@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM — Portion 1: The Surface</title>
+<!--
+  BLOOM demo-surface.html  —  Build Portion 1 (System 1) + an early slice of System 12.
+  Scope: region/tile model + section generator + border tracer + map render, in two modes:
+    · Cinder-Frost (authored)  — deterministic 12-section sample planet; bible-adjacency QA.
+    · Random (procedural)      — seeded generator with a water% slider + section count.
+  Water/islands (bible §4.7): impassable ocean carved from a noise field; land sections grown by
+  geodesic flood-fill so they never span water; islands & "stranded" sections (need Dispersal) reported.
+  No sim yet. Self-contained; boots over file://.
+-->
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#121826; --panel2:#0e1320; --ink:#cdd6e6; --dim:#7c89a3;
+    --line:#26304a; --accent:#7fe3c0; --accent2:#ffd479; --bad:#ff6b6b; --ok:#7fe3a0;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"DejaVu Sans Mono","Courier New",monospace; font-size:13px; line-height:1.45;
+    display:grid; grid-template-rows:auto auto 1fr auto; height:100vh; overflow:hidden;
+  }
+  header{
+    display:flex; align-items:center; gap:18px; padding:9px 16px;
+    background:linear-gradient(180deg,#141b2c,#0e1320); border-bottom:1px solid var(--line);
+  }
+  header h1{font-size:14px; margin:0; letter-spacing:3px; color:var(--accent); white-space:nowrap}
+  header h1 small{color:var(--dim); letter-spacing:1px; font-weight:normal}
+  .climate{display:flex; gap:14px; color:var(--dim); font-size:12px; flex-wrap:wrap}
+  .climate b{color:var(--ink); font-weight:600}
+  .controls{margin-left:auto; display:flex; gap:8px; align-items:center}
+
+  .toolbar{
+    display:flex; align-items:center; gap:14px; padding:7px 16px; flex-wrap:wrap;
+    background:#0d1322; border-bottom:1px solid var(--line); font-size:12px;
+  }
+  .toolbar .group{display:flex; align-items:center; gap:7px}
+  .toolbar .sep{width:1px; height:20px; background:var(--line)}
+  .toolbar label{color:var(--dim)}
+  .toolbar .val{color:var(--accent); min-width:34px; display:inline-block; text-align:right}
+  input[type=range]{accent-color:var(--accent); width:130px; vertical-align:middle}
+  input[type=range]:disabled{opacity:.35}
+
+  button.toggle, button.act{
+    background:#1a2236; color:var(--ink); border:1px solid var(--line);
+    padding:5px 10px; font:inherit; font-size:12px; cursor:pointer; border-radius:4px;
+  }
+  button.toggle[aria-pressed="true"]{background:#23406a; border-color:var(--accent); color:#fff}
+  button.toggle:hover, button.act:hover{border-color:var(--accent)}
+  button.act{background:#243b2f; border-color:#2f6a4d; color:#cdeede}
+  button.act:hover{border-color:var(--ok)}
+  button:disabled{opacity:.4; cursor:default}
+
+  main{display:grid; grid-template-columns:1fr 280px; min-height:0}
+  .stage{position:relative; display:flex; align-items:center; justify-content:center; padding:14px; min-height:0; overflow:hidden}
+  canvas{
+    background:#05070c; border:1px solid var(--line); border-radius:3px;
+    image-rendering:pixelated; cursor:crosshair; max-width:100%; max-height:100%;
+  }
+  aside{background:var(--panel); border-left:1px solid var(--line); padding:14px; overflow:auto; font-size:12px}
+  aside h2{font-size:12px; letter-spacing:2px; color:var(--accent2); margin:0 0 8px}
+  .badge{display:inline-block; padding:1px 7px; border-radius:3px; font-size:10px; letter-spacing:1px;
+    background:#3a2a12; color:var(--accent2); border:1px solid #6a4d1c; margin-left:6px}
+  .secname{font-size:15px; color:#fff; letter-spacing:1px}
+  table.kv{width:100%; border-collapse:collapse; margin-top:10px}
+  table.kv td{padding:3px 4px; border-bottom:1px solid #1a2236}
+  table.kv td:first-child{color:var(--dim)}
+  table.kv td:last-child{text-align:right; color:var(--ink)}
+  .eff{color:var(--accent)}
+  .nbrs{margin-top:10px; color:var(--dim); font-size:11px; line-height:1.6}
+  .nbrs span{display:inline-block; background:#1a2236; border:1px solid var(--line);
+    border-radius:3px; padding:1px 6px; margin:2px 3px 0 0; color:var(--ink)}
+  .hint{color:var(--dim); font-style:italic}
+
+  footer{
+    border-top:1px solid var(--line); background:var(--panel2); padding:8px 16px;
+    font-size:11px; color:var(--dim); display:flex; gap:22px; align-items:center; overflow-x:auto; white-space:nowrap;
+  }
+  footer .qa{display:flex; gap:6px; align-items:center}
+  footer code{color:var(--ink)}
+  .dot{display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px}
+  .ok{background:var(--ok)} .warn{background:var(--accent2)} .err{background:var(--bad)}
+</style>
+</head>
+<body>
+<header>
+  <h1>BLOOM <small>· portion 1 · the surface</small></h1>
+  <div class="climate" id="climate"></div>
+  <div class="controls">
+    <button class="toggle" id="tLabels" aria-pressed="true">labels</button>
+    <button class="toggle" id="tBorders" aria-pressed="true">borders</button>
+    <button class="toggle" id="tIds" aria-pressed="false">ids</button>
+    <button class="toggle" id="tGrid" aria-pressed="false">tile grid</button>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="group">
+    <button class="toggle" id="mAuthored" aria-pressed="true">Cinder-Frost</button>
+    <button class="toggle" id="mRandom" aria-pressed="false">Random</button>
+  </div>
+  <div class="sep"></div>
+  <div class="group">
+    <button class="act" id="btnNew">⟳ New Map</button>
+    <span class="hint" id="seedLabel">seed —</span>
+  </div>
+  <div class="sep"></div>
+  <div class="group">
+    <label for="sWater">water</label>
+    <input type="range" id="sWater" min="0" max="70" step="2" value="0">
+    <span class="val" id="vWater">0%</span>
+  </div>
+  <div class="group">
+    <label for="sSecs">sections</label>
+    <input type="range" id="sSecs" min="8" max="20" step="1" value="14">
+    <span class="val" id="vSecs">14</span>
+  </div>
+</div>
+
+<main>
+  <div class="stage"><canvas id="cv"></canvas></div>
+  <aside id="info">
+    <h2>SECTION INSPECT</h2>
+    <p class="hint">Click a section on the surface to read its ground conditions. (The color-coded 8-variable panel arrives in Portion&nbsp;3 — this is the raw model.)</p>
+  </aside>
+</main>
+
+<footer id="foot"></footer>
+
+<script>
+"use strict";
+
+/* ===========================================================================
+   GRID CONSTANTS + small helpers
+   =========================================================================== */
+const W=60, H=40, N=W*H, WATER=-1;
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const mix=(c1,c2,k)=>[c1[0]+(c2[0]-c1[0])*k, c1[1]+(c2[1]-c1[1])*k, c1[2]+(c2[2]-c1[2])*k];
+const smooth=t=>t*t*(3-2*t);
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+const pick=(rng,arr)=>arr[(rng()*arr.length)|0];
+
+/* ===========================================================================
+   AUTHORED PLANET — Cinder-Frost (embedded fallback; engine will fetch JSON).
+   center = normalized Voronoi seed. All land (no water).
+   =========================================================================== */
+const CINDERFROST = {
+  id:"cinderfrost", name:"Cinder-Frost", procedural:false,
+  gridWidth:W, gridHeight:H, winThreshold:0.70, origin:"tundra_shelf",
+  globalClimate:{ temperature:-8, moisture:45, o2:8, co2:60, pressure:90 },
+  sections:[
+    { id:"tundra_shelf", name:"Tundra Shelf", area:140, isOrigin:true, center:{x:0.24,y:0.14},
+      neighbors:["frost_basin","ash_steppe"],
+      local:{ tempOffset:-22, moistureOffset:-10, light:35, ph:6.5, salinity:5, toxicity:0, radiation:10, nutrients:30 } },
+    { id:"frost_basin", name:"Frost Basin", area:130, center:{x:0.56,y:0.12},
+      neighbors:["tundra_shelf","north_flats"],
+      local:{ tempOffset:-18, moistureOffset:5, light:30, ph:6.0, salinity:0, toxicity:0, radiation:10, nutrients:35 } },
+    { id:"north_flats", name:"North Flats", area:120, center:{x:0.44,y:0.36},
+      neighbors:["frost_basin","salt_pan"],
+      local:{ tempOffset:-10, moistureOffset:0, light:50, ph:7.0, salinity:0, toxicity:0, radiation:15, nutrients:40 } },
+    { id:"salt_pan", name:"Salt Pan", area:110, center:{x:0.74,y:0.33},
+      neighbors:["north_flats","dust_steppe"],
+      local:{ tempOffset:-4, moistureOffset:-20, light:70, ph:8.5, salinity:85, toxicity:5, radiation:20, nutrients:25 } },
+    { id:"dust_steppe", name:"Dust Steppe", area:130, center:{x:0.72,y:0.54},
+      neighbors:["salt_pan","midlands"],
+      local:{ tempOffset:2, moistureOffset:-25, light:80, ph:7.5, salinity:10, toxicity:0, radiation:25, nutrients:20 } },
+    { id:"midlands", name:"Midlands", area:150, center:{x:0.46,y:0.52},
+      neighbors:["dust_steppe","ash_steppe","river_belt"],
+      local:{ tempOffset:8, moistureOffset:10, light:65, ph:6.8, salinity:0, toxicity:0, radiation:20, nutrients:55 } },
+    { id:"ash_steppe", name:"Ash Steppe", area:120, center:{x:0.15,y:0.40},
+      neighbors:["tundra_shelf","midlands","volcanic_rise"],
+      local:{ tempOffset:6, moistureOffset:-5, light:60, ph:6.2, salinity:0, toxicity:15, radiation:30, nutrients:35 } },
+    { id:"river_belt", name:"River Belt", area:110, center:{x:0.48,y:0.67},
+      neighbors:["midlands","jungle_fringe"],
+      local:{ tempOffset:14, moistureOffset:40, light:70, ph:6.5, salinity:0, toxicity:0, radiation:15, nutrients:60 } },
+    { id:"jungle_fringe", name:"Jungle Fringe", area:130, center:{x:0.55,y:0.70},
+      neighbors:["river_belt","equator_belt"],
+      local:{ tempOffset:20, moistureOffset:35, light:75, ph:6.0, salinity:0, toxicity:0, radiation:15, nutrients:70 } },
+    { id:"equator_belt", name:"Equator Belt", area:150, center:{x:0.44,y:0.94},
+      neighbors:["jungle_fringe","volcanic_rise"],
+      local:{ tempOffset:34, moistureOffset:5, light:95, ph:6.5, salinity:0, toxicity:0, radiation:45, nutrients:50 } },
+    { id:"volcanic_rise", name:"Volcanic Rise", area:100, center:{x:0.17,y:0.74},
+      neighbors:["ash_steppe","equator_belt"],
+      local:{ tempOffset:46, moistureOffset:-30, light:90, ph:4.5, salinity:0, toxicity:60, radiation:50, nutrients:30 } },
+    { id:"glass_desert", name:"Glass Desert", area:110, center:{x:0.76,y:0.86},
+      neighbors:["equator_belt"],
+      local:{ tempOffset:28, moistureOffset:-40, light:100, ph:7.0, salinity:30, toxicity:0, radiation:55, nutrients:15 } }
+  ]
+};
+
+/* ===========================================================================
+   GENERATOR A — authored layout via additively-weighted Voronoi.
+   Gentle, capped weights → geometry/adjacency dominate, light area nudge.
+   Returns Int16Array(N) tilemap.  (No water.)
+   =========================================================================== */
+function growWeightedVoronoi(sections){
+  const cx=sections.map(s=>s.center.x*W), cy=sections.map(s=>s.center.y*H);
+  const areaSum=sections.reduce((a,s)=>a+s.area,0);
+  const target=sections.map(s=>s.area/areaSum*N);
+  const w=new Float64Array(sections.length);
+  const map=new Int16Array(N), counts=new Int32Array(sections.length);
+  const WCAP=2.2;
+  for(let it=0; it<10; it++){
+    counts.fill(0);
+    for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+      let best=0,bd=Infinity; const px=x+0.5,py=y+0.5;
+      for(let i=0;i<sections.length;i++){
+        const dx=px-cx[i],dy=py-cy[i], d=Math.sqrt(dx*dx+dy*dy)-w[i];
+        if(d<bd){bd=d;best=i;}
+      }
+      map[y*W+x]=best; counts[best]++;
+    }
+    let maxErr=0;
+    for(let i=0;i<sections.length;i++){
+      const e=target[i]-counts[i]; w[i]=clamp(w[i]+e*0.004,-WCAP,WCAP);
+      if(Math.abs(e)>maxErr)maxErr=Math.abs(e);
+    }
+    if(maxErr<5) break;
+  }
+  return map;
+}
+
+/* ===========================================================================
+   GENERATOR B — procedural planet with water (early System 12 slice).
+     1. value-noise elevation field → threshold to target water%
+     2. land sections grown by geodesic multi-source BFS (never cross water)
+     3. per-section conditions from latitude + noise (+ coastal moisture/salt)
+   =========================================================================== */
+function octave(rng, cols, rows){
+  const lat=new Float32Array((cols+1)*(rows+1));
+  for(let i=0;i<lat.length;i++) lat[i]=rng();
+  const out=new Float32Array(N);
+  for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+    const gx=x/(W-1)*cols, gy=y/(H-1)*rows;
+    const x0=gx|0, y0=gy|0, fx=smooth(gx-x0), fy=smooth(gy-y0);
+    const a=lat[y0*(cols+1)+x0], b=lat[y0*(cols+1)+x0+1];
+    const c=lat[(y0+1)*(cols+1)+x0], d=lat[(y0+1)*(cols+1)+x0+1];
+    const top=a+(b-a)*fx, bot=c+(d-c)*fx;
+    out[y*W+x]=top+(bot-top)*fy;
+  }
+  return out;
+}
+function elevationField(rng){
+  const o1=octave(rng,3,2), o2=octave(rng,6,4), o3=octave(rng,11,7);
+  const f=new Float32Array(N); let mn=Infinity,mx=-Infinity;
+  for(let i=0;i<N;i++){ const v=o1[i]+o2[i]*0.5+o3[i]*0.25; f[i]=v; if(v<mn)mn=v; if(v>mx)mx=v; }
+  const r=(mx-mn)||1; for(let i=0;i<N;i++) f[i]=(f[i]-mn)/r;
+  return f;
+}
+
+const NAME_COLD=["Frost","Glacier","Rime","Tundra","Hoar","Pale","Snow"];
+const NAME_MILD=["Green","Moss","Fern","Mild","Verdant","Heath"];
+const NAME_WARM=["Amber","Sun","Gold","Saffron","Sienna"];
+const NAME_HOT =["Cinder","Ash","Ember","Scorch","Basalt"];
+const NAME_WET =["River","Marsh","Fen","Bog","Tidal","Mire"];
+const NAME_DRY =["Dust","Salt","Glass","Bone","Chalk"];
+const NAME_NOUN=["Basin","Flats","Reach","Steppe","Shelf","Expanse","Vale","Plain","Rise","Span","Pan","Fields","Hollow","Wastes"];
+const PLANET_STEMS=["Vesper","Ymir","Tharsis","Eos","Umbra","Hollow","Atlas","Mistral","Coriol","Pallas","Nyx","Borea"];
+function biomeName(rng, effTemp, dry, wet){
+  let pool;
+  if(wet) pool=NAME_WET; else if(dry) pool=NAME_DRY;
+  else if(effTemp<-12) pool=NAME_COLD; else if(effTemp<8) pool=NAME_MILD;
+  else if(effTemp<26) pool=NAME_WARM; else pool=NAME_HOT;
+  return pick(rng,pool)+" "+pick(rng,NAME_NOUN);
+}
+
+function generatePlanet(seed, waterPct, wantSections){
+  seed=seed>>>0;
+  const rng=mulberry32(seed);
+  // 1. water mask
+  const field=elevationField(rng);
+  const tilemap=new Int16Array(N).fill(WATER);
+  const waterShade=new Float32Array(N);
+  const isLand=new Uint8Array(N);
+  let threshold=-1;
+  if(waterPct>0){ const sorted=Float32Array.from(field).sort(); threshold=sorted[clamp((waterPct/100*N)|0,0,N-1)]; }
+  for(let i=0;i<N;i++){
+    if(waterPct>0 && field[i]<threshold){ waterShade[i]=clamp((threshold-field[i])/(threshold||1),0,1); }
+    else isLand[i]=1;
+  }
+  // 2. land components
+  const comp=new Int16Array(N).fill(-1); let nComp=0; const compSize=[];
+  for(let s=0;s<N;s++){
+    if(!isLand[s]||comp[s]>=0) continue;
+    const id=nComp++; let sz=0; const st=[s];
+    while(st.length){ const t=st.pop(); if(comp[t]>=0||!isLand[t])continue; comp[t]=id; sz++;
+      const x=t%W,y=(t/W)|0; if(x>0)st.push(t-1); if(x<W-1)st.push(t+1); if(y>0)st.push(t-W); if(y<H-1)st.push(t+W); }
+    compSize.push(sz);
+  }
+  const landCount=compSize.reduce((a,b)=>a+b,0)||1;
+  // 3. seeds: ≥1 per component, remainder by area (farthest-point within comp)
+  const K=clamp(wantSections,Math.max(1,nComp),24);
+  const seeds=[];
+  for(let c=0;c<nComp;c++){ const tiles=[]; for(let t=0;t<N;t++) if(comp[t]===c) tiles.push(t); seeds.push({tile:pick(rng,tiles),comp:c}); }
+  let remaining=K-seeds.length;
+  while(remaining>0){
+    let r=rng()*landCount, c=0; for(;c<nComp;c++){ r-=compSize[c]; if(r<=0)break; } c=Math.min(c,nComp-1);
+    const tiles=[]; for(let t=0;t<N;t++) if(comp[t]===c) tiles.push(t);
+    const cs=seeds.filter(s=>s.comp===c); let bestT=tiles[0],bestD=-1;
+    for(const t of tiles){ const x=t%W,y=(t/W)|0; let md=Infinity;
+      for(const s of cs){ const sx=s.tile%W,sy=(s.tile/W)|0; const d=(x-sx)**2+(y-sy)**2; if(d<md)md=d; }
+      if(md>bestD){bestD=md;bestT=t;} }
+    seeds.push({tile:bestT,comp:c}); remaining--;
+  }
+  const SECN=seeds.length;
+  // 4. geodesic multi-source BFS (land-respecting Voronoi)
+  const owner=new Int16Array(N).fill(-1); const q=[];
+  seeds.forEach((s,i)=>{ owner[s.tile]=i; q.push(s.tile); });
+  for(let head=0; head<q.length; head++){
+    const t=q[head], o=owner[t], x=t%W,y=(t/W)|0;
+    if(x>0&&isLand[t-1]&&owner[t-1]<0){owner[t-1]=o;q.push(t-1);}
+    if(x<W-1&&isLand[t+1]&&owner[t+1]<0){owner[t+1]=o;q.push(t+1);}
+    if(y>0&&isLand[t-W]&&owner[t-W]<0){owner[t-W]=o;q.push(t-W);}
+    if(y<H-1&&isLand[t+W]&&owner[t+W]<0){owner[t+W]=o;q.push(t+W);}
+  }
+  for(let i=0;i<N;i++) tilemap[i]= isLand[i] ? owner[i] : WATER;
+  // 5. per-section conditions
+  const cent=Array.from({length:SECN},()=>({x:0,y:0,n:0,coast:0}));
+  for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+    const o=tilemap[y*W+x]; if(o<0) continue; const c=cent[o]; c.x+=x; c.y+=y; c.n++;
+    if((x>0&&tilemap[y*W+x-1]===WATER)||(x<W-1&&tilemap[y*W+x+1]===WATER)||
+       (y>0&&tilemap[(y-1)*W+x]===WATER)||(y<H-1&&tilemap[(y+1)*W+x]===WATER)) c.coast++;
+  }
+  const moistField=elevationField(rng);
+  const gTemp=-8;
+  const sections=seeds.map((s,i)=>{
+    const c=cent[i]; const yN=c.n? (c.y/c.n)/(H-1) : ((s.tile/W|0)/(H-1));
+    const coastFrac=c.n? c.coast/c.n : 0;
+    const tempOffset=Math.round((-25 + yN*72) + (rng()-0.5)*12);
+    const effTemp=gTemp+tempOffset;
+    let moistureOffset=clamp(Math.round((moistField[s.tile]*80-40) + coastFrac*20),-45,45);
+    const dry=moistureOffset<-22, wet=moistureOffset>22, hot=effTemp>26, cold=effTemp<-12;
+    const volcanic=!cold && rng()<0.14;
+    const salt=(coastFrac>0.4 && rng()<0.5) || rng()<0.10;
+    const local={
+      tempOffset, moistureOffset,
+      light: clamp(Math.round(30+yN*55 + (rng()-0.5)*25),10,100),
+      ph: volcanic?+(4+rng()*1.2).toFixed(1):salt?+(7.8+rng()*0.9).toFixed(1):+(6+rng()*1.4).toFixed(1),
+      salinity: salt?Math.round(55+rng()*35):Math.round(rng()*12),
+      toxicity: volcanic?Math.round(40+rng()*35):Math.round(rng()*12),
+      radiation: Math.round((hot?40:10)+rng()*25),
+      nutrients: wet?Math.round(55+rng()*20):dry?Math.round(12+rng()*18):Math.round(35+rng()*22)
+    };
+    return { id:"sec_"+i, name:biomeName(rng,effTemp,dry,wet), area:c.n, comp:s.comp, isOrigin:false, neighbors:[], local };
+  });
+  // 6. origin: temperate, low-stress, on the largest landmass
+  let biggest=0; for(let c=1;c<nComp;c++) if(compSize[c]>compSize[biggest]) biggest=c;
+  let origin=-1, best=Infinity;
+  sections.forEach((sec,i)=>{
+    if(sec.comp!==biggest) return;
+    const eff=gTemp+sec.local.tempOffset;
+    const score=Math.abs(eff-2)+sec.local.toxicity*0.3+sec.local.radiation*0.15+sec.local.salinity*0.2+Math.abs(sec.local.moistureOffset)*0.2;
+    if(score<best){best=score;origin=i;}
+  });
+  if(origin<0) origin=0;
+  sections[origin].isOrigin=true;
+
+  const stem=PLANET_STEMS[seed%PLANET_STEMS.length];
+  return {
+    id:"proc_"+seed, name:stem+"-"+(seed%1000), procedural:true,
+    gridWidth:W, gridHeight:H, winThreshold:0.70, origin:sections[origin].id,
+    globalClimate:{ temperature:gTemp, moisture:45, o2:8, co2:60, pressure:90 },
+    sections, _tilemap:tilemap, _waterShade:waterShade, _seed:seed
+  };
+}
+
+/* ===========================================================================
+   TERRAIN COLOR — barren-ground preview from a section's conditions.
+   =========================================================================== */
+const TEMP_STOPS=[[-40,[44,62,104]],[-20,[78,104,140]],[0,[100,126,116]],
+  [12,[92,140,88]],[25,[156,146,84]],[40,[182,100,60]],[60,[150,58,46]]];
+function lerpStops(stops,v){
+  if(v<=stops[0][0])return stops[0][1].slice();
+  if(v>=stops[stops.length-1][0])return stops[stops.length-1][1].slice();
+  for(let i=0;i<stops.length-1;i++){ const[a,ca]=stops[i],[b,cb]=stops[i+1]; if(v>=a&&v<=b)return mix(ca,cb,(v-a)/(b-a)); }
+  return stops[0][1].slice();
+}
+function terrainColor(sec, gTemp, gMoist){
+  const L=sec.local, t=gTemp+L.tempOffset, m=gMoist+L.moistureOffset;
+  let c=lerpStops(TEMP_STOPS,t);
+  if(m<35) c=mix(c,[174,154,112],(35-m)/35*0.5);
+  else if(m>65) c=mix(c,[58,112,112],(m-65)/35*0.45);
+  if(L.toxicity>=40) c=mix(c,[124,72,144],(L.toxicity-40)/60*0.5);
+  if(L.salinity>=50) c=mix(c,[200,205,212],(L.salinity-50)/50*0.42);
+  if(L.ph<=5)        c=mix(c,[152,72,60],(5-L.ph)/5*0.4);
+  if(L.radiation>=45)c=mix(c,[172,82,172],(L.radiation-45)/55*0.28);
+  return c.map(v=>clamp(Math.round(v),0,255));
+}
+
+/* ===========================================================================
+   APP STATE + MOUNTING
+   =========================================================================== */
+const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
+const dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+let TILE=14, selected=-1, hovered=-1;
+const show={labels:true,borders:true,ids:false,grid:false};
+let mode="authored", seed=12345, waterPct=0, wantSecs=14;
+
+let P=null, TILEMAP=null, WATERSHADE=null, AREA=null, CENT=null, NBRS=null, COLORS=null;
+
+function mount(planet, tilemap, waterShade){
+  P=planet; TILEMAP=tilemap; WATERSHADE=waterShade||new Float32Array(N);
+  const SEC=P.sections, SC=SEC.length;
+  P._idIndex=Object.fromEntries(SEC.map((s,i)=>[s.id,i]));
+  AREA=new Int32Array(SC); CENT=SEC.map(()=>({x:0,y:0,n:0}));
+  for(let y=0;y<H;y++) for(let x=0;x<W;x++){ const o=tilemap[y*W+x]; if(o<0)continue; AREA[o]++; const c=CENT[o]; c.x+=x; c.y+=y; c.n++; }
+  CENT.forEach(c=>{ if(c.n){c.x=c.x/c.n+0.5; c.y=c.y/c.n+0.5;} });
+  NBRS=SEC.map(()=>new Set());
+  for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+    const a=tilemap[y*W+x]; if(a<0)continue;
+    if(x+1<W){ const b=tilemap[y*W+x+1]; if(b>=0&&b!==a){NBRS[a].add(b);NBRS[b].add(a);} }
+    if(y+1<H){ const b=tilemap[(y+1)*W+x]; if(b>=0&&b!==a){NBRS[a].add(b);NBRS[b].add(a);} }
+  }
+  COLORS=SEC.map(s=>terrainColor(s,P.globalClimate.temperature,P.globalClimate.moisture));
+  selected=-1; hovered=-1;
+  resize(); renderInfo(); renderClimate(); qa();
+}
+
+function regenerate(){
+  if(mode==="authored"){
+    mount(CINDERFROST, growWeightedVoronoi(CINDERFROST.sections), null);
+    document.getElementById("seedLabel").textContent="authored";
+  } else {
+    const planet=generatePlanet(seed, waterPct, wantSecs);
+    mount(planet, planet._tilemap, planet._waterShade);
+    document.getElementById("seedLabel").textContent="seed "+planet._seed;
+  }
+}
+
+/* ===========================================================================
+   RENDER
+   =========================================================================== */
+function fitTile(){
+  const stage=document.querySelector(".stage");
+  TILE=Math.max(6,Math.floor(Math.min((stage.clientWidth-28)/W,(stage.clientHeight-28)/H)));
+}
+function resize(){
+  fitTile();
+  cv.width=W*TILE*dpr; cv.height=H*TILE*dpr;
+  cv.style.width=W*TILE+"px"; cv.style.height=H*TILE+"px";
+  ctx.setTransform(dpr,0,0,dpr,0,0); draw();
+}
+const rgb=c=>`rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`;
+const WATER_DEEP=[12,28,48], WATER_SHALLOW=[34,74,108];
+
+function draw(){
+  if(!P) return;
+  ctx.clearRect(0,0,cv.width,cv.height);
+  for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+    const i=y*W+x, o=TILEMAP[i]; let c;
+    if(o<0){ c=mix(WATER_SHALLOW,WATER_DEEP,WATERSHADE[i]); }
+    else { c=COLORS[o]; if(o===hovered) c=mix(c,[255,255,255],0.10); }
+    ctx.fillStyle=rgb(c); ctx.fillRect(x*TILE,y*TILE,TILE+0.5,TILE+0.5);
+  }
+  if(show.grid){
+    ctx.strokeStyle="rgba(255,255,255,0.05)"; ctx.lineWidth=1; ctx.beginPath();
+    for(let x=0;x<=W;x++){ctx.moveTo(x*TILE,0);ctx.lineTo(x*TILE,H*TILE);}
+    for(let y=0;y<=H;y++){ctx.moveTo(0,y*TILE);ctx.lineTo(W*TILE,y*TILE);}
+    ctx.stroke();
+  }
+  if(show.borders){
+    ctx.strokeStyle="rgba(5,7,12,0.85)"; ctx.lineWidth=1.5; ctx.beginPath();
+    for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+      const s=TILEMAP[y*W+x];
+      const rt = x+1>=W ? null : TILEMAP[y*W+x+1];
+      const dn = y+1>=H ? null : TILEMAP[(y+1)*W+x];
+      if(rt!==s){ ctx.moveTo((x+1)*TILE,y*TILE); ctx.lineTo((x+1)*TILE,(y+1)*TILE); }
+      if(x===0){ ctx.moveTo(0,y*TILE); ctx.lineTo(0,(y+1)*TILE); }
+      if(dn!==s){ ctx.moveTo(x*TILE,(y+1)*TILE); ctx.lineTo((x+1)*TILE,(y+1)*TILE); }
+      if(y===0){ ctx.moveTo(x*TILE,0); ctx.lineTo((x+1)*TILE,0); }
+    }
+    ctx.stroke();
+  }
+  if(selected>=0){
+    ctx.strokeStyle="#7fe3c0"; ctx.lineWidth=3; ctx.beginPath();
+    for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+      if(TILEMAP[y*W+x]!==selected) continue;
+      if(x+1>=W||TILEMAP[y*W+x+1]!==selected){ctx.moveTo((x+1)*TILE,y*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);}
+      if(x===0||TILEMAP[y*W+x-1]!==selected){ctx.moveTo(x*TILE,y*TILE);ctx.lineTo(x*TILE,(y+1)*TILE);}
+      if(y+1>=H||TILEMAP[(y+1)*W+x]!==selected){ctx.moveTo(x*TILE,(y+1)*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);}
+      if(y===0||TILEMAP[(y-1)*W+x]!==selected){ctx.moveTo(x*TILE,y*TILE);ctx.lineTo((x+1)*TILE,y*TILE);}
+    }
+    ctx.stroke();
+  }
+  if(show.labels){
+    const fs=Math.max(8,Math.min(13,TILE)); ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.font=`${fs}px "DejaVu Sans Mono",monospace`;
+    P.sections.forEach((s,i)=>{
+      if(!CENT[i].n) return; const px=CENT[i].x*TILE, py=CENT[i].y*TILE;
+      const txt=show.ids?s.id:s.name.toUpperCase();
+      ctx.lineWidth=3; ctx.strokeStyle="rgba(5,7,12,0.9)"; ctx.strokeText(txt,px,py);
+      ctx.fillStyle=i===selected?"#fff":"rgba(235,240,250,0.92)"; ctx.fillText(txt,px,py);
+      if(s.isOrigin){ ctx.fillStyle="#ffd479"; ctx.fillText("★ origin",px,py+fs+2); }
+    });
+  }
+}
+
+/* ===========================================================================
+   INTERACTION
+   =========================================================================== */
+function tileAt(ev){
+  const r=cv.getBoundingClientRect();
+  const x=Math.floor((ev.clientX-r.left)/TILE), y=Math.floor((ev.clientY-r.top)/TILE);
+  if(x<0||y<0||x>=W||y>=H) return -2;
+  return TILEMAP[y*W+x];
+}
+cv.addEventListener("mousemove",e=>{ const s=tileAt(e); const h=s<0?-1:s; if(h!==hovered){hovered=h;draw();} });
+cv.addEventListener("mouseleave",()=>{ if(hovered!==-1){hovered=-1;draw();} });
+cv.addEventListener("click",e=>{ const s=tileAt(e); selected=(s<0||s===selected)?-1:s; draw(); renderInfo(); });
+
+function renderInfo(){
+  const el=document.getElementById("info");
+  if(selected<0){
+    el.innerHTML='<h2>SECTION INSPECT</h2><p class="hint">Click a section to read its ground conditions. (The color-coded 8-variable panel arrives in Portion&nbsp;3 — this is the raw model.)</p>';
+    return;
+  }
+  const s=P.sections[selected], L=s.local, g=P.globalClimate;
+  const effT=g.temperature+L.tempOffset, effM=g.moisture+L.moistureOffset;
+  const derived=[...NBRS[selected]].map(i=>P.sections[i].name);
+  el.innerHTML=`
+    <h2>SECTION INSPECT</h2>
+    <div class="secname">${s.name}${s.isOrigin?'<span class="badge">★ ORIGIN</span>':''}</div>
+    <table class="kv">
+      <tr><td>tiles</td><td>${AREA[selected]}${P.procedural?'':' <span class="hint">(bible area '+s.area+')</span>'}</td></tr>
+      <tr><td>effective temp</td><td class="eff">${effT>0?'+':''}${effT}°C</td></tr>
+      <tr><td>effective moist</td><td class="eff">${effM}</td></tr>
+      <tr><td>· tempOffset</td><td>${L.tempOffset>0?'+':''}${L.tempOffset}</td></tr>
+      <tr><td>· moistOffset</td><td>${L.moistureOffset>0?'+':''}${L.moistureOffset}</td></tr>
+      <tr><td>light</td><td>${L.light}</td></tr>
+      <tr><td>soil pH</td><td>${L.ph}</td></tr>
+      <tr><td>salinity</td><td>${L.salinity}</td></tr>
+      <tr><td>toxicity</td><td>${L.toxicity}</td></tr>
+      <tr><td>radiation</td><td>${L.radiation}</td></tr>
+      <tr><td>nutrients</td><td>${L.nutrients}</td></tr>
+    </table>
+    <div class="nbrs"><b>neighbors (from tiles):</b><br>${derived.map(n=>`<span>${n}</span>`).join('')||'<i>island — none</i>'}</div>`;
+}
+
+function renderClimate(){
+  const g=P.globalClimate;
+  document.getElementById("climate").innerHTML=
+    `<span>planet <b>${P.name}</b></span>`+
+    `<span>temp <b>${g.temperature}°C</b></span>`+
+    `<span>moist <b>${g.moisture}</b></span>`+
+    `<span>O₂ <b>${g.o2}</b></span><span>CO₂ <b>${g.co2}</b></span>`+
+    `<span>win <b>${Math.round(P.winThreshold*100)}%</b> of land</span>`;
+}
+
+/* ===========================================================================
+   QA FOOTER
+   =========================================================================== */
+function qa(){
+  const SC=P.sections.length;
+  let landTiles=0, waterTiles=0;
+  for(let i=0;i<N;i++){ if(TILEMAP[i]===WATER) waterTiles++; else landTiles++; }
+  const waterShown=Math.round(waterTiles/N*100);
+
+  let broken=0; const seen=new Uint8Array(N);
+  for(let i=0;i<SC;i++){
+    let start=-1; for(let t=0;t<N;t++) if(TILEMAP[t]===i){start=t;break;}
+    if(start<0) continue;
+    let cnt=0; const st=[start];
+    while(st.length){ const t=st.pop(); if(seen[t]||TILEMAP[t]!==i)continue; seen[t]=1; cnt++;
+      const x=t%W,y=(t/W)|0; if(x>0)st.push(t-1); if(x<W-1)st.push(t+1); if(y>0)st.push(t-W); if(y<H-1)st.push(t+W); }
+    if(cnt!==AREA[i]) broken++;
+  }
+
+  const oi=P._idIndex[P.origin];
+  const reach=new Set([oi]); let frontier=[oi];
+  while(frontier.length){ const nx=[]; for(const a of frontier) for(const b of NBRS[a]) if(!reach.has(b)){reach.add(b);nx.push(b);} frontier=nx; }
+  const stranded=SC-reach.size;
+
+  const compSeen=new Uint8Array(N); let islands=0;
+  for(let s=0;s<N;s++){ if(TILEMAP[s]===WATER||compSeen[s])continue; islands++; const st=[s];
+    while(st.length){ const t=st.pop(); if(compSeen[t]||TILEMAP[t]===WATER)continue; compSeen[t]=1;
+      const x=t%W,y=(t/W)|0; if(x>0)st.push(t-1); if(x<W-1)st.push(t+1); if(y>0)st.push(t-W); if(y<H-1)st.push(t+W); } }
+
+  let html=`<div class="qa"><span class="dot ok"></span>sections <code>${SC}</code> · land <code>${landTiles}</code> · water <code>${waterTiles} (${waterShown}%)</code></div>`+
+    `<div class="qa"><span class="dot ${broken?'err':'ok'}"></span>contiguity <code>${broken?broken+' broken':'all single-blob'}</code></div>`+
+    `<div class="qa"><span class="dot ${islands>1?'warn':'ok'}"></span>islands <code>${islands}</code></div>`+
+    `<div class="qa"><span class="dot ${stranded?'warn':'ok'}"></span>reachable from origin <code>${reach.size}/${SC}</code>${stranded?` · <b>${stranded} need Dispersal</b>`:''}</div>`;
+
+  if(!P.procedural){
+    let want=0,got=0,miss=[];
+    P.sections.forEach((s,i)=>s.neighbors.forEach(nid=>{ want++; if(NBRS[i].has(P._idIndex[nid]))got++; else miss.push(s.id+'~'+nid); }));
+    const pct=Math.round(got/want*100), cls=pct===100?'ok':pct>=80?'warn':'err';
+    html+=`<div class="qa"><span class="dot ${cls}"></span>bible adjacency <code>${got}/${want} (${pct}%)</code>${miss.length?' · missing '+miss.slice(0,3).join(', '):''}</div>`;
+  }
+  html+=`<div class="qa hint">click a section · ★ = origin refuge</div>`;
+  document.getElementById("foot").innerHTML=html;
+}
+
+/* ===========================================================================
+   CONTROLS
+   =========================================================================== */
+function bindToggle(id,key){ const b=document.getElementById(id);
+  b.addEventListener("click",()=>{ show[key]=!show[key]; b.setAttribute("aria-pressed",show[key]); draw(); }); }
+bindToggle("tLabels","labels"); bindToggle("tBorders","borders"); bindToggle("tIds","ids"); bindToggle("tGrid","grid");
+
+const mA=document.getElementById("mAuthored"), mR=document.getElementById("mRandom");
+const sWater=document.getElementById("sWater"), sSecs=document.getElementById("sSecs");
+function setMode(m){
+  mode=m;
+  mA.setAttribute("aria-pressed",m==="authored"); mR.setAttribute("aria-pressed",m==="random");
+  const auth=(m==="authored");
+  sWater.disabled=sSecs.disabled=document.getElementById("btnNew").disabled=auth;
+  regenerate();
+}
+mA.addEventListener("click",()=>setMode("authored"));
+mR.addEventListener("click",()=>setMode("random"));
+document.getElementById("btnNew").addEventListener("click",()=>{ seed=(Math.random()*1e9)>>>0; regenerate(); });
+sWater.addEventListener("input",()=>{ waterPct=+sWater.value; document.getElementById("vWater").textContent=waterPct+"%"; if(mode==="random") regenerate(); });
+sSecs.addEventListener("input",()=>{ wantSecs=+sSecs.value; document.getElementById("vSecs").textContent=wantSecs; if(mode==="random") regenerate(); });
+
+window.addEventListener("resize",resize);
+
+// boot — authored mode, controls disabled until Random
+sWater.disabled=sSecs.disabled=document.getElementById("btnNew").disabled=true;
+regenerate();
+</script>
+</body>
+</html>
