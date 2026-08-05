@@ -1,474 +1,730 @@
 # BLOOM — Design Bible
-*A retro-pixel terraforming/evolution demake in the Plague Inc. lineage, for middle-school life & earth science.*
+*A friendly, modern plant-evolution strategy game in the Plague Inc. lineage, built around procedural alien planets and middle-school life and Earth science.*
 
-**Version:** 1.0 (build-ready)
-**Platform:** Browser, mouse-primary (touch-compatible). No keyboard dependency.
-**Architecture:** Single-file HTML/JS engine + external JSON content (planets / traits / scenarios), no build step. Embedded fallback planet so it boots over `file://`.
-**Session length:** 10–20 min per level. Replayable: pick planet × starter × pressure scenario.
-
-**Build workflow (this project):** build each portion as a self-contained demo (one HTML file under `demos/`), verify in isolation, then integrate into the single-file engine via shared modules in `resources/`. Same pattern as the Trans-plant project (demos per level → engine integration).
-
----
-
-## 1. HIGH CONCEPT
-
-You are a single pioneer plant species dropped onto a hostile world. You spread across the planet by **evolving the plant to endure local ground conditions** and **terraforming the global sky to bend the whole climate toward you**. Win by covering a target % of the planet. The plant itself drives the terraform loop — as it spreads, it photosynthesizes and changes the atmosphere, so success snowballs.
-
-**The one-sentence pitch for a 12-year-old:** *A planet's "mood" is its sky — you can change that. A region's "personality" is its ground — you have to adapt to that.*
+**Version:** 1.1 (gameplay-direction revision)
+**Platform:** Browser, mouse-primary, touch-compatible. No keyboard dependency.
+**Session length:** 10–20 minutes per run.
+**Primary mode:** Procedural planet × starter plant × pressure scenario.
+**Tutorial mode:** A small number of authored planets that introduce systems gradually.
+**Player fantasy:** *I figured out how to make this plant thrive and take over the planet.*
 
 ---
 
-## 2. WHAT WE TEACH (and how they learn it)
+## 1. DESIGN NORTH STAR
 
-| Concept | Taught through |
-|---|---|
-| Tolerance ranges / limiting factors (Shelford's law) | The survive/struggle/die feedback on every section; the color-coded condition panel |
-| Real plant adaptations + their mechanisms | Each evolved trait carries a one-line "why it works" (waxy cuticle → less water loss, etc.) |
-| Biogeochemical cycles (C, O, N, water) | The plant's terraform *output* literally moves the global climate sliders |
-| Climate systems & feedback loops | Terraforming tradeoffs; the Volatile pressure scenario |
-| Evolutionary tradeoffs / specialist vs generalist | Finite points; the temperature pool cap; refund consequences |
-| Ecological succession | Dead land decomposes → soil enriches → recolonizes faster |
+BLOOM should capture the readable rhythm and escalating spread of *Plague Inc.* without copying its theme. The player begins with one pioneer plant, watches it spread across a hostile world, earns Biomass, and purchases traits that let it survive new environments or reshape the planet.
 
-**Pedagogical engine:** learning by *instructive failure*, exactly like Plague teaches epidemiology. Every die-back names the one variable that killed the colony.
+The game must balance two goals equally:
+
+1. **Be a satisfying strategy game.** The player reads the map, identifies the current limiting factor, chooses among viable upgrades, and sees a clear consequence.
+2. **Teach through the mechanic.** Adaptation, limiting factors, tradeoffs, dispersal, feedback loops, and succession are learned by making the plant succeed or fail—not by stopping for a lesson.
+
+When those goals conflict, simplify the presentation before simplifying the underlying scientific idea.
+
+### One-sentence pitch
+
+> Evolve one plant to survive a strange procedural planet, spread across its regions, and change the world until your species can thrive.
+
+### The emotional payoff
+
+A successful run should end with the player thinking:
+
+> I understood this planet, built the right plant for it, and made it bloom.
 
 ---
 
-## 3. CORE LOOP
+## 2. CORE LOOP
 
+```text
+read the next barrier
+        ↓
+adapt / spread / terraform
+        ↓
+plant survives and fills more land
+        ↓
+healthy colonies generate Biomass
+        ↓
+new choices become affordable
+        ↓
+the planet becomes a larger, harder puzzle
 ```
-evolve / terraform  →  plant survives more sections  →  plant spreads (fills area)
-        ^                                                          |
-        |                                                          v
-   spend biomass  ←  collect biomass from thriving colonies  ←  spreading plant
-                                                                photosynthesizes →
-                                                                shifts GLOBAL climate
-                                                                → new sections become
-                                                                  survivable → (repeat, faster)
-```
 
-Slow patient-zero start → explosive midgame → tense endgame (driven by the pressure scenario). This mirrors the real Great Oxidation Event: the organism that spreads is the organism that changes the air. **The loop is the lesson.**
+The pacing target is:
+
+- **Slow origin:** one protected foothold and only a few affordable choices.
+- **Readable expansion:** the plant reaches nearby regions and reveals clear blockers.
+- **Explosive midgame:** established colonies generate enough Biomass for faster decisions.
+- **Tense endgame:** the pressure scenario or incompatible regions force prioritization before the win threshold is reached.
+
+The player should rarely wait without a decision. Watching spread is part of the pleasure, but the map must keep producing useful signals, Biomass opportunities, and upcoming problems.
 
 ---
 
-## 4. THE SIMULATION
+## 3. GAME STRUCTURE AND PROGRESSION
 
-### 4.1 Two grids — don't conflate them
-- **Tile grid (paint resolution):** **60 × 40** square tiles (2,400 tiles). The unit the sim ticks over. Tiles are never individually clicked.
-- **Sections (gameplay units):** **15–25** per planet. A section = a labeled cluster of contiguous tiles. ~100–150 tiles each. This is the granularity of player decisions.
+### 3.1 Tutorials
 
-Tiles = the paint. Sections = the brushwork the player reasons about.
+The first few planets are authored. Each introduces only the concepts needed for that lesson.
 
-### 4.2 Three-state model (per tile)
-Adapted from Plague's healthy / infected / dead:
+Suggested progression:
 
-| State | Meaning | Plague analog |
+1. **First Bloom:** temperature, basic spread, passive Biomass, and a 60–70% coverage goal.
+2. **Dry and Drowned:** water strategy and the difference between drought and flood adaptation.
+3. **Across the Sea:** islands and Spread traits that cross impassable terrain.
+4. **A Changing Sky:** Terraform choices and the cost of helping one region while harming another.
+5. **Under Pressure:** the first real pressure scenario.
+
+Tutorial planets should not expose every raw environmental signal at once.
+
+### 3.2 Main game
+
+Procedural planets are the primary game after the tutorials. A run is created from:
+
+- one **planet archetype**;
+- one **generated map and condition layout**;
+- one **starter plant**;
+- one **pressure scenario**;
+- optional difficulty modifiers later.
+
+Wins unlock additional starters and scenarios. New unlocks should create new approaches rather than simply being stronger.
+
+### 3.3 Starters
+
+Starters are presets in the same plant-genome and layered-sprite system.
+
+Examples:
+
+- **Succulent:** begins dry- and heat-oriented.
+- **Lichen:** begins cold- and radiation-oriented.
+- **Marsh Bloom:** begins wet- and poor-soil-oriented.
+- **Runner:** begins with fast contiguous spread.
+- **Custom:** spends a small starting allowance after the player understands the systems.
+
+A starter is a strategic opening, not a character class that locks the final build.
+
+---
+
+## 4. THE SURFACE
+
+### 4.1 Two scales
+
+- **Tile grid:** 60 × 40 cells. This is the paint resolution used for filling, borders, water, and animated spread.
+- **Sections:** normally 12–22 named contiguous land regions. Sections are the units the player clicks, reads, and reasons about.
+
+Tiles are visual state. Sections are gameplay decisions.
+
+### 4.2 Tile states
+
+| State | Meaning | Plague-style analog |
 |---|---|---|
-| **Barren** | empty, colonizable | healthy |
-| **Living** | colonized; the fill | infected |
-| **Dead** | recently died back | dead |
+| **Barren** | Colonizable ground | Healthy |
+| **Living** | Occupied by the player plant | Infected |
+| **Dead** | Recent die-back; recovering | Dead |
 
-**Transitions (the entire sim):**
-- **Barren → Living** (colonize): rate = `plantFitness(section) × seedPressure(neighbors)`. Good fit + many mature neighbors = fast fill. Marginal = slow crawl.
-- **Living → Dead** (die-back): when section conditions drop below the plant's survival threshold *for its current genome*. Vigor drops first, growth stalls, then edges recede. **Damped** (slower than growth) so a brief dip doesn't wipe a colony.
-- **Dead → Barren** (recovery): dead land slowly returns to barren and becomes recolonizable. Decomposition leaves the soil **nutrient-enriched** — the *second* colonization of that ground is faster. (Succession. Build the hook in v1, enable enrichment once core feels good.)
+Transitions:
 
-### 4.3 The survival check — 8 variables, one tick
-A tile thrives only if the plant clears **all** gates. `effective = global + localOffset` for terraformable vars; local-only otherwise.
+- **Barren → Living:** fitness × seed pressure × growth modifiers.
+- **Living → Dead:** sustained conditions below the survival threshold.
+- **Dead → Barren:** recovery over time; prior die-back may enrich soil and speed recolonization.
 
-| # | Variable | Mechanic type | Terraformable? | Real concept |
-|---|---|---|---|---|
-| 1 | Temperature | **Pool window** (see §5) | yes | thermal tolerance |
-| 2 | Moisture | **Position window** (see §6) | yes | xerophyte ↔ hydrophyte |
-| 3 | Light | **Additive** (stack both ends) | partial (local: shadow/latitude) | photosynthetic range |
-| 4 | Soil pH | **Buffer / additive broaden** | no | root ion regulation |
-| 5 | Salinity | **Resistance** (one-way) | no | halophyte salt-pumping |
-| 6 | Toxicity (heavy metals) | **Resistance** | no | hyperaccumulation |
-| 7 | Radiation | **Resistance** | no | pigment shielding |
-| 8 | Nutrients | **Soft modifier** (speed/yield, not a gate) | yes (plant can enrich) | nitrogen availability |
+### 4.3 Section health
 
-Three *different* mechanic shapes across the windowed vars (temp = capped pool, moisture = exclusive position, light = additive stack) so each teaches a distinct contrast.
+Each section tracks:
 
-### 4.4 Anti-oscillation (mandatory, design in from day one)
-A section hovering at threshold must not flicker colonize↔die every tick.
-- **Hysteresis:** the threshold to *start dying* is lower than the threshold to *start growing*. The gap = a "hanging on, not spreading" dead-zone (mirrors real plant stress).
-- **Damped die-back:** death rate < growth rate. Sustained bad conditions kill; momentary dips don't.
-- **Vigor** trait raises the die-back floor (lets marginal colonies hold while you terraform). It *is* the hysteresis buffer surfaced as a buyable.
+- barren area;
+- living area;
+- dead area;
+- vigor;
+- current limiting factor;
+- maturity and seed output.
 
-### 4.5 Spread rules
-- **Contiguous.** A section seeds its neighbors once it is **≥ maturity threshold (default 50%) colonized AND above survival vigor** — not 100%. Marginal sections still pass the plant along, just slower.
-- **Seed pressure** scales with how many mature neighbors a barren section has (3 sides = fast).
-- **Dispersal traits** unlock gap-jumps (wind = 1 gap, water = cross water, ballistic = 2+).
+A region can be:
 
-### 4.6 Section health
-Sections track **Barren / Living / Dead area + a vigor 0–100%**. Perfect match = thriving (max biomass + max terraform output). Marginal = surviving, low output. Below threshold = dying back.
+- **Thriving:** expands quickly and produces strong Biomass.
+- **Struggling:** survives but spreads and pays slowly.
+- **Holding:** neither spreading nor dying because it sits in the hysteresis band.
+- **Dying:** living area recedes until the problem is fixed.
 
-### 4.7 Water, islands & impassable terrain — *what gives Dispersal its purpose*
-Some planets have **impassable terrain**: ocean/water, ice-void, lava seas. This is a first-class part of the model, not flavor.
+### 4.4 Anti-oscillation
 
-- **A section (or raw tile run) can be flagged `kind: "water"` / `"void"` / `"lava"`** — collectively *impassable*. Impassable cells are **never colonizable** (they can't become Living) and are **excluded from the win denominator** — win % is measured against **land area only**, not the whole grid.
-- **Impassable terrain breaks contiguity → islands.** A landmass cut off by water can't be reached by ordinary contiguous spread.
-- **This is the entire reason the Dispersal jump group exists.** On a fully-contiguous Pangaea (Cinder-Frost), `wind_seed`/`water_seed`/`ballistic` are dead weight — there are no gaps to cross, so a rational player never buys them. Islands make those traits the only way across, turning "Adaptation vs Dispersal" into a live spend decision (the §7 tension). **Mirror of Plague's land/air/sea vectors: ocean is what makes "sea transmission" worth buying.**
-- **Per-planet variety:** Cinder-Frost = Pangaea (no water, Dispersal optional). An **archipelago** planet makes Dispersal mandatory. An ice-cap planet uses `void`. The procedural generator simply marks some cells impassable (and the winnability validator must confirm every land section is reachable given the *available* dispersal traits — see Invariant 3).
-- **Earth-science bonus (v2):** water bodies raise the local moisture of neighboring land (coasts are wetter) and buffer local temperature — so water teaches the water cycle, not just acts as a wall.
-- **Rendering:** impassable cells get their own fill (deep water blue / void black) and the border tracer treats the land/water edge like any other section boundary (coastlines fall out for free).
+Threshold behavior must remain stable:
 
-**Build order note:** introduced as a playable feature in **Portion 6** (with the Dispersal board) via a dedicated **archipelago demo planet**. Cinder-Frost (Portions 1–5) stays all-land so the core loop is validated without dispersal complexity.
+- growth begins above a higher threshold;
+- die-back begins below a lower threshold;
+- the space between them is a visible “holding on” state;
+- die-back is slower than healthy growth;
+- short climate fluctuations do not erase a colony.
 
 ---
 
-## 5. TEMPERATURE — the capped pool
+## 5. READABLE ENVIRONMENT MODEL
 
-A **3-point pool**, two locked arms from a shared thermal root.
-- Climb one arm first: `Hot 1/3 → 2/3 → 3/3` (cold locked while you do).
-- Maxing an arm **unlocks** the opposite arm permanently.
-- Hard cap of **3 total temp points.** Reachable end-states: `3/0, 2/1, 1/2, 0/3` (always sum 3).
-- After unlock, every cold point is **pulled from hot** (a tier-scaling refund + buy). Hedging is deliberately expensive — generalism is possible but stings.
+The first bible exposed eight environmental variables equally. That is too much normal-screen cognitive load for a fast strategy game.
 
-**Why this and not pure additive:** pure additive made temperature *solvable* (enough points = shrug off both ends), dumping all difficulty onto local stressors. The cap keeps the hot/cold tradeoff a live decision and guarantees no plant can tolerate extreme-cold AND extreme-hot regions at once — forces terraforming or sacrifice zones.
+BLOOM now uses **four player-facing condition categories**, while retaining scientifically meaningful raw signals underneath.
 
-**Free sprite win:** the cap is odd, so every mixed state has a dominant side (2/1, never 2/2) — the sprite shows the dominant pigment (frost-blue vs silver), never a blend.
+### 5.1 Player-facing categories
 
----
-
-## 6. MOISTURE — the exclusive position window
-
-NOT additive, NOT a pool. A single **position** on a desert↔swamp slider. The plant sits at **one** point: a xerophyte genuinely rots in a swamp.
-- Two opposing arms from a moisture root: **Xerophyte** (shift dry) / **Hydrophyte** (shift wet).
-- Invest along one arm to move your position. Switching strategy requires **refunding** the other arm. You are never meaningfully both.
-- No "broaden" node — there's no width, only position.
-
-This is the one true Goldilocks variable, placed where it's biologically honest (water strategy is anatomical, not a range).
-
----
-
-## 7. ECONOMY
-
-**Single currency: Biomass.** Earned passively from thriving colonies (spore/biomass bubbles float over healthy sections; click to collect — same dopamine loop as Plague's DNA bubbles).
-
-Spent across all three trait boards AND on terraforming pushes. **Every point spent reshaping the sky is a point not spent adapting the plant.** That single tension is the macro-game. One currency kills "which resource does what?" confusion.
-
----
-
-## 8. TRAIT TREES — three hex boards
-
-Three independent screens, each its own hex board (Plague's separate tabs): **Evolve / Dispersal / Terraform.**
-
-**Board rules:**
-- Hex tiles. Within a board, traits sit in **groups**, each with its own **root** (a hub root unlocks a fan; a string root starts a linear chain — group shape is a data property).
-- **Connected-blob purchase rule:** you can only buy a hex adjacent to one you already own *within its group*. Adjacency = prerequisite (mostly replaces explicit `prereq` fields; keep explicit prereqs only for rare cross-group links).
-- **Refund:** allowed, **from the tip inward only** (can't refund a hex with owned hexes hanging off it). **Cost scales with tier.** Refunding recomputes survival next tick — removing a load-bearing trait can trigger die-back. That consequence is the real cost, not the currency.
-- Single non-scrolling board per screen at ~30 total nodes. (Gentle pan only if a board ever exceeds ~40.)
-
-**Rendering:** hex = six points; states = owned / affordable / locked (three fills). Axial coords → one rounding fn for hit-testing. Reuse SpriteVG's pattern/cache approach.
-
----
-
-## 9. TRAIT LIST (sample set, ~30 nodes)
-
-Notation: `cost` in biomass; `arm` = which pool/position arm; [S] = writes a sprite layer.
-
-### EVOLVE board (14)
-| id | name | group | effect | sprite | science |
-|---|---|---|---|---|---|
-| `heat_1` | Heat Tolerance I | thermal(hot arm) | temp ceiling +1 | silver tint | heat-shock proteins |
-| `heat_2` | Heat Tolerance II | thermal(hot) | ceiling +1 | [S] silver | " |
-| `heat_3` | Heat Tolerance III | thermal(hot) | ceiling +1; unlocks cold arm | [S] silver | " |
-| `cold_1` | Cold Tolerance I | thermal(cold, locked) | temp floor −1 | frost tint | antifreeze proteins |
-| `cold_2` | Cold Tolerance II | thermal(cold) | floor −1 | [S] frost | " |
-| `cold_3` | Cold Tolerance III | thermal(cold) | floor −1; unlocks hot arm | [S] frost | " |
-| `xero_1` | Drought Adaptation I | moisture(xero) | position −, low-water survival | [S] spines | waxy cuticle / water storage |
-| `xero_2` | Drought Adaptation II | moisture(xero) | position − | [S] succulent body | " |
-| `hydro_1` | Flood Adaptation I | moisture(hydro) | position +, waterlogging survival | [S] broad glossy leaf | aerenchyma air channels |
-| `hydro_2` | Flood Adaptation II | moisture(hydro) | position + | [S] broad glossy | " |
-| `salt_1` | Salt Tolerance | salt(string) | salinity resist + | [S] crystal specks | halophyte ion pumps |
-| `rad_1` | Radiation Shielding | rad(string) | radiation resist + | [S] purple-black pigment | melanin shielding |
-| `fixn_1` | Nitrogen Fixation | nutrient(string) | removes low-nutrient penalty; enriches dead soil | icon | root-nodule bacteria |
-| `vigor_1` | Resilience | output(string) | raises die-back floor (hysteresis buffer) | icon | stress hardiness |
-
-### DISPERSAL board (8)
-| id | name | group | effect | science |
-|---|---|---|---|---|
-| `seed_1` | Seed Output I | rate(string) | barren→living fill rate + | reproductive output |
-| `seed_2` | Seed Output II | rate | fill rate + | " |
-| `early_mat` | Early Maturity | rate | sections seed neighbors at lower % | r-strategy |
-| `runner` | Runner / Rhizome | spread(hub) | faster contiguous spread | vegetative propagation |
-| `wind_seed` | Wind Seeds | jump(string) | jump 1-gap | anemochory |
-| `water_seed` | Water Seeds | jump | cross water/low tiles | hydrochory |
-| `ballistic` | Ballistic Seeds | jump (needs `wind_seed`) | jump 2+ gaps | explosive dehiscence |
-| `pods` | Flowering | spread | +seed pressure | [S] flowers/pods (spread feedback) |
-
-### TERRAFORM board (8)
-| id | name | group | effect | science | tension |
-|---|---|---|---|---|---|
-| `warm_1` | Greenhouse Forcing I | temp(hub) | global temp + (rate) | greenhouse gases | helps cold poles, cooks equator |
-| `warm_2` | Greenhouse Forcing II | temp | global temp + faster | " | " |
-| `cool_1` | Albedo Boost I | temp | global temp − | reflectivity | mirror of warming |
-| `cool_2` | Albedo Boost II | temp | global temp − faster | " | " |
-| `humid_1` | Humidify | water(hub) | global moisture + | water cycle | floods dry-adapted colonies |
-| `dry_1` | Aridify | water | global moisture − | " | " |
-| `oxy_1` | Oxygenate | gas(string) | global O2 + | photosynthesis byproduct | win/pressure flavor |
-| `co2_seq` | Carbon Sequestration | gas | global CO2 − | carbon cycle | drives Volatile instability |
-
----
-
-## 10. SPRITE SYSTEM
-
-One generic plant as a **fixed z-order layer stack** (the Trans Plant hull+overlay pattern). Acquisition order never matters — rendering always composites bottom→top in fixed sequence. **~25 PNGs → hundreds of distinct plants.**
-
-**Slots:**
-| slot | type | options | resolves by |
-|---|---|---|---|
-| Body | exclusive | default / succulent-thick / slender | priority |
-| Leaf form | exclusive | default / needle / broad-glossy / small-waxy | priority |
-| Coating | additive | waxy-frost sheen | on/off |
-| Spines | additive | — | on/off |
-| Pigment | exclusive (whole-sprite tint) | green→frost-blue→silver→red→radiation-black | priority order |
-| Salt glands | additive | crystal specks | on/off |
-| Flowers/pods | additive | — | on/off |
-| Roots | additive | deep-root / aerenchyma | on/off |
-
-- Exclusive slots resolve by a priority number (radiation-black beats frost-blue). Pure Isaac logic, no combo table.
-- Composite **once on trait change, cache it**. Hero sprite lives only on the lab/Evolve screen.
-- The **map shows coverage color**, not per-tile plants — zero per-tile sprite cost.
-- **"Starters" are presets in this same system** (Succulent = thick-body + 2 drought/heat points pre-spent; Lichen = flat-form + cold/radiation). Plus a **Custom** option (allocate your own starting points). No parallel art pipeline.
-- Special-combo art (unique look when traits A+B coexist) = cheap *later* add via a small lookup. **Not v1.**
-
----
-
-## 11. WIN / LOSS / PRESSURE
-
-### Win
-- **Win = hit the level's area-weighted coverage threshold** (e.g. 70%). Banks the unlock **permanently** (new planet / starter / scenario). Cannot be un-won.
-- **After winning:** keep playing — sandbox toward 100%, or chase optional stars (speed / max simultaneous coverage / biomass efficiency). On hardest planets a true 100%-at-once may be impossible; that's fine, it's bonus. Show the *win threshold* prominently, not a taunting 100% bar.
-
-### Loss
-- **Loss comes ONLY from the pressure scenario.** The base sim, with a protected origin region that always trickles biomass, is essentially unloseable — correct for the chill **Eden** default.
-- The origin is immune to dying from **your own terraforming** (always a refuge + income). It is **not** immune to **pressure** (that's how Dying World eventually takes your last colony). *Your hands can't kill your last harbor; the scenario can.*
-
-### Pressure scenarios (selectable per playthrough = replay + difficulty + a 2nd lesson)
-| Scenario | Pressure meter | Teaches |
+| Category | Quick states | What it represents |
 |---|---|---|
-| **Eden** | none (sandbox) | open terraforming; chill default |
-| **Hostile Native Life** | Native Spread bar — natives compete & adapt to you (the "cure" analog) | competition / invasive dynamics |
-| **Dying World** | Atmosphere Bleed clock — air leaks to space / star dims | planetary habitability factors |
-| **Volatile Climate** | Instability gauge — more terraforming = more unstable (runaway greenhouse, acid rain, tipping points) | climate feedback loops; punishes brute-force terraform |
-| **Barren & Toxic** | extreme local stressors, slow start | adaptation under constraint |
+| **Temperature** | freezing / cold / suitable / hot / scorching | effective regional temperature versus the plant’s tolerance window |
+| **Water** | parched / dry / suitable / wet / flooded | effective moisture versus the plant’s water strategy |
+| **Soil** | rich / workable / poor / hostile | nutrients, pH, and salinity combined into the strongest relevant soil limitation |
+| **Hazard** | low / stressful / dangerous / lethal | radiation, toxicity, and planet-specific hazards |
+
+The compact section readout should look like:
+
+> **Cold · Dry · Good Soil · Low Hazard**
+
+Each category is green, yellow, or red against the current plant. The strongest blocker is named in plain language:
+
+> **Growth blocked: too cold**
+
+### 5.2 Raw simulation signals
+
+The engine may retain these raw values:
+
+- temperature;
+- moisture;
+- light;
+- soil pH;
+- salinity;
+- toxicity;
+- radiation;
+- nutrients.
+
+They are not eight equal hard gates.
+
+- **Temperature** and **Water** are primary survival axes.
+- **Soil** selects or combines the most meaningful of pH, salinity, and nutrients.
+- **Hazard** selects or combines radiation, toxicity, and special scenario hazards.
+- **Light** normally changes growth speed and Biomass output rather than acting as a universal death gate. A special planet or scenario may elevate it into a primary problem.
+- **Nutrients** normally slow growth and income before they kill.
+
+### 5.3 Optional detail
+
+Clicking a category opens one short explanation with raw detail and a useful next step.
+
+Example:
+
+> **Hostile Soil — high salinity**  
+> Salt around the roots makes water uptake difficult. A salt-handling trait would improve survival here.
+
+The science lives one click deeper. The main map stays readable at a glance.
+
+### 5.4 Limiting-factor rule
+
+Every stalled or dying section must report one dominant reason first. Secondary problems can be listed in details, but the player should never have to inspect eight values to discover why growth stopped.
 
 ---
 
-## 12. SCREENS (Plague map → Bloom)
+## 6. ADAPTATION MODEL
 
-| Plague | Bloom | Shows / does |
+### 6.1 Temperature — capped tolerance pool
+
+Temperature remains a deliberate specialist-versus-generalist tradeoff.
+
+- A shared three-point pool is split between cold and heat tolerance.
+- Extreme specialization reaches the harshest environments on one end.
+- Mixed states can cover a broader but less extreme range.
+- Terraforming can move the planet toward the plant, but may damage colonies elsewhere.
+
+Exact unlock and refund behavior must be playtested in the complete loop. The pool is preserved as the current hypothesis, not protected from simplification if it proves hard to read.
+
+### 6.2 Water — strategy position
+
+Water remains a position between dry and wet strategies.
+
+- Drought adaptations shift toward dry survival.
+- Flood adaptations shift toward wet survival.
+- A plant cannot be perfectly specialized for both extremes at once.
+- Switching strategy costs Biomass and may endanger existing colonies.
+
+### 6.3 Soil traits
+
+Soil traits solve understandable mechanisms:
+
+- salt handling;
+- pH buffering;
+- nitrogen fixation;
+- deep or specialized roots;
+- symbiotic microbes.
+
+The UI presents the problem as Soil first and reveals the mechanism in detail.
+
+### 6.4 Hazard traits
+
+Hazard traits answer recognizable planetary dangers:
+
+- radiation shielding;
+- toxin exclusion or accumulation;
+- protective pigment;
+- repair and resilience;
+- scenario-specific defenses later.
+
+### 6.5 Plant resilience
+
+A resilience path may raise the holding/die-back buffer. It must not become a universal “ignore all conditions” upgrade.
+
+---
+
+## 7. THREE UPGRADE BOARDS
+
+The game uses three Plague-style upgrade screens.
+
+### 7.1 Spread
+
+Use **Spread** as the player-facing name. “Dispersal” may appear in science text.
+
+Spread traits affect:
+
+- seed output;
+- maturity speed;
+- contiguous runners or rhizomes;
+- crossing water;
+- jumping gaps;
+- flowering and other reproductive mechanisms.
+
+### 7.2 Adapt
+
+Adapt traits alter the plant’s tolerance for Temperature, Water, Soil, and Hazards. The large plant specimen lives on this screen and visibly changes as traits are purchased.
+
+### 7.3 Terraform
+
+Terraform traits or controls change global planetary conditions:
+
+- warming or cooling;
+- humidifying or drying;
+- atmospheric composition;
+- other archetype-specific global changes.
+
+Terraforming is powerful because it affects many sections at once. Its cost and strategic downside are enough; the game does not need a moral punishment system.
+
+### 7.4 Board interaction
+
+- Purchases form readable connected paths or groups.
+- Affordable, owned, and locked states are visually distinct.
+- Refunds are allowed from the tips inward.
+- Removing a load-bearing trait immediately recalculates section viability.
+- Boards should stay compact enough to read without panning in normal play.
+
+The first playable slice should use simple buttons or a compact test layout before investing heavily in final hex-board rendering.
+
+---
+
+## 8. BIOMASS ECONOMY
+
+**Biomass is the single currency.** It is spent on Spread, Adapt, and Terraform choices.
+
+### 8.1 Passive income
+
+Thriving living area generates Biomass automatically. Struggling colonies generate less. The protected origin provides a small trickle so the player cannot permanently soft-lock the run through experimentation.
+
+### 8.2 Biomass bubbles
+
+Keep Plague-style bubbles as **bonus interaction**, not the main income source.
+
+Bubbles can appear when:
+
+- a section becomes established;
+- a new landmass is reached;
+- a colony survives a dangerous transition;
+- several sections enter thriving state;
+- a rare high-output event occurs.
+
+They should:
+
+- provide a satisfying burst of value;
+- create reasons to watch the map;
+- auto-collect after a short delay or through an accessibility setting;
+- never require constant clicking to remain competitive.
+
+### 8.3 Economic tension
+
+Every Biomass point spent reshaping the sky is a point not spent adapting the organism or spreading faster. That is the central macro decision.
+
+---
+
+## 9. WATER, ISLANDS, AND IMPASSABLE TERRAIN
+
+Water, void, lava, and similar terrain are never colonizable and are excluded from the win denominator.
+
+They matter because they create geographic barriers:
+
+- ordinary spread crosses neighboring land only;
+- island planets make water-crossing traits essential;
+- some worlds remain mostly contiguous, making raw growth traits more valuable;
+- the generator must never create land that is unreachable even with the strongest available Spread trait.
+
+Coasts may later affect moisture and temperature, but geographic function comes first.
+
+---
+
+## 10. PROCEDURAL PLANETS — THE MAIN GAME
+
+Procedural generation should use **designed randomness**, not unrelated rolls across every signal.
+
+### 10.1 Planet archetypes
+
+Each planet begins from an archetype that defines coherent rules and expected strategic pressures.
+
+Examples:
+
+- **Frozen World:** cold majority, geothermal refuges, frozen barriers.
+- **Desert World:** low water, rare wet basins, strong light and poor soils.
+- **Ocean Archipelago:** fragmented land, high moisture, mandatory crossing strategy.
+- **Toxic Young World:** volcanic hazards, unstable soils, fertile recovery zones.
+- **Tidally Locked World:** scorching day side, frozen night side, habitable twilight belt.
+- **Humid Jungle World:** abundant water, low-light growth penalties, flood risk.
+- **Volatile World:** wide condition swings and strong Terraform consequences.
+
+Within the archetype, randomize:
+
+- land and water layout;
+- section sizes and adjacency;
+- gradients and local exceptions;
+- origin location;
+- named biomes;
+- severity;
+- sacrifice zones;
+- optional events.
+
+### 10.2 Procedural quality rules
+
+A generated planet must be:
+
+- reachable with available Spread traits;
+- simultaneously winnable at the target coverage;
+- understandable from its visual and textual signals;
+- not solved by one obviously mandatory sequence;
+- capable of supporting at least two broad approaches when possible;
+- free of long stretches with no relevant decision;
+- coherent enough to feel intentionally designed.
+
+### 10.3 Validation layers
+
+The generator validator should check:
+
+1. section contiguity;
+2. origin safety;
+3. landmass reachability;
+4. simultaneous coverage feasibility;
+5. required-trait affordability and dependency order;
+6. minimum winnable margin;
+7. absence of a single unavoidable exact build where possible;
+8. pacing estimates for early reachable land and Biomass generation.
+
+Procedural generation is the product, but it must not be expanded before the complete core loop proves fun on a small authored test planet.
+
+---
+
+## 11. WIN, LOSS, AND PRESSURE
+
+### 11.1 Win
+
+A run is won by holding the required percentage of colonizable land **alive at the same time**, normally around 70%.
+
+The threshold is not 100% because some regions should remain legitimate sacrifice zones. The player wins by finding a successful planetary strategy, not by purchasing every possible resistance.
+
+After winning, the player may continue toward 100% or optional performance goals.
+
+### 11.2 Eden
+
+Eden is the sandbox and systems testbed:
+
+- no external loss clock;
+- origin refuge and trickle income;
+- open experimentation;
+- useful for tutorials, accessibility, and testing new starters.
+
+Eden is not the only intended experience and should not determine the balance of pressure modes.
+
+### 11.3 Pressure scenarios
+
+Pressure changes decisions rather than merely shortening the timer.
+
+| Scenario | Strategic change | Science idea |
 |---|---|---|
-| Disease-type select | **Choose Your Seed** | starter (or Custom) + planet + scenario; starter stats, planet preview, scenario blurb |
-| World globe | **The Surface** | main screen: tiles fill barren→living→dead, biomass bubbles, coverage % vs win threshold, live global-climate readouts, click a section to inspect |
-| Transmission tab | **Dispersal** (hex board) | colonize/spread/jump traits |
-| Abilities tab | **Adaptation** (hex board) | tolerance + local-stressor traits |
-| Symptoms tab | **Terraform** (hex board) | global climate pushes (powerful but drives instability in Volatile — same risk/reward shape as symptoms drawing the cure) |
-| Cure bar | **Pressure meter** (renamed per scenario) | hidden in Eden |
-| DNA bubbles | **Spore/biomass bubbles** | float over thriving colonies; click to collect |
-| News ticker | **Field Log** | flavor + warnings ("Equatorial colonies wilting", "Native lichen probing your border") |
-| Disease overview | **Planet Health** | coverage %, living/dead/barren area, climate state, genome summary |
-| End screen | **Bloom Report** | win: coverage/unlocks/score; lose: cause + retry. Both end with a 1-paragraph science debrief tying outcome to the real mechanism |
+| **Eden** | No external loss pressure | open experimentation |
+| **Native Competition** | Another organism claims space and responds to the player | competition and invasive dynamics |
+| **Dying World** | Habitability steadily degrades | planetary habitability factors |
+| **Volatile Climate** | Heavy Terraform use raises instability and creates shocks | feedback loops and tipping points |
+| **Resource Scarcity** | Lower Biomass income increases specialization pressure | resource limitation |
+| **Barren and Toxic** | Slow, hostile opening with few easy regions | adaptation under constraint |
+
+The origin may be immune to the player’s own Terraform effects but not to scenario pressure.
 
 ---
 
-## 13. UI — reading a section
+## 12. USER INTERFACE
 
-**Borders:** draw a 2px line only on tile edges where neighbor tile's `sectionId` differs (interior edges blank). Auto-traces every section outline (Atelier Andrea shared-edge logic). Two states: thin/dark at rest; whole outline brightens 3–4px when selected. Cached overlay — computed once at load (sections don't move), redrawn only on selection change. Fill renders *inside* borders.
+### 12.1 Main Surface screen
 
-**On click → left info panel** (the "why"):
-- Section name.
-- All 8 variables as labeled readouts, **color-coded vs your current plant**: 🟢 clears / 🟡 marginal / 🔴 lethal. The red line *is* the teaching moment — points straight at which trait to buy.
-- terraform tag on terraformable variables (learn fix-by-terraform vs must-evolve).
-- *(v2)* predictive line: "Warm +10° → this section 🟡→🟢 but equator 🟢→🔴." Turns the panel into a planning tool. Design panel with room for it.
+Show:
 
-**Bottom bar** (the "state"): selected section's **Barren / Living / Dead** area + vigor, always visible. Direct Plague three-population analog.
+- planet and animated coverage map;
+- coverage versus win threshold;
+- current Biomass;
+- pressure meter when applicable;
+- speed and pause controls;
+- compact global climate readouts;
+- current warning or field-log message;
+- buttons for Spread, Adapt, and Terraform.
 
-*Diagnosis on the left, vital signs on the bottom.*
+### 12.2 Section panel
+
+On selection, show:
+
+- section name;
+- Temperature, Water, Soil, and Hazard status;
+- one dominant limiting factor;
+- barren/living/dead area and vigor;
+- maturity and seed output;
+- a clear icon showing whether the problem is solved by Adapt, Terraform, or Spread;
+- click-through detail for the raw mechanism and science.
+
+### 12.3 Readability rules
+
+- The player should understand why a section stopped within a few seconds.
+- Quick labels use ordinary language first and scientific terminology second.
+- Red indicates a blocker, yellow indicates marginal performance, and green indicates suitability.
+- Popups remain short; deeper explanations are optional.
+- Do not show all raw values unless the player requests detail.
+
+### 12.4 Visual direction
+
+The current dark surface demo is an engineering interface, not final art direction.
+
+Target a **cutesy, modern, friendly-science aesthetic**:
+
+- colorful alien biomes;
+- rounded, clean panels;
+- soft but readable section boundaries;
+- expressive icons;
+- animated spreading edges, seeds, spores, weather, and atmospheric effects;
+- a cute but not childish hero plant;
+- a planet that visibly changes from lonely and hostile to lively and green.
+
+Final visual direction remains open and should be explored through quick comparison prototypes before it is locked.
 
 ---
 
-## 14. ARCHITECTURE
+## 13. PLANT VISUAL IDENTITY
 
-- **One HTML file = engine** (sim, render, UI, trait logic). ES modules (`sim/render/ui/traits`) **only if** the engine passes ~5–6k lines.
-- **Content = external JSON** beside it: `planets/*.json`, `traits.json`, `scenarios.json`. Loaded via `fetch()`. Adding a planet = writing JSON, zero engine code.
-- **Embedded fallback planet** inside the HTML so it boots/plays over bare `file://` (external `fetch` enriches when served over HTTP, which is the normal dev + FTP deploy path).
-- Procedural generator and hand-authored campaign levels **emit the same JSON** (grid + section labels + per-section stats). Procedural planets run the winnability validator and reroll on fail; authored validated once. Engine doesn't care which made them.
-- **All rates / costs / thresholds = config values** (`config.json`), never hard-coded — balancing is data-tweaking, never re-architecting.
+The player does not need pet-care mechanics, but the organism should visibly record their strategy.
 
-### Core systems (the build order)
-1. Region/tile model + section grouping + border tracer
-2. Plant/genome model
-3. Global terraform state
-4. **The tick** (survival formula + state transitions + hysteresis) — the spine
-5. Spread (contiguous + seed pressure + maturity threshold)
-6. Trait boards (hex render, purchase/refund-from-tip)
-7. Biomass economy + bubbles
-8. Pressure/event system
-9. Screens + UI panels
-10. Sprite layer compositor (cache on trait change)
-11. Win/loss + Bloom Report
-12. Procedural generator + winnability validator
+Use a fixed-order layered plant sprite:
+
+- body form;
+- leaf form;
+- coating;
+- spines;
+- pigment;
+- salt structures;
+- flowers or pods;
+- root adaptations.
+
+Composite and cache the plant when traits change. The map shows coverage rather than thousands of individual plant sprites.
+
+The Adapt screen and final Bloom Report should display the resulting organism prominently. The winning summary should connect visible traits to the environments the plant conquered.
 
 ---
 
-## 15. JSON SCHEMAS
+## 14. SCREENS — PLAGUE INC. TRANSLATION
 
-### 15.1 Planet
+| Plague-style function | BLOOM screen | Purpose |
+|---|---|---|
+| Type selection | **Choose Your Seed** | starter, planet, scenario, unlocks |
+| World map | **The Surface** | spread, bubbles, coverage, section inspection |
+| Transmission | **Spread** | reproduction, maturity, geographic crossing |
+| Abilities | **Adapt** | Temperature, Water, Soil, Hazard traits |
+| Symptoms/risk board | **Terraform** | global changes with scenario-dependent risk |
+| Cure bar | **Pressure meter** | scenario-specific threat; hidden in Eden |
+| News ticker | **Field Log** | concise warnings and flavor |
+| Overview | **Planet Health** | living/dead/barren totals, climate, genome |
+| End screen | **Bloom Report** | outcome, unlocks, plant build, science debrief |
+
+The translation should preserve pacing and readability, not copy exact interface details.
+
+---
+
+## 15. ARCHITECTURE AND CONTENT
+
+- Browser-first HTML/JavaScript with no mandatory build step.
+- Data-driven planets, traits, scenarios, archetypes, and tuning.
+- The authored tutorials and procedural generator emit the same planet model.
+- An embedded fallback planet may remain so the game boots over `file://`.
+- Rates, costs, thresholds, scales, and category boundaries live in configuration.
+- Small demos are useful for risky isolated systems, but shared simulation logic must not be reimplemented independently in several demo files.
+
+### Build workflow revision
+
+Portion 1 successfully validated the surface and generator foundation. The next priority is **not** a more advanced generator or final trait-board UI. The next priority is a tiny complete playable run using the same map foundation.
+
+After that vertical slice is fun:
+
+1. extract or stabilize shared simulation modules;
+2. reconnect procedural generation;
+3. expand archetypes and content;
+4. add pressure scenarios;
+5. polish visuals and final board interactions.
+
+---
+
+## 16. NEXT PLAYABLE SLICE — THE FUN GATE
+
+Build one small authored test planet with:
+
+- 8–10 sections;
+- one starter plant;
+- Temperature, Water, Soil, and Hazard readouts;
+- living, barren, and dead transitions;
+- contiguous spread and maturity;
+- passive Biomass;
+- occasional bonus Biomass bubbles;
+- a small set of Adapt choices;
+- a small set of Spread choices;
+- warming/cooling and humidifying/drying Terraform choices;
+- die-back and recovery;
+- an Eden run with no external pressure;
+- a 70% simultaneous living-coverage win.
+
+Temporary buttons and compact lists are acceptable. Final hex boards and production art are not required.
+
+### Questions this slice must answer
+
+- Is watching spread satisfying?
+- Can a player understand the next blocker quickly?
+- Do purchases create immediate, visible consequences?
+- Does Terraform create interesting help-one-region/hurt-another tradeoffs?
+- Is passive Biomass paced well?
+- Do bonus bubbles add pleasure without becoming chores?
+- Does the midgame accelerate?
+- Can the player make more than one reasonable build?
+- Does a win feel like solving the plant and planet together?
+
+Do not expand the procedural content library until these answers are positive.
+
+---
+
+## 17. SAMPLE TRAIT DIRECTIONS
+
+These are content hypotheses, not a locked final tree.
+
+### Spread
+
+- Seed Output I–III
+- Early Maturity
+- Runners / Rhizomes
+- Wind Seeds
+- Waterborne Seeds
+- Ballistic Seeds
+- Flowering / Pods
+
+### Adapt
+
+- Cold Tolerance
+- Heat Tolerance
+- Drought Adaptation
+- Flood Adaptation
+- Salt Handling
+- Soil Buffering
+- Nitrogen Fixation
+- Radiation Shielding
+- Toxin Handling
+- Resilience
+
+### Terraform
+
+- Greenhouse Forcing
+- Albedo Boost
+- Humidify
+- Aridify
+- Oxygenate
+- Carbon Sequestration
+- archetype-specific planetary interventions later
+
+Every trait needs:
+
+- a clear gameplay effect;
+- a one-line ordinary-language explanation;
+- a one-line optional science explanation;
+- visible feedback where practical.
+
+---
+
+## 18. DATA MODEL DIRECTION
+
+A section may retain raw local data:
+
 ```json
 {
-  "id": "cinderfrost",
-  "name": "Cinder-Frost",
-  "blurb": "Frozen poles, a volcanic equatorial belt. Warm the world and you save the poles but melt the equator.",
-  "gridWidth": 60,
-  "gridHeight": 40,
-  "winThreshold": 0.70,
-  "origin": "tundra_shelf",
-  "globalClimate": { "temperature": -8, "moisture": 45, "o2": 8, "co2": 60, "pressure": 90 },
-  "globalLimits": { "temperature": [-40, 60], "moisture": [0, 100] },
-  "sections": [ /* see 15.2 */ ],
-  "tileMap": "RLE-or-array of sectionId per tile (length = gridWidth*gridHeight)",
-  "defaultScenario": "eden"
-}
-```
-> **Generation (build choice):** instead of authoring a 2,400-entry `tileMap` by hand, each section carries a normalized `center` seed and the engine grows the map with an **additively-weighted Voronoi** pass (gentle weights → geometry/adjacency dominates, light nudge toward target areas; weight magnitude capped so no cell reaches across a neighbor). This is the seed of the procedural generator (System 12). Verified on Cinder-Frost: 100% of authored adjacencies present, all sections single-blob, ~2% area drift.
-```json
-```
-
-### 15.2 Section
-```json
-{
-  "id": "tundra_shelf",
-  "name": "Tundra Shelf",
-  "area": 140,
-  "kind": "land",                  // "land" (default) | "water" | "void" | "lava" — impassable kinds are not colonizable & excluded from win denominator
-  "neighbors": ["frost_basin", "ash_steppe"],
-  "isOrigin": true,
+  "id": "salt_pan",
+  "name": "Salt Pan",
+  "area": 110,
+  "kind": "land",
+  "neighbors": ["north_flats", "dust_steppe"],
   "local": {
-    "tempOffset": -22, "moistureOffset": -10, "light": 35,
-    "ph": 6.5, "salinity": 5, "toxicity": 0, "radiation": 10, "nutrients": 30
+    "tempOffset": -4,
+    "moistureOffset": -20,
+    "light": 70,
+    "ph": 8.5,
+    "salinity": 85,
+    "toxicity": 5,
+    "radiation": 20,
+    "nutrients": 25
   }
 }
 ```
-> `effectiveTemp = globalClimate.temperature + local.tempOffset` (same for moisture). Other locals used as-is.
 
-### 15.3 Trait
-```json
-{
-  "id": "heat_3", "board": "evolve", "group": "thermal", "arm": "hot",
-  "cost": 60, "tier": 3, "hex": { "q": 2, "r": -1 },
-  "adjacency": ["heat_2"], "prereq": [], "unlocks": ["cold_1"],
-  "poolCap": { "pool": "thermal", "max": 3 },
-  "effect": { "type": "tempCeiling", "value": 1 },
-  "sprite": { "slot": "pigment", "value": "silver", "priority": 3 },
-  "science": "Heat-shock proteins refold proteins damaged by high temperature."
-}
-```
-
-### 15.4 Scenario
-```json
-{
-  "id": "volatile", "name": "Volatile Climate", "meterLabel": "Instability", "lossAt": 100,
-  "rules": {
-    "instabilityPerTerraformPush": 0.8, "instabilityDecayPerTick": 0.05,
-    "catastropheThresholds": [
-      { "at": 50, "event": "acid_rain", "effect": "phShockAllSections" },
-      { "at": 80, "event": "runaway_greenhouse", "effect": "tempSpikeGlobal" }
-    ]
-  },
-  "originImmuneToOwnTerraform": true, "originImmuneToPressure": false
-}
-```
-
----
-
-## 16. SAMPLE PLANET — "Cinder-Frost" (12 sections, winnable)
-
-Designed to exercise: the temperature pool (cold poles + hot equator), the terraform tradeoff, salt resistance, and one nutrient-poor regolith zone. Win = 70% by area. `globalClimate.temperature = -8`. `effectiveTemp = -8 + tempOffset`.
-
-| section | area | tempOff → effTemp | moistOff | light | pH | salin | tox | rad | nutr | neighbors | notes |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| `tundra_shelf` ORIGIN | 140 | −22 → **−30** | −10 | 35 | 6.5 | 5 | 0 | 10 | 30 | frost_basin, ash_steppe | always-survivable refuge |
-| `frost_basin` | 130 | −18 → −26 | +5 | 30 | 6.0 | 0 | 0 | 10 | 35 | tundra_shelf, north_flats | cold |
-| `north_flats` | 120 | −10 → −18 | 0 | 50 | 7.0 | 0 | 0 | 15 | 40 | frost_basin, salt_pan | mild-cold |
-| `salt_pan` | 110 | −4 → −12 | −20 | 70 | 8.5 | **85** | 5 | 20 | 25 | north_flats, dust_steppe | needs salt tolerance |
-| `dust_steppe` | 130 | +2 → −6 | −25 | 80 | 7.5 | 10 | 0 | 25 | 20 | salt_pan, midlands | dry; low nutrient |
-| `midlands` | 150 | +8 → 0 | +10 | 65 | 6.8 | 0 | 0 | 20 | 55 | dust_steppe, ash_steppe, river_belt | the easy heartland |
-| `ash_steppe` | 120 | +6 → −2 | −5 | 60 | 6.2 | 0 | 15 | 30 | 35 | tundra_shelf, midlands, volcanic_rise | mild toxicity |
-| `river_belt` | 110 | +14 → +6 | **+40** | 70 | 6.5 | 0 | 0 | 15 | 60 | midlands, jungle_fringe | wet — flood-adapted favored |
-| `jungle_fringe` | 130 | +20 → +12 | +35 | 75 | 6.0 | 0 | 0 | 15 | 70 | river_belt, equator_belt | warm + wet |
-| `equator_belt` | 150 | +34 → **+26** | +5 | 95 | 6.5 | 0 | 0 | 45 | 50 | jungle_fringe, volcanic_rise | hot + high radiation |
-| `volcanic_rise` | 100 | +46 → **+38** | −30 | 90 | 4.5 | 0 | **60** | 50 | 30 | ash_steppe, equator_belt | brutal: heat+tox+rad+acid — likely sacrifice |
-| `glass_desert` | 110 | +28 → +20 | −40 | 100 | 7.0 | 30 | 0 | 55 | 15 | equator_belt | hot, dry, irradiated, starved |
-
-**Total area = 1,500.** Win at 70% = **1,050.**
-
-**Designed solution path (proves winnability):**
-1. Start `tundra_shelf` (−30°): buy `cold_1/2/3` → survive the cold north (shelf, basin, flats). Maxing cold unlocks the hot arm.
-2. Spread through `midlands` heartland (easy) into `ash_steppe`.
-3. Take `salt_pan` with `salt_1`; cross `dust_steppe` (slow — low nutrient; `fixn_1` helps).
-4. **Terraform warm +~12°** to lift the cold north toward comfort — but watch the equator. Buy back toward `heat` (refund some cold, now 1/2 split) for `river_belt`/`jungle_fringe`/`equator_belt`. `hydro_1` for the wet belt; `rad_1` for the equator's radiation.
-5. `volcanic_rise` (+38°, tox 60, rad 50, pH 4.5) and `glass_desert` (nutr 15) are the **sacrifice zones** — covering the other 10 sections ≈ 1,290 area > 1,050 win. The planet is winnable while two sections stay barren, exactly as intended.
-
----
-
-## 17. TUNING / BALANCE CONFIG (`config.json`)
+The UI derives four category results from the raw data and current genome:
 
 ```json
 {
-  "tickMs": 250,
-  "growth": {
-    "baseFillPerTick": 0.012, "fitnessExponent": 1.5,
-    "seedPressurePerMatureNeighbor": 0.25, "maturityThreshold": 0.50, "nutrientSpeedFloor": 0.4
-  },
-  "dieback": {
-    "growStartThreshold": 0.55, "dieStartThreshold": 0.40,
-    "_comment_hysteresis": "grow > die = stable dead-zone between",
-    "diebackDampingFactor": 0.35, "vigorFloorPerVigorTrait": 0.08
-  },
-  "recovery": {
-    "deadToBarrenPerTick": 0.006, "enrichmentBonusPerDeadCycle": 0.15, "enrichmentCap": 0.6
-  },
-  "economy": {
-    "biomassPerThrivingAreaPerTick": 0.02, "biomassPerMarginalAreaPerTick": 0.006,
-    "bubbleSpawnChancePerTick": 0.05, "bubbleValue": 8, "originTrickle": 1.0
-  },
-  "traits": {
-    "tier1Cost": 20, "tier2Cost": 40, "tier3Cost": 60,
-    "refundMultiplierByTier": [0, 0.6, 0.7, 0.8],
-    "_comment_refund": "refund returns cost*mult; higher tier keeps more = stings more to undo"
-  },
-  "terraform": {
-    "tempPushPerTickTier1": 0.05, "tempPushPerTickTier2": 0.10,
-    "moisturePushPerTickTier1": 0.08, "biomassDrainPerPushTick": 0.5
-  },
-  "win": { "defaultThreshold": 0.70, "scoreStars": { "speed": true, "maxSimultaneous": true, "biomassEfficiency": true } },
-  "validator": { "requireSimultaneousSatisfiable": true, "minWinnableMarginArea": 0.02 }
+  "temperature": { "state": "marginal", "reason": "cold" },
+  "water": { "state": "marginal", "reason": "dry" },
+  "soil": { "state": "blocked", "reason": "high_salinity" },
+  "hazard": { "state": "clear", "reason": null },
+  "limitingFactor": "high_salinity"
 }
 ```
 
-### Engine-derived scale constants (NOT in the bible's config — added during build, must live in config.json)
-The bible's trait effects use `value: 1` for a "+1" point. Planet temps span [-40, 60], so a point must scale to degrees. These conversion constants are config:
-- `scales.degreesPerTempPoint` — how many °C one hot/cold point moves the tolerance bound.
-- `scales.moisturePerPoint` — how far one xero/hydro point shifts moisture position.
-- `scales.resistPerPoint` — how much one resistance point raises a stressor tolerance.
-- `genomeBase` — the untraited plant's starting tolerances (temp window, moisture position+band, light range, pH band, resist thresholds).
+Category derivation and thresholds must live in configuration and be testable independently from UI rendering.
 
 ---
 
-## 18. INVARIANTS — the dead-end audit (enforce these forever)
+## 19. INVARIANTS
 
-1. **No soft-lock:** origin section is always survivable and always trickles biomass.
-2. **Self-terraform can't kill your last harbor:** origin immune to your own terraforming (but not to pressure).
-3. **No unreachable-but-survivable region:** contiguous spread + dispersal jumps. On planets with impassable terrain (§4.7), the validator must confirm every land section is reachable from the origin given the *available* dispersal traits — no island stranded beyond the strongest jump.
-4. **No circular trait dependency:** every planet must be *provably winnable from the start with available traits* — validator enforces "∃ reachable genome+terraform state where ≥ win% sits above survival simultaneously."
-5. **No endgame boredom:** pressure escalates with progress; that's the scenario's only job.
-6. **No balancing hell:** every rate/cost/threshold is config data, never code.
-7. **No flicker:** hysteresis (grow threshold > die threshold) + damped die-back, designed in from tick #1.
-
-If a change would violate one of these, it's wrong — design around it, don't ship it.
+1. **No soft-lock:** the origin remains survivable in Eden and supplies a small Biomass trickle.
+2. **Readable failure:** every stalled or dying section names one dominant limiting factor.
+3. **No flicker:** hysteresis and damped die-back are present from the first simulation build.
+4. **Geographic reachability:** generated land is reachable with available Spread traits.
+5. **Simultaneous winnability:** the configured win percentage can be alive at once with an affordable reachable build.
+6. **Meaningful tradeoffs:** no upgrade path should make all environments irrelevant.
+7. **Procedural coherence:** generated worlds follow archetype rules and feel designed.
+8. **No mandatory clicking labor:** passive Biomass sustains play; bubbles are bonuses.
+9. **Optional depth:** the main screen stays quick to read, with detailed science behind interaction.
+10. **Strategy before content volume:** a complete fun loop is proven before more planets and traits are produced.
+11. **Data-driven balance:** rates, costs, thresholds, scales, and category mappings are configuration rather than scattered constants.
+12. **Equal game-and-science standard:** educational correctness cannot excuse dull play, and entertainment cannot depend on misleading science.
 
 ---
 
-*End of bible v1.0. Everything reconciles: every loop closes, every die-back has an escape hatch, every hard planet stays winnable, and loss lives only in the pressure layer.*
+## 20. OPEN DECISIONS
+
+These remain intentionally unresolved until the playable slice provides evidence:
+
+- exact temperature-pool unlock/refund rules;
+- whether Biomass bubbles auto-collect by default or only through a setting;
+- final plant emotional tone and degree of personality;
+- final cutesy/modern visual language;
+- exact number and shape of nodes on each board;
+- default procedural section count and run length;
+- how much predictive Terraform information the UI should reveal;
+- whether light ever becomes a primary category on special worlds.
+
+Do not lock these through prose alone. Use prototypes and playtests.
+
+---
+
+*End of Design Bible v1.1. The governing target is now a procedural, Plague-style plant strategy game with four readable environmental categories, optional scientific depth, passive Biomass plus bonus bubbles, unlockable starters and scenarios, and a complete playable vertical slice as the next development gate.*
