@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM — Next Playable Slice: First Bloom (Eden run)</title>
+<!--
+  BLOOM demo-run.html — the "Next Playable Slice" (bible v1.1 + docs/NEXT_PLAYABLE_SLICE_v1.0.md).
+  ONE complete Eden run on an authored 9-section planet, proving the core loop:
+     see barrier → buy answer → watch spread resume → earn faster → solve tradeoff → win 70%.
+  Includes: sim tick (Barren/Living/Dead, vigor, hysteresis, damped die-back, recovery),
+  4-category readout (Temperature/Water/Soil/Hazard) + named limiting factor + raw-on-click,
+  passive Biomass + bonus bubbles (auto-collect fallback), a temporary Spread/Adapt/Terraform
+  upgrade set, 70%-coverage win + a compact Bloom Report.
+  Temporary UI / dark scaffolding is intentional (final art deferred). Boots over file://.
+  Test hook: window.BLOOM_API = { buy, advance, coverage, state } for headless winnability checks.
+-->
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#121826; --panel2:#0e1320; --ink:#cdd6e6; --dim:#7c8aa3;
+    --line:#26304a; --accent:#7fe3c0; --gold:#ffd479; --bad:#ff6b6b; --ok:#7fe3a0; --warn:#ffcf6b;
+    --green:#66d17f; --yellow:#e7c14e; --red:#e2604f;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg); color:var(--ink); font-family:"DejaVu Sans Mono","Courier New",monospace;
+    font-size:13px; line-height:1.45; display:grid; grid-template-rows:auto 1fr auto; height:100vh; overflow:hidden}
+  header{display:flex; align-items:center; gap:16px; padding:8px 16px; flex-wrap:wrap;
+    background:linear-gradient(180deg,#141b2c,#0e1320); border-bottom:1px solid var(--line)}
+  header h1{font-size:13px; margin:0; letter-spacing:2px; color:var(--accent); white-space:nowrap}
+  header h1 small{color:var(--dim); letter-spacing:1px; font-weight:normal}
+  .hud{display:flex; gap:16px; align-items:center; flex-wrap:wrap; font-size:12px; color:var(--dim)}
+  .hud b{color:var(--ink)}
+  .biomass b{color:var(--gold)}
+  .covwrap{display:flex; align-items:center; gap:8px}
+  .covbar{position:relative; width:200px; height:14px; background:#0a1220; border:1px solid var(--line); border-radius:7px; overflow:hidden}
+  .covfill{position:absolute; left:0; top:0; bottom:0; width:0%; background:linear-gradient(90deg,#3f8f63,#66d17f); transition:width .2s}
+  .covwin{position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--gold)}
+  .controls{margin-left:auto; display:flex; gap:8px; align-items:center}
+  button{font:inherit; cursor:pointer}
+  button.tb{background:#1a2236; color:var(--ink); border:1px solid var(--line); padding:5px 10px; font-size:12px; border-radius:4px}
+  button.tb[aria-pressed="true"]{background:#23406a; border-color:var(--accent); color:#fff}
+  button.tb:hover{border-color:var(--accent)}
+
+  main{display:grid; grid-template-columns:270px 1fr 240px; min-height:0}
+  .stage{position:relative; display:flex; align-items:center; justify-content:center; padding:12px; min-height:0; overflow:hidden}
+  canvas{background:#05070c; border:1px solid var(--line); border-radius:3px; image-rendering:pixelated; cursor:crosshair; max-width:100%; max-height:100%}
+  aside{background:var(--panel); overflow:auto; padding:12px; font-size:12px}
+  aside.left{border-right:1px solid var(--line)}
+  aside.right{border-left:1px solid var(--line)}
+  aside h2{font-size:11px; letter-spacing:2px; color:var(--gold); margin:0 0 8px}
+  .secname{font-size:15px; color:#fff; letter-spacing:1px; margin-bottom:2px}
+  .badge{display:inline-block; padding:1px 6px; border-radius:3px; font-size:10px; letter-spacing:1px;
+    background:#3a2a12; color:var(--gold); border:1px solid #6a4d1c; margin-left:6px}
+
+  .cats{margin:10px 0}
+  .cat{display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:5px; margin-bottom:5px; background:#0e1524; border:1px solid #1b2439}
+  .cat .lamp{width:11px; height:11px; border-radius:50%; flex:0 0 auto}
+  .cat .lbl{color:var(--dim); width:84px; flex:0 0 auto}
+  .cat .st{color:var(--ink); font-weight:600}
+  .lamp.green{background:var(--green)} .lamp.yellow{background:var(--yellow)} .lamp.red{background:var(--red)}
+  .limit{margin:8px 0; padding:8px; border-radius:5px; background:#241a12; border:1px solid #55401f; color:var(--gold)}
+  .limit.ok{background:#132417; border-color:#2c5335; color:var(--ok)}
+  .fixhint{font-size:11px; color:var(--dim); margin-top:4px}
+  details.raw{margin-top:8px} details.raw summary{cursor:pointer; color:var(--dim); font-size:11px}
+  table.kv{width:100%; border-collapse:collapse; margin-top:6px} table.kv td{padding:2px 4px; border-bottom:1px solid #1a2236}
+  table.kv td:first-child{color:var(--dim)} table.kv td:last-child{text-align:right}
+  .vitals{margin-top:10px; font-size:11px}
+  .vbar{display:flex; height:12px; border:1px solid var(--line); border-radius:3px; overflow:hidden; margin-top:3px}
+  .vbar i{display:block} .vbar .vl{background:#4c9e63} .vbar .vd{background:#6b4a33} .vbar .vb{background:#1a2436}
+
+  .shop .grp{margin-bottom:12px}
+  .shop .grp h3{font-size:11px; letter-spacing:1px; margin:0 0 6px; color:var(--accent); text-transform:uppercase}
+  .buy{display:flex; align-items:center; justify-content:space-between; gap:6px; width:100%; text-align:left;
+    background:#141d30; border:1px solid #22304d; color:var(--ink); padding:6px 8px; border-radius:5px; margin-bottom:5px; font-size:12px}
+  .buy:hover:not(:disabled){border-color:var(--accent)}
+  .buy:disabled{opacity:.42; cursor:default}
+  .buy .nm{display:flex; flex-direction:column}
+  .buy .nm small{color:var(--dim); font-size:10px}
+  .buy .cost{color:var(--gold); white-space:nowrap}
+  .buy.owned{border-color:#2c5335; background:#122017}
+  .temppool{font-size:11px; color:var(--dim); margin-bottom:6px}
+
+  footer{border-top:1px solid var(--line); background:var(--panel2); padding:6px 16px; font-size:11px; color:var(--dim);
+    display:flex; gap:20px; align-items:center; overflow-x:auto; white-space:nowrap}
+  .log{color:var(--ink)}
+
+  .modal{position:fixed; inset:0; background:rgba(4,6,12,.82); display:none; align-items:center; justify-content:center; z-index:20}
+  .modal.on{display:flex}
+  .report{width:min(560px,92vw); max-height:88vh; overflow:auto; background:#111a2b; border:1px solid #2c3f63; border-radius:10px; padding:22px}
+  .report h2{color:var(--gold); letter-spacing:2px; margin:0 0 4px}
+  .report .sub{color:var(--dim); margin-bottom:14px}
+  .report .debrief{background:#0e1626; border:1px solid #22304d; border-radius:6px; padding:12px; margin:12px 0; line-height:1.6}
+  .report ul{margin:8px 0 0; padding-left:18px} .report li{margin:3px 0}
+  .report .btn{margin-top:14px; background:#243b2f; border:1px solid #2f6a4d; color:#cdeede; padding:8px 16px; border-radius:6px}
+</style>
+</head>
+<body>
+<header>
+  <h1>BLOOM <small>· first bloom</small></h1>
+  <div class="hud">
+    <span class="biomass">biomass <b id="hBio">0</b></span>
+    <span class="covwrap">coverage
+      <span class="covbar"><span class="covfill" id="hCovFill"></span><span class="covwin" id="hCovWin"></span></span>
+      <b id="hCov">0%</b> <span style="color:var(--gold)">/ 70%</span>
+    </span>
+    <span>sky <b id="hSky"></b></span>
+  </div>
+  <div class="controls">
+    <button class="tb" id="btnPlay" aria-pressed="true">⏸ pause</button>
+    <button class="tb" id="btnSpeed">▶ 1×</button>
+  </div>
+</header>
+
+<main>
+  <aside class="left" id="inspect">
+    <h2>SECTION</h2>
+    <p style="color:var(--dim);font-style:italic">Click a region to read it. The plant starts in its protected origin (★) and spreads into suitable ground on its own.</p>
+  </aside>
+
+  <div class="stage"><canvas id="cv"></canvas></div>
+
+  <aside class="right shop" id="shop"><h2>UPGRADES</h2></aside>
+</main>
+
+<footer><span class="log" id="log">Watch the plant spread. When a region stalls, read its blocker and buy the answer.</span></footer>
+
+<div class="modal" id="reportModal"><div class="report" id="report"></div></div>
+
+<script>
+"use strict";
+/* ========================================================================== */
+/*  GRID + HELPERS                                                            */
+/* ========================================================================== */
+const W=60,H=40,N=W*H;
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const lerp=(a,b,t)=>a+(b-a)*t;
+const mix=(c1,c2,k)=>[c1[0]+(c2[0]-c1[0])*k,c1[1]+(c2[1]-c1[1])*k,c1[2]+(c2[2]-c1[2])*k];
+// smooth "band" membership: 1 inside [lo,hi], ramps to 0 over `soft` beyond each edge
+function band(v,lo,hi,soft){
+  if(v>=lo&&v<=hi) return 1;
+  const d = v<lo ? lo-v : v-hi;
+  return clamp(1-d/soft,0,1);
+}
+// ramp: 1 while v<=limit, →0 over `soft` above limit
+const overLimit=(v,limit,soft)=> v<=limit?1:clamp(1-(v-limit)/soft,0,1);
+
+/* ========================================================================== */
+/*  CONFIG (all tunables in one place)                                        */
+/* ========================================================================== */
+const CFG={
+  tickMs:160,
+  scales:{ degPerTempPoint:12, tempCap:3, waterShiftPerPt:20, waterTolPerPt:5, saltPerPt:70, radPerPt:30 },
+  genomeBase:{ tempFloor:-6, tempCeil:24, waterPos:50, waterTol:18, saltTol:15, radTol:30, toxTol:25 },
+  grow:{ growThresh:0.55, dieThresh:0.35, baseFill:0.10, seedPerNeighbor:0.34, maturity:0.45 },
+  die:{ rate:0.06, damping:0.5 },
+  recover:{ deadToBarren:0.02 },
+  vigorEase:0.20,
+  econ:{ thriving:0.0045, marginal:0.0015, originTrickle:0.45, bubbleChance:0.05, bubbleValue:12, bubbleAutoTicks:60 },
+  win:0.70
+};
+
+/* ========================================================================== */
+/*  AUTHORED PLANET — "First Bloom" (friendly 9-section Eden)                 */
+/*  effTemp = globalTemp + tempOffset ;  effMoist = globalMoist + moistOffset */
+/* ========================================================================== */
+const PLANET={
+  id:"first_bloom", name:"First Bloom",
+  gridWidth:W, gridHeight:H, winThreshold:CFG.win, origin:"meadow_hollow",
+  globalClimate:{ temperature:6, moisture:50 },
+  sections:[
+    // effTemp = 6 + tempOffset ; effMoist = 50 + moistureOffset.
+    // Designed so 70% needs a WATER strategy (generalist tops out ~67%): flood→marsh or drought→dust,
+    // each sacrificing the opposite water-extreme + ember (hazard). Thermal build = cold×2+heat×1 (caps at 3),
+    // which just clears frost (cold) & sun (heat) but never ember (would need heat×2). Salt×1 for salt_barren.
+    { id:"meadow_hollow", name:"Meadow Hollow", isOrigin:true, area:130, center:{x:0.42,y:0.45},
+      neighbors:["fern_shade","cool_glen","dust_reach","marsh_low","salt_barren"],
+      local:{ tempOffset:8, moistureOffset:0, light:65, ph:6.8, salinity:0, toxicity:0, radiation:8, nutrients:60 } },
+    { id:"fern_shade", name:"Fern Shade", area:110, center:{x:0.64,y:0.30},
+      neighbors:["meadow_hollow","marsh_low"],
+      local:{ tempOffset:4, moistureOffset:6, light:55, ph:6.5, salinity:0, toxicity:0, radiation:8, nutrients:50 } },
+    { id:"cool_glen", name:"Cool Glen", area:110, center:{x:0.22,y:0.30},
+      neighbors:["meadow_hollow","frost_shelf"],
+      local:{ tempOffset:-14, moistureOffset:-4, light:45, ph:6.6, salinity:0, toxicity:0, radiation:10, nutrients:45 } },
+    { id:"frost_shelf", name:"Frost Shelf", area:100, center:{x:0.15,y:0.10},
+      neighbors:["cool_glen"],
+      local:{ tempOffset:-28, moistureOffset:-6, light:35, ph:6.4, salinity:0, toxicity:0, radiation:12, nutrients:35 } },
+    { id:"marsh_low", name:"Marsh Low", area:110, center:{x:0.68,y:0.55},
+      neighbors:["meadow_hollow","fern_shade","sun_flats"],
+      local:{ tempOffset:8, moistureOffset:42, light:60, ph:6.2, salinity:0, toxicity:0, radiation:8, nutrients:60 } },
+    { id:"dust_reach", name:"Dust Reach", area:110, center:{x:0.20,y:0.66},
+      neighbors:["meadow_hollow","salt_barren"],
+      local:{ tempOffset:12, moistureOffset:-34, light:85, ph:7.4, salinity:20, toxicity:0, radiation:22, nutrients:25 } },
+    { id:"salt_barren", name:"Salt Barren", area:100, center:{x:0.46,y:0.76},
+      neighbors:["meadow_hollow","dust_reach","sun_flats","ember_scar"],
+      local:{ tempOffset:2, moistureOffset:-6, light:75, ph:8.2, salinity:80, toxicity:5, radiation:20, nutrients:20 } },
+    { id:"sun_flats", name:"Sun Flats", area:120, center:{x:0.67,y:0.79},
+      neighbors:["salt_barren","marsh_low","ember_scar"],
+      local:{ tempOffset:24, moistureOffset:4, light:90, ph:7.0, salinity:5, toxicity:0, radiation:26, nutrients:40 } },
+    { id:"ember_scar", name:"Ember Scar", area:100, center:{x:0.70,y:0.95},
+      neighbors:["salt_barren","sun_flats"],
+      local:{ tempOffset:38, moistureOffset:-26, light:95, ph:5.0, salinity:5, toxicity:55, radiation:55, nutrients:30 } }
+  ]
+};
+
+/* ========================================================================== */
+/*  SECTION LAYOUT — weighted Voronoi (reused & validated in Portion 1)       */
+/* ========================================================================== */
+function growVoronoi(sections){
+  const cx=sections.map(s=>s.center.x*W), cy=sections.map(s=>s.center.y*H);
+  const aSum=sections.reduce((a,s)=>a+s.area,0), target=sections.map(s=>s.area/aSum*N);
+  // stronger area correction than the surface demo: this planet's win margin depends on
+  // sacrifice zones matching their designed area share (adjacency here is dense enough to survive it)
+  const w=new Float64Array(sections.length), map=new Int16Array(N), cnt=new Int32Array(sections.length), CAP=7;
+  for(let it=0;it<40;it++){
+    cnt.fill(0);
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+      let best=0,bd=Infinity; const px=x+.5,py=y+.5;
+      for(let i=0;i<sections.length;i++){ const dx=px-cx[i],dy=py-cy[i],d=Math.sqrt(dx*dx+dy*dy)-w[i]; if(d<bd){bd=d;best=i;} }
+      map[y*W+x]=best; cnt[best]++;
+    }
+    let me=0; for(let i=0;i<sections.length;i++){ const e=target[i]-cnt[i]; w[i]=clamp(w[i]+e*0.010,-CAP,CAP); if(Math.abs(e)>me)me=Math.abs(e); }
+    if(me<4)break;
+  }
+  return map;
+}
+const SEC=PLANET.sections, SC=SEC.length;
+const SIDX=Object.fromEntries(SEC.map((s,i)=>[s.id,i]));
+const ORIGIN=SIDX[PLANET.origin];
+const TILEMAP=growVoronoi(SEC);
+// tile lists + centroids + areas
+const AREA=new Int32Array(SC), CENT=SEC.map(()=>({x:0,y:0,n:0}));
+const SEC_TILES=SEC.map(()=>[]);
+for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const o=TILEMAP[y*W+x]; AREA[o]++; SEC_TILES[o].push(y*W+x); const c=CENT[o]; c.x+=x;c.y+=y;c.n++; }
+CENT.forEach(c=>{c.x=c.x/c.n+.5;c.y=c.y/c.n+.5;});
+const LAND=N; // all land in this authored planet
+
+/* ========================================================================== */
+/*  GENOME + GLOBAL TERRAFORM STATE                                           */
+/* ========================================================================== */
+const G={ temp:PLANET.globalClimate.temperature, moist:PLANET.globalClimate.moisture };
+const genome={ cold:0, heat:0, waterArm:null, waterPts:0, salt:0, rad:0, seedOut:0, earlyMat:0 };
+function derived(){
+  const s=CFG.scales,b=CFG.genomeBase;
+  const waterPos = b.waterPos + (genome.waterArm==="wet"? +1: genome.waterArm==="dry"? -1:0)*genome.waterPts*s.waterShiftPerPt;
+  return {
+    tempFloor: b.tempFloor - genome.cold*s.degPerTempPoint,
+    tempCeil:  b.tempCeil  + genome.heat*s.degPerTempPoint,
+    waterPos, waterTol: b.waterTol + genome.waterPts*s.waterTolPerPt,
+    saltTol: b.saltTol + genome.salt*s.saltPerPt,
+    radTol:  b.radTol  + genome.rad*s.radPerPt,
+    toxTol:  b.toxTol
+  };
+}
+
+/* ========================================================================== */
+/*  EVALUATION — 4 player-facing categories from raw signals                  */
+/* ========================================================================== */
+const TEMP_WORDS=(effT,d)=> effT<d.tempFloor-6?"freezing": effT<d.tempFloor+4?"cold": effT>d.tempCeil+6?"scorching": effT>d.tempCeil-4?"hot":"suitable";
+const WATER_WORDS=(m,d)=>{ const lo=d.waterPos-d.waterTol,hi=d.waterPos+d.waterTol; return m<lo-14?"parched":m<lo+4?"dry":m>hi+14?"flooded":m>hi-4?"wet":"suitable"; };
+function lampOf(f){ return f>0.72?"green": f>0.30?"yellow":"red"; }
+
+function evaluate(i){
+  const L=SEC[i].local, d=derived();
+  const effT=G.temp+L.tempOffset, effM=G.moist+L.moistureOffset;
+  // gates (0..1)
+  const tempF=band(effT,d.tempFloor,d.tempCeil,10);
+  const waterF=band(effM,d.waterPos-d.waterTol,d.waterPos+d.waterTol,12);
+  const saltF=overLimit(L.salinity,d.saltTol,26);
+  const phF = (L.ph<5||L.ph>8.5) ? overLimit(Math.max(5-L.ph,L.ph-8.5,0),0,1.2) : 1;
+  const soilGate=Math.min(saltF,phF);
+  const nutrientMod = L.nutrients<35 ? lerp(0.55,1,clamp(L.nutrients/35,0,1)) : 1; // soft speed only
+  const radF=overLimit(L.radiation,d.radTol,20), toxF=overLimit(L.toxicity,d.toxTol,26);
+  const hazF=Math.min(radF,toxF);
+  const lightMod=clamp(L.light/70,0.45,1.15);
+  let fitness=tempF*waterF*soilGate*hazF;
+  if(SEC[i].isOrigin) fitness=Math.max(fitness,0.62); // protected refuge (invariant)
+  // category display values
+  const cats={
+    Temperature:{f:tempF, word:TEMP_WORDS(effT,d)},
+    Water:{f:waterF, word:WATER_WORDS(effM,d)},
+    Soil:{f:soilGate*(nutrientMod<0.85?0.7:1), word: soilGate<0.4?"hostile": nutrientMod<0.8?"poor": soilGate<0.85?"workable":"rich"},
+    Hazard:{f:hazF, word: hazF<0.3?"lethal": hazF<0.7?"dangerous": hazF<0.95?"stressful":"low"}
+  };
+  // limiting factor = lowest category factor (if it actually blocks)
+  let limitKey=null,limitF=1;
+  for(const k in cats){ if(cats[k].f<limitF){limitF=cats[k].f;limitKey=k;} }
+  return { fitness, growthMod:nutrientMod*lightMod, cats, limitKey, limitF, effT, effM,
+           terraformable:{Temperature:true,Water:true,Soil:false,Hazard:false} };
+}
+const LIMIT_MSG={ Temperature:e=>e.cats.Temperature.word==="freezing"||e.cats.Temperature.word==="cold"?"too cold":"too hot",
+  Water:e=>e.cats.Water.word==="parched"||e.cats.Water.word==="dry"?"too dry":"too wet",
+  Soil:e=>e.cats.Soil.word==="hostile"?"soil is hostile (salt/pH)":"soil is poor (low nutrients)",
+  Hazard:e=>e.cats.Hazard.word==="lethal"?"hazard is lethal":"hazard is stressful" };
+const FIX_HINT={ Temperature:e=> (e.cats.Temperature.word==="freezing"||e.cats.Temperature.word==="cold")
+    ? "Adapt: Cold Tolerance — or Terraform: Warm the sky"
+    : "Adapt: Heat Tolerance — or Terraform: Cool the sky",
+  Water:e=> (e.cats.Water.word==="parched"||e.cats.Water.word==="dry")
+    ? "Adapt: Drought — or Terraform: Humidify"
+    : "Adapt: Flood — or Terraform: Dry the sky",
+  Soil:e=> e.cats.Soil.word==="hostile" ? "Adapt: Salt Handling (must evolve — not terraformable)" : "Low nutrients only slow growth; not a wall.",
+  Hazard:e=> e.cats.Hazard.word==="lethal" ? "Adapt: Radiation Shielding (toxicity here has no cure yet — may be a sacrifice zone)" : "Radiation Shielding reduces this." };
+
+/* ========================================================================== */
+/*  SIM STATE + TICK                                                          */
+/* ========================================================================== */
+const BAR=0,LIV=1,DEAD=2;
+const state=new Uint8Array(N);           // per-tile
+const vigor=new Float32Array(SC);        // per-section eased vigor 0..1
+const secFit=new Float32Array(SC);
+let biomass=0, ticks=0, won=false, running=true, speed=1;
+const bubbles=[];                        // {tile,x,y,life}
+let field=null;                          // log helper
+
+// seed the origin: fill a cluster of its tiles
+(function seedOrigin(){
+  const tiles=SEC_TILES[ORIGIN].slice().sort((a,b)=>{
+    const ax=a%W,ay=(a/W)|0,bx=b%W,by=(b/W)|0;
+    const cx=CENT[ORIGIN].x,cy=CENT[ORIGIN].y;
+    return ((ax-cx)**2+(ay-cy)**2)-((bx-cx)**2+(by-cy)**2);
+  });
+  for(let k=0;k<Math.min(10,tiles.length);k++) state[tiles[k]]=LIV;
+  vigor[ORIGIN]=0.7;
+})();
+
+function livingCountBySection(){ const c=new Int32Array(SC); for(let i=0;i<N;i++) if(state[i]===LIV) c[TILEMAP[i]]++; return c; }
+
+function tick(){
+  ticks++;
+  // 1. evaluate fitness + ease vigor
+  for(let i=0;i<SC;i++){ const e=evaluate(i); secFit[i]=e.fitness; vigor[i]+=(e.fitness-vigor[i])*CFG.vigorEase; }
+  // 2. transitions (double-buffer to avoid same-tick chaining)
+  const next=state.slice();
+  const seedMult=1+genome.seedOut*0.6;
+  const matReduce=genome.earlyMat*0.12;
+  // maturity per section: fraction living
+  const liv=livingCountBySection();
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+    const i=y*W+x, s=TILEMAP[i], v=vigor[s], st=state[i];
+    if(st===BAR){
+      // count living orthogonal neighbors
+      let ln=0;
+      if(x>0&&state[i-1]===LIV)ln++; if(x<W-1&&state[i+1]===LIV)ln++;
+      if(y>0&&state[i-W]===LIV)ln++; if(y<H-1&&state[i+W]===LIV)ln++;
+      if(ln>0 && v>CFG.grow.growThresh){
+        // source section must be mature enough to seed across (soft): use own-section maturity
+        const mat=liv[s]/AREA[s];
+        const gate = mat>=(CFG.grow.maturity-matReduce) || ln>=2 ? 1 : 0.4;
+        const p=CFG.grow.baseFill*seedMult*secFit[s]*(1+CFG.grow.seedPerNeighbor*(ln-1))*gate;
+        if(Math.random()<p) next[i]=LIV;
+      }
+    } else if(st===LIV){
+      if(v<CFG.grow.dieThresh){
+        const p=CFG.die.rate*CFG.die.damping*(CFG.grow.dieThresh-v)*4;
+        if(Math.random()<p) next[i]=DEAD;
+      }
+    } else { // DEAD
+      if(Math.random()<CFG.recover.deadToBarren) next[i]=BAR;
+    }
+  }
+  state.set(next);
+  // 3. economy
+  let income=CFG.econ.originTrickle;
+  const liv2=livingCountBySection();
+  for(let i=0;i<SC;i++){ const rate = secFit[i]>0.7?CFG.econ.thriving:CFG.econ.marginal; income+=liv2[i]*rate; }
+  biomass+=income;
+  // 4. bubbles (bonus)
+  for(let i=0;i<SC;i++){
+    if(secFit[i]>0.72 && liv2[i]>8 && Math.random()<CFG.econ.bubbleChance*0.15){
+      const t=SEC_TILES[i][(Math.random()*SEC_TILES[i].length)|0];
+      if(state[t]===LIV) bubbles.push({tile:t,x:(t%W)+.5,y:((t/W)|0)+.5,life:0});
+    }
+  }
+  for(const b of bubbles){ b.life++; if(b.life>CFG.econ.bubbleAutoTicks){ biomass+=CFG.econ.bubbleValue*0.5; b.dead=true; } }
+  for(let k=bubbles.length-1;k>=0;k--) if(bubbles[k].dead) bubbles.splice(k,1);
+  // 5. win check
+  let livTotal=0; for(let i=0;i<N;i++) if(state[i]===LIV) livTotal++;
+  const coverage=livTotal/LAND;
+  if(!won && coverage>=CFG.win){ won=true; running=false; onWin(coverage); }
+  return coverage;
+}
+
+/* ========================================================================== */
+/*  RENDER                                                                     */
+/* ========================================================================== */
+const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
+const dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+let TILE=14, selected=-1;
+const TEMP_STOPS=[[-40,[44,62,104]],[-20,[78,104,140]],[0,[100,126,116]],[12,[92,140,88]],[25,[156,146,84]],[40,[182,100,60]],[60,[150,58,46]]];
+function stops(v){ const S=TEMP_STOPS; if(v<=S[0][0])return S[0][1].slice(); if(v>=S[S.length-1][0])return S[S.length-1][1].slice();
+  for(let i=0;i<S.length-1;i++){const[a,ca]=S[i],[b,cb]=S[i+1]; if(v>=a&&v<=b)return mix(ca,cb,(v-a)/(b-a));} return S[0][1].slice(); }
+function barrenColor(i){ const L=SEC[i].local; let c=stops(G.temp+L.tempOffset);
+  const m=G.moist+L.moistureOffset; if(m<35)c=mix(c,[150,138,104],0.4); else if(m>68)c=mix(c,[64,104,104],0.35);
+  return mix(c,[10,12,18],0.55); } // dim: barren ground
+function livingColor(v){ // vigor 0..1 → sickly→lush green
+  const low=[120,120,70], hi=[90,205,110]; return mix(low,hi,clamp(v,0,1)); }
+const DEAD_C=[92,66,44];
+function fit(){ const st=document.querySelector(".stage"); TILE=Math.max(6,Math.floor(Math.min((st.clientWidth-24)/W,(st.clientHeight-24)/H))); }
+function resize(){ fit(); cv.width=W*TILE*dpr; cv.height=H*TILE*dpr; cv.style.width=W*TILE+"px"; cv.style.height=H*TILE+"px"; ctx.setTransform(dpr,0,0,dpr,0,0); draw(); }
+const rgb=c=>`rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`;
+
+function draw(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+    const i=y*W+x,s=TILEMAP[i]; let c;
+    if(state[i]===LIV) c=livingColor(vigor[s]);
+    else if(state[i]===DEAD) c=DEAD_C;
+    else c=barrenColor(s);
+    ctx.fillStyle=rgb(c); ctx.fillRect(x*TILE,y*TILE,TILE+.5,TILE+.5);
+  }
+  // borders
+  ctx.strokeStyle="rgba(5,7,12,0.8)"; ctx.lineWidth=1.4; ctx.beginPath();
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const s=TILEMAP[y*W+x];
+    if(x+1>=W||TILEMAP[y*W+x+1]!==s){ctx.moveTo((x+1)*TILE,y*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);} if(x===0){ctx.moveTo(0,y*TILE);ctx.lineTo(0,(y+1)*TILE);}
+    if(y+1>=H||TILEMAP[(y+1)*W+x]!==s){ctx.moveTo(x*TILE,(y+1)*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);} if(y===0){ctx.moveTo(x*TILE,0);ctx.lineTo((x+1)*TILE,0);}
+  }
+  ctx.stroke();
+  // selection
+  if(selected>=0){ ctx.strokeStyle="#7fe3c0"; ctx.lineWidth=3; ctx.beginPath();
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){ if(TILEMAP[y*W+x]!==selected)continue;
+      if(x+1>=W||TILEMAP[y*W+x+1]!==selected){ctx.moveTo((x+1)*TILE,y*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);}
+      if(x===0||TILEMAP[y*W+x-1]!==selected){ctx.moveTo(x*TILE,y*TILE);ctx.lineTo(x*TILE,(y+1)*TILE);}
+      if(y+1>=H||TILEMAP[(y+1)*W+x]!==selected){ctx.moveTo(x*TILE,(y+1)*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);}
+      if(y===0||TILEMAP[(y-1)*W+x]!==selected){ctx.moveTo(x*TILE,y*TILE);ctx.lineTo((x+1)*TILE,y*TILE);}
+    } ctx.stroke();
+  }
+  // bubbles
+  for(const b of bubbles){ const px=b.x*TILE,py=b.y*TILE, r=Math.max(4,TILE*0.42);
+    ctx.beginPath(); ctx.arc(px,py,r,0,7); ctx.fillStyle="rgba(255,212,121,0.92)"; ctx.fill();
+    ctx.lineWidth=1.5; ctx.strokeStyle="#7a5a15"; ctx.stroke(); }
+  // labels
+  const fs=Math.max(8,Math.min(12,TILE)); ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.font=`${fs}px "DejaVu Sans Mono",monospace`;
+  SEC.forEach((s,i)=>{ const px=CENT[i].x*TILE,py=CENT[i].y*TILE;
+    ctx.lineWidth=3; ctx.strokeStyle="rgba(5,7,12,0.9)"; ctx.strokeText(s.name.toUpperCase(),px,py);
+    ctx.fillStyle=i===selected?"#fff":"rgba(232,238,248,0.9)"; ctx.fillText(s.name.toUpperCase(),px,py);
+    if(s.isOrigin){ctx.fillStyle="#ffd479"; ctx.fillText("★",px,py+fs+1);}
+  });
+}
+
+/* ========================================================================== */
+/*  UI: HUD / INSPECT / SHOP                                                   */
+/* ========================================================================== */
+function renderHUD(cov){
+  document.getElementById("hBio").textContent=Math.floor(biomass);
+  document.getElementById("hCov").textContent=Math.round(cov*100)+"%";
+  document.getElementById("hCovFill").style.width=Math.round(cov*100)+"%";
+  document.getElementById("hCovWin").style.left=Math.round(CFG.win*100)+"%";
+  document.getElementById("hSky").textContent=`${G.temp>0?'+':''}${G.temp}°C · moist ${G.moist}`;
+}
+function renderInspect(){
+  const el=document.getElementById("inspect");
+  if(selected<0){ el.innerHTML='<h2>SECTION</h2><p style="color:var(--dim);font-style:italic">Click a region to read it. The plant starts in its protected origin (★) and spreads into suitable ground on its own.</p>'; return; }
+  const s=SEC[selected], e=evaluate(selected), liv=livingCountBySection()[selected];
+  let dead=0,barr=0; for(const t of SEC_TILES[selected]){ if(state[t]===DEAD)dead++; else if(state[t]===BAR)barr++; }
+  const total=AREA[selected];
+  const catRow=k=>{ const c=e.cats[k]; return `<div class="cat"><span class="lamp ${lampOf(c.f)}"></span><span class="lbl">${k}</span><span class="st">${c.word}</span>${e.terraformable[k]?'<span style="margin-left:auto;color:var(--dim);font-size:10px">terraformable</span>':''}</div>`; };
+  const blocked = e.limitF<0.72;
+  const limitHtml = blocked
+    ? `<div class="limit">▲ Growth blocked: <b>${LIMIT_MSG[e.limitKey](e)}</b><div class="fixhint">${FIX_HINT[e.limitKey](e)}</div></div>`
+    : `<div class="limit ok">✓ Thriving here — no blocker.</div>`;
+  el.innerHTML=`<h2>SECTION</h2>
+    <div class="secname">${s.name}${s.isOrigin?'<span class="badge">★ ORIGIN</span>':''}</div>
+    <div class="cats">${catRow("Temperature")}${catRow("Water")}${catRow("Soil")}${catRow("Hazard")}</div>
+    ${limitHtml}
+    <div class="vitals">vigor ${Math.round(vigor[selected]*100)}%
+      <div class="vbar"><i class="vl" style="width:${liv/total*100}%"></i><i class="vd" style="width:${dead/total*100}%"></i><i class="vb" style="flex:1"></i></div>
+      <div style="color:var(--dim);margin-top:3px">living ${liv} · dead ${dead} · barren ${barr}</div>
+    </div>
+    <details class="raw"><summary>raw signals ▾</summary>
+      <table class="kv">
+        <tr><td>effective temp</td><td>${e.effT>0?'+':''}${e.effT}°C</td></tr>
+        <tr><td>effective moist</td><td>${e.effM}</td></tr>
+        <tr><td>light</td><td>${s.local.light}</td></tr><tr><td>soil pH</td><td>${s.local.ph}</td></tr>
+        <tr><td>salinity</td><td>${s.local.salinity}</td></tr><tr><td>nutrients</td><td>${s.local.nutrients}</td></tr>
+        <tr><td>toxicity</td><td>${s.local.toxicity}</td></tr><tr><td>radiation</td><td>${s.local.radiation}</td></tr>
+      </table></details>`;
+}
+
+/* ---- upgrade catalog (temporary test set from NEXT_PLAYABLE_SLICE) ---- */
+const UP=[
+  {grp:"Adapt", id:"cold", name:"Cold Tolerance", sub:"tolerate colder ground", cost:g=>28+genome.cold*26,
+    can:()=>genome.cold+genome.heat<CFG.scales.tempCap, why:()=>"temperature points are capped — cold+heat ≤ "+CFG.scales.tempCap,
+    tier:()=>genome.cold, apply:()=>genome.cold++},
+  {grp:"Adapt", id:"heat", name:"Heat Tolerance", sub:"tolerate hotter ground", cost:g=>28+genome.heat*26,
+    can:()=>genome.cold+genome.heat<CFG.scales.tempCap, why:()=>"temperature points are capped — cold+heat ≤ "+CFG.scales.tempCap,
+    tier:()=>genome.heat, apply:()=>genome.heat++},
+  {grp:"Adapt", id:"drought", name:"Drought Adaptation", sub:"shift toward dry survival", cost:g=>30+genome.waterPts*24,
+    can:()=>genome.waterArm!=="wet", why:()=>"refund Flood first — a plant sits at one water strategy",
+    tier:()=>genome.waterArm==="dry"?genome.waterPts:0, apply:()=>{ if(genome.waterArm!=="dry"){genome.waterArm="dry";genome.waterPts=0;} genome.waterPts++; }},
+  {grp:"Adapt", id:"flood", name:"Flood Adaptation", sub:"shift toward wet survival", cost:g=>30+genome.waterPts*24,
+    can:()=>genome.waterArm!=="dry", why:()=>"refund Drought first — a plant sits at one water strategy",
+    tier:()=>genome.waterArm==="wet"?genome.waterPts:0, apply:()=>{ if(genome.waterArm!=="wet"){genome.waterArm="wet";genome.waterPts=0;} genome.waterPts++; }},
+  {grp:"Adapt", id:"salt", name:"Salt Handling", sub:"survive saline soil", cost:g=>40, can:()=>genome.salt<1, tier:()=>genome.salt, apply:()=>genome.salt++},
+  {grp:"Adapt", id:"rad", name:"Radiation Shielding", sub:"survive high radiation", cost:g=>44, can:()=>genome.rad<1, tier:()=>genome.rad, apply:()=>genome.rad++},
+  {grp:"Spread", id:"seedOut", name:"Seed Output", sub:"colonize faster", cost:g=>26+genome.seedOut*30, can:()=>genome.seedOut<2, tier:()=>genome.seedOut, apply:()=>genome.seedOut++},
+  {grp:"Spread", id:"earlyMat", name:"Early Maturity", sub:"seed neighbors sooner", cost:g=>34, can:()=>genome.earlyMat<1, tier:()=>genome.earlyMat, apply:()=>genome.earlyMat++},
+  {grp:"Terraform", id:"warm", name:"Warm the Sky", sub:"+6°C globally", cost:g=>40+tf.warm*18, can:()=>true, tier:()=>tf.warm, apply:()=>{G.temp+=6;tf.warm++;}},
+  {grp:"Terraform", id:"cool", name:"Cool the Sky", sub:"−6°C globally", cost:g=>40+tf.cool*18, can:()=>true, tier:()=>tf.cool, apply:()=>{G.temp-=6;tf.cool++;}},
+  {grp:"Terraform", id:"humid", name:"Humidify", sub:"+8 moisture globally", cost:g=>40+tf.humid*18, can:()=>true, tier:()=>tf.humid, apply:()=>{G.moist=clamp(G.moist+8,0,100);tf.humid++;}},
+  {grp:"Terraform", id:"dry", name:"Dry the Sky", sub:"−8 moisture globally", cost:g=>40+tf.dry*18, can:()=>true, tier:()=>tf.dry, apply:()=>{G.moist=clamp(G.moist-8,0,100);tf.dry++;}}
+];
+const tf={warm:0,cool:0,humid:0,dry:0};
+const upById=Object.fromEntries(UP.map(u=>[u.id,u]));
+
+function renderShop(){
+  const el=document.getElementById("shop"); const groups=["Spread","Adapt","Terraform"];
+  let html='<h2>UPGRADES</h2>';
+  for(const gname of groups){
+    html+=`<div class="grp"><h3>${gname}</h3>`;
+    if(gname==="Adapt") html+=`<div class="temppool">temp points: cold ${genome.cold} · heat ${genome.heat} / cap ${CFG.scales.tempCap}</div>`;
+    for(const u of UP.filter(x=>x.grp===gname)){
+      const cost=Math.round(u.cost()); const tier=u.tier?u.tier():0;
+      const canBuy=u.can() && biomass>=cost && !won;
+      const label = tier>0 ? `${u.name} <small>·${["I","II","III","IV"][tier]||("+"+tier)} owned · ${u.sub}</small>` : `${u.name} <small>${u.sub}</small>`;
+      const title = !u.can()&&u.why?u.why():"";
+      html+=`<button class="buy ${tier>0?'owned':''}" data-id="${u.id}" ${canBuy?'':'disabled'} title="${title}">
+        <span class="nm">${label}</span><span class="cost">${cost}</span></button>`;
+    }
+    html+='</div>';
+  }
+  el.innerHTML=html;
+  el.querySelectorAll("button.buy").forEach(b=>b.addEventListener("click",()=>buy(b.dataset.id)));
+}
+function buy(id){
+  const u=upById[id]; if(!u||won) return false; const cost=Math.round(u.cost());
+  if(!u.can()||biomass<cost) return false;
+  biomass-=cost; u.apply();
+  log(`Bought ${u.name}. ${u.grp==="Terraform"?`Sky now ${G.temp>0?'+':''}${G.temp}°C · moist ${G.moist}.`:''}`);
+  renderShop(); if(selected>=0) renderInspect(); draw();
+  return true;
+}
+
+/* ========================================================================== */
+/*  INTERACTION                                                                */
+/* ========================================================================== */
+function tileAt(ev){ const r=cv.getBoundingClientRect(); const x=Math.floor((ev.clientX-r.left)/TILE),y=Math.floor((ev.clientY-r.top)/TILE);
+  if(x<0||y<0||x>=W||y>=H)return{sec:-2,tile:-1}; return {sec:TILEMAP[y*W+x],tile:y*W+x}; }
+cv.addEventListener("click",e=>{
+  const {sec,tile}=tileAt(e);
+  // bubble hit first
+  for(let k=bubbles.length-1;k>=0;k--){ const b=bubbles[k]; const px=b.x*TILE,py=b.y*TILE; const r=cv.getBoundingClientRect();
+    if(Math.hypot(e.clientX-r.left-px,e.clientY-r.top-py)<=Math.max(6,TILE*0.55)){ biomass+=CFG.econ.bubbleValue; bubbles.splice(k,1); renderHUD(lastCov); draw(); return; } }
+  selected=(sec<0||sec===selected)?-1:sec; renderInspect(); draw();
+});
+function log(m){ document.getElementById("log").textContent=m; }
+
+document.getElementById("btnPlay").addEventListener("click",()=>{ running=!running;
+  document.getElementById("btnPlay").textContent=running?"⏸ pause":"▶ play";
+  document.getElementById("btnPlay").setAttribute("aria-pressed",running); });
+document.getElementById("btnSpeed").addEventListener("click",()=>{ speed=speed===1?2:speed===2?4:1;
+  document.getElementById("btnSpeed").textContent="▶ "+speed+"×"; });
+
+/* ========================================================================== */
+/*  BLOOM REPORT                                                               */
+/* ========================================================================== */
+function onWin(cov){
+  const built=[];
+  if(genome.cold)built.push(`Cold Tolerance ×${genome.cold}`); if(genome.heat)built.push(`Heat Tolerance ×${genome.heat}`);
+  if(genome.waterArm)built.push(`${genome.waterArm==="dry"?"Drought":"Flood"} ×${genome.waterPts}`);
+  if(genome.salt)built.push("Salt Handling"); if(genome.rad)built.push("Radiation Shielding");
+  if(genome.seedOut)built.push(`Seed Output ×${genome.seedOut}`); if(genome.earlyMat)built.push("Early Maturity");
+  const terra=[]; if(tf.warm)terra.push(`Warm ×${tf.warm}`); if(tf.cool)terra.push(`Cool ×${tf.cool}`); if(tf.humid)terra.push(`Humidify ×${tf.humid}`); if(tf.dry)terra.push(`Dry ×${tf.dry}`);
+  const held=[]; const liv=livingCountBySection(); SEC.forEach((s,i)=>{ if(liv[i]/AREA[i]>0.4)held.push(s.name); });
+  document.getElementById("report").innerHTML=`
+    <h2>★ BLOOM</h2>
+    <div class="sub">You held ${Math.round(cov*100)}% of the land in ${Math.round(ticks*CFG.tickMs/1000)}s.</div>
+    <div><b>Your plant became:</b><ul>${built.map(b=>`<li>${b}</li>`).join('')||'<li>the unmodified pioneer</li>'}</ul></div>
+    ${terra.length?`<div style="margin-top:8px"><b>You reshaped the sky:</b> ${terra.join(', ')}</div>`:''}
+    <div style="margin-top:8px"><b>Regions bloomed:</b> ${held.join(', ')}</div>
+    <div class="debrief"><b>Why it worked:</b> every region has a <i>limiting factor</i> — the one condition furthest outside your plant's tolerance. You read each blocker, then either <b>adapted the plant</b> to widen its tolerance or <b>terraformed the sky</b> to move the whole planet's climate. Because temperature points were capped, you couldn't survive the deepest cold <i>and</i> the hottest scorch at once — so the planet forced a real tradeoff, and a couple of regions stayed barren. That's ecological limiting factors and adaptive tradeoffs, the same logic real pioneer species live by.</div>
+    <button class="btn" id="reportContinue">Keep playing →</button>`;
+  document.getElementById("reportModal").classList.add("on");
+  document.getElementById("reportContinue").addEventListener("click",()=>{ document.getElementById("reportModal").classList.remove("on"); won=true; running=true; document.getElementById("btnPlay").textContent="⏸ pause"; });
+  log(`★ Bloom! ${Math.round(cov*100)}% coverage.`);
+}
+
+/* ========================================================================== */
+/*  MAIN LOOP                                                                   */
+/* ========================================================================== */
+let lastCov=0, acc=0, last=0;
+function frame(ts){
+  if(!last)last=ts; const dt=ts-last; last=ts;
+  if(running){ acc+=dt*speed;
+    while(acc>=CFG.tickMs){ lastCov=tick(); acc-=CFG.tickMs; if(won)break; }
+  }
+  renderHUD(lastCov); draw(); if(selected>=0 && ticks%3===0) renderInspect();
+  requestAnimationFrame(frame);
+}
+window.addEventListener("resize",resize);
+resize(); renderShop(); renderHUD(0); requestAnimationFrame(frame);
+
+/* ========================================================================== */
+/*  TEST HOOK — headless winnability / behavior checks                        */
+/* ========================================================================== */
+window.BLOOM_API={
+  buy, advance(n){ let c=lastCov; running=false; for(let k=0;k<n;k++){ c=tick(); if(won)break; } lastCov=c; return c; },
+  coverage(){ let l=0; for(let i=0;i<N;i++) if(state[i]===LIV)l++; return l/LAND; },
+  addBiomass(x){ biomass+=x; renderShop(); },
+  state(){ return {biomass:Math.floor(biomass), ticks, won, genome:{...genome}, tf:{...tf}, sky:{...G},
+    coverage:this.coverage(), vigor:[...vigor].map(v=>+v.toFixed(2)),
+    secFit:[...secFit].map(v=>+v.toFixed(2)), sections:SEC.map(s=>s.id)}; },
+  evalSection(id){ return evaluate(SIDX[id]); }
+};
+</script>
+</body>
+</html>
