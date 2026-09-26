@@ -87,8 +87,13 @@ check(!/\bdocument\b|\bwindow\.(?!BLOOM)|localStorage|requestAnimationFrame/.tes
   const byS = s.livingCountBySection();
   check(s.won && s.map.SC === 3 && byS[2] === 0, "a second (synthetic) planet runs on the unchanged engine and respects its own winThreshold",
     `won at tick ${t}, hot section c stays barren (${byS[2]} living)`);
-  let threw = false; try { BLOOM.createSim({ ...tiny, sections: [...tiny.sections, { ...tiny.sections[1], id: "sea", kind: "water" }] }, config, traits); } catch { threw = true; }
-  check(threw, "engine refuses water/impassable sections until procedural reconnection adds them");
+  // BLOOM-003: water/impassable terrain is supported (full coverage in tools/gen-check.js); malformed terrain is still refused
+  const wet = { ...tiny, sections: [tiny.sections[0], { ...tiny.sections[1], id: "sea", name: "Sea", kind: "water" }, tiny.sections[2]] };
+  const ws = BLOOM.createSim(wet, config, traits, { rng: GOLD.mulberry32(9) });
+  check(ws.map.SC === 2 && ws.map.impassable.length === 1 && ws.map.LAND < ws.map.N && ws.map.LAND_TILES.every(i => ws.map.TILEMAP[i] >= 0),
+    "engine models a kind:\"water\" section as impassable and leaves it out of the denominator", `LAND ${ws.map.LAND}/${ws.map.N}`);
+  let threw = false; try { BLOOM.createSim({ ...wet, sections: wet.sections.map(x => x.id === "sea" ? { ...x, kind: "magma_ocean" } : x) }, config, traits); } catch { threw = true; }
+  check(threw, "engine still refuses unknown terrain kinds (guard narrowed, not removed)");
 }
 
 console.log(fails ? `\n${fails} check(s) FAILED` : "\nALL CHECKS PASS");
