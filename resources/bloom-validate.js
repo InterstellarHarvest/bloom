@@ -1,4 +1,4 @@
-// BLOOM — planet validator foundation (bible §10.3, layers 1–3 + structural integrity). BLOOM-003.
+// BLOOM — planet validator (bible §10.3 layers 1–8 + structural integrity). BLOOM-003 … BLOOM-006.
 //
 //   BLOOM.validatePlanet(planet, config, { traits, regenerate }) → { ok, errors[], warnings[], stats }
 //
@@ -13,7 +13,10 @@
 // fine (a reason to buy it); land unreachable even with it fails a procedural planet.
 // Winnability (BLOOM-005, §10.3 layers 4–6) with { winnability: true }: a real no-cheat witness run from
 // BLOOM.findWitness (resources/bloom-witness.js) must hold winThreshold + config.validation.winMargin.
-// NOT yet: layer 7 (no single forced build) and layer 8 (pacing quality).
+// Strategy diversity + pacing (BLOOM-006, §10.3 layers 7–8) with { winnability: true, strategies: { minStrategies,
+// pacing } } (an archetype's validation policy): BLOOM.findStrategies must prove `minStrategies` materially
+// distinct broad strategies that win with margin (layer 7) AND meet the pacing time bands (layer 8). Only
+// PASS passes; a capped search is an INCONCLUSIVE error, never a pass.
 (function (root) {
   "use strict";
   const BLOOM = root.BLOOM;
@@ -135,14 +138,23 @@
       else { const { archetype, ...generated } = planet; // archetype metadata is added after generation
         if (JSON.stringify(opts.regenerate(planet.params)) !== JSON.stringify(generated)) err(`determinism: seed ${planet.params.seed} does not reproduce this planet`); }
     }
-    // --- layers 4–6: a real witness build must win with margin under the real economy
+    // --- layers 4–6 (+ 7–8 when a strategy policy is given): real witness builds under the real economy
     if (opts.winnability && !errors.length) {
       if (!BLOOM.findWitness) err("winnability: resources/bloom-witness.js is not loaded");
       else if (!opts.traits) err("winnability: needs the trait catalogue (opts.traits)");
       else {
-        const w = BLOOM.findWitness(planet, config, opts.traits, { excludeTraits: opts.excludeTraits, measurePeak: opts.measurePeak });
-        stats.witness = w;
-        if (!w.ok) err(`layer ${w.layer} (${{ 4: "simultaneous coverage", 5: "affordability/order", 6: "winnable margin" }[w.layer]}): ${w.reason}`);
+        const LAYER = { 4: "simultaneous coverage", 5: "affordability/order", 6: "winnable margin", 7: "strategy diversity", 8: "pacing" };
+        const sp = opts.strategies;
+        if (sp) {
+          const r = BLOOM.findStrategies(planet, config, opts.traits, { minStrategies: sp.minStrategies, pacing: sp.pacing,
+            excludeTraits: opts.excludeTraits, measurePeak: opts.measurePeak });
+          stats.witness = r.first; stats.strategies = r;
+          if (!r.ok) err(`layer ${r.layer} (${LAYER[r.layer]})${r.status === "INCONCLUSIVE" ? " INCONCLUSIVE" : ""}: ${r.reason}`);
+        } else {
+          const w = BLOOM.findWitness(planet, config, opts.traits, { excludeTraits: opts.excludeTraits, measurePeak: opts.measurePeak });
+          stats.witness = w;
+          if (!w.ok) err(`layer ${w.layer} (${LAYER[w.layer]}): ${w.reason}`);
+        }
       }
     }
     return done();

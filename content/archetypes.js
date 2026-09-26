@@ -11,7 +11,8 @@
 //                   maxOriginLandmassShare (origin landmass / all land; < 0.70 means ordinary spread
 //                   alone can never win → a crossing strategy is required)
 //   generation      maxAttempts for the deterministic retry loop
-//   validation      what a finished world of this archetype must pass (winnable → bible §10.3 layers 4–6)
+//   validation      what a finished world of this archetype must pass (winnable → bible §10.3 layers 4–6;
+//                   minStrategies → layer 7 strategy diversity; pacing → layer 8 time bands)
 (function (root) {
   "use strict";
   const D = root.BLOOM_DATA || (root.BLOOM_DATA = { planets: {} });
@@ -29,7 +30,11 @@
       // terrainWeights favour regional/local landforms over one continent → many nearer islands
       geography: { terrainWeights: [0.5, 0.7, 1], minLandmassTiles: 16, maxCrossingGap: 5, minLandmasses: 3, maxOriginLandmassShare: 0.62 },
       generation: { maxAttempts: 24 },
-      validation: { winnable: true, crossingRequiredToWin: true },
+      // layers 7–8 (BLOOM-006): ≥ 2 materially distinct broad strategies must win with margin AND keep pace.
+      // Pacing bands are provisional validator hypotheses for a perfect-knowledge witness (a person is slower;
+      // the bible's session target is 10–20 human minutes), in game-seconds at config.tickMs.
+      validation: { winnable: true, crossingRequiredToWin: true, minStrategies: 2,
+        pacing: { marginSeconds: [360, 900], firstPurchaseSeconds: [45, 120], maxPurchaseGapSeconds: 240 } },
     },
   ];
 })(typeof window !== "undefined" ? window : globalThis);

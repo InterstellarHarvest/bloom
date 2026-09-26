@@ -64,6 +64,14 @@ const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"} 
   check(dry.won, "dry build also wins (≥2 broad strategies)", `${Math.round(dry.secs)} s`);
   await dry.p.close();
 
+  // Terraform water alternative (BLOOM-006): Humidify ×2 does Drought's job — no water Adaptation bought at all
+  const tf = await playRecipe(["seedOut", "heat", "salt", "cold", "humid", "humid"]);
+  const tfState = tf.won ? await tf.p.evaluate(() => ({ arm: BLOOM_API.state().genome ? BLOOM_API.state().genome.waterArm : undefined,
+    gaveUp: document.querySelector(".debrief").innerText })) : {};
+  check(tf.won && tf.buys.length === 6 && !tfState.arm && /Marsh Low/.test(tfState.gaveUp), "Terraform water build wins with NO water Adaptation (Humidify ×2 instead of Drought; gives up Marsh Low)",
+    `${Math.round(tf.secs || 0)} s, buys at ${tf.buys.join(", ")} s, water arm ${tfState.arm ?? "none"}`);
+  await tf.p.close();
+
   // 2 · Readouts, preview, tradeoffs (fresh page, biomass granted so buys don't wait)
   const p = await open();
   const first = await p.evaluate(() => { for (let t = 0; t < 600; t++) { BLOOM_API.advance(1); refreshShop();
@@ -94,7 +102,7 @@ const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"} 
     await q.close(); return c;
   }
   const gen = await steady(["seedOut", "seedOut", "earlyMat", "cold", "cold", "heat", "salt", "rad"]);
-  check(gen < 0.70, "generalist (no water strategy) stays under 70%", `${(gen * 100).toFixed(1)}%`);
+  check(gen < 0.70, "the tested build with neither water Adaptation nor water Terraform stays under 70%", `${(gen * 100).toFixed(1)}%`);
   const over = await steady(["seedOut", "seedOut", "earlyMat", "cold", "cold", "heat", "salt", "flood", "flood"]);
   check(over < 0.70, "over-committing (Flood ×2) loses the home regions", `${(over * 100).toFixed(1)}%`);
 

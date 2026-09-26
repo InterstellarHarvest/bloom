@@ -1,7 +1,11 @@
-// BLOOM — winnability witness solver (bible §10.3 layers 4–6, BLOOM-005). No DOM.
+// BLOOM — winnability witness solver (bible §10.3 layers 4–6, BLOOM-005) plus strategy diversity and
+// pacing (layers 7–8, BLOOM-006). No DOM.
 //
-//   BLOOM.findWitness(planet, config, traits, { excludeTraits, measurePeak }) → { ok, layer, reason, witness, best, search }
-//   measurePeak: keep the passing witness running to its plateau to report true peak coverage (slower)
+//   BLOOM.findWitness(planet, config, traits, { excludeTraits, measurePeak }) → { ok, layer, reason, witness, best, search, early }
+//   BLOOM.findStrategies(planet, config, traits, { minStrategies, pacing, excludeTraits, measurePeak }) → layers 4–8 verdict
+//   BLOOM.witness.strategyOf(planet, config, traits, items) → { sufficient, coverage, signature } (order-independent)
+//   BLOOM.witness.strategyClasses(planet, config, traits) → static candidate classes (no simulation)
+//   measurePeak: keep a passing witness running to its plateau to report true peak coverage (slower)
 //
 // Two stages, deliberately small (not a general planner):
 //  1. STATIC: enumerate legal terminal builds from the trait catalogue by effect type, respecting the
@@ -15,6 +19,24 @@
 //     planet's normal start. A PASS needs simultaneous living coverage ≥ winThreshold + config.validation.winMargin.
 // Spread-board `level` traits (Seed Output, Early Maturity) don't change where the plant can live, so
 // they are "boosters": not enumerated, tried as fixed opening variants instead.
+//
+// LAYER 7 — strategy signature. A build's broad approach, from what its effects DO (never trait ids,
+// purchase order, or Spread speed):
+//  a. reduce the terminal build to its MINIMAL SUFFICIENT core: the cheapest sub-build (sub-multiset of its
+//     purchases) whose static estimate still reaches the validation target, and which has no sufficient
+//     proper sub-build itself. Upgrades the win didn't need — redundant, or merely "nice to have" — are never
+//     part of a strategy. Exact and cheap: every sufficient sub-build is itself an enumerated, cheaper
+//     candidate, so walking candidates cheapest-first, a candidate founds a new CLASS only when no earlier
+//     class core is contained in it; otherwise it joins the cheapest such class;
+//  b. describe each environmental condition the minimal build answers as one token
+//     "<condition>=<means>(<amount>)[+<means>(<amount>)]":
+//       Temperature:cold / Temperature:heat  ← tempPoint points (Adapt) or the net sky temp shift (Terraform; + answers cold)
+//       Water:dry / Water:wet                ← waterArm points (Adapt; the dry arm survives dry ground) or the net sky moisture shift
+//       Defense:<stat>                       ← non-Spread `level` points (salt, radiation …)
+//       Crossing:<stat>                      ← a `crossing` effect (Waterborne Seeds)
+// Two signatures are MATERIALLY DISTINCT when each has a token the other lacks — neither contains the
+// other. A shared Waterborne Seeds token therefore never distinguishes two strategies, and neither does
+// boosting Spread, re-ordering purchases or adding an upgrade the win didn't need.
 (function (root) {
   "use strict";
   const BLOOM = root.BLOOM;
@@ -22,7 +44,39 @@
   const { waterCrossings } = BLOOM.geo;
   function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
-  function findWitness(planet, config, traits, opts = {}) {
+  const SKY_AXES = { temp: ["Temperature", "cold", "heat"], moist: ["Water", "dry", "wet"] }; // + shift answers the first side
+  function signatureOf(items, traitById, skyShift) {
+    const cond = {}, add = (c, means, n) => { const m = cond[c] || (cond[c] = {}); m[means] = (m[means] || 0) + n; };
+    for (const id of items) { const t = traitById[id], e = t.effect;
+      if (e.type === "tempPoint") add(`Temperature:${e.stat}`, "Adapt", 1);
+      else if (e.type === "waterArm") add(`Water:${e.arm}`, "Adapt", 1);
+      else if (e.type === "level" && t.board !== "Spread") add(`Defense:${e.stat}`, "Adapt", 1);
+      else if (e.type === "crossing") add(`Crossing:${e.stat}`, "Spread", 1); }
+    for (const ax in skyShift) { const A = SKY_AXES[ax], d = skyShift[ax]; if (A && d) add(`${A[0]}:${d > 0 ? A[1] : A[2]}`, "Terraform", Math.abs(d)); }
+    const tokens = Object.keys(cond).sort().map(c => `${c}=` + Object.keys(cond[c]).sort().map(m =>
+      m === "Terraform" ? `Terraform(${c.endsWith(SKY_AXES.temp[1]) || c.endsWith(SKY_AXES.moist[1]) ? "+" : "−"}${cond[c][m]})` : `${m}(${cond[c][m]})`).join("+"));
+    return { key: tokens.join(" · "), tokens };
+  }
+  const distinctSignatures = (a, b) => { const A = new Set(a.tokens), B = new Set(b.tokens); return a.tokens.some(t => !B.has(t)) && b.tokens.some(t => !A.has(t)); };
+  function signatureDifference(a, b) {
+    const A = new Set(a.tokens), B = new Set(b.tokens), hA = new Set(a.held), hB = new Set(b.held);
+    return { onlyA: a.tokens.filter(t => !B.has(t)), onlyB: b.tokens.filter(t => !A.has(t)),
+      heldOnlyA: a.held.filter(s => !hB.has(s)), heldOnlyB: b.held.filter(s => !hA.has(s)) };
+  }
+
+  // LAYER 8 — the archetype's explicit time bands, checked on a finished witness run (simulate().pacing)
+  //   policy { marginSeconds: [min, max], firstPurchaseSeconds: [min, max], maxPurchaseGapSeconds }
+  function checkPacing(run, P) {
+    const m = run.pacing, why = [];
+    const band = (v, [lo, hi], what) => { if (v === null) why.push(`${what}: never`); else if (v < lo) why.push(`${what} at ${v} s < ${lo} s (too fast)`); else if (v > hi) why.push(`${what} at ${v} s > ${hi} s (too slow)`); };
+    band(run.marginSeconds, P.marginSeconds, "margin reached");
+    band(m.firstPurchaseSeconds, P.firstPurchaseSeconds, "first purchase");
+    if (m.maxPurchaseGapSeconds > P.maxPurchaseGapSeconds) why.push(`purchase gap of ${m.maxPurchaseGapSeconds} s before the margin > ${P.maxPurchaseGapSeconds} s`);
+    return { ok: !why.length, reasons: why };
+  }
+
+  // shared static search (stage 1) + helpers for stage 2; used by findWitness and findStrategies
+  function prepare(planet, config, traits, opts) {
     const t0 = Date.now(), V = config.validation, G = config.grow;
     const excluded = new Set(opts.excludeTraits || []);
     const probe = BLOOM.createSim(planet, config, traits, { rng: () => 0.5 });
@@ -44,15 +98,22 @@
       Object.assign(probe.genome, base.genome); Object.assign(probe.sky, base.sky); Object.assign(probe.tf, base.tf);
       probe.biomass = Infinity; for (const id of items) if (!probe.buy(id)) return false; return true; // legality via the engine's own rules
     };
-    const staticCoverage = items => {
-      if (!setState(items)) return -1;
+    const staticHeld = items => { // sections an unhurried plant could hold with this terminal build (null = illegal)
+      if (!setState(items)) return null;
       const ok = M.SEC.map((_, i) => probe.evaluate(i).fitness > G.growThresh);
       const hasCross = items.some(id => probe.traitById[id].effect.type === "crossing");
       const seen = new Set([M.ORIGIN]), st = [M.ORIGIN];
       while (st.length) { const a = st.pop();
         const next = hasCross ? [...M.NBRS[a], ...xl[a]] : M.NBRS[a];
         for (const b of next) if (ok[b] && !seen.has(b)) { seen.add(b); st.push(b); } }
-      let area = 0; for (const i of seen) area += M.AREA[i]; return area / M.LAND;
+      return seen;
+    };
+    const covMemo = new Map();
+    const staticCoverage = items => {
+      const k = items.join(); if (covMemo.has(k)) return covMemo.get(k);
+      const seen = staticHeld(items); let c = -1;
+      if (seen) { let area = 0; for (const i of seen) area += M.AREA[i]; c = area / M.LAND; }
+      covMemo.set(k, c); return c;
     };
     const costOf = items => { setState([]); let c = 0; for (const id of items) { c += probe.price(probe.traitById[id]); probe.buy(id); } return c; };
 
@@ -72,52 +133,171 @@
       if (cov >= 0) states.push({ items, cov });
     }
     const bestStatic = states.reduce((b, s) => s.cov > b.cov ? s : b, { cov: 0, items: [] });
-    const search = { staticStates: states.length, capped, candidates: 0, simulations: 0, target };
-    const done = r => { search.ms = Date.now() - t0; setState([]);
-      // a failure after hitting the enumeration cap says nothing about the planet — flag it as inconclusive
-      if (!r.ok && capped) r = { ...r, inconclusive: true, reason: `search capped at ${V.maxStaticStates} static builds (result inconclusive): ${r.reason}` };
-      return { ...r, search, bestStatic: { coverage: bestStatic.cov, build: bestStatic.items } }; };
-    if (bestStatic.cov < probe.winAt) return done({ ok: false, layer: 4,
-      reason: `no legal build can hold the win simultaneously: best build reaches ${(bestStatic.cov * 100).toFixed(1)}% < ${(probe.winAt * 100).toFixed(0)}%` });
-    const cands = states.filter(s => s.cov >= target).map(s => ({ ...s, cost: costOf(s.items) }))
+    const cands = states.filter(s => s.cov >= target).map(s => ({ ...s, cost: costOf(s.items), key: s.items.join() }))
       .sort((a, b) => a.cost - b.cost || a.items.length - b.items.length);
-    search.candidates = cands.length;
-    if (!cands.length) return done({ ok: false, layer: 6,
-      reason: `no legal build reaches the validation margin: best build holds ${(bestStatic.cov * 100).toFixed(1)}% < target ${(target * 100).toFixed(0)}%` });
 
-    // ---- stage 2: order each candidate greedily by static gain, then prove it in the real sim
+    // ---- stage 2 helpers: order a build greedily by static gain; opening variants for the Spread boosters
     const order = items => { const left = items.slice(), out = [];
       while (left.length) { let bi = 0, bc = -2, bp = Infinity;
         for (let k = 0; k < left.length; k++) { const c = staticCoverage([...out, left[k]]); if (c < 0) continue;
-          const p = probe.price(probe.traitById[left[k]]);
+          setState([...out, left[k]]); const p = probe.price(probe.traitById[left[k]]); // (next-tier price, as in BLOOM-005)
           if (c > bc + 1e-9 || (Math.abs(c - bc) <= 1e-9 && p < bp)) { bi = k; bc = c; bp = p; } }
         out.push(left.splice(bi, 1)[0]); }
       return out; };
     const openings = [boosters.slice(0, 1).map(t => t.id), [], boosters.map(t => t.id)]
       .filter((o, i, a) => a.findIndex(x => x.join() === o.join()) === i);
+
+    // ---- layer 7 (see header): candidate classes by minimal sufficient core, then effect tokens per core
+    const counts = items => items.reduce((m, id) => (m[id] = (m[id] || 0) + 1, m), {});
+    const within = (a, b) => Object.keys(a).every(id => (b[id] || 0) >= a[id]); // multiset a ⊆ b
+    const classes = [], classOf = new Map();
+    for (const c of cands) { const n = counts(c.items), cl = classes.find(k => within(k.n, n));
+      if (cl) cl.members.push(c); else classes.push({ core: c.items, n, members: [c] });
+      classOf.set(c.key, cl || classes[classes.length - 1]); }
+    const signature = items => { const cl = classOf.get(items.join());
+      if (cl.signature) return cl.signature;
+      const held = [...staticHeld(cl.core)].sort((a, b) => a - b); // leaves the probe in the core's state
+      const shift = { temp: probe.sky.temp - base.sky.temp, moist: probe.sky.moist - base.sky.moist };
+      return (cl.signature = { ...signatureOf(cl.core, probe.traitById, shift), minimalBuild: cl.core, held: held.map(i => M.SEC[i].id),
+        heldShare: +(held.reduce((a, i) => a + M.AREA[i], 0) / M.LAND).toFixed(4) }); };
+    // pacing context (layer 8, recorded — not a verdict): land open before any upgrade
+    const early = (() => { const held = staticHeld([]), grow = M.SEC.map((_, i) => probe.evaluate(i).fitness > G.growThresh);
+      let r = 0, g = 0; for (let i = 0; i < M.SC; i++) { if (held.has(i)) r += M.AREA[i]; if (grow[i]) g += M.AREA[i]; }
+      return { reachableShare: +(r / M.LAND).toFixed(4), growableShare: +(g / M.LAND).toFixed(4) }; })();
+
+    const search = { staticStates: states.length, capped, candidates: cands.length, simulations: 0, target };
+    // layers 4 and 6 are static verdicts (a capped enumeration makes them inconclusive)
+    let staticFail = null;
+    if (bestStatic.cov < probe.winAt) staticFail = { ok: false, layer: 4,
+      reason: `no legal build can hold the win simultaneously: best build reaches ${(bestStatic.cov * 100).toFixed(1)}% < ${(probe.winAt * 100).toFixed(0)}%` };
+    else if (!cands.length) staticFail = { ok: false, layer: 6,
+      reason: `no legal build reaches the validation margin: best build holds ${(bestStatic.cov * 100).toFixed(1)}% < target ${(target * 100).toFixed(0)}%` };
+    const done = r => { search.ms = Date.now() - t0; setState([]);
+      // a failure after hitting the enumeration cap says nothing about the planet — flag it as inconclusive
+      if (!r.ok && capped) r = { ...r, inconclusive: true, reason: `search capped at ${V.maxStaticStates} static builds (result inconclusive): ${r.reason}` };
+      return { ...r, search, early, bestStatic: { coverage: bestStatic.cov, build: bestStatic.items } }; };
+    const run = (cand, opening, measurePeak) => { search.simulations++;
+      const r = simulate(planet, config, traits, [...opening, ...order(cand.items)], target, !!measurePeak);
+      r.staticCoverage = cand.cov; r.build = cand.items; if (r.ok) r.signature = signature(cand.items); return r; };
+    const noWin = (best, capNote) => ({ ok: false, layer: best && best.won ? 6 : 5, best,
+      reason: best && best.won ? `witness wins but peaks at ${(best.peak * 100).toFixed(1)}% < target ${(target * 100).toFixed(0)}%`
+        : capNote ? `no witness reached the win with earned Biomass within ${capNote} (best peak ${best ? (best.peak * 100).toFixed(1) : 0}%)`
+        : `no candidate build reached the win with earned Biomass (best peak ${best ? (best.peak * 100).toFixed(1) : 0}%)` });
+    // order-independent classification of any build (same rule as the classes above)
+    const classify = items => { const cov = staticCoverage(items); if (cov < target) return { sufficient: false, coverage: cov };
+      const cl = classes.find(k => within(k.n, counts(items))); return { sufficient: true, coverage: cov, signature: cl && signature(cl.core) }; };
+    return { V, target, cands, classes, openings, signature, classify, search, done, run, noWin, staticFail, capped, early };
+  }
+
+  // layers 4–6: the cheapest build that a real, no-cheat run wins with margin (BLOOM-005 behaviour)
+  function findWitness(planet, config, traits, opts = {}) {
+    const X = prepare(planet, config, traits, opts), V = X.V;
+    if (X.staticFail) return X.done(X.staticFail);
     let best = null;
-    for (const cand of cands) for (const opening of openings) {
-      if (search.simulations >= V.maxSimulations) return done({ ok: false, layer: best && best.won ? 6 : 5,
-        reason: best && best.won ? `witness wins but peaks at ${(best.peak * 100).toFixed(1)}% < target ${(target * 100).toFixed(0)}%`
-          : `no witness reached the win with earned Biomass within ${V.maxSimulations} simulations × ${V.maxTicks} ticks (best peak ${best ? (best.peak * 100).toFixed(1) : 0}%)`, best });
-      search.simulations++;
-      const r = simulate(planet, config, traits, [...opening, ...order(cand.items)], target, !!opts.measurePeak);
-      r.staticCoverage = cand.cov;
-      if (r.ok) return done({ ok: true, layer: null, reason: null, witness: r });
+    for (const cand of X.cands) for (const opening of X.openings) {
+      if (X.search.simulations >= V.maxSimulations) return X.done(X.noWin(best, `${V.maxSimulations} simulations × ${V.maxTicks} ticks`));
+      const r = X.run(cand, opening, opts.measurePeak);
+      if (r.ok) return X.done({ ok: true, layer: null, reason: null, witness: r });
       if (!best || r.peak > best.peak) best = r;
     }
-    return done({ ok: false, layer: best && best.won ? 6 : 5,
-      reason: best && best.won ? `witness wins but peaks at ${(best.peak * 100).toFixed(1)}% < target ${(target * 100).toFixed(0)}%`
-        : `no candidate build reached the win with earned Biomass (best peak ${best ? (best.peak * 100).toFixed(1) : 0}%)`, best });
+    return X.done(X.noWin(best));
   }
+
+  // layers 4–8 (BLOOM-006). Candidate builds are grouped into CLASSES by signature (cheapest class first).
+  // Classes are simulated in turn — members cheapest first, every opening — until `minStrategies`
+  // pairwise-distinct classes QUALIFY: a member wins with margin AND passes the pacing policy. A class
+  // that is materially the same as an already-qualified one is skipped (it cannot add a strategy).
+  // Class outcomes: qualified · slow (its cheapest build that wins with margin misses pacing under every
+  // Spread opening) · lost (every member simulated, none wins) · unresolved (a cap was reached first:
+  // ≤ maxBuildsPerClass builds per class, ≤ maxSimulations runs in all). Verdicts: layer 7 needs `minStrategies` distinct classes that win with margin,
+  // layer 8 needs that many that qualify. A shortfall is FAIL only when nothing is unresolved and the
+  // static enumeration was not capped; otherwise it is INCONCLUSIVE. Limits: config.validation.diversity.
+  //   → { ok, layer, status PASS|FAIL|INCONCLUSIVE, reason, required, strategies[], slow[], layer7, layer8,
+  //       differences[], classes[], first (a layers 4–6 result: its witness), early, search }
+  function findStrategies(planet, config, traits, opts = {}) {
+    const X = prepare(planet, config, traits, opts), D = X.V.diversity, need = opts.minStrategies || 1, P = opts.pacing || null;
+    if (X.staticFail) { const f = X.done(X.staticFail);
+      return { ...f, status: f.inconclusive ? "INCONCLUSIVE" : "FAIL", required: need, strategies: [], slow: [], classes: [], first: f }; }
+    const classes = X.classes.map(k => ({ signature: X.signature(k.core), members: k.members }));
+    const qualified = [], slow = []; let best = null, budgetOut = false;
+    for (const cl of classes) {
+      if (qualified.length >= need) { cl.status = "not needed"; continue; }
+      if (qualified.some(q => !distinctSignatures(q.signature, cl.signature))) { cl.status = "same as a qualified strategy"; continue; }
+      cl.status = "unresolved"; cl.tried = 0; let winner = null;
+      for (const cand of cl.members.slice(0, D.maxBuildsPerClass)) {
+        for (const opening of X.openings) {
+          if (X.search.simulations >= D.maxSimulations) { budgetOut = true; break; }
+          const r = X.run(cand, opening, opts.measurePeak);
+          if (!r.ok) { if (!best || r.peak > best.peak) best = r; continue; }
+          // a witness proves its strategy only if its whole core was bought before the margin was reached
+          const got = {}; for (const p of r.purchases) if (p.tick <= r.marginTick) got[p.id] = (got[p.id] || 0) + 1;
+          const core = {}; for (const id of cl.signature.minimalBuild) core[id] = (core[id] || 0) + 1;
+          if (Object.keys(core).some(id => (got[id] || 0) < core[id])) { cl.coreIncomplete = (cl.coreIncomplete || 0) + 1; continue; }
+          r.pacingCheck = P ? checkPacing(r, P) : { ok: true, reasons: [] };
+          if (r.pacingCheck.ok) { winner = r; break; }
+          if (!cl.slowWitness) cl.slowWitness = r;
+        }
+        if (budgetOut || winner) break;
+        cl.tried++;
+        if (cl.slowWitness) break; // this build wins; its openings settled pacing — more builds only matter for losers
+      }
+      if (winner) { cl.status = "qualified"; qualified.push(winner); }
+      else if (cl.slowWitness && !budgetOut) { cl.status = "slow"; slow.push(cl.slowWitness); }
+      else if (!budgetOut && cl.tried === cl.members.length) cl.status = cl.coreIncomplete ? "wins only before its core is bought (no proof)" : "lost";
+      else if (cl.slowWitness) slow.push(cl.slowWitness); // won but budget ran out before pacing was settled
+      if (budgetOut) break;
+    }
+    const search = { ...X.search, classes: classes.length, budgetOut,
+      limits: { maxSimulations: D.maxSimulations, maxBuildsPerClass: D.maxBuildsPerClass, openings: X.openings.length, maxTicks: X.V.maxTicks } };
+    const unresolved = classes.some(c => !c.status || c.status === "unresolved") || X.capped;
+    const summary = w => ({ signature: w.signature.key, tokens: w.signature.tokens, minimalBuild: w.signature.minimalBuild, held: w.signature.held,
+      heldShare: w.signature.heldShare, build: w.build, plan: w.plan, purchases: w.purchases.map(p => ({ id: p.id, seconds: p.seconds, cost: p.cost })),
+      totalSpent: w.totalSpent, winSeconds: w.winSeconds, marginSeconds: w.marginSeconds, peak: w.peak, peakMeasured: w.peakMeasured,
+      pacing: w.pacing, pacingCheck: w.pacingCheck });
+    const classRows = classes.map(c => ({ signature: c.signature.key, members: c.members.length, status: c.status || "not reached", cheapest: c.members[0].cost,
+      ...(c.coreIncomplete ? { winsBeforeCoreBought: c.coreIncomplete } : {}) }));
+    const base = { required: need, classes: classRows, early: X.early, search };
+    const winners = [...qualified, ...slow];
+    if (!winners.length) { const f = X.done(budgetOut ? X.noWin(best, `${D.maxSimulations} simulations × ${X.V.maxTicks} ticks`) : X.noWin(best));
+      // no witness at all: FAIL only if every class was actually settled (otherwise nothing was proven either way)
+      const st = f.inconclusive || unresolved ? "INCONCLUSIVE" : "FAIL";
+      return { ...base, ...f, search, status: st, reason: st === "INCONCLUSIVE" && !f.inconclusive ? `INCONCLUSIVE — search capped: ${f.reason}` : f.reason,
+        strategies: [], slow: [], first: f }; }
+    const distinct = winners.reduce((acc, w) => acc.every(x => distinctSignatures(x.signature, w.signature)) ? acc.concat(w) : acc, []);
+    const verdict = n => n >= need ? "PASS" : unresolved ? "INCONCLUSIVE" : "FAIL";
+    const layer7 = { status: verdict(distinct.length), strategies: distinct.length, required: need };
+    const layer8 = { status: layer7.status === "PASS" ? verdict(qualified.length) : layer7.status, qualifying: qualified.length, required: need, policy: P };
+    const differences = [];
+    for (let i = 0; i < distinct.length; i++) for (let j = i + 1; j < distinct.length; j++)
+      differences.push({ a: distinct[i].signature.key, b: distinct[j].signature.key, ...signatureDifference(distinct[i].signature, distinct[j].signature) });
+    const out = { ...base, strategies: qualified.map(summary), slow: slow.map(summary), layer7, layer8, differences, witnesses: qualified,
+      first: X.done({ ok: true, layer: null, reason: null, witness: winners[0] }) };
+    const list = ws => ws.map(w => `[${w.signature.key}]`).join(" ");
+    if (layer7.status !== "PASS") return { ...out, ok: false, layer: 7, status: layer7.status,
+      reason: layer7.status === "INCONCLUSIVE" ? `INCONCLUSIVE — search capped with ${distinct.length} of ${need} broad strategies proven ${list(distinct)}`
+        : `only ${distinct.length} of ${need} required broad strategies wins with margin ${list(distinct)}; every other candidate class is ${classes.length > 1 ? "materially the same or cannot win" : "absent (static proof)"}` };
+    if (layer8.status !== "PASS") return { ...out, ok: false, layer: 8, status: layer8.status,
+      reason: `${layer8.status === "INCONCLUSIVE" ? "INCONCLUSIVE — search capped: " : ""}only ${qualified.length} of ${need} broad strategies meet the pacing policy — ` +
+        slow.map(w => `[${w.signature.key}] ${w.pacingCheck.reasons.join("; ")}`).join(" | ") };
+    return { ...out, ok: true, layer: null, status: "PASS", reason: null };
+  }
+
+  // which broad strategy a terminal build belongs to (layer-7 signature of its minimal sufficient core);
+  // { sufficient: false } when its static estimate misses the validation target
+  function strategyOf(planet, config, traits, items, opts = {}) { const X = prepare(planet, config, traits, opts), r = X.classify(items); X.done({}); return r; }
+  // the static candidate classes (one per minimal sufficient core, cheapest first) — no simulation, so not yet proof
+  function strategyClasses(planet, config, traits, opts = {}) { const X = prepare(planet, config, traits, opts);
+    const out = X.classes.map(k => ({ signature: X.signature(k.core).key, core: k.core, members: k.members.length, cheapest: k.members[0].cost })); X.done({}); return out; }
 
   // one real run: buy `plan` in order via sim.buy as soon as earned Biomass allows
   function simulate(planet, config, traits, plan, target, measurePeak = false) {
     const V = config.validation, sim = BLOOM.createSim(planet, config, traits, { rng: mulberry32(V.rngSeed) }); // never Math.random
     const sec = t => +(t * config.tickMs / 1000).toFixed(1);
     const purchases = []; let k = 0, peak = 0, peakTick = 0, winTick = null, marginTick = null, lastGrowth = 0, illegal = null, atMargin = null;
+    const perMin = Math.round(60000 / config.tickMs), earnedPerMinute = []; // Biomass the economy produced, per game-minute (observed, never edited)
     for (let t = 1; t <= V.maxTicks; t++) {
-      const cov = sim.tick();
+      const before = sim.biomass, cov = sim.tick();
+      if (marginTick === null) { const m = ((t - 1) / perMin) | 0; earnedPerMinute[m] = (earnedPerMinute[m] || 0) + (sim.biomass - before); }
       if (cov > peak + 1e-9) { peak = cov; peakTick = t; lastGrowth = t; }
       if (winTick === null && sim.won) winTick = t;
       if (marginTick === null && cov >= target) { marginTick = t; atMargin = snapshot(sim); if (!measurePeak) break; }
@@ -132,7 +312,19 @@
       totalSpent: purchases.reduce((a, p) => a + p.cost, 0), usedCrossing: purchases.some(p => sim.traitById[p.id].effect.type === "crossing"),
       winTick, winSeconds: winTick && sec(winTick), marginTick, marginSeconds: marginTick && sec(marginTick),
       peak: +peak.toFixed(4), peakTick, peakMeasured: measurePeak, target: +target.toFixed(4), crossingFootholds: sim.crossing.footholds,
-      uncolonizedAtMargin: atMargin, uncolonizedAtEnd: snapshot(sim) };
+      uncolonizedAtMargin: atMargin, uncolonizedAtEnd: snapshot(sim), pacing: pacingOf() };
+    // layer-8 measurements. Gaps run start → 1st purchase → … → last purchase made before the margin; the
+    // wait from the last purchase to the margin is reported separately (terminalWaitSeconds), not gated.
+    function pacingOf() {
+      const end = marginTick ?? V.maxTicks, before = purchases.filter(p => p.tick <= end);
+      const gaps = before.map((p, i) => +(p.seconds - (i ? before[i - 1].seconds : 0)).toFixed(1));
+      const epm = earnedPerMinute.map(x => Math.round(x)), third = Math.max(1, Math.floor(epm.length / 3));
+      const avg = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
+      return { firstPurchaseSeconds: before.length ? before[0].seconds : null, purchaseGapsSeconds: gaps,
+        maxPurchaseGapSeconds: gaps.length ? Math.max(...gaps) : null,
+        terminalWaitSeconds: marginTick && before.length ? +(sec(marginTick) - before[before.length - 1].seconds).toFixed(1) : null,
+        earnedPerMinute: epm, economyAccelerates: epm.length >= 3 && avg(epm.slice(-third)) > avg(epm.slice(0, third)) };
+    }
     // land the witness does NOT hold (sections < 40% living) and why — proof the win doesn't need 100%
     function snapshot(sim) {
       const living = sim.livingCountBySection();
@@ -144,5 +336,6 @@
   }
 
   root.BLOOM.findWitness = findWitness;
-  root.BLOOM.witness = { findWitness, simulate };
+  root.BLOOM.findStrategies = findStrategies;
+  root.BLOOM.witness = { findWitness, findStrategies, strategyOf, strategyClasses, simulate, signatureOf, distinctSignatures, checkPacing };
 })(typeof window !== "undefined" ? window : globalThis);

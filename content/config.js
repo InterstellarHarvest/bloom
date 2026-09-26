@@ -53,6 +53,10 @@
       maxSimulations: 16,       // hard cap on witness simulations per planet
       maxWaterPts: 2,           // water-strategy levels the solver considers (0..2)
       maxSkySteps: 2,           // Terraform steps per sky axis the solver considers (0..2)
+      // strategy diversity + pacing search (bible §10.3 layers 7–8, BLOOM-006): candidate builds grouped by
+      // strategy signature; ≤ maxBuildsPerClass cheapest builds per signature (each under every Spread opening),
+      // ≤ maxSimulations real runs in all. A cap reached before a verdict makes the result INCONCLUSIVE.
+      diversity: { maxSimulations: 40, maxBuildsPerClass: 2 },
     },
 
     // biomass economy (bible §8). bubbleChance is planet-wide per tick (~1 per 14 s while anything thrives)

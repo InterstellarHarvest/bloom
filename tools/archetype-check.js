@@ -1,4 +1,6 @@
 // BLOOM — archetypes + winnability validation (BLOOM-005, bible §10.1 + §10.3 layers 4–6). Plain Node.
+// Since BLOOM-006 Ocean Archipelago production generation also requires layers 7–8 (strategy diversity and
+// pacing); their fixtures live in tools/strategy-check.js, the public-seed sweep statistics here.
 //
 //   node tools/archetype-check.js
 //
@@ -46,8 +48,11 @@ check(genErr && genErr.attempts.length === OA.generation.maxAttempts && genErr.a
 
 // 5 · coherence across a fixed sweep (full production path incl. winnability)
 console.log("\n# 5 Ocean Archipelago coherence — public seeds 1–40");
-const worlds = [], genFails = [], tS = Date.now();
-for (const s of SWEEP) { try { worlds.push(BLOOM.generateFromArchetype(OA, s, { config, traits })); } catch { genFails.push(s); } }
+const worlds = [], genFails = [], allAttempts = [], seedMs = [], tS = Date.now();
+for (const s of SWEEP) { const t = Date.now();
+  try { const p = BLOOM.generateFromArchetype(OA, s, { config, traits }); worlds.push(p); allAttempts.push(...p.archetype.rejectedAttempts); }
+  catch (e) { if (!e.attempts) throw e; genFails.push(s); allAttempts.push(...e.attempts); }
+  seedMs.push(Date.now() - t); }
 const sweepMs = Date.now() - tS;
 const W = worlds.map(p => ({ p, a: p.archetype, secs: p.sections.length,
   moist: p.sections.reduce((a, s) => a + p.globalClimate.moisture + s.local.moistureOffset, 0) / p.sections.length,
@@ -55,7 +60,9 @@ const W = worlds.map(p => ({ p, a: p.archetype, secs: p.sections.length,
 const mean = xs => xs.reduce((a, b) => a + b, 0) / xs.length, range = xs => `${Math.min(...xs)}–${Math.max(...xs)}`;
 const dflt = SWEEP.map(s => BLOOM.generatePlanet({ seed: s, waterPct: 60, sections: 14, maxCrossingGap: config.crossing.maxGap }));
 const dfltMoist = mean(dflt.map(p => mean(p.sections.map(s => p.globalClimate.moisture + s.local.moistureOffset))));
-check(worlds.length >= 36, "≥ 90% of public seeds yield an accepted, winnable world", `${worlds.length}/40 (explicit failures: ${genFails.join(", ") || "none"}), ${sweepMs} ms total`);
+// BLOOM-005 accepted 39/40 under layers 1–6; requiring layers 7–8 turns seeds 3, 7, 19, 38 into explicit
+// failures (their only structurally valid attempts are single-strategy or off-pace). That is by design.
+check(worlds.length >= 32, "≥ 80% of public seeds yield an accepted world passing layers 1–8 (the rest fail explicitly)", `${worlds.length}/40 (explicit failures: ${genFails.join(", ") || "none"}), ${sweepMs} ms total`);
 check(W.every(w => Math.abs(w.a.actualWaterPct - w.a.requestedWaterPct) <= OA.water.tolerance), `water tolerance: every accepted world within ±${OA.water.tolerance} of its request`,
   `actual ${range(W.map(w => w.a.actualWaterPct))}%, max drift ${Math.max(...W.map(w => Math.abs(w.a.actualWaterPct - w.a.requestedWaterPct))).toFixed(1)}`);
 check(W.every(w => w.a.actualWaterPct >= OA.water.min - OA.water.tolerance && w.a.actualWaterPct <= OA.water.max + OA.water.tolerance) && mean(W.map(w => w.a.actualWaterPct)) >= 55,
@@ -73,6 +80,26 @@ const adapting = W.filter(w => w.build.some(id => nonSpreadIds.includes(id))).le
 check(adapting / W.length >= 0.7, "crossing alone rarely solves it: most witnesses also need an Adapt/Terraform decision", `${adapting}/${W.length} witnesses`);
 check(new Set(W.map(w => J(w.p.tilemap))).size === W.length && new Set(W.map(w => w.build.join())).size >= 5, "designed randomness: every map distinct; witness builds varied",
   `${new Set(W.map(w => w.build.join())).size} distinct witness builds`);
+
+// 5b · layers 7–8 across the sweep: production acceptance and the distributions behind the pacing bands
+console.log("\n# 5b layers 7–8 across the sweep");
+{
+  const L = {}; for (const a of allAttempts) { const r = a.rejected[0] || "?", m = r.match(/^layer (\d)[^:]*?( INCONCLUSIVE)?:/);
+    const k = m ? `layer ${m[1]}${m[2] ? " inconclusive" : ""}` : "structure/geography (layers 1–3, water, landmasses)"; L[k] = (L[k] || 0) + 1; }
+  const S = worlds.flatMap(p => p.archetype.strategies.list), P = OA.validation.pacing, num = xs => xs.filter(x => x !== null);
+  const dist = xs => { const v = num(xs).slice().sort((a, b) => a - b); return v.length ? `${v[0]}–${v[v.length - 1]} (median ${v[v.length >> 1]})` : "n/a"; };
+  const cls = worlds.map(p => BLOOM.witness.strategyClasses(p, config, traits).length); // candidate classes before simulation
+  console.log(`  rejected attempts by first reason: ${Object.entries(L).map(([k, n]) => `${k} ${n}`).join(" · ")}`);
+  console.log(`  qualifying strategies proven per world (search stops at the required ${OA.validation.minStrategies}): ${worlds.map(p => p.archetype.strategies.found).join(",")}`);
+  console.log(`  static candidate strategy classes per accepted world (before simulation, not proof): ${dist(cls)}`);
+  console.log(`  over ${S.length} accepted strategies: margin ${dist(S.map(x => x.marginSeconds))} s · win ${dist(S.map(x => x.winSeconds))} s · first purchase ${dist(S.map(x => x.firstPurchaseSeconds))} s · max purchase gap ${dist(S.map(x => x.maxPurchaseGapSeconds))} s · terminal wait ${dist(S.map(x => x.terminalWaitSeconds))} s`);
+  console.log(`  generation runtime per public seed: ${dist(seedMs)} ms`);
+  check(worlds.every(p => J(p.archetype.validatedLayers) === J([1, 2, 3, 4, 5, 6, 7, 8]) && p.archetype.strategies.found >= OA.validation.minStrategies),
+    "every accepted world passed layers 1–8 with ≥ 2 qualifying broad strategies recorded");
+  check(S.every(x => x.marginSeconds >= P.marginSeconds[0] && x.marginSeconds <= P.marginSeconds[1] && x.firstPurchaseSeconds >= P.firstPurchaseSeconds[0] &&
+    x.firstPurchaseSeconds <= P.firstPurchaseSeconds[1] && x.maxPurchaseGapSeconds <= P.maxPurchaseGapSeconds), "every accepted strategy sits inside the pacing bands");
+  check(Object.keys(L).some(k => k.startsWith("layer 7")) && Object.keys(L).some(k => k.startsWith("layer 8")), "the sweep rejects real attempts at both layer 7 and layer 8");
+}
 
 // 6–10 · fixed winning fixture
 console.log(`\n# 6–10 fixed winning fixture — Ocean Archipelago public seed ${FIX.win}`);
@@ -118,9 +145,9 @@ for (const [seed, layer] of [[FIX.negLayer4, 4], [FIX.negLayer6, 6]]) {
   const f = BLOOM.validatePlanet(p, config, { traits, winnability: true });
   check(s.ok && s.stats.reach.strongest.landShare === 1 && !f.ok && f.stats.witness.layer === layer,
     `seed ${seed} (attempt ${p.archetype.attempt}): structurally valid + fully reachable, REJECTED at layer ${layer}`, f.errors[0]);
-  const full = BLOOM.generateFromArchetype(OA, seed, { config, traits });
-  check(full.archetype.attempt > p.archetype.attempt && full.archetype.rejectedAttempts[p.archetype.attempt].rejected.some(r => r.startsWith(`layer ${layer}`)),
-    `…and production generation skips that attempt deterministically`, `accepted attempt ${full.archetype.attempt} instead of ${p.archetype.attempt}`);
+  let full = null, atts; try { full = BLOOM.generateFromArchetype(OA, seed, { config, traits }); atts = full.archetype.rejectedAttempts; } catch (e) { if (!e.attempts) throw e; atts = e.attempts; }
+  check((!full || full.archetype.attempt > p.archetype.attempt) && atts[p.archetype.attempt].rejected.some(r => r.startsWith(`layer ${layer}`)),
+    `…and production generation skips that attempt deterministically`, full ? `accepted attempt ${full.archetype.attempt} instead of ${p.archetype.attempt}` : `no later attempt passes layers 1–8: seed ${seed} fails explicitly`);
 }
 
 // 12 · solver bounds + deterministic output
