@@ -26,4 +26,4 @@ Tips for the tester: click a region to read it. Hover an upgrade before buying: 
 | 1 | | | | |
 | 2 | | | | |
 
-**Headless baseline (2026-09-26, `tools/slice-check.js`)** for comparison: a perfect-knowledge bot with a 4 s reaction wins in ~5 min (wet ≈ 5m10s, dry ≈ 5m05s). The first upgrade is affordable at ~65–75 s. A generalist caps at 67.6%. Flood II drops to ~24%.
+**Headless baseline (2026-09-26, `tools/slice-check.js`)** for comparison: a perfect-knowledge bot with a 4 s reaction wins in ~5 min (wet ≈ 5m10s, dry ≈ 5m05s). The first upgrade is affordable at ~65–75 s. The tested build with neither water Adaptation nor water Terraform (Seed Output ×2, Early Maturity, Cold ×2, Heat, Salt, Radiation) caps at 67.6%; Humidify ×2 can stand in for Drought (added 2026-09-26, BLOOM-006). Flood II drops to ~24%.
