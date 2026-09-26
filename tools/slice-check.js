@@ -67,7 +67,7 @@ const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"} 
   // 2 · Readouts, preview, tradeoffs (fresh page, biomass granted so buys don't wait)
   const p = await open();
   const first = await p.evaluate(() => { for (let t = 0; t < 600; t++) { BLOOM_API.advance(1); refreshShop();
-      if (document.querySelector("button.buy:not(.off)")) return ticks; } return null; });
+      if (document.querySelector("button.buy:not(.off)")) return BLOOM_API.state().ticks; } return null; });
   check(first !== null, "shop unlocks during normal play (no test-hook purchases)", first ? `first affordable at ${Math.round(first * TICK_S)} s` : "nothing affordable by 96 s");
 
   await p.evaluate(() => { BLOOM_API.addBiomass(5000); BLOOM_API.buy("flood"); });
