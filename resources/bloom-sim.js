@@ -1,4 +1,5 @@
-// BLOOM — shared simulation engine (no DOM). Extracted from demos/demo-run.html (BLOOM-002).
+// BLOOM — shared simulation engine (no DOM). Extracted from demos/demo-run.html (BLOOM-002);
+// water / impassable terrain + shared geometry added in BLOOM-003.
 // createSim(planet, config, traits, {rng}) builds one run: section layout, the 4-category
 // evaluation, the tick (spread / die-back / recovery / economy / bubbles / win), and the
 // upgrade effects. All numbers come from `config`; all content from `planet` + `traits`.
@@ -41,20 +42,80 @@
     return map;
   }
 
+  // ---- shared geometry (4-neighbour grid). Used by the engine, generator, validator and demos.
+  // components(mask) labels connected runs of mask tiles; ids follow first-tile scan order.
+  function components(mask, W, H) {
+    const N = W * H, id = new Int32Array(N).fill(-1), sizes = [];
+    for (let s = 0; s < N; s++) {
+      if (!mask[s] || id[s] >= 0) continue;
+      const c = sizes.length; let n = 0; const st = [s]; id[s] = c;
+      while (st.length) { const t = st.pop(); n++; const x = t % W, y = (t / W) | 0;
+        if (x > 0 && mask[t - 1] && id[t - 1] < 0) { id[t - 1] = c; st.push(t - 1); }
+        if (x < W - 1 && mask[t + 1] && id[t + 1] < 0) { id[t + 1] = c; st.push(t + 1); }
+        if (y > 0 && mask[t - W] && id[t - W] < 0) { id[t - W] = c; st.push(t - W); }
+        if (y < H - 1 && mask[t + W] && id[t + W] < 0) { id[t + W] = c; st.push(t + W); } }
+      sizes.push(n);
+    }
+    return { id, sizes };
+  }
+  // adjacency between land sections from actual geography (tilemap value -1 = impassable)
+  function sectionAdjacency(tilemap, W, H, SC) {
+    const nb = Array.from({ length: SC }, () => new Set());
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const a = tilemap[y * W + x]; if (a < 0) continue;
+      if (x + 1 < W) { const b = tilemap[y * W + x + 1]; if (b >= 0 && b !== a) { nb[a].add(b); nb[b].add(a); } }
+      if (y + 1 < H) { const b = tilemap[(y + 1) * W + x]; if (b >= 0 && b !== a) { nb[a].add(b); nb[b].add(a); } }
+    }
+    return nb.map(set => [...set].sort((p, q) => p - q));
+  }
+  // number of separate pieces each section's tiles form (1 = contiguous, 0 = empty)
+  function sectionPieces(tilemap, W, H, SC) {
+    return Array.from({ length: SC }, (_, k) => components(Array.from(tilemap, v => v === k ? 1 : 0), W, H).sizes.length);
+  }
+
+  // ---- planet → tile layout. A planet either supplies `tilemap` (section index per tile, -1 =
+  // impassable: water/void/lava) or gets a weighted-Voronoi layout from section `center`s.
+  // Sections may be kind "land" (default) or impassable kinds; the simulation only ever sees land
+  // sections, and every impassable tile is -1. An all-land Voronoi planet (First Bloom) takes the
+  // original path unchanged.
+  const KINDS = new Set(["land", "water", "void", "lava"]);
+  function resolveLayout(planet, config) {
+    const W = planet.gridWidth, H = planet.gridHeight, N = W * H, ALL = planet.sections;
+    for (const s of ALL) if (s.kind !== undefined && !KINDS.has(s.kind))
+      throw new Error(`bloom-sim: section ${s.id} has unknown kind "${s.kind}"`);
+    let full;
+    if (planet.tilemap !== undefined) {
+      const tm = planet.tilemap;
+      if (!tm || tm.length !== N) throw new Error(`bloom-sim: tilemap must have ${N} entries`);
+      for (let i = 0; i < N; i++) if (!Number.isInteger(tm[i]) || tm[i] < -1 || tm[i] >= ALL.length)
+        throw new Error(`bloom-sim: tilemap[${i}] = ${tm[i]} is not a section index or -1`);
+      full = Int16Array.from(tm);
+    } else full = growVoronoi(ALL, W, H, config.layout);
+    const isLand = ALL.map(s => (s.kind || "land") === "land");
+    let hasImpassable = isLand.includes(false);
+    for (let i = 0; i < N && !hasImpassable; i++) if (full[i] < 0) hasImpassable = true;
+    if (!hasImpassable) return { tilemap: full, sections: ALL, impassable: [] };
+    const landIdx = []; let k = 0; for (const l of isLand) landIdx.push(l ? k++ : -1);
+    const tilemap = new Int16Array(N);
+    for (let i = 0; i < N; i++) tilemap[i] = full[i] < 0 ? -1 : landIdx[full[i]];
+    return { tilemap, sections: ALL.filter((_, i) => isLand[i]), impassable: ALL.filter((_, i) => !isLand[i]) };
+  }
+
   function createSim(planet, config, traits, opts = {}) {
     const rng = opts.rng || Math.random;
     const C = config, CAT = C.categories;
     const W = planet.gridWidth, H = planet.gridHeight, N = W * H;
-    const SEC = planet.sections, SC = SEC.length;
-    if (SEC.some(s => s.kind && s.kind !== "land"))
-      throw new Error("bloom-sim: water/impassable sections are not supported yet (all-land planets only)");
+    // SEC = land sections only; TILEMAP holds their indices, -1 for water/void/lava
+    const layout = resolveLayout(planet, C), TILEMAP = layout.tilemap, SEC = layout.sections, SC = SEC.length;
     const SIDX = Object.fromEntries(SEC.map((s, i) => [s.id, i]));
     const ORIGIN = SIDX[planet.origin];
-    const TILEMAP = growVoronoi(SEC, W, H, C.layout);
-    const AREA = new Int32Array(SC), CENT = SEC.map(() => ({ x: 0, y: 0, n: 0 })), SEC_TILES = SEC.map(() => []);
-    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const o = TILEMAP[y * W + x]; AREA[o]++; SEC_TILES[o].push(y * W + x); const c = CENT[o]; c.x += x; c.y += y; c.n++; }
+    if (ORIGIN === undefined) throw new Error(`bloom-sim: origin "${planet.origin}" is not a land section`);
+    const AREA = new Int32Array(SC), CENT = SEC.map(() => ({ x: 0, y: 0, n: 0 })), SEC_TILES = SEC.map(() => []), LAND_TILES = [];
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const o = TILEMAP[y * W + x]; if (o < 0) continue; AREA[o]++; SEC_TILES[o].push(y * W + x); LAND_TILES.push(y * W + x); const c = CENT[o]; c.x += x; c.y += y; c.n++; }
+    SEC.forEach((s, i) => { if (!AREA[i]) throw new Error(`bloom-sim: land section ${s.id} has no tiles`); });
     CENT.forEach(c => { c.x = c.x / c.n + .5; c.y = c.y / c.n + .5; });
-    const LAND = N; // all-land planets only (guarded above)
+    const LAND = LAND_TILES.length; // win/coverage denominator: colonizable tiles only (bible §9)
+    const NBRS = sectionAdjacency(TILEMAP, W, H, SC); // from actual geography, never from authored lists
     const winAt = planet.winThreshold ?? C.win;
 
     // genome + global sky + terraform counts, shaped by the trait catalogue
@@ -121,7 +182,7 @@
     const state = new Uint8Array(N), vigor = new Float32Array(SC), secFit = new Float32Array(SC), bubbles = [];
     const sim = {
       planet, config, traits, BAR, LIV, DEAD,
-      map: { W, H, N, LAND, SEC, SC, SIDX, ORIGIN, TILEMAP, AREA, CENT, SEC_TILES },
+      map: { W, H, N, LAND, LAND_TILES, SEC, SC, SIDX, ORIGIN, TILEMAP, AREA, CENT, SEC_TILES, NBRS, impassable: layout.impassable },
       state, vigor, secFit, bubbles, genome, sky, tf, winAt,
       biomass: C.econ.startBiomass, ticks: 0, won: false,
       onWin: null, // (coverage) => void, called once from the tick that crosses winAt
@@ -137,8 +198,8 @@
       vigor[ORIGIN] = C.grow.originStartVigor;
     })();
 
-    function livingCountBySection() { const c = new Int32Array(SC); for (let i = 0; i < N; i++) if (state[i] === LIV) c[TILEMAP[i]]++; return c; }
-    function coverage() { let l = 0; for (let i = 0; i < N; i++) if (state[i] === LIV) l++; return l / LAND; }
+    function livingCountBySection() { const c = new Int32Array(SC); for (const i of LAND_TILES) if (state[i] === LIV) c[TILEMAP[i]]++; return c; }
+    function coverage() { let l = 0; for (const i of LAND_TILES) if (state[i] === LIV) l++; return l / LAND; }
 
     function tick() {
       const g = C.grow;
@@ -151,7 +212,9 @@
       const matReduce = lvl("earlyMat") * g.maturityPerEarlyLevel;
       const liv = livingCountBySection();
       for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-        const i = y * W + x, s = TILEMAP[i], v = vigor[s], st = state[i];
+        const i = y * W + x, s = TILEMAP[i];
+        if (s < 0) continue; // water/void/lava: never Living or Dead, never seeds (no rng draw → First Bloom unchanged)
+        const v = vigor[s], st = state[i];
         if (st === BAR) {
           let ln = 0;
           if (x > 0 && state[i - 1] === LIV) ln++; if (x < W - 1 && state[i + 1] === LIV) ln++;
@@ -231,5 +294,6 @@
     return sim;
   }
 
-  root.BLOOM = Object.assign(root.BLOOM || {}, { createSim, growVoronoi, util: { clamp, lerp, band, overLimit } });
+  root.BLOOM = Object.assign(root.BLOOM || {}, { createSim, resolveLayout, growVoronoi,
+    geo: { components, sectionAdjacency, sectionPieces }, util: { clamp, lerp, band, overLimit } });
 })(typeof window !== "undefined" ? window : globalThis);
