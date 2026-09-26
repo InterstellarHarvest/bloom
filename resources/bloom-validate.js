@@ -11,7 +11,9 @@
 // Reachability (BLOOM-004, §10.3 layer 3): ordinary spread (same landmass) vs the strongest Spread
 // crossing in `traits` (Waterborne Seeds → config.crossing.maxGap). Islands that need the trait are
 // fine (a reason to buy it); land unreachable even with it fails a procedural planet.
-// NOT yet: coverage feasibility, trait affordability, winnable margin, pacing (§10.3 layers 4–8).
+// Winnability (BLOOM-005, §10.3 layers 4–6) with { winnability: true }: a real no-cheat witness run from
+// BLOOM.findWitness (resources/bloom-witness.js) must hold winThreshold + config.validation.winMargin.
+// NOT yet: layer 7 (no single forced build) and layer 8 (pacing quality).
 (function (root) {
   "use strict";
   const BLOOM = root.BLOOM;
@@ -108,7 +110,8 @@
     const cr = waterCrossings(tm, W, H, gap), massesReached = reachableLandmasses(secMass[oi], cr.links);
     const reachSet = (ok) => { const secs = SEC.map((s, i) => ok(i) ? null : s.id).filter(Boolean);
       const masses = [...new Set(SEC.map((_, i) => secMass[i]).filter(m => !ok(SEC.findIndex((_, j) => secMass[j] === m))))];
-      return { reachableSections: SC - secs.length, strandedSections: secs, strandedLandmasses: masses }; };
+      const tiles = SEC.reduce((a, _, i) => a + (ok(i) ? area[i] : 0), 0);
+      return { reachableSections: SC - secs.length, landShare: +(tiles / land).toFixed(3), strandedSections: secs, strandedLandmasses: masses }; };
     stats.reach = {
       base: { rule: "ordinary spread (land adjacency)", ...reachSet(i => seen.has(i)) },
       strongest: { rule: crossTrait ? `${crossTrait.name} (water gap ≤ ${gap} tiles)` : "no crossing Spread trait available", maxGap: gap,
@@ -129,7 +132,18 @@
     // --- procedural planets must reproduce exactly from their seed + params
     if (planet.procedural && opts.regenerate) {
       if (!planet.params) err("determinism: procedural planet has no params");
-      else if (JSON.stringify(opts.regenerate(planet.params)) !== JSON.stringify(planet)) err(`determinism: seed ${planet.params.seed} does not reproduce this planet`);
+      else { const { archetype, ...generated } = planet; // archetype metadata is added after generation
+        if (JSON.stringify(opts.regenerate(planet.params)) !== JSON.stringify(generated)) err(`determinism: seed ${planet.params.seed} does not reproduce this planet`); }
+    }
+    // --- layers 4–6: a real witness build must win with margin under the real economy
+    if (opts.winnability && !errors.length) {
+      if (!BLOOM.findWitness) err("winnability: resources/bloom-witness.js is not loaded");
+      else if (!opts.traits) err("winnability: needs the trait catalogue (opts.traits)");
+      else {
+        const w = BLOOM.findWitness(planet, config, opts.traits, { excludeTraits: opts.excludeTraits, measurePeak: opts.measurePeak });
+        stats.witness = w;
+        if (!w.ok) err(`layer ${w.layer} (${{ 4: "simultaneous coverage", 5: "affordability/order", 6: "winnable margin" }[w.layer]}): ${w.reason}`);
+      }
     }
     return done();
   }
