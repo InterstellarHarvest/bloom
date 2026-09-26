@@ -13,7 +13,10 @@
   passive Biomass + bonus bubbles (auto-collect fallback), a temporary Spread/Adapt/Terraform
   upgrade set, 70%-coverage win + a compact Bloom Report.
   Temporary UI / dark scaffolding is intentional (final art deferred). Boots over file://.
+  2026-09-26 tuning pass: ~6–8 min pacing, hover/focus purchase preview (regions opened/closed),
+  Bloom Report names the regions your build gave up + a real-plant analog per adaptation + a drawn plant.
   Test hook: window.BLOOM_API = { buy, advance, coverage, state } for headless winnability checks.
+  Headless QA: tools/slice-check.js (drives the real buttons).
 -->
 <style>
   :root{
@@ -42,7 +45,7 @@
   button.tb[aria-pressed="true"]{background:#23406a; border-color:var(--accent); color:#fff}
   button.tb:hover{border-color:var(--accent)}
 
-  main{display:grid; grid-template-columns:270px 1fr 240px; min-height:0}
+  main{display:grid; grid-template-columns:290px 1fr 240px; min-height:0}
   .stage{position:relative; display:flex; align-items:center; justify-content:center; padding:12px; min-height:0; overflow:hidden}
   canvas{background:#05070c; border:1px solid var(--line); border-radius:3px; image-rendering:pixelated; cursor:crosshair; max-width:100%; max-height:100%}
   aside{background:var(--panel); overflow:auto; padding:12px; font-size:12px}
@@ -54,9 +57,10 @@
     background:#3a2a12; color:var(--gold); border:1px solid #6a4d1c; margin-left:6px}
 
   .cats{margin:10px 0}
-  .cat{display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:5px; margin-bottom:5px; background:#0e1524; border:1px solid #1b2439}
+  .cat{display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:5px; margin-bottom:5px; background:#0e1524; border:1px solid #1b2439}
   .cat .lamp{width:11px; height:11px; border-radius:50%; flex:0 0 auto}
-  .cat .lbl{color:var(--dim); width:84px; flex:0 0 auto}
+  .cat .lbl{color:var(--dim); width:80px; flex:0 0 auto}
+  .cat .tag{margin-left:auto; color:var(--dim); font-size:9px; white-space:nowrap}
   .cat .st{color:var(--ink); font-weight:600}
   .lamp.green{background:var(--green)} .lamp.yellow{background:var(--yellow)} .lamp.red{background:var(--red)}
   .limit{margin:8px 0; padding:8px; border-radius:5px; background:#241a12; border:1px solid #55401f; color:var(--gold)}
@@ -73,8 +77,8 @@
   .shop .grp h3{font-size:11px; letter-spacing:1px; margin:0 0 6px; color:var(--accent); text-transform:uppercase}
   .buy{display:flex; align-items:center; justify-content:space-between; gap:6px; width:100%; text-align:left;
     background:#141d30; border:1px solid #22304d; color:var(--ink); padding:6px 8px; border-radius:5px; margin-bottom:5px; font-size:12px}
-  .buy:hover:not(:disabled){border-color:var(--accent)}
-  .buy:disabled{opacity:.42; cursor:default}
+  .buy:hover:not(.off){border-color:var(--accent)}
+  .buy.off{opacity:.42; cursor:default} /* not [disabled]: unaffordable upgrades must still hover-preview */
   .buy .nm{display:flex; flex-direction:column}
   .buy .nm small{color:var(--dim); font-size:10px}
   .buy .cost{color:var(--gold); white-space:nowrap}
@@ -92,6 +96,9 @@
   .report .sub{color:var(--dim); margin-bottom:14px}
   .report .debrief{background:#0e1626; border:1px solid #22304d; border-radius:6px; padding:12px; margin:12px 0; line-height:1.6}
   .report ul{margin:8px 0 0; padding-left:18px} .report li{margin:3px 0}
+  .report .top{display:flex; gap:16px; align-items:flex-start}
+  .report canvas#plantCv{flex:0 0 auto; background:#0b1322; border:1px solid #22304d; border-radius:6px; cursor:default}
+  .report .analog li{margin:5px 0} .report .analog b{color:var(--accent)}
   .report .btn{margin-top:14px; background:#243b2f; border:1px solid #2f6a4d; color:#cdeede; padding:8px 16px; border-radius:6px}
 </style>
 </head>
@@ -152,11 +159,13 @@ const CFG={
   tickMs:160,
   scales:{ degPerTempPoint:12, tempCap:3, waterShiftPerPt:20, waterTolPerPt:5, saltPerPt:70, radPerPt:30 },
   genomeBase:{ tempFloor:-6, tempCeil:24, waterPos:50, waterTol:18, saltTol:15, radTol:30, toxTol:25 },
-  grow:{ growThresh:0.55, dieThresh:0.35, baseFill:0.10, seedPerNeighbor:0.34, maturity:0.45 },
+  // pacing (2026-09-26 tuning pass): perfect-knowledge bot w/ 4 s reaction wins in ~5 min; humans ~6–8 min
+  grow:{ growThresh:0.55, dieThresh:0.35, baseFill:0.03, seedPerNeighbor:0.34, maturity:0.45, seedTiles:30 },
   die:{ rate:0.06, damping:0.5 },
   recover:{ deadToBarren:0.02 },
   vigorEase:0.20,
-  econ:{ thriving:0.0045, marginal:0.0015, originTrickle:0.45, bubbleChance:0.05, bubbleValue:12, bubbleAutoTicks:60 },
+  // bubbleChance is planet-wide per tick (~1 per 14 s while anything thrives); worth ≈10% of an upgrade
+  econ:{ thriving:0.0004, marginal:0.00012, originTrickle:0.08, startBiomass:40, bubbleChance:0.011, bubbleValue:25, bubbleAutoTicks:60, costScale:5 },
   win:0.70
 };
 
@@ -309,7 +318,7 @@ const BAR=0,LIV=1,DEAD=2;
 const state=new Uint8Array(N);           // per-tile
 const vigor=new Float32Array(SC);        // per-section eased vigor 0..1
 const secFit=new Float32Array(SC);
-let biomass=0, ticks=0, won=false, running=true, speed=1;
+let biomass=CFG.econ.startBiomass, ticks=0, won=false, running=true, speed=1;
 const bubbles=[];                        // {tile,x,y,life}
 let field=null;                          // log helper
 
@@ -320,7 +329,7 @@ let field=null;                          // log helper
     const cx=CENT[ORIGIN].x,cy=CENT[ORIGIN].y;
     return ((ax-cx)**2+(ay-cy)**2)-((bx-cx)**2+(by-cy)**2);
   });
-  for(let k=0;k<Math.min(10,tiles.length);k++) state[tiles[k]]=LIV;
+  for(let k=0;k<Math.min(CFG.grow.seedTiles,tiles.length);k++) state[tiles[k]]=LIV;
   vigor[ORIGIN]=0.7;
 })();
 
@@ -366,11 +375,10 @@ function tick(){
   for(let i=0;i<SC;i++){ const rate = secFit[i]>0.7?CFG.econ.thriving:CFG.econ.marginal; income+=liv2[i]*rate; }
   biomass+=income;
   // 4. bubbles (bonus)
-  for(let i=0;i<SC;i++){
-    if(secFit[i]>0.72 && liv2[i]>8 && Math.random()<CFG.econ.bubbleChance*0.15){
-      const t=SEC_TILES[i][(Math.random()*SEC_TILES[i].length)|0];
-      if(state[t]===LIV) bubbles.push({tile:t,x:(t%W)+.5,y:((t/W)|0)+.5,life:0});
-    }
+  const thriving=[]; for(let i=0;i<SC;i++) if(secFit[i]>0.72 && liv2[i]>8) thriving.push(i);
+  if(thriving.length && Math.random()<CFG.econ.bubbleChance){
+    const i=thriving[(Math.random()*thriving.length)|0], t=SEC_TILES[i][(Math.random()*SEC_TILES[i].length)|0];
+    if(state[t]===LIV) bubbles.push({tile:t,x:(t%W)+.5,y:((t/W)|0)+.5,life:0});
   }
   for(const b of bubbles){ b.life++; if(b.life>CFG.econ.bubbleAutoTicks){ biomass+=CFG.econ.bubbleValue*0.5; b.dead=true; } }
   for(let k=bubbles.length-1;k>=0;k--) if(bubbles[k].dead) bubbles.splice(k,1);
@@ -386,7 +394,7 @@ function tick(){
 /* ========================================================================== */
 const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
 const dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
-let TILE=14, selected=-1, rawOpen=false;
+let TILE=14, selected=-1, rawOpen=false, preview=null; // preview={gain:[],lose:[]}
 const TEMP_STOPS=[[-40,[44,62,104]],[-20,[78,104,140]],[0,[100,126,116]],[12,[92,140,88]],[25,[156,146,84]],[40,[182,100,60]],[60,[150,58,46]]];
 function stops(v){ const S=TEMP_STOPS; if(v<=S[0][0])return S[0][1].slice(); if(v>=S[S.length-1][0])return S[S.length-1][1].slice();
   for(let i=0;i<S.length-1;i++){const[a,ca]=S[i],[b,cb]=S[i+1]; if(v>=a&&v<=b)return mix(ca,cb,(v-a)/(b-a));} return S[0][1].slice(); }
@@ -409,6 +417,9 @@ function draw(){
     else c=barrenColor(s);
     ctx.fillStyle=rgb(c); ctx.fillRect(x*TILE,y*TILE,TILE+.5,TILE+.5);
   }
+  // purchase preview tint: green = would open, red = would close
+  if(preview){ for(const [list,col] of [[preview.gain,"rgba(102,209,127,0.28)"],[preview.lose,"rgba(226,96,79,0.34)"]])
+    for(const sec of list){ ctx.fillStyle=col; for(const t of SEC_TILES[sec]) ctx.fillRect((t%W)*TILE,((t/W)|0)*TILE,TILE,TILE); } } // exact size: overlap would double the alpha into grid seams
   // borders
   ctx.strokeStyle="rgba(5,7,12,0.8)"; ctx.lineWidth=1.4; ctx.beginPath();
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const s=TILEMAP[y*W+x];
@@ -416,15 +427,9 @@ function draw(){
     if(y+1>=H||TILEMAP[(y+1)*W+x]!==s){ctx.moveTo(x*TILE,(y+1)*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);} if(y===0){ctx.moveTo(x*TILE,0);ctx.lineTo((x+1)*TILE,0);}
   }
   ctx.stroke();
-  // selection
-  if(selected>=0){ ctx.strokeStyle="#7fe3c0"; ctx.lineWidth=3; ctx.beginPath();
-    for(let y=0;y<H;y++)for(let x=0;x<W;x++){ if(TILEMAP[y*W+x]!==selected)continue;
-      if(x+1>=W||TILEMAP[y*W+x+1]!==selected){ctx.moveTo((x+1)*TILE,y*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);}
-      if(x===0||TILEMAP[y*W+x-1]!==selected){ctx.moveTo(x*TILE,y*TILE);ctx.lineTo(x*TILE,(y+1)*TILE);}
-      if(y+1>=H||TILEMAP[(y+1)*W+x]!==selected){ctx.moveTo(x*TILE,(y+1)*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);}
-      if(y===0||TILEMAP[(y-1)*W+x]!==selected){ctx.moveTo(x*TILE,y*TILE);ctx.lineTo((x+1)*TILE,y*TILE);}
-    } ctx.stroke();
-  }
+  // selection + purchase preview outlines
+  if(selected>=0) outline(selected,"#7fe3c0",3);
+  if(preview){ preview.gain.forEach(i=>outline(i,"#66d17f",3,[6,4])); preview.lose.forEach(i=>outline(i,"#e2604f",3,[6,4])); }
   // bubbles
   for(const b of bubbles){ const px=b.x*TILE,py=b.y*TILE, r=Math.max(4,TILE*0.42);
     ctx.beginPath(); ctx.arc(px,py,r,0,7); ctx.fillStyle="rgba(255,212,121,0.92)"; ctx.fill();
@@ -436,6 +441,16 @@ function draw(){
     ctx.fillStyle=i===selected?"#fff":"rgba(232,238,248,0.9)"; ctx.fillText(s.name.toUpperCase(),px,py);
     if(s.isOrigin){ctx.fillStyle="#ffd479"; ctx.fillText("★",px,py+fs+1);}
   });
+}
+
+function outline(sec,color,width,dash){
+  ctx.strokeStyle=color; ctx.lineWidth=width; ctx.setLineDash(dash||[]); ctx.beginPath();
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){ if(TILEMAP[y*W+x]!==sec)continue;
+    if(x+1>=W||TILEMAP[y*W+x+1]!==sec){ctx.moveTo((x+1)*TILE,y*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);}
+    if(x===0||TILEMAP[y*W+x-1]!==sec){ctx.moveTo(x*TILE,y*TILE);ctx.lineTo(x*TILE,(y+1)*TILE);}
+    if(y+1>=H||TILEMAP[(y+1)*W+x]!==sec){ctx.moveTo(x*TILE,(y+1)*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);}
+    if(y===0||TILEMAP[(y-1)*W+x]!==sec){ctx.moveTo(x*TILE,y*TILE);ctx.lineTo((x+1)*TILE,y*TILE);}
+  } ctx.stroke(); ctx.setLineDash([]);
 }
 
 /* ========================================================================== */
@@ -450,11 +465,12 @@ function renderHUD(cov){
 }
 function renderInspect(){
   const el=document.getElementById("inspect");
+  const curRaw=el.querySelector("details.raw"); if(curRaw) rawOpen=curRaw.open; // read synchronously: the toggle event can lag a re-render
   if(selected<0){ el.innerHTML='<h2>SECTION</h2><p style="color:var(--dim);font-style:italic">Click a region to read it. The plant starts in its protected origin (★) and spreads into suitable ground on its own.</p>'; return; }
   const s=SEC[selected], e=evaluate(selected), liv=livingCountBySection()[selected];
   let dead=0,barr=0; for(const t of SEC_TILES[selected]){ if(state[t]===DEAD)dead++; else if(state[t]===BAR)barr++; }
   const total=AREA[selected];
-  const catRow=k=>{ const c=e.cats[k]; return `<div class="cat"><span class="lamp ${c.soft&&c.f>0.72?"yellow":lampOf(c.f)}"></span><span class="lbl">${k}</span><span class="st">${c.word}</span>${e.terraformable[k]?'<span style="margin-left:auto;color:var(--dim);font-size:10px">terraformable</span>':''}</div>`; };
+  const catRow=k=>{ const c=e.cats[k]; return `<div class="cat"><span class="lamp ${c.soft&&c.f>0.72?"yellow":lampOf(c.f)}"></span><span class="lbl">${k}</span><span class="st">${c.word}</span>${e.terraformable[k]?'<span class="tag">terraformable</span>':''}</div>`; };
   const blocked = e.limitF<0.72;
   const limitHtml = blocked
     ? `<div class="limit">▲ Growth blocked: <b>${LIMIT_MSG[e.limitKey](e)}</b><div class="fixhint">${FIX_HINT[e.limitKey](e)}</div></div>`
@@ -475,7 +491,6 @@ function renderInspect(){
         <tr><td>salinity</td><td>${s.local.salinity}</td></tr><tr><td>nutrients</td><td>${s.local.nutrients}</td></tr>
         <tr><td>toxicity</td><td>${s.local.toxicity}</td></tr><tr><td>radiation</td><td>${s.local.radiation}</td></tr>
       </table></details>`;
-  el.querySelector("details.raw").addEventListener("toggle",ev=>{ rawOpen=ev.target.open; });
 }
 
 /* ---- upgrade catalog (temporary test set from NEXT_PLAYABLE_SLICE) ---- */
@@ -503,6 +518,7 @@ const UP=[
 ];
 const tf={warm:0,cool:0,humid:0,dry:0};
 const upById=Object.fromEntries(UP.map(u=>[u.id,u]));
+const price=u=>Math.round(u.cost()*CFG.econ.costScale);
 
 function renderShop(){
   const el=document.getElementById("shop"); const groups=["Spread","Adapt","Terraform"];
@@ -511,29 +527,49 @@ function renderShop(){
     html+=`<div class="grp"><h3>${gname}</h3>`;
     if(gname==="Adapt") html+=`<div class="temppool">temp points: cold ${genome.cold} · heat ${genome.heat} / cap ${CFG.scales.tempCap}</div>`;
     for(const u of UP.filter(x=>x.grp===gname)){
-      const cost=Math.round(u.cost()); const tier=u.tier?u.tier():0;
+      const cost=price(u); const tier=u.tier?u.tier():0;
       const canBuy=u.can() && biomass>=cost;
-      const label = tier>0 ? `${u.name} <small>·${["I","II","III","IV"][tier]||("+"+tier)} owned · ${u.sub}</small>` : `${u.name} <small>${u.sub}</small>`;
+      const label = tier>0 ? `${u.name} <small>·${["I","II","III","IV"][tier-1]||("+"+tier)} owned · ${u.sub}</small>` : `${u.name} <small>${u.sub}</small>`;
       const title = !u.can()&&u.why?u.why():"";
-      html+=`<button class="buy ${tier>0?'owned':''}" data-id="${u.id}" ${canBuy?'':'disabled'} title="${title}">
+      html+=`<button class="buy ${tier>0?'owned':''} ${canBuy?'':'off'}" data-id="${u.id}" aria-disabled="${!canBuy}" title="${title}">
         <span class="nm">${label}</span><span class="cost">${cost}</span></button>`;
     }
     html+='</div>';
   }
   el.innerHTML=html;
-  el.querySelectorAll("button.buy").forEach(b=>b.addEventListener("click",()=>buy(b.dataset.id)));
+  el.querySelectorAll("button.buy").forEach(b=>{ b.addEventListener("click",()=>buy(b.dataset.id));
+    b.addEventListener("mouseenter",()=>showPreview(b.dataset.id)); b.addEventListener("focus",()=>showPreview(b.dataset.id));
+    b.addEventListener("mouseleave",clearPreview); b.addEventListener("blur",clearPreview); });
 }
 // cheap per-frame pass: toggle affordability in place (a full re-render every frame would eat clicks)
 function refreshShop(){
   document.querySelectorAll("#shop button.buy").forEach(b=>{ const u=upById[b.dataset.id];
-    const off=!(u.can() && biomass>=Math.round(u.cost())); if(b.disabled!==off) b.disabled=off; });
+    const off=!(u.can() && biomass>=price(u)); if(b.classList.contains("off")!==off){ b.classList.toggle("off",off); b.setAttribute("aria-disabled",off); } });
 }
+// what-if: apply the upgrade to a copy of the plant/sky, compare which regions can grow, then restore
+function previewOf(id){
+  const u=upById[id]; if(!u||!u.can()) return null;
+  const g0={...genome}, s0={...G}, t0={...tf}, ok=()=>SEC.map((_,i)=>evaluate(i).fitness>CFG.grow.growThresh);
+  const before=ok(); u.apply(); const after=ok();
+  Object.assign(genome,g0); Object.assign(G,s0); Object.assign(tf,t0);
+  const gain=[],lose=[]; SEC.forEach((_,i)=>{ if(after[i]&&!before[i])gain.push(i); if(before[i]&&!after[i])lose.push(i); });
+  return {gain,lose};
+}
+function showPreview(id){
+  preview=previewOf(id); const u=upById[id];
+  if(!preview){ log(u.why?u.why():"Not available."); return; }
+  const nm=a=>a.map(i=>SEC[i].name).join(", ");
+  log(`${u.name} — ` + (preview.gain.length||preview.lose.length
+    ? [preview.gain.length?`opens: ${nm(preview.gain)}`:"", preview.lose.length?`⚠ closes: ${nm(preview.lose)}`:""].filter(Boolean).join(" · ")
+    : (u.grp==="Spread"?"no region changes; your plant spreads faster.":"no region changes state yet.")));
+}
+function clearPreview(){ preview=null; }
 function buy(id){
-  const u=upById[id]; if(!u) return false; const cost=Math.round(u.cost());
+  const u=upById[id]; if(!u) return false; const cost=price(u);
   if(!u.can()||biomass<cost) return false;
   biomass-=cost; u.apply();
   log(`Bought ${u.name}. ${u.grp==="Terraform"?`Sky now ${G.temp>0?'+':''}${G.temp}°C · moist ${G.moist}.`:''}`);
-  renderShop(); if(selected>=0) renderInspect(); draw();
+  renderShop(); preview=null; if(selected>=0) renderInspect(); draw();
   return true;
 }
 
@@ -560,6 +596,39 @@ document.getElementById("btnSpeed").addEventListener("click",()=>{ speed=speed==
 /* ========================================================================== */
 /*  BLOOM REPORT                                                               */
 /* ========================================================================== */
+// real-plant analog for each adaptation — this is the "explain one real adaptation" payoff (acceptance Q10)
+const ANALOG={
+  cold:"<b>Cold Tolerance</b> — like winter wheat and arctic willow: cells fill with sugars and antifreeze proteins so ice crystals don't tear them apart.",
+  heat:"<b>Heat Tolerance</b> — like the desert creosote bush: heat-shock proteins hold the plant's enzymes in shape when it gets scorching.",
+  flood:"<b>Flood Adaptation</b> — like rice and mangroves: air channels in the stem (aerenchyma) and snorkel roots pipe oxygen down to roots stuck in waterlogged mud.",
+  drought:"<b>Drought Adaptation</b> — like cacti and agave: thick water-storing tissue, waxy skin, and leaf pores (stomata) that open only in the cool night.",
+  salt:"<b>Salt Handling</b> — like saltbush and mangroves: roots filter salt out, and salt glands on the leaves push extra salt back out.",
+  rad:"<b>Radiation Shielding</b> — like high-mountain plants: red and purple pigments (anthocyanins, flavonoids) work as sunscreen against strong UV.",
+  seedOut:"<b>Seed Output</b> — like dandelions: one plant releases thousands of light seeds so a few land on new ground.",
+  earlyMat:"<b>Early Maturity</b> — like desert wildflowers: these 'ephemerals' race from seed to flower in weeks, before conditions turn bad."
+};
+
+// tiny programmatic portrait of the final plant: each owned trait adds a visible feature
+function drawPlant(c){
+  const S=4, X=c.getContext("2d"), px=(x,y,col,w=1,h=1)=>{X.fillStyle=col;X.fillRect(x*S,y*S,w*S,h*S);};
+  X.clearRect(0,0,c.width,c.height);
+  const leaf = genome.rad?"#7a5bb0": genome.heat?"#8fc9a4":"#5fbf6e", stem="#3f8a4c", soil="#5b4330";
+  px(0,40,soil,34,10);                                           // ground
+  if(genome.waterArm==="wet"){ px(0,39,"#3a6f9a",34,2); }        // standing water
+  const rootLen = genome.waterArm==="dry" ? 9 : 4;                // drought → deep taproot
+  px(16,41,"#c9a66b",1,rootLen); px(14,42,"#c9a66b",1,2); px(18,42,"#c9a66b",1,2);
+  if(genome.waterArm==="wet"){ [9,12,21,24].forEach(x=>px(x,36,"#b89868",1,4)); } // snorkel roots poke above water
+  px(16,14,stem,1,26);                                           // stem
+  const lw = genome.waterArm==="dry" ? 3 : 2;                     // succulent → thick leaves
+  [[30,-1],[25,1],[20,-1],[16,1]].forEach(([y,d])=>{
+    const x0 = d<0 ? 16-7 : 17; px(x0,y,leaf,7,lw);
+    if(genome.cold) for(let k=0;k<7;k+=2) px(x0+k,y-1,"#e8f0ff");                 // frost hairs
+    if(genome.salt) px(d<0?x0:x0+6,y+lw-1,"#ffffff");                           // salt crystal
+  });
+  if(genome.earlyMat){ px(15,11,"#ffd479",3,3); px(16,12,"#e2604f"); }           // early flower
+  if(genome.seedOut){ for(let k=0;k<genome.seedOut*3;k++) px(20+k*3,8-(k%2)*3,"#f4f1e4"); } // drifting seeds
+}
+
 function onWin(cov){
   const built=[];
   if(genome.cold)built.push(`Cold Tolerance ×${genome.cold}`); if(genome.heat)built.push(`Heat Tolerance ×${genome.heat}`);
@@ -567,15 +636,24 @@ function onWin(cov){
   if(genome.salt)built.push("Salt Handling"); if(genome.rad)built.push("Radiation Shielding");
   if(genome.seedOut)built.push(`Seed Output ×${genome.seedOut}`); if(genome.earlyMat)built.push("Early Maturity");
   const terra=[]; if(tf.warm)terra.push(`Warm ×${tf.warm}`); if(tf.cool)terra.push(`Cool ×${tf.cool}`); if(tf.humid)terra.push(`Humidify ×${tf.humid}`); if(tf.dry)terra.push(`Dry ×${tf.dry}`);
-  const held=[]; const liv=livingCountBySection(); SEC.forEach((s,i)=>{ if(liv[i]/AREA[i]>0.4)held.push(s.name); });
+  const held=[], gaveUp=[]; const liv=livingCountBySection();
+  // a region your plant CAN grow in is just still filling in — only unfit regions count as given up
+  SEC.forEach((s,i)=>{ if(liv[i]/AREA[i]>0.4) held.push(s.name);
+    else { const e=evaluate(i); if(e.fitness<=CFG.grow.growThresh) gaveUp.push(`<b>${s.name}</b> — ${LIMIT_MSG[e.limitKey](e)}`); } });
+  const owned=[...(genome.cold?["cold"]:[]),...(genome.heat?["heat"]:[]),...(genome.waterArm==="wet"?["flood"]:genome.waterArm==="dry"?["drought"]:[]),
+    ...(genome.salt?["salt"]:[]),...(genome.rad?["rad"]:[]),...(genome.seedOut?["seedOut"]:[]),...(genome.earlyMat?["earlyMat"]:[])];
+  const mins=Math.floor(ticks*CFG.tickMs/60000), secs=Math.round(ticks*CFG.tickMs/1000)%60;
   document.getElementById("report").innerHTML=`
     <h2>★ BLOOM</h2>
-    <div class="sub">You held ${Math.round(cov*100)}% of the land in ${Math.round(ticks*CFG.tickMs/1000)}s.</div>
-    <div><b>Your plant became:</b><ul>${built.map(b=>`<li>${b}</li>`).join('')||'<li>the unmodified pioneer</li>'}</ul></div>
-    ${terra.length?`<div style="margin-top:8px"><b>You reshaped the sky:</b> ${terra.join(', ')}</div>`:''}
-    <div style="margin-top:8px"><b>Regions bloomed:</b> ${held.join(', ')}</div>
-    <div class="debrief"><b>Why it worked:</b> every region has a <i>limiting factor</i> — the one condition furthest outside your plant's tolerance. You read each blocker, then either <b>adapted the plant</b> to widen its tolerance or <b>terraformed the sky</b> to move the whole planet's climate. Because temperature points were capped, you couldn't survive the deepest cold <i>and</i> the hottest scorch at once — so the planet forced a real tradeoff, and a couple of regions stayed barren. That's ecological limiting factors and adaptive tradeoffs, the same logic real pioneer species live by.</div>
+    <div class="sub">You held ${Math.round(cov*100)}% of the land in ${mins}m ${String(secs).padStart(2,"0")}s.</div>
+    <div class="top"><canvas id="plantCv" width="136" height="200"></canvas>
+      <div><b>Your plant became:</b><ul>${built.map(b=>`<li>${b}</li>`).join('')||'<li>the unmodified pioneer</li>'}</ul>
+      ${terra.length?`<div style="margin-top:8px"><b>You reshaped the sky:</b> ${terra.join(', ')}</div>`:''}</div></div>
+    <div style="margin-top:10px"><b>Regions bloomed:</b> ${held.join(', ')}</div>
+    <div class="debrief"><b>Why it worked:</b> every region has a <i>limiting factor</i>: the one condition furthest outside your plant's tolerance. You fixed enough of them to hold the planet${gaveUp.length?`, and your build gave these up:<ul>${gaveUp.map(g=>`<li>${g}</li>`).join('')}</ul>No plant tolerates everything. Adapting to one extreme costs you another, so choosing what to sacrifice was the real strategy.`:"."}</div>
+    ${owned.length?`<div><b>Real plants do this too:</b><ul class="analog">${owned.map(k=>`<li>${ANALOG[k]}</li>`).join('')}</ul></div>`:''}
     <button class="btn" id="reportContinue">Keep playing →</button>`;
+  drawPlant(document.getElementById("plantCv"));
   document.getElementById("reportModal").classList.add("on");
   document.getElementById("reportContinue").addEventListener("click",()=>{ document.getElementById("reportModal").classList.remove("on"); won=true; running=true; document.getElementById("btnPlay").textContent="⏸ pause"; });
   log(`★ Bloom! ${Math.round(cov*100)}% coverage.`);
