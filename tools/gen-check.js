@@ -17,32 +17,53 @@ let fails = 0;
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (!ok) fails++; };
 const validate = p => BLOOM.validatePlanet(p, config, { traits, regenerate: BLOOM.generatePlanet });
 
-// ---- fixed cases
+// ---- fixed cases (product settings: islands limited to the configured Waterborne Seeds range)
+const GAP = config.crossing.maxGap;
 const CASES = {
-  zeroWater:   { seed: 12345, waterPct: 0,  sections: 14 },
-  moderate:    { seed: 2024,  waterPct: 30, sections: 14 },
-  islands:     { seed: 9,     waterPct: 60, sections: 14 },
-  denominator: { seed: 777,   waterPct: 40, sections: 12 },
+  zeroWater:   { seed: 12345, waterPct: 0,  sections: 14, maxCrossingGap: GAP },
+  moderate:    { seed: 2024,  waterPct: 30, sections: 14, maxCrossingGap: GAP },
+  islands:     { seed: 25,    waterPct: 60, sections: 14, maxCrossingGap: GAP },
+  denominator: { seed: 777,   waterPct: 40, sections: 12, maxCrossingGap: GAP },
 };
 const P = Object.fromEntries(Object.entries(CASES).map(([k, v]) => [k, BLOOM.generatePlanet(v)]));
 const V = Object.fromEntries(Object.entries(P).map(([k, p]) => [k, validate(p)]));
 
 console.log("\n# generator + validator — fixed cases");
-console.log("case         seed   water%req  land  water  sections  landmasses  origin");
-for (const [k, v] of Object.entries(V)) { const s = v.stats, pl = P[k];
-  console.log(`${k.padEnd(12)} ${String(CASES[k].seed).padEnd(6)} ${String(CASES[k].waterPct).padEnd(10)} ${String(s.landTiles).padEnd(5)} ${String(s.waterTiles).padEnd(6)} ${String(s.sections).padEnd(9)} ${String(s.landmasses).padEnd(11)} ${pl.origin} "${pl.sections.find(x => x.id === pl.origin).name}"`); }
+console.log(`case         seed   water%req  land  water  sections  landmasses  reach(ordinary→strongest)  origin   [maxCrossingGap ${GAP}]`);
+for (const [k, v] of Object.entries(V)) { const s = v.stats, pl = P[k], R = s.reach;
+  console.log(`${k.padEnd(12)} ${String(CASES[k].seed).padEnd(6)} ${String(CASES[k].waterPct).padEnd(10)} ${String(s.landTiles).padEnd(5)} ${String(s.waterTiles).padEnd(6)} ${String(s.sections).padEnd(9)} ${String(s.landmasses).padEnd(11)} ${(R.base.reachableSections + "→" + R.strongest.reachableSections + "/" + s.sections).padEnd(26)} ${pl.origin} "${pl.sections.find(x => x.id === pl.origin).name}"`); }
 for (const [k, v] of Object.entries(V)) check(v.ok, `${k}: validator passes (tiles, contiguity, origin, adjacency, denominator vs engine, seed reproduction)`, v.errors.join("; "));
 check(V.zeroWater.stats.waterTiles === 0 && V.zeroWater.stats.landmasses === 1, "zero-water planet has no water and one landmass");
 check(V.moderate.stats.waterTiles > 0 && Math.abs(V.moderate.stats.waterPct - 30) <= 3, "moderate planet lands near its requested 30% water", `${V.moderate.stats.waterPct}%`);
-check(V.islands.stats.landmasses >= 3 && V.islands.stats.strandedSections.length > 0, "island planet has ≥3 landmasses and diagnostically stranded sections",
-  `${V.islands.stats.landmasses} landmasses, ${V.islands.stats.strandedSections.length} stranded`);
+check(V.islands.stats.landmasses >= 3 && V.islands.stats.reach.requiresCrossing, "island planet has ≥3 landmasses; ordinary spread strands sections, Waterborne Seeds reaches all",
+  `${V.islands.stats.landmasses} landmasses, ${V.islands.stats.reach.base.strandedSections.length} stranded without the trait, ${V.islands.stats.reach.strongest.strandedSections.length} with it`);
+
+// ---- geographic reachability layer (BLOOM-004)
+console.log("\n# reachability: ordinary spread vs strongest Spread (Waterborne Seeds)");
+for (const k of ["zeroWater", "denominator"]) { const R = V[k].stats.reach;
+  check(V[k].stats.landmasses === 1 && !R.requiresCrossing && R.strongest.strandedSections.length === 0,
+    `${k} (one landmass): fully reachable by ordinary spread — Waterborne Seeds not required`, `ordinary spread ${R.base.reachableSections}/${V[k].stats.sections}`); }
+{ const R = V.moderate.stats.reach;
+  check(R.requiresCrossing && R.strongest.strandedSections.length === 0, "moderate (2 landmasses): the small island needs Waterborne Seeds, and it is in range",
+    `ordinary ${R.base.reachableSections}/${V.moderate.stats.sections} → strongest ${R.strongest.reachableSections}/${V.moderate.stats.sections}, links ${JSON.stringify(R.crossingLinks)}`); }
+{
+  const raw = BLOOM.generatePlanet({ seed: 9, waterPct: 60, sections: 14 }), r = validate(raw), R = r.stats.reach;
+  check(!r.ok && r.errors.some(e => /unreachable even with Waterborne Seeds/.test(e)), "validator REJECTS an unreachable procedural planet (seed 9, 60%, no crossing constraint)",
+    `${r.errors.find(e => /reachability/.test(e))} · crossing links ${JSON.stringify(R.crossingLinks)}`);
+  const fixed = BLOOM.generatePlanet({ seed: 9, waterPct: 60, sections: 14, maxCrossingGap: GAP }), rf = validate(fixed);
+  check(rf.ok && rf.stats.reach.strongest.strandedSections.length === 0, `same seed with maxCrossingGap ${GAP}: unreachable islands become water and the planet validates`,
+    `${r.stats.landmasses} → ${rf.stats.landmasses} landmass(es), water ${r.stats.waterPct}% → ${rf.stats.waterPct}%`);
+  const noTrait = BLOOM.validatePlanet(P.islands, config, { traits: traits.filter(t => t.effect.type !== "crossing") });
+  check(!noTrait.ok && noTrait.stats.reach.strongest.maxGap === 0, "with no crossing trait in the catalogue, the same archipelago is (correctly) unreachable",
+    noTrait.errors.find(e => /reachability/.test(e)));
+}
 
 // ---- determinism
 const again = BLOOM.generatePlanet(CASES.islands);
 check(J(again) === J(P.islands), "same seed + params → identical planet (every field, every tile)");
 const other = BLOOM.generatePlanet({ ...CASES.islands, seed: CASES.islands.seed + 1 });
 const tileDiff = other.tilemap.filter((v, i) => v !== P.islands.tilemap[i]).length;
-check(tileDiff > 0 && J(other.sections.map(s => s.local)) !== J(P.islands.sections.map(s => s.local)), "different seed → different planet", `${tileDiff} of 2400 tiles differ (seed 9 vs 10)`);
+check(tileDiff > 0 && J(other.sections.map(s => s.local)) !== J(P.islands.sections.map(s => s.local)), "different seed → different planet", `${tileDiff} of 2400 tiles differ (seed 25 vs 26)`);
 const moreWater = BLOOM.generatePlanet({ ...CASES.islands, waterPct: 40 });
 check(J(moreWater.tilemap) !== J(P.islands.tilemap), "same seed, different params → different planet");
 let threw = false; try { BLOOM.generatePlanet({ waterPct: 20 }); } catch { threw = true; }
@@ -51,16 +72,21 @@ check(!/Math\.random/.test(require("fs").readFileSync(path.join(ROOT, "resources
 
 // ---- sweep (the Portion 1 125-map audit, now ×3 section counts, through the shared validator)
 {
-  let n = 0, invalid = 0, nonFinite = 0, split = 0, offBiggest = 0; const t0 = Date.now();
+  let n = 0, invalid = 0, nonFinite = 0, split = 0, offBiggest = 0, needTrait = 0, zeroNeed = 0, rawRejected = 0; const t0 = Date.now();
   for (let s = 1; s <= 25; s++) for (const w of [0, 20, 40, 60, 70]) for (const sec of [8, 14, 20]) {
-    const p = BLOOM.generatePlanet({ seed: s * 7919, waterPct: w, sections: sec }), r = validate(p); n++;
+    const p = BLOOM.generatePlanet({ seed: s * 7919, waterPct: w, sections: sec, maxCrossingGap: GAP }), r = validate(p); n++;
     if (!r.ok) invalid++; split += r.stats.brokenSections || 0;
     if (r.errors.some(e => e.startsWith("origin"))) offBiggest++;
+    if (r.stats.reach && r.stats.reach.requiresCrossing) { needTrait++; if (w === 0) zeroNeed++; }
     for (const x of p.sections) for (const v of Object.values(x.local)) if (!Number.isFinite(v)) nonFinite++;
+    if (w > 0 && !validate(BLOOM.generatePlanet({ seed: s * 7919, waterPct: w, sections: sec })).ok) rawRejected++;
   }
   check(invalid === 0 && nonFinite === 0 && split === 0 && offBiggest === 0,
-    "sweep: 25 seeds (7919·k) × water 0/20/40/60/70% × 8/14/20 sections all valid",
+    `sweep: 25 seeds (7919·k) × water 0/20/40/60/70% × 8/14/20 sections, maxCrossingGap ${GAP}: all valid incl. strongest-Spread reachability`,
     `${n} maps, ${invalid} invalid, ${split} split sections, ${nonFinite} non-finite signals, ${offBiggest} bad origins, ${Date.now() - t0} ms`);
+  check(needTrait > 0 && zeroNeed === 0, "sweep: islands make Waterborne Seeds a real choice on some maps, never on zero-water maps",
+    `${needTrait} maps need it to reach everything; ${zeroNeed} zero-water maps do`);
+  check(rawRejected > 0, "sweep: without the constraint, the validator rejects the maps whose islands are out of range", `${rawRejected} of 300 watery maps rejected`);
 }
 
 // ---- validator catches what it claims to (mutations of a valid planet)
@@ -158,7 +184,7 @@ function runStrip(pl) { const sim = BLOOM.createSim(pl, config, traits, { rng: r
   const oMass = pl.sections.find(s => s.id === pl.origin).landmass;
   const offIsland = sim.map.SEC.map((s, i) => [s, sim.livingCountBySection()[i]]).filter(([s]) => s.landmass !== oMass);
   const onIsland = sim.map.SEC.map((s, i) => [s, sim.livingCountBySection()[i]]).filter(([s]) => s.landmass === oMass).reduce((a, [, n]) => a + n, 0);
-  check(offIsland.every(([, n]) => n === 0) && onIsland > 0, "island planet (seed 9, 60%): after 3000 maxed-out ticks no other landmass has a single living tile",
+  check(offIsland.every(([, n]) => n === 0) && onIsland > 0, "island planet (seed 25, 60%), no Waterborne Seeds: after 3000 maxed-out ticks no other landmass has a single living tile",
     `${offIsland.length} off-landmass sections all 0 living; ${onIsland} living on the origin landmass`);
 }
 

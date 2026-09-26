@@ -18,7 +18,9 @@ let fails = 0;
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (!ok) fails++; };
 const clone = o => JSON.parse(JSON.stringify(o));
 
-function adapter(planet, config, traits) {
+// the golden pins the traits that existed when it was captured (adc87d0); traits added later are
+// checked separately below (not offered on First Bloom, and unpurchased they change nothing)
+function adapter(planet, config, traits, goldenIds) {
   let sim;
   return {
     reset(seed) { sim = BLOOM.createSim(planet, config, traits, { rng: GOLD.mulberry32(seed) }); },
@@ -26,7 +28,7 @@ function adapter(planet, config, traits) {
     read() { return { biomass: sim.biomass, ticks: sim.ticks, won: sim.won, tiles: sim.state, vigor: sim.vigor, bubbles: sim.bubbles.length }; },
     setCondition(c) { Object.assign(sim.genome, c.genome); Object.assign(sim.sky, c.sky); for (const k in sim.tf) sim.tf[k] = 0; Object.assign(sim.tf, c.tf || {}); },
     evaluate(i) { return sim.evaluate(i); }, previewOf(id) { return sim.previewOf(id); }, price(id) { return sim.price(sim.traitById[id]); },
-    traitIds: traits.map(t => t.id),
+    traitIds: traits.map(t => t.id).filter(id => !goldenIds || goldenIds.includes(id)),
     get sectionCount() { return sim.map.SC; },
     get map() { return { tilemap: sim.map.TILEMAP, area: sim.map.AREA, cent: sim.map.CENT }; },
   };
@@ -40,8 +42,10 @@ function firstDiff(a, b, p = "") {
 const { config, traits } = BLOOM_DATA, planet = BLOOM_DATA.planets.first_bloom;
 
 // 1 · golden equivalence
-const got = GOLD.runGolden(adapter(planet, config, traits));
-if (process.argv.includes("--write")) { fs.writeFileSync(GOLDEN_PATH, JSON.stringify(got)); console.log("golden written:", GOLDEN_PATH); }
+const WRITE = process.argv.includes("--write");
+const goldenIds = WRITE ? null : Object.keys(JSON.parse(fs.readFileSync(GOLDEN_PATH, "utf8")).static.prices.start);
+const got = GOLD.runGolden(adapter(planet, config, traits, goldenIds));
+if (WRITE) { fs.writeFileSync(GOLDEN_PATH, JSON.stringify(got)); console.log("golden written:", GOLDEN_PATH); }
 const want = JSON.parse(fs.readFileSync(GOLDEN_PATH, "utf8"));
 for (const part of GOLD.PARTS) {
   const d = firstDiff(JSON.parse(JSON.stringify(got[part])), want[part], part);
@@ -53,11 +57,18 @@ for (const part of GOLD.PARTS) {
 // 2 · content is pure data (no functions / code hidden in config, traits, planet)
 for (const [name, obj] of [["config", config], ["traits", traits], ["first_bloom", planet]])
   check(JSON.stringify(clone(obj)) === JSON.stringify(obj) && !/function|=>/.test(JSON.stringify(obj)), `${name} is plain JSON-shaped data`);
-const KNOWN = new Set(["tempPoint", "waterArm", "level", "sky"]);
+const KNOWN = new Set(["tempPoint", "waterArm", "level", "sky", "crossing"]);
 check(traits.every(t => t.id && t.board && t.name && KNOWN.has(t.effect.type) && Number.isFinite(t.cost.base) && Number.isFinite(t.cost.step)),
   "every trait has id/board/name/known effect type/cost");
 check(traits.filter(t => t.board !== "Terraform").every(t => typeof t.science === "string" && t.science.length > 20),
   "every Adapt/Spread trait carries its one-line science explanation");
+
+{ // traits added after the golden: First Bloom has no water, so a crossing trait is not offered there
+  const later = traits.filter(t => !goldenIds || !goldenIds.includes(t.id));
+  const s = BLOOM.createSim(planet, config, traits, { rng: GOLD.mulberry32(1) }); s.biomass = 1e9;
+  check(later.every(t => !s.offered(t) && !s.buy(t.id)) && s.map.CROSSINGS.links.length === 0,
+    "traits added after the golden are not offered on First Bloom (no water → no crossings)", later.map(t => t.name).join(", ") || "none");
+}
 
 // 3 · the engine has no DOM dependency
 const src = fs.readFileSync(path.join(ROOT, "resources/bloom-sim.js"), "utf8").replace(/\/\/.*$/gm, "");

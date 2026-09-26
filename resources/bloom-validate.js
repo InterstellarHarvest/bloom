@@ -8,12 +8,15 @@
 // (declared neighbours vs real geography), the land/water win denominator (against a real
 // BLOOM.createSim when `traits` is given) and, for procedural planets, seed reproduction
 // (when `regenerate` — e.g. BLOOM.generatePlanet — is given).
-// NOT yet: coverage feasibility, trait affordability, winnable margin, pacing (later §10.3 layers).
+// Reachability (BLOOM-004, §10.3 layer 3): ordinary spread (same landmass) vs the strongest Spread
+// crossing in `traits` (Waterborne Seeds → config.crossing.maxGap). Islands that need the trait are
+// fine (a reason to buy it); land unreachable even with it fails a procedural planet.
+// NOT yet: coverage feasibility, trait affordability, winnable margin, pacing (§10.3 layers 4–8).
 (function (root) {
   "use strict";
   const BLOOM = root.BLOOM;
   if (!BLOOM || !BLOOM.resolveLayout) throw new Error("bloom-validate.js needs resources/bloom-sim.js loaded first");
-  const { components, sectionAdjacency, sectionPieces } = BLOOM.geo;
+  const { components, sectionAdjacency, sectionPieces, waterCrossings, reachableLandmasses } = BLOOM.geo;
   const SIGNALS = ["tempOffset", "moistureOffset", "light", "ph", "salinity", "toxicity", "radiation", "nutrients"];
 
   function validatePlanet(planet, config, opts = {}) {
@@ -94,13 +97,28 @@
     });
     stats.declaredAdjacency = { declared, matched, missing };
 
-    // --- reachability by ordinary spread (same landmass only; water crossing does not exist yet)
+    // --- reachability: ordinary spread (land adjacency) vs the strongest available Spread crossing
     const seen = new Set([oi]), st = [oi];
     while (st.length) { const a = st.pop(); for (const b of geo[a]) if (!seen.has(b)) { seen.add(b); st.push(b); } }
     stats.reachableSections = seen.size;
     stats.strandedSections = SEC.filter((_, i) => !seen.has(i)).map(s => s.id);
     stats.reachableLandShare = Math.round(stats.originLandmassTiles / land * 1000) / 1000;
-    if (stats.strandedSections.length) warn(`reachability: ${stats.strandedSections.length} section(s) on other landmasses are unreachable until a water-crossing Spread trait exists`);
+    const crossTrait = (opts.traits || []).find(t => t.effect && t.effect.type === "crossing") || null;
+    const gap = crossTrait ? ((config.crossing && config.crossing.maxGap) || 0) : 0;
+    const cr = waterCrossings(tm, W, H, gap), massesReached = reachableLandmasses(secMass[oi], cr.links);
+    const reachSet = (ok) => { const secs = SEC.map((s, i) => ok(i) ? null : s.id).filter(Boolean);
+      const masses = [...new Set(SEC.map((_, i) => secMass[i]).filter(m => !ok(SEC.findIndex((_, j) => secMass[j] === m))))];
+      return { reachableSections: SC - secs.length, strandedSections: secs, strandedLandmasses: masses }; };
+    stats.reach = {
+      base: { rule: "ordinary spread (land adjacency)", ...reachSet(i => seen.has(i)) },
+      strongest: { rule: crossTrait ? `${crossTrait.name} (water gap ≤ ${gap} tiles)` : "no crossing Spread trait available", maxGap: gap,
+        ...reachSet(i => massesReached.has(secMass[i])) },
+      crossingLinks: cr.links.filter(l => l.from < l.to),
+    };
+    stats.reach.requiresCrossing = stats.reach.base.strandedSections.length > 0 && stats.reach.strongest.strandedSections.length === 0;
+    const strandedAll = stats.reach.strongest.strandedSections;
+    if (strandedAll.length) (planet.procedural ? err : warn)(`reachability: ${strandedAll.length} section(s) on ${stats.reach.strongest.strandedLandmasses.length} landmass(es) stay unreachable even with ${stats.reach.strongest.rule}`);
+    else if (stats.reach.requiresCrossing) warn(`reachability: ${stats.reach.base.strandedSections.length} section(s) need ${crossTrait.name}`);
 
     // --- the simulation agrees on the denominator (real engine instance)
     if (opts.traits && !errors.length) {

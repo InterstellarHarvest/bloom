@@ -73,6 +73,46 @@
     return Array.from({ length: SC }, (_, k) => components(Array.from(tilemap, v => v === k ? 1 : 0), W, H).sizes.length);
   }
 
+  // water crossings (BLOOM-004): from every coastal land tile, walk through WATER tiles only
+  // (4-neighbour BFS) for up to maxGap steps; any land tile of a DIFFERENT landmass touching a water
+  // tile reached at step d is a landing site at gap d (= water tiles crossed). Pure geography —
+  // never section neighbour lists. Returns tile pairs (for the simulation) and landmass links.
+  function waterCrossings(tilemap, W, H, maxGap) {
+    const N = W * H, landMask = Array.from(tilemap, v => v >= 0 ? 1 : 0), lm = components(landMask, W, H);
+    const pairs = [], best = new Map(); // "a-b" landmass link → min gap
+    if (!(maxGap > 0)) return { maxGap: maxGap || 0, landmass: lm.id, landmassSizes: lm.sizes, pairs, links: [] };
+    const dist = new Int32Array(N).fill(-1), touched = [];
+    const nb = t => { const x = t % W, y = (t / W) | 0, o = []; if (x > 0) o.push(t - 1); if (x < W - 1) o.push(t + 1); if (y > 0) o.push(t - W); if (y < H - 1) o.push(t + W); return o; };
+    for (let s = 0; s < N; s++) {
+      if (!landMask[s]) continue;
+      const start = nb(s).filter(t => !landMask[t]); if (!start.length) continue; // not coastal
+      const from = lm.id[s], landing = new Map(); let q = [];
+      for (const t of start) if (dist[t] < 0) { dist[t] = 1; touched.push(t); q.push(t); }
+      for (let d = 1; d <= maxGap && q.length; d++) {
+        const nq = [];
+        for (const w of q) for (const t of nb(w)) {
+          if (landMask[t]) { if (lm.id[t] !== from && !landing.has(t)) landing.set(t, d); }
+          else if (dist[t] < 0 && d < maxGap) { dist[t] = d + 1; touched.push(t); nq.push(t); }
+        }
+        q = nq;
+      }
+      for (const t of touched) dist[t] = -1; touched.length = 0;
+      for (const [t, d] of landing) {
+        pairs.push([s, t, d]);
+        const key = from + "-" + lm.id[t]; if (!best.has(key) || best.get(key) > d) best.set(key, d);
+      }
+    }
+    const links = [...best].map(([k, gap]) => { const [a, b] = k.split("-").map(Number); return { from: a, to: b, gap }; })
+      .sort((p, q) => p.from - q.from || p.to - q.to);
+    return { maxGap, landmass: lm.id, landmassSizes: lm.sizes, pairs, links };
+  }
+  // landmasses reachable from `startMass` using crossing links (links are symmetric by construction)
+  function reachableLandmasses(startMass, links) {
+    const seen = new Set([startMass]), st = [startMass];
+    while (st.length) { const a = st.pop(); for (const l of links) if (l.from === a && !seen.has(l.to)) { seen.add(l.to); st.push(l.to); } }
+    return seen;
+  }
+
   // ---- planet → tile layout. A planet either supplies `tilemap` (section index per tile, -1 =
   // impassable: water/void/lava) or gets a weighted-Voronoi layout from section `center`s.
   // Sections may be kind "land" (default) or impassable kinds; the simulation only ever sees land
@@ -116,6 +156,15 @@
     CENT.forEach(c => { c.x = c.x / c.n + .5; c.y = c.y / c.n + .5; });
     const LAND = LAND_TILES.length; // win/coverage denominator: colonizable tiles only (bible §9)
     const NBRS = sectionAdjacency(TILEMAP, W, H, SC); // from actual geography, never from authored lists
+    // water crossings (only maps with water have any): landing tile → linked coastal source tiles + weights
+    const XC = C.crossing || {}, CROSS = waterCrossings(TILEMAP, W, H, LAND < N ? (XC.maxGap || 0) : 0);
+    const landingIdx = new Map(), LANDING = [], LSRC = [], LW = [];
+    for (const [src, t, gap] of CROSS.pairs) {
+      let k = landingIdx.get(t); if (k === undefined) { k = LANDING.length; landingIdx.set(t, k); LANDING.push(t); LSRC.push([]); LW.push([]); }
+      LSRC[k].push(src); LW[k].push(XC.chancePerSource * Math.pow(XC.gapFalloff, gap - 1));
+    }
+    const LANDMASS = SEC.map((_, i) => CROSS.landmass[SEC_TILES[i][0]]);
+    const crossStat = (traits.find(t => t.effect.type === "crossing") || { effect: {} }).effect.stat;
     const winAt = planet.winThreshold ?? C.win;
 
     // genome + global sky + terraform counts, shaped by the trait catalogue
@@ -123,7 +172,7 @@
     const genome = {};
     for (const t of traits) {
       const e = t.effect;
-      if (e.type === "tempPoint" || e.type === "level") genome[e.stat] = 0;
+      if (e.type === "tempPoint" || e.type === "level" || e.type === "crossing") genome[e.stat] = 0;
       else if (e.type === "waterArm" && !("waterArm" in genome)) { genome.waterArm = null; genome.waterPts = 0; }
     }
     const sky = { temp: planet.globalClimate.temperature, moist: planet.globalClimate.moisture };
@@ -182,7 +231,9 @@
     const state = new Uint8Array(N), vigor = new Float32Array(SC), secFit = new Float32Array(SC), bubbles = [];
     const sim = {
       planet, config, traits, BAR, LIV, DEAD,
-      map: { W, H, N, LAND, LAND_TILES, SEC, SC, SIDX, ORIGIN, TILEMAP, AREA, CENT, SEC_TILES, NBRS, impassable: layout.impassable },
+      map: { W, H, N, LAND, LAND_TILES, SEC, SC, SIDX, ORIGIN, TILEMAP, AREA, CENT, SEC_TILES, NBRS, impassable: layout.impassable,
+             LANDMASS, CROSSINGS: { maxGap: CROSS.maxGap, links: CROSS.links, landingTiles: LANDING.length } },
+      crossing: { arrivals: 0, footholds: 0 }, // tile-ticks with waterborne seed pressure / new footholds made
       state, vigor, secFit, bubbles, genome, sky, tf, winAt,
       biomass: C.econ.startBiomass, ticks: 0, won: false,
       onWin: null, // (coverage) => void, called once from the tick that crosses winAt
@@ -235,6 +286,20 @@
           if (rng() < C.recover.deadToBarren) next[i] = BAR;
         }
       }
+      // 2b. waterborne seeds (only once a crossing trait is owned → no rng draw otherwise, First Bloom unchanged).
+      // Seeds land on another landmass's shore; they establish only under the ordinary grow rule
+      // (section vigor above growThresh, scaled by fitness) — never on water, never past a real limit.
+      if (crossStat && lvl(crossStat) > 0) {
+        for (let k = 0; k < LANDING.length; k++) {
+          const t = LANDING[k]; if (state[t] !== BAR || next[t] !== BAR) continue;
+          let pr = 0; const src = LSRC[k], w = LW[k];
+          for (let j = 0; j < src.length; j++) if (state[src[j]] === LIV) pr += w[j];
+          if (pr <= 0) continue;
+          sim.crossing.arrivals++;
+          const s = TILEMAP[t]; if (vigor[s] <= g.growThresh) continue; // arrived, but the ground rejects them
+          if (rng() < pr * seedMult * secFit[s]) { next[t] = LIV; sim.crossing.footholds++; }
+        }
+      }
       state.set(next);
       // 3. economy
       const E = C.econ;
@@ -258,6 +323,8 @@
     function collectBubble(k) { sim.biomass += C.econ.bubbleValue; bubbles.splice(k, 1); }
 
     // ---- upgrades: one implementation per effect type (content/traits.js)
+    // a trait is offered only where it can matter: crossing needs at least one real water crossing
+    function offered(t) { return t.effect.type !== "crossing" || CROSS.links.length > 0; }
     function costTier(t) { const e = t.effect;
       return e.type === "sky" ? tf[t.id] : e.type === "waterArm" ? lvl("waterPts") : lvl(e.stat); }
     function ownedTier(t) { const e = t.effect;
@@ -266,9 +333,10 @@
       if (e.type === "tempPoint") return lvl("cold") + lvl("heat") < C.scales.tempCap;
       if (e.type === "waterArm") return genome.waterArm === null || genome.waterArm === e.arm;
       if (e.type === "level") return lvl(e.stat) < e.max;
+      if (e.type === "crossing") return offered(t) && lvl(e.stat) < e.max;
       return true; }
     function applyTrait(t) { const e = t.effect;
-      if (e.type === "tempPoint" || e.type === "level") genome[e.stat]++;
+      if (e.type === "tempPoint" || e.type === "level" || e.type === "crossing") genome[e.stat]++;
       else if (e.type === "waterArm") { if (genome.waterArm !== e.arm) { genome.waterArm = e.arm; genome.waterPts = 0; } genome.waterPts++; }
       else if (e.type === "sky") { const v = sky[e.axis] + e.delta; sky[e.axis] = (e.min !== undefined || e.max !== undefined) ? clamp(v, e.min ?? -Infinity, e.max ?? Infinity) : v; tf[t.id]++; } }
     const price = t => Math.round((t.cost.base + costTier(t) * t.cost.step) * C.econ.costScale);
@@ -290,10 +358,10 @@
     }
 
     Object.assign(sim, { derived, evaluate, lampOf, tick, coverage, livingCountBySection, collectBubble,
-      traitById, price, canBuy, ownedTier, why, buy, previewOf });
+      traitById, offered, price, canBuy, ownedTier, why, buy, previewOf });
     return sim;
   }
 
   root.BLOOM = Object.assign(root.BLOOM || {}, { createSim, resolveLayout, growVoronoi,
-    geo: { components, sectionAdjacency, sectionPieces }, util: { clamp, lerp, band, overLimit } });
+    geo: { components, sectionAdjacency, sectionPieces, waterCrossings, reachableLandmasses }, util: { clamp, lerp, band, overLimit } });
 })(typeof window !== "undefined" ? window : globalThis);

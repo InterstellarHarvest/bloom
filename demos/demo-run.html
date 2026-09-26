@@ -290,7 +290,7 @@ function renderShop(){
   for(const gname of groups){
     html+=`<div class="grp"><h3>${gname}</h3>`;
     if(gname==="Adapt") html+=`<div class="temppool">temp points: cold ${genome.cold} · heat ${genome.heat} / cap ${CFG.scales.tempCap}</div>`;
-    for(const u of UP.filter(x=>x.board===gname)){
+    for(const u of UP.filter(x=>x.board===gname && sim.offered(x))){ // e.g. a crossing trait only where water can be crossed
       const cost=sim.price(u); const tier=sim.ownedTier(u);
       const canBuy=sim.canBuy(u) && sim.biomass>=cost;
       const label = tier>0 ? `${u.name} <small>·${["I","II","III","IV"][tier-1]||("+"+tier)} owned · ${u.sub}</small>` : `${u.name} <small>${u.sub}</small>`;

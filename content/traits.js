@@ -5,6 +5,8 @@
 //   waterArm  {arm}          one water strategy (wet|dry); points shift + widen the water window
 //   level     {stat, max}    simple capped genome level
 //   sky       {axis, delta}  global Terraform shift (axis temp|moist; optional min/max clamp)
+//   crossing  {stat, max}    seeds cross water to other landmasses (range/pressure: config.crossing);
+//                            only offered on maps where such a crossing exists
 // `science` is the one-line real-plant explanation the Bloom Report shows (bible §17).
 (function (root) {
   "use strict";
@@ -35,6 +37,9 @@
     { id: "seedOut", board: "Spread", name: "Seed Output", sub: "colonize faster",
       effect: { type: "level", stat: "seedOut", max: 2 }, cost: { base: 26, step: 30 },
       science: "like dandelions: one plant releases thousands of light seeds so a few land on new ground." },
+    { id: "waterSeeds", board: "Spread", name: "Waterborne Seeds", sub: "floating seeds cross narrow water",
+      effect: { type: "crossing", stat: "waterSeeds", max: 1 }, cost: { base: 36, step: 0 },
+      science: "like coconuts and sea beans: some seeds and fruits float, so currents can carry them across short stretches of water to new shorelines." },
     { id: "earlyMat", board: "Spread", name: "Early Maturity", sub: "seed neighbors sooner",
       effect: { type: "level", stat: "earlyMat", max: 1 }, cost: { base: 34, step: 0 },
       science: "like desert wildflowers: these 'ephemerals' race from seed to flower in weeks, before conditions turn bad." },
