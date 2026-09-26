@@ -19,6 +19,10 @@
   numbers are content/config.js, upgrades are content/traits.js, the planet is planets/first_bloom.js.
   Test hook: window.BLOOM_API = { buy, sim, advance, coverage, state } for headless checks.
   Headless QA: tools/slice-check.js (drives the real buttons) · tools/sim-check.js (engine golden, Node).
+  BLOOM-007 (developer/playtest harness, NOT the planet menu): with no query string this is First Bloom,
+  unchanged. demo-run.html?archetype=ocean_archipelago&seed=13 generates that public seed through the real
+  BLOOM.generateFromArchetype production path (validator layers 1–8) and plays it with the same UI; a seed
+  that fails generation shows an explicit failure state (never another seed). QA: tools/procedural-run-check.js.
 -->
 <style>
   :root{
@@ -102,6 +106,12 @@
   .report canvas#plantCv{flex:0 0 auto; background:#0b1322; border:1px solid #22304d; border-radius:6px; cursor:default}
   .report .analog li{margin:5px 0} .report .analog b{color:var(--accent)}
   .report .btn{margin-top:14px; background:#243b2f; border:1px solid #2f6a4d; color:#cdeede; padding:8px 16px; border-radius:6px}
+  /* BLOOM-007 procedural harness: run identity, water / island notes, generation failure */
+  .runid{margin-left:auto; color:#5d6a82; font-size:10px}
+  .geo{margin:8px 0; padding:8px; border-radius:5px; background:#0f1d2c; border:1px solid #24435f; color:#9cc8e8; font-size:11px}
+  .genfail{max-width:640px; margin:40px auto; padding:22px; background:#1f1418; border:1px solid #6a2f36; border-radius:10px; line-height:1.6}
+  .genfail h2{color:var(--bad); letter-spacing:2px; margin:0 0 8px; font-size:14px}
+  .genfail code{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -132,7 +142,7 @@
   <aside class="right shop" id="shop"><h2>UPGRADES</h2></aside>
 </main>
 
-<footer><span class="log" id="log">Watch the plant spread. When a region stalls, read its blocker and buy the answer.</span></footer>
+<footer><span class="log" id="log">Watch the plant spread. When a region stalls, read its blocker and buy the answer.</span><span class="runid" id="runId"></span></footer>
 
 <div class="modal" id="reportModal"><div class="report" id="report"></div></div>
 
@@ -140,8 +150,15 @@
 <script src="../content/config.js"></script>
 <script src="../content/traits.js"></script>
 <script src="../planets/first_bloom.js"></script>
+<script src="../content/archetypes.js"></script>
 <script src="../resources/bloom-sim.js"></script>
-<script>
+<script src="../resources/bloom-gen.js"></script>
+<script src="../resources/bloom-validate.js"></script>
+<script src="../resources/bloom-witness.js"></script>
+<script src="../resources/bloom-archetype.js"></script>
+<!-- the game UI below is inert (type="text/plain") until the boot script after it has chosen the planet:
+     it then runs as an ordinary classic script, so its globals (sim, selected, refreshShop …) are unchanged -->
+<script type="text/plain" id="bloomUI">
 "use strict";
 /* ========================================================================== */
 /*  ENGINE WIRING — simulation lives in resources/bloom-sim.js; numbers in    */
@@ -152,7 +169,7 @@ if(!window.BLOOM||!window.BLOOM_DATA||!BLOOM_DATA.planets||!BLOOM_DATA.planets.f
   document.body.innerHTML='<p style="padding:24px;font-family:monospace;color:#ff6b6b">BLOOM could not load its engine/content files. Open demos/demo-run.html from inside the full Bloom folder (it needs ../content, ../planets and ../resources).</p>';
   throw new Error("BLOOM engine/content files missing");
 }
-const sim=BLOOM.createSim(BLOOM_DATA.planets.first_bloom, BLOOM_DATA.config, BLOOM_DATA.traits);
+const sim=BLOOM.createSim(BLOOM_RUN.planet, BLOOM_DATA.config, BLOOM_DATA.traits);
 const CFG=sim.config;
 const {W,H,N,SEC,SC,SIDX,ORIGIN,TILEMAP,AREA,CENT,SEC_TILES}=sim.map;
 const {state,vigor,secFit,bubbles,genome,tf,BAR,LIV,DEAD}=sim, G=sim.sky;
@@ -161,6 +178,17 @@ const {clamp}=BLOOM.util;
 const mix=(c1,c2,k)=>[c1[0]+(c2[0]-c1[0])*k,c1[1]+(c2[1]-c1[1])*k,c1[2]+(c2[2]-c1[2])*k];
 let running=true, speed=1;
 sim.onWin=cov=>{ running=false; onWin(cov); };
+// display names: generated worlds can repeat a biome name, so repeats get a number (First Bloom has none)
+const LABEL=SEC.map((s,i)=>{ const same=SEC.filter(x=>x.name===s.name); return same.length>1?`${s.name} ${same.indexOf(s)+1}`:s.name; });
+// geography for water worlds (BLOOM-007): landmass per section, crossing links from the engine's own geometry
+const LANDMASS=sim.map.LANDMASS, XLINKS=sim.map.CROSSINGS.links, MULTI_MASS=new Set(LANDMASS).size>1;
+const CROSS_T=sim.traits.find(u=>u.effect.type==="crossing"&&sim.offered(u))||null;
+const ownsCrossing=()=>!!(CROSS_T&&sim.ownedTier(CROSS_T)>0);
+function livingMasses(){ const liv=livingCountBySection(), m=new Set([LANDMASS[ORIGIN]]); SEC.forEach((_,i)=>{ if(liv[i]>0) m.add(LANDMASS[i]); }); return m; }
+function crossingHops(){ // landmass → water crossings needed from land the plant already lives on
+  const hops=new Map(), q=[...livingMasses()]; q.forEach(m=>hops.set(m,0));
+  while(q.length){ const a=q.shift(); for(const l of XLINKS) if(l.from===a&&!hops.has(l.to)){ hops.set(l.to,hops.get(a)+1); q.push(l.to); } }
+  return hops; }
 
 /* limiting-factor copy (UI text; thresholds live in config.categories) */
 const LIMIT_MSG={ Temperature:e=>e.cats.Temperature.word==="freezing"||e.cats.Temperature.word==="cold"?"too cold":"too hot",
@@ -181,7 +209,7 @@ const FIX_HINT={ Temperature:e=> (e.cats.Temperature.word==="freezing"||e.cats.T
 /* ========================================================================== */
 const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
 const dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
-let TILE=14, selected=-1, rawOpen=false, preview=null; // preview={gain:[],lose:[]}
+let TILE=14, selected=-1, selectedWater=false, rawOpen=false, preview=null; // preview={gain:[],lose:[],reachHostile?}
 const TEMP_STOPS=[[-40,[44,62,104]],[-20,[78,104,140]],[0,[100,126,116]],[12,[92,140,88]],[25,[156,146,84]],[40,[182,100,60]],[60,[150,58,46]]];
 function stops(v){ const S=TEMP_STOPS; if(v<=S[0][0])return S[0][1].slice(); if(v>=S[S.length-1][0])return S[S.length-1][1].slice();
   for(let i=0;i<S.length-1;i++){const[a,ca]=S[i],[b,cb]=S[i+1]; if(v>=a&&v<=b)return mix(ca,cb,(v-a)/(b-a));} return S[0][1].slice(); }
@@ -190,7 +218,7 @@ function barrenColor(i){ const L=SEC[i].local; let c=stops(G.temp+L.tempOffset);
   return mix(c,[10,12,18],0.55); } // dim: barren ground
 function livingColor(v){ // vigor 0..1 → sickly→lush green
   const low=[120,120,70], hi=[90,205,110]; return mix(low,hi,clamp(v,0,1)); }
-const DEAD_C=[92,66,44];
+const DEAD_C=[92,66,44], WATER_C=[24,52,92], WATER_C2=[30,62,104];
 function fit(){ const st=document.querySelector(".stage"); TILE=Math.max(6,Math.floor(Math.min((st.clientWidth-24)/W,(st.clientHeight-24)/H))); }
 function resize(){ fit(); cv.width=W*TILE*dpr; cv.height=H*TILE*dpr; cv.style.width=W*TILE+"px"; cv.style.height=H*TILE+"px"; ctx.setTransform(dpr,0,0,dpr,0,0); draw(); }
 const rgb=c=>`rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`;
@@ -199,7 +227,8 @@ function draw(){
   ctx.clearRect(0,0,cv.width,cv.height);
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){
     const i=y*W+x,s=TILEMAP[i]; let c;
-    if(state[i]===LIV) c=livingColor(vigor[s]);
+    if(s<0) c=((x+y)%7===0)?WATER_C2:WATER_C; // water: never colonizable, not in the coverage denominator
+    else if(state[i]===LIV) c=livingColor(vigor[s]);
     else if(state[i]===DEAD) c=DEAD_C;
     else c=barrenColor(s);
     ctx.fillStyle=rgb(c); ctx.fillRect(x*TILE,y*TILE,TILE+.5,TILE+.5);
@@ -216,7 +245,8 @@ function draw(){
   ctx.stroke();
   // selection + purchase preview outlines
   if(selected>=0) outline(selected,"#7fe3c0",3);
-  if(preview){ preview.gain.forEach(i=>outline(i,"#66d17f",3,[6,4])); preview.lose.forEach(i=>outline(i,"#e2604f",3,[6,4])); }
+  if(preview){ preview.gain.forEach(i=>outline(i,"#66d17f",3,[6,4])); preview.lose.forEach(i=>outline(i,"#e2604f",3,[6,4]));
+    (preview.reachHostile||[]).forEach(i=>outline(i,"#e7c14e",2,[3,4])); } // reachable across water, ground hostile now
   // bubbles
   for(const b of bubbles){ const px=b.x*TILE,py=b.y*TILE, r=Math.max(4,TILE*0.42);
     ctx.beginPath(); ctx.arc(px,py,r,0,7); ctx.fillStyle="rgba(255,212,121,0.92)"; ctx.fill();
@@ -224,8 +254,8 @@ function draw(){
   // labels
   const fs=Math.max(8,Math.min(12,TILE)); ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.font=`${fs}px "DejaVu Sans Mono",monospace`;
   SEC.forEach((s,i)=>{ const px=CENT[i].x*TILE,py=CENT[i].y*TILE;
-    ctx.lineWidth=3; ctx.strokeStyle="rgba(5,7,12,0.9)"; ctx.strokeText(s.name.toUpperCase(),px,py);
-    ctx.fillStyle=i===selected?"#fff":"rgba(232,238,248,0.9)"; ctx.fillText(s.name.toUpperCase(),px,py);
+    ctx.lineWidth=3; ctx.strokeStyle="rgba(5,7,12,0.9)"; ctx.strokeText(LABEL[i].toUpperCase(),px,py);
+    ctx.fillStyle=i===selected?"#fff":"rgba(232,238,248,0.9)"; ctx.fillText(LABEL[i].toUpperCase(),px,py);
     if(s.isOrigin){ctx.fillStyle="#ffd479"; ctx.fillText("★",px,py+fs+1);}
   });
 }
@@ -254,6 +284,7 @@ function renderHUD(cov){
 function renderInspect(){
   const el=document.getElementById("inspect");
   const curRaw=el.querySelector("details.raw"); if(curRaw) rawOpen=curRaw.open; // read synchronously: the toggle event can lag a re-render
+  if(selected<0&&selectedWater){ el.innerHTML=`<h2>WATER</h2><div class="secname">Open water</div><div class="geo">🌊 Not land: nothing grows here and it does not count toward coverage. Ordinary spread cannot cross water${CROSS_T?`; ${CROSS_T.name} carries seeds over gaps of up to ${CFG.crossing.maxGap} water tiles`:""}.</div>`; return; }
   if(selected<0){ el.innerHTML='<h2>SECTION</h2><p style="color:var(--dim);font-style:italic">Click a region to read it. The plant starts in its protected origin (★) and spreads into suitable ground on its own.</p>'; return; }
   const s=SEC[selected], e=evaluate(selected), liv=livingCountBySection()[selected];
   let dead=0,barr=0; for(const t of SEC_TILES[selected]){ if(state[t]===DEAD)dead++; else if(state[t]===BAR)barr++; }
@@ -264,9 +295,9 @@ function renderInspect(){
     ? `<div class="limit">▲ Growth blocked: <b>${LIMIT_MSG[e.limitKey](e)}</b><div class="fixhint">${FIX_HINT[e.limitKey](e)}</div></div>`
     : `<div class="limit ok">✓ Thriving here — no blocker.${e.cats.Soil.soft?'<div class="fixhint">Low nutrients slow growth here, but it is not a wall.</div>':''}</div>`;
   el.innerHTML=`<h2>SECTION</h2>
-    <div class="secname">${s.name}${s.isOrigin?'<span class="badge">★ ORIGIN</span>':''}</div>
+    <div class="secname">${LABEL[selected]}${s.isOrigin?'<span class="badge">★ ORIGIN</span>':''}</div>
     <div class="cats">${catRow("Temperature")}${catRow("Water")}${catRow("Soil")}${catRow("Hazard")}</div>
-    ${limitHtml}
+    ${limitHtml}${geoNote(selected)}
     <div class="vitals">vigor ${Math.round(vigor[selected]*100)}%
       <div class="vbar"><i class="vl" style="width:${liv/total*100}%"></i><i class="vd" style="width:${dead/total*100}%"></i><i class="vb" style="flex:1"></i></div>
       <div style="color:var(--dim);margin-top:3px">living ${liv} · dead ${dead} · barren ${barr}</div>
@@ -279,6 +310,17 @@ function renderInspect(){
         <tr><td>salinity</td><td>${s.local.salinity}</td></tr><tr><td>nutrients</td><td>${s.local.nutrients}</td></tr>
         <tr><td>toxicity</td><td>${s.local.toxicity}</td></tr><tr><td>radiation</td><td>${s.local.radiation}</td></tr>
       </table></details>`;
+}
+
+// island note (water worlds only): geographic access, kept separate from the environment readout above
+function geoNote(i){
+  if(!MULTI_MASS||livingMasses().has(LANDMASS[i])) return "";
+  const h=crossingHops().get(LANDMASS[i]), g=CFG.crossing.maxGap;
+  if(!CROSS_T||h===undefined) return `<div class="geo">🌊 Separate island: no water gap of ≤ ${g} tiles links it to land your plant holds yet.</div>`;
+  const far=h>1?` It is ${h} crossings away, so seeds need a foothold on a nearer island first.`:"";
+  return ownsCrossing()
+    ? `<div class="geo">🌊 Island across water. ${CROSS_T.name} can carry seeds here; they take root only if the ground above suits your plant.${far}</div>`
+    : `<div class="geo">🌊 Island across water: ordinary spread cannot cross it. ${CROSS_T.name} would let seeds drift over.${far}</div>`;
 }
 
 /* ---- upgrade catalogue = content/traits.js; prices/effects/rules = engine ---- */
@@ -312,8 +354,20 @@ function refreshShop(){
 }
 function showPreview(id){
   preview=sim.previewOf(id); const u=upById[id];
-  if(!preview){ log(sim.why(u)||"Not available."); return; }
-  const nm=a=>a.map(i=>SEC[i].name).join(", ");
+  if(!preview){ log(sim.why(u)||(sim.ownedTier(u)>0?`${u.name} — already evolved.`:"Not available.")); return; }
+  const nm=a=>a.map(i=>LABEL[i]).join(", ");
+  if(u.effect.type==="crossing"){ // geographic access, not a promise that the far shore suits the plant
+    const hops=crossingHops(), home=livingMasses(), reach=SEC.map((_,i)=>i).filter(i=>!home.has(LANDMASS[i])&&hops.has(LANDMASS[i]));
+    const ok=reach.filter(i=>evaluate(i).fitness>CFG.grow.growThresh), bad=reach.filter(i=>!ok.includes(i));
+    const isl=new Set(reach.map(i=>LANDMASS[i])).size, far=reach.some(i=>hops.get(LANDMASS[i])>1);
+    preview={gain:ok,lose:[],reachHostile:bad};
+    const why={}; bad.forEach(i=>{ const e=evaluate(i), w=LIMIT_MSG[e.limitKey](e); why[w]=(why[w]||0)+1; });
+    // counts + outline key first (the footer is one line); the region names follow
+    log(`${u.name} — seeds float across water gaps of up to ${CFG.crossing.maxGap} tiles. Reachable: ${reach.length} region(s) on ${isl} island(s) — `+
+      `${ok.length} can take root now (green outline), ${bad.length} reachable but hostile now (yellow outline${bad.length?`: ${Object.entries(why).map(([w,n])=>`${w} ×${n}`).join(", ")}`:""}).`+
+      (far?" Farther islands need a foothold on a nearer one first.":"")+
+      (ok.length?` Can take root: ${nm(ok)}.`:"")+(bad.length?` Hostile: ${nm(bad)}.`:""));
+    return; }
   log(`${u.name} — ` + (preview.gain.length||preview.lose.length
     ? [preview.gain.length?`opens: ${nm(preview.gain)}`:"", preview.lose.length?`⚠ closes: ${nm(preview.lose)}`:""].filter(Boolean).join(" · ")
     : (u.board==="Spread"?"no region changes; your plant spreads faster.":"no region changes state yet.")));
@@ -336,6 +390,7 @@ cv.addEventListener("click",e=>{
   // bubble hit first
   for(let k=bubbles.length-1;k>=0;k--){ const b=bubbles[k]; const px=b.x*TILE,py=b.y*TILE; const r=cv.getBoundingClientRect();
     if(Math.hypot(e.clientX-r.left-px,e.clientY-r.top-py)<=Math.max(6,TILE*0.55)){ sim.collectBubble(k); renderHUD(lastCov); draw(); return; } }
+  selectedWater=sec===-1&&tile>=0; // water tile (sec -2 = outside the map)
   selected=(sec<0||sec===selected)?-1:sec; renderInspect(); draw();
 });
 function log(m){ document.getElementById("log").textContent=m; }
@@ -368,21 +423,22 @@ function drawPlant(c){
   });
   if(genome.earlyMat){ px(15,11,"#ffd479",3,3); px(16,12,"#e2604f"); }           // early flower
   if(genome.seedOut){ for(let k=0;k<genome.seedOut*3;k++) px(20+k*3,8-(k%2)*3,"#f4f1e4"); } // drifting seeds
+  if(genome.waterSeeds){ px(0,38,"#3a6f9a",8,2); px(2,36,"#8a5a2b",3,3); px(3,36,"#b98a4a"); } // a floating seed pod
 }
 
 function onWin(cov){
   // build list + real-plant analogs (acceptance Q10) come from the trait data (content/traits.js)
   const owned=UP.filter(u=>u.board!=="Terraform" && sim.ownedTier(u)>0);
-  const built=owned.map(u=> u.effect.type==="level"&&u.effect.max===1 ? u.name : `${u.short||u.name} ×${sim.ownedTier(u)}`);
+  const built=owned.map(u=> (u.effect.type==="level"||u.effect.type==="crossing")&&u.effect.max===1 ? u.name : `${u.short||u.name} ×${sim.ownedTier(u)}`);
   const terra=UP.filter(u=>u.board==="Terraform" && sim.ownedTier(u)>0).map(u=>`${u.short||u.name} ×${sim.ownedTier(u)}`);
   const held=[], gaveUp=[]; const liv=livingCountBySection();
   // a region your plant CAN grow in is just still filling in — only unfit regions count as given up
-  SEC.forEach((s,i)=>{ if(liv[i]/AREA[i]>0.4) held.push(s.name);
-    else { const e=evaluate(i); if(e.fitness<=CFG.grow.growThresh) gaveUp.push(`<b>${s.name}</b> — ${LIMIT_MSG[e.limitKey](e)}`); } });
+  SEC.forEach((s,i)=>{ if(liv[i]/AREA[i]>0.4) held.push(LABEL[i]);
+    else { const e=evaluate(i); if(e.fitness<=CFG.grow.growThresh) gaveUp.push(`<b>${LABEL[i]}</b> — ${LIMIT_MSG[e.limitKey](e)}`); } });
   const mins=Math.floor(sim.ticks*CFG.tickMs/60000), secs=Math.round(sim.ticks*CFG.tickMs/1000)%60;
   document.getElementById("report").innerHTML=`
     <h2>★ BLOOM</h2>
-    <div class="sub">You held ${Math.round(cov*100)}% of the land in ${mins}m ${String(secs).padStart(2,"0")}s.</div>
+    <div class="sub">You held ${Math.round(cov*100)}% of the land${BLOOM_RUN.kind==="procedural"?` of <b>${BLOOM_RUN.planet.name}</b> (${BLOOM_RUN.archetype.name} · public seed ${BLOOM_RUN.seed})`:""} in ${mins}m ${String(secs).padStart(2,"0")}s.</div>
     <div class="top"><canvas id="plantCv" width="136" height="200"></canvas>
       <div><b>Your plant became:</b><ul>${built.map(b=>`<li>${b}</li>`).join('')||'<li>the unmodified pioneer</li>'}</ul>
       ${terra.length?`<div style="margin-top:8px"><b>You reshaped the sky:</b> ${terra.join(', ')}</div>`:''}</div></div>
@@ -411,6 +467,10 @@ function frame(ts){
   requestAnimationFrame(frame);
 }
 window.addEventListener("resize",resize);
+if(BLOOM_RUN.kind==="procedural"){ const a=BLOOM_RUN.planet.archetype; // unobtrusive run identity for QA / playtest notes
+  document.title=`BLOOM — ${BLOOM_RUN.archetype.name} · seed ${BLOOM_RUN.seed} (playtest harness)`;
+  document.querySelector("header h1 small").textContent="· "+BLOOM_RUN.planet.name.toLowerCase();
+  document.getElementById("runId").textContent=`${BLOOM_RUN.archetype.name} · public seed ${a.publicSeed} · attempt ${a.attempt} · ${BLOOM_RUN.planet.name} (${BLOOM_RUN.planet.id}) · layers ${a.validatedLayers.join("")}`; }
 resize(); renderShop(); renderHUD(0); requestAnimationFrame(frame);
 
 /* ========================================================================== */
@@ -423,8 +483,59 @@ window.BLOOM_API={
   state(){ return {biomass:Math.floor(sim.biomass), ticks:sim.ticks, won:sim.won, genome:{...genome}, tf:{...tf}, sky:{...G},
     coverage:this.coverage(), vigor:[...vigor].map(v=>+v.toFixed(2)),
     secFit:[...secFit].map(v=>+v.toFixed(2)), sections:SEC.map(s=>s.id)}; },
-  evalSection(id){ return evaluate(SIDX[id]); }
+  evalSection(id){ return evaluate(SIDX[id]); },
+  // BLOOM-007 harness diagnostics (tests only): run identity, water geometry, living tiles per landmass
+  run:BLOOM_RUN.summary,
+  geometry(){ return { W, H, tile:TILE, water:TILEMAP.filter(v=>v<0).length, land:sim.map.LAND, landmasses:new Set(LANDMASS).size,
+    originMass:LANDMASS[ORIGIN], centers:CENT.map(c=>({x:c.x*TILE,y:c.y*TILE})), mass:[...LANDMASS] }; },
+  livingByMass(){ const liv=livingCountBySection(), out={}; SEC.forEach((_,i)=>{ out[LANDMASS[i]]=(out[LANDMASS[i]]||0)+liv[i]; }); return out; },
+  crossing(){ return { ...sim.crossing }; }
 };
+</script>
+<script>
+"use strict";
+/* ========================================================================== */
+/*  BOOT (BLOOM-007): choose the planet, then start the UI above.              */
+/*  No query string → First Bloom (the accepted slice, unchanged).             */
+/*  ?archetype=<id>&seed=<public seed> → BLOOM.generateFromArchetype, the real */
+/*  production path (validator layers 1–8). Failure → explicit failure state;  */
+/*  another seed is never substituted and no world starts.                     */
+/* ========================================================================== */
+window.BLOOM_RUN=(function(){
+  if(!window.BLOOM||!window.BLOOM_DATA||!BLOOM_DATA.planets||!BLOOM_DATA.planets.first_bloom) return {kind:"missing"};
+  const q=new URLSearchParams(location.search), aid=q.get("archetype"), seedText=q.get("seed");
+  if(aid===null&&seedText===null) return {kind:"authored", planet:BLOOM_DATA.planets.first_bloom, summary:{kind:"authored", planetId:"first_bloom", name:BLOOM_DATA.planets.first_bloom.name}};
+  const fail=(why,extra={})=>({kind:"procedural", failed:true, summary:{kind:"procedural", failed:true, archetypeId:aid, seed:seedText, why, ...extra}});
+  const A=(BLOOM_DATA.archetypes||[]).find(a=>a.id===aid);
+  if(!A) return fail(`unknown archetype "${aid}" (known: ${(BLOOM_DATA.archetypes||[]).map(a=>a.id).join(", ")})`);
+  if(seedText===null||!/^\d{1,10}$/.test(seedText)||+seedText>4294967295) return fail(`"seed" must be a whole number 0–4294967295 (got ${seedText===null?"nothing":`"${seedText}"`})`);
+  const seed=+seedText;
+  let planet;
+  try { planet=BLOOM.generateFromArchetype(A, seed, { config:BLOOM_DATA.config, traits:BLOOM_DATA.traits }); }
+  catch(e){ if(!e.attempts) throw e;
+    const byLayer={}; for(const a of e.attempts){ const m=(a.rejected[0]||"").match(/^layer (\d)/); const k=m?`layer ${m[1]}`:"structure / geography"; byLayer[k]=(byLayer[k]||0)+1; }
+    return fail(`no acceptable world in ${e.attempts.length} attempts`, { archetype:A.name, attempts:e.attempts.length, rejectedByLayer:byLayer }); }
+  // the player never sees validator solutions: drop the witness plan and strategy signatures before the UI starts
+  const {witness, strategies, rejectedAttempts, ...ident}=planet.archetype;
+  planet.archetype={...ident, rejectedAttemptCount:rejectedAttempts.length};
+  return {kind:"procedural", planet, archetype:A, seed, summary:{kind:"procedural", archetypeId:A.id, archetype:A.name, publicSeed:ident.publicSeed,
+    attempt:ident.attempt, planetId:planet.id, name:planet.name, validatedLayers:ident.validatedLayers, landmasses:ident.landmasses, actualWaterPct:ident.actualWaterPct}};
+})();
+if(BLOOM_RUN.kind==="missing"){
+  document.body.innerHTML='<p style="padding:24px;font-family:monospace;color:#ff6b6b">BLOOM could not load its engine/content files. Open demos/demo-run.html from inside the full Bloom folder (it needs ../content, ../planets and ../resources).</p>';
+} else if(BLOOM_RUN.failed){ // explicit failure state: identify the request, start nothing
+  const f=BLOOM_RUN.summary, esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  document.title="BLOOM — generation failed"; document.querySelector("header h1 small").textContent="· generation failed";
+  document.querySelector("main").innerHTML=`<div class="genfail" id="genFail" style="grid-column:1/-1;align-self:start"><h2>NO WORLD GENERATED</h2>
+    <div>${f.archetype?esc(f.archetype):`archetype <code>${esc(f.archetypeId)}</code>`} · public seed <code>${esc(f.seed)}</code></div>
+    <p>${esc(f.why)}.${f.rejectedByLayer?` Rejected attempts: ${Object.entries(f.rejectedByLayer).map(([k,n])=>`${esc(k)} ${n}`).join(" · ")}.`:""}</p>
+    <p style="color:var(--dim)">${f.attempts?"This public seed is not playable under the current validation policy.":"The launch parameters are invalid."} No other seed was substituted and no world was started. Try a different <code>seed=</code> value.</p></div>`;
+  document.querySelector("header .hud").style.visibility="hidden"; document.querySelector("header .controls").style.visibility="hidden";
+  document.getElementById("log").textContent=`Generation failed for public seed ${f.seed}.`;
+  window.BLOOM_API={ run:f };
+} else { // run the game UI as an ordinary classic script (same globals as before BLOOM-007)
+  const ui=document.createElement("script"); ui.textContent=document.getElementById("bloomUI").textContent; document.body.appendChild(ui);
+}
 </script>
 </body>
 </html>

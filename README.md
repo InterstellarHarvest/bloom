@@ -4,7 +4,7 @@ A retro-pixel **terraforming / evolution** game in the *Plague Inc.* lineage, bu
 
 > *A planet's "mood" is its sky — you can change that. A region's "personality" is its ground — you have to adapt to that.*
 
-## Status — slice gate PASSED; Ocean Archipelago worlds validated through all eight layers
+## Status — slice gate PASSED; Ocean Archipelago worlds validated (layers 1–8) and playable in a developer harness; human procedural playtest pending
 
 The original plan was eight isolated portion demos. In August 2026 the **v1.1 direction change** ([PR #1](https://github.com/InterstellarHarvest/bloom/pull/1), see [`docs/GAMEPLAY_DIRECTION_DECISIONS_v1.0.md`](docs/GAMEPLAY_DIRECTION_DECISIONS_v1.0.md)) replaced that march with a single gate: **one complete, ugly-but-playable Eden run** ([`docs/NEXT_PLAYABLE_SLICE_v1.0.md`](docs/NEXT_PLAYABLE_SLICE_v1.0.md)). The slice was built, audited and tuned, and the owner **cleared the gate on 2026-09-26**. Work now follows the bible's post-gate sequence (§15).
 
@@ -18,10 +18,14 @@ The original plan was eight isolated portion demos. In August 2026 the **v1.1 di
 | Post-gate 3a · Waterborne Seeds + reachability (BLOOM-004) | first water-crossing Spread trait (geography-derived crossings, finite range, ordinary fitness rules); validator proves every land tile is reachable with the strongest Spread; generator can keep islands in range | ✅ |
 | Post-gate 3b · archetypes + winnability (BLOOM-005) | data-driven archetype layer + **Ocean Archipelago**; deterministic archetype generate → validate → retry; validator layers 4–6 via a real no-cheat **witness build** | ✅ |
 | Post-gate 3c · strategy diversity + pacing (BLOOM-006) | validator **layers 7–8**: ≥ 2 materially distinct broad strategies per Ocean Archipelago world, each inside provisional pacing bands; production generation requires layers 1–8 | ✅ |
-| Post-gate 3d · more archetypes/content | further archetypes and traits (§10.1, §17) | ⏭ next |
+| Post-gate 3d · procedural-run harness (BLOOM-007) | `demo-run.html?archetype=ocean_archipelago&seed=N` plays a production-generated world in the real game UI; water rendering, island/crossing readouts, Waterborne Seeds preview | ✅ |
+| **Human procedural playtest** | owner plays seeds 13 and 8: [`docs/PLAYTEST_PROCEDURAL_v1.md`](docs/PLAYTEST_PROCEDURAL_v1.md) | ⏳ **pending**, gates the next row |
+| Post-gate 3e · more archetypes/content | further archetypes and traits (§10.1, §17) | 🔒 after the procedural playtest |
 | Post-gate 4–5 | pressure scenarios (§11) · visual polish + final hex boards (§7, §12) | later |
 
 **Procedural validation (BLOOM-006):** validator layers 1–8 (bible §10.3) are implemented. Ocean Archipelago generation accepts a world only if it passes structural validity, reachability, winnability, the win margin, strategy diversity (≥ 2 materially distinct broad environmental approaches, described by effect-based strategy signatures) and pacing (provisional time bands). This is validator evidence from a perfect-knowledge witness. **No procedural world has been validated by a human player yet**, and there is no player-facing planet menu.
+
+**Procedural-run harness (BLOOM-007):** a generated Ocean Archipelago can be played in the real game UI through a developer launch path (below). The page calls the production `BLOOM.generateFromArchetype`, so it only ever loads a world that passes layers 1–8. It is a playtest harness, **not the final planet menu**. The procedural worlds have **not passed human validation**: that is the owner playtest in [`docs/PLAYTEST_PROCEDURAL_v1.md`](docs/PLAYTEST_PROCEDURAL_v1.md), and **a second archetype stays gated on it**.
 
 **What the slice proves (verified headless):** several broad winning builds exist. The human-paced recipes in `slice-check` are: the *wet* build (Flood I), which gives up Dust Reach; the *dry* build (Drought I), which gives up Marsh Low; and a *Terraform* build (Humidify ×2 instead of Drought, with no water Adaptation), which also gives up Marsh Low. The witness solver finds more (e.g. a Cool or Warm Terraform replacing a temperature point). The tested build with **neither water Adaptation nor water Terraform** (Seed Output ×2, Early Maturity, Cold ×2, Heat, Salt, Radiation) caps at 67.6%. The solver's static search agrees: within its bounds, no build without a water tool exceeds 67.6%. Over-committing (Flood/Drought II) collapses the home regions, and the preview warns you before you do that.
 
@@ -30,10 +34,11 @@ The original plan was eight isolated portion demos. In August 2026 the **v1.1 di
 1. ~~Extract/stabilize shared simulation modules~~ (BLOOM-002) · ~~reconnect procedural generation~~ (BLOOM-003).
 2. ~~Water-crossing Spread + geographic reachability~~ (BLOOM-004).
 3. ~~Archetype layer, Ocean Archipelago, validator layers 4–6~~ (BLOOM-005) · ~~layers 7–8: strategy diversity + pacing~~ (BLOOM-006).
-4. **More archetypes and content** (§10.1, §17). Each new archetype states its own `minStrategies` and pacing bands.
-5. **Pressure scenarios** (§11).
-6. **Visual polish and final board interactions** (§7, §12, friendly/cutesy direction). A player-facing planet menu is still to come.
-7. Still-open design questions (need prototypes, not debate): bubble frequency/auto-collect, how much to predict before a Terraform buy, final plant personality, exact board layout.
+4. ~~Developer procedural-run harness~~ (BLOOM-007) → **owner procedural playtest** ([`docs/PLAYTEST_PROCEDURAL_v1.md`](docs/PLAYTEST_PROCEDURAL_v1.md), seeds 13 and 8). Pending.
+5. **More archetypes and content** (§10.1, §17), gated on that playtest. Each new archetype states its own `minStrategies` and pacing bands.
+6. **Pressure scenarios** (§11).
+7. **Visual polish and final board interactions** (§7, §12, friendly/cutesy direction). A player-facing planet menu is still to come.
+8. Still-open design questions (need prototypes, not debate): bubble frequency/auto-collect, how much to predict before a Terraform buy, final plant personality, exact board layout.
 
 Tuning stays data-only: every rate/cost/threshold is in [`content/config.js`](content/config.js). An intended retune regenerates the golden with `node tools/sim-check.js --write` and must say so in its commit.
 
@@ -47,6 +52,7 @@ node tools/archetype-check.js                                            # arche
 node tools/strategy-check.js                                             # layers 7–8: strategy diversity + pacing, Node, ~16 s
 NODE_PATH="$(npm root -g)" node tools/slice-check.js [--shots <dir>]     # demo-run UI, real shop buttons
 NODE_PATH="$(npm root -g)" node tools/surface-check.js [--shots <dir>]   # demo-surface UI, both modes
+NODE_PATH="$(npm root -g)" node tools/procedural-run-check.js [--shots <dir>]  # demo-run procedural harness, real controls
 ```
 
 - **`sim-check.js`** (18 checks, no dependencies):
@@ -91,8 +97,19 @@ NODE_PATH="$(npm root -g)" node tools/surface-check.js [--shots <dir>]   # demo-
   - determinism; production worlds record and re-validate layers 1–8;
   - First Bloom's Terraform water alternative and the exact 67.6% no-water-tool cap.
 - **`slice-check.js`** (15 checks) drives the **real shop buttons**: pacing, the wet, dry and Terraform (Humidify, no water Adaptation) winning builds, tradeoff guards, preview, readouts, Bloom Report.
-- **`surface-check.js`** (11 checks) drives the surface demo toolbar, proves it renders the shared generator's planets, and finds an in-range archipelago through New Map. Both browser suites need `npm i -g playwright`.
-- Exit code 1 = failure for all seven.
+- **`surface-check.js`** (11 checks) drives the surface demo toolbar, proves it renders the shared generator's planets, and finds an in-range archipelago through New Map.
+- **`procedural-run-check.js`** (32 checks) drives the procedural harness in a real browser with real clicks:
+  - First Bloom is still the default (no Waterborne Seeds, no identity line);
+  - seed 13 is generated in-page through the production path and matches Node; no witness data reaches the page;
+  - water and landmasses render, and a water click is a non-colonizable note;
+  - island inspection shows the four categories plus a geography note;
+  - Adapt and Waterborne Seeds previews;
+  - a full win through real shop clicks, with a crossing foothold that keeps spreading, coverage over land only, and the Bloom Report's identity and analogs with no First Bloom names;
+  - bubbles, pause and speed;
+  - a seed-8 smoke run;
+  - seed 35 and a malformed seed give an explicit failure state with no world started.
+- All three browser suites need `npm i -g playwright`.
+- Exit code 1 = failure for all eight.
 
 ## Architecture
 
@@ -108,9 +125,9 @@ content/config.js            every rate / cost scale / threshold / category boun
 content/traits.js            the upgrade catalogue as data: board, effect type, cost, science line
 content/archetypes.js        planet archetypes as data (Ocean Archipelago)
 planets/first_bloom.js       the authored slice planet
-demos/demo-run.html          UI + rendering for the First Bloom run
+demos/demo-run.html          UI + rendering for a run: First Bloom by default; ?archetype=<id>&seed=<n> plays a generated world
 demos/demo-surface.html      UI + rendering for the surface demo (authored Cinder-Frost + Random)
-tools/                       sim-check · gen-check · crossing-check · archetype-check · strategy-check (Node) · slice-check · surface-check (browser) · golden/
+tools/                       sim-check · gen-check · crossing-check · archetype-check · strategy-check (Node) · slice-check · surface-check · procedural-run-check (browser) · golden/
 docs/evidence/               screenshots attached to directive reports
 ```
 
@@ -173,18 +190,29 @@ docs/evidence/               screenshots attached to directive reports
 - **Upgrade effects** are four engine types (`tempPoint`, `waterArm`, `level`, `sky`). A new trait of an existing type is data only.
 - **Current limitations:**
   - One crossing trait at one range, with no currents or wind (other Spread crossings from bible §17, such as Wind or Ballistic Seeds, don't exist yet).
-  - The purchase preview doesn't yet show which islands Waterborne Seeds would open.
-  - One archetype (Ocean Archipelago) and **no player-facing procedural planet menu** yet. `demo-run.html` still plays First Bloom only.
+  - The Waterborne Seeds preview shows direct and multi-hop *geographic* reach, split into suitable-now vs hostile-now. It can't predict establishment odds or timing.
+  - One archetype (Ocean Archipelago) and **no player-facing procedural planet menu** yet. Generated worlds are reachable only through the developer query-string harness.
   - Layers 7–8 are validator evidence, **not human validation**. Witnesses use perfect knowledge and buy on the first affordable tick; no procedural world has been playtested by a person. The pacing bands are provisional hypotheses.
   - Many accepted worlds earn their second strategy by answering the *same* condition by other means (e.g. Flood Adaptation vs Dry the Sky), sometimes holding the same land. The directive counts Adapt vs Terraform as material; a stricter rule (require different land held) is a possible later tightening.
   - Static search bounds still apply to layer-7 FAIL proofs: water ≤ 2 points and ≤ 2 Terraform steps per sky axis.
   - Coasts don't change moisture in the simulation.
-  - `demo-run.html` still plays only First Bloom (no planet menu).
+  - Generated section names can repeat. The UI numbers the repeats ("Green Rise 1/2"); the generator itself is unchanged.
   - Cinder-Frost remains a demo-only sample inside `demo-surface.html`.
 
 ## Run
 
 Open any file in `demos/` directly in a browser (no build step, no server required). Keep the folder structure: the demos load `../content`, `../planets` and `../resources`.
+
+Developer procedural-run launch (a playtest harness, not the planet menu). Append a query string to `demos/demo-run.html`:
+
+| Launch | Query string |
+|---|---|
+| First Bloom (default) | *(none)* |
+| Ocean Archipelago, public seed 13 | `?archetype=ocean_archipelago&seed=13` |
+| Ocean Archipelago, public seed 8 | `?archetype=ocean_archipelago&seed=8` |
+| Known generation failure (seed 35) | `?archetype=ocean_archipelago&seed=35` → explicit **NO WORLD GENERATED** panel |
+
+A seed that fails generation never falls back to another seed. The footer shows the archetype, public seed, accepted attempt and planet name/id.
 
 ## Plan of record
 
