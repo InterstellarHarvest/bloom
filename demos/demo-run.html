@@ -279,7 +279,8 @@ function evaluate(i){
   const cats={
     Temperature:{f:tempF, word:TEMP_WORDS(effT,d)},
     Water:{f:waterF, word:WATER_WORDS(effM,d)},
-    Soil:{f:soilGate*(nutrientMod<0.85?0.7:1), word: soilGate<0.4?"hostile": nutrientMod<0.8?"poor": soilGate<0.85?"workable":"rich"},
+    // Soil lamp/limit follow the salt/pH gate only; low nutrients just slow growth (soft → yellow, never "blocked")
+    Soil:{f:soilGate, soft:nutrientMod<0.85, word: soilGate<0.4?"hostile": soilGate<0.85?"workable": nutrientMod<0.85?"poor":"rich"},
     Hazard:{f:hazF, word: hazF<0.3?"lethal": hazF<0.7?"dangerous": hazF<0.95?"stressful":"low"}
   };
   // limiting factor = lowest category factor (if it actually blocks)
@@ -290,7 +291,7 @@ function evaluate(i){
 }
 const LIMIT_MSG={ Temperature:e=>e.cats.Temperature.word==="freezing"||e.cats.Temperature.word==="cold"?"too cold":"too hot",
   Water:e=>e.cats.Water.word==="parched"||e.cats.Water.word==="dry"?"too dry":"too wet",
-  Soil:e=>e.cats.Soil.word==="hostile"?"soil is hostile (salt/pH)":"soil is poor (low nutrients)",
+  Soil:e=>e.cats.Soil.word==="hostile"?"soil is hostile (salt/pH)":"soil is marginal (salt/pH)",
   Hazard:e=>e.cats.Hazard.word==="lethal"?"hazard is lethal":"hazard is stressful" };
 const FIX_HINT={ Temperature:e=> (e.cats.Temperature.word==="freezing"||e.cats.Temperature.word==="cold")
     ? "Adapt: Cold Tolerance — or Terraform: Warm the sky"
@@ -298,7 +299,7 @@ const FIX_HINT={ Temperature:e=> (e.cats.Temperature.word==="freezing"||e.cats.T
   Water:e=> (e.cats.Water.word==="parched"||e.cats.Water.word==="dry")
     ? "Adapt: Drought — or Terraform: Humidify"
     : "Adapt: Flood — or Terraform: Dry the sky",
-  Soil:e=> e.cats.Soil.word==="hostile" ? "Adapt: Salt Handling (must evolve — not terraformable)" : "Low nutrients only slow growth; not a wall.",
+  Soil:e=> "Adapt: Salt Handling (must evolve — not terraformable)",
   Hazard:e=> e.cats.Hazard.word==="lethal" ? "Adapt: Radiation Shielding (toxicity here has no cure yet — may be a sacrifice zone)" : "Radiation Shielding reduces this." };
 
 /* ========================================================================== */
@@ -385,7 +386,7 @@ function tick(){
 /* ========================================================================== */
 const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
 const dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
-let TILE=14, selected=-1;
+let TILE=14, selected=-1, rawOpen=false;
 const TEMP_STOPS=[[-40,[44,62,104]],[-20,[78,104,140]],[0,[100,126,116]],[12,[92,140,88]],[25,[156,146,84]],[40,[182,100,60]],[60,[150,58,46]]];
 function stops(v){ const S=TEMP_STOPS; if(v<=S[0][0])return S[0][1].slice(); if(v>=S[S.length-1][0])return S[S.length-1][1].slice();
   for(let i=0;i<S.length-1;i++){const[a,ca]=S[i],[b,cb]=S[i+1]; if(v>=a&&v<=b)return mix(ca,cb,(v-a)/(b-a));} return S[0][1].slice(); }
@@ -453,11 +454,11 @@ function renderInspect(){
   const s=SEC[selected], e=evaluate(selected), liv=livingCountBySection()[selected];
   let dead=0,barr=0; for(const t of SEC_TILES[selected]){ if(state[t]===DEAD)dead++; else if(state[t]===BAR)barr++; }
   const total=AREA[selected];
-  const catRow=k=>{ const c=e.cats[k]; return `<div class="cat"><span class="lamp ${lampOf(c.f)}"></span><span class="lbl">${k}</span><span class="st">${c.word}</span>${e.terraformable[k]?'<span style="margin-left:auto;color:var(--dim);font-size:10px">terraformable</span>':''}</div>`; };
+  const catRow=k=>{ const c=e.cats[k]; return `<div class="cat"><span class="lamp ${c.soft&&c.f>0.72?"yellow":lampOf(c.f)}"></span><span class="lbl">${k}</span><span class="st">${c.word}</span>${e.terraformable[k]?'<span style="margin-left:auto;color:var(--dim);font-size:10px">terraformable</span>':''}</div>`; };
   const blocked = e.limitF<0.72;
   const limitHtml = blocked
     ? `<div class="limit">▲ Growth blocked: <b>${LIMIT_MSG[e.limitKey](e)}</b><div class="fixhint">${FIX_HINT[e.limitKey](e)}</div></div>`
-    : `<div class="limit ok">✓ Thriving here — no blocker.</div>`;
+    : `<div class="limit ok">✓ Thriving here — no blocker.${e.cats.Soil.soft?'<div class="fixhint">Low nutrients slow growth here, but it is not a wall.</div>':''}</div>`;
   el.innerHTML=`<h2>SECTION</h2>
     <div class="secname">${s.name}${s.isOrigin?'<span class="badge">★ ORIGIN</span>':''}</div>
     <div class="cats">${catRow("Temperature")}${catRow("Water")}${catRow("Soil")}${catRow("Hazard")}</div>
@@ -466,7 +467,7 @@ function renderInspect(){
       <div class="vbar"><i class="vl" style="width:${liv/total*100}%"></i><i class="vd" style="width:${dead/total*100}%"></i><i class="vb" style="flex:1"></i></div>
       <div style="color:var(--dim);margin-top:3px">living ${liv} · dead ${dead} · barren ${barr}</div>
     </div>
-    <details class="raw"><summary>raw signals ▾</summary>
+    <details class="raw"${rawOpen?' open':''}><summary>raw signals ▾</summary>
       <table class="kv">
         <tr><td>effective temp</td><td>${e.effT>0?'+':''}${e.effT}°C</td></tr>
         <tr><td>effective moist</td><td>${e.effM}</td></tr>
@@ -474,6 +475,7 @@ function renderInspect(){
         <tr><td>salinity</td><td>${s.local.salinity}</td></tr><tr><td>nutrients</td><td>${s.local.nutrients}</td></tr>
         <tr><td>toxicity</td><td>${s.local.toxicity}</td></tr><tr><td>radiation</td><td>${s.local.radiation}</td></tr>
       </table></details>`;
+  el.querySelector("details.raw").addEventListener("toggle",ev=>{ rawOpen=ev.target.open; });
 }
 
 /* ---- upgrade catalog (temporary test set from NEXT_PLAYABLE_SLICE) ---- */
@@ -485,10 +487,10 @@ const UP=[
     can:()=>genome.cold+genome.heat<CFG.scales.tempCap, why:()=>"temperature points are capped — cold+heat ≤ "+CFG.scales.tempCap,
     tier:()=>genome.heat, apply:()=>genome.heat++},
   {grp:"Adapt", id:"drought", name:"Drought Adaptation", sub:"shift toward dry survival", cost:g=>30+genome.waterPts*24,
-    can:()=>genome.waterArm!=="wet", why:()=>"refund Flood first — a plant sits at one water strategy",
+    can:()=>genome.waterArm!=="wet", why:()=>"a plant commits to one water strategy — Flood is already chosen",
     tier:()=>genome.waterArm==="dry"?genome.waterPts:0, apply:()=>{ if(genome.waterArm!=="dry"){genome.waterArm="dry";genome.waterPts=0;} genome.waterPts++; }},
   {grp:"Adapt", id:"flood", name:"Flood Adaptation", sub:"shift toward wet survival", cost:g=>30+genome.waterPts*24,
-    can:()=>genome.waterArm!=="dry", why:()=>"refund Drought first — a plant sits at one water strategy",
+    can:()=>genome.waterArm!=="dry", why:()=>"a plant commits to one water strategy — Drought is already chosen",
     tier:()=>genome.waterArm==="wet"?genome.waterPts:0, apply:()=>{ if(genome.waterArm!=="wet"){genome.waterArm="wet";genome.waterPts=0;} genome.waterPts++; }},
   {grp:"Adapt", id:"salt", name:"Salt Handling", sub:"survive saline soil", cost:g=>40, can:()=>genome.salt<1, tier:()=>genome.salt, apply:()=>genome.salt++},
   {grp:"Adapt", id:"rad", name:"Radiation Shielding", sub:"survive high radiation", cost:g=>44, can:()=>genome.rad<1, tier:()=>genome.rad, apply:()=>genome.rad++},
@@ -510,7 +512,7 @@ function renderShop(){
     if(gname==="Adapt") html+=`<div class="temppool">temp points: cold ${genome.cold} · heat ${genome.heat} / cap ${CFG.scales.tempCap}</div>`;
     for(const u of UP.filter(x=>x.grp===gname)){
       const cost=Math.round(u.cost()); const tier=u.tier?u.tier():0;
-      const canBuy=u.can() && biomass>=cost && !won;
+      const canBuy=u.can() && biomass>=cost;
       const label = tier>0 ? `${u.name} <small>·${["I","II","III","IV"][tier]||("+"+tier)} owned · ${u.sub}</small>` : `${u.name} <small>${u.sub}</small>`;
       const title = !u.can()&&u.why?u.why():"";
       html+=`<button class="buy ${tier>0?'owned':''}" data-id="${u.id}" ${canBuy?'':'disabled'} title="${title}">
@@ -521,8 +523,13 @@ function renderShop(){
   el.innerHTML=html;
   el.querySelectorAll("button.buy").forEach(b=>b.addEventListener("click",()=>buy(b.dataset.id)));
 }
+// cheap per-frame pass: toggle affordability in place (a full re-render every frame would eat clicks)
+function refreshShop(){
+  document.querySelectorAll("#shop button.buy").forEach(b=>{ const u=upById[b.dataset.id];
+    const off=!(u.can() && biomass>=Math.round(u.cost())); if(b.disabled!==off) b.disabled=off; });
+}
 function buy(id){
-  const u=upById[id]; if(!u||won) return false; const cost=Math.round(u.cost());
+  const u=upById[id]; if(!u) return false; const cost=Math.round(u.cost());
   if(!u.can()||biomass<cost) return false;
   biomass-=cost; u.apply();
   log(`Bought ${u.name}. ${u.grp==="Terraform"?`Sky now ${G.temp>0?'+':''}${G.temp}°C · moist ${G.moist}.`:''}`);
@@ -577,13 +584,15 @@ function onWin(cov){
 /* ========================================================================== */
 /*  MAIN LOOP                                                                   */
 /* ========================================================================== */
-let lastCov=0, acc=0, last=0;
+let lastCov=0, acc=0, last=0, lastInspectTick=-1;
 function frame(ts){
   if(!last)last=ts; const dt=ts-last; last=ts;
   if(running){ acc+=dt*speed;
     while(acc>=CFG.tickMs){ lastCov=tick(); acc-=CFG.tickMs; if(won)break; }
   }
-  renderHUD(lastCov); draw(); if(selected>=0 && ticks%3===0) renderInspect();
+  renderHUD(lastCov); refreshShop(); draw();
+  // re-read the inspected section every 3 sim ticks (not every frame — while paused that would swallow clicks)
+  if(selected>=0 && ticks%3===0 && ticks!==lastInspectTick){ lastInspectTick=ticks; renderInspect(); }
   requestAnimationFrame(frame);
 }
 window.addEventListener("resize",resize);
