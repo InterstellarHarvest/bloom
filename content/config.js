@@ -41,6 +41,20 @@
     // pressure Σ chancePerSource × gapFalloff^(gap−1); it establishes under the ordinary grow rule.
     crossing: { maxGap: 6, chancePerSource: 0.0005, gapFalloff: 0.7 },
 
+    // procedural winnability validation (bible §10.3 layers 4–6, BLOOM-005). Validation policy only —
+    // the player still wins at the planet's winThreshold. A planet passes when a real, no-cheat witness
+    // run (earned Biomass, sim.buy) holds winThreshold + winMargin of the land alive at once.
+    validation: {
+      winMargin: 0.03,          // witness must reach e.g. 0.70 + 0.03 = 0.73 simultaneous living coverage
+      rngSeed: 20260926,        // fixed sim RNG for witness runs → deterministic verdicts
+      maxTicks: 12000,          // witness time budget per simulation (~32 game-minutes at 160 ms/tick)
+      plateauTicks: 2000,       // stop a finished-buying witness that stops growing for this long
+      maxStaticStates: 20000,   // hard cap on enumerated terminal builds (diagnosed if hit)
+      maxSimulations: 16,       // hard cap on witness simulations per planet
+      maxWaterPts: 2,           // water-strategy levels the solver considers (0..2)
+      maxSkySteps: 2,           // Terraform steps per sky axis the solver considers (0..2)
+    },
+
     // biomass economy (bible §8). bubbleChance is planet-wide per tick (~1 per 14 s while anything thrives)
     econ: { thriving: 0.0004, marginal: 0.00012, thrivingAbove: 0.7, originTrickle: 0.08, startBiomass: 40,
             bubbleChance: 0.011, bubbleValue: 25, bubbleAutoTicks: 60, autoCollectShare: 0.5,

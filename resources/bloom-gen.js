@@ -2,7 +2,10 @@
 // (Portion 1, "Generator B"); emits the SAME planet model BLOOM.createSim consumes: sections with
 // `local` signals, plus an explicit `tilemap` (section index per tile, -1 = water).
 //
-//   BLOOM.generatePlanet({ seed, waterPct, sections, width, height, minLandmassTiles, maxCrossingGap })
+//   BLOOM.generatePlanet({ seed, waterPct, sections, width, height, minLandmassTiles, maxCrossingGap, terrainWeights, climate })
+//
+// climate (BLOOM-005, optional): the condition-layout knobs archetypes set (content/archetypes.js).
+// Any key left out uses CLIMATE_DEFAULTS, which reproduce the Portion 1 layout exactly.
 //
 // maxCrossingGap (BLOOM-004, default null = off): when set, any landmass the main landmass cannot
 // reach through water crossings of at most that many tiles is turned into water, so every land tile
@@ -20,7 +23,13 @@
   const smooth = t => t * t * (3 - 2 * t);
   const pick = (rng, arr) => arr[(rng() * arr.length) | 0];
 
-  const DEFAULTS = { waterPct: 0, sections: 14, width: 60, height: 40, minLandmassTiles: 12, maxCrossingGap: null };
+  const DEFAULTS = { waterPct: 0, sections: 14, width: 60, height: 40, minLandmassTiles: 12, maxCrossingGap: null,
+    terrainWeights: [1, 0.5, 0.25] }; // elevation octave mix: continent-scale → local-scale landforms
+  // section conditions: effTemp = temperature + tempBase + latitude·tempSpan ± tempJitter/2;
+  // moistureOffset = noise·moistureSpread − moistureSpread/2 + moistureBias + coastFraction·coastMoisture
+  const CLIMATE_DEFAULTS = { temperature: -8, moisture: 45, tempBase: -25, tempSpan: 72, tempJitter: 12,
+    moistureSpread: 80, moistureBias: 0, coastMoisture: 20, volcanicChance: 0.14,
+    coastalSaltAbove: 0.4, coastalSaltChance: 0.5, saltChance: 0.10 };
   const LIMITS = { waterPct: [0, 90], sections: [1, 24] };
 
   // value-noise octave: lattice of rng() values, smoothstep-interpolated over the grid
@@ -40,10 +49,11 @@
     }
     return out;
   }
-  function elevationField(rng, W, H) {
+  // three octaves (continent / regional / local scale) mixed by `weights`; the rng draws never change
+  function elevationField(rng, W, H, weights = [1, 0.5, 0.25]) {
     const N = W * H, o1 = octave(rng, 3, 2, W, H), o2 = octave(rng, 6, 4, W, H), o3 = octave(rng, 11, 7, W, H);
-    const f = new Float32Array(N); let mn = Infinity, mx = -Infinity;
-    for (let i = 0; i < N; i++) { const v = o1[i] + o2[i] * 0.5 + o3[i] * 0.25; f[i] = v; if (v < mn) mn = v; if (v > mx) mx = v; }
+    const f = new Float32Array(N); let mn = Infinity, mx = -Infinity; const [a, b, c] = weights;
+    for (let i = 0; i < N; i++) { const v = o1[i] * a + o2[i] * b + o3[i] * c; f[i] = v; if (v < mn) mn = v; if (v > mx) mx = v; }
     const r = (mx - mn) || 1; for (let i = 0; i < N; i++) f[i] = (f[i] - mn) / r;
     return f;
   }
@@ -73,17 +83,24 @@
     q.waterPct = clamp(q.waterPct, ...LIMITS.waterPct); q.sections = clamp(Math.round(q.sections), ...LIMITS.sections);
     q.width = Math.round(q.width); q.height = Math.round(q.height); q.minLandmassTiles = Math.max(1, Math.round(q.minLandmassTiles));
     if (q.width < 8 || q.height < 8) throw new Error("generatePlanet: grid must be at least 8×8");
+    if (!(Array.isArray(q.terrainWeights) && q.terrainWeights.length === 3 && q.terrainWeights.every(w => Number.isFinite(w) && w >= 0) && q.terrainWeights.some(w => w > 0)))
+      throw new Error("generatePlanet: terrainWeights must be three non-negative numbers (not all 0)");
     if (q.maxCrossingGap !== null && !(Number.isInteger(q.maxCrossingGap) && q.maxCrossingGap >= 1))
       throw new Error("generatePlanet: maxCrossingGap must be null or a positive integer");
+    const climate = { ...CLIMATE_DEFAULTS, ...(p.climate || {}) };
+    for (const [k, v] of Object.entries(climate)) {
+      if (!(k in CLIMATE_DEFAULTS)) throw new Error(`generatePlanet: unknown climate key "${k}"`);
+      if (!Number.isFinite(v)) throw new Error(`generatePlanet: climate.${k} must be a number`);
+    }
     return { seed: q.seed, waterPct: q.waterPct, sections: q.sections, width: q.width, height: q.height,
-             minLandmassTiles: q.minLandmassTiles, maxCrossingGap: q.maxCrossingGap };
+             minLandmassTiles: q.minLandmassTiles, maxCrossingGap: q.maxCrossingGap, terrainWeights: q.terrainWeights.slice(), climate };
   }
 
   function generatePlanet(params) {
     const P = normalizeParams(params), { seed, waterPct, width: W, height: H } = P, N = W * H;
     const rng = mulberry32(seed);
     // 1. water mask: threshold a noise elevation field at the requested water percentile
-    const field = elevationField(rng, W, H);
+    const field = elevationField(rng, W, H, P.terrainWeights);
     const waterDepth = new Float32Array(N), isLand = new Uint8Array(N);
     let threshold = -1;
     if (waterPct > 0) { const sorted = Float32Array.from(field).sort(); threshold = sorted[clamp((waterPct / 100 * N) | 0, 0, N - 1)]; }
@@ -145,16 +162,16 @@
           (y > 0 && tilemap[(y - 1) * W + x] < 0) || (y < H - 1 && tilemap[(y + 1) * W + x] < 0)) c.coast++;
     }
     const moistField = elevationField(rng, W, H);
-    const gTemp = -8;
+    const CL = P.climate, gTemp = CL.temperature;
     const sections = seeds.map((s, i) => {
       const c = cent[i]; const yN = c.n ? (c.y / c.n) / (H - 1) : ((s.tile / W | 0) / (H - 1));
       const coastFrac = c.n ? c.coast / c.n : 0;
-      const tempOffset = Math.round((-25 + yN * 72) + (rng() - 0.5) * 12);
+      const tempOffset = Math.round((CL.tempBase + yN * CL.tempSpan) + (rng() - 0.5) * CL.tempJitter);
       const effTemp = gTemp + tempOffset;
-      const moistureOffset = clamp(Math.round((moistField[s.tile] * 80 - 40) + coastFrac * 20), -45, 45);
+      const moistureOffset = clamp(Math.round((moistField[s.tile] * CL.moistureSpread - CL.moistureSpread / 2) + CL.moistureBias + coastFrac * CL.coastMoisture), -45, 45);
       const dry = moistureOffset < -22, wet = moistureOffset > 22, hot = effTemp > 26, cold = effTemp < -12;
-      const volcanic = !cold && rng() < 0.14;
-      const salt = (coastFrac > 0.4 && rng() < 0.5) || rng() < 0.10;
+      const volcanic = !cold && rng() < CL.volcanicChance;
+      const salt = (coastFrac > CL.coastalSaltAbove && rng() < CL.coastalSaltChance) || rng() < CL.saltChance;
       const local = {
         tempOffset, moistureOffset,
         light: clamp(Math.round(30 + yN * 55 + (rng() - 0.5) * 25), 10, 100),
@@ -182,7 +199,7 @@
     return {
       id: "proc_" + seed, name: PLANET_STEMS[seed % PLANET_STEMS.length] + "-" + (seed % 1000), procedural: true, params: P,
       gridWidth: W, gridHeight: H, winThreshold: 0.70, origin: sections[origin].id,
-      globalClimate: { temperature: gTemp, moisture: 45, o2: 8, co2: 60, pressure: 90 },
+      globalClimate: { temperature: gTemp, moisture: CL.moisture, o2: 8, co2: 60, pressure: 90 },
       sections,
       tilemap: Array.from(tilemap),                               // section index per tile, -1 = water
       waterDepth: Array.from(waterDepth, v => v),                 // render-only shading (0 shallow … 1 deep)
@@ -190,5 +207,5 @@
   }
 
   root.BLOOM.generatePlanet = generatePlanet;
-  root.BLOOM.gen = { generatePlanet, normalizeParams, DEFAULTS, mulberry32 };
+  root.BLOOM.gen = { generatePlanet, normalizeParams, DEFAULTS, CLIMATE_DEFAULTS, mulberry32 };
 })(typeof window !== "undefined" ? window : globalThis);
