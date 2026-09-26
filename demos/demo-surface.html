@@ -136,6 +136,7 @@
 
 <!-- shared engine / generator / validator (classic scripts → still boots over file://) -->
 <script src="../content/config.js"></script>
+<script src="../content/traits.js"></script>
 <script src="../resources/bloom-sim.js"></script>
 <script src="../resources/bloom-gen.js"></script>
 <script src="../resources/bloom-validate.js"></script>
@@ -250,7 +251,7 @@ function mount(planet, tilemap, waterShade){
   CENT.forEach(c=>{ if(c.n){c.x=c.x/c.n+0.5; c.y=c.y/c.n+0.5;} });
   NBRS=BLOOM.geo.sectionAdjacency(tilemap,W,H,SC).map(a=>new Set(a)); // from real geography
   // the shared validator checks exactly the tiles on screen (authored planets get their layout attached)
-  VAL=BLOOM.validatePlanet(P.tilemap?P:{...P, tilemap:Array.from(tilemap)}, BLOOM_DATA.config);
+  VAL=BLOOM.validatePlanet(P.tilemap?P:{...P, tilemap:Array.from(tilemap)}, BLOOM_DATA.config, { traits:BLOOM_DATA.traits });
   COLORS=SEC.map(s=>terrainColor(s,P.globalClimate.temperature,P.globalClimate.moisture));
   selected=-1; hovered=-1;
   resize(); renderInfo(); renderClimate(); qa();
@@ -261,7 +262,8 @@ function regenerate(){
     mount(CINDERFROST, growWeightedVoronoi(CINDERFROST.sections), null);
     document.getElementById("seedLabel").textContent="authored";
   } else {
-    const planet=BLOOM.generatePlanet({ seed, waterPct, sections:wantSecs });
+    // product setting: islands stay within Waterborne Seeds range (bible §9)
+    const planet=BLOOM.generatePlanet({ seed, waterPct, sections:wantSecs, maxCrossingGap:BLOOM_DATA.config.crossing.maxGap });
     mount(planet, planet.tilemap, planet.waterDepth);
     document.getElementById("seedLabel").textContent="seed "+planet.params.seed;
   }
@@ -390,11 +392,11 @@ function renderClimate(){
    QA FOOTER
    =========================================================================== */
 function qa(){
-  const st=VAL.stats, SC=st.sections, stranded=st.strandedSections.length;
+  const st=VAL.stats, SC=st.sections, stranded=st.strandedSections.length, lost=st.reach.strongest.strandedSections.length;
   let html=`<div class="qa"><span class="dot ok"></span>sections <code>${SC}</code> · land <code>${st.landTiles}</code> · water <code>${st.waterTiles} (${Math.round(st.waterTiles/st.tiles*100)}%)</code></div>`+
     `<div class="qa"><span class="dot ${st.brokenSections?'err':'ok'}"></span>contiguity <code>${st.brokenSections?st.brokenSections+' broken':'all single-blob'}</code></div>`+
     `<div class="qa"><span class="dot ${st.landmasses>1?'warn':'ok'}"></span>islands <code>${st.landmasses}</code></div>`+
-    `<div class="qa"><span class="dot ${stranded?'warn':'ok'}"></span>reachable from origin <code>${st.reachableSections}/${SC}</code>${stranded?` · <b>${stranded} need Dispersal</b>`:''}</div>`;
+    `<div class="qa"><span class="dot ${stranded?'warn':'ok'}"></span>reachable from origin <code>${st.reachableSections}/${SC}</code>${stranded?` · <b>${stranded} need Waterborne Seeds</b>`:''}${lost?` · <b>${lost} unreachable</b>`:''}</div>`;
   if(!P.procedural){
     const {declared:want,matched:got,missing:miss}=st.declaredAdjacency;
     const pct=Math.round(got/want*100), cls=pct===100?'ok':pct>=80?'warn':'err';

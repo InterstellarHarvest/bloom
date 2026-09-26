@@ -36,6 +36,11 @@
     recover: { deadToBarren: 0.02 },
     vigorEase: 0.20,
 
+    // water crossing (bible §9, BLOOM-004), used only once a `crossing` trait (Waterborne Seeds) is owned.
+    // A landing tile on another landmass within maxGap water tiles of a Living coastal tile gets seed
+    // pressure Σ chancePerSource × gapFalloff^(gap−1); it establishes under the ordinary grow rule.
+    crossing: { maxGap: 6, chancePerSource: 0.0005, gapFalloff: 0.7 },
+
     // biomass economy (bible §8). bubbleChance is planet-wide per tick (~1 per 14 s while anything thrives)
     econ: { thriving: 0.0004, marginal: 0.00012, thrivingAbove: 0.7, originTrickle: 0.08, startBiomass: 40,
             bubbleChance: 0.011, bubbleValue: 25, bubbleAutoTicks: 60, autoCollectShare: 0.5,

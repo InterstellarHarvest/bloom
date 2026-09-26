@@ -2,7 +2,11 @@
 // (Portion 1, "Generator B"); emits the SAME planet model BLOOM.createSim consumes: sections with
 // `local` signals, plus an explicit `tilemap` (section index per tile, -1 = water).
 //
-//   BLOOM.generatePlanet({ seed, waterPct, sections, width, height, minLandmassTiles })
+//   BLOOM.generatePlanet({ seed, waterPct, sections, width, height, minLandmassTiles, maxCrossingGap })
+//
+// maxCrossingGap (BLOOM-004, default null = off): when set, any landmass the main landmass cannot
+// reach through water crossings of at most that many tiles is turned into water, so every land tile
+// is reachable with the strongest Spread (bible §9). Product callers pass config.crossing.maxGap.
 //
 // Deterministic: everything is drawn from mulberry32(seed) in a fixed order — no Math.random.
 // Needs resources/bloom-sim.js first (shared geometry helpers).
@@ -10,13 +14,13 @@
   "use strict";
   const BLOOM = root.BLOOM;
   if (!BLOOM || !BLOOM.geo) throw new Error("bloom-gen.js needs resources/bloom-sim.js loaded first");
-  const { clamp } = BLOOM.util, { components, sectionAdjacency } = BLOOM.geo;
+  const { clamp } = BLOOM.util, { components, sectionAdjacency, waterCrossings, reachableLandmasses } = BLOOM.geo;
 
   function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   const smooth = t => t * t * (3 - 2 * t);
   const pick = (rng, arr) => arr[(rng() * arr.length) | 0];
 
-  const DEFAULTS = { waterPct: 0, sections: 14, width: 60, height: 40, minLandmassTiles: 12 };
+  const DEFAULTS = { waterPct: 0, sections: 14, width: 60, height: 40, minLandmassTiles: 12, maxCrossingGap: null };
   const LIMITS = { waterPct: [0, 90], sections: [1, 24] };
 
   // value-noise octave: lattice of rng() values, smoothstep-interpolated over the grid
@@ -69,7 +73,10 @@
     q.waterPct = clamp(q.waterPct, ...LIMITS.waterPct); q.sections = clamp(Math.round(q.sections), ...LIMITS.sections);
     q.width = Math.round(q.width); q.height = Math.round(q.height); q.minLandmassTiles = Math.max(1, Math.round(q.minLandmassTiles));
     if (q.width < 8 || q.height < 8) throw new Error("generatePlanet: grid must be at least 8×8");
-    return { seed: q.seed, waterPct: q.waterPct, sections: q.sections, width: q.width, height: q.height, minLandmassTiles: q.minLandmassTiles };
+    if (q.maxCrossingGap !== null && !(Number.isInteger(q.maxCrossingGap) && q.maxCrossingGap >= 1))
+      throw new Error("generatePlanet: maxCrossingGap must be null or a positive integer");
+    return { seed: q.seed, waterPct: q.waterPct, sections: q.sections, width: q.width, height: q.height,
+             minLandmassTiles: q.minLandmassTiles, maxCrossingGap: q.maxCrossingGap };
   }
 
   function generatePlanet(params) {
@@ -89,6 +96,16 @@
     if (lm.sizes.some(n => n < P.minLandmassTiles)) {
       for (let i = 0; i < N; i++) if (isLand[i] && lm.sizes[lm.id[i]] < P.minLandmassTiles) isLand[i] = 0;
       lm = components(isLand, W, H);
+    }
+    // 2b. optional reachability constraint: drop landmasses the largest one cannot reach by water crossing
+    if (P.maxCrossingGap !== null && lm.sizes.length > 1) {
+      const big = lm.sizes.indexOf(Math.max(...lm.sizes));
+      const cr = waterCrossings(Array.from(isLand, v => v ? 0 : -1), W, H, P.maxCrossingGap);
+      const keep = reachableLandmasses(big, cr.links);
+      if (keep.size < lm.sizes.length) {
+        for (let i = 0; i < N; i++) if (isLand[i] && !keep.has(lm.id[i])) isLand[i] = 0;
+        lm = components(isLand, W, H);
+      }
     }
     const comp = lm.id, compSize = lm.sizes, nComp = compSize.length;
     if (!nComp) throw new Error(`generatePlanet: seed ${seed} left no landmass ≥ ${P.minLandmassTiles} tiles`);
