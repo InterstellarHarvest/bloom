@@ -155,6 +155,20 @@ Threshold behavior must remain stable:
 - die-back is slower than healthy growth;
 - short climate fluctuations do not erase a colony.
 
+### 4.5 Colony development *(addendum: BLOOM-008 / BLOOM-009, owner-authorized gameplay iterations)*
+
+- **Establishment.** Each Living tile carries a stand density that starts as a tiny seedling stand and thickens while its section can grow. A section's establishment (Σ density / area) shows as *Sparse → Establishing → Established → Dense* and sets how much Biomass the colony yields and how strongly it seeds outward.
+- **Growth focus is per region and persistent.** Every Living region keeps its own allocation: **Balanced** (the default baseline), **Roots**, **Leaves** or **Seeds**. Changing one region never touches another.
+- **Each focus redistributes a fixed sugar budget, so each has a cost:**
+  - **Roots:** establishment, recovery and stress resilience on viable ground; costs some Biomass.
+  - **Leaves:** more Biomass, growing with the colony's establishment; costs seed output.
+  - **Seeds:** outward spread and Waterborne source pressure; costs some Biomass.
+- **The right choice depends on the colony's situation.** Young or marginal colonies favour Roots, open frontiers and coasts favour Seeds, and filled-in productive colonies favour Leaves.
+- **Local specializations.** A colony may buy **one** permanent local specialization (Root Network / Leaf Canopy / Seed Reserve) with ordinary Biomass. It strengthens the matching function, and each purchase raises the next one's price.
+- **Limits.** Neither a focus nor a specialization changes the four environmental categories or the plant's tolerances; none rescues red ground. Both belong to the region: they persist through die-back and total loss, stay dormant while nothing lives there, and act again when the region is recolonized.
+- **Optional.** Ignoring allocation and local investment remains legal and winnable (invariants 8 and 9). The validator's witnesses never use either, so layers 4–8 are a no-allocation floor.
+- All numbers are in `config.colony` / `config.establish`.
+
 ---
 
 ## 5. READABLE ENVIRONMENT MODEL
@@ -343,6 +357,8 @@ They should:
 
 Every Biomass point spent reshaping the sky is a point not spent adapting the organism or spreading faster. That is the central macro decision.
 
+*(BLOOM-009 addendum)* Local colony specializations (§4.5) add a smaller, optional sink: improve one important colony now, or save for the next global Adapt / Spread / Terraform upgrade. They are deliberately secondary to global progression.
+
 ---
 
 ## 9. WATER, ISLANDS, AND IMPASSABLE TERRAIN
@@ -507,6 +523,8 @@ Target a **cutesy, modern, friendly-science aesthetic**:
 
 Final visual direction remains open and should be explored through quick comparison prototypes before it is locked.
 
+*(BLOOM-009 addendum: approved future direction, not yet implemented.)* The owner's interface north star, the living plant / specimen window, the science-vs-visual separation (Adapt changes the plant; Terraform changes only its environment), the visual-channel framework, the modular plant-art architecture and the rendering-technology escalation path are recorded in [`docs/VISUAL_DIRECTION_v1.0.md`](docs/VISUAL_DIRECTION_v1.0.md). In short: kid-friendly and organic; large type and big touch-friendly controls; a desktop/iPad hybrid feel; no technical-dashboard look; Biomass visually dominant; plain HTML/CSS/canvas/SVG first, heavier rendering only for a demonstrated need. Mechanics validation still comes before the full visual-polish phase.
+
 ---
 
 ## 13. PLANT VISUAL IDENTITY
@@ -527,6 +545,8 @@ Use a fixed-order layered plant sprite:
 Composite and cache the plant when traits change. The map shows coverage rather than thousands of individual plant sprites.
 
 The Adapt screen and final Bloom Report should display the resulting organism prominently. The winning summary should connect visible traits to the environments the plant conquered.
+
+*(BLOOM-009 addendum: approved future direction.)* The preferred implementation is **modular authored parts + a code-controlled plant skeleton + deterministic assembly**, not baked per-combination sprites or per-combination image generation. The approved "visual channel" mapping (temperature → silhouette, water → leaf form, soil → roots/tissue, hazard → pigment/surface, spread → reproductive anatomy, local allocation → emphasis, maturity → size/fullness, Terraform → environment only) is in [`docs/VISUAL_DIRECTION_v1.0.md`](docs/VISUAL_DIRECTION_v1.0.md). The Bloom Report reuses the same final specimen.
 
 ---
 
@@ -717,7 +737,7 @@ These remain intentionally unresolved until the playable slice provides evidence
 - exact temperature-pool unlock/refund rules;
 - whether Biomass bubbles auto-collect by default or only through a setting;
 - final plant emotional tone and degree of personality;
-- final cutesy/modern visual language;
+- final cutesy/modern visual language (narrowed, not locked, by the approved direction in [`docs/VISUAL_DIRECTION_v1.0.md`](docs/VISUAL_DIRECTION_v1.0.md));
 - exact number and shape of nodes on each board;
 - default procedural section count and run length;
 - how much predictive Terraform information the UI should reveal;

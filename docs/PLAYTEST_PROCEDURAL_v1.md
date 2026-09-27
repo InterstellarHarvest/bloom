@@ -2,9 +2,18 @@
 
 **What this tests:** whether a *generated* world is fun and readable to a person. The validator (layers 1–8) already shows that these worlds can be won with at least two broad strategies at a reasonable machine pace. It cannot tell us whether a human understands islands, water crossings and Waterborne Seeds, or enjoys them.
 
-**Gate status:** ⏸ **paused, then resumed after BLOOM-008.** The owner started this test, reported that the opening had nothing to do, and asked for a way to influence regions already seeded and for colonies to look denser as they mature. BLOOM-008 changed the game in response (see *What changed since you paused* below). The gate is **not passed**. This sheet is still the human procedural-playtest gate, a second archetype still waits for it, and only the owner can mark it passed.
+**Gate status:** ⏸ **paused twice for owner feedback, ready to resume after BLOOM-009.**
 
-**Resuming:** start both runs fresh (seed 13, then seed 8). Your earlier partial runs used the old opening, so they don't count toward this record. Anything you noticed in them is still useful: put it in the *Notes from the paused attempt* row below.
+1. The owner started this test and reported that the opening had nothing to do. They asked for a way to influence regions already seeded, and for colonies to look denser as they mature. BLOOM-008 responded.
+2. The owner then asked for four more changes, and BLOOM-009 made them:
+   - each colony keeps its own focus;
+   - Biomass-funded colony upgrades;
+   - much smaller seedlings;
+   - a bigger Biomass display and visible water crossings.
+
+See *What changed* below. The gate is **not passed**. This sheet is still the human procedural-playtest gate, a second archetype still waits for it, and only the owner can mark it passed.
+
+**Resuming:** start both runs fresh (seed 13, then seed 8). Earlier partial runs used older rules, so they don't count toward this record. Anything you noticed in them is still useful: put it in the *Notes from earlier attempts* row below.
 
 **Time needed:** two runs of roughly 10–20 minutes each, plus a few minutes for the questions.
 
@@ -44,16 +53,35 @@ The bottom-right corner shows the world's identity (archetype · public seed · 
   - a *yellow* outline marks regions they could reach but where the ground is hostile right now.
 - Everything else is the First Bloom interface you already know.
 
-## What changed since you paused (BLOOM-008)
+## What changed since you paused
 
-- **Colonies now start sparse and establish over time.** A newly seeded region begins as scattered seedlings (small light-green patches with ground showing between them). It thickens to full, dark green as it establishes. Young colonies make less Biomass and fewer seeds; established ones make more. So the first minute is slower, and growth speeds up once colonies mature.
-- **Colony status.** Clicking a region your plant lives in shows **Colony: Sparse / Establishing / Established / Dense** with a bar. A region can be completely green and still be maturing: watch it darken.
-- **Colony Focus** (left panel, under the colony status). The game opens with your origin selected. You can direct **one** region's growth at a time:
-  - **Roots**: the colony thickens faster and loses fewer plants in marginal ground. It does **not** let plants survive ground that is too cold, too hot, too salty, too wet or dry, or toxic for your plant.
-  - **Leaves**: the colony makes more Biomass. It does not change where your plant can live.
-  - **Seeds**: the colony spreads outward faster, and with Waterborne Seeds it sends more seeds over water. Seeds still only take root where the ground suits your plant.
-  - Pick one with a single click. It keeps working until you change it, costs nothing, and needs no upkeep. Choosing a mode in another region moves the focus there. The header shows where it is, and the map labels that region (▼ ROOTS / ❦ LEAVES / ✿ SEEDS).
-  - Using it is optional. You can ignore it entirely and still win.
+**BLOOM-008 (still true):**
+
+- Colonies start sparse and establish over time. Young colonies make less Biomass and fewer seeds; established ones make more.
+- Clicking a region your plant lives in shows **Colony: Sparse / Establishing / Established / Dense**, with a bar and a %. A region can be completely green and still be maturing.
+
+**BLOOM-009 (new):**
+
+- **Seedlings start much smaller.** A newly colonized tile is now a tiny pale sprout on bare ground. It grows into a bigger, darker patch and finally a full, dark tile. That takes about a minute and a half on good ground, longer on poor soil. You should be able to tell a new frontier from an old colony at a glance.
+- **Every colony keeps its own growth focus.** The left panel shows it for the selected region. There are four big buttons:
+  - **Balanced** (the default): the normal way to grow.
+  - **Roots**: the colony thickens much faster and loses fewer plants on marginal ground. It costs a little of that colony's Biomass. Good for young or struggling colonies. It does **not** let plants survive ground that is too cold, too hot, too salty, too wet or dry, or toxic for your plant.
+  - **Leaves**: more Biomass from that colony, but only once it has filled in (seedlings have little leaf area). It makes fewer seeds. Good for big, established colonies.
+  - **Seeds**: the colony spreads into open ground faster and, with Waterborne Seeds, sends more seeds over water. It costs some of that colony's Biomass. Good for frontier and coastal colonies.
+  - Setting one colony **never changes another**. Each colony keeps its choice until you change it, even if it dies back or is wiped out and later regrows.
+  - A small coloured badge above a region's name shows its focus (▼ Roots, ❦ Leaves, ✿ Seeds). Balanced regions show none.
+  - A 💡 tip under the buttons suggests what suits the colony right now. You can ignore it.
+  - Using focus is optional. You can leave everything Balanced and still win.
+- **Local upgrades** (the panel below the focus). You can spend Biomass to improve **one** colony for good: **Root Network**, **Leaf Canopy** or **Seed Reserve**.
+  - It's one upgrade per colony. The first costs 90 Biomass, and each one you build makes the next cost more.
+  - It works a bit better when the colony's focus matches it.
+  - A gold ring on the map badge marks a colony that has one.
+  - Upgrades are optional. The question they pose is: *improve this important colony now, or save for the next global upgrade?*
+- **Biomass is now the big gold number at the top left.** Next to it is your income per second. It glows gold when you gain a chunk and red when you spend. Prices you can't afford yet turn red, and local upgrades say how much more you need.
+- **Water crossings are visible.** After Waterborne Seeds, small seed dots float from a coastal colony across the water:
+  - a **faint pale ripple** where they land means the seeds arrived but haven't rooted;
+  - a **bright gold-green burst** means they took root: a new colony. The footer also says so.
+  - Seeds that wash up on hostile ground only ever show the faint ripple, and the footer tells you why they can't grow there.
 - The world identities are unchanged: seed 13 is still attempt 6 · Eos-227, and seed 8 is still attempt 1 · Coriol-220.
 
 ---
@@ -71,8 +99,9 @@ Fill one column per run.
 | Regions / islands you lost or never reached **without meaning to** | | |
 | Any stretch that felt like dead waiting (roughly when, how long, what you were waiting for) | | |
 | Did you win? If you gave up, when and why | | |
-| Colony Focus: which modes did you use, where, and roughly when did you move it? | | |
-| Notes from the paused attempt (before BLOOM-008), if any | | |
+| Growth focus: which colonies did you set, to what, and roughly when? Did you change any colony more than once? | | |
+| Local upgrades bought (which, on which colony, roughly when), or why you didn't buy any | | |
+| Notes from earlier attempts (before BLOOM-008 / BLOOM-009), if any | | |
 
 ## Questions
 
@@ -93,6 +122,12 @@ Answer **Yes / Partly / No**, plus a short note. Answer across both runs unless 
 | 11 | **(BLOOM-008)** Do the first 1–2 minutes now contain meaningful decisions, rather than waiting for the first upgrade? | | |
 | 12 | **(BLOOM-008)** Are Roots / Leaves / Seeds understandable from their names and one-line descriptions, and does each feel useful somewhere? Did one feel like the obvious "always pick this"? | | |
 | 13 | **(BLOOM-008)** Does visible colony density (sparse → dense, darker as it matures) make growth easier to read? | | |
+| 14 | **(BLOOM-009)** Does each colony remembering its own focus match what you expected? Did you ever have to set something again that you had already set? | | |
+| 15 | **(BLOOM-009)** Did different colonies want different focuses (young → Roots, frontier/coast → Seeds, established → Leaves), or did one focus still feel like "always pick this"? | | |
+| 16 | **(BLOOM-009)** Local upgrades: did you face a real "improve this colony or save for a global upgrade" choice? Did any upgrade feel useless or mandatory? | | |
+| 17 | **(BLOOM-009)** Do new colonies now start small enough? Can you tell a fresh frontier from a long-established colony at a glance? | | |
+| 18 | **(BLOOM-009)** Is it always obvious how much Biomass you have, whether it's rising, and whether you can afford something? | | |
+| 19 | **(BLOOM-009)** After buying Waterborne Seeds, did you see seeds cross the water? Could you tell "seeds arrived but didn't grow" from "seeds took root"? | | |
 
 **Overall:** *Would you voluntarily play another generated planet in the current ugly prototype state?*
 
@@ -102,6 +137,15 @@ Answer: ______  Why: ______________________________________________
 
 ## After the runs
 
-Paste the filled tables back to the PMO, or commit them to this file. For comparison, the headless reference numbers are in the BLOOM-007 and BLOOM-008 reports. After BLOOM-008, a perfect-knowledge bot with a 4-second reaction, never using Colony Focus, wins seed 13 in roughly 7–12 minutes (live runs vary, because the game uses a fresh random stream each time). Read them only **after** you've played. A person is expected to be slower. The bible's session target is 10–20 minutes. BLOOM-008's pacing numbers are machine evidence only. They stay provisional until this test.
+Paste the filled tables back to the PMO, or commit them to this file. For comparison, the headless reference numbers are in the BLOOM-007, BLOOM-008 and BLOOM-009 reports. Read them only **after** you've played.
+
+- After BLOOM-009, a perfect-knowledge bot with a 4-second reaction that leaves every colony Balanced and buys no local upgrades wins seed 13 in roughly 7–10 minutes.
+- A bot that re-directs every colony by the situational rule wins it in roughly 6–8 minutes.
+- Live runs vary, because the game uses a fresh random stream each time.
+- A person is expected to be slower. The bible's session target is 10–20 minutes.
+
+These pacing numbers are machine evidence only and stay provisional until this test.
+
+**Visual note:** the art is still deliberately temporary. The owner's future visual direction is recorded in [`VISUAL_DIRECTION_v1.0.md`](VISUAL_DIRECTION_v1.0.md) and has not been started, so judge readability and decisions, not looks.
 
 The First Bloom playtest sheet is separate: [`PLAYTEST_v1.md`](PLAYTEST_v1.md).

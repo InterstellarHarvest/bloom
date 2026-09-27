@@ -25,7 +25,11 @@
   that fails generation shows an explicit failure state (never another seed). QA: tools/procedural-run-check.js.
   BLOOM-008 (temporary UI, not final): Colony Focus in the inspect panel (Roots / Leaves / Seeds on ONE Living region,
   set-and-leave), an ordinary-language colony status (Sparse → Establishing → Established → Dense), and map vegetation
-  shaded by each tile's stand density (light, gappy seedlings → dark, full stands). QA: tools/colony-focus-check.js.
+  shaded by each tile's stand density (light, gappy seedlings → dark, full stands).
+  BLOOM-009 (temporary UI, not final): EVERY Living region keeps its own growth focus (Balanced / Roots / Leaves / Seeds) and
+  may buy ONE local upgrade (Root Network / Leaf Canopy / Seed Reserve) with Biomass; small map badges show each region's
+  focus + upgrade; Biomass is the dominant HUD element; seedlings start tiny; Waterborne crossings show seeds travelling
+  over water (pale ripple = seeds arrived, bright burst = they took root). QA: tools/colony-development-check.js.
 -->
 <style>
   :root{
@@ -43,7 +47,18 @@
   header h1 small{color:var(--dim); letter-spacing:1px; font-weight:normal}
   .hud{display:flex; gap:16px; align-items:center; flex-wrap:wrap; font-size:12px; color:var(--dim)}
   .hud b{color:var(--ink)}
-  .biomass b{color:var(--gold)}
+  /* BLOOM-009: Biomass is the primary currency, so it is the largest thing in the HUD */
+  .bio{position:relative; display:flex; align-items:center; gap:10px; padding:4px 14px 4px 8px; border-radius:26px; background:linear-gradient(180deg,#3a2c0c,#241a06);
+    border:2px solid #8a6a22; box-shadow:0 0 0 1px #000 inset; min-width:190px; transition:box-shadow .25s, border-color .25s}
+  .bio .leaf{width:30px; height:30px; flex:0 0 auto; background:radial-gradient(circle at 35% 30%,#ffe9a8,#e9b43a 60%,#9b6a12); border-radius:0 70% 0 70%; transform:rotate(-12deg); box-shadow:0 0 6px rgba(255,212,121,.45)}
+  .bio .bnum{display:flex; flex-direction:column; line-height:1}
+  .bio .blbl{font-size:10px; letter-spacing:2px; color:#caa55a}
+  .bio b#hBio{font-size:30px; color:var(--gold); font-weight:700; letter-spacing:1px; font-variant-numeric:tabular-nums}
+  .bio .brate{font-size:11px; color:#caa55a; margin-left:auto; white-space:nowrap}
+  .bio.up{border-color:#ffe08a; box-shadow:0 0 14px rgba(255,212,121,.75)}
+  .bio.down{border-color:#e2604f; box-shadow:0 0 14px rgba(226,96,79,.7)}
+  .bio .spend{position:absolute; right:14px; top:-4px; color:#ff8b7a; font-weight:700; font-size:16px; pointer-events:none; animation:floatUp 1.1s ease-out forwards}
+  @keyframes floatUp{from{opacity:1; transform:translateY(0)} to{opacity:0; transform:translateY(-18px)}}
   .covwrap{display:flex; align-items:center; gap:8px}
   .covbar{position:relative; width:200px; height:14px; background:#0a1220; border:1px solid var(--line); border-radius:7px; overflow:hidden}
   .covfill{position:absolute; left:0; top:0; bottom:0; width:0%; background:linear-gradient(90deg,#3f8f63,#66d17f); transition:width .2s}
@@ -91,6 +106,7 @@
   .buy .nm{display:flex; flex-direction:column}
   .buy .nm small{color:var(--dim); font-size:10px}
   .buy .cost{color:var(--gold); white-space:nowrap}
+  .buy.poor .cost{color:#ff8b7a} /* can't afford it yet: the price turns red */
   .buy.owned{border-color:#2c5335; background:#122017}
   .temppool{font-size:11px; color:var(--dim); margin-bottom:6px}
 
@@ -120,33 +136,48 @@
   .colony .cw{color:#fff; font-weight:600}
   .dbar{height:8px; border:1px solid var(--line); border-radius:3px; margin-top:4px; background:#1a2436; overflow:hidden}
   .dbar i{display:block; height:100%; background:linear-gradient(90deg,#b2d678,#227a38)}
-  .focus{margin:8px 0; padding:8px; border-radius:5px; background:#1a1422; border:1px solid #4a3160}
-  .focus h3{font-size:11px; letter-spacing:1px; margin:0 0 4px; color:var(--focus)}
+  /* BLOOM-009: per-region growth focus + local upgrade (temporary inspect-panel controls) */
+  .focus{margin:8px 0; padding:10px; border-radius:8px; background:#1a1422; border:1px solid #4a3160}
+  .focus h3{font-size:12px; letter-spacing:1px; margin:0 0 4px; color:var(--focus)}
   .focus .fnote{font-size:11px; color:var(--dim); margin-bottom:6px}
-  .fbtn{display:flex; flex-direction:column; width:100%; text-align:left; background:#211a2e; border:1px solid #3d2d52; color:var(--ink);
-    padding:5px 8px; border-radius:5px; margin-bottom:4px; font-size:12px}
-  .fbtn small{color:var(--dim); font-size:10px}
+  .fgrid{display:grid; grid-template-columns:1fr 1fr; gap:6px}
+  .fbtn{display:flex; flex-direction:column; align-items:flex-start; text-align:left; background:#211a2e; border:2px solid #3d2d52; color:var(--ink);
+    padding:8px 9px; border-radius:8px; font-size:14px; min-height:54px}
+  .fbtn .fi{font-size:16px; margin-right:4px}
+  .fbtn small{color:var(--dim); font-size:10px; margin-top:2px}
   .fbtn:hover:not(.off){border-color:var(--focus)}
   .fbtn[aria-pressed="true"]{background:#3a2350; border-color:var(--focus); color:#fff}
   .fbtn.off{opacity:.42; cursor:default}
-  .fstate{font-size:11px; color:var(--focus); margin:4px 0}
-  .fclear{background:none; border:1px solid var(--line); color:var(--dim); font-size:10px; padding:2px 8px; border-radius:4px}
+  .fstate{font-size:11px; color:var(--focus); margin:6px 0 2px}
+  .ftip{font-size:11px; color:#b9d9a0; margin:4px 0 0}
+  .local{margin-top:10px; padding-top:8px; border-top:1px dashed #4a3160}
+  .local h3{color:var(--gold)}
+  .sbtn{display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; text-align:left; background:#241d10; border:2px solid #5b4520;
+    color:var(--ink); padding:7px 9px; border-radius:8px; margin-bottom:5px; font-size:13px; min-height:46px}
+  .sbtn small{display:block; color:var(--dim); font-size:10px}
+  .sbtn .scost{display:flex; align-items:center; gap:4px; color:var(--gold); font-weight:700; font-size:15px; white-space:nowrap}
+  .sbtn .scost i{width:12px; height:12px; background:radial-gradient(circle at 35% 30%,#ffe9a8,#e9b43a 60%,#9b6a12); border-radius:0 70% 0 70%; display:inline-block}
+  .sbtn:hover:not(.off){border-color:var(--gold)}
+  .sbtn.off{opacity:.55; cursor:default}
+  .sbtn.poor .scost{color:#ff8b7a}
+  .sbtn .need{display:block; font-size:10px; color:#ff8b7a; font-weight:normal}
+  .owned{padding:8px; border-radius:8px; background:#2a2410; border:2px solid #8a6a22; color:#ffe7a8; font-size:13px}
+  .owned small{display:block; color:#caa55a; font-size:10px; margin-top:2px}
   details.fsci{margin-top:6px} details.fsci summary{cursor:pointer; color:var(--dim); font-size:11px}
   details.fsci p{margin:4px 0 0; font-size:11px; color:var(--dim)}
-  .hfocus b{color:var(--focus)}
 </style>
 </head>
 <body>
 <header>
   <h1>BLOOM <small>· first bloom</small></h1>
   <div class="hud">
-    <span class="biomass">biomass <b id="hBio">0</b></span>
+    <span class="bio" id="bioBox" title="Biomass: the energy your plant has stored. Spend it on upgrades."><i class="leaf"></i>
+      <span class="bnum"><span class="blbl">BIOMASS</span><b id="hBio">0</b></span><span class="brate" id="hBioRate"></span></span>
     <span class="covwrap">coverage
       <span class="covbar"><span class="covfill" id="hCovFill"></span><span class="covwin" id="hCovWin"></span></span>
       <b id="hCov">0%</b> <span style="color:var(--gold)" id="hWinPct">/ 70%</span>
     </span>
     <span>sky <b id="hSky"></b></span>
-    <span class="hfocus">focus <b id="hFocus">none</b></span>
   </div>
   <div class="controls">
     <button class="tb" id="btnPlay" aria-pressed="true">⏸ pause</button>
@@ -236,12 +267,15 @@ function stops(v){ const S=TEMP_STOPS; if(v<=S[0][0])return S[0][1].slice(); if(
 function barrenColor(i){ const L=SEC[i].local; let c=stops(G.temp+L.tempOffset);
   const m=G.moist+L.moistureOffset; if(m<35)c=mix(c,[150,138,104],0.4); else if(m>68)c=mix(c,[64,104,104],0.35);
   return mix(c,[10,12,18],0.55); } // dim: barren ground
-// BLOOM-008: Living tiles are shaded by their stand density (sim.dens): a fresh seedling stand is light and gappy
-// (ground shows around a smaller plant patch), an established one dark and full; low section vigor still reads sickly.
-const SPARSE_C=[176,214,118], DENSE_C=[28,112,50], SICK_C=[128,122,70];
-function livingColor(d,v){ const c=mix(SPARSE_C,DENSE_C,Math.pow(clamp(d,0,1),0.8));
+// BLOOM-008/009: Living tiles are drawn from their stand density (sim.dens): a new seedling stand is a tiny, pale
+// sprout on bare ground; it grows into a larger, darker patch and finally a full, dark tile; low vigor still reads sickly.
+const SPARSE_C=[190,222,120], DENSE_C=[24,104,46], SICK_C=[128,122,70];
+function livingColor(d,v){ const c=mix(SPARSE_C,DENSE_C,Math.pow(clamp(d,0,1),0.75));
   return mix(SICK_C,c,clamp((v-0.2)/0.5,0,1)); }
-const patchFrac=d=>0.6+0.4*clamp((d-0.15)/0.45,0,1); // share of the tile side the plant patch covers
+const DFULL=0.78; // stand density at which the plant patch fills its tile
+const patchFrac=d=>0.24+0.76*Math.pow(clamp((d-0.03)/(DFULL-0.03),0,1),0.8); // share of the tile side the patch covers
+// small fixed per-tile offset so young patches sit irregularly (organic) rather than in a perfect grid; 0 once full
+const JIT=new Float32Array(N*2); for(let i=0;i<N;i++){ const h=Math.imul(i^0x9e3779b9,0x85ebca6b)>>>0; JIT[2*i]=((h&255)/255-0.5)*0.8; JIT[2*i+1]=(((h>>8)&255)/255-0.5)*0.8; }
 const DEAD_C=[92,66,44], WATER_C=[24,52,92], WATER_C2=[30,62,104];
 function fit(){ const st=document.querySelector(".stage"); TILE=Math.max(6,Math.floor(Math.min((st.clientWidth-24)/W,(st.clientHeight-24)/H))); }
 function resize(){ fit(); cv.width=W*TILE*dpr; cv.height=H*TILE*dpr; cv.style.width=W*TILE+"px"; cv.style.height=H*TILE+"px"; ctx.setTransform(dpr,0,0,dpr,0,0); draw(); }
@@ -254,7 +288,8 @@ function draw(){
     if(s<0) c=((x+y)%7===0)?WATER_C2:WATER_C; // water: never colonizable, not in the coverage denominator
     else if(state[i]===LIV){ // ground, then a plant patch whose size and shade follow the stand's density
       const f=patchFrac(dens[i]); if(f<1){ ctx.fillStyle=rgb(barrenColor(s)); ctx.fillRect(x*TILE,y*TILE,TILE+.5,TILE+.5); }
-      const sz=TILE*f, o=(TILE-sz)/2; ctx.fillStyle=rgb(livingColor(dens[i],vigor[s])); ctx.fillRect(x*TILE+o,y*TILE+o,sz+(f<1?0:.5),sz+(f<1?0:.5)); continue; }
+      const sz=TILE*f, o=(TILE-sz)/2, ox=o*JIT[2*i], oy=o*JIT[2*i+1]; ctx.fillStyle=rgb(livingColor(dens[i],vigor[s]));
+      ctx.fillRect(x*TILE+o+ox,y*TILE+o+oy,sz+(f<1?0:.5),sz+(f<1?0:.5)); continue; }
     else if(state[i]===DEAD) c=DEAD_C;
     else c=barrenColor(s);
     ctx.fillStyle=rgb(c); ctx.fillRect(x*TILE,y*TILE,TILE+.5,TILE+.5);
@@ -283,9 +318,49 @@ function draw(){
     ctx.lineWidth=3; ctx.strokeStyle="rgba(5,7,12,0.9)"; ctx.strokeText(LABEL[i].toUpperCase(),px,py);
     ctx.fillStyle=i===selected?"#fff":"rgba(232,238,248,0.9)"; ctx.fillText(LABEL[i].toUpperCase(),px,py);
     if(s.isOrigin){ctx.fillStyle="#ffd479"; ctx.fillText("★",px,py+fs+1);}
-    if(i===sim.focus.section&&sim.focus.mode){ const t=`${FOCUS_UI[sim.focus.mode].icon} ${FOCUS_UI[sim.focus.mode].name.toUpperCase()}`, fy=py-fs-2;
-      ctx.lineWidth=3; ctx.strokeStyle="rgba(5,7,12,0.95)"; ctx.strokeText(t,px,fy); ctx.fillStyle="#f59ad8"; ctx.fillText(t,px,fy); }
   });
+  drawBadges(); drawCrossings(performance.now());
+}
+// BLOOM-009: one small badge per region that is NOT on Balanced (its focus icon) and/or owns a local upgrade (gold ring
+// + dot), just above the region's name, so the map shows at a glance which colony does what
+function drawBadges(){
+  const r=Math.max(7,Math.min(11,TILE*0.75)), fs=Math.max(8,Math.min(12,TILE));
+  SEC.forEach((_,i)=>{ const m=sim.getColonyFocus(i), sp=sim.getSpecialization(i); if(m==="balanced"&&!sp) return;
+    const px=CENT[i].x*TILE, py=CENT[i].y*TILE-fs-r-1, u=FOCUS_UI[m];
+    ctx.beginPath(); ctx.arc(px,py,r,0,7); ctx.fillStyle=m==="balanced"?"#3a3f4c":u.color; ctx.fill();
+    ctx.lineWidth=sp?3:1.5; ctx.strokeStyle=sp?"#ffd479":"rgba(5,7,12,0.9)"; ctx.stroke();
+    if(sp){ ctx.beginPath(); ctx.arc(px+r*0.8,py-r*0.8,Math.max(2.5,r*0.32),0,7); ctx.fillStyle="#ffd479"; ctx.fill(); ctx.lineWidth=1; ctx.strokeStyle="#5a3f0a"; ctx.stroke(); }
+    if(m!=="balanced"){ ctx.fillStyle="#10131a"; ctx.font=`bold ${Math.round(r*1.2)}px "DejaVu Sans Mono",monospace`; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(u.icon,px,py+0.5); }
+  });
+}
+// BLOOM-009: Waterborne crossing feedback. Each animation is one real engine event (sim.crossing.events): a few seed dots
+// travel from the source coastal tile over the water to the landing tile. took:false (seeds ARRIVED) ends in a faint
+// pale ripple; took:true (a new FOOTHOLD) ends in a bright gold-green burst. Temporary visuals.
+const XANIM=[], XHIST=[]; let lastXid=0; const XTRAVEL=1300, XLAND=700, XMAX_ARRIVALS=6;
+function pollCrossings(now){
+  for(const e of sim.crossing.events){ if(e.id<=lastXid) continue; lastXid=e.id;
+    if(!e.took&&XANIM.filter(a=>!a.took).length>=XMAX_ARRIVALS) continue; // too many at once (fast speed): skip extra ARRIVALS, never footholds
+    const a={id:e.id, from:e.from, to:e.to, took:e.took, t0:now}; XANIM.push(a); XHIST.push({id:e.id, from:e.from, to:e.to, took:e.took, tick:e.tick}); if(XHIST.length>200) XHIST.shift();
+    const sec=TILEMAP[e.to];
+    if(e.took) log(`🌊 Waterborne seeds crossed the water and took root in ${LABEL[sec]}!`);
+    else if(!XWARNED.has(sec)&&evaluate(sec).fitness<=CFG.grow.growThresh){ XWARNED.add(sec); const ev=evaluate(sec);
+      log(`🌊 Seeds washed up on ${LABEL[sec]}, but they cannot take root there: ${LIMIT_MSG[ev.limitKey](ev)}.`); } }
+  for(let k=XANIM.length-1;k>=0;k--) if(now-XANIM[k].t0>XTRAVEL+XLAND) XANIM.splice(k,1);
+}
+const XWARNED=new Set();
+function drawCrossings(now){
+  for(const a of XANIM){
+    const x0=((a.from%W)+.5)*TILE, y0=(((a.from/W)|0)+.5)*TILE, x1=((a.to%W)+.5)*TILE, y1=(((a.to/W)|0)+.5)*TILE;
+    const dx=x1-x0, dy=y1-y0, L=Math.hypot(dx,dy)||1, cx=(x0+x1)/2-dy/L*L*0.22, cy=(y0+y1)/2+dx/L*L*0.22; // gentle arc
+    const t=(now-a.t0)/XTRAVEL;
+    for(let k=0;k<3;k++){ const u=clamp(t-k*0.12,0,1); if(t-k*0.12<0||t-k*0.12>1) continue;
+      const bx=(1-u)*(1-u)*x0+2*(1-u)*u*cx+u*u*x1, by=(1-u)*(1-u)*y0+2*(1-u)*u*cy+u*u*y1;
+      ctx.beginPath(); ctx.arc(bx,by,Math.max(2.5,TILE*0.27),0,7); ctx.fillStyle="#f4e2b0"; ctx.fill(); ctx.lineWidth=1.4; ctx.strokeStyle="#6b4a1a"; ctx.stroke(); }
+    const lt=(now-a.t0-XTRAVEL)/XLAND; if(lt<0||lt>1) continue;
+    if(a.took){ ctx.beginPath(); ctx.arc(x1,y1,TILE*(0.6+2.2*lt),0,7); ctx.lineWidth=3.5; ctx.strokeStyle=`rgba(255,226,120,${1-lt})`; ctx.stroke();
+      ctx.beginPath(); ctx.arc(x1,y1,TILE*0.7*(1-lt*0.5),0,7); ctx.fillStyle=`rgba(150,240,120,${0.9*(1-lt)})`; ctx.fill(); }
+    else { ctx.beginPath(); ctx.arc(x1,y1,TILE*(0.35+1.0*lt),0,7); ctx.lineWidth=1.5; ctx.strokeStyle=`rgba(190,220,255,${0.7*(1-lt)})`; ctx.stroke(); }
+  }
 }
 
 function outline(sec,color,width,dash){
@@ -303,21 +378,29 @@ function outlinePath(sec,color,width,dash){
 /* ========================================================================== */
 /*  UI: HUD / INSPECT / SHOP                                                   */
 /* ========================================================================== */
+// Biomass readout (BLOOM-009): big number, passive income per second (the engine's sim.income; bubbles are one-off
+// gains), a gold glow on gains ≥ 5 (a bubble) and a red glow + floating "−N" on spending
+let bioShown=null, bioFxUntil=0;
 function renderHUD(cov){
-  document.getElementById("hBio").textContent=Math.floor(sim.biomass);
+  const b=Math.floor(sim.biomass), box=document.getElementById("bioBox"), now=performance.now();
+  if(bioShown!==null&&b!==bioShown){ const d=b-bioShown;
+    if(d<=-1){ box.classList.remove("up"); box.classList.add("down"); bioFxUntil=now+700; const f=document.createElement("span"); f.className="spend"; f.textContent="−"+(-d); box.appendChild(f); setTimeout(()=>f.remove(),1100); }
+    else if(d>=5){ box.classList.remove("down"); box.classList.add("up"); bioFxUntil=now+500; } }
+  if(now>bioFxUntil){ box.classList.remove("up"); box.classList.remove("down"); }
+  bioShown=b; document.getElementById("hBio").textContent=b;
+  if(sim.ticks) document.getElementById("hBioRate").textContent=`+${(sim.income*1000/CFG.tickMs).toFixed(1)}/s`;
   document.getElementById("hCov").textContent=Math.round(cov*100)+"%";
   document.getElementById("hCovFill").style.width=Math.round(cov*100)+"%";
   document.getElementById("hCovWin").style.left=Math.round(sim.winAt*100)+"%";
   document.getElementById("hWinPct").textContent="/ "+Math.round(sim.winAt*100)+"%";
   document.getElementById("hSky").textContent=`${G.temp>0?'+':''}${G.temp}°C · moist ${G.moist}`;
-  const f=sim.focus; document.getElementById("hFocus").textContent=f.mode?`${FOCUS_UI[f.mode].name} · ${LABEL[f.section]}`:"none";
 }
 function renderInspect(){
   const el=document.getElementById("inspMain"), more=document.getElementById("inspMore");
   const curRaw=more.querySelector("details.raw"); if(curRaw) rawOpen=curRaw.open; // read synchronously: the toggle event can lag a re-render
-  renderFocus();
+  renderColonyCtl();
   if(selected<0&&selectedWater){ more.innerHTML=""; el.innerHTML=`<h2>WATER</h2><div class="secname">Open water</div><div class="geo">🌊 Not land: nothing grows here and it does not count toward coverage. Ordinary spread cannot cross water${CROSS_T?`; ${CROSS_T.name} carries seeds over gaps of up to ${CFG.crossing.maxGap} water tiles`:""}.</div>`; return; }
-  if(selected<0){ more.innerHTML=""; el.innerHTML='<h2>SECTION</h2><p style="color:var(--dim);font-style:italic">Click a region to read it. The plant starts in its protected origin (★) and spreads into suitable ground on its own. Click a region your plant lives in to choose its Colony Focus.</p>'; return; }
+  if(selected<0){ more.innerHTML=""; el.innerHTML='<h2>SECTION</h2><p style="color:var(--dim);font-style:italic">Click a region to read it. The plant starts in its protected origin (★) and spreads into suitable ground on its own. Click a region your plant lives in to set its growth focus or buy it a local upgrade.</p>'; return; }
   const s=SEC[selected], e=evaluate(selected), liv=livingCountBySection()[selected];
   let dead=0,barr=0; for(const t of SEC_TILES[selected]){ if(state[t]===DEAD)dead++; else if(state[t]===BAR)barr++; }
   const total=AREA[selected];
@@ -347,46 +430,87 @@ function renderInspect(){
       </table></details>`;
 }
 
-/* ---- Colony Focus (BLOOM-008): effects are config.focus (engine); this is only the temporary control + copy ---- */
+/* ---- colony development (BLOOM-009): effects are config.colony (engine); this is only the temporary control + copy ---- */
 const COLONY_WORD={none:"No plants yet", sparse:"Sparse", establishing:"Establishing", established:"Established", dense:"Dense"};
 const COLONY_HINT={ none:"Nothing grows here yet.",
-  sparse:"Young seedlings: they make little Biomass and few seeds yet.",
+  sparse:"Tiny seedlings: they make little Biomass and few seeds yet.",
   establishing:"The stand is thickening; its Biomass and seeds are growing.",
   established:"A full-strength colony: it seeds its neighbors and yields well.",
   dense:"A dense, mature stand at close to its full yield." };
 const pctOf=x=>Math.round(x*100);
-const FM=CFG.focus.modes;
+const CM=CFG.colony, FM=CM.modes, SPEC=CM.specializations;
 const FOCUS_UI={
-  roots:{ name:"Roots", icon:"▼", sub:"establish faster · hold on in marginal ground",
-    what:`Grow roots: this colony thickens ${pctOf(FM.roots.establishBonus)}% faster and loses fewer plants when conditions are only marginal. Roots cannot keep plants alive where it is too cold, too hot, too salty, too wet or dry, or too toxic for your plant.` },
-  leaves:{ name:"Leaves", icon:"❦", sub:"more Biomass from this colony",
-    what:`Grow leaves: more photosynthesis, so this colony makes ${pctOf(FM.leaves.yieldBonus)}% more Biomass. It does not change where your plant can live.` },
-  seeds:{ name:"Seeds", icon:"✿", sub:"spread outward faster",
-    what:`Make seeds: this colony spreads into neighboring ground ${pctOf(FM.seeds.seedBonus)}% faster${CROSS_T?` and, with ${CROSS_T.name}, sends ${pctOf(FM.seeds.crossingBonus)}% more seeds over water`:""}. Seeds only take root where the ground suits your plant.` },
+  balanced:{ name:"Balanced", icon:"◇", color:"#9aa3b5", sub:"no special focus",
+    what:"Balanced: this colony shares its energy evenly between roots, leaves and seeds. This is the normal way to grow." },
+  roots:{ name:"Roots", icon:"▼", color:"#d99a5b", sub:"young or struggling colonies",
+    what:`Roots: stands thicken ${pctOf(FM.roots.establishBonus)}% faster and lose fewer plants on marginal ground. The cost is ${pctOf(FM.roots.yieldCost)}% less Biomass from this colony. Roots cannot keep plants alive where it is too cold, too hot, too salty, too wet or dry, or too toxic for your plant.` },
+  leaves:{ name:"Leaves", icon:"❦", color:"#7fdc74", sub:"mature, productive colonies",
+    what:`Leaves: up to ${pctOf(FM.leaves.yieldBonus)}% more Biomass. The bonus grows as the colony fills in: seedlings have little leaf area, dense stands earn the full bonus. The cost is ${pctOf(FM.leaves.seedCost)}% fewer seeds. It does not change where your plant can live.` },
+  seeds:{ name:"Seeds", icon:"✿", color:"#f5a6dc", sub:"frontier or coastal colonies",
+    what:`Seeds: this colony spreads into open ground ${pctOf(FM.seeds.seedBonus)}% faster${CROSS_T?` and, with ${CROSS_T.name}, sends ${pctOf(FM.seeds.crossingBonus)}% more seeds over water`:""}. The cost is ${pctOf(FM.seeds.yieldCost)}% less Biomass from this colony. Seeds only take root where the ground suits your plant.` },
 };
-let focusKey="";
-function renderFocus(force){
-  const box=document.getElementById("focusBox"), f=sim.focus, liv=selected>=0?livingCountBySection()[selected]>0:false;
-  const key=`${selected}|${f.section}|${f.mode}|${liv}`; if(!force&&key===focusKey) return; focusKey=key; // re-render only on change: keeps clicks reliable
+const SPEC_UI={
+  rootNetwork:{ sub:"thicker stands, holds on under stress, regrows fast", what:`${SPEC.rootNetwork.name}: a deep, spreading root system. This colony establishes much faster, loses fewer plants on marginal ground and regrows quickly after die-back. It still cannot survive ground that is too hostile for your plant.` },
+  leafCanopy:{ sub:"more Biomass from an established colony", what:`${SPEC.leafCanopy.name}: a full leaf canopy. Up to ${pctOf(SPEC.leafCanopy.effect.yieldBonus)}% more Biomass from this colony, growing as the colony fills in, so it pays best on a big, established colony.` },
+  seedReserve:{ sub:"stronger spread and sea crossings from here", what:`${SPEC.seedReserve.name}: a large store of seeds. This colony spreads ${pctOf(SPEC.seedReserve.effect.seedBonus)}% faster and sends ${pctOf(SPEC.seedReserve.effect.crossingBonus)}% more seeds over water. It is most useful on a frontier or coastal colony.` },
+};
+const MATCH_NOTE=`When the colony's focus matches its upgrade, the upgrade works ${pctOf(CM.synergy)}% better.`;
+// a short, situation-based tip (young / stressed / frontier / mature), from what the player can see in this panel
+function colonyTip(i){
+  const e=evaluate(i), cs=sim.colonyStatus(i), liv=livingCountBySection()[i]; if(!liv) return "";
+  if(e.fitness<=CFG.categories.lamp.green&&e.fitness>CM.protectAbove) return "This ground is marginal for your plant: Roots help a colony hold on here.";
+  if(cs.establishment<CFG.establish.status.established) return "A young colony: Roots thicken it up; Seeds fill the open ground faster.";
+  let open=0; for(const t of SEC_TILES[i]) if(state[t]===BAR) open++;
+  if(open>AREA[i]*0.1) return "Established with open ground around it: Seeds spread it further.";
+  return "Established and filled in: Leaves turn it into a Biomass producer.";
+}
+let colonyKey="", tipTick=-1;
+function renderColonyCtl(force){
+  const box=document.getElementById("focusBox"), liv=selected>=0?livingCountBySection()[selected]>0:false;
+  const m=selected>=0?sim.getColonyFocus(selected):null, sp=selected>=0?sim.getSpecialization(selected):null;
+  const key=`${selected}|${m}|${sp}|${liv}|${sim.specPrice()}`; if(!force&&key===colonyKey) return; colonyKey=key; // re-render only on change: keeps clicks reliable
   if(selected<0){ box.innerHTML=""; return; }
-  const here=f.section===selected, elsewhere=f.mode&&!here;
-  const btn=m=>{ const u=FOCUS_UI[m], on=here&&f.mode===m;
-    return `<button class="fbtn ${liv?"":"off"}" data-focus="${m}" aria-pressed="${on}" aria-disabled="${!liv}" title="${u.what.replace(/"/g,"&quot;")}"><span>${u.icon} ${u.name}${on?" ✓":""}</span><small>${u.sub}</small></button>`; };
-  box.innerHTML=`<div class="focus" id="focusCtl"><h3>COLONY FOCUS</h3>
-    <div class="fnote">${liv?"Direct this colony's growth. One region at a time; it keeps working until you change it.":"Focus needs a living colony here first."}</div>
-    ${btn("roots")}${btn("leaves")}${btn("seeds")}
-    <div class="fstate">${here?`Focused here: ${FOCUS_UI[f.mode].name}. ${FOCUS_UI[f.mode].what}`:elsewhere?`Focus is on ${LABEL[f.section]} (${FOCUS_UI[f.mode].name}). Choosing here moves it.`:"No focus yet: all colonies grow at their normal balance."}</div>
-    ${here?'<button class="fclear" id="focusClear">clear focus</button>':""}
-    <details class="fsci"><summary>the science ▾</summary><p>A plant has only so much sugar from photosynthesis to spend. Real plants shift how much goes into roots (water, nutrients, anchoring), leaves (catching light) or flowers and seeds (offspring) as conditions change. They don't decide this consciously: hormones steer the growth. Here, the focus stands in for those signals.</p></details></div>`;
+  const btn=k=>{ const u=FOCUS_UI[k], on=m===k;
+    return `<button class="fbtn ${liv?"":"off"}" data-focus="${k}" aria-pressed="${on}" aria-disabled="${!liv}" title="${u.what.replace(/"/g,"&quot;")}"><span><span class="fi">${u.icon}</span>${u.name}${on?" ✓":""}</span><small>${u.sub}</small></button>`; };
+  const price=sim.specPrice();
+  const sbtn=id=>{ const S=SPEC[id], u=SPEC_UI[id], why=sim.specBlock(selected,id);
+    return `<button class="sbtn ${why?"off":""} ${why==="biomass"?"poor":""}" data-spec="${id}" aria-disabled="${!!why}" title="${(u.what+" "+MATCH_NOTE).replace(/"/g,"&quot;")}">
+      <span><b>${FOCUS_UI[S.mode].icon} ${S.name}</b><small>${u.sub}</small></span><span class="scost"><i></i>${price}<span class="need"></span></span></button>`; };
+  const local=!liv?`<div class="fnote">Local upgrades need a living colony here.</div>`
+    : sp?`<div class="owned" id="specOwned">${FOCUS_UI[SPEC[sp].mode].icon} <b>${SPEC[sp].name}</b> built here<small>${SPEC_UI[sp].what}${SPEC[sp].mode===m?` Focus matches: +${pctOf(CM.synergy)}% effect.`:""}</small></div>`
+    : `<div class="fnote">Spend Biomass to improve THIS colony for good (one upgrade per colony). Each one you build makes the next cost more.</div>${sbtn("rootNetwork")}${sbtn("leafCanopy")}${sbtn("seedReserve")}`;
+  box.innerHTML=`<div class="focus" id="focusCtl"><h3>GROWTH FOCUS · ${LABEL[selected].toUpperCase()}</h3>
+    <div class="fnote">${liv?"Each colony keeps its own focus until you change it. Free, one click.":"A growth focus needs a living colony here first."}</div>
+    <div class="fgrid">${btn("balanced")}${btn("roots")}${btn("leaves")}${btn("seeds")}</div>
+    ${liv?`<div class="fstate" id="fstate">${FOCUS_UI[m].what}</div><div class="ftip" id="ftip">💡 ${colonyTip(selected)}</div>`:""}
+    <div class="local" id="localCtl"><h3>LOCAL UPGRADE</h3>${local}</div>
+    <details class="fsci"><summary>the science ▾</summary><p>A plant has only so much sugar from photosynthesis to spend. Real plants shift how much goes into roots (water, nutrients, anchoring), leaves (catching light) or flowers and seeds (offspring) as conditions change. Putting more into one means less for the others. They don't decide this consciously: hormones steer the growth. Here, the focus stands in for those signals.</p></details></div>`;
   box.querySelectorAll("button.fbtn").forEach(b=>b.addEventListener("click",()=>chooseFocus(b.dataset.focus)));
-  const c=box.querySelector("#focusClear"); if(c) c.addEventListener("click",()=>{ sim.clearFocus(); log("Colony Focus cleared: every colony grows at its normal balance."); renderFocus(true); renderHUD(lastCov); draw(); });
+  box.querySelectorAll("button.sbtn").forEach(b=>b.addEventListener("click",()=>buySpec(b.dataset.spec)));
+  refreshColonyCtl();
+}
+// cheap per-frame pass: affordability of the local-upgrade buttons, in place (no re-render → clicks land)
+function refreshColonyCtl(){
+  if(selected<0) return; const price=sim.specPrice();
+  document.querySelectorAll("#focusBox button.sbtn").forEach(b=>{ const why=sim.specBlock(selected,b.dataset.spec);
+    b.classList.toggle("off",!!why); b.classList.toggle("poor",why==="biomass"); b.setAttribute("aria-disabled",!!why);
+    const need=b.querySelector(".need"), txt=why==="biomass"?`need ${Math.ceil(price-sim.biomass)} more`:""; if(need.textContent!==txt) need.textContent=txt; });
+  const tip=document.getElementById("ftip"); if(tip&&sim.ticks!==tipTick){ tipTick=sim.ticks; const t="💡 "+colonyTip(selected); if(tip.textContent!==t) tip.textContent=t; }
 }
 function chooseFocus(mode){
   if(selected<0) return false;
-  const from=sim.focus.mode?`${FOCUS_UI[sim.focus.mode].name} on ${LABEL[sim.focus.section]}`:null;
-  if(!sim.setFocus(selected,mode)){ log(`${LABEL[selected]} has no living plants yet, so there is no colony to focus.`); return false; }
-  log(`Colony Focus: ${FOCUS_UI[mode].name} on ${LABEL[selected]}${from&&from!==`${FOCUS_UI[mode].name} on ${LABEL[selected]}`?` (moved from ${from})`:""}. ${FOCUS_UI[mode].what}`);
-  renderFocus(true); renderHUD(lastCov); draw(); return true;
+  const was=sim.getColonyFocus(selected);
+  if(!sim.setColonyFocus(selected,mode)){ log(`${LABEL[selected]} has no living plants yet, so there is no colony to direct.`); return false; }
+  log(mode===was?`${LABEL[selected]} is already on ${FOCUS_UI[mode].name}.`:`${LABEL[selected]}: ${FOCUS_UI[mode].name} focus. Other colonies keep their own focus. ${FOCUS_UI[mode].what}`);
+  renderColonyCtl(true); draw(); return true;
+}
+function buySpec(id){
+  if(selected<0) return false; const why=sim.specBlock(selected,id), price=sim.specPrice();
+  if(why){ log(why==="biomass"?`${SPEC[id].name} costs ${price} Biomass. You have ${Math.floor(sim.biomass)}: ${Math.ceil(price-sim.biomass)} more needed.`
+    : why==="hasOne"?`${LABEL[selected]} already has its local upgrade (one per colony).` : `${LABEL[selected]} has no living colony to upgrade.`); return false; }
+  sim.buySpecialization(selected,id);
+  log(`Built ${SPEC[id].name} in ${LABEL[selected]} for ${price} Biomass. ${SPEC_UI[id].what}`);
+  renderColonyCtl(true); renderHUD(lastCov); draw(); return true;
 }
 
 // island note (water worlds only): geographic access, kept separate from the environment readout above
@@ -414,7 +538,7 @@ function renderShop(){
       const canBuy=sim.canBuy(u) && sim.biomass>=cost;
       const label = tier>0 ? `${u.name} <small>·${["I","II","III","IV"][tier-1]||("+"+tier)} owned · ${u.sub}</small>` : `${u.name} <small>${u.sub}</small>`;
       const title = !sim.canBuy(u)?sim.why(u):"";
-      html+=`<button class="buy ${tier>0?'owned':''} ${canBuy?'':'off'}" data-id="${u.id}" aria-disabled="${!canBuy}" title="${title}">
+      html+=`<button class="buy ${tier>0?'owned':''} ${canBuy?'':'off'} ${sim.canBuy(u)&&!canBuy?'poor':''}" data-id="${u.id}" aria-disabled="${!canBuy}" title="${title}">
         <span class="nm">${label}</span><span class="cost">${cost}</span></button>`;
     }
     html+='</div>';
@@ -427,7 +551,8 @@ function renderShop(){
 // cheap per-frame pass: toggle affordability in place (a full re-render every frame would eat clicks)
 function refreshShop(){
   document.querySelectorAll("#shop button.buy").forEach(b=>{ const u=upById[b.dataset.id];
-    const off=!(sim.canBuy(u) && sim.biomass>=sim.price(u)); if(b.classList.contains("off")!==off){ b.classList.toggle("off",off); b.setAttribute("aria-disabled",off); } });
+    const off=!(sim.canBuy(u) && sim.biomass>=sim.price(u)); if(b.classList.contains("off")!==off){ b.classList.toggle("off",off); b.setAttribute("aria-disabled",off); }
+    b.classList.toggle("poor",sim.canBuy(u)&&off); });
 }
 function showPreview(id){
   preview=sim.previewOf(id); const u=upById[id];
@@ -520,6 +645,7 @@ function onWin(cov){
       <div><b>Your plant became:</b><ul>${built.map(b=>`<li>${b}</li>`).join('')||'<li>the unmodified pioneer</li>'}</ul>
       ${terra.length?`<div style="margin-top:8px"><b>You reshaped the sky:</b> ${terra.join(', ')}</div>`:''}</div></div>
     <div style="margin-top:10px"><b>Regions bloomed:</b> ${held.join(', ')}</div>
+    ${sim.colonies.spec.some(Boolean)?`<div style="margin-top:6px"><b>Colony upgrades:</b> ${SEC.map((_,i)=>sim.getSpecialization(i)?`${SPEC[sim.getSpecialization(i)].name} in ${LABEL[i]}`:null).filter(Boolean).join(', ')}</div>`:''}
     <div class="debrief"><b>Why it worked:</b> every region has a <i>limiting factor</i>: the one condition furthest outside your plant's tolerance. You fixed enough of them to hold the planet${gaveUp.length?`, and your build gave these up:<ul>${gaveUp.map(g=>`<li>${g}</li>`).join('')}</ul>No plant tolerates everything. Adapting to one extreme costs you another, so choosing what to sacrifice was the real strategy.`:"."}</div>
     ${owned.length?`<div><b>Real plants do this too:</b><ul class="analog">${owned.filter(u=>u.science).map(u=>`<li><b>${u.name}</b> — ${u.science}</li>`).join('')}</ul></div>`:''}
     <button class="btn" id="reportContinue">Keep playing →</button>`;
@@ -538,7 +664,7 @@ function frame(ts){
   if(running){ acc+=dt*speed;
     while(acc>=CFG.tickMs){ lastCov=sim.tick(); acc-=CFG.tickMs; if(!running)break; }
   }
-  renderHUD(lastCov); refreshShop(); draw();
+  pollCrossings(performance.now()); renderHUD(lastCov); refreshShop(); refreshColonyCtl(); draw();
   // re-read the inspected section every 3 sim ticks (not every frame — while paused that would swallow clicks)
   if(selected>=0 && sim.ticks%3===0 && sim.ticks!==lastInspectTick){ lastInspectTick=sim.ticks; renderInspect(); }
   requestAnimationFrame(frame);
@@ -548,8 +674,8 @@ if(BLOOM_RUN.kind==="procedural"){ const a=BLOOM_RUN.planet.archetype; // unobtr
   document.title=`BLOOM — ${BLOOM_RUN.archetype.name} · seed ${BLOOM_RUN.seed} (playtest harness)`;
   document.querySelector("header h1 small").textContent="· "+BLOOM_RUN.planet.name.toLowerCase();
   document.getElementById("runId").textContent=`${BLOOM_RUN.archetype.name} · public seed ${a.publicSeed} · attempt ${a.attempt} · ${BLOOM_RUN.planet.name} (${BLOOM_RUN.planet.id}) · layers ${a.validatedLayers.join("")}`; }
-// BLOOM-008: open on the origin so its colony status and the Colony Focus control are the first thing in view
-selected=ORIGIN; renderInspect(); log(`Your plant has just taken root in ${LABEL[ORIGIN]}: a sparse young colony. Choose a Colony Focus on the left while it establishes.`);
+// BLOOM-008/009: open on the origin so its colony status and growth focus are the first thing in view
+selected=ORIGIN; renderInspect(); log(`Your plant has just sprouted in ${LABEL[ORIGIN]}: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish.`);
 resize(); renderShop(); renderHUD(0); requestAnimationFrame(frame);
 
 /* ========================================================================== */
@@ -569,9 +695,11 @@ window.BLOOM_API={
     originMass:LANDMASS[ORIGIN], centers:CENT.map(c=>({x:c.x*TILE,y:c.y*TILE})), mass:[...LANDMASS] }; },
   livingByMass(){ const liv=livingCountBySection(), out={}; SEC.forEach((_,i)=>{ out[LANDMASS[i]]=(out[LANDMASS[i]]||0)+liv[i]; }); return out; },
   crossing(){ return { ...sim.crossing }; },
-  // BLOOM-008 diagnostics (tests only): colony establishment/status per section and the current focus
-  colony(){ return SEC.map((_,i)=>({ ...sim.colonyStatus(i), living:livingCountBySection()[i] })); },
-  focus(){ return { ...sim.focus }; }
+  // BLOOM-008/009 diagnostics (tests only): colony establishment/status per section; per-region focus + local upgrade;
+  // the crossing animations the map has started (each one a real engine event)
+  colony(){ return SEC.map((_,i)=>({ ...sim.colonyStatus(i), living:livingCountBySection()[i], focus:sim.getColonyFocus(i), spec:sim.getSpecialization(i) })); },
+  colonies(){ return { focus:[...sim.colonies.focus], spec:[...sim.colonies.spec] }; },
+  crossAnims(){ return { active:XANIM.map(a=>({...a})), history:XHIST.map(a=>({...a})) }; }
 };
 </script>
 <script>

@@ -4,11 +4,13 @@
 // evaluation, the tick (spread / die-back / recovery / economy / bubbles / win), and the
 // upgrade effects. All numbers come from `config`; all content from `planet` + `traits`.
 // Classic script → works over file://, and loads in Node via tools/sim-check.js.
-// BLOOM-008: colony establishment (per-tile stand density → section establishment, which sets seed output
-// and yield) and Colony Focus (sim.setFocus / clearFocus: one Living section, one config.focus mode).
+// BLOOM-008: colony establishment (per-tile stand density → section establishment, which sets seed output and yield).
+// BLOOM-009: per-region colony development — every region keeps its own growth allocation (sim.setColonyFocus /
+// getColonyFocus; config.colony.modes) and may own one Biomass-bought local specialization (sim.buySpecialization);
+// waterborne crossings report discrete seed-arrival / foothold events (sim.crossing.events) for map feedback.
 //
 // ⚠ tools/golden/first_bloom.json pins this file's behavior bit-for-bit under a seeded RNG
-// (run traces last regenerated on purpose by BLOOM-008, an owner-authorized gameplay retune).
+// (run traces last regenerated on purpose by BLOOM-009, an owner-authorized gameplay retune).
 // Keep the order of rng() calls and arithmetic stable unless a retune is intended
 // (then regenerate the golden with `node tools/sim-check.js --write` and say so in the commit).
 (function (root) {
@@ -161,11 +163,12 @@
     const NBRS = sectionAdjacency(TILEMAP, W, H, SC); // from actual geography, never from authored lists
     // water crossings (only maps with water have any): landing tile → linked coastal source tiles + weights
     const XC = C.crossing || {}, CROSS = waterCrossings(TILEMAP, W, H, LAND < N ? (XC.maxGap || 0) : 0);
-    const landingIdx = new Map(), LANDING = [], LSRC = [], LW = [];
+    const landingIdx = new Map(), LANDING = [], LSRC = [], LW = [], LGAP = [];
     for (const [src, t, gap] of CROSS.pairs) {
-      let k = landingIdx.get(t); if (k === undefined) { k = LANDING.length; landingIdx.set(t, k); LANDING.push(t); LSRC.push([]); LW.push([]); }
-      LSRC[k].push(src); LW[k].push(XC.chancePerSource * Math.pow(XC.gapFalloff, gap - 1));
+      let k = landingIdx.get(t); if (k === undefined) { k = LANDING.length; landingIdx.set(t, k); LANDING.push(t); LSRC.push([]); LW.push([]); LGAP.push([]); }
+      LSRC[k].push(src); LW[k].push(XC.chancePerSource * Math.pow(XC.gapFalloff, gap - 1)); LGAP[k].push(gap);
     }
+    const arrAcc = new Float64Array(LANDING.length); // seed pressure accumulated per landing tile → arrival events
     const LANDMASS = SEC.map((_, i) => CROSS.landmass[SEC_TILES[i][0]]);
     const crossStat = (traits.find(t => t.effect.type === "crossing") || { effect: {} }).effect.stat;
     const winAt = planet.winThreshold ?? C.win;
@@ -238,16 +241,23 @@
     // outward and how much Biomass it yields, and it is what the map's vegetation shade shows.
     const state = new Uint8Array(N), dens = new Float32Array(N), vigor = new Float32Array(SC), secFit = new Float32Array(SC), bubbles = [];
     const secGrowth = new Float32Array(SC).fill(1), estab = new Float32Array(SC); // per-tick: soil/light growth modifier, establishment
-    const EST = C.establish, FOCUS = C.focus;
+    const EST = C.establish, COL = C.colony, MODES = ["balanced", ...Object.keys(COL.modes)];
     const sim = {
       planet, config, traits, BAR, LIV, DEAD,
       map: { W, H, N, LAND, LAND_TILES, SEC, SC, SIDX, ORIGIN, TILEMAP, AREA, CENT, SEC_TILES, NBRS, impassable: layout.impassable,
              LANDMASS, CROSSINGS: { maxGap: CROSS.maxGap, links: CROSS.links, landingTiles: LANDING.length } },
-      crossing: { arrivals: 0, footholds: 0 }, // tile-ticks with waterborne seed pressure / new footholds made
+      // arrivals / footholds: tile-ticks with waterborne seed pressure / new footholds made (BLOOM-004 counters).
+      // events (BLOOM-009): the most recent discrete crossing events, oldest first, each { id, tick, from, to, gap,
+      // took } — from = the strongest Living coastal source tile, to = the landing tile; took:false is a seed ARRIVAL
+      // (every config.crossing.arrivalUnit of pressure landing on a tile), took:true a new FOOTHOLD. Deterministic:
+      // derived from the same pressure the tick already computes, no extra randomness.
+      crossing: { arrivals: 0, footholds: 0, seedArrivals: 0, events: [], nextEventId: 1 },
       state, dens, vigor, secFit, bubbles, genome, sky, tf, winAt,
-      // Colony Focus (BLOOM-008): at most ONE Living section gets one growth allocation (config.focus.modes)
-      focus: { section: -1, mode: null },
-      biomass: C.econ.startBiomass, ticks: 0, won: false,
+      // colony development (BLOOM-009): per land section, its growth allocation (one of MODES; "balanced" = default)
+      // and its local specialization id (config.colony.specializations) or null. Region-owned, persistent.
+      colonies: { focus: SEC.map(() => "balanced"), spec: SEC.map(() => null) },
+      spent: { global: 0, local: 0 }, // Biomass spent on shop upgrades / local specializations
+      biomass: C.econ.startBiomass, income: 0, ticks: 0, won: false,
       onWin: null, // (coverage) => void, called once from the tick that crosses winAt
     };
     // seed the origin: fill the tiles nearest its centroid (a sparse, newly sown stand — not a mature colony)
@@ -270,36 +280,49 @@
       const word = e <= 0 ? "none" : e < S.establishing ? "sparse" : e < S.established ? "establishing" : e < S.dense ? "established" : "dense";
       return { establishment: e, word };
     }
-    // the focus mode's modifiers for section s (an empty object = baseline). Roots only ever protects a colony whose
-    // ground is at least marginal (fitness above focus.protectAbove — never red, blocked ground).
-    const NOFOCUS = {};
-    const focusOn = s => s === sim.focus.section && sim.focus.mode ? FOCUS.modes[sim.focus.mode] : NOFOCUS;
-    const rootsHolds = s => secFit[s] > FOCUS.protectAbove;
+    // effective colony modifiers for section s: its allocation mode + its specialization (× (1 + synergy) when they
+    // match), each key capped by config.colony.caps. Balanced with no specialization = all zero = the baseline.
+    // Protective effects only ever act where the ground is at least marginal (fitness above colony.protectAbove —
+    // never red, blocked ground).
+    const MOD_KEYS = ["establishBonus", "marginalEstablish", "dieBackCut", "thinningCut", "recoverBonus", "yieldBonus", "yieldCost", "seedBonus", "seedCost", "crossingBonus"];
+    const mods = SEC.map(() => Object.fromEntries(MOD_KEYS.map(k => [k, 0]))), modsKey = SEC.map(() => "balanced|null");
+    function colonyMods(s) {
+      const m = Object.fromEntries(MOD_KEYS.map(k => [k, 0])), mode = sim.colonies.focus[s], sp = sim.colonies.spec[s];
+      if (mode !== "balanced") for (const k in COL.modes[mode]) m[k] += COL.modes[mode][k];
+      if (sp) { const S = COL.specializations[sp], x = S.mode === mode ? 1 + COL.synergy : 1; for (const k in S.effect) m[k] += S.effect[k] * x; }
+      for (const k of MOD_KEYS) if (COL.caps[k] !== undefined) m[k] = Math.min(m[k], COL.caps[k]);
+      return m;
+    }
+    const rootsHolds = s => secFit[s] > COL.protectAbove;
+    // keep the most recent crossing events (a UI reads the ones newer than the last id it has seen)
+    function crossEvent(e) { const L = sim.crossing.events; e.id = sim.crossing.nextEventId++; L.push(e); if (L.length > 64) L.shift(); }
 
     function tick() {
       const g = C.grow;
       sim.ticks++;
       // 1. evaluate fitness + ease vigor
-      for (let i = 0; i < SC; i++) { const e = evaluate(i); secFit[i] = e.fitness; secGrowth[i] = e.growthMod; vigor[i] += (e.fitness - vigor[i]) * C.vigorEase; }
+      for (let i = 0; i < SC; i++) { const e = evaluate(i); secFit[i] = e.fitness; secGrowth[i] = e.growthMod; vigor[i] += (e.fitness - vigor[i]) * C.vigorEase;
+        const key = sim.colonies.focus[i] + "|" + sim.colonies.spec[i]; if (key !== modsKey[i]) { modsKey[i] = key; mods[i] = colonyMods(i); } }
       // 1b. establishment: Living stands thicken while their section supports growth (faster on rich, bright ground),
       // hold in the marginal band between the die and grow thresholds, and thin out when conditions turn lethal.
       for (const i of LAND_TILES) {
         if (state[i] !== LIV) continue;
-        const s = TILEMAP[i], v = vigor[s], f = focusOn(s), prot = rootsHolds(s);
-        if (v > g.growThresh) dens[i] += EST.rate * secGrowth[s] * Math.min(v, 1) * (1 + (f.establishBonus || 0)) * (1 - dens[i]);
+        const s = TILEMAP[i], v = vigor[s], f = mods[s], prot = rootsHolds(s);
+        if (v > g.growThresh) dens[i] += EST.rate * secGrowth[s] * Math.min(v, 1) * (1 + f.establishBonus) * (1 - dens[i]);
         else if (v >= g.dieThresh) { if (f.marginalEstablish && prot) dens[i] += EST.rate * secGrowth[s] * v * f.marginalEstablish * (1 - dens[i]); }
-        else dens[i] = Math.max(EST.minDensity, dens[i] - EST.thinning * (g.dieThresh - v) / g.dieThresh * (prot ? 1 - (f.thinningCut || 0) : 1));
+        else dens[i] = Math.max(EST.minDensity, dens[i] - EST.thinning * (g.dieThresh - v) / g.dieThresh * (prot ? 1 - f.thinningCut : 1));
       }
       for (let s = 0; s < SC; s++) estab[s] = establishment(s);
       // 2. transitions (double-buffer to avoid same-tick chaining)
       const next = state.slice();
       const seedMult = 1 + lvl("seedOut") * g.seedOutPerLevel;
       // seed output per source section: an establishing colony seeds weakly (youngSeedShare) and reaches full
-      // strength once its establishment reaches the maturity mark (Early Maturity lowers the mark); Seeds focus adds more
+      // strength once its establishment reaches the maturity mark (Early Maturity lowers the mark); its allocation /
+      // specialization then add seedBonus / crossingBonus and subtract seedCost
       const matAt = Math.max(0.05, g.maturity - lvl("earlyMat") * g.maturityPerEarlyLevel);
       const out = new Float64Array(SC), outX = new Float64Array(SC);
-      for (let s = 0; s < SC; s++) { const f = focusOn(s), base = lerp(g.youngSeedShare, 1, clamp(estab[s] / matAt, 0, 1));
-        out[s] = base * (1 + (f.seedBonus || 0)); outX[s] = base * (1 + (f.crossingBonus || 0)); }
+      for (let s = 0; s < SC; s++) { const f = mods[s], base = lerp(g.youngSeedShare, 1, clamp(estab[s] / matAt, 0, 1));
+        out[s] = base * Math.max(0, 1 + f.seedBonus - f.seedCost); outX[s] = base * Math.max(0, 1 + f.crossingBonus - f.seedCost); }
       for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
         const i = y * W + x, s = TILEMAP[i];
         if (s < 0) continue; // water/void/lava: never Living or Dead, never seeds
@@ -309,51 +332,54 @@
           if (x > 0 && state[i - 1] === LIV) { ln++; push += out[TILEMAP[i - 1]]; } if (x < W - 1 && state[i + 1] === LIV) { ln++; push += out[TILEMAP[i + 1]]; }
           if (y > 0 && state[i - W] === LIV) { ln++; push += out[TILEMAP[i - W]]; } if (y < H - 1 && state[i + W] === LIV) { ln++; push += out[TILEMAP[i + W]]; }
           if (ln > 0 && v > g.growThresh) {
-            // more Living neighbours push harder; each pushes with its own colony's seed output (establishment + focus)
+            // more Living neighbours push harder; each pushes with its own colony's seed output (establishment + allocation)
             const p = g.baseFill * seedMult * secFit[s] * (1 + g.seedPerNeighbor * (ln - 1)) * (push / ln);
             if (rng() < p) next[i] = LIV;
           }
         } else if (st === LIV) {
           if (v < g.dieThresh) {
-            const f = focusOn(s), cut = rootsHolds(s) ? (f.dieBackCut || 0) : 0;
+            const cut = rootsHolds(s) ? mods[s].dieBackCut : 0;
             const p = C.die.rate * C.die.damping * (g.dieThresh - v) * C.die.slope * (1 - cut);
             if (rng() < p) next[i] = DEAD;
           }
         } else { // DEAD
-          if (rng() < C.recover.deadToBarren) next[i] = BAR;
+          if (rng() < C.recover.deadToBarren * (1 + (rootsHolds(s) ? mods[s].recoverBonus : 0))) next[i] = BAR; // Root Network: faster regrowth
         }
       }
       // 2b. waterborne seeds (only once a crossing trait is owned → no rng draw otherwise).
       // Seeds land on another landmass's shore; they establish only under the ordinary grow rule
       // (section vigor above growThresh, scaled by fitness) — never on water, never past a real limit.
-      // Source pressure scales with the coastal colony's seed output (establishment, Seeds focus).
+      // Source pressure scales with the coastal colony's seed output (establishment, allocation, specialization).
       if (crossStat && lvl(crossStat) > 0) {
         for (let k = 0; k < LANDING.length; k++) {
           const t = LANDING[k]; if (state[t] !== BAR || next[t] !== BAR) continue;
-          let pr = 0; const src = LSRC[k], w = LW[k];
-          for (let j = 0; j < src.length; j++) if (state[src[j]] === LIV) pr += w[j] * outX[TILEMAP[src[j]]];
+          let pr = 0, top = -1, topW = 0; const src = LSRC[k], w = LW[k];
+          for (let j = 0; j < src.length; j++) if (state[src[j]] === LIV) { const x = w[j] * outX[TILEMAP[src[j]]]; pr += x; if (x > topW) { topW = x; top = j; } }
           if (pr <= 0) continue;
           sim.crossing.arrivals++;
-          const s = TILEMAP[t]; if (vigor[s] <= g.growThresh) continue; // arrived, but the ground rejects them
-          if (rng() < pr * seedMult * secFit[s]) { next[t] = LIV; sim.crossing.footholds++; }
+          arrAcc[k] += pr; const arrived = arrAcc[k] >= XC.arrivalUnit; if (arrived) arrAcc[k] -= XC.arrivalUnit;
+          const s = TILEMAP[t], ev = () => ({ tick: sim.ticks, from: src[top], to: t, gap: LGAP[k][top] });
+          if (vigor[s] > g.growThresh && rng() < pr * seedMult * secFit[s]) { next[t] = LIV; sim.crossing.footholds++; crossEvent({ ...ev(), took: true }); }
+          else if (arrived) { sim.crossing.seedArrivals++; crossEvent({ ...ev(), took: false }); } // arrived; the ground may reject them
         }
       }
       // new stands start as seedlings; tiles that die or clear hold no plants
       for (const i of LAND_TILES) if (next[i] !== state[i]) dens[i] = next[i] === LIV ? EST.seedlingDensity : 0;
       state.set(next);
       // 3. economy: each colony yields by how established its stands are (young stands yield econ.youngYield of a
-      // mature one); the origin refuge's own trickle follows the origin colony's establishment. Leaves focus adds more.
+      // mature one); the origin refuge's own trickle follows the origin colony's establishment. The colony's allocation /
+      // specialization scale it: + yieldBonus × (establishment / colony.yieldRampTo, capped at 1) − yieldCost.
       const E = C.econ, yieldOf = new Float64Array(SC);
       for (const i of LAND_TILES) if (state[i] === LIV) yieldOf[TILEMAP[i]] += lerp(E.youngYield, 1, dens[i]);
       let income = 0;
       for (let i = 0; i < SC; i++) {
-        const rate = secFit[i] > E.thrivingAbove ? E.thriving : E.marginal, f = focusOn(i);
+        const rate = secFit[i] > E.thrivingAbove ? E.thriving : E.marginal, f = mods[i];
         let y = yieldOf[i] * rate;
         if (i === ORIGIN) y += E.originTrickle * lerp(E.youngYield, 1, clamp(establishment(i) / g.maturity, 0, 1));
-        income += y * (1 + (f.yieldBonus || 0));
+        income += y * Math.max(0, 1 + f.yieldBonus * clamp(estab[i] / COL.yieldRampTo, 0, 1) - f.yieldCost);
       }
       const liv2 = livingCountBySection();
-      sim.biomass += income;
+      sim.biomass += income; sim.income = income; // passive Biomass this tick (bubbles excluded) — for the HUD's rate
       // 4. bubbles (bonus): one planet-wide roll per tick while anything thrives
       const thriving = []; for (let i = 0; i < SC; i++) if (secFit[i] > E.bubbleFitAbove && liv2[i] > E.bubbleMinLiving) thriving.push(i);
       if (thriving.length && rng() < E.bubbleChance) {
@@ -391,7 +417,7 @@
     function buy(id) {
       const t = traitById[id]; if (!t) return false; const cost = price(t);
       if (!canBuy(t) || sim.biomass < cost) return false;
-      sim.biomass -= cost; applyTrait(t);
+      sim.biomass -= cost; sim.spent.global += cost; applyTrait(t);
       return true;
     }
     // what-if: apply the upgrade to a copy of the plant/sky, compare which regions can grow, then restore
@@ -404,18 +430,36 @@
       return { gain, lose };
     }
 
-    // ---- Colony Focus (BLOOM-008): one Living section, one mode (config.focus.modes). Setting it again moves or
-    // changes it; it never costs Biomass and needs no upkeep. Focus changes growth allocation only — never fitness,
-    // tolerances, or the grow/die thresholds — so it cannot open ground the plant cannot live on.
-    function setFocus(i, mode) {
-      if (!Number.isInteger(i) || i < 0 || i >= SC || !FOCUS.modes[mode]) return false;
-      if (livingCountBySection()[i] === 0) return false; // only a seeded / Living region can be focused
-      sim.focus.section = i; sim.focus.mode = mode; return true;
+    // ---- colony development (BLOOM-009). setColonyFocus(i, mode) sets ONE region's allocation (MODES; "balanced"
+    // restores the baseline) and touches no other region. It needs plants living there now, is free, needs no upkeep and
+    // persists until that region is changed again. A local specialization is bought for one Living region with ordinary
+    // Biomass, at most one per region, and is never removed or refunded (changing the allocation keeps it). Neither
+    // changes fitness, tolerances or the grow/die thresholds, so neither can open ground the plant cannot live on.
+    const validSec = i => Number.isInteger(i) && i >= 0 && i < SC;
+    function setColonyFocus(i, mode) {
+      if (!validSec(i) || !MODES.includes(mode)) return false;
+      if (livingCountBySection()[i] === 0) return false; // only a seeded / Living region can be directed
+      sim.colonies.focus[i] = mode; return true;
     }
-    function clearFocus() { sim.focus.section = -1; sim.focus.mode = null; }
+    const getColonyFocus = i => validSec(i) ? sim.colonies.focus[i] : null;
+    const getSpecialization = i => validSec(i) ? sim.colonies.spec[i] : null;
+    function specPrice() { const n = sim.colonies.spec.filter(Boolean).length;
+      return Math.round((COL.specCost.base + COL.specCost.step * n) * C.econ.costScale); }
+    // why a specialization cannot be bought here now: null = it can; else "unknown" | "noColony" | "hasOne" | "biomass"
+    function specBlock(i, id) {
+      if (!validSec(i) || !COL.specializations[id]) return "unknown";
+      if (livingCountBySection()[i] === 0) return "noColony";
+      if (sim.colonies.spec[i]) return "hasOne";
+      return sim.biomass < specPrice() ? "biomass" : null;
+    }
+    function buySpecialization(i, id) {
+      if (specBlock(i, id)) return false;
+      const cost = specPrice(); sim.biomass -= cost; sim.spent.local += cost; sim.colonies.spec[i] = id; return true;
+    }
 
     Object.assign(sim, { derived, evaluate, lampOf, tick, coverage, livingCountBySection, collectBubble,
-      traitById, offered, price, canBuy, ownedTier, why, buy, previewOf, establishment, colonyStatus, setFocus, clearFocus });
+      traitById, offered, price, canBuy, ownedTier, why, buy, previewOf, establishment, colonyStatus,
+      COLONY_MODES: MODES, setColonyFocus, getColonyFocus, getSpecialization, specPrice, specBlock, buySpecialization, colonyMods });
     return sim;
   }
 
