@@ -4,8 +4,10 @@
 //   node tools/sim-check.js --write    regenerate the golden (ONLY for an intended retune — say so in the commit)
 //
 // The golden was first captured from the pre-extraction demos/demo-run.html (adc87d0) under a
-// seeded RNG, so a match proves the extracted engine + content reproduce the accepted slice
-// bit-for-bit: layout, category evaluation, previews, prices, and four full 2400-tick runs.
+// seeded RNG, so a match proved the extracted engine + content reproduced the accepted slice
+// bit-for-bit: layout, category evaluation, previews, prices, and full 2400-tick runs.
+// BLOOM-008 (owner-authorized gameplay retune: colony establishment + Colony Focus) regenerated the run
+// parts on purpose; the static part (layout, evaluation, previews, prices) is unchanged from adc87d0.
 "use strict";
 const fs = require("fs"), path = require("path");
 const ROOT = path.resolve(__dirname, "..");
@@ -25,7 +27,8 @@ function adapter(planet, config, traits, goldenIds) {
   return {
     reset(seed) { sim = BLOOM.createSim(planet, config, traits, { rng: GOLD.mulberry32(seed) }); },
     tick() { sim.tick(); }, buy(id) { return sim.buy(id); }, addBiomass(x) { sim.biomass += x; },
-    read() { return { biomass: sim.biomass, ticks: sim.ticks, won: sim.won, tiles: sim.state, vigor: sim.vigor, bubbles: sim.bubbles.length }; },
+    read() { return { biomass: sim.biomass, ticks: sim.ticks, won: sim.won, tiles: sim.state, vigor: sim.vigor, dens: sim.dens, bubbles: sim.bubbles.length }; },
+    setFocus(id, mode) { return sim.setFocus(sim.map.SIDX[id], mode); },
     setCondition(c) { Object.assign(sim.genome, c.genome); Object.assign(sim.sky, c.sky); for (const k in sim.tf) sim.tf[k] = 0; Object.assign(sim.tf, c.tf || {}); },
     evaluate(i) { return sim.evaluate(i); }, previewOf(id) { return sim.previewOf(id); }, price(id) { return sim.price(sim.traitById[id]); },
     traitIds: traits.map(t => t.id).filter(id => !goldenIds || goldenIds.includes(id)),
@@ -43,7 +46,8 @@ const { config, traits } = BLOOM_DATA, planet = BLOOM_DATA.planets.first_bloom;
 
 // 1 · golden equivalence
 const WRITE = process.argv.includes("--write");
-const goldenIds = WRITE ? null : Object.keys(JSON.parse(fs.readFileSync(GOLDEN_PATH, "utf8")).static.prices.start);
+// the pinned trait set stays the golden's own (the 12 adc87d0 traits) even when the runs are rewritten
+const goldenIds = fs.existsSync(GOLDEN_PATH) ? Object.keys(JSON.parse(fs.readFileSync(GOLDEN_PATH, "utf8")).static.prices.start) : null;
 const got = GOLD.runGolden(adapter(planet, config, traits, goldenIds));
 if (WRITE) { fs.writeFileSync(GOLDEN_PATH, JSON.stringify(got)); console.log("golden written:", GOLDEN_PATH); }
 const want = JSON.parse(fs.readFileSync(GOLDEN_PATH, "utf8"));

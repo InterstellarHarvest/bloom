@@ -1,0 +1,235 @@
+{
+ "engine": "pre-focus",
+ "seeds": [
+  101,
+  108,
+  115,
+  122,
+  129,
+  136,
+  143,
+  150
+ ],
+ "marksSeconds": [
+  30,
+  60,
+  120,
+  180
+ ],
+ "reactionTicks": 25,
+ "worlds": {
+  "first_bloom": {
+   "none": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 8.6,
+      "biomass": 65.5,
+      "originLivingPct": 62,
+      "originVigor": 1,
+      "originEstablishment": null
+     },
+     "60": {
+      "coveragePct": 19,
+      "biomass": 114.2,
+      "originLivingPct": 99.6,
+      "originVigor": 1,
+      "originEstablishment": null
+     },
+     "120": {
+      "coveragePct": 33.1,
+      "biomass": 278.4,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": null
+     },
+     "180": {
+      "coveragePct": 35.3,
+      "biomass": 466.5,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": null
+     }
+    },
+    "firstAffordableSeconds": 69.3,
+    "firstAffordableNoBubblesSeconds": 75.1,
+    "runs": {
+     "wet": {
+      "plan": "seedOut → cold → flood → cold → heat → salt → earlyMat → seedOut",
+      "won": "8/8",
+      "winSecondsMean": 302.1,
+      "winSecondsRange": [
+       288.6,
+       325.3
+      ],
+      "firstBuySecondsMean": 73.3
+     },
+     "dry": {
+      "plan": "seedOut → cold → drought → cold → heat → salt → earlyMat → seedOut",
+      "won": "8/8",
+      "winSecondsMean": 323.9,
+      "winSecondsRange": [
+       303.2,
+       354.2
+      ],
+      "firstBuySecondsMean": 73.3
+     },
+     "terraformWater": {
+      "plan": "seedOut → heat → salt → cold → humid → humid",
+      "won": "8/8",
+      "winSecondsMean": 318.1,
+      "winSecondsRange": [
+       306.6,
+       333.4
+      ],
+      "firstBuySecondsMean": 73.3
+     }
+    }
+   }
+  },
+  "oa_seed_13": {
+   "attempt": 6,
+   "name": "Eos-227",
+   "strategies": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)",
+     "witnessMarginSeconds": 512.2,
+     "witnessFirstPurchaseSeconds": 69.9
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)",
+     "witnessMarginSeconds": 415.7,
+     "witnessFirstPurchaseSeconds": 69.9
+    }
+   ],
+   "none": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 11.2,
+      "biomass": 62.7,
+      "originLivingPct": 81.3,
+      "originVigor": 0.75,
+      "originEstablishment": null
+     },
+     "60": {
+      "coveragePct": 13.6,
+      "biomass": 117.8,
+      "originLivingPct": 99.2,
+      "originVigor": 0.75,
+      "originEstablishment": null
+     },
+     "120": {
+      "coveragePct": 13.7,
+      "biomass": 213.7,
+      "originLivingPct": 100,
+      "originVigor": 0.75,
+      "originEstablishment": null
+     },
+     "180": {
+      "coveragePct": 13.7,
+      "biomass": 315.9,
+      "originLivingPct": 100,
+      "originVigor": 0.75,
+      "originEstablishment": null
+     }
+    },
+    "firstAffordableSeconds": 68.7,
+    "firstAffordableNoBubblesSeconds": 117.1,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → waterSeeds → salt → cold",
+      "won": "4/4",
+      "winSecondsMean": 522.5,
+      "winSecondsRange": [
+       394.4,
+       593.8
+      ],
+      "firstBuySecondsMean": 72.7
+     },
+     "strategy2": {
+      "plan": "seedOut → waterSeeds → rad → heat",
+      "won": "4/4",
+      "winSecondsMean": 420.5,
+      "winSecondsRange": [
+       394.4,
+       442.2
+      ],
+      "firstBuySecondsMean": 72.7
+     }
+    }
+   }
+  },
+  "oa_seed_8": {
+   "attempt": 1,
+   "name": "Coriol-220",
+   "strategies": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Adapt(1)",
+     "witnessMarginSeconds": 439.8,
+     "witnessFirstPurchaseSeconds": 79.8
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Terraform(−8)",
+     "witnessMarginSeconds": 468.8,
+     "witnessFirstPurchaseSeconds": 79.8
+    }
+   ],
+   "none": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 8.9,
+      "biomass": 71.3,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": null
+     },
+     "60": {
+      "coveragePct": 17.9,
+      "biomass": 110.1,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": null
+     },
+     "120": {
+      "coveragePct": 28.5,
+      "biomass": 220.2,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": null
+     },
+     "180": {
+      "coveragePct": 36.5,
+      "biomass": 337.2,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": null
+     }
+    },
+    "firstAffordableSeconds": 68.2,
+    "firstAffordableNoBubblesSeconds": 106.8,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → salt → waterSeeds → flood",
+      "won": "4/4",
+      "winSecondsMean": 472.9,
+      "winSecondsRange": [
+       438.1,
+       512
+      ],
+      "firstBuySecondsMean": 72.2
+     },
+     "strategy2": {
+      "plan": "seedOut → salt → waterSeeds → dry",
+      "won": "4/4",
+      "winSecondsMean": 502.8,
+      "winSecondsRange": [
+       484,
+       525.9
+      ],
+      "firstBuySecondsMean": 72.2
+     }
+    }
+   }
+  }
+ },
+ "ms": 4954
+}

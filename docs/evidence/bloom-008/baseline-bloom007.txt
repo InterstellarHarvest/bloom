@@ -1,0 +1,31 @@
+
+## first_bloom
+  focus=none  first normal upgrade affordable ≈ 69.3 s (bubbles off: 75.1 s)
+     30 s  cov   8.6%  bio   65.5  origin living 62% vigor 1
+     60 s  cov    19%  bio  114.2  origin living 99.6% vigor 1
+    120 s  cov  33.1%  bio  278.4  origin living 100% vigor 1
+    180 s  cov  35.3%  bio  466.5  origin living 100% vigor 1
+    run wet             won 8/8  win ≈ 302.1 s [288.6,325.3]  first buy ≈ 73.3 s
+    run dry             won 8/8  win ≈ 323.9 s [303.2,354.2]  first buy ≈ 73.3 s
+    run terraformWater  won 8/8  win ≈ 318.1 s [306.6,333.4]  first buy ≈ 73.3 s
+
+## oa_seed_13 (attempt 6, Eos-227)
+  focus=none  first normal upgrade affordable ≈ 68.7 s (bubbles off: 117.1 s)
+     30 s  cov  11.2%  bio   62.7  origin living 81.3% vigor 0.75
+     60 s  cov  13.6%  bio  117.8  origin living 99.2% vigor 0.75
+    120 s  cov  13.7%  bio  213.7  origin living 100% vigor 0.75
+    180 s  cov  13.7%  bio  315.9  origin living 100% vigor 0.75
+    run strategy1       won 4/4  win ≈ 522.5 s [394.4,593.8]  first buy ≈ 72.7 s
+    run strategy2       won 4/4  win ≈ 420.5 s [394.4,442.2]  first buy ≈ 72.7 s
+
+## oa_seed_8 (attempt 1, Coriol-220)
+  focus=none  first normal upgrade affordable ≈ 68.2 s (bubbles off: 106.8 s)
+     30 s  cov   8.9%  bio   71.3  origin living 100% vigor 1
+     60 s  cov  17.9%  bio  110.1  origin living 100% vigor 1
+    120 s  cov  28.5%  bio  220.2  origin living 100% vigor 1
+    180 s  cov  36.5%  bio  337.2  origin living 100% vigor 1
+    run strategy1       won 4/4  win ≈ 472.9 s [438.1,512]  first buy ≈ 72.2 s
+    run strategy2       won 4/4  win ≈ 502.8 s [484,525.9]  first buy ≈ 72.2 s
+
+(4954 ms, engine pre-focus)
+wrote docs/evidence/bloom-008/baseline-bloom007.json

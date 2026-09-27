@@ -30,8 +30,28 @@
     },
 
     // spread / die-back / recovery
-    grow: { growThresh: 0.55, dieThresh: 0.35, baseFill: 0.03, seedPerNeighbor: 0.34, maturity: 0.45, seedTiles: 30,
-            originStartVigor: 0.7, immatureGate: 0.4, seedOutPerLevel: 0.6, maturityPerEarlyLevel: 0.12 },
+    // maturity = the section ESTABLISHMENT (see establish) at which a colony seeds outward at full strength; below it
+    // seed output ramps up from youngSeedShare. Early Maturity lowers the mark by maturityPerEarlyLevel per level.
+    grow: { growThresh: 0.55, dieThresh: 0.35, baseFill: 0.034, seedPerNeighbor: 0.34, maturity: 0.45, seedTiles: 30,
+            originStartVigor: 0.7, youngSeedShare: 0.3, seedOutPerLevel: 0.6, maturityPerEarlyLevel: 0.12 },
+    // colony establishment (BLOOM-008). A newly Living tile is a sparse seedling stand (seedlingDensity) that thickens
+    // toward 1 at `rate` × soil/light growth modifier × vigor while its section can grow, holds in the marginal band,
+    // and thins (never below minDensity) under lethal conditions. Section establishment = Σ stand density / area.
+    // `status` bands turn it into the inspect panel's ordinary-language colony word.
+    establish: { seedlingDensity: 0.15, minDensity: 0.05, rate: 0.004, thinning: 0.01,
+                 status: { establishing: 0.12, established: 0.4, dense: 0.75 } },
+    // Colony Focus (BLOOM-008): the player may direct ONE Living section's growth toward one of these allocations.
+    // Bonuses are fractions (+0.6 = 60% more) and apply to that section only; unfocused colonies stay at baseline.
+    //   roots:  establishBonus (stands thicken faster), marginalEstablish (stands still thicken, slowly, in the marginal
+    //           band where they would otherwise only hold), dieBackCut / thinningCut (less die-back and thinning under
+    //           stress) — the protective parts only where section fitness > protectAbove (never red, blocked ground)
+    //   leaves: yieldBonus (more Biomass from that colony)
+    //   seeds:  seedBonus (stronger outward spread from it), crossingBonus (stronger Waterborne source pressure from it)
+    // No mode changes fitness, tolerances or the grow/die thresholds: destination ground still decides establishment.
+    focus: { protectAbove: 0.30,
+             modes: { roots:  { establishBonus: 1.0, marginalEstablish: 0.4, dieBackCut: 0.5, thinningCut: 0.5 },
+                      leaves: { yieldBonus: 0.5 },
+                      seeds:  { seedBonus: 0.6, crossingBonus: 0.6 } } },
     die: { rate: 0.06, damping: 0.5, slope: 4 },
     recover: { deadToBarren: 0.02 },
     vigorEase: 0.20,
@@ -60,7 +80,9 @@
     },
 
     // biomass economy (bible §8). bubbleChance is planet-wide per tick (~1 per 14 s while anything thrives)
-    econ: { thriving: 0.0004, marginal: 0.00012, thrivingAbove: 0.7, originTrickle: 0.08, startBiomass: 40,
+    // youngYield (BLOOM-008): Biomass share a fresh seedling stand yields vs a fully established one; the origin's
+    // trickle is the home colony's own production and follows its establishment the same way
+    econ: { thriving: 0.0004, marginal: 0.00012, thrivingAbove: 0.7, originTrickle: 0.1, startBiomass: 40, youngYield: 0.3,
             bubbleChance: 0.011, bubbleValue: 25, bubbleAutoTicks: 60, autoCollectShare: 0.5,
             bubbleFitAbove: 0.72, bubbleMinLiving: 8, costScale: 5 },
   };
