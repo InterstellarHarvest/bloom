@@ -65,13 +65,17 @@
   }
 
   // LAYER 8 — the archetype's explicit time bands, checked on a finished witness run (simulate().pacing)
-  //   policy { marginSeconds: [min, max], firstPurchaseSeconds: [min, max], maxPurchaseGapSeconds }
+  //   policy { marginSeconds: [min, max], firstPurchaseSeconds: [min, max], maxPurchaseGapSeconds, maxTerminalWaitSeconds? }
+  //   maxTerminalWaitSeconds (BLOOM-010, optional): the wait from the last purchase to the margin — a world won by one
+  //   early purchase followed by minutes of nothing to decide fails it (bible §10.2 "no long stretches without a decision")
   function checkPacing(run, P) {
     const m = run.pacing, why = [];
     const band = (v, [lo, hi], what) => { if (v === null) why.push(`${what}: never`); else if (v < lo) why.push(`${what} at ${v} s < ${lo} s (too fast)`); else if (v > hi) why.push(`${what} at ${v} s > ${hi} s (too slow)`); };
     band(run.marginSeconds, P.marginSeconds, "margin reached");
     band(m.firstPurchaseSeconds, P.firstPurchaseSeconds, "first purchase");
     if (m.maxPurchaseGapSeconds > P.maxPurchaseGapSeconds) why.push(`purchase gap of ${m.maxPurchaseGapSeconds} s before the margin > ${P.maxPurchaseGapSeconds} s`);
+    if (P.maxTerminalWaitSeconds != null && m.terminalWaitSeconds > P.maxTerminalWaitSeconds)
+      why.push(`waited ${m.terminalWaitSeconds} s after the last purchase for the margin > ${P.maxTerminalWaitSeconds} s`);
     return { ok: !why.length, reasons: why };
   }
 

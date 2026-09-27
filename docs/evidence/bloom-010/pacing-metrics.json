@@ -1,0 +1,1249 @@
+{
+ "engine": "per-region-allocation",
+ "seeds": [
+  101,
+  108,
+  115,
+  122,
+  129,
+  136,
+  143,
+  150
+ ],
+ "marksSeconds": [
+  30,
+  60,
+  120,
+  180
+ ],
+ "reactionTicks": 25,
+ "worlds": {
+  "first_bloom": {
+   "none": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 7,
+      "biomass": 53.1,
+      "originLivingPct": 51.6,
+      "originVigor": 1,
+      "originEstablishment": 0.12
+     },
+     "60": {
+      "coveragePct": 17.3,
+      "biomass": 93.1,
+      "originLivingPct": 97.3,
+      "originVigor": 1,
+      "originEstablishment": 0.381
+     },
+     "120": {
+      "coveragePct": 30.7,
+      "biomass": 211.1,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.741
+     },
+     "180": {
+      "coveragePct": 35.3,
+      "biomass": 394.9,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.892
+     }
+    },
+    "firstAffordableSeconds": 82.8,
+    "firstAffordableNoBubblesSeconds": 93.4,
+    "runs": {
+     "wet": {
+      "plan": "seedOut → cold → flood → cold → heat → salt → earlyMat → seedOut",
+      "won": "8/8",
+      "winSecondsMean": 344.8,
+      "winSecondsRange": [
+       334.6,
+       359.8
+      ],
+      "firstBuySecondsMean": 86.8
+     },
+     "dry": {
+      "plan": "seedOut → cold → drought → cold → heat → salt → earlyMat → seedOut",
+      "won": "8/8",
+      "winSecondsMean": 374.3,
+      "winSecondsRange": [
+       358.4,
+       384.8
+      ],
+      "firstBuySecondsMean": 86.8
+     },
+     "terraformWater": {
+      "plan": "seedOut → heat → salt → cold → humid → humid",
+      "won": "8/8",
+      "winSecondsMean": 356.7,
+      "winSecondsRange": [
+       344.6,
+       363.7
+      ],
+      "firstBuySecondsMean": 86.8
+     }
+    }
+   },
+   "roots": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 8.1,
+      "biomass": 55,
+      "originLivingPct": 57.5,
+      "originVigor": 1,
+      "originEstablishment": 0.235
+     },
+     "60": {
+      "coveragePct": 18.3,
+      "biomass": 93.1,
+      "originLivingPct": 99.4,
+      "originVigor": 1,
+      "originEstablishment": 0.678
+     },
+     "120": {
+      "coveragePct": 32,
+      "biomass": 229.2,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.964
+     },
+     "180": {
+      "coveragePct": 35.3,
+      "biomass": 417.1,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.996
+     }
+    },
+    "firstAffordableSeconds": 81.9,
+    "firstAffordableNoBubblesSeconds": 89.3,
+    "runs": {
+     "wet": {
+      "plan": "seedOut → cold → flood → cold → heat → salt → earlyMat → seedOut",
+      "won": "8/8",
+      "winSecondsMean": 351,
+      "winSecondsRange": [
+       324,
+       368.2
+      ],
+      "firstBuySecondsMean": 85.9
+     },
+     "dry": {
+      "plan": "seedOut → cold → drought → cold → heat → salt → earlyMat → seedOut",
+      "won": "8/8",
+      "winSecondsMean": 368.6,
+      "winSecondsRange": [
+       332.8,
+       388.8
+      ],
+      "firstBuySecondsMean": 85.9
+     },
+     "terraformWater": {
+      "plan": "seedOut → heat → salt → cold → humid → humid",
+      "won": "8/8",
+      "winSecondsMean": 363.4,
+      "winSecondsRange": [
+       335.5,
+       376.3
+      ],
+      "firstBuySecondsMean": 85.9
+     }
+    }
+   },
+   "leaves": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 3.9,
+      "biomass": 53.6,
+      "originLivingPct": 29.7,
+      "originVigor": 1,
+      "originEstablishment": 0.078
+     },
+     "60": {
+      "coveragePct": 10.3,
+      "biomass": 79.6,
+      "originLivingPct": 67.7,
+      "originVigor": 1,
+      "originEstablishment": 0.239
+     },
+     "120": {
+      "coveragePct": 27.3,
+      "biomass": 203.6,
+      "originLivingPct": 99.9,
+      "originVigor": 1,
+      "originEstablishment": 0.65
+     },
+     "180": {
+      "coveragePct": 35.1,
+      "biomass": 412.9,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.854
+     }
+    },
+    "firstAffordableSeconds": 90.1,
+    "firstAffordableNoBubblesSeconds": 98.8,
+    "runs": {
+     "wet": {
+      "plan": "seedOut → cold → flood → cold → heat → salt → earlyMat → seedOut",
+      "won": "8/8",
+      "winSecondsMean": 321.1,
+      "winSecondsRange": [
+       308,
+       334.9
+      ],
+      "firstBuySecondsMean": 94.1
+     },
+     "dry": {
+      "plan": "seedOut → cold → drought → cold → heat → salt → earlyMat → seedOut",
+      "won": "8/8",
+      "winSecondsMean": 340.3,
+      "winSecondsRange": [
+       326.2,
+       357.1
+      ],
+      "firstBuySecondsMean": 94.1
+     },
+     "terraformWater": {
+      "plan": "seedOut → heat → salt → cold → humid → humid",
+      "won": "8/8",
+      "winSecondsMean": 331.4,
+      "winSecondsRange": [
+       317.3,
+       341.9
+      ],
+      "firstBuySecondsMean": 94.1
+     }
+    }
+   },
+   "seeds": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 11.5,
+      "biomass": 57.2,
+      "originLivingPct": 79,
+      "originVigor": 1,
+      "originEstablishment": 0.183
+     },
+     "60": {
+      "coveragePct": 20.3,
+      "biomass": 91.8,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.465
+     },
+     "120": {
+      "coveragePct": 33.9,
+      "biomass": 223.8,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.776
+     },
+     "180": {
+      "coveragePct": 35.3,
+      "biomass": 392,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.906
+     }
+    },
+    "firstAffordableSeconds": 83.1,
+    "firstAffordableNoBubblesSeconds": 101.1,
+    "runs": {
+     "wet": {
+      "plan": "seedOut → cold → flood → cold → heat → salt → earlyMat → seedOut",
+      "won": "8/8",
+      "winSecondsMean": 362.5,
+      "winSecondsRange": [
+       340.6,
+       384.5
+      ],
+      "firstBuySecondsMean": 87.1
+     },
+     "dry": {
+      "plan": "seedOut → cold → drought → cold → heat → salt → earlyMat → seedOut",
+      "won": "8/8",
+      "winSecondsMean": 380.5,
+      "winSecondsRange": [
+       346.2,
+       414.6
+      ],
+      "firstBuySecondsMean": 87.1
+     },
+     "terraformWater": {
+      "plan": "seedOut → heat → salt → cold → humid → humid",
+      "won": "8/8",
+      "winSecondsMean": 371.6,
+      "winSecondsRange": [
+       339.7,
+       405.3
+      ],
+      "firstBuySecondsMean": 87.1
+     }
+    }
+   }
+  },
+  "oa_seed_13": {
+   "attempt": 6,
+   "name": "Eos-227",
+   "strategies": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)",
+     "witnessMarginSeconds": 609.4,
+     "witnessFirstPurchaseSeconds": 90.2
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)",
+     "witnessMarginSeconds": 480.3,
+     "witnessFirstPurchaseSeconds": 90.2
+    }
+   ],
+   "none": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 9.5,
+      "biomass": 52.2,
+      "originLivingPct": 69.3,
+      "originVigor": 0.75,
+      "originEstablishment": 0.143
+     },
+     "60": {
+      "coveragePct": 13.2,
+      "biomass": 89.8,
+      "originLivingPct": 96.3,
+      "originVigor": 0.75,
+      "originEstablishment": 0.34
+     },
+     "120": {
+      "coveragePct": 13.7,
+      "biomass": 184.2,
+      "originLivingPct": 100,
+      "originVigor": 0.75,
+      "originEstablishment": 0.639
+     },
+     "180": {
+      "coveragePct": 13.7,
+      "biomass": 300.4,
+      "originLivingPct": 100,
+      "originVigor": 0.75,
+      "originEstablishment": 0.802
+     }
+    },
+    "firstAffordableSeconds": 86,
+    "firstAffordableNoBubblesSeconds": 129.8,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → waterSeeds → salt → cold",
+      "won": "4/4",
+      "winSecondsMean": 554.2,
+      "winSecondsRange": [
+       509.9,
+       608.6
+      ],
+      "firstBuySecondsMean": 90
+     },
+     "strategy2": {
+      "plan": "seedOut → waterSeeds → rad → heat",
+      "won": "4/4",
+      "winSecondsMean": 451.6,
+      "winSecondsRange": [
+       431.4,
+       470.9
+      ],
+      "firstBuySecondsMean": 90
+     }
+    }
+   },
+   "roots": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 10.5,
+      "biomass": 52.7,
+      "originLivingPct": 76.4,
+      "originVigor": 0.75,
+      "originEstablishment": 0.286
+     },
+     "60": {
+      "coveragePct": 13.7,
+      "biomass": 84.1,
+      "originLivingPct": 99.6,
+      "originVigor": 0.75,
+      "originEstablishment": 0.644
+     },
+     "120": {
+      "coveragePct": 13.7,
+      "biomass": 189.5,
+      "originLivingPct": 100,
+      "originVigor": 0.75,
+      "originEstablishment": 0.921
+     },
+     "180": {
+      "coveragePct": 13.7,
+      "biomass": 271.2,
+      "originLivingPct": 100,
+      "originVigor": 0.75,
+      "originEstablishment": 0.983
+     }
+    },
+    "firstAffordableSeconds": 89.7,
+    "firstAffordableNoBubblesSeconds": 128.2,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → waterSeeds → salt → cold",
+      "won": "4/4",
+      "winSecondsMean": 543.5,
+      "winSecondsRange": [
+       482.6,
+       624.6
+      ],
+      "firstBuySecondsMean": 93.7
+     },
+     "strategy2": {
+      "plan": "seedOut → waterSeeds → rad → heat",
+      "won": "4/4",
+      "winSecondsMean": 475.4,
+      "winSecondsRange": [
+       431.5,
+       517.8
+      ],
+      "firstBuySecondsMean": 93.7
+     }
+    }
+   },
+   "leaves": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 6.2,
+      "biomass": 51.9,
+      "originLivingPct": 44.9,
+      "originVigor": 0.75,
+      "originEstablishment": 0.105
+     },
+     "60": {
+      "coveragePct": 11.3,
+      "biomass": 79.3,
+      "originLivingPct": 82.5,
+      "originVigor": 0.75,
+      "originEstablishment": 0.26
+     },
+     "120": {
+      "coveragePct": 13.7,
+      "biomass": 166.9,
+      "originLivingPct": 99.8,
+      "originVigor": 0.75,
+      "originEstablishment": 0.589
+     },
+     "180": {
+      "coveragePct": 13.7,
+      "biomass": 288.5,
+      "originLivingPct": 100,
+      "originVigor": 0.75,
+      "originEstablishment": 0.775
+     }
+    },
+    "firstAffordableSeconds": 96.3,
+    "firstAffordableNoBubblesSeconds": 118.9,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → waterSeeds → salt → cold",
+      "won": "4/4",
+      "winSecondsMean": 533.7,
+      "winSecondsRange": [
+       414.1,
+       712
+      ],
+      "firstBuySecondsMean": 100.3
+     },
+     "strategy2": {
+      "plan": "seedOut → waterSeeds → rad → heat",
+      "won": "4/4",
+      "winSecondsMean": 413.4,
+      "winSecondsRange": [
+       383.5,
+       449.8
+      ],
+      "firstBuySecondsMean": 100.3
+     }
+    }
+   },
+   "seeds": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 12.4,
+      "biomass": 58.7,
+      "originLivingPct": 90.6,
+      "originVigor": 0.75,
+      "originEstablishment": 0.187
+     },
+     "60": {
+      "coveragePct": 13.7,
+      "biomass": 104.6,
+      "originLivingPct": 100,
+      "originVigor": 0.75,
+      "originEstablishment": 0.397
+     },
+     "120": {
+      "coveragePct": 13.7,
+      "biomass": 190.7,
+      "originLivingPct": 100,
+      "originVigor": 0.75,
+      "originEstablishment": 0.67
+     },
+     "180": {
+      "coveragePct": 13.7,
+      "biomass": 284.7,
+      "originLivingPct": 100,
+      "originVigor": 0.75,
+      "originEstablishment": 0.82
+     }
+    },
+    "firstAffordableSeconds": 80.2,
+    "firstAffordableNoBubblesSeconds": 167.6,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → waterSeeds → salt → cold",
+      "won": "4/4",
+      "winSecondsMean": 523.1,
+      "winSecondsRange": [
+       487.8,
+       592.5
+      ],
+      "firstBuySecondsMean": 84.2
+     },
+     "strategy2": {
+      "plan": "seedOut → waterSeeds → rad → heat",
+      "won": "4/4",
+      "winSecondsMean": 486.8,
+      "winSecondsRange": [
+       458.6,
+       520.2
+      ],
+      "firstBuySecondsMean": 84.2
+     }
+    }
+   }
+  },
+  "oa_seed_8": {
+   "attempt": 1,
+   "name": "Coriol-220",
+   "strategies": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Adapt(1)",
+     "witnessMarginSeconds": 527.7,
+     "witnessFirstPurchaseSeconds": 76.5
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Terraform(−8)",
+     "witnessMarginSeconds": 571.7,
+     "witnessFirstPurchaseSeconds": 76.5
+    }
+   ],
+   "none": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 8.4,
+      "biomass": 73.3,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.304
+     },
+     "60": {
+      "coveragePct": 16.3,
+      "biomass": 117.3,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.491
+     },
+     "120": {
+      "coveragePct": 28.8,
+      "biomass": 216.1,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.729
+     },
+     "180": {
+      "coveragePct": 36.6,
+      "biomass": 348,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.856
+     }
+    },
+    "firstAffordableSeconds": 74.6,
+    "firstAffordableNoBubblesSeconds": 115.7,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → salt → waterSeeds → flood",
+      "won": "4/4",
+      "winSecondsMean": 513,
+      "winSecondsRange": [
+       477.9,
+       563
+      ],
+      "firstBuySecondsMean": 78.6
+     },
+     "strategy2": {
+      "plan": "seedOut → salt → waterSeeds → dry",
+      "won": "4/4",
+      "winSecondsMean": 527,
+      "winSecondsRange": [
+       489.9,
+       593
+      ],
+      "firstBuySecondsMean": 78.6
+     }
+    }
+   },
+   "roots": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 8.2,
+      "biomass": 71.8,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.564
+     },
+     "60": {
+      "coveragePct": 15.8,
+      "biomass": 109.1,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.801
+     },
+     "120": {
+      "coveragePct": 28.2,
+      "biomass": 209.9,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.959
+     },
+     "180": {
+      "coveragePct": 36.1,
+      "biomass": 312.5,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.992
+     }
+    },
+    "firstAffordableSeconds": 76.3,
+    "firstAffordableNoBubblesSeconds": 118.2,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → salt → waterSeeds → flood",
+      "won": "4/4",
+      "winSecondsMean": 478.7,
+      "winSecondsRange": [
+       437.6,
+       513.8
+      ],
+      "firstBuySecondsMean": 80.3
+     },
+     "strategy2": {
+      "plan": "seedOut → salt → waterSeeds → dry",
+      "won": "4/4",
+      "winSecondsMean": 517.9,
+      "winSecondsRange": [
+       496.3,
+       553.9
+      ],
+      "firstBuySecondsMean": 80.3
+     }
+    }
+   },
+   "leaves": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 7.7,
+      "biomass": 68.6,
+      "originLivingPct": 97.6,
+      "originVigor": 1,
+      "originEstablishment": 0.298
+     },
+     "60": {
+      "coveragePct": 15.4,
+      "biomass": 111.1,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.487
+     },
+     "120": {
+      "coveragePct": 28.5,
+      "biomass": 219.7,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.727
+     },
+     "180": {
+      "coveragePct": 37.1,
+      "biomass": 344.7,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.855
+     }
+    },
+    "firstAffordableSeconds": 70,
+    "firstAffordableNoBubblesSeconds": 99.2,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → salt → waterSeeds → flood",
+      "won": "4/4",
+      "winSecondsMean": 505.6,
+      "winSecondsRange": [
+       462.4,
+       605.6
+      ],
+      "firstBuySecondsMean": 74.1
+     },
+     "strategy2": {
+      "plan": "seedOut → salt → waterSeeds → dry",
+      "won": "4/4",
+      "winSecondsMean": 524.6,
+      "winSecondsRange": [
+       466.6,
+       627.5
+      ],
+      "firstBuySecondsMean": 74.1
+     }
+    }
+   },
+   "seeds": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 9.4,
+      "biomass": 50.6,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.305
+     },
+     "60": {
+      "coveragePct": 17.1,
+      "biomass": 86.2,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.492
+     },
+     "120": {
+      "coveragePct": 28.2,
+      "biomass": 185.1,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.73
+     },
+     "180": {
+      "coveragePct": 36.9,
+      "biomass": 276.4,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.856
+     }
+    },
+    "firstAffordableSeconds": 85,
+    "firstAffordableNoBubblesSeconds": 138.5,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → salt → waterSeeds → flood",
+      "won": "4/4",
+      "winSecondsMean": 505.7,
+      "winSecondsRange": [
+       470.2,
+       537.6
+      ],
+      "firstBuySecondsMean": 89
+     },
+     "strategy2": {
+      "plan": "seedOut → salt → waterSeeds → dry",
+      "won": "4/4",
+      "winSecondsMean": 519.6,
+      "winSecondsRange": [
+       486.1,
+       542.1
+      ],
+      "firstBuySecondsMean": 89
+     }
+    }
+   }
+  },
+  "desert_seed_25": {
+   "attempt": 0,
+   "name": "Umbra-584",
+   "strategies": [
+    {
+     "signature": "Water:dry=Adapt(2)",
+     "witnessMarginSeconds": 444,
+     "witnessFirstPurchaseSeconds": 50.2
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)",
+     "witnessMarginSeconds": 423.4,
+     "witnessFirstPurchaseSeconds": 50.2
+    }
+   ],
+   "none": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 4.5,
+      "biomass": 63,
+      "originLivingPct": 96.9,
+      "originVigor": 1,
+      "originEstablishment": 0.229
+     },
+     "60": {
+      "coveragePct": 4.7,
+      "biomass": 112.5,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.452
+     },
+     "120": {
+      "coveragePct": 4.7,
+      "biomass": 203,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.724
+     },
+     "180": {
+      "coveragePct": 4.7,
+      "biomass": 301.4,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.86
+     }
+    },
+    "firstAffordableSeconds": 76,
+    "firstAffordableNoBubblesSeconds": 126,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → drought → drought",
+      "won": "4/4",
+      "winSecondsMean": 480,
+      "winSecondsRange": [
+       450.7,
+       520.2
+      ],
+      "firstBuySecondsMean": 80.1
+     },
+     "strategy2": {
+      "plan": "seedOut → drought → humid → rad → heat",
+      "won": "4/4",
+      "winSecondsMean": 461.6,
+      "winSecondsRange": [
+       433.1,
+       480.8
+      ],
+      "firstBuySecondsMean": 80.1
+     }
+    }
+   },
+   "roots": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 4.6,
+      "biomass": 57.8,
+      "originLivingPct": 98.1,
+      "originVigor": 1,
+      "originEstablishment": 0.439
+     },
+     "60": {
+      "coveragePct": 4.7,
+      "biomass": 108.4,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.761
+     },
+     "120": {
+      "coveragePct": 4.7,
+      "biomass": 205.4,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.957
+     },
+     "180": {
+      "coveragePct": 4.7,
+      "biomass": 293.8,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.992
+     }
+    },
+    "firstAffordableSeconds": 80.2,
+    "firstAffordableNoBubblesSeconds": 127.4,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → drought → drought",
+      "won": "4/4",
+      "winSecondsMean": 492,
+      "winSecondsRange": [
+       469.1,
+       524.6
+      ],
+      "firstBuySecondsMean": 84.2
+     },
+     "strategy2": {
+      "plan": "seedOut → drought → humid → rad → heat",
+      "won": "4/4",
+      "winSecondsMean": 481.2,
+      "winSecondsRange": [
+       447.5,
+       519.8
+      ],
+      "firstBuySecondsMean": 84.2
+     }
+    }
+   },
+   "leaves": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 3.2,
+      "biomass": 59.4,
+      "originLivingPct": 69.8,
+      "originVigor": 1,
+      "originEstablishment": 0.168
+     },
+     "60": {
+      "coveragePct": 4.6,
+      "biomass": 104.2,
+      "originLivingPct": 98.6,
+      "originVigor": 1,
+      "originEstablishment": 0.392
+     },
+     "120": {
+      "coveragePct": 4.7,
+      "biomass": 209.4,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.693
+     },
+     "180": {
+      "coveragePct": 4.7,
+      "biomass": 323.6,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.845
+     }
+    },
+    "firstAffordableSeconds": 75.3,
+    "firstAffordableNoBubblesSeconds": 108.6,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → drought → drought",
+      "won": "4/4",
+      "winSecondsMean": 447.2,
+      "winSecondsRange": [
+       429.8,
+       466.1
+      ],
+      "firstBuySecondsMean": 79.3
+     },
+     "strategy2": {
+      "plan": "seedOut → drought → humid → rad → heat",
+      "won": "4/4",
+      "winSecondsMean": 412.5,
+      "winSecondsRange": [
+       387.8,
+       448.3
+      ],
+      "firstBuySecondsMean": 79.3
+     }
+    }
+   },
+   "seeds": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 4.7,
+      "biomass": 59.7,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.265
+     },
+     "60": {
+      "coveragePct": 4.7,
+      "biomass": 84.6,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.477
+     },
+     "120": {
+      "coveragePct": 4.7,
+      "biomass": 157.1,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.736
+     },
+     "180": {
+      "coveragePct": 4.7,
+      "biomass": 240.1,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.867
+     }
+    },
+    "firstAffordableSeconds": 111.3,
+    "firstAffordableNoBubblesSeconds": 168.6,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → drought → drought",
+      "won": "4/4",
+      "winSecondsMean": 555,
+      "winSecondsRange": [
+       533.6,
+       579.5
+      ],
+      "firstBuySecondsMean": 115.3
+     },
+     "strategy2": {
+      "plan": "seedOut → drought → humid → rad → heat",
+      "won": "4/4",
+      "winSecondsMean": 544,
+      "winSecondsRange": [
+       517.8,
+       585.1
+      ],
+      "firstBuySecondsMean": 115.3
+     }
+    }
+   }
+  },
+  "desert_seed_9": {
+   "attempt": 1,
+   "name": "Borea-935",
+   "strategies": [
+    {
+     "signature": "Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)",
+     "witnessMarginSeconds": 393.1,
+     "witnessFirstPurchaseSeconds": 88.6
+    },
+    {
+     "signature": "Defense:salt=Adapt(1) · Water:dry=Adapt(2)",
+     "witnessMarginSeconds": 377.6,
+     "witnessFirstPurchaseSeconds": 88.6
+    }
+   ],
+   "none": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 6.6,
+      "biomass": 60.3,
+      "originLivingPct": 83.2,
+      "originVigor": 1,
+      "originEstablishment": 0.236
+     },
+     "60": {
+      "coveragePct": 12.6,
+      "biomass": 103.2,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.54
+     },
+     "120": {
+      "coveragePct": 28.2,
+      "biomass": 207.7,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.836
+     },
+     "180": {
+      "coveragePct": 29,
+      "biomass": 385.3,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.942
+     }
+    },
+    "firstAffordableSeconds": 77.5,
+    "firstAffordableNoBubblesSeconds": 97.7,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → earlyMat → drought → salt → humid",
+      "won": "4/4",
+      "winSecondsMean": 369.4,
+      "winSecondsRange": [
+       363.2,
+       379.2
+      ],
+      "firstBuySecondsMean": 81.5
+     },
+     "strategy2": {
+      "plan": "seedOut → earlyMat → drought → salt → drought",
+      "won": "4/4",
+      "winSecondsMean": 368.8,
+      "winSecondsRange": [
+       359.5,
+       377.9
+      ],
+      "firstBuySecondsMean": 81.5
+     }
+    }
+   },
+   "roots": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 7.7,
+      "biomass": 58.5,
+      "originLivingPct": 93.2,
+      "originVigor": 1,
+      "originEstablishment": 0.461
+     },
+     "60": {
+      "coveragePct": 13.6,
+      "biomass": 105.7,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.848
+     },
+     "120": {
+      "coveragePct": 28.8,
+      "biomass": 228.3,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.989
+     },
+     "180": {
+      "coveragePct": 29,
+      "biomass": 383.4,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.999
+     }
+    },
+    "firstAffordableSeconds": 75,
+    "firstAffordableNoBubblesSeconds": 95.7,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → earlyMat → drought → salt → humid",
+      "won": "4/4",
+      "winSecondsMean": 367,
+      "winSecondsRange": [
+       329.6,
+       397.8
+      ],
+      "firstBuySecondsMean": 79.1
+     },
+     "strategy2": {
+      "plan": "seedOut → earlyMat → drought → salt → drought",
+      "won": "4/4",
+      "winSecondsMean": 366.9,
+      "winSecondsRange": [
+       331.2,
+       393.8
+      ],
+      "firstBuySecondsMean": 79.1
+     }
+    }
+   },
+   "leaves": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 4.2,
+      "biomass": 56.3,
+      "originLivingPct": 55.1,
+      "originVigor": 1,
+      "originEstablishment": 0.162
+     },
+     "60": {
+      "coveragePct": 10,
+      "biomass": 89.8,
+      "originLivingPct": 97,
+      "originVigor": 1,
+      "originEstablishment": 0.449
+     },
+     "120": {
+      "coveragePct": 25.6,
+      "biomass": 228.4,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.803
+     },
+     "180": {
+      "coveragePct": 29,
+      "biomass": 416.2,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.93
+     }
+    },
+    "firstAffordableSeconds": 82,
+    "firstAffordableNoBubblesSeconds": 94.4,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → earlyMat → drought → salt → humid",
+      "won": "4/4",
+      "winSecondsMean": 342.4,
+      "winSecondsRange": [
+       338.2,
+       345.9
+      ],
+      "firstBuySecondsMean": 86
+     },
+     "strategy2": {
+      "plan": "seedOut → earlyMat → drought → salt → drought",
+      "won": "4/4",
+      "winSecondsMean": 338.8,
+      "winSecondsRange": [
+       335,
+       342.4
+      ],
+      "firstBuySecondsMean": 86
+     }
+    }
+   },
+   "seeds": {
+    "autonomous": {
+     "30": {
+      "coveragePct": 9,
+      "biomass": 60.9,
+      "originLivingPct": 99.2,
+      "originVigor": 1,
+      "originEstablishment": 0.313
+     },
+     "60": {
+      "coveragePct": 15.2,
+      "biomass": 86.6,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.59
+     },
+     "120": {
+      "coveragePct": 29,
+      "biomass": 202.6,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.854
+     },
+     "180": {
+      "coveragePct": 29,
+      "biomass": 345.9,
+      "originLivingPct": 100,
+      "originVigor": 1,
+      "originEstablishment": 0.948
+     }
+    },
+    "firstAffordableSeconds": 91,
+    "firstAffordableNoBubblesSeconds": 108.4,
+    "runs": {
+     "strategy1": {
+      "plan": "seedOut → earlyMat → drought → salt → humid",
+      "won": "4/4",
+      "winSecondsMean": 401.4,
+      "winSecondsRange": [
+       364.6,
+       428.3
+      ],
+      "firstBuySecondsMean": 95
+     },
+     "strategy2": {
+      "plan": "seedOut → earlyMat → drought → salt → drought",
+      "won": "4/4",
+      "winSecondsMean": 410,
+      "winSecondsRange": [
+       375,
+       430.4
+      ],
+      "firstBuySecondsMean": 95
+     }
+    }
+   }
+  }
+ },
+ "ms": 51917
+}

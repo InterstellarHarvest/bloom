@@ -1,0 +1,105 @@
+# A1 · archetype data
+PASS  1 · Desert World archetype data is valid (and Ocean Archipelago still is)  — desert_world "Desert World" · sections [12,18] · water {"min":2,"max":12,"tolerance":4}
+PASS  1 · the archetype catalogue is plain data, now two archetypes
+PASS  1 · each archetype owns its policy: Ocean Archipelago's bands and rules are unchanged (no Desert keys)
+PASS  1 · schema rejects an origin-fitness bar above 1  — geography.minOriginFitness must be in (0, 1]
+PASS  1 · schema rejects a non-positive terminal wait  — validation.pacing.maxTerminalWaitSeconds must be > 0
+PASS  1 · schema rejects an unknown required condition  — validation.requiredConditions must be a non-empty list of signature conditions (e.g. "Water:dry") and needs minStrategies
+PASS  1 · schema rejects a malformed render colour  — render must be { ground?/water?/waterAlt?: [r,g,b] 0..255, groundMix 0..1 with ground, dunes?: boolean }
+PASS  1 · schema rejects an unknown naming pool  — naming.lakes must be one of cold/mild/warm/hot/wet/dry/noun with a non-empty list of words
+PASS  1 · schema rejects maxLandmasses 0  — geography.maxLandmasses must be a positive integer
+PASS  1 · Desert is data over generic generator knobs (no Desert-specific generator or simulation code)  — new generic climate knobs: lightBias, drySaltChance, basinMoisture, dryOffset, wetOffset, originTemp, originMoistureOffset, originMoistureWeight
+
+# A2–3 · deterministic generate/validate/retry
+PASS  2 · same archetype + public seed → identical accepted world (tiles, sections, strategy summary)  — seed 25 → attempt 0 · Umbra-584 (proc_3804767584)
+PASS  2 · the accepted world reproduces exactly from its recorded generation params (climate knobs and naming pools included)
+PASS  3 · bounded retry is deterministic: attempt k uses FNV-1a("desert_world|seed|k"); a rejected attempt is recorded and skipped identically every time  — seed 9: #0 origin Sienna Dunes is not a refuge: its own fitness 0.50 < 0.72 (limi… → attempt 1
+PASS  3 · explicit bounded failure: with one attempt allowed, seed 35 throws with its reason (never returns a bad or substitute world)  — layer 4 (simultaneous coverage): no legal build can hold the win simultaneously: best build reaches 60.3% < 70%
+
+# A4–9, 20 · Desert World public seeds 1–40 (full production path, layers 1–8)
+  accepted 40/40 · no generation failures · attempts {"0":30,"1":10}
+  rejected attempts 10, by first reason: {"layer 2 (origin refuge)":7,"layer 8 (pacing)":2,"layer 4 (simultaneous coverage)":1}
+  water 2–12.3% (mean 7.3%) · landmasses {"1":38,"2":2} · origin landmass share 0.985–1 · sections {"12":4,"13":7,"14":5,"15":2,"16":11,"17":6,"18":5}
+  climate (area-weighted, start): temperature 18–20 °C (mean 19.2) · moisture 5–27 (mean 14.0; the plant's start window is 32–68) · Water-limited land 76.1% · hot-blocked land 16.5% · open at start 16.4%
+  vs Ocean Archipelago moisture 62.6 / temperature 10.6 °C · default generator moisture 47.3 / temperature 3.4 °C
+  strategy water means per world: {"Adapt vs Adapt":17,"Adapt+Terraform vs Adapt+Terraform":6,"Adapt vs Adapt+Terraform":14,"Terraform vs Terraform":2,"Adapt vs Terraform":1}
+  strategy classes: {"rad+salt+Temperature:heat=Adapt(1) · Water:dry=Adapt(2)":3,"rad+salt+Temperature:heat=Terraform(−6) · Water:dry=Adapt(2)":3,"rad+Temperature:heat=Adapt(1) · Water:dry=Adapt(2)":8,"rad+Temperature:heat=Terraform(−6) · Water:dry=Adapt(2)":3,"rad+Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)":11,"rad+Temperature:heat=Terraform(−6) · Water:dry=Adapt(1)+Terraform(+8)":3,"rad+Temperature:heat=Adapt(1) · Water:dry=Adapt(2)+Terraform(+8)":1,"rad+Temperature:heat=Terraform(−12) · Water:dry=Adapt(2)+Terraform(+8)":1,"salt+Water:dry=Adapt(2)":8,"rad+salt+Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)":2,"rad+salt+Temperature:heat=Terraform(−6) · Water:dry=Adapt(1)+Terraform(+8)":1,"rad+salt+Temperature:heat=Adapt(1) · Water:dry=Adapt(1)":3,"rad+salt+Temperature:heat=Terraform(−6) · Water:dry=Adapt(1)":1,"rad+salt+Water:dry=Adapt(1)":1,"salt+Water:d
+  first purchases: {"seedOut":80} at 47.4–102.1 s · win 312.6–685.4 s · margin 362.1–691.7 s (median 405.9) · max gap 78.1–164.5 s · terminal wait 0.5–181.8 s
+  runtime 30.6 s for 40 seeds · median 490 ms · worst 2694 ms
+  e.g. seed 8: [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)] margin 393 s  vs  [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] margin 401.9 s
+  e.g. seed 9: [Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] margin 393.1 s  vs  [Defense:salt=Adapt(1) · Water:dry=Adapt(2)] margin 377.6 s
+  e.g. seed 13: [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] margin 508.3 s  vs  [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2)] margin 447.4 s
+PASS  4 · every accepted world's water is within ±4 of its request (2–12%)  — max drift 0.3
+PASS  5 · recognizably low-water: every world ≤ 16% water (Ocean Archipelago: 55–68%)  — mean 7.3%
+PASS  6 · mostly contiguous: ≤ 2 landmasses, the origin's landmass holds ≥ 85% of the land, and most worlds are one landmass  — {"1":38,"2":2}
+PASS  7 · dry tendency: mean effective moisture far below Ocean Archipelago and the default generator; Water limits much of the land at the start  — Desert 14.0 vs Ocean 62.6 vs default 47.3 · Water-limited land 76.1%
+PASS  8 · warm with local hot ground, never uniformly lethal: hotter than Ocean/default, most worlds have heat-blocked land, none is more than half heat-blocked  — mean 19.2 °C vs Ocean 10.6 / default 3.4 · heat-blocked land 1–30% · 40/40 worlds have some
+PASS  9 · environmental variation: every world mixes limits and has wet refuges vs dry ground; salt pans in many; the origin is a genuine refuge  — moisture spread 40–90 · limits per world 2–4 · salt in 36/40 · other green refuges at start 0–4 · origin own fitness 0.83–1
+PASS  20 · sweep quality: ≥ 34/40 accepted through layers 1–8; every strategy answers dry ground and none needs a crossing; a Water-Terraform strategy in ≥ 25% of worlds and a Drought-only one in ≥ 25%; runtime bounded  — 40/40 · Water-Terraform strategy in 23 worlds · Drought-only water in 32 · median 490 ms
+
+# A10–18 · positive fixture — Desert World public seed 25 (attempt 0, Umbra-584)
+  [Water:dry=Adapt(2)]
+    core drought + drought · plan seedOut @ 50.2 s (130) → drought @ 126.4 s (150) → drought @ 264.8 s (270)
+    spent 550 · win 428.3 s · margin 444 s · peak 74.4% · first 50.2 s · gaps 50.2/76.2/138.4 s · terminal wait 179.2 s · Biomass/min 110,100,143,92,143,222,241,124
+    holds Wadi Shelf, Oasis Basin, Chalk Dunes, Pale Pan, Bone Shelf, Glass Erg, Gold Dunes, Amber Canyon, Amber Shelf
+  [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)]
+    core heat + drought + rad + humid · plan seedOut @ 50.2 s (130) → drought @ 126.4 s (150) → humid @ 236.2 s (200) → rad @ 338.4 s (220) → heat @ 384.3 s (140)
+    spent 840 · win 416.6 s · margin 423.4 s · peak 75.0% · first 50.2 s · gaps 50.2/76.2/109.8/102.2/45.9 s · terminal wait 39.1 s · Biomass/min 110,100,143,92,119,146,208,13
+    holds Wadi Shelf, Oasis Basin, Cinder Plateau, Chalk Dunes, Pale Pan, Furnace Erg, Glass Erg, Gold Dunes, Amber Canyon, Amber Shelf
+  early land (no upgrades): reachable 4.7%, growable 22.8% · 2 simulations over 4 classes
+PASS  10 · the fixture is a recognizable Desert World (low water, one landmass) and passes layers 1–8  — water 6% · 12 sections · origin Oasis Basin
+PASS  11 · ≥ 2 materially different strategy signatures, and they hold different land  — A-only Water:dry=Adapt(2) · B-only Defense:rad=Adapt(1) + Temperature:heat=Adapt(1) + Water:dry=Adapt(1)+Terraform(+8) · land A-only Bone Shelf · B-only Cinder Plateau,Furnace Erg
+PASS  12 · one strategy is organism-first: Drought Adaptation answers the dry ground, no Terraform at all  — [Water:dry=Adapt(2)]
+PASS  13 · a materially different strategy humidifies the sky (Terraform) and so needs less Drought — and keeps different ground (the hot south)  — [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)]
+PASS  14 · Waterborne Seeds is not required: not even offered on this one-landmass fixture, and removing it from the catalogue changes no strategy
+PASS  15 · Waterborne Seeds is absent wherever no crossing exists (every one-landmass desert), offered only by the generic rule on two-landmass deserts, and never part of a Desert win — while Ocean Archipelago still requires it  — 38 one-landmass deserts: offered on 0 · 2 two-landmass: offered on 2 (seeds 16,21), in 0 strategies · OA seed 8 strategies all cross
+PASS  16 · both witnesses earn their Biomass and buy through sim.buy (independent replay reproduces each margin), buy their whole core first, and make no local colony choices  — 3 purchases, 550 spent of 1174 earned → 73.0% · 5 purchases, 840 spent of 931 earned → 73.0%
+PASS  17 · both reach the validation margin (73.0%)  — win 428.3 s → margin 444 s, peak 74.4% · win 416.6 s → margin 423.4 s, peak 75.0%
+PASS  18 · both satisfy Desert World's pacing policy (margin 360–900 s, first purchase 45–120 s, gap ≤ 240 s, terminal wait ≤ 240 s)  — margin 444 s, first 50.2 s, gap 138.4 s, wait 179.2 s · margin 423.4 s, first 50.2 s, gap 109.8 s, wait 39.1 s
+PASS  12–13 · the water problem is real: with neither water Adaptation nor water Terraform, no legal build can hold 70% (static proof)  — no legal build can hold the win simultaneously: best build reaches 4.7% < 70%
+
+# A19 · natural Desert negatives (structure-only attempt → full validation; production skips each)
+PASS  19 · layer 4 (unwinnable simultaneous coverage): seed 35 attempt 0 is structurally fine but rejected  — layer 4 (simultaneous coverage): no legal build can hold the win simultaneously: best build reaches 60.3% < 70% · production takes attempt 1
+PASS  19 · layer 7 (one exact broad solution): seed 50 attempt 0 wins with margin, but every build shares one core — a static proof  — only 1 of 2 required broad strategies wins with margin [Water:dry=Adapt(1)]; every other candidate class is ab · production takes attempt 2
+PASS  19 · layer 8 (pacing): seed 16 attempt 0 has 2 broad strategies, both win too fast  — only 0 of 2 broad strategies meet the pacing policy — [Water:dry=Adapt(1)] margin reached at 186.6 s < 360 s (too fast) | [Water:dry=Terraform(+16)] m · production takes attempt 1
+PASS  19 · origin refuge (Desert rule): seed 9 attempt 0 passes the structural validator, but its home region is dry ground kept alive only by the protected-refuge floor  — own fitness 0.50 (floor lifts it to 0.62), limited by Water · production takes attempt 1
+
+# A21–25 · First Bloom and Ocean Archipelago unchanged
+PASS  21 · First Bloom remains valid (layers 1–6 witness) and its shop unchanged  — witness margin at 293 s
+PASS  22 · Ocean Archipelago seed 13 still passes layers 1–8  — [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)] [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)]
+PASS  23 · Ocean Archipelago seed 13 identity is stable (attempt, planet name, id)  — attempt 6 · Eos-227 (proc_2316985227)
+PASS  22 · Ocean Archipelago seed 8 still passes layers 1–8  — [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Adapt(1)] [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Terraform(−8)]
+PASS  23 · Ocean Archipelago seed 8 identity is stable (attempt, planet name, id)  — attempt 1 · Coriol-220 (proc_522844220)
+PASS  25 · the known Ocean failure (seed 35) still fails explicitly after 24 attempts
+
+# A26 · colony development on Desert World (BLOOM-009 system, unchanged)
+PASS  26 · per-region focus works on a desert: two regions hold different focuses at once, the rest stay Balanced
+PASS  26 · Roots thickens the young origin refuge faster than Balanced (controlled, same RNG)  — origin establishment 0.708 → 0.872
+PASS  26 · a local specialization is bought with ordinary Biomass (refused when short), tied to its region, and raises the next price  — Root Network 90 → next 130
+PASS  26 · situational per-colony play beats Balanced, which beats misplaced play — optional, and never required to win (witnesses use none)  — strategy A recipe, 3 run seeds: situational 420 s · Balanced 476 s · misplaced 673 s
+wrote docs/evidence/bloom-010/desert-sweep.json
+
+# B27–32 · real browser: demo-run.html?archetype=desert_world&seed=25
+PASS  27 · the Desert run launches through the generic launch path (BLOOM.generateFromArchetype in-page): same accepted attempt and planet as Node, layers 1–8  — attempt 0 · Umbra-584 (proc_3804767584) · water 144 tiles · 1 landmass
+PASS  27 · run identity shows Desert World, public seed, accepted attempt and planet name/id  — Desert World · public seed 25 · attempt 0 · Umbra-584 (proc_3804767584) · layers 12345678
+PASS  32 · no witness plan, strategy signature or solution reaches the page  — planet.archetype keys: id,name,publicSeed,attempt,generationSeed,requestedWaterPct,actualWaterPct,landmasses,originLandmassShare,winnabilityChecked,validatedLayers,rejectedAttemptCount
+PASS  31 · no Ocean names or assumptions: no Waterborne Seeds in the shop, no ocean/island/sea/coast wording in the page or tooltips, region names from the desert's own pools  — Wadi Shelf, Oasis Basin, Cinder Plateau, Chalk Dunes, Pale Pan, Bone Shelf, Furnace Erg, Glass Erg, Stone Hollow, Gold Dunes, Amber Canyon, Amber Shelf
+PASS  27 · the temporary desert treatment renders: bare ground samples are sandy (warm, not blue-green), lake water is blue  — 71/76 sandy (e.g. rgb 89,80,54) · 5 water samples (e.g. rgb 52,118,146)
+PASS  28 · inspecting a dry desert region: the four categories, 'Growth blocked: too dry', and both remedies (Adapt: Drought — or Terraform: Humidify); no island note  — Bone Shelf: Water parched terraformable · ▲ Growth blocked: too dry / Adapt: Drought — or Terraform: Humidify
+PASS  28 · clicking lake water shows the plain water note (no crossing trait mentioned)  — 🌊 Not land: nothing grows here and it does not count toward coverage. Ordinary spread cannot cross water.
+PASS  28 · the Drought purchase preview names the dry regions it would open  — Drought Adaptation — opens: Gold Dunes, Amber Canyon, Amber Shelf
+PASS  29 · the Desert run is won through real shop clicks with the organism-first strategy (no local upgrades needed)  — seedOut @ 70 s → drought @ 152 s → drought @ 282 s · win at 454 s with 70.1% of the land
+PASS  30 · the Bloom Report identifies the generated Desert World (name, archetype, public seed) and its build — no Ocean wording  — ★ BLOOM / You held 70% of the land of Umbra-584 (Desert World · public seed 25) in 7m 34s.
+PASS  no browser errors (Desert seed 25)
+PASS  29 · …and also with the Terraform strategy (Humidify raises the sky's moisture)  — seedOut → drought → humid → rad → heat · win at 516 s · sky moisture 18 → 26
+PASS  no browser errors (Terraform run)
+
+# B24 · other launches
+PASS  Desert seed 9 (optional playtest seed) launches: attempt 1 · Borea-935
+PASS  no browser errors (Desert seed 9)
+PASS  24 · Ocean Archipelago seed 13 harness still works: same identity, Waterborne Seeds offered, the ocean keeps its own water colour  — attempt 6 · Eos-227 · water rgb 30,62,104
+PASS  no browser errors (Ocean seed 13)
+PASS  24 · Ocean Archipelago seed 8 harness still works: same identity, Waterborne Seeds offered, the ocean keeps its own water colour  — attempt 1 · Coriol-220 · water rgb 30,62,104
+PASS  no browser errors (Ocean seed 8)
+
+ALL CHECKS PASS  (60.1 s)

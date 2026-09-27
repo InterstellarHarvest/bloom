@@ -27,9 +27,22 @@
     terrainWeights: [1, 0.5, 0.25] }; // elevation octave mix: continent-scale → local-scale landforms
   // section conditions: effTemp = temperature + tempBase + latitude·tempSpan ± tempJitter/2;
   // moistureOffset = noise·moistureSpread − moistureSpread/2 + moistureBias + coastFraction·coastMoisture
+  // BLOOM-010 knobs (their defaults draw no extra randomness and reproduce every earlier planet exactly):
+  //   lightBias             added to every section's light (clear, cloudless skies → stronger sun)
+  //   drySaltChance         chance a DRY section that is not already saline is a salt pan (evaporation leaves salt behind)
+  //   basinMoisture         moisture moved downhill: each section's offset gains (lowness − 0.5) × basinMoisture, where
+  //                         lowness runs from 1 (the lowest-lying section, by mean terrain height) to 0 (the highest) —
+  //                         water collects in basins, so low ground (often beside the lakes) is wetter than high ground
+  //   dryOffset / wetOffset a section is DRY below / WET above these moisture offsets (poor / rich soil nutrients,
+  //                         salt pans, biome names); an arid world raises dryOffset so more of its land counts as dry
+  //   originTemp / originMoistureOffset / originMoistureWeight  what the origin search prefers: effective temperature
+  //                         (°C) and local moisture offset (0 = the sky's own moisture), and how much a moisture mismatch
+  //                         counts per point against one °C of temperature mismatch; a dry world prefers a wetter offset
+  //                         and weights it more, so the protected refuge is one of its wet basins
   const CLIMATE_DEFAULTS = { temperature: -8, moisture: 45, tempBase: -25, tempSpan: 72, tempJitter: 12,
     moistureSpread: 80, moistureBias: 0, coastMoisture: 20, volcanicChance: 0.14,
-    coastalSaltAbove: 0.4, coastalSaltChance: 0.5, saltChance: 0.10 };
+    coastalSaltAbove: 0.4, coastalSaltChance: 0.5, saltChance: 0.10,
+    lightBias: 0, drySaltChance: 0, basinMoisture: 0, dryOffset: -22, wetOffset: 22, originTemp: 2, originMoistureOffset: 0, originMoistureWeight: 0.2 };
   const LIMITS = { waterPct: [0, 90], sections: [1, 24] };
 
   // value-noise octave: lattice of rng() values, smoothstep-interpolated over the grid
@@ -66,12 +79,15 @@
   const NAME_DRY = ["Dust", "Salt", "Glass", "Bone", "Chalk"];
   const NAME_NOUN = ["Basin", "Flats", "Reach", "Steppe", "Shelf", "Expanse", "Vale", "Plain", "Rise", "Span", "Pan", "Fields", "Hollow", "Wastes"];
   const PLANET_STEMS = ["Vesper", "Ymir", "Tharsis", "Eos", "Umbra", "Hollow", "Atlas", "Mistral", "Coriol", "Pallas", "Nyx", "Borea"];
-  function biomeName(rng, effTemp, dry, wet) {
-    let pool;
-    if (wet) pool = NAME_WET; else if (dry) pool = NAME_DRY;
-    else if (effTemp < -12) pool = NAME_COLD; else if (effTemp < 8) pool = NAME_MILD;
-    else if (effTemp < 26) pool = NAME_WARM; else pool = NAME_HOT;
-    return pick(rng, pool) + " " + pick(rng, NAME_NOUN);
+  const NAME_POOLS = { cold: NAME_COLD, mild: NAME_MILD, warm: NAME_WARM, hot: NAME_HOT, wet: NAME_WET, dry: NAME_DRY, noun: NAME_NOUN };
+  // `names` (BLOOM-010, optional): an archetype's own word pools, replacing any of NAME_POOLS' keys (one rng draw per
+  // pick whatever a pool's length, so the rest of the planet is unchanged)
+  function biomeName(rng, effTemp, dry, wet, names) {
+    const P = names ? { ...NAME_POOLS, ...names } : NAME_POOLS; let pool;
+    if (wet) pool = P.wet; else if (dry) pool = P.dry;
+    else if (effTemp < -12) pool = P.cold; else if (effTemp < 8) pool = P.mild;
+    else if (effTemp < 26) pool = P.warm; else pool = P.hot;
+    return pick(rng, pool) + " " + pick(rng, P.noun);
   }
 
   function normalizeParams(p = {}) {
@@ -92,8 +108,19 @@
       if (!(k in CLIMATE_DEFAULTS)) throw new Error(`generatePlanet: unknown climate key "${k}"`);
       if (!Number.isFinite(v)) throw new Error(`generatePlanet: climate.${k} must be a number`);
     }
+    let names = null;
+    if (q.names != null) {
+      if (typeof q.names !== "object" || Array.isArray(q.names)) throw new Error("generatePlanet: names must be an object of word pools");
+      names = {};
+      for (const [k, v] of Object.entries(q.names)) {
+        if (!(k in NAME_POOLS)) throw new Error(`generatePlanet: unknown names pool "${k}"`);
+        if (!(Array.isArray(v) && v.length && v.every(w => typeof w === "string" && w))) throw new Error(`generatePlanet: names.${k} must be a non-empty list of words`);
+        names[k] = v.slice();
+      }
+    }
     return { seed: q.seed, waterPct: q.waterPct, sections: q.sections, width: q.width, height: q.height,
-             minLandmassTiles: q.minLandmassTiles, maxCrossingGap: q.maxCrossingGap, terrainWeights: q.terrainWeights.slice(), climate };
+             minLandmassTiles: q.minLandmassTiles, maxCrossingGap: q.maxCrossingGap, terrainWeights: q.terrainWeights.slice(), climate,
+             ...(names ? { names } : {}) }; // (absent unless given → earlier planets' params are unchanged)
   }
 
   function generatePlanet(params) {
@@ -155,33 +182,38 @@
     const tilemap = new Int16Array(N);
     for (let i = 0; i < N; i++) tilemap[i] = isLand[i] ? owner[i] : -1;
     // 5. per-section conditions from latitude + noise (+ coastal moisture/salt)
-    const cent = Array.from({ length: SECN }, () => ({ x: 0, y: 0, n: 0, coast: 0 }));
+    const cent = Array.from({ length: SECN }, () => ({ x: 0, y: 0, n: 0, coast: 0, elev: 0 }));
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-      const o = tilemap[y * W + x]; if (o < 0) continue; const c = cent[o]; c.x += x; c.y += y; c.n++;
+      const o = tilemap[y * W + x]; if (o < 0) continue; const c = cent[o]; c.x += x; c.y += y; c.n++; c.elev += field[y * W + x];
       if ((x > 0 && tilemap[y * W + x - 1] < 0) || (x < W - 1 && tilemap[y * W + x + 1] < 0) ||
           (y > 0 && tilemap[(y - 1) * W + x] < 0) || (y < H - 1 && tilemap[(y + 1) * W + x] < 0)) c.coast++;
     }
     const moistField = elevationField(rng, W, H);
     const CL = P.climate, gTemp = CL.temperature;
+    // lowness (for basinMoisture): 1 = lowest-lying section by mean terrain height … 0 = highest (ties: lower index first)
+    const byElev = cent.map((c, i) => [c.n ? c.elev / c.n : 0, i]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const lowness = new Float64Array(SECN); byElev.forEach(([, i], r) => { lowness[i] = SECN > 1 ? 1 - r / (SECN - 1) : 0.5; });
     const sections = seeds.map((s, i) => {
       const c = cent[i]; const yN = c.n ? (c.y / c.n) / (H - 1) : ((s.tile / W | 0) / (H - 1));
       const coastFrac = c.n ? c.coast / c.n : 0;
       const tempOffset = Math.round((CL.tempBase + yN * CL.tempSpan) + (rng() - 0.5) * CL.tempJitter);
       const effTemp = gTemp + tempOffset;
-      const moistureOffset = clamp(Math.round((moistField[s.tile] * CL.moistureSpread - CL.moistureSpread / 2) + CL.moistureBias + coastFrac * CL.coastMoisture), -45, 45);
-      const dry = moistureOffset < -22, wet = moistureOffset > 22, hot = effTemp > 26, cold = effTemp < -12;
+      const moistureOffset = clamp(Math.round((moistField[s.tile] * CL.moistureSpread - CL.moistureSpread / 2) + CL.moistureBias + coastFrac * CL.coastMoisture
+        + (lowness[i] - 0.5) * CL.basinMoisture), -45, 45);
+      const dry = moistureOffset < CL.dryOffset, wet = moistureOffset > CL.wetOffset, hot = effTemp > 26, cold = effTemp < -12;
       const volcanic = !cold && rng() < CL.volcanicChance;
-      const salt = (coastFrac > CL.coastalSaltAbove && rng() < CL.coastalSaltChance) || rng() < CL.saltChance;
+      const salt = (coastFrac > CL.coastalSaltAbove && rng() < CL.coastalSaltChance) || rng() < CL.saltChance
+        || (CL.drySaltChance > 0 && dry && rng() < CL.drySaltChance); // (short-circuit: no draw at the default 0)
       const local = {
         tempOffset, moistureOffset,
-        light: clamp(Math.round(30 + yN * 55 + (rng() - 0.5) * 25), 10, 100),
+        light: clamp(Math.round(30 + yN * 55 + (rng() - 0.5) * 25 + CL.lightBias), 10, 100),
         ph: volcanic ? +(4 + rng() * 1.2).toFixed(1) : salt ? +(7.8 + rng() * 0.9).toFixed(1) : +(6 + rng() * 1.4).toFixed(1),
         salinity: salt ? Math.round(55 + rng() * 35) : Math.round(rng() * 12),
         toxicity: volcanic ? Math.round(40 + rng() * 35) : Math.round(rng() * 12),
         radiation: Math.round((hot ? 40 : 10) + rng() * 25),
         nutrients: wet ? Math.round(55 + rng() * 20) : dry ? Math.round(12 + rng() * 18) : Math.round(35 + rng() * 22)
       };
-      return { id: "sec_" + i, name: biomeName(rng, effTemp, dry, wet), kind: "land", area: c.n, landmass: s.comp, isOrigin: false, neighbors: [], local };
+      return { id: "sec_" + i, name: biomeName(rng, effTemp, dry, wet, P.names), kind: "land", area: c.n, landmass: s.comp, isOrigin: false, neighbors: [], local };
     });
     // 6. origin: temperate, low-stress section on the largest landmass (the protected refuge)
     let biggest = 0; for (let c = 1; c < nComp; c++) if (compSize[c] > compSize[biggest]) biggest = c;
@@ -189,7 +221,7 @@
     sections.forEach((sec, i) => {
       if (sec.landmass !== biggest) return;
       const L = sec.local, eff = gTemp + L.tempOffset;
-      const score = Math.abs(eff - 2) + L.toxicity * 0.3 + L.radiation * 0.15 + L.salinity * 0.2 + Math.abs(L.moistureOffset) * 0.2;
+      const score = Math.abs(eff - CL.originTemp) + L.toxicity * 0.3 + L.radiation * 0.15 + L.salinity * 0.2 + Math.abs(L.moistureOffset - CL.originMoistureOffset) * CL.originMoistureWeight;
       if (score < best) { best = score; origin = i; }
     });
     sections[origin].isOrigin = true;

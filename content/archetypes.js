@@ -9,10 +9,17 @@
 //   climate         BLOOM.generatePlanet climate knobs (see CLIMATE_DEFAULTS in bloom-gen.js)
 //   geography       terrainWeights (generator octave mix), minLandmassTiles, maxCrossingGap (≤ config.crossing.maxGap), minLandmasses,
 //                   maxOriginLandmassShare (origin landmass / all land; < 0.70 means ordinary spread
-//                   alone can never win → a crossing strategy is required)
+//                   alone can never win → a crossing strategy is required); BLOOM-010: maxLandmasses and
+//                   minOriginLandmassShare (a mostly contiguous world), minOriginFitness (the origin's own fitness,
+//                   before the protected-refuge floor, must be at least this → the home region is a genuine refuge)
+//   render          optional temporary map treatment for the demo harness (ground tint + mix, water colours, dunes)
+//   naming          optional word pools for generated region names (cold/mild/warm/hot/wet/dry/noun), so a world's
+//                   names match its climate; pools left out use the generator's defaults
 //   generation      maxAttempts for the deterministic retry loop
 //   validation      what a finished world of this archetype must pass (winnable → bible §10.3 layers 4–6;
-//                   minStrategies → layer 7 strategy diversity; pacing → layer 8 time bands)
+//                   minStrategies → layer 7 strategy diversity; pacing → layer 8 time bands, optionally with
+//                   maxTerminalWaitSeconds; requiredConditions → every proven strategy must answer these conditions)
+// Each archetype owns its policy: changing one never changes another.
 (function (root) {
   "use strict";
   const D = root.BLOOM_DATA || (root.BLOOM_DATA = { planets: {} });
@@ -35,6 +42,41 @@
       // the bible's session target is 10–20 human minutes), in game-seconds at config.tickMs.
       validation: { winnable: true, crossingRequiredToWin: true, minStrategies: 2,
         pacing: { marginSeconds: [360, 900], firstPurchaseSeconds: [45, 120], maxPurchaseGapSeconds: 240 } },
+    },
+    {
+      id: "desert_world", name: "Desert World",
+      intent: "Hot, dry, mostly contiguous world: water is the problem. Scattered wet basins are refuges; the plant must either evolve to live dry or humidify the sky — and each answer gives up different ground.",
+      sections: [12, 18],
+      // a few lakes/playas in the lowest ground, not seas (sweep of public seeds 1–40: actual water 2–12%)
+      water: { min: 2, max: 12, tolerance: 4 },
+      // arid, warm climate (tuned on the BLOOM-010 sweep, see docs/evidence/bloom-010):
+      //  · dry sky (18) and a dry bias: most ground sits below the plant's starting water window (32–68), so Water is
+      //    the most common limit; basinMoisture makes the LOW ground wetter (water collects in basins, often beside
+      //    the lakes, whose shores gain coastMoisture) — those wet basins are the refuges, and the origin is one of them
+      //  · warm (≈ 4 °C north … 34 °C south ± 5): a hot southern band, not a lethal planet; hot ground keeps the
+      //    generator's usual strong-sun radiation
+      //  · clear skies: +20 light (a growth bonus); dry ground has poor nutrients (slower, never blocked) and some
+      //    dry sections are salt pans (drySaltChance) where evaporation left salt behind; few volcanic soils
+      climate: { temperature: 14, moisture: 18, tempBase: -10, tempSpan: 30, tempJitter: 10,
+        moistureSpread: 56, moistureBias: -4, coastMoisture: 60, basinMoisture: 30, dryOffset: -8, wetOffset: 18,
+        volcanicChance: 0.05, coastalSaltAbove: 0.25, coastalSaltChance: 0.35, saltChance: 0.04, drySaltChance: 0.2,
+        lightBias: 20, originTemp: 10, originMoistureOffset: 32, originMoistureWeight: 1 },
+      // continent-scale terrain (generator default) → one landmass, occasionally a second; crossing is never the puzzle
+      geography: { minLandmassTiles: 16, maxCrossingGap: 5, maxLandmasses: 2, minOriginLandmassShare: 0.85, minOriginFitness: 0.72 },
+      naming: { wet: ["Oasis", "Spring", "Wadi", "Seep", "Palm"], dry: ["Dune", "Dust", "Glass", "Bone", "Chalk", "Sand", "Stone"],
+        hot: ["Cinder", "Scorch", "Ember", "Blaze", "Furnace"], warm: ["Amber", "Ochre", "Gold", "Saffron", "Sienna", "Copper"],
+        mild: ["Sage", "Juniper", "Pale", "Wind", "Shade"],
+        noun: ["Basin", "Flats", "Reach", "Mesa", "Erg", "Playa", "Plateau", "Dunes", "Pan", "Hollow", "Wastes", "Rise", "Canyon", "Shelf"] },
+      // temporary map treatment for playtests (demo-run.html, data only; not the final visual direction): sandy bare
+      // ground, lighter lake water, a faint dune stipple — so a desert reads as dry at a glance
+      render: { ground: [232, 180, 100], groundMix: 0.6, water: [40, 104, 132], waterAlt: [52, 118, 146], dunes: true },
+      generation: { maxAttempts: 24 },
+      // Desert World's own policy. The Ocean Archipelago bands measured cleanly on the Desert sweep (witness margins
+      // 362–692 s, first purchase 47–102 s, largest gap 78–165 s), so they are reused unchanged; Desert adds a cap on
+      // the wait after the last purchase (one early purchase then minutes of nothing to decide is not a desert puzzle)
+      // and requires every proven strategy to answer the dry ground (Water:dry — by Adaptation, Terraform or both).
+      validation: { winnable: true, minStrategies: 2, requiredConditions: ["Water:dry"],
+        pacing: { marginSeconds: [360, 900], firstPurchaseSeconds: [45, 120], maxPurchaseGapSeconds: 240, maxTerminalWaitSeconds: 240 } },
     },
   ];
 })(typeof window !== "undefined" ? window : globalThis);

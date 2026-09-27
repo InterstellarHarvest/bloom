@@ -30,6 +30,9 @@
   may buy ONE local upgrade (Root Network / Leaf Canopy / Seed Reserve) with Biomass; small map badges show each region's
   focus + upgrade; Biomass is the dominant HUD element; seedlings start tiny; Waterborne crossings show seeds travelling
   over water (pale ripple = seeds arrived, bright burst = they took root). QA: tools/colony-development-check.js.
+  BLOOM-010: the same launch path plays the second archetype (?archetype=desert_world&seed=25). An archetype may carry
+  a tiny temporary map treatment as data (archetype.render: ground tint, water colours, dune stipple); water-crossing
+  wording in the colony panel appears only where a crossing trait is offered. QA: tools/desert-check.js.
 -->
 <style>
   :root{
@@ -264,8 +267,12 @@ let TILE=14, selected=-1, selectedWater=false, rawOpen=false, preview=null; // p
 const TEMP_STOPS=[[-40,[44,62,104]],[-20,[78,104,140]],[0,[100,126,116]],[12,[92,140,88]],[25,[156,146,84]],[40,[182,100,60]],[60,[150,58,46]]];
 function stops(v){ const S=TEMP_STOPS; if(v<=S[0][0])return S[0][1].slice(); if(v>=S[S.length-1][0])return S[S.length-1][1].slice();
   for(let i=0;i<S.length-1;i++){const[a,ca]=S[i],[b,cb]=S[i+1]; if(v>=a&&v<=b)return mix(ca,cb,(v-a)/(b-a));} return S[0][1].slice(); }
+// BLOOM-010: an archetype may carry a tiny temporary terrain treatment (archetype.render, data only): a ground tint mixed
+// into bare ground, its own water colours and a faint dune stipple. Worlds without it (First Bloom, Ocean) draw as before.
+const RENDER=(BLOOM_RUN.kind==="procedural"&&BLOOM_RUN.archetype.render)||null;
 function barrenColor(i){ const L=SEC[i].local; let c=stops(G.temp+L.tempOffset);
   const m=G.moist+L.moistureOffset; if(m<35)c=mix(c,[150,138,104],0.4); else if(m>68)c=mix(c,[64,104,104],0.35);
+  if(RENDER&&RENDER.ground) c=mix(c,RENDER.ground,RENDER.groundMix*(m<35?1:0.5)); // wetter basins keep more of their own colour
   return mix(c,[10,12,18],0.55); } // dim: barren ground
 // BLOOM-008/009: Living tiles are drawn from their stand density (sim.dens): a new seedling stand is a tiny, pale
 // sprout on bare ground; it grows into a larger, darker patch and finally a full, dark tile; low vigor still reads sickly.
@@ -276,7 +283,8 @@ const DFULL=0.78; // stand density at which the plant patch fills its tile
 const patchFrac=d=>0.24+0.76*Math.pow(clamp((d-0.03)/(DFULL-0.03),0,1),0.8); // share of the tile side the patch covers
 // small fixed per-tile offset so young patches sit irregularly (organic) rather than in a perfect grid; 0 once full
 const JIT=new Float32Array(N*2); for(let i=0;i<N;i++){ const h=Math.imul(i^0x9e3779b9,0x85ebca6b)>>>0; JIT[2*i]=((h&255)/255-0.5)*0.8; JIT[2*i+1]=(((h>>8)&255)/255-0.5)*0.8; }
-const DEAD_C=[92,66,44], WATER_C=[24,52,92], WATER_C2=[30,62,104];
+const DEAD_C=[92,66,44], WATER_C=(RENDER&&RENDER.water)||[24,52,92], WATER_C2=(RENDER&&RENDER.waterAlt)||[30,62,104];
+const DUNE=!!(RENDER&&RENDER.dunes), duneAt=(x,y)=>(x*7+y*13+((y>>1)*3))%9===0; // sparse, fixed stipple on bare ground
 function fit(){ const st=document.querySelector(".stage"); TILE=Math.max(6,Math.floor(Math.min((st.clientWidth-24)/W,(st.clientHeight-24)/H))); }
 function resize(){ fit(); cv.width=W*TILE*dpr; cv.height=H*TILE*dpr; cv.style.width=W*TILE+"px"; cv.style.height=H*TILE+"px"; ctx.setTransform(dpr,0,0,dpr,0,0); draw(); }
 const rgb=c=>`rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`;
@@ -293,6 +301,7 @@ function draw(){
     else if(state[i]===DEAD) c=DEAD_C;
     else c=barrenColor(s);
     ctx.fillStyle=rgb(c); ctx.fillRect(x*TILE,y*TILE,TILE+.5,TILE+.5);
+    if(DUNE&&state[i]===BAR&&duneAt(x,y)){ ctx.fillStyle=rgb(mix(c,[236,206,150],0.35)); ctx.fillRect(x*TILE+TILE*.15,y*TILE+TILE*.55,TILE*.7,Math.max(1,TILE*.14)); } // a wind ripple
   }
   // purchase preview tint: green = would open, red = would close
   if(preview){ for(const [list,col] of [[preview.gain,"rgba(102,209,127,0.28)"],[preview.lose,"rgba(226,96,79,0.34)"]])
@@ -446,13 +455,14 @@ const FOCUS_UI={
     what:`Roots: stands thicken ${pctOf(FM.roots.establishBonus)}% faster and lose fewer plants on marginal ground. The cost is ${pctOf(FM.roots.yieldCost)}% less Biomass from this colony. Roots cannot keep plants alive where it is too cold, too hot, too salty, too wet or dry, or too toxic for your plant.` },
   leaves:{ name:"Leaves", icon:"❦", color:"#7fdc74", sub:"mature, productive colonies",
     what:`Leaves: up to ${pctOf(FM.leaves.yieldBonus)}% more Biomass. The bonus grows as the colony fills in: seedlings have little leaf area, dense stands earn the full bonus. The cost is ${pctOf(FM.leaves.seedCost)}% fewer seeds. It does not change where your plant can live.` },
-  seeds:{ name:"Seeds", icon:"✿", color:"#f5a6dc", sub:"frontier or coastal colonies",
+  seeds:{ name:"Seeds", icon:"✿", color:"#f5a6dc", sub:CROSS_T?"frontier or coastal colonies":"frontier colonies",
     what:`Seeds: this colony spreads into open ground ${pctOf(FM.seeds.seedBonus)}% faster${CROSS_T?` and, with ${CROSS_T.name}, sends ${pctOf(FM.seeds.crossingBonus)}% more seeds over water`:""}. The cost is ${pctOf(FM.seeds.yieldCost)}% less Biomass from this colony. Seeds only take root where the ground suits your plant.` },
 };
 const SPEC_UI={
   rootNetwork:{ sub:"thicker stands, holds on under stress, regrows fast", what:`${SPEC.rootNetwork.name}: a deep, spreading root system. This colony establishes much faster, loses fewer plants on marginal ground and regrows quickly after die-back. It still cannot survive ground that is too hostile for your plant.` },
   leafCanopy:{ sub:"more Biomass from an established colony", what:`${SPEC.leafCanopy.name}: a full leaf canopy. Up to ${pctOf(SPEC.leafCanopy.effect.yieldBonus)}% more Biomass from this colony, growing as the colony fills in, so it pays best on a big, established colony.` },
-  seedReserve:{ sub:"stronger spread and sea crossings from here", what:`${SPEC.seedReserve.name}: a large store of seeds. This colony spreads ${pctOf(SPEC.seedReserve.effect.seedBonus)}% faster and sends ${pctOf(SPEC.seedReserve.effect.crossingBonus)}% more seeds over water. It is most useful on a frontier or coastal colony.` },
+  // (water-crossing wording only where a crossing trait is offered — no sea talk on a desert or on First Bloom)
+  seedReserve:{ sub:CROSS_T?"stronger spread and sea crossings from here":"stronger spread from here", what:`${SPEC.seedReserve.name}: a large store of seeds. This colony spreads ${pctOf(SPEC.seedReserve.effect.seedBonus)}% faster${CROSS_T?` and sends ${pctOf(SPEC.seedReserve.effect.crossingBonus)}% more seeds over water. It is most useful on a frontier or coastal colony`:`. It is most useful on a frontier colony pushing into open ground`}.` },
 };
 const MATCH_NOTE=`When the colony's focus matches its upgrade, the upgrade works ${pctOf(CM.synergy)}% better.`;
 // a short, situation-based tip (young / stressed / frontier / mature), from what the player can see in this panel
