@@ -2,7 +2,9 @@
 
 **What this tests:** whether a *generated* world is fun and readable to a person. The validator (layers 1–8) already shows that these worlds can be won with at least two broad strategies at a reasonable machine pace. It cannot tell us whether a human understands islands, water crossings and Waterborne Seeds, or enjoys them.
 
-**Gate status:** ⏸ **paused twice for owner feedback, ready to resume after BLOOM-009.**
+**Gate status:** ✅ **PASSED by the owner** after BLOOM-009 (recorded with BLOOM-010, 2026-09-27). Owner verdict: the gameplay is good and the per-colony development mechanic is worth keeping; the main remaining concern is **UI crowding**, not the gameplay loop. That concern is now an approved future direction ([`VISUAL_DIRECTION_v1.0.md`](VISUAL_DIRECTION_v1.0.md) §9). The second archetype followed: [`PLAYTEST_DESERT_v1.md`](PLAYTEST_DESERT_v1.md).
+
+History: the gate was paused twice for owner feedback before it passed.
 
 1. The owner started this test and reported that the opening had nothing to do. They asked for a way to influence regions already seeded, and for colonies to look denser as they mature. BLOOM-008 responded.
 2. The owner then asked for four more changes, and BLOOM-009 made them:
@@ -11,7 +13,7 @@
    - much smaller seedlings;
    - a bigger Biomass display and visible water crossings.
 
-See *What changed* below. The gate is **not passed**. This sheet is still the human procedural-playtest gate, a second archetype still waits for it, and only the owner can mark it passed.
+See *What changed* below. (Historical note: until the owner passed it, this sheet was the gate for a second archetype.)
 
 **Resuming:** start both runs fresh (seed 13, then seed 8). Earlier partial runs used older rules, so they don't count toward this record. Anything you noticed in them is still useful: put it in the *Notes from earlier attempts* row below.
 

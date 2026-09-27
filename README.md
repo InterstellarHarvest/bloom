@@ -4,7 +4,7 @@ A retro-pixel **terraforming / evolution** game in the *Plague Inc.* lineage, bu
 
 > *A planet's "mood" is its sky — you can change that. A region's "personality" is its ground — you have to adapt to that.*
 
-## Status — slice gate PASSED; Ocean Archipelago worlds validated (layers 1–8) and playable in a developer harness; human procedural playtest paused for BLOOM-008/009, to resume
+## Status — slice gate and human procedural gate PASSED; two procedural archetypes (Ocean Archipelago, Desert World) validated through layers 1–8 and playable in a developer harness; Desert owner playtest pending
 
 The original plan was eight isolated portion demos. In August 2026 the **v1.1 direction change** ([PR #1](https://github.com/InterstellarHarvest/bloom/pull/1), see [`docs/GAMEPLAY_DIRECTION_DECISIONS_v1.0.md`](docs/GAMEPLAY_DIRECTION_DECISIONS_v1.0.md)) replaced that march with a single gate: **one complete, ugly-but-playable Eden run** ([`docs/NEXT_PLAYABLE_SLICE_v1.0.md`](docs/NEXT_PLAYABLE_SLICE_v1.0.md)). The slice was built, audited and tuned, and the owner **cleared the gate on 2026-09-26**. Work now follows the bible's post-gate sequence (§15).
 
@@ -21,13 +21,16 @@ The original plan was eight isolated portion demos. In August 2026 the **v1.1 di
 | Post-gate 3d · procedural-run harness (BLOOM-007) | `demo-run.html?archetype=ocean_archipelago&seed=N` plays a production-generated world in the real game UI; water rendering, island/crossing readouts, Waterborne Seeds preview | ✅ |
 | Post-gate 3d′ · colony establishment + Colony Focus (BLOOM-008) | owner-feedback retune: colonies start sparse and establish (Sparse → Establishing → Established → Dense) · map vegetation shaded by stand density · **Colony Focus** (Roots / Leaves / Seeds on one Living region; superseded by BLOOM-009's per-region focus) · golden intentionally regenerated | ✅ |
 | Post-gate 3d″ · per-region colony development (BLOOM-009) | owner-feedback iteration: **every colony keeps its own growth focus** (Balanced / Roots / Leaves / Seeds, each with a benefit and a cost) · one Biomass-bought **local specialization** per colony (Root Network / Leaf Canopy / Seed Reserve) · seedlings start much smaller (density 0.15 → 0.05) with a longer seedling → dense journey · Biomass is the dominant HUD element · visible Waterborne seed crossings (arrival vs foothold) · golden intentionally regenerated | ✅ (machine-verified; human verdict pending) |
-| **Human procedural playtest** | owner plays seeds 13 and 8: [`docs/PLAYTEST_PROCEDURAL_v1.md`](docs/PLAYTEST_PROCEDURAL_v1.md) | ⏸ **paused for BLOOM-008/009, to resume**, gates the next row |
-| Post-gate 3e · more archetypes/content | further archetypes and traits (§10.1, §17) | 🔒 after the procedural playtest |
-| Post-gate 4–5 | pressure scenarios (§11) · visual polish + final hex boards (§7, §12); approved direction recorded in [`docs/VISUAL_DIRECTION_v1.0.md`](docs/VISUAL_DIRECTION_v1.0.md) | later (**not started**) |
+| **Human procedural playtest** | owner played seeds 13 and 8: [`docs/PLAYTEST_PROCEDURAL_v1.md`](docs/PLAYTEST_PROCEDURAL_v1.md) | ✅ **passed** (owner, after BLOOM-009): gameplay good, colony development kept; the main concern is UI crowding |
+| Post-gate 3e · second archetype (BLOOM-010) | **Desert World**: hot, dry, mostly contiguous; water is the problem, wet basins are the refuges; Drought vs Humidify strategies; same generic generate → validate (1–8) → retry path | ✅ (machine-verified; owner playtest [`docs/PLAYTEST_DESERT_v1.md`](docs/PLAYTEST_DESERT_v1.md) pending) |
+| Post-gate 3f · more archetypes/content | further archetypes and traits (§10.1, §17) | next |
+| Post-gate 4–5 | pressure scenarios (§11) · visual polish + final boards (§7, §12), including the approved contextual pop-out panels; direction recorded in [`docs/VISUAL_DIRECTION_v1.0.md`](docs/VISUAL_DIRECTION_v1.0.md) | later (**not started**) |
 
-**Procedural validation (BLOOM-006):** validator layers 1–8 (bible §10.3) are implemented. Ocean Archipelago generation accepts a world only if it passes structural validity, reachability, winnability, the win margin, strategy diversity (≥ 2 materially distinct broad environmental approaches, described by effect-based strategy signatures) and pacing (provisional time bands). This is validator evidence from a perfect-knowledge witness. **No procedural world has been validated by a human player yet**, and there is no player-facing planet menu.
+**Procedural validation (BLOOM-006):** validator layers 1–8 (bible §10.3) are implemented. Archetype generation accepts a world only if it passes structural validity, reachability, winnability, the win margin, strategy diversity (≥ 2 materially distinct broad environmental approaches, described by effect-based strategy signatures) and pacing (provisional time bands). This is validator evidence from a perfect-knowledge witness. The owner has playtested Ocean Archipelago seeds 13 and 8; there is no player-facing planet menu.
 
-**Procedural-run harness (BLOOM-007):** a generated Ocean Archipelago can be played in the real game UI through a developer launch path (below). The page calls the production `BLOOM.generateFromArchetype`, so it only ever loads a world that passes layers 1–8. It is a playtest harness, **not the final planet menu**. The procedural worlds have **not passed human validation**: that is the owner playtest in [`docs/PLAYTEST_PROCEDURAL_v1.md`](docs/PLAYTEST_PROCEDURAL_v1.md), and **a second archetype stays gated on it**.
+**Procedural-run harness (BLOOM-007):** a generated world can be played in the real game UI through a developer launch path (below). The page calls the production `BLOOM.generateFromArchetype`, so it only ever loads a world that passes layers 1–8. It is a playtest harness, **not the final planet menu**.
+
+**Desert World (BLOOM-010):** the second archetype, chosen to stress different systems from the islands: low water, one mostly contiguous landmass, heat, dryness, a few wet refuges, and the Terraform-vs-Adapt water choice. It is data plus generic generator knobs, with no Desert-specific generator or simulation code. Its own validation policy requires every proven strategy to answer the dry ground and caps the wait after the last purchase (below). Waterborne Seeds stays generic: it is offered only where a real crossing exists (2 of 40 sweep worlds) and is never part of a Desert win. The map gets a tiny temporary sand/dune/lake treatment from archetype data. The owner has not played it yet ([`docs/PLAYTEST_DESERT_v1.md`](docs/PLAYTEST_DESERT_v1.md)).
 
 **Colony establishment (BLOOM-008) + per-region colony development (BLOOM-009), owner-authorized retunes:**
 
@@ -42,7 +45,7 @@ The original plan was eight isolated portion demos. In August 2026 the **v1.1 di
 - **Evidence and config.** The BLOOM-009 study ([`docs/evidence/bloom-009/colony-study.txt`](docs/evidence/bloom-009/colony-study.txt)) shows situational per-colony play beating Balanced, and Balanced beating misplaced allocations; Leaves is no longer the automatic answer. All numbers are in `config.colony` / `config.establish`. Validator witnesses never allocate or invest, so layers 4–8 are a no-allocation floor.
 - **Other BLOOM-009 changes.** Biomass is now the dominant HUD element. Waterborne crossings show seed dots crossing the water: a faint ripple means the seeds arrived; a bright burst means a new foothold.
 
-**Visual direction (approved future direction, not implemented):** kid-friendly and organic; large type and big touch-friendly controls; a desktop/iPad hybrid; no technical-dashboard look; Biomass visually dominant. A future living-plant **specimen window** will show the plant evolving while the map shows the planet blooming. Plants will be built from modular authored parts assembled by code, and rendering stays on plain HTML/CSS/canvas/SVG unless a demonstrated need appears. Details: [`docs/VISUAL_DIRECTION_v1.0.md`](docs/VISUAL_DIRECTION_v1.0.md). Visual polish has **not** begun; mechanics validation (the human playtest) comes first.
+**Visual direction (approved future direction, not implemented):** kid-friendly and organic; large type and big touch-friendly controls; a desktop/iPad hybrid; no technical-dashboard look; Biomass visually dominant. A future living-plant **specimen window** will show the plant evolving while the map shows the planet blooming. Plants will be built from modular authored parts assembled by code, and rendering stays on plain HTML/CSS/canvas/SVG unless a demonstrated need appears. The crowded permanent left panel is temporary scaffolding: the final layout leans toward **contextual pop-out panels, drawers and large cards** (region panel, colony-development panel, larger Adapt / Spread / Terraform surfaces, details on demand), with the map as the visual centre. Details: [`docs/VISUAL_DIRECTION_v1.0.md`](docs/VISUAL_DIRECTION_v1.0.md) (§9 for the panels). Visual polish has **not** begun.
 
 **What the slice proves (verified headless):** several broad winning builds exist. The human-paced recipes in `slice-check` are: the *wet* build (Flood I), which gives up Dust Reach; the *dry* build (Drought I), which gives up Marsh Low; and a *Terraform* build (Humidify ×2 instead of Drought, with no water Adaptation), which also gives up Marsh Low. The witness solver finds more (e.g. a Cool or Warm Terraform replacing a temperature point). The tested build with **neither water Adaptation nor water Terraform** (Seed Output ×2, Early Maturity, Cold ×2, Heat, Salt, Radiation) caps at 67.6%. The solver's static search agrees: within its bounds, no build without a water tool exceeds 67.6%. Over-committing (Flood/Drought II) collapses the home regions, and the preview warns you before you do that.
 
@@ -51,8 +54,8 @@ The original plan was eight isolated portion demos. In August 2026 the **v1.1 di
 1. ~~Extract/stabilize shared simulation modules~~ (BLOOM-002) · ~~reconnect procedural generation~~ (BLOOM-003).
 2. ~~Water-crossing Spread + geographic reachability~~ (BLOOM-004).
 3. ~~Archetype layer, Ocean Archipelago, validator layers 4–6~~ (BLOOM-005) · ~~layers 7–8: strategy diversity + pacing~~ (BLOOM-006).
-4. ~~Developer procedural-run harness~~ (BLOOM-007) → **owner procedural playtest** ([`docs/PLAYTEST_PROCEDURAL_v1.md`](docs/PLAYTEST_PROCEDURAL_v1.md), seeds 13 and 8). Paused on owner feedback; ~~colony establishment + Colony Focus~~ (BLOOM-008); ~~per-region colony development, local specializations, crossing feedback~~ (BLOOM-009); resume the test.
-5. **More archetypes and content** (§10.1, §17), gated on that playtest. Each new archetype states its own `minStrategies` and pacing bands.
+4. ~~Developer procedural-run harness~~ (BLOOM-007) → ~~owner procedural playtest~~ (passed after ~~BLOOM-008~~ / ~~BLOOM-009~~).
+5. **More archetypes and content** (§10.1, §17): ~~Desert World~~ (BLOOM-010; owner playtest [`docs/PLAYTEST_DESERT_v1.md`](docs/PLAYTEST_DESERT_v1.md) pending). Each new archetype states its own identity rule, `minStrategies` and pacing bands.
 6. **Pressure scenarios** (§11).
 7. **Visual polish and final board interactions** (§7, §12), following the approved direction in [`docs/VISUAL_DIRECTION_v1.0.md`](docs/VISUAL_DIRECTION_v1.0.md) (specimen window, modular plant parts). A player-facing planet menu is still to come.
 8. Still-open design questions (need prototypes, not debate): bubble frequency/auto-collect, how much to predict before a Terraform buy, final plant personality, exact board layout.
@@ -67,12 +70,13 @@ node tools/gen-check.js                                                  # gener
 node tools/crossing-check.js                                             # Waterborne Seeds / crossings, Node, <1 s
 node tools/archetype-check.js                                            # archetypes, winnability, 40-seed production sweep, Node, ~55 s
 node tools/strategy-check.js                                             # layers 7–8: strategy diversity + pacing, Node, ~16 s
+NODE_PATH="$(npm root -g)" node tools/desert-check.js [--shots <dir>] [--json <out>] [--no-browser]  # Desert World archetype, Node + browser, ~60 s
 NODE_PATH="$(npm root -g)" node tools/slice-check.js [--shots <dir>]     # demo-run UI, real shop buttons
 NODE_PATH="$(npm root -g)" node tools/surface-check.js [--shots <dir>]   # demo-surface UI, both modes
 NODE_PATH="$(npm root -g)" node tools/procedural-run-check.js [--shots <dir>]  # demo-run procedural harness, real controls
 NODE_PATH="$(npm root -g)" node tools/colony-development-check.js [--shots <dir>]  # BLOOM-009 per-region colony development (engine + UI)
 node tools/pacing-metrics.js [--json <out>]                              # opening / pacing measurements (report, not pass/fail)
-node tools/colony-study.js [--json <out>] [--quick]                      # per-colony allocation + local-investment balance study (report)
+node tools/colony-study.js [--json <out>] [--quick] [--worlds fb,13,8,d25,d9]  # per-colony allocation + local-investment study (report; d<N> = Desert seed N)
 ```
 
 - **`sim-check.js`** (19 checks, no dependencies):
@@ -137,8 +141,18 @@ node tools/colony-study.js [--json <out>] [--quick]                      # per-c
   - **strategies:** First Bloom stays winnable with no allocation or investment. Situational per-colony play beats Balanced, which beats misplaced play. Leaves-everywhere loses to situational play. Over-investing never soft-locks the global game. Seeds 13 and 8 stay production-valid (layers 1–8) and winnable; seed 35 still fails.
   - **density:** new tiles start at 0.05 (0.15 before), still reach Dense, and keep thickening after a region fills.
   - **UI:** four focus buttons plus the local upgrades with Biomass costs and "need N more"; real map and button clicks across three regions; focus badges drawn on the map; purchase and refusal through real clicks; Biomass is the largest HUD text; live 1× clicks land. The same origin region is captured from just-seeded to Dense, and the drawn patch area tracks `sim.dens`. Crossing animations copy real engine events only; a foothold ends in a bright burst, a hostile arrival never does.
-- All four browser suites need `npm i -g playwright`.
-- Exit code 1 = failure for all nine suites.
+- **`desert-check.js`** (64 checks; BLOOM-010) — Node part, then a real-browser part:
+  - **archetype data:** schema, including rejections for the new optional keys; the catalogue is plain data; Ocean Archipelago's policy is untouched.
+  - **determinism:** same seed → same world, recorded params reproduce it, deterministic bounded retry, explicit failure.
+  - **40-seed sweep** through the full production path. The desert has to stay recognizable: low water, contiguous land, much drier and warmer than Ocean and the default generator, never uniformly lethal, varied, with genuine refuge origins. The check also enforces the sweep quality bar and prints the full statistics.
+  - **positive fixture (seed 25):** two materially different strategies holding different land — organism-first Drought ×2 vs Drought + Humidify + Heat + Radiation. It also covers an independent earned-Biomass replay, the margin, the pacing bands, and a static proof that the water problem is real.
+  - **Waterborne Seeds is generic:** absent on every one-landmass desert, never in a Desert win, still required on Ocean.
+  - **natural negatives:** layer 4 (seed 35/0), layer 7 (50/0), layer 8 (16/0) and a non-refuge origin (9/0), each skipped by production.
+  - **other worlds:** First Bloom valid; Ocean seeds 13/8 still pass with stable identities; Ocean seed 35 still fails explicitly.
+  - **colony development** works unchanged on a desert.
+  - **browser:** launch and identity; the sand/lake treatment renders; dry-region inspection with both remedies; the lake-water note; the Drought preview; wins through real shop buttons with both strategies; the Bloom Report; no Ocean wording and no witness data; Ocean seeds 13/8 still launch.
+- All five browser suites need `npm i -g playwright`.
+- Exit code 1 = failure for all ten suites.
 
 ## Architecture
 
@@ -154,11 +168,11 @@ resources/bloom-witness.js   witness solver: winnability (layers 4–6), strateg
 resources/bloom-archetype.js BLOOM.generateFromArchetype: deterministic generate → validate → retry
 content/config.js            every rate / cost scale / threshold / category boundary (§15, invariant 11)
 content/traits.js            the upgrade catalogue as data: board, effect type, cost, science line
-content/archetypes.js        planet archetypes as data (Ocean Archipelago)
+content/archetypes.js        planet archetypes as data (Ocean Archipelago, Desert World)
 planets/first_bloom.js       the authored slice planet
 demos/demo-run.html          UI + rendering for a run: First Bloom by default; ?archetype=<id>&seed=<n> plays a generated world
 demos/demo-surface.html      UI + rendering for the surface demo (authored Cinder-Frost + Random)
-tools/                       sim-check · gen-check · crossing-check · archetype-check · strategy-check (Node) · slice-check · surface-check · procedural-run-check · colony-development-check (browser) · pacing-metrics · colony-study (reports) · golden/
+tools/                       sim-check · gen-check · crossing-check · archetype-check · strategy-check (Node) · slice-check · surface-check · procedural-run-check · colony-development-check (browser) · desert-check (Node + browser) · pacing-metrics · colony-study (reports) · golden/
 docs/evidence/               screenshots attached to directive reports
 ```
 
@@ -167,7 +181,13 @@ docs/evidence/               screenshots attached to directive reports
   - A procedural planet carries an explicit `tilemap` (section index per tile, `-1` = water).
   - Sections may be `kind: "land"` (default) or `"water" | "void" | "lava"`.
   - `BLOOM.resolveLayout` turns either form into the tiles the simulation runs on, and the validator checks those same tiles.
-- **`BLOOM.generatePlanet({seed, waterPct, sections, width, height, minLandmassTiles, maxCrossingGap, terrainWeights, climate})`** is deterministic. `terrainWeights` and `climate` are the knobs archetypes set; their defaults reproduce the Portion 1 layout exactly. It uses a mulberry32 RNG and never `Math.random`. Its steps:
+- **`BLOOM.generatePlanet({seed, waterPct, sections, width, height, minLandmassTiles, maxCrossingGap, terrainWeights, climate, names})`** is deterministic. `terrainWeights`, `climate` and `names` are the knobs archetypes set; their defaults reproduce the Portion 1 layout exactly. BLOOM-010 added generic climate knobs, all neutral at their defaults (Ocean worlds are tile-for-tile identical):
+  - `basinMoisture`: low-lying sections are wetter;
+  - `dryOffset` / `wetOffset`: where soils count as dry or wet;
+  - `drySaltChance`: salt pans on dry ground;
+  - `lightBias`;
+  - the origin preferences `originTemp`, `originMoistureOffset` and `originMoistureWeight`;
+  - optional region-name word pools (`names`). It uses a mulberry32 RNG and never `Math.random`. Its steps:
   1. carve water from a noise field at the requested percentile;
   2. turn islets smaller than `minLandmassTiles` (default 12) into shallow water;
   3. grow sections by land-only flood fill, so every section is contiguous and never spans water;
@@ -186,12 +206,23 @@ docs/evidence/               screenshots attached to directive reports
   - **Where it's offered.** The trait appears only on maps that have a crossing, so First Bloom's shop is unchanged.
 - **Archetypes (bible §10.1)** are plain data in `content/archetypes.js`: section range, water range and tolerance, climate, geography and validation rules. The generator stays general.
   - **Ocean Archipelago:** 12–18 sections and 55–68% water (±5), in a maritime climate. That means a smaller temperature swing, a humid sky and more saline coasts from sea spray. Finer-scale terrain gives many near islands, at least 3 landmasses, and an origin landmass holding ≤ 62% of the land, so a crossing strategy is required to win.
+  - **Desert World (BLOOM-010):**
+    - 12–18 sections and 2–12% water (±4): lakes in the lowest ground, not seas.
+    - An arid, warm climate: sky moisture 18 against the plant's starting window of 32–68, and about 4 °C in the north to 34 °C in the south.
+    - Low basins are wetter, and the lake shores get extra moisture; those basins are the refuges. Clear skies add +20 light.
+    - Dry ground has poor nutrients, and some dry sections are salt pans.
+    - Continent-scale terrain: at most 2 landmasses, and the origin's landmass holds ≥ 85% of the land.
+    - The origin must be a genuine refuge: its own fitness ≥ 0.72 before the protected-refuge floor.
+    - Region names come from desert word pools (Oasis, Wadi, Dune, Erg, Playa …).
+    - It carries a temporary `render` treatment (sand tint, lake water, dune stipple).
+    - Its policy reuses Ocean's pacing bands (they measured cleanly on the Desert sweep) and adds `maxTerminalWaitSeconds` 240 and `requiredConditions: ["Water:dry"]`. Both are optional archetype keys; Ocean sets neither.
   - **`BLOOM.generateFromArchetype(archetype, publicSeed, {config, traits})`** is deterministic. Attempt *k* uses the generation seed FNV-1a(`id|seed|k`) and draws its section count and water request from that seed. An attempt is accepted only when:
     - the structure and strongest-Spread reachability checks pass;
     - actual water is within tolerance of the request;
-    - the landmass and origin-share rules hold;
+    - the landmass and origin-share rules hold (plus, when an archetype sets them, `maxLandmasses`, `minOriginLandmassShare` and `minOriginFitness`);
     - (for `winnable` archetypes) validator layers 4–6 pass;
-    - (when the archetype sets `minStrategies` / `pacing`, as Ocean Archipelago does) layers 7–8 **PASS**. INCONCLUSIVE counts as a rejection.
+    - (when the archetype sets `minStrategies` / `pacing`, as both archetypes do) layers 7–8 **PASS**. INCONCLUSIVE counts as a rejection;
+    - (when the archetype sets `requiredConditions`) every proven strategy answers those conditions.
   - It stops at `generation.maxAttempts` (24) and **throws** with every attempt's reasons rather than returning a bad world. `planet.archetype` records the public seed, attempt, generation seed, water and witness summary.
 - **Witness builds (§10.3 layers 4–6).** `BLOOM.validatePlanet(planet, config, {traits, winnability: true})` asks `BLOOM.findWitness` for proof, in two stages:
   1. **Static search.** It enumerates legal terminal builds by effect type under the engine's own rules and estimates the land each could hold (growable sections reachable from the origin, plus real crossings). It keeps the builds that reach win + `config.validation.winMargin` (0.70 + 0.03) and ranks them cheapest first.
@@ -212,17 +243,28 @@ docs/evidence/               screenshots attached to directive reports
   - They are time bands for a perfect-knowledge witness (people are slower; the bible's session target is 10–20 human minutes), not final balance.
   - Also recorded: purchase intervals, win and margin times, peak coverage, the terminal wait, Biomass earned per game-minute (and whether it grows), and early land reachable/growable without upgrades.
 - **Verdicts.** Layer 7 needs `minStrategies` distinct classes that win with margin; layer 8 needs that many that also pace. A shortfall is **FAIL** only when every class was settled and the static enumeration was uncapped. Any cap (`config.validation.diversity`: 40 simulations, 2 builds per class) makes it **INCONCLUSIVE**. A capped search can still **PASS** once the strategies are proven.
-- **Current sweep (public seeds 1–40).**
+- **Current sweep, Ocean Archipelago (public seeds 1–40).**
   - 34 accepted; seeds 3, 7, 19, 33, 35 and 38 fail explicitly (seed 33 joined the failures with BLOOM-009's retune; under layers 1–6 only seed 35 failed).
   - Accepted strategies reach the margin in 362–891 s, make their first purchase at 49–119 s, and have a largest purchase gap of 86–175 s.
   - Generation takes a median of ~0.6 s per seed (worst ~13 s).
+- **Current sweep, Desert World (public seeds 1–40).** Full statistics: [`docs/evidence/bloom-010/desert-check.txt`](docs/evidence/bloom-010/desert-check.txt).
+  - 40 accepted (30 at attempt 0, 10 at attempt 1). Seeds 41–120 were also all accepted within a few attempts.
+  - Rejected attempts: 7 non-refuge origins, 2 at layer 8, 1 at layer 4.
+  - Water 2–12% (mean 7.3%); 38 worlds are one landmass and 2 are two.
+  - Area-weighted mean moisture 14 (Ocean 63) and temperature 19 °C (Ocean 11 °C). About 76% of the land is Water-limited at the start.
+  - Strategy water means per world: Drought vs Drought 17, Drought vs Drought + Humidify 14, both Drought + Humidify 6, Humidify vs Humidify 2, Drought vs Humidify 1.
+  - Margins 362–692 s, first purchase 47–102 s, largest gap 78–165 s.
+  - Median 0.5 s per seed (worst ~3 s).
 - **Validator reachability (§10.3 layer 3)** reports sections and landmasses reachable by ordinary spread and with the strongest Spread in the catalogue. Islands that need Waterborne Seeds are allowed. Land unreachable even with it fails a procedural planet.
 - **Content files** are plain classic scripts holding JSON-shaped data. They load over bare `file://` with one source of truth.
 - **Upgrade effects** are four engine types (`tempPoint`, `waterArm`, `level`, `sky`). A new trait of an existing type is data only.
 - **Current limitations:**
   - One crossing trait at one range, with no currents or wind (other Spread crossings from bible §17, such as Wind or Ballistic Seeds, don't exist yet).
   - The Waterborne Seeds preview shows direct and multi-hop *geographic* reach, split into suitable-now vs hostile-now. It can't predict establishment odds or timing.
-  - One archetype (Ocean Archipelago) and **no player-facing procedural planet menu** yet. Generated worlds are reachable only through the developer query-string harness.
+  - Two archetypes (Ocean Archipelago, Desert World) and **no player-facing procedural planet menu** yet. Generated worlds are reachable only through the developer query-string harness.
+  - Desert World's second strategy often differs from the first only in how it answers the hot south (Heat Tolerance vs Cool the Sky) rather than the water question. The fixture (seed 25) and many sweep worlds do show the Drought-vs-Humidify split. Every Desert strategy answers the dry ground by rule.
+  - Desert acceptance is high (40/40). The validator still rejects about 5% of attempts: non-refuge origins, too-fast worlds, a layer-4 world and single-strategy worlds.
+  - On Desert World, Roots is useful mainly for thickening young colonies such as the origin refuge. Its marginal-ground protection rarely matters, because after a water tool most desert colonies are either green or red, with few yellow ones ([`docs/evidence/bloom-010/colony-study.txt`](docs/evidence/bloom-010/colony-study.txt)).
   - Layers 7–8 are validator evidence, **not human validation**. Witnesses use perfect knowledge and buy on the first affordable tick; no procedural world has been playtested by a person. The pacing bands are provisional hypotheses.
   - Many accepted worlds earn their second strategy by answering the *same* condition by other means (e.g. Flood Adaptation vs Dry the Sky), sometimes holding the same land. The directive counts Adapt vs Terraform as material; a stricter rule (require different land held) is a possible later tightening.
   - Static search bounds still apply to layer-7 FAIL proofs: water ≤ 2 points and ≤ 2 Terraform steps per sky axis.
@@ -242,6 +284,8 @@ Developer procedural-run launch (a playtest harness, not the planet menu). Appen
 | Ocean Archipelago, public seed 13 | `?archetype=ocean_archipelago&seed=13` |
 | Ocean Archipelago, public seed 8 | `?archetype=ocean_archipelago&seed=8` |
 | Known generation failure (seed 35) | `?archetype=ocean_archipelago&seed=35` → explicit **NO WORLD GENERATED** panel |
+| Desert World, public seed 25 (main Desert fixture) | `?archetype=desert_world&seed=25` |
+| Desert World, public seed 9 | `?archetype=desert_world&seed=9` |
 
 A seed that fails generation never falls back to another seed. The footer shows the archetype, public seed, accepted attempt and planet name/id.
 

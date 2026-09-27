@@ -1,7 +1,11 @@
 // BLOOM — per-colony allocation + local investment balance study (BLOOM-009). Plain Node, no browser. A report, not
 // pass/fail (tools/colony-development-check.js holds the pass/fail proofs).
 //
-//   node tools/colony-study.js [--json <out.json>] [--seeds N] [--quick]
+//   node tools/colony-study.js [--json <out.json>] [--seeds N] [--quick] [--worlds fb,13,8,d25,d9]
+//
+// Worlds: fb = First Bloom; a number = that Ocean Archipelago public seed; d<N> = Desert World public seed N (BLOOM-010).
+// Desert worlds also run two desert-minded local investments (a Root Network on the most marginal colony, a Seed
+// Reserve on the widest land frontier). The closing summary compares each focus with Balanced per world.
 //
 // A bot buys a fixed global recipe (each upgrade 4 s after it becomes affordable, as tools/pacing-metrics.js does) while
 // an ALLOCATION POLICY directs its colonies (re-read every 2 s; a change = one player click) and an optional
@@ -19,7 +23,7 @@ const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? proces
 const config = JSON.parse(JSON.stringify(BLOOM_DATA.config));
 for (const kv of (arg("--set", "") || "").split(",").filter(Boolean)) { const [k, v] = kv.split("="), ks = k.split("."); let o = config;
   for (const x of ks.slice(0, -1)) o = o[x]; o[ks.at(-1)] = JSON.parse(v); }
-const ONLY = arg("--only", null), WORLDS = arg("--worlds", "fb,13,8").split(",");
+const ONLY = arg("--only", null), WORLDS = arg("--worlds", "fb,13,8,d25,d9").split(",");
 const QUICK = process.argv.includes("--quick"), NSEEDS = +arg("--seeds", QUICK ? 4 : 8), OUT = arg("--json", null);
 const TPS = 1000 / config.tickMs, REACT = 25, EVERY = 12, MARKS = [60, 120, 180], EMARKS = [30, 60, 120, 180];
 const mb = BLOOM.gen.mulberry32, mean = xs => xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
@@ -76,6 +80,13 @@ const INVEST = {
     const best = cols.filter(c => c.coast > 0 && !sim.getSpecialization(c.s)).sort((a, b) => b.coast - a.coast)[0]; return best ? [best.s, "seedReserve"] : null; },
   // a Root Network on the origin at the start of the run
   rootNetworkOrigin: (sim, cols) => !sim.getSpecialization(sim.map.ORIGIN) ? [sim.map.ORIGIN, "rootNetwork"] : null,
+  // BLOOM-010 (desert-minded): ONE Root Network on the Living colony with the poorest ground that still holds (yellow, above
+  // colony.protectAbove) — where stands struggle to thicken — once it has any real presence
+  rootNetworkMarginal: (sim, cols) => { if (sim.colonies.spec.includes("rootNetwork")) return null;
+    const c = cols.filter(c => c.living >= 8 && stressed(c) && !sim.getSpecialization(c.s)).sort((a, b) => a.fit - b.fit)[0]; return c ? [c.s, "rootNetwork"] : null; },
+  // ONE Seed Reserve on the colony pushing into the most open, growable land (no water crossing needed), once established
+  seedReserveFrontier: (sim, cols) => { if (sim.colonies.spec.includes("seedReserve")) return null;
+    const c = cols.filter(c => c.frontier >= 3 && !young(c) && !sim.getSpecialization(c.s)).sort((a, b) => b.frontier - a.frontier)[0]; return c ? [c.s, "seedReserve"] : null; },
   // greedy over-investor: a specialization of its allocation's kind on every Living colony whenever affordable
   everywhere: (sim, cols) => { const c = cols.find(c => c.living > 0 && !sim.getSpecialization(c.s)); if (!c) return null;
     const m = sim.getColonyFocus(c.s); return [c.s, m === "roots" ? "rootNetwork" : m === "seeds" ? "seedReserve" : "leafCanopy"]; },
@@ -115,10 +126,10 @@ const seeds = Array.from({ length: NSEEDS }, (_, k) => 101 + k * 7), report = { 
 const FB_PLANS = { wet: ["seedOut", "cold", "flood", "cold", "heat", "salt", "earlyMat", "seedOut"], terraformWater: ["seedOut", "heat", "salt", "cold", "humid", "humid"] };
 const allocRows = Object.keys(POLICIES).map(p => [p, "none"]).filter(([p]) => !ONLY || ONLY.split("+").includes(p));
 const investRows = ONLY ? [] : [["balanced", "canopyOrigin"], ["situational", "canopyOrigin"], ["situational", "canopyThenReserve"], ["situational", "rootNetworkOrigin"], ["situational", "everywhere"]];
-function study(name, planet, plans, sds) {
+function study(name, planet, plans, sds, extraRows = []) {
   const W = report.worlds[name] = {};
   for (const [pn, plan] of Object.entries(plans)) { W[pn] = {};
-    for (const [pol, inv] of [...allocRows, ...investRows]) W[pn][inv === "none" ? pol : `${pol}+${inv}`] = row(planet, plan, sds, pol, inv); }
+    for (const [pol, inv] of [...allocRows, ...investRows, ...(ONLY ? [] : extraRows)]) W[pn][inv === "none" ? pol : `${pol}+${inv}`] = row(planet, plan, sds, pol, inv); }
 }
 if (WORLDS.includes("fb")) study("first_bloom", BLOOM_DATA.planets.first_bloom, QUICK ? { wet: FB_PLANS.wet } : FB_PLANS, seeds);
 const OA = BLOOM_DATA.archetypes.find(a => a.id === "ocean_archipelago");
@@ -127,6 +138,13 @@ for (const s of [13, 8].filter(x => WORLDS.includes(String(x)))) {
   p.archetype.strategies.list.forEach((x, k) => { plans[`strategy${k + 1}`] = x.purchases.map(q => q[0]); });
   study(`oa_seed_${s} (attempt ${p.archetype.attempt}, ${p.name})`, p, QUICK ? { strategy1: plans.strategy1 } : plans, seeds.slice(0, Math.min(NSEEDS, 6)));
 }
+const DW = BLOOM_DATA.archetypes.find(a => a.id === "desert_world");
+for (const w of WORLDS.filter(x => /^d\d+$/.test(x))) {
+  const s = +w.slice(1), p = BLOOM.generateFromArchetype(DW, s, { config, traits }), plans = {};
+  p.archetype.strategies.list.forEach((x, k) => { plans[`strategy${k + 1}`] = x.purchases.map(q => q[0]); });
+  study(`desert_seed_${s} (attempt ${p.archetype.attempt}, ${p.name})`, p, QUICK ? { strategy1: plans.strategy1 } : plans, seeds.slice(0, Math.min(NSEEDS, 6)),
+    [["situational", "rootNetworkMarginal"], ["situational", "seedReserveFrontier"], ["balanced", "rootNetworkMarginal"]]);
+}
 report.ms = Date.now() - t0;
 for (const [w, P] of Object.entries(report.worlds)) for (const [pn, rows] of Object.entries(P)) {
   console.log(`\n## ${w} · ${pn}   (${pn === "wet" || pn === "terraformWater" ? FB_PLANS[pn].join(" → ") : "witness strategy recipe"})`);
@@ -134,5 +152,13 @@ for (const [w, P] of Object.entries(report.worlds)) for (const [pn, rows] of Obj
   for (const [k, r] of Object.entries(rows))
     console.log(`  ${k.padEnd(40)} ${r.won.padEnd(5)} ${String(r.win).padStart(6)} ${JSON.stringify(r.winRange).padEnd(16)} ${String(r.firstBuy).padStart(6)}  ${String(r.clicks).padStart(5)}  ${String(r.specs).padStart(4)} ${String(r.localSpent).padStart(5)}/${String(r.globalSpent).padEnd(6)} ${MARKS.map(s => String(r.marks[s].earned).padStart(6)).join("")}  ${MARKS.map(s => String(r.marks[s].cov).padStart(5)).join("")}   ${EMARKS.map(s => r.originEst[s].toFixed(2)).join(" ")}`);
 }
+// summary: each focus vs Balanced (mean win-time change; negative = faster) — is any single focus dominant anywhere?
+console.log("\n## focus vs Balanced — mean win-time change in seconds (negative = faster; averaged over each world's recipes)");
+const CMP = ["originRoots", "rootsEverywhere", "leavesEverywhere", "seedsEverywhere", "situational", "misplaced"].filter(k => !ONLY || ONLY.split("+").includes(k));
+console.log("  " + "world".padEnd(46) + CMP.map(k => k.padStart(17)).join(""));
+report.summary = {};
+for (const [w, P] of Object.entries(report.worlds)) { const d = {};
+  for (const k of CMP) { const xs = Object.values(P).filter(r => r[k] && r[k].win !== null && r.balanced && r.balanced.win !== null).map(r => r[k].win - r.balanced.win); d[k] = xs.length ? r1(mean(xs)) : null; }
+  report.summary[w] = d; console.log("  " + w.padEnd(46) + CMP.map(k => String(d[k]).padStart(17)).join("")); }
 console.log(`\n(${report.ms} ms)`);
 if (OUT) { fs.writeFileSync(OUT, JSON.stringify(report, null, 1)); console.log("wrote", OUT); }

@@ -13,7 +13,8 @@
 //     same tool captures the earlier baselines; per-region strategies are tools/colony-study.js);
 //   · the first-upgrade time again with Biomass bubbles switched off (bubbles are a large, random share of early
 //     income, so this isolates what the colony itself — and its focus — earns).
-// Procedural worlds (Ocean Archipelago seeds 13 and 8) run the recipe the accepted world's first strategy used.
+// Procedural worlds (Ocean Archipelago seeds 13 and 8; Desert World seeds 25 and 9 since BLOOM-010) run the recipes the
+// accepted world's strategies used.
 "use strict";
 const fs = require("fs"), path = require("path");
 const ROOT = path.resolve(__dirname, "..");
@@ -92,13 +93,14 @@ report.worlds.first_bloom = summarize(BLOOM_DATA.planets.first_bloom, {
   terraformWater: ["seedOut", "heat", "salt", "cold", "humid", "humid"],
 }, seeds);
 if (PROC) {
-  const OA = BLOOM_DATA.archetypes.find(a => a.id === "ocean_archipelago");
-  for (const s of [13, 8]) {
-    let planet; try { planet = BLOOM.generateFromArchetype(OA, s, { config, traits }); }
-    catch (e) { report.worlds[`oa_seed_${s}`] = { failed: e.message.slice(0, 200) }; continue; }
+  const OA = BLOOM_DATA.archetypes.find(a => a.id === "ocean_archipelago"), DW = BLOOM_DATA.archetypes.find(a => a.id === "desert_world");
+  for (const [A, s, key] of [[OA, 13, "oa_seed_13"], [OA, 8, "oa_seed_8"], [DW, 25, "desert_seed_25"], [DW, 9, "desert_seed_9"]]) {
+    if (!A) continue;
+    let planet; try { planet = BLOOM.generateFromArchetype(A, s, { config, traits }); }
+    catch (e) { report.worlds[key] = { failed: e.message.slice(0, 200) }; continue; }
     const st = planet.archetype.strategies, plans = {};
     st.list.forEach((x, k) => { plans[`strategy${k + 1}`] = x.purchases.map(p => p[0]); });
-    report.worlds[`oa_seed_${s}`] = { attempt: planet.archetype.attempt, name: planet.name, strategies: st.list.map(x => ({ signature: x.signature, witnessMarginSeconds: x.marginSeconds, witnessFirstPurchaseSeconds: x.firstPurchaseSeconds })),
+    report.worlds[key] = { attempt: planet.archetype.attempt, name: planet.name, strategies: st.list.map(x => ({ signature: x.signature, witnessMarginSeconds: x.marginSeconds, witnessFirstPurchaseSeconds: x.firstPurchaseSeconds })),
       ...summarize(planet, plans, seeds.slice(0, Math.min(4, seeds.length))) };
   }
 }

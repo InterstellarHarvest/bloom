@@ -394,6 +394,11 @@ Examples:
 - **Humid Jungle World:** abundant water, low-light growth penalties, flood risk.
 - **Volatile World:** wide condition swings and strong Terraform consequences.
 
+*(BLOOM-005…010 addendum.)* Two archetypes are implemented as data (`content/archetypes.js`) over one generic generator, validator and simulation. Each archetype owns its identity rule and validation policy; changing one never changes another.
+
+- **Ocean Archipelago:** the defining problem is **crossing**. No single island holds enough land to win, so every winning strategy includes Waterborne Seeds.
+- **Desert World:** the defining problem is **water**. It is a hot, mostly contiguous world with a few lakes. Water collects in low basins, and those wet basins are the refuges (the origin is always a genuine one). The dry majority of the land needs a water answer, and every proven strategy must answer the dry ground somehow. Two families compete: evolve to live dry (Drought Adaptation), which gives up the wettest ground, or humidify the sky (Terraform), which needs less Drought but reaches less of the deep desert. Crossing is never the puzzle, and Waterborne Seeds appears only where the generic offer rule finds a real crossing. Strong light is a growth bonus; poor soil nutrients slow dry ground without blocking it; some dry basins are salt pans; the hot south adds heat and strong-sun radiation, which a plant may answer or give up.
+
 Within the archetype, randomize:
 
 - land and water layout;
@@ -522,6 +527,8 @@ Target a **cutesy, modern, friendly-science aesthetic**:
 - a planet that visibly changes from lonely and hostile to lively and green.
 
 Final visual direction remains open and should be explored through quick comparison prototypes before it is locked.
+
+*(BLOOM-010 addendum: approved future direction, not implemented.)* After the procedural playtest the owner judged the gameplay loop good and the main remaining problem **UI crowding**. The crowded permanent left panel is temporary scaffolding. The final information architecture leans toward **contextual pop-out panels, drawers and large cards** (in the spirit of SimCity / The Sims, without copying their look): a larger panel for the selected region, a dedicated colony-development panel, larger surfaces for Adapt / Spread / Terraform, and details on demand. It prefers larger fonts and buttons over compression, and the map stays the visual centre. Details: [`docs/VISUAL_DIRECTION_v1.0.md`](docs/VISUAL_DIRECTION_v1.0.md) §9.
 
 *(BLOOM-009 addendum: approved future direction, not yet implemented.)* The owner's interface north star, the living plant / specimen window, the science-vs-visual separation (Adapt changes the plant; Terraform changes only its environment), the visual-channel framework, the modular plant-art architecture and the rendering-technology escalation path are recorded in [`docs/VISUAL_DIRECTION_v1.0.md`](docs/VISUAL_DIRECTION_v1.0.md). In short: kid-friendly and organic; large type and big touch-friendly controls; a desktop/iPad hybrid feel; no technical-dashboard look; Biomass visually dominant; plain HTML/CSS/canvas/SVG first, heavier rendering only for a demonstrated need. Mechanics validation still comes before the full visual-polish phase.
 

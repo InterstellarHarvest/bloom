@@ -1,14 +1,14 @@
 # BLOOM — Visual & specimen direction v1.0
 
-**Status:** APPROVED FUTURE DIRECTION (owner + PMO, recorded with BLOOM-009, 2026-09-26). **Nothing in this document is implemented yet** except where the *Current implementation* section says so.
+**Status:** APPROVED FUTURE DIRECTION (owner + PMO, recorded with BLOOM-009, 2026-09-26; §9 contextual pop-out panels added with BLOOM-010, 2026-09-27). **Nothing in this document is implemented yet** except where the *Current implementation* section says so.
 
-**Gate rule:** gameplay and mechanics validation comes before the full visual-polish phase. The human procedural playtest ([`PLAYTEST_PROCEDURAL_v1.md`](PLAYTEST_PROCEDURAL_v1.md)) is still open, and this document does not start that phase.
+**Gate rule:** gameplay and mechanics validation comes before the full visual-polish phase. The owner passed the human procedural playtest ([`PLAYTEST_PROCEDURAL_v1.md`](PLAYTEST_PROCEDURAL_v1.md)) after BLOOM-009: the gameplay loop and per-colony development are kept, and the main open concern is **UI crowding** (§9). Content work (more archetypes) continues first; this document still does not start the visual-polish phase.
 
 **Relationship to the bible:** this refines [`GAME_BIBLE.md`](../GAME_BIBLE.md) §12.4 (visual direction) and §13 (plant visual identity). Where §13 describes a "fixed-order layered plant sprite", the modular-anatomy architecture in §6 below supersedes it. §20 still lists the final visual language as an open decision. This document narrows that decision; it does not lock it.
 
 ---
 
-## 1. Current implementation (BLOOM-009): temporary, functional only
+## 1. Current implementation (BLOOM-009, BLOOM-010): temporary, functional only
 
 - The dark monospace interface is still engineering scaffolding.
 - BLOOM-009 changed the interface only where gameplay hierarchy needed it:
@@ -17,6 +17,8 @@
   - **Waterborne crossings** show as a few seed dots crossing the water, ending in a faint ripple (the seeds arrived) or a bright burst (a new foothold).
 - The map draws each Living tile from its real stand density, from a tiny pale sprout to a full dark tile.
 - None of this is final art. The Bloom Report's small plant is still a code-drawn pixel placeholder.
+- **BLOOM-010** added one tiny, data-driven terrain treatment so a playtester can tell a Desert World from an Ocean Archipelago at a glance: an archetype may carry `render` data (a ground tint, its own water colours, a faint dune stipple on bare ground). It is temporary playtest readability, not the final biome art, and no asset pipeline exists.
+- The **permanent left panel** (section readout, colony focus, local upgrades) is increasingly crowded. That is temporary scaffolding; §9 records the approved replacement direction.
 
 ## 2. Interface north star (future)
 
@@ -111,3 +113,21 @@ Traits and growth state manipulate those parts and parameters. A deterministic s
 4. Heavier rendering (Three.js / WebGL) only when a demonstrated design or animation requirement cannot reasonably be met by the simpler stack.
 
 Richer planned visuals are not, on their own, a reason to add Three.js. The engineering preference remains maximum game impact with minimum unnecessary code.
+
+## 9. Contextual pop-out panels (approved after BLOOM-009; recorded with BLOOM-010 — future, NOT implemented)
+
+The owner's verdict after the procedural playtest: the gameplay loop is good and the per-colony development mechanic stays. The main remaining problem is **UI crowding**. The owner approved this direction for the final information architecture.
+
+- **The crowded permanent left panel is temporary scaffolding.** It exists because the prototype added one readout after another to a fixed sidebar. It is not the target layout.
+- **Lean toward contextual pop-out panels, drawers and large cards**, in the spirit of SimCity and The Sims:
+  - selecting a region can open a **larger region panel**, instead of squeezing its readout into a narrow column;
+  - **colony development** (growth focus, local specialization) can live in its own contextual panel for the selected colony;
+  - the global **Adapt / Spread / Terraform** systems can use larger dedicated surfaces;
+  - details appear **on demand** instead of staying permanently visible.
+- **Prefer larger fonts and larger buttons** over compressing information to preserve sidebar space. This is consistent with §2 (large type, touch-friendly targets).
+- **The map / surface stays the visual centre of the game.** Panels open over or beside it and close again; they never permanently shrink the planet into a corner.
+- Continue toward the approved **kid-friendly, organic, desktop/iPad hybrid** direction (§2).
+- The SimCity / Sims reference is about **how information is organized** (contextual, on-demand, large). It is **not** an instruction to copy their visual design.
+
+**Scope:** this is future UI/UX direction only. BLOOM-010 was a mechanics/content package (the Desert World archetype) and implemented none of it. The redesign comes with the visual-polish / final-board phase (bible §15), after content validation.
+
