@@ -6,7 +6,8 @@
 // The golden was first captured from the pre-extraction demos/demo-run.html (adc87d0) under a
 // seeded RNG, so a match proved the extracted engine + content reproduced the accepted slice
 // bit-for-bit: layout, category evaluation, previews, prices, and full 2400-tick runs.
-// BLOOM-008 (owner-authorized gameplay retune: colony establishment + Colony Focus) regenerated the run
+// BLOOM-008 (owner-authorized gameplay retune: colony establishment + Colony Focus) and BLOOM-009 (owner-authorized
+// retune: per-region allocation + local specializations, smaller seedlings, slower thickening) regenerated the run
 // parts on purpose; the static part (layout, evaluation, previews, prices) is unchanged from adc87d0.
 "use strict";
 const fs = require("fs"), path = require("path");
@@ -28,7 +29,9 @@ function adapter(planet, config, traits, goldenIds) {
     reset(seed) { sim = BLOOM.createSim(planet, config, traits, { rng: GOLD.mulberry32(seed) }); },
     tick() { sim.tick(); }, buy(id) { return sim.buy(id); }, addBiomass(x) { sim.biomass += x; },
     read() { return { biomass: sim.biomass, ticks: sim.ticks, won: sim.won, tiles: sim.state, vigor: sim.vigor, dens: sim.dens, bubbles: sim.bubbles.length }; },
-    setFocus(id, mode) { return sim.setFocus(sim.map.SIDX[id], mode); },
+    setColonyFocus(id, mode) { return sim.setColonyFocus(sim.map.SIDX[id], mode); },
+    buySpecialization(id, spec) { return sim.buySpecialization(sim.map.SIDX[id], spec); },
+    colonies() { return { focus: [...sim.colonies.focus], spec: [...sim.colonies.spec] }; },
     setCondition(c) { Object.assign(sim.genome, c.genome); Object.assign(sim.sky, c.sky); for (const k in sim.tf) sim.tf[k] = 0; Object.assign(sim.tf, c.tf || {}); },
     evaluate(i) { return sim.evaluate(i); }, previewOf(id) { return sim.previewOf(id); }, price(id) { return sim.price(sim.traitById[id]); },
     traitIds: traits.map(t => t.id).filter(id => !goldenIds || goldenIds.includes(id)),

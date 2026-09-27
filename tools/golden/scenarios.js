@@ -8,10 +8,13 @@
 //   read() -> {biomass, ticks, won, tiles, vigor, bubbles}
 //   setCondition({genome, sky, tf})  evaluate(i)  previewOf(id)  price(id)
 //   traitIds  sectionCount  map -> {tilemap, area, cent}
-//   setFocus(sectionId, mode) -> bool      (BLOOM-008 Colony Focus; read() also returns dens = stand densities)
+//   setColonyFocus(sectionId, mode) -> bool     (BLOOM-009 per-region allocation; read() also returns dens = stand densities)
+//   buySpecialization(sectionId, specId) -> bool  colonies() -> {focus, spec}
 // }
 // BLOOM-008 (owner-authorized gameplay retune): the golden was intentionally regenerated for the colony
-// establishment curve + Colony Focus; the "focus" run pins focus placement, moving and switching.
+// establishment curve + Colony Focus. BLOOM-009 (owner-authorized retune: smaller seedlings, slower thickening,
+// per-region allocation with costs, local specializations) regenerated the run parts again; the "colonies" run pins
+// several regions holding different allocations at once, changing one region, and a Biomass-bought specialization.
 (function (root) {
   "use strict";
   function mulberry32(a) {
@@ -35,9 +38,12 @@
     dry:        { seed: 22, plan: ["seedOut", "cold", "drought", "cold", "heat", "salt", "earlyMat", "seedOut"] },
     terraform:  { seed: 33, plan: ["seedOut", "humid", "cold", "cool", "salt", "flood", "warm", "dry", "earlyMat"] },
     generalist: { seed: 44, grant: 99999, plan: ["seedOut", "seedOut", "earlyMat", "cold", "cold", "heat", "salt", "rad"] },
-    // Colony Focus: Leaves on the origin from the first tick, switched to Seeds, then moved to Fern Shade as Roots
-    focus:      { seed: 55, plan: ["seedOut", "cold", "flood", "cold", "heat", "salt", "earlyMat", "seedOut"],
-                  focus: [[1, "meadow_hollow", "leaves"], [700, "meadow_hollow", "seeds"], [1400, "fern_shade", "roots"]] },
+    // per-region allocation: Roots on the origin from the first tick; Fern Shade gets Seeds (the origin keeps Roots);
+    // the origin switches to Leaves and buys a Leaf Canopy; Cool Glen gets Roots; the origin returns to Balanced
+    colonies:   { seed: 55, plan: ["seedOut", "cold", "flood", "cold", "heat", "salt", "earlyMat", "seedOut"],
+                  focus: [[1, "meadow_hollow", "roots"], [700, "fern_shade", "seeds"], [800, "meadow_hollow", "leaves"],
+                          [1300, "cool_glen", "roots"], [1900, "meadow_hollow", "balanced"]],
+                  specs: [[1310, "meadow_hollow", "leafCanopy"]] },
   };
   const TICKS = 2400, EVERY = 100;
 
@@ -64,14 +70,15 @@
     A.reset(r.seed); if (r.grant) A.addBiomass(r.grant);
     let i = 0; const trace = [], buys = [], focus = [];
     for (let t = 1; t <= TICKS; t++) {
-      for (const [ft, sec, mode] of r.focus || []) if (ft === t) focus.push([t, sec, mode, A.setFocus(sec, mode)]);
+      for (const [ft, sec, mode] of r.focus || []) if (ft === t) focus.push([t, sec, mode, A.setColonyFocus(sec, mode)]);
+      for (const [ft, sec, id] of r.specs || []) if (ft === t) focus.push([t, sec, id, A.buySpecialization(sec, id)]);
       A.tick();
       if (i < r.plan.length && A.buy(r.plan[i])) { buys.push([r.plan[i], t]); i++; }
       if (t % EVERY === 0) { const s = A.read();
         trace.push([s.ticks, s.biomass, fnv(s.tiles), Array.from(s.vigor).reduce((a, b) => a + b, 0), s.bubbles, s.won,
           s.dens ? Array.from(s.dens).reduce((a, b) => a + b, 0) : null]); }
     }
-    return r.focus ? { buys, trace, focus } : { buys, trace };
+    return r.focus ? { buys, trace, focus, colonies: A.colonies() } : { buys, trace };
   }
   function runGolden(A) { const out = {}; for (const p of PARTS) out[p] = runPart(A, p); return out; }
   const api = { runGolden, runPart, PARTS, mulberry32, fnv, CONDITIONS, RUNS };

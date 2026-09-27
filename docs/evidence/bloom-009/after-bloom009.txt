@@ -1,0 +1,97 @@
+
+## first_bloom
+  focus=none  first normal upgrade affordable ≈ 82.8 s (bubbles off: 93.4 s)
+     30 s  cov     7%  bio   53.1  origin living 51.6% vigor 1 est 0.12
+     60 s  cov  17.3%  bio   93.1  origin living 97.3% vigor 1 est 0.381
+    120 s  cov  30.7%  bio  211.1  origin living 100% vigor 1 est 0.741
+    180 s  cov  35.3%  bio  394.9  origin living 100% vigor 1 est 0.892
+    run wet             won 8/8  win ≈ 344.8 s [334.6,359.8]  first buy ≈ 86.8 s
+    run dry             won 8/8  win ≈ 374.3 s [358.4,384.8]  first buy ≈ 86.8 s
+    run terraformWater  won 8/8  win ≈ 356.7 s [344.6,363.7]  first buy ≈ 86.8 s
+  focus=roots  first normal upgrade affordable ≈ 81.9 s (bubbles off: 89.3 s)
+     30 s  cov   8.1%  bio     55  origin living 57.5% vigor 1 est 0.235
+     60 s  cov  18.3%  bio   93.1  origin living 99.4% vigor 1 est 0.678
+    120 s  cov    32%  bio  229.2  origin living 100% vigor 1 est 0.964
+    180 s  cov  35.3%  bio  417.1  origin living 100% vigor 1 est 0.996
+    run wet             won 8/8  win ≈ 351 s [324,368.2]  first buy ≈ 85.9 s
+    run dry             won 8/8  win ≈ 368.6 s [332.8,388.8]  first buy ≈ 85.9 s
+    run terraformWater  won 8/8  win ≈ 363.4 s [335.5,376.3]  first buy ≈ 85.9 s
+  focus=leaves  first normal upgrade affordable ≈ 90.1 s (bubbles off: 98.8 s)
+     30 s  cov   3.9%  bio   53.6  origin living 29.7% vigor 1 est 0.078
+     60 s  cov  10.3%  bio   79.6  origin living 67.7% vigor 1 est 0.239
+    120 s  cov  27.3%  bio  203.6  origin living 99.9% vigor 1 est 0.65
+    180 s  cov  35.1%  bio  412.9  origin living 100% vigor 1 est 0.854
+    run wet             won 8/8  win ≈ 321.1 s [308,334.9]  first buy ≈ 94.1 s
+    run dry             won 8/8  win ≈ 340.3 s [326.2,357.1]  first buy ≈ 94.1 s
+    run terraformWater  won 8/8  win ≈ 331.4 s [317.3,341.9]  first buy ≈ 94.1 s
+  focus=seeds  first normal upgrade affordable ≈ 83.1 s (bubbles off: 101.1 s)
+     30 s  cov  11.5%  bio   57.2  origin living 79% vigor 1 est 0.183
+     60 s  cov  20.3%  bio   91.8  origin living 100% vigor 1 est 0.465
+    120 s  cov  33.9%  bio  223.8  origin living 100% vigor 1 est 0.776
+    180 s  cov  35.3%  bio    392  origin living 100% vigor 1 est 0.906
+    run wet             won 8/8  win ≈ 362.5 s [340.6,384.5]  first buy ≈ 87.1 s
+    run dry             won 8/8  win ≈ 380.5 s [346.2,414.6]  first buy ≈ 87.1 s
+    run terraformWater  won 8/8  win ≈ 371.6 s [339.7,405.3]  first buy ≈ 87.1 s
+
+## oa_seed_13 (attempt 6, Eos-227)
+  focus=none  first normal upgrade affordable ≈ 86 s (bubbles off: 129.8 s)
+     30 s  cov   9.5%  bio   52.2  origin living 69.3% vigor 0.75 est 0.143
+     60 s  cov  13.2%  bio   89.8  origin living 96.3% vigor 0.75 est 0.34
+    120 s  cov  13.7%  bio  184.2  origin living 100% vigor 0.75 est 0.639
+    180 s  cov  13.7%  bio  300.4  origin living 100% vigor 0.75 est 0.802
+    run strategy1       won 4/4  win ≈ 554.2 s [509.9,608.6]  first buy ≈ 90 s
+    run strategy2       won 4/4  win ≈ 451.6 s [431.4,470.9]  first buy ≈ 90 s
+  focus=roots  first normal upgrade affordable ≈ 89.7 s (bubbles off: 128.2 s)
+     30 s  cov  10.5%  bio   52.7  origin living 76.4% vigor 0.75 est 0.286
+     60 s  cov  13.7%  bio   84.1  origin living 99.6% vigor 0.75 est 0.644
+    120 s  cov  13.7%  bio  189.5  origin living 100% vigor 0.75 est 0.921
+    180 s  cov  13.7%  bio  271.2  origin living 100% vigor 0.75 est 0.983
+    run strategy1       won 4/4  win ≈ 543.5 s [482.6,624.6]  first buy ≈ 93.7 s
+    run strategy2       won 4/4  win ≈ 475.4 s [431.5,517.8]  first buy ≈ 93.7 s
+  focus=leaves  first normal upgrade affordable ≈ 96.3 s (bubbles off: 118.9 s)
+     30 s  cov   6.2%  bio   51.9  origin living 44.9% vigor 0.75 est 0.105
+     60 s  cov  11.3%  bio   79.3  origin living 82.5% vigor 0.75 est 0.26
+    120 s  cov  13.7%  bio  166.9  origin living 99.8% vigor 0.75 est 0.589
+    180 s  cov  13.7%  bio  288.5  origin living 100% vigor 0.75 est 0.775
+    run strategy1       won 4/4  win ≈ 533.7 s [414.1,712]  first buy ≈ 100.3 s
+    run strategy2       won 4/4  win ≈ 413.4 s [383.5,449.8]  first buy ≈ 100.3 s
+  focus=seeds  first normal upgrade affordable ≈ 80.2 s (bubbles off: 167.6 s)
+     30 s  cov  12.4%  bio   58.7  origin living 90.6% vigor 0.75 est 0.187
+     60 s  cov  13.7%  bio  104.6  origin living 100% vigor 0.75 est 0.397
+    120 s  cov  13.7%  bio  190.7  origin living 100% vigor 0.75 est 0.67
+    180 s  cov  13.7%  bio  284.7  origin living 100% vigor 0.75 est 0.82
+    run strategy1       won 4/4  win ≈ 523.1 s [487.8,592.5]  first buy ≈ 84.2 s
+    run strategy2       won 4/4  win ≈ 486.8 s [458.6,520.2]  first buy ≈ 84.2 s
+
+## oa_seed_8 (attempt 1, Coriol-220)
+  focus=none  first normal upgrade affordable ≈ 74.6 s (bubbles off: 115.7 s)
+     30 s  cov   8.4%  bio   73.3  origin living 100% vigor 1 est 0.304
+     60 s  cov  16.3%  bio  117.3  origin living 100% vigor 1 est 0.491
+    120 s  cov  28.8%  bio  216.1  origin living 100% vigor 1 est 0.729
+    180 s  cov  36.6%  bio    348  origin living 100% vigor 1 est 0.856
+    run strategy1       won 4/4  win ≈ 513 s [477.9,563]  first buy ≈ 78.6 s
+    run strategy2       won 4/4  win ≈ 527 s [489.9,593]  first buy ≈ 78.6 s
+  focus=roots  first normal upgrade affordable ≈ 76.3 s (bubbles off: 118.2 s)
+     30 s  cov   8.2%  bio   71.8  origin living 100% vigor 1 est 0.564
+     60 s  cov  15.8%  bio  109.1  origin living 100% vigor 1 est 0.801
+    120 s  cov  28.2%  bio  209.9  origin living 100% vigor 1 est 0.959
+    180 s  cov  36.1%  bio  312.5  origin living 100% vigor 1 est 0.992
+    run strategy1       won 4/4  win ≈ 478.7 s [437.6,513.8]  first buy ≈ 80.3 s
+    run strategy2       won 4/4  win ≈ 517.9 s [496.3,553.9]  first buy ≈ 80.3 s
+  focus=leaves  first normal upgrade affordable ≈ 70 s (bubbles off: 99.2 s)
+     30 s  cov   7.7%  bio   68.6  origin living 97.6% vigor 1 est 0.298
+     60 s  cov  15.4%  bio  111.1  origin living 100% vigor 1 est 0.487
+    120 s  cov  28.5%  bio  219.7  origin living 100% vigor 1 est 0.727
+    180 s  cov  37.1%  bio  344.7  origin living 100% vigor 1 est 0.855
+    run strategy1       won 4/4  win ≈ 505.6 s [462.4,605.6]  first buy ≈ 74.1 s
+    run strategy2       won 4/4  win ≈ 524.6 s [466.6,627.5]  first buy ≈ 74.1 s
+  focus=seeds  first normal upgrade affordable ≈ 85 s (bubbles off: 138.5 s)
+     30 s  cov   9.4%  bio   50.6  origin living 100% vigor 1 est 0.305
+     60 s  cov  17.1%  bio   86.2  origin living 100% vigor 1 est 0.492
+    120 s  cov  28.2%  bio  185.1  origin living 100% vigor 1 est 0.73
+    180 s  cov  36.9%  bio  276.4  origin living 100% vigor 1 est 0.856
+    run strategy1       won 4/4  win ≈ 505.7 s [470.2,537.6]  first buy ≈ 89 s
+    run strategy2       won 4/4  win ≈ 519.6 s [486.1,542.1]  first buy ≈ 89 s
+
+(35639 ms, engine per-region-allocation)
+wrote docs/evidence/bloom-009/after-bloom009.json

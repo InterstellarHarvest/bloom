@@ -8,8 +8,9 @@
 //   · first NORMAL upgrade: the first moment the cheapest shop trait is affordable (no purchases made);
 //   · full runs: a bot that buys a known recipe 4 s after each upgrade becomes affordable (as tools/slice-check.js
 //     does through real buttons) → first-purchase and win times;
-//   · each of the above with no Colony Focus and with Roots / Leaves / Seeds held on the origin from t = 0
-//     (only when the engine has Colony Focus — so the same tool captures the pre-BLOOM-008 baseline);
+//   · each of the above with no allocation and with Roots / Leaves / Seeds held on the origin from t = 0
+//     (BLOOM-008 engine: its one global Colony Focus on the origin; BLOOM-009+: the origin's own allocation — so the
+//     same tool captures the earlier baselines; per-region strategies are tools/colony-study.js);
 //   · the first-upgrade time again with Biomass bubbles switched off (bubbles are a large, random share of early
 //     income, so this isolates what the colony itself — and its focus — earns).
 // Procedural worlds (Ocean Archipelago seeds 13 and 8) run the recipe the accepted world's first strategy used.
@@ -24,14 +25,14 @@ const NSEEDS = +arg("--seeds", 8), OUT = arg("--json", null), PROC = !process.ar
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 const TPS = 1000 / config.tickMs, MARKS = [30, 60, 120, 180], REACT = 25;
 const probe = BLOOM.createSim(BLOOM_DATA.planets.first_bloom, config, traits, { rng: () => 0.5 });
-const HAS_FOCUS = typeof probe.setFocus === "function";
-const MODES = HAS_FOCUS ? [null, ...Object.keys(config.focus.modes)] : [null];
+const HAS_REGION = typeof probe.setColonyFocus === "function", HAS_FOCUS = HAS_REGION || typeof probe.setFocus === "function";
+const MODES = HAS_FOCUS ? [null, ...Object.keys((config.colony || config.focus).modes)] : [null];
 const mean = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
 const r1 = x => x === null || x === undefined ? null : Math.round(x * 10) / 10;
 
 function make(planet, seed, mode, cfg = config) {
   const sim = BLOOM.createSim(planet, cfg, traits, { rng: mulberry32(seed) });
-  if (mode) sim.setFocus(sim.map.ORIGIN, mode);
+  if (mode) HAS_REGION ? sim.setColonyFocus(sim.map.ORIGIN, mode) : sim.setFocus(sim.map.ORIGIN, mode);
   return sim;
 }
 const originEst = sim => HAS_FOCUS ? sim.establishment(sim.map.ORIGIN) : null;
@@ -83,7 +84,7 @@ function summarize(planet, plans, seeds) {
 }
 
 const seeds = Array.from({ length: NSEEDS }, (_, k) => 101 + k * 7);
-const report = { engine: HAS_FOCUS ? "colony-focus" : "pre-focus", seeds, marksSeconds: MARKS, reactionTicks: REACT, worlds: {} };
+const report = { engine: HAS_REGION ? "per-region-allocation" : HAS_FOCUS ? "colony-focus" : "pre-focus", seeds, marksSeconds: MARKS, reactionTicks: REACT, worlds: {} };
 const t0 = Date.now();
 report.worlds.first_bloom = summarize(BLOOM_DATA.planets.first_bloom, {
   wet: ["seedOut", "cold", "flood", "cold", "heat", "salt", "earlyMat", "seedOut"],

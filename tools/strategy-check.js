@@ -20,7 +20,10 @@ const t0 = Date.now();
 // BLOOM-008's owner-authorized growth retune moved individual witness timings, so the natural negatives were
 // re-picked from the new 40-seed sweep (was layer7 5/0, tooSlow 27/1, lateFirst 20/2, gap 17/2 under BLOOM-006/007);
 // the pacing bands themselves did not need to change (same 35/40 accepted, same explicit failures).
-const FIX = { positive: [13, 6], layer7: [5, 5], tooSlow: [21, 1], lateFirst: [4, 1], gap: [39, 1] };
+// BLOOM-009's owner-authorized retune (smaller seedlings, slower thickening, per-region allocation) moved them again:
+// re-picked from a fresh 40-seed scan (was tooSlow 21/1, lateFirst 4/1, gap 39/1 under BLOOM-008). Bands unchanged;
+// the production sweep is now 34/40 (seed 33 joins the explicit failures 3, 7, 19, 35, 38).
+const FIX = { positive: [13, 6], layer7: [5, 5], tooSlow: [14, 1], lateFirst: [21, 1], gap: [16, 3] };
 const at = ([seed, k]) => BLOOM.archetype.attemptPlanet(OA, seed, k).planet;
 const strategies = (p, pol = POLICY, cfg = config, opts = {}) => BLOOM.findStrategies(p, cfg, traits, { ...pol, ...opts });
 const withPacing = (edit) => { const P = clone(POLICY); edit(P.pacing); return P; };
