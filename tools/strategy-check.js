@@ -17,7 +17,10 @@ const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"} 
 const t0 = Date.now();
 
 // ---- fixtures: [public seed, attempt]
-const FIX = { positive: [13, 6], layer7: [5, 0], tooSlow: [27, 1], lateFirst: [20, 2], gap: [17, 2] };
+// BLOOM-008's owner-authorized growth retune moved individual witness timings, so the natural negatives were
+// re-picked from the new 40-seed sweep (was layer7 5/0, tooSlow 27/1, lateFirst 20/2, gap 17/2 under BLOOM-006/007);
+// the pacing bands themselves did not need to change (same 35/40 accepted, same explicit failures).
+const FIX = { positive: [13, 6], layer7: [5, 5], tooSlow: [21, 1], lateFirst: [4, 1], gap: [39, 1] };
 const at = ([seed, k]) => BLOOM.archetype.attemptPlanet(OA, seed, k).planet;
 const strategies = (p, pol = POLICY, cfg = config, opts = {}) => BLOOM.findStrategies(p, cfg, traits, { ...pol, ...opts });
 const withPacing = (edit) => { const P = clone(POLICY); edit(P.pacing); return P; };
@@ -120,7 +123,7 @@ console.log("\n# 7–10 layer-8 negatives");
 {
   const p = at(FIX.gap), r = strategies(p);
   check(r.layer7.status === "PASS" && r.layer === 8 && r.status === "FAIL" && r.slow.some(w => w.pacingCheck.reasons.some(x => /^purchase gap of .* > 240 s$/.test(x))),
-    `10 · excessive purchase gap: seed ${FIX.gap[0]} attempt ${FIX.gap[1]} REJECTED at layer 8 (natural; alongside a late first purchase)`,
+    `10 · excessive purchase gap: seed ${FIX.gap[0]} attempt ${FIX.gap[1]} REJECTED at layer 8 (natural; alongside a late first purchase and a slow margin)`,
     r.slow.map(w => w.pacingCheck.reasons.join("; ")).filter((x, i, a) => a.indexOf(x) === i).join(" | "));
   const rGap = strategies(pos, withPacing(P => P.maxPurchaseGapSeconds = 30)), mine = rGap.slow.filter(w => [A.signature, B.signature].includes(w.signature));
   check(rGap.layer === 8 && rGap.status === "FAIL" && rGap.slow.every(w => w.pacingCheck.reasons.some(x => /^purchase gap/.test(x))) && mine.length === 2 && mine.every(w => w.pacingCheck.reasons.length === 1),

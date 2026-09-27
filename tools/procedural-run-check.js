@@ -198,7 +198,8 @@ const shot = async (p, name) => { if (SHOTS) await p.screenshot({ path: path.joi
     let f = 0; for (let k = 0; k < 150 && !f; k++) f = await p.evaluate(() => { BLOOM_API.advance(20); return BLOOM_API.crossing().footholds; });
     check(run.buys.map(b => b.id).join() === `seedOut,salt,${WATERBORNE.id}` && f > 0, "Seed Output, Salt Handling and Waterborne Seeds bought via real buttons; a crossing establishes",
       `${run.buys.map(b => `${b.id} @ ${b.s} s`).join(" → ")} · ${f} foothold(s)`);
-    const sec = await p.evaluate(() => { const M = BLOOM_API.sim.map; return M.SEC_TILES[M.ORIGIN][0]; }); await clickTile(p, sec);
+    // (BLOOM-008 opens with the origin already selected; start from no selection so this click selects it)
+    const sec = await p.evaluate(() => { selected = -1; renderInspect(); const M = BLOOM_API.sim.map; return M.SEC_TILES[M.ORIGIN][0]; }); await clickTile(p, sec);
     const iv = await p.evaluate(() => ({ name: document.querySelector("#inspect .secname").innerText, cats: document.querySelectorAll("#inspect .cat").length }));
     check(/ORIGIN/.test(iv.name) && iv.cats === 4, "inspecting a seed-8 section works", iv.name.replace(/\n/g, " "));
     await p.evaluate(() => draw()); await shot(p, "seed8.png");

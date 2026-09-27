@@ -23,12 +23,15 @@
   unchanged. demo-run.html?archetype=ocean_archipelago&seed=13 generates that public seed through the real
   BLOOM.generateFromArchetype production path (validator layers 1–8) and plays it with the same UI; a seed
   that fails generation shows an explicit failure state (never another seed). QA: tools/procedural-run-check.js.
+  BLOOM-008 (temporary UI, not final): Colony Focus in the inspect panel (Roots / Leaves / Seeds on ONE Living region,
+  set-and-leave), an ordinary-language colony status (Sparse → Establishing → Established → Dense), and map vegetation
+  shaded by each tile's stand density (light, gappy seedlings → dark, full stands). QA: tools/colony-focus-check.js.
 -->
 <style>
   :root{
     --bg:#0b0e14; --panel:#121826; --panel2:#0e1320; --ink:#cdd6e6; --dim:#7c8aa3;
     --line:#26304a; --accent:#7fe3c0; --gold:#ffd479; --bad:#ff6b6b; --ok:#7fe3a0; --warn:#ffcf6b;
-    --green:#66d17f; --yellow:#e7c14e; --red:#e2604f;
+    --green:#66d17f; --yellow:#e7c14e; --red:#e2604f; --focus:#f59ad8;
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%}
@@ -112,6 +115,25 @@
   .genfail{max-width:640px; margin:40px auto; padding:22px; background:#1f1418; border:1px solid #6a2f36; border-radius:10px; line-height:1.6}
   .genfail h2{color:var(--bad); letter-spacing:2px; margin:0 0 8px; font-size:14px}
   .genfail code{color:var(--gold)}
+  /* BLOOM-008: colony status + Colony Focus (temporary inspect-panel control) */
+  .colony{margin:8px 0; padding:8px; border-radius:5px; background:#0f1a14; border:1px solid #24452f}
+  .colony .cw{color:#fff; font-weight:600}
+  .dbar{height:8px; border:1px solid var(--line); border-radius:3px; margin-top:4px; background:#1a2436; overflow:hidden}
+  .dbar i{display:block; height:100%; background:linear-gradient(90deg,#b2d678,#227a38)}
+  .focus{margin:8px 0; padding:8px; border-radius:5px; background:#1a1422; border:1px solid #4a3160}
+  .focus h3{font-size:11px; letter-spacing:1px; margin:0 0 4px; color:var(--focus)}
+  .focus .fnote{font-size:11px; color:var(--dim); margin-bottom:6px}
+  .fbtn{display:flex; flex-direction:column; width:100%; text-align:left; background:#211a2e; border:1px solid #3d2d52; color:var(--ink);
+    padding:5px 8px; border-radius:5px; margin-bottom:4px; font-size:12px}
+  .fbtn small{color:var(--dim); font-size:10px}
+  .fbtn:hover:not(.off){border-color:var(--focus)}
+  .fbtn[aria-pressed="true"]{background:#3a2350; border-color:var(--focus); color:#fff}
+  .fbtn.off{opacity:.42; cursor:default}
+  .fstate{font-size:11px; color:var(--focus); margin:4px 0}
+  .fclear{background:none; border:1px solid var(--line); color:var(--dim); font-size:10px; padding:2px 8px; border-radius:4px}
+  details.fsci{margin-top:6px} details.fsci summary{cursor:pointer; color:var(--dim); font-size:11px}
+  details.fsci p{margin:4px 0 0; font-size:11px; color:var(--dim)}
+  .hfocus b{color:var(--focus)}
 </style>
 </head>
 <body>
@@ -124,6 +146,7 @@
       <b id="hCov">0%</b> <span style="color:var(--gold)" id="hWinPct">/ 70%</span>
     </span>
     <span>sky <b id="hSky"></b></span>
+    <span class="hfocus">focus <b id="hFocus">none</b></span>
   </div>
   <div class="controls">
     <button class="tb" id="btnPlay" aria-pressed="true">⏸ pause</button>
@@ -132,10 +155,7 @@
 </header>
 
 <main>
-  <aside class="left" id="inspect">
-    <h2>SECTION</h2>
-    <p style="color:var(--dim);font-style:italic">Click a region to read it. The plant starts in its protected origin (★) and spreads into suitable ground on its own.</p>
-  </aside>
+  <aside class="left" id="inspect"><div id="inspMain"></div><div id="focusBox"></div><div id="inspMore"></div></aside>
 
   <div class="stage"><canvas id="cv"></canvas></div>
 
@@ -172,7 +192,7 @@ if(!window.BLOOM||!window.BLOOM_DATA||!BLOOM_DATA.planets||!BLOOM_DATA.planets.f
 const sim=BLOOM.createSim(BLOOM_RUN.planet, BLOOM_DATA.config, BLOOM_DATA.traits);
 const CFG=sim.config;
 const {W,H,N,SEC,SC,SIDX,ORIGIN,TILEMAP,AREA,CENT,SEC_TILES}=sim.map;
-const {state,vigor,secFit,bubbles,genome,tf,BAR,LIV,DEAD}=sim, G=sim.sky;
+const {state,dens,vigor,secFit,bubbles,genome,tf,BAR,LIV,DEAD}=sim, G=sim.sky;
 const {evaluate,lampOf,livingCountBySection}=sim;
 const {clamp}=BLOOM.util;
 const mix=(c1,c2,k)=>[c1[0]+(c2[0]-c1[0])*k,c1[1]+(c2[1]-c1[1])*k,c1[2]+(c2[2]-c1[2])*k];
@@ -216,8 +236,12 @@ function stops(v){ const S=TEMP_STOPS; if(v<=S[0][0])return S[0][1].slice(); if(
 function barrenColor(i){ const L=SEC[i].local; let c=stops(G.temp+L.tempOffset);
   const m=G.moist+L.moistureOffset; if(m<35)c=mix(c,[150,138,104],0.4); else if(m>68)c=mix(c,[64,104,104],0.35);
   return mix(c,[10,12,18],0.55); } // dim: barren ground
-function livingColor(v){ // vigor 0..1 → sickly→lush green
-  const low=[120,120,70], hi=[90,205,110]; return mix(low,hi,clamp(v,0,1)); }
+// BLOOM-008: Living tiles are shaded by their stand density (sim.dens): a fresh seedling stand is light and gappy
+// (ground shows around a smaller plant patch), an established one dark and full; low section vigor still reads sickly.
+const SPARSE_C=[176,214,118], DENSE_C=[28,112,50], SICK_C=[128,122,70];
+function livingColor(d,v){ const c=mix(SPARSE_C,DENSE_C,Math.pow(clamp(d,0,1),0.8));
+  return mix(SICK_C,c,clamp((v-0.2)/0.5,0,1)); }
+const patchFrac=d=>0.6+0.4*clamp((d-0.15)/0.45,0,1); // share of the tile side the plant patch covers
 const DEAD_C=[92,66,44], WATER_C=[24,52,92], WATER_C2=[30,62,104];
 function fit(){ const st=document.querySelector(".stage"); TILE=Math.max(6,Math.floor(Math.min((st.clientWidth-24)/W,(st.clientHeight-24)/H))); }
 function resize(){ fit(); cv.width=W*TILE*dpr; cv.height=H*TILE*dpr; cv.style.width=W*TILE+"px"; cv.style.height=H*TILE+"px"; ctx.setTransform(dpr,0,0,dpr,0,0); draw(); }
@@ -228,7 +252,9 @@ function draw(){
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){
     const i=y*W+x,s=TILEMAP[i]; let c;
     if(s<0) c=((x+y)%7===0)?WATER_C2:WATER_C; // water: never colonizable, not in the coverage denominator
-    else if(state[i]===LIV) c=livingColor(vigor[s]);
+    else if(state[i]===LIV){ // ground, then a plant patch whose size and shade follow the stand's density
+      const f=patchFrac(dens[i]); if(f<1){ ctx.fillStyle=rgb(barrenColor(s)); ctx.fillRect(x*TILE,y*TILE,TILE+.5,TILE+.5); }
+      const sz=TILE*f, o=(TILE-sz)/2; ctx.fillStyle=rgb(livingColor(dens[i],vigor[s])); ctx.fillRect(x*TILE+o,y*TILE+o,sz+(f<1?0:.5),sz+(f<1?0:.5)); continue; }
     else if(state[i]===DEAD) c=DEAD_C;
     else c=barrenColor(s);
     ctx.fillStyle=rgb(c); ctx.fillRect(x*TILE,y*TILE,TILE+.5,TILE+.5);
@@ -257,10 +283,14 @@ function draw(){
     ctx.lineWidth=3; ctx.strokeStyle="rgba(5,7,12,0.9)"; ctx.strokeText(LABEL[i].toUpperCase(),px,py);
     ctx.fillStyle=i===selected?"#fff":"rgba(232,238,248,0.9)"; ctx.fillText(LABEL[i].toUpperCase(),px,py);
     if(s.isOrigin){ctx.fillStyle="#ffd479"; ctx.fillText("★",px,py+fs+1);}
+    if(i===sim.focus.section&&sim.focus.mode){ const t=`${FOCUS_UI[sim.focus.mode].icon} ${FOCUS_UI[sim.focus.mode].name.toUpperCase()}`, fy=py-fs-2;
+      ctx.lineWidth=3; ctx.strokeStyle="rgba(5,7,12,0.95)"; ctx.strokeText(t,px,fy); ctx.fillStyle="#f59ad8"; ctx.fillText(t,px,fy); }
   });
 }
 
 function outline(sec,color,width,dash){
+  outlinePath(sec,"rgba(5,7,12,0.85)",width+2,[]); outlinePath(sec,color,width,dash); } // dark underlay: readable over light seedlings and dark stands
+function outlinePath(sec,color,width,dash){
   ctx.strokeStyle=color; ctx.lineWidth=width; ctx.setLineDash(dash||[]); ctx.beginPath();
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){ if(TILEMAP[y*W+x]!==sec)continue;
     if(x+1>=W||TILEMAP[y*W+x+1]!==sec){ctx.moveTo((x+1)*TILE,y*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);}
@@ -280,12 +310,14 @@ function renderHUD(cov){
   document.getElementById("hCovWin").style.left=Math.round(sim.winAt*100)+"%";
   document.getElementById("hWinPct").textContent="/ "+Math.round(sim.winAt*100)+"%";
   document.getElementById("hSky").textContent=`${G.temp>0?'+':''}${G.temp}°C · moist ${G.moist}`;
+  const f=sim.focus; document.getElementById("hFocus").textContent=f.mode?`${FOCUS_UI[f.mode].name} · ${LABEL[f.section]}`:"none";
 }
 function renderInspect(){
-  const el=document.getElementById("inspect");
-  const curRaw=el.querySelector("details.raw"); if(curRaw) rawOpen=curRaw.open; // read synchronously: the toggle event can lag a re-render
-  if(selected<0&&selectedWater){ el.innerHTML=`<h2>WATER</h2><div class="secname">Open water</div><div class="geo">🌊 Not land: nothing grows here and it does not count toward coverage. Ordinary spread cannot cross water${CROSS_T?`; ${CROSS_T.name} carries seeds over gaps of up to ${CFG.crossing.maxGap} water tiles`:""}.</div>`; return; }
-  if(selected<0){ el.innerHTML='<h2>SECTION</h2><p style="color:var(--dim);font-style:italic">Click a region to read it. The plant starts in its protected origin (★) and spreads into suitable ground on its own.</p>'; return; }
+  const el=document.getElementById("inspMain"), more=document.getElementById("inspMore");
+  const curRaw=more.querySelector("details.raw"); if(curRaw) rawOpen=curRaw.open; // read synchronously: the toggle event can lag a re-render
+  renderFocus();
+  if(selected<0&&selectedWater){ more.innerHTML=""; el.innerHTML=`<h2>WATER</h2><div class="secname">Open water</div><div class="geo">🌊 Not land: nothing grows here and it does not count toward coverage. Ordinary spread cannot cross water${CROSS_T?`; ${CROSS_T.name} carries seeds over gaps of up to ${CFG.crossing.maxGap} water tiles`:""}.</div>`; return; }
+  if(selected<0){ more.innerHTML=""; el.innerHTML='<h2>SECTION</h2><p style="color:var(--dim);font-style:italic">Click a region to read it. The plant starts in its protected origin (★) and spreads into suitable ground on its own. Click a region your plant lives in to choose its Colony Focus.</p>'; return; }
   const s=SEC[selected], e=evaluate(selected), liv=livingCountBySection()[selected];
   let dead=0,barr=0; for(const t of SEC_TILES[selected]){ if(state[t]===DEAD)dead++; else if(state[t]===BAR)barr++; }
   const total=AREA[selected];
@@ -294,11 +326,14 @@ function renderInspect(){
   const limitHtml = blocked
     ? `<div class="limit">▲ Growth blocked: <b>${LIMIT_MSG[e.limitKey](e)}</b><div class="fixhint">${FIX_HINT[e.limitKey](e)}</div></div>`
     : `<div class="limit ok">✓ Thriving here — no blocker.${e.cats.Soil.soft?'<div class="fixhint">Low nutrients slow growth here, but it is not a wall.</div>':''}</div>`;
+  const cs=sim.colonyStatus(selected), pct=Math.round(cs.establishment*100);
   el.innerHTML=`<h2>SECTION</h2>
     <div class="secname">${LABEL[selected]}${s.isOrigin?'<span class="badge">★ ORIGIN</span>':''}</div>
     <div class="cats">${catRow("Temperature")}${catRow("Water")}${catRow("Soil")}${catRow("Hazard")}</div>
     ${limitHtml}${geoNote(selected)}
-    <div class="vitals">vigor ${Math.round(vigor[selected]*100)}%
+    <div class="colony" id="colony">Colony: <span class="cw">${COLONY_WORD[cs.word]}</span> <span style="color:var(--dim)">· ${pct}% established</span>
+      <div class="dbar"><i style="width:${pct}%"></i></div><div class="fixhint">${COLONY_HINT[cs.word]}</div></div>`;
+  more.innerHTML=`<div class="vitals">vigor ${Math.round(vigor[selected]*100)}%
       <div class="vbar"><i class="vl" style="width:${liv/total*100}%"></i><i class="vd" style="width:${dead/total*100}%"></i><i class="vb" style="flex:1"></i></div>
       <div style="color:var(--dim);margin-top:3px">living ${liv} · dead ${dead} · barren ${barr}</div>
     </div>
@@ -310,6 +345,48 @@ function renderInspect(){
         <tr><td>salinity</td><td>${s.local.salinity}</td></tr><tr><td>nutrients</td><td>${s.local.nutrients}</td></tr>
         <tr><td>toxicity</td><td>${s.local.toxicity}</td></tr><tr><td>radiation</td><td>${s.local.radiation}</td></tr>
       </table></details>`;
+}
+
+/* ---- Colony Focus (BLOOM-008): effects are config.focus (engine); this is only the temporary control + copy ---- */
+const COLONY_WORD={none:"No plants yet", sparse:"Sparse", establishing:"Establishing", established:"Established", dense:"Dense"};
+const COLONY_HINT={ none:"Nothing grows here yet.",
+  sparse:"Young seedlings: they make little Biomass and few seeds yet.",
+  establishing:"The stand is thickening; its Biomass and seeds are growing.",
+  established:"A full-strength colony: it seeds its neighbors and yields well.",
+  dense:"A dense, mature stand at close to its full yield." };
+const pctOf=x=>Math.round(x*100);
+const FM=CFG.focus.modes;
+const FOCUS_UI={
+  roots:{ name:"Roots", icon:"▼", sub:"establish faster · hold on in marginal ground",
+    what:`Grow roots: this colony thickens ${pctOf(FM.roots.establishBonus)}% faster and loses fewer plants when conditions are only marginal. Roots cannot keep plants alive where it is too cold, too hot, too salty, too wet or dry, or too toxic for your plant.` },
+  leaves:{ name:"Leaves", icon:"❦", sub:"more Biomass from this colony",
+    what:`Grow leaves: more photosynthesis, so this colony makes ${pctOf(FM.leaves.yieldBonus)}% more Biomass. It does not change where your plant can live.` },
+  seeds:{ name:"Seeds", icon:"✿", sub:"spread outward faster",
+    what:`Make seeds: this colony spreads into neighboring ground ${pctOf(FM.seeds.seedBonus)}% faster${CROSS_T?` and, with ${CROSS_T.name}, sends ${pctOf(FM.seeds.crossingBonus)}% more seeds over water`:""}. Seeds only take root where the ground suits your plant.` },
+};
+let focusKey="";
+function renderFocus(force){
+  const box=document.getElementById("focusBox"), f=sim.focus, liv=selected>=0?livingCountBySection()[selected]>0:false;
+  const key=`${selected}|${f.section}|${f.mode}|${liv}`; if(!force&&key===focusKey) return; focusKey=key; // re-render only on change: keeps clicks reliable
+  if(selected<0){ box.innerHTML=""; return; }
+  const here=f.section===selected, elsewhere=f.mode&&!here;
+  const btn=m=>{ const u=FOCUS_UI[m], on=here&&f.mode===m;
+    return `<button class="fbtn ${liv?"":"off"}" data-focus="${m}" aria-pressed="${on}" aria-disabled="${!liv}" title="${u.what.replace(/"/g,"&quot;")}"><span>${u.icon} ${u.name}${on?" ✓":""}</span><small>${u.sub}</small></button>`; };
+  box.innerHTML=`<div class="focus" id="focusCtl"><h3>COLONY FOCUS</h3>
+    <div class="fnote">${liv?"Direct this colony's growth. One region at a time; it keeps working until you change it.":"Focus needs a living colony here first."}</div>
+    ${btn("roots")}${btn("leaves")}${btn("seeds")}
+    <div class="fstate">${here?`Focused here: ${FOCUS_UI[f.mode].name}. ${FOCUS_UI[f.mode].what}`:elsewhere?`Focus is on ${LABEL[f.section]} (${FOCUS_UI[f.mode].name}). Choosing here moves it.`:"No focus yet: all colonies grow at their normal balance."}</div>
+    ${here?'<button class="fclear" id="focusClear">clear focus</button>':""}
+    <details class="fsci"><summary>the science ▾</summary><p>A plant has only so much sugar from photosynthesis to spend. Real plants shift how much goes into roots (water, nutrients, anchoring), leaves (catching light) or flowers and seeds (offspring) as conditions change. They don't decide this consciously: hormones steer the growth. Here, the focus stands in for those signals.</p></details></div>`;
+  box.querySelectorAll("button.fbtn").forEach(b=>b.addEventListener("click",()=>chooseFocus(b.dataset.focus)));
+  const c=box.querySelector("#focusClear"); if(c) c.addEventListener("click",()=>{ sim.clearFocus(); log("Colony Focus cleared: every colony grows at its normal balance."); renderFocus(true); renderHUD(lastCov); draw(); });
+}
+function chooseFocus(mode){
+  if(selected<0) return false;
+  const from=sim.focus.mode?`${FOCUS_UI[sim.focus.mode].name} on ${LABEL[sim.focus.section]}`:null;
+  if(!sim.setFocus(selected,mode)){ log(`${LABEL[selected]} has no living plants yet, so there is no colony to focus.`); return false; }
+  log(`Colony Focus: ${FOCUS_UI[mode].name} on ${LABEL[selected]}${from&&from!==`${FOCUS_UI[mode].name} on ${LABEL[selected]}`?` (moved from ${from})`:""}. ${FOCUS_UI[mode].what}`);
+  renderFocus(true); renderHUD(lastCov); draw(); return true;
 }
 
 // island note (water worlds only): geographic access, kept separate from the environment readout above
@@ -471,6 +548,8 @@ if(BLOOM_RUN.kind==="procedural"){ const a=BLOOM_RUN.planet.archetype; // unobtr
   document.title=`BLOOM — ${BLOOM_RUN.archetype.name} · seed ${BLOOM_RUN.seed} (playtest harness)`;
   document.querySelector("header h1 small").textContent="· "+BLOOM_RUN.planet.name.toLowerCase();
   document.getElementById("runId").textContent=`${BLOOM_RUN.archetype.name} · public seed ${a.publicSeed} · attempt ${a.attempt} · ${BLOOM_RUN.planet.name} (${BLOOM_RUN.planet.id}) · layers ${a.validatedLayers.join("")}`; }
+// BLOOM-008: open on the origin so its colony status and the Colony Focus control are the first thing in view
+selected=ORIGIN; renderInspect(); log(`Your plant has just taken root in ${LABEL[ORIGIN]}: a sparse young colony. Choose a Colony Focus on the left while it establishes.`);
 resize(); renderShop(); renderHUD(0); requestAnimationFrame(frame);
 
 /* ========================================================================== */
@@ -489,7 +568,10 @@ window.BLOOM_API={
   geometry(){ return { W, H, tile:TILE, water:TILEMAP.filter(v=>v<0).length, land:sim.map.LAND, landmasses:new Set(LANDMASS).size,
     originMass:LANDMASS[ORIGIN], centers:CENT.map(c=>({x:c.x*TILE,y:c.y*TILE})), mass:[...LANDMASS] }; },
   livingByMass(){ const liv=livingCountBySection(), out={}; SEC.forEach((_,i)=>{ out[LANDMASS[i]]=(out[LANDMASS[i]]||0)+liv[i]; }); return out; },
-  crossing(){ return { ...sim.crossing }; }
+  crossing(){ return { ...sim.crossing }; },
+  // BLOOM-008 diagnostics (tests only): colony establishment/status per section and the current focus
+  colony(){ return SEC.map((_,i)=>({ ...sim.colonyStatus(i), living:livingCountBySection()[i] })); },
+  focus(){ return { ...sim.focus }; }
 };
 </script>
 <script>

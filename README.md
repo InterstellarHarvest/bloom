@@ -4,7 +4,7 @@ A retro-pixel **terraforming / evolution** game in the *Plague Inc.* lineage, bu
 
 > *A planet's "mood" is its sky — you can change that. A region's "personality" is its ground — you have to adapt to that.*
 
-## Status — slice gate PASSED; Ocean Archipelago worlds validated (layers 1–8) and playable in a developer harness; human procedural playtest pending
+## Status — slice gate PASSED; Ocean Archipelago worlds validated (layers 1–8) and playable in a developer harness; human procedural playtest paused for BLOOM-008, to resume
 
 The original plan was eight isolated portion demos. In August 2026 the **v1.1 direction change** ([PR #1](https://github.com/InterstellarHarvest/bloom/pull/1), see [`docs/GAMEPLAY_DIRECTION_DECISIONS_v1.0.md`](docs/GAMEPLAY_DIRECTION_DECISIONS_v1.0.md)) replaced that march with a single gate: **one complete, ugly-but-playable Eden run** ([`docs/NEXT_PLAYABLE_SLICE_v1.0.md`](docs/NEXT_PLAYABLE_SLICE_v1.0.md)). The slice was built, audited and tuned, and the owner **cleared the gate on 2026-09-26**. Work now follows the bible's post-gate sequence (§15).
 
@@ -19,13 +19,16 @@ The original plan was eight isolated portion demos. In August 2026 the **v1.1 di
 | Post-gate 3b · archetypes + winnability (BLOOM-005) | data-driven archetype layer + **Ocean Archipelago**; deterministic archetype generate → validate → retry; validator layers 4–6 via a real no-cheat **witness build** | ✅ |
 | Post-gate 3c · strategy diversity + pacing (BLOOM-006) | validator **layers 7–8**: ≥ 2 materially distinct broad strategies per Ocean Archipelago world, each inside provisional pacing bands; production generation requires layers 1–8 | ✅ |
 | Post-gate 3d · procedural-run harness (BLOOM-007) | `demo-run.html?archetype=ocean_archipelago&seed=N` plays a production-generated world in the real game UI; water rendering, island/crossing readouts, Waterborne Seeds preview | ✅ |
-| **Human procedural playtest** | owner plays seeds 13 and 8: [`docs/PLAYTEST_PROCEDURAL_v1.md`](docs/PLAYTEST_PROCEDURAL_v1.md) | ⏳ **pending**, gates the next row |
+| Post-gate 3d′ · colony establishment + Colony Focus (BLOOM-008) | owner-feedback retune: colonies start sparse and establish (Sparse → Establishing → Established → Dense) · map vegetation shaded by stand density · **Colony Focus** (Roots / Leaves / Seeds on one Living region) · golden intentionally regenerated | ✅ (machine-verified; human verdict pending) |
+| **Human procedural playtest** | owner plays seeds 13 and 8: [`docs/PLAYTEST_PROCEDURAL_v1.md`](docs/PLAYTEST_PROCEDURAL_v1.md) | ⏸ **paused for BLOOM-008, to resume**, gates the next row |
 | Post-gate 3e · more archetypes/content | further archetypes and traits (§10.1, §17) | 🔒 after the procedural playtest |
 | Post-gate 4–5 | pressure scenarios (§11) · visual polish + final hex boards (§7, §12) | later |
 
 **Procedural validation (BLOOM-006):** validator layers 1–8 (bible §10.3) are implemented. Ocean Archipelago generation accepts a world only if it passes structural validity, reachability, winnability, the win margin, strategy diversity (≥ 2 materially distinct broad environmental approaches, described by effect-based strategy signatures) and pacing (provisional time bands). This is validator evidence from a perfect-knowledge witness. **No procedural world has been validated by a human player yet**, and there is no player-facing planet menu.
 
 **Procedural-run harness (BLOOM-007):** a generated Ocean Archipelago can be played in the real game UI through a developer launch path (below). The page calls the production `BLOOM.generateFromArchetype`, so it only ever loads a world that passes layers 1–8. It is a playtest harness, **not the final planet menu**. The procedural worlds have **not passed human validation**: that is the owner playtest in [`docs/PLAYTEST_PROCEDURAL_v1.md`](docs/PLAYTEST_PROCEDURAL_v1.md), and **a second archetype stays gated on it**.
+
+**Colony establishment + Colony Focus (BLOOM-008, owner-authorized retune):** each Living tile carries a stand density (a new tile is a sparse seedling stand that thickens while its section can grow). A section's *establishment* (Σ density / area) replaces the old fill-share maturity gate. It sets how strongly the colony seeds outward and how much Biomass it yields, and the inspect panel shows it as *Colony: Sparse / Establishing / Established / Dense*. The map shades each tile from light, gappy seedlings to dark, full stands, so a fully green region keeps changing while it matures. **Colony Focus** puts one Living region's growth into **Roots** (establish faster; less die-back and thinning, only on marginal-or-better ground, never red ground), **Leaves** (+Biomass from that colony) or **Seeds** (stronger outward spread and Waterborne source pressure from it). No mode changes fitness, tolerances or thresholds. The focus is set-and-leave, one region at a time, and optional. All numbers are in `config.focus` / `config.establish`. The validator's witness never uses focus, so layers 4–8 remain a no-focus floor.
 
 **What the slice proves (verified headless):** several broad winning builds exist. The human-paced recipes in `slice-check` are: the *wet* build (Flood I), which gives up Dust Reach; the *dry* build (Drought I), which gives up Marsh Low; and a *Terraform* build (Humidify ×2 instead of Drought, with no water Adaptation), which also gives up Marsh Low. The witness solver finds more (e.g. a Cool or Warm Terraform replacing a temperature point). The tested build with **neither water Adaptation nor water Terraform** (Seed Output ×2, Early Maturity, Cold ×2, Heat, Salt, Radiation) caps at 67.6%. The solver's static search agrees: within its bounds, no build without a water tool exceeds 67.6%. Over-committing (Flood/Drought II) collapses the home regions, and the preview warns you before you do that.
 
@@ -34,7 +37,7 @@ The original plan was eight isolated portion demos. In August 2026 the **v1.1 di
 1. ~~Extract/stabilize shared simulation modules~~ (BLOOM-002) · ~~reconnect procedural generation~~ (BLOOM-003).
 2. ~~Water-crossing Spread + geographic reachability~~ (BLOOM-004).
 3. ~~Archetype layer, Ocean Archipelago, validator layers 4–6~~ (BLOOM-005) · ~~layers 7–8: strategy diversity + pacing~~ (BLOOM-006).
-4. ~~Developer procedural-run harness~~ (BLOOM-007) → **owner procedural playtest** ([`docs/PLAYTEST_PROCEDURAL_v1.md`](docs/PLAYTEST_PROCEDURAL_v1.md), seeds 13 and 8). Pending.
+4. ~~Developer procedural-run harness~~ (BLOOM-007) → **owner procedural playtest** ([`docs/PLAYTEST_PROCEDURAL_v1.md`](docs/PLAYTEST_PROCEDURAL_v1.md), seeds 13 and 8). Paused on owner feedback; ~~colony establishment + Colony Focus~~ (BLOOM-008); resume the test.
 5. **More archetypes and content** (§10.1, §17), gated on that playtest. Each new archetype states its own `minStrategies` and pacing bands.
 6. **Pressure scenarios** (§11).
 7. **Visual polish and final board interactions** (§7, §12, friendly/cutesy direction). A player-facing planet menu is still to come.
@@ -53,10 +56,12 @@ node tools/strategy-check.js                                             # layer
 NODE_PATH="$(npm root -g)" node tools/slice-check.js [--shots <dir>]     # demo-run UI, real shop buttons
 NODE_PATH="$(npm root -g)" node tools/surface-check.js [--shots <dir>]   # demo-surface UI, both modes
 NODE_PATH="$(npm root -g)" node tools/procedural-run-check.js [--shots <dir>]  # demo-run procedural harness, real controls
+NODE_PATH="$(npm root -g)" node tools/colony-focus-check.js [--shots <dir>]    # BLOOM-008 Colony Focus + establishment (engine + UI)
+node tools/pacing-metrics.js [--json <out>]                              # opening / pacing measurements (report, not pass/fail)
 ```
 
-- **`sim-check.js`** (18 checks, no dependencies):
-  - the golden First Bloom runs, bit-for-bit;
+- **`sim-check.js`** (19 checks, no dependencies):
+  - the golden First Bloom runs, bit-for-bit (run traces intentionally regenerated by BLOOM-008; the static layout/evaluation/price part is unchanged since adc87d0; a fifth run pins Colony Focus placement, switching and moving);
   - content is pure data;
   - the engine has no DOM access;
   - config drives behavior;
@@ -92,7 +97,7 @@ NODE_PATH="$(npm root -g)" node tools/procedural-run-check.js [--shots <dir>]  #
   - the pacing policy is archetype data, and the schema rejects bad bands;
   - positive fixture (seed 13, attempt 6): two materially distinct strategies (Cold + Salt vs Heat + Radiation, holding different land), each replayed independently with earned Biomass, each buying its whole core before the margin, both inside the pacing bands;
   - signature rules: purchase order, Spread boosters, redundant add-ons and trait ids never make a new strategy;
-  - negatives: layer 7 single-strategy (seed 5 attempt 0, a static proof); layer 8 too slow (seed 27 attempt 1); first purchase too late (seed 20 attempt 2); purchase gap (seed 17 attempt 2, plus an isolated controlled boundary); too fast (controlled boundary, because fast worlds are single-strategy and already fail layer 7);
+  - negatives: layer 7 single-strategy (seed 5 attempt 5, a static proof); layer 8 too slow (seed 21 attempt 1); first purchase too late (seed 4 attempt 1); purchase gap (seed 39 attempt 1, plus an isolated controlled boundary); too fast (controlled boundary, because fast worlds are single-strategy and already fail layer 7). These natural fixtures were re-picked after BLOOM-008's retune moved individual witness timings; the bands did not change;
   - caps produce INCONCLUSIVE, never FAIL, and production rejects INCONCLUSIVE;
   - determinism; production worlds record and re-validate layers 1–8;
   - First Bloom's Terraform water alternative and the exact 67.6% no-water-tool cap.
@@ -108,15 +113,24 @@ NODE_PATH="$(npm root -g)" node tools/procedural-run-check.js [--shots <dir>]  #
   - bubbles, pause and speed;
   - a seed-8 smoke run;
   - seed 35 and a malformed seed give an explicit failure state with no world started.
-- All three browser suites need `npm i -g playwright`.
-- Exit code 1 = failure for all eight.
+- **`colony-focus-check.js`** (BLOOM-008) runs controlled engine experiments (same map and RNG, one variable changed) and drives the real UI:
+  - focus API rules: Living sections only, one region, one mode, clear;
+  - Roots: speeds establishment on yellow ground, keeps thickening in the marginal band, cuts die-back under stress, and is bit-identical to no focus on red ground;
+  - Leaves: more Biomass with identical spread; no mode changes fitness, tolerances, category words or previews;
+  - Seeds: stronger outward push, earlier Waterborne footholds, still no foothold on a hostile island;
+  - effects follow `config.focus`; newly colonized ground starts as sparse seedlings;
+  - First Bloom and seeds 13 and 8 stay winnable (with and without focus), and seed 35 still fails;
+  - UI: the opening decision, single-click select/switch/move, live 1× clicks, the density shading (darkens and keeps changing after the region fills), the status words, and palette/outline separation.
+- All four browser suites need `npm i -g playwright`.
+- Exit code 1 = failure for all nine suites.
 
 ## Architecture
 
 ```
 resources/bloom-sim.js       shared simulation engine, no DOM: layout (Voronoi or explicit tilemap),
                              water/impassable terrain, water crossings, 4-category evaluation, tick,
-                             economy, bubbles, win, upgrade effects, purchase preview, grid geometry (BLOOM.geo)
+                             colony establishment (stand density), Colony Focus, economy, bubbles, win,
+                             upgrade effects, purchase preview, grid geometry (BLOOM.geo)
 resources/bloom-gen.js       seeded procedural surface generator → the engine's planet model
 resources/bloom-validate.js  planet validator (bible §10.3 layers 1–8)
 resources/bloom-witness.js   witness solver: winnability (layers 4–6), strategy diversity + pacing (7–8)
@@ -127,7 +141,7 @@ content/archetypes.js        planet archetypes as data (Ocean Archipelago)
 planets/first_bloom.js       the authored slice planet
 demos/demo-run.html          UI + rendering for a run: First Bloom by default; ?archetype=<id>&seed=<n> plays a generated world
 demos/demo-surface.html      UI + rendering for the surface demo (authored Cinder-Frost + Random)
-tools/                       sim-check · gen-check · crossing-check · archetype-check · strategy-check (Node) · slice-check · surface-check · procedural-run-check (browser) · golden/
+tools/                       sim-check · gen-check · crossing-check · archetype-check · strategy-check (Node) · slice-check · surface-check · procedural-run-check · colony-focus-check (browser) · pacing-metrics (report) · golden/
 docs/evidence/               screenshots attached to directive reports
 ```
 
