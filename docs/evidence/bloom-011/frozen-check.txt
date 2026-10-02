@@ -1,0 +1,111 @@
+# A1–2, 6 · archetype data, neutral generator defaults
+PASS  1 · Frozen World archetype data is valid (and Ocean Archipelago / Desert World still are)  — frozen_world "Frozen World" · sections [12,18] · water {"min":6,"max":20,"tolerance":5} · requiredConditions ["Temperature:cold"]
+PASS  2 · the archetype catalogue is plain data, now three archetypes  — ocean_archipelago, desert_world, frozen_world
+PASS  1 · schema rejects an unknown climate knob  — unknown climate key geothermalHeat
+PASS  1 · schema rejects a render tint mode other than dry/cold  — render must be { ground?/water?/waterAlt?: [r,g,b] 0..255, groundMix 0..1 with ground, tintBy?: "dry"|"cold", dunes?/frost?: boolean }
+PASS  1 · schema rejects a non-boolean frost flag  — render must be { ground?/water?/waterAlt?: [r,g,b] 0..255, groundMix 0..1 with ground, tintBy?: "dry"|"cold", dunes?/frost?: boolean }
+PASS  1 · schema rejects an unknown required condition  — validation.requiredConditions must be a non-empty list of signature conditions (e.g. "Water:dry") and needs minStrategies
+PASS  1 · schema rejects an unknown naming pool  — naming.ice must be one of cold/mild/warm/hot/wet/dry/noun with a non-empty list of words
+PASS  1 · schema rejects an origin-fitness bar above 1  — geography.minOriginFitness must be in (0, 1]
+PASS  2 · Frozen is data over generic generator knobs (no Frozen-specific generator or simulation code); Ocean's and Desert's own policies are untouched  — new generic climate knobs, all 0 by default: elevationCooling, geothermalChance, geothermalWarmth · render tintBy/frost (optional) · Desert still requires Water:dry
+PASS  6 · existing worlds unchanged under the neutral defaults: 56 Ocean/Desert attempts and default-generator planets match d6e9a5c bit-for-bit (tiles, sections, names, origin)  — 56 planet bodies identical · no geothermal tags unless switched on
+
+# A3–5 · deterministic generate/validate/retry
+PASS  3 · same archetype + public seed → identical accepted world, which reproduces exactly from its recorded generation params  — seed 22 → attempt 1 · Mistral-887 (proc_1928231887)
+PASS  4 · bounded retry is deterministic: attempt k uses FNV-1a("frozen_world|seed|k"); the rejected attempt 0 is recorded and skipped identically every time  — seed 22: #0 layer 8 (pacing): only 0 of 2 broad strategies meet the pacing policy — [Temperature:cold=… → attempt 1
+PASS  5 · explicit bounded failure: with one attempt allowed, seed 22 throws with its reason (never returns a bad or substitute world)  — layer 8 (pacing): only 0 of 2 broad strategies meet the pacing policy — [Temperature:cold=Adapt(1)+Terraform(+6)] margin
+
+# A7–13, 18, 29 · Frozen World public seeds 1–40 (full production path, layers 1–8)
+  accepted 40/40 · no generation failures · attempts {"0":23,"1":13,"2":4}
+  rejected attempts 21, by first reason: {"layer 8 (pacing)":10,"layer 2 (origin refuge)":3,"layer 2 (other refuges)":7,"landmasses":1}
+  water 6–20.3% (mean 12.3%) · landmasses {"1":37,"2":3} · origin landmass share 0.893–1 · sections {"12":3,"13":9,"14":4,"15":2,"16":5,"17":4,"18":13}
+  temperature (area-weighted, start): -23–-3 °C (mean -12.5) · coldest region -48–-31 °C · warmest 2–42 °C · origin -2–13 °C · moisture mean 45.9
+  land at the start: cold-blocked 61.5% (41–82%) · open 32.2% · heat-blocked 2.1% · water-limited 2.0% · geothermal regions 0–7 · other green refuges 2–6
+  vs Ocean Archipelago 10.6 °C · Desert World 19.1 °C · default generator 3.4 °C
+  how strategies answer the cold, per world: {"Adapt vs Adapt+Terraform":30,"Adapt vs Adapt":3,"Terraform vs Terraform":1,"Adapt+Terraform vs Adapt+Terraform":5,"Adapt vs Terraform":1}
+  strategy classes: {"Temperature:cold=Adapt(2)":25,"Temperature:cold=Adapt(1)+Terraform(+12) · Temperature:heat=Adapt(1)":6,"Temperature:cold=Adapt(1)+Terraform(+6)":7,"Temperature:cold=Adapt(1)+Terraform(+6) · Temperature:heat=Adapt(1)":6,"Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1)":1,"Temperature:cold=Adapt(2)+Terraform(+6)":4,"Defense:salt=Adapt(1) · Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1)":2,"Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)":1,"Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1)":2,"Temperature:cold=Adapt(1)+Terraform(+12)":8,"Defense:salt=Adapt(1) · Temperature:cold=Adapt(2)":1,"Temperature:cold=Adapt(3)":1,"Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(2) · Water:dry=Terraform(+8)":1,"Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(2) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)":1,"Temperature:cold=Adapt(1)+Terraform(+6) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+8)":3,"Defense:rad=Adapt(1) · Temperature:cold=Adapt(1)":1,"Temperature:cold=Adapt(1)+Terraform(+6) · Temperature:heat=Adapt(1) · Water:d
+  first purchases: {"seedOut":73,"cold":7} at 48.2–111.8 s · win 314.1–676.3 s · margin 360.5–679.8 s (median 393.9) · max gap 72.5–173.8 s · terminal wait 11–197.7 s
+  runtime 42.0 s for 40 seeds · median 767 ms · worst 3686 ms
+PASS  7 · every accepted world's water is within ±5 of its request (6–20%): lakes and inlets, never an ocean world  — actual 6–20.3% · max drift 0.6
+PASS  8 · geography: mostly contiguous — ≤ 3 landmasses, the origin's landmass holds ≥ 70% of the land, most worlds are one landmass  — {"1":37,"2":3}
+PASS  9 · substantially colder than Ocean Archipelago, Desert World and the default generator (area-weighted effective temperature)  — Frozen -12.5 °C vs Ocean 10.6 · Desert 19.1 · default 3.4
+PASS  10 · temperature is never uniformly lethal: every world opens with ≥ 10% of its land growable, and nearly all have ground above freezing  — open at start 17–55% · warmest region 2–42 °C (above 0 °C in 40/40)
+PASS  11 · genuine viable refuges exist beyond the origin: every world has ≥ 2 other green regions at the start (geography.minRefuges), many have more; geothermal pockets in nearly all  — other green refuges {"2":9,"3":13,"4":7,"5":5,"6":6} · geothermal regions {"0":1,"1":1,"2":3,"3":8,"4":7,"5":10,"6":6,"7":4}
+PASS  12 · every origin is a genuine refuge on its own conditions (before the protected-refuge floor)  — origin own fitness 0.8–1 · origin -2–13 °C
+PASS  13 · significant land is blocked primarily by the cold at the start (far more than by water or heat)  — cold-blocked 61.5% (min 40.6%) vs water-limited 2.0% + heat-blocked 2.1%
+PASS  18 · every proven strategy in the sweep answers Temperature:cold (Adaptation, Terraform or both)  — 80 strategies: {"Adapt":37,"Adapt+Terraform":40,"Terraform":3}
+PASS  29 · sweep quality: ≥ 34/40 accepted through layers 1–8; a warming strategy in ≥ 25% of worlds and a Cold-Tolerance-only one in ≥ 50%; runtime bounded  — 40/40 · warming strategy in 37 worlds · Cold-only strategy in 34 · median 767 ms, worst 3686 ms
+
+# A14–24 · positive fixture — Frozen World public seed 22 (attempt 1, Mistral-887)
+  [Temperature:cold=Adapt(2)]
+    core cold + cold · plan seedOut @ 75.2 s (130) → earlyMat @ 150.2 s (170) → cold @ 226.7 s (140) → cold @ 327.2 s (270)
+    spent 710 · win 357.9 s · margin 361.4 s · peak 90.8% · first 75.2 s · gaps 75.2/75/76.5/100.5 s · terminal wait 34.2 s · Biomass/min 49,115,144,126,133,212,5
+    holds Frost Rise, Ice Basin, Sedge Slope, Mist Ridge, Mist Reach, Snow Reach, Rime Slope, Polar Cirque, Caldera Expanse, Tundra Moraine, Mist Moraine, Permafrost Reach, Ice Fields, Hoar Expanse (90.8%)
+  [Temperature:cold=Adapt(1)+Terraform(+12)]
+    core cold + warm + warm · plan seedOut @ 75.2 s (130) → earlyMat @ 150.2 s (170) → cold @ 226.7 s (140) → warm @ 309 s (200) → warm @ 390.1 s (290)
+    spent 930 · win 422.6 s · margin 427.2 s · peak 81.8% · first 75.2 s · gaps 75.2/75/76.5/82.3/81.1 s · terminal wait 37.1 s · Biomass/min 49,115,144,126,133,228,201,25
+    holds Frost Rise, Ice Basin, Sedge Slope, Mist Ridge, Snow Reach, Rime Slope, Polar Cirque, Tundra Moraine, Mist Moraine, Permafrost Reach, Ice Fields, Hoar Expanse (81.8%)
+  regions: Frost Rise -16°C · Rime Moraine -39°C · Scald Rise(geo) 33°C · Ice Basin -29°C · Sedge Slope★(geo) 7°C · Mist Ridge(geo) 13°C · Mist Reach(geo) 25°C · Snow Reach -34°C · Rime Slope -29°C · Polar Cirque -19°C · Caldera Expanse(geo) 27°C · Tundra Moraine -20°C · Mist Moraine(geo) 8°C · Permafrost Reach -15°C · Ice Fields -27°C · Hoar Expanse -30°C
+  early land (no upgrades): reachable 22.6%, growable 31.9% · 6 simulations over 2 classes
+PASS  14 · the fixture is unmistakably frozen (most land cold-blocked, one landmass, a warm geothermal refuge origin) and passes layers 1–8  — 61.1% cold-blocked · 31.9% open · origin Sedge Slope 7 °C · water 12% · 16 sections
+PASS  15 · ≥ 2 materially different strategy signatures (each has a token the other lacks)  — [Temperature:cold=Adapt(2)] vs [Temperature:cold=Adapt(1)+Terraform(+12)]
+PASS  16 · one strategy is organism-first: Cold Tolerance answers the cold, no Terraform at all  — [Temperature:cold=Adapt(2)] core cold+cold
+PASS  17 · a materially different strategy warms the sky (Warm the Sky is part of its minimal core)  — [Temperature:cold=Adapt(1)+Terraform(+12)] core cold+warm+warm
+PASS  18 · every proven fixture strategy answers Temperature:cold (the archetype's requiredConditions)
+PASS  19 · Temperature is genuinely required: with no Cold/Heat Tolerance and no Warm/Cool Terraform, no legal build can hold 70% (static proof)  — no legal build can hold the win simultaneously: best build reaches 22.6% < 70% · best (nothing)
+PASS  20 · the strategies hold different land: warming the sky pushes warm geothermal refuges the Cold-Tolerance strategy keeps beyond the plant's heat limit  — Warm +12 °C gives up Mist Reach (geothermal) 25 → 37 °C, scorching; Caldera Expanse (geothermal) 27 → 39 °C, scorching · held 90.8% vs 81.8% · costs cold+cold vs cold+warm+warm
+PASS  21 · Waterborne Seeds is not required: not even offered on this one-landmass fixture, removing it changes no strategy, and Frozen policy never asks for it
+PASS  22 · both witnesses earn their Biomass and buy through sim.buy (independent replay reproduces each margin), buy their whole core first, make no local colony choices  — 4 purchases, 710 spent of 784 earned → 73.0% · 5 purchases, 930 spent of 1021 earned → 73.2%
+PASS  23 · both reach the validation margin (73.0%)  — win 357.9 s → margin 361.4 s, peak 90.8% · win 422.6 s → margin 427.2 s, peak 81.8%
+PASS  24 · both satisfy Frozen World's pacing policy (margin 360–900 s, first purchase 45–120 s, gap ≤ 240 s, terminal wait ≤ 240 s)  — margin 361.4 s, first 75.2 s, gap 100.5 s, wait 34.2 s · margin 427.2 s, first 75.2 s, gap 82.3 s, wait 37.1 s
+
+# A25–28 · natural Frozen negatives (generated attempts, the validator's own verdicts)
+PASS  25 · layer 4 (unwinnable simultaneous coverage): seed 46 attempt 22 is structurally fine but no legal build holds 70% — its refuge is walled in by lethal toxic ground and deep ice  — layer 4 (simultaneous coverage): no legal build can hold the win simultaneously: best build reaches 13.4% < 70% · lethal: Willow Reach · natural but off the production path (seed 46 is accepted at attempt 1); layer 4 is rare on Frozen: 0 of 1,600 early attempts, 3 deep retries
+PASS  26 · layer 7 (one broad solution; Temperature not actually required): seed 171 attempt 0 is 76.9% open at the start, so every build shares one empty core — a static proof  — only 1 of 2 required broad strategies wins with margin []; every other candidate class is absent (static proof) · production takes attempt 2
+PASS  27 · layer 8 (pacing): seed 22 attempt 0 has 2 broad strategies, both win too fast (too little cold resistance)  — only 0 of 2 broad strategies meet the pacing policy — [Temperature:cold=Adapt(1)+Terraform(+6)] margin reached at 255.8 s < 360 s (too fast) | [Temperature:cold=Adapt(2)] · production takes attempt 1
+PASS  28 · bad refuge origin: seed 8 attempt 0 passes the structural validator, but its home region is frozen ground kept alive only by the protected-refuge floor  — own fitness 0.60 at -10 °C (the floor lifts it to 0.62), limited by Temperature · production takes attempt 1
+PASS  21 · across the sweep Waterborne Seeds stays geography-dependent: absent on every one-landmass world, offered only where a crossing exists, and never the only way to win  — 37 one-landmass worlds: offered on 0 · 3 multi-landmass: offered on 3 · a crossing strategy in 1 world(s) (5), always beside a non-crossing one
+
+# A30–32 · colony development on Frozen World (BLOOM-009 system, unchanged)
+PASS  30 · per-region focus works on a frozen world: two refuge colonies hold different focuses at once, the rest stay Balanced  — Sedge Slope Roots · Mist Reach Leaves
+PASS  30 · a local specialization is bought with ordinary Biomass (refused when short) and raises the next price  — Root Network 90 → next 130
+PASS  31 · Roots is not secret Cold Tolerance: with Roots + Root Network on every colony, red-cold regions are never colonized, and colonies on ground the sky turns red-cold die exactly as under Balanced  — 10 red-cold regions: living after 2600 ticks Balanced 0 / Roots+Root Network 0 · after cooling the sky 24 °C, living plants left on red ground: Balanced 0 / Roots 0
+  mean win time over both witness recipes × 3 run seeds: balanced 395 s · rootsEverywhere 380 s · leavesEverywhere 408 s · seedsEverywhere 381 s · situational 320 s · misplaced 485 s
+PASS  32 · colony-study comparison produced on the fixture: situational play beats Balanced, which beats misplaced play (optional; witnesses use none)  — Roots everywhere -15 s vs Balanced · Leaves 13 s · Seeds -13 s · situational -74 s
+
+# A33–36 · First Bloom, Ocean Archipelago and Desert World unchanged; Desert human gate recorded
+PASS  33 · First Bloom remains valid (layers 1–6 witness) and its shop unchanged  — witness margin at 293 s
+PASS  34 · Ocean Archipelago seed 13 still passes layers 1–8 with the same identity  — attempt 6 · Eos-227 · [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)] [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)]
+PASS  34 · Ocean Archipelago seed 8 still passes layers 1–8 with the same identity  — attempt 1 · Coriol-220 · [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Adapt(1)] [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Terraform(−8)]
+PASS  34 · the known Ocean failure (seed 35) still fails explicitly after 24 attempts
+PASS  35 · Desert World fixture seed 25 is unchanged: attempt 0, Umbra-584, the same two strategies  — [Water:dry=Adapt(2)] vs [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)]
+PASS  36 · the Desert human gate is recorded as passed, with the owner's restrained verdict ("decent")  — **Gate status:** ✅ **PASSED with notes** (owner, recorded 2026-10-02 in BLOOM-011). The owner played the Desert run and judged: *"gameplay is decent. lets move 
+wrote docs/evidence/bloom-011/frozen-sweep.json
+
+# B37–45 · real browser: demo-run.html?archetype=frozen_world&seed=22
+PASS  37 · the Frozen run launches through the generic launch path (BLOOM.generateFromArchetype in-page): same accepted attempt and planet as Node, layers 1–8, identity shown  — Frozen World · public seed 22 · attempt 1 · Mistral-887 (proc_1928231887) · layers 12345678 · HUD sky −18°C · moist 46
+PASS  45 · no witness plan, strategy signature or solution reaches the page  — planet.archetype keys: id,name,publicSeed,attempt,generationSeed,requestedWaterPct,actualWaterPct,landmasses,originLandmassShare,winnabilityChecked,validatedLayers,rejectedAttemptCount
+PASS  44 · no Ocean or Desert names or assumptions: no Waterborne Seeds in the shop, no ocean/island/coast/desert/dune/sand wording, region names from the frozen pools  — Frost Rise, Rime Moraine, Scald Rise, Ice Basin, Sedge Slope, Mist Ridge, Mist Reach, Snow Reach, Rime Slope, Polar Cirque, Caldera Expanse, Tundra Moraine, Mist Moraine, Permafrost Reach, Ice Fields, Hoar Expanse
+PASS  38 · the temporary frozen treatment renders: frozen bare ground is pale and cool (never sandy), warmer refuges keep their own greener colour, ice glints on frozen ground, cold-blue water  — frozen ground avg rgb 82,90,101 (100 samples) · refuge ground 67,73,57 · water 50,90,123 · 171 ice glints
+PASS  39 · inspecting a frozen region: the four categories, 'Growth blocked: too cold', both remedies (Cold Tolerance — or Warm the sky), and its temperature in numbers next to the plant's range  — Ice Basin: Temperature freezing terraformable · ▲ Growth blocked: too cold / Adapt: Cold Tolerance — or Terraform: Warm the sky · Ground here −29°C · sky −18°C · suits your plant −6°C to +24°C
+PASS  39 · inspecting a geothermal refuge explains why it is warmer than the land around it  — Geothermal ground: heat from below (hot springs, warm soil) keeps it warmer than the land around it.
+PASS  40 · the Cold Tolerance purchase preview names the frozen regions it would open  — Cold Tolerance — opens: Frost Rise, Polar Cirque, Tundra Moraine, Permafrost Reach
+PASS  41 · the Warm the Sky preview shows the sky's temperature before → after and every region it changes: opened, closer but still frozen, and warm refuges it makes worse  — Warm the Sky — sky −18°C → −12°C · opens: Permafrost Reach · ⚠ closes: Mist Reach (too hot), Caldera Expanse (too hot) · closer, still blocked: Frost Rise, Rime Moraine, Ice Basin, Snow Reach, Rime Slope, Polar Cirque, Tundra Moraine, Ice Fields, Hoar Expanse.
+PASS  42 · the Frozen run is won through real shop clicks with the organism-first strategy (Cold Tolerance; the sky never changes; no local upgrades needed)  — seedOut @ 81 s → earlyMat @ 188 s → cold @ 234 s → cold @ 325 s · win at 363 s with 70.1% of the land
+PASS  43 · the Bloom Report identifies the generated Frozen World (name, archetype, public seed), its build and the real-plant analog — no Ocean/Desert wording  — ★ BLOOM / You held 70% of the land of Mistral-887 (Frozen World · public seed 22) in 6m 03s. / Your plant became:
+PASS  no browser errors (Frozen seed 22, Cold strategy)
+PASS  41 · after warming, the interface shows the new sky (HUD + '▲ +6°C'), which regions opened or moved closer, and which warm refuges the hotter sky closed (previewed as '⚠ closes' before the click)  — HUD −12°C · moist 46 ▲ +6°C → −6°C · moist 46 ▲ +6°C · Bought Warm the Sky. Sky −18°C → −12°C · opens: Ice Fields · ⚠ closes: Mist Reach (too hot), Caldera Expanse (too hot) · closer, still blocked: Rime Moraine, Ice Basin, S ‖ Bought Warm the Sky. Sky −12°C → −6°C · opens: Ice Basin, Snow Reach, Rime Slope, Hoar Expanse · closer, still blocked: Rime Moraine · ⚠ worse, still growing: Mist Ridge. · now: Mist Reach: scorching 37°C; Caldera Expanse: scorching 39°C
+PASS  42 · …and the warming strategy also wins through real shop clicks (Warm the Sky raises the global temperature)  — seedOut @ 89 s → earlyMat @ 186 s → cold @ 254 s → warm @ 326 s → warm @ 425 s · win at 455 s · sky -18 → -6 °C
+PASS  no browser errors (warming run)
+
+# B · other launches
+PASS  Frozen seed 12 (optional playtest seed) launches: attempt 1 · Coriol-192 · Waterborne Seeds offered (two landmasses, not needed)
+PASS  no browser errors (Frozen seed 12)
+PASS  38 · Desert seed 25 still launches with its own sandy treatment (no frost), so the frozen map differs visibly  — sandy 163/172 · avg 90,80,55
+PASS  no browser errors (Desert seed 25)
+PASS  38 · Ocean Archipelago seed 13 still launches with its own ocean colours (unlike the frozen lakes)  — attempt 6 · Eos-227 · water 30,62,104 vs frozen 120,160,186
+PASS  no browser errors (Ocean seed 13)
+PASS  38 · Ocean Archipelago seed 8 still launches with its own ocean colours (unlike the frozen lakes)  — attempt 1 · Coriol-220 · water 30,62,104 vs frozen 120,160,186
+PASS  no browser errors (Ocean seed 8)
+
+ALL CHECKS PASS  (86.3 s)

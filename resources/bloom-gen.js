@@ -39,10 +39,19 @@
   //                         (°C) and local moisture offset (0 = the sky's own moisture), and how much a moisture mismatch
   //                         counts per point against one °C of temperature mismatch; a dry world prefers a wetter offset
   //                         and weights it more, so the protected refuge is one of its wet basins
+  // BLOOM-011 knobs (same rule: neutral defaults, no extra randomness unless switched on):
+  //   elevationCooling      high ground is colder (air cools as it rises): each section's temperature offset gains
+  //                         (lowness − 0.5) × elevationCooling °C — the lowest-lying section is warmed by half of it, the
+  //                         highest cooled by half — so a cold world gets frozen uplands and milder lowlands, not just a
+  //                         north–south band
+  //   geothermalChance / geothermalWarmth   chance a section sits over geothermal heat (hot springs, warm ground) and is
+  //                         geothermalWarmth °C warmer than its latitude and height alone would make it; a geothermal
+  //                         section is never also volcanic-acid ground (its warmth is the point, not a toxic hazard)
   const CLIMATE_DEFAULTS = { temperature: -8, moisture: 45, tempBase: -25, tempSpan: 72, tempJitter: 12,
     moistureSpread: 80, moistureBias: 0, coastMoisture: 20, volcanicChance: 0.14,
     coastalSaltAbove: 0.4, coastalSaltChance: 0.5, saltChance: 0.10,
-    lightBias: 0, drySaltChance: 0, basinMoisture: 0, dryOffset: -22, wetOffset: 22, originTemp: 2, originMoistureOffset: 0, originMoistureWeight: 0.2 };
+    lightBias: 0, drySaltChance: 0, basinMoisture: 0, dryOffset: -22, wetOffset: 22, originTemp: 2, originMoistureOffset: 0, originMoistureWeight: 0.2,
+    elevationCooling: 0, geothermalChance: 0, geothermalWarmth: 0 };
   const LIMITS = { waterPct: [0, 90], sections: [1, 24] };
 
   // value-noise octave: lattice of rng() values, smoothstep-interpolated over the grid
@@ -196,12 +205,18 @@
     const sections = seeds.map((s, i) => {
       const c = cent[i]; const yN = c.n ? (c.y / c.n) / (H - 1) : ((s.tile / W | 0) / (H - 1));
       const coastFrac = c.n ? c.coast / c.n : 0;
-      const tempOffset = Math.round((CL.tempBase + yN * CL.tempSpan) + (rng() - 0.5) * CL.tempJitter);
+      // (the elevation term is exactly 0 at the default, so earlier planets' offsets round identically; the geothermal
+      // draw short-circuits at chance 0, so the rng sequence is unchanged)
+      const geothermal = CL.geothermalChance > 0 && rng() < CL.geothermalChance;
+      const tempOffset = Math.round((CL.tempBase + yN * CL.tempSpan) + (rng() - 0.5) * CL.tempJitter
+        + (lowness[i] - 0.5) * CL.elevationCooling + (geothermal ? CL.geothermalWarmth : 0));
       const effTemp = gTemp + tempOffset;
       const moistureOffset = clamp(Math.round((moistField[s.tile] * CL.moistureSpread - CL.moistureSpread / 2) + CL.moistureBias + coastFrac * CL.coastMoisture
         + (lowness[i] - 0.5) * CL.basinMoisture), -45, 45);
       const dry = moistureOffset < CL.dryOffset, wet = moistureOffset > CL.wetOffset, hot = effTemp > 26, cold = effTemp < -12;
-      const volcanic = !cold && rng() < CL.volcanicChance;
+      // strong sun (→ radiation) follows the climate's own heat; geothermal warmth comes from below, not from the sky
+      const sunHot = geothermal ? effTemp - CL.geothermalWarmth > 26 : hot;
+      const volcanic = !cold && rng() < CL.volcanicChance && !geothermal; // (draw first: the sequence matches when off)
       const salt = (coastFrac > CL.coastalSaltAbove && rng() < CL.coastalSaltChance) || rng() < CL.saltChance
         || (CL.drySaltChance > 0 && dry && rng() < CL.drySaltChance); // (short-circuit: no draw at the default 0)
       const local = {
@@ -210,10 +225,11 @@
         ph: volcanic ? +(4 + rng() * 1.2).toFixed(1) : salt ? +(7.8 + rng() * 0.9).toFixed(1) : +(6 + rng() * 1.4).toFixed(1),
         salinity: salt ? Math.round(55 + rng() * 35) : Math.round(rng() * 12),
         toxicity: volcanic ? Math.round(40 + rng() * 35) : Math.round(rng() * 12),
-        radiation: Math.round((hot ? 40 : 10) + rng() * 25),
+        radiation: Math.round((sunHot ? 40 : 10) + rng() * 25),
         nutrients: wet ? Math.round(55 + rng() * 20) : dry ? Math.round(12 + rng() * 18) : Math.round(35 + rng() * 22)
       };
-      return { id: "sec_" + i, name: biomeName(rng, effTemp, dry, wet, P.names), kind: "land", area: c.n, landmass: s.comp, isOrigin: false, neighbors: [], local };
+      return { id: "sec_" + i, name: biomeName(rng, effTemp, dry, wet, P.names), kind: "land", area: c.n, landmass: s.comp, isOrigin: false, neighbors: [], local,
+        ...(geothermal ? { geothermal: true } : {}) }; // (a descriptive tag only — the engine reads `local`; absent unless switched on)
     });
     // 6. origin: temperate, low-stress section on the largest landmass (the protected refuge)
     let biggest = 0; for (let c = 1; c < nComp; c++) if (compSize[c] > compSize[biggest]) biggest = c;

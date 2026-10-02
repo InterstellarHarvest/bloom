@@ -1,0 +1,10 @@
+sim-check: PASS 19 · FAIL 0 · ALL CHECKS PASS
+gen-check: PASS 47 · FAIL 0 · ALL CHECKS PASS
+crossing-check: PASS 14 · FAIL 0 · ALL CHECKS PASS
+archetype-check: PASS 40 · FAIL 0 · ALL CHECKS PASS  (101.5 s)
+strategy-check: PASS 35 · FAIL 0 · ALL CHECKS PASS  (22.6 s)
+slice-check: PASS 15 · FAIL 0 · ALL CHECKS PASS
+surface-check: PASS 11 · FAIL 0 · ALL CHECKS PASS
+procedural-run-check: PASS 32 · FAIL 0 · ALL CHECKS PASS  (17.1 s)
+colony-development-check: PASS 68 · FAIL 0 · ALL CHECKS PASS  (28.4 s)
+desert-check: PASS 64 · FAIL 0 · ALL CHECKS PASS  (58.5 s)

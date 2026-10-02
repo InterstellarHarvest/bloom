@@ -11,8 +11,11 @@
 //                   maxOriginLandmassShare (origin landmass / all land; < 0.70 means ordinary spread
 //                   alone can never win → a crossing strategy is required); BLOOM-010: maxLandmasses and
 //                   minOriginLandmassShare (a mostly contiguous world), minOriginFitness (the origin's own fitness,
-//                   before the protected-refuge floor, must be at least this → the home region is a genuine refuge)
-//   render          optional temporary map treatment for the demo harness (ground tint + mix, water colours, dunes)
+//                   before the protected-refuge floor, must be at least this → the home region is a genuine refuge);
+//                   BLOOM-011: minRefuges (at least this many OTHER regions are green at the start → several refuges, not
+//                   one safe home surrounded by instant death)
+//   render          optional temporary map treatment for the demo harness (ground tint + mix, water colours, dunes;
+//                   BLOOM-011: tintBy "dry" (default) | "cold" — which ground takes the tint — and frost glints)
 //   naming          optional word pools for generated region names (cold/mild/warm/hot/wet/dry/noun), so a world's
 //                   names match its climate; pools left out use the generator's defaults
 //   generation      maxAttempts for the deterministic retry loop
@@ -76,6 +79,44 @@
       // the wait after the last purchase (one early purchase then minutes of nothing to decide is not a desert puzzle)
       // and requires every proven strategy to answer the dry ground (Water:dry — by Adaptation, Terraform or both).
       validation: { winnable: true, minStrategies: 2, requiredConditions: ["Water:dry"],
+        pacing: { marginSeconds: [360, 900], firstPurchaseSeconds: [45, 120], maxPurchaseGapSeconds: 240, maxTerminalWaitSeconds: 240 } },
+    },
+    {
+      id: "frozen_world", name: "Frozen World",
+      intent: "Cold, mostly contiguous world: temperature is the problem. Milder lowlands and geothermal pockets are refuges; the plant must either evolve for the cold or warm the sky — and a warmer sky also pushes the warm refuges toward too hot.",
+      sections: [12, 18],
+      // lakes and inlets, not seas (sweep of public seeds 1–40: actual water 6–20%)
+      water: { min: 6, max: 20, tolerance: 5 },
+      // cold climate (tuned on the BLOOM-011 sweep, see docs/evidence/bloom-011):
+      //  · a −18 °C sky with a north–south gradient (tempBase −20, span 34) and colder uplands (elevationCooling 20: the
+      //    highest region is 10 °C colder, the lowest 10 °C warmer) → most land sits below the plant's starting cold limit
+      //    (about −10 °C); the coldest regions reach about −45 °C, which even Cold Tolerance ×3 only just covers
+      //  · geothermal pockets (a quarter of regions, +34 °C from below): the refuges, often clustered — most near 0…+15 °C,
+      //    some warm (+20…+28 °C) and a few too hot (vents above +28 °C). Warming the sky pushes the warm ones out of range:
+      //    that is Warm the Sky's cost. Geothermal heat is not strong sunlight, so it adds no radiation hazard
+      //  · ordinary moisture (46 sky, modest spread): water is rarely the limit; few salt or volcanic soils; slightly dimmer light
+      //  · origin preference +6 °C → the home region is one of the milder refuges
+      climate: { temperature: -18, moisture: 46, tempBase: -20, tempSpan: 34, tempJitter: 8, elevationCooling: 20,
+        geothermalChance: 0.25, geothermalWarmth: 34, moistureSpread: 50, moistureBias: 0, coastMoisture: 12,
+        volcanicChance: 0.04, coastalSaltAbove: 0.4, coastalSaltChance: 0.3, saltChance: 0.04, lightBias: -6, originTemp: 6 },
+      // continent-scale terrain → usually one landmass, sometimes two or three: crossings may exist but never define the world
+      // (Waterborne Seeds appears only where the generic offer rule finds one). The origin must be a genuine refuge, and at
+      // least two OTHER regions must be green at the start
+      geography: { minLandmassTiles: 16, maxCrossingGap: 5, maxLandmasses: 3, minOriginLandmassShare: 0.7, minOriginFitness: 0.72, minRefuges: 2 },
+      naming: { cold: ["Frost", "Glacier", "Rime", "Tundra", "Hoar", "Snow", "Ice", "Permafrost", "Polar", "Sleet"],
+        mild: ["Thaw", "Lichen", "Sedge", "Willow", "Moss", "Heath"], warm: ["Steam", "Geyser", "Spring", "Thermal", "Mist"],
+        hot: ["Fumarole", "Vent", "Caldera", "Cinder", "Scald"], wet: ["Meltwater", "Fen", "Bog", "Slush", "Mire"],
+        dry: ["Scree", "Gravel", "Flint", "Windswept", "Barren"],
+        noun: ["Basin", "Flats", "Reach", "Shelf", "Plateau", "Fields", "Hollow", "Rise", "Ridge", "Valley", "Moraine", "Cirque", "Slope", "Expanse"] },
+      // temporary map treatment for playtests (demo-run.html, data only; not the final visual direction): pale snow tint on
+      // cold ground (the colder, the paler — refuges keep their own colour, and warming the sky visibly thaws the map), ice
+      // glints on frozen ground, dark cold lake water
+      render: { ground: [222, 232, 244], groundMix: 0.7, tintBy: "cold", water: [38, 78, 112], waterAlt: [120, 160, 186], frost: true },
+      generation: { maxAttempts: 24 },
+      // Frozen World's own policy. The shared pacing bands measured cleanly on the Frozen sweep (witness margins 360–680 s,
+      // first purchase 48–112 s, largest gap 73–174 s, terminal wait 11–198 s), so they are reused unchanged; every proven
+      // strategy must answer the cold ground (Temperature:cold — by Cold Tolerance, warming the sky, or both)
+      validation: { winnable: true, minStrategies: 2, requiredConditions: ["Temperature:cold"],
         pacing: { marginSeconds: [360, 900], firstPurchaseSeconds: [45, 120], maxPurchaseGapSeconds: 240, maxTerminalWaitSeconds: 240 } },
     },
   ];
