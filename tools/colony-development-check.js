@@ -335,8 +335,10 @@ const PLANS = { wet: ["seedOut", "cold", "flood", "cold", "heat", "salt", "early
   {
     const p = await open();
     const u0 = await ui(p);
-    check(u0.sel >= 0 && u0.btns.map(b => b.m).join() === "balanced,roots,leaves,seeds" && u0.btns.find(b => b.m === "balanced").on === "true" && u0.specs.length === 3 && u0.specs.every(s => s.poor && s.cost.startsWith(String(COL.specCost.base * config.econ.costScale))),
-      "a new run opens on the origin: four focus buttons (Balanced pressed), three local upgrades with their Biomass cost, all shown as unaffordable",
+    check(u0.sel >= 0 && u0.btns.map(b => b.m).join() === "balanced,roots,leaves,seeds" && u0.btns.find(b => b.m === "balanced").on === "true" && u0.specs.length === 3 && u0.specs.every(s => s.poor === (config.econ.startBiomass < COL.specCost.base * config.econ.costScale) && s.off === s.poor && s.cost.startsWith(String(COL.specCost.base * config.econ.costScale))),
+      // BLOOM-013: the starting Biomass now covers one local upgrade (the opening decision: specialize the origin now or save
+      // for the first global upgrade), so the buttons start affordable; they follow config.econ either way
+      `a new run opens on the origin: four focus buttons (Balanced pressed), three local upgrades with their Biomass cost, ${config.econ.startBiomass >= COL.specCost.base * config.econ.costScale ? "affordable from the starting Biomass" : "all shown as unaffordable"}`,
       `buttons ${u0.btns.map(b => b.m).join("/")} · upgrades ${u0.specs.map(s => `${s.id} ${s.cost.replace(/\s+/g, " ")}`).join(" · ")}`);
     check(/^Colony: Sparse/.test(u0.colony), "the inspect panel leads with the colony status + establishment %", u0.colony.split("\n")[0]);
     await shot(p, "ui-opening.png");

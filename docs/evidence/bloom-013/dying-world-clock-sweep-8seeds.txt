@@ -1,0 +1,44 @@
+=== clock grace 30 s + decline 240 s (final 270 s)
+  o13dw  drought         witness/auto 8/8 w418 g122 p1       player/auto 8/8 w300 g128 p1       witness/click 8/8 w361 g118 p1       player/click 8/8 w286 g128 p1
+  o13dw  humidify        witness/auto 8/8 w393 g122 p1       player/auto 8/8 w315 g128 p1       witness/click 8/8 w375 g118 p1       player/click 8/8 w298 g128 p1
+  o13dw  ignoreColdSalt  witness/auto 0/8 g102 p1            player/auto 0/8 g174 p1            witness/click 0/8 g97 p1             player/click 0/8 g125 p1
+  o13dw  ignoreHeatRad   witness/auto 0/8 g113 p1            player/auto 0/8 g114 p1            witness/click 1/8 w221 g99 p1        player/click 1/8 w263 g114 p1
+  d25dw  drought2        witness/auto 8/8 w364 g100 p1       player/auto 8/8 w284 g83 p1        witness/click 8/8 w320 g89 p1        player/click 8/8 w254 g74 p0.9
+  d25dw  humidify2       witness/auto 8/8 w511 g96 p1        player/auto 8/8 w361 g79 p1        witness/click 8/8 w434 g92 p1        player/click 8/8 w333 g73 p1
+  d25dw  ignoreDrought2  witness/auto 0/8 g103 p1            player/auto 0/8 g67 p1             witness/click 0/8 g78 p1             player/click 0/8 g66 p1
+  f22dw  cold3           witness/auto 8/8 w358 g114 p1       player/auto 8/8 w266 g66 p1        witness/click 8/8 w316 g92 p1        player/click 8/8 w245 g70 p0.9
+  f22dw  coldWarm        witness/auto 8/8 w370 g77 p1        player/auto 8/8 w294 g66 p1        witness/click 8/8 w333 g70 p1        player/click 8/8 w269 g70 p1
+  f22dw  ignoreCold2     witness/auto 0/8 g115 p1            player/auto 0/8 g120 p1            witness/click 0/8 g74 p1             player/click 0/8 g77 p1
+=== clock grace 30 s + decline 270 s (final 300 s)
+  o13dw  drought         witness/auto 8/8 w373 g122 p1       player/auto 8/8 w311 g127 p1       witness/click 8/8 w341 g117 p1       player/click 8/8 w298 g127 p1
+  o13dw  humidify        witness/auto 8/8 w381 g122 p1       player/auto 8/8 w317 g127 p1       witness/click 8/8 w362 g117 p1       player/click 8/8 w290 g127 p1
+  o13dw  ignoreColdSalt  witness/auto 0/8 g102 p1            player/auto 0/8 g194 p1            witness/click 0/8 g102 p1            player/click 0/8 g113 p1
+  o13dw  ignoreHeatRad   witness/auto 0/8 g113 p1            player/auto 1/8 w271 g113 p1       witness/click 2/8 w230 g113 p0.9     player/click 4/8 w252 g113 p0.9
+  d25dw  drought2        witness/auto 8/8 w371 g100 p1       player/auto 8/8 w285 g83 p0.9      witness/click 8/8 w323 g89 p1        player/click 8/8 w247 g74 p0.8
+  d25dw  humidify2       witness/auto 8/8 w514 g96 p1        player/auto 8/8 w366 g79 p1        witness/click 8/8 w420 g81 p1        player/click 8/8 w330 g73 p1
+  d25dw  ignoreDrought2  witness/auto 0/8 g114 p1            player/auto 0/8 g67 p1             witness/click 0/8 g75 p1             player/click 0/8 g66 p1
+  f22dw  cold3           witness/auto 8/8 w355 g110 p1       player/auto 8/8 w262 g68 p0.9      witness/click 8/8 w312 g111 p1       player/click 8/8 w238 g70 p0.8
+  f22dw  coldWarm        witness/auto 8/8 w372 g78 p1        player/auto 8/8 w284 g66 p0.9      witness/click 8/8 w336 g67 p1        player/click 8/8 w265 g70 p0.9
+  f22dw  ignoreCold2     witness/auto 0/8 g88 p1             player/auto 0/8 g90 p1             witness/click 0/8 g80 p1             player/click 0/8 g72 p1
+=== clock grace 40 s + decline 250 s (final 290 s)
+  o13dw  drought         witness/auto 8/8 w371 g115 p1       player/auto 8/8 w305 g125 p1       witness/click 8/8 w354 g117 p1       player/click 8/8 w285 g125 p1
+  o13dw  humidify        witness/auto 8/8 w392 g115 p1       player/auto 8/8 w317 g125 p1       witness/click 8/8 w360 g117 p1       player/click 8/8 w295 g125 p1
+  o13dw  ignoreColdSalt  witness/auto 0/8 g102 p1            player/auto 0/8 g182 p1            witness/click 0/8 g102 p1            player/click 0/8 g111 p1
+  o13dw  ignoreHeatRad   witness/auto 1/8 w285 g113 p1       player/auto 0/8 g111 p1            witness/click 2/8 w249 g113 p1       player/click 4/8 w243 g111 p0.9
+  d25dw  drought2        witness/auto 8/8 w366 g100 p1       player/auto 8/8 w283 g83 p1        witness/click 8/8 w317 g89 p1        player/click 8/8 w248 g74 p0.8
+  d25dw  humidify2       witness/auto 8/8 w514 g96 p1        player/auto 8/8 w364 g79 p1        witness/click 8/8 w437 g89 p1        player/click 8/8 w327 g73 p1
+  d25dw  ignoreDrought2  witness/auto 0/8 g120 p1            player/auto 0/8 g67 p1             witness/click 0/8 g90 p1             player/click 0/8 g66 p1
+  f22dw  cold3           witness/auto 8/8 w353 g111 p1       player/auto 8/8 w258 g66 p0.9      witness/click 8/8 w311 g110 p1       player/click 8/8 w229 g62 p0.8
+  f22dw  coldWarm        witness/auto 8/8 w369 g77 p1        player/auto 8/8 w284 g66 p1        witness/click 8/8 w335 g69 p1        player/click 8/8 w260 g62 p0.9
+  f22dw  ignoreCold2     witness/auto 0/8 g95 p1             player/auto 0/8 g101 p1            witness/click 0/8 g76 p1             player/click 0/8 g75 p1
+=== clock grace 45 s + decline 270 s (final 315 s)
+  o13dw  drought         witness/auto 8/8 w361 g114 p1       player/auto 8/8 w301 g117 p0.9     witness/click 8/8 w335 g116 p1       player/click 8/8 w289 g116 p0.9
+  o13dw  humidify        witness/auto 8/8 w379 g114 p1       player/auto 8/8 w312 g117 p1       witness/click 8/8 w343 g116 p1       player/click 8/8 w299 g116 p0.9
+  o13dw  ignoreColdSalt  witness/auto 0/8 g102 p1            player/auto 0/8 g133 p1            witness/click 0/8 g102 p1            player/click 0/8 g102 p1
+  o13dw  ignoreHeatRad   witness/auto 3/8 w262 g113 p0.9     player/auto 8/8 w268 g102 p0.8     witness/click 5/8 w256 g113 p0.9     player/click 7/8 w249 g102 p0.8
+  d25dw  drought2        witness/auto 8/8 w368 g100 p1       player/auto 8/8 w283 g83 p0.9      witness/click 8/8 w316 g89 p1        player/click 8/8 w253 g74 p0.8
+  d25dw  humidify2       witness/auto 8/8 w510 g101 p1       player/auto 8/8 w359 g79 p1        witness/click 8/8 w423 g81 p1        player/click 8/8 w330 g73 p1
+  d25dw  ignoreDrought2  witness/auto 0/8 g113 p1            player/auto 0/8 g67 p1             witness/click 0/8 g98 p1             player/click 1/8 w240 g66 p1
+  f22dw  cold3           witness/auto 8/8 w349 g109 p1       player/auto 8/8 w256 g63 p0.8      witness/click 8/8 w295 g95 p0.9      player/click 8/8 w228 g65 p0.7
+  f22dw  coldWarm        witness/auto 8/8 w371 g78 p1        player/auto 8/8 w282 g62 p0.9      witness/click 8/8 w335 g84 p1        player/click 8/8 w254 g65 p0.8
+  f22dw  ignoreCold2     witness/auto 0/8 g86 p1             player/auto 0/8 g65 p1             witness/click 0/8 g77 p1             player/click 0/8 g68 p1

@@ -1,0 +1,64 @@
+
+=== A0: (baseline)
+    prices cold 140/270/400 · heat 140/270/400 · drought 150/270 · flood 150/270 · salt 200 · rad 220 · seedOut 130/280 · waterSeeds 180 · earlyMat 170 · warm 200/290 · cool 200/290 · humid 200/290 · dry 200/290 · local 90/130/170/210
+  fb     open L63 G87 2x87 (click G77) | auto bal: 1st 90/90/90 maxGap 100 med 53/53/57 dead 72 win 344/377/360 term 8/21/7 won 4/4,4/4,4/4 | sit+canopy maxGap 109 win 270/293/282 | click win 252/274/261 maxGap 104
+  o13    open L60 G86 2x86 (click G67) | auto bal: 1st 90/90 maxGap 139 med 95/97 dead 75 win 554/452 term 184/63 won 4/4,4/4 | sit+canopy maxGap 127 win 451/391 | click win 400/318 maxGap 116
+  d25    open L48 G77 2x77 (click G52) | auto bal: 1st 80/80 maxGap 177 med 89/85 dead 67 win 480/462 term 170/36 won 4/4,4/4 | sit+canopy maxGap 114 win 413/394 | click win 366/341 maxGap 99
+  f22    open L60 G79 2x79 (click G63) | auto bal: 1st 83/83 maxGap 112 med 79/78 dead 73 win 361/423 term 39/32 won 4/4,4/4 | sit+canopy maxGap 111 win 293/330 | click win 254/291 maxGap 101
+  o13dw  open L60 G86 2x86 (click G67) | auto bal: 1st 90/90 maxGap 306 med 94/109 dead 126 win 672/707 term 118/130 won 4/4,4/4 p@win 1/1 closed 0.3/0.3 | sit+canopy maxGap 219 win 527/556 | click win 483/495 maxGap 219
+
+=== A1 start130: econ.startBiomass=130
+    prices cold 140/270/400 · heat 140/270/400 · drought 150/270 · flood 150/270 · salt 200 · rad 220 · seedOut 130/280 · waterSeeds 180 · earlyMat 170 · warm 200/290 · cool 200/290 · humid 200/290 · dry 200/290 · local 90/130/170/210
+  fb     open L0 G0 2x0 (click G0) | auto bal: 1st 4/4/4 maxGap 96 med 44/47/54 dead 81 win 296/313/321 term 8/20/7 won 4/4,4/4,4/4 | sit+canopy maxGap 105 win 244/263/252 | click win 226/247/227 maxGap 97
+  o13    open L0 G0 2x0 (click G0) | auto bal: 1st 4/4 maxGap 156 med 88/94 dead 96 win 534/410 term 210/68 won 4/4,4/4 | sit+canopy maxGap 153 win 396/351 | click win 370/283 maxGap 119
+  d25    open L0 G0 2x0 (click G0) | auto bal: 1st 4/4 maxGap 184 med 115/97 dead 95 win 455/431 term 172/36 won 4/4,4/4 | sit+canopy maxGap 142 win 395/377 | click win 348/328 maxGap 117
+  f22    open L0 G0 2x0 (click G0) | auto bal: 1st 4/4 maxGap 128 med 74/74 dead 81 win 299/363 term 37/29 won 4/4,4/4 | sit+canopy maxGap 119 win 266/297 | click win 241/278 maxGap 107
+  o13dw  open L0 G0 2x0 (click G0) | auto bal: 1st 4/4 maxGap 275 med 89/100 dead 96 win 536/543 term 109/93 won 4/4,4/4 p@win 1/1 closed 0/0 | sit+canopy maxGap 279 win 464/479 | click win 411/383 maxGap 249
+
+=== A2 start100+trickle.2: econ.startBiomass=100,econ.originTrickle=0.2
+    prices cold 140/270/400 · heat 140/270/400 · drought 150/270 · flood 150/270 · salt 200 · rad 220 · seedOut 130/280 · waterSeeds 180 · earlyMat 170 · warm 200/290 · cool 200/290 · humid 200/290 · dry 200/290 · local 90/130/170/210
+  fb     open L0 G38 2x38 (click G38) | auto bal: 1st 42/42/42 maxGap 71 med 41/41/48 dead 44 win 274/293/297 term 10/24/7 won 4/4,4/4,4/4 | sit+canopy maxGap 67 win 225/246/230 | click win 209/228/213 maxGap 63
+  o13    open L0 G38 2x38 (click G35) | auto bal: 1st 42/42 maxGap 111 med 66/70 dead 57 win 427/350 term 161/71 won 4/4,4/4 | sit+canopy maxGap 86 win 351/298 | click win 289/271 maxGap 85
+  d25    open L0 G30 2x30 (click G24) | auto bal: 1st 34/34 maxGap 124 med 72/70 dead 44 win 381/359 term 164/46 won 4/4,4/4 | sit+canopy maxGap 77 win 334/314 | click win 316/297 maxGap 75
+  f22    open L0 G34 2x34 (click G29) | auto bal: 1st 38/38 maxGap 94 med 55/65 dead 58 win 277/330 term 41/35 won 4/4,4/4 | sit+canopy maxGap 82 win 239/267 | click win 223/251 maxGap 79
+  o13dw  open L0 G38 2x38 (click G35) | auto bal: 1st 42/42 maxGap 145 med 72/80 dead 56 win 455/447 term 137/112 won 4/4,4/4 p@win 0.9/0.9 closed 0/0 | sit+canopy maxGap 132 win 409/368 | click win 400/313 maxGap 95
+
+=== A3 cost3.5: econ.costScale=3.5
+    prices cold 98/189/280 · heat 98/189/280 · drought 105/189 · flood 105/189 · salt 140 · rad 154 · seedOut 91/196 · waterSeeds 126 · earlyMat 119 · warm 140/203 · cool 140/203 · humid 140/203 · dry 140/203 · local 63/91/119/147
+  fb     open L45 G64 2x64 (click G59) | auto bal: 1st 67/67/67 maxGap 75 med 40/36/44 dead 47 win 264/289/280 term 10/4/7 won 4/4,4/4,4/4 | sit+canopy maxGap 88 win 218/236/228 | click win 204/224/210 maxGap 88
+  o13    open L45 G60 2x60 (click G50) | auto bal: 1st 64/64 maxGap 103 med 66/67 dead 59 win 500/336 term 236/64 won 4/4,4/4 | sit+canopy maxGap 91 win 359/310 | click win 345/264 maxGap 77
+  d25    open L33 G49 2x49 (click G36) | auto bal: 1st 53/53 maxGap 111 med 72/64 dead 61 win 396/371 term 176/48 won 4/4,4/4 | sit+canopy maxGap 85 win 356/334 | click win 302/296 maxGap 69
+  f22    open L37 G61 2x61 (click G51) | auto bal: 1st 64/64 maxGap 82 med 61/61 dead 45 win 283/325 term 48/39 won 4/4,4/4 | sit+canopy maxGap 88 win 238/263 | click win 212/237 maxGap 83
+  o13dw  open L45 G60 2x60 (click G50) | auto bal: 1st 64/64 maxGap 189 med 71/80 dead 63 win 479/495 term 128/125 won 4/4,4/4 p@win 1/0.9 closed 0/0 | sit+canopy maxGap 146 win 413/396 | click win 402/324 maxGap 136
+
+=== A4 cost3.5+start100: econ.costScale=3.5,econ.startBiomass=100
+    prices cold 98/189/280 · heat 98/189/280 · drought 105/189 · flood 105/189 · salt 140 · rad 154 · seedOut 91/196 · waterSeeds 126 · earlyMat 119 · warm 140/203 · cool 140/203 · humid 140/203 · dry 140/203 · local 63/91/119/147
+  fb     open L0 G0 2x0 (click G0) | auto bal: 1st 4/4/4 maxGap 81 med 34/31/41 dead 62 win 232/251/243 term 10/8/7 won 4/4,4/4,4/4 | sit+canopy maxGap 86 win 192/212/201 | click win 178/197/183 maxGap 85
+  o13    open L0 G0 2x0 (click G0) | auto bal: 1st 4/4 maxGap 113 med 65/65 dead 68 win 463/337 term 224/96 won 4/4,4/4 | sit+canopy maxGap 111 win 341/296 | click win 303/241 maxGap 101
+  d25    open L0 G0 2x0 (click G0) | auto bal: 1st 4/4 maxGap 113 med 86/68 dead 65 win 373/354 term 180/73 won 4/4,4/4 | sit+canopy maxGap 106 win 328/301 | click win 300/282 maxGap 90
+  f22    open L0 G0 2x0 (click G0) | auto bal: 1st 4/4 maxGap 89 med 54/52 dead 62 win 243/281 term 51/41 won 4/4,4/4 | sit+canopy maxGap 94 win 219/247 | click win 202/224 maxGap 85
+  o13dw  open L0 G0 2x0 (click G0) | auto bal: 1st 4/4 maxGap 170 med 64/69 dead 68 win 414/399 term 141/111 won 4/4,4/4 p@win 0.8/0.8 closed 0/0 | sit+canopy maxGap 173 win 399/319 | click win 398/282 maxGap 145
+
+=== A5 thriving.0007+trickle.2+start100: econ.startBiomass=100,econ.originTrickle=0.2,econ.thriving=0.0007,econ.marginal=0.0002
+    prices cold 140/270/400 · heat 140/270/400 · drought 150/270 · flood 150/270 · salt 200 · rad 220 · seedOut 130/280 · waterSeeds 180 · earlyMat 170 · warm 200/290 · cool 200/290 · humid 200/290 · dry 200/290 · local 90/130/170/210
+  fb     open L0 G36 2x36 (click G36) | auto bal: 1st 39/39/39 maxGap 57 med 37/36/40 dead 40 win 231/246/241 term 10/9/7 won 4/4,4/4,4/4 | sit+canopy maxGap 60 win 191/209/196 | click win 185/200/188 maxGap 60
+  o13    open L0 G37 2x37 (click G34) | auto bal: 1st 40/40 maxGap 95 med 63/65 dead 51 win 454/337 term 204/80 won 4/4,4/4 | sit+canopy maxGap 81 win 348/276 | click win 308/251 maxGap 81
+  d25    open L0 G29 2x29 (click G23) | auto bal: 1st 32/32 maxGap 108 med 65/61 dead 42 win 373/339 term 180/64 won 4/4,4/4 | sit+canopy maxGap 69 win 319/297 | click win 310/295 maxGap 71
+  f22    open L0 G32 2x32 (click G28) | auto bal: 1st 36/36 maxGap 76 med 53/47 dead 49 win 260/298 term 52/38 won 4/4,4/4 | sit+canopy maxGap 72 win 219/246 | click win 209/230 maxGap 69
+  o13dw  open L0 G37 2x37 (click G34) | auto bal: 1st 40/40 maxGap 133 med 61/69 dead 51 win 449/447 term 159/143 won 4/4,4/4 p@win 0.9/0.9 closed 0/0 | sit+canopy maxGap 118 win 398/318 | click win 395/294 maxGap 86
+
+=== A6 cost3.5+trickle.18+start100: econ.costScale=3.5,econ.startBiomass=100,econ.originTrickle=0.18
+    prices cold 98/189/280 · heat 98/189/280 · drought 105/189 · flood 105/189 · salt 140 · rad 154 · seedOut 91/196 · waterSeeds 126 · earlyMat 119 · warm 140/203 · cool 140/203 · humid 140/203 · dry 140/203 · local 63/91/119/147
+  fb     open L0 G0 2x0 (click G0) | auto bal: 1st 4/4/4 maxGap 68 med 32/27/36 dead 50 win 210/229/212 term 8/5/7 won 4/4,4/4,4/4 | sit+canopy maxGap 73 win 175/188/180 | click win 165/181/166 maxGap 73
+  o13    open L0 G0 2x0 (click G0) | auto bal: 1st 4/4 maxGap 93 med 57/61 dead 51 win 371/278 term 171/69 won 4/4,4/4 | sit+canopy maxGap 89 win 344/244 | click win 299/202 maxGap 80
+  d25    open L0 G0 2x0 (click G0) | auto bal: 1st 4/4 maxGap 94 med 68/59 dead 46 win 315/299 term 161/66 won 4/4,4/4 | sit+canopy maxGap 76 win 289/276 | click win 275/260 maxGap 65
+  f22    open L0 G0 2x0 (click G0) | auto bal: 1st 4/4 maxGap 77 med 49/48 dead 51 win 223/261 term 51/39 won 4/4,4/4 | sit+canopy maxGap 80 win 197/221 | click win 185/207 maxGap 76
+  o13dw  open L0 G0 2x0 (click G0) | auto bal: 1st 4/4 maxGap 108 med 52/58 dead 51 win 425/333 term 218/114 won 4/4,4/4 p@win 0.8/0.7 closed 0/0 | sit+canopy maxGap 102 win 398/343 | click win 393/263 maxGap 90
+
+=== A7 cost4+trickle.2+thr.0006+start100: econ.costScale=4,econ.startBiomass=100,econ.originTrickle=0.2,econ.thriving=0.0006,econ.marginal=0.00018
+    prices cold 112/216/320 · heat 112/216/320 · drought 120/216 · flood 120/216 · salt 160 · rad 176 · seedOut 104/224 · waterSeeds 144 · earlyMat 136 · warm 160/232 · cool 160/232 · humid 160/232 · dry 160/232 · local 72/104/136/168
+  fb     open L0 G7 2x7 (click G7) | auto bal: 1st 10/10/10 maxGap 66 med 28/25/32 dead 49 win 207/224/208 term 13/15/8 won 4/4,4/4,4/4 | sit+canopy maxGap 71 win 172/188/172 | click win 162/174/169 maxGap 71
+  o13    open L0 G7 2x7 (click G7) | auto bal: 1st 10/10 maxGap 100 med 55/56 dead 61 win 402/284 term 198/77 won 4/4,4/4 | sit+canopy maxGap 89 win 294/254 | click win 315/235 maxGap 80
+  d25    open L0 G7 2x7 (click G7) | auto bal: 1st 10/10 maxGap 94 med 65/55 dead 49 win 331/312 term 173/76 won 4/4,4/4 | sit+canopy maxGap 80 win 308/292 | click win 280/272 maxGap 80
+  f22    open L0 G7 2x7 (click G7) | auto bal: 1st 10/10 maxGap 77 med 47/44 dead 52 win 225/262 term 53/45 won 4/4,4/4 | sit+canopy maxGap 72 win 195/217 | click win 181/203 maxGap 65
+  o13dw  open L0 G7 2x7 (click G7) | auto bal: 1st 10/10 maxGap 131 med 53/60 dead 61 win 424/364 term 203/128 won 4/4,4/4 p@win 0.9/0.7 closed 0/0 | sit+canopy maxGap 104 win 414/295 | click win 395/267 maxGap 92

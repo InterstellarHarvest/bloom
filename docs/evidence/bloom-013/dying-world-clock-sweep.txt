@@ -1,0 +1,60 @@
+
+=== P1 g60 d420: econ.startBiomass=100,econ.originTrickle=0.3
+  o13dw  drought         BAL won 4/4 lost 0 win 405 [393.3,418.4] p@win 0.8 closed 0 maxGapW 109 | PLAYER won 4/4 lost 0 win 381 p@win 0.8 closed 0 maxGapW 91 cov@180/300 18.4/58.9
+  o13dw  humidify        BAL won 4/4 lost 0 win 367 [330.9,385.9] p@win 0.7 closed 0 maxGapW 109 | PLAYER won 4/4 lost 0 win 299 p@win 0.6 closed 0 maxGapW 91 cov@180/300 18.2/61
+  o13dw  ignoreColdSalt  BAL won 0/4 lost 0 win — null p@win 1 closed 0.6 maxGapW 99 | PLAYER won 3/4 lost 0 win 354 p@win 0.8 closed 0.3 maxGapW 77 cov@180/300 36/61.9
+  o13dw  ignoreHeatRad   BAL won 4/4 lost 0 win 288 [271.8,329.9] p@win 0.5 closed 0 maxGapW 108 | PLAYER won 4/4 lost 0 win 248 p@win 0.4 closed 0 maxGapW 79 cov@180/300 37/NaN
+  d25dw  drought2        BAL won 4/4 lost 0 win 370 [359,384.3] p@win 0.7 closed 0 maxGapW 96 | PLAYER won 4/4 lost 0 win 277 p@win 0.5 closed 0 maxGapW 77 cov@180/300 11.3/NaN
+  d25dw  humidify2       BAL won 4/4 lost 0 win 511 [488.5,529.6] p@win 1 closed 0.1 maxGapW 93 | PLAYER won 4/4 lost 0 win 351 p@win 0.7 closed 0.1 maxGapW 73 cov@180/300 5.9/35.3
+  d25dw  ignoreDrought2  BAL won 4/4 lost 0 win 337 [328.8,344.8] p@win 0.7 closed 0.1 maxGapW 94 | PLAYER won 4/4 lost 0 win 276 p@win 0.5 closed 0 maxGapW 61 cov@180/300 31.5/NaN
+  f22dw  cold3           BAL won 4/4 lost 0 win 303 [289.1,313.4] p@win 0.6 closed 0.1 maxGapW 100 | PLAYER won 4/4 lost 0 win 235 p@win 0.4 closed 0.1 maxGapW 62 cov@180/300 39.7/NaN
+  f22dw  coldWarm        BAL won 4/4 lost 0 win 346 [333.6,369.9] p@win 0.7 closed 0.2 maxGapW 71 | PLAYER won 4/4 lost 0 win 255 p@win 0.5 closed 0.1 maxGapW 62 cov@180/300 27.3/NaN
+  f22dw  ignoreCold2     BAL won 0/4 lost 0 win — null p@win 1 closed 0.7 maxGapW 80 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.7 maxGapW 65 cov@180/300 39.6/44
+
+=== P2 g30 d300: econ.startBiomass=100,econ.originTrickle=0.3,scenarios.dying_world.pressure.graceSeconds=30,scenarios.dying_world.pressure.durationSeconds=300
+  o13dw  drought         BAL won 4/4 lost 0 win 400 [343.5,484.6] p@win 1 closed 0 maxGapW 113 | PLAYER won 4/4 lost 0 win 310 p@win 0.9 closed 0 maxGapW 125 cov@180/300 18.2/51.5
+  o13dw  humidify        BAL won 4/4 lost 0 win 404 [374.6,444.3] p@win 1 closed 0 maxGapW 113 | PLAYER won 4/4 lost 0 win 313 p@win 0.9 closed 0 maxGapW 125 cov@180/300 18.2/55.4
+  o13dw  ignoreColdSalt  BAL won 0/4 lost 0 win — null p@win 1 closed 0.6 maxGapW 101 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.6 maxGapW 164 cov@180/300 16.8/36.7
+  o13dw  ignoreHeatRad   BAL won 1/4 lost 0 win 277 [277.4,277.4] p@win 1 closed 0.4 maxGapW 110 | PLAYER won 1/4 lost 0 win 263 p@win 0.9 closed 0.4 maxGapW 111 cov@180/300 16.8/62.7
+  d25dw  drought2        BAL won 4/4 lost 0 win 370 [339.5,386.4] p@win 1 closed 0 maxGapW 96 | PLAYER won 4/4 lost 0 win 286 p@win 0.9 closed 0 maxGapW 77 cov@180/300 11.5/NaN
+  d25dw  humidify2       BAL won 4/4 lost 0 win 527 [510.4,543.4] p@win 1 closed 0.3 maxGapW 101 | PLAYER won 4/4 lost 0 win 356 p@win 1 closed 0.1 maxGapW 73 cov@180/300 5.9/31.5
+  d25dw  ignoreDrought2  BAL won 0/4 lost 0 win — null p@win 1 closed 0.3 maxGapW 103 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.3 maxGapW 61 cov@180/300 31/67
+  f22dw  cold3           BAL won 4/4 lost 0 win 348 [327.8,356.5] p@win 1 closed 0.3 maxGapW 101 | PLAYER won 4/4 lost 0 win 258 p@win 0.8 closed 0.2 maxGapW 66 cov@180/300 30.6/NaN
+  f22dw  coldWarm        BAL won 4/4 lost 0 win 379 [375.2,382.1] p@win 1 closed 0.2 maxGapW 74 | PLAYER won 4/4 lost 0 win 280 p@win 0.8 closed 0.2 maxGapW 66 cov@180/300 22.6/NaN
+  f22dw  ignoreCold2     BAL won 0/4 lost 0 win — null p@win 1 closed 0.7 maxGapW 86 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.7 maxGapW 70 cov@180/300 26.3/25.9
+
+=== P3 g45 d270: econ.startBiomass=100,econ.originTrickle=0.3,scenarios.dying_world.pressure.graceSeconds=45,scenarios.dying_world.pressure.durationSeconds=270
+  o13dw  drought         BAL won 4/4 lost 0 win 379 [320.8,400.8] p@win 1 closed 0 maxGapW 112 | PLAYER won 4/4 lost 0 win 311 p@win 1 closed 0 maxGapW 117 cov@180/300 19.1/59.2
+  o13dw  humidify        BAL won 4/4 lost 0 win 392 [367.4,424.3] p@win 1 closed 0 maxGapW 112 | PLAYER won 4/4 lost 0 win 309 p@win 1 closed 0 maxGapW 117 cov@180/300 19.1/52.2
+  o13dw  ignoreColdSalt  BAL won 0/4 lost 0 win — null p@win 1 closed 0.6 maxGapW 102 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.6 maxGapW 125 cov@180/300 21.6/39.5
+  o13dw  ignoreHeatRad   BAL won 0/4 lost 0 win — null p@win 1 closed 0.4 maxGapW 113 | PLAYER won 4/4 lost 0 win 270 p@win 0.8 closed 0.2 maxGapW 102 cov@180/300 21.6/NaN
+  d25dw  drought2        BAL won 4/4 lost 0 win 373 [346.1,390.6] p@win 1 closed 0 maxGapW 96 | PLAYER won 4/4 lost 0 win 284 p@win 0.9 closed 0 maxGapW 77 cov@180/300 11.5/NaN
+  d25dw  humidify2       BAL won 4/4 lost 0 win 512 [473.4,543.4] p@win 1 closed 0.3 maxGapW 101 | PLAYER won 4/4 lost 0 win 360 p@win 1 closed 0.1 maxGapW 73 cov@180/300 5.9/32.1
+  d25dw  ignoreDrought2  BAL won 0/4 lost 0 win — null p@win 1 closed 0.3 maxGapW 110 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.3 maxGapW 61 cov@180/300 28.5/65.3
+  f22dw  cold3           BAL won 4/4 lost 0 win 352 [334.1,366.4] p@win 1 closed 0.3 maxGapW 109 | PLAYER won 4/4 lost 0 win 255 p@win 0.8 closed 0.2 maxGapW 62 cov@180/300 33.8/NaN
+  f22dw  coldWarm        BAL won 4/4 lost 0 win 379 [350.6,390.2] p@win 1 closed 0.2 maxGapW 78 | PLAYER won 4/4 lost 0 win 280 p@win 0.9 closed 0.2 maxGapW 62 cov@180/300 23.2/NaN
+  f22dw  ignoreCold2     BAL won 0/4 lost 0 win — null p@win 1 closed 0.7 maxGapW 83 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.7 maxGapW 65 cov@180/300 29.9/24.7
+
+=== P4 g30 d240: econ.startBiomass=100,econ.originTrickle=0.3,scenarios.dying_world.pressure.graceSeconds=30,scenarios.dying_world.pressure.durationSeconds=240
+  o13dw  drought         BAL won 4/4 lost 0 win 424 [344.6,520.6] p@win 1 closed 0 maxGapW 114 | PLAYER won 4/4 lost 0 win 302 p@win 1 closed 0.1 maxGapW 128 cov@180/300 18.3/58.8
+  o13dw  humidify        BAL won 4/4 lost 0 win 419 [363.4,535.7] p@win 1 closed 0.1 maxGapW 114 | PLAYER won 4/4 lost 0 win 319 p@win 1 closed 0.1 maxGapW 128 cov@180/300 18.3/54.3
+  o13dw  ignoreColdSalt  BAL won 0/4 lost 0 win — null p@win 1 closed 0.6 maxGapW 98 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.6 maxGapW 174 cov@180/300 14/19.5
+  o13dw  ignoreHeatRad   BAL won 0/4 lost 0 win — null p@win 1 closed 0.4 maxGapW 107 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.4 maxGapW 114 cov@180/300 14/41.8
+  d25dw  drought2        BAL won 4/4 lost 0 win 362 [349.1,373.1] p@win 1 closed 0 maxGapW 96 | PLAYER won 4/4 lost 0 win 283 p@win 1 closed 0 maxGapW 77 cov@180/300 11.4/NaN
+  d25dw  humidify2       BAL won 4/4 lost 0 win 511 [495,533.4] p@win 1 closed 0.3 maxGapW 96 | PLAYER won 4/4 lost 0 win 360 p@win 1 closed 0.2 maxGapW 73 cov@180/300 5.9/28.6
+  d25dw  ignoreDrought2  BAL won 0/4 lost 0 win — null p@win 1 closed 0.3 maxGapW 103 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.3 maxGapW 62 cov@180/300 29.1/54.2
+  f22dw  cold3           BAL won 4/4 lost 0 win 363 [354.9,374.4] p@win 1 closed 0.4 maxGapW 114 | PLAYER won 4/4 lost 0 win 271 p@win 1 closed 0.3 maxGapW 66 cov@180/300 28.6/NaN
+  f22dw  coldWarm        BAL won 4/4 lost 0 win 376 [360.3,384.3] p@win 1 closed 0.3 maxGapW 74 | PLAYER won 4/4 lost 0 win 298 p@win 1 closed 0.2 maxGapW 66 cov@180/300 24.5/65.9
+  f22dw  ignoreCold2     BAL won 0/4 lost 0 win — null p@win 1 closed 0.7 maxGapW 89 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.7 maxGapW 120 cov@180/300 20.7/18.5
+
+=== P0 baseline econ: 
+  o13dw  drought         BAL won 4/4 lost 0 win 672 [591.8,735.5] p@win 1 closed 0.3 maxGapW 306 | PLAYER won 4/4 lost 0 win 527 p@win 1 closed 0.2 maxGapW 219 cov@180/300 13.7/13.7
+  o13dw  humidify        BAL won 4/4 lost 0 win 707 [621.1,829.3] p@win 1 closed 0.3 maxGapW 306 | PLAYER won 4/4 lost 0 win 554 p@win 1 closed 0.2 maxGapW 219 cov@180/300 13.7/13.7
+  o13dw  ignoreColdSalt  BAL won 0/4 lost 0 win — null p@win 1 closed 0.6 maxGapW 250 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.6 maxGapW 221 cov@180/300 13.7/14.3
+  o13dw  ignoreHeatRad   BAL won 0/4 lost 0 win — null p@win 1 closed 0.4 maxGapW 250 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.4 maxGapW 206 cov@180/300 13.7/14.3
+  d25dw  drought2        BAL won 4/4 lost 0 win 576 [518.1,613.4] p@win 1 closed 0 maxGapW 163 | PLAYER won 4/4 lost 0 win 450 p@win 0.9 closed 0 maxGapW 114 cov@180/300 4.7/11.2
+  d25dw  humidify2       BAL won 4/4 lost 0 win 812 [790.4,825.8] p@win 1 closed 0.3 maxGapW 156 | PLAYER won 4/4 lost 0 win 595 p@win 1 closed 0.2 maxGapW 114 cov@180/300 4.7/4.7
+  d25dw  ignoreDrought2  BAL won 0/4 lost 0 win — null p@win 1 closed 0.3 maxGapW 183 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.3 maxGapW 114 cov@180/300 6.1/28.2
+  f22dw  cold3           BAL won 4/4 lost 0 win 512 [458.1,543.7] p@win 1 closed 0.4 maxGapW 165 | PLAYER won 4/4 lost 0 win 367 p@win 0.7 closed 0.3 maxGapW 111 cov@180/300 23/42.2
+  f22dw  coldWarm        BAL won 4/4 lost 0 win 521 [479.5,541.8] p@win 1 closed 0.2 maxGapW 117 | PLAYER won 4/4 lost 0 win 390 p@win 0.8 closed 0.2 maxGapW 111 cov@180/300 22.6/25.9
+  f22dw  ignoreCold2     BAL won 0/4 lost 0 win — null p@win 1 closed 0.7 maxGapW 169 | PLAYER won 0/4 lost 0 win — p@win 1 closed 0.7 maxGapW 122 cov@180/300 22.9/32.2
