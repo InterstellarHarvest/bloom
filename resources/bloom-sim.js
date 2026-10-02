@@ -8,6 +8,11 @@
 // BLOOM-009: per-region colony development — every region keeps its own growth allocation (sim.setColonyFocus /
 // getColonyFocus; config.colony.modes) and may own one Biomass-bought local specialization (sim.buySpecialization);
 // waterborne crossings report discrete seed-arrival / foothold events (sim.crossing.events) for map feedback.
+// BLOOM-012: pressure scenarios. createSim(…, { scenario }) takes a scenario definition (content/scenarios.js) that is
+// orthogonal to the planet. A scenario's pressure channels shift the REAL environmental inputs through the ordinary
+// evaluation (sky temperature / sky moisture / surface radiation offsets that grow with the scenario clock); the planet
+// data and the player's Terraformed sky are never edited. A scenario may also enable extinction loss. No scenario (or
+// Eden) = no pressure, no loss: exactly the pre-BLOOM-012 engine (golden unchanged).
 //
 // ⚠ tools/golden/first_bloom.json pins this file's behavior bit-for-bit under a seeded RNG
 // (run traces last regenerated on purpose by BLOOM-009, an owner-authorized gameplay retune).
@@ -27,6 +32,59 @@
   const overLimit = (v, limit, soft) => v <= limit ? 1 : clamp(1 - (v - limit) / soft, 0, 1);
 
   const BAR = 0, LIV = 1, DEAD = 2;
+
+  // ---- pressure scenarios (BLOOM-012). A scenario is plain data (content/scenarios.js):
+  //   pressure: null (Eden) | { graceSeconds, durationSeconds, channels: { temperature?, moisture?, moistureShare?, radiation? },
+  //                             graceLabel, phases: [{ from (progress 0..1, ascending, first 0), id, name, note }] }
+  //   loss:     { extinction: bool, extinctionGraceSeconds }
+  // Progress is 0 through the grace period, then rises linearly to 1 over durationSeconds and stays there (the final,
+  // degraded state — never a loss by itself). Each channel's offset = progress × its maximum: temperature in °C and
+  // moisture in points added to the sky, radiation in points added to every land section's surface radiation;
+  // moistureShare is a fraction of the planet's own STARTING sky moisture (−0.4 = the air ends up holding 40% less water
+  // vapour than it began with), so a humid world loses more points than an already dry one. (The base is the planet's
+  // data, never the Terraformed sky, so Terraform cannot change how far the scenario has progressed.)
+  const CHANNELS = { temperature: "temp", moisture: "moist", moistureShare: "moist", radiation: "rad" };
+  const ZERO_OFFSETS = Object.freeze({ temp: 0, moist: 0, rad: 0 });
+  function checkScenario(s) {
+    const e = [], P = s && s.pressure, L = s && s.loss;
+    if (!s || typeof s.id !== "string" || !/^[a-z][a-z0-9_]*$/.test(s.id)) e.push("id must be a lower-case identifier");
+    if (!s || typeof s.name !== "string" || !s.name) e.push("name missing");
+    if (P != null) {
+      if (!(P.graceSeconds >= 0)) e.push("pressure.graceSeconds must be ≥ 0");
+      if (!(P.durationSeconds > 0)) e.push("pressure.durationSeconds must be > 0");
+      const ch = P.channels || {};
+      if (!Object.keys(ch).length) e.push("pressure.channels needs at least one channel");
+      for (const k of Object.keys(ch)) if (!(k in CHANNELS) || !Number.isFinite(ch[k])) e.push(`pressure.channels.${k} is not a known channel with a finite maximum`);
+      const ph = P.phases;
+      if (!Array.isArray(ph) || !ph.length || ph[0].from !== 0 || ph.some((p, i) => !(p.from >= 0 && p.from <= 1) || (i && !(p.from > ph[i - 1].from)) || !p.id || !p.name))
+        e.push("pressure.phases must be [{ from, id, name }] with from ascending from 0 to at most 1");
+    }
+    if (!L || typeof L.extinction !== "boolean") e.push("loss.extinction must be true or false");
+    else if (L.extinction && !(L.extinctionGraceSeconds > 0)) e.push("loss.extinctionGraceSeconds must be > 0 when extinction is on");
+    return e;
+  }
+  // scenario id → definition from a catalogue. null / undefined / "" = Eden; an unknown id throws (never a substitute)
+  function resolveScenario(catalogue, id) {
+    const want = id == null || id === "" ? "eden" : id, s = (catalogue || []).find(x => x.id === want);
+    if (!s) throw new Error(`unknown scenario "${want}" (known: ${(catalogue || []).map(x => x.id).join(", ") || "none"})`);
+    const bad = checkScenario(s); if (bad.length) throw new Error(`scenario ${want}: ${bad.join("; ")}`);
+    return s;
+  }
+  const progressAt = (P, seconds) => !P ? 0 : clamp((seconds - P.graceSeconds) / P.durationSeconds, 0, 1);
+  // the drift at full pressure for one planet (base = its globalClimate) → { temp, moist, rad }
+  function maxOffsets(P, base) {
+    const o = { temp: 0, moist: 0, rad: 0 }; if (!P) return o;
+    for (const k in P.channels) o[CHANNELS[k]] += P.channels[k] * (k === "moistureShare" ? (base ? base.moisture : 0) : 1);
+    return o;
+  }
+  function offsetsAt(P, progress, base) {
+    const m = maxOffsets(P, base); return { temp: m.temp * progress, moist: m.moist * progress, rad: m.rad * progress };
+  }
+  // phase index: -1 = still in the grace period (atmosphere stable), else the last phase whose `from` ≤ progress
+  function phaseAt(P, seconds) {
+    if (!P || seconds < P.graceSeconds) return -1;
+    const p = progressAt(P, seconds); let k = 0; for (let i = 0; i < P.phases.length; i++) if (p >= P.phases[i].from) k = i; return k;
+  }
 
   // weighted Voronoi from per-section `center` seeds; weights nudge toward each section's area share
   function growVoronoi(sections, W, H, L) {
@@ -172,6 +230,10 @@
     const LANDMASS = SEC.map((_, i) => CROSS.landmass[SEC_TILES[i][0]]);
     const crossStat = (traits.find(t => t.effect.type === "crossing") || { effect: {} }).effect.stat;
     const winAt = planet.winThreshold ?? C.win;
+    // pressure scenario (BLOOM-012): definition is data; this run's live pressure state is sim.pressure (below)
+    const SCN = opts.scenario || null;
+    if (SCN) { const bad = checkScenario(SCN); if (bad.length) throw new Error(`bloom-sim: scenario ${SCN.id}: ${bad.join("; ")}`); }
+    const PR = SCN && SCN.pressure || null, LOSS = SCN && SCN.loss && SCN.loss.extinction ? SCN.loss : null;
 
     // genome + global sky + terraform counts, shaped by the trait catalogue
     const traitById = Object.fromEntries(traits.map(t => [t.id, t]));
@@ -206,20 +268,37 @@
     const terraformable = { Temperature: T.terraformable, Water: Wt.terraformable, Soil: So.terraformable, Hazard: Hz.terraformable };
 
     // raw signals → gates → the four player-facing categories + one limiting factor (bible §5)
-    function evaluate(i) {
-      const L = SEC[i].local, d = derived();
-      const effT = sky.temp + L.tempOffset, effM = sky.moist + L.moistureOffset;
+    // off = scenario pressure offsets { temp, moist, rad } — the run's current ones by default (zero without pressure);
+    // static analysis (the witness) may pass another state, e.g. the final pressure state
+    function rawFactors(L, off) {
+      const skyM = off.moist ? clamp(sky.moist + off.moist, 0, 100) : sky.moist, rad = off.rad ? Math.max(0, L.radiation + off.rad) : L.radiation;
+      const effT = sky.temp + off.temp + L.tempOffset, effM = skyM + L.moistureOffset;
+      return { effT, effM, rad, skyT: sky.temp + off.temp, skyM };
+    }
+    function evaluate(i, off) {
+      off = off || sim.pressure.offsets;
+      const L = SEC[i].local, d = derived(), pressed = off.temp || off.moist || off.rad;
+      const { effT, effM, rad: effRad, skyT, skyM } = rawFactors(L, off);
       const tempF = band(effT, d.tempFloor, d.tempCeil, T.soft);
       const waterF = band(effM, d.waterPos - d.waterTol, d.waterPos + d.waterTol, Wt.soft);
       const saltF = overLimit(L.salinity, d.saltTol, So.saltSoft);
       const phF = (L.ph < So.phMin || L.ph > So.phMax) ? overLimit(Math.max(So.phMin - L.ph, L.ph - So.phMax, 0), 0, So.phSoft) : 1;
       const soilGate = Math.min(saltF, phF);
       const nutrientMod = L.nutrients < So.nutrientFloor ? lerp(So.nutrientMinMod, 1, clamp(L.nutrients / So.nutrientFloor, 0, 1)) : 1; // soft speed only
-      const radF = overLimit(L.radiation, d.radTol, Hz.radSoft), toxF = overLimit(L.toxicity, d.toxTol, Hz.toxSoft);
+      const radF = overLimit(effRad, d.radTol, Hz.radSoft), toxF = overLimit(L.toxicity, d.toxTol, Hz.toxSoft);
       const hazF = Math.min(radF, toxF);
       const lightMod = clamp(L.light / Li.reference, Li.minMod, Li.maxMod);
       let fitness = tempF * waterF * soilGate * hazF;
-      if (SEC[i].isOrigin) fitness = Math.max(fitness, CAT.originFitnessFloor); // protected refuge (invariant 1)
+      if (SEC[i].isOrigin) { // protected refuge (invariant 1): shields the home region from its own start and from the
+        // player's Terraform — but not from scenario pressure (bible §11.3): under pressure the guarantee shrinks in
+        // proportion to how much of the origin's own habitability the pressure has taken away
+        let keep = 1;
+        if (pressed) { const u = rawFactors(L, ZERO_OFFSETS);
+          const f0 = band(u.effT, d.tempFloor, d.tempCeil, T.soft) * band(u.effM, d.waterPos - d.waterTol, d.waterPos + d.waterTol, Wt.soft)
+            * soilGate * Math.min(overLimit(u.rad, d.radTol, Hz.radSoft), toxF);
+          keep = f0 > 1e-9 ? Math.min(1, fitness / f0) : 1; }
+        fitness = Math.max(fitness, CAT.originFitnessFloor * keep);
+      }
       const cats = {
         Temperature: { f: tempF, word: tempWord(effT, d) },
         Water: { f: waterF, word: waterWord(effM, d) },
@@ -229,7 +308,7 @@
       };
       let limitKey = null, limitF = 1;
       for (const k in cats) { if (cats[k].f < limitF) { limitF = cats[k].f; limitKey = k; } }
-      return { fitness, growthMod: nutrientMod * lightMod, cats, limitKey, limitF, effT, effM, terraformable };
+      return { fitness, growthMod: nutrientMod * lightMod, cats, limitKey, limitF, effT, effM, effRad, skyT, skyM, terraformable };
     }
     const lampOf = f => f > CAT.lamp.green ? "green" : f > CAT.lamp.yellow ? "yellow" : "red";
 
@@ -259,6 +338,17 @@
       spent: { global: 0, local: 0 }, // Biomass spent on shop upgrades / local specializations
       biomass: C.econ.startBiomass, income: 0, ticks: 0, won: false,
       onWin: null, // (coverage) => void, called once from the tick that crosses winAt
+      // scenario pressure (BLOOM-012). active = the scenario has pressure channels; seconds = scenario clock (run time);
+      // progress 0..1; offsets = the CURRENT environmental drift every evaluation uses; phase = index into the scenario's
+      // phases (-1 = grace period, still stable); events = phase changes { tick, phase, progress } (UI milestone feedback).
+      scenario: SCN, pressure: { id: SCN ? SCN.id : "eden", name: SCN ? SCN.name : "Eden", active: !!PR, seconds: 0, progress: 0,
+        offsets: { ...ZERO_OFFSETS }, phase: PR ? -1 : null, events: [], startsAt: PR ? PR.graceSeconds : null,
+        fullAt: PR ? PR.graceSeconds + PR.durationSeconds : null, max: maxOffsets(PR, planet.globalClimate) },
+      // extinction loss (BLOOM-012, only when the scenario enables it): zero Living tiles for graceTicks in a row → lost.
+      // A loss freezes the run (tick() no longer advances anything). A won run is never lost afterwards.
+      extinction: { enabled: !!LOSS, graceTicks: LOSS ? Math.max(1, Math.round(LOSS.extinctionGraceSeconds * 1000 / C.tickMs)) : null, zeroTicks: 0 },
+      lost: false, lostReason: null, lostTick: null,
+      onLoss: null, // (reason) => void, called once from the tick that confirms extinction
     };
     // seed the origin: fill the tiles nearest its centroid (a sparse, newly sown stand — not a mature colony)
     (function seedOrigin() {
@@ -297,9 +387,16 @@
     // keep the most recent crossing events (a UI reads the ones newer than the last id it has seen)
     function crossEvent(e) { const L = sim.crossing.events; e.id = sim.crossing.nextEventId++; L.push(e); if (L.length > 64) L.shift(); }
 
+    function updatePressure() {
+      const P = sim.pressure, s = sim.ticks * C.tickMs / 1000, p = progressAt(PR, s), k = phaseAt(PR, s);
+      P.seconds = s; P.progress = p; P.offsets = offsetsAt(PR, p, planet.globalClimate);
+      if (k !== P.phase) { P.phase = k; P.events.push({ tick: sim.ticks, phase: k, progress: p }); }
+    }
     function tick() {
       const g = C.grow;
+      if (sim.lost) return 0; // a lost run is frozen
       sim.ticks++;
+      if (PR) updatePressure(); // (Eden: nothing to update — the run is exactly the pre-pressure engine)
       // 1. evaluate fitness + ease vigor
       for (let i = 0; i < SC; i++) { const e = evaluate(i); secFit[i] = e.fitness; secGrowth[i] = e.growthMod; vigor[i] += (e.fitness - vigor[i]) * C.vigorEase;
         const key = sim.colonies.focus[i] + "|" + sim.colonies.spec[i]; if (key !== modsKey[i]) { modsKey[i] = key; mods[i] = colonyMods(i); } }
@@ -391,6 +488,12 @@
       // 5. win check
       const cov = coverage();
       if (!sim.won && cov >= winAt) { sim.won = true; if (sim.onWin) sim.onWin(cov); }
+      // 6. extinction (pressure scenarios that enable it): no Living tile anywhere for the whole grace → the run is lost
+      if (LOSS && !sim.won) {
+        const X = sim.extinction; X.zeroTicks = cov > 0 ? 0 : X.zeroTicks + 1;
+        if (X.zeroTicks >= X.graceTicks) { sim.lost = true; sim.lostTick = sim.ticks;
+          sim.lostReason = `extinction: no living plants anywhere for ${LOSS.extinctionGraceSeconds} s`; if (sim.onLoss) sim.onLoss(sim.lostReason); }
+      }
       return cov;
     }
     function collectBubble(k) { sim.biomass += C.econ.bubbleValue; bubbles.splice(k, 1); }
@@ -464,5 +567,6 @@
   }
 
   root.BLOOM = Object.assign(root.BLOOM || {}, { createSim, resolveLayout, growVoronoi,
+    pressure: { CHANNELS, checkScenario, resolveScenario, progressAt, offsetsAt, maxOffsets, phaseAt },
     geo: { components, sectionAdjacency, sectionPieces, waterCrossings, reachableLandmasses }, util: { clamp, lerp, band, overLimit } });
 })(typeof window !== "undefined" ? window : globalThis);

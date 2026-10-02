@@ -1,0 +1,80 @@
+# A · catalogue + Eden compatibility
+PASS  1 · the scenario catalogue (content/scenarios.js) is plain JSON-shaped data; every entry passes the engine's scenario check  — eden, dying_world
+PASS  1b · Dying World owns its numbers as data: grace, duration, channel maxima, extinction grace, validation policy, display labels  — grace 60 s · duration 420 s · channels {"moistureShare":-0.4,"temperature":-8,"radiation":8} · extinction after 8 s · phases Early decline@0, Noticeable loss@0.34, Severe decline@0.67, Final harsh state@1
+PASS  1c · no scenario-specific code: the engine, witness, validators and UI never name Dying World; the UI reads the scenario's own data
+PASS  2 · Eden as an explicit scenario reproduces the accepted First Bloom golden bit-for-bit (layout, evaluations, previews, prices, all 6 runs)
+PASS  3 · First Bloom with no scenario is unchanged (same golden)
+PASS  4 · Ocean 13/8, Desert 25/9 and Frozen 22/12 Eden worlds are unchanged: same generated planet and the same 3000-tick run as 1b7ea2a, with no scenario and with Eden  — ocean_archipelago:13 ✓ · ocean_archipelago:8 ✓ · desert_world:25 ✓ · desert_world:9 ✓ · frozen_world:22 ✓ · frozen_world:12 ✓
+PASS  29 · no-pressure Ocean 13 keeps its accepted Eden baseline (attempt 6, layers 1–8, Cold+Salt vs Heat+Radiation)  — Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) | Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)
+
+# A · the pressure clock and channels
+PASS  5 · same planet + scenario + RNG reproduces bit-for-bit (4000-tick run fingerprints; layer P verdict)  — b1ce3c61,beddf22c
+PASS  6 · an unknown scenario id fails explicitly (never a substitute); a malformed definition is refused; no id = Eden  — unknown scenario "volcano_world" (known: eden, dying_world) · bloom-sim: scenario broken: pressure.durationSeconds must be > 0; pressure.channels.wind i…
+PASS  7 · Dying World pressure starts at zero (no drift, grace phase) on a fresh run and on its first tick
+PASS  8 · the grace period behaves as configured: zero drift for the first graceSeconds, then the decline starts  — 60 s = 375 ticks stable; first drift at tick 376 (60.16 s)
+PASS  9 · pressure increases monotonically (progress, every channel's drift and the phase never step back)
+PASS  10 · pressure reaches its configured maximum at grace + duration and then stays there (final harsh state, no further drift)  — full at tick 3000 (480.0 s); held for 119 more ticks; max {"temp":-8,"moist":-21.6,"rad":8}
+PASS  11 · moisture declines as the data says: moistureShare × the planet's starting sky moisture × progress  — -0.4 × 54 → 108 s -2.5, 240 s -9.3, 360 s -15.4, 480 s -21.6
+PASS  12 · temperature declines as the data says: temperature × progress  — 108 s -0.9 °C, 240 s -3.4 °C, 360 s -5.7 °C, 480 s -8 °C
+PASS  13 · radiation increases as the data says: radiation × progress  — 108 s +0.9, 240 s +3.4, 360 s +5.7, 480 s +8
+      progression: 0s p0 Atmosphere stable (for now) [m0 t0 r+0] | 60s p0 Early decline [m0 t0 r+0] | 150.1s p0.214 Early decline [m-4.6 t-1.7 r+1.7] | 240s p0.429 Noticeable loss [m-9.3 t-3.4 r+3.4] | 300s p0.571 Noticeable loss [m-12.3 t-4.6 r+4.6] | 360s p0.714 Severe decline [m-15.4 t-5.7 r+5.7] | 420s p0.857 Severe decline [m-18.5 t-6.9 r+6.9] | 480s p1 Final harsh state [m-21.6 t-8 r+8]
+PASS  14 · the planet data and the scenario data are never mutated by a full pressured run (the sky the player Terraformed is the sim's own state)
+
+# A · pressure acts through the ordinary environment
+PASS  15 · every pressured evaluation equals an Eden evaluation of the same shifted conditions (fitness, limiting factor, effective temperature / moisture / radiation)  — 120 region evaluations across 3 worlds × 3 builds at the final state
+PASS  16 · a region turns green → yellow → red purely through scenario pressure (it stays green in the same Eden run)  — Green Rise: green@4s → yellow@380s(Water) → red@476s(Water) (Eden: green throughout) · Saffron Flats: green@4s → yellow@92s(Hazard) → red@432s(Hazard) (Eden: green throughout) · Heath Reach: green@4s → yellow@200s(Hazard) → red@364s(Water) (Eden: green throughout)
+PASS  17 · existing Adapt answers scenario-induced blockers: Radiation Shielding the radiation, Drought Adaptation the drying (open at the start, blocked in the final state, open again with the Adapt)  — Green Rise: Water (dry) → Drought Adaptation reopens it · Fern Span: Hazard (radiation 33→41) → Radiation Shielding reopens it · Moss Pan: Hazard (radiation 34→42) → Radiation Shielding reopens it · Gold Pan: Water (dry) → Drought Adaptation reopens it
+PASS  20 · Radiation Shielding changes only the Hazard answer: no region's temperature, moisture or their factors move
+PASS  18 · existing Terraform counters the climate drift: Humidify adds its +8 on top of the drying and reopens dried-out regions; Warm the Sky reopens regions the cooling froze  — Ocean 13 final state, Humidify reopens: Green Rise, Gold Pan · Frozen 22 final state (Cold ×2), Warm reopens: Hoar Expanse
+PASS  19 · Terraform never erases scenario progress: a run that Terraforms at 240 s has exactly the same pressure clock, drift and milestones as one that does not (only its own sky moved)  — drift at the purchase {"temp":-3.4,"moist":-9.3,"rad":3.4}; sky 8/54 vs 14/70
+PASS  21 · Roots focus + Root Network cannot rescue a colony on ground the decline made red: it dies out exactly like the unprotected one  — Saffron Flats: fitness 0.19 ≤ protectAbove 0.3 in the final state; living tiles 900 ticks after it: 0 (Roots + Root Network) vs 0 (Balanced)
+PASS  22 · pressure reaches Biomass only through colony condition: identical to Eden while the atmosphere is stable, the economy code never reads pressure, and in the final state a pressured colony earns exactly what the same colony earns in an Eden world with those conditions  — grace: bit-identical · final state, same colonies + same draws for 40 ticks: income 15.0551 vs 15.0551 (origin fitness 1.000 vs 1.000)
+
+# A · extinction loss
+PASS  23 · extinction grace works: the run is lost exactly extinctionGraceSeconds after the last living tile died, not before  — no-purchase Ocean 13: last plants gone at 491.0 s (pressure 100.0%), lost at 498.9 s = 50 ticks later
+PASS  25 · a confirmed extinction is a clear loss: onLoss fires once with the reason, and the run is frozen (no more ticks, Biomass or tile changes)  — extinction: no living plants anywhere for 8 s
+PASS  24 · a temporary zero-Living spell shorter than the grace never loses (the counter resets when plants are back); one lasting the full grace does  — 49 ticks with no living plants → survives (counter back to 0); 50 ticks → lost
+PASS  26 · Eden is not given the pressure loss: an Eden run with no living plants for 80 s is still not lost (extinction disabled)
+
+# A · layer P — Dying World on the three production archetypes
+PASS  27 · Ocean 13 + Dying World is winnable through earned Biomass under real pressure (layer P PASS; an independent replay buys only with earned Biomass while the decline advances, and still holds 70% in the final state)  — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)] seedOut@90s → rad@390s → drought@481s → waterSeeds@559s · win 666 s · margin 672 s (pressure 100.0%) · holds 73.7% at 732 s · replay: spent 680 of 40 + 972 earned; pressure 100.0% at the margin
+PASS  28 · the primary fixture has two legitimate, materially distinct pressure strategies: answer the drying by evolving (Drought Adaptation) or by Terraforming (Humidify)  — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)] seedOut@90s → rad@390s → drought@481s → waterSeeds@559s · win 666 s · margin 672 s (pressure 100.0%) · holds 73.7% at 732 s ‖ [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Terraform(+8)] seedOut@90s → rad@390s → humid@514s → waterSeeds@595s · win 695 s · margin 703 s (pressure 100.0%) · holds 73.7% at 763 s · differ by Water:dry=Adapt(1) vs Water:dry=Terraform(+8); held land the same
+PASS  30 · Desert 25 + Dying World is proven viable by layer P (real pressured witnesses; 2 distinct strategies)  — [Defense:rad=Adapt(1) · Water:dry=Adapt(2)] seedOut@50s → rad@150s → drought@243s → drought@393s · win 504 s · margin 512 s (pressure 100.0%) · holds 82.5% at 572 s ‖ [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+16)] seedOut@50s → salt@141s → rad@274s → drought@359s → humid@490s → humid@614s · win 752 s · margin 757 s (pressure 100.0%) · holds 80.8% at 817 s
+PASS  31 · Frozen 22 + Dying World is proven viable by layer P (real pressured witnesses; 2 distinct strategies)  — [Temperature:cold=Adapt(3) · Water:dry=Adapt(1)] seedOut@75s → drought@137s → cold@201s → cold@306s → cold@430s · win 485 s · margin 493 s (pressure 100.0%) · holds 81.6% at 553 s ‖ [Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)] seedOut@75s → drought@137s → rad@241s → cold@292s → cold@409s → warm@466s · win 524 s · margin 532 s (pressure 100.0%) · holds 79.6% at 592 s
+PASS  28b · every accepted Eden strategy of the three fixtures falls below 70% growable land in the final state — the earlier solution is no longer enough  — primary: [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)] 74.7% → 22.2% · [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)] 77.3% → 35.9% | desert: [Water:dry=Adapt(2)] 74.4% → 39.8% · [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] 75.0% → 55.0% | frozen: [Temperature:cold=Adapt(2)] 90.8% → 17.5% · [Temperature:cold=Adapt(1)+Terraform(+12)] 81.8% → 11.1%
+PASS  32 · pressure never colonizes water or changes the land denominator (every water tile Barren with no plants, checked every 100 ticks through the final state)  — 1476 water tiles · 924 land tiles in both runs
+PASS  33 · Waterborne Seeds stays geography-driven under pressure: the same crossings and offer rule as Eden, footholds only on real landing tiles  — 12 crossing links · 1 footholds, all on landing tiles · Desert 25 / Frozen 22 offer Waterborne Seeds exactly as in Eden
+PASS  P · layer P supports an explicit per-archetype rejection as data (DISALLOWED with its reason) and adds nothing to prove for Eden; Dying World currently disallows no archetype
+
+(Node part 20.0 s)
+
+# B · browser
+PASS  35 · the browser launch identifies Dying World (title, header, pressure bar, footer) on the same Ocean 13 world (attempt 6)  — BLOOM — Dying World · Ocean Archipelago · seed 13 (playtest harness) · 227) · layers 12345678 · scenario dying_world (layer P PASS)
+PASS  34 · the page never holds witness or solution data: layer P hands the UI a status and a count only  — {"status":"PASS","strategiesProven":1,"required":1}
+PASS  Q · the run opens with the short science wording and when the decline starts  — ☁ Dying World · Atmosphere thinning. The planet is slowly losing atmosphere. Conditions are becoming drier and colder, and surface radiation is increasing. The decline be
+PASS  36 · the pressure bar updates with the real simulation (phase, % lost, fill, live drift, time to the next stage)  — 97s Early decline 9% lost m−1.9 r+0.7 | 193s Early decline 32% lost m−6.9 r+2.5 | 289s Noticeable loss 55% lost m−11.8 r+4.4 | 385s Severe decline 77% lost m−16.7 r+6.2 | 481s Final harsh state 100% lost m−21.6 r+8
+PASS  O2 · the map itself shows the decline: bare ground is drawn from the effective (drier, colder) climate, under a haze that thickens with the loss  — bare-ground colour rgb 46,58,68 → 54,60,66 (Δ 12); water pixel 30,62,104 → 67,88,131 (haze, Δ 90)
+PASS  39 · milestone feedback fired exactly at the configured phase thresholds (UI history = engine events = the data's `from` values)  — early@60.0s, loss@202.9s, severe@341.4s, final@480.0s
+PASS  37 · environmental readouts show the current effective values (HUD sky, region ground temperature, sky, radiation with its drift)  — HUD 0°C · moist 32.4 · Ground here +12°C · sky 0°C · suits your plant −6°C to +24°C · radiation 35 + 8 = 43
+PASS  38 · the Terraform readout keeps the player's Terraform apart from the scenario drift (sky = base · Terraform · thinning), in the bar and in the purchase message  —  moisture 40.4 = base 54 · Terraform +8 · thinning −21.6 · Bought Humidify. Sky moisture 54 → 62 (thinning air −21.6 on top) · ⚠ closes: Sienna Reach (too wet) · ⚠ worse
+PASS  no browser errors (Ocean 13 Dying World readouts)
+PASS  O · the UI notices living regions the decline pushes across a threshold (outlined on the map + one message)  — Saffron Flats green→yellow @92s, Saffron Flats yellow→red @429s
+PASS  no browser errors (threshold feedback)
+PASS  40 · a Dying World run is won through real shop clicks with earned Biomass (Ocean 13, the Drought strategy)  — seedOut @ 90 s → rad @ 362 s → drought @ 467 s → waterSeeds @ 536 s · win at 642 s with 70.0% of the land, pressure 100.0%
+PASS  42 · the Bloom Report names the planet, archetype and scenario, the final pressure state and the drift the plant endured, beside the usual build summary  — Pressure: Dying World · Atmosphere thinning — Final harsh state (100% of the decline). Your plant endured: moisture −21.6, temperature −8 °C, radiation +8 — the final harsh state.
+PASS  no browser errors (Dying World win)
+PASS  41 · an intentionally doomed control (no purchases) loses by extinction: a clear loss screen with the reason, the pressure reached and a restart button  — extinction: no living plants anywhere for 8 s at 499 s
+PASS  41b · restart reloads the same launch as a fresh run  — {"t":0,"lost":false,"on":false}
+PASS  no browser errors (extinction control)
+PASS  R · archetype=ocean_archipelago&seed=13&scenario=volcano_world fails explicitly: no run started, no substitute  — archetype ocean_archipelago · public seed 13 · scenario volcano_world / 
+PASS  R · scenario= fails explicitly: no run started, no substitute  — First Bloom · scenario / 
+PASS  R · archetype=desert_world&seed=25&scenario=Dying%20World fails explicitly: no run started, no substitute  — archetype desert_world · public seed 25 · scenario Dying World / 
+PASS  R · no scenario parameter = Eden: no pressure bar, no loss rule, the familiar title and footer  — BLOOM — Ocean Archipelago · seed 13 (playtest harness)
+PASS  no browser errors (Ocean 13 Eden)
+PASS  J · Desert World 25 + Dying World launches (layer P PASS) and its pressure bar runs  — Severe decline · 70% lost · Final harsh state in 2:07 · moisture −5 · temperature −5.6 °C
+PASS  no browser errors (Desert World Dying World)
+PASS  J · Frozen World 22 + Dying World launches (layer P PASS) and its pressure bar runs  — Severe decline · 70% lost · Final harsh state in 2:06 · moisture −12.9 · temperature −5.6 °C
+PASS  no browser errors (Frozen World Dying World)
+evidence written: docs/evidence/bloom-012/dying-world-evidence.json
+
+ALL CHECKS PASS  (39.9 s)

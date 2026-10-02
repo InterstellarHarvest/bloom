@@ -1,0 +1,967 @@
+{
+ "scenario": "dying_world",
+ "seeds": 20,
+ "archetypes": {
+  "ocean_archipelago": {
+   "rows": [
+    {
+     "seed": 1,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 309,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 641.1,
+     "hold": 0.7521
+    },
+    {
+     "seed": 2,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 230,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1)",
+     "reason": null,
+     "margin": 410.9,
+     "hold": 0.8653
+    },
+    {
+     "seed": 3,
+     "status": "GENERATION FAILED"
+    },
+    {
+     "seed": 4,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 1228,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 854.6,
+     "hold": 0.7308
+    },
+    {
+     "seed": 5,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 220,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−8)",
+     "reason": null,
+     "margin": 450.9,
+     "hold": 0.8266
+    },
+    {
+     "seed": 6,
+     "status": "PASS",
+     "two": "FAIL",
+     "ms": 189,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1)",
+     "reason": null,
+     "margin": 434.1,
+     "hold": 0.9267
+    },
+    {
+     "seed": 7,
+     "status": "GENERATION FAILED"
+    },
+    {
+     "seed": 8,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 228,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)",
+     "reason": null,
+     "margin": 563,
+     "hold": 0.8759
+    },
+    {
+     "seed": 9,
+     "status": "PASS",
+     "two": "FAIL",
+     "ms": 240,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1)",
+     "reason": null,
+     "margin": 684,
+     "hold": 0.8947
+    },
+    {
+     "seed": 10,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 215,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 535.7,
+     "hold": 0.7865
+    },
+    {
+     "seed": 11,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 207,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 481,
+     "hold": 0.7677
+    },
+    {
+     "seed": 12,
+     "status": "PASS",
+     "two": "FAIL",
+     "ms": 232,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1)",
+     "reason": null,
+     "margin": 545,
+     "hold": 0.7399
+    },
+    {
+     "seed": 13,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 246,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 672.2,
+     "hold": 0.737
+    },
+    {
+     "seed": 14,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 196,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Terraform(+8)",
+     "reason": null,
+     "margin": 543.5,
+     "hold": 0.8899
+    },
+    {
+     "seed": 15,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 227,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)",
+     "reason": null,
+     "margin": 531.7,
+     "hold": 0.7689
+    },
+    {
+     "seed": 16,
+     "status": "FAIL",
+     "two": null,
+     "ms": 53,
+     "signature": null,
+     "reason": "layer P (dying_world): no legal build can hold the win simultaneously: best build reaches 69.1% < 70%",
+     "margin": null,
+     "hold": null
+    },
+    {
+     "seed": 17,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 281,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)",
+     "reason": null,
+     "margin": 741.1,
+     "hold": 0.7417
+    },
+    {
+     "seed": 18,
+     "status": "FAIL",
+     "two": null,
+     "ms": 59,
+     "signature": null,
+     "reason": "layer P (dying_world): no legal build can hold the win simultaneously: best build reaches 50.8% < 70%",
+     "margin": null,
+     "hold": null
+    },
+    {
+     "seed": 19,
+     "status": "GENERATION FAILED"
+    },
+    {
+     "seed": 20,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 902,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 1144.8,
+     "hold": 0.7771
+    }
+   ],
+   "accepted": 15,
+   "generated": 17,
+   "twoStrategies": 12
+  },
+  "desert_world": {
+   "rows": [
+    {
+     "seed": 1,
+     "status": "FAIL",
+     "two": null,
+     "ms": 32,
+     "signature": null,
+     "reason": "layer P (dying_world): no legal build reaches the validation margin: best build holds 70.6% < target 73%",
+     "margin": null,
+     "hold": null
+    },
+    {
+     "seed": 2,
+     "status": "PASS",
+     "two": "FAIL",
+     "ms": 381,
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2)+Terraform(+8)",
+     "reason": null,
+     "margin": 731.5,
+     "hold": 0.7761
+    },
+    {
+     "seed": 3,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 299,
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2)",
+     "reason": null,
+     "margin": 402.4,
+     "hold": 0.8289
+    },
+    {
+     "seed": 4,
+     "status": "FAIL",
+     "two": null,
+     "ms": 25,
+     "signature": null,
+     "reason": "layer P (dying_world): no legal build can hold the win simultaneously: best build reaches 65.5% < 70%",
+     "margin": null,
+     "hold": null
+    },
+    {
+     "seed": 5,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 440,
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2)",
+     "reason": null,
+     "margin": 758.7,
+     "hold": 0.7343
+    },
+    {
+     "seed": 6,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 286,
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(2)",
+     "reason": null,
+     "margin": 458.4,
+     "hold": 0.7671
+    },
+    {
+     "seed": 7,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 292,
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)",
+     "reason": null,
+     "margin": 437.6,
+     "hold": 0.8584
+    },
+    {
+     "seed": 8,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 315,
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2)",
+     "reason": null,
+     "margin": 469.4,
+     "hold": 0.7341
+    },
+    {
+     "seed": 9,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 303,
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2)",
+     "reason": null,
+     "margin": 448.3,
+     "hold": 0.7458
+    },
+    {
+     "seed": 10,
+     "status": "PASS",
+     "two": "FAIL",
+     "ms": 314,
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(2)",
+     "reason": null,
+     "margin": 326.2,
+     "hold": 0.8539
+    },
+    {
+     "seed": 11,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 302,
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(2)",
+     "reason": null,
+     "margin": 385.8,
+     "hold": 0.9601
+    },
+    {
+     "seed": 12,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 313,
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)",
+     "reason": null,
+     "margin": 562.4,
+     "hold": 0.7755
+    },
+    {
+     "seed": 13,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 296,
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2)",
+     "reason": null,
+     "margin": 459,
+     "hold": 0.7713
+    },
+    {
+     "seed": 14,
+     "status": "PASS",
+     "two": "FAIL",
+     "ms": 291,
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(2)",
+     "reason": null,
+     "margin": 524.5,
+     "hold": 0.8231
+    },
+    {
+     "seed": 15,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 300,
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2)",
+     "reason": null,
+     "margin": 430.9,
+     "hold": 0.8069
+    },
+    {
+     "seed": 16,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 1517,
+     "signature": "Defense:salt=Adapt(1) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 319.2,
+     "hold": 0.8158
+    },
+    {
+     "seed": 17,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 285,
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)",
+     "reason": null,
+     "margin": 388,
+     "hold": 0.7437
+    },
+    {
+     "seed": 18,
+     "status": "PASS",
+     "two": "INCONCLUSIVE",
+     "ms": 1468,
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 356.6,
+     "hold": 0.7939
+    },
+    {
+     "seed": 19,
+     "status": "PASS",
+     "two": "FAIL",
+     "ms": 282,
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2)",
+     "reason": null,
+     "margin": 425.8,
+     "hold": 0.7802
+    },
+    {
+     "seed": 20,
+     "status": "PASS",
+     "two": "FAIL",
+     "ms": 885,
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 305.4,
+     "hold": 0.843
+    }
+   ],
+   "accepted": 18,
+   "generated": 20,
+   "twoStrategies": 12
+  },
+  "frozen_world": {
+   "rows": [
+    {
+     "seed": 1,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 337,
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 666.6,
+     "hold": 0.732
+    },
+    {
+     "seed": 2,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 1274,
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6)",
+     "reason": null,
+     "margin": 799.4,
+     "hold": 0.7452
+    },
+    {
+     "seed": 3,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 280,
+     "signature": "Temperature:cold=Adapt(3) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 494.6,
+     "hold": 0.8493
+    },
+    {
+     "seed": 4,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 293,
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(2) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 480.2,
+     "hold": 0.7311
+    },
+    {
+     "seed": 5,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 299,
+     "signature": "Temperature:cold=Adapt(2) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 374.9,
+     "hold": 0.8039
+    },
+    {
+     "seed": 6,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 294,
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(2) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 519.8,
+     "hold": 0.7372
+    },
+    {
+     "seed": 7,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 799,
+     "signature": "Defense:salt=Adapt(1) · Temperature:cold=Adapt(3) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 750.1,
+     "hold": 0.7476
+    },
+    {
+     "seed": 8,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 300,
+     "signature": "Defense:salt=Adapt(1) · Temperature:cold=Adapt(2) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 402.2,
+     "hold": 0.9307
+    },
+    {
+     "seed": 9,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 279,
+     "signature": "Temperature:cold=Adapt(2) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 422.1,
+     "hold": 0.8769
+    },
+    {
+     "seed": 10,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 297,
+     "signature": "Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 484.6,
+     "hold": 0.7939
+    },
+    {
+     "seed": 11,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 290,
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(2) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 504.5,
+     "hold": 0.7863
+    },
+    {
+     "seed": 12,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 441,
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(2) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 734.7,
+     "hold": 0.7301
+    },
+    {
+     "seed": 13,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 287,
+     "signature": "Temperature:cold=Adapt(3) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 426.2,
+     "hold": 0.8961
+    },
+    {
+     "seed": 14,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 378,
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6)",
+     "reason": null,
+     "margin": 631.5,
+     "hold": 0.7393
+    },
+    {
+     "seed": 15,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 309,
+     "signature": "Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 396.2,
+     "hold": 0.785
+    },
+    {
+     "seed": 16,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 403,
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 799.2,
+     "hold": 0.9304
+    },
+    {
+     "seed": 17,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 1330,
+     "signature": "Temperature:cold=Adapt(2) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 340.5,
+     "hold": 0.9378
+    },
+    {
+     "seed": 18,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 292,
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(2) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 439.8,
+     "hold": 0.9261
+    },
+    {
+     "seed": 19,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 312,
+     "signature": "Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 380.6,
+     "hold": 0.9283
+    },
+    {
+     "seed": 20,
+     "status": "PASS",
+     "two": "PASS",
+     "ms": 1431,
+     "signature": "Temperature:cold=Adapt(2)+Terraform(+6) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)",
+     "reason": null,
+     "margin": 530.7,
+     "hold": 0.7791
+    }
+   ],
+   "accepted": 20,
+   "generated": 20,
+   "twoStrategies": 20
+  }
+ },
+ "fixtures": {
+  "ocean_archipelago:13": {
+   "name": "Eos-227",
+   "maxDrift": {
+    "temp": -8,
+    "moist": -21.6,
+    "rad": 8
+   },
+   "eden": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)",
+     "startLand": 0.7467532467532467,
+     "finalLand": 0.22186147186147187
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)",
+     "startLand": 0.7727272727272727,
+     "finalLand": 0.3593073593073593
+    }
+   ],
+   "layerP": "PASS",
+   "strategies": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 90.2,
+       "cost": 130
+      },
+      {
+       "id": "rad",
+       "seconds": 389.6,
+       "cost": 220
+      },
+      {
+       "id": "drought",
+       "seconds": 480.6,
+       "cost": 150
+      },
+      {
+       "id": "waterSeeds",
+       "seconds": 558.9,
+       "cost": 180
+      }
+     ],
+     "winSeconds": 666.1,
+     "hold": {
+      "seconds": 732.2,
+      "coverage": 0.737,
+      "held": true
+     },
+     "held": [
+      "sec_2",
+      "sec_3",
+      "sec_4",
+      "sec_5",
+      "sec_7",
+      "sec_9",
+      "sec_11",
+      "sec_12",
+      "sec_13",
+      "sec_14"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Terraform(+8)",
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 90.2,
+       "cost": 130
+      },
+      {
+       "id": "rad",
+       "seconds": 389.6,
+       "cost": 220
+      },
+      {
+       "id": "humid",
+       "seconds": 513.8,
+       "cost": 200
+      },
+      {
+       "id": "waterSeeds",
+       "seconds": 595.4,
+       "cost": 180
+      }
+     ],
+     "winSeconds": 694.9,
+     "hold": {
+      "seconds": 763,
+      "coverage": 0.737,
+      "held": true
+     },
+     "held": [
+      "sec_2",
+      "sec_3",
+      "sec_4",
+      "sec_5",
+      "sec_7",
+      "sec_9",
+      "sec_11",
+      "sec_12",
+      "sec_13",
+      "sec_14"
+     ]
+    }
+   ]
+  },
+  "desert_world:25": {
+   "name": "Umbra-584",
+   "maxDrift": {
+    "temp": -8,
+    "moist": -7.2,
+    "rad": 8
+   },
+   "eden": [
+    {
+     "signature": "Water:dry=Adapt(2)",
+     "startLand": 0.7442375886524822,
+     "finalLand": 0.39849290780141844
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)",
+     "startLand": 0.7504432624113475,
+     "finalLand": 0.549645390070922
+    }
+   ],
+   "layerP": "PASS",
+   "strategies": [
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2)",
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 50.2,
+       "cost": 130
+      },
+      {
+       "id": "rad",
+       "seconds": 149.8,
+       "cost": 220
+      },
+      {
+       "id": "drought",
+       "seconds": 243.4,
+       "cost": 150
+      },
+      {
+       "id": "drought",
+       "seconds": 392.8,
+       "cost": 270
+      }
+     ],
+     "winSeconds": 504.3,
+     "hold": {
+      "seconds": 572,
+      "coverage": 0.8245,
+      "held": true
+     },
+     "held": [
+      "sec_0",
+      "sec_1",
+      "sec_2",
+      "sec_3",
+      "sec_4",
+      "sec_5",
+      "sec_7",
+      "sec_9",
+      "sec_10",
+      "sec_11"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+16)",
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 50.2,
+       "cost": 130
+      },
+      {
+       "id": "salt",
+       "seconds": 141,
+       "cost": 200
+      },
+      {
+       "id": "rad",
+       "seconds": 274.1,
+       "cost": 220
+      },
+      {
+       "id": "drought",
+       "seconds": 359.2,
+       "cost": 150
+      },
+      {
+       "id": "humid",
+       "seconds": 489.8,
+       "cost": 200
+      },
+      {
+       "id": "humid",
+       "seconds": 613.9,
+       "cost": 290
+      }
+     ],
+     "winSeconds": 751.8,
+     "hold": {
+      "seconds": 817.3,
+      "coverage": 0.8081,
+      "held": true
+     },
+     "held": [
+      "sec_0",
+      "sec_1",
+      "sec_2",
+      "sec_3",
+      "sec_4",
+      "sec_7",
+      "sec_8",
+      "sec_9",
+      "sec_10",
+      "sec_11"
+     ]
+    }
+   ]
+  },
+  "frozen_world:22": {
+   "name": "Mistral-887",
+   "maxDrift": {
+    "temp": -8,
+    "moist": -18.400000000000002,
+    "rad": 8
+   },
+   "eden": [
+    {
+     "signature": "Temperature:cold=Adapt(2)",
+     "startLand": 0.9076704545454546,
+     "finalLand": 0.1747159090909091
+    },
+    {
+     "signature": "Temperature:cold=Adapt(1)+Terraform(+12)",
+     "startLand": 0.8177083333333334,
+     "finalLand": 0.11079545454545454
+    }
+   ],
+   "layerP": "PASS",
+   "strategies": [
+    {
+     "signature": "Temperature:cold=Adapt(3) · Water:dry=Adapt(1)",
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 75.2,
+       "cost": 130
+      },
+      {
+       "id": "drought",
+       "seconds": 137.4,
+       "cost": 150
+      },
+      {
+       "id": "cold",
+       "seconds": 200.8,
+       "cost": 140
+      },
+      {
+       "id": "cold",
+       "seconds": 306.4,
+       "cost": 270
+      },
+      {
+       "id": "cold",
+       "seconds": 429.9,
+       "cost": 400
+      }
+     ],
+     "winSeconds": 485.1,
+     "hold": {
+      "seconds": 553,
+      "coverage": 0.8158,
+      "held": true
+     },
+     "held": [
+      "sec_2",
+      "sec_3",
+      "sec_4",
+      "sec_5",
+      "sec_6",
+      "sec_7",
+      "sec_9",
+      "sec_11",
+      "sec_12",
+      "sec_14",
+      "sec_15"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)",
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 75.2,
+       "cost": 130
+      },
+      {
+       "id": "drought",
+       "seconds": 137.4,
+       "cost": 150
+      },
+      {
+       "id": "rad",
+       "seconds": 240.5,
+       "cost": 220
+      },
+      {
+       "id": "cold",
+       "seconds": 292.2,
+       "cost": 140
+      },
+      {
+       "id": "cold",
+       "seconds": 408.8,
+       "cost": 270
+      },
+      {
+       "id": "warm",
+       "seconds": 465.9,
+       "cost": 200
+      }
+     ],
+     "winSeconds": 523.5,
+     "hold": {
+      "seconds": 591.5,
+      "coverage": 0.7959,
+      "held": true
+     },
+     "held": [
+      "sec_0",
+      "sec_3",
+      "sec_4",
+      "sec_5",
+      "sec_6",
+      "sec_8",
+      "sec_9",
+      "sec_10",
+      "sec_11",
+      "sec_12",
+      "sec_13",
+      "sec_14",
+      "sec_15"
+     ]
+    }
+   ]
+  }
+ }
+}

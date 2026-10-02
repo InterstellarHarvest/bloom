@@ -37,6 +37,13 @@
 // Two signatures are MATERIALLY DISTINCT when each has a token the other lacks — neither contains the
 // other. A shared Waterborne Seeds token therefore never distinguishes two strategies, and neither does
 // boosting Spread, re-ordering purchases or adding an upgrade the win didn't need.
+//
+// PRESSURE SCENARIOS (BLOOM-012) — opts.scenario (a content/scenarios.js definition). Nothing is special-cased: the
+// static stage estimates every build in the scenario's FINAL pressure state (the world the run ends in), and every
+// simulation runs the real engine WITH the scenario, so pressure advances on the real clock while the witness earns and
+// buys. A pressured witness passes only if it reaches the margin AND still holds the planet's win threshold
+// scenario.validation.holdFinalSeconds after the final state is reached (a win that only outran the decline is no
+// proof). Extinction ends a witness run as a failure. Without a scenario everything is exactly the BLOOM-006 search.
 (function (root) {
   "use strict";
   const BLOOM = root.BLOOM;
@@ -82,8 +89,10 @@
   // shared static search (stage 1) + helpers for stage 2; used by findWitness and findStrategies
   function prepare(planet, config, traits, opts) {
     const t0 = Date.now(), V = config.validation, G = config.grow;
-    const excluded = new Set(opts.excludeTraits || []);
-    const probe = BLOOM.createSim(planet, config, traits, { rng: () => 0.5 });
+    const excluded = new Set(opts.excludeTraits || []), SCN = opts.scenario || null;
+    const probe = BLOOM.createSim(planet, config, traits, { rng: () => 0.5, scenario: SCN });
+    // static estimates under pressure use the final state (undefined → the probe's own, unpressured offsets)
+    const FIN = SCN && SCN.pressure ? BLOOM.pressure.offsetsAt(SCN.pressure, 1, planet.globalClimate) : undefined;
     const M = probe.map, target = probe.winAt + V.winMargin;
     const usable = traits.filter(t => !excluded.has(t.id) && probe.offered(t));
     const byType = type => usable.filter(t => t.effect.type === type);
@@ -102,9 +111,9 @@
       Object.assign(probe.genome, base.genome); Object.assign(probe.sky, base.sky); Object.assign(probe.tf, base.tf);
       probe.biomass = Infinity; for (const id of items) if (!probe.buy(id)) return false; return true; // legality via the engine's own rules
     };
-    const staticHeld = items => { // sections an unhurried plant could hold with this terminal build (null = illegal)
+    const staticHeld = (items, off = FIN) => { // sections an unhurried plant could hold with this terminal build (null = illegal)
       if (!setState(items)) return null;
-      const ok = M.SEC.map((_, i) => probe.evaluate(i).fitness > G.growThresh);
+      const ok = M.SEC.map((_, i) => probe.evaluate(i, off).fitness > G.growThresh);
       const hasCross = items.some(id => probe.traitById[id].effect.type === "crossing");
       const seen = new Set([M.ORIGIN]), st = [M.ORIGIN];
       while (st.length) { const a = st.pop();
@@ -112,13 +121,15 @@
         for (const b of next) if (ok[b] && !seen.has(b)) { seen.add(b); st.push(b); } }
       return seen;
     };
-    const covMemo = new Map();
-    const staticCoverage = items => {
-      const k = items.join(); if (covMemo.has(k)) return covMemo.get(k);
-      const seen = staticHeld(items); let c = -1;
+    const covMemo = new Map(), nowMemo = new Map();
+    const staticCoverage = (items, off = FIN, memo = covMemo) => {
+      const k = items.join(); if (memo.has(k)) return memo.get(k);
+      const seen = staticHeld(items, off); let c = -1;
       if (seen) { let area = 0; for (const i of seen) area += M.AREA[i]; c = area / M.LAND; }
-      covMemo.set(k, c); return c;
+      memo.set(k, c); return c;
     };
+    // under pressure, the land a build holds in the STARTING world (used only to order purchases: what helps now first)
+    const nowCoverage = items => staticCoverage(items, undefined, nowMemo);
     const costOf = items => { setState([]); let c = 0; for (const id of items) { c += probe.price(probe.traitById[id]); probe.buy(id); } return c; };
 
     // ---- stage 1: enumerate legal terminal builds (by effect type, never by trait id)
@@ -140,16 +151,21 @@
     const cands = states.filter(s => s.cov >= target).map(s => ({ ...s, cost: costOf(s.items), key: s.items.join() }))
       .sort((a, b) => a.cost - b.cost || a.items.length - b.items.length);
 
-    // ---- stage 2 helpers: order a build greedily by static gain; opening variants for the Spread boosters
-    const order = items => { const left = items.slice(), out = [];
-      while (left.length) { let bi = 0, bc = -2, bp = Infinity;
+    // ---- stage 2 helpers: order a build greedily by static gain; opening variants for the Spread boosters.
+    // Under pressure (BLOOM-012) the gain is measured in the starting world first and in the final world as the
+    // tie-break: buy what opens land now, then prepare for the decline (what a person would do). Eden: unchanged.
+    // Two orders are tried under pressure ("now" first, then "final" = gain in the final world only).
+    const order = (items, mode = "final") => { const left = items.slice(), out = [];
+      while (left.length) { let bi = 0, bc = -2, bn = -2, bp = Infinity;
         for (let k = 0; k < left.length; k++) { const c = staticCoverage([...out, left[k]]); if (c < 0) continue;
+          const n = mode === "now" ? nowCoverage([...out, left[k]]) : 0;
           setState([...out, left[k]]); const p = probe.price(probe.traitById[left[k]]); // (next-tier price, as in BLOOM-005)
-          if (c > bc + 1e-9 || (Math.abs(c - bc) <= 1e-9 && p < bp)) { bi = k; bc = c; bp = p; } }
+          if (n > bn + 1e-9 || (Math.abs(n - bn) <= 1e-9 && (c > bc + 1e-9 || (Math.abs(c - bc) <= 1e-9 && p < bp)))) { bi = k; bc = c; bn = n; bp = p; } }
         out.push(left.splice(bi, 1)[0]); }
       return out; };
     const openings = [boosters.slice(0, 1).map(t => t.id), [], boosters.map(t => t.id)]
-      .filter((o, i, a) => a.findIndex(x => x.join() === o.join()) === i);
+      .filter((o, i, a) => a.findIndex(x => x.join() === o.join()) === i)
+      .flatMap(o => SCN && FIN ? [{ o, mode: "now" }, { o, mode: "final" }] : [{ o, mode: "final" }]); // Eden: the BLOOM-006 list
 
     // ---- layer 7 (see header): candidate classes by minimal sufficient core, then effect tokens per core
     const counts = items => items.reduce((m, id) => (m[id] = (m[id] || 0) + 1, m), {});
@@ -181,10 +197,13 @@
       if (!r.ok && capped) r = { ...r, inconclusive: true, reason: `search capped at ${V.maxStaticStates} static builds (result inconclusive): ${r.reason}` };
       return { ...r, search, early, bestStatic: { coverage: bestStatic.cov, build: bestStatic.items } }; };
     const run = (cand, opening, measurePeak) => { search.simulations++;
-      const r = simulate(planet, config, traits, [...opening, ...order(cand.items)], target, !!measurePeak);
+      const r = simulate(planet, config, traits, [...opening.o, ...order(cand.items, opening.mode)], target, !!measurePeak, SCN);
+      if (SCN && FIN) r.order = opening.mode;
       r.staticCoverage = cand.cov; r.build = cand.items; if (r.ok) r.signature = signature(cand.items); return r; };
     const noWin = (best, capNote) => ({ ok: false, layer: best && best.won ? 6 : 5, best,
-      reason: best && best.won ? `witness wins but peaks at ${(best.peak * 100).toFixed(1)}% < target ${(target * 100).toFixed(0)}%`
+      reason: best && best.hold && !best.hold.held ? `witness reaches the margin but holds only ${(best.hold.coverage * 100).toFixed(1)}% < ${(probe.winAt * 100).toFixed(0)}% ${SCN.validation.holdFinalSeconds} s into the final pressure state`
+        : best && best.lost ? `every witness died out (extinction at ${best.lostSeconds} s; best peak ${(best.peak * 100).toFixed(1)}%)`
+        : best && best.won ? `witness wins but peaks at ${(best.peak * 100).toFixed(1)}% < target ${(target * 100).toFixed(0)}%`
         : capNote ? `no witness reached the win with earned Biomass within ${capNote} (best peak ${best ? (best.peak * 100).toFixed(1) : 0}%)`
         : `no candidate build reached the win with earned Biomass (best peak ${best ? (best.peak * 100).toFixed(1) : 0}%)` });
     // order-independent classification of any build (same rule as the classes above)
@@ -257,7 +276,9 @@
     const summary = w => ({ signature: w.signature.key, tokens: w.signature.tokens, minimalBuild: w.signature.minimalBuild, held: w.signature.held,
       heldShare: w.signature.heldShare, build: w.build, plan: w.plan, purchases: w.purchases.map(p => ({ id: p.id, seconds: p.seconds, cost: p.cost })),
       totalSpent: w.totalSpent, winSeconds: w.winSeconds, marginSeconds: w.marginSeconds, peak: w.peak, peakMeasured: w.peakMeasured,
-      pacing: w.pacing, pacingCheck: w.pacingCheck });
+      pacing: w.pacing, pacingCheck: w.pacingCheck,
+      ...(w.scenario ? { scenario: w.scenario, order: w.order, pressureAtMargin: w.pressureAtMargin, hold: w.hold && { seconds: w.hold.seconds, coverage: w.hold.coverage, held: w.hold.held },
+        trace: w.trace } : {}) });
     const classRows = classes.map(c => ({ signature: c.signature.key, members: c.members.length, status: c.status || "not reached", cheapest: c.members[0].cost,
       ...(c.coreIncomplete ? { winsBeforeCoreBought: c.coreIncomplete } : {}) }));
     const base = { required: need, classes: classRows, early: X.early, search };
@@ -294,25 +315,37 @@
     const out = X.classes.map(k => ({ signature: X.signature(k.core).key, core: k.core, members: k.members.length, cheapest: k.members[0].cost })); X.done({}); return out; }
 
   // one real run: buy `plan` in order via sim.buy as soon as earned Biomass allows
-  function simulate(planet, config, traits, plan, target, measurePeak = false) {
-    const V = config.validation, sim = BLOOM.createSim(planet, config, traits, { rng: mulberry32(V.rngSeed) }); // never Math.random
-    const sec = t => +(t * config.tickMs / 1000).toFixed(1);
+  // scenario (BLOOM-012): run under that pressure scenario; after the margin keep running until holdFinalSeconds past the
+  // final pressure state and record whether the win threshold still holds there (r.hold); ok needs both
+  function simulate(planet, config, traits, plan, target, measurePeak = false, scenario = null) {
+    const V = config.validation, sim = BLOOM.createSim(planet, config, traits, { rng: mulberry32(V.rngSeed), scenario }); // never Math.random
+    const sec = t => +(t * config.tickMs / 1000).toFixed(1), P = scenario && scenario.pressure;
+    const fullTick = P ? Math.ceil(sim.pressure.fullAt * 1000 / config.tickMs) : null;
+    const holdTicks = P ? Math.round(((scenario.validation || {}).holdFinalSeconds || 0) * 1000 / config.tickMs) : 0;
     const purchases = []; let k = 0, peak = 0, peakTick = 0, winTick = null, marginTick = null, lastGrowth = 0, illegal = null, atMargin = null;
+    let holdAt = null, hold = null, pressureAtMargin = null; const trace = []; // [seconds, coverage, pressure progress] every 30 s
     const perMin = Math.round(60000 / config.tickMs), earnedPerMinute = []; // Biomass the economy produced, per game-minute (observed, never edited)
+    const every = Math.round(30000 / config.tickMs);
     for (let t = 1; t <= V.maxTicks; t++) {
       const before = sim.biomass, cov = sim.tick();
+      if (sim.lost) break;
+      if (t % every === 0) trace.push([sec(t), +cov.toFixed(4), +sim.pressure.progress.toFixed(3)]);
       if (marginTick === null) { const m = ((t - 1) / perMin) | 0; earnedPerMinute[m] = (earnedPerMinute[m] || 0) + (sim.biomass - before); }
       if (cov > peak + 1e-9) { peak = cov; peakTick = t; lastGrowth = t; }
       if (winTick === null && sim.won) winTick = t;
-      if (marginTick === null && cov >= target) { marginTick = t; atMargin = snapshot(sim); if (!measurePeak) break; }
+      if (marginTick === null && cov >= target) { marginTick = t; atMargin = snapshot(sim); pressureAtMargin = +sim.pressure.progress.toFixed(3);
+        if (P) holdAt = Math.max(t, fullTick) + holdTicks; else if (!measurePeak) break; }
+      if (holdAt !== null && t >= holdAt && !hold) { hold = { seconds: sec(t), coverage: +cov.toFixed(4), held: cov >= sim.winAt, progress: sim.pressure.progress, atEnd: snapshot(sim) };
+        if (!measurePeak) break; }
       if (k < plan.length) {
         const tr = sim.traitById[plan[k]];
         if (!sim.canBuy(tr)) { illegal = `${tr.name} is not legal at that point`; break; }
         const cost = sim.price(tr);
         if (sim.biomass >= cost && sim.buy(tr.id)) { purchases.push({ id: tr.id, name: tr.name, tick: t, seconds: sec(t), cost }); k++; lastGrowth = t; }
-      } else if (t - lastGrowth > V.plateauTicks) break;
+      } else if (t - lastGrowth > V.plateauTicks && (holdAt === null || hold)) break;
     }
-    return { ok: marginTick !== null, won: winTick !== null, illegal, plan, purchases,
+    return { ok: marginTick !== null && (!P || !!(hold && hold.held)), won: winTick !== null, illegal, plan, purchases,
+      scenario: scenario ? scenario.id : null, hold, pressureAtMargin, trace, lost: sim.lost, lostSeconds: sim.lost ? sec(sim.lostTick) : null,
       totalSpent: purchases.reduce((a, p) => a + p.cost, 0), usedCrossing: purchases.some(p => sim.traitById[p.id].effect.type === "crossing"),
       winTick, winSeconds: winTick && sec(winTick), marginTick, marginSeconds: marginTick && sec(marginTick),
       peak: +peak.toFixed(4), peakTick, peakMeasured: measurePeak, target: +target.toFixed(4), crossingFootholds: sim.crossing.footholds,
