@@ -1,0 +1,739 @@
+===== sim-check
+PASS  golden static matches bit-for-bit  — layout, 7 conditions × 9 sections, previews, prices
+PASS  golden wet matches bit-for-bit  — buys seedOut@143 cold@443 flood@649 cold@1014 heat@1198 salt@1428 earlyMat@1622 seedOut@1879 · final cov-hash e4de5eac won=true
+PASS  golden dry matches bit-for-bit  — buys seedOut@177 cold@521 drought@778 cold@1148 heat@1304 salt@1499 earlyMat@1659 seedOut@1912 · final cov-hash 1215425d won=true
+PASS  golden terraform matches bit-for-bit  — buys seedOut@176 humid@508 cold@752 cool@1054 salt@1322 flood@1527 warm@1698 dry@1971 earlyMat@2155 · final cov-hash d1b003dd won=true
+PASS  golden generalist matches bit-for-bit  — buys seedOut@1 seedOut@2 earlyMat@3 cold@4 cold@5 heat@6 salt@7 rad@8 · final cov-hash dedc3795 won=false
+PASS  golden colonies matches bit-for-bit  — buys seedOut@184 cold@438 flood@612 cold@984 heat@1139 salt@1309 earlyMat@1462 seedOut@1705 · final cov-hash e4de5eac won=true
+PASS  config is plain JSON-shaped data
+PASS  traits is plain JSON-shaped data
+PASS  first_bloom is plain JSON-shaped data
+PASS  every trait has id/board/name/known effect type/cost
+PASS  every Adapt/Spread trait carries its one-line science explanation
+PASS  traits added after the golden are not offered on First Bloom (no water → no crossings)  — Waterborne Seeds
+PASS  resources/bloom-sim.js touches no DOM/browser APIs
+PASS  prices + starting biomass follow config.econ  — cold=28
+PASS  win threshold follows config.win  — won at tick 154
+PASS  category boundaries follow config.categories
+PASS  a second (synthetic) planet runs on the unchanged engine and respects its own winThreshold  — won at tick 407, hot section c stays barren (0 living)
+PASS  engine models a kind:"water" section as impassable and leaves it out of the denominator  — LAND 400/600
+PASS  engine still refuses unknown terrain kinds (guard narrowed, not removed)
+
+ALL CHECKS PASS
+===== gen-check
+
+# generator + validator — fixed cases
+case         seed   water%req  land  water  sections  landmasses  reach(ordinary→strongest)  origin   [maxCrossingGap 6]
+zeroWater    12345  0          2400  0      14        1           14→14/14                   sec_8 "Mild Steppe"
+moderate     2024   30         1680  720    14        2           13→14/14                   sec_5 "Verdant Wastes"
+islands      25     60         935   1465   14        3           9→14/14                    sec_12 "Snow Wastes"
+denominator  777    40         1436  964    12        1           12→12/12                   sec_10 "Sienna Shelf"
+PASS  zeroWater: validator passes (tiles, contiguity, origin, adjacency, denominator vs engine, seed reproduction)
+PASS  moderate: validator passes (tiles, contiguity, origin, adjacency, denominator vs engine, seed reproduction)
+PASS  islands: validator passes (tiles, contiguity, origin, adjacency, denominator vs engine, seed reproduction)
+PASS  denominator: validator passes (tiles, contiguity, origin, adjacency, denominator vs engine, seed reproduction)
+PASS  zero-water planet has no water and one landmass
+PASS  moderate planet lands near its requested 30% water  — 30%
+PASS  island planet has ≥3 landmasses; ordinary spread strands sections, Waterborne Seeds reaches all  — 3 landmasses, 5 stranded without the trait, 0 with it
+
+# reachability: ordinary spread vs strongest Spread (Waterborne Seeds)
+PASS  zeroWater (one landmass): fully reachable by ordinary spread — Waterborne Seeds not required  — ordinary spread 14/14
+PASS  denominator (one landmass): fully reachable by ordinary spread — Waterborne Seeds not required  — ordinary spread 12/12
+PASS  moderate (2 landmasses): the small island needs Waterborne Seeds, and it is in range  — ordinary 13/14 → strongest 14/14, links [{"from":0,"to":1,"gap":6}]
+PASS  validator REJECTS an unreachable procedural planet (seed 9, 60%, no crossing constraint)  — reachability: 7 section(s) on 4 landmass(es) stay unreachable even with Waterborne Seeds (water gap ≤ 6 tiles) · crossing links [{"from":1,"to":4,"gap":1},{"from":2,"to":3,"gap":5}]
+PASS  same seed with maxCrossingGap 6: unreachable islands become water and the planet validates  — 5 → 1 landmass(es), water 60% → 78.3%
+PASS  with no crossing trait in the catalogue, the same archipelago is (correctly) unreachable  — reachability: 5 section(s) on 2 landmass(es) stay unreachable even with no crossing Spread trait available
+PASS  same seed + params → identical planet (every field, every tile)
+PASS  different seed → different planet  — 1581 of 2400 tiles differ (seed 25 vs 26)
+PASS  same seed, different params → different planet
+PASS  generator refuses to run without an explicit seed
+PASS  generator draws no Math.random (seeded mulberry32 only)
+PASS  sweep: 25 seeds (7919·k) × water 0/20/40/60/70% × 8/14/20 sections, maxCrossingGap 6: all valid incl. strongest-Spread reachability  — 375 maps, 0 invalid, 0 split sections, 0 non-finite signals, 0 bad origins, 3724 ms
+PASS  sweep: islands make Waterborne Seeds a real choice on some maps, never on zero-water maps  — 87 maps need it to reach everything; 0 zero-water maps do
+PASS  sweep: without the constraint, the validator rejects the maps whose islands are out of range  — 156 of 300 watery maps rejected
+
+# validator negative tests
+PASS  validator rejects: tile owned by a nonexistent section  — tiles: bloom-sim: tilemap[5] = 99 is not a section index or -1
+PASS  validator rejects: a section split across the map  — sec_10: land section is split into 2 pieces (must be contiguous)
+PASS  validator rejects: an empty land section  — ghost: land section has no tiles
+PASS  validator rejects: origin that is not a land section  — origin: "nowhere" is not a land section
+PASS  validator rejects: stale/fabricated neighbour  — adjacency: sec_0 and sec_1 are declared neighbours but do not touch
+PASS  validator rejects: non-finite local signal  — sec_1: local.moistureOffset is not a finite number
+PASS  validator rejects: planet that its seed does not reproduce  — determinism: seed 2024 does not reproduce this planet
+PASS  First Bloom validates; every authored neighbour really touches  — 24/24 declared pairs, 9 sections, 2400 land tiles
+
+# generated planets in BLOOM.createSim
+PASS  moderate: 3000 ticks through BLOOM.createSim with no exception/NaN/invalid tile state  — coverage 43.3% of 1680 land tiles, biomass 1000000102
+PASS  moderate: water tiles never become Living or Dead  — 720 water tiles checked every 100 ticks
+PASS  moderate: protected origin holds (fitness ≥ 0.62, still living)  — Verdant Wastes: min fitness 1.00, 253 living
+PASS  islands: 3000 ticks through BLOOM.createSim with no exception/NaN/invalid tile state  — coverage 9.1% of 935 land tiles, biomass 999999186
+PASS  islands: water tiles never become Living or Dead  — 1465 water tiles checked every 100 ticks
+PASS  islands: protected origin holds (fitness ≥ 0.62, still living)  — Snow Wastes: min fitness 0.62, 85 living
+
+# water and the win denominator
+PASS  engine denominator = land tiles only  — LAND 1436 of 2400 tiles (964 water)
+PASS  all land alive → coverage exactly 1.0; counting water would read below the win line  — coverage 1.000 vs land/all-tiles 0.598 (win at 0.7)
+PASS  …and the real tick() declares the win
+PASS  one tick's Biomass is bounded by land tiles (water earns nothing)  — +0.296 ≤ 25.874
+
+# spread vs water
+PASS  one-tile water column: west fills, identical east land is never colonized (4000 ticks)  — west 100% living, east max 0 living
+PASS  control: same map with that column as land → east IS colonized  — east reached 180 living
+PASS  authored route: a kind:"water" section separates the same way and leaves the denominator  — LAND 240/360, east max 0
+PASS  island planet (seed 25, 60%), no Waterborne Seeds: after 3000 maxed-out ticks no other landmass has a single living tile  — 5 off-landmass sections all 0 living; 85 living on the origin landmass
+PASS  engine rejects an unknown terrain kind
+PASS  engine rejects a tilemap value that is not a section or -1
+PASS  engine rejects a tilemap of the wrong size
+PASS  engine rejects an origin placed on a water section
+
+ALL CHECKS PASS
+===== crossing-check
+# rule: crossing pressure Σ 0.0005 × 0.7^(gap−1) from Living coastal tiles within 6 water tiles; ordinary grow rule applies
+PASS  gap 3, no Waterborne Seeds: East never colonized, no seed pressure (4000 ticks)  — West 144/144 living, East peak 0
+PASS  gap 3, Waterborne Seeds bought via sim.buy: East colonized by a waterborne foothold, then ordinary spread  — first foothold at tick 185, 2 foothold(s), East 120/120 living
+PASS  water tiles stay Barren in both runs (checked every 50 ticks)  — 36 water tiles
+PASS  buying the trait leaves the land-only denominator unchanged  — LAND 264/300
+PASS  geometry: only the 3-tile strait is a crossing; the 7-tile gap is not  — [{"from":0,"to":1,"gap":3}]
+PASS  gap 7 > maxGap 6: Far island gets no seed pressure and stays empty (6000 ticks)  — East 120 living, Far peak 0
+PASS  control: same map with the gap at 6 → Far island is reached (East → Far chain)  — Far 96 living
+PASS  a map whose only gap is too wide does not even offer Waterborne Seeds
+PASS  hostile island (East at +50 °C): seeds arrive but never establish  — 46971 seed arrivals, 0 footholds, East peak 0 living
+PASS  …and the inspect readout names the real limiting factor  — limit Temperature: scorching
+PASS  a waterborne colony that turns too hot dies back (Terraform Warm ×2) — ordinary die-back, real limiting factor  — East 60 → 0 living, limit Temperature: scorching
+PASS  generated archipelago validates: islands need Waterborne Seeds, and every section is reachable with it  — 3 landmasses · ordinary spread reaches 9/14 · with Waterborne Seeds (water gap ≤ 6 tiles) 14/14 · links [{"from":0,"to":1,"gap":2},{"from":1,"to":2,"gap":5}]
+PASS  same build without Waterborne Seeds: only the origin landmass lives (every island stays at 0)  — 1/3 landmasses, coverage 73.8%
+PASS  with Waterborne Seeds: every landmass is colonized through the real sim and the 70% win is reached  — 3/3 landmasses, first foothold tick 465, coverage 84.6%, water untouched
+
+ALL CHECKS PASS
+===== archetype-check
+# 1 schema
+PASS  Ocean Archipelago archetype data is valid  — ocean_archipelago "Ocean Archipelago"
+PASS  archetype catalogue is plain data (no code)
+PASS  schema rejects crossing gap beyond the trait's range  — geography.maxCrossingGap must be 1..config.crossing.maxGap (islands must stay in Waterborne Seeds range)
+PASS  schema rejects unknown climate key  — unknown climate key oceanCurrents
+PASS  schema rejects crossingRequiredToWin with an origin landmass that could win alone  — validation.crossingRequiredToWin needs geography.maxOriginLandmassShare < the win threshold
+PASS  schema rejects unbounded attempts  — generation.maxAttempts must be 1..64
+
+# 2–4 deterministic generate/validate/retry
+PASS  same archetype + public seed → identical accepted world (tiles, sections, witness summary)
+PASS  attempt k uses generationSeed = FNV-1a("id|seed|k"); earlier rejected attempts are recorded  — seed 8 → attempt 1, generationSeed 522844220
+PASS  the accepted world reproduces from its recorded generation params
+PASS  bounded: seed 35 fails explicitly after 24 attempts, each with its reasons (no bad planet returned)  — #0: water 86.9% drifted > 5 from requested 67% | #1: water 73% drifted > 5 from requested 63%
+
+# 5 Ocean Archipelago coherence — public seeds 1–40
+PASS  ≥ 80% of public seeds yield an accepted world passing layers 1–8 (the rest fail explicitly)  — 36/40 (explicit failures: 7, 19, 35, 38), 33761 ms total
+PASS  water tolerance: every accepted world within ±5 of its request  — actual 55.2–70.9%, max drift 4.8
+PASS  water: high-water worlds  — mean 63.0%
+PASS  landmasses: every world fragmented (≥ 3), several on average  — range 3–8, mean 5.3
+PASS  moisture: wetter than the default generator  — mean section moisture 63.4 vs default generator 48.2 (plant's dry-to-wet comfort window 32–68)
+PASS  section count within the archetype range and varied  — range 12–18, 7 distinct counts
+PASS  Waterborne Seeds required to win in 100% of accepted worlds (origin landmass < 70% of land; every witness buys it)  — origin-landmass share 0.216–0.62
+PASS  crossing alone rarely solves it: most witnesses also need an Adapt/Terraform decision  — 36/36 witnesses
+PASS  designed randomness: every map distinct; witness builds varied  — 25 distinct witness builds
+
+# 5b layers 7–8 across the sweep
+  rejected attempts by first reason: structure/geography (layers 1–3, water, landmasses) 321 · layer 8 inconclusive 1 · layer 7 12 · layer 4 6 · layer 6 inconclusive 1 · layer 8 4 · layer 6 1
+  qualifying strategies proven per world (search stops at the required 2): 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
+  static candidate strategy classes per accepted world (before simulation, not proof): 2–7 (median 4)
+  over 72 accepted strategies: margin 251.2–699.4 (median 418.2) s · win 223–642.1 (median 402.4) s · first purchase 16–55.8 (median 26.4) s · max purchase gap 58.3–111.7 (median 76) s · terminal wait 12.8–377 (median 153.8) s
+  generation runtime per public seed: 182–4435 (median 420) ms
+PASS  every accepted world passed layers 1–8 with ≥ 2 qualifying broad strategies recorded
+PASS  every accepted strategy sits inside the pacing bands
+PASS  the sweep rejects real attempts at both layer 7 and layer 8
+
+# 6–10 fixed winning fixture — Ocean Archipelago public seed 8
+  attempt 1 (generationSeed 522844220) · water 61% requested → 65.4% · 17 sections · 7 landmasses
+  reachable land: ordinary spread 43.7% → with Waterborne Seeds (water gap ≤ 6 tiles) 100.0%
+  witness: Seed Output @ tick 108 (17.3 s, 130) → Salt Handling @ tick 530 (84.8 s, 200) → Waterborne Seeds @ tick 927 (148.3 s, 180) → Flood Adaptation @ tick 1194 (191 s, 150)
+  spent 660 earned Biomass · win (70%) at tick 1904 (304.6 s) · margin 73.0% at tick 2028 (324.5 s) · peak 82.7% · unheld at margin 27.8%
+PASS  fixture is structurally valid, fragmented and inside the water tolerance
+PASS  ordinary spread can reach < 70% of the land; Waterborne Seeds reaches all of it  — 43.7% → 100.0%
+PASS  layer 4: a real simulation holds ≥ 70% of the land alive at once  — peak 82.7%
+PASS  layer 6: witness reaches the validation margin (70.0% + 3.0%)  — 73.0% at 324.5 s
+PASS  the win does not require colonizing 100% of the land  — 27.8% still unheld at the margin
+PASS  layer 5: independent replay — each purchase affordable from earned Biomass at its recorded tick, same result  — start 100 Biomass, 4 purchases via sim.buy, coverage 73.0% at tick 2028
+PASS  witness simulations never grant or edit Biomass (source check of simulate())
+PASS  Waterborne Seeds is required: no crossing-free build can win (static bound + the witness minus the trait in the real sim)  — no legal build can hold the win simultaneously: best build reaches 41.8% < 70% · witness without it peaks at 41.8%
+PASS  an Adapt/Terraform decision is also required (Spread traits alone cannot win)  — witness adapts with Salt Handling + Flood Adaptation · Spread-only best: no legal build can hold the win simultaneously: best build reaches 37.3% < 70% · witness Spread-only in the sim peaks at 37.4%
+
+# 11 negative fixtures (structure-only archetype generation → full validation)
+PASS  seed 3 (attempt 15): structurally valid + fully reachable, REJECTED at layer 4  — layer 4 (simultaneous coverage): no legal build can hold the win simultaneously: best build reaches 34.3% < 70%
+PASS  …and production generation skips that attempt deterministically  — accepted attempt 18 instead of 15
+PASS  seed 25 (attempt 8): structurally valid + fully reachable, REJECTED at layer 6  — layer 6 (winnable margin): no legal build reaches the validation margin: best build holds 72.2% < target 73%
+PASS  …and production generation skips that attempt deterministically  — accepted attempt 10 instead of 8
+
+# 12 solver bounds and determinism
+PASS  search stays inside its explicit bounds  — 10000 static builds (cap 20000), 471 ≥ target, 1 simulation(s) (cap 16), 307 ms
+PASS  same planet + config → identical witness and search diagnostics
+PASS  a static-state cap is enforced and reported as inconclusive, never as a verdict on the planet  — search capped at 50 static builds (result inconclusive): no legal build can hold the win simultaneously: best build reaches 37.3% < 70%
+PASS  a zero simulation budget fails explicitly instead of passing on static estimates  — no witness reached the win with earned Biomass within 0 simulations × 12000 ticks (best peak 0%)
+PASS  First Bloom (authored) also passes layers 4–6 with a real witness  — seedOut, heat, drought, salt, cold → 73.0% at 198.6 s
+
+ALL CHECKS PASS  (42.2 s)
+===== strategy-check
+# 0 policy
+PASS  Ocean Archipelago requires 2 broad strategies and the BLOOM-013 decision-cadence bands, as archetype data  — {"minStrategies":2,"pacing":{"marginSeconds":[240,720],"firstPurchaseSeconds":[0,60],"maxPurchaseGapSeconds":120}}
+PASS  schema rejects a reversed pacing band  — validation.pacing marginSeconds / firstPurchaseSeconds must be [min, max] with 0 ≤ min < max
+PASS  schema rejects minStrategies 0  — validation.minStrategies must be an integer 1..4
+PASS  schema rejects a margin band beyond the witness time budget  — validation.pacing.marginSeconds max exceeds the witness time budget (config.validation.maxTicks)
+PASS  schema rejects pacing without winnability  — validation.minStrategies / pacing need validation.winnable
+
+# 1–5 positive fixture — Ocean Archipelago seed 13, attempt 6
+  [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)]
+    core cold + salt + waterSeeds · plan seedOut @ 28.5 s (130) → waterSeeds @ 95.2 s (180) → salt @ 150.2 s (200) → cold @ 201 s (140)
+    spent 650 · win 313.4 s · margin 330.2 s · peak 74.7% · first purchase 28.5 s · gaps 28.5/66.7/55/50.8 s · terminal wait 129.2 s · Biomass/min 93,188,202,212,273,131
+  [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)]
+    core heat + rad + waterSeeds · plan seedOut @ 28.5 s (130) → waterSeeds @ 95.2 s (180) → rad @ 158.9 s (220) → heat @ 196.2 s (140)
+    spent 670 · win 251.2 s · margin 263.7 s · peak 77.3% · first purchase 28.5 s · gaps 28.5/66.7/63.7/37.3 s · terminal wait 67.5 s · Biomass/min 93,188,214,224,96
+  early land (no upgrades): reachable 13.7%, growable 54.6% · search 2 simulations over 7 classes
+PASS  1 · layers 1–8 PASS with ≥ 2 qualifying broad strategies  — 2 strategies, layer 7 PASS, layer 8 PASS
+PASS  2 · the signatures differ materially (each answers a condition the other doesn't; both share Waterborne Seeds; they hold different land)  — A-only Defense:salt=Adapt(1) + Temperature:cold=Adapt(1) · B-only Defense:rad=Adapt(1) + Temperature:heat=Adapt(1) · land A-only sec_0,sec_1,sec_6,sec_8 · B-only sec_4,sec_14
+PASS  3 · both witnesses earn Biomass and buy normally (independent sim.buy replay reproduces each margin)  — 4 purchases → 73.1% · 4 purchases → 73.1%
+PASS  …and each bought its whole strategy core before the margin (the win really used that strategy)
+PASS  4 · both clear the validation margin (73.0%)  — win 313.4 s, margin 330.2 s, peak 74.7% · win 251.2 s, margin 263.7 s, peak 77.3%
+PASS  5 · both satisfy the pacing policy  — margin 330.2 s, first 28.5 s, max gap 66.7 s · margin 263.7 s, first 28.5 s, max gap 66.7 s
+
+# signature rules
+PASS  purchase order and Spread boosters (Seed Output, Early Maturity) never change a signature  — Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)
+PASS  adding an upgrade the win didn't need never founds a new strategy (the build maps to an existing class core)  — +heat → A, +rad → A, +cool → A, +dry → A
+PASS  signatures come from effects, not trait ids (renaming every trait id gives identical signatures)
+
+# 6 layer-7 negative — seed 5, attempt 5
+PASS  structurally valid, passes layers 4–6 with a paced witness, REJECTED at layer 7 (FAIL, not inconclusive)  — layer 7 (strategy diversity): only 1 of 2 required broad strategies wins with margin [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1)]; every other candidate class is absent (static proof)
+PASS  the verdict is a static proof: every candidate build shares one minimal core  — 1 class · 1050 candidate builds · core Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1)
+PASS  …and production generation skips that attempt deterministically  — accepted attempt 17
+
+# 7–10 layer-8 negatives
+PASS  7 · too slow: seed 6 attempt 0 has 2 broad strategies that win with margin, REJECTED at layer 8  — only 1 of 2 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] margin reached at 743.7 s > 720 s (too slow)
+PASS  8 · too fast: seed 1 attempt 2 has 2 broad strategies that win with margin, REJECTED at layer 8 (natural since BLOOM-013)  — only 1 of 2 broad strategies meet the pacing policy — [Defense:rad=Adapt(1)] margin reached at 148.3 s < 240 s (too fast)
+PASS  8 · …and in isolation (controlled policy boundary): the positive fixture under a margin floor of 899 s is REJECTED at layer 8, its two strategies for speed alone  — margin reached at 330.2 s < 899 s (too fast) · margin reached at 263.7 s < 899 s (too fast)
+PASS  …and bands are inclusive: a floor exactly at the faster strategy's margin still passes  — floor 263.7 s
+PASS  9 · first purchase too late (controlled policy boundary): the positive fixture under a 27.5 s first-purchase limit is REJECTED at layer 8 for that alone  — only 0 of 2 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)] first purchase at 28.5 s > 27.5 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)] first purchase at 28.5 s > 27.5 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Terraform(−8)] first purchase at 28.5 s > 27.5 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Terraform(−6)] first purchase at 28.5 s > 27.5 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1)] first purchase at 28.5 s > 27.5 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(1)] first purchase at 28.5 s > 27.5 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] first purchase at 28.5 s > 27.5 s (too slow)
+PASS  10 · excessive purchase gap: seed 32 attempt 10 REJECTED at layer 8 (natural)  — purchase gap of 125.9 s before the margin > 120 s
+PASS  …and in isolation (controlled): the positive fixture under a 30 s gap limit is REJECTED at layer 8 for the gap alone  — purchase gap of 66.7 s before the margin > 30 s · purchase gap of 66.7 s before the margin > 30 s
+
+# 11 search caps
+PASS  a search capped exactly at the 2 simulations it needed still PASSES (strategies already proven)
+PASS  a 1-simulation diversity budget is INCONCLUSIVE, never FAIL  — INCONCLUSIVE — search capped with 1 of 2 broad strategies proven [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)]
+PASS  a capped static enumeration is INCONCLUSIVE too  — search capped at 50 static builds (result inconclusive): no legal build can hold the win simultaneously: best build reaches 54.7% < 70%
+PASS  with no builds allowed per class, even the static-proof negative is INCONCLUSIVE (no claim without evidence)  — INCONCLUSIVE — search capped: no candidate build reached the win with earned Biomass (best peak 0%)
+PASS  the validator reports INCONCLUSIVE as an error, and production generation rejects it (only PASS is accepted)  — layer 7 (strategy diversity) INCONCLUSIVE: INCONCLUSIVE — search capped with 1 of 2 broad …
+
+# 12–13 determinism and production policy
+PASS  12 · same planet + config → identical strategies, plans, times and diagnostics
+PASS  12 · fixed-seed generation stays deterministic (world + strategy summary identical)  — seed 13 → attempt 6, 2 strategies recorded
+PASS  13 · the accepted world records layers 1–8 and independently re-validates through all eight
+PASS  13 · every earlier attempt was rejected with recorded reasons  — #0: 2 landmass(es) < 3 | #1: origin landmass holds 68.5% of land > 62% | #2: water 73% drifted > 5 from requested 67% | #3: origin landmass holds 90.0% of land > 62% | #4: origin landmass holds 71.4% of land > 62% | #5: water 83.5% drifted > 5 from requested 68%
+
+# 15 First Bloom water alternatives
+PASS  without any water Adaptation, a real earned-Biomass witness wins First Bloom with water Terraform instead  — Seed Output @ 28.6 s → Heat Tolerance @ 75.2 s → Salt Handling @ 120.2 s → Cold Tolerance @ 145.8 s → Humidify @ 181.8 s → Humidify @ 227.5 s · margin 73.0% at 242.6 s · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+16)
+PASS  with neither water Adaptation nor water Terraform, no legal build reaches 70% (best 67.6% — the same cap the tested generalist hits)  — no legal build can hold the win simultaneously: best build reaches 67.6% < 70%
+PASS  First Bloom has distinct Drought, Flood and Humidify-based winning strategies  — Water:dry=Adapt(1) | Water:wet=Adapt(1) | Water:dry=Terraform(+16)
+
+ALL CHECKS PASS  (17.6 s)
+===== desert-check
+# A1 · archetype data
+PASS  1 · Desert World archetype data is valid (and Ocean Archipelago still is)  — desert_world "Desert World" · sections [12,18] · water {"min":2,"max":12,"tolerance":4}
+PASS  1 · the archetype catalogue is plain data, with at least Ocean and Desert (BLOOM-011 adds Frozen World)
+PASS  1 · each archetype owns its policy: Ocean Archipelago's bands and rules are unchanged (no Desert keys)
+PASS  1 · schema rejects an origin-fitness bar above 1  — geography.minOriginFitness must be in (0, 1]
+PASS  1 · schema rejects a non-positive terminal wait  — validation.pacing.maxTerminalWaitSeconds must be > 0
+PASS  1 · schema rejects an unknown required condition  — validation.requiredConditions must be a non-empty list of signature conditions (e.g. "Water:dry") and needs minStrategies
+PASS  1 · schema rejects a malformed render colour  — render must be { ground?/water?/waterAlt?: [r,g,b] 0..255, groundMix 0..1 with ground, tintBy?: "dry"|"cold", dunes?/frost?: boolean }
+PASS  1 · schema rejects an unknown naming pool  — naming.lakes must be one of cold/mild/warm/hot/wet/dry/noun with a non-empty list of words
+PASS  1 · schema rejects maxLandmasses 0  — geography.maxLandmasses must be a positive integer
+PASS  1 · Desert is data over generic generator knobs (no Desert-specific generator or simulation code)  — new generic climate knobs: lightBias, drySaltChance, basinMoisture, dryOffset, wetOffset, originTemp, originMoistureOffset, originMoistureWeight
+
+# A2–3 · deterministic generate/validate/retry
+PASS  2 · same archetype + public seed → identical accepted world (tiles, sections, strategy summary)  — seed 25 → attempt 0 · Umbra-584 (proc_3804767584)
+PASS  2 · the accepted world reproduces exactly from its recorded generation params (climate knobs and naming pools included)
+PASS  3 · bounded retry is deterministic: attempt k uses FNV-1a("desert_world|seed|k"); a rejected attempt is recorded and skipped identically every time  — seed 9: #0 origin Sienna Dunes is not a refuge: its own fitness 0.50 < 0.72 (limi… → attempt 1
+PASS  3 · explicit bounded failure: with one attempt allowed, seed 35 throws with its reason (never returns a bad or substitute world)  — layer 4 (simultaneous coverage): no legal build can hold the win simultaneously: best build reaches 60.3% < 70%
+
+# A4–9, 20 · Desert World public seeds 1–40 (full production path, layers 1–8)
+  accepted 40/40 · no generation failures · attempts {"0":31,"1":9}
+  rejected attempts 9, by first reason: {"layer 2 (origin refuge)":7,"layer 8 (pacing)":1,"layer 4 (simultaneous coverage)":1}
+  water 2–12.3% (mean 7.4%) · landmasses {"1":38,"2":2} · origin landmass share 0.985–1 · sections {"12":4,"13":7,"14":4,"15":2,"16":12,"17":6,"18":5}
+  climate (area-weighted, start): temperature 18–20 °C (mean 19.2) · moisture 5–27 (mean 14.1; the plant's start window is 32–68) · Water-limited land 75.5% · hot-blocked land 16.8% · open at start 16.9%
+  vs Ocean Archipelago moisture 62.6 / temperature 10.6 °C · default generator moisture 47.3 / temperature 3.4 °C
+  strategy water means per world: {"Adapt vs Adapt":17,"Adapt+Terraform vs Adapt+Terraform":6,"Adapt vs Terraform":2,"Adapt vs Adapt+Terraform":14,"Terraform vs Terraform":1}
+  strategy classes: {"rad+salt+Temperature:heat=Adapt(1) · Water:dry=Adapt(2)":3,"rad+salt+Temperature:heat=Terraform(−6) · Water:dry=Adapt(2)":3,"rad+Temperature:heat=Adapt(1) · Water:dry=Adapt(2)":8,"rad+Temperature:heat=Terraform(−6) · Water:dry=Adapt(2)":3,"rad+Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)":10,"rad+Temperature:heat=Terraform(−6) · Water:dry=Adapt(1)+Terraform(+8)":3,"Water:dry=Adapt(1)":2,"rad+salt+Water:dry=Terraform(+16)":1,"salt+Water:dry=Adapt(2)":8,"rad+salt+Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)":2,"rad+salt+Temperature:heat=Terraform(−6) · Water:dry=Adapt(1)+Terraform(+8)":1,"rad+salt+Temperature:heat=Adapt(1) · Water:dry=Adapt(1)":3,"rad+salt+Temperature:heat=Terraform(−6) · Water:dry=Adapt(1)":1,"rad+salt+Water:dry=Adapt(1)":1,"salt+Water:dry=Adapt(1)+Terraform(+8)":2,"rad+Temperature:heat=Adapt(1) · Water:dry=Adapt(1)":7
+  first purchases: {"seedOut":68,"drought":12} at 15.7–37.8 s · win 210.1–423.8 s · margin 240.2–431.2 s (median 273.8) · max gap 35.7–100.3 s · terminal wait 0.6–222.2 s
+  runtime 20.0 s for 40 seeds · median 334 ms · worst 2370 ms
+  e.g. seed 4: [Water:dry=Adapt(1)] margin 252.3 s  vs  [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Terraform(+16)] margin 288 s
+  e.g. seed 8: [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)] margin 246.7 s  vs  [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] margin 277.9 s
+  e.g. seed 9: [Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] margin 241.9 s  vs  [Defense:salt=Adapt(1) · Water:dry=Adapt(2)] margin 240.2 s
+PASS  4 · every accepted world's water is within ±4 of its request (2–12%)  — max drift 0.3
+PASS  5 · recognizably low-water: every world ≤ 16% water (Ocean Archipelago: 55–68%)  — mean 7.4%
+PASS  6 · mostly contiguous: ≤ 2 landmasses, the origin's landmass holds ≥ 85% of the land, and most worlds are one landmass  — {"1":38,"2":2}
+PASS  7 · dry tendency: mean effective moisture far below Ocean Archipelago and the default generator; Water limits much of the land at the start  — Desert 14.1 vs Ocean 62.6 vs default 47.3 · Water-limited land 75.5%
+PASS  8 · warm with local hot ground, never uniformly lethal: hotter than Ocean/default, most worlds have heat-blocked land, none is more than half heat-blocked  — mean 19.2 °C vs Ocean 10.6 / default 3.4 · heat-blocked land 1–30% · 40/40 worlds have some
+PASS  9 · environmental variation: every world mixes limits and has wet refuges vs dry ground; salt pans in many; the origin is a genuine refuge  — moisture spread 40–90 · limits per world 2–4 · salt in 37/40 · other green refuges at start 0–4 · origin own fitness 0.83–1
+PASS  20 · sweep quality: ≥ 34/40 accepted through layers 1–8; every strategy answers dry ground and none needs a crossing; a Water-Terraform strategy in ≥ 25% of worlds and a Drought-only one in ≥ 25%; runtime bounded  — 40/40 · Water-Terraform strategy in 23 worlds · Drought-only water in 33 · median 334 ms
+
+# A10–18 · positive fixture — Desert World public seed 25 (attempt 0, Umbra-584)
+  [Water:dry=Adapt(2)]
+    core drought + drought · plan seedOut @ 22.4 s (130) → drought @ 73.4 s (150) → drought @ 166.9 s (270)
+    spent 550 · win 322.2 s · margin 337.8 s · peak 74.4% · first 22.4 s · gaps 22.4/51/93.5 s · terminal wait 170.9 s · Biomass/min 127,177,178,241,290,192
+    holds Wadi Shelf, Oasis Basin, Chalk Dunes, Pale Pan, Bone Shelf, Glass Erg, Gold Dunes, Amber Canyon, Amber Shelf
+  [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)]
+    core heat + drought + rad + humid · plan seedOut @ 22.4 s (130) → drought @ 73.4 s (150) → humid @ 142.9 s (200) → rad @ 218.6 s (220) → heat @ 262.2 s (140)
+    spent 840 · win 304.2 s · margin 338.7 s · peak 75.0% · first 22.4 s · gaps 22.4/51/69.5/75.7/43.6 s · terminal wait 76.5 s · Biomass/min 127,177,191,170,265,192
+    holds Wadi Shelf, Oasis Basin, Cinder Plateau, Chalk Dunes, Pale Pan, Furnace Erg, Glass Erg, Gold Dunes, Amber Canyon, Amber Shelf
+  early land (no upgrades): reachable 4.7%, growable 22.8% · 2 simulations over 4 classes
+PASS  10 · the fixture is a recognizable Desert World (low water, one landmass) and passes layers 1–8  — water 6% · 12 sections · origin Oasis Basin
+PASS  11 · ≥ 2 materially different strategy signatures, and they hold different land  — A-only Water:dry=Adapt(2) · B-only Defense:rad=Adapt(1) + Temperature:heat=Adapt(1) + Water:dry=Adapt(1)+Terraform(+8) · land A-only Bone Shelf · B-only Cinder Plateau,Furnace Erg
+PASS  12 · one strategy is organism-first: Drought Adaptation answers the dry ground, no Terraform at all  — [Water:dry=Adapt(2)]
+PASS  13 · a materially different strategy humidifies the sky (Terraform) and so needs less Drought — and keeps different ground (the hot south)  — [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)]
+PASS  14 · Waterborne Seeds is not required: not even offered on this one-landmass fixture, and removing it from the catalogue changes no strategy
+PASS  15 · Waterborne Seeds is absent wherever no crossing exists (every one-landmass desert), offered only by the generic rule on two-landmass deserts, and never part of a Desert win — while Ocean Archipelago still requires it  — 38 one-landmass deserts: offered on 0 · 2 two-landmass: offered on 2 (seeds 16,21), in 0 strategies · OA seed 8 strategies all cross
+PASS  16 · both witnesses earn their Biomass and buy through sim.buy (independent replay reproduces each margin), buy their whole core first, and make no local colony choices  — 3 purchases, 550 spent of 1205 earned → 73.0% · 5 purchases, 840 spent of 1122 earned → 73.0%
+PASS  17 · both reach the validation margin (73.0%)  — win 322.2 s → margin 337.8 s, peak 74.4% · win 304.2 s → margin 338.7 s, peak 75.0%
+PASS  18 · both satisfy Desert World's pacing policy (margin 360–900 s, first purchase 45–120 s, gap ≤ 240 s, terminal wait ≤ 240 s)  — margin 337.8 s, first 22.4 s, gap 93.5 s, wait 170.9 s · margin 338.7 s, first 22.4 s, gap 75.7 s, wait 76.5 s
+PASS  12–13 · the water problem is real: with neither water Adaptation nor water Terraform, no legal build can hold 70% (static proof)  — no legal build can hold the win simultaneously: best build reaches 4.7% < 70%
+
+# A19 · natural Desert negatives (structure-only attempt → full validation; production skips each)
+PASS  19 · layer 4 (unwinnable simultaneous coverage): seed 35 attempt 0 is structurally fine but rejected  — layer 4 (simultaneous coverage): no legal build can hold the win simultaneously: best build reaches 60.3% < 70% · production takes attempt 1
+PASS  19 · layer 7 (one exact broad solution): seed 50 attempt 0 wins with margin, but every build shares one core — a static proof  — only 1 of 2 required broad strategies wins with margin [Water:dry=Adapt(1)]; every other candidate class is ab · production takes attempt 2
+PASS  19 · layer 8 (pacing): seed 16 attempt 0 has 2 broad strategies, both win too fast  — only 0 of 2 broad strategies meet the pacing policy — [Water:dry=Adapt(1)] margin reached at 127.5 s < 240 s (too fast) | [Water:dry=Terraform(+16)] m · production takes attempt 1
+PASS  19 · origin refuge (Desert rule): seed 9 attempt 0 passes the structural validator, but its home region is dry ground kept alive only by the protected-refuge floor  — own fitness 0.50 (floor lifts it to 0.62), limited by Water · production takes attempt 1
+
+# A21–25 · First Bloom and Ocean Archipelago unchanged
+PASS  21 · First Bloom remains valid (layers 1–6 witness) and its shop unchanged  — witness margin at 198.6 s
+PASS  22 · Ocean Archipelago seed 13 still passes layers 1–8  — [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)] [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)]
+PASS  23 · Ocean Archipelago seed 13 identity is stable (attempt, planet name, id)  — attempt 6 · Eos-227 (proc_2316985227)
+PASS  22 · Ocean Archipelago seed 8 still passes layers 1–8  — [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Adapt(1)] [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Terraform(−8)]
+PASS  23 · Ocean Archipelago seed 8 identity is stable (attempt, planet name, id)  — attempt 1 · Coriol-220 (proc_522844220)
+PASS  25 · the known Ocean failure (seed 35) still fails explicitly after 24 attempts
+
+# A26 · colony development on Desert World (BLOOM-009 system, unchanged)
+PASS  26 · per-region focus works on a desert: two regions hold different focuses at once, the rest stay Balanced
+PASS  26 · Roots thickens the young origin refuge faster than Balanced (controlled, same RNG)  — origin establishment 0.708 → 0.872
+PASS  26 · a local specialization is bought with ordinary Biomass (refused when short), tied to its region, and raises the next price  — Root Network 90 → next 130
+PASS  26 · situational per-colony play beats Balanced, which beats misplaced play — optional, and never required to win (witnesses use none)  — strategy A recipe, 3 run seeds: situational 305 s · Balanced 349 s · misplaced 473 s
+
+# B27–32 · real browser: demo-run.html?archetype=desert_world&seed=25
+PASS  27 · the Desert run launches through the generic launch path (BLOOM.generateFromArchetype in-page): same accepted attempt and planet as Node, layers 1–8  — attempt 0 · Umbra-584 (proc_3804767584) · water 144 tiles · 1 landmass
+PASS  27 · run identity shows Desert World, public seed, accepted attempt and planet name/id  — Desert World · public seed 25 · attempt 0 · Umbra-584 (proc_3804767584) · layers 12345678
+PASS  32 · no witness plan, strategy signature or solution reaches the page  — planet.archetype keys: id,name,publicSeed,attempt,generationSeed,requestedWaterPct,actualWaterPct,landmasses,originLandmassShare,winnabilityChecked,validatedLayers,rejectedAttemptCount
+PASS  31 · no Ocean names or assumptions: no Waterborne Seeds in the shop, no ocean/island/sea/coast wording in the page or tooltips, region names from the desert's own pools  — Wadi Shelf, Oasis Basin, Cinder Plateau, Chalk Dunes, Pale Pan, Bone Shelf, Furnace Erg, Glass Erg, Stone Hollow, Gold Dunes, Amber Canyon, Amber Shelf
+PASS  27 · the temporary desert treatment renders: bare ground samples are sandy (warm, not blue-green), lake water is blue  — 71/75 sandy (e.g. rgb 89,80,54) · 5 water samples (e.g. rgb 52,118,146)
+PASS  28 · inspecting a dry desert region: the four categories, 'Growth blocked: too dry', and both remedies (Adapt: Drought — or Terraform: Humidify); no island note  — Bone Shelf: Water parched terraformable · ▲ Growth blocked: too dry / Adapt: Drought — or Terraform: Humidify
+PASS  28 · clicking lake water shows the plain water note (no crossing trait mentioned)  — 🌊 Not land: nothing grows here and it does not count toward coverage. Ordinary spread cannot cross water.
+PASS  28 · the Drought purchase preview names the dry regions it would open  — Drought Adaptation — opens: Gold Dunes, Amber Canyon, Amber Shelf
+PASS  29 · the Desert run is won through real shop clicks with the organism-first strategy (no local upgrades needed)  — seedOut @ 30 s → drought @ 94 s → drought @ 178 s · win at 362 s with 70.1% of the land
+PASS  30 · the Bloom Report identifies the generated Desert World (name, archetype, public seed) and its build — no Ocean wording  — ★ BLOOM / You held 70% of the land of Umbra-584 (Desert World · public seed 25) in 6m 02s.
+PASS  no browser errors (Desert seed 25)
+PASS  29 · …and also with the Terraform strategy (Humidify raises the sky's moisture)  — seedOut → drought → humid → rad → heat · win at 315 s · sky moisture 18 → 26
+PASS  no browser errors (Terraform run)
+
+# B24 · other launches
+PASS  Desert seed 9 (optional playtest seed) launches: attempt 1 · Borea-935
+PASS  no browser errors (Desert seed 9)
+PASS  24 · Ocean Archipelago seed 13 harness still works: same identity, Waterborne Seeds offered, the ocean keeps its own water colour  — attempt 6 · Eos-227 · water rgb 30,62,104
+PASS  no browser errors (Ocean seed 13)
+PASS  24 · Ocean Archipelago seed 8 harness still works: same identity, Waterborne Seeds offered, the ocean keeps its own water colour  — attempt 1 · Coriol-220 · water rgb 30,62,104
+PASS  no browser errors (Ocean seed 8)
+
+ALL CHECKS PASS  (40.0 s)
+===== frozen-check
+# A1–2, 6 · archetype data, neutral generator defaults
+PASS  1 · Frozen World archetype data is valid (and Ocean Archipelago / Desert World still are)  — frozen_world "Frozen World" · sections [12,18] · water {"min":6,"max":20,"tolerance":5} · requiredConditions ["Temperature:cold"]
+PASS  2 · the archetype catalogue is plain data, now three archetypes  — ocean_archipelago, desert_world, frozen_world
+PASS  1 · schema rejects an unknown climate knob  — unknown climate key geothermalHeat
+PASS  1 · schema rejects a render tint mode other than dry/cold  — render must be { ground?/water?/waterAlt?: [r,g,b] 0..255, groundMix 0..1 with ground, tintBy?: "dry"|"cold", dunes?/frost?: boolean }
+PASS  1 · schema rejects a non-boolean frost flag  — render must be { ground?/water?/waterAlt?: [r,g,b] 0..255, groundMix 0..1 with ground, tintBy?: "dry"|"cold", dunes?/frost?: boolean }
+PASS  1 · schema rejects an unknown required condition  — validation.requiredConditions must be a non-empty list of signature conditions (e.g. "Water:dry") and needs minStrategies
+PASS  1 · schema rejects an unknown naming pool  — naming.ice must be one of cold/mild/warm/hot/wet/dry/noun with a non-empty list of words
+PASS  1 · schema rejects an origin-fitness bar above 1  — geography.minOriginFitness must be in (0, 1]
+PASS  2 · Frozen is data over generic generator knobs (no Frozen-specific generator or simulation code); Ocean's and Desert's own policies are untouched  — new generic climate knobs, all 0 by default: elevationCooling, geothermalChance, geothermalWarmth · render tintBy/frost (optional) · Desert still requires Water:dry
+PASS  6 · existing worlds unchanged under the neutral defaults: 56 Ocean/Desert attempts and default-generator planets match d6e9a5c bit-for-bit (tiles, sections, names, origin)  — 56 planet bodies identical · no geothermal tags unless switched on
+
+# A3–5 · deterministic generate/validate/retry
+PASS  3 · same archetype + public seed → identical accepted world, which reproduces exactly from its recorded generation params  — seed 22 → attempt 1 · Mistral-887 (proc_1928231887)
+PASS  4 · bounded retry is deterministic: attempt k uses FNV-1a("frozen_world|seed|k"); the rejected attempt 0 is recorded and skipped identically every time  — seed 22: #0 layer 8 (pacing): only 0 of 2 broad strategies meet the pacing policy — [Temperature:cold=… → attempt 1
+PASS  5 · explicit bounded failure: with one attempt allowed, seed 22 throws with its reason (never returns a bad or substitute world)  — layer 8 (pacing): only 0 of 2 broad strategies meet the pacing policy — [Temperature:cold=Adapt(1)+Terraform(+6)] margin
+
+# A7–13, 18, 29 · Frozen World public seeds 1–40 (full production path, layers 1–8)
+  accepted 40/40 · no generation failures · attempts {"0":30,"1":7,"2":3}
+  rejected attempts 13, by first reason: {"layer 2 (origin refuge)":3,"layer 8 (pacing)":3,"layer 2 (other refuges)":6,"landmasses":1}
+  water 6–20% (mean 12.7%) · landmasses {"1":36,"2":4} · origin landmass share 0.893–1 · sections {"12":4,"13":8,"14":5,"15":3,"16":6,"17":4,"18":10}
+  temperature (area-weighted, start): -23–-2 °C (mean -12.1) · coldest region -47–-30 °C · warmest 2–37 °C · origin -2–13 °C · moisture mean 45.8
+  land at the start: cold-blocked 61.2% (40–82%) · open 33.3% · heat-blocked 2.1% · water-limited 1.6% · geothermal regions 0–8 · other green refuges 2–7
+  vs Ocean Archipelago 10.6 °C · Desert World 19.1 °C · default generator 3.4 °C
+  how strategies answer the cold, per world: {"Adapt vs Adapt+Terraform":30,"Adapt vs Adapt":4,"Adapt+Terraform vs Adapt+Terraform":3,"Adapt vs Terraform":3}
+  strategy classes: {"Temperature:cold=Adapt(2)":24,"Temperature:cold=Adapt(1)+Terraform(+12)":8,"Temperature:cold=Adapt(1)+Terraform(+6)":9,"Temperature:cold=Adapt(1)+Terraform(+12) · Temperature:heat=Adapt(1)":5,"Temperature:cold=Adapt(1)+Terraform(+6) · Temperature:heat=Adapt(1)":4,"Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1)":1,"Temperature:cold=Adapt(2)+Terraform(+6)":3,"Defense:salt=Adapt(1) · Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1)":2,"Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)+Terraform(+6)":2,"Defense:salt=Adapt(1) · Temperature:cold=Adapt(2)":2,"Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)":1,"Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1)":1,"Temperature:cold=Adapt(3)":1,"Temperature:cold=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+8)":1,"Temperature:cold=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−8)":1,"Temperature:cold=Adapt(1) · Temperature:heat=Adapt(1)":1,"Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)+Terraform(+6) · Temperature:heat=Adapt(1)":1,"Defense:rad=Adapt(
+  first purchases: {"cold":16,"seedOut":64} at 16.3–37.4 s · win 198.2–474.4 s · margin 240.6–481.3 s (median 268) · max gap 37.4–112.9 s · terminal wait 11.1–234.3 s
+  runtime 20.1 s for 40 seeds · median 394 ms · worst 1401 ms
+PASS  7 · every accepted world's water is within ±5 of its request (6–20%): lakes and inlets, never an ocean world  — actual 6–20% · max drift 0.6
+PASS  8 · geography: mostly contiguous — ≤ 3 landmasses, the origin's landmass holds ≥ 70% of the land, most worlds are one landmass  — {"1":36,"2":4}
+PASS  9 · substantially colder than Ocean Archipelago, Desert World and the default generator (area-weighted effective temperature)  — Frozen -12.1 °C vs Ocean 10.6 · Desert 19.1 · default 3.4
+PASS  10 · temperature is never uniformly lethal: every world opens with ≥ 10% of its land growable, and nearly all have ground above freezing  — open at start 17–60% · warmest region 2–37 °C (above 0 °C in 40/40)
+PASS  11 · genuine viable refuges exist beyond the origin: every world has ≥ 2 other green regions at the start (geography.minRefuges), many have more; geothermal pockets in nearly all  — other green refuges {"2":8,"3":14,"4":6,"5":6,"6":5,"7":1} · geothermal regions {"0":1,"1":1,"2":2,"3":8,"4":7,"5":12,"6":5,"7":3,"8":1}
+PASS  12 · every origin is a genuine refuge on its own conditions (before the protected-refuge floor)  — origin own fitness 0.8–1 · origin -2–13 °C
+PASS  13 · significant land is blocked primarily by the cold at the start (far more than by water or heat)  — cold-blocked 61.2% (min 39.6%) vs water-limited 1.6% + heat-blocked 2.1%
+PASS  18 · every proven strategy in the sweep answers Temperature:cold (Adaptation, Terraform or both)  — 80 strategies: {"Adapt":41,"Adapt+Terraform":36,"Terraform":3}
+PASS  29 · sweep quality: ≥ 34/40 accepted through layers 1–8; a warming strategy in ≥ 25% of worlds and a Cold-Tolerance-only one in ≥ 50%; runtime bounded  — 40/40 · warming strategy in 36 worlds · Cold-only strategy in 37 · median 394 ms, worst 1401 ms
+
+# A14–24 · positive fixture — Frozen World public seed 22 (attempt 1, Mistral-887)
+  [Temperature:cold=Adapt(2)]
+    core cold + cold · plan seedOut @ 28.3 s (130) → earlyMat @ 94.9 s (170) → cold @ 132.2 s (140) → cold @ 199.8 s (270)
+    spent 710 · win 246.2 s · margin 251.5 s · peak 90.8% · first 28.3 s · gaps 28.3/66.6/37.3/67.6 s · terminal wait 51.7 s · Biomass/min 99,195,239,280,76
+    holds Frost Rise, Ice Basin, Sedge Slope, Mist Ridge, Mist Reach, Snow Reach, Rime Slope, Polar Cirque, Caldera Expanse, Tundra Moraine, Mist Moraine, Permafrost Reach, Ice Fields, Hoar Expanse (90.8%)
+  [Temperature:cold=Adapt(1)+Terraform(+12)]
+    core cold + warm + warm · plan seedOut @ 28.3 s (130) → cold @ 83.7 s (140) → warm @ 147.7 s (200) → warm @ 218.9 s (290)
+    spent 760 · win 256.2 s · margin 260.2 s · peak 81.8% · first 28.3 s · gaps 28.3/55.4/64/71.2 s · terminal wait 41.3 s · Biomass/min 99,186,201,284,101
+    holds Frost Rise, Ice Basin, Sedge Slope, Mist Ridge, Snow Reach, Rime Slope, Polar Cirque, Tundra Moraine, Mist Moraine, Permafrost Reach, Ice Fields, Hoar Expanse (81.8%)
+  regions: Frost Rise -16°C · Rime Moraine -39°C · Scald Rise(geo) 33°C · Ice Basin -29°C · Sedge Slope★(geo) 7°C · Mist Ridge(geo) 13°C · Mist Reach(geo) 25°C · Snow Reach -34°C · Rime Slope -29°C · Polar Cirque -19°C · Caldera Expanse(geo) 27°C · Tundra Moraine -20°C · Mist Moraine(geo) 8°C · Permafrost Reach -15°C · Ice Fields -27°C · Hoar Expanse -30°C
+  early land (no upgrades): reachable 22.6%, growable 31.9% · 4 simulations over 2 classes
+PASS  14 · the fixture is unmistakably frozen (most land cold-blocked, one landmass, a warm geothermal refuge origin) and passes layers 1–8  — 61.1% cold-blocked · 31.9% open · origin Sedge Slope 7 °C · water 12% · 16 sections
+PASS  15 · ≥ 2 materially different strategy signatures (each has a token the other lacks)  — [Temperature:cold=Adapt(2)] vs [Temperature:cold=Adapt(1)+Terraform(+12)]
+PASS  16 · one strategy is organism-first: Cold Tolerance answers the cold, no Terraform at all  — [Temperature:cold=Adapt(2)] core cold+cold
+PASS  17 · a materially different strategy warms the sky (Warm the Sky is part of its minimal core)  — [Temperature:cold=Adapt(1)+Terraform(+12)] core cold+warm+warm
+PASS  18 · every proven fixture strategy answers Temperature:cold (the archetype's requiredConditions)
+PASS  19 · Temperature is genuinely required: with no Cold/Heat Tolerance and no Warm/Cool Terraform, no legal build can hold 70% (static proof)  — no legal build can hold the win simultaneously: best build reaches 22.6% < 70% · best (nothing)
+PASS  20 · the strategies hold different land: warming the sky pushes warm geothermal refuges the Cold-Tolerance strategy keeps beyond the plant's heat limit  — Warm +12 °C gives up Mist Reach (geothermal) 25 → 37 °C, scorching; Caldera Expanse (geothermal) 27 → 39 °C, scorching · held 90.8% vs 81.8% · costs cold+cold vs cold+warm+warm
+PASS  21 · Waterborne Seeds is not required: not even offered on this one-landmass fixture, removing it changes no strategy, and Frozen policy never asks for it
+PASS  22 · both witnesses earn their Biomass and buy through sim.buy (independent replay reproduces each margin), buy their whole core first, make no local colony choices  — 4 purchases, 710 spent of 889 earned → 73.1% · 4 purchases, 760 spent of 871 earned → 73.2%
+PASS  23 · both reach the validation margin (73.0%)  — win 246.2 s → margin 251.5 s, peak 90.8% · win 256.2 s → margin 260.2 s, peak 81.8%
+PASS  24 · both satisfy Frozen World's pacing policy (margin 360–900 s, first purchase 45–120 s, gap ≤ 240 s, terminal wait ≤ 240 s)  — margin 251.5 s, first 28.3 s, gap 67.6 s, wait 51.7 s · margin 260.2 s, first 28.3 s, gap 71.2 s, wait 41.3 s
+
+# A25–28 · natural Frozen negatives (generated attempts, the validator's own verdicts)
+PASS  25 · layer 4 (unwinnable simultaneous coverage): seed 46 attempt 22 is structurally fine but no legal build holds 70% — its refuge is walled in by lethal toxic ground and deep ice  — layer 4 (simultaneous coverage): no legal build can hold the win simultaneously: best build reaches 13.4% < 70% · lethal: Willow Reach · natural but off the production path (seed 46 is accepted at attempt 1); layer 4 is rare on Frozen: 0 of 1,600 early attempts, 3 deep retries
+PASS  26 · layer 7 (one broad solution; Temperature not actually required): seed 171 attempt 0 is 76.9% open at the start, so every build shares one empty core — a static proof  — only 1 of 2 required broad strategies wins with margin []; every other candidate class is absent (static proof) · production takes attempt 2
+PASS  27 · layer 8 (pacing): seed 22 attempt 0 has 2 broad strategies, both win too fast (too little cold resistance)  — only 0 of 2 broad strategies meet the pacing policy — [Temperature:cold=Adapt(1)+Terraform(+6)] margin reached at 186.1 s < 240 s (too fast) | [Temperature:cold=Adapt(2)] · production takes attempt 1
+PASS  28 · bad refuge origin: seed 8 attempt 0 passes the structural validator, but its home region is frozen ground kept alive only by the protected-refuge floor  — own fitness 0.60 at -10 °C (the floor lifts it to 0.62), limited by Temperature · production takes attempt 2
+PASS  21 · across the sweep Waterborne Seeds stays geography-dependent: absent on every one-landmass world, offered only where a crossing exists, and never the only way to win  — 36 one-landmass worlds: offered on 0 · 4 multi-landmass: offered on 4 · a crossing strategy in 1 world(s) (5), always beside a non-crossing one
+
+# A30–32 · colony development on Frozen World (BLOOM-009 system, unchanged)
+PASS  30 · per-region focus works on a frozen world: two refuge colonies hold different focuses at once, the rest stay Balanced  — Sedge Slope Roots · Mist Reach Leaves
+PASS  30 · a local specialization is bought with ordinary Biomass (refused when short) and raises the next price  — Root Network 90 → next 130
+PASS  31 · Roots is not secret Cold Tolerance: with Roots + Root Network on every colony, red-cold regions are never colonized, and colonies on ground the sky turns red-cold die exactly as under Balanced  — 10 red-cold regions: living after 2600 ticks Balanced 0 / Roots+Root Network 0 · after cooling the sky 24 °C, living plants left on red ground: Balanced 0 / Roots 0
+  mean win time over both witness recipes × 3 run seeds: balanced 250 s · rootsEverywhere 244 s · leavesEverywhere 295 s · seedsEverywhere 266 s · situational 215 s · misplaced 332 s
+PASS  32 · colony-study comparison produced on the fixture: situational play beats Balanced, which beats misplaced play (optional; witnesses use none)  — Roots everywhere -6 s vs Balanced · Leaves 45 s · Seeds 16 s · situational -36 s
+
+# A33–36 · First Bloom, Ocean Archipelago and Desert World unchanged; Desert human gate recorded
+PASS  33 · First Bloom remains valid (layers 1–6 witness) and its shop unchanged  — witness margin at 198.6 s
+PASS  34 · Ocean Archipelago seed 13 still passes layers 1–8 with the same identity  — attempt 6 · Eos-227 · [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)] [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)]
+PASS  34 · Ocean Archipelago seed 8 still passes layers 1–8 with the same identity  — attempt 1 · Coriol-220 · [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Adapt(1)] [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Terraform(−8)]
+PASS  34 · the known Ocean failure (seed 35) still fails explicitly after 24 attempts
+PASS  35 · Desert World fixture seed 25 is unchanged: attempt 0, Umbra-584, the same two strategies  — [Water:dry=Adapt(2)] vs [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)]
+PASS  36 · the Desert human gate is recorded as passed, with the owner's restrained verdict ("decent")  — **Gate status:** ✅ **PASSED with notes** (owner, recorded 2026-10-02 in BLOOM-011). The owner played the Desert run and judged: *"gameplay is decent. lets move 
+
+# B37–45 · real browser: demo-run.html?archetype=frozen_world&seed=22
+PASS  37 · the Frozen run launches through the generic launch path (BLOOM.generateFromArchetype in-page): same accepted attempt and planet as Node, layers 1–8, identity shown  — Frozen World · public seed 22 · attempt 1 · Mistral-887 (proc_1928231887) · layers 12345678 · HUD sky −18°C · moist 46
+PASS  45 · no witness plan, strategy signature or solution reaches the page  — planet.archetype keys: id,name,publicSeed,attempt,generationSeed,requestedWaterPct,actualWaterPct,landmasses,originLandmassShare,winnabilityChecked,validatedLayers,rejectedAttemptCount
+PASS  44 · no Ocean or Desert names or assumptions: no Waterborne Seeds in the shop, no ocean/island/coast/desert/dune/sand wording, region names from the frozen pools  — Frost Rise, Rime Moraine, Scald Rise, Ice Basin, Sedge Slope, Mist Ridge, Mist Reach, Snow Reach, Rime Slope, Polar Cirque, Caldera Expanse, Tundra Moraine, Mist Moraine, Permafrost Reach, Ice Fields, Hoar Expanse
+PASS  38 · the temporary frozen treatment renders: frozen bare ground is pale and cool (never sandy), warmer refuges keep their own greener colour, ice glints on frozen ground, cold-blue water  — frozen ground avg rgb 82,90,101 (100 samples) · refuge ground 67,73,57 · water 50,90,123 · 171 ice glints
+PASS  39 · inspecting a frozen region: the four categories, 'Growth blocked: too cold', both remedies (Cold Tolerance — or Warm the sky), and its temperature in numbers next to the plant's range  — Ice Basin: Temperature freezing terraformable · ▲ Growth blocked: too cold / Adapt: Cold Tolerance — or Terraform: Warm the sky · Ground here −29°C · sky −18°C · suits your plant −6°C to +24°C
+PASS  39 · inspecting a geothermal refuge explains why it is warmer than the land around it  — Geothermal ground: heat from below (hot springs, warm soil) keeps it warmer than the land around it.
+PASS  40 · the Cold Tolerance purchase preview names the frozen regions it would open  — Cold Tolerance — opens: Frost Rise, Polar Cirque, Tundra Moraine, Permafrost Reach
+PASS  41 · the Warm the Sky preview shows the sky's temperature before → after and every region it changes: opened, closer but still frozen, and warm refuges it makes worse  — Warm the Sky — sky −18°C → −12°C · opens: Permafrost Reach · ⚠ closes: Mist Reach (too hot), Caldera Expanse (too hot) · closer, still blocked: Frost Rise, Rime Moraine, Ice Basin, Snow Reach, Rime Slope, Polar Cirque, Tundra Moraine, Ice Fields, Hoar Expanse.
+PASS  42 · the Frozen run is won through real shop clicks with the organism-first strategy (Cold Tolerance; the sky never changes; no local upgrades needed)  — seedOut @ 33 s → earlyMat @ 94 s → cold @ 132 s → cold @ 205 s · win at 258 s with 70.0% of the land
+PASS  43 · the Bloom Report identifies the generated Frozen World (name, archetype, public seed), its build and the real-plant analog — no Ocean/Desert wording  — ★ BLOOM / You held 70% of the land of Mistral-887 (Frozen World · public seed 22) in 4m 18s. / Your plant became:
+PASS  no browser errors (Frozen seed 22, Cold strategy)
+PASS  41 · after warming, the interface shows the new sky (HUD + '▲ +6°C'), which regions opened or moved closer, and which warm refuges the hotter sky closed (previewed as '⚠ closes' before the click)  — HUD −12°C · moist 46 ▲ +6°C → −6°C · moist 46 ▲ +6°C · Bought Warm the Sky. Sky −18°C → −12°C · opens: Ice Fields · ⚠ closes: Mist Reach (too hot), Caldera Expanse (too hot) · closer, still blocked: Rime Moraine, Ice Basin, S ‖ Bought Warm the Sky. Sky −12°C → −6°C · opens: Ice Basin, Snow Reach, Rime Slope, Hoar Expanse · closer, still blocked: Rime Moraine · ⚠ worse, still growing: Mist Ridge. · now: Mist Reach: scorching 37°C; Caldera Expanse: scorching 39°C
+PASS  42 · …and the warming strategy also wins through real shop clicks (Warm the Sky raises the global temperature)  — seedOut @ 32 s → cold @ 78 s → warm @ 134 s → warm @ 211 s · win at 248 s · sky -18 → -6 °C
+PASS  no browser errors (warming run)
+
+# B · other launches
+PASS  Frozen seed 12 (optional playtest seed) launches: attempt 1 · Coriol-192 · Waterborne Seeds offered (two landmasses, not needed)
+PASS  no browser errors (Frozen seed 12)
+PASS  38 · Desert seed 25 still launches with its own sandy treatment (no frost), so the frozen map differs visibly  — sandy 163/172 · avg 90,80,55
+PASS  no browser errors (Desert seed 25)
+PASS  38 · Ocean Archipelago seed 13 still launches with its own ocean colours (unlike the frozen lakes)  — attempt 6 · Eos-227 · water 30,62,104 vs frozen 120,160,186
+PASS  no browser errors (Ocean seed 13)
+PASS  38 · Ocean Archipelago seed 8 still launches with its own ocean colours (unlike the frozen lakes)  — attempt 1 · Coriol-220 · water 30,62,104 vs frozen 120,160,186
+PASS  no browser errors (Ocean seed 8)
+
+ALL CHECKS PASS  (52.7 s)
+===== dying-world-check --json docs/evidence/bloom-013/dying-world-evidence.json
+# A · catalogue + Eden compatibility
+PASS  1 · the scenario catalogue (content/scenarios.js) is plain JSON-shaped data; every entry passes the engine's scenario check  — eden, dying_world
+PASS  1b · Dying World owns its numbers as data: grace, duration, channel maxima, extinction grace, validation policy, display labels  — grace 40 s · duration 250 s · channels {"moistureShare":-0.4,"temperature":-8,"radiation":8} · extinction after 8 s · phases Early decline@0, Noticeable loss@0.34, Severe decline@0.67, Final harsh state@1
+PASS  1c · no scenario-specific code: the engine, witness, validators and UI never name Dying World; the UI reads the scenario's own data
+PASS  2 · Eden as an explicit scenario reproduces the accepted First Bloom golden bit-for-bit (layout, evaluations, previews, prices, all 6 runs)
+PASS  3 · First Bloom with no scenario is unchanged (same golden)
+PASS  4 · Ocean 13/8, Desert 25/9 and Frozen 22/12 Eden worlds are unchanged: the same generated geometry as 1b7ea2a, and the same 3000-tick run as the 4d1e52c engine on the BLOOM-013 data, with no scenario and with Eden  — ocean_archipelago:13 ✓ · ocean_archipelago:8 ✓ · desert_world:25 ✓ · desert_world:9 ✓ · frozen_world:22 ✓ · frozen_world:12 ✓
+PASS  29 · no-pressure Ocean 13 keeps its accepted Eden baseline (attempt 6, layers 1–8, Cold+Salt vs Heat+Radiation)  — Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) | Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)
+
+# A · the pressure clock and channels
+PASS  5 · same planet + scenario + RNG reproduces bit-for-bit (4000-tick run fingerprints; layer P verdict)  — 26f9c30b,131c2bf0
+PASS  6 · an unknown scenario id fails explicitly (never a substitute); a malformed definition is refused; no id = Eden  — unknown scenario "volcano_world" (known: eden, dying_world) · bloom-sim: scenario broken: pressure.durationSeconds must be > 0; pressure.channels.wind i…
+PASS  7 · Dying World pressure starts at zero (no drift, grace phase) on a fresh run and on its first tick
+PASS  8 · the grace period behaves as configured: zero drift for the first graceSeconds, then the decline starts  — 40 s = 249 ticks stable; first drift at tick 251 (40.16 s)
+PASS  9 · pressure increases monotonically (progress, every channel's drift and the phase never step back)
+PASS  10 · pressure reaches its configured maximum at grace + duration and then stays there (final harsh state, no further drift)  — full at tick 1813 (290.1 s); held for 177 more ticks; max {"temp":-8,"moist":-21.6,"rad":8}
+PASS  11 · moisture declines as the data says: moistureShare × the planet's starting sky moisture × progress  — -0.4 × 54 → 103 s -5.4, 165 s -10.8, 228 s -16.2, 290 s -21.6
+PASS  12 · temperature declines as the data says: temperature × progress  — 103 s -2 °C, 165 s -4 °C, 228 s -6 °C, 290 s -8 °C
+PASS  13 · radiation increases as the data says: radiation × progress  — 103 s +2, 165 s +4, 228 s +6, 290 s +8
+      progression: 0s p0 Atmosphere stable (for now) [m0 t0 r+0] | 40s p0 Early decline [m0 t0 r+0] | 82.6s p0.17 Early decline [m-3.7 t-1.4 r+1.4] | 125s p0.34 Early decline [m-7.3 t-2.7 r+2.7] | 165s p0.5 Noticeable loss [m-10.8 t-4 r+4] | 207.5s p0.67 Severe decline [m-14.5 t-5.4 r+5.4] | 250.1s p0.84 Severe decline [m-18.2 t-6.7 r+6.7] | 290.1s p1 Final harsh state [m-21.6 t-8 r+8]
+PASS  14 · the planet data and the scenario data are never mutated by a full pressured run (the sky the player Terraformed is the sim's own state)
+
+# A · pressure acts through the ordinary environment
+PASS  15 · every pressured evaluation equals an Eden evaluation of the same shifted conditions (fitness, limiting factor, effective temperature / moisture / radiation)  — 120 region evaluations across 3 worlds × 3 builds at the final state
+PASS  16 · a region turns green → yellow → red purely through scenario pressure (it stays green in the same Eden run)  — Green Rise: green@4s → yellow@232s(Water) → red@288s(Water) (Eden: green throughout) · Saffron Flats: green@4s → yellow@60s(Hazard) → red@260s(Hazard) (Eden: green throughout) · Heath Reach: green@4s → yellow@124s(Hazard) → red@224s(Water) (Eden: green throughout)
+PASS  17 · existing Adapt answers scenario-induced blockers: Radiation Shielding the radiation, Drought Adaptation the drying (open at the start, blocked in the final state, open again with the Adapt)  — Green Rise: Water (dry) → Drought Adaptation reopens it · Fern Span: Hazard (radiation 33→41) → Radiation Shielding reopens it · Moss Pan: Hazard (radiation 34→42) → Radiation Shielding reopens it · Gold Pan: Water (dry) → Drought Adaptation reopens it
+PASS  20 · Radiation Shielding changes only the Hazard answer: no region's temperature, moisture or their factors move
+PASS  18 · existing Terraform counters the climate drift: Humidify adds its +8 on top of the drying and reopens dried-out regions; Warm the Sky reopens regions the cooling froze  — Ocean 13 final state, Humidify reopens: Green Rise, Gold Pan · Frozen 22 final state (Cold ×2), Warm reopens: Hoar Expanse
+PASS  19 · Terraform never erases scenario progress: a run that Terraforms mid-decline (240 s) has exactly the same pressure clock, drift and milestones as one that does not (only its own sky moved)  — drift at the purchase {"temp":-6.4,"moist":-17.3,"rad":6.4}; sky 8/54 vs 14/70
+PASS  21 · Roots focus + Root Network cannot rescue a colony on ground the decline made red: it dies out exactly like the unprotected one  — Saffron Flats: fitness 0.19 ≤ protectAbove 0.3 in the final state; living tiles 900 ticks after it: 0 (Roots + Root Network) vs 0 (Balanced)
+PASS  22 · pressure reaches Biomass only through colony condition: identical to Eden while the atmosphere is stable, the economy code never reads pressure, and in the final state a pressured colony earns exactly what the same colony earns in an Eden world with those conditions  — grace: bit-identical · final state, same colonies + same draws for 40 ticks: income 21.7743 vs 21.7743 (origin fitness 1.000 vs 1.000)
+
+# A · extinction loss
+PASS  23 · extinction grace works: the run is lost exactly extinctionGraceSeconds after the last living tile died, not before  — no-purchase Ocean 13: last plants gone at 310.4 s (pressure 100.0%), lost at 318.2 s = 50 ticks later
+PASS  25 · a confirmed extinction is a clear loss: onLoss fires once with the reason, and the run is frozen (no more ticks, Biomass or tile changes)  — extinction: no living plants anywhere for 8 s
+PASS  24 · a temporary zero-Living spell shorter than the grace never loses (the counter resets when plants are back); one lasting the full grace does  — 49 ticks with no living plants → survives (counter back to 0); 50 ticks → lost
+PASS  26 · Eden is not given the pressure loss: an Eden run with no living plants for 80 s is still not lost (extinction disabled)
+
+# A · layer P — Dying World on the three production archetypes
+PASS  27 · Ocean 13 + Dying World is winnable through earned Biomass under real pressure (layer P PASS; an independent replay buys only with earned Biomass while the decline advances, and still holds 70% in the final state)  — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)] seedOut@29s → rad@128s → drought@179s → waterSeeds@244s · win 316 s · margin 324 s (pressure 100.0%) · holds 73.7% at 384 s · replay: spent 680 of 100 + 870 earned; pressure 100.0% at the margin
+PASS  28 · the primary fixture has two legitimate, materially distinct pressure strategies: answer the drying by evolving (Drought Adaptation) or by Terraforming (Humidify)  — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)] seedOut@29s → rad@128s → drought@179s → waterSeeds@244s · win 316 s · margin 324 s (pressure 100.0%) · holds 73.7% at 384 s ‖ [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Terraform(+8)] seedOut@29s → rad@128s → humid@196s → waterSeeds@258s · win 380 s · margin 388 s (pressure 100.0%) · holds 73.7% at 448 s · differ by Water:dry=Adapt(1) vs Water:dry=Terraform(+8); held land the same
+PASS  30 · Desert 25 + Dying World is proven viable by layer P (real pressured witnesses; 2 distinct strategies)  — [Defense:rad=Adapt(1) · Water:dry=Adapt(2)] seedOut@22s → rad@95s → drought@149s → drought@240s · win 365 s · margin 373 s (pressure 100.0%) · holds 82.9% at 433 s ‖ [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+16)] seedOut@22s → salt@89s → rad@167s → drought@202s → humid@269s → humid@368s · win 493 s · margin 496 s (pressure 100.0%) · holds 80.8% at 556 s
+PASS  31 · Frozen 22 + Dying World is proven viable by layer P (real pressured witnesses; 2 distinct strategies)  — [Temperature:cold=Adapt(3) · Water:dry=Adapt(1)] seedOut@28s → drought@87s → cold@131s → cold@193s → cold@289s · win 345 s · margin 353 s (pressure 100.0%) · holds 81.7% at 413 s ‖ [Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)] seedOut@28s → drought@87s → rad@149s → cold@180s → cold@245s → warm@281s · win 355 s · margin 364 s (pressure 100.0%) · holds 79.5% at 424 s
+PASS  28b · every accepted Eden strategy of the three fixtures falls below 70% growable land in the final state — the earlier solution is no longer enough  — primary: [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)] 74.7% → 22.2% · [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)] 77.3% → 35.9% | desert: [Water:dry=Adapt(2)] 74.4% → 39.8% · [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] 75.0% → 55.0% | frozen: [Temperature:cold=Adapt(2)] 90.8% → 17.5% · [Temperature:cold=Adapt(1)+Terraform(+12)] 81.8% → 11.1%
+PASS  32 · pressure never colonizes water or changes the land denominator (every water tile Barren with no plants, checked every 100 ticks through the final state)  — 1476 water tiles · 924 land tiles in both runs
+PASS  33 · Waterborne Seeds stays geography-driven under pressure: the same crossings and offer rule as Eden, footholds only on real landing tiles  — 12 crossing links · 1 footholds, all on landing tiles · Desert 25 / Frozen 22 offer Waterborne Seeds exactly as in Eden
+PASS  P · layer P supports an explicit per-archetype rejection as data (DISALLOWED with its reason) and adds nothing to prove for Eden; Dying World currently disallows no archetype
+
+(Node part 15.7 s)
+
+# B · browser
+PASS  35 · the browser launch identifies Dying World (title, header, pressure bar, footer) on the same Ocean 13 world (attempt 6)  — BLOOM — Dying World · Ocean Archipelago · seed 13 (playtest harness) · 227) · layers 12345678 · scenario dying_world (layer P PASS)
+PASS  34 · the page never holds witness or solution data: layer P hands the UI a status and a count only  — {"status":"PASS","strategiesProven":1,"required":1}
+PASS  Q · the run opens with the short science wording and when the decline starts  — ☁ Dying World · Atmosphere thinning. The planet is slowly losing atmosphere. Conditions are becoming drier and colder, and surface radiation is increasing. The decline be
+PASS  36 · the pressure bar updates with the real simulation (phase, % lost, fill, live drift, time to the next stage)  — 49s Early decline 4% lost m−0.8 r+0.3 | 97s Early decline 23% lost m−4.9 r+1.8 | 145s Noticeable loss 42% lost m−9.1 r+3.4 | 193s Noticeable loss 61% lost m−13.2 r+4.9 | 241s Severe decline 80% lost m−17.4 r+6.4 | 289s Severe decline 100% lost m−21.5 r+8 | 337s Final harsh state 100% lost m−21.6 r+8 | 385s Final harsh state 100% lost m−21.6 r+8 | 433s Final harsh state 100% lost m−21.6 r+8 | 481s Final harsh state 100% lost m−21.6 r+8 | 529s Final harsh state 100% lost m−21.6 r+8
+PASS  O2 · the map itself shows the decline: bare ground is drawn from the effective (drier, colder) climate, under a haze that thickens with the loss  — bare-ground colour rgb 46,58,68 → 54,60,66 (Δ 12); water pixel 30,62,104 → 67,88,131 (haze, Δ 90)
+PASS  39 · milestone feedback fired exactly at the configured phase thresholds (UI history = engine events = the data's `from` values)  — early@40.0s, loss@125.1s, severe@207.5s, final@290.1s
+PASS  37 · environmental readouts show the current effective values (HUD sky, region ground temperature, sky, radiation with its drift)  — HUD 0°C · moist 32.4 · Ground here +12°C · sky 0°C · suits your plant −6°C to +24°C · radiation 35 + 8 = 43
+PASS  38 · the Terraform readout keeps the player's Terraform apart from the scenario drift (sky = base · Terraform · thinning), in the bar and in the purchase message  —  moisture 40.4 = base 54 · Terraform +8 · thinning −21.6 · Bought Humidify. Sky moisture 54 → 62 (thinning air −21.6 on top) · ⚠ closes: Sienna Reach (too wet) · ⚠ worse
+PASS  no browser errors (Ocean 13 Dying World readouts)
+PASS  O · the UI notices living regions the decline pushes across a threshold (outlined on the map + one message)  — Saffron Flats green→yellow @59s, Saffron Flats yellow→red @260s
+PASS  no browser errors (threshold feedback)
+PASS  40 · a Dying World run is won through real shop clicks with earned Biomass (Ocean 13, the Drought strategy)  — seedOut @ 32 s → rad @ 131 s → drought @ 189 s → waterSeeds @ 243 s · win at 355 s with 70.0% of the land, pressure 100.0%
+PASS  42 · the Bloom Report names the planet, archetype and scenario, the final pressure state and the drift the plant endured, beside the usual build summary  — Pressure: Dying World · Atmosphere thinning — Final harsh state (100% of the decline). Your plant endured: moisture −21.6, temperature −8 °C, radiation +8 — the final harsh state.
+PASS  no browser errors (Dying World win)
+PASS  41 · an intentionally doomed control (no purchases) loses by extinction: a clear loss screen with the reason, the pressure reached and a restart button  — extinction: no living plants anywhere for 8 s at 308 s
+PASS  41b · restart reloads the same launch as a fresh run  — {"t":4,"lost":false,"on":false}
+PASS  no browser errors (extinction control)
+PASS  R · archetype=ocean_archipelago&seed=13&scenario=volcano_world fails explicitly: no run started, no substitute  — archetype ocean_archipelago · public seed 13 · scenario volcano_world / 
+PASS  R · scenario= fails explicitly: no run started, no substitute  — First Bloom · scenario / 
+PASS  R · archetype=desert_world&seed=25&scenario=Dying%20World fails explicitly: no run started, no substitute  — archetype desert_world · public seed 25 · scenario Dying World / 
+PASS  R · no scenario parameter = Eden: no pressure bar, no loss rule, the familiar title and footer  — BLOOM — Ocean Archipelago · seed 13 (playtest harness)
+PASS  no browser errors (Ocean 13 Eden)
+PASS  J · Desert World 25 + Dying World launches (layer P PASS) and its pressure bar runs  — Final harsh state · 100% lost · conditions have stopped changing · moisture −7.2 · temperature −8 °C
+PASS  no browser errors (Desert World Dying World)
+PASS  J · Frozen World 22 + Dying World launches (layer P PASS) and its pressure bar runs  — Final harsh state · 100% lost · conditions have stopped changing · moisture −18.4 · temperature −8 °C
+PASS  no browser errors (Frozen World Dying World)
+evidence written: docs/evidence/bloom-013/dying-world-evidence.json
+
+ALL CHECKS PASS  (31.4 s)
+===== slice-check
+PASS  wet build wins via real shop clicks  — buys at 33, 84, 120, 179, 202, 238 s
+PASS  pacing: perfect-bot win in 4–8 min (humans slower)  — 246 s
+PASS  Bloom Report opens with a drawn plant
+PASS  report lists a real-plant analog per adaptation  — 5 analogs
+PASS  report names the region the wet build gave up  — Dust Reach — too dry / Ember Scar — too dry
+PASS  no page errors during the run
+PASS  dry build also wins (≥2 broad strategies)  — 257 s
+PASS  Terraform water build wins with NO water Adaptation (Humidify ×2 instead of Drought; gives up Marsh Low)  — 272 s, buys at 32, 88, 140, 170, 213, 265 s, water arm none
+PASS  shop unlocks during normal play (no test-hook purchases)  — first affordable at 28 s
+PASS  preview warns that Flood tier 2 closes home regions  — Flood Adaptation — ⚠ closes: Fern Shade, Cool Glen
+PASS  hovering an upgrade shows its preview in the log  — Cold Tolerance — no region changes state yet.
+PASS  raw-signals panel stays open across re-renders
+PASS  Salt Barren with Salt Handling reads thriving, not 'blocked'  — ✓ Thriving here — no blocker. / Low nutrients slow growth here, but it is not a wall.
+PASS  the tested build with neither water Adaptation nor water Terraform stays under 70%  — 67.6%
+PASS  over-committing (Flood ×2) loses the home regions  — 24.3%
+
+ALL CHECKS PASS
+===== surface-check
+PASS  demo-surface.html holds no private copy of the generator (noise, names, RNG, generatePlanet)
+PASS  authored Cinder-Frost: 12 sections, adjacency 26/26, contiguous, shared validator passes  — sections 12 · land 2400 · water 0 (0%) contiguity all single-blob islands 1 reachable from origin 12/12 bible adjacency 26/26 (100%) validator pass cl
+PASS  authored map renders (canvas fully painted)
+PASS  Random mode shows BLOOM.generatePlanet({seed:12345, waterPct:50, sections:14, maxCrossingGap: config}) exactly
+PASS  procedural 50% map: water counted (out-of-range islands became water), validator passes  — sections 14 · land 577 · water 1823 (76%) contiguity all single-blob islands 1 reachable from origin 14/14 validator pass click a section · ★ = origin refuge
+PASS  procedural map renders (water + land painted)
+PASS  New Map at 60% finds an archipelago whose islands need Waterborne Seeds and are all in range  — seed 550729513 after 1 click(s): 2 landmasses, 1 sections need the trait · reachable from origin 13/14 · 1 need Waterborne Seeds validator pass click a section 
+PASS  ⟳ New Map draws a new seed and the new planet validates  — seed 550729513 → 354949653
+PASS  sliders regenerate (20 sections, 0% water)  — {"n":20,"w":0,"ok":true}
+PASS  clicking a section opens its inspect panel with geography-derived neighbours
+PASS  no page errors
+
+ALL CHECKS PASS
+===== procedural-run-check
+# First Bloom (no query string)
+PASS  no parameters → the accepted First Bloom run (same title/header, no run-identity line, no water)  — 12 upgrades
+PASS  Waterborne Seeds is absent from the First Bloom shop (sim.offered)
+PASS  no browser errors (First Bloom)
+
+# Ocean Archipelago public seed 13 (full run through real controls)
+PASS  the page generated seed 13 through BLOOM.generateFromArchetype: same accepted attempt and planet as the Node production path, layers 1–8  — attempt 6, Eos-227 (proc_2316985227)
+PASS  run identity (archetype, public seed, attempt, planet name/id) is visible in the footer  — Ocean Archipelago · public seed 13 · attempt 6 · Eos-227 (proc_2316985227) · layers 12345678
+PASS  no witness plan, strategy signature or recommended purchase reaches the page  — planet.archetype keys: id,name,publicSeed,attempt,generationSeed,requestedWaterPct,actualWaterPct,landmasses,originLandmassShare,winnabilityChecked,validatedLayers,rejectedAttemptCount
+PASS  multiple landmasses and water render; sampled water pixels are water-blue, no sampled land pixel is  — 5 landmasses · 1476 water / 924 land tiles
+PASS  clicking water shows a non-colonizable water note (no section selected)  — Open water / 🌊 Not land: nothing grows here and it does not count toward coverage. Ordinary spread cannot cross water; Waterborne Seeds carries seeds over gaps of up to 6 water tiles.
+PASS  clicking a generated island section shows Temperature/Water/Soil/Hazard and the one limiting factor, as on authored sections  — ▲ Growth blocked: soil is hostile (salt/pH)
+PASS  …plus a separate geography note: access across water vs the ground's environment  — 🌊 Island across water: ordinary spread cannot cross it. Waterborne Seeds would let seeds drift over. It is 2 crossings away, so seeds need a foothold on a nearer island first.
+PASS  Adapt purchase preview still works on a generated world  — Cold Tolerance — no region changes state yet.
+PASS  Waterborne Seeds preview names the regions it makes reachable, split into 'can take root' vs 'reachable but hostile'  — Waterborne Seeds — seeds float across water gaps of up to 6 tiles. Reachable: 11 region(s) on 4 island(s) — 7 can take root now (green outline), 4 reachable but hostile now (yellow outline: soil is hostile (salt/pH) ×4). Farther islands need a foothold on a nearer one first. Can take root: Green Rise 2, Fern Span, Gold Plain, Moss Pan, Gold Pan, Sienna Reach, Heath Reach. Hostile: Mild Basin, Green Rise 1, Green Pan, River Span.
+PASS  Waterborne Seeds bought through the real shop button (with the rest of the build)  — seedOut @ 33 s → waterSeeds @ 104 s → salt @ 168 s → cold @ 215 s
+PASS  a water crossing establishes, and ordinary spread then continues on the new landmass  — first foothold by tick 810 on landmass 2 (4 living) → 345 living by tick 1910
+PASS  seed 13 reaches the 70% win through real UI clicks; coverage = living land / land tiles, water never colonized  — win at 316 s · 70.0% of 924 land tiles (1476 water tiles excluded)
+PASS  Bloom Report opens with the generated planet's identity and the build (Waterborne Seeds listed)  — ★ BLOOM / You held 70% of the land of Eos-227 (Ocean Archipelago · public seed 13) in 5m 16s.
+PASS  …every bought adaptation is represented; Waterborne Seeds uses its existing science line  — 4 real-plant analogs
+PASS  …regions bloomed / given up come from this generated run; no First Bloom region names leak  — Regions bloomed: Mild Basin, Green Rise 2, Fern Span, Gold Plain, Green Pan, Moss Pan, Amber Pan, Gold Pan, Saffron Flats, Sienna Reach, Hea
+PASS  no browser errors during the seed-13 run
+PASS  crossing screenshot captured after the first waterborne foothold  — foothold at tick 940 (150 s)
+
+# slice interactions on seed 13 (bubbles, passive Biomass, pause/speed, inspect refresh)
+PASS  speed cycles 1×→2×→4×→1×, the run advances in real time, pause stops it  — 9 ticks live, paused at 10
+PASS  passive Biomass accrues on a generated world  — 101 → 173 over 300 ticks
+PASS  a Biomass bubble appears and clicking it on the map collects it  — +25 Biomass
+PASS  no browser errors (interactions)
+
+# Ocean Archipelago public seed 8 (smoke)
+PASS  seed 8 loads through the production path with water, several landmasses and Waterborne Seeds offered  — attempt 1 · Coriol-220 · 7 landmasses
+PASS  Seed Output, Salt Handling and Waterborne Seeds bought via real buttons; a crossing establishes  — seedOut @ 19 s → salt @ 95 s → waterSeeds @ 148 s · 4 foothold(s)
+PASS  inspecting a seed-8 section works  — Sun Basin★ ORIGIN
+PASS  no browser errors (seed 8)
+
+# Ocean Archipelago public seed 35 (known generation failure)
+PASS  seed 35 shows the explicit generation-failure state naming the public seed  — NO WORLD GENERATED / Ocean Archipelago · public seed 35 / no acceptable world in 24 attempts. Rejected attempts: structure / geography 23 · layer 4 1.
+PASS  …and no world starts (no map, no shop, no simulation; no substitute seed)
+PASS  no browser errors (failure state)
+PASS  a malformed seed is also an explicit failure, never a fallback world
+
+ALL CHECKS PASS  (13.7 s)
+===== colony-development-check
+# A · engine: per-region allocation, local specializations, density (deterministic, production engine)
+PASS  data model: every land region starts Balanced with no specialization; modes = Balanced / Roots / Leaves / Seeds  — sim.colonies = { focus: [9 × "balanced"], spec: [9 × null] }
+PASS  the BLOOM-008 single global focus is removed (no sim.setFocus / clearFocus / sim.focus, no config.focus): one model only
+PASS  [1] Region A set to Roots stays Roots after Region B is set to Seeds (an empty region / unknown mode / bad index is refused)  — A = Meadow Hollow: roots · B = Fern Shade: seeds
+PASS  [2] several regions hold different allocations at the same time  — Meadow Hollow roots · Fern Shade seeds · Cool Glen leaves · the other 6 Balanced
+PASS  [4] changing Region A later changes only Region A  — Meadow Hollow roots → leaves; every other region unchanged
+PASS  [6] allocations survive ordinary simulation ticks (1500 more ticks, bit-identical colony state)  — {"focus":["leaves","seeds","leaves","balanced","balanced","balanced","balanced","balanced","balanced"],"spec":[null,null,null,null,null,null,null,null,null]}
+PASS  Balanced can be chosen again and carries no modifier at all (the baseline)
+PASS  [7] an allocation + specialization survive die-back while the colony still exists  — 115/144 tiles left after 8 s: still seeds + seedReserve
+PASS  [7] total loss: the region KEEPS its allocation and specialization (dormant — nothing lives there; it cannot be changed or upgraded while empty); when recolonized they apply again  — Test lost every plant at 20 s (red ground), stayed roots + rootNetwork while empty, recolonized 1 s after the sky was restored → active again (establishBonus 3)
+PASS  Roots speeds establishment of a young, marginal-but-viable colony (yellow ground)  — fitness 0.62; establishment after 32 s: Balanced 30.3% → Roots 56.3%
+PASS  …in the marginal band (between die and grow thresholds) stands only hold at Balanced; with Roots they keep thickening  — fitness 0.45; establishment Balanced 5.0% (unchanged) vs Roots 20.7%
+PASS  …and under stress (yellow ground below the die threshold) Roots cuts die-back: more of the colony survives  — fitness 0.32; survivors of 144 after 96 s: Balanced 18.8 vs Roots 49.3
+PASS  [8] Roots — even with a Root Network — does NOT rescue red, blocked ground: die-back, thinning and recovery are bit-identical to Balanced; the colony still collapses  — fitness 0.05 (red); survivors after 144 s: Balanced 0.0 = Roots 0.0 = Roots + Root Network 0.0 of 144
+PASS  [8/10] no allocation or specialization lets plants spread into ground below the grow threshold (1500 ticks next to a dense, invested colony)  — Test living: 0 / 0 / 0
+PASS  Roots has a cost: on a thriving colony that is already dense it only lowers that colony's Biomass (sugar goes below ground)  — 300 ticks: Balanced 261.8 vs Roots 235.2 Biomass
+PASS  [9] no allocation changes environmental fitness, tolerance, category word, limiting factor or purchase preview  — 9 sections × 4 modes compared
+PASS  [9] Leaves raises that colony's own Biomass with identical plant cover, and the bonus scales with establishment: large on a dense stand, tiny on fresh seedlings  — extra Biomass as a share of the Test colony's own yield: dense stand +50.0% · seedling stand (first 1.92 s) +4.4% (config.colony.yieldRampTo 0.75)
+PASS  Leaves has a cost: fewer seeds, so the colony spreads more slowly into open ground  — Test tiles colonized in 6.4 s: Balanced 13 vs Leaves 9
+PASS  [10] Seeds increases outbound colonization from its colony; the destination's fitness is untouched  — Test tiles colonized from Home in 2.4 s: Balanced 5.5 → Seeds 7.3 (11/12 seeds higher)
+PASS  [10] Seeds strengthens Waterborne source pressure: the first foothold across a 3-tile strait arrives sooner  — first foothold: Balanced 13.9 s → Seeds 6.1 s (mean of 8 seeds)
+PASS  [18] Seed Reserve (bought for the coastal source colony, allocation left Balanced) makes Waterborne footholds arrive sooner  — first foothold: 13.9 s → Seed Reserve 6.1 s
+PASS  [10/18/32] Seeds + Seed Reserve + Waterborne Seeds cannot establish on a hostile island: seed ARRIVAL events happen, no FOOTHOLD event ever does  — 212 / 212 / 212 arrival events, 0 footholds; island limit: scorching
+PASS  [30/31] every crossing event is a real engine source → landing pair (geography crossing, different landmasses, gap ≤ maxGap); each foothold event is exactly one real new foothold  — 1 events (1 footholds = sim.crossing.footholds 1, 0 arrivals) · gaps 3
+PASS  [30] without Waterborne Seeds there is no crossing event at all (nothing for the map to animate)  — 1500 ticks next to a 3-tile strait
+PASS  [13] insufficient Biomass blocks a local purchase (no state change)  — price 90 = (18 + 8 × 0 bought) × costScale 5; with 89 Biomass → refused, Biomass unchanged
+PASS  [12] a local specialization spends real, ordinary Biomass (the same sim.biomass the shop uses)  — 500 → 410 Biomass; sim.spent.local 90
+PASS  [15] at most one specialization per region: a second (of any kind) is refused  — Meadow Hollow keeps leafCanopy
+PASS  [14] a specialization belongs to the one region it was bought for: every other region's modifiers stay zero  — origin yieldBonus 0.5; 8 other regions 0
+PASS  changing that colony's allocation afterwards keeps its specialization (no removal, no refund)  — now Seeds + Leaf Canopy
+PASS  each specialization bought makes the next one cost more (a bounded local sink)  — next price 130
+PASS  matching allocation + specialization combine with a bounded, data-driven synergy (capped)  — Leaves 0.5 + Leaf Canopy 0.5 × (1 + 0.25) = 1.125 (cap 1.2)
+PASS  [19] no specialization changes the plant's tolerances or any region's Temperature / Water / Soil / Hazard evaluation  — after buying rootNetwork, seedReserve, leafCanopy: derived() + every evaluate() bit-identical
+PASS  [20] the global shop keeps working after local investment; local purchases never change global prices  — bought Seed Output, Cold, Salt after a Leaf Canopy; spent global 470 / local 90
+PASS  [16] Root Network establishes a colony more strongly than the free Roots allocation (and stacks, capped, with it)  — establishment after 24 s on yellow ground: Balanced 24.7% · Roots 46.9% · Root Network 52.8% · both 62.6%
+PASS  [16] …and regrows faster after die-back (dead ground clears and is recolonized sooner under a Root Network)  — 9.6 s after half the colony died: dead tiles left Balanced 21.3 vs Root Network 2.5 · living 107.0 vs 131.0
+PASS  [17] Leaf Canopy raises that colony's Biomass, and pays far more on an established, productive colony than on a newly seeded patch  — extra Biomass as a share of the colony's own yield: dense colony +50.0% · seedling colony (first 1.92 s) +4.4%
+PASS  [24] a new Living tile starts as a tiny seedling stand, well under BLOOM-008's  — seedlingDensity 0.15 → 0.05 (origin at t = 0 and Fern Shade's first tiles at 24 s)
+PASS  [25] density still reaches a mature, full stand: Sparse → Establishing → Established → Dense  — origin: sparse @ 0.2 s, establishing @ 30.6 s, established @ 63 s, dense @ 123.2 s; max stand density 0.999
+PASS  [27] once every origin tile is Living the colony keeps thickening for a long time (tile-full ≠ mature)  — all tiles Living at 65 s at 41.8% establishment → 99.9% later
+PASS  [5/22] ignoring allocation and local investment entirely is legal: every broad First Bloom build wins with every region Balanced and nothing bought locally  — wet 249 s · dry 262 s · terraformWater 256 s
+PASS  [11] a sensible multi-colony allocation (young/stressed → Roots, open frontier → Seeds, filled-in → Leaves) beats a badly placed one; Balanced sits between and still wins  — wet build, 4 RNG seeds: situational 200 s (28 focus changes) · Balanced 249 s · misplaced 298 s
+PASS  Leaves is not the automatic answer: Leaves on every colony loses to situational play by a clear margin and does not bring the first purchase forward  — Leaves everywhere 245 s (first buy 33 s) vs situational 200 s · Balanced first buy 28 s
+PASS  [21] local investment never soft-locks the global game: even a bot that buys a specialization for every colony (or spends its opening Biomass on one) still buys its whole global recipe and wins  — over-investor: 850 local / 1030 global Biomass, win 311 s · opening Root Network: win 262 s
+PASS  [23/33/36] Ocean Archipelago seed 13 stays production-valid (layers 1–8 re-validated, witnesses buy only global traits — no local choices) and winnable  — attempt 6 · Eos-227 · 2 strategies · strategy 1 bot: Balanced 327 s [292–389] · situational 301 s [274–335]
+PASS  [23/34/36] Ocean Archipelago seed 8 stays production-valid (layers 1–8 re-validated, witnesses buy only global traits — no local choices) and winnable  — attempt 1 · Coriol-220 · 2 strategies · strategy 1 bot: Balanced 348 s [305–382] · situational 291 s [274–300]
+PASS  [35] seed 35 still fails explicitly (no acceptable world in every attempt)  — 24 attempts rejected
+PASS  allocation effects are config data: with every config.colony mode value at 0 each mode is bit-identical to Balanced; raising leaves.yieldBonus raises Biomass  — Leaves +50% → 1053 Biomass at 240 s; +100% → 1257
+
+# B · UI: per-region controls, badges, local upgrades, density rendering, Biomass HUD, crossing feedback (seeded page RNG)
+PASS  a new run opens on the origin: four focus buttons (Balanced pressed), three local upgrades with their Biomass cost, affordable from the starting Biomass  — buttons balanced/roots/leaves/seeds · upgrades rootNetwork 90 · leafCanopy 90 · seedReserve 90
+PASS  the inspect panel leads with the colony status + establishment %  — Colony: Sparse · 0% established
+PASS  [1/2/3/28] through real map + button clicks: origin Roots, Fern Shade Seeds, Cool Glen Leaves all held at once; selecting other regions cleared nothing; the origin's panel shows its own Roots pressed  — focus = ["roots","seeds","leaves","balanced","balanced","balanced","balanced","balanced","balanced"]
+PASS  [4] changing Fern Shade later changes only Fern Shade  — ["roots","roots","leaves","balanced","balanced","balanced","balanced","balanced","balanced"]
+PASS  [28] each directed region shows a small focus badge on the map in its focus colour (Balanced regions show none)  — roots 55px · seeds 53px · leaves 57px
+PASS  [13] UI: an unaffordable local upgrade says how much Biomass is missing, and clicking it changes nothing  — button: "need 5 more" · log: Leaf Canopy costs 90 Biomass. You have 85: 5 more needed.
+PASS  [12/15] UI: buying Leaf Canopy for the origin spends real Biomass (HUD follows) and the panel then shows it as built — no second upgrade offered there  — 400 → 310 (price 90) · panel: ❦ Leaf Canopy built here
+PASS  [14] UI: another colony still offers its own upgrade (at the next, higher price); the origin's upgrade stays with the origin  — Fern Shade upgrades at 130
+PASS  [29] Biomass is the most prominent HUD element: its number is ≥ 2× the size of the other status text, in a larger box, near the top-left  — Biomass 30px vs coverage 12px / sky 12px · box 9880 px² vs coverage group 5774 px²
+PASS  no browser errors (per-region controls)
+PASS  focus clicks land while the game runs live at 1×, and one click keeps working with no further input  — 8/8 live clicks registered; 9 ticks later the origin is still leaves
+PASS  no browser errors (live 1×)
+PASS  [24/25/26] the same origin region, from just seeded to Dense: at every stage the plant patches are bigger and a darker green (tiny pale sprouts → full dark tiles)  — just seeded (sparse 0.5%): mean stand 0.05, patch 8.2% of tile, plant lum 194 · low density (sparse 6.1%): mean stand 0.17, patch 19.1% of tile, plant lum 176 · establishing (establishing 19.5%): mean stand 0.24, patch 27.3% of tile, plant lum 166 · established (established 40.6%): mean stand 0.40, patch 46.3% of tile, plant lum 145 · dense (dense 87.6%): mean stand 0.88, patch 100.0% of tile, plant lum 95
+PASS  [26] rendering tracks the real stand density: each tile's drawn patch area matches its sim.dens mapping  — 619 tile samples, mean |drawn − expected| area 0.1%
+PASS  [27] a filled region keeps visibly thickening inside (Established → Dense changes the picture)  — all 315 origin tiles Living; established 40.6% (patch 46.3%, lum 145) → dense 87.6% (patch 100.0%, lum 95)
+PASS  every density shade stays distinct from water, dead ground, barren ground and the outline colours (RGB distance)  — min distance: water 69 · dead 74 · barren 43 · outlines 53
+PASS  no browser errors (density rendering)
+PASS  [30] crossing animations appear only for real engine events: none before Waterborne Seeds; after it, each animation copies one engine event's source → landing pair (different landmasses)  — before: 0 events / 0 animations · after: 2 animations (1 footholds, 1 arrivals)
+PASS  [32] seeds that wash up on hostile ground show only the travel + faint arrival ripple — never a foothold burst  — 1 animations landed on currently hostile regions, 0 as footholds
+PASS  [31] a successful foothold ends in a distinct bright burst; a plain seed arrival only in a faint ripple  — foothold landing: 72 bright px · arrival landing: 19 bright px (0 pale-ripple px)
+PASS  no browser errors (crossing feedback)
+
+ALL CHECKS PASS  (26.5 s)
+===== economy-check --json docs/evidence/bloom-013/economy-check.json --shots docs/evidence/bloom-013/shots
+# measuring (tools/economy-study.js: 7 worlds × recipes × 5 colony policies × 2 bubble policies × 4 run seeds) …
+  (233 s)
+
+# A · the economy is data
+PASS  2 · the retune is two config.econ values (startBiomass 40 → 100, originTrickle 0.1 → 0.3); yields, bubbles and every price are unchanged  — changed: startBiomass 40 → 100, originTrickle 0.1 → 0.3 · global prices cold 140/270/400 · heat 140/270/400 · drought 150/270 · flood 150/270 · salt 200 · rad 220 · seedOut 130/280 · waterSeeds 180 · earlyMat 170 · warm 200/290 · cool 200/290 · humid 200/290 · dry 200/290 · local 90/130/170/210
+PASS  2 · the engine reads both from config.econ (a run starts with config.econ.startBiomass; the origin trickle is config income)
+PASS  3 · no hidden or test-only Biomass: 2500 ticks of First Bloom gain exactly the reported income + auto-collected bubbles; the page's only grant is the BLOOM_API test hook; the economy study never grants  — 34 auto-collected bubbles, 0 unexplained gains · demo-run.html Biomass grants: 1 (BLOOM_API.addBiomass)
+PASS  26 · the starting Biomass buys ONE local upgrade now — or most of a first global upgrade a few seconds later — and never a strategy  — start 100: local upgrade 90; cheapest global 130; cheapest winning core fb 630, o13 520, d25 420, f22 410, o13dw 550
+
+# B · the opening (bubbles ignored)
+PASS  4 · a meaningful decision is affordable from the first second (a local upgrade for the origin)  — fb 1 option(s) at t=0 · o13 1 option(s) at t=0 · d25 1 option(s) at t=0 · f22 1 option(s) at t=0 · o13dw 1 option(s) at t=0
+PASS  5 · the first meaningful GLOBAL upgrade is affordable within 45 s (was 77–87 s)  — fb 29.6 s (worst 29.8; was 87) · o13 28.8 s (worst 28.8; was 86) · d25 24.5 s (worst 26.9; was 77) · f22 27.6 s (worst 28.8; was 79) · o13dw 28.8 s (worst 28.8; was 86)
+PASS  6 · two materially different options are affordable at once within 45 s on every primary world  — fb 29.6 s (seedOut + local) · o13 28.8 s (seedOut + local) · d25 24.5 s (heat/seedOut + local) · f22 27.6 s (seedOut + local) · o13dw 28.8 s (seedOut + local)
+
+# C · purchase cadence
+PASS  5b · the first global PURCHASE (witness-like bot) lands within 60 s on every recipe  — fb 33/33/33 s · o13 32.5/32.5 s · d25 28/28 s · f22 31.3/31.3 s · o13dw 32.5/32.5 s
+PASS  7 · no purchase gap above 120 s before the win on any primary recipe (witness-like and player bots, worst seed)  — fb 69.4 s / player 38.2 s (was 100) · o13 81.9 s / player 66.8 s (was 139) · d25 103.4 s / player 61.6 s (was 177) · f22 78.3 s / player 48.8 s (was 112) · o13dw 112.9 s / player 84.3 s (was 306)
+PASS  9 · midgame purchases recur on the order of tens of seconds (median gap ≤ 90 s on every recipe)  — fb 36.6/36.5/42.9 s · o13 51/56.1 s · d25 51.1/51.1 s · f22 52.2/54 s · o13dw 57.7/66.2 s
+PASS  7b · a player is never left more than 120 s with NOTHING meaningful affordable before the win (local or global)  — fb 52 s · o13 65 s · d25 56 s · f22 56 s · o13dw 100 s
+PASS  10 · the wait from a player's last purchase to the win stays bounded (≤ 120 s, mean)  — fb 9.6/7.2/6.4 s · o13 38.5/18.5 s · d25 58.5/21.2 s · f22 8.9/12.6 s · o13dw 24.4/43.1 s · (witness-like, which stops at its minimal core: 23.3/161.5/173/46.9/123.8 s)
+PASS  8 · Ocean 13 + Dying World: the old seed-output → several-minute wait is gone (layer-P witness and bots, every gap ≤ 120 s)  — witness now seedOut@29s → rad@128s → drought@179s → waterSeeds@244s (gaps 28.5/99.3/51.6/64.4) · was seedOut@90s → rad@390s → drought@481s → waterSeeds@559s (gap 299.4 s)
+PASS  24 · a player who never clicks a bubble wins every primary recipe with the cadence above  — fb 4/4,4/4,4/4 · o13 4/4,4/4 · d25 4/4,4/4 · f22 4/4,4/4 · o13dw 4/4,4/4
+PASS  25 · clicking bubbles helps (earlier wins) but is not required (a modest bonus, never the economy)  — win-time saved by clicking: 8, 14, 14, 21, 19, 12, 18, 13, 16, 21, 16 s
+
+# D · strategies still bind
+PASS  11 · First Bloom stays winnable by its broad strategy families (Flood, Drought, Terraform-water recipes win; 3 distinct strategies proven)  — wet 249.4 s · dry 266.6 s · terraformWater 263.2 s · [Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)] [Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)+Terraform(+6) · Temperature:heat=Adapt(1) · Water:wet=Adapt(1)] [Defense:salt=Adapt(1) · Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1) · Water:wet=Adapt(1)]
+PASS  12 · Ocean Archipelago 13 · Eden: same world (attempt 6), ≥ 2 distinct strategies proven within the new pacing bands, both recipes won by both bots  — [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)] margin 330.2 s, first 28.5 s, max gap 66.7 s ‖ [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)] margin 263.7 s, first 28.5 s, max gap 66.7 s
+PASS  13 · Desert World 25 · Eden: same world (attempt 0), ≥ 2 distinct strategies proven within the new pacing bands, both recipes won by both bots  — [Water:dry=Adapt(2)] margin 337.8 s, first 22.4 s, max gap 93.5 s ‖ [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] margin 338.7 s, first 22.4 s, max gap 75.7 s
+PASS  14 · Frozen World 22 · Eden: same world (attempt 1), ≥ 2 distinct strategies proven within the new pacing bands, both recipes won by both bots  — [Temperature:cold=Adapt(2)] margin 251.5 s, first 28.3 s, max gap 67.6 s ‖ [Temperature:cold=Adapt(1)+Terraform(+12)] margin 260.2 s, first 28.3 s, max gap 71.2 s
+PASS  15 · Ocean Archipelago 13 · Dying World passes layer P with 2 distinct strategies under the new clock and cadence bands  — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)] win 315.7 s, holds 73.7% ‖ [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Terraform(+8)] win 379.5 s, holds 73.7%
+PASS  18 · Desert World 25 · Dying World passes layer P with 2 distinct strategies under the new clock and cadence bands  — [Defense:rad=Adapt(1) · Water:dry=Adapt(2)] win 365 s, holds 82.9% ‖ [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+16)] win 492.8 s, holds 80.8%
+PASS  19 · Frozen World 22 · Dying World passes layer P with 2 distinct strategies under the new clock and cadence bands  — [Temperature:cold=Adapt(3) · Water:dry=Adapt(1)] win 344.5 s, holds 81.7% ‖ [Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)] win 355 s, holds 79.5%
+PASS  16 · a normal successful Dying World run lives through most of the decline (pressure ≥ 75% at the win, player and witness-like bots)  — o13dw 1/1/1/1 · d25dw 1/1/1/1 · f22dw 0.9/1/1/1
+PASS  17 · Dying World cannot be ignored: buying the planet's Eden strategy as if nothing were declining never wins (the drift closes ≥ 25% of the land to it)  — o13dw ignoreColdSalt won 0/4, drift closed up to 60% · o13dw ignoreHeatRad won 0/4, drift closed up to 40% (this Eden build already holds Radiation Shielding, a Dying World answer) · d25dw ignoreDrought2 won 0/4, drift closed up to 30% · f22dw ignoreCold2 won 0/4, drift closed up to 70%
+PASS  27–29 · tradeoffs stay binding: the shared temperature cap and one water strategy are enforced, and by mid-run (180 s) no player has earned enough to own every tolerance  — cold+heat capped at 3; Drought blocks Flood · every tolerance costs ≥ 1390; earned by 180 s: 1078/1062/1052/712/730/865/865/969/976/611/611
+PASS  30 · Terraform still trades: on Frozen 22, Warm the Sky opens cold ground and closes warm refuges, at an unchanged price  — opens 1 region(s), closes 2 · 200 Biomass
+PASS  31 · Waterborne Seeds is still a real cost on islands: unchanged price, and the Ocean 13 recipes save ≥ 30 s for it after Seed Output  — 180 Biomass · bought at coldSalt 114 s, heatRad 114 s after saving 81.9/81.9 s
+
+# E · local specialization
+PASS  20 · local specializations stay optional: every recipe is won without buying a single one  — fb 4/4,4/4,4/4 · o13 4/4,4/4 · d25 4/4,4/4 · f22 4/4,4/4 · o13dw 4/4,4/4
+PASS  21 · a local upgrade is a real cost: specializing the origin at the start delays the first global upgrade by ≥ 15 s  — fb +36 s · o13 +32.6 s · d25 +23 s · f22 +28.5 s · o13dw +32.6 s
+PASS  22 · buying a local upgrade on every colony has a real opportunity cost (slower wins than one well-placed Leaf Canopy)  — fb 310.3 vs 197.8 s, 324 vs 219.2 s, 308.2 vs 205.3 s · o13 451.3 vs 305.4 s, 430.7 vs 246.3 s · d25 342.9 vs 276.5 s, 355.5 vs 285.3 s · f22 316 vs 207.1 s, 355.6 vs 233.3 s · o13dw 404.8 vs 316.6 s, 448 vs 322.9 s
+PASS  23 · Leaves is no runaway: Leaves everywhere + a Canopy on every colony wins later than situational play with no local upgrades  — fb 322.3 vs 207.8 s, 349.6 vs 226 s, 310.8 vs 216.2 s · o13 554.3 vs 349.8 s, 391.2 vs 271.6 s · d25 441.3 vs 304.2 s, 441.7 vs 280.2 s · f22 355.6 vs 214.3 s, 387.2 vs 243.2 s · o13dw 512.6 vs 306.8 s, 474 vs 341.8 s
+
+# F · safety
+PASS  32 · no economy soft-lock: every primary recipe × colony policy × bubble policy is won by every run seed (no stalls, no losses)  — 110 rows × 4 seeds
+PASS  33 · no runaway Biomass: a player wins holding less than half the cost of every tolerance, earning < 400 Biomass per minute on average  — fb 116 left, 375/min · fb 109.5 left, 383/min · fb 86.5 left, 373/min · o13 292 left, 291/min · o13 111.3 left, 254/min · d25 524.5 left, 350/min · d25 208.3 left, 334/min · f22 104.3 left, 343/min · f22 124.8 left, 348/min · o13dw 123.3 left, 228/min · o13dw 217.8 left, 237/min
+PASS  34–35 · Dying World keeps its drift channels, phases and extinction rule; only its clock moved (grace 60 → 40 s, decline 420 → 250 s: final state at 290 s instead of 480 s, scaled to the shorter runs); an idle player still dies out only after the final state  — channels {"moistureShare":-0.4,"temperature":-8,"radiation":8} · idle Ocean 13 extinct at 318.2 s
+
+# G · browser (First Bloom, real buttons)
+PASS  36–37 · the HUD shows the starting Biomass; every global upgrade reads unaffordable and every local upgrade affordable, exactly as Biomass vs price says  — HUD 100 · globals off: 12/12 · local upgrades rootNetwork/leafCanopy/seedReserve at 90
+PASS  37 · the opening decision through the real button: Root Network on the origin spends exactly its price, the HUD follows  — 100.28541430400186 → 10.285414304001861 Biomass (HUD 10)
+PASS  38 · a First Bloom run won through real clicks after spending the start on a Root Network (so the first global upgrade waits for the Biomass that bought it): every click spent its price, the run's spend adds up  — seedOut@49.9s(130) → cold@89.1s(140) → flood@117.9s(150) → cold@177.1s(270) → heat@204.3s(140) → salt@240.3s(200) · spent global 1030, local 90
+PASS  38 · the Bloom Report lists the build and the colony upgrade that the Biomass bought  — Your plant became: · Cold Tolerance ×2 · Heat Tolerance ×1 · Flood ×1 · Salt Handling · Seed Output ×1
+PASS  37 · affordable / unaffordable states stayed correct through the run; no browser errors
+evidence written: docs/evidence/bloom-013/economy-check.json
+
+ALL CHECKS PASS  (241.6 s)

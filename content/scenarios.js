@@ -38,7 +38,10 @@
       id: "dying_world", name: "Dying World",
       intent: "Habitability steadily degrades: the planet is losing its atmosphere, so the world itself turns drier, colder and more exposed to radiation through the environmental model the player already reads. An earlier solution stops being enough; the player protects, adapts, Terraforms or gives ground up.",
       pressure: {
-        graceSeconds: 60, durationSeconds: 420,
+        // BLOOM-013: the faster economy shortened runs by about a third, so the clock was rescaled with them (was grace 60 s,
+        // decline 420 s → final state at 480 s; now final at 290 s): a normal run lives through the whole decline again, and
+        // buying the planet's Eden strategy as if nothing were changing no longer wins (docs/evidence/bloom-013/dying-world-clock-*)
+        graceSeconds: 40, durationSeconds: 250,
         channels: { moistureShare: -0.4, temperature: -8, radiation: 8 },
         graceLabel: "Atmosphere stable (for now)",
         phases: [
@@ -51,7 +54,9 @@
       loss: { extinction: true, extinctionGraceSeconds: 8 },
       validation: {
         minStrategies: 1, holdFinalSeconds: 60,
-        pacing: { marginSeconds: [300, 1200], firstPurchaseSeconds: [30, 150], maxPurchaseGapSeconds: 300 },
+        // BLOOM-013 decision cadence (was margin 300–1200 s, first purchase 30–150 s, gap ≤ 300 s): the same first-purchase and gap
+        // limits as Eden; the margin floor (240 s) also rejects a pressure run won before the decline has done much
+        pacing: { marginSeconds: [240, 900], firstPurchaseSeconds: [0, 60], maxPurchaseGapSeconds: 120 },
         archetypes: {},
       },
       display: {

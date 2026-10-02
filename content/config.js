@@ -1,7 +1,8 @@
 // BLOOM — tuning configuration (GAME_BIBLE §15, invariant 11: rates, costs,
 // thresholds, scales and category boundaries live here, not in engine code).
 // Classic script (not JSON + fetch) so it loads over file:// with no fallback copy.
-// Values are the accepted First Bloom slice balance (2026-09-26 tuning pass).
+// Values are the accepted First Bloom slice balance (2026-09-26 tuning pass), retuned since by owner-authorized passes
+// (BLOOM-008/009 growth, BLOOM-013 economy).
 (function (root) {
   "use strict";
   const D = root.BLOOM_DATA || (root.BLOOM_DATA = { planets: {} });
@@ -99,7 +100,11 @@
     // biomass economy (bible §8). bubbleChance is planet-wide per tick (~1 per 14 s while anything thrives)
     // youngYield (BLOOM-008): Biomass share a fresh seedling stand yields vs a fully established one; the origin's
     // trickle is the home colony's own production and follows its establishment the same way
-    econ: { thriving: 0.0004, marginal: 0.00012, thrivingAbove: 0.7, originTrickle: 0.1, startBiomass: 40, youngYield: 0.45,
+    // BLOOM-013 (owner-authorized retune; docs/ECONOMY_v1.md): startBiomass 40 → 100 (the run opens with one decision — a
+    // local upgrade for the origin now, or the first global upgrade ~30 s later — never a strategy) and originTrickle
+    // 0.1 → 0.3 (the home colony pays for the opening, so a player who ignores bubbles still reaches a first global upgrade
+    // in ~30 s and the next ones every ~30–90 s). Every price, yield and bubble value is unchanged.
+    econ: { thriving: 0.0004, marginal: 0.00012, thrivingAbove: 0.7, originTrickle: 0.3, startBiomass: 100, youngYield: 0.45,
             bubbleChance: 0.011, bubbleValue: 25, bubbleAutoTicks: 60, autoCollectShare: 0.5,
             bubbleFitAbove: 0.72, bubbleMinLiving: 8, costScale: 5 },
   };

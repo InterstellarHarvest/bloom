@@ -1,0 +1,33 @@
+# BLOOM-013 — which generation attempt each public seed 1–40 resolves to, 4d1e52c vs BLOOM-013
+# (planet geometry per (archetype, seed, attempt) is economy-independent and unchanged; only the validator's verdict on
+#  each attempt moved, through the new economy + decision-cadence bands). '-' = no attempt accepted (generation fails).
+
+## ocean_archipelago: accepted 34/40 → 36/40 · 11 seed(s) resolve to a different attempt
+   seed  3: attempt - → 18
+   seed 14: attempt 6 → 1
+   seed 16: attempt 20 → 1
+   seed 17: attempt 14 → 2
+   seed 20: attempt 2 → 11
+   seed 21: attempt 5 → 1
+   seed 25: attempt 18 → 10
+   seed 30: attempt 20 → 19
+   seed 31: attempt 18 → 3
+   seed 33: attempt - → 5
+   seed 39: attempt 12 → 9
+   owner / fixture seeds: 13 attempt 6 → 6 (same), 8 attempt 1 → 1 (same)
+
+## desert_world: accepted 40/40 → 40/40 · 1 seed(s) resolve to a different attempt
+   seed  4: attempt 1 → 0
+   owner / fixture seeds: 25 attempt 0 → 0 (same), 9 attempt 1 → 1 (same)
+
+## frozen_world: accepted 40/40 → 40/40 · 9 seed(s) resolve to a different attempt
+   seed  1: attempt 1 → 0
+   seed  8: attempt 1 → 2
+   seed 15: attempt 2 → 1
+   seed 19: attempt 1 → 0
+   seed 25: attempt 1 → 0
+   seed 28: attempt 1 → 0
+   seed 32: attempt 2 → 0
+   seed 37: attempt 1 → 0
+   seed 39: attempt 1 → 0
+   owner / fixture seeds: 22 attempt 1 → 1 (same), 12 attempt 1 → 1 (same)

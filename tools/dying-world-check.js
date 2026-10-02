@@ -29,7 +29,10 @@ const fnv = s => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^=
 const mul = GOLD.mulberry32, TICK_S = config.tickMs / 1000, G = config.grow.growThresh;
 const EDEN = scenarios.find(s => s.id === "eden"), DW = scenarios.find(s => s.id === "dying_world"), P = DW.pressure;
 const at = s => Math.round(s / TICK_S); // seconds → tick
-const FULL_TICK = Math.ceil((P.graceSeconds + P.durationSeconds) / TICK_S), GRACE_TICK = at(P.graceSeconds);
+// GRACE_TICK = the first tick whose clock has reached graceSeconds (the decline's start); a grace that is not a whole number of
+// ticks (e.g. 45 s = 281.25 ticks, tried during BLOOM-013) starts on the next whole tick. FIRST_DRIFT = the first tick with progress > 0.
+const FULL_TICK = Math.ceil((P.graceSeconds + P.durationSeconds) / TICK_S - 1e-9), GRACE_TICK = Math.ceil(P.graceSeconds / TICK_S - 1e-9);
+const FIRST_DRIFT = Math.floor(P.graceSeconds / TICK_S + 1e-9) + 1, DECLINE = f => Math.round((P.graceSeconds + f * P.durationSeconds) / TICK_S); // fraction of the decline → tick
 let fails = 0; const t0 = Date.now(), EVID = {};
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (!ok) fails++; };
 const gen = (id, seed) => BLOOM.generateFromArchetype(archetypes.find(a => a.id === id), seed, { config, traits });
@@ -76,20 +79,23 @@ check(EDEN.pressure === null && EDEN.loss.extinction === false && P.graceSeconds
   const same = got => GOLD.PARTS.every(p => J(clone(got[p])) === J(want[p]));
   check(same(GOLD.runGolden(adapter(EDEN))), "2 · Eden as an explicit scenario reproduces the accepted First Bloom golden bit-for-bit (layout, evaluations, previews, prices, all 6 runs)");
   check(same(GOLD.runGolden(adapter(null))), "3 · First Bloom with no scenario is unchanged (same golden)"); }
-// 4 / 29 · procedural Eden fixtures pinned to the pre-BLOOM-012 engine (1b7ea2a): generated planet + a 3000-tick seeded run
-const BASE_FP = { // captured from a `git archive 1b7ea2a` export (planet JSON hash; run: state|biomass|density hash every 500 ticks)
-  "ocean_archipelago:13": { planet: "174efa20", run: "975ae8d1,964f98d5,58207724,09674b9f,ffdcc39f,3f2af075" },
-  "ocean_archipelago:8": { planet: "e9b31592", run: "86e30f88,693ab663,14e319b1,d5a38ed5,5f117f57,77596b3e" },
-  "desert_world:25": { planet: "2a6f923a", run: "756eee43,ba037291,fb4f83ea,0a4bac1b,e8313686,38c7765a" },
-  "desert_world:9": { planet: "e2bb0909", run: "5ac45e34,f2903fb6,a507be85,b45ce85e,6f2fe767,60b20e93" },
-  "frozen_world:22": { planet: "1bb3b0ae", run: "68cb8c16,9655ff04,6b79e9b3,1e9dd03b,a4fc58bd,7f2d4cb3" },
-  "frozen_world:12": { planet: "774a9336", run: "b53321aa,b2cf3cae,71bf8007,f4830544,17a6d4a3,f5d98a04" } };
+// 4 / 29 · procedural Eden fixtures: the generated GEOMETRY (the planet minus its validator record) pinned to the pre-BLOOM-012
+// engine (1b7ea2a), and a 3000-tick seeded run pinned to the 4d1e52c engine running the BLOOM-013 data. BLOOM-013 is a data-only
+// retune (resources/ untouched since 4d1e52c): it changes the economy, so the runs and the `planet.archetype` record (witness
+// times) move, while every fixture keeps its attempt and its exact geometry.
+const BASE_FP = { // geometry: `git archive 1b7ea2a`; run (state|biomass|density hash every 500 ticks): `git archive 4d1e52c` + BLOOM-013 content/
+  "ocean_archipelago:13": { geometry: "2681486f", run: "fb9b35c0,40cac280,b80a230a,a688b8ee,828ff129,7da0d1a9" },
+  "ocean_archipelago:8": { geometry: "afa3a82e", run: "aa61a01c,a7010156,5dd3d06b,b6e039d0,5036ab8a,cbdc29b6" },
+  "desert_world:25": { geometry: "263c745c", run: "30691bce,11d82233,421228fd,ddf9b48f,bc11f20f,1dabcf92" },
+  "desert_world:9": { geometry: "7367d969", run: "00002aec,d1b289b3,dc2daf7e,7326a3e8,9f327486,fed3c1f5" },
+  "frozen_world:22": { geometry: "613f39fe", run: "5a93dc67,e01580ed,d03133c1,4d78b83d,6d938e5c,252c4de5" },
+  "frozen_world:12": { geometry: "3680792e", run: "6bf32b0e,c7f9e8e4,138645c0,4e7f9b1e,f35f4396,30952240" } };
 { const rows = [];
-  for (const key of Object.keys(BASE_FP)) { const [id, seed] = key.split(":"), p = gen(id, +seed), plan = p.archetype.strategies.list[0].purchases.map(x => x[0]);
+  for (const key of Object.keys(BASE_FP)) { const [id, seed] = key.split(":"), p = gen(id, +seed), { archetype: _, ...geometry } = p, plan = p.archetype.strategies.list[0].purchases.map(x => x[0]);
     const a = runFp(BLOOM.createSim(p, config, traits, { rng: mul(12345) }), plan, 3000), b = runFp(BLOOM.createSim(p, config, traits, { rng: mul(12345), scenario: EDEN }), plan, 3000);
-    rows.push({ key, planet: fnv(J(p)) === BASE_FP[key].planet, run: a === BASE_FP[key].run, eden: b === BASE_FP[key].run }); }
-  check(rows.every(r => r.planet && r.run && r.eden), "4 · Ocean 13/8, Desert 25/9 and Frozen 22/12 Eden worlds are unchanged: same generated planet and the same 3000-tick run as 1b7ea2a, with no scenario and with Eden",
-    rows.map(r => `${r.key} ${r.planet && r.run && r.eden ? "✓" : `planet ${r.planet} run ${r.run} eden ${r.eden}`}`).join(" · ")); }
+    rows.push({ key, planet: fnv(J(geometry)) === BASE_FP[key].geometry, run: a === BASE_FP[key].run, eden: b === BASE_FP[key].run }); }
+  check(rows.every(r => r.planet && r.run && r.eden), "4 · Ocean 13/8, Desert 25/9 and Frozen 22/12 Eden worlds are unchanged: the same generated geometry as 1b7ea2a, and the same 3000-tick run as the 4d1e52c engine on the BLOOM-013 data, with no scenario and with Eden",
+    rows.map(r => `${r.key} ${r.planet && r.run && r.eden ? "✓" : `geometry ${r.planet} run ${r.run} eden ${r.eden}`}`).join(" · ")); }
 { const sigs = OA13.archetype.strategies.list.map(x => x.signature);
   check(OA13.archetype.attempt === 6 && sigs.length === 2 && sigs.some(s => /Temperature:cold/.test(s) && /salt/.test(s)) && sigs.some(s => /Temperature:heat/.test(s) && /rad/.test(s)),
     "29 · no-pressure Ocean 13 keeps its accepted Eden baseline (attempt 6, layers 1–8, Cold+Salt vs Heat+Radiation)", sigs.join(" | ")); }
@@ -115,9 +121,9 @@ const clock = (() => { // one no-purchase pressured run, recording the pressure 
   check(fresh.progress === 0 && fresh.offsets.temp === 0 && fresh.offsets.moist === 0 && fresh.offsets.rad === 0 && fresh.phase === -1 && rows[0].p === 0,
     "7 · Dying World pressure starts at zero (no drift, grace phase) on a fresh run and on its first tick");
   const inGrace = rows.filter(r => r.s < P.graceSeconds), first = rows.find(r => r.p > 0);
-  check(inGrace.length === GRACE_TICK - 1 && inGrace.every(r => r.p === 0 && r.k === -1) && first.t === GRACE_TICK + 1 && rows[GRACE_TICK - 1].k === 0,
+  check(inGrace.length === GRACE_TICK - 1 && inGrace.every(r => r.p === 0 && r.k === -1) && first.t === FIRST_DRIFT && rows[GRACE_TICK - 1].k === 0,
     "8 · the grace period behaves as configured: zero drift for the first graceSeconds, then the decline starts",
-    `${P.graceSeconds} s = ${GRACE_TICK} ticks stable; first drift at tick ${first.t} (${first.s.toFixed(2)} s)`);
+    `${P.graceSeconds} s = ${GRACE_TICK - 1} ticks stable; first drift at tick ${first.t} (${first.s.toFixed(2)} s)`);
   let mono = true; for (let i = 1; i < rows.length; i++) { const a = rows[i - 1], b = rows[i];
     if (b.p < a.p || Math.abs(b.o.temp) < Math.abs(a.o.temp) || Math.abs(b.o.moist) < Math.abs(a.o.moist) || b.o.rad < a.o.rad || b.k < a.k) mono = false; }
   check(mono, "9 · pressure increases monotonically (progress, every channel's drift and the phase never step back)");
@@ -125,13 +131,14 @@ const clock = (() => { // one no-purchase pressured run, recording the pressure 
   check(full && full.t === FULL_TICK && after.every(r => r.p === 1 && r.o.temp === max.temp && r.o.moist === max.moist && r.o.rad === max.rad && r.k === P.phases.length - 1),
     "10 · pressure reaches its configured maximum at grace + duration and then stays there (final harsh state, no further drift)",
     `full at tick ${full && full.t} (${(full && full.s).toFixed(1)} s); held for ${after.length} more ticks; max ${J(max)}`);
-  const sample = [GRACE_TICK + 300, at(240), at(360), FULL_TICK].map(t => rows[t - 1]);
+  // (sample points are fractions of the decline, so they follow the scenario's timing data; the no-purchase run outlives FULL_TICK)
+  const sample = [DECLINE(0.25), DECLINE(0.5), DECLINE(0.75), FULL_TICK].map(t => rows[t - 1]);
   const okCh = (k, want) => sample.every(r => Math.abs(r.o[k] - want * r.p) < 1e-9);
   check(okCh("moist", P.channels.moistureShare * OA13.globalClimate.moisture) && max.moist < 0, "11 · moisture declines as the data says: moistureShare × the planet's starting sky moisture × progress",
     `${P.channels.moistureShare} × ${OA13.globalClimate.moisture} → ${sample.map(r => `${r.s.toFixed(0)} s ${r1(r.o.moist)}`).join(", ")}`);
   check(okCh("temp", P.channels.temperature) && max.temp < 0, "12 · temperature declines as the data says: temperature × progress", sample.map(r => `${r.s.toFixed(0)} s ${r1(r.o.temp)} °C`).join(", "));
   check(okCh("rad", P.channels.radiation) && max.rad > 0, "13 · radiation increases as the data says: radiation × progress", sample.map(r => `${r.s.toFixed(0)} s +${r1(r.o.rad)}`).join(", "));
-  EVID.progression = [0, GRACE_TICK, at(150), at(240), at(300), at(360), at(420), FULL_TICK].map(t => { const r = t ? rows[t - 1] : { s: 0, p: 0, o: clock.fresh.offsets, k: -1 };
+  EVID.progression = [0, GRACE_TICK, DECLINE(0.17), DECLINE(0.34), DECLINE(0.5), DECLINE(0.67), DECLINE(0.84), FULL_TICK].map(t => { const r = t ? rows[t - 1] : { s: 0, p: 0, o: clock.fresh.offsets, k: -1 };
     return { seconds: +r.s.toFixed(1), progress: +r.p.toFixed(3), phase: r.k < 0 ? P.graceLabel : P.phases[r.k].name, moisture: r1(r.o.moist), temperature: r1(r.o.temp), radiation: r1(r.o.rad) }; });
   console.log("      progression: " + EVID.progression.map(x => `${x.seconds}s p${x.progress} ${x.phase} [m${x.moisture} t${x.temperature} r+${x.radiation}]`).join(" | ")); }
 { // 14 · nothing is mutated
@@ -182,7 +189,7 @@ const lampTrace = (planet, scenario, ticks) => { const sim = BLOOM.createSim(pla
   for (let t = 1; t <= FULL_TICK + 50; t++) { a.tick(); b.tick(); if (t === 1500) { b.biomass += 1e5; ["warm", "humid", "humid"].forEach(id => b.buy(id)); at1 = { ...b.pressure.offsets }; }
     if (J(a.pressure.offsets) !== J(b.pressure.offsets) || a.pressure.progress !== b.pressure.progress || a.pressure.phase !== b.pressure.phase) ok = false; }
   check(ok && J(a.pressure.events) === J(b.pressure.events) && b.sky.temp === a.sky.temp + 6 && b.sky.moist === a.sky.moist + 16,
-    "19 · Terraform never erases scenario progress: a run that Terraforms at 240 s has exactly the same pressure clock, drift and milestones as one that does not (only its own sky moved)",
+    "19 · Terraform never erases scenario progress: a run that Terraforms mid-decline (240 s) has exactly the same pressure clock, drift and milestones as one that does not (only its own sky moved)",
     `drift at the purchase ${J({ temp: r1(at1.temp), moist: r1(at1.moist), rad: r1(at1.rad) })}; sky ${a.sky.temp}/${a.sky.moist} vs ${b.sky.temp}/${b.sky.moist}`); }
 { // 21 · Roots + Root Network cannot rescue ground the decline turned red (mechanism: focus + specialization set on a Living region)
   const run = roots => { const sim = BLOOM.createSim(OA13, config, traits, { rng: mul(5), scenario: DW }); const M = sim.map; let sec = -1;
@@ -197,7 +204,7 @@ const lampTrace = (planet, scenario, ticks) => { const sim = BLOOM.createSim(pla
     `${name}: fitness ${a.f && a.f.toFixed(2)} ≤ protectAbove ${config.colony.protectAbove} in the final state; living tiles 900 ticks after it: ${a.living} (Roots + Root Network) vs ${b.living} (Balanced)`); }
 { // 22 · Biomass changes only through real colony condition
   const e = BLOOM.createSim(OA13, config, traits, { rng: mul(21) }), d = BLOOM.createSim(OA13, config, traits, { rng: mul(21), scenario: DW }); let same = true;
-  for (let t = 1; t <= GRACE_TICK; t++) { e.tick(); d.tick(); if (e.biomass !== d.biomass || fnv(Array.from(e.state).join("")) !== fnv(Array.from(d.state).join(""))) same = false; }
+  for (let t = 1; t < FIRST_DRIFT; t++) { e.tick(); d.tick(); if (e.biomass !== d.biomass || fnv(Array.from(e.state).join("")) !== fnv(Array.from(d.state).join(""))) same = false; }
   // final state: a pressured run vs an Eden run on the shifted planet, from the SAME colony state and the SAME random draws
   const plan = ["rad", "drought", "waterSeeds"]; let srcA = mul(8), srcB = mul(99);
   const A = BLOOM.createSim(OA13, config, traits, { rng: () => srcA(), scenario: DW }); A.biomass = 1e4; plan.forEach(id => A.buy(id));
@@ -307,7 +314,7 @@ async function browserPart() {
       "35 · the browser launch identifies Dying World (title, header, pressure bar, footer) on the same Ocean 13 world (attempt 6)", `${r.title} · ${r.foot.slice(-60)}`);
     check(!/"purchases"|minimalBuild|"signature"|witness|"held"|"plan"|"strategies"/.test(r.raw) && J(Object.keys(r.run.scenarioValidation).sort()) === J(["required", "status", "strategiesProven"]),
       "34 · the page never holds witness or solution data: layer P hands the UI a status and a count only", J(r.run.scenarioValidation));
-    check(/Atmosphere thinning/.test(r.log) && /decline begins in 1:00/.test(r.log), "Q · the run opens with the short science wording and when the decline starts", r.log.slice(0, 170));
+    check(/Atmosphere thinning/.test(r.log) && r.log.includes(`decline begins in ${Math.floor(P.graceSeconds / 60)}:${String(P.graceSeconds % 60).padStart(2, "0")}`), "Q · the run opens with the short science wording and when the decline starts", r.log.slice(0, 170));
     await shot(p, "dw-ocean13-start.png");
     // (mechanism, so this readout run survives the final state on its home island without winning: Biomass granted, the
     // radiation + drying answers bought through the real buttons; no Waterborne Seeds, so the islands stay out of reach)
@@ -321,7 +328,7 @@ async function browserPart() {
     // 36 / 37 / 39 · the bar follows the real sim; readouts are effective values; milestones at the configured thresholds
     const samples = [], phasesWant = P.phases.map(ph => ({ id: ph.id, tick: (() => { for (let t = GRACE_TICK; t < FULL_TICK + 2; t++) { const pr = BLOOM.pressure.progressAt(P, t * TICK_S); if (pr >= ph.from) return t; } })() }));
     for (let n = 0; n < 34; n++) { await p.evaluate(() => { BLOOM_API.advance(100); pollPressure(performance.now()); renderPressure(); renderHUD(BLOOM_API.coverage()); });
-      if (n % 6 === 5) samples.push(await p.evaluate(() => ({ t: BLOOM_API.sim.ticks, p: BLOOM_API.pressure().progress, pct: document.getElementById("pPct").textContent, phase: document.getElementById("pPhase").textContent,
+      if (n % 3 === 2) samples.push(await p.evaluate(() => ({ t: BLOOM_API.sim.ticks, p: BLOOM_API.pressure().progress, pct: document.getElementById("pPct").textContent, phase: document.getElementById("pPhase").textContent,
         fill: document.getElementById("pFill").style.width, moist: document.getElementById("pMoist").textContent, rad: document.getElementById("pRad").textContent, next: document.getElementById("pNext").textContent }))); }
     check(samples.every(s => s.pct === `${Math.round(s.p * 100)}% lost` && Math.abs(parseFloat(s.fill) - s.p * 100) < 0.11) && new Set(samples.map(s => s.pct)).size >= 4 && samples.at(-1).next === "conditions have stopped changing",
       "36 · the pressure bar updates with the real simulation (phase, % lost, fill, live drift, time to the next stage)", samples.map(s => `${Math.round(s.t * TICK_S)}s ${s.phase} ${s.pct} m${s.moist} r${s.rad}`).join(" | "));

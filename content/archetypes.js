@@ -41,10 +41,13 @@
       geography: { terrainWeights: [0.5, 0.7, 1], minLandmassTiles: 16, maxCrossingGap: 5, minLandmasses: 3, maxOriginLandmassShare: 0.62 },
       generation: { maxAttempts: 24 },
       // layers 7–8 (BLOOM-006): ≥ 2 materially distinct broad strategies must win with margin AND keep pace.
-      // Pacing bands are provisional validator hypotheses for a perfect-knowledge witness (a person is slower;
-      // the bible's session target is 10–20 human minutes), in game-seconds at config.tickMs.
+      // Pacing bands are validator hypotheses for a perfect-knowledge witness (a person is slower; the bible's session
+      // target is 10–20 human minutes), in game-seconds at config.tickMs. BLOOM-013 replaced the provisional bands
+      // (margin 360–900 s, first purchase 45–120 s, gap ≤ 240 s) with the owner's decision-cadence requirement: the first
+      // global purchase within 60 s, no gap between purchases above 120 s, and a margin band scaled to the faster economy
+      // (240–720 s; it still rejects trivially fast and very slow worlds). Desert and Frozen share these bands.
       validation: { winnable: true, crossingRequiredToWin: true, minStrategies: 2,
-        pacing: { marginSeconds: [360, 900], firstPurchaseSeconds: [45, 120], maxPurchaseGapSeconds: 240 } },
+        pacing: { marginSeconds: [240, 720], firstPurchaseSeconds: [0, 60], maxPurchaseGapSeconds: 120 } },
     },
     {
       id: "desert_world", name: "Desert World",
@@ -74,12 +77,12 @@
       // ground, lighter lake water, a faint dune stipple — so a desert reads as dry at a glance
       render: { ground: [232, 180, 100], groundMix: 0.6, water: [40, 104, 132], waterAlt: [52, 118, 146], dunes: true },
       generation: { maxAttempts: 24 },
-      // Desert World's own policy. The Ocean Archipelago bands measured cleanly on the Desert sweep (witness margins
-      // 362–692 s, first purchase 47–102 s, largest gap 78–165 s), so they are reused unchanged; Desert adds a cap on
+      // Desert World's own policy. The Ocean Archipelago bands measured cleanly on the Desert sweep (BLOOM-010: witness margins
+      // 362–692 s, first purchase 47–102 s, largest gap 78–165 s; BLOOM-013 economy: 128–431 s, 16–29 s, 54–98 s), so they are reused; Desert adds a cap on
       // the wait after the last purchase (one early purchase then minutes of nothing to decide is not a desert puzzle)
       // and requires every proven strategy to answer the dry ground (Water:dry — by Adaptation, Terraform or both).
       validation: { winnable: true, minStrategies: 2, requiredConditions: ["Water:dry"],
-        pacing: { marginSeconds: [360, 900], firstPurchaseSeconds: [45, 120], maxPurchaseGapSeconds: 240, maxTerminalWaitSeconds: 240 } },
+        pacing: { marginSeconds: [240, 720], firstPurchaseSeconds: [0, 60], maxPurchaseGapSeconds: 120, maxTerminalWaitSeconds: 240 } },
     },
     {
       id: "frozen_world", name: "Frozen World",
@@ -113,11 +116,12 @@
       // glints on frozen ground, dark cold lake water
       render: { ground: [222, 232, 244], groundMix: 0.7, tintBy: "cold", water: [38, 78, 112], waterAlt: [120, 160, 186], frost: true },
       generation: { maxAttempts: 24 },
-      // Frozen World's own policy. The shared pacing bands measured cleanly on the Frozen sweep (witness margins 360–680 s,
-      // first purchase 48–112 s, largest gap 73–174 s, terminal wait 11–198 s), so they are reused unchanged; every proven
+      // Frozen World's own policy. The shared pacing bands measured cleanly on the Frozen sweep (BLOOM-011: witness margins
+      // 360–680 s, first purchase 48–112 s, largest gap 73–174 s, terminal wait 11–198 s; BLOOM-013 economy: 146–481 s, 16–30 s,
+      // 51–113 s, 17–234 s), so they are reused; every proven
       // strategy must answer the cold ground (Temperature:cold — by Cold Tolerance, warming the sky, or both)
       validation: { winnable: true, minStrategies: 2, requiredConditions: ["Temperature:cold"],
-        pacing: { marginSeconds: [360, 900], firstPurchaseSeconds: [45, 120], maxPurchaseGapSeconds: 240, maxTerminalWaitSeconds: 240 } },
+        pacing: { marginSeconds: [240, 720], firstPurchaseSeconds: [0, 60], maxPurchaseGapSeconds: 120, maxTerminalWaitSeconds: 240 } },
     },
   ];
 })(typeof window !== "undefined" ? window : globalThis);

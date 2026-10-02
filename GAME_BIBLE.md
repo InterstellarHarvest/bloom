@@ -359,6 +359,21 @@ Every Biomass point spent reshaping the sky is a point not spent adapting the or
 
 *(BLOOM-009 addendum)* Local colony specializations (§4.5) add a smaller, optional sink: improve one important colony now, or save for the next global Adapt / Spread / Terraform upgrade. They are deliberately secondary to global progression.
 
+### 8.4 Decision cadence *(addendum: BLOOM-013, owner-authorized retune)*
+
+**Owner feedback (Dying World playtest, 2026-10-02, verdict REVISE):** *"the game still seems a bit slow to actually gain enough biomass to effectively do anything and strategize. things might need to cost less or gain more."* Earlier playtests had noted slow openings too. The measured cause was a shared economy that left a player watching Biomass climb for minutes: the first global upgrade was affordable at ~80–90 s, and Ocean 13 + Dying World waited ~5 minutes between its first and second purchase.
+
+The rule this adds to the north star: **reduce waiting between meaningful strategic choices.** It is not "make the game faster". The intended rhythm is *read the problem → have, or soon earn, enough Biomass to choose among responses → buy → watch the consequences → another meaningful choice comes within reach → repeat.* Watching the simulation is part of the pleasure. Watching a number climb for minutes is not.
+
+Targets, measured by `tools/economy-study.js` and held by `tools/economy-check.js` (bot seconds; details in `docs/ECONOMY_v1.md`):
+
+- **Opening:** one meaningful decision is affordable immediately (a local upgrade for the origin). Two materially different options are affordable within ~30–45 s. The first global upgrade is bought within ~30–60 s. The start never buys a strategy.
+- **Midgame:** meaningful purchases recur every ~30–90 s. No ordinary gap before the win exceeds ~120 s, even for a player who never clicks a bubble.
+- **Endgame:** the wait after the last purchase stays bounded. Pointless upgrades are never added to fill time.
+- **Integrity:** tradeoffs still bind (temperature cap, one water strategy, Terraform side effects, Waterborne Seeds' price, local-vs-global). Bubbles stay a bonus. Local upgrades stay optional and costly. Biomass never piles up so fast that prices stop mattering.
+
+**The retune** is data only and changes no price: start Biomass 40 → 100 and origin trickle 0.1 → 0.3. The home colony now pays for the opening, so first-choice friction drops far more than later costs; mid- and late-game prices still demand saving. Runs got about a third shorter as a consequence. The 10–20 human-minute session target is unchanged; whether shorter but denser runs are right is a recorded PMO decision point (`docs/ECONOMY_v1.md` §6). Pressure scenarios fit the economy, not the other way round: Dying World's clock was rescaled with the runs (§11.4). The validators' pacing bands now encode these cadence targets (§10.3 layer 8 / layer P).
+
 ---
 
 ## 9. WATER, ISLANDS, AND IMPASSABLE TERRAIN
@@ -487,7 +502,7 @@ The procedural archetype phase is complete enough for production (Ocean Archipel
 - **Origin.** Under pressure the protected-refuge floor shrinks in proportion to how much of the origin's own habitability the pressure removes (immune to Terraform, not to scenario pressure).
 - **Loss.** A scenario may enable extinction: no Living tile anywhere for a short grace period loses the run, with a clear reason and a restart. Short gaps never lose. Eden keeps invariant 1 and never loses.
 - **Validation layer P.** Archetype layers 1–8 keep validating the Eden planet. A separate layer proves a planet + scenario combination: real pressured witnesses that buy with earned Biomass while the decline advances, reach the win + margin, and still hold 70% after the final state is reached, with the scenario's own strategy count and pacing bands. Per-archetype rejection is data.
-- **Dying World (atmospheric loss).** After 60 s of grace, over 7 minutes, the sky loses 40% of its starting moisture, cools by 8 °C, and surface radiation rises by 8. Wording: *Atmosphere thinning — the planet is slowly losing atmosphere. Conditions are becoming drier and colder, and surface radiation is increasing.* It is a simplified model whose directions are coherent; real atmospheric loss does not behave identically on every planet. The same decline lands differently per archetype: Ocean dries late and its hot lowlands cool into range; Desert has little water left to lose but none to spare; Frozen's cold deepens. It is viable on Ocean 13, Desert 25 and Frozen 22. The primary fixture, Ocean 13, has two strategies: evolve for the drier world (Drought Adaptation) or Terraform against it (Humidify). Owner playtest: `docs/PLAYTEST_DYING_WORLD_v1.md` (pending).
+- **Dying World (atmospheric loss).** After 40 s of grace, over about 4 minutes (BLOOM-013; was 60 s and 7 minutes, rescaled with the faster economy of §8.4), the sky loses 40% of its starting moisture, cools by 8 °C, and surface radiation rises by 8. Wording: *Atmosphere thinning — the planet is slowly losing atmosphere. Conditions are becoming drier and colder, and surface radiation is increasing.* It is a simplified model whose directions are coherent; real atmospheric loss does not behave identically on every planet. The same decline lands differently per archetype: Ocean dries late and its hot lowlands cool into range; Desert has little water left to lose but none to spare; Frozen's cold deepens. It is viable on Ocean 13, Desert 25 and Frozen 22. The primary fixture, Ocean 13, has two strategies: evolve for the drier world (Drought Adaptation) or Terraform against it (Humidify). Owner playtest: `docs/PLAYTEST_DYING_WORLD_v1.md` — **REVISE** (2026-10-02: Biomass too slow to strategize), pending the BLOOM-013 economy re-test (`docs/PLAYTEST_ECONOMY_v1.md`). Not human-approved.
 - **Not yet built:** Native Competition and the other §11.3 scenarios, a scenario-selection menu, and the final pressure UI. The current pressure bar is temporary functional UI and follows the approved contextual-panel direction rather than growing the left panel.
 
 ---

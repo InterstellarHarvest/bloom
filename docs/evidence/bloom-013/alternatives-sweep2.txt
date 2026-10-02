@@ -1,0 +1,78 @@
+
+=== A0: (baseline)
+    prices cold 140/270/400 · heat 140/270/400 · drought 150/270 · flood 150/270 · salt 200 · rad 220 · seedOut 130/280 · waterSeeds 180 · earlyMat 170 · warm 200/290 · cool 200/290 · humid 200/290 · dry 200/290 · local 90/130/170/210
+  fb     open L63 G87 2x87 | BAL 1st 90/90/90 gaps 81,58,44,67,34,49 | 81,58,44,82,39,45 | 81,58,68,32,52,64 maxW 100 win 344/377/360 term 8/21/7
+         PLAYER auto: seedOut@102 cold@136 flood@171 cold@216 heat@234 salt@262 [leafCanopy@67] | seedOut@102 cold@136 drought@171 cold@221 heat@242 salt@272 [leafCanopy@67] | seedOut@102 heat@136 salt@177 cold@202 humid@236 humid@275 [leafCanopy@67]  maxW 109 anyGap 63/63/63 dead 108 win 270/293/282 term 8/17/6 w012 0.77:0.05:0.18 0.76:0.06:0.18 0.75:0.04:0.21 unspent 80/146/61 | click win 252/274/261 maxW 104
+  o13    open L60 G86 2x86 | BAL 1st 90/90 gaps 105,103,117,72 | 105,103,124,68 maxW 139 win 554/452 term 184/63
+         PLAYER auto: seedOut@116 waterSeeds@184 salt@277 cold@325 earlyMat@379 [leafCanopy@54] | seedOut@116 waterSeeds@184 rad@285 heat@323 [leafCanopy@54]  maxW 127 anyGap 102/108 dead 116 win 458/390 term 41/42 w012 0.73:0.04:0.23 0.78:0.03:0.19 unspent 175/150 | click win 428/318 maxW 116
+  d25    open L48 G77 2x77 | BAL 1st 80/80 gaps 60,71,139 | 60,71,100,109,57 maxW 177 win 480/462 term 170/36
+         PLAYER auto: seedOut@93 drought@152 drought@256 earlyMat@310 seedOut@359 [leafCanopy@48] | seedOut@93 drought@152 humid@230 rad@301 heat@334 earlyMat@376 [leafCanopy@48]  maxW 114 anyGap 102/81 dead 114 win 398/394 term 33/20 w012 0.69:0.04:0.27 0.78:0.06:0.16 unspent 236/132 | click win 345/340 maxW 99
+  f22    open L60 G79 2x79 | BAL 1st 83/83 gaps 96,79,70,102 | 96,79,70,75,80 maxW 112 win 361/423 term 39/32
+         PLAYER auto: seedOut@111 earlyMat@155 cold@196 cold@257 [leafCanopy@63] | seedOut@111 earlyMat@155 cold@196 warm@239 warm@305 [leafCanopy@63]  maxW 111 anyGap 63/65 dead 99 win 293/330 term 48/34 w012 0.72:0.03:0.25 0.72:0.04:0.24 unspent 266/193 | click win 254/291 maxW 101
+  o13dw  open L60 G86 2x86 | BAL 1st 90/90 gaps 105,306,111,102 | 105,306,144,70 maxW 306 win 672/707 term 118/130 p@win 1/1 closed 0.3/0.3
+         PLAYER auto: seedOut@128 rad@346 drought@404 waterSeeds@470 earlyMat@537 [leafCanopy@54] | seedOut@128 rad@346 humid@425 waterSeeds@471 earlyMat@551 [leafCanopy@54]  maxW 219 anyGap 215/215 dead 152 win 527/554 term 24/11 w012 0.78:0.09:0.13 0.74:0.08:0.18 unspent 62/40 | click win 479/494 maxW 219 | p@win 1/1 closed 0.2/0.2
+
+=== B1 s100 tr.3: econ.startBiomass=100,econ.originTrickle=0.3
+    prices cold 140/270/400 · heat 140/270/400 · drought 150/270 · flood 150/270 · salt 200 · rad 220 · seedOut 130/280 · waterSeeds 180 · earlyMat 170 · warm 200/290 · cool 200/290 · humid 200/290 · dry 200/290 · local 90/130/170/210
+  fb     open L0 G30 2x30 | BAL 1st 33/33/33 gaps 33,56,41,50,26,36 | 33,56,41,55,29,36 | 33,56,59,33,41,55 maxW 69 win 249/267/263 term 7/23/7
+         PLAYER auto: seedOut@33 cold@88 flood@113 cold@144 heat@161 salt@186 [leafCanopy@67] | seedOut@33 cold@88 drought@113 cold@149 heat@165 salt@190 earlyMat@211 [leafCanopy@67] | seedOut@33 heat@88 salt@117 cold@138 humid@163 humid@197 [leafCanopy@67]  maxW 62 anyGap 36/36/34 dead 52 win 198/219/205 term 10/7/6 w012 0.58:0.2:0.22 0.58:0.19:0.23 0.56:0.18:0.26 unspent 116/110/87 | click win 190/205/192 maxW 62
+  o13    open L0 G29 2x29 | BAL 1st 33/33 gaps 33,82,73,42 | 33,82,77,41 maxW 82 win 372/298 term 162/75
+         PLAYER auto: seedOut@32 waterSeeds@93 salt@153 cold@190 earlyMat@220 seedOut@264 [leafCanopy@60] | seedOut@32 waterSeeds@93 rad@160 heat@194 earlyMat@232 [leafCanopy@60]  maxW 73 anyGap 54/59 dead 65 win 305/246 term 39/19 w012 0.57:0.12:0.32 0.63:0.14:0.22 unspent 292/111 | click win 284/228 maxW 65
+  d25    open L0 G25 2x25 | BAL 1st 28/28 gaps 29,43,94 | 29,43,71,76,34 maxW 103 win 350/320 term 173/58
+         PLAYER auto: seedOut@26 drought@86 drought@139 earlyMat@168 seedOut@212 [leafCanopy@54] | seedOut@26 drought@86 humid@124 rad@168 heat@190 earlyMat@220 seedOut@260 [leafCanopy@54]  maxW 62 anyGap 56/44 dead 56 win 277/285 term 59/21 w012 0.46:0.12:0.42 0.58:0.19:0.23 unspent 525/208 | click win 265/268 maxW 60
+  f22    open L0 G28 2x28 | BAL 1st 31/31 gaps 32,62,29,65 | 32,62,29,50,68 maxW 78 win 254/295 term 47/37
+         PLAYER auto: seedOut@32 earlyMat@92 cold@113 cold@158 seedOut@197 [leafCanopy@63] | seedOut@32 earlyMat@92 cold@113 warm@149 warm@191 seedOut@234 [leafCanopy@63]  maxW 65 anyGap 46/43 dead 56 win 207/233 term 9/13 w012 0.54:0.15:0.31 0.52:0.14:0.34 unspent 104/125 | click win 194/218 maxW 64
+  o13dw  open L0 G29 2x29 | BAL 1st 33/33 gaps 33,109,48,71 | 33,109,65,74 maxW 109 win 405/367 term 166/112 p@win 0.8/0.7 closed 0/0
+         PLAYER auto: seedOut@32 rad@101 drought@133 waterSeeds@175 earlyMat@217 seedOut@269 [leafCanopy@60] | seedOut@32 rad@101 humid@144 waterSeeds@183 earlyMat@237 seedOut@314 [leafCanopy@60]  maxW 91 anyGap 67/62 dead 66 win 381/299 term 87/20 w012 0.5:0.23:0.28 0.58:0.18:0.24 unspent 448/87 | click win 382/274 maxW 77 | p@win 0.8/0.6 closed 0/0
+
+=== B2 s100 tr.25 thr.0006: econ.startBiomass=100,econ.originTrickle=0.25,econ.thriving=0.0006,econ.marginal=0.00018
+    prices cold 140/270/400 · heat 140/270/400 · drought 150/270 · flood 150/270 · salt 200 · rad 220 · seedOut 130/280 · waterSeeds 180 · earlyMat 170 · warm 200/290 · cool 200/290 · humid 200/290 · dry 200/290 · local 90/130/170/210
+  fb     open L0 G32 2x32 | BAL 1st 36/36/36 gaps 36,54,31,52,24,29 | 36,54,31,45,24,28,23 | 36,54,50,29,31,36 maxW 56 win 239/250/240 term 9/1/7
+         PLAYER auto: seedOut@35 cold@89 flood@111 cold@145 heat@160 salt@179 [leafCanopy@67] | seedOut@35 cold@89 drought@111 cold@144 heat@159 salt@182 earlyMat@196 [leafCanopy@67] | seedOut@35 heat@89 salt@117 cold@137 humid@162 humid@191 [leafCanopy@67]  maxW 58 anyGap 36/35/35 dead 53 win 193/212/194 term 13/14/7 w012 0.56:0.22:0.23 0.55:0.22:0.23 0.55:0.21:0.25 unspent 183/209/122 | click win 184/202/183 maxW 56
+  o13    open L0 G32 2x32 | BAL 1st 36/36 gaps 36,84,80,43 | 36,84,83,53 maxW 92 win 469/317 term 238/82
+         PLAYER auto: seedOut@35 waterSeeds@102 salt@175 cold@211 earlyMat@237 [leafCanopy@58] | seedOut@35 waterSeeds@102 rad@183 heat@212 earlyMat@256 [leafCanopy@58]  maxW 81 anyGap 62/66 dead 59 win 304/257 term 36/16 w012 0.56:0.13:0.31 0.61:0.15:0.23 unspent 268/112 | click win 303/234 maxW 68
+  d25    open L0 G26 2x26 | BAL 1st 30/30 gaps 29,49,88 | 29,49,68,64,36 maxW 100 win 349/317 term 174/58
+         PLAYER auto: seedOut@26 drought@89 drought@147 earlyMat@176 seedOut@218 [leafCanopy@56] | seedOut@26 drought@89 humid@135 rad@180 heat@207 earlyMat@232 seedOut@269 [leafCanopy@56]  maxW 70 anyGap 57/47 dead 61 win 292/292 term 69/23 w012 0.45:0.12:0.43 0.57:0.19:0.24 unspent 715/261 | click win 268/271 maxW 62
+  f22    open L0 G30 2x30 | BAL 1st 33/33 gaps 34,66,33,71 | 34,66,33,55,69 maxW 74 win 254/287 term 55/39
+         PLAYER auto: seedOut@34 earlyMat@99 cold@121 cold@161 seedOut@199 [leafCanopy@63] | seedOut@34 earlyMat@99 cold@121 warm@152 warm@191 seedOut@233 [leafCanopy@63]  maxW 65 anyGap 41/41 dead 56 win 207/234 term 13/8 w012 0.54:0.16:0.3 0.53:0.15:0.32 unspent 152/116 | click win 199/223 maxW 65
+  o13dw  open L0 G32 2x32 | BAL 1st 36/36 gaps 36,114,69,58 | 36,114,81,56 maxW 114 win 420/396 term 161/123 p@win 0.9/0.8 closed 0/0
+         PLAYER auto: seedOut@35 rad@120 drought@161 waterSeeds@194 earlyMat@245 seedOut@313 [leafCanopy@58] | seedOut@35 rad@120 humid@170 waterSeeds@202 earlyMat@245 [leafCanopy@58]  maxW 100 anyGap 68/64 dead 60 win 385/301 term 73/32 w012 0.5:0.24:0.26 0.58:0.19:0.23 unspent 400/134 | click win 387/277 maxW 81 | p@win 0.8/0.6 closed 0/0
+
+=== B3 s100 tr.25 cs4: econ.startBiomass=100,econ.originTrickle=0.25,econ.costScale=4
+    prices cold 112/216/320 · heat 112/216/320 · drought 120/216 · flood 120/216 · salt 160 · rad 176 · seedOut 104/224 · waterSeeds 144 · earlyMat 136 · warm 160/232 · cool 160/232 · humid 160/232 · dry 160/232 · local 72/104/136/168
+  fb     open L0 G6 2x6 | BAL 1st 9/9/9 gaps 9,67,37,50,13,36 | 9,67,37,52,23,27 | 9,67,38,27,42,49 maxW 67 win 218/229/227 term 9/20/8
+         PLAYER auto: seedOut@10 cold@76 flood@99 cold@129 heat@141 salt@162 [leafCanopy@50] | seedOut@10 cold@76 drought@99 cold@129 heat@142 salt@161 earlyMat@177 [leafCanopy@50] | seedOut@10 heat@76 salt@101 cold@120 humid@144 humid@172 [leafCanopy@50]  maxW 72 anyGap 42/42/42 dead 62 win 175/189/179 term 12/10/8 w012 0.66:0.09:0.24 0.66:0.09:0.25 0.66:0.07:0.27 unspent 119/123/94 | click win 163/182/172 maxW 69
+  o13    open L0 G6 2x6 | BAL 1st 9/9 gaps 9,82,63,40 | 9,82,72,40 maxW 98 win 399/284 term 203/80
+         PLAYER auto: seedOut@10 waterSeeds@88 salt@135 cold@174 earlyMat@201 seedOut@240 [leafCanopy@48] | seedOut@10 waterSeeds@88 rad@143 heat@185 earlyMat@221 [leafCanopy@48]  maxW 85 anyGap 52/58 dead 78 win 327/251 term 70/22 w012 0.56:0.04:0.4 0.72:0.05:0.24 unspent 442/117 | click win 260/226 maxW 78
+  d25    open L0 G6 2x6 | BAL 1st 9/9 gaps 9,61,87 | 9,61,65,54,40 maxW 88 win 323/307 term 168/72
+         PLAYER auto: seedOut@9 drought@79 drought@133 earlyMat@162 seedOut@203 [leafCanopy@40] | seedOut@9 drought@79 humid@119 rad@160 heat@182 earlyMat@202 seedOut@239 [leafCanopy@40]  maxW 74 anyGap 52/41 dead 70 win 265/269 term 62/28 w012 0.5:0.05:0.46 0.6:0.12:0.28 unspent 522/236 | click win 253/261 maxW 68
+  f22    open L0 G6 2x6 | BAL 1st 9/9 gaps 9,63,29,67 | 9,63,29,47,62 maxW 75 win 222/257 term 52/44
+         PLAYER auto: seedOut@10 earlyMat@84 cold@106 cold@143 seedOut@184 [leafCanopy@50] | seedOut@10 earlyMat@84 cold@106 warm@132 warm@173 seedOut@207 [leafCanopy@50]  maxW 74 anyGap 43/41 dead 68 win 194/220 term 15/11 w012 0.6:0.07:0.33 0.6:0.06:0.34 unspent 140/119 | click win 179/203 maxW 72
+  o13dw  open L0 G6 2x6 | BAL 1st 9/9 gaps 9,94,47,64 | 9,94,62,62 maxW 117 win 403/362 term 200/146 p@win 0.8/0.7 closed 0/0
+         PLAYER auto: seedOut@10 rad@93 drought@116 waterSeeds@143 earlyMat@189 seedOut@242 [leafCanopy@48] | seedOut@10 rad@93 humid@123 waterSeeds@153 earlyMat@205 seedOut@267 [leafCanopy@48]  maxW 94 anyGap 60/58 dead 78 win 382/317 term 117/57 w012 0.5:0.14:0.36 0.6:0.08:0.31 unspent 626/267 | click win 383/260 maxW 83 | p@win 0.8/0.6 closed 0/0
+
+=== B4 s100 tr.2 cs4 spec22.5: econ.startBiomass=100,econ.originTrickle=0.2,econ.costScale=4,colony.specCost.base=22.5,colony.specCost.step=10
+    prices cold 112/216/320 · heat 112/216/320 · drought 120/216 · flood 120/216 · salt 160 · rad 176 · seedOut 104/224 · waterSeeds 144 · earlyMat 136 · warm 160/232 · cool 160/232 · humid 160/232 · dry 160/232 · local 90/130/170/210
+  fb     open L0 G7 2x7 | BAL 1st 11/11/11 gaps 11,73,40,54,26,29 | 11,73,40,59,19,30 | 11,73,53,20,42,42 maxW 73 win 240/249/241 term 9/17/7
+         PLAYER auto: seedOut@11 cold@81 flood@107 cold@143 heat@158 salt@178 [leafCanopy@54] | seedOut@11 cold@81 drought@107 cold@144 heat@159 salt@181 earlyMat@201 [leafCanopy@54] | seedOut@11 heat@81 salt@114 cold@135 humid@163 humid@191 [leafCanopy@54]  maxW 81 anyGap 47/47/47 dead 74 win 192/216/197 term 12/13/7 w012 0.74:0.07:0.19 0.72:0.08:0.2 0.7:0.05:0.25 unspent 108/140/76 | click win 176/199/182 maxW 81
+  o13    open L0 G7 2x7 | BAL 1st 10/10 gaps 10,81,73,60 | 10,81,83,50 maxW 101 win 364/305 term 147/88
+         PLAYER auto: seedOut@11 waterSeeds@88 salt@145 cold@196 earlyMat@231 seedOut@281 [leafCanopy@54] | seedOut@11 waterSeeds@88 rad@154 heat@199 earlyMat@240 [leafCanopy@54]  maxW 97 anyGap 62/68 dead 90 win 349/266 term 67/27 w012 0.61:0.03:0.36 0.74:0.04:0.22 unspent 392/108 | click win 271/236 maxW 87
+  d25    open L0 G7 2x7 | BAL 1st 10/10 gaps 10,62,89 | 10,62,70,61,48 maxW 97 win 344/317 term 175/61
+         PLAYER auto: seedOut@11 drought@83 drought@144 earlyMat@176 seedOut@218 [leafCanopy@40] | seedOut@11 drought@83 humid@131 rad@180 heat@208 earlyMat@235 seedOut@266 [leafCanopy@40]  maxW 92 anyGap 56/47 dead 89 win 281/283 term 60/23 w012 0.55:0.08:0.37 0.69:0.1:0.21 unspent 451/194 | click win 262/267 maxW 86
+  f22    open L0 G7 2x7 | BAL 1st 10/10 gaps 10,72,25,78 | 10,72,25,59,69 maxW 90 win 244/287 term 44/36
+         PLAYER auto: seedOut@11 earlyMat@98 cold@124 cold@172 seedOut@213 [leafCanopy@61] | seedOut@11 earlyMat@98 cold@124 warm@161 warm@209 [leafCanopy@61]  maxW 87 anyGap 48/48 dead 80 win 212/239 term 11/12 w012 0.67:0.06:0.27 0.65:0.06:0.29 unspent 102/93 | click win 200/223 maxW 84
+  o13dw  open L0 G7 2x7 | BAL 1st 10/10 gaps 10,89,43,69 | 10,89,53,70 maxW 140 win 422/388 term 188/140 p@win 0.9/0.8 closed 0/0
+         PLAYER auto: seedOut@11 rad@98 drought@126 waterSeeds@169 earlyMat@212 seedOut@284 [leafCanopy@54] | seedOut@11 rad@98 humid@138 waterSeeds@181 earlyMat@233 seedOut@318 [leafCanopy@54]  maxW 126 anyGap 67/70 dead 97 win 395/309 term 100/28 w012 0.61:0.09:0.3 0.7:0.07:0.23 unspent 456/100 | click win 382/263 maxW 110 | p@win 0.8/0.6 closed 0/0
+
+=== B5 s100 tr.3 thr.0006: econ.startBiomass=100,econ.originTrickle=0.3,econ.thriving=0.0006,econ.marginal=0.00018
+    prices cold 140/270/400 · heat 140/270/400 · drought 150/270 · flood 150/270 · salt 200 · rad 220 · seedOut 130/280 · waterSeeds 180 · earlyMat 170 · warm 200/290 · cool 200/290 · humid 200/290 · dry 200/290 · local 90/130/170/210
+  fb     open L0 G29 2x29 | BAL 1st 32/32/32 gaps 32,54,35,51,21,28 | 32,54,35,52,25,28,24 | 32,54,41,30,34,45 maxW 57 win 230/250/235 term 8/3/6
+         PLAYER auto: seedOut@32 cold@86 flood@107 cold@137 heat@150 salt@170 [leafCanopy@60] | seedOut@32 cold@86 drought@107 cold@135 heat@149 salt@171 earlyMat@185 [leafCanopy@60] | seedOut@32 heat@86 salt@113 cold@130 humid@154 humid@178 [leafCanopy@60]  maxW 55 anyGap 32/32/32 dead 51 win 184/198/186 term 10/12/8 w012 0.55:0.22:0.24 0.54:0.22:0.24 0.55:0.2:0.25 unspent 149/196/121 | click win 173/189/179 maxW 50
+  o13    open L0 G28 2x28 | BAL 1st 32/32 gaps 32,68,82,31 | 32,68,83,37 maxW 83 win 372/279 term 170/72
+         PLAYER auto: seedOut@31 waterSeeds@96 salt@147 cold@186 earlyMat@213 seedOut@256 [leafCanopy@61] | seedOut@31 waterSeeds@96 rad@154 heat@177 earlyMat@199 [leafCanopy@61]  maxW 66 anyGap 57/63 dead 60 win 296/245 term 38/25 w012 0.55:0.12:0.33 0.63:0.14:0.23 unspent 315/162 | click win 281/230 maxW 62
+  d25    open L0 G24 2x24 | BAL 1st 28/28 gaps 29,40,90 | 29,40,75,58,36 maxW 92 win 338/310 term 171/65
+         PLAYER auto: seedOut@26 drought@83 drought@131 earlyMat@160 seedOut@197 [leafCanopy@54] | seedOut@26 drought@83 humid@119 rad@153 heat@176 earlyMat@200 seedOut@236 [leafCanopy@54]  maxW 62 anyGap 54/43 dead 54 win 275/273 term 67/27 w012 0.44:0.12:0.44 0.55:0.19:0.26 unspent 751/300 | click win 248/262 maxW 60
+  f22    open L0 G27 2x27 | BAL 1st 31/31 gaps 31,56,33,58 | 31,56,33,44,66 maxW 68 win 242/282 term 52/43
+         PLAYER auto: seedOut@31 earlyMat@90 cold@110 cold@149 seedOut@182 [leafCanopy@60] | seedOut@31 earlyMat@90 cold@110 warm@139 warm@180 seedOut@218 [leafCanopy@60]  maxW 62 anyGap 38/39 dead 50 win 200/222 term 17/9 w012 0.51:0.16:0.33 0.51:0.15:0.33 unspent 211/130 | click win 191/212 maxW 60
+  o13dw  open L0 G28 2x28 | BAL 1st 32/32 gaps 32,85,55,55 | 32,85,77,43 maxW 92 win 405/373 term 173/128 p@win 0.8/0.7 closed 0/0
+         PLAYER auto: seedOut@31 rad@105 drought@135 waterSeeds@171 earlyMat@214 seedOut@269 [leafCanopy@61] | seedOut@31 rad@105 humid@146 waterSeeds@181 earlyMat@220 seedOut@288 [leafCanopy@61]  maxW 78 anyGap 62/61 dead 60 win 380/308 term 103/38 w012 0.46:0.21:0.33 0.55:0.15:0.3 unspent 667/206 | click win 384/263 maxW 85 | p@win 0.8/0.6 closed 0/0

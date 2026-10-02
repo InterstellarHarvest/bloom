@@ -57,23 +57,25 @@ Player-facing wording: **Atmosphere thinning.** *The planet is slowly losing atm
 
 | Setting | Value |
 |---|---|
-| Grace | 60 s (*Atmosphere stable (for now)*) |
-| Decline | 420 s, linear; final state at 480 s (8 min) |
+| Grace | 40 s (*Atmosphere stable (for now)*) — BLOOM-013; was 60 s |
+| Decline | 250 s, linear; final state at 290 s (~4¾ min) — BLOOM-013; was 420 s, final at 480 s |
 | Moisture | `moistureShare` −0.4: the sky ends 40% drier than it began (Ocean 13: −21.6 · Frozen 22: −18.4 · Desert 25: −7.2) |
 | Temperature | −8 °C |
 | Radiation | +8 on every land region |
-| Phases | Early decline (0) · Noticeable loss (0.34, ~203 s) · Severe decline (0.67, ~341 s) · Final harsh state (1, 480 s) |
+| Phases | Early decline (0, 40 s) · Noticeable loss (0.34, ~125 s) · Severe decline (0.67, ~208 s) · Final harsh state (1, 290 s) |
 | Extinction | no living plants for 8 s |
-| Layer P | 1 strategy required for a playable combination; final-state hold 60 s; margin 300–1200 s, first purchase 30–150 s, no gap over 300 s |
+| Layer P | 1 strategy required for a playable combination; final-state hold 60 s; margin 240–900 s, first purchase ≤ 60 s, no gap over 120 s (BLOOM-013; was 300–1200 s, 30–150 s, 300 s) |
 | Per-archetype policy | none disallowed |
 
 **Why moisture is a share.** A fixed loss in points crushed Desert World (sky moisture 18) while barely touching Ocean Archipelago (54). Losing a share of the water vapour present is the better physical rule and needs no archetype special case: humid worlds lose more points than dry ones.
 
-**Tuning evidence** (`tools/pressure-study.js`, `docs/evidence/bloom-012/`):
+**BLOOM-013 clock retune.** The owner's Dying World playtest came back REVISE: *"the game still seems a bit slow to actually gain enough biomass to effectively do anything and strategize."* The fix was the shared economy ([`ECONOMY_v1.md`](ECONOMY_v1.md)), which shortens runs by about a third. Under the old 60 + 420 s clock the faster economy outran the decline: Eden builds bought as if nothing were changing won 4/4 on Ocean 13 and Desert 25. So the clock was rescaled with the runs, not the economy slowed back down. Channels, phases and the extinction rule are unchanged. Evidence: `docs/evidence/bloom-013/dying-world-clock-sweep.txt` (4 run seeds: 60/420, 30/300, 45/270, 30/240) and `dying-world-clock-sweep-8seeds.txt` (8 run seeds, bubbles ignored and clicked: 45/270, 30/270, 40/250, 30/240), `pressure-study.txt`. 45/270 looked enough on 4 seeds, but on 8 a bubble-clicking player could still win Desert 25 with the Eden Drought ×2 build, and Ocean 13's Eden Heat + Rad build won 8/8 for the player bot. 40/250 closes both without pushing a fixture witness gap over 120 s. Faster clocks (30/240) start to stretch Ocean 13's seed-output → Radiation Shielding wait past 120 s, because the decline cuts income during it.
+
+**Tuning evidence** (BLOOM-012 values in `docs/evidence/bloom-012/`; current values from `tools/pressure-study.js` in `docs/evidence/bloom-013/`):
 
 - Every accepted Eden strategy of the three fixtures falls below 70% growable land in the final state. Ocean 13: 75% → 22% and 77% → 36%. Desert 25: 74% → 40% and 75% → 55%. Frozen 22: 91% → 17% and 82% → 11%. The earlier solution stops being enough.
 - On Ocean 13 a first profile of a fixed −14 moisture, −6 °C and +12 radiation left exactly one strategy class: Waterborne Seeds plus Radiation Shielding held everything. Drying by a share of the moisture creates the Drought-vs-Humidify question.
-- Sweep of public seeds 1–20 (accepted Eden worlds): Ocean 15/17 pass layer P, Desert 18/20, Frozen 20/20. Rejections are explicit, e.g. *best build reaches 69.1% < 70%*.
+- Sweep of public seeds 1–20 (accepted Eden worlds): Ocean 15/17 pass layer P, Desert 18/20, Frozen 20/20 under BLOOM-012. Under BLOOM-013: Ocean 17/18, Desert 17/20, Frozen 20/20. Rejections are explicit, e.g. *best build reaches 69.1% < 70%*, and now also *margin reached at 150.6 s < 240 s (too fast)*: a pressure run won before the decline has done much is not accepted.
 
 **How the same decline lands on each archetype:**
 
@@ -84,6 +86,6 @@ Player-facing wording: **Atmosphere thinning.** *The planet is slowly losing atm
 **Known limitations:**
 
 - On Ocean 13 both strategies hold the same land; they differ in how they answer the drying, not in territory. Desert 25 and Frozen 22 hold different land.
-- Every witness win comes after the final state (480 s). The decline cannot be outrun with the current economy, which is intended, but it also means the early phases are lived through rather than raced.
+- Under BLOOM-013 every fixture witness reaches its margin at or after the final state (290 s; pressure 100% at the margin), and normal bot wins come at 90–100% of the decline. The decline is lived through, not raced. Ocean 13's seed-output → Radiation Shielding stretch is still the longest wait in the scenario (~100 s for the witness, up to ~115 s with human reaction time in the browser run).
 - Radiation Shielding is part of most pressured strategies, because the radiation channel is not terraformable. A world can give radiation-heavy ground up instead (Frozen 22 strategy 1, Ocean seed 9).
 - The witness is a perfect-knowledge floor that never uses colony focus or local upgrades. Human pacing is untested until the owner playtest ([`PLAYTEST_DYING_WORLD_v1.md`](PLAYTEST_DYING_WORLD_v1.md)).

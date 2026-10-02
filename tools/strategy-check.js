@@ -23,7 +23,12 @@ const t0 = Date.now();
 // BLOOM-009's owner-authorized retune (smaller seedlings, slower thickening, per-region allocation) moved them again:
 // re-picked from a fresh 40-seed scan (was tooSlow 21/1, lateFirst 4/1, gap 39/1 under BLOOM-008). Bands unchanged;
 // the production sweep is now 34/40 (seed 33 joins the explicit failures 3, 7, 19, 35, 38).
-const FIX = { positive: [13, 6], layer7: [5, 5], tooSlow: [14, 1], lateFirst: [21, 1], gap: [16, 3] };
+// BLOOM-013's owner-authorized economy retune (start 100 Biomass, origin trickle 0.3) and the decision-cadence bands it
+// validates (margin 240–720 s, first purchase ≤ 60 s, gap ≤ 120 s) moved them again: re-picked from a fresh scan of seeds
+// 1–40 × attempts 0–23 (was tooSlow 14/1, lateFirst 21/1, gap 16/3). The faster economy produces natural too-FAST worlds
+// now (tooFast), and no natural world misses the 60 s first purchase any more (the closest, 1/8, is INCONCLUSIVE with a
+// slow margin besides), so the late-first-purchase rejection is checked as a controlled policy boundary instead.
+const FIX = { positive: [13, 6], layer7: [5, 5], tooSlow: [6, 0], tooFast: [1, 2], gap: [32, 10] };
 const at = ([seed, k]) => BLOOM.archetype.attemptPlanet(OA, seed, k).planet;
 const strategies = (p, pol = POLICY, cfg = config, opts = {}) => BLOOM.findStrategies(p, cfg, traits, { ...pol, ...opts });
 const withPacing = (edit) => { const P = clone(POLICY); edit(P.pacing); return P; };
@@ -32,8 +37,8 @@ const onlyReasons = (r, re) => r.slow.length > 0 && r.slow.every(w => w.pacingCh
 
 // 0 · the policy is data
 console.log("# 0 policy");
-check(BLOOM.archetype.checkArchetype(OA, config).length === 0 && POLICY.minStrategies === 2 && J(POLICY.pacing) === J({ marginSeconds: [360, 900], firstPurchaseSeconds: [45, 120], maxPurchaseGapSeconds: 240 }),
-  "Ocean Archipelago requires 2 broad strategies and the provisional pacing bands, as archetype data", J(POLICY));
+check(BLOOM.archetype.checkArchetype(OA, config).length === 0 && POLICY.minStrategies === 2 && J(POLICY.pacing) === J({ marginSeconds: [240, 720], firstPurchaseSeconds: [0, 60], maxPurchaseGapSeconds: 120 }),
+  "Ocean Archipelago requires 2 broad strategies and the BLOOM-013 decision-cadence bands, as archetype data", J(POLICY));
 for (const [name, mut] of [["a reversed pacing band", a => a.validation.pacing.marginSeconds = [900, 360]], ["minStrategies 0", a => a.validation.minStrategies = 0],
   ["a margin band beyond the witness time budget", a => a.validation.pacing.marginSeconds = [360, 99999]], ["pacing without winnability", a => a.validation.winnable = false]]) {
   const a = clone(OA); mut(a); const e = BLOOM.archetype.checkArchetype(a, config); check(e.length > 0, `schema rejects ${name}`, e[0]);
@@ -109,24 +114,30 @@ console.log("\n# 7–10 layer-8 negatives");
   check(r.layer7.status === "PASS" && r.layer === 8 && r.status === "FAIL" && onlyReasons(r, /^margin reached at .* \(too slow\)$/),
     `7 · too slow: seed ${FIX.tooSlow[0]} attempt ${FIX.tooSlow[1]} has ${r.layer7.strategies} broad strategies that win with margin, REJECTED at layer 8`, r.reason);
 }
-{ // controlled: no natural fixture reaches layer 8 for being too fast — fast worlds are single-strategy and fail layer 7
+{
+  const p = at(FIX.tooFast), r = strategies(p);
+  check(r.layer7.status === "PASS" && r.layer === 8 && r.status === "FAIL" && onlyReasons(r, /^margin reached at .* \(too fast\)$/),
+    `8 · too fast: seed ${FIX.tooFast[0]} attempt ${FIX.tooFast[1]} has ${r.layer7.strategies} broad strategies that win with margin, REJECTED at layer 8 (natural since BLOOM-013)`, r.reason);
+}
+{ // controlled: the same rule in isolation on the positive fixture
   const rFast = strategies(pos, withPacing(P => P.marginSeconds = [899, 900]));
   const mine = rFast.slow.filter(w => [A.signature, B.signature].includes(w.signature));
   check(rFast.layer === 8 && rFast.status === "FAIL" && rFast.slow.every(w => w.pacingCheck.reasons.some(x => /margin reached .*\(too fast\)$/.test(x))) &&
     mine.length === 2 && mine.every(w => w.pacingCheck.reasons.length === 1),
-    "8 · too fast (controlled policy boundary): the positive fixture under a margin floor of 899 s is REJECTED at layer 8, its two strategies for speed alone", mine.map(w => w.pacingCheck.reasons[0]).join(" · "));
+    "8 · …and in isolation (controlled policy boundary): the positive fixture under a margin floor of 899 s is REJECTED at layer 8, its two strategies for speed alone", mine.map(w => w.pacingCheck.reasons[0]).join(" · "));
   const rEdge = strategies(pos, withPacing(P => P.marginSeconds = [Math.min(A.marginSeconds, B.marginSeconds), 900]));
   check(rEdge.status === "PASS", "…and bands are inclusive: a floor exactly at the faster strategy's margin still passes", `floor ${Math.min(A.marginSeconds, B.marginSeconds)} s`);
 }
-{
-  const p = at(FIX.lateFirst), r = strategies(p);
-  check(r.layer7.status === "PASS" && r.layer === 8 && r.status === "FAIL" && onlyReasons(r, /^first purchase at .* \(too slow\)$/),
-    `9 · first purchase too late: seed ${FIX.lateFirst[0]} attempt ${FIX.lateFirst[1]} REJECTED at layer 8`, r.reason);
+{ // controlled (see FIX): a first-purchase limit below the positive fixture's own first purchase rejects it for that alone
+  const first = Math.min(A.pacing.firstPurchaseSeconds, B.pacing.firstPurchaseSeconds), r = strategies(pos, withPacing(P => P.firstPurchaseSeconds = [0, first - 1]));
+  const mine = r.slow.filter(w => [A.signature, B.signature].includes(w.signature));
+  check(r.layer7.status === "PASS" && r.layer === 8 && r.status === "FAIL" && onlyReasons(r, /^first purchase at .* \(too slow\)$/) && mine.length === 2,
+    `9 · first purchase too late (controlled policy boundary): the positive fixture under a ${first - 1} s first-purchase limit is REJECTED at layer 8 for that alone`, r.reason);
 }
 {
   const p = at(FIX.gap), r = strategies(p);
-  check(r.layer7.status === "PASS" && r.layer === 8 && r.status === "FAIL" && r.slow.some(w => w.pacingCheck.reasons.some(x => /^purchase gap of .* > 240 s$/.test(x))),
-    `10 · excessive purchase gap: seed ${FIX.gap[0]} attempt ${FIX.gap[1]} REJECTED at layer 8 (natural; alongside a late first purchase and a slow margin)`,
+  check(r.layer7.status === "PASS" && r.layer === 8 && r.status === "FAIL" && r.slow.some(w => w.pacingCheck.reasons.some(x => /^purchase gap of .* > 120 s$/.test(x))),
+    `10 · excessive purchase gap: seed ${FIX.gap[0]} attempt ${FIX.gap[1]} REJECTED at layer 8 (natural)`,
     r.slow.map(w => w.pacingCheck.reasons.join("; ")).filter((x, i, a) => a.indexOf(x) === i).join(" | "));
   const rGap = strategies(pos, withPacing(P => P.maxPurchaseGapSeconds = 30)), mine = rGap.slow.filter(w => [A.signature, B.signature].includes(w.signature));
   check(rGap.layer === 8 && rGap.status === "FAIL" && rGap.slow.every(w => w.pacingCheck.reasons.some(x => /^purchase gap/.test(x))) && mine.length === 2 && mine.every(w => w.pacingCheck.reasons.length === 1),

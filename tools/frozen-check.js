@@ -69,7 +69,7 @@ for (const [name, mut] of [["an unknown climate knob", a => a.climate.geothermal
   const a = clone(FW); mut(a); const e = BLOOM.archetype.checkArchetype(a, config); check(e.length > 0, `1 · schema rejects ${name}`, e[0]);
 }
 { const knobs = ["elevationCooling", "geothermalChance", "geothermalWarmth"], D = BLOOM.gen.CLIMATE_DEFAULTS;
-  check(Object.keys(FW.climate).every(k => k in D) && knobs.every(k => D[k] === 0) && J(OA.validation.pacing) === J({ marginSeconds: [360, 900], firstPurchaseSeconds: [45, 120], maxPurchaseGapSeconds: 240 }) &&
+  check(Object.keys(FW.climate).every(k => k in D) && knobs.every(k => D[k] === 0) && J(OA.validation.pacing) === J({ marginSeconds: [240, 720], firstPurchaseSeconds: [0, 60], maxPurchaseGapSeconds: 120 }) /* BLOOM-013 decision-cadence bands */ &&
     J(DW.validation.requiredConditions) === J(["Water:dry"]) && !OA.validation.requiredConditions && DW.render.tintBy === undefined && DW.render.dunes === true,
     "2 · Frozen is data over generic generator knobs (no Frozen-specific generator or simulation code); Ocean's and Desert's own policies are untouched",
     `new generic climate knobs, all 0 by default: ${knobs.join(", ")} · render tintBy/frost (optional) · Desert still requires ${DW.validation.requiredConditions}`); }

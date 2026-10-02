@@ -1,0 +1,58 @@
+# measuring (tools/economy-study.js: 7 worlds × recipes × 5 colony policies × 2 bubble policies × 4 run seeds) …
+  (233 s)
+
+# A · the economy is data
+PASS  2 · the retune is two config.econ values (startBiomass 40 → 100, originTrickle 0.1 → 0.3); yields, bubbles and every price are unchanged  — changed: startBiomass 40 → 100, originTrickle 0.1 → 0.3 · global prices cold 140/270/400 · heat 140/270/400 · drought 150/270 · flood 150/270 · salt 200 · rad 220 · seedOut 130/280 · waterSeeds 180 · earlyMat 170 · warm 200/290 · cool 200/290 · humid 200/290 · dry 200/290 · local 90/130/170/210
+PASS  2 · the engine reads both from config.econ (a run starts with config.econ.startBiomass; the origin trickle is config income)
+PASS  3 · no hidden or test-only Biomass: 2500 ticks of First Bloom gain exactly the reported income + auto-collected bubbles; the page's only grant is the BLOOM_API test hook; the economy study never grants  — 34 auto-collected bubbles, 0 unexplained gains · demo-run.html Biomass grants: 1 (BLOOM_API.addBiomass)
+PASS  26 · the starting Biomass buys ONE local upgrade now — or most of a first global upgrade a few seconds later — and never a strategy  — start 100: local upgrade 90; cheapest global 130; cheapest winning core fb 630, o13 520, d25 420, f22 410, o13dw 550
+
+# B · the opening (bubbles ignored)
+PASS  4 · a meaningful decision is affordable from the first second (a local upgrade for the origin)  — fb 1 option(s) at t=0 · o13 1 option(s) at t=0 · d25 1 option(s) at t=0 · f22 1 option(s) at t=0 · o13dw 1 option(s) at t=0
+PASS  5 · the first meaningful GLOBAL upgrade is affordable within 45 s (was 77–87 s)  — fb 29.6 s (worst 29.8; was 87) · o13 28.8 s (worst 28.8; was 86) · d25 24.5 s (worst 26.9; was 77) · f22 27.6 s (worst 28.8; was 79) · o13dw 28.8 s (worst 28.8; was 86)
+PASS  6 · two materially different options are affordable at once within 45 s on every primary world  — fb 29.6 s (seedOut + local) · o13 28.8 s (seedOut + local) · d25 24.5 s (heat/seedOut + local) · f22 27.6 s (seedOut + local) · o13dw 28.8 s (seedOut + local)
+
+# C · purchase cadence
+PASS  5b · the first global PURCHASE (witness-like bot) lands within 60 s on every recipe  — fb 33/33/33 s · o13 32.5/32.5 s · d25 28/28 s · f22 31.3/31.3 s · o13dw 32.5/32.5 s
+PASS  7 · no purchase gap above 120 s before the win on any primary recipe (witness-like and player bots, worst seed)  — fb 69.4 s / player 38.2 s (was 100) · o13 81.9 s / player 66.8 s (was 139) · d25 103.4 s / player 61.6 s (was 177) · f22 78.3 s / player 48.8 s (was 112) · o13dw 112.9 s / player 84.3 s (was 306)
+PASS  9 · midgame purchases recur on the order of tens of seconds (median gap ≤ 90 s on every recipe)  — fb 36.6/36.5/42.9 s · o13 51/56.1 s · d25 51.1/51.1 s · f22 52.2/54 s · o13dw 57.7/66.2 s
+PASS  7b · a player is never left more than 120 s with NOTHING meaningful affordable before the win (local or global)  — fb 52 s · o13 65 s · d25 56 s · f22 56 s · o13dw 100 s
+PASS  10 · the wait from a player's last purchase to the win stays bounded (≤ 120 s, mean)  — fb 9.6/7.2/6.4 s · o13 38.5/18.5 s · d25 58.5/21.2 s · f22 8.9/12.6 s · o13dw 24.4/43.1 s · (witness-like, which stops at its minimal core: 23.3/161.5/173/46.9/123.8 s)
+PASS  8 · Ocean 13 + Dying World: the old seed-output → several-minute wait is gone (layer-P witness and bots, every gap ≤ 120 s)  — witness now seedOut@29s → rad@128s → drought@179s → waterSeeds@244s (gaps 28.5/99.3/51.6/64.4) · was seedOut@90s → rad@390s → drought@481s → waterSeeds@559s (gap 299.4 s)
+PASS  24 · a player who never clicks a bubble wins every primary recipe with the cadence above  — fb 4/4,4/4,4/4 · o13 4/4,4/4 · d25 4/4,4/4 · f22 4/4,4/4 · o13dw 4/4,4/4
+PASS  25 · clicking bubbles helps (earlier wins) but is not required (a modest bonus, never the economy)  — win-time saved by clicking: 8, 14, 14, 21, 19, 12, 18, 13, 16, 21, 16 s
+
+# D · strategies still bind
+PASS  11 · First Bloom stays winnable by its broad strategy families (Flood, Drought, Terraform-water recipes win; 3 distinct strategies proven)  — wet 249.4 s · dry 266.6 s · terraformWater 263.2 s · [Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)] [Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)+Terraform(+6) · Temperature:heat=Adapt(1) · Water:wet=Adapt(1)] [Defense:salt=Adapt(1) · Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1) · Water:wet=Adapt(1)]
+PASS  12 · Ocean Archipelago 13 · Eden: same world (attempt 6), ≥ 2 distinct strategies proven within the new pacing bands, both recipes won by both bots  — [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)] margin 330.2 s, first 28.5 s, max gap 66.7 s ‖ [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)] margin 263.7 s, first 28.5 s, max gap 66.7 s
+PASS  13 · Desert World 25 · Eden: same world (attempt 0), ≥ 2 distinct strategies proven within the new pacing bands, both recipes won by both bots  — [Water:dry=Adapt(2)] margin 337.8 s, first 22.4 s, max gap 93.5 s ‖ [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] margin 338.7 s, first 22.4 s, max gap 75.7 s
+PASS  14 · Frozen World 22 · Eden: same world (attempt 1), ≥ 2 distinct strategies proven within the new pacing bands, both recipes won by both bots  — [Temperature:cold=Adapt(2)] margin 251.5 s, first 28.3 s, max gap 67.6 s ‖ [Temperature:cold=Adapt(1)+Terraform(+12)] margin 260.2 s, first 28.3 s, max gap 71.2 s
+PASS  15 · Ocean Archipelago 13 · Dying World passes layer P with 2 distinct strategies under the new clock and cadence bands  — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)] win 315.7 s, holds 73.7% ‖ [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Terraform(+8)] win 379.5 s, holds 73.7%
+PASS  18 · Desert World 25 · Dying World passes layer P with 2 distinct strategies under the new clock and cadence bands  — [Defense:rad=Adapt(1) · Water:dry=Adapt(2)] win 365 s, holds 82.9% ‖ [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+16)] win 492.8 s, holds 80.8%
+PASS  19 · Frozen World 22 · Dying World passes layer P with 2 distinct strategies under the new clock and cadence bands  — [Temperature:cold=Adapt(3) · Water:dry=Adapt(1)] win 344.5 s, holds 81.7% ‖ [Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)] win 355 s, holds 79.5%
+PASS  16 · a normal successful Dying World run lives through most of the decline (pressure ≥ 75% at the win, player and witness-like bots)  — o13dw 1/1/1/1 · d25dw 1/1/1/1 · f22dw 0.9/1/1/1
+PASS  17 · Dying World cannot be ignored: buying the planet's Eden strategy as if nothing were declining never wins (the drift closes ≥ 25% of the land to it)  — o13dw ignoreColdSalt won 0/4, drift closed up to 60% · o13dw ignoreHeatRad won 0/4, drift closed up to 40% (this Eden build already holds Radiation Shielding, a Dying World answer) · d25dw ignoreDrought2 won 0/4, drift closed up to 30% · f22dw ignoreCold2 won 0/4, drift closed up to 70%
+PASS  27–29 · tradeoffs stay binding: the shared temperature cap and one water strategy are enforced, and by mid-run (180 s) no player has earned enough to own every tolerance  — cold+heat capped at 3; Drought blocks Flood · every tolerance costs ≥ 1390; earned by 180 s: 1078/1062/1052/712/730/865/865/969/976/611/611
+PASS  30 · Terraform still trades: on Frozen 22, Warm the Sky opens cold ground and closes warm refuges, at an unchanged price  — opens 1 region(s), closes 2 · 200 Biomass
+PASS  31 · Waterborne Seeds is still a real cost on islands: unchanged price, and the Ocean 13 recipes save ≥ 30 s for it after Seed Output  — 180 Biomass · bought at coldSalt 114 s, heatRad 114 s after saving 81.9/81.9 s
+
+# E · local specialization
+PASS  20 · local specializations stay optional: every recipe is won without buying a single one  — fb 4/4,4/4,4/4 · o13 4/4,4/4 · d25 4/4,4/4 · f22 4/4,4/4 · o13dw 4/4,4/4
+PASS  21 · a local upgrade is a real cost: specializing the origin at the start delays the first global upgrade by ≥ 15 s  — fb +36 s · o13 +32.6 s · d25 +23 s · f22 +28.5 s · o13dw +32.6 s
+PASS  22 · buying a local upgrade on every colony has a real opportunity cost (slower wins than one well-placed Leaf Canopy)  — fb 310.3 vs 197.8 s, 324 vs 219.2 s, 308.2 vs 205.3 s · o13 451.3 vs 305.4 s, 430.7 vs 246.3 s · d25 342.9 vs 276.5 s, 355.5 vs 285.3 s · f22 316 vs 207.1 s, 355.6 vs 233.3 s · o13dw 404.8 vs 316.6 s, 448 vs 322.9 s
+PASS  23 · Leaves is no runaway: Leaves everywhere + a Canopy on every colony wins later than situational play with no local upgrades  — fb 322.3 vs 207.8 s, 349.6 vs 226 s, 310.8 vs 216.2 s · o13 554.3 vs 349.8 s, 391.2 vs 271.6 s · d25 441.3 vs 304.2 s, 441.7 vs 280.2 s · f22 355.6 vs 214.3 s, 387.2 vs 243.2 s · o13dw 512.6 vs 306.8 s, 474 vs 341.8 s
+
+# F · safety
+PASS  32 · no economy soft-lock: every primary recipe × colony policy × bubble policy is won by every run seed (no stalls, no losses)  — 110 rows × 4 seeds
+PASS  33 · no runaway Biomass: a player wins holding less than half the cost of every tolerance, earning < 400 Biomass per minute on average  — fb 116 left, 375/min · fb 109.5 left, 383/min · fb 86.5 left, 373/min · o13 292 left, 291/min · o13 111.3 left, 254/min · d25 524.5 left, 350/min · d25 208.3 left, 334/min · f22 104.3 left, 343/min · f22 124.8 left, 348/min · o13dw 123.3 left, 228/min · o13dw 217.8 left, 237/min
+PASS  34–35 · Dying World keeps its drift channels, phases and extinction rule; only its clock moved (grace 60 → 40 s, decline 420 → 250 s: final state at 290 s instead of 480 s, scaled to the shorter runs); an idle player still dies out only after the final state  — channels {"moistureShare":-0.4,"temperature":-8,"radiation":8} · idle Ocean 13 extinct at 318.2 s
+
+# G · browser (First Bloom, real buttons)
+PASS  36–37 · the HUD shows the starting Biomass; every global upgrade reads unaffordable and every local upgrade affordable, exactly as Biomass vs price says  — HUD 100 · globals off: 12/12 · local upgrades rootNetwork/leafCanopy/seedReserve at 90
+PASS  37 · the opening decision through the real button: Root Network on the origin spends exactly its price, the HUD follows  — 100.28541430400186 → 10.285414304001861 Biomass (HUD 10)
+PASS  38 · a First Bloom run won through real clicks after spending the start on a Root Network (so the first global upgrade waits for the Biomass that bought it): every click spent its price, the run's spend adds up  — seedOut@49.9s(130) → cold@89.1s(140) → flood@117.9s(150) → cold@177.1s(270) → heat@204.3s(140) → salt@240.3s(200) · spent global 1030, local 90
+PASS  38 · the Bloom Report lists the build and the colony upgrade that the Biomass bought  — Your plant became: · Cold Tolerance ×2 · Heat Tolerance ×1 · Flood ×1 · Salt Handling · Seed Output ×1
+PASS  37 · affordable / unaffordable states stayed correct through the run; no browser errors
+evidence written: docs/evidence/bloom-013/economy-check.json
+
+ALL CHECKS PASS  (241.6 s)
