@@ -2,7 +2,7 @@
 
 **What this tests:** whether the third archetype, **Frozen World**, feels like a genuinely different planet from Ocean Archipelago and Desert World. Here the problem is **temperature**. The validator has already shown that these worlds can be won (layers 1–8) in at least two broad ways: evolving for the cold, or warming the sky. Only a person can say whether the cold reads clearly and whether that choice feels real.
 
-**Gate status:** ☐ **not yet played.** Only the owner can mark this passed.
+**Gate status:** ☑ **passed** (owner, recorded in BLOOM-012): *"all good"*.
 
 **Time needed:** one run of roughly 10–20 minutes, plus a few minutes for the questions. The second run is optional.
 
@@ -43,4 +43,4 @@ Answer in a sentence or two; "not sure" is a useful answer.
 | Seed 22 | | | | |
 | Seed 12 (optional) | | | | |
 
-**Owner verdict:** ☐ pass ☐ pass with notes ☐ not yet (what should change first?)
+**Owner verdict:** ☑ **pass** — "all good" ☐ pass with notes ☐ not yet

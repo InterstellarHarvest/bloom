@@ -38,6 +38,14 @@
   a Terraform preview / purchase names every region the new sky opens, moves closer (still blocked), makes worse or closes,
   outlines them for a few seconds and shows the change next to the HUD sky (temporary functional readouts, not the
   specimen/environment panel). QA: tools/frozen-check.js.
+  BLOOM-012 (temporary functional UI, not the final layout): pressure scenarios. &scenario=<id> picks a scenario from
+  content/scenarios.js independently of the planet (no parameter = Eden = everything above, unchanged; an unknown id is an
+  explicit failure, never a substitute). A pressured run is started only if the planet + scenario pass the scenario
+  validation layer (resources/bloom-scenario.js). It adds a full-width pressure bar under the HUD (scenario identity, phase,
+  progress + time to the next stage, the live drift per channel and the sky as base + Terraform + scenario drift = now),
+  a faint haze over the map that thickens with the decline, milestone messages at the scenario's phase thresholds, short
+  outlines + messages when a living region tips toward its limit, the drift in the inspect panel, an extinction screen
+  (with restart) and the scenario's final state in the Bloom Report. QA: tools/dying-world-check.js.
 -->
 <style>
   :root{
@@ -174,6 +182,23 @@
   .sbtn .need{display:block; font-size:10px; color:#ff8b7a; font-weight:normal}
   .owned{padding:8px; border-radius:8px; background:#2a2410; border:2px solid #8a6a22; color:#ffe7a8; font-size:13px}
   .owned small{display:block; color:#caa55a; font-size:10px; margin-top:2px}
+  /* BLOOM-012: temporary pressure bar (full width under the HUD; only on pressure scenarios) + extinction screen */
+  .pbar{flex:1 0 100%; display:flex; flex-direction:column; gap:6px; padding:8px 12px; margin:2px 0 0; border-radius:8px;
+    background:linear-gradient(180deg,#1f1830,#17122a); border:1px solid #4b3b6e; font-size:14px; color:#e4dcf5; transition:box-shadow .3s, border-color .3s}
+  .pbar.pulse{border-color:#ffb36b; box-shadow:0 0 18px rgba(255,179,107,.65)}
+  .pbar .prow{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .pbar .pid{font-weight:700; letter-spacing:1px; color:#ffcf9a; font-size:15px; white-space:nowrap}
+  .pbar .pphase{font-weight:700; color:#fff; white-space:nowrap}
+  .pbar .ptrack{position:relative; flex:1 1 220px; min-width:180px; height:16px; border-radius:8px; background:#0c0a16; border:1px solid #3c3058; overflow:hidden}
+  .pbar .pfill{position:absolute; left:0; top:0; bottom:0; width:0%; background:linear-gradient(90deg,#7d6bb0,#e0805a)}
+  .pbar .ptick{position:absolute; top:0; bottom:0; width:2px; background:rgba(255,255,255,.55)}
+  .pbar .pnext{color:#c9bde6; white-space:nowrap}
+  .pbar .chip{display:inline-block; padding:2px 9px; border-radius:12px; background:#2c2244; border:1px solid #57447e; white-space:nowrap}
+  .pbar .chip b{color:#ffcf9a} .pbar .psky{color:#c9bde6; font-size:13px} .pbar .psky b{color:#fff}
+  .pbar .pwarn{color:#ff8b7a; font-weight:700}
+  .press{margin:8px 0; padding:8px; border-radius:5px; background:#1d1630; border:1px solid #4b3b6e; color:#d9cff0; font-size:11px}
+  .press b{color:#ffcf9a}
+  .report.lost h2{color:var(--bad)}
   details.fsci{margin-top:6px} details.fsci summary{cursor:pointer; color:var(--dim); font-size:11px}
   details.fsci p{margin:4px 0 0; font-size:11px; color:var(--dim)}
 </style>
@@ -213,11 +238,13 @@
 <script src="../content/traits.js"></script>
 <script src="../planets/first_bloom.js"></script>
 <script src="../content/archetypes.js"></script>
+<script src="../content/scenarios.js"></script>
 <script src="../resources/bloom-sim.js"></script>
 <script src="../resources/bloom-gen.js"></script>
 <script src="../resources/bloom-validate.js"></script>
 <script src="../resources/bloom-witness.js"></script>
 <script src="../resources/bloom-archetype.js"></script>
+<script src="../resources/bloom-scenario.js"></script>
 <!-- the game UI below is inert (type="text/plain") until the boot script after it has chosen the planet:
      it then runs as an ordinary classic script, so its globals (sim, selected, refreshShop …) are unchanged -->
 <script type="text/plain" id="bloomUI">
@@ -231,8 +258,10 @@ if(!window.BLOOM||!window.BLOOM_DATA||!BLOOM_DATA.planets||!BLOOM_DATA.planets.f
   document.body.innerHTML='<p style="padding:24px;font-family:monospace;color:#ff6b6b">BLOOM could not load its engine/content files. Open demos/demo-run.html from inside the full Bloom folder (it needs ../content, ../planets and ../resources).</p>';
   throw new Error("BLOOM engine/content files missing");
 }
-const sim=BLOOM.createSim(BLOOM_RUN.planet, BLOOM_DATA.config, BLOOM_DATA.traits);
+const sim=BLOOM.createSim(BLOOM_RUN.planet, BLOOM_DATA.config, BLOOM_DATA.traits, {scenario:BLOOM_RUN.scenario||undefined});
 const CFG=sim.config;
+// BLOOM-012: the run's pressure scenario (null / Eden = no pressure: every readout below is exactly as before)
+const SCN=BLOOM_RUN.scenario||null, PRESS=!!(SCN&&SCN.pressure), PS=sim.pressure;
 const {W,H,N,SEC,SC,SIDX,ORIGIN,TILEMAP,AREA,CENT,SEC_TILES}=sim.map;
 const {state,dens,vigor,secFit,bubbles,genome,tf,BAR,LIV,DEAD}=sim, G=sim.sky;
 const {evaluate,lampOf,livingCountBySection}=sim;
@@ -240,6 +269,7 @@ const {clamp}=BLOOM.util;
 const mix=(c1,c2,k)=>[c1[0]+(c2[0]-c1[0])*k,c1[1]+(c2[1]-c1[1])*k,c1[2]+(c2[2]-c1[2])*k];
 let running=true, speed=1;
 sim.onWin=cov=>{ running=false; onWin(cov); };
+sim.onLoss=why=>{ running=false; onLoss(why); };
 // display names: generated worlds can repeat a biome name, so repeats get a number (First Bloom has none)
 const LABEL=SEC.map((s,i)=>{ const same=SEC.filter(x=>x.name===s.name); return same.length>1?`${s.name} ${same.indexOf(s)+1}`:s.name; });
 // geography for water worlds (BLOOM-007): landmass per section, crossing links from the engine's own geometry
@@ -282,8 +312,11 @@ const RENDER=(BLOOM_RUN.kind==="procedural"&&BLOOM_RUN.archetype.render)||null;
 // refuges and geothermal ground keep their own colour, and warming the sky visibly thaws the map; "dry" (default) = BLOOM-010
 const TINT_COLD=!!(RENDER&&RENDER.tintBy==="cold"), FROST_BELOW=-8;
 const coldWeight=t=>clamp((4-t)/24,0.12,1);
-function barrenColor(i){ const L=SEC[i].local, t=G.temp+L.tempOffset; let c=stops(t);
-  const m=G.moist+L.moistureOffset; if(m<35)c=mix(c,[150,138,104],0.4); else if(m>68)c=mix(c,[64,104,104],0.35);
+// (BLOOM-012: drawn from the sky every region sees now — under pressure that includes the scenario drift, so the map dries
+// and cools with the decline; without pressure it is exactly the player's sky, as before)
+let DRAW_T=0, DRAW_M=0;
+function barrenColor(i){ const L=SEC[i].local, t=DRAW_T+L.tempOffset; let c=stops(t);
+  const m=DRAW_M+L.moistureOffset; if(m<35)c=mix(c,[150,138,104],0.4); else if(m>68)c=mix(c,[64,104,104],0.35);
   if(RENDER&&RENDER.ground) c=mix(c,RENDER.ground,RENDER.groundMix*(TINT_COLD?coldWeight(t):(m<35?1:0.5))); // wetter basins keep more of their own colour
   return mix(c,[10,12,18],0.55); } // dim: barren ground
 // BLOOM-008/009: Living tiles are drawn from their stand density (sim.dens): a new seedling stand is a tiny, pale
@@ -304,7 +337,8 @@ const rgb=c=>`rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`;
 
 function draw(){
   ctx.clearRect(0,0,cv.width,cv.height);
-  const frosty=FROST?SEC.map(s=>G.temp+s.local.tempOffset<FROST_BELOW):null; // (live: warming the sky melts the glints)
+  if(PRESS){ const k=skyNow(); DRAW_T=k.t; DRAW_M=k.m; } else { DRAW_T=G.temp; DRAW_M=G.moist; }
+  const frosty=FROST?SEC.map(s=>DRAW_T+s.local.tempOffset<FROST_BELOW):null; // (live: warming the sky melts the glints)
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){
     const i=y*W+x,s=TILEMAP[i]; let c;
     if(s<0) c=((x+y)%7===0)?WATER_C2:WATER_C; // water: never colonizable, not in the coverage denominator
@@ -319,6 +353,8 @@ function draw(){
     if(FROST&&state[i]===BAR&&s>=0&&frosty[s]&&frostAt(x,y)){ const g=Math.max(1,TILE*.16); ctx.fillStyle=rgb(mix(c,[236,244,255],0.6)); // a small ice glint
       ctx.fillRect(x*TILE+TILE*.3,y*TILE+TILE*.3,g,g); ctx.fillRect(x*TILE+TILE*.3+g,y*TILE+TILE*.3+g,g,g); ctx.fillRect(x*TILE+TILE*.62,y*TILE+TILE*.62,g,g); }
   }
+  // BLOOM-012: a faint haze over the whole map that thickens as the atmosphere thins (temporary feedback, not weather art)
+  if(PRESS&&PS.progress>0){ ctx.fillStyle=`rgba(200,182,226,${(0.22*PS.progress).toFixed(3)})`; ctx.fillRect(0,0,W*TILE,H*TILE); }
   // purchase preview tint: green = would open, red = would close
   if(preview){ for(const [list,col] of [[preview.gain,"rgba(102,209,127,0.28)"],[preview.lose,"rgba(226,96,79,0.34)"]])
     for(const sec of list){ ctx.fillStyle=col; for(const t of SEC_TILES[sec]) ctx.fillRect((t%W)*TILE,((t/W)|0)*TILE,TILE,TILE); } } // exact size: overlap would double the alpha into grid seams
@@ -338,6 +374,8 @@ function draw(){
   const sk=preview&&preview.better?preview:(skyFx&&performance.now()<skyFx.until?skyFx:null);
   if(sk){ if(sk===skyFx){ sk.gain.forEach(i=>outline(i,"#66d17f",3)); sk.lose.forEach(i=>outline(i,"#e2604f",3)); }
     sk.better.forEach(i=>outline(i,"#b6f0a8",2,[2,4])); sk.worse.forEach(i=>outline(i,"#f0a050",2,[2,4])); }
+  // BLOOM-012: regions the scenario's decline just pushed across a threshold (orange = worse, pale green = opened)
+  if(PRESS){ const now=performance.now(); for(const x of PX_FX) if(now<x.until) outline(x.sec,x.worse?"#ff9a50":"#b6f0a8",3,[5,3]); }
   // bubbles
   for(const b of bubbles){ const px=b.x*TILE,py=b.y*TILE, r=Math.max(4,TILE*0.42);
     ctx.beginPath(); ctx.arc(px,py,r,0,7); ctx.fillStyle="rgba(255,212,121,0.92)"; ctx.fill();
@@ -423,7 +461,7 @@ function renderHUD(cov){
   document.getElementById("hCovFill").style.width=Math.round(cov*100)+"%";
   document.getElementById("hCovWin").style.left=Math.round(sim.winAt*100)+"%";
   document.getElementById("hWinPct").textContent="/ "+Math.round(sim.winAt*100)+"%";
-  document.getElementById("hSky").textContent=`${degC(G.temp)} · moist ${G.moist}`;
+  document.getElementById("hSky").textContent=PRESS?(()=>{ const k=skyNow(); return `${degC(r1(k.t))} · moist ${r1(k.m)}`; })():`${degC(G.temp)} · moist ${G.moist}`;
   const dl=document.getElementById("hSkyDelta"), dt=skyFx&&now<skyFx.until?skyFx.delta:""; if(dl.textContent!==dt) dl.textContent=dt;
 }
 function renderInspect(){
@@ -438,7 +476,7 @@ function renderInspect(){
   const catRow=k=>{ const c=e.cats[k]; return `<div class="cat"><span class="lamp ${c.soft&&c.f>CFG.categories.lamp.green?"yellow":lampOf(c.f)}"></span><span class="lbl">${k}</span><span class="st">${c.word}</span>${e.terraformable[k]?'<span class="tag">terraformable</span>':''}</div>`; };
   // BLOOM-011: the temperature as numbers, so the two answers to cold read differently — Cold Tolerance lowers the
   // bottom of the plant's range, warming the sky raises this ground's temperature (and every other region's)
-  const dv=sim.derived(), tline=`<div class="tline" id="tline">Ground here <b>${degC(e.effT)}</b> · sky ${degC(G.temp)} · suits your plant <b>${degC(dv.tempFloor)} to ${degC(dv.tempCeil)}</b></div>`;
+  const dv=sim.derived(), tline=`<div class="tline" id="tline">Ground here <b>${degC(PRESS?r1(e.effT):e.effT)}</b> · sky ${degC(PRESS?r1(e.skyT):G.temp)} · suits your plant <b>${degC(dv.tempFloor)} to ${degC(dv.tempCeil)}</b></div>`;
   const blocked = e.limitF<CFG.categories.blockedBelow;
   const limitHtml = blocked
     ? `<div class="limit">▲ Growth blocked: <b>${LIMIT_MSG[e.limitKey](e)}</b><div class="fixhint">${FIX_HINT[e.limitKey](e)}</div></div>`
@@ -447,7 +485,7 @@ function renderInspect(){
   el.innerHTML=`<h2>SECTION</h2>
     <div class="secname">${LABEL[selected]}${s.isOrigin?'<span class="badge">★ ORIGIN</span>':''}</div>
     <div class="cats">${catRow("Temperature")}${catRow("Water")}${catRow("Soil")}${catRow("Hazard")}</div>${tline}
-    ${limitHtml}${geoNote(selected)}${thermNote(selected)}
+    ${limitHtml}${pressNote(selected,e)}${geoNote(selected)}${thermNote(selected)}
     <div class="colony" id="colony">Colony: <span class="cw">${COLONY_WORD[cs.word]}</span> <span style="color:var(--dim)">· ${pct}% established</span>
       <div class="dbar"><i style="width:${pct}%"></i></div><div class="fixhint">${COLONY_HINT[cs.word]}</div></div>`;
   more.innerHTML=`<div class="vitals">vigor ${Math.round(vigor[selected]*100)}%
@@ -456,11 +494,11 @@ function renderInspect(){
     </div>
     <details class="raw"${rawOpen?' open':''}><summary>raw signals ▾</summary>
       <table class="kv">
-        <tr><td>effective temp</td><td>${e.effT>0?'+':''}${e.effT}°C</td></tr>
-        <tr><td>effective moist</td><td>${e.effM}</td></tr>
+        <tr><td>effective temp</td><td>${e.effT>0?'+':''}${PRESS?r1(e.effT):e.effT}°C</td></tr>
+        <tr><td>effective moist</td><td>${PRESS?r1(e.effM):e.effM}</td></tr>
         <tr><td>light</td><td>${s.local.light}</td></tr><tr><td>soil pH</td><td>${s.local.ph}</td></tr>
         <tr><td>salinity</td><td>${s.local.salinity}</td></tr><tr><td>nutrients</td><td>${s.local.nutrients}</td></tr>
-        <tr><td>toxicity</td><td>${s.local.toxicity}</td></tr><tr><td>radiation</td><td>${s.local.radiation}</td></tr>
+        <tr><td>toxicity</td><td>${s.local.toxicity}</td></tr><tr><td>radiation</td><td>${PRESS&&PS.offsets.rad?`${s.local.radiation} + ${r1(PS.offsets.rad)} thin air = ${r1(e.effRad)}`:s.local.radiation}</td></tr>
       </table></details>`;
 }
 
@@ -566,6 +604,76 @@ function thermNote(i){
 }
 const degC=t=>`${t>0?"+":t<0?"−":""}${Math.abs(t)}°C`;
 
+/* ---- pressure scenario readouts (BLOOM-012; temporary functional UI). Numbers come from the engine's live sim.pressure; the
+   scenario's copy, phases and channel notes from content/scenarios.js. Scenario drift is always shown apart from Terraform. ---- */
+const r1=v=>Math.round(v*10)/10, sgn=v=>`${v>0?"+":v<0?"−":""}${Math.abs(r1(v))}`;
+const BASE=BLOOM_RUN.planet.globalClimate;
+// the sky every region sees right now = the player's (Terraformed) sky + the scenario drift (same formula as the engine)
+function skyNow(){ const o=PS.offsets; return { t:G.temp+o.temp, m:o.moist?clamp(G.moist+o.moist,0,100):G.moist }; }
+const mmss=s=>{ s=Math.max(0,Math.ceil(s)); return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; };
+function phaseName(k){ return k<0?SCN.pressure.graceLabel:SCN.pressure.phases[k].name; }
+function pressNote(i,e){
+  if(!PRESS) return ""; const o=PS.offsets;
+  if(PS.progress<=0) return `<div class="press" id="pressNote">☁ ${SCN.display.title}: the decline has not started yet. This region's conditions will change when it does.</div>`;
+  const L=SEC[i].local;
+  return `<div class="press" id="pressNote">☁ Thinning atmosphere here: temperature <b>${sgn(o.temp)} °C</b> · moisture <b>${sgn(o.moist)}</b> · radiation ${L.radiation} → <b>${r1(e.effRad)}</b>
+    <div class="fixhint">Already counted in the lamps above. Terraform changes the sky; the thinning keeps pulling it the other way.</div></div>`;
+}
+// the bar: identity, phase, progress (phase ticks), time to the next stage, the live drift, the sky as base + Terraform + drift
+function buildPressureBar(){
+  if(!PRESS) return; const P=SCN.pressure, dur=P.durationSeconds;
+  const el=document.createElement("div"); el.className="pbar"; el.id="pbar";
+  el.innerHTML=`<div class="prow"><span class="pid" id="pId">☁ ${SCN.display.title.toUpperCase()}</span><span class="pphase" id="pPhase"></span>
+    <span class="ptrack" title="atmosphere lost so far">${P.phases.slice(1).map(ph=>`<i class="ptick" style="left:${ph.from*100}%"></i>`).join("")}<i class="pfill" id="pFill"></i></span>
+    <span id="pPct"></span><span class="pnext" id="pNext"></span></div>
+    <div class="prow"><span class="chip">moisture <b id="pMoist"></b></span><span class="chip">temperature <b id="pTemp"></b></span><span class="chip">radiation <b id="pRad"></b></span>
+    <span class="psky" id="pSky"></span><span class="pwarn" id="pWarn"></span></div>`;
+  el.title=SCN.display.summary+" "+Object.values(SCN.display.channels).join("; ")+".";
+  document.querySelector("header").appendChild(el);
+}
+let pbarText="";
+function renderPressure(){
+  if(!PRESS) return; const P=SCN.pressure, o=PS.offsets, k=PS.phase, s=PS.seconds;
+  let next; if(k<0) next=`decline begins in ${mmss(P.graceSeconds-s)}`;
+  else if(PS.progress>=1) next="conditions have stopped changing";
+  else { const n=P.phases[k+1]; next=`${n.name} in ${mmss(P.graceSeconds+n.from*P.durationSeconds-s)}`; }
+  const sk=skyNow(), tfT=G.temp-BASE.temperature, tfM=G.moist-BASE.moisture;
+  const liv=sim.coverage()>0, X=sim.extinction, warn=!liv&&!sim.lost&&!sim.won?`⚠ No living plants left! Extinction in ${mmss((X.graceTicks-X.zeroTicks)*CFG.tickMs/1000)}`:"";
+  const vals=[`${phaseName(k)}`, `${Math.round(PS.progress*100)}% lost`, next, `${sgn(o.moist)}`, `${sgn(o.temp)} °C`, `${sgn(o.rad)}`,
+    `Sky now <b>${degC(r1(sk.t))}</b> = base ${degC(BASE.temperature)} · Terraform ${sgn(tfT)} · thinning ${sgn(o.temp)} — moisture <b>${r1(sk.m)}</b> = base ${BASE.moisture} · Terraform ${sgn(tfM)} · thinning ${sgn(o.moist)}`, warn];
+  const key=vals.join("|"); if(key===pbarText) return; pbarText=key;
+  document.getElementById("pPhase").textContent=vals[0]; document.getElementById("pPct").textContent=vals[1]; document.getElementById("pNext").textContent=vals[2];
+  document.getElementById("pMoist").textContent=vals[3]; document.getElementById("pTemp").textContent=vals[4]; document.getElementById("pRad").textContent=vals[5];
+  document.getElementById("pSky").innerHTML=vals[6]; document.getElementById("pWarn").textContent=vals[7];
+  document.getElementById("pFill").style.width=(PS.progress*100).toFixed(1)+"%";
+}
+// milestones: one message + a short glow each time the engine enters a new phase (sim.pressure.events — real thresholds)
+let phaseSeen=0; const PHASE_HIST=[];
+function pollPressure(now){
+  if(!PRESS) return;
+  while(phaseSeen<PS.events.length){ const ev=PS.events[phaseSeen++]; if(ev.phase<0) continue; const ph=SCN.pressure.phases[ev.phase], o=PS.offsets;
+    PHASE_HIST.push({phase:ph.id, tick:ev.tick, progress:ev.progress});
+    log(`☁ ${ph.name}: ${ph.note} Now: moisture ${sgn(o.moist)}, temperature ${sgn(o.temp)} °C, radiation ${sgn(o.rad)}.`);
+    const b=document.getElementById("pbar"); b.classList.add("pulse"); setTimeout(()=>b.classList.remove("pulse"),2500); }
+  checkThresholds(now);
+}
+// threshold feedback: every few ticks, compare each region's lamp with the last check. A change the player's own purchase did not
+// cause (no purchase since the last check) is the decline's doing: a living colony that got worse, or a region that opened up.
+const PX_FX=[], PX_HIST=[]; let pxLamp=null, pxTick=-1, buyTick=-1;
+function checkThresholds(now){
+  if(sim.ticks-pxTick<5) return; const fresh=pxLamp===null, liv=livingCountBySection(), prev=pxTick; pxTick=sim.ticks;
+  const lamps=SEC.map((_,i)=>evaluate(i)), rank={green:2,yellow:1,red:0};
+  if(!fresh&&buyTick<=prev&&PS.progress>0){ const msgs=[];
+    SEC.forEach((_,i)=>{ const a=pxLamp[i], b=lampOf(lamps[i].fitness), g=CFG.grow.growThresh;
+      if(rank[b]<rank[a.lamp]&&liv[i]>0){ PX_FX.push({sec:i, worse:true, until:now+7000}); PX_HIST.push({sec:i, name:LABEL[i], from:a.lamp, to:b, tick:sim.ticks, limit:lamps[i].limitKey});
+        msgs.push(`${LABEL[i]} is now ${b==="red"?"too hostile":"marginal"} for your plant (${LIMIT_MSG[lamps[i].limitKey](lamps[i])})`); }
+      else if(a.f<=g&&lamps[i].fitness>g){ PX_FX.push({sec:i, worse:false, until:now+7000}); PX_HIST.push({sec:i, name:LABEL[i], from:a.lamp, to:b, tick:sim.ticks, opened:true});
+        msgs.push(`${LABEL[i]} can now support your plant`); } });
+    if(msgs.length) log(`☁ The thinning atmosphere changed the land: ${msgs.join("; ")}.`); }
+  pxLamp=lamps.map(e=>({lamp:lampOf(e.fitness), f:e.fitness}));
+  for(let k=PX_FX.length-1;k>=0;k--) if(now>PX_FX[k].until) PX_FX.splice(k,1);
+}
+
 /* ---- upgrade catalogue = content/traits.js; prices/effects/rules = engine ---- */
 const UP=sim.traits, upById=sim.traitById;
 // BLOOM-011 Terraform readability: what a sky change does to EVERY region, not only the ones that switch between open and
@@ -593,7 +701,8 @@ function skyDiff(ax,from,to,before,after){
 function skyWords(d){
   const nm=a=>a.map(i=>LABEL[i]).join(", "), why=i=>LIMIT_MSG[d.after[i].limitKey](d.after[i]);
   const sky=d.axis==="temp"?`sky ${degC(d.from)} → ${degC(d.to)}`:`sky moisture ${d.from} → ${d.to}`;
-  return [sky, d.gain.length?`opens: ${nm(d.gain)}`:"", d.lose.length?`⚠ closes: ${d.lose.map(i=>`${LABEL[i]} (${why(i)})`).join(", ")}`:"",
+  const drift=PRESS&&PS.progress>0?(d.axis==="temp"?` (thinning air ${sgn(PS.offsets.temp)} °C on top)`:` (thinning air ${sgn(PS.offsets.moist)} on top)`):"";
+  return [sky+drift, d.gain.length?`opens: ${nm(d.gain)}`:"", d.lose.length?`⚠ closes: ${d.lose.map(i=>`${LABEL[i]} (${why(i)})`).join(", ")}`:"",
     d.better.length?`closer, still blocked: ${nm(d.better)}`:"", d.worse.length?`⚠ worse, still growing: ${nm(d.worse)}`:""].filter(Boolean).join(" · ");
 }
 
@@ -614,9 +723,11 @@ function renderShop(){
     html+='</div>';
   }
   el.innerHTML=html;
-  el.querySelectorAll("button.buy").forEach(b=>{ b.addEventListener("click",()=>buy(b.dataset.id));
-    b.addEventListener("mouseenter",()=>showPreview(b.dataset.id)); b.addEventListener("focus",()=>showPreview(b.dataset.id));
-    b.addEventListener("mouseleave",clearPreview); b.addEventListener("blur",clearPreview); });
+  // (BLOOM-012 fix: right after a purchase the re-rendered button sits under the pointer; its hover preview of the NEXT tier
+  // must not overwrite the purchase message — it previews again once the pointer leaves and comes back)
+  el.querySelectorAll("button.buy").forEach(b=>{ b.addEventListener("click",()=>{ if(buy(b.dataset.id)) justBought=b.dataset.id; });
+    b.addEventListener("mouseenter",()=>{ if(b.dataset.id!==justBought) showPreview(b.dataset.id); }); b.addEventListener("focus",()=>{ if(b.dataset.id!==justBought) showPreview(b.dataset.id); });
+    b.addEventListener("mouseleave",()=>{ justBought=null; clearPreview(); }); b.addEventListener("blur",clearPreview); });
 }
 // cheap per-frame pass: toggle affordability in place (a full re-render every frame would eat clicks)
 function refreshShop(){
@@ -648,6 +759,7 @@ function showPreview(id){
     : (u.board==="Spread"?"no region changes; your plant spreads faster.":"no region changes state yet.")));
 }
 function clearPreview(){ preview=null; }
+let justBought=null;
 function buy(id){
   const u=upById[id], sky=u.effect.type==="sky", ax=u.effect.axis, from=sky&&G[ax], before=sky&&SEC.map((_,i)=>evaluate(i));
   if(!sim.buy(id)) return false;
@@ -656,7 +768,8 @@ function buy(id){
     skyFx={...d, until:performance.now()+8000, delta:ax==="temp"?`${ch>0?"▲ +":"▼ −"}${Math.abs(ch)}°C`:`${ch>0?"▲ +":"▼ −"}${Math.abs(ch)} moist`};
     log(`Bought ${u.name}. ${skyWords(d).replace(/^sky/,"Sky")}.`); }
   else log(`Bought ${u.name}. `);
-  renderShop(); preview=null; if(selected>=0) renderInspect(); draw();
+  // (a pointer click marks its button in justBought after this re-render — see renderShop)
+  justBought=null; buyTick=sim.ticks; renderShop(); preview=null; if(selected>=0) renderInspect(); draw();
   return true;
 }
 
@@ -706,6 +819,25 @@ function drawPlant(c){
   if(genome.waterSeeds){ px(0,38,"#3a6f9a",8,2); px(2,36,"#8a5a2b",3,3); px(3,36,"#b98a4a"); } // a floating seed pod
 }
 
+// BLOOM-012: the scenario's identity and how far the decline got, with the drift the plant endured (pressure runs only)
+function pressureReport(){
+  if(!PRESS) return ""; const o=PS.offsets, done=PS.progress>=1;
+  return `<div class="press" id="repPressure"><b>Pressure: ${SCN.display.title}</b> — ${phaseName(PS.phase)} (${Math.round(PS.progress*100)}% of the decline).
+    Your plant endured: moisture <b>${sgn(o.moist)}</b>, temperature <b>${sgn(o.temp)} °C</b>, radiation <b>${sgn(o.rad)}</b>${done?" — the final harsh state.":`. The decline continues if you keep playing (final: moisture ${sgn(PS.max.moist)}, temperature ${sgn(PS.max.temp)} °C, radiation ${sgn(PS.max.rad)}).`}</div>`;
+}
+// BLOOM-012: extinction (pressure scenarios only): the engine has confirmed no living plants for the scenario's grace period
+function onLoss(why){
+  const mins=Math.floor(sim.ticks*CFG.tickMs/60000), secs=Math.round(sim.ticks*CFG.tickMs/1000)%60, o=PS.offsets;
+  const r=document.getElementById("report"); r.classList.add("lost");
+  r.innerHTML=`<h2>✕ EXTINCTION</h2>
+    <div class="sub" id="lossWhy">No living plants were left anywhere for ${SCN.loss.extinctionGraceSeconds} s, so the run is over (${mins}m ${String(secs).padStart(2,"0")}s${BLOOM_RUN.kind==="procedural"?` on <b>${BLOOM_RUN.planet.name}</b>, ${BLOOM_RUN.archetype.name} · public seed ${BLOOM_RUN.seed}`:""}).</div>
+    ${pressureReport()}
+    <div class="debrief"><b>What happened:</b> the planet kept changing and your plant could no longer live on any of its land. Adapting to the new conditions (Adapt), pushing the sky back (Terraform) or protecting your strongest colonies earlier can keep a foothold alive.</div>
+    <button class="btn" id="lossRestart">Restart this run ↻</button>`;
+  document.getElementById("reportModal").classList.add("on");
+  document.getElementById("lossRestart").addEventListener("click",()=>location.reload());
+  log(`✕ Extinction: ${why}.`);
+}
 function onWin(cov){
   // build list + real-plant analogs (acceptance Q10) come from the trait data (content/traits.js)
   const owned=UP.filter(u=>u.board!=="Terraform" && sim.ownedTier(u)>0);
@@ -718,7 +850,8 @@ function onWin(cov){
   const mins=Math.floor(sim.ticks*CFG.tickMs/60000), secs=Math.round(sim.ticks*CFG.tickMs/1000)%60;
   document.getElementById("report").innerHTML=`
     <h2>★ BLOOM</h2>
-    <div class="sub">You held ${Math.round(cov*100)}% of the land${BLOOM_RUN.kind==="procedural"?` of <b>${BLOOM_RUN.planet.name}</b> (${BLOOM_RUN.archetype.name} · public seed ${BLOOM_RUN.seed})`:""} in ${mins}m ${String(secs).padStart(2,"0")}s.</div>
+    <div class="sub">You held ${Math.round(cov*100)}% of the land${BLOOM_RUN.kind==="procedural"?` of <b>${BLOOM_RUN.planet.name}</b> (${BLOOM_RUN.archetype.name} · public seed ${BLOOM_RUN.seed})`:""}${PRESS?` under <b>${SCN.name}</b>`:""} in ${mins}m ${String(secs).padStart(2,"0")}s.</div>
+    ${pressureReport()}
     <div class="top"><canvas id="plantCv" width="136" height="200"></canvas>
       <div><b>Your plant became:</b><ul>${built.map(b=>`<li>${b}</li>`).join('')||'<li>the unmodified pioneer</li>'}</ul>
       ${terra.length?`<div style="margin-top:8px"><b>You reshaped the sky:</b> ${terra.join(', ')}</div>`:''}</div></div>
@@ -742,7 +875,7 @@ function frame(ts){
   if(running){ acc+=dt*speed;
     while(acc>=CFG.tickMs){ lastCov=sim.tick(); acc-=CFG.tickMs; if(!running)break; }
   }
-  pollCrossings(performance.now()); renderHUD(lastCov); refreshShop(); refreshColonyCtl(); draw();
+  pollCrossings(performance.now()); pollPressure(performance.now()); renderHUD(lastCov); renderPressure(); refreshShop(); refreshColonyCtl(); draw();
   // re-read the inspected section every 3 sim ticks (not every frame — while paused that would swallow clicks)
   if(selected>=0 && sim.ticks%3===0 && sim.ticks!==lastInspectTick){ lastInspectTick=sim.ticks; renderInspect(); }
   requestAnimationFrame(frame);
@@ -752,15 +885,21 @@ if(BLOOM_RUN.kind==="procedural"){ const a=BLOOM_RUN.planet.archetype; // unobtr
   document.title=`BLOOM — ${BLOOM_RUN.archetype.name} · seed ${BLOOM_RUN.seed} (playtest harness)`;
   document.querySelector("header h1 small").textContent="· "+BLOOM_RUN.planet.name.toLowerCase();
   document.getElementById("runId").textContent=`${BLOOM_RUN.archetype.name} · public seed ${a.publicSeed} · attempt ${a.attempt} · ${BLOOM_RUN.planet.name} (${BLOOM_RUN.planet.id}) · layers ${a.validatedLayers.join("")}`; }
+if(PRESS){ // BLOOM-012: pressure scenario identity (title, header, footer) + the temporary pressure bar
+  document.title=document.title.replace(/^BLOOM — /,`BLOOM — ${SCN.name} · `);
+  document.querySelector("header h1 small").textContent+=" · "+SCN.name.toLowerCase();
+  const rid=document.getElementById("runId"); rid.textContent=(rid.textContent?rid.textContent+" · ":"")+`scenario ${SCN.id} (layer P ${BLOOM_RUN.summary.scenarioValidation.status})`;
+  buildPressureBar(); }
 // BLOOM-008/009: open on the origin so its colony status and growth focus are the first thing in view
 selected=ORIGIN; renderInspect(); log(`Your plant has just sprouted in ${LABEL[ORIGIN]}: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish.`);
+if(PRESS) log(`☁ ${SCN.display.title}. ${SCN.display.summary} The decline begins in ${mmss(SCN.pressure.graceSeconds)}. Your plant sprouted in ${LABEL[ORIGIN]}.`);
 resize(); renderShop(); renderHUD(0); requestAnimationFrame(frame);
 
 /* ========================================================================== */
 /*  TEST HOOK — headless winnability / behavior checks                        */
 /* ========================================================================== */
 window.BLOOM_API={
-  buy, sim, advance(n){ let c=lastCov; running=false; for(let k=0;k<n;k++){ c=sim.tick(); if(sim.won)break; } lastCov=c; return c; },
+  buy, sim, advance(n){ let c=lastCov; running=false; for(let k=0;k<n;k++){ c=sim.tick(); if(sim.won||sim.lost)break; } lastCov=c; return c; },
   coverage(){ return sim.coverage(); },
   addBiomass(x){ sim.biomass+=x; renderShop(); },
   state(){ return {biomass:Math.floor(sim.biomass), ticks:sim.ticks, won:sim.won, genome:{...genome}, tf:{...tf}, sky:{...G},
@@ -777,7 +916,10 @@ window.BLOOM_API={
   // the crossing animations the map has started (each one a real engine event)
   colony(){ return SEC.map((_,i)=>({ ...sim.colonyStatus(i), living:livingCountBySection()[i], focus:sim.getColonyFocus(i), spec:sim.getSpecialization(i) })); },
   colonies(){ return { focus:[...sim.colonies.focus], spec:[...sim.colonies.spec] }; },
-  crossAnims(){ return { active:XANIM.map(a=>({...a})), history:XHIST.map(a=>({...a})) }; }
+  crossAnims(){ return { active:XANIM.map(a=>({...a})), history:XHIST.map(a=>({...a})) }; },
+  // BLOOM-012 diagnostics (tests only): the live pressure state, the milestones and threshold changes the UI showed, loss state
+  pressure(){ return { ...PS, offsets:{...PS.offsets}, max:{...PS.max}, events:PS.events.map(e=>({...e})), lost:sim.lost, lostReason:sim.lostReason,
+    extinction:{...sim.extinction}, phases:PHASE_HIST.map(x=>({...x})), thresholds:PX_HIST.map(x=>({...x})) }; }
 };
 </script>
 <script>
@@ -788,12 +930,29 @@ window.BLOOM_API={
 /*  ?archetype=<id>&seed=<public seed> → BLOOM.generateFromArchetype, the real */
 /*  production path (validator layers 1–8). Failure → explicit failure state;  */
 /*  another seed is never substituted and no world starts.                     */
+/*  BLOOM-012: &scenario=<id> (content/scenarios.js), orthogonal to the planet.*/
+/*  None → Eden, exactly as before. Unknown / malformed → explicit failure.    */
+/*  A pressure scenario starts only if planet + scenario pass layer P          */
+/*  (BLOOM.validateScenario, real pressured witnesses); its solutions are      */
+/*  never handed to the UI.                                                    */
 /* ========================================================================== */
 window.BLOOM_RUN=(function(){
   if(!window.BLOOM||!window.BLOOM_DATA||!BLOOM_DATA.planets||!BLOOM_DATA.planets.first_bloom) return {kind:"missing"};
-  const q=new URLSearchParams(location.search), aid=q.get("archetype"), seedText=q.get("seed");
-  if(aid===null&&seedText===null) return {kind:"authored", planet:BLOOM_DATA.planets.first_bloom, summary:{kind:"authored", planetId:"first_bloom", name:BLOOM_DATA.planets.first_bloom.name}};
-  const fail=(why,extra={})=>({kind:"procedural", failed:true, summary:{kind:"procedural", failed:true, archetypeId:aid, seed:seedText, why, ...extra}});
+  const q=new URLSearchParams(location.search), aid=q.get("archetype"), seedText=q.get("seed"), scText=q.get("scenario");
+  const kind=aid===null&&seedText===null?"authored":"procedural";
+  const fail=(why,extra={})=>({kind, failed:true, summary:{kind, failed:true, archetypeId:aid, seed:seedText, scenarioId:scText, why, ...extra}});
+  let scenario=null; // null = no scenario parameter: Eden, the engine exactly as before BLOOM-012
+  if(scText!==null){
+    if(!/^[a-z][a-z0-9_]{0,40}$/.test(scText)) return fail(`"scenario" must be a scenario id from content/scenarios.js (got "${scText}")`, {badScenario:true});
+    try { scenario=BLOOM.pressure.resolveScenario(BLOOM_DATA.scenarios, scText); } catch(e){ return fail(e.message, {badScenario:true}); } }
+  const withScenario=(run)=>{ // layer P for a pressured combination; Eden adds nothing to prove
+    run.scenario=scenario; run.summary.scenarioId=scenario?scenario.id:"eden"; run.summary.scenario=scenario?scenario.name:"Eden";
+    if(!scenario||!scenario.pressure) return run;
+    const v=BLOOM.validateScenario(run.planet, BLOOM_DATA.config, BLOOM_DATA.traits, scenario, {archetypeId:run.archetype?run.archetype.id:null});
+    if(!v.ok) return fail(v.reason||`${scenario.name} ${v.status}`, {archetype:run.archetype&&run.archetype.name, planetName:run.planet.name, scenario:scenario.name, scenarioRejected:v.status});
+    run.summary.scenarioValidation={status:v.status, strategiesProven:v.strategies.length, required:v.required}; // a count only — no builds, no plans
+    return run; };
+  if(kind==="authored") return withScenario({kind:"authored", planet:BLOOM_DATA.planets.first_bloom, summary:{kind:"authored", planetId:"first_bloom", name:BLOOM_DATA.planets.first_bloom.name}});
   const A=(BLOOM_DATA.archetypes||[]).find(a=>a.id===aid);
   if(!A) return fail(`unknown archetype "${aid}" (known: ${(BLOOM_DATA.archetypes||[]).map(a=>a.id).join(", ")})`);
   if(seedText===null||!/^\d{1,10}$/.test(seedText)||+seedText>4294967295) return fail(`"seed" must be a whole number 0–4294967295 (got ${seedText===null?"nothing":`"${seedText}"`})`);
@@ -806,20 +965,24 @@ window.BLOOM_RUN=(function(){
   // the player never sees validator solutions: drop the witness plan and strategy signatures before the UI starts
   const {witness, strategies, rejectedAttempts, ...ident}=planet.archetype;
   planet.archetype={...ident, rejectedAttemptCount:rejectedAttempts.length};
-  return {kind:"procedural", planet, archetype:A, seed, summary:{kind:"procedural", archetypeId:A.id, archetype:A.name, publicSeed:ident.publicSeed,
-    attempt:ident.attempt, planetId:planet.id, name:planet.name, validatedLayers:ident.validatedLayers, landmasses:ident.landmasses, actualWaterPct:ident.actualWaterPct}};
+  return withScenario({kind:"procedural", planet, archetype:A, seed, summary:{kind:"procedural", archetypeId:A.id, archetype:A.name, publicSeed:ident.publicSeed,
+    attempt:ident.attempt, planetId:planet.id, name:planet.name, validatedLayers:ident.validatedLayers, landmasses:ident.landmasses, actualWaterPct:ident.actualWaterPct}});
 })();
 if(BLOOM_RUN.kind==="missing"){
   document.body.innerHTML='<p style="padding:24px;font-family:monospace;color:#ff6b6b">BLOOM could not load its engine/content files. Open demos/demo-run.html from inside the full Bloom folder (it needs ../content, ../planets and ../resources).</p>';
 } else if(BLOOM_RUN.failed){ // explicit failure state: identify the request, start nothing
   const f=BLOOM_RUN.summary, esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  document.title="BLOOM — generation failed"; document.querySelector("header h1 small").textContent="· generation failed";
-  document.querySelector("main").innerHTML=`<div class="genfail" id="genFail" style="grid-column:1/-1;align-self:start"><h2>NO WORLD GENERATED</h2>
-    <div>${f.archetype?esc(f.archetype):`archetype <code>${esc(f.archetypeId)}</code>`} · public seed <code>${esc(f.seed)}</code></div>
+  const scen=f.badScenario||f.scenarioRejected, where=f.kind==="authored"?(f.planetName?esc(f.planetName):"First Bloom")
+    :`${f.archetype?esc(f.archetype):`archetype <code>${esc(f.archetypeId)}</code>`} · public seed <code>${esc(f.seed)}</code>`;
+  document.title=scen?"BLOOM — run not started":"BLOOM — generation failed"; document.querySelector("header h1 small").textContent=scen?"· run not started":"· generation failed";
+  document.querySelector("main").innerHTML=`<div class="genfail" id="genFail" style="grid-column:1/-1;align-self:start"><h2>${scen?"NO RUN STARTED":"NO WORLD GENERATED"}</h2>
+    <div>${where}${f.scenarioId!==null&&f.scenarioId!==undefined?` · scenario <code>${esc(f.scenarioId)}</code>`:""}</div>
     <p>${esc(f.why)}.${f.rejectedByLayer?` Rejected attempts: ${Object.entries(f.rejectedByLayer).map(([k,n])=>`${esc(k)} ${n}`).join(" · ")}.`:""}</p>
-    <p style="color:var(--dim)">${f.attempts?"This public seed is not playable under the current validation policy.":"The launch parameters are invalid."} No other seed was substituted and no world was started. Try a different <code>seed=</code> value.</p></div>`;
+    <p style="color:var(--dim)">${f.scenarioRejected?`This planet + scenario combination did not pass the scenario validation layer (${esc(f.scenarioRejected)}). No other scenario or seed was substituted and no run was started.`
+      :f.badScenario?`Known scenarios: ${(BLOOM_DATA.scenarios||[]).map(x=>`<code>${esc(x.id)}</code>`).join(", ")}. Leave <code>scenario=</code> out for Eden. No other scenario was substituted and no run was started.`
+      :`${f.attempts?"This public seed is not playable under the current validation policy.":"The launch parameters are invalid."} No other seed was substituted and no world was started. Try a different <code>seed=</code> value.`}</p></div>`;
   document.querySelector("header .hud").style.visibility="hidden"; document.querySelector("header .controls").style.visibility="hidden";
-  document.getElementById("log").textContent=`Generation failed for public seed ${f.seed}.`;
+  document.getElementById("log").textContent=scen?`Run not started (scenario ${f.scenarioId}).`:`Generation failed for public seed ${f.seed}.`;
   window.BLOOM_API={ run:f };
 } else { // run the game UI as an ordinary classic script (same globals as before BLOOM-007)
   const ui=document.createElement("script"); ui.textContent=document.getElementById("bloomUI").textContent; document.body.appendChild(ui);

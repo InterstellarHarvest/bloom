@@ -1,0 +1,1582 @@
+{
+ "scenario": {
+  "id": "dying_world",
+  "name": "Dying World",
+  "intent": "Habitability steadily degrades: the planet is losing its atmosphere, so the world itself turns drier, colder and more exposed to radiation through the environmental model the player already reads. An earlier solution stops being enough; the player protects, adapts, Terraforms or gives ground up.",
+  "pressure": {
+   "graceSeconds": 60,
+   "durationSeconds": 420,
+   "channels": {
+    "moistureShare": -0.4,
+    "temperature": -8,
+    "radiation": 8
+   },
+   "graceLabel": "Atmosphere stable (for now)",
+   "phases": [
+    {
+     "from": 0,
+     "id": "early",
+     "name": "Early decline",
+     "note": "The air is starting to thin."
+    },
+    {
+     "from": 0.34,
+     "id": "loss",
+     "name": "Noticeable loss",
+     "note": "Drier, colder, more radiation: check your edge regions."
+    },
+    {
+     "from": 0.67,
+     "id": "severe",
+     "name": "Severe decline",
+     "note": "Regions near their limits are tipping over."
+    },
+    {
+     "from": 1,
+     "id": "final",
+     "name": "Final harsh state",
+     "note": "The atmosphere has settled thin. Conditions stop changing."
+    }
+   ]
+  },
+  "loss": {
+   "extinction": true,
+   "extinctionGraceSeconds": 8
+  },
+  "validation": {
+   "minStrategies": 1,
+   "holdFinalSeconds": 60,
+   "pacing": {
+    "marginSeconds": [
+     300,
+     1200
+    ],
+    "firstPurchaseSeconds": [
+     30,
+     150
+    ],
+    "maxPurchaseGapSeconds": 300
+   },
+   "archetypes": {}
+  },
+  "display": {
+   "title": "Dying World · Atmosphere thinning",
+   "summary": "The planet is slowly losing atmosphere. Conditions are becoming drier and colder, and surface radiation is increasing.",
+   "channels": {
+    "moisture": "drier: thinner air holds less water vapour",
+    "temperature": "colder: less greenhouse warming",
+    "radiation": "more radiation: less air shields the surface"
+   }
+  }
+ },
+ "layerP": {
+  "primary": {
+   "status": "PASS",
+   "strategies": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 90.2,
+       "cost": 130
+      },
+      {
+       "id": "rad",
+       "seconds": 389.6,
+       "cost": 220
+      },
+      {
+       "id": "drought",
+       "seconds": 480.6,
+       "cost": 150
+      },
+      {
+       "id": "waterSeeds",
+       "seconds": 558.9,
+       "cost": 180
+      }
+     ],
+     "winSeconds": 666.1,
+     "marginSeconds": 672.2,
+     "pressureAtMargin": 1,
+     "hold": {
+      "seconds": 732.2,
+      "coverage": 0.737,
+      "held": true
+     },
+     "held": [
+      "sec_2",
+      "sec_3",
+      "sec_4",
+      "sec_5",
+      "sec_7",
+      "sec_9",
+      "sec_11",
+      "sec_12",
+      "sec_13",
+      "sec_14"
+     ],
+     "trace": [
+      [
+       30.1,
+       0.0974,
+       0
+      ],
+      [
+       60.2,
+       0.1364,
+       0
+      ],
+      [
+       90.2,
+       0.1374,
+       0.072
+      ],
+      [
+       120.3,
+       0.1374,
+       0.144
+      ],
+      [
+       150.4,
+       0.1374,
+       0.215
+      ],
+      [
+       180.5,
+       0.1374,
+       0.287
+      ],
+      [
+       210.6,
+       0.1374,
+       0.358
+      ],
+      [
+       240.6,
+       0.1374,
+       0.43
+      ],
+      [
+       270.7,
+       0.1374,
+       0.502
+      ],
+      [
+       300.8,
+       0.1374,
+       0.573
+      ],
+      [
+       330.9,
+       0.1374,
+       0.645
+      ],
+      [
+       361,
+       0.1374,
+       0.717
+      ],
+      [
+       391,
+       0.1396,
+       0.788
+      ],
+      [
+       421.1,
+       0.1851,
+       0.86
+      ],
+      [
+       451.2,
+       0.2749,
+       0.931
+      ],
+      [
+       481.3,
+       0.3182,
+       1
+      ],
+      [
+       511.4,
+       0.3636,
+       1
+      ],
+      [
+       541.4,
+       0.3636,
+       1
+      ],
+      [
+       571.5,
+       0.3636,
+       1
+      ],
+      [
+       601.6,
+       0.3874,
+       1
+      ],
+      [
+       631.7,
+       0.5314,
+       1
+      ],
+      [
+       661.8,
+       0.6797,
+       1
+      ],
+      [
+       691.8,
+       0.737,
+       1
+      ],
+      [
+       721.9,
+       0.737,
+       1
+      ]
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Terraform(+8)",
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 90.2,
+       "cost": 130
+      },
+      {
+       "id": "rad",
+       "seconds": 389.6,
+       "cost": 220
+      },
+      {
+       "id": "humid",
+       "seconds": 513.8,
+       "cost": 200
+      },
+      {
+       "id": "waterSeeds",
+       "seconds": 595.4,
+       "cost": 180
+      }
+     ],
+     "winSeconds": 694.9,
+     "marginSeconds": 703,
+     "pressureAtMargin": 1,
+     "hold": {
+      "seconds": 763,
+      "coverage": 0.737,
+      "held": true
+     },
+     "held": [
+      "sec_2",
+      "sec_3",
+      "sec_4",
+      "sec_5",
+      "sec_7",
+      "sec_9",
+      "sec_11",
+      "sec_12",
+      "sec_13",
+      "sec_14"
+     ],
+     "trace": [
+      [
+       30.1,
+       0.0974,
+       0
+      ],
+      [
+       60.2,
+       0.1364,
+       0
+      ],
+      [
+       90.2,
+       0.1374,
+       0.072
+      ],
+      [
+       120.3,
+       0.1374,
+       0.144
+      ],
+      [
+       150.4,
+       0.1374,
+       0.215
+      ],
+      [
+       180.5,
+       0.1374,
+       0.287
+      ],
+      [
+       210.6,
+       0.1374,
+       0.358
+      ],
+      [
+       240.6,
+       0.1374,
+       0.43
+      ],
+      [
+       270.7,
+       0.1374,
+       0.502
+      ],
+      [
+       300.8,
+       0.1374,
+       0.573
+      ],
+      [
+       330.9,
+       0.1374,
+       0.645
+      ],
+      [
+       361,
+       0.1374,
+       0.717
+      ],
+      [
+       391,
+       0.1396,
+       0.788
+      ],
+      [
+       421.1,
+       0.1851,
+       0.86
+      ],
+      [
+       451.2,
+       0.2749,
+       0.931
+      ],
+      [
+       481.3,
+       0.3182,
+       1
+      ],
+      [
+       511.4,
+       0.3182,
+       1
+      ],
+      [
+       541.4,
+       0.3636,
+       1
+      ],
+      [
+       571.5,
+       0.3636,
+       1
+      ],
+      [
+       601.6,
+       0.3636,
+       1
+      ],
+      [
+       631.7,
+       0.3766,
+       1
+      ],
+      [
+       661.8,
+       0.4751,
+       1
+      ],
+      [
+       691.8,
+       0.684,
+       1
+      ],
+      [
+       721.9,
+       0.737,
+       1
+      ],
+      [
+       752,
+       0.737,
+       1
+      ]
+     ]
+    }
+   ],
+   "differences": [
+    {
+     "a": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+     "b": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Terraform(+8)",
+     "onlyA": [
+      "Water:dry=Adapt(1)"
+     ],
+     "onlyB": [
+      "Water:dry=Terraform(+8)"
+     ],
+     "heldOnlyA": [],
+     "heldOnlyB": []
+    }
+   ],
+   "pressure": {
+    "graceSeconds": 60,
+    "fullAtSeconds": 480,
+    "maxOffsets": {
+     "temp": -8,
+     "moist": -21.6,
+     "rad": 8
+    },
+    "holdFinalSeconds": 60
+   },
+   "ms": 487
+  },
+  "desert": {
+   "status": "PASS",
+   "strategies": [
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2)",
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 50.2,
+       "cost": 130
+      },
+      {
+       "id": "rad",
+       "seconds": 149.8,
+       "cost": 220
+      },
+      {
+       "id": "drought",
+       "seconds": 243.4,
+       "cost": 150
+      },
+      {
+       "id": "drought",
+       "seconds": 392.8,
+       "cost": 270
+      }
+     ],
+     "winSeconds": 504.3,
+     "marginSeconds": 512,
+     "pressureAtMargin": 1,
+     "hold": {
+      "seconds": 572,
+      "coverage": 0.8245,
+      "held": true
+     },
+     "held": [
+      "sec_0",
+      "sec_1",
+      "sec_2",
+      "sec_3",
+      "sec_4",
+      "sec_5",
+      "sec_7",
+      "sec_9",
+      "sec_10",
+      "sec_11"
+     ],
+     "trace": [
+      [
+       30.1,
+       0.0443,
+       0
+      ],
+      [
+       60.2,
+       0.0465,
+       0
+      ],
+      [
+       90.2,
+       0.0465,
+       0.072
+      ],
+      [
+       120.3,
+       0.0465,
+       0.144
+      ],
+      [
+       150.4,
+       0.0465,
+       0.215
+      ],
+      [
+       180.5,
+       0.0465,
+       0.287
+      ],
+      [
+       210.6,
+       0.0465,
+       0.358
+      ],
+      [
+       240.6,
+       0.0465,
+       0.43
+      ],
+      [
+       270.7,
+       0.0705,
+       0.502
+      ],
+      [
+       300.8,
+       0.1121,
+       0.573
+      ],
+      [
+       330.9,
+       0.1135,
+       0.645
+      ],
+      [
+       361,
+       0.1135,
+       0.717
+      ],
+      [
+       391,
+       0.1135,
+       0.788
+      ],
+      [
+       421.1,
+       0.234,
+       0.86
+      ],
+      [
+       451.2,
+       0.4535,
+       0.931
+      ],
+      [
+       481.3,
+       0.6246,
+       1
+      ],
+      [
+       511.4,
+       0.7283,
+       1
+      ],
+      [
+       541.4,
+       0.8014,
+       1
+      ],
+      [
+       571.5,
+       0.8245,
+       1
+      ]
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+16)",
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 50.2,
+       "cost": 130
+      },
+      {
+       "id": "salt",
+       "seconds": 141,
+       "cost": 200
+      },
+      {
+       "id": "rad",
+       "seconds": 274.1,
+       "cost": 220
+      },
+      {
+       "id": "drought",
+       "seconds": 359.2,
+       "cost": 150
+      },
+      {
+       "id": "humid",
+       "seconds": 489.8,
+       "cost": 200
+      },
+      {
+       "id": "humid",
+       "seconds": 613.9,
+       "cost": 290
+      }
+     ],
+     "winSeconds": 751.8,
+     "marginSeconds": 757.3,
+     "pressureAtMargin": 1,
+     "hold": {
+      "seconds": 817.3,
+      "coverage": 0.8081,
+      "held": true
+     },
+     "held": [
+      "sec_0",
+      "sec_1",
+      "sec_2",
+      "sec_3",
+      "sec_4",
+      "sec_7",
+      "sec_8",
+      "sec_9",
+      "sec_10",
+      "sec_11"
+     ],
+     "trace": [
+      [
+       30.1,
+       0.0443,
+       0
+      ],
+      [
+       60.2,
+       0.0465,
+       0
+      ],
+      [
+       90.2,
+       0.0465,
+       0.072
+      ],
+      [
+       120.3,
+       0.0465,
+       0.144
+      ],
+      [
+       150.4,
+       0.0465,
+       0.215
+      ],
+      [
+       180.5,
+       0.0465,
+       0.287
+      ],
+      [
+       210.6,
+       0.0465,
+       0.358
+      ],
+      [
+       240.6,
+       0.0465,
+       0.43
+      ],
+      [
+       270.7,
+       0.0465,
+       0.502
+      ],
+      [
+       300.8,
+       0.0465,
+       0.573
+      ],
+      [
+       330.9,
+       0.0465,
+       0.645
+      ],
+      [
+       361,
+       0.0483,
+       0.717
+      ],
+      [
+       391,
+       0.0793,
+       0.788
+      ],
+      [
+       421.1,
+       0.1135,
+       0.86
+      ],
+      [
+       451.2,
+       0.1135,
+       0.931
+      ],
+      [
+       481.3,
+       0.1135,
+       1
+      ],
+      [
+       511.4,
+       0.1135,
+       1
+      ],
+      [
+       541.4,
+       0.1135,
+       1
+      ],
+      [
+       571.5,
+       0.1135,
+       1
+      ],
+      [
+       601.6,
+       0.1135,
+       1
+      ],
+      [
+       631.7,
+       0.1379,
+       1
+      ],
+      [
+       661.8,
+       0.211,
+       1
+      ],
+      [
+       691.8,
+       0.3431,
+       1
+      ],
+      [
+       721.9,
+       0.5488,
+       1
+      ],
+      [
+       752,
+       0.7017,
+       1
+      ],
+      [
+       782.1,
+       0.8081,
+       1
+      ],
+      [
+       812.2,
+       0.8081,
+       1
+      ]
+     ]
+    }
+   ],
+   "differences": [
+    {
+     "a": "Defense:rad=Adapt(1) · Water:dry=Adapt(2)",
+     "b": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+16)",
+     "onlyA": [
+      "Water:dry=Adapt(2)"
+     ],
+     "onlyB": [
+      "Defense:salt=Adapt(1)",
+      "Water:dry=Adapt(1)+Terraform(+16)"
+     ],
+     "heldOnlyA": [
+      "sec_5"
+     ],
+     "heldOnlyB": [
+      "sec_8"
+     ]
+    }
+   ],
+   "pressure": {
+    "graceSeconds": 60,
+    "fullAtSeconds": 480,
+    "maxOffsets": {
+     "temp": -8,
+     "moist": -7.2,
+     "rad": 8
+    },
+    "holdFinalSeconds": 60
+   },
+   "ms": 712
+  },
+  "frozen": {
+   "status": "PASS",
+   "strategies": [
+    {
+     "signature": "Temperature:cold=Adapt(3) · Water:dry=Adapt(1)",
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 75.2,
+       "cost": 130
+      },
+      {
+       "id": "drought",
+       "seconds": 137.4,
+       "cost": 150
+      },
+      {
+       "id": "cold",
+       "seconds": 200.8,
+       "cost": 140
+      },
+      {
+       "id": "cold",
+       "seconds": 306.4,
+       "cost": 270
+      },
+      {
+       "id": "cold",
+       "seconds": 429.9,
+       "cost": 400
+      }
+     ],
+     "winSeconds": 485.1,
+     "marginSeconds": 493,
+     "pressureAtMargin": 1,
+     "hold": {
+      "seconds": 553,
+      "coverage": 0.8158,
+      "held": true
+     },
+     "held": [
+      "sec_2",
+      "sec_3",
+      "sec_4",
+      "sec_5",
+      "sec_6",
+      "sec_7",
+      "sec_9",
+      "sec_11",
+      "sec_12",
+      "sec_14",
+      "sec_15"
+     ],
+     "trace": [
+      [
+       30.1,
+       0.0687,
+       0
+      ],
+      [
+       60.2,
+       0.1269,
+       0
+      ],
+      [
+       90.2,
+       0.2041,
+       0.072
+      ],
+      [
+       120.3,
+       0.2263,
+       0.144
+      ],
+      [
+       150.4,
+       0.2263,
+       0.215
+      ],
+      [
+       180.5,
+       0.2263,
+       0.287
+      ],
+      [
+       210.6,
+       0.2263,
+       0.358
+      ],
+      [
+       240.6,
+       0.2263,
+       0.43
+      ],
+      [
+       270.7,
+       0.2263,
+       0.502
+      ],
+      [
+       300.8,
+       0.2263,
+       0.573
+      ],
+      [
+       330.9,
+       0.2685,
+       0.645
+      ],
+      [
+       361,
+       0.3513,
+       0.717
+      ],
+      [
+       391,
+       0.4503,
+       0.788
+      ],
+      [
+       421.1,
+       0.4872,
+       0.86
+      ],
+      [
+       451.2,
+       0.5601,
+       0.931
+      ],
+      [
+       481.3,
+       0.6856,
+       1
+      ],
+      [
+       511.4,
+       0.7841,
+       1
+      ],
+      [
+       541.4,
+       0.8101,
+       1
+      ]
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)",
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 75.2,
+       "cost": 130
+      },
+      {
+       "id": "drought",
+       "seconds": 137.4,
+       "cost": 150
+      },
+      {
+       "id": "rad",
+       "seconds": 240.5,
+       "cost": 220
+      },
+      {
+       "id": "cold",
+       "seconds": 292.2,
+       "cost": 140
+      },
+      {
+       "id": "cold",
+       "seconds": 408.8,
+       "cost": 270
+      },
+      {
+       "id": "warm",
+       "seconds": 465.9,
+       "cost": 200
+      }
+     ],
+     "winSeconds": 523.5,
+     "marginSeconds": 531.5,
+     "pressureAtMargin": 1,
+     "hold": {
+      "seconds": 591.5,
+      "coverage": 0.7959,
+      "held": true
+     },
+     "held": [
+      "sec_0",
+      "sec_3",
+      "sec_4",
+      "sec_5",
+      "sec_6",
+      "sec_8",
+      "sec_9",
+      "sec_10",
+      "sec_11",
+      "sec_12",
+      "sec_13",
+      "sec_14",
+      "sec_15"
+     ],
+     "trace": [
+      [
+       30.1,
+       0.0687,
+       0
+      ],
+      [
+       60.2,
+       0.1269,
+       0
+      ],
+      [
+       90.2,
+       0.2041,
+       0.072
+      ],
+      [
+       120.3,
+       0.2263,
+       0.144
+      ],
+      [
+       150.4,
+       0.2263,
+       0.215
+      ],
+      [
+       180.5,
+       0.2263,
+       0.287
+      ],
+      [
+       210.6,
+       0.2263,
+       0.358
+      ],
+      [
+       240.6,
+       0.2263,
+       0.43
+      ],
+      [
+       270.7,
+       0.2263,
+       0.502
+      ],
+      [
+       300.8,
+       0.2311,
+       0.573
+      ],
+      [
+       330.9,
+       0.2628,
+       0.645
+      ],
+      [
+       361,
+       0.2921,
+       0.717
+      ],
+      [
+       391,
+       0.2959,
+       0.788
+      ],
+      [
+       421.1,
+       0.3423,
+       0.86
+      ],
+      [
+       451.2,
+       0.4252,
+       0.931
+      ],
+      [
+       481.3,
+       0.482,
+       1
+      ],
+      [
+       511.4,
+       0.6321,
+       1
+      ],
+      [
+       541.4,
+       0.7519,
+       1
+      ],
+      [
+       571.5,
+       0.7945,
+       1
+      ]
+     ]
+    }
+   ],
+   "differences": [
+    {
+     "a": "Temperature:cold=Adapt(3) · Water:dry=Adapt(1)",
+     "b": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)",
+     "onlyA": [
+      "Temperature:cold=Adapt(3)"
+     ],
+     "onlyB": [
+      "Defense:rad=Adapt(1)",
+      "Temperature:cold=Adapt(2)+Terraform(+6)"
+     ],
+     "heldOnlyA": [
+      "sec_2",
+      "sec_7"
+     ],
+     "heldOnlyB": [
+      "sec_0",
+      "sec_8",
+      "sec_10",
+      "sec_13"
+     ]
+    }
+   ],
+   "pressure": {
+    "graceSeconds": 60,
+    "fullAtSeconds": 480,
+    "maxOffsets": {
+     "temp": -8,
+     "moist": -18.4,
+     "rad": 8
+    },
+    "holdFinalSeconds": 60
+   },
+   "ms": 603
+  }
+ },
+ "evidence": {
+  "progression": [
+   {
+    "seconds": 0,
+    "progress": 0,
+    "phase": "Atmosphere stable (for now)",
+    "moisture": 0,
+    "temperature": 0,
+    "radiation": 0
+   },
+   {
+    "seconds": 60,
+    "progress": 0,
+    "phase": "Early decline",
+    "moisture": 0,
+    "temperature": 0,
+    "radiation": 0
+   },
+   {
+    "seconds": 150.1,
+    "progress": 0.214,
+    "phase": "Early decline",
+    "moisture": -4.6,
+    "temperature": -1.7,
+    "radiation": 1.7
+   },
+   {
+    "seconds": 240,
+    "progress": 0.429,
+    "phase": "Noticeable loss",
+    "moisture": -9.3,
+    "temperature": -3.4,
+    "radiation": 3.4
+   },
+   {
+    "seconds": 300,
+    "progress": 0.571,
+    "phase": "Noticeable loss",
+    "moisture": -12.3,
+    "temperature": -4.6,
+    "radiation": 4.6
+   },
+   {
+    "seconds": 360,
+    "progress": 0.714,
+    "phase": "Severe decline",
+    "moisture": -15.4,
+    "temperature": -5.7,
+    "radiation": 5.7
+   },
+   {
+    "seconds": 420,
+    "progress": 0.857,
+    "phase": "Severe decline",
+    "moisture": -18.5,
+    "temperature": -6.9,
+    "radiation": 6.9
+   },
+   {
+    "seconds": 480,
+    "progress": 1,
+    "phase": "Final harsh state",
+    "moisture": -21.6,
+    "temperature": -8,
+    "radiation": 8
+   }
+  ],
+  "transitions": [
+   "Green Rise: green@4s → yellow@380s(Water) → red@476s(Water) (Eden: green throughout)",
+   "Saffron Flats: green@4s → yellow@92s(Hazard) → red@432s(Hazard) (Eden: green throughout)",
+   "Heath Reach: green@4s → yellow@200s(Hazard) → red@364s(Water) (Eden: green throughout)"
+  ],
+  "adaptAnswers": [
+   "Green Rise: Water (dry) → Drought Adaptation reopens it",
+   "Fern Span: Hazard (radiation 33→41) → Radiation Shielding reopens it",
+   "Moss Pan: Hazard (radiation 34→42) → Radiation Shielding reopens it",
+   "Gold Pan: Water (dry) → Drought Adaptation reopens it"
+  ],
+  "extinction": {
+   "zeroFromSeconds": 491,
+   "lostSeconds": 498.9,
+   "reason": "extinction: no living plants anywhere for 8 s"
+  },
+  "primaryLayerP": {
+   "status": "PASS",
+   "strategy": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+   "purchases": [
+    {
+     "id": "seedOut",
+     "seconds": 90.2,
+     "cost": 130
+    },
+    {
+     "id": "rad",
+     "seconds": 389.6,
+     "cost": 220
+    },
+    {
+     "id": "drought",
+     "seconds": 480.6,
+     "cost": 150
+    },
+    {
+     "id": "waterSeeds",
+     "seconds": 558.9,
+     "cost": 180
+    }
+   ],
+   "winSeconds": 666.1,
+   "marginSeconds": 672.2,
+   "hold": {
+    "seconds": 732.2,
+    "coverage": 0.737,
+    "held": true
+   },
+   "ms": 265
+  },
+  "primaryStrategies": [
+   {
+    "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+    "purchases": [
+     {
+      "id": "seedOut",
+      "seconds": 90.2,
+      "cost": 130
+     },
+     {
+      "id": "rad",
+      "seconds": 389.6,
+      "cost": 220
+     },
+     {
+      "id": "drought",
+      "seconds": 480.6,
+      "cost": 150
+     },
+     {
+      "id": "waterSeeds",
+      "seconds": 558.9,
+      "cost": 180
+     }
+    ],
+    "winSeconds": 666.1,
+    "marginSeconds": 672.2,
+    "pressureAtMargin": 1,
+    "hold": {
+     "seconds": 732.2,
+     "coverage": 0.737,
+     "held": true
+    },
+    "held": [
+     "sec_2",
+     "sec_3",
+     "sec_4",
+     "sec_5",
+     "sec_7",
+     "sec_9",
+     "sec_11",
+     "sec_12",
+     "sec_13",
+     "sec_14"
+    ],
+    "order": "now"
+   },
+   {
+    "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Terraform(+8)",
+    "purchases": [
+     {
+      "id": "seedOut",
+      "seconds": 90.2,
+      "cost": 130
+     },
+     {
+      "id": "rad",
+      "seconds": 389.6,
+      "cost": 220
+     },
+     {
+      "id": "humid",
+      "seconds": 513.8,
+      "cost": 200
+     },
+     {
+      "id": "waterSeeds",
+      "seconds": 595.4,
+      "cost": 180
+     }
+    ],
+    "winSeconds": 694.9,
+    "marginSeconds": 703,
+    "pressureAtMargin": 1,
+    "hold": {
+     "seconds": 763,
+     "coverage": 0.737,
+     "held": true
+    },
+    "held": [
+     "sec_2",
+     "sec_3",
+     "sec_4",
+     "sec_5",
+     "sec_7",
+     "sec_9",
+     "sec_11",
+     "sec_12",
+     "sec_13",
+     "sec_14"
+    ],
+    "order": "now"
+   }
+  ],
+  "desertStrategies": [
+   {
+    "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2)",
+    "purchases": [
+     {
+      "id": "seedOut",
+      "seconds": 50.2,
+      "cost": 130
+     },
+     {
+      "id": "rad",
+      "seconds": 149.8,
+      "cost": 220
+     },
+     {
+      "id": "drought",
+      "seconds": 243.4,
+      "cost": 150
+     },
+     {
+      "id": "drought",
+      "seconds": 392.8,
+      "cost": 270
+     }
+    ],
+    "winSeconds": 504.3,
+    "hold": {
+     "seconds": 572,
+     "coverage": 0.8245,
+     "held": true
+    },
+    "held": [
+     "sec_0",
+     "sec_1",
+     "sec_2",
+     "sec_3",
+     "sec_4",
+     "sec_5",
+     "sec_7",
+     "sec_9",
+     "sec_10",
+     "sec_11"
+    ]
+   },
+   {
+    "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+16)",
+    "purchases": [
+     {
+      "id": "seedOut",
+      "seconds": 50.2,
+      "cost": 130
+     },
+     {
+      "id": "salt",
+      "seconds": 141,
+      "cost": 200
+     },
+     {
+      "id": "rad",
+      "seconds": 274.1,
+      "cost": 220
+     },
+     {
+      "id": "drought",
+      "seconds": 359.2,
+      "cost": 150
+     },
+     {
+      "id": "humid",
+      "seconds": 489.8,
+      "cost": 200
+     },
+     {
+      "id": "humid",
+      "seconds": 613.9,
+      "cost": 290
+     }
+    ],
+    "winSeconds": 751.8,
+    "hold": {
+     "seconds": 817.3,
+     "coverage": 0.8081,
+     "held": true
+    },
+    "held": [
+     "sec_0",
+     "sec_1",
+     "sec_2",
+     "sec_3",
+     "sec_4",
+     "sec_7",
+     "sec_8",
+     "sec_9",
+     "sec_10",
+     "sec_11"
+    ]
+   }
+  ],
+  "frozenStrategies": [
+   {
+    "signature": "Temperature:cold=Adapt(3) · Water:dry=Adapt(1)",
+    "purchases": [
+     {
+      "id": "seedOut",
+      "seconds": 75.2,
+      "cost": 130
+     },
+     {
+      "id": "drought",
+      "seconds": 137.4,
+      "cost": 150
+     },
+     {
+      "id": "cold",
+      "seconds": 200.8,
+      "cost": 140
+     },
+     {
+      "id": "cold",
+      "seconds": 306.4,
+      "cost": 270
+     },
+     {
+      "id": "cold",
+      "seconds": 429.9,
+      "cost": 400
+     }
+    ],
+    "winSeconds": 485.1,
+    "hold": {
+     "seconds": 553,
+     "coverage": 0.8158,
+     "held": true
+    },
+    "held": [
+     "sec_2",
+     "sec_3",
+     "sec_4",
+     "sec_5",
+     "sec_6",
+     "sec_7",
+     "sec_9",
+     "sec_11",
+     "sec_12",
+     "sec_14",
+     "sec_15"
+    ]
+   },
+   {
+    "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)",
+    "purchases": [
+     {
+      "id": "seedOut",
+      "seconds": 75.2,
+      "cost": 130
+     },
+     {
+      "id": "drought",
+      "seconds": 137.4,
+      "cost": 150
+     },
+     {
+      "id": "rad",
+      "seconds": 240.5,
+      "cost": 220
+     },
+     {
+      "id": "cold",
+      "seconds": 292.2,
+      "cost": 140
+     },
+     {
+      "id": "cold",
+      "seconds": 408.8,
+      "cost": 270
+     },
+     {
+      "id": "warm",
+      "seconds": 465.9,
+      "cost": 200
+     }
+    ],
+    "winSeconds": 523.5,
+    "hold": {
+     "seconds": 591.5,
+     "coverage": 0.7959,
+     "held": true
+    },
+    "held": [
+     "sec_0",
+     "sec_3",
+     "sec_4",
+     "sec_5",
+     "sec_6",
+     "sec_8",
+     "sec_9",
+     "sec_10",
+     "sec_11",
+     "sec_12",
+     "sec_13",
+     "sec_14",
+     "sec_15"
+    ]
+   }
+  ],
+  "edenStrategiesUnderPressure": [
+   "primary: [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)] 74.7% → 22.2% · [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)] 77.3% → 35.9%",
+   "desert: [Water:dry=Adapt(2)] 74.4% → 39.8% · [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] 75.0% → 55.0%",
+   "frozen: [Temperature:cold=Adapt(2)] 90.8% → 17.5% · [Temperature:cold=Adapt(1)+Terraform(+12)] 81.8% → 11.1%"
+  ],
+  "browserWin": {
+   "buys": [
+    "seedOut @ 90 s",
+    "rad @ 362 s",
+    "drought @ 467 s",
+    "waterSeeds @ 536 s"
+   ],
+   "winSeconds": 642,
+   "coverage": 0.7002164502164502,
+   "pressure": 1
+  }
+ }
+}

@@ -1,0 +1,90 @@
+# Dying World — {"moistureShare":-0.4,"temperature":-8,"radiation":8} · grace 60 s · duration 420 s
+
+## Ocean Archipelago: 15/17 Eden-accepted worlds pass layer P (12 with 2 distinct strategies) · margins 410.9–1144.8 s · final-state hold 73.1%–92.7%
+   seed  1  PASS         2×: PASS         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)
+   seed  2  PASS         2×: PASS         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1)
+   seed  3  GENERATION FAILED                  
+   seed  4  PASS         2×: PASS         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)
+   seed  5  PASS         2×: PASS         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−8)
+   seed  6  PASS         2×: FAIL         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1)
+   seed  7  GENERATION FAILED                  
+   seed  8  PASS         2×: PASS         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)
+   seed  9  PASS         2×: FAIL         Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1)
+   seed 10  PASS         2×: PASS         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1)
+   seed 11  PASS         2×: PASS         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1)
+   seed 12  PASS         2×: FAIL         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1)
+   seed 13  PASS         2×: PASS         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)
+   seed 14  PASS         2×: PASS         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Terraform(+8)
+   seed 15  PASS         2×: PASS         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)
+   seed 16  FAIL                          layer P (dying_world): no legal build can hold the win simultaneously: best build reaches 69.1% < 70%
+   seed 17  PASS         2×: PASS         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)
+   seed 18  FAIL                          layer P (dying_world): no legal build can hold the win simultaneously: best build reaches 50.8% < 70%
+   seed 19  GENERATION FAILED                  
+   seed 20  PASS         2×: PASS         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)
+
+## Desert World: 18/20 Eden-accepted worlds pass layer P (12 with 2 distinct strategies) · margins 305.4–758.7 s · final-state hold 73.4%–96.0%
+   seed  1  FAIL                          layer P (dying_world): no legal build reaches the validation margin: best build holds 70.6% < target 73%
+   seed  2  PASS         2×: FAIL         Defense:rad=Adapt(1) · Water:dry=Adapt(2)+Terraform(+8)
+   seed  3  PASS         2×: PASS         Defense:rad=Adapt(1) · Water:dry=Adapt(2)
+   seed  4  FAIL                          layer P (dying_world): no legal build can hold the win simultaneously: best build reaches 65.5% < 70%
+   seed  5  PASS         2×: PASS         Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2)
+   seed  6  PASS         2×: PASS         Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(2)
+   seed  7  PASS         2×: PASS         Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)
+   seed  8  PASS         2×: PASS         Defense:rad=Adapt(1) · Water:dry=Adapt(2)
+   seed  9  PASS         2×: PASS         Defense:rad=Adapt(1) · Water:dry=Adapt(2)
+   seed 10  PASS         2×: FAIL         Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(2)
+   seed 11  PASS         2×: PASS         Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(2)
+   seed 12  PASS         2×: PASS         Defense:rad=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)
+   seed 13  PASS         2×: PASS         Defense:rad=Adapt(1) · Water:dry=Adapt(2)
+   seed 14  PASS         2×: FAIL         Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(2)
+   seed 15  PASS         2×: PASS         Defense:rad=Adapt(1) · Water:dry=Adapt(2)
+   seed 16  PASS         2×: PASS         Defense:salt=Adapt(1) · Water:dry=Adapt(1)
+   seed 17  PASS         2×: PASS         Defense:rad=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)
+   seed 18  PASS         2×: INCONCLUSIVE Defense:rad=Adapt(1) · Water:dry=Adapt(1)
+   seed 19  PASS         2×: FAIL         Defense:rad=Adapt(1) · Water:dry=Adapt(2)
+   seed 20  PASS         2×: FAIL         Defense:rad=Adapt(1) · Water:dry=Adapt(1)
+
+## Frozen World: 20/20 Eden-accepted worlds pass layer P (20 with 2 distinct strategies) · margins 340.5–799.4 s · final-state hold 73.0%–93.8%
+   seed  1  PASS         2×: PASS         Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)
+   seed  2  PASS         2×: PASS         Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6)
+   seed  3  PASS         2×: PASS         Temperature:cold=Adapt(3) · Water:dry=Adapt(1)
+   seed  4  PASS         2×: PASS         Defense:rad=Adapt(1) · Temperature:cold=Adapt(2) · Water:dry=Adapt(1)
+   seed  5  PASS         2×: PASS         Temperature:cold=Adapt(2) · Water:dry=Adapt(1)
+   seed  6  PASS         2×: PASS         Defense:rad=Adapt(1) · Temperature:cold=Adapt(2) · Water:dry=Adapt(1)
+   seed  7  PASS         2×: PASS         Defense:salt=Adapt(1) · Temperature:cold=Adapt(3) · Water:dry=Adapt(1)
+   seed  8  PASS         2×: PASS         Defense:salt=Adapt(1) · Temperature:cold=Adapt(2) · Water:dry=Adapt(1)
+   seed  9  PASS         2×: PASS         Temperature:cold=Adapt(2) · Water:dry=Adapt(1)
+   seed 10  PASS         2×: PASS         Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)
+   seed 11  PASS         2×: PASS         Defense:rad=Adapt(1) · Temperature:cold=Adapt(2) · Water:dry=Adapt(1)
+   seed 12  PASS         2×: PASS         Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(2) · Water:dry=Adapt(1)
+   seed 13  PASS         2×: PASS         Temperature:cold=Adapt(3) · Water:dry=Adapt(1)
+   seed 14  PASS         2×: PASS         Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6)
+   seed 15  PASS         2×: PASS         Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)
+   seed 16  PASS         2×: PASS         Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)
+   seed 17  PASS         2×: PASS         Temperature:cold=Adapt(2) · Water:dry=Adapt(1)
+   seed 18  PASS         2×: PASS         Defense:rad=Adapt(1) · Temperature:cold=Adapt(2) · Water:dry=Adapt(1)
+   seed 19  PASS         2×: PASS         Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)
+   seed 20  PASS         2×: PASS         Temperature:cold=Adapt(2)+Terraform(+6) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)
+
+## fixture ocean_archipelago 13 (Eos-227) — full drift: moisture -21.6, temperature -8 °C, radiation +8
+   Eden strategy [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)]: growable land 74.7% at the start → 22.2% in the final state
+   Eden strategy [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)]: growable land 77.3% at the start → 35.9% in the final state
+   layer P (2 strategies): PASS
+   [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Adapt(1)] seedOut@90s → rad@390s → drought@481s → waterSeeds@559s · win 666 s · holds 73.7% at 732 s
+   [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Water:dry=Terraform(+8)] seedOut@90s → rad@390s → humid@514s → waterSeeds@595s · win 695 s · holds 73.7% at 763 s
+
+## fixture desert_world 25 (Umbra-584) — full drift: moisture -7.2, temperature -8 °C, radiation +8
+   Eden strategy [Water:dry=Adapt(2)]: growable land 74.4% at the start → 39.8% in the final state
+   Eden strategy [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)]: growable land 75.0% at the start → 55.0% in the final state
+   layer P (2 strategies): PASS
+   [Defense:rad=Adapt(1) · Water:dry=Adapt(2)] seedOut@50s → rad@150s → drought@243s → drought@393s · win 504 s · holds 82.5% at 572 s
+   [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+16)] seedOut@50s → salt@141s → rad@274s → drought@359s → humid@490s → humid@614s · win 752 s · holds 80.8% at 817 s
+
+## fixture frozen_world 22 (Mistral-887) — full drift: moisture -18.4, temperature -8 °C, radiation +8
+   Eden strategy [Temperature:cold=Adapt(2)]: growable land 90.8% at the start → 17.5% in the final state
+   Eden strategy [Temperature:cold=Adapt(1)+Terraform(+12)]: growable land 81.8% at the start → 11.1% in the final state
+   layer P (2 strategies): PASS
+   [Temperature:cold=Adapt(3) · Water:dry=Adapt(1)] seedOut@75s → drought@137s → cold@201s → cold@306s → cold@430s · win 485 s · holds 81.6% at 553 s
+   [Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)+Terraform(+6) · Water:dry=Adapt(1)] seedOut@75s → drought@137s → rad@241s → cold@292s → cold@409s → warm@466s · win 524 s · holds 79.6% at 592 s
+
+written: docs/evidence/bloom-012/pressure-study.json

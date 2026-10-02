@@ -398,7 +398,7 @@ Examples:
 
 - **Ocean Archipelago:** the defining problem is **crossing**. No single island holds enough land to win, so every winning strategy includes Waterborne Seeds.
 - **Desert World:** the defining problem is **water**. It is a hot, mostly contiguous world with a few lakes. Water collects in low basins, and those wet basins are the refuges (the origin is always a genuine one). The dry majority of the land needs a water answer, and every proven strategy must answer the dry ground somehow. Two families compete: evolve to live dry (Drought Adaptation), which gives up the wettest ground, or humidify the sky (Terraform), which needs less Drought but reaches less of the deep desert. Crossing is never the puzzle, and Waterborne Seeds appears only where the generic offer rule finds a real crossing. Strong light is a growth bonus; poor soil nutrients slow dry ground without blocking it; some dry basins are salt pans; the hot south adds heat and strong-sun radiation, which a plant may answer or give up. **Human gate passed with notes** (owner, recorded in BLOOM-011): gameplay was "decent", and production should move on. Known Desert limitations stay backlog observations.
-- **Frozen World:** the defining problem is **temperature**. It is a cold, mostly contiguous world with a few lakes; uplands and the north are coldest. Geothermal pockets (heat from below, not sunlight) and milder lowlands are the refuges: the origin is always a genuine one, and at least two other regions are green at the start. Most of the land is blocked by the cold, and every proven strategy must answer it somehow. Two families compete: evolve for the cold (Cold Tolerance), or warm the sky (Terraform), which needs fewer Cold points but pushes the warm geothermal refuges toward too hot. The plant's temperature points are shared (cold + heat ≤ 3), so evolving deep cold tolerance leaves no room for heat, while warming the sky works beyond that cap. Water is rarely the limit. Crossing is never the puzzle, and Waterborne Seeds appears only where the generic offer rule finds a real crossing. Owner playtest pending (`docs/PLAYTEST_FROZEN_v1.md`).
+- **Frozen World:** the defining problem is **temperature**. It is a cold, mostly contiguous world with a few lakes; uplands and the north are coldest. Geothermal pockets (heat from below, not sunlight) and milder lowlands are the refuges: the origin is always a genuine one, and at least two other regions are green at the start. Most of the land is blocked by the cold, and every proven strategy must answer it somehow. Two families compete: evolve for the cold (Cold Tolerance), or warm the sky (Terraform), which needs fewer Cold points but pushes the warm geothermal refuges toward too hot. The plant's temperature points are shared (cold + heat ≤ 3), so evolving deep cold tolerance leaves no room for heat, while warming the sky works beyond that cap. Water is rarely the limit. Crossing is never the puzzle, and Waterborne Seeds appears only where the generic offer rule finds a real crossing. **Human gate passed** (owner, recorded in BLOOM-012): *"all good"*.
 
 Within the archetype, randomize:
 
@@ -475,6 +475,20 @@ Pressure changes decisions rather than merely shortening the timer.
 | **Barren and Toxic** | Slow, hostile opening with few easy regions | adaptation under constraint |
 
 The origin may be immune to the player’s own Terraform effects but not to scenario pressure.
+
+### 11.4 Pressure scenario implementation *(addendum: BLOOM-012)*
+
+The procedural archetype phase is complete enough for production (Ocean Archipelago, Desert World, Frozen World; all three human gates passed). Pressure scenarios are the next phase. BLOOM-012 built the reusable architecture and the first scenario, **Dying World**. Details: `docs/SCENARIOS_v1.md`.
+
+- **Orthogonal to planets.** A run is planet + scenario. Scenarios are plain data in `content/scenarios.js` (`eden`, `dying_world`) and reach the engine separately from the planet. No archetype is cloned to make a pressure variant, and no simulation code names a scenario. No scenario, or Eden, is exactly the earlier engine.
+- **Pressure works through the environment the player already reads.** A scenario's channels add a drift that grows over the run to the sky temperature, the sky moisture and each region's surface radiation, inside the ordinary evaluation. There is no pressure damage stat, no direct coverage drain and no currency penalty. Biomass changes only because colonies' real conditions change.
+- **Clock.** A grace period, then a linear decline to a final state that stays. Reaching the final state is not a loss: a plant suited to the final world can still win and hold 70% there.
+- **Terraform and drift stay separate.** Terraform changes the player's sky; the drift is added on top of it and is never undone by it. The UI writes the sky as base + Terraform + thinning = now.
+- **Origin.** Under pressure the protected-refuge floor shrinks in proportion to how much of the origin's own habitability the pressure removes (immune to Terraform, not to scenario pressure).
+- **Loss.** A scenario may enable extinction: no Living tile anywhere for a short grace period loses the run, with a clear reason and a restart. Short gaps never lose. Eden keeps invariant 1 and never loses.
+- **Validation layer P.** Archetype layers 1–8 keep validating the Eden planet. A separate layer proves a planet + scenario combination: real pressured witnesses that buy with earned Biomass while the decline advances, reach the win + margin, and still hold 70% after the final state is reached, with the scenario's own strategy count and pacing bands. Per-archetype rejection is data.
+- **Dying World (atmospheric loss).** After 60 s of grace, over 7 minutes, the sky loses 40% of its starting moisture, cools by 8 °C, and surface radiation rises by 8. Wording: *Atmosphere thinning — the planet is slowly losing atmosphere. Conditions are becoming drier and colder, and surface radiation is increasing.* It is a simplified model whose directions are coherent; real atmospheric loss does not behave identically on every planet. The same decline lands differently per archetype: Ocean dries late and its hot lowlands cool into range; Desert has little water left to lose but none to spare; Frozen's cold deepens. It is viable on Ocean 13, Desert 25 and Frozen 22. The primary fixture, Ocean 13, has two strategies: evolve for the drier world (Drought Adaptation) or Terraform against it (Humidify). Owner playtest: `docs/PLAYTEST_DYING_WORLD_v1.md` (pending).
+- **Not yet built:** Native Competition and the other §11.3 scenarios, a scenario-selection menu, and the final pressure UI. The current pressure bar is temporary functional UI and follows the approved contextual-panel direction rather than growing the left panel.
 
 ---
 
@@ -593,8 +607,8 @@ After that vertical slice is fun:
 
 1. extract or stabilize shared simulation modules;
 2. reconnect procedural generation;
-3. expand archetypes and content;
-4. add pressure scenarios;
+3. expand archetypes and content; *(three production archetypes done — BLOOM-005…011)*
+4. add pressure scenarios; *(started — BLOOM-012: scenario architecture + Dying World, §11.4)*
 5. polish visuals and final board interactions.
 
 ---
