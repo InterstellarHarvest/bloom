@@ -49,7 +49,7 @@ const waterMeans = s => { const t = toks(s).find(x => x.startsWith("Water:dry=")
 console.log("# A1 · archetype data");
 check(BLOOM.archetype.checkArchetype(DW, config).length === 0 && BLOOM.archetype.checkArchetype(OA, config).length === 0,
   "1 · Desert World archetype data is valid (and Ocean Archipelago still is)", `${DW.id} "${DW.name}" · sections ${J(DW.sections)} · water ${J(DW.water)}`);
-check(!/function|=>/.test(J(archetypes)) && J(clone(archetypes)) === J(archetypes) && archetypes.length === 2, "1 · the archetype catalogue is plain data, now two archetypes");
+check(!/function|=>/.test(J(archetypes)) && J(clone(archetypes)) === J(archetypes) && archetypes.length >= 2, "1 · the archetype catalogue is plain data, with at least Ocean and Desert (BLOOM-011 adds Frozen World)");
 check(J(OA.validation.pacing) === J({ marginSeconds: [360, 900], firstPurchaseSeconds: [45, 120], maxPurchaseGapSeconds: 240 }) && !OA.validation.requiredConditions &&
   !OA.geography.minOriginFitness && !OA.render && !OA.naming, "1 · each archetype owns its policy: Ocean Archipelago's bands and rules are unchanged (no Desert keys)");
 for (const [name, mut] of [["an origin-fitness bar above 1", a => a.geography.minOriginFitness = 1.5], ["a non-positive terminal wait", a => a.validation.pacing.maxTerminalWaitSeconds = 0],

@@ -2,7 +2,7 @@
 
 **What this tests:** whether the second archetype, **Desert World**, feels like a genuinely different planet and keeps the good loop from the Ocean Archipelago prototype. The validator has already shown that these worlds can be won (layers 1–8) in at least two broad ways. Only a person can say whether the water problem reads clearly and whether the choices feel real.
 
-**Gate status:** ☐ **not yet played.** Only the owner can mark this passed.
+**Gate status:** ✅ **PASSED with notes** (owner, recorded 2026-10-02 in BLOOM-011). The owner played the Desert run and judged: *"gameplay is decent. lets move on"*. PMO reading: Desert World passes its human gate and is acceptable for continued production; no further Desert tuning cycle now. Known Desert limitations (README) stay backlog observations unless a later archetype shows a shared systems problem. The question table below was not filled in.
 
 **Time needed:** one run of roughly 10–20 minutes, plus a few minutes for the questions. A second run is optional.
 
@@ -42,4 +42,4 @@ Answer in a sentence or two; "not sure" is a useful answer.
 | Seed 25 | | | | |
 | Seed 9 (optional) | | | | |
 
-**Owner verdict:** ☐ pass ☐ pass with notes ☐ not yet (what should change first?)
+**Owner verdict:** ☐ pass ☑ **pass with notes** — "gameplay is decent. lets move on" ☐ not yet

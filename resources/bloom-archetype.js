@@ -11,6 +11,8 @@
 //   · (BLOOM-010, each optional) landmasses ≤ geography.maxLandmasses, origin-landmass share ≥ geography.minOriginLandmassShare
 //     (a mostly contiguous world), and the origin's OWN fitness — before the engine's protected-refuge floor, under the
 //     starting genome and sky — ≥ geography.minOriginFitness (the home region is a genuine refuge, not just protected);
+//   · (BLOOM-011, optional) at least geography.minRefuges OTHER regions are green (fitness above the green lamp) under the
+//     starting genome and sky — a world with several refuges, not one safe home surrounded by instant death;
 //   · (BLOOM-010, optional) every proven layer-7 strategy answers each of validation.requiredConditions (e.g. "Water:dry":
 //     a Desert World's identity is its water problem, the way crossing is an Ocean Archipelago's);
 //   · if archetype.validation.winnable: bible §10.3 layers 4–6 (a real no-cheat witness wins with margin;
@@ -40,13 +42,15 @@
         e.push(`naming.${k} must be one of ${pools.join("/")} with a non-empty list of words`); }
     if (a.render != null) { const rgb = c => Array.isArray(c) && c.length === 3 && c.every(v => Number.isFinite(v) && v >= 0 && v <= 255), R = a.render;
       if (typeof R !== "object" || Array.isArray(R) || ["ground", "water", "waterAlt"].some(k => R[k] != null && !rgb(R[k])) ||
-        (R.ground != null && !(R.groundMix >= 0 && R.groundMix <= 1)) || (R.dunes != null && typeof R.dunes !== "boolean"))
-        e.push("render must be { ground?/water?/waterAlt?: [r,g,b] 0..255, groundMix 0..1 with ground, dunes?: boolean }"); }
+        (R.ground != null && !(R.groundMix >= 0 && R.groundMix <= 1)) || ["dunes", "frost"].some(k => R[k] != null && typeof R[k] !== "boolean") ||
+        (R.tintBy != null && !["dry", "cold"].includes(R.tintBy)))
+        e.push("render must be { ground?/water?/waterAlt?: [r,g,b] 0..255, groundMix 0..1 with ground, tintBy?: \"dry\"|\"cold\", dunes?/frost?: boolean }"); }
     const g = a.geography || {};
     if (g.maxCrossingGap != null && !(g.maxCrossingGap >= 1 && g.maxCrossingGap <= ((config.crossing || {}).maxGap || 0)))
       e.push("geography.maxCrossingGap must be 1..config.crossing.maxGap (islands must stay in Waterborne Seeds range)");
     if (g.minOriginFitness != null && !(g.minOriginFitness > 0 && g.minOriginFitness <= 1)) e.push("geography.minOriginFitness must be in (0, 1]");
     if (g.maxLandmasses != null && !(Number.isInteger(g.maxLandmasses) && g.maxLandmasses >= 1)) e.push("geography.maxLandmasses must be a positive integer");
+    if (g.minRefuges != null && !(Number.isInteger(g.minRefuges) && g.minRefuges >= 0)) e.push("geography.minRefuges must be a non-negative integer");
     if (g.minOriginLandmassShare != null && !(g.minOriginLandmassShare > 0 && g.minOriginLandmassShare <= 1)) e.push("geography.minOriginLandmassShare must be in (0, 1]");
     if (!(a.generation && a.generation.maxAttempts >= 1 && a.generation.maxAttempts <= 64)) e.push("generation.maxAttempts must be 1..64");
     if (a.validation && a.validation.crossingRequiredToWin && !(g.maxOriginLandmassShare < config.win))
@@ -102,6 +106,11 @@
         const probe = BLOOM.createSim(planet, config, traits, { rng: () => 0.5 }), e = probe.evaluate(probe.map.ORIGIN);
         const raw = Object.values(e.cats).reduce((a, c) => a * c.f, 1); // its own conditions, before the protected-refuge floor
         if (raw < g.minOriginFitness) why.push(`origin ${planet.sections.find(x => x.isOrigin).name} is not a refuge: its own fitness ${raw.toFixed(2)} < ${g.minOriginFitness} (limited by ${e.limitKey})`);
+      }
+      if (!why.length && g.minRefuges != null) { // (BLOOM-011) not one safe home surrounded by instant death: other green regions
+        const probe = BLOOM.createSim(planet, config, traits, { rng: () => 0.5 }), M = probe.map;
+        const n = M.SEC.filter((_, i) => i !== M.ORIGIN && probe.evaluate(i).fitness > config.categories.lamp.green).length;
+        if (n < g.minRefuges) why.push(`only ${n} refuge region(s) besides the origin (green under the starting plant and sky) < ${g.minRefuges}`);
       }
       let witness = null, strategies = null;
       const policy = A.validation && (A.validation.minStrategies != null || A.validation.pacing)

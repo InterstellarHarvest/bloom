@@ -1,0 +1,9362 @@
+{
+ "seeds": [
+  101,
+  108,
+  115,
+  122,
+  129,
+  136,
+  143,
+  150
+ ],
+ "worlds": {
+  "first_bloom": {
+   "wet": {
+    "balanced": {
+     "won": "8/8",
+     "win": 344.8,
+     "winRange": [
+      334.6,
+      359.8
+     ],
+     "firstBuy": 86.8,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 17.3,
+       "earned": 93.1
+      },
+      "120": {
+       "cov": 33.7,
+       "earned": 213.6
+      },
+      "180": {
+       "cov": 41.9,
+       "earned": 395.7
+      }
+     },
+     "originEst": {
+      "30": 0.12,
+      "60": 0.381,
+      "120": 0.741,
+      "180": 0.892
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "8/8",
+     "win": 351,
+     "winRange": [
+      324,
+      368.2
+     ],
+     "firstBuy": 85.9,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 18.3,
+       "earned": 93.1
+      },
+      "120": {
+       "cov": 34.4,
+       "earned": 220.3
+      },
+      "180": {
+       "cov": 42.1,
+       "earned": 407.2
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.678,
+      "120": 0.964,
+      "180": 0.996
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "8/8",
+     "win": 321.1,
+     "winRange": [
+      308,
+      334.9
+     ],
+     "firstBuy": 94.1,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 10.3,
+       "earned": 79.6
+      },
+      "120": {
+       "cov": 30.4,
+       "earned": 200.6
+      },
+      "180": {
+       "cov": 41.3,
+       "earned": 421
+      }
+     },
+     "originEst": {
+      "30": 0.078,
+      "60": 0.239,
+      "120": 0.651,
+      "180": 0.854
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "8/8",
+     "win": 362.5,
+     "winRange": [
+      340.6,
+      384.5
+     ],
+     "firstBuy": 87.1,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 20.3,
+       "earned": 91.8
+      },
+      "120": {
+       "cov": 35,
+       "earned": 219.3
+      },
+      "180": {
+       "cov": 41.8,
+       "earned": 382.2
+      }
+     },
+     "originEst": {
+      "30": 0.183,
+      "60": 0.465,
+      "120": 0.776,
+      "180": 0.906
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "8/8",
+     "win": 326.7,
+     "winRange": [
+      318.6,
+      343.5
+     ],
+     "firstBuy": 92.6,
+     "clicks": 7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1051.3,
+     "marks": {
+      "60": {
+       "cov": 9.7,
+       "earned": 82.5
+      },
+      "120": {
+       "cov": 22.9,
+       "earned": 200.6
+      },
+      "180": {
+       "cov": 38.3,
+       "earned": 398.1
+      }
+     },
+     "originEst": {
+      "30": 0.078,
+      "60": 0.238,
+      "120": 0.65,
+      "180": 0.853
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "8/8",
+     "win": 340.7,
+     "winRange": [
+      314.1,
+      367.7
+     ],
+     "firstBuy": 82.3,
+     "clicks": 7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 18.6,
+       "earned": 93.2
+      },
+      "120": {
+       "cov": 35.3,
+       "earned": 252.8
+      },
+      "180": {
+       "cov": 44.4,
+       "earned": 434.5
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.677,
+      "120": 0.964,
+      "180": 0.996
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "8/8",
+     "win": 395.2,
+     "winRange": [
+      358.2,
+      416.5
+     ],
+     "firstBuy": 85.3,
+     "clicks": 7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 24,
+       "earned": 99.7
+      },
+      "120": {
+       "cov": 35.3,
+       "earned": 217.4
+      },
+      "180": {
+       "cov": 42.8,
+       "earned": 367.1
+      }
+     },
+     "originEst": {
+      "30": 0.186,
+      "60": 0.468,
+      "120": 0.777,
+      "180": 0.907
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "8/8",
+     "win": 283.6,
+     "winRange": [
+      271.7,
+      295.5
+     ],
+     "firstBuy": 81,
+     "clicks": 30.4,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 19,
+       "earned": 91.9
+      },
+      "120": {
+       "cov": 35.3,
+       "earned": 270.1
+      },
+      "180": {
+       "cov": 47.7,
+       "earned": 508.2
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.55,
+      "120": 0.812,
+      "180": 0.921
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "8/8",
+     "win": 275.9,
+     "winRange": [
+      255.5,
+      291.7
+     ],
+     "firstBuy": 75.1,
+     "clicks": 33.1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 24,
+       "earned": 105
+      },
+      "120": {
+       "cov": 36.3,
+       "earned": 293.6
+      },
+      "180": {
+       "cov": 51.1,
+       "earned": 548.2
+      }
+     },
+     "originEst": {
+      "30": 0.186,
+      "60": 0.484,
+      "120": 0.784,
+      "180": 0.91
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "8/8",
+     "win": 298.1,
+     "winRange": [
+      274.4,
+      316
+     ],
+     "firstBuy": 77.3,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 18.1,
+       "earned": 96.4
+      },
+      "120": {
+       "cov": 34.7,
+       "earned": 277.1
+      },
+      "180": {
+       "cov": 47.1,
+       "earned": 501.1
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.541,
+      "120": 0.808,
+      "180": 0.919
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "8/8",
+     "win": 414.2,
+     "winRange": [
+      394.7,
+      451.5
+     ],
+     "firstBuy": 93.4,
+     "clicks": 36.4,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 9.7,
+       "earned": 82.5
+      },
+      "120": {
+       "cov": 22.7,
+       "earned": 188.5
+      },
+      "180": {
+       "cov": 36.4,
+       "earned": 331.8
+      }
+     },
+     "originEst": {
+      "30": 0.078,
+      "60": 0.238,
+      "120": 0.742,
+      "180": 0.9
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "8/8",
+     "win": 332.1,
+     "winRange": [
+      320,
+      347.5
+     ],
+     "firstBuy": 117.2,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 17.3,
+       "earned": 93.2
+      },
+      "120": {
+       "cov": 31.2,
+       "earned": 238.9
+      },
+      "180": {
+       "cov": 39.3,
+       "earned": 465.9
+      }
+     },
+     "originEst": {
+      "30": 0.12,
+      "60": 0.381,
+      "120": 0.741,
+      "180": 0.892
+     },
+     "example": [
+      [
+       "meadow_hollow",
+       "leafCanopy",
+       67.2
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "8/8",
+     "win": 268.8,
+     "winRange": [
+      256.6,
+      276.5
+     ],
+     "firstBuy": 102.3,
+     "clicks": 30.1,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 19,
+       "earned": 92.9
+      },
+      "120": {
+       "cov": 35.2,
+       "earned": 318.8
+      },
+      "180": {
+       "cov": 46.1,
+       "earned": 622.4
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.55,
+      "120": 0.812,
+      "180": 0.921
+     },
+     "example": [
+      [
+       "meadow_hollow",
+       "leafCanopy",
+       67.2
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "8/8",
+     "win": 268.8,
+     "winRange": [
+      256.6,
+      276.5
+     ],
+     "firstBuy": 102.3,
+     "clicks": 30.1,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 19,
+       "earned": 92.9
+      },
+      "120": {
+       "cov": 35.2,
+       "earned": 318.8
+      },
+      "180": {
+       "cov": 46.1,
+       "earned": 622.4
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.55,
+      "120": 0.812,
+      "180": 0.921
+     },
+     "example": [
+      [
+       "meadow_hollow",
+       "leafCanopy",
+       67.2
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "8/8",
+     "win": 297.9,
+     "winRange": [
+      288.2,
+      312.8
+     ],
+     "firstBuy": 108,
+     "clicks": 30.6,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 19,
+       "earned": 92
+      },
+      "120": {
+       "cov": 35.1,
+       "earned": 283
+      },
+      "180": {
+       "cov": 42.7,
+       "earned": 531.5
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.574,
+      "120": 0.967,
+      "180": 0.998
+     },
+     "example": [
+      [
+       "meadow_hollow",
+       "rootNetwork",
+       67.2
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "8/8",
+     "win": 379.1,
+     "winRange": [
+      336.8,
+      426.2
+     ],
+     "firstBuy": 106.4,
+     "clicks": 31,
+     "specs": 4.9,
+     "localSpent": 818.8,
+     "globalSpent": 1030,
+     "marks": {
+      "60": {
+       "cov": 19,
+       "earned": 92.6
+      },
+      "120": {
+       "cov": 35.2,
+       "earned": 295.6
+      },
+      "180": {
+       "cov": 38.4,
+       "earned": 593.5
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.55,
+      "120": 0.812,
+      "180": 0.921
+     },
+     "example": [
+      [
+       "meadow_hollow",
+       "leafCanopy",
+       67.2
+      ],
+      [
+       "fern_shade",
+       "leafCanopy",
+       130.6
+      ],
+      [
+       "cool_glen",
+       "leafCanopy",
+       218.9
+      ],
+      [
+       "frost_shelf",
+       "rootNetwork",
+       251.5
+      ],
+      [
+       "marsh_low",
+       "leafCanopy",
+       286.1
+      ]
+     ]
+    }
+   },
+   "terraformWater": {
+    "balanced": {
+     "won": "8/8",
+     "win": 356.7,
+     "winRange": [
+      344.6,
+      363.7
+     ],
+     "firstBuy": 86.8,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 17.3,
+       "earned": 93.1
+      },
+      "120": {
+       "cov": 33.7,
+       "earned": 213.6
+      },
+      "180": {
+       "cov": 38.1,
+       "earned": 384.8
+      }
+     },
+     "originEst": {
+      "30": 0.12,
+      "60": 0.381,
+      "120": 0.741,
+      "180": 0.892
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "8/8",
+     "win": 363.4,
+     "winRange": [
+      335.5,
+      376.3
+     ],
+     "firstBuy": 85.9,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 18.3,
+       "earned": 93.1
+      },
+      "120": {
+       "cov": 34.4,
+       "earned": 220.3
+      },
+      "180": {
+       "cov": 38.6,
+       "earned": 390.2
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.678,
+      "120": 0.964,
+      "180": 0.996
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "8/8",
+     "win": 331.4,
+     "winRange": [
+      317.3,
+      341.9
+     ],
+     "firstBuy": 94.1,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 10.3,
+       "earned": 79.6
+      },
+      "120": {
+       "cov": 30.4,
+       "earned": 200.6
+      },
+      "180": {
+       "cov": 37.2,
+       "earned": 416
+      }
+     },
+     "originEst": {
+      "30": 0.078,
+      "60": 0.239,
+      "120": 0.651,
+      "180": 0.854
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "8/8",
+     "win": 371.6,
+     "winRange": [
+      339.7,
+      405.3
+     ],
+     "firstBuy": 87.1,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 20.3,
+       "earned": 91.8
+      },
+      "120": {
+       "cov": 35,
+       "earned": 219.3
+      },
+      "180": {
+       "cov": 38.5,
+       "earned": 385.5
+      }
+     },
+     "originEst": {
+      "30": 0.183,
+      "60": 0.465,
+      "120": 0.776,
+      "180": 0.906
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "8/8",
+     "win": 334.5,
+     "winRange": [
+      322.4,
+      342.4
+     ],
+     "firstBuy": 92.6,
+     "clicks": 7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 9.7,
+       "earned": 82.5
+      },
+      "120": {
+       "cov": 22.9,
+       "earned": 200.6
+      },
+      "180": {
+       "cov": 35.2,
+       "earned": 404.9
+      }
+     },
+     "originEst": {
+      "30": 0.078,
+      "60": 0.238,
+      "120": 0.65,
+      "180": 0.853
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "8/8",
+     "win": 342.7,
+     "winRange": [
+      319.7,
+      368.8
+     ],
+     "firstBuy": 82.3,
+     "clicks": 7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 18.6,
+       "earned": 93.2
+      },
+      "120": {
+       "cov": 35.3,
+       "earned": 252.8
+      },
+      "180": {
+       "cov": 40.6,
+       "earned": 449.2
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.677,
+      "120": 0.964,
+      "180": 0.996
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "8/8",
+     "win": 408,
+     "winRange": [
+      366.1,
+      432.2
+     ],
+     "firstBuy": 85.3,
+     "clicks": 7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 24,
+       "earned": 99.7
+      },
+      "120": {
+       "cov": 35.3,
+       "earned": 217.4
+      },
+      "180": {
+       "cov": 39.7,
+       "earned": 372.2
+      }
+     },
+     "originEst": {
+      "30": 0.186,
+      "60": 0.468,
+      "120": 0.777,
+      "180": 0.907
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "8/8",
+     "win": 291.7,
+     "winRange": [
+      281.4,
+      300.6
+     ],
+     "firstBuy": 81,
+     "clicks": 30.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 19,
+       "earned": 91.9
+      },
+      "120": {
+       "cov": 35.3,
+       "earned": 269.9
+      },
+      "180": {
+       "cov": 42.2,
+       "earned": 519
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.55,
+      "120": 0.812,
+      "180": 0.921
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "8/8",
+     "win": 283.9,
+     "winRange": [
+      266.9,
+      301.1
+     ],
+     "firstBuy": 75.1,
+     "clicks": 29.5,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 24,
+       "earned": 105
+      },
+      "120": {
+       "cov": 35.5,
+       "earned": 292.2
+      },
+      "180": {
+       "cov": 50.1,
+       "earned": 540.2
+      }
+     },
+     "originEst": {
+      "30": 0.186,
+      "60": 0.484,
+      "120": 0.784,
+      "180": 0.91
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "8/8",
+     "win": 311.4,
+     "winRange": [
+      299.8,
+      326.7
+     ],
+     "firstBuy": 77.3,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 18.1,
+       "earned": 96.4
+      },
+      "120": {
+       "cov": 34.5,
+       "earned": 277.1
+      },
+      "180": {
+       "cov": 41.9,
+       "earned": 503.6
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.541,
+      "120": 0.808,
+      "180": 0.919
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "8/8",
+     "win": 426.1,
+     "winRange": [
+      385.3,
+      466.9
+     ],
+     "firstBuy": 93.4,
+     "clicks": 40.5,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 9.7,
+       "earned": 82.5
+      },
+      "120": {
+       "cov": 22.7,
+       "earned": 188.5
+      },
+      "180": {
+       "cov": 34.9,
+       "earned": 326.7
+      }
+     },
+     "originEst": {
+      "30": 0.078,
+      "60": 0.238,
+      "120": 0.742,
+      "180": 0.899
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "8/8",
+     "win": 342.4,
+     "winRange": [
+      328.8,
+      349.1
+     ],
+     "firstBuy": 117.2,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 17.3,
+       "earned": 93.2
+      },
+      "120": {
+       "cov": 31.2,
+       "earned": 238.9
+      },
+      "180": {
+       "cov": 36.1,
+       "earned": 464.1
+      }
+     },
+     "originEst": {
+      "30": 0.12,
+      "60": 0.381,
+      "120": 0.741,
+      "180": 0.892
+     },
+     "example": [
+      [
+       "meadow_hollow",
+       "leafCanopy",
+       67.2
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "8/8",
+     "win": 277.7,
+     "winRange": [
+      268.3,
+      291
+     ],
+     "firstBuy": 102.3,
+     "clicks": 30.3,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 19,
+       "earned": 92.9
+      },
+      "120": {
+       "cov": 35.2,
+       "earned": 318.8
+      },
+      "180": {
+       "cov": 42,
+       "earned": 618.1
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.55,
+      "120": 0.812,
+      "180": 0.921
+     },
+     "example": [
+      [
+       "meadow_hollow",
+       "leafCanopy",
+       67.2
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "8/8",
+     "win": 277.7,
+     "winRange": [
+      268.3,
+      291
+     ],
+     "firstBuy": 102.3,
+     "clicks": 30.3,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 19,
+       "earned": 92.9
+      },
+      "120": {
+       "cov": 35.2,
+       "earned": 318.8
+      },
+      "180": {
+       "cov": 42,
+       "earned": 618.1
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.55,
+      "120": 0.812,
+      "180": 0.921
+     },
+     "example": [
+      [
+       "meadow_hollow",
+       "leafCanopy",
+       67.2
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "8/8",
+     "win": 309.3,
+     "winRange": [
+      290.7,
+      323.5
+     ],
+     "firstBuy": 108,
+     "clicks": 30.6,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 19,
+       "earned": 92
+      },
+      "120": {
+       "cov": 35.1,
+       "earned": 283
+      },
+      "180": {
+       "cov": 37.6,
+       "earned": 537.5
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.574,
+      "120": 0.967,
+      "180": 0.998
+     },
+     "example": [
+      [
+       "meadow_hollow",
+       "rootNetwork",
+       67.2
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "8/8",
+     "win": 379.8,
+     "winRange": [
+      355,
+      410.7
+     ],
+     "firstBuy": 106.4,
+     "clicks": 30.1,
+     "specs": 5,
+     "localSpent": 850,
+     "globalSpent": 1100,
+     "marks": {
+      "60": {
+       "cov": 19,
+       "earned": 92.6
+      },
+      "120": {
+       "cov": 35.2,
+       "earned": 295.6
+      },
+      "180": {
+       "cov": 36.2,
+       "earned": 594.7
+      }
+     },
+     "originEst": {
+      "30": 0.235,
+      "60": 0.55,
+      "120": 0.812,
+      "180": 0.921
+     },
+     "example": [
+      [
+       "meadow_hollow",
+       "leafCanopy",
+       67.2
+      ],
+      [
+       "fern_shade",
+       "leafCanopy",
+       130.6
+      ],
+      [
+       "cool_glen",
+       "leafCanopy",
+       188.2
+      ],
+      [
+       "frost_shelf",
+       "rootNetwork",
+       295.7
+      ],
+      [
+       "salt_barren",
+       "leafCanopy",
+       324.5
+      ]
+     ]
+    }
+   }
+  },
+  "oa_seed_13 (attempt 6, Eos-227)": {
+   "strategy1": {
+    "balanced": {
+     "won": "6/6",
+     "win": 529.4,
+     "winRange": [
+      428.6,
+      608.6
+     ],
+     "firstBuy": 83.7,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 13.3,
+       "earned": 96.7
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 197.5
+      },
+      "180": {
+       "cov": 13.8,
+       "earned": 307.5
+      }
+     },
+     "originEst": {
+      "30": 0.152,
+      "60": 0.352,
+      "120": 0.645,
+      "180": 0.806
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "6/6",
+     "win": 547,
+     "winRange": [
+      482.6,
+      624.6
+     ],
+     "firstBuy": 88.9,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 91.7
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 201.3
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 287.3
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.651,
+      "120": 0.923,
+      "180": 0.983
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "6/6",
+     "win": 532.5,
+     "winRange": [
+      414.1,
+      712
+     ],
+     "firstBuy": 91.4,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 11.6,
+       "earned": 94
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 195
+      },
+      "180": {
+       "cov": 14.6,
+       "earned": 323.3
+      }
+     },
+     "originEst": {
+      "30": 0.115,
+      "60": 0.277,
+      "120": 0.598,
+      "180": 0.78
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "6/6",
+     "win": 543.9,
+     "winRange": [
+      487.8,
+      641.3
+     ],
+     "firstBuy": 81.1,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 107.9
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 192
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 277.8
+      }
+     },
+     "originEst": {
+      "30": 0.193,
+      "60": 0.402,
+      "120": 0.673,
+      "180": 0.821
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "6/6",
+     "win": 553,
+     "winRange": [
+      427.5,
+      628.8
+     ],
+     "firstBuy": 91.4,
+     "clicks": 11.7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 11.6,
+       "earned": 94
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 195
+      },
+      "180": {
+       "cov": 14.1,
+       "earned": 321.2
+      }
+     },
+     "originEst": {
+      "30": 0.115,
+      "60": 0.277,
+      "120": 0.598,
+      "180": 0.78
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "6/6",
+     "win": 563.4,
+     "winRange": [
+      423.8,
+      747.4
+     ],
+     "firstBuy": 88.9,
+     "clicks": 12,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 91.7
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 201.3
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 287.3
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.651,
+      "120": 0.923,
+      "180": 0.983
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "6/6",
+     "win": 476.1,
+     "winRange": [
+      459.8,
+      503.2
+     ],
+     "firstBuy": 81.1,
+     "clicks": 11.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 107.9
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 192
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 277.8
+      }
+     },
+     "originEst": {
+      "30": 0.193,
+      "60": 0.402,
+      "120": 0.673,
+      "180": 0.821
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "6/6",
+     "win": 450.4,
+     "winRange": [
+      369.6,
+      530.6
+     ],
+     "firstBuy": 75.5,
+     "clicks": 32.7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 102.6
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 236.6
+      },
+      "180": {
+       "cov": 15.7,
+       "earned": 351.9
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.528,
+      "120": 0.742,
+      "180": 0.859
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "6/6",
+     "win": 426.4,
+     "winRange": [
+      343,
+      458.6
+     ],
+     "firstBuy": 74.2,
+     "clicks": 42.2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 113.2
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 234.1
+      },
+      "180": {
+       "cov": 13.9,
+       "earned": 348.8
+      }
+     },
+     "originEst": {
+      "30": 0.193,
+      "60": 0.456,
+      "120": 0.703,
+      "180": 0.837
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "6/6",
+     "win": 509.9,
+     "winRange": [
+      432.3,
+      656.5
+     ],
+     "firstBuy": 76,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 13.6,
+       "earned": 105
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 234.6
+      },
+      "180": {
+       "cov": 14,
+       "earned": 358
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.524,
+      "120": 0.739,
+      "180": 0.857
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "6/6",
+     "win": 616.1,
+     "winRange": [
+      518.4,
+      751.5
+     ],
+     "firstBuy": 95.8,
+     "clicks": 32.2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 11.6,
+       "earned": 94
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 170.4
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 245.9
+      }
+     },
+     "originEst": {
+      "30": 0.115,
+      "60": 0.277,
+      "120": 0.63,
+      "180": 0.803
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "6/6",
+     "win": 510.7,
+     "winRange": [
+      446.9,
+      581.8
+     ],
+     "firstBuy": 109.1,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 13.3,
+       "earned": 96.7
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 208.2
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 342.1
+      }
+     },
+     "originEst": {
+      "30": 0.152,
+      "60": 0.352,
+      "120": 0.645,
+      "180": 0.806
+     },
+     "example": [
+      [
+       "sec_11",
+       "leafCanopy",
+       69.1
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "6/6",
+     "win": 430.6,
+     "winRange": [
+      380.8,
+      466.4
+     ],
+     "firstBuy": 109.4,
+     "clicks": 34.2,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 104.5
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 266.6
+      },
+      "180": {
+       "cov": 14,
+       "earned": 417.7
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.528,
+      "120": 0.742,
+      "180": 0.859
+     },
+     "example": [
+      [
+       "sec_11",
+       "leafCanopy",
+       53.8
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "6/6",
+     "win": 427.4,
+     "winRange": [
+      386.7,
+      488
+     ],
+     "firstBuy": 109.4,
+     "clicks": 34.5,
+     "specs": 2,
+     "localSpent": 220,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 104.5
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 266.6
+      },
+      "180": {
+       "cov": 14,
+       "earned": 417.7
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.528,
+      "120": 0.742,
+      "180": 0.859
+     },
+     "example": [
+      [
+       "sec_11",
+       "leafCanopy",
+       53.8
+      ],
+      [
+       "sec_7",
+       "seedReserve",
+       362.9
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "6/6",
+     "win": 459.8,
+     "winRange": [
+      409.4,
+      499.8
+     ],
+     "firstBuy": 116.4,
+     "clicks": 32.8,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 102.8
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 241.9
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 367.9
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.572,
+      "120": 0.929,
+      "180": 0.988
+     },
+     "example": [
+      [
+       "sec_11",
+       "rootNetwork",
+       53.8
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "6/6",
+     "win": 528.7,
+     "winRange": [
+      437.4,
+      612
+     ],
+     "firstBuy": 110.1,
+     "clicks": 33.8,
+     "specs": 4.2,
+     "localSpent": 648.3,
+     "globalSpent": 650,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 103.9
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 261.3
+      },
+      "180": {
+       "cov": 14,
+       "earned": 410.2
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.528,
+      "120": 0.742,
+      "180": 0.859
+     },
+     "example": [
+      [
+       "sec_11",
+       "leafCanopy",
+       53.8
+      ],
+      [
+       "sec_2",
+       "rootNetwork",
+       251.5
+      ],
+      [
+       "sec_3",
+       "leafCanopy",
+       301.4
+      ],
+      [
+       "sec_1",
+       "rootNetwork",
+       458.9
+      ]
+     ]
+    }
+   },
+   "strategy2": {
+    "balanced": {
+     "won": "6/6",
+     "win": 441,
+     "winRange": [
+      398.4,
+      470.9
+     ],
+     "firstBuy": 83.7,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 13.3,
+       "earned": 96.7
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 197.5
+      },
+      "180": {
+       "cov": 13.8,
+       "earned": 307.5
+      }
+     },
+     "originEst": {
+      "30": 0.152,
+      "60": 0.352,
+      "120": 0.645,
+      "180": 0.806
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "6/6",
+     "win": 452,
+     "winRange": [
+      402.2,
+      517.8
+     ],
+     "firstBuy": 88.9,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 91.7
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 201.3
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 287.3
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.651,
+      "120": 0.923,
+      "180": 0.983
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "6/6",
+     "win": 415.5,
+     "winRange": [
+      355.5,
+      484
+     ],
+     "firstBuy": 91.4,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 11.6,
+       "earned": 94
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 195
+      },
+      "180": {
+       "cov": 14.6,
+       "earned": 323.3
+      }
+     },
+     "originEst": {
+      "30": 0.115,
+      "60": 0.277,
+      "120": 0.598,
+      "180": 0.78
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "6/6",
+     "win": 476.7,
+     "winRange": [
+      423,
+      520.2
+     ],
+     "firstBuy": 81.1,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 107.9
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 192
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 277.8
+      }
+     },
+     "originEst": {
+      "30": 0.193,
+      "60": 0.402,
+      "120": 0.673,
+      "180": 0.821
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "6/6",
+     "win": 449.3,
+     "winRange": [
+      407.8,
+      484.2
+     ],
+     "firstBuy": 91.4,
+     "clicks": 9.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 11.6,
+       "earned": 94
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 195
+      },
+      "180": {
+       "cov": 14.1,
+       "earned": 321.2
+      }
+     },
+     "originEst": {
+      "30": 0.115,
+      "60": 0.277,
+      "120": 0.598,
+      "180": 0.78
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "6/6",
+     "win": 438.2,
+     "winRange": [
+      385.4,
+      522.2
+     ],
+     "firstBuy": 88.9,
+     "clicks": 9.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 91.7
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 201.3
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 287.3
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.651,
+      "120": 0.923,
+      "180": 0.983
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "6/6",
+     "win": 448.3,
+     "winRange": [
+      393.4,
+      484.8
+     ],
+     "firstBuy": 81.1,
+     "clicks": 9.7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 107.9
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 192
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 277.8
+      }
+     },
+     "originEst": {
+      "30": 0.193,
+      "60": 0.402,
+      "120": 0.673,
+      "180": 0.821
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "6/6",
+     "win": 398.2,
+     "winRange": [
+      357.8,
+      446.2
+     ],
+     "firstBuy": 75.5,
+     "clicks": 21.5,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 102.6
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 236.6
+      },
+      "180": {
+       "cov": 15.7,
+       "earned": 351.9
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.528,
+      "120": 0.742,
+      "180": 0.859
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "6/6",
+     "win": 376.7,
+     "winRange": [
+      327,
+      430.9
+     ],
+     "firstBuy": 74.2,
+     "clicks": 28,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 113.2
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 234.1
+      },
+      "180": {
+       "cov": 13.9,
+       "earned": 348.8
+      }
+     },
+     "originEst": {
+      "30": 0.193,
+      "60": 0.456,
+      "120": 0.703,
+      "180": 0.837
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "6/6",
+     "win": 395.4,
+     "winRange": [
+      382.6,
+      407.8
+     ],
+     "firstBuy": 76,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 13.6,
+       "earned": 105
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 234.6
+      },
+      "180": {
+       "cov": 14,
+       "earned": 358
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.524,
+      "120": 0.739,
+      "180": 0.857
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "6/6",
+     "win": 529.2,
+     "winRange": [
+      481.1,
+      573.9
+     ],
+     "firstBuy": 95.8,
+     "clicks": 25.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 11.6,
+       "earned": 94
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 170.4
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 245.9
+      }
+     },
+     "originEst": {
+      "30": 0.115,
+      "60": 0.277,
+      "120": 0.63,
+      "180": 0.803
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "6/6",
+     "win": 417.1,
+     "winRange": [
+      382.2,
+      441.1
+     ],
+     "firstBuy": 109.1,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 13.3,
+       "earned": 96.7
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 208.2
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 342.1
+      }
+     },
+     "originEst": {
+      "30": 0.152,
+      "60": 0.352,
+      "120": 0.645,
+      "180": 0.806
+     },
+     "example": [
+      [
+       "sec_11",
+       "leafCanopy",
+       69.1
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "6/6",
+     "win": 376,
+     "winRange": [
+      337.9,
+      427.5
+     ],
+     "firstBuy": 109.4,
+     "clicks": 22.5,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 104.5
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 266.6
+      },
+      "180": {
+       "cov": 14,
+       "earned": 417.7
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.528,
+      "120": 0.742,
+      "180": 0.859
+     },
+     "example": [
+      [
+       "sec_11",
+       "leafCanopy",
+       53.8
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "6/6",
+     "win": 375.5,
+     "winRange": [
+      337.9,
+      428.5
+     ],
+     "firstBuy": 109.4,
+     "clicks": 22.5,
+     "specs": 1.5,
+     "localSpent": 155,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 104.5
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 266.6
+      },
+      "180": {
+       "cov": 14,
+       "earned": 417.7
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.528,
+      "120": 0.742,
+      "180": 0.859
+     },
+     "example": [
+      [
+       "sec_11",
+       "leafCanopy",
+       53.8
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "6/6",
+     "win": 439.9,
+     "winRange": [
+      404.8,
+      485.8
+     ],
+     "firstBuy": 116.4,
+     "clicks": 22,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 102.8
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 241.9
+      },
+      "180": {
+       "cov": 13.7,
+       "earned": 367.9
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.572,
+      "120": 0.929,
+      "180": 0.988
+     },
+     "example": [
+      [
+       "sec_11",
+       "rootNetwork",
+       53.8
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "6/6",
+     "win": 545.7,
+     "winRange": [
+      466.9,
+      632.2
+     ],
+     "firstBuy": 110.1,
+     "clicks": 22,
+     "specs": 4,
+     "localSpent": 606.7,
+     "globalSpent": 670,
+     "marks": {
+      "60": {
+       "cov": 13.7,
+       "earned": 103.9
+      },
+      "120": {
+       "cov": 13.7,
+       "earned": 261.3
+      },
+      "180": {
+       "cov": 14,
+       "earned": 410.2
+      }
+     },
+     "originEst": {
+      "30": 0.298,
+      "60": 0.528,
+      "120": 0.742,
+      "180": 0.859
+     },
+     "example": [
+      [
+       "sec_11",
+       "leafCanopy",
+       53.8
+      ],
+      [
+       "sec_2",
+       "rootNetwork",
+       251.5
+      ],
+      [
+       "sec_3",
+       "leafCanopy",
+       301.4
+      ],
+      [
+       "sec_5",
+       "leafCanopy",
+       364.8
+      ]
+     ]
+    }
+   }
+  },
+  "oa_seed_8 (attempt 1, Coriol-220)": {
+   "strategy1": {
+    "balanced": {
+     "won": "6/6",
+     "win": 507.8,
+     "winRange": [
+      477.9,
+      563
+     ],
+     "firstBuy": 78.9,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 17.4,
+       "earned": 106.4
+      },
+      "120": {
+       "cov": 31.6,
+       "earned": 217.9
+      },
+      "180": {
+       "cov": 38.2,
+       "earned": 336.7
+      }
+     },
+     "originEst": {
+      "30": 0.304,
+      "60": 0.492,
+      "120": 0.729,
+      "180": 0.856
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "6/6",
+     "win": 478.5,
+     "winRange": [
+      437.6,
+      513.8
+     ],
+     "firstBuy": 78.6,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 17.4,
+       "earned": 111.8
+      },
+      "120": {
+       "cov": 31.6,
+       "earned": 221.8
+      },
+      "180": {
+       "cov": 39.1,
+       "earned": 335
+      }
+     },
+     "originEst": {
+      "30": 0.564,
+      "60": 0.802,
+      "120": 0.959,
+      "180": 0.992
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "6/6",
+     "win": 468,
+     "winRange": [
+      378.7,
+      605.6
+     ],
+     "firstBuy": 73.3,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 15.8,
+       "earned": 112.5
+      },
+      "120": {
+       "cov": 31.6,
+       "earned": 240.3
+      },
+      "180": {
+       "cov": 40.3,
+       "earned": 377.9
+      }
+     },
+     "originEst": {
+      "30": 0.3,
+      "60": 0.489,
+      "120": 0.728,
+      "180": 0.855
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "6/6",
+     "win": 487,
+     "winRange": [
+      438.4,
+      537.6
+     ],
+     "firstBuy": 85.8,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 17.7,
+       "earned": 88.6
+      },
+      "120": {
+       "cov": 30,
+       "earned": 199.9
+      },
+      "180": {
+       "cov": 37.5,
+       "earned": 309.4
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.492,
+      "120": 0.73,
+      "180": 0.856
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "6/6",
+     "win": 572.6,
+     "winRange": [
+      494.6,
+      728.2
+     ],
+     "firstBuy": 71,
+     "clicks": 10.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 11,
+       "earned": 123.8
+      },
+      "120": {
+       "cov": 25.4,
+       "earned": 246
+      },
+      "180": {
+       "cov": 33.8,
+       "earned": 376.1
+      }
+     },
+     "originEst": {
+      "30": 0.302,
+      "60": 0.49,
+      "120": 0.729,
+      "180": 0.855
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "6/6",
+     "win": 460.5,
+     "winRange": [
+      430.1,
+      480.6
+     ],
+     "firstBuy": 68.2,
+     "clicks": 9.2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 19.5,
+       "earned": 125
+      },
+      "120": {
+       "cov": 34.4,
+       "earned": 224.5
+      },
+      "180": {
+       "cov": 38.7,
+       "earned": 340.6
+      }
+     },
+     "originEst": {
+      "30": 0.564,
+      "60": 0.802,
+      "120": 0.959,
+      "180": 0.992
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "6/6",
+     "win": 474.9,
+     "winRange": [
+      433.8,
+      551.2
+     ],
+     "firstBuy": 93.6,
+     "clicks": 11.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 24.5,
+       "earned": 93.4
+      },
+      "120": {
+       "cov": 36.6,
+       "earned": 192.6
+      },
+      "180": {
+       "cov": 38.1,
+       "earned": 283.2
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.493,
+      "120": 0.73,
+      "180": 0.856
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "6/6",
+     "win": 378.5,
+     "winRange": [
+      350.1,
+      414.4
+     ],
+     "firstBuy": 62.2,
+     "clicks": 26.2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 19.9,
+       "earned": 135.2
+      },
+      "120": {
+       "cov": 35.2,
+       "earned": 264.8
+      },
+      "180": {
+       "cov": 41.8,
+       "earned": 441.1
+      }
+     },
+     "originEst": {
+      "30": 0.481,
+      "60": 0.621,
+      "120": 0.798,
+      "180": 0.893
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "6/6",
+     "win": 346.4,
+     "winRange": [
+      293.4,
+      376
+     ],
+     "firstBuy": 70,
+     "clicks": 28.2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 24.5,
+       "earned": 118.5
+      },
+      "120": {
+       "cov": 37.3,
+       "earned": 262.3
+      },
+      "180": {
+       "cov": 41.8,
+       "earned": 445.1
+      }
+     },
+     "originEst": {
+      "30": 0.442,
+      "60": 0.593,
+      "120": 0.783,
+      "180": 0.885
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "6/6",
+     "win": 540.7,
+     "winRange": [
+      453.1,
+      659
+     ],
+     "firstBuy": 68.9,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 17.8,
+       "earned": 124.2
+      },
+      "120": {
+       "cov": 31.4,
+       "earned": 245.7
+      },
+      "180": {
+       "cov": 40.9,
+       "earned": 390.1
+      }
+     },
+     "originEst": {
+      "30": 0.481,
+      "60": 0.621,
+      "120": 0.798,
+      "180": 0.893
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "6/6",
+     "win": 596.5,
+     "winRange": [
+      512.5,
+      691.2
+     ],
+     "firstBuy": 76.1,
+     "clicks": 27.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 11,
+       "earned": 118.1
+      },
+      "120": {
+       "cov": 25.4,
+       "earned": 203
+      },
+      "180": {
+       "cov": 34.3,
+       "earned": 299.4
+      }
+     },
+     "originEst": {
+      "30": 0.302,
+      "60": 0.49,
+      "120": 0.729,
+      "180": 0.855
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "6/6",
+     "win": 503,
+     "winRange": [
+      434.4,
+      591.4
+     ],
+     "firstBuy": 116.7,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 17.4,
+       "earned": 108.3
+      },
+      "120": {
+       "cov": 29.4,
+       "earned": 236.2
+      },
+      "180": {
+       "cov": 37.3,
+       "earned": 363.5
+      }
+     },
+     "originEst": {
+      "30": 0.304,
+      "60": 0.492,
+      "120": 0.729,
+      "180": 0.856
+     },
+     "example": [
+      [
+       "sec_8",
+       "leafCanopy",
+       46.1
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "6/6",
+     "win": 388.3,
+     "winRange": [
+      347.4,
+      434.4
+     ],
+     "firstBuy": 97.5,
+     "clicks": 26.3,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 19.2,
+       "earned": 142.2
+      },
+      "120": {
+       "cov": 33,
+       "earned": 304.5
+      },
+      "180": {
+       "cov": 40.8,
+       "earned": 483.4
+      }
+     },
+     "originEst": {
+      "30": 0.481,
+      "60": 0.621,
+      "120": 0.798,
+      "180": 0.893
+     },
+     "example": [
+      [
+       "sec_8",
+       "leafCanopy",
+       38.4
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "6/6",
+     "win": 402.3,
+     "winRange": [
+      360.8,
+      432
+     ],
+     "firstBuy": 97.5,
+     "clicks": 29.7,
+     "specs": 2,
+     "localSpent": 220,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 19.2,
+       "earned": 142.2
+      },
+      "120": {
+       "cov": 33,
+       "earned": 304.5
+      },
+      "180": {
+       "cov": 40.8,
+       "earned": 483.4
+      }
+     },
+     "originEst": {
+      "30": 0.481,
+      "60": 0.621,
+      "120": 0.798,
+      "180": 0.893
+     },
+     "example": [
+      [
+       "sec_8",
+       "leafCanopy",
+       38.4
+      ],
+      [
+       "sec_2",
+       "seedReserve",
+       265
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "6/6",
+     "win": 415.7,
+     "winRange": [
+      379,
+      452.6
+     ],
+     "firstBuy": 104.6,
+     "clicks": 27.2,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 19.2,
+       "earned": 136.1
+      },
+      "120": {
+       "cov": 32.9,
+       "earned": 275.5
+      },
+      "180": {
+       "cov": 38,
+       "earned": 428.3
+      }
+     },
+     "originEst": {
+      "30": 0.481,
+      "60": 0.758,
+      "120": 0.964,
+      "180": 0.995
+     },
+     "example": [
+      [
+       "sec_8",
+       "rootNetwork",
+       38.4
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "6/6",
+     "win": 481.9,
+     "winRange": [
+      448.3,
+      528.5
+     ],
+     "firstBuy": 97.5,
+     "clicks": 26.7,
+     "specs": 4.5,
+     "localSpent": 725,
+     "globalSpent": 660,
+     "marks": {
+      "60": {
+       "cov": 19.2,
+       "earned": 142.2
+      },
+      "120": {
+       "cov": 33,
+       "earned": 304.5
+      },
+      "180": {
+       "cov": 37.3,
+       "earned": 491
+      }
+     },
+     "originEst": {
+      "30": 0.481,
+      "60": 0.621,
+      "120": 0.798,
+      "180": 0.893
+     },
+     "example": [
+      [
+       "sec_8",
+       "leafCanopy",
+       38.4
+      ],
+      [
+       "sec_4",
+       "leafCanopy",
+       145.9
+      ],
+      [
+       "sec_9",
+       "leafCanopy",
+       195.8
+      ],
+      [
+       "sec_2",
+       "seedReserve",
+       410.9
+      ],
+      [
+       "sec_0",
+       "rootNetwork",
+       472.3
+      ]
+     ]
+    }
+   },
+   "strategy2": {
+    "balanced": {
+     "won": "6/6",
+     "win": 520,
+     "winRange": [
+      489.9,
+      593
+     ],
+     "firstBuy": 78.9,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 17.4,
+       "earned": 106.4
+      },
+      "120": {
+       "cov": 31.6,
+       "earned": 217.9
+      },
+      "180": {
+       "cov": 38.2,
+       "earned": 336.7
+      }
+     },
+     "originEst": {
+      "30": 0.304,
+      "60": 0.492,
+      "120": 0.729,
+      "180": 0.856
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "6/6",
+     "win": 513.2,
+     "winRange": [
+      491.8,
+      553.9
+     ],
+     "firstBuy": 78.6,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 17.4,
+       "earned": 111.8
+      },
+      "120": {
+       "cov": 31.6,
+       "earned": 221.8
+      },
+      "180": {
+       "cov": 39.1,
+       "earned": 335
+      }
+     },
+     "originEst": {
+      "30": 0.564,
+      "60": 0.802,
+      "120": 0.959,
+      "180": 0.992
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "6/6",
+     "win": 487.5,
+     "winRange": [
+      407.8,
+      627.5
+     ],
+     "firstBuy": 73.3,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 15.8,
+       "earned": 112.5
+      },
+      "120": {
+       "cov": 31.6,
+       "earned": 240.3
+      },
+      "180": {
+       "cov": 40.3,
+       "earned": 377.9
+      }
+     },
+     "originEst": {
+      "30": 0.3,
+      "60": 0.489,
+      "120": 0.728,
+      "180": 0.855
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "6/6",
+     "win": 511.9,
+     "winRange": [
+      486.1,
+      542.1
+     ],
+     "firstBuy": 85.8,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 17.7,
+       "earned": 88.6
+      },
+      "120": {
+       "cov": 30,
+       "earned": 199.9
+      },
+      "180": {
+       "cov": 37.5,
+       "earned": 309.4
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.492,
+      "120": 0.73,
+      "180": 0.856
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "6/6",
+     "win": 622.5,
+     "winRange": [
+      528,
+      752.5
+     ],
+     "firstBuy": 71,
+     "clicks": 11,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 11,
+       "earned": 123.8
+      },
+      "120": {
+       "cov": 25.4,
+       "earned": 246
+      },
+      "180": {
+       "cov": 33.8,
+       "earned": 376.1
+      }
+     },
+     "originEst": {
+      "30": 0.302,
+      "60": 0.49,
+      "120": 0.729,
+      "180": 0.855
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "6/6",
+     "win": 489.2,
+     "winRange": [
+      453.4,
+      526.4
+     ],
+     "firstBuy": 68.2,
+     "clicks": 9.8,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 19.5,
+       "earned": 125
+      },
+      "120": {
+       "cov": 34.4,
+       "earned": 224.5
+      },
+      "180": {
+       "cov": 38.7,
+       "earned": 340.6
+      }
+     },
+     "originEst": {
+      "30": 0.564,
+      "60": 0.802,
+      "120": 0.959,
+      "180": 0.992
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "6/6",
+     "win": 504.1,
+     "winRange": [
+      473.1,
+      545.1
+     ],
+     "firstBuy": 93.6,
+     "clicks": 11.5,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 24.5,
+       "earned": 93.4
+      },
+      "120": {
+       "cov": 36.6,
+       "earned": 192.6
+      },
+      "180": {
+       "cov": 38.1,
+       "earned": 283.2
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.493,
+      "120": 0.73,
+      "180": 0.856
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "6/6",
+     "win": 406.6,
+     "winRange": [
+      349.3,
+      454.7
+     ],
+     "firstBuy": 62.2,
+     "clicks": 27.2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 19.9,
+       "earned": 135.2
+      },
+      "120": {
+       "cov": 35.2,
+       "earned": 264.8
+      },
+      "180": {
+       "cov": 41.8,
+       "earned": 441.1
+      }
+     },
+     "originEst": {
+      "30": 0.481,
+      "60": 0.621,
+      "120": 0.798,
+      "180": 0.893
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "6/6",
+     "win": 405.7,
+     "winRange": [
+      370.7,
+      445.3
+     ],
+     "firstBuy": 70,
+     "clicks": 30.7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 24.5,
+       "earned": 118.5
+      },
+      "120": {
+       "cov": 37.3,
+       "earned": 262.3
+      },
+      "180": {
+       "cov": 41.8,
+       "earned": 445.1
+      }
+     },
+     "originEst": {
+      "30": 0.442,
+      "60": 0.593,
+      "120": 0.783,
+      "180": 0.885
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "6/6",
+     "win": 553,
+     "winRange": [
+      432.5,
+      685
+     ],
+     "firstBuy": 68.9,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 17.8,
+       "earned": 124.2
+      },
+      "120": {
+       "cov": 31.4,
+       "earned": 245.7
+      },
+      "180": {
+       "cov": 40.9,
+       "earned": 390.1
+      }
+     },
+     "originEst": {
+      "30": 0.481,
+      "60": 0.621,
+      "120": 0.798,
+      "180": 0.893
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "6/6",
+     "win": 649.4,
+     "winRange": [
+      589.4,
+      705.9
+     ],
+     "firstBuy": 76.1,
+     "clicks": 28.7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 11,
+       "earned": 118.1
+      },
+      "120": {
+       "cov": 25.4,
+       "earned": 203
+      },
+      "180": {
+       "cov": 34.3,
+       "earned": 299.4
+      }
+     },
+     "originEst": {
+      "30": 0.302,
+      "60": 0.49,
+      "120": 0.729,
+      "180": 0.855
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "6/6",
+     "win": 533,
+     "winRange": [
+      490.6,
+      631
+     ],
+     "firstBuy": 116.7,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 17.4,
+       "earned": 108.3
+      },
+      "120": {
+       "cov": 29.4,
+       "earned": 236.2
+      },
+      "180": {
+       "cov": 37.3,
+       "earned": 363.5
+      }
+     },
+     "originEst": {
+      "30": 0.304,
+      "60": 0.492,
+      "120": 0.729,
+      "180": 0.856
+     },
+     "example": [
+      [
+       "sec_8",
+       "leafCanopy",
+       46.1
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "6/6",
+     "win": 415.4,
+     "winRange": [
+      383.7,
+      485.9
+     ],
+     "firstBuy": 97.5,
+     "clicks": 27.7,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 19.2,
+       "earned": 142.2
+      },
+      "120": {
+       "cov": 33,
+       "earned": 304.5
+      },
+      "180": {
+       "cov": 40.8,
+       "earned": 483.4
+      }
+     },
+     "originEst": {
+      "30": 0.481,
+      "60": 0.621,
+      "120": 0.798,
+      "180": 0.893
+     },
+     "example": [
+      [
+       "sec_8",
+       "leafCanopy",
+       38.4
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "6/6",
+     "win": 422.5,
+     "winRange": [
+      399.8,
+      443.5
+     ],
+     "firstBuy": 97.5,
+     "clicks": 29.8,
+     "specs": 2,
+     "localSpent": 220,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 19.2,
+       "earned": 142.2
+      },
+      "120": {
+       "cov": 33,
+       "earned": 304.5
+      },
+      "180": {
+       "cov": 40.8,
+       "earned": 483.4
+      }
+     },
+     "originEst": {
+      "30": 0.481,
+      "60": 0.621,
+      "120": 0.798,
+      "180": 0.893
+     },
+     "example": [
+      [
+       "sec_8",
+       "leafCanopy",
+       38.4
+      ],
+      [
+       "sec_2",
+       "seedReserve",
+       265
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "6/6",
+     "win": 454,
+     "winRange": [
+      385.4,
+      525.8
+     ],
+     "firstBuy": 104.6,
+     "clicks": 27.3,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 19.2,
+       "earned": 136.1
+      },
+      "120": {
+       "cov": 32.9,
+       "earned": 275.5
+      },
+      "180": {
+       "cov": 38,
+       "earned": 428.3
+      }
+     },
+     "originEst": {
+      "30": 0.481,
+      "60": 0.758,
+      "120": 0.964,
+      "180": 0.995
+     },
+     "example": [
+      [
+       "sec_8",
+       "rootNetwork",
+       38.4
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "6/6",
+     "win": 502.8,
+     "winRange": [
+      467.5,
+      524.3
+     ],
+     "firstBuy": 97.5,
+     "clicks": 26,
+     "specs": 4.5,
+     "localSpent": 725,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 19.2,
+       "earned": 142.2
+      },
+      "120": {
+       "cov": 33,
+       "earned": 304.5
+      },
+      "180": {
+       "cov": 37.3,
+       "earned": 491
+      }
+     },
+     "originEst": {
+      "30": 0.481,
+      "60": 0.621,
+      "120": 0.798,
+      "180": 0.893
+     },
+     "example": [
+      [
+       "sec_8",
+       "leafCanopy",
+       38.4
+      ],
+      [
+       "sec_4",
+       "leafCanopy",
+       145.9
+      ],
+      [
+       "sec_9",
+       "leafCanopy",
+       195.8
+      ],
+      [
+       "sec_1",
+       "rootNetwork",
+       430.1
+      ],
+      [
+       "sec_0",
+       "rootNetwork",
+       499.2
+      ]
+     ]
+    }
+   }
+  },
+  "desert_seed_25 (attempt 0, Umbra-584)": {
+   "strategy1": {
+    "balanced": {
+     "won": "6/6",
+     "win": 478.9,
+     "winRange": [
+      437.9,
+      520.2
+     ],
+     "firstBuy": 79.1,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 106.5
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 210.5
+      },
+      "180": {
+       "cov": 6.4,
+       "earned": 308.8
+      }
+     },
+     "originEst": {
+      "30": 0.234,
+      "60": 0.455,
+      "120": 0.725,
+      "180": 0.861
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "6/6",
+     "win": 494.8,
+     "winRange": [
+      469.1,
+      529.4
+     ],
+     "firstBuy": 84.5,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 108.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 197.4
+      },
+      "180": {
+       "cov": 5.4,
+       "earned": 297.5
+      }
+     },
+     "originEst": {
+      "30": 0.452,
+      "60": 0.766,
+      "120": 0.958,
+      "180": 0.992
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "6/6",
+     "win": 446.8,
+     "winRange": [
+      429.8,
+      466.1
+     ],
+     "firstBuy": 78.2,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.6,
+       "earned": 100.2
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 212.1
+      },
+      "180": {
+       "cov": 7.5,
+       "earned": 331.8
+      }
+     },
+     "originEst": {
+      "30": 0.182,
+      "60": 0.406,
+      "120": 0.7,
+      "180": 0.849
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "6/6",
+     "win": 544.8,
+     "winRange": [
+      500.6,
+      579.5
+     ],
+     "firstBuy": 98.6,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 101.4
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 178
+      },
+      "180": {
+       "cov": 5.3,
+       "earned": 262.3
+      }
+     },
+     "originEst": {
+      "30": 0.268,
+      "60": 0.48,
+      "120": 0.737,
+      "180": 0.867
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "6/6",
+     "win": 553.5,
+     "winRange": [
+      537.6,
+      567.5
+     ],
+     "firstBuy": 78.2,
+     "clicks": 8.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.6,
+       "earned": 100.2
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 212.1
+      },
+      "180": {
+       "cov": 6.2,
+       "earned": 333.4
+      }
+     },
+     "originEst": {
+      "30": 0.182,
+      "60": 0.406,
+      "120": 0.7,
+      "180": 0.849
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "6/6",
+     "win": 490,
+     "winRange": [
+      470.4,
+      505.6
+     ],
+     "firstBuy": 84.5,
+     "clicks": 8.2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 108.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 197.4
+      },
+      "180": {
+       "cov": 5.5,
+       "earned": 297.5
+      }
+     },
+     "originEst": {
+      "30": 0.452,
+      "60": 0.766,
+      "120": 0.958,
+      "180": 0.992
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "6/6",
+     "win": 490.6,
+     "winRange": [
+      437,
+      564.3
+     ],
+     "firstBuy": 98.6,
+     "clicks": 8.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 101.4
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 178
+      },
+      "180": {
+       "cov": 5.6,
+       "earned": 260.2
+      }
+     },
+     "originEst": {
+      "30": 0.268,
+      "60": 0.48,
+      "120": 0.737,
+      "180": 0.867
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "6/6",
+     "win": 415.9,
+     "winRange": [
+      408.3,
+      426.6
+     ],
+     "firstBuy": 71.9,
+     "clicks": 25.8,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 119.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 235.7
+      },
+      "180": {
+       "cov": 8.7,
+       "earned": 364
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.595,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "6/6",
+     "win": 403.9,
+     "winRange": [
+      385.6,
+      428.2
+     ],
+     "firstBuy": 76.6,
+     "clicks": 26,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 117.4
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 232
+      },
+      "180": {
+       "cov": 9.1,
+       "earned": 346.7
+      }
+     },
+     "originEst": {
+      "30": 0.342,
+      "60": 0.563,
+      "120": 0.78,
+      "180": 0.889
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "6/6",
+     "win": 429,
+     "winRange": [
+      399.5,
+      457
+     ],
+     "firstBuy": 70.7,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 119.8
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 233.7
+      },
+      "180": {
+       "cov": 8.3,
+       "earned": 363.6
+      }
+     },
+     "originEst": {
+      "30": 0.429,
+      "60": 0.594,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "6/6",
+     "win": 651.8,
+     "winRange": [
+      600.5,
+      704
+     ],
+     "firstBuy": 90.7,
+     "clicks": 33.2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.6,
+       "earned": 99.4
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 178.6
+      },
+      "180": {
+       "cov": 4.7,
+       "earned": 256.2
+      }
+     },
+     "originEst": {
+      "30": 0.182,
+      "60": 0.406,
+      "120": 0.704,
+      "180": 0.85
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "6/6",
+     "win": 483,
+     "winRange": [
+      437.4,
+      516.8
+     ],
+     "firstBuy": 122.4,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 107.6
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 231.5
+      },
+      "180": {
+       "cov": 5.1,
+       "earned": 356.8
+      }
+     },
+     "originEst": {
+      "30": 0.234,
+      "60": 0.455,
+      "120": 0.725,
+      "180": 0.861
+     },
+     "example": [
+      [
+       "sec_1",
+       "leafCanopy",
+       53.8
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "6/6",
+     "win": 407.9,
+     "winRange": [
+      395,
+      420.3
+     ],
+     "firstBuy": 104.3,
+     "clicks": 26.3,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 124.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 270.4
+      },
+      "180": {
+       "cov": 6.4,
+       "earned": 423.9
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.595,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": [
+      [
+       "sec_1",
+       "leafCanopy",
+       48
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "6/6",
+     "win": 407.9,
+     "winRange": [
+      395,
+      420.3
+     ],
+     "firstBuy": 104.3,
+     "clicks": 26.3,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 124.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 270.4
+      },
+      "180": {
+       "cov": 6.4,
+       "earned": 423.9
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.595,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": [
+      [
+       "sec_1",
+       "leafCanopy",
+       48
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "6/6",
+     "win": 469.5,
+     "winRange": [
+      462.1,
+      477.4
+     ],
+     "firstBuy": 113.5,
+     "clicks": 25.2,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 120.4
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 240.1
+      },
+      "180": {
+       "cov": 4.8,
+       "earned": 373.2
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.698,
+      "120": 0.961,
+      "180": 0.995
+     },
+     "example": [
+      [
+       "sec_1",
+       "rootNetwork",
+       48
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "6/6",
+     "win": 458.4,
+     "winRange": [
+      435.5,
+      476.8
+     ],
+     "firstBuy": 104.3,
+     "clicks": 26.3,
+     "specs": 5,
+     "localSpent": 850,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 124.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 270.4
+      },
+      "180": {
+       "cov": 6.4,
+       "earned": 423.9
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.595,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": [
+      [
+       "sec_1",
+       "leafCanopy",
+       48
+      ],
+      [
+       "sec_10",
+       "seedReserve",
+       207.4
+      ],
+      [
+       "sec_3",
+       "leafCanopy",
+       364.8
+      ],
+      [
+       "sec_0",
+       "rootNetwork",
+       405.1
+      ],
+      [
+       "sec_5",
+       "leafCanopy",
+       441.6
+      ]
+     ]
+    },
+    "situational+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 410.7,
+     "winRange": [
+      405,
+      416.3
+     ],
+     "firstBuy": 71.9,
+     "clicks": 25.8,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 119.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 235.7
+      },
+      "180": {
+       "cov": 8.7,
+       "earned": 364
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.595,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": [
+      [
+       "sec_0",
+       "rootNetwork",
+       322.6
+      ]
+     ]
+    },
+    "situational+seedReserveFrontier": {
+     "won": "6/6",
+     "win": 442.3,
+     "winRange": [
+      410.6,
+      484.8
+     ],
+     "firstBuy": 71.9,
+     "clicks": 25.8,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 119.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 235.7
+      },
+      "180": {
+       "cov": 8.7,
+       "earned": 364
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.595,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": [
+      [
+       "sec_10",
+       "seedReserve",
+       192
+      ]
+     ]
+    },
+    "balanced+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 472.4,
+     "winRange": [
+      436.3,
+      509
+     ],
+     "firstBuy": 79.1,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 550,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 106.5
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 210.5
+      },
+      "180": {
+       "cov": 6.4,
+       "earned": 308.8
+      }
+     },
+     "originEst": {
+      "30": 0.234,
+      "60": 0.455,
+      "120": 0.725,
+      "180": 0.861
+     },
+     "example": [
+      [
+       "sec_0",
+       "rootNetwork",
+       351.4
+      ]
+     ]
+    }
+   },
+   "strategy2": {
+    "balanced": {
+     "won": "6/6",
+     "win": 458.4,
+     "winRange": [
+      417,
+      487.4
+     ],
+     "firstBuy": 79.1,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 106.5
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 210.5
+      },
+      "180": {
+       "cov": 6.4,
+       "earned": 308.8
+      }
+     },
+     "originEst": {
+      "30": 0.234,
+      "60": 0.455,
+      "120": 0.725,
+      "180": 0.861
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "6/6",
+     "win": 479.2,
+     "winRange": [
+      447.5,
+      519.8
+     ],
+     "firstBuy": 84.5,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 108.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 197.4
+      },
+      "180": {
+       "cov": 5.4,
+       "earned": 297.5
+      }
+     },
+     "originEst": {
+      "30": 0.452,
+      "60": 0.766,
+      "120": 0.958,
+      "180": 0.992
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "6/6",
+     "win": 415.5,
+     "winRange": [
+      387.8,
+      448.3
+     ],
+     "firstBuy": 78.2,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.6,
+       "earned": 100.2
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 212.1
+      },
+      "180": {
+       "cov": 7.5,
+       "earned": 331.8
+      }
+     },
+     "originEst": {
+      "30": 0.182,
+      "60": 0.406,
+      "120": 0.7,
+      "180": 0.849
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "6/6",
+     "win": 525.9,
+     "winRange": [
+      466.9,
+      585.1
+     ],
+     "firstBuy": 98.6,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 101.4
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 178
+      },
+      "180": {
+       "cov": 5.3,
+       "earned": 262.3
+      }
+     },
+     "originEst": {
+      "30": 0.268,
+      "60": 0.48,
+      "120": 0.737,
+      "180": 0.867
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "6/6",
+     "win": 493.5,
+     "winRange": [
+      471.8,
+      515.4
+     ],
+     "firstBuy": 78.2,
+     "clicks": 9,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.6,
+       "earned": 100.2
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 212.1
+      },
+      "180": {
+       "cov": 6.2,
+       "earned": 333.4
+      }
+     },
+     "originEst": {
+      "30": 0.182,
+      "60": 0.406,
+      "120": 0.7,
+      "180": 0.849
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "6/6",
+     "win": 478.7,
+     "winRange": [
+      468,
+      486.4
+     ],
+     "firstBuy": 84.5,
+     "clicks": 9.8,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 108.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 197.4
+      },
+      "180": {
+       "cov": 5.5,
+       "earned": 297.5
+      }
+     },
+     "originEst": {
+      "30": 0.452,
+      "60": 0.766,
+      "120": 0.958,
+      "180": 0.992
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "6/6",
+     "win": 519.1,
+     "winRange": [
+      459.8,
+      600.8
+     ],
+     "firstBuy": 98.6,
+     "clicks": 10,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 101.4
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 178
+      },
+      "180": {
+       "cov": 5.6,
+       "earned": 260.2
+      }
+     },
+     "originEst": {
+      "30": 0.268,
+      "60": 0.48,
+      "120": 0.737,
+      "180": 0.867
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "6/6",
+     "win": 388.5,
+     "winRange": [
+      382.2,
+      398.4
+     ],
+     "firstBuy": 71.9,
+     "clicks": 30.5,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 119.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 235.7
+      },
+      "180": {
+       "cov": 8.7,
+       "earned": 364
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.595,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "6/6",
+     "win": 382.4,
+     "winRange": [
+      354.1,
+      400.5
+     ],
+     "firstBuy": 76.6,
+     "clicks": 32.8,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 117.4
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 232
+      },
+      "180": {
+       "cov": 9.1,
+       "earned": 346.7
+      }
+     },
+     "originEst": {
+      "30": 0.342,
+      "60": 0.563,
+      "120": 0.78,
+      "180": 0.889
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "6/6",
+     "win": 401.6,
+     "winRange": [
+      385,
+      425.8
+     ],
+     "firstBuy": 70.7,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 119.8
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 233.7
+      },
+      "180": {
+       "cov": 8.3,
+       "earned": 363.6
+      }
+     },
+     "originEst": {
+      "30": 0.429,
+      "60": 0.594,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "6/6",
+     "win": 588.5,
+     "winRange": [
+      565.8,
+      619
+     ],
+     "firstBuy": 90.7,
+     "clicks": 39.2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.6,
+       "earned": 99.4
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 178.6
+      },
+      "180": {
+       "cov": 4.7,
+       "earned": 256.2
+      }
+     },
+     "originEst": {
+      "30": 0.182,
+      "60": 0.406,
+      "120": 0.704,
+      "180": 0.85
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "6/6",
+     "win": 459.1,
+     "winRange": [
+      409.3,
+      498.1
+     ],
+     "firstBuy": 122.4,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 107.6
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 231.5
+      },
+      "180": {
+       "cov": 5.1,
+       "earned": 356.8
+      }
+     },
+     "originEst": {
+      "30": 0.234,
+      "60": 0.455,
+      "120": 0.725,
+      "180": 0.861
+     },
+     "example": [
+      [
+       "sec_1",
+       "leafCanopy",
+       53.8
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "6/6",
+     "win": 385.5,
+     "winRange": [
+      364.6,
+      420.5
+     ],
+     "firstBuy": 104.3,
+     "clicks": 30.2,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 124.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 270.4
+      },
+      "180": {
+       "cov": 6.4,
+       "earned": 423.9
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.595,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": [
+      [
+       "sec_1",
+       "leafCanopy",
+       48
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "6/6",
+     "win": 385.5,
+     "winRange": [
+      364.6,
+      420.5
+     ],
+     "firstBuy": 104.3,
+     "clicks": 30.2,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 124.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 270.4
+      },
+      "180": {
+       "cov": 6.4,
+       "earned": 423.9
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.595,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": [
+      [
+       "sec_1",
+       "leafCanopy",
+       48
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "6/6",
+     "win": 434.8,
+     "winRange": [
+      425.8,
+      454.2
+     ],
+     "firstBuy": 113.5,
+     "clicks": 32.2,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 120.4
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 240.1
+      },
+      "180": {
+       "cov": 4.8,
+       "earned": 373.2
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.698,
+      "120": 0.961,
+      "180": 0.995
+     },
+     "example": [
+      [
+       "sec_1",
+       "rootNetwork",
+       48
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "6/6",
+     "win": 488.1,
+     "winRange": [
+      470.4,
+      499.4
+     ],
+     "firstBuy": 104.3,
+     "clicks": 35,
+     "specs": 4,
+     "localSpent": 600,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 124.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 270.4
+      },
+      "180": {
+       "cov": 6.4,
+       "earned": 423.9
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.595,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": [
+      [
+       "sec_1",
+       "leafCanopy",
+       48
+      ],
+      [
+       "sec_10",
+       "seedReserve",
+       207.4
+      ],
+      [
+       "sec_3",
+       "rootNetwork",
+       343.7
+      ],
+      [
+       "sec_0",
+       "rootNetwork",
+       395.5
+      ]
+     ]
+    },
+    "situational+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 406.5,
+     "winRange": [
+      392,
+      431.5
+     ],
+     "firstBuy": 71.9,
+     "clicks": 31.3,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 119.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 235.7
+      },
+      "180": {
+       "cov": 8.7,
+       "earned": 364
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.595,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": [
+      [
+       "sec_3",
+       "rootNetwork",
+       255.4
+      ]
+     ]
+    },
+    "situational+seedReserveFrontier": {
+     "won": "6/6",
+     "win": 413.7,
+     "winRange": [
+      391.5,
+      433.6
+     ],
+     "firstBuy": 71.9,
+     "clicks": 30.8,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 119.7
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 235.7
+      },
+      "180": {
+       "cov": 8.7,
+       "earned": 364
+      }
+     },
+     "originEst": {
+      "30": 0.43,
+      "60": 0.595,
+      "120": 0.795,
+      "180": 0.897
+     },
+     "example": [
+      [
+       "sec_10",
+       "seedReserve",
+       192
+      ]
+     ]
+    },
+    "balanced+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 480.9,
+     "winRange": [
+      436.3,
+      515.2
+     ],
+     "firstBuy": 79.1,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 840,
+     "marks": {
+      "60": {
+       "cov": 4.7,
+       "earned": 106.5
+      },
+      "120": {
+       "cov": 4.7,
+       "earned": 210.5
+      },
+      "180": {
+       "cov": 6.4,
+       "earned": 308.8
+      }
+     },
+     "originEst": {
+      "30": 0.234,
+      "60": 0.455,
+      "120": 0.725,
+      "180": 0.861
+     },
+     "example": [
+      [
+       "sec_3",
+       "rootNetwork",
+       265
+      ]
+     ]
+    }
+   }
+  },
+  "desert_seed_9 (attempt 1, Borea-935)": {
+   "strategy1": {
+    "balanced": {
+     "won": "6/6",
+     "win": 364.5,
+     "winRange": [
+      337.1,
+      379.2
+     ],
+     "firstBuy": 83,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 13.1,
+       "earned": 101
+      },
+      "120": {
+       "cov": 28.9,
+       "earned": 229.1
+      },
+      "180": {
+       "cov": 29.1,
+       "earned": 387.2
+      }
+     },
+     "originEst": {
+      "30": 0.249,
+      "60": 0.549,
+      "120": 0.839,
+      "180": 0.943
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "6/6",
+     "win": 369.8,
+     "winRange": [
+      329.6,
+      397.8
+     ],
+     "firstBuy": 79.2,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 14,
+       "earned": 103.5
+      },
+      "120": {
+       "cov": 29,
+       "earned": 245.9
+      },
+      "180": {
+       "cov": 29.3,
+       "earned": 402.1
+      }
+     },
+     "originEst": {
+      "30": 0.479,
+      "60": 0.853,
+      "120": 0.989,
+      "180": 0.999
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "6/6",
+     "win": 338.7,
+     "winRange": [
+      322.9,
+      345.9
+     ],
+     "firstBuy": 81.4,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 10,
+       "earned": 98.1
+      },
+      "120": {
+       "cov": 28.8,
+       "earned": 244.8
+      },
+      "180": {
+       "cov": 29.2,
+       "earned": 432.2
+      }
+     },
+     "originEst": {
+      "30": 0.174,
+      "60": 0.46,
+      "120": 0.807,
+      "180": 0.931
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "6/6",
+     "win": 394.1,
+     "winRange": [
+      364.6,
+      428.3
+     ],
+     "firstBuy": 89.9,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 15.8,
+       "earned": 93.5
+      },
+      "120": {
+       "cov": 29,
+       "earned": 203.8
+      },
+      "180": {
+       "cov": 29,
+       "earned": 345.6
+      }
+     },
+     "originEst": {
+      "30": 0.318,
+      "60": 0.593,
+      "120": 0.855,
+      "180": 0.948
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "6/6",
+     "win": 375,
+     "winRange": [
+      359.8,
+      394.9
+     ],
+     "firstBuy": 84,
+     "clicks": 11,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 8.9,
+       "earned": 101.7
+      },
+      "120": {
+       "cov": 21.3,
+       "earned": 218.6
+      },
+      "180": {
+       "cov": 29,
+       "earned": 428.2
+      }
+     },
+     "originEst": {
+      "30": 0.174,
+      "60": 0.456,
+      "120": 0.805,
+      "180": 0.931
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "6/6",
+     "win": 361.5,
+     "winRange": [
+      323,
+      405.9
+     ],
+     "firstBuy": 79.4,
+     "clicks": 11,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 14.7,
+       "earned": 107.9
+      },
+      "120": {
+       "cov": 29,
+       "earned": 226.4
+      },
+      "180": {
+       "cov": 29,
+       "earned": 392
+      }
+     },
+     "originEst": {
+      "30": 0.479,
+      "60": 0.853,
+      "120": 0.989,
+      "180": 0.999
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "6/6",
+     "win": 389.5,
+     "winRange": [
+      375.7,
+      415.4
+     ],
+     "firstBuy": 88.4,
+     "clicks": 11,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 21.4,
+       "earned": 89.8
+      },
+      "120": {
+       "cov": 29,
+       "earned": 204
+      },
+      "180": {
+       "cov": 29,
+       "earned": 344.6
+      }
+     },
+     "originEst": {
+      "30": 0.319,
+      "60": 0.593,
+      "120": 0.855,
+      "180": 0.948
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "6/6",
+     "win": 293.9,
+     "winRange": [
+      283.2,
+      309.4
+     ],
+     "firstBuy": 75.6,
+     "clicks": 36.7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 109.9
+      },
+      "120": {
+       "cov": 29,
+       "earned": 297.8
+      },
+      "180": {
+       "cov": 32.5,
+       "earned": 541.1
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.67,
+      "120": 0.882,
+      "180": 0.958
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "6/6",
+     "win": 278.1,
+     "winRange": [
+      260.6,
+      289
+     ],
+     "firstBuy": 79,
+     "clicks": 40.5,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 20.9,
+       "earned": 102.2
+      },
+      "120": {
+       "cov": 29,
+       "earned": 283.8
+      },
+      "180": {
+       "cov": 31.7,
+       "earned": 515.6
+      }
+     },
+     "originEst": {
+      "30": 0.323,
+      "60": 0.612,
+      "120": 0.862,
+      "180": 0.951
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "6/6",
+     "win": 330.1,
+     "winRange": [
+      305.8,
+      347.8
+     ],
+     "firstBuy": 71,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 14.2,
+       "earned": 116.5
+      },
+      "120": {
+       "cov": 29,
+       "earned": 283.1
+      },
+      "180": {
+       "cov": 29.9,
+       "earned": 462.7
+      }
+     },
+     "originEst": {
+      "30": 0.446,
+      "60": 0.665,
+      "120": 0.881,
+      "180": 0.958
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "6/6",
+     "win": 484.2,
+     "winRange": [
+      414.2,
+      510.6
+     ],
+     "firstBuy": 94.7,
+     "clicks": 41.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9,
+       "earned": 100.1
+      },
+      "120": {
+       "cov": 19.4,
+       "earned": 174.1
+      },
+      "180": {
+       "cov": 29,
+       "earned": 290.5
+      }
+     },
+     "originEst": {
+      "30": 0.174,
+      "60": 0.514,
+      "120": 0.861,
+      "180": 0.95
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "6/6",
+     "win": 366.7,
+     "winRange": [
+      348.8,
+      380.8
+     ],
+     "firstBuy": 116.6,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 13.1,
+       "earned": 103.1
+      },
+      "120": {
+       "cov": 28.5,
+       "earned": 241.2
+      },
+      "180": {
+       "cov": 29,
+       "earned": 430.4
+      }
+     },
+     "originEst": {
+      "30": 0.249,
+      "60": 0.549,
+      "120": 0.839,
+      "180": 0.943
+     },
+     "example": [
+      [
+       "sec_12",
+       "leafCanopy",
+       53.8
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "6/6",
+     "win": 294.6,
+     "winRange": [
+      279.2,
+      309.8
+     ],
+     "firstBuy": 97.4,
+     "clicks": 35.7,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 115.6
+      },
+      "120": {
+       "cov": 29,
+       "earned": 334.6
+      },
+      "180": {
+       "cov": 31,
+       "earned": 606.1
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.67,
+      "120": 0.882,
+      "180": 0.958
+     },
+     "example": [
+      [
+       "sec_12",
+       "leafCanopy",
+       44.2
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "6/6",
+     "win": 294.6,
+     "winRange": [
+      279.2,
+      309.8
+     ],
+     "firstBuy": 97.4,
+     "clicks": 35.7,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 115.6
+      },
+      "120": {
+       "cov": 29,
+       "earned": 334.6
+      },
+      "180": {
+       "cov": 31,
+       "earned": 606.1
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.67,
+      "120": 0.882,
+      "180": 0.958
+     },
+     "example": [
+      [
+       "sec_12",
+       "leafCanopy",
+       44.2
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "6/6",
+     "win": 320.2,
+     "winRange": [
+      296.5,
+      341
+     ],
+     "firstBuy": 104.6,
+     "clicks": 37.3,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 110.7
+      },
+      "120": {
+       "cov": 29,
+       "earned": 292
+      },
+      "180": {
+       "cov": 29.3,
+       "earned": 536.7
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.775,
+      "120": 0.99,
+      "180": 1
+     },
+     "example": [
+      [
+       "sec_12",
+       "rootNetwork",
+       44.2
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "6/6",
+     "win": 377.1,
+     "winRange": [
+      357.9,
+      393.3
+     ],
+     "firstBuy": 106.2,
+     "clicks": 36.2,
+     "specs": 4,
+     "localSpent": 600,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 110
+      },
+      "120": {
+       "cov": 29,
+       "earned": 286.5
+      },
+      "180": {
+       "cov": 29,
+       "earned": 547.7
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.67,
+      "120": 0.882,
+      "180": 0.958
+     },
+     "example": [
+      [
+       "sec_5",
+       "rootNetwork",
+       44.2
+      ],
+      [
+       "sec_6",
+       "leafCanopy",
+       134.4
+      ],
+      [
+       "sec_1",
+       "rootNetwork",
+       241.9
+      ],
+      [
+       "sec_0",
+       "leafCanopy",
+       362.9
+      ]
+     ]
+    },
+    "situational+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 293.9,
+     "winRange": [
+      283.2,
+      309.4
+     ],
+     "firstBuy": 75.6,
+     "clicks": 36.7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 109.9
+      },
+      "120": {
+       "cov": 29,
+       "earned": 297.8
+      },
+      "180": {
+       "cov": 32.5,
+       "earned": 541.1
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.67,
+      "120": 0.882,
+      "180": 0.958
+     },
+     "example": []
+    },
+    "situational+seedReserveFrontier": {
+     "won": "6/6",
+     "win": 312.3,
+     "winRange": [
+      283.2,
+      330.2
+     ],
+     "firstBuy": 88.4,
+     "clicks": 35.8,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 109.9
+      },
+      "120": {
+       "cov": 29,
+       "earned": 288.7
+      },
+      "180": {
+       "cov": 31.3,
+       "earned": 526.1
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.67,
+      "120": 0.882,
+      "180": 0.958
+     },
+     "example": [
+      [
+       "sec_6",
+       "seedReserve",
+       97.9
+      ]
+     ]
+    },
+    "balanced+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 364.5,
+     "winRange": [
+      337.1,
+      379.2
+     ],
+     "firstBuy": 83,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 13.1,
+       "earned": 101
+      },
+      "120": {
+       "cov": 28.9,
+       "earned": 229.1
+      },
+      "180": {
+       "cov": 29.1,
+       "earned": 387.2
+      }
+     },
+     "originEst": {
+      "30": 0.249,
+      "60": 0.549,
+      "120": 0.839,
+      "180": 0.943
+     },
+     "example": []
+    }
+   },
+   "strategy2": {
+    "balanced": {
+     "won": "6/6",
+     "win": 364.4,
+     "winRange": [
+      339.7,
+      377.9
+     ],
+     "firstBuy": 83,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 13.1,
+       "earned": 101
+      },
+      "120": {
+       "cov": 28.9,
+       "earned": 229.1
+      },
+      "180": {
+       "cov": 29.1,
+       "earned": 387.2
+      }
+     },
+     "originEst": {
+      "30": 0.249,
+      "60": 0.549,
+      "120": 0.839,
+      "180": 0.943
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "6/6",
+     "win": 369.7,
+     "winRange": [
+      331.2,
+      393.8
+     ],
+     "firstBuy": 79.2,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 14,
+       "earned": 103.5
+      },
+      "120": {
+       "cov": 29,
+       "earned": 245.9
+      },
+      "180": {
+       "cov": 29.3,
+       "earned": 402.1
+      }
+     },
+     "originEst": {
+      "30": 0.479,
+      "60": 0.853,
+      "120": 0.989,
+      "180": 0.999
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "6/6",
+     "win": 335.3,
+     "winRange": [
+      314.9,
+      342.4
+     ],
+     "firstBuy": 81.4,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 10,
+       "earned": 98.1
+      },
+      "120": {
+       "cov": 28.8,
+       "earned": 244.8
+      },
+      "180": {
+       "cov": 29.2,
+       "earned": 432.2
+      }
+     },
+     "originEst": {
+      "30": 0.174,
+      "60": 0.46,
+      "120": 0.807,
+      "180": 0.931
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "6/6",
+     "win": 402.1,
+     "winRange": [
+      375,
+      430.4
+     ],
+     "firstBuy": 89.9,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 15.8,
+       "earned": 93.5
+      },
+      "120": {
+       "cov": 29,
+       "earned": 203.8
+      },
+      "180": {
+       "cov": 29,
+       "earned": 345.6
+      }
+     },
+     "originEst": {
+      "30": 0.318,
+      "60": 0.593,
+      "120": 0.855,
+      "180": 0.948
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "6/6",
+     "win": 355,
+     "winRange": [
+      343.8,
+      374.4
+     ],
+     "firstBuy": 84,
+     "clicks": 12,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 8.9,
+       "earned": 101.7
+      },
+      "120": {
+       "cov": 21.3,
+       "earned": 218.6
+      },
+      "180": {
+       "cov": 29,
+       "earned": 428.2
+      }
+     },
+     "originEst": {
+      "30": 0.174,
+      "60": 0.456,
+      "120": 0.805,
+      "180": 0.931
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "6/6",
+     "win": 366.7,
+     "winRange": [
+      329.9,
+      410.2
+     ],
+     "firstBuy": 79.4,
+     "clicks": 12,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 14.7,
+       "earned": 107.9
+      },
+      "120": {
+       "cov": 29,
+       "earned": 226.4
+      },
+      "180": {
+       "cov": 29,
+       "earned": 392
+      }
+     },
+     "originEst": {
+      "30": 0.479,
+      "60": 0.853,
+      "120": 0.989,
+      "180": 0.999
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "6/6",
+     "win": 406.8,
+     "winRange": [
+      387.8,
+      431.5
+     ],
+     "firstBuy": 88.4,
+     "clicks": 12,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 21.4,
+       "earned": 89.8
+      },
+      "120": {
+       "cov": 29,
+       "earned": 204
+      },
+      "180": {
+       "cov": 29,
+       "earned": 344.6
+      }
+     },
+     "originEst": {
+      "30": 0.319,
+      "60": 0.593,
+      "120": 0.855,
+      "180": 0.948
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "6/6",
+     "win": 291.2,
+     "winRange": [
+      281.6,
+      304.6
+     ],
+     "firstBuy": 75.6,
+     "clicks": 41.8,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 109.9
+      },
+      "120": {
+       "cov": 29,
+       "earned": 297.8
+      },
+      "180": {
+       "cov": 32.5,
+       "earned": 541.1
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.67,
+      "120": 0.882,
+      "180": 0.958
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "6/6",
+     "win": 280,
+     "winRange": [
+      270.2,
+      291.8
+     ],
+     "firstBuy": 79,
+     "clicks": 45.8,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 20.9,
+       "earned": 102.2
+      },
+      "120": {
+       "cov": 29,
+       "earned": 283.8
+      },
+      "180": {
+       "cov": 31.7,
+       "earned": 515.6
+      }
+     },
+     "originEst": {
+      "30": 0.323,
+      "60": 0.612,
+      "120": 0.862,
+      "180": 0.951
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "6/6",
+     "win": 324.3,
+     "winRange": [
+      303,
+      349.3
+     ],
+     "firstBuy": 71,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 14.2,
+       "earned": 116.5
+      },
+      "120": {
+       "cov": 29,
+       "earned": 283.1
+      },
+      "180": {
+       "cov": 29.9,
+       "earned": 462.7
+      }
+     },
+     "originEst": {
+      "30": 0.446,
+      "60": 0.665,
+      "120": 0.881,
+      "180": 0.958
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "6/6",
+     "win": 475,
+     "winRange": [
+      399.4,
+      505.8
+     ],
+     "firstBuy": 94.7,
+     "clicks": 51.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 9,
+       "earned": 100.1
+      },
+      "120": {
+       "cov": 19.4,
+       "earned": 174.1
+      },
+      "180": {
+       "cov": 29,
+       "earned": 290.5
+      }
+     },
+     "originEst": {
+      "30": 0.174,
+      "60": 0.514,
+      "120": 0.861,
+      "180": 0.95
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "6/6",
+     "win": 363,
+     "winRange": [
+      354.2,
+      374.1
+     ],
+     "firstBuy": 116.6,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 13.1,
+       "earned": 103.1
+      },
+      "120": {
+       "cov": 28.5,
+       "earned": 241.2
+      },
+      "180": {
+       "cov": 29,
+       "earned": 430.4
+      }
+     },
+     "originEst": {
+      "30": 0.249,
+      "60": 0.549,
+      "120": 0.839,
+      "180": 0.943
+     },
+     "example": [
+      [
+       "sec_12",
+       "leafCanopy",
+       53.8
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "6/6",
+     "win": 288.6,
+     "winRange": [
+      276.8,
+      302.9
+     ],
+     "firstBuy": 97.4,
+     "clicks": 40.3,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 115.6
+      },
+      "120": {
+       "cov": 29,
+       "earned": 334.6
+      },
+      "180": {
+       "cov": 31,
+       "earned": 606.1
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.67,
+      "120": 0.882,
+      "180": 0.958
+     },
+     "example": [
+      [
+       "sec_12",
+       "leafCanopy",
+       44.2
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "6/6",
+     "win": 288.6,
+     "winRange": [
+      276.8,
+      302.9
+     ],
+     "firstBuy": 97.4,
+     "clicks": 40.3,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 115.6
+      },
+      "120": {
+       "cov": 29,
+       "earned": 334.6
+      },
+      "180": {
+       "cov": 31,
+       "earned": 606.1
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.67,
+      "120": 0.882,
+      "180": 0.958
+     },
+     "example": [
+      [
+       "sec_12",
+       "leafCanopy",
+       44.2
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "6/6",
+     "win": 314.7,
+     "winRange": [
+      292.8,
+      337.4
+     ],
+     "firstBuy": 104.6,
+     "clicks": 41.2,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 110.7
+      },
+      "120": {
+       "cov": 29,
+       "earned": 292
+      },
+      "180": {
+       "cov": 29.3,
+       "earned": 536.7
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.775,
+      "120": 0.99,
+      "180": 1
+     },
+     "example": [
+      [
+       "sec_12",
+       "rootNetwork",
+       44.2
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "6/6",
+     "win": 424.3,
+     "winRange": [
+      401.8,
+      444.6
+     ],
+     "firstBuy": 106.2,
+     "clicks": 47.5,
+     "specs": 4.8,
+     "localSpent": 808.3,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 110
+      },
+      "120": {
+       "cov": 29,
+       "earned": 286.5
+      },
+      "180": {
+       "cov": 29,
+       "earned": 547.7
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.67,
+      "120": 0.882,
+      "180": 0.958
+     },
+     "example": [
+      [
+       "sec_5",
+       "rootNetwork",
+       44.2
+      ],
+      [
+       "sec_6",
+       "leafCanopy",
+       134.4
+      ],
+      [
+       "sec_1",
+       "rootNetwork",
+       241.9
+      ],
+      [
+       "sec_3",
+       "rootNetwork",
+       324.5
+      ],
+      [
+       "sec_8",
+       "rootNetwork",
+       368.6
+      ]
+     ]
+    },
+    "situational+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 291.2,
+     "winRange": [
+      281.6,
+      304.6
+     ],
+     "firstBuy": 75.6,
+     "clicks": 41.8,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 109.9
+      },
+      "120": {
+       "cov": 29,
+       "earned": 297.8
+      },
+      "180": {
+       "cov": 32.5,
+       "earned": 541.1
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.67,
+      "120": 0.882,
+      "180": 0.958
+     },
+     "example": []
+    },
+    "situational+seedReserveFrontier": {
+     "won": "6/6",
+     "win": 312.3,
+     "winRange": [
+      293,
+      331.4
+     ],
+     "firstBuy": 88.4,
+     "clicks": 41.2,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 15.2,
+       "earned": 109.9
+      },
+      "120": {
+       "cov": 29,
+       "earned": 288.7
+      },
+      "180": {
+       "cov": 31.3,
+       "earned": 526.1
+      }
+     },
+     "originEst": {
+      "30": 0.448,
+      "60": 0.67,
+      "120": 0.882,
+      "180": 0.958
+     },
+     "example": [
+      [
+       "sec_6",
+       "seedReserve",
+       97.9
+      ]
+     ]
+    },
+    "balanced+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 364.4,
+     "winRange": [
+      339.7,
+      377.9
+     ],
+     "firstBuy": 83,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 920,
+     "marks": {
+      "60": {
+       "cov": 13.1,
+       "earned": 101
+      },
+      "120": {
+       "cov": 28.9,
+       "earned": 229.1
+      },
+      "180": {
+       "cov": 29.1,
+       "earned": 387.2
+      }
+     },
+     "originEst": {
+      "30": 0.249,
+      "60": 0.549,
+      "120": 0.839,
+      "180": 0.943
+     },
+     "example": []
+    }
+   }
+  },
+  "frozen_seed_22 (attempt 1, Mistral-887)": {
+   "strategy1": {
+    "balanced": {
+     "won": "6/6",
+     "win": 351.4,
+     "winRange": [
+      313.1,
+      391
+     ],
+     "firstBuy": 79.5,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 13.8,
+       "earned": 105.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 222.2
+      },
+      "180": {
+       "cov": 22.7,
+       "earned": 373.3
+      }
+     },
+     "originEst": {
+      "30": 0.157,
+      "60": 0.382,
+      "120": 0.671,
+      "180": 0.825
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "6/6",
+     "win": 355.6,
+     "winRange": [
+      323.5,
+      380.3
+     ],
+     "firstBuy": 85.5,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 14,
+       "earned": 98.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 207.8
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 362
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.682,
+      "120": 0.934,
+      "180": 0.986
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "6/6",
+     "win": 321,
+     "winRange": [
+      294.4,
+      347.8
+     ],
+     "firstBuy": 86.9,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 10.7,
+       "earned": 91.8
+      },
+      "120": {
+       "cov": 22.4,
+       "earned": 228.2
+      },
+      "180": {
+       "cov": 22.7,
+       "earned": 404.3
+      }
+     },
+     "originEst": {
+      "30": 0.107,
+      "60": 0.306,
+      "120": 0.63,
+      "180": 0.803
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "6/6",
+     "win": 374.1,
+     "winRange": [
+      349.1,
+      402.1
+     ],
+     "firstBuy": 88.3,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 15.8,
+       "earned": 92.2
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 201
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 334.6
+      }
+     },
+     "originEst": {
+      "30": 0.208,
+      "60": 0.422,
+      "120": 0.692,
+      "180": 0.836
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "6/6",
+     "win": 377.5,
+     "winRange": [
+      357.1,
+      405.9
+     ],
+     "firstBuy": 88.2,
+     "clicks": 12.2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 9.6,
+       "earned": 91.6
+      },
+      "120": {
+       "cov": 20.1,
+       "earned": 205.9
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 376.4
+      }
+     },
+     "originEst": {
+      "30": 0.107,
+      "60": 0.304,
+      "120": 0.628,
+      "180": 0.802
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "6/6",
+     "win": 347.7,
+     "winRange": [
+      332.2,
+      361.1
+     ],
+     "firstBuy": 84.6,
+     "clicks": 12.7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 14.5,
+       "earned": 100.6
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 202.7
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 339.1
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.682,
+      "120": 0.934,
+      "180": 0.986
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "6/6",
+     "win": 364.2,
+     "winRange": [
+      328.2,
+      405.6
+     ],
+     "firstBuy": 87.4,
+     "clicks": 13,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 21.1,
+       "earned": 91.1
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 194
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 305.8
+      }
+     },
+     "originEst": {
+      "30": 0.208,
+      "60": 0.422,
+      "120": 0.692,
+      "180": 0.836
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "6/6",
+     "win": 297.3,
+     "winRange": [
+      288.6,
+      304.3
+     ],
+     "firstBuy": 79.1,
+     "clicks": 33.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 100.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 258.1
+      },
+      "180": {
+       "cov": 22.9,
+       "earned": 441.1
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.544,
+      "120": 0.757,
+      "180": 0.871
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "6/6",
+     "win": 278.6,
+     "winRange": [
+      262.7,
+      298.9
+     ],
+     "firstBuy": 77.3,
+     "clicks": 36,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 20.9,
+       "earned": 98
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 260.9
+      },
+      "180": {
+       "cov": 23.7,
+       "earned": 450.5
+      }
+     },
+     "originEst": {
+      "30": 0.208,
+      "60": 0.493,
+      "120": 0.73,
+      "180": 0.856
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "6/6",
+     "win": 302.1,
+     "winRange": [
+      284.8,
+      319.8
+     ],
+     "firstBuy": 73.4,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 14.7,
+       "earned": 109.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 283.3
+      },
+      "180": {
+       "cov": 23.5,
+       "earned": 483.9
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.543,
+      "120": 0.757,
+      "180": 0.87
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "6/6",
+     "win": 434.2,
+     "winRange": [
+      391.8,
+      465.9
+     ],
+     "firstBuy": 89.4,
+     "clicks": 40.7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 9.6,
+       "earned": 91.6
+      },
+      "120": {
+       "cov": 19.8,
+       "earned": 190.9
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 312.5
+      }
+     },
+     "originEst": {
+      "30": 0.107,
+      "60": 0.304,
+      "120": 0.645,
+      "180": 0.811
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "6/6",
+     "win": 351.8,
+     "winRange": [
+      325.6,
+      385.1
+     ],
+     "firstBuy": 99.4,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 13.8,
+       "earned": 105.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 242
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 410.7
+      }
+     },
+     "originEst": {
+      "30": 0.157,
+      "60": 0.382,
+      "120": 0.671,
+      "180": 0.825
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       71
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "6/6",
+     "win": 291,
+     "winRange": [
+      274.7,
+      307.8
+     ],
+     "firstBuy": 104.4,
+     "clicks": 32.8,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 103.1
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 287.5
+      },
+      "180": {
+       "cov": 22.9,
+       "earned": 536.4
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.544,
+      "120": 0.757,
+      "180": 0.871
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       63.4
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "6/6",
+     "win": 291,
+     "winRange": [
+      274.7,
+      307.8
+     ],
+     "firstBuy": 104.4,
+     "clicks": 32.8,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 103.1
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 287.5
+      },
+      "180": {
+       "cov": 22.9,
+       "earned": 536.4
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.544,
+      "120": 0.757,
+      "180": 0.871
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       63.4
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "6/6",
+     "win": 314.2,
+     "winRange": [
+      288.5,
+      330.6
+     ],
+     "firstBuy": 110.5,
+     "clicks": 32.8,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 100.8
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 260.4
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 472.7
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.601,
+      "120": 0.938,
+      "180": 0.991
+     },
+     "example": [
+      [
+       "sec_4",
+       "rootNetwork",
+       63.4
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "6/6",
+     "win": 402.4,
+     "winRange": [
+      384.6,
+      421.4
+     ],
+     "firstBuy": 104.4,
+     "clicks": 40.8,
+     "specs": 5,
+     "localSpent": 850,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 103.1
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 287.5
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 545.1
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.544,
+      "120": 0.757,
+      "180": 0.871
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       63.4
+      ],
+      [
+       "sec_6",
+       "leafCanopy",
+       142.1
+      ],
+      [
+       "sec_5",
+       "rootNetwork",
+       263
+      ],
+      [
+       "sec_0",
+       "rootNetwork",
+       311
+      ],
+      [
+       "sec_9",
+       "rootNetwork",
+       353.3
+      ]
+     ]
+    },
+    "situational+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 296.9,
+     "winRange": [
+      287.7,
+      304.3
+     ],
+     "firstBuy": 79.1,
+     "clicks": 33,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 100.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 258.1
+      },
+      "180": {
+       "cov": 22.9,
+       "earned": 441.1
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.544,
+      "120": 0.757,
+      "180": 0.871
+     },
+     "example": [
+      [
+       "sec_7",
+       "rootNetwork",
+       282.2
+      ]
+     ]
+    },
+    "situational+seedReserveFrontier": {
+     "won": "6/6",
+     "win": 311.4,
+     "winRange": [
+      297.4,
+      335.7
+     ],
+     "firstBuy": 85.2,
+     "clicks": 33.7,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 100.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 253.8
+      },
+      "180": {
+       "cov": 22.9,
+       "earned": 439
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.544,
+      "120": 0.757,
+      "180": 0.871
+     },
+     "example": [
+      [
+       "sec_6",
+       "seedReserve",
+       76.8
+      ]
+     ]
+    },
+    "balanced+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 350.8,
+     "winRange": [
+      312,
+      389.8
+     ],
+     "firstBuy": 79.5,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 710,
+     "marks": {
+      "60": {
+       "cov": 13.8,
+       "earned": 105.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 222.2
+      },
+      "180": {
+       "cov": 22.7,
+       "earned": 373.3
+      }
+     },
+     "originEst": {
+      "30": 0.157,
+      "60": 0.382,
+      "120": 0.671,
+      "180": 0.825
+     },
+     "example": [
+      [
+       "sec_7",
+       "rootNetwork",
+       368.6
+      ]
+     ]
+    }
+   },
+   "strategy2": {
+    "balanced": {
+     "won": "6/6",
+     "win": 411.1,
+     "winRange": [
+      364.3,
+      435
+     ],
+     "firstBuy": 79.5,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 13.8,
+       "earned": 105.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 222.2
+      },
+      "180": {
+       "cov": 22.7,
+       "earned": 373.3
+      }
+     },
+     "originEst": {
+      "30": 0.157,
+      "60": 0.382,
+      "120": 0.671,
+      "180": 0.825
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "6/6",
+     "win": 417.4,
+     "winRange": [
+      396.2,
+      439.5
+     ],
+     "firstBuy": 85.5,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 14,
+       "earned": 98.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 207.8
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 362
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.682,
+      "120": 0.934,
+      "180": 0.986
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "6/6",
+     "win": 370.8,
+     "winRange": [
+      349.4,
+      401.3
+     ],
+     "firstBuy": 86.9,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 10.7,
+       "earned": 91.8
+      },
+      "120": {
+       "cov": 22.4,
+       "earned": 228.2
+      },
+      "180": {
+       "cov": 22.7,
+       "earned": 404.3
+      }
+     },
+     "originEst": {
+      "30": 0.107,
+      "60": 0.306,
+      "120": 0.63,
+      "180": 0.803
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "6/6",
+     "win": 437.8,
+     "winRange": [
+      414.9,
+      471.2
+     ],
+     "firstBuy": 88.3,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 15.8,
+       "earned": 92.2
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 201
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 334.6
+      }
+     },
+     "originEst": {
+      "30": 0.208,
+      "60": 0.422,
+      "120": 0.692,
+      "180": 0.836
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "6/6",
+     "win": 419.5,
+     "winRange": [
+      395.8,
+      443.7
+     ],
+     "firstBuy": 88.2,
+     "clicks": 12.5,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 9.6,
+       "earned": 91.6
+      },
+      "120": {
+       "cov": 20.1,
+       "earned": 205.9
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 376.4
+      }
+     },
+     "originEst": {
+      "30": 0.107,
+      "60": 0.304,
+      "120": 0.628,
+      "180": 0.802
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "6/6",
+     "win": 409.1,
+     "winRange": [
+      391,
+      425.1
+     ],
+     "firstBuy": 84.6,
+     "clicks": 12.8,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 14.5,
+       "earned": 100.6
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 202.7
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 339.1
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.682,
+      "120": 0.934,
+      "180": 0.986
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "6/6",
+     "win": 441.7,
+     "winRange": [
+      398.9,
+      483.4
+     ],
+     "firstBuy": 87.4,
+     "clicks": 13.8,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 21.1,
+       "earned": 91.1
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 194
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 305.8
+      }
+     },
+     "originEst": {
+      "30": 0.208,
+      "60": 0.422,
+      "120": 0.692,
+      "180": 0.836
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "6/6",
+     "win": 344.8,
+     "winRange": [
+      338.7,
+      354.4
+     ],
+     "firstBuy": 79.1,
+     "clicks": 38.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 100.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 258.1
+      },
+      "180": {
+       "cov": 22.9,
+       "earned": 441.1
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.544,
+      "120": 0.757,
+      "180": 0.871
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "6/6",
+     "win": 326,
+     "winRange": [
+      309.3,
+      344.8
+     ],
+     "firstBuy": 77.3,
+     "clicks": 45.5,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 20.9,
+       "earned": 98
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 260.9
+      },
+      "180": {
+       "cov": 23.7,
+       "earned": 450.5
+      }
+     },
+     "originEst": {
+      "30": 0.208,
+      "60": 0.493,
+      "120": 0.73,
+      "180": 0.856
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "6/6",
+     "win": 360.9,
+     "winRange": [
+      337.8,
+      377.4
+     ],
+     "firstBuy": 73.4,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 14.7,
+       "earned": 109.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 283.3
+      },
+      "180": {
+       "cov": 23.5,
+       "earned": 483.9
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.543,
+      "120": 0.757,
+      "180": 0.87
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "6/6",
+     "win": 511.9,
+     "winRange": [
+      467.8,
+      538.4
+     ],
+     "firstBuy": 89.4,
+     "clicks": 45.5,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 9.6,
+       "earned": 91.6
+      },
+      "120": {
+       "cov": 19.8,
+       "earned": 190.9
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 312.5
+      }
+     },
+     "originEst": {
+      "30": 0.107,
+      "60": 0.304,
+      "120": 0.645,
+      "180": 0.811
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "6/6",
+     "win": 396.6,
+     "winRange": [
+      375.4,
+      430.9
+     ],
+     "firstBuy": 99.4,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 13.8,
+       "earned": 105.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 242
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 410.7
+      }
+     },
+     "originEst": {
+      "30": 0.157,
+      "60": 0.382,
+      "120": 0.671,
+      "180": 0.825
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       71
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "6/6",
+     "win": 329.3,
+     "winRange": [
+      314.6,
+      343.2
+     ],
+     "firstBuy": 104.4,
+     "clicks": 37.2,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 103.1
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 287.5
+      },
+      "180": {
+       "cov": 22.9,
+       "earned": 536.4
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.544,
+      "120": 0.757,
+      "180": 0.871
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       63.4
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "6/6",
+     "win": 329.3,
+     "winRange": [
+      314.6,
+      343.2
+     ],
+     "firstBuy": 104.4,
+     "clicks": 37.2,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 103.1
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 287.5
+      },
+      "180": {
+       "cov": 22.9,
+       "earned": 536.4
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.544,
+      "120": 0.757,
+      "180": 0.871
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       63.4
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "6/6",
+     "win": 362.8,
+     "winRange": [
+      336.2,
+      386.6
+     ],
+     "firstBuy": 110.5,
+     "clicks": 38.7,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 100.8
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 260.4
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 472.7
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.601,
+      "120": 0.938,
+      "180": 0.991
+     },
+     "example": [
+      [
+       "sec_4",
+       "rootNetwork",
+       63.4
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "6/6",
+     "win": 448.1,
+     "winRange": [
+      435,
+      459.5
+     ],
+     "firstBuy": 104.4,
+     "clicks": 43.7,
+     "specs": 5,
+     "localSpent": 850,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 103.1
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 287.5
+      },
+      "180": {
+       "cov": 22.6,
+       "earned": 545.1
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.544,
+      "120": 0.757,
+      "180": 0.871
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       63.4
+      ],
+      [
+       "sec_6",
+       "leafCanopy",
+       142.1
+      ],
+      [
+       "sec_5",
+       "rootNetwork",
+       263
+      ],
+      [
+       "sec_0",
+       "rootNetwork",
+       351.4
+      ],
+      [
+       "sec_9",
+       "leafCanopy",
+       391.7
+      ]
+     ]
+    },
+    "situational+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 359.8,
+     "winRange": [
+      355.5,
+      371.2
+     ],
+     "firstBuy": 79.1,
+     "clicks": 38.7,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 100.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 258.1
+      },
+      "180": {
+       "cov": 22.9,
+       "earned": 441.1
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.544,
+      "120": 0.757,
+      "180": 0.871
+     },
+     "example": [
+      [
+       "sec_6",
+       "rootNetwork",
+       259.2
+      ]
+     ]
+    },
+    "situational+seedReserveFrontier": {
+     "won": "6/6",
+     "win": 359,
+     "winRange": [
+      347,
+      373.4
+     ],
+     "firstBuy": 85.2,
+     "clicks": 38.7,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 15.1,
+       "earned": 100.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 253.8
+      },
+      "180": {
+       "cov": 22.9,
+       "earned": 439
+      }
+     },
+     "originEst": {
+      "30": 0.311,
+      "60": 0.544,
+      "120": 0.757,
+      "180": 0.871
+     },
+     "example": [
+      [
+       "sec_6",
+       "seedReserve",
+       76.8
+      ]
+     ]
+    },
+    "balanced+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 434.1,
+     "winRange": [
+      394.4,
+      459.4
+     ],
+     "firstBuy": 79.5,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 930,
+     "marks": {
+      "60": {
+       "cov": 13.8,
+       "earned": 105.4
+      },
+      "120": {
+       "cov": 22.6,
+       "earned": 222.2
+      },
+      "180": {
+       "cov": 22.7,
+       "earned": 373.3
+      }
+     },
+     "originEst": {
+      "30": 0.157,
+      "60": 0.382,
+      "120": 0.671,
+      "180": 0.825
+     },
+     "example": [
+      [
+       "sec_6",
+       "rootNetwork",
+       347.5
+      ]
+     ]
+    }
+   }
+  },
+  "frozen_seed_12 (attempt 1, Coriol-192)": {
+   "strategy1": {
+    "balanced": {
+     "won": "6/6",
+     "win": 415.1,
+     "winRange": [
+      382.2,
+      435.8
+     ],
+     "firstBuy": 88.7,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9.3,
+       "earned": 86
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 206.2
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 312.7
+      }
+     },
+     "originEst": {
+      "30": 0.157,
+      "60": 0.316,
+      "120": 0.552,
+      "180": 0.706
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "6/6",
+     "win": 424.1,
+     "winRange": [
+      380.3,
+      455.8
+     ],
+     "firstBuy": 78.4,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 8.9,
+       "earned": 101.6
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 216.4
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 319.9
+      }
+     },
+     "originEst": {
+      "30": 0.306,
+      "60": 0.587,
+      "120": 0.856,
+      "180": 0.95
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "6/6",
+     "win": 387.6,
+     "winRange": [
+      371,
+      411
+     ],
+     "firstBuy": 90.8,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9.2,
+       "earned": 84.6
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 197.6
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 343
+      }
+     },
+     "originEst": {
+      "30": 0.126,
+      "60": 0.281,
+      "120": 0.528,
+      "180": 0.69
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "6/6",
+     "win": 437.1,
+     "winRange": [
+      418.2,
+      453.1
+     ],
+     "firstBuy": 91.6,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 10.3,
+       "earned": 87.3
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 192.7
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 309.6
+      }
+     },
+     "originEst": {
+      "30": 0.185,
+      "60": 0.34,
+      "120": 0.567,
+      "180": 0.716
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "6/6",
+     "win": 429.1,
+     "winRange": [
+      400.3,
+      438.2
+     ],
+     "firstBuy": 93.1,
+     "clicks": 11,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 6.7,
+       "earned": 89.4
+      },
+      "120": {
+       "cov": 11.7,
+       "earned": 190.8
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 335.6
+      }
+     },
+     "originEst": {
+      "30": 0.124,
+      "60": 0.275,
+      "120": 0.525,
+      "180": 0.688
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "6/6",
+     "win": 401.2,
+     "winRange": [
+      365.3,
+      438.7
+     ],
+     "firstBuy": 86.7,
+     "clicks": 11,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9.6,
+       "earned": 97.6
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 207.9
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 331.9
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.586,
+      "120": 0.856,
+      "180": 0.95
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "6/6",
+     "win": 439.2,
+     "winRange": [
+      390.4,
+      480
+     ],
+     "firstBuy": 90.4,
+     "clicks": 11,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 11.7,
+       "earned": 91.6
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 193.5
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 295
+      }
+     },
+     "originEst": {
+      "30": 0.186,
+      "60": 0.341,
+      "120": 0.568,
+      "180": 0.717
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "6/6",
+     "win": 339.4,
+     "winRange": [
+      313.1,
+      356.2
+     ],
+     "firstBuy": 79.5,
+     "clicks": 34,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9.5,
+       "earned": 99.5
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 238.8
+      },
+      "180": {
+       "cov": 12.1,
+       "earned": 398.3
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.489,
+      "120": 0.665,
+      "180": 0.78
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "6/6",
+     "win": 329.1,
+     "winRange": [
+      308.8,
+      353.6
+     ],
+     "firstBuy": 77.7,
+     "clicks": 38.8,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 11.7,
+       "earned": 101
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 245.9
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 401.1
+      }
+     },
+     "originEst": {
+      "30": 0.2,
+      "60": 0.455,
+      "120": 0.642,
+      "180": 0.766
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "6/6",
+     "win": 370.7,
+     "winRange": [
+      347.7,
+      389.4
+     ],
+     "firstBuy": 77.1,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9.1,
+       "earned": 105.8
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 233
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 366.6
+      }
+     },
+     "originEst": {
+      "30": 0.306,
+      "60": 0.488,
+      "120": 0.664,
+      "180": 0.78
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "6/6",
+     "win": 533.5,
+     "winRange": [
+      488.3,
+      591.2
+     ],
+     "firstBuy": 93.8,
+     "clicks": 39.7,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 6.7,
+       "earned": 89.4
+      },
+      "120": {
+       "cov": 11.7,
+       "earned": 175.1
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 273.2
+      }
+     },
+     "originEst": {
+      "30": 0.124,
+      "60": 0.275,
+      "120": 0.525,
+      "180": 0.688
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "6/6",
+     "win": 417.6,
+     "winRange": [
+      394.6,
+      433.1
+     ],
+     "firstBuy": 122,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9.3,
+       "earned": 86
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 214.9
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 342.5
+      }
+     },
+     "originEst": {
+      "30": 0.157,
+      "60": 0.316,
+      "120": 0.552,
+      "180": 0.706
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       82.6
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "6/6",
+     "win": 343,
+     "winRange": [
+      321.4,
+      357.9
+     ],
+     "firstBuy": 111.7,
+     "clicks": 34.2,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9.5,
+       "earned": 101.6
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 262.3
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 450.5
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.489,
+      "120": 0.665,
+      "180": 0.78
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       65.3
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "6/6",
+     "win": 343,
+     "winRange": [
+      321.4,
+      357.9
+     ],
+     "firstBuy": 111.7,
+     "clicks": 34.2,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9.5,
+       "earned": 101.6
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 262.3
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 450.5
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.489,
+      "120": 0.665,
+      "180": 0.78
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       65.3
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "6/6",
+     "win": 365.6,
+     "winRange": [
+      342.1,
+      393.6
+     ],
+     "firstBuy": 113.7,
+     "clicks": 34.5,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9.4,
+       "earned": 99.8
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 250.4
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 411.6
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.533,
+      "120": 0.867,
+      "180": 0.963
+     },
+     "example": [
+      [
+       "sec_4",
+       "rootNetwork",
+       65.3
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "6/6",
+     "win": 481.8,
+     "winRange": [
+      464.2,
+      502.7
+     ],
+     "firstBuy": 110.4,
+     "clicks": 36,
+     "specs": 5,
+     "localSpent": 850,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9.4,
+       "earned": 100.9
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 265.6
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 454.5
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.489,
+      "120": 0.665,
+      "180": 0.78
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       65.3
+      ],
+      [
+       "sec_16",
+       "leafCanopy",
+       153.6
+      ],
+      [
+       "sec_6",
+       "rootNetwork",
+       301.4
+      ],
+      [
+       "sec_7",
+       "leafCanopy",
+       345.6
+      ],
+      [
+       "sec_9",
+       "leafCanopy",
+       384
+      ]
+     ]
+    },
+    "situational+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 346.5,
+     "winRange": [
+      323.2,
+      363
+     ],
+     "firstBuy": 79.5,
+     "clicks": 34.8,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9.5,
+       "earned": 99.5
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 238.8
+      },
+      "180": {
+       "cov": 12.1,
+       "earned": 398.3
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.489,
+      "120": 0.665,
+      "180": 0.78
+     },
+     "example": [
+      [
+       "sec_13",
+       "rootNetwork",
+       313
+      ]
+     ]
+    },
+    "situational+seedReserveFrontier": {
+     "won": "6/6",
+     "win": 359.8,
+     "winRange": [
+      325.1,
+      377.1
+     ],
+     "firstBuy": 86.5,
+     "clicks": 34.8,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9.5,
+       "earned": 99.5
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 238.8
+      },
+      "180": {
+       "cov": 12.1,
+       "earned": 398.3
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.489,
+      "120": 0.665,
+      "180": 0.78
+     },
+     "example": [
+      [
+       "sec_12",
+       "seedReserve",
+       266.9
+      ]
+     ]
+    },
+    "balanced+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 425.9,
+     "winRange": [
+      389.9,
+      445.6
+     ],
+     "firstBuy": 88.7,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 850,
+     "marks": {
+      "60": {
+       "cov": 9.3,
+       "earned": 86
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 206.2
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 312.7
+      }
+     },
+     "originEst": {
+      "30": 0.157,
+      "60": 0.316,
+      "120": 0.552,
+      "180": 0.706
+     },
+     "example": [
+      [
+       "sec_13",
+       "rootNetwork",
+       403.2
+      ]
+     ]
+    }
+   },
+   "strategy2": {
+    "balanced": {
+     "won": "6/6",
+     "win": 421.5,
+     "winRange": [
+      386.7,
+      438.6
+     ],
+     "firstBuy": 88.7,
+     "clicks": 0,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 9.3,
+       "earned": 86
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 206.2
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 312.7
+      }
+     },
+     "originEst": {
+      "30": 0.157,
+      "60": 0.316,
+      "120": 0.552,
+      "180": 0.706
+     },
+     "example": []
+    },
+    "originRoots": {
+     "won": "6/6",
+     "win": 430.2,
+     "winRange": [
+      390.1,
+      463.7
+     ],
+     "firstBuy": 78.4,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 8.9,
+       "earned": 101.6
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 216.4
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 319.9
+      }
+     },
+     "originEst": {
+      "30": 0.306,
+      "60": 0.587,
+      "120": 0.856,
+      "180": 0.95
+     },
+     "example": []
+    },
+    "originLeaves": {
+     "won": "6/6",
+     "win": 390.6,
+     "winRange": [
+      373.3,
+      410.9
+     ],
+     "firstBuy": 90.8,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 9.2,
+       "earned": 84.6
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 197.6
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 343
+      }
+     },
+     "originEst": {
+      "30": 0.126,
+      "60": 0.281,
+      "120": 0.528,
+      "180": 0.69
+     },
+     "example": []
+    },
+    "originSeeds": {
+     "won": "6/6",
+     "win": 446.9,
+     "winRange": [
+      426.1,
+      467.4
+     ],
+     "firstBuy": 91.6,
+     "clicks": 1,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 10.3,
+       "earned": 87.3
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 192.7
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 309.6
+      }
+     },
+     "originEst": {
+      "30": 0.185,
+      "60": 0.34,
+      "120": 0.567,
+      "180": 0.716
+     },
+     "example": []
+    },
+    "leavesEverywhere": {
+     "won": "6/6",
+     "win": 424.4,
+     "winRange": [
+      390.6,
+      436.6
+     ],
+     "firstBuy": 93.1,
+     "clicks": 11,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 6.7,
+       "earned": 89.4
+      },
+      "120": {
+       "cov": 11.7,
+       "earned": 190.8
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 335.6
+      }
+     },
+     "originEst": {
+      "30": 0.124,
+      "60": 0.275,
+      "120": 0.525,
+      "180": 0.688
+     },
+     "example": []
+    },
+    "rootsEverywhere": {
+     "won": "6/6",
+     "win": 408.9,
+     "winRange": [
+      374.1,
+      444.6
+     ],
+     "firstBuy": 86.7,
+     "clicks": 11,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 9.6,
+       "earned": 97.6
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 207.9
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 331.9
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.586,
+      "120": 0.856,
+      "180": 0.95
+     },
+     "example": []
+    },
+    "seedsEverywhere": {
+     "won": "6/6",
+     "win": 457.1,
+     "winRange": [
+      405,
+      500.6
+     ],
+     "firstBuy": 90.4,
+     "clicks": 11,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 11.7,
+       "earned": 91.6
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 193.5
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 295
+      }
+     },
+     "originEst": {
+      "30": 0.186,
+      "60": 0.341,
+      "120": 0.568,
+      "180": 0.717
+     },
+     "example": []
+    },
+    "situational": {
+     "won": "6/6",
+     "win": 342.7,
+     "winRange": [
+      318.4,
+      360
+     ],
+     "firstBuy": 79.5,
+     "clicks": 35.8,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 9.5,
+       "earned": 99.5
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 238.8
+      },
+      "180": {
+       "cov": 12.1,
+       "earned": 398.3
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.489,
+      "120": 0.665,
+      "180": 0.78
+     },
+     "example": []
+    },
+    "situationalSeedFirst": {
+     "won": "6/6",
+     "win": 335.9,
+     "winRange": [
+      314.2,
+      361.3
+     ],
+     "firstBuy": 77.7,
+     "clicks": 41.3,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 11.7,
+       "earned": 101
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 245.9
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 401.1
+      }
+     },
+     "originEst": {
+      "30": 0.2,
+      "60": 0.455,
+      "120": 0.642,
+      "180": 0.766
+     },
+     "example": []
+    },
+    "originRootsThenLeaves": {
+     "won": "6/6",
+     "win": 375.2,
+     "winRange": [
+      352.6,
+      396.3
+     ],
+     "firstBuy": 77.1,
+     "clicks": 2,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 9.1,
+       "earned": 105.8
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 233
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 366.6
+      }
+     },
+     "originEst": {
+      "30": 0.306,
+      "60": 0.488,
+      "120": 0.664,
+      "180": 0.78
+     },
+     "example": []
+    },
+    "misplaced": {
+     "won": "6/6",
+     "win": 537.7,
+     "winRange": [
+      493.3,
+      591.4
+     ],
+     "firstBuy": 93.8,
+     "clicks": 43,
+     "specs": 0,
+     "localSpent": 0,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 6.7,
+       "earned": 89.4
+      },
+      "120": {
+       "cov": 11.7,
+       "earned": 175.1
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 273.2
+      }
+     },
+     "originEst": {
+      "30": 0.124,
+      "60": 0.275,
+      "120": 0.525,
+      "180": 0.688
+     },
+     "example": []
+    },
+    "balanced+canopyOrigin": {
+     "won": "6/6",
+     "win": 422.1,
+     "winRange": [
+      398.2,
+      439.5
+     ],
+     "firstBuy": 122,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 9.3,
+       "earned": 86
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 214.9
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 342.5
+      }
+     },
+     "originEst": {
+      "30": 0.157,
+      "60": 0.316,
+      "120": 0.552,
+      "180": 0.706
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       82.6
+      ]
+     ]
+    },
+    "situational+canopyOrigin": {
+     "won": "6/6",
+     "win": 343.5,
+     "winRange": [
+      321.9,
+      356.3
+     ],
+     "firstBuy": 111.7,
+     "clicks": 35.5,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 9.5,
+       "earned": 101.6
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 262.3
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 450.5
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.489,
+      "120": 0.665,
+      "180": 0.78
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       65.3
+      ]
+     ]
+    },
+    "situational+canopyThenReserve": {
+     "won": "6/6",
+     "win": 343.5,
+     "winRange": [
+      321.9,
+      356.3
+     ],
+     "firstBuy": 111.7,
+     "clicks": 35.5,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 9.5,
+       "earned": 101.6
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 262.3
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 450.5
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.489,
+      "120": 0.665,
+      "180": 0.78
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       65.3
+      ]
+     ]
+    },
+    "situational+rootNetworkOrigin": {
+     "won": "6/6",
+     "win": 367.3,
+     "winRange": [
+      341.1,
+      394.2
+     ],
+     "firstBuy": 113.7,
+     "clicks": 36.2,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 9.4,
+       "earned": 99.8
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 250.4
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 411.6
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.533,
+      "120": 0.867,
+      "180": 0.963
+     },
+     "example": [
+      [
+       "sec_4",
+       "rootNetwork",
+       65.3
+      ]
+     ]
+    },
+    "situational+everywhere": {
+     "won": "6/6",
+     "win": 483.9,
+     "winRange": [
+      464.8,
+      504.6
+     ],
+     "firstBuy": 110.4,
+     "clicks": 38.2,
+     "specs": 5,
+     "localSpent": 850,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 9.4,
+       "earned": 100.9
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 265.6
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 454.5
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.489,
+      "120": 0.665,
+      "180": 0.78
+     },
+     "example": [
+      [
+       "sec_4",
+       "leafCanopy",
+       65.3
+      ],
+      [
+       "sec_16",
+       "leafCanopy",
+       153.6
+      ],
+      [
+       "sec_6",
+       "rootNetwork",
+       301.4
+      ],
+      [
+       "sec_7",
+       "leafCanopy",
+       345.6
+      ],
+      [
+       "sec_9",
+       "leafCanopy",
+       384
+      ]
+     ]
+    },
+    "situational+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 355,
+     "winRange": [
+      332.3,
+      371.5
+     ],
+     "firstBuy": 79.5,
+     "clicks": 36.8,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 9.5,
+       "earned": 99.5
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 238.8
+      },
+      "180": {
+       "cov": 12.1,
+       "earned": 398.3
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.489,
+      "120": 0.665,
+      "180": 0.78
+     },
+     "example": [
+      [
+       "sec_13",
+       "rootNetwork",
+       313
+      ]
+     ]
+    },
+    "situational+seedReserveFrontier": {
+     "won": "6/6",
+     "win": 363.7,
+     "winRange": [
+      332.2,
+      381.3
+     ],
+     "firstBuy": 86.5,
+     "clicks": 36.7,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 9.5,
+       "earned": 99.5
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 238.8
+      },
+      "180": {
+       "cov": 12.1,
+       "earned": 398.3
+      }
+     },
+     "originEst": {
+      "30": 0.305,
+      "60": 0.489,
+      "120": 0.665,
+      "180": 0.78
+     },
+     "example": [
+      [
+       "sec_12",
+       "seedReserve",
+       266.9
+      ]
+     ]
+    },
+    "balanced+rootNetworkMarginal": {
+     "won": "6/6",
+     "win": 439.3,
+     "winRange": [
+      402.6,
+      457.3
+     ],
+     "firstBuy": 88.7,
+     "clicks": 0,
+     "specs": 1,
+     "localSpent": 90,
+     "globalSpent": 910,
+     "marks": {
+      "60": {
+       "cov": 9.3,
+       "earned": 86
+      },
+      "120": {
+       "cov": 11.8,
+       "earned": 206.2
+      },
+      "180": {
+       "cov": 11.8,
+       "earned": 312.7
+      }
+     },
+     "originEst": {
+      "30": 0.157,
+      "60": 0.316,
+      "120": 0.552,
+      "180": 0.706
+     },
+     "example": [
+      [
+       "sec_13",
+       "rootNetwork",
+       403.2
+      ]
+     ]
+    }
+   }
+  }
+ },
+ "ms": 312049,
+ "summary": {
+  "first_bloom": {
+   "originRoots": 6.4,
+   "rootsEverywhere": -9.1,
+   "leavesEverywhere": -20.2,
+   "seedsEverywhere": 50.8,
+   "situational": -63.1,
+   "misplaced": 69.4
+  },
+  "oa_seed_13 (attempt 6, Eos-227)": {
+   "originRoots": 14.3,
+   "rootsEverywhere": 15.6,
+   "leavesEverywhere": 16,
+   "seedsEverywhere": -23,
+   "situational": -60.9,
+   "misplaced": 87.5
+  },
+  "oa_seed_8 (attempt 1, Coriol-220)": {
+   "originRoots": -18,
+   "rootsEverywhere": -39.1,
+   "leavesEverywhere": 83.7,
+   "seedsEverywhere": -24.4,
+   "situational": -121.3,
+   "misplaced": 109
+  },
+  "desert_seed_25 (attempt 0, Umbra-584)": {
+   "originRoots": 18.4,
+   "rootsEverywhere": 15.7,
+   "leavesEverywhere": 54.9,
+   "seedsEverywhere": 36.2,
+   "situational": -66.4,
+   "misplaced": 151.5
+  },
+  "desert_seed_9 (attempt 1, Borea-935)": {
+   "originRoots": 5.3,
+   "rootsEverywhere": -0.3,
+   "leavesEverywhere": 0.6,
+   "seedsEverywhere": 33.7,
+   "situational": -71.9,
+   "misplaced": 115.2
+  },
+  "frozen_seed_22 (attempt 1, Mistral-887)": {
+   "originRoots": 5.3,
+   "rootsEverywhere": -2.8,
+   "leavesEverywhere": 17.3,
+   "seedsEverywhere": 21.7,
+   "situational": -60.2,
+   "misplaced": 91.8
+  },
+  "frozen_seed_12 (attempt 1, Coriol-192)": {
+   "originRoots": 8.8,
+   "rootsEverywhere": -13.3,
+   "leavesEverywhere": 8.4,
+   "seedsEverywhere": 29.8,
+   "situational": -77.3,
+   "misplaced": 117.3
+  }
+ }
+}
