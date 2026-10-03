@@ -1,0 +1,169 @@
+/*
+  BLOOM UI concept mockups — REFINEMENT (BLOOM-020) · Concept 10 look. Loads AFTER shared.css + r2.css + c9.css.
+  VISUAL CONCEPT MOCKUP ONLY: fake data, not connected to the game, not the production UI.
+  Placeholder palette / type / icons. Nothing here is a final brand decision.
+
+  Concept 10 reuses Concept 9's content styles (banner, Region layout A, Regions list, Map View, context bar) from c9.css
+  unchanged, and replaces only the shell. body.c9 is NOT set, so none of Concept 9's rail / full-height geometry applies.
+
+  Geometry contract (docs/UI_CONCEPT_REVIEW_v4.md §6):
+    - closed: the map uses the whole world area; only a small launcher floats in the top-right sea corner;
+    - open: the map's right edge moves in ONCE by --res (the reserved column) — the same --res for both tool-access variants,
+      so dock ↔ in-panel switches, mode switches and region → region never move the map again;
+    - the visible panel is top-aligned and content-height: it ends when its content ends (max-height = the world area minus
+      the gutters, then the panel's own body scrolls). The reserved column below a short panel is plain map background.
+*/
+body.c10{--top:86px; --gap:12px; --wb:420px; --dock:78px; --res:calc(var(--wb) + var(--dock) + var(--gap) * 2)}
+@media (min-width:1400px){ body.c10{--wb:452px} }
+@media (max-width:1100px){ body.c10{--top:82px; --gap:10px; --wb:372px; --dock:70px} }
+
+/* review switch: keep short words visible on narrow screens ("1 Dock" / "2 In-panel") */
+@media (max-width:1100px){ body.c10 .vswitch button span{display:inline} body.c10 .vswitch button span .lg{display:none} }
+@media (min-width:1101px){ body.c10 .vswitch button span .sh{display:none} }
+
+/* ── world geometry ── */
+body.c10 .mapzone{right:0}
+body.c10 .world.wb-open .mapzone{right:var(--res)}
+body.c10 .mapwrap{inset:14px 16px 16px 16px}
+body.c10 .paused-flag{top:12px}
+body.c10 .toasts{bottom:24px; left:50vw}
+body.c10.wb-open .toasts{left:calc((100vw - var(--res)) / 2)}
+body.c10 .bm-map .sel-o{stroke-width:3.4; filter:drop-shadow(0 0 2px rgba(47,58,44,.55))}
+body.c10 .bm-map .sel-o2{stroke-width:1.3}
+
+/* the bench layer: never takes clicks itself, so the reserved column below a short panel still belongs to the map */
+.bench10{position:absolute; inset:0; z-index:24; pointer-events:none}
+.bench10 > *{pointer-events:auto}
+
+/* ── the ONE workbench: top-aligned, content-height, internal scroll past max-height ── */
+.wb10{position:absolute; top:var(--gap); right:calc(var(--gap) + var(--dock) - 3px); width:var(--wb); max-height:calc(100% - var(--gap) * 2);
+  display:flex; flex-direction:column; overflow:hidden; background:var(--card); border:3px solid var(--line-2); border-radius:22px 0 22px 22px;
+  box-shadow:0 3px 0 var(--line), 0 16px 40px rgba(60,45,15,.18); opacity:0; transform:translateX(18px); transition:opacity .22s, transform .38s var(--ease)}
+.wb10.open{opacity:1; transform:none}
+.bench10[data-tools="panel"] .wb10{right:var(--gap); width:calc(var(--wb) + var(--dock) - 3px); border-radius:22px}
+@media (prefers-reduced-motion: reduce){ .wb10{transition:none} }
+
+/* header: (in-panel variant) Explore / Change navigation, then the mode title row */
+.wb10-h{flex:none; border-bottom:2px solid var(--line)}
+.wb10-t{display:flex; align-items:center; gap:10px; padding:10px 10px 10px 12px; transition:background .3s}
+.wb10-t .mi{display:grid; place-items:center; width:40px; height:40px; flex:none; border-radius:14px; font-size:21px; background:var(--paper-2)}
+.wb10-t .mt{flex:1; min-width:0}
+.wb10-t .ml{display:block; font-size:11px; font-weight:900; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.wb10-t h2{margin:0; font-size:20px; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.wb10-t h2:focus{outline:none}
+.wb10-t h2:focus-visible{outline:3px solid var(--focus)}
+.bench10[data-tools="panel"] .wb10-t{padding:4px 8px 6px 12px; gap:8px}
+.bench10[data-tools="panel"] .wb10-t .mi{width:30px; height:30px; font-size:16px; border-radius:10px}
+.bench10[data-tools="panel"] .wb10-t .ml{display:none}   /* the Explore / Change navigation above already names the group */
+.bench10[data-tools="panel"] .wb10-t h2{font-size:18px}
+.wb10[data-mode="region"] .wb10-t .mi{background:var(--ink); color:#fff}
+.wb10[data-mode="adapt"] .wb10-t{background:linear-gradient(90deg,var(--leaf-soft),var(--card) 70%)} .wb10[data-mode="adapt"] .wb10-t .mi{background:var(--leaf-soft)}
+.wb10[data-mode="spread"] .wb10-t{background:linear-gradient(90deg,var(--bloom-soft),var(--card) 70%)} .wb10[data-mode="spread"] .wb10-t .mi{background:var(--bloom-soft)}
+.wb10[data-mode="terraform"] .wb10-t{background:linear-gradient(90deg,var(--sky-soft),var(--card) 70%)} .wb10[data-mode="terraform"] .wb10-t .mi{background:var(--sky-soft)}
+.wb10-h.swap .wb10-t{animation:swap .45s var(--ease)}
+
+/* Variant 2 · In-panel navigation: two compact segmented groups */
+.nav10{display:flex; gap:8px; padding:8px 10px 2px}
+.ng{flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:2px}
+.ng-h{padding-left:6px; font-size:10px; font-weight:900; letter-spacing:1.3px; text-transform:uppercase; color:var(--ink-faint)}
+.ng-b{display:flex; gap:2px; padding:3px; border-radius:14px; background:var(--paper-2)}
+.nv10{position:relative; flex:1 1 0; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; min-height:46px; padding:3px 2px;
+  border:none; border-radius:11px; background:transparent; cursor:pointer; font-weight:800; font-size:12px; line-height:1.1; color:var(--ink-soft); transition:background .15s}
+.nv10 .ti{font-size:18px; line-height:1.1}
+.nv10 .tn{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.nv10:hover{background:rgba(255,255,255,.7); color:var(--ink)}
+.nv10[aria-pressed="true"]{background:var(--ink); color:#fff7e0}
+.nv10[aria-disabled="true"] .ti,.nv10[aria-disabled="true"] .tn{opacity:.45}
+.nv10 .badge{position:absolute; top:2px; right:3px; min-width:18px; height:18px; padding:0 4px; border-radius:9px; background:#fff2dc; border:2px solid var(--warn); color:#7a4a00; font-size:10px; font-weight:900; display:grid; place-items:center}
+.nv10 .vdot{position:absolute; top:5px; right:8px; width:10px; height:10px; border-radius:50%; background:var(--gold); border:2px solid #fff}
+@media (max-width:1100px){ .nav10{gap:6px; padding:6px 8px 2px} .nv10{font-size:11px; min-height:46px} .nv10 .ti{font-size:16px} }
+
+/* Variant 1 · Attached dock: a short Explore / Change stack, only as tall as its buttons */
+.dock10{position:absolute; top:var(--gap); right:var(--gap); width:var(--dock); z-index:2; display:flex; flex-direction:column; gap:2px; padding:7px 5px 8px;
+  background:var(--card); border:3px solid var(--line-2); border-radius:18px; box-shadow:0 3px 0 var(--line), 0 10px 26px rgba(60,45,15,.14)}
+/* when the workbench is open the dock is joined to the panel's top-right corner: one shaped surface, not a separate column */
+.world.wb-open .bench10[data-tools="dock"] .dock10{border-radius:0 18px 18px 0; box-shadow:4px 3px 0 var(--line), 8px 14px 26px rgba(60,45,15,.12)}
+.dk-g{display:flex; flex-direction:column; gap:2px}
+.dk-h{margin:2px 0 1px; text-align:center; font-size:9.5px; font-weight:900; letter-spacing:1.1px; text-transform:uppercase; color:var(--ink-faint)}
+.dk-div{height:2px; background:var(--line); margin:4px 5px 3px; flex:none}
+.tl10{position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; width:100%; min-height:56px; padding:4px 1px; border:2px solid transparent;
+  border-radius:14px; background:transparent; cursor:pointer; font-weight:900; font-size:11px; line-height:1.1; text-align:center; transition:background .15s}
+.tl10 .ti{display:grid; place-items:center; width:34px; height:34px; border-radius:50%; font-size:18px; background:var(--paper-2); transition:transform .15s var(--ease)}
+.tl10 .tn{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.tl10:hover{background:var(--paper)}
+.tl10:hover .ti{transform:scale(1.06)}
+.tl10[data-tool="region"] .ti{background:#ece6d6}
+.tl10[data-tool="adapt"] .ti{background:var(--leaf-soft)} .tl10[data-tool="spread"] .ti{background:var(--bloom-soft)} .tl10[data-tool="terraform"] .ti{background:var(--sky-soft)}
+.tl10[aria-pressed="true"]{background:var(--ink); color:#fff7e0; border-color:var(--ink)}
+/* the active tool points into the panel it owns */
+.tl10[aria-pressed="true"]::before{content:''; position:absolute; left:-10px; top:50%; margin-top:-8px; border:8px solid transparent; border-right-color:var(--ink); border-left:0}
+.tl10[aria-disabled="true"] .ti,.tl10[aria-disabled="true"] .tn{opacity:.45}
+.tl10 .badge{position:absolute; top:1px; right:2px; min-width:20px; height:20px; padding:0 4px; border-radius:10px; background:#fff2dc; border:2px solid var(--warn); color:#7a4a00; font-size:11px; display:grid; place-items:center}
+.tl10 .vdot{position:absolute; top:5px; right:9px; width:11px; height:11px; border-radius:50%; background:var(--gold); border:2px solid #fff}
+@media (max-width:1100px){ .tl10{min-height:52px; font-size:10px} .tl10 .ti{width:30px; height:30px; font-size:16px} }
+
+/* Variant 2, closed: one small "Tools" opener in the top-right sea corner */
+.opener10{position:absolute; top:var(--gap); right:var(--gap); display:inline-flex; align-items:center; gap:9px; min-height:54px; padding:6px 14px 6px 7px; cursor:pointer;
+  border-radius:18px; border:3px solid var(--line-2); background:var(--card); box-shadow:0 3px 0 var(--line), 0 10px 26px rgba(60,45,15,.14); font-weight:900; font-size:15px; text-align:left}
+.opener10:hover{border-color:var(--ink-soft)}
+.opener10 .oi{display:grid; place-items:center; width:36px; height:36px; border-radius:12px; background:var(--paper-2); font-size:19px}
+.opener10 .ot small{display:block; font-size:11px; font-weight:800; color:var(--ink-soft); letter-spacing:.3px}
+
+/* upgrade context bar ("Considering for: Frost Ridge") — c9.css .ctx9 plus a Details action */
+.ctx10 .ctx-acts{margin-left:auto; display:inline-flex; gap:6px}
+.ctx10 .ctx-acts .ctx-x{margin-left:0}
+.ctx10 .ctx-d{min-height:32px; padding:0 10px; border-radius:10px; border:2px solid var(--ink); background:var(--card); cursor:pointer; font-weight:900; font-size:12px; white-space:nowrap}
+.ctx10 .ctx-d:hover{background:var(--ink); color:#fff7e0}
+.ctx10 .glob b{color:var(--ink-soft)}
+.ctx10.swap{animation:swap .6s var(--ease)}
+
+/* ── body: content-height panes. Fixed parts stay put; the one scrolling part shrinks when the panel hits max-height ── */
+.wb10-b{flex:0 1 auto; min-height:0; display:flex; flex-direction:column; overflow:hidden}
+.wb10-b > .pane{flex:0 1 auto; min-height:0; display:flex; flex-direction:column}
+/* Region · layout A: summary + tabs fixed, tab body scrolls */
+.wb10 .rv{height:auto; flex:0 1 auto; min-height:0}
+.wb10 .rv-body{flex:0 1 auto; min-height:0; overflow:auto; padding:12px 14px 14px}
+.wb10 .rv-a .rv-sum{grid-template-columns:118px minmax(0,1fr); padding:12px 14px 10px}
+.wb10 .rv-a .slot-spec{height:128px}
+.wb10 .rv .rp-limit{margin-top:6px; padding:5px 9px; font-size:13px}
+.wb10 .rv .rp-fix{margin-top:6px; gap:5px}
+.wb10 .rv .fixbtn{min-height:36px; padding:2px 9px; font-size:12.5px}
+.wb10 .rtabs{margin:8px 14px 0}
+.wb10 .rtabs button{min-height:40px}
+.wb10 .ctile2{padding:6px 10px}
+@media (max-width:1100px){ .wb10 .rv-a .rv-sum{grid-template-columns:100px minmax(0,1fr)} .wb10 .rv-a .slot-spec{height:116px} }
+/* Regions: filter row fixed, list scrolls */
+.wb10 .r9{height:auto; flex:0 1 auto; min-height:0}
+.wb10 .r9-scroll{flex:0 1 auto; min-height:0}
+/* Map View: short, compact rows */
+.wb10 .mv{flex:0 1 auto; gap:8px; padding:10px 14px 14px}
+.wb10 .mv-intro{font-size:13px}
+.wb10 .mv-list{gap:7px}
+.wb10 .mv-opt{min-height:52px; padding:5px 10px; grid-template-columns:36px minmax(0,1fr) auto}
+.wb10 .mv-opt .mvi{width:36px; height:36px; font-size:18px; border-radius:12px}
+.wb10 .mv-opt small{font-size:11.5px}
+.wb10 .mv-key{font-size:11px}
+.wb10 .mv-key .st{font-size:11px; padding:0 7px 0 3px} .wb10 .mv-key .st i{width:14px; height:14px; font-size:9px}
+.wb10 .mv-opt b{font-size:15px}
+.wb10 .mv-state{padding:6px 10px; font-size:12.5px; line-height:1.3; min-height:2.9em}
+/* Adapt / Spread / Terraform: the plant preview stays pinned at the top while the cards scroll under it */
+.wb10 .ab-host{flex:0 1 auto; min-height:0; overflow:auto; padding:0 14px 14px}
+.wb10 .ab{height:auto; flex:none; flex-direction:column; gap:10px}   /* never shrink: the pane scrolls, and the sticky plant needs the full-height box */
+.wb10 .ab-spec{position:sticky; top:0; z-index:3; flex-direction:row; gap:12px; height:auto; padding:12px 0 10px; background:var(--card); border-bottom:2px dashed var(--line)}
+.wb10 .ab-spec{padding:10px 0 8px}
+.wb10 .ab-specbox{width:112px; height:112px; flex:none}
+.wb10 .ab-cap{flex:1; align-self:center; font-size:14px}
+.wb10 .ab-specbox .unch{left:4px; right:4px; bottom:4px; font-size:8.5px; letter-spacing:.3px; padding:2px 2px}
+.wb10 .ab-cards{flex:none; overflow:visible; --card-min:148px; gap:8px}
+.wb10 .ab-cards .tcard{min-height:0; padding:9px 11px; gap:4px}
+.wb10 .ab-cards .tcard h4{font-size:15px}
+.wb10 .ab-cards .tcard p{font-size:12.5px; line-height:1.3}
+.wb10 .tcard .t-top{flex-wrap:wrap}
+.wb10 .tcard .t-top h4{flex:1 1 0; min-width:0}
+.wb10 .tcard .ctx-tag{margin-left:0; align-self:flex-start}
+.wb10 .tcard .t-ico{font-size:24px}
+.wb10 .tcard .t-top{gap:8px}
+.ctx10 .stw{display:inline-flex}
+.ctx10 .stw .st{padding:1px 3px}
+.ctx10 .verdict{min-height:2.6em}   /* reserve two lines so hovering cards never changes the panel height */
+@media (max-width:1100px){ .wb10 .ab-specbox{width:100px; height:100px} .wb10 .ab-cap{font-size:13px} }
