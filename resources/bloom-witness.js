@@ -44,6 +44,15 @@
 // buys. A pressured witness passes only if it reaches the margin AND still holds the planet's win threshold
 // scenario.validation.holdFinalSeconds after the final state is reached (a win that only outran the decline is no
 // proof). Extinction ends a witness run as a failure. Without a scenario everything is exactly the BLOOM-006 search.
+//
+// COMPETITION (BLOOM-014) — a scenario with a `competition` block has a living competitor and no static final state. The
+// static stage then counts a region only if an ESTABLISHED player colony would also out-compete MATURE native cover there in
+// that environment (sim.holdsAgainstNatives: the engine's own contest rule at full maturity); native land the build cannot
+// win also blocks the static path to the regions behind it. That only ranks candidates — the proof is the real simulation:
+// natives start established, spread, contest and recede live, and every witness must hold the win threshold
+// validation.holdFinalSeconds after the later of its margin and the final pressure state (no clock: after the margin), so
+// a coverage spike the competitor takes back is no proof. Optional validation.confirmRngSeeds: the same plan must also pass
+// (margin + hold) under each of those simulation seeds before a witness counts (robust, not one lucky RNG stream).
 (function (root) {
   "use strict";
   const BLOOM = root.BLOOM;
@@ -113,7 +122,7 @@
     };
     const staticHeld = (items, off = FIN) => { // sections an unhurried plant could hold with this terminal build (null = illegal)
       if (!setState(items)) return null;
-      const ok = M.SEC.map((_, i) => probe.evaluate(i, off).fitness > G.growThresh);
+      const ok = M.SEC.map((_, i) => probe.evaluate(i, off).fitness > G.growThresh && probe.holdsAgainstNatives(i, off));
       const hasCross = items.some(id => probe.traitById[id].effect.type === "crossing");
       const seen = new Set([M.ORIGIN]), st = [M.ORIGIN];
       while (st.length) { const a = st.pop();
@@ -196,12 +205,19 @@
       // a failure after hitting the enumeration cap says nothing about the planet — flag it as inconclusive
       if (!r.ok && capped) r = { ...r, inconclusive: true, reason: `search capped at ${V.maxStaticStates} static builds (result inconclusive): ${r.reason}` };
       return { ...r, search, early, bestStatic: { coverage: bestStatic.cov, build: bestStatic.items } }; };
+    const CONFIRM = (SCN && SCN.validation && SCN.validation.confirmRngSeeds) || [];
     const run = (cand, opening, measurePeak) => { search.simulations++;
-      const r = simulate(planet, config, traits, [...opening.o, ...order(cand.items, opening.mode)], target, !!measurePeak, SCN);
+      const plan = [...opening.o, ...order(cand.items, opening.mode)], r = simulate(planet, config, traits, plan, target, !!measurePeak, SCN);
       if (SCN && FIN) r.order = opening.mode;
+      if (r.ok && CONFIRM.length) { // robustness: the same plan under other simulation seeds (each a full run: margin + hold)
+        // (confirmation runs verify a found witness; they are counted apart and never use up the search budget)
+        r.confirm = CONFIRM.map(seed => { search.confirmations = (search.confirmations || 0) + 1; const c = simulate(planet, config, traits, plan, target, false, SCN, seed);
+          return { rngSeed: seed, ok: c.ok, marginSeconds: c.marginSeconds, hold: c.hold && { coverage: c.hold.coverage, held: c.hold.held }, lost: c.lost }; });
+        if (r.confirm.some(c => !c.ok)) { r.ok = false; r.unconfirmed = true; } }
       r.staticCoverage = cand.cov; r.build = cand.items; if (r.ok) r.signature = signature(cand.items); return r; };
     const noWin = (best, capNote) => ({ ok: false, layer: best && best.won ? 6 : 5, best,
-      reason: best && best.hold && !best.hold.held ? `witness reaches the margin but holds only ${(best.hold.coverage * 100).toFixed(1)}% < ${(probe.winAt * 100).toFixed(0)}% ${SCN.validation.holdFinalSeconds} s into the final pressure state`
+      reason: best && best.unconfirmed ? `witness wins with margin under the validation seed but not under every confirmation seed (${best.confirm.map(c => `${c.rngSeed}: ${c.ok ? "ok" : c.lost ? "extinct" : c.hold && !c.hold.held ? `held ${(c.hold.coverage * 100).toFixed(1)}%` : "no margin"}`).join(", ")})`
+        : best && best.hold && !best.hold.held ? `witness reaches the margin but holds only ${(best.hold.coverage * 100).toFixed(1)}% < ${(probe.winAt * 100).toFixed(0)}% ${SCN.validation.holdFinalSeconds} s ${SCN.pressure ? "into the final pressure state" : "after the margin"}`
         : best && best.lost ? `every witness died out (extinction at ${best.lostSeconds} s; best peak ${(best.peak * 100).toFixed(1)}%)`
         : best && best.won ? `witness wins but peaks at ${(best.peak * 100).toFixed(1)}% < target ${(target * 100).toFixed(0)}%`
         : capNote ? `no witness reached the win with earned Biomass within ${capNote} (best peak ${best ? (best.peak * 100).toFixed(1) : 0}%)`
@@ -278,7 +294,7 @@
       totalSpent: w.totalSpent, winSeconds: w.winSeconds, marginSeconds: w.marginSeconds, peak: w.peak, peakMeasured: w.peakMeasured,
       pacing: w.pacing, pacingCheck: w.pacingCheck,
       ...(w.scenario ? { scenario: w.scenario, order: w.order, pressureAtMargin: w.pressureAtMargin, hold: w.hold && { seconds: w.hold.seconds, coverage: w.hold.coverage, held: w.hold.held },
-        trace: w.trace } : {}) });
+        trace: w.trace } : {}), ...(w.competition ? { competition: w.competition } : {}), ...(w.confirm ? { confirm: w.confirm } : {}) });
     const classRows = classes.map(c => ({ signature: c.signature.key, members: c.members.length, status: c.status || "not reached", cheapest: c.members[0].cost,
       ...(c.coreIncomplete ? { winsBeforeCoreBought: c.coreIncomplete } : {}) }));
     const base = { required: need, classes: classRows, early: X.early, search };
@@ -317,24 +333,26 @@
   // one real run: buy `plan` in order via sim.buy as soon as earned Biomass allows
   // scenario (BLOOM-012): run under that pressure scenario; after the margin keep running until holdFinalSeconds past the
   // final pressure state and record whether the win threshold still holds there (r.hold); ok needs both
-  function simulate(planet, config, traits, plan, target, measurePeak = false, scenario = null) {
-    const V = config.validation, sim = BLOOM.createSim(planet, config, traits, { rng: mulberry32(V.rngSeed), scenario }); // never Math.random
-    const sec = t => +(t * config.tickMs / 1000).toFixed(1), P = scenario && scenario.pressure;
-    const fullTick = P ? Math.ceil(sim.pressure.fullAt * 1000 / config.tickMs) : null;
-    const holdTicks = P ? Math.round(((scenario.validation || {}).holdFinalSeconds || 0) * 1000 / config.tickMs) : 0;
+  // competition (BLOOM-014): any scenario that changes the run (BLOOM.pressure.isDynamic) must hold the win threshold
+  // holdFinalSeconds after the later of the margin and the final pressure state (no pressure clock: after the margin)
+  function simulate(planet, config, traits, plan, target, measurePeak = false, scenario = null, rngSeed = null) {
+    const V = config.validation, sim = BLOOM.createSim(planet, config, traits, { rng: mulberry32(rngSeed ?? V.rngSeed), scenario }); // never Math.random
+    const sec = t => +(t * config.tickMs / 1000).toFixed(1), P = scenario && scenario.pressure, DYN = BLOOM.pressure.isDynamic(scenario);
+    const fullTick = P ? Math.ceil(sim.pressure.fullAt * 1000 / config.tickMs) : 0;
+    const holdTicks = DYN ? Math.round(((scenario.validation || {}).holdFinalSeconds || 0) * 1000 / config.tickMs) : 0;
     const purchases = []; let k = 0, peak = 0, peakTick = 0, winTick = null, marginTick = null, lastGrowth = 0, illegal = null, atMargin = null;
-    let holdAt = null, hold = null, pressureAtMargin = null; const trace = []; // [seconds, coverage, pressure progress] every 30 s
+    let holdAt = null, hold = null, pressureAtMargin = null; const trace = [], nativeTrace = []; // [seconds, coverage, pressure progress] every 30 s (+ native share)
     const perMin = Math.round(60000 / config.tickMs), earnedPerMinute = []; // Biomass the economy produced, per game-minute (observed, never edited)
     const every = Math.round(30000 / config.tickMs);
     for (let t = 1; t <= V.maxTicks; t++) {
       const before = sim.biomass, cov = sim.tick();
       if (sim.lost) break;
-      if (t % every === 0) trace.push([sec(t), +cov.toFixed(4), +sim.pressure.progress.toFixed(3)]);
+      if (t % every === 0) { trace.push([sec(t), +cov.toFixed(4), +sim.pressure.progress.toFixed(3)]); if (sim.competition.enabled) nativeTrace.push([sec(t), +sim.competition.share.toFixed(4)]); }
       if (marginTick === null) { const m = ((t - 1) / perMin) | 0; earnedPerMinute[m] = (earnedPerMinute[m] || 0) + (sim.biomass - before); }
       if (cov > peak + 1e-9) { peak = cov; peakTick = t; lastGrowth = t; }
       if (winTick === null && sim.won) winTick = t;
       if (marginTick === null && cov >= target) { marginTick = t; atMargin = snapshot(sim); pressureAtMargin = +sim.pressure.progress.toFixed(3);
-        if (P) holdAt = Math.max(t, fullTick) + holdTicks; else if (!measurePeak) break; }
+        if (DYN) holdAt = Math.max(t, fullTick) + holdTicks; else if (!measurePeak) break; }
       if (holdAt !== null && t >= holdAt && !hold) { hold = { seconds: sec(t), coverage: +cov.toFixed(4), held: cov >= sim.winAt, progress: sim.pressure.progress, atEnd: snapshot(sim) };
         if (!measurePeak) break; }
       if (k < plan.length) {
@@ -344,7 +362,10 @@
         if (sim.biomass >= cost && sim.buy(tr.id)) { purchases.push({ id: tr.id, name: tr.name, tick: t, seconds: sec(t), cost }); k++; lastGrowth = t; }
       } else if (t - lastGrowth > V.plateauTicks && (holdAt === null || hold)) break;
     }
-    return { ok: marginTick !== null && (!P || !!(hold && hold.held)), won: winTick !== null, illegal, plan, purchases,
+    const CS = sim.competition;
+    return { ok: marginTick !== null && (!DYN || !!(hold && hold.held)), won: winTick !== null, illegal, plan, purchases,
+      ...(CS.enabled ? { competition: { startShare: +CS.startShare.toFixed(4), peakShare: +CS.peakShare.toFixed(4), endShare: +CS.share.toFixed(4),
+        contestedRegions: CS.everContested.reduce((a, b) => a + b, 0), flips: { ...CS.flips }, nativeTrace } } : {}),
       scenario: scenario ? scenario.id : null, hold, pressureAtMargin, trace, lost: sim.lost, lostSeconds: sim.lost ? sec(sim.lostTick) : null,
       totalSpent: purchases.reduce((a, p) => a + p.cost, 0), usedCrossing: purchases.some(p => sim.traitById[p.id].effect.type === "crossing"),
       winTick, winSeconds: winTick && sec(winTick), marginTick, marginSeconds: marginTick && sec(marginTick),

@@ -1,6 +1,6 @@
-# BLOOM — Pressure scenarios v1 (BLOOM-012)
+# BLOOM — Pressure scenarios v1 (BLOOM-012, BLOOM-014)
 
-Pressure scenarios are bible §11.3. This note covers the scenario catalogue, the engine contract, the validation layer and the first scenario, **Dying World**. Numbers below are the current values in `content/scenarios.js`; the data file is the source of truth.
+Pressure scenarios are bible §11.3. This note covers the scenario catalogue, the engine contract, the validation layer and the two scenarios built so far: **Dying World** (§5, a changing physical environment) and **Native Competition** (§6, BLOOM-014: a competing organism that responds to the player). Numbers below are the current values in `content/scenarios.js`; the data file is the source of truth.
 
 ## 1. Scenarios are not planets
 
@@ -21,12 +21,15 @@ Every entry is plain JSON-shaped data:
 | Key | Meaning |
 |---|---|
 | `id`, `name`, `intent` | identity and design intent |
-| `pressure` | `null` = no outside pressure (Eden). Otherwise: `graceSeconds`, `durationSeconds`, `channels`, `graceLabel`, `phases` |
+| `pressure` | `null` = no pressure clock. Otherwise: `graceSeconds`, `durationSeconds`, `channels`, `graceLabel`, `phases` |
+| `competition` | optional (BLOOM-014): a competing native organism — `tolerance`, `start`, `growth`, `contest`, `events` (§6). Absent = no native layer |
 | `pressure.channels` | the drift at full pressure. `temperature` (°C added to the sky), `moisture` (points added to the sky, clamped 0–100), `moistureShare` (a fraction of the planet's **starting** sky moisture), `radiation` (points added to every land region's surface radiation) |
 | `pressure.phases` | readable stages `[{ from, id, name, note }]`, `from` = progress 0–1 ascending from 0. Entering one is a milestone |
 | `loss` | `{ extinction: true/false, extinctionGraceSeconds }` |
-| `validation` | layer P policy: `minStrategies`, `holdFinalSeconds`, `pacing` bands, `archetypes` (per-archetype `{ allowed: false, reason }`) |
-| `display` | short player-facing copy: `title`, `summary`, one note per channel |
+| `validation` | layer P policy: `minStrategies`, `holdFinalSeconds`, `pacing` bands, `archetypes` (per-archetype `{ allowed: false, reason }`), optional `confirmRngSeeds` (BLOOM-014) |
+| `display` | short player-facing copy: `title`, `summary`, one note per channel, optional `lossNote` for the extinction screen |
+
+A scenario with neither `pressure` nor `competition` (Eden) changes nothing: `BLOOM.pressure.isDynamic(s)` is false, the engine is the plain engine and layer P has nothing to prove.
 
 ## 3. Engine model
 
@@ -47,7 +50,9 @@ Archetype layers 1–8 keep validating the underlying Eden planet; an Eden witne
 - `minStrategies` distinct broad strategies (layer-7 signatures) must pass, inside the scenario's own pacing bands;
 - pressured witnesses try two purchase orders: what opens land now first, or what the final world needs first. Eden's search is unchanged.
 
-Statuses: **PASS**, **FAIL**, **INCONCLUSIVE** (a search cap was hit; never accepted), **DISALLOWED** (per-archetype data policy), **EDEN** (nothing to prove). The browser harness starts a pressured run only on PASS and hands the UI a status and a count, never builds or plans.
+Statuses: **PASS**, **FAIL**, **INCONCLUSIVE** (a search cap was hit; never accepted), **DISALLOWED** (per-archetype data policy), **EDEN** (nothing to prove).
+
+BLOOM-014 generalized the layer to any scenario that changes the run. Without a pressure clock, the hold is measured `holdFinalSeconds` after the margin (with a clock: after the later of the margin and the final state, exactly as before). Optional `confirmRngSeeds` re-run a found witness's plan under other simulation seeds; each must also reach the margin and hold, so a win from one lucky RNG stream is no proof. Confirmation runs never use up the search budget. For a competition scenario the static stage cannot know a final native state, and does not invent one; see §6. The browser harness starts a pressured run only on PASS and hands the UI a status and a count, never builds or plans.
 
 ## 5. Dying World
 
@@ -89,3 +94,103 @@ Player-facing wording: **Atmosphere thinning.** *The planet is slowly losing atm
 - Under BLOOM-013 every fixture witness reaches its margin at or after the final state (290 s; pressure 100% at the margin), and normal bot wins come at 90–100% of the decline. The decline is lived through, not raced. Ocean 13's seed-output → Radiation Shielding stretch is still the longest wait in the scenario (~100 s for the witness, up to ~115 s with human reaction time in the browser run).
 - Radiation Shielding is part of most pressured strategies, because the radiation channel is not terraformable. A world can give radiation-heavy ground up instead (Frozen 22 strategy 1, Ocean seed 9).
 - The witness is a perfect-knowledge floor that never uses colony focus or local upgrades. Human pacing is untested until the owner playtest ([`PLAYTEST_DYING_WORLD_v1.md`](PLAYTEST_DYING_WORLD_v1.md)).
+
+## 6. Native Competition (BLOOM-014)
+
+**Purpose.** Dying World is pressure from a changing physical environment. Native Competition is pressure from **another living organism that occupies space and responds locally to the player's expansion**. Target feeling: *"The planet was already alive. I need to find places where my plant can compete, strengthen vulnerable colonies, and decide whether to adapt the organism or alter the environment."* There is no clock and no countdown.
+
+**Science idea (middle school):** organisms compete when they need the same limited resources: light, water, nutrients and space. Environmental conditions decide which organism has the advantage, so a species that does well in one habitat can lose in another, and changing the environment can change the outcome. Invasion success is not simply "strong beats weak", and competition does not always end with one species gone. Player-facing words: *native competitor, competing vegetation, native cover, contested, competition for light/water/nutrients/space*. Never enemy, attack, infection, combat or kill. Native plants are not "bad"; they are adapted to the planet as it was.
+
+Player-facing summary: *This planet already has native vegetation. It competes with your plant for light, water, nutrients and space.*
+
+### 6.1 A generic mechanism
+
+The engine has one generic competition mechanism, switched on by a scenario's `competition` block (`createSim(…, { scenario })`). Native Competition is that block plus copy. No engine, witness, validator or UI code names it (`tools/native-competition-check.js` check 2 scans for that). A future scenario, or an archetype-flavoured variant, can reuse the mechanism with other numbers.
+
+### 6.2 State
+
+- `sim.competition.native[t]` = native stand density (0–1) on land tile `t`; 0 = no native cover. **One organism per tile:** a native-held tile is never Living or Dead for the player.
+- Native cover is never on water, void or lava, never counts toward the player's coverage, and never changes the coverage denominator. The win is still 70% of the colonizable land Living at once.
+- Per region: native vigor and fitness (eased like the player's), tile counts, contact ("front") tiles, recent gains/losses, and a side: *your advantage / native advantage / even / no native plants here*.
+- Events (`sim.competition.events`, real transitions only, the most recent 64): `contested` (the first contested region), `playerAdvantage`, `nativeRetake` (a net loss of ≥ 6 player tiles in a region within ~20 s, then quiet for 60 s there), `nativeDominated` (a region becomes ≥ 50% native with the player under 10%; regions that start that way raise nothing).
+
+### 6.3 Start (from the planet, never the run RNG)
+
+Every run of the same planet starts the same way (hash of planet id + scenario id → its own stream). The natives cover 26–32% of the colonizable land, in 4–7 organic patches grown on ground they can grow on. Patch centres are weighted by native fitness² and kept apart. Stand density is 0.6–0.9 × the native's fitness there. The origin region and every land tile within 5 steps of it stay open. No landmass starts more than 60% native-held, which leaves natural gaps and open shore on every island.
+
+| Fixture | Native land at the start |
+|---|---|
+| Desert 25 (primary) | 26.8% |
+| Ocean 13 | 26.0% (none on the home island) |
+| Frozen 22 | 27.9% |
+
+### 6.4 Suitability
+
+The native is adapted to the planet's **starting** conditions. Its temperature and moisture windows have the baseline plant's width (`breadth` 1.0) and are centred halfway (`adaptation` 0.5) between the baseline plant's centre and the planet's area-weighted median starting ground. Its salt and radiation limits move the same way toward the 75th percentile of the starting land. pH and toxicity limits are the baseline plant's. It is evaluated with the same softness and the same effective inputs as the player: the current sky (Terraform included), local offsets and any scenario drift. Desert 25 natives like −0.5…29.5 °C and moisture 13–49 (the player starts at −6…24 °C and 32–68), so they hold the dry ground the un-adapted player cannot.
+
+### 6.5 Rules
+
+- **Open ground.** Each organism spreads by its own ordinary rule: the player's spread is unchanged; the native's is `spread` 0.02 × native fitness × (1 + 0.34 per extra native neighbour) × the neighbours' mean stand density, on ground where its vigor > 0.55. Within a tick, the player's spread is resolved first.
+- **Stands.** Native density thickens toward its own vigor (`rate` 0.004 × the ground's soil/light modifier), holds in its marginal band, and thins where its vigor < 0.35. A stand under 0.04 disappears: the native recedes. Either organism's stands thicken up to 50% more slowly while the other holds their neighbours (`crowding` 0.5 × share of the 4 neighbours): competition for light, water, nutrients and space.
+- **Fronts.** *Attack* = min(vigor on that ground, 1) (`nativeVigour` 1.0: the native is as vigorous as the player's plant where each is equally suited). *Defence* = that attack × (0.4 + 0.6 × support). *Support* is the larger of the defender's colony maturity in the region (mean stand density) and its local stand (its own density, or its same-organism neighbours' mean). A contested tile flips to the attacker with the attacker's ordinary spread chance × min(1, (attack − defence) / 0.3). The player additionally needs ground it can grow on (vigor > growThresh), and the native likewise.
+  - The better-suited organism pushes into the other's cover.
+  - When both suit the ground equally, established stands hold and young ones are overgrown.
+  - Red ground stays red: the player never takes it, whatever its focus or upgrades.
+- **Roots** (focus or Root Network) cut the chance of being overgrown by its `dieBackCut`, only where the player's ground is at least marginal (the same rule as die-back). It is never immunity.
+- **Waterborne Seeds** that land on native-held shore take root only by out-competing the stand there (the same attack/defence rule); open shore is unaffected.
+- **Economy.** Untouched: competition never reads or writes Biomass. The player earns less only because it has fewer or thinner Living stands.
+- **Loss.** The generic extinction rule (no living plants anywhere for 8 s). There is no "natives reached X%" loss.
+
+### 6.6 Counterplay (existing tools only)
+
+| Tool | What it does against competition | Evidence (check) |
+|---|---|---|
+| **Adapt** | raises the player's own fitness; never changes the native's | Radiation Shielding lifts Wadi Shelf from 90% to 100% suited against natives at 97.5%; a controlled front goes from net −40 to +40 tiles (17) |
+| **Terraform** | changes the shared environment: native strongholds can leave the native's window while other regions suit it more; never deletes native cover directly | after the Adapt-heavy build on Desert 25: Humidify suits the natives better in 3 regions and worse in 1, and hands Amber Shelf to them (native fitness 92% → 100%); Dry the Sky wins Wadi Shelf for the player (its fit 67% → 100%); Cool the Sky wins Pale Pan (native fit 100% → 95%). Buying Humidify + Cool leaves every native stand untouched until the tick rules respond (18, 19) |
+| **Spread** | works on contested ground as on open ground | Seed Output ×2 (same build otherwise): coverage at 240 s 68.8% → 80.5%, native tiles taken 654 → 860 (20) |
+| **Roots** | holds a young contested colony | young colony vs established natives, 64 s: ends with 50 tiles (Roots) vs 33 (Balanced) (39) |
+| **Seeds** | pushes a winning front | native tiles taken in 16 s: 61 (Seeds) vs 47 (Balanced) (40) |
+| **Leaves** | pays in secure, established colonies; no protection | secure colonies +50% Biomass; a contested Leaves colony holds no better than Balanced (41) |
+
+So the spatial pattern the design hoped for emerges without being forced: **Roots at a fragile front, Seeds on a front you are winning, Leaves behind the front.** Validation never needs it: witnesses stay on Balanced and buy no local upgrade.
+
+### 6.7 Validation (layer P)
+
+`validation`: 1 strategy for a playable combination (the primary fixture is checked for 2), hold 70% for 60 s after the margin, confirmed under simulation seeds 101 and 202, margin 240–900 s, first purchase ≤ 60 s, no gap over 120 s, no archetype disallowed.
+
+- The **static stage** counts a region only where an established player colony would beat mature native cover in that environment (`sim.holdsAgainstNatives`: the player's fitness > the native's at full maturity, i.e. the engine's own contest rule). Native land a build cannot win blocks the static path to the regions behind it. This ranks candidate builds only; it never decides a verdict, and there is no invented "final native state".
+- **Every witness** is a real competitive run: natives start established, spread, contest and recede live, extinction is live, and all Biomass is earned. It must reach the margin, still hold 70% 60 s later, and do both again under two more seeds.
+
+| Fixture | Layer P | Strategies (signature → purchases, margin, native land start → peak → end) |
+|---|---|---|
+| **Desert 25 (primary)** | PASS, 2 strategies | **Adapt-heavy** [Drought ×2, Heat, Salt, Radiation]: Seed Output 26 s → Salt 103 → Radiation 178 → Drought 225 → Drought 311 → Heat 359; margin 444 s; holds 77.9%; natives 26.8% → 41.3% → 22.1% · **Terraform the heat** [Drought ×2, Salt, Radiation, Cool the Sky]: the same until Cool 375 s; margin 501 s; holds 76.6%; natives → 18.1%. They hold different land (each gives up a different region). |
+| Ocean 13 | PASS, 1 strategy (a 2nd unresolved within the search caps) | [Waterborne Seeds, Salt, Radiation, Heat, Drought, Dry the Sky ×2]: margin 620 s; holds 77.4%; natives 26.0% → 40.9% → 19.1% |
+| Frozen 22 | PASS (2 found when asked) | [Cold ×2, Heat]: margin 311 s; natives 27.9% → 37.0% → 20.3% · [Cold ×2, Radiation]: margin 363 s |
+
+- **The Eden answers are no longer enough on the primary fixture.** Desert 25's accepted Eden strategies peak at 43.5% (Drought ×2) and 60.5% (Drought + Humidify + Heat + Radiation) under competition. In the economy study, Ocean 13's Eden strategies also never win (0/4 runs each). Frozen 22's Eden build (Cold ×2) still wins: competition slows it but does not force a different answer there.
+- **Territory timeline, Desert 25 Adapt-heavy witness** (s: player / native land): 30: 5/36 · 90: 5/41 · 240: 5/41 · 300: 8/38 · 361: 36/34 · 421: 67/31 · 481: 77/23. The natives fill open ground in the first ~90 s, while the player's plant is still stuck on its wet home ground. Once the build fits the dry ground, the player's established colonies push the fronts back. The natives keep the regions that suit them better.
+- **Sweep** (public seeds 1–10, accepted Eden worlds): Ocean 8/9, Desert 8/10, Frozen 10/10 pass. Ocean 5 and Desert 1 fail statically (*best build reaches 52.9% / 61.3% < 70%*). Desert 10 is INCONCLUSIVE (*no candidate reached the win; best peak 26%*). (`docs/evidence/bloom-014/layer-p-sweep-1-10.txt`)
+
+### 6.8 How it lands per archetype
+
+- **Desert (primary).** One contiguous front. The natives hold the dry ground the un-adapted plant cannot. Drought adaptation lets the player contest it, but Drought ×2 also makes the wet Wadi Shelf "too wet", and the natives keep it. Heat (Adapt) or Cool the Sky (Terraform) then decide the hot regions; each strategy gives up a different region.
+- **Ocean.** The natives are island populations; they never cross water. On Ocean 13 none start on the home island, and the western island is largely native-held, so Waterborne Seeds lands on its open shore or must out-compete the stand there. The cheapest Eden builds stall around 50%. On several sweep worlds the winning witness pushes the natives off every island (native land at the end 0–13%): once an island is lost they cannot return.
+- **Frozen.** The natives favour the milder, cold-adapted middle ground, not the frozen wastes. Cold Tolerance competes head-on, and the native front slows the run without changing the answer. It is the mildest of the three.
+
+### 6.9 UI (temporary, functional)
+
+- Map: native stands are violet and hatched (one "/" mark on a young stand, two on a dense one), so they never read by colour alone. Fronts are amber lines on tile edges where the two organisms touch.
+- Region panel: *🌿 Competition: ▲ Your advantage / ▼ Native advantage / ◆ Even contest / — No native plants here*, a CONTESTED tag, native cover and your plants as shares of the region, how well the ground suits each, recent tiles taken each way, and one plain sentence of why. Colony tips read the front: Roots where natives push in, Seeds on a winnable front, Leaves behind it.
+- Status bar under the HUD: native-held land (share of the land), its trend over ~20 s, contested regions and who leads in them. No countdown.
+- Messages + short outlines for each engine event. Terraform previews and purchase messages also name regions where the new sky suits the native plants more or less.
+- Bloom Report: one line with native land at the start, at the peak and now, regions contested, and the land left to native vegetation: *"You did not need to remove every native plant."* The extinction screen uses the scenario's own `lossNote`.
+
+### 6.10 Known limitations
+
+- Desert 25's two strategies share Drought ×2 + Salt + Radiation and differ only in Heat (Adapt) vs Cool the Sky (Terraform). They hold different land, but this is the same "same condition, Adapt vs Terraform" kind of difference as Ocean's Eden pair. No Humidify strategy qualifies under competition.
+- Ocean 13 proves 1 strategy, and it is expensive (1510 Biomass, 8 purchases); a second class stays unresolved within the search caps. Ocean runs are the longest (witness margin 620 s; ~530 s for the player bot).
+- Frozen 22: the Eden build still wins; competition adds friction, not a new decision.
+- Natives can be pushed off a whole island or world (several Ocean sweep witnesses end at 0%). This is a legitimate outcome of the rules, not a requirement, and the report never claims eradication. It does mean natives never recolonize across water.
+- On the primary fixture the player's plant stays on its home region for the first ~4–5 minutes while the natives spread. A person who buys Drought first gets out sooner (economy study "player" bot: win in ~5 min). Human feel is untested until the owner playtest ([`PLAYTEST_NATIVE_COMPETITION_v1.md`](PLAYTEST_NATIVE_COMPETITION_v1.md)).
+- The witness is a perfect-knowledge floor that never uses colony focus. The UI is temporary.
+

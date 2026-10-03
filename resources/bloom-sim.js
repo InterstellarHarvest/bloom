@@ -13,6 +13,12 @@
 // evaluation (sky temperature / sky moisture / surface radiation offsets that grow with the scenario clock); the planet
 // data and the player's Terraformed sky are never edited. A scenario may also enable extinction loss. No scenario (or
 // Eden) = no pressure, no loss: exactly the pre-BLOOM-012 engine (golden unchanged).
+// BLOOM-014: competition. A scenario's `competition` block (content/scenarios.js) switches on a second, native organism
+// with real tile state (sim.competition.native = stand density per land tile). It starts established on part of the land,
+// spreads into open ground, thickens, recedes where conditions turn against it, and contests the player's tiles at shared
+// fronts: whichever organism is locally stronger (its fitness in the current environment × how established its stands
+// are) pushes the other back. Its tolerances come from the planet's starting conditions, and it reads the same sky
+// (Terraform included) and pressure offsets as the player. No competition block = no native layer, no extra RNG draws.
 //
 // ⚠ tools/golden/first_bloom.json pins this file's behavior bit-for-bit under a seeded RNG
 // (run traces last regenerated on purpose by BLOOM-009, an owner-authorized gameplay retune).
@@ -61,8 +67,31 @@
     }
     if (!L || typeof L.extinction !== "boolean") e.push("loss.extinction must be true or false");
     else if (L.extinction && !(L.extinctionGraceSeconds > 0)) e.push("loss.extinctionGraceSeconds must be > 0 when extinction is on");
+    if (s && s.competition != null) e.push(...checkCompetition(s.competition));
     return e;
   }
+  // competition block (BLOOM-014): every number the native layer uses, with its legal range
+  function checkCompetition(c) {
+    const e = [], num = (v, lo, hi) => Number.isFinite(v) && v >= lo && v <= hi;
+    const pair = (v, lo, hi, int) => Array.isArray(v) && v.length === 2 && v.every(x => num(x, lo, hi) && (!int || Number.isInteger(x))) && v[0] <= v[1];
+    const T = c.tolerance || {}, S = c.start || {}, G = c.growth || {}, K = c.contest || {}, E = c.events || {};
+    if (!num(T.adaptation, 0, 1) || !num(T.breadth, 0.2, 3) || !num(T.hardyShare, 0, 1)) e.push("competition.tolerance needs adaptation 0..1, breadth 0.2..3, hardyShare 0..1");
+    if (!pair(S.coverShare, 0, 0.9) || !pair(S.density, 0.01, 1) || !pair(S.patches, 1, 64, true) || !num(S.originBufferTiles, 0, 64) || !num(S.maxLandmassShare, 0.05, 1))
+      e.push("competition.start needs coverShare [lo,hi] in 0..0.9, density [lo,hi] in 0..1, patches [lo,hi] whole numbers ≥ 1, originBufferTiles ≥ 0, maxLandmassShare 0.05..1");
+    for (const k of ["growThresh", "dieThresh", "spread", "seedPerNeighbor", "seedlingDensity", "rate", "thinning", "minDensity", "vigorEase"])
+      if (!num(G[k], 0, 1)) e.push(`competition.growth.${k} must be a number 0..1`);
+    if (!(G.dieThresh < G.growThresh) || !(G.minDensity < G.seedlingDensity)) e.push("competition.growth needs dieThresh < growThresh and minDensity < seedlingDensity");
+    if (!num(K.nativeVigour, 0.05, 1.5) || !num(K.holdBase, 0, 1) || !num(K.scale, 0.01, 2) || !num(K.crowding, 0, 0.95))
+      e.push("competition.contest needs nativeVigour 0.05..1.5, holdBase 0..1, scale 0.01..2, crowding 0..0.95");
+    if (!num(E.contestedTiles, 1, 1000) || !num(E.advantageMargin, 0, 1) || !num(E.dominatedShare, 0.05, 1) || !num(E.dominatedPlayerBelow, 0, 1) || !num(E.retakeTiles, 1, 1000) || !num(E.windowSeconds, 1, 600))
+      e.push("competition.events needs contestedTiles ≥ 1, advantageMargin 0..1, dominatedShare 0.05..1, dominatedPlayerBelow 0..1, retakeTiles ≥ 1, windowSeconds 1..600");
+    return e;
+  }
+  // a scenario changes the run at all (pressure clock and/or a competing organism); Eden / none = the plain engine
+  const isDynamic = s => !!(s && (s.pressure || s.competition));
+  // small deterministic helpers for planet-derived (not run-RNG) state: FNV-1a string hash → mulberry32 stream
+  const fnv1a = str => { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193); } return h >>> 0; };
+  function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   // scenario id → definition from a catalogue. null / undefined / "" = Eden; an unknown id throws (never a substitute)
   function resolveScenario(catalogue, id) {
     const want = id == null || id === "" ? "eden" : id, s = (catalogue || []).find(x => x.id === want);
@@ -234,6 +263,7 @@
     const SCN = opts.scenario || null;
     if (SCN) { const bad = checkScenario(SCN); if (bad.length) throw new Error(`bloom-sim: scenario ${SCN.id}: ${bad.join("; ")}`); }
     const PR = SCN && SCN.pressure || null, LOSS = SCN && SCN.loss && SCN.loss.extinction ? SCN.loss : null;
+    const CP = SCN && SCN.competition || null; // BLOOM-014: a competing native organism (null = none, no native layer at all)
 
     // genome + global sky + terraform counts, shaped by the trait catalogue
     const traitById = Object.fromEntries(traits.map(t => [t.id, t]));
@@ -361,6 +391,188 @@
       vigor[ORIGIN] = C.grow.originStartVigor;
     })();
 
+    // ---- competition (BLOOM-014). A native organism with real tile state; every number is scenario.competition data.
+    //  · nat[t] = native stand density on land tile t (0 = no native cover). A tile is held by at most one organism:
+    //    a native-held tile has player state BAR (never Living), so it never counts toward the player's coverage.
+    //  · tolerance profile: the native is adapted to THIS planet's starting conditions. Its temperature and moisture windows
+    //    have the baseline plant's width × tolerance.breadth and are centred `tolerance.adaptation` of the way from the
+    //    baseline plant's centre to the planet's area-weighted median starting ground; its salt / radiation limits move the same
+    //    way toward the hardyShare quantile of the starting land. It is evaluated with the SAME effective conditions as the
+    //    player (current sky incl. Terraform, local offsets, scenario pressure), so a changed sky changes where it thrives.
+    //  · at a front, ATTACK = how well the organism grows there: min(its vigor in that region, 1) (the native's × contest.
+    //    nativeVigour); DEFENCE = the defender's attack × (holdBase + (1 − holdBase) × its SUPPORT), where support is the
+    //    larger of its colony's maturity in that region (mean stand density there) and its local stand (its own density, or
+    //    its same-organism neighbours' mean if larger). An established, well-suited colony holds; young stands, or a lone
+    //    incursion, can be overgrown; the better-suited organism pushes into the other's cover.
+    //  · fronts: a Living player tile beside native cover can be overgrown by it, and a native-held tile beside the player's
+    //    colony (or on a shore its Waterborne Seeds reach) can be taken over, only when attack > defence: probability = the
+    //    attacker's ordinary spread chance × min(1, (attack − defence) / contest.scale). The player still needs ground it can grow on (vigor > growThresh), the
+    //    native ground it can grow on (native vigor > its growThresh). Roots (dieBackCut, only where the player's ground is
+    //    at least marginal) lower the chance of being overgrown; nothing makes a colony immune.
+    //  · open ground: both organisms spread into it by their own ordinary rule (the player first within a tick).
+    //  · stands: native density thickens toward its own vigor, holds in its marginal band and thins under lethal conditions;
+    //    a stand below minDensity disappears (the native recedes). A tile's stands of either organism thicken more slowly
+    //    while the other organism crowds it (contest.crowding × share of the 4 neighbours it holds): light, water, nutrients.
+    const nat = new Float32Array(N), nVig = new Float32Array(SC), nFit = new Float32Array(SC), nflip = new Int8Array(N);
+    const pMat = new Float32Array(SC), nMat = new Float32Array(SC), pCnt = new Int32Array(SC), nCnt = new Int32Array(SC), contact = new Int32Array(SC);
+    const gainR = new Float64Array(SC), lossR = new Float64Array(SC), spreadR = new Float64Array(SC), recedeR = new Float64Array(SC); // recent flips (decaying)
+    const nb4 = t => { const x = t % W, y = (t / W) | 0, o = []; if (x > 0) o.push(t - 1); if (x < W - 1) o.push(t + 1); if (y > 0) o.push(t - W); if (y < H - 1) o.push(t + W); return o; };
+    const NB = CP ? Array.from({ length: N }, (_, t) => TILEMAP[t] >= 0 ? nb4(t).filter(u => TILEMAP[u] >= 0) : []) : null; // land neighbours per tile
+    const GN = CP && CP.growth, KC = CP && CP.contest, EV = CP && CP.events;
+    const NP = CP ? (function nativeProfile() {
+      const b = C.genomeBase, TL = CP.tolerance, gc = planet.globalClimate;
+      const rows = SEC.map((s, i) => ({ a: AREA[i], t: gc.temperature + s.local.tempOffset, m: gc.moisture + s.local.moistureOffset, salt: s.local.salinity, rad: s.local.radiation }));
+      const q = (key, share) => { const r = rows.slice().sort((x, y) => x[key] - y[key]); let acc = 0;
+        for (const x of r) { acc += x.a; if (acc >= share * LAND) return x[key]; } return r[r.length - 1][key]; };
+      const k = TL.adaptation, tC = lerp((b.tempFloor + b.tempCeil) / 2, q("t", 0.5), k), tH = (b.tempCeil - b.tempFloor) / 2 * TL.breadth;
+      const mC = lerp(b.waterPos, q("m", 0.5), k), mH = b.waterTol * TL.breadth;
+      return { tempLo: tC - tH, tempHi: tC + tH, moistLo: mC - mH, moistHi: mC + mH,
+        saltTol: Math.max(b.saltTol, lerp(b.saltTol, q("salt", TL.hardyShare), k)), radTol: Math.max(b.radTol, lerp(b.radTol, q("rad", TL.hardyShare), k)),
+        toxTol: b.toxTol, startMedian: { temp: q("t", 0.5), moist: q("m", 0.5) } };
+    })() : null;
+    // the native's fitness in region i under the current (or given) environment: same raw inputs and the same category
+    // softness as the player's evaluate(), its own tolerance windows; side = which way the limiting factor is off
+    function nativeEvaluate(i, off) {
+      off = off || sim.pressure.offsets;
+      const L = SEC[i].local, { effT, effM, rad } = rawFactors(L, off), P = NP;
+      const cats = { Temperature: band(effT, P.tempLo, P.tempHi, T.soft), Water: band(effM, P.moistLo, P.moistHi, Wt.soft),
+        Soil: Math.min(overLimit(L.salinity, P.saltTol, So.saltSoft), (L.ph < So.phMin || L.ph > So.phMax) ? overLimit(Math.max(So.phMin - L.ph, L.ph - So.phMax, 0), 0, So.phSoft) : 1),
+        Hazard: Math.min(overLimit(rad, P.radTol, Hz.radSoft), overLimit(L.toxicity, P.toxTol, Hz.toxSoft)) };
+      let limitKey = null, limitF = 1; for (const k in cats) if (cats[k] < limitF) { limitF = cats[k]; limitKey = k; }
+      const side = limitKey === "Temperature" ? (effT < P.tempLo ? "cold" : "hot") : limitKey === "Water" ? (effM < P.moistLo ? "dry" : "wet")
+        : limitKey === "Soil" ? "salt" : limitKey === "Hazard" ? "hazard" : null;
+      return { fitness: cats.Temperature * cats.Water * cats.Soil * cats.Hazard, cats, limitKey, limitF, side, effT, effM };
+    }
+    const hold = sup => KC.holdBase + (1 - KC.holdBase) * sup;
+    const pAtk = s => Math.min(vigor[s], 1), nAtk = s => KC.nativeVigour * Math.min(nVig[s], 1);
+    // a tile's support (see above): its region's colony maturity or its local stand, whichever is larger
+    const pSup = i => { let n = 0, d = 0; for (const u of NB[i]) if (state[u] === LIV) { n++; d += dens[u]; } return Math.max(pMat[TILEMAP[i]], dens[i], n ? d / n : 0); };
+    const nSup = j => { let n = 0, d = 0; for (const u of NB[j]) if (nat[u] > 0) { n++; d += nat[u]; } return Math.max(nMat[TILEMAP[j]], nat[j], n ? d / n : 0); };
+    const pDef = i => pAtk(TILEMAP[i]) * hold(pSup(i)), nDef = j => nAtk(TILEMAP[j]) * hold(nSup(j));
+    const frontEdge = new Float64Array(SC); // mean over this region's front tiles of (player push − native push), as the contest is now
+    // per-region tallies the contest, the UI and the events read: player / native tiles and their mean stand density,
+    // and contact = tiles of this region touching the other organism (player tile beside native cover, or the reverse)
+    function compStats() {
+      pCnt.fill(0); nCnt.fill(0); pMat.fill(0); nMat.fill(0); contact.fill(0); frontEdge.fill(0); let tot = 0;
+      for (const i of LAND_TILES) { const s = TILEMAP[i];
+        if (state[i] === LIV) { pCnt[s]++; pMat[s] += dens[i]; } else if (nat[i] > 0) { nCnt[s]++; nMat[s] += nat[i]; tot++; } }
+      for (let s = 0; s < SC; s++) { if (pCnt[s]) pMat[s] /= pCnt[s]; if (nCnt[s]) nMat[s] /= nCnt[s]; }
+      for (const i of LAND_TILES) { const s = TILEMAP[i];
+        // each front tile: (how hard the player could push the native here) − (how hard the native could push the player
+        // here), both in THIS region's conditions, each defender with the support it actually has on this front
+        if (state[i] === LIV) { let n = 0, d = 0; for (const u of NB[i]) if (nat[u] > 0) { n++; d += nSup(u); }
+          if (n) { contact[s]++; frontEdge[s] += Math.max(0, pAtk(s) - nAtk(s) * hold(d / n)) - Math.max(0, nAtk(s) - pDef(i)); } }
+        else if (nat[i] > 0) { let n = 0, d = 0; for (const u of NB[i]) if (state[u] === LIV) { n++; d += pSup(u); }
+          if (n) { contact[s]++; frontEdge[s] += Math.max(0, pAtk(s) - nDef(i)) - Math.max(0, nAtk(s) - pAtk(s) * hold(d / n)); } } }
+      for (let s = 0; s < SC; s++) if (contact[s]) frontEdge[s] /= contact[s];
+      return tot;
+    }
+    // which organism has the advantage in region s now: "none" (no native cover here), "native", "player" or "even". With a
+    // front in the region: the mean strength difference over its front tiles; without one: a newcomer of the player (its
+    // colony here, or bare seedlings) against the native stands here
+    const edgeOf = s => contact[s] ? frontEdge[s]
+      : Math.max(0, pAtk(s) - nAtk(s) * hold(nMat[s])) - Math.max(0, nAtk(s) - pAtk(s) * hold(pCnt[s] ? pMat[s] : 0));
+    function sideOf(s) {
+      if (!nCnt[s]) return "none";
+      if (!(vigor[s] > C.grow.growThresh)) return "native"; // the player cannot grow here at all
+      const edge = edgeOf(s);
+      return edge > EV.advantageMargin ? "player" : edge < -EV.advantageMargin ? "native" : "even";
+    }
+    // static proof helper (validation): could an ESTABLISHED player colony hold region i against MATURE native cover in the
+    // given environment? (player strength at full density = its fitness; native stands settle at their own vigor)
+    function holdsAgainstNatives(i, off) {
+      if (!CP) return true;
+      // (established player: defence = its attack; mature native cover settles at its own fitness → defence ≥ ... ; the player
+      // holds and keeps pushing exactly when its attack beats the native's attack)
+      return Math.min(evaluate(i, off).fitness, 1) > KC.nativeVigour * Math.min(nativeEvaluate(i, off).fitness, 1);
+    }
+    if (CP) (function seedNatives() {
+      // starting native cover, from the PLANET (not the run RNG): a planet + scenario always starts the same way
+      const S = CP.start, r = mulberry32(fnv1a(`${planet.id}|${SCN.id}|native`));
+      for (let s = 0; s < SC; s++) { nFit[s] = nativeEvaluate(s, ZERO_OFFSETS).fitness; nVig[s] = nFit[s]; }
+      // the origin region and every land tile within originBufferTiles steps of it (over land) start open
+      const dist = new Int32Array(N).fill(-1), q = [];
+      for (const t of SEC_TILES[ORIGIN]) { dist[t] = 0; q.push(t); }
+      for (let h = 0; h < q.length; h++) { const t = q[h]; if (dist[t] >= S.originBufferTiles) continue;
+        for (const u of NB[t]) if (dist[u] < 0) { dist[u] = dist[t] + 1; q.push(u); } }
+      // no landmass starts more than maxLandmassShare native-held (natural gaps: open ground, open shore, on every island)
+      const lmOf = t => CROSS.landmass[t], lmSize = CROSS.landmassSizes, lmUsed = new Int32Array(lmSize.length);
+      const ok = t => dist[t] < 0 && nFit[TILEMAP[t]] > GN.growThresh && lmUsed[lmOf(t)] < S.maxLandmassShare * lmSize[lmOf(t)];
+      const cand = LAND_TILES.filter(ok);
+      const target = Math.min(cand.length, Math.round(lerp(S.coverShare[0], S.coverShare[1], r()) * LAND));
+      const nP = S.patches[0] + Math.floor(r() * (S.patches[1] - S.patches[0] + 1));
+      const place = t => { nat[t] = clamp(lerp(S.density[0], S.density[1], r()) * nFit[TILEMAP[t]], GN.seedlingDensity, 1); lmUsed[lmOf(t)]++; };
+      // patch centres: suitable tiles picked by native fitness², kept apart (sqrt(land / patches) / 2 tiles) when possible
+      const cum = []; let tw = 0; for (const t of cand) { tw += nFit[TILEMAP[t]] ** 2; cum.push(tw); }
+      const spacing = Math.sqrt(LAND / nP) / 2, centres = [];
+      for (let k = 0; k < nP && cand.length; k++) {
+        let pick = -1;
+        for (let tries = 0; tries < 40; tries++) {
+          const w = r() * tw; let lo = 0, hi = cum.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (cum[m] < w) lo = m + 1; else hi = m; }
+          const t = cand[lo]; if (nat[t] > 0 || !ok(t)) continue; pick = t;
+          if (centres.every(c => Math.hypot(c % W - t % W, ((c / W) | 0) - ((t / W) | 0)) >= spacing)) break;
+        }
+        if (pick >= 0 && !(nat[pick] > 0) && ok(pick)) { place(pick); centres.push(pick); }
+      }
+      // grow the patches round-robin into a random tile of each patch's frontier (organic blobs, never over water)
+      const fronts = centres.map(c => NB[c].filter(ok)); let placed = centres.length, grew = true;
+      while (placed < target && grew) { grew = false;
+        for (const f of fronts) { while (f.length) { const j = (r() * f.length) | 0, t = f[j]; f[j] = f[f.length - 1]; f.pop(); if (nat[t] > 0 || !ok(t)) continue;
+            place(t); placed++; grew = true; for (const u of NB[t]) if (ok(u) && !(nat[u] > 0)) f.push(u); break; }
+          if (placed >= target) break; } }
+    })();
+    // live competition state (UI, events, report, validation). Eden / no competition block: { enabled: false } and nothing else.
+    //  native/vigor/fitness: the per-tile stand density and per-region native vigor/fitness arrays; tiles / share: native-held land
+    //  now (share of the colonizable land — the same denominator as the player's coverage); startShare / peakShare / peakTick;
+    //  contested: regions with at least events.contestedTiles front tiles now; everContested[s] = 1 once region s has been;
+    //  flips: tiles the player took from the native, the native took from the player, the native spread into, the native lost
+    //  to the environment (cumulative); recent: the same per region, decaying over events.windowSeconds; regions[s]: side
+    //  ("none" | "native" | "player" | "even"), contested, dominated; events: real transitions { id, tick, type, sec } with type
+    //  "contested" (the first contested region) | "playerAdvantage" | "nativeRetake" | "nativeDominated" (the most recent 64)
+    const WINDOW_TICKS = CP ? Math.round(EV.windowSeconds * 1000 / C.tickMs) : 0;
+    sim.competition = !CP ? { enabled: false } : { enabled: true, native: nat, vigor: nVig, fitness: nFit, profile: NP,
+      tiles: 0, share: 0, startShare: 0, peakShare: 0, peakTick: 0, contested: 0, everContested: new Uint8Array(SC), firstContactTick: null,
+      flips: { playerTook: 0, nativeTook: 0, nativeSpread: 0, nativeReceded: 0 }, recent: { gained: gainR, lost: lossR, spread: spreadR, receded: recedeR },
+      regionTiles: { player: pCnt, native: nCnt, contact }, regions: SEC.map(() => ({ side: "none", contested: false, dominated: false, announced: null, retakeAfter: 0 })),
+      events: [], nextEventId: 1 };
+    // a tile's stands thicken more slowly while the other organism holds its neighbours (1 = no crowding)
+    function crowded(i, player) { let n = 0; for (const u of NB[i]) if (player ? nat[u] > 0 : state[u] === LIV) n++; return 1 - KC.crowding * n / 4; }
+    function compEvent(type, s) { const L = sim.competition.events; L.push({ id: sim.competition.nextEventId++, tick: sim.ticks, type, sec: s }); if (L.length > 64) L.shift(); }
+    const dominated = s => nCnt[s] >= EV.dominatedShare * AREA[s] && pCnt[s] < EV.dominatedPlayerBelow * AREA[s];
+    function compAfterTick() {
+      const CS = sim.competition, tot = compStats(); let contested = 0;
+      CS.tiles = tot; CS.share = tot / LAND; if (CS.share > CS.peakShare) { CS.peakShare = CS.share; CS.peakTick = sim.ticks; }
+      for (let s = 0; s < SC; s++) {
+        const R = CS.regions[s], isC = contact[s] >= EV.contestedTiles, side = sideOf(s); R.contested = isC; R.side = side;
+        if (isC) { contested++; CS.everContested[s] = 1; if (CS.firstContactTick === null) { CS.firstContactTick = sim.ticks; compEvent("contested", s); } }
+        // the player gains a clear advantage in a contested region (said again only after the native has led there in between)
+        if (isC && side === "player" && R.announced !== "player") { R.announced = "player"; compEvent("playerAdvantage", s); }
+        else if (side === "native" && R.announced === "player") R.announced = "native";
+        // the native retakes meaningful ground: its NET gain from the player here over the recent window (a busy front that
+        // trades tiles both ways is not a retake); quiet for 3 windows afterwards in that region
+        if (lossR[s] - gainR[s] >= EV.retakeTiles && sim.ticks >= R.retakeAfter) { R.retakeAfter = sim.ticks + 3 * WINDOW_TICKS; compEvent("nativeRetake", s); }
+        if (!R.dominated && dominated(s)) { R.dominated = true; compEvent("nativeDominated", s); }
+        else if (R.dominated && nCnt[s] < (EV.dominatedShare - 0.15) * AREA[s]) R.dominated = false;
+      }
+      CS.contested = contested;
+    }
+    if (CP) { const CS = sim.competition, t = compStats(); CS.tiles = t; CS.share = CS.startShare = CS.peakShare = t / LAND;
+      // (regions that START native-held — or within the hysteresis band of it — raise no event: nothing changed hands)
+      SEC.forEach((_, s) => { CS.regions[s].dominated = nCnt[s] >= (EV.dominatedShare - 0.15) * AREA[s] && pCnt[s] < EV.dominatedPlayerBelow * AREA[s]; CS.regions[s].side = sideOf(s); }); }
+    // one region's competition readout (UI): who holds what, each organism's fitness / maturity / strength here, the side
+    // with the advantage, whether it is contested, and why the native is limited here (its limiting factor + direction)
+    function competitionAt(i) {
+      if (!CP || !validSecC(i)) return null;
+      const e = nativeEvaluate(i), pm = pCnt[i] ? pMat[i] : 0, nm = nCnt[i] ? nMat[i] : 0, edge = edgeOf(i);
+      return { nativeTiles: nCnt[i], playerTiles: pCnt[i], area: AREA[i], nativeShare: nCnt[i] / AREA[i], playerShare: pCnt[i] / AREA[i],
+        nativeFitness: nFit[i], nativeVigor: nVig[i], playerFitness: secFit[i], playerVigor: vigor[i], playerMaturity: pm, nativeMaturity: nm,
+        playerAttack: pAtk(i), nativeAttack: nAtk(i), playerHold: pAtk(i) * hold(pm), nativeHold: nAtk(i) * hold(nm), edge, side: sideOf(i), contested: contact[i] >= EV.contestedTiles, contact: contact[i],
+        dominated: sim.competition.regions[i].dominated, playerCanGrow: vigor[i] > C.grow.growThresh, nativeCanGrow: nVig[i] > GN.growThresh,
+        nativeLimit: e.limitKey, nativeLimitSide: e.side, nativeLimitF: e.limitF,
+        recent: { gained: gainR[i], lost: lossR[i], spread: spreadR[i], receded: recedeR[i] } };
+    }
+    const validSecC = i => Number.isInteger(i) && i >= 0 && i < SC;
+
     function livingCountBySection() { const c = new Int32Array(SC); for (const i of LAND_TILES) if (state[i] === LIV) c[TILEMAP[i]]++; return c; }
     function coverage() { let l = 0; for (const i of LAND_TILES) if (state[i] === LIV) l++; return l / LAND; }
     // section establishment 0..1 (see dens above) and its ordinary-language status for the inspect panel / map
@@ -400,15 +612,24 @@
       // 1. evaluate fitness + ease vigor
       for (let i = 0; i < SC; i++) { const e = evaluate(i); secFit[i] = e.fitness; secGrowth[i] = e.growthMod; vigor[i] += (e.fitness - vigor[i]) * C.vigorEase;
         const key = sim.colonies.focus[i] + "|" + sim.colonies.spec[i]; if (key !== modsKey[i]) { modsKey[i] = key; mods[i] = colonyMods(i); } }
+      if (CP) { const dk = Math.exp(-C.tickMs / 1000 / EV.windowSeconds); // native fitness/vigor; recent-flip tallies decay
+        for (let s = 0; s < SC; s++) { nFit[s] = nativeEvaluate(s).fitness; nVig[s] += (nFit[s] - nVig[s]) * GN.vigorEase; gainR[s] *= dk; lossR[s] *= dk; spreadR[s] *= dk; recedeR[s] *= dk; } }
       // 1b. establishment: Living stands thicken while their section supports growth (faster on rich, bright ground),
       // hold in the marginal band between the die and grow thresholds, and thin out when conditions turn lethal.
       for (const i of LAND_TILES) {
         if (state[i] !== LIV) continue;
         const s = TILEMAP[i], v = vigor[s], f = mods[s], prot = rootsHolds(s);
-        if (v > g.growThresh) dens[i] += EST.rate * secGrowth[s] * Math.min(v, 1) * (1 + f.establishBonus) * (1 - dens[i]);
-        else if (v >= g.dieThresh) { if (f.marginalEstablish && prot) dens[i] += EST.rate * secGrowth[s] * v * f.marginalEstablish * (1 - dens[i]); }
+        if (v > g.growThresh) { let d = EST.rate * secGrowth[s] * Math.min(v, 1) * (1 + f.establishBonus) * (1 - dens[i]); if (CP) d *= crowded(i, true); dens[i] += d; }
+        else if (v >= g.dieThresh) { if (f.marginalEstablish && prot) { let d = EST.rate * secGrowth[s] * v * f.marginalEstablish * (1 - dens[i]); if (CP) d *= crowded(i, true); dens[i] += d; } }
         else dens[i] = Math.max(EST.minDensity, dens[i] - EST.thinning * (g.dieThresh - v) / g.dieThresh * (prot ? 1 - f.thinningCut : 1));
       }
+      // 1c. native stands (competition only): thicken toward the native's own vigor, hold in its marginal band, thin when
+      // lethal; a stand below minDensity is gone (the native recedes from that tile)
+      if (CP) for (const i of LAND_TILES) { if (!(nat[i] > 0)) continue; const s = TILEMAP[i], v = nVig[s];
+        if (v >= GN.dieThresh) { const cap = Math.min(v, 1); nat[i] += (nat[i] < cap ? GN.rate * secGrowth[s] * crowded(i, false) : GN.rate) * (cap - nat[i]); }
+        else nat[i] -= GN.thinning * (GN.dieThresh - v) / GN.dieThresh;
+        if (nat[i] < GN.minDensity) { nat[i] = 0; recedeR[s]++; sim.competition.flips.nativeReceded++; } }
+      if (CP) compStats();
       for (let s = 0; s < SC; s++) estab[s] = establishment(s);
       // 2. transitions (double-buffer to avoid same-tick chaining)
       const next = state.slice();
@@ -424,7 +645,14 @@
         const i = y * W + x, s = TILEMAP[i];
         if (s < 0) continue; // water/void/lava: never Living or Dead, never seeds
         const v = vigor[s], st = state[i];
-        if (st === BAR) {
+        if (st === BAR && CP && nat[i] > 0) { // native-held ground: the player takes it only by out-competing the native here
+          let ln = 0, push = 0;
+          for (const u of NB[i]) if (state[u] === LIV) { ln++; push += out[TILEMAP[u]]; }
+          if (ln > 0 && v > g.growThresh) {
+            const adv = pAtk(s) - nDef(i);
+            if (adv > 0 && rng() < g.baseFill * seedMult * secFit[s] * (1 + g.seedPerNeighbor * (ln - 1)) * (push / ln) * Math.min(1, adv / KC.scale)) { next[i] = LIV; nflip[i] = 1; }
+          }
+        } else if (st === BAR) {
           let ln = 0, push = 0;
           if (x > 0 && state[i - 1] === LIV) { ln++; push += out[TILEMAP[i - 1]]; } if (x < W - 1 && state[i + 1] === LIV) { ln++; push += out[TILEMAP[i + 1]]; }
           if (y > 0 && state[i - W] === LIV) { ln++; push += out[TILEMAP[i - W]]; } if (y < H - 1 && state[i + W] === LIV) { ln++; push += out[TILEMAP[i + W]]; }
@@ -438,6 +666,13 @@
             const cut = rootsHolds(s) ? mods[s].dieBackCut : 0;
             const p = C.die.rate * C.die.damping * (g.dieThresh - v) * C.die.slope * (1 - cut);
             if (rng() < p) next[i] = DEAD;
+          }
+          if (CP && next[i] === LIV) { // native cover beside this tile may overgrow it, if the native is locally stronger
+            let nn = 0, md = 0; for (const u of NB[i]) if (nat[u] > 0) { nn++; md += nat[u]; }
+            if (nn > 0 && nVig[s] > GN.growThresh) {
+              const adv = nAtk(s) - pDef(i), cut = rootsHolds(s) ? mods[s].dieBackCut : 0;
+              if (adv > 0 && rng() < GN.spread * nFit[s] * (1 + GN.seedPerNeighbor * (nn - 1)) * (md / nn) * Math.min(1, adv / KC.scale) * (1 - cut)) { next[i] = BAR; nflip[i] = -1; }
+            }
           }
         } else { // DEAD
           if (rng() < C.recover.deadToBarren * (1 + (rootsHolds(s) ? mods[s].recoverBonus : 0))) next[i] = BAR; // Root Network: faster regrowth
@@ -456,12 +691,24 @@
           sim.crossing.arrivals++;
           arrAcc[k] += pr; const arrived = arrAcc[k] >= XC.arrivalUnit; if (arrived) arrAcc[k] -= XC.arrivalUnit;
           const s = TILEMAP[t], ev = () => ({ tick: sim.ticks, from: src[top], to: t, gap: LGAP[k][top] });
-          if (vigor[s] > g.growThresh && rng() < pr * seedMult * secFit[s]) { next[t] = LIV; sim.crossing.footholds++; crossEvent({ ...ev(), took: true }); }
+          // (competition: native-held shore is contested — seeds take root there only if the plant out-competes the native)
+          const held = CP && nat[t] > 0, cf = held ? Math.min(1, Math.max(0, pAtk(s) - nDef(t)) / KC.scale) : 1;
+          if (vigor[s] > g.growThresh && cf > 0 && rng() < pr * seedMult * secFit[s] * cf) { next[t] = LIV; if (held) nflip[t] = 1; sim.crossing.footholds++; crossEvent({ ...ev(), took: true }); }
           else if (arrived) { sim.crossing.seedArrivals++; crossEvent({ ...ev(), took: false }); } // arrived; the ground may reject them
         }
       }
+      // 2c. natives spread into open ground by their own ordinary rule (after the player's spread: open ground the player
+      // took this tick is not open any more); native cover the player took this tick no longer seeds
+      if (CP) for (const i of LAND_TILES) {
+        if (state[i] !== BAR || nat[i] > 0 || next[i] !== BAR) continue; const s = TILEMAP[i]; if (!(nVig[s] > GN.growThresh)) continue;
+        let nn = 0, md = 0; for (const u of NB[i]) if (nat[u] > 0 && nflip[u] !== 1) { nn++; md += nat[u]; }
+        if (nn > 0 && rng() < GN.spread * nFit[s] * (1 + GN.seedPerNeighbor * (nn - 1)) * (md / nn)) nflip[i] = 2;
+      }
       // new stands start as seedlings; tiles that die or clear hold no plants
       for (const i of LAND_TILES) if (next[i] !== state[i]) dens[i] = next[i] === LIV ? EST.seedlingDensity : 0;
+      if (CP) { const F = sim.competition.flips;
+        for (const i of LAND_TILES) { const f = nflip[i]; if (!f) continue; const s = TILEMAP[i]; nflip[i] = 0;
+          if (f === 1) { nat[i] = 0; gainR[s]++; F.playerTook++; } else { nat[i] = GN.seedlingDensity; if (f === -1) { lossR[s]++; F.nativeTook++; } else { spreadR[s]++; F.nativeSpread++; } } } }
       state.set(next);
       // 3. economy: each colony yields by how established its stands are (young stands yield econ.youngYield of a
       // mature one); the origin refuge's own trickle follows the origin colony's establishment. The colony's allocation /
@@ -488,6 +735,7 @@
       // 5. win check
       const cov = coverage();
       if (!sim.won && cov >= winAt) { sim.won = true; if (sim.onWin) sim.onWin(cov); }
+      if (CP) compAfterTick();
       // 6. extinction (pressure scenarios that enable it): no Living tile anywhere for the whole grace → the run is lost
       if (LOSS && !sim.won) {
         const X = sim.extinction; X.zeroTicks = cov > 0 ? 0 : X.zeroTicks + 1;
@@ -562,11 +810,12 @@
 
     Object.assign(sim, { derived, evaluate, lampOf, tick, coverage, livingCountBySection, collectBubble,
       traitById, offered, price, canBuy, ownedTier, why, buy, previewOf, establishment, colonyStatus,
+      nativeEvaluate: CP ? nativeEvaluate : null, competitionAt, holdsAgainstNatives,
       COLONY_MODES: MODES, setColonyFocus, getColonyFocus, getSpecialization, specPrice, specBlock, buySpecialization, colonyMods });
     return sim;
   }
 
   root.BLOOM = Object.assign(root.BLOOM || {}, { createSim, resolveLayout, growVoronoi,
-    pressure: { CHANNELS, checkScenario, resolveScenario, progressAt, offsetsAt, maxOffsets, phaseAt },
+    pressure: { CHANNELS, checkScenario, checkCompetition, resolveScenario, isDynamic, progressAt, offsetsAt, maxOffsets, phaseAt },
     geo: { components, sectionAdjacency, sectionPieces, waterCrossings, reachableLandmasses }, util: { clamp, lerp, band, overLimit } });
 })(typeof window !== "undefined" ? window : globalThis);

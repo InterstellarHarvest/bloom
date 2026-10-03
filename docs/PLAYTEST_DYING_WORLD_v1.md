@@ -2,7 +2,7 @@
 
 **What this tests:** the first **pressure scenario**. In Dying World the planet slowly loses its atmosphere, so the world itself becomes drier, colder and more exposed to radiation while you play. It should feel like the planet is changing under you, not like a countdown. The validator has shown this world can be won under the real decline in at least two ways. Only a person can say whether it is readable and fun.
 
-**Gate status:** **REVISE** (owner, 2026-10-02): *"the game still seems a bit slow to actually gain enough biomass to effectively do anything and strategize. things might need to cost less or gain more."* This was treated as a shared-economy problem, not a Dying World one. **BLOOM-013** retuned the economy and rescaled this scenario's clock to match ([`ECONOMY_v1.md`](ECONOMY_v1.md)). The gate stays **REVISE pending the economy re-test**: the next round is the two short runs in [`PLAYTEST_ECONOMY_v1.md`](PLAYTEST_ECONOMY_v1.md), not this whole sheet again. Only the owner can mark this passed.
+**Gate status:** **REVISE** (owner, 2026-10-02): *"the game still seems a bit slow to actually gain enough biomass to effectively do anything and strategize. things might need to cost less or gain more."* This was treated as a shared-economy problem, not a Dying World one. **BLOOM-013** retuned the economy and rescaled this scenario's clock to match ([`ECONOMY_v1.md`](ECONOMY_v1.md)). The gate stays **REVISE pending the economy re-test**: the next round is the two short runs in [`PLAYTEST_ECONOMY_v1.md`](PLAYTEST_ECONOMY_v1.md), not this whole sheet again. Only the owner can mark this passed. → after the BLOOM-013 economy retune, the owner re-test ([`PLAYTEST_ECONOMY_v1.md`](PLAYTEST_ECONOMY_v1.md)) said *"seems better, lets move on."*: **passed with notes** (recorded 2026-10-02 in BLOOM-014).
 
 **Time needed:** one run of roughly 8–15 minutes since BLOOM-013 (was 12–20), plus a few minutes for the questions.
 
@@ -46,4 +46,4 @@ Answer in a sentence or two; "not sure" is a useful answer.
 |---|---|---|---|---|
 | Ocean 13 + Dying World | | | | |
 
-**Owner verdict:** ☐ pass ☐ pass with notes ☐ not yet (what should change first?)
+**Owner verdict:** first ☒ not yet (REVISE: Biomass too slow, above); after BLOOM-013 ☒ pass with notes — *"seems better, lets move on."*
