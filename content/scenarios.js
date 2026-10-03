@@ -24,6 +24,9 @@
 //   competition  (BLOOM-014) optional: a competing native organism with real tile state — see the native_competition entry
 //   climateInstability (BLOOM-015) optional: the player's own Terraform unsettles the climate and causes temporary shocks —
 //                see the volatile_climate entry
+//   display.card (BLOOM-016) the launcher's scenario card + briefing: tagline (what changes, one line), detail (one more
+//                sentence), cue (the key strategic idea, never a build), icon (a temporary icon key), tag (optional short label,
+//                e.g. Eden's "Relaxed"; scenarios are not ranked by difficulty)
 //   display      short player-facing copy for the temporary pressure / competition bar, Bloom Report and loss screen (lossNote)
 // Terraform never touches scenario progress: it changes the player's sky; the scenario drift is added on top of it.
 (function (root) {
@@ -35,7 +38,8 @@
       intent: "No outside pressure: the planet stays as it is. Open experimentation (bible §11.2).",
       pressure: null,
       loss: { extinction: false },
-      display: { title: "Eden", summary: "No outside pressure. The planet stays as it is." },
+      display: { title: "Eden", summary: "No outside pressure. The planet stays as it is.",
+        card: { tagline: "No outside pressure.", detail: "The planet stays as it is for the whole run.", cue: "Experiment freely while learning the planet.", icon: "leaf", tag: "Relaxed" } },
     },
     {
       id: "dying_world", name: "Dying World",
@@ -64,6 +68,7 @@
       },
       display: {
         title: "Dying World · Atmosphere thinning",
+        card: { tagline: "The atmosphere is thinning.", detail: "The world becomes drier, colder and more exposed to radiation as the run goes on.", cue: "Plan for the world it is becoming, not only the one it is now.", icon: "hourglass" },
         summary: "The planet is slowly losing atmosphere. Conditions are becoming drier and colder, and surface radiation is increasing.",
         channels: {
           moisture:    "drier: thinner air holds less water vapour",
@@ -109,6 +114,7 @@
       },
       display: {
         title: "Native Competition",
+        card: { tagline: "The planet already has native vegetation.", detail: "Your plant must compete with it for suitable land and resources.", cue: "Native vegetation is adapted to the planet's starting conditions.", icon: "sprouts" },
         summary: "This planet already has native vegetation. It competes with your plant for light, water, nutrients and space.",
         lossNote: "native vegetation overgrew your last colonies. Where the two plants meet, the one better suited to the ground pushes, and established colonies hold while young ones can be overgrown. Spread into ground that suits your plant better than the natives (Adapt), change the sky so their strongholds suit them less (Terraform), or thicken a threatened young colony (Roots).",
       },
@@ -157,6 +163,7 @@
       },
       display: {
         title: "Volatile Climate",
+        card: { tagline: "Reshaping the climate has side effects.", detail: "Terraforming too aggressively can destabilize the climate and cause temporary extremes.", cue: "How fast you change the planet matters.", icon: "storm" },
         summary: "Terraforming changes the whole planet's climate. Change it too fast and the climate becomes unstable: it can swing to temporary extremes before it settles.",
         science: "Climate instability (a simplified game model): rapid changes to a planet's climate can push connected systems out of balance. Feedbacks can make the climate overshoot or swing back before it settles, so heavy Terraforming can cause temporary temperature or moisture extremes. Real climates do not respond the same way to every change, and one action does not cause one heat wave; this model only shows the idea that fast, large forcing brings more variability.",
         axes: { temp: "temperature", moist: "moisture" },

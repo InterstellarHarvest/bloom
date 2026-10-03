@@ -535,7 +535,22 @@ The third pressure prototype, and the last new pressure mechanic before the rout
 - **Loss.** The generic extinction rule; high instability is never a loss by itself. The origin refuge follows the same rule as scenario drift, so a reckless Critical swing on a one-colony plant can end the run.
 - **Validation.** Layer P runs real witnesses whose own purchases unsettle the climate; the hold check waits 60 s past the last shock; a Terraform-heavy witness (≥ 2 steps) counts only with a real shock behind it; two confirmation seeds. **Frozen World 22** (primary fixture) proves an Adapt-heavy strategy (Cold ×2: no instability, no shock) and a Terraform-heavy one (Cold + Warm ×2: Volatile, a real cold snap, still wins and holds). Desert 25 and Ocean 13 pass. Ocean's strategies need at most one Terraform step, so Volatile Climate is mild there. The BLOOM-013 economy and decision cadence are unchanged.
 - **Science framing.** A simplified game model of the idea that rapid, large changes to a climate can push connected systems out of balance (feedback, overshoot, variability, temporary extremes) before it settles. It does not claim that every change causes identical shocks, that one warming action causes one heat wave, or that climates oscillate symmetrically.
-- **Status.** Machine-verified (`tools/volatile-climate-check.js`). Owner playtest: `docs/PLAYTEST_VOLATILE_CLIMATE_v1.md` (pending; not human-approved).
+- **Status.** Machine-verified (`tools/volatile-climate-check.js`). Owner playtest: `docs/PLAYTEST_VOLATILE_CLIMATE_v1.md`. **Human gate passed** (recorded 2026-10-03 with BLOOM-016): the owner answered *"1 - done"* to the PMO's recommendation to finish the Volatile Climate run before moving on.
+
+**Mechanics-expansion block: complete** (PMO, 2026-10-03). Production content is the authored First Bloom plus three procedural archetypes (Ocean Archipelago, Desert World, Frozen World) and four scenarios (Eden, Dying World, Native Competition, Volatile Climate) with three distinct pressure mechanisms (environmental drift, a competing organism, self-caused climate instability). No further archetype or pressure mechanic is planned now.
+
+### 11.7 Player game flow *(addendum: BLOOM-016)*
+
+The URL-driven prototype became a player-facing launch flow: **Home → planet → scenario → briefing → preparing the world → the run → result → play again / another world.** Nobody needs a query string.
+
+- **Entry point:** `index.html` at the repo root. Home offers **Start with First Bloom** (the authored introductory world, recommended first run, launched exactly as accepted; not retrofitted with pressure scenarios) and **Choose a New Planet**.
+- **Two independent choices:** planet (archetype) then scenario. Any scenario combines with any procedural planet through the existing orthogonal architecture; there are no hand-built combinations. Scenarios are presented as different kinds of problem, never as an Easy → Hard ladder; Eden alone is tagged *Relaxed*.
+- **Copy is data.** Planet cards come from each archetype's `display` block, scenario cards from each scenario's `display.card`, and the flow's own copy and search policy from `content/play.js`. Cards and the briefing give clues for a hypothesis ("Most land is cold"), never a build.
+- **A fair world, or none.** The run page chooses World Seeds automatically (browser crypto random; never `Math.random` in generation) and runs the production path on each: archetype layers 1–8, then layer P when the scenario changes the run. The first accepted world starts. Rejected candidates never start; after a bounded number (6) the player sees an explicit, friendly failure. The flow never silently substitutes another planet, downgrades the scenario or falls back to Eden. A combination the scenario data marks DISALLOWED is shown disabled with the data's reason.
+- **Reproducible.** The accepted world's planet, World Seed and scenario are shown and written into its URL. *Play this world again* rebuilds the same planet + scenario; outcomes still depend on play (the live run has its own randomness). *Same planet, new world* draws a new seed. *Change scenario* / *Change planet* return to selection. Every new run is a new page, so no simulation state can leak. No save game.
+- **Developer harness kept.** Direct `demo-run.html?archetype=…&seed=…&scenario=…` launches behave exactly as before.
+- **A temporary shell, not the final UI.** See §12.4 and the design-reference gate below.
+- **Status.** Machine-verified (`tools/game-flow-check.js`). Owner playtest: `docs/PLAYTEST_GAME_FLOW_v1.md` (pending; not human-approved).
 
 ---
 
@@ -589,6 +604,8 @@ Target a **cutesy, modern, friendly-science aesthetic**:
 - a planet that visibly changes from lonely and hostile to lively and green.
 
 Final visual direction remains open and should be explored through quick comparison prototypes before it is locked.
+
+*(BLOOM-016 addendum: owner requirement, process decision.)* **No final run-screen UI is designed before a dedicated design-reference review.** The owner: *"i want to go over various ideas for designs you have or we can borrow from similar style games when we get to that phase."* After BLOOM-016 and before the major run-screen UI / specimen implementation, PMO and owner review several UI/UX concepts and relevant precedents from comparable strategy / simulation games: home and selection presentation, map-first layouts, contextual panels and drawers, upgrade-board presentation, living-organism / specimen presentation, information hierarchy, touch / desktop hybrid controls, and how comparable games reveal complexity progressively. The BLOOM-016 launcher and run menus are a clean temporary shell and lock none of this. Recorded in `docs/VISUAL_DIRECTION_v1.0.md` §10.
 
 *(BLOOM-010 addendum: approved future direction, not implemented.)* After the procedural playtest the owner judged the gameplay loop good and the main remaining problem **UI crowding**. The crowded permanent left panel is temporary scaffolding. The final information architecture leans toward **contextual pop-out panels, drawers and large cards** (in the spirit of SimCity / The Sims, without copying their look): a larger panel for the selected region, a dedicated colony-development panel, larger surfaces for Adapt / Spread / Terraform, and details on demand. It prefers larger fonts and buttons over compression, and the map stays the visual centre. Details: [`docs/VISUAL_DIRECTION_v1.0.md`](docs/VISUAL_DIRECTION_v1.0.md) §9.
 

@@ -131,3 +131,11 @@ The owner's verdict after the procedural playtest: the gameplay loop is good and
 
 **Scope:** this is future UI/UX direction only. BLOOM-010 was a mechanics/content package (the Desert World archetype) and implemented none of it. The redesign comes with the visual-polish / final-board phase (bible §15), after content validation.
 
+## 10. Design-reference review before the final UI (owner requirement; recorded with BLOOM-016 — process decision only)
+
+The owner asked for a separate design-review phase before the major run-screen redesign: *"i want to go over various ideas for designs you have or we can borrow from similar style games when we get to that phase."*
+
+- **Gate.** After BLOOM-016 (player game flow) and **before** the major run-screen UI / specimen implementation, PMO and owner review multiple UI/UX concepts and relevant precedents from comparable strategy / simulation games. No final run-screen design is authorized before that review.
+- **What the review considers:** home and selection presentation; map-first layouts; contextual panels and drawers (§9); upgrade-board presentation (Adapt / Spread / Terraform); living-organism / specimen presentation (§§1–6); information hierarchy; touch / desktop hybrid controls; how comparable games reveal complexity progressively.
+- **What is not decided yet:** permanent sidebar layout, final contextual drawers, final board layout, specimen window placement, final typography, final art style, final icons, mobile / tablet composition. Sections 1–9 above remain the approved *direction*; the concrete design is chosen in the review.
+- **BLOOM-016's launcher** (`index.html`, the run page's player menu, the loading and result actions) is a clean, temporary, functional shell: its layout, emoji icons and type are placeholders and pre-select nothing.

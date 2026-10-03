@@ -62,6 +62,15 @@
   colours follow the shocked sky; regions it pushes across a threshold (or that reopen when it ends) get a message + short
   outline; the inspect panel shows the shock in the region's temperature line. The Bloom Report and the extinction screen
   add one climate line. QA: tools/volatile-climate-check.js.
+  BLOOM-016 (temporary shell, not the final layout): player mode, ?play=1, opened by the player entry point (../index.html).
+  With an archetype but no seed it shows "Preparing planet…" and runs BLOOM.play.searchWorld (resources/bloom-play.js) over
+  automatically chosen World Seeds (in resources/bloom-play-worker.js when the browser allows a worker; on file:// on the page,
+  one step per task), starts the first world that passes layers 1–8 (+ layer P for a dynamic scenario), and writes
+  ?play=1&archetype=…&seed=…&scenario=… into the address. A rejected candidate never starts; all rejected → a friendly
+  "No playable world found" screen, never a substitute. Player wording (World Seed), a header Menu (Play this world again ·
+  Same planet, new world · Change scenario · Change planet · Home; confirms before leaving a live run) and the same actions
+  under the Bloom Report / extinction screen. Every action opens a fresh page. Without play=1 nothing here changes: the
+  developer harness above is untouched. QA: tools/game-flow-check.js.
 -->
 <style>
   :root{
@@ -245,6 +254,30 @@
   .clim b{color:#ffcf9a}
   details.fsci{margin-top:6px} details.fsci summary{cursor:pointer; color:var(--dim); font-size:11px}
   details.fsci p{margin:4px 0 0; font-size:11px; color:var(--dim)}
+  /* BLOOM-016 player mode (?play=1; temporary shell, not the final run-screen design): run menu, world preparation,
+     friendly failure, post-run actions. The developer harness (no play=1) never shows any of it. */
+  .pmenu{position:relative} .pmenu .pm{position:absolute; right:0; top:calc(100% + 6px); z-index:30; display:none; min-width:230px;
+    background:#111a2b; border:1px solid #2c3f63; border-radius:8px; padding:6px; box-shadow:0 8px 24px rgba(0,0,0,.5)}
+  .pmenu.open .pm{display:block}
+  .pm button,.runacts button,.prep button,.playfail button{display:block; width:100%; text-align:left; background:#141d30; border:1px solid #22304d; color:var(--ink);
+    padding:10px 12px; border-radius:6px; margin:4px 0; font-size:13px; min-height:40px}
+  .pm button:hover,.runacts button:hover,.prep button:hover,.playfail button:hover{border-color:var(--accent)}
+  .pm small,.runacts small{display:block; color:var(--dim); font-size:11px; margin-top:2px}
+  :is(.pm,.runacts,.prep,.playfail) button:focus-visible, .pmenu > button:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
+  .runacts{margin-top:16px; padding-top:12px; border-top:1px solid #22304d}
+  .runacts h3{font-size:11px; letter-spacing:2px; color:var(--accent); margin:0 0 6px}
+  .runacts .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:0 8px}
+  .runacts .primary{background:#243b2f; border-color:#2f6a4d; color:#cdeede}
+  .prep{position:fixed; inset:0; z-index:25; display:flex; align-items:center; justify-content:center; background:var(--bg)}
+  .prep .box,.playfail{width:min(520px,92vw); background:#111a2b; border:1px solid #2c3f63; border-radius:10px; padding:24px}
+  .prep h2,.playfail h2{margin:0 0 6px; color:var(--gold); letter-spacing:1px; font-size:20px}
+  .prep .what{color:var(--ink); font-size:14px; margin-bottom:14px}
+  .prep .stepline{display:flex; align-items:center; gap:12px; min-height:44px; color:var(--accent); font-size:13px}
+  .prep .spin{flex:0 0 22px; width:22px; height:22px; border-radius:50%; border:3px solid #2c3f63; border-top-color:var(--accent); animation:spin 0.9s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion: reduce){ .prep .spin{animation:none; border-color:var(--accent)} }
+  .prep .slow{color:var(--dim); font-size:12px; min-height:16px; margin:6px 0 10px}
+  .playfail{margin:40px auto} .playfail p{line-height:1.6}
 </style>
 </head>
 <body>
@@ -289,6 +322,8 @@
 <script src="../resources/bloom-witness.js"></script>
 <script src="../resources/bloom-archetype.js"></script>
 <script src="../resources/bloom-scenario.js"></script>
+<script src="../content/play.js"></script>
+<script src="../resources/bloom-play.js"></script>
 <!-- the game UI below is inert (type="text/plain") until the boot script after it has chosen the planet:
      it then runs as an ordinary classic script, so its globals (sim, selected, refreshShop …) are unchanged -->
 <script type="text/plain" id="bloomUI">
@@ -318,6 +353,23 @@ const mix=(c1,c2,k)=>[c1[0]+(c2[0]-c1[0])*k,c1[1]+(c2[1]-c1[1])*k,c1[2]+(c2[2]-c
 let running=true, speed=1;
 sim.onWin=cov=>{ running=false; onWin(cov); };
 sim.onLoss=why=>{ running=false; onLoss(why); };
+// BLOOM-016 player mode (?play=1, launched from index.html): player wording, a run menu and post-run actions. Every action
+// opens a fresh page (a new run is genuinely new: nothing of this sim carries over); the developer harness never shows them.
+const PLAY=!!BLOOM_RUN.play, PC=BLOOM_DATA.play||null, SEEDWORD=PLAY?"World Seed":"public seed";
+const RUN_ARCH=BLOOM_RUN.kind==="procedural"?BLOOM_RUN.archetype.id:null, RUN_SCN=SCN?SCN.id:"eden";
+function playActions(){ const X=PC.actions, q=BLOOM.play.runQuery;
+  if(!RUN_ARCH) return [{id:"playAgain", label:X.playAgain, href:"demo-run.html?play=1", primary:true},
+    {id:"changePlanet", label:PC.choose.action, href:"../index.html#/planet"}, {id:"home", label:X.home, href:"../index.html"}];
+  return [{id:"playAgain", label:X.playAgain, note:X.playAgainNote, href:"demo-run.html?"+q({archetype:RUN_ARCH, seed:BLOOM_RUN.seed, scenario:RUN_SCN}), primary:true},
+    {id:"newWorld", label:X.newWorld, href:"demo-run.html?"+q({archetype:RUN_ARCH, scenario:RUN_SCN})+"&avoid="+BLOOM_RUN.seed},
+    {id:"changeScenario", label:X.changeScenario, href:"../index.html#/scenario/"+RUN_ARCH},
+    {id:"changePlanet", label:X.changePlanet, href:"../index.html#/planet/"+RUN_ARCH},
+    {id:"home", label:X.home, href:"../index.html"}]; }
+const actBtn=a=>`<button type="button" data-act="${a.id}" data-go="${a.href}"${a.primary?' class="primary"':""}>${a.label}${a.note?`<small>${a.note}</small>`:""}</button>`;
+function runActionsHtml(){ return `<div class="runacts" id="runActions"><h3>WHAT NEXT?</h3><div class="grid">${playActions().map(actBtn).join("")}</div></div>`; }
+// leaving a live run asks first (it is not saved); after a win or an extinction it just goes
+function wireActions(el){ el.querySelectorAll("button[data-go]").forEach(b=>b.addEventListener("click",()=>{
+  if(!sim.won&&!sim.lost&&!confirm(PC.actions.confirmLeave)) return; location.href=b.dataset.go; })); }
 // display names: generated worlds can repeat a biome name, so repeats get a number (First Bloom has none)
 const LABEL=SEC.map((s,i)=>{ const same=SEC.filter(x=>x.name===s.name); return same.length>1?`${s.name} ${same.indexOf(s)+1}`:s.name; });
 // geography for water worlds (BLOOM-007): landmass per section, crossing links from the engine's own geometry
@@ -1088,12 +1140,12 @@ function onLoss(why){
   const mins=Math.floor(sim.ticks*CFG.tickMs/60000), secs=Math.round(sim.ticks*CFG.tickMs/1000)%60, o=PS.offsets;
   const r=document.getElementById("report"); r.classList.add("lost");
   r.innerHTML=`<h2>✕ EXTINCTION</h2>
-    <div class="sub" id="lossWhy">No living plants were left anywhere for ${SCN.loss.extinctionGraceSeconds} s, so the run is over (${mins}m ${String(secs).padStart(2,"0")}s${BLOOM_RUN.kind==="procedural"?` on <b>${BLOOM_RUN.planet.name}</b>, ${BLOOM_RUN.archetype.name} · public seed ${BLOOM_RUN.seed}`:""}).</div>
+    <div class="sub" id="lossWhy">No living plants were left anywhere for ${SCN.loss.extinctionGraceSeconds} s, so the run is over (${mins}m ${String(secs).padStart(2,"0")}s${BLOOM_RUN.kind==="procedural"?` on <b>${BLOOM_RUN.planet.name}</b>, ${BLOOM_RUN.archetype.name} · ${SEEDWORD} ${BLOOM_RUN.seed}`:""}).</div>
     ${pressureReport()}${competitionReport()}${climateReport()}
     <div class="debrief" id="lossDebrief"><b>What happened:</b> ${(SCN.display&&SCN.display.lossNote)||"the planet kept changing and your plant could no longer live on any of its land. Adapting to the new conditions (Adapt), pushing the sky back (Terraform) or protecting your strongest colonies earlier can keep a foothold alive."}</div>
-    <button class="btn" id="lossRestart">Restart this run ↻</button>`;
+    ${PLAY?runActionsHtml():`<button class="btn" id="lossRestart">Restart this run ↻</button>`}`;
   document.getElementById("reportModal").classList.add("on");
-  document.getElementById("lossRestart").addEventListener("click",()=>location.reload());
+  if(PLAY) wireActions(r); else document.getElementById("lossRestart").addEventListener("click",()=>location.reload());
   log(`✕ Extinction: ${why}.`);
 }
 function onWin(cov){
@@ -1108,7 +1160,7 @@ function onWin(cov){
   const mins=Math.floor(sim.ticks*CFG.tickMs/60000), secs=Math.round(sim.ticks*CFG.tickMs/1000)%60;
   document.getElementById("report").innerHTML=`
     <h2>★ BLOOM</h2>
-    <div class="sub">You held ${Math.round(cov*100)}% of the land${BLOOM_RUN.kind==="procedural"?` of <b>${BLOOM_RUN.planet.name}</b> (${BLOOM_RUN.archetype.name} · public seed ${BLOOM_RUN.seed})`:""}${SCEN?` under <b>${SCN.name}</b>`:""} in ${mins}m ${String(secs).padStart(2,"0")}s.</div>
+    <div class="sub">You held ${Math.round(cov*100)}% of the land${BLOOM_RUN.kind==="procedural"?` of <b>${BLOOM_RUN.planet.name}</b> (${BLOOM_RUN.archetype.name} · ${SEEDWORD} ${BLOOM_RUN.seed})`:""}${SCEN?` under <b>${SCN.name}</b>`:""} in ${mins}m ${String(secs).padStart(2,"0")}s.</div>
     ${pressureReport()}${competitionReport()}${climateReport()}
     <div class="top"><canvas id="plantCv" width="136" height="200"></canvas>
       <div><b>Your plant became:</b><ul>${built.map(b=>`<li>${b}</li>`).join('')||'<li>the unmodified pioneer</li>'}</ul>
@@ -1117,7 +1169,8 @@ function onWin(cov){
     ${sim.colonies.spec.some(Boolean)?`<div style="margin-top:6px"><b>Colony upgrades:</b> ${SEC.map((_,i)=>sim.getSpecialization(i)?`${SPEC[sim.getSpecialization(i)].name} in ${LABEL[i]}`:null).filter(Boolean).join(', ')}</div>`:''}
     <div class="debrief"><b>Why it worked:</b> every region has a <i>limiting factor</i>: the one condition furthest outside your plant's tolerance. You fixed enough of them to hold the planet${gaveUp.length?`, and your build gave these up:<ul>${gaveUp.map(g=>`<li>${g}</li>`).join('')}</ul>No plant tolerates everything. Adapting to one extreme costs you another, so choosing what to sacrifice was the real strategy.`:"."}</div>
     ${owned.length?`<div><b>Real plants do this too:</b><ul class="analog">${owned.filter(u=>u.science).map(u=>`<li><b>${u.name}</b> — ${u.science}</li>`).join('')}</ul></div>`:''}
-    <button class="btn" id="reportContinue">Keep playing →</button>`;
+    <button class="btn" id="reportContinue">Keep playing →</button>${PLAY?runActionsHtml():""}`;
+  if(PLAY) wireActions(document.getElementById("report"));
   drawPlant(document.getElementById("plantCv"));
   document.getElementById("reportModal").classList.add("on");
   document.getElementById("reportContinue").addEventListener("click",()=>{ document.getElementById("reportModal").classList.remove("on"); running=true; document.getElementById("btnPlay").textContent="⏸ pause"; });
@@ -1148,6 +1201,17 @@ if(SCEN){ // BLOOM-012/014: scenario identity (title, header, footer) + the temp
   document.querySelector("header h1 small").textContent+=" · "+SCN.name.toLowerCase();
   const rid=document.getElementById("runId"); rid.textContent=(rid.textContent?rid.textContent+" · ":"")+`scenario ${SCN.id} (layer P ${BLOOM_RUN.summary.scenarioValidation.status})`;
   buildPressureBar(); buildCompBar(); buildClimateBar(); }
+if(PLAY){ // BLOOM-016: player identity (no developer terms) + the run menu in the header
+  const nm=RUN_ARCH?BLOOM_RUN.archetype.name:PC.firstBloom.name, sc=SCN?SCN.name:"Eden";
+  document.title=RUN_ARCH?`BLOOM — ${nm} · ${sc}`:`BLOOM — ${nm}`;
+  document.getElementById("runId").textContent=RUN_ARCH?`${nm} · ${SEEDWORD}: ${BLOOM_RUN.seed} · ${sc}`:nm;
+  const m=document.createElement("span"); m.className="pmenu"; m.id="playMenuWrap";
+  m.innerHTML=`<button class="tb" id="btnMenu" aria-haspopup="true" aria-expanded="false" aria-controls="playMenu">☰ ${PC.actions.menu}</button><div class="pm" id="playMenu">${playActions().map(actBtn).join("")}</div>`;
+  document.querySelector("header .controls").appendChild(m); wireActions(m.querySelector(".pm"));
+  const mb=m.querySelector("#btnMenu"), setOpen=o=>{ m.classList.toggle("open",o); mb.setAttribute("aria-expanded",o); };
+  mb.addEventListener("click",()=>{ const o=!m.classList.contains("open"); setOpen(o); if(o) m.querySelector(".pm button").focus(); });
+  document.addEventListener("click",e=>{ if(!m.contains(e.target)) setOpen(false); });
+  document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&m.classList.contains("open")){ setOpen(false); mb.focus(); } }); }
 // BLOOM-008/009: open on the origin so its colony status and growth focus are the first thing in view
 selected=ORIGIN; renderInspect(); log(`Your plant has just sprouted in ${LABEL[ORIGIN]}: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish.`);
 if(PRESS) log(`☁ ${SCN.display.title}. ${SCN.display.summary} The decline begins in ${mmss(SCN.pressure.graceSeconds)}. Your plant sprouted in ${LABEL[ORIGIN]}.`);
@@ -1213,7 +1277,10 @@ window.BLOOM_API={
 /*  (BLOOM.validateScenario, real pressured witnesses); its solutions are      */
 /*  never handed to the UI.                                                    */
 /* ========================================================================== */
-window.BLOOM_RUN=(function(){
+// the run summary of an accepted procedural world (shared by the harness and the BLOOM-016 player path)
+const procSummary=(A,planet)=>{ const a=planet.archetype; return {kind:"procedural", archetypeId:A.id, archetype:A.name, publicSeed:a.publicSeed,
+  attempt:a.attempt, planetId:planet.id, name:planet.name, validatedLayers:a.validatedLayers, landmasses:a.landmasses, actualWaterPct:a.actualWaterPct}; };
+function harnessRun(){
   if(!window.BLOOM||!window.BLOOM_DATA||!BLOOM_DATA.planets||!BLOOM_DATA.planets.first_bloom) return {kind:"missing"};
   const q=new URLSearchParams(location.search), aid=q.get("archetype"), seedText=q.get("seed"), scText=q.get("scenario");
   const kind=aid===null&&seedText===null?"authored":"procedural";
@@ -1240,11 +1307,11 @@ window.BLOOM_RUN=(function(){
     const byLayer={}; for(const a of e.attempts){ const m=(a.rejected[0]||"").match(/^layer (\d)/); const k=m?`layer ${m[1]}`:"structure / geography"; byLayer[k]=(byLayer[k]||0)+1; }
     return fail(`no acceptable world in ${e.attempts.length} attempts`, { archetype:A.name, attempts:e.attempts.length, rejectedByLayer:byLayer }); }
   // the player never sees validator solutions: drop the witness plan and strategy signatures before the UI starts
-  const {witness, strategies, rejectedAttempts, ...ident}=planet.archetype;
-  planet.archetype={...ident, rejectedAttemptCount:rejectedAttempts.length};
-  return withScenario({kind:"procedural", planet, archetype:A, seed, summary:{kind:"procedural", archetypeId:A.id, archetype:A.name, publicSeed:ident.publicSeed,
-    attempt:ident.attempt, planetId:planet.id, name:planet.name, validatedLayers:ident.validatedLayers, landmasses:ident.landmasses, actualWaterPct:ident.actualWaterPct}});
-})();
+  BLOOM.play.stripPlanet(planet);
+  return withScenario({kind:"procedural", planet, archetype:A, seed, summary:procSummary(A, planet)});
+}
+function startRun(run){
+window.BLOOM_RUN=run;
 if(BLOOM_RUN.kind==="missing"){
   document.body.innerHTML='<p style="padding:24px;font-family:monospace;color:#ff6b6b">BLOOM could not load its engine/content files. Open demos/demo-run.html from inside the full Bloom folder (it needs ../content, ../planets and ../resources).</p>';
 } else if(BLOOM_RUN.failed){ // explicit failure state: identify the request, start nothing
@@ -1264,6 +1331,89 @@ if(BLOOM_RUN.kind==="missing"){
 } else { // run the game UI as an ordinary classic script (same globals as before BLOOM-007)
   const ui=document.createElement("script"); ui.textContent=document.getElementById("bloomUI").textContent; document.body.appendChild(ui);
 }
+}
+/* ========================================================================== */
+/*  BLOOM-016 PLAYER PATH (?play=1&archetype=<id>&scenario=<id>[&seed=<n>]),  */
+/*  launched from index.html. Without a seed: a bounded search over          */
+/*  automatically chosen World Seeds (BLOOM.play.searchWorld: archetype      */
+/*  layers 1–8, then layer P when the scenario changes the run) behind a     */
+/*  "Preparing planet…" screen, in a worker when the browser allows it. With */
+/*  a seed (Play again / a shared link): that seed only. The accepted world's */
+/*  URL replaces the address (reload = the same world). Rejected candidates  */
+/*  never start; no other planet or scenario is ever substituted.            */
+/*  &candidates=a,b,c (QA hook) fixes the seed list; &avoid=<n> skips a seed. */
+/*  ?play=1 alone = First Bloom through the harness path above, unchanged.   */
+/* ========================================================================== */
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fill=(t,m)=>String(t).replace(/\{(\w+)\}/g,(_,k)=>m[k]!==undefined?m[k]:`{${k}}`);
+window.BLOOM_PLAY_LOG={mode:null, steps:[], state:"idle"}; // QA: how the world search ran (never any solution data)
+function playFail(P,{title,body,reason,A,S,retry}){
+  const brief=A&&S?`../index.html#/brief/${A.id}/${S.id}`:"../index.html#/planet";
+  document.title="BLOOM — no world started"; document.querySelector("header h1 small").textContent="";
+  document.querySelector("header .hud").style.visibility="hidden"; document.querySelector("header .controls").style.visibility="hidden";
+  const prep=document.getElementById("prep"); if(prep) prep.remove();
+  document.querySelector("main").innerHTML=`<div class="playfail" id="playFail" role="alert" style="grid-column:1/-1;align-self:start"><h2>${esc(title)}</h2>
+    <p>${esc(body)}</p>${reason?`<p style="color:var(--dim)">${esc(reason)}</p>`:""}
+    ${retry?`<button type="button" id="failRetry" data-go="${retry}">${esc(P.failure.retry)}</button>`:""}
+    <button type="button" id="failChange" data-go="${brief}">${esc(P.failure.change)}</button>
+    <button type="button" id="failHome" data-go="../index.html">${esc(P.actions.home)}</button></div>`;
+  document.querySelectorAll("#playFail button[data-go]").forEach(b=>b.addEventListener("click",()=>{ location.href=b.dataset.go; }));
+  document.getElementById("log").textContent="No world started.";
+  window.BLOOM_API={ run:{ failed:true, play:true, archetypeId:A?A.id:null, scenarioId:S?S.id:null, title } };
+  (document.getElementById("failRetry")||document.getElementById("failChange")).focus();
+}
+function playBoot(q){
+  const D=BLOOM_DATA, P=D.play, aid=q.get("archetype"), scText=q.get("scenario"), seedText=q.get("seed"), cand=q.get("candidates");
+  const A=(D.archetypes||[]).find(a=>a.id===aid); let S=null;
+  try { S=BLOOM.pressure.resolveScenario(D.scenarios, scText); } catch(e){ S=null; }
+  const seedOk=t=>/^\d{1,10}$/.test(t)&&+t<=4294967295;
+  if(!A||!S||(seedText!==null&&!seedOk(seedText))||(cand!==null&&!cand.split(",").every(seedOk)))
+    return playFail(P,{title:P.failure.title, body:P.failure.badLink});
+  const replay=seedText!==null, avoid=q.get("avoid");
+  const rand=()=>crypto.getRandomValues(new Uint32Array(1))[0];
+  const seeds=replay?[+seedText]:cand!==null?cand.split(",").map(Number):BLOOM.play.pickSeeds(P.search.maxCandidates, P.search, rand, avoid!==null&&seedOk(avoid)?+avoid:null);
+  const names={planet:A.name, scenario:S.name}, L=P.loading;
+  // the preparation screen (covers the inert run page until the world is ready)
+  document.title=`BLOOM — ${P.loading.title}`;
+  const prep=document.createElement("div"); prep.className="prep"; prep.id="prep"; prep.setAttribute("role","dialog"); prep.setAttribute("aria-modal","true"); prep.setAttribute("aria-labelledby","prepTitle");
+  prep.innerHTML=`<div class="box"><h2 id="prepTitle">${esc(L.title)}</h2><div class="what" id="prepWhat">${esc(A.name)} · ${esc(S.name)}</div>
+    <div class="stepline" aria-live="polite"><span class="spin" aria-hidden="true"></span><span id="prepStep">${esc(L.steps.terrain)}</span></div>
+    <div class="slow" id="prepSlow"></div><button type="button" id="prepCancel">${esc(L.cancel)}</button></div>`;
+  document.body.appendChild(prep); document.getElementById("prepCancel").focus();
+  const LOG=window.BLOOM_PLAY_LOG; LOG.state="running"; LOG.seeds=seeds.length; let cancelled=false, stop=()=>{};
+  const slowT=setTimeout(()=>{ const e=document.getElementById("prepSlow"); if(e) e.textContent=L.slowNote; },4000);
+  document.getElementById("prepCancel").addEventListener("click",()=>{ cancelled=true; stop(); LOG.state="cancelled"; clearTimeout(slowT);
+    location.href=`../index.html#/brief/${A.id}/${S.id}`; });
+  const onStep=st=>{ if(cancelled) return; LOG.steps.push({step:st.step, index:st.index});
+    const e=document.getElementById("prepStep"); if(e) e.textContent=fill(L.steps[st.step]||L.title, names); };
+  const args={archetypeId:A.id, scenarioId:S.id, seeds};
+  // main-thread fallback (file:// pages cannot start workers): the same generator, one step per task so the screen repaints
+  const searchHere=()=>new Promise((resolve,reject)=>{ LOG.mode="main";
+    const it=BLOOM.play.searchWorld({archetype:A, scenario:S, seeds, config:D.config, traits:D.traits});
+    const next=()=>{ if(cancelled) return; let r; try { r=it.next(); } catch(e){ return reject(e); }
+      if(r.done) return resolve(r.value); onStep(r.value); setTimeout(next,30); };
+    setTimeout(next,30); });
+  const searchWorker=()=>new Promise((resolve,reject)=>{ let w, heard=false;
+    try { w=new Worker("../resources/bloom-play-worker.js"); } catch(e){ return searchHere().then(resolve,reject); }
+    LOG.mode="worker"; stop=()=>w.terminate();
+    w.onmessage=e=>{ heard=true; const m=e.data;
+      if(m.type==="step") onStep(m.step); else { w.terminate(); m.type==="done"?resolve(m.result):reject(new Error(m.message)); } };
+    w.onerror=ev=>{ ev.preventDefault(); w.terminate(); if(!heard) searchHere().then(resolve,reject); else reject(new Error(ev.message||"world search failed")); };
+    w.postMessage(args); });
+  searchWorker().then(res=>{ clearTimeout(slowT); if(cancelled) return; LOG.state=res.ok?"accepted":"failed"; LOG.tried=res.tried.map(t=>({seed:t.seed, outcome:t.outcome}));
+    if(!res.ok) return playFail(P,{title:P.failure.title, A, S, retry:"demo-run.html?"+BLOOM.play.runQuery({archetype:A.id, scenario:S.id}),
+      body:fill(replay?P.failure.replayBody:P.failure.body, names), reason:res.status==="DISALLOWED"?res.reason:null});
+    const planet=res.planet, run={kind:"procedural", play:true, planet, archetype:A, seed:res.seed, scenario:S,
+      summary:{...procSummary(A, planet), scenarioId:S.id, scenario:S.name}};
+    if(res.scenarioValidation) run.summary.scenarioValidation=res.scenarioValidation; // a count only — no builds, no plans
+    history.replaceState(null, "", location.pathname+"?"+BLOOM.play.runQuery({archetype:A.id, seed:res.seed, scenario:S.id}));
+    prep.remove(); startRun(run);
+  }, err=>{ clearTimeout(slowT); LOG.state="error"; LOG.error=String(err&&err.message||err);
+    playFail(P,{title:P.failure.title, body:fill(P.failure.body, names), A, S, retry:"demo-run.html?"+BLOOM.play.runQuery({archetype:A.id, scenario:S.id})}); });
+}
+{ const q=new URLSearchParams(location.search), play=q.get("play")==="1";
+  if(play&&q.get("archetype")!==null&&window.BLOOM&&BLOOM.play&&window.BLOOM_DATA&&BLOOM_DATA.play) playBoot(q);
+  else { const run=harnessRun(); if(play&&!run.failed&&run.kind!=="missing") run.play=true; startRun(run); } }
 </script>
 </body>
 </html>

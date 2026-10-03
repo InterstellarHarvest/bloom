@@ -19,6 +19,10 @@
 //   naming          optional word pools for generated region names (cold/mild/warm/hot/wet/dry/noun), so a world's
 //                   names match its climate; pools left out use the generator's defaults
 //   generation      maxAttempts for the deterministic retry loop
+//   display         (BLOOM-016) player-facing card + briefing copy for the launcher (index.html): tagline (one-sentence
+//                   identity), character (the planet's main problem, a short label), cue (a hint that helps form a hypothesis,
+//                   never a build), detail (one briefing sentence), icon (a temporary icon key), previewSeed (the public seed
+//                   whose raw terrain draws the card's mini map; generation only, nothing is validated for a preview)
 //   validation      what a finished world of this archetype must pass (winnable → bible §10.3 layers 4–6;
 //                   minStrategies → layer 7 strategy diversity; pacing → layer 8 time bands, optionally with
 //                   maxTerminalWaitSeconds; requiredConditions → every proven strategy must answer these conditions)
@@ -29,6 +33,9 @@
   D.archetypes = [
     {
       id: "ocean_archipelago", name: "Ocean Archipelago",
+      display: { tagline: "Fragmented islands surrounded by water.", character: "Crossing water",
+        cue: "Crossing between islands is part of the puzzle.", detail: "The land is split into islands, and no single island is big enough on its own.",
+        icon: "islands", previewSeed: 13 },
       intent: "Fragmented, moist island world: no single island holds enough land to win, so the plant must cross water — and each island still asks its own adaptation questions.",
       sections: [12, 18],
       water: { min: 55, max: 68, tolerance: 5 },
@@ -51,6 +58,9 @@
     },
     {
       id: "desert_world", name: "Desert World",
+      display: { tagline: "A hot, dry world with scattered wet refuges.", character: "Dry ground",
+        cue: "Water strategy matters most.", detail: "Most ground is dry; wet basins and lakeshores are the refuges.",
+        icon: "dunes", previewSeed: 25 },
       intent: "Hot, dry, mostly contiguous world: water is the problem. Scattered wet basins are refuges; the plant must either evolve to live dry or humidify the sky — and each answer gives up different ground.",
       sections: [12, 18],
       // a few lakes/playas in the lowest ground, not seas (sweep of public seeds 1–40: actual water 2–12%)
@@ -86,6 +96,9 @@
     },
     {
       id: "frozen_world", name: "Frozen World",
+      display: { tagline: "A mostly frozen planet with warmer refuges.", character: "Cold ground",
+        cue: "Surviving the cold and warming the climate compete.", detail: "Cold dominates most of the planet, but geothermal refuges are warmer.",
+        icon: "snowflake", previewSeed: 22 },
       intent: "Cold, mostly contiguous world: temperature is the problem. Milder lowlands and geothermal pockets are refuges; the plant must either evolve for the cold or warm the sky — and a warmer sky also pushes the warm refuges toward too hot.",
       sections: [12, 18],
       // lakes and inlets, not seas (sweep of public seeds 1–40: actual water 6–20%)
