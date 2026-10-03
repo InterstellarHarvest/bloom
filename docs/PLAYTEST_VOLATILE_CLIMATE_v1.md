@@ -4,7 +4,7 @@
 
 **Time needed:** one run, about 4–8 minutes, plus nine short answers.
 
-**Gate status:** ☐ not yet played.
+**Gate status:** ✅ **passed** (owner, recorded 2026-10-03 in BLOOM-016): *"1 - done"*, in reply to the PMO recommendation to finish the Volatile Climate run before moving on. This closes the mechanics-expansion block.
 
 ## How to read it
 

@@ -298,3 +298,8 @@ They differ in what they do to the planet and in the land they hold: the Adapt p
 - **Bot vs witness timing.** The witness buys the instant it can, so its two Warms are ~70 s apart; a person who spaces Terraform steps 2+ minutes apart may avoid every shock. That is a legitimate choice, but it makes the scenario's effect depend on purchase timing.
 - **Temporary UI**, like the other scenarios: the status bar adds a two-row strip under the HUD (header ~147 px). Human feel is untested until the owner playtest ([`PLAYTEST_VOLATILE_CLIMATE_v1.md`](PLAYTEST_VOLATILE_CLIMATE_v1.md)).
 
+## 8. Player-facing selection (BLOOM-016)
+
+No scenario numbers changed. Each scenario gained a `display.card` block (tagline = what changes, detail, cue = the key strategic idea, a temporary icon key, and an optional tag; only Eden's *Relaxed*), which the launcher (`index.html`) reads for its scenario cards and briefing. Scenarios are offered as different kinds of problem, not a difficulty ladder.
+
+The launch flow uses layer P exactly as it is: for a scenario that changes the run (`BLOOM.pressure.isDynamic`), every automatically chosen World Seed must pass `validateScenario` on its generated world before the run starts; a rejected or inconclusive candidate is skipped (bounded, `content/play.js` search.maxCandidates = 6) and never started; a DISALLOWED entry in `validation.archetypes` disables that planet + scenario card with its `reason`. No combination is DISALLOWED today. Volatile Climate's human gate passed on 2026-10-03 (*"1 - done"*).
