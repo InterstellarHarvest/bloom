@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM mockup · Concept 10 · Refined unified workbench</title>
+<!--
+  BLOOM-020 · Concept 10 — Refined unified workbench (refinement of Concept 9; Concept 9 is unchanged).
+  VISUAL CONCEPT MOCKUP ONLY: fake data, scripted behaviour, not connected to the game. Not the production UI.
+  Same six modes and the same one-reframe geometry as Concept 9, refined after the owner's BLOOM-019 review:
+    - Region details use layout A (tabbed) only;
+    - the workbench is a top-aligned, CONTENT-HEIGHT panel with a max-height and internal scroll (no full-height slab);
+    - no permanent full-height tool rail. A review-only switch compares two tool-access presentations:
+        1 · Attached dock: a short Explore / Change dock joined to the panel edge; when closed it is a small floating stack;
+        2 · In-panel navigation: Explore / Change controls live in the panel header; when closed a small "Tools" opener remains;
+    - while Adapt / Spread / Terraform is open, clicking a different region changes who you are "Considering for" and stays in
+      the mode. Clicking the already-selected region, or the Details / Region controls, opens its Region details.
+  Content styles are reused from c9.css; the shell (panel, dock, opener, geometry) lives in c10.css; behaviour in c10.js.
+  Review notes: docs/UI_CONCEPT_REVIEW_v4.md
+-->
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="r2.css">
+<link rel="stylesheet" href="c9.css">
+<link rel="stylesheet" href="c10.css">
+</head>
+<body class="r2 c10">
+<header class="top9">
+  <div class="t-left"><b>Eden</b>Fake planet · Dying World scenario</div>
+  <div class="banner" id="banner" role="group" aria-label="Run status"></div>
+  <div id="clock"></div>
+</header>
+<div class="world" id="world">
+  <div class="mapzone can-push" id="mapzone">
+    <div class="mapwrap" id="mapwrap"></div>
+    <div class="mv-legend" id="mvLegend" hidden></div>
+  </div>
+  <div class="bench10" id="bench">
+    <aside class="wb10" id="wb" hidden aria-label="Workbench">
+      <div class="wb10-h">
+        <nav class="nav10" id="nav" aria-label="Workbench tools" hidden></nav>
+        <div class="wb10-t">
+          <span class="mi" aria-hidden="true"></span>
+          <div class="mt"><span class="ml"></span><h2 id="wbT" tabindex="-1"></h2></div>
+          <button type="button" class="x-btn" id="wbX" aria-label="Close workbench">✕</button>
+        </div>
+      </div>
+      <div class="ctx9 ctx10" id="ctx" hidden></div>
+      <div class="wb10-b" id="wbBody">
+        <div class="pane" id="p-region" data-mode="region" hidden></div>
+        <div class="pane" id="p-regions" data-mode="regions" hidden></div>
+        <div class="pane" id="p-mapview" data-mode="mapview" hidden></div>
+        <div class="pane" id="p-adapt" data-mode="adapt" hidden></div>
+        <div class="pane" id="p-spread" data-mode="spread" hidden></div>
+        <div class="pane" id="p-terraform" data-mode="terraform" hidden></div>
+      </div>
+    </aside>
+    <nav class="dock10" id="dock" aria-label="Tools" hidden></nav>
+    <button type="button" class="opener10" id="opener" hidden aria-controls="wb"><span class="oi" aria-hidden="true">🧰</span><span class="ot">Tools<small>Explore · Change</small></span></button>
+  </div>
+</div>
+<div class="sr-only" id="c10live" role="status" aria-live="polite"></div>
+
+<script src="shared.js"></script>
+<script src="r2.js"></script>
+<script src="c10.js"></script>
+</body>
+</html>

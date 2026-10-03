@@ -183,3 +183,18 @@ The owner reviewed Concepts 5–8 and chose to converge on **Concept 8's side wo
   - the touch purchase pattern;
   - the questions in v3 §13.
 - The production run-screen UI is **not locked** and the rebuild is not started.
+
+### 10.3 Owner decisions from the Concept 9 review: refinement (recorded with BLOOM-020)
+
+The owner reviewed Concept 9. The full record is in [`UI_CONCEPT_REVIEW_v4.md`](UI_CONCEPT_REVIEW_v4.md).
+- **Decided:** Region details use **layout A · Tabbed** (fixed summary + Overview / Colony / Science tabs). B and C are retired as candidates.
+- **Not approved as it was:** the permanent full-height Explore / Change rail at the outer edge.
+- **New rule: content-height workbench.**
+  - The workbench is top-aligned and only as tall as its content, up to a max-height.
+  - Past that, the mode's own body scrolls inside it.
+  - It is never a full-height slab, and the map still reserves the column while it is open.
+- **Under test (Concept 10):**
+  - tool access as an **attached short dock** vs **in-panel Explore / Change navigation** (review-only switch);
+  - in Adapt / Spread / Terraform, a map click **re-targets "Considering for"** and stays in the mode, with Details, a second click or the Region tool opening Region details.
+- **Geometry rule unchanged:** one reframe on open; zero movement for region → region, mode switches and tool-access switches; exact restore on close.
+- The production run-screen UI is **not locked** and the rebuild is not started.
