@@ -1,0 +1,3760 @@
+{
+ "when": "2026-10-03T19:02:23.190Z",
+ "checks": [
+  {
+   "name": "gallery defaults to Convergence (BLOOM-019)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "gallery: Convergence launches Concept 9",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "gallery: Round 2 still launches Concepts 5–8, Round 1 still launches 1–4",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "gallery: hidden Round 1 / Round 2 links not tabbable",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "gallery tabs: arrow keys move Convergence → Round 2",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "gallery tabs: → Round 1",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "gallery tabs: wrap back to Convergence",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "gallery: Concepts 1–9 all reachable, and each back link returns to its own tab",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "gallery: an old BLOOM-018 \"Round 2\" memory does not hide the new Convergence default",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "gallery no horizontal scroll @1280x800",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "gallery no horizontal scroll @1024x768",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "gallery no horizontal scroll @1440x900",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "gallery: no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "regression concept-1-hybrid.html: loads, selects a region, opens Adapt and previews a card, no errors",
+   "ok": true,
+   "detail": {
+    "sel": "frost",
+    "pv": 4,
+    "errs": []
+   }
+  },
+  {
+   "name": "regression concept-2-drawers.html: loads, selects a region, opens Adapt and previews a card, no errors",
+   "ok": true,
+   "detail": {
+    "sel": "frost",
+    "pv": 2,
+    "errs": []
+   }
+  },
+  {
+   "name": "regression concept-3-specimen.html: loads, selects a region, opens Adapt and previews a card, no errors",
+   "ok": true,
+   "detail": {
+    "sel": "frost",
+    "pv": 2,
+    "errs": []
+   }
+  },
+  {
+   "name": "regression concept-4-shelf.html: loads, selects a region, opens Adapt and previews a card, no errors",
+   "ok": true,
+   "detail": {
+    "sel": "frost",
+    "pv": 2,
+    "errs": []
+   }
+  },
+  {
+   "name": "regression concept-5-popover.html: loads, selects a region, opens Adapt and previews a card, no errors",
+   "ok": true,
+   "detail": {
+    "sel": "frost",
+    "pv": 2,
+    "errs": []
+   }
+  },
+  {
+   "name": "regression concept-6-sidecar.html: loads, selects a region, opens Adapt and previews a card, no errors",
+   "ok": true,
+   "detail": {
+    "sel": "frost",
+    "pv": 2,
+    "errs": []
+   }
+  },
+  {
+   "name": "regression concept-7-bottom-bench.html: loads, selects a region, opens Adapt and previews a card, no errors",
+   "ok": true,
+   "detail": {
+    "sel": "frost",
+    "pv": 2,
+    "errs": []
+   }
+  },
+  {
+   "name": "regression concept-8-side-bench.html: loads, selects a region, opens Adapt and previews a card, no errors",
+   "ok": true,
+   "detail": {
+    "sel": "frost",
+    "pv": 2,
+    "errs": []
+   }
+  },
+  {
+   "name": "c9@1280x800 opens cleanly: workbench closed, no region popup element",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 default map is large (≥ 80% of viewport width available, ≥ 55% height)",
+   "ok": true,
+   "detail": [
+    16,
+    140,
+    1164,
+    644
+   ]
+  },
+  {
+   "name": "c9@1280x800 rail: five tools in two groups (Explore: Regions, Map View · Change: Adapt, Spread, Terraform)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 rail is compact (≤ 84 px wide) and every tool visible",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 player-facing UI says \"Map View\", never \"Lens\"",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 no horizontal scroll (idle)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 top banner centred (±3 px)",
+   "ok": true,
+   "detail": {
+    "centre": 640,
+    "vw": 1280,
+    "h": 76,
+    "w": 727,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   }
+  },
+  {
+   "name": "c9@1280x800 Biomass is the strongest number in the banner",
+   "ok": true,
+   "detail": {
+    "centre": 640,
+    "vw": 1280,
+    "h": 76,
+    "w": 727,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   }
+  },
+  {
+   "name": "c9@1280x800 banner is substantial but not tall (60–90 px, top band ≤ 90 px)",
+   "ok": true,
+   "detail": {
+    "centre": 640,
+    "vw": 1280,
+    "h": 76,
+    "w": 727,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   }
+  },
+  {
+   "name": "c9@1280x800 banner shows Biomass, In bloom vs goal, living regions, Dying World, climate",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Pause and speed visible",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Pause stops the fake clock",
+   "ok": true,
+   "detail": [
+    4,
+    4
+   ]
+  },
+  {
+   "name": "c9@1280x800 Pause button reads Play while paused; banner says paused",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 speed cycles 2× → 4× → 1×",
+   "ok": true,
+   "detail": [
+    "2×",
+    "4×",
+    "1×"
+   ]
+  },
+  {
+   "name": "c9@1280x800 4× runs the fake clock faster",
+   "ok": true,
+   "detail": 4
+  },
+  {
+   "name": "c9@1280x800 region click opens the workbench in Region mode (Frost Ridge)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Region mode is obvious in the workbench header",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 opening reframes the map once (box changed, one open transition)",
+   "ok": true,
+   "detail": {
+    "r0": [
+     16,
+     140,
+     1164,
+     644
+    ],
+    "r1": [
+     16,
+     140,
+     732,
+     644
+    ],
+    "flips": 1
+   }
+  },
+  {
+   "name": "c9@1280x800 map stays large with the workbench open (≥ 50% of viewport width)",
+   "ok": true,
+   "detail": [
+    16,
+    140,
+    732,
+    644
+   ]
+  },
+  {
+   "name": "c9@1280x800 workbench sits beside the map, never over it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 no horizontal scroll (workbench open)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 region → region updates the workbench each click (Ember Rise → Dust Reach → Marsh Low → Cloud Steps → Salt Flats)",
+   "ok": true,
+   "detail": [
+    "Ember Rise",
+    "Dust Reach",
+    "Marsh Low",
+    "Cloud Steps",
+    "Salt Flats"
+   ]
+  },
+  {
+   "name": "c9@1280x800 region → region: zero map geometry change, workbench never closed/reopened",
+   "ok": true,
+   "detail": {
+    "rr": {
+     "sizes": [],
+     "flips": 0
+    },
+    "r1": [
+     16,
+     140,
+     732,
+     644
+    ],
+    "r2": [
+     16,
+     140,
+     732,
+     644
+    ]
+   }
+  },
+  {
+   "name": "c9@1280x800 selected region outline follows the selection",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 A tabbed: fixed summary (plant, status, limit, fixes) + Overview / Colony / Science tabs",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 A tabbed: Overview shows conditions, stand density, Biomass; summary shows focus",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800 A tabbed: Colony tab shows Roots / Leaves / Seeds + local specialization",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 B dashboard: compact grid (4 conditions + stand / Biomass / focus / local upgrade) visible with tabs below",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 B dashboard: required state visible without switching tabs",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800 C sections: no category tabs; Holding it back / Conditions / Colony / Plant sections",
+   "ok": true,
+   "detail": [
+    "What’s holding it back",
+    "Conditions",
+    "Colony",
+    "Plant"
+   ]
+  },
+  {
+   "name": "c9@1280x800 C sections: specimen + focus + local specialization live in the scrolling workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 C sections: jump buttons scroll to a section",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 C sections: region → region keeps the scroll position for comparison",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 A/B/C switch preserves the selected region (Marsh Low) in all three",
+   "ok": true,
+   "detail": {
+    "a": true,
+    "b": true,
+    "c": true
+   }
+  },
+  {
+   "name": "c9@1280x800 Region: Terraform fix preview keeps plant layers identical, changes environment",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Region: Adapt fix preview changes plant layers",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Region: fix hover previews on the real map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 colony focus Roots / Leaves / Seeds changes state from the workbench",
+   "ok": true,
+   "detail": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "name": "c9@1280x800 Regions mode: rail tool pressed, header says Regions, 10 rows with triage status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Regions mode shows limiting factors and Blocked / Strained / Thriving groups",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Regions: hovering a row outlines it on the map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Regions → pick switches to Region mode for that region (Salt Flats), selected on the map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Regions → Region: zero map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1280x800 Region header \"All regions\" returns to Regions mode",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 adapt: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 adapt hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 0,
+    "arcs": 0,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800 Adapt preview changes the plant (anatomy)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Adapt: card tagged as helping the selected region; verdict names it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 adapt: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 spread: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 spread hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 1,
+    "worse": 0,
+    "arcs": 2,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800 Spread preview draws seed paths on the real map",
+   "ok": true,
+   "detail": {
+    "open": 1,
+    "worse": 0,
+    "arcs": 2,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800 spread: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 terraform: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 terraform hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 2,
+    "arcs": 0,
+    "tint": 0.22,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800 Terraform preview: plant layers identical (anatomy unchanged), environment changed",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Terraform preview: \"plant unchanged\" tag + planet tint on the real map",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 2,
+    "arcs": 0,
+    "tint": 0.22,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800 terraform: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Region → Adapt → Spread → Terraform → Map View → Regions: zero further map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1280x800 buying Cold Tolerance works (fake), opens Frost Ridge, clears the card tag",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Map View mode: five choices, Plants is committed by default",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Map View hover previews the Water overlay on the map (uncommitted)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 leaving an uncommitted Map View option restores the committed view",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 keyboard focus on a Map View option previews it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 arrow keys move the preview (Temperature → Water)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 moving focus away restores the committed view",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 clicking commits a Map View (Soil); it is visibly active in the chooser, legend and rail",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 with Soil committed: hover Hazard previews, leaving returns to Soil",
+   "ok": true,
+   "detail": "hazard"
+  },
+  {
+   "name": "c9@1280x800 committed Map View persists while another mode is open",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 returning to Plants removes the heatmap",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Map View preview / commit: zero map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1280x800 closing the workbench restores the map exactly and clears the selection",
+   "ok": true,
+   "detail": {
+    "r0": [
+     16,
+     140,
+     1164,
+     644
+    ],
+    "r3": [
+     16,
+     140,
+     1164,
+     644
+    ]
+   }
+  },
+  {
+   "name": "c9@1280x800 keyboard: Enter on a region opens Region mode and keeps focus on the map for quick comparison",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 keyboard: Tab + Enter on the next region updates the workbench in place",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 keyboard: Esc closes the workbench, focus returns to the region, map restored",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 keyboard: rail tool opens its mode and moves focus into the workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 keyboard: Esc returns focus to the rail tool",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 keyboard: pressing the active rail tool again closes the workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Tab walk (closed): every stop visible, focus ring present, nothing hidden (39 stops)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800 closed workbench contents are not tabbable",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 Tab walk (Region open): no hidden stops (inactive panes / tabs excluded)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800 no horizontal scroll (end)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800 no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1024x768 opens cleanly: workbench closed, no region popup element",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 default map is large (≥ 80% of viewport width available, ≥ 55% height)",
+   "ok": true,
+   "detail": [
+    16,
+    136,
+    916,
+    616
+   ]
+  },
+  {
+   "name": "c9@1024x768 rail: five tools in two groups (Explore: Regions, Map View · Change: Adapt, Spread, Terraform)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 rail is compact (≤ 84 px wide) and every tool visible",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 player-facing UI says \"Map View\", never \"Lens\"",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 no horizontal scroll (idle)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 top banner centred (±3 px)",
+   "ok": true,
+   "detail": {
+    "centre": 512,
+    "vw": 1024,
+    "h": 72,
+    "w": 618,
+    "bio": 36,
+    "max": 19,
+    "top": 82
+   }
+  },
+  {
+   "name": "c9@1024x768 Biomass is the strongest number in the banner",
+   "ok": true,
+   "detail": {
+    "centre": 512,
+    "vw": 1024,
+    "h": 72,
+    "w": 618,
+    "bio": 36,
+    "max": 19,
+    "top": 82
+   }
+  },
+  {
+   "name": "c9@1024x768 banner is substantial but not tall (60–90 px, top band ≤ 90 px)",
+   "ok": true,
+   "detail": {
+    "centre": 512,
+    "vw": 1024,
+    "h": 72,
+    "w": 618,
+    "bio": 36,
+    "max": 19,
+    "top": 82
+   }
+  },
+  {
+   "name": "c9@1024x768 banner shows Biomass, In bloom vs goal, living regions, Dying World, climate",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Pause and speed visible",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Pause stops the fake clock",
+   "ok": true,
+   "detail": [
+    1,
+    1
+   ]
+  },
+  {
+   "name": "c9@1024x768 Pause button reads Play while paused; banner says paused",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 speed cycles 2× → 4× → 1×",
+   "ok": true,
+   "detail": [
+    "2×",
+    "4×",
+    "1×"
+   ]
+  },
+  {
+   "name": "c9@1024x768 4× runs the fake clock faster",
+   "ok": true,
+   "detail": 4
+  },
+  {
+   "name": "c9@1024x768 region click opens the workbench in Region mode (Frost Ridge)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Region mode is obvious in the workbench header",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 opening reframes the map once (box changed, one open transition)",
+   "ok": true,
+   "detail": {
+    "r0": [
+     16,
+     136,
+     916,
+     616
+    ],
+    "r1": [
+     16,
+     136,
+     528,
+     616
+    ],
+    "flips": 1
+   }
+  },
+  {
+   "name": "c9@1024x768 map stays large with the workbench open (≥ 50% of viewport width)",
+   "ok": true,
+   "detail": [
+    16,
+    136,
+    528,
+    616
+   ]
+  },
+  {
+   "name": "c9@1024x768 workbench sits beside the map, never over it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 no horizontal scroll (workbench open)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 region → region updates the workbench each click (Ember Rise → Dust Reach → Marsh Low → Cloud Steps → Salt Flats)",
+   "ok": true,
+   "detail": [
+    "Ember Rise",
+    "Dust Reach",
+    "Marsh Low",
+    "Cloud Steps",
+    "Salt Flats"
+   ]
+  },
+  {
+   "name": "c9@1024x768 region → region: zero map geometry change, workbench never closed/reopened",
+   "ok": true,
+   "detail": {
+    "rr": {
+     "sizes": [],
+     "flips": 0
+    },
+    "r1": [
+     16,
+     136,
+     528,
+     616
+    ],
+    "r2": [
+     16,
+     136,
+     528,
+     616
+    ]
+   }
+  },
+  {
+   "name": "c9@1024x768 selected region outline follows the selection",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 A tabbed: fixed summary (plant, status, limit, fixes) + Overview / Colony / Science tabs",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 A tabbed: Overview shows conditions, stand density, Biomass; summary shows focus",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1024x768 A tabbed: Colony tab shows Roots / Leaves / Seeds + local specialization",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 B dashboard: compact grid (4 conditions + stand / Biomass / focus / local upgrade) visible with tabs below",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 B dashboard: required state visible without switching tabs",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1024x768 C sections: no category tabs; Holding it back / Conditions / Colony / Plant sections",
+   "ok": true,
+   "detail": [
+    "What’s holding it back",
+    "Conditions",
+    "Colony",
+    "Plant"
+   ]
+  },
+  {
+   "name": "c9@1024x768 C sections: specimen + focus + local specialization live in the scrolling workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 C sections: jump buttons scroll to a section",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 C sections: region → region keeps the scroll position for comparison",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 A/B/C switch preserves the selected region (Marsh Low) in all three",
+   "ok": true,
+   "detail": {
+    "a": true,
+    "b": true,
+    "c": true
+   }
+  },
+  {
+   "name": "c9@1024x768 Region: Terraform fix preview keeps plant layers identical, changes environment",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Region: Adapt fix preview changes plant layers",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Region: fix hover previews on the real map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 colony focus Roots / Leaves / Seeds changes state from the workbench",
+   "ok": true,
+   "detail": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "name": "c9@1024x768 Regions mode: rail tool pressed, header says Regions, 10 rows with triage status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Regions mode shows limiting factors and Blocked / Strained / Thriving groups",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Regions: hovering a row outlines it on the map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Regions → pick switches to Region mode for that region (Salt Flats), selected on the map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Regions → Region: zero map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1024x768 Region header \"All regions\" returns to Regions mode",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 adapt: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 adapt hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 0,
+    "arcs": 0,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1024x768 Adapt preview changes the plant (anatomy)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Adapt: card tagged as helping the selected region; verdict names it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 adapt: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 spread: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 spread hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 1,
+    "worse": 0,
+    "arcs": 2,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1024x768 Spread preview draws seed paths on the real map",
+   "ok": true,
+   "detail": {
+    "open": 1,
+    "worse": 0,
+    "arcs": 2,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1024x768 spread: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 terraform: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 terraform hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 2,
+    "arcs": 0,
+    "tint": 0.22,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1024x768 Terraform preview: plant layers identical (anatomy unchanged), environment changed",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Terraform preview: \"plant unchanged\" tag + planet tint on the real map",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 2,
+    "arcs": 0,
+    "tint": 0.22,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1024x768 terraform: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Region → Adapt → Spread → Terraform → Map View → Regions: zero further map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1024x768 buying Cold Tolerance works (fake), opens Frost Ridge, clears the card tag",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Map View mode: five choices, Plants is committed by default",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Map View hover previews the Water overlay on the map (uncommitted)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 leaving an uncommitted Map View option restores the committed view",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 keyboard focus on a Map View option previews it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 arrow keys move the preview (Temperature → Water)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 moving focus away restores the committed view",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 clicking commits a Map View (Soil); it is visibly active in the chooser, legend and rail",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 with Soil committed: hover Hazard previews, leaving returns to Soil",
+   "ok": true,
+   "detail": "hazard"
+  },
+  {
+   "name": "c9@1024x768 committed Map View persists while another mode is open",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 returning to Plants removes the heatmap",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Map View preview / commit: zero map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1024x768 closing the workbench restores the map exactly and clears the selection",
+   "ok": true,
+   "detail": {
+    "r0": [
+     16,
+     136,
+     916,
+     616
+    ],
+    "r3": [
+     16,
+     136,
+     916,
+     616
+    ]
+   }
+  },
+  {
+   "name": "c9@1024x768 keyboard: Enter on a region opens Region mode and keeps focus on the map for quick comparison",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 keyboard: Tab + Enter on the next region updates the workbench in place",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 keyboard: Esc closes the workbench, focus returns to the region, map restored",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 keyboard: rail tool opens its mode and moves focus into the workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 keyboard: Esc returns focus to the rail tool",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 keyboard: pressing the active rail tool again closes the workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Tab walk (closed): every stop visible, focus ring present, nothing hidden (39 stops)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1024x768 closed workbench contents are not tabbable",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 Tab walk (Region open): no hidden stops (inactive panes / tabs excluded)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1024x768 no horizontal scroll (end)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768 no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1440x900 opens cleanly: workbench closed, no region popup element",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 default map is large (≥ 80% of viewport width available, ≥ 55% height)",
+   "ok": true,
+   "detail": [
+    16,
+    140,
+    1324,
+    744
+   ]
+  },
+  {
+   "name": "c9@1440x900 rail: five tools in two groups (Explore: Regions, Map View · Change: Adapt, Spread, Terraform)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 rail is compact (≤ 84 px wide) and every tool visible",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 player-facing UI says \"Map View\", never \"Lens\"",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 no horizontal scroll (idle)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 top banner centred (±3 px)",
+   "ok": true,
+   "detail": {
+    "centre": 720,
+    "vw": 1440,
+    "h": 76,
+    "w": 727,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   }
+  },
+  {
+   "name": "c9@1440x900 Biomass is the strongest number in the banner",
+   "ok": true,
+   "detail": {
+    "centre": 720,
+    "vw": 1440,
+    "h": 76,
+    "w": 727,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   }
+  },
+  {
+   "name": "c9@1440x900 banner is substantial but not tall (60–90 px, top band ≤ 90 px)",
+   "ok": true,
+   "detail": {
+    "centre": 720,
+    "vw": 1440,
+    "h": 76,
+    "w": 727,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   }
+  },
+  {
+   "name": "c9@1440x900 banner shows Biomass, In bloom vs goal, living regions, Dying World, climate",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Pause and speed visible",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Pause stops the fake clock",
+   "ok": true,
+   "detail": [
+    1,
+    1
+   ]
+  },
+  {
+   "name": "c9@1440x900 Pause button reads Play while paused; banner says paused",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 speed cycles 2× → 4× → 1×",
+   "ok": true,
+   "detail": [
+    "2×",
+    "4×",
+    "1×"
+   ]
+  },
+  {
+   "name": "c9@1440x900 4× runs the fake clock faster",
+   "ok": true,
+   "detail": 4
+  },
+  {
+   "name": "c9@1440x900 region click opens the workbench in Region mode (Frost Ridge)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Region mode is obvious in the workbench header",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 opening reframes the map once (box changed, one open transition)",
+   "ok": true,
+   "detail": {
+    "r0": [
+     16,
+     140,
+     1324,
+     744
+    ],
+    "r1": [
+     16,
+     140,
+     856,
+     744
+    ],
+    "flips": 1
+   }
+  },
+  {
+   "name": "c9@1440x900 map stays large with the workbench open (≥ 50% of viewport width)",
+   "ok": true,
+   "detail": [
+    16,
+    140,
+    856,
+    744
+   ]
+  },
+  {
+   "name": "c9@1440x900 workbench sits beside the map, never over it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 no horizontal scroll (workbench open)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 region → region updates the workbench each click (Ember Rise → Dust Reach → Marsh Low → Cloud Steps → Salt Flats)",
+   "ok": true,
+   "detail": [
+    "Ember Rise",
+    "Dust Reach",
+    "Marsh Low",
+    "Cloud Steps",
+    "Salt Flats"
+   ]
+  },
+  {
+   "name": "c9@1440x900 region → region: zero map geometry change, workbench never closed/reopened",
+   "ok": true,
+   "detail": {
+    "rr": {
+     "sizes": [],
+     "flips": 0
+    },
+    "r1": [
+     16,
+     140,
+     856,
+     744
+    ],
+    "r2": [
+     16,
+     140,
+     856,
+     744
+    ]
+   }
+  },
+  {
+   "name": "c9@1440x900 selected region outline follows the selection",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 A tabbed: fixed summary (plant, status, limit, fixes) + Overview / Colony / Science tabs",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 A tabbed: Overview shows conditions, stand density, Biomass; summary shows focus",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1440x900 A tabbed: Colony tab shows Roots / Leaves / Seeds + local specialization",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 B dashboard: compact grid (4 conditions + stand / Biomass / focus / local upgrade) visible with tabs below",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 B dashboard: required state visible without switching tabs",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1440x900 C sections: no category tabs; Holding it back / Conditions / Colony / Plant sections",
+   "ok": true,
+   "detail": [
+    "What’s holding it back",
+    "Conditions",
+    "Colony",
+    "Plant"
+   ]
+  },
+  {
+   "name": "c9@1440x900 C sections: specimen + focus + local specialization live in the scrolling workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 C sections: jump buttons scroll to a section",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 C sections: region → region keeps the scroll position for comparison",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 A/B/C switch preserves the selected region (Marsh Low) in all three",
+   "ok": true,
+   "detail": {
+    "a": true,
+    "b": true,
+    "c": true
+   }
+  },
+  {
+   "name": "c9@1440x900 Region: Terraform fix preview keeps plant layers identical, changes environment",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Region: Adapt fix preview changes plant layers",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Region: fix hover previews on the real map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 colony focus Roots / Leaves / Seeds changes state from the workbench",
+   "ok": true,
+   "detail": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "name": "c9@1440x900 Regions mode: rail tool pressed, header says Regions, 10 rows with triage status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Regions mode shows limiting factors and Blocked / Strained / Thriving groups",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Regions: hovering a row outlines it on the map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Regions → pick switches to Region mode for that region (Salt Flats), selected on the map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Regions → Region: zero map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1440x900 Region header \"All regions\" returns to Regions mode",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 adapt: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 adapt hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 0,
+    "arcs": 0,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1440x900 Adapt preview changes the plant (anatomy)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Adapt: card tagged as helping the selected region; verdict names it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 adapt: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 spread: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 spread hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 1,
+    "worse": 0,
+    "arcs": 2,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1440x900 Spread preview draws seed paths on the real map",
+   "ok": true,
+   "detail": {
+    "open": 1,
+    "worse": 0,
+    "arcs": 2,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1440x900 spread: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 terraform: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 terraform hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 2,
+    "arcs": 0,
+    "tint": 0.22,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1440x900 Terraform preview: plant layers identical (anatomy unchanged), environment changed",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Terraform preview: \"plant unchanged\" tag + planet tint on the real map",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 2,
+    "arcs": 0,
+    "tint": 0.22,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1440x900 terraform: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Region → Adapt → Spread → Terraform → Map View → Regions: zero further map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1440x900 buying Cold Tolerance works (fake), opens Frost Ridge, clears the card tag",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Map View mode: five choices, Plants is committed by default",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Map View hover previews the Water overlay on the map (uncommitted)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 leaving an uncommitted Map View option restores the committed view",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 keyboard focus on a Map View option previews it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 arrow keys move the preview (Temperature → Water)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 moving focus away restores the committed view",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 clicking commits a Map View (Soil); it is visibly active in the chooser, legend and rail",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 with Soil committed: hover Hazard previews, leaving returns to Soil",
+   "ok": true,
+   "detail": "hazard"
+  },
+  {
+   "name": "c9@1440x900 committed Map View persists while another mode is open",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 returning to Plants removes the heatmap",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Map View preview / commit: zero map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1440x900 closing the workbench restores the map exactly and clears the selection",
+   "ok": true,
+   "detail": {
+    "r0": [
+     16,
+     140,
+     1324,
+     744
+    ],
+    "r3": [
+     16,
+     140,
+     1324,
+     744
+    ]
+   }
+  },
+  {
+   "name": "c9@1440x900 keyboard: Enter on a region opens Region mode and keeps focus on the map for quick comparison",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 keyboard: Tab + Enter on the next region updates the workbench in place",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 keyboard: Esc closes the workbench, focus returns to the region, map restored",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 keyboard: rail tool opens its mode and moves focus into the workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 keyboard: Esc returns focus to the rail tool",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 keyboard: pressing the active rail tool again closes the workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Tab walk (closed): every stop visible, focus ring present, nothing hidden (39 stops)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1440x900 closed workbench contents are not tabbable",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 Tab walk (Region open): no hidden stops (inactive panes / tabs excluded)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1440x900 no horizontal scroll (end)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1440x900 no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800+rm opens cleanly: workbench closed, no region popup element",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm default map is large (≥ 80% of viewport width available, ≥ 55% height)",
+   "ok": true,
+   "detail": [
+    16,
+    140,
+    1164,
+    644
+   ]
+  },
+  {
+   "name": "c9@1280x800+rm rail: five tools in two groups (Explore: Regions, Map View · Change: Adapt, Spread, Terraform)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm rail is compact (≤ 84 px wide) and every tool visible",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm player-facing UI says \"Map View\", never \"Lens\"",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm no horizontal scroll (idle)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm reduced motion detected by page",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm top banner centred (±3 px)",
+   "ok": true,
+   "detail": {
+    "centre": 640,
+    "vw": 1280,
+    "h": 76,
+    "w": 727,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   }
+  },
+  {
+   "name": "c9@1280x800+rm Biomass is the strongest number in the banner",
+   "ok": true,
+   "detail": {
+    "centre": 640,
+    "vw": 1280,
+    "h": 76,
+    "w": 727,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   }
+  },
+  {
+   "name": "c9@1280x800+rm banner is substantial but not tall (60–90 px, top band ≤ 90 px)",
+   "ok": true,
+   "detail": {
+    "centre": 640,
+    "vw": 1280,
+    "h": 76,
+    "w": 727,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   }
+  },
+  {
+   "name": "c9@1280x800+rm banner shows Biomass, In bloom vs goal, living regions, Dying World, climate",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Pause and speed visible",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Pause stops the fake clock",
+   "ok": true,
+   "detail": [
+    0,
+    0
+   ]
+  },
+  {
+   "name": "c9@1280x800+rm Pause button reads Play while paused; banner says paused",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm speed cycles 2× → 4× → 1×",
+   "ok": true,
+   "detail": [
+    "2×",
+    "4×",
+    "1×"
+   ]
+  },
+  {
+   "name": "c9@1280x800+rm 4× runs the fake clock faster",
+   "ok": true,
+   "detail": 4
+  },
+  {
+   "name": "c9@1280x800+rm region click opens the workbench in Region mode (Frost Ridge)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Region mode is obvious in the workbench header",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm opening reframes the map once (box changed, one open transition)",
+   "ok": true,
+   "detail": {
+    "r0": [
+     16,
+     140,
+     1164,
+     644
+    ],
+    "r1": [
+     16,
+     140,
+     732,
+     644
+    ],
+    "flips": 1
+   }
+  },
+  {
+   "name": "c9@1280x800+rm map stays large with the workbench open (≥ 50% of viewport width)",
+   "ok": true,
+   "detail": [
+    16,
+    140,
+    732,
+    644
+   ]
+  },
+  {
+   "name": "c9@1280x800+rm workbench sits beside the map, never over it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm no horizontal scroll (workbench open)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm region → region updates the workbench each click (Ember Rise → Dust Reach → Marsh Low → Cloud Steps → Salt Flats)",
+   "ok": true,
+   "detail": [
+    "Ember Rise",
+    "Dust Reach",
+    "Marsh Low",
+    "Cloud Steps",
+    "Salt Flats"
+   ]
+  },
+  {
+   "name": "c9@1280x800+rm region → region: zero map geometry change, workbench never closed/reopened",
+   "ok": true,
+   "detail": {
+    "rr": {
+     "sizes": [],
+     "flips": 0
+    },
+    "r1": [
+     16,
+     140,
+     732,
+     644
+    ],
+    "r2": [
+     16,
+     140,
+     732,
+     644
+    ]
+   }
+  },
+  {
+   "name": "c9@1280x800+rm selected region outline follows the selection",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm A tabbed: fixed summary (plant, status, limit, fixes) + Overview / Colony / Science tabs",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm A tabbed: Overview shows conditions, stand density, Biomass; summary shows focus",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800+rm A tabbed: Colony tab shows Roots / Leaves / Seeds + local specialization",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm B dashboard: compact grid (4 conditions + stand / Biomass / focus / local upgrade) visible with tabs below",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm B dashboard: required state visible without switching tabs",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800+rm C sections: no category tabs; Holding it back / Conditions / Colony / Plant sections",
+   "ok": true,
+   "detail": [
+    "What’s holding it back",
+    "Conditions",
+    "Colony",
+    "Plant"
+   ]
+  },
+  {
+   "name": "c9@1280x800+rm C sections: specimen + focus + local specialization live in the scrolling workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm C sections: jump buttons scroll to a section",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm C sections: region → region keeps the scroll position for comparison",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm A/B/C switch preserves the selected region (Marsh Low) in all three",
+   "ok": true,
+   "detail": {
+    "a": true,
+    "b": true,
+    "c": true
+   }
+  },
+  {
+   "name": "c9@1280x800+rm Region: Terraform fix preview keeps plant layers identical, changes environment",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Region: Adapt fix preview changes plant layers",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Region: fix hover previews on the real map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm colony focus Roots / Leaves / Seeds changes state from the workbench",
+   "ok": true,
+   "detail": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "name": "c9@1280x800+rm Regions mode: rail tool pressed, header says Regions, 10 rows with triage status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Regions mode shows limiting factors and Blocked / Strained / Thriving groups",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Regions: hovering a row outlines it on the map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Regions → pick switches to Region mode for that region (Salt Flats), selected on the map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Regions → Region: zero map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1280x800+rm Region header \"All regions\" returns to Regions mode",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm adapt: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm adapt hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 0,
+    "arcs": 0,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800+rm Adapt preview changes the plant (anatomy)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Adapt: card tagged as helping the selected region; verdict names it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm adapt: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm spread: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm spread hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 1,
+    "worse": 0,
+    "arcs": 2,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800+rm Spread preview draws seed paths on the real map",
+   "ok": true,
+   "detail": {
+    "open": 1,
+    "worse": 0,
+    "arcs": 2,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800+rm spread: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm terraform: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm terraform hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 2,
+    "arcs": 0,
+    "tint": 0.22,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800+rm Terraform preview: plant layers identical (anatomy unchanged), environment changed",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Terraform preview: \"plant unchanged\" tag + planet tint on the real map",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 2,
+    "arcs": 0,
+    "tint": 0.22,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800+rm terraform: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Region → Adapt → Spread → Terraform → Map View → Regions: zero further map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1280x800+rm buying Cold Tolerance works (fake), opens Frost Ridge, clears the card tag",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Map View mode: five choices, Plants is committed by default",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Map View hover previews the Water overlay on the map (uncommitted)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm leaving an uncommitted Map View option restores the committed view",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm keyboard focus on a Map View option previews it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm arrow keys move the preview (Temperature → Water)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm moving focus away restores the committed view",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm clicking commits a Map View (Soil); it is visibly active in the chooser, legend and rail",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm with Soil committed: hover Hazard previews, leaving returns to Soil",
+   "ok": true,
+   "detail": "hazard"
+  },
+  {
+   "name": "c9@1280x800+rm committed Map View persists while another mode is open",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm returning to Plants removes the heatmap",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Map View preview / commit: zero map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1280x800+rm closing the workbench restores the map exactly and clears the selection",
+   "ok": true,
+   "detail": {
+    "r0": [
+     16,
+     140,
+     1164,
+     644
+    ],
+    "r3": [
+     16,
+     140,
+     1164,
+     644
+    ]
+   }
+  },
+  {
+   "name": "c9@1280x800+rm keyboard: Enter on a region opens Region mode and keeps focus on the map for quick comparison",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm keyboard: Tab + Enter on the next region updates the workbench in place",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm keyboard: Esc closes the workbench, focus returns to the region, map restored",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm keyboard: rail tool opens its mode and moves focus into the workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm keyboard: Esc returns focus to the rail tool",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm keyboard: pressing the active rail tool again closes the workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Tab walk (closed): every stop visible, focus ring present, nothing hidden (39 stops)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800+rm closed workbench contents are not tabbable",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm Tab walk (Region open): no hidden stops (inactive panes / tabs excluded)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800+rm no horizontal scroll (end)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+rm no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800+firefox opens cleanly: workbench closed, no region popup element",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox default map is large (≥ 80% of viewport width available, ≥ 55% height)",
+   "ok": true,
+   "detail": [
+    16,
+    140,
+    1164,
+    644
+   ]
+  },
+  {
+   "name": "c9@1280x800+firefox rail: five tools in two groups (Explore: Regions, Map View · Change: Adapt, Spread, Terraform)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox rail is compact (≤ 84 px wide) and every tool visible",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox player-facing UI says \"Map View\", never \"Lens\"",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox no horizontal scroll (idle)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox top banner centred (±3 px)",
+   "ok": true,
+   "detail": {
+    "centre": 640,
+    "vw": 1280,
+    "h": 76,
+    "w": 728,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox Biomass is the strongest number in the banner",
+   "ok": true,
+   "detail": {
+    "centre": 640,
+    "vw": 1280,
+    "h": 76,
+    "w": 728,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox banner is substantial but not tall (60–90 px, top band ≤ 90 px)",
+   "ok": true,
+   "detail": {
+    "centre": 640,
+    "vw": 1280,
+    "h": 76,
+    "w": 728,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox banner shows Biomass, In bloom vs goal, living regions, Dying World, climate",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Pause and speed visible",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Pause stops the fake clock",
+   "ok": true,
+   "detail": [
+    1,
+    1
+   ]
+  },
+  {
+   "name": "c9@1280x800+firefox Pause button reads Play while paused; banner says paused",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox speed cycles 2× → 4× → 1×",
+   "ok": true,
+   "detail": [
+    "2×",
+    "4×",
+    "1×"
+   ]
+  },
+  {
+   "name": "c9@1280x800+firefox 4× runs the fake clock faster",
+   "ok": true,
+   "detail": 4
+  },
+  {
+   "name": "c9@1280x800+firefox region click opens the workbench in Region mode (Frost Ridge)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Region mode is obvious in the workbench header",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox opening reframes the map once (box changed, one open transition)",
+   "ok": true,
+   "detail": {
+    "r0": [
+     16,
+     140,
+     1164,
+     644
+    ],
+    "r1": [
+     16,
+     140,
+     732,
+     644
+    ],
+    "flips": 1
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox map stays large with the workbench open (≥ 50% of viewport width)",
+   "ok": true,
+   "detail": [
+    16,
+    140,
+    732,
+    644
+   ]
+  },
+  {
+   "name": "c9@1280x800+firefox workbench sits beside the map, never over it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox no horizontal scroll (workbench open)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox region → region updates the workbench each click (Ember Rise → Dust Reach → Marsh Low → Cloud Steps → Salt Flats)",
+   "ok": true,
+   "detail": [
+    "Ember Rise",
+    "Dust Reach",
+    "Marsh Low",
+    "Cloud Steps",
+    "Salt Flats"
+   ]
+  },
+  {
+   "name": "c9@1280x800+firefox region → region: zero map geometry change, workbench never closed/reopened",
+   "ok": true,
+   "detail": {
+    "rr": {
+     "sizes": [],
+     "flips": 0
+    },
+    "r1": [
+     16,
+     140,
+     732,
+     644
+    ],
+    "r2": [
+     16,
+     140,
+     732,
+     644
+    ]
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox selected region outline follows the selection",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox A tabbed: fixed summary (plant, status, limit, fixes) + Overview / Colony / Science tabs",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox A tabbed: Overview shows conditions, stand density, Biomass; summary shows focus",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800+firefox A tabbed: Colony tab shows Roots / Leaves / Seeds + local specialization",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox B dashboard: compact grid (4 conditions + stand / Biomass / focus / local upgrade) visible with tabs below",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox B dashboard: required state visible without switching tabs",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800+firefox C sections: no category tabs; Holding it back / Conditions / Colony / Plant sections",
+   "ok": true,
+   "detail": [
+    "What’s holding it back",
+    "Conditions",
+    "Colony",
+    "Plant"
+   ]
+  },
+  {
+   "name": "c9@1280x800+firefox C sections: specimen + focus + local specialization live in the scrolling workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox C sections: jump buttons scroll to a section",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox C sections: region → region keeps the scroll position for comparison",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox A/B/C switch preserves the selected region (Marsh Low) in all three",
+   "ok": true,
+   "detail": {
+    "a": true,
+    "b": true,
+    "c": true
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox Region: Terraform fix preview keeps plant layers identical, changes environment",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Region: Adapt fix preview changes plant layers",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Region: fix hover previews on the real map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox colony focus Roots / Leaves / Seeds changes state from the workbench",
+   "ok": true,
+   "detail": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "name": "c9@1280x800+firefox Regions mode: rail tool pressed, header says Regions, 10 rows with triage status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Regions mode shows limiting factors and Blocked / Strained / Thriving groups",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Regions: hovering a row outlines it on the map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Regions → pick switches to Region mode for that region (Salt Flats), selected on the map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Regions → Region: zero map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox Region header \"All regions\" returns to Regions mode",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox adapt: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox adapt hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 0,
+    "arcs": 0,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox Adapt preview changes the plant (anatomy)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Adapt: card tagged as helping the selected region; verdict names it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox adapt: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox spread: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox spread hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 1,
+    "worse": 0,
+    "arcs": 2,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox Spread preview draws seed paths on the real map",
+   "ok": true,
+   "detail": {
+    "open": 1,
+    "worse": 0,
+    "arcs": 2,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox spread: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox terraform: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox terraform hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 2,
+    "arcs": 0,
+    "tint": 0.22,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox Terraform preview: plant layers identical (anatomy unchanged), environment changed",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Terraform preview: \"plant unchanged\" tag + planet tint on the real map",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 2,
+    "arcs": 0,
+    "tint": 0.22,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox terraform: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Region → Adapt → Spread → Terraform → Map View → Regions: zero further map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox buying Cold Tolerance works (fake), opens Frost Ridge, clears the card tag",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Map View mode: five choices, Plants is committed by default",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Map View hover previews the Water overlay on the map (uncommitted)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox leaving an uncommitted Map View option restores the committed view",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox keyboard focus on a Map View option previews it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox arrow keys move the preview (Temperature → Water)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox moving focus away restores the committed view",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox clicking commits a Map View (Soil); it is visibly active in the chooser, legend and rail",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox with Soil committed: hover Hazard previews, leaving returns to Soil",
+   "ok": true,
+   "detail": "hazard"
+  },
+  {
+   "name": "c9@1280x800+firefox committed Map View persists while another mode is open",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox returning to Plants removes the heatmap",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Map View preview / commit: zero map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox closing the workbench restores the map exactly and clears the selection",
+   "ok": true,
+   "detail": {
+    "r0": [
+     16,
+     140,
+     1164,
+     644
+    ],
+    "r3": [
+     16,
+     140,
+     1164,
+     644
+    ]
+   }
+  },
+  {
+   "name": "c9@1280x800+firefox keyboard: Enter on a region opens Region mode and keeps focus on the map for quick comparison",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox keyboard: Tab + Enter on the next region updates the workbench in place",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox keyboard: Esc closes the workbench, focus returns to the region, map restored",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox keyboard: rail tool opens its mode and moves focus into the workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox keyboard: Esc returns focus to the rail tool",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox keyboard: pressing the active rail tool again closes the workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Tab walk (closed): every stop visible, focus ring present, nothing hidden (40 stops)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800+firefox closed workbench contents are not tabbable",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox Tab walk (Region open): no hidden stops (inactive panes / tabs excluded)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1280x800+firefox no horizontal scroll (end)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1280x800+firefox no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1024x768+firefox opens cleanly: workbench closed, no region popup element",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox default map is large (≥ 80% of viewport width available, ≥ 55% height)",
+   "ok": true,
+   "detail": [
+    16,
+    136,
+    916,
+    616
+   ]
+  },
+  {
+   "name": "c9@1024x768+firefox rail: five tools in two groups (Explore: Regions, Map View · Change: Adapt, Spread, Terraform)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox rail is compact (≤ 84 px wide) and every tool visible",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox player-facing UI says \"Map View\", never \"Lens\"",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox no horizontal scroll (idle)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox top banner centred (±3 px)",
+   "ok": true,
+   "detail": {
+    "centre": 512,
+    "vw": 1024,
+    "h": 72,
+    "w": 619,
+    "bio": 36,
+    "max": 19,
+    "top": 82
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox Biomass is the strongest number in the banner",
+   "ok": true,
+   "detail": {
+    "centre": 512,
+    "vw": 1024,
+    "h": 72,
+    "w": 619,
+    "bio": 36,
+    "max": 19,
+    "top": 82
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox banner is substantial but not tall (60–90 px, top band ≤ 90 px)",
+   "ok": true,
+   "detail": {
+    "centre": 512,
+    "vw": 1024,
+    "h": 72,
+    "w": 619,
+    "bio": 36,
+    "max": 19,
+    "top": 82
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox banner shows Biomass, In bloom vs goal, living regions, Dying World, climate",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Pause and speed visible",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Pause stops the fake clock",
+   "ok": true,
+   "detail": [
+    1,
+    1
+   ]
+  },
+  {
+   "name": "c9@1024x768+firefox Pause button reads Play while paused; banner says paused",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox speed cycles 2× → 4× → 1×",
+   "ok": true,
+   "detail": [
+    "2×",
+    "4×",
+    "1×"
+   ]
+  },
+  {
+   "name": "c9@1024x768+firefox 4× runs the fake clock faster",
+   "ok": true,
+   "detail": 4
+  },
+  {
+   "name": "c9@1024x768+firefox region click opens the workbench in Region mode (Frost Ridge)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Region mode is obvious in the workbench header",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox opening reframes the map once (box changed, one open transition)",
+   "ok": true,
+   "detail": {
+    "r0": [
+     16,
+     136,
+     916,
+     616
+    ],
+    "r1": [
+     16,
+     136,
+     528,
+     616
+    ],
+    "flips": 1
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox map stays large with the workbench open (≥ 50% of viewport width)",
+   "ok": true,
+   "detail": [
+    16,
+    136,
+    528,
+    616
+   ]
+  },
+  {
+   "name": "c9@1024x768+firefox workbench sits beside the map, never over it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox no horizontal scroll (workbench open)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox region → region updates the workbench each click (Ember Rise → Dust Reach → Marsh Low → Cloud Steps → Salt Flats)",
+   "ok": true,
+   "detail": [
+    "Ember Rise",
+    "Dust Reach",
+    "Marsh Low",
+    "Cloud Steps",
+    "Salt Flats"
+   ]
+  },
+  {
+   "name": "c9@1024x768+firefox region → region: zero map geometry change, workbench never closed/reopened",
+   "ok": true,
+   "detail": {
+    "rr": {
+     "sizes": [],
+     "flips": 0
+    },
+    "r1": [
+     16,
+     136,
+     528,
+     616
+    ],
+    "r2": [
+     16,
+     136,
+     528,
+     616
+    ]
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox selected region outline follows the selection",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox A tabbed: fixed summary (plant, status, limit, fixes) + Overview / Colony / Science tabs",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox A tabbed: Overview shows conditions, stand density, Biomass; summary shows focus",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1024x768+firefox A tabbed: Colony tab shows Roots / Leaves / Seeds + local specialization",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox B dashboard: compact grid (4 conditions + stand / Biomass / focus / local upgrade) visible with tabs below",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox B dashboard: required state visible without switching tabs",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1024x768+firefox C sections: no category tabs; Holding it back / Conditions / Colony / Plant sections",
+   "ok": true,
+   "detail": [
+    "What’s holding it back",
+    "Conditions",
+    "Colony",
+    "Plant"
+   ]
+  },
+  {
+   "name": "c9@1024x768+firefox C sections: specimen + focus + local specialization live in the scrolling workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox C sections: jump buttons scroll to a section",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox C sections: region → region keeps the scroll position for comparison",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox A/B/C switch preserves the selected region (Marsh Low) in all three",
+   "ok": true,
+   "detail": {
+    "a": true,
+    "b": true,
+    "c": true
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox Region: Terraform fix preview keeps plant layers identical, changes environment",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Region: Adapt fix preview changes plant layers",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Region: fix hover previews on the real map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox colony focus Roots / Leaves / Seeds changes state from the workbench",
+   "ok": true,
+   "detail": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "name": "c9@1024x768+firefox Regions mode: rail tool pressed, header says Regions, 10 rows with triage status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Regions mode shows limiting factors and Blocked / Strained / Thriving groups",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Regions: hovering a row outlines it on the map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Regions → pick switches to Region mode for that region (Salt Flats), selected on the map",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Regions → Region: zero map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox Region header \"All regions\" returns to Regions mode",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox adapt: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox adapt hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 0,
+    "arcs": 0,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox Adapt preview changes the plant (anatomy)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Adapt: card tagged as helping the selected region; verdict names it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox adapt: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox spread: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox spread hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 1,
+    "worse": 0,
+    "arcs": 2,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox Spread preview draws seed paths on the real map",
+   "ok": true,
+   "detail": {
+    "open": 1,
+    "worse": 0,
+    "arcs": 2,
+    "tint": 0,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox spread: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox terraform: same workbench, rail tool pressed, region context kept (\"Considering for Frost Ridge\")",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox terraform hover preview is drawn on the real map and every highlighted region is uncovered",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 2,
+    "arcs": 0,
+    "tint": 0.22,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox Terraform preview: plant layers identical (anatomy unchanged), environment changed",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Terraform preview: \"plant unchanged\" tag + planet tint on the real map",
+   "ok": true,
+   "detail": {
+    "open": 2,
+    "worse": 2,
+    "arcs": 0,
+    "tint": 0.22,
+    "uncovered": true,
+    "overlap": false
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox terraform: no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Region → Adapt → Spread → Terraform → Map View → Regions: zero further map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox buying Cold Tolerance works (fake), opens Frost Ridge, clears the card tag",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Map View mode: five choices, Plants is committed by default",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Map View hover previews the Water overlay on the map (uncommitted)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox leaving an uncommitted Map View option restores the committed view",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox keyboard focus on a Map View option previews it",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox arrow keys move the preview (Temperature → Water)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox moving focus away restores the committed view",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox clicking commits a Map View (Soil); it is visibly active in the chooser, legend and rail",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox with Soil committed: hover Hazard previews, leaving returns to Soil",
+   "ok": true,
+   "detail": "hazard"
+  },
+  {
+   "name": "c9@1024x768+firefox committed Map View persists while another mode is open",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox returning to Plants removes the heatmap",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Map View preview / commit: zero map geometry change",
+   "ok": true,
+   "detail": {
+    "sizes": [],
+    "flips": 0
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox closing the workbench restores the map exactly and clears the selection",
+   "ok": true,
+   "detail": {
+    "r0": [
+     16,
+     136,
+     916,
+     616
+    ],
+    "r3": [
+     16,
+     136,
+     916,
+     616
+    ]
+   }
+  },
+  {
+   "name": "c9@1024x768+firefox keyboard: Enter on a region opens Region mode and keeps focus on the map for quick comparison",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox keyboard: Tab + Enter on the next region updates the workbench in place",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox keyboard: Esc closes the workbench, focus returns to the region, map restored",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox keyboard: rail tool opens its mode and moves focus into the workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox keyboard: Esc returns focus to the rail tool",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox keyboard: pressing the active rail tool again closes the workbench",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Tab walk (closed): every stop visible, focus ring present, nothing hidden (40 stops)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1024x768+firefox closed workbench contents are not tabbable",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox Tab walk (Region open): no hidden stops (inactive panes / tabs excluded)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c9@1024x768+firefox no horizontal scroll (end)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c9@1024x768+firefox no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "no external network requests",
+   "ok": true,
+   "detail": []
+  }
+ ],
+ "geometry": {
+  "c9@1280x800": {
+   "closed": [
+    16,
+    140,
+    1164,
+    644
+   ],
+   "hud": {
+    "centre": 640,
+    "vw": 1280,
+    "h": 76,
+    "w": 727,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   },
+   "open": [
+    16,
+    140,
+    732,
+    644
+   ],
+   "regionToRegion": {
+    "sizes": 0,
+    "flips": 0
+   },
+   "modeSwitches": {
+    "sizes": 0,
+    "flips": 0
+   },
+   "closedAgain": [
+    16,
+    140,
+    1164,
+    644
+   ]
+  },
+  "c9@1024x768": {
+   "closed": [
+    16,
+    136,
+    916,
+    616
+   ],
+   "hud": {
+    "centre": 512,
+    "vw": 1024,
+    "h": 72,
+    "w": 618,
+    "bio": 36,
+    "max": 19,
+    "top": 82
+   },
+   "open": [
+    16,
+    136,
+    528,
+    616
+   ],
+   "regionToRegion": {
+    "sizes": 0,
+    "flips": 0
+   },
+   "modeSwitches": {
+    "sizes": 0,
+    "flips": 0
+   },
+   "closedAgain": [
+    16,
+    136,
+    916,
+    616
+   ]
+  },
+  "c9@1440x900": {
+   "closed": [
+    16,
+    140,
+    1324,
+    744
+   ],
+   "hud": {
+    "centre": 720,
+    "vw": 1440,
+    "h": 76,
+    "w": 727,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   },
+   "open": [
+    16,
+    140,
+    856,
+    744
+   ],
+   "regionToRegion": {
+    "sizes": 0,
+    "flips": 0
+   },
+   "modeSwitches": {
+    "sizes": 0,
+    "flips": 0
+   },
+   "closedAgain": [
+    16,
+    140,
+    1324,
+    744
+   ]
+  },
+  "c9@1280x800+rm": {
+   "closed": [
+    16,
+    140,
+    1164,
+    644
+   ],
+   "hud": {
+    "centre": 640,
+    "vw": 1280,
+    "h": 76,
+    "w": 727,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   },
+   "open": [
+    16,
+    140,
+    732,
+    644
+   ],
+   "regionToRegion": {
+    "sizes": 0,
+    "flips": 0
+   },
+   "modeSwitches": {
+    "sizes": 0,
+    "flips": 0
+   },
+   "closedAgain": [
+    16,
+    140,
+    1164,
+    644
+   ]
+  },
+  "c9@1280x800+firefox": {
+   "closed": [
+    16,
+    140,
+    1164,
+    644
+   ],
+   "hud": {
+    "centre": 640,
+    "vw": 1280,
+    "h": 76,
+    "w": 728,
+    "bio": 42,
+    "max": 22,
+    "top": 86
+   },
+   "open": [
+    16,
+    140,
+    732,
+    644
+   ],
+   "regionToRegion": {
+    "sizes": 0,
+    "flips": 0
+   },
+   "modeSwitches": {
+    "sizes": 0,
+    "flips": 0
+   },
+   "closedAgain": [
+    16,
+    140,
+    1164,
+    644
+   ]
+  },
+  "c9@1024x768+firefox": {
+   "closed": [
+    16,
+    136,
+    916,
+    616
+   ],
+   "hud": {
+    "centre": 512,
+    "vw": 1024,
+    "h": 72,
+    "w": 619,
+    "bio": 36,
+    "max": 19,
+    "top": 82
+   },
+   "open": [
+    16,
+    136,
+    528,
+    616
+   ],
+   "regionToRegion": {
+    "sizes": 0,
+    "flips": 0
+   },
+   "modeSwitches": {
+    "sizes": 0,
+    "flips": 0
+   },
+   "closedAgain": [
+    16,
+    136,
+    916,
+    616
+   ]
+  }
+ },
+ "external": [],
+ "errors": [],
+ "summary": {
+  "total": 521,
+  "failed": 0
+ }
+}

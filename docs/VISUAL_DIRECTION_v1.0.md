@@ -161,3 +161,25 @@ The owner reviewed the BLOOM-017 concepts. These decisions now bind the producti
 - **Map-geometry rule:** surfaces overlay the map by default. Only a genuine column-scale workflow (Regions browser, deep upgrade browser) may shift it: once on open and once on close, never per click, and never with two columns.
 - **Specimen rule** (unchanged from §§3–6, now explicit for previews): Adapt changes the organism; a Terraform preview changes only its surroundings.
 - The concrete layout is still open. Round 2 (Concepts 5–8) is the comparison set, and no production UI is authorized yet.
+
+### 10.2 Owner decisions from the Round 2 review: convergence (recorded with BLOOM-019)
+
+The owner reviewed Concepts 5–8 and chose to converge on **Concept 8's side workbench**. The full record is in [`UI_CONCEPT_REVIEW_v3.md`](UI_CONCEPT_REVIEW_v3.md) §§1–4.
+- **Rejected:**
+  - region popups that cover the map (they hide neighbouring regions);
+  - Adapt / Spread / Terraform surfaces that cover the map (they spoil hover previews on the real map);
+  - scattered tool clusters;
+  - "Lens" as the player-facing word;
+  - a thin top toolbar.
+- **Direction under test (Concept 9):**
+  - **one** right-side workbench shared by Region · Regions · Map View · Adapt · Spread · Terraform, one mode at a time;
+  - clicking a region opens it in **Region** mode, and clicking another updates it in place;
+  - **one** compact Explore / Change tool rail;
+  - **Map View** with hover/focus preview and click-to-commit;
+  - a larger, centred status banner with Biomass strongest.
+- **Map-geometry rule, tightened for the shared workbench:** opening the workbench reframes the map **once**; switching modes, or region → region, moves it **zero** more times; closing restores it exactly. Map-covering surfaces are no longer the default for regions or upgrades.
+- **Still open:**
+  - Region workbench organisation (Variant A tabbed / B dashboard + tabs / C scrolling sections);
+  - the touch purchase pattern;
+  - the questions in v3 §13.
+- The production run-screen UI is **not locked** and the rebuild is not started.

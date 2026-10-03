@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BLOOM UI concept mockups</title>
 <!--
-  BLOOM-017 + BLOOM-018 — UI concept mockup sandbox: gallery / launcher.
-  Round 1 (BLOOM-017, concepts 1–4) is kept as design history. Round 2 (BLOOM-018, concepts 5–8) follows the owner's review.
+  BLOOM-017 + BLOOM-018 + BLOOM-019 — UI concept mockup sandbox: gallery / launcher.
+  Round 1 (BLOOM-017, concepts 1–4) and Round 2 (BLOOM-018, concepts 5–8) are kept as design history.
+  Convergence (BLOOM-019, Concept 9) follows the owner's review of Round 2 and is the default tab.
   VISUAL CONCEPT MOCKUPS ONLY. Nothing in demos/ui-mockups/ loads or calls the game engine, generator, validator,
-  scenarios or Bloom Report. Fake data everywhere. Not evidence of production UI. Review notes: docs/UI_CONCEPT_REVIEW_v1.md (round 1), docs/UI_CONCEPT_REVIEW_v2.md (round 2)
+  scenarios or Bloom Report. Fake data everywhere. Not evidence of production UI. Review notes: docs/UI_CONCEPT_REVIEW_v1.md (round 1), docs/UI_CONCEPT_REVIEW_v2.md (round 2), docs/UI_CONCEPT_REVIEW_v3.md (convergence)
 -->
 <link rel="stylesheet" href="shared.css">
 <style>
@@ -66,19 +67,105 @@
   .wf .bench{background:#fffdf7; border:2px solid var(--line-2)}
   .wf .lch{background:#fffdf7; border:2px solid var(--line-2); border-radius:12px}
   .wf .lead{position:absolute; height:0; border-top:2px dashed #2f3a2c; transform-origin:left center}
+  /* convergence (BLOOM-019) */
+  .conv{display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); gap:20px; align-items:start}
+  @media (max-width:960px){ .conv{grid-template-columns:1fr} }
+  .concept.big .wf{height:190px}
+  .wf .rl{background:#fffdf7; border:2px solid var(--line-2); border-radius:8px}
+  .wf .sel{background:transparent; border:2px dashed #2f3a2c; border-radius:6px}
+  .vars{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+  @media (max-width:620px){ .vars{grid-template-columns:1fr} }
+  .vars div{background:var(--paper); border:2px solid var(--line); border-radius:14px; padding:8px 10px; font-size:14px}
+  .vars b{display:block; font-size:15px}
+  .side{display:flex; flex-direction:column; gap:16px}
+  .side .owner{margin:0}
+  .side .owner ul{font-size:14px}
+  .rule{font-size:14px; font-weight:700; background:var(--sky-soft); color:var(--sky-dark); border-radius:12px; padding:8px 12px}
 </style>
 </head>
 <body>
-<div class="mock-ribbon" role="note"><span class="tag">CONCEPT MOCKUPS</span><span>BLOOM-017 + BLOOM-018 · UI design sandbox</span><span class="spacer"></span><span class="hint">Fake data · not connected to the game · not the production UI</span></div>
+<div class="mock-ribbon" role="note"><span class="tag">CONCEPT MOCKUPS</span><span>BLOOM-017 · 018 · 019 · UI design sandbox</span><span class="spacer"></span><span class="hint">Fake data · not connected to the game · not the production UI</span></div>
 <div class="wrap">
   <h1>BLOOM <span>run-screen concepts</span></h1>
   <div class="warn" role="note"><span aria-hidden="true" style="font-size:26px">🧪</span><span><b>VISUAL MOCKUPS ONLY</b>Nothing here runs the game. The map, regions, Biomass, coverage, trait effects, colony growth and specimen drawings are all scripted placeholders. Prices, effects and art are not proposals. Emoji icons, colours and fonts are placeholders too.</span></div>
   <div class="rounds" role="tablist" aria-label="Concept rounds">
-    <button type="button" role="tab" id="tab-round2" aria-controls="panel-round2" aria-selected="true">Round 2 · Owner-directed iteration<span><small>Concepts 5–8 · BLOOM-018</small><span class="new">NEW</span></span></button>
+    <button type="button" role="tab" id="tab-convergence" aria-controls="panel-convergence" aria-selected="true">Convergence · BLOOM-019<span><small>Concept 9 · unified side workbench</small><span class="new">NEW</span></span></button>
+    <button type="button" role="tab" id="tab-round2" aria-controls="panel-round2" aria-selected="false" tabindex="-1">Round 2 · Owner-directed iteration<small>Concepts 5–8 · BLOOM-018</small></button>
     <button type="button" role="tab" id="tab-round1" aria-controls="panel-round1" aria-selected="false" tabindex="-1">Round 1 · Original concepts<small>Concepts 1–4 · BLOOM-017</small></button>
   </div>
 
-  <section class="round" id="panel-round2" role="tabpanel" aria-labelledby="tab-round2">
+  <section class="round" id="panel-convergence" role="tabpanel" aria-labelledby="tab-convergence">
+    <p class="lede">One focused prototype, not another round of options. The owner chose Concept 8's side workbench and asked one question: <b>how should a single right-side workbench behave when Region inspection, the Regions browser, Map View, Adapt, Spread and Terraform all share it?</b> Concept 9 is the answer to try.</p>
+    <div class="conv">
+      <article class="concept rec big">
+        <span class="badge">START HERE</span>
+        <h2><small>Concept 9</small>Unified side workbench</h2>
+        <div class="wf" aria-hidden="true">
+          <i class="hud" style="left:26%; right:26%; top:6px; height:24px">IN BLOOM · ✦ BIOMASS · DYING WORLD</i>
+          <i class="hud" style="right:6px; width:48px; top:6px; height:24px">⏸ 1×</i>
+          <i class="map" style="left:6px; right:calc(38% + 34px); top:36px; bottom:6px">MAP (reframed once)</i>
+          <i class="sel" style="left:18%; width:12%; top:58px; height:34px"></i>
+          <i class="drw" style="right:34px; width:38%; top:36px; bottom:6px">ONE WORKBENCH<br>Region · Regions · Map View<br>Adapt · Spread · Terraform</i>
+          <i class="rl" style="right:6px; width:24px; top:36px; bottom:6px; font-size:8px; line-height:1.6">🗂<br>🗺️<br>—<br>🌿<br>🌱<br>🌍</i>
+        </div>
+        <p><b>Click any region and its details open in the side workbench.</b> There is no popup over the map. Click another region and the workbench updates in place: the map does not move and nothing covers the region you want next. One compact <b>tool rail</b> at the right edge groups <b>Explore</b> (Regions, Map View) and <b>Change</b> (Adapt, Spread, Terraform). Every tool opens the same workbench.</p>
+        <p class="rule">Map geometry: opening the workbench reframes the map <b>once</b>. Switching between Region, Regions, Map View, Adapt, Spread and Terraform moves it <b>zero</b> more times. Closing puts it back exactly.</p>
+        <h3>Region layout: three organisations to compare</h3>
+        <p>A small <b>“Review only · Region layout”</b> switch in the striped mockup ribbon changes only how the Region workbench is organised. The selected region stays selected.</p>
+        <div class="vars">
+          <div><b>A · Tabbed</b>Fixed summary with the plant, then Overview / Colony / Science tabs.</div>
+          <div><b>B · Dashboard + tabs</b>A compact grid of the main numbers stays visible. Tabs only change the lower part.</div>
+          <div><b>C · Sections</b>No tabs. One scrolling workbench: Holding it back, Conditions, Colony, Plant.</div>
+        </div>
+        <h3>Try this</h3>
+        <ul>
+          <li>Click <b>Frost Ridge</b>, then <b>Ember Rise</b>, <b>Dust Reach</b> and <b>Marsh Low</b> in quick succession. Is region-to-region comparison fast?</li>
+          <li>Switch the ribbon between <b>A</b>, <b>B</b> and <b>C</b> and repeat. Which one lets you compare fastest?</li>
+          <li>Open <b>🗺️ Map View</b> and move the pointer over Temperature, Water, Soil and Hazard. The map previews each one. Click one to keep it.</li>
+          <li>With Frost Ridge selected, open <b>🌿 Adapt</b> and hover <b>Cold Tolerance</b>. Then open <b>🌍 Terraform</b> and hover <b>Warm the Sky</b>. Watch the uncovered map, and compare the plant with the sky.</li>
+          <li>Open <b>🗂 Regions</b> and pick a region from the list.</li>
+          <li>Press <b>Pause</b>, then cycle the speed <b>1× → 2× → 4×</b>.</li>
+        </ul>
+        <a class="btn plant open" href="concept-9-unified-bench.html">Open Concept 9 →</a>
+      </article>
+      <div class="side">
+        <div class="owner">
+          <h2>What the owner said about Round 2</h2>
+          <h3 class="keep">✓ Liked</h3>
+          <ul>
+            <li>Concept 8's side workbench and its one deliberate map reframe</li>
+            <li>Keeping the real map visible while deciding</li>
+            <li>Concept 2-style Regions browsing and triage</li>
+            <li>Map heatmaps, and contextual plant visuals</li>
+            <li>Pause / speed placement as it was</li>
+          </ul>
+          <h3 class="drop">✕ Rejected or asked to change</h3>
+          <ul>
+            <li>Upgrade surfaces covering too much of the map (C5, C7): hover previews became much less useful</li>
+            <li>Region popups that hide neighbouring regions, so they can't be clicked or even seen</li>
+            <li>Concept 8's scattered controls (Regions / Lens at the top, Adapt / Spread / Terraform at the bottom)</li>
+            <li>The word “Lens” (now <b>Map View</b>)</li>
+            <li>A thin top bar: the status banner should be larger and centred</li>
+          </ul>
+        </div>
+        <section class="order" aria-labelledby="ord3T" style="margin:0">
+          <h2 id="ord3T">Questions to answer</h2>
+          <ul class="qs" style="columns:1">
+            <li>A, B or C for the Region workbench?</li>
+            <li>Is the Explore / Change rail easy to find, and small enough?</li>
+            <li>Is one reframe on open acceptable, now that nothing moves after it?</li>
+            <li>Does Map View hover-to-preview, click-to-keep feel right?</li>
+            <li>Does “Considering for: Frost Ridge” help, or make global upgrades look local?</li>
+            <li>Should a map click while Adapt is open jump to Region (as now) or only change who you are considering?</li>
+            <li>Is the top banner the right size and weight?</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="round" id="panel-round2" role="tabpanel" aria-labelledby="tab-round2" hidden>
+    <p class="hist"><span aria-hidden="true">📜</span><span><b>Design history (BLOOM-018).</b> The owner reviewed these four on 2026-10-03 and chose to converge on Concept 8's side workbench. The findings are in the Convergence tab and in <code>docs/UI_CONCEPT_REVIEW_v3.md</code>. The concepts are left here unchanged for reference.</span></p>
     <p class="lede">Four variations inside the narrowed direction from the owner's review of Round 1. They share one design language and differ on purpose in a few places: <b>where region details appear</b>, <b>where Adapt / Spread / Terraform open</b>, <b>how the Regions browser sits beside the map</b> and <b>how the heatmap lens is tucked away</b>. All four keep a large map, a live HUD, and persistent <b>Pause</b> and <b>speed</b> controls.</p>
     <div class="owner">
       <h2>What the owner asked for (from the Round 1 review)</h2>
@@ -330,26 +417,28 @@
     </ul>
   </section>
   </section>
-  <footer>Review notes for PMO / owner: <code>docs/UI_CONCEPT_REVIEW_v2.md</code> (Round 2) and <code>docs/UI_CONCEPT_REVIEW_v1.md</code> (Round 1). The actual game is at the repo root (<a href="../../index.html">index.html</a>) and is not part of this sandbox.</footer>
+  <footer>Review notes for PMO / owner: <code>docs/UI_CONCEPT_REVIEW_v3.md</code> (Convergence), <code>docs/UI_CONCEPT_REVIEW_v2.md</code> (Round 2) and <code>docs/UI_CONCEPT_REVIEW_v1.md</code> (Round 1). The actual game is at the repo root (<a href="../../index.html">index.html</a>) and is not part of this sandbox.</footer>
 </div>
 <script>
-/* Round switcher. Defaults to Round 2. #round1 / #round2 in the URL wins, then the last round viewed (remembered on this device). */
+/* Round switcher. Defaults to Convergence (BLOOM-019). #convergence / #round2 / #round1 in the URL wins, then the last tab viewed
+   on this device. BLOOM-019 uses a new storage key so a Round 2 visit remembered from BLOOM-018 does not hide the new tab. */
 (function(){
-  const tabs = [document.getElementById('tab-round2'), document.getElementById('tab-round1')];
+  const IDS = ['convergence', 'round2', 'round1'];
+  const tabs = IDS.map(id => document.getElementById('tab-' + id));
   function show(id, push){
     tabs.forEach(t => { const on = t.id === 'tab-' + id; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-    try { localStorage.setItem('bloomMockRound', id); } catch (e) {}
+    try { localStorage.setItem('bloomMockTab', id); } catch (e) {}
     if (push) history.replaceState(null, '', '#' + id);
   }
   tabs.forEach((t, k) => {
     t.addEventListener('click', () => show(t.id.slice(4), true));
     t.addEventListener('keydown', e => { const d = { ArrowRight:1, ArrowLeft:-1 }[e.key]; if (d) { e.preventDefault(); const n = tabs[(k + d + tabs.length) % tabs.length]; show(n.id.slice(4), true); n.focus(); } });
   });
-  let start = 'round2';
-  try { const m = localStorage.getItem('bloomMockRound'); if (m === 'round1' || m === 'round2') start = m; } catch (e) {}
-  const h = location.hash.slice(1); if (h === 'round1' || h === 'round2') start = h;
+  let start = 'convergence';
+  try { const m = localStorage.getItem('bloomMockTab'); if (IDS.includes(m)) start = m; } catch (e) {}
+  const h = location.hash.slice(1); if (IDS.includes(h)) start = h;
   show(start, false);
-  window.addEventListener('hashchange', () => { const x = location.hash.slice(1); if (x === 'round1' || x === 'round2') show(x, false); });
+  window.addEventListener('hashchange', () => { const x = location.hash.slice(1); if (IDS.includes(x)) show(x, false); });
 })();
 </script>
 </body>

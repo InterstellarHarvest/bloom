@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM mockup · Concept 9 · Unified side workbench</title>
+<!--
+  BLOOM-019 · Concept 9 — Unified side workbench (convergence prototype, derived from Concept 8).
+  VISUAL CONCEPT MOCKUP ONLY: fake data, scripted behaviour, not connected to the game. Not the production UI.
+  One right-side workbench serves Region · Regions · Map View · Adapt · Spread · Terraform, one mode at a time. Clicking a
+  region opens it in Region mode (no popup); clicking another region updates it in place. One fixed tool rail at the right
+  edge groups Explore (Regions, Map View) and Change (Adapt, Spread, Terraform). Opening the workbench reframes the map once;
+  switching modes never moves the map again; closing restores it. Behaviour lives in c9.js, look in c9.css.
+  Review notes: docs/UI_CONCEPT_REVIEW_v3.md
+-->
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="r2.css">
+<link rel="stylesheet" href="c9.css">
+</head>
+<body class="r2 c9">
+<header class="top9">
+  <div class="t-left"><b>Eden</b>Fake planet · Dying World scenario</div>
+  <div class="banner" id="banner" role="group" aria-label="Run status"></div>
+  <div id="clock"></div>
+</header>
+<div class="world" id="world">
+  <div class="mapzone can-push" id="mapzone">
+    <div class="mapwrap" id="mapwrap"></div>
+    <div class="mv-legend" id="mvLegend" hidden></div>
+  </div>
+  <aside class="wb9" id="wb" hidden aria-label="Workbench">
+    <div class="wb9-h">
+      <span class="mi" aria-hidden="true"></span>
+      <div class="mt"><span class="ml"></span><h2 id="wbT" tabindex="-1"></h2></div>
+      <button type="button" class="hbtn" id="wbAll" hidden><span aria-hidden="true">🗂</span>All regions</button>
+      <button type="button" class="x-btn" id="wbX" aria-label="Close workbench">✕</button>
+    </div>
+    <div class="ctx9" id="ctx9" hidden></div>
+    <div class="wb9-b">
+      <div class="pane" id="p-region" data-mode="region" hidden></div>
+      <div class="pane" id="p-regions" data-mode="regions" hidden></div>
+      <div class="pane" id="p-mapview" data-mode="mapview" hidden></div>
+      <div class="pane" id="p-adapt" data-mode="adapt" hidden></div>
+      <div class="pane" id="p-spread" data-mode="spread" hidden></div>
+      <div class="pane" id="p-terraform" data-mode="terraform" hidden></div>
+    </div>
+  </aside>
+  <nav class="rail9" id="rail" aria-label="Tools">
+    <div class="rg-h" id="rhExplore">Explore</div>
+    <div role="group" aria-labelledby="rhExplore">
+      <button type="button" class="tl9" data-tool="regions" aria-pressed="false" aria-controls="wb"><span class="ti" aria-hidden="true">🗂</span>Regions<span class="badge" aria-hidden="true">0</span></button>
+      <button type="button" class="tl9" data-tool="mapview" aria-pressed="false" aria-controls="wb"><span class="ti" aria-hidden="true">🗺️</span>Map View<small>Plants</small><span class="vdot" aria-hidden="true" hidden></span></button>
+    </div>
+    <span class="div" role="presentation"></span>
+    <div class="rg-h" id="rhChange">Change</div>
+    <div role="group" aria-labelledby="rhChange">
+      <button type="button" class="tl9" data-tool="adapt" aria-pressed="false" aria-controls="wb"><span class="ti" aria-hidden="true">🌿</span>Adapt<small>your plant</small></button>
+      <button type="button" class="tl9" data-tool="spread" aria-pressed="false" aria-controls="wb"><span class="ti" aria-hidden="true">🌱</span>Spread<small>your seeds</small></button>
+      <button type="button" class="tl9" data-tool="terraform" aria-pressed="false" aria-controls="wb"><span class="ti" aria-hidden="true">🌍</span>Terraform<small>the planet</small></button>
+    </div>
+    <span class="rail-sp"></span>
+    <p class="rail-note">Click the map to inspect a region</p>
+  </nav>
+</div>
+<div class="sr-only" id="c9live" role="status" aria-live="polite"></div>
+
+<script src="shared.js"></script>
+<script src="r2.js"></script>
+<script src="c9.js"></script>
+</body>
+</html>
