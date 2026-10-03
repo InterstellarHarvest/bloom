@@ -1,0 +1,189 @@
+/*
+  BLOOM UI concept mockups (BLOOM-017) — shared look for the sandbox.
+  VISUAL CONCEPT MOCKUPS ONLY: fake data, not connected to the game, not the production UI.
+  Placeholder palette / type / icons. Nothing here is a final brand decision.
+*/
+:root{
+  --paper:#fbf6ea; --paper-2:#f4ecd8; --card:#fffdf7; --line:#e4d8bd; --line-2:#d3c39f;
+  --ink:#2f3a2c; --ink-soft:#5f6b57; --ink-faint:#8a937f;
+  --leaf:#3f9d4b; --leaf-dark:#2a7636; --leaf-soft:#e2f2d6;      /* PLANT verbs (Adapt) */
+  --bloom:#d9607e; --bloom-dark:#a83d5a; --bloom-soft:#fbe3e9;   /* Spread */
+  --sky:#3b8fd0; --sky-dark:#23679f; --sky-soft:#dcecf8;          /* PLANET verbs (Terraform) */
+  --gold:#f2b324; --gold-deep:#a86f00; --gold-soft:#fff1c7;       /* Biomass */
+  --ok:#3f9d4b; --warn:#d98a1c; --bad:#c4466a;
+  --pressure:#8a5bb8; --pressure-soft:#efe5f8;
+  --focus:#1f6fd1;
+  --r-lg:22px 18px 24px 18px; --r-md:16px 13px 17px 14px; --r-sm:11px;
+  --shadow:0 2px 0 rgba(80,60,20,.08), 0 8px 24px rgba(80,60,20,.10);
+  --shadow-lg:0 4px 0 rgba(80,60,20,.08), 0 18px 48px rgba(60,45,15,.20);
+  --font:ui-rounded,"SF Pro Rounded","Nunito","Varela Round","Trebuchet MS",system-ui,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{margin:0; height:100%}
+body{background:var(--paper); color:var(--ink); font-family:var(--font); font-size:17px; line-height:1.4;
+  background-image:radial-gradient(circle at 12% 18%, rgba(255,255,255,.7), transparent 40%),
+                   radial-gradient(circle at 88% 82%, rgba(226,242,214,.6), transparent 45%)}
+button{font:inherit; color:inherit}
+:focus-visible{outline:3px solid var(--focus); outline-offset:3px; border-radius:8px}
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+
+/* ── mockup ribbon: always visible, never mistaken for the game ── */
+.mock-ribbon{display:flex; align-items:center; gap:12px; height:40px; padding:0 12px; font-size:13px; letter-spacing:.3px;
+  background:repeating-linear-gradient(-45deg,#2f3a2c 0 12px,#38452f 12px 24px); color:#f5efdc; flex:none}
+.mock-ribbon a{color:#ffe08a; font-weight:700; text-decoration:none; padding:4px 10px; min-height:36px; display:inline-flex; align-items:center; border-radius:8px}
+.mock-ribbon a:hover{background:rgba(255,255,255,.12)}
+.mock-ribbon .tag{background:#ffe08a; color:#2f3a2c; font-weight:800; padding:1px 8px; border-radius:6px; letter-spacing:1px}
+.mock-ribbon .spacer{flex:1}
+.mock-ribbon .hint{opacity:.8}
+.mock-ribbon > *{white-space:nowrap; flex:none}
+.mock-ribbon > span:nth-child(3){flex:0 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis}
+@media (max-width:1180px){ .mock-ribbon .hint{display:none} }
+
+/* ── buttons ── */
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:10px 18px; cursor:pointer;
+  border:2px solid var(--line-2); border-radius:var(--r-md); background:var(--card); font-weight:700; font-size:17px;
+  box-shadow:0 3px 0 var(--line-2); transition:transform .12s var(--ease), box-shadow .12s, background .15s, border-color .15s}
+.btn:hover{transform:translateY(-1px); border-color:var(--ink-faint)}
+.btn:active{transform:translateY(2px); box-shadow:0 1px 0 var(--line-2)}
+.btn.small{min-height:40px; padding:6px 12px; font-size:15px}
+.btn.icon{min-width:48px; padding:6px}
+.btn.plant{background:var(--leaf); border-color:var(--leaf-dark); color:#fff; box-shadow:0 3px 0 var(--leaf-dark)}
+.btn.spread{background:var(--bloom); border-color:var(--bloom-dark); color:#fff; box-shadow:0 3px 0 var(--bloom-dark)}
+.btn.planet{background:var(--sky); border-color:var(--sky-dark); color:#fff; box-shadow:0 3px 0 var(--sky-dark)}
+.btn.gold{background:var(--gold); border-color:var(--gold-deep); color:#3a2800; box-shadow:0 3px 0 var(--gold-deep)}
+.btn[aria-disabled="true"]{opacity:.55; cursor:not-allowed}
+.btn.ghost{background:transparent; box-shadow:none; border-color:transparent}
+.btn.ghost:hover{background:rgba(0,0,0,.05)}
+.x-btn{width:44px; height:44px; border-radius:50%; border:2px solid var(--line-2); background:var(--card); cursor:pointer; font-size:20px; line-height:1; display:grid; place-items:center; flex:none}
+.x-btn:hover{border-color:var(--ink-soft)}
+
+/* ── Biomass ── */
+.biomass{display:inline-flex; align-items:center; gap:10px; position:relative}
+.biomass .num{font-weight:900; color:var(--gold-deep); font-variant-numeric:tabular-nums; letter-spacing:.5px}
+.biomass .rate{font-size:14px; color:var(--ink-soft); font-weight:700}
+.biomass .ico{display:inline-grid; place-items:center; width:1.4em; height:1.4em; border-radius:50%; background:radial-gradient(circle at 35% 30%,#ffe9a0,var(--gold) 60%,#d99a0b); box-shadow:inset 0 -2px 0 rgba(0,0,0,.12)}
+.biomass.flash-gain .num{animation:gain .6s var(--ease)}
+.biomass.flash-spend .num{animation:spend .6s var(--ease)}
+@keyframes gain{0%{text-shadow:0 0 0 transparent}40%{text-shadow:0 0 14px #ffd64a}100%{text-shadow:0 0 0 transparent}}
+@keyframes spend{0%{color:var(--bad)}100%{color:var(--gold-deep)}}
+.floater{position:absolute; pointer-events:none; font-weight:900; font-size:20px; animation:floatUp 1.1s var(--ease) forwards; z-index:50; white-space:nowrap}
+.floater.spend{color:var(--bad)} .floater.gain{color:var(--gold-deep)}
+@keyframes floatUp{0%{opacity:0; transform:translateY(4px)}15%{opacity:1}100%{opacity:0; transform:translateY(-34px)}}
+
+/* ── status chips (icon + word + colour; never colour alone) ── */
+.st{display:inline-flex; align-items:center; gap:6px; font-weight:800; font-size:14px; padding:3px 10px 3px 6px; border-radius:20px; border:2px solid}
+.st i{font-style:normal; display:inline-grid; place-items:center; width:20px; height:20px; border-radius:50%; color:#fff; font-size:12px}
+.st.ok{border-color:#bfe0b5; background:var(--leaf-soft); color:var(--leaf-dark)} .st.ok i{background:var(--ok)}
+.st.warn{border-color:#f0cf98; background:#fff2dc; color:#8a5300} .st.warn i{background:var(--warn)}
+.st.bad{border-color:#eab6c4; background:#fbe6ec; color:#8f2846} .st.bad i{background:var(--bad)}
+
+.cond{display:grid; grid-template-columns:34px 1fr auto; align-items:center; gap:8px 10px; padding:10px 12px; border-radius:var(--r-md); background:var(--card); border:2px solid var(--line)}
+.cond .ci{font-size:22px; text-align:center}
+.cond b{display:block; font-size:16px}
+.cond small{color:var(--ink-soft); font-size:14px}
+
+/* ── kind labels: "affects your PLANT" vs "affects the PLANET" ── */
+.kind{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:900; letter-spacing:1.2px; text-transform:uppercase; padding:3px 10px; border-radius:20px}
+.kind.plant{background:var(--leaf-soft); color:var(--leaf-dark)}
+.kind.spread{background:var(--bloom-soft); color:var(--bloom-dark)}
+.kind.planet{background:var(--sky-soft); color:var(--sky-dark)}
+
+/* ── trait cards ── */
+.tcard{position:relative; display:flex; flex-direction:column; gap:6px; text-align:left; cursor:pointer; padding:14px; min-height:132px;
+  border:3px solid var(--line); border-radius:var(--r-lg); background:var(--card); box-shadow:var(--shadow);
+  transition:transform .15s var(--ease), border-color .15s, box-shadow .15s}
+.tcard:hover,.tcard:focus-visible{transform:translateY(-3px); border-color:var(--ink-faint)}
+.tcard .t-top{display:flex; align-items:center; gap:10px}
+.tcard .t-ico{font-size:30px; line-height:1}
+.tcard h4{margin:0; font-size:18px}
+.tcard p{margin:0; font-size:15px; color:var(--ink-soft)}
+.tcard .cost{margin-top:auto; display:flex; align-items:center; gap:8px; font-weight:900; color:var(--gold-deep)}
+.tcard .cost .tiny{font-size:13px; color:var(--ink-faint); font-weight:700}
+.tcard.owned{border-color:var(--leaf); background:linear-gradient(var(--leaf-soft),var(--card) 60%)}
+.tcard.owned .cost{color:var(--leaf-dark)}
+.tcard.poor .cost{color:var(--bad)}
+.tcard.just{animation:pop .5s var(--ease)}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.05)}100%{transform:scale(1)}}
+.tcard[data-kind="planet"].owned{border-color:var(--sky); background:linear-gradient(var(--sky-soft),var(--card) 60%)}
+.tcard[data-kind="spread"].owned{border-color:var(--bloom); background:linear-gradient(var(--bloom-soft),var(--card) 60%)}
+
+/* ── segmented focus control ── */
+.seg{display:grid; grid-template-columns:repeat(4,1fr); gap:6px}
+.seg button{min-height:64px; border-radius:var(--r-md); border:2px solid var(--line); background:var(--card); cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; font-weight:800; font-size:14px; padding:6px 4px; transition:border-color .15s, background .15s, transform .12s}
+.seg button span{font-size:22px}
+.seg button:hover{border-color:var(--ink-faint)}
+.seg button[aria-pressed="true"]{border-color:var(--leaf-dark); background:var(--leaf-soft); box-shadow:inset 0 0 0 2px var(--leaf)}
+.seg button[aria-pressed="true"]::after{content:"✓ current"; font-size:11px; color:var(--leaf-dark)}
+
+/* ── tabs ── */
+.tabs{display:flex; gap:6px; border-bottom:2px solid var(--line); margin:0 0 12px}
+.tabs button{min-height:44px; padding:6px 14px; border:none; background:none; cursor:pointer; font-weight:800; color:var(--ink-soft); border-bottom:4px solid transparent; margin-bottom:-2px; border-radius:10px 10px 0 0}
+.tabs button[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--leaf)}
+.tabs button:hover{background:rgba(0,0,0,.04)}
+
+/* ── progress bars ── */
+.bar{position:relative; height:14px; border-radius:10px; background:var(--paper-2); border:2px solid var(--line); overflow:hidden}
+.bar > i{position:absolute; inset:0 auto 0 0; background:var(--leaf); border-radius:8px; transition:width .6s var(--ease)}
+.bar .goal{position:absolute; top:-3px; bottom:-3px; width:3px; background:var(--ink); border-radius:2px}
+.bar.pressure > i{background:repeating-linear-gradient(-45deg,var(--pressure) 0 8px,#9d74c7 8px 16px)}
+.bar.instab > i{background:linear-gradient(90deg,#8fc4e8,#e0a040 70%,var(--bad))}
+
+/* ── toasts ── */
+.toasts{position:fixed; left:50%; bottom:24px; transform:translateX(-50%); display:flex; flex-direction:column; gap:8px; align-items:center; z-index:100; pointer-events:none}
+.toast{background:var(--ink); color:#fff7e0; padding:10px 18px; border-radius:16px; font-weight:700; box-shadow:var(--shadow-lg); animation:toastIn .3s var(--ease), toastOut .4s var(--ease) 2.6s forwards; max-width:min(90vw,520px)}
+@keyframes toastIn{from{opacity:0; transform:translateY(12px)}to{opacity:1; transform:none}}
+@keyframes toastOut{to{opacity:0; transform:translateY(-8px)}}
+
+/* ── map (shared SVG renderer) ── */
+.bm-map{display:block; width:100%; height:100%; user-select:none; -webkit-user-select:none}
+.bm-map .rg{cursor:pointer; outline:none}
+.bm-map .rg:focus{outline:none}
+.bm-map .hover-o{fill:none; stroke:#fff; stroke-width:1.6; stroke-linejoin:round; pointer-events:none; opacity:.95}
+.bm-map .sel-o{fill:none; stroke:#fff; stroke-width:2.6; stroke-linejoin:round; pointer-events:none}
+.bm-map .sel-o2{fill:none; stroke:var(--ink); stroke-width:1; stroke-linejoin:round; pointer-events:none; stroke-dasharray:3 2; animation:march 1.2s linear infinite}
+@keyframes march{to{stroke-dashoffset:-10}}
+.bm-map .pv-open{fill:rgba(63,157,75,.28); stroke:#2a7636; stroke-width:1.6; stroke-dasharray:4 2; animation:pulse 1.4s ease-in-out infinite; pointer-events:none}
+.bm-map .pv-worse{fill:url(#bmHatch); stroke:#a83d5a; stroke-width:1.6; stroke-dasharray:2 2; pointer-events:none}
+.bm-map .pv-flash{fill:rgba(255,255,255,.55); stroke:#fff; stroke-width:2; animation:flashOut 1.4s ease-out forwards; pointer-events:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes flashOut{0%{opacity:1}100%{opacity:0}}
+.bm-map .lbl{pointer-events:none; font-family:var(--font); font-weight:800}
+.bm-map .lbl rect{fill:rgba(255,253,247,.92); stroke:rgba(47,58,44,.25); stroke-width:.5}
+.bm-map .lbl text{font-size:6.4px; fill:var(--ink)}
+.bm-map .lbl.hide{opacity:0; transition:opacity .2s}
+.bm-map .lbl.show{opacity:1}
+.bm-map .pv-badge circle{stroke:#fff; stroke-width:1}
+.bm-map .pv-badge text{font-size:7px; font-weight:900; fill:#fff; text-anchor:middle; dominant-baseline:central}
+.bm-map .tint{pointer-events:none; transition:opacity .4s}
+.bm-map .seedarc{fill:none; stroke:var(--bloom-dark); stroke-width:1.2; stroke-dasharray:2 3; animation:march 1s linear infinite; pointer-events:none}
+
+/* ── specimen (shared SVG renderer) ── */
+.bm-spec{position:relative; overflow:hidden; border-radius:var(--r-lg); background:#dceefa}
+.bm-spec svg{display:block; width:100%; height:100%}
+.bm-spec .layer{transition:opacity .45s var(--ease)}
+.bm-spec .pv-tag{position:absolute; top:10px; left:10px; background:var(--ink); color:#fff7e0; font-size:12px; font-weight:900; letter-spacing:1px; padding:3px 10px; border-radius:12px; opacity:0; transition:opacity .2s}
+.bm-spec.previewing .pv-tag{opacity:1}
+.bm-spec [data-f].dim{opacity:.22; transition:opacity .25s}
+.bm-spec [data-f].glow{filter:drop-shadow(0 0 3px #fff) drop-shadow(0 0 6px #ffd64a)}
+.bm-spec .weather line,.bm-spec .weather circle.fall{animation:fall 1.6s linear infinite}
+@keyframes fall{from{transform:translateY(-20px)}to{transform:translateY(40px)}}
+.bm-spec .sway{transform-box:fill-box; transform-origin:50% 100%; animation:sway 5s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg)}}
+
+/* ── reduced motion ── */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important}
+  .bm-spec .weather{display:none}
+}
+
+/* card grids */
+.cards-cat{margin:14px 0 8px; font-size:14px; letter-spacing:1.4px; text-transform:uppercase; color:var(--ink-soft)}
+.cards-cat:first-child{margin-top:0}
+.cards-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px}
+.cards-grid.compact{grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px}
+.cards-grid.compact .tcard{min-height:92px; padding:10px 12px}
+.cards-grid.compact .tcard h4{font-size:16px}
+.tcard.blocked{opacity:.55; cursor:not-allowed}
+.tcard[aria-disabled="true"].owned{cursor:default}

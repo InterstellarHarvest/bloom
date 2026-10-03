@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM mockup · Concept 2 · Drawers</title>
+<!--
+  BLOOM-017 · Concept 2 — Drawer-heavy map-first (SimCity / Sims information architecture, not their look).
+  VISUAL CONCEPT MOCKUP ONLY: fake data, scripted behaviour, not connected to the game. Not the production UI.
+  Philosophy: nothing is modal. A left tool rail opens side SHEETS (Regions / Adapt / Spread / Terraform) that float over
+  the map; the right REGION DRAWER is rich and tabbed; both can be open at once and the map stays clickable. Map "lenses"
+  recolour the planet by one condition. The specimen is only a small portrait inside the region drawer.
+-->
+<link rel="stylesheet" href="shared.css">
+<style>
+  body{display:flex; flex-direction:column; height:100vh; overflow:hidden}
+  .top{flex:none; display:flex; align-items:center; gap:16px; padding:6px 14px; background:var(--card); border-bottom:3px solid var(--line); z-index:30}
+  .top .biomass .ico{width:34px; height:34px; font-size:17px}
+  .top .biomass .num{font-size:30px}
+  .goalmini{display:flex; align-items:center; gap:8px; font-weight:800}
+  .goalmini .bar{width:150px}
+  .advisor{flex:1; display:flex; align-items:center; gap:10px; min-height:44px; padding:6px 14px; border-radius:22px; background:var(--paper-2); font-weight:700; font-size:15px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis}
+  .advisor .face{font-size:22px}
+  .advisor span.msg{overflow:hidden; text-overflow:ellipsis; transition:opacity .3s}
+  .scenmini{display:flex; align-items:center; gap:8px; font-weight:800; font-size:14px; color:#5b3a82}
+  .scenmini .bar{width:90px}
+  .body{flex:1; min-height:0; display:flex; position:relative}
+  /* rail */
+  .rail{flex:none; width:96px; display:flex; flex-direction:column; gap:8px; padding:10px 8px; background:var(--paper-2); border-right:3px solid var(--line); z-index:25}
+  .rail button{display:flex; flex-direction:column; align-items:center; gap:2px; min-height:76px; border-radius:var(--r-md); border:3px solid transparent; background:var(--card); cursor:pointer; font-weight:800; font-size:13px; box-shadow:0 2px 0 var(--line-2)}
+  .rail button span{font-size:28px}
+  .rail button:hover{border-color:var(--line-2)}
+  .rail button[aria-expanded="true"]{border-color:var(--ink); background:#fff}
+  .rail button.adapt[aria-expanded="true"]{border-color:var(--leaf-dark); background:var(--leaf-soft)}
+  .rail button.spread[aria-expanded="true"]{border-color:var(--bloom-dark); background:var(--bloom-soft)}
+  .rail button.terra[aria-expanded="true"]{border-color:var(--sky-dark); background:var(--sky-soft)}
+  .rail .sep{height:2px; background:var(--line); margin:4px 6px}
+  .rail .lbl{font-size:10px; font-weight:900; letter-spacing:1px; color:var(--ink-faint); text-align:center; margin-top:4px}
+  /* map area */
+  .mapzone{flex:1; position:relative; min-width:0; transition:margin .35s var(--ease)}
+  .body.drawer-open .mapzone{margin-right:400px}
+  .mapwrap{transition:left .32s var(--ease)}
+  .body.sheet-open .mapwrap, .body.sheet-open .legend{left:354px !important}
+  .mapwrap{position:absolute; inset:58px 12px 12px 12px}
+  .lenses{position:absolute; top:10px; left:50%; transform:translateX(-50%); display:flex; gap:4px; padding:4px; background:var(--card); border:2px solid var(--line); border-radius:20px; box-shadow:var(--shadow); z-index:5}
+  .lenses button{min-height:38px; padding:4px 12px; border-radius:16px; border:none; background:none; cursor:pointer; font-weight:800; font-size:14px; color:var(--ink-soft)}
+  .lenses button[aria-pressed="true"]{background:var(--ink); color:#fff7e0}
+  .legend{position:absolute; left:20px; bottom:20px; background:rgba(255,253,247,.94); border:2px solid var(--line); border-radius:var(--r-md); padding:8px 12px; display:flex; gap:10px; font-size:13px; font-weight:800; z-index:4}
+  /* left sheet: floats over the map, map stays live */
+  .sheet{position:absolute; top:58px; bottom:10px; left:10px; width:334px; background:var(--card); border:3px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow-lg); z-index:20;
+    display:flex; flex-direction:column; transform:translateX(-112%); transition:transform .32s var(--ease)}
+  .sheet.open{transform:none}
+  .sheet header{display:flex; align-items:center; gap:10px; padding:12px 12px 8px 16px; border-bottom:2px solid var(--line)}
+  .sheet header h2{margin:0; font-size:22px; flex:1}
+  .sheet .scroll{flex:1; overflow:auto; padding:12px 14px}
+  .sheet .pv{flex:none; border-top:2px solid var(--line); padding:10px 14px; font-weight:700; font-size:14px; min-height:64px; background:var(--paper)}
+  .sheet .mini-spec{height:130px; margin:0 0 10px} .sheet .mini-spec .bm-spec{height:100%}
+  .rlist{list-style:none; margin:0; padding:0; display:grid; gap:6px}
+  .rlist button{width:100%; display:grid; grid-template-columns:26px 1fr auto; gap:8px; align-items:center; text-align:left; min-height:52px; padding:6px 10px; border-radius:var(--r-md); border:2px solid var(--line); background:var(--card); cursor:pointer}
+  .rlist button:hover{border-color:var(--ink-faint)}
+  .rlist button[aria-current="true"]{border-color:var(--ink); background:var(--paper)}
+  .rlist .sw{width:22px; height:22px; border-radius:6px; border:2px solid rgba(0,0,0,.15)}
+  .rlist small{display:block; color:var(--ink-soft); font-weight:700}
+  .sortrow{display:flex; gap:6px; margin:0 0 10px; font-size:14px; font-weight:800; align-items:center}
+  /* right drawer: rich, tabbed with vertical tabs (Sims-like) */
+  .drawer{position:absolute; top:0; right:0; bottom:0; width:400px; display:flex; background:var(--card); border-left:3px solid var(--line); box-shadow:-8px 0 24px rgba(60,45,15,.12); z-index:22;
+    transform:translateX(105%); transition:transform .35s var(--ease)}
+  .drawer.open{transform:none}
+  .vtabs{flex:none; width:72px; display:flex; flex-direction:column; gap:6px; padding:12px 6px; background:var(--paper-2); border-right:2px solid var(--line)}
+  .vtabs button{min-height:68px; border-radius:14px; border:2px solid transparent; background:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; font-size:11px; font-weight:900; color:var(--ink-soft)}
+  .vtabs button span{font-size:24px}
+  .vtabs button[aria-selected="true"]{background:var(--card); border-color:var(--line-2); color:var(--ink)}
+  .dmain{flex:1; display:flex; flex-direction:column; min-width:0}
+  .postcard{position:relative; padding:14px 14px 12px; display:flex; gap:12px; align-items:center; border-bottom:2px solid var(--line)}
+  .postcard .portrait{width:92px; height:92px; flex:none; border-radius:50%; overflow:hidden; border:4px solid #fff; box-shadow:var(--shadow)}
+  .postcard .portrait .bm-spec{height:100%; border-radius:50%}
+  .postcard h2{margin:0; font-size:23px; padding-right:44px}
+  .postcard .x-btn{position:absolute; top:10px; right:10px}
+  .postcard .meta{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+  .chip{display:inline-flex; align-items:center; gap:6px; padding:2px 10px; border-radius:20px; background:var(--paper-2); font-weight:800; font-size:13px}
+  .dscroll{flex:1; overflow:auto; padding:14px}
+  .ctiles{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  .ctile{border:2px solid var(--line); border-radius:var(--r-md); padding:10px; display:flex; flex-direction:column; gap:6px}
+  .ctile .h{display:flex; align-items:center; gap:6px; font-weight:900}
+  .ctile small{color:var(--ink-soft); font-weight:700}
+  .help{margin:12px 0 0; border:3px dashed var(--line-2); border-radius:var(--r-md); padding:10px 12px}
+  .help b{display:block; margin-bottom:6px}
+  .help .row{display:flex; flex-wrap:wrap; gap:6px}
+  .fix{display:inline-flex; align-items:center; gap:6px; min-height:42px; padding:4px 12px; border-radius:14px; border:2px solid var(--line-2); background:var(--card); cursor:pointer; font-weight:800}
+  .fcards{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  .fcard{text-align:left; padding:10px 12px; min-height:92px; border-radius:var(--r-md); border:3px solid var(--line); background:var(--card); cursor:pointer; display:flex; flex-direction:column; gap:2px}
+  .fcard .i{font-size:24px} .fcard b{font-size:16px} .fcard small{color:var(--ink-soft); font-weight:700; font-size:13px}
+  .fcard[aria-pressed="true"]{border-color:var(--leaf-dark); background:var(--leaf-soft)}
+  .fcard:hover{border-color:var(--ink-faint)}
+  .specrow{display:grid; gap:6px}
+  .specrow button{display:flex; align-items:center; gap:10px; min-height:52px; padding:6px 12px; border-radius:var(--r-md); border:2px solid var(--line); background:var(--card); cursor:pointer; text-align:left; font-weight:800}
+  .specrow button .c{margin-left:auto; color:var(--gold-deep); font-weight:900; white-space:nowrap}
+  .specrow button.has{border-color:var(--leaf); background:var(--leaf-soft)}
+  h3.sub{margin:16px 0 8px; font-size:13px; letter-spacing:1.3px; text-transform:uppercase; color:var(--ink-soft)}
+  h3.sub:first-child{margin-top:0}
+  .nbs{display:flex; flex-wrap:wrap; gap:6px}
+  .log{list-style:none; padding:0; margin:0; display:grid; gap:6px; font-size:14px}
+  .log li{padding:6px 10px; border-radius:10px; background:var(--paper)}
+  .rawt{width:100%; border-collapse:collapse; font-size:14px} .rawt td{padding:6px 4px; border-bottom:1px dashed var(--line)} .rawt td:last-child{text-align:right; font-weight:800}
+  .empty{padding:12px; border-radius:var(--r-md); background:var(--paper-2); font-weight:700; color:var(--ink-soft)}
+  @media (max-width:1150px){ .drawer{width:370px} .body.drawer-open .mapzone{margin-right:370px} .advisor{display:none} }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="biomass" id="bio"><span class="ico" aria-hidden="true">✦</span><span class="num">0</span><span class="rate"></span></div>
+  <div class="goalmini"><span>🌍 <span id="cov">0</span>%</span><span class="bar"><i id="covbar"></i><span class="goal" style="left:70%"></span></span><small>goal 70%</small></div>
+  <div class="advisor" role="status" aria-live="polite"><span class="face" aria-hidden="true">🦉</span><span class="msg" id="adv">Welcome! Click a region to open its drawer.</span></div>
+  <div class="scenmini" title="Dying World: the air is thinning"><span aria-hidden="true">💨</span>Dying World <span class="bar pressure"><i id="prsbar"></i></span></div>
+</header>
+<div class="body" id="body">
+  <nav class="rail" aria-label="Tools">
+    <button type="button" data-sheet="regions" aria-expanded="false"><span aria-hidden="true">🗺️</span>Regions</button>
+    <div class="sep" role="presentation"></div>
+    <div class="lbl">PLANT</div>
+    <button type="button" class="adapt" data-sheet="adapt" aria-expanded="false"><span aria-hidden="true">🌿</span>Adapt</button>
+    <button type="button" class="spread" data-sheet="spread" aria-expanded="false"><span aria-hidden="true">🌱</span>Spread</button>
+    <div class="lbl">PLANET</div>
+    <button type="button" class="terra" data-sheet="terraform" aria-expanded="false"><span aria-hidden="true">🌍</span>Terraform</button>
+  </nav>
+  <div class="mapzone">
+    <div class="lenses" role="group" aria-label="Map lens">
+      <button type="button" data-lens="" aria-pressed="true">🌱 Plants</button>
+      <button type="button" data-lens="temp" aria-pressed="false">🌡️ Temp</button>
+      <button type="button" data-lens="water" aria-pressed="false">💧 Water</button>
+      <button type="button" data-lens="soil" aria-pressed="false">🟫 Soil</button>
+      <button type="button" data-lens="hazard" aria-pressed="false">⚠️ Hazard</button>
+    </div>
+    <div class="mapwrap" id="mapwrap"></div>
+    <div class="legend" id="legend" hidden></div>
+    <section class="sheet" id="sheet" hidden aria-labelledby="sTitle">
+      <header><h2 id="sTitle"></h2><span class="kind" id="sKind"></span><button class="x-btn" id="sClose" type="button" aria-label="Close sheet">✕</button></header>
+      <div class="scroll" id="sBody"></div>
+      <div class="pv" id="sPv" aria-live="polite"></div>
+    </section>
+  </div>
+  <aside class="drawer" id="drawer" hidden aria-labelledby="dTitle">
+    <div class="vtabs" role="tablist" aria-orientation="vertical" aria-label="Region sections">
+      <button role="tab" data-tab="over" aria-selected="true"><span aria-hidden="true">🔎</span>Overview</button>
+      <button role="tab" data-tab="colony" aria-selected="false"><span aria-hidden="true">🌱</span>Colony</button>
+      <button role="tab" data-tab="nbs" aria-selected="false"><span aria-hidden="true">🧭</span>Nearby</button>
+      <button role="tab" data-tab="raw" aria-selected="false"><span aria-hidden="true">🔬</span>Details</button>
+    </div>
+    <div class="dmain">
+      <div class="postcard" id="post">
+        <div class="portrait" id="portrait"></div>
+        <div><h2 id="dTitle"></h2><div class="meta" id="dMeta"></div></div>
+        <button class="x-btn" id="dClose" type="button" aria-label="Close region drawer">✕</button>
+      </div>
+      <div class="dscroll" id="dBody" role="tabpanel"></div>
+    </div>
+  </aside>
+</div>
+
+<script src="shared.js"></script>
+<script>
+BM.ribbon('Concept 2 · Drawer-heavy map-first (SimCity / Sims-style panels)');
+BM.bindBiomass(document.getElementById('bio'));
+const S = BM.store.s, $ = id => document.getElementById(id);
+const body = $('body'), drawer = $('drawer'), sheet = $('sheet');
+BM.store.on(() => { $('cov').textContent = S.coverage.toFixed(0); $('covbar').style.width = Math.min(100, S.coverage) + '%'; $('prsbar').style.width = S.pressure * 100 + '%'; });
+function advise(t){ const a = $('adv'); a.style.opacity = 0; setTimeout(() => { a.textContent = t; a.style.opacity = 1; }, 200); }
+
+/* map + lenses */
+let selected = null, dtab = 'over', sheetId = null, sheetRegionSort = 'help';
+const map = BM.mountMap($('mapwrap'), { labels:'all', onSelect:id => openRegion(id) });
+const LEG = { temp:'Temperature', water:'Water', soil:'Soil', hazard:'Hazard' };
+document.querySelectorAll('[data-lens]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-lens]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  map.setLens(b.dataset.lens);
+  const L = $('legend'); L.hidden = !b.dataset.lens;
+  if (b.dataset.lens) { L.innerHTML = '<span>' + LEG[b.dataset.lens] + ' lens:</span>' + BM.stHTML('ok') + BM.stHTML('warn') + BM.stHTML('bad'); advise('Lens on: every region is coloured by ' + LEG[b.dataset.lens].toLowerCase() + '. Hatched dots mark blocked ground.'); }
+}));
+
+/* region drawer */
+const portrait = BM.mountSpecimen($('portrait'), { compact:true });
+function openRegion(id){
+  selected = id; map.select(id);
+  if (!BM.isOpen(drawer)) { body.classList.add('drawer-open'); BM.openLayer(drawer, document.activeElement, { noFocus:true, onClose:() => { body.classList.remove('drawer-open'); map.select(null); selected = null; renderSheet(); } }); }
+  renderDrawer(); renderSheet();
+  const v = BM.view(id);
+  advise(v.limit ? v.r.name + ': ' + v.limit.text + '.' : v.r.name + ' is doing well.');
+}
+$('dClose').addEventListener('click', () => BM.closeLayer(drawer));
+const vt = [...document.querySelectorAll('.vtabs [role=tab]')];
+vt.forEach((t, k) => {
+  t.addEventListener('click', () => { dtab = t.dataset.tab; renderDrawer(); });
+  t.addEventListener('keydown', e => { if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); const n = vt[(k + (e.key === 'ArrowDown' ? 1 : vt.length - 1)) % vt.length]; dtab = n.dataset.tab; renderDrawer(); n.focus(); } });
+});
+function renderDrawer(){
+  if (!selected) return;
+  const v = BM.view(selected), r = v.r, rs = v.rs;
+  vt.forEach(t => { const on = t.dataset.tab === dtab; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; });
+  $('post').style.background = 'linear-gradient(90deg,' + BM.TERRAIN[r.terrain] + ',var(--card) 75%)';
+  $('dTitle').textContent = r.name;
+  $('dMeta').innerHTML = (r.origin ? '<span class="chip">⭐ Start</span>' : '') + '<span class="chip">' + (rs.colony === 'living' ? '🌱 ' + v.estWord : '◌ No colony') + '</span>' + BM.stHTML(v.st, v.limit ? BM.ST_WORD[v.st] : 'Thriving');
+  portrait.render(BM.specState(selected));
+  const B = $('dBody'); let h = '';
+  if (dtab === 'over') {
+    h += '<h3 class="sub">Conditions</h3><div class="ctiles">' + ['temp','water','soil','hazard'].map(k => '<div class="ctile"><span class="h"><span aria-hidden="true">' + BM.COND_META[k].ico + '</span>' + BM.COND_META[k].name + '</span>' + BM.stHTML(v.cond[k][0]) + '<small>' + BM.esc(v.cond[k][1]) + '</small></div>').join('') + '</div>';
+    if (v.limit) h += '<div class="help"><b>' + BM.COND_META[v.limit.f].ico + ' ' + BM.esc(v.limit.text) + '</b>' + (v.fixers.length ? '<div class="row">' + v.fixers.map(it => '<button class="fix" data-fix="' + it.id + '">' + it.ico + ' ' + it.name + ' <span class="kind ' + BM.BOARDS[it.board].kind + '">' + BM.BOARDS[it.board].name + '</span></button>').join('') + '</div>' : '') + '</div>';
+    h += '<h3 class="sub">Recent</h3><ul class="log">' + fakeLog(r, rs).map(x => '<li>' + x + '</li>').join('') + '</ul>';
+  } else if (dtab === 'colony') {
+    if (rs.colony !== 'living') h = '<div class="empty">No colony here yet. Once seeds settle, you can choose how this colony grows.</div>';
+    else {
+      h += '<h3 class="sub">How should this colony grow?</h3><div class="fcards" role="group" aria-label="Growth focus">' + BM.FOCUS.map(f => '<button class="fcard" type="button" data-focus="' + f.id + '" aria-pressed="' + (f.id === rs.focus) + '"><span class="i" aria-hidden="true">' + f.ico + '</span><b>' + f.name + (f.id === rs.focus ? ' ✓' : '') + '</b><small>' + f.text + '</small></button>').join('') + '</div>';
+      h += '<h3 class="sub">Local upgrade · one per colony</h3><div class="specrow">' + BM.SPECS.map(x => '<button type="button" class="' + (rs.spec === x.id ? 'has' : '') + '" data-spec="' + x.id + '" aria-disabled="' + (!!rs.spec) + '"><span aria-hidden="true" style="font-size:22px">' + x.ico + '</span><span>' + x.name + '<br><small style="font-weight:700; color:var(--ink-soft)">' + x.text + '</small></span><span class="c">' + (rs.spec === x.id ? '✓ Built' : rs.spec ? '' : '● ' + BM.SPEC_COST) + '</span></button>').join('') + '</div>';
+    }
+  } else if (dtab === 'nbs') {
+    h += '<h3 class="sub">Neighbouring regions</h3><div class="nbs">' + neighbours(selected).map(id => { const n = BM.view(id); return '<button class="fix" data-go="' + id + '">' + BM.stHTML(n.st, '') + ' ' + n.r.name + '</button>'; }).join('') + '</div>' +
+      '<p style="color:var(--ink-soft); font-weight:700; font-size:14px">Seeds travel to touching regions. Water needs Waterborne Seeds.</p>';
+  } else {
+    h += '<h3 class="sub">Raw signals</h3><table class="rawt">' + Object.entries(r.raw).map(([k, val]) => '<tr><td>' + k + '</td><td>' + val + '</td></tr>').join('') + '</table>';
+  }
+  B.innerHTML = h;
+  B.querySelectorAll('[data-fix]').forEach(b => b.addEventListener('click', () => openSheet(BM.item(b.dataset.fix).board, b, b.dataset.fix)));
+  B.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => openRegion(b.dataset.go)));
+  B.querySelectorAll('[data-focus]').forEach(b => {
+    b.addEventListener('click', () => { BM.store.setFocus(selected, b.dataset.focus); renderDrawer(); $('dBody').querySelector('[data-focus="' + b.dataset.focus + '"]').focus(); advise(BM.region(selected).name + ' now grows with a ' + BM.FOCUS.find(f => f.id === b.dataset.focus).name + ' focus.'); });
+    b.addEventListener('pointerenter', () => portrait.render(BM.specState(selected, { focus:b.dataset.focus }), true));
+    b.addEventListener('pointerleave', () => portrait.render(BM.specState(selected)));
+  });
+  B.querySelectorAll('[data-spec]').forEach(b => b.addEventListener('click', () => { const res = BM.store.buySpec(selected, b.dataset.spec); BM.toast(res.ok ? 'Built ' + BM.SPECS.find(x => x.id === b.dataset.spec).name + '.' : res.reason); if (res.ok) renderDrawer(); }));
+}
+function neighbours(id){
+  const N = { sunny:['fern','cloud','frost','dust','mossy','marsh'], fern:['cloud','sunny','marsh'], marsh:['fern','sunny','mossy'], cloud:['fern','sunny','frost'], frost:['cloud','sunny','ember','dust'],
+    ember:['frost','dust'], dust:['sunny','frost','ember','salt','mossy'], salt:['dust','mossy'], mossy:['marsh','sunny','dust','salt'], tide:[] };
+  return N[id].length ? N[id] : [];
+}
+function fakeLog(r, rs){
+  if (rs.colony !== 'living') return ['🌬️ Seeds blew in 30 s ago and could not settle.', '👀 Your plant has scouted this region.'];
+  return ['🌱 Stand thickened to ' + Math.round(rs.est * 100) + '%.', '✦ Earned ' + (rs.est * 12).toFixed(0) + ' Biomass in the last minute.', r.origin ? '⭐ Your plant landed here.' : '🌬️ First seeds settled here.'];
+}
+let lastT = 0;
+BM.store.on(e => { if (!selected) return; if (e.type === 'tick' && (S.t - lastT < 3 || drawer.contains(document.activeElement))) return; lastT = S.t; if (e.type !== 'gain') renderDrawer(); });
+
+/* left sheets (non-modal) */
+document.querySelectorAll('.rail [data-sheet]').forEach(b => b.addEventListener('click', () => sheetId === b.dataset.sheet ? BM.closeLayer(sheet) : openSheet(b.dataset.sheet, b)));
+$('sClose').addEventListener('click', () => BM.closeLayer(sheet));
+let sheetSpec = null, cardsApi = null;
+function openSheet(id, opener, focusCard){
+  if (sheetId) BM.closeLayer(sheet, { noReturn:true });
+  sheetId = id;
+  document.querySelectorAll('.rail [data-sheet]').forEach(x => x.setAttribute('aria-expanded', x.dataset.sheet === id));
+  renderSheet(true);
+  body.classList.add('sheet-open');
+  BM.openLayer(sheet, opener, { onClose:() => { body.classList.remove('sheet-open'); sheetId = null; map.setPreview(null); document.querySelectorAll('.rail [data-sheet]').forEach(x => x.setAttribute('aria-expanded', 'false')); } });
+  if (focusCard && cardsApi) setTimeout(() => cardsApi.focusCard(focusCard), 60);
+  if (id !== 'regions') advise(id === 'terraform' ? 'Terraform changes the whole planet. Hover a card: the map shows what it would change.' : 'Hover a card: the map highlights regions it would open (+) or make harder (−).');
+}
+function renderSheet(full){
+  if (!sheetId) return;
+  const sb = $('sBody');
+  if (sheetId === 'regions') {
+    $('sTitle').textContent = '🗺️ Regions'; $('sKind').className = 'kind'; $('sKind').textContent = '';
+    const rank = { bad:0, warn:1, ok:2 };
+    const list = BM.REGIONS.map(r => BM.view(r.id)).sort((a, b) => sheetRegionSort === 'help' ? rank[a.st] - rank[b.st] : a.r.name.localeCompare(b.r.name));
+    sb.innerHTML = '<div class="sortrow">Sort: <button class="btn small' + (sheetRegionSort === 'help' ? ' gold' : '') + '" data-sort="help">Needs help first</button><button class="btn small' + (sheetRegionSort === 'az' ? ' gold' : '') + '" data-sort="az">A–Z</button></div><ul class="rlist">' +
+      list.map(v => '<li><button data-go="' + v.r.id + '" aria-current="' + (selected === v.r.id) + '"><span class="sw" style="background:' + BM.TERRAIN[v.r.terrain] + '" aria-hidden="true"></span><span>' + v.r.name + '<small>' + (v.limit ? BM.esc(v.limit.text) : 'Doing well') + '</small></span>' + BM.stHTML(v.st) + '</button></li>').join('') + '</ul>';
+    sb.querySelectorAll('[data-go]').forEach(b => { b.addEventListener('click', () => openRegion(b.dataset.go)); b.addEventListener('pointerenter', () => map.setPreview({ open:[b.dataset.go] })); b.addEventListener('pointerleave', () => map.setPreview(null)); });
+    sb.querySelectorAll('[data-sort]').forEach(b => b.addEventListener('click', () => { sheetRegionSort = b.dataset.sort; renderSheet(); sb.querySelector('[data-sort="' + b.dataset.sort + '"]').focus(); }));
+    $('sPv').textContent = 'Hover a region in the list to find it on the map.';
+    return;
+  }
+  if (!full) return;
+  const B = BM.BOARDS[sheetId];
+  $('sTitle').textContent = B.ico + ' ' + B.name; $('sKind').className = 'kind ' + B.kind; $('sKind').textContent = sheetId === 'terraform' ? 'Planet' : 'Plant';
+  sb.innerHTML = '<div class="mini-spec" id="sSpec"></div><div id="sCards"></div>';
+  sheetSpec = BM.mountSpecimen($('sSpec'), { compact:true });
+  const rid = () => selected || 'sunny';
+  const show = pv => { const it = pv && BM.item(pv); sheetSpec.render(BM.specState(rid(), !it ? { showcase:true } : it.board === 'terraform' ? { sky:pv, showcase:true } : { addTrait:pv, showcase:true }), !!it); };
+  show(null);
+  cardsApi = BM.renderCards($('sCards'), sheetId, { compact:true, onPreview:id => {
+    show(id); const it = id && BM.item(id), p = id ? BM.previewOf(id) : null;
+    map.setPreview(it ? { open:p.open, worse:p.worse, tint:it.board === 'terraform' ? id : null, arcs:id === 'waterSeeds' ? [['sunny','tide'],['mossy','tide']] : null } : null);
+    $('sPv').innerHTML = it ? BM.esc(BM.previewText(id)) : '<span style="color:var(--ink-faint)">Hover a card. The map itself shows the effect.</span>';
+  }, onBought:id => { show(null); advise(BM.item(id).name + ' bought. Look at the map.'); } });
+  $('sPv').innerHTML = '<span style="color:var(--ink-faint)">Hover a card. The map itself shows the effect.</span>';
+}
+BM.store.on(e => { if (sheetId === 'regions' && (e.type === 'buy' || e.type === 'focus')) renderSheet(); });
+setTimeout(() => openRegion('sunny'), 400);
+</script>
+</body>
+</html>

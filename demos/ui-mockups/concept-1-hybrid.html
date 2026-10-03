@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM mockup · Concept 1 · Hybrid</title>
+<!--
+  BLOOM-017 · Concept 1 — Hybrid A+C+B (PMO-recommended baseline).
+  VISUAL CONCEPT MOCKUP ONLY: fake data, scripted behaviour, not connected to the game. Not the production UI.
+  Philosophy: the map is the centre; selecting a region slides in a context drawer (with the specimen IN that region);
+  the three global systems open as big dedicated boards from a large bottom launch bar.
+-->
+<link rel="stylesheet" href="shared.css">
+<style>
+  body{display:flex; flex-direction:column; height:100vh; overflow:hidden}
+  /* HUD */
+  .hud{flex:none; display:flex; align-items:center; gap:18px; padding:8px 16px; background:var(--card); border-bottom:3px solid var(--line); box-shadow:0 2px 0 rgba(0,0,0,.03); z-index:30; position:relative}
+  .hud .biomass{background:var(--gold-soft); border:3px solid #f3d27a; border-radius:var(--r-lg); padding:4px 18px 4px 10px}
+  .hud .biomass .ico{width:40px; height:40px; font-size:20px}
+  .hud .biomass .num{font-size:36px; line-height:1}
+  .hud .biomass .lab{display:block; font-size:12px; font-weight:900; letter-spacing:1.2px; color:var(--gold-deep)}
+  .goal{flex:1; max-width:420px; display:flex; flex-direction:column; gap:4px}
+  .goal .row{display:flex; justify-content:space-between; font-weight:800; font-size:15px}
+  .goal .row b{font-size:20px; color:var(--leaf-dark)}
+  .scen{display:flex; align-items:center; gap:10px; padding:6px 12px; border-radius:var(--r-md); background:var(--pressure-soft); border:2px solid #d9c6ec; cursor:pointer; min-height:48px}
+  .scen .t{font-weight:900; font-size:14px; color:#5b3a82}
+  .scen .bar{width:120px}
+  .hud .spacer{flex:1}
+  /* stage */
+  .stage{position:relative; flex:1; min-height:0}
+  .mapwrap{position:absolute; inset:12px 12px 12px 12px; transition:right .35s var(--ease)}
+  .stage.drawer-open .mapwrap{right:432px}
+  .maphint{position:absolute; left:24px; top:20px; background:rgba(255,253,247,.92); border:2px solid var(--line); border-radius:var(--r-md); padding:8px 14px; font-weight:700; font-size:15px; pointer-events:none; transition:opacity .3s}
+  .stage.drawer-open .maphint{opacity:0}
+  /* drawer */
+  .drawer{position:absolute; top:12px; right:12px; bottom:12px; width:408px; background:var(--card); border:3px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow-lg);
+    display:flex; flex-direction:column; transform:translateX(110%); transition:transform .35s var(--ease); z-index:10}
+  .drawer.open{transform:none}
+  .drawer header{display:flex; align-items:center; gap:10px; padding:12px 12px 8px 16px}
+  .drawer header h2{margin:0; font-size:24px; flex:1}
+  .drawer .scroll{overflow:auto; padding:0 16px 16px; flex:1}
+  .drawer .who{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:0 0 10px}
+  .chip{display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:20px; background:var(--paper-2); font-weight:800; font-size:14px}
+  .specbox{height:170px; margin:0 0 10px}
+  .specbox .bm-spec{height:100%}
+  .speclab{font-size:13px; color:var(--ink-soft); font-weight:700; margin:-4px 0 10px}
+  .limit{border-radius:var(--r-md); padding:12px 14px; margin:0 0 12px; border:3px solid}
+  .limit.bad{background:#fbe6ec; border-color:#eab6c4} .limit.warn{background:#fff2dc; border-color:#f0cf98} .limit.ok{background:var(--leaf-soft); border-color:#bfe0b5}
+  .limit .h{font-size:13px; font-weight:900; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-soft)}
+  .limit .tx{font-size:18px; font-weight:800; margin:2px 0 8px}
+  .fixes{display:flex; flex-wrap:wrap; gap:8px}
+  .fix{display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:6px 12px; border-radius:14px; border:2px solid var(--line-2); background:var(--card); cursor:pointer; font-weight:800}
+  .fix small{font-weight:800; font-size:11px; letter-spacing:1px; text-transform:uppercase; padding:1px 6px; border-radius:8px}
+  .fix.plant small{background:var(--leaf-soft); color:var(--leaf-dark)} .fix.planet small{background:var(--sky-soft); color:var(--sky-dark)} .fix.spread small{background:var(--bloom-soft); color:var(--bloom-dark)}
+  .fix:hover{border-color:var(--ink-soft)}
+  .conds{display:grid; gap:8px}
+  .rawt{width:100%; border-collapse:collapse; font-size:15px} .rawt td{padding:7px 4px; border-bottom:1px dashed var(--line)} .rawt td:last-child{text-align:right; font-weight:800}
+  .focusdesc{margin:8px 0 14px; font-size:15px; color:var(--ink-soft); min-height:2.8em}
+  .specs{display:grid; gap:8px}
+  .specbtn{display:grid; grid-template-columns:40px 1fr auto; align-items:center; gap:10px; text-align:left; padding:10px 12px; min-height:60px; border-radius:var(--r-md); border:2px solid var(--line); background:var(--card); cursor:pointer}
+  .specbtn .i{font-size:26px} .specbtn b{display:block} .specbtn small{color:var(--ink-soft)}
+  .specbtn .c{font-weight:900; color:var(--gold-deep)}
+  .specbtn.has{border-color:var(--leaf); background:var(--leaf-soft)} .specbtn.has .c{color:var(--leaf-dark)}
+  .specbtn[aria-disabled="true"]:not(.has){opacity:.5}
+  h3.sub{margin:16px 0 8px; font-size:14px; letter-spacing:1.3px; text-transform:uppercase; color:var(--ink-soft)}
+  .empty{padding:14px; border-radius:var(--r-md); background:var(--paper-2); font-weight:700; color:var(--ink-soft)}
+  /* action bar */
+  .actions{flex:none; display:flex; gap:14px; padding:10px 16px 14px; background:var(--card); border-top:3px solid var(--line); z-index:30; position:relative; align-items:stretch}
+  .act{flex:1; display:flex; align-items:center; gap:14px; text-align:left; min-height:76px; padding:10px 18px; border-radius:var(--r-lg); cursor:pointer; border:3px solid; box-shadow:0 4px 0; transition:transform .12s var(--ease)}
+  .act:hover{transform:translateY(-2px)} .act:active{transform:translateY(2px); box-shadow:0 1px 0}
+  .act .i{font-size:36px} .act b{display:block; font-size:22px} .act small{font-size:14px; font-weight:800; opacity:.9}
+  .act.adapt{background:var(--leaf); border-color:var(--leaf-dark); color:#fff; box-shadow:0 4px 0 var(--leaf-dark)}
+  .act.spread{background:var(--bloom); border-color:var(--bloom-dark); color:#fff; box-shadow:0 4px 0 var(--bloom-dark)}
+  .act.terra{background:var(--sky); border-color:var(--sky-dark); color:#fff; box-shadow:0 4px 0 var(--sky-dark)}
+  .act[aria-expanded="true"]{outline:4px solid var(--ink); outline-offset:2px}
+  .act .tagline{margin-left:auto; font-size:11px; font-weight:900; letter-spacing:1.2px; text-transform:uppercase; background:rgba(255,255,255,.22); padding:3px 8px; border-radius:10px}
+  /* boards (takeover, map dimmed behind; HUD stays visible) */
+  .scrim{position:absolute; inset:0; background:rgba(47,58,44,.35); opacity:0; transition:opacity .3s; z-index:15}
+  .scrim.open{opacity:1}
+  .board{position:absolute; inset:12px 12px 12px 12px; background:var(--paper); border:3px solid var(--line-2); border-radius:var(--r-lg); box-shadow:var(--shadow-lg); z-index:20;
+    display:flex; flex-direction:column; transform:translateY(40px) scale(.97); opacity:0; transition:transform .35s var(--ease), opacity .25s}
+  .board.open{transform:none; opacity:1}
+  .board > header{display:flex; align-items:center; gap:14px; padding:12px 14px 10px 20px; border-bottom:3px solid var(--line)}
+  .board > header .bi{font-size:40px}
+  .board > header h2{margin:0; font-size:30px}
+  .board > header p{margin:0; color:var(--ink-soft); font-weight:700}
+  .board > header .grow{flex:1}
+  .bbody{flex:1; min-height:0; display:grid; grid-template-columns:minmax(300px,38%) 1fr; gap:18px; padding:16px 20px}
+  .bleft{display:flex; flex-direction:column; gap:10px; min-height:0}
+  .bleft .big{flex:1; min-height:220px}
+  .bleft .big .bm-spec{height:100%}
+  .bleft .pick{display:flex; align-items:center; gap:8px; font-weight:800; font-size:15px}
+  .bleft select{font:inherit; min-height:44px; padding:4px 10px; border-radius:12px; border:2px solid var(--line-2); background:var(--card); font-weight:800}
+  .looks{display:flex; flex-wrap:wrap; gap:6px}
+  .looks span{font-size:13px; font-weight:800; padding:3px 10px; border-radius:14px; background:var(--leaf-soft); color:var(--leaf-dark); border:2px solid transparent; cursor:default}
+  .looks span.pv{background:var(--ink); color:#fff7e0}
+  .bright{overflow:auto; padding-right:4px; min-height:0}
+  .bleft .big{position:relative}
+  .minimap{position:absolute; right:10px; bottom:10px; width:42%; max-width:260px; aspect-ratio:412/272; border-radius:14px; overflow:hidden; border:3px solid #fff; box-shadow:var(--shadow); background:#a9d6ee}
+  .minimap::before{content:'Where it matters'; position:absolute; left:6px; top:4px; font-size:11px; font-weight:900; color:var(--ink); background:rgba(255,253,247,.9); padding:1px 6px; border-radius:8px; z-index:1}
+  .pvline{flex:none; padding:10px 20px 14px; font-weight:800; font-size:16px; border-top:3px solid var(--line); min-height:48px; display:flex; align-items:center; gap:10px}
+  .pvline .muted{color:var(--ink-faint)}
+  .stab{display:grid; gap:4px; font-weight:800; font-size:14px}
+  .stab .bar{height:16px}
+  .stab .ghost{position:absolute; top:0; bottom:0; background:repeating-linear-gradient(-45deg,rgba(196,70,106,.55) 0 5px,transparent 5px 10px); transition:left .3s, width .3s}
+  .note{font-size:14px; color:var(--ink-soft); font-weight:700; margin:0}
+  @media (max-width:1100px){ .drawer{width:360px} .stage.drawer-open .mapwrap{right:384px} .act small{display:none} .bbody{grid-template-columns:minmax(260px,36%) 1fr} }
+  @media (max-width:820px){ .stage.drawer-open .mapwrap{right:12px} .act .tagline{display:none} .scen .bar{display:none} }
+</style>
+</head>
+<body>
+<header class="hud">
+  <div class="biomass" id="bio" aria-live="off"><span class="ico" aria-hidden="true">✦</span><span><span class="lab">BIOMASS</span><span class="num">0</span></span><span class="rate"></span></div>
+  <div class="goal" aria-label="Planet coverage goal">
+    <div class="row"><span>🌍 Planet in bloom</span><span><b id="cov">0%</b> / 70% to win</span></div>
+    <div class="bar"><i id="covbar" style="width:0"></i><span class="goal" style="left:70%"></span></div>
+  </div>
+  <span class="spacer"></span>
+  <button class="scen" id="scenBtn" type="button" aria-label="Scenario: Dying World. Atmosphere thinning.">
+    <span aria-hidden="true" style="font-size:22px">💨</span><span><span class="t">DYING WORLD</span><br><small style="font-weight:700">Air thinning · <span id="prs">0</span>%</small></span>
+    <span class="bar pressure"><i id="prsbar" style="width:0"></i></span>
+  </button>
+  <button class="btn small ghost" type="button" onclick="BM.toast('Menu is not part of this mockup.')">☰ Menu</button>
+</header>
+
+<main class="stage" id="stage">
+  <div class="mapwrap" id="mapwrap"></div>
+  <div class="maphint" id="maphint">👆 Pick a region on the map</div>
+
+  <aside class="drawer" id="drawer" hidden aria-labelledby="dTitle">
+    <header>
+      <h2 id="dTitle">Region</h2>
+      <button class="x-btn" type="button" id="dClose" aria-label="Close region panel">✕</button>
+    </header>
+    <div class="scroll">
+      <div class="who" id="dWho"></div>
+      <div class="specbox" id="dSpec"></div>
+      <p class="speclab" id="dSpecLab"></p>
+      <div id="dLimit"></div>
+      <div class="tabs" role="tablist" aria-label="Region sections">
+        <button role="tab" id="t-cond" aria-selected="true" aria-controls="p-cond">Conditions</button>
+        <button role="tab" id="t-col" aria-selected="false" aria-controls="p-col">Colony</button>
+        <button role="tab" id="t-raw" aria-selected="false" aria-controls="p-raw">Details</button>
+      </div>
+      <section role="tabpanel" id="p-cond" aria-labelledby="t-cond"><div class="conds" id="dConds"></div></section>
+      <section role="tabpanel" id="p-col" aria-labelledby="t-col" hidden></section>
+      <section role="tabpanel" id="p-raw" aria-labelledby="t-raw" hidden><table class="rawt" id="dRaw"></table></section>
+    </div>
+  </aside>
+
+  <div class="scrim" id="scrim" hidden></div>
+  <section class="board" id="board" hidden role="dialog" aria-modal="true" aria-labelledby="bTitle">
+    <header>
+      <span class="bi" id="bIco" aria-hidden="true"></span>
+      <div class="grow"><h2 id="bTitle"></h2><p id="bVerb"></p></div>
+      <span class="kind" id="bKind"></span>
+      <button class="x-btn" type="button" id="bClose" aria-label="Close board">✕</button>
+    </header>
+    <div class="bbody">
+      <div class="bleft" id="bLeft"></div>
+      <div class="bright" id="bCards"></div>
+    </div>
+    <div class="pvline" id="bPv" aria-live="polite"><span class="muted">Hover or focus a card to preview it. Click to buy.</span></div>
+  </section>
+</main>
+
+<nav class="actions" aria-label="Global systems">
+  <button class="act adapt" data-board="adapt" aria-expanded="false"><span class="i" aria-hidden="true">🌿</span><span><b>Adapt</b><small>Change your plant</small></span><span class="tagline">Plant</span></button>
+  <button class="act spread" data-board="spread" aria-expanded="false"><span class="i" aria-hidden="true">🌱</span><span><b>Spread</b><small>Reach new land</small></span><span class="tagline">Plant</span></button>
+  <button class="act terra" data-board="terraform" aria-expanded="false"><span class="i" aria-hidden="true">🌍</span><span><b>Terraform</b><small>Change the planet</small></span><span class="tagline">Planet</span></button>
+</nav>
+
+<script src="shared.js"></script>
+<script>
+BM.ribbon('Concept 1 · Hybrid: map + region drawer + big boards (recommended baseline)');
+BM.bindBiomass(document.getElementById('bio'));
+const S = BM.store.s, $ = id => document.getElementById(id);
+const stage = $('stage'), drawer = $('drawer');
+
+/* HUD */
+BM.store.on(() => {
+  $('cov').textContent = S.coverage.toFixed(0) + '%'; $('covbar').style.width = Math.min(100, S.coverage) + '%';
+  $('prs').textContent = Math.round(S.pressure * 100); $('prsbar').style.width = S.pressure * 100 + '%';
+});
+$('scenBtn').addEventListener('click', () => BM.toast('💨 Dying World: the air is thinning. The planet gets colder, drier and more exposed over time.'));
+
+/* map */
+let selected = null, tab = 'cond';
+const map = BM.mountMap($('mapwrap'), { labels:'all', onSelect:id => openRegion(id) });
+const spec = BM.mountSpecimen($('dSpec'), { compact:true });
+
+function openRegion(id){
+  selected = id; map.select(id);
+  if (!BM.isOpen(drawer)) { stage.classList.add('drawer-open'); BM.openLayer(drawer, document.activeElement, { noFocus:true, onClose:() => { stage.classList.remove('drawer-open'); map.select(null); selected = null; } }); }
+  renderDrawer(true);
+}
+$('dClose').addEventListener('click', () => BM.closeLayer(drawer));
+
+function renderDrawer(full){
+  if (!selected) return;
+  const v = BM.view(selected), r = v.r, rs = v.rs;
+  $('dTitle').textContent = r.name;
+  $('dWho').innerHTML = (r.origin ? '<span class="chip">⭐ Starting region</span>' : '') +
+    '<span class="chip">' + (rs.colony === 'living' ? '🌱 ' + v.estWord + ' · ' + Math.round(rs.est * 100) + '%' : '◌ No colony yet') + '</span>' +
+    (rs.colony === 'living' ? '<span class="chip">' + BM.FOCUS.find(f => f.id === rs.focus).ico + ' ' + BM.FOCUS.find(f => f.id === rs.focus).name + '</span>' : '');
+  spec.render(BM.specState(selected));
+  $('dSpecLab').textContent = rs.colony === 'living' ? 'Your plant, growing in ' + r.name + '.' : 'How your plant would cope in ' + r.name + ' today.';
+  const L = v.limit;
+  let html = '<div class="limit ' + v.st + '"><div class="h">' + (L ? 'Holding your plant back' : 'Good ground') + '</div><div class="tx">' +
+    (L ? BM.COND_META[L.f].ico + ' ' + BM.esc(L.text) : '✓ Nothing is holding your plant back here.') + '</div>';
+  if (L && v.fixers.length) html += '<div class="fixes">' + v.fixers.map(it => { const k = BM.BOARDS[it.board].kind;
+    return '<button class="fix ' + k + '" data-fix="' + it.id + '">' + it.ico + ' ' + it.name + ' <small>' + BM.BOARDS[it.board].name + '</small></button>'; }).join('') + '</div>';
+  html += '</div>';
+  $('dLimit').innerHTML = html;
+  $('dLimit').querySelectorAll('[data-fix]').forEach(b => b.addEventListener('click', () => openBoard(BM.item(b.dataset.fix).board, b, b.dataset.fix)));
+  $('dConds').innerHTML = ['temp','water','soil','hazard'].map(k => '<div class="cond"><span class="ci" aria-hidden="true">' + BM.COND_META[k].ico + '</span><span><b>' + BM.COND_META[k].name + '</b><small>' + BM.esc(v.cond[k][1]) + '</small></span>' + BM.stHTML(v.cond[k][0]) + '</div>').join('');
+  $('dRaw').innerHTML = Object.entries(r.raw).map(([k, val]) => '<tr><td>' + k + '</td><td>' + val + '</td></tr>').join('');
+  renderColony();
+}
+function renderColony(){
+  const v = BM.view(selected), rs = v.rs, p = $('p-col');
+  if (rs.colony !== 'living') { p.innerHTML = '<div class="empty">No colony here yet. ' + (v.limit ? 'Fix what is holding your plant back, then seeds can settle.' : 'Seeds from a neighbour will settle here soon.') + '</div>'; return; }
+  const f = BM.FOCUS.find(x => x.id === rs.focus);
+  p.innerHTML = '<h3 class="sub" style="margin-top:0">Growth focus</h3><div class="seg" role="group" aria-label="Growth focus">' +
+    BM.FOCUS.map(x => '<button type="button" data-focus="' + x.id + '" aria-pressed="' + (x.id === rs.focus) + '"><span aria-hidden="true">' + x.ico + '</span>' + x.name + '</button>').join('') +
+    '</div><p class="focusdesc" id="fdesc">' + f.text + '</p><h3 class="sub">Local upgrade <small style="text-transform:none; letter-spacing:0">(one per colony)</small></h3><div class="specs">' +
+    BM.SPECS.map(x => '<button type="button" class="specbtn' + (rs.spec === x.id ? ' has' : '') + '" data-spec="' + x.id + '" aria-disabled="' + (!!rs.spec) + '"><span class="i" aria-hidden="true">' + x.ico + '</span><span><b>' + x.name + '</b><small>' + x.text + '</small></span><span class="c">' + (rs.spec === x.id ? '✓ Built' : rs.spec ? '' : '● ' + BM.SPEC_COST) + '</span></button>').join('') + '</div>';
+  p.querySelectorAll('[data-focus]').forEach(b => {
+    b.addEventListener('click', () => { BM.store.setFocus(selected, b.dataset.focus); renderDrawer(); p.querySelector('[data-focus="' + b.dataset.focus + '"]').focus(); });
+    b.addEventListener('pointerenter', () => { spec.render(BM.specState(selected, { focus:b.dataset.focus }), b.dataset.focus !== rs.focus); $('fdesc').textContent = BM.FOCUS.find(x => x.id === b.dataset.focus).text; });
+    b.addEventListener('pointerleave', () => { spec.render(BM.specState(selected)); $('fdesc').textContent = BM.FOCUS.find(x => x.id === BM.store.s.reg[selected].focus).text; });
+  });
+  p.querySelectorAll('[data-spec]').forEach(b => {
+    b.addEventListener('pointerenter', () => { if (!rs.spec) spec.render(BM.specState(selected, { spec:b.dataset.spec }), true); });
+    b.addEventListener('pointerleave', () => spec.render(BM.specState(selected)));
+    b.addEventListener('click', () => { const res = BM.store.buySpec(selected, b.dataset.spec); BM.toast(res.ok ? BM.SPECS.find(x => x.id === b.dataset.spec).ico + ' ' + BM.SPECS.find(x => x.id === b.dataset.spec).name + ' built in ' + BM.region(selected).name + '.' : res.reason); if (res.ok) { renderDrawer(); $('p-col').querySelector('[data-spec]').focus(); } });
+  });
+}
+/* tabs (arrow keys move between tabs) */
+const tabs = [...document.querySelectorAll('[role=tab]')];
+tabs.forEach((t, k) => {
+  t.addEventListener('click', () => selectTab(t));
+  t.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = tabs[(k + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; selectTab(n); n.focus(); } });
+});
+function selectTab(t){ tabs.forEach(x => { const on = x === t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; $(x.getAttribute('aria-controls')).hidden = !on; }); }
+selectTab(tabs[0]);
+let lastTickRender = 0;
+BM.store.on(e => { if (selected && (e.type === 'buy' || e.type === 'spec' || (e.type === 'tick' && S.t - lastTickRender >= 3))) { lastTickRender = S.t;
+  if (e.type === 'tick' && drawer.contains(document.activeElement) && $('p-col').contains(document.activeElement)) return;  // don't yank focus mid-interaction
+  if (e.type === 'tick') { const v = BM.view(selected); $('dWho').querySelector('.chip:last-child'); renderWhoOnly(v); } else renderDrawer(); } });
+function renderWhoOnly(v){ const rs = v.rs, r = v.r; $('dWho').innerHTML = (r.origin ? '<span class="chip">⭐ Starting region</span>' : '') + '<span class="chip">' + (rs.colony === 'living' ? '🌱 ' + v.estWord + ' · ' + Math.round(rs.est * 100) + '%' : '◌ No colony yet') + '</span>' + (rs.colony === 'living' ? '<span class="chip">' + BM.FOCUS.find(f => f.id === rs.focus).ico + ' ' + BM.FOCUS.find(f => f.id === rs.focus).name + '</span>' : ''); }
+
+/* boards */
+const board = $('board'), scrim = $('scrim');
+let boardId = null, boardSpec = null, boardMini = null, boardRegion = 'sunny', cards = null;
+document.querySelectorAll('.act').forEach(b => b.addEventListener('click', () => boardId === b.dataset.board ? BM.closeLayer(board) : openBoard(b.dataset.board, b)));
+$('bClose').addEventListener('click', () => BM.closeLayer(board));
+scrim.addEventListener('click', () => BM.closeLayer(board));
+
+function openBoard(id, opener, focusCard){
+  if (boardId) BM.closeLayer(board, { noReturn:true });
+  boardId = id; const B = BM.BOARDS[id];
+  document.querySelectorAll('.act').forEach(a => a.setAttribute('aria-expanded', a.dataset.board === id));
+  $('bIco').textContent = B.ico; $('bTitle').textContent = B.name; $('bVerb').textContent = B.verb;
+  $('bKind').className = 'kind ' + B.kind; $('bKind').textContent = id === 'terraform' ? '🌍 affects the planet' : '🌿 affects your plant';
+  boardRegion = selected || boardRegion;
+  const L = $('bLeft'); L.innerHTML = '';
+  if (id === 'terraform') {
+    L.innerHTML = '<p class="note">The plant stays the same. The <b>world around it</b> changes: sky, weather and soil, everywhere at once.</p>' +
+      '<div class="pick"><label for="bReg">Seen from:</label><select id="bReg"></select></div>' +
+      '<div class="big"><div id="bSpecHost" style="height:100%"></div><div class="minimap" id="bMini"></div></div>' +
+      '<div class="stab"><span>Climate stability <small style="color:var(--ink-faint)">(big changes can cause weather shocks)</small></span><div class="bar instab" style="position:relative"><i id="stabI"></i><span class="ghost" id="stabG" style="left:0; width:0"></span></div></div>';
+  } else {
+    L.innerHTML = '<div class="pick"><label for="bReg">Your plant in:</label><select id="bReg"></select></div><div class="big"><div id="bSpecHost" style="height:100%"></div><div class="minimap" id="bMini"></div></div><div class="looks" id="bLooks" aria-label="Visible adaptations"></div>';
+  }
+  $('bReg').innerHTML = BM.REGIONS.map(r => '<option value="' + r.id + '"' + (r.id === boardRegion ? ' selected' : '') + '>' + r.name + '</option>').join('');
+  $('bReg').addEventListener('change', e => { boardRegion = e.target.value; renderBoardSpec(null); });
+  boardSpec = BM.mountSpecimen($('bSpecHost'));
+  if (id === 'spread') boardSpec.el.addEventListener('pointerenter', () => boardSpec.highlight('spread')), boardSpec.el.addEventListener('pointerleave', () => boardSpec.highlight(null));
+  boardMini = BM.mountMap($('bMini'), { labels:'none', bubbles:false, calm:true });
+  boardMini.el.querySelectorAll('.rg').forEach(g => g.setAttribute('tabindex', -1));
+  cards = BM.renderCards($('bCards'), id, { onPreview:previewItem, onBought:() => renderBoardSpec(null) });
+  renderBoardSpec(null);
+  scrim.hidden = false; void scrim.offsetWidth; scrim.classList.add('open');
+  BM.openLayer(board, opener, { onClose:() => { scrim.classList.remove('open'); setTimeout(() => scrim.hidden = true, 300); boardId = null; document.querySelectorAll('.act').forEach(a => a.setAttribute('aria-expanded', 'false')); $('bLeft').innerHTML = ''; } });
+  if (focusCard) setTimeout(() => cards.focusCard(focusCard), 60);
+}
+function renderBoardSpec(pv){
+  if (!boardSpec) return;
+  const it = pv && BM.item(pv);
+  const extra = !it ? { showcase:true } : it.board === 'terraform' ? { sky:pv, showcase:true } : { addTrait:pv, showcase:true };
+  boardSpec.render(BM.specState(boardRegion, extra), !!it);
+  if ($('bLooks')) $('bLooks').innerHTML = BM.ITEMS.filter(i => i.board === boardId && (BM.store.owned(i.id) || i.id === pv)).map(i => '<span class="' + (i.id === pv && !BM.store.owned(i.id) ? 'pv' : '') + '">' + i.ico + ' ' + i.look + '</span>').join('') || '<span>No ' + boardId + ' changes yet</span>';
+  if ($('stabI')) { $('stabI').style.width = S.instab * 100 + '%'; const add = it ? .22 : 0; $('stabG').style.left = S.instab * 100 + '%'; $('stabG').style.width = add * 100 + '%'; }
+}
+function previewItem(id){
+  renderBoardSpec(id);
+  const it = id && BM.item(id);
+  const p = id ? BM.previewOf(id) : {};
+  boardMini.setPreview(!it ? null : { open:p.open, worse:p.worse, tint: it.board === 'terraform' ? id : null, arcs: id === 'waterSeeds' ? [['sunny','tide'],['mossy','tide']] : null });
+  map.setPreview(!it ? null : { open:p.open, worse:p.worse, tint: it.board === 'terraform' ? id : null });
+  $('bPv').innerHTML = !it ? '<span class="muted">Hover or focus a card to preview it. Click to buy.</span>' :
+    '<span class="kind ' + BM.BOARDS[it.board].kind + '">' + (it.board === 'terraform' ? 'Planet' : 'Plant') + '</span> ' + BM.esc(BM.previewText(id)) + (BM.store.owned(id) ? ' <span class="muted">(owned)</span>' : '');
+}
+BM.store.on(e => { if (e.type === 'tick' && boardId && $('stabI')) $('stabI').style.width = S.instab * 100 + '%'; });
+
+/* open on the starting region so the drawer is discoverable */
+setTimeout(() => openRegion('sunny'), 400);
+</script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM mockup · Concept 4 · Calm shelf</title>
+<!--
+  BLOOM-017 · Concept 4 — Minimal calm shelf (Terra Nil-inspired calm, not its look).
+  VISUAL CONCEPT MOCKUP ONLY: fake data, scripted behaviour, not connected to the game. Not the production UI.
+  Philosophy: the planet fills the screen and almost nothing else is permanent. Biomass and the goal float quietly in the
+  corners; a compact shelf at the bottom expands into one row of cards; a small card pops up next to the region you tap.
+  Low information density, details only when asked for. The specimen is a small portrait, not a panel.
+-->
+<link rel="stylesheet" href="shared.css">
+<style>
+  body{display:flex; flex-direction:column; height:100vh; overflow:hidden; background:#a9d6ee}
+  .world{position:relative; flex:1; min-height:0}
+  .mapwrap{position:absolute; inset:70px 24px 120px 24px; transition:bottom .45s var(--ease)}
+  .world.tray-open .mapwrap{bottom:330px}
+  /* corners */
+  .bio{position:absolute; top:14px; left:22px; z-index:5; text-shadow:0 2px 0 rgba(255,255,255,.6)}
+  .bio .num{font-size:46px; line-height:1}
+  .bio .ico{width:46px; height:46px; font-size:22px}
+  .bio .rate{display:block; font-size:14px}
+  .corner{position:absolute; top:12px; right:20px; z-index:5; display:flex; gap:10px; align-items:center}
+  .ring{position:relative; width:64px; height:64px; border-radius:50%; background:rgba(255,253,247,.9); border:none; cursor:pointer; padding:0; box-shadow:var(--shadow)}
+  .ring svg{position:absolute; inset:0}
+  .ring b{position:absolute; inset:0; display:grid; place-items:center; font-size:16px; font-weight:900}
+  .ring small{position:absolute; left:0; right:0; bottom:-18px; text-align:center; font-size:11px; font-weight:900; color:var(--ink-soft); letter-spacing:.5px}
+  .info{position:absolute; top:96px; right:20px; width:280px; z-index:6; background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow-lg); padding:14px 16px; font-size:15px;
+    opacity:0; transform:translateY(-6px); transition:opacity .3s, transform .3s var(--ease)}
+  .info.open{opacity:1; transform:none}
+  .info h3{margin:0 0 4px}
+  /* region card (anchored) */
+  .rcard{position:absolute; z-index:8; width:300px; background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow-lg); padding:12px 14px 12px;
+    opacity:0; transform:translateY(8px) scale(.98); transition:opacity .28s, transform .35s var(--ease)}
+  .rcard.open{opacity:1; transform:none}
+  .rcard::after{content:''; position:absolute; left:var(--ax,50%); bottom:-9px; width:18px; height:18px; background:var(--card); transform:translateX(-50%) rotate(45deg); border-radius:3px}
+  .rcard.below::after{bottom:auto; top:-9px}
+  .rc-top{display:flex; gap:12px; align-items:center}
+  .rc-top .pt{width:64px; height:64px; flex:none; border-radius:50%; overflow:hidden; box-shadow:0 0 0 3px #fff, 0 0 0 5px var(--line)}
+  .rc-top .pt .bm-spec{height:100%; border-radius:50%}
+  .rc-top h3{margin:0; font-size:19px}
+  .rc-top p{margin:2px 0 0; font-size:14px; color:var(--ink-soft); font-weight:700}
+  .rcard .x-btn{position:absolute; top:8px; right:8px; width:36px; height:36px; font-size:15px; border-width:0; background:var(--paper)}
+  .icons{display:flex; gap:8px; margin:12px 0 4px; align-items:center}
+  .icons button{width:48px; height:48px; border-radius:50%; border:2px solid var(--line); background:var(--card); cursor:pointer; font-size:22px; display:grid; place-items:center; transition:transform .15s var(--ease), border-color .15s}
+  .icons button:hover{transform:translateY(-2px)}
+  .icons button[aria-pressed="true"]{border-color:var(--leaf-dark); background:var(--leaf-soft); box-shadow:inset 0 0 0 2px var(--leaf)}
+  .icons .sp{flex:1}
+  .icons .up{width:auto; padding:0 12px; border-radius:24px; font-size:14px; font-weight:800; white-space:nowrap}
+  .icons .up.has{border-color:var(--leaf); background:var(--leaf-soft)}
+  .hintline{font-size:13px; color:var(--ink-soft); font-weight:700; min-height:1.3em; margin:0}
+  .more{margin-top:8px; border-top:2px dashed var(--line); padding-top:6px}
+  .more .tabs{margin:0 0 6px} .more .tabs button{min-height:36px; font-size:13px}
+  .more ul{list-style:none; padding:0; margin:0; display:grid; gap:4px; font-size:14px}
+  .more li{display:flex; justify-content:space-between; gap:6px}
+  .linkbtn{background:none; border:none; color:var(--sky-dark); font-weight:800; cursor:pointer; padding:6px 0; min-height:36px}
+  .fixes{display:flex; gap:6px; flex-wrap:wrap; margin:8px 0 0}
+  .fix{display:inline-flex; align-items:center; gap:4px; min-height:38px; padding:2px 10px; border-radius:12px; border:2px solid var(--line); background:var(--paper); cursor:pointer; font-weight:800; font-size:13px}
+  .speclist{display:grid; gap:4px; margin:6px 0 0}
+  .speclist button{display:flex; align-items:center; gap:8px; min-height:42px; padding:4px 10px; border-radius:12px; border:2px solid var(--line); background:var(--card); cursor:pointer; font-weight:800; font-size:14px; text-align:left}
+  .speclist button span.c{margin-left:auto; color:var(--gold-deep)}
+  /* shelf */
+  .shelf{position:absolute; left:50%; bottom:18px; transform:translateX(-50%); z-index:9; display:flex; flex-direction:column; align-items:center; width:min(940px,calc(100% - 32px))}
+  .tray{width:100%; background:rgba(255,253,247,.97); border-radius:28px; box-shadow:var(--shadow-lg); margin-bottom:10px; overflow:hidden; display:flex; flex-direction:column;
+    max-height:0; opacity:0; transition:max-height .45s var(--ease), opacity .3s}
+  .tray.open{max-height:220px; opacity:1}
+  .tray-in{display:flex; gap:14px; padding:14px 16px 6px; align-items:stretch}
+  .tray .pt{width:118px; flex:none; border-radius:22px; overflow:hidden}
+  .tray .pt .bm-spec{height:100%; border-radius:22px}
+  .tray .row{flex:1; display:flex; gap:10px; overflow-x:auto; padding-bottom:6px}
+  .tray .row .cards-grid{display:flex; gap:10px}
+  .tray .row .tcard{width:170px; flex:none; min-height:118px; box-shadow:none}
+  .tray .pv{padding:2px 18px 12px; font-size:14px; font-weight:700; color:var(--ink-soft); min-height:1.6em}
+  .pill{display:flex; gap:6px; padding:8px; background:rgba(255,253,247,.95); border-radius:40px; box-shadow:var(--shadow-lg)}
+  .pill button{display:flex; align-items:center; gap:8px; min-height:56px; padding:6px 18px 6px 8px; border-radius:30px; border:none; background:transparent; cursor:pointer; font-weight:800; font-size:16px; transition:background .2s}
+  .pill button .b{width:44px; height:44px; border-radius:50%; display:grid; place-items:center; font-size:22px}
+  .pill .adapt .b{background:var(--leaf-soft)} .pill .spread .b{background:var(--bloom-soft)} .pill .terra .b{background:var(--sky-soft)}
+  .pill button:hover{background:var(--paper-2)}
+  .pill button[aria-expanded="true"]{background:var(--ink); color:#fff7e0}
+  .pill .div{width:2px; background:var(--line); margin:8px 4px}
+  .pill small{display:block; font-size:11px; font-weight:800; opacity:.7; letter-spacing:.5px}
+  @media (prefers-reduced-motion: reduce){ .tray{transition:none} }
+</style>
+</head>
+<body>
+<div class="world" id="world">
+  <div class="mapwrap" id="mapwrap"></div>
+  <div class="biomass bio" id="bio"><span class="ico" aria-hidden="true">✦</span><span><span class="num">0</span><span class="rate"></span></span></div>
+  <div class="corner">
+    <button class="ring" type="button" id="goalRing" aria-label="Planet in bloom. Goal 70 percent."><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" fill="none" stroke="#e9e1cc" stroke-width="6"/><circle id="goalArc" cx="32" cy="32" r="27" fill="none" stroke="#3f9d4b" stroke-width="6" stroke-linecap="round" transform="rotate(-90 32 32)" stroke-dasharray="0 170"/><circle id="goalTick" r="3" fill="#2f3a2c"/></svg><b id="goalTxt">0%</b><small>BLOOM</small></button>
+    <button class="ring" type="button" id="scenRing" aria-label="Dying World scenario"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" fill="none" stroke="#efe5f8" stroke-width="6"/><circle id="prsArc" cx="32" cy="32" r="27" fill="none" stroke="#8a5bb8" stroke-width="6" stroke-linecap="round" transform="rotate(-90 32 32)" stroke-dasharray="0 170"/></svg><b aria-hidden="true">💨</b><small>AIR</small></button>
+  </div>
+  <div class="info" id="info" hidden role="dialog" aria-labelledby="infoT"></div>
+  <div class="rcard" id="rcard" hidden role="dialog" aria-labelledby="rcT"></div>
+  <div class="shelf">
+    <div class="tray" id="tray" hidden role="region" aria-label="Upgrades">
+      <div class="tray-in"><div class="pt" id="trayPt"></div><div class="row" id="trayRow"></div></div>
+      <div class="pv" id="trayPv" aria-live="polite"></div>
+    </div>
+    <nav class="pill" aria-label="Upgrades">
+      <button class="adapt" data-b="adapt" aria-expanded="false"><span class="b" aria-hidden="true">🌿</span><span>Adapt<small>your plant</small></span></button>
+      <button class="spread" data-b="spread" aria-expanded="false"><span class="b" aria-hidden="true">🌱</span><span>Spread<small>your plant</small></span></button>
+      <span class="div" role="presentation"></span>
+      <button class="terra" data-b="terraform" aria-expanded="false"><span class="b" aria-hidden="true">🌍</span><span>Terraform<small>the planet</small></span></button>
+    </nav>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+BM.ribbon('Concept 4 · Minimal calm shelf (full-screen planet, compact shelf)');
+BM.bindBiomass(document.getElementById('bio'));
+const S = BM.store.s, $ = id => document.getElementById(id);
+const C = 2 * Math.PI * 27;
+BM.store.on(() => {
+  $('goalArc').setAttribute('stroke-dasharray', (S.coverage / 100 * C).toFixed(1) + ' ' + C);
+  const a = (.7 * 2 - .5) * Math.PI; $('goalTick').setAttribute('cx', 32 + Math.cos(a) * 27); $('goalTick').setAttribute('cy', 32 + Math.sin(a) * 27);
+  $('goalTxt').textContent = Math.round(S.coverage) + '%';
+  $('prsArc').setAttribute('stroke-dasharray', (S.pressure * C).toFixed(1) + ' ' + C);
+});
+function info(title, body, opener){
+  const I = $('info'); I.innerHTML = '<button class="x-btn" style="position:absolute; top:8px; right:8px; width:36px; height:36px" aria-label="Close">✕</button><h3 id="infoT">' + title + '</h3><p style="margin:0">' + body + '</p>';
+  I.querySelector('.x-btn').addEventListener('click', () => BM.closeLayer(I));
+  if (BM.isOpen(I)) BM.closeLayer(I, { noReturn:true });
+  BM.openLayer(I, opener);
+}
+$('goalRing').addEventListener('click', e => info('🌍 ' + Math.round(S.coverage) + '% in bloom', 'Cover 70% of the land to win. The dot on the ring marks the goal.', e.currentTarget));
+$('scenRing').addEventListener('click', e => info('💨 Dying World', 'The air is thinning (' + Math.round(S.pressure * 100) + '%). The planet slowly gets colder, drier and more exposed.', e.currentTarget));
+
+/* map + anchored region card */
+let rid = null, more = false, mtab = 'c', upOpen = false;
+const map = BM.mountMap($('mapwrap'), { labels:'hover', calm:true, onSelect:id => { if (tb) BM.closeLayer(tray, { noReturn:true }); rid = id; more = false; upOpen = false; openCard(); } });
+const card = $('rcard');
+let cardSpec = null;
+function openCard(){
+  renderCard();
+  if (!BM.isOpen(card)) BM.openLayer(card, document.activeElement, { noFocus:true, onClose:() => { rid = null; map.select(null); } });
+  place();
+}
+function place(){
+  if (!rid) return;
+  const p = map.screenPoint(rid), w = $('world').getBoundingClientRect(), cw = card.offsetWidth, ch = card.offsetHeight;
+  let x = p.x - w.left - cw / 2, y = p.y - w.top - ch - 26, below = false;
+  if (y < 70) { y = p.y - w.top + 26; below = true; }
+  x = Math.max(12, Math.min(w.width - cw - 12, x));
+  const floor = w.height - ($('world').classList.contains('tray-open') ? 330 : 112) - 8;
+  card.style.left = x + 'px'; card.style.top = Math.max(64, Math.min(y, floor - ch)) + 'px';
+  card.classList.toggle('below', below);
+  card.style.setProperty('--ax', Math.max(20, Math.min(cw - 20, p.x - w.left - x)) + 'px');
+}
+window.addEventListener('resize', place);
+function renderCard(){
+  if (!rid) return;
+  const v = BM.view(rid), rs = v.rs;
+  const said = v.limit ? v.limit.text + '.' : (rs.colony === 'living' ? v.estWord + ' and doing well.' : 'Seeds will settle soon.');
+  let h = '<button class="x-btn" type="button" aria-label="Close">✕</button><div class="rc-top"><div class="pt" id="cardPt"></div><div><h3 id="rcT">' + v.r.name + '</h3><p>' + BM.ST_ICON[v.st] + ' ' + BM.esc(said) + '</p></div></div>';
+  if (v.limit && v.fixers.length) h += '<div class="fixes">' + v.fixers.map(it => '<button class="fix" data-fix="' + it.id + '" title="' + BM.esc(it.desc) + '">' + it.ico + ' ' + it.name + '</button>').join('') + '</div>';
+  if (rs.colony === 'living') {
+    h += '<div class="icons" role="group" aria-label="Growth focus">' + BM.FOCUS.map(f => '<button type="button" data-focus="' + f.id + '" aria-pressed="' + (f.id === rs.focus) + '" aria-label="' + f.name + ' focus: ' + f.text + '" title="' + f.name + '">' + f.ico + '</button>').join('') +
+      '<span class="sp"></span><button type="button" class="up' + (rs.spec ? ' has' : '') + '" id="upB" aria-expanded="' + upOpen + '">' + (rs.spec ? BM.SPECS.find(x => x.id === rs.spec).ico + ' Built' : '＋ Upgrade') + '</button></div>' +
+      '<p class="hintline" id="hl">' + BM.FOCUS.find(f => f.id === rs.focus).name + ': ' + BM.FOCUS.find(f => f.id === rs.focus).text + '</p>';
+    if (upOpen && !rs.spec) h += '<div class="speclist">' + BM.SPECS.map(x => '<button type="button" data-spec="' + x.id + '">' + x.ico + ' ' + x.name + '<span class="c">● ' + BM.SPEC_COST + '</span></button>').join('') + '</div>';
+  }
+  h += '<button class="linkbtn" type="button" id="moreB" aria-expanded="' + more + '">' + (more ? 'Less ▴' : 'More ▾') + '</button>';
+  if (more) h += '<div class="more"><div class="tabs" role="tablist"><button role="tab" data-mt="c" aria-selected="' + (mtab === 'c') + '">Conditions</button><button role="tab" data-mt="d" aria-selected="' + (mtab === 'd') + '">Details</button></div><ul>' +
+    (mtab === 'c' ? ['temp','water','soil','hazard'].map(k => '<li><span>' + BM.COND_META[k].ico + ' ' + BM.COND_META[k].name + '</span>' + BM.stHTML(v.cond[k][0], v.cond[k][1]) + '</li>').join('')
+      : Object.entries(v.r.raw).map(([k, x]) => '<li><span>' + k + '</span><b>' + x + '</b></li>').join('')) + '</ul></div>';
+  card.innerHTML = h;
+  cardSpec = BM.mountSpecimen($('cardPt'), { compact:true }); cardSpec.render(BM.specState(rid));
+  card.querySelector('.x-btn').addEventListener('click', () => BM.closeLayer(card));
+  card.querySelectorAll('[data-focus]').forEach(b => {
+    b.addEventListener('click', () => { BM.store.setFocus(rid, b.dataset.focus); renderCard(); card.querySelector('[data-focus="' + b.dataset.focus + '"]').focus(); });
+    const sh = () => { $('hl').textContent = BM.FOCUS.find(f => f.id === b.dataset.focus).name + ': ' + BM.FOCUS.find(f => f.id === b.dataset.focus).text; cardSpec.render(BM.specState(rid, { focus:b.dataset.focus }), true); };
+    b.addEventListener('pointerenter', sh); b.addEventListener('focus', sh);
+    b.addEventListener('pointerleave', () => cardSpec.render(BM.specState(rid)));
+  });
+  const up = $('upB'); if (up && !BM.store.s.reg[rid].spec) up.addEventListener('click', () => { upOpen = !upOpen; renderCard(); place(); $('upB').focus(); });
+  card.querySelectorAll('[data-spec]').forEach(b => b.addEventListener('click', () => { const r = BM.store.buySpec(rid, b.dataset.spec); BM.toast(r.ok ? BM.SPECS.find(x => x.id === b.dataset.spec).name + ' built.' : r.reason); upOpen = false; renderCard(); place(); }));
+  $('moreB').addEventListener('click', () => { more = !more; renderCard(); place(); $('moreB').focus(); });
+  card.querySelectorAll('[data-mt]').forEach(b => b.addEventListener('click', () => { mtab = b.dataset.mt; renderCard(); place(); card.querySelector('[data-mt="' + mtab + '"]').focus(); }));
+  card.querySelectorAll('[data-fix]').forEach(b => b.addEventListener('click', () => openTray(BM.item(b.dataset.fix).board, b, b.dataset.fix)));
+}
+let lastT = 0;
+BM.store.on(e => { if (!rid || card.contains(document.activeElement)) return; if (e.type === 'tick' && S.t - lastT < 4) return; lastT = S.t; if (e.type !== 'gain') { renderCard(); place(); } });
+
+/* shelf tray */
+const tray = $('tray'); let tb = null, trayPt = null;
+document.querySelectorAll('.pill [data-b]').forEach(b => b.addEventListener('click', () => tb === b.dataset.b ? BM.closeLayer(tray) : openTray(b.dataset.b, b)));
+function openTray(id, opener, focusId){
+  if (tb) BM.closeLayer(tray, { noReturn:true });
+  if (BM.isOpen(card)) BM.closeLayer(card, { noReturn:true });   // calm: one thing at a time
+  tb = id; document.querySelectorAll('.pill [data-b]').forEach(x => x.setAttribute('aria-expanded', x.dataset.b === id));
+  $('world').classList.add('tray-open');
+  $('trayPt').innerHTML = ''; trayPt = BM.mountSpecimen($('trayPt'), { compact:true });
+  const where = () => rid || 'sunny';
+  const show = pid => { const it = pid && BM.item(pid); trayPt.render(BM.specState(where(), !it ? { showcase:true } : it.board === 'terraform' ? { sky:pid, showcase:true } : { addTrait:pid, showcase:true }), !!it); };
+  show(null);
+  const idle = id === 'terraform' ? 'Changes the whole planet. Hover a card to see the map tint.' : 'Changes your plant. Hover a card to see where it helps.';
+  const api = BM.renderCards($('trayRow'), id, { compact:true, groups:false, onPreview:pid => {
+    show(pid); const it = pid && BM.item(pid), p = pid ? BM.previewOf(pid) : null;
+    map.setPreview(it ? { open:p.open, worse:p.worse, tint:it.board === 'terraform' ? pid : null, arcs:pid === 'waterSeeds' ? [['sunny','tide']] : null } : null);
+    $('trayPv').textContent = pid ? BM.previewText(pid) : idle;
+  }, onBought:() => show(null) });
+  $('trayPv').textContent = idle;
+  BM.openLayer(tray, opener, { onClose:() => { tb = null; $('world').classList.remove('tray-open'); map.setPreview(null); document.querySelectorAll('.pill [data-b]').forEach(x => x.setAttribute('aria-expanded', 'false')); setTimeout(place, 460); } });
+  setTimeout(place, 460);
+  if (focusId) setTimeout(() => api.focusCard(focusId), 80);
+}
+</script>
+</body>
+</html>
