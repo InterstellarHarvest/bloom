@@ -21,6 +21,10 @@
 // holdFinalSeconds after it — and, with validation.confirmRngSeeds, do all of that again under each extra simulation seed.
 // There is no fake "final native state": the static stage only ranks builds by where an established colony would beat mature
 // native cover (bloom-witness.js); the verdict is the simulation's.
+// BLOOM-015: likewise a CLIMATE-INSTABILITY scenario (scenario.climateInstability): every witness's own Terraform purchases
+// unsettle the climate live, its shocks run in the real engine, and it must hold the win threshold holdFinalSeconds after the
+// later of its margin and its last shock; a Terraform-heavy witness counts only with real shocks behind it
+// (validation.mechanicEvidence). No shock is ever injected for the validator.
 (function (root) {
   "use strict";
   const BLOOM = root.BLOOM;
@@ -42,8 +46,11 @@
     let competition = null;
     if (S.competition) { const probe = BLOOM.createSim(planet, config, traits, { rng: () => 0.5, scenario: S }), C = probe.competition;
       competition = { startShare: +C.startShare.toFixed(4), startTiles: C.tiles, holdAfterMarginSeconds: V.holdFinalSeconds || 0, confirmRngSeeds: V.confirmRngSeeds || [] }; }
+    // climate instability (BLOOM-015): the mechanism's thresholds (the shocks themselves are each witness's own, in strategies[].climate)
+    const climate = S.climateInstability ? { threshold: S.climateInstability.shocks.threshold, holdAfterShockSeconds: V.holdFinalSeconds || 0,
+      mechanicEvidence: V.mechanicEvidence || null, confirmRngSeeds: V.confirmRngSeeds || [] } : null;
     return { ...base, ok: r.status === "PASS", status: r.status, reason: r.reason ? `layer P (${S.id}): ${r.reason}` : null, required: need,
-      strategies: r.strategies || [], slow: r.slow || [], differences: r.differences || [], classes: r.classes || [], pressure, competition,
+      strategies: r.strategies || [], slow: r.slow || [], differences: r.differences || [], classes: r.classes || [], pressure, competition, climate,
       search: { ...r.search, ms: Date.now() - t0 }, layer: r.layer };
   }
 

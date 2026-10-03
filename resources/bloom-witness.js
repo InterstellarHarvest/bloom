@@ -53,6 +53,15 @@
 // validation.holdFinalSeconds after the later of its margin and the final pressure state (no clock: after the margin), so
 // a coverage spike the competitor takes back is no proof. Optional validation.confirmRngSeeds: the same plan must also pass
 // (margin + hold) under each of those simulation seeds before a witness counts (robust, not one lucky RNG stream).
+//
+// CLIMATE INSTABILITY (BLOOM-015) — a scenario with a `climateInstability` block has no clock and no fixed final state either:
+// shocks come from the witness's OWN Terraform purchases, live. The static stage is unchanged (shocks are temporary, so it
+// ranks builds in the steady climate); the simulation runs the real instability layer, and the hold check moves past every
+// shock: a witness must still hold the win threshold holdFinalSeconds after the later of its margin and the end of the last
+// shock that was running or announced then (a win that only lasted until the next shock is no proof). Mechanic evidence
+// (scenario.validation.mechanicEvidence { terraformSteps, minShocks }): a witness whose plan buys at least terraformSteps
+// Terraform steps counts only if at least minShocks real shocks started before its hold check — a Terraform-heavy strategy
+// must have lived through the mechanic. A plan with fewer steps (Adapt-heavy) may legitimately see no shock at all.
 (function (root) {
   "use strict";
   const BLOOM = root.BLOOM;
@@ -212,12 +221,14 @@
       if (r.ok && CONFIRM.length) { // robustness: the same plan under other simulation seeds (each a full run: margin + hold)
         // (confirmation runs verify a found witness; they are counted apart and never use up the search budget)
         r.confirm = CONFIRM.map(seed => { search.confirmations = (search.confirmations || 0) + 1; const c = simulate(planet, config, traits, plan, target, false, SCN, seed);
-          return { rngSeed: seed, ok: c.ok, marginSeconds: c.marginSeconds, hold: c.hold && { coverage: c.hold.coverage, held: c.hold.held }, lost: c.lost }; });
+          return { rngSeed: seed, ok: c.ok, marginSeconds: c.marginSeconds, hold: c.hold && { coverage: c.hold.coverage, held: c.hold.held }, lost: c.lost,
+            ...(c.climate ? { shocks: c.climate.shocks.length, noEvidence: c.climate.noEvidence } : {}) }; });
         if (r.confirm.some(c => !c.ok)) { r.ok = false; r.unconfirmed = true; } }
       r.staticCoverage = cand.cov; r.build = cand.items; if (r.ok) r.signature = signature(cand.items); return r; };
     const noWin = (best, capNote) => ({ ok: false, layer: best && best.won ? 6 : 5, best,
       reason: best && best.unconfirmed ? `witness wins with margin under the validation seed but not under every confirmation seed (${best.confirm.map(c => `${c.rngSeed}: ${c.ok ? "ok" : c.lost ? "extinct" : c.hold && !c.hold.held ? `held ${(c.hold.coverage * 100).toFixed(1)}%` : "no margin"}`).join(", ")})`
-        : best && best.hold && !best.hold.held ? `witness reaches the margin but holds only ${(best.hold.coverage * 100).toFixed(1)}% < ${(probe.winAt * 100).toFixed(0)}% ${SCN.validation.holdFinalSeconds} s ${SCN.pressure ? "into the final pressure state" : "after the margin"}`
+        : best && best.climate && best.climate.noEvidence && best.marginTick !== null && best.hold && best.hold.held ? `witness wins with ${best.climate.terraformSteps} Terraform steps but never lived through a climate shock (${best.climate.shocksBeforeHold} < ${SCN.validation.mechanicEvidence.minShocks}): no proof under the scenario's mechanic`
+        : best && best.hold && !best.hold.held ? `witness reaches the margin but holds only ${(best.hold.coverage * 100).toFixed(1)}% < ${(probe.winAt * 100).toFixed(0)}% ${SCN.validation.holdFinalSeconds} s ${SCN.pressure ? "into the final pressure state" : SCN.climateInstability ? "after the margin and the last climate shock" : "after the margin"}`
         : best && best.lost ? `every witness died out (extinction at ${best.lostSeconds} s; best peak ${(best.peak * 100).toFixed(1)}%)`
         : best && best.won ? `witness wins but peaks at ${(best.peak * 100).toFixed(1)}% < target ${(target * 100).toFixed(0)}%`
         : capNote ? `no witness reached the win with earned Biomass within ${capNote} (best peak ${best ? (best.peak * 100).toFixed(1) : 0}%)`
@@ -294,7 +305,7 @@
       totalSpent: w.totalSpent, winSeconds: w.winSeconds, marginSeconds: w.marginSeconds, peak: w.peak, peakMeasured: w.peakMeasured,
       pacing: w.pacing, pacingCheck: w.pacingCheck,
       ...(w.scenario ? { scenario: w.scenario, order: w.order, pressureAtMargin: w.pressureAtMargin, hold: w.hold && { seconds: w.hold.seconds, coverage: w.hold.coverage, held: w.hold.held },
-        trace: w.trace } : {}), ...(w.competition ? { competition: w.competition } : {}), ...(w.confirm ? { confirm: w.confirm } : {}) });
+        trace: w.trace } : {}), ...(w.competition ? { competition: w.competition } : {}), ...(w.climate ? { climate: w.climate } : {}), ...(w.confirm ? { confirm: w.confirm } : {}) });
     const classRows = classes.map(c => ({ signature: c.signature.key, members: c.members.length, status: c.status || "not reached", cheapest: c.members[0].cost,
       ...(c.coreIncomplete ? { winsBeforeCoreBought: c.coreIncomplete } : {}) }));
     const base = { required: need, classes: classRows, early: X.early, search };
@@ -340,6 +351,9 @@
     const sec = t => +(t * config.tickMs / 1000).toFixed(1), P = scenario && scenario.pressure, DYN = BLOOM.pressure.isDynamic(scenario);
     const fullTick = P ? Math.ceil(sim.pressure.fullAt * 1000 / config.tickMs) : 0;
     const holdTicks = DYN ? Math.round(((scenario.validation || {}).holdFinalSeconds || 0) * 1000 / config.tickMs) : 0;
+    const CL = sim.climate.enabled ? sim.climate : null, shockTicks = CL ? Math.round(scenario.climateInstability.shocks.durationSeconds * 1000 / config.tickMs) : 0;
+    const EVD = CL && (scenario.validation || {}).mechanicEvidence, skySteps = plan.filter(id => sim.traitById[id].effect.type === "sky").length;
+    let minAfterMargin = null; // lowest coverage between the margin and the hold check (how hard the shocks bit)
     const purchases = []; let k = 0, peak = 0, peakTick = 0, winTick = null, marginTick = null, lastGrowth = 0, illegal = null, atMargin = null;
     let holdAt = null, hold = null, pressureAtMargin = null; const trace = [], nativeTrace = []; // [seconds, coverage, pressure progress] every 30 s (+ native share)
     const perMin = Math.round(60000 / config.tickMs), earnedPerMinute = []; // Biomass the economy produced, per game-minute (observed, never edited)
@@ -351,8 +365,12 @@
       if (marginTick === null) { const m = ((t - 1) / perMin) | 0; earnedPerMinute[m] = (earnedPerMinute[m] || 0) + (sim.biomass - before); }
       if (cov > peak + 1e-9) { peak = cov; peakTick = t; lastGrowth = t; }
       if (winTick === null && sim.won) winTick = t;
+      if (CL && marginTick !== null && !hold) minAfterMargin = minAfterMargin === null ? cov : Math.min(minAfterMargin, cov);
       if (marginTick === null && cov >= target) { marginTick = t; atMargin = snapshot(sim); pressureAtMargin = +sim.pressure.progress.toFixed(3);
         if (DYN) holdAt = Math.max(t, fullTick) + holdTicks; else if (!measurePeak) break; }
+      if (CL && holdAt !== null && !hold) { // climate instability: the hold check waits for every running / announced shock to end
+        let end = 0; for (const ax in CL.axes) { const A = CL.axes[ax]; if (A.shock) end = Math.max(end, A.shock.endTick); else if (A.pending) end = Math.max(end, A.pending.startTick + shockTicks); }
+        if (end) holdAt = Math.max(holdAt, end + holdTicks); }
       if (holdAt !== null && t >= holdAt && !hold) { hold = { seconds: sec(t), coverage: +cov.toFixed(4), held: cov >= sim.winAt, progress: sim.pressure.progress, atEnd: snapshot(sim) };
         if (!measurePeak) break; }
       if (k < plan.length) {
@@ -363,7 +381,13 @@
       } else if (t - lastGrowth > V.plateauTicks && (holdAt === null || hold)) break;
     }
     const CS = sim.competition;
-    return { ok: marginTick !== null && (!DYN || !!(hold && hold.held)), won: winTick !== null, illegal, plan, purchases,
+    // mechanic evidence (climate instability): a Terraform-heavy plan must have lived through at least minShocks real shocks
+    const shocksBeforeHold = CL ? CL.shocks.filter(x => hold ? x.startTick <= Math.round(hold.seconds * 1000 / config.tickMs) : true).length : 0;
+    const noEvidence = !!(EVD && skySteps >= EVD.terraformSteps && shocksBeforeHold < EVD.minShocks);
+    return { ok: marginTick !== null && (!DYN || !!(hold && hold.held)) && !noEvidence, won: winTick !== null, illegal, plan, purchases,
+      ...(CL ? { climate: { peak: +CL.peak.toFixed(4), terraformSteps: skySteps, shocksBeforeHold, noEvidence, minCoverageAfterMargin: minAfterMargin === null ? null : +minAfterMargin.toFixed(4),
+        shocks: CL.shocks.map(x => ({ axis: x.axis, kind: x.kind, sign: x.sign, magnitude: +x.magnitude.toFixed(2), severity: x.severity, seconds: sec(x.startTick), endSeconds: sec(x.endTick), levelAtStart: x.levelAtStart })),
+        forcing: CL.forcing.map(f => ({ seconds: sec(f.tick), axis: f.axis, add: +f.add.toFixed(3), after: +f.after.toFixed(3) })), endLevel: +CL.level.toFixed(4) } } : {}),
       ...(CS.enabled ? { competition: { startShare: +CS.startShare.toFixed(4), peakShare: +CS.peakShare.toFixed(4), endShare: +CS.share.toFixed(4),
         contestedRegions: CS.everContested.reduce((a, b) => a + b, 0), flips: { ...CS.flips }, nativeTrace } } : {}),
       scenario: scenario ? scenario.id : null, hold, pressureAtMargin, trace, lost: sim.lost, lostSeconds: sim.lost ? sec(sim.lostTick) : null,

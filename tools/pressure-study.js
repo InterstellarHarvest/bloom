@@ -15,7 +15,7 @@ const { BLOOM, BLOOM_DATA } = globalThis, { config, traits, archetypes, scenario
 const arg = k => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; };
 const S = BLOOM.pressure.resolveScenario(scenarios, arg("--scenario") || "dying_world"), N = +(arg("--seeds") || 20), JSON_OUT = arg("--json");
 const pct = x => (x * 100).toFixed(1) + "%", out = { scenario: S.id, seeds: N, archetypes: {}, fixtures: {} }, G = config.grow.growThresh;
-console.log(`# ${S.name} — ${J(S.pressure && S.pressure.channels)} · grace ${S.pressure.graceSeconds} s · duration ${S.pressure.durationSeconds} s\n`);
+console.log(`# ${S.name} — ${S.pressure ? `${J(S.pressure.channels)} · grace ${S.pressure.graceSeconds} s · duration ${S.pressure.durationSeconds} s` : "no pressure clock"}${S.climateInstability ? " · climate instability" : ""}${S.competition ? " · competition" : ""}\n`);
 function J(o) { return JSON.stringify(o); }
 for (const A of archetypes) {
   const rows = [];

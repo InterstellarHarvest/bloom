@@ -1,0 +1,16 @@
+sim rc=0 2s ALL CHECKS PASS
+gen rc=0 4s ALL CHECKS PASS
+crossing rc=0 2s ALL CHECKS PASS
+archetype rc=0 45s ALL CHECKS PASS  (45.3 s)
+strategy rc=0 19s ALL CHECKS PASS  (19.0 s)
+slice rc=0 9s ALL CHECKS PASS
+surface rc=0 2s ALL CHECKS PASS
+procedural-run rc=0 14s ALL CHECKS PASS  (13.8 s)
+colony-development rc=0 26s ALL CHECKS PASS  (25.4 s)
+desert rc=0 42s ALL CHECKS PASS  (41.9 s)
+frozen rc=0 56s ALL CHECKS PASS  (56.0 s)
+dying-world rc=0 34s ALL CHECKS PASS  (34.2 s)
+economy rc=0 262s ALL CHECKS PASS  (261.4 s)
+native-competition rc=0 118s ALL CHECKS PASS  (117.8 s)
+volatile-climate rc=1 115s 1 check(s) FAILED  (115.3 s)
+volatile-climate (re-run ×3 after the 33b hover-race fix): ALL CHECKS PASS ×3

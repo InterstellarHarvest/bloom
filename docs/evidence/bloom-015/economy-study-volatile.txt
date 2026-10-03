@@ -1,0 +1,152 @@
+# economy (committed config) · start 100 · trickle 0.3 · thriving 0.0004 · costScale 5
+prices: cold 140/270/400 · heat 140/270/400 · drought 150/270 · flood 150/270 · salt 200 · rad 220 · seedOut 130/280 · waterSeeds 180 · earlyMat 170 · warm 200/290 · cool 200/290 · humid 200/290 · dry 200/290 · local 90/130/170/210
+
+## Frozen World 22 · Volatile Climate (2 candidate strategy classes)
+  opening, bubbles auto : options at start 1 · first local 0.2 s · first global 25.3 s (worst 28.8) · two options 25.3 s (worst 28.8) · first global options: seedOut, cold, heat
+  opening, bubbles click: options at start 1 · first local 0.2 s · first global 21.3 s (worst 28.8) · two options 21.3 s (worst 28.8) · first global options: seedOut, cold, heat
+  recipe adapt: seedOut → earlyMat → cold → cold
+    bubbles:policy+invest                   won  win s (range)        1st   2nd   3rd  last  maxGap(worst) median anyGap term  dead(worst) win0/1/2+      spent G/L  specs unspent  cov%@60/120/180/300
+    auto:balanced+none                       8/8   248.5 [225.8,263.2]     28.9  90.6 128.6 198.9   71.7( 78.6)  49.3   71.7  49.6 35.8( 42) 0.36/0.31/0.33   710/0        0    256   17.4    23  32.8   NaN  pressure@win 0 drift-closed max 0
+    auto:situational+none                    8/8   213.2 [207.5,218.4]       29  79.1 108.8 167.1   58.3( 63.7)  40.7   58.3  46.1 29.5( 33) 0.35/0.31/0.34   710/0        0  289.8   19.1  24.3  44.5   NaN  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin            8/8   210.3 [201.3,216]         29  91.2 113.6   158   62.1( 65.6)    37   44.8  52.4 44.9( 57) 0.49/0.15/0.36   710/90       1  416.6   19.1  23.5  47.9   NaN  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin+extend     8/8   207.1 [198.1,214.2]       29  91.2 113.6 197.8   62.1( 65.6)  39.4   44.9   9.3 44.9( 57) 0.55/0.15/0.3    990/90       1  103.8   19.1  23.5  47.9   NaN  pressure@win 0 drift-closed max 0
+    auto:situational+everywhere              8/8   313.6 [301.9,326.2]     60.8   122 148.6 294.2  145.6(153.7)    61   58.9  19.4 57.6( 62) 0.75/0.12/0.13   710/850      5  165.1   14.8  22.6  28.3  62.1  pressure@win 0 drift-closed max 0
+    auto:leavesEverywhere+everywhere         8/8   354.4 [341.4,361.9]       67 132.7 154.4 283.2  128.8(134.5)  66.4   65.1   9.1 64.1( 71) 0.69/0.13/0.19   710/1428.8  6.9   97.1    9.6  20.7  24.6  45.5  pressure@win 0 drift-closed max 0
+    click:balanced+none                      8/8   229.6 [215,245.4]       24.8    81 115.9 174.4   60.9(   68)  44.4   60.9  55.2 30.4( 44) 0.34/0.3/0.35    710/0        0    307   18.3  23.5    39   NaN  pressure@win 0 drift-closed max 0
+    click:situational+none                   8/8   193.8 [175.2,206.4]     25.7    71  95.6 141.6   50.5( 56.9)  34.5   50.5  52.2 25.9( 35) 0.32/0.3/0.38    710/0        0  396.8   19.6  26.9  57.6   NaN  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin           8/8   195.5 [188.6,201.8]     25.7    82   101 140.7   56.3( 65.6)  32.8   39.9  54.8 36.1( 55) 0.47/0.14/0.39   710/90       1  426.4   19.6  25.4  59.5   NaN  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin+extend    8/8   192.2 [184.5,200.5]     25.7    82   101 181.8   56.3( 65.6)  38.7   42.1  10.4 36.1( 55) 0.54/0.14/0.32   990/90       1  111.4   19.6  25.4  59.6   NaN  pressure@win 0 drift-closed max 0
+    click:situational+everywhere             8/8   286.1 [266.1,318.9]     56.5 113.1 135.8 265.1  129.4(156.9)  56.5   54.6    18 55.3( 62) 0.74/0.12/0.14   710/850      5    171   15.3  22.6  33.4  59.4  pressure@win 0 drift-closed max 0
+    click:leavesEverywhere+everywhere        8/8   333.4 [319.8,346.4]     62.1 124.1 145.9   263  117.2(132.5)    62   60.2   5.1 60.5( 71) 0.69/0.12/0.18   710/1470     7   56.9    9.9    21  25.5  53.6  pressure@win 0 drift-closed max 0
+    e.g. seedOut@32 earlyMat@93 cold@122 cold@187
+  recipe terraform: seedOut → cold → warm → warm
+    bubbles:policy+invest                   won  win s (range)        1st   2nd   3rd  last  maxGap(worst) median anyGap term  dead(worst) win0/1/2+      spent G/L  specs unspent  cov%@60/120/180/300
+    auto:balanced+none                       8/8     293 [274.6,318.6]     28.9  82.1 133.8 207.9   74.1( 79.2)  52.5   74.1  85.1 35.8( 42) 0.3/0.26/0.44    760/0        0  437.1   17.4  29.1  37.6  62.6  pressure@win 0 drift-closed max 0
+    auto:situational+none                    8/8   253.7 [246.6,264.6]       29  72.8 116.8 169.5   52.8(   57)  43.9   52.8  84.2 29.5( 33) 0.29/0.25/0.45   760/0        0  538.4   19.1  32.8  44.3   NaN  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin            8/8   254.1 [249.9,261.1]       29  86.4 120.8 165.9   57.4( 60.3)  39.8   45.1  88.2 44.9( 57) 0.41/0.12/0.47   760/90       1  674.1   19.1  28.7  41.5   NaN  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin+extend     8/8   244.9 [240.2,251.4]       29  86.4 120.8 230.7   57.4( 60.3)  35.9   45.1  14.1 44.9( 57) 0.53/0.14/0.33  1210/90       1  144.9   19.1  28.7  41.5   NaN  pressure@win 0 drift-closed max 0
+    auto:situational+everywhere              8/8   325.4 [314.4,329.9]     60.8 112.9 186.3 301.8  115.5(117.9)  67.8   58.9  23.6 57.6( 62) 0.72/0.09/0.19   760/850      5  197.5   14.8  23.8  37.9  54.9  pressure@win 0 drift-closed max 0
+    auto:leavesEverywhere+everywhere         8/8   370.5 [361.1,386.4]       67 127.2 184.8 290.4  105.7(110.7)  64.3   65.1  15.3 64.1( 71) 0.68/0.08/0.23   760/1428.8  6.9  157.5    9.6  20.7  27.8  39.4  pressure@win 0 drift-closed max 0
+    click:balanced+none                      8/8     269 [254.6,290.7]     24.8  74.3 120.2 180.3   63.6( 79.1)  46.2   63.6  88.8 29.9( 44) 0.27/0.27/0.46   760/0        0  488.3   18.3  30.9  39.8   NaN  pressure@win 0 drift-closed max 0
+    click:situational+none                   8/8   241.2 [232.3,251.4]     25.7  65.6 106.8 156.2     50( 59.5)  40.3     50    85 25.9( 35) 0.28/0.25/0.47   760/0        0  588.3   19.8  34.2  45.3   NaN  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin           8/8   237.5 [231,249.3]       25.7  77.2 111.1 150.1   51.5( 59.5)  36.5   39.1  87.4 36.1( 55) 0.4/0.12/0.48    760/90       1  666.1   19.6  30.5  41.4   NaN  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin+extend    8/8   230.5 [224.2,244.2]     25.7  77.2 111.1 211.8   51.5( 59.5)  34.4   39.8  18.7 36.1( 55) 0.52/0.13/0.35  1210/90       1  203.1   19.6  30.5  41.5   NaN  pressure@win 0 drift-closed max 0
+    click:situational+everywhere             8/8   298.7 [282.9,318.2]     56.5 103.6 162.7 272.4  109.6(129.1)  60.2   54.6  26.4 55.3( 62) 0.7/0.1/0.2      760/850      5  241.3   15.3  25.4  38.5  63.8  pressure@win 0 drift-closed max 0
+    click:leavesEverywhere+everywhere        8/8   360.7 [344,375.2]       62.1 117.8 175.4 269.3   93.9(104.5)  61.7   60.2  17.2 59.3( 71) 0.66/0.08/0.26   760/1562.5  7.3  193.3    9.9  21.6  28.2  43.8  pressure@win 0 drift-closed max 0
+    e.g. seedOut@32 cold@87 warm@136 warm@212
+  recipe reckless: seedOut → warm → warm → warm → cold
+    bubbles:policy+invest                   won  win s (range)        1st   2nd   3rd  last  maxGap(worst) median anyGap term  dead(worst) win0/1/2+      spent G/L  specs unspent  cov%@60/120/180/300
+    auto:balanced+none                       8/8   407.8 [371.5,432]       28.9  99.1 182.4 331.9  111.8(124.8)  69.2  111.8    76 35.8( 42) 0.28/0.23/0.49  1140/0        0  362.9   17.4  19.8  17.1  28.3  pressure@win 0 drift-closed max 0
+    auto:situational+none                    8/8   322.4 [309.6,327.7]       29  85.6 145.2 261.2   87.6( 93.8)  55.2   87.6  61.2 29.5( 33) 0.3/0.25/0.46   1140/0        0  334.9   19.1  19.9    18  51.1  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin            8/8     308 [301.9,315.4]       29  96.1 143.8 235.2   70.3( 76.2)  47.7   68.2  72.8 44.9( 57) 0.42/0.11/0.47  1140/90       1  528.5   19.1  20.5    18  64.5  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin+extend     8/8   304.2 [294.7,313.9]       29  96.1 143.8 288.4   70.3( 76.2)  38.7   68.2  15.8 44.9( 57) 0.48/0.11/0.41  1485/90       1  153.3   19.1  20.5    18  64.7  pressure@win 0 drift-closed max 0
+    auto:situational+everywhere              8/8   521.5 [487.8,567.7]     60.8 158.4 211.8 498.3  267.9(  299)  61.4   59.8  23.2 57.6( 62) 0.58/0.01/0.42  1140/1655   7.5    178   14.8  22.6  21.1    23  pressure@win 0 drift-closed max 0
+    auto:leavesEverywhere+everywhere         8/8   476.6 [459,498.2]         67 164.1 210.9   317   97.5(104.1)  63.3   66.5  24.9 64.1( 71) 0.59/0.04/0.37  1140/1608.8  7.4  237.8    9.6  20.7  20.3    20  pressure@win 0 drift-closed max 0
+    click:balanced+none                      8/8   355.5 [339.5,372.2]     24.8    89 159.5 284.5   94.2( 98.5)  60.1   94.2  70.9 31.8( 44) 0.28/0.24/0.48  1140/0        0  394.1   18.3  18.6  17.6  35.4  pressure@win 0 drift-closed max 0
+    click:situational+none                   8/8     298 [283.5,307.8]     25.7    76 128.7 229.2   72.9(101.6)    46   72.9  68.8 25.9( 35) 0.28/0.23/0.49  1140/0        0  432.8   19.6    19  18.2  65.8  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin           8/8     286 [266.1,304]       25.7  86.7 128.2 204.7   62.1( 69.5)  41.5   53.7  81.3 36.1( 55) 0.39/0.11/0.51  1140/90       1  635.5   19.6  19.9  18.7  67.7  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin+extend    8/8   280.7 [263.5,298.9]     25.7  86.7 128.2 268.3   62.1( 69.5)  36.5   53.7  12.4 36.1( 55) 0.47/0.12/0.41  1590/90       1  140.4   19.6  19.9  18.7   NaN  pressure@win 0 drift-closed max 0
+    click:situational+everywhere             8/8   433.7 [357,508.8]       56.5 141.6 193.6   387  178.1(275.7)    58   62.9  27.8 55.3( 62) 0.58/0.02/0.4   1140/1313.8  6.4  223.8   15.3  22.6  20.1  27.7  pressure@win 0 drift-closed max 0
+    click:leavesEverywhere+everywhere        8/8   451.7 [437.4,465.8]     62.1 149.8 193.7 294.6   91.6(  100)  62.5   63.8  24.5 60.5( 71) 0.59/0.04/0.37  1140/1701.3  7.6  240.6    9.9    21  18.8  23.4  pressure@win 0 drift-closed max 0
+    e.g. seedOut@32 warm@100 warm@183 warm@300 cold@341
+
+## Desert World 25 · Volatile Climate (4 candidate strategy classes)
+  opening, bubbles auto : options at start 1 · first local 0.2 s · first global 23.9 s (worst 26.9) · two options 23.9 s (worst 26.9) · first global options: heat, seedOut, drought
+  opening, bubbles click: options at start 1 · first local 0.2 s · first global 18.6 s (worst 26.9) · two options 18.6 s (worst 26.9) · first global options: heat, seedOut, drought
+  recipe adapt: seedOut → drought → drought
+    bubbles:policy+invest                   won  win s (range)        1st   2nd   3rd  last  maxGap(worst) median anyGap term  dead(worst) win0/1/2+      spent G/L  specs unspent  cov%@60/120/180/300
+    auto:balanced+none                       8/8     350 [342.4,355.2]     27.5  81.1 176.2 176.2   95.1(104.3)  53.6   95.1 173.8 33.6( 40) 0.24/0.21/0.55   550/0        0  788.5    4.7   8.9  13.5  55.7  pressure@win 0 drift-closed max 0
+    auto:situational+none                    8/8   306.6 [290.2,327]       26.5  71.5 144.5 144.5   73.1( 80.6)    45   73.1   162 27.6( 34) 0.23/0.2/0.57    550/0        0 1024.3    4.7  10.5  31.2  65.5  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin            8/8   303.3 [285,325.4]       26.5  86.6 143.6 143.6   61.4( 67.2)  55.7     57 159.7 44.5( 63) 0.34/0.09/0.57   550/90       1 1218.5    4.7   8.2  31.6  67.2  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin+extend     8/8   276.3 [266.2,285.1]     26.5  86.6 143.6   217   61.4( 67.2)  40.5     57  59.3 44.5( 63) 0.47/0.11/0.42  1000/90       1  540.8    4.7   8.2  32.2   NaN  pressure@win 0 drift-closed max 0
+    auto:situational+everywhere              8/8   344.2 [322.6,357.6]     53.3  92.2 188.6 188.6   96.4(103.7)  53.3   63.3    18 51.9( 63) 0.7/0.1/0.19     550/1103.8  5.9  153.6    4.7   7.4  11.3  56.4  pressure@win 0 drift-closed max 0
+    auto:leavesEverywhere+everywhere         8/8   447.9 [429.9,472.5]     60.4  96.4 173.7 173.7   77.3( 82.4)  60.4   65.1  23.6   57( 61) 0.58/0.09/0.33   550/2147.5  8.8  443.3    4.6   5.9  11.7  50.8  pressure@win 0 drift-closed max 0
+    click:balanced+none                      8/8   312.8 [287.8,340.2]     22.2  65.8 140.4 140.4   74.6( 98.7)  43.6   74.6 172.4 31.3( 39) 0.23/0.19/0.59   550/0        0  879.3    4.8  10.4  32.8    62  pressure@win 0 drift-closed max 0
+    click:situational+none                   8/8   279.7 [260.6,310.2]     21.6  59.5   121   121   62.1( 78.4)  37.3   62.1 158.7 27.3( 34) 0.22/0.19/0.6    550/0        0 1101.6    4.8  12.5  46.2  67.5  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin           8/8   289.6 [266.4,314.6]     21.6  74.8 127.6 127.6   54.9( 65.7)  51.1   52.8   162 37.1( 52) 0.32/0.08/0.61   550/90       1 1350.5    4.7  10.4  41.9  68.6  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin+extend    8/8   263.7 [247.7,280]       21.6  74.8 127.6 196.8   54.9( 65.7)  37.2   52.8    67 37.1( 52) 0.46/0.09/0.45  1000/90       1  658.4    4.7  10.4  42.9   NaN  pressure@win 0 drift-closed max 0
+    click:situational+everywhere             8/8   315.1 [285.8,334.9]     47.8    79 160.4 160.4   81.4(   98)  47.9   57.9  14.4   52( 83) 0.7/0.09/0.21    550/1222.5  6.3  138.6    4.7   9.6  20.7  63.5  pressure@win 0 drift-closed max 0
+    click:leavesEverywhere+everywhere        8/8   445.7 [419.7,464.3]     53.5  85.7 158.4 158.4   72.8( 85.6)  53.5   66.2  58.8 51.5( 57) 0.5/0.08/0.42    550/1942.5  8.3 1050.9    4.6   6.5    15  51.6  pressure@win 0 drift-closed max 0
+    e.g. seedOut@29 drought@72 drought@166
+  recipe terraform: seedOut → drought → humid → rad → cool → cool
+    bubbles:policy+invest                   won  win s (range)        1st   2nd   3rd  last  maxGap(worst) median anyGap term  dead(worst) win0/1/2+      spent G/L  specs unspent  cov%@60/120/180/300
+    auto:balanced+none                       8/8   354.6 [339.8,377.9]     27.5  81.1 153.9 337.9   75.3( 79.1)  59.1   75.3  16.7 34.6( 40) 0.38/0.28/0.33  1190/0        0  124.5    4.7   8.9    15  53.7  pressure@win 0 drift-closed max 0
+    auto:situational+none                    8/8   316.6 [282.9,346.1]     26.5  71.5 128.5 272.2   58.3( 64.3)  47.1   58.3  44.4   28( 34) 0.33/0.28/0.39  1190/0        0  365.4    4.7  10.5  23.2  67.9  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin            8/8     313 [301.1,320.2]     26.5  86.6 130.4 250.3   60.1( 67.2)  42.4   45.1  62.7 44.5( 63) 0.49/0.11/0.41  1190/90       1  575.6    4.7   8.2  20.6    67  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin+extend     8/8   310.7 [301.3,321]       26.5  86.6 130.4 304.3   60.1( 67.2)  38.2   45.1   6.5 44.5( 63) 0.55/0.11/0.34  1640/90       1   91.6    4.7   8.2  20.6  67.1  pressure@win 0 drift-closed max 0
+    auto:situational+everywhere              8/8   397.8 [378.1,409]       53.3  92.2 173.5 396.1  125.3(131.7)  60.4   52.7   1.8 51.9( 63) 0.7/0.11/0.19   1190/850      5   51.6    4.7   7.4  12.2  43.9  pressure@win 0 drift-closed max 0
+    auto:leavesEverywhere+everywhere         8/8   453.7 [438.2,472.2]     60.4  96.4 161.3 370.1  104.7(112.3)  62.6   58.5  18.1   57( 61) 0.65/0.11/0.24  1190/1470     7  200.4    4.6   5.9  11.6  29.1  pressure@win 0 drift-closed max 0
+    click:balanced+none                      8/8   331.4 [292.2,368.5]     22.2  65.8 122.3 287.5   71.1( 80.5)  47.9   71.1  43.9 32.4( 39) 0.34/0.27/0.39  1190/0        0  308.9    4.8  10.7  21.7  64.4  pressure@win 0 drift-closed max 0
+    click:situational+none                   8/8   294.1 [275.7,311.5]     21.6  59.5 107.4 232.7   53.9( 60.1)  39.3   53.9  61.3 26.6( 34) 0.29/0.25/0.46  1190/0        0  565.1    4.8  12.5  29.7  67.5  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin           8/8   291.8 [274.6,304.3]     21.6  74.8 114.8   224   53.5( 65.7)    38   43.3  67.8 37.1( 52) 0.45/0.09/0.45  1190/90       1  650.4    4.7  10.7  26.2  69.4  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin+extend    8/8   287.3 [272.2,300.5]     21.6  74.8 114.8 275.3   53.5( 65.7)  34.4   43.3    12 37.1( 52) 0.52/0.1/0.38   1640/90       1  178.6    4.7  10.7  26.2  69.7  pressure@win 0 drift-closed max 0
+    click:situational+everywhere             8/8   356.8 [342.4,371.4]     47.8    79 148.2 353.9  108.1(125.1)  56.1   50.1   2.9   52( 83) 0.7/0.11/0.19   1190/850      5   61.1    4.7   9.6  16.9  57.8  pressure@win 0 drift-closed max 0
+    click:leavesEverywhere+everywhere        8/8   440.1 [420.5,466.9]     53.5  85.7   148 339.4   92.4(102.2)  57.4   52.5  22.8 51.5( 57) 0.63/0.1/0.27   1190/1655   7.5  253.5    4.6   6.5  12.5  33.2  pressure@win 0 drift-closed max 0
+    e.g. seedOut@29 drought@72 humid@143 rad@218 cool@270 cool@339
+  recipe reckless: seedOut → drought → humid → humid → rad → heat
+    bubbles:policy+invest                   won  win s (range)        1st   2nd   3rd  last  maxGap(worst) median anyGap term  dead(worst) win0/1/2+      spent G/L  specs unspent  cov%@60/120/180/300
+    auto:balanced+none                       8/8   380.4 [353.6,395.4]     27.5  81.1 153.9 336.9   88.5( 99.8)  55.8   88.5  43.5 34.6( 40) 0.37/0.3/0.33   1130/0        0  244.4    4.7   8.9    15  42.4  pressure@win 0 drift-closed max 0
+    auto:situational+none                    8/8   307.5 [297.1,323]       26.5  71.5 128.5 282.2   66.4( 71.4)  48.1   66.4  25.3 28.4( 34) 0.38/0.31/0.31  1130/0        0  174.4    4.7  10.5  23.3  62.6  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin            8/8   295.9 [288.3,303.7]     26.5  86.6 130.4 270.2   60.5( 67.2)    46   56.4  25.7 45.4( 63) 0.58/0.13/0.29  1130/90       1  196.9    4.7   8.2  20.5    68  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin+extend     8/8   295.8 [288.3,303.7]     26.5  86.6 130.4 276.4   60.5( 67.2)  45.6   56.4  19.4 45.4( 63) 0.58/0.13/0.29 1172.5/90       1  153.6    4.7   8.2  20.5    68  pressure@win 0 drift-closed max 0
+    auto:situational+everywhere              8/8     421 [397.4,435.7]     53.3  92.2 173.5 394.2  172.4(179.7)  46.1   52.7  26.8 51.9( 63) 0.71/0.12/0.18  1130/850      5  234.5    4.7   7.4  12.2  43.8  pressure@win 0 drift-closed max 0
+    auto:leavesEverywhere+everywhere         8/8   491.3 [476.2,508.2]     60.4  96.4 161.3 361.5  152.1(161.6)  48.1   58.5  23.4   57( 61) 0.65/0.11/0.24  1130/1891.3  8.1  258.5    4.6   5.9  11.6  28.3  pressure@win 0 drift-closed max 0
+    click:balanced+none                      8/8   317.2 [291.4,358.4]     22.2  65.8 122.3 275.9   77.3( 94.2)  44.3   77.3  41.3   32( 39) 0.35/0.3/0.35   1130/0        0    240    4.8  10.7  21.7  57.9  pressure@win 0 drift-closed max 0
+    click:situational+none                   8/8   274.9 [249.3,301.1]     21.6  59.5 107.4 245.3   60.6( 72.7)  40.9   60.6  29.6 27.8( 34) 0.36/0.31/0.34  1130/0        0  204.6    4.8  12.5  29.6  69.9  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin           8/8   272.7 [243.4,291.8]     21.6  74.8 114.8 239.6   54.4( 65.7)  41.5   51.1  33.1 37.5( 52) 0.54/0.12/0.34  1130/90       1  238.9    4.7  10.7  27.5   NaN  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin+extend    8/8     272 [242.1,289.1]     21.6  74.8 114.8 260.5   54.4( 65.7)    40   51.1  11.5 37.5( 52) 0.56/0.12/0.32 1257.5/90       1  113.6    4.7  10.7  27.5   NaN  pressure@win 0 drift-closed max 0
+    click:situational+everywhere             8/8   374.4 [362.7,407.2]     47.8    79 148.2 346.5    153(163.4)  39.9   50.6  27.9   52( 83) 0.7/0.11/0.19   1130/850      5  248.3    4.7   9.6  16.9  53.3  pressure@win 0 drift-closed max 0
+    click:leavesEverywhere+everywhere        8/8   493.4 [462.2,513.4]     53.5  85.7   148 306.5  109.5(141.9)  42.9   52.5  26.3 51.5( 57) 0.61/0.1/0.28   1130/2306.3  9.1  358.8    4.6   6.5  12.5  29.2  pressure@win 0 drift-closed max 0
+    e.g. seedOut@29 drought@72 humid@143 humid@234 rad@290 heat@316
+
+## Ocean Archipelago 13 · Volatile Climate (7 candidate strategy classes)
+  opening, bubbles auto : options at start 1 · first local 0.2 s · first global 25.6 s (worst 28.8) · two options 25.6 s (worst 28.8) · first global options: seedOut
+  opening, bubbles click: options at start 1 · first local 0.2 s · first global 22.2 s (worst 28.8) · two options 22.2 s (worst 28.8) · first global options: seedOut, cold, heat, flood
+  recipe coldSalt: seedOut → waterSeeds → salt → cold
+    bubbles:policy+invest                   won  win s (range)        1st   2nd   3rd  last  maxGap(worst) median anyGap term  dead(worst) win0/1/2+      spent G/L  specs unspent  cov%@60/120/180/300
+    auto:balanced+none                       8/8   394.4 [312.6,540]         29 102.4 171.6 214.2   77.6( 86.8)  53.8   77.6 180.2   40( 46) 0.29/0.24/0.47   650/0        0  679.3   13.7  15.1  36.5  61.7  pressure@win 0 drift-closed max 0
+    auto:situational+none                    8/8   344.9 [315.2,369.8]     31.5  90.2 176.4 224.4   86.3(103.1)  53.3   86.3 120.5 36.6( 44) 0.31/0.26/0.43   650/0        0    631   13.7  15.2  38.1  63.3  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin            8/8   312.1 [258.6,345.1]     31.5 103.1 156.5 195.6   71.6( 80.5)  46.3   53.5 116.5 49.1( 65) 0.46/0.1/0.43    650/90       1    755   13.7    14  38.8  64.6  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin+extend     8/8   303.9 [274.7,336.3]     31.5 103.1 156.5 268.4   71.6( 80.5)  41.2   53.7  35.5 49.1( 65) 0.57/0.12/0.31  1100/90       1  266.4   13.7    14  38.8  66.7  pressure@win 0 drift-closed max 0
+    auto:situational+everywhere              8/8     447 [396.6,510.1]       60 108.3 286.7 329.5  178.4(196.6)  54.5   71.7  31.8 81.9(119) 0.78/0.02/0.2    650/855      5  173.1   13.7  13.8  32.5  53.1  pressure@win 0 drift-closed max 0
+    auto:leavesEverywhere+everywhere         8/8   561.5 [405.3,973.3]     67.4 111.7 180.5 209.8   82.6(105.2)  49.9   91.4  30.2 64.5( 75) 0.61/0.03/0.37   650/2197.5  8.8  405.8   11.6  14.1  18.7  46.3  pressure@win 0 drift-closed max 0
+    click:balanced+none                      8/8   387.3 [269,532.8]       25.8  87.8 148.8 188.5   66.1( 87.3)  49.5   66.1 198.7   34( 48) 0.25/0.22/0.54   650/0        0  867.3   13.7  16.8    40    60  pressure@win 0 drift-closed max 0
+    click:situational+none                   8/8     297 [228.2,384]       31.5  80.5 146.9 191.2   71.9(   97)  43.9   71.9 105.9 33.9( 44) 0.3/0.26/0.44    650/0        0  632.5   13.7  20.1  46.1  61.8  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin           8/8   312.6 [254.6,365.9]     31.5  92.6 142.9   178   62.4( 74.2)  42.8   50.2 134.7 44.5( 56) 0.41/0.11/0.49   650/90       1  972.3   13.7  14.9  44.5  63.9  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin+extend    8/8   294.3 [252.3,344.2]     31.5  92.6 142.9 247.7   62.4( 74.2)    39   50.2  46.6 44.5( 56) 0.53/0.12/0.34  1100/90       1  347.4   13.7  14.9  44.5  65.1  pressure@win 0 drift-closed max 0
+    click:situational+everywhere             8/8   396.8 [285.8,483.5]     51.9  94.7 239.8 269.9  145.1(179.8)    48     62  21.4 74.1(106) 0.72/0.02/0.26   650/1036.3  5.6  129.5   13.7  16.5  37.1  57.3  pressure@win 0 drift-closed max 0
+    click:leavesEverywhere+everywhere        8/8   535.6 [390.4,876.8]       60  98.4   144 164.1   62.6( 77.1)  40.7   87.8  29.7   57( 75) 0.57/0.03/0.4    650/2453.8  9.4  462.6   11.9  14.9  21.4  50.1  pressure@win 0 drift-closed max 0
+    e.g. seedOut@33 waterSeeds@114 salt@187 cold@229
+  recipe heatRad: seedOut → waterSeeds → rad → heat
+    bubbles:policy+invest                   won  win s (range)        1st   2nd   3rd  last  maxGap(worst) median anyGap term  dead(worst) win0/1/2+      spent G/L  specs unspent  cov%@60/120/180/300
+    auto:balanced+none                       8/8   296.5 [265.3,313.3]       29 102.4 177.6 223.1   79.6( 92.8)  57.2   79.6  73.4   40( 46) 0.38/0.31/0.31   670/0        0  279.3   13.7  15.1    36  67.8  pressure@win 0 drift-closed max 0
+    auto:situational+none                    8/8   278.3 [234.2,315.7]     31.5  90.2 184.3 224.2   94.2(113.3)  49.6   94.2  54.1 36.5( 44) 0.39/0.32/0.29   670/0        0    220   13.7  15.2  37.7  66.7  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin            8/8   253.7 [221.6,278.2]     31.5 103.1 162.6 198.4   72.3( 80.5)    48   59.5  55.3 49.3( 65) 0.57/0.13/0.3    670/90       1  284.9   13.7    14  36.6   NaN  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin+extend     8/8   253.3 [221.1,274.9]     31.5 103.1 162.6 235.8   72.3( 80.5)  38.7   59.5  17.4 49.3( 65) 0.63/0.14/0.23   840/90       1    112   13.7    14  36.6   NaN  pressure@win 0 drift-closed max 0
+    auto:situational+everywhere              8/8   431.3 [356,494.6]         60 108.3   339 375.4  230.7(269.4)  54.4   74.1  43.9 81.9(119) 0.78/0.01/0.21   670/610      4  165.4   13.7  13.8  32.5  51.5  pressure@win 0 drift-closed max 0
+    auto:leavesEverywhere+everywhere         8/8   378.4 [340.8,397.8]     67.4 111.7 202.9 230.5    103(147.8)  50.1   65.5  29.4 64.5( 75) 0.71/0.03/0.26   670/1108.8  5.9    207   11.6  14.1  18.3  49.7  pressure@win 0 drift-closed max 0
+    click:balanced+none                      8/8   257.4 [228.6,312.3]     25.8  87.8 155.6   186   70.6(   88)  46.1   70.6  71.4   32( 48) 0.32/0.3/0.38    670/0        0    333   13.7  16.7  40.2  68.3  pressure@win 0 drift-closed max 0
+    click:situational+none                   8/8   255.7 [204.2,297.8]     31.5  80.5 155.6 194.2   78.4(106.6)  42.7   78.4  61.5 32.9( 44) 0.34/0.31/0.35   670/0        0  296.1   13.7  20.2  44.3   NaN  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin           8/8   233.4 [205.4,251.5]     31.5  92.6 149.1   181   64.9( 74.2)  43.3   56.5  52.4 43.8( 56) 0.52/0.14/0.34   670/90       1  333.9   13.7  14.9  42.4   NaN  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin+extend    8/8     232 [204.2,251.5]     31.5  92.6 149.1 211.4   64.9( 74.2)  35.3   56.5  20.6 43.8( 56) 0.59/0.15/0.26   840/90       1  145.3   13.7  14.9  42.4   NaN  pressure@win 0 drift-closed max 0
+    click:situational+everywhere             8/8   364.8 [277.8,441.1]     51.9  94.7 273.5 307.2  178.8(235.1)  47.8   62.3    24 74.1(106) 0.75/0.01/0.23   670/703.8  4.4    104   13.7  16.5  36.9  55.2  pressure@win 0 drift-closed max 0
+    click:leavesEverywhere+everywhere        8/8   352.2 [283.4,460.2]       60  98.4 170.5   193   79.9(129.1)  45.3   62.1  24.4 56.8( 75) 0.66/0.02/0.32   670/1232.5  6.3  184.5   11.9  14.9  21.6  56.3  pressure@win 0 drift-closed max 0
+    e.g. seedOut@33 waterSeeds@114 rad@192 heat@233
+  recipe dry: seedOut → waterSeeds → salt → dry
+    bubbles:policy+invest                   won  win s (range)        1st   2nd   3rd  last  maxGap(worst) median anyGap term  dead(worst) win0/1/2+      spent G/L  specs unspent  cov%@60/120/180/300
+    auto:balanced+none                       8/8     368 [313.1,452]         29 102.4 171.6 231.4   77.6( 86.8)  62.4   77.6 136.6   40( 46) 0.3/0.24/0.46    710/0        0  546.3   13.7  15.1  36.5  60.5  pressure@win 0 drift-closed max 0
+    auto:situational+none                    8/8   345.5 [299.4,391.5]     31.5  90.2 176.4 236.7   86.3(103.1)  59.5   86.3 108.8 36.6( 44) 0.31/0.26/0.43   710/0        0  604.5   13.7  15.2  38.1  63.5  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin            8/8   316.2 [282.9,432.5]     31.5 103.1 156.5 205.9   71.6( 80.5)  51.4   55.2 110.3 49.1( 65) 0.45/0.1/0.45    710/90       1  762.8   13.7    14  38.8  65.8  pressure@win 0 drift-closed max 0
+    auto:situational+canopyOrigin+extend     8/8   313.5 [275.2,395.2]     31.5 103.1 156.5 274.7   71.6( 80.5)  44.9   55.5  38.8 49.1( 65) 0.55/0.11/0.34  1160/90       1    299   13.7    14  38.8  65.2  pressure@win 0 drift-closed max 0
+    auto:situational+everywhere              8/8     493 [399.5,626.6]       60 108.3 286.7 344.3  178.4(196.6)  59.1   71.7  35.1 81.9(119) 0.73/0.01/0.27   710/1056.3  5.6  204.4   13.7  13.8  32.5  53.1  pressure@win 0 drift-closed max 0
+    auto:leavesEverywhere+everywhere         8/8     613 [495.7,768.8]     67.4 111.7 180.5 237.7     92(105.2)  54.7   72.9  37.2 64.5( 75) 0.56/0.01/0.43   710/2683.8  9.9  383.3   11.6  14.1  18.7  49.5  pressure@win 0 drift-closed max 0
+    click:balanced+none                      8/8   400.6 [291.4,565.1]     25.8  87.8 148.8 202.2   69.9( 87.3)  53.6   69.9 198.4   34( 48) 0.24/0.2/0.55    710/0        0  939.3   13.7  16.8  40.5  62.2  pressure@win 0 drift-closed max 0
+    click:situational+none                   8/8   305.2 [238.7,381.8]     31.5  80.5 146.9 205.2   74.2(   97)  49.7   74.2 100.1 33.9( 44) 0.29/0.25/0.46   710/0        0  610.3   13.7  20.1    46  60.8  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin           8/8   287.2 [256.8,330.2]     31.5  92.6 142.9 188.5   62.4( 74.2)  47.4   50.9  98.6 44.5( 56) 0.42/0.11/0.46   710/90       1  746.5   13.7  14.9  44.8  61.5  pressure@win 0 drift-closed max 0
+    click:situational+canopyOrigin+extend    8/8   277.2 [248.6,309.1]     31.5  92.6 142.9 245.4   62.4( 74.2)  42.1   50.9  31.8 44.5( 56) 0.52/0.13/0.35  1125/90       1  246.4   13.7  14.9  44.8  67.7  pressure@win 0 drift-closed max 0
+    click:situational+everywhere             8/8   396.8 [288.3,476.2]     51.9  94.7 239.8 282.2  145.1(179.8)    50   62.9  30.1 74.1(106) 0.7/0.01/0.29    710/906.3  5.1  175.9   13.7  16.5  37.1  57.1  pressure@win 0 drift-closed max 0
+    click:leavesEverywhere+everywhere        8/8   506.3 [362.4,671]         60  98.4   144 198.9   71.8( 98.3)  47.9   61.7  20.5 56.8( 75) 0.58/0.01/0.42   710/2555   9.5  193.1   11.9  14.9  21.6  55.2  pressure@win 0 drift-closed max 0
+    e.g. seedOut@33 waterSeeds@114 salt@187 dry@247
+
+(137210 ms)
+wrote docs/evidence/bloom-015/economy-study-volatile.json

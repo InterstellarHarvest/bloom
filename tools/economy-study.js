@@ -3,6 +3,7 @@
 //
 //   node tools/economy-study.js [--json <out.json>] [--seeds N] [--quick] [--brief] [--worlds fb,o13,d25,f22,o13dw,d25dw,f22dw]
 //                               (BLOOM-014, opt-in, not in the default set: --worlds d25nc,o13nc,f22nc = Native Competition)
+//                               (BLOOM-015, opt-in: --worlds f22vc,d25vc,o13vc = Volatile Climate)
 //                               [--set econ.startBiomass=100,traits.seedOut.base=20,…]
 //
 // The question is not "how fast is a run" but "how long does a player wait between meaningful Biomass decisions".
@@ -90,6 +91,17 @@ const COMPETITION_WORLDS = [
     witness: ["seedOut", "waterSeeds", "salt", "rad", "heat", "dry", "dry", "drought"], ignoreColdSalt: ["seedOut", "waterSeeds", "salt", "cold"], ignoreHeatRad: ["seedOut", "waterSeeds", "rad", "heat"] }],
   ["f22nc", "Frozen World 22 · Native Competition", "frozen_world", 22, 1, "native_competition", {
     coldHeat: ["seedOut", "heat", "cold", "cold"], coldRad: ["seedOut", "rad", "cold", "cold"], ignoreCold2: ["seedOut", "earlyMat", "cold", "cold"] }],
+];
+// BLOOM-015: Volatile Climate worlds (Terraform-driven climate instability; no clock). Opt-in only, like the competition worlds.
+// Recipes = the layer-P witnesses' plans (an Adapt-heavy one and a Terraform-heavy one) + a deliberately Terraform-heavy
+// "reckless" recipe that stacks steps on one axis as fast as Biomass allows.
+const CLIMATE_WORLDS = [
+  ["f22vc", "Frozen World 22 · Volatile Climate", "frozen_world", 22, 1, "volatile_climate", {
+    adapt: ["seedOut", "earlyMat", "cold", "cold"], terraform: ["seedOut", "cold", "warm", "warm"], reckless: ["seedOut", "warm", "warm", "warm", "cold"] }],
+  ["d25vc", "Desert World 25 · Volatile Climate", "desert_world", 25, 0, "volatile_climate", {
+    adapt: ["seedOut", "drought", "drought"], terraform: ["seedOut", "drought", "humid", "rad", "cool", "cool"], reckless: ["seedOut", "drought", "humid", "humid", "rad", "heat"] }],
+  ["o13vc", "Ocean Archipelago 13 · Volatile Climate", "ocean_archipelago", 13, 6, "volatile_climate", {
+    coldSalt: ["seedOut", "waterSeeds", "salt", "cold"], heatRad: ["seedOut", "waterSeeds", "rad", "heat"], dry: ["seedOut", "waterSeeds", "salt", "dry"] }],
 ];
 // colony rows: [allocation policy, investment policy]
 // "player" = situational allocation + one Leaf Canopy on the origin + Spread upgrades after the recipe (a reasonable human)
@@ -186,7 +198,7 @@ function cadence(X, config, traits, plan, seed, bubbles, policyName, investName,
       terminal: win !== null && all.length ? r1(win - all.at(-1).s) : null,
       spentGlobal: sim.spent.global, spentLocal: sim.spent.local, unspent: Math.round(sim.biomass), earned: Math.round(sim.biomass + sim.spent.global + sim.spent.local), marks,
       windows: windows.map(w => w / tot), deadWait, progressAtWin: X.scenario ? +sim.pressure.progress.toFixed(3) : null, maxClosed: +maxClosed.toFixed(3),
-      completedPlan: i >= plan.length };
+      completedPlan: i >= plan.length, shocks: sim.climate.enabled ? sim.climate.shocks.length : null, peakInstability: sim.climate.enabled ? +sim.climate.peak.toFixed(3) : null };
   }
 }
 
@@ -207,6 +219,7 @@ function studyWorld(W, config, traits, seeds, rows, bubbleModes, scenarios) {
         windows: [0, 1, 2].map(k => +mean(runs.map(r => r.windows[k])).toFixed(2)),
         spentGlobal: m(r => r.spentGlobal), spentLocal: m(r => r.spentLocal), specs: m(r => r.specs.length), unspent: m(r => r.unspent), earned: m(r => r.earned),
         completedPlan: runs.filter(r => r.completedPlan).length, progressAtWin: m(r => r.progressAtWin), maxClosed: m(r => r.maxClosed),
+        ...(runs[0].shocks !== null ? { shocks: m(r => r.shocks), shocksMax: Math.max(...runs.map(r => r.shocks)), peakInstability: m(r => r.peakInstability) } : {}),
         marks: Object.fromEntries(CHECK.map(c => [c, { cov: r1(100 * (mean(runs.filter(r => r.marks[c]).map(r => r.marks[c].cov)) ?? NaN)), bio: m(r => r.marks[c] && r.marks[c].bio),
           earned: m(r => r.marks[c] && r.marks[c].earned) }])),
         example: runs[0].buys.map(b => `${b.id}@${Math.round(b.s)}`).concat(runs[0].specs.map(b => `[${b.id}@${Math.round(b.s)}]`)).join(" ") };
@@ -225,10 +238,10 @@ function priceTable(config, traits) {
 
 function study({ spec = "", seeds, worlds, rows, bubbleModes }) {
   const { config, traits, scenarios } = withOverrides(spec), out = { set: spec, prices: priceTable(config, traits), econ: config.econ, specCost: config.colony.specCost, worlds: {} };
-  for (const W of [...WORLDS, ...COMPETITION_WORLDS].filter(w => worlds.includes(w[0]))) out.worlds[W[0]] = studyWorld(W, config, traits, seeds, rows, bubbleModes, scenarios);
+  for (const W of [...WORLDS, ...COMPETITION_WORLDS, ...CLIMATE_WORLDS].filter(w => worlds.includes(w[0]))) out.worlds[W[0]] = studyWorld(W, config, traits, seeds, rows, bubbleModes, scenarios);
   return out;
 }
-module.exports = { study, WORLDS, COMPETITION_WORLDS, withOverrides, options, meaningfulGlobal, context, cadence, opening, priceTable };
+module.exports = { study, WORLDS, COMPETITION_WORLDS, CLIMATE_WORLDS, withOverrides, options, meaningfulGlobal, context, cadence, opening, priceTable };
 if (require.main !== module) return;
 
 const QUICK = process.argv.includes("--quick"), BRIEF = process.argv.includes("--brief"), NSEEDS = +arg("--seeds", QUICK || BRIEF ? 4 : 8), OUT = arg("--json", null);

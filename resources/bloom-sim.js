@@ -19,6 +19,13 @@
 // fronts: whichever organism is locally stronger (its fitness in the current environment × how established its stands
 // are) pushes the other back. Its tolerances come from the planet's starting conditions, and it reads the same sky
 // (Terraform included) and pressure offsets as the player. No competition block = no native layer, no extra RNG draws.
+// BLOOM-015: climate instability. A scenario's `climateInstability` block (content/scenarios.js) makes the player's OWN
+// Terraform purchases unsettle the climate, per sky axis (temperature / moisture). Each Terraform step adds forcing to its
+// axis (more when steps on that axis come close together), instability settles back over time, and an axis that stays
+// unsettled enough produces a temporary, deterministic climate SHOCK (heat pulse / cold snap / wet surge / dry spell): a
+// warning, then a temporary offset on the same sky inputs every evaluation already reads, then a full return. Permanent
+// Terraform is never undone and planet data is never edited. sim.climate holds the live state; no block = no state, no
+// extra RNG draws (shock timing and type come from the purchases and a planet-derived hash, never from the run RNG).
 //
 // ⚠ tools/golden/first_bloom.json pins this file's behavior bit-for-bit under a seeded RNG
 // (run traces last regenerated on purpose by BLOOM-009, an owner-authorized gameplay retune).
@@ -68,6 +75,27 @@
     if (!L || typeof L.extinction !== "boolean") e.push("loss.extinction must be true or false");
     else if (L.extinction && !(L.extinctionGraceSeconds > 0)) e.push("loss.extinctionGraceSeconds must be > 0 when extinction is on");
     if (s && s.competition != null) e.push(...checkCompetition(s.competition));
+    if (s && s.climateInstability != null) e.push(...checkClimateInstability(s.climateInstability));
+    return e;
+  }
+  // climate-instability block (BLOOM-015): every number the instability layer uses, with its legal range
+  const CLIMATE_AXES = ["temp", "moist"];
+  function checkClimateInstability(c) {
+    const e = [], num = (v, lo, hi) => Number.isFinite(v) && v >= lo && v <= hi;
+    const F = c.forcing || {}, S = c.settling || {}, K = c.shocks || {}, A = c.axes || {}, B = c.bands;
+    if (!num(c.baseline, 0, 0.5)) e.push("climateInstability.baseline must be 0..0.5");
+    if (!Object.keys(A).length || Object.keys(A).some(k => !CLIMATE_AXES.includes(k))) e.push(`climateInstability.axes must name sky axes (${CLIMATE_AXES.join(", ")})`);
+    for (const k in A) { const a = A[k] || {}, m = a.magnitude;
+      if (!num(a.unit, 0.1, 100)) e.push(`climateInstability.axes.${k}.unit must be 0.1..100`);
+      if (!Array.isArray(m) || m.length !== 2 || !m.every(x => num(x, 0, 60)) || m[0] > m[1]) e.push(`climateInstability.axes.${k}.magnitude must be [lo, hi] in 0..60`);
+      for (const d of ["up", "down"]) if (!a[d] || typeof a[d].id !== "string" || !a[d].name) e.push(`climateInstability.axes.${k}.${d} needs { id, name }`); }
+    if (!num(F.perStep, 0, 1) || !num(F.compounding, 0, 5) || !num(F.memorySeconds, 1, 3600)) e.push("climateInstability.forcing needs perStep 0..1, compounding 0..5, memorySeconds 1..3600");
+    if (!num(S.halfLifeSeconds, 1, 3600)) e.push("climateInstability.settling.halfLifeSeconds must be 1..3600");
+    if (!num(K.threshold, 0.05, 1) || !num(K.warningSeconds, 0, 120) || !num(K.durationSeconds, 1, 600) || !num(K.rampSeconds, 0, 300) || !(K.rampSeconds * 2 <= K.durationSeconds)
+      || !num(K.release, 0, 1) || !num(K.quietSeconds, 0, 600) || !num(K.overshootShare, 0, 1))
+      e.push("climateInstability.shocks needs threshold 0.05..1, warningSeconds 0..120, durationSeconds 1..600, rampSeconds ≤ half the duration, release 0..1, quietSeconds 0..600, overshootShare 0..1");
+    if (!Array.isArray(B) || !B.length || B[0].from !== 0 || B.some((b, i) => !(b.from >= 0 && b.from <= 1) || (i && !(b.from > B[i - 1].from)) || !b.id || !b.name))
+      e.push("climateInstability.bands must be [{ from, id, name }] with from ascending from 0 to at most 1");
     return e;
   }
   // competition block (BLOOM-014): every number the native layer uses, with its legal range
@@ -88,7 +116,7 @@
     return e;
   }
   // a scenario changes the run at all (pressure clock and/or a competing organism); Eden / none = the plain engine
-  const isDynamic = s => !!(s && (s.pressure || s.competition));
+  const isDynamic = s => !!(s && (s.pressure || s.competition || s.climateInstability));
   // small deterministic helpers for planet-derived (not run-RNG) state: FNV-1a string hash → mulberry32 stream
   const fnv1a = str => { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193); } return h >>> 0; };
   function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -264,6 +292,10 @@
     if (SCN) { const bad = checkScenario(SCN); if (bad.length) throw new Error(`bloom-sim: scenario ${SCN.id}: ${bad.join("; ")}`); }
     const PR = SCN && SCN.pressure || null, LOSS = SCN && SCN.loss && SCN.loss.extinction ? SCN.loss : null;
     const CP = SCN && SCN.competition || null; // BLOOM-014: a competing native organism (null = none, no native layer at all)
+    const CI = SCN && SCN.climateInstability || null; // BLOOM-015: Terraform-driven climate instability (null = none at all)
+    // the environmental offsets every evaluation uses by default: the scenario drift, plus (climate instability only) the
+    // active shock — without instability this is exactly sim.pressure.offsets, as before
+    const envOffsets = CI ? () => sim.climate.env : () => sim.pressure.offsets;
 
     // genome + global sky + terraform counts, shaped by the trait catalogue
     const traitById = Object.fromEntries(traits.map(t => [t.id, t]));
@@ -306,7 +338,7 @@
       return { effT, effM, rad, skyT: sky.temp + off.temp, skyM };
     }
     function evaluate(i, off) {
-      off = off || sim.pressure.offsets;
+      off = off || envOffsets();
       const L = SEC[i].local, d = derived(), pressed = off.temp || off.moist || off.rad;
       const { effT, effM, rad: effRad, skyT, skyM } = rawFactors(L, off);
       const tempF = band(effT, d.tempFloor, d.tempCeil, T.soft);
@@ -433,7 +465,7 @@
     // the native's fitness in region i under the current (or given) environment: same raw inputs and the same category
     // softness as the player's evaluate(), its own tolerance windows; side = which way the limiting factor is off
     function nativeEvaluate(i, off) {
-      off = off || sim.pressure.offsets;
+      off = off || envOffsets();
       const L = SEC[i].local, { effT, effM, rad } = rawFactors(L, off), P = NP;
       const cats = { Temperature: band(effT, P.tempLo, P.tempHi, T.soft), Water: band(effM, P.moistLo, P.moistHi, Wt.soft),
         Soil: Math.min(overLimit(L.salinity, P.saltTol, So.saltSoft), (L.ph < So.phMin || L.ph > So.phMax) ? overLimit(Math.max(So.phMin - L.ph, L.ph - So.phMax, 0), 0, So.phSoft) : 1),
@@ -573,6 +605,113 @@
     }
     const validSecC = i => Number.isInteger(i) && i >= 0 && i < SC;
 
+    // ---- climate instability (BLOOM-015). Every number is scenario.climateInstability data; nothing names a scenario.
+    //  · per sky axis (temp, moist): level 0..1 (how unsettled that part of the climate is), recent (Terraform steps on the
+    //    axis, fading over forcing.memorySeconds) and net (the same, signed: + = warming / humidifying).
+    //  · FORCING: a Terraform step of |delta| = units × axis.unit adds perStep × units × (1 + compounding × recent) to its
+    //    axis — steps on the same axis close together compound; Adapt and Spread purchases add nothing.
+    //  · SETTLING: every axis relaxes toward the baseline with settling.halfLifeSeconds (no purchase needed to settle).
+    //  · SHOCKS: an axis at or above shocks.threshold (with no shock of its own active or pending, outside its quiet time)
+    //    announces a shock (warningSeconds ahead), then it runs durationSeconds: a temporary offset of magnitude
+    //    lerp(axis.magnitude, severity) on that sky axis (severity = how far above the threshold the axis rose between the
+    //    warning and the start;
+    //    ramps in and out over rampSeconds), added to the drift every evaluation reads; it releases `release` of the axis's
+    //    excess instability when it starts and ends with the offset back at exactly 0, then the axis stays quiet for
+    //    quietSeconds. Direction: an OVERSHOOT continues the recent forcing (warming → heat pulse), a REBOUND swings the other
+    //    way (warming → cold snap); which one comes from a planet-derived hash (planet | scenario | axis | shock number),
+    //    overshootShare of the time an overshoot — the same purchases at the same times always give the same shocks.
+    //  · overall level = the most unsettled axis; bands (data) name it (Stable … Critical).
+    //  · events (most recent 64): { id, tick, type: "band" | "shockWarning" | "shockStart" | "shockEnd", … }.
+    const CLIM = CI ? (() => {
+      const dt = C.tickMs / 1000, axes = {};
+      for (const k of CLIMATE_AXES) if (CI.axes[k]) axes[k] = { level: CI.baseline, recent: 0, net: 0, count: 0, pending: null, shock: null, quietUntil: 0, offset: 0, peak: CI.baseline, maxSwing: 0 };
+      return { dt, ticks: s => Math.max(1, Math.round(s / dt)), settle: Math.exp(-Math.LN2 * dt / CI.settling.halfLifeSeconds), fade: Math.exp(-dt / CI.forcing.memorySeconds), axes };
+    })() : null;
+    const bandAt = v => { let k = 0; CI.bands.forEach((b, i) => { if (v >= b.from) k = i; }); return k; };
+    const climateLevel = () => { let m = 0; for (const k in CLIM.axes) m = Math.max(m, CLIM.axes[k].level); return m; };
+    // deterministic shock direction for the n-th shock on an axis: overshoot (follow the recent forcing) or rebound
+    function shockKind(ax, A, n) {
+      const r = mulberry32(fnv1a(`${planet.id}|${SCN.id}|climate|${ax}|${n}`)), over = r() < CI.shocks.overshootShare, s0 = r() < 0.5 ? 1 : -1;
+      const dir = (A.net > 1e-9 ? 1 : A.net < -1e-9 ? -1 : s0) * (over ? 1 : -1), K = CI.axes[ax][dir > 0 ? "up" : "down"];
+      return { axis: ax, sign: dir, id: K.id, name: K.name, overshoot: over };
+    }
+    // the Terraform forcing one sky step adds to an axis in a given axis state (pure: used by buy() and the preview)
+    function forcingOf(A, ax, delta) {
+      const units = Math.abs(delta) / CI.axes[ax].unit, add = CI.forcing.perStep * units * (1 + CI.forcing.compounding * A.recent);
+      return { units, add, after: Math.min(1, A.level + add) };
+    }
+    function climateEvent(e) { const L = sim.climate.events; L.push({ id: sim.climate.nextEventId++, tick: sim.ticks, ...e }); if (L.length > 64) L.shift(); }
+    function climateBand(cause, axis) { // overall band change → one event (cause: "terraform" | "settling" | "shock")
+      const CS = sim.climate, lv = climateLevel(), b = bandAt(lv); CS.level = lv;
+      if (lv > CS.peak) { CS.peak = lv; CS.peakTick = sim.ticks; }
+      if (b !== CS.band) { climateEvent({ type: "band", from: CS.band, to: b, cause, axis: axis || null, level: lv }); CS.band = b; }
+    }
+    function climateForce(ax, delta) { // a Terraform purchase on sky axis `ax`
+      const A = CLIM.axes[ax]; if (!A) return;
+      const f = forcingOf(A, ax, delta), before = A.level;
+      A.level = f.after; A.recent += f.units; A.net += Math.sign(delta) * f.units; if (A.level > A.peak) A.peak = A.level;
+      sim.climate.forcing.push({ tick: sim.ticks, axis: ax, delta, units: f.units, add: f.add, before, after: A.level });
+      climateBand("terraform", ax);
+    }
+    // one tick of the climate: settle, fade the forcing memory, announce / start / run / end shocks, rebuild the offsets
+    function updateClimate() {
+      const CS = sim.climate, K = CI.shocks, now = sim.ticks;
+      for (const ax in CLIM.axes) { const A = CLIM.axes[ax], cfg = CI.axes[ax];
+        A.level = CI.baseline + (A.level - CI.baseline) * CLIM.settle; A.recent *= CLIM.fade; A.net *= CLIM.fade;
+        if (!A.shock && !A.pending && now >= A.quietUntil && A.level >= K.threshold) {
+          const kind = shockKind(ax, A, A.count + 1); A.pending = { ...kind, startTick: now + (K.warningSeconds > 0 ? CLIM.ticks(K.warningSeconds) : 0), peak: A.level };
+          climateEvent({ type: "shockWarning", axis: ax, kind: kind.id, name: kind.name, sign: kind.sign, startTick: A.pending.startTick, level: A.level }); }
+        if (A.pending) A.pending.peak = Math.max(A.pending.peak, A.level); // (forcing during the warning makes the coming shock larger)
+        if (A.pending && now >= A.pending.startTick) {
+          const p = A.pending, sev = clamp((p.peak - K.threshold) / Math.max(1e-9, 1 - K.threshold), 0, 1), mag = lerp(cfg.magnitude[0], cfg.magnitude[1], sev);
+          A.count++; A.pending = null;
+          A.shock = { n: A.count, axis: ax, id: p.id, name: p.name, sign: p.sign, overshoot: p.overshoot, magnitude: mag, severity: sev, levelAtStart: p.peak,
+            startTick: now, endTick: now + CLIM.ticks(K.durationSeconds), ramp: CLIM.ticks(K.rampSeconds) };
+          A.level -= K.release * (A.level - CI.baseline);
+          CS.shocks.push({ n: A.count, axis: ax, kind: p.id, name: p.name, sign: p.sign, overshoot: p.overshoot, magnitude: +mag.toFixed(3), severity: +sev.toFixed(3),
+            levelAtStart: +A.shock.levelAtStart.toFixed(4), startTick: now, endTick: A.shock.endTick, ended: false });
+          climateEvent({ type: "shockStart", axis: ax, kind: p.id, name: p.name, sign: p.sign, magnitude: mag, endTick: A.shock.endTick });
+        }
+        if (A.shock) {
+          const S = A.shock, t = now - S.startTick, left = S.endTick - now;
+          if (left <= 0) { // the shock is over: the offset is exactly 0 again
+            A.offset = 0; A.shock = null; A.quietUntil = now + CLIM.ticks(K.quietSeconds);
+            const h = CS.shocks.find(x => x.axis === ax && x.n === S.n); if (h) h.ended = true;
+            climateEvent({ type: "shockEnd", axis: ax, kind: S.id, name: S.name });
+          } else {
+            const env = S.ramp > 0 ? Math.min(1, t / S.ramp, left / S.ramp) : 1;
+            A.offset = S.sign * S.magnitude * env; A.maxSwing = Math.max(A.maxSwing, Math.abs(A.offset));
+          }
+        }
+      }
+      const P = sim.pressure.offsets, o = CS.offsets; o.temp = CLIM.axes.temp ? CLIM.axes.temp.offset : 0; o.moist = CLIM.axes.moist ? CLIM.axes.moist.offset : 0;
+      CS.env = { temp: P.temp + o.temp, moist: P.moist + o.moist, rad: P.rad };
+      climateBand("settling");
+    }
+    // live climate state (UI, events, report, validation). No climateInstability block: { enabled: false } and nothing else.
+    //  level / band (index into the scenario's bands) / peak / peakTick; axes[ax] = { level, recent, net, count, pending,
+    //  shock, quietUntil, offset, peak, maxSwing }; offsets = the active shock offsets { temp, moist }; env = drift + shock (what
+    //  evaluations read); shocks = every shock so far { n, axis, kind, name, sign, overshoot, magnitude, severity, levelAtStart,
+    //  startTick, endTick, ended }; forcing = every Terraform push { tick, axis, delta, units, add, before, after }
+    sim.climate = !CI ? { enabled: false } : { enabled: true, level: CI.baseline, band: bandAt(CI.baseline), peak: CI.baseline, peakTick: 0, axes: CLIM.axes,
+      offsets: { temp: 0, moist: 0 }, env: { ...ZERO_OFFSETS }, shocks: [], forcing: [], events: [], nextEventId: 1 };
+    // what one Terraform purchase would do to the climate now (UI preview; no state change): the axis, its level before /
+    // after, the overall band before / after, and whether it would set off a shock (and which kind — the direction rule is
+    // deterministic) or only add to one already running / announced
+    function climatePreview(id) {
+      const t = traitById[id]; if (!CI || !t || t.effect.type !== "sky" || !canBuy(t)) return null;
+      const ax = t.effect.axis, A = CLIM.axes[ax]; if (!A) return null;
+      const f = forcingOf(A, ax, t.effect.delta), K = CI.shocks, lv0 = climateLevel();
+      let lv1 = f.after; for (const k in CLIM.axes) if (k !== ax) lv1 = Math.max(lv1, CLIM.axes[k].level);
+      const busy = !!(A.shock || A.pending), triggers = !busy && f.after >= K.threshold && sim.ticks + 1 >= A.quietUntil;
+      const kind = triggers ? shockKind(ax, { net: A.net + Math.sign(t.effect.delta) * f.units }, A.count + 1) : null;
+      // (expected size if nothing else is bought before it starts: the severity of the level right after this purchase)
+      const mag = CI.axes[ax].magnitude, magnitude = f.after >= K.threshold ? lerp(mag[0], mag[1], clamp((f.after - K.threshold) / Math.max(1e-9, 1 - K.threshold), 0, 1)) : 0;
+      return { axis: ax, add: f.add, axisBefore: A.level, axisAfter: f.after, before: lv0, after: lv1, bandBefore: bandAt(lv0), bandAfter: bandAt(lv1),
+        crossesBand: bandAt(lv1) > bandAt(lv0), triggersShock: triggers, kind, magnitude, afterQuiet: !busy && f.after >= K.threshold && !triggers,
+        addsToActive: busy, threshold: K.threshold };
+    }
+
     function livingCountBySection() { const c = new Int32Array(SC); for (const i of LAND_TILES) if (state[i] === LIV) c[TILEMAP[i]]++; return c; }
     function coverage() { let l = 0; for (const i of LAND_TILES) if (state[i] === LIV) l++; return l / LAND; }
     // section establishment 0..1 (see dens above) and its ordinary-language status for the inspect panel / map
@@ -609,6 +748,7 @@
       if (sim.lost) return 0; // a lost run is frozen
       sim.ticks++;
       if (PR) updatePressure(); // (Eden: nothing to update — the run is exactly the pre-pressure engine)
+      if (CI) updateClimate(); // (BLOOM-015: settle, run shocks; after the drift so env = drift + shock)
       // 1. evaluate fitness + ease vigor
       for (let i = 0; i < SC; i++) { const e = evaluate(i); secFit[i] = e.fitness; secGrowth[i] = e.growthMod; vigor[i] += (e.fitness - vigor[i]) * C.vigorEase;
         const key = sim.colonies.focus[i] + "|" + sim.colonies.spec[i]; if (key !== modsKey[i]) { modsKey[i] = key; mods[i] = colonyMods(i); } }
@@ -768,7 +908,9 @@
     function buy(id) {
       const t = traitById[id]; if (!t) return false; const cost = price(t);
       if (!canBuy(t) || sim.biomass < cost) return false;
+      const ax = CI && t.effect.type === "sky" ? t.effect.axis : null, was = ax ? sky[ax] : 0;
       sim.biomass -= cost; sim.spent.global += cost; applyTrait(t);
+      if (ax && sky[ax] !== was) climateForce(ax, sky[ax] - was); // BLOOM-015: Terraform (only) unsettles its sky axis
       return true;
     }
     // what-if: apply the upgrade to a copy of the plant/sky, compare which regions can grow, then restore
@@ -811,11 +953,12 @@
     Object.assign(sim, { derived, evaluate, lampOf, tick, coverage, livingCountBySection, collectBubble,
       traitById, offered, price, canBuy, ownedTier, why, buy, previewOf, establishment, colonyStatus,
       nativeEvaluate: CP ? nativeEvaluate : null, competitionAt, holdsAgainstNatives,
+      climatePreview, envOffsets,
       COLONY_MODES: MODES, setColonyFocus, getColonyFocus, getSpecialization, specPrice, specBlock, buySpecialization, colonyMods });
     return sim;
   }
 
   root.BLOOM = Object.assign(root.BLOOM || {}, { createSim, resolveLayout, growVoronoi,
-    pressure: { CHANNELS, checkScenario, checkCompetition, resolveScenario, isDynamic, progressAt, offsetsAt, maxOffsets, phaseAt },
+    pressure: { CHANNELS, CLIMATE_AXES, checkScenario, checkCompetition, checkClimateInstability, resolveScenario, isDynamic, progressAt, offsetsAt, maxOffsets, phaseAt },
     geo: { components, sectionAdjacency, sectionPieces, waterCrossings, reachableLandmasses }, util: { clamp, lerp, band, overLimit } });
 })(typeof window !== "undefined" ? window : globalThis);

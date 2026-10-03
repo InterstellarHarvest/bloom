@@ -22,6 +22,8 @@
 //                distinct broad strategies) inside the pacing bands, and still holds the win threshold holdFinalSeconds
 //                after the final state is reached. archetypes: per-archetype decisions ("allowed" / "disallowed" + reason)
 //   competition  (BLOOM-014) optional: a competing native organism with real tile state — see the native_competition entry
+//   climateInstability (BLOOM-015) optional: the player's own Terraform unsettles the climate and causes temporary shocks —
+//                see the volatile_climate entry
 //   display      short player-facing copy for the temporary pressure / competition bar, Bloom Report and loss screen (lossNote)
 // Terraform never touches scenario progress: it changes the player's sky; the scenario drift is added on top of it.
 (function (root) {
@@ -109,6 +111,56 @@
         title: "Native Competition",
         summary: "This planet already has native vegetation. It competes with your plant for light, water, nutrients and space.",
         lossNote: "native vegetation overgrew your last colonies. Where the two plants meet, the one better suited to the ground pushes, and established colonies hold while young ones can be overgrown. Spread into ground that suits your plant better than the natives (Adapt), change the sky so their strongholds suit them less (Terraform), or thicken a threatened young colony (Roots).",
+      },
+    },
+    {
+      id: "volatile_climate", name: "Volatile Climate",
+      intent: "Terraforming is powerful, but changing a whole planet's climate quickly pushes it out of balance before it settles. Each Terraform step unsettles the part of the climate it changes (temperature or moisture); heavy or closely spaced steps compound; the climate settles back on its own. An axis that stays unsettled enough swings: a temporary heat pulse, cold snap, wet surge or dry spell, announced a few seconds ahead, through the same sky the player already reads. Permanent Terraform stays. There is no clock: a plant that adapts instead of reshaping the sky meets little instability.",
+      pressure: null,
+      // BLOOM-015 generic climate-instability mechanism (resources/bloom-sim.js; the engine never names this scenario):
+      //   baseline   starting (and resting) instability of every axis, 0..1
+      //   axes       the sky axes Terraform can unsettle: unit = the size of one Terraform step on that axis (°C / moisture
+      //              points) — forcing is counted in steps; magnitude = [lo, hi] size of a shock's swing (°C / points), lo at
+      //              the threshold, hi at full instability; up / down = the shock kinds when it swings up / down
+      //   forcing    one Terraform step adds perStep × (1 + compounding × recent), where recent = Terraform steps on that axis,
+      //              each fading with time constant memorySeconds: closely spaced steps on one axis compound
+      //   settling   instability relaxes toward the baseline with this half-life (no purchase needed)
+      //   shocks     an axis at or above threshold announces a shock warningSeconds ahead; it lasts durationSeconds (ramping in
+      //              and out over rampSeconds), releases `release` of the axis's excess instability when it starts, then the
+      //              axis is quiet for quietSeconds; overshootShare of shocks continue the recent forcing (warming → heat
+      //              pulse), the rest swing back (warming → cold snap) — chosen by a planet-derived hash, never the run RNG
+      //   bands      readable states of the overall instability (the most unsettled axis)
+      climateInstability: {
+        baseline: 0.05,
+        axes: {
+          temp:  { unit: 6, magnitude: [8, 14],  up: { id: "heat_pulse", name: "Heat pulse" }, down: { id: "cold_snap", name: "Cold snap" } },
+          moist: { unit: 8, magnitude: [12, 22], up: { id: "wet_surge",  name: "Wet surge" },  down: { id: "dry_spell", name: "Dry spell" } },
+        },
+        forcing: { perStep: 0.3, compounding: 0.6, memorySeconds: 90 },
+        settling: { halfLifeSeconds: 75 },
+        shocks: { threshold: 0.55, warningSeconds: 12, durationSeconds: 45, rampSeconds: 8, release: 0.4, quietSeconds: 20, overshootShare: 0.5 },
+        bands: [
+          { from: 0,    id: "stable",    name: "Stable",    note: "The climate is settled." },
+          { from: 0.3,  id: "unsettled", name: "Unsettled", note: "Recent Terraforming is still working through the climate." },
+          { from: 0.55, id: "volatile",  name: "Volatile",  note: "Unsettled enough to swing: expect a temporary shock." },
+          { from: 0.8,  id: "critical",  name: "Critical",  note: "Strong, repeated forcing: shocks will be large." },
+        ],
+      },
+      loss: { extinction: true, extinctionGraceSeconds: 8 },
+      validation: {
+        // a witness must still hold the win threshold 60 s after the later of its margin and its last shock; a Terraform-heavy
+        // witness (≥ 2 Terraform steps) counts only if it lived through a real shock
+        minStrategies: 1, holdFinalSeconds: 60, confirmRngSeeds: [101, 202],
+        mechanicEvidence: { terraformSteps: 2, minShocks: 1 },
+        pacing: { marginSeconds: [240, 900], firstPurchaseSeconds: [0, 60], maxPurchaseGapSeconds: 120 },
+        archetypes: {},
+      },
+      display: {
+        title: "Volatile Climate",
+        summary: "Terraforming changes the whole planet's climate. Change it too fast and the climate becomes unstable: it can swing to temporary extremes before it settles.",
+        science: "Climate instability (a simplified game model): rapid changes to a planet's climate can push connected systems out of balance. Feedbacks can make the climate overshoot or swing back before it settles, so heavy Terraforming can cause temporary temperature or moisture extremes. Real climates do not respond the same way to every change, and one action does not cause one heat wave; this model only shows the idea that fast, large forcing brings more variability.",
+        axes: { temp: "temperature", moist: "moisture" },
+        lossNote: "a climate shock pushed your last colonies past what your plant tolerates. Shocks come from Terraforming: each step unsettles the climate, steps close together compound, and the climate settles on its own. Adapting the plant (Adapt) adds no instability; spacing Terraform steps, or giving colonies some tolerance beyond the new sky, lets them ride out a swing.",
       },
     },
   ];
