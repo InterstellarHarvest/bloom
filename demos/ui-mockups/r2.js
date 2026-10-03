@@ -16,7 +16,8 @@
     BM2.hud(host, opts) / clockControls(host) / pausedFlag(host)
     BM2.lens(host, map, opts)                   styles: menu | tool | expand | dropdown
     BM2.inspector(opts)                         modes: anchored | sidecar; tab styles: top | seg | pill | side
-    BM2.board(host, boardId, opts)              Adapt / Spread / Terraform content (specimen + cards + map preview + effects)
+    BM2.board(host, boardId, opts)              Adapt / Spread / Terraform content (specimen + cards + map preview + effects);
+                                                BLOOM-019 adds optional opts.onPreview(itemId|null)
     BM2.regions(host, opts)                     styles: grouped | matrix | kanban | list
     BM2.specFor(rid, previewItemId, extra)      specimen state honouring the Adapt-vs-Terraform rule
 */
@@ -424,6 +425,7 @@ BM2.board = function(host, board, o){
     });
   }
   function preview(pid){
+    if (o.onPreview) o.onPreview(pid);   // BLOOM-019: additive hook (Concept 9 region context); C5–C8 never pass it
     if (!pid) { map.setPreview(null); idle(); if (last) effects(last, true); return; }
     last = pid;
     const it = BM.item(pid), p = BM.previewOf(pid);
