@@ -4,7 +4,7 @@
 
 **Time needed:** one run, about 5–12 minutes, plus nine short answers.
 
-**Gate status:** ☐ not yet played.
+**Gate status:** ✅ **passed with notes** (owner, recorded 2026-10-02 in BLOOM-015): *"fine. continue."* No further Native Competition tuning pass for now; the known limitations in [`SCENARIOS_v1.md`](SCENARIOS_v1.md) §6.10 stay documented backlog observations.
 
 ## How to read it
 

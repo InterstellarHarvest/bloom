@@ -53,6 +53,15 @@
   the HUD shows native-held land, its trend and the contested regions (no clock: there is none); engine events (first contact,
   your advantage, native retakes, native-dominated region) become messages + short outlines; Terraform previews also say where
   the new sky suits the native plants more or less; the Bloom Report adds one competition line. QA: tools/native-competition-check.js.
+  BLOOM-015 (temporary functional UI, not the final layout): climate-instability scenarios (any scenario with a
+  `climateInstability` block). A slim status bar under the HUD shows the engine's live instability (sim.climate): overall %
+  and band on a meter with the shock threshold marked, each sky axis's own instability, an announced or active shock (kind,
+  size, time left), a one-line forecast, and the sky as base + Terraform + shock = now (never a countdown: there is no
+  clock). Terraform previews / purchases add the instability change (axis, % before → after, band change) and warn when the
+  step will set off a shock (likely kind and size). During a shock the map takes a faint tint of its kind and the ground
+  colours follow the shocked sky; regions it pushes across a threshold (or that reopen when it ends) get a message + short
+  outline; the inspect panel shows the shock in the region's temperature line. The Bloom Report and the extinction screen
+  add one climate line. QA: tools/volatile-climate-check.js.
 -->
 <style>
   :root{
@@ -219,6 +228,21 @@
   .comp{margin:8px 0; padding:8px; border-radius:5px; background:#1f1529; border:1px solid #5a3f72; color:#e3d4f0; font-size:12px}
   .comp .ch{font-size:13px} .comp .ch b{color:#fff} .comp.mine{border-color:#3f7a4f; background:#14221a} .comp.theirs{border-color:#8a4a6a; background:#2a1522}
   .comp .cw{margin-top:4px; color:#cdbde0; font-size:11px; line-height:1.45} .comp .cn{color:var(--dim); font-size:11px; margin-top:3px}
+  /* BLOOM-015: climate instability (temporary): status bar under the HUD, inspect note, report line */
+  .climbar{flex:1 0 100%; display:flex; align-items:center; gap:4px 12px; flex-wrap:wrap; padding:5px 12px; margin:2px 0 0; border-radius:8px;
+    background:linear-gradient(180deg,#14202c,#101a24); border:1px solid #2f5470; font-size:14px; color:#d8e8f5; transition:box-shadow .3s, border-color .3s}
+  .climbar.pulse{border-color:#ffb36b; box-shadow:0 0 18px rgba(255,179,107,.65)}
+  .climbar .vid{font-weight:700; letter-spacing:1px; color:#9fd4f5; white-space:nowrap}
+  .climbar .vtrack{position:relative; flex:0 1 160px; min-width:110px; height:14px; border-radius:7px; background:#0a1018; border:1px solid #2f4a60; overflow:hidden}
+  .climbar .vfill{position:absolute; left:0; top:0; bottom:0; width:0%; background:linear-gradient(90deg,#5aa0c8,#e0b05a 55%,#e0605a)}
+  .climbar .vtick{position:absolute; top:0; bottom:0; width:2px; background:rgba(255,255,255,.7)}
+  .climbar b{color:#fff} .climbar .vband{font-weight:700; white-space:nowrap} .climbar .b0{color:#9fe3a0} .climbar .b1{color:#ffe08a} .climbar .b2{color:#ffb36b} .climbar .b3{color:#ff7a6a}
+  .climbar .chip{display:inline-block; padding:2px 9px; border-radius:12px; background:#1a2c3c; border:1px solid #2f5470; white-space:nowrap}
+  .climbar .chip.hot{border-color:#e0805a; background:#3a2018} .climbar .chip.cold{border-color:#6aa8e0; background:#16283c}
+  .climbar .vshock{font-weight:700; color:#ffcf9a; white-space:nowrap}
+  .climbar .vrow2{flex:1 0 100%; display:flex; gap:2px 18px; flex-wrap:wrap; font-size:12px; color:#a9c4d8} .climbar .vrow2 b{color:#fff}
+  .clim{margin:8px 0; padding:8px; border-radius:5px; background:#13202c; border:1px solid #2f5470; color:#d3e3f0; font-size:11px}
+  .clim b{color:#ffcf9a}
   details.fsci{margin-top:6px} details.fsci summary{cursor:pointer; color:var(--dim); font-size:11px}
   details.fsci p{margin:4px 0 0; font-size:11px; color:var(--dim)}
 </style>
@@ -283,7 +307,9 @@ const CFG=sim.config;
 // BLOOM-012: the run's pressure scenario (null / Eden = no pressure: every readout below is exactly as before)
 const SCN=BLOOM_RUN.scenario||null, PRESS=!!(SCN&&SCN.pressure), PS=sim.pressure;
 // BLOOM-014: a competition scenario (the engine's native layer); SCEN = the run has any scenario mechanics at all
-const CS=sim.competition, COMP=!!CS.enabled, SCEN=PRESS||COMP;
+const CS=sim.competition, COMP=!!CS.enabled;
+// BLOOM-015: a climate-instability scenario (the engine's sim.climate); SCEN = the run has any scenario mechanics at all
+const CL=sim.climate, CLIM=!!CL.enabled, SCEN=PRESS||COMP||CLIM;
 const {W,H,N,SEC,SC,SIDX,ORIGIN,TILEMAP,AREA,CENT,SEC_TILES}=sim.map;
 const {state,dens,vigor,secFit,bubbles,genome,tf,BAR,LIV,DEAD}=sim, G=sim.sky;
 const {evaluate,lampOf,livingCountBySection}=sim;
@@ -363,7 +389,7 @@ const rgb=c=>`rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`;
 
 function draw(){
   ctx.clearRect(0,0,cv.width,cv.height);
-  if(PRESS){ const k=skyNow(); DRAW_T=k.t; DRAW_M=k.m; } else { DRAW_T=G.temp; DRAW_M=G.moist; }
+  if(PRESS||CLIM){ const k=skyNow(); DRAW_T=k.t; DRAW_M=k.m; } else { DRAW_T=G.temp; DRAW_M=G.moist; }
   const frosty=FROST?SEC.map(s=>DRAW_T+s.local.tempOffset<FROST_BELOW):null; // (live: warming the sky melts the glints)
   const natHatch=[]; // native tiles drawn this frame (x, y, density) → one hatch path after the ground pass
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){
@@ -389,6 +415,9 @@ function draw(){
     ctx.stroke(); }
   // BLOOM-012: a faint haze over the whole map that thickens as the atmosphere thins (temporary feedback, not weather art)
   if(PRESS&&PS.progress>0){ ctx.fillStyle=`rgba(200,182,226,${(0.22*PS.progress).toFixed(3)})`; ctx.fillRect(0,0,W*TILE,H*TILE); }
+  // BLOOM-015: a faint tint of the active shock's kind over the whole map, following the shock's own ramp (temporary feedback)
+  if(CLIM) for(const ax in CL.axes){ const A=CL.axes[ax]; if(!A.shock||!A.offset) continue; const c=SHOCK_UI[A.shock.id]||SHOCK_UI.fallback, k=Math.abs(A.offset)/A.shock.magnitude;
+    ctx.fillStyle=`rgba(${c.rgb},${(0.16*k).toFixed(3)})`; ctx.fillRect(0,0,W*TILE,H*TILE); }
   // purchase preview tint: green = would open, red = would close
   if(preview){ for(const [list,col] of [[preview.gain,"rgba(102,209,127,0.28)"],[preview.lose,"rgba(226,96,79,0.34)"]])
     for(const sec of list){ ctx.fillStyle=col; for(const t of SEC_TILES[sec]) ctx.fillRect((t%W)*TILE,((t/W)|0)*TILE,TILE,TILE); } } // exact size: overlap would double the alpha into grid seams
@@ -415,7 +444,7 @@ function draw(){
   if(sk){ if(sk===skyFx){ sk.gain.forEach(i=>outline(i,"#66d17f",3)); sk.lose.forEach(i=>outline(i,"#e2604f",3)); }
     sk.better.forEach(i=>outline(i,"#b6f0a8",2,[2,4])); sk.worse.forEach(i=>outline(i,"#f0a050",2,[2,4])); }
   // BLOOM-012: regions the scenario's decline just pushed across a threshold (orange = worse, pale green = opened)
-  if(PRESS){ const now=performance.now(); for(const x of PX_FX) if(now<x.until) outline(x.sec,x.worse?"#ff9a50":"#b6f0a8",3,[5,3]); }
+  if(PRESS||CLIM){ const now=performance.now(); for(const x of PX_FX) if(now<x.until) outline(x.sec,x.worse?"#ff9a50":"#b6f0a8",3,[5,3]); }
   // BLOOM-014: a region a competition event just named (amber = the native gained, mint = your plant gained, violet = contact)
   if(COMP){ const now=performance.now(); for(const x of CX_FX) if(now<x.until) outline(x.sec,x.color,3,[5,3]); }
   // bubbles
@@ -503,7 +532,7 @@ function renderHUD(cov){
   document.getElementById("hCovFill").style.width=Math.round(cov*100)+"%";
   document.getElementById("hCovWin").style.left=Math.round(sim.winAt*100)+"%";
   document.getElementById("hWinPct").textContent="/ "+Math.round(sim.winAt*100)+"%";
-  document.getElementById("hSky").textContent=PRESS?(()=>{ const k=skyNow(); return `${degC(r1(k.t))} · moist ${r1(k.m)}`; })():`${degC(G.temp)} · moist ${G.moist}`;
+  document.getElementById("hSky").textContent=PRESS||CLIM?(()=>{ const k=skyNow(); return `${degC(r1(k.t))} · moist ${r1(k.m)}`; })():`${degC(G.temp)} · moist ${G.moist}`;
   const dl=document.getElementById("hSkyDelta"), dt=skyFx&&now<skyFx.until?skyFx.delta:""; if(dl.textContent!==dt) dl.textContent=dt;
 }
 function renderInspect(){
@@ -518,7 +547,7 @@ function renderInspect(){
   const catRow=k=>{ const c=e.cats[k]; return `<div class="cat"><span class="lamp ${c.soft&&c.f>CFG.categories.lamp.green?"yellow":lampOf(c.f)}"></span><span class="lbl">${k}</span><span class="st">${c.word}</span>${e.terraformable[k]?'<span class="tag">terraformable</span>':''}</div>`; };
   // BLOOM-011: the temperature as numbers, so the two answers to cold read differently — Cold Tolerance lowers the
   // bottom of the plant's range, warming the sky raises this ground's temperature (and every other region's)
-  const dv=sim.derived(), tline=`<div class="tline" id="tline">Ground here <b>${degC(PRESS?r1(e.effT):e.effT)}</b> · sky ${degC(PRESS?r1(e.skyT):G.temp)} · suits your plant <b>${degC(dv.tempFloor)} to ${degC(dv.tempCeil)}</b></div>`;
+  const dv=sim.derived(), RD=PRESS||CLIM, tline=`<div class="tline" id="tline">Ground here <b>${degC(RD?r1(e.effT):e.effT)}</b> · sky ${degC(RD?r1(e.skyT):G.temp)} · suits your plant <b>${degC(dv.tempFloor)} to ${degC(dv.tempCeil)}</b></div>`;
   const blocked = e.limitF<CFG.categories.blockedBelow;
   const limitHtml = blocked
     ? `<div class="limit">▲ Growth blocked: <b>${LIMIT_MSG[e.limitKey](e)}</b><div class="fixhint">${FIX_HINT[e.limitKey](e)}</div></div>`
@@ -527,7 +556,7 @@ function renderInspect(){
   el.innerHTML=`<h2>SECTION</h2>
     <div class="secname">${LABEL[selected]}${s.isOrigin?'<span class="badge">★ ORIGIN</span>':''}</div>
     <div class="cats">${catRow("Temperature")}${catRow("Water")}${catRow("Soil")}${catRow("Hazard")}</div>${tline}
-    ${limitHtml}${pressNote(selected,e)}${compNote(selected)}${geoNote(selected)}${thermNote(selected)}
+    ${limitHtml}${pressNote(selected,e)}${climNote(selected,e)}${compNote(selected)}${geoNote(selected)}${thermNote(selected)}
     <div class="colony" id="colony">Colony: <span class="cw">${COLONY_WORD[cs.word]}</span> <span style="color:var(--dim)">· ${pct}% established</span>
       <div class="dbar"><i style="width:${pct}%"></i></div><div class="fixhint">${COLONY_HINT[cs.word]}</div></div>`;
   more.innerHTML=`<div class="vitals">vigor ${Math.round(vigor[selected]*100)}%
@@ -536,8 +565,8 @@ function renderInspect(){
     </div>
     <details class="raw"${rawOpen?' open':''}><summary>raw signals ▾</summary>
       <table class="kv">
-        <tr><td>effective temp</td><td>${e.effT>0?'+':''}${PRESS?r1(e.effT):e.effT}°C</td></tr>
-        <tr><td>effective moist</td><td>${PRESS?r1(e.effM):e.effM}</td></tr>
+        <tr><td>effective temp</td><td>${e.effT>0?'+':''}${RD?r1(e.effT):e.effT}°C</td></tr>
+        <tr><td>effective moist</td><td>${RD?r1(e.effM):e.effM}</td></tr>
         <tr><td>light</td><td>${s.local.light}</td></tr><tr><td>soil pH</td><td>${s.local.ph}</td></tr>
         <tr><td>salinity</td><td>${s.local.salinity}</td></tr><tr><td>nutrients</td><td>${s.local.nutrients}</td></tr>
         <tr><td>toxicity</td><td>${s.local.toxicity}</td></tr><tr><td>radiation</td><td>${PRESS&&PS.offsets.rad?`${s.local.radiation} + ${r1(PS.offsets.rad)} thin air = ${r1(e.effRad)}`:s.local.radiation}</td></tr>
@@ -655,7 +684,8 @@ const degC=t=>`${t>0?"+":t<0?"−":""}${Math.abs(t)}°C`;
 const r1=v=>Math.round(v*10)/10, sgn=v=>`${v>0?"+":v<0?"−":""}${Math.abs(r1(v))}`;
 const BASE=BLOOM_RUN.planet.globalClimate;
 // the sky every region sees right now = the player's (Terraformed) sky + the scenario drift (same formula as the engine)
-function skyNow(){ const o=PS.offsets; return { t:G.temp+o.temp, m:o.moist?clamp(G.moist+o.moist,0,100):G.moist }; }
+// (BLOOM-015: with climate instability the engine's env = drift + the active shock)
+function skyNow(){ const o=CLIM?CL.env:PS.offsets; return { t:G.temp+o.temp, m:o.moist?clamp(G.moist+o.moist,0,100):G.moist }; }
 const mmss=s=>{ s=Math.max(0,Math.ceil(s)); return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; };
 function phaseName(k){ return k<0?SCN.pressure.graceLabel:SCN.pressure.phases[k].name; }
 function pressNote(i,e){
@@ -696,7 +726,7 @@ function renderPressure(){
 // milestones: one message + a short glow each time the engine enters a new phase (sim.pressure.events — real thresholds)
 let phaseSeen=0; const PHASE_HIST=[];
 function pollPressure(now){
-  if(!PRESS) return;
+  if(!PRESS){ if(CLIM) checkThresholds(now); return; }
   while(phaseSeen<PS.events.length){ const ev=PS.events[phaseSeen++]; if(ev.phase<0) continue; const ph=SCN.pressure.phases[ev.phase], o=PS.offsets;
     PHASE_HIST.push({phase:ph.id, tick:ev.tick, progress:ev.progress});
     log(`☁ ${ph.name}: ${ph.note} Now: moisture ${sgn(o.moist)}, temperature ${sgn(o.temp)} °C, radiation ${sgn(o.rad)}.`);
@@ -705,17 +735,19 @@ function pollPressure(now){
 }
 // threshold feedback: every few ticks, compare each region's lamp with the last check. A change the player's own purchase did not
 // cause (no purchase since the last check) is the decline's doing: a living colony that got worse, or a region that opened up.
-const PX_FX=[], PX_HIST=[]; let pxLamp=null, pxTick=-1, buyTick=-1;
+// (BLOOM-015 fix: "no purchase since the last check" is a purchase COUNT, not a tick — a purchase made on the same tick as a
+// check used to be read as already seen, and its own land changes were then blamed on the scenario)
+const PX_FX=[], PX_HIST=[]; let pxLamp=null, pxTick=-1, buyTick=-1, buyCount=0, pxBuys=0;
 function checkThresholds(now){
-  if(sim.ticks-pxTick<5) return; const fresh=pxLamp===null, liv=livingCountBySection(), prev=pxTick; pxTick=sim.ticks;
+  if(sim.ticks-pxTick<5) return; const fresh=pxLamp===null, liv=livingCountBySection(), bought=buyCount!==pxBuys; pxTick=sim.ticks; pxBuys=buyCount;
   const lamps=SEC.map((_,i)=>evaluate(i)), rank={green:2,yellow:1,red:0};
-  if(!fresh&&buyTick<=prev&&PS.progress>0){ const msgs=[];
+  if(!fresh&&!bought&&(PS.progress>0||CLIM)){ const msgs=[], why=climWhy();
     SEC.forEach((_,i)=>{ const a=pxLamp[i], b=lampOf(lamps[i].fitness), g=CFG.grow.growThresh;
-      if(rank[b]<rank[a.lamp]&&liv[i]>0){ PX_FX.push({sec:i, worse:true, until:now+7000}); PX_HIST.push({sec:i, name:LABEL[i], from:a.lamp, to:b, tick:sim.ticks, limit:lamps[i].limitKey});
+      if(rank[b]<rank[a.lamp]&&liv[i]>0){ PX_FX.push({sec:i, worse:true, until:now+7000}); PX_HIST.push({sec:i, name:LABEL[i], from:a.lamp, to:b, tick:sim.ticks, limit:lamps[i].limitKey, cause:why.cause});
         msgs.push(`${LABEL[i]} is now ${b==="red"?"too hostile":"marginal"} for your plant (${LIMIT_MSG[lamps[i].limitKey](lamps[i])})`); }
-      else if(a.f<=g&&lamps[i].fitness>g){ PX_FX.push({sec:i, worse:false, until:now+7000}); PX_HIST.push({sec:i, name:LABEL[i], from:a.lamp, to:b, tick:sim.ticks, opened:true});
+      else if(a.f<=g&&lamps[i].fitness>g){ PX_FX.push({sec:i, worse:false, until:now+7000}); PX_HIST.push({sec:i, name:LABEL[i], from:a.lamp, to:b, tick:sim.ticks, opened:true, cause:why.cause});
         msgs.push(`${LABEL[i]} can now support your plant`); } });
-    if(msgs.length) log(`☁ The thinning atmosphere changed the land: ${msgs.join("; ")}.`); }
+    if(msgs.length) log(`${why.text} changed the land: ${msgs.join("; ")}.`); }
   pxLamp=lamps.map(e=>({lamp:lampOf(e.fitness), f:e.fitness}));
   for(let k=PX_FX.length-1;k>=0;k--) if(now>PX_FX[k].until) PX_FX.splice(k,1);
 }
@@ -780,8 +812,8 @@ const CX_COLOR={ contested:"#c79af0", playerAdvantage:"#7fe3c0", nativeRetake:"#
 function pollCompetition(now){
   if(!COMP) return;
   for(const ev of CS.events){ if(ev.id<=cxSeen) continue; cxSeen=ev.id;
-    CX_HIST.push({type:ev.type, sec:ev.sec, name:LABEL[ev.sec], tick:ev.tick}); CX_FX.push({sec:ev.sec, color:CX_COLOR[ev.type], until:now+6000});
-    log(CX_MSG[ev.type](LABEL[ev.sec])); const b=document.getElementById("cbar"); b.classList.add("pulse"); setTimeout(()=>b.classList.remove("pulse"),1800); }
+    const msg=CX_MSG[ev.type](LABEL[ev.sec]); CX_HIST.push({type:ev.type, sec:ev.sec, name:LABEL[ev.sec], tick:ev.tick, msg}); CX_FX.push({sec:ev.sec, color:CX_COLOR[ev.type], until:now+6000});
+    log(msg); const b=document.getElementById("cbar"); b.classList.add("pulse"); setTimeout(()=>b.classList.remove("pulse"),1800); }
   for(let k=CX_FX.length-1;k>=0;k--) if(now>CX_FX[k].until) CX_FX.splice(k,1);
 }
 // Terraform + natives: regions holding (or touching) native cover where the new sky suits the native plants clearly less / more
@@ -790,6 +822,103 @@ function nativeSkyShift(before,after){
   SEC.forEach((_,i)=>{ const c=sim.competitionAt(i); if(!c.nativeTiles&&!c.contact) return; const d=after[i]-before[i];
     if(d<=-0.1) nb.push(i); else if(d>=0.1) nw.push(i); });
   return {nb,nw}; } // nb = suits them less (good for you), nw = suits them more
+
+/* ---- climate-instability readouts (BLOOM-015; temporary functional UI). Every number is the engine's live sim.climate (and
+   sim.climatePreview for a Terraform step not yet bought); copy, bands and shock names come from content/scenarios.js. ---- */
+const CI_D=CLIM?SCN.climateInstability:null, AXNAME=CLIM?SCN.display.axes:{}, BANDS=CLIM?CI_D.bands:[];
+const SHOCK_UI={ heat_pulse:{rgb:"255,130,60", cls:"hot"}, cold_snap:{rgb:"110,170,255", cls:"cold"}, wet_surge:{rgb:"70,200,200", cls:"cold"},
+  dry_spell:{rgb:"230,190,110", cls:"hot"}, fallback:{rgb:"220,220,220", cls:""} };
+const AXUNIT={temp:" °C", moist:""}, axVal=(ax,v)=>`${sgn(v)}${AXUNIT[ax]}`;
+const lowerName=n=>n.charAt(0).toLowerCase()+n.slice(1);
+// a settled climate absorbs one Terraform step without a shock exactly when baseline + one step stays under the threshold
+const ONE_STEP_SAFE=CLIM&&CI_D.baseline+CI_D.forcing.perStep<CI_D.shocks.threshold;
+const pctI=x=>Math.round(x*100), bandOf=v=>BANDS.reduce((k,b,i)=>v>=b.from?i:k,0);
+const tfOf=ax=>ax==="temp"?G.temp-BASE.temperature:G.moist-BASE.moisture;
+// the cause of a land change the player did not buy: an active climate shock (BLOOM-015) or the scenario's drift (BLOOM-012)
+function climWhy(){
+  if(CLIM) for(const ax in CL.axes){ const A=CL.axes[ax]; if(A.shock) return {cause:"shock", text:`🌪 The ${lowerName(A.shock.name)}${sim.ticks>A.shock.endTick-A.shock.ramp?" (easing)":""}`}; }
+  if(CLIM&&!PRESS){ const last=CL.shocks[CL.shocks.length-1]; return {cause:"shock", text:`🌪 The end of the ${last?lowerName(last.name):"climate shock"}`}; }
+  return {cause:"pressure", text:"☁ The thinning atmosphere"};
+}
+function climNote(i,e){
+  if(!CLIM) return ""; const parts=[];
+  for(const ax in CL.axes){ const A=CL.axes[ax];
+    if(A.shock) parts.push(`🌪 <b>${A.shock.name}</b>: ${AXNAME[ax]} <b>${axVal(ax,A.offset)}</b> here now, over in ${mmss((A.shock.endTick-sim.ticks)*CFG.tickMs/1000)}. Already counted in the lamps above. Your Terraform (${axVal(ax,tfOf(ax))}) stays when it passes.`);
+    else if(A.pending) parts.push(`⚠ A <b>${lowerName(A.pending.name)}</b> is coming in ${mmss((A.pending.startTick-sim.ticks)*CFG.tickMs/1000)}: ${AXNAME[ax]} will swing ${A.pending.sign>0?"up":"down"} for a while. Colonies close to their ${ax==="temp"?(A.pending.sign>0?"heat":"cold"):(A.pending.sign>0?"wet":"dry")} limit here may die back until it passes.`); }
+  return parts.length?`<div class="clim" id="climNote">${parts.join("<br>")}</div>`:"";
+}
+// the bar: identity, overall instability (meter with the shock threshold marked) + band, each axis, the shock, a forecast, the sky
+function buildClimateBar(){
+  if(!CLIM) return; const el=document.createElement("div"); el.className="climbar"; el.id="vbar";
+  el.innerHTML=`<span class="vid" id="vId">🌪 ${SCN.display.title.toUpperCase()}</span><span>instability</span>
+    <span class="vtrack" title="climate instability (the most unsettled sky axis); the white mark is where shocks start">${BANDS.slice(1).map(b=>`<i class="vtick" style="left:${b.from*100}%;opacity:${b.from===CI_D.shocks.threshold?1:0.4}"></i>`).join("")}<i class="vfill" id="vFill"></i></span>
+    <b id="vPct"></b><span class="vband" id="vBand"></span>${Object.keys(CL.axes).map(ax=>`<span class="chip" id="vAx_${ax}">${AXNAME[ax]} <b></b></span>`).join("")}
+    <span class="vshock" id="vShock"></span><span class="vrow2"><span id="vFc"></span><span id="vSky"></span></span>`;
+  el.title=SCN.display.summary+" "+SCN.display.science; document.querySelector("header").appendChild(el);
+}
+function settleSeconds(lv,to){ const b=CI_D.baseline; return lv<=to?0:CI_D.settling.halfLifeSeconds*Math.log2((lv-b)/Math.max(1e-6,to-b)); }
+function climForecast(){
+  for(const ax in CL.axes){ const A=CL.axes[ax]; if(A.shock) return `Temporary: your Terraform stays. Colonies it pushed past their ${ax==="temp"?(A.shock.sign>0?"heat":"cold"):(A.shock.sign>0?"wet":"dry")} limit can regrow when it passes.`; }
+  for(const ax in CL.axes){ const A=CL.axes[ax]; if(A.pending) return `${AXNAME[ax][0].toUpperCase()+AXNAME[ax].slice(1)} will swing ${A.pending.sign>0?"up":"down"}: colonies near their ${ax==="temp"?(A.pending.sign>0?"heat":"cold"):(A.pending.sign>0?"wet":"dry")} limit may die back until it passes.`; }
+  const lv=CL.level, th=CI_D.shocks.threshold;
+  for(const ax in CL.axes){ const A=CL.axes[ax]; if(A.level>=th) return `⚠ ${AXNAME[ax]} still volatile: it can swing again in ${mmss((A.quietUntil-sim.ticks)*CFG.tickMs/1000)} unless it settles below ${pctI(th)}%.`; }
+  // which axis one more Terraform step would push over the threshold now
+  const risky=[...new Set(UP.filter(u=>u.effect.type==="sky"&&sim.canBuy(u)).map(u=>u.effect.axis))].filter(ax=>{ const t=UP.find(u=>u.effect.type==="sky"&&u.effect.axis===ax&&sim.canBuy(u)), p=t&&sim.climatePreview(t.id); return p&&p.triggersShock; });
+  if(risky.length) return `One more ${risky.map(ax=>AXNAME[ax]).join(" or ")} Terraform step now would set off a shock. Settles below ${pctI(th)}% in about ${mmss(settleSeconds(Math.max(...risky.map(ax=>CL.axes[ax].level)),BANDS[1].from))}.`;
+  if(lv>=BANDS[1].from) return `Settling: back to ${BANDS[0].name} in about ${mmss(settleSeconds(lv,BANDS[1].from))}.`;
+  return ONE_STEP_SAFE?"Settled: one Terraform step causes no shock; several close together can.":"Settled.";
+}
+let vbarText="";
+function renderClimate(){
+  if(!CLIM) return; const lv=CL.level, b=CL.band;
+  let shock=""; for(const ax in CL.axes){ const A=CL.axes[ax];
+    if(A.shock) shock=`${A.shock.name}: ${AXNAME[ax]} ${axVal(ax,A.offset)} · ${mmss((A.shock.endTick-sim.ticks)*CFG.tickMs/1000)} left`;
+    else if(A.pending&&!shock) shock=`⚠ ${A.pending.name} in ${mmss((A.pending.startTick-sim.ticks)*CFG.tickMs/1000)}`; }
+  const sk=skyNow(), P=PRESS?PS.offsets:{temp:0,moist:0}, o=CL.offsets, dr=(ax,v)=>PRESS?` · thinning ${sgn(P[ax])}`:"";
+  const shk=ax=>{ const A=CL.axes[ax]; return A&&A.shock?` · ${lowerName(A.shock.name)} ${sgn(o[ax])}`:""; }; // (the shock term appears only while one runs)
+  const vals=[`${pctI(lv)}%`, BANDS[b].name, `b${Math.min(3,b)}`, ...Object.keys(CL.axes).map(ax=>`${pctI(CL.axes[ax].level)}%`), shock, climForecast(),
+    `Sky now <b>${degC(r1(sk.t))}</b> = base ${degC(BASE.temperature)} · Terraform ${sgn(tfOf("temp"))}${dr("temp")}${shk("temp")} — moisture <b>${r1(sk.m)}</b> = base ${BASE.moisture} · Terraform ${sgn(tfOf("moist"))}${dr("moist")}${shk("moist")}`];
+  const key=vals.join("|"); if(key===vbarText) return; vbarText=key;
+  document.getElementById("vPct").textContent=vals[0]; const bd=document.getElementById("vBand"); bd.textContent=vals[1]; bd.className="vband "+vals[2];
+  Object.keys(CL.axes).forEach((ax,k)=>{ const c=document.getElementById("vAx_"+ax), A=CL.axes[ax]; c.querySelector("b").textContent=vals[3+k];
+    c.className="chip"+(A.shock||A.pending?" "+(SHOCK_UI[(A.shock||A.pending).id]||SHOCK_UI.fallback).cls:""); });
+  const n=Object.keys(CL.axes).length; document.getElementById("vShock").textContent=vals[3+n]; document.getElementById("vFc").textContent=vals[4+n];
+  document.getElementById("vSky").innerHTML=vals[5+n]; document.getElementById("vFill").style.width=(lv*100).toFixed(1)+"%";
+}
+// climate events (sim.climate.events — real engine transitions): one message + a glow on the bar each (no spam: band rises
+// caused by a purchase are already in the purchase message; only "settled back" band changes are announced)
+const CL_HIST=[]; let clSeen=0;
+function pollClimate(){
+  if(!CLIM) return;
+  for(const ev of CL.events){ if(ev.id<=clSeen) continue; clSeen=ev.id; let msg=null;
+    if(ev.type==="shockWarning") msg=`⚠ 🌪 ${AXNAME[ev.axis][0].toUpperCase()+AXNAME[ev.axis].slice(1)} is unstable after your Terraforming: a ${lowerName(ev.name)} is coming in ${mmss((ev.startTick-sim.ticks)*CFG.tickMs/1000)}. Colonies near their ${ev.axis==="temp"?(ev.sign>0?"heat":"cold"):(ev.sign>0?"wet":"dry")} limit may die back until it passes.`;
+    else if(ev.type==="shockStart") msg=`🌪 ${ev.name}! ${AXNAME[ev.axis]} ${axVal(ev.axis,ev.sign*ev.magnitude)} for ${CI_D.shocks.durationSeconds} s. It is temporary: your Terraform stays.`;
+    else if(ev.type==="shockEnd") msg=`🌪 The ${lowerName(ev.name)} has passed: ${AXNAME[ev.axis]} is back to your Terraformed sky.`;
+    else if(ev.type==="band"&&ev.to<ev.from&&ev.cause==="settling") msg=`🌪 The climate has settled to ${BANDS[ev.to].name} (${pctI(ev.level)}%).`;
+    CL_HIST.push({...ev, shown:!!msg});
+    if(msg){ log(msg); const b=document.getElementById("vbar"); b.classList.add("pulse"); setTimeout(()=>b.classList.remove("pulse"),1800); } }
+}
+// a Terraform step's climate effect, in words (preview: "would"; after a purchase: "now")
+function climPreviewWords(c,done){
+  if(!c) return ""; const ax=AXNAME[c.axis];
+  const head=`🌪 instability: ${ax} ${pctI(c.axisBefore)}% → ${pctI(c.axisAfter)}%${c.bandAfter!==c.bandBefore?` · ${BANDS[c.bandBefore].name} → ${BANDS[c.bandAfter].name}`:` · ${BANDS[c.bandAfter].name}`}`;
+  const tail=c.triggersShock?` · ⚠ ${done?"this sets":"this will set"} off a ${ax} shock in ~${CI_D.shocks.warningSeconds} s (likely a ${lowerName(c.kind.name)}, about ${axVal(c.axis,c.kind.sign*c.magnitude)})`
+    : c.addsToActive?` · adds to the ${ax} swing already under way`
+    : c.afterQuiet?` · ⚠ ${ax} stays volatile: another shock can follow after the current quiet spell`
+    : c.axisAfter>=BANDS[1].from?` · no shock from this step; another ${ax} step soon would add more`:" · no shock";
+  return head+tail;
+}
+// BLOOM-015: one climate line in the Bloom Report / extinction screen — what the climate went through, never a grade
+function climateReport(){
+  if(!CLIM) return ""; const sh=CL.shocks, kinds={}; sh.forEach(x=>{ kinds[x.name]=(kinds[x.name]||0)+1; });
+  const swing=Object.keys(CL.axes).filter(ax=>CL.axes[ax].maxSwing>0).map(ax=>{ const big=sh.filter(x=>x.axis===ax).reduce((m,x)=>x.magnitude>m.magnitude?x:m,{magnitude:0,sign:1});
+    return `${AXNAME[ax]} ${axVal(ax,big.sign*CL.axes[ax].maxSwing)}`; });
+  const steps=CL.forcing.length, byAx=Object.keys(CL.axes).map(ax=>[ax,CL.forcing.filter(f=>f.axis===ax).length]).filter(x=>x[1]).map(([ax,n])=>`${AXNAME[ax]} ${n}`);
+  return `<div class="clim" id="repClimate"><b>Climate: ${SCN.display.title}</b> — ${steps} Terraform step${steps===1?"":"s"}${byAx.length?` (${byAx.join(", ")})`:""}; instability peaked at
+    <b>${pctI(CL.peak)}%</b> (${BANDS[bandOf(CL.peak)].name}) and is <b>${pctI(CL.level)}%</b> now.
+    ${sh.length?`${sh.length} climate shock${sh.length===1?"":"s"}: ${Object.entries(kinds).map(([k,n])=>`${lowerName(k)}${n>1?` ×${n}`:""}`).join(", ")}; largest temporary swing ${swing.join(", ")}.`:"No climate shock."}
+    Instability is the cost of changing a whole planet quickly, not a score: a heavily Terraformed win and a low-instability win are both wins.</div>`;
+}
 
 /* ---- upgrade catalogue = content/traits.js; prices/effects/rules = engine ---- */
 const UP=sim.traits, upById=sim.traitById;
@@ -818,7 +947,8 @@ function skyDiff(ax,from,to,before,after){
 function skyWords(d){
   const nm=a=>a.map(i=>LABEL[i]).join(", "), why=i=>LIMIT_MSG[d.after[i].limitKey](d.after[i]);
   const sky=d.axis==="temp"?`sky ${degC(d.from)} → ${degC(d.to)}`:`sky moisture ${d.from} → ${d.to}`;
-  const drift=PRESS&&PS.progress>0?(d.axis==="temp"?` (thinning air ${sgn(PS.offsets.temp)} °C on top)`:` (thinning air ${sgn(PS.offsets.moist)} on top)`):"";
+  let drift=PRESS&&PS.progress>0?(d.axis==="temp"?` (thinning air ${sgn(PS.offsets.temp)} °C on top)`:` (thinning air ${sgn(PS.offsets.moist)} on top)`):"";
+  if(CLIM&&CL.axes[d.axis]&&CL.axes[d.axis].shock) drift+=` (${lowerName(CL.axes[d.axis].shock.name)} ${axVal(d.axis,CL.offsets[d.axis])} on top for now)`;
   return [sky+drift, d.gain.length?`opens: ${nm(d.gain)}`:"", d.lose.length?`⚠ closes: ${d.lose.map(i=>`${LABEL[i]} (${why(i)})`).join(", ")}`:"",
     d.better.length?`closer, still blocked: ${nm(d.better)}`:"", d.worse.length?`⚠ worse, still growing: ${nm(d.worse)}`:"",
     d.nb&&d.nb.length?`🌿 suits native plants less: ${nm(d.nb)}`:"", d.nw&&d.nw.length?`🌿 suits native plants more: ${nm(d.nw)}`:""].filter(Boolean).join(" · ");
@@ -870,8 +1000,8 @@ function showPreview(id){
       (ok.length?` Can take root: ${nm(ok)}.`:"")+(bad.length?` Hostile: ${nm(bad)}.`:""));
     return; }
   if(u.effect.type==="sky"){ // Terraform: the whole sky changes, so name every region it helps or hurts (engine decides open/closed)
-    const d=skyWhatIf(u); preview={gain:preview.gain, lose:preview.lose, better:d.better, worse:d.worse};
-    log(`${u.name} — ${skyWords({...d, gain:preview.gain, lose:preview.lose})}.`); return; }
+    const d=skyWhatIf(u), c=CLIM?sim.climatePreview(id):null; preview={gain:preview.gain, lose:preview.lose, better:d.better, worse:d.worse, climate:c};
+    log(`${u.name} — ${skyWords({...d, gain:preview.gain, lose:preview.lose})}.${c?" "+climPreviewWords(c,false)+".":""}`); return; }
   log(`${u.name} — ` + (preview.gain.length||preview.lose.length
     ? [preview.gain.length?`opens: ${nm(preview.gain)}`:"", preview.lose.length?`⚠ closes: ${nm(preview.lose)}`:""].filter(Boolean).join(" · ")
     : (u.board==="Spread"?"no region changes; your plant spreads faster.":"no region changes state yet.")));
@@ -880,15 +1010,15 @@ function clearPreview(){ preview=null; }
 let justBought=null;
 function buy(id){
   const u=upById[id], sky=u.effect.type==="sky", ax=u.effect.axis, from=sky&&G[ax], before=sky&&SEC.map((_,i)=>evaluate(i));
-  const nf0=sky&&COMP?SEC.map((_,i)=>sim.nativeEvaluate(i).fitness):null;
+  const nf0=sky&&COMP?SEC.map((_,i)=>sim.nativeEvaluate(i).fitness):null, cp=sky&&CLIM?sim.climatePreview(id):null;
   if(!sim.buy(id)) return false;
   if(sky){ // BLOOM-011: say what the new sky did — regions opened / closed / helped / hurt — and outline them for a few seconds
     const d={...skyDiff(ax,from,G[ax],before,SEC.map((_,i)=>evaluate(i))), ...(COMP?nativeSkyShift(nf0,SEC.map((_,i)=>sim.nativeEvaluate(i).fitness)):{})}, ch=G[ax]-from;
     skyFx={...d, until:performance.now()+8000, delta:ax==="temp"?`${ch>0?"▲ +":"▼ −"}${Math.abs(ch)}°C`:`${ch>0?"▲ +":"▼ −"}${Math.abs(ch)} moist`};
-    log(`Bought ${u.name}. ${skyWords(d).replace(/^sky/,"Sky")}.`); }
+    log(`Bought ${u.name}. ${skyWords(d).replace(/^sky/,"Sky")}.${cp?" "+climPreviewWords(cp,true)+".":""}`); }
   else log(`Bought ${u.name}. `);
   // (a pointer click marks its button in justBought after this re-render — see renderShop)
-  justBought=null; buyTick=sim.ticks; renderShop(); preview=null; if(selected>=0) renderInspect(); draw();
+  justBought=null; buyTick=sim.ticks; buyCount++; renderShop(); preview=null; if(selected>=0) renderInspect(); draw();
   return true;
 }
 
@@ -959,7 +1089,7 @@ function onLoss(why){
   const r=document.getElementById("report"); r.classList.add("lost");
   r.innerHTML=`<h2>✕ EXTINCTION</h2>
     <div class="sub" id="lossWhy">No living plants were left anywhere for ${SCN.loss.extinctionGraceSeconds} s, so the run is over (${mins}m ${String(secs).padStart(2,"0")}s${BLOOM_RUN.kind==="procedural"?` on <b>${BLOOM_RUN.planet.name}</b>, ${BLOOM_RUN.archetype.name} · public seed ${BLOOM_RUN.seed}`:""}).</div>
-    ${pressureReport()}${competitionReport()}
+    ${pressureReport()}${competitionReport()}${climateReport()}
     <div class="debrief" id="lossDebrief"><b>What happened:</b> ${(SCN.display&&SCN.display.lossNote)||"the planet kept changing and your plant could no longer live on any of its land. Adapting to the new conditions (Adapt), pushing the sky back (Terraform) or protecting your strongest colonies earlier can keep a foothold alive."}</div>
     <button class="btn" id="lossRestart">Restart this run ↻</button>`;
   document.getElementById("reportModal").classList.add("on");
@@ -979,7 +1109,7 @@ function onWin(cov){
   document.getElementById("report").innerHTML=`
     <h2>★ BLOOM</h2>
     <div class="sub">You held ${Math.round(cov*100)}% of the land${BLOOM_RUN.kind==="procedural"?` of <b>${BLOOM_RUN.planet.name}</b> (${BLOOM_RUN.archetype.name} · public seed ${BLOOM_RUN.seed})`:""}${SCEN?` under <b>${SCN.name}</b>`:""} in ${mins}m ${String(secs).padStart(2,"0")}s.</div>
-    ${pressureReport()}${competitionReport()}
+    ${pressureReport()}${competitionReport()}${climateReport()}
     <div class="top"><canvas id="plantCv" width="136" height="200"></canvas>
       <div><b>Your plant became:</b><ul>${built.map(b=>`<li>${b}</li>`).join('')||'<li>the unmodified pioneer</li>'}</ul>
       ${terra.length?`<div style="margin-top:8px"><b>You reshaped the sky:</b> ${terra.join(', ')}</div>`:''}</div></div>
@@ -1003,7 +1133,7 @@ function frame(ts){
   if(running){ acc+=dt*speed;
     while(acc>=CFG.tickMs){ lastCov=sim.tick(); acc-=CFG.tickMs; if(!running)break; }
   }
-  pollCrossings(performance.now()); pollPressure(performance.now()); pollCompetition(performance.now()); renderHUD(lastCov); renderPressure(); renderComp(); refreshShop(); refreshColonyCtl(); draw();
+  pollCrossings(performance.now()); pollPressure(performance.now()); pollCompetition(performance.now()); pollClimate(); renderHUD(lastCov); renderPressure(); renderComp(); renderClimate(); refreshShop(); refreshColonyCtl(); draw();
   // re-read the inspected section every 3 sim ticks (not every frame — while paused that would swallow clicks)
   if(selected>=0 && sim.ticks%3===0 && sim.ticks!==lastInspectTick){ lastInspectTick=sim.ticks; renderInspect(); }
   requestAnimationFrame(frame);
@@ -1017,10 +1147,11 @@ if(SCEN){ // BLOOM-012/014: scenario identity (title, header, footer) + the temp
   document.title=document.title.replace(/^BLOOM — /,`BLOOM — ${SCN.name} · `);
   document.querySelector("header h1 small").textContent+=" · "+SCN.name.toLowerCase();
   const rid=document.getElementById("runId"); rid.textContent=(rid.textContent?rid.textContent+" · ":"")+`scenario ${SCN.id} (layer P ${BLOOM_RUN.summary.scenarioValidation.status})`;
-  buildPressureBar(); buildCompBar(); }
+  buildPressureBar(); buildCompBar(); buildClimateBar(); }
 // BLOOM-008/009: open on the origin so its colony status and growth focus are the first thing in view
 selected=ORIGIN; renderInspect(); log(`Your plant has just sprouted in ${LABEL[ORIGIN]}: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish.`);
 if(PRESS) log(`☁ ${SCN.display.title}. ${SCN.display.summary} The decline begins in ${mmss(SCN.pressure.graceSeconds)}. Your plant sprouted in ${LABEL[ORIGIN]}.`);
+if(CLIM&&!PRESS&&!COMP) log(`🌪 ${SCN.display.title}. ${SCN.display.summary} Terraform unsettles the part of the climate it changes; Adapt and Spread do not. Your plant sprouted in ${LABEL[ORIGIN]}.`);
 if(COMP&&!PRESS) log(`🌿 ${SCN.display.title}. ${SCN.display.summary} Native plants (violet, hatched) hold ${Math.round(CS.share*100)}% of the land. Your plant sprouted in ${LABEL[ORIGIN]}.`);
 resize(); renderShop(); renderHUD(0); requestAnimationFrame(frame);
 
@@ -1055,6 +1186,15 @@ window.BLOOM_API={
       everContested:[...CS.everContested], events:CS.events.map(e=>({...e})), uiEvents:CX_HIST.map(e=>({...e})), regions:SEC.map((_,i)=>sim.competitionAt(i)),
       nativeTiles:[...CS.native].map((d,t)=>d>0?t:-1).filter(t=>t>=0), bar:document.getElementById("cbar")?document.getElementById("cbar").textContent.replace(/\s+/g," ").trim():null,
       lost:sim.lost, lostReason:sim.lostReason, extinction:{...sim.extinction} }; },
+  // BLOOM-015 diagnostics (tests only): the live climate state, the events the UI showed, the land changes it attributed to a
+  // shock, the bar text, and a what-if for one Terraform step (the same engine preview the shop uses)
+  climate(){ if(!CLIM) return {enabled:false};
+    return { enabled:true, level:CL.level, band:CL.band, bandName:BANDS[CL.band].name, peak:CL.peak, offsets:{...CL.offsets}, env:{...CL.env},
+      axes:Object.fromEntries(Object.entries(CL.axes).map(([k,A])=>[k,{level:A.level, count:A.count, offset:A.offset, shock:A.shock&&{...A.shock}, pending:A.pending&&{...A.pending}, maxSwing:A.maxSwing}])),
+      shocks:CL.shocks.map(x=>({...x})), forcing:CL.forcing.map(x=>({...x})), events:CL.events.map(e=>({...e})), uiEvents:CL_HIST.map(e=>({...e})),
+      thresholds:PX_HIST.map(x=>({...x})), bar:document.getElementById("vbar")?document.getElementById("vbar").textContent.replace(/\s+/g," ").trim():null,
+      lost:sim.lost, lostReason:sim.lostReason, extinction:{...sim.extinction} }; },
+  climatePreview(id){ return CLIM?sim.climatePreview(id):null; },
   // colour of the pixel at the centre of a tile (canvas readback; tests only)
   tilePixel(t){ const x=((t%W)+0.5)*TILE*dpr|0, y=(((t/W)|0)+0.5)*TILE*dpr|0, d=ctx.getImageData(x,y,1,1).data; return [d[0],d[1],d[2]]; }
 };

@@ -407,8 +407,11 @@ async function browserPart() {
     check(bar.text.includes(`native plants hold ${Math.round(bar.share * 100)}% of the land`) && bar.text.includes(`contested regions ${bar.cont}`) && !/\d+:\d\d/.test(bar.text) && !/left|remaining|until/i.test(bar.text),
       "45 · the scenario status shows real native-held land and contested regions (and a trend), with no countdown", bar.text.replace(/\n/g, " "));
     // 46 · events: engine transitions shown in the UI
-    const ev = await p.evaluate(() => { pollCompetition(performance.now()); const C = BLOOM_API.competition(); return { eng: C.events.length, ui: C.uiEvents.length, types: [...new Set(C.uiEvents.map(e => e.type))], log: document.getElementById("log").textContent }; });
-    check(ev.ui > 0 && ev.ui === ev.eng && /🌿/.test(ev.log), "46 · real simulation produces competition events, and each one is shown (message + map outline) — none invented by the UI", `${ev.ui} events: ${ev.types.join(", ")} · last: ${ev.log.slice(0, 100)}`);
+    // (BLOOM-015 flake fix: the footer holds only the LATEST message, and with the live UI's Math.random the last competition
+    // event may come before the scripted purchases' own messages — so each shown event's own message is checked instead)
+    const ev = await p.evaluate(() => { pollCompetition(performance.now()); const C = BLOOM_API.competition(); return { eng: C.events.length, ui: C.uiEvents.length, types: [...new Set(C.uiEvents.map(e => e.type))],
+      allShown: C.uiEvents.every(e => /🌿/.test(e.msg || "")), log: (C.uiEvents.at(-1) || {}).msg || "" }; });
+    check(ev.ui > 0 && ev.ui === ev.eng && ev.allShown, "46 · real simulation produces competition events, and each one is shown (message + map outline) — none invented by the UI", `${ev.ui} events: ${ev.types.join(", ")} · last: ${ev.log.slice(0, 100)}`);
     check(p.errors.length === 0, "no browser errors (Desert 25 readouts)", p.errors.join(" | ")); await p.close(); }
   // 47 / 49 · a run won through REAL shop buttons with earned Biomass (the plan comes from the Node-side validator; the page never sees it)
   { const p = await open(NCQ), plan = LP.primary.strategies[0].purchases.map(x => x.id); let i = 0, affordAt = null, won = null; const buys = [];

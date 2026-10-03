@@ -1,0 +1,33 @@
+ocean_archipelago: 9/9 pass, 8 with 2 strategies, 0 with a shocked witness
+  1:PASS/PASS
+  2:PASS/PASS
+  3:PASS/PASS
+  4:PASS/PASS
+  5:PASS/PASS
+  6:PASS/PASS
+  7:genfail
+  8:PASS/PASS
+  9:PASS/INCONCLUSIVE
+  10:PASS/PASS
+desert_world: 10/10 pass, 10 with 2 strategies, 1 with a shocked witness
+  1:PASS/PASS
+  2:PASS/PASS
+  3:PASS/PASS
+  4:PASS/PASS shocks 1
+  5:PASS/PASS
+  6:PASS/PASS
+  7:PASS/PASS
+  8:PASS/PASS
+  9:PASS/PASS
+  10:PASS/PASS
+frozen_world: 10/10 pass, 10 with 2 strategies, 2 with a shocked witness
+  1:PASS/PASS shocks 1
+  2:PASS/PASS
+  3:PASS/PASS shocks 1
+  4:PASS/PASS
+  5:PASS/PASS
+  6:PASS/PASS
+  7:PASS/PASS
+  8:PASS/PASS
+  9:PASS/PASS
+  10:PASS/PASS
