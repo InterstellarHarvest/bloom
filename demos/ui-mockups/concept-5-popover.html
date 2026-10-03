@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM mockup · Concept 5 · Rich region popover</title>
+<!--
+  BLOOM-018 · Concept 5 — Rich region popover (the most direct reading of the owner's BLOOM-017 review).
+  VISUAL CONCEPT MOCKUP ONLY: fake data, scripted behaviour, not connected to the game. Not the production UI.
+  - Map stays full size. Clicking a region opens a LARGE anchored popover beside it (tabs, no "More ▾"), map never moves.
+  - Adapt / Spread / Terraform: small floating launchers; each opens a palette that OVERLAPS the bottom of the map.
+  - Regions browser: the one surface allowed to push the map (a real left column).
+  - Heatmaps: one "Map view ▾" control opening a small menu.
+-->
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="r2.css">
+<style>
+  .hudbar{position:absolute; top:10px; left:16px; right:16px; z-index:20; display:flex; align-items:flex-start; gap:12px; pointer-events:none}
+  .hudbar > *{pointer-events:auto}
+  .hudbar .glass{padding:6px 14px}
+  .hudbar .sp{flex:1}
+  .mapzone{left:0; right:0}
+  .world.rb-open .mapzone{left:364px}
+  .mapwrap{inset:80px 16px 86px 16px}
+  .maptools{position:absolute; top:84px; left:16px; z-index:10; display:flex; flex-direction:column; align-items:flex-start; gap:8px}
+  .maptools .row{display:flex; gap:8px}
+  .tool{display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:4px 14px 4px 10px; border-radius:14px; border:2px solid var(--line-2); background:var(--card); cursor:pointer; font-weight:800; font-size:14px; box-shadow:0 2px 0 var(--line-2)}
+  .tool[aria-expanded="true"]{background:var(--ink); color:#fff7e0; border-color:var(--ink); box-shadow:none}
+  .paused-flag{top:86px}
+  .launch{position:absolute; left:50%; bottom:16px; transform:translateX(-50%); z-index:15}
+  /* palette: overlaps the map, never resizes it */
+  .palette{position:absolute; left:50%; bottom:86px; z-index:26; width:min(980px, calc(100% - 32px)); height:318px; transform:translateX(-50%) translateY(14px); opacity:0;
+    display:flex; flex-direction:column; transition:opacity .22s, transform .3s var(--ease)}
+  .palette.open{opacity:1; transform:translateX(-50%)}
+  .palette .panel-h{padding:8px 10px 8px 16px}
+  .palette .panel-h h2{font-size:19px}
+  .palette .ctx{font-size:13px; font-weight:800; color:var(--ink-soft)}
+  .palette .ab-host{flex:1; min-height:0; padding:10px 14px 12px}
+  .palette .ab{height:100%}
+  .palette .ab-spec{width:176px}
+  .palette .ab-cards{--card-min:150px}
+  .palette .ab-eff{width:208px; overflow:auto; border-left:2px dashed var(--line); padding-left:12px}
+  /* regions column (pushes the map: column-scale workflow) */
+  .rcol{position:absolute; top:80px; bottom:12px; left:12px; width:340px; z-index:18; display:flex; flex-direction:column; transform:translateX(-110%); transition:transform .38s var(--ease)}
+  .rcol.open{transform:none}
+  .rcol .panel-b{display:flex; flex-direction:column}
+  .rcol .rb-host{flex:1; min-height:0}
+  #rp{width:452px}
+  @media (max-width:1100px){
+    .hudbar .h-clim{display:none}
+    .hudbar .h-stat .bar{width:90px}
+    .rcol{width:316px} .world.rb-open .mapzone{left:340px}
+    #rp{width:430px}
+    .palette .ab-eff{width:180px}
+  }
+</style>
+</head>
+<body class="r2">
+<div class="world" id="world">
+  <div class="mapzone can-push" id="mapzone">
+    <div class="mapwrap" id="mapwrap"></div>
+    <div class="maptools">
+      <div class="row" id="toolsRow">
+        <button type="button" class="tool" id="rbBtn" aria-expanded="false" aria-controls="rcol"><span aria-hidden="true">🗂</span>Regions</button>
+      </div>
+      <div id="legend" hidden></div>
+    </div>
+    <nav class="launch" aria-label="Upgrades">
+      <button type="button" class="adapt" data-b="adapt" aria-expanded="false"><span class="b" aria-hidden="true">🌿</span><span class="t">Adapt<small>your plant</small></span></button>
+      <button type="button" class="spread" data-b="spread" aria-expanded="false"><span class="b" aria-hidden="true">🌱</span><span class="t">Spread<small>your plant</small></span></button>
+      <span class="div" role="presentation"></span>
+      <button type="button" class="terra" data-b="terraform" aria-expanded="false"><span class="b" aria-hidden="true">🌍</span><span class="t">Terraform<small>the planet</small></span></button>
+    </nav>
+    <section class="palette float" id="palette" hidden aria-labelledby="palT">
+      <div class="panel-h"><h2 id="palT"></h2><span class="ctx" id="palCtx"></span><span class="kind" id="palKind"></span><button type="button" class="x-btn" id="palX" aria-label="Close">✕</button></div>
+      <div class="ab-host" id="pal-adapt" hidden></div><div class="ab-host" id="pal-spread" hidden></div><div class="ab-host" id="pal-terraform" hidden></div>
+    </section>
+  </div>
+  <div class="hudbar">
+    <div class="glass" id="hud"></div>
+    <span class="sp"></span>
+    <div id="clock"></div>
+  </div>
+  <aside class="rcol float" id="rcol" hidden aria-labelledby="rcT">
+    <div class="panel-h"><h2 id="rcT">🗂 Regions</h2><button type="button" class="x-btn" id="rcX" aria-label="Close Regions">✕</button></div>
+    <div class="panel-b"><div class="rb-host" id="rbHost"></div></div>
+  </aside>
+  <section id="rp"></section>
+</div>
+
+<script src="shared.js"></script>
+<script src="r2.js"></script>
+<script>
+BM2.ribbon('Concept 5 · Rich region popover (map never moves for routine clicks)');
+const $ = id => document.getElementById(id), world = $('world');
+const hud = BM2.hud($('hud'), { attention:true, onAttention:b => toggleRegions(b, true) });
+BM2.clockControls($('clock'));
+BM2.pausedFlag($('mapzone'));
+
+let boardOpen = null;
+const map = BM.mountMap($('mapwrap'), { labels:'all', onSelect:id => {
+  if (boardOpen) { insp.close({ noReturn:true }); ctx = id; map.select(id); boards[boardOpen].refresh(); $('palCtx').textContent = 'Your plant in ' + BM.region(id).name; return; }
+  insp.open(id);
+} });
+BM2.lens($('toolsRow'), map, { style:'menu', drop:'down', align:'left', legendHost:$('legend') });
+
+/* region popover: anchored beside the region; map geometry untouched */
+const safe = () => ({ top:80, bottom:86, left:(world.classList.contains('rb-open') ? 376 : 12), right:12 });
+const insp = BM2.inspector({ el:$('rp'), map, world, mode:'anchored', tabStyle:'top', tabs:BM2.TABSETS.three, safe,
+  onFix:(id, b) => openBoard(BM.item(id).board, launcherFor(BM.item(id).board), id),
+  onOpen:() => rb.render(), onClose:() => rb.render() });
+let ctx = null;
+
+/* regions column: the only surface allowed to push the map */
+const rb = BM2.regions($('rbHost'), { style:'grouped', map, current:() => insp.rid, onPick:id => { insp.open(id); } });
+const rcol = $('rcol');
+function toggleRegions(opener, attention){
+  if (BM.isOpen(rcol)) { if (attention) { rb.setFilter('bad'); return; } BM.closeLayer(rcol); return; }
+  if (boardOpen) BM.closeLayer($('palette'), { noReturn:true });
+  world.classList.add('rb-open'); $('rbBtn').setAttribute('aria-expanded', 'true'); hud.att.setAttribute('aria-expanded', 'true');
+  BM.openLayer(rcol, opener, { onClose:() => { world.classList.remove('rb-open'); $('rbBtn').setAttribute('aria-expanded', 'false'); hud.att.setAttribute('aria-expanded', 'false'); afterGeometry(); } });
+  rb.setFilter(attention ? 'bad' : 'all');
+  afterGeometry();
+}
+function afterGeometry(){ setTimeout(insp.place, BM.reduceMotion ? 20 : 420); }
+$('rbBtn').addEventListener('click', e => toggleRegions(e.currentTarget));
+$('rcX').addEventListener('click', () => BM.closeLayer(rcol));
+
+/* action palette: overlays the lower map; region popover closes (selection stays as context) */
+const boards = {};
+['adapt','spread','terraform'].forEach(b => boards[b] = BM2.board($('pal-' + b), b, { map, rid:() => ctx, compact:true, groups:false, flat:true }));
+const launcherFor = b => document.querySelector('.launch [data-b="' + b + '"]');
+document.querySelectorAll('.launch [data-b]').forEach(btn => btn.addEventListener('click', () => boardOpen === btn.dataset.b ? BM.closeLayer($('palette')) : openBoard(btn.dataset.b, btn)));
+$('palX').addEventListener('click', () => BM.closeLayer($('palette')));
+function openBoard(b, opener, focusId){
+  const pal = $('palette');
+  ctx = insp.rid || ctx;
+  if (insp.isOpen) insp.close({ noReturn:true });
+  if (ctx) map.select(ctx);
+  if (BM.isOpen(rcol)) BM.closeLayer(rcol, { noReturn:true });
+  if (boardOpen) { boards[boardOpen].hide(); $('pal-' + boardOpen).hidden = true; }
+  boardOpen = b;
+  const B = BM.BOARDS[b];
+  $('palT').textContent = B.ico + ' ' + B.name; $('palKind').className = 'kind ' + B.kind; $('palKind').textContent = b === 'terraform' ? 'Changes the planet' : 'Changes your plant';
+  $('palCtx').textContent = 'Your plant in ' + BM.region(ctx || 'sunny').name;
+  $('pal-' + b).hidden = false; boards[b].show();
+  document.querySelectorAll('.launch [data-b]').forEach(x => x.setAttribute('aria-expanded', x.dataset.b === b));
+  if (!BM.isOpen(pal)) BM.openLayer(pal, opener, { onClose:() => { boards[boardOpen].hide(); $('pal-' + boardOpen).hidden = true; boardOpen = null; document.querySelectorAll('.launch [data-b]').forEach(x => x.setAttribute('aria-expanded', 'false')); if (ctx && !insp.isOpen) map.select(null); ctx = null; } });
+  else setTimeout(() => $('pal-' + b).querySelector('.tcard').focus({ preventScroll:true }), 30);
+  if (focusId) setTimeout(() => boards[b].focusCard(focusId), 60);
+}
+setTimeout(() => BM.toast('Click any region to inspect it. The map never moves for that.'), 600);
+</script>
+</body>
+</html>

@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BLOOM UI concept mockups</title>
 <!--
-  BLOOM-017 — UI concept mockup sandbox: gallery / launcher.
+  BLOOM-017 + BLOOM-018 — UI concept mockup sandbox: gallery / launcher.
+  Round 1 (BLOOM-017, concepts 1–4) is kept as design history. Round 2 (BLOOM-018, concepts 5–8) follows the owner's review.
   VISUAL CONCEPT MOCKUPS ONLY. Nothing in demos/ui-mockups/ loads or calls the game engine, generator, validator,
-  scenarios or Bloom Report. Fake data everywhere. Not evidence of production UI. Review notes: docs/UI_CONCEPT_REVIEW_v1.md
+  scenarios or Bloom Report. Fake data everywhere. Not evidence of production UI. Review notes: docs/UI_CONCEPT_REVIEW_v1.md (round 1), docs/UI_CONCEPT_REVIEW_v2.md (round 2)
 -->
 <link rel="stylesheet" href="shared.css">
 <style>
@@ -44,15 +45,175 @@
   @media (max-width:760px){ .qs{columns:1} }
   footer{margin-top:28px; font-size:14px; color:var(--ink-soft)}
   footer a{color:var(--sky-dark); font-weight:800}
+  /* round switcher (BLOOM-018) */
+  .rounds{display:inline-flex; gap:6px; padding:6px; margin:0 0 20px; background:var(--paper-2); border:2px solid var(--line); border-radius:22px; flex-wrap:wrap}
+  .rounds button{display:flex; flex-direction:column; align-items:flex-start; gap:0; min-height:58px; padding:6px 18px; border:2px solid transparent; border-radius:16px; background:none; cursor:pointer; font-weight:900; font-size:17px; color:var(--ink-soft); text-align:left}
+  .rounds button small{font-size:13px; font-weight:700}
+  .rounds button:hover{background:rgba(255,255,255,.6)}
+  .rounds button[aria-selected="true"]{background:var(--card); border-color:var(--ink); color:var(--ink); box-shadow:var(--shadow)}
+  .rounds button .new{display:inline-block; margin-left:6px; font-size:11px; letter-spacing:1px; padding:1px 7px; border-radius:8px; background:var(--leaf); color:#fff; vertical-align:2px}
+  .hist{display:flex; gap:10px; align-items:flex-start; background:var(--card); border:2px dashed var(--line-2); border-radius:var(--r-md); padding:10px 14px; margin:0 0 18px; font-size:15px; max-width:900px}
+  .owner{background:var(--card); border:3px solid var(--line); border-radius:var(--r-lg); padding:14px 18px; margin:0 0 22px}
+  .owner h2{margin:0 0 8px; font-size:20px}
+  .owner .cols{display:grid; grid-template-columns:1fr 1fr; gap:6px 28px}
+  @media (max-width:860px){ .owner .cols{grid-template-columns:1fr} }
+  .owner h3{margin:4px 0 4px; font-size:13px; letter-spacing:1.3px; text-transform:uppercase}
+  .owner h3.keep{color:var(--leaf-dark)} .owner h3.drop{color:var(--bad)}
+  .owner ul{margin:0; padding-left:20px; font-size:15px} .owner li{margin:2px 0}
+  .geo{display:inline-block; font-size:12px; font-weight:900; letter-spacing:.5px; padding:2px 8px; border-radius:8px; background:var(--sky-soft); color:var(--sky-dark); margin:0 4px 4px 0}
+  .geo.b{background:var(--gold-soft); color:var(--gold-deep)}
+  .wf .pop{background:#fffdf7; border:2px solid #2f3a2c}
+  .wf .bench{background:#fffdf7; border:2px solid var(--line-2)}
+  .wf .lch{background:#fffdf7; border:2px solid var(--line-2); border-radius:12px}
+  .wf .lead{position:absolute; height:0; border-top:2px dashed #2f3a2c; transform-origin:left center}
 </style>
 </head>
 <body>
-<div class="mock-ribbon" role="note"><span class="tag">CONCEPT MOCKUPS</span><span>BLOOM-017 · UI design sandbox</span><span class="spacer"></span><span class="hint">Fake data · not connected to the game · not the production UI</span></div>
+<div class="mock-ribbon" role="note"><span class="tag">CONCEPT MOCKUPS</span><span>BLOOM-017 + BLOOM-018 · UI design sandbox</span><span class="spacer"></span><span class="hint">Fake data · not connected to the game · not the production UI</span></div>
 <div class="wrap">
   <h1>BLOOM <span>run-screen concepts</span></h1>
-  <p class="lede">Four clickable layout ideas for the run screen, so the owner and PMO can compare <b>where things live</b> and <b>how it feels</b> before the real UI and specimen work is authorized. All four use the same fake planet and the same fake numbers, so any difference you notice is the layout.</p>
   <div class="warn" role="note"><span aria-hidden="true" style="font-size:26px">🧪</span><span><b>VISUAL MOCKUPS ONLY</b>Nothing here runs the game. The map, regions, Biomass, coverage, trait effects, colony growth and specimen drawings are all scripted placeholders. Prices, effects and art are not proposals. Emoji icons, colours and fonts are placeholders too.</span></div>
+  <div class="rounds" role="tablist" aria-label="Concept rounds">
+    <button type="button" role="tab" id="tab-round2" aria-controls="panel-round2" aria-selected="true">Round 2 · Owner-directed iteration<span><small>Concepts 5–8 · BLOOM-018</small><span class="new">NEW</span></span></button>
+    <button type="button" role="tab" id="tab-round1" aria-controls="panel-round1" aria-selected="false" tabindex="-1">Round 1 · Original concepts<small>Concepts 1–4 · BLOOM-017</small></button>
+  </div>
 
+  <section class="round" id="panel-round2" role="tabpanel" aria-labelledby="tab-round2">
+    <p class="lede">Four variations inside the narrowed direction from the owner's review of Round 1. They share one design language and differ on purpose in a few places: <b>where region details appear</b>, <b>where Adapt / Spread / Terraform open</b>, <b>how the Regions browser sits beside the map</b> and <b>how the heatmap lens is tucked away</b>. All four keep a large map, a live HUD, and persistent <b>Pause</b> and <b>speed</b> controls.</p>
+    <div class="owner">
+      <h2>What the owner asked for (from the Round 1 review)</h2>
+      <div class="cols">
+        <div><h3 class="keep">✓ Kept</h3><ul>
+          <li>Map-first play with a large, visually dominant map</li>
+          <li>Concept 2's Regions browser and its triage information</li>
+          <li>A rich region popup with tabs. No “More ▾”.</li>
+          <li>A medium specimen where it adds information: the region popup and Adapt</li>
+          <li>Small floating Adapt / Spread / Terraform launchers (Concept 4 scale)</li>
+          <li>Heatmaps (Temperature, Water, Soil, Hazard) behind one compact control</li>
+          <li>Persistent Pause / Play and speed (1× → 2× → 4×)</li>
+        </ul></div>
+        <div><h3 class="drop">✕ Rejected</h3><ul>
+          <li>A permanent giant specimen (Concept 3)</li>
+          <li>Full-screen Adapt / Spread / Terraform takeovers (Concept 1)</li>
+          <li>Giant permanent bottom action buttons (Concept 1)</li>
+          <li>Resizing the map for routine clicks</li>
+          <li>So little information that it feels like a watching game (Concept 4)</li>
+          <li>Four always-visible heatmap buttons (Concept 2)</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="grid">
+      <article class="concept rec">
+        <span class="badge">START HERE</span>
+        <h2><small>Concept 5</small>Rich region popover</h2>
+        <div class="wf" aria-hidden="true">
+          <i class="hud" style="left:6px; width:52%; top:6px; height:18px">✦ BIOMASS · GOAL · AIR · ⚠</i>
+          <i class="hud" style="right:6px; width:56px; top:6px; height:18px">⏸ 1×</i>
+          <i class="map" style="left:6px; right:6px; top:28px; bottom:6px">MAP (never moves)</i>
+          <i class="pop" style="left:46%; width:36%; top:34px; height:82px">REGION POPOVER<br>tabs + plant</i>
+          <i class="lch" style="left:30%; right:30%; bottom:10px; height:18px">🌿 🌱 | 🌍</i>
+          <i class="hud" style="left:10px; top:30px; width:66px; height:14px; font-size:8px">🗂 ◐ Map view</i>
+        </div>
+        <p>The most direct reading of the review. Click a region and a <b>large anchored popover</b> opens beside it, with tabs for <b>Overview / Colony / Science</b>, a medium specimen, the limiting factor and one-click fixes. Adapt / Spread / Terraform are small floating launchers. Each opens a <b>palette that overlaps the lower map</b> without resizing it. Regions is the one tool allowed to push the map, as a full left column.</p>
+        <p><span class="geo">Popover · palette · lens menu: overlay</span><span class="geo b">Regions column: pushes map</span></p>
+        <h3>Try this</h3>
+        <ul>
+          <li>Click <b>Frost Ridge</b>, then <b>Marsh Low</b>, then <b>Mossy Basin</b>. Switch tabs and try <b>Colony → Roots / Leaves / Seeds</b>.</li>
+          <li>In the popover, hover <b>❄️ Cold Tolerance</b> and then <b>☀️ Warm the Sky</b>. Compare the plant with the sky.</li>
+          <li>Open <b>Map view ▾</b> → Temperature. Open <b>🗂 Regions</b> or the <b>⚠ need help</b> chip.</li>
+          <li>Press <b>Pause</b>, then cycle the speed <b>1× → 2× → 4×</b>.</li>
+        </ul>
+        <a class="btn plant open" href="concept-5-popover.html">Open Concept 5 →</a>
+      </article>
+
+      <article class="concept">
+        <h2><small>Concept 6</small>Floating sidecar</h2>
+        <div class="wf" aria-hidden="true">
+          <i class="hud" style="left:20%; right:20%; top:6px; height:18px">✦ HUD · ⚠ · ⏸ 1×</i>
+          <i class="map" style="left:6px; right:6px; top:28px; bottom:6px">MAP</i>
+          <i class="lch" style="left:10px; width:22px; top:52px; height:70px; font-size:9px">🌿<br>🌱<br>🌍</i>
+          <i class="pop" style="left:38px; width:34%; top:34px; bottom:12px">SIDECAR<br>(far edge)</i>
+          <span class="lead" style="left:calc(38px + 34%); top:62px; width:28%; transform:rotate(-12deg)"></span>
+          <i class="lch" style="right:10px; width:58px; bottom:10px; height:16px; font-size:8px">🗂 ◐</i>
+        </div>
+        <p>The region card is <b>detached</b>: a medium-large inspector floats against a map edge, on the side <b>away from</b> the region you picked, so the region stays visible. A dashed leader line ties the two together. Actions open a <b>floating card stack</b> beside a small vertical launcher. The Regions browser is a <b>triage matrix</b> (✓ ! ✕ per condition) in a temporary column.</p>
+        <p><span class="geo">Sidecar · card stack · lens tool: overlay</span><span class="geo b">Regions column: pushes map</span></p>
+        <h3>Try this</h3>
+        <ul>
+          <li>Click <b>Ember Rise</b> (card docks left), then <b>Fern Hollow</b> (card docks right).</li>
+          <li>Open <b>Adapt</b> from the left cluster and hover <b>Drought Adaptation</b>.</li>
+          <li>Use the round <b>◐</b> lens tool in the bottom-right corner.</li>
+          <li>Open <b>🗂 Regions</b> and scan the condition matrix.</li>
+        </ul>
+        <a class="btn open" href="concept-6-sidecar.html">Open Concept 6 →</a>
+      </article>
+
+      <article class="concept">
+        <h2><small>Concept 7</small>Context popup + bottom workbench</h2>
+        <div class="wf" aria-hidden="true">
+          <i class="hud" style="left:6px; right:6px; top:6px; height:18px">✦ HUD · ⚠ · ◐ LENS · ⏸ 1×</i>
+          <i class="map" style="left:6px; right:6px; top:28px; bottom:6px; place-items:start center; padding-top:14px">MAP (never resizes)</i>
+          <i class="bench" style="left:10px; right:10px; bottom:6px; height:54px">WORKBENCH: Regions · Adapt · Spread · Terraform · 👁 Peek</i>
+        </div>
+        <p>A sharper split between <b>looking</b> and <b>changing things</b>. Inspection uses a rich anchored popup with big icon tab-buttons down its side. Every change happens in a wide <b>bottom workbench</b> that slides over the lower map. Previews draw on the real map above it, and <b>👁 Peek</b> makes the workbench see-through. Regions is a workbench tab: a three-column triage board. The lens is one button that expands into a compact strip while in use.</p>
+        <p><span class="geo">Popup · workbench · lens strip: overlay. The map never moves.</span></p>
+        <h3>Try this</h3>
+        <ul>
+          <li>Open <b>Adapt</b>, hover cards, then click a region on the map to change “your plant in…”.</li>
+          <li>Press <b>👁 Peek</b> to see the map under the workbench.</li>
+          <li>Switch to the <b>Regions</b> tab and pick a card from the triage board.</li>
+          <li>Press <b>◐ Lens</b> in the top bar and switch between lenses.</li>
+        </ul>
+        <a class="btn open" href="concept-7-bottom-bench.html">Open Concept 7 →</a>
+      </article>
+
+      <article class="concept">
+        <h2><small>Concept 8</small>Context popup + side workbench</h2>
+        <div class="wf" aria-hidden="true">
+          <i class="hud" style="left:6px; right:6px; top:6px; height:18px">✦ HUD · ⚠ · ⏸ 1×</i>
+          <i class="map" style="left:6px; right:38%; top:28px; bottom:6px; place-items:end center; padding-bottom:20px">MAP (reframed once)</i>
+          <i class="hud" style="left:10px; top:32px; width:84px; height:14px; font-size:8px">🗂 Regions · Lens ▾</i>
+          <i class="pop" style="left:22%; width:30%; top:50px; height:60px">POPUP</i>
+          <i class="drw" style="right:6px; width:35%; top:28px; bottom:6px">ONE WORKBENCH<br>Regions · Adapt<br>Spread · Terraform</i>
+        </div>
+        <p>A deliberate column workflow. Routine inspection is still a contextual popup and the map does not move. Regions, Adapt, Spread and Terraform share <b>one right-hand workbench</b>. Opening it reframes the map <b>once</b>. Switching between its tabs never moves the map again, and closing it puts the map back exactly. The map is never squeezed by two columns. The lens is a <b>“Lens: Plants ▾”</b> dropdown in the map toolbar.</p>
+        <p><span class="geo">Popup · lens dropdown: overlay</span><span class="geo b">Workbench: pushes map (one column, never two)</span></p>
+        <h3>Try this</h3>
+        <ul>
+          <li>Open <b>🗂 Regions</b>, sort by <b>Biggest colony</b>, and pick regions. The popup opens beside the workbench.</li>
+          <li>Switch the workbench to <b>Terraform</b> and hover <b>Humidify</b>. The map does not move between tabs.</li>
+          <li>Open <b>Lens: Plants ▾</b> and pick <b>Water</b>.</li>
+        </ul>
+        <a class="btn open" href="concept-8-side-bench.html">Open Concept 8 →</a>
+      </article>
+    </div>
+
+    <section class="order" aria-labelledby="ord2T">
+      <h2 id="ord2T">Suggested review order (Round 2)</h2>
+      <ol>
+        <li><b>Concept 5</b>: the baseline answer to the review. Click 4–5 regions, use every popover tab, open each action palette, try Pause and speed.</li>
+        <li><b>Concept 7</b>: same inspection, but changes happen in a bigger bottom workbench. Is the extra card room worth covering the lower map?</li>
+        <li><b>Concept 8</b>: the side-workbench version. Does one deliberate map reframe feel better or worse than an overlay?</li>
+        <li><b>Concept 6</b>: the detached sidecar. Is a card at the edge with a leader line clearer than a popover next to the region?</li>
+        <li>Then pick and mix: “Concept 5's popover + Concept 7's workbench + Concept 6's matrix”, and so on.</li>
+      </ol>
+      <h2 style="margin-top:16px">Questions to keep in mind</h2>
+      <ul class="qs">
+        <li>Can I always see something changing, and something I could decide?</li>
+        <li>Is Pause / speed easy to find without looking for it?</li>
+        <li>Is the popover big enough without “More”? Too big?</li>
+        <li>Anchored next to the region, or docked at the edge?</li>
+        <li>Palette, card stack, bottom workbench or side workbench for upgrades?</li>
+        <li>Which lens treatment is easiest to find and to turn off?</li>
+        <li>Does the map ever move when I didn't expect it to?</li>
+        <li>Is “Adapt changes the plant, Terraform changes its surroundings” obvious?</li>
+      </ul>
+    </section>
+  </section>
+
+  <section class="round" id="panel-round1" role="tabpanel" aria-labelledby="tab-round1" hidden>
+    <p class="hist"><span aria-hidden="true">📜</span><span><b>Design history (BLOOM-017).</b> The owner reviewed these four on 2026-10-03. What was kept and rejected is recorded in Round 2 and in <code>docs/UI_CONCEPT_REVIEW_v2.md</code>. They are left here unchanged for reference. The “PMO-recommended” badge reflects the recommendation before the owner's review.</span></p>
+  <p class="lede">Four clickable layout ideas for the run screen, so the owner and PMO can compare <b>where things live</b> and <b>how it feels</b> before the real UI and specimen work is authorized. All four use the same fake planet and the same fake numbers, so any difference you notice is the layout.</p>
   <div class="grid">
     <article class="concept rec">
       <span class="badge">★ PMO-RECOMMENDED BASELINE</span>
@@ -168,7 +329,28 @@
       <li>Does it feel like a desktop game, an iPad app, or both?</li>
     </ul>
   </section>
-  <footer>Review notes for PMO / owner: <code>docs/UI_CONCEPT_REVIEW_v1.md</code>. The actual game is at the repo root (<a href="../../index.html">index.html</a>) and is not part of this sandbox.</footer>
+  </section>
+  <footer>Review notes for PMO / owner: <code>docs/UI_CONCEPT_REVIEW_v2.md</code> (Round 2) and <code>docs/UI_CONCEPT_REVIEW_v1.md</code> (Round 1). The actual game is at the repo root (<a href="../../index.html">index.html</a>) and is not part of this sandbox.</footer>
 </div>
+<script>
+/* Round switcher. Defaults to Round 2. #round1 / #round2 in the URL wins, then the last round viewed (remembered on this device). */
+(function(){
+  const tabs = [document.getElementById('tab-round2'), document.getElementById('tab-round1')];
+  function show(id, push){
+    tabs.forEach(t => { const on = t.id === 'tab-' + id; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
+    try { localStorage.setItem('bloomMockRound', id); } catch (e) {}
+    if (push) history.replaceState(null, '', '#' + id);
+  }
+  tabs.forEach((t, k) => {
+    t.addEventListener('click', () => show(t.id.slice(4), true));
+    t.addEventListener('keydown', e => { const d = { ArrowRight:1, ArrowLeft:-1 }[e.key]; if (d) { e.preventDefault(); const n = tabs[(k + d + tabs.length) % tabs.length]; show(n.id.slice(4), true); n.focus(); } });
+  });
+  let start = 'round2';
+  try { const m = localStorage.getItem('bloomMockRound'); if (m === 'round1' || m === 'round2') start = m; } catch (e) {}
+  const h = location.hash.slice(1); if (h === 'round1' || h === 'round2') start = h;
+  show(start, false);
+  window.addEventListener('hashchange', () => { const x = location.hash.slice(1); if (x === 'round1' || x === 'round2') show(x, false); });
+})();
+</script>
 </body>
 </html>
