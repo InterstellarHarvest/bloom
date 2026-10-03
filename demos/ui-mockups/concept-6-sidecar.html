@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM mockup · Concept 6 · Floating sidecar</title>
+<!--
+  BLOOM-018 · Concept 6 — Floating sidecar.
+  VISUAL CONCEPT MOCKUP ONLY: fake data, scripted behaviour, not connected to the game. Not the production UI.
+  - Selecting a region opens a medium-large floating inspector card docked at a map EDGE (not over the region). It docks on
+    the side AWAY from the selected region so the region stays visible, and a dashed leader line ties it to the region.
+    Map geometry never changes for this.
+  - Adapt / Spread / Terraform: a compact vertical launcher cluster; actions open a floating card stack over the map.
+  - Regions browser: a temporary column that pushes the map, with a condition-by-condition triage matrix.
+  - Heatmaps: a small round lens tool tucked in the map-tools corner.
+-->
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="r2.css">
+<style>
+  .hudcap{position:absolute; top:10px; left:50%; transform:translateX(-50%); z-index:20; display:flex; align-items:center; gap:16px; padding:6px 6px 6px 14px; white-space:nowrap}
+  .world.rb-open .mapzone{left:384px}
+  .mapwrap{inset:84px 16px 16px 100px}
+  .paused-flag{top:90px}
+  .launch.vertical{position:absolute; left:14px; top:50%; transform:translateY(-50%); z-index:15}
+  .launch.vertical button{flex-direction:column; gap:2px; padding:6px 6px 8px; min-width:72px; border-radius:20px; font-size:13px}
+  .launch.vertical button .t{align-items:center}
+  .maptools{position:absolute; right:16px; bottom:16px; z-index:12; display:flex; align-items:center; gap:8px}
+  .tool{display:inline-flex; align-items:center; gap:8px; min-height:52px; padding:4px 16px 4px 12px; border-radius:26px; border:2px solid var(--line-2); background:var(--card); cursor:pointer; font-weight:800; font-size:14px; box-shadow:var(--shadow)}
+  .tool[aria-expanded="true"]{background:var(--ink); color:#fff7e0; border-color:var(--ink)}
+  /* floating sidecar inspector */
+  #rp{width:420px; top:84px}
+  #rp .rp-head{grid-template-columns:150px 1fr}
+  #rp .rp-spec{height:168px}
+  .leader{z-index:29}
+  /* action card stack: floats over the map, no geometry change */
+  .stack{position:absolute; top:84px; bottom:16px; left:96px; width:392px; z-index:26; display:flex; flex-direction:column; opacity:0; transform:translateX(-16px); transition:opacity .2s, transform .28s var(--ease)}
+  .stack.open{opacity:1; transform:none}
+  .stack .ab-host{flex:1; min-height:0; padding:10px 12px 12px}
+  .stack .ab{flex-direction:column; height:100%; gap:10px}
+  .stack .ab-spec{flex-direction:row; height:156px; gap:12px; align-items:stretch}
+  .stack .ab-specbox{width:150px; flex:none}
+  .stack .ab-cap{flex:1; align-self:center; font-size:14px}
+  .stack .ab-cards{flex:1}
+  .stack .ab-cards .tcard{min-height:0; padding:10px 12px}
+  .stack .ab-cards .cards-grid{grid-template-columns:1fr; gap:8px}
+  .stack .ab-eff{max-height:132px; overflow:auto; border-top:2px dashed var(--line); padding-top:8px}
+  .stack .ab-eff .row{margin-bottom:4px}
+  /* regions column (pushes the map) */
+  .rcol{position:absolute; top:84px; bottom:12px; left:12px; width:360px; z-index:18; display:flex; flex-direction:column; transform:translateX(-110%); transition:transform .38s var(--ease)}
+  .rcol.open{transform:none}
+  .rcol .panel-b{display:flex; flex-direction:column; padding:10px}
+  .rcol .rb-host{flex:1; min-height:0}
+  @media (max-width:1100px){
+    .hudcap .h-clim{display:none}
+    .hudcap .h-stat .bar{width:86px}
+    .hudcap{gap:12px}
+    #rp{width:384px} #rp .rp-head{grid-template-columns:128px 1fr} #rp .rp-spec{height:150px}
+    .stack{width:360px}
+    .rcol{width:336px} .world.rb-open .mapzone{left:356px}
+  }
+</style>
+</head>
+<body class="r2">
+<div class="world" id="world">
+  <div class="mapzone can-push" id="mapzone">
+    <div class="mapwrap" id="mapwrap"></div>
+    <nav class="launch vertical" aria-label="Upgrades">
+      <button type="button" class="adapt" data-b="adapt" aria-expanded="false"><span class="b" aria-hidden="true">🌿</span><span class="t">Adapt<small>plant</small></span></button>
+      <button type="button" class="spread" data-b="spread" aria-expanded="false"><span class="b" aria-hidden="true">🌱</span><span class="t">Spread<small>plant</small></span></button>
+      <span class="div" role="presentation"></span>
+      <button type="button" class="terra" data-b="terraform" aria-expanded="false"><span class="b" aria-hidden="true">🌍</span><span class="t">Terraform<small>planet</small></span></button>
+    </nav>
+    <div class="maptools" id="tools">
+      <div id="legend" hidden></div>
+      <button type="button" class="tool" id="rbBtn" aria-expanded="false" aria-controls="rcol"><span aria-hidden="true">🗂</span>Regions</button>
+    </div>
+    <section class="stack float" id="stack" hidden aria-labelledby="stT">
+      <div class="panel-h"><h2 id="stT"></h2><span class="kind" id="stKind"></span><button type="button" class="x-btn" id="stX" aria-label="Close">✕</button></div>
+      <div class="ab-host" id="st-adapt" hidden></div><div class="ab-host" id="st-spread" hidden></div><div class="ab-host" id="st-terraform" hidden></div>
+    </section>
+  </div>
+  <div class="hudcap glass"><div id="hud"></div><div id="clock"></div></div>
+  <aside class="rcol float" id="rcol" hidden aria-labelledby="rcT">
+    <div class="panel-h"><h2 id="rcT">🗂 Regions · triage</h2><button type="button" class="x-btn" id="rcX" aria-label="Close Regions">✕</button></div>
+    <div class="panel-b"><div class="rb-host" id="rbHost"></div></div>
+  </aside>
+  <svg class="leader" id="leader" hidden aria-hidden="true"></svg>
+  <section id="rp"></section>
+</div>
+
+<script src="shared.js"></script>
+<script src="r2.js"></script>
+<script>
+BM2.ribbon('Concept 6 · Floating sidecar (inspector docks at the far edge, map never moves)');
+const $ = id => document.getElementById(id), world = $('world'), zone = $('mapzone');
+const hud = BM2.hud($('hud'), { attention:true, onAttention:b => toggleRegions(b, true) });
+BM2.clockControls($('clock'));
+BM2.pausedFlag(zone);
+
+let boardOpen = null, ctx = null;
+const map = BM.mountMap($('mapwrap'), { labels:'all', onSelect:id => {
+  if (boardOpen) { ctx = id; map.select(id); boards[boardOpen].refresh(); return; }
+  insp.open(id);
+} });
+BM2.lens($('tools'), map, { style:'tool', drop:'up', align:'right', legendHost:$('legend') });
+
+/* sidecar: docked on the map edge farthest from the selected region, tied to it by a leader line */
+function placeSidecar(el, px){
+  const W = world.getBoundingClientRect(), Z = zone.getBoundingClientRect(), zl = Z.left - W.left;
+  const dockLeft = px > zl + Z.width / 2;
+  el.style.width = Z.width < 780 ? '344px' : '';                      // tight map zone (e.g. Regions open at 1024): slimmer card
+  el.style.left = (dockLeft ? zl + 98 : zl + Z.width - 16 - el.offsetWidth) + 'px';
+  el.dataset.dock = dockLeft ? 'left' : 'right';
+}
+const insp = BM2.inspector({ el:$('rp'), map, world, mode:'sidecar', tabStyle:'pill', tabs:BM2.TABSETS.four, leader:$('leader'),
+  safe:() => ({ top:84, bottom:16 }), placeSidecar,
+  onFix:id => openBoard(BM.item(id).board, launcherFor(BM.item(id).board), id),
+  onOpen:() => rb.render(), onClose:() => rb.render() });
+
+/* regions column: temporary, pushes the map; closing returns it exactly */
+const rb = BM2.regions($('rbHost'), { style:'matrix', map, current:() => insp.rid, onPick:id => insp.open(id) });
+const rcol = $('rcol');
+function toggleRegions(opener, attention){
+  if (BM.isOpen(rcol)) { BM.closeLayer(rcol); return; }
+  if (boardOpen) BM.closeLayer($('stack'), { noReturn:true });
+  world.classList.add('rb-open'); $('rbBtn').setAttribute('aria-expanded', 'true'); hud.att.setAttribute('aria-expanded', 'true');
+  BM.openLayer(rcol, opener, { onClose:() => { world.classList.remove('rb-open'); $('rbBtn').setAttribute('aria-expanded', 'false'); hud.att.setAttribute('aria-expanded', 'false'); afterGeometry(); } });
+  rb.render(); afterGeometry();
+}
+function afterGeometry(){ setTimeout(insp.place, BM.reduceMotion ? 20 : 420); }
+$('rbBtn').addEventListener('click', e => toggleRegions(e.currentTarget));
+$('rcX').addEventListener('click', () => BM.closeLayer(rcol));
+
+/* action stack: floating cards beside the launchers; sidecar and Regions column close (selection stays as context) */
+const boards = {};
+['adapt','spread','terraform'].forEach(b => boards[b] = BM2.board($('st-' + b), b, { map, rid:() => ctx }));
+const launcherFor = b => document.querySelector('.launch [data-b="' + b + '"]');
+document.querySelectorAll('.launch [data-b]').forEach(btn => btn.addEventListener('click', () => boardOpen === btn.dataset.b ? BM.closeLayer($('stack')) : openBoard(btn.dataset.b, btn)));
+$('stX').addEventListener('click', () => BM.closeLayer($('stack')));
+function openBoard(b, opener, focusId){
+  const st = $('stack');
+  ctx = insp.rid || ctx;
+  if (insp.isOpen) insp.close({ noReturn:true });
+  if (ctx) map.select(ctx);
+  if (BM.isOpen(rcol)) BM.closeLayer(rcol, { noReturn:true });
+  if (boardOpen) { boards[boardOpen].hide(); $('st-' + boardOpen).hidden = true; }
+  boardOpen = b;
+  const B = BM.BOARDS[b];
+  $('stT').textContent = B.ico + ' ' + B.name; $('stKind').className = 'kind ' + B.kind; $('stKind').textContent = b === 'terraform' ? 'Planet' : 'Plant';
+  $('st-' + b).hidden = false; boards[b].show();
+  document.querySelectorAll('.launch [data-b]').forEach(x => x.setAttribute('aria-expanded', x.dataset.b === b));
+  if (!BM.isOpen(st)) BM.openLayer(st, opener, { onClose:() => { boards[boardOpen].hide(); $('st-' + boardOpen).hidden = true; boardOpen = null; document.querySelectorAll('.launch [data-b]').forEach(x => x.setAttribute('aria-expanded', 'false')); if (ctx && !insp.isOpen) map.select(null); ctx = null; } });
+  else setTimeout(() => $('st-' + b).querySelector('.tcard').focus({ preventScroll:true }), 30);
+  if (focusId) setTimeout(() => boards[b].focusCard(focusId), 60);
+}
+setTimeout(() => BM.toast('Click any region: its card docks at the far edge so the region stays in view.'), 600);
+</script>
+</body>
+</html>

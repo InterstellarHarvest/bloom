@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM mockup · Concept 7 · Bottom workbench</title>
+<!--
+  BLOOM-018 · Concept 7 — Context + bottom workbench.
+  VISUAL CONCEPT MOCKUP ONLY: fake data, scripted behaviour, not connected to the game. Not the production UI.
+  A sharper split between INSPECTING (rich anchored popup with icon tab-buttons) and MAKING CHANGES (a wide bottom
+  workbench that slides over the lower map). The map NEVER changes size in this concept: the workbench overlays it, previews
+  draw on the real map above, and "Peek" makes the workbench see-through. Regions is a workbench tab (triage board).
+  Heatmaps: one "Lens" button that expands into a compact segmented strip only while a lens is in use.
+-->
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="r2.css">
+<style>
+  .topbar{flex:none; display:flex; align-items:center; gap:14px; padding:6px 14px; min-height:66px; background:var(--card); border-bottom:3px solid var(--line); z-index:30}
+  .topbar .sp{flex:1}
+  .mapwrap{inset:14px 16px 88px 16px}
+  .paused-flag{top:64px}
+  .lensstrip{position:absolute; top:12px; left:50%; transform:translateX(-50%); z-index:14; display:flex; flex-direction:column; align-items:center; gap:6px}
+  .lensstrip .lens-seg{box-shadow:var(--shadow)}
+  .launch{position:absolute; left:50%; bottom:16px; transform:translateX(-50%); z-index:15}
+  /* bottom workbench: overlays the lower map; the map itself never resizes */
+  .bench{position:absolute; left:12px; right:12px; bottom:0; height:clamp(300px, 47%, 384px); z-index:26; display:flex; flex-direction:column;
+    border-radius:26px 26px 0 0; border-bottom:none; transform:translateY(104%); transition:transform .34s var(--ease)}
+  .bench.open{transform:none}
+  .bench-h{display:flex; align-items:center; gap:10px; padding:8px 10px 0 12px; border-bottom:2px solid var(--line); flex:none}
+  .bench-h .btabs{display:flex; gap:4px}
+  .bench-h .btabs button{display:inline-flex; align-items:center; gap:8px; min-height:48px; padding:4px 16px 4px 8px; border:2px solid transparent; border-bottom:none; border-radius:16px 16px 0 0; background:none; cursor:pointer; font-weight:900; font-size:15px; color:var(--ink-soft); margin-bottom:-2px}
+  .bench-h .btabs button .b{width:32px; height:32px; border-radius:50%; display:grid; place-items:center; font-size:17px}
+  .bench-h .btabs button[data-t="adapt"] .b{background:var(--leaf-soft)} .bench-h .btabs button[data-t="spread"] .b{background:var(--bloom-soft)} .bench-h .btabs button[data-t="terraform"] .b{background:var(--sky-soft)} .bench-h .btabs button[data-t="regions"] .b{background:var(--paper-2)}
+  .bench-h .btabs button[aria-selected="true"]{background:var(--card); border-color:var(--line); color:var(--ink)}
+  .bench-h .btabs .div{width:2px; background:var(--line); margin:10px 4px}
+  .bench-h .sp{flex:1}
+  .bench-h .ctx{font-size:13px; font-weight:800; color:var(--ink-soft); white-space:nowrap}
+  .peek{display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:4px 12px; border-radius:14px; border:2px solid var(--line-2); background:var(--card); cursor:pointer; font-weight:800; font-size:14px; white-space:nowrap}
+  .peek[aria-pressed="true"]{background:var(--ink); color:#fff7e0; border-color:var(--ink)}
+  .bench-b{flex:1; min-height:0; padding:12px 14px 14px; transition:opacity .2s}
+  .bench.peeking{background:rgba(255,253,247,.18); box-shadow:none; border-style:dashed}
+  .bench.peeking .bench-b{opacity:0; pointer-events:none}
+  .bench.peeking .bench-h{background:var(--card); border-radius:24px 24px 0 0}
+  .bench .ab-host,.bench .rb-host{height:100%}
+  .bench .ab{height:100%; gap:16px}
+  .bench .ab-spec{width:214px}
+  .bench .ab-cards{--card-min:196px}
+  .bench .ab-cards .tcard{min-height:118px}
+  .bench .ab-eff{width:236px; overflow:auto; border-left:2px dashed var(--line); padding-left:14px}
+  #rp{width:470px}
+  @media (max-width:1100px){
+    .topbar .h-clim{display:none}
+    .topbar .h-stat .bar{width:84px}
+    .topbar{gap:10px}
+    .bench .ab-spec{width:176px}
+    .bench .ab-eff{width:190px}
+    .bench .ab-cards{--card-min:168px}
+    .bench-h .btabs button{padding:4px 10px 4px 6px; font-size:14px}
+    .bench-h .ctx{display:none}
+    #rp{width:440px}
+  }
+</style>
+</head>
+<body class="r2">
+<header class="topbar"><div id="hud"></div><div id="lensHost"></div><span class="sp"></span><div id="clock"></div></header>
+<div class="world" id="world">
+  <div class="mapzone" id="mapzone">
+    <div class="mapwrap" id="mapwrap"></div>
+    <div class="lensstrip" id="lensStrip"><div id="legend" hidden></div></div>
+    <nav class="launch" id="launch" aria-label="Workbench">
+      <button type="button" class="regions" data-b="regions" aria-expanded="false"><span class="b" aria-hidden="true">🗂</span><span class="t">Regions<small>triage</small></span></button>
+      <span class="div" role="presentation"></span>
+      <button type="button" class="adapt" data-b="adapt" aria-expanded="false"><span class="b" aria-hidden="true">🌿</span><span class="t">Adapt<small>your plant</small></span></button>
+      <button type="button" class="spread" data-b="spread" aria-expanded="false"><span class="b" aria-hidden="true">🌱</span><span class="t">Spread<small>your plant</small></span></button>
+      <span class="div" role="presentation"></span>
+      <button type="button" class="terra" data-b="terraform" aria-expanded="false"><span class="b" aria-hidden="true">🌍</span><span class="t">Terraform<small>the planet</small></span></button>
+    </nav>
+    <section class="bench float" id="bench" hidden aria-label="Workbench">
+      <div class="bench-h">
+        <div class="btabs" role="tablist" aria-label="Workbench">
+          <button type="button" role="tab" data-t="regions" id="bt-regions" aria-controls="bench-b"><span class="b" aria-hidden="true">🗂</span>Regions</button>
+          <span class="div" role="presentation"></span>
+          <button type="button" role="tab" data-t="adapt" id="bt-adapt" aria-controls="bench-b"><span class="b" aria-hidden="true">🌿</span>Adapt</button>
+          <button type="button" role="tab" data-t="spread" id="bt-spread" aria-controls="bench-b"><span class="b" aria-hidden="true">🌱</span>Spread</button>
+          <span class="div" role="presentation"></span>
+          <button type="button" role="tab" data-t="terraform" id="bt-terraform" aria-controls="bench-b"><span class="b" aria-hidden="true">🌍</span>Terraform</button>
+        </div>
+        <span class="sp"></span>
+        <span class="kind" id="bKind"></span>
+        <span class="ctx" id="bCtx"></span>
+        <button type="button" class="peek" id="peek" aria-pressed="false" title="See the map under the workbench"><span aria-hidden="true">👁</span>Peek</button>
+        <button type="button" class="x-btn" id="bX" aria-label="Close workbench">✕</button>
+      </div>
+      <div class="bench-b" id="bench-b" role="tabpanel">
+        <div class="rb-host" id="b-regions" hidden></div>
+        <div class="ab-host" id="b-adapt" hidden></div><div class="ab-host" id="b-spread" hidden></div><div class="ab-host" id="b-terraform" hidden></div>
+      </div>
+    </section>
+  </div>
+  <section id="rp"></section>
+</div>
+
+<script src="shared.js"></script>
+<script src="r2.js"></script>
+<script>
+BM2.ribbon('Concept 7 · Context popup + bottom workbench (map never resizes)');
+const $ = id => document.getElementById(id), world = $('world');
+const hud = BM2.hud($('hud'), { attention:true, onAttention:b => openBench('regions', b) });
+BM2.clockControls($('clock'));
+BM2.pausedFlag($('mapzone'));
+
+let tab = null, ctx = null;
+const map = BM.mountMap($('mapwrap'), { labels:'all', onSelect:id => {
+  if (tab && tab !== 'regions') { ctx = id; map.select(id); boards[tab].refresh(); $('bCtx').textContent = 'Your plant in ' + BM.region(id).name; return; }
+  if (tab === 'regions') BM.closeLayer(bench, { noReturn:true });
+  insp.open(id);
+} });
+BM2.lens($('lensHost'), map, { style:'expand', stripHost:$('lensStrip'), legendHost:$('legend') });
+$('lensStrip').appendChild($('legend'));   // legend sits under the strip
+
+/* inspection: rich anchored popup, icon tab-buttons down its side */
+const benchTop = () => 88;
+const insp = BM2.inspector({ el:$('rp'), map, world, mode:'anchored', tabStyle:'side', tabs:BM2.TABSETS.cond,
+  safe:() => ({ top:12, bottom:benchTop(), left:12, right:12 }),
+  onFix:id => openBench(BM.item(id).board, launcherFor(BM.item(id).board), id) });
+
+/* making changes: the bottom workbench (overlay; never resizes the map) */
+const bench = $('bench'), launch = $('launch');
+const boards = {};
+['adapt','spread','terraform'].forEach(b => boards[b] = BM2.board($('b-' + b), b, { map, rid:() => ctx, flat:true, groups:false }));
+const rb = BM2.regions($('b-regions'), { style:'kanban', map, current:() => ctx, onPick:id => { BM.closeLayer(bench, { noReturn:true }); insp.open(id, { focus:true }); } });
+const launcherFor = b => launch.querySelector('[data-b="' + b + '"]');
+const btabs = [...bench.querySelectorAll('[role=tab]')];
+launch.querySelectorAll('[data-b]').forEach(btn => btn.addEventListener('click', () => openBench(btn.dataset.b, btn)));
+btabs.forEach((t, k) => {
+  t.addEventListener('click', () => showTab(t.dataset.t));
+  t.addEventListener('keydown', e => { const d = { ArrowRight:1, ArrowLeft:-1 }[e.key]; if (d) { e.preventDefault(); const n = btabs[(k + d + btabs.length) % btabs.length]; showTab(n.dataset.t); n.focus(); } });
+});
+$('bX').addEventListener('click', () => BM.closeLayer(bench));
+$('peek').addEventListener('click', () => { const on = !bench.classList.contains('peeking'); bench.classList.toggle('peeking', on); $('peek').setAttribute('aria-pressed', on); });
+function showTab(t){
+  if (tab && tab !== 'regions') { boards[tab].hide(); }
+  ['regions','adapt','spread','terraform'].forEach(x => $('b-' + x).hidden = x !== t);
+  tab = t;
+  btabs.forEach(b => { const on = b.dataset.t === t; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; });
+  $('bench-b').setAttribute('aria-labelledby', 'bt-' + t);
+  if (t === 'regions') { rb.render(); $('bKind').className = 'kind'; $('bKind').textContent = ''; $('bCtx').textContent = 'Pick a region to jump to it'; }
+  else { boards[t].show(); const k = BM.BOARDS[t].kind; $('bKind').className = 'kind ' + k; $('bKind').textContent = t === 'terraform' ? 'Changes the planet' : 'Changes your plant'; $('bCtx').textContent = 'Your plant in ' + BM.region(ctx || 'sunny').name; }
+}
+function openBench(t, opener, focusId){
+  ctx = insp.rid || ctx;
+  if (insp.isOpen) insp.close({ noReturn:true });
+  if (ctx && t !== 'regions') map.select(ctx);
+  showTab(t);
+  if (!BM.isOpen(bench)) {
+    launch.hidden = true; hud.att.setAttribute('aria-expanded', 'true');
+    BM.openLayer(bench, opener || launcherFor(t), { noFocus:true, onClose:() => {
+      if (tab && tab !== 'regions') boards[tab].hide(); tab = null; launch.hidden = false; hud.att.setAttribute('aria-expanded', 'false');
+      bench.classList.remove('peeking'); $('peek').setAttribute('aria-pressed', 'false'); if (ctx && !insp.isOpen) map.select(null); ctx = null; } });
+  }
+  setTimeout(() => { if (focusId) boards[t].focusCard(focusId); else $('bt-' + t).focus({ preventScroll:true }); }, 60);
+}
+setTimeout(() => BM.toast('Click a region to inspect it. Make changes from the workbench at the bottom.'), 600);
+</script>
+</body>
+</html>

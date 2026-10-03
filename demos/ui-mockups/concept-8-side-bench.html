@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM mockup · Concept 8 · Side workbench</title>
+<!--
+  BLOOM-018 · Concept 8 — Context + side workbench.
+  VISUAL CONCEPT MOCKUP ONLY: fake data, scripted behaviour, not connected to the game. Not the production UI.
+  Routine inspection stays contextual (anchored popup, segmented tab buttons, map does not move). Deep workflows (Regions,
+  Adapt, Spread, Terraform) share ONE right-hand workbench column. Opening that column reframes the map once; switching
+  between its tabs never moves the map again; closing it returns the map exactly. Never two columns, never a tiny map.
+  Heatmaps: a "Lens: Plants ▾" dropdown that lives in the map toolbar beside Regions.
+-->
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="r2.css">
+<style>
+  .topbar{flex:none; display:flex; align-items:center; gap:14px; padding:6px 14px; min-height:66px; background:var(--card); border-bottom:3px solid var(--line); z-index:30}
+  .topbar .sp{flex:1}
+  .mapzone{right:0}
+  .world.wb-open .mapzone{right:436px}
+  .mapwrap{inset:72px 16px 16px 16px}
+  .paused-flag{top:76px}
+  .mtb{position:absolute; top:12px; left:16px; right:16px; z-index:14; display:flex; align-items:center; gap:8px; pointer-events:none}
+  .mtb > *{pointer-events:auto}
+  .mtb .grp{display:flex; gap:4px; padding:4px; border-radius:18px}
+  .tool{display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:4px 14px 4px 10px; border-radius:14px; border:2px solid transparent; background:transparent; cursor:pointer; font-weight:800; font-size:14px; white-space:nowrap}
+  .tool:hover{background:var(--paper-2)}
+  .tool[aria-expanded="true"]{background:var(--ink); color:#fff7e0}
+  .mtb .lens-btn{border-color:transparent; box-shadow:none; background:transparent}
+  .mtb .lens-btn:hover{background:var(--paper-2)}
+  .mtb .lens-btn[data-active="true"]{background:var(--ink)}
+  .mtb .sep{width:2px; background:var(--line); margin:6px 2px}
+  .launch{position:absolute; right:16px; bottom:16px; z-index:15}
+  .launch button .t small{display:none}
+  /* the one side workbench: a column-scale workflow, allowed to reframe the map */
+  .wb{position:absolute; top:0; right:0; bottom:0; width:436px; z-index:24; display:flex; flex-direction:column; background:var(--card); border-left:3px solid var(--line);
+    box-shadow:-8px 0 24px rgba(60,45,15,.12); transform:translateX(104%); transition:transform .38s var(--ease)}
+  .wb.open{transform:none}
+  .wb-h{display:flex; align-items:center; gap:6px; padding:8px 8px 0 10px; border-bottom:2px solid var(--line); flex:none}
+  .wb-h .wtabs{display:flex; gap:2px; flex:1; min-width:0}
+  .wb-h .wtabs button{flex:1; display:flex; flex-direction:column; align-items:center; gap:0; min-height:58px; padding:4px 2px; border:none; border-bottom:4px solid transparent; background:none; cursor:pointer; font-weight:900; font-size:13px; color:var(--ink-soft); border-radius:12px 12px 0 0; margin-bottom:-2px}
+  .wb-h .wtabs button span{font-size:21px}
+  .wb-h .wtabs button:hover{background:var(--paper)}
+  .wb-h .wtabs button[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--ink)}
+  .wb-h .wtabs button[data-t="adapt"][aria-selected="true"]{border-bottom-color:var(--leaf)}
+  .wb-h .wtabs button[data-t="spread"][aria-selected="true"]{border-bottom-color:var(--bloom)}
+  .wb-h .wtabs button[data-t="terraform"][aria-selected="true"]{border-bottom-color:var(--sky)}
+  .wb-sub{display:flex; align-items:center; gap:8px; padding:8px 14px; font-size:13px; font-weight:800; color:var(--ink-soft); border-bottom:2px solid var(--line); flex:none}
+  .wb-b{flex:1; min-height:0; padding:12px 14px}
+  .wb .ab-host,.wb .rb-host{height:100%}
+  .wb .ab{flex-direction:column; height:100%; gap:10px}
+  .wb .ab-spec{flex-direction:row; height:178px; gap:12px}
+  .wb .ab-specbox{width:168px; flex:none}
+  .wb .ab-cap{flex:1; align-self:center; font-size:14px}
+  .wb .ab-cards{flex:1}
+  .wb .ab-cards .cards-grid{grid-template-columns:1fr 1fr; gap:8px}
+  .wb .ab-cards .tcard{min-height:112px; padding:10px 12px}
+  .wb .ab-cards .tcard p{font-size:13px}
+  .wb .ab-eff{max-height:118px; overflow:auto; border-top:2px dashed var(--line); padding-top:8px}
+  #rp{width:452px}
+  @media (max-width:1100px){
+    .topbar .h-clim{display:none}
+    .topbar .h-stat .bar{width:84px}
+    .wb{width:392px} .world.wb-open .mapzone{right:392px}
+    .wb .ab-spec{height:150px} .wb .ab-specbox{width:140px}
+    #rp{width:430px}
+  }
+</style>
+</head>
+<body class="r2">
+<header class="topbar"><div id="hud"></div><span class="sp"></span><div id="clock"></div></header>
+<div class="world" id="world">
+  <div class="mapzone can-push" id="mapzone">
+    <div class="mapwrap" id="mapwrap"></div>
+    <div class="mtb">
+      <div class="grp glass" id="mtb" role="toolbar" aria-label="Map tools">
+        <button type="button" class="tool" id="rbBtn" aria-expanded="false" aria-controls="wb"><span aria-hidden="true">🗂</span>Regions</button>
+        <span class="sep" role="presentation"></span>
+      </div>
+      <div id="legend" hidden></div>
+    </div>
+    <nav class="launch" id="launch" aria-label="Upgrades">
+      <button type="button" class="adapt" data-b="adapt" aria-expanded="false"><span class="b" aria-hidden="true">🌿</span><span class="t">Adapt<small>plant</small></span></button>
+      <button type="button" class="spread" data-b="spread" aria-expanded="false"><span class="b" aria-hidden="true">🌱</span><span class="t">Spread<small>plant</small></span></button>
+      <span class="div" role="presentation"></span>
+      <button type="button" class="terra" data-b="terraform" aria-expanded="false"><span class="b" aria-hidden="true">🌍</span><span class="t">Terraform<small>planet</small></span></button>
+    </nav>
+  </div>
+  <aside class="wb" id="wb" hidden aria-label="Workbench">
+    <div class="wb-h">
+      <div class="wtabs" role="tablist" aria-label="Workbench">
+        <button type="button" role="tab" data-t="regions" id="wt-regions" aria-controls="wb-b"><span aria-hidden="true">🗂</span>Regions</button>
+        <button type="button" role="tab" data-t="adapt" id="wt-adapt" aria-controls="wb-b"><span aria-hidden="true">🌿</span>Adapt</button>
+        <button type="button" role="tab" data-t="spread" id="wt-spread" aria-controls="wb-b"><span aria-hidden="true">🌱</span>Spread</button>
+        <button type="button" role="tab" data-t="terraform" id="wt-terraform" aria-controls="wb-b"><span aria-hidden="true">🌍</span>Terraform</button>
+      </div>
+      <button type="button" class="x-btn" id="wX" aria-label="Close workbench">✕</button>
+    </div>
+    <div class="wb-sub" id="wSub"></div>
+    <div class="wb-b" id="wb-b" role="tabpanel">
+      <div class="rb-host" id="w-regions" hidden></div>
+      <div class="ab-host" id="w-adapt" hidden></div><div class="ab-host" id="w-spread" hidden></div><div class="ab-host" id="w-terraform" hidden></div>
+    </div>
+  </aside>
+  <section id="rp"></section>
+</div>
+
+<script src="shared.js"></script>
+<script src="r2.js"></script>
+<script>
+BM2.ribbon('Concept 8 · Context popup + one side workbench (deliberate column)');
+const $ = id => document.getElementById(id), world = $('world');
+const hud = BM2.hud($('hud'), { attention:true, onAttention:b => openWB('regions', b) });
+BM2.clockControls($('clock'));
+BM2.pausedFlag($('mapzone'));
+
+let tab = null, ctx = null;
+const map = BM.mountMap($('mapwrap'), { labels:'all', onSelect:id => {
+  if (tab && tab !== 'regions') { ctx = id; map.select(id); boards[tab].refresh(); sub(); return; }
+  insp.open(id);
+} });
+BM2.lens($('mtb'), map, { style:'dropdown', drop:'down', align:'left', legendHost:$('legend') });
+
+/* routine inspection: anchored popup, segmented tab buttons; coexists with the Regions tab only */
+const wbOpen = () => world.classList.contains('wb-open');
+const insp = BM2.inspector({ el:$('rp'), map, world, mode:'anchored', tabStyle:'seg', tabs:BM2.TABSETS.three,
+  safe:() => ({ top:72, bottom:12, left:12, right:wbOpen() ? $('wb').offsetWidth + 12 : 12 }),
+  onFix:id => openWB(BM.item(id).board, launcherFor(BM.item(id).board), id),
+  onOpen:() => { if (tab === 'regions') rb.render(); }, onClose:() => { if (tab === 'regions') rb.render(); } });
+
+/* the side workbench: one column slot for every deep workflow */
+const wb = $('wb'), boards = {};
+['adapt','spread','terraform'].forEach(b => boards[b] = BM2.board($('w-' + b), b, { map, rid:() => ctx }));
+const rb = BM2.regions($('w-regions'), { style:'list', map, current:() => insp.rid, onPick:id => insp.open(id, { focus:true }) });
+const launcherFor = b => document.querySelector('.launch [data-b="' + b + '"]');
+const wtabs = [...wb.querySelectorAll('[role=tab]')];
+document.querySelectorAll('.launch [data-b]').forEach(btn => btn.addEventListener('click', () => tab === btn.dataset.b ? BM.closeLayer(wb) : openWB(btn.dataset.b, btn)));
+$('rbBtn').addEventListener('click', e => tab === 'regions' ? BM.closeLayer(wb) : openWB('regions', e.currentTarget));
+wtabs.forEach((t, k) => {
+  t.addEventListener('click', () => showTab(t.dataset.t));
+  t.addEventListener('keydown', e => { const d = { ArrowRight:1, ArrowLeft:-1 }[e.key]; if (d) { e.preventDefault(); const n = wtabs[(k + d + wtabs.length) % wtabs.length]; showTab(n.dataset.t); n.focus(); } });
+});
+$('wX').addEventListener('click', () => BM.closeLayer(wb));
+function sub(){
+  $('wSub').innerHTML = tab === 'regions' ? '🗂 Every region at a glance. Pick one to inspect it on the map.' :
+    '<span class="kind ' + BM.BOARDS[tab].kind + '">' + (tab === 'terraform' ? 'Changes the planet' : 'Changes your plant') + '</span> Your plant in ' + BM.region(ctx || 'sunny').name + (ctx ? '' : ' (start)') + ' · click the map to look elsewhere';
+}
+function showTab(t){
+  if (tab && tab !== 'regions') boards[tab].hide();
+  if (t !== 'regions' && insp.isOpen) { ctx = insp.rid; insp.close({ noReturn:true }); map.select(ctx); }
+  ['regions','adapt','spread','terraform'].forEach(x => $('w-' + x).hidden = x !== t);
+  tab = t;
+  wtabs.forEach(b => { const on = b.dataset.t === t; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; });
+  $('wb-b').setAttribute('aria-labelledby', 'wt-' + t);
+  document.querySelectorAll('.launch [data-b]').forEach(x => x.setAttribute('aria-expanded', x.dataset.b === t));
+  $('rbBtn').setAttribute('aria-expanded', t === 'regions');
+  if (t === 'regions') rb.render(); else boards[t].show();
+  sub();
+}
+function openWB(t, opener, focusId){
+  ctx = insp.rid || ctx;
+  const first = !BM.isOpen(wb);
+  showTab(t);
+  if (first) {
+    world.classList.add('wb-open'); hud.att.setAttribute('aria-expanded', 'true');
+    BM.openLayer(wb, opener, { noFocus:true, onClose:() => {
+      if (tab && tab !== 'regions') boards[tab].hide(); tab = null; world.classList.remove('wb-open'); hud.att.setAttribute('aria-expanded', 'false');
+      document.querySelectorAll('.launch [data-b]').forEach(x => x.setAttribute('aria-expanded', 'false')); $('rbBtn').setAttribute('aria-expanded', 'false');
+      if (ctx && !insp.isOpen) map.select(null); ctx = null; setTimeout(insp.place, BM.reduceMotion ? 20 : 420); } });
+    setTimeout(insp.place, BM.reduceMotion ? 20 : 420);
+  }
+  setTimeout(() => { if (focusId) boards[t].focusCard(focusId); else $('wt-' + t).focus({ preventScroll:true }); }, 60);
+}
+setTimeout(() => BM.toast('Click a region to inspect it. Regions and upgrades open in one side workbench.'), 600);
+</script>
+</body>
+</html>

@@ -139,3 +139,25 @@ The owner asked for a separate design-review phase before the major run-screen r
 - **What the review considers:** home and selection presentation; map-first layouts; contextual panels and drawers (§9); upgrade-board presentation (Adapt / Spread / Terraform); living-organism / specimen presentation (§§1–6); information hierarchy; touch / desktop hybrid controls; how comparable games reveal complexity progressively.
 - **What is not decided yet:** permanent sidebar layout, final contextual drawers, final board layout, specimen window placement, final typography, final art style, final icons, mobile / tablet composition. Sections 1–9 above remain the approved *direction*; the concrete design is chosen in the review.
 - **BLOOM-016's launcher** (`index.html`, the run page's player menu, the loading and result actions) is a clean, temporary, functional shell: its layout, emoji icons and type are placeholders and pre-select nothing.
+
+### 10.1 Owner decisions from the Round 1 concept review (recorded with BLOOM-018)
+
+The owner reviewed the BLOOM-017 concepts. These decisions now bind the production run-screen design; the full record is in [`UI_CONCEPT_REVIEW_v2.md`](UI_CONCEPT_REVIEW_v2.md) §1.
+- **Rejected:**
+  - a permanent giant specimen or specimen-first layout;
+  - full-screen Adapt / Spread / Terraform takeovers;
+  - giant permanent bottom action buttons;
+  - routine map resizing;
+  - an over-minimal "watching game" display;
+  - four always-visible heatmap buttons.
+- **Kept:**
+  - map-first play with a large map;
+  - a Concept-2-style Regions browser;
+  - a rich contextual region popup with tabs (no "More" expansion);
+  - a medium contextual specimen;
+  - compact floating action launchers;
+  - one compact heatmap lens control;
+  - persistent Pause / Play and speed (1× → 2× → 4×).
+- **Map-geometry rule:** surfaces overlay the map by default. Only a genuine column-scale workflow (Regions browser, deep upgrade browser) may shift it: once on open and once on close, never per click, and never with two columns.
+- **Specimen rule** (unchanged from §§3–6, now explicit for previews): Adapt changes the organism; a Terraform preview changes only its surroundings.
+- The concrete layout is still open. Round 2 (Concepts 5–8) is the comparison set, and no production UI is authorized yet.

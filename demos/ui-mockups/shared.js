@@ -16,6 +16,7 @@
     BM.mountSpecimen(container, opts)       SVG modular specimen (sky / plant / soil) with cross-fade
     BM.bindBiomass(el)                      live Biomass number + flashes
     BM.openLayer(el, opener) / closeLayer   panels/boards with Escape + focus return
+    BM.clock                                (BLOOM-018) fake clock pause / speed 1×·2×·4×; default running 1×
     BM.toast(msg) / BM.floatAt(el, text, kind)
 */
 (function(){
@@ -229,12 +230,23 @@ BM.store = {
   collect(n){ S.biomass += n; emit({ type:'gain', n }); },
   density:densityOf,
 };
-setInterval(() => {                               // fake clock: Biomass ticks, new colonies thicken, pressure creeps
+function fakeTick(){                              // fake clock: Biomass ticks, new colonies thicken, pressure creeps
   S.t++; S.biomass += S.income;
   BM.REGIONS.forEach(r => { const rs = S.reg[r.id]; if (rs.colony === 'living' && rs.est < .9) rs.est = Math.min(.9, rs.est + (rs.est < .5 ? .012 : .003) * (rs.focus === 'roots' ? 1.4 : 1)); });
   S.pressure = Math.min(.92, S.pressure + .0015); S.instab = Math.max(.08, S.instab - .004);
   recompute(); emit({ type:'tick' });
-}, 1000);
+}
+/* BLOOM-018: the fake clock can be paused and sped up (1× → 2× → 4× → 1×) so round-2 mockups can show Pause / speed.
+   Defaults (running, 1×) are exactly the BLOOM-017 behaviour; round-1 concepts never touch BM.clock. Still fake. */
+const CLK = { paused:false, speed:1, timer:null };
+function runClock(){ clearInterval(CLK.timer); CLK.timer = CLK.paused ? null : setInterval(fakeTick, 1000 / CLK.speed); }
+BM.clock = {
+  get paused(){ return CLK.paused; }, get speed(){ return CLK.speed; },
+  setPaused(p){ CLK.paused = !!p; runClock(); emit({ type:'clock' }); },
+  toggle(){ this.setPaused(!CLK.paused); },
+  cycleSpeed(){ CLK.speed = CLK.speed === 1 ? 2 : CLK.speed === 2 ? 4 : 1; runClock(); emit({ type:'clock' }); },
+};
+runClock();
 
 /* region readout with fake purchases applied */
 BM.view = function(rid){
@@ -485,7 +497,7 @@ BM.mountMap = function(container, opts){
 
   // fake Biomass bubbles (click/Enter to collect)
   function spawnBubble(){
-    if (!opts.bubbles || bubG.childNodes.length >= 2 || document.hidden) return;
+    if (!opts.bubbles || bubG.childNodes.length >= 2 || document.hidden || BM.clock.paused) return;
     const cands = []; for (let i = 0; i < grid.length; i++) if (densityOf(i) > .45) cands.push(i);
     if (!cands.length) return;
     const i = cands[Math.floor(Math.random() * cands.length)], x = (i % W) * T + 5, y = ((i / W) | 0) * T + 5;
@@ -504,6 +516,7 @@ BM.mountMap = function(container, opts){
     el:svg, select:id => select(id, false), setLens(f){ lens = f || null; paint(); }, get lens(){ return lens; }, get selected(){ return sel; }, setPreview, flash, paint,
     screenPoint(id){ const r = BM.region(id); const pt = svg.createSVGPoint(); pt.x = r.cx * T; pt.y = r.cy * T; const m = svg.getScreenCTM(); const q = pt.matrixTransform(m); return { x:q.x, y:q.y }; },
     focusRegion(id){ rgEls[id] && rgEls[id].focus(); },
+    highlight(id){ hovO.setAttribute('d', id && outl[id] ? outl[id] : ''); },   // BLOOM-018: outline a region without selecting it
   };
 };
 
