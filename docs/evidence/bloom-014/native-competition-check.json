@@ -1,0 +1,1774 @@
+{
+ "scenario": {
+  "id": "native_competition",
+  "name": "Native Competition",
+  "intent": "The planet is already alive: native vegetation, adapted to the planet's starting conditions, holds part of the land and spreads into open ground. The player's plant competes with it for light, water, nutrients and space at moving fronts, finds the places it can win, strengthens vulnerable colonies, and decides whether to adapt the organism or alter the environment. The competitor reacts locally to what the player does; there is no clock.",
+  "pressure": null,
+  "competition": {
+   "tolerance": {
+    "adaptation": 0.5,
+    "breadth": 1,
+    "hardyShare": 0.75
+   },
+   "start": {
+    "coverShare": [
+     0.26,
+     0.32
+    ],
+    "density": [
+     0.6,
+     0.9
+    ],
+    "patches": [
+     4,
+     7
+    ],
+    "originBufferTiles": 5,
+    "maxLandmassShare": 0.6
+   },
+   "growth": {
+    "growThresh": 0.55,
+    "dieThresh": 0.35,
+    "spread": 0.02,
+    "seedPerNeighbor": 0.34,
+    "seedlingDensity": 0.15,
+    "rate": 0.004,
+    "thinning": 0.01,
+    "minDensity": 0.04,
+    "vigorEase": 0.2
+   },
+   "contest": {
+    "nativeVigour": 1,
+    "holdBase": 0.4,
+    "scale": 0.3,
+    "crowding": 0.5
+   },
+   "events": {
+    "contestedTiles": 4,
+    "advantageMargin": 0.08,
+    "dominatedShare": 0.5,
+    "dominatedPlayerBelow": 0.1,
+    "retakeTiles": 6,
+    "windowSeconds": 20
+   }
+  },
+  "loss": {
+   "extinction": true,
+   "extinctionGraceSeconds": 8
+  },
+  "validation": {
+   "minStrategies": 1,
+   "holdFinalSeconds": 60,
+   "confirmRngSeeds": [
+    101,
+    202
+   ],
+   "pacing": {
+    "marginSeconds": [
+     240,
+     900
+    ],
+    "firstPurchaseSeconds": [
+     0,
+     60
+    ],
+    "maxPurchaseGapSeconds": 120
+   },
+   "archetypes": {}
+  },
+  "display": {
+   "title": "Native Competition",
+   "summary": "This planet already has native vegetation. It competes with your plant for light, water, nutrients and space.",
+   "lossNote": "native vegetation overgrew your last colonies. Where the two plants meet, the one better suited to the ground pushes, and established colonies hold while young ones can be overgrown. Spread into ground that suits your plant better than the natives (Adapt), change the sky so their strongholds suit them less (Terraform), or thicken a threatened young colony (Roots)."
+  }
+ },
+ "layerP": {
+  "primary": {
+   "status": "PASS",
+   "competition": {
+    "startShare": 0.2677,
+    "startTiles": 604,
+    "holdAfterMarginSeconds": 60,
+    "confirmRngSeeds": [
+     101,
+     202
+    ]
+   },
+   "strategies": [
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2)",
+     "tokens": [
+      "Defense:rad=Adapt(1)",
+      "Defense:salt=Adapt(1)",
+      "Temperature:heat=Adapt(1)",
+      "Water:dry=Adapt(2)"
+     ],
+     "minimalBuild": [
+      "heat",
+      "drought",
+      "drought",
+      "salt",
+      "rad"
+     ],
+     "held": [
+      "sec_1",
+      "sec_2",
+      "sec_3",
+      "sec_5",
+      "sec_6",
+      "sec_7",
+      "sec_8",
+      "sec_9",
+      "sec_10",
+      "sec_11"
+     ],
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 26.1,
+       "cost": 130
+      },
+      {
+       "id": "salt",
+       "seconds": 103,
+       "cost": 200
+      },
+      {
+       "id": "rad",
+       "seconds": 178.1,
+       "cost": 220
+      },
+      {
+       "id": "drought",
+       "seconds": 225.4,
+       "cost": 150
+      },
+      {
+       "id": "drought",
+       "seconds": 311.2,
+       "cost": 270
+      },
+      {
+       "id": "heat",
+       "seconds": 358.7,
+       "cost": 140
+      }
+     ],
+     "totalSpent": 1110,
+     "winSeconds": 431.4,
+     "marginSeconds": 444.2,
+     "hold": {
+      "seconds": 504.2,
+      "coverage": 0.7788,
+      "held": true
+     },
+     "pacing": {
+      "firstPurchaseSeconds": 26.1,
+      "purchaseGapsSeconds": [
+       26.1,
+       76.9,
+       75.1,
+       47.3,
+       85.8,
+       47.5
+      ],
+      "maxPurchaseGapSeconds": 85.8,
+      "terminalWaitSeconds": 85.5,
+      "earnedPerMinute": [
+       103,
+       162,
+       189,
+       190,
+       181,
+       190,
+       248,
+       156
+      ],
+      "economyAccelerates": true
+     },
+     "trace": [
+      [
+       30.1,
+       0.0461,
+       0
+      ],
+      [
+       60.2,
+       0.0465,
+       0
+      ],
+      [
+       90.2,
+       0.0465,
+       0
+      ],
+      [
+       120.3,
+       0.0461,
+       0
+      ],
+      [
+       150.4,
+       0.0465,
+       0
+      ],
+      [
+       180.5,
+       0.0465,
+       0
+      ],
+      [
+       210.6,
+       0.0461,
+       0
+      ],
+      [
+       240.6,
+       0.0532,
+       0
+      ],
+      [
+       270.7,
+       0.0625,
+       0
+      ],
+      [
+       300.8,
+       0.0754,
+       0
+      ],
+      [
+       330.9,
+       0.1418,
+       0
+      ],
+      [
+       361,
+       0.3626,
+       0
+      ],
+      [
+       391,
+       0.5386,
+       0
+      ],
+      [
+       421.1,
+       0.6658,
+       0
+      ],
+      [
+       451.2,
+       0.7398,
+       0
+      ],
+      [
+       481.3,
+       0.7708,
+       0
+      ]
+     ],
+     "competition": {
+      "startShare": 0.2677,
+      "peakShare": 0.4131,
+      "endShare": 0.2212,
+      "contestedRegions": 10,
+      "flips": {
+       "playerTook": 1003,
+       "nativeTook": 572,
+       "nativeSpread": 326,
+       "nativeReceded": 0
+      },
+      "nativeTrace": [
+       [
+        30.1,
+        0.3595
+       ],
+       [
+        60.2,
+        0.3923
+       ],
+       [
+        90.2,
+        0.4069
+       ],
+       [
+        120.3,
+        0.4127
+       ],
+       [
+        150.4,
+        0.4122
+       ],
+       [
+        180.5,
+        0.4122
+       ],
+       [
+        210.6,
+        0.4127
+       ],
+       [
+        240.6,
+        0.4056
+       ],
+       [
+        270.7,
+        0.3963
+       ],
+       [
+        300.8,
+        0.3834
+       ],
+       [
+        330.9,
+        0.3608
+       ],
+       [
+        361,
+        0.3391
+       ],
+       [
+        391,
+        0.3258
+       ],
+       [
+        421.1,
+        0.3067
+       ],
+       [
+        451.2,
+        0.2602
+       ],
+       [
+        481.3,
+        0.2292
+       ]
+      ]
+     },
+     "confirm": [
+      {
+       "rngSeed": 101,
+       "ok": true,
+       "marginSeconds": 444.6,
+       "hold": {
+        "coverage": 0.7757,
+        "held": true
+       },
+       "lost": false
+      },
+      {
+       "rngSeed": 202,
+       "ok": true,
+       "marginSeconds": 446.2,
+       "hold": {
+        "coverage": 0.7793,
+        "held": true
+       },
+       "lost": false
+      }
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(2)",
+     "tokens": [
+      "Defense:rad=Adapt(1)",
+      "Defense:salt=Adapt(1)",
+      "Temperature:heat=Terraform(−6)",
+      "Water:dry=Adapt(2)"
+     ],
+     "minimalBuild": [
+      "drought",
+      "drought",
+      "salt",
+      "rad",
+      "cool"
+     ],
+     "held": [
+      "sec_1",
+      "sec_2",
+      "sec_3",
+      "sec_4",
+      "sec_5",
+      "sec_7",
+      "sec_8",
+      "sec_9",
+      "sec_10",
+      "sec_11"
+     ],
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 26.1,
+       "cost": 130
+      },
+      {
+       "id": "salt",
+       "seconds": 103,
+       "cost": 200
+      },
+      {
+       "id": "rad",
+       "seconds": 178.1,
+       "cost": 220
+      },
+      {
+       "id": "drought",
+       "seconds": 225.4,
+       "cost": 150
+      },
+      {
+       "id": "drought",
+       "seconds": 311.2,
+       "cost": 270
+      },
+      {
+       "id": "cool",
+       "seconds": 375.2,
+       "cost": 200
+      }
+     ],
+     "totalSpent": 1170,
+     "winSeconds": 461.9,
+     "marginSeconds": 501.1,
+     "hold": {
+      "seconds": 561.1,
+      "coverage": 0.7655,
+      "held": true
+     },
+     "pacing": {
+      "firstPurchaseSeconds": 26.1,
+      "purchaseGapsSeconds": [
+       26.1,
+       76.9,
+       75.1,
+       47.3,
+       85.8,
+       64
+      ],
+      "maxPurchaseGapSeconds": 85.8,
+      "terminalWaitSeconds": 125.9,
+      "earnedPerMinute": [
+       103,
+       162,
+       189,
+       190,
+       181,
+       190,
+       252,
+       358,
+       151
+      ],
+      "economyAccelerates": true
+     },
+     "trace": [
+      [
+       30.1,
+       0.0461,
+       0
+      ],
+      [
+       60.2,
+       0.0465,
+       0
+      ],
+      [
+       90.2,
+       0.0465,
+       0
+      ],
+      [
+       120.3,
+       0.0461,
+       0
+      ],
+      [
+       150.4,
+       0.0465,
+       0
+      ],
+      [
+       180.5,
+       0.0465,
+       0
+      ],
+      [
+       210.6,
+       0.0461,
+       0
+      ],
+      [
+       240.6,
+       0.0532,
+       0
+      ],
+      [
+       270.7,
+       0.0625,
+       0
+      ],
+      [
+       300.8,
+       0.0754,
+       0
+      ],
+      [
+       330.9,
+       0.1418,
+       0
+      ],
+      [
+       361,
+       0.359,
+       0
+      ],
+      [
+       391,
+       0.4809,
+       0
+      ],
+      [
+       421.1,
+       0.6246,
+       0
+      ],
+      [
+       451.2,
+       0.6866,
+       0
+      ],
+      [
+       481.3,
+       0.7181,
+       0
+      ],
+      [
+       511.4,
+       0.7318,
+       0
+      ],
+      [
+       541.4,
+       0.7527,
+       0
+      ]
+     ],
+     "competition": {
+      "startShare": 0.2677,
+      "peakShare": 0.4131,
+      "endShare": 0.1809,
+      "contestedRegions": 9,
+      "flips": {
+       "playerTook": 1333,
+       "nativeTook": 811,
+       "nativeSpread": 326,
+       "nativeReceded": 0
+      },
+      "nativeTrace": [
+       [
+        30.1,
+        0.3595
+       ],
+       [
+        60.2,
+        0.3923
+       ],
+       [
+        90.2,
+        0.4069
+       ],
+       [
+        120.3,
+        0.4127
+       ],
+       [
+        150.4,
+        0.4122
+       ],
+       [
+        180.5,
+        0.4122
+       ],
+       [
+        210.6,
+        0.4127
+       ],
+       [
+        240.6,
+        0.4056
+       ],
+       [
+        270.7,
+        0.3963
+       ],
+       [
+        300.8,
+        0.3834
+       ],
+       [
+        330.9,
+        0.3608
+       ],
+       [
+        361,
+        0.3395
+       ],
+       [
+        391,
+        0.3262
+       ],
+       [
+        421.1,
+        0.3036
+       ],
+       [
+        451.2,
+        0.2598
+       ],
+       [
+        481.3,
+        0.2283
+       ],
+       [
+        511.4,
+        0.2145
+       ],
+       [
+        541.4,
+        0.1937
+       ]
+      ]
+     },
+     "confirm": [
+      {
+       "rngSeed": 101,
+       "ok": true,
+       "marginSeconds": 493.8,
+       "hold": {
+        "coverage": 0.7598,
+        "held": true
+       },
+       "lost": false
+      },
+      {
+       "rngSeed": 202,
+       "ok": true,
+       "marginSeconds": 479.5,
+       "hold": {
+        "coverage": 0.7713,
+        "held": true
+       },
+       "lost": false
+      }
+     ]
+    }
+   ],
+   "differences": [
+    {
+     "a": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2)",
+     "b": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(2)",
+     "onlyA": [
+      "Temperature:heat=Adapt(1)"
+     ],
+     "onlyB": [
+      "Temperature:heat=Terraform(−6)"
+     ],
+     "heldOnlyA": [
+      "sec_6"
+     ],
+     "heldOnlyB": [
+      "sec_4"
+     ]
+    }
+   ],
+   "classes": [
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2)",
+     "members": 102,
+     "status": "qualified",
+     "cheapest": 980
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(2)",
+     "members": 28,
+     "status": "qualified",
+     "cheapest": 1040
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1)+Terraform(−6) · Water:dry=Adapt(1)+Terraform(+8)",
+     "members": 12,
+     "status": "not needed",
+     "cheapest": 1110
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Adapt(1)+Terraform(−6) · Water:dry=Adapt(2) · Water:wet=Terraform(−8)",
+     "members": 24,
+     "status": "not needed",
+     "cheapest": 1180
+    },
+    {
+     "signature": "Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2)",
+     "members": 6,
+     "status": "not needed",
+     "cheapest": 1250
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Adapt(1)+Terraform(+8)",
+     "members": 4,
+     "status": "not needed",
+     "cheapest": 1260
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2) · Water:wet=Terraform(−16)",
+     "members": 12,
+     "status": "not needed",
+     "cheapest": 1270
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Adapt(2) · Water:wet=Terraform(−8)",
+     "members": 8,
+     "status": "not needed",
+     "cheapest": 1330
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(2) · Water:dry=Adapt(2)",
+     "members": 3,
+     "status": "not needed",
+     "cheapest": 1540
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(2) · Water:dry=Adapt(1)+Terraform(+8)",
+     "members": 6,
+     "status": "not needed",
+     "cheapest": 1670
+    }
+   ],
+   "ms": 5411
+  },
+  "ocean": {
+   "status": "PASS",
+   "competition": {
+    "startShare": 0.2597,
+    "startTiles": 240,
+    "holdAfterMarginSeconds": 60,
+    "confirmRngSeeds": [
+     101,
+     202
+    ]
+   },
+   "strategies": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)",
+     "tokens": [
+      "Crossing:waterSeeds=Spread(1)",
+      "Defense:rad=Adapt(1)",
+      "Defense:salt=Adapt(1)",
+      "Temperature:heat=Adapt(1)",
+      "Water:dry=Adapt(1)",
+      "Water:wet=Terraform(−16)"
+     ],
+     "minimalBuild": [
+      "heat",
+      "drought",
+      "salt",
+      "rad",
+      "dry",
+      "dry",
+      "waterSeeds"
+     ],
+     "held": [
+      "sec_0",
+      "sec_1",
+      "sec_2",
+      "sec_3",
+      "sec_4",
+      "sec_6",
+      "sec_7",
+      "sec_8",
+      "sec_9",
+      "sec_11",
+      "sec_13",
+      "sec_14"
+     ],
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 28.5,
+       "cost": 130
+      },
+      {
+       "id": "waterSeeds",
+       "seconds": 102.9,
+       "cost": 180
+      },
+      {
+       "id": "salt",
+       "seconds": 181.4,
+       "cost": 200
+      },
+      {
+       "id": "rad",
+       "seconds": 252.8,
+       "cost": 220
+      },
+      {
+       "id": "heat",
+       "seconds": 299.5,
+       "cost": 140
+      },
+      {
+       "id": "dry",
+       "seconds": 348.8,
+       "cost": 200
+      },
+      {
+       "id": "dry",
+       "seconds": 429.6,
+       "cost": 290
+      },
+      {
+       "id": "drought",
+       "seconds": 468.5,
+       "cost": 150
+      }
+     ],
+     "totalSpent": 1510,
+     "winSeconds": 585.9,
+     "marginSeconds": 619.5,
+     "hold": {
+      "seconds": 679.5,
+      "coverage": 0.7738,
+      "held": true
+     },
+     "pacing": {
+      "firstPurchaseSeconds": 28.5,
+      "purchaseGapsSeconds": [
+       28.5,
+       74.4,
+       78.5,
+       71.4,
+       46.7,
+       49.3,
+       80.8,
+       38.9
+      ],
+      "maxPurchaseGapSeconds": 80.8,
+      "terminalWaitSeconds": 151,
+      "earnedPerMinute": [
+       81,
+       188,
+       129,
+       168,
+       218,
+       215,
+       223,
+       248,
+       218,
+       318,
+       65
+      ],
+      "economyAccelerates": true
+     },
+     "trace": [
+      [
+       30.1,
+       0.0996,
+       0
+      ],
+      [
+       60.2,
+       0.1374,
+       0
+      ],
+      [
+       90.2,
+       0.1374,
+       0
+      ],
+      [
+       120.3,
+       0.1374,
+       0
+      ],
+      [
+       150.4,
+       0.1374,
+       0
+      ],
+      [
+       180.5,
+       0.1374,
+       0
+      ],
+      [
+       210.6,
+       0.1374,
+       0
+      ],
+      [
+       240.6,
+       0.1374,
+       0
+      ],
+      [
+       270.7,
+       0.1374,
+       0
+      ],
+      [
+       300.8,
+       0.1407,
+       0
+      ],
+      [
+       330.9,
+       0.2359,
+       0
+      ],
+      [
+       361,
+       0.3485,
+       0
+      ],
+      [
+       391,
+       0.4383,
+       0
+      ],
+      [
+       421.1,
+       0.4968,
+       0
+      ],
+      [
+       451.2,
+       0.4978,
+       0
+      ],
+      [
+       481.3,
+       0.5,
+       0
+      ],
+      [
+       511.4,
+       0.5249,
+       0
+      ],
+      [
+       541.4,
+       0.5855,
+       0
+      ],
+      [
+       571.5,
+       0.671,
+       0
+      ],
+      [
+       601.6,
+       0.7175,
+       0
+      ],
+      [
+       631.7,
+       0.7435,
+       0
+      ],
+      [
+       661.8,
+       0.7716,
+       0
+      ]
+     ],
+     "competition": {
+      "startShare": 0.2597,
+      "peakShare": 0.4091,
+      "endShare": 0.1905,
+      "contestedRegions": 6,
+      "flips": {
+       "playerTook": 443,
+       "nativeTook": 241,
+       "nativeSpread": 138,
+       "nativeReceded": 0
+      },
+      "nativeTrace": [
+       [
+        30.1,
+        0.2803
+       ],
+       [
+        60.2,
+        0.289
+       ],
+       [
+        90.2,
+        0.2911
+       ],
+       [
+        120.3,
+        0.2955
+       ],
+       [
+        150.4,
+        0.2998
+       ],
+       [
+        180.5,
+        0.3009
+       ],
+       [
+        210.6,
+        0.3009
+       ],
+       [
+        240.6,
+        0.3009
+       ],
+       [
+        270.7,
+        0.3009
+       ],
+       [
+        300.8,
+        0.3009
+       ],
+       [
+        330.9,
+        0.3009
+       ],
+       [
+        361,
+        0.3193
+       ],
+       [
+        391,
+        0.3582
+       ],
+       [
+        421.1,
+        0.3929
+       ],
+       [
+        451.2,
+        0.4069
+       ],
+       [
+        481.3,
+        0.4048
+       ],
+       [
+        511.4,
+        0.3799
+       ],
+       [
+        541.4,
+        0.3193
+       ],
+       [
+        571.5,
+        0.2338
+       ],
+       [
+        601.6,
+        0.1959
+       ],
+       [
+        631.7,
+        0.1926
+       ],
+       [
+        661.8,
+        0.1905
+       ]
+      ]
+     },
+     "confirm": [
+      {
+       "rngSeed": 101,
+       "ok": true,
+       "marginSeconds": 733.6,
+       "hold": {
+        "coverage": 0.7738,
+        "held": true
+       },
+       "lost": false
+      },
+      {
+       "rngSeed": 202,
+       "ok": true,
+       "marginSeconds": 685.9,
+       "hold": {
+        "coverage": 0.7716,
+        "held": true
+       },
+       "lost": false
+      }
+     ]
+    }
+   ],
+   "differences": [],
+   "classes": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Terraform(−6)",
+     "members": 112,
+     "status": "unresolved",
+     "cheapest": 800
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)",
+     "members": 18,
+     "status": "qualified",
+     "cheapest": 1380
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(2) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)",
+     "members": 3,
+     "status": "not needed",
+     "cheapest": 1940
+    }
+   ],
+   "ms": 14861
+  },
+  "frozen": {
+   "status": "PASS",
+   "competition": {
+    "startShare": 0.2789,
+    "startTiles": 589,
+    "holdAfterMarginSeconds": 60,
+    "confirmRngSeeds": [
+     101,
+     202
+    ]
+   },
+   "strategies": [
+    {
+     "signature": "Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1)",
+     "tokens": [
+      "Temperature:cold=Adapt(2)",
+      "Temperature:heat=Adapt(1)"
+     ],
+     "minimalBuild": [
+      "cold",
+      "cold",
+      "heat"
+     ],
+     "held": [
+      "sec_2",
+      "sec_3",
+      "sec_4",
+      "sec_5",
+      "sec_6",
+      "sec_7",
+      "sec_8",
+      "sec_9",
+      "sec_11",
+      "sec_14",
+      "sec_15"
+     ],
+     "purchases": [
+      {
+       "id": "seedOut",
+       "seconds": 27.8,
+       "cost": 130
+      },
+      {
+       "id": "heat",
+       "seconds": 88.3,
+       "cost": 140
+      },
+      {
+       "id": "cold",
+       "seconds": 130.9,
+       "cost": 140
+      },
+      {
+       "id": "cold",
+       "seconds": 201.4,
+       "cost": 270
+      }
+     ],
+     "totalSpent": 680,
+     "winSeconds": 297.3,
+     "marginSeconds": 310.6,
+     "hold": {
+      "seconds": 370.6,
+      "coverage": 0.7486,
+      "held": true
+     },
+     "pacing": {
+      "firstPurchaseSeconds": 27.8,
+      "purchaseGapsSeconds": [
+       27.8,
+       60.5,
+       42.6,
+       70.5
+      ],
+      "maxPurchaseGapSeconds": 70.5,
+      "terminalWaitSeconds": 109.2,
+      "earnedPerMinute": [
+       89,
+       191,
+       227,
+       231,
+       274,
+       48
+      ],
+      "economyAccelerates": true
+     },
+     "trace": [
+      [
+       30.1,
+       0.0848,
+       0
+      ],
+      [
+       60.2,
+       0.1525,
+       0
+      ],
+      [
+       90.2,
+       0.1823,
+       0
+      ],
+      [
+       120.3,
+       0.242,
+       0
+      ],
+      [
+       150.4,
+       0.258,
+       0
+      ],
+      [
+       180.5,
+       0.2576,
+       0
+      ],
+      [
+       210.6,
+       0.2884,
+       0
+      ],
+      [
+       240.6,
+       0.4607,
+       0
+      ],
+      [
+       270.7,
+       0.6046,
+       0
+      ],
+      [
+       300.8,
+       0.7126,
+       0
+      ],
+      [
+       330.9,
+       0.7457,
+       0
+      ],
+      [
+       361,
+       0.7533,
+       0
+      ]
+     ],
+     "competition": {
+      "startShare": 0.2789,
+      "peakShare": 0.3698,
+      "endShare": 0.2027,
+      "contestedRegions": 12,
+      "flips": {
+       "playerTook": 1218,
+       "nativeTook": 804,
+       "nativeSpread": 253,
+       "nativeReceded": 0
+      },
+      "nativeTrace": [
+       [
+        30.1,
+        0.3153
+       ],
+       [
+        60.2,
+        0.3352
+       ],
+       [
+        90.2,
+        0.3466
+       ],
+       [
+        120.3,
+        0.3556
+       ],
+       [
+        150.4,
+        0.357
+       ],
+       [
+        180.5,
+        0.366
+       ],
+       [
+        210.6,
+        0.3603
+       ],
+       [
+        240.6,
+        0.3054
+       ],
+       [
+        270.7,
+        0.2652
+       ],
+       [
+        300.8,
+        0.2301
+       ],
+       [
+        330.9,
+        0.2055
+       ],
+       [
+        361,
+        0.1979
+       ]
+      ]
+     },
+     "confirm": [
+      {
+       "rngSeed": 101,
+       "ok": true,
+       "marginSeconds": 306.4,
+       "hold": {
+        "coverage": 0.7779,
+        "held": true
+       },
+       "lost": false
+      },
+      {
+       "rngSeed": 202,
+       "ok": true,
+       "marginSeconds": 270.4,
+       "hold": {
+        "coverage": 0.7637,
+        "held": true
+       },
+       "lost": false
+      }
+     ]
+    }
+   ],
+   "differences": [],
+   "classes": [
+    {
+     "signature": "Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1)",
+     "members": 58,
+     "status": "qualified",
+     "cheapest": 550
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(2)",
+     "members": 78,
+     "status": "not needed",
+     "cheapest": 630
+    },
+    {
+     "signature": "Temperature:cold=Adapt(2) · Water:dry=Adapt(1) · Water:wet=Terraform(−8)",
+     "members": 24,
+     "status": "not needed",
+     "cheapest": 760
+    },
+    {
+     "signature": "Temperature:cold=Adapt(3) · Temperature:heat=Terraform(−6)",
+     "members": 18,
+     "status": "not needed",
+     "cheapest": 1010
+    },
+    {
+     "signature": "Temperature:cold=Adapt(2) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)",
+     "members": 4,
+     "status": "not needed",
+     "cheapest": 1050
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(1)+Terraform(+12) · Temperature:heat=Adapt(2) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)",
+     "members": 2,
+     "status": "not needed",
+     "cheapest": 1900
+    }
+   ],
+   "ms": 1924
+  }
+ },
+ "layerPDefaultPrimary": {
+  "status": "PASS",
+  "strategies": 1
+ },
+ "starts": {
+  "primary": 0.26773049645390073,
+  "ocean": 0.2597402597402597,
+  "frozen": 0.27888257575757575
+ },
+ "evidence": {
+  "startSweep": [
+   {
+    "a": "ocean_archipelago",
+    "seed": 1,
+    "share": 0.2920245398773006
+   },
+   {
+    "a": "ocean_archipelago",
+    "seed": 2,
+    "share": 0.2702960840496657
+   },
+   {
+    "a": "ocean_archipelago",
+    "seed": 3,
+    "share": 0.280794701986755
+   },
+   {
+    "a": "ocean_archipelago",
+    "seed": 4,
+    "share": 0.27863046044864226
+   },
+   {
+    "a": "ocean_archipelago",
+    "seed": 5,
+    "share": 0.2925531914893617
+   },
+   {
+    "a": "ocean_archipelago",
+    "seed": 6,
+    "share": 0.309662398137369
+   },
+   {
+    "a": "ocean_archipelago",
+    "seed": 8,
+    "share": 0.26265060240963856
+   },
+   {
+    "a": "desert_world",
+    "seed": 1,
+    "share": 0.28194444444444444
+   },
+   {
+    "a": "desert_world",
+    "seed": 2,
+    "share": 0.2838827838827839
+   },
+   {
+    "a": "desert_world",
+    "seed": 3,
+    "share": 0.24956140350877193
+   },
+   {
+    "a": "desert_world",
+    "seed": 4,
+    "share": 0.2902621722846442
+   },
+   {
+    "a": "desert_world",
+    "seed": 5,
+    "share": 0.2708333333333333
+   },
+   {
+    "a": "desert_world",
+    "seed": 6,
+    "share": 0.2631578947368421
+   },
+   {
+    "a": "desert_world",
+    "seed": 7,
+    "share": 0.31899641577060933
+   },
+   {
+    "a": "desert_world",
+    "seed": 8,
+    "share": 0.3079710144927536
+   },
+   {
+    "a": "frozen_world",
+    "seed": 1,
+    "share": 0.284375
+   },
+   {
+    "a": "frozen_world",
+    "seed": 2,
+    "share": 0.29118773946360155
+   },
+   {
+    "a": "frozen_world",
+    "seed": 3,
+    "share": 0.29069767441860467
+   },
+   {
+    "a": "frozen_world",
+    "seed": 4,
+    "share": 0.2558139534883721
+   },
+   {
+    "a": "frozen_world",
+    "seed": 5,
+    "share": 0.31470588235294117
+   },
+   {
+    "a": "frozen_world",
+    "seed": 6,
+    "share": 0.28740530303030304
+   },
+   {
+    "a": "frozen_world",
+    "seed": 7,
+    "share": 0.3055555555555556
+   },
+   {
+    "a": "frozen_world",
+    "seed": 8,
+    "share": 0.3175287356321839
+   }
+  ],
+  "response": {
+   "region": "Amber Shelf",
+   "nativeTilesOpen": [
+    218,
+    5
+   ],
+   "nativeTilesPlayerHeld": [
+    0,
+    0
+   ]
+  },
+  "strongFront": [
+   {
+    "region": "Gold Dunes",
+    "start": {
+     "p": 49,
+     "n": 73
+    },
+    "ends": [
+     {
+      "p": 116,
+      "n": 6
+     },
+     {
+      "p": 115,
+      "n": 7
+     },
+     {
+      "p": 116,
+      "n": 6
+     }
+    ],
+    "net": 66.66666666666667
+   },
+   {
+    "region": "Pale Pan",
+    "start": {
+     "p": 36,
+     "n": 45
+    },
+    "ends": [
+     {
+      "p": 49,
+      "n": 32
+     },
+     {
+      "p": 47,
+      "n": 34
+     },
+     {
+      "p": 57,
+      "n": 24
+     }
+    ],
+    "net": 15
+   }
+  ],
+  "adapt": {
+   "trait": "rad",
+   "region": "Wadi Shelf",
+   "playerFitness": [
+    0.9,
+    1
+   ],
+   "nativeFitness": 0.975,
+   "frontNet": {
+    "a": -40.333333333333336,
+    "b": 40
+   }
+  },
+  "terraform": [
+   {
+    "trait": "humid",
+    "nativeWorse": [
+     "Wadi Shelf"
+    ],
+    "nativeBetter": [
+     "Chalk Dunes",
+     "Glass Erg",
+     "Amber Shelf"
+    ],
+    "advantageFlips": [
+     "Amber Shelf"
+    ]
+   },
+   {
+    "trait": "dry",
+    "nativeWorse": [
+     "Gold Dunes",
+     "Amber Shelf"
+    ],
+    "nativeBetter": [],
+    "advantageFlips": [
+     "Wadi Shelf"
+    ]
+   },
+   {
+    "trait": "warm",
+    "nativeWorse": [],
+    "nativeBetter": [],
+    "advantageFlips": []
+   },
+   {
+    "trait": "cool",
+    "nativeWorse": [
+     "Pale Pan"
+    ],
+    "nativeBetter": [],
+    "advantageFlips": [
+     "Pale Pan"
+    ]
+   }
+  ],
+  "witnessReplay": [
+   {
+    "fixture": "primary",
+    "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2)",
+    "earned": 1418,
+    "spent": 1110,
+    "nativeStart": 0.26773049645390073,
+    "nativePeak": 0.41312056737588654,
+    "flips": {
+     "playerTook": 728,
+     "nativeTook": 405,
+     "nativeSpread": 326,
+     "nativeReceded": 0
+    }
+   },
+   {
+    "fixture": "primary",
+    "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(2)",
+    "earned": 1776,
+    "spent": 1170,
+    "nativeStart": 0.26773049645390073,
+    "nativePeak": 0.41312056737588654,
+    "flips": {
+     "playerTook": 1065,
+     "nativeTook": 623,
+     "nativeSpread": 326,
+     "nativeReceded": 0
+    }
+   },
+   {
+    "fixture": "ocean",
+    "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)",
+    "earned": 2070,
+    "spent": 1510,
+    "nativeStart": 0.2597402597402597,
+    "nativePeak": 0.4090909090909091,
+    "flips": {
+     "playerTook": 408,
+     "nativeTook": 208,
+     "nativeSpread": 138,
+     "nativeReceded": 0
+    }
+   },
+   {
+    "fixture": "frozen",
+    "signature": "Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1)",
+    "earned": 1059,
+    "spent": 680,
+    "nativeStart": 0.27888257575757575,
+    "nativePeak": 0.3697916666666667,
+    "flips": {
+     "playerTook": 1029,
+     "nativeTook": 652,
+     "nativeSpread": 253,
+     "nativeReceded": 0
+    }
+   }
+  ],
+  "edenUnderCompetition": [
+   {
+    "sig": "Water:dry=Adapt(2)",
+    "peak": 0.4348,
+    "ok": false
+   },
+   {
+    "sig": "Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)",
+    "peak": 0.6046,
+    "ok": false
+   }
+  ],
+  "roots": {
+   "region": "Pale Pan",
+   "balanced": 32.5,
+   "roots": 50,
+   "lostBalanced": 36,
+   "lostRoots": 24.5
+  },
+  "seeds": {
+   "region": "Gold Dunes",
+   "tookBalanced": 46.666666666666664,
+   "tookSeeds": 61.166666666666664
+  },
+  "leaves": {
+   "secureIncomeBalanced": 323.252223390944,
+   "secureIncomeLeaves": 484.8783350864162,
+   "contestedEndBalanced": 32.166666666666664,
+   "contestedEndLeaves": 28.333333333333332
+  },
+  "events": [
+   {
+    "type": "contested",
+    "region": "Oasis Basin",
+    "seconds": 72.5
+   },
+   {
+    "type": "playerAdvantage",
+    "region": "Oasis Basin",
+    "seconds": 72.5
+   },
+   {
+    "type": "playerAdvantage",
+    "region": "Amber Canyon",
+    "seconds": 250.7
+   },
+   {
+    "type": "playerAdvantage",
+    "region": "Amber Canyon",
+    "seconds": 343
+   }
+  ],
+  "browserWin": {
+   "buys": [
+    "seedOut @ 31 s",
+    "salt @ 107 s",
+    "rad @ 183 s",
+    "drought @ 242 s",
+    "drought @ 358 s",
+    "heat @ 404 s"
+   ],
+   "winSeconds": 468,
+   "coverage": 0.700354609929078,
+   "native": 0.2983156028368794,
+   "nativePeak": 0.41400709219858156
+  }
+ }
+}

@@ -10,7 +10,7 @@ Dying World's decline was also shortened to fit the faster game. This re-test ch
 
 **Time needed:** two short runs, about 5–12 minutes each, plus four quick answers per run.
 
-**Gate status:** ☐ not yet played. Dying World stays **REVISE** until this re-test says otherwise.
+**Gate status:** ✅ **passed with notes** (owner, recorded 2026-10-02 in BLOOM-014): *"seems better, lets move on."* The BLOOM-013 economy is human-approved and the Dying World gate is passed with notes. The answers below were not filled in.
 
 ## Before you play
 
@@ -43,4 +43,4 @@ A sentence each is plenty; "not sure" is a useful answer.
 | 1 | | |
 | 2 | | |
 
-**Owner verdict:** ☐ pass ☐ pass with notes ☐ not yet (what should change first?)
+**Owner verdict:** ☐ pass ☒ pass with notes ☐ not yet — *"seems better, lets move on."*

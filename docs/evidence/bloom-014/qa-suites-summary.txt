@@ -1,0 +1,14 @@
+sim-check rc=0 2s 19 | ALL CHECKS PASS
+gen-check rc=0 4s 47 | ALL CHECKS PASS
+crossing-check rc=0 2s 14 | ALL CHECKS PASS
+archetype-check rc=0 43s 40 | ALL CHECKS PASS  (43.0 s)
+strategy-check rc=0 18s 36 | ALL CHECKS PASS  (18.1 s)
+desert-check rc=0 40s 64 | ALL CHECKS PASS  (40.2 s)
+frozen-check rc=0 54s 70 | ALL CHECKS PASS  (54.4 s)
+dying-world-check rc=0 32s 63 | ALL CHECKS PASS  (31.9 s)
+slice-check rc=0 9s 15 | ALL CHECKS PASS
+surface-check rc=0 2s 11 | ALL CHECKS PASS
+procedural-run-check rc=0 15s 32 | ALL CHECKS PASS  (14.3 s)
+colony-development-check rc=0 25s 68 | ALL CHECKS PASS  (25.0 s)
+economy-check rc=0 250s 39 | ALL CHECKS PASS  (250.1 s)
+native-competition-check rc=0 113s 66 | ALL CHECKS PASS  (113.0 s)

@@ -2,6 +2,7 @@
 // (tools/economy-check.js holds the pass/fail proofs; it reuses this file's measurements).
 //
 //   node tools/economy-study.js [--json <out.json>] [--seeds N] [--quick] [--brief] [--worlds fb,o13,d25,f22,o13dw,d25dw,f22dw]
+//                               (BLOOM-014, opt-in, not in the default set: --worlds d25nc,o13nc,f22nc = Native Competition)
 //                               [--set econ.startBiomass=100,traits.seedOut.base=20,…]
 //
 // The question is not "how fast is a run" but "how long does a player wait between meaningful Biomass decisions".
@@ -78,6 +79,18 @@ const WORLDS = [
     cold3: ["seedOut", "drought", "cold", "cold", "cold"], coldWarm: ["seedOut", "drought", "rad", "cold", "cold", "warm"],
     ignoreCold2: ["seedOut", "earlyMat", "cold", "cold"] }],
 ];
+// BLOOM-014: Native Competition worlds (a competing native organism; no clock). Opt-in only (--worlds …), so the default
+// world set — and tools/economy-check.js, which runs it — is exactly BLOOM-013's. Recipes = the layer-P witnesses' plans +
+// "ignore…" recipes (the planet's Eden strategy, bought as if the planet were empty).
+const COMPETITION_WORLDS = [
+  ["d25nc", "Desert World 25 · Native Competition", "desert_world", 25, 0, "native_competition", {
+    adapt: ["seedOut", "salt", "rad", "drought", "drought", "heat"], terraform: ["seedOut", "salt", "rad", "drought", "drought", "cool"],
+    ignoreDrought2: ["seedOut", "drought", "drought"], ignoreHumidify: ["seedOut", "drought", "humid", "rad", "heat"] }],
+  ["o13nc", "Ocean Archipelago 13 · Native Competition", "ocean_archipelago", 13, 6, "native_competition", {
+    witness: ["seedOut", "waterSeeds", "salt", "rad", "heat", "dry", "dry", "drought"], ignoreColdSalt: ["seedOut", "waterSeeds", "salt", "cold"], ignoreHeatRad: ["seedOut", "waterSeeds", "rad", "heat"] }],
+  ["f22nc", "Frozen World 22 · Native Competition", "frozen_world", 22, 1, "native_competition", {
+    coldHeat: ["seedOut", "heat", "cold", "cold"], coldRad: ["seedOut", "rad", "cold", "cold"], ignoreCold2: ["seedOut", "earlyMat", "cold", "cold"] }],
+];
 // colony rows: [allocation policy, investment policy]
 // "player" = situational allocation + one Leaf Canopy on the origin + Spread upgrades after the recipe (a reasonable human)
 const ROWS_FULL = [["balanced", "none"], ["situational", "none"], ["situational", "canopyOrigin"], ["situational", "canopyOrigin", "extend"],
@@ -92,9 +105,10 @@ function planetOf(W) {
 // ---- per-world context: the strategy cores the meaningful-option rule reads (static; no simulation)
 function context(W, config, traits, scenarios = BLOOM_DATA.scenarios) {
   const planet = planetOf(W), scenario = BLOOM.pressure.resolveScenario(scenarios, W[5]);
-  const classes = BLOOM.witness.strategyClasses(planet, config, traits, { scenario: scenario.pressure ? scenario : null });
+  const dyn = BLOOM.pressure.isDynamic(scenario) ? scenario : null; // (pressure and/or competition; Eden = none, as before)
+  const classes = BLOOM.witness.strategyClasses(planet, config, traits, { scenario: dyn });
   const cores = classes.map(c => c.core.reduce((m, id) => (m[id] = (m[id] || 0) + 1, m), {}));
-  return { planet, scenario: scenario.pressure ? scenario : null, cores, classes: classes.length };
+  return { planet, scenario: dyn, cores, classes: classes.length };
 }
 const owned = (sim, t) => t.effect.type === "sky" ? sim.tf[t.id] : sim.ownedTier(t);
 function meaningfulGlobal(sim, t, X) {
@@ -211,10 +225,10 @@ function priceTable(config, traits) {
 
 function study({ spec = "", seeds, worlds, rows, bubbleModes }) {
   const { config, traits, scenarios } = withOverrides(spec), out = { set: spec, prices: priceTable(config, traits), econ: config.econ, specCost: config.colony.specCost, worlds: {} };
-  for (const W of WORLDS.filter(w => worlds.includes(w[0]))) out.worlds[W[0]] = studyWorld(W, config, traits, seeds, rows, bubbleModes, scenarios);
+  for (const W of [...WORLDS, ...COMPETITION_WORLDS].filter(w => worlds.includes(w[0]))) out.worlds[W[0]] = studyWorld(W, config, traits, seeds, rows, bubbleModes, scenarios);
   return out;
 }
-module.exports = { study, WORLDS, withOverrides, options, meaningfulGlobal, context, cadence, opening, priceTable };
+module.exports = { study, WORLDS, COMPETITION_WORLDS, withOverrides, options, meaningfulGlobal, context, cadence, opening, priceTable };
 if (require.main !== module) return;
 
 const QUICK = process.argv.includes("--quick"), BRIEF = process.argv.includes("--brief"), NSEEDS = +arg("--seeds", QUICK || BRIEF ? 4 : 8), OUT = arg("--json", null);

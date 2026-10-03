@@ -46,6 +46,13 @@
   a faint haze over the map that thickens with the decline, milestone messages at the scenario's phase thresholds, short
   outlines + messages when a living region tips toward its limit, the drift in the inspect panel, an extinction screen
   (with restart) and the scenario's final state in the Bloom Report. QA: tools/dying-world-check.js.
+  BLOOM-014 (temporary functional UI, not the final layout): competition scenarios (any scenario with a `competition` block,
+  launched with &scenario=<id>). Native vegetation is drawn from the engine's real tile state (sim.competition.native) as a
+  hatched violet stand that thickens with its density; amber lines mark the fronts where it touches the player's plants. The
+  inspect panel adds a short competition readout (who has the advantage here and why, in plain words); a slim status bar under
+  the HUD shows native-held land, its trend and the contested regions (no clock: there is none); engine events (first contact,
+  your advantage, native retakes, native-dominated region) become messages + short outlines; Terraform previews also say where
+  the new sky suits the native plants more or less; the Bloom Report adds one competition line. QA: tools/native-competition-check.js.
 -->
 <style>
   :root{
@@ -199,6 +206,19 @@
   .press{margin:8px 0; padding:8px; border-radius:5px; background:#1d1630; border:1px solid #4b3b6e; color:#d9cff0; font-size:11px}
   .press b{color:#ffcf9a}
   .report.lost h2{color:var(--bad)}
+  /* BLOOM-014: competition (temporary): status bar under the HUD, inspect readout, report line */
+  .cbar{flex:1 0 100%; display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:6px 12px; margin:2px 0 0; border-radius:8px;
+    background:linear-gradient(180deg,#22172c,#1a1224); border:1px solid #5a3f72; font-size:14px; color:#eadcf5; transition:box-shadow .3s, border-color .3s}
+  .cbar.pulse{border-color:#ffb347; box-shadow:0 0 16px rgba(255,179,71,.6)}
+  .cbar .cid{font-weight:700; letter-spacing:1px; color:#d9b3f0; white-space:nowrap}
+  .cbar b{color:#fff} .cbar .ctrend{font-weight:700; white-space:nowrap} .cbar .up{color:#e8a0ff} .cbar .dn{color:#9fe3a0} .cbar .flat{color:#b9a8cc}
+  .cbar .key{margin-left:auto; color:#b9a8cc; font-size:12px; white-space:nowrap}
+  .cbar .sw{display:inline-block; width:14px; height:14px; vertical-align:-2px; border-radius:2px; margin-right:4px;
+    background:repeating-linear-gradient(135deg,#7a4ea0 0 3px,#b892d6 3px 5px)}
+  .cbar .fr{display:inline-block; width:16px; height:3px; vertical-align:3px; margin:0 4px 0 10px; background:#ffb347}
+  .comp{margin:8px 0; padding:8px; border-radius:5px; background:#1f1529; border:1px solid #5a3f72; color:#e3d4f0; font-size:12px}
+  .comp .ch{font-size:13px} .comp .ch b{color:#fff} .comp.mine{border-color:#3f7a4f; background:#14221a} .comp.theirs{border-color:#8a4a6a; background:#2a1522}
+  .comp .cw{margin-top:4px; color:#cdbde0; font-size:11px; line-height:1.45} .comp .cn{color:var(--dim); font-size:11px; margin-top:3px}
   details.fsci{margin-top:6px} details.fsci summary{cursor:pointer; color:var(--dim); font-size:11px}
   details.fsci p{margin:4px 0 0; font-size:11px; color:var(--dim)}
 </style>
@@ -262,6 +282,8 @@ const sim=BLOOM.createSim(BLOOM_RUN.planet, BLOOM_DATA.config, BLOOM_DATA.traits
 const CFG=sim.config;
 // BLOOM-012: the run's pressure scenario (null / Eden = no pressure: every readout below is exactly as before)
 const SCN=BLOOM_RUN.scenario||null, PRESS=!!(SCN&&SCN.pressure), PS=sim.pressure;
+// BLOOM-014: a competition scenario (the engine's native layer); SCEN = the run has any scenario mechanics at all
+const CS=sim.competition, COMP=!!CS.enabled, SCEN=PRESS||COMP;
 const {W,H,N,SEC,SC,SIDX,ORIGIN,TILEMAP,AREA,CENT,SEC_TILES}=sim.map;
 const {state,dens,vigor,secFit,bubbles,genome,tf,BAR,LIV,DEAD}=sim, G=sim.sky;
 const {evaluate,lampOf,livingCountBySection}=sim;
@@ -328,6 +350,10 @@ const DFULL=0.78; // stand density at which the plant patch fills its tile
 const patchFrac=d=>0.24+0.76*Math.pow(clamp((d-0.03)/(DFULL-0.03),0,1),0.8); // share of the tile side the patch covers
 // small fixed per-tile offset so young patches sit irregularly (organic) rather than in a perfect grid; 0 once full
 const JIT=new Float32Array(N*2); for(let i=0;i<N;i++){ const h=Math.imul(i^0x9e3779b9,0x85ebca6b)>>>0; JIT[2*i]=((h&255)/255-0.5)*0.8; JIT[2*i+1]=(((h>>8)&255)/255-0.5)*0.8; }
+// BLOOM-014: native vegetation = a violet stand (pale when sparse, deep plum when dense) PLUS a diagonal hatch, so it never
+// reads by colour alone: player stands are solid squares, native stands are hatched; fronts are amber lines on tile edges
+const NAT_SPARSE=[178,146,204], NAT_DENSE=[92,52,128], NAT_HATCH="rgba(232,214,250,0.75)", FRONT_C="#ffb347";
+const nativeColor=d=>mix(NAT_SPARSE,NAT_DENSE,Math.pow(clamp(d,0,1),0.8));
 const DEAD_C=[92,66,44], WATER_C=(RENDER&&RENDER.water)||[24,52,92], WATER_C2=(RENDER&&RENDER.waterAlt)||[30,62,104];
 const DUNE=!!(RENDER&&RENDER.dunes), duneAt=(x,y)=>(x*7+y*13+((y>>1)*3))%9===0; // sparse, fixed stipple on bare ground
 const FROST=!!(RENDER&&RENDER.frost), frostAt=(x,y)=>(x*5+y*11+((x>>2)*3))%8===0; // ice glints on bare ground below FROST_BELOW °C
@@ -339,6 +365,7 @@ function draw(){
   ctx.clearRect(0,0,cv.width,cv.height);
   if(PRESS){ const k=skyNow(); DRAW_T=k.t; DRAW_M=k.m; } else { DRAW_T=G.temp; DRAW_M=G.moist; }
   const frosty=FROST?SEC.map(s=>DRAW_T+s.local.tempOffset<FROST_BELOW):null; // (live: warming the sky melts the glints)
+  const natHatch=[]; // native tiles drawn this frame (x, y, density) → one hatch path after the ground pass
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){
     const i=y*W+x,s=TILEMAP[i]; let c;
     if(s<0) c=((x+y)%7===0)?WATER_C2:WATER_C; // water: never colonizable, not in the coverage denominator
@@ -347,12 +374,19 @@ function draw(){
       const sz=TILE*f, o=(TILE-sz)/2, ox=o*JIT[2*i], oy=o*JIT[2*i+1]; ctx.fillStyle=rgb(livingColor(dens[i],vigor[s]));
       ctx.fillRect(x*TILE+o+ox,y*TILE+o+oy,sz+(f<1?0:.5),sz+(f<1?0:.5)); continue; }
     else if(state[i]===DEAD) c=DEAD_C;
+    else if(COMP&&CS.native[i]>0){ const d=CS.native[i]; ctx.fillStyle=rgb(mix(barrenColor(s),nativeColor(d),0.45+0.55*clamp(d/0.8,0,1)));
+      ctx.fillRect(x*TILE,y*TILE,TILE+.5,TILE+.5); natHatch.push(x,y,d); continue; }
     else c=barrenColor(s);
     ctx.fillStyle=rgb(c); ctx.fillRect(x*TILE,y*TILE,TILE+.5,TILE+.5);
     if(DUNE&&state[i]===BAR&&duneAt(x,y)){ ctx.fillStyle=rgb(mix(c,[236,206,150],0.35)); ctx.fillRect(x*TILE+TILE*.15,y*TILE+TILE*.55,TILE*.7,Math.max(1,TILE*.14)); } // a wind ripple
     if(FROST&&state[i]===BAR&&s>=0&&frosty[s]&&frostAt(x,y)){ const g=Math.max(1,TILE*.16); ctx.fillStyle=rgb(mix(c,[236,244,255],0.6)); // a small ice glint
       ctx.fillRect(x*TILE+TILE*.3,y*TILE+TILE*.3,g,g); ctx.fillRect(x*TILE+TILE*.3+g,y*TILE+TILE*.3+g,g,g); ctx.fillRect(x*TILE+TILE*.62,y*TILE+TILE*.62,g,g); }
   }
+  if(natHatch.length){ ctx.strokeStyle=NAT_HATCH; ctx.lineWidth=Math.max(1,TILE*0.12); ctx.beginPath(); // "/" marks: one on a young stand, two on a dense one
+    for(let k=0;k<natHatch.length;k+=3){ const x=natHatch[k]*TILE, y=natHatch[k+1]*TILE, d=natHatch[k+2];
+      if(d>0.45){ ctx.moveTo(x+TILE*0.12,y+TILE*0.55); ctx.lineTo(x+TILE*0.55,y+TILE*0.12); ctx.moveTo(x+TILE*0.45,y+TILE*0.88); ctx.lineTo(x+TILE*0.88,y+TILE*0.45); }
+      else { ctx.moveTo(x+TILE*0.25,y+TILE*0.75); ctx.lineTo(x+TILE*0.75,y+TILE*0.25); } }
+    ctx.stroke(); }
   // BLOOM-012: a faint haze over the whole map that thickens as the atmosphere thins (temporary feedback, not weather art)
   if(PRESS&&PS.progress>0){ ctx.fillStyle=`rgba(200,182,226,${(0.22*PS.progress).toFixed(3)})`; ctx.fillRect(0,0,W*TILE,H*TILE); }
   // purchase preview tint: green = would open, red = would close
@@ -365,6 +399,12 @@ function draw(){
     if(y+1>=H||TILEMAP[(y+1)*W+x]!==s){ctx.moveTo(x*TILE,(y+1)*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);} if(y===0){ctx.moveTo(x*TILE,0);ctx.lineTo((x+1)*TILE,0);}
   }
   ctx.stroke();
+  // BLOOM-014 fronts: an amber line on every tile edge where a Living player tile touches native cover
+  if(COMP){ ctx.strokeStyle=FRONT_C; ctx.lineWidth=Math.max(2,TILE*0.2); ctx.beginPath(); const NA=CS.native, liv=t=>state[t]===LIV, nat=t=>NA[t]>0;
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const i=y*W+x;
+      if(x+1<W&&((liv(i)&&nat(i+1))||(nat(i)&&liv(i+1)))){ ctx.moveTo((x+1)*TILE,y*TILE+1); ctx.lineTo((x+1)*TILE,(y+1)*TILE-1); }
+      if(y+1<H&&((liv(i)&&nat(i+W))||(nat(i)&&liv(i+W)))){ ctx.moveTo(x*TILE+1,(y+1)*TILE); ctx.lineTo((x+1)*TILE-1,(y+1)*TILE); } }
+    ctx.stroke(); }
   // selection + purchase preview outlines
   if(selected>=0) outline(selected,"#7fe3c0",3);
   if(preview){ preview.gain.forEach(i=>outline(i,"#66d17f",3,[6,4])); preview.lose.forEach(i=>outline(i,"#e2604f",3,[6,4]));
@@ -376,6 +416,8 @@ function draw(){
     sk.better.forEach(i=>outline(i,"#b6f0a8",2,[2,4])); sk.worse.forEach(i=>outline(i,"#f0a050",2,[2,4])); }
   // BLOOM-012: regions the scenario's decline just pushed across a threshold (orange = worse, pale green = opened)
   if(PRESS){ const now=performance.now(); for(const x of PX_FX) if(now<x.until) outline(x.sec,x.worse?"#ff9a50":"#b6f0a8",3,[5,3]); }
+  // BLOOM-014: a region a competition event just named (amber = the native gained, mint = your plant gained, violet = contact)
+  if(COMP){ const now=performance.now(); for(const x of CX_FX) if(now<x.until) outline(x.sec,x.color,3,[5,3]); }
   // bubbles
   for(const b of bubbles){ const px=b.x*TILE,py=b.y*TILE, r=Math.max(4,TILE*0.42);
     ctx.beginPath(); ctx.arc(px,py,r,0,7); ctx.fillStyle="rgba(255,212,121,0.92)"; ctx.fill();
@@ -471,7 +513,7 @@ function renderInspect(){
   if(selected<0&&selectedWater){ more.innerHTML=""; el.innerHTML=`<h2>WATER</h2><div class="secname">Open water</div><div class="geo">🌊 Not land: nothing grows here and it does not count toward coverage. Ordinary spread cannot cross water${CROSS_T?`; ${CROSS_T.name} carries seeds over gaps of up to ${CFG.crossing.maxGap} water tiles`:""}.</div>`; return; }
   if(selected<0){ more.innerHTML=""; el.innerHTML='<h2>SECTION</h2><p style="color:var(--dim);font-style:italic">Click a region to read it. The plant starts in its protected origin (★) and spreads into suitable ground on its own. Click a region your plant lives in to set its growth focus or buy it a local upgrade.</p>'; return; }
   const s=SEC[selected], e=evaluate(selected), liv=livingCountBySection()[selected];
-  let dead=0,barr=0; for(const t of SEC_TILES[selected]){ if(state[t]===DEAD)dead++; else if(state[t]===BAR)barr++; }
+  let dead=0,barr=0,natv=0; for(const t of SEC_TILES[selected]){ if(state[t]===DEAD)dead++; else if(COMP&&CS.native[t]>0)natv++; else if(state[t]===BAR)barr++; }
   const total=AREA[selected];
   const catRow=k=>{ const c=e.cats[k]; return `<div class="cat"><span class="lamp ${c.soft&&c.f>CFG.categories.lamp.green?"yellow":lampOf(c.f)}"></span><span class="lbl">${k}</span><span class="st">${c.word}</span>${e.terraformable[k]?'<span class="tag">terraformable</span>':''}</div>`; };
   // BLOOM-011: the temperature as numbers, so the two answers to cold read differently — Cold Tolerance lowers the
@@ -485,12 +527,12 @@ function renderInspect(){
   el.innerHTML=`<h2>SECTION</h2>
     <div class="secname">${LABEL[selected]}${s.isOrigin?'<span class="badge">★ ORIGIN</span>':''}</div>
     <div class="cats">${catRow("Temperature")}${catRow("Water")}${catRow("Soil")}${catRow("Hazard")}</div>${tline}
-    ${limitHtml}${pressNote(selected,e)}${geoNote(selected)}${thermNote(selected)}
+    ${limitHtml}${pressNote(selected,e)}${compNote(selected)}${geoNote(selected)}${thermNote(selected)}
     <div class="colony" id="colony">Colony: <span class="cw">${COLONY_WORD[cs.word]}</span> <span style="color:var(--dim)">· ${pct}% established</span>
       <div class="dbar"><i style="width:${pct}%"></i></div><div class="fixhint">${COLONY_HINT[cs.word]}</div></div>`;
   more.innerHTML=`<div class="vitals">vigor ${Math.round(vigor[selected]*100)}%
       <div class="vbar"><i class="vl" style="width:${liv/total*100}%"></i><i class="vd" style="width:${dead/total*100}%"></i><i class="vb" style="flex:1"></i></div>
-      <div style="color:var(--dim);margin-top:3px">living ${liv} · dead ${dead} · barren ${barr}</div>
+      <div style="color:var(--dim);margin-top:3px">living ${liv} · dead ${dead} · barren ${barr}${COMP?` · native plants ${natv}`:""}</div>
     </div>
     <details class="raw"${rawOpen?' open':''}><summary>raw signals ▾</summary>
       <table class="kv">
@@ -531,6 +573,10 @@ const MATCH_NOTE=`When the colony's focus matches its upgrade, the upgrade works
 // a short, situation-based tip (young / stressed / frontier / mature), from what the player can see in this panel
 function colonyTip(i){
   const e=evaluate(i), cs=sim.colonyStatus(i), liv=livingCountBySection()[i]; if(!liv) return "";
+  if(COMP){ const c=sim.competitionAt(i); // (BLOOM-014) a front: the same three tools, read for competition
+    if(c.contact&&c.side==="native"&&c.playerFitness>CM.protectAbove) return "Native plants are pushing in here: Roots thicken this colony so it holds. Roots cannot help where your plant is poorly suited.";
+    if(c.contact&&c.side!=="native") return "This colony is on a front it can win: Seeds push into native cover faster.";
+    if(!c.contact&&cs.establishment>=CFG.establish.status.established&&!c.nativeTiles) return "Safe behind the front and established: Leaves turn it into a Biomass producer."; }
   if(e.fitness<=CFG.categories.lamp.green&&e.fitness>CM.protectAbove) return "This ground is marginal for your plant: Roots help a colony hold on here.";
   if(cs.establishment<CFG.establish.status.established) return "A young colony: Roots thicken it up; Seeds fill the open ground faster.";
   let open=0; for(const t of SEC_TILES[i]) if(state[t]===BAR) open++;
@@ -674,6 +720,77 @@ function checkThresholds(now){
   for(let k=PX_FX.length-1;k>=0;k--) if(now>PX_FX[k].until) PX_FX.splice(k,1);
 }
 
+/* ---- competition readouts (BLOOM-014; temporary functional UI). Every number is the engine's live competition state
+   (sim.competition, sim.competitionAt); the words explain the engine's own contest rule: the better-suited organism pushes,
+   an established colony holds, a young one can be overgrown. ---- */
+const SIDE_UI={ player:{icon:"▲", name:"Your advantage", cls:"mine"}, native:{icon:"▼", name:"Native advantage", cls:"theirs"},
+  even:{icon:"◆", name:"Even contest", cls:""}, none:{icon:"—", name:"No native plants here", cls:""} };
+const NLIM={ cold:"too cold for them", hot:"too hot for them", dry:"too dry for them", wet:"too wet for them", salt:"too salty for them", hazard:"too harsh (radiation/toxicity) for them" };
+const suitWord=f=>f>CFG.categories.lamp.green?"well":f>CFG.grow.growThresh?"only partly":"poorly";
+function compWhy(i,c){
+  const youSuit=c.playerFitness, theySuit=c.nativeFitness, young=c.playerTiles>0&&c.playerMaturity<CFG.establish.status.established;
+  if(c.side==="none") return c.nativeCanGrow?"Native vegetation could spread in here: this ground suits it. Plants already growing here block it."
+    :`Native plants cannot spread here: it is ${NLIM[c.nativeLimitSide]||"unsuitable for them"}.`;
+  if(c.side==="native"){
+    if(!c.playerCanGrow) return "Your plant cannot grow here, so the native plants keep this ground.";
+    if(theySuit>youSuit+0.05) return `The native plants are better suited to this ground than your plant${youSuit>CFG.categories.lamp.green?" (yours grows well here, theirs grows even better)":` (it suits yours only ${suitWord(youSuit)==="poorly"?"poorly":"partly"})`}, so they push into your plants where they meet.`;
+    if(young) return "Your colony here is still young, so established native plants are reclaiming space. Established colonies hold; Roots thicken a young colony faster.";
+    return "The native plants here are more established than your plants, so they are holding and reclaiming space.";
+  }
+  if(c.side==="player"){
+    if(youSuit>theySuit+0.05) return `Your plant is better suited here (the ground is ${NLIM[c.nativeLimitSide]||"less ideal for them"}), so your colony is pushing native cover back.`;
+    return "Both plants suit this ground, but your colony is more established here, so it is pushing native cover back.";
+  }
+  return "Both plants suit this ground about equally. The more established side holds; this front moves slowly. Strengthening your colony here, or changing what suits each plant, tips it.";
+}
+function compNote(i){
+  if(!COMP) return ""; const c=sim.competitionAt(i), u=SIDE_UI[c.side], pct=x=>Math.round(x*100);
+  const trend=c.recent.gained+c.recent.lost>=1?` · lately: you took ${Math.round(c.recent.gained)}, they took ${Math.round(c.recent.lost)} tiles`:"";
+  return `<div class="comp ${u.cls}" id="compNote"><div class="ch">🌿 Competition: <b id="compSide">${u.icon} ${u.name}</b>${c.contested?' <span class="badge">CONTESTED</span>':""}</div>
+    <div class="cn">native cover <b>${pct(c.nativeShare)}%</b> · your plants <b>${pct(c.playerShare)}%</b> · suits you ${pct(Math.min(1,c.playerFitness))}% · suits them ${pct(Math.min(1,c.nativeFitness))}%${trend}</div>
+    <div class="cw" id="compWhy">${compWhy(i,c)}</div></div>`;
+}
+// the status bar: native-held land (share of the land, same denominator as your coverage), its trend, contested regions and
+// who leads in them. Never a countdown: competition has no clock.
+const CHIST=[]; let cbarText="";
+function buildCompBar(){
+  if(!COMP) return; const el=document.createElement("div"); el.className="cbar"; el.id="cbar";
+  el.innerHTML=`<span class="cid" id="cId">🌿 ${SCN.display.title.toUpperCase()}</span><span>native plants hold <b id="cNative"></b> of the land</span>
+    <span class="ctrend" id="cTrend"></span><span>contested regions <b id="cCont"></b></span><span id="cLead"></span>
+    <span class="key"><i class="sw"></i>native plants<i class="fr"></i>front</span>`;
+  el.title=SCN.display.summary; document.querySelector("header").appendChild(el);
+}
+function compTrend(){ // native share now vs ~20 game-seconds ago (samples every 2 s of game time)
+  const per=Math.round(2000/CFG.tickMs); if(!CHIST.length||sim.ticks-CHIST[CHIST.length-1].t>=per){ CHIST.push({t:sim.ticks, v:CS.share}); if(CHIST.length>12) CHIST.shift(); }
+  const d=CS.share-CHIST[0].v; return d>0.005?["up","▲ spreading"]:d<-0.005?["dn","▼ retreating"]:["flat","steady"]; }
+function renderComp(){
+  if(!COMP) return; const t=compTrend(); let mine=0, theirs=0; SEC.forEach((_,i)=>{ const R=CS.regions[i]; if(R.contested){ if(R.side==="player") mine++; else if(R.side==="native") theirs++; } });
+  const vals=[`${Math.round(CS.share*100)}%`, t[1], t[0], `${CS.contested}`, CS.contested?`you lead ${mine} · natives lead ${theirs}`:""];
+  const key=vals.join("|"); if(key===cbarText) return; cbarText=key;
+  document.getElementById("cNative").textContent=vals[0]; const tr=document.getElementById("cTrend"); tr.textContent=vals[1]; tr.className="ctrend "+vals[2];
+  document.getElementById("cCont").textContent=vals[3]; document.getElementById("cLead").textContent=vals[4];
+}
+// competition events (sim.competition.events — real engine transitions): one message + a short outline each
+const CX_FX=[], CX_HIST=[]; let cxSeen=0;
+const CX_MSG={ contested:n=>`🌿 First contact in ${n}: your plant has met native vegetation. Where they meet, the better-suited plant pushes, and established colonies hold.`,
+  playerAdvantage:n=>`🌿 Your plant has the advantage in ${n} and is pushing native cover back.`,
+  nativeRetake:n=>`🌿 Native plants are reclaiming ground in ${n}: your colony there is losing space.`,
+  nativeDominated:n=>`🌿 ${n} is now dominated by native vegetation.` };
+const CX_COLOR={ contested:"#c79af0", playerAdvantage:"#7fe3c0", nativeRetake:"#ffb347", nativeDominated:"#ffb347" };
+function pollCompetition(now){
+  if(!COMP) return;
+  for(const ev of CS.events){ if(ev.id<=cxSeen) continue; cxSeen=ev.id;
+    CX_HIST.push({type:ev.type, sec:ev.sec, name:LABEL[ev.sec], tick:ev.tick}); CX_FX.push({sec:ev.sec, color:CX_COLOR[ev.type], until:now+6000});
+    log(CX_MSG[ev.type](LABEL[ev.sec])); const b=document.getElementById("cbar"); b.classList.add("pulse"); setTimeout(()=>b.classList.remove("pulse"),1800); }
+  for(let k=CX_FX.length-1;k>=0;k--) if(now>CX_FX[k].until) CX_FX.splice(k,1);
+}
+// Terraform + natives: regions holding (or touching) native cover where the new sky suits the native plants clearly less / more
+function nativeSkyShift(before,after){
+  const nb=[], nw=[]; if(!COMP) return {nb,nw};
+  SEC.forEach((_,i)=>{ const c=sim.competitionAt(i); if(!c.nativeTiles&&!c.contact) return; const d=after[i]-before[i];
+    if(d<=-0.1) nb.push(i); else if(d>=0.1) nw.push(i); });
+  return {nb,nw}; } // nb = suits them less (good for you), nw = suits them more
+
 /* ---- upgrade catalogue = content/traits.js; prices/effects/rules = engine ---- */
 const UP=sim.traits, upById=sim.traitById;
 // BLOOM-011 Terraform readability: what a sky change does to EVERY region, not only the ones that switch between open and
@@ -681,10 +798,10 @@ const UP=sim.traits, upById=sim.traitById;
 // better = the region's conditions improve but it stays blocked; worse = they deteriorate but it can still grow there.
 let skyFx=null; // the last Terraform purchase's effect, outlined on the map / shown in the HUD for a few seconds
 function skyWhatIf(u){
-  const e=u.effect, ax=e.axis, o=G[ax], before=SEC.map((_,i)=>evaluate(i));
+  const e=u.effect, ax=e.axis, o=G[ax], before=SEC.map((_,i)=>evaluate(i)), nf0=COMP?SEC.map((_,i)=>sim.nativeEvaluate(i).fitness):null;
   let v=o+e.delta; if(e.min!==undefined||e.max!==undefined) v=clamp(v,e.min??-Infinity,e.max??Infinity);
-  G[ax]=v; const after=SEC.map((_,i)=>evaluate(i)); G[ax]=o;
-  return skyDiff(ax,o,v,before,after);
+  G[ax]=v; const after=SEC.map((_,i)=>evaluate(i)), nf1=COMP?SEC.map((_,i)=>sim.nativeEvaluate(i).fitness):null; G[ax]=o;
+  return {...skyDiff(ax,o,v,before,after), ...(COMP?nativeSkyShift(nf0,nf1):{})};
 }
 // (better = the ground moved closer to the plant's tolerance window on the changed axis, e.g. −32 °C → −26 °C on frozen
 // ground: still deadly, but nearer; worse = the region can still grow but its fitness dropped)
@@ -703,7 +820,8 @@ function skyWords(d){
   const sky=d.axis==="temp"?`sky ${degC(d.from)} → ${degC(d.to)}`:`sky moisture ${d.from} → ${d.to}`;
   const drift=PRESS&&PS.progress>0?(d.axis==="temp"?` (thinning air ${sgn(PS.offsets.temp)} °C on top)`:` (thinning air ${sgn(PS.offsets.moist)} on top)`):"";
   return [sky+drift, d.gain.length?`opens: ${nm(d.gain)}`:"", d.lose.length?`⚠ closes: ${d.lose.map(i=>`${LABEL[i]} (${why(i)})`).join(", ")}`:"",
-    d.better.length?`closer, still blocked: ${nm(d.better)}`:"", d.worse.length?`⚠ worse, still growing: ${nm(d.worse)}`:""].filter(Boolean).join(" · ");
+    d.better.length?`closer, still blocked: ${nm(d.better)}`:"", d.worse.length?`⚠ worse, still growing: ${nm(d.worse)}`:"",
+    d.nb&&d.nb.length?`🌿 suits native plants less: ${nm(d.nb)}`:"", d.nw&&d.nw.length?`🌿 suits native plants more: ${nm(d.nw)}`:""].filter(Boolean).join(" · ");
 }
 
 function renderShop(){
@@ -762,9 +880,10 @@ function clearPreview(){ preview=null; }
 let justBought=null;
 function buy(id){
   const u=upById[id], sky=u.effect.type==="sky", ax=u.effect.axis, from=sky&&G[ax], before=sky&&SEC.map((_,i)=>evaluate(i));
+  const nf0=sky&&COMP?SEC.map((_,i)=>sim.nativeEvaluate(i).fitness):null;
   if(!sim.buy(id)) return false;
   if(sky){ // BLOOM-011: say what the new sky did — regions opened / closed / helped / hurt — and outline them for a few seconds
-    const d=skyDiff(ax,from,G[ax],before,SEC.map((_,i)=>evaluate(i))), ch=G[ax]-from;
+    const d={...skyDiff(ax,from,G[ax],before,SEC.map((_,i)=>evaluate(i))), ...(COMP?nativeSkyShift(nf0,SEC.map((_,i)=>sim.nativeEvaluate(i).fitness)):{})}, ch=G[ax]-from;
     skyFx={...d, until:performance.now()+8000, delta:ax==="temp"?`${ch>0?"▲ +":"▼ −"}${Math.abs(ch)}°C`:`${ch>0?"▲ +":"▼ −"}${Math.abs(ch)} moist`};
     log(`Bought ${u.name}. ${skyWords(d).replace(/^sky/,"Sky")}.`); }
   else log(`Bought ${u.name}. `);
@@ -825,14 +944,23 @@ function pressureReport(){
   return `<div class="press" id="repPressure"><b>Pressure: ${SCN.display.title}</b> — ${phaseName(PS.phase)} (${Math.round(PS.progress*100)}% of the decline).
     Your plant endured: moisture <b>${sgn(o.moist)}</b>, temperature <b>${sgn(o.temp)} °C</b>, radiation <b>${sgn(o.rad)}</b>${done?" — the final harsh state.":`. The decline continues if you keep playing (final: moisture ${sgn(PS.max.moist)}, temperature ${sgn(PS.max.temp)} °C, radiation ${sgn(PS.max.rad)}).`}</div>`;
 }
-// BLOOM-012: extinction (pressure scenarios only): the engine has confirmed no living plants for the scenario's grace period
+// BLOOM-014: one competition line — how much land the native plants held at the start, at their peak and now, how many regions
+// were contested, and the regions left to them (winning never needed every native plant gone)
+function competitionReport(){
+  if(!COMP) return ""; const pct=x=>Math.round(x*100), contested=CS.everContested.reduce((a,b)=>a+b,0);
+  const left=SEC.map((_,i)=>i).filter(i=>{ const c=sim.competitionAt(i); return c.nativeShare>=0.4; }).map(i=>LABEL[i]);
+  return `<div class="comp" id="repComp"><b>Competition: ${SCN.display.title}</b> — native plants held <b>${pct(CS.startShare)}%</b> of the land at the start,
+    <b>${pct(CS.peakShare)}%</b> at their peak and <b>${pct(CS.share)}%</b> now. ${contested} region${contested===1?"":"s"} became contested.
+    ${left.length?`Left to native vegetation: ${left.join(", ")}. You did not need to remove every native plant.`:"Hardly any native cover is left: your plant out-competed it almost everywhere."}</div>`;
+}
+// BLOOM-012: extinction (scenarios that enable it): the engine has confirmed no living plants for the scenario's grace period
 function onLoss(why){
   const mins=Math.floor(sim.ticks*CFG.tickMs/60000), secs=Math.round(sim.ticks*CFG.tickMs/1000)%60, o=PS.offsets;
   const r=document.getElementById("report"); r.classList.add("lost");
   r.innerHTML=`<h2>✕ EXTINCTION</h2>
     <div class="sub" id="lossWhy">No living plants were left anywhere for ${SCN.loss.extinctionGraceSeconds} s, so the run is over (${mins}m ${String(secs).padStart(2,"0")}s${BLOOM_RUN.kind==="procedural"?` on <b>${BLOOM_RUN.planet.name}</b>, ${BLOOM_RUN.archetype.name} · public seed ${BLOOM_RUN.seed}`:""}).</div>
-    ${pressureReport()}
-    <div class="debrief"><b>What happened:</b> the planet kept changing and your plant could no longer live on any of its land. Adapting to the new conditions (Adapt), pushing the sky back (Terraform) or protecting your strongest colonies earlier can keep a foothold alive.</div>
+    ${pressureReport()}${competitionReport()}
+    <div class="debrief" id="lossDebrief"><b>What happened:</b> ${(SCN.display&&SCN.display.lossNote)||"the planet kept changing and your plant could no longer live on any of its land. Adapting to the new conditions (Adapt), pushing the sky back (Terraform) or protecting your strongest colonies earlier can keep a foothold alive."}</div>
     <button class="btn" id="lossRestart">Restart this run ↻</button>`;
   document.getElementById("reportModal").classList.add("on");
   document.getElementById("lossRestart").addEventListener("click",()=>location.reload());
@@ -850,8 +978,8 @@ function onWin(cov){
   const mins=Math.floor(sim.ticks*CFG.tickMs/60000), secs=Math.round(sim.ticks*CFG.tickMs/1000)%60;
   document.getElementById("report").innerHTML=`
     <h2>★ BLOOM</h2>
-    <div class="sub">You held ${Math.round(cov*100)}% of the land${BLOOM_RUN.kind==="procedural"?` of <b>${BLOOM_RUN.planet.name}</b> (${BLOOM_RUN.archetype.name} · public seed ${BLOOM_RUN.seed})`:""}${PRESS?` under <b>${SCN.name}</b>`:""} in ${mins}m ${String(secs).padStart(2,"0")}s.</div>
-    ${pressureReport()}
+    <div class="sub">You held ${Math.round(cov*100)}% of the land${BLOOM_RUN.kind==="procedural"?` of <b>${BLOOM_RUN.planet.name}</b> (${BLOOM_RUN.archetype.name} · public seed ${BLOOM_RUN.seed})`:""}${SCEN?` under <b>${SCN.name}</b>`:""} in ${mins}m ${String(secs).padStart(2,"0")}s.</div>
+    ${pressureReport()}${competitionReport()}
     <div class="top"><canvas id="plantCv" width="136" height="200"></canvas>
       <div><b>Your plant became:</b><ul>${built.map(b=>`<li>${b}</li>`).join('')||'<li>the unmodified pioneer</li>'}</ul>
       ${terra.length?`<div style="margin-top:8px"><b>You reshaped the sky:</b> ${terra.join(', ')}</div>`:''}</div></div>
@@ -875,7 +1003,7 @@ function frame(ts){
   if(running){ acc+=dt*speed;
     while(acc>=CFG.tickMs){ lastCov=sim.tick(); acc-=CFG.tickMs; if(!running)break; }
   }
-  pollCrossings(performance.now()); pollPressure(performance.now()); renderHUD(lastCov); renderPressure(); refreshShop(); refreshColonyCtl(); draw();
+  pollCrossings(performance.now()); pollPressure(performance.now()); pollCompetition(performance.now()); renderHUD(lastCov); renderPressure(); renderComp(); refreshShop(); refreshColonyCtl(); draw();
   // re-read the inspected section every 3 sim ticks (not every frame — while paused that would swallow clicks)
   if(selected>=0 && sim.ticks%3===0 && sim.ticks!==lastInspectTick){ lastInspectTick=sim.ticks; renderInspect(); }
   requestAnimationFrame(frame);
@@ -885,14 +1013,15 @@ if(BLOOM_RUN.kind==="procedural"){ const a=BLOOM_RUN.planet.archetype; // unobtr
   document.title=`BLOOM — ${BLOOM_RUN.archetype.name} · seed ${BLOOM_RUN.seed} (playtest harness)`;
   document.querySelector("header h1 small").textContent="· "+BLOOM_RUN.planet.name.toLowerCase();
   document.getElementById("runId").textContent=`${BLOOM_RUN.archetype.name} · public seed ${a.publicSeed} · attempt ${a.attempt} · ${BLOOM_RUN.planet.name} (${BLOOM_RUN.planet.id}) · layers ${a.validatedLayers.join("")}`; }
-if(PRESS){ // BLOOM-012: pressure scenario identity (title, header, footer) + the temporary pressure bar
+if(SCEN){ // BLOOM-012/014: scenario identity (title, header, footer) + the temporary pressure / competition bar
   document.title=document.title.replace(/^BLOOM — /,`BLOOM — ${SCN.name} · `);
   document.querySelector("header h1 small").textContent+=" · "+SCN.name.toLowerCase();
   const rid=document.getElementById("runId"); rid.textContent=(rid.textContent?rid.textContent+" · ":"")+`scenario ${SCN.id} (layer P ${BLOOM_RUN.summary.scenarioValidation.status})`;
-  buildPressureBar(); }
+  buildPressureBar(); buildCompBar(); }
 // BLOOM-008/009: open on the origin so its colony status and growth focus are the first thing in view
 selected=ORIGIN; renderInspect(); log(`Your plant has just sprouted in ${LABEL[ORIGIN]}: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish.`);
 if(PRESS) log(`☁ ${SCN.display.title}. ${SCN.display.summary} The decline begins in ${mmss(SCN.pressure.graceSeconds)}. Your plant sprouted in ${LABEL[ORIGIN]}.`);
+if(COMP&&!PRESS) log(`🌿 ${SCN.display.title}. ${SCN.display.summary} Native plants (violet, hatched) hold ${Math.round(CS.share*100)}% of the land. Your plant sprouted in ${LABEL[ORIGIN]}.`);
 resize(); renderShop(); renderHUD(0); requestAnimationFrame(frame);
 
 /* ========================================================================== */
@@ -919,7 +1048,15 @@ window.BLOOM_API={
   crossAnims(){ return { active:XANIM.map(a=>({...a})), history:XHIST.map(a=>({...a})) }; },
   // BLOOM-012 diagnostics (tests only): the live pressure state, the milestones and threshold changes the UI showed, loss state
   pressure(){ return { ...PS, offsets:{...PS.offsets}, max:{...PS.max}, events:PS.events.map(e=>({...e})), lost:sim.lost, lostReason:sim.lostReason,
-    extinction:{...sim.extinction}, phases:PHASE_HIST.map(x=>({...x})), thresholds:PX_HIST.map(x=>({...x})) }; }
+    extinction:{...sim.extinction}, phases:PHASE_HIST.map(x=>({...x})), thresholds:PX_HIST.map(x=>({...x})) }; },
+  // BLOOM-014 diagnostics (tests only): the live competition state, per-region readouts, the events the UI showed, the bar text
+  competition(){ if(!COMP) return {enabled:false};
+    return { enabled:true, share:CS.share, startShare:CS.startShare, peakShare:CS.peakShare, tiles:CS.tiles, contested:CS.contested, flips:{...CS.flips},
+      everContested:[...CS.everContested], events:CS.events.map(e=>({...e})), uiEvents:CX_HIST.map(e=>({...e})), regions:SEC.map((_,i)=>sim.competitionAt(i)),
+      nativeTiles:[...CS.native].map((d,t)=>d>0?t:-1).filter(t=>t>=0), bar:document.getElementById("cbar")?document.getElementById("cbar").textContent.replace(/\s+/g," ").trim():null,
+      lost:sim.lost, lostReason:sim.lostReason, extinction:{...sim.extinction} }; },
+  // colour of the pixel at the centre of a tile (canvas readback; tests only)
+  tilePixel(t){ const x=((t%W)+0.5)*TILE*dpr|0, y=(((t/W)|0)+0.5)*TILE*dpr|0, d=ctx.getImageData(x,y,1,1).data; return [d[0],d[1],d[2]]; }
 };
 </script>
 <script>
@@ -945,9 +1082,9 @@ window.BLOOM_RUN=(function(){
   if(scText!==null){
     if(!/^[a-z][a-z0-9_]{0,40}$/.test(scText)) return fail(`"scenario" must be a scenario id from content/scenarios.js (got "${scText}")`, {badScenario:true});
     try { scenario=BLOOM.pressure.resolveScenario(BLOOM_DATA.scenarios, scText); } catch(e){ return fail(e.message, {badScenario:true}); } }
-  const withScenario=(run)=>{ // layer P for a pressured combination; Eden adds nothing to prove
+  const withScenario=(run)=>{ // layer P for a scenario that changes the run (pressure and/or competition); Eden adds nothing to prove
     run.scenario=scenario; run.summary.scenarioId=scenario?scenario.id:"eden"; run.summary.scenario=scenario?scenario.name:"Eden";
-    if(!scenario||!scenario.pressure) return run;
+    if(!BLOOM.pressure.isDynamic(scenario)) return run;
     const v=BLOOM.validateScenario(run.planet, BLOOM_DATA.config, BLOOM_DATA.traits, scenario, {archetypeId:run.archetype?run.archetype.id:null});
     if(!v.ok) return fail(v.reason||`${scenario.name} ${v.status}`, {archetype:run.archetype&&run.archetype.name, planetName:run.planet.name, scenario:scenario.name, scenarioRejected:v.status});
     run.summary.scenarioValidation={status:v.status, strategiesProven:v.strategies.length, required:v.required}; // a count only — no builds, no plans
