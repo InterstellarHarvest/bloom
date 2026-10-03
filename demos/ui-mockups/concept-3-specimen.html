@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM mockup · Concept 3 · Specimen</title>
+<!--
+  BLOOM-017 · Concept 3 — Specimen-companion layout.
+  VISUAL CONCEPT MOCKUP ONLY: fake data, scripted behaviour, not connected to the game. Not the production UI.
+  Philosophy: the player's plant is always on screen beside the map. Plant-changing controls (Adapt, Spread, colony growth)
+  live physically UNDER THE PLANT; planet-changing controls (Terraform) live physically ON THE MAP. The specimen follows the
+  selected region, so clicking around the map doubles as "how would my plant do here?".
+-->
+<link rel="stylesheet" href="shared.css">
+<style>
+  body{display:flex; flex-direction:column; height:100vh; overflow:hidden}
+  .hud{flex:none; display:flex; align-items:center; gap:18px; padding:6px 16px; background:var(--card); border-bottom:3px solid var(--line)}
+  .hud .biomass .ico{width:36px; height:36px; font-size:18px} .hud .biomass .num{font-size:32px}
+  .goal{display:flex; align-items:center; gap:10px; font-weight:800} .goal .bar{width:200px}
+  .hud .spacer{flex:1}
+  .scen{display:flex; align-items:center; gap:8px; font-weight:800; color:#5b3a82; font-size:14px} .scen .bar{width:110px}
+  .main{flex:1; min-height:0; display:grid; grid-template-columns:minmax(360px,40%) 1fr; gap:12px; padding:12px}
+  /* PLANT side */
+  .plantside{position:relative; display:flex; flex-direction:column; min-height:0; background:var(--card); border:3px solid #bfe0b5; border-radius:var(--r-lg); box-shadow:var(--shadow); overflow:hidden}
+  .ps-head{flex:none; display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--leaf-soft); border-bottom:3px solid #bfe0b5}
+  .ps-head h2{margin:0; font-size:20px; white-space:nowrap} .ps-head .where{font-weight:800; color:var(--leaf-dark); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0}
+  .ps-head .btn{white-space:nowrap; flex:none}
+  .ps-head .spacer{flex:1}
+  .scene{position:relative; flex:1; min-height:200px}
+  .scene .bm-spec{position:absolute; inset:0; border-radius:0}
+  .callout{position:absolute; z-index:2; display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:900; letter-spacing:1px; padding:4px 10px; border-radius:14px; background:rgba(255,253,247,.92); border:2px solid var(--line); cursor:help; min-height:36px}
+  .callout:hover,.callout:focus-visible{background:#fff; border-color:var(--ink)}
+  .callout.sky{top:10px; right:10px; color:var(--sky-dark)} .callout.plant{top:50%; right:10px; color:var(--leaf-dark)} .callout.soil{bottom:10px; right:10px; color:#7a5130}
+  .cond-strip{position:absolute; left:10px; top:10px; z-index:2; display:flex; flex-direction:column; gap:4px}
+  .cond-strip .st{background:rgba(255,253,247,.94)}
+  .tags{flex:none; display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px 4px}
+  .tag{display:inline-flex; align-items:center; gap:6px; padding:4px 10px; min-height:34px; border-radius:16px; border:2px solid var(--line); background:var(--card); font-weight:800; font-size:13px; cursor:help}
+  .tag:hover,.tag:focus-visible{border-color:var(--leaf-dark); background:var(--leaf-soft)}
+  .tag.none{color:var(--ink-faint); cursor:default}
+  .colony{flex:none; padding:6px 14px 8px}
+  .colony .lab{display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:900; letter-spacing:1.2px; color:var(--ink-soft); margin:0 0 6px}
+  .colony .seg button{min-height:54px}
+  .colony .seg button[aria-pressed="true"]::after{content:none}
+  .colony .note{font-size:14px; color:var(--ink-soft); font-weight:700; margin:6px 0 0; min-height:1.4em}
+  .plantbar{flex:none; display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:10px 14px 14px; border-top:3px dashed #bfe0b5; background:linear-gradient(var(--card),var(--leaf-soft))}
+  .plantbar .h{grid-column:1/-1; font-size:12px; font-weight:900; letter-spacing:1.4px; color:var(--leaf-dark); margin:0}
+  .plantbar .btn{min-height:60px; font-size:19px}
+  .plantbar .btn[aria-expanded="true"]{outline:4px solid var(--ink); outline-offset:2px}
+  /* plant panel slides UP over the lower half of the plant side; the specimen stays visible above */
+  .ppanel{position:absolute; left:0; right:0; bottom:0; height:58%; background:var(--paper); border-top:3px solid var(--leaf); border-radius:22px 22px 0 0; box-shadow:0 -10px 30px rgba(60,45,15,.18); z-index:5;
+    display:flex; flex-direction:column; transform:translateY(105%); transition:transform .33s var(--ease)}
+  .ppanel.open{transform:none}
+  /* in flow while open: the panel replaces tags / colony / buttons, so the whole plant stays visible above it */
+  .plantside.pp-open .ppanel{position:relative; height:auto; flex:1.1 1 0; min-height:0}
+  .plantside.pp-open .tags, .plantside.pp-open .colony, .plantside.pp-open .plantbar{display:none}
+  .ppanel header{display:flex; align-items:center; gap:10px; padding:10px 12px 6px 16px}
+  .ppanel header h3{margin:0; font-size:20px; flex:1}
+  .ppanel .cards{flex:1; min-height:0; overflow:auto; padding:4px 14px 10px}
+  .ppanel .pv{flex:none; padding:8px 14px 12px; font-weight:700; font-size:14px; border-top:2px solid var(--line); min-height:52px}
+  /* PLANET side */
+  .planetside{position:relative; min-height:0; border:3px solid #b9d6ee; border-radius:var(--r-lg); background:#a9d6ee; overflow:hidden; box-shadow:var(--shadow)}
+  .planetside .mapwrap{position:absolute; inset:56px 8px 8px 8px; transition:bottom .33s var(--ease)}
+  .planetside.tf-open .mapwrap{bottom:236px}
+  .pl-head{position:absolute; top:0; left:0; right:0; height:52px; display:flex; align-items:center; gap:10px; padding:0 10px 0 14px; background:var(--sky-soft); border-bottom:3px solid #b9d6ee; z-index:3}
+  .pl-head h2{margin:0; font-size:18px; color:var(--sky-dark)} .pl-head .spacer{flex:1}
+  .pl-head .btn{min-height:42px}
+  .pl-head .btn[aria-expanded="true"]{outline:4px solid var(--ink); outline-offset:2px}
+  .rcard{position:absolute; left:16px; bottom:16px; width:min(330px,60%); background:var(--card); border:3px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow-lg); z-index:4; padding:10px 14px 12px; transition:transform .3s var(--ease), opacity .3s}
+  .rcard.away{transform:translateY(20px); opacity:0; pointer-events:none}
+  .rcard h3{margin:0 0 4px; font-size:20px; display:flex; align-items:center; gap:8px}
+  .rcard .x-btn{position:absolute; top:8px; right:8px; width:38px; height:38px; font-size:16px}
+  .rcard .lim{font-weight:800; font-size:15px; margin:4px 0 8px}
+  .rcard .fixes{display:flex; flex-wrap:wrap; gap:6px}
+  .fix{display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:4px 10px; border-radius:12px; border:2px solid var(--line-2); background:var(--card); cursor:pointer; font-weight:800; font-size:14px}
+  .rcard .tabs{margin:8px 0 6px} .rcard .tabs button{min-height:38px; font-size:14px}
+  .rcard .conds{display:grid; grid-template-columns:1fr 1fr; gap:4px 8px; font-size:13px}
+  .rcard .conds div{display:flex; align-items:center; gap:4px; font-weight:700}
+  .rcard .rawt{width:100%; border-collapse:collapse; font-size:13px} .rcard .rawt td{padding:3px 2px; border-bottom:1px dashed var(--line)} .rcard .rawt td:last-child{text-align:right; font-weight:800}
+  .tfpanel{position:absolute; left:0; right:0; bottom:0; height:228px; background:var(--paper); border-top:3px solid var(--sky); z-index:5; display:flex; flex-direction:column; transform:translateY(105%); transition:transform .33s var(--ease)}
+  .tfpanel.open{transform:none}
+  .tfpanel header{display:flex; align-items:center; gap:10px; padding:8px 12px 4px 16px}
+  .tfpanel header h3{margin:0; font-size:18px; flex:1}
+  .tfpanel .strip{flex:1; overflow-x:auto; overflow-y:hidden; display:flex; gap:10px; padding:4px 14px 8px}
+  .tfpanel .strip .cards-grid{display:flex; gap:10px}
+  .tfpanel .strip .tcard{flex:none; width:200px}
+  .tfpanel .pv{flex:none; padding:4px 16px 10px; font-weight:700; font-size:14px}
+  .stabmini{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:800} .stabmini .bar{width:140px; height:12px}
+  @media (max-width:1100px){ .main{grid-template-columns:minmax(320px,42%) 1fr} .callout.plant{display:none} }
+</style>
+</head>
+<body>
+<header class="hud">
+  <div class="biomass" id="bio"><span class="ico" aria-hidden="true">✦</span><span class="num">0</span><span class="rate"></span></div>
+  <div class="goal"><span>🌍 <b id="cov">0</b>% in bloom</span><span class="bar"><i id="covbar"></i><span class="goal" style="left:70%"></span></span><small>win at 70%</small></div>
+  <span class="spacer"></span>
+  <div class="scen"><span aria-hidden="true">💨</span>Dying World · air thinning <span class="bar pressure"><i id="prsbar"></i></span></div>
+</header>
+<div class="main">
+  <!-- ══════ PLANT SIDE ══════ -->
+  <section class="plantside" id="plantside" aria-labelledby="psTitle">
+    <div class="ps-head"><span aria-hidden="true" style="font-size:24px">🌿</span><h2 id="psTitle">Your plant</h2><span class="where" id="where"></span><span class="spacer"></span>
+      <button class="btn small" type="button" id="homeBtn" title="Show the plant in its starting region" aria-label="Show the plant in its starting region">⭐ Start</button></div>
+    <div class="scene" id="scene">
+      <div class="cond-strip" id="condStrip" aria-label="Conditions here"></div>
+      <button class="callout sky" type="button" data-hl="env" aria-label="Highlight the environment layer: changed by Terraform">☁️ SKY &amp; SOIL · Terraform</button>
+      <button class="callout plant" type="button" data-hl="plant" aria-label="Highlight the plant: changed by Adapt and Spread">🌿 PLANT · Adapt</button>
+    </div>
+    <div class="tags" id="tags" aria-label="Your plant's adaptations (hover to find them on the plant)"></div>
+    <div class="colony" id="colony"></div>
+    <div class="plantbar">
+      <p class="h">CHANGE YOUR PLANT</p>
+      <button class="btn plant" type="button" data-pp="adapt" aria-expanded="false">🌿 Adapt</button>
+      <button class="btn spread" type="button" data-pp="spread" aria-expanded="false">🌱 Spread</button>
+    </div>
+    <div class="ppanel" id="ppanel" hidden role="region" aria-labelledby="ppTitle">
+      <header><h3 id="ppTitle"></h3><span class="kind plant">Watch the plant ↑</span><button class="x-btn" type="button" id="ppClose" aria-label="Close panel">✕</button></header>
+      <div class="cards" id="ppCards"></div>
+      <div class="pv" id="ppPv" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ══════ PLANET SIDE ══════ -->
+  <section class="planetside" id="planetside" aria-labelledby="plTitle">
+    <div class="pl-head"><span aria-hidden="true" style="font-size:22px">🌍</span><h2 id="plTitle">The planet</h2><span class="spacer"></span>
+      <div class="stabmini"><span>Climate</span><span class="bar instab"><i id="stabI"></i></span></div>
+      <button class="btn planet small" type="button" id="tfBtn" aria-expanded="false">🌍 Terraform · change the planet</button></div>
+    <div class="mapwrap" id="mapwrap"></div>
+    <div class="rcard away" id="rcard" aria-live="polite"></div>
+    <div class="tfpanel" id="tfpanel" hidden role="region" aria-labelledby="tfTitle">
+      <header><h3 id="tfTitle">🌍 Terraform · the whole planet changes</h3><span class="kind planet">Watch the map → and the sky ←</span><button class="x-btn" type="button" id="tfClose" aria-label="Close Terraform">✕</button></header>
+      <div class="strip" id="tfCards"></div>
+      <div class="pv" id="tfPv" aria-live="polite"></div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+<script>
+BM.ribbon('Concept 3 · Specimen companion: plant always visible beside the map');
+BM.bindBiomass(document.getElementById('bio'));
+const S = BM.store.s, $ = id => document.getElementById(id);
+BM.store.on(() => { $('cov').textContent = S.coverage.toFixed(0); $('covbar').style.width = Math.min(100, S.coverage) + '%'; $('prsbar').style.width = S.pressure * 100 + '%'; $('stabI').style.width = S.instab * 100 + '%'; });
+
+let rid = 'sunny', pvExtra = null;
+const spec = BM.mountSpecimen($('scene'));
+const map = BM.mountMap($('mapwrap'), { labels:'all', onSelect:id => { rid = id; renderAll(); $('rcard').classList.remove('away'); } });
+map.select('sunny');
+$('homeBtn').addEventListener('click', () => { rid = 'sunny'; map.select('sunny'); renderAll(); });
+
+const CHANNEL = { cold:'temp', heat:'temp', drought:'water', flood:'water', salt:'soil', rad:'hazard', seedOut:'spread', waterSeeds:'spread', earlyMat:'spread' };
+const PLANT_F = ['temp','water','soil','hazard','spread'];
+function renderSpec(){ spec.render(BM.specState(rid, pvExtra || {}), !!pvExtra && Object.keys(pvExtra).some(k => k !== 'showcase')); }
+function renderAll(){
+  const v = BM.view(rid);
+  $('where').textContent = 'in ' + v.r.name + (v.rs.colony === 'living' ? '' : ' · no colony');
+  renderSpec();
+  $('condStrip').innerHTML = ['temp','water','soil','hazard'].map(k => '<span class="st ' + v.cond[k][0] + '" title="' + BM.esc(v.cond[k][1]) + '"><i aria-hidden="true">' + BM.ST_ICON[v.cond[k][0]] + '</i>' + BM.COND_META[k].name + '</span>').join('');
+  const owned = BM.ITEMS.filter(i => i.board !== 'terraform' && BM.store.owned(i.id));
+  $('tags').innerHTML = owned.length ? owned.map(i => '<button class="tag" type="button" data-ch="' + CHANNEL[i.id] + '">' + i.ico + ' ' + i.name + '</button>').join('') : '<span class="tag none">No adaptations yet</span>';
+  $('tags').querySelectorAll('[data-ch]').forEach(t => { const on = () => spec.highlight(t.dataset.ch), off = () => spec.highlight(null);
+    t.addEventListener('pointerenter', on); t.addEventListener('focus', on); t.addEventListener('pointerleave', off); t.addEventListener('blur', off); });
+  renderColony(v); renderCard(v);
+}
+function renderColony(v){
+  const C = $('colony'), rs = v.rs;
+  if (rs.colony !== 'living') { C.innerHTML = '<div class="lab"><span>COLONY HERE</span></div><p class="note">No colony in ' + v.r.name + ' yet: growth controls appear once your plant lives here.</p>'; return; }
+  C.innerHTML = '<div class="lab"><span>COLONY HERE · ' + v.estWord.toUpperCase() + '</span><button class="btn small" type="button" id="upBtn">' + (rs.spec ? '✓ ' + BM.SPECS.find(x => x.id === rs.spec).name : '＋ Local upgrade · ' + BM.SPEC_COST) + '</button></div>' +
+    '<div class="seg" role="group" aria-label="Growth focus">' + BM.FOCUS.map(f => '<button type="button" data-focus="' + f.id + '" aria-pressed="' + (f.id === rs.focus) + '"><span aria-hidden="true">' + f.ico + '</span>' + f.name + '</button>').join('') + '</div><p class="note" id="fnote">' + BM.FOCUS.find(f => f.id === rs.focus).text + '</p>';
+  C.querySelectorAll('[data-focus]').forEach(b => {
+    b.addEventListener('pointerenter', () => { pvExtra = { focus:b.dataset.focus }; renderSpec(); $('fnote').textContent = BM.FOCUS.find(f => f.id === b.dataset.focus).text; });
+    b.addEventListener('pointerleave', () => { pvExtra = null; renderSpec(); $('fnote').textContent = BM.FOCUS.find(f => f.id === S.reg[rid].focus).text; });
+    b.addEventListener('click', () => { BM.store.setFocus(rid, b.dataset.focus); pvExtra = null; renderAll(); $('colony').querySelector('[data-focus="' + b.dataset.focus + '"]').focus(); });
+  });
+  const up = $('upBtn');
+  if (!rs.spec) up.addEventListener('click', () => {           // cycle a tiny chooser inline: pick by repeated click is clumsy, so use a 3-way prompt row
+    C.querySelector('.seg').outerHTML = '<div class="seg" style="grid-template-columns:repeat(3,1fr)" role="group" aria-label="Choose a local upgrade">' + BM.SPECS.map(x => '<button type="button" data-spec="' + x.id + '"><span aria-hidden="true">' + x.ico + '</span>' + x.name + '</button>').join('') + '</div>';
+    $('fnote').textContent = 'Pick one upgrade for this colony (● ' + BM.SPEC_COST + ').';
+    C.querySelectorAll('[data-spec]').forEach(b => {
+      b.addEventListener('pointerenter', () => { pvExtra = { spec:b.dataset.spec }; renderSpec(); $('fnote').textContent = BM.SPECS.find(x => x.id === b.dataset.spec).text; });
+      b.addEventListener('pointerleave', () => { pvExtra = null; renderSpec(); });
+      b.addEventListener('click', () => { const res = BM.store.buySpec(rid, b.dataset.spec); BM.toast(res.ok ? 'Built ' + BM.SPECS.find(x => x.id === b.dataset.spec).name + ': look at the plant.' : res.reason); pvExtra = null; renderAll(); });
+    });
+    C.querySelector('[data-spec]').focus();
+  });
+}
+function renderCard(v){
+  const L = v.limit;
+  $('rcard').innerHTML = '<button class="x-btn" type="button" id="rcX" aria-label="Hide region card">✕</button><h3>' + BM.ST_ICON[v.st] + ' ' + v.r.name + '</h3>' +
+    '<div class="lim">' + (L ? BM.COND_META[L.f].ico + ' ' + BM.esc(L.text) : '✓ Nothing is holding your plant back here.') + '</div>' +
+    (L && v.fixers.length ? '<div class="fixes">' + v.fixers.map(it => '<button class="fix" data-fix="' + it.id + '">' + it.ico + ' ' + it.name + ' <span class="kind ' + BM.BOARDS[it.board].kind + '">' + (it.board === 'terraform' ? 'Planet' : 'Plant') + '</span></button>').join('') + '</div>' : '') +
+    '<div class="tabs" role="tablist"><button role="tab" aria-selected="' + (ctab === 'c') + '" data-ct="c">Conditions</button><button role="tab" aria-selected="' + (ctab === 'd') + '" data-ct="d">Details</button></div>' +
+    (ctab === 'c' ? '<div class="conds">' + ['temp','water','soil','hazard'].map(k => '<div>' + BM.ST_ICON[v.cond[k][0]] + ' ' + BM.COND_META[k].name + ': ' + BM.esc(v.cond[k][1]) + '</div>').join('') + '</div>'
+      : '<table class="rawt">' + Object.entries(v.r.raw).map(([k, x]) => '<tr><td>' + k + '</td><td>' + x + '</td></tr>').join('') + '</table>');
+  $('rcX').addEventListener('click', () => $('rcard').classList.add('away'));
+  $('rcard').querySelectorAll('[data-ct]').forEach(b => b.addEventListener('click', () => { ctab = b.dataset.ct; renderCard(BM.view(rid)); $('rcard').querySelector('[data-ct="' + ctab + '"]').focus(); }));
+  $('rcard').querySelectorAll('[data-fix]').forEach(b => b.addEventListener('click', () => { const it = BM.item(b.dataset.fix); it.board === 'terraform' ? openTf(b, it.id) : openPP(it.board, b, it.id); }));
+}
+let ctab = 'c';
+document.querySelectorAll('[data-hl]').forEach(b => { const on = () => spec.highlight(b.dataset.hl === 'env' ? 'env' : PLANT_F), off = () => spec.highlight(null);
+  b.addEventListener('pointerenter', on); b.addEventListener('focus', on); b.addEventListener('pointerleave', off); b.addEventListener('blur', off); });
+
+/* plant panel (Adapt / Spread) */
+let pp = null;
+document.querySelectorAll('[data-pp]').forEach(b => b.addEventListener('click', () => pp === b.dataset.pp ? BM.closeLayer($('ppanel')) : openPP(b.dataset.pp, b)));
+$('ppClose').addEventListener('click', () => BM.closeLayer($('ppanel')));
+function openPP(id, opener, focusId){
+  if (pp) BM.closeLayer($('ppanel'), { noReturn:true });
+  if (BM.isOpen($('tfpanel'))) BM.closeLayer($('tfpanel'), { noReturn:true });
+  pp = id; const B = BM.BOARDS[id];
+  $('plantside').classList.add('pp-open');
+  document.querySelectorAll('[data-pp]').forEach(x => x.setAttribute('aria-expanded', x.dataset.pp === id));
+  $('ppTitle').textContent = B.ico + ' ' + B.name + ' · ' + B.verb.toLowerCase();
+  const api = BM.renderCards($('ppCards'), id, { compact:true, groups:false, onPreview:pid => {
+    pvExtra = pid ? { addTrait:pid, showcase:true } : { showcase:true }; renderSpec();
+    if (pid) spec.highlight(CHANNEL[pid]); else spec.highlight(null);
+    const p = pid ? BM.previewOf(pid) : null;
+    map.setPreview(pid ? { open:p.open, worse:p.worse, arcs:pid === 'waterSeeds' ? [['sunny','tide'],['mossy','tide']] : null } : null);
+    $('ppPv').innerHTML = pid ? BM.esc(BM.previewText(pid)) : '<span style="color:var(--ink-faint)">Hover a card: the plant above changes, and the map shows where it helps.</span>';
+  }, onBought:() => { pvExtra = { showcase:true }; renderAll(); } });
+  $('ppPv').innerHTML = '<span style="color:var(--ink-faint)">Hover a card: the plant above changes, and the map shows where it helps.</span>';
+  pvExtra = { showcase:true }; renderSpec();
+  BM.openLayer($('ppanel'), opener, { onClose:() => { $('plantside').classList.remove('pp-open'); const ab = document.querySelector('[data-pp="' + pp + '"]'); pp = null; setTimeout(() => { if (document.activeElement === document.body && ab) ab.focus(); }, 0); pvExtra = null; spec.highlight(null); map.setPreview(null); renderSpec(); document.querySelectorAll('[data-pp]').forEach(x => x.setAttribute('aria-expanded', 'false')); } });
+  if (focusId) setTimeout(() => api.focusCard(focusId), 60);
+}
+
+/* planet panel (Terraform) */
+$('tfBtn').addEventListener('click', () => BM.isOpen($('tfpanel')) ? BM.closeLayer($('tfpanel')) : openTf($('tfBtn')));
+$('tfClose').addEventListener('click', () => BM.closeLayer($('tfpanel')));
+function openTf(opener, focusId){
+  if (pp) BM.closeLayer($('ppanel'), { noReturn:true });
+  $('tfBtn').setAttribute('aria-expanded', 'true'); $('planetside').classList.add('tf-open'); $('rcard').classList.add('away');
+  const api = BM.renderCards($('tfCards'), 'terraform', { compact:true, groups:false, onPreview:pid => {
+    pvExtra = pid ? { sky:pid } : null; renderSpec(); spec.highlight(pid ? 'env' : null);
+    const p = pid ? BM.previewOf(pid) : null;
+    map.setPreview(pid ? { open:p.open, worse:p.worse, tint:pid } : null);
+    $('tfPv').innerHTML = pid ? BM.esc(BM.previewText(pid)) + ' <b>The plant itself does not change.</b>' : '<span style="color:var(--ink-faint)">Hover a card: the map tints and the sky around your plant changes.</span>';
+  }, onBought:() => { pvExtra = null; renderAll(); } });
+  $('tfPv').innerHTML = '<span style="color:var(--ink-faint)">Hover a card: the map tints and the sky around your plant changes.</span>';
+  BM.openLayer($('tfpanel'), opener, { onClose:() => { $('tfBtn').setAttribute('aria-expanded', 'false'); $('planetside').classList.remove('tf-open'); pvExtra = null; spec.highlight(null); map.setPreview(null); renderSpec(); } });
+  if (focusId) setTimeout(() => api.focusCard(focusId), 60);
+}
+let lastT = 0;
+BM.store.on(e => { if (e.type === 'buy' || e.type === 'spec' || e.type === 'focus') return renderAll();
+  if (e.type === 'tick' && S.t - lastT >= 4 && !document.querySelector('.plantside .colony').contains(document.activeElement) && !pvExtra) { lastT = S.t; renderAll(); } });
+renderAll();
+</script>
+</body>
+</html>
