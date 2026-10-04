@@ -1,0 +1,7667 @@
+{
+ "when": "2026-10-04T19:34:02.394Z",
+ "checks": [
+  {
+   "name": "isolation: c15.js / c15.css / the Concept 15 page contain no engine, generator, validator, scenario, balance, Bloom Report or network references outside comments",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "isolation: the Concept 15 page loads only shared.js and c15.js",
+   "ok": true,
+   "detail": "<script src=\"shared.js\" <script src=\"c15.js\""
+  },
+  {
+   "name": "icons: no emoji characters in c15.js, c15.css or the Concept 15 page",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "scope: repository-root index.html, gameplay folders, shared mockup files, rooms.js / rooms.css and Concepts 1–14 are untouched (git status)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "gallery @1280x800: defaults to Rooms convergence (BLOOM-023), no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "gallery: six rounds in order",
+   "ok": true,
+   "detail": [
+    "tab-c15",
+    "tab-rooms",
+    "tab-refinement",
+    "tab-convergence",
+    "tab-round2",
+    "tab-round1"
+   ]
+  },
+  {
+   "name": "gallery: Rooms convergence launches Concept 15 only",
+   "ok": true,
+   "detail": [
+    "concept-15-convergence.html"
+   ]
+  },
+  {
+   "name": "gallery: hidden tabs’ links not visible / tabbable",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "gallery tabs: arrow keys walk rooms → refinement → convergence → round2 → round1 → c15 (wrap)",
+   "ok": true,
+   "detail": [
+    "rooms",
+    "refinement",
+    "convergence",
+    "round2",
+    "round1",
+    "c15"
+   ]
+  },
+  {
+   "name": "gallery: 15 concept pages linked across the six tabs (Concepts 1–15 reachable)",
+   "ok": true,
+   "detail": [
+    "concept-15-convergence.html",
+    "concept-11-balanced-rooms.html",
+    "concept-12-specimen-rooms.html",
+    "concept-13-world-control-rooms.html",
+    "concept-14-category-labs.html",
+    "concept-10-refined-bench.html",
+    "concept-9-unified-bench.html",
+    "concept-5-popover.html",
+    "concept-6-sidecar.html",
+    "concept-7-bottom-bench.html",
+    "concept-8-side-bench.html",
+    "concept-1-hybrid.html",
+    "concept-2-drawers.html",
+    "concept-3-specimen.html",
+    "concept-4-shelf.html"
+   ]
+  },
+  {
+   "name": "gallery: all 15 concept pages load with the mockup ribbon and no console errors (Concepts 1–14 regression)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "gallery: an old BLOOM-022 remembered tab does not hide the new default",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "gallery @1024x768: defaults to Rooms convergence (BLOOM-023), no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "gallery @1440x900: defaults to Rooms convergence (BLOOM-023), no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "sizing: at 1280×800 the Concept 15 room UI is measurably larger than Concept 11 (node name, node width, node icon, room tabs, chips, title, mini-map name, category label, lens chips all ≥ 8 % larger)",
+   "ok": true,
+   "detail": {
+    "c11": {
+     "nodeName": 13,
+     "nodeW": 110,
+     "nodeIcon": 38,
+     "roomTab": 13,
+     "roomTabH": 40,
+     "chip": 12,
+     "chipH": 28,
+     "h2": 24,
+     "mmName": 17,
+     "catLabel": 11,
+     "lensChip": 11
+    },
+    "c15": {
+     "nodeName": 16,
+     "nodeW": 166,
+     "nodeIcon": 46,
+     "roomTab": 15.2,
+     "roomTabH": 46,
+     "chip": 14.4,
+     "chipH": 35,
+     "h2": 27.2,
+     "mmName": 20.8,
+     "catLabel": 12,
+     "lensChip": 13.6
+    },
+    "bigger": [
+     "nodeName",
+     "nodeW",
+     "nodeIcon",
+     "roomTab",
+     "roomTabH",
+     "chip",
+     "chipH",
+     "h2",
+     "mmName",
+     "catLabel",
+     "lensChip"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800: loads (HUD, main map, five tools, Pause / speed), no console errors, nothing selected, no banner, clock running",
+   "ok": true,
+   "detail": {
+    "errs": [],
+    "s": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800: Planet View no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800: main map fills the available width: SVG spans the frame, viewBox aspect = frame aspect, ocean rect covers the widened viewBox (no dead side columns)",
+   "ok": true,
+   "detail": {
+    "svgW": 1280,
+    "wrapW": 1280,
+    "zoneW": 1280,
+    "boxAR": 1.8906942392909896,
+    "vbAR": 1.8906985294117646,
+    "bgCovers": true,
+    "vb": "-57.13 -6 514.27 272"
+   }
+  },
+  {
+   "name": "c15@1280x800: clicking Frost Ridge selects it and shows the bottom region banner (X button, name, status, four conditions, Inspect)",
+   "ok": true,
+   "detail": {
+    "sel": "frost",
+    "ctx": null,
+    "room": null,
+    "banner": true,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800: selecting a region does not move or resize the main map",
+   "ok": true,
+   "detail": {
+    "r0": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "r0b": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800: Pause and Speed do NOT close the banner or change the selection",
+   "ok": true,
+   "detail": {
+    "sP": {
+     "sel": "frost",
+     "ctx": null,
+     "room": null,
+     "banner": true,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sS": {
+     "sel": "frost",
+     "ctx": null,
+     "room": null,
+     "banner": true,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800: clicking empty map / ocean closes the banner and deselects",
+   "ok": true,
+   "detail": {
+    "ocean": {
+     "x": 24,
+     "y": 776
+    },
+    "s": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800: the X-in-a-circle closes the banner and deselects",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": null,
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800: Map View layer: hover previews Temperature on the map without setting it, leaving restores, click sets it, hovering Water previews over the set layer and leaving returns to Temperature",
+   "ok": true,
+   "detail": {
+    "sH": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": "temp",
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sL": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sC": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": null,
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sH2": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": "water",
+     "mainLens": "water",
+     "miniLens": [
+      "water",
+      "water",
+      "water",
+      "water"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sL2": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": null,
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800: keyboard focus on a layer button previews it too",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": null,
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": "temp",
+    "lensPv": "soil",
+    "mainLens": "soil",
+    "miniLens": [
+     "soil",
+     "soil",
+     "soil",
+     "soil"
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 region: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1280x800 region: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800 region: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800 region: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800 region: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "region",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 region: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800 region: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800 region: four condition rows, limiting factor, large Overview / Colony / Science tabs (≥ 40 px), plant upper-left, colony info lower-left, mini-map right",
+   "ok": true,
+   "detail": {
+    "conds": 4,
+    "tabOk": true,
+    "tabH": 51.390625
+   }
+  },
+  {
+   "name": "c15@1280x800 region: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 region: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "after": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 adapt: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1280x800 adapt: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800 adapt: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800 adapt: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800 adapt: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "adapt",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 adapt: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800 adapt: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800 adapt: renders a tree (k-anat: 13 nodes, 14 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 166,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 adapt: plant upper-left, info lower-left, tree centre, mini-map right; leader lanes from plant parts to the category rail, one per category, never crossing",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 166,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 adapt: hovering Cold Tolerance previews on the PLANT (not the environment), explains it in the LEFT info block, lights the Stem leader, marks opening regions on the mini-map and names them in the right-column region context",
+   "ok": true,
+   "detail": {
+    "plantChanged": true,
+    "envChanged": false,
+    "pv": {
+     "infoPv": true,
+     "info": "Preview · TemperatureCold Tolerance120 BiomassHardier, compact growth survives f",
+     "open": 2,
+     "arcs": 0,
+     "tint": 0,
+     "previewing": true,
+     "glow": [
+      "temp"
+     ],
+     "ldOn": 1,
+     "ctx": "Region effect of this choiceOpens Cloud Steps, Frost Ridge",
+     "scenePv": false,
+     "sceneStop": "",
+     "globeOpen": [],
+     "globePv": false,
+     "readout": "",
+     "specimens": 1
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800 adapt: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "Your plant in Dust ReachWould not survive yetBlock",
+    "infoAfter": "Your plant in Dust ReachWould not survive yetBlock"
+   }
+  },
+  {
+   "name": "c15@1280x800: Adapt → Terraform link switches rooms without leaving the paused mode or changing the room context",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "terraform",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 adapt: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 adapt: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "after": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 spread: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1280x800 spread: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800 spread: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800 spread: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800 spread: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "spread",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 spread: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800 spread: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800 spread: renders a tree (k-anat: 8 nodes, 9 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 139,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 spread: plant upper-left, info lower-left, tree centre, mini-map right; leader lanes from plant parts to the category rail, one per category, never crossing",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 139,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 spread: hovering Waterborne Seeds previews on the plant (seed parts), explains it in the left block, lights the Pods leader and draws dispersal arcs on the mini-map",
+   "ok": true,
+   "detail": {
+    "arcs": 2,
+    "glow": [
+     "spread"
+    ],
+    "ldOn": 1,
+    "info": "Preview · ReachWaterborne Seeds150 BiomassFloating seeds cross the sea.Looks lik"
+   }
+  },
+  {
+   "name": "c15@1280x800 spread: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "Your plant in Dust ReachWould not survive yetBlock",
+    "infoAfter": "Your plant in Dust ReachWould not survive yetBlock"
+   }
+  },
+  {
+   "name": "c15@1280x800 spread: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 spread: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "after": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 terraform: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1280x800 terraform: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800 terraform: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800 terraform: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800 terraform: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "terraform",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 terraform: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800 terraform: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800 terraform: renders a tree (k-orbit: 10 nodes, 10 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-orbit",
+    "nodes": 10,
+    "edges": 10,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 0,
+    "leadersOrdered": true,
+    "nodeW": 154,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 terraform: hovering Warm the Sky changes the LAND SCENE (sky colour, preview tag), the GLOBE (lit regions, glow) and the mini-map tint, shows 14 → 20 °C in the right-column readout and explains it in the left block; there is no plant drawing in the room",
+   "ok": true,
+   "detail": {
+    "sceneBefore": "#efd294",
+    "pv": {
+     "infoPv": true,
+     "info": "Preview · Sky temperatureWarm the Sky200 BiomassThe whole planet gets warmer.Loo",
+     "open": 2,
+     "arcs": 0,
+     "tint": 0.22,
+     "previewing": false,
+     "glow": [],
+     "ldOn": 0,
+     "ctx": "Planet readoutSky temperature14 °C→ 20 °CRainNormal rainInstabilityOpens Cloud Steps, Frost RidgeHarder: Ember Rise, Dust Reach",
+     "scenePv": true,
+     "sceneStop": "#f5c780",
+     "globeOpen": [
+      "cloud",
+      "frost"
+     ],
+     "globePv": true,
+     "readout": "→ 20 °C",
+     "specimens": 0
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800 terraform: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "The land around Dust ReachWarm · 27 °CToo dry · Sa",
+    "infoAfter": "The land around Dust ReachWarm · 27 °CToo dry · Sa"
+   }
+  },
+  {
+   "name": "c15@1280x800 terraform: the globe spins by click-drag and by arrow keys (lightweight, stable: no errors, land shows on the front and hides on the back)",
+   "ok": true,
+   "detail": {
+    "rot0": 0,
+    "rot1": 1.5555555555555556,
+    "rot2": 1.0555555555555556,
+    "vis": {
+     "total": 16,
+     "hidden": 7
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800 terraform: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800 terraform: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "after": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800: Adapt and Spread share the room family (same tree kind, same zones, same em scale)",
+   "ok": true,
+   "detail": {
+    "adapt": "k-anat",
+    "spread": "k-anat"
+   }
+  },
+  {
+   "name": "c15@1280x800: Terraform uses a distinct tree design (orbit) around the globe",
+   "ok": true,
+   "detail": {
+    "terraform": "k-orbit"
+   }
+  },
+  {
+   "name": "c15@1280x800: Resume play closes the room and runs the clock",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800: Back from a run that was already paused stays paused",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800: keyboard: Enter on Adapt opens it, 28 Tabs stay inside the room with visible focus, Escape returns focus to the Adapt tool",
+   "ok": true,
+   "detail": {
+    "bad": [],
+    "outside": [],
+    "count": 28,
+    "focusBack": true
+   }
+  },
+  {
+   "name": "c15@1280x800: deep link ?room=adapt&region=frost opens Adapt paused with Frost Ridge as the room context and nothing selected at home",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "frost",
+    "room": "adapt",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "frost",
+     "frost",
+     "frost",
+     "frost"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800: no emoji anywhere on the page; inline SVG icons in use (174)",
+   "ok": true,
+   "detail": {
+    "hits": [],
+    "svgIcons": 174
+   }
+  },
+  {
+   "name": "c15@1280x800: no console errors over the whole run",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1024x768: loads (HUD, main map, five tools, Pause / speed), no console errors, nothing selected, no banner, clock running",
+   "ok": true,
+   "detail": {
+    "errs": [],
+    "s": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1024x768: Planet View no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768: main map fills the available width: SVG spans the frame, viewBox aspect = frame aspect, ocean rect covers the widened viewBox (no dead side columns)",
+   "ok": true,
+   "detail": {
+    "svgW": 1024,
+    "wrapW": 1024,
+    "zoneW": 1024,
+    "boxAR": 1.5875968992248062,
+    "vbAR": 1.587610294117647,
+    "bgCovers": true,
+    "vb": "-15.91 -6 431.83 272"
+   }
+  },
+  {
+   "name": "c15@1024x768: clicking Frost Ridge selects it and shows the bottom region banner (X button, name, status, four conditions, Inspect)",
+   "ok": true,
+   "detail": {
+    "sel": "frost",
+    "ctx": null,
+    "room": null,
+    "banner": true,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768: selecting a region does not move or resize the main map",
+   "ok": true,
+   "detail": {
+    "r0": [
+     0,
+     123,
+     1024,
+     645
+    ],
+    "r0b": [
+     0,
+     123,
+     1024,
+     645
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768: Pause and Speed do NOT close the banner or change the selection",
+   "ok": true,
+   "detail": {
+    "sP": {
+     "sel": "frost",
+     "ctx": null,
+     "room": null,
+     "banner": true,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sS": {
+     "sel": "frost",
+     "ctx": null,
+     "room": null,
+     "banner": true,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1024x768: clicking empty map / ocean closes the banner and deselects",
+   "ok": true,
+   "detail": {
+    "ocean": {
+     "x": 24,
+     "y": 744
+    },
+    "s": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1024x768: the X-in-a-circle closes the banner and deselects",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": null,
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768: Map View layer: hover previews Temperature on the map without setting it, leaving restores, click sets it, hovering Water previews over the set layer and leaving returns to Temperature",
+   "ok": true,
+   "detail": {
+    "sH": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": "temp",
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sL": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sC": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": null,
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sH2": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": "water",
+     "mainLens": "water",
+     "miniLens": [
+      "water",
+      "water",
+      "water",
+      "water"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sL2": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": null,
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1024x768: keyboard focus on a layer button previews it too",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": null,
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": "temp",
+    "lensPv": "soil",
+    "mainLens": "soil",
+    "miniLens": [
+     "soil",
+     "soil",
+     "soil",
+     "soil"
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 region: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1024x768 region: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1024x768 region: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768 region: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768 region: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "region",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 region: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768 region: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1024x768 region: four condition rows, limiting factor, large Overview / Colony / Science tabs (≥ 40 px), plant upper-left, colony info lower-left, mini-map right",
+   "ok": true,
+   "detail": {
+    "conds": 4,
+    "tabOk": true,
+    "tabH": 43.515625
+   }
+  },
+  {
+   "name": "c15@1024x768 region: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 region: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1024,
+     645
+    ],
+    "after": [
+     0,
+     123,
+     1024,
+     645
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 adapt: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1024x768 adapt: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1024x768 adapt: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768 adapt: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768 adapt: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "adapt",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 adapt: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768 adapt: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1024x768 adapt: renders a tree (k-anat: 13 nodes, 14 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 142,
+    "em": 13.5,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 adapt: plant upper-left, info lower-left, tree centre, mini-map right; leader lanes from plant parts to the category rail, one per category, never crossing",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 142,
+    "em": 13.5,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 adapt: hovering Cold Tolerance previews on the PLANT (not the environment), explains it in the LEFT info block, lights the Stem leader, marks opening regions on the mini-map and names them in the right-column region context",
+   "ok": true,
+   "detail": {
+    "plantChanged": true,
+    "envChanged": false,
+    "pv": {
+     "infoPv": true,
+     "info": "Preview · TemperatureCold Tolerance120 BiomassHardier, compact growth survives f",
+     "open": 2,
+     "arcs": 0,
+     "tint": 0,
+     "previewing": true,
+     "glow": [
+      "temp"
+     ],
+     "ldOn": 1,
+     "ctx": "Region effect of this choiceOpens Cloud Steps, Frost Ridge",
+     "scenePv": false,
+     "sceneStop": "",
+     "globeOpen": [],
+     "globePv": false,
+     "readout": "",
+     "specimens": 1
+    }
+   }
+  },
+  {
+   "name": "c15@1024x768 adapt: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "Your plant in Dust ReachWould not survive yetBlock",
+    "infoAfter": "Your plant in Dust ReachWould not survive yetBlock"
+   }
+  },
+  {
+   "name": "c15@1024x768: Adapt → Terraform link switches rooms without leaving the paused mode or changing the room context",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "terraform",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 adapt: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 adapt: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1024,
+     645
+    ],
+    "after": [
+     0,
+     123,
+     1024,
+     645
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 spread: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1024x768 spread: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1024x768 spread: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768 spread: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768 spread: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "spread",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 spread: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768 spread: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1024x768 spread: renders a tree (k-anat: 8 nodes, 9 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 118,
+    "em": 13.5,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 spread: plant upper-left, info lower-left, tree centre, mini-map right; leader lanes from plant parts to the category rail, one per category, never crossing",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 118,
+    "em": 13.5,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 spread: hovering Waterborne Seeds previews on the plant (seed parts), explains it in the left block, lights the Pods leader and draws dispersal arcs on the mini-map",
+   "ok": true,
+   "detail": {
+    "arcs": 2,
+    "glow": [
+     "spread"
+    ],
+    "ldOn": 1,
+    "info": "Preview · ReachWaterborne Seeds150 BiomassFloating seeds cross the sea.Looks lik"
+   }
+  },
+  {
+   "name": "c15@1024x768 spread: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "Your plant in Dust ReachWould not survive yetBlock",
+    "infoAfter": "Your plant in Dust ReachWould not survive yetBlock"
+   }
+  },
+  {
+   "name": "c15@1024x768 spread: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 spread: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1024,
+     645
+    ],
+    "after": [
+     0,
+     123,
+     1024,
+     645
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 terraform: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1024x768 terraform: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1024x768 terraform: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768 terraform: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768 terraform: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "terraform",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 terraform: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768 terraform: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1024x768 terraform: renders a tree (k-orbit: 10 nodes, 10 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-orbit",
+    "nodes": 10,
+    "edges": 10,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 0,
+    "leadersOrdered": true,
+    "nodeW": 130,
+    "em": 13.5,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 terraform: hovering Warm the Sky changes the LAND SCENE (sky colour, preview tag), the GLOBE (lit regions, glow) and the mini-map tint, shows 14 → 20 °C in the right-column readout and explains it in the left block; there is no plant drawing in the room",
+   "ok": true,
+   "detail": {
+    "sceneBefore": "#efd294",
+    "pv": {
+     "infoPv": true,
+     "info": "Preview · Sky temperatureWarm the Sky200 BiomassThe whole planet gets warmer.Loo",
+     "open": 2,
+     "arcs": 0,
+     "tint": 0.22,
+     "previewing": false,
+     "glow": [],
+     "ldOn": 0,
+     "ctx": "Planet readoutSky temperature14 °C→ 20 °CRainNormal rainInstabilityOpens Cloud Steps, Frost RidgeHarder: Ember Rise, Dust Reach",
+     "scenePv": true,
+     "sceneStop": "#f5c780",
+     "globeOpen": [
+      "cloud",
+      "frost"
+     ],
+     "globePv": true,
+     "readout": "→ 20 °C",
+     "specimens": 0
+    }
+   }
+  },
+  {
+   "name": "c15@1024x768 terraform: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "The land around Dust ReachWarm · 27 °CToo dry · Sa",
+    "infoAfter": "The land around Dust ReachWarm · 27 °CToo dry · Sa"
+   }
+  },
+  {
+   "name": "c15@1024x768 terraform: the globe spins by click-drag and by arrow keys (lightweight, stable: no errors, land shows on the front and hides on the back)",
+   "ok": true,
+   "detail": {
+    "rot0": 0,
+    "rot1": 1.5555555555555556,
+    "rot2": 1.0555555555555556,
+    "vis": {
+     "total": 16,
+     "hidden": 7
+    }
+   }
+  },
+  {
+   "name": "c15@1024x768 terraform: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768 terraform: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1024,
+     645
+    ],
+    "after": [
+     0,
+     123,
+     1024,
+     645
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768: Adapt and Spread share the room family (same tree kind, same zones, same em scale)",
+   "ok": true,
+   "detail": {
+    "adapt": "k-anat",
+    "spread": "k-anat"
+   }
+  },
+  {
+   "name": "c15@1024x768: Terraform uses a distinct tree design (orbit) around the globe",
+   "ok": true,
+   "detail": {
+    "terraform": "k-orbit"
+   }
+  },
+  {
+   "name": "c15@1024x768: Resume play closes the room and runs the clock",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768: Back from a run that was already paused stays paused",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1024x768: keyboard: Enter on Adapt opens it, 28 Tabs stay inside the room with visible focus, Escape returns focus to the Adapt tool",
+   "ok": true,
+   "detail": {
+    "bad": [],
+    "outside": [],
+    "count": 28,
+    "focusBack": true
+   }
+  },
+  {
+   "name": "c15@1024x768: deep link ?room=adapt&region=frost opens Adapt paused with Frost Ridge as the room context and nothing selected at home",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "frost",
+    "room": "adapt",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "frost",
+     "frost",
+     "frost",
+     "frost"
+    ]
+   }
+  },
+  {
+   "name": "c15@1024x768: no emoji anywhere on the page; inline SVG icons in use (174)",
+   "ok": true,
+   "detail": {
+    "hits": [],
+    "svgIcons": 174
+   }
+  },
+  {
+   "name": "c15@1024x768: no console errors over the whole run",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1440x900: loads (HUD, main map, five tools, Pause / speed), no console errors, nothing selected, no banner, clock running",
+   "ok": true,
+   "detail": {
+    "errs": [],
+    "s": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1440x900: Planet View no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900: main map fills the available width: SVG spans the frame, viewBox aspect = frame aspect, ocean rect covers the widened viewBox (no dead side columns)",
+   "ok": true,
+   "detail": {
+    "svgW": 1440,
+    "wrapW": 1440,
+    "zoneW": 1440,
+    "boxAR": 1.8532818532818534,
+    "vbAR": 1.8532720588235294,
+    "bgCovers": true,
+    "vb": "-52.04 -6 504.09 272"
+   }
+  },
+  {
+   "name": "c15@1440x900: clicking Frost Ridge selects it and shows the bottom region banner (X button, name, status, four conditions, Inspect)",
+   "ok": true,
+   "detail": {
+    "sel": "frost",
+    "ctx": null,
+    "room": null,
+    "banner": true,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900: selecting a region does not move or resize the main map",
+   "ok": true,
+   "detail": {
+    "r0": [
+     0,
+     123,
+     1440,
+     777
+    ],
+    "r0b": [
+     0,
+     123,
+     1440,
+     777
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900: Pause and Speed do NOT close the banner or change the selection",
+   "ok": true,
+   "detail": {
+    "sP": {
+     "sel": "frost",
+     "ctx": null,
+     "room": null,
+     "banner": true,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sS": {
+     "sel": "frost",
+     "ctx": null,
+     "room": null,
+     "banner": true,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1440x900: clicking empty map / ocean closes the banner and deselects",
+   "ok": true,
+   "detail": {
+    "ocean": {
+     "x": 24,
+     "y": 876
+    },
+    "s": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1440x900: the X-in-a-circle closes the banner and deselects",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": null,
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900: Map View layer: hover previews Temperature on the map without setting it, leaving restores, click sets it, hovering Water previews over the set layer and leaving returns to Temperature",
+   "ok": true,
+   "detail": {
+    "sH": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": "temp",
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sL": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sC": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": null,
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sH2": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": "water",
+     "mainLens": "water",
+     "miniLens": [
+      "water",
+      "water",
+      "water",
+      "water"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sL2": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": null,
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1440x900: keyboard focus on a layer button previews it too",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": null,
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": "temp",
+    "lensPv": "soil",
+    "mainLens": "soil",
+    "miniLens": [
+     "soil",
+     "soil",
+     "soil",
+     "soil"
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 region: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1440x900 region: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1440x900 region: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900 region: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900 region: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "region",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 region: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900 region: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1440x900 region: four condition rows, limiting factor, large Overview / Colony / Science tabs (≥ 40 px), plant upper-left, colony info lower-left, mini-map right",
+   "ok": true,
+   "detail": {
+    "conds": 4,
+    "tabOk": true,
+    "tabH": 57.6875
+   }
+  },
+  {
+   "name": "c15@1440x900 region: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 region: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1440,
+     777
+    ],
+    "after": [
+     0,
+     123,
+     1440,
+     777
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 adapt: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1440x900 adapt: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1440x900 adapt: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900 adapt: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900 adapt: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "adapt",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 adapt: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900 adapt: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1440x900 adapt: renders a tree (k-anat: 13 nodes, 14 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 187,
+    "em": 18,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 adapt: plant upper-left, info lower-left, tree centre, mini-map right; leader lanes from plant parts to the category rail, one per category, never crossing",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 187,
+    "em": 18,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 adapt: hovering Cold Tolerance previews on the PLANT (not the environment), explains it in the LEFT info block, lights the Stem leader, marks opening regions on the mini-map and names them in the right-column region context",
+   "ok": true,
+   "detail": {
+    "plantChanged": true,
+    "envChanged": false,
+    "pv": {
+     "infoPv": true,
+     "info": "Preview · TemperatureCold Tolerance120 BiomassHardier, compact growth survives f",
+     "open": 2,
+     "arcs": 0,
+     "tint": 0,
+     "previewing": true,
+     "glow": [
+      "temp"
+     ],
+     "ldOn": 1,
+     "ctx": "Region effect of this choiceOpens Cloud Steps, Frost Ridge",
+     "scenePv": false,
+     "sceneStop": "",
+     "globeOpen": [],
+     "globePv": false,
+     "readout": "",
+     "specimens": 1
+    }
+   }
+  },
+  {
+   "name": "c15@1440x900 adapt: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "Your plant in Dust ReachWould not survive yetBlock",
+    "infoAfter": "Your plant in Dust ReachWould not survive yetBlock"
+   }
+  },
+  {
+   "name": "c15@1440x900: Adapt → Terraform link switches rooms without leaving the paused mode or changing the room context",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "terraform",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 adapt: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 adapt: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1440,
+     777
+    ],
+    "after": [
+     0,
+     123,
+     1440,
+     777
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 spread: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1440x900 spread: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1440x900 spread: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900 spread: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900 spread: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "spread",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 spread: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900 spread: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1440x900 spread: renders a tree (k-anat: 8 nodes, 9 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 157,
+    "em": 18,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 spread: plant upper-left, info lower-left, tree centre, mini-map right; leader lanes from plant parts to the category rail, one per category, never crossing",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 157,
+    "em": 18,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 spread: hovering Waterborne Seeds previews on the plant (seed parts), explains it in the left block, lights the Pods leader and draws dispersal arcs on the mini-map",
+   "ok": true,
+   "detail": {
+    "arcs": 2,
+    "glow": [
+     "spread"
+    ],
+    "ldOn": 1,
+    "info": "Preview · ReachWaterborne Seeds150 BiomassFloating seeds cross the sea.Looks lik"
+   }
+  },
+  {
+   "name": "c15@1440x900 spread: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "Your plant in Dust ReachWould not survive yetBlock",
+    "infoAfter": "Your plant in Dust ReachWould not survive yetBlock"
+   }
+  },
+  {
+   "name": "c15@1440x900 spread: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 spread: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1440,
+     777
+    ],
+    "after": [
+     0,
+     123,
+     1440,
+     777
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 terraform: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1440x900 terraform: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1440x900 terraform: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900 terraform: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900 terraform: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "terraform",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 terraform: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900 terraform: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1440x900 terraform: renders a tree (k-orbit: 10 nodes, 10 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-orbit",
+    "nodes": 10,
+    "edges": 10,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 0,
+    "leadersOrdered": true,
+    "nodeW": 174,
+    "em": 18,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 terraform: hovering Warm the Sky changes the LAND SCENE (sky colour, preview tag), the GLOBE (lit regions, glow) and the mini-map tint, shows 14 → 20 °C in the right-column readout and explains it in the left block; there is no plant drawing in the room",
+   "ok": true,
+   "detail": {
+    "sceneBefore": "#efd294",
+    "pv": {
+     "infoPv": true,
+     "info": "Preview · Sky temperatureWarm the Sky200 BiomassThe whole planet gets warmer.Loo",
+     "open": 2,
+     "arcs": 0,
+     "tint": 0.22,
+     "previewing": false,
+     "glow": [],
+     "ldOn": 0,
+     "ctx": "Planet readoutSky temperature14 °C→ 20 °CRainNormal rainInstabilityOpens Cloud Steps, Frost RidgeHarder: Ember Rise, Dust Reach",
+     "scenePv": true,
+     "sceneStop": "#f5c780",
+     "globeOpen": [
+      "cloud",
+      "frost"
+     ],
+     "globePv": true,
+     "readout": "→ 20 °C",
+     "specimens": 0
+    }
+   }
+  },
+  {
+   "name": "c15@1440x900 terraform: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "The land around Dust ReachWarm · 27 °CToo dry · Sa",
+    "infoAfter": "The land around Dust ReachWarm · 27 °CToo dry · Sa"
+   }
+  },
+  {
+   "name": "c15@1440x900 terraform: the globe spins by click-drag and by arrow keys (lightweight, stable: no errors, land shows on the front and hides on the back)",
+   "ok": true,
+   "detail": {
+    "rot0": 0,
+    "rot1": 1.5555555555555556,
+    "rot2": 1.0555555555555556,
+    "vis": {
+     "total": 16,
+     "hidden": 7
+    }
+   }
+  },
+  {
+   "name": "c15@1440x900 terraform: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900 terraform: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1440,
+     777
+    ],
+    "after": [
+     0,
+     123,
+     1440,
+     777
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900: Adapt and Spread share the room family (same tree kind, same zones, same em scale)",
+   "ok": true,
+   "detail": {
+    "adapt": "k-anat",
+    "spread": "k-anat"
+   }
+  },
+  {
+   "name": "c15@1440x900: Terraform uses a distinct tree design (orbit) around the globe",
+   "ok": true,
+   "detail": {
+    "terraform": "k-orbit"
+   }
+  },
+  {
+   "name": "c15@1440x900: Resume play closes the room and runs the clock",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900: Back from a run that was already paused stays paused",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1440x900: keyboard: Enter on Adapt opens it, 28 Tabs stay inside the room with visible focus, Escape returns focus to the Adapt tool",
+   "ok": true,
+   "detail": {
+    "bad": [],
+    "outside": [],
+    "count": 28,
+    "focusBack": true
+   }
+  },
+  {
+   "name": "c15@1440x900: deep link ?room=adapt&region=frost opens Adapt paused with Frost Ridge as the room context and nothing selected at home",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "frost",
+    "room": "adapt",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "frost",
+     "frost",
+     "frost",
+     "frost"
+    ]
+   }
+  },
+  {
+   "name": "c15@1440x900: no emoji anywhere on the page; inline SVG icons in use (174)",
+   "ok": true,
+   "detail": {
+    "hits": [],
+    "svgIcons": 174
+   }
+  },
+  {
+   "name": "c15@1440x900: no console errors over the whole run",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800+rm: loads (HUD, main map, five tools, Pause / speed), no console errors, nothing selected, no banner, clock running",
+   "ok": true,
+   "detail": {
+    "errs": [],
+    "s": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: Planet View no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm: main map fills the available width: SVG spans the frame, viewBox aspect = frame aspect, ocean rect covers the widened viewBox (no dead side columns)",
+   "ok": true,
+   "detail": {
+    "svgW": 1280,
+    "wrapW": 1280,
+    "zoneW": 1280,
+    "boxAR": 1.8906942392909896,
+    "vbAR": 1.8906985294117646,
+    "bgCovers": true,
+    "vb": "-57.13 -6 514.27 272"
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: clicking Frost Ridge selects it and shows the bottom region banner (X button, name, status, four conditions, Inspect)",
+   "ok": true,
+   "detail": {
+    "sel": "frost",
+    "ctx": null,
+    "room": null,
+    "banner": true,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: selecting a region does not move or resize the main map",
+   "ok": true,
+   "detail": {
+    "r0": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "r0b": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: Pause and Speed do NOT close the banner or change the selection",
+   "ok": true,
+   "detail": {
+    "sP": {
+     "sel": "frost",
+     "ctx": null,
+     "room": null,
+     "banner": true,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sS": {
+     "sel": "frost",
+     "ctx": null,
+     "room": null,
+     "banner": true,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: clicking empty map / ocean closes the banner and deselects",
+   "ok": true,
+   "detail": {
+    "ocean": {
+     "x": 24,
+     "y": 776
+    },
+    "s": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: the X-in-a-circle closes the banner and deselects",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": null,
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: Map View layer: hover previews Temperature on the map without setting it, leaving restores, click sets it, hovering Water previews over the set layer and leaving returns to Temperature",
+   "ok": true,
+   "detail": {
+    "sH": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": "temp",
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sL": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sC": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": null,
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sH2": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": "water",
+     "mainLens": "water",
+     "miniLens": [
+      "water",
+      "water",
+      "water",
+      "water"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sL2": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": null,
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: keyboard focus on a layer button previews it too",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": null,
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": "temp",
+    "lensPv": "soil",
+    "mainLens": "soil",
+    "miniLens": [
+     "soil",
+     "soil",
+     "soil",
+     "soil"
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm region: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1280x800+rm region: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800+rm region: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm region: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm region: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "region",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm region: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm region: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+rm region: four condition rows, limiting factor, large Overview / Colony / Science tabs (≥ 40 px), plant upper-left, colony info lower-left, mini-map right",
+   "ok": true,
+   "detail": {
+    "conds": 4,
+    "tabOk": true,
+    "tabH": 51.390625
+   }
+  },
+  {
+   "name": "c15@1280x800+rm region: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm region: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "after": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm adapt: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1280x800+rm adapt: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800+rm adapt: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm adapt: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm adapt: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "adapt",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm adapt: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm adapt: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+rm adapt: renders a tree (k-anat: 13 nodes, 14 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 166,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm adapt: plant upper-left, info lower-left, tree centre, mini-map right; leader lanes from plant parts to the category rail, one per category, never crossing",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 166,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm adapt: hovering Cold Tolerance previews on the PLANT (not the environment), explains it in the LEFT info block, lights the Stem leader, marks opening regions on the mini-map and names them in the right-column region context",
+   "ok": true,
+   "detail": {
+    "plantChanged": true,
+    "envChanged": false,
+    "pv": {
+     "infoPv": true,
+     "info": "Preview · TemperatureCold Tolerance120 BiomassHardier, compact growth survives f",
+     "open": 2,
+     "arcs": 0,
+     "tint": 0,
+     "previewing": true,
+     "glow": [
+      "temp"
+     ],
+     "ldOn": 1,
+     "ctx": "Region effect of this choiceOpens Cloud Steps, Frost Ridge",
+     "scenePv": false,
+     "sceneStop": "",
+     "globeOpen": [],
+     "globePv": false,
+     "readout": "",
+     "specimens": 1
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+rm adapt: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "Your plant in Dust ReachWould not survive yetBlock",
+    "infoAfter": "Your plant in Dust ReachWould not survive yetBlock"
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: Adapt → Terraform link switches rooms without leaving the paused mode or changing the room context",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "terraform",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm adapt: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm adapt: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "after": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm spread: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1280x800+rm spread: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800+rm spread: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm spread: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm spread: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "spread",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm spread: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm spread: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+rm spread: renders a tree (k-anat: 8 nodes, 9 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 139,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm spread: plant upper-left, info lower-left, tree centre, mini-map right; leader lanes from plant parts to the category rail, one per category, never crossing",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 139,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm spread: hovering Waterborne Seeds previews on the plant (seed parts), explains it in the left block, lights the Pods leader and draws dispersal arcs on the mini-map",
+   "ok": true,
+   "detail": {
+    "arcs": 2,
+    "glow": [
+     "spread"
+    ],
+    "ldOn": 1,
+    "info": "Preview · ReachWaterborne Seeds150 BiomassFloating seeds cross the sea.Looks lik"
+   }
+  },
+  {
+   "name": "c15@1280x800+rm spread: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "Your plant in Dust ReachWould not survive yetBlock",
+    "infoAfter": "Your plant in Dust ReachWould not survive yetBlock"
+   }
+  },
+  {
+   "name": "c15@1280x800+rm spread: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm spread: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "after": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm terraform: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1280x800+rm terraform: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800+rm terraform: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm terraform: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm terraform: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "terraform",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm terraform: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm terraform: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+rm terraform: renders a tree (k-orbit: 10 nodes, 10 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-orbit",
+    "nodes": 10,
+    "edges": 10,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 0,
+    "leadersOrdered": true,
+    "nodeW": 154,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm terraform: hovering Warm the Sky changes the LAND SCENE (sky colour, preview tag), the GLOBE (lit regions, glow) and the mini-map tint, shows 14 → 20 °C in the right-column readout and explains it in the left block; there is no plant drawing in the room",
+   "ok": true,
+   "detail": {
+    "sceneBefore": "#efd294",
+    "pv": {
+     "infoPv": true,
+     "info": "Preview · Sky temperatureWarm the Sky200 BiomassThe whole planet gets warmer.Loo",
+     "open": 2,
+     "arcs": 0,
+     "tint": 0.22,
+     "previewing": false,
+     "glow": [],
+     "ldOn": 0,
+     "ctx": "Planet readoutSky temperature14 °C→ 20 °CRainNormal rainInstabilityOpens Cloud Steps, Frost RidgeHarder: Ember Rise, Dust Reach",
+     "scenePv": true,
+     "sceneStop": "#f5c780",
+     "globeOpen": [
+      "cloud",
+      "frost"
+     ],
+     "globePv": true,
+     "readout": "→ 20 °C",
+     "specimens": 0
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+rm terraform: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "The land around Dust ReachWarm · 27 °CToo dry · Sa",
+    "infoAfter": "The land around Dust ReachWarm · 27 °CToo dry · Sa"
+   }
+  },
+  {
+   "name": "c15@1280x800+rm terraform: the globe spins by click-drag and by arrow keys (lightweight, stable: no errors, land shows on the front and hides on the back)",
+   "ok": true,
+   "detail": {
+    "rot0": 0,
+    "rot1": 1.5555555555555556,
+    "rot2": 1.0555555555555556,
+    "vis": {
+     "total": 16,
+     "hidden": 7
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+rm terraform: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm terraform: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "after": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: Adapt and Spread share the room family (same tree kind, same zones, same em scale)",
+   "ok": true,
+   "detail": {
+    "adapt": "k-anat",
+    "spread": "k-anat"
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: Terraform uses a distinct tree design (orbit) around the globe",
+   "ok": true,
+   "detail": {
+    "terraform": "k-orbit"
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: Resume play closes the room and runs the clock",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm: Back from a run that was already paused stays paused",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+rm: keyboard: Enter on Adapt opens it, 28 Tabs stay inside the room with visible focus, Escape returns focus to the Adapt tool",
+   "ok": true,
+   "detail": {
+    "bad": [],
+    "outside": [],
+    "count": 28,
+    "focusBack": true
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: deep link ?room=adapt&region=frost opens Adapt paused with Frost Ridge as the room context and nothing selected at home",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "frost",
+    "room": "adapt",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "frost",
+     "frost",
+     "frost",
+     "frost"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: no emoji anywhere on the page; inline SVG icons in use (174)",
+   "ok": true,
+   "detail": {
+    "hits": [],
+    "svgIcons": 174
+   }
+  },
+  {
+   "name": "c15@1280x800+rm: no console errors over the whole run",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800+firefox: loads (HUD, main map, five tools, Pause / speed), no console errors, nothing selected, no banner, clock running",
+   "ok": true,
+   "detail": {
+    "errs": [],
+    "s": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: Planet View no horizontal scroll",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox: main map fills the available width: SVG spans the frame, viewBox aspect = frame aspect, ocean rect covers the widened viewBox (no dead side columns)",
+   "ok": true,
+   "detail": {
+    "svgW": 1280,
+    "wrapW": 1280,
+    "zoneW": 1280,
+    "boxAR": 1.8906942392909896,
+    "vbAR": 1.8906985294117646,
+    "bgCovers": true,
+    "vb": "-57.13 -6 514.27 272"
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: clicking Frost Ridge selects it and shows the bottom region banner (X button, name, status, four conditions, Inspect)",
+   "ok": true,
+   "detail": {
+    "sel": "frost",
+    "ctx": null,
+    "room": null,
+    "banner": true,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: selecting a region does not move or resize the main map",
+   "ok": true,
+   "detail": {
+    "r0": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "r0b": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: Pause and Speed do NOT close the banner or change the selection",
+   "ok": true,
+   "detail": {
+    "sP": {
+     "sel": "frost",
+     "ctx": null,
+     "room": null,
+     "banner": true,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sS": {
+     "sel": "frost",
+     "ctx": null,
+     "room": null,
+     "banner": true,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: clicking empty map / ocean closes the banner and deselects",
+   "ok": true,
+   "detail": {
+    "ocean": {
+     "x": 24,
+     "y": 776
+    },
+    "s": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: the X-in-a-circle closes the banner and deselects",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": null,
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: Map View layer: hover previews Temperature on the map without setting it, leaving restores, click sets it, hovering Water previews over the set layer and leaving returns to Temperature",
+   "ok": true,
+   "detail": {
+    "sH": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": "temp",
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sL": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sC": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": null,
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sH2": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": "water",
+     "mainLens": "water",
+     "miniLens": [
+      "water",
+      "water",
+      "water",
+      "water"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "sL2": {
+     "sel": null,
+     "ctx": null,
+     "room": null,
+     "banner": false,
+     "paused": false,
+     "lens": "temp",
+     "lensPv": null,
+     "mainLens": "temp",
+     "miniLens": [
+      "temp",
+      "temp",
+      "temp",
+      "temp"
+     ],
+     "miniSel": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: keyboard focus on a layer button previews it too",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": null,
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": "temp",
+    "lensPv": "soil",
+    "mainLens": "soil",
+    "miniLens": [
+     "soil",
+     "soil",
+     "soil",
+     "soil"
+    ],
+    "miniSel": [
+     null,
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox region: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox region: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800+firefox region: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox region: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox region: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "region",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox region: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox region: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "region",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox region: four condition rows, limiting factor, large Overview / Colony / Science tabs (≥ 40 px), plant upper-left, colony info lower-left, mini-map right",
+   "ok": true,
+   "detail": {
+    "conds": 4,
+    "tabOk": true,
+    "tabH": 51.40000915527344
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox region: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox region: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "after": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox adapt: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox adapt: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800+firefox adapt: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox adapt: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox adapt: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "adapt",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox adapt: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox adapt: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "adapt",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox adapt: renders a tree (k-anat: 13 nodes, 14 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 166,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox adapt: plant upper-left, info lower-left, tree centre, mini-map right; leader lanes from plant parts to the category rail, one per category, never crossing",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 166,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox adapt: hovering Cold Tolerance previews on the PLANT (not the environment), explains it in the LEFT info block, lights the Stem leader, marks opening regions on the mini-map and names them in the right-column region context",
+   "ok": true,
+   "detail": {
+    "plantChanged": true,
+    "envChanged": false,
+    "pv": {
+     "infoPv": true,
+     "info": "Preview · TemperatureCold Tolerance120 BiomassHardier, compact growth survives f",
+     "open": 2,
+     "arcs": 0,
+     "tint": 0,
+     "previewing": true,
+     "glow": [
+      "temp"
+     ],
+     "ldOn": 1,
+     "ctx": "Region effect of this choiceOpens Cloud Steps, Frost Ridge",
+     "scenePv": false,
+     "sceneStop": "",
+     "globeOpen": [],
+     "globePv": false,
+     "readout": "",
+     "specimens": 1
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox adapt: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "Your plant in Dust ReachWould not survive yetBlock",
+    "infoAfter": "Your plant in Dust ReachWould not survive yetBlock"
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: Adapt → Terraform link switches rooms without leaving the paused mode or changing the room context",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "terraform",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox adapt: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox adapt: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "after": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox spread: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox spread: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800+firefox spread: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox spread: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox spread: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "spread",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox spread: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox spread: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "spread",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox spread: renders a tree (k-anat: 8 nodes, 9 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 139,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox spread: plant upper-left, info lower-left, tree centre, mini-map right; leader lanes from plant parts to the category rail, one per category, never crossing",
+   "ok": true,
+   "detail": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 139,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox spread: hovering Waterborne Seeds previews on the plant (seed parts), explains it in the left block, lights the Pods leader and draws dispersal arcs on the mini-map",
+   "ok": true,
+   "detail": {
+    "arcs": 2,
+    "glow": [
+     "spread"
+    ],
+    "ldOn": 1,
+    "info": "Preview · ReachWaterborne Seeds150 BiomassFloating seeds cross the sea.Looks lik"
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox spread: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "Your plant in Dust ReachWould not survive yetBlock",
+    "infoAfter": "Your plant in Dust ReachWould not survive yetBlock"
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox spread: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox spread: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "after": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox terraform: opens from its tool, AUTO-PAUSES, PAUSED pill on, Planet View hidden; the home selection is CLEARED and Frost Ridge becomes the room context on the mini-map",
+   "ok": true,
+   "detail": {
+    "s": {
+     "sel": null,
+     "ctx": "frost",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "frost",
+      "frost",
+      "frost",
+      "frost"
+     ]
+    },
+    "pill": true,
+    "bg": true
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox terraform: no horizontal scroll, no console errors",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "c15@1280x800+firefox terraform: header names the room and offers Planet, four room links, Resume play",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox terraform: has a smaller interactive map in the right column",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox terraform: clicking Dust Reach on the mini-map changes the ROOM context only (home selection stays empty)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": "terraform",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox terraform: hovering Salt Flats on the mini-map peeks its status",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox terraform: mini-map Map View chips: hover previews Hazard on the mini-maps, leaving restores, click sets",
+   "ok": true,
+   "detail": {
+    "mH": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mL": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": null,
+     "lensPv": null,
+     "mainLens": null,
+     "miniLens": [
+      null,
+      null,
+      null,
+      null
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    },
+    "mC": {
+     "sel": null,
+     "ctx": "dust",
+     "room": "terraform",
+     "banner": false,
+     "paused": true,
+     "lens": "hazard",
+     "lensPv": "hazard",
+     "mainLens": "hazard",
+     "miniLens": [
+      "hazard",
+      "hazard",
+      "hazard",
+      "hazard"
+     ],
+     "miniSel": [
+      "dust",
+      "dust",
+      "dust",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox terraform: renders a tree (k-orbit: 10 nodes, 10 edges), no node collisions, nodes inside the tree area",
+   "ok": true,
+   "detail": {
+    "kind": "k-orbit",
+    "nodes": 10,
+    "edges": 10,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 0,
+    "leadersOrdered": true,
+    "nodeW": 154,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox terraform: hovering Warm the Sky changes the LAND SCENE (sky colour, preview tag), the GLOBE (lit regions, glow) and the mini-map tint, shows 14 → 20 °C in the right-column readout and explains it in the left block; there is no plant drawing in the room",
+   "ok": true,
+   "detail": {
+    "sceneBefore": "#efd294",
+    "pv": {
+     "infoPv": true,
+     "info": "Preview · Sky temperatureWarm the Sky200 BiomassThe whole planet gets warmer.Loo",
+     "open": 2,
+     "arcs": 0,
+     "tint": 0.22,
+     "previewing": false,
+     "glow": [],
+     "ldOn": 0,
+     "ctx": "Planet readoutSky temperature14 °C→ 20 °CRainNormal rainInstabilityOpens Cloud Steps, Frost RidgeHarder: Ember Rise, Dust Reach",
+     "scenePv": true,
+     "sceneStop": "#f5c780",
+     "globeOpen": [
+      "cloud",
+      "frost"
+     ],
+     "globePv": true,
+     "readout": "→ 20 °C",
+     "specimens": 0
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox terraform: leaving the node restores the visual, the left info block and the mini-map",
+   "ok": true,
+   "detail": {
+    "infoBefore": "The land around Dust ReachWarm · 27 °CToo dry · Sa",
+    "infoAfter": "The land around Dust ReachWarm · 27 °CToo dry · Sa"
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox terraform: the globe spins by click-drag and by arrow keys (lightweight, stable: no errors, land shows on the front and hides on the back)",
+   "ok": true,
+   "detail": {
+    "rot0": 0,
+    "rot1": 1.5555555555555556,
+    "rot2": 1.0555555555555556,
+    "vis": {
+     "total": 16,
+     "hidden": 7
+    }
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox terraform: Escape returns to Planet View, RESUMES the clock (it was running before) and leaves NO region selected (the mini-map choice did not come back as a home selection)",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "dust",
+    "room": null,
+    "banner": false,
+    "paused": false,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "dust",
+     "dust",
+     "dust",
+     "dust"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox terraform: the main map has exactly the same geometry after the room as before (no reframing)",
+   "ok": true,
+   "detail": {
+    "before": [
+     0,
+     123,
+     1280,
+     677
+    ],
+    "after": [
+     0,
+     123,
+     1280,
+     677
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: Adapt and Spread share the room family (same tree kind, same zones, same em scale)",
+   "ok": true,
+   "detail": {
+    "adapt": "k-anat",
+    "spread": "k-anat"
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: Terraform uses a distinct tree design (orbit) around the globe",
+   "ok": true,
+   "detail": {
+    "terraform": "k-orbit"
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: Resume play closes the room and runs the clock",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox: Back from a run that was already paused stays paused",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "c15@1280x800+firefox: keyboard: Enter on Adapt opens it, 28 Tabs stay inside the room with visible focus, Escape returns focus to the Adapt tool",
+   "ok": true,
+   "detail": {
+    "bad": [],
+    "outside": [],
+    "count": 28,
+    "focusBack": true
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: deep link ?room=adapt&region=frost opens Adapt paused with Frost Ridge as the room context and nothing selected at home",
+   "ok": true,
+   "detail": {
+    "sel": null,
+    "ctx": "frost",
+    "room": "adapt",
+    "banner": false,
+    "paused": true,
+    "lens": null,
+    "lensPv": null,
+    "mainLens": null,
+    "miniLens": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "miniSel": [
+     "frost",
+     "frost",
+     "frost",
+     "frost"
+    ]
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: no emoji anywhere on the page; inline SVG icons in use (174)",
+   "ok": true,
+   "detail": {
+    "hits": [],
+    "svgIcons": 174
+   }
+  },
+  {
+   "name": "c15@1280x800+firefox: no console errors over the whole run",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "no external network requests",
+   "ok": true,
+   "detail": []
+  }
+ ],
+ "geometry": {
+  "c15@1280x800": {
+   "fit": {
+    "svgW": 1280,
+    "wrapW": 1280,
+    "zoneW": 1280,
+    "boxAR": 1.8906942392909896,
+    "vbAR": 1.8906985294117646,
+    "bgCovers": true,
+    "vb": "-57.13 -6 514.27 272"
+   }
+  },
+  "c15@1024x768": {
+   "fit": {
+    "svgW": 1024,
+    "wrapW": 1024,
+    "zoneW": 1024,
+    "boxAR": 1.5875968992248062,
+    "vbAR": 1.587610294117647,
+    "bgCovers": true,
+    "vb": "-15.91 -6 431.83 272"
+   }
+  },
+  "c15@1440x900": {
+   "fit": {
+    "svgW": 1440,
+    "wrapW": 1440,
+    "zoneW": 1440,
+    "boxAR": 1.8532818532818534,
+    "vbAR": 1.8532720588235294,
+    "bgCovers": true,
+    "vb": "-52.04 -6 504.09 272"
+   }
+  },
+  "c15@1280x800+rm": {
+   "fit": {
+    "svgW": 1280,
+    "wrapW": 1280,
+    "zoneW": 1280,
+    "boxAR": 1.8906942392909896,
+    "vbAR": 1.8906985294117646,
+    "bgCovers": true,
+    "vb": "-57.13 -6 514.27 272"
+   }
+  },
+  "c15@1280x800+firefox": {
+   "fit": {
+    "svgW": 1280,
+    "wrapW": 1280,
+    "zoneW": 1280,
+    "boxAR": 1.8906942392909896,
+    "vbAR": 1.8906985294117646,
+    "bgCovers": true,
+    "vb": "-57.13 -6 514.27 272"
+   }
+  }
+ },
+ "trees": {
+  "c15@1280x800": {
+   "adapt": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 166,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "spread": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 139,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "terraform": {
+    "kind": "k-orbit",
+    "nodes": 10,
+    "edges": 10,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 0,
+    "leadersOrdered": true,
+    "nodeW": 154,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  "c15@1024x768": {
+   "adapt": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 142,
+    "em": 13.5,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "spread": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 118,
+    "em": 13.5,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "terraform": {
+    "kind": "k-orbit",
+    "nodes": 10,
+    "edges": 10,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 0,
+    "leadersOrdered": true,
+    "nodeW": 130,
+    "em": 13.5,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  "c15@1440x900": {
+   "adapt": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 187,
+    "em": 18,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "spread": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 157,
+    "em": 18,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "terraform": {
+    "kind": "k-orbit",
+    "nodes": 10,
+    "edges": 10,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 0,
+    "leadersOrdered": true,
+    "nodeW": 174,
+    "em": 18,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  "c15@1280x800+rm": {
+   "adapt": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 166,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "spread": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 139,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "terraform": {
+    "kind": "k-orbit",
+    "nodes": 10,
+    "edges": 10,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 0,
+    "leadersOrdered": true,
+    "nodeW": 154,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  "c15@1280x800+firefox": {
+   "adapt": {
+    "kind": "k-anat",
+    "nodes": 13,
+    "edges": 14,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 4,
+    "leadersOrdered": true,
+    "nodeW": 166,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "spread": {
+    "kind": "k-anat",
+    "nodes": 8,
+    "edges": 9,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 3,
+    "leadersOrdered": true,
+    "nodeW": 139,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "terraform": {
+    "kind": "k-orbit",
+    "nodes": 10,
+    "edges": 10,
+    "overlaps": 0,
+    "outside": 0,
+    "leaders": 0,
+    "leadersOrdered": true,
+    "nodeW": 154,
+    "em": 16,
+    "zones": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  }
+ },
+ "sizes": {
+  "c11": {
+   "nodeName": 13,
+   "nodeW": 110,
+   "nodeIcon": 38,
+   "roomTab": 13,
+   "roomTabH": 40,
+   "chip": 12,
+   "chipH": 28,
+   "h2": 24,
+   "mmName": 17,
+   "catLabel": 11,
+   "lensChip": 11
+  },
+  "c15": {
+   "nodeName": 16,
+   "nodeW": 166,
+   "nodeIcon": 46,
+   "roomTab": 15.2,
+   "roomTabH": 46,
+   "chip": 14.4,
+   "chipH": 35,
+   "h2": 27.2,
+   "mmName": 20.8,
+   "catLabel": 12,
+   "lensChip": 13.6
+  }
+ },
+ "icons": {
+  "c15@1280x800": {
+   "hits": [],
+   "svgIcons": 174
+  },
+  "c15@1024x768": {
+   "hits": [],
+   "svgIcons": 174
+  },
+  "c15@1440x900": {
+   "hits": [],
+   "svgIcons": 174
+  },
+  "c15@1280x800+rm": {
+   "hits": [],
+   "svgIcons": 174
+  },
+  "c15@1280x800+firefox": {
+   "hits": [],
+   "svgIcons": 174
+  }
+ },
+ "external": [],
+ "errors": [],
+ "summary": {
+  "total": 356,
+  "failed": 0
+ }
+}

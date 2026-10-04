@@ -221,3 +221,11 @@ After BLOOM-021 the owner changed the leading direction. The full record and the
 - **Icons:** final UI phases use **real SVG / custom icons, never emoji**. Concepts 11–14 already use an inline SVG placeholder set.
 - **Under comparison (Concepts 11–14):** specimen prominence, mini-map prominence, one shared room template versus specialised rooms, tree layouts (outline branches, radial ring, tech chips, route stations, anatomy rows, gauge columns), and whether Region Inspect is a report, a lab or a control screen.
 - The production run-screen UI is **not locked** and the rebuild is not started.
+
+### 10.6 Decision Rooms Convergence (recorded with BLOOM-023)
+
+The owner reviewed Concepts 11–14 and asked for one convergence prototype instead of another exploration round. The record is [`UI_CONCEPT_REVIEW_v7.md`](UI_CONCEPT_REVIEW_v7.md); the prototype is Concept 15 in the gallery.
+- **Kept:** the Planet View + paused decision rooms architecture (no return to a side workbench).
+- **Combined:** Concept 11's left-column room composition and globe Terraform, Concept 12's bottom region banner (only while a region is selected; X / empty-map click deselect; Pause / speed never close it), Concept 14's anatomy-linked Adapt tree (cleaned up: plant-ordered categories, lane leaders that never cross). Adapt and Spread are one room family; Terraform is the globe room with a land scene instead of a plant.
+- **New rules:** the main map fills the frame width (more ocean, no dead side columns); entering a room deselects the home map and carries the region into the room as its mini-map context; room mini-map choices never come back as a home selection; Map View layers preview on hover / focus and set on click; room UI scales with the viewport and is noticeably larger (desktop-first, iPad-like legibility).
+- The production run-screen UI is **not locked** and the rebuild is not started; the owner's confirmations are listed in v7 §11.
