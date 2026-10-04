@@ -5,12 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BLOOM UI concept mockups</title>
 <!--
-  BLOOM-017 + BLOOM-018 + BLOOM-019 + BLOOM-020 + BLOOM-021 — UI concept mockup sandbox: gallery / launcher.
-  Round 1 (BLOOM-017, concepts 1–4), Round 2 (BLOOM-018, concepts 5–8) and Convergence (BLOOM-019, Concept 9) are kept as
-  design history. Refinement (BLOOM-020, Concept 10) follows the owner's review of Concept 9 and is the default tab;
-  BLOOM-021 adds a third tool-access choice (top banner) to Concept 10 — no new concept.
+  BLOOM-017 … BLOOM-022 — UI concept mockup sandbox: gallery / launcher.
+  Round 1 (BLOOM-017, concepts 1–4), Round 2 (BLOOM-018, concepts 5–8), Convergence (BLOOM-019, Concept 9) and Refinement
+  (BLOOM-020/021, Concept 10) are kept as design history. Decision rooms (BLOOM-022, Concepts 11–14) is the newest group and the
+  default tab: the owner changed direction to a stable full-map Planet View that hands off into dedicated PAUSED strategy rooms
+  (Region Inspect, Adapt, Spread, Terraform), each with a smaller interactive mini-map and a visual upgrade tree.
   VISUAL CONCEPT MOCKUPS ONLY. Nothing in demos/ui-mockups/ loads or calls the game engine, generator, validator,
-  scenarios or Bloom Report. Fake data everywhere. Not evidence of production UI. Review notes: docs/UI_CONCEPT_REVIEW_v1.md (round 1), docs/UI_CONCEPT_REVIEW_v2.md (round 2), docs/UI_CONCEPT_REVIEW_v3.md (convergence), docs/UI_CONCEPT_REVIEW_v4.md (refinement), docs/UI_CONCEPT_REVIEW_v5.md (top-banner tool access)
+  scenarios or Bloom Report. Fake data everywhere. Not evidence of production UI. Review notes: docs/UI_CONCEPT_REVIEW_v1.md (round 1),
+  docs/UI_CONCEPT_REVIEW_v2.md (round 2), docs/UI_CONCEPT_REVIEW_v3.md (convergence), docs/UI_CONCEPT_REVIEW_v4.md (refinement),
+  docs/UI_CONCEPT_REVIEW_v5.md (top-banner tool access), docs/UI_CONCEPT_REVIEW_v6.md (decision rooms)
 -->
 <link rel="stylesheet" href="shared.css">
 <style>
@@ -92,23 +95,169 @@
   .vars .nw{display:inline-block; margin-left:4px; padding:0 6px; border-radius:6px; background:var(--gold); color:#3a2800; font-size:10px; font-weight:900; letter-spacing:.6px; vertical-align:2px}
   .wf .tb{background:#fffdf7; border:2px dashed var(--line-2); border-radius:6px; font-size:7.5px; letter-spacing:.4px}
   .rounds button{font-size:16px; padding:6px 14px}   /* four rounds now: keep the switcher on one row at 1280 */
+  /* decision rooms (BLOOM-022) */
+  .wf .rm{background:#ece5d3; border:2px solid #2f3a2c; border-radius:10px; align-items:start; padding-top:3px; font-size:9px; color:#5f6b57}
+  .wf .rm.dark{background:#39463a; border-color:#1f281d; color:#f5efdc}
+  .wf .tr{background:#fffdf7; border:2px dashed var(--line-2); border-radius:8px}
+  .wf .mm{background:#a9d6ee; border:2px solid var(--line-2); border-radius:8px} .wf .mm.big{border-color:#56664f}
+  .wf .dot{width:14px; height:14px; border-radius:50%; background:#fffdf7; border:2px solid var(--leaf-dark)}
+  .wf .lab{border:2px solid; border-radius:8px; align-items:start; padding-top:4px; line-height:1.3} .wf .lab.a{background:#f4ecd8; border-color:#e6c46a} .wf .lab.b{background:#e2f2d6; border-color:#9fd18a} .wf .lab.c{background:#fbe3e9; border-color:#eab6c4} .wf .lab.d{background:#dcecf8; border-color:#9ec3e4}
+  .rounds button{font-size:15px; padding:6px 12px}   /* five rounds now */
   @media (max-width:900px){ .vars.three{grid-template-columns:1fr} }
   @media (max-width:620px){ .vars.two{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
-<div class="mock-ribbon" role="note"><span class="tag">CONCEPT MOCKUPS</span><span>BLOOM-017 · 018 · 019 · 020 · 021 · UI design sandbox</span><span class="spacer"></span><span class="hint">Fake data · not connected to the game · not the production UI</span></div>
+<div class="mock-ribbon" role="note"><span class="tag">CONCEPT MOCKUPS</span><span>BLOOM-017 … 022 · UI design sandbox</span><span class="spacer"></span><span class="hint">Fake data · not connected to the game · not the production UI</span></div>
 <div class="wrap">
   <h1>BLOOM <span>run-screen concepts</span></h1>
-  <div class="warn" role="note"><span aria-hidden="true" style="font-size:26px">🧪</span><span><b>VISUAL MOCKUPS ONLY</b>Nothing here runs the game. The map, regions, Biomass, coverage, trait effects, colony growth and specimen drawings are all scripted placeholders. Prices, effects and art are not proposals. Emoji icons, colours and fonts are placeholders too.</span></div>
+  <div class="warn" role="note"><span aria-hidden="true" style="font-size:26px">🧪</span><span><b>VISUAL MOCKUPS ONLY</b>Nothing here runs the game. The map, regions, Biomass, coverage, trait effects, colony growth and specimen drawings are all scripted placeholders. Prices, effects and art are not proposals. Colours and fonts are placeholders too. Concepts 1–10 use emoji placeholder icons; Concepts 11–14 use a simple inline SVG placeholder icon set, which is the direction for the final UI (real icons, never emoji).</span></div>
   <div class="rounds" role="tablist" aria-label="Concept rounds">
-    <button type="button" role="tab" id="tab-refinement" aria-controls="panel-refinement" aria-selected="true">Refinement · BLOOM-020<span><small>Concept 10 · refined workbench · + top banner (021)</small><span class="new">NEW</span></span></button>
+    <button type="button" role="tab" id="tab-rooms" aria-controls="panel-rooms" aria-selected="true">Decision rooms · BLOOM-022<span><small>Concepts 11–14 · Planet View + paused rooms</small><span class="new">NEW</span></span></button>
+    <button type="button" role="tab" id="tab-refinement" aria-controls="panel-refinement" aria-selected="false" tabindex="-1">Refinement · BLOOM-020<small>Concept 10 · refined workbench · + top banner (021)</small></button>
     <button type="button" role="tab" id="tab-convergence" aria-controls="panel-convergence" aria-selected="false" tabindex="-1">Convergence · BLOOM-019<small>Concept 9 · unified side workbench</small></button>
     <button type="button" role="tab" id="tab-round2" aria-controls="panel-round2" aria-selected="false" tabindex="-1">Round 2 · Owner-directed iteration<small>Concepts 5–8 · BLOOM-018</small></button>
     <button type="button" role="tab" id="tab-round1" aria-controls="panel-round1" aria-selected="false" tabindex="-1">Round 1 · Original concepts<small>Concepts 1–4 · BLOOM-017</small></button>
   </div>
 
-  <section class="round" id="panel-refinement" role="tabpanel" aria-labelledby="tab-refinement">
+  <section class="round" id="panel-rooms" role="tabpanel" aria-labelledby="tab-rooms">
+    <p class="lede">A <b>change of direction</b>, not another workbench refinement. The owner chose a new architecture: a <b>stable full-map Planet View as home</b> that hands off into <b>dedicated, paused strategy rooms</b> for Region Inspect, Adapt, Spread and Terraform. Every room keeps a <b>smaller interactive map</b>, and Adapt / Spread / Terraform get a <b>visual evolution tree</b> instead of card grids. Four versions of that one architecture are here to compare.</p>
+    <div class="owner" id="rules22">
+      <h2>What all four share (so the comparison is fair)</h2>
+      <div class="cols">
+        <div>
+          <h3 class="keep">✓ Common rules</h3>
+          <ul>
+            <li><b>Planet View is home.</b> One large map, mounted once, never resized by exploring. Compact access to Regions, Map View, Adapt, Spread, Terraform and Pause / speed.</li>
+            <li><b>Entering a room auto-pauses.</b> A PAUSED · strategy mode pill, a striped top edge and a <b>Resume play</b> button say so. <b>Planet</b> (or Escape) goes back and restores the clock as it was.</li>
+            <li><b>Every room has a mini-map</b> you can click, hover to peek, re-target “Considering for”, and see previews on. Rooms link to each other, so you compare without close / reopen cycles.</li>
+            <li><b>Adapt and Spread change the organism</b> (specimen layers glow). <b>Terraform changes the environment only</b> (sky / ground change, plant dims and is labelled unchanged).</li>
+            <li><b>No emoji.</b> One inline SVG placeholder icon set across tools, categories, nodes and status chips.</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="drop">✕ Not in this round</h3>
+          <ul>
+            <li>No production UI logic: fake data, scripted purchases, fake clock.</li>
+            <li>Later-tier tree nodes are <b>placeholders</b> (dashed, lock badge). They shape the trees and unlock visually when their parent is bought, but cannot be purchased. The 13 purchasable items are the same fake items as every earlier concept.</li>
+            <li>Costs, names, effects, art, colours and the icon drawings are not proposals.</li>
+            <li>The production UI is <b>not locked</b> by this round.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="grid">
+      <article class="concept rec">
+        <span class="badge">START HERE</span>
+        <h2><small>Concept 11</small>Balanced decision rooms</h2>
+        <div class="wf" aria-hidden="true">
+          <i class="hud" style="left:12%; right:30%; top:6px; height:22px">STATUS · EXPLORE · CHANGE TOOLS</i>
+          <i class="hud" style="right:6px; width:40px; top:6px; height:22px">II · 1×</i>
+          <i class="map" style="left:6px; right:6px; top:34px; bottom:6px; opacity:.45">PLANET VIEW (dimmed behind)</i>
+          <i class="rm" style="left:22px; right:22px; top:46px; bottom:16px">PAUSED ROOM · chamber</i>
+          <i class="pl" style="left:32px; width:22%; top:70px; bottom:26px; font-size:9px">SPECIMEN<br>or focus</i>
+          <i class="tr" style="left:calc(22% + 42px); right:calc(26% + 42px); top:70px; bottom:26px; font-size:9px">TREE</i>
+          <i class="mm" style="right:32px; width:26%; top:70px; bottom:26px; font-size:9px">MINI-MAP<br>+ context</i>
+        </div>
+        <p><b>The practical baseline.</b> Planet View keeps the centred banner with top-banner tools. Rooms open as a <b>chamber over the dimmed planet</b> and all four share one three-zone structure: specimen or room focus · tree or content · mini-map and context.</p>
+        <p class="spec">Trees: Adapt and Spread use an <b>organic branching outline</b> (category trunks, tier brackets); Terraform uses a <b>planetary-systems ring</b> around a planet disc. Region Inspect keeps the owner-approved tabbed layout.</p>
+        <h3>Try this</h3>
+        <ul>
+          <li>Click <b>Frost Ridge</b>, then <b>Adapt</b> in the banner. The room opens, the clock pauses, the specimen shows the plant in Frost Ridge.</li>
+          <li>Hover <b>Cold Tolerance</b>: the plant gets shorter and fuzzier, the mini-map marks Frost Ridge and Cloud Steps as opening.</li>
+          <li>Click <b>Dust Reach</b> on the mini-map: “Considering for” changes without leaving the room. Then press <b>Terraform</b> in the room header and hover <b>Warm the Sky</b>: sky and disc warm, the plant dims as “anatomy unchanged”.</li>
+          <li>Press <b>Planet</b>: the clock resumes exactly as it was.</li>
+        </ul>
+        <a class="btn plant open" href="concept-11-balanced-rooms.html">Open Concept 11 →</a>
+      </article>
+      <article class="concept">
+        <h2><small>Concept 12</small>Specimen-first evolution rooms</h2>
+        <div class="wf" aria-hidden="true">
+          <i class="hud" style="left:12%; right:30%; top:6px; height:22px">STATUS · TOOLS</i>
+          <i class="hud" style="right:6px; width:40px; top:6px; height:22px">II · 1×</i>
+          <i class="rm" style="left:6px; right:6px; top:34px; bottom:6px">PAUSED ROOM · full screen</i>
+          <i class="pl" style="left:34%; width:22%; top:56px; bottom:22px; border-radius:50%; font-size:9px">BIG<br>SPECIMEN</i>
+          <i class="dot" style="left:28%; top:60px"></i><i class="dot" style="left:60%; top:62px"></i><i class="dot" style="left:22%; top:100px"></i><i class="dot" style="left:66%; top:104px"></i><i class="dot" style="left:30%; bottom:22px"></i><i class="dot" style="left:60%; bottom:24px"></i>
+          <i class="mm" style="right:16px; width:20%; top:56px; height:52px; font-size:8px">small MINI-MAP</i>
+        </div>
+        <p><b>Strongest biological identity.</b> Planet View is restrained (one slim summary bar). Adapt and Spread put the <b>plant in the middle of a full screen</b> with a <b>radial evolution ring</b> around it; hovering a node lights the matching plant parts. Terraform tests the same ring around a sky-and-ground scene.</p>
+        <p class="spec">Mini-map: smaller than Concept 11 (top of the side column) but fully interactive. Trees: radial rings in all three rooms, category labels in the gaps between sectors.</p>
+        <h3>Try this</h3>
+        <ul>
+          <li>Open <b>Adapt</b> and move slowly round the ring: stature, leaves, roots and pigment take turns glowing on the big plant.</li>
+          <li>Open <b>Spread</b>: the ring is sparser. Hover <b>Waterborne Seeds</b> for the sea route to Tide Isle on the small map.</li>
+          <li>Open <b>Terraform</b>: same ring language, but the hover changes the sky in the scene and the planet badge, not the plant. Does the language flex, or does Terraform want its own?</li>
+        </ul>
+        <a class="btn plant open" href="concept-12-specimen-rooms.html">Open Concept 12 →</a>
+      </article>
+      <article class="concept">
+        <h2><small>Concept 13</small>World-control strategy rooms</h2>
+        <div class="wf" aria-hidden="true">
+          <i class="hud nv" style="left:6px; right:6px; top:6px; height:18px">EDEN · IN BLOOM · 260 · II · 1×</i>
+          <i class="nv" style="left:6px; width:34px; top:28px; bottom:6px; font-size:7px; line-height:1.8">REG<br>MAP<br>ADA<br>SPR<br>TER</i>
+          <i class="rm dark" style="left:46px; right:6px; top:28px; bottom:6px">PAUSED ROOM · ops</i>
+          <i class="mm big" style="left:56px; width:52%; top:48px; bottom:16px; font-size:9px">WORLD MAP (large)</i>
+          <i class="pl" style="right:16px; width:30%; top:48px; height:30px; font-size:8px">thumb · owned</i>
+          <i class="tr" style="right:16px; width:30%; top:84px; bottom:16px; font-size:9px">TECH TREE</i>
+        </div>
+        <p><b>Strongest strategy / map identity.</b> Planet View is very clean: a thin dark status strip and a left command strip. In the rooms the <b>world map takes most of the space</b>; the tree is a compact <b>tech-tree of chips</b> beside it and the specimen is a small thumbnail. Terraform reads like a control room.</p>
+        <p class="spec">Trees: orthogonal tech network (Adapt, Terraform) and a dashed dispersal-route tree (Spread), all in the side column. Region Inspect is a control screen: big map, list, tabs.</p>
+        <h3>Try this</h3>
+        <ul>
+          <li>On Planet View, select a region: its summary appears in the command strip, not over the map.</li>
+          <li>Open <b>Terraform</b>, hover <b>Humidify</b>: the big map tints and hatches, the environment panel shows the change, the plant thumb stays as it is.</li>
+          <li>Open <b>Spread</b>, hover <b>Seed Output</b>: dispersal arcs appear on the big map.</li>
+          <li>Is a tree you may scroll (at 1024 px) acceptable when the map is this big?</li>
+        </ul>
+        <a class="btn plant open" href="concept-13-world-control-rooms.html">Open Concept 13 →</a>
+      </article>
+      <article class="concept">
+        <h2><small>Concept 14</small>Category labs</h2>
+        <div class="wf" aria-hidden="true">
+          <i class="hud" style="left:12%; right:30%; top:6px; height:22px">STATUS · TOOLS</i>
+          <i class="hud" style="right:6px; width:40px; top:6px; height:22px">II · 1×</i>
+          <i class="lab a" style="left:6px; width:calc(25% - 8px); top:34px; bottom:6px; font-size:8px">DOSSIER<br>paper report</i>
+          <i class="lab b" style="left:25%; width:calc(25% - 4px); top:34px; bottom:6px; font-size:8px">EVOLUTION LAB<br>anatomy rows</i>
+          <i class="lab c" style="left:calc(50% + 4px); width:calc(25% - 4px); top:34px; bottom:6px; font-size:8px">DISPERSAL LAB<br>route over map</i>
+          <i class="lab d" style="left:calc(75% + 8px); right:6px; top:34px; bottom:6px; font-size:8px">SYSTEMS LAB<br>gauge columns</i>
+        </div>
+        <p><b>Strongest room-by-room specialisation.</b> The rooms do not share one template: <b>Ecology dossier</b> (ruled paper, stacked sections), <b>Evolution lab</b> (plant beside anatomy-linked rows with leader lines to its parts), <b>Dispersal lab</b> (a route line of stations over a large mini-map) and <b>Planet systems lab</b> (gauge columns per system). Shared shell, pause rule and mini-map keep it one game.</p>
+        <p class="spec">Trees: anatomy-linked rows (Adapt), route stations (Spread), systems columns with live gauges (Terraform). Each room has its own accent.</p>
+        <h3>Try this</h3>
+        <ul>
+          <li>Open <b>Regions</b>: the dossier reads top to bottom with no tabs. Does a report beat tabs here?</li>
+          <li>Open <b>Adapt</b>: follow a leader line from the plant to its row, then hover a node to see that part glow.</li>
+          <li>Open <b>Terraform</b>, hover <b>Cool the Sky</b>: the Sky temperature gauge previews 8 °C and the map tints blue.</li>
+          <li>Does the set still feel like one game?</li>
+        </ul>
+        <a class="btn plant open" href="concept-14-category-labs.html">Open Concept 14 →</a>
+      </article>
+    </div>
+    <section class="order" aria-labelledby="ord6T">
+      <h2 id="ord6T">Suggested review order</h2>
+      <ol>
+        <li><b>Concept 11</b> first, as the baseline: learn the shared rules (pause, mini-map, room links) where the layout is calmest.</li>
+        <li><b>Concept 12</b>: decide how much the specimen should dominate, and whether one ring language can carry Terraform.</li>
+        <li><b>Concept 13</b>: decide how much the map should dominate, and whether chips are enough tree.</li>
+        <li><b>Concept 14</b>: decide whether specialised rooms are worth the loss of one shared template.</li>
+        <li>Then return to 11 and ask which pieces of 12 / 13 / 14 it should borrow.</li>
+      </ol>
+      <h2 style="margin-top:16px">Questions to keep in mind</h2>
+      <ul class="qs">
+        <li>Chamber over the dimmed planet (11) or a full new screen (12–14)?</li>
+        <li>Specimen: hero (12), medium (11, 14 Adapt), or thumbnail (13)?</li>
+        <li>Mini-map: medium (11, 14), small (12) or large (13)?</li>
+        <li>One shared three-zone template (11) or room-specific labs (14)?</li>
+        <li>Which tree reads best: outline branches, radial ring, tech chips, route stations, anatomy rows, gauge columns?</li>
+        <li>Should Region Inspect feel like a report (14), a lab (11, 12) or a control screen (13)?</li>
+        <li>Is Back = “as it was” and Resume play = “running” the right pair of exits?</li>
+        <li>Should the room header link to the other rooms, or should every room return to the planet first?</li>
+      </ul>
+    </section>
+  </section>
+
+  <section class="round" id="panel-refinement" role="tabpanel" aria-labelledby="tab-refinement" hidden>
+    <p class="hist"><span aria-hidden="true">📜</span><span><b>Design history (BLOOM-020 / 021).</b> The owner liked Concept 10 and the top-banner tools, then changed direction on 2026-10-04 to a stable Planet View with paused decision rooms. That round is Concepts 11–14 in the Decision rooms tab, recorded in <code>docs/UI_CONCEPT_REVIEW_v6.md</code>. Concept 10 is left here unchanged for reference.</span></p>
     <p class="lede">Not a new direction: a refinement of Concept 9. The owner liked the side workbench and Region layout <b>A · Tabbed</b>, but did not approve the permanent full-height tool rail, and asked that anything coming from the workbench be <b>only as tall as its content</b>. Concept 10 tries exactly those two things. <b>BLOOM-021:</b> the owner liked Concept 10 and asked to try the tools in the top banner, so Concept 10 now has a <b>third tool-access choice</b>. It is not a new concept.</p>
     <div class="conv">
       <article class="concept rec big">
@@ -500,26 +649,26 @@
     </ul>
   </section>
   </section>
-  <footer>Review notes for PMO / owner: <code>docs/UI_CONCEPT_REVIEW_v5.md</code> (Concept 10 top-banner tool access), <code>docs/UI_CONCEPT_REVIEW_v4.md</code> (Refinement), <code>docs/UI_CONCEPT_REVIEW_v3.md</code> (Convergence), <code>docs/UI_CONCEPT_REVIEW_v2.md</code> (Round 2) and <code>docs/UI_CONCEPT_REVIEW_v1.md</code> (Round 1). The actual game is at the repo root (<a href="../../index.html">index.html</a>) and is not part of this sandbox.</footer>
+  <footer>Review notes for PMO / owner: <code>docs/UI_CONCEPT_REVIEW_v6.md</code> (Decision rooms, Concepts 11–14), <code>docs/UI_CONCEPT_REVIEW_v5.md</code> (Concept 10 top-banner tool access), <code>docs/UI_CONCEPT_REVIEW_v4.md</code> (Refinement), <code>docs/UI_CONCEPT_REVIEW_v3.md</code> (Convergence), <code>docs/UI_CONCEPT_REVIEW_v2.md</code> (Round 2) and <code>docs/UI_CONCEPT_REVIEW_v1.md</code> (Round 1). The actual game is at the repo root (<a href="../../index.html">index.html</a>) and is not part of this sandbox.</footer>
 </div>
 <script>
-/* Round switcher. Defaults to Refinement (BLOOM-020). #refinement / #convergence / #round2 / #round1 in the URL wins, then the last
-   tab viewed on this device. Each new round uses a new storage key so an older remembered tab does not hide the newest one
-   (BLOOM-018 bloomMockRound → BLOOM-019 bloomMockTab → BLOOM-020 bloomMockTab20). */
+/* Round switcher. Defaults to Decision rooms (BLOOM-022). #rooms / #refinement / #convergence / #round2 / #round1 in the URL wins, then
+   the last tab viewed on this device. Each new round uses a new storage key so an older remembered tab does not hide the newest one
+   (BLOOM-018 bloomMockRound → BLOOM-019 bloomMockTab → BLOOM-020 bloomMockTab20 → BLOOM-022 bloomMockTab22). */
 (function(){
-  const IDS = ['refinement', 'convergence', 'round2', 'round1'];
+  const IDS = ['rooms', 'refinement', 'convergence', 'round2', 'round1'];
   const tabs = IDS.map(id => document.getElementById('tab-' + id));
   function show(id, push){
     tabs.forEach(t => { const on = t.id === 'tab-' + id; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-    try { localStorage.setItem('bloomMockTab20', id); } catch (e) {}
+    try { localStorage.setItem('bloomMockTab22', id); } catch (e) {}
     if (push) history.replaceState(null, '', '#' + id);
   }
   tabs.forEach((t, k) => {
     t.addEventListener('click', () => show(t.id.slice(4), true));
     t.addEventListener('keydown', e => { const d = { ArrowRight:1, ArrowLeft:-1 }[e.key]; if (d) { e.preventDefault(); const n = tabs[(k + d + tabs.length) % tabs.length]; show(n.id.slice(4), true); n.focus(); } });
   });
-  let start = 'refinement';
-  try { const m = localStorage.getItem('bloomMockTab20'); if (IDS.includes(m)) start = m; } catch (e) {}
+  let start = 'rooms';
+  try { const m = localStorage.getItem('bloomMockTab22'); if (IDS.includes(m)) start = m; } catch (e) {}
   const h = location.hash.slice(1); if (IDS.includes(h)) start = h;
   show(start, false);
   window.addEventListener('hashchange', () => { const x = location.hash.slice(1); if (IDS.includes(x)) show(x, false); });
