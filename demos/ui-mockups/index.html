@@ -105,6 +105,8 @@
   .wf .lab{border:2px solid; border-radius:8px; align-items:start; padding-top:4px; line-height:1.3} .wf .lab.a{background:#f4ecd8; border-color:#e6c46a} .wf .lab.b{background:#e2f2d6; border-color:#9fd18a} .wf .lab.c{background:#fbe3e9; border-color:#eab6c4} .wf .lab.d{background:#dcecf8; border-color:#9ec3e4}
   .rounds button{font-size:15px; padding:6px 12px}   /* five rounds now */
   .rounds button{font-size:14px; padding:6px 10px}   /* six rounds now (BLOOM-023) */
+  .rounds button{font-size:13px; padding:5px 9px}   /* seven rounds now (BLOOM-024) */
+  .wf .win{background:#fffdf7; border:2px solid #56664f; border-radius:8px; box-shadow:0 3px 8px rgba(0,0,0,.25)} .wf .dimmap{background:#7f9fb0; filter:blur(1.5px)}
   .wf .lf{background:#dceefa; border:2px solid var(--line-2); border-radius:8px} .wf .gl{background:radial-gradient(circle at 40% 35%,#cfeefb,#4f94c9); border-radius:50%; border:2px solid #fff}
   .wf .bn{background:#fffdf7; border:2px solid #2f3a2c; border-radius:10px; font-size:8px}
   .c15card{grid-column:1 / -1; display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:18px 24px} .c15card > h2{grid-column:1 / -1} .c15card .wf{height:190px}
@@ -115,12 +117,13 @@
 </style>
 </head>
 <body>
-<div class="mock-ribbon" role="note"><span class="tag">CONCEPT MOCKUPS</span><span>BLOOM-017 … 023 · UI design sandbox</span><span class="spacer"></span><span class="hint">Fake data · not connected to the game · not the production UI</span></div>
+<div class="mock-ribbon" role="note"><span class="tag">CONCEPT MOCKUPS</span><span>BLOOM-017 … 024 · UI design sandbox</span><span class="spacer"></span><span class="hint">Fake data · not connected to the game · not the production UI</span></div>
 <div class="wrap">
   <h1>BLOOM <span>run-screen concepts</span></h1>
-  <div class="warn" role="note"><span aria-hidden="true" style="font-size:26px">🧪</span><span><b>VISUAL MOCKUPS ONLY</b>Nothing here runs the game. The map, regions, Biomass, coverage, trait effects, colony growth and specimen drawings are all scripted placeholders. Prices, effects and art are not proposals. Colours and fonts are placeholders too. Concepts 1–10 use emoji placeholder icons; Concepts 11–15 use a simple inline SVG placeholder icon set, which is the direction for the final UI (real icons, never emoji).</span></div>
+  <div class="warn" role="note"><span aria-hidden="true" style="font-size:26px">🧪</span><span><b>VISUAL MOCKUPS ONLY</b>Nothing here runs the game. The map, regions, Biomass, coverage, trait effects, colony growth and specimen drawings are all scripted placeholders. Prices, effects and art are not proposals. Colours and fonts are placeholders too. Concepts 1–10 use emoji placeholder icons; Concepts 11–16 use a simple inline SVG placeholder icon set, which is the direction for the final UI (real icons, never emoji).</span></div>
   <div class="rounds" role="tablist" aria-label="Concept rounds">
-    <button type="button" role="tab" id="tab-c15" aria-controls="panel-c15" aria-selected="true">Rooms convergence · BLOOM-023<span><small>Concept 15 · one combined prototype</small><span class="new">NEW</span></span></button>
+    <button type="button" role="tab" id="tab-c16" aria-controls="panel-c16" aria-selected="true">Presentation refinement · BLOOM-024<span><small>Concept 16 · Concept 15 refined</small><span class="new">NEW</span></span></button>
+    <button type="button" role="tab" id="tab-c15" aria-controls="panel-c15" aria-selected="false" tabindex="-1">Rooms convergence · BLOOM-023<small>Concept 15 · one combined prototype</small></button>
     <button type="button" role="tab" id="tab-rooms" aria-controls="panel-rooms" aria-selected="false" tabindex="-1">Decision rooms · BLOOM-022<small>Concepts 11–14 · Planet View + paused rooms</small></button>
     <button type="button" role="tab" id="tab-refinement" aria-controls="panel-refinement" aria-selected="false" tabindex="-1">Refinement · BLOOM-020<small>Concept 10 · refined workbench · + top banner (021)</small></button>
     <button type="button" role="tab" id="tab-convergence" aria-controls="panel-convergence" aria-selected="false" tabindex="-1">Convergence · BLOOM-019<small>Concept 9 · unified side workbench</small></button>
@@ -129,7 +132,94 @@
   </div>
 
 
-  <section class="round" id="panel-c15" role="tabpanel" aria-labelledby="tab-c15">
+  <section class="round" id="panel-c16" role="tabpanel" aria-labelledby="tab-c16">
+    <p class="lede">A <b>presentation refinement of Concept 15</b>, not a new exploration round. Concept 15 is accepted as the convergence direction; before the production UI plan is written the owner asked for one more pass on how it <i>looks and feels</i>: bigger and more filled, rooms that float over the world instead of replacing it, clearer anatomy links, Terraform as two side banks instead of a full orbit, and hover previews that never stick. <b>Concept 16 is Concept 15 with that pass applied.</b> Nothing about the architecture, the Planet View rules or the room set changes.</p>
+    <div class="owner" id="rules24">
+      <h2>What this pass changes (authoritative owner directions)</h2>
+      <div class="cols">
+        <div>
+          <h3 class="keep">✓ Refined in Concept 16</h3>
+          <ul>
+            <li><b>Scale from pill fit.</b> The room's type size is calibrated so that <b>three region pills of ordinary name length fit across the right-hand context column</b>; everything in the room (text, chips, tabs, info blocks, tree nodes, labels) is sized in em from it. When the window is too crowded for that size, the <b>whole room shrinks proportionally</b> rather than reflowing or scrolling.</li>
+            <li><b>Rooms float over the world.</b> Planet View stays underneath, <b>blurred and dimmed</b>; the room's boxes are windows with the world visible between them.</li>
+            <li><b>Content-height side panels.</b> The lower-left info block and the right-hand mini-map and context boxes end where their content ends (with a sensible floor); short content no longer stretches to the bottom.</li>
+            <li><b>Anatomy links you can read.</b> Thicker colour-coded leaders, bigger anchor rings with a label plate on the plant part, a glow on the lit leader, matching colour on the category label, the rail port, the node and the hover info.</li>
+            <li><b>Category colours with a reason.</b> Adapt by condition (Hazard purple, Water blue, Temperature hot orange, Soil brown); Spread by dispersal logic (Seeds = the carrier, amber; Growth = the colony, green; Reach = the distance, teal).</li>
+            <li><b>Spread stays compact.</b> The row step is capped, so the smaller Spread tree keeps the Adapt family look without giant gaps, and its box ends where the tree ends.</li>
+            <li><b>Terraform banks, not an orbit.</b> <b>Soil</b> on the left as a C pointing at the globe's surface; <b>Atmosphere</b> on the right as a reversed C pointing at a dotted <b>halo around</b> the globe (never over its face). Later tiers fork off their parent along the bank.</li>
+            <li><b>Hover reset rule.</b> Hover / focus previews only while active; leaving a node, chip, mini-map region or the window restores the committed state at once. Only a click commits. Everywhere: trees, Map View chips, mini-maps, scene, globe, plant.</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="drop">✕ Unchanged, by instruction</h3>
+          <ul>
+            <li>The Concept 15 architecture: Planet View home, bottom region banner only while selected, X / empty-map deselect, Pause / speed never close it, entering a room deselects home and carries the region as room context, room mini-map choices stay local, Adapt / Spread one family, Terraform the globe room, Map View hover previews + click sets, no emoji.</li>
+            <li>No earlier architecture alternative is reopened; no new concepts besides this refinement.</li>
+            <li>Terraform's "anatomy unchanged" explainer box stays gone.</li>
+            <li>Fake data, scripted purchases, fake clock; later-tier nodes are placeholders (three new Ground placeholders fill the Soil bank; none can be bought).</li>
+            <li>The production UI is <b>not locked</b> by this prototype and the rebuild is not started.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="grid">
+      <article class="concept rec c15card">
+        <span class="badge">REFINEMENT</span>
+        <h2><small>Concept 16</small>Concept 15 Presentation Refinement</h2>
+        <div>
+          <div class="wf" aria-hidden="true">
+            <i class="hud" style="left:20%; right:22%; top:6px; height:22px">STATUS · EXPLORE · CHANGE</i>
+            <i class="hud" style="right:6px; width:40px; top:6px; height:22px">II · 1×</i>
+            <i class="map" style="left:0; right:0; top:34px; bottom:0; border-radius:0">FULL-WIDTH PLANET VIEW · unchanged</i>
+            <i class="bn" style="left:22%; right:22%; bottom:8px; height:40px">⊗ REGION BANNER · only while selected</i>
+          </div>
+          <p><b>Planet View</b> is as in Concept 15. The change is what happens when a room opens.</p>
+          <div class="wf" aria-hidden="true" style="margin-top:12px">
+            <i class="dimmap" style="left:0; right:0; top:0; bottom:0; border-radius:12px">WORLD BEHIND · blurred + dimmed</i>
+            <i class="win" style="left:8px; right:8px; top:6px; height:22px; font-size:8px">PLANET · ROOM TITLE · ROOMS · PAUSED · RESUME</i>
+            <i class="win" style="left:8px; width:22%; top:34px; height:64px; font-size:8px">PLANT / LAND</i>
+            <i class="win" style="left:8px; width:22%; top:104px; height:52px; font-size:8px">HOVER INFO<br>(content height)</i>
+            <i class="win" style="left:calc(22% + 18px); right:calc(30% + 18px); top:34px; bottom:8px; font-size:9px">BIGGER TREE<br>colour-coded · thick leaders<br>or GLOBE + SOIL / ATMOSPHERE banks</i>
+            <i class="win" style="right:8px; width:30%; top:34px; height:78px; font-size:8px">MINI-MAP · 3 pills across</i>
+            <i class="win" style="right:8px; width:30%; top:118px; height:40px; font-size:8px">REGION EFFECT (content height)</i>
+          </div>
+        </div>
+        <div>
+          <ul class="states">
+            <li><b>Scale</b>Calibrated from pill fit (three pills across the right column), capped by window height; the room shrinks as one piece at 1024.</li>
+            <li><b>Region Inspect</b>Same tabbed layout, larger tabs and rows, content-height box, floating over the world.</li>
+            <li><b>Adapt</b>Colour-coded Hazard / Water / Temperature / Soil; thick leaders with label plates on leaf pigment / leaf shape / stem / roots; hover info lower-left ends with its content.</li>
+            <li><b>Spread</b>Same family, compact rows; Seeds / Growth / Reach colours; leaders to seed head / flowers / pods; dispersal arcs on the mini-map.</li>
+            <li><b>Terraform</b>Land scene upper-left; globe centre with a dotted atmosphere halo; Soil bank left (C) pointing at the surface, Atmosphere bank right (reversed C) pointing at the halo; planet readout right.</li>
+          </ul>
+          <h3>Try this</h3>
+          <ul>
+            <li>Click <b>Frost Ridge</b>, then <b>Adapt</b>: the world blurs behind the room's boxes. Hover <b>Cold Tolerance</b>: the orange <b>Stem</b> leader thickens and glows, the plate on the plant fills, the left block turns orange.</li>
+            <li>Move the pointer onto empty tree space: the preview clears at once. Click Cold Tolerance: it is bought (fake) and stays bought when you leave.</li>
+            <li>Open <b>Spread</b>: the tree box is shorter than Adapt's and the world shows below it.</li>
+            <li>Open <b>Terraform</b>: Soil on the left, Atmosphere on the right. Hover <b>Rock Weathering</b>: its pin on the surface lights; hover <b>Warm the Sky</b>: its ring on the halo lights, the land warms, the readout shows 14 → 20 °C.</li>
+            <li>Count the region pills in the right column: three fit across at 1280 and 1440. Resize to 1024: the same layout, smaller.</li>
+          </ul>
+          <a class="btn plant open" href="concept-16-presentation-refinement.html">Open Concept 16 →</a>
+        </div>
+      </article>
+    </div>
+    <section class="order" aria-labelledby="ord8T">
+      <h2 id="ord8T">What the owner should confirm next</h2>
+      <ul class="qs">
+        <li>Is the <b>three-pills-across</b> calibration (a region chip of median name length, right column 30 % wide) the right reading of the screenshot benchmark, or should the reference pill be shorter / the column narrower?</li>
+        <li>Is the <b>blur + dim</b> strength right (7 px, 46 % dim), and should the HUD stay visible behind the room header or be hidden?</li>
+        <li>Are the <b>content-height boxes</b> right, or should the right column's two boxes be one?</li>
+        <li>Do the <b>category colours</b> read as meaningful (Adapt by condition, Spread by dispersal), and is the hot-orange Temperature acceptable next to the Spread room's pink?</li>
+        <li>Are the <b>leader plates</b> on the plant enough, or should the plant parts themselves be outlined in the category colour?</li>
+        <li>Terraform: <b>Soil left / Atmosphere right</b>, or the other way round? Is the globe still big enough with two banks beside it, and does the dotted halo read as "atmosphere"?</li>
+        <li>Is the 1024 behaviour (same layout at about 80 % scale, Atmosphere bank with 8 nodes tightly stacked) acceptable?</li>
+        <li>Does Concept 16 become the basis of the production run-screen plan? The production UI is <b>not</b> locked by this round.</li>
+      </ul>
+    </section>
+  </section>
+  <section class="round" id="panel-c15" role="tabpanel" aria-labelledby="tab-c15" hidden>
+    <p class="hist"><span aria-hidden="true">📜</span><span><b>Design history (BLOOM-023).</b> The owner accepted Concept 15 as the convergence direction on 2026-10-04 and asked for one presentation refinement pass before the production UI plan. That is Concept 16 in the Presentation refinement tab, recorded in <code>docs/UI_CONCEPT_REVIEW_v8.md</code>. Concept 15 is left here unchanged for reference.</span></p>
     <p class="lede">A <b>convergence prototype</b>, not another four-way exploration. The owner reviewed Concepts 11–14 and chose: keep the <b>Planet View + paused decision rooms</b> architecture, build the Adapt room on <b>Concept 14's anatomy-linked tree</b> inside <b>Concept 11's left-column composition</b>, make Spread its sibling, keep the <b>globe Terraform</b> idea but bigger and more dramatic, use <b>Concept 12's bottom region banner</b> with stricter rules, fill the map width, and make every room <b>bigger and more iPad-like</b>. Concept 15 is that one prototype.</p>
     <div class="owner" id="rules23">
       <h2>What changed from BLOOM-022 (authoritative owner decisions)</h2>
@@ -739,26 +829,26 @@
     </ul>
   </section>
   </section>
-  <footer>Review notes for PMO / owner: <code>docs/UI_CONCEPT_REVIEW_v6.md</code> (Decision rooms, Concepts 11–14), <code>docs/UI_CONCEPT_REVIEW_v5.md</code> (Concept 10 top-banner tool access), <code>docs/UI_CONCEPT_REVIEW_v4.md</code> (Refinement), <code>docs/UI_CONCEPT_REVIEW_v3.md</code> (Convergence), <code>docs/UI_CONCEPT_REVIEW_v2.md</code> (Round 2) and <code>docs/UI_CONCEPT_REVIEW_v1.md</code> (Round 1). The actual game is at the repo root (<a href="../../index.html">index.html</a>) and is not part of this sandbox.</footer>
+  <footer>Review notes for PMO / owner: <code>docs/UI_CONCEPT_REVIEW_v8.md</code> (Presentation refinement, Concept 16), <code>docs/UI_CONCEPT_REVIEW_v7.md</code> (Rooms convergence, Concept 15), <code>docs/UI_CONCEPT_REVIEW_v6.md</code> (Decision rooms, Concepts 11–14), <code>docs/UI_CONCEPT_REVIEW_v5.md</code> (Concept 10 top-banner tool access), <code>docs/UI_CONCEPT_REVIEW_v4.md</code> (Refinement), <code>docs/UI_CONCEPT_REVIEW_v3.md</code> (Convergence), <code>docs/UI_CONCEPT_REVIEW_v2.md</code> (Round 2) and <code>docs/UI_CONCEPT_REVIEW_v1.md</code> (Round 1). The actual game is at the repo root (<a href="../../index.html">index.html</a>) and is not part of this sandbox.</footer>
 </div>
 <script>
-/* Round switcher. Defaults to Rooms convergence (BLOOM-023). #c15 / #rooms / #refinement / #convergence / #round2 / #round1 in the URL
+/* Round switcher. Defaults to Presentation refinement (BLOOM-024). #c16 / #c15 / #rooms / #refinement / #convergence / #round2 / #round1 in the URL
    wins, then the last tab viewed on this device. Each new round uses a new storage key so an older remembered tab does not hide the
-   newest one (BLOOM-018 bloomMockRound → BLOOM-019 bloomMockTab → BLOOM-020 bloomMockTab20 → BLOOM-022 bloomMockTab22 → BLOOM-023 bloomMockTab23). */
+   newest one (BLOOM-018 bloomMockRound → BLOOM-019 bloomMockTab → BLOOM-020 bloomMockTab20 → BLOOM-022 bloomMockTab22 → BLOOM-023 bloomMockTab23 → BLOOM-024 bloomMockTab24). */
 (function(){
-  const IDS = ['c15', 'rooms', 'refinement', 'convergence', 'round2', 'round1'];
+  const IDS = ['c16', 'c15', 'rooms', 'refinement', 'convergence', 'round2', 'round1'];
   const tabs = IDS.map(id => document.getElementById('tab-' + id));
   function show(id, push){
     tabs.forEach(t => { const on = t.id === 'tab-' + id; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-    try { localStorage.setItem('bloomMockTab23', id); } catch (e) {}
+    try { localStorage.setItem('bloomMockTab24', id); } catch (e) {}
     if (push) history.replaceState(null, '', '#' + id);
   }
   tabs.forEach((t, k) => {
     t.addEventListener('click', () => show(t.id.slice(4), true));
     t.addEventListener('keydown', e => { const d = { ArrowRight:1, ArrowLeft:-1 }[e.key]; if (d) { e.preventDefault(); const n = tabs[(k + d + tabs.length) % tabs.length]; show(n.id.slice(4), true); n.focus(); } });
   });
-  let start = 'c15';
-  try { const m = localStorage.getItem('bloomMockTab23'); if (IDS.includes(m)) start = m; } catch (e) {}
+  let start = 'c16';
+  try { const m = localStorage.getItem('bloomMockTab24'); if (IDS.includes(m)) start = m; } catch (e) {}
   const h = location.hash.slice(1); if (IDS.includes(h)) start = h;
   show(start, false);
   window.addEventListener('hashchange', () => { const x = location.hash.slice(1); if (IDS.includes(x)) show(x, false); });
