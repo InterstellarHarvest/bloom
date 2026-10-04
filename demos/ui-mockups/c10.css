@@ -17,9 +17,12 @@ body.c10{--top:86px; --gap:12px; --wb:420px; --dock:78px; --res:calc(var(--wb) +
 @media (min-width:1400px){ body.c10{--wb:452px} }
 @media (max-width:1100px){ body.c10{--top:82px; --gap:10px; --wb:372px; --dock:70px} }
 
-/* review switch: keep short words visible on narrow screens ("1 Dock" / "2 In-panel") */
-@media (max-width:1100px){ body.c10 .vswitch button span{display:inline} body.c10 .vswitch button span .lg{display:none} }
-@media (min-width:1101px){ body.c10 .vswitch button span .sh{display:none} }
+/* the ribbon now carries one or two review switches: the long hint only shows on very wide screens */
+body.c10 .mock-ribbon .hint{display:none}
+@media (min-width:1700px){ body.c10 .mock-ribbon .hint{display:inline} }
+/* review switch: keep short words visible on narrow screens ("1 Dock" / "2 In-panel" / "3 Top") */
+@media (max-width:1199px){ body.c10 .vswitch .vl{display:none} body.c10 .vswitch button span{display:inline} body.c10 .vswitch button span .lg{display:none} }
+@media (min-width:1200px){ body.c10 .vswitch button span .sh{display:none} }
 
 /* ── world geometry ── */
 body.c10 .mapzone{right:0}
@@ -40,7 +43,7 @@ body.c10 .bm-map .sel-o2{stroke-width:1.3}
   display:flex; flex-direction:column; overflow:hidden; background:var(--card); border:3px solid var(--line-2); border-radius:22px 0 22px 22px;
   box-shadow:0 3px 0 var(--line), 0 16px 40px rgba(60,45,15,.18); opacity:0; transform:translateX(18px); transition:opacity .22s, transform .38s var(--ease)}
 .wb10.open{opacity:1; transform:none}
-.bench10[data-tools="panel"] .wb10{right:var(--gap); width:calc(var(--wb) + var(--dock) - 3px); border-radius:22px}
+.bench10[data-tools="panel"] .wb10,.bench10[data-tools="top"] .wb10{right:var(--gap); width:calc(var(--wb) + var(--dock) - 3px); border-radius:22px}
 @media (prefers-reduced-motion: reduce){ .wb10{transition:none} }
 
 /* header: (in-panel variant) Explore / Change navigation, then the mode title row */
@@ -167,3 +170,73 @@ body.c10 .bm-map .sel-o2{stroke-width:1.3}
 .ctx10 .stw .st{padding:1px 3px}
 .ctx10 .verdict{min-height:2.6em}   /* reserve two lines so hovering cards never changes the panel height */
 @media (max-width:1100px){ .wb10 .ab-specbox{width:100px; height:100px} .wb10 .ab-cap{font-size:13px} }
+
+
+/* ── Variant 3 · Top banner (BLOOM-021): Explore / Change controls in the HUD, between the run status and Pause / speed ──
+   Hierarchy: the status card stays the tallest, boldest block (Biomass 42 px); the tool group is a quieter, shorter capsule;
+   Pause / speed stays its own capsule at the far right. Nothing floats over the planet while the workbench is closed.
+   Labels: icon + short text where it fits (≥ 1180 px), icons only below that or when the review switch says "Icons".
+   Every tool keeps a visible tooltip on hover / focus and a full accessible name either way. */
+.top9.has-tools{grid-template-columns:minmax(0,1fr) auto auto auto}
+.top9.has-tools .t-left{font-size:12px}
+/* no outer capsule: two small segmented groups sit in the band, so the status card stays the biggest, boldest block */
+.tb10{display:flex; align-items:flex-end; gap:8px; align-self:center}
+.tg{display:flex; flex-direction:column; gap:1px}
+.tg-h{padding-left:7px; font-size:9.5px; font-weight:900; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-faint); line-height:1.2}
+.tg-b{display:flex; gap:2px; padding:3px; border-radius:13px; background:var(--paper-2)}
+.tt10{position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; min-width:50px; height:46px; padding:2px 5px;
+  border:none; border-radius:10px; background:transparent; cursor:pointer; font-weight:800; font-size:11px; line-height:1.05; color:var(--ink-soft); transition:background .15s}
+.tt10 .ti{font-size:18px; line-height:1.1}
+.tt10 .tn{white-space:nowrap}
+.tt10:hover{background:rgba(255,255,255,.8); color:var(--ink)}
+.tt10[data-tool="adapt"]:not([aria-pressed="true"]) .ti,.tt10[data-tool="spread"]:not([aria-pressed="true"]) .ti,.tt10[data-tool="terraform"]:not([aria-pressed="true"]) .ti{filter:saturate(1.1)}
+/* active: inverted fill AND a notch pointing down at the workbench it owns (shape, not colour alone) */
+.tt10[aria-pressed="true"]{background:var(--ink); color:#fff7e0}
+.tt10[aria-pressed="true"]::after{content:''; position:absolute; left:50%; bottom:-9px; margin-left:-7px; border:7px solid transparent; border-top-color:var(--ink); border-bottom:0}
+.tt10 .badge{position:absolute; top:1px; right:2px; min-width:17px; height:17px; padding:0 4px; border-radius:9px; background:#fff2dc; border:2px solid var(--warn); color:#7a4a00; font-size:10px; font-weight:900; display:grid; place-items:center; line-height:1}
+.tt10 .vdot{position:absolute; top:4px; right:7px; width:10px; height:10px; border-radius:50%; background:var(--gold); border:2px solid #fff}
+/* icons only (review switch, or automatically on narrow screens): square buttons, same tool identity, tooltips carry the words */
+.tb10.icons .tt10{min-width:44px; width:44px; height:44px; padding:0}
+.tb10.icons .tt10 .ti{font-size:21px}
+.tb10.icons .tt10 .tn{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+@media (max-width:1199px){
+  .tb10 .tt10{min-width:44px; width:44px; height:44px; padding:0}
+  .tb10 .tt10 .ti{font-size:21px}
+  .tb10 .tt10 .tn{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+}
+/* making room without touching Biomass: in this variant only, the two progress bars get shorter as the window narrows */
+@media (max-width:1359px){
+  .top9.has-tools .banner > div{padding:0 13px}
+  .top9.has-tools .bn-cov .bar{width:140px} .top9.has-tools .bn-scn .bar{width:104px}
+}
+@media (max-width:1199px){
+  .top9.has-tools .banner > div{padding:0 11px}
+  .top9.has-tools .bn-cov .bar{width:120px} .top9.has-tools .bn-scn .bar{width:76px}
+}
+/* ≤ 1100 px (iPad-landscape 1024): icons only; bars shorter again; "of the land ·" / "of the" dropped from the two small
+   captions (they read "goal 70%" and "air lost"); every number, the climate word and the living-region count stay */
+@media (max-width:1100px){
+  .top9.has-tools{gap:6px}
+  .top9.has-tools .banner{padding:0 3px}
+  .top9.has-tools .banner > div{padding:0 9px}
+  .top9.has-tools .bn-bio{padding:0 14px !important}
+  .top9.has-tools .bn-cov .bar{width:104px} .top9.has-tools .bn-scn .bar{width:78px}
+  .top9.has-tools .bn-scn .row{gap:6px}
+  .top9.has-tools .bn-x{display:none}
+  .top9.has-tools .clock .clk-play{min-width:76px}
+  .tb10{gap:5px}
+  .tg-h{font-size:9px; letter-spacing:1px; padding-left:5px}
+}
+
+/* labels review switch: below 1200 px the banner is icons-only whatever it says, so say so */
+.lsw .auto{display:none; font-size:10.5px; font-weight:800; color:#ffe08a; opacity:.85; padding:0 6px 0 2px; white-space:nowrap}
+@media (max-width:1199px){ .lsw .auto{display:inline} }
+@media (max-width:1100px){ .lsw .auto{font-size:0} .lsw .auto::before{content:'auto'; font-size:10.5px} }
+
+/* tooltip for the top-banner tools: appears under the button on hover (short delay) or keyboard focus (immediately) */
+.tip10{position:fixed; z-index:80; max-width:240px; padding:6px 10px 7px; border-radius:10px; background:var(--ink); color:#fff7e0; font-size:12.5px; line-height:1.3;
+  box-shadow:0 6px 18px rgba(30,25,10,.28); pointer-events:none}
+.tip10 b{display:block; font-size:13.5px}
+.tip10 span{display:block; color:#e8dfc4}
+.tip10 em{display:block; margin-top:2px; font-style:normal; font-size:11px; color:#ffe08a}
+.tip10::before{content:''; position:absolute; top:-7px; left:var(--ax,50%); margin-left:-7px; border:7px solid transparent; border-bottom-color:var(--ink); border-top:0}

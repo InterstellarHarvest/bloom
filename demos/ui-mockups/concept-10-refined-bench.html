@@ -5,18 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BLOOM mockup · Concept 10 · Refined unified workbench</title>
 <!--
-  BLOOM-020 · Concept 10 — Refined unified workbench (refinement of Concept 9; Concept 9 is unchanged).
+  BLOOM-020 (+ BLOOM-021 top-banner variant) · Concept 10 — Refined unified workbench (refinement of Concept 9; Concept 9 is unchanged).
   VISUAL CONCEPT MOCKUP ONLY: fake data, scripted behaviour, not connected to the game. Not the production UI.
   Same six modes and the same one-reframe geometry as Concept 9, refined after the owner's BLOOM-019 review:
     - Region details use layout A (tabbed) only;
     - the workbench is a top-aligned, CONTENT-HEIGHT panel with a max-height and internal scroll (no full-height slab);
-    - no permanent full-height tool rail. A review-only switch compares two tool-access presentations:
+    - no permanent full-height tool rail. A review-only switch compares three tool-access presentations:
         1 · Attached dock: a short Explore / Change dock joined to the panel edge; when closed it is a small floating stack;
         2 · In-panel navigation: Explore / Change controls live in the panel header; when closed a small "Tools" opener remains;
+        3 · Top banner (BLOOM-021): compact Explore / Change controls in the top HUD, between the run status and Pause / speed;
+            nothing floats over the planet when the workbench is closed. A second review-only switch compares icon + text
+            labels with icons only (hover / focus tooltips either way);
     - while Adapt / Spread / Terraform is open, clicking a different region changes who you are "Considering for" and stays in
       the mode. Clicking the already-selected region, or the Details / Region controls, opens its Region details.
   Content styles are reused from c9.css; the shell (panel, dock, opener, geometry) lives in c10.css; behaviour in c10.js.
-  Review notes: docs/UI_CONCEPT_REVIEW_v4.md
+  Review notes: docs/UI_CONCEPT_REVIEW_v4.md (dock / in-panel), docs/UI_CONCEPT_REVIEW_v5.md (top banner)
 -->
 <link rel="stylesheet" href="shared.css">
 <link rel="stylesheet" href="r2.css">
@@ -27,6 +30,7 @@
 <header class="top9">
   <div class="t-left"><b>Eden</b>Fake planet · Dying World scenario</div>
   <div class="banner" id="banner" role="group" aria-label="Run status"></div>
+  <nav class="tb10" id="topTools" aria-label="Tools" hidden></nav>
   <div id="clock"></div>
 </header>
 <div class="world" id="world">
@@ -58,6 +62,7 @@
     <button type="button" class="opener10" id="opener" hidden aria-controls="wb"><span class="oi" aria-hidden="true">🧰</span><span class="ot">Tools<small>Explore · Change</small></span></button>
   </div>
 </div>
+<div class="tip10" id="tip" aria-hidden="true" hidden></div>
 <div class="sr-only" id="c10live" role="status" aria-live="polite"></div>
 
 <script src="shared.js"></script>
