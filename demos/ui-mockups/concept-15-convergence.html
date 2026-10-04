@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM mockup · Concept 15 · Decision Rooms Convergence</title>
+<!--
+  BLOOM-023 · Concept 15 — Decision Rooms Convergence: one prototype that combines the owner's picks from Concepts 11, 12 and 14.
+  Planet View (map fills the width; bottom region banner only while a region is selected) → paused rooms: Region Inspect,
+  Adapt and Spread (one family: plant upper-left, hover info lower-left, cleaned-up anatomy-linked tree, mini-map right) and
+  Terraform (land scene upper-left, large draggable globe with an orbit tree, mini-map + planet readout right). Bigger,
+  iPad-like room sizing that scales with the viewport.
+  VISUAL CONCEPT MOCKUP ONLY: fake data, scripted behaviour, not connected to the game. Not the production UI.
+  All behaviour lives in c15.js; the look in c15.css; the fake data, map and specimen in shared.js / shared.css (unchanged).
+  Deep links for review: ?room=adapt|spread|terraform|region&region=frost&lens=temp
+  Review notes: docs/UI_CONCEPT_REVIEW_v7.md
+-->
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="c15.css">
+</head>
+<body class="c15" data-concept="15">
+<div id="app"></div>
+<script src="shared.js"></script>
+<script src="c15.js"></script>
+</body>
+</html>
