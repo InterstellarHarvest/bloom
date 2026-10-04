@@ -1,5 +1,6 @@
 /*
-  BLOOM UI concept mockups — REFINEMENT (BLOOM-020) · Concept 10 — Refined unified workbench. Loads AFTER shared.js + r2.js.
+  BLOOM UI concept mockups — REFINEMENT (BLOOM-020, + BLOOM-021 top banner) · Concept 10 — Refined unified workbench.
+  Loads AFTER shared.js + r2.js.
 
   VISUAL CONCEPT MOCKUP ONLY. Everything is still the BLOOM-017 fake world (BM.*) plus round-2 components (BM2.*): fake planet,
   fake Biomass clock, scripted trait effects. Nothing here loads or calls the engine, generator, validator, scenarios, balance
@@ -12,6 +13,9 @@
     - no permanent full-height tool rail. Review-only switch, same modes and selection either way:
         dock  · 1 Attached dock: a short Explore / Change dock joined to the panel; a small floating stack when closed;
         panel · 2 In-panel navigation: Explore / Change controls in the panel header; a small "Tools" opener when closed;
+        top   · 3 Top banner (BLOOM-021): compact Explore / Change controls in the HUD between the run status and Pause / speed;
+                no dock and no opener over the planet; Region has no banner button (map click, Details or a Regions row opens it).
+                A second review-only switch compares icon + text with icons only (?labels=text|icons); tooltips either way;
     - opening reframes the map once; region → region, mode → mode and dock ↔ panel never move it again; closing restores it;
     - while Adapt / Spread / Terraform is open, a map click on ANOTHER region changes "Considering for" and stays in the mode.
       Clicking the selected region again, the context bar's "Details" button or the Region tool opens Region details.
@@ -25,24 +29,35 @@ BM.ribbon('Concept 10 · Refined unified workbench');
 const rib = document.querySelector('.mock-ribbon');
 const back = rib.querySelector('a'); back.href = 'index.html#refinement'; back.setAttribute('aria-label', 'Back to the mockup gallery, Refinement');
 rib.querySelector('.tag').textContent = 'REFINEMENT MOCKUP';
-const ACCESS = [['dock', '1', 'Attached dock', 'Dock'], ['panel', '2', 'In-panel navigation', 'In-panel']];
+const ACCESS = [['dock', '1', 'Attached dock', 'Dock'], ['panel', '2', 'In-panel navigation', 'In-panel'], ['top', '3', 'Top banner', 'Top']];
+const ACCESS_IDS = ACCESS.map(a => a[0]);
 const vsw = document.createElement('div');
 vsw.className = 'vswitch'; vsw.setAttribute('role', 'group'); vsw.setAttribute('aria-label', 'Design review only, not game UI: Tool access');
 vsw.innerHTML = '<span class="vl" aria-hidden="true">Review only · Tool access</span>' +
   ACCESS.map(([k, n, t, sh]) => '<button type="button" data-tools="' + k + '" aria-pressed="false" title="Tool access ' + n + ': ' + t + ' (design review only)"><b>' + n + '</b><span><span class="lg">' + t + '</span><span class="sh">' + sh + '</span></span></button>').join('');
 rib.insertBefore(vsw, rib.querySelector('.spacer').nextSibling);
+/* BLOOM-021: second review-only switch, shown only for 3 · Top banner — icon + text vs icons only */
+const lsw = document.createElement('div');
+lsw.className = 'vswitch lsw'; lsw.setAttribute('role', 'group'); lsw.setAttribute('aria-label', 'Design review only, not game UI: top-banner tool labels');
+lsw.innerHTML = '<span class="vl" aria-hidden="true">Labels</span>' +
+  [['text', 'Icon + text', 'Text'], ['icons', 'Icons only', 'Icons']].map(([k, t, sh]) => '<button type="button" data-labels="' + k + '" aria-pressed="false" title="Top-banner labels: ' + t + (k === 'text' ? ' where it fits (below 1200 px wide the banner always shows icons only)' : '') + ' (design review only)"><span><span class="lg">' + t + '</span><span class="sh">' + sh + '</span></span></button>').join('') +
+  '<span class="auto" aria-hidden="true">icons at this width</span>';
+rib.insertBefore(lsw, vsw.nextSibling);
 
-let access = 'dock';
-try { const m = localStorage.getItem('bloomC10Tools'); if (m === 'dock' || m === 'panel') access = m; } catch (e) {}
-const qv = new URLSearchParams(location.search).get('tools'); if (qv === 'dock' || qv === 'panel') access = qv;
+let access = 'dock', labels = 'text';
+try { const m = localStorage.getItem('bloomC10Tools'); if (ACCESS_IDS.includes(m)) access = m; } catch (e) {}
+try { const m = localStorage.getItem('bloomC10Labels'); if (m === 'text' || m === 'icons') labels = m; } catch (e) {}
+const qs = new URLSearchParams(location.search), qv = qs.get('tools'), ql = qs.get('labels');
+if (ACCESS_IDS.includes(qv)) access = qv;
+if (ql === 'text' || ql === 'icons') labels = ql;
 
 /* ───────── top status banner (carried from Concept 9) ───────── */
 const banner = $('banner');
 banner.innerHTML =
-  '<div class="bn-cov"><span class="bn-k"><span aria-hidden="true">🌍</span> In bloom</span><span class="bn-v"><b class="v">0%</b><small>of the land · goal 70%</small></span>' +
+  '<div class="bn-cov"><span class="bn-k"><span aria-hidden="true">🌍</span> In bloom</span><span class="bn-v"><b class="v">0%</b><small><span class="bn-x">of the land · </span>goal 70%</small></span>' +
     '<span class="bar"><i></i><span class="goal" style="left:70%"></span></span><span class="bn-sub"><b class="liv">0</b> of 10 regions living</span></div>' +
   '<div class="bn-bio biomass"><span class="ico" aria-hidden="true">✦</span><span><span class="lbl">Biomass</span><span class="num">0</span><span class="rate"></span></span></div>' +
-  '<div class="bn-scn"><span class="bn-k"><span aria-hidden="true">💨</span> Dying World</span><span class="bn-v"><b class="v">0%</b><small>of the air lost</small></span>' +
+  '<div class="bn-scn"><span class="bn-k"><span aria-hidden="true">💨</span> Dying World</span><span class="bn-v"><b class="v">0%</b><small><span class="bn-x">of the </span>air lost</small></span>' +
     '<span class="row"><span class="bar pressure"><i></i></span><span class="bn-sub">⚡ <span class="word">Calm</span></span></span></div>';
 BM.bindBiomass(banner.querySelector('.bn-bio'));
 BM.store.on(() => {
@@ -62,6 +77,7 @@ BM2.pausedFlag($('mapzone'));
 
 /* ───────── map ───────── */
 const world = $('world'), bench = $('bench'), wb = $('wb'), dock = $('dock'), nav = $('nav'), opener = $('opener'), live = $('c10live');
+const top = $('topTools'), topBar = document.querySelector('.top9'), tip = $('tip');
 const map = window.map = BM.mountMap($('mapwrap'), { labels:'all', onSelect:id => selectRegion(id, { via:'map' }) });
 const regionEl = id => document.querySelector('#mapwrap .rg[data-r="' + id + '"]');
 const say = t => { live.textContent = ''; setTimeout(() => { live.textContent = t; }, 30); };
@@ -81,31 +97,67 @@ const isBoard = m => m === 'adapt' || m === 'spread' || m === 'terraform';
 const panes = [...wb.querySelectorAll('.pane')];
 const hIco = wb.querySelector('.mi'), hLbl = wb.querySelector('.ml'), hT = $('wbT'), wbHead = wb.querySelector('.wb10-h'), ctxBar = $('ctx');
 
-/* ───────── tools: ONE list, two presentations (attached dock / in-panel navigation) ───────── */
+/* ───────── tools: ONE list, three presentations (attached dock / in-panel navigation / top banner) ───────── */
 const GROUPS = [
   ['explore', 'Explore', [['region', '📍', 'Region'], ['regions', '🗂', 'Regions'], ['mapview', '🗺️', 'Map View']]],
   ['change', 'Change', [['adapt', '🌿', 'Adapt'], ['spread', '🌱', 'Spread'], ['terraform', '🌍', 'Terraform']]],
 ];
+/* BLOOM-021 decision: the top banner has no Region button. A map click always opens Region; from Adapt / Spread / Terraform the
+   context bar's Details (or clicking the selected region again) returns to it; a Regions row leads into it too. */
+const KIND = { dock:['tl10', 'dk-g', 'dk-h', false], panel:['nv10', 'ng', 'ng-h', true], top:['tt10', 'tg', 'tg-h', true] };
 function toolsHTML(kind){
-  const cls = kind === 'dock' ? 'tl10' : 'nv10';
+  const [cls, gcls, hcls, track] = KIND[kind];
   return GROUPS.map(([g, gn, items], k) => (k && kind === 'dock' ? '<span class="dk-div" role="presentation"></span>' : '') +
-    '<div class="' + (kind === 'dock' ? 'dk-g' : 'ng') + ' g-' + g + '" role="group" aria-labelledby="' + kind + 'H-' + g + '"><span class="' + (kind === 'dock' ? 'dk-h' : 'ng-h') + '" id="' + kind + 'H-' + g + '">' + gn + '</span>' +
-      (kind === 'dock' ? '' : '<span class="ng-b">') +
-      items.map(([id, ico, n]) => '<button type="button" class="' + cls + '" data-tool="' + id + '" aria-pressed="false" aria-controls="wb"><span class="ti" aria-hidden="true">' + ico + '</span><span class="tn">' + n + '</span>' +
+    '<div class="' + gcls + ' g-' + g + '" role="group" aria-labelledby="' + kind + 'H-' + g + '"><span class="' + hcls + '" id="' + kind + 'H-' + g + '">' + gn + '</span>' +
+      (track ? '<span class="' + (kind === 'top' ? 'tg-b' : 'ng-b') + '">' : '') +
+      items.filter(([id]) => !(kind === 'top' && id === 'region')).map(([id, ico, n]) => '<button type="button" class="' + cls + '" data-tool="' + id + '" aria-pressed="false" aria-controls="wb"><span class="ti" aria-hidden="true">' + ico + '</span><span class="tn">' + n + '</span>' +
         (id === 'regions' ? '<span class="badge" aria-hidden="true">0</span>' : '') + (id === 'mapview' ? '<span class="vdot" aria-hidden="true" hidden></span>' : '') + '</button>').join('') +
-      (kind === 'dock' ? '' : '</span>') + '</div>').join('');
+      (track ? '</span>' : '') + '</div>').join('');
 }
 dock.innerHTML = toolsHTML('dock');
 nav.innerHTML = toolsHTML('panel');
-const allTools = () => [...dock.querySelectorAll('[data-tool]'), ...nav.querySelectorAll('[data-tool]')];
-const toolBtn = t => (access === 'dock' ? dock : nav).querySelector('[data-tool="' + t + '"]');
+top.innerHTML = toolsHTML('top');
+const hosts = { dock, panel:nav, top };
+const allTools = () => [...dock.querySelectorAll('[data-tool]'), ...nav.querySelectorAll('[data-tool]'), ...top.querySelectorAll('[data-tool]')];
+const isTool = el => !!(el && el.dataset && el.dataset.tool && (dock.contains(el) || nav.contains(el) || top.contains(el)));
+const toolBtn = t => hosts[access].querySelector('[data-tool="' + t + '"]');
 allTools().forEach(b => b.addEventListener('click', () => {
-  const t = b.dataset.tool, inDock = !!b.closest('#dock');
+  const t = b.dataset.tool, outside = !!b.closest('#dock, #topTools');
   if (t === 'region' && !sel) { BM.toast('📍 Click a region on the map to see its details here.'); say('No region selected. Click a region on the map to see its details.'); return; }
   lastOpener = b;
-  if (mode === t) { if (inDock) closeBench(); return; }
+  hideTip();
+  /* pressing the active tool again closes the workbench when the tools live outside it (dock, top banner) */
+  if (mode === t) { if (outside) closeBench(); return; }
   setMode(t, { opener:b, focus:!BM2.viaPointer() });
 }));
+
+/* top-banner tooltips: name + what it does (+ state). Hover shows after a short delay; keyboard focus shows at once. */
+const TIPS = { regions:'Every region at a glance', mapview:'Colour the map by temperature, water, soil or hazard', adapt:'Change your plant', spread:'Change how seeds travel', terraform:'Change the planet' };
+let tipT = 0, tipFor = null, tipGone = 0;
+function tipHTML(b){
+  const t = b.dataset.tool, n = GROUPS.flatMap(g => g[2]).find(x => x[0] === t)[2];
+  let extra = '';
+  if (t === 'regions') { const k = BM.REGIONS.filter(r => BM.view(r.id).st !== 'ok').length; extra = k + ' need help'; }
+  if (t === 'mapview') { const L = BM2.LENSES.find(l => l.id === committed); extra = 'Showing ' + (committed ? L.name : 'Plants (normal)'); }
+  return '<b>' + n + '</b><span>' + TIPS[t] + (extra ? ' · ' + extra : '') + '</span>' + (t === mode ? '<em>Open · press again to close</em>' : '');
+}
+function showTip(b){
+  clearTimeout(tipT); tipFor = b;
+  tip.innerHTML = tipHTML(b); tip.hidden = false;
+  const r = b.getBoundingClientRect(), w = tip.offsetWidth, x = Math.max(8, Math.min(innerWidth - w - 8, r.left + r.width / 2 - w / 2));
+  tip.style.left = x + 'px'; tip.style.top = (r.bottom + 12) + 'px';
+  tip.style.setProperty('--ax', (r.left + r.width / 2 - x) + 'px');
+}
+function hideTip(){ clearTimeout(tipT); if (!tip.hidden) tipGone = performance.now(); tipFor = null; tip.hidden = true; }
+top.querySelectorAll('[data-tool]').forEach(b => {
+  /* moving along the bar while a tooltip is (or was just) showing switches it at once; a cold hover waits a moment */
+  b.addEventListener('pointerenter', () => { clearTimeout(tipT); tipT = setTimeout(() => showTip(b), !tip.hidden || performance.now() - tipGone < 400 ? 0 : 280); });
+  b.addEventListener('pointerleave', hideTip);
+  b.addEventListener('focus', () => { if (b.matches(':focus-visible')) showTip(b); });
+  b.addEventListener('blur', hideTip);
+});
+/* Esc dismisses a showing tooltip first (and only that), so it can be hidden without moving focus or closing anything */
+window.addEventListener('keydown', e => { if (e.key === 'Escape' && !tip.hidden) { e.preventDefault(); e.stopImmediatePropagation(); hideTip(); } }, true);
 opener.addEventListener('click', () => { lastOpener = opener; setMode(lastTool, { opener, focus:!BM2.viaPointer() }); });
 function paintTools(){
   const n = BM.REGIONS.filter(r => BM.view(r.id).st !== 'ok').length;
@@ -117,16 +169,19 @@ function paintTools(){
       b.setAttribute('aria-disabled', sel ? 'false' : 'true');
       b.title = sel ? 'Region details: ' + BM.region(sel).name : 'Click a region on the map first';
       b.setAttribute('aria-label', sel ? 'Region details: ' + BM.region(sel).name : 'Region details. No region selected: click a region on the map');
+    } else if (top.contains(b) && TIPS[t] && t !== 'mapview' && t !== 'regions') {
+      b.setAttribute('aria-label', b.querySelector('.tn').textContent + ': ' + TIPS[t].toLowerCase());
     } else if (t === 'regions') {
       b.querySelector('.badge').textContent = n;
       b.setAttribute('aria-label', 'Regions: browse every region. ' + n + ' need help');
     } else if (t === 'mapview') {
       b.querySelector('.ti').textContent = committed ? L.ico : '🗺️';
       b.querySelector('.vdot').hidden = !committed;
-      b.title = 'Map View: ' + (committed ? L.name : 'Plants');
+      if (!top.contains(b)) b.title = 'Map View: ' + (committed ? L.name : 'Plants');
       b.setAttribute('aria-label', 'Map View: showing ' + (committed ? L.name : 'Plants, the normal view') + '. Choose what the map shows');
     }
   });
+  if (tipFor && !tip.hidden) tip.innerHTML = tipHTML(tipFor);
 }
 
 /* ───────── opening / switching / closing the ONE workbench ───────── */
@@ -173,7 +228,7 @@ function closeBench(){
   BM.closeLayer(wb, { noReturn:true });
   /* the panel is now closing: never return focus into it. Fall back to the visible launcher for the same tool. */
   let f = backTo && document.contains(backTo) && !wb.contains(backTo) && !backTo.closest('[hidden]') && backTo.getClientRects().length ? backTo : null;
-  if (!f) f = access === 'dock' ? dock.querySelector('[data-tool="' + (was === 'region' ? 'regions' : was) + '"]') : opener;
+  if (!f) f = access === 'panel' ? opener : hosts[access].querySelector('[data-tool="' + (was === 'region' ? 'regions' : was) + '"]');
   if (f) f.focus({ preventScroll:true });
 }
 /* Esc closes the workbench and returns focus to whatever opened the current mode (region, dock tool or Tools opener) */
@@ -489,7 +544,7 @@ function paintCtx(){
       '<span class="ctx-acts"><button type="button" class="ctx-d" aria-label="Open Region details for ' + v.r.name + '">📍 Details</button>' +
       '<button type="button" class="ctx-x" aria-label="Stop considering ' + v.r.name + '">✕</button></span>' +
       '<span class="glob">🌍 Global upgrade: applies everywhere. <b>Click another region</b> on the map to consider it.</span><span class="verdict" aria-live="polite"></span>';
-    ctxBar.querySelector('.ctx-d').addEventListener('click', e => { lastOpener = toolBtn('region'); setMode('region', { focus:!BM2.viaPointer() }); });
+    ctxBar.querySelector('.ctx-d').addEventListener('click', e => { lastOpener = toolBtn('region') || toolBtn(mode); setMode('region', { focus:!BM2.viaPointer() }); });
     ctxBar.querySelector('.ctx-x').addEventListener('click', () => { sel = null; map.select(null); paintCtx(); paintTools(); boards[mode].show(); tagCards(mode); toolBtn(mode) && toolBtn(mode).focus({ preventScroll:true }); });
   } else {
     ctxBar.innerHTML = '<span class="pin">🌍 Global upgrades</span><span class="glob">Each applies everywhere. <b>Click a region</b> on the map to weigh them for it.</span><span class="verdict" aria-live="polite"></span>';
@@ -517,33 +572,47 @@ function tagCards(b){
   });
 }
 
-/* ───────── design-review switch: Tool access 1 · Attached dock / 2 · In-panel navigation ───────── */
+/* ───────── design-review switch: Tool access 1 · Attached dock / 2 · In-panel navigation / 3 · Top banner ───────── */
 function paintAccess(){
   const open = BM.isOpen(wb);
   bench.dataset.tools = access;
   dock.hidden = access !== 'dock';
   nav.hidden = access !== 'panel';
+  top.hidden = access !== 'top';
+  topBar.classList.toggle('has-tools', access === 'top');
   opener.hidden = access !== 'panel' || open;
+  lsw.hidden = access !== 'top';
+  if (access !== 'top') hideTip();
 }
 function setTools(v){
-  const had = document.activeElement, hadTool = had && had.dataset && had.dataset.tool && (dock.contains(had) || nav.contains(had)) ? had.dataset.tool : null;
+  const had = document.activeElement, hadTool = isTool(had) ? had.dataset.tool : null;
   const hadOpener = had === opener;
   access = v;
   try { localStorage.setItem('bloomC10Tools', v); } catch (e) {}
   vsw.querySelectorAll('[data-tools]').forEach(b => b.setAttribute('aria-pressed', b.dataset.tools === v ? 'true' : 'false'));
   paintAccess(); paintTools();
-  if (lastOpener && (dock.contains(lastOpener) || nav.contains(lastOpener))) lastOpener = toolBtn(lastOpener.dataset.tool);
+  if (isTool(lastOpener)) lastOpener = toolBtn(lastOpener.dataset.tool);   // null when the top banner has no Region button: closing falls back
   /* keep keyboard focus on the equivalent control when the one it was on disappears */
-  if (hadTool) { const b = toolBtn(hadTool); if (b && b.getClientRects().length) b.focus({ preventScroll:true }); else if (!opener.hidden) opener.focus({ preventScroll:true }); }
+  const near = () => toolBtn(mode && mode !== 'region' ? mode : 'regions');
+  if (hadTool) { const b = toolBtn(hadTool) || (access === 'top' ? near() : null); if (b && b.getClientRects().length) b.focus({ preventScroll:true }); else if (!opener.hidden) opener.focus({ preventScroll:true }); }
   else if (hadOpener && opener.hidden) { const b = toolBtn(lastTool); if (b) b.focus({ preventScroll:true }); }
 }
 vsw.querySelectorAll('[data-tools]').forEach(b => b.addEventListener('click', () => setTools(b.dataset.tools)));
 setTools(access);
+function setLabels(v){
+  labels = v;
+  try { localStorage.setItem('bloomC10Labels', v); } catch (e) {}
+  lsw.querySelectorAll('[data-labels]').forEach(b => b.setAttribute('aria-pressed', b.dataset.labels === v ? 'true' : 'false'));
+  top.classList.toggle('icons', v === 'icons');
+  hideTip();
+}
+lsw.querySelectorAll('[data-labels]').forEach(b => b.addEventListener('click', () => setLabels(b.dataset.labels)));
+setLabels(labels);
 
 /* QA / review hooks (read-only views of mockup state) */
 window.C10 = {
   get mode(){ return mode; }, get sel(){ return sel; }, get tools(){ return access; },
-  get committed(){ return committed; }, get preview(){ return previewView; }, setTools,
+  get committed(){ return committed; }, get preview(){ return previewView; }, get labels(){ return labels; }, setTools, setLabels,
 };
 
 paintTools();

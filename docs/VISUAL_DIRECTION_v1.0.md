@@ -198,3 +198,17 @@ The owner reviewed Concept 9. The full record is in [`UI_CONCEPT_REVIEW_v4.md`](
   - in Adapt / Spread / Terraform, a map click **re-targets "Considering for"** and stays in the mode, with Details, a second click or the Region tool opening Region details.
 - **Geometry rule unchanged:** one reframe on open; zero movement for region → region, mode switches and tool-access switches; exact restore on close.
 - The production run-screen UI is **not locked** and the rebuild is not started.
+
+### 10.4 Concept 10 top-banner tool access (recorded with BLOOM-021)
+
+The owner broadly likes Concept 10 and asked to try the tools in the top banner, between the run status and Pause / speed. The full record is in [`UI_CONCEPT_REVIEW_v5.md`](UI_CONCEPT_REVIEW_v5.md).
+- **Not a new concept.** Concept 10 gains a third review-only tool-access choice, **3 · Top banner**, beside 1 · Attached dock and 2 · In-panel navigation.
+- **Top-banner rules under test:**
+  - band order is status → tools → Pause / speed;
+  - the status card stays the biggest block, with Biomass the strongest number;
+  - the tools are two small Explore / Change groups with no outer capsule;
+  - icon + text at ≥ 1200 px, icons only below that; every tool has a hover / focus tooltip and a full accessible name;
+  - Region has no banner button.
+- **Closed state:** nothing floats over the planet.
+- **Geometry rule unchanged:** one reframe on open; zero movement for tool switches, region → region and tool-access switches.
+- The production run-screen UI is **not locked** and the rebuild is not started.

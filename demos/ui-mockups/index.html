@@ -5,11 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BLOOM UI concept mockups</title>
 <!--
-  BLOOM-017 + BLOOM-018 + BLOOM-019 + BLOOM-020 — UI concept mockup sandbox: gallery / launcher.
+  BLOOM-017 + BLOOM-018 + BLOOM-019 + BLOOM-020 + BLOOM-021 — UI concept mockup sandbox: gallery / launcher.
   Round 1 (BLOOM-017, concepts 1–4), Round 2 (BLOOM-018, concepts 5–8) and Convergence (BLOOM-019, Concept 9) are kept as
-  design history. Refinement (BLOOM-020, Concept 10) follows the owner's review of Concept 9 and is the default tab.
+  design history. Refinement (BLOOM-020, Concept 10) follows the owner's review of Concept 9 and is the default tab;
+  BLOOM-021 adds a third tool-access choice (top banner) to Concept 10 — no new concept.
   VISUAL CONCEPT MOCKUPS ONLY. Nothing in demos/ui-mockups/ loads or calls the game engine, generator, validator,
-  scenarios or Bloom Report. Fake data everywhere. Not evidence of production UI. Review notes: docs/UI_CONCEPT_REVIEW_v1.md (round 1), docs/UI_CONCEPT_REVIEW_v2.md (round 2), docs/UI_CONCEPT_REVIEW_v3.md (convergence), docs/UI_CONCEPT_REVIEW_v4.md (refinement)
+  scenarios or Bloom Report. Fake data everywhere. Not evidence of production UI. Review notes: docs/UI_CONCEPT_REVIEW_v1.md (round 1), docs/UI_CONCEPT_REVIEW_v2.md (round 2), docs/UI_CONCEPT_REVIEW_v3.md (convergence), docs/UI_CONCEPT_REVIEW_v4.md (refinement), docs/UI_CONCEPT_REVIEW_v5.md (top-banner tool access)
 -->
 <link rel="stylesheet" href="shared.css">
 <style>
@@ -87,30 +88,35 @@
   .wf .res{background:repeating-linear-gradient(-45deg,transparent 0 6px,rgba(47,58,44,.08) 6px 9px); border:2px dashed rgba(47,58,44,.25); border-radius:8px; color:var(--ink-faint)}
   .wf .nv{background:#2f3a2c; color:#fff7e0; border-radius:6px; font-size:8px}
   .vars.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .vars.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .vars .nw{display:inline-block; margin-left:4px; padding:0 6px; border-radius:6px; background:var(--gold); color:#3a2800; font-size:10px; font-weight:900; letter-spacing:.6px; vertical-align:2px}
+  .wf .tb{background:#fffdf7; border:2px dashed var(--line-2); border-radius:6px; font-size:7.5px; letter-spacing:.4px}
   .rounds button{font-size:16px; padding:6px 14px}   /* four rounds now: keep the switcher on one row at 1280 */
+  @media (max-width:900px){ .vars.three{grid-template-columns:1fr} }
   @media (max-width:620px){ .vars.two{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
-<div class="mock-ribbon" role="note"><span class="tag">CONCEPT MOCKUPS</span><span>BLOOM-017 · 018 · 019 · 020 · UI design sandbox</span><span class="spacer"></span><span class="hint">Fake data · not connected to the game · not the production UI</span></div>
+<div class="mock-ribbon" role="note"><span class="tag">CONCEPT MOCKUPS</span><span>BLOOM-017 · 018 · 019 · 020 · 021 · UI design sandbox</span><span class="spacer"></span><span class="hint">Fake data · not connected to the game · not the production UI</span></div>
 <div class="wrap">
   <h1>BLOOM <span>run-screen concepts</span></h1>
   <div class="warn" role="note"><span aria-hidden="true" style="font-size:26px">🧪</span><span><b>VISUAL MOCKUPS ONLY</b>Nothing here runs the game. The map, regions, Biomass, coverage, trait effects, colony growth and specimen drawings are all scripted placeholders. Prices, effects and art are not proposals. Emoji icons, colours and fonts are placeholders too.</span></div>
   <div class="rounds" role="tablist" aria-label="Concept rounds">
-    <button type="button" role="tab" id="tab-refinement" aria-controls="panel-refinement" aria-selected="true">Refinement · BLOOM-020<span><small>Concept 10 · refined workbench</small><span class="new">NEW</span></span></button>
+    <button type="button" role="tab" id="tab-refinement" aria-controls="panel-refinement" aria-selected="true">Refinement · BLOOM-020<span><small>Concept 10 · refined workbench · + top banner (021)</small><span class="new">NEW</span></span></button>
     <button type="button" role="tab" id="tab-convergence" aria-controls="panel-convergence" aria-selected="false" tabindex="-1">Convergence · BLOOM-019<small>Concept 9 · unified side workbench</small></button>
     <button type="button" role="tab" id="tab-round2" aria-controls="panel-round2" aria-selected="false" tabindex="-1">Round 2 · Owner-directed iteration<small>Concepts 5–8 · BLOOM-018</small></button>
     <button type="button" role="tab" id="tab-round1" aria-controls="panel-round1" aria-selected="false" tabindex="-1">Round 1 · Original concepts<small>Concepts 1–4 · BLOOM-017</small></button>
   </div>
 
   <section class="round" id="panel-refinement" role="tabpanel" aria-labelledby="tab-refinement">
-    <p class="lede">Not a new direction: a refinement of Concept 9. The owner liked the side workbench and Region layout <b>A · Tabbed</b>, but did not approve the permanent full-height tool rail, and asked that anything coming from the workbench be <b>only as tall as its content</b>. Concept 10 tries exactly those two things.</p>
+    <p class="lede">Not a new direction: a refinement of Concept 9. The owner liked the side workbench and Region layout <b>A · Tabbed</b>, but did not approve the permanent full-height tool rail, and asked that anything coming from the workbench be <b>only as tall as its content</b>. Concept 10 tries exactly those two things. <b>BLOOM-021:</b> the owner liked Concept 10 and asked to try the tools in the top banner, so Concept 10 now has a <b>third tool-access choice</b>. It is not a new concept.</p>
     <div class="conv">
       <article class="concept rec big">
         <span class="badge">START HERE</span>
         <h2><small>Concept 10</small>Refined unified workbench</h2>
         <div class="wf" aria-hidden="true">
-          <i class="hud" style="left:26%; right:26%; top:6px; height:24px">IN BLOOM · ✦ BIOMASS · DYING WORLD</i>
+          <i class="hud" style="left:12%; right:42%; top:6px; height:24px">IN BLOOM · ✦ BIOMASS · DYING WORLD</i>
+          <i class="tb" style="right:60px; width:calc(28% - 4px); top:9px; height:18px">3 · TOOLS HERE</i>
           <i class="hud" style="right:6px; width:48px; top:6px; height:24px">⏸ 1×</i>
           <i class="map" style="left:6px; right:calc(40% + 10px); top:36px; bottom:6px">MAP (reframed once)</i>
           <i class="sel" style="left:18%; width:12%; top:58px; height:34px"></i>
@@ -120,18 +126,20 @@
         </div>
         <p><b>Same workbench, same six modes, same one reframe.</b> Region details use the <b>A · Tabbed</b> layout only. The workbench is now a <b>top-aligned panel that ends where its content ends</b>: Map View is short, Region is medium, Regions and Adapt are taller and scroll inside the panel once they reach the bottom. There is no full-height rail any more.</p>
         <p class="rule">Map geometry: opening reframes the map <b>once</b>. Region → region, every mode switch and the tool-access switch move it <b>zero</b> more times. Closing puts it back exactly. Below a short panel you just see map background.</p>
-        <h3>Tool access: two presentations to compare</h3>
-        <p>A <b>“Review only · Tool access”</b> switch in the striped mockup ribbon changes only where the tools sit. The open mode and the selected region stay as they are.</p>
-        <div class="vars two">
+        <h3>Tool access: three presentations to compare</h3>
+        <p>A <b>“Review only · Tool access”</b> switch in the striped mockup ribbon changes only where the tools sit. The open mode, the selected region, the Map View and open / closed all stay as they are, and the map does not move.</p>
+        <div class="vars three">
           <div><b>1 · Attached dock</b>A short Explore / Change dock joined to the panel's edge, only as tall as its buttons. When the workbench closes it stays as a small floating button stack.</div>
           <div><b>2 · In-panel navigation</b>No outside dock. Explore / Change sit as compact controls in the panel header. When the workbench closes, one small <b>🧰 Tools</b> opener remains.</div>
+          <div><b>3 · Top banner</b><span class="nw">BLOOM-021</span> Compact Explore / Change controls in the top HUD, between the run status and Pause / speed. With the workbench closed, <b>nothing floats over the planet</b>. Region has no banner button: click the map. A second <b>Labels</b> switch compares icon + text with icons only.</div>
         </div>
         <h3>Try this</h3>
         <ul>
           <li>Click <b>Frost Ridge</b>, then <b>Ember Rise</b> and <b>Marsh Low</b>. The tabbed Region details update in place.</li>
           <li>Open <b>🗺️ Map View</b>. The panel is short and ends well above the bottom. Hover Temperature, Water, Soil and Hazard, then click one to keep it.</li>
           <li>With Frost Ridge selected, open <b>🌿 Adapt</b>, then click <b>Dust Reach</b> on the map. You stay in Adapt and “Considering for” changes. Click Dust Reach again, or press <b>📍 Details</b>, to open its Region details.</li>
-          <li>Switch the ribbon between <b>1</b> and <b>2</b> with the workbench open, then closed. Which feels lighter?</li>
+          <li>Switch the ribbon between <b>1</b>, <b>2</b> and <b>3</b> with the workbench open, then closed. Which feels lighter?</li>
+          <li>In <b>3 · Top banner</b>, close the workbench and look at the planet. Then try <b>Labels: Icons only</b> and hover a tool for its tooltip.</li>
           <li>Open <b>🌍 Terraform</b> and hover <b>Warm the Sky</b>: the sky changes, the plant does not.</li>
           <li>Press <b>Pause</b>, then cycle the speed <b>1× → 2× → 4×</b>.</li>
         </ul>
@@ -155,7 +163,9 @@
         <section class="order" aria-labelledby="ord4T" style="margin:0">
           <h2 id="ord4T">Questions to answer</h2>
           <ul class="qs" style="columns:1">
-            <li>Attached dock (1) or in-panel navigation (2)?</li>
+            <li>Attached dock (1), in-panel navigation (2) or top banner (3)?</li>
+            <li>Top banner: icon + text, or icons only with tooltips?</li>
+            <li>Top banner: is it fine that Region has no button there?</li>
             <li>Does the content-height panel feel like a shaped surface, or does the empty reserved column below it bother you?</li>
             <li>In Adapt / Spread / Terraform, should a map click only change who you are considering (as now), or open Region details (as in Concept 9)?</li>
             <li>Is “click the selected region again, or press Details” an obvious enough way back to Region details?</li>
@@ -490,7 +500,7 @@
     </ul>
   </section>
   </section>
-  <footer>Review notes for PMO / owner: <code>docs/UI_CONCEPT_REVIEW_v4.md</code> (Refinement), <code>docs/UI_CONCEPT_REVIEW_v3.md</code> (Convergence), <code>docs/UI_CONCEPT_REVIEW_v2.md</code> (Round 2) and <code>docs/UI_CONCEPT_REVIEW_v1.md</code> (Round 1). The actual game is at the repo root (<a href="../../index.html">index.html</a>) and is not part of this sandbox.</footer>
+  <footer>Review notes for PMO / owner: <code>docs/UI_CONCEPT_REVIEW_v5.md</code> (Concept 10 top-banner tool access), <code>docs/UI_CONCEPT_REVIEW_v4.md</code> (Refinement), <code>docs/UI_CONCEPT_REVIEW_v3.md</code> (Convergence), <code>docs/UI_CONCEPT_REVIEW_v2.md</code> (Round 2) and <code>docs/UI_CONCEPT_REVIEW_v1.md</code> (Round 1). The actual game is at the repo root (<a href="../../index.html">index.html</a>) and is not part of this sandbox.</footer>
 </div>
 <script>
 /* Round switcher. Defaults to Refinement (BLOOM-020). #refinement / #convergence / #round2 / #round1 in the URL wins, then the last
