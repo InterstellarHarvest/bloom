@@ -229,3 +229,14 @@ The owner reviewed Concepts 11–14 and asked for one convergence prototype inst
 - **Combined:** Concept 11's left-column room composition and globe Terraform, Concept 12's bottom region banner (only while a region is selected; X / empty-map click deselect; Pause / speed never close it), Concept 14's anatomy-linked Adapt tree (cleaned up: plant-ordered categories, lane leaders that never cross). Adapt and Spread are one room family; Terraform is the globe room with a land scene instead of a plant.
 - **New rules:** the main map fills the frame width (more ocean, no dead side columns); entering a room deselects the home map and carries the region into the room as its mini-map context; room mini-map choices never come back as a home selection; Map View layers preview on hover / focus and set on click; room UI scales with the viewport and is noticeably larger (desktop-first, iPad-like legibility).
 - The production run-screen UI is **not locked** and the rebuild is not started; the owner's confirmations are listed in v7 §11.
+
+### 10.7 Concept 15 Presentation Refinement (recorded with BLOOM-024)
+
+The owner accepted Concept 15 as the convergence direction and asked for one presentation pass before the production UI plan is written. The record is [`UI_CONCEPT_REVIEW_v8.md`](UI_CONCEPT_REVIEW_v8.md); the prototype is Concept 16 in the gallery (Concept 15 is kept unchanged as history). Nothing structural changed; the owner's presentation directions are now built and QA'd:
+- **Scale from pill fit:** the room's type size is calibrated so that about three region pills of ordinary name length fit across the right-hand context column; everything in the room is sized in em from it and the whole room shrinks proportionally when the window is too crowded (17.5 / 14.0 / 19.7 px at 1280 / 1024 / 1440).
+- **Rooms float over the world:** Planet View stays underneath, blurred and dimmed and inert; the room's boxes are windows with the world visible between them (not a return to the chamber or the side workbench).
+- **Content-height side panels** with a floor; the Spread tree box ends with its tree.
+- **Anatomy links:** thicker colour-coded leaders with a glow when lit, bigger anchor rings with label plates on the plant; **category colours with a reason** (Adapt by condition, Spread by dispersal logic) on labels, nodes, ports, leaders, anchors and the hover info.
+- **Terraform:** Soil (left, pointing at the surface) and Atmosphere (right, pointing at a dotted halo around the globe) as a C and a reversed C instead of a full orbit.
+- **Hover-reset rule:** hover / focus previews only while active; leaving restores the committed state at once; only a click commits.
+- The production run-screen UI is **not locked** and the rebuild is not started; the owner's confirmations are listed in v8 §11.
