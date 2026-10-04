@@ -240,3 +240,13 @@ The owner accepted Concept 15 as the convergence direction and asked for one pre
 - **Terraform:** Soil (left, pointing at the surface) and Atmosphere (right, pointing at a dotted halo around the globe) as a C and a reversed C instead of a full orbit.
 - **Hover-reset rule:** hover / focus previews only while active; leaving restores the committed state at once; only a click commits.
 - The production run-screen UI is **not locked** and the rebuild is not started; the owner's confirmations are listed in v8 §11.
+
+### 10.8 Final Interaction & Connector Refinement (recorded with BLOOM-025)
+
+Concept 16 is the accepted direction; the owner listed the last interaction and connector issues to settle before the production UI specification. The record is [`UI_CONCEPT_REVIEW_v9.md`](UI_CONCEPT_REVIEW_v9.md); the prototype is Concept 17 in the gallery (Concept 16 is kept unchanged as history). Nothing structural changed; built and QA'd:
+- **Plant link, three review-only treatments on one page** (ribbon switch): *Bridge* (separate cards joined by a translucent connector gutter with exit / entry sockets; the baseline), *Docked* (the plant card docks on the tree's seam; lanes in a bay on the tree's edge), *Organic* (cards apart; thick smooth tendrils). Same data, positions, colours and scale in all three; leaders never cross in any.
+- **Right-panel region pills** preview on hover / focus (the region is outlined on the mini-map, its status peeked); leaving restores the selected context; only a click selects.
+- **PAUSED** / **Resume** wording; **"Would help"** actions as intrinsic-width buttons in one or two columns; **Map View** as a compact popover under its button with only the five view choices (closes on outside click, Escape, tool toggle).
+- **Terraform exclusion zone:** one atmosphere halo band plus 1 em of clearance that only the Soil pins and Atmosphere rings may enter; straight / short-elbow subskill connectors along the bank; lock badges on the node's outer corner; legend top-left, readout bottom-left.
+- **Spread padding** symmetric from the real card height; **hover reset** strengthened (no re-hover after a blur until the pointer moves).
+- The production run-screen UI is **not locked** and the rebuild is not started; the owner's decisions are listed in v9 §13.
