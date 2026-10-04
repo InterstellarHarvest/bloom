@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM mockup · Concept 11 · Balanced decision rooms</title>
+<!--
+  BLOOM-022 · Concept 11 — Balanced decision rooms: the most balanced, likely practical baseline. Planet View is a stable map-first home with top-banner tool access; Region Inspect / Adapt / Spread / Terraform open as a paused chamber over the planet with the same three-zone structure (specimen or room focus · tree / content · mini-map + context). Adapt and Spread use an organic top-down branching tree; Terraform uses a planetary-systems ring around a planet disc.
+  VISUAL CONCEPT MOCKUP ONLY: fake data, scripted behaviour, not connected to the game. Not the production UI.
+  Shared architecture for Concepts 11–14 ("Planet View + paused decision rooms"): entering a room auto-pauses the fake clock,
+  every room carries a smaller interactive mini-map, Adapt / Spread preview on the plant and Terraform on the environment only,
+  and the icons are an inline SVG placeholder set (no emoji). All behaviour lives in rooms.js; the look in rooms.css; the fake
+  data, map and specimen in shared.js / shared.css. Deep links for review: ?room=adapt|spread|terraform|region&region=frost&lens=temp
+  Review notes: docs/UI_CONCEPT_REVIEW_v6.md
+-->
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="rooms.css">
+</head>
+<body class="rooms c11" data-concept="11">
+<div id="app"></div>
+<script src="shared.js"></script>
+<script src="rooms.js"></script>
+</body>
+</html>

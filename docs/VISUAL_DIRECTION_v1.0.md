@@ -212,3 +212,12 @@ The owner broadly likes Concept 10 and asked to try the tools in the top banner,
 - **Closed state:** nothing floats over the planet.
 - **Geometry rule unchanged:** one reframe on open; zero movement for tool switches, region → region and tool-access switches.
 - The production run-screen UI is **not locked** and the rebuild is not started.
+
+### 10.5 Direction change: Planet View + paused decision rooms (recorded with BLOOM-022)
+
+After BLOOM-021 the owner changed the leading direction. The full record and the four comparison concepts are in [`UI_CONCEPT_REVIEW_v6.md`](UI_CONCEPT_REVIEW_v6.md).
+- **New architecture under test:** a **stable full-map Planet View as home** that hands off into **dedicated, paused strategy / inspection rooms** for Region Inspect, Adapt, Spread and Terraform. The side workbench (Concepts 9–10) is no longer the leading direction; Concepts 1–10 remain in the gallery as design history.
+- **Rules every room must keep:** entering a room auto-pauses and says so; every room carries a **smaller interactive map** (select, peek, re-target, previews); Adapt / Spread / Terraform use a **visual upgrade tree**, not a card grid; Adapt changes the organism, Terraform changes the environment only; important map effects stay visible while deciding; regions can be compared without close / reopen cycles.
+- **Icons:** final UI phases use **real SVG / custom icons, never emoji**. Concepts 11–14 already use an inline SVG placeholder set.
+- **Under comparison (Concepts 11–14):** specimen prominence, mini-map prominence, one shared room template versus specialised rooms, tree layouts (outline branches, radial ring, tech chips, route stations, anatomy rows, gauge columns), and whether Region Inspect is a report, a lab or a control screen.
+- The production run-screen UI is **not locked** and the rebuild is not started.
