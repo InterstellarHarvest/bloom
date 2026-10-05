@@ -1,7 +1,12 @@
 # Destination Survey v1 — integration handoff (Menu / Tutorial workstream)
 
-**From:** BLOOM-028A · **For:** the Main Menu (which enters this screen) and the next milestone (atmospheric descent from
-Begin Expedition). Evidence and QA: `docs/evidence/bloom-028a/REPORT.md`.
+**From:** BLOOM-028A, validated identity BLOOM-028A1 · **For:** the Main Menu (which enters this screen) and the next
+milestone (atmospheric descent from Begin Expedition). Evidence and QA: `docs/evidence/bloom-028a/REPORT.md`,
+`docs/evidence/bloom-028a1/REPORT.md`.
+
+> **The planet contract.** Every world the survey shows is already a **fully validated** BLOOM world. The selected
+> **`detail.planet` is the authoritative gameplay planet. Consumers must not regenerate it from the seed.**
+> `detail.candidate.seed` is provenance only. See §3.
 
 The Destination Survey is where a run starts: nine candidate worlds in a 3 × 3 matrix (columns **Stable / Volatile /
 Extreme**), **SCAN NEW SECTOR** for nine more, and a **Planet Focus** state where one world fills the left half and its
@@ -14,11 +19,11 @@ dossier sits on the right, with **← Return to survey** and **Begin expedition*
 | | owns |
 |---|---|
 | `resources/destination-survey/destination-survey.js` | **`DestinationSurvey`**: screen composition, 3 × 3 layout, labels, selection, focus state, dossier, scan, return, the Begin Expedition hook |
-| `resources/destination-survey/survey-data.js` | pure data: which worlds a sector shows, their class, their dossier (no DOM; Node-testable) |
-| `resources/destination-survey/survey-worker.js` | module worker that builds sectors off the main thread |
+| `resources/destination-survey/survey-data.js` | pure data: which validated worlds a sector shows, their class, their dossier, `planetFingerprint` (no DOM; Node-testable) |
+| `resources/destination-survey/survey-worker.js` | module worker that builds **one column** (three validated worlds) off the main thread; up to three run in parallel |
 | `resources/destination-survey/destination-survey.css` | the screen's look (scoped under `.ds`) |
 | `demos/destination-survey.html` | development entry point (localhost) with a dev placeholder for Begin Expedition |
-| `tools/destination-survey-check.js` | the 20th regression suite (survey data) |
+| `tools/destination-survey-check.js` | the 20th regression suite (survey data; S4 re-validates every shown world independently) |
 
 Sphere rendering is **not** here. Every globe is a stock `PlanetSphereView` on **one** `PlanetSphereRenderer` for the whole
 screen (`docs/PLANET_SPHERE_VIEW_v1.md` §9). The survey only calls its public API and moves globe containers with CSS
@@ -28,8 +33,9 @@ transforms, which the renderer follows.
 
 ```html
 <link rel="stylesheet" href="resources/destination-survey/destination-survey.css">
-<!-- the BLOOM classic scripts: content/config.js, traits.js, planets/first_bloom.js, content/archetypes.js, content/play.js,
-     resources/bloom-sim.js, bloom-gen.js, bloom-validate.js, bloom-witness.js, bloom-archetype.js -->
+<!-- the BLOOM classic scripts: content/config.js, traits.js, planets/first_bloom.js, content/archetypes.js,
+     content/scenarios.js, content/play.js, resources/bloom-sim.js, bloom-gen.js, bloom-validate.js, bloom-witness.js,
+     bloom-archetype.js, bloom-scenario.js, bloom-play.js -->
 <main id="survey" style="width:100%; height:100dvh"></main>
 <script type="module">
   import { DestinationSurvey } from "./resources/destination-survey/destination-survey.js";
@@ -41,13 +47,21 @@ transforms, which the renderer follows.
 ```
 
 - The root is any sized box. It becomes the renderer's stage and gets `class="ds"`.
-- Like the globe, it needs **http(s)** (ES modules + a module worker). Locally: `python3 -m http.server 8767` from the repo
+- Like the globe, it needs **http(s)** (ES modules + module workers). Locally: `python3 -m http.server 8767` from the repo
   root → `http://localhost:8767/demos/destination-survey.html`.
-- Options: `sectorSeed` (reproducible sector), `firstBloom` (add the authored First Bloom), `reducedMotion`
-  (`null` follows the OS), `worker` (`false` builds sectors on the main thread), `onBeginExpedition`.
+- Options:
+  - `sectorSeed` (reproducible sector);
+  - `firstBloom` (add the authored First Bloom);
+  - `reducedMotion` (`null` follows the OS);
+  - `workers` (pool size: one column task per worker; default hardware threads − 1, clamped 1 … 3);
+  - `worker` (`false` builds sectors on the main thread: a degraded path that freezes the screen ~1 s per world);
+  - `onBeginExpedition`.
 - Methods: `scan()`, `select(i)`, `returnToSurvey()`, `beginExpedition()`, `dispose()`. Each returns `false` / `null` when
   the screen is mid-transition, so double clicks are harmless.
-- Read-only state: `state` (`"survey" | "focus" | …`), `selected`, `cells` (the nine candidates), `views`, `host`, `stats`.
+- Read-only state:
+  - `state` (`"survey" | "focus" | …`), `selected`, `cells` (the nine candidates), `views`, `host`;
+  - `nextSectorReady`;
+  - `stats` (scans, selects, sector build times, scan waits, …).
 
 ## 3. Begin Expedition → the next milestone
 
@@ -56,24 +70,64 @@ transforms, which the renderer follows.
 
 | `detail.` | |
 |---|---|
-| `candidate` | `{ key, name, authored, archetypeId, seed, attempt, classId, sectorSeed }` — the world's identity |
-| `planet`, `render` | the planet data on the globe and its archetype's render hints |
-| `dossier` | what the focus panel shows |
-| `view`, `globe` | the **live** `PlanetSphereView` and its container in the focus slot — still turning |
+| `planet` | **the authoritative gameplay planet**: the exact validated object the player saw, inspected and chose |
+| `candidate` | identity + provenance `{ key, name, authored, archetypeId, seed, attempt, classId, sectorSeed, validation }` |
+| `render` | the archetype's render hints (map treatment) |
+| `dossier` | what the focus panel shows (computed from `planet`) |
+| `view`, `container` | the **live** `PlanetSphereView` and its element in the focus slot — still turning (`globe` = the same element, kept for 028A callers) |
 | `survey` | the screen (call `survey.dispose()` once the cloud cover hides it) |
+
+**Gameplay must consume `detail.planet`.**
+- Do not call the generator, `BLOOM.play.searchWorld` or `runSearch` again with `detail.candidate.seed`.
+- The planet is already the world that path produces (it went through it, in the worker). Running it again can only
+  return the same map at best, or a different one if anything in generation or validation ever changes.
+- `survey.dispose()` does not touch planet objects, so a consumer can keep `detail.planet` after the screen is gone.
 
 The descent can then zoom toward the planet using the public API (`view.setDistance(…)`, or a CSS scale on `globe`), lay
 its cloud layer over the screen, swap screens under the clouds and dispose the survey. No longitude matching is wanted: the
 clouds are the seam.
 
-**Decision needed before 028B (see the report, "attempt match").** A candidate is
-`BLOOM.generateFromArchetype(archetype, seed, { winnability: false })`, the production attempt loop with the structural
-layers only. The full layer 1–8 search for the same seed lands on the **same** world about 4 times in 5 (sample: 29 / 36).
-Otherwise the playable world for that seed is a later attempt, so a different map. Options: validate the focused world in
-the background while the player reads the dossier, validate under the clouds and accept a different map, or pre-validate
-whole sectors.
+## 4. Validated sectors, prefetch and cost (028A1)
 
-## 4. Rules of the screen (keep when extending)
+**What a candidate is.** It is the world the play flow itself produces:
+- `BLOOM.play.runSearch({ archetype, scenario: null /* Eden */, seeds: [seed] })`, which runs `generateFromArchetype`
+  layers 1–8 (structure, reachability, a real winnability witness, strategy diversity, pacing) and then `stripPlanet`.
+- A seed with no acceptable world is skipped; it is never shown.
+- 028A's structural-only worlds are gone. In a sample of 028A's own sectors, 4 of the 27 worlds shown (3 of 12 Ocean)
+  were not the world a validated run of that seed plays.
+
+**How a sector is built.**
+- A sector is three **column tasks**, one per class, each finding three worlds of its class.
+- A column draws (archetype, seed) pairs from a deterministic stream for (sector seed, column).
+- Each draw is first *predicted* with a cheap structural world (≈ 20 ms; never shown).
+- Only draws predicted for that column are validated, the slow part.
+- A validated world whose real class differs is set aside (≈ 1 in 10 validations).
+- Columns are independent, so the sector is identical whether built in one worker, three, or in Node.
+
+**Workers and prefetch.**
+- Up to three module workers run the column tasks in parallel. The main thread never generates.
+- When a sector appears, the next one starts validating in the background. With it ready, **SCAN NEW SECTOR** is just
+  the sweep (~0.9–1.0 s).
+- If SCAN is pressed before it is ready:
+  - the button stays busy and the header counts **"Confirming worlds n / 9"**;
+  - no globe changes until all nine are validated;
+  - then the normal sweep runs.
+- The first sector shows a "Surveying sector… n / 9 worlds confirmed" placeholder.
+
+**Measured cost** (2026, desktop: 8-core, Radeon Pro 5700 XT; `docs/evidence/bloom-028a1/`):
+
+| | |
+|---|---|
+| one validated world (inside a worker) | ≈ 0.7 s mean (Frozen 0.74, Desert 0.73, Ocean 0.69; tails to 2–3 s) |
+| first sector, 3 workers (5 fresh loads) | 2.8 – 5.1 s (the slowest column decides); 1 worker ≈ 7.6 s |
+| prefetched sectors (8 in a row) | 1.8 – 5.4 s each, while the player looks at the current one |
+| main thread while workers validate | event-loop lag ≤ 3 ms, no long tasks, 60 fps |
+| the same work on the main thread (`worker: false`) | frames up to 1.4 s, lag up to 3 s — why the workers exist |
+
+**Recommendation for the Main Menu.** Create the survey (or at least start its first sector) while the title screen is
+showing, so the 3–5 s first-sector validation finishes before the player arrives.
+
+## 5. Rules of the screen (keep when extending)
 
 - **One renderer per screen.** Never give a cell its own view or renderer. The focused planet is the same view, moved:
   its container is re-parented into the focus slot and FLIP-animated, so its yaw and idle spin never restart.
@@ -84,4 +138,8 @@ whole sectors.
 - **Grid globes are not draggable.** The whole cell is one real `<button>`, so a click selects without pausing the
   globe's idle spin. The focused globe gets the accepted controls (horizontal drag, ← / →).
 - **Classes are presentation only.** A world's class comes from how much of its land the starting plant can already
-  live on (the engine's own `evaluate()` lamps): ≥ 45 % Stable, ≥ 22 % Volatile, otherwise Extreme. No mechanic reads it.
+  live on (the engine's own `evaluate()` lamps). No mechanic reads it.
+  - Bands: ≥ 35 % Stable, ≥ 20 % Volatile, otherwise Extreme.
+  - 028A1 recalibrated them on 90 validated worlds (tertiles 21 % / 34 %). Validated worlds are harsher than 028A's
+    structural ones, so the old 45 % / 22 % bands made Stable rare (≈ 1 in 10 worlds).
+- **Never show a world before it is validated, and never swap a shown world.** One `setPlanet` per cell per sector.
