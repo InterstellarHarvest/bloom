@@ -1,0 +1,18 @@
+Existing BLOOM QA on branch agent/planet-sphere-spike (working tree = 6c0357b + spike files), 2026-10-04, node v20.20.2, run as listed in README → QA:
+sim-check: PASS 19 · FAIL 0 · ALL CHECKS PASS
+gen-check: PASS 47 · FAIL 0 · ALL CHECKS PASS
+crossing-check: PASS 14 · FAIL 0 · ALL CHECKS PASS
+archetype-check: PASS 40 · FAIL 0 · ALL CHECKS PASS  (46.1 s)
+strategy-check: PASS 36 · FAIL 0 · ALL CHECKS PASS  (19.8 s)
+desert-check: PASS 64 · FAIL 0 · ALL CHECKS PASS  (42.2 s)
+frozen-check: PASS 70 · FAIL 0 · ALL CHECKS PASS  (58.8 s)
+dying-world-check: PASS 63 · FAIL 0 · ALL CHECKS PASS  (32.9 s)
+slice-check: PASS 15 · FAIL 0 · ALL CHECKS PASS
+surface-check: PASS 11 · FAIL 0 · ALL CHECKS PASS
+procedural-run-check: PASS 32 · FAIL 0 · ALL CHECKS PASS  (14.0 s)
+colony-development-check: PASS 68 · FAIL 0 · ALL CHECKS PASS  (26.8 s)
+economy-check: PASS 39 · FAIL 0 · ALL CHECKS PASS  (262.4 s)
+native-competition-check: PASS 66 · FAIL 0 · ALL CHECKS PASS  (116.4 s)
+volatile-climate-check: PASS 78 · FAIL 0 · ALL CHECKS PASS  (113.6 s)
+game-flow-check: PASS 74 · FAIL 0 · ALL CHECKS PASS  (53.9 s)
+(exit code 0 for every suite; grep for 'FAIL' alone also matches two strategy-check PASS names that contain the word)

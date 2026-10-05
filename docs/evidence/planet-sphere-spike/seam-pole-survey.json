@@ -1,0 +1,2734 @@
+{
+ "when": "2026-10-04T23:55:55.496Z",
+ "seeds": "1–40",
+ "summary": {
+  "worlds": 116,
+  "rejectedSeeds": 4,
+  "rowsPerWorld": 40,
+  "seamLandVsWaterRows": {
+   "mean": 14.6,
+   "max": 39,
+   "worldsWithAtLeast10": 79,
+   "worldsWithZero": 7
+  },
+  "worldsWhereASectionSpansTheSeam": 0,
+  "seamColourStepVsInterior": 7.9,
+  "poleRowsWithLand": "99%",
+  "poleRowSectionsMean": 3.8,
+  "worstSectionAreaVsTiles": {
+   "mean": 0.32,
+   "min": 0.1
+  },
+  "bestSectionAreaVsTiles": {
+   "mean": 1.46,
+   "max": 1.74
+  },
+  "byArchetype": {
+   "ocean_archipelago": {
+    "worlds": 36,
+    "meanLandVsWaterRows": 18.6,
+    "meanSectionBreakRows": 3.9
+   },
+   "desert_world": {
+    "worlds": 40,
+    "meanLandVsWaterRows": 11.1,
+    "meanSectionBreakRows": 28.2
+   },
+   "frozen_world": {
+    "worlds": 40,
+    "meanLandVsWaterRows": 14.5,
+    "meanSectionBreakRows": 24.1
+   }
+  }
+ },
+ "worlds": [
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 1,
+   "name": "Mistral-11",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 11,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 22.1,
+    "meanInteriorColourStep": 7.7
+   },
+   "north": {
+    "landTiles": 7,
+    "sections": 2
+   },
+   "south": {
+    "landTiles": 29,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.17,
+   "bestSectionAreaVsTiles": 1.46
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 2,
+   "name": "Hollow-109",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 13,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 16.4,
+    "meanInteriorColourStep": 7.6
+   },
+   "north": {
+    "landTiles": 21,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 27,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.14,
+   "bestSectionAreaVsTiles": 1.52
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 3,
+   "name": "Borea-751",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 9,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 15.9,
+    "meanInteriorColourStep": 7.3
+   },
+   "north": {
+    "landTiles": 18,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 28,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.18,
+   "bestSectionAreaVsTiles": 1.58
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 4,
+   "name": "Umbra-120",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 23,
+    "sectionBreak": 2,
+    "sameSection": 0,
+    "meanSeamColourStep": 35.6,
+    "meanInteriorColourStep": 7
+   },
+   "north": {
+    "landTiles": 11,
+    "sections": 1
+   },
+   "south": {
+    "landTiles": 35,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.28,
+   "bestSectionAreaVsTiles": 1.55
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 5,
+   "name": "Coriol-356",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 19,
+    "sectionBreak": 14,
+    "sameSection": 0,
+    "meanSeamColourStep": 25.8,
+    "meanInteriorColourStep": 5.8
+   },
+   "north": {
+    "landTiles": 30,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 15,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.12,
+   "bestSectionAreaVsTiles": 1.54
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 6,
+   "name": "Borea-923",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 14,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 25.4,
+    "meanInteriorColourStep": 7.1
+   },
+   "north": {
+    "landTiles": 0,
+    "sections": 0
+   },
+   "south": {
+    "landTiles": 28,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.17,
+   "bestSectionAreaVsTiles": 1.38
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 7,
+   "rejected": true
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 8,
+   "name": "Coriol-220",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 25,
+    "sectionBreak": 6,
+    "sameSection": 0,
+    "meanSeamColourStep": 33.4,
+    "meanInteriorColourStep": 7.6
+   },
+   "north": {
+    "landTiles": 21,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 23,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.15,
+   "bestSectionAreaVsTiles": 1.49
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 9,
+   "name": "Ymir-493",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 22,
+    "sectionBreak": 8,
+    "sameSection": 0,
+    "meanSeamColourStep": 31,
+    "meanInteriorColourStep": 7.8
+   },
+   "north": {
+    "landTiles": 13,
+    "sections": 1
+   },
+   "south": {
+    "landTiles": 13,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.33,
+   "bestSectionAreaVsTiles": 1.4
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 10,
+   "name": "Umbra-932",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 13,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 16.3,
+    "meanInteriorColourStep": 7.3
+   },
+   "north": {
+    "landTiles": 18,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 13,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.26,
+   "bestSectionAreaVsTiles": 1.5
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 11,
+   "name": "Borea-287",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 13,
+    "sectionBreak": 9,
+    "sameSection": 0,
+    "meanSeamColourStep": 20.1,
+    "meanInteriorColourStep": 7.2
+   },
+   "north": {
+    "landTiles": 21,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 12,
+    "sections": 1
+   },
+   "worstSectionAreaVsTiles": 0.12,
+   "bestSectionAreaVsTiles": 1.36
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 12,
+   "name": "Ymir-85",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 15,
+    "sectionBreak": 3,
+    "sameSection": 0,
+    "meanSeamColourStep": 25.2,
+    "meanInteriorColourStep": 7.4
+   },
+   "north": {
+    "landTiles": 27,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 15,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.2,
+   "bestSectionAreaVsTiles": 1.53
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 13,
+   "name": "Eos-227",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 6,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 14.4,
+    "meanInteriorColourStep": 7.1
+   },
+   "north": {
+    "landTiles": 13,
+    "sections": 2
+   },
+   "south": {
+    "landTiles": 18,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.21,
+   "bestSectionAreaVsTiles": 1.42
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 14,
+   "name": "Borea-227",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 18,
+    "sectionBreak": 9,
+    "sameSection": 0,
+    "meanSeamColourStep": 29.3,
+    "meanInteriorColourStep": 7.2
+   },
+   "north": {
+    "landTiles": 28,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 18,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.18,
+   "bestSectionAreaVsTiles": 1.4
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 15,
+   "name": "Ymir-145",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 12,
+    "sectionBreak": 6,
+    "sameSection": 0,
+    "meanSeamColourStep": 16.6,
+    "meanInteriorColourStep": 7
+   },
+   "north": {
+    "landTiles": 25,
+    "sections": 2
+   },
+   "south": {
+    "landTiles": 29,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.25,
+   "bestSectionAreaVsTiles": 1.65
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 16,
+   "name": "Ymir-713",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 17,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 25,
+    "meanInteriorColourStep": 7.2
+   },
+   "north": {
+    "landTiles": 16,
+    "sections": 2
+   },
+   "south": {
+    "landTiles": 8,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.14,
+   "bestSectionAreaVsTiles": 1.36
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 17,
+   "name": "Borea-803",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 25,
+    "sectionBreak": 5,
+    "sameSection": 0,
+    "meanSeamColourStep": 35,
+    "meanInteriorColourStep": 7.3
+   },
+   "north": {
+    "landTiles": 11,
+    "sections": 2
+   },
+   "south": {
+    "landTiles": 25,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.26,
+   "bestSectionAreaVsTiles": 1.51
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 18,
+   "name": "Umbra-744",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 24,
+    "sectionBreak": 6,
+    "sameSection": 0,
+    "meanSeamColourStep": 35.7,
+    "meanInteriorColourStep": 6.7
+   },
+   "north": {
+    "landTiles": 13,
+    "sections": 2
+   },
+   "south": {
+    "landTiles": 38,
+    "sections": 6
+   },
+   "worstSectionAreaVsTiles": 0.17,
+   "bestSectionAreaVsTiles": 1.51
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 19,
+   "rejected": true
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 20,
+   "name": "Mistral-823",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 12,
+    "sectionBreak": 7,
+    "sameSection": 0,
+    "meanSeamColourStep": 20.8,
+    "meanInteriorColourStep": 6.8
+   },
+   "north": {
+    "landTiles": 21,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 6,
+    "sections": 1
+   },
+   "worstSectionAreaVsTiles": 0.1,
+   "bestSectionAreaVsTiles": 1.38
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 21,
+   "name": "Mistral-295",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 11,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 14.6,
+    "meanInteriorColourStep": 6.3
+   },
+   "north": {
+    "landTiles": 37,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 5,
+    "sections": 1
+   },
+   "worstSectionAreaVsTiles": 0.17,
+   "bestSectionAreaVsTiles": 1.56
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 22,
+   "name": "Ymir-829",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 29,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 32.8,
+    "meanInteriorColourStep": 6.1
+   },
+   "north": {
+    "landTiles": 27,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 6,
+    "sections": 1
+   },
+   "worstSectionAreaVsTiles": 0.27,
+   "bestSectionAreaVsTiles": 1.46
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 23,
+   "name": "Coriol-116",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 27,
+    "sectionBreak": 11,
+    "sameSection": 0,
+    "meanSeamColourStep": 38.9,
+    "meanInteriorColourStep": 5.8
+   },
+   "north": {
+    "landTiles": 24,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 23,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.24,
+   "bestSectionAreaVsTiles": 1.54
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 24,
+   "name": "Pallas-745",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 20,
+    "sectionBreak": 6,
+    "sameSection": 0,
+    "meanSeamColourStep": 30.8,
+    "meanInteriorColourStep": 7.8
+   },
+   "north": {
+    "landTiles": 12,
+    "sections": 1
+   },
+   "south": {
+    "landTiles": 24,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.22,
+   "bestSectionAreaVsTiles": 1.53
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 25,
+   "name": "Pallas-777",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 18,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 27.9,
+    "meanInteriorColourStep": 7.1
+   },
+   "north": {
+    "landTiles": 24,
+    "sections": 1
+   },
+   "south": {
+    "landTiles": 28,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.28,
+   "bestSectionAreaVsTiles": 1.74
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 26,
+   "name": "Borea-163",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 21,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 34.8,
+    "meanInteriorColourStep": 7.5
+   },
+   "north": {
+    "landTiles": 21,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 29,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.23,
+   "bestSectionAreaVsTiles": 1.51
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 27,
+   "name": "Ymir-369",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 13,
+    "sectionBreak": 10,
+    "sameSection": 0,
+    "meanSeamColourStep": 21.5,
+    "meanInteriorColourStep": 7.6
+   },
+   "north": {
+    "landTiles": 6,
+    "sections": 1
+   },
+   "south": {
+    "landTiles": 11,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.27,
+   "bestSectionAreaVsTiles": 1.47
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 28,
+   "name": "Borea-495",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 14,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 23.6,
+    "meanInteriorColourStep": 7
+   },
+   "north": {
+    "landTiles": 24,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 26,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.26,
+   "bestSectionAreaVsTiles": 1.69
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 29,
+   "name": "Eos-351",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 27,
+    "sectionBreak": 6,
+    "sameSection": 0,
+    "meanSeamColourStep": 36.1,
+    "meanInteriorColourStep": 7.5
+   },
+   "north": {
+    "landTiles": 19,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 20,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.14,
+   "bestSectionAreaVsTiles": 1.5
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 30,
+   "name": "Vesper-472",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 17,
+    "sectionBreak": 10,
+    "sameSection": 0,
+    "meanSeamColourStep": 26,
+    "meanInteriorColourStep": 6.2
+   },
+   "north": {
+    "landTiles": 10,
+    "sections": 1
+   },
+   "south": {
+    "landTiles": 26,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.11,
+   "bestSectionAreaVsTiles": 1.38
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 31,
+   "name": "Coriol-672",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 12,
+    "sectionBreak": 9,
+    "sameSection": 0,
+    "meanSeamColourStep": 18.5,
+    "meanInteriorColourStep": 6.6
+   },
+   "north": {
+    "landTiles": 35,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 0,
+    "sections": 0
+   },
+   "worstSectionAreaVsTiles": 0.13,
+   "bestSectionAreaVsTiles": 1.41
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 32,
+   "name": "Mistral-435",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 12,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 18.5,
+    "meanInteriorColourStep": 6.9
+   },
+   "north": {
+    "landTiles": 18,
+    "sections": 2
+   },
+   "south": {
+    "landTiles": 11,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.34,
+   "bestSectionAreaVsTiles": 1.46
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 33,
+   "name": "Vesper-28",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 23,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 27.7,
+    "meanInteriorColourStep": 6.6
+   },
+   "north": {
+    "landTiles": 19,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 11,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.18,
+   "bestSectionAreaVsTiles": 1.54
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 34,
+   "name": "Nyx-766",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 32,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 48.1,
+    "meanInteriorColourStep": 6.3
+   },
+   "north": {
+    "landTiles": 32,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 28,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.24,
+   "bestSectionAreaVsTiles": 1.66
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 35,
+   "rejected": true
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 36,
+   "name": "Nyx-994",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 20,
+    "sectionBreak": 7,
+    "sameSection": 0,
+    "meanSeamColourStep": 33.9,
+    "meanInteriorColourStep": 6.7
+   },
+   "north": {
+    "landTiles": 15,
+    "sections": 2
+   },
+   "south": {
+    "landTiles": 8,
+    "sections": 1
+   },
+   "worstSectionAreaVsTiles": 0.22,
+   "bestSectionAreaVsTiles": 1.37
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 37,
+   "name": "Borea-299",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 15,
+    "sectionBreak": 4,
+    "sameSection": 0,
+    "meanSeamColourStep": 25.5,
+    "meanInteriorColourStep": 6.9
+   },
+   "north": {
+    "landTiles": 9,
+    "sections": 1
+   },
+   "south": {
+    "landTiles": 43,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.19,
+   "bestSectionAreaVsTiles": 1.45
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 38,
+   "rejected": true
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 39,
+   "name": "Atlas-294",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 39,
+    "sectionBreak": 1,
+    "sameSection": 0,
+    "meanSeamColourStep": 55.5,
+    "meanInteriorColourStep": 6.6
+   },
+   "north": {
+    "landTiles": 33,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 13,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.23,
+   "bestSectionAreaVsTiles": 1.59
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 40,
+   "name": "Mistral-655",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 28,
+    "sectionBreak": 0,
+    "sameSection": 0,
+    "meanSeamColourStep": 41.5,
+    "meanInteriorColourStep": 6.9
+   },
+   "north": {
+    "landTiles": 21,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 10,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.16,
+   "bestSectionAreaVsTiles": 1.39
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 1,
+   "name": "Borea-175",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 23,
+    "sectionBreak": 17,
+    "sameSection": 0,
+    "meanSeamColourStep": 58.2,
+    "meanInteriorColourStep": 3.3
+   },
+   "north": {
+    "landTiles": 55,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 42,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.38,
+   "bestSectionAreaVsTiles": 1.46
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 2,
+   "name": "Pallas-477",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 14,
+    "sectionBreak": 26,
+    "sameSection": 0,
+    "meanSeamColourStep": 39.6,
+    "meanInteriorColourStep": 2.5
+   },
+   "north": {
+    "landTiles": 47,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 27,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.33,
+   "bestSectionAreaVsTiles": 1.41
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 3,
+   "name": "Atlas-234",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 7,
+    "sectionBreak": 33,
+    "sameSection": 0,
+    "meanSeamColourStep": 25.3,
+    "meanInteriorColourStep": 2.1
+   },
+   "north": {
+    "landTiles": 51,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 40,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.38,
+   "bestSectionAreaVsTiles": 1.42
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 4,
+   "name": "Mistral-155",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 0,
+    "sectionBreak": 40,
+    "sameSection": 0,
+    "meanSeamColourStep": 9.5,
+    "meanInteriorColourStep": 2.9
+   },
+   "north": {
+    "landTiles": 40,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.36,
+   "bestSectionAreaVsTiles": 1.51
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 5,
+   "name": "Vesper-656",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 4,
+    "sectionBreak": 36,
+    "sameSection": 0,
+    "meanSeamColourStep": 17.9,
+    "meanInteriorColourStep": 1.3
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 48,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.38,
+   "bestSectionAreaVsTiles": 1.39
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 6,
+   "name": "Hollow-809",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 21,
+    "sectionBreak": 19,
+    "sameSection": 0,
+    "meanSeamColourStep": 52,
+    "meanInteriorColourStep": 1.7
+   },
+   "north": {
+    "landTiles": 49,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.35,
+   "bestSectionAreaVsTiles": 1.51
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 7,
+   "name": "Nyx-334",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 10,
+    "sectionBreak": 30,
+    "sameSection": 0,
+    "meanSeamColourStep": 26.4,
+    "meanInteriorColourStep": 3.2
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 54,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.33,
+   "bestSectionAreaVsTiles": 1.51
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 8,
+   "name": "Borea-623",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 12,
+    "sectionBreak": 28,
+    "sameSection": 0,
+    "meanSeamColourStep": 31,
+    "meanInteriorColourStep": 3.5
+   },
+   "north": {
+    "landTiles": 58,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.3,
+   "bestSectionAreaVsTiles": 1.54
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 9,
+   "name": "Borea-935",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 3,
+    "sectionBreak": 37,
+    "sameSection": 0,
+    "meanSeamColourStep": 9.3,
+    "meanInteriorColourStep": 1.9
+   },
+   "north": {
+    "landTiles": 27,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.38,
+   "bestSectionAreaVsTiles": 1.39
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 10,
+   "name": "Coriol-708",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 8,
+    "sectionBreak": 32,
+    "sameSection": 0,
+    "meanSeamColourStep": 21.5,
+    "meanInteriorColourStep": 2.8
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 57,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.37,
+   "bestSectionAreaVsTiles": 1.52
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 11,
+   "name": "Umbra-588",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 5,
+    "sectionBreak": 35,
+    "sameSection": 0,
+    "meanSeamColourStep": 15,
+    "meanInteriorColourStep": 2.4
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 53,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.42,
+   "bestSectionAreaVsTiles": 1.53
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 12,
+   "name": "Atlas-386",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 6,
+    "sectionBreak": 34,
+    "sameSection": 0,
+    "meanSeamColourStep": 24.3,
+    "meanInteriorColourStep": 2.5
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 6
+   },
+   "south": {
+    "landTiles": 42,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.36,
+   "bestSectionAreaVsTiles": 1.44
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 13,
+   "name": "Hollow-565",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 23,
+    "sectionBreak": 17,
+    "sameSection": 0,
+    "meanSeamColourStep": 55.5,
+    "meanInteriorColourStep": 1.6
+   },
+   "north": {
+    "landTiles": 49,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.29,
+   "bestSectionAreaVsTiles": 1.5
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 14,
+   "name": "Coriol-744",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 19,
+    "sectionBreak": 21,
+    "sameSection": 0,
+    "meanSeamColourStep": 53.5,
+    "meanInteriorColourStep": 2.9
+   },
+   "north": {
+    "landTiles": 59,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 37,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.47,
+   "bestSectionAreaVsTiles": 1.41
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 15,
+   "name": "Eos-243",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 0,
+    "sectionBreak": 40,
+    "sameSection": 0,
+    "meanSeamColourStep": 7.5,
+    "meanInteriorColourStep": 1.9
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 55,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.38,
+   "bestSectionAreaVsTiles": 1.47
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 16,
+   "name": "Hollow-41",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 0,
+    "sectionBreak": 40,
+    "sameSection": 0,
+    "meanSeamColourStep": 9.8,
+    "meanInteriorColourStep": 2.6
+   },
+   "north": {
+    "landTiles": 49,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 47,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.17,
+   "bestSectionAreaVsTiles": 1.38
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 17,
+   "name": "Ymir-961",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 9,
+    "sectionBreak": 31,
+    "sameSection": 0,
+    "meanSeamColourStep": 25.4,
+    "meanInteriorColourStep": 2.5
+   },
+   "north": {
+    "landTiles": 47,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 46,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.5,
+   "bestSectionAreaVsTiles": 1.39
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 18,
+   "name": "Coriol-468",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 4,
+    "sectionBreak": 36,
+    "sameSection": 0,
+    "meanSeamColourStep": 11.7,
+    "meanInteriorColourStep": 2
+   },
+   "north": {
+    "landTiles": 45,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 46,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.33,
+   "bestSectionAreaVsTiles": 1.41
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 19,
+   "name": "Eos-479",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 20,
+    "sectionBreak": 20,
+    "sameSection": 0,
+    "meanSeamColourStep": 60.7,
+    "meanInteriorColourStep": 2.6
+   },
+   "north": {
+    "landTiles": 54,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 45,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.45,
+   "bestSectionAreaVsTiles": 1.43
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 20,
+   "name": "Eos-263",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 4,
+    "sectionBreak": 34,
+    "sameSection": 0,
+    "meanSeamColourStep": 17,
+    "meanInteriorColourStep": 2.6
+   },
+   "north": {
+    "landTiles": 46,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 55,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.41,
+   "bestSectionAreaVsTiles": 1.49
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 21,
+   "name": "Umbra-956",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 19,
+    "sectionBreak": 21,
+    "sameSection": 0,
+    "meanSeamColourStep": 51.1,
+    "meanInteriorColourStep": 3.8
+   },
+   "north": {
+    "landTiles": 57,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 47,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.21,
+   "bestSectionAreaVsTiles": 1.51
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 22,
+   "name": "Tharsis-298",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 8,
+    "sectionBreak": 32,
+    "sameSection": 0,
+    "meanSeamColourStep": 27.6,
+    "meanInteriorColourStep": 4
+   },
+   "north": {
+    "landTiles": 46,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 54,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.41,
+   "bestSectionAreaVsTiles": 1.45
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 23,
+   "name": "Hollow-61",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 13,
+    "sectionBreak": 27,
+    "sameSection": 0,
+    "meanSeamColourStep": 35.5,
+    "meanInteriorColourStep": 3
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.36,
+   "bestSectionAreaVsTiles": 1.54
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 24,
+   "name": "Borea-595",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 3,
+    "sectionBreak": 37,
+    "sameSection": 0,
+    "meanSeamColourStep": 9.9,
+    "meanInteriorColourStep": 3.7
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 49,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.54,
+   "bestSectionAreaVsTiles": 1.46
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 25,
+   "name": "Umbra-584",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 12,
+    "sectionBreak": 28,
+    "sameSection": 0,
+    "meanSeamColourStep": 37,
+    "meanInteriorColourStep": 1.9
+   },
+   "north": {
+    "landTiles": 51,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 42,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.43,
+   "bestSectionAreaVsTiles": 1.39
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 26,
+   "name": "Ymir-17",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 9,
+    "sectionBreak": 31,
+    "sameSection": 0,
+    "meanSeamColourStep": 35.8,
+    "meanInteriorColourStep": 3.3
+   },
+   "north": {
+    "landTiles": 42,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 50,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.32,
+   "bestSectionAreaVsTiles": 1.46
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 27,
+   "name": "Atlas-70",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 27,
+    "sectionBreak": 11,
+    "sameSection": 0,
+    "meanSeamColourStep": 67.3,
+    "meanInteriorColourStep": 2.5
+   },
+   "north": {
+    "landTiles": 49,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 54,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.35,
+   "bestSectionAreaVsTiles": 1.48
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 28,
+   "name": "Vesper-76",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 24,
+    "sectionBreak": 16,
+    "sameSection": 0,
+    "meanSeamColourStep": 62.2,
+    "meanInteriorColourStep": 2.1
+   },
+   "north": {
+    "landTiles": 52,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 55,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.49,
+   "bestSectionAreaVsTiles": 1.44
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 29,
+   "name": "Umbra-196",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 5,
+    "sectionBreak": 35,
+    "sameSection": 0,
+    "meanSeamColourStep": 19.2,
+    "meanInteriorColourStep": 3.7
+   },
+   "north": {
+    "landTiles": 51,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.45,
+   "bestSectionAreaVsTiles": 1.53
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 30,
+   "name": "Tharsis-974",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 16,
+    "sectionBreak": 13,
+    "sameSection": 0,
+    "meanSeamColourStep": 42.2,
+    "meanInteriorColourStep": 3.8
+   },
+   "north": {
+    "landTiles": 53,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 46,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.27,
+   "bestSectionAreaVsTiles": 1.46
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 31,
+   "name": "Pallas-449",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 6,
+    "sectionBreak": 34,
+    "sameSection": 0,
+    "meanSeamColourStep": 15.6,
+    "meanInteriorColourStep": 1.8
+   },
+   "north": {
+    "landTiles": 49,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 57,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.33,
+   "bestSectionAreaVsTiles": 1.48
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 32,
+   "name": "Umbra-296",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 7,
+    "sectionBreak": 24,
+    "sameSection": 0,
+    "meanSeamColourStep": 23.2,
+    "meanInteriorColourStep": 2.5
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 33,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.39,
+   "bestSectionAreaVsTiles": 1.41
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 33,
+   "name": "Borea-795",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 4,
+    "sectionBreak": 36,
+    "sameSection": 0,
+    "meanSeamColourStep": 13.7,
+    "meanInteriorColourStep": 1.3
+   },
+   "north": {
+    "landTiles": 38,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 49,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.38,
+   "bestSectionAreaVsTiles": 1.46
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 34,
+   "name": "Nyx-874",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 0,
+    "sectionBreak": 40,
+    "sameSection": 0,
+    "meanSeamColourStep": 2.1,
+    "meanInteriorColourStep": 2.5
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 55,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.38,
+   "bestSectionAreaVsTiles": 1.48
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 35,
+   "name": "Tharsis-498",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 18,
+    "sectionBreak": 22,
+    "sameSection": 0,
+    "meanSeamColourStep": 46.2,
+    "meanInteriorColourStep": 2.8
+   },
+   "north": {
+    "landTiles": 37,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 58,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.37,
+   "bestSectionAreaVsTiles": 1.38
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 36,
+   "name": "Umbra-196",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 18,
+    "sectionBreak": 22,
+    "sameSection": 0,
+    "meanSeamColourStep": 56.8,
+    "meanInteriorColourStep": 1.4
+   },
+   "north": {
+    "landTiles": 55,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 48,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.47,
+   "bestSectionAreaVsTiles": 1.42
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 37,
+   "name": "Eos-399",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 28,
+    "sectionBreak": 12,
+    "sameSection": 0,
+    "meanSeamColourStep": 69.8,
+    "meanInteriorColourStep": 1.9
+   },
+   "north": {
+    "landTiles": 57,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 57,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.46,
+   "bestSectionAreaVsTiles": 1.43
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 38,
+   "name": "Atlas-542",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 23,
+    "sectionBreak": 12,
+    "sameSection": 0,
+    "meanSeamColourStep": 58.3,
+    "meanInteriorColourStep": 2.7
+   },
+   "north": {
+    "landTiles": 39,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.47,
+   "bestSectionAreaVsTiles": 1.43
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 39,
+   "name": "Ymir-17",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 7,
+    "sectionBreak": 33,
+    "sameSection": 0,
+    "meanSeamColourStep": 30.3,
+    "meanInteriorColourStep": 2.2
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 52,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.39,
+   "bestSectionAreaVsTiles": 1.46
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 40,
+   "name": "Nyx-886",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 3,
+    "sectionBreak": 37,
+    "sameSection": 0,
+    "meanSeamColourStep": 15.6,
+    "meanInteriorColourStep": 2.1
+   },
+   "north": {
+    "landTiles": 31,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 45,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.35,
+   "bestSectionAreaVsTiles": 1.39
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 1,
+   "name": "Borea-531",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 0,
+    "sectionBreak": 40,
+    "sameSection": 0,
+    "meanSeamColourStep": 53.7,
+    "meanInteriorColourStep": 10.2
+   },
+   "north": {
+    "landTiles": 44,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 18,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.35,
+   "bestSectionAreaVsTiles": 1.3
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 2,
+   "name": "Tharsis-774",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 26,
+    "sectionBreak": 14,
+    "sameSection": 0,
+    "meanSeamColourStep": 40.1,
+    "meanInteriorColourStep": 7.9
+   },
+   "north": {
+    "landTiles": 47,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 29,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.32,
+   "bestSectionAreaVsTiles": 1.41
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 3,
+   "name": "Pallas-249",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 9,
+    "sectionBreak": 31,
+    "sameSection": 0,
+    "meanSeamColourStep": 21.2,
+    "meanInteriorColourStep": 8.2
+   },
+   "north": {
+    "landTiles": 55,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 36,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.47,
+   "bestSectionAreaVsTiles": 1.42
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 4,
+   "name": "Umbra-484",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 25,
+    "sectionBreak": 15,
+    "sameSection": 0,
+    "meanSeamColourStep": 39.4,
+    "meanInteriorColourStep": 8.1
+   },
+   "north": {
+    "landTiles": 55,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 40,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.36,
+   "bestSectionAreaVsTiles": 1.43
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 5,
+   "name": "Eos-199",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 4,
+    "sectionBreak": 28,
+    "sameSection": 0,
+    "meanSeamColourStep": 31.9,
+    "meanInteriorColourStep": 7.5
+   },
+   "north": {
+    "landTiles": 37,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.46,
+   "bestSectionAreaVsTiles": 1.48
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 6,
+   "name": "Nyx-674",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 28,
+    "sectionBreak": 12,
+    "sameSection": 0,
+    "meanSeamColourStep": 47.4,
+    "meanInteriorColourStep": 7.4
+   },
+   "north": {
+    "landTiles": 54,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 57,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.27,
+   "bestSectionAreaVsTiles": 1.42
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 7,
+   "name": "Ymir-853",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 13,
+    "sectionBreak": 23,
+    "sameSection": 0,
+    "meanSeamColourStep": 33.5,
+    "meanInteriorColourStep": 7.9
+   },
+   "north": {
+    "landTiles": 42,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 25,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.32,
+   "bestSectionAreaVsTiles": 1.34
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 8,
+   "name": "Nyx-766",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 11,
+    "sectionBreak": 29,
+    "sameSection": 0,
+    "meanSeamColourStep": 45.3,
+    "meanInteriorColourStep": 7.7
+   },
+   "north": {
+    "landTiles": 45,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 46,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.34,
+   "bestSectionAreaVsTiles": 1.45
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 9,
+   "name": "Borea-259",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 30,
+    "sectionBreak": 3,
+    "sameSection": 0,
+    "meanSeamColourStep": 52.4,
+    "meanInteriorColourStep": 7.8
+   },
+   "north": {
+    "landTiles": 55,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.41,
+   "bestSectionAreaVsTiles": 1.43
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 10,
+   "name": "Atlas-846",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 5,
+    "sectionBreak": 35,
+    "sameSection": 0,
+    "meanSeamColourStep": 19.8,
+    "meanInteriorColourStep": 5.4
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 47,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.37,
+   "bestSectionAreaVsTiles": 1.49
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 11,
+   "name": "Nyx-990",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 22,
+    "sectionBreak": 18,
+    "sameSection": 0,
+    "meanSeamColourStep": 53,
+    "meanInteriorColourStep": 8.9
+   },
+   "north": {
+    "landTiles": 43,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 47,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.36,
+   "bestSectionAreaVsTiles": 1.5
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 12,
+   "name": "Coriol-192",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 20,
+    "sectionBreak": 20,
+    "sameSection": 0,
+    "meanSeamColourStep": 59.8,
+    "meanInteriorColourStep": 6.8
+   },
+   "north": {
+    "landTiles": 52,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 38,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.38,
+   "bestSectionAreaVsTiles": 1.42
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 13,
+   "name": "Borea-931",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 21,
+    "sectionBreak": 19,
+    "sameSection": 0,
+    "meanSeamColourStep": 44.6,
+    "meanInteriorColourStep": 9.3
+   },
+   "north": {
+    "landTiles": 57,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 52,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.34,
+   "bestSectionAreaVsTiles": 1.6
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 14,
+   "name": "Atlas-218",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 16,
+    "sectionBreak": 24,
+    "sameSection": 0,
+    "meanSeamColourStep": 28.3,
+    "meanInteriorColourStep": 8.3
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 43,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.23,
+   "bestSectionAreaVsTiles": 1.5
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 15,
+   "name": "Ymir-277",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 17,
+    "sectionBreak": 23,
+    "sameSection": 0,
+    "meanSeamColourStep": 65.8,
+    "meanInteriorColourStep": 8.8
+   },
+   "north": {
+    "landTiles": 37,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 44,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.43,
+   "bestSectionAreaVsTiles": 1.42
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 16,
+   "name": "Mistral-711",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 0,
+    "sectionBreak": 40,
+    "sameSection": 0,
+    "meanSeamColourStep": 44,
+    "meanInteriorColourStep": 7.5
+   },
+   "north": {
+    "landTiles": 24,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 6
+   },
+   "worstSectionAreaVsTiles": 0.31,
+   "bestSectionAreaVsTiles": 1.42
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 17,
+   "name": "Nyx-514",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 17,
+    "sectionBreak": 12,
+    "sameSection": 0,
+    "meanSeamColourStep": 37.1,
+    "meanInteriorColourStep": 10.7
+   },
+   "north": {
+    "landTiles": 26,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 52,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.39,
+   "bestSectionAreaVsTiles": 1.39
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 18,
+   "name": "Pallas-33",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 26,
+    "sectionBreak": 14,
+    "sameSection": 0,
+    "meanSeamColourStep": 56.7,
+    "meanInteriorColourStep": 5.2
+   },
+   "north": {
+    "landTiles": 57,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.41,
+   "bestSectionAreaVsTiles": 1.5
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 19,
+   "name": "Tharsis-558",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 14,
+    "sectionBreak": 17,
+    "sameSection": 0,
+    "meanSeamColourStep": 49,
+    "meanInteriorColourStep": 6
+   },
+   "north": {
+    "landTiles": 56,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 54,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.42,
+   "bestSectionAreaVsTiles": 1.53
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 20,
+   "name": "Tharsis-458",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 16,
+    "sectionBreak": 24,
+    "sameSection": 0,
+    "meanSeamColourStep": 46,
+    "meanInteriorColourStep": 7.1
+   },
+   "north": {
+    "landTiles": 45,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 37,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.29,
+   "bestSectionAreaVsTiles": 1.43
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 21,
+   "name": "Pallas-933",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 16,
+    "sectionBreak": 24,
+    "sameSection": 0,
+    "meanSeamColourStep": 42.6,
+    "meanInteriorColourStep": 4.8
+   },
+   "north": {
+    "landTiles": 57,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 53,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.46,
+   "bestSectionAreaVsTiles": 1.46
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 22,
+   "name": "Mistral-887",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 32,
+    "sectionBreak": 8,
+    "sameSection": 0,
+    "meanSeamColourStep": 60.1,
+    "meanInteriorColourStep": 7.2
+   },
+   "north": {
+    "landTiles": 36,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.37,
+   "bestSectionAreaVsTiles": 1.45
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 23,
+   "name": "Borea-279",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 25,
+    "sectionBreak": 15,
+    "sameSection": 0,
+    "meanSeamColourStep": 44.1,
+    "meanInteriorColourStep": 5.7
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 57,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.35,
+   "bestSectionAreaVsTiles": 1.55
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 24,
+   "name": "Nyx-854",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 6,
+    "sectionBreak": 30,
+    "sameSection": 0,
+    "meanSeamColourStep": 29.1,
+    "meanInteriorColourStep": 7
+   },
+   "north": {
+    "landTiles": 50,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 38,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.34,
+   "bestSectionAreaVsTiles": 1.39
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 25,
+   "name": "Hollow-329",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 8,
+    "sectionBreak": 32,
+    "sameSection": 0,
+    "meanSeamColourStep": 12.8,
+    "meanInteriorColourStep": 7.7
+   },
+   "north": {
+    "landTiles": 44,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 45,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.33,
+   "bestSectionAreaVsTiles": 1.47
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 26,
+   "name": "Coriol-304",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 6,
+    "sectionBreak": 34,
+    "sameSection": 0,
+    "meanSeamColourStep": 29.4,
+    "meanInteriorColourStep": 4.7
+   },
+   "north": {
+    "landTiles": 49,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 51,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.41,
+   "bestSectionAreaVsTiles": 1.39
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 27,
+   "name": "Mistral-611",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 11,
+    "sectionBreak": 29,
+    "sameSection": 0,
+    "meanSeamColourStep": 40.3,
+    "meanInteriorColourStep": 6.3
+   },
+   "north": {
+    "landTiles": 54,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.33,
+   "bestSectionAreaVsTiles": 1.54
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 28,
+   "name": "Nyx-890",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 13,
+    "sectionBreak": 27,
+    "sameSection": 0,
+    "meanSeamColourStep": 40.6,
+    "meanInteriorColourStep": 9.7
+   },
+   "north": {
+    "landTiles": 46,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 47,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.36,
+   "bestSectionAreaVsTiles": 1.51
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 29,
+   "name": "Hollow-365",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 11,
+    "sectionBreak": 26,
+    "sameSection": 0,
+    "meanSeamColourStep": 38,
+    "meanInteriorColourStep": 5
+   },
+   "north": {
+    "landTiles": 50,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.56,
+   "bestSectionAreaVsTiles": 1.43
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 30,
+   "name": "Eos-283",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 22,
+    "sectionBreak": 12,
+    "sameSection": 0,
+    "meanSeamColourStep": 44.2,
+    "meanInteriorColourStep": 8
+   },
+   "north": {
+    "landTiles": 29,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.47,
+   "bestSectionAreaVsTiles": 1.43
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 31,
+   "name": "Atlas-510",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 0,
+    "sectionBreak": 40,
+    "sameSection": 0,
+    "meanSeamColourStep": 6,
+    "meanInteriorColourStep": 6.8
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 54,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.36,
+   "bestSectionAreaVsTiles": 1.53
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 32,
+   "name": "Ymir-1",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 15,
+    "sectionBreak": 25,
+    "sameSection": 0,
+    "meanSeamColourStep": 43.1,
+    "meanInteriorColourStep": 8.8
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 45,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.34,
+   "bestSectionAreaVsTiles": 1.55
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 33,
+   "name": "Nyx-758",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 9,
+    "sectionBreak": 31,
+    "sameSection": 0,
+    "meanSeamColourStep": 51.7,
+    "meanInteriorColourStep": 7.3
+   },
+   "north": {
+    "landTiles": 54,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 23,
+    "sections": 2
+   },
+   "worstSectionAreaVsTiles": 0.42,
+   "bestSectionAreaVsTiles": 1.36
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 34,
+   "name": "Eos-247",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 17,
+    "sectionBreak": 23,
+    "sameSection": 0,
+    "meanSeamColourStep": 34.5,
+    "meanInteriorColourStep": 8.2
+   },
+   "north": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "south": {
+    "landTiles": 36,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.29,
+   "bestSectionAreaVsTiles": 1.48
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 35,
+   "name": "Umbra-940",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 8,
+    "sectionBreak": 30,
+    "sameSection": 0,
+    "meanSeamColourStep": 34.4,
+    "meanInteriorColourStep": 8.7
+   },
+   "north": {
+    "landTiles": 34,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 57,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.49,
+   "bestSectionAreaVsTiles": 1.49
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 36,
+   "name": "Ymir-901",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 26,
+    "sectionBreak": 11,
+    "sameSection": 0,
+    "meanSeamColourStep": 48.4,
+    "meanInteriorColourStep": 9.7
+   },
+   "north": {
+    "landTiles": 41,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 26,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.47,
+   "bestSectionAreaVsTiles": 1.32
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 37,
+   "name": "Atlas-426",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 4,
+    "sectionBreak": 36,
+    "sameSection": 0,
+    "meanSeamColourStep": 40.4,
+    "meanInteriorColourStep": 8.2
+   },
+   "north": {
+    "landTiles": 58,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 39,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.41,
+   "bestSectionAreaVsTiles": 1.4
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 38,
+   "name": "Vesper-96",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 13,
+    "sectionBreak": 26,
+    "sameSection": 0,
+    "meanSeamColourStep": 44.1,
+    "meanInteriorColourStep": 6.6
+   },
+   "north": {
+    "landTiles": 52,
+    "sections": 4
+   },
+   "south": {
+    "landTiles": 22,
+    "sections": 3
+   },
+   "worstSectionAreaVsTiles": 0.36,
+   "bestSectionAreaVsTiles": 1.38
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 39,
+   "name": "Coriol-512",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 11,
+    "sectionBreak": 29,
+    "sameSection": 0,
+    "meanSeamColourStep": 48.2,
+    "meanInteriorColourStep": 8.3
+   },
+   "north": {
+    "landTiles": 48,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 60,
+    "sections": 5
+   },
+   "worstSectionAreaVsTiles": 0.32,
+   "bestSectionAreaVsTiles": 1.45
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 40,
+   "name": "Coriol-28",
+   "seam": {
+    "rows": 40,
+    "landVsWater": 6,
+    "sectionBreak": 34,
+    "sameSection": 0,
+    "meanSeamColourStep": 30.6,
+    "meanInteriorColourStep": 9.3
+   },
+   "north": {
+    "landTiles": 23,
+    "sections": 3
+   },
+   "south": {
+    "landTiles": 36,
+    "sections": 4
+   },
+   "worstSectionAreaVsTiles": 0.23,
+   "bestSectionAreaVsTiles": 1.39
+  }
+ ]
+}

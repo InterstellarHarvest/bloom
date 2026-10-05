@@ -1,0 +1,193 @@
+{
+ "when": "2026-10-05T00:11:08.084Z",
+ "head": "6c0357ba9cc0f61e39042a9e6cf7378efd05f9d6",
+ "passed": 37,
+ "failed": 0,
+ "results": [
+  {
+   "ok": true,
+   "name": "N1 spike-only changes since 6c0357b",
+   "detail": "30 changed path(s), all spike files"
+  },
+  {
+   "ok": true,
+   "name": "N2 simulation / generator / validators / content / tools / goldens / production UI untouched",
+   "detail": "resources · content · planets · tools · index.html · demos/demo-run.html · demos/demo-surface.html · demos/ui-mockups · GAME_BIBLE.md"
+  },
+  {
+   "ok": true,
+   "name": "N3 production planets are the existing 60×40 grid",
+   "detail": ""
+  },
+  {
+   "ok": true,
+   "name": "N4 tile centre → UV → tile round-trips all 2400 tiles; seam/pole edges clamp",
+   "detail": "round-trip 2400/2400 · edges [0,59,0,39,0,1]"
+  },
+  {
+   "ok": true,
+   "name": "N5 texture renderer refuses a non-2:1 size and a non-whole-pixel tile footprint",
+   "detail": ""
+  },
+  {
+   "ok": true,
+   "name": "N6 seam test world Frozen 9: 30/40 edge rows land vs water, no section spans the seam",
+   "detail": "{\"rows\":40,\"landVsWater\":30,\"sectionBreak\":3,\"sameSection\":0,\"meanSeamColourStep\":52.4,\"meanInteriorColourStep\":7.8}"
+  },
+  {
+   "ok": true,
+   "name": "B0 documented launch: `python3 -m http.server 8765` from the repo root serves the spike",
+   "detail": "http://localhost:8765/demos/planet-sphere-spike.html"
+  },
+  {
+   "ok": true,
+   "name": "B1 spike loads with no console errors, page errors or failed requests",
+   "detail": "{\"errors\":[],\"failed\":[]}"
+  },
+  {
+   "ok": true,
+   "name": "B2 page shows the REAL production planet (Ocean Archipelago 13 identical to Node BLOOM.generateFromArchetype)",
+   "detail": "proc_2316985227 · BLOOM.generateFromArchetype (production path) · layers 12345678"
+  },
+  {
+   "ok": true,
+   "name": "B3 logical map stays the existing 60×40",
+   "detail": "60×40"
+  },
+  {
+   "ok": true,
+   "name": "B4 texture is exactly 2:1 (480×240, 8×6 px per tile)",
+   "detail": "{\"width\":480,\"height\":240,\"tileW\":8,\"tileH\":6}"
+  },
+  {
+   "ok": true,
+   "name": "B5 texture canvas is rendered from the planet data (every tile's pixels = its base land / water colour)",
+   "detail": "{\"match\":2400,\"total\":2400,\"waterOk\":1476,\"waterN\":1476}"
+  },
+  {
+   "ok": true,
+   "name": "B6 Three.js sphere renders (frames advancing, round non-background silhouette)",
+   "detail": "frames 18 · bbox 592×591 px · three r185"
+  },
+  {
+   "ok": true,
+   "name": "B7 slow idle rotation when untouched (≈ one turn a minute)",
+   "detail": "6.09°/s"
+  },
+  {
+   "ok": true,
+   "name": "B8 pointer drag changes the globe orientation (yaw and pitch)",
+   "detail": "Δyaw 0.679 rad for 200 px · globe radius 296 px · Δquat 0.0636"
+  },
+  {
+   "ok": true,
+   "name": "B9 idle rotation stops immediately while interacting (idle factor 0 for every frame with the button down; globe still while held)",
+   "detail": "121 frames · drift while held 3.3e-5 rad"
+  },
+  {
+   "ok": true,
+   "name": "B10 idle rotation resumes after the ~3 s idle delay",
+   "detail": "still for 118 frames to +2.8 s · resumed at +3.05 s"
+  },
+  {
+   "ok": true,
+   "name": "B11 idle resume is gentle (eases in over ~1.5 s, no jump)",
+   "detail": "idle factor over +3.0–3.4 s: 0.00 0.00 0.02 0.06 0.11"
+  },
+  {
+   "ok": true,
+   "name": "B12 raycast UV → tile → region: every target resolves to its tile, land to the tilemap's section ID, water to water",
+   "detail": "327/327 (land 138, water 189, all 15 sections, seam columns, pole rows)"
+  },
+  {
+   "ok": true,
+   "name": "B13 real pointer hover shows UV / tile / region in the developer readout (land and water)",
+   "detail": "UV: 0.358, 0.662 | Tile: 21, 13 | Region: sec_13 — Heath Reach | lon -51.0°  lat 29.2°  ·  Tile: 0, 13 | Region: Water (impassable)"
+  },
+  {
+   "ok": true,
+   "name": "B14 hover sweep: every sphere hit gives in-range UV and a tile that agrees with the authoritative tilemap",
+   "detail": "31/35 points hit the sphere"
+  },
+  {
+   "ok": true,
+   "name": "B15 no per-frame texture uploads (1 upload, texture version constant across frames, drags and hovers)",
+   "detail": "uploads 1 · version 1 · 61 frames"
+  },
+  {
+   "ok": true,
+   "name": "B16 switching planet redraws the texture once (one more upload); seam-test world Frozen 9 is the real production planet",
+   "detail": "uploads 2 · seam {\"rows\":40,\"landVsWater\":30,\"sectionBreak\":3,\"sameSection\":0,\"meanSeamColourStep\":52.4,\"meanInteriorColourStep\":7.8}"
+  },
+  {
+   "ok": true,
+   "name": "B17 seam location: 6 px west of the u=0 meridian picks column 59, 6 px east picks column 0 (no wrap in data)",
+   "detail": "[[59,0],[59,0],[59,0]]"
+  },
+  {
+   "ok": true,
+   "name": "B18 picking on the seam-test world (Frozen 9)",
+   "detail": "185/185 (land 154, water 31)"
+  },
+  {
+   "ok": true,
+   "name": "B19 second seam world (Desert 4): land on both edges in all 40 rows, every row a section break",
+   "detail": "{\"rows\":40,\"landVsWater\":0,\"sectionBreak\":40,\"sameSection\":0,\"meanSeamColourStep\":9.5,\"meanInteriorColourStep\":2.9}"
+  },
+  {
+   "ok": true,
+   "name": "B20 resize: drawing buffer follows the container, camera aspect matches, globe stays round (not stretched)",
+   "detail": "[{\"vp\":\"900×700\",\"css\":\"540×661\",\"buf\":\"540×661\",\"aspectOk\":true,\"bufOk\":true,\"round\":true,\"bbox\":\"420×421\"},{\"vp\":\"1500×900\",\"css\":\"1140×861\",\"buf\":\"1140×861\",\"aspectOk\":true,\"bufOk\":true,\"round\":true,\"bbox\":\"670×670\"},{\"vp\":\"390×844\",\"css\":\"390×523\",\"buf\":\"390×523\",\"aspectOk\":true,\"bufOk\":true,\"round\":true,\"bbox\":\"304×303\"},{\"vp\":\"1280×800\",\"css\":\"920×761\",\"buf\":\"920×761\",\"aspectOk\":true,\"bufOk\":true,\"round\":true,\"bbox\":\"592×592\"}]"
+  },
+  {
+   "ok": true,
+   "name": "B21 dispose frees geometry / material / texture / renderer, stops the loop and removes the canvas; a new view renders",
+   "detail": "{\"before\":{\"geometries\":2,\"textures\":1},\"after\":{\"geometries\":0,\"textures\":0},\"oldDisposed\":true,\"oldCanvasInDom\":false,\"oldFramesStopped\":true,\"canvases\":1,\"newFrames\":19,\"newUploads\":1}"
+  },
+  {
+   "ok": true,
+   "name": "B22 still no console / page errors after the whole Chromium run",
+   "detail": "{\"errors\":[],\"failed\":[]}"
+  },
+  {
+   "ok": true,
+   "name": "perf (report only)",
+   "detail": "{\"pickMs\":0.768,\"meanFrameMs\":19.27,\"p95FrameMs\":33.4,\"jsRenderMs\":0.1,\"gl\":\"ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\",\"calls\":1,\"triangles\":16128,\"generateMs\":341,\"textureDrawMs\":1.8}"
+  },
+  {
+   "ok": true,
+   "name": "B23 prefers-reduced-motion: no automatic rotation (globe still for 5 s)",
+   "detail": "yaw -1.5708 → -1.5708"
+  },
+  {
+   "ok": true,
+   "name": "B24 reduced motion: manual drag still rotates; no fling or idle afterwards",
+   "detail": "Δyaw 0.507 · after release 1.9e-5"
+  },
+  {
+   "ok": true,
+   "name": "B25 reduced-motion run has no console errors",
+   "detail": "[]"
+  },
+  {
+   "ok": true,
+   "name": "B26 device pixel ratio capped at 2 (DPR 2 → 2, DPR 3 → 2)",
+   "detail": "[{\"device\":2,\"used\":2,\"css\":\"640×661\",\"buf\":\"1280×1322\"},{\"device\":3,\"used\":2,\"css\":\"640×661\",\"buf\":\"1280×1322\"}]"
+  },
+  {
+   "ok": true,
+   "name": "B27 960×480 texture (16×12 px per tile) also 2:1 and picks correctly",
+   "detail": "{\"width\":960,\"height\":480,\"tileW\":16,\"tileH\":12} · picks 128/128"
+  },
+  {
+   "ok": true,
+   "name": "F1 Firefox smoke: renders, drag rotates, picking correct, one texture upload, no console errors",
+   "detail": "frames 79 · Δyaw 0.941 · picks 147/147 · errors []"
+  },
+  {
+   "ok": true,
+   "name": "perf GPU (report only)",
+   "detail": "{\"pickMs\":0.831,\"meanFrameMs\":16.67,\"p95FrameMs\":16.8,\"jsRenderMs\":0.11,\"gl\":\"ANGLE (ATI Technologies Inc., AMD Radeon Pro 5700 XT OpenGL Engine, OpenGL 4.1)\",\"calls\":1,\"triangles\":16128,\"generateMs\":448,\"textureDrawMs\":5.3}"
+  }
+ ]
+}
