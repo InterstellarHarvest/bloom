@@ -18,11 +18,17 @@ const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"} 
 const validate = p => BLOOM.validatePlanet(p, config, { traits, regenerate: BLOOM.generatePlanet });
 
 // ---- fixed cases (product settings: islands limited to the configured Waterborne Seeds range)
+// BLOOM-027B (cylindrical generator): the generator's worlds changed on purpose, so two fixture seeds were re-picked for the SAME
+// roles from a scan of seeds 1–400 (docs/evidence/bloom-027b/fixture-changes.md). `moderate` was seed 2024 (two landmasses, the
+// small island in Waterborne range): on the cylinder its island joins the mainland across the cut (one landmass) → seed 5 (two
+// landmasses, one section stranded without the trait, gap 4). `islands` was seed 25 (≥ 3 landmasses, crossing required): on the
+// cylinder its three rectangular islands are one landmass spanning the cut → seed 119 (3 landmasses, 10 sections stranded without
+// the trait, all reachable with it; the same seed is tools/crossing-check.js's archipelago).
 const GAP = config.crossing.maxGap;
 const CASES = {
   zeroWater:   { seed: 12345, waterPct: 0,  sections: 14, maxCrossingGap: GAP },
-  moderate:    { seed: 2024,  waterPct: 30, sections: 14, maxCrossingGap: GAP },
-  islands:     { seed: 25,    waterPct: 60, sections: 14, maxCrossingGap: GAP },
+  moderate:    { seed: 5,     waterPct: 30, sections: 14, maxCrossingGap: GAP },
+  islands:     { seed: 119,   waterPct: 60, sections: 14, maxCrossingGap: GAP },
   denominator: { seed: 777,   waterPct: 40, sections: 12, maxCrossingGap: GAP },
 };
 const P = Object.fromEntries(Object.entries(CASES).map(([k, v]) => [k, BLOOM.generatePlanet(v)]));
@@ -63,7 +69,7 @@ const again = BLOOM.generatePlanet(CASES.islands);
 check(J(again) === J(P.islands), "same seed + params → identical planet (every field, every tile)");
 const other = BLOOM.generatePlanet({ ...CASES.islands, seed: CASES.islands.seed + 1 });
 const tileDiff = other.tilemap.filter((v, i) => v !== P.islands.tilemap[i]).length;
-check(tileDiff > 0 && J(other.sections.map(s => s.local)) !== J(P.islands.sections.map(s => s.local)), "different seed → different planet", `${tileDiff} of 2400 tiles differ (seed 25 vs 26)`);
+check(tileDiff > 0 && J(other.sections.map(s => s.local)) !== J(P.islands.sections.map(s => s.local)), "different seed → different planet", `${tileDiff} of 2400 tiles differ (seed ${CASES.islands.seed} vs ${CASES.islands.seed + 1})`);
 const moreWater = BLOOM.generatePlanet({ ...CASES.islands, waterPct: 40 });
 check(J(moreWater.tilemap) !== J(P.islands.tilemap), "same seed, different params → different planet");
 let threw = false; try { BLOOM.generatePlanet({ waterPct: 20 }); } catch { threw = true; }
@@ -184,7 +190,7 @@ function runStrip(pl) { const sim = BLOOM.createSim(pl, config, traits, { rng: r
   const oMass = pl.sections.find(s => s.id === pl.origin).landmass;
   const offIsland = sim.map.SEC.map((s, i) => [s, sim.livingCountBySection()[i]]).filter(([s]) => s.landmass !== oMass);
   const onIsland = sim.map.SEC.map((s, i) => [s, sim.livingCountBySection()[i]]).filter(([s]) => s.landmass === oMass).reduce((a, [, n]) => a + n, 0);
-  check(offIsland.every(([, n]) => n === 0) && onIsland > 0, "island planet (seed 25, 60%), no Waterborne Seeds: after 3000 maxed-out ticks no other landmass has a single living tile",
+  check(offIsland.every(([, n]) => n === 0) && onIsland > 0, `island planet (seed ${CASES.islands.seed}, 60%), no Waterborne Seeds: after 3000 maxed-out ticks no other landmass has a single living tile`,
     `${offIsland.length} off-landmass sections all 0 living; ${onIsland} living on the origin landmass`);
 }
 

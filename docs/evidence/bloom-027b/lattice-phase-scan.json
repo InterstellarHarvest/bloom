@@ -1,0 +1,115 @@
+{
+ "production": 0.3333333333333333,
+ "phases": {
+  "0": {
+   "terrainStepRatio": 0.444,
+   "terrainStepRatioRange": [
+    0.152,
+    0.897
+   ],
+   "terrainRank": 0.102,
+   "coastFlipRatio": 0.387,
+   "coastFlipRank": 0.19,
+   "worlds": 240
+  },
+  "0.25": {
+   "terrainStepRatio": 0.789,
+   "terrainStepRatioRange": [
+    0.342,
+    1.505
+   ],
+   "terrainRank": 0.332,
+   "coastFlipRatio": 0.679,
+   "coastFlipRank": 0.299,
+   "worlds": 240
+  },
+  "0.211": {
+   "terrainStepRatio": 0.636,
+   "terrainStepRatioRange": [
+    0.236,
+    1.257
+   ],
+   "terrainRank": 0.218,
+   "coastFlipRatio": 0.548,
+   "coastFlipRank": 0.251,
+   "worlds": 240
+  },
+  "0.28": {
+   "terrainStepRatio": 0.897,
+   "terrainStepRatioRange": [
+    0.412,
+    1.683
+   ],
+   "terrainRank": 0.416,
+   "coastFlipRatio": 0.806,
+   "coastFlipRank": 0.342,
+   "worlds": 240
+  },
+  "0.3": {
+   "terrainStepRatio": 0.963,
+   "terrainStepRatioRange": [
+    0.444,
+    1.794
+   ],
+   "terrainRank": 0.469,
+   "coastFlipRatio": 0.892,
+   "coastFlipRank": 0.374,
+   "worlds": 240
+  },
+  "0.333": {
+   "terrainStepRatio": 1.064,
+   "terrainStepRatioRange": [
+    0.491,
+    1.96
+   ],
+   "terrainRank": 0.549,
+   "coastFlipRatio": 1.048,
+   "coastFlipRank": 0.415,
+   "worlds": 240
+  },
+  "0.35": {
+   "terrainStepRatio": 1.11,
+   "terrainStepRatioRange": [
+    0.513,
+    2.032
+   ],
+   "terrainRank": 0.58,
+   "coastFlipRatio": 1.113,
+   "coastFlipRank": 0.428,
+   "worlds": 240
+  },
+  "0.375": {
+   "terrainStepRatio": 1.173,
+   "terrainStepRatioRange": [
+    0.541,
+    2.129
+   ],
+   "terrainRank": 0.623,
+   "coastFlipRatio": 1.194,
+   "coastFlipRank": 0.46,
+   "worlds": 240
+  },
+  "0.4": {
+   "terrainStepRatio": 1.229,
+   "terrainStepRatioRange": [
+    0.566,
+    2.215
+   ],
+   "terrainRank": 0.663,
+   "coastFlipRatio": 1.251,
+   "coastFlipRank": 0.477,
+   "worlds": 240
+  },
+  "0.5": {
+   "terrainStepRatio": 1.381,
+   "terrainStepRatioRange": [
+    0.633,
+    2.424
+   ],
+   "terrainRank": 0.76,
+   "coastFlipRatio": 1.435,
+   "coastFlipRank": 0.521,
+   "worlds": 240
+  }
+ }
+}

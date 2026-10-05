@@ -1,0 +1,200 @@
+{
+ "legend": "left: engine strip x = 0…W−1 · right: the same world rotated half a turn (x = 30…59, 0…29) so the former side edges meet in the middle · dotted white line = longitude zero · far right: the two seam columns x = W−1 | x = 0 side by side · black = section borders (cylindrical east/south neighbour)",
+ "maps": [
+  {
+   "file": "gen-119-60.png",
+   "title": "generatePlanet seed 119 water 60%",
+   "topology": {
+    "wrapX": true,
+    "wrapY": false
+   },
+   "seamRows": {
+    "landBothSides": 14,
+    "sameSectionBothSides": 11,
+    "coastCrossesCut": 1,
+    "waterBothSides": 25
+   },
+   "sectionsSpanningCut": 2
+  },
+  {
+   "file": "gen-5-30.png",
+   "title": "generatePlanet seed 5 water 30%",
+   "topology": {
+    "wrapX": true,
+    "wrapY": false
+   },
+   "seamRows": {
+    "landBothSides": 31,
+    "sameSectionBothSides": 30,
+    "coastCrossesCut": 0,
+    "waterBothSides": 9
+   },
+   "sectionsSpanningCut": 4
+  },
+  {
+   "file": "gen-2024-30.png",
+   "title": "generatePlanet seed 2024 water 30%",
+   "topology": {
+    "wrapX": true,
+    "wrapY": false
+   },
+   "seamRows": {
+    "landBothSides": 26,
+    "sameSectionBothSides": 26,
+    "coastCrossesCut": 5,
+    "waterBothSides": 9
+   },
+   "sectionsSpanningCut": 4
+  },
+  {
+   "file": "gen-25-60.png",
+   "title": "generatePlanet seed 25 water 60%",
+   "topology": {
+    "wrapX": true,
+    "wrapY": false
+   },
+   "seamRows": {
+    "landBothSides": 15,
+    "sameSectionBothSides": 13,
+    "coastCrossesCut": 0,
+    "waterBothSides": 25
+   },
+   "sectionsSpanningCut": 3
+  },
+  {
+   "file": "gen-12345-0.png",
+   "title": "generatePlanet seed 12345 water 0%",
+   "topology": {
+    "wrapX": true,
+    "wrapY": false
+   },
+   "seamRows": {
+    "landBothSides": 40,
+    "sameSectionBothSides": 40,
+    "coastCrossesCut": 0,
+    "waterBothSides": 0
+   },
+   "sectionsSpanningCut": 3
+  },
+  {
+   "file": "ocean_archipelago-28.png",
+   "title": "ocean_archipelago public seed 28 → attempt 8 Borea-495",
+   "topology": {
+    "wrapX": true,
+    "wrapY": false
+   },
+   "seamRows": {
+    "landBothSides": 12,
+    "sameSectionBothSides": 11,
+    "coastCrossesCut": 2,
+    "waterBothSides": 26
+   },
+   "sectionsSpanningCut": 2
+  },
+  {
+   "file": "ocean_archipelago-8.png",
+   "title": "ocean_archipelago public seed 8 → attempt 1 Coriol-220",
+   "topology": {
+    "wrapX": true,
+    "wrapY": false
+   },
+   "seamRows": {
+    "landBothSides": 20,
+    "sameSectionBothSides": 19,
+    "coastCrossesCut": 6,
+    "waterBothSides": 14
+   },
+   "sectionsSpanningCut": 4
+  },
+  {
+   "file": "ocean_archipelago-30.png",
+   "title": "ocean_archipelago public seed 30 → attempt 7 Borea-207",
+   "topology": {
+    "wrapX": true,
+    "wrapY": false
+   },
+   "seamRows": {
+    "landBothSides": 17,
+    "sameSectionBothSides": 15,
+    "coastCrossesCut": 0,
+    "waterBothSides": 23
+   },
+   "sectionsSpanningCut": 4
+  },
+  {
+   "file": "desert_world-17.png",
+   "title": "desert_world public seed 17 → attempt 0 Ymir-961",
+   "topology": {
+    "wrapX": true,
+    "wrapY": false
+   },
+   "seamRows": {
+    "landBothSides": 40,
+    "sameSectionBothSides": 29,
+    "coastCrossesCut": 0,
+    "waterBothSides": 0
+   },
+   "sectionsSpanningCut": 3
+  },
+  {
+   "file": "desert_world-22.png",
+   "title": "desert_world public seed 22 → attempt 0 Ymir-917",
+   "topology": {
+    "wrapX": true,
+    "wrapY": false
+   },
+   "seamRows": {
+    "landBothSides": 40,
+    "sameSectionBothSides": 39,
+    "coastCrossesCut": 0,
+    "waterBothSides": 0
+   },
+   "sectionsSpanningCut": 4
+  },
+  {
+   "file": "frozen_world-11.png",
+   "title": "frozen_world public seed 11 → attempt 1 Pallas-609",
+   "topology": {
+    "wrapX": true,
+    "wrapY": false
+   },
+   "seamRows": {
+    "landBothSides": 35,
+    "sameSectionBothSides": 27,
+    "coastCrossesCut": 5,
+    "waterBothSides": 0
+   },
+   "sectionsSpanningCut": 4
+  },
+  {
+   "file": "frozen_world-4.png",
+   "title": "frozen_world public seed 4 → attempt 1 Eos-103",
+   "topology": {
+    "wrapX": true,
+    "wrapY": false
+   },
+   "seamRows": {
+    "landBothSides": 29,
+    "sameSectionBothSides": 28,
+    "coastCrossesCut": 4,
+    "waterBothSides": 7
+   },
+   "sectionsSpanningCut": 4
+  },
+  {
+   "file": "frozen_world-9.png",
+   "title": "frozen_world public seed 9 → attempt 4 Mistral-735",
+   "topology": {
+    "wrapX": true,
+    "wrapY": false
+   },
+   "seamRows": {
+    "landBothSides": 29,
+    "sameSectionBothSides": 25,
+    "coastCrossesCut": 1,
+    "waterBothSides": 10
+   },
+   "sectionsSpanningCut": 4
+  }
+ ]
+}

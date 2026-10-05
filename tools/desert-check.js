@@ -28,12 +28,14 @@ let fails = 0;
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (!ok) fails++; };
 const t0 = Date.now();
 
-// ---- fixtures: public seeds, and (seed, attempt) for natural rejected candidates, all from the BLOOM-010 sweep
-const FIX = { positive: 25, second: 9,
-  negLayer4: [35, 0],      // plausible desert, but no legal build holds 70% at once (best 60.3%)
-  negLayer7: [50, 0],      // winnable and on pace, but only one broad strategy exists (static proof)
-  negLayer8: [16, 0],      // two broad strategies, both win too fast (a desert with too little resistance)
-  negOrigin: [9, 0] };     // the generator's origin pick is not a genuine refuge (Water-limited): a Desert-specific rule
+// ---- fixtures: public seeds, and (seed, attempt) for natural rejected candidates, from the BLOOM-010 sweep and re-picked for the
+// same roles after BLOOM-027B's cylindrical generator changed every world (scan of seeds 1–120 × attempts 0–2 and 1–60 × 0–7:
+// docs/evidence/bloom-027b/fixture-changes.md). positive = Desert 17 (attempt 0, Ymir-961: Drought-only vs Humidify strategies holding different land; Desert 25's new world has two all-Adapt strategies and keeps winning under full Dying World pressure); second = 4 (attempt 1, Coriol-536; seed 9 now accepts at 0 so it cannot prove the bounded retry).
+const FIX = { positive: 17, second: 4,
+  negLayer4: [57, 0],      // plausible desert, but no legal build holds 70% at once (best 58.8%; was 35/0, now accepted at 0)
+  negLayer7: [68, 1],      // winnable and on pace, but only one broad strategy exists (static proof; was 50/0)
+  negLayer8: [16, 0],      // two broad strategies, both win too fast (a desert with too little resistance) — unchanged role and seed
+  negOrigin: [1, 0] };     // the generator's origin pick is not a genuine refuge (Water-limited): a Desert-specific rule (was 9/0, now accepted)
 const SWEEP = Array.from({ length: 40 }, (_, i) => i + 1);
 // sweep quality thresholds (item 20) — the archetype's bar, set from the BLOOM-010 sweep with headroom
 const Q = { minAccepted: 34, maxWater: 16, maxLandmasses: 2, minOriginShare: 0.85, maxMeanMoisture: 30, minWaterTerraformWorlds: 0.25,
@@ -206,13 +208,13 @@ const skipped = ([s, k], re) => { const g = BLOOM.generateFromArchetype(DW, s, {
 console.log("\n# A21–25 · First Bloom and Ocean Archipelago unchanged");
 { const fb = BLOOM_DATA.planets.first_bloom, v = BLOOM.validatePlanet(fb, config, { traits, winnability: true });
   check(v.ok && !probeOf(fb).offered(WATERBORNE), "21 · First Bloom remains valid (layers 1–6 witness) and its shop unchanged", `witness margin at ${v.stats.witness.witness.marginSeconds} s`); }
-const OA_ID = { 13: { attempt: 6, name: "Eos-227", id: "proc_2316985227" }, 8: { attempt: 1, name: "Coriol-220", id: "proc_522844220" } };
-for (const s of [13, 8]) { const g = BLOOM.generateFromArchetype(OA, s, { config, traits }), a = g.archetype;
+const OA_ID = { 28: { attempt: 8, name: "Borea-495", id: "proc_580988495" }, 8: { attempt: 1, name: "Coriol-220", id: "proc_522844220" } }; // (BLOOM-027B: Ocean 28 is the shared Ocean primary; was 13 / Eos-227)
+for (const s of Object.keys(OA_ID).map(Number)) { const g = BLOOM.generateFromArchetype(OA, s, { config, traits }), a = g.archetype;
   const v = BLOOM.validatePlanet(g, config, { traits, regenerate: BLOOM.generatePlanet, winnability: true, strategies: { minStrategies: OA.validation.minStrategies, pacing: OA.validation.pacing } });
   check(v.ok && a.strategies.found >= 2 && a.landmasses >= 3, `22 · Ocean Archipelago seed ${s} still passes layers 1–8`, `${a.strategies.list.map(x => `[${x.signature}]`).join(" ")}`);
   check(a.attempt === OA_ID[s].attempt && g.name === OA_ID[s].name && g.id === OA_ID[s].id, `23 · Ocean Archipelago seed ${s} identity is stable (attempt, planet name, id)`, `attempt ${a.attempt} · ${g.name} (${g.id})`); }
-{ let e = null; try { BLOOM.generateFromArchetype(OA, 35, { config, traits }); } catch (x) { e = x; }
-  check(e && e.attempts.length === OA.generation.maxAttempts && e.attempts.every(a => a.rejected.length), "25 · the known Ocean failure (seed 35) still fails explicitly after 24 attempts"); }
+{ let e = null; try { BLOOM.generateFromArchetype(OA, 114, { config, traits }); } catch (x) { e = x; }
+  check(e && e.attempts.length === OA.generation.maxAttempts && e.attempts.every(a => a.rejected.length), "25 · the known Ocean failure (seed 114; was 35 before BLOOM-027B) still fails explicitly after 24 attempts"); }
 
 // ---- A26 · colony development on the desert, unchanged mechanics
 console.log("\n# A26 · colony development on Desert World (BLOOM-009 system, unchanged)");
@@ -268,7 +270,7 @@ if (JSON_OUT) { fs.writeFileSync(JSON_OUT, J({ accepted: worlds.length, genFails
     id.run.planetId === pos.id && J(id.run.validatedLayers) === "[1,2,3,4,5,6,7,8]" && id.geo.landmasses === 1,
     "27 · the Desert run launches through the generic launch path (BLOOM.generateFromArchetype in-page): same accepted attempt and planet as Node, layers 1–8",
     `attempt ${id.run.attempt} · ${id.run.name} (${id.run.planetId}) · water ${id.geo.water} tiles · 1 landmass`);
-  check(id.runId === `Desert World · public seed ${FIX.positive} · attempt ${pos.archetype.attempt} · ${pos.name} (${pos.id}) · layers 12345678` && /Desert World · seed 25/.test(id.title),
+  check(id.runId === `Desert World · public seed ${FIX.positive} · attempt ${pos.archetype.attempt} · ${pos.name} (${pos.id}) · layers 12345678` && new RegExp(`Desert World · seed ${FIX.positive}`).test(id.title),
     "27 · run identity shows Desert World, public seed, accepted attempt and planet name/id", id.runId);
   check(!id.keys.includes("witness") && !id.keys.includes("strategies") && !/signature|witness|Adapt\(\d\)|Terraform\([+−-]|Water:dry/i.test(id.text + id.titles),
     "32 · no witness plan, strategy signature or solution reaches the page", `planet.archetype keys: ${id.keys.join(",")}`);
@@ -338,7 +340,7 @@ if (JSON_OUT) { fs.writeFileSync(JSON_OUT, J({ accepted: worlds.length, genFails
     const ref = BLOOM.generateFromArchetype(DW, FIX.second, { config, traits });
     check(r.run.attempt === ref.archetype.attempt && r.run.planetId === ref.id && r.n === 4, `Desert seed ${FIX.second} (optional playtest seed) launches: attempt ${r.run.attempt} · ${r.run.name}`);
     await shot(q, `desert${FIX.second}-start.png`); check(q.errors.length === 0, `no browser errors (Desert seed ${FIX.second})`, q.errors.join(" | ")); await q.close(); }
-  for (const s of [13, 8]) { const q = await open(`?archetype=ocean_archipelago&seed=${s}`);
+  for (const s of Object.keys(OA_ID).map(Number)) { const q = await open(`?archetype=ocean_archipelago&seed=${s}`);
     const r = await q.evaluate(() => ({ run: BLOOM_API.run, shop: [...document.querySelectorAll("button.buy")].map(b => b.dataset.id), geo: BLOOM_API.geometry(),
       water: (() => { const c = document.getElementById("cv").getContext("2d"), M = BLOOM_API.sim.map, T = BLOOM_API.geometry().tile, d = window.devicePixelRatio || 1, t = M.TILEMAP.findIndex(v => v < 0);
         return [...c.getImageData(((t % M.W) + 0.5) * T * d, (((t / M.W) | 0) + 0.5) * T * d, 1, 1).data].slice(0, 3); })() }));

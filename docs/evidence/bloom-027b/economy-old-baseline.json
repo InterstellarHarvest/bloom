@@ -1,0 +1,3438 @@
+{
+ "set": "econ.startBiomass=40,econ.originTrickle=0.1",
+ "prices": {
+  "global": {
+   "cold": [
+    140,
+    270,
+    400
+   ],
+   "heat": [
+    140,
+    270,
+    400
+   ],
+   "drought": [
+    150,
+    270
+   ],
+   "flood": [
+    150,
+    270
+   ],
+   "salt": [
+    200
+   ],
+   "rad": [
+    220
+   ],
+   "seedOut": [
+    130,
+    280
+   ],
+   "waterSeeds": [
+    180
+   ],
+   "earlyMat": [
+    170
+   ],
+   "warm": [
+    200,
+    290
+   ],
+   "cool": [
+    200,
+    290
+   ],
+   "humid": [
+    200,
+    290
+   ],
+   "dry": [
+    200,
+    290
+   ]
+  },
+  "local": [
+   90,
+   130,
+   170,
+   210
+  ]
+ },
+ "econ": {
+  "thriving": 0.0004,
+  "marginal": 0.00012,
+  "thrivingAbove": 0.7,
+  "originTrickle": 0.1,
+  "startBiomass": 40,
+  "youngYield": 0.45,
+  "bubbleChance": 0.011,
+  "bubbleValue": 25,
+  "bubbleAutoTicks": 60,
+  "autoCollectShare": 0.5,
+  "bubbleFitAbove": 0.72,
+  "bubbleMinLiving": 8,
+  "costScale": 5
+ },
+ "specCost": {
+  "base": 18,
+  "step": 8
+ },
+ "worlds": {
+  "o28": {
+   "label": "Ocean Archipelago 28 · Eden",
+   "classes": 7,
+   "opening": {
+    "auto": {
+     "start": 0,
+     "local": 61.5,
+     "global": 85.4,
+     "two": 85.4,
+     "globalMax": 117.1,
+     "twoMax": 117.1,
+     "firstOptions": [
+      "seedOut"
+     ]
+    },
+    "click": {
+     "start": 0,
+     "local": 45.8,
+     "global": 67.4,
+     "two": 67.4,
+     "globalMax": 99.8,
+     "twoMax": 99.8,
+     "firstOptions": [
+      "cold",
+      "heat",
+      "seedOut",
+      "flood"
+     ]
+    }
+   },
+   "recipes": {
+    "radSaltColdHeat": {
+     "plan": "seedOut → waterSeeds → salt → cold → rad → heat",
+     "auto:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 654.5,
+      "winRange": [
+       593,
+       715.5
+      ],
+      "coreDone": 559.8,
+      "first": 89.1,
+      "second": 207.2,
+      "third": 324.9,
+      "last": 559.8,
+      "maxGap": 132.4,
+      "maxGapWorst": 154.1,
+      "medianGap": 90.6,
+      "maxAnyGap": 132.4,
+      "maxAnyGapWorst": 154.1,
+      "gaps": [
+       78.7,
+       139.2,
+       97.1,
+       104.2,
+       112.6,
+       60.5
+      ],
+      "terminal": 94.7,
+      "deadWait": 69.3,
+      "deadWaitWorst": 79,
+      "windows": [
+       0.48,
+       0.27,
+       0.25
+      ],
+      "spentGlobal": 1010,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 261.8,
+      "earned": 1271.8,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 64.2,
+        "earned": 64.2
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 94.7,
+        "earned": 94.7
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 91.2,
+        "earned": 188.7
+       },
+       "180": {
+        "cov": 6.1,
+        "bio": 141,
+        "earned": 271
+       },
+       "300": {
+        "cov": 17.7,
+        "bio": 170.4,
+        "earned": 480.4
+       },
+       "450": {
+        "cov": 50.1,
+        "bio": 97.3,
+        "earned": 747.3
+       },
+       "600": {
+        "cov": 62.4,
+        "bio": 100.9,
+        "earned": 1110.9
+       }
+      },
+      "example": "seedOut@79 waterSeeds@218 salt@315 cold@419 rad@532 heat@592"
+     },
+     "auto:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 524.2,
+      "winRange": [
+       480.3,
+       568.2
+      ],
+      "coreDone": 422.2,
+      "first": 101.9,
+      "second": 177.4,
+      "third": 274.1,
+      "last": 501.1,
+      "maxGap": 104.9,
+      "maxGapWorst": 120.5,
+      "medianGap": 64,
+      "maxAnyGap": 96.7,
+      "maxAnyGapWorst": 106.5,
+      "gaps": [
+       85.1,
+       74.3,
+       84.8,
+       50.4,
+       76.9,
+       40,
+       46.3
+      ],
+      "terminal": 23.1,
+      "deadWait": 84.8,
+      "deadWaitWorst": 107,
+      "windows": [
+       0.73,
+       0.05,
+       0.22
+      ],
+      "spentGlobal": 1320,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 94.3,
+      "earned": 1504.3,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 73.9,
+        "earned": 73.9
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 50.1,
+        "earned": 140.1
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 87.2,
+        "earned": 274.7
+       },
+       "180": {
+        "cov": 6.2,
+        "bio": 56.8,
+        "earned": 411.8
+       },
+       "300": {
+        "cov": 28.4,
+        "bio": 48.6,
+        "earned": 683.6
+       },
+       "450": {
+        "cov": 59.5,
+        "bio": 125.6,
+        "earned": 1225.6
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@85 waterSeeds@159 salt@244 cold@295 rad@372 heat@412 earlyMat@458 [leafCanopy@37]"
+     },
+     "click:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 507.5,
+      "winRange": [
+       457,
+       531
+      ],
+      "coreDone": 405.2,
+      "first": 71,
+      "second": 143.3,
+      "third": 223.9,
+      "last": 405.2,
+      "maxGap": 92.7,
+      "maxGapWorst": 103.5,
+      "medianGap": 67.9,
+      "maxAnyGap": 92.7,
+      "maxAnyGapWorst": 103.5,
+      "gaps": [
+       61.4,
+       71.7,
+       75.1,
+       80,
+       83.5,
+       37.1
+      ],
+      "terminal": 102.3,
+      "deadWait": 52.5,
+      "deadWaitWorst": 71,
+      "windows": [
+       0.43,
+       0.27,
+       0.3
+      ],
+      "spentGlobal": 1010,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 333.3,
+      "earned": 1343.3,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 73.5,
+        "earned": 73.5
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 105.9,
+        "earned": 138.4
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 101.2,
+        "earned": 276.2
+       },
+       "180": {
+        "cov": 9.1,
+        "bio": 143.8,
+        "earned": 408.8
+       },
+       "300": {
+        "cov": 30.6,
+        "bio": 74.6,
+        "earned": 689.6
+       },
+       "450": {
+        "cov": 61,
+        "bio": 155.8,
+        "earned": 1165.8
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@61 waterSeeds@133 salt@208 cold@288 rad@372 heat@409"
+     },
+     "click:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 432.8,
+      "winRange": [
+       387.5,
+       469.6
+      ],
+      "coreDone": 335.1,
+      "first": 78.1,
+      "second": 128,
+      "third": 205,
+      "last": 423.6,
+      "maxGap": 88,
+      "maxGapWorst": 101,
+      "medianGap": 53.2,
+      "maxAnyGap": 81,
+      "maxAnyGapWorst": 94.6,
+      "gaps": [
+       59.8,
+       33,
+       59.2,
+       32.6,
+       69.3,
+       43.5,
+       41.2,
+       75
+      ],
+      "terminal": 9.2,
+      "deadWait": 63.3,
+      "deadWaitWorst": 74,
+      "windows": [
+       0.74,
+       0.04,
+       0.22
+      ],
+      "spentGlobal": 1390,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 69.3,
+      "earned": 1549.3,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 42.5,
+        "earned": 110
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 39.4,
+        "earned": 194.4
+       },
+       "120": {
+        "cov": 6.2,
+        "bio": 125.2,
+        "earned": 390.2
+       },
+       "180": {
+        "cov": 14.2,
+        "bio": 83.6,
+        "earned": 533.6
+       },
+       "300": {
+        "cov": 42.9,
+        "bio": 120.7,
+        "earned": 950.7
+       },
+       "450": {
+        "cov": 65.2,
+        "bio": 159.7,
+        "earned": 1569.7
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@60 waterSeeds@93 salt@152 cold@185 rad@254 heat@297 earlyMat@339 seedOut@414 [leafCanopy@19]"
+     }
+    },
+    "radSaltHeatDry": {
+     "plan": "seedOut → waterSeeds → dry → salt → rad → heat",
+     "auto:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 610.2,
+      "winRange": [
+       591.5,
+       632
+      ],
+      "coreDone": 573.2,
+      "first": 89.1,
+      "second": 207.2,
+      "third": 324.9,
+      "last": 573.2,
+      "maxGap": 133.5,
+      "maxGapWorst": 154.1,
+      "medianGap": 95,
+      "maxAnyGap": 133.5,
+      "maxAnyGapWorst": 154.1,
+      "gaps": [
+       78.7,
+       139.2,
+       97.1,
+       95.7,
+       77.5,
+       61.1
+      ],
+      "terminal": 37,
+      "deadWait": 69,
+      "deadWaitWorst": 79,
+      "windows": [
+       0.49,
+       0.27,
+       0.24
+      ],
+      "spentGlobal": 1070,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 109.8,
+      "earned": 1179.8,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 64.2,
+        "earned": 64.2
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 94.7,
+        "earned": 94.7
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 91.2,
+        "earned": 188.7
+       },
+       "180": {
+        "cov": 6.1,
+        "bio": 141,
+        "earned": 271
+       },
+       "300": {
+        "cov": 17.7,
+        "bio": 170.4,
+        "earned": 480.4
+       },
+       "450": {
+        "cov": 53.2,
+        "bio": 80.8,
+        "earned": 790.8
+       },
+       "600": {
+        "cov": 64.9,
+        "bio": 118.5,
+        "earned": 1118.5
+       }
+      },
+      "example": "seedOut@79 waterSeeds@218 dry@315 salt@411 rad@488 heat@549"
+     },
+     "auto:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 466.8,
+      "winRange": [
+       437.3,
+       482.4
+      ],
+      "coreDone": 434.4,
+      "first": 101.9,
+      "second": 177.4,
+      "third": 274.1,
+      "last": 443.3,
+      "maxGap": 104.9,
+      "maxGapWorst": 120.5,
+      "medianGap": 71,
+      "maxAnyGap": 96.7,
+      "maxAnyGapWorst": 106.5,
+      "gaps": [
+       85.1,
+       74.3,
+       84.8,
+       63.3,
+       57.6,
+       36.3,
+       35.7
+      ],
+      "terminal": 23.5,
+      "deadWait": 84.8,
+      "deadWaitWorst": 107,
+      "windows": [
+       0.74,
+       0.04,
+       0.22
+      ],
+      "spentGlobal": 1112.5,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 116.5,
+      "earned": 1319,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 73.9,
+        "earned": 73.9
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 50.1,
+        "earned": 140.1
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 87.2,
+        "earned": 274.7
+       },
+       "180": {
+        "cov": 6.2,
+        "bio": 56.8,
+        "earned": 411.8
+       },
+       "300": {
+        "cov": 31.7,
+        "bio": 88.8,
+        "earned": 688.8
+       },
+       "450": {
+        "cov": 63.2,
+        "bio": 77.6,
+        "earned": 1191
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@85 waterSeeds@159 dry@244 salt@308 rad@365 heat@401 earlyMat@437 [leafCanopy@37]"
+     },
+     "click:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 452.2,
+      "winRange": [
+       418.7,
+       475.4
+      ],
+      "coreDone": 413.6,
+      "first": 71,
+      "second": 143.3,
+      "third": 223.9,
+      "last": 413.6,
+      "maxGap": 99.4,
+      "maxGapWorst": 107.2,
+      "medianGap": 72.1,
+      "maxAnyGap": 99.4,
+      "maxAnyGapWorst": 107.2,
+      "gaps": [
+       61.4,
+       71.7,
+       75.1,
+       91.6,
+       77.8,
+       39.2
+      ],
+      "terminal": 38.7,
+      "deadWait": 58.5,
+      "deadWaitWorst": 74,
+      "windows": [
+       0.5,
+       0.26,
+       0.24
+      ],
+      "spentGlobal": 1070,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 137,
+      "earned": 1207,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 73.5,
+        "earned": 73.5
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 105.9,
+        "earned": 138.4
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 101.2,
+        "earned": 276.2
+       },
+       "180": {
+        "cov": 9.1,
+        "bio": 143.8,
+        "earned": 408.8
+       },
+       "300": {
+        "cov": 43.6,
+        "bio": 68.3,
+        "earned": 678.3
+       },
+       "450": {
+        "cov": 67.1,
+        "bio": 83.2,
+        "earned": 1153.2
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@61 waterSeeds@133 dry@208 salt@300 rad@378 heat@417"
+     },
+     "click:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 384.8,
+      "winRange": [
+       332.2,
+       428
+      ],
+      "coreDone": 355.3,
+      "first": 78.1,
+      "second": 128,
+      "third": 205,
+      "last": 374.1,
+      "maxGap": 84.8,
+      "maxGapWorst": 101,
+      "medianGap": 54.8,
+      "maxAnyGap": 77.8,
+      "maxAnyGapWorst": 94.6,
+      "gaps": [
+       59.8,
+       33,
+       59.2,
+       62.2,
+       46,
+       40.6
+      ],
+      "terminal": 10.7,
+      "deadWait": 63.3,
+      "deadWaitWorst": 74,
+      "windows": [
+       0.75,
+       0.03,
+       0.22
+      ],
+      "spentGlobal": 1197.5,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 45.8,
+      "earned": 1333.3,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 42.5,
+        "earned": 110
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 39.4,
+        "earned": 194.4
+       },
+       "120": {
+        "cov": 6.2,
+        "bio": 125.2,
+        "earned": 390.2
+       },
+       "180": {
+        "cov": 15.7,
+        "bio": 64.7,
+        "earned": 514.7
+       },
+       "300": {
+        "cov": 50.5,
+        "bio": 120.5,
+        "earned": 975.5
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@60 waterSeeds@93 dry@152 salt@214 rad@260 heat@301 [leafCanopy@19]"
+     }
+    }
+   }
+  },
+  "o28dw": {
+   "label": "Ocean Archipelago 28 · Dying World",
+   "classes": 4,
+   "opening": {
+    "auto": {
+     "start": 0,
+     "local": 61.5,
+     "global": 85.4,
+     "two": 85.4,
+     "globalMax": 117.1,
+     "twoMax": 117.1,
+     "firstOptions": [
+      "seedOut"
+     ]
+    },
+    "click": {
+     "start": 0,
+     "local": 45.8,
+     "global": 67.4,
+     "two": 67.4,
+     "globalMax": 99.8,
+     "twoMax": 99.8,
+     "firstOptions": [
+      "cold",
+      "heat",
+      "seedOut",
+      "drought"
+     ]
+    }
+   },
+   "recipes": {
+    "radSaltHumid": {
+     "plan": "seedOut → rad → waterSeeds → humid → salt",
+     "auto:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 560.6,
+      "winRange": [
+       525.8,
+       603.5
+      ],
+      "coreDone": 506.4,
+      "first": 89.1,
+      "second": 224.1,
+      "third": 324.2,
+      "last": 506.4,
+      "maxGap": 135,
+      "maxGapWorst": 158.8,
+      "medianGap": 97.4,
+      "maxAnyGap": 135,
+      "maxAnyGapWorst": 158.8,
+      "gaps": [
+       78.7,
+       109.3,
+       90.6,
+       88,
+       86
+      ],
+      "terminal": 54.3,
+      "deadWait": 68.8,
+      "deadWaitWorst": 79,
+      "windows": [
+       0.49,
+       0.24,
+       0.27
+      ],
+      "spentGlobal": 930,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 146.5,
+      "earned": 1076.5,
+      "completedPlan": 4,
+      "progressAtWin": 1,
+      "maxClosed": 0.2,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 64.2,
+        "earned": 64.2
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 94.7,
+        "earned": 94.7
+       },
+       "120": {
+        "cov": 7.3,
+        "bio": 91.3,
+        "earned": 188.8
+       },
+       "180": {
+        "cov": 16.7,
+        "bio": 145.8,
+        "earned": 275.8
+       },
+       "300": {
+        "cov": 30.5,
+        "bio": 86.1,
+        "earned": 481.1
+       },
+       "450": {
+        "cov": 40.9,
+        "bio": 126.5,
+        "earned": 806.5
+       },
+       "600": {
+        "cov": 69.8,
+        "bio": 331.2,
+        "earned": 1261.2
+       }
+      },
+      "example": "seedOut@79 rad@188 waterSeeds@279 humid@367 salt@453"
+     },
+     "auto:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 441.6,
+      "winRange": [
+       386.6,
+       488.2
+      ],
+      "coreDone": 384.1,
+      "first": 102.7,
+      "second": 188.3,
+      "third": 253.5,
+      "last": 410.4,
+      "maxGap": 103.4,
+      "maxGapWorst": 123.8,
+      "medianGap": 68.9,
+      "maxAnyGap": 85.6,
+      "maxAnyGapWorst": 97.3,
+      "gaps": [
+       85.1,
+       72.5,
+       61.4,
+       71.6,
+       59.5
+      ],
+      "terminal": 31.3,
+      "deadWait": 79.3,
+      "deadWaitWorst": 107,
+      "windows": [
+       0.72,
+       0.04,
+       0.24
+      ],
+      "spentGlobal": 1015,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 134.8,
+      "earned": 1239.8,
+      "completedPlan": 4,
+      "progressAtWin": 1,
+      "maxClosed": 0.2,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 73.9,
+        "earned": 73.9
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 50.1,
+        "earned": 140.1
+       },
+       "120": {
+        "cov": 7.1,
+        "bio": 92,
+        "earned": 279.5
+       },
+       "180": {
+        "cov": 17.3,
+        "bio": 158.7,
+        "earned": 433.7
+       },
+       "300": {
+        "cov": 33.9,
+        "bio": 88.6,
+        "earned": 758.6
+       },
+       "450": {
+        "cov": 58.2,
+        "bio": 163.5,
+        "earned": 1183.5
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@85 rad@158 waterSeeds@219 humid@291 salt@350 [leafCanopy@37]"
+     },
+     "click:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 492.9,
+      "winRange": [
+       384,
+       591.5
+      ],
+      "coreDone": 371.8,
+      "first": 71,
+      "second": 168.5,
+      "third": 245.8,
+      "last": 371.8,
+      "maxGap": 102.1,
+      "maxGapWorst": 120.3,
+      "medianGap": 67.9,
+      "maxAnyGap": 102.1,
+      "maxAnyGapWorst": 120.3,
+      "gaps": [
+       61.4,
+       79.2,
+       67.1,
+       76.6,
+       55.4
+      ],
+      "terminal": 121.1,
+      "deadWait": 55.8,
+      "deadWaitWorst": 71,
+      "windows": [
+       0.39,
+       0.22,
+       0.39
+      ],
+      "spentGlobal": 930,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 404.3,
+      "earned": 1334.3,
+      "completedPlan": 4,
+      "progressAtWin": 1,
+      "maxClosed": 0.2,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 73.5,
+        "earned": 73.5
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 105.9,
+        "earned": 138.4
+       },
+       "120": {
+        "cov": 7.3,
+        "bio": 127.5,
+        "earned": 257.5
+       },
+       "180": {
+        "cov": 17.5,
+        "bio": 142.2,
+        "earned": 382.2
+       },
+       "300": {
+        "cov": 36.4,
+        "bio": 90.7,
+        "earned": 720.7
+       },
+       "450": {
+        "cov": 57.7,
+        "bio": 231.2,
+        "earned": 1161.2
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@61 rad@141 waterSeeds@208 humid@284 salt@340"
+     },
+     "click:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 364.5,
+      "winRange": [
+       277.6,
+       433.3
+      ],
+      "coreDone": 333.3,
+      "first": 78.1,
+      "second": 151.8,
+      "third": 196.8,
+      "last": 357.3,
+      "maxGap": 84.1,
+      "maxGapWorst": 101.1,
+      "medianGap": 62.8,
+      "maxAnyGap": 81.4,
+      "maxAnyGapWorst": 101.1,
+      "gaps": [
+       59.8,
+       51.4,
+       38.6,
+       62.2,
+       63.2
+      ],
+      "terminal": 7.2,
+      "deadWait": 55.8,
+      "deadWaitWorst": 66,
+      "windows": [
+       0.68,
+       0.05,
+       0.28
+      ],
+      "spentGlobal": 1015,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 43.5,
+      "earned": 1148.5,
+      "completedPlan": 4,
+      "progressAtWin": 1,
+      "maxClosed": 0.2,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 42.5,
+        "earned": 110
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 39.4,
+        "earned": 194.4
+       },
+       "120": {
+        "cov": 7.1,
+        "bio": 109.2,
+        "earned": 384.2
+       },
+       "180": {
+        "cov": 18.7,
+        "bio": 138,
+        "earned": 568
+       },
+       "300": {
+        "cov": 43.7,
+        "bio": 101.5,
+        "earned": 854.9
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@60 rad@111 waterSeeds@150 humid@212 salt@275 [leafCanopy@19]"
+     }
+    },
+    "radSaltColdDrought": {
+     "plan": "seedOut → rad → waterSeeds → drought → salt → cold",
+     "auto:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 530.4,
+      "winRange": [
+       466.4,
+       578.6
+      ],
+      "coreDone": null,
+      "first": 89.1,
+      "second": 224.1,
+      "third": 324.2,
+      "last": 473.5,
+      "maxGap": 135,
+      "maxGapWorst": 158.8,
+      "medianGap": 99.5,
+      "maxAnyGap": 135,
+      "maxAnyGapWorst": 158.8,
+      "gaps": [
+       78.7,
+       109.3,
+       90.6,
+       60,
+       92.8
+      ],
+      "terminal": 56.9,
+      "deadWait": 68.8,
+      "deadWaitWorst": 79,
+      "windows": [
+       0.53,
+       0.27,
+       0.21
+      ],
+      "spentGlobal": 830,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 134.5,
+      "earned": 964.5,
+      "completedPlan": 0,
+      "progressAtWin": 1,
+      "maxClosed": 0.2,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 64.2,
+        "earned": 64.2
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 94.7,
+        "earned": 94.7
+       },
+       "120": {
+        "cov": 7.3,
+        "bio": 91.3,
+        "earned": 188.8
+       },
+       "180": {
+        "cov": 16.7,
+        "bio": 145.8,
+        "earned": 275.8
+       },
+       "300": {
+        "cov": 30.5,
+        "bio": 86.1,
+        "earned": 481.1
+       },
+       "450": {
+        "cov": 47.8,
+        "bio": 66.2,
+        "earned": 796.2
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@79 rad@188 waterSeeds@279 drought@339 salt@431"
+     },
+     "auto:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 410,
+      "winRange": [
+       395.8,
+       421.3
+      ],
+      "coreDone": 402.6,
+      "first": 102.7,
+      "second": 188.3,
+      "third": 253.5,
+      "last": 397.8,
+      "maxGap": 103.4,
+      "maxGapWorst": 123.8,
+      "medianGap": 68.3,
+      "maxAnyGap": 88.6,
+      "maxAnyGapWorst": 97.3,
+      "gaps": [
+       85.1,
+       72.5,
+       61.4,
+       49,
+       84.8,
+       34.6
+      ],
+      "terminal": 12.2,
+      "deadWait": 79.3,
+      "deadWaitWorst": 107,
+      "windows": [
+       0.75,
+       0.04,
+       0.2
+      ],
+      "spentGlobal": 950,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 56.5,
+      "earned": 1096.5,
+      "completedPlan": 2,
+      "progressAtWin": 1,
+      "maxClosed": 0.2,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 73.9,
+        "earned": 73.9
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 50.1,
+        "earned": 140.1
+       },
+       "120": {
+        "cov": 7.1,
+        "bio": 92,
+        "earned": 279.5
+       },
+       "180": {
+        "cov": 17.3,
+        "bio": 158.7,
+        "earned": 433.7
+       },
+       "300": {
+        "cov": 34.4,
+        "bio": 97.2,
+        "earned": 754.7
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@85 rad@158 waterSeeds@219 drought@268 salt@353 cold@387 [leafCanopy@37]"
+     },
+     "click:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 422.1,
+      "winRange": [
+       343.8,
+       518.2
+      ],
+      "coreDone": 437.1,
+      "first": 71,
+      "second": 168.5,
+      "third": 245.8,
+      "last": 364.9,
+      "maxGap": 102.1,
+      "maxGapWorst": 120.3,
+      "medianGap": 73.1,
+      "maxAnyGap": 102.1,
+      "maxAnyGapWorst": 120.3,
+      "gaps": [
+       61.4,
+       79.2,
+       67.1,
+       56,
+       74.4
+      ],
+      "terminal": 57.2,
+      "deadWait": 57.5,
+      "deadWaitWorst": 71,
+      "windows": [
+       0.46,
+       0.26,
+       0.28
+      ],
+      "spentGlobal": 865,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 184.3,
+      "earned": 1049.3,
+      "completedPlan": 1,
+      "progressAtWin": 1,
+      "maxClosed": 0.2,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 73.5,
+        "earned": 73.5
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 105.9,
+        "earned": 138.4
+       },
+       "120": {
+        "cov": 7.3,
+        "bio": 127.5,
+        "earned": 257.5
+       },
+       "180": {
+        "cov": 17.5,
+        "bio": 142.2,
+        "earned": 382.2
+       },
+       "300": {
+        "cov": 40.7,
+        "bio": 89,
+        "earned": 694
+       },
+       "450": {
+        "cov": 57.3,
+        "bio": 93.3,
+        "earned": 1043.3
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@61 rad@141 waterSeeds@208 drought@264 salt@338"
+     },
+     "click:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 352.8,
+      "winRange": [
+       318.2,
+       374.2
+      ],
+      "coreDone": 332.6,
+      "first": 78.1,
+      "second": 151.8,
+      "third": 196.8,
+      "last": 322.8,
+      "maxGap": 85.1,
+      "maxGapWorst": 101.1,
+      "medianGap": 60.4,
+      "maxAnyGap": 78.8,
+      "maxAnyGapWorst": 101.1,
+      "gaps": [
+       59.8,
+       51.4,
+       38.6,
+       46.4,
+       67.2,
+       38.7
+      ],
+      "terminal": 30,
+      "deadWait": 55.3,
+      "deadWaitWorst": 66,
+      "windows": [
+       0.72,
+       0.05,
+       0.22
+      ],
+      "spentGlobal": 935,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 120.8,
+      "earned": 1145.8,
+      "completedPlan": 3,
+      "progressAtWin": 1,
+      "maxClosed": 0.2,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 42.5,
+        "earned": 110
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 39.4,
+        "earned": 194.4
+       },
+       "120": {
+        "cov": 7.1,
+        "bio": 109.2,
+        "earned": 384.2
+       },
+       "180": {
+        "cov": 18.7,
+        "bio": 138,
+        "earned": 568
+       },
+       "300": {
+        "cov": 48.8,
+        "bio": 124.5,
+        "earned": 944.5
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@60 rad@111 waterSeeds@150 drought@196 salt@263 cold@302 [leafCanopy@19]"
+     }
+    },
+    "ignoreRadSaltColdHeat": {
+     "plan": "seedOut → waterSeeds → salt → cold → rad → heat",
+     "auto:balanced+none": {
+      "won": "0/4",
+      "lost": 0,
+      "win": null,
+      "winRange": null,
+      "coreDone": 594,
+      "first": 89.1,
+      "second": 207.2,
+      "third": 326.1,
+      "last": 594,
+      "maxGap": 139.1,
+      "maxGapWorst": 156.4,
+      "medianGap": 98.2,
+      "maxAnyGap": 139.1,
+      "maxAnyGapWorst": 156.4,
+      "gaps": [
+       78.7,
+       94.1,
+       84,
+       59.7,
+       149.6,
+       70.2
+      ],
+      "terminal": null,
+      "deadWait": 73.3,
+      "deadWaitWorst": 80,
+      "windows": [
+       0.18,
+       0.09,
+       0.73
+      ],
+      "spentGlobal": 1010,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 3236,
+      "earned": 4246,
+      "completedPlan": 4,
+      "progressAtWin": 1,
+      "maxClosed": 0.4,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 64.2,
+        "earned": 64.2
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 94.7,
+        "earned": 94.7
+       },
+       "120": {
+        "cov": 7.3,
+        "bio": 91.3,
+        "earned": 188.8
+       },
+       "180": {
+        "cov": 16.7,
+        "bio": 100.8,
+        "earned": 275.8
+       },
+       "300": {
+        "cov": 18.4,
+        "bio": 133,
+        "earned": 493
+       },
+       "450": {
+        "cov": 16.7,
+        "bio": 129.5,
+        "earned": 744.5
+       },
+       "600": {
+        "cov": 35.6,
+        "bio": 113.3,
+        "earned": 1053.3
+       }
+      },
+      "example": "seedOut@79 waterSeeds@173 salt@257 cold@317 rad@466 heat@536"
+     },
+     "auto:situational+canopyOrigin+extend": {
+      "won": "0/4",
+      "lost": 0,
+      "win": null,
+      "winRange": null,
+      "coreDone": 451.9,
+      "first": 102.7,
+      "second": 173,
+      "third": 261.6,
+      "last": 586,
+      "maxGap": 106.9,
+      "maxGapWorst": 123.8,
+      "medianGap": 71.8,
+      "maxAnyGap": 93.8,
+      "maxAnyGapWorst": 111.2,
+      "gaps": [
+       85.1,
+       60.8,
+       70.4,
+       45,
+       83.3,
+       48.8,
+       54.4,
+       77
+      ],
+      "terminal": null,
+      "deadWait": 83.8,
+      "deadWaitWorst": 107,
+      "windows": [
+       0.23,
+       0.02,
+       0.75
+      ],
+      "spentGlobal": 1460,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 5161.5,
+      "earned": 6711.5,
+      "completedPlan": 4,
+      "progressAtWin": 1,
+      "maxClosed": 0.4,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 73.9,
+        "earned": 73.9
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 50.1,
+        "earned": 140.1
+       },
+       "120": {
+        "cov": 7.1,
+        "bio": 92,
+        "earned": 279.5
+       },
+       "180": {
+        "cov": 18.2,
+        "bio": 63.6,
+        "earned": 418.6
+       },
+       "300": {
+        "cov": 21.6,
+        "bio": 83.4,
+        "earned": 718.4
+       },
+       "450": {
+        "cov": 33.6,
+        "bio": 77.6,
+        "earned": 1115.1
+       },
+       "600": {
+        "cov": 46.6,
+        "bio": 209.6,
+        "earned": 1619.6
+       }
+      },
+      "example": "seedOut@85 waterSeeds@146 salt@216 cold@261 rad@345 heat@393 earlyMat@448 seedOut@525 [leafCanopy@37]"
+     },
+     "click:balanced+none": {
+      "won": "0/4",
+      "lost": 0,
+      "win": null,
+      "winRange": null,
+      "coreDone": 425,
+      "first": 71,
+      "second": 148.6,
+      "third": 229.1,
+      "last": 425,
+      "maxGap": 95.2,
+      "maxGapWorst": 103.5,
+      "medianGap": 70.1,
+      "maxAnyGap": 95.2,
+      "maxAnyGapWorst": 103.5,
+      "gaps": [
+       61.4,
+       76.5,
+       61.6,
+       59.1,
+       83.8,
+       78.9
+      ],
+      "terminal": null,
+      "deadWait": 57.5,
+      "deadWaitWorst": 71,
+      "windows": [
+       0.12,
+       0.07,
+       0.81
+      ],
+      "spentGlobal": 1010,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 5109.3,
+      "earned": 6119.3,
+      "completedPlan": 4,
+      "progressAtWin": 1,
+      "maxClosed": 0.4,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 73.5,
+        "earned": 73.5
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 105.9,
+        "earned": 138.4
+       },
+       "120": {
+        "cov": 7.3,
+        "bio": 127.5,
+        "earned": 257.5
+       },
+       "180": {
+        "cov": 17.1,
+        "bio": 90.9,
+        "earned": 400.9
+       },
+       "300": {
+        "cov": 22.1,
+        "bio": 63.1,
+        "earned": 713.1
+       },
+       "450": {
+        "cov": 43.9,
+        "bio": 85.6,
+        "earned": 1095.6
+       },
+       "600": {
+        "cov": 49.6,
+        "bio": 531.9,
+        "earned": 1541.9
+       }
+      },
+      "example": "seedOut@61 waterSeeds@138 salt@200 cold@259 rad@342 heat@421"
+     },
+     "click:situational+canopyOrigin+extend": {
+      "won": "0/4",
+      "lost": 0,
+      "win": null,
+      "winRange": null,
+      "coreDone": 344.7,
+      "first": 78.1,
+      "second": 139.2,
+      "third": 202.8,
+      "last": 450.5,
+      "maxGap": 86.3,
+      "maxGapWorst": 101,
+      "medianGap": 55.8,
+      "maxAnyGap": 82.1,
+      "maxAnyGapWorst": 89.7,
+      "gaps": [
+       59.8,
+       33,
+       64.2,
+       54.7,
+       73.1,
+       54.9,
+       37.7,
+       66.8
+      ],
+      "terminal": null,
+      "deadWait": 57.8,
+      "deadWaitWorst": 66,
+      "windows": [
+       0.17,
+       0.02,
+       0.82
+      ],
+      "spentGlobal": 1460,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 7060.5,
+      "earned": 8610.5,
+      "completedPlan": 4,
+      "progressAtWin": 1,
+      "maxClosed": 0.4,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 42.5,
+        "earned": 110
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 39.4,
+        "earned": 194.4
+       },
+       "120": {
+        "cov": 8,
+        "bio": 103.2,
+        "earned": 368.2
+       },
+       "180": {
+        "cov": 24.6,
+        "bio": 74.5,
+        "earned": 529.5
+       },
+       "300": {
+        "cov": 32.9,
+        "bio": 82.7,
+        "earned": 967.7
+       },
+       "450": {
+        "cov": 51.3,
+        "bio": 160.8,
+        "earned": 1570.8
+       },
+       "600": {
+        "cov": 52.7,
+        "bio": 705.3,
+        "earned": 2255.3
+       }
+      },
+      "example": "seedOut@60 waterSeeds@93 salt@157 cold@212 rad@285 heat@340 earlyMat@377 seedOut@444 [leafCanopy@19]"
+     }
+    },
+    "ignoreRadSaltHeatDry": {
+     "plan": "seedOut → waterSeeds → dry → salt → rad → heat",
+     "auto:balanced+none": {
+      "won": "0/4",
+      "lost": 0,
+      "win": null,
+      "winRange": null,
+      "coreDone": 629.8,
+      "first": 89.1,
+      "second": 207.2,
+      "third": 326.1,
+      "last": 629.8,
+      "maxGap": 142.5,
+      "maxGapWorst": 156.4,
+      "medianGap": 107.1,
+      "maxAnyGap": 142.5,
+      "maxAnyGapWorst": 156.4,
+      "gaps": [
+       78.7,
+       94.1,
+       84,
+       92.6,
+       120.4,
+       80.4
+      ],
+      "terminal": null,
+      "deadWait": 72.8,
+      "deadWaitWorst": 80,
+      "windows": [
+       0.18,
+       0.1,
+       0.72
+      ],
+      "spentGlobal": 1070,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 2501.8,
+      "earned": 3571.8,
+      "completedPlan": 4,
+      "progressAtWin": 1,
+      "maxClosed": 0.4,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 64.2,
+        "earned": 64.2
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 94.7,
+        "earned": 94.7
+       },
+       "120": {
+        "cov": 7.3,
+        "bio": 91.3,
+        "earned": 188.8
+       },
+       "180": {
+        "cov": 16.7,
+        "bio": 100.8,
+        "earned": 275.8
+       },
+       "300": {
+        "cov": 16.8,
+        "bio": 138.3,
+        "earned": 498.3
+       },
+       "450": {
+        "cov": 16.7,
+        "bio": 132.9,
+        "earned": 742.9
+       },
+       "600": {
+        "cov": 24.8,
+        "bio": 109.8,
+        "earned": 1019.8
+       }
+      },
+      "example": "seedOut@79 waterSeeds@173 dry@257 salt@349 rad@470 heat@550"
+     },
+     "auto:situational+canopyOrigin+extend": {
+      "won": "0/4",
+      "lost": 0,
+      "win": null,
+      "winRange": null,
+      "coreDone": 515.4,
+      "first": 102.7,
+      "second": 173,
+      "third": 261.6,
+      "last": 718.8,
+      "maxGap": 126.9,
+      "maxGapWorst": 148.3,
+      "medianGap": 85.4,
+      "maxAnyGap": 126.9,
+      "maxAnyGapWorst": 148.3,
+      "gaps": [
+       85.1,
+       60.8,
+       70.4,
+       106.1,
+       95.8,
+       67.1,
+       79,
+       101.9
+      ],
+      "terminal": null,
+      "deadWait": 86.8,
+      "deadWaitWorst": 107,
+      "windows": [
+       0.28,
+       0.02,
+       0.71
+      ],
+      "spentGlobal": 1520,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 2897.8,
+      "earned": 4507.8,
+      "completedPlan": 4,
+      "progressAtWin": 1,
+      "maxClosed": 0.4,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 73.9,
+        "earned": 73.9
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 50.1,
+        "earned": 140.1
+       },
+       "120": {
+        "cov": 7.1,
+        "bio": 92,
+        "earned": 279.5
+       },
+       "180": {
+        "cov": 18.2,
+        "bio": 63.6,
+        "earned": 418.6
+       },
+       "300": {
+        "cov": 17,
+        "bio": 94,
+        "earned": 694
+       },
+       "450": {
+        "cov": 18.4,
+        "bio": 157.3,
+        "earned": 1012.3
+       },
+       "600": {
+        "cov": 38.3,
+        "bio": 62.5,
+        "earned": 1350
+       }
+      },
+      "example": "seedOut@85 waterSeeds@146 dry@216 salt@322 rad@418 heat@485 earlyMat@564 seedOut@666 [leafCanopy@37]"
+     },
+     "click:balanced+none": {
+      "won": "0/4",
+      "lost": 0,
+      "win": null,
+      "winRange": null,
+      "coreDone": 457.7,
+      "first": 71,
+      "second": 148.6,
+      "third": 229.1,
+      "last": 457.7,
+      "maxGap": 107.2,
+      "maxGapWorst": 116.9,
+      "medianGap": 75.4,
+      "maxAnyGap": 107.2,
+      "maxAnyGapWorst": 116.9,
+      "gaps": [
+       61.4,
+       76.5,
+       61.6,
+       52.8,
+       105.9,
+       69.2
+      ],
+      "terminal": null,
+      "deadWait": 57,
+      "deadWaitWorst": 71,
+      "windows": [
+       0.12,
+       0.07,
+       0.81
+      ],
+      "spentGlobal": 1070,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 4113.3,
+      "earned": 5183.3,
+      "completedPlan": 4,
+      "progressAtWin": 1,
+      "maxClosed": 0.4,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 73.5,
+        "earned": 73.5
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 105.9,
+        "earned": 138.4
+       },
+       "120": {
+        "cov": 7.3,
+        "bio": 127.5,
+        "earned": 257.5
+       },
+       "180": {
+        "cov": 17.1,
+        "bio": 90.9,
+        "earned": 400.9
+       },
+       "300": {
+        "cov": 16.7,
+        "bio": 115.7,
+        "earned": 725.7
+       },
+       "450": {
+        "cov": 27,
+        "bio": 102.1,
+        "earned": 1067.1
+       },
+       "600": {
+        "cov": 40.6,
+        "bio": 460.7,
+        "earned": 1530.7
+       }
+      },
+      "example": "seedOut@61 waterSeeds@138 dry@200 salt@252 rad@358 heat@427"
+     },
+     "click:situational+canopyOrigin+extend": {
+      "won": "0/4",
+      "lost": 0,
+      "win": null,
+      "winRange": null,
+      "coreDone": 368.4,
+      "first": 78.1,
+      "second": 139.2,
+      "third": 202.8,
+      "last": 528.2,
+      "maxGap": 103.7,
+      "maxGapWorst": 109.5,
+      "medianGap": 61,
+      "maxAnyGap": 100.9,
+      "maxAnyGapWorst": 109.5,
+      "gaps": [
+       59.8,
+       33,
+       64.2,
+       51.6,
+       67.4,
+       55.7,
+       76.1,
+       109.5
+      ],
+      "terminal": null,
+      "deadWait": 62.5,
+      "deadWaitWorst": 73,
+      "windows": [
+       0.18,
+       0.02,
+       0.8
+      ],
+      "spentGlobal": 1520,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 4689.5,
+      "earned": 6299.5,
+      "completedPlan": 4,
+      "progressAtWin": 1,
+      "maxClosed": 0.4,
+      "marks": {
+       "30": {
+        "cov": 6.1,
+        "bio": 42.5,
+        "earned": 110
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 39.4,
+        "earned": 194.4
+       },
+       "120": {
+        "cov": 8,
+        "bio": 103.2,
+        "earned": 368.2
+       },
+       "180": {
+        "cov": 24,
+        "bio": 92.6,
+        "earned": 547.6
+       },
+       "300": {
+        "cov": 21.1,
+        "bio": 179.6,
+        "earned": 984.6
+       },
+       "450": {
+        "cov": 43.9,
+        "bio": 113.2,
+        "earned": 1400.7
+       },
+       "600": {
+        "cov": 48.2,
+        "bio": 258.9,
+        "earned": 1868.9
+       }
+      },
+      "example": "seedOut@60 waterSeeds@93 dry@157 salt@209 rad@276 heat@332 earlyMat@408 seedOut@517 [leafCanopy@19]"
+     }
+    }
+   }
+  },
+  "d17": {
+   "label": "Desert World 17 · Eden",
+   "classes": 5,
+   "opening": {
+    "auto": {
+     "start": 0,
+     "local": 58.6,
+     "global": 87.9,
+     "two": 87.9,
+     "globalMax": 94.1,
+     "twoMax": 94.1,
+     "firstOptions": [
+      "seedOut",
+      "heat"
+     ]
+    },
+    "click": {
+     "start": 0,
+     "local": 50.4,
+     "global": 70.6,
+     "two": 70.6,
+     "globalMax": 84.5,
+     "twoMax": 84.5,
+     "firstOptions": [
+      "seedOut",
+      "heat"
+     ]
+    }
+   },
+   "recipes": {
+    "droughtHumid": {
+     "plan": "seedOut → earlyMat → drought → humid",
+     "auto:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 409.3,
+      "winRange": [
+       388.2,
+       428.6
+      ],
+      "coreDone": 372.6,
+      "first": 91.2,
+      "second": 192.2,
+      "third": 285.6,
+      "last": 372.6,
+      "maxGap": 106.6,
+      "maxGapWorst": 121.9,
+      "medianGap": 92,
+      "maxAnyGap": 106.6,
+      "maxAnyGapWorst": 121.9,
+      "gaps": [
+       94.9,
+       106.2,
+       101.3,
+       79.8
+      ],
+      "terminal": 36.7,
+      "deadWait": 67.8,
+      "deadWaitWorst": 80,
+      "windows": [
+       0.56,
+       0.29,
+       0.16
+      ],
+      "spentGlobal": 650,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 143.3,
+      "earned": 793.3,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 4.9,
+        "bio": 56.3,
+        "earned": 56.3
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 91,
+        "earned": 91
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 58.4,
+        "earned": 188.4
+       },
+       "180": {
+        "cov": 6.1,
+        "bio": 121.9,
+        "earned": 294.4
+       },
+       "300": {
+        "cov": 13.2,
+        "bio": 106,
+        "earned": 481
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@95 earlyMat@201 drought@302 humid@382"
+     },
+     "auto:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 331.7,
+      "winRange": [
+       319,
+       353.9
+      ],
+      "coreDone": 292.2,
+      "first": 115.6,
+      "second": 172.4,
+      "third": 226.5,
+      "last": 292.2,
+      "maxGap": 115.6,
+      "maxGapWorst": 122.4,
+      "medianGap": 63.6,
+      "maxAnyGap": 67.4,
+      "maxAnyGapWorst": 72.5,
+      "gaps": [
+       108.3,
+       45,
+       62.2,
+       68
+      ],
+      "terminal": 39.5,
+      "deadWait": 76.3,
+      "deadWaitWorst": 114,
+      "windows": [
+       0.8,
+       0.04,
+       0.16
+      ],
+      "spentGlobal": 650,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 231.3,
+      "earned": 971.3,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 5.5,
+        "bio": 57.4,
+        "earned": 57.4
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 27.8,
+        "earned": 95.3
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 60.6,
+        "earned": 248.1
+       },
+       "180": {
+        "cov": 6.1,
+        "bio": 73.8,
+        "earned": 421.3
+       },
+       "300": {
+        "cov": 50.9,
+        "bio": 97.8,
+        "earned": 787.8
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@108 earlyMat@153 drought@216 humid@284 [leafCanopy@56]"
+     },
+     "click:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 310.4,
+      "winRange": [
+       278.9,
+       336.5
+      ],
+      "coreDone": 264.2,
+      "first": 74.1,
+      "second": 139.4,
+      "third": 200.6,
+      "last": 264.2,
+      "maxGap": 81.2,
+      "maxGapWorst": 88.6,
+      "medianGap": 67,
+      "maxAnyGap": 81.2,
+      "maxAnyGapWorst": 88.6,
+      "gaps": [
+       70.6,
+       77.2,
+       79.6,
+       60.6
+      ],
+      "terminal": 46.3,
+      "deadWait": 51.5,
+      "deadWaitWorst": 61,
+      "windows": [
+       0.52,
+       0.28,
+       0.2
+      ],
+      "spentGlobal": 650,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 188.8,
+      "earned": 838.8,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 4.9,
+        "bio": 59.4,
+        "earned": 59.4
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 119.1,
+        "earned": 119.1
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 142.8,
+        "earned": 272.8
+       },
+       "180": {
+        "cov": 6.8,
+        "bio": 72.6,
+        "earned": 410.1
+       },
+       "300": {
+        "cov": 48.6,
+        "bio": 61.7,
+        "earned": 711.7
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@71 earlyMat@148 drought@227 humid@288"
+     },
+     "click:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 280.8,
+      "winRange": [
+       252.3,
+       310.4
+      ],
+      "coreDone": 237,
+      "first": 95,
+      "second": 141.7,
+      "third": 183.2,
+      "last": 248.5,
+      "maxGap": 95,
+      "maxGapWorst": 102.4,
+      "medianGap": 52.7,
+      "maxAnyGap": 58.1,
+      "maxAnyGapWorst": 67.2,
+      "gaps": [
+       86.6,
+       42.5,
+       23.4,
+       50.1,
+       46
+      ],
+      "terminal": 32.3,
+      "deadWait": 85.8,
+      "deadWaitWorst": 96,
+      "windows": [
+       0.78,
+       0.04,
+       0.19
+      ],
+      "spentGlobal": 720,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 181.5,
+      "earned": 991.5,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 5.5,
+        "bio": 60.5,
+        "earned": 60.5
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 56,
+        "earned": 123.5
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 103.6,
+        "earned": 323.6
+       },
+       "180": {
+        "cov": 9.3,
+        "bio": 103.6,
+        "earned": 531.1
+       },
+       "300": {
+        "cov": 64.1,
+        "bio": 150.3,
+        "earned": 890.3
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@87 earlyMat@129 drought@153 humid@203 seedOut@249 [leafCanopy@44]"
+     }
+    },
+    "saltDrought": {
+     "plan": "seedOut → earlyMat → drought → salt",
+     "auto:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 401.8,
+      "winRange": [
+       383,
+       419.8
+      ],
+      "coreDone": 372.6,
+      "first": 91.2,
+      "second": 192.2,
+      "third": 285.6,
+      "last": 372.6,
+      "maxGap": 106.6,
+      "maxGapWorst": 121.9,
+      "medianGap": 92,
+      "maxAnyGap": 106.6,
+      "maxAnyGapWorst": 121.9,
+      "gaps": [
+       94.9,
+       106.2,
+       101.3,
+       79.8
+      ],
+      "terminal": 29.2,
+      "deadWait": 67.8,
+      "deadWaitWorst": 80,
+      "windows": [
+       0.56,
+       0.28,
+       0.15
+      ],
+      "spentGlobal": 650,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 126.3,
+      "earned": 776.3,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 4.9,
+        "bio": 56.3,
+        "earned": 56.3
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 91,
+        "earned": 91
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 58.4,
+        "earned": 188.4
+       },
+       "180": {
+        "cov": 6.1,
+        "bio": 121.9,
+        "earned": 294.4
+       },
+       "300": {
+        "cov": 13.2,
+        "bio": 106,
+        "earned": 481
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@95 earlyMat@201 drought@302 salt@382"
+     },
+     "auto:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 322.9,
+      "winRange": [
+       314.7,
+       342.6
+      ],
+      "coreDone": 292.2,
+      "first": 115.6,
+      "second": 172.4,
+      "third": 226.5,
+      "last": 292.2,
+      "maxGap": 115.6,
+      "maxGapWorst": 122.4,
+      "medianGap": 63.6,
+      "maxAnyGap": 67.4,
+      "maxAnyGapWorst": 72.5,
+      "gaps": [
+       108.3,
+       45,
+       62.2,
+       68
+      ],
+      "terminal": 30.7,
+      "deadWait": 76.3,
+      "deadWaitWorst": 114,
+      "windows": [
+       0.82,
+       0.05,
+       0.14
+      ],
+      "spentGlobal": 650,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 178.5,
+      "earned": 918.5,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 5.5,
+        "bio": 57.4,
+        "earned": 57.4
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 27.8,
+        "earned": 95.3
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 60.6,
+        "earned": 248.1
+       },
+       "180": {
+        "cov": 6.1,
+        "bio": 73.8,
+        "earned": 421.3
+       },
+       "300": {
+        "cov": 51.4,
+        "bio": 106.3,
+        "earned": 796.3
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@108 earlyMat@153 drought@216 salt@284 [leafCanopy@56]"
+     },
+     "click:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 306.9,
+      "winRange": [
+       273,
+       332.6
+      ],
+      "coreDone": 264.2,
+      "first": 74.1,
+      "second": 139.4,
+      "third": 200.6,
+      "last": 264.2,
+      "maxGap": 81.2,
+      "maxGapWorst": 88.6,
+      "medianGap": 67,
+      "maxAnyGap": 81.2,
+      "maxAnyGapWorst": 88.6,
+      "gaps": [
+       70.6,
+       77.2,
+       79.6,
+       60.6
+      ],
+      "terminal": 42.8,
+      "deadWait": 51.5,
+      "deadWaitWorst": 61,
+      "windows": [
+       0.53,
+       0.27,
+       0.2
+      ],
+      "spentGlobal": 650,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 188.8,
+      "earned": 838.8,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 4.9,
+        "bio": 59.4,
+        "earned": 59.4
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 119.1,
+        "earned": 119.1
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 142.8,
+        "earned": 272.8
+       },
+       "180": {
+        "cov": 6.8,
+        "bio": 72.6,
+        "earned": 410.1
+       },
+       "300": {
+        "cov": 49.2,
+        "bio": 39.5,
+        "earned": 689.5
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@71 earlyMat@148 drought@227 salt@288"
+     },
+     "click:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 273.3,
+      "winRange": [
+       246.6,
+       302.1
+      ],
+      "coreDone": 237,
+      "first": 95,
+      "second": 141.7,
+      "third": 183.2,
+      "last": 237,
+      "maxGap": 95,
+      "maxGapWorst": 102.4,
+      "medianGap": 52.8,
+      "maxAnyGap": 58.1,
+      "maxAnyGapWorst": 67.2,
+      "gaps": [
+       86.6,
+       42.5,
+       23.4,
+       50.1
+      ],
+      "terminal": 36.3,
+      "deadWait": 85.8,
+      "deadWaitWorst": 96,
+      "windows": [
+       0.79,
+       0.04,
+       0.17
+      ],
+      "spentGlobal": 650,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 227,
+      "earned": 967,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 5.5,
+        "bio": 60.5,
+        "earned": 60.5
+       },
+       "60": {
+        "cov": 6.1,
+        "bio": 56,
+        "earned": 123.5
+       },
+       "120": {
+        "cov": 6.1,
+        "bio": 103.6,
+        "earned": 323.6
+       },
+       "180": {
+        "cov": 9.3,
+        "bio": 103.6,
+        "earned": 531.1
+       },
+       "300": {
+        "cov": 68.6,
+        "bio": 178.6,
+        "earned": 918.6
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@87 earlyMat@129 drought@153 salt@203 [leafCanopy@44]"
+     }
+    }
+   }
+  },
+  "f11": {
+   "label": "Frozen World 11 · Eden",
+   "classes": 4,
+   "opening": {
+    "auto": {
+     "start": 0,
+     "local": 59.8,
+     "global": 78.7,
+     "two": 78.7,
+     "globalMax": 93.1,
+     "twoMax": 93.1,
+     "firstOptions": [
+      "cold",
+      "heat",
+      "seedOut"
+     ]
+    },
+    "click": {
+     "start": 0,
+     "local": 50.9,
+     "global": 61.4,
+     "two": 61.4,
+     "globalMax": 79.7,
+     "twoMax": 79.7,
+     "firstOptions": [
+      "seedOut",
+      "cold",
+      "heat"
+     ]
+    }
+   },
+   "recipes": {
+    "coldHeat": {
+     "plan": "seedOut → cold → heat",
+     "auto:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 320.6,
+      "winRange": [
+       308.3,
+       333.4
+      ],
+      "coreDone": 238.6,
+      "first": 82.3,
+      "second": 158.2,
+      "third": 238.6,
+      "last": 238.6,
+      "maxGap": 91.7,
+      "maxGapWorst": 97,
+      "medianGap": 76.1,
+      "maxAnyGap": 91.7,
+      "maxAnyGapWorst": 97,
+      "gaps": [
+       96.3,
+       77.1,
+       70.8
+      ],
+      "terminal": 82,
+      "deadWait": 66.5,
+      "deadWaitWorst": 80,
+      "windows": [
+       0.59,
+       0.31,
+       0.1
+      ],
+      "spentGlobal": 410,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 244,
+      "earned": 654,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 6.6,
+        "bio": 55.8,
+        "earned": 55.8
+       },
+       "60": {
+        "cov": 9.1,
+        "bio": 99.5,
+        "earned": 99.5
+       },
+       "120": {
+        "cov": 9.1,
+        "bio": 83.2,
+        "earned": 213.2
+       },
+       "180": {
+        "cov": 11.2,
+        "bio": 37.1,
+        "earned": 307.1
+       },
+       "300": {
+        "cov": 55.5,
+        "bio": 170.6,
+        "earned": 580.6
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@96 cold@173 heat@244"
+     },
+     "auto:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 277.4,
+      "winRange": [
+       268.3,
+       293.4
+      ],
+      "coreDone": 189.8,
+      "first": 98.8,
+      "second": 141.1,
+      "third": 189.8,
+      "last": 236.9,
+      "maxGap": 98.8,
+      "maxGapWorst": 109.9,
+      "medianGap": 47.9,
+      "maxAnyGap": 53.9,
+      "maxAnyGapWorst": 55.7,
+      "gaps": [
+       94.6,
+       47.5,
+       52,
+       48.5
+      ],
+      "terminal": 40.5,
+      "deadWait": 85,
+      "deadWaitWorst": 96,
+      "windows": [
+       0.83,
+       0.1,
+       0.06
+      ],
+      "spentGlobal": 580,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 216,
+      "earned": 886,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 7.2,
+        "bio": 59.1,
+        "earned": 59.1
+       },
+       "60": {
+        "cov": 9.1,
+        "bio": 27.8,
+        "earned": 117.8
+       },
+       "120": {
+        "cov": 9.1,
+        "bio": 83.5,
+        "earned": 303.5
+       },
+       "180": {
+        "cov": 13.8,
+        "bio": 123,
+        "earned": 483
+       },
+       "300": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@95 cold@142 heat@194 earlyMat@243 [leafCanopy@46]"
+     },
+     "click:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 262.2,
+      "winRange": [
+       245.6,
+       279.5
+      ],
+      "coreDone": 177.3,
+      "first": 65.2,
+      "second": 107,
+      "third": 177.3,
+      "last": 177.3,
+      "maxGap": 74.8,
+      "maxGapWorst": 83.5,
+      "medianGap": 60.6,
+      "maxAnyGap": 74.8,
+      "maxAnyGapWorst": 83.5,
+      "gaps": [
+       79.7,
+       39.3,
+       68.5
+      ],
+      "terminal": 85,
+      "deadWait": 56.8,
+      "deadWaitWorst": 76,
+      "windows": [
+       0.56,
+       0.25,
+       0.2
+      ],
+      "spentGlobal": 410,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 335.8,
+      "earned": 745.8,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 6.6,
+        "bio": 58.9,
+        "earned": 58.9
+       },
+       "60": {
+        "cov": 9.1,
+        "bio": 65.7,
+        "earned": 130.7
+       },
+       "120": {
+        "cov": 10.6,
+        "bio": 60.2,
+        "earned": 295.2
+       },
+       "180": {
+        "cov": 22.6,
+        "bio": 115.4,
+        "earned": 455.4
+       },
+       "300": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@80 cold@119 heat@188"
+     },
+     "click:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 254.3,
+      "winRange": [
+       239.8,
+       267.5
+      ],
+      "coreDone": 151.8,
+      "first": 76.4,
+      "second": 111.3,
+      "third": 151.8,
+      "last": 238,
+      "maxGap": 76.4,
+      "maxGapWorst": 83,
+      "medianGap": 45,
+      "maxAnyGap": 56.3,
+      "maxAnyGapWorst": 61.1,
+      "gaps": [
+       73.8,
+       39.8,
+       32,
+       57.6,
+       53.1
+      ],
+      "terminal": 16.3,
+      "deadWait": 52.5,
+      "deadWaitWorst": 74,
+      "windows": [
+       0.77,
+       0.13,
+       0.1
+      ],
+      "spentGlobal": 790,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 112.5,
+      "earned": 992.5,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 7.2,
+        "bio": 71.6,
+        "earned": 71.6
+       },
+       "60": {
+        "cov": 9.1,
+        "bio": 67.7,
+        "earned": 157.7
+       },
+       "120": {
+        "cov": 10,
+        "bio": 77.3,
+        "earned": 402.3
+       },
+       "180": {
+        "cov": 21.9,
+        "bio": 111.4,
+        "earned": 611.4
+       },
+       "300": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "seedOut@74 cold@114 heat@146 earlyMat@203 seedOut@256 [leafCanopy@42]"
+     }
+    },
+    "coldWarm": {
+     "plan": "cold → warm",
+     "auto:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 300.8,
+      "winRange": [
+       270.9,
+       327.7
+      ],
+      "coreDone": 192.9,
+      "first": 86.4,
+      "second": 192.9,
+      "third": null,
+      "last": 192.9,
+      "maxGap": 106.5,
+      "maxGapWorst": 115,
+      "medianGap": 96.4,
+      "maxAnyGap": 106.5,
+      "maxAnyGapWorst": 115,
+      "gaps": [
+       96.3,
+       103.7
+      ],
+      "terminal": 108,
+      "deadWait": 61.5,
+      "deadWaitWorst": 80,
+      "windows": [
+       0.45,
+       0.21,
+       0.35
+      ],
+      "spentGlobal": 340,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 306.3,
+      "earned": 646.3,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 6.6,
+        "bio": 55.8,
+        "earned": 55.8
+       },
+       "60": {
+        "cov": 9.1,
+        "bio": 99.5,
+        "earned": 99.5
+       },
+       "120": {
+        "cov": 11,
+        "bio": 74.3,
+        "earned": 214.3
+       },
+       "180": {
+        "cov": 17.5,
+        "bio": 76.3,
+        "earned": 316.3
+       },
+       "300": {
+        "cov": 59.6,
+        "bio": 259.9,
+        "earned": 599.9
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "cold@96 warm@200"
+     },
+     "auto:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 260.7,
+      "winRange": [
+       248,
+       271.8
+      ],
+      "coreDone": 175.6,
+      "first": 101.2,
+      "second": 175.6,
+      "third": 216.3,
+      "last": 239,
+      "maxGap": 101.2,
+      "maxGapWorst": 110.6,
+      "medianGap": 69.4,
+      "maxAnyGap": 74.4,
+      "maxAnyGapWorst": 87.7,
+      "gaps": [
+       99.5,
+       87.7,
+       40.8
+      ],
+      "terminal": 21.7,
+      "deadWait": 85,
+      "deadWaitWorst": 96,
+      "windows": [
+       0.81,
+       0.02,
+       0.17
+      ],
+      "spentGlobal": 555,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 117.3,
+      "earned": 762.3,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 7.2,
+        "bio": 59.1,
+        "earned": 59.1
+       },
+       "60": {
+        "cov": 9.1,
+        "bio": 27.8,
+        "earned": 117.8
+       },
+       "120": {
+        "cov": 10.3,
+        "bio": 56.1,
+        "earned": 286.1
+       },
+       "180": {
+        "cov": 17.1,
+        "bio": 80.2,
+        "earned": 460.2
+       },
+       "300": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "cold@100 warm@187 seedOut@228 [leafCanopy@46]"
+     },
+     "click:balanced+none": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 270.8,
+      "winRange": [
+       240,
+       286.1
+      ],
+      "coreDone": 140.1,
+      "first": 67.4,
+      "second": 140.1,
+      "third": null,
+      "last": 140.1,
+      "maxGap": 81,
+      "maxGapWorst": 96.6,
+      "medianGap": 70.1,
+      "maxAnyGap": 81,
+      "maxAnyGapWorst": 96.6,
+      "gaps": [
+       81.6,
+       91.4
+      ],
+      "terminal": 130.7,
+      "deadWait": 55.8,
+      "deadWaitWorst": 76,
+      "windows": [
+       0.43,
+       0.12,
+       0.44
+      ],
+      "spentGlobal": 340,
+      "spentLocal": 0,
+      "specs": 0,
+      "unspent": 419.5,
+      "earned": 759.5,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 6.6,
+        "bio": 58.9,
+        "earned": 58.9
+       },
+       "60": {
+        "cov": 9.3,
+        "bio": 73.2,
+        "earned": 143.2
+       },
+       "120": {
+        "cov": 12.9,
+        "bio": 107,
+        "earned": 297
+       },
+       "180": {
+        "cov": 25.5,
+        "bio": 102.8,
+        "earned": 442.8
+       },
+       "300": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "cold@82 warm@173"
+     },
+     "click:situational+canopyOrigin+extend": {
+      "won": "4/4",
+      "lost": 0,
+      "win": 231.3,
+      "winRange": [
+       204.8,
+       246.6
+      ],
+      "coreDone": 143.2,
+      "first": 77.8,
+      "second": 143.2,
+      "third": 183.1,
+      "last": 223.7,
+      "maxGap": 82.2,
+      "maxGapWorst": 93.3,
+      "medianGap": 51.9,
+      "maxAnyGap": 66.2,
+      "maxAnyGapWorst": 93.3,
+      "gaps": [
+       73.8,
+       73.4,
+       35.2,
+       41.8
+      ],
+      "terminal": 7.6,
+      "deadWait": 54.3,
+      "deadWaitWorst": 74,
+      "windows": [
+       0.79,
+       0.03,
+       0.17
+      ],
+      "spentGlobal": 640,
+      "spentLocal": 90,
+      "specs": 1,
+      "unspent": 69.5,
+      "earned": 799.5,
+      "completedPlan": 4,
+      "progressAtWin": null,
+      "maxClosed": 0,
+      "marks": {
+       "30": {
+        "cov": 7.2,
+        "bio": 71.6,
+        "earned": 71.6
+       },
+       "60": {
+        "cov": 9.1,
+        "bio": 67.7,
+        "earned": 157.7
+       },
+       "120": {
+        "cov": 12.3,
+        "bio": 80,
+        "earned": 360
+       },
+       "180": {
+        "cov": 27.2,
+        "bio": 99.3,
+        "earned": 561.8
+       },
+       "300": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "450": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       },
+       "600": {
+        "cov": null,
+        "bio": null,
+        "earned": null
+       }
+      },
+      "example": "cold@74 warm@147 seedOut@182 earlyMat@224 [leafCanopy@42]"
+     }
+    }
+   }
+  }
+ },
+ "seeds": [
+  101,
+  108,
+  115,
+  122
+ ],
+ "ms": 44742
+}

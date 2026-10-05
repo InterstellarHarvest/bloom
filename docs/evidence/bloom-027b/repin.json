@@ -1,0 +1,260 @@
+{
+ "root": "/Users/MrDashiki/Experiments & Projects/_worktrees/bloom-027b-cylinder-gen",
+ "frozenCheckPIN": {
+  "ocean_archipelago|1|0": "1e5a5387",
+  "ocean_archipelago|1|1": "12d20f18",
+  "ocean_archipelago|1|2": "9ec74812",
+  "ocean_archipelago|8|0": "85d341e7",
+  "ocean_archipelago|8|1": "05176096",
+  "ocean_archipelago|8|2": "0cbc05c8",
+  "ocean_archipelago|13|0": "314dfe63",
+  "ocean_archipelago|13|1": "b5aaad2c",
+  "ocean_archipelago|13|2": "418ed4c1",
+  "ocean_archipelago|25|0": "99017ef9",
+  "ocean_archipelago|25|1": "e1c78384",
+  "ocean_archipelago|25|2": "f0a61ad0",
+  "ocean_archipelago|9|0": "f1bf999e",
+  "ocean_archipelago|9|1": "fabf3394",
+  "ocean_archipelago|9|2": "b7c36f35",
+  "ocean_archipelago|35|0": "dbc4f986",
+  "ocean_archipelago|35|1": "1ddab33e",
+  "ocean_archipelago|35|2": "02f0ade0",
+  "desert_world|1|0": "1234d515",
+  "desert_world|1|1": "75fa498f",
+  "desert_world|1|2": "6c7d80b4",
+  "desert_world|8|0": "d3df3115",
+  "desert_world|8|1": "f9cf62e8",
+  "desert_world|8|2": "8acadde8",
+  "desert_world|13|0": "e6f6bdb9",
+  "desert_world|13|1": "cf2332b6",
+  "desert_world|13|2": "1b9c4e1b",
+  "desert_world|25|0": "6bb15087",
+  "desert_world|25|1": "0e2c3c1b",
+  "desert_world|25|2": "1d4f29b0",
+  "desert_world|9|0": "83d60a64",
+  "desert_world|9|1": "7ab8d98d",
+  "desert_world|9|2": "9e8cdd32",
+  "desert_world|35|0": "e4ff041e",
+  "desert_world|35|1": "dac49453",
+  "desert_world|35|2": "33a87149",
+  "default|1|0": "be4c4519",
+  "default|1|8": "089e64a8",
+  "default|1|30": "91daf3f5",
+  "default|1|60": "7c38b318",
+  "default|2|0": "d4e9c07d",
+  "default|2|8": "b72e81e8",
+  "default|2|30": "0a0bdb86",
+  "default|2|60": "990d352a",
+  "default|3|0": "1d7627d1",
+  "default|3|8": "4ee71033",
+  "default|3|30": "52271657",
+  "default|3|60": "204fe308",
+  "default|7|0": "d9b0872f",
+  "default|7|8": "d2fafae1",
+  "default|7|30": "48808a85",
+  "default|7|60": "bbff9607",
+  "default|42|0": "d4e78cb9",
+  "default|42|8": "0da24e05",
+  "default|42|30": "d7a22763",
+  "default|42|60": "e66707d7"
+ },
+ "dyingWorldBASE_FP": {
+  "ocean_archipelago:28": {
+   "geometry": "cd7c2737",
+   "run": "7a39ec52,dc9a3f52,cbe30754,79a65626,d9159b6b,f4ab6a97",
+   "edenEqualsRun": true,
+   "attempt": 8,
+   "name": "Borea-495",
+   "strategies": [
+    "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Adapt(1)",
+    "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1) · Water:wet=Terraform(−8)"
+   ]
+  },
+  "ocean_archipelago:8": {
+   "geometry": "698a0131",
+   "run": "ef5575ee,30e8e0e2,50d33ed2,81fc1155,f5230e5a,b5e7ace8",
+   "edenEqualsRun": true,
+   "attempt": 1,
+   "name": "Coriol-220",
+   "strategies": [
+    "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:wet=Adapt(1)",
+    "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1)"
+   ]
+  },
+  "desert_world:17": {
+   "geometry": "e5cf32ef",
+   "run": "8aeda063,f99cae45,4fb52470,1e751fb5,d9691906,a99afb94",
+   "edenEqualsRun": true,
+   "attempt": 0,
+   "name": "Ymir-961",
+   "strategies": [
+    "Water:dry=Adapt(1)+Terraform(+8)",
+    "Defense:salt=Adapt(1) · Water:dry=Adapt(1)"
+   ]
+  },
+  "desert_world:4": {
+   "geometry": "5b176d43",
+   "run": "e19d1d3b,8d46ec6c,4bfbda1c,e70945b1,ba6936ef,d19a4562",
+   "edenEqualsRun": true,
+   "attempt": 1,
+   "name": "Coriol-536",
+   "strategies": [
+    "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)",
+    "Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2)"
+   ]
+  },
+  "frozen_world:11": {
+   "geometry": "e6107a80",
+   "run": "7a37679f,36899074,6ff6e65f,fd3d2368,0fde15ea,50a5bad2",
+   "edenEqualsRun": true,
+   "attempt": 1,
+   "name": "Pallas-609",
+   "strategies": [
+    "Temperature:cold=Adapt(1) · Temperature:heat=Adapt(1)",
+    "Temperature:cold=Adapt(1)+Terraform(+6)"
+   ]
+  },
+  "frozen_world:4": {
+   "geometry": "ab40551e",
+   "run": "fc1a79f7,3c2e806e,388e8b75,1c0dadc4,b2e9447f,e2b90283",
+   "edenEqualsRun": true,
+   "attempt": 1,
+   "name": "Eos-103",
+   "strategies": [
+    "Temperature:cold=Adapt(2)",
+    "Temperature:cold=Adapt(1)+Terraform(+12)"
+   ]
+  },
+  "ocean_archipelago:30": {
+   "geometry": "68c6803b",
+   "run": "4f5d4a29,ef774658,ae0fbccc,6d7c152c,a9ab53f1,b65e2cd7",
+   "edenEqualsRun": true,
+   "attempt": 7,
+   "name": "Borea-207",
+   "strategies": [
+    "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1)",
+    "Crossing:waterSeeds=Spread(1) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)"
+   ]
+  },
+  "frozen_world:9": {
+   "geometry": "25597cac",
+   "run": "855146e4,9d66a50c,3954f349,a65cfc79,d0724ea6,bad40af0",
+   "edenEqualsRun": true,
+   "attempt": 4,
+   "name": "Mistral-735",
+   "strategies": [
+    "Temperature:cold=Adapt(2)",
+    "Temperature:cold=Adapt(1)+Terraform(+12) · Temperature:heat=Adapt(1)"
+   ]
+  },
+  "desert_world:22": {
+   "geometry": "144c9496",
+   "run": "670d879a,39deaa17,2817add1,21c8aa61,b2387fbd,492cf740",
+   "edenEqualsRun": true,
+   "attempt": 0,
+   "name": "Ymir-917",
+   "strategies": [
+    "Water:dry=Adapt(2)",
+    "Defense:rad=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)"
+   ]
+  }
+ },
+ "nativeCompetition": {
+  "BASE_FP": {
+   "ocean_archipelago:28": "7a39ec52,dc9a3f52,cbe30754,79a65626,d9159b6b,f4ab6a97",
+   "desert_world:17": "8aeda063,f99cae45,4fb52470,1e751fb5,d9691906,a99afb94",
+   "frozen_world:11": "7a37679f,36899074,6ff6e65f,fd3d2368,0fde15ea,50a5bad2",
+   "ocean_archipelago:30": "4f5d4a29,ef774658,ae0fbccc,6d7c152c,a9ab53f1,b65e2cd7",
+   "frozen_world:4": "fc1a79f7,3c2e806e,388e8b75,1c0dadc4,b2e9447f,e2b90283",
+   "desert_world:22": "670d879a,39deaa17,2817add1,21c8aa61,b2387fbd,492cf740"
+  },
+  "PIN": {
+   "planets": {
+    "ocean_archipelago:28": "59193a12",
+    "desert_world:17": "b72e23dd",
+    "frozen_world:11": "290a7b3f",
+    "ocean_archipelago:30": "be10566d",
+    "frozen_world:4": "bd61cd5a",
+    "desert_world:22": "90b74016"
+   },
+   "dw": {
+    "ocean_archipelago:28": "292424c4,2a525624,f83159b0,bd847afd,25ce952b,05220c00",
+    "desert_world:17": "3ad9c1d1,b41d8295,028c482e,114ede5f,1097e447,7c93b68c",
+    "frozen_world:11": "f5e161e4,3f1df5bc,60a24440,66b93ca3,a7b2629b,1714b6c3",
+    "ocean_archipelago:30": "05b456a1,6231e4ca,5cea4681,389cef9c,e2c8773c,12cbe1b9",
+    "frozen_world:4": "205486dd,e93d7163,e312807b,baa21883,39f4da9a,faab52be",
+    "desert_world:22": "ac3feadf,96d44860,e1f37e34,319194ce,92b10818,e80b015e"
+   },
+   "dwLayerP": {
+    "ocean_archipelago:28": "82fb5502",
+    "desert_world:17": "8e7b201c",
+    "frozen_world:11": "2b20f6bc",
+    "ocean_archipelago:30": "83013a93",
+    "frozen_world:4": "1c17405a",
+    "desert_world:22": "1172c15b"
+   }
+  }
+ },
+ "volatileClimatePIN": {
+  "ocean_archipelago:28": {
+   "planet": "59193a12",
+   "edenRun": "510a5831",
+   "dying_worldRun": "88045c4f",
+   "dying_worldStatus": "PASS",
+   "dying_worldLayerP": "82fb5502",
+   "native_competitionRun": "4921ad02",
+   "native_competitionStatus": "PASS",
+   "native_competitionLayerP": "1628b558"
+  },
+  "desert_world:17": {
+   "planet": "b72e23dd",
+   "edenRun": "3630d13e",
+   "dying_worldRun": "e305e957",
+   "dying_worldStatus": "PASS",
+   "dying_worldLayerP": "8e7b201c",
+   "native_competitionRun": "e3336312",
+   "native_competitionStatus": "PASS",
+   "native_competitionLayerP": "7c71a937"
+  },
+  "frozen_world:11": {
+   "planet": "290a7b3f",
+   "edenRun": "8f763abf",
+   "dying_worldRun": "2a311eca",
+   "dying_worldStatus": "PASS",
+   "dying_worldLayerP": "2b20f6bc",
+   "native_competitionRun": "8737b039",
+   "native_competitionStatus": "PASS",
+   "native_competitionLayerP": "f881f42d"
+  },
+  "ocean_archipelago:30": {
+   "planet": "be10566d",
+   "edenRun": "a8744e25",
+   "dying_worldRun": "e09a1826",
+   "dying_worldStatus": "PASS",
+   "dying_worldLayerP": "83013a93",
+   "native_competitionRun": "0b65ebc4",
+   "native_competitionStatus": "PASS",
+   "native_competitionLayerP": "3919faea"
+  },
+  "frozen_world:4": {
+   "planet": "bd61cd5a",
+   "edenRun": "2c2daf13",
+   "dying_worldRun": "5aeb4113",
+   "dying_worldStatus": "PASS",
+   "dying_worldLayerP": "1c17405a",
+   "native_competitionRun": "2861e5db",
+   "native_competitionStatus": "PASS",
+   "native_competitionLayerP": "d2849761"
+  },
+  "desert_world:22": {
+   "planet": "90b74016",
+   "edenRun": "dcfbec58",
+   "dying_worldRun": "e612a2f7",
+   "dying_worldStatus": "PASS",
+   "dying_worldLayerP": "1172c15b",
+   "native_competitionRun": "8b41997a",
+   "native_competitionStatus": "PASS",
+   "native_competitionLayerP": "60e190cf"
+  }
+ }
+}

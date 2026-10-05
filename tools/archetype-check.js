@@ -20,7 +20,12 @@ const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"} 
 const t0 = Date.now();
 
 // ---- fixtures (public seeds)
-const FIX = { win: 8, negLayer4: 3, negLayer6: 25, genFail: 35 };
+// BLOOM-027B (cylindrical generator): the worlds changed on purpose, so the negatives were re-picked for the SAME roles from a scan of
+// public seeds 1–40 × attempts 0–23 and a production sweep of seeds 41–200 (docs/evidence/bloom-027b/fixture-changes.md). win 8 keeps
+// its seed AND its attempt (1, Coriol-220). negLayer4 was 3 (attempt 18 → now accepted at 7 with no layer-4 attempt) → 27 (attempt 1
+// rejected at layer 4, accepted at 5); negLayer6 was 25 (attempt 0 → now a layer-7 rejection) → 24 (attempt 0 rejected at layer 6,
+// accepted at 2); genFail was 35 (now accepted at attempt 1) → 114, the first public seed above 40 with no acceptable attempt in 24.
+const FIX = { win: 8, negLayer4: 27, negLayer6: 24, genFail: 114 };
 const SWEEP = Array.from({ length: 40 }, (_, i) => i + 1);
 
 // 1 · archetype data / schema

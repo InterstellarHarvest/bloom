@@ -242,18 +242,27 @@ console.log("\n# H · region centre on a cylinder");
   check(geo.longitudeCenter(wrapHist, W, CYLINDER) === 0 && geo.longitudeCenter(wrapHist, W, RECT) === 30, "H.7 · longitudeCenter on x = 57…2: cylinder 0.0, rectangle 30.0");
 }
 
-// ---- I · the generator is still rectangular and byte-identical
-console.log("\n# I · procedural generation unchanged (rectangular; opts in only in BLOOM-027B)");
+// ---- I · the generator is cylindrical (BLOOM-027B) and byte-stable
+console.log("\n# I · procedural generation is cylindrical (BLOOM-027B) and pinned");
 {
-  const PIN = { "gen:12345:0": "7667a422", "gen:25:60": "3e509f25", "gen:2024:30": "a24455b9", "ocean_archipelago:13": "cd2c8238", "desert_world:25": "e8fd8e13", "frozen_world:22": "19d31a4c" }; // b704961 (main)
+  // BLOOM-027B pins (this generator): three raw planets and the three archetype fixture worlds, whole record. Any intended generator
+  // change must re-pin these and say so (docs/CYLINDRICAL_TOPOLOGY_v1.md §10). The b704961 rectangular values they replaced are kept in
+  // docs/evidence/bloom-027b/fixture-changes.md.
+  const PIN = {"gen:12345:0": "f03320a0", "gen:25:60": "2089d1f1", "gen:2024:30": "8a403243", "ocean_archipelago:13": "674f3768", "desert_world:25": "1b1041a9", "frozen_world:22": "74692006"};
   const gens = { "gen:12345:0": BLOOM.generatePlanet({ seed: 12345, waterPct: 0, sections: 14, maxCrossingGap: GAP }), "gen:25:60": BLOOM.generatePlanet({ seed: 25, waterPct: 60, sections: 14, maxCrossingGap: GAP }),
     "gen:2024:30": BLOOM.generatePlanet({ seed: 2024, waterPct: 30, sections: 14, maxCrossingGap: GAP }) };
   for (const [id, seed] of [["ocean_archipelago", 13], ["desert_world", 25], ["frozen_world", 22]]) gens[`${id}:${seed}`] = BLOOM.generateFromArchetype(archetypes.find(a => a.id === id), seed, { config, traits });
-  const rows = Object.entries(gens).map(([k, p]) => ({ k, same: fnv(J(p)) === PIN[k], noTopo: p.topology === undefined, rect: BLOOM.createSim(p, config, traits, { rng: mul(1) }).map.topology === RECT }));
-  check(rows.every(r => r.same), "I.1 · three raw generator planets and the three archetype fixture worlds (whole record) equal main b704961 byte-for-byte", rows.map(r => `${r.k} ${r.same ? "✓" : "✗"}`).join(" · "));
-  check(rows.every(r => r.noTopo && r.rect), "I.2 · no generated planet carries a topology field: every one runs as the legacy rectangle");
+  const rows = Object.entries(gens).map(([k, p]) => ({ k, same: fnv(J(p)) === PIN[k], now: fnv(J(p)), cyl: J(p.topology) === J({ wrapX: true, wrapY: false }), topo: BLOOM.createSim(p, config, traits, { rng: mul(1) }).map.topology === CYLINDER }));
+  check(rows.every(r => r.same), "I.1 · three raw generator planets and the three archetype fixture worlds (whole record) equal the BLOOM-027B pins byte-for-byte", rows.map(r => `${r.k} ${r.same ? "✓" : `✗ now ${r.now}`}`).join(" · "));
+  check(rows.every(r => r.cyl && r.topo), "I.2 · every generated planet carries topology { wrapX: true, wrapY: false } and runs as the cylinder");
   const v = validate(gens["gen:25:60"], { regenerate: BLOOM.generatePlanet });
-  check(v.ok && v.stats.topology === undefined, "I.3 · a generated planet's validator record is unchanged (no topology entry)");
+  check(v.ok && J(v.stats.topology) === J({ wrapX: true, wrapY: false }), "I.3 · a generated planet's validator record carries the declared topology");
+  // the whole seam story of a generated world, read both ways: one piece / one landmass on the cylinder, split on the rectangle
+  const p = gens["gen:2024:30"], W = p.gridWidth, H = p.gridHeight, SC = p.sections.length, land = Array.from(p.tilemap, t => t >= 0 ? 1 : 0);
+  const spans = new Set(); for (let y = 0; y < H; y++) if (p.tilemap[y * W] >= 0 && p.tilemap[y * W] === p.tilemap[y * W + W - 1]) spans.add(p.tilemap[y * W]);
+  const pc = geo.sectionPieces(p.tilemap, W, H, SC, CYLINDER), pr = geo.sectionPieces(p.tilemap, W, H, SC, RECT);
+  check(spans.size > 0 && [...spans].every(i => pc[i] === 1 && pr[i] === 2) && geo.components(land, W, H, CYLINDER).sizes.length < geo.components(land, W, H, RECT).sizes.length,
+    `I.4 · gen:2024:30 has ${spans.size} section(s) on both sides of the cut: one piece on the cylinder, two on the rectangle; its land is fewer landmasses on the cylinder than on the rectangle`);
 }
 
 console.log(`\n${fails ? `${fails} check(s) FAILED` : "ALL CHECKS PASS"}  (${((Date.now() - t0) / 1000).toFixed(1)} s)`);

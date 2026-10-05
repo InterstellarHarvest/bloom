@@ -1,7 +1,7 @@
 // BLOOM — per-colony allocation + local investment balance study (BLOOM-009). Plain Node, no browser. A report, not
 // pass/fail (tools/colony-development-check.js holds the pass/fail proofs).
 //
-//   node tools/colony-study.js [--json <out.json>] [--seeds N] [--quick] [--worlds fb,13,8,d25,d9,f22,f12]
+//   node tools/colony-study.js [--json <out.json>] [--seeds N] [--quick] [--worlds fb,28,8,d17,d4,f11,f4]
 //
 // Worlds: fb = First Bloom; a number = that Ocean Archipelago public seed; d<N> = Desert World public seed N (BLOOM-010);
 // f<N> = Frozen World public seed N (BLOOM-011). Desert and Frozen worlds also run two land-minded local investments (a
@@ -24,7 +24,7 @@ const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? proces
 const config = JSON.parse(JSON.stringify(BLOOM_DATA.config));
 for (const kv of (arg("--set", "") || "").split(",").filter(Boolean)) { const [k, v] = kv.split("="), ks = k.split("."); let o = config;
   for (const x of ks.slice(0, -1)) o = o[x]; o[ks.at(-1)] = JSON.parse(v); }
-const ONLY = arg("--only", null), WORLDS = arg("--worlds", "fb,13,8,d25,d9,f22,f12").split(",");
+const ONLY = arg("--only", null), WORLDS = arg("--worlds", "fb,28,8,d17,d4,f11,f4").split(",");
 const QUICK = process.argv.includes("--quick"), NSEEDS = +arg("--seeds", QUICK ? 4 : 8), OUT = arg("--json", null);
 const TPS = 1000 / config.tickMs, REACT = 25, EVERY = 12, MARKS = [60, 120, 180], EMARKS = [30, 60, 120, 180];
 const mb = BLOOM.gen.mulberry32, mean = xs => xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
