@@ -3,25 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BLOOM — Planet Sphere Spike</title>
+<title>BLOOM — PlanetSphereView demo</title>
 <!--
-  BLOOM — Planet Sphere Projection · TECHNICAL SPIKE (developer demo, not product UI). See docs/PLANET_SPHERE_SPIKE_v1.md.
+  BLOOM — PlanetSphereView · developer demo + QA page (not product UI). Integration guide: docs/PLANET_SPHERE_VIEW_v1.md.
 
-  Renders a real BLOOM planet (the production generator / archetype path, unchanged) into a 2:1 texture canvas and shows it
-  on a Three.js sphere (three@0.185.1, vendored under demos/planet-sphere/vendor/). Hovering the sphere raycasts it and maps
-  UV → logical tile → the authoritative tilemap (water or an existing section). Nothing here touches the simulation, the
-  generator, the validators or the topology.
-  BLOOM-027C: generated planets are cylinders (BLOOM-027B, topology { wrapX: true, wrapY: false }), so the texture cut
-  x = W − 1 | x = 0 is an ordinary interior boundary. The globe is YAW ONLY (spins about its fixed vertical axis; no tilt).
-  The presets are the 027C seam evidence worlds; the Diagnostics toggles are developer aids, not product UI.
+  Shows a real BLOOM planet (the production generator / archetype path, unchanged) on the production component
+  resources/planet-sphere/planet-sphere-view.js, through its public API only. Hovering picks UV → logical tile → the
+  authoritative tilemap. The Diagnostics toggles are developer overlays drawn into the texture (one upload per toggle).
+  BLOOM-027D grew this page out of the 027C spike page (demos/planet-sphere-spike.html @ 3763641).
 
-  ES modules: serve the repository root over http, e.g.
-      python3 -m http.server 8765        (from the repository root)
-      open http://localhost:8765/demos/planet-sphere-spike.html
+  ES modules: serve the repository root over http (modules do not load from file://), e.g.
+      python3 -m http.server 8767        (from the repository root)
+      open http://localhost:8767/demos/planet-sphere.html
   URL: ?planet=<preset key>   or   ?archetype=<id>&seed=<n>   or   ?gen=default&seed=<n>&water=<pct>
-       &tex=480 (default, 8×6 px per tile) | 960 (16×12 px per tile)   ·   &debug=0 hides the readout panel
+       &tex=480 (default, 8×6 px per tile) | 960   ·   &debug=0 hides the readout panel   ·   &idle=0
        &view=cut (start with longitude zero facing the camera)   ·   &hl=<section id> highlight a section
-       &bounds=1 section boundaries · &cols=1 seam columns · &grid=1 tile grid · &seam=1 longitude-zero line · &idle=0
+       &bounds=1 section boundaries · &cols=1 seam columns · &grid=1 tile grid · &seam=1 longitude-zero line
 -->
 <style>
   :root{
@@ -35,7 +32,7 @@
   header{display:flex; align-items:center; gap:14px; padding:8px 16px; background:linear-gradient(180deg,#141b2c,#0e1320); border-bottom:1px solid var(--line); flex-wrap:wrap}
   header h1{font-size:14px; margin:0; letter-spacing:3px; color:var(--accent); white-space:nowrap}
   header h1 small{color:var(--dim); letter-spacing:1px; font-weight:normal}
-  header .spike{margin-left:auto; color:var(--accent2); font-size:11px; border:1px solid #5a4a20; padding:2px 8px; border-radius:3px}
+  header .tag{margin-left:auto; color:var(--accent2); font-size:11px; border:1px solid #5a4a20; padding:2px 8px; border-radius:3px}
   main{display:grid; grid-template-columns:1fr 360px; min-height:0}
   main.nodebug{grid-template-columns:1fr 0}
   main.nodebug aside{display:none}
@@ -69,14 +66,14 @@
     body{overflow:auto; height:auto}
     main, main.nodebug{grid-template-columns:1fr; grid-template-rows:62vh auto}
     aside{border-left:0; border-top:1px solid var(--line)}
-    header .spike{margin-left:0}
+    header .tag{margin-left:0}
   }
 </style>
 </head>
 <body>
 <header>
-  <h1>BLOOM <small>· planet sphere projection</small></h1>
-  <span class="spike">TECHNICAL SPIKE · prototype only · not product UI</span>
+  <h1>BLOOM <small>· PlanetSphereView</small></h1>
+  <span class="tag">developer demo · QA page · not product UI</span>
 </header>
 <main id="main">
   <div class="stage">
@@ -84,7 +81,7 @@
     <div class="status" id="status">Generating planet…</div>
     <div id="hoverDot" hidden></div>
     <div id="hoverTip" hidden></div>
-    <div class="hint">drag sideways to spin · scroll to zoom · ← → when focused · yaw only</div>
+    <div class="hint">drag sideways to spin · ← → when focused · scroll to zoom (demo only) · yaw only</div>
   </div>
   <aside id="panel" aria-label="Developer readout">
     <h2>Planet</h2>
@@ -103,8 +100,8 @@
       <button data-view="cutW">Cut 40° right</button><button data-view="cutE">Cut 40° left</button>
     </div>
     <div class="row">
-      <label class="chk"><input type="checkbox" id="unlit"> unlit colours</label>
       <label class="chk"><input type="checkbox" id="idle" checked> idle rotation</label>
+      <label class="chk"><input type="checkbox" id="interactive" checked> interaction</label>
     </div>
 
     <h2>Diagnostics <span style="text-transform:none;letter-spacing:0">(developer only)</span></h2>
@@ -118,14 +115,14 @@
     </div>
     <div class="row"><label for="dHl" style="color:var(--dim)">Highlight</label><select id="dHl" aria-label="Highlight section"></select></div>
     <p class="note" style="margin-top:0">Click (without dragging) on land to highlight that section.</p>
-    <div class="row"><button id="recreate" title="dispose the Three.js view and build a new one (resource-cleanup check)">Dispose + recreate view</button></div>
+    <div class="row"><button id="recreate" title="dispose the view and build a new one (resource-cleanup check)">Dispose + recreate view</button></div>
 
     <h2>Readout</h2>
     <dl id="readout"></dl>
 
-    <h2>Texture <span style="text-transform:none;letter-spacing:0">(the canvas uploaded to the sphere)</span></h2>
+    <h2>Texture <span style="text-transform:none;letter-spacing:0">(what the globe wraps)</span></h2>
     <div id="texWrap"><canvas id="texPreview" width="480" height="240"></canvas><div class="seamedge" style="left:0"></div><div class="seamedge" style="right:0"></div><div id="texCross"></div></div>
-    <p class="note">Magenta edges = the texture cut (longitude zero): column x = 0 (left) and x = W−1 (right) meet there on the sphere. On a cylinder (every generated planet since BLOOM-027B) they are ordinary neighbours.</p>
+    <p class="note">Magenta edges = the texture cut (longitude zero): column x = 0 (left) and x = W−1 (right) meet there on the sphere. On a cylinder (every generated planet since BLOOM-027B) they are ordinary neighbours; First Bloom is a legacy rectangle.</p>
   </aside>
 </main>
 
@@ -140,27 +137,26 @@
 <script src="../resources/bloom-witness.js"></script>
 <script src="../resources/bloom-archetype.js"></script>
 
-<script type="importmap">{ "imports": { "three": "./planet-sphere/vendor/three-0.185.1/three.module.min.js" } }</script>
 <script type="module">
-import * as THREE from "three";
-import { PlanetSphereView } from "./planet-sphere/planet-sphere-view.js";
-import { drawPlanetTexture, regionAtUV, tileCenterUV, uvToLonLat, seamStats, wrapsX } from "./planet-sphere/planet-projection.js";
+import { PlanetSphereView } from "../resources/planet-sphere/planet-sphere-view.js";
+import { drawPlanetTexture, texturePlanet, textureSize, baseTileColors, uvToLonLat, seamStats, wrapsX } from "../resources/planet-sphere/planet-texture.js";
+import { REVISION } from "../resources/planet-sphere/vendor/three-0.185.1/three.module.min.js";
 
 const D = window.BLOOM_DATA, B = window.BLOOM, $ = id => document.getElementById(id);
-// BLOOM-027C seam evidence worlds (picked by docs/evidence/bloom-027c/seam-cases-survey.js from 3 archetypes × seeds 1–40)
+// BLOOM-027C seam evidence worlds (docs/evidence/bloom-027c/seam-cases-survey.js) + First Bloom (authored, legacy rectangle)
 const PRESETS = [
-  { key: "ocean6", label: "Ocean · seed 6 — island + one section across the cut, coasts N & S (A, B, D)", archetype: "ocean_archipelago", seed: 6, hl: "sec_13" },
-  { key: "ocean36", label: "Ocean · seed 36 — landmass + section spanning the cut (A, B)", archetype: "ocean_archipelago", seed: 36, hl: "sec_1" },
-  { key: "frozen7", label: "Frozen · seed 7 — strong same-id section span (B)", archetype: "frozen_world", seed: 7, hl: "sec_9" },
-  { key: "desert5", label: "Desert · seed 5 — strong same-id section span (B)", archetype: "desert_world", seed: 5, hl: "sec_0" },
-  { key: "desert25", label: "Desert · seed 25 — different sections meet across the cut (C)", archetype: "desert_world", seed: 25 },
-  { key: "frozen25", label: "Frozen · seed 25 — different sections meet across the cut (C)", archetype: "frozen_world", seed: 25 },
-  { key: "ocean40", label: "Ocean · seed 40 — water all the way through the cut (E)", archetype: "ocean_archipelago", seed: 40 },
-  { key: "ocean15", label: "Ocean · seed 15 — a section only in polar rows (yaw-only exposure)", archetype: "ocean_archipelago", seed: 15 },
-  { key: "ocean13", label: "Ocean · seed 13 — primary fixture (spike baseline)", archetype: "ocean_archipelago", seed: 13 },
+  { key: "ocean6", label: "Ocean · seed 6 — island + one section across the cut", archetype: "ocean_archipelago", seed: 6, hl: "sec_13" },
+  { key: "ocean36", label: "Ocean · seed 36 — landmass + section spanning the cut", archetype: "ocean_archipelago", seed: 36, hl: "sec_1" },
+  { key: "frozen7", label: "Frozen · seed 7 — strong same-id section span", archetype: "frozen_world", seed: 7, hl: "sec_9" },
+  { key: "desert5", label: "Desert · seed 5 — strong same-id section span", archetype: "desert_world", seed: 5, hl: "sec_0" },
+  { key: "desert25", label: "Desert · seed 25 — different sections meet across the cut", archetype: "desert_world", seed: 25 },
+  { key: "frozen25", label: "Frozen · seed 25 — different sections meet across the cut", archetype: "frozen_world", seed: 25 },
+  { key: "ocean40", label: "Ocean · seed 40 — open water all the way through the cut", archetype: "ocean_archipelago", seed: 40 },
+  { key: "ocean13", label: "Ocean · seed 13 — primary fixture", archetype: "ocean_archipelago", seed: 13 },
+  { key: "firstbloom", label: "First Bloom — authored planet (legacy rectangle, no wrap)", authored: "first_bloom" },
   { key: "default2024", label: "Default generator (no archetype) · seed 2024 · 30% water", gen: "default", seed: 2024, water: 30 },
 ];
-const S = window.SPHERE_SPIKE = { ready: false, errors: [], three: THREE.REVISION, presets: PRESETS };
+const S = window.SPHERE_DEMO = { ready: false, errors: [], three: REVISION, presets: PRESETS, interactionEvents: [] };
 addEventListener("error", e => S.errors.push(String(e.message || e)));
 addEventListener("unhandledrejection", e => S.errors.push(String(e.reason && e.reason.message || e.reason)));
 
@@ -175,16 +171,17 @@ let source;
 if (q.get("archetype") || q.get("gen")) source = q.get("gen") === "default" ? { gen: "default", seed: +q.get("seed") || 2024, water: q.has("water") ? +q.get("water") : 30 } : { archetype: q.get("archetype"), seed: +q.get("seed") || 0 };
 else source = PRESETS.find(p => p.key === q.get("planet")) || PRESETS[0];
 const TEX_W = q.get("tex") === "960" ? 960 : 480;
-const DIAG = { boundaries: q.get("bounds") === "1", seamColumns: q.get("cols") === "1", grid: q.get("grid") === "1", highlight: null };
+const DIAG = { boundaries: q.get("bounds") === "1", seamColumns: q.get("cols") === "1", grid: q.get("grid") === "1", meridian: q.get("seam") === "1", highlight: null };
 let hlId = q.get("hl") || source.hl || null; // section id to highlight (diagnostic)
-$("dBounds").checked = DIAG.boundaries; $("dCols").checked = DIAG.seamColumns; $("dGrid").checked = DIAG.grid;
-$("seamMark").checked = q.get("seam") === "1"; if (q.get("idle") === "0") $("idle").checked = false;
+$("dBounds").checked = DIAG.boundaries; $("dCols").checked = DIAG.seamColumns; $("dGrid").checked = DIAG.grid; $("seamMark").checked = DIAG.meridian;
+if (q.get("idle") === "0") $("idle").checked = false;
 $("tex").value = String(TEX_W);
 if (q.get("debug") === "0") $("main").classList.add("nodebug");
 
-// ---- planet: the real production path, untouched (same call as demo-run.html's harness)
+// ---- planet: the real production path, untouched (same calls as demo-run.html's harness)
 function generate(src) {
-  if (src.gen === "default") { // the shared generator with its own defaults (60×40, 14 sections) + the product crossing gap
+  if (src.authored) { const planet = D.planets[src.authored]; return { planet, render: null, summary: { source: "authored planet (BLOOM.resolveLayout)", seed: "—", waterPct: 0 } }; }
+  if (src.gen === "default") {
     const planet = B.generatePlanet({ seed: src.seed, waterPct: src.water, sections: 14, maxCrossingGap: D.config.crossing.maxGap });
     return { planet, render: null, summary: { source: "BLOOM.generatePlanet (default generator)", seed: src.seed, waterPct: src.water } };
   }
@@ -196,136 +193,124 @@ function generate(src) {
     seed: a.publicSeed, attempt: a.attempt, generationSeed: a.generationSeed, waterPct: a.actualWaterPct, landmasses: a.landmasses, layers: a.validatedLayers.join("") } };
 }
 
-const texCanvas = document.createElement("canvas"); // dedicated texture canvas (never the gameplay canvas)
 let view = null, cur = null;
-
+const onStart = () => S.interactionEvents.push(["start", performance.now()]), onEnd = () => S.interactionEvents.push(["end", performance.now()]);
 function makeView() {
-  view = new PlanetSphereView($("globe"), { textureCanvas: texCanvas, autoRotate: $("idle").checked });
-  if (q.get("view") === "cut" && !S.view) view.lookAt(0, { instant: true });
-  view.setSeamMarker($("seamMark").checked); view.setUnlit($("unlit").checked);
-  view.onFrame = onFrame; S.view = view;
+  view = new PlanetSphereView($("globe"), { autoRotate: $("idle").checked, interactive: $("interactive").checked, wheelZoom: true,
+    background: "#0b0e14", textureWidth: TEX_W, onInteractionStart: onStart, onInteractionEnd: onEnd });
+  if (q.get("view") === "cut" && !S.view) view.lookAt(0);
+  if (cur) applyTexture();
+  S.view = view;
 }
+const diag = () => ({ ...DIAG, highlight: hlId && cur ? cur.tp.sections.findIndex(x => x.id === hlId) : null });
+function applyTexture() { view.setPlanet(cur.planet, { render: cur.render, diagnostics: diag() }); copyPreview(); }
 
 function load(src, { keepHl = false } = {}) {
   $("status").textContent = "Generating planet…"; $("status").className = "status"; $("status").hidden = false;
-  // let the message paint, then generate outside the render loop (generation is BLOOM work, never done per frame)
-  return new Promise(res => setTimeout(() => {
+  return new Promise(res => setTimeout(() => { // let the message paint; generation is BLOOM work, never done per frame
     const t0 = performance.now();
     try { cur = generate(src); }
     catch (e) { $("status").textContent = `No world: ${e.message.slice(0, 300)}`; $("status").className = "status err"; S.errors.push("generation: " + e.message); S.ready = true; return res(false); }
     cur.genMs = Math.round(performance.now() - t0); cur.src = src;
-    const t1 = performance.now();
+    cur.tp = texturePlanet(cur.planet); cur.seam = seamStats(cur.tp, baseTileColors(cur.tp, cur.render));
     if (!keepHl) hlId = src.hl || null;
-    DIAG.highlight = hlId ? cur.planet.sections.findIndex(x => x.id === hlId) : null;
-    cur.tex = drawPlanetTexture(texCanvas, cur.planet, { render: cur.render, width: TEX_W, height: TEX_W / 2, diag: DIAG });
+    const t1 = performance.now();
+    if (!view) makeView(); else applyTexture(); // exactly one texture upload per planet
     cur.texMs = +(performance.now() - t1).toFixed(1);
-    cur.seam = seamStats(cur.planet, cur.tex.tiles);
-    if (!view) makeView(); else view.textureChanged(); // exactly one texture upload per planet
-    copyPreview();
-    $("dHl").replaceChildren(new Option("(none)", ""), ...cur.planet.sections.map(x => new Option(`${x.id} — ${x.name}`, x.id))); $("dHl").value = hlId || "";
+    $("dHl").replaceChildren(new Option("(none)", ""), ...cur.tp.sections.map(x => new Option(`${x.id} — ${x.name}`, x.id))); $("dHl").value = hlId || "";
     $("status").hidden = true;
-    Object.assign(S, { planet: cur.planet, summary: cur.summary, texture: { width: cur.tex.width, height: cur.tex.height, tileW: cur.tex.tileW, tileH: cur.tex.tileH }, seam: cur.seam,
-      textureCanvas: texCanvas, genMs: cur.genMs, texMs: cur.texMs, ready: true });
+    Object.assign(S, { planet: cur.tp, summary: cur.summary, seam: cur.seam, genMs: cur.genMs, texMs: cur.texMs, ready: true });
     const key = src.key || "custom"; $("preset").value = PRESETS.some(p => p.key === key) ? key : "custom";
-    $("arch").value = src.gen === "default" ? "default" : src.archetype; $("seed").value = src.seed;
-    renderReadout(true);
+    $("arch").value = src.gen === "default" ? "default" : src.archetype || ""; $("seed").value = src.seed ?? "";
+    renderReadout();
     res(true);
   }, 30));
 }
 
-// ---- hover: Three.js raycast → UV → tile → authoritative tilemap
-let hover = null, hoverKey = "", lastOV = -1;
-function onFrame(v) {
-  if ((v.hoverDirty || v.orientationVersion !== lastOV) && cur) {
-    v.hoverDirty = false; lastOV = v.orientationVersion;
-    const hit = v.hoverClient ? v.pickAt(v.hoverClient.x, v.hoverClient.y) : null;
-    hover = hit ? { ...hit, region: regionAtUV(cur.planet, hit.uv.u, hit.uv.v) } : null;
-    const k = hover ? `${hover.region.index}|${hover.uv.u.toFixed(3)}|${hover.uv.v.toFixed(3)}` : "";
-    if (k !== hoverKey) { hoverKey = k; renderHover(); }
-  }
-  if (v.frames % 12 === 0) renderReadout(false);
+// ---- hover: the view's pick helper → UV → tile → authoritative tilemap. Polled on the page's own frame loop, only when the
+// pointer or the globe moved.
+let hoverClient = null, hover = null, hoverKey = "", lastPick = "";
+$("globe").addEventListener("pointermove", e => { hoverClient = { x: e.clientX, y: e.clientY }; });
+$("globe").addEventListener("pointerleave", () => { hoverClient = null; });
+function tick() {
+  requestAnimationFrame(tick);
+  if (!view || view.disposed || !cur) return;
+  const k = hoverClient ? `${hoverClient.x},${hoverClient.y},${view.getYaw()},${view.distance}` : "";
+  if (k !== lastPick) { lastPick = k; hover = hoverClient ? view.pickAt(hoverClient.x, hoverClient.y) : null;
+    const hk = hover ? `${hover.region.index}|${hover.uv.u.toFixed(3)}|${hover.uv.v.toFixed(3)}` : ""; if (hk !== hoverKey) { hoverKey = hk; renderHover(); } }
+  if (++tick.n % 12 === 0) renderReadout();
 }
+tick.n = 0; requestAnimationFrame(tick);
 function regionText(r) { return r.water ? "Water (impassable)" : `${r.sectionId} — ${r.name}${r.isOrigin ? " (origin)" : ""}`; }
 function renderHover() {
   const tip = $("hoverTip"), cross = $("texCross"), dot = $("hoverDot");
   S.hover = hover && { uv: hover.uv, x: hover.region.x, y: hover.region.y, water: hover.region.water, sectionId: hover.region.sectionId, name: hover.region.name };
   if (!hover) { tip.hidden = dot.hidden = true; cross.style.display = "none"; return; }
-  const sr = $("globe").getBoundingClientRect(), hc = view.hoverClient; // marks the raycast point (headless screenshots show no cursor)
-  if (hc) { dot.hidden = false; dot.style.left = (hc.x - sr.left) + "px"; dot.style.top = (hc.y - sr.top) + "px"; }
+  const sr = $("globe").getBoundingClientRect(); // marks the raycast point (headless screenshots show no cursor)
+  if (hoverClient) { dot.hidden = false; dot.style.left = (hoverClient.x - sr.left) + "px"; dot.style.top = (hoverClient.y - sr.top) + "px"; }
   const r = hover.region, ll = uvToLonLat(hover.uv.u, hover.uv.v);
   tip.hidden = false;
   tip.textContent = `UV: ${hover.uv.u.toFixed(3)}, ${hover.uv.v.toFixed(3)}\nTile: ${r.x}, ${r.y}\nRegion: ${regionText(r)}\nlon ${ll.lon.toFixed(1)}°  lat ${ll.lat.toFixed(1)}°`;
-  const W = cur.planet.gridWidth, H = cur.planet.gridHeight;
+  const W = cur.tp.gridWidth, H = cur.tp.gridHeight;
   Object.assign(cross.style, { display: "block", left: (r.x / W * 100) + "%", top: (r.y / H * 100) + "%", width: (100 / W) + "%", height: (100 / H) + "%" });
 }
 
 const fmt = (n, d = 3) => (+n).toFixed(d);
-function renderReadout(force) {
+function renderReadout() {
   if (!cur || !view || view.disposed) return;
-  const st = view.state(), p = cur.planet, s = cur.summary, sm = cur.seam, c = uvToLonLat(st.centerU, st.centerV);
-  // signed degrees from the view centre to longitude zero (the texture cut): + = the cut is right (east) of centre
-  const cutOff = ((-st.centerU * 360) % 360 + 540) % 360 - 180;
+  const st = view.state(), p = cur.tp, s = cur.summary, c = uvToLonLat(st.centerU, 0.5);
+  const cutOff = ((-st.centerU * 360) % 360 + 540) % 360 - 180; // signed degrees from the view centre to longitude zero (+ = right)
   const idle = !st.autoRotatePref ? "off (toggle)" : st.reducedMotion ? "off — prefers-reduced-motion" : st.interacting ? "paused — interacting"
     : st.idleResumesInMs > 0 ? `paused — resumes in ${(st.idleResumesInMs / 1000).toFixed(1)} s` : st.idleFactor < 1 ? `ramping in (${fmt(st.idleFactor, 2)})` : "rotating";
-  const topo = p.topology ? `wrapX ${p.topology.wrapX} · wrapY ${p.topology.wrapY}` : "none (legacy rectangle)";
+  const topo = p.topology && p.topology.wrapX !== undefined ? `wrapX ${p.topology.wrapX} · wrapY ${p.topology.wrapY}` : "none (legacy rectangle)";
+  const sm = cur.seam;
   const rows = [
-    ["planet", `${p.name} · ${p.id}`], ["source", s.source],
+    ["planet", `${cur.planet.name} · ${cur.planet.id}`], ["source", s.source],
     ...(s.archetype ? [["archetype", `${s.archetype} · public seed ${s.seed} · attempt ${s.attempt}`], ["gen. seed", `${s.generationSeed} · layers ${s.layers}`]] : [["seed", `${s.seed} · water ${s.waterPct}%`]]),
-    ["water / land", `${s.waterPct}% water · ${p.sections.length} sections${s.landmasses ? ` · ${s.landmasses} landmasses` : ""}`],
-    ["logical map", `${p.gridWidth}×${p.gridHeight} tiles`], ["topology", topo],
-    ["texture", `${cur.tex.width}×${cur.tex.height} · ${cur.tex.tileW}×${cur.tex.tileH} px/tile · aspect ${fmt(cur.tex.width / cur.tex.height, 3)}`],
+    ["logical map", `${p.gridWidth}×${p.gridHeight} tiles · ${p.sections.length} sections`], ["topology", topo],
+    ["texture", `${st.textureWidth}×${st.textureHeight} · ${st.textureWidth / p.gridWidth}×${st.textureHeight / p.gridHeight} px/tile · signature ${st.textureSignature}`],
     ["cut", `u=0≡1 · column x=${p.gridWidth - 1} | x=0 · ${wrapsX(p) ? "neighbours (cylinder)" : "hard edge (rectangle)"}`],
     ["cut rows", `${sm.sameSection} same section · ${sm.sectionBreak} different sections · ${sm.landVsWater} land↔water · ${sm.rows - sm.sameSection - sm.sectionBreak - sm.landVsWater} water both`],
-    ["cut colour", `Δ ${sm.meanSeamColourStep} across cut vs ${sm.meanInteriorColourStep} interior mean`],
-    ["yaw", `${fmt(st.yaw * 180 / Math.PI % 360, 1)}° · pitch ${fmt(st.pitch * 180 / Math.PI, 1)}° (fixed, yaw only)`],
-    ["view centre", `lon ${fmt(c.lon, 1)}° · u ${fmt(st.centerU, 3)} · cut ${Math.abs(cutOff) < 0.05 ? "centred" : `${fmt(Math.abs(cutOff), 1)}° ${cutOff > 0 ? "right" : "left"}`}${Math.abs(cutOff) < 90 ? " (visible)" : ""}`],
-    ["idle", idle],
-    ["renderer", `${st.cssWidth}×${st.cssHeight} css · buffer ${st.bufferWidth}×${st.bufferHeight} · DPR ${st.pixelRatio} (device ${st.deviceDpr}, cap 2)`],
-    ["uploads", `texture uploads ${st.textureUploads} · frames ${st.frames}`],
-    ["timing", `generate ${cur.genMs} ms · texture ${cur.texMs} ms · three r${THREE.REVISION}`],
+    ["yaw", `${fmt(st.yaw * 180 / Math.PI % 360, 1)}° · pitch 0 · roll 0 (yaw only)`],
+    ["view centre", `lon ${fmt(c.lon, 1)}° · u ${fmt(st.centerU, 3)} · cut ${Math.abs(cutOff) < 0.05 ? "centred" : `${fmt(Math.abs(cutOff), 1)}° ${cutOff > 0 ? "right" : "left"}`}`],
+    ["idle", idle], ["interaction", `${st.interactive ? "on" : "off"} · callbacks ${S.interactionEvents.length}`],
+    ["renderer", `box ${st.box ? `${st.box.w}×${st.box.h}` : "—"} css · buffer ${st.bufferWidth}×${st.bufferHeight} · DPR ${st.pixelRatio} (device ${st.deviceDpr}, cap 2)`],
+    ["work", `texture uploads ${st.textureUploads} · loop ticks ${st.rendererFrames} · drawn frames ${st.rendererRenders}`],
+    ["GPU memory", st.memory ? `geometries ${st.memory.geometries} · textures ${st.memory.textures} · programs ${st.programs}` : "—"],
+    ["timing", `generate ${cur.genMs} ms · texture ${cur.texMs} ms · three r${REVISION}`],
   ];
   $("readout").innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${String(v).replace(/[&<]/g, ch => ({ "&": "&amp;", "<": "&lt;" }[ch]))}</dd>`).join("");
 }
 
-// ---- diagnostics: redraw the texture (one upload per change, never per frame)
-function copyPreview() { const pv = $("texPreview"); pv.width = texCanvas.width; pv.height = texCanvas.height; pv.getContext("2d").drawImage(texCanvas, 0, 0); }
-function redrawDiag() {
-  if (!cur) return;
-  DIAG.highlight = hlId ? cur.planet.sections.findIndex(x => x.id === hlId) : null;
-  drawPlanetTexture(texCanvas, cur.planet, { render: cur.render, width: TEX_W, height: TEX_W / 2, diag: DIAG });
-  view.textureChanged(); copyPreview(); $("dHl").value = hlId || ""; S.highlight = hlId;
-}
+// ---- diagnostics: re-set the planet with new overlays (one upload per change, never per frame)
+function copyPreview() { const sz = textureSize(cur.tp.gridWidth, cur.tp.gridHeight, TEX_W); drawPlanetTexture($("texPreview"), cur.tp, { render: cur.render, width: sz.width, height: sz.height, diag: diag() }); }
+function redrawDiag() { if (!cur) return; applyTexture(); $("dHl").value = hlId || ""; S.highlight = hlId; }
 function setHighlight(id) { hlId = id || null; redrawDiag(); }
 $("dBounds").addEventListener("change", e => { DIAG.boundaries = e.target.checked; redrawDiag(); });
 $("dCols").addEventListener("change", e => { DIAG.seamColumns = e.target.checked; redrawDiag(); });
 $("dGrid").addEventListener("change", e => { DIAG.grid = e.target.checked; redrawDiag(); });
+$("seamMark").addEventListener("change", e => { DIAG.meridian = e.target.checked; redrawDiag(); });
 $("dHl").addEventListener("change", e => setHighlight(e.target.value));
 { let down = null; // a click (no drag) on the globe highlights the section under the pointer; on water it clears
   $("globe").addEventListener("pointerdown", e => { down = { x: e.clientX, y: e.clientY }; });
   $("globe").addEventListener("pointerup", e => { if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 4) return; down = null;
-    const h = view.pickAt(e.clientX, e.clientY); if (h) { const r = regionAtUV(cur.planet, h.uv.u, h.uv.v); setHighlight(r.water ? null : r.sectionId); } }); }
+    const h = view.pickAt(e.clientX, e.clientY); if (h) setHighlight(h.region.water ? null : h.region.sectionId); }); }
 
 // ---- wiring (yaw only: every view is a longitude)
-const VIEWS = { front: () => view.lookAt(0.5), cut: () => view.lookAt(0), cutW: () => view.lookAt(1 - 40 / 360), cutE: () => view.lookAt(40 / 360) };
+const VIEWS = { front: () => view.lookAt(0.5, { animate: true }), cut: () => view.lookAt(0, { animate: true }), cutW: () => view.lookAt(1 - 40 / 360, { animate: true }), cutE: () => view.lookAt(40 / 360, { animate: true }) };
 document.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => VIEWS[b.dataset.view]()));
-$("seamMark").addEventListener("change", e => view && view.setSeamMarker(e.target.checked));
-$("unlit").addEventListener("change", e => view && view.setUnlit(e.target.checked));
 $("idle").addEventListener("change", e => view && view.setAutoRotate(e.target.checked));
+$("interactive").addEventListener("change", e => view && view.setInteractionEnabled(e.target.checked));
 $("preset").addEventListener("change", e => { const p = PRESETS.find(x => x.key === e.target.value); if (p) load(p); });
 $("gen").addEventListener("click", () => { const a = $("arch").value, seed = Math.max(0, Math.floor(+$("seed").value || 0));
   load(a === "default" ? { gen: "default", seed, water: 30 } : { archetype: a, seed }); });
 $("tex").addEventListener("change", e => { const u = new URL(location.href); u.searchParams.set("tex", e.target.value); location.href = u.href; });
-$("recreate").addEventListener("click", () => { S.lastDisposed = view; view.dispose(); makeView(); renderReadout(true); });
+$("recreate").addEventListener("click", () => { S.lastDisposed = view; view.dispose(); makeView(); renderReadout(); });
 
 Object.assign(S, {
-  load, regionAtUV: (u, v) => regionAtUV(cur.planet, u, v), tileCenterUV: (x, y) => tileCenterUV(cur.planet.gridWidth, cur.planet.gridHeight, x, y),
-  /** QA: raycast at the canvas centre (the same path the pointer uses) and resolve the region */
-  pickCenter() { const r = view.renderer.domElement.getBoundingClientRect(), h = view.pickAt(r.left + r.width / 2, r.top + r.height / 2);
-    return h && { uv: h.uv, ...regionAtUV(cur.planet, h.uv.u, h.uv.v) }; },
-  /** QA: raycast at a client point and resolve the region */
-  pickClient(x, y) { const h = view.pickAt(x, y); return h && { uv: h.uv, ...regionAtUV(cur.planet, h.uv.u, h.uv.v) }; },
-  setDiag(o) { Object.assign(DIAG, o); for (const [k, el] of [["boundaries", "dBounds"], ["seamColumns", "dCols"], ["grid", "dGrid"]]) $(el).checked = !!DIAG[k]; redrawDiag(); },
-  setHighlight, recreateView() { $("recreate").click(); return view; },
+  load, setHighlight, reapply: applyTexture, recreateView() { $("recreate").click(); return view; },
+  setDiag(o) { Object.assign(DIAG, o); for (const [k, el] of [["boundaries", "dBounds"], ["seamColumns", "dCols"], ["grid", "dGrid"], ["meridian", "seamMark"]]) $(el).checked = !!DIAG[k]; redrawDiag(); },
+  pickClient(x, y) { const h = view.pickAt(x, y); return h && { uv: h.uv, analytic: !!h.analytic, ...h.region }; },
 });
 load(source, { keepHl: true });
 </script>
