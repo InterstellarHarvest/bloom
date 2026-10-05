@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM — nine-globe technical proof</title>
+<!--
+  BLOOM-027D · TECHNICAL PROOF for the Menu/Tutorial workstream: nine PlanetSphereViews visible at once. NOT the planet menu
+  (no selection, navigation, focus state or transitions — those belong to the Menu/Tutorial track).
+
+  ?mode=shared   (default) one PlanetSphereRenderer = ONE WebGL context; each globe is drawn into its own cell (viewport + scissor)
+  ?mode=separate nine standalone views = nine WebGL contexts (the comparison case; not recommended)
+  &idle=0 no idle spin · &n=<1…9> globes
+
+  ES modules: serve the repository root over http, e.g.  python3 -m http.server 8767  →  http://localhost:8767/demos/planet-sphere-grid.html
+-->
+<style>
+  :root{ --bg:#0b0e14; --ink:#cdd6e6; --dim:#7c89a3; --line:#26304a; --accent:#7fe3c0; --accent2:#ffd479; }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg); color:var(--ink); font-family:"DejaVu Sans Mono","Courier New",monospace; font-size:12.5px; line-height:1.45; min-height:100vh}
+  header{display:flex; align-items:center; gap:14px; padding:8px 16px; border-bottom:1px solid var(--line); flex-wrap:wrap}
+  header h1{font-size:14px; margin:0; letter-spacing:3px; color:var(--accent)}
+  header .tag{margin-left:auto; color:var(--accent2); font-size:11px; border:1px solid #5a4a20; padding:2px 8px; border-radius:3px}
+  #stats{padding:6px 16px; color:var(--dim); font-size:11px; min-height:1.5em}
+  #stage{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; padding:12px 16px 24px; max-width:960px; margin:0 auto}
+  .cell{display:flex; flex-direction:column; align-items:center; gap:4px; min-width:0}
+  .globe{width:100%; aspect-ratio:1/1}
+  .cap{color:var(--dim); font-size:11px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%}
+</style>
+</head>
+<body>
+<header><h1>BLOOM <small style="color:var(--dim);letter-spacing:1px">· nine globes</small></h1><span class="tag">technical proof · not the planet menu</span></header>
+<div id="stats">Generating planets…</div>
+<div id="stage"></div>
+
+<script src="../content/config.js"></script>
+<script src="../content/traits.js"></script>
+<script src="../planets/first_bloom.js"></script>
+<script src="../content/archetypes.js"></script>
+<script src="../resources/bloom-sim.js"></script>
+<script src="../resources/bloom-gen.js"></script>
+<script src="../resources/bloom-validate.js"></script>
+<script src="../resources/bloom-witness.js"></script>
+<script src="../resources/bloom-archetype.js"></script>
+
+<script type="module">
+import { PlanetSphereView, PlanetSphereRenderer } from "../resources/planet-sphere/planet-sphere-view.js";
+
+const D = window.BLOOM_DATA, B = window.BLOOM, $ = id => document.getElementById(id);
+const q = new URLSearchParams(location.search);
+const G = window.GRID_PROOF = { ready: false, errors: [], mode: q.get("mode") === "separate" ? "separate" : "shared", host: null, views: [] };
+addEventListener("error", e => G.errors.push(String(e.message || e)));
+addEventListener("unhandledrejection", e => G.errors.push(String(e.reason && e.reason.message || e.reason)));
+
+// First Bloom + 3 archetypes × seeds. Raw generation (BLOOM.archetype.attemptPlanet, no validation) — the same fast path
+// index.html uses for its planet previews; a presentation never needs the validator.
+const SPEC = [{ authored: "first_bloom" }, ...["ocean_archipelago", "desert_world", "frozen_world"].flatMap((id, i) => [[id, 13 + i], [id, 6 + i], [id, 25 + i]].map(([a, s]) => ({ archetype: a, seed: s })))].slice(0, 9);
+const t0 = performance.now();
+G.planets = SPEC.slice(0, Math.max(1, Math.min(9, +q.get("n") || 9))).map(s => {
+  if (s.authored) return { planet: D.planets[s.authored], render: null, label: D.planets[s.authored].name + " · authored" };
+  const A = D.archetypes.find(a => a.id === s.archetype), planet = B.archetype.attemptPlanet(A, s.seed, 0).planet;
+  return { planet, render: A.render || null, label: `${A.name} · ${s.seed}` };
+});
+G.genMs = +(performance.now() - t0).toFixed(1);
+
+/** Build the grid in a mode; returns the time to create the nine views (texture draw + upload request included). */
+G.build = (mode = G.mode) => {
+  G.teardown(); G.mode = mode;
+  const stage = $("stage"), t = performance.now();
+  const cells = G.planets.map(p => { const c = document.createElement("div"); c.className = "cell";
+    c.innerHTML = `<div class="globe"></div><div class="cap"></div>`; c.querySelector(".cap").textContent = p.label; return c; });
+  stage.replaceChildren(...cells);
+  if (mode === "shared") G.host = new PlanetSphereRenderer(stage); // its canvas is laid over the whole grid
+  G.views = G.planets.map((p, i) => new PlanetSphereView(cells[i].querySelector(".globe"), {
+    renderer: G.host || undefined, planet: p.planet, render: p.render, autoRotate: q.get("idle") !== "0", yaw: i * 0.7 }));
+  G.createMs = +(performance.now() - t).toFixed(1);
+  return G.createMs;
+};
+G.teardown = () => { for (const v of G.views) v.dispose(); if (G.host) G.host.dispose(); G.views = []; G.host = null; $("stage").replaceChildren(); };
+G.contexts = () => G.mode === "shared" ? (G.host && !G.host.disposed ? 1 : 0) : G.views.filter(v => !v.disposed).length;
+
+G.build();
+$("stats").textContent = `${G.views.length} globes · mode ${G.mode} · ${G.contexts()} WebGL context(s) · generate ${G.genMs} ms · create ${G.createMs} ms`;
+G.ready = true;
+</script>
+</body>
+</html>
