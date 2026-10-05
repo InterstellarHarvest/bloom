@@ -1,0 +1,204 @@
+{
+ "when": "2026-10-05T17:36:34.953Z",
+ "head": "15c301d446a479b3b195109b73869b8cdd219976",
+ "passed": 32,
+ "failed": 0,
+ "results": [
+  {
+   "ok": true,
+   "name": "N1 only NEW 028A files since 15c301d (resources/destination-survey/, demos/destination-survey.html, tools/destination-survey-check.js, docs/DESTINATION_SURVEY_v1.md, this evidence); no existing file modified or deleted",
+   "detail": "29 new path(s)"
+  },
+  {
+   "ok": true,
+   "name": "N2 PlanetSphereView / PlanetSphereRenderer / texture module / Three.js vendor / sphere demos + handoff doc, generator, simulation, validators, content, First Bloom, goldens, index.html, run page and UI mockups byte-identical to 027D",
+   "detail": "21 protected paths"
+  },
+  {
+   "ok": true,
+   "name": "N3 tools/destination-survey-check.js (survey data: classes, production worlds, dossier derivation, determinism, no mutation) is green",
+   "detail": "9 pass / 0 fail"
+  },
+  {
+   "ok": true,
+   "name": "N4 menu code uses the stock component only: imports PlanetSphereView/Renderer + survey data, touches no `_` internals, creates exactly ONE PlanetSphereRenderer, no Three.js / WebGL of its own; no menu state in the sphere module",
+   "detail": "imports [\"../planet-sphere/planet-sphere-view.js\",\"./survey-data.js\"] · internals [] · renderers 1"
+  },
+  {
+   "ok": true,
+   "name": "N5 (T18) the accepted 027D sphere QA re-run on this branch: every behavioural check green (42/43 pass; 1 provenance check(s) flag only the new 028A files, as designed)",
+   "detail": "N1 : stray: demos/destination-survey.html, docs/DESTINATION_SURVEY_v1.md, docs/evidence/.bloom-027d-rerun/qa-sphere-production.js, docs/evidence/bloom-028a/01-survey-1440x900.png, docs/evidence/bloom-028a/"
+  },
+  {
+   "ok": true,
+   "name": "B0 documented launch: `python3 -m http.server 8769` from the repository root serves demos/destination-survey.html",
+   "detail": "http://127.0.0.1:8769/demos/destination-survey.html"
+  },
+  {
+   "ok": true,
+   "name": "T1 the dev entry loads over localhost (python3 -m http.server from the repo root): survey state, nine candidates, no page / console errors, no failed requests",
+   "detail": "Sector 2A-001 · sectors built by worker · []"
+  },
+  {
+   "ok": true,
+   "name": "T1b sectors are built in the module worker (main thread stays free for the spinning globes)",
+   "detail": "worker"
+  },
+  {
+   "ok": true,
+   "name": "T2 exactly ONE PlanetSphereRenderer: one WebGL context created on the page, one canvas (inside the survey stage), all nine views attached to it, one shader program, one shared geometry",
+   "detail": "{\"gl\":1,\"live\":1,\"canvases\":1,\"inStage\":1,\"shared\":true,\"hostViews\":9,\"programs\":1,\"geometries\":1}"
+  },
+  {
+   "ok": true,
+   "name": "T3 nine visible PlanetSphereViews in the survey: each has a planet, an on-screen box, and drawn globe pixels at its box centre (transparent at its corners)",
+   "detail": "[[255,0],[255,0],[255,0],[255,0],[255,0],[255,0],[255,0],[255,0],[255,0]]"
+  },
+  {
+   "ok": true,
+   "name": "T4 independent globes: nine different orientations and textures; all idle-spin (the component's own idle rotation, no second system); turning one leaves the other eight untouched",
+   "detail": "{\"spun\":[0.122,0.1219,0.122,0.122,0.122,0.122,0.122,0.122,0.122],\"after\":[0.0106,0.0106,0.0106,0.0106,2,0.0106,0.0106,0.0106,0.0106]}"
+  },
+  {
+   "ok": true,
+   "name": "T4b in the survey each globe is part of its candidate button (not separately draggable), so a click selects without touching the globe's idle spin",
+   "detail": "[false,false,false,false,false,false,false,false,false]"
+  },
+  {
+   "ok": true,
+   "name": "T5 no WebGL context-limit / context warnings",
+   "detail": "[\"[.WebGL-0x1140011e000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\",\"[.WebGL-0x1140011e000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\",\"[.WebGL-0x1140011e000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\"]"
+  },
+  {
+   "ok": true,
+   "name": "T6 SCAN NEW SECTOR replaces all nine candidates (nine new worlds, one texture upload per globe, the same nine views and the same single context)",
+   "detail": "Sector 3E-677 · 1090 ms · 9/9 new"
+  },
+  {
+   "ok": true,
+   "name": "T7 the replacement is a staged sweep, not a hard pop: each globe shrinks away before its world changes (scale ≤ 0.15 at the swap), swaps spread over ≥ 250 ms, top-left first → bottom-right last, order follows the diagonal (Spearman ρ ≥ 0.8) with slight irregularity",
+   "detail": "spread 341 ms · ρ 1.00 · order 0 1 3 2 4 6 5 7 8 · scales [0.08,0.08,0.08,0.08,0.08,0.08,0.08,0.08,0.08]"
+  },
+  {
+   "ok": true,
+   "name": "T7b the scan is short (sector prefetched by the worker while the player looked at the last one); the button reports busy meanwhile",
+   "detail": "1090 ms end-to-end"
+  },
+  {
+   "ok": true,
+   "name": "T9 / T13 every one of the nine grid positions enters focus (its own globe in the focus slot, draggable, dossier titled with its world, the other eight receded and not drawn, keyboard focus on the dossier) and RETURN TO SURVEY restores the 3 × 3 (globe back in its cell, not draggable, keyboard focus back on that candidate)",
+   "detail": "9 / 9"
+  },
+  {
+   "ok": true,
+   "name": "T10 orientation continuity through grid → focus → grid: the SAME PlanetSphereView instance and container throughout, no texture re-upload, yaw never jumps or runs backwards (largest per-frame step < 0.012 rad: idle spin only)",
+   "detail": "#0 0.0052/0.0056 (43f) #1 0.0052/0.0056 (43f) #2 0.0053/0.0056 (40f) #3 0.0053/0.0056 (42f) #4 0.0053/0.0056 (42f) #5 0.0052/0.0056 (42f) #6 0.0052/0.0056 (42f) #7 0.0052/0.0057 (44f) #8 0.0052/0.0056 (43f)"
+  },
+  {
+   "ok": true,
+   "name": "T10b the globe's on-screen box moves continuously: it starts the size of its cell, grows monotonically to the focus slot, and shrinks monotonically back (a FLIP transform the renderer follows; no reframing jump)",
+   "detail": "#0 203→760→203 #1 203→760→203 #2 203→760→203 #3 203→760→203 #4 203→760→203 #5 203→760→203 #6 203→760→203 #7 203→760→203 #8 203→760→203"
+  },
+  {
+   "ok": true,
+   "name": "T10c the travelling globe never overlaps another globe that is still > 15% of its size, out or back (globes on one renderer share a depth buffer, so overlap would intersect them)",
+   "detail": "#2 0/35 · 0/27 (worst 0.00) #5 0/35 · 0/27 (worst 0.00) #8 0/36 · 0/27 (worst 0.00) #4 0/36 · 0/27 (worst 0.00) #6 0/36 · 0/27 (worst 0.00)"
+  },
+  {
+   "ok": true,
+   "name": "T11 the focused planet stays draggable: a horizontal drag spins it (yaw only)",
+   "detail": "Δyaw 0.763 rad"
+  },
+  {
+   "ok": true,
+   "name": "T12 a vertical drag on the focused planet changes nothing: no pitch, no roll (quaternion x = z = 0), yaw unchanged",
+   "detail": "Δyaw 0.00000 · q [0,-0.978206,0,0.207636]"
+  },
+  {
+   "ok": true,
+   "name": "T12b keyboard: the focused globe is focusable and ← / → spin it; ↑ does nothing",
+   "detail": "{\"d\":0.11961422780696118,\"up\":0.0003617862190115062,\"tab\":0}"
+  },
+  {
+   "ok": true,
+   "name": "T16 BEGIN EXPEDITION fires the hook (onBeginExpedition + a bubbling bloom:begin-expedition event carrying the candidate, its planet data and its live view / container) and stays on this screen: no navigation, no run started, the planet untouched; the page shows its dev placeholder",
+   "detail": "{\"key\":\"frozen_world:14176\",\"detail\":[\"candidate\",\"dossier\",\"globe\",\"planet\",\"render\",\"survey\",\"view\"]}"
+  },
+  {
+   "ok": true,
+   "name": "T-kbd candidates are real buttons: Enter opens the focus state (the hidden grid becomes inert), Escape returns and puts keyboard focus back on the candidate",
+   "detail": "{\"f\":{\"st\":\"focus\",\"sel\":3,\"gridInert\":true},\"b\":{\"st\":\"survey\",\"active\":true,\"focusInert\":true}}"
+  },
+  {
+   "ok": true,
+   "name": "T14 12 grid ↔ focus cycles + 10 scans: listeners, observers and contexts at baseline (still one context ever created), GPU memory 9 textures / 1 geometry, one program, no lingering animations, no errors",
+   "detail": "{\"listeners\":93,\"observers\":1,\"liveGL\":1,\"glCreated\":1,\"contextWarnings\":0} → {\"listeners\":93,\"observers\":1,\"liveGL\":1,\"glCreated\":1,\"contextWarnings\":0} · {\"geometries\":1,\"textures\":9} · stats {\"scans\":13,\"selects\":30,\"returns\":30,\"begins\":1}"
+  },
+  {
+   "ok": true,
+   "name": "T14b no performance degradation after the cycles (mean frame time, headless software GL)",
+   "detail": "49.06 → 49.62 ms (p95 50.1 → 66.7)"
+  },
+  {
+   "ok": true,
+   "name": "T15 resize: at 1024×768, 1440×900 and 820×1180 portrait — in the grid, in focus, and after focus → grid at a new size — every visible view's drawing box matches its container (≤ 2 px) and the canvas buffer tracks the stage × DPR",
+   "detail": "g1024:9v max1.328125 f1024:1v max0.734375 f1440:1v max0.296875 g1440:9v max1.34375 g820:9v max1.609375 f820:1v max0.78125 g820b:9v max1.609375"
+  },
+  {
+   "ok": true,
+   "name": "T15b portrait focus: the focus layer scrolls (dossier below the planet) and the globe's drawing box follows the scroll",
+   "detail": "{\"y0\":76,\"y1\":-84,\"scrolled\":true}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "console warnings seen (Chromium, main page)",
+   "detail": "[.WebGL-0x…]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels | [.WebGL-0x…]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  },
+  {
+   "ok": true,
+   "name": "T8 reduced motion (forced by option): globes do not idle-spin; SCAN replaces all nine at once behind a short whole-screen fade (no sweeping transforms); select / return swap with a fade; the focused globe still drags (no fling)",
+   "detail": "{\"spread\":11.3,\"anims\":[\"root:opacity@150ms\",\"root:opacity@220ms\",\"el:borderBottomColor@10ms\",\"el:borderBottomWidth@10ms\",\"el:borderLeftColor@10ms\",\"el:borderLeftWidth@10ms\",\"el:borderRightColor@10ms\",\"el:borderRightWidth@10ms\",\"el:borderTopColor@10ms\",\"el:borderTopWidth@10ms\",\"el:color@10ms\"],\"dragYaw\":0.682,\"fling\":0}"
+  },
+  {
+   "ok": true,
+   "name": "T8 reduced motion (OS prefers-reduced-motion): globes do not idle-spin; SCAN replaces all nine at once behind a short whole-screen fade (no sweeping transforms); select / return swap with a fade; the focused globe still drags (no fling)",
+   "detail": "{\"spread\":12.5,\"anims\":[\"root:opacity@150ms\",\"root:opacity@220ms\",\"el:borderBottomColor@10ms\",\"el:borderBottomWidth@10ms\",\"el:borderLeftColor@10ms\",\"el:borderLeftWidth@10ms\",\"el:borderRightColor@10ms\",\"el:borderRightWidth@10ms\",\"el:borderTopColor@10ms\",\"el:borderTopWidth@10ms\",\"el:color@10ms\"],\"dragYaw\":0.684,\"fling\":0}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "First Bloom cut, measured on the data (rows across x = 59 | x = 0)",
+   "detail": "{\"rows\":40,\"landVsWater\":0,\"sectionBreak\":40,\"sameSection\":0,\"meanSeamColourStep\":27.8,\"meanInteriorColourStep\":1}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "…for comparison, a generated cylinder in the same sector",
+   "detail": "{\"rows\":40,\"landVsWater\":3,\"sectionBreak\":0,\"sameSection\":14,\"meanSeamColourStep\":8,\"meanInteriorColourStep\":8.4}"
+  },
+  {
+   "ok": true,
+   "name": "F1 Firefox: loads over localhost, one WebGL context with nine drawn globes, sectors from the module worker, SCAN replaces all nine, select → focus (same globe, yaw continuing) → Begin hook → return; no errors",
+   "detail": "{\"gl\":1,\"live\":1,\"views\":9,\"px\":9,\"fresh\":9,\"inSlot\":true,\"yawFwd\":true,\"fired\":true,\"back\":\"survey\",\"src\":\"worker\",\"errs\":[]}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "WebKit (Safari engine)",
+   "detail": "not available on this machine: browserType.launch: Executable doesn't exist at /Users/MrDashiki/Library/Caches/ms-playwright/webkit-2272/pw_run.sh"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "perf GPU (module worker) — 3×3 idle spin · during a scan · during select · focus idle · 3×3 after 10 scan + focus cycles",
+   "detail": "{\"idle\":{\"meanFrameMs\":16.67,\"p95FrameMs\":16.7,\"maxFrameMs\":16.8,\"drawn\":180,\"frames\":179,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\"},\"scan\":{\"meanFrameMs\":16.67,\"p95FrameMs\":16.7,\"maxFrameMs\":16.8,\"drawn\":70,\"frames\":69,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\",\"longTasks\":[]},\"selectDuring\":{\"meanFrameMs\":16.67,\"p95FrameMs\":16.7,\"maxFrameMs\":16.8,\"drawn\":50,\"frames\":49,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\"},\"focusIdle\":{\"meanFrameMs\":16.67,\"p95FrameMs\":16.8,\"maxFrameMs\":16.8,\"drawn\":120,\"frames\":119,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\"},\"afterCycles\":{\"meanFrameMs\":16.67,\"p95FrameMs\":16.8,\"maxFrameMs\":16.8,\"drawn\":180,\"frames\":179,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\"}}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "perf GPU (main-thread generation) — 3×3 idle spin · during a scan · during select · focus idle · 3×3 after 10 scan + focus cycles",
+   "detail": "{\"idle\":{\"meanFrameMs\":16.67,\"p95FrameMs\":16.7,\"maxFrameMs\":16.8,\"drawn\":180,\"frames\":179,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\"},\"scan\":{\"meanFrameMs\":17.63,\"p95FrameMs\":16.7,\"maxFrameMs\":83.3,\"drawn\":70,\"frames\":69,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\",\"longTasks\":[97]},\"selectDuring\":{\"meanFrameMs\":16.67,\"p95FrameMs\":16.8,\"maxFrameMs\":16.8,\"drawn\":50,\"frames\":49,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\"},\"focusIdle\":{\"meanFrameMs\":16.67,\"p95FrameMs\":16.8,\"maxFrameMs\":16.8,\"drawn\":120,\"frames\":119,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\"},\"afterCycles\":{\"meanFrameMs\":16.67,\"p95FrameMs\":16.8,\"maxFrameMs\":16.8,\"drawn\":180,\"frames\":179,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\"}}"
+  }
+ ]
+}
