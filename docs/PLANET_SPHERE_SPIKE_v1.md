@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Starting commit | `6c0357ba9cc0f61e39042a9e6cf7378efd05f9d6` (main, BLOOM-025) |
-| Spike commit | {{SPIKE_COMMIT}} (this report is committed on top of it as the branch head; the hand-off message gives the final SHA) |
+| Spike commit | `fa0063f61552230fde870c61aee200a66e268e22` (this report is committed on top of it as the branch head; the hand-off message gives the final SHA) |
 | Three.js | **three@0.185.1**, pinned and vendored at `demos/planet-sphere/vendor/three-0.185.1/` (MIT; `three.module.min.js` + `three.core.min.js`, copied unmodified from the npm tarball; hashes in that folder's README). It loads through an import map in the demo page and nothing else in BLOOM imports it. |
 | Run the demo | from the repository root: `python3 -m http.server 8765` |
 | Demo URL | `http://localhost:8765/demos/planet-sphere-spike.html` |
