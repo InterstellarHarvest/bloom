@@ -1,0 +1,16 @@
+colony-development-check [31] — pre-existing timing-dependent pixel check (BLOOM-028B investigation, 2026-10-05)
+Inputs untouched by 028B: git diff 80a39ce..HEAD -- demos/demo-run.html resources/bloom-sim.js tools/colony-development-check.js content planets → 0 files.
+[31] measures bright pixels around the landing tile of whichever real crossing events the live sim produced; the arrival sample sometimes lands beside bright tiles.
+
+this branch (028B) — suite run + 3 re-runs:
+colony-development-check        67     1  exit=1 1 check(s) FAILED  (62.5 s)  (63s)
+  re-run 1: 68 pass · PASS — foothold landing: 33 bright px · arrival landing: 9 bright px (33 pale-ripple px)
+  re-run 2: 67 pass · FAIL — foothold landing: 28 bright px · arrival landing: 13 bright px (33 pale-ripple px)
+  re-run 3: 67 pass · FAIL — foothold landing: 28 bright px · arrival landing: 13 bright px (33 pale-ripple px)
+
+pristine 80a39ce (git archive into scratch) — 3 runs:
+  run 1: 68 pass · PASS — foothold landing: 33 bright px · arrival landing: 9 bright px (33 pale-ripple px)
+  run 2: 68 pass · PASS — foothold landing: 33 bright px · arrival landing: 9 bright px (33 pale-ripple px)
+  run 3: 67 pass · FAIL — foothold landing: 27 bright px · arrival landing: 13 bright px (33 pale-ripple px)
+
+Same two outcomes on both trees (arrival 9 px → PASS, 13 px → FAIL): pre-existing flake, not a 028B regression.
