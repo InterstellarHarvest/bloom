@@ -1,0 +1,200 @@
+{
+ "when": "2026-10-05T18:58:02.113Z",
+ "head": "7913fbe2502cd9c2fba4bd29822cbf3d7a673abd",
+ "passed": 30,
+ "failed": 2,
+ "results": [
+  {
+   "ok": false,
+   "name": "N1 only NEW 028A files since 15c301d (resources/destination-survey/, demos/destination-survey.html, tools/destination-survey-check.js, docs/DESTINATION_SURVEY_v1.md, this evidence); no existing file modified or deleted",
+   "detail": "stray docs/evidence/.bloom-028a-rerun/qa-destination-survey.js, docs/evidence/bloom-028a1/00-first-sector-loading.png, docs/evidence/bloom-028a1/01-validated-survey-1440x900.png, docs/evidence/bloom-028a1/02-after-scans.png, docs/evidence/bloom-028a1/02b-scan-waiting-for-validation.png, docs/evidence/bloom-028a1/03-firefox-validated-survey.png, docs/evidence/bloom-028a1/perf-samples.json, docs/evidence/bloom-028a1/qa-028a-rerun.json, docs/evidence/bloom-028a1/qa-results.json, docs/evidence/bloom-028a1/qa-suites-summary.txt, docs/evidence/bloom-028a1/qa-validated-identity.js, docs/evidence/bloom-028a1/run-all-suites.sh · modified "
+  },
+  {
+   "ok": true,
+   "name": "N2 PlanetSphereView / PlanetSphereRenderer / texture module / Three.js vendor / sphere demos + handoff doc, generator, simulation, validators, content, First Bloom, goldens, index.html, run page and UI mockups byte-identical to 027D",
+   "detail": "21 protected paths"
+  },
+  {
+   "ok": true,
+   "name": "N3 tools/destination-survey-check.js (survey data: classes, production worlds, dossier derivation, determinism, no mutation) is green",
+   "detail": "10 pass / 0 fail"
+  },
+  {
+   "ok": true,
+   "name": "N4 menu code uses the stock component only: imports PlanetSphereView/Renderer + survey data, touches no `_` internals, creates exactly ONE PlanetSphereRenderer, no Three.js / WebGL of its own; no menu state in the sphere module",
+   "detail": "imports [\"../planet-sphere/planet-sphere-view.js\",\"./survey-data.js\"] · internals [] · renderers 1"
+  },
+  {
+   "ok": false,
+   "name": "N5 (T18) the accepted 027D sphere QA re-run on this branch: every behavioural check green (41/43 pass; 2 provenance check(s) flag only the new 028A files, as designed)",
+   "detail": "N1 : stray: demos/destination-survey.html, docs/DESTINATION_SURVEY_v1.md, docs/evidence/bloom-028a/01-survey-1440x900.png, docs/evidence/bloom-028a/02a-grid-to-focus-180ms.png, docs/evidence/bloom-028a/02b | N2 : tools/destination-survey-check.js"
+  },
+  {
+   "ok": true,
+   "name": "B0 documented launch: `python3 -m http.server 8791` from the repository root serves demos/destination-survey.html",
+   "detail": "http://127.0.0.1:8791/demos/destination-survey.html"
+  },
+  {
+   "ok": true,
+   "name": "T1 the dev entry loads over localhost (python3 -m http.server from the repo root): survey state, nine candidates, no page / console errors, no failed requests",
+   "detail": "Sector 2A-001 · sectors built by worker · []"
+  },
+  {
+   "ok": true,
+   "name": "T1b sectors are built in the module worker (main thread stays free for the spinning globes)",
+   "detail": "worker"
+  },
+  {
+   "ok": true,
+   "name": "T2 exactly ONE PlanetSphereRenderer: one WebGL context created on the page, one canvas (inside the survey stage), all nine views attached to it, one shader program, one shared geometry",
+   "detail": "{\"gl\":1,\"live\":1,\"canvases\":1,\"inStage\":1,\"shared\":true,\"hostViews\":9,\"programs\":1,\"geometries\":1}"
+  },
+  {
+   "ok": true,
+   "name": "T3 nine visible PlanetSphereViews in the survey: each has a planet, an on-screen box, and drawn globe pixels at its box centre (transparent at its corners)",
+   "detail": "[[255,0],[255,0],[255,0],[255,0],[255,0],[255,0],[255,0],[255,0],[255,0]]"
+  },
+  {
+   "ok": true,
+   "name": "T4 independent globes: nine different orientations and textures; all idle-spin (the component's own idle rotation, no second system); turning one leaves the other eight untouched",
+   "detail": "{\"spun\":[0.124,0.1241,0.1241,0.1241,0.1241,0.1241,0.1241,0.1241,0.1241],\"after\":[0.0086,0.0086,0.0086,0.0086,2,0.0086,0.0086,0.0086,0.0086]}"
+  },
+  {
+   "ok": true,
+   "name": "T4b in the survey each globe is part of its candidate button (not separately draggable), so a click selects without touching the globe's idle spin",
+   "detail": "[false,false,false,false,false,false,false,false,false]"
+  },
+  {
+   "ok": true,
+   "name": "T5 no WebGL context-limit / context warnings",
+   "detail": "[\"[.WebGL-0x1040011e000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\",\"[.WebGL-0x1040011e000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\",\"[.WebGL-0x1040011e000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\"]"
+  },
+  {
+   "ok": true,
+   "name": "T6 SCAN NEW SECTOR replaces all nine candidates (nine new worlds, one texture upload per globe, the same nine views and the same single context)",
+   "detail": "Sector 3E-677 · 1071 ms · 9/9 new"
+  },
+  {
+   "ok": true,
+   "name": "T7 the replacement is a staged sweep, not a hard pop: each globe shrinks away before its world changes (scale ≤ 0.15 at the swap), swaps spread over ≥ 250 ms, top-left first → bottom-right last, order follows the diagonal (Spearman ρ ≥ 0.8) with slight irregularity",
+   "detail": "spread 287 ms · ρ 0.98 · order 0 1 3 2 4 6 7 5 8 · scales [0.08,0.08,0.08,0.08,0.08,0.08,0.08,0.08,0.08]"
+  },
+  {
+   "ok": true,
+   "name": "T7b the scan is short (sector prefetched by the worker while the player looked at the last one); the button reports busy meanwhile",
+   "detail": "1071 ms end-to-end"
+  },
+  {
+   "ok": true,
+   "name": "T9 / T13 every one of the nine grid positions enters focus (its own globe in the focus slot, draggable, dossier titled with its world, the other eight receded and not drawn, keyboard focus on the dossier) and RETURN TO SURVEY restores the 3 × 3 (globe back in its cell, not draggable, keyboard focus back on that candidate)",
+   "detail": "9 / 9"
+  },
+  {
+   "ok": true,
+   "name": "T10 orientation continuity through grid → focus → grid: the SAME PlanetSphereView instance and container throughout, no texture re-upload, yaw never jumps or runs backwards (largest per-frame step < 0.012 rad: idle spin only)",
+   "detail": "#0 0.0055/0.0055 (30f) #1 0.0052/0.0056 (39f) #2 0.0052/0.0056 (42f) #3 0.0053/0.0057 (44f) #4 0.0052/0.0056 (44f) #5 0.0052/0.0056 (44f) #6 0.0052/0.0057 (43f) #7 0.0052/0.0056 (44f) #8 0.0053/0.0056 (44f)"
+  },
+  {
+   "ok": true,
+   "name": "T10b the globe's on-screen box moves continuously: it starts the size of its cell, grows monotonically to the focus slot, and shrinks monotonically back (a FLIP transform the renderer follows; no reframing jump)",
+   "detail": "#0 203→760→203 #1 203→760→203 #2 203→760→203 #3 203→760→203 #4 203→760→203 #5 203→760→203 #6 203→760→203 #7 203→760→203 #8 203→760→203"
+  },
+  {
+   "ok": true,
+   "name": "T10c the travelling globe never overlaps another globe that is still > 15% of its size, out or back (globes on one renderer share a depth buffer, so overlap would intersect them)",
+   "detail": "#2 0/35 · 0/27 (worst 0.00) #5 0/36 · 0/27 (worst 0.00) #8 0/36 · 0/27 (worst 0.00) #4 0/36 · 0/27 (worst 0.00) #6 0/35 · 0/27 (worst 0.00)"
+  },
+  {
+   "ok": true,
+   "name": "T11 the focused planet stays draggable: a horizontal drag spins it (yaw only)",
+   "detail": "Δyaw 0.761 rad"
+  },
+  {
+   "ok": true,
+   "name": "T12 a vertical drag on the focused planet changes nothing: no pitch, no roll (quaternion x = z = 0), yaw unchanged",
+   "detail": "Δyaw 0.00000 · q [0,-0.881706,0,0.471798]"
+  },
+  {
+   "ok": true,
+   "name": "T12b keyboard: the focused globe is focusable and ← / → spin it; ↑ does nothing",
+   "detail": "{\"d\":0.11953608958326178,\"up\":0.00043992444270912756,\"tab\":0}"
+  },
+  {
+   "ok": true,
+   "name": "T16 BEGIN EXPEDITION fires the hook (onBeginExpedition + a bubbling bloom:begin-expedition event carrying the candidate, its planet data and its live view / container) and stays on this screen: no navigation, no run started, the planet untouched; the page shows its dev placeholder",
+   "detail": "{\"key\":\"frozen_world:19467\",\"detail\":[\"candidate\",\"container\",\"dossier\",\"globe\",\"planet\",\"render\",\"survey\",\"view\"]}"
+  },
+  {
+   "ok": true,
+   "name": "T-kbd candidates are real buttons: Enter opens the focus state (the hidden grid becomes inert), Escape returns and puts keyboard focus back on the candidate",
+   "detail": "{\"f\":{\"st\":\"focus\",\"sel\":3,\"gridInert\":true},\"b\":{\"st\":\"survey\",\"active\":true,\"focusInert\":true}}"
+  },
+  {
+   "ok": true,
+   "name": "T14 12 grid ↔ focus cycles + 10 scans: listeners, observers and contexts at baseline (still one context ever created), GPU memory 9 textures / 1 geometry, one program, no lingering animations, no errors",
+   "detail": "{\"listeners\":93,\"observers\":1,\"liveGL\":1,\"glCreated\":1,\"contextWarnings\":0} → {\"listeners\":93,\"observers\":1,\"liveGL\":1,\"glCreated\":1,\"contextWarnings\":0} · {\"geometries\":1,\"textures\":9} · stats {\"scans\":13,\"selects\":30,\"returns\":30,\"begins\":1,\"workerTasks\":45,\"scanWaits\":8,\"sectorTimes\":[{\"seed\":1,\"ms\":3722,\"columns\":[{\"draws\":7,\"predictions\":7,\"validations\":2,\"wasted\":0,\"failed\":0,\"predictMs\":237,\"validateMs\":1675,\"byArchetype\":{\"frozen_world\":{\"validations\":2,\"ms\":1674.9000000357628,\"maxMs\":1134.4000000357628}},\"ms\":1924},{\"draws\":5,\"predictions\":5,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":103,\"validateMs\":2824,\"byArchetype\":{\"frozen_world\":{\"validations\":3,\"ms\":2823.699999988079,\"maxMs\":1150.199999988079}},\"ms\":2939},{\"draws\":11,\"predictions\":11,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":284,\"validateMs\":3321,\"byArchetype\":{\"desert_world\":{\"validations\":3,\"ms\":3320.800000011921,\"maxMs\":1574.5}},\"ms\":3619}]},{\"seed\":189677,\"ms\":3618,\"columns\":[{\"draws\":9,\"predictions\":9,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":191,\"validateMs\":2763,\"byArchetype\":{\"ocean_archipelago\":{\"validations\":2,\"ms\":2244.5,\"maxMs\":1700.699999988079},\"frozen_world\":{\"validations\":1,\"ms\":518.1000000238419,\"maxMs\":518.1000000238419}},\"ms\":2954},{\"draws\":4,\"predictions\":4,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":99,\"validateMs\":1969,\"byArchetype\":{\"frozen_world\":{\"validations\":1,\"ms\":483.30000001192093,\"maxMs\":483.30000001192093},\"ocean_archipelago\":{\"validations\":2,\"ms\":1485.699999988079,\"maxMs\":1052.1000000238419}},\"ms\":2068},{\"draws\":17,\"predictions\":17,\"validations\":4,\"wasted\":1,\"failed\":0,\"predictMs\":277,\"validateMs\":3302,\"byArchetype\":{\"ocean_archipelago\":{\"validations\":1,\"ms\":881.1999999880791,\"maxMs\":881.1999999880791},\"desert_world\":{\"validations\":3,\"ms\":2420.5,\"maxMs\":1393.300000011921}},\"ms\":3579}]},{\"seed\":239209,\"ms\":2625,\"columns\":[{\"draws\":6,\"predictions\":6,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":148,\"validateMs\":1165,\"byArchetype\":{\"ocean_archipelago\":{\"validations\":3,\"ms\":1165.2000000476837,\"maxMs\":422}},\"ms\":1313},{\"draws\":7,\"predictions\":7,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":246,\"validateMs\":2370,\"byArchetype\":{\"desert_world\":{\"validations\":1,\"ms\":499.89999997615814,\"maxMs\":499.89999997615814},\"frozen_world\":{\"validations\":2,\"ms\":1870.0999999642372,\"maxMs\":1303.7999999523163}},\"ms\":2616},{\"draws\":5,\"predictions\":5,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":134,\"validateMs\":1985,\"byArchetype\":{\"desert_world\":{\"validations\":1,\"ms\":577.9000000357628,\"maxMs\":577.9000000357628},\"ocean_archipelago\":{\"validations\":1,\"ms\":314,\"maxMs\":314},\"frozen_world\":{\"validations\":1,\"ms\":1092.9000000357628,\"maxMs\":1092.9000000357628}},\"ms\":2120}]},{\"seed\":215260,\"ms\":4400,\"columns\":[{\"draws\":7,\"predictions\":7,\"validations\":4,\"wasted\":1,\"failed\":0,\"predictMs\":140,\"validateMs\":3620,\"byArchetype\":{\"frozen_world\":{\"validations\":2,\"ms\":2398.899999976158,\"maxMs\":1312.3999999761581},\"ocean_archipelago\":{\"validations\":2,\"ms\":1220.6000000238419,\"maxMs\":806.6999999880791}},\"ms\":3760},{\"draws\":23,\"predictions\":23,\"validations\":4,\"wasted\":1,\"failed\":0,\"predictMs\":563,\"validateMs\":3793,\"byArchetype\":{\"desert_world\":{\"validations\":1,\"ms\":2569,\"maxMs\":2569},\"frozen_world\":{\"validations\":3,\"ms\":1223.6000000238419,\"maxMs\":474.30000001192093}},\"ms\":4356},{\"draws\":19,\"predictions\":19,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":437,\"validateMs\":2273,\"byArchetype\":{\"ocean_archipelago\":{\"validations\":1,\"ms\":767.1999999880791,\"maxMs\":767.1999999880791},\"desert_world\":{\"validations\":2,\"ms\":1505.800000011921,\"maxMs\":1022.5}},\"ms\":2710}]},{\"seed\":804647,\"ms\":6590,\"columns\":[{\"draws\":17,\"predictions\":17,\"validations\":5,\"wasted\":2,\"failed\":0,\"predictMs\":242,\"validateMs\":6339,\"byArchetype\":{\"frozen_world\":{\"validations\":2,\"ms\":2503.599999964237,\"maxMs\":1885.3999999761581},\"ocean_archipelago\":{\"validations\":3,\"ms\":3834.9999999403954,\"maxMs\":1998.199999988079}},\"ms\":6582},{\"draws\":13,\"predictions\":13,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":185,\"validateMs\":2918,\"byArchetype\":{\"frozen_world\":{\"validations\":2,\"ms\":1401.5,\"maxMs\":768.6000000238419},\"ocean_archipelago\":{\"validations\":1,\"ms\":1516.2000000476837,\"maxMs\":1516.2000000476837}},\"ms\":3103},{\"draws\":14,\"predictions\":14,\"validations\":4,\"wasted\":1,\"failed\":0,\"predictMs\":277,\"validateMs\":1831,\"byArchetype\":{\"ocean_archipelago\":{\"validations\":2,\"ms\":963.5,\"maxMs\":508.60000002384186},\"frozen_world\":{\"validations\":2,\"ms\":867,\"maxMs\":544.8999999761581}},\"ms\":2108}]},{\"seed\":777434,\"ms\":3679,\"columns\":[{\"draws\":7,\"predictions\":7,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":220,\"validateMs\":2598,\"byArchetype\":{\"ocean_archipelago\":{\"validations\":3,\"ms\":2598.0999999046326,\"maxMs\":1606.7999999523163}},\"ms\":2818},{\"draws\":6,\"predictions\":6,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":332,\"validateMs\":1881,\"byArchetype\":{\"frozen_world\":{\"validations\":1,\"ms\":961.1999999880791,\"maxMs\":961.1999999880791},\"desert_world\":{\"validations\":1,\"ms\":454.80000001192093,\"maxMs\":454.80000001192093},\"ocean_archipelago\":{\"validations\":1,\"ms\":464.9000000357628,\"maxMs\":464.9000000357628}},\"ms\":2213},{\"draws\":11,\"predictions\":11,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":234,\"validateMs\":3408,\"byArchetype\":{\"desert_world\":{\"validations\":3,\"ms\":3407.899999976158,\"maxMs\":2002.5}},\"ms\":3642}]},{\"seed\":717295,\"ms\":5858,\"columns\":[{\"draws\":17,\"predictions\":17,\"validations\":5,\"wasted\":2,\"failed\":0,\"predictMs\":309,\"validateMs\":5506,\"byArchetype\":{\"ocean_archipelago\":{\"validations\":3,\"ms\":2570.100000023842,\"maxMs\":1955.9000000357628},\"frozen_world\":{\"validations\":2,\"ms\":2936.2999999523163,\"maxMs\":2194.899999976158}},\"ms\":5816},{\"draws\":11,\"predictions\":11,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":214,\"validateMs\":1912,\"byArchetype\":{\"desert_world\":{\"validations\":2,\"ms\":1066.800000011921,\"maxMs\":698.1999999880791},\"frozen_world\":{\"validations\":1,\"ms\":844.8000000119209,\"maxMs\":844.8000000119209}},\"ms\":2126},{\"draws\":7,\"predictions\":7,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":191,\"validateMs\":3007,\"byArchetype\":{\"desert_world\":{\"validations\":1,\"ms\":1960.0999999642372,\"maxMs\":1960.0999999642372},\"frozen_world\":{\"validations\":1,\"ms\":513.6000000238419,\"maxMs\":513.6000000238419},\"ocean_archipelago\":{\"validations\":1,\"ms\":533.1000000238419,\"maxMs\":533.1000000238419}},\"ms\":3198}]},{\"seed\":580112,\"ms\":4566,\"columns\":[{\"draws\":6,\"predictions\":6,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":110,\"validateMs\":2970,\"byArchetype\":{\"ocean_archipelago\":{\"validations\":1,\"ms\":546.8000000119209,\"maxMs\":546.8000000119209},\"frozen_world\":{\"validations\":2,\"ms\":2423.5,\"maxMs\":1396.199999988079}},\"ms\":3081},{\"draws\":4,\"predictions\":4,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":63,\"validateMs\":4459,\"byArchetype\":{\"frozen_world\":{\"validations\":3,\"ms\":4459.100000023842,\"maxMs\":2163.699999988079}},\"ms\":4522},{\"draws\":4,\"predictions\":4,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":46,\"validateMs\":2387,\"byArchetype\":{\"frozen_world\":{\"validations\":1,\"ms\":1530,\"maxMs\":1530},\"desert_world\":{\"validations\":2,\"ms\":856.5,\"maxMs\":441.19999998807907}},\"ms\":2433}]},{\"seed\":766309,\"ms\":5146,\"columns\":[{\"draws\":8,\"predictions\":8,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":246,\"validateMs\":4879,\"byArchetype\":{\"ocean_archipelago\":{\"validations\":3,\"ms\":4878.5,\"maxMs\":3617.399999976158}},\"ms\":5125},{\"draws\":8,\"predictions\":8,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":242,\"validateMs\":2259,\"byArchetype\":{\"frozen_world\":{\"validations\":3,\"ms\":2259.400000035763,\"maxMs\":1323.699999988079}},\"ms\":2502},{\"draws\":9,\"predictions\":9,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":94,\"validateMs\":1327,\"byArchetype\":{\"desert_world\":{\"validations\":3,\"ms\":1326.7000000476837,\"maxMs\":471.80000001192093}},\"ms\":1421}]},{\"seed\":361515,\"ms\":4486,\"columns\":[{\"draws\":12,\"predictions\":12,\"validations\":4,\"wasted\":1,\"failed\":0,\"predictMs\":214,\"validateMs\":4256,\"byArchetype\":{\"ocean_archipelago\":{\"validations\":1,\"ms\":663.3000000119209,\"maxMs\":663.3000000119209},\"frozen_world\":{\"validations\":3,\"ms\":3593.099999964237,\"maxMs\":2095.399999976158}},\"ms\":4470},{\"draws\":19,\"predictions\":19,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":620,\"validateMs\":1991,\"byArchetype\":{\"frozen_world\":{\"validations\":2,\"ms\":1348.1000000238419,\"maxMs\":677.1999999880791},\"ocean_archipelago\":{\"validations\":1,\"ms\":643.1999999880791,\"maxMs\":643.1999999880791}},\"ms\":2611},{\"draws\":6,\"predictions\":6,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":119,\"validateMs\":3272,\"byArchetype\":{\"frozen_world\":{\"validations\":1,\"ms\":1236.5,\"maxMs\":1236.5},\"desert_world\":{\"validations\":2,\"ms\":2035.300000011921,\"maxMs\":1465.5}},\"ms\":3391}]},{\"seed\":332045,\"ms\":3349,\"columns\":[{\"draws\":5,\"predictions\":5,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":125,\"validateMs\":2253,\"byArchetype\":{\"ocean_archipelago\":{\"validations\":3,\"ms\":2253.400000035763,\"maxMs\":1441.300000011921}},\"ms\":2378},{\"draws\":12,\"predictions\":12,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":178,\"validateMs\":1118,\"byArchetype\":{\"frozen_world\":{\"validations\":2,\"ms\":835.8999999761581,\"maxMs\":443.5999999642372},\"ocean_archipelago\":{\"validations\":1,\"ms\":282.0999999642372,\"maxMs\":282.0999999642372}},\"ms\":1296},{\"draws\":11,\"predictions\":11,\"validations\":4,\"wasted\":1,\"failed\":0,\"predictMs\":263,\"validateMs\":3064,\"byArchetype\":{\"desert_world\":{\"validations\":2,\"ms\":901.0999999642372,\"maxMs\":464.69999998807907},\"frozen_world\":{\"validations\":1,\"ms\":1673.6000000238419,\"maxMs\":1673.6000000238419},\"ocean_archipelago\":{\"validations\":1,\"ms\":489.10000002384186,\"maxMs\":489.10000002384186}},\"ms\":3327}]},{\"seed\":22364,\"ms\":3835,\"columns\":[{\"draws\":6,\"predictions\":6,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":127,\"validateMs\":3701,\"byArchetype\":{\"frozen_world\":{\"validations\":1,\"ms\":2120.199999988079,\"maxMs\":2120.199999988079},\"ocean_archipelago\":{\"validations\":2,\"ms\":1580.800000011921,\"maxMs\":1190.9000000357628}},\"ms\":3829},{\"draws\":9,\"predictions\":9,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":99,\"validateMs\":2307,\"byArchetype\":{\"desert_world\":{\"validations\":2,\"ms\":1497.5999999642372,\"maxMs\":966.1999999880791},\"frozen_world\":{\"validations\":1,\"ms\":809.0999999642372,\"maxMs\":809.0999999642372}},\"ms\":2406},{\"draws\":15,\"predictions\":15,\"validations\":4,\"wasted\":1,\"failed\":0,\"predictMs\":238,\"validateMs\":2875,\"byArchetype\":{\"desert_world\":{\"validations\":2,\"ms\":807.4000000357628,\"maxMs\":438.9000000357628},\"frozen_world\":{\"validations\":1,\"ms\":345.10000002384186,\"maxMs\":345.10000002384186},\"ocean_archipelago\":{\"validations\":1,\"ms\":1722,\"maxMs\":1722}},\"ms\":3113}]},{\"seed\":889537,\"ms\":5536,\"columns\":[{\"draws\":5,\"predictions\":5,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":66,\"validateMs\":2042,\"byArchetype\":{\"ocean_archipelago\":{\"validations\":2,\"ms\":1284.7000000476837,\"maxMs\":840.5},\"frozen_world\":{\"validations\":1,\"ms\":757.5,\"maxMs\":757.5}},\"ms\":2109},{\"draws\":11,\"predictions\":11,\"validations\":4,\"wasted\":1,\"failed\":0,\"predictMs\":169,\"validateMs\":5319,\"byArchetype\":{\"desert_world\":{\"validations\":2,\"ms\":3101.600000023842,\"maxMs\":1946},\"frozen_world\":{\"validations\":2,\"ms\":2217.699999988079,\"maxMs\":1329.300000011921}},\"ms\":5489},{\"draws\":4,\"predictions\":4,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":46,\"validateMs\":1293,\"byArchetype\":{\"desert_world\":{\"validations\":2,\"ms\":825.5,\"maxMs\":459.5},\"frozen_world\":{\"validations\":1,\"ms\":467.60000002384186,\"maxMs\":467.60000002384186}},\"ms\":1339}]},{\"seed\":269594,\"ms\":3908,\"columns\":[{\"draws\":10,\"predictions\":10,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":280,\"validateMs\":2209,\"byArchetype\":{\"ocean_archipelago\":{\"validations\":3,\"ms\":2209.399999976158,\"maxMs\":1196.800000011921}},\"ms\":2490},{\"draws\":3,\"predictions\":3,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":63,\"validateMs\":3825,\"byArchetype\":{\"desert_world\":{\"validations\":2,\"ms\":3043.900000035763,\"maxMs\":2119.300000011921},\"ocean_archipelago\":{\"validations\":1,\"ms\":781.3999999761581,\"maxMs\":781.3999999761581}},\"ms\":3888},{\"draws\":10,\"predictions\":10,\"validations\":3,\"wasted\":0,\"failed\":0,\"predictMs\":135,\"validateMs\":1648,\"byArchetype\":{\"frozen_world\":{\"validations\":1,\"ms\":399.39999997615814,\"maxMs\":399.39999997615814},\"desert_world\":{\"validations\":2,\"ms\":1249.0000000596046,\"maxMs\":819.4000000357628}},\"ms\":1784}]}],\"lastScan\":{\"prefetched\":false,\"waitedMs\":3907}}"
+  },
+  {
+   "ok": true,
+   "name": "T14b no performance degradation after the cycles (mean frame time, headless software GL)",
+   "detail": "50 → 60.67 ms (p95 50.1 → 66.7)"
+  },
+  {
+   "ok": true,
+   "name": "T15 resize: at 1024×768, 1440×900 and 820×1180 portrait — in the grid, in focus, and after focus → grid at a new size — every visible view's drawing box matches its container (≤ 2 px) and the canvas buffer tracks the stage × DPR",
+   "detail": "g1024:9v max1.328125 f1024:1v max0.734375 f1440:1v max0.296875 g1440:9v max1.34375 g820:9v max1.609375 f820:1v max0.78125 g820b:9v max1.609375"
+  },
+  {
+   "ok": true,
+   "name": "T15b portrait focus: the focus layer scrolls (dossier below the planet) and the globe's drawing box follows the scroll",
+   "detail": "{\"y0\":76,\"y1\":-84,\"scrolled\":true}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "console warnings seen (Chromium, main page)",
+   "detail": "[.WebGL-0x…]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels | [.WebGL-0x…]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  },
+  {
+   "ok": true,
+   "name": "T8 reduced motion (forced by option): globes do not idle-spin; SCAN replaces all nine at once behind a short whole-screen fade (no sweeping transforms); select / return swap with a fade; the focused globe still drags (no fling)",
+   "detail": "{\"spread\":11.7,\"anims\":[\"root:opacity@150ms\",\"root:opacity@220ms\",\"el:borderBottomColor@10ms\",\"el:borderBottomWidth@10ms\",\"el:borderLeftColor@10ms\",\"el:borderLeftWidth@10ms\",\"el:borderRightColor@10ms\",\"el:borderRightWidth@10ms\",\"el:borderTopColor@10ms\",\"el:borderTopWidth@10ms\",\"el:color@10ms\"],\"dragYaw\":0.685,\"fling\":0}"
+  },
+  {
+   "ok": true,
+   "name": "T8 reduced motion (OS prefers-reduced-motion): globes do not idle-spin; SCAN replaces all nine at once behind a short whole-screen fade (no sweeping transforms); select / return swap with a fade; the focused globe still drags (no fling)",
+   "detail": "{\"spread\":12.4,\"anims\":[\"root:opacity@150ms\",\"root:opacity@220ms\",\"el:borderBottomColor@10ms\",\"el:borderBottomWidth@10ms\",\"el:borderLeftColor@10ms\",\"el:borderLeftWidth@10ms\",\"el:borderRightColor@10ms\",\"el:borderRightWidth@10ms\",\"el:borderTopColor@10ms\",\"el:borderTopWidth@10ms\",\"el:color@10ms\"],\"dragYaw\":0.685,\"fling\":0}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "First Bloom cut, measured on the data (rows across x = 59 | x = 0)",
+   "detail": "{\"rows\":40,\"landVsWater\":0,\"sectionBreak\":40,\"sameSection\":0,\"meanSeamColourStep\":27.8,\"meanInteriorColourStep\":1}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "…for comparison, a generated cylinder in the same sector",
+   "detail": "{\"rows\":40,\"landVsWater\":0,\"sectionBreak\":2,\"sameSection\":38,\"meanSeamColourStep\":0.1,\"meanInteriorColourStep\":8.8}"
+  },
+  {
+   "ok": true,
+   "name": "F1 Firefox: loads over localhost, one WebGL context with nine drawn globes, sectors from the module worker, SCAN replaces all nine, select → focus (same globe, yaw continuing) → Begin hook → return; no errors",
+   "detail": "{\"gl\":1,\"live\":1,\"views\":9,\"px\":9,\"fresh\":9,\"inSlot\":true,\"yawFwd\":true,\"fired\":true,\"back\":\"survey\",\"src\":\"worker\",\"errs\":[]}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "WebKit (Safari engine)",
+   "detail": "not available on this machine: browserType.launch: Executable doesn't exist at /Users/MrDashiki/Library/Caches/ms-playwright/webkit-2272/pw_run.sh"
+  }
+ ],
+ "nested027d": {
+  "passed": 41,
+  "failed": 2,
+  "failedNames": [
+   "N1 only the sphere component, its demo pages, the new texture suite, the handoff",
+   "N2 generator, simulation, validators, content, planets, game shell, run page and"
+  ]
+ }
+}
