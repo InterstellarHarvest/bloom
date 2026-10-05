@@ -23,15 +23,24 @@
 //
 // The focused planet is the SAME PlanetSphereView, moved: its container is re-parented from its grid cell into the focus slot
 // and FLIP-animated (a scale + translate transform from the old box to the new one), so its yaw and idle spin never restart.
-// No transition primitive lives here: Begin Expedition only announces the selection (the atmosphere / cloud descent is the
-// next milestone's job and sits over this screen).
+//
+// DEPARTURE (028B). With the `descent` option, Begin Expedition also plays the dramatic departure: the dossier and header recede,
+// the same live PlanetSphereView (still turning; yaw never reset, no landing alignment) moves to the centre and its camera
+// dollies in until the world is too large to read as a ball, and the reusable AtmosphereTransition ("dramatic") closes cloud cover over the whole screen. Only
+// under full cover is descent.onCovered(detail) called, where the consumer mounts its destination and the survey is disposed;
+// then the clouds part. The cloud overlay itself is resources/atmosphere-transition/ (screen-agnostic) — this file only
+// choreographs its own screen and invokes it. Without `descent`, Begin Expedition only announces the selection (028A).
 import { PlanetSphereView, PlanetSphereRenderer } from "../planet-sphere/planet-sphere-view.js";
+import { AtmosphereTransition } from "../atmosphere-transition/atmosphere-transition.js";
 import { SURVEY_CLASSES, ROWS, columnCandidates, assembleSector, nextSectorSeed, sectorLabel } from "./survey-data.js";
 
 const COLS = SURVEY_CLASSES.length, N = ROWS * COLS;
 const GLOBE_DISTANCE = 3.6;                 // the disc fills ~92% of its box, in the grid and in focus alike (no reframing)
 const EASE_OUT = "cubic-bezier(.2,.8,.2,1)", EASE_IN = "cubic-bezier(.55,0,.85,.35)", EASE_FLIP = "cubic-bezier(.3,.7,.2,1)";
-const T = { flipIn: 720, flipInDelay: 90, flipOut: 620, recede: 240, regrow: 380, regrowAfter: 0.62, scanOut: 200, scanIn: 340, scanStep: 82, fadeOut: 150, fadeIn: 220 };
+const T = { flipIn: 720, flipInDelay: 90, flipOut: 620, recede: 240, regrow: 380, regrowAfter: 0.62, scanOut: 200, scanIn: 340, scanStep: 82, fadeOut: 150, fadeIn: 220,
+  // departure (028B): UI recedes, the planet approach starts a beat later, the clouds close in while it is still visible
+  departRecede: 320, departRecedeRm: 200, approachDelay: 60, approachMorph: 760, dollyDelay: 220, dolly: 2000, cloudsAfter: 560 };
+const DOLLY_TO = 1.45; // the view's closest camera distance: the disc is then ~3 × the screen height (no longer readable as a ball)
 // Choreography rule: globes on one renderer share one depth buffer, so where two globe boxes overlap they intersect by depth,
 // not by paint order (docs/evidence/bloom-028a/REPORT.md). The flying globe therefore never crosses a full-size neighbour: the
 // others shrink away first (fast ease-out) and the flight starts a beat later; on the way back they regrow only once it has passed.
@@ -50,10 +59,20 @@ export class DestinationSurvey {
    * worker             build sectors in module workers (default true; falls back to the main thread, which then stalls ~1 s a world)
    * workers            worker pool size, one column task per worker (default: hardware threads − 1, clamped 1 … 3)
    * onBeginExpedition  called with the Begin Expedition detail (also dispatched as "bloom:begin-expedition" on root)
+   * descent            (028B) play the dramatic departure on Begin Expedition (omitted: announce only, as in 028A):
+   *                      onCovered(detail, info)  REQUIRED, may be async: called only under full cloud cover; mount the
+   *                                               destination here (from detail.planet). The survey disposes itself after it
+   *                                               resolves unless it already did (or autoDispose: false)
+   *                      transition               an AtmosphereTransition to use (default: a private one over document.body)
+   *                      coveredTimeoutMs         give up on onCovered after this long (default: wait)
+   *                      onError(err, detail)     a failed descent (default: console.error); the survey is back in focus if alive
+   *                      autoDispose              default true
+   *                      seed                     fix the cloud layout (reproducible captures); default: a new one every departure
    */
-  constructor(root, { sectorSeed = null, firstBloom = false, reducedMotion = null, worker = true, workers = null, onBeginExpedition = null } = {}) {
+  constructor(root, { sectorSeed = null, firstBloom = false, reducedMotion = null, worker = true, workers = null, onBeginExpedition = null, descent = null } = {}) {
     if (!root || typeof root.appendChild !== "function") throw new TypeError("DestinationSurvey: root must be a DOM element");
-    this.root = root; this.onBeginExpedition = onBeginExpedition; this.forcedReducedMotion = reducedMotion;
+    if (descent && typeof descent.onCovered !== "function") throw new TypeError("DestinationSurvey: descent.onCovered must be a function");
+    this.root = root; this.onBeginExpedition = onBeginExpedition; this.forcedReducedMotion = reducedMotion; this.descent = descent;
     this.mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
     this.firstBloom = !!firstBloom; this.useWorker = worker !== false;
     this.sectorSeed = sectorSeed == null ? 1 + Math.floor(Math.random() * 999998) : sectorSeed >>> 0;
@@ -152,14 +171,17 @@ export class DestinationSurvey {
   }
 
   /**
-   * BEGIN EXPEDITION — the hook for the next milestone's atmospheric descent. It changes nothing here: it announces the focused
-   * world via onBeginExpedition and a bubbling "bloom:begin-expedition" CustomEvent on root, and returns the same detail.
-   * Null outside the focus state.
+   * BEGIN EXPEDITION. It announces the focused world via onBeginExpedition and a bubbling "bloom:begin-expedition" CustomEvent
+   * on root, and returns the same detail; without the `descent` option it changes nothing else (028A), with it the departure
+   * follows (_depart, 028B). Null outside the focus state.
    *   detail.planet     THE AUTHORITATIVE GAMEPLAY PLANET: the exact validated object the player saw and inspected. Consumers
    *                     must play this object and must NOT regenerate a world from detail.candidate.seed (provenance only).
    *   detail.candidate  identity + provenance { key, name, authored, archetypeId, seed, attempt, classId, sectorSeed, validation }
    *   detail.dossier · detail.render · detail.view (the live, still-turning PlanetSphereView) · detail.container (its element;
    *   `globe` is the same element, kept for 028A callers) · detail.survey (dispose it once the screen is hidden)
+   *   detail.descent    (028B, only with the `descent` option) a Promise of the departure: resolves { detail, transition }
+   *                     after the reveal; rejects if it failed (the survey is then back in focus, unless it was disposed)
+   * With `descent`, the screen enters the "departing" state at once: every other action (and a second Begin) is refused.
    */
   beginExpedition() {
     if (this.state !== "focus") return null;
@@ -168,9 +190,93 @@ export class DestinationSurvey {
       sectorSeed: this.sectorSeed, validation: c.validation }, planet: c.planet, render: c.render, dossier: c.dossier,
       view: this.views[i], container: this.globes[i], globe: this.globes[i], survey: this };
     this.stats.begins++;
-    this.root.dispatchEvent(new CustomEvent("bloom:begin-expedition", { detail, bubbles: true }));
-    if (this.onBeginExpedition) this.onBeginExpedition(detail);
+    let go = null;
+    if (this.descent) {
+      this.state = "departing"; this.root.dataset.state = "departing"; // commit: no second Begin, no return, no scan
+      detail.descent = new Promise(res => { go = res; }).then(() => this._depart(detail));
+      detail.descent.catch(err => { const h = this.descent.onError; if (h) h(err, detail); else console.error("DestinationSurvey: expedition descent failed", err); });
+    }
+    try {
+      this.root.dispatchEvent(new CustomEvent("bloom:begin-expedition", { detail, bubbles: true }));
+      if (this.onBeginExpedition) this.onBeginExpedition(detail);
+    } finally { if (go) go(); } // a throwing listener must not strand the screen in "departing"
     return detail;
+  }
+
+  /**
+   * The dramatic departure (028B): recede the dossier / header, grow the same live globe toward the viewer, close the cloud
+   * cover, hand over under it, reveal. Never regenerates, re-plans or re-orients the planet; never touches its yaw.
+   */
+  async _depart(detail) {
+    const i = this.selected, g = this.globes[i], view = this.views[i], rm = this.reducedMotion, D = this.descent;
+    this._haltPool();                       // no world generation (not even the next-sector prefetch) while departing
+    view.setInteractionEnabled(false);      // no drag / keys; the idle spin carries on, yaw untouched
+    this.focus.inert = true; this.head.inert = true;
+    const anims = this._departAnims = [];
+    const ease = { easing: EASE_OUT, fill: "forwards" };
+    this._dollyFrame = null;
+    anims.push(this.dossier.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: rm ? "none" : "translateX(48px)" }], { duration: rm ? T.departRecedeRm : T.departRecede, ...ease }));
+    anims.push(this.head.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: rm ? "none" : "translateY(-14px)" }], { duration: rm ? T.departRecedeRm : T.departRecede, ...ease }));
+    if (!rm) anims.push(this._approach(g, view));
+    const atx = D.transition || new AtmosphereTransition(), own = !D.transition;
+    try {
+      if (!rm) await new Promise(res => setTimeout(res, T.cloudsAfter)); // the approach is under way before the clouds arrive
+      const transition = await atx.run({ preset: "dramatic", reducedMotion: rm, origin: { x: 0.5, y: 0.5 }, seed: D.seed ?? null, // (null: a fresh cloud layout every time)
+        onPhase: p => { if (this.state === "departing" && p !== "idle") this.root.dataset.departPhase = p; },
+        onCovered: async info => {
+          if (this.state === "disposed") return; // disposed from outside before cover: nothing of ours to hand over
+          this.stats.coveredAt = performance.now();
+          try {
+            const work = Promise.resolve(D.onCovered(detail, info));
+            await (D.coveredTimeoutMs == null ? work : Promise.race([work, new Promise((_, rej) => setTimeout(() =>
+              rej(Object.assign(new Error(`descent.onCovered did not settle within ${D.coveredTimeoutMs} ms`), { name: "TimeoutError" })), D.coveredTimeoutMs))]));
+          } catch (err) { this._undoDeparture(); throw err; } // still under cover: put the focus screen back before the reveal
+          if (this.state !== "disposed" && D.autoDispose !== false) this.dispose();
+        } });
+      if (this.state === "departing") this.state = "departed"; // (autoDispose: false) the consumer owns the hidden screen now
+      return { detail, transition };
+    } catch (err) {
+      if (this.state === "departing") this._undoDeparture(); // e.g. a busy shared transition: nothing was covered
+      if (this.state === "focus") this.dossierTitle.focus({ preventScroll: true });
+      throw err;
+    } finally { if (own) atx.dispose(); }
+  }
+
+  /**
+   * The planet approach, on the live view: its container eases from the focus slot to exactly the screen's rectangle (so the
+   * globe drifts to the centre; the WebGL viewport never leaves the canvas), then the camera dollies in (public setDistance)
+   * ever faster until the world overfills the screen. Orientation is never touched; the idle spin carries on.
+   */
+  _approach(g, view) {
+    const gr = g.getBoundingClientRect(), sr = this.root.getBoundingClientRect();
+    const morph = g.animate([{ transformOrigin: "0 0", transform: "none" },
+      { transformOrigin: "0 0", transform: `translate(${(sr.left - gr.left).toFixed(2)}px, ${(sr.top - gr.top).toFixed(2)}px) scale(${(sr.width / gr.width).toFixed(5)}, ${(sr.height / gr.height).toFixed(5)})` }],
+      { duration: T.approachMorph, delay: T.approachDelay, easing: "cubic-bezier(.45,0,.35,1)", fill: "forwards" });
+    // apparent size ∝ 1 / √(d² − 1): grow it exponentially (an accelerating fall) from the inspection distance to DOLLY_TO
+    const k0 = Math.sqrt(GLOBE_DISTANCE ** 2 - 1), R = k0 / Math.sqrt(DOLLY_TO ** 2 - 1), t0 = performance.now() + T.dollyDelay;
+    const step = now => {
+      this._dollyFrame = null;
+      if (this.state !== "departing" || view.disposed) return;
+      const p = Math.min(1, Math.max(0, (now - t0) / T.dolly)), q = Math.pow(R, Math.pow(p, 1.4));
+      view.setDistance(Math.sqrt(1 + (k0 / q) ** 2));
+      if (p < 1) this._dollyFrame = requestAnimationFrame(step);
+    };
+    this._dollyFrame = requestAnimationFrame(step);
+    this.stats.approach = { dollyFrom: GLOBE_DISTANCE, dollyTo: DOLLY_TO, sizeRatio: +R.toFixed(3) };
+    return morph;
+  }
+
+  /** A failed departure (under cover): back to the focus screen exactly as it was — same view, same yaw, prefetch resumed. */
+  _undoDeparture() {
+    if (this.state !== "departing" && this.state !== "departed") return;
+    for (const a of this._departAnims || []) a.cancel();
+    this._departAnims = null;
+    if (this._dollyFrame) cancelAnimationFrame(this._dollyFrame); this._dollyFrame = null;
+    this.views[this.selected].setDistance(GLOBE_DISTANCE); // back to the inspection framing (orientation was never touched)
+    this.focus.inert = false; this.head.inert = false;
+    this.state = "focus"; this.root.dataset.state = "focus"; delete this.root.dataset.departPhase;
+    this.views[this.selected].setInteractionEnabled(true);
+    this._poolHalted = false; this._prefetch();
   }
 
   /** Tear the screen down: animations, the renderer and its nine views, the worker, listeners and the built DOM. */
@@ -183,7 +289,7 @@ export class DestinationSurvey {
     this._sectors.clear();
     this.root.removeEventListener("keydown", this._onKey); this.root.removeEventListener("click", this._onClick);
     this.root.replaceChildren(); this.root.classList.remove("ds", "rm");
-    for (const k of ["state", "class"]) delete this.root.dataset[k];
+    for (const k of ["state", "class", "departPhase"]) delete this.root.dataset[k];
   }
 
   // ---------------------------------------------------------------- DOM
@@ -367,12 +473,13 @@ export class DestinationSurvey {
 
   _column(sectorSeed, column, firstBloom, onProgress) {
     return this._viaPool({ sectorSeed, column, firstBloom }, onProgress).then(r => { this.sectorSource = "worker"; return r; }, err => {
-      if (this.state === "disposed") throw err;
+      if (this.state === "disposed" || err.halted) throw err; // (halted for a departure: never fall back to main-thread generation)
       return this._columnOnMainThread(sectorSeed, column, firstBloom, onProgress).then(r => { this.sectorSource = "main-thread"; return r; });
     });
   }
 
   _viaPool(task, onProgress) {
+    if (this._poolHalted) return Promise.reject(Object.assign(new Error("departing"), { halted: true }));
     if (!this.useWorker || this._poolBroken) return Promise.reject(new Error("no worker"));
     return new Promise((resolve, reject) => { this._queue.push({ ...task, id: ++this._reqId, resolve, reject, onProgress }); this.stats.workerTasks++; this._pump(); });
   }
@@ -401,6 +508,15 @@ export class DestinationSurvey {
     w.onerror = e => { if (e.preventDefault) e.preventDefault(); this._stopPool(new Error("worker failed")); }; // module workers unsupported, or a load error
     this._pool.push(slot);
     return slot;
+  }
+
+  /** Departure: stop the workers and drop unfinished sectors (no generation while departing); _undoDeparture resumes prefetching. */
+  _haltPool() {
+    this._poolHalted = true;
+    const err = Object.assign(new Error("departing"), { halted: true });
+    for (const s of this._pool) { s.w.terminate(); if (s.task) s.task.reject(err); }
+    for (const t of this._queue) t.reject(err);
+    this._pool = []; this._queue = [];
   }
 
   _stopPool(err) {

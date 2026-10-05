@@ -1,8 +1,8 @@
 # Destination Survey v1 — integration handoff (Menu / Tutorial workstream)
 
-**From:** BLOOM-028A, validated identity BLOOM-028A1 · **For:** the Main Menu (which enters this screen) and the next
-milestone (atmospheric descent from Begin Expedition). Evidence and QA: `docs/evidence/bloom-028a/REPORT.md`,
-`docs/evidence/bloom-028a1/REPORT.md`.
+**From:** BLOOM-028A, validated identity BLOOM-028A1, departure BLOOM-028B · **For:** the Main Menu (which enters this
+screen) and the Main PMO (which connects the expedition descent to the real game). Evidence and QA:
+`docs/evidence/bloom-028a/REPORT.md`, `docs/evidence/bloom-028a1/REPORT.md`, `docs/evidence/bloom-028b/REPORT.md`.
 
 > **The planet contract.** Every world the survey shows is already a **fully validated** BLOOM world. The selected
 > **`detail.planet` is the authoritative gameplay planet. Consumers must not regenerate it from the seed.**
@@ -18,11 +18,13 @@ dossier sits on the right, with **← Return to survey** and **Begin expedition*
 
 | | owns |
 |---|---|
-| `resources/destination-survey/destination-survey.js` | **`DestinationSurvey`**: screen composition, 3 × 3 layout, labels, selection, focus state, dossier, scan, return, the Begin Expedition hook |
+| `resources/destination-survey/destination-survey.js` | **`DestinationSurvey`**: screen composition, 3 × 3 layout, labels, selection, focus state, dossier, scan, return, the Begin Expedition hook, and (028B) the departure choreography that invokes AtmosphereTransition |
 | `resources/destination-survey/survey-data.js` | pure data: which validated worlds a sector shows, their class, their dossier, `planetFingerprint` (no DOM; Node-testable) |
 | `resources/destination-survey/survey-worker.js` | module worker that builds **one column** (three validated worlds) off the main thread; up to three run in parallel |
 | `resources/destination-survey/destination-survey.css` | the screen's look (scoped under `.ds`) |
-| `demos/destination-survey.html` | development entry point (localhost) with a dev placeholder for Begin Expedition |
+| `demos/destination-survey.html` | development entry point (localhost) with a dev placeholder for Begin Expedition (announce only, no `descent`) |
+| `demos/expedition-descent.html` | 028B integration harness: the full departure into a clearly marked development handoff target |
+| `resources/atmosphere-transition/` | the reusable cloud transition the departure uses (screen-agnostic; `docs/ATMOSPHERE_TRANSITION_v1.md`) |
 | `tools/destination-survey-check.js` | the 20th regression suite (survey data; S4 re-validates every shown world independently) |
 
 Sphere rendering is **not** here. Every globe is a stock `PlanetSphereView` on **one** `PlanetSphereRenderer` for the whole
@@ -55,7 +57,8 @@ transforms, which the renderer follows.
   - `reducedMotion` (`null` follows the OS);
   - `workers` (pool size: one column task per worker; default hardware threads − 1, clamped 1 … 3);
   - `worker` (`false` builds sectors on the main thread: a degraded path that freezes the screen ~1 s per world);
-  - `onBeginExpedition`.
+  - `onBeginExpedition`;
+  - `descent` (028B): play the dramatic departure on Begin Expedition (§3).
 - Methods: `scan()`, `select(i)`, `returnToSurvey()`, `beginExpedition()`, `dispose()`. Each returns `false` / `null` when
   the screen is mid-transition, so double clicks are harmless.
 - Read-only state:
@@ -83,9 +86,37 @@ transforms, which the renderer follows.
   return the same map at best, or a different one if anything in generation or validation ever changes.
 - `survey.dispose()` does not touch planet objects, so a consumer can keep `detail.planet` after the screen is gone.
 
-The descent can then zoom toward the planet using the public API (`view.setDistance(…)`, or a CSS scale on `globe`), lay
-its cloud layer over the screen, swap screens under the clouds and dispose the survey. No longitude matching is wanted: the
-clouds are the seam.
+### 3.1 The departure (028B): `descent`
+
+Pass `descent` and Begin Expedition also plays the departure. Full description, timings and failure behaviour:
+`docs/ATMOSPHERE_TRANSITION_v1.md` §7.
+
+```js
+new DestinationSurvey(root, { descent: {
+  async onCovered(detail, info) { detail.survey.dispose(); await mountExpedition(detail.planet); },  // REQUIRED; only under full cover
+  onError(err, detail) { … },   // optional (default console.error); the survey is then back in focus state
+  transition,                   // optional AtmosphereTransition (default: a private one over document.body)
+  coveredTimeoutMs,             // optional
+  autoDispose: true,            // dispose the survey after onCovered resolves, if you did not
+  seed,                         // optional: fix the cloud layout (default: a fresh random layout every departure)
+} });
+```
+
+- **Begin commits at once.**
+  - State `"departing"`: every other action and a second Begin are refused.
+  - The announcement (event + `onBeginExpedition`) fires once; `detail.descent` is a promise of the departure.
+  - The prefetch workers stop, so nothing is generated while departing.
+- **Recede.** The dossier and header recede.
+- **Approach.**
+  - The **same live view** moves to the screen centre (its container eases to the screen's rectangle, never beyond the
+    canvas).
+  - Its camera dollies in with the public `setDistance` until the world overfills the screen.
+  - Its yaw is never touched and it keeps turning. **There is no landing alignment.**
+- **Cover and handoff.** AtmosphereTransition's DRAMATIC cover closes. Only at full cover is `descent.onCovered(detail)`
+  called: mount the destination from `detail.planet`, dispose the survey. Then the clouds part.
+- **Failure.** If `onCovered` fails, the survey restores itself under cover (focus state, same view, inspection distance,
+  prefetch resumed) before the clouds reveal it.
+- **Reduced motion.** Fades only, no approach; the transition takes its reduced path.
 
 ## 4. Validated sectors, prefetch and cost (028A1)
 
@@ -143,3 +174,5 @@ showing, so the 3–5 s first-sector validation finishes before the player arriv
   - 028A1 recalibrated them on 90 validated worlds (tertiles 21 % / 34 %). Validated worlds are harsher than 028A's
     structural ones, so the old 45 % / 22 % bands made Stable rare (≈ 1 in 10 worlds).
 - **Never show a world before it is validated, and never swap a shown world.** One `setPlanet` per cell per sector.
+- **The departure never generates, re-plans or re-orients** (028B). It only moves the live view's container, dollies its
+  camera and hands over the very `detail.planet` object.

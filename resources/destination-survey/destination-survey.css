@@ -134,6 +134,15 @@
 .ds-seed{margin:10px 0 0; font-size:12px; color:var(--ink-faint); font-weight:700; letter-spacing:.4px}
 .ds-actions{display:flex; flex-wrap:nowrap; justify-content:space-between; align-items:center; gap:10px; margin-top:16px}
 
+/* ── departure (028B): the focus layout holds; the script recedes the dossier / header with animations and grows the globe.
+   (Same declarations as focus, without transitions, so CSS transitions never compete with those animations.) ── */
+.ds[data-state="departing"]::before, .ds[data-state="departed"]::before{opacity:1}
+.ds[data-state="departing"] .ds-cols, .ds[data-state="departing"] .ds-cap, .ds[data-state="departing"] .ds-halo{opacity:0}
+.ds[data-state="departing"] .ds-head-tools{opacity:0; pointer-events:none}
+.ds[data-state="departing"] .ds-dossier{opacity:1; transform:none; visibility:visible; transition:none}
+.ds[data-state="departing"] .ds-sector{opacity:.6}
+.ds[data-state="departing"] .ds-cand{cursor:default}
+
 /* narrower screens (tablet portrait): planet on top, dossier below */
 @container (max-width: 820px){
   .ds-focus{--F:clamp(200px, min(44cqh, 82cqw), 560px)} /* (a container query styles descendants, never .ds itself) */
