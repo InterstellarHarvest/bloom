@@ -10,7 +10,7 @@ Technical validation only. Nothing here is integrated into gameplay, Terraform, 
 | Starting SHA | `f6bca30` (BLOOM-027B, branch `agent/bloom-027b-cylinder-generator`, on top of accepted 027A `ae9c780`) |
 | `main` when inspected | still `b704961` (checked with `git fetch` before branching) |
 | Branch / worktree | `agent/bloom-027c-sphere-validation` · `_worktrees/bloom-027c-sphere` |
-| Commits | `e7fd512` spike files brought forward verbatim · `FINAL_SHA` 027C changes + evidence |
+| Commits | `e7fd512` spike files brought forward verbatim · `01b2c0b` 027C changes + evidence (this SHA-record commit follows it) |
 | Sphere spike source | `agent/planet-sphere-spike`, implementation commit `fa0063f` (report `75101e1`) |
 
 **How the spike was brought forward.** The spike diff (`6c0357b..fa0063f`) is purely additive, so it can't overwrite any 027B file. Only the demo itself was copied, with `git checkout fa0063f -- demos/planet-sphere-spike.html demos/planet-sphere/`. That covers the page, `planet-sphere-view.js`, `planet-projection.js` and the vendored `three@0.185.1`. It is committed unchanged as `e7fd512`, so the 027C diff reads cleanly on top. The spike's docs, old screenshots and its README lines were **not** brought forward. Three.js stays vendored as it was.
