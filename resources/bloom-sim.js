@@ -31,6 +31,12 @@
 // (run traces last regenerated on purpose by BLOOM-009, an owner-authorized gameplay retune).
 // Keep the order of rng() calls and arithmetic stable unless a retune is intended
 // (then regenerate the golden with `node tools/sim-check.js --write` and say so in the commit).
+// BLOOM-027A: cylindrical geography foundation. A planet may declare `topology: { wrapX, wrapY }` (absent = the legacy
+// rectangle). wrapX wraps longitude (x = 0 and x = W − 1 are adjacent on every row); wrapY is reserved and must stay
+// false — the world is a cylinder, never a torus. BLOOM.geo holds the ONE cardinal-neighbour rule (west / east / north /
+// south / neighbors4) and every geography-sensitive system — components, section adjacency and pieces, water crossings,
+// region centres, origin seeding, plant spread, native competition — reads it instead of testing x > 0 / x < W − 1 itself.
+// Procedural generation is still rectangular in this milestone (it does not set `topology`), so no generated planet changes.
 (function (root) {
   "use strict";
   const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -143,8 +149,65 @@
     const p = progressAt(P, seconds); let k = 0; for (let i = 0; i < P.phases.length; i++) if (p >= P.phases[i].from) k = i; return k;
   }
 
+  // ---- topology (BLOOM-027A). Plain data: { wrapX, wrapY }. RECT is every planet without a `topology` field (First Bloom,
+  // every planet the generator emits today); CYLINDER wraps longitude only. wrapY is reserved: it must be false.
+  const RECT = Object.freeze({ wrapX: false, wrapY: false }), CYLINDER = Object.freeze({ wrapX: true, wrapY: false });
+  // the planet's topology as plain data, or an error message. A missing field is the legacy rectangle; anything else must be a
+  // { wrapX: boolean, wrapY: false } object (unknown keys are refused so a typo cannot silently stay rectangular).
+  function normalizeTopology(t) {
+    if (t === undefined || t === null) return RECT;
+    if (typeof t !== "object" || Array.isArray(t)) return "topology must be an object { wrapX, wrapY }";
+    for (const k of Object.keys(t)) if (k !== "wrapX" && k !== "wrapY") return `topology: unknown key "${k}"`;
+    if (t.wrapX !== undefined && typeof t.wrapX !== "boolean") return "topology.wrapX must be true or false";
+    if (t.wrapY !== undefined && typeof t.wrapY !== "boolean") return "topology.wrapY must be true or false";
+    if (t.wrapY === true) return "topology.wrapY = true is not supported (a planet is a cylinder, never a torus)";
+    return t.wrapX ? CYLINDER : RECT;
+  }
+  function topologyOf(planet) {
+    const t = normalizeTopology(planet && planet.topology);
+    if (typeof t === "string") throw new Error("bloom-sim: " + t);
+    if (t.wrapX && !(planet.gridWidth >= 3)) throw new Error("bloom-sim: topology.wrapX needs gridWidth ≥ 3");
+    return t;
+  }
+  // ---- the one cardinal-neighbour rule. Each step returns the neighbouring tile index or -1 (no neighbour), allocation-free.
+  // Rectangle: no neighbour past any edge. Cylinder: west of x = 0 is x = W − 1 on the same row and east of x = W − 1 is x = 0;
+  // north of y = 0 and south of y = H − 1 are never neighbours under either topology.
+  const west = (t, W, topo) => { const x = t % W; return x > 0 ? t - 1 : (topo.wrapX ? t + W - 1 : -1); };
+  const east = (t, W, topo) => { const x = t % W; return x < W - 1 ? t + 1 : (topo.wrapX ? t - W + 1 : -1); };
+  const north = (t, W) => t >= W ? t - W : -1;
+  const south = (t, W, H) => t < (H - 1) * W ? t + W : -1;
+  // the existing cardinal neighbours of tile t, in the engine's historical order west, east, north, south
+  function neighbors4(t, W, H, topo) {
+    const o = [], l = west(t, W, topo), r = east(t, W, topo), u = north(t, W), d = south(t, W, H);
+    if (l >= 0) o.push(l); if (r >= 0) o.push(r); if (u >= 0) o.push(u); if (d >= 0) o.push(d); return o;
+  }
+  function forEachNeighbor4(t, W, H, topo, fn) {
+    const l = west(t, W, topo), r = east(t, W, topo), u = north(t, W), d = south(t, W, H);
+    if (l >= 0) fn(l); if (r >= 0) fn(r); if (u >= 0) fn(u); if (d >= 0) fn(d);
+  }
+  // shortest signed horizontal offset from column b to column a (a − b on a rectangle; wrapped into (−W/2, W/2] on a cylinder)
+  const wrapDx = (a, b, W, topo) => { const d = a - b; return topo.wrapX ? d - W * Math.ceil(d / W - 0.5) : d; };
+  // mean longitude (tile-centre column, in [0, W)) of a set of tiles given as a per-column tile count.
+  // Rectangle: the arithmetic mean, exactly as before. Cylinder: the occupied columns are unwrapped across the widest run of
+  // EMPTY columns (the set's own far side), so tiles on x = 57,58,59,0,1,2 of a 60-wide world centre at 0.0 (the seam), not 30.
+  // Ties between equally wide empty runs take the first one met walking east from the lowest occupied column. A set that
+  // occupies every column has no empty run and is unwrapped from column 0 (= the arithmetic mean): the documented,
+  // deterministic fallback for an unusually symmetric region, where no longitude is more central than another.
+  function longitudeCenter(colCount, W, topo) {
+    let n = 0, sx = 0, first = -1;
+    for (let x = 0; x < W; x++) { const c = colCount[x]; if (c > 0) { n += c; sx += c * x; if (first < 0) first = x; } }
+    if (!n) return NaN;
+    if (!topo.wrapX) return sx / n + .5;
+    let start = 0, bestGap = 0, run = 0;
+    for (let k = 1; k <= W; k++) { const x = (first + k) % W;
+      if (colCount[x] > 0) { if (run > bestGap) { bestGap = run; start = x; } run = 0; } else run++; }
+    let su = 0; for (let x = 0; x < W; x++) if (colCount[x] > 0) su += colCount[x] * ((x < start ? x + W : x) + .5);
+    const m = su / n; return m >= W ? m - W : m;
+  }
+
   // weighted Voronoi from per-section `center` seeds; weights nudge toward each section's area share
-  function growVoronoi(sections, W, H, L) {
+  // (topology-aware: on a cylinder the horizontal distance to a seed is the shorter way round)
+  function growVoronoi(sections, W, H, L, topo = RECT) {
     const N = W * H;
     const cx = sections.map(s => s.center.x * W), cy = sections.map(s => s.center.y * H);
     const aSum = sections.reduce((a, s) => a + s.area, 0), target = sections.map(s => s.area / aSum * N);
@@ -153,7 +216,7 @@
       cnt.fill(0);
       for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
         let best = 0, bd = Infinity; const px = x + .5, py = y + .5;
-        for (let i = 0; i < sections.length; i++) { const dx = px - cx[i], dy = py - cy[i], d = Math.sqrt(dx * dx + dy * dy) - w[i]; if (d < bd) { bd = d; best = i; } }
+        for (let i = 0; i < sections.length; i++) { const dx = wrapDx(px, cx[i], W, topo), dy = py - cy[i], d = Math.sqrt(dx * dx + dy * dy) - w[i]; if (d < bd) { bd = d; best = i; } }
         map[y * W + x] = best; cnt[best]++;
       }
       let me = 0; for (let i = 0; i < sections.length; i++) { const e = target[i] - cnt[i]; w[i] = clamp(w[i] + e * L.weightRate, -CAP, CAP); if (Math.abs(e) > me) me = Math.abs(e); }
@@ -162,47 +225,48 @@
     return map;
   }
 
-  // ---- shared geometry (4-neighbour grid). Used by the engine, generator, validator and demos.
-  // components(mask) labels connected runs of mask tiles; ids follow first-tile scan order.
-  function components(mask, W, H) {
+  // ---- shared geometry (4-neighbour grid). Used by the engine, generator, validator and demos. Every function takes the
+  // planet's topology last and defaults to the rectangle, so callers that never pass one (the generator today) are unchanged.
+  // components(mask) labels connected runs of mask tiles; ids follow first-tile scan order. On a cylinder a run that leaves
+  // the map at x = W − 1 and continues at x = 0 is ONE component.
+  function components(mask, W, H, topo = RECT) {
     const N = W * H, id = new Int32Array(N).fill(-1), sizes = [];
+    const visit = (u, c, st) => { if (u >= 0 && mask[u] && id[u] < 0) { id[u] = c; st.push(u); } };
     for (let s = 0; s < N; s++) {
       if (!mask[s] || id[s] >= 0) continue;
       const c = sizes.length; let n = 0; const st = [s]; id[s] = c;
-      while (st.length) { const t = st.pop(); n++; const x = t % W, y = (t / W) | 0;
-        if (x > 0 && mask[t - 1] && id[t - 1] < 0) { id[t - 1] = c; st.push(t - 1); }
-        if (x < W - 1 && mask[t + 1] && id[t + 1] < 0) { id[t + 1] = c; st.push(t + 1); }
-        if (y > 0 && mask[t - W] && id[t - W] < 0) { id[t - W] = c; st.push(t - W); }
-        if (y < H - 1 && mask[t + W] && id[t + W] < 0) { id[t + W] = c; st.push(t + W); } }
+      while (st.length) { const t = st.pop(); n++;
+        visit(west(t, W, topo), c, st); visit(east(t, W, topo), c, st); visit(north(t, W), c, st); visit(south(t, W, H), c, st); }
       sizes.push(n);
     }
     return { id, sizes };
   }
-  // adjacency between land sections from actual geography (tilemap value -1 = impassable)
-  function sectionAdjacency(tilemap, W, H, SC) {
+  // adjacency between land sections from actual geography (tilemap value -1 = impassable). Two DIFFERENT sections touching
+  // only across the seam of a cylinder are neighbours; touching never merges their ids (that is the generator's job).
+  function sectionAdjacency(tilemap, W, H, SC, topo = RECT) {
     const nb = Array.from({ length: SC }, () => new Set());
-    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-      const a = tilemap[y * W + x]; if (a < 0) continue;
-      if (x + 1 < W) { const b = tilemap[y * W + x + 1]; if (b >= 0 && b !== a) { nb[a].add(b); nb[b].add(a); } }
-      if (y + 1 < H) { const b = tilemap[(y + 1) * W + x]; if (b >= 0 && b !== a) { nb[a].add(b); nb[b].add(a); } }
-    }
+    const touch = (a, u) => { if (u >= 0) { const b = tilemap[u]; if (b >= 0 && b !== a) { nb[a].add(b); nb[b].add(a); } } };
+    for (let t = 0; t < W * H; t++) { const a = tilemap[t]; if (a < 0) continue; touch(a, east(t, W, topo)); touch(a, south(t, W, H)); }
     return nb.map(set => [...set].sort((p, q) => p - q));
   }
-  // number of separate pieces each section's tiles form (1 = contiguous, 0 = empty)
-  function sectionPieces(tilemap, W, H, SC) {
-    return Array.from({ length: SC }, (_, k) => components(Array.from(tilemap, v => v === k ? 1 : 0), W, H).sizes.length);
+  // number of separate pieces each section's tiles form (1 = contiguous, 0 = empty); one section on both sides of a
+  // cylinder's seam whose tiles connect across it is ONE piece
+  function sectionPieces(tilemap, W, H, SC, topo = RECT) {
+    return Array.from({ length: SC }, (_, k) => components(Array.from(tilemap, v => v === k ? 1 : 0), W, H, topo).sizes.length);
   }
 
   // water crossings (BLOOM-004): from every coastal land tile, walk through WATER tiles only
   // (4-neighbour BFS) for up to maxGap steps; any land tile of a DIFFERENT landmass touching a water
   // tile reached at step d is a landing site at gap d (= water tiles crossed). Pure geography —
   // never section neighbour lists. Returns tile pairs (for the simulation) and landmass links.
-  function waterCrossings(tilemap, W, H, maxGap) {
-    const N = W * H, landMask = Array.from(tilemap, v => v >= 0 ? 1 : 0), lm = components(landMask, W, H);
+  // Topology-aware: on a cylinder the water walk and the landmasses both wrap, so a strait may cross longitude zero, while land
+  // directly adjacent across the seam is one landmass (ordinary spread, never a crossing).
+  function waterCrossings(tilemap, W, H, maxGap, topo = RECT) {
+    const N = W * H, landMask = Array.from(tilemap, v => v >= 0 ? 1 : 0), lm = components(landMask, W, H, topo);
     const pairs = [], best = new Map(); // "a-b" landmass link → min gap
     if (!(maxGap > 0)) return { maxGap: maxGap || 0, landmass: lm.id, landmassSizes: lm.sizes, pairs, links: [] };
     const dist = new Int32Array(N).fill(-1), touched = [];
-    const nb = t => { const x = t % W, y = (t / W) | 0, o = []; if (x > 0) o.push(t - 1); if (x < W - 1) o.push(t + 1); if (y > 0) o.push(t - W); if (y < H - 1) o.push(t + W); return o; };
+    const nb = t => neighbors4(t, W, H, topo);
     for (let s = 0; s < N; s++) {
       if (!landMask[s]) continue;
       const start = nb(s).filter(t => !landMask[t]); if (!start.length) continue; // not coastal
@@ -238,9 +302,10 @@
   // Sections may be kind "land" (default) or impassable kinds; the simulation only ever sees land
   // sections, and every impassable tile is -1. An all-land Voronoi planet (First Bloom) takes the
   // original path unchanged.
+  // The result also carries the planet's `topology` (BLOOM-027A) so every consumer judges the same tiles the same way.
   const KINDS = new Set(["land", "water", "void", "lava"]);
   function resolveLayout(planet, config) {
-    const W = planet.gridWidth, H = planet.gridHeight, N = W * H, ALL = planet.sections;
+    const W = planet.gridWidth, H = planet.gridHeight, N = W * H, ALL = planet.sections, topology = topologyOf(planet);
     for (const s of ALL) if (s.kind !== undefined && !KINDS.has(s.kind))
       throw new Error(`bloom-sim: section ${s.id} has unknown kind "${s.kind}"`);
     let full;
@@ -250,15 +315,15 @@
       for (let i = 0; i < N; i++) if (!Number.isInteger(tm[i]) || tm[i] < -1 || tm[i] >= ALL.length)
         throw new Error(`bloom-sim: tilemap[${i}] = ${tm[i]} is not a section index or -1`);
       full = Int16Array.from(tm);
-    } else full = growVoronoi(ALL, W, H, config.layout);
+    } else full = growVoronoi(ALL, W, H, config.layout, topology);
     const isLand = ALL.map(s => (s.kind || "land") === "land");
     let hasImpassable = isLand.includes(false);
     for (let i = 0; i < N && !hasImpassable; i++) if (full[i] < 0) hasImpassable = true;
-    if (!hasImpassable) return { tilemap: full, sections: ALL, impassable: [] };
+    if (!hasImpassable) return { tilemap: full, sections: ALL, impassable: [], topology };
     const landIdx = []; let k = 0; for (const l of isLand) landIdx.push(l ? k++ : -1);
     const tilemap = new Int16Array(N);
     for (let i = 0; i < N; i++) tilemap[i] = full[i] < 0 ? -1 : landIdx[full[i]];
-    return { tilemap, sections: ALL.filter((_, i) => isLand[i]), impassable: ALL.filter((_, i) => !isLand[i]) };
+    return { tilemap, sections: ALL.filter((_, i) => isLand[i]), impassable: ALL.filter((_, i) => !isLand[i]), topology };
   }
 
   function createSim(planet, config, traits, opts = {}) {
@@ -266,18 +331,22 @@
     const C = config, CAT = C.categories;
     const W = planet.gridWidth, H = planet.gridHeight, N = W * H;
     // SEC = land sections only; TILEMAP holds their indices, -1 for water/void/lava
-    const layout = resolveLayout(planet, C), TILEMAP = layout.tilemap, SEC = layout.sections, SC = SEC.length;
+    const layout = resolveLayout(planet, C), TILEMAP = layout.tilemap, SEC = layout.sections, SC = SEC.length, TOPO = layout.topology;
     const SIDX = Object.fromEntries(SEC.map((s, i) => [s.id, i]));
     const ORIGIN = SIDX[planet.origin];
     if (ORIGIN === undefined) throw new Error(`bloom-sim: origin "${planet.origin}" is not a land section`);
     const AREA = new Int32Array(SC), CENT = SEC.map(() => ({ x: 0, y: 0, n: 0 })), SEC_TILES = SEC.map(() => []), LAND_TILES = [];
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const o = TILEMAP[y * W + x]; if (o < 0) continue; AREA[o]++; SEC_TILES[o].push(y * W + x); LAND_TILES.push(y * W + x); const c = CENT[o]; c.x += x; c.y += y; c.n++; }
     SEC.forEach((s, i) => { if (!AREA[i]) throw new Error(`bloom-sim: land section ${s.id} has no tiles`); });
-    CENT.forEach(c => { c.x = c.x / c.n + .5; c.y = c.y / c.n + .5; });
+    // region centres: the rectangle keeps its arithmetic mean bit-for-bit; a cylinder's longitude centre is wrap-aware
+    // (BLOOM.geo.longitudeCenter), so a region on both sides of the seam centres at the seam, never in the middle of the map
+    if (!TOPO.wrapX) CENT.forEach(c => { c.x = c.x / c.n + .5; c.y = c.y / c.n + .5; });
+    else { const cols = SEC.map(() => new Int32Array(W)); for (const t of LAND_TILES) cols[TILEMAP[t]][t % W]++;
+      CENT.forEach((c, i) => { c.x = longitudeCenter(cols[i], W, TOPO); c.y = c.y / c.n + .5; }); }
     const LAND = LAND_TILES.length; // win/coverage denominator: colonizable tiles only (bible §9)
-    const NBRS = sectionAdjacency(TILEMAP, W, H, SC); // from actual geography, never from authored lists
+    const NBRS = sectionAdjacency(TILEMAP, W, H, SC, TOPO); // from actual geography, never from authored lists
     // water crossings (only maps with water have any): landing tile → linked coastal source tiles + weights
-    const XC = C.crossing || {}, CROSS = waterCrossings(TILEMAP, W, H, LAND < N ? (XC.maxGap || 0) : 0);
+    const XC = C.crossing || {}, CROSS = waterCrossings(TILEMAP, W, H, LAND < N ? (XC.maxGap || 0) : 0, TOPO);
     const landingIdx = new Map(), LANDING = [], LSRC = [], LW = [], LGAP = [];
     for (const [src, t, gap] of CROSS.pairs) {
       let k = landingIdx.get(t); if (k === undefined) { k = LANDING.length; landingIdx.set(t, k); LANDING.push(t); LSRC.push([]); LW.push([]); LGAP.push([]); }
@@ -385,7 +454,7 @@
     const EST = C.establish, COL = C.colony, MODES = ["balanced", ...Object.keys(COL.modes)];
     const sim = {
       planet, config, traits, BAR, LIV, DEAD,
-      map: { W, H, N, LAND, LAND_TILES, SEC, SC, SIDX, ORIGIN, TILEMAP, AREA, CENT, SEC_TILES, NBRS, impassable: layout.impassable,
+      map: { W, H, N, LAND, LAND_TILES, SEC, SC, SIDX, ORIGIN, TILEMAP, AREA, CENT, SEC_TILES, NBRS, topology: TOPO, impassable: layout.impassable,
              LANDMASS, CROSSINGS: { maxGap: CROSS.maxGap, links: CROSS.links, landingTiles: LANDING.length } },
       // arrivals / footholds: tile-ticks with waterborne seed pressure / new footholds made (BLOOM-004 counters).
       // events (BLOOM-009): the most recent discrete crossing events, oldest first, each { id, tick, from, to, gap,
@@ -416,8 +485,8 @@
     (function seedOrigin() {
       const tiles = SEC_TILES[ORIGIN].slice().sort((a, b) => {
         const ax = a % W, ay = (a / W) | 0, bx = b % W, by = (b / W) | 0;
-        const cx = CENT[ORIGIN].x, cy = CENT[ORIGIN].y;
-        return ((ax - cx) ** 2 + (ay - cy) ** 2) - ((bx - cx) ** 2 + (by - cy) ** 2);
+        const cx = CENT[ORIGIN].x, cy = CENT[ORIGIN].y, dax = wrapDx(ax, cx, W, TOPO), dbx = wrapDx(bx, cx, W, TOPO); // (wrapDx = ax − cx on a rectangle)
+        return (dax ** 2 + (ay - cy) ** 2) - (dbx ** 2 + (by - cy) ** 2);
       });
       for (let k = 0; k < Math.min(C.grow.seedTiles, tiles.length); k++) { state[tiles[k]] = LIV; dens[tiles[k]] = EST.seedlingDensity; }
       vigor[ORIGIN] = C.grow.originStartVigor;
@@ -448,7 +517,7 @@
     const nat = new Float32Array(N), nVig = new Float32Array(SC), nFit = new Float32Array(SC), nflip = new Int8Array(N);
     const pMat = new Float32Array(SC), nMat = new Float32Array(SC), pCnt = new Int32Array(SC), nCnt = new Int32Array(SC), contact = new Int32Array(SC);
     const gainR = new Float64Array(SC), lossR = new Float64Array(SC), spreadR = new Float64Array(SC), recedeR = new Float64Array(SC); // recent flips (decaying)
-    const nb4 = t => { const x = t % W, y = (t / W) | 0, o = []; if (x > 0) o.push(t - 1); if (x < W - 1) o.push(t + 1); if (y > 0) o.push(t - W); if (y < H - 1) o.push(t + W); return o; };
+    const nb4 = t => neighbors4(t, W, H, TOPO); // the shared cardinal rule (wraps longitude on a cylinder)
     const NB = CP ? Array.from({ length: N }, (_, t) => TILEMAP[t] >= 0 ? nb4(t).filter(u => TILEMAP[u] >= 0) : []) : null; // land neighbours per tile
     const GN = CP && CP.growth, KC = CP && CP.contest, EV = CP && CP.events;
     const NP = CP ? (function nativeProfile() {
@@ -542,7 +611,7 @@
         for (let tries = 0; tries < 40; tries++) {
           const w = r() * tw; let lo = 0, hi = cum.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (cum[m] < w) lo = m + 1; else hi = m; }
           const t = cand[lo]; if (nat[t] > 0 || !ok(t)) continue; pick = t;
-          if (centres.every(c => Math.hypot(c % W - t % W, ((c / W) | 0) - ((t / W) | 0)) >= spacing)) break;
+          if (centres.every(c => Math.hypot(wrapDx(c % W, t % W, W, TOPO), ((c / W) | 0) - ((t / W) | 0)) >= spacing)) break; // (wrap-aware spacing; = c%W − t%W on a rectangle)
         }
         if (pick >= 0 && !(nat[pick] > 0) && ok(pick)) { place(pick); centres.push(pick); }
       }
@@ -793,9 +862,11 @@
             if (adv > 0 && rng() < g.baseFill * seedMult * secFit[s] * (1 + g.seedPerNeighbor * (ln - 1)) * (push / ln) * Math.min(1, adv / KC.scale)) { next[i] = LIV; nflip[i] = 1; }
           }
         } else if (st === BAR) {
-          let ln = 0, push = 0;
-          if (x > 0 && state[i - 1] === LIV) { ln++; push += out[TILEMAP[i - 1]]; } if (x < W - 1 && state[i + 1] === LIV) { ln++; push += out[TILEMAP[i + 1]]; }
-          if (y > 0 && state[i - W] === LIV) { ln++; push += out[TILEMAP[i - W]]; } if (y < H - 1 && state[i + W] === LIV) { ln++; push += out[TILEMAP[i + W]]; }
+          // the four cardinal neighbours come from the shared topology rule (allocation-free; -1 = none). On a rectangle this is
+          // exactly the old x > 0 / x < W − 1 / y > 0 / y < H − 1 test, so the RNG draw sequence of every legacy world is unchanged.
+          let ln = 0, push = 0; const nl = west(i, W, TOPO), nr = east(i, W, TOPO), nu = north(i, W), nd = south(i, W, H);
+          if (nl >= 0 && state[nl] === LIV) { ln++; push += out[TILEMAP[nl]]; } if (nr >= 0 && state[nr] === LIV) { ln++; push += out[TILEMAP[nr]]; }
+          if (nu >= 0 && state[nu] === LIV) { ln++; push += out[TILEMAP[nu]]; } if (nd >= 0 && state[nd] === LIV) { ln++; push += out[TILEMAP[nd]]; }
           if (ln > 0 && v > g.growThresh) {
             // more Living neighbours push harder; each pushes with its own colony's seed output (establishment + allocation)
             const p = g.baseFill * seedMult * secFit[s] * (1 + g.seedPerNeighbor * (ln - 1)) * (push / ln);
@@ -960,5 +1031,6 @@
 
   root.BLOOM = Object.assign(root.BLOOM || {}, { createSim, resolveLayout, growVoronoi,
     pressure: { CHANNELS, CLIMATE_AXES, checkScenario, checkCompetition, checkClimateInstability, resolveScenario, isDynamic, progressAt, offsetsAt, maxOffsets, phaseAt },
-    geo: { components, sectionAdjacency, sectionPieces, waterCrossings, reachableLandmasses }, util: { clamp, lerp, band, overLimit } });
+    geo: { RECT, CYLINDER, normalizeTopology, topologyOf, west, east, north, south, neighbors4, forEachNeighbor4, wrapDx, longitudeCenter,
+      components, sectionAdjacency, sectionPieces, waterCrossings, reachableLandmasses }, util: { clamp, lerp, band, overLimit } });
 })(typeof window !== "undefined" ? window : globalThis);

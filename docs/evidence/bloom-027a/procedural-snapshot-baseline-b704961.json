@@ -1,0 +1,255 @@
+{
+ "generatePlanet": {
+  "dry": "5ca590ea2bcac888",
+  "moderate": "757c9346ed6b979d",
+  "islands": "ae0cc53008d26c5c",
+  "small": "c0ea12d7166fbad8"
+ },
+ "validate": {
+  "dry": "875fcfee7f4181f7",
+  "moderate": "ced6f8dfe06978e8",
+  "islands": "f3e0cd29fea0598c",
+  "small": "fbf8f775dd8397d8"
+ },
+ "archetypeRaw": {
+  "ocean_archipelago": "d84d5e61c9038994",
+  "desert_world": "55ae1cdf5499692c",
+  "frozen_world": "6ea67046e5ca5b38"
+ },
+ "archetypeAccepted": {
+  "ocean_archipelago": "ac905f9c53d12982",
+  "desert_world": "eeef5a78ac637ddb",
+  "frozen_world": "b96b048d19fbd0a5"
+ },
+ "runs": {
+  "ocean13/eden": {
+   "hash": "ca16a5ba0b3df2e8",
+   "coverage": 0.1374,
+   "ticks": 3000,
+   "cent": "7ff48f4b24b0c43d",
+   "footholds": 0
+  },
+  "ocean13/eden/rich": {
+   "hash": "04bab2de93b003d5",
+   "coverage": 0.1374,
+   "ticks": 3000,
+   "cent": "7ff48f4b24b0c43d",
+   "footholds": 0
+  },
+  "ocean13/dying_world": {
+   "hash": "7611601a2033e094",
+   "coverage": 0.1374,
+   "ticks": 3000,
+   "cent": "7ff48f4b24b0c43d",
+   "footholds": 0
+  },
+  "ocean13/dying_world/rich": {
+   "hash": "2f54ddbee2c5eec6",
+   "coverage": 0.1374,
+   "ticks": 3000,
+   "cent": "7ff48f4b24b0c43d",
+   "footholds": 0
+  },
+  "ocean13/native_competition": {
+   "hash": "b7e57db570e76e9e",
+   "coverage": 0.1374,
+   "ticks": 3000,
+   "cent": "7ff48f4b24b0c43d",
+   "footholds": 0
+  },
+  "ocean13/native_competition/rich": {
+   "hash": "c4fdd0b42be67bfe",
+   "coverage": 0.1374,
+   "ticks": 3000,
+   "cent": "7ff48f4b24b0c43d",
+   "footholds": 0
+  },
+  "ocean13/volatile_climate": {
+   "hash": "ca16a5ba0b3df2e8",
+   "coverage": 0.1374,
+   "ticks": 3000,
+   "cent": "7ff48f4b24b0c43d",
+   "footholds": 0
+  },
+  "ocean13/volatile_climate/rich": {
+   "hash": "04bab2de93b003d5",
+   "coverage": 0.1374,
+   "ticks": 3000,
+   "cent": "7ff48f4b24b0c43d",
+   "footholds": 0
+  },
+  "desert25/eden": {
+   "hash": "66004f875fe8223f",
+   "coverage": 0.1135,
+   "ticks": 3000,
+   "cent": "a52f369719aaaa07",
+   "footholds": 0
+  },
+  "desert25/eden/rich": {
+   "hash": "e50ca0f57d81c60d",
+   "coverage": 0.1135,
+   "ticks": 3000,
+   "cent": "a52f369719aaaa07",
+   "footholds": 0
+  },
+  "desert25/dying_world": {
+   "hash": "34827b3eee051335",
+   "coverage": 0.0816,
+   "ticks": 3000,
+   "cent": "a52f369719aaaa07",
+   "footholds": 0
+  },
+  "desert25/dying_world/rich": {
+   "hash": "0f01d945e78310a9",
+   "coverage": 0.1135,
+   "ticks": 3000,
+   "cent": "a52f369719aaaa07",
+   "footholds": 0
+  },
+  "desert25/native_competition": {
+   "hash": "e706d13d0c8f5952",
+   "coverage": 0.0465,
+   "ticks": 3000,
+   "cent": "a52f369719aaaa07",
+   "footholds": 0
+  },
+  "desert25/native_competition/rich": {
+   "hash": "5e292c8877a27649",
+   "coverage": 0.0465,
+   "ticks": 3000,
+   "cent": "a52f369719aaaa07",
+   "footholds": 0
+  },
+  "desert25/volatile_climate": {
+   "hash": "66004f875fe8223f",
+   "coverage": 0.1135,
+   "ticks": 3000,
+   "cent": "a52f369719aaaa07",
+   "footholds": 0
+  },
+  "desert25/volatile_climate/rich": {
+   "hash": "e50ca0f57d81c60d",
+   "coverage": 0.1135,
+   "ticks": 3000,
+   "cent": "a52f369719aaaa07",
+   "footholds": 0
+  },
+  "frozen22/eden": {
+   "hash": "b4fb5ddd3a1fcc96",
+   "coverage": 0.6387,
+   "ticks": 3000,
+   "cent": "6b5a8289d4e520b7",
+   "footholds": 0
+  },
+  "frozen22/eden/rich": {
+   "hash": "ee177dedb4ea6f9c",
+   "coverage": 0.6387,
+   "ticks": 3000,
+   "cent": "6b5a8289d4e520b7",
+   "footholds": 0
+  },
+  "frozen22/dying_world": {
+   "hash": "540c51079d795ce5",
+   "coverage": 0.3627,
+   "ticks": 3000,
+   "cent": "6b5a8289d4e520b7",
+   "footholds": 0
+  },
+  "frozen22/dying_world/rich": {
+   "hash": "102ed3ecfced64b4",
+   "coverage": 0.3887,
+   "ticks": 3000,
+   "cent": "6b5a8289d4e520b7",
+   "footholds": 0
+  },
+  "frozen22/native_competition": {
+   "hash": "1fedf1acf45985f3",
+   "coverage": 0.2339,
+   "ticks": 3000,
+   "cent": "6b5a8289d4e520b7",
+   "footholds": 0
+  },
+  "frozen22/native_competition/rich": {
+   "hash": "8782a350988011a1",
+   "coverage": 0.2751,
+   "ticks": 3000,
+   "cent": "6b5a8289d4e520b7",
+   "footholds": 0
+  },
+  "frozen22/volatile_climate": {
+   "hash": "b4fb5ddd3a1fcc96",
+   "coverage": 0.6387,
+   "ticks": 3000,
+   "cent": "6b5a8289d4e520b7",
+   "footholds": 0
+  },
+  "frozen22/volatile_climate/rich": {
+   "hash": "ee177dedb4ea6f9c",
+   "coverage": 0.6387,
+   "ticks": 3000,
+   "cent": "6b5a8289d4e520b7",
+   "footholds": 0
+  },
+  "ocean8/eden": {
+   "hash": "5c1169eb37e1e2b1",
+   "coverage": 0.3735,
+   "ticks": 3000,
+   "cent": "5f106cff6962f022",
+   "footholds": 0
+  },
+  "ocean8/eden/rich": {
+   "hash": "1674024c16444843",
+   "coverage": 0.3735,
+   "ticks": 3000,
+   "cent": "5f106cff6962f022",
+   "footholds": 0
+  },
+  "ocean8/dying_world": {
+   "hash": "b7cbcfa56f35b8e9",
+   "coverage": 0.3735,
+   "ticks": 3000,
+   "cent": "5f106cff6962f022",
+   "footholds": 0
+  },
+  "ocean8/dying_world/rich": {
+   "hash": "23de2cc8886cf626",
+   "coverage": 0.3735,
+   "ticks": 3000,
+   "cent": "5f106cff6962f022",
+   "footholds": 0
+  },
+  "ocean8/native_competition": {
+   "hash": "37ca0487760e06e1",
+   "coverage": 0.1217,
+   "ticks": 3000,
+   "cent": "5f106cff6962f022",
+   "footholds": 0
+  },
+  "ocean8/native_competition/rich": {
+   "hash": "42d83eec6b41cd4c",
+   "coverage": 0.1096,
+   "ticks": 3000,
+   "cent": "5f106cff6962f022",
+   "footholds": 0
+  },
+  "ocean8/volatile_climate": {
+   "hash": "5c1169eb37e1e2b1",
+   "coverage": 0.3735,
+   "ticks": 3000,
+   "cent": "5f106cff6962f022",
+   "footholds": 0
+  },
+  "ocean8/volatile_climate/rich": {
+   "hash": "1674024c16444843",
+   "coverage": 0.3735,
+   "ticks": 3000,
+   "cent": "5f106cff6962f022",
+   "footholds": 0
+  }
+ },
+ "firstBloom": {
+  "tilemap": "978411ee623178e1",
+  "cent": "1666793fb701017f",
+  "nbrs": "7910e8cae115cf67"
+ }
+}

@@ -1,0 +1,18 @@
+suite                         pass  fail  result
+sim-check                       19     0  exit=0 ALL CHECKS PASS
+gen-check                       47     0  exit=0 ALL CHECKS PASS
+crossing-check                  14     0  exit=0 ALL CHECKS PASS
+topology-check                  52     0  exit=0 ALL CHECKS PASS  (3.1 s)
+archetype-check                 40     0  exit=0 ALL CHECKS PASS  (49.3 s)
+strategy-check                  36     0  exit=0 ALL CHECKS PASS  (20.2 s)
+slice-check                     15     0  exit=0 ALL CHECKS PASS
+surface-check                   11     0  exit=0 ALL CHECKS PASS
+procedural-run-check            32     0  exit=0 ALL CHECKS PASS  (15.0 s)
+colony-development-check        68     0  exit=0 ALL CHECKS PASS  (27.1 s)
+desert-check                    64     0  exit=0 ALL CHECKS PASS  (45.8 s)
+frozen-check                    70     0  exit=0 ALL CHECKS PASS  (61.5 s)
+dying-world-check               63     0  exit=0 ALL CHECKS PASS  (36.2 s)
+economy-check                   39     0  exit=0 ALL CHECKS PASS  (276.0 s)
+native-competition-check        66     0  exit=0 ALL CHECKS PASS  (117.4 s)
+volatile-climate-check          78     0  exit=0 ALL CHECKS PASS  (115.0 s)
+game-flow-check                 74     0  exit=0 ALL CHECKS PASS  (53.5 s)

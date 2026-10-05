@@ -113,6 +113,8 @@ A starter is a strategic opening, not a character class that locks the final bui
 
 Tiles are visual state. Sections are gameplay decisions.
 
+**Topology (BLOOM-027A).** The grid is a *cylinder*: a planet may declare `topology: { wrapX: true, wrapY: false }`, and then `x = 0` and `x = W − 1` are adjacent columns on every row (longitude wraps) while `y = 0` and `y = H − 1` stay real edges (latitude never wraps — never a torus). A planet without a `topology` field is the legacy rectangle: First Bloom and, until the cylindrical generator milestone (BLOOM-027B), every procedural planet. One shared neighbour rule (`BLOOM.geo`) decides adjacency for landmasses, section neighbours and pieces, water crossings, region centres, spread and native competition; nothing re-implements the map edge. Two different sections touching only across the seam are neighbours and keep their ids; one section with tiles on both sides of the seam is one contiguous region. Why: the Planet Sphere spike showed the flat map's side edge as a visible, misleading seam on a globe (`docs/CYLINDRICAL_TOPOLOGY_v1.md`).
+
 ### 4.2 Tile states
 
 | State | Meaning | Plague-style analog |
