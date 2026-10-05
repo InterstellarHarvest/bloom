@@ -250,3 +250,13 @@ Concept 16 is the accepted direction; the owner listed the last interaction and 
 - **Terraform exclusion zone:** one atmosphere halo band plus 1 em of clearance that only the Soil pins and Atmosphere rings may enter; straight / short-elbow subskill connectors along the bank; lock badges on the node's outer corner; legend top-left, readout bottom-left.
 - **Spread padding** symmetric from the real card height; **hover reset** strengthened (no re-hover after a blur until the pointer moves).
 - The production run-screen UI is **not locked** and the rebuild is not started; the owner's decisions are listed in v9 §13.
+
+### 10.9 Final UI Lock Polish (recorded with BLOOM-026)
+
+The owner chose **Organic** for the plant → tree link and made the remaining visual decisions. The record is [`UI_CONCEPT_REVIEW_v10.md`](UI_CONCEPT_REVIEW_v10.md); the prototype is **Concept 18** in the gallery (Concept 17 is kept unchanged as history). It is a final polish of Concept 17, not an architecture change:
+- **Organic only**, with **much thicker tendrils** (about 9 px idle / 14 px lit at 1280, 1.6–2.1× Concept 17), a slightly wider gutter so they never touch, and the anchor → plate → tendril → port → category chain intact.
+- **Diffuse Terraform atmosphere:** one radial-gradient layer, clear at the globe's face, strongest at the Atmosphere rings, fading into space; no hard ring edge.
+- **Soil arrows** with blunt rounded noses ending about 3 px off the visible surface, never touching it.
+- **Planet View region banner:** content-sized action buttons (Inspect region, then the Would help suggestions) that wrap at narrow widths.
+- **Condition boxes:** Temperature (orange) / Water (blue) / Soil (brown) / Hazard (purple) keep their category identity in every state; status is a separate badge with an icon and a word (Region Inspect's rows match).
+- Sphere / projection engineering is out of scope (a separate PMO). The production rebuild is **not** started; the small remaining owner decisions are in v10 §13.

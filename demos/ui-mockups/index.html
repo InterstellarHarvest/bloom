@@ -107,6 +107,7 @@
   .rounds button{font-size:14px; padding:6px 10px}   /* six rounds now (BLOOM-023) */
   .rounds button{font-size:13px; padding:5px 9px}   /* seven rounds now (BLOOM-024) */
   .rounds button{font-size:12.5px; padding:5px 8px}   /* eight rounds now (BLOOM-025) */
+  .rounds button{font-size:12px; padding:5px 7px}   /* nine rounds now (BLOOM-026) */
   .c15card .states.six{grid-template-columns:repeat(2,minmax(0,1fr))}
   .wf .win{background:#fffdf7; border:2px solid #56664f; border-radius:8px; box-shadow:0 3px 8px rgba(0,0,0,.25)} .wf .dimmap{background:#7f9fb0; filter:blur(1.5px)}
   .wf .lf{background:#dceefa; border:2px solid var(--line-2); border-radius:8px} .wf .gl{background:radial-gradient(circle at 40% 35%,#cfeefb,#4f94c9); border-radius:50%; border:2px solid #fff}
@@ -119,12 +120,13 @@
 </style>
 </head>
 <body>
-<div class="mock-ribbon" role="note"><span class="tag">CONCEPT MOCKUPS</span><span>BLOOM-017 … 025 · UI design sandbox</span><span class="spacer"></span><span class="hint">Fake data · not connected to the game · not the production UI</span></div>
+<div class="mock-ribbon" role="note"><span class="tag">CONCEPT MOCKUPS</span><span>BLOOM-017 … 026 · UI design sandbox</span><span class="spacer"></span><span class="hint">Fake data · not connected to the game · not the production UI</span></div>
 <div class="wrap">
   <h1>BLOOM <span>run-screen concepts</span></h1>
-  <div class="warn" role="note"><span aria-hidden="true" style="font-size:26px">🧪</span><span><b>VISUAL MOCKUPS ONLY</b>Nothing here runs the game. The map, regions, Biomass, coverage, trait effects, colony growth and specimen drawings are all scripted placeholders. Prices, effects and art are not proposals. Colours and fonts are placeholders too. Concepts 1–10 use emoji placeholder icons; Concepts 11–17 use a simple inline SVG placeholder icon set, which is the direction for the final UI (real icons, never emoji).</span></div>
+  <div class="warn" role="note"><span aria-hidden="true" style="font-size:26px">🧪</span><span><b>VISUAL MOCKUPS ONLY</b>Nothing here runs the game. The map, regions, Biomass, coverage, trait effects, colony growth and specimen drawings are all scripted placeholders. Prices, effects and art are not proposals. Colours and fonts are placeholders too. Concepts 1–10 use emoji placeholder icons; Concepts 11–18 use a simple inline SVG placeholder icon set, which is the direction for the final UI (real icons, never emoji).</span></div>
   <div class="rounds" role="tablist" aria-label="Concept rounds">
-    <button type="button" role="tab" id="tab-c17" aria-controls="panel-c17" aria-selected="true">Final interaction &amp; connectors · BLOOM-025<span><small>Concept 17 · Concept 16 refined</small><span class="new">NEW</span></span></button>
+    <button type="button" role="tab" id="tab-c18" aria-controls="panel-c18" aria-selected="true">Final UI lock polish · BLOOM-026<span><small>Concept 18 · Concept 17 polished</small><span class="new">NEW</span></span></button>
+    <button type="button" role="tab" id="tab-c17" aria-controls="panel-c17" aria-selected="false" tabindex="-1">Final interaction &amp; connectors · BLOOM-025<small>Concept 17 · Concept 16 refined</small></button>
     <button type="button" role="tab" id="tab-c16" aria-controls="panel-c16" aria-selected="false" tabindex="-1">Presentation refinement · BLOOM-024<small>Concept 16 · Concept 15 refined</small></button>
     <button type="button" role="tab" id="tab-c15" aria-controls="panel-c15" aria-selected="false" tabindex="-1">Rooms convergence · BLOOM-023<small>Concept 15 · one combined prototype</small></button>
     <button type="button" role="tab" id="tab-rooms" aria-controls="panel-rooms" aria-selected="false" tabindex="-1">Decision rooms · BLOOM-022<small>Concepts 11–14 · Planet View + paused rooms</small></button>
@@ -135,7 +137,89 @@
   </div>
 
 
-  <section class="round" id="panel-c17" role="tabpanel" aria-labelledby="tab-c17">
+  <section class="round" id="panel-c18" role="tabpanel" aria-labelledby="tab-c18">
+    <p class="lede">A <b>final visual polish of Concept 17</b>, not an architecture change. The owner has made the remaining visual decisions for the current BLOOM UI direction; <b>Concept 18 is Concept 17 with those decisions applied</b>: Organic is the plant → tree link, the Organic tendrils are much thicker, Terraform's atmosphere is diffuse, Soil arrows end just off the surface, the Planet View region banner uses content-sized buttons, and the four condition boxes have their own category identity. Everything else in Concept 17 is kept as it was.</p>
+    <div class="owner" id="rules26">
+      <h2>What this pass changes (authoritative owner decisions)</h2>
+      <div class="cols">
+        <div>
+          <h3 class="keep">✓ Settled in Concept 18</h3>
+          <ul>
+            <li><b>Organic is the plant link.</b> Adapt and Spread join the plant to the tree with Organic tendrils only. The review-only Bridge / Docked / Organic switch is gone; Concept 17 keeps the comparison.</li>
+            <li><b>Much thicker tendrils.</b> About 1.6–1.8× Concept 17, idle and lit, at every window size. The lit tendril turns the category's dark shade over a wide glow. A pale vein keeps them soft, the gap between the cards is a little wider so they never touch, and anchor → plate → tendril → port → category still reads as one chain.</li>
+            <li><b>Diffuse atmosphere.</b> One soft gradient layer around the globe. It is clear at the globe's edge, strongest where the Atmosphere rings sit, and fades out into space. It has no hard ring edge and never covers the globe face.</li>
+            <li><b>Soil arrows</b> end about 3 px off the visible surface, never touching it. The arrowheads have blunt, rounded noses and a thin pale outline.</li>
+            <li><b>Region banner actions</b> are content-sized buttons: <b>Inspect region</b>, then the <b>Would help</b> suggestions (name + which room). They wrap at narrow widths and never stretch across the row.</li>
+            <li><b>Condition boxes</b> Temperature (orange), Water (blue), Soil (brown) and Hazard (purple) each keep their category in every state: accent bar, tinted icon, coloured label, faint wash. Status is a separate badge with an icon and a word. A Soggy Water box is still the blue Water box. Region Inspect's condition rows match.</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="drop">✕ Unchanged, by instruction</h3>
+          <ul>
+            <li>All accepted Concept 17 behaviour: full-width Planet View, banner selection rules, the Map View popover, hover previews / click commits, region-pill hover on the mini-map, PAUSED / Resume, content-sized "Would help" buttons, rooms floating over the blurred world, content-height side boxes, the Adapt / Spread room family, category colours, the Soil-left / Atmosphere-right banks, the exclusion zone, Spread padding, hover reset, no emoji.</li>
+            <li>No sphere / projection work. The Terraform globe stays the stylised mockup; a separate PMO owns the real 2D-map → 3D-sphere architecture.</li>
+            <li>Fake data, scripted purchases, fake clock; later-tier nodes are placeholders.</li>
+            <li>The production UI rebuild is <b>not started</b> by this round.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="grid">
+      <article class="concept rec c15card">
+        <span class="badge">FINAL UI LOCK POLISH</span>
+        <h2><small>Concept 18</small>Final UI Lock Polish</h2>
+        <div>
+          <div class="wf" aria-hidden="true">
+            <i class="hud" style="left:20%; right:22%; top:6px; height:22px">STATUS · EXPLORE · MAP VIEW ▾ · CHANGE</i>
+            <i class="hud" style="right:6px; width:40px; top:6px; height:22px">II · 1×</i>
+            <i class="map" style="left:0; right:0; top:34px; bottom:0; border-radius:0">FULL-WIDTH PLANET VIEW · unchanged</i>
+            <i class="bn" style="left:14%; right:14%; bottom:8px; height:58px; font-size:7.5px; line-height:1.5">⊗ REGION · TEMP | WATER | SOIL | HAZARD (category boxes + status badge)<br>[Inspect region] WOULD HELP [Adapt] [Terraform] · content-sized</i>
+          </div>
+          <p><b>Planet View</b>: the banner's condition boxes and action buttons are polished. Everything else is as in Concept 17.</p>
+          <div class="wf" aria-hidden="true" style="margin-top:12px">
+            <i class="dimmap" style="left:0; right:0; top:0; bottom:0; border-radius:12px">WORLD BEHIND · blurred + dimmed</i>
+            <i class="win" style="left:8px; right:8px; top:6px; height:22px; font-size:8px">PLANET · ROOM TITLE · ROOMS · PAUSED · RESUME</i>
+            <i class="win" style="left:8px; width:22%; top:34px; height:64px; font-size:8px">PLANT</i>
+            <i class="win" style="left:8px; width:22%; top:104px; height:52px; font-size:8px">HOVER INFO</i>
+            <i class="win" style="left:calc(22% + 34px); right:calc(30% + 18px); top:34px; bottom:8px; font-size:9px">TREE · thick Organic tendrils<br>or GLOBE · diffuse atmosphere</i>
+            <i class="win" style="right:8px; width:30%; top:34px; height:78px; font-size:8px">MINI-MAP</i>
+            <i class="win" style="right:8px; width:30%; top:118px; height:40px; font-size:8px">REGION EFFECT</i>
+          </div>
+        </div>
+        <div>
+          <ul class="states six">
+            <li><b>Adapt · Organic</b>Thick colour-coded tendrils from plant parts to categories; the lit one is unmistakable.</li>
+            <li><b>Spread · Organic</b>The same tendrils, the same compact card with balanced padding.</li>
+            <li><b>Terraform · atmosphere</b>One soft gradient layer: clear at the face, strongest at the rings, gone before the clearance ends.</li>
+            <li><b>Terraform · Soil arrows</b>Blunt rounded noses about 3 px off the surface.</li>
+            <li><b>Region banner</b>Content-sized Inspect / Would help buttons that wrap.</li>
+            <li><b>Condition boxes</b>Four category identities, with status as a separate badge (icon + word).</li>
+          </ul>
+          <h3>Try this</h3>
+          <ul>
+            <li>Click <b>Frost Ridge</b>: in the banner, Temperature stays orange with a red <b>Blocked</b> badge, and the green / blue suggestions are only as wide as their names. Click <b>Marsh Low</b>: its <b>Soggy</b> Water box is still blue, with an amber badge.</li>
+            <li>Open <b>Adapt</b> and hover <b>Cold Tolerance</b>: the thick Stem tendril lights dark orange with a glow, all the way to Temperature.</li>
+            <li>Open <b>Terraform</b>: the atmosphere fades softly on both sides; the brown Soil arrows stop just off the planet's surface.</li>
+            <li>Make the window narrow: the banner's buttons wrap onto a second row instead of stretching or squeezing.</li>
+          </ul>
+          <a class="btn plant open" href="concept-18-final-ui-lock.html">Open Concept 18 →</a>
+        </div>
+      </article>
+    </div>
+    <section class="order" aria-labelledby="ord10T">
+      <h2 id="ord10T">What the owner may still want to confirm</h2>
+      <ul class="qs">
+        <li>Tendril weight: about 9 px idle / 14 px lit at 1280 (8.5 / 12.5 px at 1024). Right, or heavier still?</li>
+        <li>The Organic gutter is 0.8 em wider than in Concept 17, so the thick tendrils never touch. The tree pays it back from its tier gaps and right margin (tier-1 cards 171 px vs 173 px at 1280). The few card titles with a word too long for their card are scaled down slightly (Waterborne about 84 %). Accept?</li>
+        <li>Atmosphere strength: peak opacity 0.5. Stronger or fainter?</li>
+        <li>Soil arrow gap: about 3 px from the surface, with a thin pale outline. Accept?</li>
+        <li>Banner condition boxes: an OK status shows only a green check (the word "OK" is there for screen readers); Strained / Blocked show icon + word. Should OK show its word too?</li>
+        <li>With those answers, Concept 18 can serve as the visual basis for the production run-screen specification. The production rebuild is <b>not</b> started by this round.</li>
+      </ul>
+    </section>
+  </section>
+  <section class="round" id="panel-c17" role="tabpanel" aria-labelledby="tab-c17" hidden>
+    <p class="hist"><span aria-hidden="true">📜</span><span><b>Design history (BLOOM-025).</b> The owner chose <b>Organic</b> for the plant link and asked for a final visual polish. That is Concept 18 in the Final UI lock polish tab, recorded in <code>docs/UI_CONCEPT_REVIEW_v10.md</code>. Concept 17, with its Bridge / Docked / Organic comparison switch, is left here unchanged for reference.</span></p>
     <p class="lede">A <b>final interaction and connector refinement of Concept 16</b>, not a new architecture round. Concept 16 is the accepted convergence direction; before the production UI specification is written the owner listed the last presentation and interaction issues to settle. <b>Concept 17 is Concept 16 with those settled</b>, plus a review-only switch that puts three treatments of the plant → tree connection on the same page so they can be compared directly. Nothing about the architecture, the Planet View rules, the room set, the scale system or the floating-room presentation changes.</p>
     <div class="owner" id="rules25">
       <h2>What this pass changes (authoritative owner directions)</h2>
@@ -920,26 +1004,26 @@
     </ul>
   </section>
   </section>
-  <footer>Review notes for PMO / owner: <code>docs/UI_CONCEPT_REVIEW_v9.md</code> (Final interaction &amp; connectors, Concept 17), <code>docs/UI_CONCEPT_REVIEW_v8.md</code> (Presentation refinement, Concept 16), <code>docs/UI_CONCEPT_REVIEW_v7.md</code> (Rooms convergence, Concept 15), <code>docs/UI_CONCEPT_REVIEW_v6.md</code> (Decision rooms, Concepts 11–14), <code>docs/UI_CONCEPT_REVIEW_v5.md</code> (Concept 10 top-banner tool access), <code>docs/UI_CONCEPT_REVIEW_v4.md</code> (Refinement), <code>docs/UI_CONCEPT_REVIEW_v3.md</code> (Convergence), <code>docs/UI_CONCEPT_REVIEW_v2.md</code> (Round 2) and <code>docs/UI_CONCEPT_REVIEW_v1.md</code> (Round 1). The actual game is at the repo root (<a href="../../index.html">index.html</a>) and is not part of this sandbox.</footer>
+  <footer>Review notes for PMO / owner: <code>docs/UI_CONCEPT_REVIEW_v10.md</code> (Final UI lock polish, Concept 18), <code>docs/UI_CONCEPT_REVIEW_v9.md</code> (Final interaction &amp; connectors, Concept 17), <code>docs/UI_CONCEPT_REVIEW_v8.md</code> (Presentation refinement, Concept 16), <code>docs/UI_CONCEPT_REVIEW_v7.md</code> (Rooms convergence, Concept 15), <code>docs/UI_CONCEPT_REVIEW_v6.md</code> (Decision rooms, Concepts 11–14), <code>docs/UI_CONCEPT_REVIEW_v5.md</code> (Concept 10 top-banner tool access), <code>docs/UI_CONCEPT_REVIEW_v4.md</code> (Refinement), <code>docs/UI_CONCEPT_REVIEW_v3.md</code> (Convergence), <code>docs/UI_CONCEPT_REVIEW_v2.md</code> (Round 2) and <code>docs/UI_CONCEPT_REVIEW_v1.md</code> (Round 1). The actual game is at the repo root (<a href="../../index.html">index.html</a>) and is not part of this sandbox.</footer>
 </div>
 <script>
-/* Round switcher. Defaults to Final interaction & connectors (BLOOM-025). #c17 / #c16 / #c15 / #rooms / #refinement / #convergence / #round2 / #round1 in the URL
+/* Round switcher. Defaults to Final UI lock polish (BLOOM-026). #c18 / #c17 / #c16 / #c15 / #rooms / #refinement / #convergence / #round2 / #round1 in the URL
    wins, then the last tab viewed on this device. Each new round uses a new storage key so an older remembered tab does not hide the
-   newest one (BLOOM-018 bloomMockRound → BLOOM-019 bloomMockTab → BLOOM-020 bloomMockTab20 → BLOOM-022 bloomMockTab22 → BLOOM-023 bloomMockTab23 → BLOOM-024 bloomMockTab24 → BLOOM-025 bloomMockTab25). */
+   newest one (BLOOM-018 bloomMockRound → BLOOM-019 bloomMockTab → BLOOM-020 bloomMockTab20 → BLOOM-022 bloomMockTab22 → BLOOM-023 bloomMockTab23 → BLOOM-024 bloomMockTab24 → BLOOM-025 bloomMockTab25 → BLOOM-026 bloomMockTab26). */
 (function(){
-  const IDS = ['c17', 'c16', 'c15', 'rooms', 'refinement', 'convergence', 'round2', 'round1'];
+  const IDS = ['c18', 'c17', 'c16', 'c15', 'rooms', 'refinement', 'convergence', 'round2', 'round1'];
   const tabs = IDS.map(id => document.getElementById('tab-' + id));
   function show(id, push){
     tabs.forEach(t => { const on = t.id === 'tab-' + id; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-    try { localStorage.setItem('bloomMockTab25', id); } catch (e) {}
+    try { localStorage.setItem('bloomMockTab26', id); } catch (e) {}
     if (push) history.replaceState(null, '', '#' + id);
   }
   tabs.forEach((t, k) => {
     t.addEventListener('click', () => show(t.id.slice(4), true));
     t.addEventListener('keydown', e => { const d = { ArrowRight:1, ArrowLeft:-1 }[e.key]; if (d) { e.preventDefault(); const n = tabs[(k + d + tabs.length) % tabs.length]; show(n.id.slice(4), true); n.focus(); } });
   });
-  let start = 'c17';
-  try { const m = localStorage.getItem('bloomMockTab25'); if (IDS.includes(m)) start = m; } catch (e) {}
+  let start = 'c18';
+  try { const m = localStorage.getItem('bloomMockTab26'); if (IDS.includes(m)) start = m; } catch (e) {}
   const h = location.hash.slice(1); if (IDS.includes(h)) start = h;
   show(start, false);
   window.addEventListener('hashchange', () => { const x = location.hash.slice(1); if (IDS.includes(x)) show(x, false); });
