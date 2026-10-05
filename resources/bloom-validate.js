@@ -17,6 +17,10 @@
 // pacing } } (an archetype's validation policy): BLOOM.findStrategies must prove `minStrategies` materially
 // distinct broad strategies that win with margin (layer 7) AND meet the pacing time bands (layer 8). Only
 // PASS passes; a capped search is an INCONCLUSIVE error, never a pass.
+// Topology (BLOOM-027A): the planet's `topology` ({ wrapX, wrapY }, absent = rectangle) is validated and then every geographic
+// judgement — contiguity, landmasses, neighbours, reachability, crossings — is made under it through the shared BLOOM.geo
+// helpers. On a cylinder a section on both sides of the seam is one piece when its tiles connect across it, and two different
+// sections touching only across the seam are real neighbours. Seam contact never merges ids. Rectangular validation is unchanged.
 (function (root) {
   "use strict";
   const BLOOM = root.BLOOM;
@@ -46,6 +50,8 @@
     });
     const g = planet.globalClimate || {};
     if (!Number.isFinite(g.temperature) || !Number.isFinite(g.moisture)) err("globalClimate: temperature/moisture must be finite numbers");
+    const topo = BLOOM.geo.normalizeTopology(planet.topology);
+    if (typeof topo === "string") err(topo); else if (topo.wrapX && !(W >= 3)) err("topology: wrapX needs gridWidth ≥ 3");
     const flagged = ALL.filter(s => s && s.isOrigin).map(s => s.id);
     if (flagged.length > 1 || (flagged.length === 1 && flagged[0] !== planet.origin)) err(`origin: isOrigin flags (${flagged.join(",")}) disagree with origin "${planet.origin}"`);
     if (errors.length) return done();
@@ -60,11 +66,13 @@
     if (bad) { err(`tiles: ${bad} tiles are owned by no valid land section`); return done(); }
     stats.width = W; stats.height = H; stats.tiles = N; stats.landTiles = land; stats.waterTiles = N - land;
     stats.waterPct = Math.round((N - land) / N * 1000) / 10; stats.sections = SC; stats.impassableSections = layout.impassable.length;
+    // (reported only for planets that DECLARE a topology, so every legacy planet's validator record stays byte-identical)
+    if (planet.topology !== undefined) stats.topology = { wrapX: layout.topology.wrapX, wrapY: layout.topology.wrapY };
     if (!SC) { err("sections: no land sections"); return done(); }
     if (land + stats.waterTiles !== N) err("denominator: land + water tiles do not add up to the grid");
 
     // --- sections: non-empty, contiguous, declared area (procedural = exact)
-    const pieces = sectionPieces(tm, W, H, SC);
+    const pieces = sectionPieces(tm, W, H, SC, topo);
     stats.brokenSections = 0;
     SEC.forEach((s, i) => {
       if (!area[i]) { err(`${s.id}: land section has no tiles`); stats.brokenSections++; }
@@ -74,7 +82,7 @@
     });
 
     // --- landmasses (4-connected land), origin
-    const lm = components(Array.from(tm, v => v >= 0 ? 1 : 0), W, H);
+    const lm = components(Array.from(tm, v => v >= 0 ? 1 : 0), W, H, topo);
     const secMass = SEC.map((_, i) => { for (let t = 0; t < N; t++) if (tm[t] === i) return lm.id[t]; return -1; });
     stats.landmasses = lm.sizes.length;
     const oi = SEC.findIndex(s => s.id === planet.origin);
@@ -87,7 +95,7 @@
       err(`${s.id}: landmass tag ${s.landmass} disagrees with the geography`); });
 
     // --- adjacency: geography is the truth; declared neighbours must be real, symmetric, land
-    const geo = sectionAdjacency(tm, W, H, SC), idx = Object.fromEntries(SEC.map((s, i) => [s.id, i]));
+    const geo = sectionAdjacency(tm, W, H, SC, topo), idx = Object.fromEntries(SEC.map((s, i) => [s.id, i]));
     for (let a = 0; a < SC; a++) for (const b of geo[a]) if (!geo[b].includes(a)) err(`adjacency: geographic adjacency not symmetric (${SEC[a].id}/${SEC[b].id})`);
     let declared = 0, matched = 0; const missing = [];
     SEC.forEach((s, a) => {
@@ -110,7 +118,7 @@
     stats.reachableLandShare = Math.round(stats.originLandmassTiles / land * 1000) / 1000;
     const crossTrait = (opts.traits || []).find(t => t.effect && t.effect.type === "crossing") || null;
     const gap = crossTrait ? ((config.crossing && config.crossing.maxGap) || 0) : 0;
-    const cr = waterCrossings(tm, W, H, gap), massesReached = reachableLandmasses(secMass[oi], cr.links);
+    const cr = waterCrossings(tm, W, H, gap, topo), massesReached = reachableLandmasses(secMass[oi], cr.links);
     const reachSet = (ok) => { const secs = SEC.map((s, i) => ok(i) ? null : s.id).filter(Boolean);
       const masses = [...new Set(SEC.map((_, i) => secMass[i]).filter(m => !ok(SEC.findIndex((_, j) => secMass[j] === m))))];
       const tiles = SEC.reduce((a, _, i) => a + (ok(i) ? area[i] : 0), 0);

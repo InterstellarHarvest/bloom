@@ -120,7 +120,7 @@
 
     // section-level crossing links from the same geography the engine uses
     const xl = Array.from({ length: M.SC }, () => new Set());
-    if (cross.length) for (const [a, b] of waterCrossings(M.TILEMAP, M.W, M.H, (config.crossing || {}).maxGap || 0).pairs)
+    if (cross.length) for (const [a, b] of waterCrossings(M.TILEMAP, M.W, M.H, (config.crossing || {}).maxGap || 0, M.topology).pairs)
       xl[M.TILEMAP[a]].add(M.TILEMAP[b]);
 
     // ---- static estimate for a terminal state {items: [traitId...]}
