@@ -31,22 +31,28 @@ const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"} 
 const t0 = Date.now();
 
 // ---- fixtures: public seeds, and (seed, attempt) for natural rejected candidates, all from the BLOOM-011 sweeps
-const FIX = { positive: 22, second: 12,
-  negLayer4: [46, 22],     // natural: the geothermal origin pocket is walled in by toxic volcanic ground and deep ice (best 13.4%);
+const FIX = { positive: 11, second: 4,
+  // BLOOM-027B: positive = Frozen 11 (attempt 1, Pallas-609: geothermal refuge origin, 60% cold-blocked, Cold-Adapt vs Warm strategies holding different
+  // land — the warm geothermal refuges; seed 22's new world accepts at attempt 0 and its strategies hold the same land); second = 4 (attempt 1; seed 12 now
+  // accepts at 0). Negatives re-picked by role from per-attempt scans of seeds 1–150 × attempts 0–23 (docs/evidence/bloom-027b/fixture-changes.md §4).
+  negLayer4: [67, 17],     // natural: no legal build holds 70% (best 2.1%); production accepts seed 67 at attempt 2, so it never reaches this attempt (was 46/22;
                            //   production accepts seed 46's attempt 0, so it never reaches this attempt. Layer 4 is rare on Frozen:
                            //   none in attempts 0–3 of seeds 1–400 (1,600 attempts); 3 in attempts 4–23 of seeds 1–150 (46/22,
                            //   83/17, 130/14), all deep retries production never reaches
-  negLayer7: [171, 0],     // not frozen enough: 77% of the land is open at the start, so the win needs no upgrade at all — every
+  negLayer7: [64, 8],      // not frozen enough: most of the land is open at the start, so the win needs no upgrade at all — every (was 171/0; production
+                           //   accepts seed 64 at attempt 3, so this attempt is never the production world)
                            //   build shares one empty core (one broad strategy; Temperature is not required); production skips it
-  negLayer8: [22, 0],      // two broad strategies, both win too fast; production skips it (→ the positive fixture is attempt 1)
-  negOrigin: [8, 0] };     // the generator's origin pick is too cold to be a genuine refuge (Temperature-limited)
+  negLayer8: [30, 0],      // two broad strategies, both win too fast; production skips it (BLOOM-027B: was 22/0, now accepted at 0)
+  negOrigin: [13, 0] };    // the generator's origin pick is too cold to be a genuine refuge (Temperature-limited; BLOOM-027B: was 8/0, now a layer-8 case)
 const SWEEP = Array.from({ length: 40 }, (_, i) => i + 1);
 // sweep quality thresholds (item 29) — the archetype's bar, set from the BLOOM-011 sweep with headroom
 const Q = { minAccepted: 34, maxWater: 25, maxLandmasses: 3, minOriginShare: 0.7, minSingleLandmass: 0.75, minColdBlockedMean: 0.5, minColdBlockedEach: 0.3,
   maxColdBlockedEach: 0.95, minWarmWorlds: 0.25, minOrganismWorlds: 0.5, maxMedianSeedMs: 5000, maxSeedMs: 30000 };
-// d6e9a5c (BLOOM-010) planet bodies (everything but params/archetype metadata), FNV-1a of their JSON: Ocean / Desert attempts and
-// default-generator planets must be unchanged by BLOOM-011's generator knobs at their neutral defaults
-const PIN = {"ocean_archipelago|1|0":"c3156f9b","ocean_archipelago|1|1":"c032b9b0","ocean_archipelago|1|2":"0d520ae5","ocean_archipelago|8|0":"078e9ad8","ocean_archipelago|8|1":"f3caeb83","ocean_archipelago|8|2":"42b9ba3a","ocean_archipelago|13|0":"8251bc30","ocean_archipelago|13|1":"4352092c","ocean_archipelago|13|2":"c4b9fa6a","ocean_archipelago|25|0":"fff826b9","ocean_archipelago|25|1":"a1bbca66","ocean_archipelago|25|2":"811bb6b7","ocean_archipelago|9|0":"030b6c1d","ocean_archipelago|9|1":"09e9fc57","ocean_archipelago|9|2":"238cc393","ocean_archipelago|35|0":"3e5dcdd2","ocean_archipelago|35|1":"c5955adb","ocean_archipelago|35|2":"efa60f87","desert_world|1|0":"d43b44c3","desert_world|1|1":"c4859762","desert_world|1|2":"e6311417","desert_world|8|0":"488a1d93","desert_world|8|1":"ce8bb3eb","desert_world|8|2":"1d69057d","desert_world|13|0":"0a8d22e6","desert_world|13|1":"bfd2f1fb","desert_world|13|2":"5a7d0a4a","desert_world|25|0":"ec1ce61b","desert_world|25|1":"566ea541","desert_world|25|2":"47a4f7fe","desert_world|9|0":"8f95121e","desert_world|9|1":"7dc5a30d","desert_world|9|2":"048f91e3","desert_world|35|0":"25a5d649","desert_world|35|1":"d04ede97","desert_world|35|2":"63e5587d","default|1|0":"e630fcaf","default|1|8":"5931f7bc","default|1|30":"9f74de64","default|1|60":"d887d677","default|2|0":"fb255ecb","default|2|8":"6fa32fc3","default|2|30":"84cd1540","default|2|60":"461e7ca1","default|3|0":"ab413578","default|3|8":"45d51c6f","default|3|30":"b5b4ca9e","default|3|60":"24627dde","default|7|0":"09f92d8e","default|7|8":"3be22e96","default|7|30":"cb267da5","default|7|60":"0e2bd69e","default|42|0":"63b78de7","default|42|8":"42ab27c1","default|42|30":"51de964a","default|42|60":"d803de2d"};
+// Planet bodies (everything but params/archetype metadata), FNV-1a of their JSON. Until BLOOM-027B these were the d6e9a5c (BLOOM-010)
+// values, proving BLOOM-011's generator knobs change nothing at their neutral defaults. BLOOM-027B's cylindrical generator changed every
+// world on purpose, so they are re-pinned to the 027B generator (docs/evidence/bloom-027b/repin.json); the knob-neutrality role is kept
+// by the same comparison against this generator, and any later intended generator change must re-pin these and say so
+const PIN = {"ocean_archipelago|1|0":"1e5a5387","ocean_archipelago|1|1":"12d20f18","ocean_archipelago|1|2":"9ec74812","ocean_archipelago|8|0":"85d341e7","ocean_archipelago|8|1":"05176096","ocean_archipelago|8|2":"0cbc05c8","ocean_archipelago|13|0":"314dfe63","ocean_archipelago|13|1":"b5aaad2c","ocean_archipelago|13|2":"418ed4c1","ocean_archipelago|25|0":"99017ef9","ocean_archipelago|25|1":"e1c78384","ocean_archipelago|25|2":"f0a61ad0","ocean_archipelago|9|0":"f1bf999e","ocean_archipelago|9|1":"fabf3394","ocean_archipelago|9|2":"b7c36f35","ocean_archipelago|35|0":"dbc4f986","ocean_archipelago|35|1":"1ddab33e","ocean_archipelago|35|2":"02f0ade0","desert_world|1|0":"1234d515","desert_world|1|1":"75fa498f","desert_world|1|2":"6c7d80b4","desert_world|8|0":"d3df3115","desert_world|8|1":"f9cf62e8","desert_world|8|2":"8acadde8","desert_world|13|0":"e6f6bdb9","desert_world|13|1":"cf2332b6","desert_world|13|2":"1b9c4e1b","desert_world|25|0":"6bb15087","desert_world|25|1":"0e2c3c1b","desert_world|25|2":"1d4f29b0","desert_world|9|0":"83d60a64","desert_world|9|1":"7ab8d98d","desert_world|9|2":"9e8cdd32","desert_world|35|0":"e4ff041e","desert_world|35|1":"dac49453","desert_world|35|2":"33a87149","default|1|0":"be4c4519","default|1|8":"089e64a8","default|1|30":"91daf3f5","default|1|60":"7c38b318","default|2|0":"d4e9c07d","default|2|8":"b72e81e8","default|2|30":"0a0bdb86","default|2|60":"990d352a","default|3|0":"1d7627d1","default|3|8":"4ee71033","default|3|30":"52271657","default|3|60":"204fe308","default|7|0":"d9b0872f","default|7|8":"d2fafae1","default|7|30":"48808a85","default|7|60":"bbff9607","default|42|0":"d4e78cb9","default|42|8":"0da24e05","default|42|30":"d7a22763","default|42|60":"e66707d7"};
 const effT = p => p.sections.map(s => p.globalClimate.temperature + s.local.tempOffset);
 const areaMean = (p, xs) => xs.reduce((a, x, i) => a + x * p.sections[i].area, 0) / p.sections.reduce((a, s) => a + s.area, 0);
 const probeOf = p => BLOOM.createSim(p, config, traits, { rng: () => 0.5 });
@@ -78,7 +84,7 @@ for (const [name, mut] of [["an unknown climate knob", a => a.climate.geothermal
   const diff = Object.keys(PIN).filter(k => PIN[k] !== now[k]);
   const g = BLOOM.generatePlanet({ seed: 5, waterPct: 20, sections: 14 });
   check(!diff.length && g.sections.every(s => !("geothermal" in s)),
-    "6 · existing worlds unchanged under the neutral defaults: 56 Ocean/Desert attempts and default-generator planets match d6e9a5c bit-for-bit (tiles, sections, names, origin)",
+    "6 · existing worlds unchanged under the neutral defaults: 56 Ocean/Desert attempts and default-generator planets match the BLOOM-027B generator pins bit-for-bit (tiles, sections, names, origin; were d6e9a5c until the cylindrical generator)",
     diff.length ? `changed: ${diff.join(", ")}` : `${Object.keys(PIN).length} planet bodies identical · no geothermal tags unless switched on`); }
 
 console.log("\n# A3–5 · deterministic generate/validate/retry");
@@ -189,7 +195,9 @@ check(R.strategies.every(s => s.tokens.some(t => t.startsWith("Temperature:cold=
   const heldOnlyOrg = org && tfm ? org.held.filter(id => !tfm.held.includes(id)) : [], shift = tfm ? tfm.minimalBuild.filter(id => id === "warm").length * traits.find(t => t.id === "warm").effect.delta : 0;
   const s2 = probeOf(pos); for (const id of tfm ? tfm.minimalBuild : []) { s2.biomass = 1e9; s2.buy(id); }
   const why = heldOnlyOrg.map(id => { const i = PM.SIDX[id], e = s2.evaluate(i); return { name: secName(id), geo: !!PM.SEC[i].geothermal, word: e.cats.Temperature.word, before: pev[i].effT, after: e.effT }; });
-  check(heldOnlyOrg.length >= 1 && why.every(w => w.word === "hot" || w.word === "scorching") && why.some(w => w.geo) && org.heldShare > tfm.heldShare,
+  // (BLOOM-027B: the claim is WHICH land each strategy keeps — the warm geothermal refuges the warming scorches — not how much in total; on Frozen 11 the
+  // Terraform strategy holds more land overall while giving those refuges up, so the former "org holds more" clause is dropped)
+  check(heldOnlyOrg.length >= 1 && why.every(w => w.word === "hot" || w.word === "scorching") && why.some(w => w.geo),
     "20 · the strategies hold different land: warming the sky pushes warm geothermal refuges the Cold-Tolerance strategy keeps beyond the plant's heat limit",
     `Warm +${shift} °C gives up ${why.map(w => `${w.name}${w.geo ? " (geothermal)" : ""} ${w.before} → ${w.after} °C, ${w.word}`).join("; ")} · held ${pct(org.heldShare)} vs ${pct(tfm.heldShare)} · costs ${org.minimalBuild.map(id => id).join("+")} vs ${tfm.minimalBuild.join("+")}`); }
 { const st = BLOOM.findStrategies(pos, config, traits, { ...POLICY, excludeTraits: [WATERBORNE.id] });
@@ -223,11 +231,12 @@ const skipped = ([s, k], re) => { const g = BLOOM.generateFromArchetype(FW, s, {
     `${v.errors[0]} · lethal: ${lethal.join(", ")} · natural but off the production path (seed ${FIX.negLayer4[0]} is accepted at attempt ${prodAt}); layer 4 is rare on Frozen: 0 of 1,600 early attempts, 3 deep retries`); }
 { const p = at(FIX.negLayer7), r = BLOOM.findStrategies(p, config, traits, POLICY), k = skipped(FIX.negLayer7, /^layer 7/), sim = probeOf(p), M = sim.map;
   const open = M.SEC.reduce((a, _, i) => a + (sim.evaluate(i).fitness > G ? M.AREA[i] : 0), 0) / M.LAND;
-  check(r.layer === 7 && r.status === "FAIL" && r.first.witness && r.first.witness.ok && r.classes.length === 1 && r.classes[0].signature === "" && open >= 0.7 && k !== null,
+  const prodAt = BLOOM.generateFromArchetype(FW, FIX.negLayer7[0], { config, traits }).archetype.attempt; // (BLOOM-027B: the natural case now sits behind the accepted attempt — production never takes it either way)
+  check(r.layer === 7 && r.status === "FAIL" && r.first.witness && r.first.witness.ok && r.classes.length === 1 && r.classes[0].signature === "" && open >= 0.7 && (k !== null || prodAt !== FIX.negLayer7[1]),
     `26 · layer 7 (one broad solution; Temperature not actually required): seed ${FIX.negLayer7[0]} attempt ${FIX.negLayer7[1]} is ${pct(open)} open at the start, so every build shares one empty core — a static proof`,
-    `${r.reason.slice(0, 120)} · production takes attempt ${k}`); }
+    `${r.reason.slice(0, 120)} · production takes attempt ${k ?? prodAt}`); }
 { const p = at(FIX.negLayer8), r = BLOOM.findStrategies(p, config, traits, POLICY), k = skipped(FIX.negLayer8, /^layer 8/);
-  check(r.layer7.status === "PASS" && r.layer === 8 && r.status === "FAIL" && r.slow.every(w => w.pacingCheck.reasons.some(x => /too fast/.test(x))) && k === pos.archetype.attempt,
+  check(r.layer7.status === "PASS" && r.layer === 8 && r.status === "FAIL" && r.slow.every(w => w.pacingCheck.reasons.some(x => /too fast/.test(x))) && k !== null, // (BLOOM-027B: the too-fast attempt is no longer the positive fixture's own attempt 0; production still skips it)
     `27 · layer 8 (pacing): seed ${FIX.negLayer8[0]} attempt ${FIX.negLayer8[1]} has 2 broad strategies, both win too fast (too little cold resistance)`, `${r.reason.slice(0, 170)} · production takes attempt ${k}`); }
 { const p = at(FIX.negOrigin), sim = probeOf(p), e = sim.evaluate(sim.map.ORIGIN), k = skipped(FIX.negOrigin, /not a refuge/), s = BLOOM.validatePlanet(p, config, { traits });
   check(s.ok && rawFit(e) < FW.geography.minOriginFitness && e.fitness >= config.categories.originFitnessFloor && e.limitKey === "Temperature" && k !== null,
@@ -243,8 +252,10 @@ const skipped = ([s, k], re) => { const g = BLOOM.generateFromArchetype(FW, s, {
 // ---- A30–32 · colony development on the frozen world, unchanged mechanics
 console.log("\n# A30–32 · colony development on Frozen World (BLOOM-009 system, unchanged)");
 { const mk = () => BLOOM.createSim(pos, config, traits, { rng: BLOOM.gen.mulberry32(7) });
-  const s1 = mk(), O = s1.map.ORIGIN; s1.biomass = 0; for (let t = 0; t < 1500; t++) s1.tick();
-  const liv = s1.livingCountBySection(), other = s1.map.SEC.findIndex((_, i) => i !== O && liv[i] > 0);
+  // (BLOOM-027B: on Frozen 11 nothing but the origin is green under the starting plant, so the second refuge colony is reached after the world's own strategy A
+  // core is bought — the claim, two colonies holding different focuses at once, is the same)
+  const s1 = mk(), O = s1.map.ORIGIN; s1.biomass = 1e9; for (const id of pos.archetype.strategies.list[0].purchases.map(x => x[0])) s1.buy(id); s1.biomass = 0; let liv, other = -1;
+  for (let t = 0; t < 4000 && other < 0; t++) { s1.tick(); if (t >= 1499 && t % 100 === 99) { liv = s1.livingCountBySection(); other = s1.map.SEC.findIndex((_, i) => i !== O && liv[i] > 0); } }
   check(other >= 0 && s1.setColonyFocus(O, "roots") && s1.setColonyFocus(other, "leaves") && s1.colonies.focus.filter(f => f !== "balanced").length === 2,
     "30 · per-region focus works on a frozen world: two refuge colonies hold different focuses at once, the rest stay Balanced", `${secName(s1.map.SEC[O].id)} Roots · ${secName(s1.map.SEC[other].id)} Leaves`);
   const c = mk(); c.biomass = 60; const refused = !c.buySpecialization(c.map.ORIGIN, "rootNetwork"); c.biomass = 200; const bought = c.buySpecialization(c.map.ORIGIN, "rootNetwork");
@@ -275,15 +286,15 @@ console.log("\n# A30–32 · colony development on Frozen World (BLOOM-009 syste
 console.log("\n# A33–36 · First Bloom, Ocean Archipelago and Desert World unchanged; Desert human gate recorded");
 { const fb = BLOOM_DATA.planets.first_bloom, v = BLOOM.validatePlanet(fb, config, { traits, winnability: true });
   check(v.ok && !probeOf(fb).offered(WATERBORNE), "33 · First Bloom remains valid (layers 1–6 witness) and its shop unchanged", `witness margin at ${v.stats.witness.witness.marginSeconds} s`); }
-const OA_ID = { 13: { attempt: 6, name: "Eos-227", id: "proc_2316985227" }, 8: { attempt: 1, name: "Coriol-220", id: "proc_522844220" } };
-for (const s of [13, 8]) { const g = BLOOM.generateFromArchetype(OA, s, { config, traits }), a = g.archetype;
+const OA_ID = { 28: { attempt: 8, name: "Borea-495", id: "proc_580988495" }, 8: { attempt: 1, name: "Coriol-220", id: "proc_522844220" } }; // (BLOOM-027B: Ocean 28 is the shared Ocean primary; was 13 / Eos-227)
+for (const s of Object.keys(OA_ID).map(Number)) { const g = BLOOM.generateFromArchetype(OA, s, { config, traits }), a = g.archetype;
   check(a.strategies.found >= 2 && a.landmasses >= 3 && a.attempt === OA_ID[s].attempt && g.name === OA_ID[s].name && g.id === OA_ID[s].id,
     `34 · Ocean Archipelago seed ${s} still passes layers 1–8 with the same identity`, `attempt ${a.attempt} · ${g.name} · ${a.strategies.list.map(x => `[${x.signature}]`).join(" ")}`); }
-{ let e = null; try { BLOOM.generateFromArchetype(OA, 35, { config, traits }); } catch (x) { e = x; }
-  check(e && e.attempts.length === OA.generation.maxAttempts, "34 · the known Ocean failure (seed 35) still fails explicitly after 24 attempts"); }
-{ const g = BLOOM.generateFromArchetype(DW, 25, { config, traits }), a = g.archetype;
-  check(a.attempt === 0 && g.name === "Umbra-584" && J(a.strategies.list.map(x => x.signature)) === J(["Water:dry=Adapt(2)", "Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)"]),
-    "35 · Desert World fixture seed 25 is unchanged: attempt 0, Umbra-584, the same two strategies", a.strategies.list.map(x => `[${x.signature}]`).join(" vs ")); }
+{ let e = null; try { BLOOM.generateFromArchetype(OA, 114, { config, traits }); } catch (x) { e = x; }
+  check(e && e.attempts.length === OA.generation.maxAttempts, "34 · the known Ocean failure (seed 114; was 35 before BLOOM-027B) still fails explicitly after 24 attempts"); }
+{ const g = BLOOM.generateFromArchetype(DW, 17, { config, traits }), a = g.archetype;
+  check(a.attempt === 0 && g.name === "Ymir-961" && J(a.strategies.list.map(x => x.signature)) === J(["Water:dry=Adapt(1)+Terraform(+8)", "Defense:salt=Adapt(1) · Water:dry=Adapt(1)"]),
+    "35 · Desert World fixture seed 17 is unchanged: attempt 0, Ymir-961, the same two strategies (BLOOM-027B fixture; was seed 25 Umbra-584)", a.strategies.list.map(x => `[${x.signature}]`).join(" vs ")); }
 { const sheet = fs.readFileSync(path.join(ROOT, "docs/PLAYTEST_DESERT_v1.md"), "utf8"), bible = fs.readFileSync(path.join(ROOT, "GAME_BIBLE.md"), "utf8");
   check(/PASSED/.test(sheet) && /"?decent"?/.test(sheet) && /Desert/.test(bible) && /decent/.test(bible), "36 · the Desert human gate is recorded as passed, with the owner's restrained verdict (\"decent\")",
     (sheet.match(/^.*PASSED.*$/m) || [""])[0].slice(0, 160)); }
@@ -329,7 +340,7 @@ if (JSON_OUT) { fs.writeFileSync(JSON_OUT, J({ accepted: worlds.length, genFails
     fnIsReal: BLOOM.generateFromArchetype === BLOOM.archetype.generateFromArchetype, geo: BLOOM_API.geometry(), labels: SEC.map((_, i) => LABEL[i]), sky: document.getElementById("hSky").textContent }));
   check(id.fnIsReal && id.run.kind === "procedural" && id.run.archetypeId === "frozen_world" && id.run.publicSeed === FIX.positive && id.run.attempt === pos.archetype.attempt &&
     id.run.planetId === pos.id && J(id.run.validatedLayers) === "[1,2,3,4,5,6,7,8]" && id.geo.landmasses === 1 &&
-    id.runId === `Frozen World · public seed ${FIX.positive} · attempt ${pos.archetype.attempt} · ${pos.name} (${pos.id}) · layers 12345678` && /Frozen World · seed 22/.test(id.title),
+    id.runId === `Frozen World · public seed ${FIX.positive} · attempt ${pos.archetype.attempt} · ${pos.name} (${pos.id}) · layers 12345678` && new RegExp(`Frozen World · seed ${FIX.positive}`).test(id.title),
     "37 · the Frozen run launches through the generic launch path (BLOOM.generateFromArchetype in-page): same accepted attempt and planet as Node, layers 1–8, identity shown",
     `${id.runId} · HUD sky ${id.sky}`);
   check(!id.keys.includes("witness") && !id.keys.includes("strategies") && !/signature|witness|Adapt\(\d\)|Terraform\([+−-]|Temperature:cold/i.test(id.text + id.titles),
@@ -379,7 +390,8 @@ if (JSON_OUT) { fs.writeFileSync(JSON_OUT, J({ accepted: worlds.length, genFails
     return { won, i, buys }; };
   { const plan = org.purchases.map(x => x.id), r = await playPlan(p, plan);
     const fin = await p.evaluate(() => ({ cov: BLOOM_API.sim.coverage(), genome: { ...BLOOM_API.sim.genome }, sky: { ...BLOOM_API.sim.sky }, local: BLOOM_API.sim.spent.local }));
-    check(!!r.won && r.i === plan.length && fin.cov >= 0.70 && fin.genome.cold >= 2 && fin.sky.temp === pos.globalClimate.temperature && fin.local === 0,
+    // (BLOOM-027B: Frozen 11's organism-first strategy is Cold + Heat Tolerance — one Cold point — so "Cold Tolerance present" replaces the old "Cold ×2")
+    check(!!r.won && r.i === plan.length && fin.cov >= 0.70 && fin.genome.cold >= 1 && fin.sky.temp === pos.globalClimate.temperature && fin.local === 0,
       "42 · the Frozen run is won through real shop clicks with the organism-first strategy (Cold Tolerance; the sky never changes; no local upgrades needed)",
       `${r.buys.join(" → ")} · win at ${r.won ? Math.round(r.won.ticks * TICK_S) : "—"} s with ${pct(fin.cov)} of the land`);
     // (the leak scan skips the real-plant analog list: it is generic trait science shown on every world — e.g. Early
@@ -402,8 +414,10 @@ if (JSON_OUT) { fs.writeFileSync(JSON_OUT, J({ accepted: worlds.length, genFails
     const fin = await q.evaluate(() => ({ cov: BLOOM_API.sim.coverage(), sky: { ...BLOOM_API.sim.sky } }));
     const after = seen.filter(x => x.when === "after"), before = seen.filter(x => x.when === "before"), lost = after.flatMap(x => x.fx.lose);
     const tooHot = await q.evaluate(names => names.map(n => { const i = LABEL.indexOf(n), e = evaluate(i); return `${n}: ${e.cats.Temperature.word} ${e.effT}°C`; }), lost);
-    check(after.length === 2 && /^Bought Warm the Sky\. Sky −18°C → −12°C/.test(after[0].log) && /^Bought Warm the Sky\. Sky −12°C → −6°C/.test(after[1].log) && after.every(x => x.delta === "▲ +6°C") &&
-      /^−12°C/.test(after[0].sky) && /^−6°C/.test(after[1].sky) && lost.length >= 1 && before.some(b => /⚠ closes: /.test(b.log)) && tooHot.every(t => /hot|scorching/.test(t)),
+    // (BLOOM-027B: the Terraform strategy's Warm steps are counted from the plan — Frozen 11's has one, Frozen 22's had two — and each step's message / HUD is checked in turn)
+    const nWarm = plan.filter(id => id === "warm").length, T0 = pos.globalClimate.temperature, deg = v => `${v < 0 ? "−" : ""}${Math.abs(v)}°C`;
+    check(nWarm >= 1 && after.length === nWarm && after.every((x, k) => new RegExp(`^Bought Warm the Sky\\. Sky ${deg(T0 + 6 * k)} → ${deg(T0 + 6 * (k + 1))}`).test(x.log) && x.delta === `▲ +${6 * (k + 1)}°C` && x.sky.startsWith(deg(T0 + 6 * (k + 1)))) &&
+      lost.length >= 1 && before.some(b => /⚠ closes: /.test(b.log)) && tooHot.every(t => /hot|scorching/.test(t)),
       "41 · after warming, the interface shows the new sky (HUD + '▲ +6°C'), which regions opened or moved closer, and which warm refuges the hotter sky closed (previewed as '⚠ closes' before the click)",
       `HUD ${after.map(x => `${x.sky} ${x.delta}`).join(" → ")} · ${after.map(x => x.log.slice(0, 170)).join(" ‖ ")} · now: ${tooHot.join("; ")}`);
     check(!!r.won && r.i === plan.length && fin.sky.temp > pos.globalClimate.temperature, "42 · …and the warming strategy also wins through real shop clicks (Warm the Sky raises the global temperature)",
@@ -416,12 +430,12 @@ if (JSON_OUT) { fs.writeFileSync(JSON_OUT, J({ accepted: worlds.length, genFails
     check(r.run.attempt === ref.archetype.attempt && r.run.planetId === ref.id && r.n === 4 && r.shop.includes(WATERBORNE.id) === probeOf(ref).offered(WATERBORNE),
       `Frozen seed ${FIX.second} (optional playtest seed) launches: attempt ${r.run.attempt} · ${r.run.name} · Waterborne Seeds ${r.shop.includes(WATERBORNE.id) ? "offered (two landmasses, not needed)" : "absent"}`);
     await shot(q, `frozen${FIX.second}-start.png`); check(q.errors.length === 0, `no browser errors (Frozen seed ${FIX.second})`, q.errors.join(" | ")); await q.close(); }
-  { const q = await open(`?archetype=desert_world&seed=25`), d = await sample(q), r = await q.evaluate(() => BLOOM_API.run);
+  { const q = await open(`?archetype=desert_world&seed=17`), d = await sample(q), r = await q.evaluate(() => BLOOM_API.run);
     const all = [...d.cold, ...d.mild];
-    check(r.attempt === 0 && r.name === "Umbra-584" && all.filter(sandy).length >= 0.6 * all.length && d.glints < fz.glints / 3,
-      "38 · Desert seed 25 still launches with its own sandy treatment (no frost), so the frozen map differs visibly", `sandy ${all.filter(sandy).length}/${all.length} · avg ${avg(all)}`);
-    await shot(q, "desert25-start-for-comparison.png"); check(q.errors.length === 0, "no browser errors (Desert seed 25)", q.errors.join(" | ")); await q.close(); }
-  for (const s of [13, 8]) { const q = await open(`?archetype=ocean_archipelago&seed=${s}`);
+    check(r.attempt === 0 && r.name === "Ymir-961" && all.filter(sandy).length >= 0.6 * all.length && d.glints < fz.glints / 3,
+      "38 · Desert seed 17 still launches with its own sandy treatment (no frost), so the frozen map differs visibly", `sandy ${all.filter(sandy).length}/${all.length} · avg ${avg(all)}`);
+    await shot(q, "desert17-start-for-comparison.png"); check(q.errors.length === 0, "no browser errors (Desert seed 17)", q.errors.join(" | ")); await q.close(); }
+  for (const s of Object.keys(OA_ID).map(Number)) { const q = await open(`?archetype=ocean_archipelago&seed=${s}`);
     const r = await q.evaluate(() => ({ run: BLOOM_API.run, shop: [...document.querySelectorAll("button.buy")].map(b => b.dataset.id) })), o = await sample(q);
     check(r.run.attempt === OA_ID[s].attempt && r.run.name === OA_ID[s].name && r.shop.includes(WATERBORNE.id) && [J([24, 52, 92]), J([30, 62, 104])].includes(J(o.water[0])) && J(avg(o.water)) !== J(avg(fz.water)),
       `38 · Ocean Archipelago seed ${s} still launches with its own ocean colours (unlike the frozen lakes)`, `attempt ${r.run.attempt} · ${r.run.name} · water ${o.water[0]} vs frozen ${fz.water[0]}`);

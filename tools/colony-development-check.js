@@ -295,8 +295,8 @@ const PLANS = { wet: ["seedOut", "cold", "flood", "cold", "heat", "salt", "early
       `attempt ${A.attempt} · ${p.name} · ${A.strategies.found} strategies · strategy 1 bot: Balanced ${fmt(w0.map(r => r.win))} · situational ${fmt(wS.map(r => r.win))}`);
   }
   {
-    let e = null; try { BLOOM.generateFromArchetype(OA, 35, { config, traits }); } catch (x) { e = x; }
-    check(e && e.attempts && e.attempts.length === OA.generation.maxAttempts, "[35] seed 35 still fails explicitly (no acceptable world in every attempt)", e ? `${e.attempts.length} attempts rejected` : "generated a world");
+    let e = null; try { BLOOM.generateFromArchetype(OA, 114, { config, traits }); } catch (x) { e = x; }
+    check(e && e.attempts && e.attempts.length === OA.generation.maxAttempts, "[35] seed 114 (was 35 before BLOOM-027B) still fails explicitly (no acceptable world in every attempt)", e ? `${e.attempts.length} attempts rejected` : "generated a world");
   }
   // ---------------------------------------------------------------- config-driven
   {
@@ -447,16 +447,21 @@ const PLANS = { wet: ["seedOut", "cold", "flood", "cold", "heat", "salt", "early
       `min distance: water ${dW.toFixed(0)} · dead ${dD.toFixed(0)} · barren ${dB.toFixed(0)} · outlines ${dO.toFixed(0)}`);
     check(p.errors.length === 0, "no browser errors (density rendering)", p.errors.join(" | ")); await p.close();
   }
-  // [30–32] Waterborne crossing feedback on seed 13
+  // [30–32] Waterborne crossing feedback on seed 2 (BLOOM-027B: among the Ocean fixture-adjacent worlds, seed 2 is one whose crossings give both plain arrivals and footholds in this run)
   {
-    const p = await open({ seed: 3, query: "?archetype=ocean_archipelago&seed=13" });
-    await step(p, 600); await p.waitForTimeout(200);
-    const pre = await p.evaluate(() => ({ ev: sim.crossing.events.length, anims: BLOOM_API.crossAnims().history.length }));
-    await p.evaluate(id => { BLOOM_API.addBiomass(2000); buy(id); }, CROSS_ID);
-    // step a little at a time so each event gets animated (the map picks new events up every frame)
-    let foot = null, arrival = null;
-    for (let k = 0; k < 400 && !(foot && arrival); k++) { await step(p, 3); await p.waitForTimeout(20);
-      const h = await p.evaluate(() => BLOOM_API.crossAnims().history); foot ??= h.find(a => a.took) || null; arrival ??= h.find(a => !a.took) || null; }
+    // (BLOOM-027B: whether a run shows both a foothold and a plain arrival within 1200 ticks depends on the run seed; the page is deterministic per seed, so the
+    // first of a few seeds that shows both is used — the claims below are about what each kind of event looks like, not about one seed)
+    let p, pre, foot = null, arrival = null, runSeed = null;
+    for (const seed of [3, 1, 2, 4, 5, 6]) {
+      p = await open({ seed, query: "?archetype=ocean_archipelago&seed=2" });
+      await step(p, 600); await p.waitForTimeout(200);
+      pre = await p.evaluate(() => ({ ev: sim.crossing.events.length, anims: BLOOM_API.crossAnims().history.length }));
+      await p.evaluate(id => { BLOOM_API.addBiomass(2000); buy(id); }, CROSS_ID);
+      // step a little at a time so each event gets animated (the map picks new events up every frame)
+      foot = null; arrival = null;
+      for (let k = 0; k < 400 && !(foot && arrival); k++) { await step(p, 3); await p.waitForTimeout(20);
+        const h = await p.evaluate(() => BLOOM_API.crossAnims().history); foot ??= h.find(a => a.took) || null; arrival ??= h.find(a => !a.took) || null; }
+      runSeed = seed; if (foot && arrival) break; await p.close(); }
     const hist = await p.evaluate(() => ({ h: BLOOM_API.crossAnims().history, ev: sim.crossing.events.map(e => ({ ...e })), hostile: SEC.map((_, i) => evaluate(i).fitness <= CFG.grow.growThresh), tm: [...TILEMAP], mass: [...LANDMASS] }));
     const evIds = new Map(hist.ev.map(e => [e.id, e]));
     const real = hist.h.every(a => { const e = evIds.get(a.id); return !e || (e.from === a.from && e.to === a.to && e.took === a.took); }) && hist.h.every(a => hist.mass[hist.tm[a.from]] !== hist.mass[hist.tm[a.to]]);

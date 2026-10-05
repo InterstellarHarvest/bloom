@@ -99,9 +99,12 @@ console.log(`# rule: crossing pressure Σ ${XC.chancePerSource} × ${XC.gapFallo
     `East ${before} → ${after} living, limit ${ev2.limitKey}: ${ev2.cats.Temperature.word}`);
 }
 
-// 4 · generated archipelago: seed 25, 60% water, constrained to the configured crossing range
+// 4 · generated archipelago: seed 119, 60% water, constrained to the configured crossing range
+//     (BLOOM-027B: was seed 25; on the cylindrical generator seed 25's three islands are one landmass across the cut, so it no longer
+//     is an archipelago. Seed 119 fills the same role with the same build: 3 landmasses, 10 of 14 sections stranded without the trait,
+//     59% coverage without it, every landmass colonized and a 70% win with it — docs/evidence/bloom-027b/fixture-changes.md)
 {
-  const params = { seed: 25, waterPct: 60, sections: 14, maxCrossingGap: XC.maxGap };
+  const params = { seed: 119, waterPct: 60, sections: 14, maxCrossingGap: XC.maxGap };
   const pl = BLOOM.generatePlanet(params), v = BLOOM.validatePlanet(pl, config, { traits, regenerate: BLOOM.generatePlanet }), R = v.stats.reach;
   check(v.ok && R.requiresCrossing && R.base.strandedSections.length > 0 && R.strongest.strandedSections.length === 0,
     "generated archipelago validates: islands need Waterborne Seeds, and every section is reachable with it",

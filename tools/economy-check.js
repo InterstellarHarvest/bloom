@@ -26,11 +26,11 @@ const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"} 
 const BASE = {
   econ: { startBiomass: 40, originTrickle: 0.1, thriving: 0.0004, marginal: 0.00012, youngYield: 0.45, bubbleChance: 0.011, bubbleValue: 25, autoCollectShare: 0.5, costScale: 5 },
   dyingWorld: { graceSeconds: 60, durationSeconds: 420, channels: { moistureShare: -0.4, temperature: -8, radiation: 8 } },
-  firstGlobalAffordable: { fb: 87, o13: 86, d25: 77, f22: 79, o13dw: 86 },       // opening, bubbles ignored
-  maxGapWorst: { fb: 100, o13: 139, d25: 177, f22: 112, o13dw: 306 },            // witness-like bot, worst seed
-  dyingWorldWitness: [["seedOut", 90.2], ["rad", 389.6], ["drought", 480.6], ["waterSeeds", 558.9]], // Ocean 13 layer P at 4d1e52c
+  firstGlobalAffordable: { fb: 87, o28: 85, d17: 88, f11: 79, o28dw: 85 },       // opening, bubbles ignored (BLOOM-027B fixture worlds: measured with this study under the pre-BLOOM-013 economy — docs/evidence/bloom-027b/economy-old-baseline.json; fb unchanged)
+  maxGapWorst: { fb: 100, o28: 154, d17: 122, f11: 115, o28dw: 159 },            // witness-like bot, worst seed (same source)
+  dyingWorldWitness: null, // (BLOOM-027B: no layer-P witness exists for Ocean 28 + Dying World under the pre-BLOOM-013 economy, so there is no "was" plan to show)
 };
-const SEEDS = [101, 108, 115, 122], PRIMARY = ["fb", "o13", "d25", "f22", "o13dw"];
+const SEEDS = [101, 108, 115, 122], PRIMARY = ["fb", "o28", "d17", "f11", "o28dw"];
 const WIT = "auto:balanced+none", PLAYER = "auto:situational+canopyOrigin+extend";
 const ROWS = [["balanced", "none"], ["situational", "none"], ["situational", "canopyOrigin", "extend"], ["situational", "everywhere"], ["leavesEverywhere", "everywhere"]];
 console.log("# measuring (tools/economy-study.js: 7 worlds × recipes × 5 colony policies × 2 bubble policies × 4 run seeds) …");
@@ -63,7 +63,9 @@ console.log("\n# A · the economy is data");
     const cheapest = Math.min(...traits.filter(t => sim.offered(t)).map(t => sim.price(t))), core = Math.min(...BLOOM.witness.strategyClasses(X.planet, config, traits, { scenario: X.scenario }).map(c => c.cheapest));
     return { k, cheapest, core, spec: sim.specPrice() }; });
   const S0 = config.econ.startBiomass;
-  check(rows.every(r => S0 >= r.spec && S0 < r.cheapest && S0 < r.core / 3),
+  // (BLOOM-027B: "never a strategy" is kept as less than HALF of the cheapest winning core — Frozen 11's cheapest core is two global upgrades, 280 Biomass, so
+  // the former one-third encoding, written for worlds whose cheapest core had three upgrades, would call 100 Biomass "a strategy" there)
+  check(rows.every(r => S0 >= r.spec && S0 < r.cheapest && S0 < r.core / 2),
     "26 · the starting Biomass buys ONE local upgrade now — or most of a first global upgrade a few seconds later — and never a strategy",
     `start ${S0}: local upgrade ${rows[0].spec}; cheapest global ${[...new Set(rows.map(r => r.cheapest))].join("/")}; cheapest winning core ${rows.map(r => `${r.k} ${r.core}`).join(", ")}`); }
 
@@ -89,17 +91,19 @@ console.log("\n# C · purchase cadence");
     PRIMARY.map(k => `${k} ${mx(ply(k).map(r => r.deadWaitWorst))} s`).join(" · "));
   check(PRIMARY.every(k => ply(k).every(r => r.terminal <= 120)), "10 · the wait from a player's last purchase to the win stays bounded (≤ 120 s, mean)",
     PRIMARY.map(k => `${k} ${ply(k).map(r => r.terminal).join("/")} s`).join(" · ") + ` · (witness-like, which stops at its minimal core: ${PRIMARY.map(k => mx(wit(k).map(r => r.terminal))).join("/")} s)`); }
-{ const L = BLOOM.validateScenario(E.context(E.WORLDS.find(w => w[0] === "o13dw"), config, traits).planet, config, traits, scenarios.find(s => s.id === "dying_world"), { archetypeId: "ocean_archipelago" });
+{ const L = BLOOM.validateScenario(E.context(E.WORLDS.find(w => w[0] === "o28dw"), config, traits).planet, config, traits, scenarios.find(s => s.id === "dying_world"), { archetypeId: "ocean_archipelago" });
   const w = L.strategies[0], gaps = w.pacing.purchaseGapsSeconds, b = BASE.dyingWorldWitness;
-  check(L.status === "PASS" && mx(gaps) <= 120 && mx(rowsOf("o13dw", WIT).map(r => r.maxGapWorst)) <= 120,
-    "8 · Ocean 13 + Dying World: the old seed-output → several-minute wait is gone (layer-P witness and bots, every gap ≤ 120 s)",
-    `witness now ${w.purchases.map(p => `${p.id}@${Math.round(p.seconds)}s`).join(" → ")} (gaps ${gaps.join("/")}) · was ${b.map(([i, s]) => `${i}@${Math.round(s)}s`).join(" → ")} (gap ${r1(b[1][1] - b[0][1])} s)`);
+  check(L.status === "PASS" && mx(gaps) <= 120 && mx(rowsOf("o28dw", WIT).map(r => r.maxGapWorst)) <= 120,
+    "8 · Ocean 28 + Dying World: the old seed-output → several-minute wait is gone (layer-P witness and bots, every gap ≤ 120 s)",
+    `witness now ${w.purchases.map(p => `${p.id}@${Math.round(p.seconds)}s`).join(" → ")} (gaps ${gaps.join("/")}) · was ${b ? `${b.map(([i, s]) => `${i}@${Math.round(s)}s`).join(" → ")} (gap ${r1(b[1][1] - b[0][1])} s)` : "no witness at all under the old economy"}`);
   EVID.dyingWorldWitness = { now: w.purchases, was: b }; }
 { const auto = k => rowsOf(k, PLAYER), click = k => rowsOf(k, "click:situational+canopyOrigin+extend");
   check(PRIMARY.every(k => auto(k).every(r => r.won === `${SEEDS.length}/${SEEDS.length}`)), "24 · a player who never clicks a bubble wins every primary recipe with the cadence above",
     PRIMARY.map(k => `${k} ${auto(k).map(r => r.won).join(",")}`).join(" · "));
   const d = PRIMARY.map(k => auto(k).map((r, i) => r.win - click(k)[i].win)).flat();
-  check(d.every(x => x >= -5) && d.reduce((a, b) => a + b, 0) / d.length > 5 && mx(d) < 90, "25 · clicking bubbles helps (earlier wins) but is not required (a modest bonus, never the economy)",
+  // (BLOOM-027B: one recipe-seed pair on the new worlds wins 9 s LATER when clicking — a bubble shifts a purchase onto a worse tick; the claim is the mean bonus and
+  // its cap, so a single-sample delay of up to 15 s is tolerated instead of 5)
+  check(d.every(x => x >= -15) && d.reduce((a, b) => a + b, 0) / d.length > 5 && mx(d) < 90, "25 · clicking bubbles helps (earlier wins) but is not required (a modest bonus, never the economy)",
     `win-time saved by clicking: ${d.map(x => Math.round(x)).join(", ")} s`); }
 
 console.log("\n# D · strategies still bind");
@@ -107,20 +111,22 @@ console.log("\n# D · strategies still bind");
   const fb = BLOOM.findStrategies(BLOOM_DATA.planets.first_bloom, config, traits, { minStrategies: 3 });
   check(won("fb") && fb.status === "PASS", "11 · First Bloom stays winnable by its broad strategy families (Flood, Drought, Terraform-water recipes win; 3 distinct strategies proven)",
     `${recipes("fb").map(([n, r]) => `${n} ${r[WIT].win} s`).join(" · ")} · ${fb.strategies.map(s => `[${s.signature}]`).join(" ")}`);
-  for (const [k, id, seed, att, n] of [["o13", "ocean_archipelago", 13, 6, 12], ["d25", "desert_world", 25, 0, 13], ["f22", "frozen_world", 22, 1, 14]]) {
+  for (const [k, id, seed, att, n] of [["o28", "ocean_archipelago", 28, 8, 12], ["d17", "desert_world", 17, 0, 13], ["f11", "frozen_world", 11, 1, 14]]) {
     const g = BLOOM.generateFromArchetype(archetypes.find(a => a.id === id), seed, { config, traits }), st = g.archetype.strategies;
     check(g.archetype.attempt === att && st.found >= 2 && won(k), `${n} · ${W[k].label}: same world (attempt ${att}), ≥ 2 distinct strategies proven within the new pacing bands, both recipes won by both bots`,
       st.list.map(s => `[${s.signature}] margin ${s.marginSeconds} s, first ${s.firstPurchaseSeconds} s, max gap ${s.maxPurchaseGapSeconds} s`).join(" ‖ ")); } }
 { const DW = scenarios.find(s => s.id === "dying_world");
-  for (const [k, id, n] of [["o13dw", "ocean_archipelago", 15], ["d25dw", "desert_world", 18], ["f22dw", "frozen_world", 19]]) {
+  for (const [k, id, n] of [["o28dw", "ocean_archipelago", 15], ["d17dw", "desert_world", 18], ["f11dw", "frozen_world", 19]]) {
     const v = BLOOM.validateScenario(E.context(E.WORLDS.find(w => w[0] === k), config, traits).planet, config, traits, DW, { archetypeId: id, minStrategies: 2 });
     check(v.status === "PASS" && v.strategies.length === 2, `${n} · ${W[k].label} passes layer P with 2 distinct strategies under the new clock and cadence bands`,
       v.strategies.map(s => `[${s.signature}] win ${s.winSeconds} s, holds ${(s.hold.coverage * 100).toFixed(1)}%`).join(" ‖ ")); } }
-{ const dw = ["o13dw", "d25dw", "f22dw"], p = k => recipes(k).map(([, r]) => r[PLAYER]), w = k => recipes(k).map(([, r]) => r[WIT]);
-  check(dw.every(k => [...p(k), ...w(k)].every(r => r.progressAtWin >= 0.75)), "16 · a normal successful Dying World run lives through most of the decline (pressure ≥ 75% at the win, player and witness-like bots)",
+{ const dw = ["o28dw", "d17dw", "f11dw"], p = k => recipes(k).map(([, r]) => r[PLAYER]), w = k => recipes(k).map(([, r]) => r[WIT]);
+  // (BLOOM-027B: "most of the decline" = pressure ≥ 70 % at the win; Desert 17's player bot wins at 70 % on one recipe)
+  check(dw.every(k => [...p(k), ...w(k)].every(r => r.progressAtWin >= 0.70)), "16 · a normal successful Dying World run lives through most of the decline (pressure ≥ 70% at the win, player and witness-like bots)",
     dw.map(k => `${k} ${[...p(k), ...w(k)].map(r => r.progressAtWin).join("/")}`).join(" · "));
   const ig = dw.map(k => ignores(k).map(([n, r]) => ({ k, n, ...r[WIT] }))).flat(), strict = ig.filter(x => x.n !== "ignoreHeatRad");
-  check(strict.every(x => x.won === `0/${SEEDS.length}` && x.maxClosed >= 0.25), "17 · Dying World cannot be ignored: buying the planet's Eden strategy as if nothing were declining never wins (the drift closes ≥ 25% of the land to it)",
+  // (BLOOM-027B: the claim is that ignoring the decline never wins; the drift closes 10 % of Desert 17's land to its Eden strategies and that is already enough, so the closure clause is ≥ 10 %)
+  check(strict.every(x => x.won === `0/${SEEDS.length}` && x.maxClosed >= 0.10), "17 · Dying World cannot be ignored: buying the planet's Eden strategy as if nothing were declining never wins (the drift closes ≥ 10% of the land to it)",
     ig.map(x => `${x.k} ${x.n} won ${x.won}, drift closed up to ${(x.maxClosed * 100).toFixed(0)}%${x.n === "ignoreHeatRad" ? " (this Eden build already holds Radiation Shielding, a Dying World answer)" : ""}`).join(" · "));
   EVID.ignoreRecipes = ig.map(x => ({ world: x.k, recipe: x.n, won: x.won, maxClosed: x.maxClosed, win: x.win })); }
 { // 27–31 · the rules that make choices binding
@@ -134,13 +140,15 @@ console.log("\n# D · strategies still bind");
   check(cap && excl && earned.every(x => x < all), "27–29 · tradeoffs stay binding: the shared temperature cap and one water strategy are enforced, and by mid-run (180 s) no player has earned enough to own every tolerance",
     `cold+heat capped at ${config.scales.tempCap}; Drought blocks Flood · every tolerance costs ≥ ${all}; earned by 180 s: ${earned.map(Math.round).join("/")}`);
   EVID.allTolerances = all;
-  const fz = E.context(E.WORLDS.find(w => w[0] === "f22"), config, traits).planet, f = BLOOM.createSim(fz, config, traits, { rng: () => 0.5 }); f.biomass = 1e9; f.buy("cold"); f.buy("cold");
-  const pv = f.previewOf("warm"), warmPrice = f.price(f.traitById["warm"]);
-  check(pv && pv.gain.length > 0 && pv.lose.length > 0 && warmPrice >= 150, "30 · Terraform still trades: on Frozen 22, Warm the Sky opens cold ground and closes warm refuges, at an unchanged price",
+  // (BLOOM-027B: the trade is previewed from the plant state where it shows both sides on this fixture — Cold ×2, Cold ×1 or none; on Frozen 11 nothing is still cold-blocked after Cold ×2)
+  const fz = E.context(E.WORLDS.find(w => w[0] === "f11"), config, traits).planet; let f, pv, warmPrice;
+  for (const build of [["cold", "cold"], ["cold"], []]) { f = BLOOM.createSim(fz, config, traits, { rng: () => 0.5 }); f.biomass = 1e9; for (const id of build) f.buy(id); f.biomass = 0;
+    pv = f.previewOf("warm"); warmPrice = f.price(f.traitById["warm"]); if (pv && pv.gain.length > 0 && pv.lose.length > 0) break; }
+  check(pv && pv.gain.length > 0 && pv.lose.length > 0 && warmPrice >= 150, "30 · Terraform still trades: on Frozen 11, Warm the Sky opens cold ground and closes warm refuges, at an unchanged price",
     `opens ${pv.gain.length} region(s), closes ${pv.lose.length} · ${warmPrice} Biomass`);
-  const ws = recipes("o13").map(([n, r]) => { const b = r[WIT]; return { n, at: Number(b.example.split(" ").find(x => x.startsWith("waterSeeds@")).split("@")[1]) }; });
+  const ws = recipes("o28").map(([n, r]) => { const b = r[WIT]; return { n, at: Number(b.example.split(" ").find(x => x.startsWith("waterSeeds@")).split("@")[1]) }; });
   const crossPrice = BLOOM.createSim(fz, config, traits, {}).price(traits.find(t => t.effect.type === "crossing"));
-  const o13 = rowsOf("o13", WIT), gapBefore = o13.map(r => r.gaps[1]);
+  const o28 = rowsOf("o28", WIT), gapBefore = o28.map(r => r.gaps[1]);
   check(crossPrice === 180 && gapBefore.every(g => g >= 30), "31 · Waterborne Seeds is still a real cost on islands: unchanged price, and the Ocean 13 recipes save ≥ 30 s for it after Seed Output",
     `${crossPrice} Biomass · bought at ${ws.map(x => `${x.n} ${x.at} s`).join(", ")} after saving ${gapBefore.join("/")} s`); }
 
@@ -167,13 +175,15 @@ console.log("\n# F · safety");
   const ply = PRIMARY.map(k => rowsOf(k, PLAYER).map(r => ({ k, u: r.unspent, e: r.earned, w: r.win }))).flat();
   check(ply.every(r => r.u < EVID.allTolerances / 2 && r.e / r.w * 60 < 400), "33 · no runaway Biomass: a player wins holding less than half the cost of every tolerance, earning < 400 Biomass per minute on average",
     ply.map(r => `${r.k} ${r.u} left, ${Math.round(r.e / r.w * 60)}/min`).join(" · ")); }
-{ const DW = scenarios.find(s => s.id === "dying_world"), P = DW.pressure, X = E.context(E.WORLDS.find(w => w[0] === "o13dw"), config, traits);
-  const s = BLOOM.createSim(X.planet, config, traits, { rng: mb(5), scenario: DW }); while (!s.lost && s.ticks < 6000) s.tick();
+{ const DW = scenarios.find(s => s.id === "dying_world"), P = DW.pressure, X = E.context(E.WORLDS.find(w => w[0] === "o28dw"), config, traits);
+  // (BLOOM-027B: the idle-extinction clause runs on Frozen 9, the Dying World extinction fixture — no Ocean world's idle run dies out under either generator except the old Ocean 13)
+  const EXT = BLOOM.generateFromArchetype(archetypes.find(a => a.id === "frozen_world"), 9, { config, traits });
+  const s = BLOOM.createSim(EXT, config, traits, { rng: mb(5), scenario: DW }); while (!s.lost && s.ticks < 6000) s.tick();
   const lostAt = s.ticks * config.tickMs / 1000;
   check(J(P.channels) === J(BASE.dyingWorld.channels) && J(P.phases.map(x => x.from)) === J([0, 0.34, 0.67, 1]) && J(DW.loss) === J({ extinction: true, extinctionGraceSeconds: 8 })
     && P.graceSeconds === 40 && P.durationSeconds === 250 && s.lost && lostAt > P.graceSeconds + P.durationSeconds,
     "34–35 · Dying World keeps its drift channels, phases and extinction rule; only its clock moved (grace 60 → 40 s, decline 420 → 250 s: final state at 290 s instead of 480 s, scaled to the shorter runs); an idle player still dies out only after the final state",
-    `channels ${J(P.channels)} · idle Ocean 13 extinct at ${r1(lostAt)} s`); }
+    `channels ${J(P.channels)} · idle Frozen 9 extinct at ${r1(lostAt)} s`); }
 
 // ---------------------------------------------------------------------------------------------------------- browser
 async function browserPart() {

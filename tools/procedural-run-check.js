@@ -66,18 +66,18 @@ const shot = async (p, name) => { if (SHOTS) await p.screenshot({ path: path.joi
     check(p.errors.length === 0, "no browser errors (First Bloom)", p.errors.join(" | ")); await p.close();
   }
 
-  // ---------------------------------------------------------------- seed 13: full UI-driven run
-  console.log("\n# Ocean Archipelago public seed 13 (full run through real controls)");
-  const ref13 = BLOOM.generateFromArchetype(OA, 13, { config, traits }); // Node reference, same production path
+  // ---------------------------------------------------------------- seed 28: full UI-driven run
+  console.log("\n# Ocean Archipelago public seed 28 (full run through real controls)");
+  const ref28 = BLOOM.generateFromArchetype(OA, 28, { config, traits }); // Node reference, same production path
   {
-    const p = await open(13);
+    const p = await open(28);
     const id = await p.evaluate(() => ({ run: BLOOM_API.run, runId: document.getElementById("runId").textContent, title: document.title,
       keys: Object.keys(BLOOM_RUN.planet.archetype), text: document.body.innerText, fnIsReal: typeof BLOOM.generateFromArchetype === "function" && BLOOM.generateFromArchetype === BLOOM.archetype.generateFromArchetype }));
-    check(id.fnIsReal && id.run.kind === "procedural" && id.run.publicSeed === 13 && id.run.attempt === ref13.archetype.attempt && id.run.planetId === ref13.id &&
+    check(id.fnIsReal && id.run.kind === "procedural" && id.run.publicSeed === 28 && id.run.attempt === ref28.archetype.attempt && id.run.planetId === ref28.id &&
       JSON.stringify(id.run.validatedLayers) === "[1,2,3,4,5,6,7,8]",
-      "the page generated seed 13 through BLOOM.generateFromArchetype: same accepted attempt and planet as the Node production path, layers 1–8",
+      "the page generated seed 28 through BLOOM.generateFromArchetype: same accepted attempt and planet as the Node production path, layers 1–8",
       `attempt ${id.run.attempt}, ${id.run.name} (${id.run.planetId})`);
-    check(/public seed 13/.test(id.runId) && /attempt 6/.test(id.runId) && id.runId.includes(id.run.name) && id.runId.includes("Ocean Archipelago"),
+    check(/public seed 28/.test(id.runId) && /attempt 8/.test(id.runId) && id.runId.includes(id.run.name) && id.runId.includes("Ocean Archipelago"),
       "run identity (archetype, public seed, attempt, planet name/id) is visible in the footer", id.runId);
     check(!id.keys.includes("witness") && !id.keys.includes("strategies") && !/Crossing:|signature|witness|Adapt\(\d\)/i.test(id.text),
       "no witness plan, strategy signature or recommended purchase reaches the page", `planet.archetype keys: ${id.keys.join(",")}`);
@@ -117,7 +117,7 @@ const shot = async (p, name) => { if (SHOTS) await p.screenshot({ path: path.joi
     await p.mouse.move(5, 5); await p.evaluate(() => { selected = -1; renderInspect(); });
 
     // play strategy A of the accepted world (a known valid build) via real shop clicks
-    const plan = ["seedOut", WATERBORNE.id, "salt", "cold"];
+    const plan = ref28.archetype.strategies.list[0].purchases.map(x => x[0]); // (BLOOM-027B: the accepted world's own strategy A — seed 28: seedOut, waterSeeds, salt, cold, rad, heat; was Ocean 13's seedOut, waterSeeds, salt, cold)
     const run = await playRecipe(p, plan, { watchMasses: true });
     const origin = await p.evaluate(() => BLOOM_API.geometry().originMass);
     const firstFoothold = run.masses.find(m => Object.entries(m.mass).some(([k, n]) => +k !== origin && n > 0));
@@ -132,12 +132,12 @@ const shot = async (p, name) => { if (SHOTS) await p.screenshot({ path: path.joi
     const fin = await p.evaluate(() => { const S = BLOOM_API.sim, M = S.map; let wl = 0; for (let t = 0; t < M.N; t++) if (M.TILEMAP[t] < 0 && S.state[t] !== S.BAR) wl++;
       return { cov: S.coverage(), land: M.LAND, n: M.N, water: M.TILEMAP.filter(v => v < 0).length, waterNotBarren: wl, living: M.LAND_TILES.filter(t => S.state[t] === S.LIV).length }; });
     check(run.won && fin.cov >= 0.70 && fin.land + fin.water === fin.n && Math.abs(fin.cov - fin.living / fin.land) < 1e-9 && fin.waterNotBarren === 0,
-      "seed 13 reaches the 70% win through real UI clicks; coverage = living land / land tiles, water never colonized",
+      "seed 28 reaches the 70% win through real UI clicks; coverage = living land / land tiles, water never colonized",
       `win at ${Math.round(run.secs || 0)} s · ${(fin.cov * 100).toFixed(1)}% of ${fin.land} land tiles (${fin.water} water tiles excluded)`);
     const rep = await p.evaluate(() => ({ on: document.getElementById("reportModal").classList.contains("on"), text: document.getElementById("report").innerText,
       analog: [...document.querySelectorAll(".analog li")].map(li => li.innerText), labels: SEC.map((_, i) => LABEL[i]) }));
     const namesInReport = rep.labels.filter(n => rep.text.includes(n));
-    check(rep.on && rep.text.includes(ref13.name) && /Ocean Archipelago · public seed 13/.test(rep.text) && /Waterborne Seeds/.test(rep.text),
+    check(rep.on && rep.text.includes(ref28.name) && /Ocean Archipelago · public seed 28/.test(rep.text) && /Waterborne Seeds/.test(rep.text),
       "Bloom Report opens with the generated planet's identity and the build (Waterborne Seeds listed)", rep.text.split("\n").slice(0, 2).join(" / "));
     check(rep.analog.some(a => a.includes(WATERBORNE.science)) && ["Seed Output", "Salt Handling", "Cold Tolerance"].every(n => rep.text.includes(n)),
       "…every bought adaptation is represented; Waterborne Seeds uses its existing science line", `${rep.analog.length} real-plant analogs`);
@@ -146,12 +146,13 @@ const shot = async (p, name) => { if (SHOTS) await p.screenshot({ path: path.joi
     await shot(p, "seed13-report.png");
     await p.evaluate(() => document.getElementById("reportModal").classList.remove("on"));
     await shot(p, "seed13-won-map.png");
-    check(p.errors.length === 0, "no browser errors during the seed-13 run", p.errors.join(" | ")); await p.close();
+    check(p.errors.length === 0, "no browser errors during the seed-28 run", p.errors.join(" | ")); await p.close();
   }
   // screenshot of the crossing: rerun to the first foothold + growth, then capture the map
   {
-    const p = await open(13);
-    const plan = ["seedOut", WATERBORNE.id, "salt", "cold"]; let i = 0, affordAt = null, ft = null;
+    const p = await open(28);
+    // (BLOOM-027B: the plan is the accepted world's own strategy A — seed 28: seedOut, waterSeeds, salt, cold, rad, heat; was Ocean 13's seedOut, waterSeeds, salt, cold)
+    const plan = ref28.archetype.strategies.list[0].purchases.map(x => x[0]); let i = 0, affordAt = null, ft = null;
     for (let t = 0; t < 6000; t += 5) {
       await p.evaluate(() => { BLOOM_API.advance(5); refreshShop(); });
       const st = await p.evaluate(() => ({ ticks: BLOOM_API.state().ticks, f: BLOOM_API.crossing().footholds }));
@@ -165,9 +166,9 @@ const shot = async (p, name) => { if (SHOTS) await p.screenshot({ path: path.joi
   }
 
   // ---------------------------------------------------------------- slice interactions on a generated world
-  console.log("\n# slice interactions on seed 13 (bubbles, passive Biomass, pause/speed, inspect refresh)");
+  console.log("\n# slice interactions on seed 28 (bubbles, passive Biomass, pause/speed, inspect refresh)");
   {
-    const p = await open(13, false);
+    const p = await open(28, false);
     const sp = [];
     for (let k = 0; k < 3; k++) { await p.click("#btnSpeed"); sp.push(await p.$eval("#btnSpeed", b => b.textContent)); }
     await p.waitForTimeout(400); const t1 = await p.evaluate(() => BLOOM_API.state().ticks);
@@ -207,16 +208,16 @@ const shot = async (p, name) => { if (SHOTS) await p.screenshot({ path: path.joi
   }
 
   // ---------------------------------------------------------------- seed 35: explicit failure
-  console.log("\n# Ocean Archipelago public seed 35 (known generation failure)");
+  console.log("\n# Ocean Archipelago public seed 114 (known generation failure; was 35 before BLOOM-027B)");
   {
-    let nodeErr = null; try { BLOOM.generateFromArchetype(OA, 35, { config, traits }); } catch (e) { nodeErr = e; }
-    const p = await open(35, false); await p.waitForTimeout(500);
+    let nodeErr = null; try { BLOOM.generateFromArchetype(OA, 114, { config, traits }); } catch (e) { nodeErr = e; }
+    const p = await open(114, false); await p.waitForTimeout(500);
     const r = await p.evaluate(() => ({ fail: (document.getElementById("genFail") || {}).innerText || "", canvas: !!document.getElementById("cv"), shop: document.querySelectorAll("button.buy").length,
       run: window.BLOOM_API && BLOOM_API.run, hasSim: !!(window.BLOOM_API && BLOOM_API.sim), title: document.title }));
-    check(nodeErr && nodeErr.attempts.length === OA.generation.maxAttempts && r.run.failed && /public seed 35/.test(r.fail) && /no acceptable world in 24 attempts/.test(r.fail),
-      "seed 35 shows the explicit generation-failure state naming the public seed", r.fail.split("\n").filter(Boolean).slice(0, 3).join(" / "));
+    check(nodeErr && nodeErr.attempts.length === OA.generation.maxAttempts && r.run.failed && /public seed 114/.test(r.fail) && /no acceptable world in 24 attempts/.test(r.fail),
+      "seed 114 (was 35 before BLOOM-027B) shows the explicit generation-failure state naming the public seed", r.fail.split("\n").filter(Boolean).slice(0, 3).join(" / "));
     check(!r.canvas && r.shop === 0 && !r.hasSim && /No other seed was substituted/.test(r.fail), "…and no world starts (no map, no shop, no simulation; no substitute seed)");
-    await shot(p, "seed35-failure.png");
+    await shot(p, "seed114-failure.png");
     check(p.errors.length === 0, "no browser errors (failure state)", p.errors.join(" | ")); await p.close();
     const q = await open("12x", false); const bad = await q.evaluate(() => (document.getElementById("genFail") || {}).innerText || "");
     check(/must be a whole number/.test(bad) && q.errors.length === 0, "a malformed seed is also an explicit failure, never a fallback world", bad.split("\n")[2] || ""); await q.close();

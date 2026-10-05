@@ -1,9 +1,9 @@
 // BLOOM — Biomass economy + decision-cadence study (BLOOM-013). Plain Node, no browser. A report, not pass/fail
 // (tools/economy-check.js holds the pass/fail proofs; it reuses this file's measurements).
 //
-//   node tools/economy-study.js [--json <out.json>] [--seeds N] [--quick] [--brief] [--worlds fb,o13,d25,f22,o13dw,d25dw,f22dw]
-//                               (BLOOM-014, opt-in, not in the default set: --worlds d25nc,o13nc,f22nc = Native Competition)
-//                               (BLOOM-015, opt-in: --worlds f22vc,d25vc,o13vc = Volatile Climate)
+//   node tools/economy-study.js [--json <out.json>] [--seeds N] [--quick] [--brief] [--worlds fb,o28,d17,f11,o28dw,d17dw,f11dw]
+//                               (BLOOM-014, opt-in, not in the default set: --worlds d17nc,o28nc,f11nc = Native Competition)
+//                               (BLOOM-015, opt-in: --worlds f11vc,d17vc,o28vc = Volatile Climate)
 //                               [--set econ.startBiomass=100,traits.seedOut.base=20,…]
 //
 // The question is not "how fast is a run" but "how long does a player wait between meaningful Biomass decisions".
@@ -64,44 +64,32 @@ const WORLDS = [
     wet: ["seedOut", "cold", "flood", "cold", "heat", "salt", "earlyMat", "seedOut"],
     dry: ["seedOut", "cold", "drought", "cold", "heat", "salt", "earlyMat", "seedOut"],
     terraformWater: ["seedOut", "heat", "salt", "cold", "humid", "humid"] }],
-  ["o13", "Ocean Archipelago 13 · Eden", "ocean_archipelago", 13, 6, "eden", {
-    coldSalt: ["seedOut", "waterSeeds", "salt", "cold"], heatRad: ["seedOut", "waterSeeds", "rad", "heat"] }],
-  ["d25", "Desert World 25 · Eden", "desert_world", 25, 0, "eden", {
-    drought2: ["seedOut", "drought", "drought"], humidify: ["seedOut", "drought", "humid", "rad", "heat"] }],
-  ["f22", "Frozen World 22 · Eden", "frozen_world", 22, 1, "eden", {
-    cold2: ["seedOut", "earlyMat", "cold", "cold"], warm2: ["seedOut", "earlyMat", "cold", "warm", "warm"] }],
-  ["o13dw", "Ocean Archipelago 13 · Dying World", "ocean_archipelago", 13, 6, "dying_world", {
-    drought: ["seedOut", "rad", "drought", "waterSeeds"], humidify: ["seedOut", "rad", "humid", "waterSeeds"],
-    ignoreColdSalt: ["seedOut", "waterSeeds", "salt", "cold"], ignoreHeatRad: ["seedOut", "waterSeeds", "rad", "heat"] }],
-  ["d25dw", "Desert World 25 · Dying World", "desert_world", 25, 0, "dying_world", {
-    drought2: ["seedOut", "rad", "drought", "drought"], humidify2: ["seedOut", "salt", "rad", "drought", "humid", "humid"],
-    ignoreDrought2: ["seedOut", "drought", "drought"] }],
-  ["f22dw", "Frozen World 22 · Dying World", "frozen_world", 22, 1, "dying_world", {
-    cold3: ["seedOut", "drought", "cold", "cold", "cold"], coldWarm: ["seedOut", "drought", "rad", "cold", "cold", "warm"],
-    ignoreCold2: ["seedOut", "earlyMat", "cold", "cold"] }],
+  // BLOOM-027B fixture worlds (Ocean 28 attempt 8, Desert 17 attempt 0, Frozen 11 attempt 1; recipes = their proven strategies, "ignore…" = the Eden strategies under a scenario)
+  ["o28", "Ocean Archipelago 28 · Eden", "ocean_archipelago", 28, 8, "eden", {radSaltColdHeat: ["seedOut", "waterSeeds", "salt", "cold", "rad", "heat"], radSaltHeatDry: ["seedOut", "waterSeeds", "dry", "salt", "rad", "heat"]}],
+  ["o28dw", "Ocean Archipelago 28 · Dying World", "ocean_archipelago", 28, 8, "dying_world", {radSaltHumid: ["seedOut", "rad", "waterSeeds", "humid", "salt"], radSaltColdDrought: ["seedOut", "rad", "waterSeeds", "drought", "salt", "cold"], ignoreRadSaltColdHeat: ["seedOut", "waterSeeds", "salt", "cold", "rad", "heat"], ignoreRadSaltHeatDry: ["seedOut", "waterSeeds", "dry", "salt", "rad", "heat"]}],
+  ["d17", "Desert World 17 · Eden", "desert_world", 17, 0, "eden", {droughtHumid: ["seedOut", "earlyMat", "drought", "humid"], saltDrought: ["seedOut", "earlyMat", "drought", "salt"]}],
+  ["d17dw", "Desert World 17 · Dying World", "desert_world", 17, 0, "dying_world", {saltDroughtHumid: ["seedOut", "earlyMat", "drought", "humid", "salt"], radDroughtHumid: ["seedOut", "earlyMat", "drought", "humid", "rad"], ignoreDroughtHumid: ["seedOut", "earlyMat", "drought", "humid"], ignoreSaltDrought: ["seedOut", "earlyMat", "drought", "salt"]}],
+  ["f11", "Frozen World 11 · Eden", "frozen_world", 11, 1, "eden", {coldHeat: ["seedOut", "cold", "heat"], coldWarm: ["cold", "warm"]}],
+  ["f11dw", "Frozen World 11 · Dying World", "frozen_world", 11, 1, "dying_world", {radCold2: ["seedOut", "rad", "cold", "cold"], coldWarmDrought: ["seedOut", "cold", "cold", "warm", "drought"], ignoreColdHeat: ["seedOut", "cold", "heat"], ignoreColdWarm: ["cold", "warm"]}],
 ];
 // BLOOM-014: Native Competition worlds (a competing native organism; no clock). Opt-in only (--worlds …), so the default
 // world set — and tools/economy-check.js, which runs it — is exactly BLOOM-013's. Recipes = the layer-P witnesses' plans +
 // "ignore…" recipes (the planet's Eden strategy, bought as if the planet were empty).
 const COMPETITION_WORLDS = [
-  ["d25nc", "Desert World 25 · Native Competition", "desert_world", 25, 0, "native_competition", {
-    adapt: ["seedOut", "salt", "rad", "drought", "drought", "heat"], terraform: ["seedOut", "salt", "rad", "drought", "drought", "cool"],
-    ignoreDrought2: ["seedOut", "drought", "drought"], ignoreHumidify: ["seedOut", "drought", "humid", "rad", "heat"] }],
-  ["o13nc", "Ocean Archipelago 13 · Native Competition", "ocean_archipelago", 13, 6, "native_competition", {
-    witness: ["seedOut", "waterSeeds", "salt", "rad", "heat", "dry", "dry", "drought"], ignoreColdSalt: ["seedOut", "waterSeeds", "salt", "cold"], ignoreHeatRad: ["seedOut", "waterSeeds", "rad", "heat"] }],
-  ["f22nc", "Frozen World 22 · Native Competition", "frozen_world", 22, 1, "native_competition", {
-    coldHeat: ["seedOut", "heat", "cold", "cold"], coldRad: ["seedOut", "rad", "cold", "cold"], ignoreCold2: ["seedOut", "earlyMat", "cold", "cold"] }],
+  ["d17nc", "Desert World 17 · Native Competition", "desert_world", 17, 0, "native_competition", {saltDrought2Dry: ["seedOut", "drought", "salt", "drought", "dry", "dry"], radSaltHeatDrought2Dry: ["seedOut", "drought", "salt", "drought", "dry", "rad", "heat"], ignoreDroughtHumid: ["seedOut", "earlyMat", "drought", "humid"], ignoreSaltDrought: ["seedOut", "earlyMat", "drought", "salt"]}],
+  ["o28nc", "Ocean Archipelago 28 · Native Competition", "ocean_archipelago", 28, 8, "native_competition", {radSaltWarmHeatDry: ["seedOut", "waterSeeds", "salt", "rad", "heat", "warm", "warm", "dry", "heat"], ignoreRadSaltColdHeat: ["seedOut", "waterSeeds", "salt", "cold", "rad", "heat"], ignoreRadSaltHeatDry: ["seedOut", "waterSeeds", "dry", "salt", "rad", "heat"]}],
+  ["f11nc", "Frozen World 11 · Native Competition", "frozen_world", 11, 1, "native_competition", {cold2: ["seedOut", "cold", "cold"], ignoreColdHeat: ["seedOut", "cold", "heat"], ignoreColdWarm: ["cold", "warm"]}],
 ];
 // BLOOM-015: Volatile Climate worlds (Terraform-driven climate instability; no clock). Opt-in only, like the competition worlds.
 // Recipes = the layer-P witnesses' plans (an Adapt-heavy one and a Terraform-heavy one) + a deliberately Terraform-heavy
 // "reckless" recipe that stacks steps on one axis as fast as Biomass allows.
 const CLIMATE_WORLDS = [
-  ["f22vc", "Frozen World 22 · Volatile Climate", "frozen_world", 22, 1, "volatile_climate", {
-    adapt: ["seedOut", "earlyMat", "cold", "cold"], terraform: ["seedOut", "cold", "warm", "warm"], reckless: ["seedOut", "warm", "warm", "warm", "cold"] }],
-  ["d25vc", "Desert World 25 · Volatile Climate", "desert_world", 25, 0, "volatile_climate", {
-    adapt: ["seedOut", "drought", "drought"], terraform: ["seedOut", "drought", "humid", "rad", "cool", "cool"], reckless: ["seedOut", "drought", "humid", "humid", "rad", "heat"] }],
-  ["o13vc", "Ocean Archipelago 13 · Volatile Climate", "ocean_archipelago", 13, 6, "volatile_climate", {
-    coldSalt: ["seedOut", "waterSeeds", "salt", "cold"], heatRad: ["seedOut", "waterSeeds", "rad", "heat"], dry: ["seedOut", "waterSeeds", "salt", "dry"] }],
+  // Eden controls for the Volatile Climate fixtures (tools/volatile-climate-check.js 53 compares dead waits with and without the scenario)
+  ["f4", "Frozen World 4 · Eden (Volatile Climate control)", "frozen_world", 4, 1, "eden", {strategyA: ["cold", "cold"], strategyB: ["seedOut", "cold", "warm", "warm"]}],
+  ["d22", "Desert World 22 · Eden (Volatile Climate control)", "desert_world", 22, 0, "eden", {strategyA: ["seedOut", "earlyMat", "drought", "drought"], strategyB: ["seedOut", "earlyMat", "drought", "humid", "rad"]}],
+  ["f4vc", "Frozen World 4 · Volatile Climate", "frozen_world", 4, 1, "volatile_climate", {adapt: ["cold", "cold"], terraform: ["seedOut", "cold", "warm", "warm"], reckless: ["seedOut", "warm", "warm", "warm", "cold"]}],  // layer P PASS, 2 strategies, shocks 0/1; reckless = three Warms stacked before any Adapt (as Frozen 22's was)
+  ["d22vc", "Desert World 22 · Volatile Climate", "desert_world", 22, 0, "volatile_climate", {adapt: ["seedOut", "earlyMat", "drought", "drought"], terraform: ["seedOut", "drought", "humid", "humid"], reckless: ["seedOut", "drought", "humid", "humid", "rad"]}],  // layer P PASS, 3 strategies, shocks 0/0/1
+  ["o28vc", "Ocean Archipelago 28 · Volatile Climate", "ocean_archipelago", 28, 8, "volatile_climate", {adapt: ["seedOut", "waterSeeds", "salt", "cold", "rad", "heat"], terraform: ["seedOut", "waterSeeds", "dry", "salt", "rad", "heat"], reckless: ["seedOut", "waterSeeds", "salt", "dry", "rad", "heat"]}],  // layer P PASS, 2 strategies, shocks 0/0
 ];
 // colony rows: [allocation policy, investment policy]
 // "player" = situational allocation + one Leaf Canopy on the origin + Spread upgrades after the recipe (a reasonable human)

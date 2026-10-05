@@ -28,7 +28,13 @@ const t0 = Date.now();
 // 1–40 × attempts 0–23 (was tooSlow 14/1, lateFirst 21/1, gap 16/3). The faster economy produces natural too-FAST worlds
 // now (tooFast), and no natural world misses the 60 s first purchase any more (the closest, 1/8, is INCONCLUSIVE with a
 // slow margin besides), so the late-first-purchase rejection is checked as a controlled policy boundary instead.
-const FIX = { positive: [13, 6], layer7: [5, 5], tooSlow: [6, 0], tooFast: [1, 2], gap: [32, 10] };
+// BLOOM-027B (cylindrical generator): every Ocean world changed on purpose; fixtures re-picked for the same roles from a full per-attempt
+// scan of public seeds 1–120 × attempts 0–23 (docs/evidence/bloom-027b/fixture-changes.md §2). positive = the shared Ocean primary
+// (seed 28 attempt 8; seed 13 is now accepted at 2 with two strategies that hold the same land). layer7 [1, 8] (static proof, accepted at
+// 19), tooSlow [12, 1] (only "too slow", accepted at 12), gap [61, 15] (a natural purchase-gap world production never reaches). No Ocean
+// attempt in that scan fails layer 8 for "too fast" ALONE any more (the fast worlds are layer-7 cases now), so — like the late-first-
+// purchase rule since BLOOM-013 — the too-fast rejection is checked as a controlled policy boundary on the positive fixture (8 below).
+const FIX = { positive: [28, 8], layer7: [1, 8], tooSlow: [12, 1], gap: [61, 15] };
 const at = ([seed, k]) => BLOOM.archetype.attemptPlanet(OA, seed, k).planet;
 const strategies = (p, pol = POLICY, cfg = config, opts = {}) => BLOOM.findStrategies(p, cfg, traits, { ...pol, ...opts });
 const withPacing = (edit) => { const P = clone(POLICY); edit(P.pacing); return P; };
@@ -114,17 +120,12 @@ console.log("\n# 7–10 layer-8 negatives");
   check(r.layer7.status === "PASS" && r.layer === 8 && r.status === "FAIL" && onlyReasons(r, /^margin reached at .* \(too slow\)$/),
     `7 · too slow: seed ${FIX.tooSlow[0]} attempt ${FIX.tooSlow[1]} has ${r.layer7.strategies} broad strategies that win with margin, REJECTED at layer 8`, r.reason);
 }
-{
-  const p = at(FIX.tooFast), r = strategies(p);
-  check(r.layer7.status === "PASS" && r.layer === 8 && r.status === "FAIL" && onlyReasons(r, /^margin reached at .* \(too fast\)$/),
-    `8 · too fast: seed ${FIX.tooFast[0]} attempt ${FIX.tooFast[1]} has ${r.layer7.strategies} broad strategies that win with margin, REJECTED at layer 8 (natural since BLOOM-013)`, r.reason);
-}
-{ // controlled: the same rule in isolation on the positive fixture
+{ // controlled (see FIX): the too-fast rule in isolation on the positive fixture (no natural Ocean world fails layer 8 for speed alone since BLOOM-027B)
   const rFast = strategies(pos, withPacing(P => P.marginSeconds = [899, 900]));
   const mine = rFast.slow.filter(w => [A.signature, B.signature].includes(w.signature));
   check(rFast.layer === 8 && rFast.status === "FAIL" && rFast.slow.every(w => w.pacingCheck.reasons.some(x => /margin reached .*\(too fast\)$/.test(x))) &&
     mine.length === 2 && mine.every(w => w.pacingCheck.reasons.length === 1),
-    "8 · …and in isolation (controlled policy boundary): the positive fixture under a margin floor of 899 s is REJECTED at layer 8, its two strategies for speed alone", mine.map(w => w.pacingCheck.reasons[0]).join(" · "));
+    "8 · too fast (controlled policy boundary): the positive fixture under a margin floor of 899 s is REJECTED at layer 8, its two strategies for speed alone", mine.map(w => w.pacingCheck.reasons[0]).join(" · "));
   const rEdge = strategies(pos, withPacing(P => P.marginSeconds = [Math.min(A.marginSeconds, B.marginSeconds), 900]));
   check(rEdge.status === "PASS", "…and bands are inclusive: a floor exactly at the faster strategy's margin still passes", `floor ${Math.min(A.marginSeconds, B.marginSeconds)} s`);
 }

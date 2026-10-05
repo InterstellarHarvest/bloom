@@ -1,7 +1,7 @@
-# Cylindrical Geography Foundation (BLOOM-027A)
+# Cylindrical Geography (BLOOM-027A foundation · BLOOM-027B generator)
 
-**Milestone:** BLOOM-027A · **Project:** Cylindrical Planet Topology · **Branch:** `agent/bloom-027a-cylinder-topology` (from main `b704961`)
-**Status:** foundation only — no generated planet is cylindrical yet. BLOOM-027B (cylindrical procedural generation) is the next milestone and has not started.
+**Milestones:** BLOOM-027A (foundation, `agent/bloom-027a-cylinder-topology` `ae9c780` from main `b704961`) · **BLOOM-027B** (cylindrical procedural generation, `agent/bloom-027b-cylinder-generator` from `ae9c780`) · **Project:** Cylindrical Planet Topology
+**Status:** 027A complete and PMO-accepted. **027B complete (§10): every procedural planet is generated as a cylinder.** The production sphere renderer is still a separate spike (not integrated); poles are out of scope by owner decision (§10.9).
 
 ## 1. Why
 
@@ -97,9 +97,9 @@ There is no post-processing that unifies ids because they touch across the seam.
 - Concepts 17 / 18, every UI behaviour, every balance constant, every scenario: untouched. The 2D demos still draw the flattened map; their edge strokes are rendering, not geography.
 - No equal-area projection, no gameplay redesign.
 
-## 8. Next milestone — BLOOM-027B, cylindrical procedural generation (not started)
+## 8. BLOOM-027B — cylindrical procedural generation (done; see §10)
 
-The generator will opt its planets into `topology: { wrapX: true, wrapY: false }`, make the elevation/moisture noise periodic in x, grow regions with `BLOOM.geo` so one owner id can span the seam, and run the same validator cylindrically. It must call these helpers rather than recreate wrap logic in `bloom-gen.js`. Changing generated worlds, their goldens and fixtures needs its own authorization; nothing here does that.
+The generator now opts its planets into `topology: { wrapX: true, wrapY: false }`, samples the elevation and moisture noise periodically in x, grows regions through `BLOOM.geo` so one owner id can span the seam, and the same validator judges them cylindrically. §10 records the change, its evidence and the fixture re-pins it required.
 
 ## 9. Evidence
 
@@ -152,3 +152,84 @@ Branch `agent/bloom-027a-cylinder-topology`, worktree `_worktrees/bloom-027a-cyl
 Raw totals: `docs/evidence/bloom-027a/qa-suites-summary.txt` (Node 20.20.2, Playwright under `npm root -g`, macOS 12 / Darwin 21.6).
 
 **Determinism notes.** Legacy worlds: same RNG sequence (proved above). Cylindrical fixtures: a seam tile can have one more Living neighbour than its flattened picture suggests, so a cylindrical world's run naturally differs from the same tiles read as a rectangle — that is the point. Native seeding draws from the planet-keyed RNG and is unchanged on rectangles; on a cylinder its patch spacing is wrap-aware. The validator's `stats.topology` appears only for planets that declare a topology, so every pinned legacy validator record keeps its hash.
+
+
+---
+
+## 10. BLOOM-027B — cylindrical procedural generation
+
+**Branch:** `agent/bloom-027b-cylinder-generator`, worktree `_worktrees/bloom-027b-cylinder-gen`, from `ae9c780` (027A; main was still `b704961`). Final SHA: see `docs/evidence/bloom-027b/README.md`.
+**Evidence:** `docs/evidence/bloom-027b/` (surveys, RNG comparison, periodic-noise proof, lattice-phase scan, re-pin data, fixture-change log, flat-map captures, QA totals).
+
+### 10.1 What a generated planet is now
+
+Every planet `BLOOM.generatePlanet` emits — and therefore every archetype attempt and every production World Seed — carries
+
+```
+topology: { wrapX: true, wrapY: false }      // plain data, = BLOOM.geo.CYLINDER
+```
+
+from the moment it is generated. The flat 60 × 40 map is a cut-open view of one continuous cylindrical world: x = 0 and x = W − 1 are adjacent columns, latitude is bounded. A landmass, a section or a coastline may cross the cut; the cut is where the picture was cut, not a geographic boundary. First Bloom (authored) declares no topology and is bit-for-bit unchanged (golden).
+
+### 10.2 Periodic terrain and moisture noise — by construction
+
+`resources/bloom-gen.js › octave()` is the only noise sampler; `elevationField()` sums three octaves of it and is called twice per planet (terrain, then moisture), so both fields are periodic in x by the same construction. The sampler:
+
+- draws the lattice exactly as before — `(cols + 1) × (rows + 1)` `rng()` values, row-major — so the generator's **RNG stream keeps its shape** (§10.5);
+- treats the horizontal lattice as a **ring of `cols` cells**: lattice column `cols` *is* column 0 (the circle closes), so the closing column of each row is drawn but never read;
+- maps a column to a position on that circle, `gx = x / W · cols + LATTICE_PHASE`, with x = W the same place as x = 0 — every grid column, x = W − 1 included, is an ordinary interior sample, and the step W − 1 → 0 is the same kind of step as any other adjacent pair (the two columns are neighbours, **not** the same place; nothing asserts `field[y][0] === field[y][W−1]`);
+- keeps y exactly as it was: `gy = y / (H − 1) · rows`, bounded, with the Portion-1 lattice clamp on the last row;
+- exposes `at(u, y)` (through `BLOOM.gen.noise`, a narrowly scoped test hook, not a product API) so a test can sample the *same* field at a continuous column, including past the right edge, and prove `at(u ± W, y) = at(u, y)` and continuity across the cut (`tools/cylinder-gen-check.js` 5–7).
+
+**Lattice phase.** With the ring closing exactly at longitude zero, x = 0 sits on a lattice node of *every* octave at once (the legacy rectangle had both its edges there, where the smoothstep slope is zero), which would make the cut the one systematically **smoothest** column boundary of every world — special in the other direction (terrain step 0.44× an ordinary boundary, rank 0.10; coast crossings 0.39×). `LATTICE_PHASE = 1/3` of a cell turns the ring so the cut lands at the median interior boundary (step 1.06×, rank 0.55; coast crossings 1.05×). It is a fixed constant, not a draw, and the field stays periodic. The scan that chose it: `docs/evidence/bloom-027b/lattice-phase-scan.{js,json}`.
+
+**No seam repair of any kind.** No column copying, no edge averaging, no blur, no water strip, no post-generation pass, no region merging. `tools/cylinder-gen-check.js` 18 audits the source: no `x > 0` / `x < W − 1` / `t ± 1` edge test survives in `bloom-gen.js`, and every `components`, `waterCrossings` and `sectionAdjacency` call passes the topology.
+
+### 10.3 Cylindrical geography in the generator — through `BLOOM.geo` only
+
+| stage | before (rectangular) | now |
+|---|---|---|
+| landmasses (initial, after islet removal, after reachability cleanup) | `components(isLand, W, H)` | `components(…, CYLINDER)` — land continuing from x = W − 1 onto x = 0 is **one** landmass |
+| reachability cleanup (`maxCrossingGap`) | `waterCrossings(…)` | `waterCrossings(…, CYLINDER)` — a strait may cross longitude zero; an island only in Waterborne range across the cut is kept |
+| section seeds (farthest point) | `(x − sx)²` | `wrapDx(x, sx, W, CYLINDER)²` — a tile at x = 1 knows a seed at x = 59 is two columns away |
+| region growth (multi-source BFS) | 4 inline edge tests | `forEachNeighbor4(t, W, H, CYLINDER, …)` — an owner reaching x = W − 1 continues onto x = 0: **one section id on both sides of the cut**, decided at growth time |
+| coast detection | 4 inline edge tests | `neighbors4(t, W, H, CYLINDER)` — west of x = 0 is x = W − 1; the cut is never a coast; top/bottom rows unchanged |
+| section neighbours | `sectionAdjacency(…)` | `sectionAdjacency(…, CYLINDER)` — two different sections touching only across the cut are neighbours; ids never merge |
+| output | no `topology` | `topology: { wrapX: true, wrapY: false }` |
+
+Two different owners meeting at the cut stay two sections (`AA……BB`); one owner that grew through it is one section (`AA……AA`). Nothing infers "same section" from contact.
+
+### 10.4 Determinism and World Seeds
+
+The generator is deterministic: identical code, seed, archetype and parameters give an identical planet (raw `generatePlanet`, every archetype attempt, and the production `generateFromArchetype` retry path with winnability — `tools/cylinder-gen-check.js` 3, `docs/evidence/bloom-027b/seam-survey-after.json` repeats every one of 160 + 120 worlds). No `Math.random`, no clock.
+
+**World Seed compatibility — an intentional break.** Procedural World Seed N no longer reproduces its pre-027B rectangular world; it reproduces the same new cylindrical world every time. No migration machinery was added (the project is in active development). 36 of 40 Ocean Archipelago, 15 of 40 Desert World and 21 of 40 Frozen World public seeds now accept at a different attempt (`docs/evidence/bloom-027b/seam-survey.md`); Ocean accepts 40/40 (was 36/40).
+
+### 10.5 RNG discipline
+
+Each noise field consumes 143 draws (12 + 35 + 96 lattice values) in both the ae9c780 generator and this one — the ring's closing column is drawn and not read — so the terrain and moisture fields sit at the same positions of the RNG stream as before (`docs/evidence/bloom-027b/rng-draw-compare.{js,json}`, 36 parameter sets, both trees instrumented identically in separate vm contexts). Draws *between* and *after* the fields (seed picks, per-section conditions, names) depend on the generated geometry (landmass count, coast fractions, short-circuited salt/volcanic draws), which is exactly what the cylinder legitimately changes, so per-world totals differ; the stream was preserved where preserving it was meaningful.
+
+### 10.6 Seam survey (before / after)
+
+`docs/evidence/bloom-027b/seam-survey.js` reads both trees' worlds **cylindrically** (160 raw worlds + 3 archetypes × seeds 1–40 through the production path). Summary (`seam-survey.md`):
+
+- before, the cut was a wall: 0 of 280 worlds had a section spanning it; the terrain field jumped 10–14× an ordinary column step there; every pair that would touch across it on a globe was missing from gameplay;
+- after, nearly every world has sections whose single id sits on both sides of the cut (one piece under the cylinder, two if read as a rectangle); pairs touching *only* across the cut are rare (region borders no longer end there); the terrain step across the cut is 1.04–1.13× an ordinary boundary and ranks at the median; land/water flips along the cut match the interior mean; 0 broken sections; all 120 production worlds validate as cylinders.
+
+### 10.7 First Bloom, 60 × 40, balance
+
+First Bloom: no topology, golden bit-for-bit (`tools/sim-check.js`). Default logical grid 60 × 40, 2400 tiles, win denominator and threshold unchanged (`tools/cylinder-gen-check.js` 20). No balance constant, archetype datum, scenario datum or validation rule was changed (§10.8 lists every test-side change).
+
+### 10.8 Fixtures and pins that changed, and why
+
+See `docs/evidence/bloom-027b/fixture-changes.md` for the complete list with reasons. In short: raw fixture seeds whose islands joined the mainland across the cut were re-picked for the same role (gen-check / crossing-check: 2024 → 5, 25 → 119); the shared archetype fixture worlds moved where their new worlds no longer fill the roles the suites prove on them — Ocean 13 → **28**, Desert 25 → **17**, Frozen 22 → **11** (plus Ocean 30 for Native Competition's ocean world, Frozen 9 as the Dying World extinction world, and Frozen 4 / Desert 22 as Volatile Climate's own worlds) — each chosen by running the mechanism suites against every accepted world of the archetype; natural negative fixtures (layer 4/6/7/8, bad-origin, generation-failure) were re-picked by role from full per-attempt scans; every generator-dependent hash pin was recomputed with each suite's own hashing (`repin.js`); the economy study's per-world recipes were regenerated from the fixtures' proven strategies and its "was" baselines re-measured on the new worlds under the pre-BLOOM-013 economy.
+
+A number of mechanism checks selected their test instance (a region, a colony, a schedule, a snap size) in a way that only the old fixture worlds satisfied; those now search the fixture worlds / a small parameter range for an instance, with the claim unchanged, and say so in the check. Every such change is listed in `fixture-changes.md` §6. No balance constant, archetype datum, scenario datum, price or validation rule changed.
+
+**Gameplay observations worth the owner's eye** (none acted on): under the cylindrical generator origins are safer refuges on average (bigger landmasses give the origin search more choices: no Ocean world's idle Dying World run dies out — under the old generator exactly one of 36 did, and it happened to be the fixture); 5 of 24 Native Competition sweep worlds seed less native cover than the configured range because the per-landmass cap binds once landmasses merge; a proven Terraform-heavy Volatile Climate strategy that meets a real shock exists on ~2 of 40 Frozen worlds under either generator.
+
+### 10.9 Out of scope by owner decision
+
+- **Poles.** The production globe will only yaw around its vertical axis; players never tilt it to the poles. No polar-cap system, no pole adjacency, no north/south wrap, no equal-area weighting, no reserved top/bottom rows. Y is an ordinary bounded axis; any distortion of the extreme rows on a sphere is accepted.
+- **3:2 grid vs 2:1 texture.** The sphere spike's 480 × 240 texture may keep stretching the 60 × 40 map; the presentation question is deferred.
+- **Sphere integration.** `agent/planet-sphere-spike` (`75101e1`) is untouched and not in production; Concept 18, the production UI and the menu/tutorial flow are unchanged. A follow-up will combine this generator with the renderer for visual validation.

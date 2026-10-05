@@ -1,0 +1,1075 @@
+{
+ "cases": 36,
+ "terrainDrawsBase": [
+  143
+ ],
+ "terrainDrawsAfter": [
+  143
+ ],
+ "noiseDrawCountPreserved": true,
+ "directSamplerDraws": {
+  "octave 3x2": {
+   "draws": 12,
+   "reported": 12,
+   "lattice": 12
+  },
+  "octave 6x4": {
+   "draws": 35,
+   "reported": 35,
+   "lattice": 35
+  },
+  "octave 11x7": {
+   "draws": 96,
+   "reported": 96,
+   "lattice": 96
+  },
+  "elevationField": 143
+ },
+ "note": "The noise consumes 143 draws per field in both trees (12 + 35 + 96 lattice values; the ring's closing column is drawn and not read). Draws BETWEEN the terrain and moisture fields (section-seed picks) and after the moisture field (per-section conditions, names) depend on the generated geometry (number of landmasses, coast fractions, dry/volcanic short-circuits), which is what the cylinder legitimately changes, so those totals differ per world; the position of every draw relative to its stage is unchanged.",
+ "rows": [
+  {
+   "params": {
+    "seed": 1,
+    "waterPct": 0,
+    "sections": 14
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 1,
+    "waterPct": 30,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 451,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 1,
+    "waterPct": 60,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 454,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 452,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 1,
+    "waterPct": 45,
+    "sections": 10,
+    "width": 48,
+    "height": 32
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 403,
+    "sections": 10,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 10
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 404,
+    "sections": 10,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 10
+   }
+  },
+  {
+   "params": {
+    "seed": 2,
+    "waterPct": 0,
+    "sections": 14
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 2,
+    "waterPct": 30,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 2,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 2,
+    "waterPct": 60,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 451,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 2,
+    "waterPct": 45,
+    "sections": 10,
+    "width": 48,
+    "height": 32
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 402,
+    "sections": 10,
+    "landmasses": 3,
+    "topology": null,
+    "seedStageDraws": 10
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 404,
+    "sections": 10,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 10
+   }
+  },
+  {
+   "params": {
+    "seed": 3,
+    "waterPct": 0,
+    "sections": 14
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 3,
+    "waterPct": 30,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 451,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 2,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 3,
+    "waterPct": 60,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 451,
+    "sections": 14,
+    "landmasses": 3,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 451,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 3,
+    "waterPct": 45,
+    "sections": 10,
+    "width": 48,
+    "height": 32
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 403,
+    "sections": 10,
+    "landmasses": 2,
+    "topology": null,
+    "seedStageDraws": 10
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 403,
+    "sections": 10,
+    "landmasses": 3,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 10
+   }
+  },
+  {
+   "params": {
+    "seed": 7,
+    "waterPct": 0,
+    "sections": 14
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 7,
+    "waterPct": 30,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 452,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 7,
+    "waterPct": 60,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 455,
+    "sections": 14,
+    "landmasses": 2,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 454,
+    "sections": 14,
+    "landmasses": 2,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 7,
+    "waterPct": 45,
+    "sections": 10,
+    "width": 48,
+    "height": 32
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 403,
+    "sections": 10,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 10
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 403,
+    "sections": 10,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 10
+   }
+  },
+  {
+   "params": {
+    "seed": 13,
+    "waterPct": 0,
+    "sections": 14
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 13,
+    "waterPct": 30,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 13,
+    "waterPct": 60,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 454,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 454,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 13,
+    "waterPct": 45,
+    "sections": 10,
+    "width": 48,
+    "height": 32
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 403,
+    "sections": 10,
+    "landmasses": 2,
+    "topology": null,
+    "seedStageDraws": 10
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 403,
+    "sections": 10,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 10
+   }
+  },
+  {
+   "params": {
+    "seed": 25,
+    "waterPct": 0,
+    "sections": 14
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 25,
+    "waterPct": 30,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 448,
+    "sections": 14,
+    "landmasses": 2,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 2,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 25,
+    "waterPct": 60,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 447,
+    "sections": 14,
+    "landmasses": 3,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 444,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 25,
+    "waterPct": 45,
+    "sections": 10,
+    "width": 48,
+    "height": 32
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 401,
+    "sections": 10,
+    "landmasses": 2,
+    "topology": null,
+    "seedStageDraws": 10
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 402,
+    "sections": 10,
+    "landmasses": 2,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 10
+   }
+  },
+  {
+   "params": {
+    "seed": 42,
+    "waterPct": 0,
+    "sections": 14
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 451,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 42,
+    "waterPct": 30,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 42,
+    "waterPct": 60,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 448,
+    "sections": 14,
+    "landmasses": 2,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 2,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 42,
+    "waterPct": 45,
+    "sections": 10,
+    "width": 48,
+    "height": 32
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 404,
+    "sections": 10,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 10
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 403,
+    "sections": 10,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 10
+   }
+  },
+  {
+   "params": {
+    "seed": 2024,
+    "waterPct": 0,
+    "sections": 14
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 2024,
+    "waterPct": 30,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 2,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 448,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 2024,
+    "waterPct": 60,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 447,
+    "sections": 14,
+    "landmasses": 2,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 448,
+    "sections": 14,
+    "landmasses": 2,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 2024,
+    "waterPct": 45,
+    "sections": 10,
+    "width": 48,
+    "height": 32
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 402,
+    "sections": 10,
+    "landmasses": 2,
+    "topology": null,
+    "seedStageDraws": 10
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 402,
+    "sections": 10,
+    "landmasses": 2,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 10
+   }
+  },
+  {
+   "params": {
+    "seed": 12345,
+    "waterPct": 0,
+    "sections": 14
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 450,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 12345,
+    "waterPct": 30,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 448,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 12345,
+    "waterPct": 60,
+    "sections": 14,
+    "maxCrossingGap": 6
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 449,
+    "sections": 14,
+    "landmasses": 1,
+    "topology": null,
+    "seedStageDraws": 14
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 157,
+    "totalDraws": 448,
+    "sections": 14,
+    "landmasses": 2,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 14
+   }
+  },
+  {
+   "params": {
+    "seed": 12345,
+    "waterPct": 45,
+    "sections": 10,
+    "width": 48,
+    "height": 32
+   },
+   "base": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 403,
+    "sections": 10,
+    "landmasses": 4,
+    "topology": null,
+    "seedStageDraws": 10
+   },
+   "after": {
+    "terrainDraws": 143,
+    "seedStagePlusMoistureDraws": 153,
+    "totalDraws": 402,
+    "sections": 10,
+    "landmasses": 2,
+    "topology": {
+     "wrapX": true,
+     "wrapY": false
+    },
+    "seedStageDraws": 10
+   }
+  }
+ ]
+}
