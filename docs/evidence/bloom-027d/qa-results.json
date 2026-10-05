@@ -1,0 +1,265 @@
+{
+ "when": "2026-10-05T14:47:41.345Z",
+ "head": "10ceaa7ac5496255ba44b809c28e906bcd35fca5",
+ "passed": 43,
+ "failed": 0,
+ "results": [
+  {
+   "ok": true,
+   "name": "N1 only the sphere component, its demo pages, the new texture suite, the handoff doc and 027D evidence changed since 3763641",
+   "detail": "29 path(s)"
+  },
+  {
+   "ok": true,
+   "name": "N2 generator, simulation, validators, content, planets, game shell, run page and UI mockups byte-identical to the accepted generator f6bca30; existing tools untouched",
+   "detail": "15 protected paths"
+  },
+  {
+   "ok": true,
+   "name": "N3 tools/sphere-texture-check.js (deterministic stipple-wrap + texture suite) is green",
+   "detail": "12 pass / 0 fail"
+  },
+  {
+   "ok": true,
+   "name": "N4 component hygiene: no DOM ids / selectors / storage / globals written, no module-level mutable state; three is imported by relative path (no import map needed); the texture module imports nothing",
+   "detail": "imports [\"./vendor/three-0.185.1/three.module.min.js\",\"./planet-texture.js\"] · texture imports false"
+  },
+  {
+   "ok": true,
+   "name": "B0 documented launch: `python3 -m http.server 8768` from the repository root serves the demo",
+   "detail": "http://127.0.0.1:8768/demos/planet-sphere.html"
+  },
+  {
+   "ok": true,
+   "name": "B1 the browser shows the same production worlds as Node: 60×40 cylinders, 480×240 texture, one upload per new world",
+   "detail": "ocean6=Pallas-161 ocean36=Umbra-288 frozen7=Ymir-853 desert5=Vesper-656 desert25=Umbra-584 frozen25=Hollow-329 ocean40=Borea-179"
+  },
+  {
+   "ok": true,
+   "name": "B2a the globe's rotation is a pure rotation about its vertical axis through diagonal drag, vertical drag, ↑/↓/PgUp/PgDn, ←/→ and wheel zoom (no pitch, no roll)",
+   "detail": "[0,0,0,0,0]"
+  },
+  {
+   "ok": true,
+   "name": "B2b horizontal drag and ←/→ spin the globe; a pure vertical drag and ↑/↓ change nothing",
+   "detail": "diagonal Δyaw 1.104 · vertical Δyaw 0.0e+0 · ↑↓ Δyaw 0.0e+0 · →→ Δyaw 0.240"
+  },
+  {
+   "ok": true,
+   "name": "B2c the axis never moves on screen: the north pole stays top-centre through every drag (a physical globe on a fixed axis); no view over a pole",
+   "detail": "pole NDC [0,0.755142] → [0,0.755142] → [0,0.755142] → [0,0.755142] · zoomed [0,1.220365]"
+  },
+  {
+   "ok": true,
+   "name": "B2d there is no pitch / tilt / roll API: such options are ignored; lookAt(u) is longitude only",
+   "detail": "{\"names\":[],\"tilt\":0,\"c\":0.30000000000000004}"
+  },
+  {
+   "ok": true,
+   "name": "B3 idle spin is horizontal only, is zero from the first frame of a press, and ramps back in ~3 s after release (full speed ~1.5 s later)",
+   "detail": "idle before true · paused after release true · stopped at once true · during press 28 frames all idleFactor 0 · resumed 2.99 s after release · full speed 4.49 s · max |qx|+|qz| 0"
+  },
+  {
+   "ok": true,
+   "name": "B4a (027C fix kept) picks just west (x = 59) and just east (x = 0) of longitude zero resolve to the tilemap's own region on each side",
+   "detail": "1372/1372 row-picks [cut 0°: rows 3–36, ±30°: 4–35] · same 790 · different 126 · coast 36 · water 420"
+  },
+  {
+   "ok": true,
+   "name": "B4b (027C fix kept) a ray exactly ON the meridian resolves to an adjacent cut tile, never null — the analytic longitude-zero fallback is live",
+   "detail": "1372/1372 · analytic fallback used 252×"
+  },
+  {
+   "ok": true,
+   "name": "B4c (027C fix kept) a pick straight after a zoom change sees the NEW camera (matrices synced before picking, no frame in between)",
+   "detail": "{\"far\":0.45144411858551986,\"near\":0.3986272297401906,\"analyticNear\":0.39862562106875915}"
+  },
+  {
+   "ok": true,
+   "name": "B4d the analytic fallback agrees with the mesh UV (same tile)",
+   "detail": "1483/1488 · max |Δu| 1.60e-3"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "B4e polar rows outside the fixed equatorial view (accepted by the PMO; not a requirement)",
+   "detail": "{\"firstRow\":3,\"lastRow\":36}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "B5 cost of setPlanet with unchanged content (signature only, no draw, no upload)",
+   "detail": "{\"ms\":0.056,\"extraUploads\":0}"
+  },
+  {
+   "ok": true,
+   "name": "B5 no texture upload while rotating; setPlanet with an unchanged source uploads nothing; each real change uploads exactly once",
+   "detail": "{\"uploads\":0,\"ver\":0,\"drawn\":87,\"sameAgain\":0,\"reapplyMsInclDemoPreview\":0.9,\"threeToggles\":3,\"version\":3}"
+  },
+  {
+   "ok": true,
+   "name": "B6 pointer hover 3 px either side of the cut on Ocean 6: tiles (59, y) and (0, y), both sec_13 Moss Steppe",
+   "detail": "[[59,16,\"sec_13\"],[0,16,\"sec_13\"]]"
+  },
+  {
+   "ok": true,
+   "name": "B7 render on demand: with no idle spin and no input, the loop ticks but draws 0 frames (no GPU work for a still globe)",
+   "detail": "{\"ticks\":60,\"drawn\":0}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "B8 performance, headless Chromium (software GL) — one globe",
+   "detail": "{\"meanFrameMs\":16.67,\"p95FrameMs\":16.8,\"drawnFrames\":180,\"ticks\":180,\"gl\":\"ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\",\"pickMs\":0.772,\"setPlanetWithChangeMs\":2.58}"
+  },
+  {
+   "ok": true,
+   "name": "B8 idle rotation draws every frame; pick < 2 ms",
+   "detail": "{\"drawn\":180,\"pickMs\":0.772,\"meanFrameMs\":16.67}"
+  },
+  {
+   "ok": true,
+   "name": "B9 a steady drag moves the globe every frame, in one direction",
+   "detail": "{\"frames\":104,\"midStalls\":0,\"monotonic\":true}"
+  },
+  {
+   "ok": true,
+   "name": "B10a onInteractionStart / onInteractionEnd fire once per drag; with interaction disabled a drag or key does nothing and fires nothing; disabling mid-drag ends the drag (end fires)",
+   "detail": "{\"one\":\"start,end\",\"offMoved\":0,\"offEvents\":0,\"midDrag\":{\"interacting\":false,\"events\":\"start,end\"}}"
+  },
+  {
+   "ok": true,
+   "name": "B10b an interactive container is focusable, labelled and claims horizontal touch only (touch-action: pan-y, so vertical swipes still scroll the page); disabling restores it",
+   "detail": "{\"on\":{\"tabindex\":\"0\",\"aria\":true,\"touch\":\"pan-y\",\"cursor\":\"grab\"},\"off\":{\"tabindex\":null,\"aria\":null,\"touch\":\"\",\"cursor\":\"\"}}"
+  },
+  {
+   "ok": true,
+   "name": "B10c setYaw / getYaw (instant and animated); yaw 0 = map centre",
+   "detail": "{\"sy\":{\"yaw\":1,\"centerU\":0.34084505690810474},\"animEnd\":-0.5}"
+  },
+  {
+   "ok": true,
+   "name": "B11 resize (900×700, phone 390×844, and the container alone shrinking 300 px): globe stays round and inside its box; buffer follows the container",
+   "detail": "{\"sizes\":[{\"width\":420,\"height\":421,\"bufferWidth\":540,\"bufferHeight\":661},{\"width\":304,\"height\":303,\"bufferWidth\":390,\"bufferHeight\":523}],\"container\":{\"box\":{\"x\":0,\"y\":0,\"w\":620,\"h\":761,\"visible\":true},\"buffer\":[620,761],\"bbox\":{\"width\":482,\"height\":483,\"bufferWidth\":620,\"bufferHeight\":761}}}"
+  },
+  {
+   "ok": true,
+   "name": "B12 no console errors / failed requests across every world and interaction above",
+   "detail": "{\"errors\":[],\"failed\":[]}"
+  },
+  {
+   "ok": true,
+   "name": "B13a dispose(): GPU geometry / texture freed (1 / 1 → 0 / 0), WebGL context lost, canvas removed, loop stopped, container's style and attributes restored exactly; a second dispose is a no-op",
+   "detail": "{\"mem\":{\"geometries\":1,\"textures\":1},\"memAfter\":{\"geometries\":0,\"textures\":0},\"lost\":true,\"framesAfter\":0,\"container\":[\"position: fixed; left: 10px; top: 10px; width: 240px; height: 240px;\",\"position: fixed; left: 10px; top: 10px; width: 240px; height: 240px;\"]}"
+  },
+  {
+   "ok": true,
+   "name": "B13b dispose(): every event listener, ResizeObserver and WebGL context it added is gone (live counts back to the page's baseline)",
+   "detail": "{\"baseline\":{\"listeners\":45,\"observers\":1,\"liveGL\":1,\"glCreated\":2,\"contextWarnings\":0},\"whileLive\":{\"listeners\":56,\"observers\":2,\"liveGL\":2},\"after\":{\"listeners\":45,\"observers\":1,\"liveGL\":1,\"glCreated\":3,\"contextWarnings\":0}}"
+  },
+  {
+   "ok": true,
+   "name": "B14 30 standalone + 10 × nine-view shared create/destroy cycles: listeners, observers and live WebGL contexts return to baseline, no 'too many contexts' warning, JS heap flat",
+   "detail": "{\"baseline\":{\"listeners\":45,\"observers\":1,\"liveGL\":1,\"glCreated\":3,\"contextWarnings\":0},\"after\":{\"listeners\":45,\"observers\":1,\"liveGL\":1,\"glCreated\":43,\"contextWarnings\":0},\"contextsCreated\":40,\"heapDeltaMB\":0}"
+  },
+  {
+   "ok": true,
+   "name": "B15 instances are independent: changing one view's yaw, idle, interaction, planet and distance leaves the other untouched (standalone and on one shared renderer); only the immutable sphere geometry is shared",
+   "detail": "{\"out\":[{\"bYawSame\":true,\"bUploadsSame\":true,\"bSigSame\":true,\"bAuto\":true,\"bInter\":true,\"bDist\":true,\"distinct\":true,\"aSigNow\":true},{\"bYawSame\":true,\"bUploadsSame\":true,\"bSigSame\":true,\"bAuto\":true,\"bInter\":true,\"bDist\":true,\"distinct\":true,\"aSigNow\":true}],\"sharedGeo\":true}"
+  },
+  {
+   "ok": true,
+   "name": "B16 DPR capped at 2 on a 3× display",
+   "detail": "920×761 css → 1840×1522 buffer · pixelRatio 2"
+  },
+  {
+   "ok": true,
+   "name": "B17a prefers-reduced-motion: no idle spin, no fling, animated turns jump instantly — and a horizontal drag still spins the globe",
+   "detail": "autoRotate false · drag Δyaw 0.406 · 4.5 s after release Δyaw 0.0e+0 · lookAt(0, animate) → centre u 0"
+  },
+  {
+   "ok": true,
+   "name": "B17b the media query is live: idle spin resumes when reduced motion is turned off and stops at once when it is turned back on",
+   "detail": "{\"live\":{\"spinning\":true},\"live2\":{\"idleFactor\":0,\"targetMoved\":0}}"
+  },
+  {
+   "ok": true,
+   "name": "B17c reduced-motion page: no console errors",
+   "detail": "[]"
+  },
+  {
+   "ok": true,
+   "name": "G1 nine globes on one PlanetSphereRenderer: ONE WebGL context, one shader program, one shared geometry, nine textures (one upload each), each placed on its own cell",
+   "detail": "{\"n\":9,\"gl\":1,\"liveGL\":1,\"mem\":{\"geometries\":1,\"textures\":9},\"programs\":1,\"uploads\":[1,1,1,1,1,1,1,1,1],\"cellsOk\":true,\"createMs\":56.9}"
+  },
+  {
+   "ok": true,
+   "name": "G2 each globe is drawn inside its own cell only: opaque at the cell centre, transparent at the cell corner and in the gutter (the page shows through)",
+   "detail": "[[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]]"
+  },
+  {
+   "ok": true,
+   "name": "G3 render on demand across the grid: nine still globes draw 0 frames",
+   "detail": "{\"ticks\":61,\"drawn\":0}"
+  },
+  {
+   "ok": true,
+   "name": "G4 a drag on one cell spins only that globe (pointer input comes from each view's own container)",
+   "detail": "[0,0,0,0,0.8537,0,0,0,0]"
+  },
+  {
+   "ok": true,
+   "name": "G5 the shared canvas and every cell re-measure on a phone-width resize (no per-view resize call needed)",
+   "detail": "[[111,111],[111,111],[111,111],[111,111],[111,111],[111,111],[111,111],[111,111],[111,111]]"
+  },
+  {
+   "ok": true,
+   "name": "G5b a CSS scale on a cell (e.g. a grid → focus animation) is followed for drawing and picking; scaling the whole stage keeps every box in the stage's own units",
+   "detail": "{\"w0\":301,\"wide\":452,\"pickAtScaledEdge\":true,\"stageScaled\":{\"box\":452,\"buffer\":960},\"back\":301}"
+  },
+  {
+   "ok": true,
+   "name": "G6 host.dispose() tears all nine views down: GPU memory 0 / 0, context lost, canvas removed, stage style restored",
+   "detail": "{\"mem\":{\"geometries\":0,\"textures\":0},\"lost\":true,\"canvas\":false,\"stagePos\":\"\",\"liveGL\":0,\"listeners\":15,\"observers\":0}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "G7 nine spinning globes, headless Chromium (software GL): shared renderer vs nine contexts",
+   "detail": "{\"separate\":{\"createMs\":115.9,\"contexts\":9,\"programs\":9,\"meanFrameMs\":50.56,\"p95FrameMs\":66.6,\"gl\":\"ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\"},\"shared\":{\"createMs\":42.6,\"contexts\":1,\"programs\":1,\"meanFrameMs\":48.04,\"p95FrameMs\":50.1,\"gl\":\"ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\"}}"
+  },
+  {
+   "ok": true,
+   "name": "G7 shared: 1 context / 1 compiled program for nine globes; separate: 9 / 9",
+   "detail": "{\"shared\":[1,1],\"separate\":[9,9]}"
+  },
+  {
+   "ok": true,
+   "name": "G8 grid page: no console errors / failed requests",
+   "detail": "{\"errors\":[],\"failed\":[]}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "F0 file:// probe (Chromium): ES modules do not load from file://, so PlanetSphereView needs the page served over http(s)",
+   "detail": "{\"moduleRan\":false,\"firstError\":\"Access to script at 'file:///Users/MrDashiki/Experiments%20&%20Projects/_worktrees/bloom-027d-sphere/resources/planet-sphere/planet-sphere-view.js' from origin \"}"
+  },
+  {
+   "ok": true,
+   "name": "F1 Firefox: demo loads, cut picks correct on both sides, yaw only; nine-globe grid on one context; no errors",
+   "detail": "34/34 · grid {\"n\":9,\"gl\":1,\"programs\":1} · []"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "perf GPU — one globe idle-rotating (report only)",
+   "detail": "{\"meanFrameMs\":16.67,\"p95FrameMs\":16.8,\"drawnFrames\":180,\"ticks\":180,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\"}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "perf GPU — nine spinning globes, shared vs separate (report only)",
+   "detail": "{\"separate\":{\"createMs\":108.4,\"meanFrameMs\":16.67,\"p95FrameMs\":16.7,\"drawnFrames\":1620,\"ticks\":180,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\"},\"shared\":{\"createMs\":38.9,\"meanFrameMs\":16.67,\"p95FrameMs\":16.8,\"drawnFrames\":180,\"ticks\":180,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\"}}"
+  }
+ ]
+}
