@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM — Planet Sphere Spike</title>
+<!--
+  BLOOM — Planet Sphere Projection · TECHNICAL SPIKE (developer demo, not product UI). See docs/PLANET_SPHERE_SPIKE_v1.md.
+
+  Renders a real BLOOM planet (the production generator / archetype path, unchanged) into a 2:1 texture canvas and shows it
+  on a Three.js sphere (three@0.185.1, vendored under demos/planet-sphere/vendor/). Hovering the sphere raycasts it and maps
+  UV → logical tile → the authoritative tilemap (water or an existing section). Nothing here touches the simulation, the
+  generator, the validators or the topology: the grid still does not wrap, so x = 0 and x = W − 1 meet at a visible seam.
+
+  ES modules: serve the repository root over http, e.g.
+      python3 -m http.server 8765        (from the repository root)
+      open http://localhost:8765/demos/planet-sphere-spike.html
+  URL: ?planet=ocean13|desert25|frozen22|frozen9|desert4|default2024   or   ?archetype=<id>&seed=<n>   or   ?gen=default&seed=<n>&water=<pct>
+       &tex=480 (default, 8×6 px per tile) | 960 (16×12 px per tile)   ·   &debug=0 hides the readout panel
+-->
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#121826; --panel2:#0e1320; --ink:#cdd6e6; --dim:#7c89a3;
+    --line:#26304a; --accent:#7fe3c0; --accent2:#ffd479; --bad:#ff6b6b; --seam:#ff4fd8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg); color:var(--ink); font-family:"DejaVu Sans Mono","Courier New",monospace; font-size:12.5px; line-height:1.45;
+    display:grid; grid-template-rows:auto 1fr; height:100vh; overflow:hidden}
+  header{display:flex; align-items:center; gap:14px; padding:8px 16px; background:linear-gradient(180deg,#141b2c,#0e1320); border-bottom:1px solid var(--line); flex-wrap:wrap}
+  header h1{font-size:14px; margin:0; letter-spacing:3px; color:var(--accent); white-space:nowrap}
+  header h1 small{color:var(--dim); letter-spacing:1px; font-weight:normal}
+  header .spike{margin-left:auto; color:var(--accent2); font-size:11px; border:1px solid #5a4a20; padding:2px 8px; border-radius:3px}
+  main{display:grid; grid-template-columns:1fr 360px; min-height:0}
+  main.nodebug{grid-template-columns:1fr 0}
+  main.nodebug aside{display:none}
+  .stage{position:relative; min-width:0; min-height:0}
+  #globe{position:absolute; inset:0}
+  .status{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); color:var(--dim); pointer-events:none; text-align:center}
+  .status.err{color:var(--bad); max-width:80%}
+  .hint{position:absolute; left:12px; bottom:10px; color:var(--dim); font-size:11px; pointer-events:none}
+  #hoverDot{position:absolute; width:11px; height:11px; margin:-6px 0 0 -6px; border:2px solid #fff; border-radius:50%; box-shadow:0 0 0 1px #000; pointer-events:none}
+  #hoverTip{position:absolute; right:12px; top:10px; background:rgba(14,19,32,.88); border:1px solid var(--line); padding:6px 9px; border-radius:4px; pointer-events:none; white-space:pre; font-size:12px; min-width:15em}
+  aside{background:var(--panel2); border-left:1px solid var(--line); overflow:auto; padding:10px 12px 16px}
+  aside h2{font-size:11px; letter-spacing:2px; color:var(--dim); margin:12px 0 6px; font-weight:normal; text-transform:uppercase}
+  aside h2:first-child{margin-top:0}
+  .row{display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-bottom:6px}
+  select, input[type=number]{background:#1a2236; color:var(--ink); border:1px solid var(--line); font:inherit; padding:4px 6px; border-radius:4px}
+  select{max-width:100%}
+  input[type=number]{width:9em}
+  button{background:#1a2236; color:var(--ink); border:1px solid var(--line); padding:4px 9px; font:inherit; font-size:12px; cursor:pointer; border-radius:4px}
+  button:hover, button:focus-visible{border-color:var(--accent); outline:none}
+  button.act{background:#243b2f; border-color:#2f6a4d; color:#cdeede}
+  label.chk{display:flex; gap:6px; align-items:center; color:var(--ink); cursor:pointer}
+  dl{display:grid; grid-template-columns:auto 1fr; gap:2px 10px; margin:0}
+  dt{color:var(--dim)} dd{margin:0; word-break:break-word}
+  .seamkey{color:var(--seam)}
+  #texWrap{position:relative; border:1px solid var(--line); margin-top:4px}
+  #texPreview{display:block; width:100%; image-rendering:pixelated; aspect-ratio:2/1}
+  #texCross{position:absolute; border:1px solid #fff; box-shadow:0 0 0 1px #000; pointer-events:none; display:none}
+  .seamedge{position:absolute; top:0; bottom:0; width:2px; background:var(--seam); opacity:.8}
+  .note{color:var(--dim); font-size:11px; margin:6px 0 0}
+  @media (max-width:820px){
+    body{overflow:auto; height:auto}
+    main, main.nodebug{grid-template-columns:1fr; grid-template-rows:62vh auto}
+    aside{border-left:0; border-top:1px solid var(--line)}
+    header .spike{margin-left:0}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>BLOOM <small>· planet sphere projection</small></h1>
+  <span class="spike">TECHNICAL SPIKE · prototype only · not product UI</span>
+</header>
+<main id="main">
+  <div class="stage">
+    <div id="globe"></div>
+    <div class="status" id="status">Generating planet…</div>
+    <div id="hoverDot" hidden></div>
+    <div id="hoverTip" hidden></div>
+    <div class="hint">drag to rotate · scroll to zoom · arrow keys when focused</div>
+  </div>
+  <aside id="panel" aria-label="Developer readout">
+    <h2>Planet</h2>
+    <div class="row"><select id="preset" aria-label="Planet preset"></select></div>
+    <div class="row">
+      <select id="arch" aria-label="Archetype"></select>
+      <input id="seed" type="number" min="0" max="4294967295" step="1" aria-label="Public seed">
+      <button class="act" id="gen">Generate</button>
+    </div>
+    <div class="row"><label for="tex" style="color:var(--dim)">Texture</label>
+      <select id="tex"><option value="480">480×240 (8×6 px / tile)</option><option value="960">960×480 (16×12 px / tile)</option></select></div>
+
+    <h2>View</h2>
+    <div class="row">
+      <button data-view="front">Front</button><button data-view="back">Opposite</button>
+      <button data-view="seam">Face seam</button><button data-view="north">North pole</button><button data-view="south">South pole</button>
+    </div>
+    <div class="row">
+      <label class="chk"><input type="checkbox" id="seamMark"> <span>seam marker <span class="seamkey">┊</span></span></label>
+      <label class="chk"><input type="checkbox" id="unlit"> unlit colours</label>
+      <label class="chk"><input type="checkbox" id="idle" checked> idle rotation</label>
+    </div>
+    <div class="row"><button id="recreate" title="dispose the Three.js view and build a new one (resource-cleanup check)">Dispose + recreate view</button></div>
+
+    <h2>Readout</h2>
+    <dl id="readout"></dl>
+
+    <h2>Texture <span style="text-transform:none;letter-spacing:0">(the canvas uploaded to the sphere)</span></h2>
+    <div id="texWrap"><canvas id="texPreview" width="480" height="240"></canvas><div class="seamedge" style="left:0"></div><div class="seamedge" style="right:0"></div><div id="texCross"></div></div>
+    <p class="note">Magenta edges = the longitude seam: column x = 0 (left) and x = W−1 (right) meet there on the sphere. The grid does not wrap, so they are unrelated land.</p>
+  </aside>
+</main>
+
+<!-- authoritative BLOOM content + production modules (classic scripts, unchanged; same order as demos/demo-run.html) -->
+<script src="../content/config.js"></script>
+<script src="../content/traits.js"></script>
+<script src="../planets/first_bloom.js"></script>
+<script src="../content/archetypes.js"></script>
+<script src="../resources/bloom-sim.js"></script>
+<script src="../resources/bloom-gen.js"></script>
+<script src="../resources/bloom-validate.js"></script>
+<script src="../resources/bloom-witness.js"></script>
+<script src="../resources/bloom-archetype.js"></script>
+
+<script type="importmap">{ "imports": { "three": "./planet-sphere/vendor/three-0.185.1/three.module.min.js" } }</script>
+<script type="module">
+import * as THREE from "three";
+import { PlanetSphereView } from "./planet-sphere/planet-sphere-view.js";
+import { drawPlanetTexture, regionAtUV, tileCenterUV, uvToLonLat, seamStats } from "./planet-sphere/planet-projection.js";
+
+const D = window.BLOOM_DATA, B = window.BLOOM, $ = id => document.getElementById(id);
+const PRESETS = [
+  { key: "ocean13", label: "Ocean Archipelago · seed 13 — normal world (primary fixture)", archetype: "ocean_archipelago", seed: 13 },
+  { key: "desert25", label: "Desert World · seed 25 — normal world (preview seed)", archetype: "desert_world", seed: 25 },
+  { key: "frozen22", label: "Frozen World · seed 22 — normal world (fixture)", archetype: "frozen_world", seed: 22 },
+  { key: "frozen9", label: "Frozen World · seed 9 — SEAM TEST (30/40 edge rows land vs water)", archetype: "frozen_world", seed: 9 },
+  { key: "desert4", label: "Desert World · seed 4 — seam test (land both edges, 40/40 rows section break)", archetype: "desert_world", seed: 4 },
+  { key: "default2024", label: "Default generator (no archetype) · seed 2024 · 30% water", gen: "default", seed: 2024, water: 30 },
+];
+const S = window.SPHERE_SPIKE = { ready: false, errors: [], three: THREE.REVISION, presets: PRESETS };
+addEventListener("error", e => S.errors.push(String(e.message || e)));
+addEventListener("unhandledrejection", e => S.errors.push(String(e.reason && e.reason.message || e.reason)));
+
+// ---- controls
+for (const p of PRESETS) $("preset").add(new Option(p.label, p.key));
+$("preset").add(new Option("(custom archetype + seed)", "custom"));
+for (const a of D.archetypes) $("arch").add(new Option(a.name, a.id));
+$("arch").add(new Option("Default generator (no archetype, 30% water)", "default"));
+
+const q = new URLSearchParams(location.search);
+let source;
+if (q.get("archetype") || q.get("gen")) source = q.get("gen") === "default" ? { gen: "default", seed: +q.get("seed") || 2024, water: q.has("water") ? +q.get("water") : 30 } : { archetype: q.get("archetype"), seed: +q.get("seed") || 0 };
+else source = PRESETS.find(p => p.key === q.get("planet")) || PRESETS[0];
+const TEX_W = q.get("tex") === "960" ? 960 : 480;
+$("tex").value = String(TEX_W);
+if (q.get("debug") === "0") $("main").classList.add("nodebug");
+
+// ---- planet: the real production path, untouched (same call as demo-run.html's harness)
+function generate(src) {
+  if (src.gen === "default") { // the shared generator with its own defaults (60×40, 14 sections) + the product crossing gap
+    const planet = B.generatePlanet({ seed: src.seed, waterPct: src.water, sections: 14, maxCrossingGap: D.config.crossing.maxGap });
+    return { planet, render: null, summary: { source: "BLOOM.generatePlanet (default generator)", seed: src.seed, waterPct: src.water } };
+  }
+  const A = D.archetypes.find(a => a.id === src.archetype);
+  if (!A) throw new Error(`unknown archetype "${src.archetype}"`);
+  const planet = B.generateFromArchetype(A, src.seed, { config: D.config, traits: D.traits }); // validator layers 1–8, as the game does
+  const a = planet.archetype;
+  return { planet, render: A.render || null, summary: { source: "BLOOM.generateFromArchetype (production path)", archetype: A.name, archetypeId: A.id,
+    seed: a.publicSeed, attempt: a.attempt, generationSeed: a.generationSeed, waterPct: a.actualWaterPct, landmasses: a.landmasses, layers: a.validatedLayers.join("") } };
+}
+
+const texCanvas = document.createElement("canvas"); // dedicated texture canvas (never the gameplay canvas)
+let view = null, cur = null;
+
+function makeView() {
+  view = new PlanetSphereView($("globe"), { textureCanvas: texCanvas, autoRotate: $("idle").checked });
+  view.setSeamMarker($("seamMark").checked); view.setUnlit($("unlit").checked);
+  view.onFrame = onFrame; S.view = view;
+}
+
+function load(src) {
+  $("status").textContent = "Generating planet…"; $("status").className = "status"; $("status").hidden = false;
+  // let the message paint, then generate outside the render loop (generation is BLOOM work, never done per frame)
+  return new Promise(res => setTimeout(() => {
+    const t0 = performance.now();
+    try { cur = generate(src); }
+    catch (e) { $("status").textContent = `No world: ${e.message.slice(0, 300)}`; $("status").className = "status err"; S.errors.push("generation: " + e.message); S.ready = true; return res(false); }
+    cur.genMs = Math.round(performance.now() - t0); cur.src = src;
+    const t1 = performance.now();
+    cur.tex = drawPlanetTexture(texCanvas, cur.planet, { render: cur.render, width: TEX_W, height: TEX_W / 2 });
+    cur.texMs = +(performance.now() - t1).toFixed(1);
+    cur.seam = seamStats(cur.planet, cur.tex.tiles);
+    if (!view) makeView(); else view.textureChanged(); // exactly one texture upload per planet
+    const pv = $("texPreview"); pv.width = texCanvas.width; pv.height = texCanvas.height; pv.getContext("2d").drawImage(texCanvas, 0, 0);
+    $("status").hidden = true;
+    Object.assign(S, { planet: cur.planet, summary: cur.summary, texture: { width: cur.tex.width, height: cur.tex.height, tileW: cur.tex.tileW, tileH: cur.tex.tileH }, seam: cur.seam,
+      textureCanvas: texCanvas, genMs: cur.genMs, texMs: cur.texMs, ready: true });
+    const key = src.key || "custom"; $("preset").value = PRESETS.some(p => p.key === key) ? key : "custom";
+    $("arch").value = src.gen === "default" ? "default" : src.archetype; $("seed").value = src.seed;
+    renderReadout(true);
+    res(true);
+  }, 30));
+}
+
+// ---- hover: Three.js raycast → UV → tile → authoritative tilemap
+let hover = null, hoverKey = "", lastOV = -1;
+function onFrame(v) {
+  if ((v.hoverDirty || v.orientationVersion !== lastOV) && cur) {
+    v.hoverDirty = false; lastOV = v.orientationVersion;
+    const hit = v.hoverClient ? v.pickAt(v.hoverClient.x, v.hoverClient.y) : null;
+    hover = hit ? { ...hit, region: regionAtUV(cur.planet, hit.uv.u, hit.uv.v) } : null;
+    const k = hover ? `${hover.region.index}|${hover.uv.u.toFixed(3)}|${hover.uv.v.toFixed(3)}` : "";
+    if (k !== hoverKey) { hoverKey = k; renderHover(); }
+  }
+  if (v.frames % 12 === 0) renderReadout(false);
+}
+function regionText(r) { return r.water ? "Water (impassable)" : `${r.sectionId} — ${r.name}${r.isOrigin ? " (origin)" : ""}`; }
+function renderHover() {
+  const tip = $("hoverTip"), cross = $("texCross"), dot = $("hoverDot");
+  S.hover = hover && { uv: hover.uv, x: hover.region.x, y: hover.region.y, water: hover.region.water, sectionId: hover.region.sectionId, name: hover.region.name };
+  if (!hover) { tip.hidden = dot.hidden = true; cross.style.display = "none"; return; }
+  const sr = $("globe").getBoundingClientRect(), hc = view.hoverClient; // marks the raycast point (headless screenshots show no cursor)
+  if (hc) { dot.hidden = false; dot.style.left = (hc.x - sr.left) + "px"; dot.style.top = (hc.y - sr.top) + "px"; }
+  const r = hover.region, ll = uvToLonLat(hover.uv.u, hover.uv.v);
+  tip.hidden = false;
+  tip.textContent = `UV: ${hover.uv.u.toFixed(3)}, ${hover.uv.v.toFixed(3)}\nTile: ${r.x}, ${r.y}\nRegion: ${regionText(r)}\nlon ${ll.lon.toFixed(1)}°  lat ${ll.lat.toFixed(1)}°`;
+  const W = cur.planet.gridWidth, H = cur.planet.gridHeight;
+  Object.assign(cross.style, { display: "block", left: (r.x / W * 100) + "%", top: (r.y / H * 100) + "%", width: (100 / W) + "%", height: (100 / H) + "%" });
+}
+
+const fmt = (n, d = 3) => (+n).toFixed(d);
+function renderReadout(force) {
+  if (!cur || !view || view.disposed) return;
+  const st = view.state(), p = cur.planet, s = cur.summary, sm = cur.seam, c = uvToLonLat(st.centerU, st.centerV);
+  const seamLon = ((st.centerU * 360) % 360 + 360) % 360, seamOff = Math.min(seamLon, 360 - seamLon); // degrees of longitude from view centre to the seam
+  const idle = !st.autoRotatePref ? "off (toggle)" : st.reducedMotion ? "off — prefers-reduced-motion" : st.interacting ? "paused — interacting"
+    : st.idleResumesInMs > 0 ? `paused — resumes in ${(st.idleResumesInMs / 1000).toFixed(1)} s` : st.idleFactor < 1 ? `ramping in (${fmt(st.idleFactor, 2)})` : "rotating";
+  const rows = [
+    ["planet", `${p.name} · ${p.id}`], ["source", s.source],
+    ...(s.archetype ? [["archetype", `${s.archetype} · public seed ${s.seed} · attempt ${s.attempt}`], ["gen. seed", `${s.generationSeed} · layers ${s.layers}`]] : [["seed", `${s.seed} · water ${s.waterPct}%`]]),
+    ["water / land", `${s.waterPct}% water · ${p.sections.length} sections${s.landmasses ? ` · ${s.landmasses} landmasses` : ""}`],
+    ["logical map", `${p.gridWidth}×${p.gridHeight} tiles (unchanged, no wrap)`],
+    ["texture", `${cur.tex.width}×${cur.tex.height} · ${cur.tex.tileW}×${cur.tex.tileH} px/tile · aspect ${fmt(cur.tex.width / cur.tex.height, 3)}`],
+    ["seam", `u=0≡1 · lon ±180° · column x=0 | x=${p.gridWidth - 1}`],
+    ["seam rows", `${sm.landVsWater}/${sm.rows} land↔water · ${sm.sectionBreak}/${sm.rows} section break · ${sm.sameSection} same`],
+    ["seam colour", `Δ ${sm.meanSeamColourStep} across seam vs ${sm.meanInteriorColourStep} interior mean`],
+    ["view centre", `lon ${fmt(c.lon, 1)}° lat ${fmt(c.lat, 1)}° · seam ${fmt(seamOff, 0)}° away${seamOff < 90 ? " (visible)" : ""}`],
+    ["idle", idle],
+    ["renderer", `${st.cssWidth}×${st.cssHeight} css · buffer ${st.bufferWidth}×${st.bufferHeight} · DPR ${st.pixelRatio} (device ${st.deviceDpr}, cap 2)`],
+    ["uploads", `texture uploads ${st.textureUploads} · frames ${st.frames}`],
+    ["timing", `generate ${cur.genMs} ms · texture ${cur.texMs} ms · three r${THREE.REVISION}`],
+  ];
+  $("readout").innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${String(v).replace(/[&<]/g, ch => ({ "&": "&amp;", "<": "&lt;" }[ch]))}</dd>`).join("");
+}
+
+// ---- wiring
+const VIEWS = { front: () => view.lookAt(0.5, 0.5 + 0.18 / Math.PI), back: () => view.lookAt(0.0, 0.5 + 0.18 / Math.PI), seam: () => view.lookAt(1 - 30 / 360, 0.55),
+  north: () => view.lookAt(view.centerUV().u, 1), south: () => view.lookAt(view.centerUV().u, 0) };
+document.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => VIEWS[b.dataset.view]()));
+$("seamMark").addEventListener("change", e => view && view.setSeamMarker(e.target.checked));
+$("unlit").addEventListener("change", e => view && view.setUnlit(e.target.checked));
+$("idle").addEventListener("change", e => view && view.setAutoRotate(e.target.checked));
+$("preset").addEventListener("change", e => { const p = PRESETS.find(x => x.key === e.target.value); if (p) load(p); });
+$("gen").addEventListener("click", () => { const a = $("arch").value, seed = Math.max(0, Math.floor(+$("seed").value || 0));
+  load(a === "default" ? { gen: "default", seed, water: 30 } : { archetype: a, seed }); });
+$("tex").addEventListener("change", e => { const u = new URL(location.href); u.searchParams.set("tex", e.target.value); location.href = u.href; });
+$("recreate").addEventListener("click", () => { S.lastDisposed = view; view.dispose(); makeView(); renderReadout(true); });
+
+Object.assign(S, {
+  load, regionAtUV: (u, v) => regionAtUV(cur.planet, u, v), tileCenterUV: (x, y) => tileCenterUV(cur.planet.gridWidth, cur.planet.gridHeight, x, y),
+  /** QA: raycast at the canvas centre (the same path the pointer uses) and resolve the region */
+  pickCenter() { const r = view.renderer.domElement.getBoundingClientRect(), h = view.pickAt(r.left + r.width / 2, r.top + r.height / 2);
+    return h && { uv: h.uv, ...regionAtUV(cur.planet, h.uv.u, h.uv.v) }; },
+  recreateView() { $("recreate").click(); return view; },
+});
+load(source);
+</script>
+</body>
+</html>
