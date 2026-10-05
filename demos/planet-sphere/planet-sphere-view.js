@@ -2,14 +2,18 @@
 //
 //   const view = new PlanetSphereView(container, { textureCanvas });
 //   view.textureChanged();            // after redrawing textureCanvas (the ONLY time the texture is re-uploaded)
-//   view.pickAt(clientX, clientY)     // → { uv: {u, v}, point } | null   (closest sphere intersection, Three.js raycast)
-//   view.lookAt(u, v, { instant })    // turn the globe so texture point (u, v) faces the camera
+//   view.pickAt(clientX, clientY)     // → { uv: {u, v}, point } | null   (closest sphere intersection, Three.js raycast;
+//                                     //   analytic ray–sphere fallback for a ray exactly on the u = 0 ≡ 1 seam edge)
+//   view.lookAt(u, { instant })       // spin the globe so longitude u faces the camera (yaw only)
 //   view.state()                      // orientation / idle / renderer numbers for the debug readout and QA
 //   view.dispose()                    // stop the loop, remove listeners, free geometry/material/texture/renderer
 //
 // The globe is a renderer of the texture only: it knows nothing about BLOOM's simulation and runs none of it.
-// Orientation = tilt group (pitch about X) ∘ spin group (yaw about Y); the camera stays on +Z. A texture point (u, v)
-// faces the camera when yaw = π/2 − 2πu and pitch = latitude = (v − ½)·π.
+// Orientation = tilt group (pitch about X) ∘ spin group (yaw about Y); the camera stays on +Z. Longitude u faces the camera
+// when yaw = π/2 − 2πu.
+// BLOOM-027C — YAW ONLY (owner decision: players never inspect the poles). The globe spins about its fixed vertical axis and
+// nothing else: drag, arrow keys, fling, idle spin and lookAt all move yaw; pitch is a constructor constant (default 0 =
+// equator-on, no tilt) that no input can change, so there is no view over or under the globe.
 // Rotation is our own (no OrbitControls): the globe turns, not the camera, so the light stays put, the idle spin is one
 // number, and "is the user interacting" is exact. Drag is target-smoothed (τ ≈ 90 ms) with a decaying fling.
 import * as THREE from "three";
@@ -22,6 +26,7 @@ export class PlanetSphereView {
   constructor(container, {
     textureCanvas, idleDelayMs = 3000, idleRampMs = 1500, idleSpeed = TAU / 60, // one turn a minute
     maxDpr = 2, segments = [128, 64], autoRotate = true, reducedMotion = null, // null = follow the media query
+    pitch = 0, // fixed axis tilt toward the camera (rad); never changed by input
   } = {}) {
     this.container = container;
     this.opts = { idleDelayMs, idleRampMs, idleSpeed, maxDpr };
@@ -34,7 +39,7 @@ export class PlanetSphereView {
     r.setClearColor(0x0b0e14, 1);
     r.domElement.className = "sphere-canvas";
     r.domElement.tabIndex = 0;
-    r.domElement.setAttribute("aria-label", "Planet globe — drag or use the arrow keys to rotate, scroll to zoom");
+    r.domElement.setAttribute("aria-label", "Planet globe — drag sideways or use the left / right arrow keys to spin, scroll to zoom");
     Object.assign(r.domElement.style, { display: "block", width: "100%", height: "100%", touchAction: "none", outline: "none", cursor: "grab" });
     container.appendChild(r.domElement);
     this.scene = new THREE.Scene();
@@ -66,8 +71,8 @@ export class PlanetSphereView {
 
     // ---- orientation state (front of the map, u = 0.5, faces the camera)
     this.yaw = this.targetYaw = HALF_PI - TAU * 0.5;
-    this.pitch = this.targetPitch = 0.18;
-    this.vYaw = 0; this.vPitch = 0;                      // fling velocity (rad/s) after release
+    this.pitch = THREE.MathUtils.clamp(pitch, -HALF_PI, HALF_PI); // fixed: yaw-only interaction
+    this.vYaw = 0;                                       // fling velocity (rad/s) after release
     this.idleFactor = 0; this.interacting = false;
     this.lastInteraction = performance.now() - idleDelayMs; // idle spin ramps in from load instead of starting at full speed
     this.anim = null;                                    // preset-view tween
@@ -89,23 +94,29 @@ export class PlanetSphereView {
   /** Call after the texture canvas was redrawn. One upload per call, never per frame. */
   textureChanged() { this.texture.needsUpdate = true; this.textureUploads++; }
 
-  pickAt(clientX, clientY) {
+  pickAt(clientX, clientY, { forceAnalytic = false } = {}) { // forceAnalytic: QA only (compare the fallback with the mesh)
     const rect = this.renderer.domElement.getBoundingClientRect();
     if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) return null;
     this.ndc.set(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1);
-    this._applyOrientation(); this.scene.updateMatrixWorld(); // pick what the current yaw/pitch shows, even between frames
+    this._applyOrientation(); this.scene.updateMatrixWorld(); this.camera.updateMatrixWorld(); // pick what the current yaw / zoom shows, even between frames (the camera is not in the scene graph)
     this.raycaster.setFromCamera(this.ndc, this.camera);
-    const hit = this.raycaster.intersectObject(this.globe, false)[0]; // sorted: [0] is the closest intersection
-    return hit && hit.uv ? { uv: { u: hit.uv.x, v: hit.uv.y }, point: hit.point.toArray(), distance: hit.distance } : null;
+    const hit = forceAnalytic ? null : this.raycaster.intersectObject(this.globe, false)[0]; // sorted: [0] is the closest intersection
+    if (hit && hit.uv) return { uv: { u: hit.uv.x, v: hit.uv.y }, point: hit.point.toArray(), distance: hit.distance };
+    // BLOOM-027C: SphereGeometry's u = 0 and u = 1 seam vertices differ by ~1e-16 (sin 2π ≠ 0), so a ray EXACTLY on the
+    // longitude-zero meridian can slip between the two seam triangles. Fall back to the analytic ray–sphere hit, same UV convention.
+    const p = this.raycaster.ray.intersectSphere(this._unitSphere || (this._unitSphere = new THREE.Sphere(new THREE.Vector3(), 1)), new THREE.Vector3());
+    if (!p) return null;
+    const l = this.globe.worldToLocal(p.clone()), phi = Math.atan2(l.z, -l.x);
+    const u = (phi < 0 ? phi + TAU : phi) / TAU, v = 1 - Math.acos(THREE.MathUtils.clamp(l.y, -1, 1)) / Math.PI;
+    return { uv: { u, v }, point: p.toArray(), distance: p.distanceTo(this.raycaster.ray.origin), analytic: true };
   }
 
-  lookAt(u, v, { instant = false } = {}) {
+  lookAt(u, { instant = false } = {}) { // yaw only: longitude u comes to the front, the axis never tilts
     let yaw = HALF_PI - TAU * u; yaw = this.yaw + wrapPi(yaw - this.yaw); // shortest way round
-    const pitch = THREE.MathUtils.clamp((v - 0.5) * Math.PI, -HALF_PI, HALF_PI);
     this._touch();
-    this.vYaw = this.vPitch = 0;
-    if (instant || this.reducedMotion) { this.yaw = this.targetYaw = yaw; this.pitch = this.targetPitch = pitch; this.anim = null; this.orientationVersion++; }
-    else this.anim = { t0: performance.now(), dur: 700, y0: this.yaw, p0: this.pitch, y1: yaw, p1: pitch };
+    this.vYaw = 0;
+    if (instant || this.reducedMotion) { this.yaw = this.targetYaw = yaw; this.anim = null; this.orientationVersion++; }
+    else this.anim = { t0: performance.now(), dur: 700, y0: this.yaw, y1: yaw };
   }
 
   setZoom(distance) { this.distance = THREE.MathUtils.clamp(distance, 1.45, 6); this.camera.position.z = this.distance; this._measure(); this.orientationVersion++; }
@@ -116,7 +127,7 @@ export class PlanetSphereView {
   state() {
     const c = this.centerUV(), sz = new THREE.Vector2(); this.renderer.getDrawingBufferSize(sz);
     const now = performance.now(), wait = this.interacting ? null : Math.max(0, this.lastInteraction + this.opts.idleDelayMs - now);
-    return { yaw: this.yaw, pitch: this.pitch, quaternion: this.tilt.quaternion.clone().multiply(this.spin.quaternion).toArray(),
+    return { yaw: this.yaw, pitch: this.pitch, yawOnly: true, quaternion: this.tilt.quaternion.clone().multiply(this.spin.quaternion).toArray(),
       centerU: c.u, centerV: c.v, interacting: this.interacting, idleFactor: this.idleFactor,
       autoRotate: this.autoRotateActive, autoRotatePref: this.autoRotatePref, reducedMotion: this.reducedMotion,
       idleResumesInMs: this.autoRotateActive && wait !== null && wait > 0 ? wait : 0,
@@ -162,17 +173,16 @@ export class PlanetSphereView {
     on(el, "pointerdown", e => {
       if (e.button !== 0) return;
       el.setPointerCapture(e.pointerId); el.style.cursor = "grabbing"; el.focus({ preventScroll: true });
-      this.interacting = true; this.anim = null; this.vYaw = this.vPitch = 0; this._touch();
-      last = { x: e.clientX, y: e.clientY }; samples = [{ t: performance.now(), yaw: this.targetYaw, pitch: this.targetPitch }];
+      this.interacting = true; this.anim = null; this.vYaw = 0; this._touch();
+      last = { x: e.clientX }; samples = [{ t: performance.now(), yaw: this.targetYaw }];
     });
     on(el, "pointermove", e => {
       this.hoverClient = { x: e.clientX, y: e.clientY }; this.hoverDirty = true;
       if (!this.interacting || !last) return;
-      const k = 1 / Math.max(40, this.radiusPx); // a surface point at the centre follows the pointer
-      this.targetYaw += (e.clientX - last.x) * k;
-      this.targetPitch = THREE.MathUtils.clamp(this.targetPitch + (e.clientY - last.y) * k, -HALF_PI, HALF_PI);
-      last = { x: e.clientX, y: e.clientY }; this._touch();
-      const t = performance.now(); samples.push({ t, yaw: this.targetYaw, pitch: this.targetPitch }); while (samples.length > 2 && t - samples[0].t > 100) samples.shift();
+      const k = 1 / Math.max(40, this.radiusPx); // a surface point at the centre follows the pointer horizontally
+      this.targetYaw += (e.clientX - last.x) * k; // vertical pointer motion is ignored: yaw only
+      last = { x: e.clientX }; this._touch();
+      const t = performance.now(); samples.push({ t, yaw: this.targetYaw }); while (samples.length > 2 && t - samples[0].t > 100) samples.shift();
     });
     const end = e => {
       if (!this.interacting) return;
@@ -181,18 +191,18 @@ export class PlanetSphereView {
       const t = performance.now(), recent = samples.filter(s => t - s.t <= 100);
       if (!this.reducedMotion && recent.length >= 2) { // fling from the last 100 ms of movement (none under reduced motion)
         const a = recent[0], b = recent[recent.length - 1], dt = Math.max(16, b.t - a.t) / 1000;
-        this.vYaw = THREE.MathUtils.clamp((b.yaw - a.yaw) / dt, -6, 6); this.vPitch = THREE.MathUtils.clamp((b.pitch - a.pitch) / dt, -6, 6);
+        this.vYaw = THREE.MathUtils.clamp((b.yaw - a.yaw) / dt, -6, 6);
       }
     };
     on(el, "pointerup", end); on(el, "pointercancel", end);
     on(el, "pointerleave", () => { this.hoverClient = null; this.hoverDirty = true; });
     on(el, "wheel", e => { e.preventDefault(); this._touch(); this.setZoom(this.distance * Math.exp(e.deltaY * 0.0012)); }, { passive: false });
     on(el, "keydown", e => {
-      const step = 0.12, m = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
-      if (!m) return; e.preventDefault(); this._touch(); this.anim = null;
-      this.targetYaw += m[0]; this.targetPitch = THREE.MathUtils.clamp(this.targetPitch + m[1], -HALF_PI, HALF_PI);
+      const step = 0.12, d = { ArrowLeft: -step, ArrowRight: step }[e.key]; // ArrowUp / ArrowDown do nothing: yaw only
+      if (!d) return; e.preventDefault(); this._touch(); this.anim = null;
+      this.targetYaw += d;
     });
-    if (this.mq) on(this.mq, "change", () => { if (this.reducedMotion) { this.idleFactor = 0; this.vYaw = this.vPitch = 0; } });
+    if (this.mq) on(this.mq, "change", () => { if (this.reducedMotion) { this.idleFactor = 0; this.vYaw = 0; } });
     if (window.ResizeObserver) { this.ro = new ResizeObserver(() => this._resize()); this.ro.observe(this.container); }
     else on(window, "resize", () => this._resize());
   }
@@ -222,19 +232,19 @@ export class PlanetSphereView {
     if (this.disposed) return;
     this.raf = requestAnimationFrame(this._frame);
     const dt = Math.min(0.05, Math.max(0, (now - this.lastTime) / 1000)); this.lastTime = now;
-    const y0 = this.yaw, p0 = this.pitch;
+    const y0 = this.yaw;
 
-    if (this.anim) { // preset view tween
+    if (this.anim) { // preset view tween (yaw only)
       const a = this.anim, k = smoothstep((now - a.t0) / a.dur);
-      this.yaw = this.targetYaw = a.y0 + (a.y1 - a.y0) * k; this.pitch = this.targetPitch = a.p0 + (a.p1 - a.p0) * k;
+      this.yaw = this.targetYaw = a.y0 + (a.y1 - a.y0) * k;
       this.lastInteraction = now;
       if (k >= 1) this.anim = null;
     } else {
-      if (!this.interacting && (this.vYaw || this.vPitch)) { // fling decays (τ ≈ 0.35 s)
+      if (!this.interacting && this.vYaw) { // fling decays (τ ≈ 0.35 s)
         const decay = Math.exp(-dt / 0.35);
-        this.targetYaw += this.vYaw * dt; this.targetPitch = THREE.MathUtils.clamp(this.targetPitch + this.vPitch * dt, -HALF_PI, HALF_PI);
-        this.vYaw *= decay; this.vPitch *= decay;
-        if (Math.abs(this.vYaw) < 0.01 && Math.abs(this.vPitch) < 0.01) this.vYaw = this.vPitch = 0;
+        this.targetYaw += this.vYaw * dt;
+        this.vYaw *= decay;
+        if (Math.abs(this.vYaw) < 0.01) this.vYaw = 0;
         else this.lastInteraction = now; // the idle delay counts from when the fling has settled
       }
       // idle spin: only when untouched for idleDelayMs; ramps in gently (smoothstep over idleRampMs)
@@ -244,10 +254,10 @@ export class PlanetSphereView {
         if (this.idleFactor > 0) this.targetYaw += this.opts.idleSpeed * this.idleFactor * dt;
       } else this.idleFactor = 0;
       const follow = 1 - Math.exp(-dt / 0.09); // weighted drag: the globe eases toward the pointer target
-      this.yaw += (this.targetYaw - this.yaw) * follow; this.pitch += (this.targetPitch - this.pitch) * follow;
+      this.yaw += (this.targetYaw - this.yaw) * follow;
     }
     if (Math.abs(this.yaw) > 1e4) { const w = TAU * Math.round(this.yaw / TAU); this.yaw -= w; this.targetYaw -= w; } // keep floats small
-    if (this.yaw !== y0 || this.pitch !== p0) this.orientationVersion++;
+    if (this.yaw !== y0) this.orientationVersion++;
 
     this._applyOrientation();
     const c0 = performance.now();

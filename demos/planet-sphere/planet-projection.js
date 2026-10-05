@@ -1,8 +1,10 @@
 // BLOOM — planet-sphere spike: planet data → 2:1 texture, and sphere UV → logical tile → region. PROTOTYPE ONLY.
 //
-// A VIEW of the authoritative planet model (gridWidth / gridHeight / sections / tilemap from BLOOM.generatePlanet or
-// BLOOM.generateFromArchetype). It never edits the planet, never builds a second world model and never wraps the grid:
-// column x = 0 and column x = W − 1 stay hard edges in the data; on the sphere they meet at the texture seam (u = 0 ≡ 1).
+// A VIEW of the authoritative planet model (gridWidth / gridHeight / sections / tilemap / topology from BLOOM.generatePlanet
+// or BLOOM.generateFromArchetype). It never edits the planet and never builds a second world model.
+// BLOOM-027C: the planet's own `topology` decides what the texture cut u = 0 ≡ 1 is. Generated planets (BLOOM-027B) are
+// cylinders ({ wrapX: true, wrapY: false }): column x = W − 1 and column x = 0 are ordinary neighbours, so the cut is an
+// interior boundary like any other. A planet without `topology` (First Bloom) is a rectangle and the cut is a hard edge.
 //
 // The base-appearance palette below is DUPLICATED from demos/demo-run.html (TEMP_STOPS, barrenColor, water colours, dune
 // and frost stipple; BLOOM-010/011) on purpose: extracting a shared renderer would churn production files for a spike.
@@ -56,7 +58,7 @@ const css = c => `rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])
  * Tile (x, y) covers texture pixels [x·tw, (x+1)·tw) × [y·th, (y+1)·th), tw = width / W, th = height / H.
  * Returns the geometry the UV mapping relies on.
  */
-export function drawPlanetTexture(canvas, planet, { render = null, width = DEFAULT_TEXTURE.width, height = DEFAULT_TEXTURE.height } = {}) {
+export function drawPlanetTexture(canvas, planet, { render = null, width = DEFAULT_TEXTURE.width, height = DEFAULT_TEXTURE.height, diag = null } = {}) {
   if (width !== 2 * height) throw new Error(`planet texture must be 2:1 (got ${width}×${height})`);
   const W = planet.gridWidth, H = planet.gridHeight;
   if (width % W || height % H) throw new Error(`texture ${width}×${height} is not a whole number of pixels per tile for a ${W}×${H} grid`);
@@ -71,25 +73,66 @@ export function drawPlanetTexture(canvas, planet, { render = null, width = DEFAU
       ctx.fillRect(X + Math.round(tw * .3), Y + Math.round(th * .3), gx, gy); ctx.fillRect(X + Math.round(tw * .3) + gx, Y + Math.round(th * .3) + gy, gx, gy);
       ctx.fillRect(X + Math.round(tw * .62), Y + Math.round(th * .62), gx, gy); }
   }
+  if (diag) drawDiagnostics(ctx, planet, tw, th, diag);
   return { width, height, tileW: tw, tileH: th, gridWidth: W, gridHeight: H, tiles };
 }
 
 /**
- * Sphere UV → logical tile. Three.js SphereGeometry: u runs 0 → 1 west → east around the full 360°, v runs 0 (south pole)
- * → 1 (north pole); CanvasTexture's default flipY puts canvas row 0 at v = 1. So tile x = ⌊u·W⌋, y = ⌊(1 − v)·H⌋, clamped
- * so u = 1 (the seam's far side) and v = 0 (the south pole) land on the last column / row rather than off the grid.
+ * BLOOM-027C developer diagnostics drawn INTO the texture (redrawn + re-uploaded only when a toggle changes, never per frame):
+ *   boundaries — a line on every land|land edge between two different section ids. Neighbours come from the planet's own
+ *                topology, so on a cylinder the x = W − 1 | x = 0 pair gets exactly the treatment of an interior pair (half
+ *                the line on the last texture column, half on the first) and on a rectangle it gets none.
+ *   seamColumns — tint the two texture-edge columns x = 0 and x = W − 1.
+ *   highlight  — overlay every tile of one section index.
+ *   grid       — a faint line on every tile edge (shows the logical tile footprint: 8×6 texture px at 480×240).
+ * These are not product visuals and nothing here is blurred or masked: the base tile colours are untouched underneath.
  */
-export function uvToTile(gridWidth, gridHeight, u, v) {
-  const x = clamp(Math.floor(u * gridWidth), 0, gridWidth - 1), y = clamp(Math.floor((1 - v) * gridHeight), 0, gridHeight - 1);
+function drawDiagnostics(ctx, planet, tw, th, { boundaries = false, seamColumns = false, highlight = null, grid = false } = {}) {
+  const W = planet.gridWidth, H = planet.gridHeight, T = planet.tilemap, wrap = wrapsX(planet);
+  if (grid) {
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    for (let x = 0; x < W; x++) ctx.fillRect(x * tw, 0, 1, H * th);
+    for (let y = 0; y < H; y++) ctx.fillRect(0, y * th, W * tw, 1);
+  }
+  if (highlight !== null && highlight >= 0) {
+    ctx.fillStyle = "rgba(255,226,92,0.55)";
+    for (let i = 0; i < W * H; i++) if (T[i] === highlight) ctx.fillRect((i % W) * tw, Math.floor(i / W) * th, tw, th);
+  }
+  if (seamColumns) {
+    ctx.fillStyle = "rgba(255,79,216,0.38)";
+    ctx.fillRect(0, 0, tw, H * th); ctx.fillRect((W - 1) * tw, 0, tw, H * th);
+  }
+  if (boundaries) {
+    ctx.fillStyle = "rgb(250,250,250)";
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const a = T[y * W + x]; if (a < 0) continue;
+      const ex = x + 1 < W ? x + 1 : wrap ? 0 : -1; // east neighbour under the planet's topology
+      if (ex >= 0) { const b = T[y * W + ex]; if (b >= 0 && b !== a) { ctx.fillRect((x + 1) * tw - 1, y * th, 1, th); ctx.fillRect(ex * tw, y * th, 1, th); } }
+      if (y + 1 < H) { const b = T[(y + 1) * W + x]; if (b >= 0 && b !== a) ctx.fillRect(x * tw, (y + 1) * th - 1, tw, 2); }
+    }
+  }
+}
+
+/**
+ * Sphere UV → logical tile. Three.js SphereGeometry: u runs 0 → 1 west → east around the full 360°, v runs 0 (south pole)
+ * → 1 (north pole); CanvasTexture's default flipY puts canvas row 0 at v = 1. So tile x = ⌊u·W⌋, y = ⌊(1 − v)·H⌋.
+ * Rows clamp (v = 0, the south pole, lands on the last row). Columns WRAP when the planet wraps in x (u = 1 is the same
+ * meridian as u = 0, so it lands on column 0), and clamp otherwise (u = 1 lands on the last column of a rectangle).
+ */
+export function uvToTile(gridWidth, gridHeight, u, v, wrapX = false) {
+  const fx = Math.floor(u * gridWidth), y = clamp(Math.floor((1 - v) * gridHeight), 0, gridHeight - 1);
+  const x = wrapX ? ((fx % gridWidth) + gridWidth) % gridWidth : clamp(fx, 0, gridWidth - 1);
   return { x, y, index: y * gridWidth + x };
 }
+/** The planet's own x-wrap (absent topology = the legacy rectangle). */
+export const wrapsX = planet => !!(planet.topology && planet.topology.wrapX);
 
 /** Logical tile centre → sphere UV (the inverse used by QA and by the "look at" buttons). */
 export const tileCenterUV = (gridWidth, gridHeight, x, y) => ({ u: (x + 0.5) / gridWidth, v: 1 - (y + 0.5) / gridHeight });
 
 /** UV → tile → the authoritative tilemap entry: water, or the existing BLOOM section. */
 export function regionAtUV(planet, u, v) {
-  const t = uvToTile(planet.gridWidth, planet.gridHeight, u, v), s = planet.tilemap[t.index];
+  const t = uvToTile(planet.gridWidth, planet.gridHeight, u, v, wrapsX(planet)), s = planet.tilemap[t.index];
   if (s < 0) return { ...t, water: true, sectionIndex: -1, sectionId: null, name: "Water (impassable)" };
   const sec = planet.sections[s];
   return { ...t, water: false, sectionIndex: s, sectionId: sec.id, name: sec.name, isOrigin: !!sec.isOrigin };
@@ -99,9 +142,9 @@ export function regionAtUV(planet, u, v) {
 export const uvToLonLat = (u, v) => ({ lon: u * 360 - 180, lat: v * 180 - 90 });
 
 /**
- * How visible the non-wrapping seam is, measured on the data: rows whose left and right edge tiles disagree on land vs
- * water, rows where both are land but different sections (no section ever spans both edges, because the grid does not
- * wrap), and the mean colour step across the seam vs across interior column boundaries.
+ * What sits across the texture cut, measured on the data: rows whose edge tiles (x = W − 1 | x = 0) disagree on land vs
+ * water, rows where both are land but different sections, rows where ONE section id is on both sides (only possible when
+ * the generator grew it across a wrapping cut), and the mean colour step across the cut vs across interior column boundaries.
  */
 export function seamStats(planet, tiles) {
   const W = planet.gridWidth, H = planet.gridHeight, T = planet.tilemap;

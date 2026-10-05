@@ -1,0 +1,167 @@
+{
+ "when": "2026-10-05T12:59:21.686Z",
+ "head": "e7fd512d2dbbfb36cca6d6da35ed641701d53cef",
+ "passed": 27,
+ "failed": 0,
+ "results": [
+  {
+   "ok": true,
+   "name": "N1 only isolated sphere-demo + 027C evidence paths changed since f6bca30",
+   "detail": "11 path(s)"
+  },
+  {
+   "ok": true,
+   "name": "N2 generator / sim / validators / content / tools / production UI (Concept 17/18) byte-identical to f6bca30",
+   "detail": "resources · content · planets · tools · index.html · demos/demo-run.html · demos/demo-surface.html · demos/ui-mockups · GAME_BIBLE.md · README.md"
+  },
+  {
+   "ok": true,
+   "name": "N3 every evidence world (production path @ f6bca30) is a 60×40 cylinder { wrapX: true, wrapY: false }",
+   "detail": ""
+  },
+  {
+   "ok": true,
+   "name": "N4 UV ↔ tile round-trips all 2400 tiles; u = 1 ≡ column 0 on a cylinder (59 on a rectangle)",
+   "detail": "round-trip 2400/2400 · [0,59,59,0,39]"
+  },
+  {
+   "ok": true,
+   "name": "N5 regionAtUV at u = 1 − ε / u = ε returns the tilemap's own region on each side (same id ⇔ same section)",
+   "detail": "280/280 rows"
+  },
+  {
+   "ok": true,
+   "name": "N6 section-boundary diagnostic: the x=59|x=0 pair is drawn exactly like an interior pair (and never on a legacy rectangle)",
+   "detail": "cut rows 40/40 · interior 29|30 rows 40/40 · rectangle cut lines 0"
+  },
+  {
+   "ok": true,
+   "name": "B0 documented launch: `python3 -m http.server 8766` from the worktree root serves the demo",
+   "detail": "http://localhost:8766/demos/planet-sphere-spike.html"
+  },
+  {
+   "ok": true,
+   "name": "B1 the browser generates the same production worlds as Node: 60×40 cylinders, 480×240 texture",
+   "detail": "ocean6=Pallas-161 ocean36=Umbra-288 frozen7=Ymir-853 desert5=Vesper-656 desert25=Umbra-584 frozen25=Hollow-329 ocean40=Borea-179"
+  },
+  {
+   "ok": true,
+   "name": "B2a pitch stays exactly 0 through diagonal drag, vertical drag, ↑/↓/PgUp keys, ←/→ keys and wheel zoom (tilt quaternion identity)",
+   "detail": "[0,0,0,0,0,0]"
+  },
+  {
+   "ok": true,
+   "name": "B2b horizontal drag + ←/→ spin longitude; pure vertical drag and ↑/↓ do nothing",
+   "detail": "diag drag Δyaw 1.097 · vertical drag Δyaw 9.6e-7 · ↑↓ Δyaw 2.2e-12 · →→ Δyaw 0.240"
+  },
+  {
+   "ok": true,
+   "name": "B2c the globe's axis never moves on screen: north pole fixed at the top centre through every drag (spinning a globe on a fixed axis)",
+   "detail": "pole NDC [0,0.755142] → [0,0.755142] → [0,0.755142] · zoomed [0,1.220365]"
+  },
+  {
+   "ok": true,
+   "name": "B2d lookAt(u) is longitude only",
+   "detail": "{\"u\":0.30000000000000004,\"pitch\":0}"
+  },
+  {
+   "ok": true,
+   "name": "B3 idle spin is horizontal only, stops on interaction and ramps back in ~3 s after release (fling settle included)",
+   "detail": "resumed 2.99 s after release · full speed 4.49 s · pitch during idle 0"
+  },
+  {
+   "ok": true,
+   "name": "B4a raycast just west (x=59) and just east (x=0) of longitude zero → the tilemap's own region on each side; same-id rows give ONE id, different-section rows give their two ids, water gives water",
+   "detail": "1372/1372 row-picks (7 worlds × every on-screen row [cut 0°: rows 3–36, cut ±30°: rows 4–35] × ±1 px and the two nearest tile centres) · same 790 · different 126 · coast 36 · water 420 · near-horizon picks that landed one row over 0"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "B4 per-world (cut centred, ±1 px)",
+   "detail": "ocean6: 34/34 (S9 D0 c3 ~22) · ocean36: 34/34 (S22 D1 c2 ~9) · frozen7: 34/34 (S23 D1 c0 ~10) · desert5: 34/34 (S33 D1 c0 ~0) · desert25: 34/34 (S22 D10 c1 ~1) · frozen25: 34/34 (S26 D8 c0 ~0) · ocean40: 34/34 (S0 D0 c0 ~34)"
+  },
+  {
+   "ok": true,
+   "name": "B4b a raycast exactly ON the meridian resolves to one of the two adjacent cut tiles (never null)",
+   "detail": "1372/1372 · analytic fallback used 252×"
+  },
+  {
+   "ok": true,
+   "name": "B4d yaw-only horizon (evidence for G): at the default zoom rows 0–2 / 37–39 are never on screen at any yaw; rows 0–1 / 38–39 not even at max zoom-out",
+   "detail": "{\"6\":{\"first\":2,\"last\":37,\"horizonLat\":80.4},\"1.45\":{\"first\":18,\"last\":21,\"horizonLat\":46.4},\"4.2\":{\"first\":3,\"last\":36,\"horizonLat\":76.2}}"
+  },
+  {
+   "ok": true,
+   "name": "B4c analytic fallback UV agrees with the mesh UV (same tile)",
+   "detail": "1483/1488 · max |Δu| 1.60e-3"
+  },
+  {
+   "ok": true,
+   "name": "B5 no texture upload while rotating; each diagnostics toggle = exactly one upload",
+   "detail": "{\"uploads\":0,\"ver\":0,\"frames\":88,\"afterThreeToggles\":3}"
+  },
+  {
+   "ok": true,
+   "name": "B6 pointer hover 3 px either side of the cut on Ocean 6: tiles (59, y) and (0, y), both sec_13 Moss Steppe",
+   "detail": "[[59,16,\"sec_13\"],[0,16,\"sec_13\"]]"
+  },
+  {
+   "ok": true,
+   "name": "B7 no console errors / failed requests across all evidence worlds and interactions",
+   "detail": "{\"errors\":[],\"failed\":[]}"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "perf headless (software GL)",
+   "detail": "{\"pickMs\":0.712,\"meanFrameMs\":16.76,\"p95FrameMs\":16.7,\"jsRenderMs\":0.08,\"uploadsDuring\":0,\"textureVersionDelta\":0,\"gl\":\"ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\",\"calls\":1,\"triangles\":16128}"
+  },
+  {
+   "ok": true,
+   "name": "B8 180 idle frames: zero texture uploads; pick < 2 ms",
+   "detail": "{\"uploads\":0,\"pickMs\":0.712}"
+  },
+  {
+   "ok": true,
+   "name": "B9 a steady drag moves the globe every frame, in one direction (target-smoothed, no stalls)",
+   "detail": "{\"frames\":106,\"midStalls\":0,\"monotonic\":true,\"p95FrameMs\":18.3,\"meanFrameMs\":17.6}"
+  },
+  {
+   "ok": true,
+   "name": "B10 resize (900×700, phone 390×844): globe stays round and inside the canvas",
+   "detail": "{\"bb1\":{\"width\":420,\"height\":420,\"bufferWidth\":540,\"bufferHeight\":661},\"bb2\":{\"width\":304,\"height\":303,\"bufferWidth\":390,\"bufferHeight\":523}}"
+  },
+  {
+   "ok": true,
+   "name": "B11 DPR capped at 2 on a 3× display",
+   "detail": "920×761 css → 1840×1522 buffer · pixelRatio 2"
+  },
+  {
+   "ok": true,
+   "name": "B12 prefers-reduced-motion: no idle spin, no fling after a drag, lookAt jumps instantly, pitch stays 0",
+   "detail": "reducedMotion true · autoRotate false · idleFactor 0 · pitch 0/0 · yaw after release -1.1652 → 4.5 s later -1.1652 · lookAt(0) centre u 0"
+  },
+  {
+   "ok": true,
+   "name": "B13 reduced-motion page: no console errors",
+   "detail": "[]"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "polar-only section shown in 09",
+   "detail": "{\"id\":\"sec_5\",\"name\":\"Scorch Rise\",\"rowsFromEdge\":1,\"u\":0.3716666666666667}"
+  },
+  {
+   "ok": true,
+   "name": "F1 Firefox smoke: Ocean 6 loads, cut picks correct both sides, no errors",
+   "detail": "34/34 · []"
+  },
+  {
+   "ok": true,
+   "info": true,
+   "name": "perf GPU (report only)",
+   "detail": "{\"pickMs\":0.872,\"meanFrameMs\":16.67,\"p95FrameMs\":16.7,\"jsRenderMs\":0.11,\"uploadsDuring\":0,\"textureVersionDelta\":0,\"gl\":\"ANGLE (AMD, ANGLE Metal Renderer: AMD Radeon Pro 5700 XT, Unspecified Version)\",\"calls\":1,\"triangles\":16128}"
+  }
+ ]
+}
