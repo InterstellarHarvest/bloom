@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BLOOM — Destination Survey (028A dev entry)</title>
 <!--
-  BLOOM-028A · development entry point for the Destination Survey + Planet Focus screen (resources/destination-survey/).
+  BLOOM-028A / 028A1 · development entry point for the Destination Survey + Planet Focus screen (resources/destination-survey/).
   The future Main Menu enters this screen; the root index.html is NOT integrated yet. Begin Expedition ends in a clearly marked
   development placeholder (the atmospheric descent is the next milestone); gameplay is never touched from here.
 
@@ -14,6 +14,7 @@
 
   ?sector=<n>     reproducible sector seed (default random) · &firstBloom=1  put the authored First Bloom in the first sector
   &rm=1 | &rm=0   force reduced motion on / off (default: follow prefers-reduced-motion) · &worker=0  build sectors on the main thread
+  &workers=<1…3>  worker pool size (default: hardware threads − 1, max 3). Every candidate is a FULLY VALIDATED world (028A1).
 -->
 <link rel="stylesheet" href="../resources/destination-survey/destination-survey.css">
 <style>
@@ -34,12 +35,15 @@
 <script src="../content/traits.js"></script>
 <script src="../planets/first_bloom.js"></script>
 <script src="../content/archetypes.js"></script>
+<script src="../content/scenarios.js"></script>
 <script src="../content/play.js"></script>
 <script src="../resources/bloom-sim.js"></script>
 <script src="../resources/bloom-gen.js"></script>
 <script src="../resources/bloom-validate.js"></script>
 <script src="../resources/bloom-witness.js"></script>
 <script src="../resources/bloom-archetype.js"></script>
+<script src="../resources/bloom-scenario.js"></script>
+<script src="../resources/bloom-play.js"></script>
 
 <script type="module">
 import { DestinationSurvey } from "../resources/destination-survey/destination-survey.js";
@@ -51,10 +55,10 @@ addEventListener("unhandledrejection", e => DEV.errors.push(String(e.reason && e
 
 const rm = q.get("rm") === "1" ? true : q.get("rm") === "0" ? false : null;
 const survey = DEV.survey = new DestinationSurvey($("survey"), {
-  sectorSeed: q.has("sector") ? +q.get("sector") : null, firstBloom: q.get("firstBloom") === "1", reducedMotion: rm, worker: q.get("worker") !== "0",
+  sectorSeed: q.has("sector") ? +q.get("sector") : null, firstBloom: q.get("firstBloom") === "1", reducedMotion: rm, worker: q.get("worker") !== "0", workers: q.has("workers") ? +q.get("workers") : null,
   // DEVELOPMENT PLACEHOLDER for the next milestone's atmospheric descent: prove the hook fires; never start gameplay from here
   onBeginExpedition(d) {
-    DEV.hooks.push({ key: d.candidate.key, name: d.candidate.name, yaw: d.view.getYaw(), at: performance.now() });
+    DEV.hooks.push({ key: d.candidate.key, name: d.candidate.name, yaw: d.view.getYaw(), at: performance.now(), detail: d }); // (detail kept for QA identity checks)
     const c = d.candidate, h = $("devHook");
     h.innerHTML = `<b>DEV HOOK · BEGIN EXPEDITION</b> fired for <code>${c.name}</code> (${c.archetypeId ? `${c.archetypeId} · seed ${c.seed}` : "authored"}).
       The atmospheric descent is the next milestone; gameplay is not started from this page. <button type="button">OK</button>`;
