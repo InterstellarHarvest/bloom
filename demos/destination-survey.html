@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOOM — Destination Survey (028A dev entry)</title>
+<!--
+  BLOOM-028A · development entry point for the Destination Survey + Planet Focus screen (resources/destination-survey/).
+  The future Main Menu enters this screen; the root index.html is NOT integrated yet. Begin Expedition ends in a clearly marked
+  development placeholder (the atmospheric descent is the next milestone); gameplay is never touched from here.
+
+  ES modules + a module worker: serve the repository root over http, e.g.
+    python3 -m http.server 8767   →   http://localhost:8767/demos/destination-survey.html
+
+  ?sector=<n>     reproducible sector seed (default random) · &firstBloom=1  put the authored First Bloom in the first sector
+  &rm=1 | &rm=0   force reduced motion on / off (default: follow prefers-reduced-motion) · &worker=0  build sectors on the main thread
+-->
+<link rel="stylesheet" href="../resources/destination-survey/destination-survey.css">
+<style>
+  html,body{margin:0; height:100%; background:#03050b}
+  #survey{position:relative; width:100%; height:100vh; height:100dvh}
+  .dev-hook{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:10; max-width:min(560px, calc(100% - 32px));
+    padding:12px 16px; border:2px dashed #ffd479; border-radius:14px; background:rgba(20,16,4,.94); color:#ffe9b0;
+    font:600 14px/1.35 ui-rounded,"SF Pro Rounded","Nunito","Trebuchet MS",system-ui,sans-serif}
+  .dev-hook b{color:#ffd479; letter-spacing:1px} .dev-hook code{color:#fff}
+  .dev-hook button{margin-left:10px; font:inherit; color:#3a2800; background:#ffd479; border:0; border-radius:8px; padding:4px 10px; cursor:pointer}
+</style>
+</head>
+<body>
+<main id="survey"></main>
+<div class="dev-hook" id="devHook" role="status" hidden></div>
+
+<script src="../content/config.js"></script>
+<script src="../content/traits.js"></script>
+<script src="../planets/first_bloom.js"></script>
+<script src="../content/archetypes.js"></script>
+<script src="../content/play.js"></script>
+<script src="../resources/bloom-sim.js"></script>
+<script src="../resources/bloom-gen.js"></script>
+<script src="../resources/bloom-validate.js"></script>
+<script src="../resources/bloom-witness.js"></script>
+<script src="../resources/bloom-archetype.js"></script>
+
+<script type="module">
+import { DestinationSurvey } from "../resources/destination-survey/destination-survey.js";
+
+const q = new URLSearchParams(location.search), $ = id => document.getElementById(id);
+const DEV = window.SURVEY_DEV = { ready: false, errors: [], hooks: [], survey: null };
+addEventListener("error", e => DEV.errors.push(String(e.message || e)));
+addEventListener("unhandledrejection", e => DEV.errors.push(String(e.reason && e.reason.message || e.reason)));
+
+const rm = q.get("rm") === "1" ? true : q.get("rm") === "0" ? false : null;
+const survey = DEV.survey = new DestinationSurvey($("survey"), {
+  sectorSeed: q.has("sector") ? +q.get("sector") : null, firstBloom: q.get("firstBloom") === "1", reducedMotion: rm, worker: q.get("worker") !== "0",
+  // DEVELOPMENT PLACEHOLDER for the next milestone's atmospheric descent: prove the hook fires; never start gameplay from here
+  onBeginExpedition(d) {
+    DEV.hooks.push({ key: d.candidate.key, name: d.candidate.name, yaw: d.view.getYaw(), at: performance.now() });
+    const c = d.candidate, h = $("devHook");
+    h.innerHTML = `<b>DEV HOOK · BEGIN EXPEDITION</b> fired for <code>${c.name}</code> (${c.archetypeId ? `${c.archetypeId} · seed ${c.seed}` : "authored"}).
+      The atmospheric descent is the next milestone; gameplay is not started from this page. <button type="button">OK</button>`;
+    h.hidden = false; h.querySelector("button").onclick = () => { h.hidden = true; d.survey.dossierTitle.focus(); };
+  },
+});
+survey.ready.then(() => { DEV.ready = true; }, err => DEV.errors.push("survey: " + (err && err.message || err)));
+</script>
+</body>
+</html>
