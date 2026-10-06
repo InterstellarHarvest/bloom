@@ -115,6 +115,7 @@ export class ExpeditionEntry {
     const s = this.survey; this.survey = null;
     s.dispose();                                                        // renderer (one context), nine views, workers (the pool it owned), listeners, DOM
     this.surveyHost.hidden = true; this.surveyHost.inert = false;
+    this.menu.setStatus("");                                            // that sector went with the survey; the fresh prefetch reports its own
     const shown = this.menu.show({ settled: true });                    // the next painting (preloaded) at rest, no entrance; focus on Begin
     rec.swappedMs = Math.round(performance.now() - t0);
     await Promise.race([shown, sleep(T.paintingWait)]);                 // decoded and on screen before the black lifts

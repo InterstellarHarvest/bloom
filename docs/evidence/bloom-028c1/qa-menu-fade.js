@@ -64,7 +64,7 @@ const INIT = () => {
       rows.push({ t: +now.toFixed(1), dt: +(now - last).toFixed(1), state: E.state, black: +black.toFixed(4), blackShown: cs.display !== "none",
         menuOn, ds: !!ds, dsVisible: !!ds && !E.surveyHost.hidden, dsState: ds ? ds.dataset.state : null, cells: S ? S.cells.filter(Boolean).length : 0, renders: S && S.host ? S.host.renders : null,
         bg: m.background ? m.background.index : null, artShown: m.art.classList.contains("is-shown"), artOp: +getComputedStyle(m.art).opacity, artReady: m.art.complete && m.art.naturalWidth > 0 && !!m.background && m.art.currentSrc === m.background.src,
-        plaque: menuOn ? +getComputedStyle(m.plaque).opacity : null, atx: ov ? ov.className : null,
+        plaque: menuOn ? +getComputedStyle(m.plaque).opacity : null, status: m.statusEl.textContent, atx: ov ? ov.className : null,
         tf: [getComputedStyle(E.menuHost).transform, getComputedStyle(E.surveyHost).transform, cs.transform, getComputedStyle(E.root).transform].filter(x => x && x !== "none").length,
         clip: [E.menuHost, E.surveyHost, E.black].map(e => getComputedStyle(e).clipPath).filter(x => x && x !== "none").length,
         dur: (a => a ? a.effect.getTiming().duration : null)(E.black.getAnimations()[0]), gl: __LEAK.liveGL(), workers: __workers.live.size });
@@ -180,8 +180,8 @@ function returnChecks(tag, a, before, { rm = false, slowMs = 0 } = {}) {
   check(a.noClouds && a.noTransform, tag("F6 a plain fade back: no cloud overlay, no transform / clip-path"));
   timingCheck(tag("F7"), a, rm, "dispose + painting + first frames");
   const bg = visible.length ? visible[0].bg : null;
-  check(visible.length && visible.every(x => x.bg === bg && x.artShown && x.artReady && x.artOp === 1 && x.plaque === 1) && bg === before.next && bg !== before.bg && (!slowMs || r.liftMs - r.swappedMs >= slowMs - 100),
-    tag(`F8 the next painting (the preloaded one, never the one just shown) is swapped in while black: decoded (the pixels on screen are the new file: currentSrc), at full opacity, the plaque at rest (no entrance replay) on every frame the black is lifting${slowMs ? ` — with the painting held back ${slowMs} ms, the screen stays black until it is decoded` : ""}`),
+  check(visible.length && visible.every(x => x.bg === bg && x.artShown && x.artReady && x.artOp === 1 && x.plaque === 1 && !/nine worlds ready/.test(x.status)) && bg === before.next && bg !== before.bg && (!slowMs || r.liftMs - r.swappedMs >= slowMs - 100),
+    tag(`F8 the next painting (the preloaded one, never the one just shown) is swapped in while black: decoded (the pixels on screen are the new file: currentSrc), at full opacity, the plaque at rest (no entrance replay), no stale "nine worlds ready" status (that sector left with the survey) on every frame the black is lifting${slowMs ? ` — with the painting held back ${slowMs} ms, the screen stays black until it is decoded` : ""}`),
     `painting ${before.bg + 1} → ${bg + 1} (planned ${before.next + 1}); visible frames ${visible.length}; swap → lift ${r.liftMs - r.swappedMs} ms`);
 }
 

@@ -151,8 +151,9 @@ held 30–90 ms, fully revealed ≈ 0.55–0.63 s after the click; both fades at
   is made `inert`, black fades in; at full black the survey is **disposed** (renderer, nine views, its pool's workers,
   listeners, DOM) and the menu shown `settled` with its **next painting** (§4: preloaded, never the one just shown). The black
   waits for that painting to be decoded and on screen (capped at 2 s for a painting that never arrives), then two frames, then
-  lifts: the painting and plaque are complete and at rest when the menu appears — the lifting black is the entrance. A fresh
-  prefetch starts once the black is gone. Allowed from the survey and loading states; refused in focus (use Return to
+  lifts: the painting and plaque are complete and at rest when the menu appears — the lifting black is the entrance. The
+  status line is cleared under the black (that sector left with the survey); a fresh prefetch starts once the black is gone
+  and reports its own progress. Allowed from the survey and loading states; refused in focus (use Return to
   survey), mid-animation and while departing.
 - **The AtmosphereTransition** instance the entry creates is now used only by the survey's dramatic departure
   (`descent.transition`); its cloud bitmaps are still prepared once the title is up.
