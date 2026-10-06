@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strange Bloom — Unknown Soils</title>
+<!--
+  BLOOM-028C · the opening title: Main Menu → Destination Survey → (028B departure) → a development handoff target.
+  resources/main-menu/ (MainMenu, ExpeditionEntry) over the accepted Destination Survey, PlanetSphereView and AtmosphereTransition.
+  The project stays BLOOM internally; the player reads STRANGE BLOOM · UNKNOWN SOILS.
+
+  Not the root index.html integration (the file:// decision is still open). ES modules + module workers: serve the repository
+  root over http, e.g.  python3 -m http.server 8767  →  http://localhost:8767/demos/main-menu.html
+  ?bg=<1…12>  force a background · &rm=1 | &rm=0  force reduced motion (default: Settings, then the OS) · &sector=<n>  first sector seed
+  &firstBloom=1 · &workers=<1…8> · &worker=0  (main-thread sectors) · &hold=<ms> / &fail=1 / &seed=<n>  the departure's covered work / cloud layout
+-->
+<link rel="stylesheet" href="../resources/destination-survey/destination-survey.css">
+<link rel="stylesheet" href="../resources/main-menu/main-menu.css">
+<style>
+  html,body{margin:0; height:100%; background:#0a0810; overflow:hidden}
+  #app{position:relative; width:100%; height:100vh; height:100dvh}
+  /* the development handoff target: the selected world's starting surface, full bleed (as in demos/expedition-descent.html) */
+  .dest{position:fixed; inset:0; overflow:hidden; background:#03050b; color:#edf1f8; font:600 15px/1.4 ui-rounded,"SF Pro Rounded","Nunito","Trebuchet MS",system-ui,sans-serif}
+  .dest[hidden]{display:none}
+  .dest canvas{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; image-rendering:pixelated; image-rendering:crisp-edges}
+  .dest::after{content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(120% 100% at 50% 50%, transparent 55%, rgba(3,5,11,.55) 100%)}
+  .dest-plate{position:absolute; z-index:1; left:clamp(16px,3vw,32px); top:clamp(16px,3vw,28px); max-width:min(520px, calc(100% - 32px)); padding:14px 18px;
+    border:2px dashed #ffd479; border-radius:16px 13px 17px 14px; background:rgba(14,20,36,.88)}
+  .dest-plate small{display:block; font-size:12px; font-weight:800; letter-spacing:2.2px; text-transform:uppercase; color:#ffd479}
+  .dest-plate h1{margin:4px 0 2px; font-size:30px; line-height:1.1} .dest-plate h1:focus{outline:none}
+  .dest-plate p{margin:4px 0 0; color:#aab5ca; font-size:14px} .dest-plate code{color:#fff}
+  .dest-plate button{margin-top:10px; font:800 13px inherit; font-family:inherit; letter-spacing:1px; text-transform:uppercase; color:#3a2800; background:#ffd479; border:0; border-radius:10px; padding:7px 12px; cursor:pointer}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<section class="dest" id="dest" hidden aria-labelledby="destTitle">
+  <canvas id="destMap" aria-hidden="true"></canvas>
+  <div class="dest-plate">
+    <small>Expedition handoff target · development harness</small>
+    <h1 id="destTitle" tabindex="-1"></h1>
+    <p id="destMeta"></p>
+    <p>The planet surface you chose, mounted under cloud cover from <code>detail.planet</code>. Gameplay is not started here.</p>
+    <button type="button" id="reset">Back to title (dev: reload)</button>
+  </div>
+</section>
+
+<script src="../content/config.js"></script>
+<script src="../content/traits.js"></script>
+<script src="../planets/first_bloom.js"></script>
+<script src="../content/archetypes.js"></script>
+<script src="../content/scenarios.js"></script>
+<script src="../content/play.js"></script>
+<script src="../resources/bloom-sim.js"></script>
+<script src="../resources/bloom-gen.js"></script>
+<script src="../resources/bloom-validate.js"></script>
+<script src="../resources/bloom-witness.js"></script>
+<script src="../resources/bloom-archetype.js"></script>
+<script src="../resources/bloom-scenario.js"></script>
+<script src="../resources/bloom-play.js"></script>
+
+<script type="module">
+import { ExpeditionEntry } from "../resources/main-menu/expedition-entry.js";
+import { drawPlanetTexture } from "../resources/planet-sphere/planet-texture.js";
+import { planetFingerprint } from "../resources/destination-survey/survey-data.js";
+
+const q = new URLSearchParams(location.search), $ = id => document.getElementById(id);
+const DEV = window.MENU_DEV = { ready: false, errors: [], events: [], hooks: [], handoffs: [], results: [], entry: null };
+addEventListener("error", e => DEV.errors.push(String(e.message || e)));
+addEventListener("unhandledrejection", e => DEV.errors.push(String(e.reason && e.reason.message || e.reason)));
+const rm = q.get("rm") === "1" ? true : q.get("rm") === "0" ? false : undefined, hold = +(q.get("hold") || 0), fail = q.get("fail") === "1";
+const ev = (type, data) => DEV.events.push({ type, at: Math.round(performance.now()), ...(data || {}) });
+
+function mountDestination(detail) {
+  const p = detail.planet, c = detail.candidate;
+  drawPlanetTexture($("destMap"), p, { render: detail.render || null });
+  $("destTitle").textContent = c.name;
+  $("destMeta").innerHTML = `${c.authored ? "Authored world" : `${c.archetypeId} · World Seed ${c.seed}`} · planet <code>${planetFingerprint(p)}</code>`;
+  $("dest").hidden = false;
+}
+
+const entry = DEV.entry = new ExpeditionEntry($("app"), {
+  reducedMotion: rm, background: q.has("bg") ? +q.get("bg") - 1 : null,
+  sectorSeed: q.has("sector") ? +q.get("sector") : null, firstBloom: q.get("firstBloom") === "1", workers: q.has("workers") ? +q.get("workers") : null, worker: q.get("worker") !== "0",
+  onBeginExpedition(d) { DEV.hooks.push({ key: d.candidate.key, at: performance.now(), detail: d }); ev("begin-expedition", { key: d.candidate.key }); },
+  descent: {
+    seed: q.has("seed") ? +q.get("seed") : null,
+    async onCovered(detail, info) {
+      const rec = { at: performance.now(), concealed: info.concealed, reducedMotion: info.reducedMotion, planet: detail.planet }; DEV.handoffs.push(rec);
+      if (hold) await new Promise(r => setTimeout(r, hold));
+      if (fail) throw new Error("dev: covered work failed (fail=1)");
+      detail.survey.dispose(); rec.surveyDisposedAt = performance.now();
+      mountDestination(detail); rec.mountedAt = performance.now();
+    },
+    onError(err) { DEV.results.push({ error: err.message }); ev("descent-error", { error: err.message }); },
+  },
+});
+$("app").addEventListener("bloom:begin-expedition", e => { e.detail.descent.then(r => { DEV.results.push({ ok: true, transition: r.transition }); ev("departed"); $("destTitle").focus({ preventScroll: true }); }, () => {}); });
+$("reset").onclick = () => location.reload();
+entry.menu.shown.then(() => { DEV.ready = true; ev("menu-shown", { background: entry.menu.background.index + 1 }); }, err => DEV.errors.push("menu: " + (err && err.message || err)));
+</script>
+</body>
+</html>
