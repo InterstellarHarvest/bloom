@@ -956,6 +956,13 @@
       return cov;
     }
     function collectBubble(k) { sim.biomass += C.econ.bubbleValue; bubbles.splice(k, 1); }
+    // (BLOOM-028D1) a bonus bubble placed on purpose instead of by the tick's random roll: on Living land tile `t`, one per tile.
+    // Draws no randomness and changes nothing else; the bubble then behaves exactly like a rolled one (collectBubble, or it
+    // collects itself at half value after econ.bubbleAutoTicks). Returns false (and places nothing) for any other tile.
+    function placeBubble(t) {
+      if (!Number.isInteger(t) || t < 0 || t >= N || TILEMAP[t] < 0 || state[t] !== LIV || bubbles.some(b => b.tile === t)) return false;
+      bubbles.push({ tile: t, x: (t % W) + .5, y: ((t / W) | 0) + .5, life: 0 }); return true;
+    }
 
     // ---- upgrades: one implementation per effect type (content/traits.js)
     // a trait is offered only where it can matter: crossing needs at least one real water crossing
@@ -1021,7 +1028,7 @@
       const cost = specPrice(); sim.biomass -= cost; sim.spent.local += cost; sim.colonies.spec[i] = id; return true;
     }
 
-    Object.assign(sim, { derived, evaluate, lampOf, tick, coverage, livingCountBySection, collectBubble,
+    Object.assign(sim, { derived, evaluate, lampOf, tick, coverage, livingCountBySection, collectBubble, placeBubble,
       traitById, offered, price, canBuy, ownedTier, why, buy, previewOf, establishment, colonyStatus,
       nativeEvaluate: CP ? nativeEvaluate : null, competitionAt, holdsAgainstNatives,
       climatePreview, envOffsets,

@@ -14,6 +14,8 @@
   root over http, e.g.  python3 -m http.server 8767  →  http://localhost:8767/demos/main-menu.html
   ?bg=<1…12>  force a background · &rm=1 | &rm=0  force reduced motion (default: Settings, then the OS) · &sector=<n>  first sector seed
   &firstBloom=1 · &workers=<1…8> · &worker=0  (main-thread sectors) · &hold=<ms> / &fail=1 / &seed=<n>  the departure's covered work / cloud layout
+  BLOOM-028D1: TRAINING fades to black and opens the training run (demo-run.html?training=1&return=<this page>); its Skip / Main menu
+  come back here through the same black.
 -->
 <link rel="stylesheet" href="../resources/destination-survey/destination-survey.css">
 <link rel="stylesheet" href="../resources/main-menu/main-menu.css">
@@ -80,7 +82,9 @@ function mountDestination(detail) {
   $("dest").hidden = false;
 }
 
-const entry = DEV.entry = new ExpeditionEntry($("app"), {
+// (028D1) TRAINING → the training run page, which comes back to exactly this title (its query included) through return=
+const trainingHref = () => new URL("demo-run.html?" + BLOOM.play.trainingQuery({ returnTo: location.href.split("#")[0] }), location.href).href;
+const entry = DEV.entry = new ExpeditionEntry($("app"), { trainingHref,
   reducedMotion: rm, background: q.has("bg") ? +q.get("bg") - 1 : null,
   sectorSeed: q.has("sector") ? +q.get("sector") : null, firstBloom: q.get("firstBloom") === "1", workers: q.has("workers") ? +q.get("workers") : null, worker: q.get("worker") !== "0",
   onBeginExpedition(d) { DEV.hooks.push({ key: d.candidate.key, at: performance.now(), detail: d }); ev("begin-expedition", { key: d.candidate.key }); },
