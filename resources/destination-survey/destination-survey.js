@@ -313,14 +313,14 @@ export class DestinationSurvey {
       <header class="ds-head">
         <div class="ds-title"><span class="ds-kicker">BLOOM · Expedition planning</span><h1>Destination Survey</h1></div>
         <p class="ds-sector" aria-live="polite"></p>
-        <div class="ds-head-tools"><span class="ds-progress" hidden></span><button type="button" class="ds-btn scan" data-act="scan">${SCAN_ICON}<span>Scan <span class="lbl-long">new </span>sector</span></button></div>
+        <div class="ds-head-tools"><span class="ds-progress sr-only" role="status"></span><button type="button" class="ds-btn scan" data-act="scan">${SCAN_ICON}<span>Scan <span class="lbl-long">new </span>sector</span></button></div>
       </header>
       <div class="ds-survey">
         <div class="ds-cols" aria-hidden="true">${SURVEY_CLASSES.map(c => `<div class="ds-colhead" data-class="${c.id}"><b>${c.label}</b><small>${esc(c.blurb)}</small></div>`).join("")}</div>
         <div class="ds-grid" role="group" aria-label="Candidate worlds: three columns, Stable, Volatile and Extreme">${Array.from({ length: N }, (_, i) => {
           const c = SURVEY_CLASSES[i % COLS];
           return `<div class="ds-cell" data-class="${c.id}"><button type="button" class="ds-cand" data-index="${i}" disabled>
-            <span class="ds-globe-slot"><span class="ds-globe"></span><span class="ds-halo"></span></span>
+            <span class="ds-globe-slot"><span class="ds-globe"></span><span class="ds-halo"></span><span class="ds-incoming" aria-hidden="true" style="--d:${(-i * 0.37).toFixed(2)}s">Incoming</span></span>
             <span class="ds-cap"><b class="ds-name">&nbsp;</b><small class="ds-desc">&nbsp;</small><span class="sr-only"></span></span></button></div>`; }).join("")}</div>
       </div>
       <div class="ds-placeholder" aria-hidden="true">Scanning sector…</div>
@@ -414,37 +414,30 @@ export class DestinationSurvey {
 
   // ---------------------------------------------------------------- progressive fill (028B)
   /**
-   * Show sector entry `e` as it is confirmed: each world appears in its column (next free row, top down) the moment it is
-   * certain to be in the sector; when a column is complete, any world not in its final row (most → least habitable) shrinks
-   * out and grows back in its row (they never slide across each other: overlapping globes on one renderer intersect by depth).
-   * One setPlanet per world; the finished grid is exactly the sector's (assembleSector) order.
+   * Show sector entry `e` as it is confirmed: each world appears in ITS OWN column (its class), in the first free row, the
+   * moment it is certain to be in the sector, and never moves again (owner rule: the column matters, the row does not).
+   * Empty spots show a quiet "Incoming" until their world arrives. One setPlanet per world; each finished column holds
+   * exactly the sector's worlds of that class (in landing order).
    */
   _fillIn(e) {
     const fill = this._fill = { e, rows: [[], [], []], settled: [null, null, null] }; // rows[col]: the worlds placed in that column
     this.sector = null;
-    for (let i = 0; i < N; i++) { this.cells[i] = null; this.views[i].setPlanet(null); this.buttons[i].disabled = true; this._uncaption(i); }
-    this.sectorEl.innerHTML = `<b>${esc(sectorLabel(e.seed))}</b> · surveying…`;
+    for (let i = 0; i < N; i++) { this.cells[i] = null; this.views[i].setPlanet(null); this.buttons[i].disabled = true; this._uncaption(i); this.slots[i].classList.add("is-incoming"); }
+    this.sectorEl.innerHTML = `<b>${esc(sectorLabel(e.seed))}</b>`;
     e.listener = { cell: (col, cand) => this._place(fill, col, cand), column: (col, column) => this._settleColumn(fill, col, column) };
     e.shown.forEach((list, col) => list.forEach(c => this._place(fill, col, c)));
     e.cols.forEach((c, col) => { if (c) this._settleColumn(fill, col, c); });
   }
 
-  /**
-   * The row for a newly confirmed world: an empty row consistent with the worlds already shown in its column (more habitable
-   * above, less below; First Bloom on top), the middle one first — so most worlds land in their final row and few need moving.
-   */
-  _rowFor(col, cand) {
-    const rank = c => (c.authored ? Infinity : c.habitable), v = rank(cand), at = r => this.cells[r * COLS + col];
-    const empty = []; for (let r = 0; r < ROWS; r++) if (!at(r)) empty.push(r);
-    const fits = r => { for (let q = 0; q < ROWS; q++) { const c = at(q); if (c && ((q < r && rank(c) < v) || (q > r && rank(c) > v))) return false; } return true; };
-    const ok = empty.filter(fits), mid = (ROWS - 1) / 2;
-    return (ok.length ? ok : empty).sort((a, b) => Math.abs(a - mid) - Math.abs(b - mid) || a - b)[0];
-  }
+  /** The row for a newly confirmed world: the first free row of its OWN column (owner rule: the column — the class — is what
+   *  matters; the row does not). A world never moves once it is on screen. */
+  _rowFor(col) { for (let r = 0; r < ROWS; r++) if (!this.cells[r * COLS + col]) return r; return -1; }
 
   _place(fill, col, cand) {
     if (this._fill !== fill || this.state === "disposed") return;
     const rows = fill.rows[col]; if (rows.length >= ROWS || rows.some(c => c.key === cand.key)) return;
-    const i = this._rowFor(col, cand) * COLS + col; rows.push(cand);
+    const r = this._rowFor(col); if (r < 0) return;
+    const i = r * COLS + col; rows.push(cand);
     this._show(i, cand);
     this._progress(fill.e);
     if (!this.reducedMotion) this._grow(i, 0);
@@ -454,6 +447,7 @@ export class DestinationSurvey {
   _show(i, cand) {
     this.cells[i] = cand;
     if (!cand) { this.views[i].setPlanet(null); this._uncaption(i); return; }
+    this.slots[i].classList.remove("is-incoming"); // gone in the same frame the globe is first drawn: text and planet never overlap
     this.views[i].setPlanet(cand.planet, { render: cand.render }); this.stats.shown = (this.stats.shown || 0) + 1;
     if (cand.authored) this.views[i].setYaw(0); // a legacy rectangle: start with its real map edge on the far side (§11)
     this._caption(i, cand); this.buttons[i].disabled = true;
@@ -469,30 +463,11 @@ export class DestinationSurvey {
       cap.animate([{ opacity: 0 }, { opacity: 1 }], { duration: T.scanIn, delay, fill: "backwards" }).finished]).catch(() => {});
   }
 
-  /** A column is complete: show any world still missing (nearest-fill), then move worlds into their final rows. */
+  /** A column is complete: show any of its worlds still missing (e.g. the no-worker path). Nothing on screen ever moves. */
   _settleColumn(fill, col, column) {
     if (this._fill !== fill || fill.settled[col]) return fill.settled[col];
-    return (fill.settled[col] = (async () => {
-      const want = column.cells, at = r => r * COLS + col;
-      for (const c of want) if (c && !fill.rows[col].some(x => x.key === c.key)) this._place(fill, col, c);
-      const wrong = []; for (let r = 0; r < ROWS; r++) { const cur = this.cells[at(r)], tgt = want[r] || null; if ((cur && cur.key) !== (tgt && tgt.key)) wrong.push(r); }
-      if (!wrong.length) return;
-      const rm = this.reducedMotion;
-      if (!rm) await Promise.all(wrong.map(r => { const g = this.globes[at(r)], cap = this.buttons[at(r)].querySelector(".ds-cap");
-        cap.animate([{ opacity: 1 }, { opacity: 0 }], { duration: T.scanOut, fill: "forwards" });
-        return g.animate([{ transform: "none" }, { transform: "scale(.08)" }], { duration: T.scanOut, easing: EASE_IN, fill: "forwards" }).finished.catch(() => {}); }));
-      if (this._fill !== fill || this.state === "disposed") return;
-      const moving = wrong.map(r => ({ g: this.globes[at(r)], v: this.views[at(r)], c: this.cells[at(r)] }));
-      for (const r of wrong) {
-        const i = at(r), tgt = want[r] || null, m = moving.find(x => (x.c && x.c.key) === (tgt && tgt.key));
-        for (const a of [...m.g.getAnimations(), ...this.buttons[i].querySelector(".ds-cap").getAnimations()]) a.cancel();
-        this.slots[i].insertBefore(m.g, this.slots[i].firstChild); // the view follows its container: same planet, same yaw
-        this.globes[i] = m.g; this.views[i] = m.v; this.cells[i] = m.c;
-        if (m.c) { this._caption(i, m.c); this.buttons[i].disabled = true; } else this._uncaption(i);
-      }
-      this.stats.reorders = (this.stats.reorders || 0) + wrong.length;
-      if (!rm) await Promise.all(wrong.map(r => this._grow(at(r), 0)));
-    })());
+    for (const c of column.cells) if (c && !fill.rows[col].some(x => x.key === c.key)) this._place(fill, col, c);
+    return (fill.settled[col] = Promise.resolve());
   }
 
   /** The whole sector is in: settle every column (the no-worker fallback path places everything here), enable the grid. */
@@ -503,7 +478,8 @@ export class DestinationSurvey {
     if (this.state === "disposed") return;
     this.sector = sector; this._fill = null; fill.e.listener = null;
     for (const k of [...this._sectors.keys()]) if (this._sectors.get(k).seed === sector.sectorSeed) this._sectors.delete(k); // shown: the cells hold it now
-    for (let i = 0; i < N; i++) { if (this.cells[i] !== sector.cells[i]) this._show(i, sector.cells[i]); this.buttons[i].disabled = !sector.cells[i]; }
+    // the worlds keep the rows they landed in: each column holds exactly the sector's worlds of that column (its class)
+    for (let i = 0; i < N; i++) { this.slots[i].classList.remove("is-incoming"); this.buttons[i].disabled = !this.cells[i]; }
     this._placeholder(null);
     this.sectorEl.innerHTML = `<b>${esc(sector.label)}</b> · nine candidate worlds`;
   }
@@ -563,10 +539,10 @@ export class DestinationSurvey {
   /** Header / placeholder: how many of the awaited sector's nine worlds are validated so far (null clears it). */
   _progress(e) {
     if (e && e !== this._awaiting) return;
-    const n = e ? e.found.reduce((a, b) => a + b, 0) : 0, placed = this._fill ? this._fill.rows.reduce((a, r) => a + r.length, 0) : 0;
-    if (this.state === "loading") this._placeholder(e && !placed ? `Surveying sector… ${n} / ${N} worlds confirmed` : null);
-    this.progressEl.hidden = !e || (this.state === "loading" && !placed);
-    if (e) this.progressEl.textContent = `Confirming worlds ${n} / ${N}`;
+    // (028B) no visible loading text: each empty spot shows "Incoming" until its world appears; this status is for screen readers
+    const n = e ? e.found.reduce((a, b) => a + b, 0) : 0;
+    if (this.state === "loading") this._placeholder(null);
+    this.progressEl.textContent = e ? `Surveying sector: ${n} of ${N} worlds confirmed` : "";
   }
 
   /**

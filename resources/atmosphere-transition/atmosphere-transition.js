@@ -183,15 +183,18 @@ export class AtmosphereTransition {
    */
   prepare() {
     if (this._bitmaps) return this._bitmaps.ready;
-    const colors = { ...CLOUD_COLORS, ...(this.colors || {}) }, map = new Map();
+    const colors = { ...CLOUD_COLORS, ...(this.colors || {}) }, map = new Map(), t0 = performance.now();
+    this.prepareStats = { bitmaps: 0, maxTaskMs: 0, ms: null }; // (QA: the longest synchronous step this costs the main thread)
     // one bitmap at a time with a yield between them, so preparing never blocks a frame (each is a few ms)
     const ready = (async () => {
       for (const shape of Object.keys(SHAPES)) for (const far of [false, true]) {
         await new Promise(r => setTimeout(r, 0));
-        const url = drawCloudBitmap(shape, far, colors), img = new Image(); img.src = url;
+        const t = performance.now(), url = drawCloudBitmap(shape, far, colors), img = new Image(); img.src = url;
+        this.prepareStats.maxTaskMs = Math.max(this.prepareStats.maxTaskMs, performance.now() - t); this.prepareStats.bitmaps++;
         try { await img.decode(); } catch { /* decoded on first paint instead */ }
         map.set(shape + (far ? "|far" : ""), { url, img });
       }
+      this.prepareStats.ms = Math.round(performance.now() - t0);
       return map;
     })();
     this._bitmaps = { map, ready };

@@ -12,7 +12,7 @@
 .ds{
   --font:ui-rounded,"SF Pro Rounded","Nunito","Varela Round","Trebuchet MS",system-ui,sans-serif;
   --space-0:#03050b; --space-1:#0a1124; --ink:#edf1f8; --ink-soft:#aab5ca; --ink-faint:#717e97; --line:#27324d; --panel:rgba(14,20,36,.86);
-  --stable:#86d98f; --volatile:#f2c45a; --extreme:#f48aa3; --sky:#4f9fe0; --sky-dark:#2b6ea8; --leaf:#3f9d4b; --leaf-dark:#2a7636;
+  --stable:#86d98f; --volatile:#f2c45a; --extreme:#f2604e; --sky:#4f9fe0; --sky-dark:#2b6ea8; --leaf:#3f9d4b; --leaf-dark:#2a7636;
   --focus:#ffd479; --r-lg:22px 18px 24px 18px; --r-md:16px 13px 17px 14px; --ease:cubic-bezier(.2,.8,.2,1);
   --head:76px; --colhead:46px; --cap:44px; --gapY:8px; --padX:clamp(16px,3cqw,40px); --gapX:clamp(18px,5cqw,110px);
   /* a candidate globe box: as big as three rows (or three columns) allow */
@@ -83,10 +83,25 @@
 .ds-globe-slot{position:relative; display:block; width:var(--G); height:var(--G)}
 .ds-globe{display:block; width:100%; height:100%}
 .ds-globe.is-receded{display:none}
-/* the scan ring: a thin circle just outside the globe disc (the disc fills ~92% of its box at distance 3.6) */
-.ds-halo{position:absolute; left:50%; top:50%; width:100%; height:100%; transform:translate(-50%,-50%); border-radius:50%; pointer-events:none;
-  border:2px solid color-mix(in srgb, var(--cls) 40%, transparent); opacity:.35; transition:opacity .2s, border-color .2s, box-shadow .2s}
-.ds-cand:hover .ds-halo, .ds-cand:focus-visible .ds-halo{opacity:1; border-color:var(--cls); box-shadow:0 0 0 4px color-mix(in srgb, var(--cls) 16%, transparent), 0 0 28px color-mix(in srgb, var(--cls) 30%, transparent)}
+/* the halo (028B): no ring at rest; on hover / keyboard focus a soft glow hugging the planet's own disc (the disc fills 91.7 %
+   of its box at distance 3.6). An outer box-shadow is drawn only OUTSIDE the element, so it never tints the planet. The same
+   element pulses outward when a world arrives (the scan / fill-in animations). */
+.ds-halo{position:absolute; left:50%; top:50%; width:91.7%; height:91.7%; transform:translate(-50%,-50%); border-radius:50%; pointer-events:none;
+  opacity:0; transition:opacity .2s;
+  box-shadow:0 0 10px 1px color-mix(in srgb, var(--cls) 55%, transparent), 0 0 26px 8px color-mix(in srgb, var(--cls) 28%, transparent), 0 0 54px 18px color-mix(in srgb, var(--cls) 10%, transparent)}
+.ds-cand:hover .ds-halo, .ds-cand:focus-visible .ds-halo{opacity:1}
+/* an empty spot while its world is still being confirmed: a quiet shimmering "Incoming" (removed the moment the planet appears) */
+.ds-incoming{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); display:none; pointer-events:none; white-space:nowrap;
+  font-size:11px; font-weight:800; letter-spacing:3.5px; text-transform:uppercase; padding-left:3.5px;
+  background:linear-gradient(100deg, var(--ink-faint) 0%, var(--ink-faint) 38%, color-mix(in srgb, var(--cls) 70%, white) 50%, var(--ink-faint) 62%, var(--ink-faint) 100%) 0 0 / 260% 100%;
+  -webkit-background-clip:text; background-clip:text; color:transparent; opacity:.75;
+  animation:ds-shimmer 2.4s linear var(--d, 0s) infinite, ds-breathe 2.4s ease-in-out var(--d, 0s) infinite}
+.ds-incoming::after{content:""; position:absolute; left:50%; top:calc(100% + 7px); width:26px; height:2px; margin-left:-13px; border-radius:2px;
+  background:linear-gradient(90deg, transparent, color-mix(in srgb, var(--cls) 60%, transparent), transparent); animation:ds-scanline 1.6s ease-in-out var(--d, 0s) infinite}
+.ds-globe-slot.is-incoming .ds-incoming{display:block}
+@keyframes ds-shimmer{from{background-position:100% 0} to{background-position:-60% 0}}
+@keyframes ds-breathe{0%,100%{opacity:.55} 50%{opacity:.9}}
+@keyframes ds-scanline{0%,100%{transform:scaleX(.4); opacity:.3} 50%{transform:scaleX(1.4); opacity:.9}}
 .ds-cand:focus-visible{outline:none}
 .ds-cap{position:relative; display:flex; flex-direction:column; align-items:center; height:var(--cap); padding-top:3px; line-height:1.15; max-width:100%; transition:opacity .25s}
 .ds-name{font-size:16px; font-weight:800; letter-spacing:.4px; white-space:nowrap}
@@ -126,7 +141,7 @@
 .ds-rows dt{font-size:12px; font-weight:900; letter-spacing:1.4px; text-transform:uppercase; color:var(--ink-faint); padding-top:3px; white-space:nowrap}
 .ds-rows dd{margin:0; font-size:14px; color:var(--ink-soft)}
 .ds-rows dd b{display:block; color:var(--ink); font-size:16px}
-.ds-challenges{margin:14px 0 0; padding:12px 14px; border-radius:var(--r-md); background:rgba(244,138,163,.07); border:2px solid rgba(244,138,163,.22)}
+.ds-challenges{margin:14px 0 0; padding:12px 14px; border-radius:var(--r-md); background:rgba(242,96,78,.07); border:2px solid rgba(242,96,78,.24)}
 .ds-challenges h3{margin:0 0 6px; font-size:12px; font-weight:900; letter-spacing:1.4px; text-transform:uppercase; color:var(--extreme)}
 .ds-challenges ul{margin:0; padding-left:18px; font-size:15px} .ds-challenges li{margin:2px 0}
 .ds-challenges li small{color:var(--ink-faint); font-weight:700}
@@ -163,3 +178,5 @@
 .ds.rm *, .ds.rm::before{transition-duration:.01s !important; transition-delay:0s !important}
 .ds.rm .ds-dossier{transform:none !important}
 .ds.rm .ds-btn[aria-busy="true"] svg{animation:none}
+.ds.rm .ds-incoming, .ds.rm .ds-incoming::after{animation:none; opacity:.75}
+@media (prefers-reduced-motion: reduce){ .ds-incoming, .ds-incoming::after{animation:none !important; opacity:.75} }

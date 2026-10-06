@@ -23,6 +23,9 @@ export const SURVEY_CLASSES = [
   { id: "extreme",  label: "Extreme",  minHabitable: 0,    blurb: "Little land habitable on arrival" },
 ];
 export const ROWS = 3; // a sector is a 3 × 3 matrix: one column per class, ROWS candidates each
+// A column's draw budget. A column needs 6–11 draws in practice; the budget only bounds a pathological stream. Since 028B a
+// column never borrows a world of another class (owner rule), so the budget is generous (was 60 with a "nearest" fill).
+export const MAX_DRAWS = 400;
 export const VALIDATION_PATH = "BLOOM.play.searchWorld (Eden) → generateFromArchetype layers 1–8 → stripPlanet";
 
 const mulberry32 = a => () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
@@ -129,16 +132,16 @@ export function makeCandidate(spec, deps) {
 /**
  * One column of a sector: ROWS validated worlds of class SURVEY_CLASSES[column], drawn from a deterministic stream of
  * (archetype, World Seed) pairs for (sectorSeed, column). Each draw is first PREDICTED with a cheap structural world; only a
- * draw predicted for this column is validated (the slow part). A validated world whose real class differs is kept aside and
- * used only if the column cannot fill inside `maxDraws` (marked filledBy: "nearest"). Columns are independent, so a sector's
+ * draw predicted for this column is validated (the slow part). A validated world whose real class differs is discarded: a
+ * column only ever holds worlds of its class (028B; an unfilled row would stay empty). Columns are independent, so a sector's
  * three columns can be built in parallel (one task each) and still come out identical.
  * A generator: yields { found, draws, validations } after each draw; returns { column, cells, stats }.
  * `firstBloom: true` puts the authored First Bloom at the top of its own class column.
  */
-export function* columnCandidates(sectorSeed, column, deps, { firstBloom = false, maxDraws = 60 } = {}) {
+export function* columnCandidates(sectorSeed, column, deps, { firstBloom = false, maxDraws = MAX_DRAWS } = {}) {
   const { BLOOM_DATA: D } = deps0(deps), want = SURVEY_CLASSES[column].id, t0 = now();
   const rng = mulberry32(((sectorSeed >>> 0) ^ 0x5eed0028) + column * 0x9e3779b1), pol = (D.play && D.play.search) || { seedMin: 1, seedMax: 99999 };
-  const cells = [], aside = [], seen = new Set(), stats = { draws: 0, predictions: 0, validations: 0, wasted: 0, failed: 0, predictMs: 0, validateMs: 0, byArchetype: {} };
+  const cells = [], seen = new Set(), stats = { draws: 0, predictions: 0, validations: 0, wasted: 0, failed: 0, predictMs: 0, validateMs: 0, byArchetype: {} };
   if (firstBloom) { const fb = makeCandidate({ authored: "first_bloom" }, deps); if (fb && fb.classId === want) { cells.push(fb); seen.add(fb.key); } }
   yield { found: cells.length, draws: 0, validations: 0 };
   while (cells.length < ROWS && stats.draws < maxDraws) {
@@ -152,11 +155,10 @@ export function* columnCandidates(sectorSeed, column, deps, { firstBloom = false
     const by = stats.byArchetype[A.id] || (stats.byArchetype[A.id] = { validations: 0, ms: 0, maxMs: 0 }); by.validations++; by.ms += ms; by.maxMs = Math.max(by.maxMs, ms);
     if (!c) stats.failed++;
     else if (c.classId === want) cells.push(c);
-    else { stats.wasted++; aside.push(c); }
+    else stats.wasted++; // validated, but its real class belongs to another column
     yield { found: cells.length, draws: stats.draws, validations: stats.validations };
   }
-  const lo = SURVEY_CLASSES[column].minHabitable;
-  while (cells.length < ROWS && aside.length) { aside.sort((a, b) => Math.abs(a.habitable - lo) - Math.abs(b.habitable - lo)); const c = aside.shift(); c.filledBy = "nearest"; cells.push(c); }
+  // (028B, owner rule) a column only ever holds worlds of ITS class: no wrong-class "nearest" fill; an unfilled row stays empty
   cells.sort((a, b) => (b.authored - a.authored) || (b.habitable - a.habitable));
   stats.ms = Math.round(now() - t0); stats.predictMs = Math.round(stats.predictMs); stats.validateMs = Math.round(stats.validateMs);
   return { sectorSeed: sectorSeed >>> 0, column, cells, stats };
@@ -166,13 +168,13 @@ export function* columnCandidates(sectorSeed, column, deps, { firstBloom = false
  * planColumn walks the column's deterministic draw stream (cheap predictions only) and returns the next `want` draws that are
  * predicted for this column; every pick is then validated on its own (makeCandidate, in any worker, in any order);
  * columnFromValidated applies columnCandidates' acceptance rule to the results IN STREAM ORDER — same stopping point, same
- * set-aside fill, same sort — so a column (and so a sector) is identical whichever path built it. Validations of picks beyond
+ * rule — so a column (and so a sector) is identical whichever path built it. Validations of picks beyond
  * the stopping point are speculative and simply discarded. (Plain data in and out: postable to and from workers.)
- *   planColumn(sectorSeed, column, deps, { firstBloom, fromDraw = 0, want, maxDraws = 60 })
+ *   planColumn(sectorSeed, column, deps, { firstBloom, fromDraw = 0, want, maxDraws = MAX_DRAWS })
  *     → { fb, picks: [{ draw, archetypeId, seed }], nextDraw, exhausted, predictions, predictMs }
  *     (fb: the First Bloom candidate when firstBloom and fromDraw = 0 and it belongs to this column, else null)
  */
-export function planColumn(sectorSeed, column, deps, { firstBloom = false, fromDraw = 0, want = ROWS + 1, maxDraws = 60 } = {}) {
+export function planColumn(sectorSeed, column, deps, { firstBloom = false, fromDraw = 0, want = ROWS + 1, maxDraws = MAX_DRAWS } = {}) {
   const { BLOOM_DATA: D } = deps0(deps), wantClass = SURVEY_CLASSES[column].id;
   const rng = mulberry32(((sectorSeed >>> 0) ^ 0x5eed0028) + column * 0x9e3779b1), pol = (D.play && D.play.search) || { seedMin: 1, seedMax: 99999 };
   const seen = new Set(), picks = []; let fb = null, draws = 0, predictions = 0, predictMs = 0;
@@ -192,18 +194,17 @@ export function planColumn(sectorSeed, column, deps, { firstBloom = false, fromD
  * world passed); `exhausted` = the stream ran out (maxDraws). Returns { column, done } — done is false while more results are
  * needed (the caller plans / validates more and calls again); when done, `column` equals buildColumn's for the same inputs.
  */
-export function columnFromValidated(sectorSeed, column, { fb = null, results, exhausted = false, maxDraws = 60, stats: extra = null }) {
-  const want = SURVEY_CLASSES[column].id, cells = fb ? [fb] : [], aside = [];
+export function columnFromValidated(sectorSeed, column, { fb = null, results, exhausted = false, maxDraws = MAX_DRAWS, stats: extra = null }) {
+  const want = SURVEY_CLASSES[column].id, cells = fb ? [fb] : [];
   const stats = { draws: 0, validations: 0, wasted: 0, failed: 0, parallel: true, ...(extra || {}) };
   for (const r of results) {
     if (cells.length >= ROWS) break;
     stats.draws = r.draw; stats.validations++;
-    if (!r.cand) stats.failed++; else if (r.cand.classId === want) cells.push(r.cand); else { stats.wasted++; aside.push(r.cand); }
+    if (!r.cand) stats.failed++; else if (r.cand.classId === want) cells.push(r.cand); else stats.wasted++;
   }
   if (cells.length < ROWS && !exhausted) return { done: false };
   if (cells.length < ROWS) stats.draws = maxDraws;
-  const lo = SURVEY_CLASSES[column].minHabitable;
-  while (cells.length < ROWS && aside.length) { aside.sort((a, b) => Math.abs(a.habitable - lo) - Math.abs(b.habitable - lo)); const c = aside.shift(); c.filledBy = "nearest"; cells.push(c); }
+  // (028B, owner rule) a column only ever holds worlds of ITS class: no wrong-class "nearest" fill; an unfilled row stays empty
   cells.sort((a, b) => (b.authored - a.authored) || (b.habitable - a.habitable));
   return { done: true, column: { sectorSeed: sectorSeed >>> 0, column, cells, stats } };
 }

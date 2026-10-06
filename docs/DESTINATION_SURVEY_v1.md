@@ -150,12 +150,17 @@ whole sector. Now:
 **Fill in as confirmed (028B, owner decision; replaces 028A1's "all nine at once").**
 - **When a world appears.** As soon as it is validated *and certain to be in the sector*: too few undecided or matching
   draws precede it to push it out. That can be before slower worlds earlier in the stream have finished.
-- **Where it appears.** It takes an empty row consistent with the worlds already shown in its column (more habitable
-  above, First Bloom on top; the middle row first).
-- **Settling.** When a column is complete, any world not in its final row shrinks out and grows into it. Globes never
-  slide across each other, because globes on one renderer intersect by depth. Typically 2–5 globes move per sector.
-- **Exactly once.** Each world gets one `setPlanet`; moves re-parent containers, never re-texture.
-- **Buttons.** They stay disabled until all nine are in. The header counts **"Confirming worlds n / 9"**.
+- **Where it appears (owner rules).**
+  - Always in **its own class's column**: a hard world never lands in the easy column.
+  - In the first free row. **It never moves again** (no re-sorting, no bounce): the column matters, the row does not.
+  - A finished column holds exactly the sector's worlds of its class, in landing order. Data order (`sector.cells`)
+    stays most → least habitable; prefetched scans show that order.
+- **Exactly once.** Each world gets one `setPlanet`.
+- **While loading.**
+  - Each empty spot shows a quiet shimmering **"Incoming"** (static under reduced motion).
+  - It is removed in the same task the planet is set, so text and planet never overlap.
+  - There is no other visible loading text; screen readers get a "Surveying sector: n of 9 worlds confirmed" status.
+- **Buttons.** They stay disabled until all nine are in.
 - **Scan before the next sector is ready.** The current worlds leave at once and the new ones fill in the same way.
 - **Prefetched scan.** If the next sector is ready, **SCAN NEW SECTOR** is still the single sweep (~0.9–1.0 s).
 - **Fallback.** The no-worker path still shows the sector all at once.
@@ -198,5 +203,12 @@ showing. The slowest world's validation then finishes before the player arrives.
   - 028A1 recalibrated them on 90 validated worlds (tertiles 21 % / 34 %). Validated worlds are harsher than 028A's
     structural ones, so the old 45 % / 22 % bands made Stable rare (≈ 1 in 10 worlds).
 - **Never show a world before it is validated, and never swap a shown world.** One `setPlanet` per cell per sector.
+- **A column only ever holds worlds of its own class (028B owner rule).**
+  - A validated world of another class is discarded, never used to fill a gap.
+  - The draw budget (`MAX_DRAWS` 400; a column needs 6–11 draws) only bounds a pathological stream, which would leave a
+    row empty.
+- **No circle marks the spots (028B).** Hover and keyboard focus show a soft glow hugging the planet's own disc: an outer
+  shadow, so it never tints the globe.
+- **Class colours.** Stable green `#86d98f`, Volatile gold `#f2c45a`, Extreme red `#f2604e` (028B; was pink).
 - **The departure never generates, re-plans or re-orients** (028B). It only moves the live view's container, dollies its
   camera and hands over the very `detail.planet` object.
