@@ -3,6 +3,10 @@
 **From:** BLOOM-029A · **For:** whoever builds BLOOM-029B–029E (the Concept 18 run screen) and the Main PMO.
 **Base:** `c23815e` (028D1 evidence tip). Evidence: `docs/evidence/bloom-029a/REPORT.md`. Suite: `tools/run-ui-check.js` (the 24th).
 
+> **BLOOM-029B** built the first production consumer of this boundary — the Planet View behind `&ui=18` — and added a few
+> additive reads (`surface()`, `mapState()`, `effects()`, `runMenu()` + `actions.runAction`, two scenario fields; `api` stays 1).
+> See `docs/PRODUCTION_PLANET_VIEW_v1.md` §6.
+
 > **Concept 18 supplies presentation. The existing run supplies truth.**
 > 029A adds no UI. The temporary shell looks and behaves exactly as before: proven run for run, event for event, and pixel for
 > pixel below the header, against `c23815e` (REPORT §2). What 029A adds is one small, explicit adapter. Through it, a new
@@ -129,7 +133,8 @@ adapter file is missing, the shell runs exactly as before; the hooks are no-ops.
 - **`BLOOM_API`:** the same 19 members, and the same 12 `state()` fields (B8).
 - **Training:**
   - starts paused, deterministic, Restart / Skip / Main menu, status store
-  - `training-check` 82/82 in the broad run
+  - `training-check` in the broad run: **81 pass / 1 fail** (Firefox B1c, a timing flake); green in isolated re-runs, and the same
+    failure reproduced on `c23815e` (erratum corrected in BLOOM-029B; this line used to say 82/82)
 - **No coach code.** None of 028D2's uncommitted work was imported (N5).
 
 ## 6. Seams for the next milestones

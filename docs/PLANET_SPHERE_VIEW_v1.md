@@ -31,7 +31,7 @@ Fixed behaviour you build on:
 | | |
 |---|---|
 | `resources/planet-sphere/planet-sphere-view.js` | **`PlanetSphereView`**, **`PlanetSphereRenderer`** (the module you import) |
-| `resources/planet-sphere/planet-texture.js` | planet data → 2:1 texture, UV → tile → region (pure; no Three.js) |
+| `resources/planet-sphere/planet-texture.js` | planet data → 2:1 texture, UV → tile → region (pure; no Three.js). Since BLOOM-029B the texture **is the canonical planet surface** (`resources/planet-surface/planet-surface.js`), the same surface the production gameplay map draws flat; it keeps no palette of its own (`docs/PRODUCTION_PLANET_VIEW_v1.md` §2) |
 | `resources/planet-sphere/vendor/three-0.185.1/` | pinned Three.js r185.1, imported by relative path |
 | `demos/planet-sphere.html` | developer demo / QA page (one globe, diagnostics) |
 | `demos/planet-sphere-grid.html` | technical proof: nine globes on one context (**not** the menu) |

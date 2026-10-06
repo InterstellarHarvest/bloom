@@ -172,6 +172,10 @@ never keeps the element.
 - **Shop:** `upgrades` · `board-spread` / `board-adapt` / `board-terraform` · `upgrade-<trait id>` (e.g. `upgrade-cold`,
   `upgrade-humid`)
 - **Footer / report:** `message-log` · `report` · `report-continue` · `run-actions`
+- **Production Planet View (`&ui=18`, BLOOM-029B):** `biomass`, `coverage`, `sky`, `play-pause`, `speed`, `run-menu` (+ its
+  `action-*`), `map`, `message-log`, `inspect`, `readout`, `limiting-factor`, `colony-status` resolve to the new controls (one element
+  each; the hidden shell's copies become `data-tutorial-legacy`); new `map-view`, `scenario-status`. The rest stay on the shell until
+  the rooms exist. `docs/PRODUCTION_PLANET_VIEW_v1.md` §7.
 
 ## 10. Notes for 028D2
 
