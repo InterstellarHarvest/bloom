@@ -21,8 +21,10 @@
 //     and does not disturb the active run.
 //   · dispose() during a run removes the overlay immediately, aborts the run's AbortSignal and rejects run() ("AbortError").
 //
-// TECHNOLOGY: DOM + inline SVG + Web Animations / CSS keyframes on transform and opacity only (compositor-friendly). No canvas,
-// no WebGL, no per-frame JavaScript. The overlay is built when a run starts and removed when it ends (nothing left in the DOM
+// TECHNOLOGY: DOM + Web Animations / CSS keyframes on transform and opacity only (compositor-friendly); no WebGL, no per-frame
+// JavaScript. Each cloud silhouette is drawn ONCE per instance into a small bitmap (2D canvas → PNG object URL, prepare()) and
+// the clouds are <img> elements: scaling a bitmap is pure GPU work in every browser, whereas Firefox re-rasterises scaled SVG on
+// the CPU every time the scale changes (measured: a 100+ ms hitch at the start of every reveal at 5K). The overlay is built when a run starts and removed when it ends (nothing left in the DOM
 // between runs except one shared <style> element). It blocks pointer and keyboard input while it is up, and is aria-hidden.
 //
 // NOT A CANNED ANIMATION: every run lays its clouds out from a seed (random unless run({ seed }) fixes it): the composition
@@ -52,7 +54,7 @@ const SHAPES = {
 export const ATMOSPHERE_PRESETS = Object.freeze({
   // A descent through cloud cover: for big, rare moments (Destination Survey → expedition).
   dramatic: Object.freeze({
-    name: "dramatic", conceal: "full", peak: 1, concealMs: 1350, minCoveredMs: 160, revealMs: 1000, settleFrames: 2,
+    name: "dramatic", conceal: "full", peak: 1, concealMs: 1250, minCoveredMs: 160, revealMs: 1000, settleFrames: 3, settleMaxMs: 400,
     veil: { delay: 380, ease: "cubic-bezier(.6,.05,.8,.4)" },
     motion: "descent",
     clouds: [
@@ -96,24 +98,43 @@ export function layoutClouds(preset, seed) {
   return { seed: seed >>> 0, mirror, clouds: clouds.filter(c => !c.skip) };
 }
 
+// default cloud colours (bitmaps are drawn with these; `colors` overrides them) and the bitmap width (texture px; 200:130)
+const CLOUD_COLORS = Object.freeze({ light: "#f8faff", shade: "#aebfe2", far: "#e6ecf8", farShade: "#a5b5d8" });
+const BITMAP_W = 1024;
+
+/** One cloud silhouette, drawn once: the shade cluster, then the light cluster nudged up (the chunky two-tone underside).
+ *  Far clouds are pre-softened (a blur baked into the bitmap costs nothing per frame). → a PNG data URL. */
+function drawCloudBitmap(shape, far, colors) {
+  const bw = far ? BITMAP_W / 2 : BITMAP_W; // far clouds are soft anyway: half resolution, a quarter of the work
+  const c = document.createElement("canvas"); c.width = bw; c.height = Math.round(bw * 0.65);
+  // CPU-backed (willReadFrequently): encoding it never stalls the GPU with a readback
+  const g = c.getContext("2d", { willReadFrequently: true }), k = bw / 200, pad = far ? 6 : 0;
+  const blob = (fill, tx, ty, sc) => { g.fillStyle = fill; g.beginPath();
+    for (const [x, y, r] of SHAPES[shape]) { const X = (tx + x * sc) * k, Y = (ty + y * sc) * k, R = r * sc * k * (1 - pad / 200); g.moveTo(X + R, Y); g.arc(X, Y, R, 0, Math.PI * 2); }
+    g.fill(); };
+  if (far) g.filter = "blur(2.5px)";
+  blob(far ? colors.farShade : colors.shade, 0, 0, 1);
+  blob(far ? colors.far : colors.light, 4, -6, 0.96);
+  // encoded synchronously (one bitmap per task, see prepare()): toBlob encodes in idle time, and a page that never idles
+  // (spinning globes) waited ~1 s per bitmap for it in Chromium
+  return c.toDataURL("image/png");
+}
+
 const CSS = `
 .atx{position:fixed; inset:0; z-index:var(--atx-z,10000); overflow:hidden; pointer-events:auto; touch-action:none; user-select:none; -webkit-user-select:none; contain:strict;
-  --atx-light:#f8faff; --atx-shade:#aebfe2; --atx-far:#e6ecf8; --atx-far-shade:#a5b5d8; --atx-veil-a:#dfe7f6; --atx-veil-b:#c3d0ea; --atx-veil-c:#a9b9dc}
+  --atx-veil-a:#dfe7f6; --atx-veil-b:#c3d0ea; --atx-veil-c:#a9b9dc}
 .atx.atx-in-host{position:absolute}
-.atx-defs{position:absolute; width:0; height:0; overflow:hidden}
 .atx-veil{position:absolute; inset:-2%; opacity:0;
   background:radial-gradient(70% 60% at var(--atx-ox,50%) var(--atx-oy,50%), var(--atx-veil-a) 0%, var(--atx-veil-b) 62%, var(--atx-veil-c) 100%)}
 .atx-sweep .atx-veil{inset:0 -30%;
   background:linear-gradient(100deg, transparent 0%, var(--atx-veil-b) 18%, var(--atx-veil-a) 38%, var(--atx-veil-a) 62%, var(--atx-veil-b) 82%, transparent 100%)}
 .atx-cloud{position:absolute; left:0; top:0; opacity:0}
 .atx-drift{width:100%; height:100%; animation:atx-drift var(--atx-dd,9s) ease-in-out var(--atx-dl,0s) infinite alternate}
-.atx-cloud svg{display:block; width:100%; height:auto; overflow:visible}
-.atx-cloud .sh{fill:var(--atx-shade)} .atx-cloud .lt{fill:var(--atx-light)}
-.atx-cloud.far .sh{fill:var(--atx-far-shade)} .atx-cloud.far .lt{fill:var(--atx-far)}
+.atx-cloud img{display:block; width:100%; height:100%; user-select:none; -webkit-user-drag:none; pointer-events:none}
 /* depth from tone, not filters: no CSS blur / will-change on these big layers (measured: both cost whole frames in software
    compositing, and Firefox warns about will-change memory) */
-.atx-cloud.far svg{opacity:.8}
-.atx-cloud.flip svg{transform:scaleX(-1)}
+.atx-cloud.far img{opacity:.8}
+.atx-cloud.flip img{transform:scaleX(-1)}
 @keyframes atx-drift{from{transform:translate3d(calc(var(--atx-dx,1) * -1.2%), calc(var(--atx-dy,1) * .8%), 0) scale(1)}
                      to{transform:translate3d(calc(var(--atx-dx,1) * 1.4%), calc(var(--atx-dy,1) * -.9%), 0) scale(1.025)}}
 .atx.rm .atx-drift{animation:none}
@@ -125,6 +146,16 @@ const timeoutError = ms => Object.assign(new Error(`AtmosphereTransition: onCove
 
 /** One frame (or 50 ms when frames are not being produced, e.g. a hidden tab — a transition must never hang on rAF). */
 const nextFrame = () => new Promise(res => { let done = false; const go = () => { if (!done) { done = true; res(); } }; requestAnimationFrame(go); setTimeout(go, 50); });
+/**
+ * After the consumer's covered work: wait until `n` consecutive frames come at a normal pace (≤ 28 ms), at most `maxMs`. The
+ * first paint of a freshly mounted full screen can take 100+ ms (measured: Firefox at 5K); that stall must happen while
+ * the screen is still covered, not on the first frames of the reveal.
+ */
+async function settle(n, maxMs) {
+  if (!n) return;
+  const t0 = performance.now(); let ok = 0, last = t0;
+  while (ok < n && performance.now() - t0 < maxMs) { await nextFrame(); const t = performance.now(); ok = t - last <= 28 ? ok + 1 : 0; last = t; }
+}
 const settled = anims => Promise.all(anims.map(a => a.finished.catch(() => {})));
 
 export class AtmosphereTransition {
@@ -140,11 +171,32 @@ export class AtmosphereTransition {
     if (host && typeof host.appendChild !== "function") throw new TypeError("AtmosphereTransition: host must be a DOM element");
     this.host = host || document.body; this.zIndex = zIndex; this.forcedReducedMotion = reducedMotion; this.blockInput = blockInput !== false; this.colors = colors;
     this.uid = "atx" + (++instances) + "-" + Math.floor(Math.random() * 1e6).toString(36);
-    this.phase = "idle"; this.disposed = false; this.runs = 0; this.overlay = null; this._run = null;
+    this.phase = "idle"; this.disposed = false; this.runs = 0; this.overlay = null; this._run = null; this._bitmaps = null;
     ensureStyle();
   }
 
   get running() { return this._run !== null; }
+
+  /**
+   * Draw and decode the cloud bitmaps now (a few ms, once per instance). run() does it by itself the first time; call this
+   * ahead of time (e.g. when a screen that may transition appears) so the first transition starts on the very next frame.
+   */
+  prepare() {
+    if (this._bitmaps) return this._bitmaps.ready;
+    const colors = { ...CLOUD_COLORS, ...(this.colors || {}) }, map = new Map();
+    // one bitmap at a time with a yield between them, so preparing never blocks a frame (each is a few ms)
+    const ready = (async () => {
+      for (const shape of Object.keys(SHAPES)) for (const far of [false, true]) {
+        await new Promise(r => setTimeout(r, 0));
+        const url = drawCloudBitmap(shape, far, colors), img = new Image(); img.src = url;
+        try { await img.decode(); } catch { /* decoded on first paint instead */ }
+        map.set(shape + (far ? "|far" : ""), { url, img });
+      }
+      return map;
+    })();
+    this._bitmaps = { map, ready };
+    return ready;
+  }
   get reducedMotion() { return this.forcedReducedMotion ?? !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches); }
 
   /**
@@ -189,7 +241,8 @@ export class AtmosphereTransition {
     const aborted = () => { if (ctl.signal.aborted) throw ctl.signal.reason || abortError("AtmosphereTransition: aborted"); };
     const peak = full ? 1 : P.peak;
     const o = origin || { x: 0.5, y: 0.5 };
-    this._mount(run, T, o);
+    const bitmaps = await this.prepare(); aborted();
+    this._mount(run, T, o, bitmaps);
     const { veil, clouds } = run;
     const box = this.overlay.getBoundingClientRect(), W = box.width || innerWidth, H = box.height || innerHeight;
 
@@ -217,7 +270,7 @@ export class AtmosphereTransition {
     } catch (err) { failure = err; }
     aborted();
     mark("coveredDone");
-    await minHold; for (let i = 0; i < (P.settleFrames || 0); i++) await nextFrame(); aborted();
+    await minHold; await settle(P.settleFrames || 0, P.settleMaxMs || 0); aborted();
     if (failure && !ctl.signal.aborted) ctl.abort(failure); // tell a still-running onCovered (e.g. after a timeout) to stop
 
     // ---- reveal (also after a failure: never strand the app behind the overlay)
@@ -234,7 +287,7 @@ export class AtmosphereTransition {
   }
 
   /** Build the overlay for one run: defs (shared silhouettes), the veil, and the clouds of the preset (positions from the host box). */
-  _mount(run, T, o) {
+  _mount(run, T, o, bitmaps) {
     const { P, rm } = run, inHost = this.host !== document.body && this.host !== document.documentElement;
     const ov = this.overlay = document.createElement("div");
     ov.className = "atx atx-" + P.motion + (rm ? " rm" : "") + (inHost ? " atx-in-host" : "");
@@ -244,10 +297,7 @@ export class AtmosphereTransition {
     if (this.colors) for (const [k, v] of Object.entries(this.colors)) ov.style.setProperty("--atx-" + k.replace(/[A-Z]/g, m => "-" + m.toLowerCase()), v);
     const L = run.layout = layoutClouds(P, run.seed);
     ov.dataset.atxSeed = String(run.seed);
-    const used = [...new Set(L.clouds.map(c => c.shape))];
-    const id = s => `${this.uid}-${s}`;
-    ov.innerHTML = `<svg class="atx-defs" aria-hidden="true" focusable="false"><defs>${used.map(s =>
-      `<symbol id="${id(s)}" viewBox="0 0 200 130">${SHAPES[s].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join("")}</symbol>`).join("")}</defs></svg><div class="atx-veil"></div>`;
+    ov.innerHTML = `<div class="atx-veil"></div>`;
     run.veil = ov.querySelector(".atx-veil");
     if (inHost && getComputedStyle(this.host).position === "static") { const prev = this.host.style.position; this.host.style.position = "relative"; run.cleanup.push(() => { this.host.style.position = prev; }); }
     this.host.appendChild(ov);
@@ -260,7 +310,8 @@ export class AtmosphereTransition {
         // resting place: centred on (x, y); the transform animations are relative to it
         el.style.cssText = `width:${c.w.toFixed(0)}px; height:${h.toFixed(0)}px; left:${(c.x * W - c.w / 2).toFixed(0)}px; top:${(c.y * H - h / 2).toFixed(0)}px;` +
           `--atx-dd:${c.drift.dur}s; --atx-dl:${c.drift.delay}s; --atx-dx:${c.drift.dx}; --atx-dy:${c.drift.dy}`;
-        el.innerHTML = `<div class="atx-drift"><svg viewBox="0 0 200 130" aria-hidden="true" focusable="false"><use href="#${id(c.shape)}" class="sh"/><use href="#${id(c.shape)}" class="lt" transform="translate(4 -6) scale(.96)"/></svg></div>`;
+        const bm = bitmaps.get(c.shape + (c.layer === "far" ? "|far" : ""));
+        el.innerHTML = `<div class="atx-drift"><img src="${bm.url}" alt="" decoding="sync" draggable="false"></div>`;
         ov.appendChild(el);
         return { ...c, el, h };
       });

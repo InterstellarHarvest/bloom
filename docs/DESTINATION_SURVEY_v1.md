@@ -20,7 +20,7 @@ dossier sits on the right, with **← Return to survey** and **Begin expedition*
 |---|---|
 | `resources/destination-survey/destination-survey.js` | **`DestinationSurvey`**: screen composition, 3 × 3 layout, labels, selection, focus state, dossier, scan, return, the Begin Expedition hook, and (028B) the departure choreography that invokes AtmosphereTransition |
 | `resources/destination-survey/survey-data.js` | pure data: which validated worlds a sector shows, their class, their dossier, `planetFingerprint` (no DOM; Node-testable) |
-| `resources/destination-survey/survey-worker.js` | module worker that builds **one column** (three validated worlds) off the main thread; up to three run in parallel |
+| `resources/destination-survey/survey-worker.js` | module worker: plans a column's next predicted draws, or validates **one** world (028B); the pool runs up to eight in parallel |
 | `resources/destination-survey/destination-survey.css` | the screen's look (scoped under `.ds`) |
 | `demos/destination-survey.html` | development entry point (localhost) with a dev placeholder for Begin Expedition (announce only, no `descent`) |
 | `demos/expedition-descent.html` | 028B integration harness: the full departure into a clearly marked development handoff target |
@@ -55,7 +55,7 @@ transforms, which the renderer follows.
   - `sectorSeed` (reproducible sector);
   - `firstBloom` (add the authored First Bloom);
   - `reducedMotion` (`null` follows the OS);
-  - `workers` (pool size: one column task per worker; default hardware threads − 1, clamped 1 … 3);
+  - `workers` (pool size; default hardware threads − 2, clamped 1 … 8; each validation is its own task since 028B);
   - `worker` (`false` builds sectors on the main thread: a degraded path that freezes the screen ~1 s per world);
   - `onBeginExpedition`;
   - `descent` (028B): play the dramatic departure on Begin Expedition (§3).
@@ -118,7 +118,7 @@ new DestinationSurvey(root, { descent: {
   prefetch resumed) before the clouds reveal it.
 - **Reduced motion.** Fades only, no approach; the transition takes its reduced path.
 
-## 4. Validated sectors, prefetch and cost (028A1)
+## 4. Validated sectors, prefetch and cost (028A1; loading revised in 028B)
 
 **What a candidate is.** It is the world the play flow itself produces:
 - `BLOOM.play.runSearch({ archetype, scenario: null /* Eden */, seeds: [seed] })`, which runs `generateFromArchetype`
@@ -133,17 +133,32 @@ new DestinationSurvey(root, { descent: {
 - Each draw is first *predicted* with a cheap structural world (≈ 20 ms; never shown).
 - Only draws predicted for that column are validated, the slow part.
 - A validated world whose real class differs is set aside (≈ 1 in 10 validations).
-- Columns are independent, so the sector is identical whether built in one worker, three, or in Node.
+- Columns are independent, so the sector is identical whether built in one worker, many, or in Node.
 
-**Workers and prefetch.**
-- Up to three module workers run the column tasks in parallel. The main thread never generates.
-- When a sector appears, the next one starts validating in the background. With it ready, **SCAN NEW SECTOR** is just
-  the sweep (~0.9–1.0 s).
-- If SCAN is pressed before it is ready:
-  - the button stays busy and the header counts **"Confirming worlds n / 9"**;
-  - no globe changes until all nine are validated;
-  - then the normal sweep runs.
-- The first sector shows a "Surveying sector… n / 9 worlds confirmed" placeholder.
+**Parallel validation (028B).** A column's validations used to run one after another, so the slowest column held up the
+whole sector. Now:
+- A worker **plans** the column: it walks the deterministic stream and returns the next draws predicted for that column.
+- Each of those draws is **validated as its own task**, on a pool of hardware threads − 2 workers (at most 8).
+- The page accepts the results **in stream order** with survey-data's `columnFromValidated`. That is the sequential
+  column's exact rule: same stopping point, same set-aside fill, same sort.
+- So the sector is identical to the one-worker or Node result. `tools/destination-survey-check.js` S11 proves it on real
+  sectors, including a First Bloom column.
+- Draws beyond the stopping point are speculative (about one per sector): queued ones are dropped, running ones finish
+  and are ignored.
+- The main thread never generates.
+
+**Fill in as confirmed (028B, owner decision; replaces 028A1's "all nine at once").**
+- **When a world appears.** As soon as it is validated *and certain to be in the sector*: too few undecided or matching
+  draws precede it to push it out. That can be before slower worlds earlier in the stream have finished.
+- **Where it appears.** It takes an empty row consistent with the worlds already shown in its column (more habitable
+  above, First Bloom on top; the middle row first).
+- **Settling.** When a column is complete, any world not in its final row shrinks out and grows into it. Globes never
+  slide across each other, because globes on one renderer intersect by depth. Typically 2–5 globes move per sector.
+- **Exactly once.** Each world gets one `setPlanet`; moves re-parent containers, never re-texture.
+- **Buttons.** They stay disabled until all nine are in. The header counts **"Confirming worlds n / 9"**.
+- **Scan before the next sector is ready.** The current worlds leave at once and the new ones fill in the same way.
+- **Prefetched scan.** If the next sector is ready, **SCAN NEW SECTOR** is still the single sweep (~0.9–1.0 s).
+- **Fallback.** The no-worker path still shows the sector all at once.
 
 **Measured cost** (2026, desktop: 8-core, Radeon Pro 5700 XT; `docs/evidence/bloom-028a1/`):
 
@@ -155,8 +170,17 @@ new DestinationSurvey(root, { descent: {
 | main thread while workers validate | event-loop lag ≤ 3 ms, no long tasks, 60 fps |
 | the same work on the main thread (`worker: false`) | frames up to 1.4 s, lag up to 3 s — why the workers exist |
 
+**028B measurements** (the same desktop; `docs/evidence/bloom-028b/`):
+
+| | |
+|---|---|
+| first world on screen (page load, Firefox on the real GPU) | **≈ 1.2–1.4 s**; the rest fill in one by one |
+| first sector complete | ≈ 4.2–5.5 s, bounded by the single slowest world (one world can take 3–4 s on its own) |
+| scan before the next sector is ready: first new world | **0.5–0.75 s** (previously: nothing until all nine, 3.7–5.7 s) |
+| prefetched sector | ≈ 2.4 s in the background (was 2.9 s) |
+
 **Recommendation for the Main Menu.** Create the survey (or at least start its first sector) while the title screen is
-showing, so the 3–5 s first-sector validation finishes before the player arrives.
+showing. The slowest world's validation then finishes before the player arrives.
 
 ## 5. Rules of the screen (keep when extending)
 

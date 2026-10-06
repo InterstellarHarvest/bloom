@@ -33,7 +33,9 @@ const code = src => src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`\\])\
     check(!hits.length && !/^\s*import\s/m.test(body) && !/\bimport\(/.test(body), "A2 screen-agnostic: no imports and no planet / survey / sphere / menu / tutorial / gameplay vocabulary in the code", hits.join(" | ") || "clean"); }
 
   // 3. no WebGL / canvas / per-frame JS
-  check(!/getContext|webgl|<canvas|createElement\(["']canvas|WebGLRenderer|OffscreenCanvas/i.test(body), "A3 no canvas or WebGL context: clouds are DOM + inline SVG");
+  { const ctxs = [...body.matchAll(/getContext\(\s*["']([^"']+)["']/g)].map(m => m[1]);
+    check(ctxs.length === 1 && ctxs[0] === "2d" && !/webgl|WebGLRenderer|<canvas|appendChild\(c\)/i.test(body) && /toDataURL/.test(body) && /<img /.test(body),
+      "A3 no WebGL: the clouds are <img> elements of bitmaps drawn once with an off-screen 2D canvas (never put in the page)", `contexts ${JSON.stringify(ctxs)}`); }
   { const raf = (body.match(/requestAnimationFrame/g) || []).length, setInt = /setInterval/.test(body);
     check(raf === 1 && !setInt && /\.animate\(/.test(body) && /@keyframes atx-drift/.test(body), "A4 motion = Web Animations + CSS keyframes (transform / opacity); no setInterval; rAF only in the one-frame settle helper", `rAF uses ${raf}`); }
 
@@ -76,9 +78,9 @@ const code = src => src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`\\])\
   { const { spawnSync } = require("child_process");
     const r = spawnSync("git", ["diff", "--name-only", "80a39ce", "--", "resources/planet-sphere", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js",
       "resources/bloom-archetype.js", "resources/bloom-play.js", "resources/bloom-play-worker.js", "resources/bloom-sim.js", "resources/bloom-scenario.js",
-      "resources/destination-survey/survey-data.js", "resources/destination-survey/survey-worker.js", "content", "planets"], { cwd: ROOT });
+      "content", "planets"], { cwd: ROOT });
     if (r.status !== 0) info("A12", "git unavailable or 80a39ce not in history: skipped");
-    else check(!r.stdout.toString().trim(), "A12 vs 80a39ce: PlanetSphereView / renderer / texture, the generator, validators, witness, play flow, survey data / worker, content and planets are unchanged", r.stdout.toString().trim() || "none changed"); }
+    else check(!r.stdout.toString().trim(), "A12 vs 80a39ce: PlanetSphereView / renderer / texture, the generator, validators, witness, play flow, content and planets are unchanged", r.stdout.toString().trim() || "none changed"); }
 
   console.log(fails ? `\n${fails} check(s) FAILED  (${((Date.now() - t0) / 1000).toFixed(1)} s)` : `\nALL CHECKS PASS  (${((Date.now() - t0) / 1000).toFixed(1)} s)`);
   process.exit(fails ? 1 : 0);

@@ -109,6 +109,28 @@ const info = (name, detail) => console.log(`INFO  ${name}  — ${detail}`);
     check(S.planetFingerprint(clone.planet) === c.fingerprint && clone.fingerprint === c.fingerprint && [p2, p3, p4].every(p => S.planetFingerprint(p) !== c.fingerprint) && /^[0-9a-f]{16}$/.test(c.fingerprint),
       "S8 planetFingerprint: stable across structured cloning (the worker → page boundary) and changed by one tile, one region condition or one neighbour link", c.fingerprint); }
 
+  // 7b. (028B) the parallel path — plan picks, validate each independently and OUT OF ORDER, accept in stream order — builds
+  // exactly the sequential reference column, for every column of both sectors (incl. a column with First Bloom)
+  { const bad = [], memo = new Map(); let spec = 0, accepted = 0;
+    const validate = p => { const k = p.archetypeId + ":" + p.seed; if (!memo.has(k)) memo.set(k, S.makeCandidate({ archetypeId: p.archetypeId, seed: p.seed })); return memo.get(k); };
+    const parallel = (seed, col, opts = {}) => {
+      let plan = S.planColumn(seed, col, undefined, { ...opts, want: 4 }); const picks = [...plan.picks], fb = plan.fb;
+      for (;;) {
+        const cands = picks.map(validate); // each validated independently (any worker, any order); only stream order matters below
+        const r = S.columnFromValidated(seed, col, { fb, results: picks.map((p, i) => ({ draw: p.draw, cand: cands[i] })), exhausted: plan.exhausted });
+        if (r.done) { spec += Math.max(0, picks.length - r.column.stats.validations); accepted += r.column.stats.validations; return r.column; }
+        plan = S.planColumn(seed, col, undefined, { ...opts, fromDraw: plan.nextDraw, want: 2 }); picks.push(...plan.picks);
+      }
+    };
+    const sig = col => col.cells.map(c => [c.key, c.classId, c.filledBy || "", S.planetFingerprint(c.planet)].join("/")).join(" | ");
+    for (const sec of sectors) for (let col = 0; col < 3; col++) {
+      const ref = { cells: sec.cells.filter((_, i) => i % 3 === col) }, par = parallel(sec.sectorSeed, col);
+      if (sig(par) !== sig(ref)) bad.push(`sector ${sec.sectorSeed} column ${col}`); }
+    const fbPar = (() => { for (let c = 0; c < 3; c++) { const ref = S.buildColumn(1, c, undefined, { firstBloom: true }); if (ref.cells.some(x => x.authored)) return { c, ref, par: parallel(1, c, { firstBloom: true }) }; } return null; })();
+    if (!fbPar || sig(fbPar.par) !== sig(fbPar.ref)) bad.push("first bloom column");
+    check(!bad.length, "S11 (028B) parallel column path = sequential reference: planColumn picks + independent validations + columnFromValidated (stream-order acceptance) give the identical cells (keys, classes, nearest-fill, order, planet fingerprints) for all 6 columns of both sectors and a First Bloom column",
+      bad.join("; ") || `${accepted} accepted-in-order validations, ${spec} speculative ones discarded`); }
+
   // 8. plain data, nothing mutated, no DOM / globals in the module
   { const c = sectors[0].cells[0]; let cloneable = true; try { structuredClone(sectors[0]); } catch (e) { cloneable = e.message; }
     const after = J({ config: D.config, traits: D.traits, archetypes: D.archetypes, play: D.play, fb: D.planets.first_bloom });
