@@ -1,0 +1,26 @@
+Suite failures in run-all-suites.sh on the 029A candidate (2026-10-06): 3 checks in 3 suites, each classified by isolated sequential re-runs (3 each).
+
+FAIL  [31] a successful foothold ends in a distinct bright burst; a plain seed arrival only in a faint ripple  — foothold landing: 28 bright px · arrival landing: 13 bright px (33 pale-ripple px)
+FAIL  44 · selecting a region shows its competition readout (who has the advantage, native cover, your plants, and why in plain words), and it updates with the engine  — 🌿 Competition: ▼ Native advantage CONTESTED → 🌿 Competition: ▼ Native advantage CONTESTED · “The native plants here are more established than your plants, so they are holding and reclaiming space.”
+FAIL  [firefox] B1c · it opens under full black, the training layer lifts it once drawn; ☰ Training offers Restart · Skip · Main menu; no return= → the title page  — return http://127.0.0.1:64409/demos/main-menu.html
+
+Isolated re-runs (fails per run):
+029A native-competition-check run1: fails=0
+029A native-competition-check run2: fails=0
+029A native-competition-check run3: fails=0
+c23815e native-competition-check run1: fails=0
+c23815e native-competition-check run2: fails=0
+c23815e native-competition-check run3: fails=0
+029A training-check run1: fails=0
+029A training-check run2: fails=0
+029A training-check run3: fails=0
+c23815e training-check run1: fails=0
+c23815e training-check run2: fails=1 FAIL  [firefox] B1c · it opens under full black, the training layer lifts it once drawn; ☰ Training offers Restart · Skip · Main menu;
+c23815e training-check run3: fails=0
+029A colony-development-check run1: fails=0
+029A colony-development-check run2: fails=0
+029A colony-development-check run3: fails=0
+
+colony-development-check [31]: the pre-existing pixel flake (same 'arrival landing: 13 bright px' signature recorded in 028B / 028C1 / 028D1). 0 0 0 on 029A.
+native-competition-check 44: a live (unseeded Math.random) desert run; the check needs the picked contested region's readout to change over 700 ticks. 0 0 0 on 029A, 0 0 0 on c23815e. The inspect / competition readout path is proven render-identical to c23815e by qa-equivalence.js (Native Competition · Desert 22, 29 checkpoints) and run-ui-check B1.
+training-check B1c [firefox]: reproduced on c23815e itself (run 2 of 3) — a pre-existing Firefox timing flake on the 'opens under full black' sample; 0 0 0 on 029A.
