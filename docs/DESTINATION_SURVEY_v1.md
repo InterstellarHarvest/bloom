@@ -191,6 +191,12 @@ showing. The slowest world's validation then finishes before the player arrives.
 
 - **One renderer per screen.** Never give a cell its own view or renderer. The focused planet is the same view, moved:
   its container is re-parented into the focus slot and FLIP-animated, so its yaw and idle spin never restart.
+- **Grid ↔ focus (028B, owner).** The other worlds *darken away* rather than shrink: a background-coloured disc fades over
+  each (globe pixels ignore CSS opacity), then they are hidden, and only then does the chosen world fly.
+  - Globes on one renderer intersect by depth, so nothing may be under the flying globe. There is no z-index: lifting one
+    globe "on top" would need a `PlanetSphereRenderer` change (draw it last with depth cleared), which is sphere-track work.
+  - On return, each world reappears under its cover as soon as the rest of the flight can no longer touch it, and the
+    covers fade so every world is back as the globe lands.
 - **Globe pixels ignore CSS opacity / filters** (shared canvas).
   - Globes move and recede with transforms on their containers and hide with `display:none`.
   - Under reduced motion, only the whole screen fades.
