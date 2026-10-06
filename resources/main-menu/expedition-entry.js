@@ -4,8 +4,9 @@
 //
 //   import { ExpeditionEntry } from "<repo>/resources/main-menu/expedition-entry.js";
 //   const entry = new ExpeditionEntry(root, { descent: { async onCovered(detail) { … mount gameplay from detail.planet … } } });
-//   entry.state                       // "menu" | "to-survey" | "survey" | "to-menu" | "departed" | "disposed"
+//   entry.state                       // "menu" | "to-survey" | "survey" | "to-menu" | "departed" | "leaving" | "disposed"
 //   entry.beginExpedition()           // what BEGIN EXPEDITION does; entry.returnToMenu() what "← Main menu" does
+//   entry.leaveTo(href)               // (028D1) menu → black → another page (TRAINING with `trainingHref`)
 //   entry.dispose();
 //
 // Needs the BLOOM classic scripts on the page (the survey's workers import them), destination-survey.css and main-menu.css.
@@ -21,13 +22,15 @@
 // menu shown with its next painting, decoded and settled (no entrance replay: the lifting black is the entrance) → black lifts.
 // The black only starts to lift after the new screen's first frames, so slow preparation stays black rather than half-shown.
 // Reduced motion: 80 ms each way. No clouds, no zoom, no wipe; the AtmosphereTransition and its presets are untouched.
+// (028D1) The fade itself is ./black-fade.js, shared with the training run page; leaveTo() uses it to leave the title for
+// another page (TRAINING), and a page restored from the back-forward cache after such a departure lifts the black again.
 import { MainMenu } from "./main-menu.js";
+import { BlackFade } from "./black-fade.js";
 import { readSettings, reducedMotionFor } from "./main-menu-data.js";
 import { DestinationSurvey } from "../destination-survey/destination-survey.js";
 import { AtmosphereTransition } from "../atmosphere-transition/atmosphere-transition.js";
 
-const T = { toBlack: 220, fromBlack: 250, toBlackRm: 80, fromBlackRm: 80, paintingWait: 2000 }; // (paintingWait: cap on waiting, black, for a painting that never decodes)
-const EASE = "cubic-bezier(.4,0,.2,1)";
+const T = { paintingWait: 2000 }; // cap on waiting, black, for a painting that never decodes (fade timings: ./black-fade.js FADE)
 const frame = () => new Promise(r => requestAnimationFrame(() => r()));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -39,12 +42,14 @@ export class ExpeditionEntry {
    * background         force the first painting (0 … 11; development / QA)
    * descent            the survey's departure consumer (docs/DESTINATION_SURVEY_v1.md §3.1); its `transition` defaults to this entry's
    * onBeginExpedition  passed to the survey
-   * onTraining         the menu's TRAINING hook (omitted: placeholder dialog)
+   * onTraining         the menu's TRAINING hook (omitted: `trainingHref`, else the placeholder dialog)
+   * trainingHref       (028D1) where TRAINING goes when there is no onTraining: a URL, or () → URL; the title fades to black and
+   *                    navigates there (leaveTo)
    * transition         an AtmosphereTransition for the survey's departure (default: a private one over root)
    * storage            Storage for settings (default localStorage)
    */
   constructor(root, { reducedMotion = undefined, sectorSeed = null, firstBloom = false, worker = true, workers = null, background = null, descent = null,
-    onBeginExpedition = null, onTraining = null, transition = null, storage = undefined, rng = Math.random } = {}) {
+    onBeginExpedition = null, onTraining = null, trainingHref = null, transition = null, storage = undefined, rng = Math.random } = {}) {
     if (!root || typeof root.appendChild !== "function") throw new TypeError("ExpeditionEntry: root must be a DOM element");
     this.root = root; this.descent = descent; this.onBeginExpedition = onBeginExpedition; this.forcedReducedMotion = reducedMotion;
     this.poolOpts = { worker, workers }; this.firstSector = { sectorSeed, firstBloom };
@@ -53,12 +58,18 @@ export class ExpeditionEntry {
     this.stats = { begins: 0, returns: 0, entries: [], exits: [], prefetches: [] };
     if (getComputedStyle(root).position === "static") root.style.position = "relative";
     this.menuHost = host(root, "ee-menu"); this.surveyHost = host(root, "ee-survey"); this.surveyHost.hidden = true;
-    this.black = host(root, "ee-black"); this.black.setAttribute("aria-hidden", "true"); this._blackAnim = null; // the fade layer (above both screens, below the departure's clouds)
+    this.black = host(root, "ee-black"); this.black.setAttribute("aria-hidden", "true"); this._fader = new BlackFade(this.black); // the fade layer (above both screens, below the departure's clouds)
     this.black.style.cssText += "; z-index:9999; background:#000; opacity:0; display:none; pointer-events:auto; contain:strict";
     this.atx = transition || new AtmosphereTransition({ host: root });   // the survey's dramatic departure only (028C1)
     this.menu = new MainMenu(this.menuHost, { reducedMotion: this.reducedMotion, background, rng, storage,
       onBegin: () => { this.beginExpedition().catch(err => console.error("ExpeditionEntry: could not enter the survey", err)); },
-      onTraining, onSettingsChange: s => this._settingsChanged(s) });
+      onTraining: onTraining || (trainingHref ? () => { this.leaveTo(typeof trainingHref === "function" ? trainingHref() : trainingHref)
+        .catch(err => console.error("ExpeditionEntry: could not leave for training", err)); } : null),
+      onSettingsChange: s => this._settingsChanged(s) });
+    // (028D1) back from a page this title left for (leaveTo): a page restored from the back-forward cache would still be black
+    this._onPageShow = e => { if (!e.persisted || this.state !== "leaving") return;
+      this.state = "menu"; this.menuHost.inert = false; this._fade(0, this.reducedMotion).then(() => this.menu.focusMenu()); };
+    addEventListener("pageshow", this._onPageShow);
     this._prefetchSector(this.firstSector);           // the first sector starts now, while the title is showing
     this.menu.shown.then(() => { if (this.state === "menu") this.atx.prepare(); }); // cloud bitmaps ready before the first transition
   }
@@ -130,34 +141,33 @@ export class ExpeditionEntry {
     return true;
   }
 
+  /**
+   * (028D1) Leave the title for another page — TRAINING: the menu is made inert, the black fades in (220 ms; reduced motion
+   * 80 ms) and, at full black, `navigate(href)` runs (default: location.assign). From the menu state only. The new page
+   * lifts its own black (the training run page does). Resolves true once navigation has been asked for.
+   */
+  async leaveTo(href, { navigate = h => location.assign(h) } = {}) {
+    if (this.state !== "menu" || !href) return false;
+    this.state = "leaving"; this.menuHost.inert = true;
+    await this._fade(1, this.reducedMotion);
+    if (this.state !== "leaving") return false;
+    navigate(String(href));
+    return true;
+  }
+
   dispose() {
     if (this.state === "disposed") return;
-    this.state = "disposed";
+    this.state = "disposed"; removeEventListener("pageshow", this._onPageShow);
     if (this.survey) { this.survey.dispose(); this.survey = null; }
     if (this.prefetch) { this.prefetch.dispose(); this.prefetch = null; }
-    if (this._blackAnim) { this._blackAnim.cancel(); this._blackAnim = null; }
+    this._fader.cancel();
     this.menu.dispose(); this.atx.dispose();
     this.menuHost.remove(); this.surveyHost.remove(); this.black.remove();
   }
 
   // ---------------------------------------------------------------- internals
-  /**
-   * The black layer to opacity `to` (1: covered, 0: clear), 220 / 250 ms (reduced motion — forced, or the OS when `rm` is null —
-   * 80 / 80 ms). It takes input while it shows at all and is display: none when clear. Resolves when it is there; a dispose
-   * mid-fade resolves too (the callers check the state).
-   */
-  _fade(to, rm) {
-    const reduce = rm ?? !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches); // (null: follow the OS, read now)
-    const el = this.black, dur = to ? (reduce ? T.toBlackRm : T.toBlack) : (reduce ? T.fromBlackRm : T.fromBlack);
-    if (this._blackAnim) this._blackAnim.cancel();
-    el.style.display = "";
-    const a = this._blackAnim = el.animate([{ opacity: to ? 0 : 1 }, { opacity: to }], { duration: dur, easing: EASE, fill: "forwards" });
-    return a.finished.then(() => {
-      if (this._blackAnim !== a) return;
-      el.style.opacity = String(to); a.cancel(); this._blackAnim = null;   // (the final value committed, then the animation dropped)
-      if (!to) el.style.display = "none";
-    }, () => {});
-  }
+  /** The black layer to opacity `to` (1: covered, 0: clear): ./black-fade.js (220 / 250 ms, reduced motion 80 / 80 ms). */
+  _fade(to, rm) { return this._fader.fade(to, rm); }
 
   _prefetchSector(first) {
     const pool = this.prefetch = DestinationSurvey.prefetch({ ...first, ...this.poolOpts }), rec = { seed: pool.first.seed, at: performance.now(), readyMs: null };

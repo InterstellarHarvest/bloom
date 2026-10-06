@@ -71,6 +71,16 @@
   Same planet, new world · Change scenario · Change planet · Home; confirms before leaving a live run) and the same actions
   under the Bloom Report / extinction screen. Every action opens a fresh page. Without play=1 nothing here changes: the
   developer harness above is untouched. QA: tools/game-flow-check.js.
+  BLOOM-028D1 (training foundation; no coaching UI yet): ?planet=<id> opens any AUTHORED world by id (BLOOM_DATA.planets; no
+  planet= = First Bloom, exactly as before). ?training=1 is the training run, opened by the title's TRAINING: the authored
+  Training Grounds (planets/training_grounds.js; content/training.js), PAUSED at the landing, on a config derived for it
+  (BLOOM.play.deriveConfig — the shared config is never touched) with a seeded random stream; the run menu and the report offer
+  Restart training · Skip training · Main menu, and &return=<url> (same origin only) is where they go. The training layer
+  (resources/training/training-run.js, loaded in training mode only) fades the arrival / exits and records the training status.
+  For every run: generic bloom:* events on document at the real action points (play-pause, speed, region-select,
+  upgrade-preview, upgrade-purchase, growth-focus, local-upgrade, bubble-collect, win, run-ready), stable data-tutorial anchors
+  on the controls, and BLOOM_RUN_UI.placeBubble(sectionId) for a bonus bubble placed on purpose. Contracts:
+  docs/TRAINING_FOUNDATION_v1.md. QA: tools/training-check.js.
 -->
 <style>
   :root{
@@ -278,44 +288,48 @@
   @media (prefers-reduced-motion: reduce){ .prep .spin{animation:none; border-color:var(--accent)} }
   .prep .slow{color:var(--dim); font-size:12px; min-height:16px; margin:6px 0 10px}
   .playfail{margin:40px auto} .playfail p{line-height:1.6}
+  /* BLOOM-028D1: the training run's black (arrival under it, exits through it; resources/training/training-run.js fades it) */
+  .training-cover{position:fixed; inset:0; z-index:1000; background:#000; pointer-events:auto}
 </style>
 </head>
 <body>
 <header>
   <h1>BLOOM <small>· first bloom</small></h1>
   <div class="hud">
-    <span class="bio" id="bioBox" title="Biomass: the energy your plant has stored. Spend it on upgrades."><i class="leaf"></i>
+    <span class="bio" id="bioBox" data-tutorial="biomass" title="Biomass: the energy your plant has stored. Spend it on upgrades."><i class="leaf"></i>
       <span class="bnum"><span class="blbl">BIOMASS</span><b id="hBio">0</b></span><span class="brate" id="hBioRate"></span></span>
-    <span class="covwrap">coverage
+    <span class="covwrap" data-tutorial="coverage">coverage
       <span class="covbar"><span class="covfill" id="hCovFill"></span><span class="covwin" id="hCovWin"></span></span>
       <b id="hCov">0%</b> <span style="color:var(--gold)" id="hWinPct">/ 70%</span>
     </span>
-    <span>sky <b id="hSky"></b> <span id="hSkyDelta" class="skyd"></span></span>
+    <span data-tutorial="sky">sky <b id="hSky"></b> <span id="hSkyDelta" class="skyd"></span></span>
   </div>
   <div class="controls">
-    <button class="tb" id="btnPlay" aria-pressed="true">⏸ pause</button>
-    <button class="tb" id="btnSpeed">▶ 1×</button>
+    <button class="tb" id="btnPlay" aria-pressed="true" data-tutorial="play-pause">⏸ pause</button>
+    <button class="tb" id="btnSpeed" data-tutorial="speed">▶ 1×</button>
   </div>
 </header>
 
 <main>
-  <aside class="left" id="inspect"><div id="inspMain"></div><div id="focusBox"></div><div id="inspMore"></div></aside>
+  <aside class="left" id="inspect" data-tutorial="inspect"><div id="inspMain"></div><div id="focusBox"></div><div id="inspMore"></div></aside>
 
-  <div class="stage"><canvas id="cv"></canvas></div>
+  <div class="stage"><canvas id="cv" data-tutorial="map"></canvas></div>
 
-  <aside class="right shop" id="shop"><h2>UPGRADES</h2></aside>
+  <aside class="right shop" id="shop" data-tutorial="upgrades"><h2>UPGRADES</h2></aside>
 </main>
 
-<footer><span class="log" id="log">Watch the plant spread. When a region stalls, read its blocker and buy the answer.</span><span class="runid" id="runId"></span></footer>
+<footer><span class="log" id="log" data-tutorial="message-log">Watch the plant spread. When a region stalls, read its blocker and buy the answer.</span><span class="runid" id="runId"></span></footer>
 
-<div class="modal" id="reportModal"><div class="report" id="report"></div></div>
+<div class="modal" id="reportModal" data-tutorial="report"><div class="report" id="report"></div></div>
 
 <!-- engine + content (classic scripts, so the demo still boots over file://) -->
 <script src="../content/config.js"></script>
 <script src="../content/traits.js"></script>
 <script src="../planets/first_bloom.js"></script>
+<script src="../planets/training_grounds.js"></script>
 <script src="../content/archetypes.js"></script>
 <script src="../content/scenarios.js"></script>
+<script src="../content/training.js"></script>
 <script src="../resources/bloom-sim.js"></script>
 <script src="../resources/bloom-gen.js"></script>
 <script src="../resources/bloom-validate.js"></script>
@@ -337,7 +351,11 @@ if(!window.BLOOM||!window.BLOOM_DATA||!BLOOM_DATA.planets||!BLOOM_DATA.planets.f
   document.body.innerHTML='<p style="padding:24px;font-family:monospace;color:#ff6b6b">BLOOM could not load its engine/content files. Open demos/demo-run.html from inside the full Bloom folder (it needs ../content, ../planets and ../resources).</p>';
   throw new Error("BLOOM engine/content files missing");
 }
-const sim=BLOOM.createSim(BLOOM_RUN.planet, BLOOM_DATA.config, BLOOM_DATA.traits, {scenario:BLOOM_RUN.scenario||undefined});
+// BLOOM-028D1: a training run (?training=1) plays on its own derived config (content/training.js through BLOOM.play.deriveConfig:
+// a copy — the shared config is never touched) with a seeded random stream; every other run is created exactly as before
+const TRAIN=BLOOM_RUN.training||null, TC=TRAIN?BLOOM_DATA.training.copy:null;
+const sim=BLOOM.createSim(BLOOM_RUN.planet, TRAIN?TRAIN.config:BLOOM_DATA.config, BLOOM_DATA.traits,
+  TRAIN?{scenario:BLOOM_RUN.scenario||undefined, rng:BLOOM.gen.mulberry32(TRAIN.rngSeed)}:{scenario:BLOOM_RUN.scenario||undefined});
 const CFG=sim.config;
 // BLOOM-012: the run's pressure scenario (null / Eden = no pressure: every readout below is exactly as before)
 const SCN=BLOOM_RUN.scenario||null, PRESS=!!(SCN&&SCN.pressure), PS=sim.pressure;
@@ -350,26 +368,38 @@ const {state,dens,vigor,secFit,bubbles,genome,tf,BAR,LIV,DEAD}=sim, G=sim.sky;
 const {evaluate,lampOf,livingCountBySection}=sim;
 const {clamp}=BLOOM.util;
 const mix=(c1,c2,k)=>[c1[0]+(c2[0]-c1[0])*k,c1[1]+(c2[1]-c1[1])*k,c1[2]+(c2[2]-c1[2])*k];
-let running=true, speed=1;
-sim.onWin=cov=>{ running=false; onWin(cov); };
+let running=!TRAIN, speed=1; // (BLOOM-028D1: a training run starts paused)
+// BLOOM-028D1: generic run events for the layers built on this page (the tutorial). Each is a CustomEvent "bloom:<type>" on
+// document, dispatched at the real action point AFTER the action took effect; detail is plain data. They change nothing here.
+const emit=(type,detail)=>document.dispatchEvent(new CustomEvent("bloom:"+type,{detail}));
+const secRef=i=>i>=0?{index:i, id:SEC[i].id, name:LABEL[i]}:{index:-1, id:null, name:null};
+sim.onWin=cov=>{ running=false; onWin(cov); emit("win",{coverage:cov, ticks:sim.ticks, planetId:BLOOM_RUN.planet.id, training:!!TRAIN}); };
 sim.onLoss=why=>{ running=false; onLoss(why); };
 // BLOOM-016 player mode (?play=1, launched from index.html): player wording, a run menu and post-run actions. Every action
 // opens a fresh page (a new run is genuinely new: nothing of this sim carries over); the developer harness never shows them.
 const PLAY=!!BLOOM_RUN.play, PC=BLOOM_DATA.play||null, SEEDWORD=PLAY?"World Seed":"public seed";
 const RUN_ARCH=BLOOM_RUN.kind==="procedural"?BLOOM_RUN.archetype.id:null, RUN_SCN=SCN?SCN.id:"eden";
+// (BLOOM-028D1) an authored world opened by planet= is replayed by the same planet=; First Bloom's own links are unchanged
+const AUTH_Q=BLOOM_RUN.planetParam?"&planet="+encodeURIComponent(BLOOM_RUN.planetParam):"";
 function playActions(){ const X=PC.actions, q=BLOOM.play.runQuery;
-  if(!RUN_ARCH) return [{id:"playAgain", label:X.playAgain, href:"demo-run.html?play=1", primary:true},
+  if(TRAIN) return [{id:"restartTraining", label:TC.restart, note:TC.restartNote, primary:!sim.won}, // (BLOOM-028D1) training: its own three
+    ...(sim.won?[]:[{id:"skipTraining", label:TC.skip, note:TC.skipNote}]), {id:"mainMenu", label:TC.mainMenu, note:TC.mainMenuNote, primary:sim.won}];
+  if(!RUN_ARCH) return [{id:"playAgain", label:X.playAgain, href:"demo-run.html?play=1"+AUTH_Q, primary:true},
     {id:"changePlanet", label:PC.choose.action, href:"../index.html#/planet"}, {id:"home", label:X.home, href:"../index.html"}];
   return [{id:"playAgain", label:X.playAgain, note:X.playAgainNote, href:"demo-run.html?"+q({archetype:RUN_ARCH, seed:BLOOM_RUN.seed, scenario:RUN_SCN}), primary:true},
     {id:"newWorld", label:X.newWorld, href:"demo-run.html?"+q({archetype:RUN_ARCH, scenario:RUN_SCN})+"&avoid="+BLOOM_RUN.seed},
     {id:"changeScenario", label:X.changeScenario, href:"../index.html#/scenario/"+RUN_ARCH},
     {id:"changePlanet", label:X.changePlanet, href:"../index.html#/planet/"+RUN_ARCH},
     {id:"home", label:X.home, href:"../index.html"}]; }
-const actBtn=a=>`<button type="button" data-act="${a.id}" data-go="${a.href}"${a.primary?' class="primary"':""}>${a.label}${a.note?`<small>${a.note}</small>`:""}</button>`;
-function runActionsHtml(){ return `<div class="runacts" id="runActions"><h3>WHAT NEXT?</h3><div class="grid">${playActions().map(actBtn).join("")}</div></div>`; }
+const actBtn=a=>`<button type="button" data-act="${a.id}" data-go="${a.href||""}" data-tutorial="action-${a.id}"${a.primary?' class="primary"':""}>${a.label}${a.note?`<small>${a.note}</small>`:""}</button>`;
+function runActionsHtml(){ return `<div class="runacts" id="runActions" data-tutorial="run-actions"><h3>WHAT NEXT?</h3><div class="grid">${playActions().map(actBtn).join("")}</div></div>`; }
 // leaving a live run asks first (it is not saved); after a win or an extinction it just goes
 function wireActions(el){ el.querySelectorAll("button[data-go]").forEach(b=>b.addEventListener("click",()=>{
+  if(TRAIN) return trainingGo(b.dataset.act); // (BLOOM-028D1) nothing to lose in training: no confirm
   if(!sim.won&&!sim.lost&&!confirm(PC.actions.confirmLeave)) return; location.href=b.dataset.go; })); }
+// (BLOOM-028D1) training actions go through the training layer (fade, status); without it (an ES module: not over file://) just go
+function trainingGo(act){ const ui=window.BLOOM_TRAINING_UI; if(ui) return ui.go(act);
+  if(act==="restartTraining") location.reload(); else location.href=TRAIN.returnTo; }
 // display names: generated worlds can repeat a biome name, so repeats get a number (First Bloom has none)
 const LABEL=SEC.map((s,i)=>{ const same=SEC.filter(x=>x.name===s.name); return same.length>1?`${s.name} ${same.indexOf(s)+1}`:s.name; });
 // geography for water worlds (BLOOM-007): landmass per section, crossing links from the engine's own geometry
@@ -602,20 +632,20 @@ function renderInspect(){
   const dv=sim.derived(), RD=PRESS||CLIM, tline=`<div class="tline" id="tline">Ground here <b>${degC(RD?r1(e.effT):e.effT)}</b> · sky ${degC(RD?r1(e.skyT):G.temp)} · suits your plant <b>${degC(dv.tempFloor)} to ${degC(dv.tempCeil)}</b></div>`;
   const blocked = e.limitF<CFG.categories.blockedBelow;
   const limitHtml = blocked
-    ? `<div class="limit">▲ Growth blocked: <b>${LIMIT_MSG[e.limitKey](e)}</b><div class="fixhint">${FIX_HINT[e.limitKey](e)}</div></div>`
-    : `<div class="limit ok">✓ Thriving here — no blocker.${e.cats.Soil.soft?'<div class="fixhint">Low nutrients slow growth here, but it is not a wall.</div>':''}</div>`;
+    ? `<div class="limit" data-tutorial="limiting-factor">▲ Growth blocked: <b>${LIMIT_MSG[e.limitKey](e)}</b><div class="fixhint">${FIX_HINT[e.limitKey](e)}</div></div>`
+    : `<div class="limit ok" data-tutorial="limiting-factor">✓ Thriving here — no blocker.${e.cats.Soil.soft?'<div class="fixhint">Low nutrients slow growth here, but it is not a wall.</div>':''}</div>`;
   const cs=sim.colonyStatus(selected), pct=Math.round(cs.establishment*100);
   el.innerHTML=`<h2>SECTION</h2>
     <div class="secname">${LABEL[selected]}${s.isOrigin?'<span class="badge">★ ORIGIN</span>':''}</div>
-    <div class="cats">${catRow("Temperature")}${catRow("Water")}${catRow("Soil")}${catRow("Hazard")}</div>${tline}
+    <div class="cats" data-tutorial="readout">${catRow("Temperature")}${catRow("Water")}${catRow("Soil")}${catRow("Hazard")}</div>${tline}
     ${limitHtml}${pressNote(selected,e)}${climNote(selected,e)}${compNote(selected)}${geoNote(selected)}${thermNote(selected)}
-    <div class="colony" id="colony">Colony: <span class="cw">${COLONY_WORD[cs.word]}</span> <span style="color:var(--dim)">· ${pct}% established</span>
+    <div class="colony" id="colony" data-tutorial="colony-status">Colony: <span class="cw">${COLONY_WORD[cs.word]}</span> <span style="color:var(--dim)">· ${pct}% established</span>
       <div class="dbar"><i style="width:${pct}%"></i></div><div class="fixhint">${COLONY_HINT[cs.word]}</div></div>`;
   more.innerHTML=`<div class="vitals">vigor ${Math.round(vigor[selected]*100)}%
       <div class="vbar"><i class="vl" style="width:${liv/total*100}%"></i><i class="vd" style="width:${dead/total*100}%"></i><i class="vb" style="flex:1"></i></div>
       <div style="color:var(--dim);margin-top:3px">living ${liv} · dead ${dead} · barren ${barr}${COMP?` · native plants ${natv}`:""}</div>
     </div>
-    <details class="raw"${rawOpen?' open':''}><summary>raw signals ▾</summary>
+    <details class="raw" data-tutorial="raw-signals"${rawOpen?' open':''}><summary>raw signals ▾</summary>
       <table class="kv">
         <tr><td>effective temp</td><td>${e.effT>0?'+':''}${RD?r1(e.effT):e.effT}°C</td></tr>
         <tr><td>effective moist</td><td>${RD?r1(e.effM):e.effM}</td></tr>
@@ -671,19 +701,19 @@ function renderColonyCtl(force){
   const key=`${selected}|${m}|${sp}|${liv}|${sim.specPrice()}`; if(!force&&key===colonyKey) return; colonyKey=key; // re-render only on change: keeps clicks reliable
   if(selected<0){ box.innerHTML=""; return; }
   const btn=k=>{ const u=FOCUS_UI[k], on=m===k;
-    return `<button class="fbtn ${liv?"":"off"}" data-focus="${k}" aria-pressed="${on}" aria-disabled="${!liv}" title="${u.what.replace(/"/g,"&quot;")}"><span><span class="fi">${u.icon}</span>${u.name}${on?" ✓":""}</span><small>${u.sub}</small></button>`; };
+    return `<button class="fbtn ${liv?"":"off"}" data-focus="${k}" data-tutorial="focus-${k}" aria-pressed="${on}" aria-disabled="${!liv}" title="${u.what.replace(/"/g,"&quot;")}"><span><span class="fi">${u.icon}</span>${u.name}${on?" ✓":""}</span><small>${u.sub}</small></button>`; };
   const price=sim.specPrice();
   const sbtn=id=>{ const S=SPEC[id], u=SPEC_UI[id], why=sim.specBlock(selected,id);
-    return `<button class="sbtn ${why?"off":""} ${why==="biomass"?"poor":""}" data-spec="${id}" aria-disabled="${!!why}" title="${(u.what+" "+MATCH_NOTE).replace(/"/g,"&quot;")}">
+    return `<button class="sbtn ${why?"off":""} ${why==="biomass"?"poor":""}" data-spec="${id}" data-tutorial="local-${id}" aria-disabled="${!!why}" title="${(u.what+" "+MATCH_NOTE).replace(/"/g,"&quot;")}">
       <span><b>${FOCUS_UI[S.mode].icon} ${S.name}</b><small>${u.sub}</small></span><span class="scost"><i></i>${price}<span class="need"></span></span></button>`; };
   const local=!liv?`<div class="fnote">Local upgrades need a living colony here.</div>`
     : sp?`<div class="owned" id="specOwned">${FOCUS_UI[SPEC[sp].mode].icon} <b>${SPEC[sp].name}</b> built here<small>${SPEC_UI[sp].what}${SPEC[sp].mode===m?` Focus matches: +${pctOf(CM.synergy)}% effect.`:""}</small></div>`
     : `<div class="fnote">Spend Biomass to improve THIS colony for good (one upgrade per colony). Each one you build makes the next cost more.</div>${sbtn("rootNetwork")}${sbtn("leafCanopy")}${sbtn("seedReserve")}`;
-  box.innerHTML=`<div class="focus" id="focusCtl"><h3>GROWTH FOCUS · ${LABEL[selected].toUpperCase()}</h3>
+  box.innerHTML=`<div class="focus" id="focusCtl" data-tutorial="growth-focus"><h3>GROWTH FOCUS · ${LABEL[selected].toUpperCase()}</h3>
     <div class="fnote">${liv?"Each colony keeps its own focus until you change it. Free, one click.":"A growth focus needs a living colony here first."}</div>
     <div class="fgrid">${btn("balanced")}${btn("roots")}${btn("leaves")}${btn("seeds")}</div>
     ${liv?`<div class="fstate" id="fstate">${FOCUS_UI[m].what}</div><div class="ftip" id="ftip">💡 ${colonyTip(selected)}</div>`:""}
-    <div class="local" id="localCtl"><h3>LOCAL UPGRADE</h3>${local}</div>
+    <div class="local" id="localCtl" data-tutorial="local-upgrade"><h3>LOCAL UPGRADE</h3>${local}</div>
     <details class="fsci"><summary>the science ▾</summary><p>A plant has only so much sugar from photosynthesis to spend. Real plants shift how much goes into roots (water, nutrients, anchoring), leaves (catching light) or flowers and seeds (offspring) as conditions change. Putting more into one means less for the others. They don't decide this consciously: hormones steer the growth. Here, the focus stands in for those signals.</p></details></div>`;
   box.querySelectorAll("button.fbtn").forEach(b=>b.addEventListener("click",()=>chooseFocus(b.dataset.focus)));
   box.querySelectorAll("button.sbtn").forEach(b=>b.addEventListener("click",()=>buySpec(b.dataset.spec)));
@@ -702,7 +732,7 @@ function chooseFocus(mode){
   const was=sim.getColonyFocus(selected);
   if(!sim.setColonyFocus(selected,mode)){ log(`${LABEL[selected]} has no living plants yet, so there is no colony to direct.`); return false; }
   log(mode===was?`${LABEL[selected]} is already on ${FOCUS_UI[mode].name}.`:`${LABEL[selected]}: ${FOCUS_UI[mode].name} focus. Other colonies keep their own focus. ${FOCUS_UI[mode].what}`);
-  renderColonyCtl(true); draw(); return true;
+  renderColonyCtl(true); draw(); emit("growth-focus",{...secRef(selected), focus:mode, previous:was, changed:mode!==was}); return true;
 }
 function buySpec(id){
   if(selected<0) return false; const why=sim.specBlock(selected,id), price=sim.specPrice();
@@ -710,7 +740,7 @@ function buySpec(id){
     : why==="hasOne"?`${LABEL[selected]} already has its local upgrade (one per colony).` : `${LABEL[selected]} has no living colony to upgrade.`); return false; }
   sim.buySpecialization(selected,id);
   log(`Built ${SPEC[id].name} in ${LABEL[selected]} for ${price} Biomass. ${SPEC_UI[id].what}`);
-  renderColonyCtl(true); renderHUD(lastCov); draw(); return true;
+  renderColonyCtl(true); renderHUD(lastCov); draw(); emit("local-upgrade",{...secRef(selected), upgrade:id, upgradeName:SPEC[id].name, cost:price}); return true;
 }
 
 // island note (water worlds only): geographic access, kept separate from the environment readout above
@@ -1010,14 +1040,14 @@ function renderShop(){
   const el=document.getElementById("shop"); const groups=["Spread","Adapt","Terraform"];
   let html='<h2>UPGRADES</h2>';
   for(const gname of groups){
-    html+=`<div class="grp"><h3>${gname}</h3>`;
+    html+=`<div class="grp" data-tutorial="board-${gname.toLowerCase()}"><h3>${gname}</h3>`;
     if(gname==="Adapt") html+=`<div class="temppool">temp points: cold ${genome.cold} · heat ${genome.heat} / cap ${CFG.scales.tempCap}</div>`;
     for(const u of UP.filter(x=>x.board===gname && sim.offered(x))){ // e.g. a crossing trait only where water can be crossed
       const cost=sim.price(u); const tier=sim.ownedTier(u);
       const canBuy=sim.canBuy(u) && sim.biomass>=cost;
       const label = tier>0 ? `${u.name} <small>·${["I","II","III","IV"][tier-1]||("+"+tier)} owned · ${u.sub}</small>` : `${u.name} <small>${u.sub}</small>`;
       const title = !sim.canBuy(u)?sim.why(u):"";
-      html+=`<button class="buy ${tier>0?'owned':''} ${canBuy?'':'off'} ${sim.canBuy(u)&&!canBuy?'poor':''}" data-id="${u.id}" aria-disabled="${!canBuy}" title="${title}">
+      html+=`<button class="buy ${tier>0?'owned':''} ${canBuy?'':'off'} ${sim.canBuy(u)&&!canBuy?'poor':''}" data-id="${u.id}" data-tutorial="upgrade-${u.id}" aria-disabled="${!canBuy}" title="${title}">
         <span class="nm">${label}</span><span class="cost">${cost}</span></button>`;
     }
     html+='</div>';
@@ -1035,7 +1065,10 @@ function refreshShop(){
     const off=!(sim.canBuy(u) && sim.biomass>=sim.price(u)); if(b.classList.contains("off")!==off){ b.classList.toggle("off",off); b.setAttribute("aria-disabled",off); }
     b.classList.toggle("poor",sim.canBuy(u)&&off); });
 }
-function showPreview(id){
+// (BLOOM-028D1) a preview shown = one bloom:upgrade-preview with what it showed (region ids); available false = not buyable now
+function showPreview(id){ describePreview(id); const u=upById[id], ids=a=>(a||[]).map(i=>SEC[i].id), P=preview||{};
+  emit("upgrade-preview",{id, board:u.board, name:u.name, available:!!preview, gain:ids(P.gain), lose:ids(P.lose), better:ids(P.better), worse:ids(P.worse), reachHostile:ids(P.reachHostile)}); }
+function describePreview(id){
   preview=sim.previewOf(id); const u=upById[id];
   if(!preview){ log(sim.why(u)||(sim.ownedTier(u)>0?`${u.name} — already evolved.`:"Not available.")); return; }
   const nm=a=>a.map(i=>LABEL[i]).join(", ");
@@ -1062,7 +1095,7 @@ function clearPreview(){ preview=null; }
 let justBought=null;
 function buy(id){
   const u=upById[id], sky=u.effect.type==="sky", ax=u.effect.axis, from=sky&&G[ax], before=sky&&SEC.map((_,i)=>evaluate(i));
-  const nf0=sky&&COMP?SEC.map((_,i)=>sim.nativeEvaluate(i).fitness):null, cp=sky&&CLIM?sim.climatePreview(id):null;
+  const nf0=sky&&COMP?SEC.map((_,i)=>sim.nativeEvaluate(i).fitness):null, cp=sky&&CLIM?sim.climatePreview(id):null, cost=sim.price(u);
   if(!sim.buy(id)) return false;
   if(sky){ // BLOOM-011: say what the new sky did — regions opened / closed / helped / hurt — and outline them for a few seconds
     const d={...skyDiff(ax,from,G[ax],before,SEC.map((_,i)=>evaluate(i))), ...(COMP?nativeSkyShift(nf0,SEC.map((_,i)=>sim.nativeEvaluate(i).fitness)):{})}, ch=G[ax]-from;
@@ -1071,6 +1104,7 @@ function buy(id){
   else log(`Bought ${u.name}. `);
   // (a pointer click marks its button in justBought after this re-render — see renderShop)
   justBought=null; buyTick=sim.ticks; buyCount++; renderShop(); preview=null; if(selected>=0) renderInspect(); draw();
+  emit("upgrade-purchase",{id, board:u.board, name:u.name, cost, tier:sim.ownedTier(u), biomass:Math.floor(sim.biomass)});
   return true;
 }
 
@@ -1083,17 +1117,33 @@ cv.addEventListener("click",e=>{
   const {sec,tile}=tileAt(e);
   // bubble hit first
   for(let k=bubbles.length-1;k>=0;k--){ const b=bubbles[k]; const px=b.x*TILE,py=b.y*TILE; const r=cv.getBoundingClientRect();
-    if(Math.hypot(e.clientX-r.left-px,e.clientY-r.top-py)<=Math.max(6,TILE*0.55)){ sim.collectBubble(k); renderHUD(lastCov); draw(); return; } }
+    if(Math.hypot(e.clientX-r.left-px,e.clientY-r.top-py)<=Math.max(6,TILE*0.55)){ sim.collectBubble(k); renderHUD(lastCov); draw();
+      BUB_SEEN.delete(b); emit("bubble-collect",{how:"click", tile:b.tile, ...secRef(TILEMAP[b.tile]), value:CFG.econ.bubbleValue}); return; } }
   selectedWater=sec===-1&&tile>=0; // water tile (sec -2 = outside the map)
-  selected=(sec<0||sec===selected)?-1:sec; renderInspect(); draw();
+  const was=selected; selected=(sec<0||sec===selected)?-1:sec; renderInspect(); draw();
+  emit("region-select",{...secRef(selected), previous:was>=0?SEC[was].id:null, water:selectedWater, tile});
 });
+// (BLOOM-028D1) a bubble that left the map without a click collected itself (the engine's auto-collect): one event each. Checked
+// once a frame (a rolled bubble lives ≥ econ.bubbleAutoTicks ticks, far longer than a frame; only BLOOM_API.advance can skip frames)
+let BUB_SEEN=new Set();
+function pollBubbles(){ if(!BUB_SEEN.size&&!bubbles.length) return; const now=new Set(bubbles);
+  for(const b of BUB_SEEN) if(!now.has(b)) emit("bubble-collect",{how:"auto", tile:b.tile, ...secRef(TILEMAP[b.tile]), value:CFG.econ.bubbleValue*CFG.econ.autoCollectShare});
+  BUB_SEEN=now; }
+// (BLOOM-028D1) a bonus bubble placed on purpose (scripted training moments, QA): on the Living tile of region `sectionId` (default:
+// the origin) nearest that region's centre — the same tile for the same map state. Returns the tile, or -1 (nothing living there).
+function placeBubble(sectionId){ const s=sectionId==null?ORIGIN:SIDX[sectionId]; if(s===undefined) return -1;
+  const c=CENT[s]; let best=-1, bd=Infinity;
+  for(const t of SEC_TILES[s]){ if(state[t]!==LIV||bubbles.some(b=>b.tile===t)) continue;
+    const dx=(t%W)+.5-c.x, dy=((t/W)|0)+.5-c.y, d=dx*dx+dy*dy; if(d<bd) { bd=d; best=t; } }
+  if(best<0||!sim.placeBubble(best)) return -1; BUB_SEEN.add(bubbles[bubbles.length-1]); draw(); return best; }
+window.BLOOM_RUN_UI={ placeBubble };
 function log(m){ document.getElementById("log").textContent=m; }
 
 document.getElementById("btnPlay").addEventListener("click",()=>{ running=!running;
   document.getElementById("btnPlay").textContent=running?"⏸ pause":"▶ play";
-  document.getElementById("btnPlay").setAttribute("aria-pressed",running); });
+  document.getElementById("btnPlay").setAttribute("aria-pressed",running); emit("play-pause",{running}); });
 document.getElementById("btnSpeed").addEventListener("click",()=>{ speed=speed===1?2:speed===2?4:1;
-  document.getElementById("btnSpeed").textContent="▶ "+speed+"×"; });
+  document.getElementById("btnSpeed").textContent="▶ "+speed+"×"; emit("speed",{speed}); });
 
 /* ========================================================================== */
 /*  BLOOM REPORT                                                               */
@@ -1159,7 +1209,7 @@ function onWin(cov){
     else { const e=evaluate(i); if(e.fitness<=CFG.grow.growThresh) gaveUp.push(`<b>${LABEL[i]}</b> — ${LIMIT_MSG[e.limitKey](e)}`); } });
   const mins=Math.floor(sim.ticks*CFG.tickMs/60000), secs=Math.round(sim.ticks*CFG.tickMs/1000)%60;
   document.getElementById("report").innerHTML=`
-    <h2>★ BLOOM</h2>
+    <h2>★ ${TRAIN?TC.complete.toUpperCase():"BLOOM"}</h2>
     <div class="sub">You held ${Math.round(cov*100)}% of the land${BLOOM_RUN.kind==="procedural"?` of <b>${BLOOM_RUN.planet.name}</b> (${BLOOM_RUN.archetype.name} · ${SEEDWORD} ${BLOOM_RUN.seed})`:""}${SCEN?` under <b>${SCN.name}</b>`:""} in ${mins}m ${String(secs).padStart(2,"0")}s.</div>
     ${pressureReport()}${competitionReport()}${climateReport()}
     <div class="top"><canvas id="plantCv" width="136" height="200"></canvas>
@@ -1169,7 +1219,7 @@ function onWin(cov){
     ${sim.colonies.spec.some(Boolean)?`<div style="margin-top:6px"><b>Colony upgrades:</b> ${SEC.map((_,i)=>sim.getSpecialization(i)?`${SPEC[sim.getSpecialization(i)].name} in ${LABEL[i]}`:null).filter(Boolean).join(', ')}</div>`:''}
     <div class="debrief"><b>Why it worked:</b> every region has a <i>limiting factor</i>: the one condition furthest outside your plant's tolerance. You fixed enough of them to hold the planet${gaveUp.length?`, and your build gave these up:<ul>${gaveUp.map(g=>`<li>${g}</li>`).join('')}</ul>No plant tolerates everything. Adapting to one extreme costs you another, so choosing what to sacrifice was the real strategy.`:"."}</div>
     ${owned.length?`<div><b>Real plants do this too:</b><ul class="analog">${owned.filter(u=>u.science).map(u=>`<li><b>${u.name}</b> — ${u.science}</li>`).join('')}</ul></div>`:''}
-    <button class="btn" id="reportContinue">Keep playing →</button>${PLAY?runActionsHtml():""}`;
+    <button class="btn" id="reportContinue" data-tutorial="report-continue">Keep playing →</button>${PLAY?runActionsHtml():""}`;
   if(PLAY) wireActions(document.getElementById("report"));
   drawPlant(document.getElementById("plantCv"));
   document.getElementById("reportModal").classList.add("on");
@@ -1186,7 +1236,7 @@ function frame(ts){
   if(running){ acc+=dt*speed;
     while(acc>=CFG.tickMs){ lastCov=sim.tick(); acc-=CFG.tickMs; if(!running)break; }
   }
-  pollCrossings(performance.now()); pollPressure(performance.now()); pollCompetition(performance.now()); pollClimate(); renderHUD(lastCov); renderPressure(); renderComp(); renderClimate(); refreshShop(); refreshColonyCtl(); draw();
+  pollBubbles(); pollCrossings(performance.now()); pollPressure(performance.now()); pollCompetition(performance.now()); pollClimate(); renderHUD(lastCov); renderPressure(); renderComp(); renderClimate(); refreshShop(); refreshColonyCtl(); draw();
   // re-read the inspected section every 3 sim ticks (not every frame — while paused that would swallow clicks)
   if(selected>=0 && sim.ticks%3===0 && sim.ticks!==lastInspectTick){ lastInspectTick=sim.ticks; renderInspect(); }
   requestAnimationFrame(frame);
@@ -1196,17 +1246,19 @@ if(BLOOM_RUN.kind==="procedural"){ const a=BLOOM_RUN.planet.archetype; // unobtr
   document.title=`BLOOM — ${BLOOM_RUN.archetype.name} · seed ${BLOOM_RUN.seed} (playtest harness)`;
   document.querySelector("header h1 small").textContent="· "+BLOOM_RUN.planet.name.toLowerCase();
   document.getElementById("runId").textContent=`${BLOOM_RUN.archetype.name} · public seed ${a.publicSeed} · attempt ${a.attempt} · ${BLOOM_RUN.planet.name} (${BLOOM_RUN.planet.id}) · layers ${a.validatedLayers.join("")}`; }
+// (BLOOM-028D1) an authored world shows its own name (First Bloom: "· first bloom", as before)
+if(BLOOM_RUN.kind==="authored") document.querySelector("header h1 small").textContent="· "+BLOOM_RUN.planet.name.toLowerCase();
 if(SCEN){ // BLOOM-012/014: scenario identity (title, header, footer) + the temporary pressure / competition bar
   document.title=document.title.replace(/^BLOOM — /,`BLOOM — ${SCN.name} · `);
   document.querySelector("header h1 small").textContent+=" · "+SCN.name.toLowerCase();
   const rid=document.getElementById("runId"); rid.textContent=(rid.textContent?rid.textContent+" · ":"")+`scenario ${SCN.id} (layer P ${BLOOM_RUN.summary.scenarioValidation.status})`;
   buildPressureBar(); buildCompBar(); buildClimateBar(); }
 if(PLAY){ // BLOOM-016: player identity (no developer terms) + the run menu in the header
-  const nm=RUN_ARCH?BLOOM_RUN.archetype.name:PC.firstBloom.name, sc=SCN?SCN.name:"Eden";
-  document.title=RUN_ARCH?`BLOOM — ${nm} · ${sc}`:`BLOOM — ${nm}`;
-  document.getElementById("runId").textContent=RUN_ARCH?`${nm} · ${SEEDWORD}: ${BLOOM_RUN.seed} · ${sc}`:nm;
+  const nm=RUN_ARCH?BLOOM_RUN.archetype.name:BLOOM_RUN.planet.name, sc=SCN?SCN.name:"Eden";
+  document.title=RUN_ARCH?`BLOOM — ${nm} · ${sc}`:TRAIN?`BLOOM — ${TC.title} · ${nm}`:`BLOOM — ${nm}`;
+  document.getElementById("runId").textContent=RUN_ARCH?`${nm} · ${SEEDWORD}: ${BLOOM_RUN.seed} · ${sc}`:TRAIN?`${TC.title} · ${nm}`:nm;
   const m=document.createElement("span"); m.className="pmenu"; m.id="playMenuWrap";
-  m.innerHTML=`<button class="tb" id="btnMenu" aria-haspopup="true" aria-expanded="false" aria-controls="playMenu">☰ ${PC.actions.menu}</button><div class="pm" id="playMenu">${playActions().map(actBtn).join("")}</div>`;
+  m.innerHTML=`<button class="tb" id="btnMenu" aria-haspopup="true" aria-expanded="false" aria-controls="playMenu" data-tutorial="run-menu">☰ ${TRAIN?TC.menu:PC.actions.menu}</button><div class="pm" id="playMenu">${playActions().map(actBtn).join("")}</div>`;
   document.querySelector("header .controls").appendChild(m); wireActions(m.querySelector(".pm"));
   const mb=m.querySelector("#btnMenu"), setOpen=o=>{ m.classList.toggle("open",o); mb.setAttribute("aria-expanded",o); };
   mb.addEventListener("click",()=>{ const o=!m.classList.contains("open"); setOpen(o); if(o) m.querySelector(".pm button").focus(); });
@@ -1218,6 +1270,8 @@ if(PRESS) log(`☁ ${SCN.display.title}. ${SCN.display.summary} The decline begi
 if(CLIM&&!PRESS&&!COMP) log(`🌪 ${SCN.display.title}. ${SCN.display.summary} Terraform unsettles the part of the climate it changes; Adapt and Spread do not. Your plant sprouted in ${LABEL[ORIGIN]}.`);
 if(COMP&&!PRESS) log(`🌿 ${SCN.display.title}. ${SCN.display.summary} Native plants (violet, hatched) hold ${Math.round(CS.share*100)}% of the land. Your plant sprouted in ${LABEL[ORIGIN]}.`);
 resize(); renderShop(); renderHUD(0); requestAnimationFrame(frame);
+if(TRAIN){ const bp=document.getElementById("btnPlay"); bp.textContent="▶ play"; bp.setAttribute("aria-pressed","false"); } // paused at the landing
+BLOOM_RUN.started=true; emit("run-ready",{planetId:BLOOM_RUN.planet.id, kind:BLOOM_RUN.kind, training:!!TRAIN, running});
 
 /* ========================================================================== */
 /*  TEST HOOK — headless winnability / behavior checks                        */
@@ -1226,7 +1280,7 @@ window.BLOOM_API={
   buy, sim, advance(n){ let c=lastCov; running=false; for(let k=0;k<n;k++){ c=sim.tick(); if(sim.won||sim.lost)break; } lastCov=c; return c; },
   coverage(){ return sim.coverage(); },
   addBiomass(x){ sim.biomass+=x; renderShop(); },
-  state(){ return {biomass:Math.floor(sim.biomass), ticks:sim.ticks, won:sim.won, genome:{...genome}, tf:{...tf}, sky:{...G},
+  state(){ return {biomass:Math.floor(sim.biomass), ticks:sim.ticks, won:sim.won, running, speed, genome:{...genome}, tf:{...tf}, sky:{...G},
     coverage:this.coverage(), vigor:[...vigor].map(v=>+v.toFixed(2)),
     secFit:[...secFit].map(v=>+v.toFixed(2)), sections:SEC.map(s=>s.id)}; },
   evalSection(id){ return evaluate(SIDX[id]); },
@@ -1285,6 +1339,12 @@ function harnessRun(){
   const q=new URLSearchParams(location.search), aid=q.get("archetype"), seedText=q.get("seed"), scText=q.get("scenario");
   const kind=aid===null&&seedText===null?"authored":"procedural";
   const fail=(why,extra={})=>({kind, failed:true, summary:{kind, failed:true, archetypeId:aid, seed:seedText, scenarioId:scText, why, ...extra}});
+  // BLOOM-028D1: planet=<id> names an AUTHORED world (BLOOM_DATA.planets); training=1 opens the training world
+  // (BLOOM_DATA.training.planetId, unless planet= names another) — authored only, Eden only, never a substitute
+  const training=q.get("training")==="1", planetText=q.get("planet"), who={planetName:training?"Training":`planet ${planetText}`};
+  if((training||planetText!==null)&&kind!=="authored") return fail(training?"training opens an authored world: leave out archetype= and seed=":"planet= names an authored world: it cannot be combined with archetype= or seed=", {badPlanet:true, ...who});
+  if(training&&scText!==null) return fail("training has no scenario: leave out scenario=", {badPlanet:true, ...who});
+  if(training&&!(BLOOM_DATA.training&&BLOOM.play&&BLOOM.play.deriveConfig)) return fail("the training data (content/training.js) or BLOOM.play is not loaded", {badPlanet:true, ...who});
   let scenario=null; // null = no scenario parameter: Eden, the engine exactly as before BLOOM-012
   if(scText!==null){
     if(!/^[a-z][a-z0-9_]{0,40}$/.test(scText)) return fail(`"scenario" must be a scenario id from content/scenarios.js (got "${scText}")`, {badScenario:true});
@@ -1296,7 +1356,16 @@ function harnessRun(){
     if(!v.ok) return fail(v.reason||`${scenario.name} ${v.status}`, {archetype:run.archetype&&run.archetype.name, planetName:run.planet.name, scenario:scenario.name, scenarioRejected:v.status});
     run.summary.scenarioValidation={status:v.status, strategiesProven:v.strategies.length, required:v.required}; // a count only — no builds, no plans
     return run; };
-  if(kind==="authored") return withScenario({kind:"authored", planet:BLOOM_DATA.planets.first_bloom, summary:{kind:"authored", planetId:"first_bloom", name:BLOOM_DATA.planets.first_bloom.name}});
+  if(kind==="authored"){
+    const pid=planetText!==null?planetText:training?BLOOM_DATA.training.planetId:"first_bloom";
+    const P=/^[a-z][a-z0-9_]{0,40}$/.test(pid)&&Object.prototype.hasOwnProperty.call(BLOOM_DATA.planets,pid)?BLOOM_DATA.planets[pid]:null;
+    if(!P) return fail(`unknown planet "${pid}" (authored worlds: ${Object.keys(BLOOM_DATA.planets).join(", ")})`, {badPlanet:true, planetName:`planet ${pid}`});
+    const run=withScenario({kind:"authored", planet:P, planetParam:planetText, summary:{kind:"authored", planetId:P.id, name:P.name}});
+    if(training&&!run.failed){ const T=BLOOM_DATA.training; // the derived config is built once, here; content/config.js is never edited
+      run.play=true; run.summary.training=true;
+      run.training={ planetId:P.id, rngSeed:T.rngSeed, config:BLOOM.play.deriveConfig(BLOOM_DATA.config, T.config),
+        returnTo:BLOOM.play.safeReturn(q.get("return"), location.href, T.returnTo) }; }
+    return run; }
   const A=(BLOOM_DATA.archetypes||[]).find(a=>a.id===aid);
   if(!A) return fail(`unknown archetype "${aid}" (known: ${(BLOOM_DATA.archetypes||[]).map(a=>a.id).join(", ")})`);
   if(seedText===null||!/^\d{1,10}$/.test(seedText)||+seedText>4294967295) return fail(`"seed" must be a whole number 0–4294967295 (got ${seedText===null?"nothing":`"${seedText}"`})`);
@@ -1323,12 +1392,18 @@ if(BLOOM_RUN.kind==="missing"){
     <div>${where}${f.scenarioId!==null&&f.scenarioId!==undefined?` · scenario <code>${esc(f.scenarioId)}</code>`:""}</div>
     <p>${esc(f.why)}.${f.rejectedByLayer?` Rejected attempts: ${Object.entries(f.rejectedByLayer).map(([k,n])=>`${esc(k)} ${n}`).join(" · ")}.`:""}</p>
     <p style="color:var(--dim)">${f.scenarioRejected?`This planet + scenario combination did not pass the scenario validation layer (${esc(f.scenarioRejected)}). No other scenario or seed was substituted and no run was started.`
+      :f.badPlanet?`No other world was substituted and no run was started.`
       :f.badScenario?`Known scenarios: ${(BLOOM_DATA.scenarios||[]).map(x=>`<code>${esc(x.id)}</code>`).join(", ")}. Leave <code>scenario=</code> out for Eden. No other scenario was substituted and no run was started.`
       :`${f.attempts?"This public seed is not playable under the current validation policy.":"The launch parameters are invalid."} No other seed was substituted and no world was started. Try a different <code>seed=</code> value.`}</p></div>`;
   document.querySelector("header .hud").style.visibility="hidden"; document.querySelector("header .controls").style.visibility="hidden";
   document.getElementById("log").textContent=scen?`Run not started (scenario ${f.scenarioId}).`:`Generation failed for public seed ${f.seed}.`;
   window.BLOOM_API={ run:f };
 } else { // run the game UI as an ordinary classic script (same globals as before BLOOM-007)
+  if(BLOOM_RUN.training){ // BLOOM-028D1: the training page opens under black (the title faded out into it). Its training layer (an ES
+    // module, loaded here in training mode only) lifts it once the run is drawn and owns the exits; without that layer the black just goes
+    const c=document.createElement("div"); c.id="trainingCover"; c.className="training-cover"; c.setAttribute("aria-hidden","true"); document.body.appendChild(c);
+    setTimeout(()=>{ if(!c.dataset.owner) c.remove(); },2000);
+    const m=document.createElement("script"); m.type="module"; m.src="../resources/training/training-run.js"; document.head.appendChild(m); }
   const ui=document.createElement("script"); ui.textContent=document.getElementById("bloomUI").textContent; document.body.appendChild(ui);
 }
 }

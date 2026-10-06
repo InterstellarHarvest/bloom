@@ -67,7 +67,8 @@ Not here: the sphere (`docs/PLANET_SPHERE_VIEW_v1.md`), the transition (`docs/AT
   - **No CONTINUE EXPEDITION.** The codebase has no save / resume state (only UI-mockup preferences in localStorage), so none
     is offered; nothing fake was built. Add it when a real save exists.
   - **TRAINING** calls `onTraining` if given; otherwise it opens a dialog that says plainly the training expedition is not
-    yet open (a placeholder for the Tutorial workstream).
+    yet open (a placeholder for the Tutorial workstream). **028D1:** `ExpeditionEntry({ trainingHref })` makes TRAINING fade to
+    black and open the training run (`leaveTo`); `demos/main-menu.html` passes it. Contracts: `docs/TRAINING_FOUNDATION_v1.md`.
   - **SETTINGS**: one real setting, **Motion** (Follow system / Reduced / Full), persisted at
     `localStorage["strange-bloom.settings"]` (never throws without storage). It feeds `reducedMotion` to the menu, the
     transition and the survey (§7).

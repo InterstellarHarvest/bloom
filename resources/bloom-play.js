@@ -9,6 +9,13 @@
 //   BLOOM.play.runSearch(opts, onStep)                   → drives searchWorld to the end synchronously (Node / fallback)
 //   BLOOM.play.stripPlanet(planet)                       → the planet with its validator solutions removed
 //   BLOOM.play.runQuery({ archetype, seed, scenario })   → "play=1&archetype=…&seed=…&scenario=…" for demo-run.html
+//   BLOOM.play.deriveConfig(base, overrides)             → a NEW config: a deep copy of `base` with `overrides` merged in
+//                                                          (BLOOM-028D1: the training run's config; `base` is never touched)
+//   BLOOM.play.trainingQuery({ planet, returnTo })       → "training=1[&planet=…][&return=…]" for demo-run.html (028D1)
+//   BLOOM.play.safeReturn(value, here, fallback)         → where a training run may go back to: `value` (the return= parameter)
+//                                                          resolved against `here`, only if it is the same origin; else
+//                                                          `fallback` resolved against `here`. Never another site, never
+//                                                          javascript: or data: (028D1)
 //
 // The bounded world search: for each candidate World Seed in order, the real production path runs —
 //   1. BLOOM.generateFromArchetype (archetype layers 1–8; its own deterministic attempt loop is part of that seed's identity);
@@ -87,5 +94,34 @@
     return q.join("&");
   }
 
-  root.BLOOM.play = { availability, pickSeeds, stripPlanet, searchWorld, runSearch, runQuery };
+  // (BLOOM-028D1) A run that needs its own numbers (the training run) gets a derived copy, never an edit of the shared config:
+  // `base` is deep-copied (config is plain data) and `overrides` merged in, object by object. An override may only change a
+  // key the base already has, with a value of the same kind, so a typo is refused instead of silently adding a dead setting.
+  function deriveConfig(base, overrides) {
+    const out = JSON.parse(JSON.stringify(base));
+    const merge = (dst, src, at) => { for (const k of Object.keys(src || {})) {
+      const p = at ? `${at}.${k}` : k, v = src[k], o = dst[k];
+      if (!(k in dst)) throw new Error(`deriveConfig: "${p}" is not a config setting`);
+      const isObj = x => x !== null && typeof x === "object" && !Array.isArray(x);
+      if (isObj(o) !== isObj(v) || (!isObj(o) && typeof o !== typeof v)) throw new Error(`deriveConfig: "${p}" must be a ${isObj(o) ? "group" : typeof o}`);
+      if (isObj(o)) merge(o, v, p); else dst[k] = Array.isArray(v) ? v.slice() : v; } };
+    merge(out, overrides, "");
+    return out;
+  }
+
+  // (BLOOM-028D1) the training URL contract: demo-run.html?training=1 opens the training world (BLOOM_DATA.training.planetId)
+  // paused; planet= names another authored world; return= is where Skip / Main menu / a finished training go back to
+  function trainingQuery({ planet, returnTo } = {}) {
+    const q = ["training=1"];
+    if (planet) q.push("planet=" + encodeURIComponent(planet));
+    if (returnTo) q.push("return=" + encodeURIComponent(returnTo));
+    return q.join("&");
+  }
+  function safeReturn(value, here, fallback) {
+    const base = new URL(here), ok = u => u.origin === base.origin && /^(https?|file):$/.test(u.protocol) && u.protocol === base.protocol;
+    if (value) { try { const u = new URL(value, base); if (ok(u)) return u.href; } catch (e) { /* not a URL: the fallback */ } }
+    return new URL(fallback, base).href;
+  }
+
+  root.BLOOM.play = { availability, pickSeeds, stripPlanet, searchWorld, runSearch, runQuery, deriveConfig, trainingQuery, safeReturn };
 })(typeof window !== "undefined" ? window : globalThis);
