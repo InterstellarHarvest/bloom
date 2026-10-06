@@ -1,0 +1,7 @@
+Deterministic slice-check recipe (seeded Math.random, no RAF ticks), seed:winTick/finalTileHash
+466b88b (028C1): 1:1531t/519fd1c3 2:1489t/c77ef45b 3:1486t/ce0bad75 4:1692t/9d121c15 5:1580t/51a5b7a4 6:1558t/df40be64
+b2a6450 (028D1): 1:1531t/519fd1c3 2:1489t/c77ef45b 3:1486t/ce0bad75 4:1692t/9d121c15 5:1580t/51a5b7a4 6:1558t/df40be64
+
+Unseeded slice-check pacing (s), 10 isolated runs each, run in parallel on this machine:
+466b88b: 253 252 240 253 257 258 252 260 258 260 
+b2a6450: 243 262 224 253 257 241 252 244 234 235 

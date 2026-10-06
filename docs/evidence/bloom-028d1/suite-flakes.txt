@@ -1,0 +1,14 @@
+Suite failures in run-all-suites.sh on 1c0f050 (2026-10-06): the same two timing-dependent checks 028C1 recorded on 83a5f76.
+
+FAIL  [31] a successful foothold ends in a distinct bright burst; a plain seed arrival only in a faint ripple  — foothold landing: 29 bright px · arrival landing: 13 bright px (33 pale-ripple px)
+FAIL  pacing: perfect-bot win in 4–8 min (humans slower)  — 239 s
+
+colony-development-check [31]: the pre-existing pixel flake (docs/evidence/bloom-028b/colony-check-31-flake.txt; same "arrival landing: 13 bright px"
+signature). Isolated re-runs, fail counts: 1c0f050 0 1 1 · 466b88b (028C1, untouched code) 0 0 1 0.
+
+slice-check pacing: the bot's own Math.random spread straddles the 240 s floor. Proven not a regression (slice-pacing-determinism.txt): the
+exact slice-check bot with a seeded Math.random and frozen frame loop gives identical win ticks and final tile hashes on 466b88b and b2a6450
+for seeds 1–6, and seed 3 wins at 238 s on BOTH. Unseeded isolated runs on b2a6450: fail counts 0 0 0 1 (first sweep re-runs).
+
+First sweep (b2a6450, before 1c0f050): the same two + atmosphere-transition-check A12 (028B provenance diffed against the working tree;
+fixed in 1c0f050 by pinning it to 028B's own range 80a39ce → d036ea3 — REPORT §5).
