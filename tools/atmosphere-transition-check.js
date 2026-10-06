@@ -74,13 +74,14 @@ const code = src => src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`\\])\
     check(depart.length > 500 && !/generate|attemptPlanet|runSearch|searchWorld|columnCandidates|setPlanet|setYaw|lookAt|new PlanetSphere|setAutoRotate/.test(depart),
       "A11 the departure code never generates, re-plans, re-creates or re-orients a planet (no generator / setPlanet / setYaw / lookAt / setAutoRotate / new view; only the public setDistance camera dolly)", `${depart.length} chars checked`); }
 
-  // 6. the sphere component and the generator are not touched by this milestone
+  // 6. the sphere component and the generator are not touched by this milestone (028B: 80a39ce → its final commit d036ea3 —
+  //    pinned to that range in 028D1, so later milestones that work in these paths do not trip 028B's provenance claim)
   { const { spawnSync } = require("child_process");
-    const r = spawnSync("git", ["diff", "--name-only", "80a39ce", "--", "resources/planet-sphere", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js",
+    const r = spawnSync("git", ["diff", "--name-only", "80a39ce", "d036ea3", "--", "resources/planet-sphere", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js",
       "resources/bloom-archetype.js", "resources/bloom-play.js", "resources/bloom-play-worker.js", "resources/bloom-sim.js", "resources/bloom-scenario.js",
       "content", "planets"], { cwd: ROOT });
-    if (r.status !== 0) info("A12", "git unavailable or 80a39ce not in history: skipped");
-    else check(!r.stdout.toString().trim(), "A12 vs 80a39ce: PlanetSphereView / renderer / texture, the generator, validators, witness, play flow, content and planets are unchanged", r.stdout.toString().trim() || "none changed"); }
+    if (r.status !== 0) info("A12", "git unavailable or 80a39ce / d036ea3 not in history: skipped");
+    else check(!r.stdout.toString().trim(), "A12 028B (80a39ce → d036ea3): PlanetSphereView / renderer / texture, the generator, validators, witness, play flow, content and planets are unchanged", r.stdout.toString().trim() || "none changed"); }
 
   console.log(fails ? `\n${fails} check(s) FAILED  (${((Date.now() - t0) / 1000).toFixed(1)} s)` : `\nALL CHECKS PASS  (${((Date.now() - t0) / 1000).toFixed(1)} s)`);
   process.exit(fails ? 1 : 0);
