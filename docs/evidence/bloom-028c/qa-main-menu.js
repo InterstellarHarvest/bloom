@@ -159,17 +159,17 @@ async function menuBasics(browser, B) {
   check(firstConfirmed && /Surveying sector|Sector surveyed/.test(statusSeen), tag("M5b worlds are confirmed while the player is still on the menu (the first within the sample), and the status line reports it quietly"), `first confirmed at ${firstConfirmed && firstConfirmed[0]} ms; status "${statusSeen}"`);
   perf[tag("menu load")] = { loads: await ev(page, () => MENU_DEV.entry.menu.stats.loads), firstConfirmedMs: firstConfirmed && firstConfirmed[0], longTasks: await ev(page, () => __longTasks.map(x => Math.round(x.d))) };
   // dialogs + keyboard
-  const d = await ev(page, async () => { const E = MENU_DEV.entry, m = E.menu, out = {};
-    m.items.training.click(); out.trainingOpen = m.dialogs.training.open; out.trainingText = m.dialogs.training.textContent.replace(/\s+/g, " ").trim().slice(0, 80); m.dialogs.training.close(); out.focusBack = document.activeElement === m.items.training;
+  const d = await ev(page, async () => { const E = MENU_DEV.entry, m = E.menu, out = {}, tick = () => new Promise(r => setTimeout(r, 30)); // (a dialog's close event is dispatched asynchronously)
+    m.items.training.click(); out.trainingOpen = m.dialogs.training.open; out.trainingText = m.dialogs.training.textContent.replace(/\s+/g, " ").trim().slice(0, 80); m.dialogs.training.close(); await tick(); out.focusBack = document.activeElement === m.items.training;
     m.items.credits.click(); out.creditsOpen = m.dialogs.credits.open; out.creditsHasTitle = /Strange Bloom/.test(m.dialogs.credits.textContent); m.dialogs.credits.close();
     m.items.settings.click(); out.settingsOpen = m.dialogs.settings.open; const r = m.dialogs.settings.querySelector('input[value="reduced"]'); r.click(); r.dispatchEvent(new Event("change", { bubbles: true }));
     out.stored = localStorage.getItem("strange-bloom.settings"); out.entryRm = E.reducedMotion; out.menuRm = m.root.classList.contains("rm"); m.dialogs.settings.close();
     const f = m.dialogs.settings.querySelector('input[value="full"]'); m.items.settings.click(); f.click(); f.dispatchEvent(new Event("change", { bubbles: true })); out.entryFull = E.reducedMotion; out.menuFull = m.root.classList.contains("motion-full"); m.dialogs.settings.close();
-    const s = m.dialogs.settings.querySelector('input[value="system"]'); m.items.settings.click(); s.click(); s.dispatchEvent(new Event("change", { bubbles: true })); out.entrySystem = E.reducedMotion; m.dialogs.settings.close();
+    const s = m.dialogs.settings.querySelector('input[value="system"]'); m.items.settings.click(); s.click(); s.dispatchEvent(new Event("change", { bubbles: true })); out.entrySystem = E.reducedMotion; m.dialogs.settings.close(); await tick();
     return out; });
   check(d.trainingOpen && /not yet open|Not yet open/i.test(d.trainingText) && d.focusBack && d.creditsOpen && d.creditsHasTitle && d.settingsOpen && d.stored === '{"motion":"reduced"}' && d.entryRm === true && d.menuRm && d.entryFull === false && d.menuFull && d.entrySystem === null,
     tag("M13 dialogs: TRAINING opens the clearly-marked placeholder (focus returns to its button on close), CREDITS opens, SETTINGS motion persists to localStorage and takes effect at once (reduced → true, full → false, system → null)"), J(d));
-  await ev(page, () => MENU_DEV.entry.menu.items.begin.focus());
+  await page.waitForTimeout(100); await ev(page, () => MENU_DEV.entry.menu.items.begin.focus());
   await page.keyboard.press("ArrowDown"); const k1 = await ev(page, () => document.activeElement.dataset.act);
   await page.keyboard.press("ArrowUp"); await page.keyboard.press("ArrowUp"); const k2 = await ev(page, () => document.activeElement.dataset.act);
   await page.keyboard.press("End"); const k3 = await ev(page, () => document.activeElement.dataset.act); await page.keyboard.press("Home"); const k4 = await ev(page, () => document.activeElement.dataset.act);
