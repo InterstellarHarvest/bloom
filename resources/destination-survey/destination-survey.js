@@ -32,14 +32,15 @@
 // choreographs its own screen and invokes it. Without `descent`, Begin Expedition only announces the selection (028A).
 import { PlanetSphereView, PlanetSphereRenderer } from "../planet-sphere/planet-sphere-view.js";
 import { AtmosphereTransition } from "../atmosphere-transition/atmosphere-transition.js";
-import { SURVEY_CLASSES, ROWS, columnCandidates, assembleSector, nextSectorSeed, sectorLabel } from "./survey-data.js";
+import { SURVEY_CLASSES, ROWS, columnCandidates, columnFromValidated, assembleSector, nextSectorSeed, sectorLabel } from "./survey-data.js";
 
 const COLS = SURVEY_CLASSES.length, N = ROWS * COLS;
 const GLOBE_DISTANCE = 3.6;                 // the disc fills ~92% of its box, in the grid and in focus alike (no reframing)
 const EASE_OUT = "cubic-bezier(.2,.8,.2,1)", EASE_IN = "cubic-bezier(.55,0,.85,.35)", EASE_FLIP = "cubic-bezier(.3,.7,.2,1)";
 const T = { flipIn: 720, flipInDelay: 90, flipOut: 620, recede: 240, regrow: 380, regrowAfter: 0.62, scanOut: 200, scanIn: 340, scanStep: 82, fadeOut: 150, fadeIn: 220,
   // departure (028B): UI recedes, the planet approach starts a beat later, the clouds close in while it is still visible
-  departRecede: 320, departRecedeRm: 200, approachDelay: 60, approachMorph: 760, dollyDelay: 220, dolly: 2000, cloudsAfter: 560 };
+  departRecede: 320, departRecedeRm: 200, approachDelay: 60, approachMorph: 760, dollyDelay: 120, dolly: 2500, cloudsAfter: 1000 };
+// (cloudsAfter: the planet zooms alone for a beat — ~1 s, the world visibly coming closer — before the atmosphere arrives)
 const DOLLY_TO = 1.45; // the view's closest camera distance: the disc is then ~3 × the screen height (no longer readable as a ball)
 // Choreography rule: globes on one renderer share one depth buffer, so where two globe boxes overlap they intersect by depth,
 // not by paint order (docs/evidence/bloom-028a/REPORT.md). The flying globe therefore never crosses a full-size neighbour: the
@@ -57,7 +58,7 @@ export class DestinationSurvey {
    * firstBloom         include the authored First Bloom in the first sector (development / evidence)
    * reducedMotion      null follows prefers-reduced-motion (menu animations AND the globes); true / false force it
    * worker             build sectors in module workers (default true; falls back to the main thread, which then stalls ~1 s a world)
-   * workers            worker pool size, one column task per worker (default: hardware threads − 1, clamped 1 … 3)
+   * workers            worker pool size (default: hardware threads − 2, clamped 1 … 8); each validation is its own task (028B)
    * onBeginExpedition  called with the Begin Expedition detail (also dispatched as "bloom:begin-expedition" on root)
    * descent            (028B) play the dramatic departure on Begin Expedition (omitted: announce only, as in 028A):
    *                      onCovered(detail, info)  REQUIRED, may be async: called only under full cloud cover; mount the
@@ -78,14 +79,17 @@ export class DestinationSurvey {
     this.sectorSeed = sectorSeed == null ? 1 + Math.floor(Math.random() * 999998) : sectorSeed >>> 0;
     this.state = "loading"; this.selected = null; this.cells = new Array(N).fill(null); this.sector = null;
     this.stats = { scans: 0, selects: 0, returns: 0, begins: 0, workerTasks: 0, scanWaits: 0, sectorTimes: [], lastScan: null }; this.sectorSource = null;
-    this.poolSize = Math.max(1, Math.min(3, workers || ((typeof navigator !== "undefined" && navigator.hardwareConcurrency) || 2) - 1));
+    // 028B: validations run one per task (parallel column path), so the pool can use the machine: hardware threads − 2 (the
+    // page's main and compositor threads keep theirs), at most 8
+    this.poolSize = Math.max(1, Math.min(8, workers || ((typeof navigator !== "undefined" && navigator.hardwareConcurrency) || 3) - 2));
     this._sectors = new Map(); this._pool = []; this._queue = []; this._reqId = 0; this._poolBroken = false; this._awaiting = null;
     this._build();
     this.host = new PlanetSphereRenderer(root); // ONE WebGL context for the whole screen
     this.views = this.globes.map((g, i) => new PlanetSphereView(g, { renderer: this.host, interactive: false, reducedMotion,
       distance: GLOBE_DISTANCE, yaw: i * 0.7 + 0.35, ariaLabel: "Planet globe: drag sideways or press the left and right arrow keys to spin it" }));
-    const first = this._sector(this.sectorSeed, this.firstBloom); this._awaiting = this._sectors.get(this._key(this.sectorSeed, this.firstBloom)); this._progress(this._awaiting);
-    this.ready = first.then(s => { this._awaiting = null; return this._swapIn(s, { first: true }); }).then(() => {
+    const first = this._sector(this.sectorSeed, this.firstBloom); this._awaiting = this._sectors.get(this._key(this.sectorSeed, this.firstBloom));
+    this._fillIn(this._awaiting); this._progress(this._awaiting); // (028B) each world appears the moment it is confirmed
+    this.ready = first.then(s => { this._awaiting = null; this._progress(null); return this._finishFill(s); }).then(() => {
       this.state = "survey"; this.root.dataset.state = "survey"; this._prefetch(); return this; })
       .catch(err => { this._placeholder(`Survey unavailable: ${err.message || err}`); throw err; });
   }
@@ -99,20 +103,22 @@ export class DestinationSurvey {
 
   /**
    * SCAN NEW SECTOR: the next sector's nine validated worlds replace these in a short corner-to-corner sweep. Normally that
-   * sector was prefetched while the player looked at this one; if not, the button stays busy and the header counts the worlds
-   * confirmed so far until the whole sector is ready (no world is shown before it is validated).
+   * sector was prefetched while the player looked at this one; if not (028B), the current worlds leave at once and the new
+   * ones fill in as each is confirmed (the button stays busy and the header counts them). No world is ever shown before it
+   * is validated and certain to be in the sector.
    */
   async scan() {
     if (this.state !== "survey") return false;
     this.state = "scanning"; this.scanBtn.setAttribute("aria-busy", "true");
     try {
       const seed = nextSectorSeed(this.sectorSeed), p = this._sector(seed, false), e = this._sectors.get(this._key(seed, false)), prefetched = e.ready, t0 = performance.now();
-      if (!prefetched) { this.stats.scanWaits++; this._awaiting = e; this._progress(e); }
+      if (!prefetched) { this.stats.scanWaits++; this._awaiting = e; await this._sweepOut(); if (this.state === "disposed") return false; this._fillIn(e); this._progress(e); }
       const sector = await p;
       this._awaiting = null; this._progress(null);
       if (this.state === "disposed") return false;
       this.stats.lastScan = { prefetched, waitedMs: Math.round(performance.now() - t0) };
-      this.sectorSeed = seed; await this._swapIn(sector, { first: false });
+      this.sectorSeed = seed;
+      if (prefetched) await this._swapIn(sector, { first: false }); else await this._finishFill(sector);
       this.stats.scans++; this._prefetch(); return true;
     } finally { if (this.state !== "disposed") { this.state = "survey"; this.scanBtn.removeAttribute("aria-busy"); } }
   }
@@ -139,6 +145,7 @@ export class DestinationSurvey {
     }
     if (this.state === "disposed") return false;
     this.views[i].setInteractionEnabled(true); // the accepted controls: horizontal drag / ← → spin; vertical ignored
+    if (this.descent) this._transition().prepare(); // draw the cloud bitmaps now, while the player reads the dossier
     this.state = "focus"; this.stats.selects++;
     this.dossierTitle.focus({ preventScroll: true });
     return true;
@@ -218,7 +225,7 @@ export class DestinationSurvey {
     anims.push(this.dossier.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: rm ? "none" : "translateX(48px)" }], { duration: rm ? T.departRecedeRm : T.departRecede, ...ease }));
     anims.push(this.head.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: rm ? "none" : "translateY(-14px)" }], { duration: rm ? T.departRecedeRm : T.departRecede, ...ease }));
     if (!rm) anims.push(this._approach(g, view));
-    const atx = D.transition || new AtmosphereTransition(), own = !D.transition;
+    const atx = this._transition(), own = !D.transition;
     try {
       if (!rm) await new Promise(res => setTimeout(res, T.cloudsAfter)); // the approach is under way before the clouds arrive
       const transition = await atx.run({ preset: "dramatic", reducedMotion: rm, origin: { x: 0.5, y: 0.5 }, seed: D.seed ?? null, // (null: a fresh cloud layout every time)
@@ -239,8 +246,11 @@ export class DestinationSurvey {
       if (this.state === "departing") this._undoDeparture(); // e.g. a busy shared transition: nothing was covered
       if (this.state === "focus") this.dossierTitle.focus({ preventScroll: true });
       throw err;
-    } finally { if (own) atx.dispose(); }
+    } finally { if (own) { atx.dispose(); this._atx = null; } }
   }
+
+  /** The descent's AtmosphereTransition: the consumer's, or a private one over document.body (created once, on first need). */
+  _transition() { return this.descent.transition || (this._atx || (this._atx = new AtmosphereTransition())); }
 
   /**
    * The planet approach, on the live view: its container eases from the focus slot to exactly the screen's rectangle (so the
@@ -257,7 +267,7 @@ export class DestinationSurvey {
     const step = now => {
       this._dollyFrame = null;
       if (this.state !== "departing" || view.disposed) return;
-      const p = Math.min(1, Math.max(0, (now - t0) / T.dolly)), q = Math.pow(R, Math.pow(p, 1.4));
+      const p = Math.min(1, Math.max(0, (now - t0) / T.dolly)), q = Math.pow(R, Math.pow(p, 1.25));
       view.setDistance(Math.sqrt(1 + (k0 / q) ** 2));
       if (p < 1) this._dollyFrame = requestAnimationFrame(step);
     };
@@ -283,6 +293,7 @@ export class DestinationSurvey {
   dispose() {
     if (this.state === "disposed") return;
     this.state = "disposed";
+    if (this._atx && !this._atx.running) { this._atx.dispose(); this._atx = null; } // prepared in focus, never used (a running one is ours to finish)
     for (const a of this.root.getAnimations({ subtree: true })) a.cancel();
     this.host.dispose();          // (planet objects are not touched: a Begin Expedition consumer may still hold detail.planet)
     this._stopPool(new Error("disposed"));
@@ -401,6 +412,111 @@ export class DestinationSurvey {
     return a.finished.then(() => { if (to === 1 && this._fadeAnim === a) { a.cancel(); this._fadeAnim = null; } }, () => {});
   }
 
+  // ---------------------------------------------------------------- progressive fill (028B)
+  /**
+   * Show sector entry `e` as it is confirmed: each world appears in its column (next free row, top down) the moment it is
+   * certain to be in the sector; when a column is complete, any world not in its final row (most → least habitable) shrinks
+   * out and grows back in its row (they never slide across each other: overlapping globes on one renderer intersect by depth).
+   * One setPlanet per world; the finished grid is exactly the sector's (assembleSector) order.
+   */
+  _fillIn(e) {
+    const fill = this._fill = { e, rows: [[], [], []], settled: [null, null, null] }; // rows[col]: the worlds placed in that column
+    this.sector = null;
+    for (let i = 0; i < N; i++) { this.cells[i] = null; this.views[i].setPlanet(null); this.buttons[i].disabled = true; this._uncaption(i); }
+    this.sectorEl.innerHTML = `<b>${esc(sectorLabel(e.seed))}</b> · surveying…`;
+    e.listener = { cell: (col, cand) => this._place(fill, col, cand), column: (col, column) => this._settleColumn(fill, col, column) };
+    e.shown.forEach((list, col) => list.forEach(c => this._place(fill, col, c)));
+    e.cols.forEach((c, col) => { if (c) this._settleColumn(fill, col, c); });
+  }
+
+  /**
+   * The row for a newly confirmed world: an empty row consistent with the worlds already shown in its column (more habitable
+   * above, less below; First Bloom on top), the middle one first — so most worlds land in their final row and few need moving.
+   */
+  _rowFor(col, cand) {
+    const rank = c => (c.authored ? Infinity : c.habitable), v = rank(cand), at = r => this.cells[r * COLS + col];
+    const empty = []; for (let r = 0; r < ROWS; r++) if (!at(r)) empty.push(r);
+    const fits = r => { for (let q = 0; q < ROWS; q++) { const c = at(q); if (c && ((q < r && rank(c) < v) || (q > r && rank(c) > v))) return false; } return true; };
+    const ok = empty.filter(fits), mid = (ROWS - 1) / 2;
+    return (ok.length ? ok : empty).sort((a, b) => Math.abs(a - mid) - Math.abs(b - mid) || a - b)[0];
+  }
+
+  _place(fill, col, cand) {
+    if (this._fill !== fill || this.state === "disposed") return;
+    const rows = fill.rows[col]; if (rows.length >= ROWS || rows.some(c => c.key === cand.key)) return;
+    const i = this._rowFor(col, cand) * COLS + col; rows.push(cand);
+    this._show(i, cand);
+    this._progress(fill.e);
+    if (!this.reducedMotion) this._grow(i, 0);
+  }
+
+  /** A world into grid position i (planet + caption); its button stays disabled until the whole sector is in. */
+  _show(i, cand) {
+    this.cells[i] = cand;
+    if (!cand) { this.views[i].setPlanet(null); this._uncaption(i); return; }
+    this.views[i].setPlanet(cand.planet, { render: cand.render }); this.stats.shown = (this.stats.shown || 0) + 1;
+    if (cand.authored) this.views[i].setYaw(0); // a legacy rectangle: start with its real map edge on the far side (§11)
+    this._caption(i, cand); this.buttons[i].disabled = true;
+  }
+
+  _uncaption(i) { const b = this.buttons[i]; b.querySelector(".ds-name").innerHTML = "&nbsp;"; b.querySelector(".ds-desc").innerHTML = "&nbsp;"; b.querySelector(".sr-only").textContent = ""; }
+
+  _grow(i, delay) {
+    const g = this.globes[i], cap = this.buttons[i].querySelector(".ds-cap"), halo = this.slots[i].querySelector(".ds-halo");
+    halo.animate([{ transform: "translate(-50%,-50%) scale(.9)", opacity: 0 }, { transform: "translate(-50%,-50%) scale(1)", opacity: 1, offset: .35 },
+      { transform: "translate(-50%,-50%) scale(1.28)", opacity: 0 }], { duration: T.scanIn + 160, delay, easing: "ease-out" });
+    return Promise.all([g.animate([{ transform: "scale(.08)" }, { transform: "scale(1.035)", offset: .72 }, { transform: "none" }], { duration: T.scanIn, delay, easing: EASE_OUT, fill: "backwards" }).finished,
+      cap.animate([{ opacity: 0 }, { opacity: 1 }], { duration: T.scanIn, delay, fill: "backwards" }).finished]).catch(() => {});
+  }
+
+  /** A column is complete: show any world still missing (nearest-fill), then move worlds into their final rows. */
+  _settleColumn(fill, col, column) {
+    if (this._fill !== fill || fill.settled[col]) return fill.settled[col];
+    return (fill.settled[col] = (async () => {
+      const want = column.cells, at = r => r * COLS + col;
+      for (const c of want) if (c && !fill.rows[col].some(x => x.key === c.key)) this._place(fill, col, c);
+      const wrong = []; for (let r = 0; r < ROWS; r++) { const cur = this.cells[at(r)], tgt = want[r] || null; if ((cur && cur.key) !== (tgt && tgt.key)) wrong.push(r); }
+      if (!wrong.length) return;
+      const rm = this.reducedMotion;
+      if (!rm) await Promise.all(wrong.map(r => { const g = this.globes[at(r)], cap = this.buttons[at(r)].querySelector(".ds-cap");
+        cap.animate([{ opacity: 1 }, { opacity: 0 }], { duration: T.scanOut, fill: "forwards" });
+        return g.animate([{ transform: "none" }, { transform: "scale(.08)" }], { duration: T.scanOut, easing: EASE_IN, fill: "forwards" }).finished.catch(() => {}); }));
+      if (this._fill !== fill || this.state === "disposed") return;
+      const moving = wrong.map(r => ({ g: this.globes[at(r)], v: this.views[at(r)], c: this.cells[at(r)] }));
+      for (const r of wrong) {
+        const i = at(r), tgt = want[r] || null, m = moving.find(x => (x.c && x.c.key) === (tgt && tgt.key));
+        for (const a of [...m.g.getAnimations(), ...this.buttons[i].querySelector(".ds-cap").getAnimations()]) a.cancel();
+        this.slots[i].insertBefore(m.g, this.slots[i].firstChild); // the view follows its container: same planet, same yaw
+        this.globes[i] = m.g; this.views[i] = m.v; this.cells[i] = m.c;
+        if (m.c) { this._caption(i, m.c); this.buttons[i].disabled = true; } else this._uncaption(i);
+      }
+      this.stats.reorders = (this.stats.reorders || 0) + wrong.length;
+      if (!rm) await Promise.all(wrong.map(r => this._grow(at(r), 0)));
+    })());
+  }
+
+  /** The whole sector is in: settle every column (the no-worker fallback path places everything here), enable the grid. */
+  async _finishFill(sector) {
+    const fill = this._fill;
+    if (!fill) return this._swapIn(sector, { first: true });
+    await Promise.all(SURVEY_CLASSES.map((_, col) => this._settleColumn(fill, col, { cells: sector.cells.filter((_, i) => i % COLS === col) })));
+    if (this.state === "disposed") return;
+    this.sector = sector; this._fill = null; fill.e.listener = null;
+    for (const k of [...this._sectors.keys()]) if (this._sectors.get(k).seed === sector.sectorSeed) this._sectors.delete(k); // shown: the cells hold it now
+    for (let i = 0; i < N; i++) { if (this.cells[i] !== sector.cells[i]) this._show(i, sector.cells[i]); this.buttons[i].disabled = !sector.cells[i]; }
+    this._placeholder(null);
+    this.sectorEl.innerHTML = `<b>${esc(sector.label)}</b> · nine candidate worlds`;
+  }
+
+  /** Scan before the next sector is ready: the current worlds leave at once (corner to corner); the new ones then fill in. */
+  async _sweepOut() {
+    if (!this.reducedMotion) await Promise.all(this.globes.map((g, i) => { if (!this.cells[i]) return null;
+      const [r, c] = rowCol(i), delay = (r + c) * T.scanStep * 0.6, cap = this.buttons[i].querySelector(".ds-cap");
+      cap.animate([{ opacity: 1 }, { opacity: 0 }], { duration: T.scanOut, delay, fill: "forwards" });
+      return g.animate([{ transform: "none" }, { transform: "scale(.08)" }], { duration: T.scanOut, delay, easing: EASE_IN, fill: "forwards" }).finished.catch(() => {}); }));
+    for (let i = 0; i < N; i++) { for (const a of [...this.globes[i].getAnimations(), ...this.buttons[i].querySelector(".ds-cap").getAnimations()]) a.cancel(); this.views[i].setPlanet(null); this.cells[i] = null; this._uncaption(i); this.buttons[i].disabled = true; }
+  }
+
   /** Put a sector on screen: a corner-to-corner sweep (slightly irregular), or one restrained fade under reduced motion. */
   async _swapIn(sector, { first }) {
     this.sector = sector;
@@ -447,9 +563,9 @@ export class DestinationSurvey {
   /** Header / placeholder: how many of the awaited sector's nine worlds are validated so far (null clears it). */
   _progress(e) {
     if (e && e !== this._awaiting) return;
-    const n = e ? e.found.reduce((a, b) => a + b, 0) : 0;
-    if (this.state === "loading") this._placeholder(e ? `Surveying sector… ${n} / ${N} worlds confirmed` : null);
-    this.progressEl.hidden = !e || this.state === "loading";
+    const n = e ? e.found.reduce((a, b) => a + b, 0) : 0, placed = this._fill ? this._fill.rows.reduce((a, r) => a + r.length, 0) : 0;
+    if (this.state === "loading") this._placeholder(e && !placed ? `Surveying sector… ${n} / ${N} worlds confirmed` : null);
+    this.progressEl.hidden = !e || (this.state === "loading" && !placed);
     if (e) this.progressEl.textContent = `Confirming worlds ${n} / ${N}`;
   }
 
@@ -461,8 +577,13 @@ export class DestinationSurvey {
     const key = this._key(seed, firstBloom);
     let e = this._sectors.get(key);
     if (!e) {
-      e = { key, seed, found: [0, 0, 0], ready: false, t0: performance.now(), ms: null };
-      e.promise = Promise.all(SURVEY_CLASSES.map((_, col) => this._column(seed, col, firstBloom, pr => { e.found[col] = pr.found; this._progress(e); })))
+      // shown[col]: worlds already certain to be in the sector (in the order they became certain); cols[col]: finished columns.
+      // A screen that starts showing this sector late (a scan during the prefetch) replays them through e.listener.
+      e = { key, seed, found: [0, 0, 0], shown: [[], [], []], cols: [null, null, null], listener: null, ready: false, t0: performance.now(), ms: null };
+      e.promise = Promise.all(SURVEY_CLASSES.map((_, col) => this._column(seed, col, firstBloom, pr => {
+        if (pr.cell) { e.shown[col].push(pr.cell); if (e.listener) e.listener.cell(col, pr.cell); }
+        e.found[col] = Math.max(pr.found || 0, e.shown[col].length); this._progress(e);
+      }).then(c => { e.cols[col] = c; if (e.listener) e.listener.column(col, c); return c; })))
         .then(cols => { e.ready = true; e.ms = Math.round(performance.now() - e.t0);
           this.stats.sectorTimes.push({ seed, ms: e.ms, columns: cols.map(c => c.stats) }); return assembleSector(seed, cols); });
       e.promise.catch(() => { if (this._sectors.get(key) === e) this._sectors.delete(key); });
@@ -472,15 +593,55 @@ export class DestinationSurvey {
   }
 
   _column(sectorSeed, column, firstBloom, onProgress) {
-    return this._viaPool({ sectorSeed, column, firstBloom }, onProgress).then(r => { this.sectorSource = "worker"; return r; }, err => {
+    return this._columnParallel(sectorSeed, column, firstBloom, onProgress).then(r => { this.sectorSource = "worker"; return r; }, err => {
       if (this.state === "disposed" || err.halted) throw err; // (halted for a departure: never fall back to main-thread generation)
       return this._columnOnMainThread(sectorSeed, column, firstBloom, onProgress).then(r => { this.sectorSource = "main-thread"; return r; });
     });
   }
 
+  /**
+   * One column, its validations in parallel (028B): a worker plans the column's next predicted draws (cheap), every pick is
+   * validated as its own pool task, and the results are accepted IN STREAM ORDER with survey-data's columnFromValidated — the
+   * sequential column's exact rule, so the sector is identical to the one-worker / Node result (tools/destination-survey-check
+   * S11). Picks beyond the stopping point are speculative: queued ones are dropped, running ones finish and are ignored.
+   */
+  async _columnParallel(sectorSeed, column, firstBloom, onProgress) {
+    const t0 = performance.now(), group = Symbol("column"), base = { sectorSeed, column, firstBloom }, want = SURVEY_CLASSES[column].id;
+    const picks = [], pending = [], results = [], known = new Map(), emitted = new Set(); let predictions = 0, predictMs = 0, fb = null, need = ROWS;
+    // A validated pick of this class is CERTAIN to be in the column once fewer than `need` earlier picks are still undecided or
+    // matching (only those could take its place) — then it can be shown at once, even while earlier picks are still validating.
+    const emit = () => {
+      let ahead = 0;
+      for (let j = 0; j < picks.length && ahead < need; j++) {
+        const done = known.has(j), cand = known.get(j), match = done && cand && cand.classId === want;
+        if (match && !emitted.has(j)) { emitted.add(j); if (onProgress) onProgress({ cell: cand }); }
+        if (!done || match) ahead++;
+      }
+    };
+    const add = plan => { predictions += plan.predictions; predictMs += plan.predictMs;
+      for (const p of plan.picks) { const j = picks.push(p) - 1, v = this._viaPool({ type: "validate", archetypeId: p.archetypeId, seed: p.seed, group });
+        v.then(c => { known.set(j, c); emit(); }, () => {}); pending.push(v); } };
+    let plan = await this._viaPool({ type: "plan", ...base, fromDraw: 0, want: ROWS + 1, group }); fb = plan.fb;
+    if (fb) { need = ROWS - 1; if (onProgress) onProgress({ cell: fb }); }
+    add(plan);
+    const finish = r => { this._queue = this._queue.filter(t => t.group !== group || (t.reject(Object.assign(new Error("speculative"), { dropped: true })), false));
+      return { ...r.column, stats: { ...r.column.stats, ms: Math.round(performance.now() - t0), predictions, predictMs, speculative: picks.length - r.column.stats.validations } }; };
+    for (;;) {
+      while (results.length < picks.length) {
+        const cand = await pending[results.length];
+        results.push({ draw: picks[results.length].draw, cand });
+        const r = columnFromValidated(sectorSeed, column, { fb, results });
+        if (r.done) return finish(r);
+      }
+      if (plan.exhausted) return finish(columnFromValidated(sectorSeed, column, { fb, results, exhausted: true }));
+      plan = await this._viaPool({ type: "plan", ...base, fromDraw: plan.nextDraw, want: 2, group }); add(plan);
+    }
+  }
+
   _viaPool(task, onProgress) {
     if (this._poolHalted) return Promise.reject(Object.assign(new Error("departing"), { halted: true }));
     if (!this.useWorker || this._poolBroken) return Promise.reject(new Error("no worker"));
+    while (this._pool.length < this.poolSize && !this._poolBroken) if (!this._spawn()) break; // start the whole pool at once: start-up overlaps planning
     return new Promise((resolve, reject) => { this._queue.push({ ...task, id: ++this._reqId, resolve, reject, onProgress }); this.stats.workerTasks++; this._pump(); });
   }
 
@@ -491,7 +652,8 @@ export class DestinationSurvey {
       if (!slot && this._pool.length < this.poolSize) slot = this._spawn();
       if (!slot) return;
       const t = slot.task = this._queue.shift();
-      slot.w.postMessage({ id: t.id, sectorSeed: t.sectorSeed, column: t.column, firstBloom: t.firstBloom });
+      const { resolve, reject, onProgress, group, ...msg } = t; // (functions / symbols never cross to the worker)
+      slot.w.postMessage(msg);
     }
   }
 

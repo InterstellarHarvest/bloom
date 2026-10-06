@@ -73,6 +73,9 @@ atx.run(options) → Promise<result>
 `result = { preset, reducedMotion, concealed, seed, mirrored, coveredHoldMs, totalMs, times: { start, covered, coveredDone, revealStart, end } }`
 (times in ms from the start of the run).
 
+`atx.prepare()` draws the cloud bitmaps ahead of time (§9). `run()` does it by itself on first use, but calling it when a
+screen that may transition appears means the first transition starts on the very next frame.
+
 Read-only: `atx.running`, `atx.phase`, `atx.runs`, `atx.disposed`. `atx.dispose()` is idempotent.
 
 ## 4. Lifecycle and the covered contract
@@ -83,8 +86,9 @@ run() ─► concealing ─► COVERED ─► onCovered() … (async, as long as
 
 - **Covered is the contract point.** With `conceal: "full"` (DRAMATIC, or SUBDUED when asked), the veil is fully opaque
   when `onCovered` is called, so nothing underneath can be seen. Replace or prepare the underlying state there.
-- **The reveal never starts before `onCovered` settles.** It then waits the preset's `settleFrames` (DRAMATIC 2,
-  SUBDUED 0), so freshly mounted content has painted before the clouds part.
+- **The reveal never starts before `onCovered` settles.** It then waits until frames are flowing at a normal pace again:
+  `settleFrames` consecutive frames of ≤ 28 ms, capped at `settleMaxMs` (DRAMATIC 3 frames / 400 ms, SUBDUED none). So
+  a heavy first paint of the new screen happens under cover, not on the first frames of the reveal.
 - **A long hold is alive, not frozen.** The clouds keep drifting during it (CSS keyframe animations on transforms, which
   run on the compositor).
 - **No artificial delay.** If `onCovered` returns at once, the covered state lasts only the preset's `minCoveredMs`
@@ -121,8 +125,8 @@ Destination Survey does exactly this (§7).
 
 - **Intended use.** Destination Survey → expedition, and any once-per-session "we are going somewhere" moment.
 - **Timing (full motion).**
-  - conceal 1350 ms, then at least 160 ms covered, 2 settle frames, reveal 1000 ms;
-  - ≈ 2.65 s from `run()` to the end when the covered work is instant (measured 2.64–2.67 s, Chromium);
+  - conceal 1250 ms, then at least 160 ms covered, the smooth-frame settle (normally 3 frames), reveal 1000 ms;
+  - ≈ 2.55 s from `run()` to the end when the covered work is instant;
   - the covered phase lasts longer only while your work needs it.
 - **Visual phases.**
   1. The near clouds close in from the edges of the screen; the centre stays open longest.
@@ -131,12 +135,13 @@ Destination Survey does exactly this (§7).
   4. The veil fills the gaps (it starts at 380 ms and reaches fully opaque at covered).
   5. Hold: the clouds drift slowly.
   6. Reveal: everything streams outward past the edges, growing as if flown through, while the veil fades.
-- **Structure.** Up to 14 clouds in 3 depth layers (far 5, mid 4, near 5) over 1 veil: at most 102 DOM / SVG nodes while
-  up, 0 after. The layout differs on every run (§6.1).
-  - Each cloud is a `<div>` (enter / exit motion) holding a `<div>` (drift), which holds an inline `<svg>` with two `<use>`
-    of a shared circle-cluster silhouette. The two `<use>` are a shade and a light tone; their offset gives the chunky
-    two-tone cartoon underside.
-  - Depth comes from tone and opacity, not filters (§9).
+- **Structure.** Up to 14 clouds in 3 depth layers (far 5, mid 4, near 5) over 1 veil: at most 44 DOM nodes while up, 0
+  after. The layout differs on every run (§6.1).
+  - Each cloud is a `<div>` (enter / exit motion) holding a `<div>` (drift), which holds an `<img>`.
+  - The image is a bitmap of a circle-cluster silhouette, drawn once per instance. A shade tone sits under a light tone
+    nudged up, which gives the chunky two-tone cartoon underside.
+  - Far clouds use a pre-softened, half-resolution bitmap. Depth comes from tone, opacity and that baked softness, never
+    from live filters (§9).
 
 ### SUBDUED — frequent gameplay-room changes (~200–300 ms)
 
@@ -207,11 +212,13 @@ What Begin Expedition then does:
    - The **same live `PlanetSphereView`** keeps turning; its yaw is never set.
    - Its container eases from the focus slot to exactly the screen's rectangle (760 ms), so the world drifts to the
      centre. The WebGL viewport never leaves the canvas.
-   - Its camera then dollies in, through the public `setDistance`, from 3.6 to the view's closest 1.45 over 2 s,
+   - Its camera then dollies in, through the public `setDistance`, from 3.6 to the view's closest 1.45 over 2.5 s,
      accelerating.
-   - The disc becomes wider than the screen while the clouds are still thin (veil ≈ 0.1). No new view, no second renderer.
-4. **Atmosphere.** 560 ms after Begin, `run({ preset: "dramatic" })` starts. The planet stays visible through the cloud
-   gaps early on.
+   - **The planet zooms alone for a beat first** (owner note). The clouds wait 1.0 s after Begin, by which time the disc
+     has grown about 1.6×: the world visibly comes closer before the atmosphere arrives.
+   - The disc becomes wider than the screen while the clouds are still thin. No new view, no second renderer.
+4. **Atmosphere.** 1.0 s after Begin, `run({ preset: "dramatic" })` starts. The planet stays visible through the cloud gaps
+   early on. The survey prepares the cloud bitmaps while the player is reading the dossier, so Begin never pays for them.
 5. **Covered.** `descent.onCovered(detail, info)` runs. The survey is disposed (by you, or automatically when your callback
    resolves) and your destination is mounted.
 6. **Reveal.** The clouds part on the new screen. `detail.descent` resolves `{ detail, transition }`.
@@ -245,18 +252,28 @@ Handled inside the component; consumers need do nothing.
 
 | | |
 |---|---|
-| technology | DOM + inline SVG + Web Animations / CSS keyframes on `transform` and `opacity` only. **No canvas, no WebGL** (QA: 0 contexts created by any number of runs) |
-| per-frame JavaScript | none (one `requestAnimationFrame` per settle frame; the drift is CSS) |
-| frames | **real GPU** (Chromium, ANGLE/Metal): 16.7 ms mean / p95 ≤ 16.8 ms in every phase, standalone and during the survey departure. **Headless software rendering:** Chromium standalone 16.7 ms throughout. Firefox measured 17 ms in a plain rAF probe, but mean 21–30 ms (p95 ≤ 83 ms) under the QA driver, whose per-frame sampler forces style reads. Firefox on a real GPU was not measured |
+| technology | DOM + `<img>` bitmaps + Web Animations / CSS keyframes on `transform` and `opacity` only. **No WebGL** (QA: 0 contexts created by any number of runs). The bitmaps are drawn once with an off-screen 2D canvas that never enters the page |
+| bitmaps | 8 (4 silhouettes × near / far), PNG data URLs, decoded before use. `prepare()` takes 36–94 ms in total, one bitmap per task with yields: no main-thread stall over 39 ms |
+| per-frame JavaScript | none (the settle samples a few frames; the drift is CSS) |
+| frames, Firefox on the real GPU (headed, 1920×1080 @2×) | departure approach / cloud build / reveal: **16.7 ms mean, max 17 ms**. One 67 ms frame inside the covered hold: the survey's teardown and the destination's mount, hidden under full cover |
+| frames, Chromium on the real GPU (ANGLE/Metal, up to 2560×1440 @2×) | 16.7 ms mean / p95 ≤ 16.8 ms in every phase. Compositor traces: 190 / 191 departure frames presented |
 | main thread | no long tasks attributable to the transition |
 
-**What we removed and why.** An earlier draft used CSS `blur()` on the far and mid clouds, `will-change` on every cloud, and
-an animated highlight layer in the veil.
+**What we removed and why.**
+- **Live CSS `blur()`, `will-change` and an animated veil highlight.** Under software compositing they cost whole frames
+  (Firefox 50–100 ms, Chromium 33 ms), and Firefox warned "will-change memory consumption is too high".
+- **Inline SVG clouds.** Firefox re-rasterises scaled SVG on the CPU whenever an element's scale changes, and these clouds
+  scale continuously. Bitmaps scale on the GPU in every browser.
+- **`canvas.toBlob` for the bitmaps.**
+  - Chromium encodes it in idle time, so on a page that never idles (spinning globes) each bitmap waited ~1 s.
+  - Its GPU-backed canvas also logged "GPU stall due to ReadPixels".
+  - The bitmaps are now CPU-backed (`willReadFrequently`) and encoded synchronously, one per task.
 
-- Under software compositing these cost whole frames: Firefox 50–100 ms, Chromium 33 ms.
-- Firefox also warned "will-change memory consumption is too high".
+**Do not reintroduce live filters, `will-change`, or vector clouds on these full-screen layers.**
 
-**Do not reintroduce filters or `will-change` on these full-screen layers.**
+**Headless software rendering overstates Firefox costs.** Headless Firefox showed 50–150 ms frames at the start of a
+reveal after a screen swap. The main thread was not blocked: the gap was software rasterisation of the newly revealed
+screen. Real Firefox on the GPU drops no frames there (4 / 4 runs). Judge Firefox smoothness on real hardware.
 
 ## 10. Out of scope (deliberately)
 

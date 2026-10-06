@@ -161,6 +161,53 @@ export function* columnCandidates(sectorSeed, column, deps, { firstBloom = false
   stats.ms = Math.round(now() - t0); stats.predictMs = Math.round(stats.predictMs); stats.validateMs = Math.round(stats.validateMs);
   return { sectorSeed: sectorSeed >>> 0, column, cells, stats };
 }
+/**
+ * PARALLEL COLUMN (BLOOM-028B): the same column as columnCandidates, split so its slow validations can run concurrently.
+ * planColumn walks the column's deterministic draw stream (cheap predictions only) and returns the next `want` draws that are
+ * predicted for this column; every pick is then validated on its own (makeCandidate, in any worker, in any order);
+ * columnFromValidated applies columnCandidates' acceptance rule to the results IN STREAM ORDER — same stopping point, same
+ * set-aside fill, same sort — so a column (and so a sector) is identical whichever path built it. Validations of picks beyond
+ * the stopping point are speculative and simply discarded. (Plain data in and out: postable to and from workers.)
+ *   planColumn(sectorSeed, column, deps, { firstBloom, fromDraw = 0, want, maxDraws = 60 })
+ *     → { fb, picks: [{ draw, archetypeId, seed }], nextDraw, exhausted, predictions, predictMs }
+ *     (fb: the First Bloom candidate when firstBloom and fromDraw = 0 and it belongs to this column, else null)
+ */
+export function planColumn(sectorSeed, column, deps, { firstBloom = false, fromDraw = 0, want = ROWS + 1, maxDraws = 60 } = {}) {
+  const { BLOOM_DATA: D } = deps0(deps), wantClass = SURVEY_CLASSES[column].id;
+  const rng = mulberry32(((sectorSeed >>> 0) ^ 0x5eed0028) + column * 0x9e3779b1), pol = (D.play && D.play.search) || { seedMin: 1, seedMax: 99999 };
+  const seen = new Set(), picks = []; let fb = null, draws = 0, predictions = 0, predictMs = 0;
+  if (firstBloom) { const c = makeCandidate({ authored: "first_bloom" }, deps); if (c && c.classId === wantClass) { seen.add(c.key); if (fromDraw === 0) fb = c; } }
+  const next = () => { draws++; const A = D.archetypes[Math.floor(rng() * D.archetypes.length)], seed = pol.seedMin + Math.floor(rng() * (pol.seedMax - pol.seedMin + 1)); return { A, seed, key: `${A.id}:${seed}` }; };
+  while (draws < fromDraw) { const d = next(); seen.add(d.key); } // replay the stream (rng only) up to where the last plan stopped
+  while (picks.length < want && draws < maxDraws) {
+    const d = next(); if (seen.has(d.key)) continue; seen.add(d.key);
+    const t = now(), predicted = predictClass(d.A.id, d.seed, deps); predictions++; predictMs += now() - t;
+    if (predicted === wantClass) picks.push({ draw: draws, archetypeId: d.A.id, seed: d.seed });
+  }
+  return { fb, picks, nextDraw: draws, exhausted: draws >= maxDraws, predictions, predictMs: Math.round(predictMs) };
+}
+
+/**
+ * The column from validated picks: `results` = [{ draw, cand }] in stream order (cand = makeCandidate's result, null when no
+ * world passed); `exhausted` = the stream ran out (maxDraws). Returns { column, done } — done is false while more results are
+ * needed (the caller plans / validates more and calls again); when done, `column` equals buildColumn's for the same inputs.
+ */
+export function columnFromValidated(sectorSeed, column, { fb = null, results, exhausted = false, maxDraws = 60, stats: extra = null }) {
+  const want = SURVEY_CLASSES[column].id, cells = fb ? [fb] : [], aside = [];
+  const stats = { draws: 0, validations: 0, wasted: 0, failed: 0, parallel: true, ...(extra || {}) };
+  for (const r of results) {
+    if (cells.length >= ROWS) break;
+    stats.draws = r.draw; stats.validations++;
+    if (!r.cand) stats.failed++; else if (r.cand.classId === want) cells.push(r.cand); else { stats.wasted++; aside.push(r.cand); }
+  }
+  if (cells.length < ROWS && !exhausted) return { done: false };
+  if (cells.length < ROWS) stats.draws = maxDraws;
+  const lo = SURVEY_CLASSES[column].minHabitable;
+  while (cells.length < ROWS && aside.length) { aside.sort((a, b) => Math.abs(a.habitable - lo) - Math.abs(b.habitable - lo)); const c = aside.shift(); c.filledBy = "nearest"; cells.push(c); }
+  cells.sort((a, b) => (b.authored - a.authored) || (b.habitable - a.habitable));
+  return { done: true, column: { sectorSeed: sectorSeed >>> 0, column, cells, stats } };
+}
+
 export function buildColumn(sectorSeed, column, deps, opts) { const it = columnCandidates(sectorSeed, column, deps, opts); for (;;) { const r = it.next(); if (r.done) return r.value; } }
 
 /** Three column results → the sector: cells in row-major order (cells[row * 3 + col], col = class index). */

@@ -102,7 +102,7 @@ document.querySelector(".panel").addEventListener("click", e => {
   const m = $("motion").value, [preset, full] = b.dataset.run.split("-");
   DEV.run({ preset, conceal: full ? "full" : null, holdMs: +$("hold").value, fail: $("fail").checked, reducedMotion: m === "" ? null : m === "1" });
 });
-DEV.ready = true;
+DEV.atx.prepare().then(() => { DEV.ready = true; }); // draw the cloud bitmaps up front (a real screen would do this when it appears)
 </script>
 </body>
 </html>
