@@ -1,7 +1,7 @@
 {
  "chromium dramatic immediate frames": {
   "concealing": {
-   "n": 75,
+   "n": 76,
    "mean": 16.7,
    "p95": 16.8,
    "max": 16.8,
@@ -30,51 +30,52 @@
   }
  },
  "chromium dramatic long tasks": 0,
- "chromium dramatic overlay nodes": 35,
+ "chromium dramatic overlay nodes": 38,
  "chromium dramatic covered-hold frames": {
-  "n": 151,
-  "mean": 16.9,
+  "n": 150,
+  "mean": 17,
   "p95": 16.8,
   "max": 33.4,
   "over50": 0
  },
- "chromium subdued total ms": 246,
+ "chromium subdued total ms": 264,
  "chromium subdued overlay nodes": 11,
  "chromium cloud bitmaps prepare": {
   "ms": 36,
-  "worstMainThreadStallMs": 9,
+  "longestOwnTaskMs": 5,
+  "pageWorstStallMs": 8,
   "overlayNodes": 44
  },
  "chromium loading": {
-  "firstGlobeMs": 1958,
-  "readyMs": 5677,
-  "sectorMs": 4844,
-  "reorders": 4,
+  "firstGlobeMs": 2162,
+  "readyMs": 5818,
+  "sectorMs": 5621,
+  "reorders": 0,
   "pool": 6,
-  "scanFirstNewMs": 556,
-  "scanReadyMs": 4740
+  "scanFirstNewMs": 788,
+  "scanReadyMs": 5863
  },
  "chromium dramatic 1280×800 frames": {
   "before Begin": {
    "n": 8,
-   "mean": 35.4,
-   "p95": 49.9,
-   "max": 49.9,
+   "mean": 43.8,
+   "p95": 50,
+   "max": 50,
    "over50": 0
   },
   "approach": {
-   "n": 34,
-   "mean": 29.9,
-   "p95": 33.4,
-   "max": 33.4,
-   "over50": 0
+   "n": 28,
+   "mean": 38.1,
+   "p95": 50.1,
+   "max": 50.1,
+   "over50": 2
   },
   "concealing": {
-   "n": 40,
-   "mean": 32.9,
-   "p95": 50,
-   "max": 50.1,
-   "over50": 1
+   "n": 34,
+   "mean": 39.2,
+   "p95": 50.1,
+   "max": 66.7,
+   "over50": 2
   },
   "covered": {
    "n": 13,
@@ -86,7 +87,7 @@
   "revealing": {
    "n": 60,
    "mean": 16.7,
-   "p95": 16.8,
+   "p95": 16.7,
    "max": 16.8,
    "over50": 0
   },
@@ -98,7 +99,9 @@
    "over50": 0
   }
  },
- "chromium dramatic 1280×800 long tasks": [],
+ "chromium dramatic 1280×800 long tasks": [
+  51
+ ],
  "chromium async hold 1.5 s frames": {
   "before Begin": {
    "n": 8,
@@ -108,28 +111,28 @@
    "over50": 0
   },
   "approach": {
-   "n": 34,
-   "mean": 29.9,
-   "p95": 33.4,
+   "n": 29,
+   "mean": 36.2,
+   "p95": 50,
    "max": 50,
    "over50": 0
   },
   "concealing": {
-   "n": 39,
-   "mean": 33.8,
-   "p95": 50,
+   "n": 37,
+   "mean": 36,
+   "p95": 50.1,
    "max": 50.1,
-   "over50": 1
+   "over50": 3
   },
   "covered": {
    "n": 47,
    "mean": 34,
    "p95": 50,
-   "max": 66.7,
-   "over50": 2
+   "max": 66.6,
+   "over50": 1
   },
   "revealing": {
-   "n": 59,
+   "n": 61,
    "mean": 16.7,
    "p95": 16.8,
    "max": 16.8,
@@ -143,7 +146,9 @@
    "over50": 0
   }
  },
- "chromium async hold 1.5 s long tasks": [],
+ "chromium async hold 1.5 s long tasks": [
+  60
+ ],
  "chromium reduced motion frames": {
   "before Begin": {
    "n": 1,
@@ -153,17 +158,17 @@
    "over50": 0
   },
   "concealing": {
-   "n": 17,
-   "mean": 17.6,
+   "n": 15,
+   "mean": 21.1,
    "p95": 33.4,
    "max": 33.4,
    "over50": 0
   },
   "covered": {
-   "n": 78,
-   "mean": 16.9,
+   "n": 76,
+   "mean": 16.7,
    "p95": 16.8,
-   "max": 33.4,
+   "max": 16.8,
    "over50": 0
   },
   "revealing": {
@@ -175,9 +180,9 @@
   },
   "after": {
    "n": 1,
-   "mean": 16.8,
-   "p95": 16.8,
-   "max": 16.8,
+   "mean": 16.6,
+   "p95": 16.6,
+   "max": 16.6,
    "over50": 0
   }
  },
@@ -185,24 +190,24 @@
  "chromium dramatic 1024×768 frames": {
   "before Begin": {
    "n": 8,
-   "mean": 31.2,
-   "p95": 49.9,
-   "max": 49.9,
+   "mean": 31.3,
+   "p95": 33.4,
+   "max": 33.4,
    "over50": 0
   },
   "approach": {
-   "n": 39,
-   "mean": 25.6,
+   "n": 36,
+   "mean": 29.2,
    "p95": 33.4,
    "max": 33.4,
    "over50": 0
   },
   "concealing": {
-   "n": 48,
-   "mean": 27.4,
-   "p95": 33.4,
-   "max": 33.4,
-   "over50": 0
+   "n": 40,
+   "mean": 32.9,
+   "p95": 50.1,
+   "max": 66.6,
+   "over50": 2
   },
   "covered": {
    "n": 14,
@@ -214,7 +219,7 @@
   "revealing": {
    "n": 60,
    "mean": 16.7,
-   "p95": 16.8,
+   "p95": 16.7,
    "max": 16.8,
    "over50": 0
   },
@@ -226,192 +231,197 @@
    "over50": 0
   }
  },
- "chromium dramatic 1024×768 long tasks": [],
+ "chromium dramatic 1024×768 long tasks": [
+  58
+ ],
  "chromium dramatic 1440×900 frames": {
   "before Begin": {
    "n": 8,
-   "mean": 39.6,
+   "mean": 41.7,
    "p95": 50,
    "max": 50,
    "over50": 0
   },
   "approach": {
-   "n": 28,
-   "mean": 36.9,
-   "p95": 50,
-   "max": 50,
-   "over50": 0
+   "n": 26,
+   "mean": 41.7,
+   "p95": 50.1,
+   "max": 50.1,
+   "over50": 2
   },
   "concealing": {
-   "n": 32,
-   "mean": 40.6,
-   "p95": 66.7,
-   "max": 66.7,
-   "over50": 3
+   "n": 24,
+   "mean": 53.5,
+   "p95": 66.8,
+   "max": 83.3,
+   "over50": 11
   },
   "covered": {
-   "n": 13,
-   "mean": 19.2,
-   "p95": 33.4,
-   "max": 33.4,
-   "over50": 0
+   "n": 12,
+   "mean": 22.2,
+   "p95": 66.8,
+   "max": 66.8,
+   "over50": 1
   },
   "revealing": {
-   "n": 60,
-   "mean": 16.7,
-   "p95": 16.8,
-   "max": 16.8,
+   "n": 57,
+   "mean": 17.5,
+   "p95": 33.3,
+   "max": 33.4,
    "over50": 0
   },
   "after": {
    "n": 1,
-   "mean": 16.7,
-   "p95": 16.7,
-   "max": 16.7,
+   "mean": 16.6,
+   "p95": 16.6,
+   "max": 16.6,
    "over50": 0
   }
  },
- "chromium dramatic 1440×900 long tasks": [],
+ "chromium dramatic 1440×900 long tasks": [
+  74
+ ],
  "firefox dramatic immediate frames": {
   "concealing": {
    "n": 52,
-   "mean": 24.1,
-   "p95": 50,
-   "max": 83.3,
+   "mean": 24,
+   "p95": 49.4,
+   "max": 83.5,
    "over50": 2
   },
   "covered": {
-   "n": 14,
-   "mean": 29.8,
-   "p95": 66.7,
-   "max": 66.7,
-   "over50": 2
+   "n": 10,
+   "mean": 26.7,
+   "p95": 50,
+   "max": 50,
+   "over50": 0
   },
   "revealing": {
-   "n": 35,
-   "mean": 28.6,
-   "p95": 66.7,
-   "max": 66.7,
-   "over50": 3
+   "n": 34,
+   "mean": 29.4,
+   "p95": 50.7,
+   "max": 66.2,
+   "over50": 4
   },
   "none": {
    "n": 1,
-   "mean": 16.7,
-   "p95": 16.7,
-   "max": 16.7,
+   "mean": 16.5,
+   "p95": 16.5,
+   "max": 16.5,
    "over50": 0
   }
  },
  "firefox dramatic long tasks": [],
- "firefox dramatic overlay nodes": 38,
+ "firefox dramatic overlay nodes": 41,
  "firefox dramatic covered-hold frames": {
-  "n": 148,
-  "mean": 17.3,
-  "p95": 17.1,
-  "max": 50,
-  "over50": 0
+  "n": 137,
+  "mean": 18.6,
+  "p95": 33.9,
+  "max": 50.9,
+  "over50": 4
  },
- "firefox subdued total ms": 253,
+ "firefox subdued total ms": 264,
  "firefox subdued overlay nodes": 11,
  "firefox cloud bitmaps prepare": {
-  "ms": 86,
-  "worstMainThreadStallMs": 36,
+  "ms": 77,
+  "longestOwnTaskMs": 9,
+  "pageWorstStallMs": 47,
   "overlayNodes": 35
  },
  "firefox loading": {
-  "firstGlobeMs": 1339,
-  "readyMs": 6472,
-  "sectorMs": 5745,
-  "reorders": 5,
+  "firstGlobeMs": 1379,
+  "readyMs": 6113,
+  "sectorMs": 5962,
+  "reorders": 0,
   "pool": 8,
-  "scanFirstNewMs": 828,
-  "scanReadyMs": 5723
+  "scanFirstNewMs": 932,
+  "scanReadyMs": 5968
  },
  "firefox dramatic frames": {
   "before Begin": {
    "n": 2,
-   "mean": 16.7,
-   "p95": 16.7,
-   "max": 16.7,
+   "mean": 16.8,
+   "p95": 16.8,
+   "max": 16.8,
    "over50": 0
   },
   "approach": {
    "n": 61,
    "mean": 16.4,
-   "p95": 17.1,
-   "max": 17.3,
+   "p95": 17.2,
+   "max": 17.6,
    "over50": 0
   },
   "concealing": {
-   "n": 64,
-   "mean": 19.8,
+   "n": 63,
+   "mean": 19.6,
    "p95": 33.3,
-   "max": 50,
-   "over50": 0
+   "max": 66.9,
+   "over50": 1
   },
   "covered": {
-   "n": 11,
-   "mean": 18.2,
-   "p95": 33.3,
-   "max": 33.3,
-   "over50": 0
+   "n": 10,
+   "mean": 25,
+   "p95": 50.1,
+   "max": 50.1,
+   "over50": 1
   },
   "revealing": {
    "n": 41,
-   "mean": 24.4,
-   "p95": 50,
-   "max": 66.7,
-   "over50": 2
+   "mean": 24,
+   "p95": 49.2,
+   "max": 50.3,
+   "over50": 1
   },
   "after": {
    "n": 1,
-   "mean": 16.7,
-   "p95": 16.7,
-   "max": 16.7,
+   "mean": 17,
+   "p95": 17,
+   "max": 17,
    "over50": 0
   }
  },
  "firefox async hold 1.5 s frames": {
   "before Begin": {
    "n": 2,
-   "mean": 16.6,
-   "p95": 16.7,
-   "max": 16.7,
+   "mean": 17.1,
+   "p95": 17.6,
+   "max": 17.6,
    "over50": 0
   },
   "approach": {
    "n": 61,
    "mean": 16.4,
-   "p95": 16.7,
-   "max": 16.7,
+   "p95": 17.4,
+   "max": 17.6,
    "over50": 0
   },
   "concealing": {
-   "n": 69,
-   "mean": 18.4,
-   "p95": 33.3,
-   "max": 50,
+   "n": 58,
+   "mean": 21.6,
+   "p95": 49.6,
+   "max": 49.9,
    "over50": 0
   },
   "covered": {
-   "n": 89,
-   "mean": 17.6,
-   "p95": 17.3,
-   "max": 50,
-   "over50": 0
+   "n": 72,
+   "mean": 25.2,
+   "p95": 50.2,
+   "max": 50.9,
+   "over50": 5
   },
   "revealing": {
-   "n": 47,
-   "mean": 21.3,
-   "p95": 50,
-   "max": 50.6,
-   "over50": 2
+   "n": 32,
+   "mean": 30.7,
+   "p95": 65.8,
+   "max": 66.7,
+   "over50": 3
   },
   "after": {
    "n": 1,
-   "mean": 16.7,
-   "p95": 16.7,
-   "max": 16.7,
+   "mean": 16.9,
+   "p95": 16.9,
+   "max": 16.9,
    "over50": 0
   }
  },
@@ -419,37 +429,37 @@
  "firefox reduced motion frames": {
   "before Begin": {
    "n": 2,
-   "mean": 16.7,
-   "p95": 16.7,
-   "max": 16.7,
+   "mean": 16.6,
+   "p95": 17.5,
+   "max": 17.5,
    "over50": 0
   },
   "concealing": {
-   "n": 14,
-   "mean": 22.6,
-   "p95": 50,
-   "max": 50,
-   "over50": 0
+   "n": 10,
+   "mean": 28.3,
+   "p95": 50.4,
+   "max": 50.4,
+   "over50": 2
   },
   "covered": {
-   "n": 11,
-   "mean": 16.7,
-   "p95": 16.7,
-   "max": 16.7,
+   "n": 9,
+   "mean": 22.2,
+   "p95": 49.6,
+   "max": 49.6,
    "over50": 0
   },
   "revealing": {
-   "n": 20,
-   "mean": 18.4,
-   "p95": 50,
-   "max": 50,
-   "over50": 0
+   "n": 14,
+   "mean": 26.2,
+   "p95": 66.6,
+   "max": 66.6,
+   "over50": 2
   },
   "after": {
    "n": 1,
-   "mean": 16.7,
-   "p95": 16.7,
-   "max": 16.7,
+   "mean": 16,
+   "p95": 16,
+   "max": 16,
    "over50": 0
   }
  },
@@ -457,30 +467,30 @@
  "gpu GPU (Metal) departure frames": {
   "before Begin": {
    "n": 1,
-   "mean": 16.6,
-   "p95": 16.6,
-   "max": 16.6,
+   "mean": 16.7,
+   "p95": 16.7,
+   "max": 16.7,
    "over50": 0
   },
   "approach": {
    "n": 60,
    "mean": 16.7,
-   "p95": 16.8,
+   "p95": 16.7,
    "max": 16.8,
    "over50": 0
   },
   "concealing": {
-   "n": 77,
+   "n": 78,
    "mean": 16.7,
    "p95": 16.8,
    "max": 16.8,
    "over50": 0
   },
   "covered": {
-   "n": 13,
+   "n": 14,
    "mean": 16.7,
-   "p95": 16.8,
-   "max": 16.8,
+   "p95": 16.7,
+   "max": 16.7,
    "over50": 0
   },
   "revealing": {
@@ -501,7 +511,7 @@
  "gpu GPU (Metal) departure long tasks": [],
  "gpu standalone dramatic frames": {
   "concealing": {
-   "n": 74,
+   "n": 76,
    "mean": 16.7,
    "p95": 16.7,
    "max": 16.8,
@@ -515,48 +525,48 @@
    "over50": 0
   },
   "revealing": {
-   "n": 59,
+   "n": 60,
    "mean": 16.7,
-   "p95": 16.7,
+   "p95": 16.8,
    "max": 16.8,
    "over50": 0
   },
   "none": {
    "n": 1,
-   "mean": 16.8,
-   "p95": 16.8,
-   "max": 16.8,
+   "mean": 16.7,
+   "p95": 16.7,
+   "max": 16.7,
    "over50": 0
   }
  },
- "gpu standalone subdued total ms": 243,
+ "gpu standalone subdued total ms": 265,
  "gpu standalone subdued frames": {
   "concealing": {
    "n": 5,
-   "mean": 16.6,
+   "mean": 16.7,
    "p95": 16.7,
    "max": 16.7,
    "over50": 0
   },
   "covered": {
    "n": 1,
-   "mean": 16.7,
-   "p95": 16.7,
-   "max": 16.7,
+   "mean": 16.6,
+   "p95": 16.6,
+   "max": 16.6,
    "over50": 0
   },
   "revealing": {
    "n": 8,
    "mean": 16.7,
-   "p95": 16.7,
-   "max": 16.7,
+   "p95": 16.8,
+   "max": 16.8,
    "over50": 0
   },
   "none": {
    "n": 1,
-   "mean": 16.7,
-   "p95": 16.7,
-   "max": 16.7,
+   "mean": 16.6,
+   "p95": 16.6,
+   "max": 16.6,
    "over50": 0
   }
  }
