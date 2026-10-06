@@ -81,6 +81,12 @@
   upgrade-preview, upgrade-purchase, growth-focus, local-upgrade, bubble-collect, win, run-ready), stable data-tutorial anchors
   on the controls, and BLOOM_RUN_UI.placeBubble(sectionId) for a bonus bubble placed on purpose. Contracts:
   docs/TRAINING_FOUNDATION_v1.md. QA: tools/training-check.js.
+  BLOOM-029B (migration path): &ui=18 shows the PRODUCTION Planet View (resources/run-ui/planet-view.js, Concept 18) over the
+  SAME run: it reads and acts only through BLOOM_RUN_UI.adapter, draws the map with resources/run-ui/run-map-renderer.js over
+  the canonical planet surface (resources/planet-surface/planet-surface.js, the same surface PlanetSphereView wraps), and
+  hides the temporary shell below. Without ui=18 nothing here changes. THE SHELL BELOW (header HUD, inspect / shop sidebars,
+  footer, its draw()) IS MIGRATION-ONLY: it stays as the full-mechanics regression harness until the 029C/029D rooms exist and
+  BLOOM-029E makes the production UI the default and retires it. docs/PRODUCTION_PLANET_VIEW_v1.md.
 -->
 <style>
   :root{
@@ -340,6 +346,12 @@
 <script src="../resources/bloom-play.js"></script>
 <!-- BLOOM-029A: the run UI production boundary (read-only snapshots + the real actions, for the future run screen) -->
 <script src="../resources/run-ui/run-ui-adapter.js"></script>
+<!-- BLOOM-029B: the production Planet View (shown only with &ui=18 during the migration; inert otherwise). The canonical planet
+     surface is shared with PlanetSphereView; the map renderer and the view read the run only through the adapter. -->
+<link rel="stylesheet" href="../resources/run-ui/planet-view.css">
+<script src="../resources/planet-surface/planet-surface.js"></script>
+<script src="../resources/run-ui/run-map-renderer.js"></script>
+<script src="../resources/run-ui/planet-view.js"></script>
 <!-- the game UI below is inert (type="text/plain") until the boot script after it has chosen the planet:
      it then runs as an ordinary classic script, so its globals (sim, selected, refreshShop …) are unchanged -->
 <script type="text/plain" id="bloomUI">
@@ -374,6 +386,9 @@ let running=!TRAIN, speed=1; // (BLOOM-028D1: a training run starts paused)
 // BLOOM-028D1: generic run events for the layers built on this page (the tutorial). Each is a CustomEvent "bloom:<type>" on
 // document, dispatched at the real action point AFTER the action took effect; detail is plain data. They change nothing here.
 const emit=(type,detail)=>document.dispatchEvent(new CustomEvent("bloom:"+type,{detail}));
+// BLOOM-029B: &ui=18 = the production Planet View over this same run (migration path); the shell below is then hidden and its map
+// is not drawn (its DOM and state stay: they are the adapter's host). Without it, nothing changes.
+const UI18=new URLSearchParams(location.search).get("ui")==="18"&&!!(window.BLOOM&&BLOOM.planetView&&BLOOM.runUI);
 // BLOOM-029A: the run UI boundary (resources/run-ui/run-ui-adapter.js), created near the end of this script. Until then (and if the
 // adapter file is missing) these two hooks do nothing, so the shell never depends on it.
 let runUI={ invalidate(){}, frame(){} };
@@ -399,9 +414,11 @@ function playActions(){ const X=PC.actions, q=BLOOM.play.runQuery;
 const actBtn=a=>`<button type="button" data-act="${a.id}" data-go="${a.href||""}" data-tutorial="action-${a.id}"${a.primary?' class="primary"':""}>${a.label}${a.note?`<small>${a.note}</small>`:""}</button>`;
 function runActionsHtml(){ return `<div class="runacts" id="runActions" data-tutorial="run-actions"><h3>WHAT NEXT?</h3><div class="grid">${playActions().map(actBtn).join("")}</div></div>`; }
 // leaving a live run asks first (it is not saved); after a win or an extinction it just goes
-function wireActions(el){ el.querySelectorAll("button[data-go]").forEach(b=>b.addEventListener("click",()=>{
-  if(TRAIN) return trainingGo(b.dataset.act); // (BLOOM-028D1) nothing to lose in training: no confirm
-  if(!sim.won&&!sim.lost&&!confirm(PC.actions.confirmLeave)) return; location.href=b.dataset.go; })); }
+function wireActions(el){ el.querySelectorAll("button[data-go]").forEach(b=>b.addEventListener("click",()=>goAction(b.dataset.act,b.dataset.go))); }
+// (BLOOM-029B) one run-menu / post-run action, extracted unchanged so the shell's buttons and the run UI adapter take the same path
+function goAction(act,href){
+  if(TRAIN) return trainingGo(act); // (BLOOM-028D1) nothing to lose in training: no confirm
+  if(!sim.won&&!sim.lost&&!confirm(PC.actions.confirmLeave)) return false; location.href=href; return true; }
 // (BLOOM-028D1) training actions go through the training layer (fade, status); without it (an ES module: not over file://) just go
 function trainingGo(act){ const ui=window.BLOOM_TRAINING_UI; if(ui) return ui.go(act);
   if(act==="restartTraining") location.reload(); else location.href=TRAIN.returnTo; }
@@ -475,6 +492,7 @@ function resize(){ fit(); cv.width=W*TILE*dpr; cv.height=H*TILE*dpr; cv.style.wi
 const rgb=c=>`rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`;
 
 function draw(){
+  if(UI18) return; // (BLOOM-029B) the production map draws the run instead (the shell is hidden)
   ctx.clearRect(0,0,cv.width,cv.height);
   if(PRESS||CLIM){ const k=skyNow(); DRAW_T=k.t; DRAW_M=k.m; } else { DRAW_T=G.temp; DRAW_M=G.moist; }
   const frosty=FROST?SEC.map(s=>DRAW_T+s.local.tempOffset<FROST_BELOW):null; // (live: warming the sky melts the glints)
@@ -919,7 +937,7 @@ const CX_COLOR={ contested:"#c79af0", playerAdvantage:"#7fe3c0", nativeRetake:"#
 function pollCompetition(now){
   if(!COMP) return;
   for(const ev of CS.events){ if(ev.id<=cxSeen) continue; cxSeen=ev.id;
-    const msg=CX_MSG[ev.type](LABEL[ev.sec]); CX_HIST.push({type:ev.type, sec:ev.sec, name:LABEL[ev.sec], tick:ev.tick, msg}); CX_FX.push({sec:ev.sec, color:CX_COLOR[ev.type], until:now+6000});
+    const msg=CX_MSG[ev.type](LABEL[ev.sec]); CX_HIST.push({type:ev.type, sec:ev.sec, name:LABEL[ev.sec], tick:ev.tick, msg}); CX_FX.push({sec:ev.sec, color:CX_COLOR[ev.type], type:ev.type, until:now+6000});
     log(msg); const b=document.getElementById("cbar"); b.classList.add("pulse"); setTimeout(()=>b.classList.remove("pulse"),1800); }
   for(let k=CX_FX.length-1;k>=0;k--) if(now>CX_FX[k].until) CX_FX.splice(k,1);
 }
@@ -1323,9 +1341,15 @@ if(window.BLOOM&&BLOOM.runUI){
       skyFx:()=>skyFx, message:()=>lastMessage, tilePx:()=>TILE, canvas:cv, compBar:()=>compBar },
     read:{ skyNow, catLamp, isBlocked, tileCounts, limitText:e=>LIMIT_MSG[e.limitKey](e), fixHint:e=>FIX_HINT[e.limitKey](e),
       colonyWord:w=>COLONY_WORD[w], colonyHint:w=>COLONY_HINT[w], colonyTip, focusUI:FOCUS_UI, specUI:SPEC_UI, geoInfo, compWhy,
-      pressureStatus, phaseName, climForecast, upgradeState, offeredOn, computePreview, tileAt:(x,y)=>tileAt({clientX:x, clientY:y}) },
-    act:{ setRunning, setSpeed, selectAt, showPreview, clearPreview, buy, chooseFocus, buySpec, collectBubbleAt, placeBubble } });
+      pressureStatus, phaseName, climForecast, upgradeState, offeredOn, computePreview, tileAt:(x,y)=>tileAt({clientX:x, clientY:y}),
+      runMenu:()=>PLAY?{label:TRAIN?TC.menu:PC.actions.menu, items:playActions()}:null },
+    act:{ setRunning, setSpeed, selectAt, showPreview, clearPreview, buy, chooseFocus, buySpec, collectBubbleAt, placeBubble,
+      runAction:id=>{ const a=PLAY&&playActions().find(x=>x.id===id); return a?goAction(a.id,a.href||""):false; } },
+    // (BLOOM-029B) the map's render hints and this page's own transient map feedback, for the production map
+    map:{ render:RENDER, crossings:()=>XANIM, crossingTiming:{travel:XTRAVEL, land:XLAND}, flashes:()=>({thresholds:PX_FX, competition:CX_FX}) } });
   window.BLOOM_RUN_UI.adapter=runUI.adapter;
+  // (BLOOM-029B) &ui=18: mount the production Planet View on the adapter (before bloom:run-ready, so anchors and controls exist)
+  if(UI18) BLOOM.planetView.mount(runUI.adapter,{root:document.body});
 }
 // BLOOM-008/009: open on the origin so its colony status and growth focus are the first thing in view
 selected=ORIGIN; renderInspect(); log(`Your plant has just sprouted in ${LABEL[ORIGIN]}: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish.`);

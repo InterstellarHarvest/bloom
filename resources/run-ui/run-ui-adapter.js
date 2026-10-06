@@ -14,6 +14,13 @@
 //   const runUI = BLOOM.runUI.createAdapter(host)   → { adapter, invalidate(reason), frame() }   (the latter two are the page's)
 //   window.BLOOM_RUN_UI.adapter                      → the adapter (the run page publishes it before bloom:run-ready)
 //
+// BLOOM-029B (additive; api stays 1): four more reads and one action for the production Planet View — surface() (the canonical
+// planet-surface source: the planet's own grid, tilemap, region climate offsets, topology, render hints and the sky the ground
+// sees now), mapState() (per-tile living / dead / native state and density: what the map's live overlays draw), effects() (the
+// page's own transient map feedback: water crossings, threshold / competition outlines, the last Terraform change) and runMenu()
+// + actions.runAction(id) (the player / training run menu: the page's own items and its own leave / training path). Each is a copy
+// of existing truth; none adds a rule. docs/PRODUCTION_PLANET_VIEW_v1.md §6.
+//
 // Classic script, no dependencies: boots over file:// like every other run-page file.
 (function (root) {
   "use strict";
@@ -23,11 +30,12 @@
   const EVENTS = ["run-ready", "play-pause", "speed", "region-select", "upgrade-preview", "upgrade-purchase", "growth-focus",
     "local-upgrade", "bubble-collect", "win"];
   const HOST_SHAPE = {
-    "": ["sim", "run", "labels", "events", "categories", "boards", "speeds", "scenario", "view", "read", "act"],
+    "": ["sim", "run", "labels", "events", "categories", "boards", "speeds", "scenario", "view", "read", "act", "map"],
     view: ["running", "speed", "selected", "selectedWater", "coverage", "preview", "skyFx", "message", "tilePx", "canvas", "compBar"],
     read: ["skyNow", "catLamp", "isBlocked", "tileCounts", "limitText", "fixHint", "colonyWord", "colonyHint", "colonyTip", "focusUI",
-      "specUI", "geoInfo", "compWhy", "pressureStatus", "phaseName", "climForecast", "upgradeState", "offeredOn", "computePreview", "tileAt"],
-    act: ["setRunning", "setSpeed", "selectAt", "showPreview", "clearPreview", "buy", "chooseFocus", "buySpec", "collectBubbleAt", "placeBubble"],
+      "specUI", "geoInfo", "compWhy", "pressureStatus", "phaseName", "climForecast", "upgradeState", "offeredOn", "computePreview", "tileAt", "runMenu"],
+    act: ["setRunning", "setSpeed", "selectAt", "showPreview", "clearPreview", "buy", "chooseFocus", "buySpec", "collectBubbleAt", "placeBubble", "runAction"],
+    map: ["render", "crossings", "crossingTiming", "flashes"], // (BLOOM-029B) the map's render hints and the page's transient map feedback
   };
 
   // plain-data copy: arrays (and typed arrays) become arrays, objects are copied key by key, functions are dropped
@@ -101,7 +109,8 @@
         summary: scn && scn.display ? scn.display.summary : null, pressure: null, competition: null, climate: null };
       if (S.press) { const P = sim.pressure, st = R.pressureStatus();
         out.pressure = { phase: P.phase, phaseName: R.phaseName(P.phase), progress: P.progress, seconds: P.seconds,
-          offsets: plain(P.offsets), max: plain(P.max), next: st.next, nextIn: st.nextIn, extinctionIn: st.extinctionIn }; }
+          offsets: plain(P.offsets), max: plain(P.max), next: st.next, nextIn: st.nextIn, extinctionIn: st.extinctionIn,
+          phaseMarks: scn.pressure.phases.map(p => p.from) }; } // (029B) where each phase begins on the progress meter
       if (S.comp) { const C = sim.competition, bar = V.compBar();
         out.competition = { share: C.share, startShare: C.startShare, peakShare: C.peakShare, contested: C.contested,
           trend: bar ? bar.trend : null, trendText: bar ? bar.trendText : null, playerLeads: bar ? bar.playerLeads : null, nativeLeads: bar ? bar.nativeLeads : null }; }
@@ -111,7 +120,7 @@
             shock: X.shock ? { ...plain(X.shock), endsIn: tickSeconds(X.shock.endTick - sim.ticks) } : null,
             pending: X.pending ? { ...plain(X.pending), startsIn: tickSeconds(X.pending.startTick - sim.ticks) } : null }; }
         out.climate = { level: C.level, band: C.band, bandName: S.bands[C.band].name, peak: C.peak, offsets: plain(C.offsets), env: plain(C.env),
-          axes, forecast: R.climForecast() }; }
+          axes, forecast: R.climForecast(), threshold: scn.climateInstability.shocks.threshold }; } // (029B) the shock threshold the meter marks
       return out;
     }
     function regionSummary(i, liv) {
@@ -191,6 +200,43 @@
     }
     function tileAt(clientX, clientY) { const t = R.tileAt(clientX, clientY); return { tile: t.tile, region: t.sec, id: t.sec >= 0 ? SEC[t.sec].id : null }; }
 
+    // ---- (BLOOM-029B) the production map's sources. Copies of existing truth: the planet the sim runs on, its tiles, the page's own
+    // transient feedback. Read surface() when the sky changes; mapState() / effects() once per drawn frame.
+    const MP = host.map;
+    // the canonical planet surface's source (resources/planet-surface/planet-surface.js): the run's planet with the sim's own resolved
+    // layout (land regions + tilemap, -1 = water / impassable), its archetype's render hints and the sky its ground sees now (Terraform
+    // + scenario drift / shock: the sky the old map drew its ground under). Never regenerated: this is the planet the sim was built on.
+    function surface() {
+      const P = run.planet, sky = hud().skyNow;
+      return { planet: { id: P.id, name: P.name, gridWidth: M.W, gridHeight: M.H, globalClimate: plain(P.globalClimate),
+          sections: SEC.map(s => ({ id: s.id, name: s.name, local: { tempOffset: s.local.tempOffset, moistureOffset: s.local.moistureOffset } })),
+          tilemap: Array.from(M.TILEMAP), topology: plain(M.topology) },
+        render: MP.render ? plain(MP.render) : null,
+        sky: { temperature: sky.temp, moisture: sky.moist }, startSky: { temperature: P.globalClimate.temperature, moisture: P.globalClimate.moisture } };
+    }
+    // per-tile live state (copies): state 0 bare · 1 living · 2 dead; stand density; native density (competition runs, else null);
+    // per-region vigor. What the old map's vegetation / dead / native layers drew, tile for tile.
+    function mapState() {
+      const st = sim.state, out = new Uint8Array(M.N);
+      for (let i = 0; i < M.N; i++) out[i] = st[i] === sim.LIV ? 1 : st[i] === sim.DEAD ? 2 : 0;
+      return { ticks: sim.ticks, width: M.W, height: M.H, state: out, density: Float32Array.from(sim.dens),
+        native: S.comp ? Float32Array.from(sim.competition.native) : null, vigor: Float32Array.from(sim.vigor) };
+    }
+    // the page's transient map feedback, as it is now: water-crossing animations (engine events; elapsed ms of each), threshold
+    // outlines (scenario drift / shocks pushed a region worse or opened it), competition-event outlines, and the last Terraform
+    // purchase's effect on the land (for a few seconds). Times are ms left / elapsed on the page's clock (performance.now()).
+    function effects() {
+      const now = performance.now(), fx = V.skyFx(), fl = MP.flashes(), T = MP.crossingTiming;
+      return {
+        crossings: MP.crossings().map(a => ({ id: a.id, from: a.from, to: a.to, took: !!a.took, elapsed: now - a.t0 })), crossingTiming: { travel: T.travel, land: T.land },
+        thresholds: fl.thresholds.filter(x => now < x.until).map(x => ({ ...ref(x.sec), worse: !!x.worse, left: x.until - now })),
+        competition: fl.competition.filter(x => now < x.until).map(x => ({ ...ref(x.sec), type: x.type || null, left: x.until - now })),
+        skyChange: fx && now < fx.until ? { axis: fx.axis, text: fx.delta, gain: ids(fx.gain), lose: ids(fx.lose), better: ids(fx.better), worse: ids(fx.worse), left: fx.until - now } : null,
+      };
+    }
+    // the player / training run menu (null in the developer harness): the page's own label and items
+    function runMenu() { const m = R.runMenu(); return m ? { label: m.label, items: m.items.map(a => ({ id: a.id, label: a.label, note: a.note || null, primary: !!a.primary })) } : null; }
+
     // ---- actions: the run page's own functions (each fires its bloom:* event itself)
     const actions = Object.freeze({
       setRunning(on) { on = !!on; if (on !== V.running()) A.setRunning(on); return V.running(); },
@@ -209,12 +255,14 @@
       buyLocalUpgrade(r, id) { const i = indexOf(r); if (i < 0 || !Object.prototype.hasOwnProperty.call(CFG.colony.specializations, id)) return false; return A.buySpec(id, i) === true; },
       collectBubble(tile) { const k = sim.bubbles.findIndex(b => b.tile === tile); return k >= 0 && A.collectBubbleAt(k) === true; },
       placeBubble(regionId) { return A.placeBubble(regionId); },
+      // (BLOOM-029B) a run-menu item: the page's own path (training layer / leave confirmation / navigation); unknown id → false
+      runAction(id) { const m = R.runMenu(); if (!m || !m.items.some(a => a.id === id)) return false; return A.runAction(id) !== false; },
     });
 
     const adapter = Object.freeze({
       api: API_VERSION, events: Object.freeze(EVENTS.map(t => "bloom:" + t)),
       run: runInfo, hud, scenario, regions, region, selection, upgrades, upgrade, previewOf, activePreview, wouldHelp, colony, bubbles,
-      message: () => V.message(), map, tileAt, actions,
+      message: () => V.message(), map, tileAt, surface, mapState, effects, runMenu, actions,
       subscribe(fn) { if (typeof fn !== "function") throw new TypeError("subscribe needs a function"); listeners.add(fn); return () => { listeners.delete(fn); }; },
       get revision() { return revision; },
     });
