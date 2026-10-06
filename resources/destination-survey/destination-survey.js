@@ -37,14 +37,16 @@ import { SURVEY_CLASSES, ROWS, columnCandidates, columnFromValidated, assembleSe
 const COLS = SURVEY_CLASSES.length, N = ROWS * COLS;
 const GLOBE_DISTANCE = 3.6;                 // the disc fills ~92% of its box, in the grid and in focus alike (no reframing)
 const EASE_OUT = "cubic-bezier(.2,.8,.2,1)", EASE_IN = "cubic-bezier(.55,0,.85,.35)", EASE_FLIP = "cubic-bezier(.3,.7,.2,1)";
-const T = { flipIn: 720, flipInDelay: 90, flipOut: 620, recede: 240, regrow: 380, regrowAfter: 0.62, scanOut: 200, scanIn: 340, scanStep: 82, fadeOut: 150, fadeIn: 220,
+const T = { flipIn: 720, flipOut: 620, darken: 200, scanOut: 200, scanIn: 340, scanStep: 82, fadeOut: 150, fadeIn: 220,
   // departure (028B): UI recedes, the planet approach starts a beat later, the clouds close in while it is still visible
   departRecede: 320, departRecedeRm: 200, approachDelay: 60, approachMorph: 760, dollyDelay: 120, dolly: 2500, cloudsAfter: 1000 };
 // (cloudsAfter: the planet zooms alone for a beat — ~1 s, the world visibly coming closer — before the atmosphere arrives)
 const DOLLY_TO = 1.45; // the view's closest camera distance: the disc is then ~3 × the screen height (no longer readable as a ball)
 // Choreography rule: globes on one renderer share one depth buffer, so where two globe boxes overlap they intersect by depth,
-// not by paint order (docs/evidence/bloom-028a/REPORT.md). The flying globe therefore never crosses a full-size neighbour: the
-// others shrink away first (fast ease-out) and the flight starts a beat later; on the way back they regrow only once it has passed.
+// not by paint order (docs/evidence/bloom-028a/REPORT.md). Nothing may therefore sit under the flying globe. (028B, owner) The
+// other worlds DARKEN away (a background-coloured disc fades over each; globe pixels ignore CSS opacity) and are hidden before
+// the chosen one flies; on the way back each reappears — under its cover, which then fades — as soon as the rest of the flight
+// can no longer touch it, all finishing exactly as the globe lands.
 const SCAN_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5" opacity=".6"/><path d="M12 12 L19 6"/></svg>`;
 const hash01 = (a, b) => { let h = Math.imul((a >>> 0) ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(b + 1, 0xc2b2ae35); h ^= h >>> 15; h = Math.imul(h, 0x2c1b3c6d); h ^= h >>> 12; return (h >>> 0) / 4294967296; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -129,19 +131,19 @@ export class DestinationSurvey {
     this.state = "to-focus"; this.selected = i;
     const cand = this.cells[i], g = this.globes[i], rm = this.reducedMotion, others = this._others(i);
     this._fillDossier(cand); this.root.dataset.class = cand.classId;
-    if (rm) await this._fade(0);
-    const first = g.getBoundingClientRect();
-    this.focusSlot.appendChild(g);
-    this._setMode("focus");
-    if (rm) { for (const j of others) this.globes[j].classList.add("is-receded"); await this._fade(1); }
-    else {
-      const last = g.getBoundingClientRect(), [r0, c0] = rowCol(i);
-      await Promise.all([this._flip(g, first, last, T.flipIn, T.flipInDelay), ...others.map(j => {
-        const [r, c] = rowCol(j), d = Math.hypot(r - r0, c - c0), el = this.globes[j];
-        const a = el.animate([{ transform: "none" }, { transform: `translate(${(c - c0) * 14}%, ${(r - r0) * 14}%) scale(.06)` }],
-          { duration: T.recede, delay: d * 20, easing: EASE_OUT, fill: "forwards" });
-        return a.finished.then(() => { el.classList.add("is-receded"); a.cancel(); }, () => {});
-      })]);
+    if (rm) {
+      await this._fade(0);
+      this.focusSlot.appendChild(g); this._setMode("focus");
+      for (const j of others) this.globes[j].classList.add("is-receded");
+      await this._fade(1);
+    } else {
+      // (028B) the others darken away and are hidden first; then the chosen world flies from its cell into the focus slot
+      this._setMode("focus");
+      await this._darken(others);
+      if (this.state === "disposed") return false;
+      const first = g.getBoundingClientRect();
+      this.focusSlot.appendChild(g);
+      await this._flip(g, first, g.getBoundingClientRect(), T.flipIn);
     }
     if (this.state === "disposed") return false;
     this.views[i].setInteractionEnabled(true); // the accepted controls: horizontal drag / ← → spin; vertical ignored
@@ -160,16 +162,11 @@ export class DestinationSurvey {
     if (rm) await this._fade(0);
     const first = g.getBoundingClientRect();
     this.slots[i].insertBefore(g, this.slots[i].firstChild);
-    for (const j of others) this.globes[j].classList.remove("is-receded");
     this._setMode("survey");
-    if (rm) await this._fade(1);
+    if (rm) { for (const j of others) this.globes[j].classList.remove("is-receded"); await this._fade(1); }
     else {
-      const last = g.getBoundingClientRect(), [r0, c0] = rowCol(i);
-      await Promise.all([this._flip(g, first, last, T.flipOut), ...others.map(j => {
-        const [r, c] = rowCol(j), d = Math.hypot(r - r0, c - c0);
-        return this.globes[j].animate([{ transform: `translate(${(c - c0) * 14}%, ${(r - r0) * 14}%) scale(.06)` }, { transform: "none" }],
-          { duration: T.regrow, delay: T.flipOut * T.regrowAfter + d * 40, easing: EASE_OUT, fill: "backwards" }).finished.catch(() => {});
-      })]);
+      const last = g.getBoundingClientRect();
+      await Promise.all([this._flip(g, first, last, T.flipOut), this._brightenDuringReturn(first, last, others)]);
     }
     if (this.state === "disposed") return false;
     this.state = "survey"; this.selected = null; this.stats.returns++;
@@ -313,7 +310,7 @@ export class DestinationSurvey {
       <header class="ds-head">
         <div class="ds-title"><span class="ds-kicker">BLOOM · Expedition planning</span><h1>Destination Survey</h1></div>
         <p class="ds-sector" aria-live="polite"></p>
-        <div class="ds-head-tools"><span class="ds-progress sr-only" role="status"></span><button type="button" class="ds-btn scan" data-act="scan">${SCAN_ICON}<span>Scan <span class="lbl-long">new </span>sector</span></button></div>
+        <div class="ds-head-tools"><span class="ds-progress sr-only" role="status" hidden></span><button type="button" class="ds-btn scan" data-act="scan">${SCAN_ICON}<span>Scan <span class="lbl-long">new </span>sector</span></button></div>
       </header>
       <div class="ds-survey">
         <div class="ds-cols" aria-hidden="true">${SURVEY_CLASSES.map(c => `<div class="ds-colhead" data-class="${c.id}"><b>${c.label}</b><small>${esc(c.blurb)}</small></div>`).join("")}</div>
@@ -395,6 +392,44 @@ export class DestinationSurvey {
 
   // ---------------------------------------------------------------- animation helpers
   _others(i) { return this.globes.map((_, j) => j).filter(j => j !== i && this.cells[j]); }
+
+  /** A background-coloured disc over grid cell j (globe pixels ignore CSS opacity, so they are darkened by covering them). */
+  _cover(j) { const c = document.createElement("span"); c.className = "ds-cover"; this.slots[j].appendChild(c); return c; }
+
+  /** Grid → focus: the other worlds darken to the background together, then are hidden (nothing left under the flight). */
+  async _darken(others) {
+    const covers = others.map(j => this._cover(j));
+    await Promise.all(covers.map(c => c.animate([{ opacity: 0 }, { opacity: 1 }], { duration: T.darken, easing: "ease-in", fill: "forwards" }).finished.catch(() => {})));
+    for (const j of others) this.globes[j].classList.add("is-receded");
+    for (const c of covers) c.remove();
+  }
+
+  /**
+   * Focus → grid: while the globe flies home (`first` → `last`, the FLIP's rectangles), each hidden world reappears under a dark
+   * cover as soon as no remaining part of the flight can touch it (the flight's disc is interpolated over the rest of its path),
+   * and its cover fades so that EVERY world is fully back exactly when the globe lands.
+   */
+  _brightenDuringReturn(first, last, others) {
+    return new Promise(resolve => {
+      const t0 = performance.now(), end = t0 + T.flipOut, g = this.globes[this.selected], pending = new Set(others), fades = [];
+      const disc = (r, k = 0.4585) => ({ x: r.left + r.width / 2, y: r.top + r.height / 2, r: r.width * k });
+      const lerp = (a, b, u) => a + (b - a) * u; // the FLIP rectangle is linear in its progress u (translate + scale)
+      const at = u => ({ left: lerp(first.left, last.left, u), top: lerp(first.top, last.top, u), width: lerp(first.width, last.width, u), height: lerp(first.height, last.height, u) });
+      const clearOf = (j, u0) => { const D = disc(this.slots[j].getBoundingClientRect(), 0.47);
+        for (let u = u0; u <= 1.0001; u += 0.04) { const F = disc(at(Math.min(1, u))); if (Math.hypot(F.x - D.x, F.y - D.y) < F.r + D.r) return false; } return true; };
+      const step = () => {
+        if (this.state === "disposed") return resolve();
+        const now = performance.now(), cur = g.getBoundingClientRect(), span = last.width - first.width;
+        const u = span ? Math.min(1, Math.max(0, (cur.width - first.width) / span)) : Math.min(1, (now - t0) / T.flipOut);
+        for (const j of [...pending]) if (now >= end || clearOf(j, u)) {
+          pending.delete(j); const c = this._cover(j); c.style.opacity = "1"; this.globes[j].classList.remove("is-receded");
+          fades.push(c.animate([{ opacity: 1 }, { opacity: 0 }], { duration: Math.max(60, end - now), easing: "ease-out", fill: "forwards" }).finished.catch(() => {}).then(() => c.remove()));
+        }
+        if (pending.size) requestAnimationFrame(step); else Promise.all(fades).then(() => resolve());
+      };
+      requestAnimationFrame(step);
+    });
+  }
 
   /** FLIP: the element now sits at `last`; animate it from where it was (`first`) to there with a scale + translate. */
   _flip(el, first, last, duration, delay = 0) {
@@ -542,7 +577,7 @@ export class DestinationSurvey {
     // (028B) no visible loading text: each empty spot shows "Incoming" until its world appears; this status is for screen readers
     const n = e ? e.found.reduce((a, b) => a + b, 0) : 0;
     if (this.state === "loading") this._placeholder(null);
-    this.progressEl.textContent = e ? `Surveying sector: ${n} of ${N} worlds confirmed` : "";
+    this.progressEl.textContent = e ? `Surveying sector: ${n} of ${N} worlds confirmed` : ""; this.progressEl.hidden = !e; // (hidden when idle)
   }
 
   /**

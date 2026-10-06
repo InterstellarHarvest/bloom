@@ -83,6 +83,11 @@
 .ds-globe-slot{position:relative; display:block; width:var(--G); height:var(--G)}
 .ds-globe{display:block; width:100%; height:100%}
 .ds-globe.is-receded{display:none}
+/* (028B, owner) grid ↔ focus: the other worlds darken away instead of shrinking. Globe pixels ignore CSS opacity (shared canvas),
+   so a soft disc in the background colour is laid over each one and faded; once dark the globe is hidden (display:none) and the
+   chosen world flies over nothing — globes on one renderer intersect by depth, so nothing may sit under the flying one. */
+.ds-cover{position:absolute; inset:-2%; border-radius:50%; pointer-events:none; opacity:0;
+  background:radial-gradient(closest-side, var(--space-1) 0%, var(--space-1) 93%, color-mix(in srgb, var(--space-1) 0%, transparent) 100%)}
 /* the halo (028B): no ring at rest; on hover / keyboard focus a soft glow hugging the planet's own disc (the disc fills 91.7 %
    of its box at distance 3.6). An outer box-shadow is drawn only OUTSIDE the element, so it never tints the planet. The same
    element pulses outward when a world arrives (the scan / fill-in animations). */

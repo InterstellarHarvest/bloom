@@ -491,6 +491,25 @@ async function loading(browser, B) {
     const hov = await ev(page, () => +getComputedStyle(DESCENT_DEV.survey.slots[2].querySelector(".ds-halo")).opacity);
     check(h.border === "0px" && +h.rest === 0 && h.shadow && Math.abs(h.size - 0.917) < 0.01 && hov === 1 && h.extreme === "#f2604e",
       tag("L6 (owner) no circle around the spots at rest; hover / focus shows a glow hugging the planet's own disc (91.7 % of the box, shadow outside only); Extreme is red"), J({ ...h, hover: hov })); }
+  // L7 (owner) grid ↔ focus: the others darken away (no shrinking); nothing is ever under the flying globe; on return every
+  // world is back when it lands
+  { const out = [];
+    for (const i of [0, 4, 8]) out.push(await ev(page, i => new Promise(res => { const S = DESCENT_DEV.survey, disc = el => { const q = el.getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2, r: q.width * 0.4585, w: q.width }; };
+      const shrinks = () => S.globes.some(g => g.getAnimations().some(a => /scale\(0?\.0/.test(JSON.stringify(a.effect.getKeyframes()))));
+      const watch = (phase, done) => { const t0 = performance.now(), fly = S.globes[i], w0 = disc(fly).w; let minGap = Infinity, flewEarly = 0, shrank = 0, landed = null, allBack = null;
+        const f = () => { const t = performance.now() - t0, F = disc(fly), vis = S.globes.filter((g, j) => j !== i && getComputedStyle(g).display !== "none");
+          if (phase === "select" && Math.abs(F.w - w0) > 1 && vis.length) flewEarly++;
+          if (shrinks()) shrank++;
+          for (const g of vis) { const D = disc(g); minGap = Math.min(minGap, Math.hypot(F.x - D.x, F.y - D.y) - (F.r + D.r)); }
+          if (landed == null && t > 60 && !fly.getAnimations().length) landed = t;
+          if (phase === "return" && allBack == null && t > 60 && vis.length === 8 && !document.querySelector(".ds-cover")) allBack = t;
+          if ((phase === "select" && S.state === "focus") || (phase === "return" && S.state === "survey")) done({ minGap: Math.round(minGap), flewEarly, shrank, late: allBack != null && landed != null ? Math.round(allBack - landed) : null });
+          else requestAnimationFrame(f); };
+        requestAnimationFrame(f); };
+      watch("select", a => setTimeout(() => { watch("return", r => res({ i, sel: a, ret: r })); S.returnToSurvey(); }, 150)); S.select(i); }), i));
+    check(out.every(o => o.sel.flewEarly === 0 && o.sel.shrank === 0 && o.ret.shrank === 0 && o.ret.minGap >= 0 && o.ret.late !== null && o.ret.late <= 50),
+      tag("L7 (owner) select / return: the other worlds darken away (no shrink animation) and are hidden before the chosen globe moves; on return none is ever visible under the flying globe, and all are fully back within a few frames of it landing"),
+      out.map(o => `cell ${o.i}: return min gap ${o.ret.minGap}px, all back ${o.ret.late} ms after landing`).join(" · ")); }
   perf[tag("loading")] = { firstGlobeMs: a.firstGlobe, readyMs: a.ready, sectorMs: a.sectorMs, reorders: a.reorders, pool: a.pool, scanFirstNewMs: sc.firstNew, scanReadyMs: sc.last && sc.last.waitedMs };
   const errs = log.errors.concat(log.warnings).filter(e => !/GPU stall due to ReadPixels/.test(e));
   check(!errs.length, tag("L4 loading: no console errors or warnings"), J(errs).slice(0, 300));
