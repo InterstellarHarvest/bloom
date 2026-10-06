@@ -21,6 +21,7 @@ dossier sits on the right, with **← Return to survey** and **Begin expedition*
 | `resources/destination-survey/destination-survey.js` | **`DestinationSurvey`**: screen composition, 3 × 3 layout, labels, selection, focus state, dossier, scan, return, the Begin Expedition hook, and (028B) the departure choreography that invokes AtmosphereTransition |
 | `resources/destination-survey/survey-data.js` | pure data: which validated worlds a sector shows, their class, their dossier, `planetFingerprint` (no DOM; Node-testable) |
 | `resources/destination-survey/survey-worker.js` | module worker: plans a column's next predicted draws, or validates **one** world (028B); the pool runs up to eight in parallel |
+| `resources/destination-survey/sector-pool.js` | **`SectorPool`** (028C): the worker pool + sector cache, lifted out of `DestinationSurvey` unchanged so the Main Menu can start the first sector before the screen exists (`DestinationSurvey.prefetch`, §4a) |
 | `resources/destination-survey/destination-survey.css` | the screen's look (scoped under `.ds`) |
 | `demos/destination-survey.html` | development entry point (localhost) with a dev placeholder for Begin Expedition (announce only, no `descent`) |
 | `demos/expedition-descent.html` | 028B integration harness: the full departure into a clearly marked development handoff target |
@@ -58,9 +59,14 @@ transforms, which the renderer follows.
   - `workers` (pool size; default hardware threads − 2, clamped 1 … 8; each validation is its own task since 028B);
   - `worker` (`false` builds sectors on the main thread: a degraded path that freezes the screen ~1 s per world);
   - `onBeginExpedition`;
-  - `descent` (028B): play the dramatic departure on Begin Expedition (§3).
-- Methods: `scan()`, `select(i)`, `returnToSurvey()`, `beginExpedition()`, `dispose()`. Each returns `false` / `null` when
-  the screen is mid-transition, so double clicks are harmless.
+  - `descent` (028B): play the dramatic departure on Begin Expedition (§3);
+  - `sectors` (028C): a `SectorPool` to adopt, normally `DestinationSurvey.prefetch(…)` started on the title screen; its
+    prefetched sector is the first shown and the survey owns the pool from then on (§4a);
+  - `onExit` (028C): shows a "← Main menu" ghost button before the title (survey and loading states; Escape leaves too) and
+    is called when the player presses it. The survey changes nothing itself; the consumer transitions and disposes it.
+- Methods: `scan()`, `select(i)`, `returnToSurvey()`, `beginExpedition()`, `exit()` (028C), `dispose()`. Each returns
+  `false` / `null` when the screen is mid-transition, so double clicks are harmless.
+- Static: `DestinationSurvey.prefetch({ sectorSeed, firstBloom, worker, workers })` → a `SectorPool` with one sector started.
 - Read-only state:
   - `state` (`"survey" | "focus" | …`), `selected`, `cells` (the nine candidates), `views`, `host`;
   - `nextSectorReady`;
@@ -185,7 +191,27 @@ whole sector. Now:
 | prefetched sector | ≈ 2.4 s in the background (was 2.9 s) |
 
 **Recommendation for the Main Menu.** Create the survey (or at least start its first sector) while the title screen is
-showing. The slowest world's validation then finishes before the player arrives.
+showing. The slowest world's validation then finishes before the player arrives. → Done in 028C, §4a.
+
+### 4a. Prefetching the first sector without a screen (028C)
+
+The pool and the sector cache now live in `SectorPool` (`sector-pool.js`): the same code, moved. A survey still creates a
+private one unless given `sectors`.
+
+```js
+const pool = DestinationSurvey.prefetch({ sectorSeed: null });   // on the title screen: workers start now; no DOM, no WebGL
+pool.progress                                                    // { seed, confirmed, total: 9, ready, ms }
+const survey = new DestinationSurvey(root, { sectors: pool });   // when the player presses BEGIN
+```
+
+- **Complete at adoption:** the sector arrives with the single prefetched-scan sweep (~0.9 s), buttons enabled at its end.
+- **Half-built at adoption:** the worlds already confirmed are placed at once (the entry's `shown` lists replay through the
+  028B fill-in), the rest show "Incoming" and arrive as confirmed. One `setPlanet` per world, as before.
+- **Identity:** the objects the pool validated are the objects the survey draws, describes and hands on. Nothing is
+  regenerated; the main thread never generates; no WebGL context exists until the survey does.
+- **Ownership:** an adopted pool is disposed with the survey (`dispose()` → workers terminated, entries dropped). Dispose a
+  pool yourself only if no survey ever takes it.
+- Full description, measurements and the menu side: `docs/MAIN_MENU_v1.md` §5.
 
 ## 5. Rules of the screen (keep when extending)
 
@@ -218,3 +244,5 @@ showing. The slowest world's validation then finishes before the player arrives.
 - **Class colours.** Stable green `#86d98f`, Volatile gold `#f2c45a`, Extreme red `#f2604e` (028B; was pink).
 - **The departure never generates, re-plans or re-orients** (028B). It only moves the live view's container, dollies its
   camera and hands over the very `detail.planet` object.
+- **Leaving for the menu (028C)** is the consumer's transition plus `survey.dispose()`; `exit()` only announces. It is
+  refused in focus (Return to survey first), mid-animation and while departing.

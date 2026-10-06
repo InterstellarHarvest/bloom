@@ -30,9 +30,16 @@
 // under full cover is descent.onCovered(detail) called, where the consumer mounts its destination and the survey is disposed;
 // then the clouds part. The cloud overlay itself is resources/atmosphere-transition/ (screen-agnostic) — this file only
 // choreographs its own screen and invokes it. Without `descent`, Begin Expedition only announces the selection (028A).
+//
+// ARRIVAL FROM THE MAIN MENU (028C). The worker pool and sector cache live in SectorPool (./sector-pool.js, the same code lifted
+// out). DestinationSurvey.prefetch(opts) starts a sector with no screen at all — the Main Menu calls it while the title shows —
+// and `new DestinationSurvey(root, { sectors: pool })` adopts it: a finished sector arrives with the prefetched-scan sweep, a
+// half-built one shows what is already confirmed and fills in the rest (the accepted 028B behaviour). The `onExit` option adds
+// a "← Main menu" button; the consumer runs the transition back and disposes the survey (which disposes the pool it owns).
 import { PlanetSphereView, PlanetSphereRenderer } from "../planet-sphere/planet-sphere-view.js";
 import { AtmosphereTransition } from "../atmosphere-transition/atmosphere-transition.js";
-import { SURVEY_CLASSES, ROWS, columnCandidates, columnFromValidated, assembleSector, nextSectorSeed, sectorLabel } from "./survey-data.js";
+import { SURVEY_CLASSES, ROWS, nextSectorSeed, sectorLabel } from "./survey-data.js";
+import { SectorPool } from "./sector-pool.js";
 
 const COLS = SURVEY_CLASSES.length, N = ROWS * COLS;
 const GLOBE_DISTANCE = 3.6;                 // the disc fills ~92% of its box, in the grid and in focus alike (no reframing)
@@ -71,37 +78,63 @@ export class DestinationSurvey {
    *                      onError(err, detail)     a failed descent (default: console.error); the survey is back in focus if alive
    *                      autoDispose              default true
    *                      seed                     fix the cloud layout (reproducible captures); default: a new one every departure
+   * sectors            (028C) a SectorPool to adopt — normally DestinationSurvey.prefetch(…) started on the title screen. Its
+   *                    prefetched sector becomes the first one shown (sectorSeed / firstBloom default to it); the survey owns
+   *                    the pool from here and disposes it with itself. Omitted: a private pool, as before.
+   * onExit             (028C) called when the player leaves for the Main Menu (a "← Main menu" header button appears; Escape
+   *                    in the survey state leaves too). The survey changes nothing itself: the consumer transitions and disposes it.
    */
-  constructor(root, { sectorSeed = null, firstBloom = false, reducedMotion = null, worker = true, workers = null, onBeginExpedition = null, descent = null } = {}) {
+  constructor(root, { sectorSeed = null, firstBloom = false, reducedMotion = null, worker = true, workers = null, onBeginExpedition = null, descent = null, sectors = null, onExit = null } = {}) {
     if (!root || typeof root.appendChild !== "function") throw new TypeError("DestinationSurvey: root must be a DOM element");
     if (descent && typeof descent.onCovered !== "function") throw new TypeError("DestinationSurvey: descent.onCovered must be a function");
-    this.root = root; this.onBeginExpedition = onBeginExpedition; this.forcedReducedMotion = reducedMotion; this.descent = descent;
+    if (sectors && (!(sectors instanceof SectorPool) || sectors.disposed)) throw new TypeError("DestinationSurvey: sectors must be a live SectorPool");
+    this.root = root; this.onBeginExpedition = onBeginExpedition; this.forcedReducedMotion = reducedMotion; this.descent = descent; this.onExit = onExit;
     this.mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
-    this.firstBloom = !!firstBloom; this.useWorker = worker !== false;
-    this.sectorSeed = sectorSeed == null ? 1 + Math.floor(Math.random() * 999998) : sectorSeed >>> 0;
+    // (028C) the pool: adopted (its prefetched sector is the first shown) or private. Validations run one per task (028B), so the
+    // pool uses the machine: hardware threads − 2 (the page's main and compositor threads keep theirs), at most 8.
+    this.sectors = sectors || new SectorPool({ worker, workers });
+    const pre = sectors && sectors.first;
+    this.firstBloom = !!firstBloom || !!(pre && sectorSeed == null && pre.firstBloom);
+    this.sectorSeed = sectorSeed != null ? sectorSeed >>> 0 : pre ? pre.seed : 1 + Math.floor(Math.random() * 999998);
     this.state = "loading"; this.selected = null; this.cells = new Array(N).fill(null); this.sector = null;
-    this.stats = { scans: 0, selects: 0, returns: 0, begins: 0, workerTasks: 0, scanWaits: 0, sectorTimes: [], lastScan: null }; this.sectorSource = null;
-    // 028B: validations run one per task (parallel column path), so the pool can use the machine: hardware threads − 2 (the
-    // page's main and compositor threads keep theirs), at most 8
-    this.poolSize = Math.max(1, Math.min(8, workers || ((typeof navigator !== "undefined" && navigator.hardwareConcurrency) || 3) - 2));
-    this._sectors = new Map(); this._pool = []; this._queue = []; this._reqId = 0; this._poolBroken = false; this._awaiting = null;
+    const pool = this.sectors;
+    this.stats = { scans: 0, selects: 0, returns: 0, begins: 0, exits: 0, scanWaits: 0, lastScan: null, get workerTasks() { return pool.stats.workerTasks; }, get sectorTimes() { return pool.stats.sectorTimes; } };
+    this._awaiting = null;
     this._build();
     this.host = new PlanetSphereRenderer(root); // ONE WebGL context for the whole screen
     this.views = this.globes.map((g, i) => new PlanetSphereView(g, { renderer: this.host, interactive: false, reducedMotion,
       distance: GLOBE_DISTANCE, yaw: i * 0.7 + 0.35, ariaLabel: "Planet globe: drag sideways or press the left and right arrow keys to spin it" }));
-    const first = this._sector(this.sectorSeed, this.firstBloom); this._awaiting = this._sectors.get(this._key(this.sectorSeed, this.firstBloom));
-    this._fillIn(this._awaiting); this._progress(this._awaiting); // (028B) each world appears the moment it is confirmed
-    this.ready = first.then(s => { this._awaiting = null; this._progress(null); return this._finishFill(s); }).then(() => {
+    this.sectors.onProgress = e => this._progress(e);
+    const e = this.sectors.sector(this.sectorSeed, this.firstBloom);
+    this.stats.adopted = pre ? { seed: pre.seed, ready: e.ready, confirmed: e.found.reduce((a, b) => a + b, 0) } : null;
+    let first;
+    if (e.ready) first = e.promise.then(s => this._swapIn(s, { first: true })); // (028C) prefetched in full: the single sweep, as a prefetched scan
+    else {
+      this._awaiting = e; this._fillIn(e); this._progress(e); // (028B) each world appears the moment it is confirmed (already-confirmed ones at once)
+      first = e.promise.then(s => { this._awaiting = null; this._progress(null); return this._finishFill(s); });
+    }
+    this.ready = first.then(() => { if (this.state === "disposed") return this;
       this.state = "survey"; this.root.dataset.state = "survey"; this._prefetch(); return this; })
-      .catch(err => { this._placeholder(`Survey unavailable: ${err.message || err}`); throw err; });
+      .catch(err => { if (this.state !== "disposed") this._placeholder(`Survey unavailable: ${err.message || err}`); throw err; });
+  }
+
+  /** (028C) Start validating a sector with no screen — on the title screen, while the player reads the menu. Returns the
+   *  SectorPool to pass as `sectors`; `pool.progress` / `pool.ready` report it; `pool.dispose()` if no survey ever takes it. */
+  static prefetch({ sectorSeed = null, firstBloom = false, worker = true, workers = null } = {}) {
+    return new SectorPool({ worker, workers }).prefetch({ sectorSeed, firstBloom });
   }
 
   get reducedMotion() { return this.forcedReducedMotion ?? !!(this.mq && this.mq.matches); }
   get selectedCandidate() { return this.selected === null ? null : this.cells[this.selected]; }
+  get sectorSource() { return this.sectors.source; }
+  get poolSize() { return this.sectors.poolSize; }
+  // (028B QA harness compatibility: it reads the pool's worker list and halted flag through these private names)
+  get _pool() { return this.sectors._pool; }
+  get _poolHalted() { return this.sectors.halted; }
 
   // ---------------------------------------------------------------- public
   /** Is the sector after the one on screen already validated and waiting (prefetched)? */
-  get nextSectorReady() { const e = this._sectors.get(this._key(nextSectorSeed(this.sectorSeed), false)); return !!(e && e.ready); }
+  get nextSectorReady() { const e = this.sectors.get(nextSectorSeed(this.sectorSeed), false); return !!(e && e.ready); }
 
   /**
    * SCAN NEW SECTOR: the next sector's nine validated worlds replace these in a short corner-to-corner sweep. Normally that
@@ -113,7 +146,7 @@ export class DestinationSurvey {
     if (this.state !== "survey") return false;
     this.state = "scanning"; this.scanBtn.setAttribute("aria-busy", "true");
     try {
-      const seed = nextSectorSeed(this.sectorSeed), p = this._sector(seed, false), e = this._sectors.get(this._key(seed, false)), prefetched = e.ready, t0 = performance.now();
+      const seed = nextSectorSeed(this.sectorSeed), e = this.sectors.sector(seed, false), p = e.promise, prefetched = e.ready, t0 = performance.now();
       if (!prefetched) { this.stats.scanWaits++; this._awaiting = e; await this._sweepOut(); if (this.state === "disposed") return false; this._fillIn(e); this._progress(e); }
       const sector = await p;
       this._awaiting = null; this._progress(null);
@@ -123,6 +156,17 @@ export class DestinationSurvey {
       if (prefetched) await this._swapIn(sector, { first: false }); else await this._finishFill(sector);
       this.stats.scans++; this._prefetch(); return true;
     } finally { if (this.state !== "disposed") { this.state = "survey"; this.scanBtn.removeAttribute("aria-busy"); } }
+  }
+
+  /**
+   * (028C) Leave for the Main Menu: only from the survey (or still-loading) state, and only with an `onExit` consumer, which
+   * runs the transition and disposes this screen. False otherwise (mid-animation, focus, departing: harmless double clicks).
+   */
+  exit() {
+    if (!this.onExit || (this.state !== "survey" && this.state !== "loading")) return false;
+    this.stats.exits++;
+    this.onExit(this);
+    return true;
   }
 
   /** Grid → focus: the chosen globe (the same view, still turning) grows into the left half; the dossier comes in on the right. */
@@ -283,18 +327,17 @@ export class DestinationSurvey {
     this.focus.inert = false; this.head.inert = false;
     this.state = "focus"; this.root.dataset.state = "focus"; delete this.root.dataset.departPhase;
     this.views[this.selected].setInteractionEnabled(true);
-    this._poolHalted = false; this._prefetch();
+    this.sectors.resume(); this._prefetch();
   }
 
-  /** Tear the screen down: animations, the renderer and its nine views, the worker, listeners and the built DOM. */
+  /** Tear the screen down: animations, the renderer and its nine views, the worker pool (owned), listeners and the built DOM. */
   dispose() {
     if (this.state === "disposed") return;
     this.state = "disposed";
     if (this._atx && !this._atx.running) { this._atx.dispose(); this._atx = null; } // prepared in focus, never used (a running one is ours to finish)
     for (const a of this.root.getAnimations({ subtree: true })) a.cancel();
     this.host.dispose();          // (planet objects are not touched: a Begin Expedition consumer may still hold detail.planet)
-    this._stopPool(new Error("disposed"));
-    this._sectors.clear();
+    this.sectors.dispose();       // workers terminated, pending work rejected, entries forgotten (an adopted pool is ours by then)
     this.root.removeEventListener("keydown", this._onKey); this.root.removeEventListener("click", this._onClick);
     this.root.replaceChildren(); this.root.classList.remove("ds", "rm");
     for (const k of ["state", "class", "departPhase"]) delete this.root.dataset[k];
@@ -308,6 +351,7 @@ export class DestinationSurvey {
     if (!r.hasAttribute("aria-label")) r.setAttribute("aria-label", "Destination survey");
     r.innerHTML = `
       <header class="ds-head">
+        <button type="button" class="ds-btn ghost ds-exit" data-act="exit"${this.onExit ? "" : " hidden"}><span aria-hidden="true">←</span> Main menu</button>
         <div class="ds-title"><span class="ds-kicker">BLOOM · Expedition planning</span><h1>Destination Survey</h1></div>
         <p class="ds-sector" aria-live="polite"></p>
         <div class="ds-head-tools"><span class="ds-progress sr-only" role="status" hidden></span><button type="button" class="ds-btn scan" data-act="scan">${SCAN_ICON}<span>Scan <span class="lbl-long">new </span>sector</span></button></div>
@@ -340,7 +384,7 @@ export class DestinationSurvey {
         </aside>
       </div>`;
     const q = s => r.querySelector(s), qa = s => [...r.querySelectorAll(s)];
-    this.head = q(".ds-head"); this.sectorEl = q(".ds-sector"); this.scanBtn = q('[data-act="scan"]');
+    this.head = q(".ds-head"); this.sectorEl = q(".ds-sector"); this.scanBtn = q('[data-act="scan"]'); this.exitBtn = q('[data-act="exit"]');
     this.grid = q(".ds-grid"); this.buttons = qa(".ds-cand"); this.slots = qa(".ds-globe-slot"); this.globes = qa(".ds-globe");
     this.focus = q(".ds-focus"); this.focusSlot = q(".ds-focus-slot"); this.dossier = q(".ds-dossier"); this.dossierTitle = q(".ds-dossier h2");
     this.placeholderEl = q(".ds-placeholder"); this.progressEl = q(".ds-progress");
@@ -351,15 +395,20 @@ export class DestinationSurvey {
       else if (b.dataset.act === "scan") this.scan();
       else if (b.dataset.act === "return") this.returnToSurvey();
       else if (b.dataset.act === "begin") this.beginExpedition();
+      else if (b.dataset.act === "exit") this.exit();
     };
-    this._onKey = e => { if (e.key === "Escape" && this.state === "focus") { e.preventDefault(); this.returnToSurvey(); } };
+    this._onKey = e => {
+      if (e.key !== "Escape") return;
+      if (this.state === "focus") { e.preventDefault(); this.returnToSurvey(); }
+      else if (this.onExit && (this.state === "survey" || this.state === "loading")) { e.preventDefault(); this.exit(); } // (028C)
+    };
     r.addEventListener("click", this._onClick); r.addEventListener("keydown", this._onKey);
   }
 
   _setMode(mode) {
     this.root.dataset.state = mode;
     const focus = mode === "focus";
-    this.focus.inert = !focus; this.grid.inert = focus; this.head.querySelector(".ds-head-tools").inert = focus;
+    this.focus.inert = !focus; this.grid.inert = focus; this.head.querySelector(".ds-head-tools").inert = focus; this.exitBtn.inert = focus;
   }
 
   _placeholder(text) { this.placeholderEl.textContent = text || ""; this.placeholderEl.hidden = !text; }
@@ -512,7 +561,7 @@ export class DestinationSurvey {
     await Promise.all(SURVEY_CLASSES.map((_, col) => this._settleColumn(fill, col, { cells: sector.cells.filter((_, i) => i % COLS === col) })));
     if (this.state === "disposed") return;
     this.sector = sector; this._fill = null; fill.e.listener = null;
-    for (const k of [...this._sectors.keys()]) if (this._sectors.get(k).seed === sector.sectorSeed) this._sectors.delete(k); // shown: the cells hold it now
+    this.sectors.forget(sector.sectorSeed); // shown: the cells hold it now
     // the worlds keep the rows they landed in: each column holds exactly the sector's worlds of that column (its class)
     for (let i = 0; i < N; i++) { this.slots[i].classList.remove("is-incoming"); this.buttons[i].disabled = !this.cells[i]; }
     this._placeholder(null);
@@ -531,7 +580,7 @@ export class DestinationSurvey {
   /** Put a sector on screen: a corner-to-corner sweep (slightly irregular), or one restrained fade under reduced motion. */
   async _swapIn(sector, { first }) {
     this.sector = sector;
-    for (const k of [...this._sectors.keys()]) if (this._sectors.get(k).seed === sector.sectorSeed) this._sectors.delete(k); // shown: the cells hold it now
+    this.sectors.forget(sector.sectorSeed); // shown: the cells hold it now
     const assign = i => {
       const cand = sector.cells[i]; this.cells[i] = cand;
       if (!cand) { this.views[i].setPlanet(null); this.buttons[i].disabled = true; return; }
@@ -567,9 +616,8 @@ export class DestinationSurvey {
     }));
   }
 
-  // ---------------------------------------------------------------- sectors (validated; worker pool, main-thread fallback)
-  _key(seed, firstBloom) { return seed + (firstBloom ? ":fb" : ""); }
-  _prefetch() { this._sector(nextSectorSeed(this.sectorSeed), false); }
+  // ---------------------------------------------------------------- sectors (validated; SectorPool: workers, main-thread fallback)
+  _prefetch() { if (!this.sectors.disposed) this.sectors.sector(nextSectorSeed(this.sectorSeed), false); }
 
   /** Header / placeholder: how many of the awaited sector's nine worlds are validated so far (null clears it). */
   _progress(e) {
@@ -580,127 +628,6 @@ export class DestinationSurvey {
     this.progressEl.textContent = e ? `Surveying sector: ${n} of ${N} worlds confirmed` : ""; this.progressEl.hidden = !e; // (hidden when idle)
   }
 
-  /**
-   * The validated sector for a seed (cached entry; its promise resolves when all three columns are ready). Each column is one
-   * task for the worker pool; if workers can't run, the main thread builds the column instead (stalling ~1 s per world).
-   */
-  _sector(seed, firstBloom) {
-    const key = this._key(seed, firstBloom);
-    let e = this._sectors.get(key);
-    if (!e) {
-      // shown[col]: worlds already certain to be in the sector (in the order they became certain); cols[col]: finished columns.
-      // A screen that starts showing this sector late (a scan during the prefetch) replays them through e.listener.
-      e = { key, seed, found: [0, 0, 0], shown: [[], [], []], cols: [null, null, null], listener: null, ready: false, t0: performance.now(), ms: null };
-      e.promise = Promise.all(SURVEY_CLASSES.map((_, col) => this._column(seed, col, firstBloom, pr => {
-        if (pr.cell) { e.shown[col].push(pr.cell); if (e.listener) e.listener.cell(col, pr.cell); }
-        e.found[col] = Math.max(pr.found || 0, e.shown[col].length); this._progress(e);
-      }).then(c => { e.cols[col] = c; if (e.listener) e.listener.column(col, c); return c; })))
-        .then(cols => { e.ready = true; e.ms = Math.round(performance.now() - e.t0);
-          this.stats.sectorTimes.push({ seed, ms: e.ms, columns: cols.map(c => c.stats) }); return assembleSector(seed, cols); });
-      e.promise.catch(() => { if (this._sectors.get(key) === e) this._sectors.delete(key); });
-      this._sectors.set(key, e);
-    }
-    return e.promise;
-  }
-
-  _column(sectorSeed, column, firstBloom, onProgress) {
-    return this._columnParallel(sectorSeed, column, firstBloom, onProgress).then(r => { this.sectorSource = "worker"; return r; }, err => {
-      if (this.state === "disposed" || err.halted) throw err; // (halted for a departure: never fall back to main-thread generation)
-      return this._columnOnMainThread(sectorSeed, column, firstBloom, onProgress).then(r => { this.sectorSource = "main-thread"; return r; });
-    });
-  }
-
-  /**
-   * One column, its validations in parallel (028B): a worker plans the column's next predicted draws (cheap), every pick is
-   * validated as its own pool task, and the results are accepted IN STREAM ORDER with survey-data's columnFromValidated — the
-   * sequential column's exact rule, so the sector is identical to the one-worker / Node result (tools/destination-survey-check
-   * S11). Picks beyond the stopping point are speculative: queued ones are dropped, running ones finish and are ignored.
-   */
-  async _columnParallel(sectorSeed, column, firstBloom, onProgress) {
-    const t0 = performance.now(), group = Symbol("column"), base = { sectorSeed, column, firstBloom }, want = SURVEY_CLASSES[column].id;
-    const picks = [], pending = [], results = [], known = new Map(), emitted = new Set(); let predictions = 0, predictMs = 0, fb = null, need = ROWS;
-    // A validated pick of this class is CERTAIN to be in the column once fewer than `need` earlier picks are still undecided or
-    // matching (only those could take its place) — then it can be shown at once, even while earlier picks are still validating.
-    const emit = () => {
-      let ahead = 0;
-      for (let j = 0; j < picks.length && ahead < need; j++) {
-        const done = known.has(j), cand = known.get(j), match = done && cand && cand.classId === want;
-        if (match && !emitted.has(j)) { emitted.add(j); if (onProgress) onProgress({ cell: cand }); }
-        if (!done || match) ahead++;
-      }
-    };
-    const add = plan => { predictions += plan.predictions; predictMs += plan.predictMs;
-      for (const p of plan.picks) { const j = picks.push(p) - 1, v = this._viaPool({ type: "validate", archetypeId: p.archetypeId, seed: p.seed, group });
-        v.then(c => { known.set(j, c); emit(); }, () => {}); pending.push(v); } };
-    let plan = await this._viaPool({ type: "plan", ...base, fromDraw: 0, want: ROWS + 1, group }); fb = plan.fb;
-    if (fb) { need = ROWS - 1; if (onProgress) onProgress({ cell: fb }); }
-    add(plan);
-    const finish = r => { this._queue = this._queue.filter(t => t.group !== group || (t.reject(Object.assign(new Error("speculative"), { dropped: true })), false));
-      return { ...r.column, stats: { ...r.column.stats, ms: Math.round(performance.now() - t0), predictions, predictMs, speculative: picks.length - r.column.stats.validations } }; };
-    for (;;) {
-      while (results.length < picks.length) {
-        const cand = await pending[results.length];
-        results.push({ draw: picks[results.length].draw, cand });
-        const r = columnFromValidated(sectorSeed, column, { fb, results });
-        if (r.done) return finish(r);
-      }
-      if (plan.exhausted) return finish(columnFromValidated(sectorSeed, column, { fb, results, exhausted: true }));
-      plan = await this._viaPool({ type: "plan", ...base, fromDraw: plan.nextDraw, want: 2, group }); add(plan);
-    }
-  }
-
-  _viaPool(task, onProgress) {
-    if (this._poolHalted) return Promise.reject(Object.assign(new Error("departing"), { halted: true }));
-    if (!this.useWorker || this._poolBroken) return Promise.reject(new Error("no worker"));
-    while (this._pool.length < this.poolSize && !this._poolBroken) if (!this._spawn()) break; // start the whole pool at once: start-up overlaps planning
-    return new Promise((resolve, reject) => { this._queue.push({ ...task, id: ++this._reqId, resolve, reject, onProgress }); this.stats.workerTasks++; this._pump(); });
-  }
-
-  /** Hand queued column tasks to idle workers, starting workers up to the pool size. */
-  _pump() {
-    while (this._queue.length && !this._poolBroken) {
-      let slot = this._pool.find(s => !s.task);
-      if (!slot && this._pool.length < this.poolSize) slot = this._spawn();
-      if (!slot) return;
-      const t = slot.task = this._queue.shift();
-      const { resolve, reject, onProgress, group, ...msg } = t; // (functions / symbols never cross to the worker)
-      slot.w.postMessage(msg);
-    }
-  }
-
-  _spawn() {
-    let w;
-    try { w = new Worker(new URL("./survey-worker.js", import.meta.url), { type: "module" }); }
-    catch { this._stopPool(new Error("worker failed")); return null; }
-    const slot = { w, task: null };
-    w.onmessage = e => {
-      const t = slot.task, m = e.data; if (!t || m.id !== t.id) return;
-      if (m.progress) { if (t.onProgress) t.onProgress(m.progress); return; }
-      slot.task = null; m.error ? t.reject(new Error(m.error)) : t.resolve(m.result); this._pump();
-    };
-    w.onerror = e => { if (e.preventDefault) e.preventDefault(); this._stopPool(new Error("worker failed")); }; // module workers unsupported, or a load error
-    this._pool.push(slot);
-    return slot;
-  }
-
   /** Departure: stop the workers and drop unfinished sectors (no generation while departing); _undoDeparture resumes prefetching. */
-  _haltPool() {
-    this._poolHalted = true;
-    const err = Object.assign(new Error("departing"), { halted: true });
-    for (const s of this._pool) { s.w.terminate(); if (s.task) s.task.reject(err); }
-    for (const t of this._queue) t.reject(err);
-    this._pool = []; this._queue = [];
-  }
-
-  _stopPool(err) {
-    this._poolBroken = true;
-    for (const s of this._pool) { s.w.terminate(); if (s.task) s.task.reject(err); }
-    for (const t of this._queue) t.reject(err);
-    this._pool = []; this._queue = [];
-  }
-
-  async _columnOnMainThread(sectorSeed, column, firstBloom, onProgress) {
-    const it = columnCandidates(sectorSeed, column, undefined, { firstBloom });
-    for (;;) { const r = it.next(); if (r.done) return r.value; if (onProgress) onProgress(r.value); await new Promise(res => setTimeout(res, 0)); if (this.state === "disposed") throw new Error("disposed"); }
-  }
+  _haltPool() { this.sectors.halt(); }
 }
