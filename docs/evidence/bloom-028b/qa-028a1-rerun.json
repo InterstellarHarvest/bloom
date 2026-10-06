@@ -1,18 +1,18 @@
 {
- "when": "2026-10-05T20:41:39.186Z",
- "head": "80a39ce961f8912599ce73ee30ad3380ea3a820c",
- "passed": 17,
- "failed": 2,
+ "when": "2026-10-06T00:06:11.339Z",
+ "head": "e3a07d61c4779cad2e52902acb880c13e8629655",
+ "passed": 11,
+ "failed": 8,
  "results": [
   {
    "ok": true,
    "name": "N0 the 028A1 work starts from exactly 7913fbe (BLOOM-028A, accepted)",
-   "detail": "base 7913fbe · head 80a39ce"
+   "detail": "base 7913fbe · head e3a07d6"
   },
   {
    "ok": false,
    "name": "N1 only intended 028A1 files changed since 7913fbe: the survey module / worker / CSS, its dev page, the survey data suite, the handoff doc and this evidence",
-   "detail": "stray: demos/atmosphere-transition.html, demos/expedition-descent.html, docs/evidence/.bloom-028a1-rerun/qa-validated-identity.js, docs/evidence/.bloom-028a1-rerun/run.log, docs/evidence/bloom-028b/perf.json, docs/evidence/bloom-028b/qa-atmosphere-transition.js, docs/evidence/bloom-028b/qa-results.json, docs/evidence/bloom-028b/qa-suites-summary.txt, docs/evidence/bloom-028b/run-all-suites.sh, docs/evidence/bloom-028b/timelines.json, resources/atmosphere-transition/atmosphere-transition.js, tools/atmosphere-transition-check.js"
+   "detail": "stray: demos/atmosphere-transition.html, demos/expedition-descent.html, docs/ATMOSPHERE_TRANSITION_v1.md, docs/evidence/bloom-028b/01-focused-before-begin.png, docs/evidence/bloom-028b/02-early-approach.png, docs/evidence/bloom-028b/03-partial-cloud-entry.png, docs/evidence/bloom-028b/04-near-full-concealment.png, docs/evidence/bloom-028b/05-covered-hold.png, docs/evidence/bloom-028b/06-cloud-reveal.png, docs/evidence/bloom-028b/07-revealed-destination.png, docs/evidence/bloom-028b/08-reduced-motion-covered.png, docs/evidence/bloom-028b/09-standalone-subdued-peak.png, docs/evidence/bloom-028b/09b-standalone-dramatic-building.png, docs/evidence/bloom-028b/10-standalone-dramatic-covered-hold.png, docs/evidence/bloom-028b/11a-seed-variation.png, docs/evidence/bloom-028b/11b-seed-variation.png, docs/evidence/bloom-028b/11c-seed-variation.png, docs/evidence/bloom-028b/12-firefox-revealed-destination.png, docs/evidence/bloom-028b/13-firefox-standalone-covered.png, docs/evidence/bloom-028b/REPORT.md, docs/evidence/bloom-028b/colony-check-31-flake.txt, docs/evidence/bloom-028b/perf.json, docs/evidence/bloom-028b/qa-028a-rerun-nested.json, docs/evidence/bloom-028b/qa-028a1-rerun.json, docs/evidence/bloom-028b/qa-atmosphere-transition.js, docs/evidence/bloom-028b/qa-results.json, docs/evidence/bloom-028b/qa-run.log, docs/evidence/bloom-028b/qa-suites-summary.txt, docs/evidence/bloom-028b/run-all-suites.sh, docs/evidence/bloom-028b/timelines.json, resources/atmosphere-transition/atmosphere-transition.js, tools/atmosphere-transition-check.js, docs/evidence/.bloom-028a1-rerun/qa-validated-identity.js, docs/evidence/.bloom-028a1-rerun/run.log"
   },
   {
    "ok": true,
@@ -22,7 +22,7 @@
   {
    "ok": true,
    "name": "N3 tools/destination-survey-check.js green (incl. S4: every shown world = an independent production re-validation of its seed, byte for byte)",
-   "detail": "10 pass / 0 fail"
+   "detail": "11 pass / 0 fail"
   },
   {
    "ok": true,
@@ -33,12 +33,12 @@
    "ok": true,
    "info": true,
    "name": "N5 028A → 028A1: of the worlds 028A showed (sectors 1–3), how many were NOT the world a validated run of that seed plays",
-   "detail": "4 / 27 (Ocean 3 / 12) — 028A1 shows 0 such worlds (N3 S4, I2, I3) · 17960 ms"
+   "detail": "4 / 27 (Ocean 3 / 12) — 028A1 shows 0 such worlds (N3 S4, I2, I3) · 17682 ms"
   },
   {
    "ok": false,
-   "name": "N6 (QA 15) the accepted 028A browser QA re-run on this branch: every behavioural check green (29/32; the 2 failing checks are provenance-only, as designed), and its nested 027D sphere QA re-run behaviourally green (41/43; only 027D's N1 / N2 provenance)",
-   "detail": "N4 menu code uses the stock component only: imports PlanetSphereView/Renderer + survey dat :: imports [\"../planet-sphere/planet-sphere-view.js\",\"../atmosphere-transition/atmosphere-transition.js\",\"./survey-data.js\"] · internals [] · renderers 1"
+   "name": "N6 (QA 15) the accepted 028A browser QA re-run on this branch: every behavioural check green (27/32; the 1 failing checks are provenance-only, as designed), and its nested 027D sphere QA re-run behaviourally green (41/43; only 027D's N1 / N2 provenance)",
+   "detail": "N4 menu code uses the stock component only: imports PlanetSphereView/Renderer + survey dat :: imports [\"../planet-sphere/planet-sphere-view.js\",\"../atmosphere-transition/atmosphere-transition.js\",\"./survey-data.js\"] · internals [] · renderers 1 | N5 (T18) the accepted 027D sphere QA re-run on this branch: every behavioural check green  :: N1 : stray: demos/atmosphere-transition.html, demos/destination-survey.html, demos/expedition-descent.html, docs/ATMOSPHERE_TRANSITION_v1.md, docs/DESTINATION_SURVEY_v1.md, docs/evidence/bloom-028a/01 | T8 reduced motion (forced by option): globes do not idle-spin; SCAN replaces all nine at o :: {\"spread\":531.6,\"anims\":[\"el:borderBottomColor@10ms\",\"el:borderBottomWidth@10ms\",\"el:borderLeftColor@10ms\",\"el:borderLeftWidth@10ms\",\"el:borderRightColor@10ms\",\"el:borderRightWidth@10ms\",\"el:borderTop | T8 reduced motion (OS prefers-reduced-motion): globes do not idle-spin; SCAN replaces all  :: {\"spread\":709.4,\"anims\":[\"el:borderBottomColor@10ms\",\"el:borderBottomWidth@10ms\",\"el:borderLeftColor@10ms\",\"el:borderLeftWidth@10ms\",\"el:borderRightColor@10ms\",\"el:borderRightWidth@10ms\",\"el:borderTop"
   },
   {
    "ok": true,
@@ -48,7 +48,7 @@
   {
    "ok": true,
    "name": "I1 the dev entry loads over localhost: the first sector is validated in the worker pool while the screen shows its loading state, then nine worlds; no errors",
-   "detail": "first sector 3962 ms (page ready 4986 ms) · pool 3"
+   "detail": "first sector 3756 ms (page ready 4552 ms) · pool 3"
   },
   {
    "ok": true,
@@ -56,14 +56,14 @@
    "detail": "{\"gl\":1,\"views\":9,\"workers\":3}"
   },
   {
-   "ok": true,
+   "ok": false,
    "name": "I2 (QA 3, 4) every globe was assigned exactly once, with a world already validated (layers 1–8, winnability checked, validator solutions stripped; First Bloom authored) whose fingerprint equals the worker's — no unvalidated world was ever shown and no world was swapped afterwards",
    "detail": "9 assignments · 8 validated + 1 authored"
   },
   {
-   "ok": true,
+   "ok": false,
    "name": "I3 (QA 5, 6, 7, 12) sector 1 (incl. First Bloom): for all nine positions the SAME validated planet is rendered (view draws its tilemap; texture signature of that planet), described (dossier recomputed from it = shown dossier; focus panel rows), focused (same view in the focus slot), and handed on by bloom:begin-expedition AND onBeginExpedition (same object; fingerprint = the worker's); no generator call, no worker task and no globe re-assignment from selection through Begin and back",
-   "detail": "First Bloom, Hollow-181, Umbra-292, Atlas-42, Hollow-665, Nyx-554, Coriol-548, Eos-175, Umbra-780"
+   "detail": "{\"i\":0,\"name\":\"First Bloom\",\"validated\":true,\"rendered\":true,\"assigned\":false,\"dossier\":true,\"focus\":true,\"event\":true,\"callback\":true,\"unchanged\":true,\"genCalls\":0,\"workerTasks\":0,\"newAssigns\":0} | {\"i\":2,\"name\":\"Umbra-292\",\"validated\":true,\"rendered\":true,\"assigned\":false,\"dossier\":true,\"focus\":true,\"event\":true,\"callback\":true,\"unchanged\":true,\"genCalls\":0,\"workerTasks\":0,\"newAssigns\":0} | {\"i\":3,\"name\":\"Atlas-42\",\"validated\":true,\"rendered\":true,\"assigned\":false,\"dossier\":true,\"focus\":true,\"event\":true,\"callback\":true,\"unchanged\":true,\"genCalls\":0,\"workerTasks\":0,\"newAssigns\":0} | {\"i\":5,\"name\":\"Nyx-554\",\"validated\":true,\"rendered\":true,\"assigned\":false,\"dossier\":true,\"focus\":true,\"event\":true,\"callback\":true,\"unchanged\":true,\"genCalls\":0,\"workerTasks\":0,\"newAssigns\":0} | {\"i\":6,\"name\":\"Coriol-548\",\"validated\":true,\"rendered\":true,\"assigned\":false,\"dossier\":true,\"focus\":true,\"event\":true,\"callback\":true,\"unchanged\":true,\"genCalls\":0,\"workerTasks\":0,\"newAssigns\":0}"
   },
   {
    "ok": true,
@@ -73,28 +73,28 @@
   {
    "ok": true,
    "name": "I5 SCAN with the next sector prefetched swaps in nine already-validated worlds at once (no wait; the staged sweep only)",
-   "detail": "scan 1029 ms (waited 0 ms) · prefetched sector built in 3787 ms"
+   "detail": "scan 1062 ms (waited 0 ms) · prefetched sector built in 5085 ms"
   },
   {
-   "ok": true,
+   "ok": false,
    "name": "I3 (QA 5, 6, 7, 12) sector 2 after SCAN (repeated scan): for all nine positions the SAME validated planet is rendered (view draws its tilemap; texture signature of that planet), described (dossier recomputed from it = shown dossier; focus panel rows), focused (same view in the focus slot), and handed on by bloom:begin-expedition AND onBeginExpedition (same object; fingerprint = the worker's); no generator call, no worker task and no globe re-assignment from selection through Begin and back",
-   "detail": "Eos-439, Nyx-742, Ymir-897, Ymir-641, Atlas-526, Hollow-709, Eos-795, Eos-447, Hollow-13"
+   "detail": "{\"i\":0,\"name\":\"Eos-439\",\"validated\":true,\"rendered\":true,\"assigned\":false,\"dossier\":true,\"focus\":true,\"event\":true,\"callback\":true,\"unchanged\":true,\"genCalls\":0,\"workerTasks\":12,\"newAssigns\":0} | {\"i\":2,\"name\":\"Ymir-897\",\"validated\":true,\"rendered\":true,\"assigned\":false,\"dossier\":true,\"focus\":true,\"event\":true,\"callback\":true,\"unchanged\":true,\"genCalls\":0,\"workerTasks\":0,\"newAssigns\":0} | {\"i\":3,\"name\":\"Ymir-641\",\"validated\":true,\"rendered\":true,\"assigned\":false,\"dossier\":true,\"focus\":true,\"event\":true,\"callback\":true,\"unchanged\":true,\"genCalls\":0,\"workerTasks\":0,\"newAssigns\":0} | {\"i\":5,\"name\":\"Hollow-709\",\"validated\":true,\"rendered\":true,\"assigned\":false,\"dossier\":true,\"focus\":true,\"event\":true,\"callback\":true,\"unchanged\":true,\"genCalls\":0,\"workerTasks\":0,\"newAssigns\":0} | {\"i\":6,\"name\":\"Eos-795\",\"validated\":true,\"rendered\":true,\"assigned\":false,\"dossier\":true,\"focus\":true,\"event\":true,\"callback\":true,\"unchanged\":true,\"genCalls\":0,\"workerTasks\":0,\"newAssigns\":0}"
   },
   {
-   "ok": true,
+   "ok": false,
    "name": "I6 SCAN before the prefetch is ready: the button stays busy and the header counts the worlds confirmed so far (\"Confirming worlds n / 9\"); no globe changes until all nine are validated; then the normal sweep",
-   "detail": "waited 4753 ms · progress seen Confirming worlds 0 / 9 → Confirming worlds 1 / 9 → Confirming worlds 2 / 9 → Confirming worlds 3 / 9 → Confirming worlds 4 / 9 → Confirming worlds 6 / 9 → Confirming worlds 8 / 9 · main-thread lag while waiting max 253.7 ms"
+   "detail": "waited 5685 ms · progress seen Confirming worlds 0 / 9 → Confirming worlds 1 / 9 → Confirming worlds 2 / 9 → Confirming worlds 3 / 9 → Confirming worlds 4 / 9 → Confirming worlds 5 / 9 → Confirming worlds 6 / 9 → Confirming worlds 7 / 9 → Confirming worlds 8 / 9 · main-thread lag while waiting max 182.7 ms"
   },
   {
    "ok": true,
    "info": true,
    "name": "I7a (software GL) main thread while the pool validates vs idle — headless SwiftShader renders WebGL on the CPU, so ~50 ms frames are long tasks even when idle; the GPU check I7 below decides",
-   "detail": "lag busy max 169.1 ms over 49 samples · idle max 107.5 ms · software-GL frames busy 64.97 / idle 50.28 ms · long tasks [80,71,66,65,68,67,66,67,66,68,69,87,91,87,77,72,77,68,98,72,79,83,79,65,66,59,59,62,68,66,65,66,61,66,61,60,55,55,55,56,56,55,54,54,54,54,54,54,54,54,55,54,52]"
+   "detail": "lag busy max 205 ms over 40 samples · idle max 119.4 ms · software-GL frames busy 74.85 / idle 53.39 ms · long tasks [88,76,141,73,77,92,77,63,75,79,69,68,68,72,81,86,82,72,70,64,74,69,69,68,67,68,62,69,67,70,68,72,69,67,70,72,74,70,69,73,68,69,70,73,71,87,89,76,68,93,80,73,83,83,68,62,72,58,59]"
   },
   {
-   "ok": true,
+   "ok": false,
    "name": "I8 (QA 8) five more validated scans: every sector nine validated worlds, each globe = its cell's planet; listeners / observers / contexts at baseline, 9 textures, never more than three workers, the sector cache holds at most the next sector, still no main-thread generation",
-   "detail": "{\"listeners\":111,\"observers\":1,\"liveGL\":1,\"glCreated\":1,\"contextWarnings\":0} → {\"listeners\":111,\"observers\":1,\"liveGL\":1,\"glCreated\":1,\"contextWarnings\":0} · workers 3 · cache 1 · sectors [3962,3787,2816,4872,6871,3582,5823,4616,5181,4616] ms"
+   "detail": "{\"listeners\":111,\"observers\":1,\"liveGL\":1,\"glCreated\":1,\"contextWarnings\":0} → {\"listeners\":111,\"observers\":1,\"liveGL\":1,\"glCreated\":1,\"contextWarnings\":0} · workers 3 · cache 1 · sectors [3756,5085,3691,5791,5410,4358,5157,4940,5548,4025] ms"
   },
   {
    "ok": true,
@@ -104,12 +104,12 @@
   {
    "ok": true,
    "name": "I10 (QA 10, 11) reduced motion: validated scan swaps all nine at once behind the fade; select → Begin → RETURN keep the same planet",
-   "detail": "{\"spread\":14.7,\"n\":9}"
+   "detail": "{\"spread\":12.4,\"n\":9}"
   },
   {
-   "ok": true,
+   "ok": false,
    "name": "F1 (QA 18) Firefox: validated sectors from the worker pool, one context / nine views, identity chain render → dossier → focus → event / callback, validated scan, no main-thread generation, no errors",
-   "detail": "first sector 4084 ms · {\"gen\":0}"
+   "detail": "first sector 4362 ms · {\"gen\":0}"
   },
   {
    "ok": true,

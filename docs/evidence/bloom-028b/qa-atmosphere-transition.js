@@ -24,7 +24,7 @@ const J = o => JSON.stringify(o);
 const check = (ok, name, detail = "") => { results.push({ ok: !!ok, name, detail: String(detail) }); console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (!ok) fails++; };
 const info = (name, detail) => { results.push({ ok: true, info: true, name, detail: typeof detail === "string" ? detail : J(detail) }); console.log(`INFO  ${name}  — ${typeof detail === "string" ? detail : J(detail)}`); };
 const git = (...a) => spawnSync("git", a, { cwd: ROOT }).stdout.toString();
-const ALLOWED = [/^resources\/atmosphere-transition\//, /^resources\/destination-survey\/destination-survey\.(js|css)$/, /^demos\/atmosphere-transition\.html$/, /^demos\/expedition-descent\.html$/,
+const ALLOWED = [/^resources\/atmosphere-transition\//, /^resources\/destination-survey\/destination-survey\.(js|css)$/, /^resources\/destination-survey\/survey-(data|worker)\.js$/, /^tools\/destination-survey-check\.js$/, /^demos\/atmosphere-transition\.html$/, /^demos\/expedition-descent\.html$/,
   /^tools\/atmosphere-transition-check\.js$/, /^docs\/ATMOSPHERE_TRANSITION_v1\.md$/, /^docs\/DESTINATION_SURVEY_v1\.md$/, /^docs\/evidence\/bloom-028b\//, /^README\.md$/];
 const stats = a => { const s = [...a].sort((x, y) => x - y), n = s.length; if (!n) return { n: 0 };
   return { n, mean: +(s.reduce((x, y) => x + y, 0) / n).toFixed(1), p95: +s[Math.min(n - 1, Math.floor(n * 0.95))].toFixed(1), max: +s[n - 1].toFixed(1), over50: s.filter(x => x > 50).length }; };
@@ -58,6 +58,12 @@ const INIT = () => {
     if (B.play) for (const k of ["runSearch", "searchWorld"]) wrap(B.play, k, "play." + k);
     return true; };
   window.__longTasks = []; if ((PerformanceObserver.supportedEntryTypes || []).includes("longtask")) try { new PerformanceObserver(l => { for (const e of l.getEntries()) window.__longTasks.push({ t: e.startTime, d: e.duration }); }).observe({ type: "longtask", buffered: true }); } catch { /* Firefox */ }
+  // (028B loading) every 20 ms from page start: how many worlds the survey shows, and its state
+  window.__fillLog = []; const fl = setInterval(() => { const S = window.DESCENT_DEV && DESCENT_DEV.survey; if (!S) return; __fillLog.push([performance.now(), S.cells.filter(Boolean).length, S.state]); if (__fillLog.length > 3000) clearInterval(fl); }, 20);
+  document.addEventListener("DOMContentLoaded", () => window.__armGen());
+  // the view draws exactly this candidate's planet: its texture wrapper shares a generated planet's own tilemap array (authored
+  // First Bloom is laid out on the fly: same id / name)
+  window.__draws = (v, c) => !c ? !v.planet : !!v.planet && v.planet.id === c.planet.id && v.planet.name === c.planet.name && (!c.planet.tilemap || v.planet.tilemap === c.planet.tilemap);
   window.__nodes = () => document.getElementsByTagName("*").length - (document.getElementById("log") ? document.getElementById("log").getElementsByTagName("*").length : 0); // (the demo's own run log excluded)
 };
 
@@ -100,8 +106,8 @@ function partN() {
   const sphere = git("diff", "--name-only", BASE, "--", "resources/planet-sphere").trim();
   check(!sphere, "N3 PlanetSphereView / PlanetSphereRenderer / planet-texture / vendored Three.js unchanged", sphere || "unchanged");
   const gen = git("diff", "--name-only", BASE, "--", "resources/bloom-sim.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js",
-    "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/bloom-play-worker.js", "resources/destination-survey/survey-data.js", "resources/destination-survey/survey-worker.js", "content", "planets", "index.html").trim();
-  check(!gen, "N4 generator, validator, witness, play flow, survey data / worker, content, planets and index.html unchanged", gen || "unchanged");
+    "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/bloom-play-worker.js", "content", "planets", "index.html").trim();
+  check(!gen, "N4 generator, validator, witness, play flow, content, planets and index.html unchanged (survey data / worker change additively in 028B: the parallel column path, proven equal by destination-survey-check S11)", gen || "unchanged");
   const r = spawnSync(process.execPath, [path.join(ROOT, "tools/atmosphere-transition-check.js")], { cwd: ROOT }).stdout.toString();
   const p = (r.match(/^PASS/gm) || []).length, f = (r.match(/^FAIL/gm) || []).length;
   check(!f && p >= 12 && /ALL CHECKS PASS/.test(r), "N5 tools/atmosphere-transition-check.js (21st suite): presets, screen-agnostic, no WebGL, one survey renderer, departure never generates", `${p} pass / ${f} fail`);
@@ -242,6 +248,20 @@ async function standalone(browser, B) {
     check(ok, tag("S13 repeated runs (dramatic / subdued / failure / reduced; all runs on this page): DOM node count, listeners, keyboard captures and running animations back at baseline; one shared <style>; zero WebGL contexts, zero canvases"),
       `${end.runs} runs; nodes ${base.nodes} → ${end.nodes}, listeners ${base.listeners} → ${end.listeners}, gl ${end.gl}, anims ${end.anims}`); }
 
+  // S17 (028B) clouds are bitmaps drawn once (Firefox re-rasterises scaled SVG): <img> elements, no SVG in the overlay; preparing
+  // them never blocks the main thread for a long task
+  { const r = await ev(page, async () => {
+      const { AtmosphereTransition } = await import("/resources/atmosphere-transition/atmosphere-transition.js");
+      const a = new AtmosphereTransition(); let worst = 0, last = performance.now(), done = false;
+      const tick = () => { const n = performance.now(); worst = Math.max(worst, n - last); last = n; if (!done) setTimeout(tick, 4); }; tick();
+      const t0 = performance.now(); await a.prepare(); done = true; const prepMs = performance.now() - t0;
+      let dom = null; await a.run({ preset: "dramatic", onCovered: () => { const ov = document.querySelector(".atx");
+        dom = { imgs: ov.querySelectorAll(".atx-cloud img").length, clouds: ov.querySelectorAll(".atx-cloud").length, svg: ov.querySelectorAll("svg").length, canvas: ov.querySelectorAll("canvas").length,
+          png: [...ov.querySelectorAll("img")].every(i => /^data:image\/png/.test(i.src) && i.complete && i.naturalWidth > 0), nodes: ov.getElementsByTagName("*").length + 1 }; } });
+      a.dispose(); return { prepMs: Math.round(prepMs), worstStall: Math.round(worst), ...dom }; });
+    check(r.imgs === r.clouds && r.clouds >= 9 && r.svg === 0 && r.canvas === 0 && r.png && r.worstStall < 50, tag("S17 clouds are pre-rendered bitmaps (<img>, decoded before use; no SVG or canvas in the overlay); prepare() draws them without a long task"), J(r));
+    perf[tag("cloud bitmaps prepare")] = { ms: r.prepMs, worstMainThreadStallMs: r.worstStall, overlayNodes: r.nodes }; }
+
   // S16 not a canned animation: fresh runs lay their clouds out differently; a given seed reproduces its layout exactly
   { const v = await ev(page, async () => {
       const sig = () => [...document.querySelectorAll(".atx-cloud")].map(e => e.className + "@" + e.style.left + "," + e.style.top + "," + e.style.width).join("|");
@@ -294,7 +314,7 @@ const ARM = async cell => {
       yaw: view.disposed ? null : view.getYaw(), viewAlive: !view.disposed, same: alive ? S.views[cell] === view && S.host.views.includes(view) : null,
       globeW: alive && container.isConnected ? +r.width.toFixed(1) : null, dist: view.disposed ? null : +view.distance.toFixed(4), discPx: view.disposed ? null : Math.round(2 * view.radiusPx),
       inside: alive && container.isConnected ? r.left >= __sel.stage.left - 1 && r.top >= __sel.stage.top - 1 && r.right <= __sel.stage.right + 1 && r.bottom <= __sel.stage.bottom + 1 : null, visibleGlobes: alive ? S.globes.filter(g => g.isConnected && getComputedStyle(g).display !== "none" && g.getBoundingClientRect().width > 0).length : 0,
-      dest: !document.getElementById("dest").hidden, pool: alive ? S._pool.length : 0, liveGL: __LEAK.liveGL() });
+      dest: !document.getElementById("dest").hidden, pool: alive ? S._pool.length : 0, liveGL: __LEAK.liveGL(), posts: __workers.posts, created: __workers.created, gen: __gen.calls });
     last = now;
     if (!(DESCENT_DEV.results.length && !ov) || rows.length < 3) requestAnimationFrame(f);
   };
@@ -370,10 +390,16 @@ function departureChecks(B, name, d, { rm = false, hold = 0 } = {}) {
       tag("D5 planet approach: the live globe moves to the centre and its camera dollies in (distance only ever decreases, the disc only grows) until, while still visible, the disc is wider than the screen; its box never leaves the canvas"),
       `disc ${ds[0]} → ${ds.at(-1)} px before cover (screen ${big} px; wider than the screen first at veil ${firstBig && firstBig.veil.toFixed(2)}); distance ${dist[0]} → ${dist.at(-1)}; setDistance calls ${d.spy.setDistance}`); }
   else check(pre.filter(r => r.globeW).every(r => Math.abs(r.globeW - pre[0].globeW) < 0.5) && d.spy.setDistance === 0, tag("D5 reduced motion: no planet approach (no box change, no camera dolly); only fades"), `box ${pre[0].globeW} px`);
+  if (!rm) { const b0 = rows.find(r => r.state === "departing"), c0 = rows.find(r => r.atx !== "none"), beat = b0 && c0 ? c0.t - b0.t : -1;
+    const discAt = c0 ? rows[rows.indexOf(c0) - 1].discPx : 0, disc0 = b0 ? b0.discPx : 1;
+    check(beat >= 900 && discAt >= disc0 * 1.3, tag("D5b the planet zooms alone for a beat before the atmosphere: no cloud overlay for ≥ 0.9 s after Begin, while the disc already grows ≥ 1.3×"),
+      `clouds after ${Math.round(beat)} ms; disc ${disc0} → ${discAt} px by then`); }
   const id = d.identity;
   check(id && id.sameAsSel && id.sameAsHook && id.viewSame && id.fpSel === id.fpHand && id.destText.includes(id.fpSel) && d.texSame,
     tag("D6 planet identity: the object handed over under cover IS the selected cell's planet (===) and the hook's detail.planet; same fingerprint; the destination surface is pixel-identical to that object's own texture"),
     id ? `${id.fpSel}; surface ${d.texSame}` : "no handoff");
+  const dep0 = rows.find(r => r.state === "departing"), last = rows.at(-1);
+  d.posts = dep0 ? last.posts - dep0.posts : -1; d.created = dep0 ? last.created - dep0.created : -1; d.gen = dep0 ? last.gen - dep0.gen : -1; // counted from the Begin frame
   check(d.gen === 0 && d.posts === 0 && d.created === 0 && d.liveWorkers === 0 && pre.filter(r => r.state === "departing").every(r => r.pool === 0),
     tag("D7 no generation during the departure: zero main-thread generator / validator / layout calls, zero worker messages or new workers; the prefetch pool is halted at Begin"), `gen ${d.gen} ${J(d.genLog.slice(0, 3))}, posts ${d.posts}, created ${d.created}, live ${d.liveWorkers}`);
   const h = d.handoff, revealAbs = R ? R.times.start + R.times.revealStart : 0;
@@ -391,7 +417,7 @@ function departureChecks(B, name, d, { rm = false, hold = 0 } = {}) {
     J({ totalMs: R && R.totalMs, hold: R && R.coveredHoldMs, listeners: `${a.listenersBefore} → ${a.listeners}`, liveGL: a.liveGL }));
   if (hold) { const cov = rows.filter(r => r.atx === "covered");
     check(R && R.coveredHoldMs >= hold && cov.every(r => r.veil >= 0.999) && cov.filter(r => !r.dest).length > 10, tag(`D11 async hold (${hold} ms of covered work): concealment held the whole time, the reveal waited`), `hold ${R && R.coveredHoldMs} ms, ${cov.length} covered frames`); }
-  if (R) check(R.reducedMotion === rm, tag(`D12 the transition ran ${rm ? "its reduced-motion path" : "the full dramatic path"}`), `reducedMotion ${R.reducedMotion}; total ${R.totalMs} ms (+ ${rm ? 0 : 560} ms approach lead)`);
+  if (R) check(R.reducedMotion === rm, tag(`D12 the transition ran ${rm ? "its reduced-motion path" : "the full dramatic path"}`), `reducedMotion ${R.reducedMotion}; total ${R.totalMs} ms (+ ${rm ? 0 : 1000} ms approach lead)`);
   const known = e => /GPU stall due to ReadPixels/.test(e) || (PREEXISTING.has(B) && /WebGL context was lost\./.test(e));
   const errs = d.log.errors.filter(e => !known(e)), warns = d.log.warnings.filter(e => !known(e));
   check(!errs.length && !warns.length && !a.devErrors.length && a.contextWarnings === 0, tag("D13 no console errors / warnings, no new WebGL warnings, no uncaught errors" + (PREEXISTING.has(B) ? " (Firefox's \"WebGL context was lost.\" on the survey's dispose is the unmodified renderer's own message, proven pre-existing by F0)" : "")),
@@ -413,6 +439,42 @@ async function failedDeparture(browser, B) {
   check(rc.focusOnTitle && rc.yawB !== rc.yawA && rc.ret === true && rc.stateAfterReturn === "survey" && !a.poolHalted && rc.prefetch,
     tag("D15 after the failure the screen is fully usable: focus back on the dossier, the globe still turning, Return to survey works, prefetching resumed"), J(rc));
   check(d.identity === null || d.identity.sameAsSel, tag("D16 the failure path never touched the planet"));
+}
+
+// ---------------------------------------------------------------- Part L: loading (028B revision)
+async function loading(browser, B) {
+  const tag = s => `${B} ${s}`;
+  const { ctx, page, log } = await openPage(browser, `${DESCENT}?sector=${SECTOR}`);
+  await page.waitForFunction(() => window.DESCENT_DEV && DESCENT_DEV.ready, null, { timeout: 120000 });
+  const a = await ev(page, () => { const S = DESCENT_DEV.survey, fl = __fillLog, t1 = fl.find(x => x[1] > 0), tReady = fl.find(x => x[2] === "survey");
+    const keys = new Set(S.sector.cells.filter(Boolean).map(c => c.key)), placedValid = S.cells.every(c => !c || c.authored || (c.planet.archetype && c.planet.archetype.winnabilityChecked && c.planet.archetype.validatedLayers.join() === "1,2,3,4,5,6,7,8"));
+    return { firstGlobe: t1 && Math.round(t1[0]), counts: [...new Set(fl.filter(x => x[2] === "loading").map(x => x[1]))], ready: Math.round(tReady ? tReady[0] : performance.now()), sectorMs: S.stats.sectorTimes[0].ms,
+      same: S.cells.every((c, i) => c === S.sector.cells[i]), allIn: S.cells.every(c => !c || keys.has(c.key)), placedValid, shown: S.stats.shown, n: S.cells.filter(Boolean).length,
+      drawn: S.cells.every((c, i) => __draws(S.views[i], c) && S.views[i].container === S.globes[i] && S.slots[i].contains(S.globes[i])),
+      reorders: S.stats.reorders || 0, pool: S.poolSize, hc: navigator.hardwareConcurrency, workers: __workers.created, gen: __gen.calls, enabled: S.buttons.filter(b => !b.disabled).length,
+      speculative: S.stats.sectorTimes[0].columns.map(c => c.speculative), parallel: S.stats.sectorTimes[0].columns.every(c => c.parallel) }; });
+  check(a.firstGlobe && a.ready && a.firstGlobe < a.ready - 500 && a.counts.length >= 4 && a.same && a.drawn && a.placedValid && a.shown === a.n && a.n === 9 && a.enabled === 9 && a.gen === 0,
+    tag("L1 fill in as confirmed: the first world is on screen well before the sector completes and the grid fills one world at a time; every world shown is fully validated; one setPlanet per world (reorders move containers, never re-texture); after the moves, the view in every grid slot draws exactly that slot's planet; the finished grid is exactly the sector; no main-thread generation"),
+    `first globe ${a.firstGlobe} ms, all nine + grid ready ${a.ready} ms (sector ${a.sectorMs} ms); counts seen ${J(a.counts)}; setPlanet ${a.shown}; reorders ${a.reorders}`);
+  check(a.parallel && a.pool === Math.max(1, Math.min(8, a.hc - 2)) && a.workers === a.pool, tag("L2 validations run one per task on a pool of hardware threads − 2 (≤ 8) workers (parallel column path)"), `pool ${a.pool} (hardwareConcurrency ${a.hc}); speculative per column ${J(a.speculative)}`);
+  // scan before the next sector is ready: the old worlds leave at once, the new ones fill in as confirmed
+  // (scan once, then again the moment the grid is back: that second sector cannot be prefetched yet)
+  await page.waitForFunction(() => DESCENT_DEV.survey.nextSectorReady, null, { timeout: 120000 });
+  await page.click('[data-act="scan"]'); await page.waitForFunction(() => DESCENT_DEV.survey.state === "survey", null, { timeout: 120000 });
+  const sc = await ev(page, () => new Promise(res => { const S = DESCENT_DEV.survey, old = new Set(S.cells.filter(Boolean).map(c => c.key)), t0 = performance.now(); let gone = null, firstNew = null;
+    const f = () => { const t = performance.now() - t0, cur = S.cells.filter(Boolean);
+      if (gone === null && !cur.some(c => old.has(c.key))) gone = Math.round(t);
+      if (firstNew === null && cur.some(c => !old.has(c.key))) firstNew = Math.round(t);
+      if (S.state === "survey" && t > 50) res({ last: S.stats.lastScan, emptiedAt: gone, firstNew, same: S.cells.every((c, i) => c === S.sector.cells[i] && __draws(S.views[i], c) && S.slots[i].contains(S.globes[i])), n: S.cells.filter(Boolean).length, enabled: S.buttons.filter(b => !b.disabled).length });
+      else requestAnimationFrame(f); };
+    S.scan(); requestAnimationFrame(f); }));
+  check(sc.last && sc.last.prefetched === false && sc.firstNew && sc.firstNew < sc.last.waitedMs - 300 && sc.same && sc.n === 9 && sc.enabled === 9,
+    tag("L3 scan before the next sector is ready: the current worlds leave at once and the new ones appear as each is confirmed (not after all nine); the finished grid is exactly the new sector"),
+    `old worlds gone ${sc.emptiedAt} ms, first new world ${sc.firstNew} ms, sector ready ${sc.last && sc.last.waitedMs} ms`);
+  perf[tag("loading")] = { firstGlobeMs: a.firstGlobe, readyMs: a.ready, sectorMs: a.sectorMs, reorders: a.reorders, pool: a.pool, scanFirstNewMs: sc.firstNew, scanReadyMs: sc.last && sc.last.waitedMs };
+  const errs = log.errors.concat(log.warnings).filter(e => !/GPU stall due to ReadPixels/.test(e));
+  check(!errs.length, tag("L4 loading: no console errors or warnings"), J(errs).slice(0, 300));
+  await ctx.close();
 }
 
 // ---------------------------------------------------------------- GPU (report only)
@@ -441,6 +503,7 @@ async function gpuSample(b) {
     { const ctx = await chromium.newContext({ reducedMotion: "reduce" }); const page = await ctx.newPage(); await page.goto(STANDALONE); await page.waitForFunction(() => window.ATX_DEV && ATX_DEV.ready);
       const r = await page.evaluate(() => ATX_DEV.run({ preset: "dramatic" }));
       check(r.result && r.result.reducedMotion === true && r.covered.veil === 1 && !r.overlayLeft, "chromium S15 system prefers-reduced-motion: reduce (no option passed) → the component takes its reduced path by itself", `total ${r.result && r.result.totalMs} ms`); await ctx.close(); }
+    console.log("\n— Chromium: loading"); await loading(chromium, "chromium");
     console.log("\n— Chromium: Destination Survey departure");
     const d1 = await departure(chromium, "chromium", { name: "dramatic 1280×800" }); departureChecks("chromium", "dramatic 1280×800", d1);
     const d2 = await departure(chromium, "chromium", { q: "&hold=1500", name: "async hold 1.5 s" }); departureChecks("chromium", "async hold 1.5 s", d2, { hold: 1500 });
@@ -458,19 +521,29 @@ async function gpuSample(b) {
     if (SHOTS) {
       console.log("\n— evidence shots");
       await departure(chromium, "shots", { viewport: { width: 1440, height: 900 }, name: "shots", q: "&hold=900",
-        shots: { focus: "01-focused-before-begin.png", timed: [[420, "02-early-approach.png"], [1050, "03-partial-cloud-entry.png"], [1650, "04-near-full-concealment.png"]], covered: "05-covered-hold.png" } });
+        shots: { focus: "01-focused-before-begin.png", timed: [[650, "02-early-approach.png"], [1500, "03-partial-cloud-entry.png"], [2100, "04-near-full-concealment.png"]], covered: "05-covered-hold.png" } });
       { const o = await openSurvey(chromium, "", { viewport: { width: 1440, height: 900 } }); await toFocus(o.page);
         await o.page.click('[data-act="begin"]'); await o.page.waitForFunction(() => document.querySelector(".atx") && document.querySelector(".atx").dataset.atxPhase === "revealing");
         await o.page.waitForTimeout(380); await o.page.screenshot({ path: path.join(OUT, "06-cloud-reveal.png") });
         await o.page.waitForFunction(() => DESCENT_DEV.results.length && !document.querySelector(".atx")); await o.page.waitForTimeout(300);
         await o.page.screenshot({ path: path.join(OUT, "07-revealed-destination.png") }); await o.ctx.close(); }
       await departure(chromium, "shots", { viewport: { width: 1440, height: 900 }, name: "shots-rm", q: "&rm=1&hold=900", shots: { covered: "08-reduced-motion-covered.png" } });
+      { // 028B revision: the grid filling in as worlds are confirmed (first load, then a scan before the next sector is ready)
+        const o = await openPage(chromium, `${DESCENT}?sector=${SECTOR}`, { viewport: { width: 1440, height: 900 } });
+        await o.page.waitForFunction(() => window.DESCENT_DEV && DESCENT_DEV.survey && DESCENT_DEV.survey.cells.filter(Boolean).length >= 4, null, { timeout: 120000 });
+        await o.page.waitForTimeout(250); await o.page.screenshot({ path: path.join(OUT, "14-loading-fill-in.png") });
+        await o.page.waitForFunction(() => DESCENT_DEV.ready, null, { timeout: 120000 }); await o.page.waitForFunction(() => DESCENT_DEV.survey.nextSectorReady, null, { timeout: 120000 });
+        await o.page.click('[data-act="scan"]'); await o.page.waitForFunction(() => DESCENT_DEV.survey.state === "survey");
+        await o.page.evaluate(() => { const S = DESCENT_DEV.survey; window.__oldKeys = new Set(S.cells.filter(Boolean).map(c => c.key)); S.scan(); });
+        await o.page.waitForFunction(() => { const S = DESCENT_DEV.survey; return S.state === "scanning" && S.cells.filter(c => c && !__oldKeys.has(c.key)).length >= 3; }, null, { timeout: 120000 });
+        await o.page.waitForTimeout(250); await o.page.screenshot({ path: path.join(OUT, "15-scan-fill-in.png") }); await o.ctx.close(); }
     }
     await hctx.close(); await chromium.close();
 
     if (FIREFOX) { let ff = null; try { ff = await pw.firefox.launch(); } catch (err) { info("Firefox", "not available: " + err.message.split("\n")[0]); }
       if (ff) { const hc = await ff.newContext(); helper = await hc.newPage();
         console.log("\n— Firefox: standalone"); await standalone(ff, "firefox");
+        console.log("\n— Firefox: loading"); await loading(ff, "firefox");
         console.log("\n— Firefox: Destination Survey departure");
         { // F0: the unmodified 028A dev page (no 028B code runs there): dispose the survey and record what Firefox logs
           const o = await openPage(ff, `${HOST}/demos/destination-survey.html?sector=${SECTOR}`); await o.page.waitForFunction(() => window.SURVEY_DEV && SURVEY_DEV.ready, null, { timeout: 120000 });
