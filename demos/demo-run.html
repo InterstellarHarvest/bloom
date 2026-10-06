@@ -338,6 +338,8 @@
 <script src="../resources/bloom-scenario.js"></script>
 <script src="../content/play.js"></script>
 <script src="../resources/bloom-play.js"></script>
+<!-- BLOOM-029A: the run UI production boundary (read-only snapshots + the real actions, for the future run screen) -->
+<script src="../resources/run-ui/run-ui-adapter.js"></script>
 <!-- the game UI below is inert (type="text/plain") until the boot script after it has chosen the planet:
      it then runs as an ordinary classic script, so its globals (sim, selected, refreshShop …) are unchanged -->
 <script type="text/plain" id="bloomUI">
@@ -372,9 +374,12 @@ let running=!TRAIN, speed=1; // (BLOOM-028D1: a training run starts paused)
 // BLOOM-028D1: generic run events for the layers built on this page (the tutorial). Each is a CustomEvent "bloom:<type>" on
 // document, dispatched at the real action point AFTER the action took effect; detail is plain data. They change nothing here.
 const emit=(type,detail)=>document.dispatchEvent(new CustomEvent("bloom:"+type,{detail}));
+// BLOOM-029A: the run UI boundary (resources/run-ui/run-ui-adapter.js), created near the end of this script. Until then (and if the
+// adapter file is missing) these two hooks do nothing, so the shell never depends on it.
+let runUI={ invalidate(){}, frame(){} };
 const secRef=i=>i>=0?{index:i, id:SEC[i].id, name:LABEL[i]}:{index:-1, id:null, name:null};
 sim.onWin=cov=>{ running=false; onWin(cov); emit("win",{coverage:cov, ticks:sim.ticks, planetId:BLOOM_RUN.planet.id, training:!!TRAIN}); };
-sim.onLoss=why=>{ running=false; onLoss(why); };
+sim.onLoss=why=>{ running=false; onLoss(why); runUI.invalidate("loss"); };
 // BLOOM-016 player mode (?play=1, launched from index.html): player wording, a run menu and post-run actions. Every action
 // opens a fresh page (a new run is genuinely new: nothing of this sim carries over); the developer harness never shows them.
 const PLAY=!!BLOOM_RUN.play, PC=BLOOM_DATA.play||null, SEEDWORD=PLAY?"World Seed":"public seed";
@@ -617,6 +622,12 @@ function renderHUD(cov){
   document.getElementById("hSky").textContent=PRESS||CLIM?(()=>{ const k=skyNow(); return `${degC(r1(k.t))} · moist ${r1(k.m)}`; })():`${degC(G.temp)} · moist ${G.moist}`;
   const dl=document.getElementById("hSkyDelta"), dt=skyFx&&now<skyFx.until?skyFx.delta:""; if(dl.textContent!==dt) dl.textContent=dt;
 }
+// (BLOOM-029A) the inspect panel's read rules, shared with the run UI adapter (resources/run-ui/) so both read them the same way:
+// a category's lamp (soft soil reads yellow, not green), "growth blocked", and the region's dead / barren / native tile counts
+const catLamp=c=>c.soft&&c.f>CFG.categories.lamp.green?"yellow":lampOf(c.f);
+const isBlocked=e=>e.limitF<CFG.categories.blockedBelow;
+function tileCounts(i){ let dead=0,barr=0,natv=0; for(const t of SEC_TILES[i]){ if(state[t]===DEAD)dead++; else if(COMP&&CS.native[t]>0)natv++; else if(state[t]===BAR)barr++; }
+  return {dead,barr,natv}; }
 function renderInspect(){
   const el=document.getElementById("inspMain"), more=document.getElementById("inspMore");
   const curRaw=more.querySelector("details.raw"); if(curRaw) rawOpen=curRaw.open; // read synchronously: the toggle event can lag a re-render
@@ -624,13 +635,13 @@ function renderInspect(){
   if(selected<0&&selectedWater){ more.innerHTML=""; el.innerHTML=`<h2>WATER</h2><div class="secname">Open water</div><div class="geo">🌊 Not land: nothing grows here and it does not count toward coverage. Ordinary spread cannot cross water${CROSS_T?`; ${CROSS_T.name} carries seeds over gaps of up to ${CFG.crossing.maxGap} water tiles`:""}.</div>`; return; }
   if(selected<0){ more.innerHTML=""; el.innerHTML='<h2>SECTION</h2><p style="color:var(--dim);font-style:italic">Click a region to read it. The plant starts in its protected origin (★) and spreads into suitable ground on its own. Click a region your plant lives in to set its growth focus or buy it a local upgrade.</p>'; return; }
   const s=SEC[selected], e=evaluate(selected), liv=livingCountBySection()[selected];
-  let dead=0,barr=0,natv=0; for(const t of SEC_TILES[selected]){ if(state[t]===DEAD)dead++; else if(COMP&&CS.native[t]>0)natv++; else if(state[t]===BAR)barr++; }
+  const {dead,barr,natv}=tileCounts(selected);
   const total=AREA[selected];
-  const catRow=k=>{ const c=e.cats[k]; return `<div class="cat"><span class="lamp ${c.soft&&c.f>CFG.categories.lamp.green?"yellow":lampOf(c.f)}"></span><span class="lbl">${k}</span><span class="st">${c.word}</span>${e.terraformable[k]?'<span class="tag">terraformable</span>':''}</div>`; };
+  const catRow=k=>{ const c=e.cats[k]; return `<div class="cat"><span class="lamp ${catLamp(c)}"></span><span class="lbl">${k}</span><span class="st">${c.word}</span>${e.terraformable[k]?'<span class="tag">terraformable</span>':''}</div>`; };
   // BLOOM-011: the temperature as numbers, so the two answers to cold read differently — Cold Tolerance lowers the
   // bottom of the plant's range, warming the sky raises this ground's temperature (and every other region's)
   const dv=sim.derived(), RD=PRESS||CLIM, tline=`<div class="tline" id="tline">Ground here <b>${degC(RD?r1(e.effT):e.effT)}</b> · sky ${degC(RD?r1(e.skyT):G.temp)} · suits your plant <b>${degC(dv.tempFloor)} to ${degC(dv.tempCeil)}</b></div>`;
-  const blocked = e.limitF<CFG.categories.blockedBelow;
+  const blocked = isBlocked(e);
   const limitHtml = blocked
     ? `<div class="limit" data-tutorial="limiting-factor">▲ Growth blocked: <b>${LIMIT_MSG[e.limitKey](e)}</b><div class="fixhint">${FIX_HINT[e.limitKey](e)}</div></div>`
     : `<div class="limit ok" data-tutorial="limiting-factor">✓ Thriving here — no blocker.${e.cats.Soil.soft?'<div class="fixhint">Low nutrients slow growth here, but it is not a wall.</div>':''}</div>`;
@@ -727,26 +738,32 @@ function refreshColonyCtl(){
     const need=b.querySelector(".need"), txt=why==="biomass"?`need ${Math.ceil(price-sim.biomass)} more`:""; if(need.textContent!==txt) need.textContent=txt; });
   const tip=document.getElementById("ftip"); if(tip&&sim.ticks!==tipTick){ tipTick=sim.ticks; const t="💡 "+colonyTip(selected); if(tip.textContent!==t) tip.textContent=t; }
 }
-function chooseFocus(mode){
-  if(selected<0) return false;
-  const was=sim.getColonyFocus(selected);
-  if(!sim.setColonyFocus(selected,mode)){ log(`${LABEL[selected]} has no living plants yet, so there is no colony to direct.`); return false; }
-  log(mode===was?`${LABEL[selected]} is already on ${FOCUS_UI[mode].name}.`:`${LABEL[selected]}: ${FOCUS_UI[mode].name} focus. Other colonies keep their own focus. ${FOCUS_UI[mode].what}`);
-  renderColonyCtl(true); draw(); emit("growth-focus",{...secRef(selected), focus:mode, previous:was, changed:mode!==was}); return true;
+// (BLOOM-029A) `i` = the region acted on; omitted = the selected region, exactly as the buttons above have always used it
+function chooseFocus(mode,i=selected){
+  if(i<0) return false;
+  const was=sim.getColonyFocus(i);
+  if(!sim.setColonyFocus(i,mode)){ log(`${LABEL[i]} has no living plants yet, so there is no colony to direct.`); return false; }
+  log(mode===was?`${LABEL[i]} is already on ${FOCUS_UI[mode].name}.`:`${LABEL[i]}: ${FOCUS_UI[mode].name} focus. Other colonies keep their own focus. ${FOCUS_UI[mode].what}`);
+  renderColonyCtl(true); draw(); emit("growth-focus",{...secRef(i), focus:mode, previous:was, changed:mode!==was}); return true;
 }
-function buySpec(id){
-  if(selected<0) return false; const why=sim.specBlock(selected,id), price=sim.specPrice();
+function buySpec(id,i=selected){
+  if(i<0) return false; const why=sim.specBlock(i,id), price=sim.specPrice();
   if(why){ log(why==="biomass"?`${SPEC[id].name} costs ${price} Biomass. You have ${Math.floor(sim.biomass)}: ${Math.ceil(price-sim.biomass)} more needed.`
-    : why==="hasOne"?`${LABEL[selected]} already has its local upgrade (one per colony).` : `${LABEL[selected]} has no living colony to upgrade.`); return false; }
-  sim.buySpecialization(selected,id);
-  log(`Built ${SPEC[id].name} in ${LABEL[selected]} for ${price} Biomass. ${SPEC_UI[id].what}`);
-  renderColonyCtl(true); renderHUD(lastCov); draw(); emit("local-upgrade",{...secRef(selected), upgrade:id, upgradeName:SPEC[id].name, cost:price}); return true;
+    : why==="hasOne"?`${LABEL[i]} already has its local upgrade (one per colony).` : `${LABEL[i]} has no living colony to upgrade.`); return false; }
+  sim.buySpecialization(i,id);
+  log(`Built ${SPEC[id].name} in ${LABEL[i]} for ${price} Biomass. ${SPEC_UI[id].what}`);
+  renderColonyCtl(true); renderHUD(lastCov); draw(); emit("local-upgrade",{...secRef(i), upgrade:id, upgradeName:SPEC[id].name, cost:price}); return true;
 }
 
+// (BLOOM-029A) the facts behind the island note, shared with the run UI adapter: null = no note (one landmass, or the plant is there)
+function geoInfo(i){
+  if(!MULTI_MASS||livingMasses().has(LANDMASS[i])) return null;
+  return { landmass:LANDMASS[i], hops:crossingHops().get(LANDMASS[i]), crossing:CROSS_T?CROSS_T.id:null, owned:ownsCrossing(), maxGap:CFG.crossing.maxGap };
+}
 // island note (water worlds only): geographic access, kept separate from the environment readout above
 function geoNote(i){
-  if(!MULTI_MASS||livingMasses().has(LANDMASS[i])) return "";
-  const h=crossingHops().get(LANDMASS[i]), g=CFG.crossing.maxGap;
+  const info=geoInfo(i); if(!info) return "";
+  const h=info.hops, g=CFG.crossing.maxGap;
   if(!CROSS_T||h===undefined) return `<div class="geo">🌊 Separate island: no water gap of ≤ ${g} tiles links it to land your plant holds yet.</div>`;
   const far=h>1?` It is ${h} crossings away, so seeds need a foothold on a nearer island first.`:"";
   return ownsCrossing()
@@ -790,13 +807,20 @@ function buildPressureBar(){
   document.querySelector("header").appendChild(el);
 }
 let pbarText="";
-function renderPressure(){
-  if(!PRESS) return; const P=SCN.pressure, o=PS.offsets, k=PS.phase, s=PS.seconds;
-  let next; if(k<0) next=`decline begins in ${mmss(P.graceSeconds-s)}`;
+// (BLOOM-029A) the bar's live status as data — the next stage (text + seconds to it) and the extinction countdown (seconds, or null
+// while any plant lives) — shared with the run UI adapter
+function pressureStatus(){
+  const P=SCN.pressure, k=PS.phase, s=PS.seconds; let next, nextIn=null;
+  if(k<0){ nextIn=P.graceSeconds-s; next=`decline begins in ${mmss(nextIn)}`; }
   else if(PS.progress>=1) next="conditions have stopped changing";
-  else { const n=P.phases[k+1]; next=`${n.name} in ${mmss(P.graceSeconds+n.from*P.durationSeconds-s)}`; }
+  else { const n=P.phases[k+1]; nextIn=P.graceSeconds+n.from*P.durationSeconds-s; next=`${n.name} in ${mmss(nextIn)}`; }
+  const liv=sim.coverage()>0, X=sim.extinction, extinctionIn=!liv&&!sim.lost&&!sim.won?(X.graceTicks-X.zeroTicks)*CFG.tickMs/1000:null;
+  return { next, nextIn, extinctionIn };
+}
+function renderPressure(){
+  if(!PRESS) return; const o=PS.offsets, k=PS.phase, st=pressureStatus(), next=st.next;
   const sk=skyNow(), tfT=G.temp-BASE.temperature, tfM=G.moist-BASE.moisture;
-  const liv=sim.coverage()>0, X=sim.extinction, warn=!liv&&!sim.lost&&!sim.won?`⚠ No living plants left! Extinction in ${mmss((X.graceTicks-X.zeroTicks)*CFG.tickMs/1000)}`:"";
+  const warn=st.extinctionIn!==null?`⚠ No living plants left! Extinction in ${mmss(st.extinctionIn)}`:"";
   const vals=[`${phaseName(k)}`, `${Math.round(PS.progress*100)}% lost`, next, `${sgn(o.moist)}`, `${sgn(o.temp)} °C`, `${sgn(o.rad)}`,
     `Sky now <b>${degC(r1(sk.t))}</b> = base ${degC(BASE.temperature)} · Terraform ${sgn(tfT)} · thinning ${sgn(o.temp)} — moisture <b>${r1(sk.m)}</b> = base ${BASE.moisture} · Terraform ${sgn(tfM)} · thinning ${sgn(o.moist)}`, warn];
   const key=vals.join("|"); if(key===pbarText) return; pbarText=key;
@@ -866,7 +890,7 @@ function compNote(i){
 }
 // the status bar: native-held land (share of the land, same denominator as your coverage), its trend, contested regions and
 // who leads in them. Never a countdown: competition has no clock.
-const CHIST=[]; let cbarText="";
+const CHIST=[]; let cbarText="", compBar=null; // (BLOOM-029A) compBar = the bar's last trend + leads, for the run UI adapter
 function buildCompBar(){
   if(!COMP) return; const el=document.createElement("div"); el.className="cbar"; el.id="cbar";
   el.innerHTML=`<span class="cid" id="cId">🌿 ${SCN.display.title.toUpperCase()}</span><span>native plants hold <b id="cNative"></b> of the land</span>
@@ -879,6 +903,7 @@ function compTrend(){ // native share now vs ~20 game-seconds ago (samples every
   const d=CS.share-CHIST[0].v; return d>0.005?["up","▲ spreading"]:d<-0.005?["dn","▼ retreating"]:["flat","steady"]; }
 function renderComp(){
   if(!COMP) return; const t=compTrend(); let mine=0, theirs=0; SEC.forEach((_,i)=>{ const R=CS.regions[i]; if(R.contested){ if(R.side==="player") mine++; else if(R.side==="native") theirs++; } });
+  compBar={trend:t[0], trendText:t[1], playerLeads:mine, nativeLeads:theirs};
   const vals=[`${Math.round(CS.share*100)}%`, t[1], t[0], `${CS.contested}`, CS.contested?`you lead ${mine} · natives lead ${theirs}`:""];
   const key=vals.join("|"); if(key===cbarText) return; cbarText=key;
   document.getElementById("cNative").textContent=vals[0]; const tr=document.getElementById("cTrend"); tr.textContent=vals[1]; tr.className="ctrend "+vals[2];
@@ -1036,18 +1061,23 @@ function skyWords(d){
     d.nb&&d.nb.length?`🌿 suits native plants less: ${nm(d.nb)}`:"", d.nw&&d.nw.length?`🌿 suits native plants more: ${nm(d.nw)}`:""].filter(Boolean).join(" · ");
 }
 
+// (BLOOM-029A) the shop's read rules, shared with the run UI adapter: the boards in order, what a board offers (e.g. a crossing trait
+// only where water can be crossed), and one upgrade's state — price, owned tier, allowed by the rules, affordable now, and why not
+const BOARDS=["Spread","Adapt","Terraform"];
+const offeredOn=board=>UP.filter(x=>x.board===board && sim.offered(x));
+function upgradeState(u){ const cost=sim.price(u), tier=sim.ownedTier(u), rules=sim.canBuy(u);
+  return { cost, tier, rules, canBuy:rules && sim.biomass>=cost, why:rules?"":sim.why(u) }; }
 function renderShop(){
-  const el=document.getElementById("shop"); const groups=["Spread","Adapt","Terraform"];
+  const el=document.getElementById("shop"); const groups=BOARDS;
   let html='<h2>UPGRADES</h2>';
   for(const gname of groups){
     html+=`<div class="grp" data-tutorial="board-${gname.toLowerCase()}"><h3>${gname}</h3>`;
     if(gname==="Adapt") html+=`<div class="temppool">temp points: cold ${genome.cold} · heat ${genome.heat} / cap ${CFG.scales.tempCap}</div>`;
-    for(const u of UP.filter(x=>x.board===gname && sim.offered(x))){ // e.g. a crossing trait only where water can be crossed
-      const cost=sim.price(u); const tier=sim.ownedTier(u);
-      const canBuy=sim.canBuy(u) && sim.biomass>=cost;
+    for(const u of offeredOn(gname)){
+      const {cost,tier,rules,canBuy,why}=upgradeState(u);
       const label = tier>0 ? `${u.name} <small>·${["I","II","III","IV"][tier-1]||("+"+tier)} owned · ${u.sub}</small>` : `${u.name} <small>${u.sub}</small>`;
-      const title = !sim.canBuy(u)?sim.why(u):"";
-      html+=`<button class="buy ${tier>0?'owned':''} ${canBuy?'':'off'} ${sim.canBuy(u)&&!canBuy?'poor':''}" data-id="${u.id}" data-tutorial="upgrade-${u.id}" aria-disabled="${!canBuy}" title="${title}">
+      const title = why;
+      html+=`<button class="buy ${tier>0?'owned':''} ${canBuy?'':'off'} ${rules&&!canBuy?'poor':''}" data-id="${u.id}" data-tutorial="upgrade-${u.id}" aria-disabled="${!canBuy}" title="${title}">
         <span class="nm">${label}</span><span class="cost">${cost}</span></button>`;
     }
     html+='</div>';
@@ -1061,37 +1091,39 @@ function renderShop(){
 }
 // cheap per-frame pass: toggle affordability in place (a full re-render every frame would eat clicks)
 function refreshShop(){
-  document.querySelectorAll("#shop button.buy").forEach(b=>{ const u=upById[b.dataset.id];
-    const off=!(sim.canBuy(u) && sim.biomass>=sim.price(u)); if(b.classList.contains("off")!==off){ b.classList.toggle("off",off); b.setAttribute("aria-disabled",off); }
-    b.classList.toggle("poor",sim.canBuy(u)&&off); });
+  document.querySelectorAll("#shop button.buy").forEach(b=>{ const st=upgradeState(upById[b.dataset.id]);
+    const off=!st.canBuy; if(b.classList.contains("off")!==off){ b.classList.toggle("off",off); b.setAttribute("aria-disabled",off); }
+    b.classList.toggle("poor",st.rules&&off); });
 }
 // (BLOOM-028D1) a preview shown = one bloom:upgrade-preview with what it showed (region ids); available false = not buyable now
 function showPreview(id){ describePreview(id); const u=upById[id], ids=a=>(a||[]).map(i=>SEC[i].id), P=preview||{};
   emit("upgrade-preview",{id, board:u.board, name:u.name, available:!!preview, gain:ids(P.gain), lose:ids(P.lose), better:ids(P.better), worse:ids(P.worse), reachHostile:ids(P.reachHostile)}); }
-function describePreview(id){
-  preview=sim.previewOf(id); const u=upById[id];
-  if(!preview){ log(sim.why(u)||(sim.ownedTier(u)>0?`${u.name} — already evolved.`:"Not available.")); return; }
+// (BLOOM-029A) the preview itself, computed without showing it: { data, text }. data = what the map outlines (null = not available
+// now), text = what the footer says. describePreview shows it (as always); the run UI adapter reads it for rooms that preview in place
+function computePreview(id){
+  let data=sim.previewOf(id); const u=upById[id];
+  if(!data) return { data:null, text:sim.why(u)||(sim.ownedTier(u)>0?`${u.name} — already evolved.`:"Not available.") };
   const nm=a=>a.map(i=>LABEL[i]).join(", ");
   if(u.effect.type==="crossing"){ // geographic access, not a promise that the far shore suits the plant
     const hops=crossingHops(), home=livingMasses(), reach=SEC.map((_,i)=>i).filter(i=>!home.has(LANDMASS[i])&&hops.has(LANDMASS[i]));
     const ok=reach.filter(i=>evaluate(i).fitness>CFG.grow.growThresh), bad=reach.filter(i=>!ok.includes(i));
     const isl=new Set(reach.map(i=>LANDMASS[i])).size, far=reach.some(i=>hops.get(LANDMASS[i])>1);
-    preview={gain:ok,lose:[],reachHostile:bad};
+    data={gain:ok,lose:[],reachHostile:bad};
     const why={}; bad.forEach(i=>{ const e=evaluate(i), w=LIMIT_MSG[e.limitKey](e); why[w]=(why[w]||0)+1; });
     // counts + outline key first (the footer is one line); the region names follow
-    log(`${u.name} — seeds float across water gaps of up to ${CFG.crossing.maxGap} tiles. Reachable: ${reach.length} region(s) on ${isl} island(s) — `+
+    return { data, text:`${u.name} — seeds float across water gaps of up to ${CFG.crossing.maxGap} tiles. Reachable: ${reach.length} region(s) on ${isl} island(s) — `+
       `${ok.length} can take root now (green outline), ${bad.length} reachable but hostile now (yellow outline${bad.length?`: ${Object.entries(why).map(([w,n])=>`${w} ×${n}`).join(", ")}`:""}).`+
       (far?" Farther islands need a foothold on a nearer one first.":"")+
-      (ok.length?` Can take root: ${nm(ok)}.`:"")+(bad.length?` Hostile: ${nm(bad)}.`:""));
-    return; }
+      (ok.length?` Can take root: ${nm(ok)}.`:"")+(bad.length?` Hostile: ${nm(bad)}.`:"") }; }
   if(u.effect.type==="sky"){ // Terraform: the whole sky changes, so name every region it helps or hurts (engine decides open/closed)
-    const d=skyWhatIf(u), c=CLIM?sim.climatePreview(id):null; preview={gain:preview.gain, lose:preview.lose, better:d.better, worse:d.worse, climate:c};
-    log(`${u.name} — ${skyWords({...d, gain:preview.gain, lose:preview.lose})}.${c?" "+climPreviewWords(c,false)+".":""}`); return; }
-  log(`${u.name} — ` + (preview.gain.length||preview.lose.length
-    ? [preview.gain.length?`opens: ${nm(preview.gain)}`:"", preview.lose.length?`⚠ closes: ${nm(preview.lose)}`:""].filter(Boolean).join(" · ")
-    : (u.board==="Spread"?"no region changes; your plant spreads faster.":"no region changes state yet.")));
+    const d=skyWhatIf(u), c=CLIM?sim.climatePreview(id):null; data={gain:data.gain, lose:data.lose, better:d.better, worse:d.worse, climate:c};
+    return { data, text:`${u.name} — ${skyWords({...d, gain:data.gain, lose:data.lose})}.${c?" "+climPreviewWords(c,false)+".":""}` }; }
+  return { data, text:`${u.name} — ` + (data.gain.length||data.lose.length
+    ? [data.gain.length?`opens: ${nm(data.gain)}`:"", data.lose.length?`⚠ closes: ${nm(data.lose)}`:""].filter(Boolean).join(" · ")
+    : (u.board==="Spread"?"no region changes; your plant spreads faster.":"no region changes state yet.")) };
 }
-function clearPreview(){ preview=null; }
+function describePreview(id){ const r=computePreview(id); preview=r.data; log(r.text); }
+function clearPreview(){ preview=null; runUI.invalidate("preview-clear"); }
 let justBought=null;
 function buy(id){
   const u=upById[id], sky=u.effect.type==="sky", ax=u.effect.axis, from=sky&&G[ax], before=sky&&SEC.map((_,i)=>evaluate(i));
@@ -1113,15 +1145,22 @@ function buy(id){
 /* ========================================================================== */
 function tileAt(ev){ const r=cv.getBoundingClientRect(); const x=Math.floor((ev.clientX-r.left)/TILE),y=Math.floor((ev.clientY-r.top)/TILE);
   if(x<0||y<0||x>=W||y>=H)return{sec:-2,tile:-1}; return {sec:TILEMAP[y*W+x],tile:y*W+x}; }
+// (BLOOM-029A) the map's two actions as functions, so the map click and the run UI adapter take the same path
+// a bubble collected by the player: bubbles[k]
+function collectBubbleAt(k){ const b=bubbles[k]; if(!b) return false; sim.collectBubble(k); renderHUD(lastCov); draw();
+  BUB_SEEN.delete(b); emit("bubble-collect",{how:"click", tile:b.tile, ...secRef(TILEMAP[b.tile]), value:CFG.econ.bubbleValue}); return true; }
+// a map click on section `sec` (−1 water, −2 outside the map) at `tile` (−1 = none): clicking the selected region again deselects
+function selectAt(sec,tile){
+  selectedWater=sec===-1&&tile>=0; // water tile (sec -2 = outside the map)
+  const was=selected; selected=(sec<0||sec===selected)?-1:sec; renderInspect(); draw();
+  emit("region-select",{...secRef(selected), previous:was>=0?SEC[was].id:null, water:selectedWater, tile});
+}
 cv.addEventListener("click",e=>{
   const {sec,tile}=tileAt(e);
   // bubble hit first
   for(let k=bubbles.length-1;k>=0;k--){ const b=bubbles[k]; const px=b.x*TILE,py=b.y*TILE; const r=cv.getBoundingClientRect();
-    if(Math.hypot(e.clientX-r.left-px,e.clientY-r.top-py)<=Math.max(6,TILE*0.55)){ sim.collectBubble(k); renderHUD(lastCov); draw();
-      BUB_SEEN.delete(b); emit("bubble-collect",{how:"click", tile:b.tile, ...secRef(TILEMAP[b.tile]), value:CFG.econ.bubbleValue}); return; } }
-  selectedWater=sec===-1&&tile>=0; // water tile (sec -2 = outside the map)
-  const was=selected; selected=(sec<0||sec===selected)?-1:sec; renderInspect(); draw();
-  emit("region-select",{...secRef(selected), previous:was>=0?SEC[was].id:null, water:selectedWater, tile});
+    if(Math.hypot(e.clientX-r.left-px,e.clientY-r.top-py)<=Math.max(6,TILE*0.55)){ collectBubbleAt(k); return; } }
+  selectAt(sec,tile);
 });
 // (BLOOM-028D1) a bubble that left the map without a click collected itself (the engine's auto-collect): one event each. Checked
 // once a frame (a rolled bubble lives ≥ econ.bubbleAutoTicks ticks, far longer than a frame; only BLOOM_API.advance can skip frames)
@@ -1135,15 +1174,19 @@ function placeBubble(sectionId){ const s=sectionId==null?ORIGIN:SIDX[sectionId];
   const c=CENT[s]; let best=-1, bd=Infinity;
   for(const t of SEC_TILES[s]){ if(state[t]!==LIV||bubbles.some(b=>b.tile===t)) continue;
     const dx=(t%W)+.5-c.x, dy=((t/W)|0)+.5-c.y, d=dx*dx+dy*dy; if(d<bd) { bd=d; best=t; } }
-  if(best<0||!sim.placeBubble(best)) return -1; BUB_SEEN.add(bubbles[bubbles.length-1]); draw(); return best; }
+  if(best<0||!sim.placeBubble(best)) return -1; BUB_SEEN.add(bubbles[bubbles.length-1]); draw(); runUI.invalidate("bubble-place"); return best; }
 window.BLOOM_RUN_UI={ placeBubble };
-function log(m){ document.getElementById("log").textContent=m; }
+let lastMessage=document.getElementById("log").textContent; // (BLOOM-029A) the footer's message, for the run UI adapter
+function log(m){ document.getElementById("log").textContent=m; lastMessage=m; runUI.invalidate("message"); }
 
-document.getElementById("btnPlay").addEventListener("click",()=>{ running=!running;
+// (BLOOM-029A) the ⏸ / ▶ and speed buttons' actions as functions, so the buttons and the run UI adapter take the same path
+function setRunning(r){ running=r;
   document.getElementById("btnPlay").textContent=running?"⏸ pause":"▶ play";
-  document.getElementById("btnPlay").setAttribute("aria-pressed",running); emit("play-pause",{running}); });
-document.getElementById("btnSpeed").addEventListener("click",()=>{ speed=speed===1?2:speed===2?4:1;
-  document.getElementById("btnSpeed").textContent="▶ "+speed+"×"; emit("speed",{speed}); });
+  document.getElementById("btnPlay").setAttribute("aria-pressed",running); emit("play-pause",{running}); }
+const SPEEDS=[1,2,4]; // 1× → 2× → 4× → 1×
+function setSpeed(n){ speed=n; document.getElementById("btnSpeed").textContent="▶ "+speed+"×"; emit("speed",{speed}); }
+document.getElementById("btnPlay").addEventListener("click",()=>setRunning(!running));
+document.getElementById("btnSpeed").addEventListener("click",()=>setSpeed(speed===1?2:speed===2?4:1));
 
 /* ========================================================================== */
 /*  BLOOM REPORT                                                               */
@@ -1223,7 +1266,7 @@ function onWin(cov){
   if(PLAY) wireActions(document.getElementById("report"));
   drawPlant(document.getElementById("plantCv"));
   document.getElementById("reportModal").classList.add("on");
-  document.getElementById("reportContinue").addEventListener("click",()=>{ document.getElementById("reportModal").classList.remove("on"); running=true; document.getElementById("btnPlay").textContent="⏸ pause"; });
+  document.getElementById("reportContinue").addEventListener("click",()=>{ document.getElementById("reportModal").classList.remove("on"); running=true; document.getElementById("btnPlay").textContent="⏸ pause"; runUI.invalidate("continue"); });
   log(`★ Bloom! ${Math.round(cov*100)}% coverage.`);
 }
 
@@ -1237,6 +1280,7 @@ function frame(ts){
     while(acc>=CFG.tickMs){ lastCov=sim.tick(); acc-=CFG.tickMs; if(!running)break; }
   }
   pollBubbles(); pollCrossings(performance.now()); pollPressure(performance.now()); pollCompetition(performance.now()); pollClimate(); renderHUD(lastCov); renderPressure(); renderComp(); renderClimate(); refreshShop(); refreshColonyCtl(); draw();
+  runUI.frame(); // (BLOOM-029A) one "the run advanced" notice for the adapter's subscribers, only on frames where the sim ticked
   // re-read the inspected section every 3 sim ticks (not every frame — while paused that would swallow clicks)
   if(selected>=0 && sim.ticks%3===0 && sim.ticks!==lastInspectTick){ lastInspectTick=sim.ticks; renderInspect(); }
   requestAnimationFrame(frame);
@@ -1264,6 +1308,25 @@ if(PLAY){ // BLOOM-016: player identity (no developer terms) + the run menu in t
   mb.addEventListener("click",()=>{ const o=!m.classList.contains("open"); setOpen(o); if(o) m.querySelector(".pm button").focus(); });
   document.addEventListener("click",e=>{ if(!m.contains(e.target)) setOpen(false); });
   document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&m.classList.contains("open")){ setOpen(false); mb.focus(); } }); }
+/* ========================================================================== */
+/*  RUN UI BOUNDARY (BLOOM-029A) — docs/RUN_UI_PRODUCTION_BOUNDARY_v1.md       */
+/*  The future run screen reads and acts through BLOOM_RUN_UI.adapter, never   */
+/*  through the globals above. This host is the whole list of what it may      */
+/*  reach: this page's live state (getters) and its own read rules / actions   */
+/*  (the same functions the temporary shell uses). Nothing here is copied.     */
+/* ========================================================================== */
+if(window.BLOOM&&BLOOM.runUI){
+  runUI=BLOOM.runUI.createAdapter({
+    sim, run:BLOOM_RUN, labels:LABEL, events:document, categories:["Temperature","Water","Soil","Hazard"], boards:BOARDS, speeds:SPEEDS,
+    scenario:{ scn:SCN, press:PRESS, comp:COMP, clim:CLIM, bands:BANDS, axisNames:AXNAME },
+    view:{ running:()=>running, speed:()=>speed, selected:()=>selected, selectedWater:()=>selectedWater, coverage:()=>lastCov, preview:()=>preview,
+      skyFx:()=>skyFx, message:()=>lastMessage, tilePx:()=>TILE, canvas:cv, compBar:()=>compBar },
+    read:{ skyNow, catLamp, isBlocked, tileCounts, limitText:e=>LIMIT_MSG[e.limitKey](e), fixHint:e=>FIX_HINT[e.limitKey](e),
+      colonyWord:w=>COLONY_WORD[w], colonyHint:w=>COLONY_HINT[w], colonyTip, focusUI:FOCUS_UI, specUI:SPEC_UI, geoInfo, compWhy,
+      pressureStatus, phaseName, climForecast, upgradeState, offeredOn, computePreview, tileAt:(x,y)=>tileAt({clientX:x, clientY:y}) },
+    act:{ setRunning, setSpeed, selectAt, showPreview, clearPreview, buy, chooseFocus, buySpec, collectBubbleAt, placeBubble } });
+  window.BLOOM_RUN_UI.adapter=runUI.adapter;
+}
 // BLOOM-008/009: open on the origin so its colony status and growth focus are the first thing in view
 selected=ORIGIN; renderInspect(); log(`Your plant has just sprouted in ${LABEL[ORIGIN]}: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish.`);
 if(PRESS) log(`☁ ${SCN.display.title}. ${SCN.display.summary} The decline begins in ${mmss(SCN.pressure.graceSeconds)}. Your plant sprouted in ${LABEL[ORIGIN]}.`);
