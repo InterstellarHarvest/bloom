@@ -34,14 +34,15 @@ const info = (name, detail) => console.log(`INFO  ${name}  — ${detail}`);
   { const bad = [];
     for (const s of sectors) {
       if (s.cells.length !== 9 || s.cells.some(c => !c)) { bad.push(`${s.sectorSeed}: ${s.cells.filter(Boolean).length} cells`); continue; }
-      s.cells.forEach((c, i) => { if (c.classId !== S.SURVEY_CLASSES[i % 3].id && !c.filledBy) bad.push(`${s.sectorSeed}#${i} ${c.classId}`); });
+      s.cells.forEach((c, i) => { if (c.classId !== S.SURVEY_CLASSES[i % 3].id) bad.push(`${s.sectorSeed}#${i} ${c.classId}`); });
       for (let col = 0; col < 3; col++) { const h = [0, 1, 2].map(r => s.cells[r * 3 + col].habitable); if (!(h[0] >= h[1] && h[1] >= h[2])) bad.push(`${s.sectorSeed} col ${col} order`); }
       if (new Set(s.cells.map(c => c.key)).size !== 9) bad.push(`${s.sectorSeed} duplicate world`);
     }
     check(!bad.length, "S1 every sector is a 3 × 3 matrix: column = class (Stable / Volatile / Extreme), 9 distinct worlds, each column ordered most → least habitable", bad.join("; ") || SEEDS.length + " sectors");
     info("validated sector build cost (Node, one thread: three columns in sequence)", sectors.map(s => `${s.label}: ${s.ms} ms · columns ${s.columns.map(c => `${c.ms} ms/${c.validations}v/${c.wasted}w`).join(", ")}`).join(" · "));
-    const nearest = all.filter(c => c.filledBy).length;
-    check(nearest === 0, "S2 every column fills with worlds of its own class inside the draw budget (no nearest-band fallback on the sample)", `${nearest} fallback cell(s)`); }
+    const nearest = all.filter(c => c.filledBy).length, src = fs.readFileSync(path.join(ROOT, "resources/destination-survey/survey-data.js"), "utf8").replace(/\/\/.*$/gm, "");
+    check(nearest === 0 && all.length === sectors.length * 9 && !/filledBy\s*=|aside\.push/.test(src) && S.MAX_DRAWS >= 200,
+      "S2 (028B owner rule) a column only ever holds worlds of ITS class: every sample column has three of its own, and survey-data has no wrong-class fallback (an unfilled row would stay empty; draw budget " + S.MAX_DRAWS + ")", `${nearest} fallback cell(s)`); }
 
   // 2. classification = the engine's starting lamps, area-weighted, in the documented bands
   { const bad = [];
@@ -128,7 +129,7 @@ const info = (name, detail) => console.log(`INFO  ${name}  — ${detail}`);
       if (sig(par) !== sig(ref)) bad.push(`sector ${sec.sectorSeed} column ${col}`); }
     const fbPar = (() => { for (let c = 0; c < 3; c++) { const ref = S.buildColumn(1, c, undefined, { firstBloom: true }); if (ref.cells.some(x => x.authored)) return { c, ref, par: parallel(1, c, { firstBloom: true }) }; } return null; })();
     if (!fbPar || sig(fbPar.par) !== sig(fbPar.ref)) bad.push("first bloom column");
-    check(!bad.length, "S11 (028B) parallel column path = sequential reference: planColumn picks + independent validations + columnFromValidated (stream-order acceptance) give the identical cells (keys, classes, nearest-fill, order, planet fingerprints) for all 6 columns of both sectors and a First Bloom column",
+    check(!bad.length, "S11 (028B) parallel column path = sequential reference: planColumn picks + independent validations + columnFromValidated (stream-order acceptance) give the identical cells (keys, classes, order, planet fingerprints) for all 6 columns of both sectors and a First Bloom column",
       bad.join("; ") || `${accepted} accepted-in-order validations, ${spec} speculative ones discarded`); }
 
   // 8. plain data, nothing mutated, no DOM / globals in the module

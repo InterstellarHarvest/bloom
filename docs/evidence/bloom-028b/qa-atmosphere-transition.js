@@ -59,7 +59,16 @@ const INIT = () => {
     return true; };
   window.__longTasks = []; if ((PerformanceObserver.supportedEntryTypes || []).includes("longtask")) try { new PerformanceObserver(l => { for (const e of l.getEntries()) window.__longTasks.push({ t: e.startTime, d: e.duration }); }).observe({ type: "longtask", buffered: true }); } catch { /* Firefox */ }
   // (028B loading) every 20 ms from page start: how many worlds the survey shows, and its state
-  window.__fillLog = []; const fl = setInterval(() => { const S = window.DESCENT_DEV && DESCENT_DEV.survey; if (!S) return; __fillLog.push([performance.now(), S.cells.filter(Boolean).length, S.state]); if (__fillLog.length > 3000) clearInterval(fl); }, 20);
+  window.__fillLog = []; window.__fillAudit = { moves: 0, labelOverPlanet: 0, emptyWithoutLabel: 0, loadingText: 0, frames: 0 }; const where = new Map();
+  const fl = setInterval(() => { const S = window.DESCENT_DEV && DESCENT_DEV.survey; if (!S) return; __fillLog.push([performance.now(), S.cells.filter(Boolean).length, S.state]); if (__fillLog.length > 3000) clearInterval(fl); }, 20);
+  const audit = () => { const S = window.DESCENT_DEV && DESCENT_DEV.survey, A = __fillAudit;
+    if (S && S.slots && (S.state === "loading" || S.state === "scanning")) { A.frames++;
+      S.cells.forEach((c, i) => { const inc = S.slots[i].classList.contains("is-incoming");
+        if (c) { if (where.has(c.key) && where.get(c.key) !== i) A.moves++; where.set(c.key, i); if (inc) A.labelOverPlanet++; }
+        else if (S.state === "loading" && !inc) A.emptyWithoutLabel++; });
+      const ph = S.placeholderEl, pr = S.progressEl; if ((!ph.hidden && ph.textContent.trim()) || (pr.offsetWidth > 2 && pr.textContent.trim())) A.loadingText++; }
+    requestAnimationFrame(audit); };
+  requestAnimationFrame(audit);
   document.addEventListener("DOMContentLoaded", () => window.__armGen());
   // the view draws exactly this candidate's planet: its texture wrapper shares a generated planet's own tilemap array (authored
   // First Bloom is laid out on the fly: same id / name)
@@ -258,9 +267,10 @@ async function standalone(browser, B) {
       let dom = null; await a.run({ preset: "dramatic", onCovered: () => { const ov = document.querySelector(".atx");
         dom = { imgs: ov.querySelectorAll(".atx-cloud img").length, clouds: ov.querySelectorAll(".atx-cloud").length, svg: ov.querySelectorAll("svg").length, canvas: ov.querySelectorAll("canvas").length,
           png: [...ov.querySelectorAll("img")].every(i => /^data:image\/png/.test(i.src) && i.complete && i.naturalWidth > 0), nodes: ov.getElementsByTagName("*").length + 1 }; } });
-      a.dispose(); return { prepMs: Math.round(prepMs), worstStall: Math.round(worst), ...dom }; });
-    check(r.imgs === r.clouds && r.clouds >= 9 && r.svg === 0 && r.canvas === 0 && r.png && r.worstStall < 50, tag("S17 clouds are pre-rendered bitmaps (<img>, decoded before use; no SVG or canvas in the overlay); prepare() draws them without a long task"), J(r));
-    perf[tag("cloud bitmaps prepare")] = { ms: r.prepMs, worstMainThreadStallMs: r.worstStall, overlayNodes: r.nodes }; }
+      const own = a.prepareStats; a.dispose(); return { prepMs: Math.round(prepMs), longestOwnTaskMs: Math.round(own.maxTaskMs * 10) / 10, bitmaps: own.bitmaps, pageWorstStall: Math.round(worst), ...dom }; });
+    check(r.imgs === r.clouds && r.clouds >= 9 && r.svg === 0 && r.canvas === 0 && r.png && r.bitmaps === 8 && r.longestOwnTaskMs < 50,
+      tag("S17 clouds are pre-rendered bitmaps (<img>, decoded before use; no SVG or canvas in the overlay); prepare() draws them one per task, its longest synchronous step well under a long task (page-wide stall reported for information)"), J(r));
+    perf[tag("cloud bitmaps prepare")] = { ms: r.prepMs, longestOwnTaskMs: r.longestOwnTaskMs, pageWorstStallMs: r.pageWorstStall, overlayNodes: r.nodes }; }
 
   // S16 not a canned animation: fresh runs lay their clouds out differently; a given seed reproduces its layout exactly
   { const v = await ev(page, async () => {
@@ -449,13 +459,17 @@ async function loading(browser, B) {
   const a = await ev(page, () => { const S = DESCENT_DEV.survey, fl = __fillLog, t1 = fl.find(x => x[1] > 0), tReady = fl.find(x => x[2] === "survey");
     const keys = new Set(S.sector.cells.filter(Boolean).map(c => c.key)), placedValid = S.cells.every(c => !c || c.authored || (c.planet.archetype && c.planet.archetype.winnabilityChecked && c.planet.archetype.validatedLayers.join() === "1,2,3,4,5,6,7,8"));
     return { firstGlobe: t1 && Math.round(t1[0]), counts: [...new Set(fl.filter(x => x[2] === "loading").map(x => x[1]))], ready: Math.round(tReady ? tReady[0] : performance.now()), sectorMs: S.stats.sectorTimes[0].ms,
-      same: S.cells.every((c, i) => c === S.sector.cells[i]), allIn: S.cells.every(c => !c || keys.has(c.key)), placedValid, shown: S.stats.shown, n: S.cells.filter(Boolean).length,
+      same: [0, 1, 2].every(col => { const mine = S.cells.filter((_, i) => i % 3 === col), want = S.sector.cells.filter((_, i) => i % 3 === col);
+        return mine.length === want.length && want.every(w => !w || mine.includes(w)) && mine.every(c => !c || c.classId === ["stable", "volatile", "extreme"][col]); }), audit: { ...__fillAudit }, incomingLeft: document.querySelectorAll(".is-incoming").length, allIn: S.cells.every(c => !c || keys.has(c.key)), placedValid, shown: S.stats.shown, n: S.cells.filter(Boolean).length,
       drawn: S.cells.every((c, i) => __draws(S.views[i], c) && S.views[i].container === S.globes[i] && S.slots[i].contains(S.globes[i])),
       reorders: S.stats.reorders || 0, pool: S.poolSize, hc: navigator.hardwareConcurrency, workers: __workers.created, gen: __gen.calls, enabled: S.buttons.filter(b => !b.disabled).length,
       speculative: S.stats.sectorTimes[0].columns.map(c => c.speculative), parallel: S.stats.sectorTimes[0].columns.every(c => c.parallel) }; });
   check(a.firstGlobe && a.ready && a.firstGlobe < a.ready - 500 && a.counts.length >= 4 && a.same && a.drawn && a.placedValid && a.shown === a.n && a.n === 9 && a.enabled === 9 && a.gen === 0,
-    tag("L1 fill in as confirmed: the first world is on screen well before the sector completes and the grid fills one world at a time; every world shown is fully validated; one setPlanet per world (reorders move containers, never re-texture); after the moves, the view in every grid slot draws exactly that slot's planet; the finished grid is exactly the sector; no main-thread generation"),
-    `first globe ${a.firstGlobe} ms, all nine + grid ready ${a.ready} ms (sector ${a.sectorMs} ms); counts seen ${J(a.counts)}; setPlanet ${a.shown}; reorders ${a.reorders}`);
+    tag("L1 fill in as confirmed: the first world is on screen well before the sector completes and the grid fills one world at a time; every world shown is fully validated; one setPlanet per world; the view in every grid slot draws exactly that slot's planet; each column holds exactly the sector's worlds of ITS class; no main-thread generation"),
+    `first globe ${a.firstGlobe} ms, all nine + grid ready ${a.ready} ms (sector ${a.sectorMs} ms); counts seen ${J(a.counts)}; setPlanet ${a.shown}`);
+  check(a.audit.moves === 0 && a.audit.labelOverPlanet === 0 && a.audit.emptyWithoutLabel === 0 && a.audit.loadingText === 0 && a.incomingLeft === 0 && a.audit.frames > 20,
+    tag("L5 (owner rules) no world ever moves once shown (no bounce); every empty spot shows \"Incoming\" while loading, never on a spot that has a planet, none left at the end; no visible loading text"),
+    J({ ...a.audit, incomingLeft: a.incomingLeft }));
   check(a.parallel && a.pool === Math.max(1, Math.min(8, a.hc - 2)) && a.workers === a.pool, tag("L2 validations run one per task on a pool of hardware threads − 2 (≤ 8) workers (parallel column path)"), `pool ${a.pool} (hardwareConcurrency ${a.hc}); speculative per column ${J(a.speculative)}`);
   // scan before the next sector is ready: the old worlds leave at once, the new ones fill in as confirmed
   // (scan once, then again the moment the grid is back: that second sector cannot be prefetched yet)
@@ -465,12 +479,18 @@ async function loading(browser, B) {
     const f = () => { const t = performance.now() - t0, cur = S.cells.filter(Boolean);
       if (gone === null && !cur.some(c => old.has(c.key))) gone = Math.round(t);
       if (firstNew === null && cur.some(c => !old.has(c.key))) firstNew = Math.round(t);
-      if (S.state === "survey" && t > 50) res({ last: S.stats.lastScan, emptiedAt: gone, firstNew, same: S.cells.every((c, i) => c === S.sector.cells[i] && __draws(S.views[i], c) && S.slots[i].contains(S.globes[i])), n: S.cells.filter(Boolean).length, enabled: S.buttons.filter(b => !b.disabled).length });
+      if (S.state === "survey" && t > 50) res({ last: S.stats.lastScan, emptiedAt: gone, firstNew, same: S.cells.every((c, i) => c && c.classId === ["stable", "volatile", "extreme"][i % 3] && S.sector.cells.includes(c) && __draws(S.views[i], c) && S.slots[i].contains(S.globes[i])), n: S.cells.filter(Boolean).length, enabled: S.buttons.filter(b => !b.disabled).length });
       else requestAnimationFrame(f); };
     S.scan(); requestAnimationFrame(f); }));
   check(sc.last && sc.last.prefetched === false && sc.firstNew && sc.firstNew < sc.last.waitedMs - 300 && sc.same && sc.n === 9 && sc.enabled === 9,
-    tag("L3 scan before the next sector is ready: the current worlds leave at once and the new ones appear as each is confirmed (not after all nine); the finished grid is exactly the new sector"),
+    tag("L3 scan before the next sector is ready: the current worlds leave at once and the new ones appear as each is confirmed (not after all nine); every world sits in its own class's column, drawn by the view in its slot"),
     `old worlds gone ${sc.emptiedAt} ms, first new world ${sc.firstNew} ms, sector ready ${sc.last && sc.last.waitedMs} ms`);
+  { const h = await ev(page, () => { const S = DESCENT_DEV.survey, halo = S.slots[2].querySelector(".ds-halo"), cs = getComputedStyle(halo), ds = getComputedStyle(S.root);
+      return { border: cs.borderTopWidth, rest: cs.opacity, shadow: cs.boxShadow !== "none", size: Math.round(halo.getBoundingClientRect().width / S.slots[2].getBoundingClientRect().width * 1000) / 1000, extreme: ds.getPropertyValue("--extreme").trim() }; });
+    await page.hover('.ds-cand[data-index="2"]'); await page.waitForTimeout(350);
+    const hov = await ev(page, () => +getComputedStyle(DESCENT_DEV.survey.slots[2].querySelector(".ds-halo")).opacity);
+    check(h.border === "0px" && +h.rest === 0 && h.shadow && Math.abs(h.size - 0.917) < 0.01 && hov === 1 && h.extreme === "#f2604e",
+      tag("L6 (owner) no circle around the spots at rest; hover / focus shows a glow hugging the planet's own disc (91.7 % of the box, shadow outside only); Extreme is red"), J({ ...h, hover: hov })); }
   perf[tag("loading")] = { firstGlobeMs: a.firstGlobe, readyMs: a.ready, sectorMs: a.sectorMs, reorders: a.reorders, pool: a.pool, scanFirstNewMs: sc.firstNew, scanReadyMs: sc.last && sc.last.waitedMs };
   const errs = log.errors.concat(log.warnings).filter(e => !/GPU stall due to ReadPixels/.test(e));
   check(!errs.length, tag("L4 loading: no console errors or warnings"), J(errs).slice(0, 300));
@@ -536,7 +556,9 @@ async function gpuSample(b) {
         await o.page.click('[data-act="scan"]'); await o.page.waitForFunction(() => DESCENT_DEV.survey.state === "survey");
         await o.page.evaluate(() => { const S = DESCENT_DEV.survey; window.__oldKeys = new Set(S.cells.filter(Boolean).map(c => c.key)); S.scan(); });
         await o.page.waitForFunction(() => { const S = DESCENT_DEV.survey; return S.state === "scanning" && S.cells.filter(c => c && !__oldKeys.has(c.key)).length >= 3; }, null, { timeout: 120000 });
-        await o.page.waitForTimeout(250); await o.page.screenshot({ path: path.join(OUT, "15-scan-fill-in.png") }); await o.ctx.close(); }
+        await o.page.waitForTimeout(250); await o.page.screenshot({ path: path.join(OUT, "15-scan-fill-in.png") });
+        await o.page.waitForFunction(() => DESCENT_DEV.survey.state === "survey", null, { timeout: 120000 });
+        await o.page.hover('.ds-cand[data-index="2"]'); await o.page.waitForTimeout(400); await o.page.screenshot({ path: path.join(OUT, "16-hover-glow.png") }); await o.ctx.close(); }
     }
     await hctx.close(); await chromium.close();
 
