@@ -8,6 +8,7 @@
 //   await menu.recede();              // title / menu recede (leaving for the survey) …
 //   menu.hide();                      // … then hidden under cover; later
 //   menu.show();                      // back: a NEW painting (never the one just shown), the entrance replays
+//   menu.show({ settled: true });     // … or appears at rest (no entrance, no painting fade): shown under a cover that lifts (028C1)
 //   menu.dispose();
 //
 // This screen knows nothing about the Destination Survey, planets or transitions: ExpeditionEntry (./expedition-entry.js) owns
@@ -86,14 +87,15 @@ export class MainMenu {
   /**
    * Show again (after hide / recede): a NEW painting — the one already preloaded — and the entrance replays; focus lands on
    * BEGIN EXPEDITION. `rotate: false` keeps the current painting (used when a departure was aborted before anything changed).
-   * Resolves when the painting is decoded and fading in (the plaque is up immediately).
+   * `settled: true` (the consumer shows it under a cover that then lifts): no entrance replay and the painting appears without
+   * its fade — the screen is complete the moment the painting is decoded. Resolves when the painting is decoded and shown.
    */
-  show({ rotate = true } = {}) {
+  show({ rotate = true, settled = false } = {}) {
     if (this.state === "disposed") return Promise.resolve();
     for (const a of this._recedeAnims || []) a.cancel(); this._recedeAnims = null;
-    this.root.classList.remove("is-receded"); this.root.style.display = "";
+    this.root.classList.remove("is-receded"); this.root.classList.toggle("is-settled", settled); this.root.style.display = "";
     this.state = "shown";
-    this._replayEntrance();
+    if (!settled) this._replayEntrance();
     const p = rotate || !this.background ? this._show(this.next ? this.next.index : pickBackground(this.background ? this.background.index : null, this.rng)) : Promise.resolve(this.background);
     this.focusMenu();
     return (this.shown = p);
@@ -110,7 +112,7 @@ export class MainMenu {
     for (const a of this.root.getAnimations({ subtree: true })) a.cancel();
     this.root.removeEventListener("click", this._onClick); this.root.removeEventListener("keydown", this._onKey);
     this.art.removeAttribute("src"); this._preload = null; this.next = null;
-    this.root.replaceChildren(); this.root.classList.remove("mm", "rm", "motion-full", "is-receded"); this.root.style.display = "";
+    this.root.replaceChildren(); this.root.classList.remove("mm", "rm", "motion-full", "is-receded", "is-settled"); this.root.style.display = "";
   }
 
   // ---------------------------------------------------------------- the painting

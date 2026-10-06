@@ -1,4 +1,4 @@
-// BLOOM — Main Menu checks (BLOOM-028C). Plain Node, production modules only; no browser.
+// BLOOM — Main Menu checks (BLOOM-028C; M7g / M7h 028C1). Plain Node, production modules only; no browser.
 //
 //   node tools/main-menu-check.js
 //
@@ -128,7 +128,13 @@ const mulberry32 = a => () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.i
       "M7d the one worker spawn point moved to sector-pool.js; destination-survey.js imports SectorPool and exposes static prefetch()");
     check(/type === "plan"/.test(worker) && /type === "validate"/.test(worker) && /columnCandidates\(sectorSeed, column, undefined, \{ firstBloom \}\)/.test(worker),
       "M7e survey-worker.js still serves the accepted plan / validate / column tasks (semantics untouched; byte identity is checked by the milestone's provenance QA)");
-    check(/translate:/.test(css) && !/@keyframes mm-rise\{[^}]*transform/.test(css), "M7f entrances / recede animate the independent `translate` property, never the plaque's layout transform"); }
+    check(/translate:/.test(css) && !/@keyframes mm-rise\{[^}]*transform/.test(css), "M7f entrances / recede animate the independent `translate` property, never the plaque's layout transform");
+    // 028C1: menu ↔ survey is a plain fade through black owned by the entry; the AtmosphereTransition is only handed to the survey's departure
+    const ec = code(entry);
+    check(!/\.atx\.run\(|\.run\(\s*\{\s*preset/.test(ec) && /transition: this\.descent\.transition \|\| this\.atx/.test(ec) && /\.animate\(\[\{ opacity: to \? 0 : 1 \}, \{ opacity: to \}\]/.test(ec) && !/translate|scale|clip-path|filter/.test(ec.slice(ec.indexOf("_fade(to, rm) {"), ec.indexOf("_prefetchSector(first)"))),
+      "M7g (028C1) menu ↔ survey is a fade through black: ExpeditionEntry never runs the AtmosphereTransition itself (it only hands it to the survey's dramatic departure); its fade animates opacity alone (no zoom, wipe, clouds)");
+    check(/\.mm\.is-settled \.mm-plaque, \.mm\.is-settled \.mm-nav li, \.mm\.is-settled \.mm-status\{animation:none\}/.test(css) && /\.mm\.is-settled \.mm-art\{transition:none\}/.test(css) && /show\(\{ settled: true \}\)/.test(ec),
+      "M7h (028C1) the return shows the menu `settled` under the black (no entrance replay, no painting fade), so the screen is complete before the black lifts"); }
 
   console.log(fails ? `\n${fails} check(s) FAILED (${Date.now() - t0} ms)` : `\nALL CHECKS PASS (${Date.now() - t0} ms)`);
   process.exit(fails ? 1 : 0);
