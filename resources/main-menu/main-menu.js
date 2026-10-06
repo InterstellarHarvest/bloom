@@ -125,7 +125,11 @@ export class MainMenu {
     img.classList.remove("is-shown"); img.src = src;
     const done = () => { if (this.state === "disposed" || this.background.index !== index) return this.background;
       img.classList.add("is-shown"); this.stats.loads.push({ index, ms: Math.round(performance.now() - t0) }); this._remember(index); this._preloadNext(index); return this.background; };
-    return (img.decode ? img.decode() : Promise.resolve()).then(done, done); // (a decode() rejection — src changed mid-decode — still shows what the browser has)
+    // (028C1) the NEW image must have arrived first: while it is still loading, Firefox's decode() resolves at once against the
+    // previous painting (complete false), which would let a cover lift onto the old picture
+    const arrived = img.complete ? Promise.resolve() : new Promise(res => { const f = () => { img.removeEventListener("load", f); img.removeEventListener("error", f); res(); };
+      img.addEventListener("load", f); img.addEventListener("error", f); });
+    return arrived.then(() => (img.decode ? img.decode() : null)).then(done, done); // (a decode() rejection — src changed mid-decode — still shows what the browser has)
   }
 
   /** Choose the painting a later show() will use (never this one) and let the browser fetch + decode it now. */
