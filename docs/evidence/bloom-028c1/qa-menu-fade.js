@@ -63,7 +63,7 @@ const INIT = () => {
       const ov = document.querySelector(".atx"), S = E.survey;
       rows.push({ t: +now.toFixed(1), dt: +(now - last).toFixed(1), state: E.state, black: +black.toFixed(4), blackShown: cs.display !== "none",
         menuOn, ds: !!ds, dsVisible: !!ds && !E.surveyHost.hidden, dsState: ds ? ds.dataset.state : null, cells: S ? S.cells.filter(Boolean).length : 0, renders: S && S.host ? S.host.renders : null,
-        bg: m.background ? m.background.index : null, artShown: m.art.classList.contains("is-shown"), artOp: +getComputedStyle(m.art).opacity, artReady: m.art.complete && m.art.naturalWidth > 0,
+        bg: m.background ? m.background.index : null, artShown: m.art.classList.contains("is-shown"), artOp: +getComputedStyle(m.art).opacity, artReady: m.art.complete && m.art.naturalWidth > 0 && !!m.background && m.art.currentSrc === m.background.src,
         plaque: menuOn ? +getComputedStyle(m.plaque).opacity : null, atx: ov ? ov.className : null,
         tf: [getComputedStyle(E.menuHost).transform, getComputedStyle(E.surveyHost).transform, cs.transform, getComputedStyle(E.root).transform].filter(x => x && x !== "none").length,
         clip: [E.menuHost, E.surveyHost, E.black].map(e => getComputedStyle(e).clipPath).filter(x => x && x !== "none").length,
@@ -181,7 +181,7 @@ function returnChecks(tag, a, before, { rm = false, slowMs = 0 } = {}) {
   timingCheck(tag("F7"), a, rm, "dispose + painting + first frames");
   const bg = visible.length ? visible[0].bg : null;
   check(visible.length && visible.every(x => x.bg === bg && x.artShown && x.artReady && x.artOp === 1 && x.plaque === 1) && bg === before.next && bg !== before.bg && (!slowMs || r.liftMs - r.swappedMs >= slowMs - 100),
-    tag(`F8 the next painting (the preloaded one, never the one just shown) is swapped in while black: decoded, at full opacity, the plaque at rest (no entrance replay) on every frame the black is lifting${slowMs ? ` — with the painting held back ${slowMs} ms, the screen stays black until it is decoded` : ""}`),
+    tag(`F8 the next painting (the preloaded one, never the one just shown) is swapped in while black: decoded (the pixels on screen are the new file: currentSrc), at full opacity, the plaque at rest (no entrance replay) on every frame the black is lifting${slowMs ? ` — with the painting held back ${slowMs} ms, the screen stays black until it is decoded` : ""}`),
     `painting ${before.bg + 1} → ${bg + 1} (planned ${before.next + 1}); visible frames ${visible.length}; swap → lift ${r.liftMs - r.swappedMs} ms`);
 }
 
@@ -296,20 +296,24 @@ async function descent(browser, B) {
 async function stills(browser) {
   const { ctx, page } = await openMenu(browser, `sector=${SECTOR}&bg=4`, { viewport: { width: 1440, height: 900 } });
   await page.waitForFunction(() => MENU_DEV.entry.prefetch.progress.ready, null, { timeout: 120000 }); await page.waitForTimeout(1200);
-  const pauseAt = (pred) => ev(page, p => new Promise(res => { const E = MENU_DEV.entry, f = () => { const a = E.black.getAnimations()[0], cs = getComputedStyle(E.black);
-    const st = { state: E.state, menuOn: E.menuHost.style.display !== "none", ds: !!document.querySelector(".ds") && !E.surveyHost.hidden };
-    if (a && new Function("s", "o", "return " + p)(st, +cs.opacity)) { a.pause(); res({ ...st, black: +cs.opacity }); } else requestAnimationFrame(f); }; requestAnimationFrame(f); }), pred.toString());
+  // wait for the fade on `screen` going `toBlack` (or lifting), then seek it to its midpoint and pause (deterministic: never
+  // depends on a frame landing inside an opacity window, which SwiftShader's ~300 ms frames can skip); 15 s guard
+  const pauseAt = (screen, toBlack) => ev(page, ([screen, toBlack]) => new Promise((res, rej) => { const E = MENU_DEV.entry, t0 = performance.now(), f = () => {
+    const a = E.black.getAnimations()[0], st = { state: E.state, menuOn: E.menuHost.style.display !== "none", ds: !!document.querySelector(".ds") && !E.surveyHost.hidden };
+    const dir = a && +a.effect.getKeyframes().at(-1).opacity === (toBlack ? 1 : 0);
+    if (a && dir && st[screen]) { a.pause(); a.currentTime = a.effect.getTiming().duration / 2; requestAnimationFrame(() => requestAnimationFrame(() => res({ ...st, black: +getComputedStyle(E.black).opacity }))); }
+    else if (performance.now() - t0 > 15000) rej(new Error(`stills: no ${toBlack ? "fade to black" : "lift"} over ${screen}`)); else requestAnimationFrame(f); }; requestAnimationFrame(f); }), [screen, toBlack]);
   const resume = () => ev(page, () => { for (const a of MENU_DEV.entry.black.getAnimations()) a.play(); });
   const shot = async (file, p) => { const s = await p; fs.writeFileSync(path.join(OUT, file), await page.screenshot()); await resume(); return s; };
   const s = {};
-  s.a = shot("01-menu-fading-to-black.png", pauseAt("s.menuOn && o > 0.45 && o < 0.75")); await page.click('[data-act="begin"]'); await s.a;
-  s.b = shot("02-survey-fading-in.png", pauseAt("s.ds && o > 0.3 && o < 0.6")); await s.b;
+  s.a = shot("01-menu-fading-to-black.png", pauseAt("menuOn", true)); await page.click('[data-act="begin"]'); await s.a;
+  s.b = shot("02-survey-fading-in.png", pauseAt("ds", false)); await s.b;
   await page.waitForFunction(() => MENU_DEV.entry.state === "survey" && MENU_DEV.entry.survey.state === "survey", null, { timeout: 120000 }); await page.waitForTimeout(600);
-  s.c = shot("03-survey-fading-to-black.png", pauseAt("s.ds && o > 0.45 && o < 0.75")); await page.click('[data-act="exit"]'); await s.c;
-  s.d = shot("04-menu-fading-in-next-painting.png", pauseAt("s.menuOn && o > 0.3 && o < 0.6")); await s.d;
+  s.c = shot("03-survey-fading-to-black.png", pauseAt("ds", true)); await page.click('[data-act="exit"]'); await s.c;
+  s.d = shot("04-menu-fading-in-next-painting.png", pauseAt("menuOn", false)); await s.d;
   await page.waitForFunction(() => MENU_DEV.entry.state === "menu"); await page.waitForTimeout(300);
   fs.writeFileSync(path.join(OUT, "05-menu-after-return.png"), await page.screenshot());
-  info("evidence stills (each fade paused near its midpoint)", { a: await s.a, b: await s.b, c: await s.c, d: await s.d });
+  info("evidence stills (each fade seeked to its midpoint and paused)", { a: await s.a, b: await s.b, c: await s.c, d: await s.d });
   await ctx.close();
 }
 
