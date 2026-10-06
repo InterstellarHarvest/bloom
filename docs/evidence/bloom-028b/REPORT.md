@@ -7,6 +7,9 @@
   - `5c9cf8c` — implementation;
   - `e3a07d6` — evidence;
   - `b670d84` — owner revision;
+  - `006418a` — revision evidence;
+  - `0eb8c66` — owner round 2;
+  - `99f66ca` — owner round 3;
   - this evidence commit.
 - Not merged, not pushed. Integration handoff: `docs/ATMOSPHERE_TRANSITION_v1.md`; survey changes:
   `docs/DESTINATION_SURVEY_v1.md` §3.1 and §4.
@@ -42,6 +45,32 @@ The owner reviewed the first build in Firefox on a 5K iMac and asked for four ch
      grows into its final row (2–5 per sector). Each world still gets exactly one `setPlanet`.
    - **First world on screen: ≈ 1.2–1.4 s** (Firefox real GPU 1.4 s), previously a blank 4–5.6 s wait.
    - **Scan before the next sector is ready: first new world after 0.56–0.83 s**, previously 3.7–5.7 s of nothing.
+
+## 0b. Owner rounds 2–3 (Firefox, 5K)
+
+- **"Loaded planets bounce when another loads."**
+  - Cause: the column re-sort shrank and regrew out-of-order globes.
+  - **Owner rule:** the column (class) matters, the row does not. Worlds now keep the row they land in and never move.
+  - L5 checks zero moves on every frame.
+- **"A hard planet must never be in the easy column."**
+  - The inherited wrong-class "nearest" fallback is removed.
+  - A column only ever holds its own class: draw budget `MAX_DRAWS` 400 (was 60); an unfilled row would stay empty.
+  - Checked by suite S1 / S2 and by L1 / L3.
+- **Loading text removed.**
+  - Each empty spot shows a small shimmering **"Incoming"**, removed in the same task its planet appears (L5: never over a
+    planet, none left at the end).
+  - Screen readers get a status line, hidden when idle.
+- **Circles around the spots removed.** Hover and focus show a glow hugging the planet's own disc (L6).
+- **Extreme colour** is red `#f2604e` (was pink).
+- **"Others wait to regrow until the planet lands."**
+  - First try: regrow during the flight. Measured unsafe: the regrowing discs overlapped the flying globe by up to
+    −405 px, and globes on one renderer intersect by depth.
+  - **Owner's choice:** the other worlds *darken away* (background-coloured covers, then hidden) instead of shrinking.
+  - On return, each reappears as soon as the rest of the flight can no longer touch it, all fully back as the globe lands.
+  - L7 checks this per frame: no globe moves while another is visible, the minimum gap to visible globes is ≥ 16 px, and
+    all are back ≤ 50 ms after landing.
+  - Owner asked why not z-index: globes share one WebGL canvas and depth buffer, so there is no z-index. A "draw it on top"
+    fix is a `PlanetSphereRenderer` change, which is sphere-track work.
 
 ## 1. What was built
 
@@ -80,9 +109,9 @@ The owner reviewed the first build in Firefox on a 5K iMac and asked for four ch
 
 | | |
 |---|---|
-| browser QA (`qa-atmosphere-transition.js --shots`, on committed `b670d84`) | **167 / 167** (Chromium 1280×800, 1024×768, 1440×900, forced + system reduced motion, loading; Firefox incl. loading; GPU sample) → `qa-results.json`, `qa-run.log` |
-| 21 repository suites (`run-all-suites.sh`, on the revision) | **860 / 0**, all green, incl. `destination-survey-check` 11/11 (new S11) and the 21st suite 14/14 → `qa-suites-summary.txt` |
-| accepted 028A1 QA re-run on the revision | **11 / 19**. Every failure is a sentinel for a behaviour the owner asked to change, or provenance (§5). The identity flags inside I3 are all true. → `qa-028a1-rerun.json` |
+| browser QA (`qa-atmosphere-transition.js --shots`, on committed `99f66ca`) | **173 / 173** (Chromium 1280×800, 1024×768, 1440×900, forced + system reduced motion, loading; Firefox incl. loading; GPU sample) → `qa-results.json`, `qa-run.log` |
+| 21 repository suites (`run-all-suites.sh`, on round 2's survey data, unchanged since) | **859 / 1**: the one failure is the pre-existing `colony-development-check` [31] pixel flake (passed in the previous run; also flakes on pristine `80a39ce`). `destination-survey-check` 11 / 11, 21st suite 14 / 14 → `qa-suites-summary.txt` |
+| accepted 028A1 QA re-run on `99f66ca` | **15 / 19**. The 4 failures are provenance, its aggregate, the prefetch-task counter in I3 (every identity flag true), and I6 (the owner's fill-in) (§5) → `qa-028a1-rerun.json` |
 | nested 028A QA re-run | **27 / 32**: provenance, the import allow-list, and the two reduced-motion "all nine at once" checks (§5) → `qa-028a-rerun-nested.json` |
 | Firefox on the real GPU (headed spot checks) | departure 16.7 ms in every visible phase; standalone 0 frames > 40 ms in 4 / 4 swap runs (§0) |
 | Safari / WebKit | not installed on this machine (mac12). Left for hardware QA |
@@ -177,10 +206,8 @@ None of these is a regression. Each is provenance, or a sentinel for a behaviour
 |---|---|---|
 | 028A1 N1, 028A N1, N5 | file-list provenance sentinels (028A N1 / N5 already failed by design at 028A1's acceptance) | no |
 | 028A N4 | import allow-list: the survey now also imports `atmosphere-transition.js` (required by 028B). The rest of N4 holds: no sphere internals, one renderer | no (intended) |
-| 028A1 I2, I3 | wrap each view's `setPlanet` by its **original** grid index. Fill-in moves views between rows when a column settles, so "assigned" is false where a view moved. Every other identity flag in I3 is true: validated, rendered, dossier, focus, event, callback, unchanged, 0 generator calls. L1 proves slot ↔ planet directly | no (owner change) |
+| 028A1 I3 (sector 2 only) | counts worker tasks queued while a world is focused. The next sector's prefetch now queues one task per validation (028B parallel path) instead of three column tasks up front. Every identity flag is true: validated, rendered, assigned, dossier, focus, event, callback, unchanged, 0 generator calls | no |
 | 028A1 I6, 028A T8 (×2) | "no globe changes until all nine are validated" / reduced-motion scan "all nine at once" | no (owner decision: fill in as confirmed) |
-| 028A1 I8 | "never more than three workers": the pool is now hardware threads − 2 (≤ 8) | no (owner request: faster loading) |
-| 028A1 F1 | Firefox aggregate of the above | no |
 | 028A1 N6 | aggregate of the nested 028A results | no |
 
 - **`colony-development-check` [31]** passed in the final suite run. It is a pre-existing timing-dependent pixel flake: it
@@ -207,7 +234,8 @@ None of these is a regression. Each is provenance, or a sentinel for a behaviour
 | `12-firefox-revealed-destination.png` | Firefox: revealed destination |
 | `13-firefox-standalone-covered.png` | Firefox: standalone covered |
 | `14-loading-fill-in.png` | first load, the grid filling in (a column settling) |
-| `15-scan-fill-in.png` | scan before the next sector is ready: new worlds filling in |
+| `15-scan-fill-in.png` | scan before the next sector is ready: new worlds filling in (with "Incoming" spots) |
+| `16-hover-glow.png` | hover glow hugging an Extreme planet; no circles around the spots |
 | `colony-check-31-flake.txt` | the [31] flake investigation |
 
 `timelines.json` holds frame-by-frame timelines. `perf.json` holds frame statistics.
