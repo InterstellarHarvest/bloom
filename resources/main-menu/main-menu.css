@@ -103,6 +103,9 @@
 @keyframes mm-rise{from{opacity:0; translate:0 14px} to{opacity:1; translate:0 0}}
 @keyframes mm-fade{from{opacity:0} to{opacity:1}}
 .mm.is-receded .mm-plaque, .mm.is-receded .mm-status{opacity:0} /* held by the script's recede animation, then hidden */
+/* settled (028C1): shown under the entry's black, which is the entrance — no replay, the painting appears without its fade */
+.mm.is-settled .mm-plaque, .mm.is-settled .mm-nav li, .mm.is-settled .mm-status{animation:none}
+.mm.is-settled .mm-art{transition:none}
 
 /* ── narrower screens: the plaque spans the bottom (portrait phones, small tablets) ── */
 @container (max-width: 720px){

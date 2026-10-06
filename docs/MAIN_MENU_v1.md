@@ -1,11 +1,12 @@
 # Main Menu v1 — integration handoff (Menu / Tutorial workstream, Main PMO)
 
 **From:** BLOOM-028C · **For:** the Main PMO (root `index.html` integration, gameplay handoff) and the Tutorial workstream
-(the TRAINING hook). Evidence and QA: `docs/evidence/bloom-028c/REPORT.md`.
+(the TRAINING hook). Evidence and QA: `docs/evidence/bloom-028c/REPORT.md`; the menu ↔ survey fade (028C1):
+`docs/evidence/bloom-028c1/REPORT.md`.
 
 The opening title of the game. The player reads **STRANGE BLOOM · UNKNOWN SOILS**; the project, its files, modules and
 repository stay **BLOOM**. One of twelve hand-painted backgrounds fills the screen, the title and menu sit on a plaque over it,
-BEGIN EXPEDITION leads into the accepted Destination Survey through a short mist, and the first validated sector is already
+BEGIN EXPEDITION leads into the accepted Destination Survey through a short fade to black (028C1), and the first validated sector is already
 being prepared while the title is showing.
 
 ---
@@ -18,7 +19,7 @@ being prepared while the title is showing.
 | `resources/main-menu/main-menu-data.js` | pure data: `TITLE`, `SUBTITLE`, `BACKGROUNDS`, `pickBackground`, settings (`readSettings` / `writeSettings`, `reducedMotionFor`). Node-testable |
 | `resources/main-menu/main-menu.css` | the screen's look (scoped under `.mm`) |
 | `resources/main-menu/backgrounds/menu-01.jpg … menu-12.jpg` | the owner's twelve paintings, 1280 × 720 JPEG, byte-identical to the originals (never re-encoded) |
-| `resources/main-menu/expedition-entry.js` | **`ExpeditionEntry`**: the flow menu ↔ survey — hosts, ONE `AtmosphereTransition`, the title-screen prefetch, the motion setting |
+| `resources/main-menu/expedition-entry.js` | **`ExpeditionEntry`**: the flow menu ↔ survey — hosts, the fade through black between them (028C1), the `AtmosphereTransition` it hands to the survey's dramatic departure, the title-screen prefetch, the motion setting |
 | `resources/destination-survey/sector-pool.js` | **`SectorPool`**: the survey's worker pool + sector cache, lifted out of `DestinationSurvey` so a sector can be built before the screen exists (§5) |
 | `resources/destination-survey/destination-survey.js` | adds `sectors` (adopt a pool), `onExit` / `exit()` ("← Main menu"), `static prefetch()` — additive; the accepted behaviour is unchanged |
 | `demos/main-menu.html` | the entry page (localhost): menu → survey → 028B departure → a clearly marked development handoff target |
@@ -51,7 +52,8 @@ Not here: the sphere (`docs/PLANET_SPHERE_VIEW_v1.md`), the transition (`docs/AT
   `prefetch` (the pool waiting for the next survey), `stats` (begins, returns, per-entry timings, prefetch timings).
 - Methods: `beginExpedition()`, `returnToMenu()`, `dispose()`.
 - `MainMenu` alone (for a page that composes its own flow): `new MainMenu(root, { onBegin, onTraining, onSettingsChange, reducedMotion, background })`;
-  `shown` (promise), `recede()`, `hide()`, `show({ rotate })`, `setStatus(text)`, `setReducedMotion(v)`, `openDialog(name)`, `dispose()`.
+  `shown` (promise), `recede()`, `hide()`, `show({ rotate, settled })` (`settled`: no entrance replay, no painting fade — for a
+  show under a cover that then lifts; 028C1), `setStatus(text)`, `setReducedMotion(v)`, `openDialog(name)`, `dispose()`.
 
 ## 3. The screen
 
@@ -127,34 +129,55 @@ pool.dispose();          // only if no survey ever took it
 
 ## 6. Menu → survey → menu
 
-- **BEGIN** (`ExpeditionEntry.beginExpedition`): the plaque recedes (220 ms; opacity + a 14 px rise), 110 ms later the
-  **SUBDUED** transition runs with `conceal: "full"` (the layout swap and the globes' first frame are never seen). Under
-  cover: the menu is hidden, the survey constructed with the prefetched pool, one frame drawn. Then the mist clears.
-  Measured ≈ 0.3 s to covered and ≈ 0.6 s to fully revealed; no dramatic descent here.
-- **"← Main menu"** (survey `onExit`, a ghost button before the survey's title; also Escape in the survey state): SUBDUED,
-  `conceal: "full"`; under cover the survey is **disposed** (renderer, nine views, its pool's workers, listeners, DOM), the
-  menu shows its next painting, a fresh prefetch starts. Allowed from the survey and loading states; refused in focus (use
-  Return to survey), mid-animation and while departing.
-- **One `AtmosphereTransition`** serves both directions and the survey's dramatic departure (`descent.transition`).
+**028C1: a plain fade through black** replaced the SUBDUED mist here. One black layer (`.ee-black`, a child of the entry's
+root above both screens, below the departure's clouds; `display: none` when clear) animates opacity only — no clouds, zoom or
+wipe. AtmosphereTransition and its presets are unchanged; the entry no longer runs it itself.
+
+| | to black | held black | from black |
+|---|---|---|---|
+| menu → survey | 220 ms | until the survey is mounted and has drawn two frames | 250 ms |
+| survey → menu | 220 ms | until the survey is disposed, the next painting is decoded and shown, and two frames drawn | 250 ms |
+| reduced motion (either way) | 80 ms | as above | 80 ms |
+
+Easing `cubic-bezier(.4, 0, .2, 1)` both ways. Measured on a real GPU (Metal, headless Chromium): click → black ≈ 250–280 ms,
+held 30–90 ms, fully revealed ≈ 0.55–0.63 s after the click; both fades at a steady 60 fps (`docs/evidence/bloom-028c1/`).
+
+- **BEGIN** (`ExpeditionEntry.beginExpedition`): the menu is made `inert` and the black fades in over it. At full black the
+  menu is hidden and the survey constructed with the prefetched pool (§5) — in one task, so no frame has both screens. The
+  black lifts only after two animation frames, i.e. after the survey's first layout and globe frame are drawn; if that takes
+  longer (slow GPU init, a heavy first frame) the screen simply stays black. A half-built sector shows its confirmed worlds
+  and fills in as before (that is the survey's honest loading state, not transition state).
+- **"← Main menu"** (survey `onExit`, a ghost button before the survey's title; also Escape in the survey state): the survey
+  is made `inert`, black fades in; at full black the survey is **disposed** (renderer, nine views, its pool's workers,
+  listeners, DOM) and the menu shown `settled` with its **next painting** (§4: preloaded, never the one just shown). The black
+  waits for that painting to be decoded and on screen (capped at 2 s for a painting that never arrives), then two frames, then
+  lifts: the painting and plaque are complete and at rest when the menu appears — the lifting black is the entrance. A fresh
+  prefetch starts once the black is gone. Allowed from the survey and loading states; refused in focus (use Return to
+  survey), mid-animation and while departing.
+- **The AtmosphereTransition** instance the entry creates is now used only by the survey's dramatic departure
+  (`descent.transition`); its cloud bitmaps are still prepared once the title is up.
 - **Begin before the prefetch completes** is handled honestly (§5). **A return while still loading** disposes the pool
   mid-work; `survey.ready` rejects quietly (the entry catches it).
 - **After the departure** (028B, unchanged) the survey disposes itself under the clouds; the entry's state is `"departed"`.
   Gameplay handoff is the PMO's `descent.onCovered`.
+- `stats.entries[]` / `stats.exits[]` record each crossing: `blackMs`, `swappedMs`, `liftMs`, `revealedMs` (from the click).
 
 ## 7. Reduced motion
 
 - Detection: the OS (`prefers-reduced-motion`, live) unless the Settings motion choice forces it.
 - Menu: entrances and the recede become immediate (≤ 10 ms), the painting appears without a fade, the hover marker does not
   slide. Nothing is disabled.
-- Transition and survey: their own reduced paths, from the same value (`ExpeditionEntry.reducedMotion`).
+- Menu ↔ survey fade: 80 ms each way (forced, from Settings, or the OS when the setting follows it). The survey's departure
+  (AtmosphereTransition) and the survey: their own reduced paths, from the same value (`ExpeditionEntry.reducedMotion`).
 
 ## 8. Performance notes
 
 - Menu: HTML / CSS over one `<img>`; no WebGL, no canvas, no workers of its own. No `backdrop-filter`, no `will-change`,
   no animated filter (028B lesson); the title's drop shadow is a static filter on one small element.
 - Memory: one decoded 1280 × 720 painting on screen plus one preloaded (≈ 3.7 MB each decoded).
-- Headless frame samples of the menu → survey transition are in `perf.json`; judge Firefox smoothness headed on real
-  hardware (028B lesson).
+- Headless frame samples of both fades are in `docs/evidence/bloom-028c1/` (`timelines.json`, `perf.json`). Under SwiftShader
+  (no GPU) a survey still filling in can take ~300 ms a frame, so a fade may land in one or two frames there; on a real GPU
+  both fades run at 60 fps. Judge Firefox smoothness headed on real hardware (028B lesson).
 
 ## 9. Out of scope (deliberately)
 
