@@ -1,0 +1,10 @@
+Suite failures in run-all-suites.sh on 83a5f76 (2026-10-06) — both timing-dependent checks in code BLOOM-028C1 does not touch
+(git diff 1b0e375..83a5f76 -- tools resources/bloom-*.js content planets demos/demo-run.html → only tools/main-menu-check.js).
+
+FAIL  [31] a successful foothold ends in a distinct bright burst; a plain seed arrival only in a faint ripple  — foothold landing: 27 bright px · arrival landing: 13 bright px (33 pale-ripple px)
+FAIL  pacing: perfect-bot win in 4–8 min (humans slower)  — 238 s
+
+Isolated re-runs on 83a5f76, fail counts: slice-check 0 0 0 0 0 0 0 0 (8 runs), colony-development-check 0 0 0 (3 runs).
+colony-development-check [31]: the pre-existing flake documented in docs/evidence/bloom-028b/colony-check-31-flake.txt.
+slice-check pacing: a wall-clock-bounded bot run (238 s vs its 240 s floor of 4 min) — machine load during the 22-suite sweep.
+tools/main-menu-check.js
