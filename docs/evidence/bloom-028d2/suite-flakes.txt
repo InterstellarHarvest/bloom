@@ -1,0 +1,18 @@
+BLOOM-028D2 broad regression (run-all-suites.sh, 30 suites, 2026-10-07, on the implementation commit 966c8b1 — amended to cd75ea2 by a
+one-line fix to the new suite's own N10 scan, below): 1344 pass / 2 fail (qa-suites-summary.txt).
+
+1. dying-world-check "40 · a Dying World run is won through real shop clicks with earned Biomass (Ocean 28, the Drought strategy)" — an
+   ordinary scenario run with live Math.random (only training is seeded): that run reached the win (70.0 %) after four of its five planned
+   purchases, so the check's `i === plan.length` failed. The path is the legacy-shell scenario run (?ui=legacy, no training=): the training
+   layer and the coach are never loaded there (guided-training-check G1), and demos/demo-run.html's non-training code is unchanged
+   (guided-training-check N8 / N9). Rerun, sequential, nothing else running: branch cd75ea2 63/63; baseline 8f4c273 (the 029F worktree,
+   clean before and after) 63/63. Not a 028D2 regression.
+
+2. guided-training-check "N10 · … only the training layer imports the coach …" — a defect in the new suite, not the product: once the coach
+   files were committed, `git grep` also matched the usage examples in their own header comments (`import { TrainingCoach } from …`). The scan
+   now ignores comment lines (amended into the implementation commit → cd75ea2). Rerun on cd75ea2 with --evidence, Chromium + Firefox:
+   51/51 (qa-guided-training-check.log; it also produced every still and guided-training-proof.json in this folder).
+
+With the reruns every one of the 30 suites is green on cd75ea2: 1344 + 2 = 1346 checks, 0 failures outstanding.
+(expedition-handoff-check, the 029F exact-world identity suite, is 32/32 on the branch: its byte-identity / scope guards are bounded to
+3ab9933 … 8f4c273 once HEAD is past 8f4c273, the END_SHA rule the 029B–029E suites already follow.)

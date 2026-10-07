@@ -1,0 +1,2095 @@
+{
+ "milestone": "BLOOM-028D2",
+ "baseSha": "8f4c273b2baedab5739cdfc28478366c50ee3422",
+ "generatedAt": "2026-10-07T22:15:38.374Z",
+ "steps": [
+  {
+   "index": 1,
+   "id": "start",
+   "title": "Start the world",
+   "copy": {
+    "default": "Your pioneer plant has landed in Landing Meadow. Keep 65% of this world's land alive at once to finish training. Press Play to start."
+   },
+   "targets": "play-pause (Planet View) · the open room's Resume",
+   "predicate": "the real run is running AND ticks > 0"
+  },
+  {
+   "index": 2,
+   "id": "natural-spread",
+   "title": "Watch it spread",
+   "copy": {
+    "default": "It spreads by itself into ground it can live on. Watch it settle Green Verge."
+   },
+   "targets": "region green_verge (Planet View geometry) · play-pause while paused",
+   "predicate": "Green Verge has ≥ 6 living tiles (VERGE_ESTABLISHED; tick 122 on the real run)"
+  },
+  {
+   "index": 3,
+   "id": "biomass",
+   "title": "Biomass",
+   "copy": {
+    "default": "Living plants earn Biomass, the energy you spend on upgrades. A bonus bubble just appeared in Landing Meadow: click it to collect it."
+   },
+   "targets": "the bubble's map point (renderer.clientOf) · biomass",
+   "predicate": "bloom:bubble-collect for THE scripted bubble's tile (how: click or auto) — placed once via BLOOM_RUN_UI.placeBubble('landing_meadow')"
+  },
+  {
+   "index": 4,
+   "id": "inspect-chill",
+   "title": "A region that isn't growing",
+   "copy": {
+    "default": "Chill Hollow isn't growing. Click it on the map to find out why."
+   },
+   "targets": "region chill_hollow · in a room: its region-strip chip",
+   "predicate": "Chill Hollow is the home selection, or the open room's context (reached through the real UI); or already viable (solved early: acknowledged)"
+  },
+  {
+   "index": 5,
+   "id": "limiting-factor",
+   "title": "Find the limiting factor",
+   "copy": {
+    "default": "One limiting factor holds it back: Temperature, too cold for your plant. Open Adapt to find the answer."
+   },
+   "targets": "the banner's real Would help Cold Tolerance, else the Adapt tool · in another room: the Adapt tab · in Adapt: upgrade-cold",
+   "predicate": "bloom:upgrade-preview for cold seen (hover or keyboard focus); or Cold owned; or Chill Hollow already viable"
+  },
+  {
+   "index": 6,
+   "id": "adapt-buy",
+   "title": "Change the plant",
+   "copy": {
+    "default": "Adapt changes your plant, everywhere at once. Buy Cold Tolerance and Chill Hollow opens."
+   },
+   "targets": "upgrade-cold (room-aware as lesson 5) + region chill_hollow",
+   "predicate": "Chill Hollow fitness > the run's grow.growThresh (0.55) — by Cold Tolerance (taught) or Warm the Sky (acknowledged)"
+  },
+  {
+   "index": 7,
+   "id": "spread",
+   "title": "Spread upgrades",
+   "copy": {
+    "default": "Spread upgrades change how your plant moves and reproduces, not what it can survive. Point at Seed Output to preview it."
+   },
+   "targets": "upgrade-seedOut in Spread · the Spread tab / tool",
+   "predicate": "any real Spread-board upgrade owned (Seed Output taught; Early Maturity acknowledged)"
+  },
+  {
+   "index": 8,
+   "id": "growth-focus",
+   "title": "Growth Focus",
+   "copy": {
+    "default": "Each colony can focus its energy. Open Landing Meadow's controls: Region Inspect, then its Colony tab."
+   },
+   "targets": "growth-focus in Region Inspect › Colony · the Colony tab · the Region Inspect tab · the banner's Inspect region · region landing_meadow / the Regions tool",
+   "predicate": "any living region's growth focus is not Balanced"
+  },
+  {
+   "index": 9,
+   "id": "local-upgrade",
+   "title": "Local Upgrade",
+   "copy": {
+    "default": "A Local Upgrade spends Biomass to improve one colony for good. Buy any one for Landing Meadow."
+   },
+   "targets": "local-upgrade (room-aware as lesson 8)",
+   "predicate": "any region owns a local upgrade"
+  },
+  {
+   "index": 10,
+   "id": "terraform-preview",
+   "title": "Change the planet",
+   "copy": {
+    "default": "Thirsty Flats is too dry for your plant. Terraform changes the whole planet: open Terraform and point at Humidify."
+   },
+   "targets": "upgrade-humid in Terraform · the Terraform tab / tool / Would help + region thirsty_flats",
+   "predicate": "bloom:upgrade-preview for humid seen; or Humidify owned; or Thirsty Flats already viable"
+  },
+  {
+   "index": 11,
+   "id": "tradeoff",
+   "title": "Read the tradeoff",
+   "copy": {
+    "default": "Humidify would open Thirsty Flats. Reed Fen gets wetter too, but still grows. This trade is worth it: buy Humidify."
+   },
+   "targets": "upgrade-humid (room-aware) + regions thirsty_flats, reed_fen; keeps the room's Region effect readout and preview column clear",
+   "predicate": "Thirsty Flats fitness > grow.growThresh — by Humidify (taught) or Drought Adaptation (Reed Fen's cost acknowledged)"
+  },
+  {
+   "index": 12,
+   "id": "sacrifice",
+   "title": "You don't need every region",
+   "copy": {
+    "default": "Salt Pan's soil is hostile, and Terraform can't change soil. You can win without it: click Salt Pan, then let it go."
+   },
+   "targets": "region salt_pan · in a room: its region-strip chip",
+   "predicate": "Salt Pan is the home selection or the open room's context (Salt Handling is never asked for)"
+  },
+  {
+   "index": 13,
+   "id": "goal",
+   "title": "Grow to <winPct>% (from the run's own threshold)",
+   "copy": {
+    "default": "You don't need Salt Pan. Keep growing until 65% of the land is alive at once. The speed button can help."
+   },
+   "targets": "coverage + speed · in a room: Resume",
+   "predicate": "the run's own bloom:win (or run().won) — nothing else"
+  }
+ ],
+ "runs": {
+  "taught": {
+   "browser": "chromium",
+   "viewport": "1280x800",
+   "lessons": [
+    {
+     "index": 1,
+     "id": "start",
+     "how": "running",
+     "cause": "notice",
+     "ack": null,
+     "tick": 1,
+     "at": 1463,
+     "enteredTick": 0,
+     "biomass": 150,
+     "coverage": 0.0202,
+     "fitness": {
+      "landing_meadow": 1,
+      "green_verge": 1,
+      "chill_hollow": 0.4,
+      "reed_fen": 1,
+      "thirsty_flats": 0.333,
+      "salt_pan": 0
+     },
+     "viable": [
+      "landing_meadow",
+      "green_verge",
+      "reed_fen"
+     ],
+     "owned": {},
+     "focus": {},
+     "local": {},
+     "ui": {
+      "room": null,
+      "context": null,
+      "tab": null,
+      "selection": "landing_meadow",
+      "transitioning": false
+     }
+    },
+    {
+     "index": 2,
+     "id": "natural-spread",
+     "how": "established",
+     "cause": "notice",
+     "ack": null,
+     "tick": 123,
+     "at": 2561,
+     "enteredTick": 1,
+     "biomass": 188,
+     "coverage": 0.069,
+     "fitness": {
+      "landing_meadow": 1,
+      "green_verge": 1,
+      "chill_hollow": 0.4,
+      "reed_fen": 1,
+      "thirsty_flats": 0.333,
+      "salt_pan": 0
+     },
+     "viable": [
+      "landing_meadow",
+      "green_verge",
+      "reed_fen"
+     ],
+     "owned": {},
+     "focus": {},
+     "local": {},
+     "ui": {
+      "room": null,
+      "context": null,
+      "tab": null,
+      "selection": "landing_meadow",
+      "transitioning": false
+     }
+    },
+    {
+     "index": 3,
+     "id": "biomass",
+     "how": "click",
+     "cause": "bloom:bubble-collect",
+     "ack": "+25 Biomass. Your colonies earn it all the time.",
+     "tick": 123,
+     "at": 3148,
+     "enteredTick": 123,
+     "biomass": 213,
+     "coverage": 0.069,
+     "fitness": {
+      "landing_meadow": 1,
+      "green_verge": 1,
+      "chill_hollow": 0.4,
+      "reed_fen": 1,
+      "thirsty_flats": 0.333,
+      "salt_pan": 0
+     },
+     "viable": [
+      "landing_meadow",
+      "green_verge",
+      "reed_fen"
+     ],
+     "owned": {},
+     "focus": {},
+     "local": {},
+     "ui": {
+      "room": null,
+      "context": null,
+      "tab": null,
+      "selection": "landing_meadow",
+      "transitioning": false
+     }
+    },
+    {
+     "index": 4,
+     "id": "inspect-chill",
+     "how": "selected",
+     "cause": "bloom:region-select",
+     "ack": null,
+     "tick": 123,
+     "at": 3849,
+     "enteredTick": 123,
+     "biomass": 213,
+     "coverage": 0.069,
+     "fitness": {
+      "landing_meadow": 1,
+      "green_verge": 1,
+      "chill_hollow": 0.4,
+      "reed_fen": 1,
+      "thirsty_flats": 0.333,
+      "salt_pan": 0
+     },
+     "viable": [
+      "landing_meadow",
+      "green_verge",
+      "reed_fen"
+     ],
+     "owned": {},
+     "focus": {},
+     "local": {},
+     "ui": {
+      "room": null,
+      "context": null,
+      "tab": null,
+      "selection": "chill_hollow",
+      "transitioning": false
+     }
+    },
+    {
+     "index": 5,
+     "id": "limiting-factor",
+     "how": "preview",
+     "cause": "bloom:upgrade-preview",
+     "ack": null,
+     "tick": 123,
+     "at": 4898,
+     "enteredTick": 123,
+     "biomass": 213,
+     "coverage": 0.069,
+     "fitness": {
+      "landing_meadow": 1,
+      "green_verge": 1,
+      "chill_hollow": 0.4,
+      "reed_fen": 1,
+      "thirsty_flats": 0.333,
+      "salt_pan": 0
+     },
+     "viable": [
+      "landing_meadow",
+      "green_verge",
+      "reed_fen"
+     ],
+     "owned": {},
+     "focus": {},
+     "local": {},
+     "ui": {
+      "room": "adapt",
+      "context": "chill_hollow",
+      "tab": null,
+      "selection": null,
+      "transitioning": false
+     }
+    },
+    {
+     "index": 6,
+     "id": "adapt-buy",
+     "how": "cold",
+     "cause": "bloom:upgrade-purchase",
+     "ack": "Chill Hollow suits your plant now. It will move in by itself.",
+     "tick": 123,
+     "at": 5918,
+     "enteredTick": 123,
+     "biomass": 73,
+     "coverage": 0.069,
+     "fitness": {
+      "landing_meadow": 1,
+      "green_verge": 1,
+      "chill_hollow": 1,
+      "reed_fen": 1,
+      "thirsty_flats": 0.333,
+      "salt_pan": 0
+     },
+     "viable": [
+      "landing_meadow",
+      "green_verge",
+      "chill_hollow",
+      "reed_fen"
+     ],
+     "owned": {
+      "cold": 1
+     },
+     "focus": {},
+     "local": {},
+     "ui": {
+      "room": "adapt",
+      "context": "chill_hollow",
+      "tab": null,
+      "selection": null,
+      "transitioning": false
+     }
+    },
+    {
+     "index": 7,
+     "id": "spread",
+     "how": "seedOut",
+     "cause": "bloom:upgrade-purchase",
+     "ack": "Seed Output: every colony now throws more seed.",
+     "tick": 263,
+     "at": 8511,
+     "enteredTick": 123,
+     "biomass": 5,
+     "coverage": 0.1901,
+     "fitness": {
+      "landing_meadow": 1,
+      "green_verge": 1,
+      "chill_hollow": 1,
+      "reed_fen": 1,
+      "thirsty_flats": 0.333,
+      "salt_pan": 0
+     },
+     "viable": [
+      "landing_meadow",
+      "green_verge",
+      "chill_hollow",
+      "reed_fen"
+     ],
+     "owned": {
+      "seedOut": 1,
+      "cold": 1
+     },
+     "focus": {},
+     "local": {},
+     "ui": {
+      "room": "spread",
+      "context": "chill_hollow",
+      "tab": null,
+      "selection": null,
+      "transitioning": false
+     }
+    },
+    {
+     "index": 8,
+     "id": "growth-focus",
+     "how": "leaves",
+     "cause": "bloom:growth-focus",
+     "ack": "Chill Hollow now grows with a Leaves focus. Each colony keeps its own.",
+     "tick": 263,
+     "at": 10631,
+     "enteredTick": 263,
+     "biomass": 5,
+     "coverage": 0.1901,
+     "fitness": {
+      "landing_meadow": 1,
+      "green_verge": 1,
+      "chill_hollow": 1,
+      "reed_fen": 1,
+      "thirsty_flats": 0.333,
+      "salt_pan": 0
+     },
+     "viable": [
+      "landing_meadow",
+      "green_verge",
+      "chill_hollow",
+      "reed_fen"
+     ],
+     "owned": {
+      "seedOut": 1,
+      "cold": 1
+     },
+     "focus": {
+      "chill_hollow": "leaves"
+     },
+     "local": {},
+     "ui": {
+      "room": "region",
+      "context": "chill_hollow",
+      "tab": "colony",
+      "selection": null,
+      "transitioning": false
+     }
+    },
+    {
+     "index": 9,
+     "id": "local-upgrade",
+     "how": "rootNetwork",
+     "cause": "bloom:local-upgrade",
+     "ack": "Chill Hollow keeps that upgrade for good.",
+     "tick": 403,
+     "at": 11371,
+     "enteredTick": 263,
+     "biomass": 7,
+     "coverage": 0.3353,
+     "fitness": {
+      "landing_meadow": 1,
+      "green_verge": 1,
+      "chill_hollow": 1,
+      "reed_fen": 1,
+      "thirsty_flats": 0.333,
+      "salt_pan": 0
+     },
+     "viable": [
+      "landing_meadow",
+      "green_verge",
+      "chill_hollow",
+      "reed_fen"
+     ],
+     "owned": {
+      "seedOut": 1,
+      "cold": 1
+     },
+     "focus": {
+      "chill_hollow": "leaves"
+     },
+     "local": {
+      "chill_hollow": "rootNetwork"
+     },
+     "ui": {
+      "room": "region",
+      "context": "chill_hollow",
+      "tab": "colony",
+      "selection": null,
+      "transitioning": false
+     }
+    },
+    {
+     "index": 10,
+     "id": "terraform-preview",
+     "how": "preview",
+     "cause": "bloom:upgrade-preview",
+     "ack": null,
+     "tick": 403,
+     "at": 12935,
+     "enteredTick": 403,
+     "biomass": 7,
+     "coverage": 0.3353,
+     "fitness": {
+      "landing_meadow": 1,
+      "green_verge": 1,
+      "chill_hollow": 1,
+      "reed_fen": 1,
+      "thirsty_flats": 0.333,
+      "salt_pan": 0
+     },
+     "viable": [
+      "landing_meadow",
+      "green_verge",
+      "chill_hollow",
+      "reed_fen"
+     ],
+     "owned": {
+      "seedOut": 1,
+      "cold": 1
+     },
+     "focus": {
+      "chill_hollow": "leaves"
+     },
+     "local": {
+      "chill_hollow": "rootNetwork"
+     },
+     "ui": {
+      "room": "terraform",
+      "context": "chill_hollow",
+      "tab": null,
+      "selection": null,
+      "transitioning": false
+     }
+    },
+    {
+     "index": 11,
+     "id": "tradeoff",
+     "how": "humid",
+     "cause": "bloom:upgrade-purchase",
+     "ack": "Humidify opened Thirsty Flats. The whole sky got wetter, so Reed Fen did too, but it still grows.",
+     "tick": 643,
+     "at": 14206,
+     "enteredTick": 403,
+     "biomass": 1,
+     "coverage": 0.5527,
+     "fitness": {
+      "landing_meadow": 1,
+      "green_verge": 1,
+      "chill_hollow": 1,
+      "reed_fen": 0.667,
+      "thirsty_flats": 1,
+      "salt_pan": 0
+     },
+     "viable": [
+      "landing_meadow",
+      "green_verge",
+      "chill_hollow",
+      "reed_fen",
+      "thirsty_flats"
+     ],
+     "owned": {
+      "seedOut": 1,
+      "cold": 1,
+      "humid": 1
+     },
+     "focus": {
+      "chill_hollow": "leaves"
+     },
+     "local": {
+      "chill_hollow": "rootNetwork"
+     },
+     "ui": {
+      "room": "terraform",
+      "context": "chill_hollow",
+      "tab": null,
+      "selection": null,
+      "transitioning": false
+     }
+    },
+    {
+     "index": 12,
+     "id": "sacrifice",
+     "how": "room-context",
+     "cause": "input",
+     "ack": null,
+     "tick": 643,
+     "at": 15319,
+     "enteredTick": 643,
+     "biomass": 1,
+     "coverage": 0.5527,
+     "fitness": {
+      "landing_meadow": 1,
+      "green_verge": 1,
+      "chill_hollow": 1,
+      "reed_fen": 0.667,
+      "thirsty_flats": 1,
+      "salt_pan": 0
+     },
+     "viable": [
+      "landing_meadow",
+      "green_verge",
+      "chill_hollow",
+      "reed_fen",
+      "thirsty_flats"
+     ],
+     "owned": {
+      "seedOut": 1,
+      "cold": 1,
+      "humid": 1
+     },
+     "focus": {
+      "chill_hollow": "leaves"
+     },
+     "local": {
+      "chill_hollow": "rootNetwork"
+     },
+     "ui": {
+      "room": "terraform",
+      "context": "salt_pan",
+      "tab": null,
+      "selection": null,
+      "transitioning": false
+     }
+    },
+    {
+     "index": 13,
+     "id": "goal",
+     "how": "win",
+     "cause": "bloom:win",
+     "ack": null,
+     "tick": 734,
+     "at": 16734,
+     "enteredTick": 643,
+     "biomass": 82,
+     "coverage": 0.6217,
+     "fitness": {
+      "landing_meadow": 1,
+      "green_verge": 1,
+      "chill_hollow": 1,
+      "reed_fen": 0.667,
+      "thirsty_flats": 1,
+      "salt_pan": 0
+     },
+     "viable": [
+      "landing_meadow",
+      "green_verge",
+      "chill_hollow",
+      "reed_fen",
+      "thirsty_flats"
+     ],
+     "owned": {
+      "seedOut": 1,
+      "cold": 1,
+      "humid": 1
+     },
+     "focus": {
+      "chill_hollow": "leaves"
+     },
+     "local": {
+      "chill_hollow": "rootNetwork"
+     },
+     "ui": {
+      "room": null,
+      "context": null,
+      "tab": null,
+      "selection": null,
+      "transitioning": false
+     }
+    }
+   ],
+   "events": [
+    {
+     "type": "play-pause",
+     "tick": 0,
+     "at": 1300,
+     "step": 1,
+     "detail": {
+      "running": true
+     }
+    },
+    {
+     "type": "bubble-placed",
+     "tick": 123,
+     "at": 2561,
+     "step": 3,
+     "detail": {
+      "region": "landing_meadow",
+      "tile": 600
+     }
+    },
+    {
+     "type": "bubble-collect",
+     "tick": 123,
+     "at": 3148,
+     "step": 3,
+     "detail": {
+      "how": "click",
+      "tile": 600,
+      "id": "landing_meadow",
+      "value": 25
+     }
+    },
+    {
+     "type": "region-select",
+     "tick": 123,
+     "at": 3848,
+     "step": 4,
+     "detail": {
+      "id": "chill_hollow",
+      "previous": "landing_meadow",
+      "tile": 346
+     }
+    },
+    {
+     "type": "region-select",
+     "tick": 123,
+     "at": 4661,
+     "step": 5,
+     "detail": {
+      "id": null,
+      "previous": "chill_hollow",
+      "tile": -1
+     }
+    },
+    {
+     "type": "upgrade-preview",
+     "tick": 123,
+     "at": 4898,
+     "step": 5,
+     "detail": {
+      "id": "cold",
+      "board": "Adapt",
+      "available": true,
+      "gain": [
+       "chill_hollow"
+      ],
+      "lose": [],
+      "worse": []
+     }
+    },
+    {
+     "type": "upgrade-preview",
+     "tick": 123,
+     "at": 5279,
+     "step": 6,
+     "detail": {
+      "id": "cold",
+      "board": "Adapt",
+      "available": true,
+      "gain": [
+       "chill_hollow"
+      ],
+      "lose": [],
+      "worse": []
+     }
+    },
+    {
+     "type": "upgrade-purchase",
+     "tick": 123,
+     "at": 5918,
+     "step": 6,
+     "detail": {
+      "id": "cold",
+      "board": "Adapt",
+      "cost": 140,
+      "tier": 1
+     }
+    },
+    {
+     "type": "upgrade-preview",
+     "tick": 123,
+     "at": 5919,
+     "step": 7,
+     "detail": {
+      "id": "cold",
+      "board": "Adapt",
+      "available": true,
+      "gain": [],
+      "lose": [],
+      "worse": []
+     }
+    },
+    {
+     "type": "upgrade-preview",
+     "tick": 123,
+     "at": 7608,
+     "step": 7,
+     "detail": {
+      "id": "seedOut",
+      "board": "Spread",
+      "available": true,
+      "gain": [],
+      "lose": [],
+      "worse": []
+     }
+    },
+    {
+     "type": "upgrade-purchase",
+     "tick": 263,
+     "at": 8510,
+     "step": 7,
+     "detail": {
+      "id": "seedOut",
+      "board": "Spread",
+      "cost": 130,
+      "tier": 1
+     }
+    },
+    {
+     "type": "upgrade-preview",
+     "tick": 263,
+     "at": 8512,
+     "step": 8,
+     "detail": {
+      "id": "seedOut",
+      "board": "Spread",
+      "available": true,
+      "gain": [],
+      "lose": [],
+      "worse": []
+     }
+    },
+    {
+     "type": "growth-focus",
+     "tick": 263,
+     "at": 10630,
+     "step": 8,
+     "detail": {
+      "id": "chill_hollow",
+      "focus": "leaves",
+      "previous": "balanced"
+     }
+    },
+    {
+     "type": "local-upgrade",
+     "tick": 403,
+     "at": 11371,
+     "step": 9,
+     "detail": {
+      "id": "chill_hollow",
+      "upgrade": "rootNetwork",
+      "cost": 90
+     }
+    },
+    {
+     "type": "upgrade-preview",
+     "tick": 403,
+     "at": 12935,
+     "step": 10,
+     "detail": {
+      "id": "humid",
+      "board": "Terraform",
+      "available": true,
+      "gain": [
+       "thirsty_flats"
+      ],
+      "lose": [],
+      "worse": [
+       "reed_fen"
+      ]
+     }
+    },
+    {
+     "type": "upgrade-purchase",
+     "tick": 643,
+     "at": 14206,
+     "step": 11,
+     "detail": {
+      "id": "humid",
+      "board": "Terraform",
+      "cost": 200,
+      "tier": 1
+     }
+    },
+    {
+     "type": "upgrade-preview",
+     "tick": 643,
+     "at": 14208,
+     "step": 12,
+     "detail": {
+      "id": "humid",
+      "board": "Terraform",
+      "available": true,
+      "gain": [],
+      "lose": [
+       "reed_fen"
+      ],
+      "worse": [
+       "green_verge"
+      ]
+     }
+    },
+    {
+     "type": "play-pause",
+     "tick": 643,
+     "at": 16344,
+     "step": 13,
+     "detail": {
+      "running": true
+     }
+    },
+    {
+     "type": "win",
+     "tick": 734,
+     "at": 16734,
+     "step": 13,
+     "detail": {
+      "coverage": 0.6516927083333334,
+      "ticks": 734,
+      "training": true
+     }
+    }
+   ],
+   "targets": [
+    {
+     "lesson": 1,
+     "id": "start",
+     "key": "anchor:play-pause",
+     "rect": [
+      1116,
+      16,
+      1162,
+      62
+     ],
+     "card": [
+      924,
+      76,
+      1264,
+      245
+     ],
+     "side": "below",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "BUTTON",
+      "tut": "play-pause",
+      "node": null,
+      "id": "pvPause"
+     }
+    },
+    {
+     "lesson": 3,
+     "id": "biomass",
+     "key": "bubble:600",
+     "rect": [
+      631,
+      330,
+      671,
+      370
+     ],
+     "card": [
+      481,
+      384,
+      821,
+      574
+     ],
+     "side": "below",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "CANVAS",
+      "tut": "map",
+      "node": null,
+      "id": "pvMap"
+     }
+    },
+    {
+     "lesson": 4,
+     "id": "inspect-chill",
+     "key": "region:chill_hollow",
+     "rect": [
+      297,
+      171,
+      425,
+      299
+     ],
+     "card": [
+      191,
+      313,
+      531,
+      513
+     ],
+     "side": "below",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "CANVAS",
+      "tut": "map",
+      "node": null,
+      "id": "pvMap"
+     }
+    },
+    {
+     "lesson": 5,
+     "id": "limiting-factor",
+     "key": "control:help:cold",
+     "rect": [
+      473,
+      691,
+      630,
+      737
+     ],
+     "card": [
+      381,
+      392,
+      721,
+      561
+     ],
+     "side": "above",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "BUTTON",
+      "tut": null,
+      "node": null,
+      "id": null
+     }
+    },
+    {
+     "lesson": 6,
+     "id": "adapt-buy",
+     "key": "anchor:upgrade-cold",
+     "rect": [
+      477,
+      437,
+      684,
+      499
+     ],
+     "card": [
+      123,
+      383,
+      463,
+      552
+     ],
+     "side": "left",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "BUTTON",
+      "tut": "upgrade-cold",
+      "node": "cold",
+      "id": null
+     }
+    },
+    {
+     "lesson": 7,
+     "id": "spread",
+     "key": "control:room-nav:spread",
+     "rect": [
+      622,
+      23,
+      670,
+      71
+     ],
+     "card": [
+      16,
+      563,
+      356,
+      784
+     ],
+     "side": "dock-bottom-left",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "BUTTON",
+      "tut": null,
+      "node": null,
+      "id": null
+     }
+    },
+    {
+     "lesson": 7,
+     "id": "spread",
+     "key": "anchor:upgrade-seedOut",
+     "rect": [
+      477,
+      118,
+      684,
+      180
+     ],
+     "card": [
+      411,
+      309,
+      751,
+      530
+     ],
+     "side": "below",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "BUTTON",
+      "tut": "upgrade-seedOut",
+      "node": "seedOut",
+      "id": null
+     }
+    },
+    {
+     "lesson": 7,
+     "id": "spread",
+     "key": "anchor:upgrade-seedOut",
+     "rect": [
+      477,
+      118,
+      684,
+      180
+     ],
+     "card": [
+      411,
+      309,
+      751,
+      509
+     ],
+     "side": "below",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "BUTTON",
+      "tut": "upgrade-seedOut",
+      "node": "seedOut",
+      "id": null
+     }
+    },
+    {
+     "lesson": 8,
+     "id": "growth-focus",
+     "key": "control:room-nav:region",
+     "rect": [
+      496,
+      23,
+      544,
+      71
+     ],
+     "card": [
+      350,
+      309,
+      690,
+      530
+     ],
+     "side": "below",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "BUTTON",
+      "tut": null,
+      "node": null,
+      "id": null
+     }
+    },
+    {
+     "lesson": 8,
+     "id": "growth-focus",
+     "key": "control:tab:colony",
+     "rect": [
+      476,
+      167,
+      611,
+      221
+     ],
+     "card": [
+      374,
+      235,
+      714,
+      456
+     ],
+     "side": "below",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "BUTTON",
+      "tut": null,
+      "node": null,
+      "id": "drtab-colony"
+     }
+    },
+    {
+     "lesson": 10,
+     "id": "terraform-preview",
+     "key": "control:room-nav:terraform",
+     "rect": [
+      727,
+      23,
+      775,
+      71
+     ],
+     "card": [
+      581,
+      85,
+      921,
+      288
+     ],
+     "side": "below",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "BUTTON",
+      "tut": null,
+      "node": null,
+      "id": null
+     }
+    },
+    {
+     "lesson": 10,
+     "id": "terraform-preview",
+     "key": "anchor:upgrade-humid",
+     "rect": [
+      782,
+      467,
+      927,
+      529
+     ],
+     "card": [
+      391,
+      397,
+      731,
+      600
+     ],
+     "side": "left",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "BUTTON",
+      "tut": "upgrade-humid",
+      "node": "humid",
+      "id": null
+     }
+    },
+    {
+     "lesson": 11,
+     "id": "tradeoff",
+     "key": "anchor:upgrade-humid",
+     "rect": [
+      782,
+      467,
+      927,
+      529
+     ],
+     "card": [
+      391,
+      392,
+      731,
+      604
+     ],
+     "side": "left",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "BUTTON",
+      "tut": "upgrade-humid",
+      "node": "humid",
+      "id": null
+     }
+    },
+    {
+     "lesson": 12,
+     "id": "sacrifice",
+     "key": "control:strip:salt_pan",
+     "rect": [
+      991,
+      479,
+      1077,
+      515
+     ],
+     "card": [
+      391,
+      365,
+      731,
+      629
+     ],
+     "side": "left",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "BUTTON",
+      "tut": null,
+      "node": null,
+      "id": null
+     }
+    },
+    {
+     "lesson": 13,
+     "id": "goal",
+     "key": "control:room-resume",
+     "rect": [
+      1133,
+      23,
+      1249,
+      71
+     ],
+     "card": [
+      924,
+      98,
+      1264,
+      292
+     ],
+     "side": "below",
+     "cardOverTarget": 0,
+     "hit": {
+      "coach": false,
+      "tag": "BUTTON",
+      "tut": null,
+      "node": null,
+      "id": null
+     }
+    }
+   ],
+   "fitness": {
+    "start": {
+     "landing_meadow": 1,
+     "green_verge": 1,
+     "chill_hollow": 0.4,
+     "reed_fen": 1,
+     "thirsty_flats": 0.333,
+     "salt_pan": 0
+    },
+    "afterCold": {
+     "landing_meadow": 1,
+     "green_verge": 1,
+     "chill_hollow": 1,
+     "reed_fen": 1,
+     "thirsty_flats": 0.333,
+     "salt_pan": 0
+    },
+    "afterHumidify": {
+     "landing_meadow": 1,
+     "green_verge": 1,
+     "chill_hollow": 1,
+     "reed_fen": 0.667,
+     "thirsty_flats": 1,
+     "salt_pan": 0
+    }
+   },
+   "bubble": {
+    "placed": {
+     "bubbles": [
+      {
+       "tile": 600,
+       "region": "landing_meadow"
+      }
+     ],
+     "calls": 1
+    },
+    "collected": "click"
+   },
+   "tradeoffPreview": {
+    "gain": [
+     "thirsty_flats"
+    ],
+    "lose": [],
+    "better": [],
+    "worse": [
+     "reed_fen"
+    ],
+    "reachHostile": [],
+    "climate": null,
+    "sky": {
+     "axis": "moist",
+     "from": 50,
+     "to": 58,
+     "current": {
+      "temperature": 8,
+      "moisture": 50
+     },
+     "preview": {
+      "temperature": 8,
+      "moisture": 58
+     }
+    }
+   },
+   "tradeoffCopy": "Humidify would open Thirsty Flats. Reed Fen gets wetter too, but still grows. This trade is worth it: buy Humidify.",
+   "final": {
+    "coverage": 0.6516927083333334,
+    "ticks": 734,
+    "winAt": 0.65,
+    "record": {
+     "status": "completed",
+     "at": 1791411246395,
+     "v": 1
+    }
+   },
+   "completionActions": [
+    "beginExpedition",
+    "restartTraining",
+    "mainMenu"
+   ],
+   "keepPlaying": false,
+   "focus": "beginExpedition"
+  },
+  "firefox": {
+   "browser": "firefox",
+   "lessons": [
+    {
+     "index": 1,
+     "id": "start",
+     "how": "running",
+     "tick": 1
+    },
+    {
+     "index": 2,
+     "id": "natural-spread",
+     "how": "established",
+     "tick": 122
+    },
+    {
+     "index": 3,
+     "id": "biomass",
+     "how": "click",
+     "tick": 122
+    },
+    {
+     "index": 4,
+     "id": "inspect-chill",
+     "how": "selected",
+     "tick": 122
+    },
+    {
+     "index": 5,
+     "id": "limiting-factor",
+     "how": "preview",
+     "tick": 122
+    },
+    {
+     "index": 6,
+     "id": "adapt-buy",
+     "how": "cold",
+     "tick": 122
+    },
+    {
+     "index": 7,
+     "id": "spread",
+     "how": "seedOut",
+     "tick": 262
+    },
+    {
+     "index": 8,
+     "id": "growth-focus",
+     "how": "leaves",
+     "tick": 262
+    },
+    {
+     "index": 9,
+     "id": "local-upgrade",
+     "how": "rootNetwork",
+     "tick": 402
+    },
+    {
+     "index": 10,
+     "id": "terraform-preview",
+     "how": "preview",
+     "tick": 402
+    },
+    {
+     "index": 11,
+     "id": "tradeoff",
+     "how": "humid",
+     "tick": 642
+    },
+    {
+     "index": 12,
+     "id": "sacrifice",
+     "how": "room-context",
+     "tick": 642
+    },
+    {
+     "index": 13,
+     "id": "goal",
+     "how": "win",
+     "tick": 734
+    }
+   ],
+   "completionActions": [
+    "beginExpedition",
+    "restartTraining",
+    "mainMenu"
+   ]
+  }
+ },
+ "alternate": {
+  "route": "warm + earlyMat + roots(green_verge) + seedReserve + drought; bubble auto-collected",
+  "lessons": [
+   {
+    "index": 1,
+    "id": "start",
+    "how": "running",
+    "tick": 1,
+    "ack": null
+   },
+   {
+    "index": 2,
+    "id": "natural-spread",
+    "how": "established",
+    "tick": 141,
+    "ack": null
+   },
+   {
+    "index": 3,
+    "id": "biomass",
+    "how": "auto",
+    "tick": 521,
+    "ack": "That bubble collected itself, at half value. Click bubbles for the full amount."
+   },
+   {
+    "index": 4,
+    "id": "inspect-chill",
+    "how": "selected",
+    "tick": 521,
+    "ack": null
+   },
+   {
+    "index": 5,
+    "id": "limiting-factor",
+    "how": "solved-early",
+    "tick": 521,
+    "ack": "Warm the Sky opened Chill Hollow instead: Terraform warmed the whole planet rather than changing your plant."
+   },
+   {
+    "index": 6,
+    "id": "adapt-buy",
+    "how": "warm",
+    "tick": 521,
+    "ack": "Warm the Sky opened Chill Hollow instead: Terraform warmed the whole planet rather than changing your plant."
+   },
+   {
+    "index": 7,
+    "id": "spread",
+    "how": "earlyMat",
+    "tick": 521,
+    "ack": "Early Maturity is a real Spread upgrade too: it changes how your plant travels, not where it can live."
+   },
+   {
+    "index": 8,
+    "id": "growth-focus",
+    "how": "roots",
+    "tick": 521,
+    "ack": "Green Verge now grows with a Roots focus. Each colony keeps its own."
+   },
+   {
+    "index": 9,
+    "id": "local-upgrade",
+    "how": "seedReserve",
+    "tick": 561,
+    "ack": "Green Verge keeps that upgrade for good."
+   },
+   {
+    "index": 10,
+    "id": "terraform-preview",
+    "how": "solved-early",
+    "tick": 761,
+    "ack": "Drought Adaptation opened Thirsty Flats, but Reed Fen is now too wet for your plant. Every fix has a cost."
+   },
+   {
+    "index": 11,
+    "id": "tradeoff",
+    "how": "drought",
+    "tick": 761,
+    "ack": "Drought Adaptation opened Thirsty Flats, but Reed Fen is now too wet for your plant. Every fix has a cost."
+   },
+   {
+    "index": 12,
+    "id": "sacrifice",
+    "how": "room-context",
+    "tick": 761,
+    "ack": null
+   },
+   {
+    "index": 13,
+    "id": "goal",
+    "how": "win",
+    "tick": 1060,
+    "ack": null
+   }
+  ],
+  "owned": [
+   "earlyMat",
+   "drought",
+   "warm"
+  ],
+  "fitnessAfterDrought": {
+   "landing_meadow": 1,
+   "green_verge": 0.75,
+   "chill_hollow": 1,
+   "reed_fen": 0.083,
+   "thirsty_flats": 1,
+   "salt_pan": 0
+  },
+  "record": "completed",
+  "bubbleTile": 600
+ },
+ "firstRun": {
+  "noRecord": {
+   "tag": true,
+   "label": "Training Recommended",
+   "dialog": {
+    "h": "First expedition?",
+    "btns": [
+     "Go to Expedition",
+     "Start Training (~5 min)"
+    ],
+    "focus": "Go to Expedition",
+    "url": "http://127.0.0.1:54349/demos/main-menu.html?bg=3&workers=3&sector=77"
+   },
+   "choice": "Go to Expedition",
+   "record": "skipped",
+   "survey": "survey",
+   "prefetchAdopted": {
+    "seed": 77,
+    "ready": false,
+    "confirmed": 4
+   }
+  },
+  "afterSkipped": {
+   "tag": false,
+   "prompts": 0
+  },
+  "startTraining": {
+   "rec": null,
+   "training": true,
+   "lesson": 1
+  },
+  "completed": {
+   "tag": false,
+   "prompts": 0
+  }
+ },
+ "completion": {
+  "beginExpedition": {
+   "url": "/demos/main-menu.html",
+   "events": [
+    "menu-shown",
+    "auto-begin"
+   ],
+   "handoffs": 0,
+   "record": {
+    "v": 1,
+    "status": "completed",
+    "at": 1791411246395
+   }
+  }
+ },
+ "accessibility": {
+  "keyboard": {
+   "lessonsReached": [
+    2,
+    5,
+    6,
+    7
+   ],
+   "mapAnnounce": "Chill Hollow: strained. Enter selects.",
+   "focusPreview": true,
+   "skipReachable": true,
+   "visibleFocus": true
+  },
+  "reducedMotion": {
+   "settingsReduced": {
+    "rm": true,
+    "ringAnim": "none",
+    "cardAnim": "none",
+    "transition": "opacity",
+    "smooth": "auto"
+   },
+   "osReduced": {
+    "rm": true,
+    "ringAnim": "none",
+    "cardAnim": "none",
+    "transition": "opacity",
+    "smooth": "auto"
+   },
+   "settingsFullOverOs": {
+    "rm": false,
+    "ringAnim": "tcPulse",
+    "cardAnim": "tcIn",
+    "transition": "left, top, opacity",
+    "smooth": "auto"
+   }
+  }
+ },
+ "viewports": {
+  "chromium": [
+   {
+    "size": "1024x768",
+    "ok": [
+     true,
+     true,
+     true
+    ],
+    "sides": [
+     "below",
+     "above",
+     "left"
+    ],
+    "docked": true,
+    "errs": 0
+   },
+   {
+    "size": "1280x800",
+    "ok": [
+     true,
+     true,
+     true
+    ],
+    "sides": [
+     "below",
+     "above",
+     "left"
+    ],
+    "docked": true
+   },
+   {
+    "size": "1280x800→1100x700",
+    "ok": [
+     true
+    ],
+    "sides": [
+     "below"
+    ],
+    "moved": [
+     361,
+     235,
+     311,
+     212
+    ],
+    "errs": 0
+   },
+   {
+    "size": "1440x900",
+    "ok": [
+     true,
+     true,
+     true
+    ],
+    "sides": [
+     "below",
+     "above",
+     "left"
+    ],
+    "docked": true,
+    "errs": 0
+   },
+   {
+    "size": "860x700",
+    "ok": [
+     true,
+     true,
+     true
+    ],
+    "sides": [
+     "dock-bottom",
+     "dock-top",
+     "dock-bottom"
+    ],
+    "docked": true,
+    "errs": 0
+   }
+  ],
+  "firefox": [
+   {
+    "size": "1280x800",
+    "ok": [
+     true,
+     true,
+     true
+    ],
+    "sides": [
+     "below",
+     "above",
+     "left"
+    ],
+    "docked": true,
+    "errs": 0
+   }
+  ]
+ },
+ "skip": {
+  "dialog": {
+   "modal": "true",
+   "title": "Skip training?",
+   "body": "You can start it again any time from the main menu.",
+   "btns": [
+    "Keep training",
+    "Skip training"
+   ],
+   "focus": "Keep training",
+   "pvInert": true,
+   "native": "function"
+  },
+  "escapeKeeps": true,
+  "keepKeeps": true,
+  "menuSameDialog": true,
+  "dialogsOpened": 3,
+  "confirmedRecord": "skipped",
+  "landedOn": "Strange Bloom — Unknown Soils"
+ },
+ "trainingConfig": {
+  "econ": {
+   "startBiomass": 150,
+   "originTrickle": 0.6,
+   "bubbleChance": 0,
+   "bubbleAutoTicks": 375
+  }
+ },
+ "winThreshold": 0.65,
+ "checks": {
+  "pass": 51,
+  "fail": 0,
+  "results": [
+   {
+    "ok": true,
+    "name": "N1 · the work starts at the accepted 029F final 8f4c273 exactly (the first commit's parent, or HEAD itself before any commit); every commit since is a BLOOM-028D2 commit; no merge, no other milestone"
+   },
+   {
+    "ok": true,
+    "name": "N2 · the paused old 028D2 worktree (agent/bloom-028d2-guided-training @ c23815e) is byte-for-byte untouched: HEAD, `git status --porcelain` hash, complete `git diff` hash and every untracked file's hash equal the fingerprint recorded before this milestone began"
+   },
+   {
+    "ok": true,
+    "name": "N3 · no old 028D2 file, commit or cherry-pick was imported wholesale: no new file equals an old draft file; the old branch adds no commit to this history; none of the old engineering-shell selectors / views (#btnPlay, tileRect, BLOOM_RUN_UI.highlight, ui.status(), …) appear in the production coach; the 14-step draft became the 13 locked lessons"
+   },
+   {
+    "ok": true,
+    "name": "N4a · exactly 13 lessons in the locked order (start · natural spread · Biomass bubble · inspect Chill Hollow · its limiting factor · Adapt · Spread / Seed Output · Growth Focus · Local Upgrade · Terraform preview · the tradeoff · the sacrifice zone · the goal), each with copy, targets and an outcome; every line 1–3 short sentences in every state shown"
+   },
+   {
+    "ok": true,
+    "name": "N4b · the goal is read from the REAL run threshold (hud.winPct: 65 % for Training Grounds, 70 % if the planet said so) — no stale 60 % anywhere in the coach or its copy; Training Grounds still wins at 0.65"
+   },
+   {
+    "ok": true,
+    "name": "N4c · lessons 7–8 keep the paused draft's finalized wording (Spread upgrades: \"…how your plant moves and reproduces, not what it can survive\" → \"No region opens or closes…Buy Seed Output.\"; Growth Focus: \"Each colony can focus its energy\" → \"Pick Roots, Leaves or Seeds for <colony>. It's free…\"), retargeted at the production Spread room's real Seed Output and Region Inspect's Colony tab"
+   },
+   {
+    "ok": true,
+    "name": "N5a · no lesson advances from elapsed time: a frozen run read 2 000 times over 33 simulated minutes stays on lesson 1 (the clock decides when the state is read, never what it must be)"
+   },
+   {
+    "ok": true,
+    "name": "N5b · the taught route advances on outcomes only — Play + ticks, Green Verge established (6 living), THE scripted bubble collected (placed once, in Landing Meadow), Chill Hollow selected, the Cold preview (not Warm's), Chill Hollow viable (not the purchase alone), any Spread purchase, a non-Balanced focus, a local upgrade, the Humidify preview, Thirsty Flats viable, Salt Pan selected, and the run's own win; the index is monotonic"
+   },
+   {
+    "ok": true,
+    "name": "N5c · reconciliation: a player who already used Warm the Sky, Early Maturity, a Roots focus, Seed Reserve and Drought Adaptation (and whose bubble collected itself) is never stuck or told to buy what they own — those lessons pass through in one evaluation, each acknowledged (Warm opened Chill Hollow; Drought opened Thirsty Flats but closed Reed Fen; the bubble at half value), straight to the goal"
+   },
+   {
+    "ok": true,
+    "name": "N5d · Salt Pan's lesson finishes by READING it (never by Salt Handling); a win during any lesson ends the script as completed; the director never changes Biomass"
+   },
+   {
+    "ok": true,
+    "name": "N5e · the director listens to exactly the ten bloom:* events (+ click / keyup / focusin) and removes every listener and its adapter subscription on dispose (twice is harmless)"
+   },
+   {
+    "ok": true,
+    "name": "N6 · placeCard: always inside the viewport with a 16 px gutter and never on its target (1 200 random targets at 1024×768 / 1280×800 / 1440×900); slides past a keep-clear control it would cover; flips to the free side at an edge; below 900 px docks full width (≤ 560 px) at the bottom, or the top when the target is low"
+   },
+   {
+    "ok": true,
+    "name": "N7 · anti-cheat: no production coach file (steps, director, coach, training layer) references BLOOM_API, calls any adapter action (buy, selectRegion, setGrowthFocus, buyLocalUpgrade, collectBubble, preview, play / pause, speed), touches the sim, writes Biomass / fitness / coverage / the win threshold, or synthesises a click or event; the one effect is BLOOM_RUN_UI.placeBubble for the scripted bubble"
+   },
+   {
+    "ok": true,
+    "name": "N8 · every bloom:* dispatch site in the run page is identical to 8f4c273 (same ten types, same detail keys, nothing tutorial-specific added); the run UI adapter is byte-identical (api 1, the same ten EVENTS); the Planet View gains only additive lines (regionPoint / regionRect); BLOOM_RUN_UI keeps placeBubble and .adapter"
+   },
+   {
+    "ok": true,
+    "name": "N9 · nothing outside the coach changed: the engine, generator, validators, content, planets (Training Grounds: win 0.65), the adapter, map renderer, rooms, globe, transition, specimen, surface, sphere, AtmosphereTransition, expedition handoff, survey, training store, root index.html are byte-identical to 8f4c273; the training config is unchanged (start Biomass 150 · origin trickle 0.6 · bubble chance 0 · bubble auto ticks 375; seed 28041)"
+   },
+   {
+    "ok": true,
+    "name": "N10 · the production data-tutorial anchors are exactly 8f4c273's (run page, Planet View, rooms, report); the coach never writes one (its own markers are data-coach / data-training-coach); only the training layer imports the coach, and the run page loads that layer only for ?training=1"
+   },
+   {
+    "ok": true,
+    "name": "N11 · the record: \"completed\" is never downgraded; the title writes only \"skipped\" (Go to Expedition); the training layer writes \"skipped\" only after the confirmed skip and \"completed\" only on the run's win — Start Training, Restart and Main menu write nothing; no window.confirm"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G1 · the coach never mounts outside production training: First Bloom, planet=training_grounds as an ORDINARY authored run, a generated world, a scenario run and an exact expedition-handoff run never even load the training layer; ?ui=legacy training loads the foundation layer but mounts no coach"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G1b · no page errors"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G2 · ?training=1 mounts the coach over the production run: paused at tick 0; lesson 1 of 13 names the REAL 65 % goal (planet threshold 0.65); a labelled region with a real heading, announced through aria-live, focused once on arrival (nothing else had focus); Skip Tutorial present"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G3a · the taught route by real input finishes all 13 lessons in order, each on its real outcome"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G3b · the outcomes: Play + ticks · Green Verge established (the map region) · ONE scripted bubble (BLOOM_RUN_UI.placeBubble, once, Landing Meadow) clicked · Chill Hollow selected on the map · the Cold preview · Cold bought → Chill Hollow viable · Seed Output · Leaves · Root Network · the Humidify preview · Humidify → Thirsty Flats viable · Salt Pan · the run's own bloom:win"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G3c · at every lesson the coach's target is the REAL control (the map canvas for a region / bubble; the production button / node / tab otherwise) — under its centre is never a coach element, and the card never covers it"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G3d · room-aware teaching on the real state: Chill Hollow's limiting factor (Temperature) read from the run, the banner's real \"Would help\" → the Adapt room's Cold node; Chill Hollow fitness 0.4 → 1; Seed Output in the Spread room; the Colony tab; the real Humidify preview opens Thirsty Flats and makes Reed Fen worse-but-growing (the lesson's words come from that preview; the room's \"Region effect\" readout says the same); Thirsty Flats → 1; Salt Pan never solved (0)"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G3e · at the real win the coach is gone (no card, no ring) and the production report shows TRAINING COMPLETE with Begin Expedition (first, focused) · Restart training · Main menu — no Keep playing; the record is \"completed\""
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G3f · the bloom:* events seen on the way carry exactly their documented detail keys (TRAINING_FOUNDATION §7); no console error, no unhandled rejection"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G8 · Begin Expedition leaves through the training black, opens the Strange Bloom title and enters the Destination Survey at once (the accepted begin=1 path, consumed from the address); no world is packed or handed off (the survey still owns generation); no prompt; still \"completed\""
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G4 · the alternate route stays coherent: the bubble left alone collects itself (acknowledged: half value); Warm the Sky opens Chill Hollow (acknowledged as Terraform, not the plant); Early Maturity counts as the Spread lesson; Roots on Green Verge; Seed Reserve; Drought instead of Humidify (Reed Fen's cost acknowledged: fitness 0.083); a real win with neither Cold, Humidify nor Salt Handling owned"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G5a · early actions never deadlock: Cold bought paused at the landing → once the world runs, the Chill Hollow lessons pass as already solved (never \"buy Cold Tolerance\" again); a Seeds focus and Seed Reserve bought before their lessons are taken as done when reached; the index stays monotonic"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G5b · Restart training: no confirmation, a fresh page at lesson 1, tick 0, paused (step state was in memory only); no training record written"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G6 · the keyboard alone satisfies the coached actions: Enter on Play; the map's arrow keys + Enter select Chill Hollow; Tab + Enter on the real \"Would help\" opens Adapt with Cold Tolerance FOCUSED — the focus preview counts exactly like a hover (bloom:upgrade-preview cold); Enter buys it; Skip Tutorial is reachable by Tab with a visible focus ring"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G7 · Skip: the coach's Skip Tutorial and the menu's Skip training open the SAME production dialog (an aria-modal alertdialog — \"Skip training?\" · Keep training / Skip training — focus on Keep training, the game inert behind it; never window.confirm); Escape and Keep training return to the same lesson and record nothing; confirming records \"skipped\" and fades back to the real Strange Bloom title (no coach left; the Recommended tag gone)"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G7b · Main menu from a guided training records nothing (it may be offered again); a skip after a completed training keeps \"completed\" (never downgraded)"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G9a · no training record: TRAINING carries \"Recommended\" (read with the label); the first BEGIN EXPEDITION opens ONE dialog (\"First expedition?\": Go to Expedition · Start Training (~5 min)) and never starts training by itself; Go to Expedition records \"skipped\", drops the tag and enters the Destination Survey on the sector prefetched under the dialog"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G9b · with a \"skipped\" or \"completed\" record there is no tag and BEGIN EXPEDITION goes straight to the survey (it never asks again); Start Training (~5 min) opens the real training run (lesson 1) through the black and writes nothing; TRAINING stays in the menu in every state"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G10a · the callout fits every viewport (1024x768 · 1280x800 · 1280x800→1100x700 · 1440x900 · 860x700): inside the window with its 16 px gutter, never on the target, no horizontal page scroll; below 900 px it docks full width; it re-places at once when the window resizes (the map-region geometry is re-read)"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G10b · reduced motion (the Settings choice, else the OS): no pulsing ring, no gliding card (opacity only), no entrance lift, no smooth scrolling; Settings \"full\" over a reduced OS keeps the motion"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G11 · unmount removes every coach listener (click / keyup / focusin + the ten bloom:*), its timer, frame loop and elements; remounting three times leaves exactly one set — no leak"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G12a · with the coach mounted every production anchor still resolves to exactly one element, and the speed control stays real (1× → 2× → 4× → 1×, each a bloom:speed)"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] G12b · 1774 requests, all to the local test server (no external network); no console error or page error across the browser groups"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] G2 · ?training=1 mounts the coach over the production run: paused at tick 0; lesson 1 of 13 names the REAL 65 % goal (planet threshold 0.65); a labelled region with a real heading, announced through aria-live, focused once on arrival (nothing else had focus); Skip Tutorial present"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] G3a · the taught route by real input finishes all 13 lessons in order, each on its real outcome"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] G3b · the outcomes: Play + ticks · Green Verge established (the map region) · ONE scripted bubble (BLOOM_RUN_UI.placeBubble, once, Landing Meadow) clicked · Chill Hollow selected on the map · the Cold preview · Cold bought → Chill Hollow viable · Seed Output · Leaves · Root Network · the Humidify preview · Humidify → Thirsty Flats viable · Salt Pan · the run's own bloom:win"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] G3c · at every lesson the coach's target is the REAL control (the map canvas for a region / bubble; the production button / node / tab otherwise) — under its centre is never a coach element, and the card never covers it"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] G3d · room-aware teaching on the real state: Chill Hollow's limiting factor (Temperature) read from the run, the banner's real \"Would help\" → the Adapt room's Cold node; Chill Hollow fitness 0.4 → 1; Seed Output in the Spread room; the Colony tab; the real Humidify preview opens Thirsty Flats and makes Reed Fen worse-but-growing (the lesson's words come from that preview; the room's \"Region effect\" readout says the same); Thirsty Flats → 1; Salt Pan never solved (0)"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] G3e · at the real win the coach is gone (no card, no ring) and the production report shows TRAINING COMPLETE with Begin Expedition (first, focused) · Restart training · Main menu — no Keep playing; the record is \"completed\""
+   },
+   {
+    "ok": true,
+    "name": "[firefox] G3f · the bloom:* events seen on the way carry exactly their documented detail keys (TRAINING_FOUNDATION §7); no console error, no unhandled rejection"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] G8 · Begin Expedition leaves through the training black, opens the Strange Bloom title and enters the Destination Survey at once (the accepted begin=1 path, consumed from the address); no world is packed or handed off (the survey still owns generation); no prompt; still \"completed\""
+   },
+   {
+    "ok": true,
+    "name": "[firefox] G7 · Skip: the coach's Skip Tutorial and the menu's Skip training open the SAME production dialog (an aria-modal alertdialog — \"Skip training?\" · Keep training / Skip training — focus on Keep training, the game inert behind it; never window.confirm); Escape and Keep training return to the same lesson and record nothing; confirming records \"skipped\" and fades back to the real Strange Bloom title (no coach left; the Recommended tag gone)"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] G10a · the callout fits every viewport (1280x800): inside the window with its 16 px gutter, never on the target, no horizontal page scroll; below 900 px it docks full width; it re-places at once when the window resizes (the map-region geometry is re-read)"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] G12b · 214 requests, all to the local test server (no external network); no console error or page error across the browser groups"
+   }
+  ]
+ },
+ "requirements": {
+  "1": "N1",
+  "2": "N2",
+  "3": "N3",
+  "4": "G1",
+  "5": "G1",
+  "6": "G1",
+  "7": "G2",
+  "8": "G2",
+  "9": "N4a G2",
+  "10": "N4b G2",
+  "11": "N5a",
+  "12": "N5b N5c G5a",
+  "13": "G3b",
+  "14": "G3b",
+  "15": "G3b N5b",
+  "16": "G3b",
+  "17": "G4 N5c",
+  "18": "N7 N5d",
+  "19": "G3b G3d",
+  "20": "G3b G3d G6",
+  "21": "G3b G3c",
+  "22": "N5b G3d",
+  "23": "G4 N5c",
+  "24": "G3b G3d N4c",
+  "25": "N9 G4",
+  "26": "G3b",
+  "27": "G4 N5c",
+  "28": "G3b",
+  "29": "G4 N5c",
+  "30": "G3d",
+  "31": "G3b G3d",
+  "32": "G3d",
+  "33": "G3b G3d",
+  "34": "G4 N5c",
+  "35": "G4 N5c",
+  "36": "N5d G4",
+  "37": "G3d G4",
+  "38": "N5b G3b",
+  "39": "N4b N9",
+  "40": "G12a",
+  "41": "G5b",
+  "42": "G5b",
+  "43": "G5a N5c",
+  "44": "G5a",
+  "45": "G3c G4",
+  "46": "G3c G10a (every target re-found each frame; no element kept)",
+  "47": "G10a",
+  "48": "G3c",
+  "49": "G6",
+  "50": "G2",
+  "51": "G6",
+  "52": "G10b",
+  "53": "G10a",
+  "54": "G10a G3",
+  "55": "G10a",
+  "56": "G10a",
+  "57": "G3 G7 G10a [firefox]",
+  "58": "G10a",
+  "59": "G2 G6 G7",
+  "60": "G7",
+  "61": "G7",
+  "62": "G7",
+  "63": "G7",
+  "64": "G5b",
+  "65": "G7b",
+  "66": "G9a",
+  "67": "G9a G9b",
+  "68": "G9b",
+  "69": "G9a",
+  "70": "G9a",
+  "71": "G9b",
+  "72": "G9a",
+  "73": "G9b",
+  "74": "G9a",
+  "75": "G9a G9b",
+  "76": "G3e",
+  "77": "G3e",
+  "78": "G3e",
+  "79": "G3e",
+  "80": "G3e",
+  "81": "G3e",
+  "82": "G8",
+  "83": "G8",
+  "84": "G3e",
+  "85": "G7b N11",
+  "86": "N8 G3f",
+  "87": "N10 G12a",
+  "88": "N8",
+  "89": "N7",
+  "90": "N9 (engine / config / traits byte-identical)",
+  "91": "N9",
+  "92": "tools/expedition-handoff-check.js (29th suite, run alongside)",
+  "93": "G12b",
+  "94": "G12b G1b G3f",
+  "95": "G3f G12b",
+  "96": "G11 N5e"
+ }
+}
