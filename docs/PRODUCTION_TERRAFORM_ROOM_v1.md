@@ -109,8 +109,10 @@ Soil**, and the empty-state line disappears once such a node is offered. Nothing
 
 `resources/planet-sphere/planet-sphere-view.js` is byte-identical to 2d0fb08 (N3 pins the blob hashes). The room consumes it through
 `BLOOM.terraformGlobe.mount(host, { reducedMotion, ariaLabel, surface, onReady })`, which uses only the public API: `new PlanetSphereView(host,
-{ reducedMotion, ariaLabel, background: null, wheelZoom: false })`, `setPlanet(planet, { render })`, `resize()`, `dispose()`, `state()` /
-`getYaw()` for QA. Yaw drag, ← / →, fling, idle rotation (3 s delay, one turn a minute), reduced motion, focusability (`tabindex=0`) and the
+{ reducedMotion, ariaLabel, background: null, wheelZoom: false })`, `setPlanet(planet, { render })`, `resize()`, `dispose()`, and `state()`
+(the documented read-only snapshot) for the room's measurements. No private member (`_canvas`, `_globe`, `_makeGlobe`, material / texture /
+Three.js objects) is read anywhere under `resources/run-ui/`; suite N4 scans the unmasked sources. The pixel-identity proof reads the sphere's
+texture canvas (`view._canvas`) only inside the QA harness of `tools/terraform-check.js` — QA introspection, not production coupling. Yaw drag, ← / →, fling, idle rotation (3 s delay, one turn a minute), reduced motion, focusability (`tabindex=0`) and the
 accessible label are the component's own (B17, B22); the room adds a visible focus ring as a sibling element around the face (a clipped outline
 would vanish) and names the planet in the label (*The planet \<name\> as it is now. Drag sideways or press the left and right arrow keys to spin
 it. Terraform previews repaint its sky.*). The host box is sized so the component's default framing (distance 4.2, fov 35°) yields the face
