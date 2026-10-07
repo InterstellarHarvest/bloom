@@ -100,7 +100,8 @@ it owns no simulation and no rules.
   per copy in screen space: crossings, labels, colony badges, bubbles (on top: they are clickable).
 - **Cylinder fill:** a wrapping world is centred on its middle meridian (as the globe faces it at yaw 0) and **repeated** sideways
   until the stage is full (3 copies at 1280 × 800); never padded with invented ocean. Any copy's click resolves to the same
-  canonical tile (`x mod W`) — QA B8 clicks the left and right copies. Labels / bubbles near the cut are drawn on every copy.
+  canonical tile (`x mod W`), and that canonical tile is what the click's `bloom:region-select` reports — QA B8 / B29b click the left
+  and right copies. Labels / bubbles near the cut are drawn on every copy.
   A rectangle is drawn once, centred, inside the dark stage frame. Simulation geometry is untouched.
 - **Context loss:** Chromium can drop and restore offscreen 2D canvases (blank) at start-up; the renderer repaints the surface on
   `contextrestored` and asks its owner for a frame.
@@ -109,10 +110,17 @@ it owns no simulation and no rules.
 
 ## 5. Selection, banner, Map View, scenarios
 
-- **Selection** is the run's own (`adapter.selection()` + `bloom:region-select`): a land click selects (idempotent), water / outside
-  deselects, the banner's X deselects, Pause / speed never touch it. A bubble under the pointer is collected first, as in the
-  shell. The run opens with the origin selected (the page's own start), so the banner shows it.
-  - Adapter `selectRegion` reports `tile −1` in its event (029A's documented difference).
+- **Selection** is the run's own (`adapter.selection()` + `bloom:region-select`). A bubble under the pointer is collected first, as
+  in the shell. The banner's X deselects; Pause / speed never touch the selection. The run opens with the origin selected (the
+  page's own start), so the banner shows it.
+  - **A physical map click = the real canonical tile.** The view sends the renderer's `hitTest` tile (a repeated cylinder copy
+    resolves to `x mod W`) through `actions.selectTile(tile)`, which calls the page's own map-click action `selectAt(sec, tile)`.
+    So, exactly as the shell's map: the event carries that tile; clicking the selected region again **deselects** it (the event
+    still carries the clicked tile); a water tile deselects with `water: true` and the water tile. Only a click on the frame
+    outside the planet (no tile) clears through `actions.deselect()`.
+  - **Abstract choices = tile −1.** Keyboard Enter on the map's region focus, and future room / context controls, use
+    `actions.selectRegion(r)`: idempotent (the selected region stays selected, no second event), `tile −1` (029A's documented
+    difference).
 - **Banner (only while selected):** region name, status chip (OK / Strained / Blocked), Origin badge, colony status
   (`region.colony.label`), limiting factor (`limiting.key` + the page's words), four condition boxes, "Inspect region", and
   **Would help** = `adapter.wouldHelp(region)` (real previews; `limiting.hint` is not used). Boxes keep category identity in every
@@ -139,6 +147,7 @@ it owns no simulation and no rules.
 | `mapState()` | `{ ticks, width, height, state (0 bare · 1 living · 2 dead), density, native \| null, vigor }` (typed-array copies) | `sim.state / dens / competition.native / vigor` |
 | `effects()` | `{ crossings[{id, from, to, took, elapsed}], crossingTiming, thresholds[{…ref, worse, left}], competition[{…ref, type, left}], skyChange{axis, text, gain, lose, better, worse, left} \| null }` | the page's `XANIM`, `PX_FX`, `CX_FX`, `skyFx` |
 | `runMenu()` · `actions.runAction(id)` | `{label, items[{id, label, note, primary}]}` or null · the page's own leave / training path | `playActions()` + `goAction` (extracted unchanged from `wireActions`) |
+| `actions.selectTile(tile)` | `true`, or `false` for a non-tile (nothing happens) | the page's own `selectAt(tilemap[tile], tile)` — a physical map click (§5) |
 | `scenario().pressure.phaseMarks` · `scenario().climate.threshold` | where each phase begins · the shock threshold | the scenario data the shell's bars already marked |
 
 The host gained a `map` part (`render`, `crossings`, `crossingTiming`, `flashes`), `read.runMenu` and `act.runAction`; competition

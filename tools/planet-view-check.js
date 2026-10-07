@@ -231,8 +231,8 @@ const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
         const bannerName = await p.evaluate(() => document.querySelector("#pvBanner .bn-t b").textContent);
         const sL0 = await click(r.left, 0), sL1 = await click(r.mid, 0), sLm = await click(r.left, -1), sR1 = await click(r.right, 1), wantL = await reg(r.left), wantR = await reg(r.right);
         const hitCopies = await p.evaluate(([l, rr]) => { const a = __pv.client(l, -1), b = __pv.client(rr, 1), h1 = __pv.R.hitTest(a.x, a.y), h2 = __pv.R.hitTest(b.x, b.y); return [h1.tile === l && h1.copy === -1, h2.tile === rr && h2.copy === 1]; }, [r.left, r.right]);
-        check(sMid.index === want && sMid.id === ev.detail.id && ev.detail.index === want && bannerName === sMid.name && r.copies.count === 3,
-          `${tag} B7 · a map click selects the real region under it (adapter selection = the tilemap's region, bloom:region-select carries its id, the banner names it)`, `tile ${r.mid} → ${J(sMid)} · event ${J(ev.detail)}`);
+        check(sMid.index === want && sMid.id === ev.detail.id && ev.detail.index === want && ev.detail.tile === r.mid && bannerName === sMid.name && r.copies.count === 3,
+          `${tag} B7 · a map click selects the real region under it (adapter selection = the tilemap's region, bloom:region-select carries its id and the clicked canonical tile, the banner names it)`, `tile ${r.mid} → ${J(sMid)} · event ${J(ev.detail)}`);
         check(sL0.index === wantL && sLm.index === wantL && sL1.index !== wantL && sR1.index === (wantR >= 0 ? wantR : -1) && hitCopies.every(Boolean),
           `${tag} B8 · cylinder: the stage shows ${r.copies.count} copies; a click on the left repeated copy (copy −1) and on the right one (+1) selects the SAME canonical region as copy 0 (x mod W)`,
           `left tile ${r.left} copy0 ${sL0.index} copy−1 ${sLm.index} (want ${wantL}) · right tile ${r.right} copy+1 ${sR1.index} (want ${wantR}) · hitTest ${J(hitCopies)}`);
@@ -243,6 +243,40 @@ const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
         await p.click("#pvBanner .bx"); await frames(p, 2); const s3 = await p.evaluate(() => ({ sel: __pv.A.selection().index, banner: !document.getElementById("pvBanner").hidden }));
         await click(r.mid, 0); const sW = await click(r.water, 0), bW = await p.evaluate(() => document.getElementById("pvBanner").hidden);
         check(s2.sel === s1 && s2.banner && s3.sel === -1 && !s3.banner && sW.index === -1 && bW, `${tag} B9 · Pause / speed leave the selection and banner alone; the banner's X deselects (banner gone); a water click deselects`, J({ s1, s2, s3, water: sW.index, bW })); }
+      // B29 · physical map clicks = the run's own map-click path (actions.selectTile → selectAt(sec, tile)); abstract choices keep tile −1
+      { const T = await p.evaluate(() => { const I = __pv.R.info(), m = __pv.A.map(), W = m.width, TM = m.tilemap, rows = Math.floor((560 - 80 - I.offsetY) / I.tilePx) - 1;
+          const minX = Math.ceil(W - I.offsetX / I.tilePx) + 1, maxX = Math.floor((1280 - I.offsetX - I.worldWidth) / I.tilePx) - 2;
+          const land = (x0, x1) => { for (let y = 1; y < rows; y++) for (let x = x0; x <= x1; x++) if (TM[y * W + x] >= 0) return y * W + x; return -1; };
+          const water = (x0, x1) => { for (let y = 1; y < rows; y++) for (let x = x0; x <= x1; x++) if (TM[y * W + x] < 0) return y * W + x; return -1; };
+          return { mid: land(20, 40), water: water(20, 40), left: land(minX, W - 1), rightW: water(0, maxX), TM };
+        });
+        const SHAPE = '["index","id","name","previous","water","tile"]';
+        const clickEv = async (t, copy) => { await p.evaluate(() => { __EV.length = 0; }); const c = await p.evaluate(([t, copy]) => __pv.client(t, copy), [t, copy]);
+          await p.mouse.click(c.x, c.y); await frames(p, 2);
+          return p.evaluate(() => ({ ev: __EV.filter(e => e.type === "region-select").map(e => e.detail), sel: __pv.A.selection() })); };
+        await p.evaluate(() => __pv.A.actions.deselect()); await frames(p, 1);
+        const a1 = await clickEv(T.mid, 0), a2 = await clickEv(T.mid, 0), w1 = await clickEv(T.mid, 0), w2 = await clickEv(T.water, 0);
+        const reg = T.TM[T.mid], E = x => x.ev[0] || {};
+        const land = a1.ev.length === 1 && E(a1).tile === T.mid && E(a1).index === reg && a1.sel.index === reg && a1.sel.id === E(a1).id && E(a1).water === false;
+        const toggle = a2.ev.length === 1 && E(a2).tile === T.mid && E(a2).index === -1 && E(a2).previous === a1.sel.id && a2.sel.index === -1;
+        const water = w1.sel.index === reg && w2.ev.length === 1 && E(w2).tile === T.water && E(w2).water === true && E(w2).index === -1 && E(w2).previous === w1.sel.id && w2.sel.index === -1 && w2.sel.water === true;
+        const shape = [a1, a2, w2].every(x => JSON.stringify(Object.keys(E(x))) === SHAPE);
+        check(land && toggle && water && shape, `${tag} B29a · a physical LAND click emits bloom:region-select with the exact canonical tile (not −1) and selects that tile's region; clicking it AGAIN deselects (event: the same tile, previous = that region); a WATER click deselects with water:true and the real water tile; detail shape unchanged`,
+          J({ tile: T.mid, a1: E(a1), a2: E(a2), w2: E(w2) }));
+        // repeated cylinder copies: the left copy (−1) and the centre copy emit the SAME canonical tile and toggle the same region; a right-copy (+1) water tile likewise
+        const c0 = await clickEv(T.left, 0), cL = await clickEv(T.left, -1), cL2 = await clickEv(T.left, -1), rW = await clickEv(T.rightW, 1), rW0 = await clickEv(T.rightW, 0);
+        const rl = T.TM[T.left];
+        const copies = E(c0).tile === T.left && E(c0).index === rl && E(cL).tile === T.left && E(cL).index === -1 && E(cL).previous === c0.sel.id
+          && E(cL2).tile === T.left && E(cL2).index === rl && cL2.sel.index === rl && E(rW).tile === T.rightW && E(rW).water === true && rW.sel.index === -1 && E(rW0).tile === T.rightW && E(rW0).water === true;
+        check(copies, `${tag} B29b · repeated cylinder copies: a click on the left copy (−1) emits the SAME canonical tile as the centre copy and toggles the same region (centre selects → left copy deselects → left copy selects again); a right-copy (+1) water click emits the canonical water tile`,
+          J({ left: T.left, c0: E(c0), cL: E(cL), cL2: E(cL2), rightWater: T.rightW, rW: E(rW), rW0: E(rW0) }));
+        // abstract choices: keyboard Enter and actions.selectRegion report tile −1; selectRegion is idempotent (no toggle, no second event)
+        await p.evaluate(() => { __pv.A.actions.deselect(); __EV.length = 0; }); await p.focus("#pvMap"); await p.keyboard.press("ArrowRight"); await p.keyboard.press("Enter"); await frames(p, 2);
+        const kb = await p.evaluate(() => ({ ev: __EV.filter(e => e.type === "region-select").map(e => e.detail), sel: __pv.A.selection().index, focus: __pv.PV.state().focus }));
+        const ab = await p.evaluate(([reg]) => { __EV.length = 0; const A = __pv.A, r1 = A.actions.selectRegion(reg), n1 = __EV.length, r2 = A.actions.selectRegion(reg), n2 = __EV.length;
+          return { r1, r2, n1, n2, sel: A.selection().index, tile: (__EV[0] || {}).detail && __EV[0].detail.tile, bad: A.actions.selectTile(-1) === false && A.actions.selectTile(1e9) === false && A.actions.selectTile(1.5) === false && __EV.length === n2 }; }, [reg]);
+        check(kb.ev.length === 1 && kb.ev[0].tile === -1 && kb.sel === kb.focus && JSON.stringify(Object.keys(kb.ev[0])) === SHAPE && ab.r1 && ab.r2 && ab.n1 === 1 && ab.n2 === 1 && ab.sel === reg && ab.tile === -1 && ab.bad,
+          `${tag} B29c · abstract choices keep tile −1: keyboard Enter on the map's region focus and actions.selectRegion(); selectRegion is idempotent (a second call: still selected, no event); selectTile refuses a non-tile`, J({ kb: kb.ev[0], ab })); }
       // B10 · pause / speed: real actions, bloom:play-pause / bloom:speed, exactly 1× → 2× → 4× → 1×
       { const r = await p.evaluate(() => { __EV.length = 0; return true; });
         await p.click("#pvPause"); const run1 = await p.evaluate(() => __pv.A.run().running); await p.click("#pvPause"); const run2 = await p.evaluate(() => __pv.A.run().running);
