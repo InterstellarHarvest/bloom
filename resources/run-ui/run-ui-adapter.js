@@ -18,7 +18,8 @@
 // planet-surface source: the planet's own grid, tilemap, region climate offsets, topology, render hints and the sky the ground
 // sees now), mapState() (per-tile living / dead / native state and density: what the map's live overlays draw), effects() (the
 // page's own transient map feedback: water crossings, threshold / competition outlines, the last Terraform change) and runMenu()
-// + actions.runAction(id) (the player / training run menu: the page's own items and its own leave / training path). Each is a copy
+// + actions.runAction(id) (the player / training run menu: the page's own items and its own leave / training path), and
+// actions.selectTile(tile) (a physical map click: the page's own selectAt with the real tile). Each is a copy
 // of existing truth; none adds a rule. docs/PRODUCTION_PLANET_VIEW_v1.md §6.
 //
 // Classic script, no dependencies: boots over file:// like every other run-page file.
@@ -248,6 +249,10 @@
       // select a region (idempotent: the selected region stays selected); the event's tile is −1 (not a map click)
       selectRegion(r) { const i = indexOf(r); if (i < 0) return false; if (i !== V.selected()) A.selectAt(i, -1); return true; },
       deselect() { if (V.selected() < 0 && !V.selectedWater()) return false; A.selectAt(-2, -1); return true; },
+      // (BLOOM-029B) a PHYSICAL map click on canonical tile `tile`: the page's own map-click path, selectAt(tilemap[tile], tile), so the
+      // event reports the real tile, a click on the selected region deselects it and a water tile deselects with water:true.
+      // (selectRegion above stays the abstract, idempotent selector: tile −1.) Not a map tile → false, nothing happens.
+      selectTile(tile) { if (!Number.isInteger(tile) || tile < 0 || tile >= M.N) return false; A.selectAt(M.TILEMAP[tile], tile); return true; },
       preview(id) { if (!sim.traitById[id]) return null; A.showPreview(id); return previewOf(id); }, // shows it: outline + footer + event
       clearPreview() { A.clearPreview(); },
       buy(id) { return !!sim.traitById[id] && A.buy(id) === true; },

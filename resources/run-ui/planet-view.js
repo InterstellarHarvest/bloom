@@ -323,7 +323,10 @@
     canvas.addEventListener("click", e => {
       const b = R.bubbleAt(e.clientX, e.clientY, A.bubbles()); if (b) { A.actions.collectBubble(b.tile); return; }   // a bubble first (as the shell)
       const h = R.hitTest(e.clientX, e.clientY);
-      if (h.region >= 0) A.actions.selectRegion(h.region); else A.actions.deselect();                                // water / outside → deselect
+      // a physical click: the canonical tile under it (a repeated cylinder copy resolves to x mod W) through the run's own map-click
+      // path — the event carries that tile, the selected region clicked again deselects, water deselects with water:true. Only a
+      // click on the frame outside the planet (no tile) clears through the abstract deselect.
+      if (h.tile >= 0) A.actions.selectTile(h.tile); else A.actions.deselect();
       if (state.focus >= 0) { state.focus = -1; dirty = true; }
     });
     canvas.addEventListener("keydown", e => {
