@@ -4,6 +4,10 @@
 screen) and the Main PMO (which connects the expedition descent to the real game). Evidence and QA:
 `docs/evidence/bloom-028a/REPORT.md`, `docs/evidence/bloom-028a1/REPORT.md`, `docs/evidence/bloom-028b/REPORT.md`.
 
+> **BLOOM-029F: the gameplay handoff is done.** `demos/main-menu.html`'s `descent.onCovered` now packages the exact `detail.planet`
+> verbatim into a session-scoped handoff and opens the production run page with an opaque token; gameplay rehydrates that planet as its
+> own, never regenerating it. This screen is byte-identical to 028C. Contract: `docs/EXPEDITION_HANDOFF_v1.md`.
+
 > **The planet contract.** Every world the survey shows is already a **fully validated** BLOOM world. The selected
 > **`detail.planet` is the authoritative gameplay planet. Consumers must not regenerate it from the seed.**
 > `detail.candidate.seed` is provenance only. See §3.
@@ -24,7 +28,7 @@ dossier sits on the right, with **← Return to survey** and **Begin expedition*
 | `resources/destination-survey/sector-pool.js` | **`SectorPool`** (028C): the worker pool + sector cache, lifted out of `DestinationSurvey` unchanged so the Main Menu can start the first sector before the screen exists (`DestinationSurvey.prefetch`, §4a) |
 | `resources/destination-survey/destination-survey.css` | the screen's look (scoped under `.ds`) |
 | `demos/destination-survey.html` | development entry point (localhost) with a dev placeholder for Begin Expedition (announce only, no `descent`) |
-| `demos/expedition-descent.html` | 028B integration harness: the full departure into a clearly marked development handoff target |
+| `demos/expedition-descent.html` | 028B integration harness: the full departure into a clearly marked development handoff target (kept as a harness; the production departure is `demos/main-menu.html`, 029F) |
 | `resources/atmosphere-transition/` | the reusable cloud transition the departure uses (screen-agnostic; `docs/ATMOSPHERE_TRANSITION_v1.md`) |
 | `tools/destination-survey-check.js` | the 20th regression suite (survey data; S4 re-validates every shown world independently) |
 
@@ -72,7 +76,7 @@ transforms, which the renderer follows.
   - `nextSectorReady`;
   - `stats` (scans, selects, sector build times, scan waits, …).
 
-## 3. Begin Expedition → the next milestone
+## 3. Begin Expedition → gameplay (consumed by BLOOM-029F)
 
 `beginExpedition()` (the button) changes nothing on screen. It calls `onBeginExpedition(detail)` and dispatches a bubbling
 `bloom:begin-expedition` CustomEvent on the root with the same `detail`:
@@ -91,6 +95,9 @@ transforms, which the renderer follows.
 - The planet is already the world that path produces (it went through it, in the worker). Running it again can only
   return the same map at best, or a different one if anything in generation or validation ever changes.
 - `survey.dispose()` does not touch planet objects, so a consumer can keep `detail.planet` after the screen is gone.
+- **The production consumer (029F):** `demos/main-menu.html` → `BLOOM.expedition.pack(detail, …)` → `store(sessionStorage)` →
+  `survey.dispose()` → `demo-run.html?play=1&expedition=<token>`; the run page's `BLOOM.expedition.toRun` makes the stored planet the run's
+  planet. `docs/EXPEDITION_HANDOFF_v1.md`.
 
 ### 3.1 The departure (028B): `descent`
 

@@ -70,5 +70,26 @@
       confirmLeave: "Leave this run? It will not be saved.",
     },
     search: { maxCandidates: 6, seedMin: 1, seedMax: 99999 },
+    // (BLOOM-029F) an expedition run: the exact planet chosen in the Destination Survey, carried into gameplay verbatim (never
+    // regenerated from its World Seed). Its post-run actions and the explicit failure states of a handoff that cannot be used.
+    expedition: {
+      playAgain: "Play again",
+      playAgainNote: "This exact planet, exactly as surveyed. A fresh start: your choices make the run.",
+      choosePlanet: "Choose another planet",
+      choosePlanetNote: "Back to the Destination Survey to pick a different destination.",
+      mainMenu: "Main menu",
+      mainMenuNote: "Back to the title.",
+      failure: {
+        title: "No expedition to start",
+        missing: "This expedition is not open in this tab any more. Expeditions live only in the tab that chose them, and only the most recent ones are kept.",
+        link: "This expedition link is not valid: it carries more than the expedition itself.",
+        malformed: "The expedition data could not be read.",
+        version: "This expedition was prepared by another version of the game and cannot be opened here.",
+        planet: "The expedition data holds no playable world.",
+        integrity: "The expedition data does not match what was chosen, so it cannot be trusted.",
+        note: "No other world was substituted and no run was started. Choose a destination again from the main menu.",
+        mainMenu: "Main menu",
+      },
+    },
   };
 })(typeof window !== "undefined" ? window : globalThis);

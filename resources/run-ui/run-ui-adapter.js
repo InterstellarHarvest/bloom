@@ -99,6 +99,8 @@
         scenarioId: S.scn ? S.scn.id : "eden", scenarioName: S.scn ? S.scn.name : "Eden",
         mechanics: { pressure: S.press, competition: S.comp, climate: S.clim },
         training: !!run.training, play: !!run.play, started: !!run.started,
+        // (BLOOM-029F) an expedition run's provenance: the exact Destination Survey planet (identity for the report / debugging; never a world source)
+        expedition: run.expedition ? { token: run.expedition.token, source: run.expedition.source, candidateKey: run.expedition.candidateKey, sectorSeed: run.expedition.sectorSeed, classId: run.expedition.classId, fingerprint: run.expedition.fingerprint } : null,
         running: V.running(), speed: V.speed(), speeds: host.speeds.slice(),
         ticks: sim.ticks, seconds: tickSeconds(sim.ticks), tickMs: CFG.tickMs,
         won: !!sim.won, lost: !!sim.lost, lostReason: sim.lostReason || null,
