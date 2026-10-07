@@ -1,0 +1,678 @@
+{
+  "generatedAt": "2026-10-07T02:38:49.504Z",
+  "base": "2750cbb0363c3be27165196ea6325171442203eb",
+  "rooms": {
+    "1024x768": {
+      "em": 13.8,
+      "emBy": "chips",
+      "tendrils": {
+        "idleMin": 8.5,
+        "litMin": 12.5,
+        "veinMin": 2,
+        "adapt": [
+          [
+            "Hazard",
+            8.5
+          ],
+          [
+            "Water",
+            8.5
+          ],
+          [
+            "Temperature",
+            8.5
+          ],
+          [
+            "Soil",
+            8.5
+          ]
+        ],
+        "adaptLit": [
+          [
+            "Temperature",
+            12.5
+          ]
+        ],
+        "glow": 23.75,
+        "vein": 2,
+        "spread": [
+          [
+            "Seeds",
+            8.5
+          ],
+          [
+            "Growth",
+            8.5
+          ],
+          [
+            "Reach",
+            8.5
+          ]
+        ]
+      },
+      "crossings": {
+        "adapt": {
+          "paths": 4,
+          "crossings": 0,
+          "minGap": 5.1,
+          "at": [
+            "Temperature",
+            "Soil",
+            240,
+            319
+          ],
+          "widths": [
+            8.5,
+            8.5,
+            8.5,
+            8.5
+          ]
+        },
+        "adaptLit": {
+          "paths": 4,
+          "crossings": 0,
+          "minGap": 2.9,
+          "at": [
+            "Temperature",
+            "Soil",
+            240,
+            324
+          ],
+          "widths": [
+            8.5,
+            8.5,
+            12.5,
+            8.5
+          ]
+        },
+        "spread": {
+          "paths": 3,
+          "crossings": 0,
+          "minGap": 24.3,
+          "at": [
+            "Growth",
+            "Reach",
+            235,
+            216
+          ],
+          "widths": [
+            8.5,
+            8.5,
+            8.5
+          ]
+        },
+        "spreadLit": {
+          "paths": 3,
+          "crossings": 0,
+          "minGap": 24.3,
+          "at": [
+            "Growth",
+            "Reach",
+            235,
+            216
+          ],
+          "widths": [
+            12.5,
+            8.5,
+            8.5
+          ]
+        }
+      },
+      "trees": {
+        "adapt": 538,
+        "spread": 289,
+        "spreadWant": 284.30400000000003,
+        "zone": 690.84375
+      },
+      "chipFit": {
+        "strip": 304.125,
+        "chip": 95.921875,
+        "gap": 4.83,
+        "three": 297.425625,
+        "fits": true,
+        "realStrip": 304.125,
+        "median": "Mire Basin"
+      },
+      "cards": {
+        "info": 0.9941123188405797,
+        "mm": 0.8944746376811594,
+        "ctx": 0.9442934782608695,
+        "main": 289,
+        "zone": 690.84375,
+        "scroll": 0,
+        "drScroll": 0,
+        "header": 4.8663949275362315,
+        "small": [],
+        "chips": [
+          36,
+          36,
+          36,
+          36,
+          36,
+          36,
+          36,
+          36,
+          36,
+          36,
+          36,
+          36,
+          36,
+          36,
+          36
+        ],
+        "lenses": [
+          36,
+          36,
+          36,
+          36,
+          36
+        ]
+      },
+      "labelMode": "full"
+    },
+    "1280x800": {
+      "em": 17.3,
+      "emBy": "chips",
+      "tendrils": {
+        "idleMin": 8.996,
+        "litMin": 13.840000000000002,
+        "veinMin": 2.076,
+        "adapt": [
+          [
+            "Hazard",
+            8.996
+          ],
+          [
+            "Water",
+            8.996
+          ],
+          [
+            "Temperature",
+            8.996
+          ],
+          [
+            "Soil",
+            8.996
+          ]
+        ],
+        "adaptLit": [
+          [
+            "Temperature",
+            13.84
+          ]
+        ],
+        "glow": 26.296000000000003,
+        "vein": 2.076,
+        "spread": [
+          [
+            "Seeds",
+            8.996
+          ],
+          [
+            "Growth",
+            8.996
+          ],
+          [
+            "Reach",
+            8.996
+          ]
+        ]
+      },
+      "crossings": {
+        "adapt": {
+          "paths": 4,
+          "crossings": 0,
+          "minGap": 7.8,
+          "at": [
+            "Temperature",
+            "Soil",
+            299,
+            393
+          ],
+          "widths": [
+            8.996,
+            8.996,
+            8.996,
+            8.996
+          ]
+        },
+        "adaptLit": {
+          "paths": 4,
+          "crossings": 0,
+          "minGap": 5.1,
+          "at": [
+            "Temperature",
+            "Soil",
+            300,
+            399
+          ],
+          "widths": [
+            8.996,
+            8.996,
+            13.84,
+            8.996
+          ]
+        },
+        "spread": {
+          "paths": 3,
+          "crossings": 0,
+          "minGap": 30,
+          "at": [
+            "Growth",
+            "Reach",
+            285,
+            265
+          ],
+          "widths": [
+            8.996,
+            8.996,
+            8.996
+          ]
+        },
+        "spreadLit": {
+          "paths": 3,
+          "crossings": 0,
+          "minGap": 30,
+          "at": [
+            "Growth",
+            "Reach",
+            285,
+            265
+          ],
+          "widths": [
+            13.84,
+            8.996,
+            8.996
+          ]
+        }
+      },
+      "trees": {
+        "adapt": 673,
+        "spread": 360,
+        "spreadWant": 355.334,
+        "zone": 710.453125
+      },
+      "chipFit": {
+        "strip": 381.03125,
+        "chip": 119.25,
+        "gap": 6.055,
+        "three": 369.86,
+        "fits": true,
+        "realStrip": 381.03125,
+        "median": "Mire Basin"
+      },
+      "cards": {
+        "info": -5.386560693641618,
+        "mm": 0.8652456647398844,
+        "ctx": 0.9149205202312138,
+        "main": 360,
+        "zone": 710.453125,
+        "scroll": 0,
+        "drScroll": 0,
+        "header": 4.598085260115607,
+        "small": [],
+        "chips": [
+          41.375,
+          41.375,
+          41.375,
+          41.375,
+          41.375,
+          41.375,
+          41.375,
+          41.375,
+          41.375,
+          41.375,
+          41.375,
+          41.375,
+          41.375,
+          41.375,
+          41.375
+        ],
+        "lenses": [
+          38.921875,
+          38.921875,
+          38.921875,
+          38.921875,
+          38.921875
+        ]
+      },
+      "labelMode": "full"
+    },
+    "1440x900": {
+      "em": 19.4,
+      "emBy": "chips",
+      "tendrils": {
+        "idleMin": 10.088,
+        "litMin": 15.52,
+        "veinMin": 2.328,
+        "adapt": [
+          [
+            "Hazard",
+            10.088
+          ],
+          [
+            "Water",
+            10.088
+          ],
+          [
+            "Temperature",
+            10.088
+          ],
+          [
+            "Soil",
+            10.088
+          ]
+        ],
+        "adaptLit": [
+          [
+            "Temperature",
+            15.52
+          ]
+        ],
+        "glow": 29.488,
+        "vein": 2.328,
+        "spread": [
+          [
+            "Seeds",
+            10.088
+          ],
+          [
+            "Growth",
+            10.088
+          ],
+          [
+            "Reach",
+            10.088
+          ]
+        ]
+      },
+      "crossings": {
+        "adapt": {
+          "paths": 4,
+          "crossings": 0,
+          "minGap": 9,
+          "at": [
+            "Temperature",
+            "Soil",
+            341,
+            460
+          ],
+          "widths": [
+            10.088,
+            10.088,
+            10.088,
+            10.088
+          ]
+        },
+        "adaptLit": {
+          "paths": 4,
+          "crossings": 0,
+          "minGap": 6,
+          "at": [
+            "Temperature",
+            "Soil",
+            337,
+            439
+          ],
+          "widths": [
+            10.088,
+            10.088,
+            15.52,
+            10.088
+          ]
+        },
+        "spread": {
+          "paths": 3,
+          "crossings": 0,
+          "minGap": 36.3,
+          "at": [
+            "Growth",
+            "Reach",
+            329,
+            293
+          ],
+          "widths": [
+            10.088,
+            10.088,
+            10.088
+          ]
+        },
+        "spreadLit": {
+          "paths": 3,
+          "crossings": 0,
+          "minGap": 36.3,
+          "at": [
+            "Growth",
+            "Reach",
+            329,
+            293
+          ],
+          "widths": [
+            15.52,
+            10.088,
+            10.088
+          ]
+        }
+      },
+      "trees": {
+        "adapt": 755,
+        "spread": 404,
+        "spreadWant": 399.15199999999993,
+        "zone": 801.765625
+      },
+      "chipFit": {
+        "strip": 429.296875,
+        "chip": 133.234375,
+        "gap": 6.79,
+        "three": 413.283125,
+        "fits": true,
+        "realStrip": 429.296875,
+        "median": "Mire Basin"
+      },
+      "cards": {
+        "info": 0.9528028350515465,
+        "mm": 0.8529317010309279,
+        "ctx": 0.9028672680412372,
+        "main": 404,
+        "zone": 801.765625,
+        "scroll": 0,
+        "drScroll": 0,
+        "header": 4.548163659793815,
+        "small": [],
+        "chips": [
+          46.390625,
+          46.390625,
+          46.390625,
+          46.390625,
+          46.390625,
+          46.390625,
+          46.390625,
+          46.390625,
+          46.390625,
+          46.390625,
+          46.390625,
+          46.390625,
+          46.390625,
+          46.390625,
+          46.390625
+        ],
+        "lenses": [
+          43.640625,
+          43.640625,
+          43.640625,
+          43.640625,
+          43.640625
+        ]
+      },
+      "labelMode": "full"
+    },
+    "1280x800-firefox": {
+      "em": 17.3,
+      "emBy": "chips",
+      "tendrils": {
+        "idleMin": 8.996,
+        "litMin": 13.840000000000002,
+        "veinMin": 2.076,
+        "adapt": [
+          [
+            "Hazard",
+            8.996
+          ],
+          [
+            "Water",
+            8.996
+          ],
+          [
+            "Temperature",
+            8.996
+          ],
+          [
+            "Soil",
+            8.996
+          ]
+        ],
+        "adaptLit": [
+          [
+            "Temperature",
+            13.84
+          ]
+        ],
+        "glow": 26.296000000000003,
+        "vein": 2.076,
+        "spread": [
+          [
+            "Seeds",
+            8.996
+          ],
+          [
+            "Growth",
+            8.996
+          ],
+          [
+            "Reach",
+            8.996
+          ]
+        ]
+      },
+      "crossings": {
+        "adapt": {
+          "paths": 4,
+          "crossings": 0,
+          "minGap": 7.9,
+          "at": [
+            "Temperature",
+            "Soil",
+            299,
+            393
+          ],
+          "widths": [
+            8.996,
+            8.996,
+            8.996,
+            8.996
+          ]
+        },
+        "adaptLit": {
+          "paths": 4,
+          "crossings": 0,
+          "minGap": 5.3,
+          "at": [
+            "Temperature",
+            "Soil",
+            299,
+            394
+          ],
+          "widths": [
+            8.996,
+            8.996,
+            13.84,
+            8.996
+          ]
+        },
+        "spread": {
+          "paths": 3,
+          "crossings": 0,
+          "minGap": 32,
+          "at": [
+            "Growth",
+            "Reach",
+            293,
+            264
+          ],
+          "widths": [
+            8.996,
+            8.996,
+            8.996
+          ]
+        },
+        "spreadLit": {
+          "paths": 3,
+          "crossings": 0,
+          "minGap": 32,
+          "at": [
+            "Growth",
+            "Reach",
+            293,
+            264
+          ],
+          "widths": [
+            13.84,
+            8.996,
+            8.996
+          ]
+        }
+      },
+      "trees": {
+        "adapt": 673,
+        "spread": 360,
+        "spreadWant": 355.834,
+        "zone": 710.4166717529297
+      },
+      "chipFit": {
+        "strip": 381.0333251953125,
+        "chip": 119.23333740234375,
+        "gap": 6.055,
+        "three": 369.81001220703126,
+        "fits": true,
+        "realStrip": 381.0333251953125,
+        "median": "Mire Basin"
+      },
+      "cards": {
+        "info": 0.9653203887057442,
+        "mm": 0.8651221832098988,
+        "ctx": 0.9152204039468931,
+        "main": 360,
+        "zone": 710.4166717529297,
+        "scroll": 0,
+        "drScroll": 0,
+        "header": 4.600192384223718,
+        "small": [],
+        "chips": [
+          41.383331298828125,
+          41.383331298828125,
+          41.383331298828125,
+          41.383331298828125,
+          41.383331298828125,
+          41.383331298828125,
+          41.38334655761719,
+          41.38334655761719,
+          41.38334655761719,
+          41.38334655761719,
+          41.383331298828125,
+          41.383331298828125,
+          41.383331298828125,
+          41.383331298828125,
+          41.383331298828125
+        ],
+        "lenses": [
+          38.916656494140625,
+          38.916656494140625,
+          38.916656494140625,
+          38.916656494140625,
+          38.916656494140625
+        ]
+      },
+      "labelMode": "full"
+    }
+  }
+}
