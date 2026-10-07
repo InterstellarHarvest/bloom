@@ -81,6 +81,8 @@
   upgrade-preview, upgrade-purchase, growth-focus, local-upgrade, bubble-collect, win, run-ready), stable data-tutorial anchors
   on the controls, and BLOOM_RUN_UI.placeBubble(sectionId) for a bonus bubble placed on purpose. Contracts:
   docs/TRAINING_FOUNDATION_v1.md. QA: tools/training-check.js.
+  BLOOM-029D: the fourth production room, Terraform (same controller; resources/run-ui/terraform-globe.js hosts the unmodified
+  PlanetSphereView showing the exact current planet under the current sky). computePreview records the real current → preview sky.
   BLOOM-029C: with &ui=18 the production decision rooms (resources/run-ui/decision-rooms.js: Region Inspect, Adapt, Spread; the
   production plant specimen resources/run-ui/plant-specimen.js) mount into the Planet View's room seam, over the same adapter.
   BLOOM-029B (migration path): &ui=18 shows the PRODUCTION Planet View (resources/run-ui/planet-view.js, Concept 18) over the
@@ -357,6 +359,9 @@
 <!-- BLOOM-029C: the production decision rooms (Region Inspect · Adapt · Spread) over the Planet View, same adapter; inert without &ui=18 -->
 <link rel="stylesheet" href="../resources/run-ui/decision-rooms.css">
 <script src="../resources/run-ui/plant-specimen.js"></script>
+<!-- BLOOM-029D: the production Terraform room's globe helper (guarded dynamic import of the unmodified PlanetSphereView over http(s);
+     a flat canonical-surface fallback over file://), then the rooms (Terraform is the fourth room since 029D) -->
+<script src="../resources/run-ui/terraform-globe.js"></script>
 <script src="../resources/run-ui/decision-rooms.js"></script>
 <!-- the game UI below is inert (type="text/plain") until the boot script after it has chosen the planet:
      it then runs as an ordinary classic script, so its globals (sim, selected, refreshShop …) are unchanged -->
@@ -1060,8 +1065,9 @@ let skyFx=null; // the last Terraform purchase's effect, outlined on the map / s
 function skyWhatIf(u){
   const e=u.effect, ax=e.axis, o=G[ax], before=SEC.map((_,i)=>evaluate(i)), nf0=COMP?SEC.map((_,i)=>sim.nativeEvaluate(i).fitness):null;
   let v=o+e.delta; if(e.min!==undefined||e.max!==undefined) v=clamp(v,e.min??-Infinity,e.max??Infinity);
-  G[ax]=v; const after=SEC.map((_,i)=>evaluate(i)), nf1=COMP?SEC.map((_,i)=>sim.nativeEvaluate(i).fitness):null; G[ax]=o;
-  return {...skyDiff(ax,o,v,before,after), ...(COMP?nativeSkyShift(nf0,nf1):{})};
+  G[ax]=v; const after=SEC.map((_,i)=>evaluate(i)), nf1=COMP?SEC.map((_,i)=>sim.nativeEvaluate(i).fitness):null, skyAfter=skyNow(); G[ax]=o;
+  // (BLOOM-029D) skyAfter = the surface sky under the what-if (Terraform + drift / shock), read with the same skyNow the map paints under
+  return {...skyDiff(ax,o,v,before,after), skyAfter, ...(COMP?nativeSkyShift(nf0,nf1):{})};
 }
 // (better = the ground moved closer to the plant's tolerance window on the changed axis, e.g. −32 °C → −26 °C on frozen
 // ground: still deadly, but nearer; worse = the region can still grow but its fitness dropped)
@@ -1140,7 +1146,10 @@ function computePreview(id){
       (far?" Farther islands need a foothold on a nearer one first.":"")+
       (ok.length?` Can take root: ${nm(ok)}.`:"")+(bad.length?` Hostile: ${nm(bad)}.`:"") }; }
   if(u.effect.type==="sky"){ // Terraform: the whole sky changes, so name every region it helps or hurts (engine decides open/closed)
-    const d=skyWhatIf(u), c=CLIM?sim.climatePreview(id):null; data={gain:data.gain, lose:data.lose, better:d.better, worse:d.worse, climate:c};
+    const d=skyWhatIf(u), c=CLIM?sim.climatePreview(id):null;
+    // (BLOOM-029D) sky = the exact current → preview SURFACE sky of this what-if, for the production Terraform room's globe (read-only;
+    // the map's outline code and the bloom:upgrade-preview detail pick their own keys, so neither changes)
+    data={gain:data.gain, lose:data.lose, better:d.better, worse:d.worse, climate:c, sky:{axis:d.axis, from:d.from, to:d.to, current:skyNow(), preview:d.skyAfter}};
     return { data, text:`${u.name} — ${skyWords({...d, gain:data.gain, lose:data.lose})}.${c?" "+climPreviewWords(c,false)+".":""}` }; }
   return { data, text:`${u.name} — ` + (data.gain.length||data.lose.length
     ? [data.gain.length?`opens: ${nm(data.gain)}`:"", data.lose.length?`⚠ closes: ${nm(data.lose)}`:""].filter(Boolean).join(" · ")
@@ -1356,7 +1365,7 @@ if(window.BLOOM&&BLOOM.runUI){
   window.BLOOM_RUN_UI.adapter=runUI.adapter;
   // (BLOOM-029B) &ui=18: mount the production Planet View on the adapter (before bloom:run-ready, so anchors and controls exist)
   if(UI18){ const pv=BLOOM.planetView.mount(runUI.adapter,{root:document.body});
-    if(BLOOM.decisionRooms) BLOOM.decisionRooms.mount(pv); } // (BLOOM-029C) the rooms fill the view's room seam (Terraform stays open for 029D)
+    if(BLOOM.decisionRooms) BLOOM.decisionRooms.mount(pv); } // (BLOOM-029C / 029D) the four rooms fill the view's room seam
 }
 // BLOOM-008/009: open on the origin so its colony status and growth focus are the first thing in view
 selected=ORIGIN; renderInspect(); log(`Your plant has just sprouted in ${LABEL[ORIGIN]}: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish.`);

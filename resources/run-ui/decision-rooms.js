@@ -1,6 +1,10 @@
 // BLOOM — production decision rooms (BLOOM-029C, Concept 18): Region Inspect · Adapt · Spread. docs/PRODUCTION_PLANT_ROOMS_v1.md.
+// BLOOM-029D adds the fourth room, Terraform (docs/PRODUCTION_TERRAFORM_ROOM_v1.md): the environmental room over the same controller,
+// with the EXISTING PlanetSphereView (through resources/run-ui/terraform-globe.js, public API only) showing the exact current planet
+// under the run's CURRENT surface sky, the Concept 18 diffuse atmosphere around it, a real Soil environmental readout on the left and
+// the real Atmosphere nodes (warm / cool / humid / dry — the only real Terraform traits) on the right.
 //
-// Three floating rooms over the production Planet View (resources/run-ui/planet-view.js), filled into its room seam
+// Four floating rooms over the production Planet View (resources/run-ui/planet-view.js), filled into its room seam
 // (planetView.rooms.register / openRoom). Concept 18 supplies the presentation (the floating-card room family, the shared room
 // header, the organic plant → tree tendrils, the category identity, the "three region chips across" scale); THE EXISTING RUN
 // SUPPLIES TRUTH: every region, colony, trait, tier, price, availability, preview and purchase comes from window.BLOOM_RUN_UI's
@@ -17,13 +21,14 @@
 //   Back / Escape   close, clear transient previews / peeks, restore the run to its pre-room state; no home region selected.
 //   Resume          close, clear, and run regardless of the pre-room state.
 //   room → room     no Planet View in between, still paused, same context, the old room's transient preview cleared.
-//   Terraform       stays on the Planet View's seam (unavailable until BLOOM-029D): a request says so and changes nothing.
+//   Terraform       (029D) the fourth room: same lifecycle; its preview repaints the globe to the exact real preview sky and clears
+//                   back to the committed current surface on every reset path; no second Terraform state exists.
 // Room context ≠ home selection: the right-hand mini-map (the SAME production map renderer, resources/run-ui/run-map-renderer.js,
 // on its own canvas) and region strip change the room context only — never actions.selectRegion, never bloom:region-select.
 // Real Adapt / Spread nodes preview through adapter.actions.preview(id) (the deliberate player preview: bloom:upgrade-preview,
 // the home map's outline) and buy through adapter.actions.buy(id) (bloom:upgrade-purchase). Transitions: none here (immediate
 // swaps); BLOOM-029E wraps planetView ↔ room and room ↔ room through the seam below (controller.transition).
-// Classic script, no dependencies besides BLOOM.surface, BLOOM.runMap and BLOOM.plantSpecimen: boots over file://.
+// Classic script, no dependencies besides BLOOM.surface, BLOOM.runMap, BLOOM.plantSpecimen and (029D) BLOOM.terraformGlobe: boots over file://.
 (function (root) {
   "use strict";
   // ---- the production icon family (24×24 strokes, inline SVG; never emoji). Shared language with the Planet View.
@@ -55,6 +60,12 @@
     science: '<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M7.5 16h9"/>', stem: '<path d="M12 21V6"/><path d="M12 12c-3 0-5-2-5-5 3 0 5 2 5 5zM12 16c0-3 2-5 5-5 0 3-2 5-5 5z"/>',
     crown: '<path d="M12 21V9"/><circle cx="12" cy="6" r="3"/><path d="M12 3v-1M9.5 3.5l-.7-.7M14.5 3.5l.7-.7M8.5 6h-1M15.5 6h1"/>', pods: '<ellipse cx="12" cy="10" rx="5" ry="4"/><path d="M12 6v8"/><path d="M3 18c3-2 6 2 9 0s6-2 9 0"/>',
     info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.6" r=".9"/>', coin: '<circle cx="12" cy="12" r="8"/><path d="M12 7.5v9M9.5 10h3.5a1.75 1.75 0 0 1 0 3.5H10"/>',
+    // (029D) Terraform: rain / air / land / geothermal / spin hint
+    humid: '<path d="M7 15.5a4 4 0 0 1 .6-7.95A5.5 5.5 0 0 1 18 9a3.25 3.25 0 0 1-.5 6.5H7z"/><path d="M9 18l-1 2.6M13 18l-1 2.6M17 18l-1 2.6"/>',
+    air: '<path d="M3 8h10.5a2.5 2.5 0 1 0-2.5-2.5M3 13h14.5a2.5 2.5 0 1 1-2.5 2.5M3 18h7.5a2 2 0 1 1-2 2"/>',
+    land: '<path d="M3 17l5-6 4 4 3-3 6 5"/><path d="M3 21h18"/><circle cx="17.5" cy="6.5" r="2.2"/>',
+    geo: '<path d="M12 21c-4 0-6.5-2.6-6.5-6.2 0-3.1 2.2-5.3 3.3-7.3.5 2 1.6 3.1 3.1 3.6-.5-3.2 1-5.8 3.1-8 .1 4.2 3.5 5.9 3.5 10.5 0 4.3-2.6 7.4-6.5 7.4z"/>',
+    drag: '<path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/>',
   };
   const ico = (n, cls) => `<svg class="ic${cls ? " " + cls : ""}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${I[n] || I.info}</svg>`;
   const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -71,10 +82,18 @@
   };
   // PMO-locked presentation categories (content/traits.js uiCategory): order top → bottom = the plant's anatomy top → bottom, so
   // the organic tendrils cannot cross; the accepted category colours; which specimen part each category points at
-  const CATS = { Adapt: ["Hazard", "Water", "Temperature", "Soil"], Spread: ["Seeds", "Growth", "Reach"] };
+  // (029D) Terraform: the PMO-locked presentation categories (content/traits.js uiCategory, order = upper sky → weather near the ground) and
+  // banks (uiBank): Soil = the ground, LEFT of the globe (no real node exists yet: an environmental readout only); Atmosphere = the sky, RIGHT.
+  const CATS = { Adapt: ["Hazard", "Water", "Temperature", "Soil"], Spread: ["Seeds", "Growth", "Reach"], Terraform: ["Sky temperature", "Rain"] };
   const CAT_COLOR = { Hazard: ["#8a5bb8", "#efe5f8", "#5e3a86"], Water: ["#3b8fd0", "#dcecf8", "#23679f"], Temperature: ["#d9601f", "#fde6d6", "#9c3f0e"], Soil: ["#8a6a3e", "#f1e6d2", "#5f452a"],
-    Seeds: ["#c58a1a", "#fbefcf", "#8a5d00"], Growth: ["#3f9d4b", "#e2f2d6", "#2a7636"], Reach: ["#1f8f8f", "#d8f1ef", "#136060"] };
-  const CAT_ICON = { Hazard: "hazard", Water: "water", Temperature: "temp", Soil: "soil", Seeds: "seedOut", Growth: "colony", Reach: "reach" };
+    Seeds: ["#c58a1a", "#fbefcf", "#8a5d00"], Growth: ["#3f9d4b", "#e2f2d6", "#2a7636"], Reach: ["#1f8f8f", "#d8f1ef", "#136060"],
+    "Sky temperature": ["#d9601f", "#fde6d6", "#9c3f0e"], Rain: ["#3b8fd0", "#dcecf8", "#23679f"] }; // Sky temperature = the warm / orange family, Rain = the blue family (Concept 18)
+  const CAT_ICON = { Hazard: "hazard", Water: "water", Temperature: "temp", Soil: "soil", Seeds: "seedOut", Growth: "colony", Reach: "reach", "Sky temperature": "temp", Rain: "humid" };
+  const BANKS = { Soil: { side: -1, ico: "soil", to: "surface", word: "the ground", color: CAT_COLOR.Soil }, Atmosphere: { side: 1, ico: "air", to: "halo", word: "the air around the planet", color: ["#5a6fa8", "#e3eaf6", "#44579a"] } };
+  const BANK_ORDER = ["Soil", "Atmosphere"], BANK_OF = u => (u.uiBank && BANKS[u.uiBank] ? u.uiBank : "Atmosphere"); // a real sky trait without metadata still reads as the sky
+  // Concept 18 Terraform geometry (em; docs/UI_CONCEPT_REVIEW_v9.md §7 exclusion zone, v10 §4–5): halo band from the face, the clearance nothing
+  // may enter, the lane the banks start outside, top / bottom bands for the legend and readout, the bank step cap, the Soil arrow (future real nodes)
+  const TF = { haloIn: 0.3, haloW: 1, clear: 1, lane: 0.7, topbot: 2.6, margin: 0.5, stepMax: 4.9, catGap: 0.45, soilW: [8, 9.6], nodeW: [7.8, 9.4], ring: 0.42, soilGap: 0.1, soilHead: [0.62, 1], soilNose: 0.16 };
   const CAT_PART = { Hazard: ["pigment", "Leaf pigment", "leaves"], Water: ["leafShape", "Leaf shape", "water"], Temperature: ["stem", "Stem", "stem"], Soil: ["roots", "Roots", "roots"],
     Seeds: ["seedHead", "Seed head", "crown"], Growth: ["flowers", "Flowers", "colony"], Reach: ["pods", "Pods", "pods"] };
   const COND_CAT = ["Temperature", "Water", "Soil", "Hazard"];
@@ -92,8 +111,8 @@
   function mount(view) {
     if (instance) return instance;
     if (!view || !view.adapter || !view.rooms || typeof view.rooms.register !== "function") throw new TypeError("BLOOM.decisionRooms: needs the production Planet View instance (BLOOM.planetView.mount)");
-    const A = view.adapter, RM = root.BLOOM.runMap, SF = root.BLOOM.surface, PS = root.BLOOM.plantSpecimen;
-    if (!RM || !SF || !PS) throw new TypeError("BLOOM.decisionRooms: needs BLOOM.runMap, BLOOM.surface and BLOOM.plantSpecimen");
+    const A = view.adapter, RM = root.BLOOM.runMap, SF = root.BLOOM.surface, PS = root.BLOOM.plantSpecimen, TG = root.BLOOM.terraformGlobe;
+    if (!RM || !SF || !PS || !TG) throw new TypeError("BLOOM.decisionRooms: needs BLOOM.runMap, BLOOM.surface, BLOOM.plantSpecimen and BLOOM.terraformGlobe");
     const mq = root.matchMedia ? root.matchMedia("(prefers-reduced-motion: reduce)") : null;
     const reduced = () => !!(mq && mq.matches) || document.documentElement.classList.contains("reduce-motion") || view.el.classList.contains("reduced");
     const MAP0 = A.map(), IDX = {}; MAP0.regions.forEach(r => { IDX[r.id] = r.index; });
@@ -139,7 +158,7 @@
       sec.innerHTML = `<header class="rh">` +
           `<button type="button" class="rb back" data-act="back">${ico("back")}<span>Back</span></button>` +
           `<div class="rt"><span class="rk">${esc(R.kicker)}</span><h2 id="drt-${id}" tabindex="-1">${esc(R.title)}</h2><small>${esc(R.verb)}</small></div>` +
-          `<nav class="rnav" aria-label="Rooms">` + ROOM_IDS.map(k => `<button type="button" class="rn ${ROOMS[k].kind}" data-go="${k}" aria-pressed="${k === id}"${k === "terraform" ? ' data-room="unavailable" aria-disabled="true" title="Terraform (arrives in BLOOM-029D)"' : ""}>${ico(ROOMS[k].ico)}<span>${esc(ROOMS[k].title)}</span></button>`).join("") + `</nav>` +
+          `<nav class="rnav" aria-label="Rooms">` + ROOM_IDS.map(k => `<button type="button" class="rn ${ROOMS[k].kind}" data-go="${k}" aria-pressed="${k === id}" title="${esc(ROOMS[k].title)}">${ico(ROOMS[k].ico)}<span>${esc(ROOMS[k].title)}</span></button>`).join("") + `</nav>` +
           `<div class="rbio" title="Biomass: the energy your plant has stored">${ico("coin")}<b class="rbio-n">0</b><small>Biomass</small></div>` +
           `<div class="paused on" role="status"><span class="pi">${ico("pause")}</span><b>PAUSED</b></div>` +
           `<button type="button" class="rb resume" data-act="resume">${ico("play")}<span>Resume</span></button>` +
@@ -216,6 +235,23 @@
     const ownedChips = () => { const out = []; for (const b of A.upgrades()) if (b.board !== "Terraform") for (const u of b.items) if (u.owned) out.push(`<span class="ow" style="${catStyle(u.uiCategory)}">${ico(I[u.id] ? u.id : CAT_ICON[u.uiCategory])}${esc(u.name)}${u.tier > 1 ? ` <i>${ROMAN[u.tier] || u.tier}</i>` : ""}</span>`);
       return out.length ? out.join("") : `<span class="ow none">No adaptations yet</span>`; };
     function zoneHeight(sec) { const rr = sec.getBoundingClientRect(), hh = sec.querySelector(".rh").getBoundingClientRect(), cs = getComputedStyle(sec); return Math.floor(rr.bottom - parseFloat(cs.paddingBottom) - hh.bottom - (parseFloat(cs.rowGap) || 0)); }
+    // shared by the tree rooms (Adapt / Spread / Terraform): a real node's state and its state line, from the adapter's item only
+    const nodeState = u => u.canBuy ? "avail" : u.rules ? "poor" : u.owned ? "owned" : "blocked";
+    const stateWord = u => { const st = nodeState(u), t = u.tier ? `Tier ${ROMAN[u.tier] || u.tier} owned` : "";
+      if (st === "avail" || st === "poor") return (t ? t + " · next " : "") + `${u.price} Biomass`;
+      if (st === "owned") return t + (u.maxTier !== null && u.tier >= u.maxTier ? " · complete" : "");
+      return u.reason ? cap(u.reason) : "Not available now"; };
+    function effectFor(pv, i) { // the real preview region lists (ids) read for the room context: never recalculated here
+      const r = regs[i], rid = r.id, inL = k => (pv[k] || []).includes(rid);
+      if (!pv.available) return { icon: "lock", text: pv.text || "Not available now", cls: "off" };
+      if (inL("gain")) return { icon: "check", text: `Opens ${r.name}: your plant could take root here.`, cls: "gain" };
+      if (inL("lose")) return { icon: "x", text: `Closes ${r.name}: your plant would no longer survive here.`, cls: "lose" };
+      if (inL("reachHostile")) return { icon: "reach", text: `${r.name} becomes reachable across water, but is hostile for now.`, cls: "hostile" };
+      if (inL("better")) return { icon: "alert", text: `${r.name}: closer to your plant's range, still blocked.`, cls: "better" };
+      if (inL("worse")) return { icon: "alert", text: `${r.name}: worse for your plant, but it still grows.`, cls: "worse" };
+      return { icon: "info", text: `Unchanged for ${r.name}.`, cls: "same" };
+    }
+    const svgMk = (tag, attrs, parent) => { const e = document.createElementNS("http://www.w3.org/2000/svg", tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
 
     // ---------------------------------------------------------------- Region Inspect: Overview · Colony · Science (real tabs)
     function buildRegion() {
@@ -279,11 +315,6 @@
       const edges = document.createElementNS("http://www.w3.org/2000/svg", "svg"); edges.setAttribute("class", "edges"); edges.setAttribute("aria-hidden", "true"); tree.appendChild(edges);
       const leaders = document.createElementNS("http://www.w3.org/2000/svg", "svg"); leaders.setAttribute("class", "dr-leaders"); leaders.setAttribute("aria-hidden", "true"); sec.appendChild(leaders);
       let items = [], cats = [], nodeEls = {}, lbls = {}, L = null, fitRaf = 0;
-      const nodeState = u => u.canBuy ? "avail" : u.rules ? "poor" : u.owned ? "owned" : "blocked";
-      const stateWord = u => { const st = nodeState(u), t = u.tier ? `Tier ${ROMAN[u.tier] || u.tier} owned` : "";
-        if (st === "avail" || st === "poor") return (t ? t + " · next " : "") + `${u.price} Biomass`;
-        if (st === "owned") return t + (u.maxTier !== null && u.tier >= u.maxTier ? " · complete" : "");
-        return u.reason ? cap(u.reason) : "Not available now"; };
       // the REAL tree: offered items of this board from the adapter, grouped by the content's presentation category
       function readTree() {
         const b = A.upgrades().find(x => x.board === BOARD); items = b ? b.items : []; cats = CATS[BOARD].filter(c => items.some(u => u.uiCategory === c));
@@ -329,7 +360,7 @@
       // content-height tree card: as tall as the tree wants (capped row step), up to the room's free height; next frame, so the
       // tree's own ResizeObserver never loops on itself
       function fitMain() { if (!L) return; cancelAnimationFrame(fitRaf); fitRaf = requestAnimationFrame(() => { const avail = zoneHeight(sec); if (!avail || avail < 0) return; const h = Math.min(Math.ceil(L.wantH) + 4, avail); if (Math.abs(parseFloat(zm.style.height || "0") - h) > 1) zm.style.height = h + "px"; }); }
-      const svgEl = (tag, attrs, parent) => { const e = document.createElementNS("http://www.w3.org/2000/svg", tag); for (const k in attrs) e.setAttribute(k, attrs[k]); (parent || edges).appendChild(e); return e; };
+      const svgEl = (tag, attrs, parent) => svgMk(tag, attrs, parent || edges);
       const curveH = (a, b) => { const mx = (a.x + b.x) / 2; return `M${a.x} ${a.y}C${mx} ${a.y},${mx} ${b.y},${b.x} ${b.y}`; };
       function paintEdges() {
         if (!L) return; edges.textContent = ""; const em = state.em;
@@ -366,16 +397,6 @@
           `<p class="li-hint">${id === "spread" ? "This changes how your plant travels and takes root everywhere." : "This changes YOUR PLANT, everywhere it grows."} Hover or focus a skill: the plant previews it and the line shows which part changes.</p>`;
         sp.info.classList.remove("pvw"); sp.info.removeAttribute("style"); mm.ctx.removeAttribute("style"); mm.ctx.classList.remove("pvw");
         mm.ctx.querySelector(".mc-rows").innerHTML = `<div class="mc-row">${ico("inspect")}<span><b>${esc(r.name)}</b> · ${esc(r.colony.label)}</span></div><div class="mc-row">${ico(r.limiting.blocked ? "x" : "check")}<span>${esc(limitLine(r))}</span></div><div class="mc-row faint">${ico("info")}<span>Hover a skill to see what it does for this region</span></div>`;
-      }
-      function effectFor(pv, i) { // the real preview region lists (ids) read for the room context: never recalculated here
-        const r = regs[i], rid = r.id, inL = k => (pv[k] || []).includes(rid);
-        if (!pv.available) return { icon: "lock", text: pv.text || "Not available now", cls: "off" };
-        if (inL("gain")) return { icon: "check", text: `Opens ${r.name}: your plant could take root here.`, cls: "gain" };
-        if (inL("lose")) return { icon: "x", text: `Closes ${r.name}: your plant would no longer survive here.`, cls: "lose" };
-        if (inL("reachHostile")) return { icon: "reach", text: `${r.name} becomes reachable across water, but is hostile for now.`, cls: "hostile" };
-        if (inL("better")) return { icon: "alert", text: `${r.name}: closer to your plant's range, still blocked.`, cls: "better" };
-        if (inL("worse")) return { icon: "alert", text: `${r.name}: worse for your plant, but it still grows.`, cls: "worse" };
-        return { icon: "info", text: `Unchanged for ${r.name}.`, cls: "same" };
       }
       function paintPreview() {
         const pv = state.preview, u = state.hovered ? items.find(x => x.id === state.hovered) : null;
@@ -423,6 +444,248 @@
           treeHeight: zm.getBoundingClientRect().height, wantH: L ? L.wantH : null, labelMode: L ? L.labelMode : null }; } };
     }
 
+    // ---------------------------------------------------------------- Terraform (029D): the environmental room — real PlanetSphereView, Soil-left / Atmosphere-right
+    // CONCEPT 18 SUPPLIES PRESENTATION, THE RUN SUPPLIES TRUTH: the only nodes are the real offered Terraform traits (adapter.upgrades), the
+    // globe is the unmodified PlanetSphereView painting a presentation snapshot of the exact authoritative planet under the run's CURRENT
+    // surface sky (adapter.surface + BLOOM.terraformGlobe.snapshot), previews repaint it to the page's own what-if sky (preview.sky from
+    // actions.preview) and the Soil side is the room-context region's real environmental readout (adapter.region) — no fake Soil skill,
+    // cost, lock, arrow or pin. The plant specimen is never shown here. Future REAL Soil traits (uiBank "Soil") would take the Soil bank
+    // and the accepted near-surface arrow; the layout, connectors and anchors below already handle both banks.
+    function buildTerraform() {
+      const id = "terraform", sec = roomShell(id), R0 = ROOMS[id], zf = sec.querySelector(".z-focus"), zm = sec.querySelector(".z-main"), zmap = sec.querySelector(".z-map");
+      const mm = mapBlock(id, zmap, `<div class="mm-ctx tf"><span class="mc-k">Planet readout</span><dl class="env-rows"></dl><span class="mc-k mc-k2">Region effect of this choice</span><div class="mc-rows"></div></div>`);
+      // LEFT: the environment / land focus (sky + ground of the room-context region, from real values; no plant) and the information card
+      const env = document.createElement("div"); env.className = "lf-top env"; zf.appendChild(env);
+      const envSvg = svgMk("svg", { viewBox: "0 0 400 300", class: "env-svg", role: "img", "aria-label": "The land around the region: its sky and ground now. No plant is drawn here: Terraform changes the environment." }, env);
+      const envTag = document.createElement("div"); envTag.className = "ps-tag"; envTag.textContent = "PREVIEW"; env.appendChild(envTag);
+      const envCap = document.createElement("div"); envCap.className = "spec-cap"; envCap.innerHTML = `<b class="sc-n"></b><small class="sc-w"></small>`; env.appendChild(envCap);
+      const info = document.createElement("div"); info.className = "lf-info"; zf.appendChild(info);
+      // CENTRE: the planet card — Soil bank (left) · diffuse atmosphere + globe (centre) · Atmosphere bank (right); legend top-left, sky readout bottom-left
+      zm.classList.add("tf-main");
+      const stage = document.createElement("div"); stage.className = "tf-stage"; stage.dataset.tutorial = "board-terraform"; stage.setAttribute("role", "group"); stage.setAttribute("aria-label", "Terraform: planet systems. Soil on the left is the ground; Atmosphere on the right is the sky around the planet"); zm.appendChild(stage);
+      const edges = svgMk("svg", { class: "edges tf-edges", "aria-hidden": "true", focusable: "false" }, stage);
+      const soil = document.createElement("div"); soil.className = "bank bank-soil"; soil.dataset.bank = "Soil"; soil.setAttribute("style", catStyle("Soil")); stage.appendChild(soil);
+      const gh = document.createElement("div"); gh.className = "tf-globe"; gh.setAttribute("aria-roledescription", "planet globe"); stage.appendChild(gh);
+      const gfocus = document.createElement("div"); gfocus.className = "tf-focus"; gfocus.setAttribute("aria-hidden", "true"); stage.appendChild(gfocus); // the visible keyboard-focus ring around the face
+      const legend = document.createElement("div"); legend.className = "bank-legend"; legend.setAttribute("aria-label", "Planet systems: Soil on the left is the ground, Atmosphere on the right is the air around the planet");
+      legend.innerHTML = BANK_ORDER.map(b => `<span class="bl-${b.toLowerCase()}">${ico(BANKS[b].ico)}<b>${esc(b)}</b><small>${BANKS[b].side < 0 ? "left" : "right"} · ${esc(BANKS[b].word)}</small></span>`).join(""); stage.appendChild(legend);
+      const gread = document.createElement("div"); gread.className = "g-read"; gread.innerHTML = `<small class="gr-k">Sky now</small><b class="d-t"></b><small class="d-r"></small><span class="g-hint">${ico("drag")}drag or ← → to spin</span>`; stage.appendChild(gread);
+      let items = [], cats = [], nodeEls = {}, lbls = {}, L = null, src = null, shownKey = "", globeKind = "pending", fitRaf = 0;
+      const planetName = A.run().planetName || "the planet";
+      // the globe slot: the real PlanetSphereView over http(s) (public API only), the flat canonical-surface fallback otherwise. Idle spin, yaw drag,
+      // ← / →, reduced motion and focusability are the component's own; the room only hands it presentation snapshots.
+      const globe = TG.mount(gh, { reducedMotion: reduced() ? true : null, surface: SF, ariaLabel: `The planet ${planetName} as it is now. Drag sideways or press the left and right arrow keys to spin it. Terraform previews repaint its sky.`,
+        onReady: k => { globeKind = k; stage.dataset.globe = k; if (!sec.hidden) requestAnimationFrame(() => relayout()); } });
+      const skyKey = s => `${(+s.temperature).toFixed(3)}|${(+s.moisture).toFixed(3)}`;
+      const readSurface = () => { src = A.surface(); };
+      // the EXACT authoritative planet (adapter.surface().planet: id, grid, sections, tilemap, topology) under `sky` → the sphere, as a
+      // presentation snapshot. Never the run's planet object, never a regenerated world; the sphere repaints only when the signature changes.
+      function showSky(sky) { if (!src) return; const k = `${src.planet.id}|${skyKey(sky)}`; if (k === shownKey) return; shownKey = k; globe.setSurface(TG.snapshot(src.planet, sky), src.render); }
+      const fmtT = t => degC(t), fmtM = m => `${num(Math.round(m * 10) / 10)} moisture`;
+      const axisName = ax => ax === "temp" ? "Sky temperature" : "Sky moisture";
+
+      // ---- the real tree: offered Terraform items, in category order (upper sky → weather near the ground), each remembering its bank
+      function readTree() {
+        const b = A.upgrades().find(x => x.board === "Terraform"), raw = b ? b.items : [];
+        items = CATS.Terraform.flatMap(c => raw.filter(u => u.uiCategory === c)).concat(raw.filter(u => !CATS.Terraform.includes(u.uiCategory)));
+        cats = CATS.Terraform.filter(c => items.some(u => u.uiCategory === c)).concat([...new Set(items.filter(u => !CATS.Terraform.includes(u.uiCategory)).map(u => u.uiCategory || "Sky"))]);
+        const want = new Set(items.map(u => u.id)); for (const k of Object.keys(nodeEls)) if (!want.has(k)) { nodeEls[k].remove(); delete nodeEls[k]; }
+        for (const u of items) if (!nodeEls[u.id]) { const n = document.createElement("button"); n.type = "button"; n.className = "node card tf-node"; n.dataset.node = u.id; n.dataset.cat = u.uiCategory || ""; n.dataset.bank = BANK_OF(u); n.dataset.tutorial = `upgrade-${u.id}`; n.setAttribute("style", catStyle(u.uiCategory)); stage.appendChild(n); nodeEls[u.id] = n; }
+        for (const c of Object.keys(lbls)) if (!cats.includes(c)) { lbls[c].remove(); delete lbls[c]; }
+        for (const c of cats) if (!lbls[c]) { const l = document.createElement("div"); l.className = "cat-l tf-cat"; l.dataset.cat = c; l.setAttribute("style", catStyle(c)); l.innerHTML = `${ico(CAT_ICON[c] || "air")}<span>${esc(c)}</span>`; l.title = c; stage.appendChild(l); lbls[c] = l; }
+      }
+      function paintNodes() {
+        for (const u of items) { const n = nodeEls[u.id], st = nodeState(u), bank = BANK_OF(u);
+          n.className = `node card tf-node st-${st}${u.owned ? " has" : ""}${state.hovered === u.id ? " pvw" : ""} side-${bank === "Soil" ? "l" : "r"}`;
+          n.innerHTML = `<span class="ni">${ico(I[u.id] ? u.id : CAT_ICON[u.uiCategory] || "air")}${u.owned ? `<span class="nl ok">${ico("check")}</span>` : st === "blocked" ? `<span class="nl">${ico("lock")}</span>` : ""}</span><span class="nt"><b>${esc(u.name)}</b><small>${esc(stateWord(u))}</small></span>`;
+          n.setAttribute("aria-label", `${u.name}, ${u.uiCategory || "sky"} · ${bank}. ${stateWord(u)}. ${u.sub || ""}. Changes the planet, not the plant${u.canBuy ? ". Press to buy" : ""}`); n.setAttribute("aria-disabled", String(!u.canBuy)); n.title = u.sub || u.name; }
+        paintEdges(); fitTitles();
+      }
+      function fitTitles() { for (const u of items) { const b = nodeEls[u.id].querySelector(".nt b"); if (!b) continue; b.style.removeProperty("--fit"); if (b.scrollWidth > b.clientWidth + 0.5) b.style.setProperty("--fit", Math.max(0.8, Math.floor(b.clientWidth / b.scrollWidth * 100) / 100)); } }
+      const rectDist = (px, py, x0, y0, x1, y1) => Math.hypot(Math.max(x0 - px, 0, px - x1), Math.max(y0 - py, 0, py - y1));
+      // ---- layout (px from the room em): the globe takes what the two banks, the halo band, the clearance and the lanes leave; each bank
+      // is a C hugging the exclusion zone (Soil left, Atmosphere right), its bow reduced until every card stays outside the zone + half a lane
+      function layout(w, h, em) {
+        const K = TF, haloIn = K.haloIn * em, haloW = K.haloW * em, clear = K.clear * em, lane = K.lane * em, topbot = K.topbot * em, M = K.margin * em, badge = 0.7 * em;
+        const banks = {}; for (const b of BANK_ORDER) banks[b] = items.filter(u => BANK_OF(u) === b);
+        const soilW = Math.max(K.soilW[0] * em, Math.min(K.soilW[1] * em, w * 0.22)), nodeW = Math.max(K.nodeW[0] * em, Math.min(K.nodeW[1] * em, w * 0.22));
+        const leftW = banks.Soil.length ? Math.max(soilW, nodeW + badge) : soilW, rightW = banks.Atmosphere.length ? nodeW + badge : soilW, ring = haloIn + haloW + clear + lane;
+        let R = Math.min((w - leftW - rightW - 2 * ring - 2 * M) / 2, (h - 2 * topbot) / 2 - (haloIn + haloW + clear)); R = Math.max(3.6 * em, R);
+        const cx = M + leftW + ring + R, cy = h / 2, face = R, HR = R + haloIn + haloW / 2, zone = R + haloIn + haloW + clear, RO = R + haloIn + haloW + clear * TG.ATMO.out;
+        const pos = {}, labelPos = {}, cardH = nid => (nodeEls[nid] && nodeEls[nid].offsetHeight) || 3.6 * em, padY = Math.max(topbot, 1 * em);
+        for (const b of BANK_ORDER) { const list = banks[b]; if (!list.length) continue; const sign = BANKS[b].side, ids = list.map(u => u.id);
+          const slots = []; let s = 0, prev = null; for (const u of list) { if (prev && u.uiCategory !== prev) s += K.catGap; slots.push(s); s += 1; prev = u.uiCategory; }
+          const total = slots[slots.length - 1], hMax = Math.max(...ids.map(cardH)), step = Math.min(K.stepMax * em, (h - 2 * padY - hMax) / Math.max(1e-6, total)), span = total * step, ry = Math.max(span / 2, 1);
+          const rxIn = zone + lane; let bow = Math.max(0, Math.min(rxIn - R * 0.45, 3 * em));
+          const place = bw => ids.map((nid, k) => { const y = cy - span / 2 + slots[k] * step, t = (y - cy) / ry; return { id: nid, x: cx + sign * (rxIn - bw * (1 - Math.sqrt(Math.max(0, 1 - t * t)))), y }; });
+          const clearOf = ps => ps.every(p => { const hh = cardH(p.id), x0 = sign > 0 ? p.x : p.x - nodeW, x1 = sign > 0 ? p.x + nodeW : p.x; return rectDist(cx, cy, x0, p.y - hh / 2, x1, p.y + hh / 2) >= zone + lane * 0.5; });
+          let ps = place(bow); while (bow > 0 && !clearOf(ps)) { bow = Math.max(0, bow - 0.1 * em); ps = place(bow); }
+          for (const p of ps) pos[p.id] = { x: p.x, y: p.y, side: sign, bank: b }; // x = the card's INNER edge (globe side)
+          for (const c of cats) { const first = list.find(u => (u.uiCategory || "Sky") === c); if (!first) continue; const p = pos[first.id]; let lx = p.x + sign * 0.3 * em; const ly = p.y - cardH(first.id) / 2 - 0.95 * em;
+            for (let g = 0; g < 40 && Math.hypot(lx - cx, ly - cy) < zone + 0.2 * em; g++) lx += sign * 0.5 * em; labelPos[c] = { x: lx, y: ly, side: sign }; } }
+        return { pos, labelPos, banks, R, face, HR, zone, RO, cx, cy, soilW: leftW, nodeW, M, em, lane, haloIn, haloW, clear, box: TG.boxFor(R), padY, w, h };
+      }
+      function relayout(pass) {
+        const w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return; const em = state.em, hs = items.map(u => nodeEls[u.id].offsetHeight).join();
+        L = layout(w, h, em); stage.style.setProperty("--nw", L.nodeW + "px"); stage.style.setProperty("--sw", L.soilW + "px"); stage.style.setProperty("--pady", L.padY + "px");
+        edges.setAttribute("viewBox", `0 0 ${w} ${h}`); edges.setAttribute("width", w); edges.setAttribute("height", h);
+        Object.assign(gh.style, { left: (L.cx - L.box / 2) + "px", top: (L.cy - L.box / 2) + "px", width: L.box + "px", height: L.box + "px" });
+        const fr = L.face + 0.45 * em; Object.assign(gfocus.style, { left: (L.cx - fr) + "px", top: (L.cy - fr) + "px", width: 2 * fr + "px", height: 2 * fr + "px" });
+        soil.style.left = L.M + "px"; soil.style.width = L.soilW + "px";
+        for (const u of items) { const p = L.pos[u.id], n = nodeEls[u.id]; if (!p) continue; n.style.left = (p.side > 0 ? p.x : p.x - L.nodeW) + "px"; n.style.top = p.y + "px"; }
+        for (const c of cats) { const a = L.labelPos[c], l = lbls[c]; if (!a || !l) continue; l.style.left = a.x + "px"; l.style.top = a.y + "px"; l.classList.toggle("flip", a.side < 0); }
+        paintEdges(); fitTitles();
+        if (!pass && items.map(u => nodeEls[u.id].offsetHeight).join() !== hs) return relayout(1);
+        if (globe.view) globe.view.resize();
+      }
+      // ---- the edges layer: ONE diffuse atmosphere (an SVG radial gradient AROUND the component — never in the sphere's materials: clear at the
+      // face, strongest where the Atmosphere connectors end, gone by 80 % of the clearance; the colour leans to the previewed channel) and one
+      // connector per real node: Atmosphere → a small ring on the atmosphere's strongest line, Soil (future real nodes) → a blunt arrow whose
+      // nose stops a small gap off the visible face. Neither enters the face; both aim at the globe centre, so connectors fan out and never cross.
+      function paintEdges() {
+        if (!L) return; edges.textContent = ""; const em = state.em, { cx, cy, face, HR, RO } = L, pv = state.preview, chan = state.hovered && pv ? (pv.sky ? pv.sky.axis : (items.find(u => u.id === state.hovered) || {}).axis) : null;
+        const color = chan === "temp" ? CAT_COLOR["Sky temperature"][0] : chan === "moist" ? CAT_COLOR.Rain[0] : TG.ATMO.rgb, gid = `tfatm-${id}`;
+        const grad = svgMk("radialGradient", { id: gid, gradientUnits: "userSpaceOnUse", cx, cy, r: RO }, svgMk("defs", {}, edges));
+        for (const [o, a] of TG.atmosphereStops(face, HR, RO)) svgMk("stop", { offset: o, "stop-color": color, "stop-opacity": a }, grad);
+        svgMk("circle", { class: `atmo${chan ? " on" : ""}`, cx, cy, r: RO, fill: `url(#${gid})` }, edges);
+        for (const u of items) { const p = L.pos[u.id]; if (!p) continue; const B = BANKS[p.bank], lit = state.hovered === u.id, st = nodeState(u), toSurface = B.to === "surface";
+          const a = Math.atan2(p.y - cy, p.x - cx), nose = TF.soilNose * em, r0 = toSurface ? face + TF.soilGap * em + nose / 2 : HR;
+          const end = { x: cx + Math.cos(a) * r0, y: cy + Math.sin(a) * r0 }, headL = TF.soilHead[0] * em, headW = TF.soilHead[1] * em;
+          const tail = toSurface ? { x: end.x + Math.cos(a) * headL * 0.7, y: end.y + Math.sin(a) * headL * 0.7 } : end, start = { x: p.x - p.side * 0.05 * em, y: p.y };
+          const mx = (start.x + tail.x) / 2, my = (start.y + tail.y) / 2 + (p.y - cy) * 0.18;
+          const e = svgMk("path", { class: `lead ${toSurface ? "to-surface" : "to-halo"} ${u.owned ? "on-owned" : st === "blocked" ? "off" : "open"}${lit ? " on" : ""}`, d: `M${start.x} ${start.y}Q${mx} ${my} ${tail.x} ${tail.y}`, "data-node": u.id, "data-cat": u.uiCategory || "" }, edges); e.setAttribute("style", catStyle(u.uiCategory));
+          if (toSurface) { const tf = `rotate(${a * 180 / Math.PI + 90} ${end.x} ${end.y})`, hd = `M${end.x} ${end.y}l${-headW / 2} ${-headL}h${headW}z`;
+            svgMk("path", { class: "pin-under", d: hd, transform: tf, "stroke-width": nose + 2.4 }, edges); const pin = svgMk("path", { class: `pin${lit ? " on" : ""}`, d: hd, transform: tf, "stroke-width": nose, "data-node": u.id }, edges); pin.setAttribute("style", catStyle(u.uiCategory)); }
+          else { const ring = svgMk("circle", { class: `ring${lit ? " on" : ""}`, cx: end.x, cy: end.y, r: TF.ring * em, "data-node": u.id }, edges); ring.setAttribute("style", catStyle(u.uiCategory)); } }
+        edges.classList.toggle("dim", !!state.hovered);
+      }
+      // ---- the Soil side: the room-context region's REAL ground, as information (adapter.region.raw / conditions / limiting / geothermal).
+      // Real Soil Terraform nodes would sit in this bank too; none exist, so one honest line says so and no card, arrow or pin is drawn.
+      function paintSoil(r) {
+        const R = r.raw, sc = r.conditions.find(c => c.key === "Soil") || { word: "", lamp: "green", terraformable: false }, st = LAMP_ST[sc.lamp] || "ok", limSoil = r.limiting.key === "Soil" && r.limiting.blocked;
+        const rel = limSoil ? `<div class="li-row">${ico("x")}<span><b>Holding the plant back here.</b>${sc.terraformable ? "" : " No sky change reaches the ground."}</span></div>`
+          : r.limiting.softSoil ? `<div class="li-row">${ico("alert")}<span>Marginal ground: the plant grows here, slowly.</span></div>` : `<div class="li-row">${ico("check")}<span>The ground suits your plant.</span></div>`;
+        soil.innerHTML = `<div class="cat-l tf-cat bank-cat">${ico("soil")}<span>Soil</span></div><div class="soil-card"><span class="li-k">The ground · ${esc(r.name)}</span>` +
+          `<div class="soil-st">${chip(st, cap(sc.word))}${r.geothermal ? `<span class="geo">${ico("geo")}Geothermal</span>` : ""}</div>` +
+          `<dl class="soil-rows"><div><dt>pH</dt><dd>${esc(num(R.ph))}</dd></div><div><dt>Salinity</dt><dd>${esc(num(R.salinity))}</dd></div><div><dt>Nutrients</dt><dd>${esc(num(R.nutrients))}</dd></div><div><dt>Toxicity</dt><dd>${esc(num(R.toxicity))}</dd></div></dl>${rel}` +
+          (L && L.banks.Soil.length ? "" : `<p class="bank-empty">No soil interventions available.</p>`) + `</div>`;
+      }
+      // ---- the environment focus (left): sky + ground of the room-context region under `sky`, from real values only. The ground colour is the
+      // canonical surface's own colour for this region under that sky (BLOOM.surface, the one terrain palette); sky, snow, haze, rain, lake,
+      // cracks, salt and toxicity cues follow the region's real raw readings. Static (no animation).
+      const hex = c => `rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`, mixc = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+      function paintScene(r, sky, previewing) {
+        const sec0 = src.planet.sections.find(x => x.id === r.id) || { local: { tempOffset: 0, moistureOffset: 0 } };
+        const tile = SF.surfaceTiles({ gridWidth: 1, gridHeight: 1, globalClimate: sky, sections: [{ local: sec0.local }], tilemap: [0], topology: null }, { render: src.render })[0];
+        const t = sky.temperature + sec0.local.tempOffset, m = Math.max(0, Math.min(100, sky.moisture + sec0.local.moistureOffset)); // the ground's own temperature / moisture under this sky
+        let top = t < 0 ? mixc([223, 233, 247], [143, 205, 242], Math.max(0, Math.min(1, (t + 30) / 30))) : t > 28 ? mixc([143, 205, 242], [242, 181, 138], Math.min(1, (t - 28) / 24)) : [143, 205, 242];
+        let bot = [230, 245, 253]; if (m > 65) { const k = Math.min(1, (m - 65) / 35) * 0.7; top = mixc(top, [156, 176, 194], k); bot = mixc(bot, [224, 232, 239], k); } if (m < 30) { const k = Math.min(1, (30 - m) / 30) * 0.6; top = mixc(top, [239, 210, 148], k); bot = mixc(bot, [251, 240, 210], k); }
+        const g1 = tile.rgb, g2 = mixc(g1, [47, 58, 44], 0.22), far = mixc(g1, [183, 195, 204], 0.55), snow = t < -8, caps = t < 4, rain = m > 68 && t >= 0, flakes = m > 55 && t < -2, haze = m < 28, lake = Math.max(0, Math.min(1, (m - 25) / 50)), cracks = m < 32;
+        const salt = r.raw.salinity > 1.2, toxic = r.raw.toxicity > 0.5, rad = r.raw.effectiveRadiation, hot = t > 32;
+        const pt = (n, f) => { let s = ""; for (let i = 0; i < n; i++) s += f(i); return s; };
+        envSvg.innerHTML = `<defs><linearGradient id="tfsky-${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${hex(top)}"/><stop offset="1" stop-color="${hex(bot)}"/></linearGradient></defs>` +
+          `<rect x="0" y="0" width="400" height="300" fill="url(#tfsky-${id})"/>` +
+          (rain ? "" : `<circle cx="312" cy="68" r="${30 + (hot ? 10 : 0)}" fill="#fff3b0" opacity="${0.35 + Math.min(0.3, rad / 100)}"/><circle cx="312" cy="68" r="${20 + (hot ? 6 : 0)}" fill="${hot ? "#ffb347" : "#ffd65a"}"/>`) +
+          (rad > 40 ? pt(7, i => `<line x1="${300 + Math.cos(i) * 42}" y1="${56 + Math.sin(i) * 42}" x2="${300 + Math.cos(i) * 56}" y2="${56 + Math.sin(i) * 56}" stroke="#f2b324" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>`) : "") +
+          (haze ? pt(4, i => `<rect x="0" y="${84 + i * 26}" width="400" height="10" rx="5" fill="#f5deaa" opacity=".5"/>`) : "") +
+          (rain || flakes ? `<g fill="#e9eef2"><ellipse cx="70" cy="80" rx="46" ry="18"/><ellipse cx="230" cy="62" rx="54" ry="20"/><ellipse cx="330" cy="100" rx="40" ry="15"/></g>` : `<g fill="#fff" opacity=".9"><ellipse cx="90" cy="86" rx="34" ry="12"/><ellipse cx="236" cy="66" rx="30" ry="10"/></g>`) +
+          `<path d="M0 190 L60 120 L110 165 L160 105 L215 160 L260 125 L320 170 L360 140 L400 175 V300 H0z" fill="${hex(far)}"/>` +
+          (caps ? `<path d="M48 134 L60 120 L72 134z M148 118 L160 105 L173 120z M250 136 L260 125 L271 137z M350 150 L360 140 L371 152z" fill="#fff" opacity=".95"/>` : "") +
+          `<path d="M0 215 C60 190 110 195 170 205 C230 215 280 185 340 200 C370 208 390 212 400 214 V300 H0z" fill="${hex(g1)}"/>` +
+          (snow ? `<path d="M0 215 C60 190 110 195 170 205 C230 215 280 185 340 200 C370 208 390 212 400 214 V222 C330 214 280 228 200 218 C130 210 70 220 0 223z" fill="#fff" opacity=".9"/>` : "") +
+          (lake > 0.05 ? `<ellipse cx="120" cy="258" rx="${50 + 44 * lake}" ry="${10 + 8 * lake}" fill="#7fb4d6" opacity="${0.55 + 0.4 * lake}"/>` : "") +
+          `<path d="M0 262 C80 246 160 250 220 262 C300 276 360 262 400 268 V300 H0z" fill="${hex(g2)}"/>` +
+          (cracks ? `<g stroke="#8a6a3e" stroke-width="1.8" fill="none"><path d="M250 282l14 6-5 9"/><path d="M320 274l-10 7 7 10"/><path d="M60 286l12-4 6 8"/></g>` : "") +
+          (salt ? pt(28, i => `<rect x="${(i * 37) % 400}" y="${238 + (i * 53) % 55}" width="3" height="3" fill="#fff"/>`) : "") + (toxic ? pt(16, i => `<circle cx="${(i * 61 + 20) % 400}" cy="${246 + (i * 29) % 48}" r="2" fill="#5e3a86" opacity=".8"/>`) : "") +
+          (rain ? pt(30, i => `<line x1="${(i * 89) % 400}" y1="${20 + (i * 47) % 170}" x2="${(i * 89) % 400 - 4}" y2="${30 + (i * 47) % 170}" stroke="#6f93b3" stroke-width="1.6" stroke-linecap="round"/>`) : "") +
+          (flakes ? pt(26, i => `<circle cx="${(i * 97) % 400}" cy="${(i * 61) % 190}" r="2.2" fill="#fff"/>`) : "");
+        env.classList.toggle("previewing", !!previewing);
+        envCap.querySelector(".sc-n").textContent = `Land around ${r.name}`; envCap.querySelector(".sc-w").textContent = `${previewing ? "Preview · " : ""}sky ${fmtT(sky.temperature)} · ${fmtM(sky.moisture)}`;
+      }
+      // ---- the information card (left): the current environment, or the REAL Terraform action under preview (it changes the planet / sky, not the plant)
+      const condRows = r => r.conditions.map(cd => { const s = LAMP_ST[cd.lamp] || "ok", reading = cap(cd.word) + (cd.key === "Temperature" ? ` · ${degC(r.temperature.ground)}` : "");
+        return `<div class="cond mini st-${s}" data-cat="${cd.key}" style="${catStyle(cd.key)}"><span class="cond-i">${ico(CAT_ICON[cd.key])}</span><span class="cnm">${cd.key}<small class="ct">${esc(reading)}</small></span>${chip(s)}</div>`; }).join("");
+      function paintInfoBase(r) {
+        const sky = src.sky, dT = r.temperature.ground - sky.temperature, rel = Math.abs(dT) < 0.5 ? "as the sky" : `${Math.abs(Math.round(dT))} °C ${dT > 0 ? "warmer" : "colder"} than the sky`;
+        info.innerHTML = `<span class="li-k">The land around ${esc(r.name)}</span><div class="li-h"><span class="ni">${ico("land")}</span><div><b>${esc(r.limiting.blocked ? "Blocked here" : r.limiting.softSoil ? "Marginal here" : "Suits your plant")}</b><small>${esc(limitLine(r))}</small></div></div>` +
+          `<div class="conds">${condRows(r)}</div>` +
+          `<div class="li-row">${ico("terraform")}<span><b>Sky</b> ${fmtT(sky.temperature)} · ${fmtM(sky.moisture)}${A.hud().skyAdjusted ? " (as the ground sees it now)" : ""} · ground here ${rel}</span></div>` +
+          `<p class="li-hint">Hover a planet system to preview this land. Terraform never changes your plant.</p>`;
+        info.classList.remove("pvw"); info.removeAttribute("style");
+      }
+      function paintInfoPreview(u, pv, r) {
+        const s = pv.sky, axis = s ? s.axis : u.axis, cur = s ? s.current : src.sky, nx = s ? s.preview : cur, fx = effectFor(pv, state.ctx);
+        const elsewhere = [pv.gain && pv.gain.length ? `<b>Opens:</b> ${esc(names(pv.gain))}` : "", pv.lose && pv.lose.length ? `<b>Closes:</b> ${esc(names(pv.lose))}` : "", pv.better && pv.better.length ? `<b>Closer, still blocked:</b> ${esc(names(pv.better))}` : "", pv.worse && pv.worse.length ? `<b>Worse, still growing:</b> ${esc(names(pv.worse))}` : ""].filter(Boolean);
+        info.setAttribute("style", catStyle(u.uiCategory)); info.classList.add("pvw");
+        info.innerHTML = `<span class="li-k">Preview · ${esc(u.uiCategory || "Sky")} · ${esc(BANK_OF(u))}</span><div class="li-h"><span class="ni">${ico(I[u.id] ? u.id : CAT_ICON[u.uiCategory] || "air")}</span><div><b>${esc(u.name)}</b><small>${esc(stateWord(u))}</small></div></div>` +
+          `<p>${esc(cap(u.sub || ""))}.</p><span class="li-part">${ico("terraform")}Changes the planet's sky · not the plant</span>` +
+          `<div class="li-row">${ico(axis === "temp" ? "temp" : "humid")}<span><b>${axisName(axis)}:</b> ${axis === "temp" ? `${fmtT(cur.temperature)} → ${fmtT(nx.temperature)}` : `${num(cur.moisture)} → ${num(nx.moisture)}`}${A.hud().skyAdjusted ? " (as the ground sees it)" : ""}</span></div>` +
+          `<div class="li-row fx-${fx.cls}">${ico(fx.icon)}<span><b>${esc(fx.text)}</b></span></div>` + (elsewhere.length ? `<div class="li-row">${ico("regions")}<span>${elsewhere.join(" · ")}</span></div>` : "") +
+          `<p class="li-hint">${u.canBuy ? "Click or press Enter to buy." : u.rules ? `Needs ${u.price} Biomass.` : esc(cap(u.reason || "Not available now"))}</p>`;
+      }
+      // ---- the right-hand card: the real current planet readout (current → preview while previewing, scenario-adjusted, climate instability from
+      // the real preview) and the region / planet effect from the real preview lists
+      const pct = v => `${Math.round(v * 100)} %`;
+      function paintReadout(pv, r) {
+        const sky = src.sky, hud = A.hud(), sc = A.scenario(), s = pv && pv.sky, c = pv && pv.climate, soilC = r.conditions.find(x => x.key === "Soil") || { word: "", lamp: "green" };
+        const arrow = (ax, now, nxt) => s && s.axis === ax ? ` <i class="to">→ ${nxt}</i>` : "";
+        const rows = [[ico("temp"), "Sky temperature", `${fmtT(sky.temperature)}${arrow("temp", sky.temperature, s ? fmtT(s.preview.temperature) : "")}`, hud.skyAdjusted ? `Terraformed ${fmtT(hud.sky.temp)} · the scenario adds the rest` : ""],
+          [ico("humid"), "Rain · sky moisture", `${num(sky.moisture)}${arrow("moist", sky.moisture, s ? num(s.preview.moisture) : "")}`, hud.skyAdjusted ? `Terraformed ${num(hud.sky.moist)} · the scenario adds the rest` : ""]];
+        if (sc.climate) { const C = sc.climate, ax = c ? C.axes[c.axis] : null;
+          rows.push([ico("hazard"), "Climate instability", c ? `${pct(c.axisBefore)} <i class="to">→ ${pct(c.axisAfter)}</i> · ${esc(sc.climate.bandName)}${c.bandAfter !== c.bandBefore ? ` → ${esc((C.bandNames || [])[c.bandAfter] || "")}` : ""}` : `${pct(C.level)} · ${esc(C.bandName)}`,
+            c ? (c.triggersShock ? `⚠ Sets off a ${c.kind ? lower(c.kind.name) : "shock"} (about ${c.axis === "temp" ? `${c.kind && c.kind.sign < 0 ? "−" : "+"}${num(c.magnitude)} °C` : `${c.kind && c.kind.sign < 0 ? "−" : "+"}${num(c.magnitude)} moisture`})` : c.addsToActive ? `Adds to the ${ax ? lower(ax.name) : ""} swing already under way` : c.afterQuiet ? "Stays volatile: another shock can follow the quiet spell" : c.crossesBand ? "Crosses into a less settled band · no shock from this step" : "No shock from this step") : (C.forecast || "")]); }
+        rows.push([ico("soil"), "Soil here", `${chip(LAMP_ST[soilC.lamp] || "ok", cap(soilC.word))}`, ""], [ico(r.limiting.blocked ? "x" : "check"), "Limiting factor", r.limiting.blocked ? esc(cap(r.limiting.key)) : "None", r.limiting.blocked ? esc(r.limiting.text) : r.limiting.softSoil ? "marginal soil" : ""]);
+        mm.ctx.querySelector(".env-rows").innerHTML = rows.map(([ic, k, v, n]) => `<div><dt>${ic}${k}</dt><dd><b>${v}</b>${n ? `<small>${n}</small>` : ""}</dd></div>`).join("");
+        const rowsEl = mm.ctx.querySelector(".mc-rows");
+        if (!pv) { rowsEl.innerHTML = `<div class="mc-row faint">${ico("info")}<span>Hover a planet system to see what it does for ${esc(r.name)} and the whole planet</span></div>`; mm.ctx.classList.remove("pvw"); mm.ctx.removeAttribute("style"); return; }
+        const fx = effectFor(pv, state.ctx), tot = [["Opens", pv.gain, "check"], ["Closes", pv.lose, "x"], ["Closer, still blocked", pv.better, "alert"], ["Worse, still growing", pv.worse, "alert"]].filter(([, l]) => l && l.length);
+        rowsEl.innerHTML = `<div class="mc-row fx-${fx.cls}">${ico(fx.icon)}<span><b>${esc(fx.text)}</b></span></div>` + (tot.length ? tot.map(([k, l, ic]) => `<div class="mc-row faint">${ico(ic)}<span><b>${k} ${l.length}:</b> ${esc(names(l))}</span></div>`).join("") : `<div class="mc-row faint">${ico("info")}<span>No region changes state right away.</span></div>`);
+        const u = items.find(x => x.id === pv.id); mm.ctx.setAttribute("style", catStyle(u && u.uiCategory)); mm.ctx.classList.add("pvw");
+      }
+      const lower = s => (s || "").toLowerCase();
+      function readoutGlobe(sky, s) { gread.querySelector(".d-t").innerHTML = s && s.axis === "temp" ? `${esc(fmtT(sky.temperature))} <i class="to">→ ${esc(fmtT(s.preview.temperature))}</i>` : esc(fmtT(sky.temperature));
+        gread.querySelector(".d-r").innerHTML = s && s.axis === "moist" ? `${esc(fmtM(sky.moisture))} <i class="to">→ ${esc(num(s.preview.moisture))}</i>` : esc(fmtM(sky.moisture)); gread.classList.toggle("pvw", !!s); }
+      function paintPreview() {
+        const pv = state.preview, u = state.hovered ? items.find(x => x.id === state.hovered) : null, r = A.region(state.ctx);
+        if (!u || !pv) { showSky(src.sky); paintScene(r, src.sky, false); paintInfoBase(r); paintReadout(null, r); readoutGlobe(src.sky, null); stage.dataset.chan = ""; paintEdges(); return; }
+        const nx = pv.sky ? pv.sky.preview : src.sky; showSky(nx); paintScene(r, nx, true); paintInfoPreview(u, pv, r); paintReadout(pv, r); readoutGlobe(src.sky, pv.sky); stage.dataset.chan = pv.sky ? pv.sky.axis : (u.axis || ""); paintEdges();
+      }
+      // UPGRADE PREVIEW CONTRACT (as Adapt / Spread): a real node previews ONLY while hovered / focused, through adapter.actions.preview(id)
+      // (bloom:upgrade-preview + the home map's outline); every reset path clears it and the globe returns to the committed current surface.
+      function setHover(nid) {
+        if (state.hovered === nid) return; state.hovered = nid;
+        if (nid) state.preview = A.actions.preview(nid); else { state.preview = null; if (A.activePreview()) A.actions.clearPreview(); }
+        paintNodes(); paintPreview(); mm.invalidate();
+      }
+      const clear = () => { if (state.hovered !== null) setHover(null); };
+      stage.addEventListener("pointerover", e => { if (state.suspended) return; const b = e.target.closest(".node"); if (b) setHover(b.dataset.node); else clear(); });
+      stage.addEventListener("pointermove", e => { if (!state.suspended) return; state.suspended = false; const b = e.target.closest(".node"); if (b) setHover(b.dataset.node); });
+      stage.addEventListener("pointerout", e => { const b = e.target.closest(".node"); if (!b) return; const to = e.relatedTarget; if (!to || !(to.closest && to.closest(".node") === b)) clear(); });
+      stage.addEventListener("pointerleave", clear); stage.addEventListener("pointercancel", clear);
+      stage.addEventListener("focusin", e => { const b = e.target.closest(".node"); if (b) setHover(b.dataset.node); else clear(); }); // focus on the globe or elsewhere in the card = leaving the tree
+      stage.addEventListener("focusout", e => { if (!stage.contains(e.relatedTarget)) clear(); });
+      stage.addEventListener("click", e => {
+        const b = e.target.closest(".node"); if (!b) return; const u = items.find(x => x.id === b.dataset.node); if (!u) return;
+        if (!u.canBuy) { setHover(u.id); return; }
+        if (A.actions.buy(u.id)) { live(`Bought ${u.name}. The sky changes.`); if (state.hovered === u.id) { state.hovered = null; setHover(u.id); } } // still on the node: the NEXT real tier previews
+      });
+      stage.addEventListener("keydown", e => { if (e.key !== "Enter" && e.key !== " ") return; const b = e.target.closest(".node"); if (!b) return; e.preventDefault(); b.click(); });
+      new ResizeObserver(() => relayout()).observe(stage);
+      function paint() { if (state.ctx < 0) return; readSurface(); readTree(); paintNodes(); paintSoil(A.region(state.ctx)); paintPreview(); mm.paint(); relayout(); }
+      rooms[id] = { sec, mm, stage, paint, onOpen() { paint(); requestAnimationFrame(() => relayout()); }, clear() { clear(); mm.pk(-1); }, redraw() { relayout(); },
+        focusNode(nid) { const n = nodeEls[nid]; if (n) { n.focus(); return true; } return false; }, focusFirst: () => sec.querySelector("h2").focus(),
+        globeKind: () => globeKind, globe: () => globe, source: () => src, dispose() { globe.dispose(); },
+        measure() { const rect = el => { const r = el.getBoundingClientRect(); return [r.x, r.y, r.width, r.height].map(v => Math.round(v * 10) / 10); }, sr = stage.getBoundingClientRect();
+          return { em: state.em, globe: globeKind, items: items.map(u => ({ id: u.id, cat: u.uiCategory, bank: BANK_OF(u), tier: u.tier, price: u.price, canBuy: u.canBuy, rules: u.rules, owned: u.owned })),
+            banks: Object.fromEntries(BANK_ORDER.map(b => [b, L ? L.banks[b].length : 0])), layout: L ? { R: L.R, HR: L.HR, zone: L.zone, RO: L.RO, cx: L.cx + sr.x, cy: L.cy + sr.y, box: L.box, nodeW: L.nodeW, soilW: L.soilW } : null,
+            faceMeasured: globe.view ? globe.view.state().globeRadiusPx : null, sphere: globe.view ? globe.view.state() : null, stage: rect(stage), globeBox: rect(gh), soil: rect(soil), legend: rect(legend), readout: rect(gread),
+            nodes: items.map(u => ({ id: u.id, rect: rect(nodeEls[u.id]), lock: nodeEls[u.id].querySelector(".nl") ? rect(nodeEls[u.id].querySelector(".nl")) : null })), labels: cats.map(c => ({ cat: c, rect: rect(lbls[c]) })),
+            connectors: [...edges.querySelectorAll(".lead")].map(p => ({ id: p.dataset.node, d: p.getAttribute("d"), width: parseFloat(getComputedStyle(p).strokeWidth), lit: p.classList.contains("on"), toSurface: p.classList.contains("to-surface") })),
+            rings: edges.querySelectorAll(".ring").length, pins: edges.querySelectorAll(".pin").length, soilArrows: edges.querySelectorAll(".to-surface").length,
+            atmo: L ? { stops: TG.atmosphereStops(L.face, L.HR, L.RO), color: (edges.querySelector("stop") || {}).getAttribute ? edges.querySelector("stop").getAttribute("stop-color") : null, peak: TG.ATMO.peak } : null,
+            soilEmpty: !!soil.querySelector(".bank-empty"), soilText: soil.textContent.replace(/\s+/g, " ").trim(), specimen: !!sec.querySelector(".lf-top:not(.env), .aplate, .lead-g"), chan: stage.dataset.chan || "" }; } };
+    }
+
     // ---------------------------------------------------------------- the controller: open / close / switch / context
     function setCtx(i, from) {
       if (i < 0 || i >= regs.length) return; state.ctx = i; state.peek = -1;
@@ -446,7 +709,9 @@
       room.sec.hidden = false; room.onOpen(); paintHeader();
       layer.querySelectorAll("[data-go]").forEach(b => { if (b.classList.contains("rn")) b.setAttribute("aria-pressed", String(b.dataset.go === name)); });
       live(`${ROOMS[name].title} open. Game paused. Considering ${regs[state.ctx].name}.`);
-      requestAnimationFrame(() => { if (!(ctx.item && room.focusNode && room.focusNode(ctx.item))) room.focusFirst(); });
+      // a requested real node ("Would help") gets a deliberate focus preview; until the pointer really moves, a pointerover the browser may
+      // synthesise for whatever now sits under the stationary pointer (Firefox does, on a room swap) must not clear it (the 029C suspended rule)
+      requestAnimationFrame(() => { if (ctx.item && room.focusNode) { state.suspended = true; if (room.focusNode(ctx.item)) return; state.suspended = false; } room.focusFirst(); });
       return () => close(false);
     }
     function close(resume) {
@@ -462,7 +727,7 @@
     function paintHeader() { const h = A.hud(); layer.querySelectorAll(".rbio-n").forEach(e => { e.textContent = h.biomass; }); const r = A.run(); layer.querySelectorAll(".paused").forEach(e => e.classList.toggle("on", !r.running)); }
     layer.addEventListener("click", e => {
       const a = e.target.closest("[data-act]"); if (a) { close(a.dataset.act === "resume"); return; }
-      const g = e.target.closest(".rn[data-go]"); if (g) { if (g.dataset.go === "terraform") { view.openRoom("terraform", { region: state.ctx, opener: g }); return; } open(g.dataset.go, { region: state.ctx, opener: state.opener }); }
+      const g = e.target.closest(".rn[data-go]"); if (g) open(g.dataset.go, { region: state.ctx, opener: state.opener });
     });
     document.addEventListener("keydown", e => { if (e.key === "Escape" && state.room) { e.preventDefault(); close(false); } });
     // preview safety nets: the window losing focus, the tab hidden, the pointer leaving the window
@@ -472,7 +737,7 @@
     document.addEventListener("pointerout", e => { if (!e.relatedTarget) for (const k in rooms) if (!rooms[k].sec.hidden) rooms[k].clear(); });
 
     // ---------------------------------------------------------------- build, subscribe, register
-    buildRegion(); buildBoard("adapt"); buildBoard("spread");
+    buildRegion(); buildBoard("adapt"); buildBoard("spread"); buildTerraform();
     const unsub = A.subscribe(ch => {
       if (!state.room) return; const r = ch.reasons;
       if (r.some(x => x !== "tick" && x !== "message" && x !== "preview-clear" && x !== "upgrade-preview")) regs = A.regions();
@@ -482,27 +747,31 @@
     let raf = 0, disposed = false; (function loop() { if (disposed) return; raf = requestAnimationFrame(loop); if (!state.room) return; for (const m of miniMaps) m.frame(); })();
     new ResizeObserver(() => { if (!state.room) return; calibrate(); const room = rooms[state.room]; if (room.redraw) room.redraw(); miniMaps.forEach(m => m.relayout()); }).observe(layer);
     // the 028D1 anchors these rooms now own (the hidden shell's copies become data-tutorial-legacy): docs/PRODUCTION_PLANT_ROOMS_v1.md §11
-    const claimed = ["raw-signals", "growth-focus", "local-upgrade", "upgrades", "board-adapt", "board-spread"];
+    const claimed = ["raw-signals", "growth-focus", "local-upgrade", "upgrades", "board-adapt", "board-spread", "board-terraform"]; // (029D) + the Terraform board and its real nodes
     const c0 = A.colony(origin()); for (const f of c0.focusChoices) claimed.push(`focus-${f.id}`); for (const l of c0.localChoices) claimed.push(`local-${l.id}`);
-    for (const b of A.upgrades()) if (b.board !== "Terraform") for (const u of b.items) claimed.push(`upgrade-${u.id}`);
+    for (const b of A.upgrades()) for (const u of b.items) claimed.push(`upgrade-${u.id}`);
     view.rooms.claimAnchors(claimed);
     // paint every room once now (hidden, context = origin): the claimed anchors exist before any room opens, so a coach can resolve
     // them first; the first open repaints for the real context
     state.ctx = origin(); for (const k in rooms) rooms[k].paint();
-    for (const name of ["region", "adapt", "spread"]) view.rooms.register(name, { open: ctx => open(name, ctx) });
+    for (const name of ROOM_IDS) view.rooms.register(name, { open: ctx => open(name, ctx) }); // (029D) Terraform registers too: its tool reads ready
 
     const api = {
       el: layer, adapter: A, rooms, open, close, setCtx, setLens, previewLens, calibrate,
       // BLOOM-029E seam: wrap a swap in the SUBDUED AtmosphereTransition here (planetView ↔ room and room ↔ room); 029C swaps at once
       transition: null,
-      // BLOOM-029D seam: Terraform registers through planetView.rooms.register("terraform", …) with its own PlanetSphereView room
       state: () => ({ room: state.room, context: state.ctx, contextId: state.ctx >= 0 ? regs[state.ctx].id : null, wasRunning: state.wasRunning, peek: state.peek, lens: state.lens, lensPreview: state.lensPv,
-        hovered: state.hovered, preview: state.preview ? state.preview.id : null, em: state.em, emBy: state.emBy, emChips: state.emChips, emHeight: state.emHeight, medianName, claimedAnchors: claimed.slice() }),
+        hovered: state.hovered, preview: state.preview ? state.preview.id : null, em: state.em, emBy: state.emBy, emChips: state.emChips, emHeight: state.emHeight, medianName, claimedAnchors: claimed.slice(),
+        globe: rooms.terraform ? rooms.terraform.globeKind() : null }), // (029D) "pending" | "sphere" | "fallback"
       measure: name => rooms[name] && rooms[name].measure ? rooms[name].measure() : null,
-      dispose() { disposed = true; cancelAnimationFrame(raf); unsub(); if (state.room) close(false); layer.remove(); instance = null; DR.instance = null; },
+      // (029D) disposing the rooms disposes the Terraform globe (its WebGL context, canvas and listeners) with them
+      dispose() { disposed = true; cancelAnimationFrame(raf); unsub(); if (state.room) close(false); for (const k in rooms) if (rooms[k].dispose) rooms[k].dispose(); layer.remove(); instance = null; DR.instance = null; },
     };
+    // (029D) destroying the production view destroys the rooms with it (and the Terraform globe's WebGL context, canvas and listeners):
+    // the Planet View's own dispose runs after ours. Additive: the view's api object is plain and knows nothing about the rooms.
+    const pvDispose = view.dispose; view.dispose = () => { if (instance === api) api.dispose(); pvDispose(); };
     instance = api; DR.instance = api; return api;
   }
-  const DR = { mount, version: 1, instance: null, CATS: Object.freeze(CATS), CAT_COLOR: Object.freeze(CAT_COLOR), CAT_PART: Object.freeze(CAT_PART), TENDRIL: Object.freeze(TENDRIL) };
+  const DR = { mount, version: 1, instance: null, CATS: Object.freeze(CATS), CAT_COLOR: Object.freeze(CAT_COLOR), CAT_PART: Object.freeze(CAT_PART), TENDRIL: Object.freeze(TENDRIL), BANKS: Object.freeze(BANKS), TF: Object.freeze(TF) };
   root.BLOOM = Object.assign(root.BLOOM || {}, { decisionRooms: DR });
 })(typeof window !== "undefined" ? window : globalThis);

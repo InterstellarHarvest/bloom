@@ -161,7 +161,8 @@ flashes now also record their event `type`. Nothing else in the page changed for
   `readout`, `limiting-factor`, `colony-status`. The hidden shell's copies are renamed `data-tutorial-legacy` (and again whenever
   the shell re-renders them). New: `map-view`, `scenario-status`. **BLOOM-029C** re-homed `growth-focus`, `focus-*`, `local-upgrade`,
   `local-*`, `raw-signals`, `upgrades`, `board-adapt`, `board-spread` and the Adapt / Spread `upgrade-*` to the production rooms
-  (`rooms.claimAnchors`); the shell keeps `board-terraform`, the Terraform `upgrade-*`, `report`, `report-continue`, `run-actions`.
+  (`rooms.claimAnchors`); **BLOOM-029D** re-homed `board-terraform` and the Terraform `upgrade-*` to the Terraform room; the shell keeps
+  only `report`, `report-continue`, `run-actions`.
 - **Training:** starts paused (Pause shows Resume, pressed), deterministic, the menu's Restart / Skip / Main menu go through the
   page's own path (training layer fade + status), no coach UI.
 
@@ -171,9 +172,11 @@ flashes now also record their event `type`. Nothing else in the page changed for
   are registered through `planetView.rooms.register(name, { open(ctx) → close })`, `ctx = { adapter, region, item, opener, view }`;
   they pause on open (restore on Back, run on Resume), take the home selection as the room context and clear it. The seam gained
   `rooms.claimAnchors(names)`, `rooms.setActive(name)`, `rooms.parts()`, `state().room` and the exposed `toast` (now at the `.pv`
-  root, above the room veil). Trait → category metadata is now in the content (`uiCategory`, presentation only). Terraform is
-  still unregistered: its request shows the development notice and changes nothing (029D).
-- **029D Terraform:** `PlanetSphereView` unmodified; `view.setPlanet(adapter.surface().planet, { render: adapter.surface().render })`
+  root, above the room veil). Trait → category metadata is now in the content (`uiCategory`, presentation only). **029D** registered
+  Terraform too: every tool reads ready and the development notice path is no longer reachable.
+- **029D Terraform (done, `docs/PRODUCTION_TERRAFORM_ROOM_v1.md`):** `PlanetSphereView` unmodified; the room passes a presentation snapshot of
+  `adapter.surface().planet` whose `globalClimate` is the CURRENT surface sky (`BLOOM.terraformGlobe.snapshot`), so the globe and the flat map
+  paint one surface live; 029C's sketch was `view.setPlanet(adapter.surface().planet, { render: adapter.surface().render })`
   shows the same canonical surface as the map (match regions by **id**, 029A §6.3). Decoration (atmosphere, open / worse regions)
   drawn outside the view.
 - **029E default switch:** drop the `ui` flag, hide nothing — delete the shell's visible DOM and `draw()`, keep the host block.
@@ -183,7 +186,7 @@ flashes now also record their event `type`. Nothing else in the page changed for
 
 ## 9. Limitations / risks
 
-- Terraform is not built (029D): `&ui=18` cannot buy Terraform upgrades (use the shell). Region Inspect, Adapt and Spread are
+- Terraform is built since 029D (`&ui=18` buys Terraform upgrades in its room). Region Inspect, Adapt and Spread are
   production rooms since BLOOM-029C. The Bloom Report / extinction screen are still the shell's modal (visible in both paths).
 - Player-mode links do not carry `&ui=18`.
 - The page's message copy still contains pictographs in the middle of sentences (e.g. "⚠"); only a leading one is replaced.

@@ -23,7 +23,6 @@
 .dr .rn{position:relative; display:inline-flex; align-items:center; gap:.4em; min-height:max(3.1em, 44px); min-width:max(3.1em, 44px); padding:.3em .8em; border:0; border-right:2px solid var(--line); background:none; cursor:pointer; font-weight:800; font-size:.98em; color:var(--ink); white-space:nowrap}
 .dr .rn:last-child{border-right:0} .dr .rn:hover{background:var(--paper-2)} .dr .rn .ic{width:1.3em; height:1.3em}
 .dr .rn[aria-pressed="true"]{background:var(--ink); color:#fff7e0} .dr .rn.plant[aria-pressed="true"]{background:var(--leaf-dark)} .dr .rn.spread[aria-pressed="true"]{background:var(--bloom-dark)} .dr .rn.planet[aria-pressed="true"]{background:var(--sky-dark)}
-.dr .rn[data-room="unavailable"]{color:var(--ink-faint)} .dr .rn[data-room="unavailable"]::before{content:""; position:absolute; right:.3em; top:.3em; width:.45em; height:.45em; border-radius:50%; border:2px solid var(--ink-faint); background:var(--card)}
 .dr .rbio{display:inline-flex; align-items:center; gap:.35em; padding:.25em .8em .25em .5em; border-radius:2em; background:linear-gradient(180deg,#fff7dc,#ffefc0); border:2px solid #f0cf72; color:#7a4f00; line-height:1.05; white-space:nowrap}
 .dr .rbio .ic{width:1.3em; height:1.3em; color:#a86f00} .dr .rbio b{font-size:1.15em; font-variant-numeric:tabular-nums} .dr .rbio small{font-size:.7em; font-weight:900; letter-spacing:.8px; text-transform:uppercase; color:#8a6200}
 .dr .paused{display:inline-flex; align-items:center; gap:.5em; padding:.25em .9em .25em .3em; border-radius:2em; background:var(--gold-soft); border:2px solid #e6c46a; color:#5a3c00; line-height:1.05}
@@ -170,3 +169,57 @@
 .dr :focus-visible{outline:3px solid var(--focus); outline-offset:3px}
 @media (prefers-reduced-motion: reduce){ .dr *{transition:none !important; animation:none !important} .dr .node:hover .ni,.dr .node:focus-visible .ni{transform:none} }
 .pv.reduced .dr *{transition:none !important; animation:none !important}
+
+/* ── Terraform (BLOOM-029D): the environmental room. Concept 18 Terraform proportions (20 / 1fr / 23), sky accent; no plant specimen ── */
+.dr .r-terraform{grid-template-columns:20% minmax(0,1fr) 23%; --acc:var(--sky); --acc-soft:var(--sky-soft); --acc-dark:var(--sky-dark)}
+.dr .r-terraform .rc{font-size:.84em} .dr .r-terraform .mm-lens .lb{padding:.15em .5em}
+/* the right column: when the readout grows (a preview), the mini-map gives up height first (down to 5.5 em) and the strip keeps one row and scrolls */
+.dr .r-terraform .mm{overflow:hidden} .dr .r-terraform .mm-map{flex:0 1 auto; min-height:5.5em; max-height:8.6em} .dr .r-terraform .mm-strip{flex:1 1 auto; min-height:2.6em; overflow:auto}
+.dr .mm-ctx.tf{font-size:.92em; gap:.35em}
+.dr .r-terraform .z-main.tf-main{background:linear-gradient(#f3f8fc, var(--card)); height:100%; padding:.55em; overflow:hidden}
+.dr .tf-stage{position:relative; flex:1; min-height:0; overflow:hidden; --pady:2.6em}
+.dr .tf-edges{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; overflow:visible}
+.dr .tf-edges .atmo{stroke:none}                                            /* ONE diffuse atmosphere: a radial gradient, no stroke, no ring (stops set by decision-rooms.js) */
+.dr .tf-edges .lead{fill:none; stroke:var(--cat, var(--sky)); stroke-width:3.2; opacity:.8; stroke-linecap:round; stroke-linejoin:round}
+.dr .tf-edges .lead.off{stroke-dasharray:4 7; opacity:.55} .dr .tf-edges .lead.on{stroke-width:5.5; opacity:1; stroke:var(--cat-dark, var(--sky-dark))} .dr .tf-edges.dim .lead:not(.on){opacity:.4}
+.dr .tf-edges .ring{fill:var(--card); stroke:var(--cat, var(--sky)); stroke-width:3} .dr .tf-edges .ring.on{fill:var(--cat, var(--sky)); stroke:#fff}
+.dr .tf-edges .pin{fill:var(--cat, var(--sky)); stroke:var(--cat, var(--sky)); stroke-linejoin:round} .dr .tf-edges .pin.on{fill:var(--cat-dark); stroke:var(--cat-dark)} .dr .tf-edges .pin-under{fill:#fff; stroke:rgba(255,253,247,.92); stroke-linejoin:round}
+/* the globe slot: the unmodified PlanetSphereView's own canvas inside (it sets tabindex / aria-label / cursor itself); the flat fallback is a disc of the canonical surface */
+.dr .tf-globe{position:absolute; z-index:2; border-radius:50%; outline:none}
+.dr .tf-globe canvas.planet-sphere-canvas{background:transparent !important; border:0 !important; border-radius:0 !important; max-width:none !important; max-height:none !important}   /* the legacy shell styles every canvas (dark, bordered); the sphere's own clear is transparent */
+.dr .tf-focus{position:absolute; z-index:5; border-radius:50%; border:3px solid var(--focus); opacity:0; pointer-events:none} .dr .tf-globe:focus-visible + .tf-focus{opacity:1}
+.dr .tg-flat-wrap{position:absolute; inset:11.1%; border-radius:50%; overflow:hidden; background:var(--paper-2); border:2px solid var(--line-2); display:grid; place-items:center}
+.dr .tg-flat-cv{width:100%; height:auto; image-rendering:pixelated}
+/* the Soil bank (left): the region's real ground as information; its one honest line when no real Soil node exists */
+.dr .bank-soil{position:absolute; top:50%; transform:translateY(-50%); z-index:3; display:flex; flex-direction:column; gap:.45em; max-height:calc(100% - 2 * var(--pady)); min-height:0}
+.dr .bank-soil .bank-cat{position:static; transform:none; align-self:flex-start}
+.dr .soil-card{display:flex; flex-direction:column; gap:.4em; padding:.65em .75em; border:2px solid var(--line-2); border-left:.45em solid var(--cat, var(--line-2)); border-radius:.85em; background:var(--card); box-shadow:0 3px 0 var(--line-2); font-size:.92em; overflow:auto; min-height:0}
+.dr .soil-card .li-k{color:var(--cat-dark)} .dr .soil-st{display:flex; align-items:center; gap:.4em; flex-wrap:wrap}
+.dr .soil-card .geo{display:inline-flex; align-items:center; gap:.25em; font-size:.78em; font-weight:900; letter-spacing:.6px; text-transform:uppercase; padding:.15em .55em; border-radius:.5em; background:#fde6d6; color:#9c3f0e; border:1.5px solid #f0b58e} .dr .soil-card .geo .ic{width:1.1em; height:1.1em}
+.dr .soil-rows{display:grid; grid-template-columns:1fr auto; gap:.15em .7em; margin:0; font-variant-numeric:tabular-nums} .dr .soil-rows > div{display:contents} .dr .soil-rows dt{font-weight:800; color:var(--ink-soft)} .dr .soil-rows dd{margin:0; font-weight:900; text-align:right}
+.dr .soil-card .li-row{font-size:.92em} .dr .bank-empty{margin:.2em 0 0; font-size:.8em; font-weight:800; color:var(--ink-faint)}
+/* the Atmosphere bank (right): the real nodes as intrinsic cards hugging the exclusion zone; lock / owned badges on the OUTER top corner (away from the globe) */
+.dr .tf-node.node{transform:translate(0,-50%); width:var(--nw,10em); z-index:4}
+.dr .tf-node .nl{top:-.35em; bottom:auto} .dr .tf-node.side-r .nl{right:-.35em} .dr .tf-node.side-l .nl{right:auto; left:-.35em}
+.dr .tf-node.card{padding:.35em .5em .35em .4em; gap:.45em} .dr .tf-node .ni{width:2.5em; height:2.5em} .dr .tf-node .ni .ic{width:1.45em; height:1.45em} .dr .tf-node .nt b{font-size:calc(.95em * var(--fit, 1))} .dr .tf-node .nt small{white-space:normal}
+.dr .tf-cat{position:absolute; transform:translate(0,-50%); z-index:3} .dr .tf-cat.flip{transform:translate(-100%,-50%)}
+.dr .bank-legend{position:absolute; top:.5em; left:.8em; display:flex; flex-direction:column; gap:.1em; font-size:.8em; pointer-events:none; z-index:3}
+.dr .bank-legend span{display:inline-flex; align-items:center; gap:.35em; white-space:nowrap; font-weight:900; letter-spacing:1.1px; text-transform:uppercase} .dr .bank-legend .bl-soil{color:#5f452a} .dr .bank-legend .bl-atmosphere{color:#44579a}
+.dr .bank-legend .ic{width:1.25em; height:1.25em} .dr .bank-legend small{font-size:.8em; font-weight:800; letter-spacing:.2px; text-transform:none; color:var(--ink-soft)}
+.dr .g-read{position:absolute; left:.8em; bottom:.5em; display:flex; flex-direction:column; line-height:1.15; font-size:.9em; z-index:3; pointer-events:none}
+.dr .g-read .gr-k{font-size:.72em; letter-spacing:1.1px; font-weight:900; text-transform:uppercase; color:var(--ink-soft)} .dr .g-read b{font-size:1.25em; font-variant-numeric:tabular-nums} .dr .g-read .d-r{font-weight:800; color:var(--ink-soft)}
+.dr .g-read .g-hint{display:inline-flex; align-items:center; gap:.3em; margin-top:.25em; font-size:.74em; font-weight:800; color:var(--ink-faint)} .dr .g-read .g-hint .ic{width:1.1em; height:1.1em}
+.dr .to{font-style:normal; font-weight:900; color:var(--cat-dark, var(--sky-dark))}
+/* left: the environment / land focus (sky + ground from real values; never the plant) and the information card's compact condition rows */
+.dr .lf-top.env{aspect-ratio:4/3; max-height:38%; background:#dceefa} .dr .env-svg{display:block; width:100%; height:100%} .dr .env.previewing .ps-tag{opacity:1}
+.dr .conds{display:flex; flex-direction:column; gap:.3em} .dr .cond.mini{grid-template-columns:1.8em minmax(0,1fr) auto; gap:.4em; padding:.25em .45em .25em .35em; font-size:.86em}
+.dr .cond.mini .cond-i{width:1.8em; height:1.8em} .dr .cond.mini .cond-i .ic{width:1.1em; height:1.1em} .dr .cond.mini .stc{font-size:.82em; padding:.1em .5em .1em .25em}
+.dr .cond.mini .cnm{display:flex; flex-direction:column; line-height:1.1; min-width:0; font-size:.94em; letter-spacing:-.01em} .dr .cond.mini .cnm .ct{font-size:.86em; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.dr .r-terraform .lf-info .li-h b{font-size:1.15em} .dr .r-terraform .lf-info{font-size:.95em; gap:.45em; padding:.7em .8em}
+.dr .lf-info .li-row.fx-gain .ic{color:var(--leaf-dark)} .dr .lf-info .li-row.fx-lose .ic{color:#8f2846} .dr .lf-info .li-row.fx-worse .ic,.dr .lf-info .li-row.fx-better .ic{color:#8a5300}
+/* right: the planet readout rows above the region / planet effect */
+.dr .env-rows{display:flex; flex-direction:column; gap:.28em; margin:0} .dr .env-rows > div{display:flex; justify-content:space-between; gap:.6em; align-items:flex-start}
+.dr .env-rows dt{display:inline-flex; align-items:center; gap:.35em; font-weight:800; color:var(--ink-soft); font-size:.9em; flex:none} .dr .env-rows dt .ic{width:1.2em; height:1.2em}
+.dr .env-rows dd{margin:0; text-align:right; min-width:0} .dr .env-rows dd b{display:block; font-variant-numeric:tabular-nums; line-height:1.2} .dr .env-rows dd small{display:block; font-size:.74em; color:var(--ink-faint); font-weight:700; line-height:1.2}
+.dr .mc-k2{margin-top:.25em; padding-top:.45em; border-top:1px solid var(--line)}
+@media (max-width:1100px){ .dr .cond.mini{grid-template-columns:1.8em 4.6em auto 1fr} .dr .bank-legend small,.dr .g-read .g-hint{display:none} }

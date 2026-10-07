@@ -177,8 +177,9 @@ never keeps the element.
   each; the hidden shell's copies become `data-tutorial-legacy`); new `map-view`, `scenario-status`. `docs/PRODUCTION_PLANET_VIEW_v1.md` §7.
 - **Production rooms (`&ui=18`, BLOOM-029C):** `raw-signals`, `growth-focus` + `focus-*`, `local-upgrade` + `local-*` resolve to the
   Region Inspect room; `upgrades`, `board-adapt`, `board-spread` and every Adapt / Spread `upgrade-<id>` to the Adapt / Spread rooms (one
-  element each, mounted while closed; the shell's copies become `data-tutorial-legacy`). `board-terraform` and the Terraform
-  `upgrade-*` stay on the shell until BLOOM-029D; `report`, `report-continue`, `run-actions` until the report converges.
+  element each, mounted while closed; the shell's copies become `data-tutorial-legacy`). **BLOOM-029D:** `board-terraform` and the
+  Terraform `upgrade-warm/cool/humid/dry` resolve to the Terraform room the same way (`docs/PRODUCTION_TERRAFORM_ROOM_v1.md` §13);
+  `report`, `report-continue`, `run-actions` stay on the shell until the report converges.
   `docs/PRODUCTION_PLANT_ROOMS_v1.md` §11. Room navigation is presentation state (no new event); 028D2 integration decides its contract.
 
 ## 10. Notes for 028D2

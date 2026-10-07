@@ -24,6 +24,11 @@
 //
 // BLOOM-029C (additive; api stays 1): upgrade items carry the content's `uiCategory` (presentation only; docs/PRODUCTION_PLANT_ROOMS_v1.md).
 //
+// BLOOM-029D (additive; api stays 1): upgrade items also carry the content's `uiBank` (presentation only: the Terraform room's
+// Soil / Atmosphere side); preview results of a Terraform (sky) trait carry `sky` — the page's own what-if's exact current → preview
+// SURFACE sky (Terraform + scenario drift / shock, i.e. what the ground is painted under) — and terraformPreview(id) reads just
+// that without showing anything. No Terraform rule is here: the page's computePreview computes it (docs/PRODUCTION_TERRAFORM_ROOM_v1.md).
+//
 // Classic script, no dependencies: boots over file:// like every other run-page file.
 (function (root) {
   "use strict";
@@ -122,7 +127,7 @@
           axes[ax] = { name: S.axisNames[ax], level: X.level, offset: X.offset,
             shock: X.shock ? { ...plain(X.shock), endsIn: tickSeconds(X.shock.endTick - sim.ticks) } : null,
             pending: X.pending ? { ...plain(X.pending), startsIn: tickSeconds(X.pending.startTick - sim.ticks) } : null }; }
-        out.climate = { level: C.level, band: C.band, bandName: S.bands[C.band].name, peak: C.peak, offsets: plain(C.offsets), env: plain(C.env),
+        out.climate = { level: C.level, band: C.band, bandName: S.bands[C.band].name, bandNames: S.bands.map(b => b.name), peak: C.peak, offsets: plain(C.offsets), env: plain(C.env), // (029D) + every band's name, for the preview's band change
           axes, forecast: R.climForecast(), threshold: scn.climateInstability.shocks.threshold }; } // (029B) the shock threshold the meter marks
       return out;
     }
@@ -159,6 +164,7 @@
       const st = R.upgradeState(u), e = u.effect;
       return { id: u.id, board: u.board, name: u.name, short: u.short || null, sub: u.sub || null, effect: e.type, axis: e.axis || null,
         uiCategory: u.uiCategory || null, // (BLOOM-029C) the content's presentation-only room category; the sim never reads it
+        uiBank: u.uiBank || null,         // (BLOOM-029D) the content's presentation-only Terraform bank (Soil / Atmosphere); the sim never reads it
         tier: st.tier, maxTier: e.max !== undefined ? e.max : null, owned: st.tier > 0, price: st.cost,
         rules: st.rules, affordable: sim.biomass >= st.cost, canBuy: st.canBuy, reason: st.why || null, science: u.science || null };
     }
@@ -167,14 +173,24 @@
         ...(board === "Adapt" ? { tempPoints: { cold: sim.genome.cold, heat: sim.genome.heat, cap: CFG.scales.tempCap } } : {}) }));
     }
     function upgrade(id) { const u = sim.traitById[id]; if (!u) return null; return { ...upgradeItem(u), offered: !!sim.offered(u) }; }
+    // (BLOOM-029D) a sky preview's exact current → preview surface sky, as the page's what-if computed it ({ t, m } → { temperature, moisture })
+    const skyShape = s => s ? { axis: s.axis, from: s.from, to: s.to, current: { temperature: s.current.t, moisture: s.current.m }, preview: { temperature: s.preview.t, moisture: s.preview.m } } : null;
     const previewShape = d => d ? { gain: ids(d.gain), lose: ids(d.lose), better: ids(d.better), worse: ids(d.worse),
-      reachHostile: ids(d.reachHostile), climate: d.climate ? plain(d.climate) : null } : null;
+      reachHostile: ids(d.reachHostile), climate: d.climate ? plain(d.climate) : null, sky: skyShape(d.sky) } : null;
     // the real preview calculation, without showing it (no outline, no footer, no event): what a room previews in place
     function previewOf(id) {
       const u = sim.traitById[id]; if (!u) return null; const r = R.computePreview(id), d = previewShape(r.data);
       return { id, board: u.board, name: u.name, available: !!r.data, ...(d || { gain: [], lose: [], better: [], worse: [], reachHostile: [], climate: null }), text: r.text };
     }
     function activePreview() { return previewShape(V.preview()); } // what the main map outlines now (null = no preview)
+    // (BLOOM-029D) the exact REAL current → preview surface sky of one Terraform node, from the page's own what-if (the same
+    // computePreview the footer and the map use), without showing it. Not a sky trait → null. Not buyable now → previewSurfaceSky
+    // equals the current sky (nothing would change) and preview.available is false. No mutation is left behind (the page restores its sky).
+    function terraformPreview(id) {
+      const u = sim.traitById[id]; if (!u || u.effect.type !== "sky") return null;
+      const p = previewOf(id), now = hud().skyNow, cur = { temperature: now.temp, moisture: now.moist };
+      return { id, axis: u.effect.axis, available: p.available, currentSurfaceSky: p.sky ? p.sky.current : cur, previewSurfaceSky: p.sky ? p.sky.preview : cur, preview: p };
+    }
     // offered upgrades whose real preview opens this region now (the rules must allow buying it; affordability is not required)
     function wouldHelp(r) {
       const i = indexOf(r); if (i < 0) return null; const out = [];
@@ -269,7 +285,7 @@
 
     const adapter = Object.freeze({
       api: API_VERSION, events: Object.freeze(EVENTS.map(t => "bloom:" + t)),
-      run: runInfo, hud, scenario, regions, region, selection, upgrades, upgrade, previewOf, activePreview, wouldHelp, colony, bubbles,
+      run: runInfo, hud, scenario, regions, region, selection, upgrades, upgrade, previewOf, activePreview, terraformPreview, wouldHelp, colony, bubbles,
       message: () => V.message(), map, tileAt, surface, mapState, effects, runMenu, actions,
       subscribe(fn) { if (typeof fn !== "function") throw new TypeError("subscribe needs a function"); listeners.add(fn); return () => { listeners.delete(fn); }; },
       get revision() { return revision; },
