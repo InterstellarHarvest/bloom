@@ -1,0 +1,18 @@
+BLOOM-029C broad runs (run-all-suites.sh, 26 suites, 2026-10-07), from the 029C worktree under "Experiments & Projects/_worktrees".
+
+Run 1 (working tree before the final implementation commit): 1122 pass / 3 fail.
+  - native-competition-check 44 "selecting a region shows its competition readout … updates with the engine" (legacy shell, live run,
+    wall-clock): the known live-run flake recorded in 029A. Isolated re-run on the same tree: 66/66. Clean 2750cbb (029B worktree): 66/66.
+  - game-flow-check CRASHED at tools/game-flow-check.js:141 "dialog.accept: Cannot accept dialog which is already handled!" (legacy player
+    flow, no &ui=18). Harness race: menuAct() registers a one-shot page.once("dialog") handler per call; an unconsumed earlier handler and
+    a new one both answer the same confirm. Isolated re-run on the same tree: 74/74. Clean 2750cbb: 3 / 3 runs 74/74 (did not reproduce;
+    classified by code reading as a pre-existing harness race unrelated to the rooms, which never mount without &ui=18).
+  - planet-view-check B21: a REAL 029C defect (room anchors existed only after a room first opened) — fixed in 93bb81b (rooms paint once at
+    mount); planet-view-check 80/80 and plant-rooms-check 66/66 (new B21-0 guards it) on the fix.
+
+Run 2 (on the final implementation commit 93bb81b): 1146 pass / 1 fail.
+  - colony-development-check [31] "a successful foothold ends in a distinct bright burst; a plain seed arrival only in a faint ripple —
+    foothold landing: 28 bright px · arrival landing: 13 bright px (33 pale-ripple px)": the pre-existing environment-dependent pixel flake
+    recorded in 028B / 028C1 / 028D1 / 029A / 029B (legacy shell, seeded RNG, wall-clock stepping). Reproduced on the CLEAN accepted baseline
+    2750cbb (the 029B worktree, git status clean, same parent path): run 1 FAIL with the identical "arrival landing: 13 bright px" signature,
+    run 2 PASS. Run 1 of this evidence passed it (68/68). Not a 029C regression: the suite runs the legacy shell, which 029C does not touch.
