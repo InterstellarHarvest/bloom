@@ -15,3 +15,10 @@ crossing's landing tile. Whether it trips depends on the run environment, not on
 So the identical 029B tree passes where 57c73f8 fails, and a clean 57c73f8 fails 3/3 from the same parent path the 029B worktree
 uses. Classified: pre-existing, environment-dependent, reproduced on the accepted baseline; not a 029B regression. The legacy map
 path is also proven unchanged by equivalence-vs-57c73f8.log (8 scripted runs identical, 0 px below the header).
+
+--- Correction run (cd0fbe2, physical map click → actions.selectTile) ---
+Broad run: 1079 pass / 2 fail. colony-development-check [31]: same signature as above (classified above).
+slice-check "pacing: perfect-bot win in 4–8 min (humans slower) — 231 s": the known pacing flake (028C1 / 028D1 suite-flakes: the bot's
+live Math.random spread straddles the 240 s floor; proven deterministic-identical in bloom-028d1/slice-pacing-determinism.txt). Isolated
+re-runs, win seconds (6 each, alternating): 029B 248 247 253 254 263 257 (0 fail) · CLEAN 57c73f8 in its own worktree 252 244 249 253 243 238
+(1 fail, 238 s). Reproduced on the accepted baseline; slice-check runs the legacy shell, which the correction does not touch.

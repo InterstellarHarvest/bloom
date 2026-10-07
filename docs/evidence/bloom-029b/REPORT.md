@@ -34,18 +34,23 @@ layer, Concept 18 mockups, root `index.html`.
 
 ## 3. Focused suite — `tools/planet-view-check.js`
 
-**74 / 74** (`qa-planet-view-check.log`): Node 8 (N1–N7, N3b) · Chromium 36 (B1–B28 at 1280 × 800, B23 at 1024 / 1280 / 1440, B24
-reduced motion, B25 survey, B26 file://) · Firefox 30 (everything at 1280 × 800 except the survey, reduced-motion and file:// runs).
+**80 / 80** after the physical-click correction (`qa-planet-view-check.log`; 74 / 74 on 682604b): Node 8 (N1–N7, N3b) · Chromium 39 (B1–B28 at 1280 × 800, B23 at 1024 / 1280 / 1440, B24
+reduced motion, B25 survey, B26 file://) · Firefox 33 (everything at 1280 × 800 except the survey, reduced-motion and file:// runs).
 It covers the 42 required items: base SHA (N1); legacy path (B1); real mount + one sim (B2); adapter truth (B3, B14, B20); no
 mockup data (N7, B18); shared renderer / no duplicate palette / same-source pixels (N3, N4, B4, B5, B25); cylinder seam (N5) and
 copies (B8); generator / topology / sphere / survey untouched (N6); overlays (B6, B20, B28); selection / X / water / pause–speed
 (B7, B9); banner + categories + wouldHelp + intrinsic buttons (B14–B16); Map View (B11–B13); HUD (B3); pause / speed events (B10);
 training (B21, B22); anchors (B21); scenario cards (B20); network / console (B18, B20b, B25b); widths (B23); reduced motion (B24);
-Firefox; keyboard (B27); rooms seam (B17).
+Firefox; keyboard (B27); rooms seam (B17). **Correction (B7, B29a–c):** a physical map click reports the exact canonical tile, the
+same region clicked again deselects (event still carries the tile), a water click deselects with water:true and its tile, left /
+right repeated cylinder copies emit the same canonical tile and toggle the same region, keyboard / `selectRegion` keep tile −1 and
+`selectRegion` stays idempotent, `selectTile` refuses a non-tile, and the event detail keys are unchanged.
 
 ## 4. Broad regression — 25 suites (`run-all-suites.sh` → `qa-suites-summary.txt`)
 
-**1072 pass / 1 fail** over 25 suites (`qa-suites-summary.txt`). Every engine / gameplay / sphere / survey / menu / transition /
+On the final candidate (cd0fbe2 + evidence): **1079 pass / 2 fail** — colony [31] and slice-check pacing (231 s), both known flakes
+reproduced on a clean 57c73f8 (`suite-flakes.txt`); run-ui-check 40/40, training-check 82/82, planet-view-check 80/80.
+On 682604b: **1072 pass / 1 fail** over 25 suites (`qa-suites-summary.txt`). Every engine / gameplay / sphere / survey / menu / transition /
 training / run-ui suite is green, including `run-ui-check` 40/40 (029A), `training-check` 82/82, `sphere-texture-check` 14/14,
 `destination-survey-check` 11/11. The single failure is the pre-existing `colony-development-check [31]` pixel flake,
 **reproduced 3/3 on a clean 57c73f8 checkout** from the same parent path, while the identical 029B tree passes 4/4 elsewhere
