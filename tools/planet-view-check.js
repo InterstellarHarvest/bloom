@@ -317,6 +317,14 @@ const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
         const pv = await p.evaluate(() => ({ events: __EV.filter(e => e.type === "upgrade-preview").length, active: __pv.A.activePreview() }));
         check(f0 >= 0 && f1 >= 0 && f1 !== f0 && s1 === f1 && s2 === -1 && pv.events === 0 && pv.active === null,
           `${tag} B27 · keyboard: arrow keys move the map's region focus, Enter selects it, Escape clears; hovering a "Would help" button previews it silently (adapter.previewOf: no bloom:upgrade-preview, no shell preview)`, J({ f0, f1, s1, s2, pv })); }
+      // B28 · colony badges (growth focus / local upgrade) and Waterborne crossings are drawn from the run's own state / events
+      { const r = await p.evaluate(() => { const A = __pv.A, o = A.regions().find(r => r.isOrigin).index; BLOOM_API.addBiomass(2000);
+          A.actions.setGrowthFocus(o, "roots"); const local = A.actions.buyLocalUpgrade(o, "rootNetwork"); const cross = A.upgrades().flatMap(b => b.items).find(u => u.effect === "crossing");
+          if (cross) A.actions.buy(cross.id); return { local, cross: cross && cross.id }; });
+        let seen = 0; for (let k = 0; k < 40 && !seen; k++) { await p.evaluate(() => BLOOM_API.advance(40)); await frames(p, 2); seen = await p.evaluate(() => __pv.R.info().lastFrame.crossings); }
+        const st = await p.evaluate(() => ({ last: __pv.R.info().lastFrame, fx: __pv.A.effects().crossings.length, focus: __pv.A.regions().find(r => r.isOrigin).focus, local: __pv.A.regions().find(r => r.isOrigin).localUpgrade }));
+        check(r.local && st.focus === "roots" && st.local === "rootNetwork" && st.last.badges >= 1 && seen > 0,
+          `${tag} B28 · the origin's growth focus (Roots) and local upgrade (Root Network) draw its colony badge; after buying ${r.cross}, real crossing events are animated on the map (effects().crossings)`, J({ r, seen, st })); }
       if (!FF) { await p.mouse.move(640, 300); await p.evaluate(() => __pv.A.actions.deselect()); await frames(p, 2); await shot(p, "06-generated-cylinder-world-planet-view.png"); }
 
       // ---- B19 · First Bloom (rectangle) + selection banner screenshot; no selection screenshot

@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-10-07T00:08:18.734Z",
+  "base": "57c73f85a9ad4b949c55e6781724f9501d8d2d71",
+  "node": {
+    "worlds": [
+      "ocean_archipelago:28",
+      "desert_world:17",
+      "frozen_world:11",
+      "desert_world:22",
+      "frozen_world:4"
+    ],
+    "signaturesEqual": 5,
+    "pixelValuesCompared": 1728000,
+    "pixelValuesDifferent": 0
+  },
+  "run": {
+    "url": "/demos/demo-run.html?archetype=ocean_archipelago&seed=28&ui=18",
+    "planetId": "proc_580988495",
+    "surfaceSignatureStartSky": "09d8f471",
+    "surfaceSignatureNow": "09d8f471",
+    "flatSurfaceAt8x6Hash": "96023cd9",
+    "mapSurfaceCanvasEqualsCanonicalPaint": true,
+    "sky": {
+      "temperature": 8,
+      "moisture": 54
+    },
+    "startSky": {
+      "temperature": 8,
+      "moisture": 54
+    }
+  },
+  "sphere": {
+    "url": "/demos/planet-sphere.html?archetype=ocean_archipelago&seed=28",
+    "planetId": "proc_580988495",
+    "textureSize": [
+      480,
+      240
+    ],
+    "textureHash": "96023cd9",
+    "surfaceSignature": "09d8f471",
+    "textureUploads": 1
+  },
+  "sameSurface": {
+    "planetIds": true,
+    "signatures": true,
+    "pixels": true
+  },
+  "survey": {
+    "n": 9,
+    "same": 9,
+    "ids": [
+      "proc_3903504703",
+      "proc_2049763552",
+      "proc_1343119172",
+      "proc_2848179471",
+      "proc_3852766641",
+      "proc_1516239873",
+      "proc_1621564974",
+      "proc_152250720",
+      "proc_1374216124"
+    ]
+  }
+}
