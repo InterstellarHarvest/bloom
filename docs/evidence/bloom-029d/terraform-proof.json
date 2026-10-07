@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-07T13:09:48.968Z",
+  "generatedAt": "2026-10-07T14:33:47.881Z",
   "base": "2d0fb0899967db96bf23a3c17d4f78c9ab635f81",
   "sphereUnchanged": {
     "files": [
@@ -123,7 +123,7 @@
   },
   "sphere": {
     "module": [
-      "http://127.0.0.1:49927/resources/planet-sphere/planet-sphere-view.js"
+      "http://127.0.0.1:52642/resources/planet-sphere/planet-sphere-view.js"
     ],
     "three": 1,
     "identity": {
