@@ -68,7 +68,7 @@
     const world = document.createElement("canvas"), wctx = world.getContext("2d");      // the whole planet once, at the current tile size
     const surf = document.createElement("canvas"), sctx = surf.getContext("2d");        // the canonical surface, at the current tile size
     let SP = null, RENDER = null, SKY = null, W = 0, H = 0, WRAP = false, TM = null, NREG = 0, JIT = null, EDGES = null, TILES_OF = null;
-    let surfSig = null, surfaceRepaints = 0, frames = 0, restores = 0;
+    let surfSig = null, surfaceRepaints = 0, frames = 0, restores = 0, drawn = { crossings: 0, bubbles: 0, labels: 0, badges: 0 };
     // a 2D canvas can lose its backing store (Chromium drops and restores offscreen contexts, blank, e.g. while the GPU process starts):
     // repaint the surface and ask the owner for a new frame when that happens
     for (const c of [canvas, world, surf]) c.addEventListener("contextrestored", () => { restores++; surfSig = null; if (onInvalidate) onInvalidate(); });
@@ -219,6 +219,7 @@
         if (WRAP && Math.abs(fx1 - fx0) > W / 2) fx1 += fx1 > fx0 ? -W : W;
         const x0 = X0 + fx0 * t, y0 = Y0 + fy0 * t, x1 = X0 + fx1 * t, y1 = Y0 + fy1 * t;
         const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy) || 1, cx = (x0 + x1) / 2 - dy / L * L * 0.22, cy = (y0 + y1) / 2 + dx / L * L * 0.22;
+        if (k === 0) drawn.crossings++;
         const tt = a.elapsed / TT.travel, pt = u => [(1 - u) * (1 - u) * x0 + 2 * (1 - u) * u * cx + u * u * x1, (1 - u) * (1 - u) * y0 + 2 * (1 - u) * u * cy + u * u * y1];
         if (still) { if (tt <= 1) { c.setLineDash([2 * dpr, 4 * dpr]); c.strokeStyle = "rgba(107,74,26,0.85)"; c.lineWidth = 2 * dpr; c.beginPath(); c.moveTo(x0, y0); c.quadraticCurveTo(cx, cy, x1, y1); c.stroke(); c.setLineDash([]); } }
         else for (let j = 0; j < 3; j++) { const u = tt - j * 0.12; if (u < 0 || u > 1) continue; const [bx, by] = pt(u);
@@ -228,9 +229,9 @@
           c.beginPath(); c.arc(x1, y1, t * 0.7 * (1 - g * 0.5), 0, 7); c.fillStyle = `rgba(63,157,75,${still ? 0.85 : 0.9 * (1 - lt)})`; c.fill(); }
         else { c.beginPath(); c.arc(x1, y1, t * (0.35 + 1.0 * g), 0, 7); c.lineWidth = 1.6 * dpr; c.strokeStyle = `rgba(35,103,159,${still ? 0.7 : 0.75 * (1 - lt)})`; c.stroke(); }
       }
-      if (f.labels && labels) drawLabels(c, labels, X0, cw, dpr);
+      if (f.labels && labels) { drawLabels(c, labels, X0, cw, dpr); if (k === 0) { drawn.labels = labels.length; drawn.badges = labels.filter(L => L.focus !== "balanced" || L.local).length; } }
       // Biomass bubbles: gold coins with a "+" (collect by click / tap; the engine auto-collects them later), above the labels
-      for (const b of f.bubbles || []) { const bx = X0 + b.x * t, by = Y0 + b.y * t, r = Math.max(7 * dpr, t * 0.45); if (bx < -r || bx > cw + r) continue;
+      for (const b of f.bubbles || []) { const bx = X0 + b.x * t, by = Y0 + b.y * t, r = Math.max(7 * dpr, t * 0.45); if (k === 0) drawn.bubbles++; if (bx < -r || bx > cw + r) continue;
         c.beginPath(); c.arc(bx, by, r, 0, 7); c.fillStyle = "#f2b324"; c.fill(); c.lineWidth = 1.8 * dpr; c.strokeStyle = "#fffdf7"; c.stroke();
         c.beginPath(); c.arc(bx, by, r + 1.2 * dpr, 0, 7); c.lineWidth = 1 * dpr; c.strokeStyle = "rgba(90,60,0,0.55)"; c.stroke();
         icon(c, "plus", bx, by, r * 1.3, "#5a3c00", 3.2 * dpr); }
@@ -275,7 +276,7 @@
     }
 
     function draw(f) {
-      if (!SP) return; frames++;
+      if (!SP) return; frames++; drawn = { crossings: 0, bubbles: 0, labels: 0, badges: 0 };
       drawWorld(f);
       const c = ctx; c.setTransform(1, 0, 0, 1, 0, 0); c.imageSmoothingEnabled = false;
       c.fillStyle = rgb(frameColor); c.fillRect(0, 0, canvas.width, canvas.height);    // the stage frame (outside the planet only)
@@ -288,7 +289,7 @@
     function info() {
       return { gridWidth: W, gridHeight: H, wrapX: WRAP, tilePx: G.td / G.dpr, tileDevicePx: G.td, dpr: G.dpr, offsetX: G.ox / G.dpr, offsetY: G.oy / G.dpr,
         worldWidth: G.worldW / G.dpr, worldHeight: G.worldH / G.dpr, copies: { from: G.kMin, to: G.kMax, count: G.kMax - G.kMin + 1 },
-        surfaceSignature: SP ? surface.surfaceSignature(SP, { render: RENDER, sky: SKY }) : null, surfaceRepaints, frames, contextRestores: restores,
+        surfaceSignature: SP ? surface.surfaceSignature(SP, { render: RENDER, sky: SKY }) : null, surfaceRepaints, frames, contextRestores: restores, lastFrame: { ...drawn },
         sky: SKY ? surface.skyOf(SP, SKY) : null };
     }
     return Object.freeze({ setSource, setSky, layout, draw, hitTest, bubbleAt, clientOf, info, surfaceCanvas: surf, worldCanvas: world, get planet() { return SP; }, get render() { return RENDER; } });

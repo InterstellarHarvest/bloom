@@ -1,0 +1,17 @@
+Broad run (run-all-suites.sh, 2026-10-06/07): 1 failing check in 25 suites.
+
+FAIL  [31] a successful foothold ends in a distinct bright burst; a plain seed arrival only in a faint ripple  — foothold landing: 27 bright px · arrival landing: 13 bright px (33 pale-ripple px)
+
+The same "arrival landing: 13 bright px" signature is the pre-existing colony-development-check [31] flake recorded in 028B, 028C1,
+028D1 and 029A. It runs the LEGACY shell (no &ui=18) with a seeded RNG but wall-clock stepping, and counts "bright" pixels round a
+crossing's landing tile. Whether it trips depends on the run environment, not on 029B's code:
+
+  029B worktree (…/Experiments & Projects/_worktrees/bloom-029b-…)        6 / 6 runs fail
+  57c73f8 tree in the scratch directory (git archive)                     3 / 6 runs fail
+  57c73f8 + 029B's four inert file loads, scratch directory               1 / 4 runs fail
+  the EXACT 029B tree copied to the scratch directory (rsync, no .git)    0 / 4 runs fail
+  CLEAN 57c73f8 in its own worktree (…/_worktrees/bloom-029a-run-ui-boundary, git status clean)   3 / 3 runs fail (same signature)
+
+So the identical 029B tree passes where 57c73f8 fails, and a clean 57c73f8 fails 3/3 from the same parent path the 029B worktree
+uses. Classified: pre-existing, environment-dependent, reproduced on the accepted baseline; not a 029B regression. The legacy map
+path is also proven unchanged by equivalence-vs-57c73f8.log (8 scripted runs identical, 0 px below the header).
