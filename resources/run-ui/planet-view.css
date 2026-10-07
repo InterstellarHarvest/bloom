@@ -180,7 +180,7 @@ html.ui18 body{background:#242c22}
 .pv-log{flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .pv-log .ic{width:16px; height:16px; color:var(--leaf-dark); margin-right:6px}
 .pv-runid{flex:none; color:var(--ink-faint); font-size:12px; white-space:nowrap; max-width:42%; overflow:hidden; text-overflow:ellipsis}
-.pv-toast{position:absolute; left:50%; top:12px; transform:translateX(-50%); z-index:6; max-width:min(560px, calc(100% - 24px)); background:var(--ink); color:#fff7e0; border-radius:12px;
+.pv-toast{position:absolute; left:50%; top:88px; transform:translateX(-50%); z-index:60; max-width:min(560px, calc(100% - 24px)); background:var(--ink); color:#fff7e0; border-radius:12px;
   padding:9px 14px; font-weight:800; font-size:13.5px; box-shadow:var(--shadow-lg); display:flex; gap:8px; align-items:center}
 .pv-toast .ic{width:18px; height:18px; color:#ffe08a}
 .pv-dev{display:inline-block; margin-left:6px; padding:0 6px; border-radius:6px; background:#ffe08a; color:var(--ink); font-size:10.5px; font-weight:900; letter-spacing:.8px; vertical-align:2px}

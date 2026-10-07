@@ -9,7 +9,8 @@
 // PRESENTATION ONLY. It reads the run through window.BLOOM_RUN_UI.adapter and acts only through adapter.actions (each fires its
 // unchanged bloom:* event); it reads no page global, owns no rule, price or simulation, and imports no Concept 18 mockup file or
 // data. The rooms (Region Inspect, Adapt, Spread, Terraform) are NOT built here: their buttons go through one navigation seam
-// (rooms.register / openRoom) that 029C / 029D fill; until then a request says so (migration build only).
+// (rooms.register / openRoom) that 029C (resources/run-ui/decision-rooms.js: Region Inspect, Adapt, Spread) and 029D (Terraform)
+// fill; until a room is registered a request says so (migration build only).
 //
 //   const pv = BLOOM.planetView.mount(adapter, { root: document.body })   → the instance (also BLOOM.planetView.instance)
 //
@@ -105,8 +106,8 @@
         `<section class="pv-scn" id="pvScn" data-tutorial="scenario-status" hidden aria-live="off"></section>` +
         `<div class="pv-legend" id="pvLegend" hidden></div>` +
         `<aside class="pv-banner" id="pvBanner" data-tutorial="inspect" hidden aria-label="Selected region"></aside>` +
-        `<div class="pv-toast" id="pvToast" role="status" hidden></div>` +
       `</main>` +
+      `<div class="pv-toast" id="pvToast" role="status" hidden></div>` + // at the root: readable above the 029C room veil
       `<footer class="pv-foot"><span class="pv-log" id="pvLog" data-tutorial="message-log" aria-live="polite"></span><span class="pv-runid" id="pvRunId"></span></footer>` +
       `<div class="pv-pop pv-lens" id="pvLens" role="group" aria-label="Map View" hidden><span class="lk">Map View</span>` +
         LENSES.map(([k, name, ic]) => `<button type="button" class="pv-lb" data-lens="${k}" aria-pressed="${k === ""}">${ico(ic)}<span>${name}</span></button>`).join("") + `</div>` +
@@ -117,6 +118,7 @@
     // (the shell re-renders its inspect panel, so this runs again whenever an anchor reappears there; the shell keeps every other
     // anchor — growth focus, local upgrades, boards, upgrades, report — until the rooms that show them exist: 029C / 029D)
     const REHOMED = ["biomass", "coverage", "sky", "play-pause", "speed", "run-menu", "map", "message-log", "inspect", "readout", "limiting-factor", "colony-status"];
+    // (BLOOM-029C) the rooms claim more names through rooms.claimAnchors(names); the same rule then applies to them
     const rehome = () => {
       for (const n of REHOMED) document.querySelectorAll(`[data-tutorial="${n}"]`).forEach(e => { if (!el.contains(e)) { e.setAttribute("data-tutorial-legacy", n); e.removeAttribute("data-tutorial"); } });
       if (MENU) document.querySelectorAll('#playMenu [data-tutorial^="action-"]').forEach(e => { e.setAttribute("data-tutorial-legacy", e.dataset.tutorial); e.removeAttribute("data-tutorial"); });
@@ -292,7 +294,7 @@
         const bs = [...menuPop.querySelectorAll("[data-act]")], k = bs.indexOf(document.activeElement); bs[(k + (e.key === "ArrowDown" ? 1 : bs.length - 1)) % bs.length].focus(); }); }
 
     // ---------------------------------------------------------------- tools · room navigation seam (029C / 029D fill it)
-    const rooms = { region: null, adapt: null, spread: null, terraform: null };
+    const rooms = { region: null, adapt: null, spread: null, terraform: null }; let activeRoom = null;
     function paintTools() { el.querySelectorAll(".pv-tool[data-tool]").forEach(b => { const t = b.dataset.tool; if (t === "mapview") return;
       b.dataset.room = rooms[t] ? "ready" : "unavailable"; b.title = rooms[t] ? ROOM_TITLE[t] : `${ROOM_TITLE[t]} (arrives in BLOOM-${ROOM_MILESTONE[t]})`; }); }
     /**
@@ -395,10 +397,16 @@
 
     const api = {
       el, renderer: R, adapter: A,
-      rooms: Object.freeze({ register(name, impl) { if (!(name in rooms)) throw new Error(`BLOOM.planetView: unknown room "${name}"`); rooms[name] = impl || null; paintTools(); }, has: n => !!rooms[n] }),
+      rooms: Object.freeze({ register(name, impl) { if (!(name in rooms)) throw new Error(`BLOOM.planetView: unknown room "${name}"`); rooms[name] = impl || null; paintTools(); }, has: n => !!rooms[n],
+        // (BLOOM-029C) a registered room re-homes shell anchors it now owns: the hidden shell's copies become data-tutorial-legacy
+        claimAnchors(names) { for (const n of names) if (!REHOMED.includes(n)) REHOMED.push(n); rehome(); },
+        // (BLOOM-029C) the room controller reports the open room; the tools show it pressed
+        setActive(name) { activeRoom = name || null; el.querySelectorAll(".pv-tool[data-tool]").forEach(b => { if (b.dataset.tool !== "mapview") b.setAttribute("aria-pressed", String(b.dataset.tool === activeRoom)); }); },
+        get active() { return activeRoom; }, parts: () => [el.querySelector(".pv-hud"), stage, el.querySelector(".pv-foot")] }),
+      toast,
       openRoom, setLens, previewLens, openLens, openMenu,
       state: () => ({ lens: state.lens, lensPreview: state.lensPv, lensOpen: state.lensOpen, menuOpen: state.menuOpen, hover: state.hover, focus: state.focus,
-        selection: A.selection().index, banner: !banner.hidden, scenarioOpen: state.scnOpen, layerShown: el.dataset.layer || null }),
+        selection: A.selection().index, banner: !banner.hidden, scenarioOpen: state.scnOpen, layerShown: el.dataset.layer || null, room: activeRoom }),
       redraw() { dirty = true; },
       dispose() { disposed = true; cancelAnimationFrame(raf); unsub(); anchorWatch.disconnect(); el.remove(); document.documentElement.classList.remove("ui18"); instance = null; },
     };
