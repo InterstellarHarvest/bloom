@@ -28,10 +28,17 @@
 "use strict";
 const path = require("path"), fs = require("fs"), http = require("http"), { execSync } = require("child_process");
 const ROOT = path.resolve(__dirname, ".."), BASE_SHA = "3ab99337676e214c200b34cbbeeff844f67c7e8f";
+// (BLOOM-028D2) the accepted 029F final candidate: the byte-identity / scope / run-page guards below (N2, N3, N10) are bounded to
+// 3ab9933 … 8f4c273 once a later milestone has built on it (028D2 changes the training layer, the title's ExpeditionEntry / MainMenu and the
+// run page's training actions by design), exactly as the 029B–029E suites bound theirs (END_SHA); at 8f4c273 itself the working tree is checked as before
+const END_SHA = "8f4c273b2baedab5739cdfc28478366c50ee3422";
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const BROWSERS = (argOf("--browsers") || "chromium").split(","), EVIDENCE = argv.includes("--evidence");
 const EVD = path.join(ROOT, "docs/evidence/bloom-029f");
 const read = f => fs.readFileSync(path.join(ROOT, f), "utf8"), J = JSON.stringify, git = c => execSync("git " + c, { cwd: ROOT, encoding: "utf8" }).trim();
+const AT_END = (() => { try { return git(`merge-base --is-ancestor ${END_SHA} HEAD`) === "" && git("rev-parse HEAD") !== END_SHA; } catch { return false; } })();
+const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT_END ? [] : git("ls-files --others --exclude-standard").split("\n").filter(Boolean);
+const hashAt = f => AT_END ? git(`rev-parse ${END_SHA}:${f}`) : git(`hash-object ${f}`), readAt = f => AT_END ? git(`show ${END_SHA}:${f}`) : read(f);
 let fails = 0; const t0 = Date.now();
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (!ok) fails++; };
 const info = (name, detail) => console.log(`INFO  ${name}  — ${detail}`);
@@ -58,13 +65,13 @@ const memStorage = () => { const m = new Map(); return { getItem: k => (m.has(k)
     "resources/training/training-run.js", "resources/training/training-store.js", "resources/main-menu/main-menu.js", "resources/main-menu/main-menu-data.js", "resources/main-menu/main-menu.css", "resources/main-menu/expedition-entry.js", "resources/main-menu/black-fade.js",
     "resources/run-ui/planet-view.js", "resources/run-ui/planet-view.css", "resources/run-ui/decision-rooms.js", "resources/run-ui/decision-rooms.css", "resources/run-ui/run-report.js", "resources/run-ui/run-report.css", "resources/run-ui/gameplay-transition.js", "resources/run-ui/run-map-renderer.js", "resources/run-ui/plant-specimen.js", "resources/run-ui/terraform-globe.js",
     "index.html", "demos/destination-survey.html", "demos/expedition-descent.html", "demos/planet-sphere.html", "demos/planet-sphere-grid.html", "demos/atmosphere-transition.html", "GAME_BIBLE.md"];
-  { const same = f => git(`rev-parse ${BASE_SHA}:${f}`) === git(`hash-object ${f}`);
-    const diff = PROTECTED.filter(f => !same(f)), dirs = git(`diff --stat ${BASE_SHA} -- resources/destination-survey/ resources/planet-sphere/ resources/planet-surface/ resources/atmosphere-transition/ resources/training/ resources/main-menu/ planets/ demos/ui-mockups/`);
+  { const same = f => git(`rev-parse ${BASE_SHA}:${f}`) === hashAt(f);
+    const diff = PROTECTED.filter(f => !same(f)), dirs = git(`diff --stat ${RANGE} -- resources/destination-survey/ resources/planet-sphere/ resources/planet-surface/ resources/atmosphere-transition/ resources/training/ resources/main-menu/ planets/ demos/ui-mockups/`);
     PROOF.unchanged = { files: PROTECTED.length, differing: diff, surveyBlob: git("hash-object resources/destination-survey/destination-survey.js"), dirDiff: dirs || "(empty)" };
     check(!diff.length && !dirs, "N2 · byte-identical to 3ab9933: the Destination Survey (screen, data, worker, pool, css: generation, validation, grid, focus, dossier, selected identity, sphere choreography, DRAMATIC descent), PlanetSphereView + texture, the canonical surface, AtmosphereTransition, the engine, generator, validators, play / scenario modules, content, planets, the training layer, the menu + ExpeditionEntry + fade, the production view / rooms / report / bridge / map renderer / specimen / globe helper, root index.html, the standalone demo pages and the bible",
       diff.length ? "DIFFER: " + diff.join(", ") : `${PROTECTED.length} files + 8 directories · destination-survey.js blob ${PROOF.unchanged.surveyBlob.slice(0, 10)}`); }
   // N3 · scope
-  { const changed = git(`diff --name-only ${BASE_SHA}`).split("\n").filter(Boolean).concat(git("ls-files --others --exclude-standard").split("\n").filter(Boolean));
+  { const changed = git(`diff --name-only ${RANGE}`).split("\n").filter(Boolean).concat(untracked());
     const allowed = p => p === "demos/demo-run.html" || p === "demos/main-menu.html" || p === "content/play.js" || p === "resources/run-ui/run-ui-adapter.js" || p.startsWith("resources/expedition/") || p.startsWith("tools/") || p.startsWith("docs/") || p === "README.md";
     const out = changed.filter(p => !allowed(p));
     check(!out.length && changed.includes("resources/expedition/expedition-handoff.js"), "N3 · scope: 029F adds resources/expedition/ and changes only the run page, the title page, content/play.js (action / failure copy), one additive adapter read, the suites, docs / evidence and README", `${changed.sort().join(", ")}${out.length ? " · OUTSIDE: " + out.join(", ") : ""}`); }
@@ -168,14 +175,14 @@ const memStorage = () => { const m = new Map(); return { getItem: k => (m.has(k)
     check(strings.every(s => typeof s === "string" && s.length > 3 && !DEV_COPY.test(s) && !EMOJI.test(s)) && ["missing", "link", "malformed", "version", "planet", "integrity", "note", "title", "mainMenu"].every(k => typeof E.failure[k] === "string") && !arrBad.length && !/stack|Error:/.test(J(E)),
       "N9 · the expedition copy lives in content/play.js (three actions with notes; a failure title, one body per reason — missing / link / malformed / version / planet / integrity — a note that nothing was substituted, the Main menu label); no developer wording, no emoji, no stack-trace wording in it or in the arrival module's strings", `${strings.length} strings`); }
   // N10 · the training branch and the ten dispatch sites / detail keys / anchors are those of 3ab9933; the adapter's only addition
-  { const runBase = git(`show ${BASE_SHA}:demos/demo-run.html`), runAt = read("demos/demo-run.html");
+  { const runBase = git(`show ${BASE_SHA}:demos/demo-run.html`), runAt = readAt("demos/demo-run.html");
     const sites = s => EVTS.map(t => [t, (s.match(new RegExp(`emit\\("${t}"`, "g")) || []).length]), keysOf = s => EVTS.map(t => { const m = [...s.matchAll(new RegExp(`emit\\("${t}",\\s*\\{([^}]*)\\}`, "g"))].map(x => x[1].replace(/\s+/g, "")); return [t, m.join(" | ")]; });
     const anchors = s => [...new Set([...s.matchAll(/data-tutorial="([^"]+)"/g)].map(m => m[1]))].sort();
     const trainBlock = s => (s.match(/if\(BLOOM_RUN\.training\)\{[\s\S]*?document\.head\.appendChild\(m\); \}/) || [""])[0], harness = s => (s.match(/function harnessRun\(\)\{[\s\S]*?\n\}\nfunction startRun/) || [""])[0], play = s => (s.match(/function playBoot\(q\)\{[\s\S]*?\n\}\n/) || [""])[0];
     const same = J(sites(runBase)) === J(sites(runAt)) && J(keysOf(runBase)) === J(keysOf(runAt)) && J(anchors(runBase)) === J(anchors(runAt)) && trainBlock(runBase) && trainBlock(runBase) === trainBlock(runAt) && harness(runBase) && harness(runBase) === harness(runAt) && play(runBase) && play(runBase) === play(runAt);
-    const RU = BLOOM.runUI, adDiff = git(`diff ${BASE_SHA} -- resources/run-ui/run-ui-adapter.js`).split("\n").filter(l => /^[+-][^+-]/.test(l));
+    const RU = BLOOM.runUI, adDiff = git(`diff ${RANGE} -- resources/run-ui/run-ui-adapter.js`).split("\n").filter(l => /^[+-][^+-]/.test(l));
     const adOk = RU.API_VERSION === 1 && RU.EVENTS.length === 10 && J(RU.EVENTS) === J(EVTS) && adDiff.length === 2 && adDiff.every(l => l.startsWith("+") && /expedition/.test(l));
-    const trainingFiles = ["resources/training/training-run.js", "resources/training/training-store.js", "content/training.js", "planets/training_grounds.js"].every(f => git(`rev-parse ${BASE_SHA}:${f}`) === git(`hash-object ${f}`));
+    const trainingFiles = ["resources/training/training-run.js", "resources/training/training-store.js", "content/training.js", "planets/training_grounds.js"].every(f => git(`rev-parse ${BASE_SHA}:${f}`) === hashAt(f));
     check(same && adOk && trainingFiles, "N10 · the run page keeps every bloom:* dispatch site with the same detail keys, the same data-tutorial anchor set, the identical training branch, harnessRun() and playBoot() as 3ab9933 (direct / developer / training boots untouched); the training layer, data and world are byte-identical; the adapter stays api 1 with the 10 events and its whole diff is the one additive `expedition` provenance read in run()",
       `anchors ${anchors(runAt).length} · adapter diff lines ${adDiff.length}`); }
 
@@ -249,7 +256,10 @@ const memStorage = () => { const m = new Map(); return { getItem: k => (m.has(k)
     let browser; try { browser = await pw[bname].launch(); } catch (e) { check(false, `${tag} browser launches`, e.message.split("\n")[0]); continue; }
     console.log(`# ${bname}`);
     const reqs = [], errs = [];
-    const context = async (opts = {}) => { const c = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: opts.rm ? "reduce" : "no-preference" }); await c.addInitScript(INIT); return c; };
+    // (BLOOM-028D2) a player with a training record: the first-run training recommendation (tools/guided-training-check.js G9) would otherwise
+    // open before the survey on the first BEGIN EXPEDITION of every fresh context; this suite is about the departure, not the first run
+    const context = async (opts = {}) => { const c = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: opts.rm ? "reduce" : "no-preference" }); await c.addInitScript(INIT);
+      await c.addInitScript(() => { try { if (!localStorage.getItem("strange-bloom.training")) localStorage.setItem("strange-bloom.training", '{"v":1,"status":"completed","at":1}'); } catch {} }); return c; };
     const newPage = async (c, label) => { const p = await c.newPage(); p.label = label; p.on("pageerror", e => errs.push(`${label}: ${e.message}`)); p.on("console", m => { if (m.type() === "error") errs.push(`${label}: console: ${m.text()}`); }); p.on("request", r => reqs.push(r.url())); p.on("dialog", d => d.accept()); return p; };
     try {
       const c = await context(), p = await newPage(c, "flow");

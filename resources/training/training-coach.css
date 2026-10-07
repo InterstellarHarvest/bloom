@@ -1,0 +1,66 @@
+/*
+  BLOOM-028D2 — the guided training's callout (resources/training/training-coach.js) and the one Skip confirmation
+  (resources/training/training-run.js). docs/GUIDED_TRAINING_v1.md §7. The production card family (cream card, ink border, the organic
+  radii, the rooms' and report's colours); no web fonts, no external requests. Scoped to .tc-* (the coach's own layer above the
+  Planet View, its rooms and its report) and .tsk-* (the skip dialog).
+  One callout, one restrained ring on the real control, an optional leader line; no full-screen dim, nothing that eats the target's
+  clicks (every coach element but the card itself is pointer-events:none). Reduced motion: no pulse, no glide, no entrance lift —
+  the card and ring jump to place, opacity only.
+*/
+.tc-layer{--card:#fffdf7; --paper:#fbf6ea; --line-2:#d3c39f; --ink:#2f3a2c; --ink-soft:#5f6b57; --gold:#f2b324; --gold-deep:#a86f00; --gold-soft:#fff1c7;
+  --leaf:#3f9d4b; --focus:#1f6fd1; --r-md:16px 13px 17px 14px;
+  --font:ui-rounded,"SF Pro Rounded","Nunito","Varela Round","Trebuchet MS",system-ui,sans-serif;
+  position:fixed; inset:0; z-index:500; pointer-events:none; font-family:var(--font); color:var(--ink)}
+.tc-layer *{box-sizing:border-box}
+.tc-card{position:fixed; left:0; top:0; width:340px; pointer-events:auto; background:var(--card); color:var(--ink);
+  border:3px solid var(--ink); border-radius:var(--r-md); padding:10px 14px 12px; font-size:15px; line-height:1.4;
+  box-shadow:0 4px 0 rgba(80,60,20,.10), 0 16px 40px rgba(30,24,8,.32); transition:left .18s ease, top .18s ease, opacity .18s ease}
+.tc-card[hidden]{display:none}
+.tc-card:focus{outline:none} .tc-card:focus-visible{outline:3px solid var(--focus); outline-offset:3px}
+.tc-card.tc-in{animation:tcIn .22s ease-out}
+@keyframes tcIn{from{opacity:0; transform:translateY(5px)} to{opacity:1; transform:none}}
+.tc-top{display:flex; align-items:center; gap:8px; min-height:30px}
+.tc-kicker{font-size:11px; font-weight:900; letter-spacing:1.6px; color:var(--gold-deep)}
+.tc-count{font-size:12px; font-weight:800; color:var(--ink-soft)}
+.tc-skip{margin-left:auto; font:inherit; font-size:13px; font-weight:800; color:var(--ink); background:var(--paper); border:2px solid var(--line-2);
+  border-radius:12px; padding:4px 10px; min-height:34px; cursor:pointer}
+.tc-skip:hover{border-color:var(--ink)} .tc-skip:focus-visible{outline:3px solid var(--focus); outline-offset:2px}
+.tc-bar{height:5px; margin:6px 0 8px; background:#efe5cc; border-radius:3px; overflow:hidden}
+.tc-bar i{display:block; height:100%; background:linear-gradient(90deg,var(--gold-deep),var(--gold)); transition:width .3s ease}
+.tc-ack{display:flex; gap:6px; align-items:flex-start; margin:0 0 6px; padding:5px 8px; font-size:13px; font-weight:700; color:#235b2c; background:#e2f2d6; border-radius:10px}
+.tc-ack svg{flex:none; width:16px; height:16px; margin-top:1px; fill:none; stroke:currentColor; stroke-width:3; stroke-linecap:round; stroke-linejoin:round}
+.tc-ack[hidden]{display:none}
+.tc-title{margin:0 0 3px; font-size:18px; font-weight:900; line-height:1.2; color:var(--ink)}
+.tc-body{margin:0}
+.tc-status{margin:7px 0 0; font-size:13px; font-weight:700; color:#7a4d00}
+.tc-status:empty{display:none}
+.tc-live{position:fixed; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap}
+
+/* the ring on the real control: never covers it (pointer-events:none, a frame drawn OUTSIDE its box), never hides its text */
+.tc-ring{position:fixed; pointer-events:none; border:3px solid var(--gold); border-radius:12px;
+  box-shadow:0 0 0 2px rgba(47,58,44,.85), 0 0 18px 2px rgba(242,179,36,.55); animation:tcPulse 1.8s ease-in-out infinite}
+.tc-ring.tc-round{border-radius:50%}
+.tc-ring.tc-secondary{border-width:2px; border-style:solid; border-color:rgba(242,179,36,.85); box-shadow:0 0 0 2px rgba(47,58,44,.55); animation:none}
+@keyframes tcPulse{50%{box-shadow:0 0 0 2px rgba(47,58,44,.85), 0 0 6px 0 rgba(242,179,36,.25)}}
+.tc-leader{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible}
+.tc-leader line{stroke:var(--ink); stroke-width:3; stroke-linecap:round}
+.tc-leader circle{fill:var(--gold); stroke:var(--ink); stroke-width:2}
+/* narrow windows (< 900 px): the card docks to the top or bottom edge, full width up to 560 px (placeCard) */
+.tc-card[data-side^="dock"]{max-width:560px}
+/* reduced motion: opacity only — no pulse, no glide, no entrance lift. .tc-rm is set by the coach from the player's Settings choice, else
+   the OS (it follows prefers-reduced-motion changes live), so Settings "full" can keep the motion on a reduced OS: no @media rule here */
+.tc-rm .tc-card{transition:opacity .12s linear} .tc-rm .tc-card.tc-in{animation:none} .tc-rm .tc-ring{animation:none} .tc-rm .tc-bar i{transition:none}
+
+/* the one Skip confirmation (training-run.js): a production dialog, never window.confirm */
+.tsk{position:fixed; inset:0; z-index:700; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(36,44,34,.55);
+  font-family:ui-rounded,"SF Pro Rounded","Nunito","Varela Round","Trebuchet MS",system-ui,sans-serif; color:#2f3a2c}
+.tsk[hidden]{display:none}
+.tsk-card{width:min(420px,100%); background:#fffdf7; border:3px solid #2f3a2c; border-radius:22px 18px 24px 18px; padding:18px 20px 16px;
+  box-shadow:0 4px 0 rgba(80,60,20,.10), 0 18px 48px rgba(30,24,8,.35)}
+.tsk-card h2{margin:0 0 6px; font-size:22px; font-weight:900}
+.tsk-card p{margin:0 0 14px; font-size:15px; line-height:1.4; color:#5f6b57}
+.tsk-acts{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap}
+.tsk-btn{font:inherit; font-size:15px; font-weight:800; min-height:44px; padding:6px 16px; border-radius:14px; border:2px solid #d3c39f; background:#fbf6ea; color:#2f3a2c; cursor:pointer;
+  box-shadow:0 2px 0 #d3c39f}
+.tsk-btn.primary{background:#2f3a2c; color:#fff7e0; border-color:#2f3a2c; box-shadow:0 2px 0 #11160f}
+.tsk-btn:focus-visible{outline:3px solid #1f6fd1; outline-offset:3px}

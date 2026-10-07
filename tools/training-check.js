@@ -235,8 +235,8 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
       const w = await last(p, "win"), rep = await p.evaluate(() => ({ h2: document.querySelector("#report h2").textContent, acts: [...document.querySelectorAll("#runActions button")].map(b => b.dataset.act),
         modal: document.getElementById("reportModal").classList.contains("on"), status: BLOOM_TRAINING_UI.status().status, order: window.__EV.map(e => e.type).filter(t => t !== "upgrade-preview") }));
       check(won && w && w.detail.training === true && w.detail.planetId === "training_grounds" && w.detail.coverage >= 0.65 && rep.modal && /TRAINING COMPLETE/.test(rep.h2)
-        && J(rep.acts) === J(["restartTraining", "mainMenu"]) && rep.status === "completed",
-        `${B} B2g · reaching 65 % → bloom:win {coverage, ticks, planetId, training}; the report reads Training complete with Restart · Main menu, and the status is recorded "completed"`,
+        && J(rep.acts) === J(["beginExpedition", "restartTraining", "mainMenu"]) && rep.status === "completed",
+        `${B} B2g · reaching 65 % → bloom:win {coverage, ticks, planetId, training}; the report reads Training complete with (BLOOM-028D2) Begin Expedition · Restart training · Main menu, and the status is recorded "completed"`,
         `coverage ${w && (w.detail.coverage * 100).toFixed(1)}% at tick ${w && w.detail.ticks} · ${rep.h2}`);
       check(EVTS.every(t => rep.order.includes(t) || t === "upgrade-preview") && !p.errs.length, `${B} B2h · all ten event types seen, no page errors`, rep.order.join(" → ").slice(0, 400));
       if (SHOTS && bname === "chromium") await p.screenshot({ path: path.join(SHOTS, "02-training-complete.png") });
@@ -294,7 +294,9 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
         `title black ${leave && leave.dur} ms, max ${leave && leave.max} over ${leave && leave.n} frames · lift ${coverAnim} ms · ${arr.url.replace(BASE, "")}`);
       const exitVia = async act => { await p.click("#pvMenuBtn"); const durP = p.waitForFunction(() => { const c = document.getElementById("trainingCover"), a = c && c.getAnimations()[0]; return a ? a.effect.getTiming().duration : null; }, null, { timeout: 5000, polling: "raf" }).then(h => h.jsonValue()).catch(() => null);
         const navP = act === "restartTraining" ? p.waitForEvent("load", { timeout: 15000 }) : p.waitForURL(u => u.href.startsWith(`${BASE}/demos/main-menu.html`), { timeout: 15000 });
-        await p.click(`#pvMenu [data-act="${act}"]`); const dur = await durP; await navP; return dur; };
+        await p.click(`#pvMenu [data-act="${act}"]`);
+        if (act === "skipTraining") await p.click('[data-training-skip] [data-skip="skip"]'); // (BLOOM-028D2) a guided training asks once before a skip
+        const dur = await durP; await navP; return dur; };
       const d1 = await exitVia("mainMenu"); await title();
       const back1 = await p.evaluate(() => ({ url: location.href, status: (() => { try { return JSON.parse(localStorage.getItem("strange-bloom.training")); } catch { return "err"; } })() }));
       check(d1 === toBlack && back1.url === MENU && back1.status === null, `${B} B5b${R} · ☰ → Main menu: fades to black (${toBlack} ms) and returns to the very title page; nothing recorded`, `${d1} ms · ${back1.url.replace(BASE, "")}`);

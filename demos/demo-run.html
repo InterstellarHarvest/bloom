@@ -81,6 +81,9 @@
   upgrade-preview, upgrade-purchase, growth-focus, local-upgrade, bubble-collect, win, run-ready), stable data-tutorial anchors
   on the controls, and BLOOM_RUN_UI.placeBubble(sectionId) for a bonus bubble placed on purpose. Contracts:
   docs/TRAINING_FOUNDATION_v1.md. QA: tools/training-check.js.
+  BLOOM-028D2 (guided training): in training mode on the production UI the training layer mounts the guided coach (thirteen
+  outcome-driven lessons that point at the real controls; the player acts, the coach observes) and asks once before a skip; the
+  finished training's report offers Begin Expedition · Restart training · Main menu (no Keep playing). docs/GUIDED_TRAINING_v1.md.
   BLOOM-029F (exact expedition handoff): ?play=1&expedition=<token> is an EXPEDITION run — the exact planet the player chose in the
   Destination Survey, read back VERBATIM from the session handoff (resources/expedition/expedition-handoff.js, written by the title page
   under the DRAMATIC cloud cover) and rehydrated as the run's planet BEFORE the one sim is created. No generator, world search or attempt
@@ -447,8 +450,10 @@ const AUTH_Q=BLOOM_RUN.planetParam?"&planet="+encodeURIComponent(BLOOM_RUN.plane
 function playActions(){ const X=PC.actions, q=BLOOM.play.runQuery;
   if(XP) return [{id:"playAgain", label:XC.playAgain, note:XC.playAgainNote, href:XP.playAgainHref, primary:true},
     {id:"choosePlanet", label:XC.choosePlanet, note:XC.choosePlanetNote, href:XP.chooseHref}, {id:"mainMenu", label:XC.mainMenu, note:XC.mainMenuNote, href:XP.returnTo}];
-  if(TRAIN) return [{id:"restartTraining", label:TC.restart, note:TC.restartNote, primary:!sim.won}, // (BLOOM-028D1) training: its own three
-    ...(sim.won?[]:[{id:"skipTraining", label:TC.skip, note:TC.skipNote}]), {id:"mainMenu", label:TC.mainMenu, note:TC.mainMenuNote, primary:sim.won}];
+  if(TRAIN) return sim.won // (BLOOM-028D1) training: its own three; (BLOOM-028D2) finished: Begin Expedition · Restart training · Main menu
+    ? [{id:"beginExpedition", label:TC.beginExpedition, note:TC.beginExpeditionNote, primary:true}, {id:"restartTraining", label:TC.restart, note:TC.restartNote},
+       {id:"mainMenu", label:TC.mainMenu, note:TC.mainMenuNote}]
+    : [{id:"restartTraining", label:TC.restart, note:TC.restartNote, primary:true}, {id:"skipTraining", label:TC.skip, note:TC.skipNote}, {id:"mainMenu", label:TC.mainMenu, note:TC.mainMenuNote}];
   if(!RUN_ARCH) return [{id:"playAgain", label:X.playAgain, href:"demo-run.html?play=1"+AUTH_Q, primary:true},
     {id:"changePlanet", label:PC.choose.action, href:"../index.html#/planet"}, {id:"home", label:X.home, href:"../index.html"}];
   return [{id:"playAgain", label:X.playAgain, note:X.playAgainNote, href:"demo-run.html?"+q({archetype:RUN_ARCH, seed:BLOOM_RUN.seed, scenario:RUN_SCN}), primary:true},
@@ -466,7 +471,7 @@ function goAction(act,href){
   if(!sim.won&&!sim.lost&&!confirm(PC.actions.confirmLeave)) return false; location.href=href; return true; }
 // (BLOOM-028D1) training actions go through the training layer (fade, status); without it (an ES module: not over file://) just go
 function trainingGo(act){ const ui=window.BLOOM_TRAINING_UI; if(ui) return ui.go(act);
-  if(act==="restartTraining") location.reload(); else location.href=TRAIN.returnTo; }
+  if(act==="restartTraining") location.reload(); else location.href=act==="beginExpedition"&&BLOOM.expedition?BLOOM.expedition.withBegin(new URL(TRAIN.returnTo,location.href).href):TRAIN.returnTo; }
 // display names: generated worlds can repeat a biome name, so repeats get a number (First Bloom has none)
 const LABEL=SEC.map((s,i)=>{ const same=SEC.filter(x=>x.name===s.name); return same.length>1?`${s.name} ${same.indexOf(s)+1}`:s.name; });
 // geography for water worlds (BLOOM-007): landmass per section, crossing links from the engine's own geometry
@@ -1361,7 +1366,7 @@ function legacyWinHtml(d){ const lbl=b=>b.single?b.name:`${b.short||b.name} ×${
     ${d.colonyUpgrades.length?`<div style="margin-top:6px"><b>Colony upgrades:</b> ${d.colonyUpgrades.map(c=>`${c.name} in ${c.region.name}`).join(', ')}</div>`:''}
     <div class="debrief"><b>Why it worked:</b> every region has a <i>limiting factor</i>: the one condition furthest outside your plant's tolerance. You fixed enough of them to hold the planet${d.gaveUp.length?`, and your build gave these up:<ul>${d.gaveUp.map(g=>`<li><b>${g.region.name}</b> — ${g.reason}</li>`).join('')}</ul>${d.why.gaveUpNote}`:"."}</div>
     ${d.built.length?`<div><b>Real plants do this too:</b><ul class="analog">${d.analogs.map(a=>`<li><b>${a.name}</b> — ${a.science}</li>`).join('')}</ul></div>`:''}
-    <button class="btn" id="reportContinue" data-tutorial="report-continue">Keep playing →</button>${PLAY?runActionsHtml():""}`; }
+    <button class="btn" id="reportContinue" data-tutorial="report-continue"${TRAIN?" hidden":""}>Keep playing →</button>${PLAY?runActionsHtml():""}`; } // (028D2) training ends at its report (the anchor stays, hidden, as in the production report)
 function legacyLossHtml(d){ const I=d.identity, e=d.elapsed;
   return `<h2>✕ EXTINCTION</h2>
     <div class="sub" id="lossWhy">No living plants were left anywhere for ${d.graceSeconds} s, so the run is over (${e.mins}m ${String(e.secs).padStart(2,"0")}s${I.kind==="procedural"?` on <b>${I.planetName}</b>, ${I.archetypeName} · ${I.seedWord} ${I.seed}`:""}).</div>
@@ -1372,12 +1377,12 @@ function legacyLossHtml(d){ const I=d.identity, e=d.elapsed;
 // (running again; no bloom:play-pause, as before); Restart this run = the harness's reload (an extinction outside player mode);
 // the player / training actions = goAction (the page's own confirm / training-layer path). The production report only invokes these.
 function reportActions(){ if(!REPORT) return []; const out=[];
-  if(REPORT.kind==="win") out.push({ id:"keepPlaying", label:"Keep playing", note:null, primary:true, href:"" });
+  if(REPORT.kind==="win"&&!TRAIN) out.push({ id:"keepPlaying", label:"Keep playing", note:null, primary:true, href:"" }); // (028D2) no Keep playing after training
   if(PLAY) out.push(...playActions().map(a=>({ id:a.id, label:a.label, note:a.note||null, primary:!!a.primary, href:a.href||"" })));
   else if(REPORT.kind==="loss") out.push({ id:"restartRun", label:"Restart this run", note:null, primary:true, href:"" });
   return out; }
 function reportAction(id){ if(!REPORT) return false;
-  if(id==="keepPlaying"){ if(REPORT.kind!=="win") return false; continueAfterWin(); return true; }
+  if(id==="keepPlaying"){ if(REPORT.kind!=="win"||TRAIN) return false; continueAfterWin(); return true; }
   if(id==="restartRun"){ if(PLAY||REPORT.kind!=="loss") return false; location.reload(); return true; }
   const a=PLAY&&playActions().find(x=>x.id===id); return a?goAction(a.id,a.href||""):false; }
 function continueAfterWin(){ document.getElementById("reportModal").classList.remove("on"); running=true; document.getElementById("btnPlay").textContent="⏸ pause"; runUI.invalidate("continue"); }

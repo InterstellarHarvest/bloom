@@ -17,6 +17,8 @@
 // BLOOM-029E: this is the DEFAULT run interface. demos/demo-run.html mounts it on every run (First Bloom, planet=, generated, every
 // scenario, play=1, training=1) over the same run as the retired engineering shell, which stays hidden as the sim host; only the
 // developer flag ?ui=legacy shows that shell instead. The production run report (resources/run-ui/run-report.js) mounts over this view.
+// BLOOM-028D2: regionPoint(id) / regionRect(id) — read-only screen geometry of a region on the current map layout, for the guided
+// training's callout (resources/training/training-coach.js); presentation only.
 // Classic script, no dependencies besides BLOOM.surface and BLOOM.runMap: boots over file://.
 (function (root) {
   "use strict";
@@ -397,6 +399,16 @@
     if (mq && mq.addEventListener) mq.addEventListener("change", () => { el.classList.toggle("reduced", reduced()); dirty = true; });
     relayout(); paintHud(); paintLog(); paintScenario(); paintBanner(true); paintLens(); loop();
 
+    // (BLOOM-028D2) read-only presentation geometry for an instruction placed over the map (the guided training's callout): where a region
+    // is on screen NOW, from the renderer's current layout (client px; on a cylinder, the copy nearest the stage centre). Nothing is cached
+    // in screen space, so a resize / relayout is reflected on the next read. Unknown region → null. No rule, no selection, no event.
+    const BOX = MAP0.regions.map(() => ({ x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity }));
+    MAP0.tilemap.forEach((s, t) => { if (s < 0) return; const b = BOX[s], x = t % MAP0.width, y = (t / MAP0.width) | 0;
+      b.x0 = Math.min(b.x0, x); b.y0 = Math.min(b.y0, y); b.x1 = Math.max(b.x1, x + 1); b.y1 = Math.max(b.y1, y + 1); });
+    function regionPoint(id) { const i = IDX[id]; if (i === undefined) return null; const c = MAP0.regions[i].center; return R.clientOf(c.x, c.y); }
+    function regionRect(id) { const i = IDX[id]; if (i === undefined || !Number.isFinite(BOX[i].x0)) return null; const b = BOX[i], a = R.clientOf(b.x0, b.y0), z = R.clientOf(b.x1, b.y1);
+      return { left: a.x, top: a.y, right: z.x, bottom: z.y, width: z.x - a.x, height: z.y - a.y }; }
+
     const api = {
       el, renderer: R, adapter: A,
       rooms: Object.freeze({ register(name, impl) { if (!(name in rooms)) throw new Error(`BLOOM.planetView: unknown room "${name}"`); rooms[name] = impl || null; paintTools(); }, has: n => !!rooms[n],
@@ -410,6 +422,7 @@
       state: () => ({ lens: state.lens, lensPreview: state.lensPv, lensOpen: state.lensOpen, menuOpen: state.menuOpen, hover: state.hover, focus: state.focus,
         selection: A.selection().index, banner: !banner.hidden, scenarioOpen: state.scnOpen, layerShown: el.dataset.layer || null, room: activeRoom }),
       redraw() { dirty = true; },
+      regionPoint, regionRect, // (BLOOM-028D2) read-only map geometry (above)
       dispose() { disposed = true; cancelAnimationFrame(raf); unsub(); anchorWatch.disconnect(); el.remove(); document.documentElement.classList.remove("ui18"); instance = null; },
     };
     instance = api; PV.instance = api;
