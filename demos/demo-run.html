@@ -81,6 +81,15 @@
   upgrade-preview, upgrade-purchase, growth-focus, local-upgrade, bubble-collect, win, run-ready), stable data-tutorial anchors
   on the controls, and BLOOM_RUN_UI.placeBubble(sectionId) for a bonus bubble placed on purpose. Contracts:
   docs/TRAINING_FOUNDATION_v1.md. QA: tools/training-check.js.
+  BLOOM-029F (exact expedition handoff): ?play=1&expedition=<token> is an EXPEDITION run — the exact planet the player chose in the
+  Destination Survey, read back VERBATIM from the session handoff (resources/expedition/expedition-handoff.js, written by the title page
+  under the DRAMATIC cloud cover) and rehydrated as the run's planet BEFORE the one sim is created. No generator, world search or attempt
+  loop runs on this path: the candidate's World Seed / attempt are provenance only (shown, reported, never used to rebuild the world).
+  Eden, the scenario the survey validates. An arrival cover (resources/expedition/expedition-arrival.js, the transition's own veil) is up
+  before the first paint and lifts only once the production Planet View has painted that exact planet. An unknown / corrupt / unsupported
+  handoff is an explicit failure state with one way out (Main menu) — never First Bloom, never a regeneration, never another world. The
+  run's actions: Play again (the same stored planet, a fresh sim), Choose another planet (the title's survey), Main menu. Refresh and
+  Play again replay the same token. QA: tools/expedition-handoff-check.js.
   BLOOM-029E (gameplay UI convergence): the PRODUCTION UI is the DEFAULT run interface. With no ui= query (and with the alias ui=18)
   this page mounts the production Planet View, its four rooms and the production run report (resources/run-ui/run-report.js) over the
   same run, for every launch (First Bloom, planet=, generated, every scenario, play=1, training=1). Room swaps and the report open /
@@ -356,6 +365,9 @@
 <script src="../resources/bloom-scenario.js"></script>
 <script src="../content/play.js"></script>
 <script src="../resources/bloom-play.js"></script>
+<!-- BLOOM-029F: the expedition handoff (the exact survey planet, verbatim, from the session) and its arrival cover -->
+<script src="../resources/expedition/expedition-handoff.js"></script>
+<script src="../resources/expedition/expedition-arrival.js"></script>
 <!-- BLOOM-029A: the run UI production boundary (read-only snapshots + the real actions, for the future run screen) -->
 <script src="../resources/run-ui/run-ui-adapter.js"></script>
 <!-- BLOOM-029B: the production Planet View (the default run interface since BLOOM-029E; the shell is shown only with ?ui=legacy). The
@@ -426,9 +438,15 @@ sim.onLoss=why=>{ running=false; onLoss(why); runUI.invalidate("loss"); };
 // opens a fresh page (a new run is genuinely new: nothing of this sim carries over); the developer harness never shows them.
 const PLAY=!!BLOOM_RUN.play, PC=BLOOM_DATA.play||null, SEEDWORD=PLAY?"World Seed":"public seed";
 const RUN_ARCH=BLOOM_RUN.kind==="procedural"?BLOOM_RUN.archetype.id:null, RUN_SCN=SCN?SCN.id:"eden";
+// BLOOM-029F: an expedition run (the exact Destination Survey planet from the session handoff): its own three actions, every one on
+// the real navigation seam — Play again replays the SAME stored planet (same token: a fresh sim, never the seed), Choose another
+// planet opens the title's survey, Main menu the title. Never the old root launcher, never ui=legacy, no scenario chooser.
+const XP=BLOOM_RUN.expedition||null, XC=XP&&PC?PC.expedition:null;
 // (BLOOM-028D1) an authored world opened by planet= is replayed by the same planet=; First Bloom's own links are unchanged
 const AUTH_Q=BLOOM_RUN.planetParam?"&planet="+encodeURIComponent(BLOOM_RUN.planetParam):"";
 function playActions(){ const X=PC.actions, q=BLOOM.play.runQuery;
+  if(XP) return [{id:"playAgain", label:XC.playAgain, note:XC.playAgainNote, href:XP.playAgainHref, primary:true},
+    {id:"choosePlanet", label:XC.choosePlanet, note:XC.choosePlanetNote, href:XP.chooseHref}, {id:"mainMenu", label:XC.mainMenu, note:XC.mainMenuNote, href:XP.returnTo}];
   if(TRAIN) return [{id:"restartTraining", label:TC.restart, note:TC.restartNote, primary:!sim.won}, // (BLOOM-028D1) training: its own three
     ...(sim.won?[]:[{id:"skipTraining", label:TC.skip, note:TC.skipNote}]), {id:"mainMenu", label:TC.mainMenu, note:TC.mainMenuNote, primary:sim.won}];
   if(!RUN_ARCH) return [{id:"playAgain", label:X.playAgain, href:"demo-run.html?play=1"+AUTH_Q, primary:true},
@@ -486,7 +504,8 @@ function stops(v){ const S=TEMP_STOPS; if(v<=S[0][0])return S[0][1].slice(); if(
   for(let i=0;i<S.length-1;i++){const[a,ca]=S[i],[b,cb]=S[i+1]; if(v>=a&&v<=b)return mix(ca,cb,(v-a)/(b-a));} return S[0][1].slice(); }
 // BLOOM-010: an archetype may carry a tiny temporary terrain treatment (archetype.render, data only): a ground tint mixed
 // into bare ground, its own water colours and a faint dune stipple. Worlds without it (First Bloom, Ocean) draw as before.
-const RENDER=(BLOOM_RUN.kind==="procedural"&&BLOOM_RUN.archetype.render)||null;
+// (BLOOM-029F) an expedition run keeps the handoff's exact render hints (the survey's detail.render, verbatim), never a reconstruction
+const RENDER=XP?(BLOOM_RUN.render||null):(BLOOM_RUN.kind==="procedural"&&BLOOM_RUN.archetype.render)||null;
 // BLOOM-011: render.tintBy "cold" weights the ground tint by how cold the ground is NOW (live sky + local offset), so mild
 // refuges and geothermal ground keep their own colour, and warming the sky visibly thaws the map; "dry" (default) = BLOOM-010
 const TINT_COLD=!!(RENDER&&RENDER.tintBy==="cold"), FROST_BELOW=-8;
@@ -1273,7 +1292,9 @@ let REPORT=null; // the current run-end report (null until a win or an extinctio
 const elapsed=()=>({ ticks:sim.ticks, seconds:sim.ticks*CFG.tickMs/1000, mins:Math.floor(sim.ticks*CFG.tickMs/60000), secs:Math.round(sim.ticks*CFG.tickMs/1000)%60,
   text:`${Math.floor(sim.ticks*CFG.tickMs/60000)}m ${String(Math.round(sim.ticks*CFG.tickMs/1000)%60).padStart(2,"0")}s` });
 const reportIdentity=()=>({ planetId:BLOOM_RUN.planet.id, planetName:BLOOM_RUN.planet.name, kind:BLOOM_RUN.kind, archetypeId:RUN_ARCH, archetypeName:RUN_ARCH?BLOOM_RUN.archetype.name:null,
-  seed:RUN_ARCH?BLOOM_RUN.seed:null, seedWord:SEEDWORD, scenarioId:RUN_SCN, scenarioName:SCN?SCN.name:"Eden", scenarioTitle:SCN&&SCN.display?SCN.display.title:null, scenarioActive:SCEN, training:!!TRAIN, play:PLAY });
+  seed:RUN_ARCH?BLOOM_RUN.seed:null, seedWord:SEEDWORD, scenarioId:RUN_SCN, scenarioName:SCN?SCN.name:"Eden", scenarioTitle:SCN&&SCN.display?SCN.display.title:null, scenarioActive:SCEN, training:!!TRAIN, play:PLAY,
+  // (BLOOM-029F) the exact selected world's provenance (the seed above is provenance too: the run was never regenerated from it)
+  expedition:XP?{ token:XP.token, source:XP.source, candidateKey:XP.candidateKey, sectorSeed:XP.sectorSeed, classId:XP.classId, authored:XP.authored, archetypeId:XP.archetypeId, seed:XP.seed, attempt:XP.attempt, fingerprint:XP.fingerprint, validation:XP.validation }:null });
 // BLOOM-012: the scenario's identity and how far the decline got, with the drift the plant endured (pressure runs only)
 function pressureReportData(){ if(!PRESS) return null; const o=PS.offsets;
   return { title:SCN.display.title, phaseName:phaseName(PS.phase), phase:PS.phase, progress:PS.progress, done:PS.progress>=1, offsets:{moist:o.moist, temp:o.temp, rad:o.rad}, max:{moist:PS.max.moist, temp:PS.max.temp, rad:PS.max.rad} }; }
@@ -1667,8 +1688,37 @@ function playBoot(q){
   }, err=>{ clearTimeout(slowT); LOG.state="error"; LOG.error=String(err&&err.message||err);
     playFail(P,{title:P.failure.title, body:fill(P.failure.body, names), A, S, retry:"demo-run.html?"+BLOOM.play.runQuery({archetype:A.id, scenario:S.id})}); });
 }
+/* ========================================================================== */
+/*  BLOOM-029F EXPEDITION BOOT (?play=1&expedition=<token>): the exact         */
+/*  Destination Survey planet. The handoff is resolved BEFORE the sim exists;  */
+/*  the stored planet IS the run's planet (rehydrated, never regenerated: no   */
+/*  generator, search or attempt loop on this path; the seed is provenance).  */
+/*  An unknown / corrupt / unsupported handoff → an explicit failure state,   */
+/*  never First Bloom and never another world. The arrival cover is up        */
+/*  before anything paints and lifts once that planet is on screen.          */
+/* ========================================================================== */
+function expeditionBoot(q){
+  const X=BLOOM.expedition, XA=BLOOM.expeditionArrival, XC=BLOOM_DATA.play.expedition, token=q.get("expedition");
+  const cover=XA.cover();                                                     // the descent's veil, before the first paint
+  const combined=["archetype","seed","scenario","planet","training","candidates"].filter(k=>q.get(k)!==null);
+  const res=combined.length?{ok:false, reason:"link"}:X.load(token, X.storageOf(window));
+  if(!res.ok){ // explicit failure: identify what happened, start nothing, substitute nothing
+    const why=XC.failure[res.reason]||XC.failure.malformed;
+    window.BLOOM_RUN={kind:"expedition", failed:true, play:true, summary:{kind:"expedition", failed:true, expedition:true, token, reason:res.reason, why}};
+    window.BLOOM_API={ run:BLOOM_RUN.summary };
+    document.title=`Strange Bloom — ${XC.failure.title}`;
+    cover.fail({ title:XC.failure.title, body:why, note:XC.failure.note, action:{ label:XC.failure.mainMenu, href:"main-menu.html" } });
+    return; }
+  const payload=res.payload, run=X.toRun(payload, {BLOOM_DATA});             // planet = the stored planet; archetype = static content by id
+  const returnTo=BLOOM.play.safeReturn(payload.returnTo, location.href, "main-menu.html");
+  run.expedition.returnTo=returnTo; run.expedition.playAgainHref=X.runUrl(payload.token); run.expedition.chooseHref=X.withBegin(returnTo);
+  startRun(run);                                                              // ONE sim, created from that planet
+  cover.lift().catch(()=>{});                                                 // after run-ready + the production surface painted + 2 frames
+}
 { const q=new URLSearchParams(location.search), play=q.get("play")==="1";
-  if(play&&q.get("archetype")!==null&&window.BLOOM&&BLOOM.play&&window.BLOOM_DATA&&BLOOM_DATA.play) playBoot(q);
+  // (029F) an expedition link never falls through to another boot: without the handoff modules it is the engine-missing state, not First Bloom
+  if(q.get("expedition")!==null) (window.BLOOM&&BLOOM.expedition&&BLOOM.expeditionArrival&&window.BLOOM_DATA&&BLOOM_DATA.play&&BLOOM_DATA.play.expedition)?expeditionBoot(q):startRun({kind:"missing"});
+  else if(play&&q.get("archetype")!==null&&window.BLOOM&&BLOOM.play&&window.BLOOM_DATA&&BLOOM_DATA.play) playBoot(q);
   else { const run=harnessRun(); if(play&&!run.failed&&run.kind!=="missing") run.play=true; startRun(run); } }
 </script>
 </body>

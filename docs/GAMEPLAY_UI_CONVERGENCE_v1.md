@@ -9,7 +9,7 @@
 > the page only as the hidden simulation host the adapter wraps and as the historical regression oracle, shown by the developer flag
 > `?ui=legacy` alone. No gameplay mechanic, balance number, threshold, trait effect, planet generator, canonical surface, sphere or
 > AtmosphereTransition internal changed (`tools/run-ui-convergence-check.js` N2 / N10: byte-identical files, identical seeded runs).
-> The 029F selected-planet handoff is **not** done here (§13); the 028D2 coach is still paused (§14).
+> The 029F selected-planet handoff was **not** done here (§13) — it is now done: `docs/EXPEDITION_HANDOFF_v1.md`; the 028D2 coach is still paused (§14).
 
 ## 1. What changed
 
@@ -249,15 +249,16 @@ menu and report), `run-ui-convergence-check`. The 029B / 029C / 029D suites' dif
 (`BASE_SHA → END_SHA`, as `run-ui-check` already did), so a later milestone's legitimate work never trips them; no assertion was weakened.
 The shell remains until a later engineering cleanup because it is still a useful oracle; it is not the product UI.
 
-## 13. The 029F seam (not done here)
+## 13. The 029F seam (done in BLOOM-029F — `docs/EXPEDITION_HANDOFF_v1.md`)
 
 The Destination Survey's exact, already generated and validated `detail.planet` must become the run's planet object — passed to the run,
 **never regenerated from `candidate.seed`**. 029E touched none of it: `resources/destination-survey/*`, `resources/main-menu/*`,
 `resources/planet-sphere/*` and the survey / title pages are byte-identical (N2); survey generation, validation, selected identity, scan
 sector, focus and the DRAMATIC descent are unchanged. The run page still boots from `?archetype=&seed=` / `planet=` through `harnessRun()` /
-`playBoot()`; 029F replaces that boot's planet source for the survey path and lands on the (now default) production UI, whose surface,
-rooms and report take whatever planet object the run holds. The focused survey planet → gameplay crossing keeps the DRAMATIC preset;
-029E's SUBDUED language starts only inside gameplay.
+`playBoot()`; 029F adds `expeditionBoot()` (`?play=1&expedition=<token>`), whose planet source is the session handoff written under the
+DRAMATIC cover — the exact `detail.planet`, rehydrated, never regenerated — and lands on the default production UI, whose surface, rooms
+and report take that planet object. The focused survey planet → gameplay crossing keeps the DRAMATIC preset (continued by an arrival
+cover on the run page); 029E's SUBDUED language starts only inside gameplay.
 
 ## 14. 028D2 (still paused)
 

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Strange Bloom — Unknown Soils</title>
 <!--
-  BLOOM-028C · the opening title: Main Menu → Destination Survey → (028B departure) → a development handoff target.
+  BLOOM-028C · the opening title: Main Menu → Destination Survey → (028B departure) → (BLOOM-029F) the production gameplay page.
   resources/main-menu/ (MainMenu, ExpeditionEntry) over the accepted Destination Survey, PlanetSphereView and AtmosphereTransition.
   Menu ↔ survey is a plain fade through black (028C1); the clouds are the survey's dramatic departure only.
   The project stays BLOOM internally; the player reads STRANGE BLOOM · UNKNOWN SOILS.
@@ -16,37 +16,25 @@
   &firstBloom=1 · &workers=<1…8> · &worker=0  (main-thread sectors) · &hold=<ms> / &fail=1 / &seed=<n>  the departure's covered work / cloud layout
   BLOOM-028D1: TRAINING fades to black and opens the training run (demo-run.html?training=1&return=<this page>); its Skip / Main menu
   come back here through the same black.
+  BLOOM-029F: BEGIN EXPEDITION's DRAMATIC descent ends in the real game. Under full cloud cover the survey's exact validated
+  `detail.planet` is packaged VERBATIM into a session-scoped handoff (resources/expedition/expedition-handoff.js, sessionStorage; the
+  World Seed travels as provenance only), the survey and its worker pool are disposed, and the page navigates to
+  demo-run.html?play=1&expedition=<opaque token> — only the token is in the address; nothing is regenerated. The run page keeps its own
+  atmospheric cover up until that exact planet is on screen. ?begin=1 (the run's "Choose another planet") enters the survey at once.
 -->
 <link rel="stylesheet" href="../resources/destination-survey/destination-survey.css">
 <link rel="stylesheet" href="../resources/main-menu/main-menu.css">
 <style>
   html,body{margin:0; height:100%; background:#0a0810; overflow:hidden}
   #app{position:relative; width:100%; height:100vh; height:100dvh}
-  /* the development handoff target: the selected world's starting surface, full bleed (as in demos/expedition-descent.html) */
-  .dest{position:fixed; inset:0; overflow:hidden; background:#03050b; color:#edf1f8; font:600 15px/1.4 ui-rounded,"SF Pro Rounded","Nunito","Trebuchet MS",system-ui,sans-serif}
-  .dest[hidden]{display:none}
-  .dest canvas{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; image-rendering:pixelated; image-rendering:crisp-edges}
-  .dest::after{content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(120% 100% at 50% 50%, transparent 55%, rgba(3,5,11,.55) 100%)}
-  .dest-plate{position:absolute; z-index:1; left:clamp(16px,3vw,32px); top:clamp(16px,3vw,28px); max-width:min(520px, calc(100% - 32px)); padding:14px 18px;
-    border:2px dashed #ffd479; border-radius:16px 13px 17px 14px; background:rgba(14,20,36,.88)}
-  .dest-plate small{display:block; font-size:12px; font-weight:800; letter-spacing:2.2px; text-transform:uppercase; color:#ffd479}
-  .dest-plate h1{margin:4px 0 2px; font-size:30px; line-height:1.1} .dest-plate h1:focus{outline:none}
-  .dest-plate p{margin:4px 0 0; color:#aab5ca; font-size:14px} .dest-plate code{color:#fff}
-  .dest-plate button{margin-top:10px; font:800 13px inherit; font-family:inherit; letter-spacing:1px; text-transform:uppercase; color:#3a2800; background:#ffd479; border:0; border-radius:10px; padding:7px 12px; cursor:pointer}
+  /* (029F) a departure that could not open the game: a plain notice over the title host; the only way on is a reload */
+  .ee-stranded{position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:20; padding:12px 16px; border-radius:12px; background:rgba(14,20,36,.94); color:#edf1f8;
+    font:600 14px/1.4 ui-rounded,"SF Pro Rounded","Nunito","Trebuchet MS",system-ui,sans-serif; border:1px solid #ffd479}
+  .ee-stranded button{margin-left:12px; font:800 13px inherit; font-family:inherit; letter-spacing:1px; text-transform:uppercase; color:#3a2800; background:#ffd479; border:0; border-radius:10px; padding:7px 12px; cursor:pointer}
 </style>
 </head>
 <body>
 <div id="app"></div>
-<section class="dest" id="dest" hidden aria-labelledby="destTitle">
-  <canvas id="destMap" aria-hidden="true"></canvas>
-  <div class="dest-plate">
-    <small>Expedition handoff target · development harness</small>
-    <h1 id="destTitle" tabindex="-1"></h1>
-    <p id="destMeta"></p>
-    <p>The planet surface you chose, mounted under cloud cover from <code>detail.planet</code>. Gameplay is not started here.</p>
-    <button type="button" id="reset">Back to title (dev: reload)</button>
-  </div>
-</section>
 
 <script src="../content/config.js"></script>
 <script src="../content/traits.js"></script>
@@ -61,10 +49,11 @@
 <script src="../resources/bloom-archetype.js"></script>
 <script src="../resources/bloom-scenario.js"></script>
 <script src="../resources/bloom-play.js"></script>
+<!-- BLOOM-029F: the session-scoped expedition handoff (classic script: the run page loads the same file) -->
+<script src="../resources/expedition/expedition-handoff.js"></script>
 
 <script type="module">
 import { ExpeditionEntry } from "../resources/main-menu/expedition-entry.js";
-import { drawPlanetTexture } from "../resources/planet-sphere/planet-texture.js";
 import { planetFingerprint } from "../resources/destination-survey/survey-data.js";
 
 const q = new URLSearchParams(location.search), $ = id => document.getElementById(id);
@@ -73,17 +62,29 @@ addEventListener("error", e => DEV.errors.push(String(e.message || e)));
 addEventListener("unhandledrejection", e => DEV.errors.push(String(e.reason && e.reason.message || e.reason)));
 const rm = q.get("rm") === "1" ? true : q.get("rm") === "0" ? false : undefined, hold = +(q.get("hold") || 0), fail = q.get("fail") === "1";
 const ev = (type, data) => DEV.events.push({ type, at: Math.round(performance.now()), ...(data || {}) });
-
-function mountDestination(detail) {
-  const p = detail.planet, c = detail.candidate;
-  drawPlanetTexture($("destMap"), p, { render: detail.render || null });
-  $("destTitle").textContent = c.name;
-  $("destMeta").innerHTML = `${c.authored ? "Authored world" : `${c.archetypeId} · World Seed ${c.seed}`} · planet <code>${planetFingerprint(p)}</code>`;
-  $("dest").hidden = false;
-}
+const X = BLOOM.expedition;
+// (029F) ?begin=1 enters the survey at once (the run's "Choose another planet"); it is dropped from the address so a reload or a
+// return lands on the title, and the URL the run page comes back to never carries it
+if (q.get("begin") === "1") { const u = new URL(location.href); u.searchParams.delete("begin"); history.replaceState(null, "", u.href); }
+const thisPage = () => { const u = new URL(location.href); u.hash = ""; u.searchParams.delete("begin"); return u.href; };
 
 // (028D1) TRAINING → the training run page, which comes back to exactly this title (its query included) through return=
-const trainingHref = () => new URL("demo-run.html?" + BLOOM.play.trainingQuery({ returnTo: location.href.split("#")[0] }), location.href).href;
+const trainingHref = () => new URL("demo-run.html?" + BLOOM.play.trainingQuery({ returnTo: thisPage() }), location.href).href;
+// (029F) under full cloud cover: package the EXACT selected planet (detail.planet, verbatim), write the session handoff, dispose the
+// survey and its workers, and open the gameplay page with the opaque token. Nothing is generated; the seed rides along as provenance.
+async function departToGameplay(detail, rec) {
+  const env = X.pack(detail, { token: X.newToken(), returnTo: thisPage(), fingerprint: planetFingerprint(detail.planet) });
+  if (JSON.stringify(env.planet) !== JSON.stringify(detail.planet)) throw new Error("expedition handoff: the packaged planet is not the selected planet");
+  X.store(env, X.storageOf(window));                                       // session-scoped, bounded (older handoffs pruned)
+  rec.token = env.token; rec.fingerprint = env.fingerprint; rec.integrity = env.integrity; rec.storedAt = performance.now();
+  detail.survey.dispose(); rec.surveyDisposedAt = performance.now();        // renderer, nine views, the pool's workers, DOM
+  const href = new URL(X.runUrl(env.token), location.href).href; rec.href = href; ev("depart", { token: env.token });
+  location.assign(href);
+  // still here after this long = the gameplay page did not open: an explicit error (the survey is gone; the notice offers a reload)
+  await new Promise((_, rej) => setTimeout(() => rej(new Error("the gameplay page did not open")), 8000));
+}
+function stranded(msg) { const n = document.createElement("div"); n.className = "ee-stranded"; n.setAttribute("role", "alert");
+  n.innerHTML = `<span></span><button type="button">Back to title</button>`; n.firstChild.textContent = msg; n.lastChild.onclick = () => location.reload(); document.body.appendChild(n); }
 const entry = DEV.entry = new ExpeditionEntry($("app"), { trainingHref,
   reducedMotion: rm, background: q.has("bg") ? +q.get("bg") - 1 : null,
   sectorSeed: q.has("sector") ? +q.get("sector") : null, firstBloom: q.get("firstBloom") === "1", workers: q.has("workers") ? +q.get("workers") : null, worker: q.get("worker") !== "0",
@@ -91,18 +92,20 @@ const entry = DEV.entry = new ExpeditionEntry($("app"), { trainingHref,
   descent: {
     seed: q.has("seed") ? +q.get("seed") : null,
     async onCovered(detail, info) {
-      const rec = { at: performance.now(), concealed: info.concealed, reducedMotion: info.reducedMotion, planet: detail.planet }; DEV.handoffs.push(rec);
+      const rec = { at: performance.now(), concealed: info.concealed, reducedMotion: info.reducedMotion, key: detail.candidate.key, planet: detail.planet }; DEV.handoffs.push(rec);
       if (hold) await new Promise(r => setTimeout(r, hold));
       if (fail) throw new Error("dev: covered work failed (fail=1)");
-      detail.survey.dispose(); rec.surveyDisposedAt = performance.now();
-      mountDestination(detail); rec.mountedAt = performance.now();
+      await departToGameplay(detail, rec);
     },
-    onError(err) { DEV.results.push({ error: err.message }); ev("descent-error", { error: err.message }); },
+    onError(err) { DEV.results.push({ error: err.message }); ev("descent-error", { error: err.message }); if (!entry.survey || entry.survey.state === "disposed") stranded(`The expedition could not start (${err.message}).`); },
   },
 });
-$("app").addEventListener("bloom:begin-expedition", e => { e.detail.descent.then(r => { DEV.results.push({ ok: true, transition: r.transition }); ev("departed"); $("destTitle").focus({ preventScroll: true }); }, () => {}); });
-$("reset").onclick = () => location.reload();
-entry.menu.shown.then(() => { DEV.ready = true; ev("menu-shown", { background: entry.menu.background.index + 1 }); }, err => DEV.errors.push("menu: " + (err && err.message || err)));
+$("app").addEventListener("bloom:begin-expedition", e => { e.detail.descent.then(r => { DEV.results.push({ ok: true, transition: r.transition }); ev("departed"); }, () => {}); });
+// a title restored from the back-forward cache after a departure (Back from the game) would still be behind its clouds: start it afresh
+addEventListener("pageshow", e => { if (e.persisted && entry.state === "departed") location.reload(); });
+entry.menu.shown.then(() => { DEV.ready = true; ev("menu-shown", { background: entry.menu.background.index + 1 });
+  if (q.get("begin") === "1") { ev("auto-begin"); entry.beginExpedition().catch(err => DEV.errors.push("begin: " + (err && err.message || err))); } },
+  err => DEV.errors.push("menu: " + (err && err.message || err)));
 </script>
 </body>
 </html>

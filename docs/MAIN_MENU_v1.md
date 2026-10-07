@@ -9,6 +9,11 @@ repository stay **BLOOM**. One of twelve hand-painted backgrounds fills the scre
 BEGIN EXPEDITION leads into the accepted Destination Survey through a short fade to black (028C1), and the first validated sector is already
 being prepared while the title is showing.
 
+> **BLOOM-029F: the gameplay handoff is done.** The survey's DRAMATIC departure now ends in the production run page: under full cover
+> `demos/main-menu.html` writes the exact selected planet to a session-scoped handoff and navigates with an opaque token
+> (`docs/EXPEDITION_HANDOFF_v1.md`). The menu modules are byte-identical to 028D1; `?begin=1` (the run's "Choose another planet") enters
+> the survey at once.
+
 ---
 
 ## 1. Files and ownership
@@ -22,7 +27,7 @@ being prepared while the title is showing.
 | `resources/main-menu/expedition-entry.js` | **`ExpeditionEntry`**: the flow menu ↔ survey — hosts, the fade through black between them (028C1), the `AtmosphereTransition` it hands to the survey's dramatic departure, the title-screen prefetch, the motion setting |
 | `resources/destination-survey/sector-pool.js` | **`SectorPool`**: the survey's worker pool + sector cache, lifted out of `DestinationSurvey` so a sector can be built before the screen exists (§5) |
 | `resources/destination-survey/destination-survey.js` | adds `sectors` (adopt a pool), `onExit` / `exit()` ("← Main menu"), `static prefetch()` — additive; the accepted behaviour is unchanged |
-| `demos/main-menu.html` | the entry page (localhost): menu → survey → 028B departure → a clearly marked development handoff target |
+| `demos/main-menu.html` | the entry page (localhost): menu → survey → 028B departure → (029F) the production run page with the exact selected planet |
 | `tools/main-menu-check.js` | the 22nd regression suite |
 
 Not here: the sphere (`docs/PLANET_SPHERE_VIEW_v1.md`), the transition (`docs/ATMOSPHERE_TRANSITION_v1.md`), the survey
@@ -161,7 +166,8 @@ held 30–90 ms, fully revealed ≈ 0.55–0.63 s after the click; both fades at
 - **Begin before the prefetch completes** is handled honestly (§5). **A return while still loading** disposes the pool
   mid-work; `survey.ready` rejects quietly (the entry catches it).
 - **After the departure** (028B, unchanged) the survey disposes itself under the clouds; the entry's state is `"departed"`.
-  Gameplay handoff is the PMO's `descent.onCovered`.
+  The gameplay handoff is `demos/main-menu.html`'s `descent.onCovered` (029F, `docs/EXPEDITION_HANDOFF_v1.md` §5); a title restored from
+  the back-forward cache in that state reloads itself.
 - `stats.entries[]` / `stats.exits[]` record each crossing: `blackMs`, `swappedMs`, `liftMs`, `revealedMs` (from the click).
 
 ## 7. Reduced motion
@@ -183,8 +189,8 @@ held 30–90 ms, fully revealed ≈ 0.55–0.63 s after the click; both fades at
 
 ## 9. Out of scope (deliberately)
 
-- Root `index.html` integration and the `file://` decision; gameplay handoff; tutorial gameplay (TRAINING is a hook);
-  CONTINUE EXPEDITION (no save state exists); SUBDUED in gameplay rooms; any sphere or survey redesign.
+- Root `index.html` integration and the `file://` decision; tutorial gameplay (TRAINING opens the 028D1 training run);
+  CONTINUE EXPEDITION (no save state exists); any sphere or survey redesign. (The gameplay handoff: done in 029F.)
 - The survey's header kicker still reads "BLOOM · Expedition planning" (owner content decision; one string).
 - Credits copy and owner attribution are provisional.
 - Safari / WebKit untested here (not installed on this machine).

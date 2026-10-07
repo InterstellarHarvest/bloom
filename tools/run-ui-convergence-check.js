@@ -27,10 +27,17 @@
 "use strict";
 const path = require("path"), fs = require("fs"), http = require("http"), { execSync } = require("child_process");
 const ROOT = path.resolve(__dirname, ".."), BASE_SHA = "0f5ce811704cc58fb77147952e7f6fc21e776f0c";
+// (BLOOM-029F) the accepted 029E final candidate: the byte-identity / scope guards below (N2, N3) are bounded to 0f5ce81 … 3ab9933 once a
+// later milestone has built on it (029F changes the title page, content/play.js and the adapter by design), exactly as the 029B–029D suites
+// bound theirs (END_SHA); at 3ab9933 itself the working tree is checked as before
+const END_SHA = "3ab99337676e214c200b34cbbeeff844f67c7e8f";
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const BROWSERS = (argOf("--browsers") || "chromium,firefox").split(","), EVIDENCE = argv.includes("--evidence");
 const EVD = path.join(ROOT, "docs/evidence/bloom-029e");
 const read = f => fs.readFileSync(path.join(ROOT, f), "utf8"), J = JSON.stringify, git = c => execSync("git " + c, { cwd: ROOT, encoding: "utf8" }).trim();
+const AT_END = (() => { try { return git(`merge-base --is-ancestor ${END_SHA} HEAD`) === "" && git("rev-parse HEAD") !== END_SHA; } catch { return false; } })();
+const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT_END ? [] : git("ls-files --others --exclude-standard").split("\n").filter(Boolean);
+const hashAt = f => AT_END ? git(`rev-parse ${END_SHA}:${f}`) : git(`hash-object ${f}`);
 let fails = 0; const t0 = Date.now();
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (!ok) fails++; };
 const info = (name, detail) => console.log(`INFO  ${name}  — ${detail}`);
@@ -51,18 +58,18 @@ const LEGACY_SUITES = ["slice-check", "economy-check", "procedural-run-check", "
   const head = git("rev-parse HEAD");
   check(git(`merge-base HEAD ${BASE_SHA}`) === BASE_SHA && git(`cat-file -t ${BASE_SHA}`) === "commit", "N1 · the branch starts from the accepted BLOOM-029D final candidate 0f5ce81 (not origin/main)", `HEAD ${head.slice(0, 7)} · ${git(`rev-list --count ${BASE_SHA}..HEAD`)} commit(s) since 0f5ce81`);
   // N2 · byte-identical: AtmosphereTransition, the sphere, the canonical surface, engine / generator / validators / content / planets, menu, survey (029F seam), training layer
-  { const same = f => git(`rev-parse ${BASE_SHA}:${f}`) === git(`hash-object ${f}`);
+  { const same = f => git(`rev-parse ${BASE_SHA}:${f}`) === hashAt(f);
     const files = ["resources/atmosphere-transition/atmosphere-transition.js", "resources/planet-sphere/planet-sphere-view.js", "resources/planet-sphere/planet-texture.js", "resources/planet-surface/planet-surface.js",
       "resources/bloom-sim.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/bloom-play-worker.js",
       "content/config.js", "content/traits.js", "content/scenarios.js", "content/archetypes.js", "content/training.js", "content/play.js", "planets/first_bloom.js", "planets/training_grounds.js",
       "resources/training/training-run.js", "resources/training/training-store.js", "resources/main-menu/main-menu.js", "resources/main-menu/main-menu-data.js", "resources/main-menu/expedition-entry.js", "resources/main-menu/black-fade.js",
       "resources/run-ui/run-map-renderer.js", "resources/run-ui/plant-specimen.js", "resources/run-ui/terraform-globe.js", "index.html", "demos/main-menu.html", "demos/destination-survey.html", "GAME_BIBLE.md"];
-    const diff = files.filter(f => !same(f)), surveyDiff = git(`diff --stat ${BASE_SHA} -- resources/destination-survey/ resources/main-menu/ resources/planet-sphere/ resources/atmosphere-transition/ resources/training/ demos/ui-mockups/`);
+    const diff = files.filter(f => !same(f)), surveyDiff = git(`diff --stat ${RANGE} -- resources/destination-survey/ resources/main-menu/ resources/planet-sphere/ resources/atmosphere-transition/ resources/training/ demos/ui-mockups/`);
     PROOF.unchanged = { files: files.length, differing: diff, atmosphereTransitionBlob: git("hash-object resources/atmosphere-transition/atmosphere-transition.js"), surveyDiffStat: surveyDiff || "(empty)" };
     check(!diff.length && !surveyDiff, "N2 · byte-identical to 0f5ce81: AtmosphereTransition (its presets and timings), PlanetSphereView + texture, the canonical surface, the engine, generator, validators, play / scenario modules, content, planets, the training layer, the main menu, the Destination Survey (the 029F selected-planet seam untouched), the map renderer, the specimen, the globe helper, root index.html and the mockups",
       diff.length ? "DIFFER: " + diff.join(", ") : `${files.length} files + 6 directories · AtmosphereTransition blob ${PROOF.unchanged.atmosphereTransitionBlob.slice(0, 10)}`); }
   // N3 · scope
-  { const changed = git(`diff --name-only ${BASE_SHA}`).split("\n").filter(Boolean).concat(git("ls-files --others --exclude-standard").split("\n").filter(Boolean));
+  { const changed = git(`diff --name-only ${RANGE}`).split("\n").filter(Boolean).concat(untracked());
     const allowed = p => p === "demos/demo-run.html" || p.startsWith("resources/run-ui/") || p.startsWith("tools/") || p.startsWith("docs/") || p === "README.md";
     const out = changed.filter(p => !allowed(p));
     check(!out.length, "N3 · scope: 029E changes only the run page, resources/run-ui/, the suites, docs / evidence and README", `${changed.sort().join(", ")}${out.length ? " · OUTSIDE: " + out.join(", ") : ""}`); }
