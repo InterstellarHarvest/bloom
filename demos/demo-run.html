@@ -81,6 +81,8 @@
   upgrade-preview, upgrade-purchase, growth-focus, local-upgrade, bubble-collect, win, run-ready), stable data-tutorial anchors
   on the controls, and BLOOM_RUN_UI.placeBubble(sectionId) for a bonus bubble placed on purpose. Contracts:
   docs/TRAINING_FOUNDATION_v1.md. QA: tools/training-check.js.
+  BLOOM-029C: with &ui=18 the production decision rooms (resources/run-ui/decision-rooms.js: Region Inspect, Adapt, Spread; the
+  production plant specimen resources/run-ui/plant-specimen.js) mount into the Planet View's room seam, over the same adapter.
   BLOOM-029B (migration path): &ui=18 shows the PRODUCTION Planet View (resources/run-ui/planet-view.js, Concept 18) over the
   SAME run: it reads and acts only through BLOOM_RUN_UI.adapter, draws the map with resources/run-ui/run-map-renderer.js over
   the canonical planet surface (resources/planet-surface/planet-surface.js, the same surface PlanetSphereView wraps), and
@@ -352,6 +354,10 @@
 <script src="../resources/planet-surface/planet-surface.js"></script>
 <script src="../resources/run-ui/run-map-renderer.js"></script>
 <script src="../resources/run-ui/planet-view.js"></script>
+<!-- BLOOM-029C: the production decision rooms (Region Inspect · Adapt · Spread) over the Planet View, same adapter; inert without &ui=18 -->
+<link rel="stylesheet" href="../resources/run-ui/decision-rooms.css">
+<script src="../resources/run-ui/plant-specimen.js"></script>
+<script src="../resources/run-ui/decision-rooms.js"></script>
 <!-- the game UI below is inert (type="text/plain") until the boot script after it has chosen the planet:
      it then runs as an ordinary classic script, so its globals (sim, selected, refreshShop …) are unchanged -->
 <script type="text/plain" id="bloomUI">
@@ -1349,7 +1355,8 @@ if(window.BLOOM&&BLOOM.runUI){
     map:{ render:RENDER, crossings:()=>XANIM, crossingTiming:{travel:XTRAVEL, land:XLAND}, flashes:()=>({thresholds:PX_FX, competition:CX_FX}) } });
   window.BLOOM_RUN_UI.adapter=runUI.adapter;
   // (BLOOM-029B) &ui=18: mount the production Planet View on the adapter (before bloom:run-ready, so anchors and controls exist)
-  if(UI18) BLOOM.planetView.mount(runUI.adapter,{root:document.body});
+  if(UI18){ const pv=BLOOM.planetView.mount(runUI.adapter,{root:document.body});
+    if(BLOOM.decisionRooms) BLOOM.decisionRooms.mount(pv); } // (BLOOM-029C) the rooms fill the view's room seam (Terraform stays open for 029D)
 }
 // BLOOM-008/009: open on the origin so its colony status and growth focus are the first thing in view
 selected=ORIGIN; renderInspect(); log(`Your plant has just sprouted in ${LABEL[ORIGIN]}: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish.`);

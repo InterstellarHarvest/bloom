@@ -1,0 +1,172 @@
+/*
+  BLOOM-029C — production decision rooms (Region Inspect · Adapt · Spread), Concept 18 visual language. docs/PRODUCTION_PLANT_ROOMS_v1.md.
+  Scoped to .pv .dr (mounted inside the production Planet View, &ui=18). Reuses the accepted Concept 18 room CSS ideas (floating
+  content-height cards over the blurred, dimmed, inert world; the shared room header; category identity; organic tendrils whose
+  weights follow the room em — set by decision-rooms.js); no mockup file is loaded. Local inline-SVG icons only; no web fonts.
+*/
+/* the Planet View stays mounted underneath in the same geometry: blurred ≈ 7 px, dimmed by the layer's 46 % ink veil, inert */
+.pv.in-room > .pv-hud, .pv.in-room > .pv-stage, .pv.in-room > .pv-foot{filter:blur(7px) saturate(.72) brightness(.94); pointer-events:none; user-select:none}
+.dr{position:absolute; inset:0; z-index:40; background:rgba(52,62,48,.46); --room-em:16px; font-size:var(--room-em);
+  --room-bg:#ebe4d2; --acc:var(--leaf); --acc-soft:var(--leaf-soft); --acc-dark:var(--leaf-dark);
+  --box-shadow:0 2px 0 rgba(60,50,20,.08), 0 10px 28px rgba(40,50,30,.22)}
+.dr-room{position:absolute; inset:0; display:grid; grid-template-rows:auto minmax(0,1fr); grid-template-columns:21% minmax(0,1fr) 33%; grid-template-areas:"rh rh rh" "focus main map"; gap:1em; padding:0 1em 1em; min-height:0; align-items:start; font-size:var(--room-em)}
+/* the scale probe: the room grid at a known font size, measured, never shown (and never a .dr-room) */
+.dr-probe{position:absolute; inset:auto 0 auto 0; top:0; display:grid; grid-template-rows:0 auto; grid-template-columns:21% minmax(0,1fr) 33%; grid-template-areas:"rh rh rh" "focus main map"; gap:1em; padding:0 1em 1em; visibility:hidden; pointer-events:none; height:2px; overflow:hidden; z-index:-1}
+.dr .box,.dr .rh,.dr .lf-top,.dr .lf-info,.dr .z-main,.dr .mm,.dr .mm-ctx{background:var(--card); border:2px solid var(--line-2); border-radius:var(--r-md); box-shadow:var(--box-shadow)}
+
+/* ── shared room header: Back · kicker / title / verb · Region | Adapt | Spread | Terraform · Biomass · PAUSED · Resume ── */
+.dr .rh{grid-area:rh; display:flex; flex-wrap:nowrap; align-items:center; gap:.75em; padding:.55em .8em; margin-top:10px; min-height:4.2em; min-width:0}
+.dr .rb{display:inline-flex; align-items:center; gap:.4em; min-height:max(3em, 44px); min-width:max(3em, 44px); padding:.3em .85em; border:2px solid var(--line-2); border-radius:.8em; background:var(--card); font-weight:800; font-size:1em; cursor:pointer; box-shadow:0 2px 0 var(--line-2); color:var(--ink)}
+.dr .rb .ic{width:1.35em; height:1.35em} .dr .rb:hover{background:var(--paper-2)} .dr .rb.resume{background:var(--leaf); border-color:var(--leaf-dark); color:#fff; box-shadow:0 2px 0 var(--leaf-dark)} .dr .rb.resume:hover{background:var(--leaf-dark)}
+.dr .rt{display:flex; flex-direction:column; line-height:1.1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:0 1 auto} .dr .rk{font-size:.72em; letter-spacing:1.4px; font-weight:900; color:var(--acc-dark)} .dr .rt h2{margin:0; font-size:1.75em; outline-offset:4px} .dr .rt small{font-size:.82em; color:var(--ink-soft); font-weight:700}
+.dr .rnav{display:inline-flex; margin:0 auto; border:2px solid var(--line-2); border-radius:.9em; overflow:hidden; background:var(--card)}
+.dr .rn{position:relative; display:inline-flex; align-items:center; gap:.4em; min-height:max(3.1em, 44px); min-width:max(3.1em, 44px); padding:.3em .8em; border:0; border-right:2px solid var(--line); background:none; cursor:pointer; font-weight:800; font-size:.98em; color:var(--ink); white-space:nowrap}
+.dr .rn:last-child{border-right:0} .dr .rn:hover{background:var(--paper-2)} .dr .rn .ic{width:1.3em; height:1.3em}
+.dr .rn[aria-pressed="true"]{background:var(--ink); color:#fff7e0} .dr .rn.plant[aria-pressed="true"]{background:var(--leaf-dark)} .dr .rn.spread[aria-pressed="true"]{background:var(--bloom-dark)} .dr .rn.planet[aria-pressed="true"]{background:var(--sky-dark)}
+.dr .rn[data-room="unavailable"]{color:var(--ink-faint)} .dr .rn[data-room="unavailable"]::before{content:""; position:absolute; right:.3em; top:.3em; width:.45em; height:.45em; border-radius:50%; border:2px solid var(--ink-faint); background:var(--card)}
+.dr .rbio{display:inline-flex; align-items:center; gap:.35em; padding:.25em .8em .25em .5em; border-radius:2em; background:linear-gradient(180deg,#fff7dc,#ffefc0); border:2px solid #f0cf72; color:#7a4f00; line-height:1.05; white-space:nowrap}
+.dr .rbio .ic{width:1.3em; height:1.3em; color:#a86f00} .dr .rbio b{font-size:1.15em; font-variant-numeric:tabular-nums} .dr .rbio small{font-size:.7em; font-weight:900; letter-spacing:.8px; text-transform:uppercase; color:#8a6200}
+.dr .paused{display:inline-flex; align-items:center; gap:.5em; padding:.25em .9em .25em .3em; border-radius:2em; background:var(--gold-soft); border:2px solid #e6c46a; color:#5a3c00; line-height:1.05}
+.dr .paused .pi{width:2em; height:2em; border-radius:50%; background:#3a2800; color:#ffe08a; display:grid; place-items:center} .dr .paused .pi .ic{width:1em; height:1em; stroke-width:2.6}
+.dr .paused b{display:block; font-size:.85em; letter-spacing:1.4px; padding-right:.3em} .dr .paused:not(.on){opacity:.35; filter:grayscale(1)}
+.dr .rz{min-height:0; min-width:0}
+/* the three zones are content-height columns: cards end where their content ends, the dimmed world shows below them */
+.dr .z-focus{grid-area:focus; display:flex; flex-direction:column; gap:1em; max-height:100%; min-height:0}
+.dr .z-main{grid-area:main; display:flex; flex-direction:column; min-height:0; overflow:hidden; position:relative; height:100%}
+.dr .z-map{grid-area:map; display:flex; flex-direction:column; gap:1em; max-height:100%; min-height:0}
+@media (max-width:1600px){ .dr .rt small{display:none} }
+/* room header widths: below 1500 px only the OPEN room's nav button keeps its label (the others keep a tooltip); below 1100 px icons only */
+@media (max-width:1500px){ .dr .rn:not([aria-pressed="true"]) span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)} .dr .rn{padding:.25em .7em} .dr .rbio small{display:none} }
+@media (max-width:1100px){ .dr .rn span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)} .dr .rb span{display:none} .dr .rt h2{font-size:1.4em} }
+
+/* ── left column: the production plant specimen above, the information card below (content height, with a floor) ── */
+.dr .lf-top{position:relative; flex:none; border-radius:var(--r-md); overflow:hidden; background:#dceefa; width:100%; aspect-ratio:170/196; max-height:56%}
+.dr .ps{position:relative; width:100%; height:100%} .dr .ps-svg{display:block; width:100%; height:100%}
+.dr .ps-tag{position:absolute; top:.6em; left:.6em; background:var(--ink); color:#fff7e0; font-size:.72em; font-weight:900; letter-spacing:1px; padding:.25em .7em; border-radius:.7em; opacity:0; transition:opacity .15s}
+.dr .ps.previewing .ps-tag{opacity:1}
+.dr .ps.ghost .ps-layer .ps-part{opacity:.55; filter:saturate(.6)} .dr .ps.unviable .ps-layer .ps-part{filter:saturate(.35) brightness(1.05)}
+.dr .ps-part{transition:opacity .15s, filter .15s} .dr .ps-part.dim{opacity:.38} .dr .ps-part.hl{filter:drop-shadow(0 0 .35em rgba(255,255,255,.95)) drop-shadow(0 0 .5em var(--cat, #ffd65a))}
+.dr .spec-cap{position:absolute; left:0; right:0; bottom:0; padding:1.4em .8em .5em; background:linear-gradient(transparent, rgba(47,58,44,.75)); color:#fff7e0; line-height:1.15; pointer-events:none}
+.dr .spec-cap b{display:block; font-size:1em} .dr .spec-cap small{display:block; font-size:.78em; font-weight:700; opacity:.9}
+.dr .lf-info{flex:0 1 auto; min-height:7.5em; display:flex; flex-direction:column; gap:.55em; padding:.85em .95em; overflow:auto; transition:border-color .15s, background .15s}
+.dr .lf-info.pvw{border-color:var(--cat, var(--acc)); background:linear-gradient(var(--cat-soft, var(--acc-soft)), var(--card) 46%)}
+.dr .li-k{font-size:.72em; letter-spacing:1.2px; font-weight:900; text-transform:uppercase; color:var(--ink-soft)} .dr .lf-info.pvw .li-k{color:var(--cat-dark, var(--acc-dark))}
+.dr .li-h{display:flex; align-items:center; gap:.6em} .dr .li-h .ni{width:2.8em; height:2.8em; border-radius:50%; background:var(--cat-soft, var(--acc-soft)); color:var(--cat-dark, var(--acc-dark)); display:grid; place-items:center; flex:none} .dr .li-h .ni .ic{width:1.6em; height:1.6em}
+.dr .li-h b{font-size:1.3em; line-height:1.1; display:block} .dr .li-h small{display:block; font-size:.82em; color:var(--ink-soft); font-weight:800}
+.dr .lf-info p{margin:0; font-size:1em; line-height:1.35}
+.dr .li-row{display:flex; gap:.5em; align-items:flex-start; font-size:.95em; line-height:1.3} .dr .li-row .ic{width:1.3em; height:1.3em; color:var(--cat-dark, var(--acc-dark)); flex:none; margin-top:.1em} .dr .li-row b{color:var(--ink-soft)}
+.dr .li-part{display:inline-flex; align-items:center; gap:.4em; padding:.3em .8em; border-radius:.7em; background:var(--cat, var(--acc)); color:#fff; font-weight:900; font-size:.82em; letter-spacing:.6px; text-transform:uppercase; align-self:flex-start; box-shadow:0 2px 0 var(--cat-dark, var(--acc-dark))}
+.dr .ownd{display:flex; flex-wrap:wrap; gap:.3em; align-items:center; font-size:.9em} .dr .ownd small{width:100%; font-weight:900; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-soft); font-size:.75em}
+.dr .ow{display:inline-flex; align-items:center; gap:.3em; padding:.25em .65em; border-radius:.5em; background:var(--cat-soft, var(--leaf-soft)); color:var(--cat-dark, var(--leaf-dark)); font-weight:800} .dr .ow .ic{width:1.1em; height:1.1em} .dr .ow i{font-style:normal; font-weight:900} .dr .ow.none{background:var(--paper-2); color:var(--ink-faint)}
+.dr .li-hint{margin-top:.2em; font-size:.8em; color:var(--ink-faint); font-weight:700}
+
+/* ── right column: mini-map card (the production renderer), Map View chips, region strip; then a separate context / effect card ── */
+.dr .mm{display:flex; flex-direction:column; gap:.55em; flex:0 1 auto; min-height:0; padding:.75em}
+.dr .mm-h{display:flex; align-items:center; gap:.5em; flex-wrap:wrap; flex:none} .dr .mm-k{font-size:.72em; letter-spacing:1.2px; font-weight:900; color:var(--ink-soft); text-transform:uppercase; width:100%} .dr .mm-name{font-size:1.35em}
+.dr .mm-map{flex:none; aspect-ratio:412/272; max-height:38%; border-radius:.7em; overflow:hidden; border:2px solid var(--line-2); min-height:7em; background:var(--card); position:relative}
+.dr .mm-cv{position:absolute; left:0; top:0; display:block; image-rendering:pixelated; cursor:default} .dr .mm-cv.over{cursor:pointer}
+.dr .mm-peek{margin:0; font-size:.88em; color:var(--ink-faint); font-weight:700; min-height:1.5em; flex:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis} .dr .mm-peek.on{color:var(--ink)}
+.dr .mm-lens{display:flex; flex-wrap:wrap; gap:3px; flex:none}
+.dr .lb{display:inline-flex; align-items:center; gap:.3em; min-height:max(2.5em, 36px); min-width:max(2.5em, 36px); padding:.15em .65em; border:2px solid transparent; border-radius:.7em; background:none; cursor:pointer; font-weight:800; font-size:.9em; color:var(--ink); text-align:left}
+.dr .lb .ic{width:1.25em; height:1.25em} .dr .lb span{display:none} .dr .lb[aria-pressed="true"] span{display:inline}
+.dr .lb:hover,.dr .lb:focus-visible,.dr .lb.pvw{background:var(--paper-2); border-color:var(--line-2)} .dr .lb[aria-pressed="true"]{background:var(--ink); color:#fff7e0; border-color:var(--ink)} .dr .lb.pvw:not([aria-pressed="true"]){border-style:dashed; border-color:var(--ink-faint)}
+.dr .mm-strip{display:flex; flex-wrap:wrap; gap:.35em; overflow:auto; min-height:0; flex:0 1 auto; align-content:flex-start}
+.dr .rc{display:inline-flex; align-items:center; gap:.35em; min-height:max(2.6em, 36px); padding:.2em .6em .2em .45em; border:2px solid var(--line); border-radius:.75em; background:var(--paper); cursor:pointer; font-size:.92em; font-weight:800; color:var(--ink-soft); white-space:nowrap; letter-spacing:-.01em}
+.dr .rc .rs{display:inline-grid; place-items:center; width:1.15em; height:1.15em; border-radius:50%; color:#fff; flex:none} .dr .rc .rs .ic{width:.8em; height:.8em; stroke-width:3.4}
+.dr .rc.st-ok .rs{background:var(--ok)} .dr .rc.st-warn .rs{background:var(--warn)} .dr .rc.st-bad .rs{background:var(--bad)} .dr .rc .org{width:.9em; height:.9em; fill:var(--gold); stroke:var(--gold-deep); stroke-width:1.6}
+.dr .rc.living{color:var(--ink)} .dr .rc:hover,.dr .rc.pk{border-color:var(--ink); background:var(--paper-2)} .dr .rc[aria-pressed="true"]{background:var(--ink); color:#fff7e0; border-color:var(--ink)}
+.dr .rc.pk[aria-pressed="true"]{box-shadow:0 0 0 2px var(--card), 0 0 0 4px var(--ink)}
+.dr .mm-ctx{display:flex; flex-direction:column; gap:.45em; padding:.8em .9em; flex:none; transition:border-color .15s, background .15s} .dr .mc-k{font-size:.72em; letter-spacing:1.2px; font-weight:900; text-transform:uppercase; color:var(--ink-soft)}
+.dr .mc-rows{display:flex; flex-direction:column; gap:.4em}
+.dr .mc-row{display:flex; align-items:flex-start; gap:.5em; font-size:.95em; line-height:1.3} .dr .mc-row .ic{width:1.25em; height:1.25em; flex:none; color:var(--ink-soft); margin-top:.05em} .dr .mc-row b{color:var(--ink)} .dr .mc-row.faint{color:var(--ink-faint); font-weight:700; font-size:.88em}
+.dr .mm-ctx.pvw{border-color:var(--cat, var(--acc)); background:linear-gradient(var(--cat-soft, var(--acc-soft)), var(--card) 60%)} .dr .mm-ctx.pvw .mc-k{color:var(--cat-dark, var(--acc-dark))}
+.dr .mc-row.fx-gain .ic{color:var(--leaf-dark)} .dr .mc-row.fx-lose .ic,.dr .mc-row.fx-lose b{color:#8f2846} .dr .mc-row.fx-hostile .ic,.dr .mc-row.fx-worse .ic{color:#8a5300} .dr .mc-row.fx-off .ic{color:var(--ink-faint)}
+
+/* ── status chips (icon + word: never colour alone) ── */
+.dr .stc{display:inline-flex; align-items:center; gap:.3em; padding:.18em .7em .18em .35em; border-radius:1em; font-size:.9em; font-weight:900; border:1.5px solid}
+.dr .stc .ic{width:1.1em; height:1.1em; padding:.15em; border-radius:50%; stroke-width:3.4; color:#fff; box-sizing:border-box}
+.dr .stc.ok{border-color:#bfe0b5; background:var(--leaf-soft); color:var(--leaf-dark)} .dr .stc.ok .ic{background:var(--ok)}
+.dr .stc.warn{border-color:#e9b25a; background:#fff2dc; color:#8a5300} .dr .stc.warn .ic{background:var(--warn)}
+.dr .stc.bad{border-color:#d98aa2; background:#fbe6ec; color:#8f2846} .dr .stc.bad .ic{background:var(--bad)}
+
+/* ── Region Inspect: content-height tabbed card ── */
+.dr .r-region .z-main{overflow:auto; padding:.9em 1.1em; height:auto; max-height:100%}
+.dr .rg-head{display:flex; align-items:baseline; justify-content:space-between; gap:.7em; flex-wrap:wrap; margin-bottom:.5em} .dr .rg-name{margin:0; font-size:2em}
+.dr .rg-sub{display:inline-flex; align-items:center; gap:.5em; flex-wrap:wrap} .dr .rg-w{font-weight:800; color:var(--ink-soft)}
+.dr .rg-o{display:inline-flex; align-items:center; gap:.25em; font-size:.7em; font-weight:900; letter-spacing:1px; text-transform:uppercase; padding:.15em .6em; border-radius:.5em; background:var(--gold-soft); color:var(--gold-deep); border:1.5px solid #f0cf72} .dr .rg-o .ic{width:1.1em; height:1.1em; fill:var(--gold); stroke:var(--gold-deep); stroke-width:1.6}
+.dr .tabs{display:flex; gap:.3em; border-bottom:3px solid var(--line); margin-bottom:.8em}
+.dr .tabs [role="tab"]{display:inline-flex; align-items:center; gap:.45em; min-height:max(3.1em, 44px); padding:.4em 1.3em; border:2px solid transparent; border-bottom:0; border-radius:.8em .8em 0 0; background:none; cursor:pointer; font-weight:800; font-size:1.1em; color:var(--ink-soft)}
+.dr .tabs [role="tab"] .ic{width:1.3em; height:1.3em} .dr .tabs [role="tab"]:hover{background:var(--paper-2)}
+.dr .tabs [role="tab"][aria-selected="true"]{background:var(--paper); border-color:var(--line); color:var(--ink); margin-bottom:-3px; border-bottom:3px solid var(--paper)}
+.dr .pane .pb{display:flex; flex-direction:column; gap:.55em}
+/* condition rows carry their category (accent, tinted icon disc, label colour, faint wash) in every state; the chip is the status */
+.dr .cond{display:grid; grid-template-columns:2.2em 7.3em auto 1fr; align-items:center; gap:.6em; padding:.45em .8em .45em .6em; border-radius:.7em;
+  background:linear-gradient(90deg, var(--cat-soft) 0, var(--paper) 70%); border:1.5px solid color-mix(in srgb, var(--cat) 30%, var(--paper)); border-left:.35em solid var(--cat)}
+.dr .cond .cond-i{display:grid; place-items:center; width:2.2em; height:2.2em; border-radius:50%; background:var(--card); border:1.5px solid color-mix(in srgb, var(--cat) 45%, var(--card)); color:var(--cat-dark)} .dr .cond .cond-i .ic{width:1.3em; height:1.3em}
+.dr .cond .cnm{font-weight:900; font-size:1.02em; color:var(--cat-dark)} .dr .cond .ct{font-size:.98em; color:var(--ink-soft); font-weight:700}
+.dr .cond.st-warn .ct{color:#8a5300; font-weight:800} .dr .cond.st-bad .ct{color:#8f2846; font-weight:800}
+.dr .limbox{display:flex; gap:.7em; align-items:center; padding:.7em .9em; border-radius:.8em; border:2px solid var(--line-2); background:var(--card)} .dr .limbox .ic{width:2em; height:2em; flex:none}
+.dr .limbox small{display:block; font-size:.75em; font-weight:900; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-soft)} .dr .limbox b{font-size:1.1em}
+.dr .limbox.st-bad{border-color:#eab6c4; background:#fbe6ec} .dr .limbox.st-warn{border-color:#f0cf98; background:#fff2dc} .dr .limbox.st-ok{border-color:#bfe0b5; background:var(--leaf-soft)}
+.dr .help{display:flex; flex-direction:column; gap:.45em; margin-top:.2em} .dr .help > small{font-size:.75em; font-weight:900; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-soft)} .dr .help .none{font-size:.9em; font-weight:700; color:var(--ink-soft)}
+.dr .help-b{display:grid; grid-template-columns:max-content; gap:.55em .7em; justify-content:start; align-items:start} .dr .help.n2 .help-b{grid-template-columns:repeat(2, minmax(0, max-content))}
+.dr .hbtn{display:inline-flex; align-items:center; gap:.55em; min-height:max(3.2em, 44px); padding:.45em 1.15em .45em .85em; border:2px solid var(--line-2); border-radius:.9em; background:var(--card); box-shadow:0 2px 0 var(--line-2); cursor:pointer; font-weight:800; font-size:1em; line-height:1.1; width:auto; max-width:100%; text-align:left; color:var(--ink)}
+.dr .hbtn .ic{width:1.5em; height:1.5em; flex:none; opacity:.9} .dr .hb-t{display:flex; flex-direction:column; min-width:0} .dr .hb-t b{white-space:nowrap} .dr .hb-t small{font-size:.65em; opacity:.85; letter-spacing:.8px; text-transform:uppercase; font-weight:900}
+.dr .hbtn.plant{background:var(--leaf); border-color:var(--leaf-dark); color:#fff; box-shadow:0 2px 0 var(--leaf-dark)} .dr .hbtn.spread{background:var(--bloom); border-color:var(--bloom-dark); color:#fff; box-shadow:0 2px 0 var(--bloom-dark)} .dr .hbtn.planet{background:var(--sky); border-color:var(--sky-dark); color:#fff; box-shadow:0 2px 0 var(--sky-dark)}
+.dr .hbtn.plant:hover{background:var(--leaf-dark)} .dr .hbtn.spread:hover{background:var(--bloom-dark)} .dr .hbtn.planet:hover{background:var(--sky-dark)}
+@media (max-width:900px){ .dr .help.n2 .help-b{grid-template-columns:max-content} }
+.dr .est .est-h{display:flex; justify-content:space-between; align-items:baseline} .dr .est small{color:var(--ink-soft); font-weight:700} .dr .est b{font-size:1.1em}
+.dr .bar{position:relative; height:10px; border-radius:6px; background:var(--paper-2); overflow:hidden; border:1px solid var(--line); margin:.3em 0} .dr .bar i{position:absolute; left:0; top:0; bottom:0; width:0; border-radius:6px; background:var(--leaf)}
+.dr .lab{display:block; font-size:.75em; font-weight:900; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-soft); margin-top:.4em}
+.dr .opts{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.45em; margin-top:.35em}
+.dr .opt{display:flex; gap:.5em; align-items:flex-start; text-align:left; min-height:max(3.2em, 44px); padding:.6em .7em; border:2px solid var(--line); border-radius:.8em; background:var(--card); cursor:pointer; line-height:1.15; color:var(--ink); font:inherit}
+.dr .opt .ic{width:1.5em; height:1.5em; margin-top:.1em; color:var(--leaf-dark); flex:none} .dr .opt b{display:block; font-size:1em} .dr .opt small{display:block; font-size:.8em; color:var(--ink-soft); font-weight:700}
+.dr .opt:hover{border-color:var(--ink)} .dr .opt[aria-pressed="true"]{border-color:var(--leaf); background:var(--leaf-soft)} .dr .opt[aria-disabled="true"]{opacity:.55; cursor:not-allowed}
+.dr .rawt{width:100%; border-collapse:collapse; font-size:1em} .dr .rawt th{text-align:left; font-weight:800; padding:.4em .6em; color:var(--ink-soft); border-bottom:1px solid var(--line)} .dr .rawt th small{display:block; font-size:.75em; font-weight:700; color:var(--ink-faint)}
+.dr .rawt td{padding:.4em .6em; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; text-align:right; font-weight:800}
+.dr .note{font-size:.8em; color:var(--ink-faint); font-weight:700; margin:.4em 0 0}
+@media (max-width:1100px){ .dr .cond{grid-template-columns:2.2em 6em auto 1fr} .dr .tabs [role="tab"]{padding:.4em .8em} }
+
+/* ── Adapt / Spread trees: a category rail at the left, one real trait per row ── */
+.dr .tree{position:relative; flex:1; min-height:0; overflow:hidden}
+.dr .tree .edges{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
+.dr .edge{fill:none; stroke:var(--line-2); stroke-width:3.5; stroke-linecap:round; stroke-linejoin:round}
+.dr .edge.on{stroke:var(--cat, var(--acc))} .dr .edge.open{stroke:#c3b68f} .dr .edge.off{stroke-dasharray:4 7; opacity:.7} .dr .edge.rail-e{stroke-width:4; stroke:#c3b68f}
+.dr .edges .port{fill:var(--card); stroke:var(--cat-dark, var(--acc-dark)); stroke-width:3.5} .dr .edges .port.on{fill:var(--cat, var(--acc)); stroke:var(--cat-dark)}
+.dr .cat-l{position:absolute; transform:translate(0,-50%); display:inline-flex; align-items:center; gap:.4em; font-size:.76em; font-weight:900; letter-spacing:1.2px; text-transform:uppercase; color:var(--cat-dark, var(--acc-dark)); white-space:nowrap; pointer-events:none; background:var(--cat-soft, var(--acc-soft)); border:2px solid var(--cat, var(--acc)); padding:.3em .75em; border-radius:.7em; z-index:3}
+.dr .cat-l .ic{width:1.3em; height:1.3em}
+.dr .node{position:absolute; transform:translate(-50%,-50%); display:flex; align-items:center; gap:.6em; cursor:pointer; font:inherit; color:var(--ink); text-align:left; line-height:1.1; z-index:2}
+.dr .node.card{width:var(--nw,12em); min-height:max(3.9em, 44px); padding:.35em .55em .35em .45em; border:2px solid var(--line-2); border-left:.45em solid var(--cat, var(--line-2)); border-radius:.85em; background:var(--card); box-shadow:0 3px 0 var(--line-2)}
+.dr .node .ni{position:relative; display:grid; place-items:center; width:2.85em; height:2.85em; border-radius:50%; background:var(--paper-2); color:var(--cat-dark, var(--ink-soft)); flex:none} .dr .node .ni .ic{width:1.65em; height:1.65em}
+.dr .node .nl{position:absolute; right:-.3em; bottom:-.3em; width:1.2em; height:1.2em; border-radius:50%; background:var(--ink-faint); color:#fff; display:grid; place-items:center; border:2px solid var(--card)} .dr .node .nl .ic{width:.65em; height:.65em; stroke-width:3} .dr .node .nl.ok{background:var(--leaf)}
+.dr .node .nt{min-width:0} .dr .node .nt b{display:block; font-size:calc(1.02em * var(--fit, 1))} .dr .node .nt small{display:block; font-size:.72em; font-weight:800; color:var(--ink-soft); margin-top:.15em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.dr .tree.tight .node.card .nt small{white-space:normal} .dr .tree.tight .node.card .ni{width:2.4em; height:2.4em} .dr .tree.tight .node.card .ni .ic{width:1.35em; height:1.35em} .dr .tree.tight .node.card{gap:.4em; padding:.35em .5em .35em .4em} .dr .tree.tight .node .nt b{font-size:calc(.92em * var(--fit, 1))}
+.dr .node:hover .ni,.dr .node:focus-visible .ni{transform:scale(1.07)} .dr .node.card:hover,.dr .node.card:focus-visible{border-color:var(--cat-dark, var(--ink)); border-left-color:var(--cat, var(--ink))}
+.dr .node.st-avail.card{border-color:var(--ink); border-left-color:var(--cat, var(--ink))} .dr .node.st-avail .ni{background:var(--cat-soft, var(--acc-soft)); color:var(--cat-dark, var(--acc-dark))}
+.dr .node.st-poor .nt small{color:var(--bad)}
+.dr .node.has.card{background:var(--cat-soft, var(--acc-soft))} .dr .node.has .ni{background:var(--cat, var(--acc)); color:#fff} .dr .node.st-owned.card{border-color:var(--cat, var(--acc))} .dr .node.st-owned .nt small{color:var(--cat-dark, var(--acc-dark))}
+.dr .node.st-blocked{opacity:.65} .dr .node.st-blocked .ni{background:#fbe6ec; color:var(--bad)} .dr .node.st-blocked.card{border-style:dashed; border-left-style:solid; box-shadow:none}
+.dr .node.pvw .ni{box-shadow:0 0 0 .25em var(--cat-soft, var(--acc-soft)), 0 0 0 .45em var(--cat, var(--acc))}
+.dr .r-adapt .z-main{background:linear-gradient(#f4f9f0, var(--card))} .dr .r-spread .z-main{background:linear-gradient(#fdf4f6, var(--card))}
+/* the Organic gutter (Concept 18): room for the thick tendrils to curve apart between the plant card and the tree card */
+.dr .r-adapt .z-main,.dr .r-spread .z-main{margin-left:var(--gut, .8em)}
+.dr .r-adapt{--acc:var(--leaf); --acc-soft:var(--leaf-soft); --acc-dark:var(--leaf-dark)} .dr .r-spread{--acc:var(--bloom); --acc-soft:var(--bloom-soft); --acc-dark:var(--bloom-dark)} .dr .r-region{--acc:var(--gold); --acc-soft:var(--gold-soft); --acc-dark:var(--gold-deep)}
+
+/* ── ORGANIC tendrils (the only plant → tree treatment; owner-approved weights set per room em by decision-rooms.js) ── */
+.dr .dr-leaders{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:6; overflow:visible}
+.dr .dr-leaders .lead-g{transition:opacity .15s}
+.dr .dr-leaders .ld-glow{fill:none; stroke:var(--cat, var(--acc)); stroke-width:var(--ld-glow, 24px); stroke-linejoin:round; stroke-linecap:round; opacity:0; transition:opacity .15s}
+.dr .dr-leaders .lead-g.on .ld-glow{opacity:.34}
+.dr .dr-leaders .ld{fill:none; stroke:var(--cat, var(--acc)); stroke-width:var(--ld-w, 9px); opacity:.86; transition:opacity .15s; stroke-linejoin:round; stroke-linecap:round}
+.dr .dr-leaders .ld.on{opacity:1; stroke:var(--cat-dark, var(--acc-dark)); stroke-width:var(--ld-on, 13px)}
+.dr .dr-leaders .vein{fill:none; stroke:rgba(255,255,255,.5); stroke-width:var(--vein, 2px); stroke-linecap:round} .dr .dr-leaders .lead-g.on .vein{stroke:rgba(255,255,255,.62)}
+.dr .dr-leaders.dim .lead-g:not(.on){opacity:.4}
+.dr .dr-leaders .anchor-halo{fill:var(--cat-soft, var(--acc-soft)); opacity:.9}
+.dr .dr-leaders .anchor{fill:var(--card); stroke:var(--cat-dark, var(--acc-dark)); stroke-width:3.5} .dr .dr-leaders .anchor.on{fill:var(--cat, var(--acc)); stroke:#fff}
+.dr .dr-leaders .anchor-dot{fill:var(--cat-dark, var(--acc-dark))} .dr .dr-leaders .lead-g.on .anchor-dot{fill:#fff}
+.dr .dr-leaders .aplate{fill:var(--card); stroke:var(--cat-dark, var(--acc-dark)); stroke-width:2} .dr .dr-leaders .aplate.on{fill:var(--cat, var(--acc))}
+.dr .dr-leaders .alab{font:900 .74em/1 var(--font); letter-spacing:1px; text-transform:uppercase; fill:var(--cat-dark, var(--acc-dark))} .dr .dr-leaders .alab.on{fill:#fff}
+
+.dr :focus-visible{outline:3px solid var(--focus); outline-offset:3px}
+@media (prefers-reduced-motion: reduce){ .dr *{transition:none !important; animation:none !important} .dr .node:hover .ni,.dr .node:focus-visible .ni{transform:none} }
+.pv.reduced .dr *{transition:none !important; animation:none !important}

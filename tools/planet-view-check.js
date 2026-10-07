@@ -104,11 +104,13 @@ const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
   { const guarded = ["resources/bloom-gen.js", "resources/bloom-sim.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js", "resources/bloom-scenario.js",
       "resources/bloom-play.js", "content", "planets", "resources/planet-sphere/planet-sphere-view.js", "resources/destination-survey", "resources/main-menu", "resources/atmosphere-transition",
       "resources/training", "index.html", "demos/ui-mockups", "demos/destination-survey.html", "demos/main-menu.html", "demos/atmosphere-transition.html", "demos/planet-sphere.html", "demos/planet-sphere-grid.html"];
-    const changed = git(`diff --name-only ${BASE_SHA} -- ${guarded.join(" ")}`);
+    // (BLOOM-029C) content/traits.js may differ ONLY by the presentation-only uiCategory field (tools/plant-rooms-check.js N2 proves gameplay unchanged)
+    const changed = git(`diff --name-only ${BASE_SHA} -- ${guarded.join(" ")}`).split("\n").filter(Boolean).filter(f => f !== "content/traits.js").join("\n");
+    const traitLines = git(`diff ${BASE_SHA} -- content/traits.js`).split("\n").filter(l => /^[+-][^+-]/.test(l)), traitsOk = traitLines.every(l => /uiCategory|BLOOM-029C|presentation|Spread: Seeds|never read it/.test(l) || (l.startsWith("-") && traitLines.some(m => m.startsWith("+") && m.slice(1).replace(/ uiCategory: "\w+",/, "") === l.slice(1))));
     const texExports = src => [...src.matchAll(/export (?:const|function|class) (\w+)/g)].map(m => m[1]).sort().join();
     const texBase = texExports(git(`show ${BASE_SHA}:resources/planet-sphere/planet-texture.js`)), texNow = texExports(read("resources/planet-sphere/planet-texture.js"));
-    check(!changed && texBase === texNow, "N6 · untouched: generator, topology, sim, validators, content, planets, PlanetSphereView (public API, interaction, projection), the survey, menu, transition and training layer; planet-texture.js keeps exactly its exports",
-      (changed ? "CHANGED: " + changed.replace(/\n/g, ", ") + " · " : "") + `planet-texture exports ${texNow}`); }
+    check(!changed && traitsOk && texBase === texNow, "N6 · untouched: generator, topology, sim, validators, content (traits.js: only the 029C presentation-only uiCategory field), planets, PlanetSphereView (public API, interaction, projection), the survey, menu, transition and training layer; planet-texture.js keeps exactly its exports",
+      (changed ? "CHANGED: " + changed.replace(/\n/g, ", ") + " · " : "") + `traits.js diff ${traitLines.length} line(s)${traitsOk ? "" : " NOT only uiCategory"} · planet-texture exports ${texNow}`); }
 
   // N7 · presentation reads no page global and holds no rule; no Concept 18 mockup file or data; the adapter additions are additive
   { const pv = strip(read("resources/run-ui/planet-view.js")), rm = strip(read("resources/run-ui/run-map-renderer.js")), ad = strip(read("resources/run-ui/run-ui-adapter.js"));
@@ -331,13 +333,17 @@ const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
         check(r.name && r.colony && r.limiting && r.boxes, `${tag} B14 · the banner shows the real region: name, colony status, limiting factor (key + the page's words) and the four condition readings / statuses from adapter.region()`, J({ name: r.name, colony: r.colony, limiting: r.limiting, notOk: r.notOk }));
         check(ok && r.distinct && J(okCols) === J(r.colors), `${tag} B15 · Temperature / Water / Soil / Hazard keep four distinct category colours whatever their status (a blocked region and an all-OK region show the same four); status is a separate icon + word badge`, r.colors.join(" · ") + " · " + r.notOk.join(", "));
         check(r.helpEq && r.help.length > 0 && r.intrinsic, `${tag} B16 · "Would help" = adapter.wouldHelp(region) exactly (real previews), and the banner's buttons are intrinsic-width (no flex-grow, no clipping)`, J({ help: r.help, wh: r.wh, buttons: r.nBtns })); }
-      // B17 · rooms are not built: their requests are visibly unavailable (dev path) and change nothing
+      // B17 · the room seam: Region / Adapt / Spread are registered by BLOOM-029C (tools ready); Terraform is not built (unavailable):
+      // its request says so through the seam and changes nothing (no mock room). A registered room opens and closes through the seam.
       { const before = await p.evaluate(() => [__pv.A.selection().index, __pv.A.run().running, __EV.length]);
-        await p.click('[data-tool="adapt"]'); await frames(p, 2);
+        await p.click('[data-tool="terraform"]'); await frames(p, 2);
         const r = await p.evaluate(() => ({ toast: !document.getElementById("pvToast").hidden && document.getElementById("pvToast").textContent, st: [...document.querySelectorAll(".pv-tool[data-room]")].map(b => b.dataset.tool + ":" + b.dataset.room),
-          after: [__pv.A.selection().index, __pv.A.run().running, __EV.length], rooms: ["region", "adapt", "spread", "terraform"].map(n => __pv.PV.rooms.has(n)) }));
-        check(r.toast && /029C/.test(r.toast) && J(r.after) === J(before) && r.rooms.every(x => !x) && r.st.every(s => /unavailable/.test(s)),
-          `${tag} B17 · the Region / Adapt / Spread / Terraform rooms are not built: their tool buttons are marked unavailable and a request says so through the room seam, touching nothing (no mock room)`, J(r)); }
+          after: [__pv.A.selection().index, __pv.A.run().running, __EV.length], rooms: ["region", "adapt", "spread", "terraform"].map(n => __pv.PV.rooms.has(n)), room: __pv.PV.state().room }));
+        await p.click('[data-tool="adapt"]'); await frames(p, 3); const o = await p.evaluate(() => ({ room: __pv.PV.state().room, running: __pv.A.run().running, layer: !!document.querySelector(".pv .dr:not([hidden])") }));
+        await p.keyboard.press("Escape"); await frames(p, 3); const c = await p.evaluate(() => ({ room: __pv.PV.state().room, running: __pv.A.run().running, sel: __pv.A.selection().index }));
+        check(r.toast && /029D/.test(r.toast) && J(r.after) === J(before) && J(r.rooms) === "[true,true,true,false]" && J(r.st) === J(["region:ready", "adapt:ready", "spread:ready", "terraform:unavailable"]) && r.room === null
+          && o.room === "adapt" && o.running === false && o.layer && c.room === null && c.running === before[1] && c.sel === -1,
+          `${tag} B17 · the room seam: Region / Adapt / Spread are registered (029C) and open through it (Adapt pauses the run; Escape closes and restores it, no home selection); Terraform is not built — its tool is marked unavailable and a request says so (BLOOM-029D) touching nothing`, J({ ...r, open: o, closed: c })); }
       { const n = await p.evaluate(() => { const A = __pv.A, names = new Set(A.regions().map(r => r.name)); return [...document.querySelectorAll(".pv .bn-t b")].every(b => names.has(b.textContent)); });
         const ext = p.reqs.filter(u => !u.startsWith(ORIGIN) && !u.startsWith("data:") && !u.startsWith("blob:"));
         check(n && !ext.length && !p.reqs.some(u => /ui-mockups/.test(u)) && !p.errs.length, `${tag} B18 · no Concept 18 file is requested, no request leaves the local server, no console error`, `${p.reqs.length} requests${ext.length ? " · EXTERNAL " + ext.join(", ") : ""}${p.errs.length ? " · ERRORS " + p.errs.join(" | ") : ""}`); }
@@ -410,10 +416,10 @@ const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
         const r = await q.evaluate(() => { const one = n => { const e = document.querySelectorAll(`[data-tutorial="${n}"]`); return e.length === 1 && !!e[0].closest(".pv"); };
           const A = __pv.A, names = ["biomass", "coverage", "sky", "play-pause", "speed", "run-menu", "map", "message-log", "inspect", "readout", "limiting-factor", "colony-status"];
           return { paused: A.run().running === false && A.run().training, pressed: document.getElementById("pvPause").getAttribute("aria-pressed") === "true", label: document.getElementById("pvPause").getAttribute("aria-label"),
-            anchors: names.filter(one), missing: names.filter(n => !one(n)), legacyKept: ["growth-focus", "upgrades", "report"].every(n => document.querySelectorAll(`[data-tutorial="${n}"]`).length >= 1),
+            anchors: names.filter(one), missing: names.filter(n => !one(n)), legacyKept: ["board-terraform", "upgrade-warm"].every(n => document.querySelectorAll(`[data-tutorial="${n}"]`).length === 1 && !document.querySelector(`[data-tutorial="${n}"]`).closest(".pv")) && ["growth-focus", "upgrades", "raw-signals"].every(one), // (029C) the rooms own these now; Terraform's stay on the shell
             ready: __EV.filter(e => e.type === "run-ready").map(e => e.detail), menu: [...document.querySelectorAll("#pvMenu [data-act]")].map(b => b.dataset.act) }; });
         check(r.paused && r.pressed && r.label === "Resume" && !r.missing.length && r.legacyKept && r.ready.length === 1 && r.ready[0].training === true && J(r.menu) === '["restartTraining","skipTraining","mainMenu"]',
-          `${tag} B21 · training in the production view: starts PAUSED (Pause shows Resume, pressed), every re-homed anchor resolves to ONE production element (${r.anchors.length}), the shell keeps the rest, one bloom:run-ready {training:true}, the training menu lists Restart · Skip · Main menu`, J(r));
+          `${tag} B21 · training in the production view: starts PAUSED (Pause shows Resume, pressed), every re-homed anchor resolves to ONE production element (${r.anchors.length}; the 029C rooms own growth-focus / upgrades / raw-signals too), the shell keeps Terraform's, one bloom:run-ready {training:true}, the training menu lists Restart · Skip · Main menu`, J(r));
         if (!FF) await shot(q, "12-training-paused.png");
         await q.click("#pvPause"); await frames(q, 2); const go = await q.evaluate(() => [__pv.A.run().running, __EV.filter(e => e.type === "play-pause").map(e => e.detail.running)]);
         await q.click("#pvMenuBtn"); await q.click('#pvMenu [data-act="restartTraining"]'); await q.waitForFunction(() => window.BLOOM_RUN_UI && BLOOM_RUN_UI.adapter && BLOOM.planetView.instance, null, { timeout: 20000, polling: 100 }).catch(() => {});

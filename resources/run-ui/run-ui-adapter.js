@@ -22,6 +22,8 @@
 // actions.selectTile(tile) (a physical map click: the page's own selectAt with the real tile). Each is a copy
 // of existing truth; none adds a rule. docs/PRODUCTION_PLANET_VIEW_v1.md §6.
 //
+// BLOOM-029C (additive; api stays 1): upgrade items carry the content's `uiCategory` (presentation only; docs/PRODUCTION_PLANT_ROOMS_v1.md).
+//
 // Classic script, no dependencies: boots over file:// like every other run-page file.
 (function (root) {
   "use strict";
@@ -156,6 +158,7 @@
     function upgradeItem(u) {
       const st = R.upgradeState(u), e = u.effect;
       return { id: u.id, board: u.board, name: u.name, short: u.short || null, sub: u.sub || null, effect: e.type, axis: e.axis || null,
+        uiCategory: u.uiCategory || null, // (BLOOM-029C) the content's presentation-only room category; the sim never reads it
         tier: st.tier, maxTier: e.max !== undefined ? e.max : null, owned: st.tier > 0, price: st.cost,
         rules: st.rules, affordable: sim.biomass >= st.cost, canBuy: st.canBuy, reason: st.why || null, science: u.science || null };
     }

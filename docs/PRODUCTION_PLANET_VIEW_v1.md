@@ -159,18 +159,20 @@ flashes now also record their event `type`. Nothing else in the page changed for
 - **Anchors (`&ui=18`):** re-homed to the production elements, each resolving to exactly ONE element: `biomass`, `coverage`, `sky`,
   `play-pause`, `speed`, `run-menu` (+ `action-*` in its menu), `map` (the canvas), `message-log`, and, on the banner, `inspect`,
   `readout`, `limiting-factor`, `colony-status`. The hidden shell's copies are renamed `data-tutorial-legacy` (and again whenever
-  the shell re-renders them). New: `map-view`, `scenario-status`. The shell keeps `growth-focus`, `focus-*`, `local-*`,
-  `raw-signals`, `upgrades`, `board-*`, `upgrade-*`, `report`, `report-continue`, `run-actions` until the rooms that show them exist.
+  the shell re-renders them). New: `map-view`, `scenario-status`. **BLOOM-029C** re-homed `growth-focus`, `focus-*`, `local-upgrade`,
+  `local-*`, `raw-signals`, `upgrades`, `board-adapt`, `board-spread` and the Adapt / Spread `upgrade-*` to the production rooms
+  (`rooms.claimAnchors`); the shell keeps `board-terraform`, the Terraform `upgrade-*`, `report`, `report-continue`, `run-actions`.
 - **Training:** starts paused (Pause shows Resume, pressed), deterministic, the menu's Restart / Skip / Main menu go through the
   page's own path (training layer fade + status), no coach UI.
 
 ## 8. Seams for the next milestones
 
-- **029C rooms:** `planetView.rooms.register("region" | "adapt" | "spread", { open(ctx) → close })`, `ctx = { adapter, region,
-  item, opener, view }`. The Change tools, "Inspect region" and "Would help" already call `openRoom(name, {region, item, opener})`.
-  The accepted rules the rooms implement: pause on open (restore on Back), take the home selection as the room context, clear the
-  home selection. Until registered, a request shows a development notice and changes nothing (tools carry a small ring).
-  Trait → rail categories are still not in the content (029A §6.2).
+- **029C rooms — DONE** (`resources/run-ui/decision-rooms.js`, `docs/PRODUCTION_PLANT_ROOMS_v1.md`): Region Inspect, Adapt and Spread
+  are registered through `planetView.rooms.register(name, { open(ctx) → close })`, `ctx = { adapter, region, item, opener, view }`;
+  they pause on open (restore on Back, run on Resume), take the home selection as the room context and clear it. The seam gained
+  `rooms.claimAnchors(names)`, `rooms.setActive(name)`, `rooms.parts()`, `state().room` and the exposed `toast` (now at the `.pv`
+  root, above the room veil). Trait → category metadata is now in the content (`uiCategory`, presentation only). Terraform is
+  still unregistered: its request shows the development notice and changes nothing (029D).
 - **029D Terraform:** `PlanetSphereView` unmodified; `view.setPlanet(adapter.surface().planet, { render: adapter.surface().render })`
   shows the same canonical surface as the map (match regions by **id**, 029A §6.3). Decoration (atmosphere, open / worse regions)
   drawn outside the view.
@@ -181,8 +183,8 @@ flashes now also record their event `type`. Nothing else in the page changed for
 
 ## 9. Limitations / risks
 
-- The rooms are not built: `&ui=18` cannot buy upgrades, set growth focus or buy local upgrades (use the shell). The Bloom
-  Report / extinction screen are still the shell's modal (visible in both paths).
+- Terraform is not built (029D): `&ui=18` cannot buy Terraform upgrades (use the shell). Region Inspect, Adapt and Spread are
+  production rooms since BLOOM-029C. The Bloom Report / extinction screen are still the shell's modal (visible in both paths).
 - Player-mode links do not carry `&ui=18`.
 - The page's message copy still contains pictographs in the middle of sentences (e.g. "⚠"); only a leading one is replaced.
 - Labels avoid each other with one vertical nudge; very small tiles on crowded worlds can still overlap.

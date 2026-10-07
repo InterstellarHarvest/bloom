@@ -154,6 +154,11 @@ adapter file is missing, the shell runs exactly as before; the hooks are no-ops.
 
 ### 6.2 Region / Adapt / Spread (029C)
 
+> **Built by BLOOM-029C** (`resources/run-ui/decision-rooms.js`, `docs/PRODUCTION_PLANT_ROOMS_v1.md`). Decisions taken: tree hover uses
+> `actions.preview(id)` (the deliberate real preview, `bloom:upgrade-preview`); the trait → category grouping is content metadata
+> (`uiCategory`, presentation only; adapter items carry it); rooms pause through `actions.pause()` and restore through
+> `setRunning(wasRunning)`; the detail shapes stay frozen, so the coach learns room state from the controller, not from an event.
+
 - **Selection versus room context** is supported:
   - `region(r)`, `colony(r)`, `wouldHelp(r)` and `previewOf(id)` read any region without selecting it.
   - `setGrowthFocus(r, …)` and `buyLocalUpgrade(r, …)` act on any region.
