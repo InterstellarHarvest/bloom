@@ -80,15 +80,15 @@
   /**
    * Mount a globe slot into `host` (an empty, sized element the room owns). Options: reducedMotion (true | null), ariaLabel,
    * surface (BLOOM.surface, for the fallback), onReady(kind). → { kind: "pending" | "sphere" | "fallback", view, setSurface(planet,
-   * render), textureCanvas(), dispose() }. setSurface may be called before the module resolved: the snapshot is kept and applied on
-   * resolution. The sphere is consumed strictly through its public API.
+   * render), dispose() }. setSurface may be called before the module resolved: the snapshot is kept and applied on resolution. The sphere
+   * is consumed strictly through its public API (constructor options, setPlanet, dispose; the room adds resize / state): no private member
+   * is read here or in the room — QA white-boxes the texture source only inside its own harness (tools/terraform-check.js).
    */
   function mount(host, { reducedMotion = null, ariaLabel = "The planet now: drag sideways or press the left and right arrow keys to spin it", surface = root.BLOOM && root.BLOOM.surface, onReady = null } = {}) {
     if (!host || typeof host.appendChild !== "function") throw new TypeError("BLOOM.terraformGlobe.mount: host must be a DOM element");
     const H = { kind: "pending", view: null, disposed: false, pending: null, flat: null, surfaceSets: 0 };
     host.classList.add("tg-host");
     H.setSurface = (planet, render) => { H.pending = { planet, render: render || null }; H.surfaceSets++; if (H.view) H.view.setPlanet(planet, { render: render || null }); else if (H.flat) paintFlat(); };
-    H.textureCanvas = () => (H.view ? H.view._canvas : H.flat ? H.flat.canvas : null); // (QA: the sphere's texture source, read-only)
     H.dispose = () => { if (H.disposed) return; H.disposed = true; if (H.view) { H.view.dispose(); H.view = null; } if (H.flat) { H.flat.wrap.remove(); H.flat = null; } host.classList.remove("tg-host", "tg-sphere", "tg-flat"); };
     // the flat fallback: the canonical surface painted once with BLOOM.surface (the production map's own paint function), clipped to a disc
     function paintFlat() {
