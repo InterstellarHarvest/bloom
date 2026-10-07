@@ -3,7 +3,9 @@
 **From:** BLOOM-029A · **For:** whoever builds BLOOM-029B–029E (the Concept 18 run screen) and the Main PMO.
 **Base:** `c23815e` (028D1 evidence tip). Evidence: `docs/evidence/bloom-029a/REPORT.md`. Suite: `tools/run-ui-check.js` (the 24th).
 
-> **BLOOM-029B** built the first production consumer of this boundary — the Planet View behind `&ui=18` — and added a few
+> **BLOOM-029E** made the production UI the default (`?ui=legacy` = the engineering shell, developer-only) and added the report seams —
+> `report()`, `reportActions()`, `actions.reportAction(id)`: the page's `winReport()` / `lossReport()` truth and its own post-run actions
+> (`docs/GAMEPLAY_UI_CONVERGENCE_v1.md` §8). **BLOOM-029B** built the first production consumer of this boundary — the Planet View, behind `&ui=18` at the time — and added a few
 > additive reads (`surface()`, `mapState()`, `effects()`, `runMenu()` + `actions.runAction`, two scenario fields; `api` stays 1).
 > See `docs/PRODUCTION_PLANET_VIEW_v1.md` §6.
 
@@ -198,17 +200,12 @@ view.setPlanet(BLOOM_RUN.planet, { render: (BLOOM_RUN.archetype && BLOOM_RUN.arc
 - **Seam.** Authored worlds (First Bloom, Training Grounds) have no `topology`. They are rectangles, so the globe shows a real
   seam at the cut. Generated worlds are cylinders.
 
-### 6.4 Room transitions (029E): AtmosphereTransition, unmodified
+### 6.4 Room transitions (029E): AtmosphereTransition, unmodified — DONE
 
-```js
-import { AtmosphereTransition } from "../resources/atmosphere-transition/atmosphere-transition.js";
-await atx.run({ preset: "subdued", onCovered: () => swapRoom() });   // conceal:"full" if the swap must not be seen
-```
-
-- **Order:** pause, then run, then swap at covered, then reveal. On Back, restore the previous running state.
-- **The page loop keeps drawing under the veil.** That is harmless, because the sim only ticks while running.
-- **Same constraint as the sphere:** an ES module, http(s) only, with a guarded import.
-- **Motion:** read it the way the training layer does (`main-menu-data.js` `readSettings` → `reducedMotionFor`).
+`resources/run-ui/gameplay-transition.js` is the one bridge (a guarded dynamic import, as the sphere; the component consumed through its
+public API only; the Settings motion choice read through `main-menu-data.js`); the rooms controller and the production report run every
+swap inside it with the order pause → conceal → swap at covered → reveal → resume (`docs/GAMEPLAY_UI_CONVERGENCE_v1.md` §5–§6). The page
+loop keeps drawing under the veil, harmlessly: the sim only ticks while running, and it is paused before the conceal starts.
 
 ## 7. Concept 18 mock data: not imported
 

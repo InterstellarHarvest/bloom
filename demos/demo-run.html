@@ -81,6 +81,14 @@
   upgrade-preview, upgrade-purchase, growth-focus, local-upgrade, bubble-collect, win, run-ready), stable data-tutorial anchors
   on the controls, and BLOOM_RUN_UI.placeBubble(sectionId) for a bonus bubble placed on purpose. Contracts:
   docs/TRAINING_FOUNDATION_v1.md. QA: tools/training-check.js.
+  BLOOM-029E (gameplay UI convergence): the PRODUCTION UI is the DEFAULT run interface. With no ui= query (and with the alias ui=18)
+  this page mounts the production Planet View, its four rooms and the production run report (resources/run-ui/run-report.js) over the
+  same run, for every launch (First Bloom, planet=, generated, every scenario, play=1, training=1). Room swaps and the report open /
+  close through ONE SUBDUED AtmosphereTransition (resources/run-ui/gameplay-transition.js). The engineering shell below (header HUD,
+  inspect / shop sidebars, canvas, footer, report modal) is RETIRED as a player-facing path: it stays only as the hidden simulation
+  host the adapter wraps (its DOM and functions are the one real run) and as the historical regression oracle, shown ONLY by the
+  developer flag ?ui=legacy (never linked from the game). The report's truth is factored into winReport() / lossReport() below: the
+  modal and the production report read the same structured data; reportActions() / reportAction() own the post-run actions.
   BLOOM-029D: the fourth production room, Terraform (same controller; resources/run-ui/terraform-globe.js hosts the unmodified
   PlanetSphereView showing the exact current planet under the current sky). computePreview records the real current → preview sky.
   BLOOM-029C: with &ui=18 the production decision rooms (resources/run-ui/decision-rooms.js: Region Inspect, Adapt, Spread; the
@@ -350,19 +358,24 @@
 <script src="../resources/bloom-play.js"></script>
 <!-- BLOOM-029A: the run UI production boundary (read-only snapshots + the real actions, for the future run screen) -->
 <script src="../resources/run-ui/run-ui-adapter.js"></script>
-<!-- BLOOM-029B: the production Planet View (shown only with &ui=18 during the migration; inert otherwise). The canonical planet
-     surface is shared with PlanetSphereView; the map renderer and the view read the run only through the adapter. -->
+<!-- BLOOM-029B: the production Planet View (the default run interface since BLOOM-029E; the shell is shown only with ?ui=legacy). The
+     canonical planet surface is shared with PlanetSphereView; the map renderer and the view read the run only through the adapter. -->
 <link rel="stylesheet" href="../resources/run-ui/planet-view.css">
 <script src="../resources/planet-surface/planet-surface.js"></script>
 <script src="../resources/run-ui/run-map-renderer.js"></script>
 <script src="../resources/run-ui/planet-view.js"></script>
-<!-- BLOOM-029C: the production decision rooms (Region Inspect · Adapt · Spread) over the Planet View, same adapter; inert without &ui=18 -->
+<!-- BLOOM-029C: the production decision rooms (Region Inspect · Adapt · Spread) over the Planet View, same adapter -->
 <link rel="stylesheet" href="../resources/run-ui/decision-rooms.css">
 <script src="../resources/run-ui/plant-specimen.js"></script>
 <!-- BLOOM-029D: the production Terraform room's globe helper (guarded dynamic import of the unmodified PlanetSphereView over http(s);
      a flat canonical-surface fallback over file://), then the rooms (Terraform is the fourth room since 029D) -->
 <script src="../resources/run-ui/terraform-globe.js"></script>
 <script src="../resources/run-ui/decision-rooms.js"></script>
+<!-- BLOOM-029E: the gameplay transition bridge (guarded dynamic import of the unmodified AtmosphereTransition over http(s); immediate swaps
+     over file://) and the production run report (Bloom Report / Extinction over the dimmed Planet View, the production plant specimen) -->
+<script src="../resources/run-ui/gameplay-transition.js"></script>
+<link rel="stylesheet" href="../resources/run-ui/run-report.css">
+<script src="../resources/run-ui/run-report.js"></script>
 <!-- the game UI below is inert (type="text/plain") until the boot script after it has chosen the planet:
      it then runs as an ordinary classic script, so its globals (sim, selected, refreshShop …) are unchanged -->
 <script type="text/plain" id="bloomUI">
@@ -397,9 +410,12 @@ let running=!TRAIN, speed=1; // (BLOOM-028D1: a training run starts paused)
 // BLOOM-028D1: generic run events for the layers built on this page (the tutorial). Each is a CustomEvent "bloom:<type>" on
 // document, dispatched at the real action point AFTER the action took effect; detail is plain data. They change nothing here.
 const emit=(type,detail)=>document.dispatchEvent(new CustomEvent("bloom:"+type,{detail}));
-// BLOOM-029B: &ui=18 = the production Planet View over this same run (migration path); the shell below is then hidden and its map
-// is not drawn (its DOM and state stay: they are the adapter's host). Without it, nothing changes.
-const UI18=new URLSearchParams(location.search).get("ui")==="18"&&!!(window.BLOOM&&BLOOM.planetView&&BLOOM.runUI);
+// BLOOM-029E: the PRODUCTION Planet View + rooms + report are the DEFAULT interface over this same run; the shell below is then hidden
+// and its map is not drawn (its DOM, state and functions stay: they are the adapter's host — the one real simulation). ONLY the
+// developer flag ?ui=legacy (historical regression suites, low-level diagnosis; never linked from the game) shows the shell instead;
+// ?ui=18 (the 029B–029D migration flag) remains a backwards-compatible alias of the default.
+const UI_MODE=new URLSearchParams(location.search).get("ui")==="legacy"?"legacy":"production";
+const PROD=UI_MODE==="production"&&!!(window.BLOOM&&BLOOM.planetView&&BLOOM.decisionRooms&&BLOOM.runUI);
 // BLOOM-029A: the run UI boundary (resources/run-ui/run-ui-adapter.js), created near the end of this script. Until then (and if the
 // adapter file is missing) these two hooks do nothing, so the shell never depends on it.
 let runUI={ invalidate(){}, frame(){} };
@@ -503,7 +519,7 @@ function resize(){ fit(); cv.width=W*TILE*dpr; cv.height=H*TILE*dpr; cv.style.wi
 const rgb=c=>`rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`;
 
 function draw(){
-  if(UI18) return; // (BLOOM-029B) the production map draws the run instead (the shell is hidden)
+  if(PROD) return; // (BLOOM-029B/E) the production map draws the run instead (the shell is the hidden host)
   ctx.clearRect(0,0,cv.width,cv.height);
   if(PRESS||CLIM){ const k=skyNow(); DRAW_T=k.t; DRAW_M=k.m; } else { DRAW_T=G.temp; DRAW_M=G.moist; }
   const frosty=FROST?SEC.map(s=>DRAW_T+s.local.tempOffset<FROST_BELOW):null; // (live: warming the sky melts the glints)
@@ -1224,7 +1240,8 @@ document.getElementById("btnSpeed").addEventListener("click",()=>setSpeed(speed=
 /* ========================================================================== */
 /*  BLOOM REPORT                                                               */
 /* ========================================================================== */
-// tiny programmatic portrait of the final plant: each owned trait adds a visible feature
+// tiny programmatic portrait of the final plant: each owned trait adds a visible feature (the engineering modal only; the production
+// report shows the production plant specimen, resources/run-ui/plant-specimen.js, from the same owned tiers)
 function drawPlant(c){
   const S=4, X=c.getContext("2d"), px=(x,y,col,w=1,h=1)=>{X.fillStyle=col;X.fillRect(x*S,y*S,w*S,h*S);};
   X.clearRect(0,0,c.width,c.height);
@@ -1246,60 +1263,117 @@ function drawPlant(c){
   if(genome.waterSeeds){ px(0,38,"#3a6f9a",8,2); px(2,36,"#8a5a2b",3,3); px(3,36,"#b98a4a"); } // a floating seed pod
 }
 
+// (BLOOM-029E) REPORT TRUTH, as structured data. The calculations below are the ones the Bloom Report / extinction screen have always
+// made — "held" = a region more than 40 % living, "gave up" = an unfit region (fitness at or under the growth threshold) and its named
+// limiting factor, the owned Adapt / Spread build and the Terraform steps as separate lists, the colony upgrades, the real-plant analogs
+// from the trait content, each scenario's final state — written once here and READ by both presentations: the engineering modal (the
+// legacy*Html renderers below, ?ui=legacy) and the production report (resources/run-ui/run-report.js, through adapter.report()).
+// Nothing is re-derived elsewhere; no rule, threshold or outcome changed.
+let REPORT=null; // the current run-end report (null until a win or an extinction)
+const elapsed=()=>({ ticks:sim.ticks, seconds:sim.ticks*CFG.tickMs/1000, mins:Math.floor(sim.ticks*CFG.tickMs/60000), secs:Math.round(sim.ticks*CFG.tickMs/1000)%60,
+  text:`${Math.floor(sim.ticks*CFG.tickMs/60000)}m ${String(Math.round(sim.ticks*CFG.tickMs/1000)%60).padStart(2,"0")}s` });
+const reportIdentity=()=>({ planetId:BLOOM_RUN.planet.id, planetName:BLOOM_RUN.planet.name, kind:BLOOM_RUN.kind, archetypeId:RUN_ARCH, archetypeName:RUN_ARCH?BLOOM_RUN.archetype.name:null,
+  seed:RUN_ARCH?BLOOM_RUN.seed:null, seedWord:SEEDWORD, scenarioId:RUN_SCN, scenarioName:SCN?SCN.name:"Eden", scenarioTitle:SCN&&SCN.display?SCN.display.title:null, scenarioActive:SCEN, training:!!TRAIN, play:PLAY });
 // BLOOM-012: the scenario's identity and how far the decline got, with the drift the plant endured (pressure runs only)
-function pressureReport(){
-  if(!PRESS) return ""; const o=PS.offsets, done=PS.progress>=1;
-  return `<div class="press" id="repPressure"><b>Pressure: ${SCN.display.title}</b> — ${phaseName(PS.phase)} (${Math.round(PS.progress*100)}% of the decline).
-    Your plant endured: moisture <b>${sgn(o.moist)}</b>, temperature <b>${sgn(o.temp)} °C</b>, radiation <b>${sgn(o.rad)}</b>${done?" — the final harsh state.":`. The decline continues if you keep playing (final: moisture ${sgn(PS.max.moist)}, temperature ${sgn(PS.max.temp)} °C, radiation ${sgn(PS.max.rad)}).`}</div>`;
+function pressureReportData(){ if(!PRESS) return null; const o=PS.offsets;
+  return { title:SCN.display.title, phaseName:phaseName(PS.phase), phase:PS.phase, progress:PS.progress, done:PS.progress>=1, offsets:{moist:o.moist, temp:o.temp, rad:o.rad}, max:{moist:PS.max.moist, temp:PS.max.temp, rad:PS.max.rad} }; }
+function pressureReport(){ const d=pressureReportData(); if(!d) return ""; const o=d.offsets;
+  return `<div class="press" id="repPressure"><b>Pressure: ${d.title}</b> — ${d.phaseName} (${Math.round(d.progress*100)}% of the decline).
+    Your plant endured: moisture <b>${sgn(o.moist)}</b>, temperature <b>${sgn(o.temp)} °C</b>, radiation <b>${sgn(o.rad)}</b>${d.done?" — the final harsh state.":`. The decline continues if you keep playing (final: moisture ${sgn(d.max.moist)}, temperature ${sgn(d.max.temp)} °C, radiation ${sgn(d.max.rad)}).`}</div>`;
 }
 // BLOOM-014: one competition line — how much land the native plants held at the start, at their peak and now, how many regions
 // were contested, and the regions left to them (winning never needed every native plant gone)
-function competitionReport(){
-  if(!COMP) return ""; const pct=x=>Math.round(x*100), contested=CS.everContested.reduce((a,b)=>a+b,0);
-  const left=SEC.map((_,i)=>i).filter(i=>{ const c=sim.competitionAt(i); return c.nativeShare>=0.4; }).map(i=>LABEL[i]);
-  return `<div class="comp" id="repComp"><b>Competition: ${SCN.display.title}</b> — native plants held <b>${pct(CS.startShare)}%</b> of the land at the start,
-    <b>${pct(CS.peakShare)}%</b> at their peak and <b>${pct(CS.share)}%</b> now. ${contested} region${contested===1?"":"s"} became contested.
+function competitionReportData(){ if(!COMP) return null; const contested=CS.everContested.reduce((a,b)=>a+b,0);
+  const left=SEC.map((_,i)=>i).filter(i=>sim.competitionAt(i).nativeShare>=0.4).map(i=>secRef(i));
+  return { title:SCN.display.title, startShare:CS.startShare, peakShare:CS.peakShare, share:CS.share, contested, left }; }
+function competitionReport(){ const d=competitionReportData(); if(!d) return ""; const pct=x=>Math.round(x*100), left=d.left.map(r=>r.name);
+  return `<div class="comp" id="repComp"><b>Competition: ${d.title}</b> — native plants held <b>${pct(d.startShare)}%</b> of the land at the start,
+    <b>${pct(d.peakShare)}%</b> at their peak and <b>${pct(d.share)}%</b> now. ${d.contested} region${d.contested===1?"":"s"} became contested.
     ${left.length?`Left to native vegetation: ${left.join(", ")}. You did not need to remove every native plant.`:"Hardly any native cover is left: your plant out-competed it almost everywhere."}</div>`;
 }
+// BLOOM-015: one climate line in the Bloom Report / extinction screen — what the climate went through, never a grade
+function climateReportData(){ if(!CLIM) return null; const sh=CL.shocks, kinds={}; sh.forEach(x=>{ kinds[x.name]=(kinds[x.name]||0)+1; });
+  const swing=Object.keys(CL.axes).filter(ax=>CL.axes[ax].maxSwing>0).map(ax=>{ const big=sh.filter(x=>x.axis===ax).reduce((m,x)=>x.magnitude>m.magnitude?x:m,{magnitude:0,sign:1});
+    return { axis:ax, name:AXNAME[ax], maxSwing:CL.axes[ax].maxSwing, text:`${AXNAME[ax]} ${axVal(ax,big.sign*CL.axes[ax].maxSwing)}` }; });
+  const byAxis=Object.keys(CL.axes).map(ax=>[ax,CL.forcing.filter(f=>f.axis===ax).length]).filter(x=>x[1]).map(([ax,n])=>({ axis:ax, name:AXNAME[ax], steps:n, text:`${AXNAME[ax]} ${n}` }));
+  return { title:SCN.display.title, steps:CL.forcing.length, byAxis, peak:CL.peak, peakBand:BANDS[bandOf(CL.peak)].name, level:CL.level, bandName:BANDS[CL.band].name,
+    shockCount:sh.length, shocks:Object.entries(kinds).map(([name,n])=>({ name, count:n, text:`${lowerName(name)}${n>1?` ×${n}`:""}` })), swing,
+    note:"Instability is the cost of changing a whole planet quickly, not a score: a heavily Terraformed win and a low-instability win are both wins." }; }
+function climateReport(){ const d=climateReportData(); if(!d) return "";
+  return `<div class="clim" id="repClimate"><b>Climate: ${d.title}</b> — ${d.steps} Terraform step${d.steps===1?"":"s"}${d.byAxis.length?` (${d.byAxis.map(x=>x.text).join(", ")})`:""}; instability peaked at
+    <b>${pctI(d.peak)}%</b> (${d.peakBand}) and is <b>${pctI(d.level)}%</b> now.
+    ${d.shockCount?`${d.shockCount} climate shock${d.shockCount===1?"":"s"}: ${d.shocks.map(x=>x.text).join(", ")}; largest temporary swing ${d.swing.map(x=>x.text).join(", ")}.`:"No climate shock."}
+    ${d.note}</div>`;
+}
+// the Bloom Report's truth (acceptance Q10: build list + real-plant analogs come from the trait data, content/traits.js)
+function winReport(cov){
+  const owned=UP.filter(u=>u.board!=="Terraform" && sim.ownedTier(u)>0);
+  const built=owned.map(u=>({ id:u.id, name:u.name, short:u.short||null, board:u.board, tier:sim.ownedTier(u), single:(u.effect.type==="level"||u.effect.type==="crossing")&&u.effect.max===1, science:u.science||null, uiCategory:u.uiCategory||null }));
+  const terraform=UP.filter(u=>u.board==="Terraform" && sim.ownedTier(u)>0).map(u=>({ id:u.id, name:u.name, short:u.short||null, tier:sim.ownedTier(u), axis:u.effect.axis||null, uiCategory:u.uiCategory||null }));
+  const held=[], gaveUp=[]; const liv=livingCountBySection();
+  // a region your plant CAN grow in is just still filling in — only unfit regions count as given up
+  SEC.forEach((s,i)=>{ if(liv[i]/AREA[i]>0.4) held.push({ region:secRef(i), livingShare:liv[i]/AREA[i] });
+    else { const e=evaluate(i); if(e.fitness<=CFG.grow.growThresh) gaveUp.push({ region:secRef(i), limitKey:e.limitKey, reason:LIMIT_MSG[e.limitKey](e) }); } });
+  const colonyUpgrades=SEC.map((_,i)=>{ const sp=sim.getSpecialization(i); return sp?{ region:secRef(i), upgrade:sp, name:SPEC[sp].name }:null; }).filter(Boolean);
+  return { kind:"win", heading:TRAIN?TC.complete.toUpperCase():"BLOOM", coverage:cov, coveragePct:Math.round(cov*100), winAt:sim.winAt, elapsed:elapsed(), identity:reportIdentity(),
+    built, terraform, held, gaveUp, colonyUpgrades, analogs:built.filter(b=>b.science).map(b=>({ id:b.id, name:b.name, science:b.science })),
+    pressure:pressureReportData(), competition:competitionReportData(), climate:climateReportData(),
+    why:{ lead:"every region has a limiting factor: the one condition furthest outside your plant's tolerance. You fixed enough of them to hold the planet",
+      gaveUpNote:"No plant tolerates everything. Adapting to one extreme costs you another, so choosing what to sacrifice was the real strategy." } };
+}
 // BLOOM-012: extinction (scenarios that enable it): the engine has confirmed no living plants for the scenario's grace period
-function onLoss(why){
-  const mins=Math.floor(sim.ticks*CFG.tickMs/60000), secs=Math.round(sim.ticks*CFG.tickMs/1000)%60, o=PS.offsets;
-  const r=document.getElementById("report"); r.classList.add("lost");
-  r.innerHTML=`<h2>✕ EXTINCTION</h2>
-    <div class="sub" id="lossWhy">No living plants were left anywhere for ${SCN.loss.extinctionGraceSeconds} s, so the run is over (${mins}m ${String(secs).padStart(2,"0")}s${BLOOM_RUN.kind==="procedural"?` on <b>${BLOOM_RUN.planet.name}</b>, ${BLOOM_RUN.archetype.name} · ${SEEDWORD} ${BLOOM_RUN.seed}`:""}).</div>
+function lossReport(why){
+  return { kind:"loss", heading:"EXTINCTION", reason:why, lostReason:sim.lostReason||why, graceSeconds:SCN.loss.extinctionGraceSeconds, elapsed:elapsed(), identity:reportIdentity(),
+    pressure:pressureReportData(), competition:competitionReportData(), climate:climateReportData(),
+    debrief:(SCN.display&&SCN.display.lossNote)||"the planet kept changing and your plant could no longer live on any of its land. Adapting to the new conditions (Adapt), pushing the sky back (Terraform) or protecting your strongest colonies earlier can keep a foothold alive." };
+}
+// the engineering modal's markup (?ui=legacy only), rendered from the structured report — the same words as before
+function legacyWinHtml(d){ const lbl=b=>b.single?b.name:`${b.short||b.name} ×${b.tier}`, I=d.identity;
+  return `
+    <h2>★ ${d.heading}</h2>
+    <div class="sub">You held ${d.coveragePct}% of the land${I.kind==="procedural"?` of <b>${I.planetName}</b> (${I.archetypeName} · ${I.seedWord} ${I.seed})`:""}${I.scenarioActive?` under <b>${I.scenarioName}</b>`:""} in ${d.elapsed.text}.</div>
     ${pressureReport()}${competitionReport()}${climateReport()}
-    <div class="debrief" id="lossDebrief"><b>What happened:</b> ${(SCN.display&&SCN.display.lossNote)||"the planet kept changing and your plant could no longer live on any of its land. Adapting to the new conditions (Adapt), pushing the sky back (Terraform) or protecting your strongest colonies earlier can keep a foothold alive."}</div>
-    ${PLAY?runActionsHtml():`<button class="btn" id="lossRestart">Restart this run ↻</button>`}`;
-  document.getElementById("reportModal").classList.add("on");
-  if(PLAY) wireActions(r); else document.getElementById("lossRestart").addEventListener("click",()=>location.reload());
+    <div class="top"><canvas id="plantCv" width="136" height="200"></canvas>
+      <div><b>Your plant became:</b><ul>${d.built.map(b=>`<li>${lbl(b)}</li>`).join('')||'<li>the unmodified pioneer</li>'}</ul>
+      ${d.terraform.length?`<div style="margin-top:8px"><b>You reshaped the sky:</b> ${d.terraform.map(t=>`${t.short||t.name} ×${t.tier}`).join(', ')}</div>`:''}</div></div>
+    <div style="margin-top:10px"><b>Regions bloomed:</b> ${d.held.map(h=>h.region.name).join(', ')}</div>
+    ${d.colonyUpgrades.length?`<div style="margin-top:6px"><b>Colony upgrades:</b> ${d.colonyUpgrades.map(c=>`${c.name} in ${c.region.name}`).join(', ')}</div>`:''}
+    <div class="debrief"><b>Why it worked:</b> every region has a <i>limiting factor</i>: the one condition furthest outside your plant's tolerance. You fixed enough of them to hold the planet${d.gaveUp.length?`, and your build gave these up:<ul>${d.gaveUp.map(g=>`<li><b>${g.region.name}</b> — ${g.reason}</li>`).join('')}</ul>${d.why.gaveUpNote}`:"."}</div>
+    ${d.built.length?`<div><b>Real plants do this too:</b><ul class="analog">${d.analogs.map(a=>`<li><b>${a.name}</b> — ${a.science}</li>`).join('')}</ul></div>`:''}
+    <button class="btn" id="reportContinue" data-tutorial="report-continue">Keep playing →</button>${PLAY?runActionsHtml():""}`; }
+function legacyLossHtml(d){ const I=d.identity, e=d.elapsed;
+  return `<h2>✕ EXTINCTION</h2>
+    <div class="sub" id="lossWhy">No living plants were left anywhere for ${d.graceSeconds} s, so the run is over (${e.mins}m ${String(e.secs).padStart(2,"0")}s${I.kind==="procedural"?` on <b>${I.planetName}</b>, ${I.archetypeName} · ${I.seedWord} ${I.seed}`:""}).</div>
+    ${pressureReport()}${competitionReport()}${climateReport()}
+    <div class="debrief" id="lossDebrief"><b>What happened:</b> ${d.debrief}</div>
+    ${PLAY?runActionsHtml():`<button class="btn" id="lossRestart">Restart this run ↻</button>`}`; }
+// (BLOOM-029E) the report's actions and their one real path. Keep playing = the continue-after-win the modal's button has always made
+// (running again; no bloom:play-pause, as before); Restart this run = the harness's reload (an extinction outside player mode);
+// the player / training actions = goAction (the page's own confirm / training-layer path). The production report only invokes these.
+function reportActions(){ if(!REPORT) return []; const out=[];
+  if(REPORT.kind==="win") out.push({ id:"keepPlaying", label:"Keep playing", note:null, primary:true, href:"" });
+  if(PLAY) out.push(...playActions().map(a=>({ id:a.id, label:a.label, note:a.note||null, primary:!!a.primary, href:a.href||"" })));
+  else if(REPORT.kind==="loss") out.push({ id:"restartRun", label:"Restart this run", note:null, primary:true, href:"" });
+  return out; }
+function reportAction(id){ if(!REPORT) return false;
+  if(id==="keepPlaying"){ if(REPORT.kind!=="win") return false; continueAfterWin(); return true; }
+  if(id==="restartRun"){ if(PLAY||REPORT.kind!=="loss") return false; location.reload(); return true; }
+  const a=PLAY&&playActions().find(x=>x.id===id); return a?goAction(a.id,a.href||""):false; }
+function continueAfterWin(){ document.getElementById("reportModal").classList.remove("on"); running=true; document.getElementById("btnPlay").textContent="⏸ pause"; runUI.invalidate("continue"); }
+function onLoss(why){
+  REPORT=lossReport(why);
+  if(!PROD){ const r=document.getElementById("report"); r.classList.add("lost"); r.innerHTML=legacyLossHtml(REPORT);
+    document.getElementById("reportModal").classList.add("on");
+    if(PLAY) wireActions(r); else document.getElementById("lossRestart").addEventListener("click",()=>location.reload()); }
   log(`✕ Extinction: ${why}.`);
 }
 function onWin(cov){
-  // build list + real-plant analogs (acceptance Q10) come from the trait data (content/traits.js)
-  const owned=UP.filter(u=>u.board!=="Terraform" && sim.ownedTier(u)>0);
-  const built=owned.map(u=> (u.effect.type==="level"||u.effect.type==="crossing")&&u.effect.max===1 ? u.name : `${u.short||u.name} ×${sim.ownedTier(u)}`);
-  const terra=UP.filter(u=>u.board==="Terraform" && sim.ownedTier(u)>0).map(u=>`${u.short||u.name} ×${sim.ownedTier(u)}`);
-  const held=[], gaveUp=[]; const liv=livingCountBySection();
-  // a region your plant CAN grow in is just still filling in — only unfit regions count as given up
-  SEC.forEach((s,i)=>{ if(liv[i]/AREA[i]>0.4) held.push(LABEL[i]);
-    else { const e=evaluate(i); if(e.fitness<=CFG.grow.growThresh) gaveUp.push(`<b>${LABEL[i]}</b> — ${LIMIT_MSG[e.limitKey](e)}`); } });
-  const mins=Math.floor(sim.ticks*CFG.tickMs/60000), secs=Math.round(sim.ticks*CFG.tickMs/1000)%60;
-  document.getElementById("report").innerHTML=`
-    <h2>★ ${TRAIN?TC.complete.toUpperCase():"BLOOM"}</h2>
-    <div class="sub">You held ${Math.round(cov*100)}% of the land${BLOOM_RUN.kind==="procedural"?` of <b>${BLOOM_RUN.planet.name}</b> (${BLOOM_RUN.archetype.name} · ${SEEDWORD} ${BLOOM_RUN.seed})`:""}${SCEN?` under <b>${SCN.name}</b>`:""} in ${mins}m ${String(secs).padStart(2,"0")}s.</div>
-    ${pressureReport()}${competitionReport()}${climateReport()}
-    <div class="top"><canvas id="plantCv" width="136" height="200"></canvas>
-      <div><b>Your plant became:</b><ul>${built.map(b=>`<li>${b}</li>`).join('')||'<li>the unmodified pioneer</li>'}</ul>
-      ${terra.length?`<div style="margin-top:8px"><b>You reshaped the sky:</b> ${terra.join(', ')}</div>`:''}</div></div>
-    <div style="margin-top:10px"><b>Regions bloomed:</b> ${held.join(', ')}</div>
-    ${sim.colonies.spec.some(Boolean)?`<div style="margin-top:6px"><b>Colony upgrades:</b> ${SEC.map((_,i)=>sim.getSpecialization(i)?`${SPEC[sim.getSpecialization(i)].name} in ${LABEL[i]}`:null).filter(Boolean).join(', ')}</div>`:''}
-    <div class="debrief"><b>Why it worked:</b> every region has a <i>limiting factor</i>: the one condition furthest outside your plant's tolerance. You fixed enough of them to hold the planet${gaveUp.length?`, and your build gave these up:<ul>${gaveUp.map(g=>`<li>${g}</li>`).join('')}</ul>No plant tolerates everything. Adapting to one extreme costs you another, so choosing what to sacrifice was the real strategy.`:"."}</div>
-    ${owned.length?`<div><b>Real plants do this too:</b><ul class="analog">${owned.filter(u=>u.science).map(u=>`<li><b>${u.name}</b> — ${u.science}</li>`).join('')}</ul></div>`:''}
-    <button class="btn" id="reportContinue" data-tutorial="report-continue">Keep playing →</button>${PLAY?runActionsHtml():""}`;
-  if(PLAY) wireActions(document.getElementById("report"));
-  drawPlant(document.getElementById("plantCv"));
-  document.getElementById("reportModal").classList.add("on");
-  document.getElementById("reportContinue").addEventListener("click",()=>{ document.getElementById("reportModal").classList.remove("on"); running=true; document.getElementById("btnPlay").textContent="⏸ pause"; runUI.invalidate("continue"); });
+  REPORT=winReport(cov);
+  if(!PROD){ document.getElementById("report").innerHTML=legacyWinHtml(REPORT);
+    if(PLAY) wireActions(document.getElementById("report"));
+    drawPlant(document.getElementById("plantCv"));
+    document.getElementById("reportModal").classList.add("on");
+    document.getElementById("reportContinue").addEventListener("click",continueAfterWin); }
   log(`★ Bloom! ${Math.round(cov*100)}% coverage.`);
 }
 
@@ -1341,6 +1415,8 @@ if(PLAY){ // BLOOM-016: player identity (no developer terms) + the run menu in t
   mb.addEventListener("click",()=>{ const o=!m.classList.contains("open"); setOpen(o); if(o) m.querySelector(".pm button").focus(); });
   document.addEventListener("click",e=>{ if(!m.contains(e.target)) setOpen(false); });
   document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&m.classList.contains("open")){ setOpen(false); mb.focus(); } }); }
+if(PROD){ // (BLOOM-029E) the game's own identity in the player's tab — Strange Bloom + the world (never engineering wording)
+  const nm=BLOOM_RUN.planet.name; document.title=`Strange Bloom — ${TRAIN?`${TC.title} · ${nm}`:[nm, SCN?SCN.name:null].filter(Boolean).join(" · ")}`; }
 /* ========================================================================== */
 /*  RUN UI BOUNDARY (BLOOM-029A) — docs/RUN_UI_PRODUCTION_BOUNDARY_v1.md       */
 /*  The future run screen reads and acts through BLOOM_RUN_UI.adapter, never   */
@@ -1357,15 +1433,17 @@ if(window.BLOOM&&BLOOM.runUI){
     read:{ skyNow, catLamp, isBlocked, tileCounts, limitText:e=>LIMIT_MSG[e.limitKey](e), fixHint:e=>FIX_HINT[e.limitKey](e),
       colonyWord:w=>COLONY_WORD[w], colonyHint:w=>COLONY_HINT[w], colonyTip, focusUI:FOCUS_UI, specUI:SPEC_UI, geoInfo, compWhy,
       pressureStatus, phaseName, climForecast, upgradeState, offeredOn, computePreview, tileAt:(x,y)=>tileAt({clientX:x, clientY:y}),
-      runMenu:()=>PLAY?{label:TRAIN?TC.menu:PC.actions.menu, items:playActions()}:null },
+      runMenu:()=>PLAY?{label:TRAIN?TC.menu:PC.actions.menu, items:playActions()}:null,
+      report:()=>REPORT, reportActions }, // (BLOOM-029E) the structured run-end report and its actions (the modal reads the same)
     act:{ setRunning, setSpeed, selectAt, showPreview, clearPreview, buy, chooseFocus, buySpec, collectBubbleAt, placeBubble,
-      runAction:id=>{ const a=PLAY&&playActions().find(x=>x.id===id); return a?goAction(a.id,a.href||""):false; } },
+      runAction:id=>{ const a=PLAY&&playActions().find(x=>x.id===id); return a?goAction(a.id,a.href||""):false; }, reportAction },
     // (BLOOM-029B) the map's render hints and this page's own transient map feedback, for the production map
     map:{ render:RENDER, crossings:()=>XANIM, crossingTiming:{travel:XTRAVEL, land:XLAND}, flashes:()=>({thresholds:PX_FX, competition:CX_FX}) } });
   window.BLOOM_RUN_UI.adapter=runUI.adapter;
-  // (BLOOM-029B) &ui=18: mount the production Planet View on the adapter (before bloom:run-ready, so anchors and controls exist)
-  if(UI18){ const pv=BLOOM.planetView.mount(runUI.adapter,{root:document.body});
-    if(BLOOM.decisionRooms) BLOOM.decisionRooms.mount(pv); } // (BLOOM-029C / 029D) the four rooms fill the view's room seam
+  // (BLOOM-029B/E) the default: mount the production Planet View on the adapter (before bloom:run-ready, so anchors and controls exist),
+  // the four rooms into its room seam (029C / 029D) and the production run report over it (029E), sharing the rooms' one transition
+  if(PROD){ const pv=BLOOM.planetView.mount(runUI.adapter,{root:document.body}), dr=BLOOM.decisionRooms.mount(pv);
+    if(BLOOM.runReport) BLOOM.runReport.mount(pv,{ transition:dr.transition }); }
 }
 // BLOOM-008/009: open on the origin so its colony status and growth focus are the first thing in view
 selected=ORIGIN; renderInspect(); log(`Your plant has just sprouted in ${LABEL[ORIGIN]}: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish.`);

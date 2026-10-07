@@ -16,14 +16,14 @@ switch), 029F (Survey → gameplay handoff), and the Main PMO.
 | URL | What you get |
 |---|---|
 | `demos/demo-run.html?…` (no `ui`) | the temporary engineering shell, **unchanged** (the full-mechanics regression harness) |
-| `demos/demo-run.html?…&ui=18` | the **production Planet View** over the same run (any planet, scenario, `play=1`, `training=1`, `planet=`) |
+| `demos/demo-run.html` (no `ui=`; `&ui=18` is an alias) | the **production Planet View** over the same run — **the default since BLOOM-029E** (any planet, scenario, `play=1`, `training=1`, `planet=`); `?ui=legacy` is the developer-only flag for the engineering shell (`docs/GAMEPLAY_UI_CONVERGENCE_v1.md` §2) |
 
 - Both are presentations of the **same** ordinary run: one page, one sim, one adapter. `&ui=18` mounts
   `BLOOM.planetView.mount(adapter)` just before `bloom:run-ready`, hides the shell (`html.ui18`) and stops the shell's map `draw()`
   (its DOM and state stay: they are the adapter's host).
 - The shell is marked **MIGRATION-ONLY** in `demos/demo-run.html`. BLOOM-029E makes the production UI the default and retires the
   shell's visible parts (and with them the shell's own map palette, the last old terrain colours in the repo).
-- `&ui=18` is not carried by the player-mode navigation links ("Play this world again", …); a reload / Restart training keeps it.
+- (029E) no `ui=` flag is needed or carried by any link: the production view is the default; `&ui=18` remains an alias.
 - Over `file://` the view boots (all its files are classic scripts); the training layer, sphere and transition still need http.
 
 ## 2. One canonical planet surface
@@ -179,16 +179,16 @@ flashes now also record their event `type`. Nothing else in the page changed for
   paint one surface live; 029C's sketch was `view.setPlanet(adapter.surface().planet, { render: adapter.surface().render })`
   shows the same canonical surface as the map (match regions by **id**, 029A §6.3). Decoration (atmosphere, open / worse regions)
   drawn outside the view.
-- **029E default switch:** drop the `ui` flag, hide nothing — delete the shell's visible DOM and `draw()`, keep the host block.
+- **029E default switch — DONE** (`docs/GAMEPLAY_UI_CONVERGENCE_v1.md`): the production UI is the default; the shell's visible DOM stays only as the hidden host (`display:none`, inert, its `draw()` returns) behind `?ui=legacy`; room swaps and the production report run through the SUBDUED AtmosphereTransition.
 - **029F Survey → gameplay:** the exact `detail.planet` the Destination Survey hands over (an already generated, validated planet)
   must become the run's planet object — passed to the run, **never regenerated from `candidate.seed`**. The surface already takes
   whatever planet object the run holds, so the map will match the globe the player chose pixel for pixel.
 
 ## 9. Limitations / risks
 
-- Terraform is built since 029D (`&ui=18` buys Terraform upgrades in its room). Region Inspect, Adapt and Spread are
-  production rooms since BLOOM-029C. The Bloom Report / extinction screen are still the shell's modal (visible in both paths).
-- Player-mode links do not carry `&ui=18`.
+- Terraform is built since 029D. Region Inspect, Adapt and Spread are production rooms since BLOOM-029C. Since BLOOM-029E the
+  Bloom Report / extinction screen are the production report (`resources/run-ui/run-report.js`); the shell's modal shows only under `?ui=legacy`.
+- Player-mode links carry no `ui=` flag (the default is production).
 - The page's message copy still contains pictographs in the middle of sentences (e.g. "⚠"); only a leading one is replaced.
 - Labels avoid each other with one vertical nudge; very small tiles on crowded worlds can still overlap.
-- The shell's own map palette remains in `demo-run.html` until 029E (migration-only).
+- The shell's own map palette remains in `demo-run.html` as part of the hidden host / the `?ui=legacy` oracle (029E retired the shell as a player-facing path; a later engineering cleanup may remove it).

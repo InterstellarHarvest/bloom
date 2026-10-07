@@ -26,9 +26,20 @@
 // Room context ≠ home selection: the right-hand mini-map (the SAME production map renderer, resources/run-ui/run-map-renderer.js,
 // on its own canvas) and region strip change the room context only — never actions.selectRegion, never bloom:region-select.
 // Real Adapt / Spread nodes preview through adapter.actions.preview(id) (the deliberate player preview: bloom:upgrade-preview,
-// the home map's outline) and buy through adapter.actions.buy(id) (bloom:upgrade-purchase). Transitions: none here (immediate
-// swaps); BLOOM-029E wraps planetView ↔ room and room ↔ room through the seam below (controller.transition).
-// Classic script, no dependencies besides BLOOM.surface, BLOOM.runMap, BLOOM.plantSpecimen and (029D) BLOOM.terraformGlobe: boots over file://.
+// the home map's outline) and buy through adapter.actions.buy(id) (bloom:upgrade-purchase).
+// BLOOM-029E — every swap is wrapped in the SUBDUED mist through ONE gameplay transition bridge (resources/run-ui/gameplay-transition.js,
+// the unmodified AtmosphereTransition behind a guarded import; immediate swaps over file://). docs/GAMEPLAY_UI_CONVERGENCE_v1.md §5:
+//   open     1 remember the running state · 2 pause the REAL run at once · 3 conceal · 4 at covered: carry the selection into the
+//            context, clear the home selection (the real action), make the Planet View inert, reveal the room layer, swap · 5 reveal ·
+//            6 focus the room control once the reveal has completed. The sim never advances while a room opens.
+//   switch   paused throughout, same context, the old room's transient preview cleared BEFORE the swap, no Planet View in between.
+//   close    1 clear the preview · 2 stay paused · 3 conceal · 4 at covered: hide the room, restore the Planet View, no selection ·
+//            5 reveal · 6 ONLY after the transition completes: Back restores the pre-room state, Resume runs · 7 restore focus.
+//   A second request while `transitioning` is ignored cleanly (no overlapping run, no double pause / resume, no two rooms, no lost
+//   context); the swap itself always happens exactly once (the bridge rolls forward on any failure). `controller.timeline()` records
+//   every swap's pause / covered / reveal / resume timestamps and running states (QA).
+// Classic script, no dependencies besides BLOOM.surface, BLOOM.runMap, BLOOM.plantSpecimen, (029D) BLOOM.terraformGlobe and (029E)
+// BLOOM.gameplayTransition: boots over file://.
 (function (root) {
   "use strict";
   // ---- the production icon family (24×24 strokes, inline SVG; never emoji). Shared language with the Planet View.
@@ -111,17 +122,22 @@
   function mount(view) {
     if (instance) return instance;
     if (!view || !view.adapter || !view.rooms || typeof view.rooms.register !== "function") throw new TypeError("BLOOM.decisionRooms: needs the production Planet View instance (BLOOM.planetView.mount)");
-    const A = view.adapter, RM = root.BLOOM.runMap, SF = root.BLOOM.surface, PS = root.BLOOM.plantSpecimen, TG = root.BLOOM.terraformGlobe;
+    const A = view.adapter, RM = root.BLOOM.runMap, SF = root.BLOOM.surface, PS = root.BLOOM.plantSpecimen, TG = root.BLOOM.terraformGlobe, GT = root.BLOOM.gameplayTransition;
     if (!RM || !SF || !PS || !TG) throw new TypeError("BLOOM.decisionRooms: needs BLOOM.runMap, BLOOM.surface, BLOOM.plantSpecimen and BLOOM.terraformGlobe");
+    // (029E) ONE gameplay transition per run (the SUBDUED mist); without the bridge file every swap is immediate
+    const T = GT ? GT.create({ onError: err => console.error("BLOOM.decisionRooms: a room swap failed", err) }) : null;
     const mq = root.matchMedia ? root.matchMedia("(prefers-reduced-motion: reduce)") : null;
-    const reduced = () => !!(mq && mq.matches) || document.documentElement.classList.contains("reduce-motion") || view.el.classList.contains("reduced");
+    // reduced motion: the OS, the page's class, the view's class, or (029E) the player's Settings choice as the transition bridge reads it
+    const reduced = () => !!(mq && mq.matches) || document.documentElement.classList.contains("reduce-motion") || view.el.classList.contains("reduced") || !!(T && T.reducedMotion());
     const MAP0 = A.map(), IDX = {}; MAP0.regions.forEach(r => { IDX[r.id] = r.index; });
     const idx = list => (list || []).map(id => IDX[id]).filter(i => i >= 0);
     const names = list => (list || []).map(id => (regs.find(r => r.id === id) || {}).name || id).join(", ");
     const origin = () => (regs.find(r => r.isOrigin) || regs[0]).index;
     let regs = A.regions();
     // presentation state only: the run has one pause (the page's); this remembers what the room must restore
-    const state = { room: null, ctx: -1, wasRunning: null, opener: null, peek: -1, lens: null, lensPv: null, em: 16, emBy: "", preview: null, hovered: null, suspended: false };
+    const state = { room: null, ctx: -1, wasRunning: null, opener: null, peek: -1, lens: null, lensPv: null, em: 16, emBy: "", preview: null, hovered: null, suspended: false,
+      transitioning: false, transitionKind: null, ignored: 0 }; // (029E) one swap at a time; `ignored` counts requests dropped while one ran (QA)
+    const TL = []; // (029E) the swap timeline: pause / covered / reveal / resume timestamps and running states (QA evidence)
 
     // ---------------------------------------------------------------- the layer (inside the Planet View, over the veil)
     const layer = document.createElement("div"); layer.className = "dr"; layer.id = "dr"; layer.hidden = true; view.el.appendChild(layer);
@@ -692,44 +708,93 @@
       miniMaps.forEach(m => m.paint()); for (const k in rooms) if (!rooms[k].sec.hidden) rooms[k].paint();
       if (from && state.room) live(`Considering ${regs[i].name}`);
     }
-    function open(name, ctx = {}) {
-      const room = rooms[name]; if (!room) return false;
-      const first = !state.room;
-      if (first) {
-        const run = A.run(); state.wasRunning = run.running; state.opener = ctx.opener || null;
-        if (run.running) A.actions.pause();                                        // the real pause (bloom:play-pause); remembered for Back
-        const sel = A.selection().index, carry = ctx.region >= 0 ? ctx.region : sel >= 0 ? sel : state.ctx >= 0 ? state.ctx : origin();
-        if (sel >= 0 || A.selection().water) A.actions.deselect();                 // the home selection is cleared (the real bloom:region-select)
-        regs = A.regions(); state.ctx = carry; state.peek = -1;
-        layer.hidden = false; view.el.classList.add("in-room"); calibrate();           // calibrate with the layer laid out
-        parts.forEach(e => { e.inert = true; e.setAttribute("aria-hidden", "true"); });   // the Planet View stays, exactly where it was, inert
-      } else if (state.room !== name) { const old = rooms[state.room]; old.clear(); old.sec.hidden = true; }
-      else return () => close(false);
-      state.room = name; view.rooms.setActive(name);
-      room.sec.hidden = false; room.onOpen(); paintHeader();
-      layer.querySelectorAll("[data-go]").forEach(b => { if (b.classList.contains("rn")) b.setAttribute("aria-pressed", String(b.dataset.go === name)); });
-      live(`${ROOMS[name].title} open. Game paused. Considering ${regs[state.ctx].name}.`);
+    // (029E) the transition lock: while a swap runs, every swap-affecting control is locked (the mist's overlay blocks input too) and a
+    // second request is ignored cleanly; the lock is released when the transition has completed (resume / focus happen after that)
+    const tnow = () => performance.now();
+    const lock = (kind) => { state.transitioning = true; state.transitionKind = kind; layer.dataset.transitioning = kind; view.el.dataset.transitioning = kind; };
+    const unlock = () => { state.transitioning = false; state.transitionKind = null; delete layer.dataset.transitioning; delete view.el.dataset.transitioning; };
+    const record = e => { TL.push(e); if (TL.length > 60) TL.shift(); return e; };
+    // the swap through the bridge (the mist when it can run, immediate otherwise); the swap function runs exactly once on every path
+    const swapThrough = (kind, swap, origin) => T ? T.run({ onCovered: swap, kind, origin }) : Promise.resolve((swap({ immediate: true, why: "no-transition" }), { ran: false, immediate: true, covered: false, error: null }));
+    // the incoming room's restrained card entrance (opacity rise, a few px of lift, scale → 1), only when the mist ran; never under reduced motion
+    const entrance = (sec, ran) => { sec.classList.remove("entering"); if (!ran || reduced()) return; void sec.offsetWidth; sec.classList.add("entering"); sec.addEventListener("animationend", () => sec.classList.remove("entering"), { once: true }); };
+    const focusRoom = (room, ctx) => {
       // a requested real node ("Would help") gets a deliberate focus preview; until the pointer really moves, a pointerover the browser may
       // synthesise for whatever now sits under the stationary pointer (Firefox does, on a room swap) must not clear it (the 029C suspended rule)
-      requestAnimationFrame(() => { if (ctx.item && room.focusNode) { state.suspended = true; if (room.focusNode(ctx.item)) return; state.suspended = false; } room.focusFirst(); });
+      if (ctx.item && room.focusNode) { state.suspended = true; if (room.focusNode(ctx.item)) return; state.suspended = false; } room.focusFirst(); };
+    function open(name, ctx = {}) {
+      const room = rooms[name]; if (!room) return false;
+      if (state.transitioning) { state.ignored++; return false; }                   // (029E) one swap at a time: a repeated click / key is dropped
+      const first = !state.room;
+      if (!first && state.room === name) return () => close(false);
+      const e = record({ kind: first ? "open" : "switch", from: state.room, to: name, tStart: tnow(), runningBefore: A.run().running, tPause: null, tCovered: null, tSwapDone: null, tEnd: null, runningAtSwap: null, runningAtEnd: null, ran: false, immediate: null, ticksAtStart: A.run().ticks, ticksAtEnd: null });
+      if (first) {
+        const run = A.run(); state.wasRunning = run.running; state.opener = ctx.opener || null;   // 1 · the pre-room running state, remembered for Back
+        if (run.running) { A.actions.pause(); e.tPause = tnow(); }                                 // 2 · the REAL pause, at once (the one bloom:play-pause)
+      } else { const old = rooms[state.room]; old.clear(); if (A.activePreview()) A.actions.clearPreview(); } // room → room: the old room's transient preview cleared BEFORE the swap
+      lock(e.kind);
+      const swap = () => {                                                                           // 4 · at the covered point
+        e.tCovered = tnow(); e.runningAtSwap = A.run().running;
+        if (first) {
+          const sel = A.selection().index, carry = ctx.region >= 0 ? ctx.region : sel >= 0 ? sel : state.ctx >= 0 ? state.ctx : origin();
+          if (sel >= 0 || A.selection().water) A.actions.deselect();                 // the home selection is cleared (the real bloom:region-select)
+          regs = A.regions(); state.ctx = carry; state.peek = -1;
+          layer.hidden = false; view.el.classList.add("in-room"); calibrate();           // calibrate with the layer laid out
+          parts.forEach(x => { x.inert = true; x.setAttribute("aria-hidden", "true"); });   // the Planet View stays, exactly where it was, inert
+        } else { rooms[state.room].sec.hidden = true; }                                   // no Planet View in between
+        state.room = name; view.rooms.setActive(name);
+        room.sec.hidden = false; room.onOpen(); paintHeader();
+        layer.querySelectorAll("[data-go]").forEach(b => { if (b.classList.contains("rn")) b.setAttribute("aria-pressed", String(b.dataset.go === name)); });
+        live(`${ROOMS[name].title} open. Game paused. Considering ${regs[state.ctx].name}.`);
+        e.tSwapDone = tnow();
+      };
+      swapThrough(e.kind, swap, ctx.origin || null).then(res => {                                  // 5 · revealed → 6 · focus the room control
+        e.tEnd = tnow(); e.ran = !!res.ran; e.immediate = !!res.immediate; e.runningAtEnd = A.run().running; e.ticksAtEnd = A.run().ticks; e.error = res.error || null;
+        unlock(); entrance(room.sec, res.ran);
+        requestAnimationFrame(() => { if (state.room === name && !state.transitioning) focusRoom(room, ctx); });
+      });
       return () => close(false);
     }
     function close(resume) {
-      if (!state.room) return; const room = rooms[state.room]; room.clear(); if (A.activePreview()) A.actions.clearPreview();
-      room.sec.hidden = true; state.room = null; state.hovered = null; state.preview = null; state.peek = -1; state.lensPv = null;
-      layer.hidden = true; view.el.classList.remove("in-room"); parts.forEach(e => { e.inert = false; e.removeAttribute("aria-hidden"); });
-      view.rooms.setActive(null);
-      if (resume) A.actions.play(); else A.actions.setRunning(!!state.wasRunning);   // Resume = running; Back = as it was before the room
-      live(`Back to Planet View${A.run().running ? ", running" : ", still paused"}. No region selected.`);
-      const op = state.opener; state.opener = null;
-      if (op && document.contains(op) && !op.closest("[hidden]")) op.focus(); else { const t = view.el.querySelector('.pv-tool[data-tool="region"]'); if (t) t.focus(); }
+      if (!state.room || state.transitioning) { if (state.room) state.ignored++; return; }
+      const room = rooms[state.room], from = state.room;
+      const e = record({ kind: resume ? "resume" : "back", from, to: null, tStart: tnow(), runningBefore: A.run().running, wasRunning: !!state.wasRunning, tCovered: null, tSwapDone: null, tEnd: null, tResume: null, runningAtSwap: null, runningAtEnd: null, ran: false, immediate: null, ticksAtStart: A.run().ticks, ticksAtEnd: null });
+      room.clear(); if (A.activePreview()) A.actions.clearPreview();                  // 1 · the transient preview cleared · 2 · still paused
+      lock(e.kind);
+      const swap = () => {                                                              // 4 · at the covered point: hide the room, restore the Planet View, no selection
+        e.tCovered = tnow(); e.runningAtSwap = A.run().running;
+        room.sec.hidden = true; room.sec.classList.remove("entering"); state.room = null; state.hovered = null; state.preview = null; state.peek = -1; state.lensPv = null;
+        layer.hidden = true; view.el.classList.remove("in-room"); parts.forEach(x => { x.inert = false; x.removeAttribute("aria-hidden"); });
+        view.rooms.setActive(null);
+        e.tSwapDone = tnow();
+      };
+      swapThrough(e.kind, swap, null).then(res => {                                     // 5 · revealed → 6 · ONLY now: Resume runs; Back restores the pre-room state
+        e.tEnd = tnow(); e.ran = !!res.ran; e.immediate = !!res.immediate; e.error = res.error || null;
+        unlock();
+        if (resume) A.actions.play(); else A.actions.setRunning(!!state.wasRunning);
+        e.tResume = tnow(); e.runningAtEnd = A.run().running; e.ticksAtEnd = A.run().ticks;
+        live(`Back to Planet View${A.run().running ? ", running" : ", still paused"}. No region selected.`);
+        const op = state.opener; state.opener = null;                                   // 7 · focus back where the room was opened from
+        if (op && document.contains(op) && !op.closest("[hidden]") && !op.closest("[inert]")) op.focus(); else { const t = view.el.querySelector('.pv-tool[data-tool="region"]'); if (t) t.focus(); }
+      });
+    }
+    // (029E) an immediate close with no transition and no resume — the run has ended (win / loss) while a room was open: the production
+    // report takes over the Planet View through its own SUBDUED swap, so nothing stale may stay open underneath it
+    function closeImmediate() {
+      if (!state.room) return false; const room = rooms[state.room];
+      room.clear(); if (A.activePreview()) A.actions.clearPreview();
+      room.sec.hidden = true; room.sec.classList.remove("entering"); state.room = null; state.hovered = null; state.preview = null; state.peek = -1; state.lensPv = null; state.opener = null;
+      layer.hidden = true; view.el.classList.remove("in-room"); parts.forEach(x => { x.inert = false; x.removeAttribute("aria-hidden"); });
+      view.rooms.setActive(null); unlock(); record({ kind: "end-of-run", from: room.sec.dataset.room, tStart: tnow(), tEnd: tnow(), immediate: true, ran: false });
+      return true;
     }
     function paintHeader() { const h = A.hud(); layer.querySelectorAll(".rbio-n").forEach(e => { e.textContent = h.biomass; }); const r = A.run(); layer.querySelectorAll(".paused").forEach(e => e.classList.toggle("on", !r.running)); }
     layer.addEventListener("click", e => {
+      if (state.transitioning) { state.ignored++; return; }
       const a = e.target.closest("[data-act]"); if (a) { close(a.dataset.act === "resume"); return; }
       const g = e.target.closest(".rn[data-go]"); if (g) open(g.dataset.go, { region: state.ctx, opener: state.opener });
     });
-    document.addEventListener("keydown", e => { if (e.key === "Escape" && state.room) { e.preventDefault(); close(false); } });
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && state.room) { e.preventDefault(); if (state.transitioning) { state.ignored++; return; } close(false); } });
     // preview safety nets: the window losing focus, the tab hidden, the pointer leaving the window
     root.addEventListener("blur", () => { state.suspended = true; for (const k in rooms) if (rooms[k].clear && !rooms[k].sec.hidden) rooms[k].clear(); });
     root.addEventListener("focus", () => { state.suspended = false; });
@@ -740,6 +805,7 @@
     buildRegion(); buildBoard("adapt"); buildBoard("spread"); buildTerraform();
     const unsub = A.subscribe(ch => {
       if (!state.room) return; const r = ch.reasons;
+      if (r.includes("win") || r.includes("loss")) { closeImmediate(); return; }   // (029E) the run ended under an open room: nothing stale under the report
       if (r.some(x => x !== "tick" && x !== "message" && x !== "preview-clear" && x !== "upgrade-preview")) regs = A.regions();
       if (r.includes("upgrade-purchase") || r.includes("local-upgrade") || r.includes("growth-focus") || r.includes("tick") || r.includes("region-select")) { condCache = null; const room = rooms[state.room]; room.paint(); }
       paintHeader(); miniMaps.forEach(m => m.invalidate());
@@ -757,16 +823,20 @@
     for (const name of ROOM_IDS) view.rooms.register(name, { open: ctx => open(name, ctx) }); // (029D) Terraform registers too: its tool reads ready
 
     const api = {
-      el: layer, adapter: A, rooms, open, close, setCtx, setLens, previewLens, calibrate,
-      // BLOOM-029E seam: wrap a swap in the SUBDUED AtmosphereTransition here (planetView ↔ room and room ↔ room); 029C swaps at once
-      transition: null,
+      el: layer, adapter: A, rooms, open, close, closeImmediate, setCtx, setLens, previewLens, calibrate,
+      // (029E) the ONE gameplay transition of this run (BLOOM.gameplayTransition bridge over the unmodified AtmosphereTransition, SUBDUED);
+      // the production report shares it. null only when the bridge file is not loaded (every swap is then immediate)
+      transition: T,
+      timeline: () => TL.map(e => ({ ...e })),
       state: () => ({ room: state.room, context: state.ctx, contextId: state.ctx >= 0 ? regs[state.ctx].id : null, wasRunning: state.wasRunning, peek: state.peek, lens: state.lens, lensPreview: state.lensPv,
         hovered: state.hovered, preview: state.preview ? state.preview.id : null, em: state.em, emBy: state.emBy, emChips: state.emChips, emHeight: state.emHeight, medianName, claimedAnchors: claimed.slice(),
-        globe: rooms.terraform ? rooms.terraform.globeKind() : null }), // (029D) "pending" | "sphere" | "fallback"
+        globe: rooms.terraform ? rooms.terraform.globeKind() : null, // (029D) "pending" | "sphere" | "fallback"
+        transitioning: state.transitioning, transitionKind: state.transitionKind, transition: T ? T.kind : "none", ignored: state.ignored, swaps: TL.length }), // (029E)
       measure: name => rooms[name] && rooms[name].measure ? rooms[name].measure() : null,
-      // (029D) disposing the rooms disposes the Terraform globe (its WebGL context, canvas and listeners) with them
-      dispose() { disposed = true; cancelAnimationFrame(raf); unsub(); if (state.room) close(false); for (const k in rooms) if (rooms[k].dispose) rooms[k].dispose(); layer.remove(); instance = null; DR.instance = null; },
+      // (029D) disposing the rooms disposes the Terraform globe (its WebGL context, canvas and listeners) with them; (029E) and the transition
+      dispose() { disposed = true; cancelAnimationFrame(raf); unsub(); if (state.room) closeImmediate(); for (const k in rooms) if (rooms[k].dispose) rooms[k].dispose(); if (T) T.dispose(); layer.remove(); instance = null; DR.instance = null; },
     };
+    if (T) T.prepare(); // (029E) the mist's bitmaps drawn in idle time now, so the first room opens on the next frame (non-blocking; a swap before this resolves is immediate)
     // (029D) destroying the production view destroys the rooms with it (and the Terraform globe's WebGL context, canvas and listeners):
     // the Planet View's own dispose runs after ours. Additive: the view's api object is plain and knows nothing about the rooms.
     const pvDispose = view.dispose; view.dispose = () => { if (instance === api) api.dispose(); pvDispose(); };

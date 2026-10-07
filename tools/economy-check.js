@@ -188,7 +188,8 @@ console.log("\n# F · safety");
 // ---------------------------------------------------------------------------------------------------------- browser
 async function browserPart() {
   let chromium; try { ({ chromium } = require("playwright")); } catch (e) { check(false, "Playwright available for the browser part", "npm i -g playwright; NODE_PATH=\"$(npm root -g)\""); return; }
-  const PAGE = "file://" + encodeURI(path.join(ROOT, "demos/demo-run.html")), browser = await chromium.launch();
+  // (BLOOM-029E) this suite drives the engineering shell's own buttons: it opens the page with the developer flag ?ui=legacy
+  const PAGE = "file://" + encodeURI(path.join(ROOT, "demos/demo-run.html")) + "?ui=legacy", browser = await chromium.launch();
   { const w = await browser.newPage(); await w.goto(PAGE); await w.waitForTimeout(200); await w.close(); } // headless warm-up
   console.log("\n# G · browser (First Bloom, real buttons)");
   const p = await browser.newPage({ viewport: { width: 1440, height: 920 } }); const errors = [];

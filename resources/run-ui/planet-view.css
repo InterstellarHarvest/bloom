@@ -1,10 +1,12 @@
 /*
   BLOOM-029B — production Planet View (Concept 18 visual language). docs/PRODUCTION_PLANET_VIEW_v1.md.
-  Scoped to .pv (mounted only with &ui=18 during the migration); nothing here styles the temporary shell. Reuses Concept 18's
+  Scoped to .pv (the default run interface since BLOOM-029E; html.ui18 marks a page whose shell is the hidden sim host). Nothing here
+  styles the retired engineering shell beyond hiding it. Reuses Concept 18's
   accepted CSS ideas (cream HUD, centred status + tool groups, clock buttons, Map View popover, bottom region banner with
   category condition boxes); no mockup file is loaded. Local inline-SVG icons only; no web fonts, no external requests.
 */
 html.ui18 body > header, html.ui18 body > main, html.ui18 body > footer{display:none !important}
+html.ui18 #reportModal{display:none !important}   /* (029E) the engineering report modal never shows over the production report */
 html.ui18 body{background:#242c22}
 .pv{
   --paper:#fbf6ea; --paper-2:#f4ecd8; --card:#fffdf7; --line:#e4d8bd; --line-2:#d3c39f;
@@ -183,7 +185,6 @@ html.ui18 body{background:#242c22}
 .pv-toast{position:absolute; left:50%; top:88px; transform:translateX(-50%); z-index:60; max-width:min(560px, calc(100% - 24px)); background:var(--ink); color:#fff7e0; border-radius:12px;
   padding:9px 14px; font-weight:800; font-size:13.5px; box-shadow:var(--shadow-lg); display:flex; gap:8px; align-items:center}
 .pv-toast .ic{width:18px; height:18px; color:#ffe08a}
-.pv-dev{display:inline-block; margin-left:6px; padding:0 6px; border-radius:6px; background:#ffe08a; color:var(--ink); font-size:10.5px; font-weight:900; letter-spacing:.8px; vertical-align:2px}
 
 @media (prefers-reduced-motion: reduce){ .pv *{transition:none !important; animation:none !important} }
 .pv.reduced *{transition:none !important; animation:none !important}

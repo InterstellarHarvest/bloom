@@ -235,7 +235,7 @@ and training mode are unchanged (N5, B18).
 
 ## 14. Training · file:// fallback · 029E seam
 
-**Training** (`?training=1&ui=18`): starts paused; the Terraform room opens paused with the Training Grounds on its globe (pixel-identical
+**Training** (`?training=1`; the production UI is the default since 029E): starts paused; the Terraform room opens paused with the Training Grounds on its globe (pixel-identical
 to the flat training map), context Landing Meadow, its four nodes carrying the training run's real prices (= `sim.price`) and availability;
 preview / purchase are the real actions; two fresh loads with the same Humidify purchase and 400 ticks are identical tick for tick; Restart /
 Skip / Main menu remain (B21). No training mechanic or copy changed.
@@ -246,9 +246,10 @@ canonical surface (`BLOOM.surface.paintSurface` of the same snapshot, clipped ro
 preview); the layout, nodes, Soil readout, preview and purchase are unchanged (B23). It is a developer / offline compatibility path, not an
 alternate design, and copies nothing from the sphere.
 
-**029E seam.** Every swap is immediate; `controller.transition` is `null`. 029E wraps (a) Planet View → room, (b) room → room, (c) room →
-Planet View in `AtmosphereTransition.SUBDUED` exactly as `docs/PRODUCTION_PLANT_ROOMS_v1.md` §13 describes; the Terraform room's own clear /
-restore already happens before a hide, so a covered swap needs no extra step. AtmosphereTransition internals are untouched.
+**029E seam — filled.** `controller.transition` is the run's one gameplay transition bridge; Planet View → room, room → room and room →
+Planet View run through the SUBDUED AtmosphereTransition with the locked pause / swap / resume order (`docs/GAMEPLAY_UI_CONVERGENCE_v1.md`
+§5–§6). The Terraform room's own clear / restore happens before the conceal (the old preview is cleared before the swap), so the globe
+always shows the committed surface when it is revealed again. AtmosphereTransition internals are untouched (byte-identical).
 
 ## 15. Accessibility / input
 
@@ -267,5 +268,5 @@ its own reduced-motion behaviour (no idle spin, no fling) (B22).
 - **Firefox 1280×800 only** (WebKit not installed); Firefox's WebGL runs the same checks (B4–B10, B17, B21).
 - **Idle spin while the room is closed:** the component keeps its rAF loop (it skips drawing an invisible view). Disposal happens with the
   controller; the run page has no other teardown path.
-- **No transition** (029E), **no coach** (028D2); the Bloom Report / extinction remain the shell's modal.
+- Transitions arrived in 029E; **no coach** (028D2); the Bloom Report / extinction are the production report since 029E.
 - **Headless probe noise:** the sphere's limb shading sits in the first ~6 px outside the face, so the atmosphere probe starts 8 px out.

@@ -1,0 +1,91 @@
+/*
+  BLOOM-029E — production run report (Bloom Report / Extinction), Concept 18 visual family. docs/GAMEPLAY_UI_CONVERGENCE_v1.md §7.
+  Scoped to .pv .rr (mounted inside the production Planet View, above the rooms, below the toast). One large, centred, floating
+  field-journal card over the DIMMED Planet View: the map and world stay faintly visible around it; the card scrolls internally
+  when it must; never a full-screen opaque dashboard; no page horizontal scroll at 1024 / 1280 / 1440; touch-sized controls;
+  the SVG icon family only (no emoji); win / loss never read by colour alone. The Planet View underneath is inert.
+*/
+.pv.in-report > .pv-hud, .pv.in-report > .pv-stage, .pv.in-report > .pv-foot{filter:saturate(.78) brightness(.92); pointer-events:none; user-select:none}
+.rr{position:absolute; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; padding:24px; font-size:15px;
+  --rr-bg:#fffdf7; --rr-paper:#fbf6ea; --rr-line:#e4d8bd; --rr-line-2:#d3c39f; --rr-ink:#2f3a2c; --rr-soft:#5f6b57; --rr-faint:#8a937f}
+.rr-veil{position:absolute; inset:0; background:radial-gradient(80% 70% at 50% 45%, rgba(36,44,34,.42), rgba(36,44,34,.62))}
+.rr-card{position:relative; width:min(900px, 100%); max-height:100%; overflow:hidden; background:var(--rr-bg); color:var(--rr-ink);
+  border:3px solid var(--rr-ink); border-radius:var(--r-lg, 22px 18px 24px 18px); box-shadow:var(--shadow-lg, 0 18px 48px rgba(60,45,15,.25)); padding:0; outline:none;
+  display:flex; flex-direction:column; min-height:0}
+/* the header and the action bar stay in view; the facts + body scroll inside the card when they must */
+.rr-scroll{flex:1 1 auto; min-height:0; overflow:auto; overscroll-behavior:contain; display:flex; flex-direction:column; gap:14px; padding:14px 24px 16px}
+.rr-card:focus-visible{outline:3px solid var(--focus, #1f6fd1); outline-offset:3px}
+.rr :focus-visible{outline:3px solid var(--focus, #1f6fd1); outline-offset:3px}
+.rr .ic{pointer-events:none; width:1.25em; height:1.25em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex:none; vertical-align:-.28em}
+/* the card's restrained entrance THROUGH the mist (only when it ran; never under reduced motion) */
+.rr-card.entering{animation:rrEnter .2s cubic-bezier(.2,.7,.3,1) both}
+@keyframes rrEnter{from{opacity:0; transform:translate3d(0,6px,0) scale(.992)} to{opacity:1; transform:translate3d(0,0,0) scale(1)}}
+@media (prefers-reduced-motion: reduce){ .rr-card.entering{animation:none} .rr *{transition:none !important; animation:none !important} }
+.pv.reduced .rr-card.entering{animation:none} .pv.reduced .rr *{transition:none !important; animation:none !important}
+
+/* ── header: kicker · heading (icon + word) · one summary sentence. (The run page styles every <header> / <footer> element for its
+   engineering shell: every property that rule sets is set again here, so nothing of it reaches this card.) ── */
+.rr .rr-head{display:flex; flex-direction:column; align-items:stretch; flex-wrap:nowrap; gap:4px; margin:0; padding:18px 24px 12px; background:var(--rr-bg); border:0; border-bottom:3px solid var(--rr-line); color:var(--rr-ink); flex:none}
+.rr-kicker{font-size:11px; font-weight:900; letter-spacing:1.4px; text-transform:uppercase; color:var(--rr-soft)}
+.rr-head h2{display:flex; align-items:center; gap:10px; margin:0; font-size:30px; line-height:1.05; letter-spacing:.5px}
+.rr-head h2 .rr-mark{width:36px; height:36px; padding:6px; border-radius:50%; stroke-width:2.6; color:#fff; box-sizing:border-box}
+.rr[data-kind="win"] .rr-head h2 .rr-mark{background:var(--gold, #f2b324); fill:var(--gold-soft, #fff1c7); stroke:var(--gold-deep, #a86f00)}
+.rr[data-kind="loss"] .rr-head h2 .rr-mark{background:var(--bad, #c4466a); stroke:#fff}
+.rr[data-kind="loss"] .rr-head h2 span{color:#8f2846}
+.rr-sum{margin:4px 0 0; font-size:16px; font-weight:700; color:var(--rr-ink); line-height:1.35}
+
+/* ── four facts ── */
+.rr-facts{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px}
+.rr-fact{display:flex; align-items:flex-start; gap:8px; padding:8px 10px; border:2px solid var(--rr-line); border-radius:var(--r-md, 16px 13px 17px 14px); background:var(--rr-paper); min-width:0}
+.rr-fact > .ic{width:22px; height:22px; color:var(--rr-soft); margin-top:2px}
+.rr-fact small{display:block; font-size:10.5px; font-weight:900; letter-spacing:.9px; text-transform:uppercase; color:var(--rr-soft)}
+.rr-fact b{display:block; font-size:16px; line-height:1.15; overflow:hidden; text-overflow:ellipsis}
+.rr-fact span{display:block; font-size:12px; font-weight:700; color:var(--rr-faint); overflow:hidden; text-overflow:ellipsis}
+.rr[data-kind="loss"] .rr-fact:first-child{border-color:#d98aa2; background:#fbe6ec} .rr[data-kind="loss"] .rr-fact:first-child b{color:#8f2846}
+
+/* ── body: the plant column (specimen + build + sky) and the text column ── */
+.rr-body{display:grid; grid-template-columns:minmax(220px, 300px) minmax(0,1fr); gap:16px; align-items:start}
+.rr-plant{display:flex; flex-direction:column; gap:10px; min-width:0}
+.rr-spec{position:relative; border-radius:var(--r-md, 16px); overflow:hidden; background:#dceefa; aspect-ratio:170/196; border:2px solid var(--rr-line-2)}
+.rr .ps{position:relative; width:100%; height:100%} .rr .ps-svg{display:block; width:100%; height:100%}
+.rr .ps-tag{display:none}
+.rr .ps.ghost .ps-layer .ps-part{opacity:.55; filter:saturate(.6)} .rr .ps.unviable .ps-layer .ps-part{filter:saturate(.35) brightness(1.05)}
+.rr .ps.stressed .ps-layer .ps-part{filter:saturate(.7)}
+.rr-spec-cap{position:absolute; left:0; right:0; bottom:0; padding:22px 12px 8px; background:linear-gradient(transparent, rgba(47,58,44,.78)); color:#fff7e0; line-height:1.15; pointer-events:none}
+.rr-spec-cap b{display:block; font-size:14px} .rr-spec-cap small{display:block; font-size:12px; font-weight:700; opacity:.9}
+.rr-build{display:flex; flex-direction:column; gap:10px}
+.rr-sec{display:flex; flex-direction:column; gap:6px; padding:10px 12px; border:2px solid var(--rr-line); border-radius:var(--r-md, 16px); background:var(--rr-bg)}
+.rr-sec h3{display:flex; align-items:center; gap:6px; margin:0; font-size:12px; font-weight:900; letter-spacing:1px; text-transform:uppercase; color:var(--rr-soft)}
+.rr-sec h3 .ic{width:18px; height:18px; color:var(--leaf-dark, #2a7636)}
+.rr-sec p{margin:0; font-size:14px; line-height:1.4}
+.rr-sky{border-color:#bcd4ec; background:linear-gradient(var(--sky-soft, #dcecf8), var(--rr-bg) 70%)} .rr-sky h3 .ic{color:var(--sky-dark, #23679f)}
+.rr-note{font-size:12px !important; font-weight:700; color:var(--rr-faint)}
+.rr-chips{display:flex; flex-wrap:wrap; gap:6px}
+.rr-chip{display:inline-flex; align-items:center; gap:5px; padding:5px 10px; border-radius:10px; font-size:13.5px; font-weight:800; background:var(--rr-paper); border:1.5px solid var(--rr-line-2); color:var(--rr-ink)}
+.rr-chip .ic{width:16px; height:16px} .rr-chip i{font-style:normal; font-weight:700; color:var(--rr-soft)}
+.rr-chip.ow{background:var(--cat-soft, var(--leaf-soft, #e2f2d6)); border-color:color-mix(in srgb, var(--cat, #3f9d4b) 45%, var(--rr-bg)); color:var(--cat-dark, var(--leaf-dark, #2a7636))}
+.rr-chip.ow.none{background:var(--rr-paper); color:var(--rr-faint); border-style:dashed}
+.rr-chip.rg.ok{background:var(--leaf-soft, #e2f2d6); border-color:#bfe0b5; color:var(--leaf-dark, #2a7636)} .rr-chip.rg.ok .ic{padding:2px; border-radius:50%; background:var(--ok, #3f9d4b); color:#fff; stroke-width:3.4; box-sizing:border-box}
+.rr-text{display:flex; flex-direction:column; gap:10px; min-width:0}
+.rr-why{background:linear-gradient(var(--gold-soft, #fff1c7), var(--rr-bg) 55%); border-color:#f0cf72} .rr-why h3 .ic{color:var(--gold-deep, #a86f00)}
+.rr[data-kind="loss"] .rr-why{background:linear-gradient(#fbe6ec, var(--rr-bg) 55%); border-color:#d98aa2} .rr[data-kind="loss"] .rr-why h3 .ic{color:#8f2846}
+.rr-gave{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px}
+.rr-gave li{display:flex; align-items:flex-start; gap:6px; font-size:14px; line-height:1.35} .rr-gave li .ic{width:16px; height:16px; padding:2px; border-radius:50%; background:var(--bad, #c4466a); color:#fff; stroke-width:3.4; box-sizing:border-box; margin-top:2px}
+.rr-analog ul{margin:0; padding-left:18px; display:flex; flex-direction:column; gap:4px; font-size:14px; line-height:1.4}
+.rr-scn{display:flex; flex-direction:column; gap:4px; padding:10px 12px; border:2px solid var(--rr-line); border-radius:var(--r-md, 16px); background:var(--rr-paper)}
+.rr-scn h3{display:flex; align-items:center; gap:6px; margin:0; font-size:12px; font-weight:900; letter-spacing:1px; text-transform:uppercase; color:var(--rr-soft)} .rr-scn h3 .ic{width:18px; height:18px; color:var(--pressure, #8a5bb8)}
+.rr-scn p{margin:0; font-size:13.5px; line-height:1.4}
+
+/* ── actions: Keep playing first (a win), then the page's own run actions (the shell's <footer> rule is overridden property by property) ── */
+.rr .rr-actions{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:0; padding:12px 24px 16px; background:var(--rr-paper); border:0; border-top:3px solid var(--rr-line); color:var(--rr-ink);
+  font-size:15px; white-space:normal; overflow:visible; flex:none}
+.rr-acts{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.rr-btn{display:inline-flex; align-items:center; gap:8px; min-height:46px; padding:6px 16px 6px 12px; border:2px solid var(--rr-line-2); border-radius:14px; background:var(--rr-bg); box-shadow:0 2px 0 var(--rr-line-2);
+  cursor:pointer; font:inherit; font-weight:800; font-size:14px; color:var(--rr-ink); text-align:left; line-height:1.1}
+.rr-btn .ic{width:20px; height:20px} .rr-btn span{display:flex; flex-direction:column} .rr-btn small{font-size:11px; font-weight:700; color:var(--rr-soft)}
+.rr-btn:hover{background:var(--rr-paper)}
+.rr-btn.primary{background:var(--leaf, #3f9d4b); border-color:var(--leaf-dark, #2a7636); color:#fff; box-shadow:0 2px 0 var(--leaf-dark, #2a7636)} .rr-btn.primary:hover{background:var(--leaf-dark, #2a7636)} .rr-btn.primary small{color:#eaf6e4}
+.rr[data-kind="loss"] .rr-btn.primary{background:var(--ink, #2f3a2c); border-color:#1f261e; box-shadow:0 2px 0 #1f261e}
+
+@media (max-width:1100px){ .rr{padding:18px} .rr-scroll{padding:12px 18px 14px} .rr .rr-head{padding:14px 18px 10px} .rr .rr-actions{padding:10px 18px 14px} .rr-head h2{font-size:26px} .rr-facts{grid-template-columns:repeat(2, minmax(0,1fr))} .rr-body{grid-template-columns:minmax(200px, 240px) minmax(0,1fr)} }
+@media (max-width:860px){ .rr{padding:12px} .rr-body{grid-template-columns:1fr} .rr-spec{max-width:260px} }

@@ -33,6 +33,12 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const strip = src => src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`\\])\/\/.*$/gm, "$1");
 const fnv = a => { let h = 0x811c9dc5; for (let i = 0; i < a.length; i++) { h ^= a[i] & 0xff; h = Math.imul(h, 0x01000193); } return (h >>> 0).toString(16); };
 const MEAS = { generatedAt: new Date().toISOString(), base: BASE_SHA };
+// (BLOOM-029E) this suite's own range: its base → the accepted BLOOM-029C final candidate 2d0fb08 while a later milestone is checked out on top
+// (as tools/run-ui-check.js already does), so later work that legitimately touches these files never trips this milestone's scope guards;
+// at or before 2d0fb08 the working tree is compared as before
+const END_SHA = "2d0fb0899967db96bf23a3c17d4f78c9ab635f81";
+const AT_END = (() => { try { return git(`merge-base --is-ancestor ${END_SHA} HEAD`) === "" && git("rev-parse HEAD") !== END_SHA; } catch { return false; } })();
+const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT_END ? [] : git("ls-files --others --exclude-standard").split("\n").filter(Boolean);
 const EVTS = ["run-ready", "play-pause", "speed", "region-select", "upgrade-preview", "upgrade-purchase", "growth-focus", "local-upgrade", "bubble-collect", "win"];
 // the 028D1 detail shapes (docs/TRAINING_FOUNDATION_v1.md §7), frozen
 const SHAPES = { "run-ready": "planetId,kind,training,running", "play-pause": "running", speed: "speed", "region-select": "index,id,name,previous,water,tile", "upgrade-preview": "id,board,name,available,gain,lose,better,worse,reachHostile",
@@ -73,7 +79,7 @@ const hexToRgb = h => `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3,
     check(!diffs.length, "N2b · gameplay unchanged with uiCategory stripped from the traits: identical prices / rules / tiers / offered / previews, identical purchases and identical seeded 900-tick runs (state, density, Biomass, coverage) on First Bloom, Training Grounds and Ocean 28", diffs.join(", ") || "3 worlds identical"); }
 
   // N3 · scope
-  { const changed = git(`diff --name-only ${BASE_SHA}`).split("\n").filter(Boolean).concat(git("ls-files --others --exclude-standard").split("\n").filter(Boolean));
+  { const changed = git(`diff --name-only ${RANGE}`).split("\n").filter(Boolean).concat(untracked());
     const allowed = p => p === "content/traits.js" || p === "demos/demo-run.html" || p.startsWith("resources/run-ui/") || p === "tools/plant-rooms-check.js" || p === "tools/planet-view-check.js" || p === "tools/terraform-check.js" || p.startsWith("docs/") || p === "README.md"; // (029D) + the Terraform suite
     const guarded = ["resources/planet-sphere/", "resources/planet-surface/", "resources/atmosphere-transition/", "resources/main-menu/", "resources/destination-survey/", "resources/training/", "resources/bloom-", "planets/", "index.html", "demos/ui-mockups/", "demos/main-menu.html", "demos/destination-survey.html", "demos/planet-sphere", "demos/atmosphere-transition.html", "content/config.js", "content/scenarios.js", "content/training.js", "content/archetypes.js", "content/play.js", "GAME_BIBLE.md"];
     const out = changed.filter(p => !allowed(p)), hit = changed.filter(p => guarded.some(g => p.startsWith(g)));
@@ -86,7 +92,7 @@ const hexToRgb = h => `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3,
     const shared = read("demos/ui-mockups/shared.js"), c18 = read("demos/ui-mockups/c18.js");
     const fakeNames = [...shared.matchAll(/\{ id:'(\w+)', name:'([^']+)', terrain:/g)].map(m => m[2]).concat([...c18.matchAll(/future:true, name:'([^']+)'/g)].map(m => m[1]));
     const added = DR + "\n" + PSP + "\n" + DRC + "\n" + read("resources/run-ui/planet-view.js") + "\n" + read("resources/run-ui/planet-view.css") + "\n" + read("resources/run-ui/terraform-globe.js") + "\n"
-      + git(`diff ${BASE_SHA} -- demos/demo-run.html resources/run-ui/run-ui-adapter.js content/traits.js`).split("\n").filter(l => l.startsWith("+") && !l.startsWith("+++")).join("\n");
+      + git(`diff ${RANGE} -- demos/demo-run.html resources/run-ui/run-ui-adapter.js content/traits.js`).split("\n").filter(l => l.startsWith("+") && !l.startsWith("+++")).join("\n");
     const leaks = fakeNames.filter(n => added.includes(n)).concat(/ui-mockups|shared\.js|c18\.js|\bBM\.|future:|ROOMS2\d/.test(added.replace(/Concept 18['’]?s?|mockup file/g, "")) ? ["mockup reference"] : []);
     const renderer = /RM\.createRenderer\(|BLOOM\.runMap/.test(drc) && !/paintSurface|getImageData|fillRect|surfacePlanet|tilemap\[/.test(drc);
     const organicOnly = !/bridge|docked|socket|lane bay|data-link/i.test(drc + strip(DRC));
@@ -98,7 +104,7 @@ const hexToRgb = h => `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3,
       leaks.length ? "LEAKS " + leaks.join(", ") : `${DR.split("\n").length} + ${PSP.split("\n").length} lines scanned for ${fakeNames.length} mockup names`); }
   // N5 · the adapter and the run page's event contract
   { const ad = strip(read("resources/run-ui/run-ui-adapter.js")); const RU = BLOOM.runUI;
-    const adAdded = git(`diff ${BASE_SHA} -- resources/run-ui/run-ui-adapter.js`).split("\n").filter(l => /^\+[^+]/.test(l));
+    const adAdded = git(`diff ${RANGE} -- resources/run-ui/run-ui-adapter.js`).split("\n").filter(l => /^\+[^+]/.test(l));
     const runBase = git(`show ${BASE_SHA}:demos/demo-run.html`), runAt = read("demos/demo-run.html");
     const sites = s => EVTS.map(t => [t, (s.match(new RegExp(`emit\\("${t}"`, "g")) || []).length]);
     const keysOf = s => EVTS.map(t => { const m = [...s.matchAll(new RegExp(`emit\\("${t}",\\s*\\{([^}]*)\\}`, "g"))].map(x => x[1].replace(/\s+/g, "")); return [t, m.join(" | ")]; });
@@ -155,7 +161,10 @@ const hexToRgb = h => `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3,
   const frames = (p, n = 3) => p.evaluate(n => new Promise(r => { let k = 0; const f = () => (++k >= n ? r() : requestAnimationFrame(f)); requestAnimationFrame(f); }), n);
   const shot = async (p, name, clip) => { if (EVIDENCE) await p.screenshot({ path: path.join(EVD, name), ...(clip ? { clip } : {}) }); };
   const state = p => p.evaluate(() => __dr.state());
-  const openRoom = async (p, name) => { const inRoom = await p.evaluate(() => !!__dr.DR.state().room); await p.click(inRoom ? `.dr .dr-room:not([hidden]) .rn[data-go="${name}"]` : `.pv-tool[data-tool="${name}"]`); await frames(p, 4); await sleep(60); };
+  // (BLOOM-029E) room swaps run through the SUBDUED mist: after a room click, Back, Resume or Escape the controller is busy for ~0.3 s; the
+  // checks below read the settled state (the swap happens at the covered point, the resume / focus after the reveal), exactly as before
+  const settled = p => p.waitForFunction(() => !BLOOM.decisionRooms.instance.state().transitioning, null, { timeout: 8000, polling: 20 });
+  const openRoom = async (p, name) => { await settled(p); const inRoom = await p.evaluate(() => !!__dr.DR.state().room); await p.click(inRoom ? `.dr .dr-room:not([hidden]) .rn[data-go="${name}"]` : `.pv-tool[data-tool="${name}"]`); await settled(p); await frames(p, 4); await sleep(60); };
   const hoverNode = async (p, id) => { await p.hover(`.dr .dr-room:not([hidden]) .node[data-node="${id}"]`); await frames(p, 3); };
   const leaveTree = async (p) => { const r = await p.evaluate(() => { const h = document.querySelector(".dr .dr-room:not([hidden]) .rh").getBoundingClientRect(); return [h.x + h.width / 2, h.y + h.height - 4]; }); await p.mouse.move(r[0], r[1]); await frames(p, 3); };
 
@@ -184,12 +193,12 @@ const hexToRgb = h => `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3,
           `${tag} B1 · opening Adapt from a running run pauses it at once (one real bloom:play-pause {running:false}), remembers it was running, carries the home selection into the room context and clears it (one bloom:region-select {id:null}); the Planet View keeps the exact same map geometry underneath, blurred 7 px under the 46 % veil, inert and aria-hidden; the room takes focus`,
           J({ before: [before.run, before.sel, before.geom], after: [r.run, r.dr.wasRunning, r.dr.context, r.sel, r.geom], blur: r.blur, veil: r.veil, pp: r.pp, rs: r.rs })); }
       // ---- B2 · Back restores · Resume forces running · Escape closes · focus returns to the opener
-      { await p.click(".dr .dr-room:not([hidden]) .rb.back"); await frames(p, 3);
+      { await p.click(".dr .dr-room:not([hidden]) .rb.back"); await settled(p); await frames(p, 3);
         const a = await p.evaluate(() => ({ ...__dr.state(), hidden: document.getElementById("dr").hidden, inert: document.querySelector(".pv-hud").inert, active: document.activeElement.dataset.tool, cls: document.querySelector(".pv").classList.contains("in-room") }));
-        await p.evaluate(() => __dr.A.actions.pause()); await frames(p, 2); await openRoom(p, "region"); const b0 = await state(p); await p.click(".dr .dr-room:not([hidden]) .rb.back"); await frames(p, 3); const b = await state(p);
-        await openRoom(p, "region"); await p.click(".dr .dr-room:not([hidden]) .rb.resume"); await frames(p, 3); const c = await state(p);
-        await p.evaluate(() => __dr.A.actions.pause()); await openRoom(p, "spread"); await p.keyboard.press("Escape"); await frames(p, 3); const d = await state(p);
-        await p.evaluate(() => __dr.A.actions.play()); await openRoom(p, "spread"); await p.keyboard.press("Escape"); await frames(p, 3); const e = await state(p);
+        await p.evaluate(() => __dr.A.actions.pause()); await frames(p, 2); await openRoom(p, "region"); const b0 = await state(p); await p.click(".dr .dr-room:not([hidden]) .rb.back"); await settled(p); await frames(p, 3); const b = await state(p);
+        await openRoom(p, "region"); await p.click(".dr .dr-room:not([hidden]) .rb.resume"); await settled(p); await frames(p, 3); const c = await state(p);
+        await p.evaluate(() => __dr.A.actions.pause()); await openRoom(p, "spread"); await p.keyboard.press("Escape"); await settled(p); await frames(p, 3); const d = await state(p);
+        await p.evaluate(() => __dr.A.actions.play()); await openRoom(p, "spread"); await p.keyboard.press("Escape"); await settled(p); await frames(p, 3); const e = await state(p);
         check(a.dr.room === null && a.run === true && a.sel === -1 && a.hidden && !a.inert && !a.cls && a.active === "adapt" && b0.run === false && b0.dr.wasRunning === false && b.run === false && b.dr.room === null && c.run === true && c.dr.room === null && d.run === false && d.dr.room === null && e.run === true && e.dr.room === null && e.sel === -1,
           `${tag} B2 · Back restores the pre-room state (running → running again, focus back on the opener, no region selected; paused → still paused); Resume closes and runs regardless; Escape closes and restores (paused stays paused, running runs)`, J({ back: [a.run, a.active], pausedBack: [b0.dr.wasRunning, b.run], resume: c.run, escPaused: d.run, escRunning: e.run })); }
       // ---- B3 · room → room: still paused, same context, the old preview cleared; B4 · no selection → the origin
@@ -238,7 +247,7 @@ const hexToRgb = h => `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3,
         check(rowsOk && J(r.help) === J(r.wh) && (!r.blocked || r.lim.includes(r.limKey)) && r.intrinsic, `${tag} B8 · Overview: the four condition rows (Temperature orange · Water blue · Soil brown · Hazard purple, status chip icon + word, reading) equal adapter.region(context).conditions exactly; the limiting box names the real limiting key; "Would help" buttons are exactly adapter.wouldHelp(context), intrinsic width`, J({ pick: r.pick, rows: r.rows.map(x => `${x.cat} ${x.st} ${x.reading}`), help: r.help, wh: r.wh }));
         if (!FF) await shot(p, "01-region-inspect-overview-1280x800.png");
         if (r.help.length) { const n0 = await p.evaluate(() => __EV.length); const item = r.help[0]; const board = await p.evaluate(id => __dr.A.upgrade(id).board.toLowerCase(), item);
-          if (board !== "terraform") { await p.click(`.dr .dr-room:not([hidden]) .help [data-item="${item}"]`); await frames(p, 4); await sleep(80);
+          if (board !== "terraform") { await p.click(`.dr .dr-room:not([hidden]) .help [data-item="${item}"]`); await settled(p); await frames(p, 4); await sleep(80);
             const s = await p.evaluate((n) => ({ ...__dr.state(), active: document.activeElement.dataset.node, pv: __EV.slice(n).filter(e => e.type === "upgrade-preview").map(e => e.detail.id) }), n0);
             check(s.dr.room === board && s.dr.context === r.pick && s.active === item && s.pv[0] === item && s.run === false, `${tag} B8b · clicking a real "Would help" suggestion (${item}) opens ${board} with the same room context and focuses that real node (its focus preview fires bloom:upgrade-preview)`, J({ room: s.dr.room, ctx: s.dr.context, active: s.active, pv: s.pv }));
             await openRoom(p, "region"); } } }
@@ -285,7 +294,7 @@ const hexToRgb = h => `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3,
         await p.evaluate(() => { __dr.room().querySelector(".mm-strip [data-r]").focus(); }); await frames(p, 3); const f = await state(p);
         await hoverNode(p, "rad"); await p.evaluate(() => window.dispatchEvent(new Event("blur"))); await frames(p, 3); const g = await state(p); await p.evaluate(() => window.dispatchEvent(new Event("focus")));
         await hoverNode(p, "drought"); await p.evaluate(() => { Object.defineProperty(document, "hidden", { get: () => true, configurable: true }); document.dispatchEvent(new Event("visibilitychange")); }); await frames(p, 3); const h = await state(p); await p.evaluate(() => { delete document.hidden; document.dispatchEvent(new Event("visibilitychange")); });
-        await p.evaluate(() => { __dr.room().querySelector('.node[data-node="flood"]').focus(); }); await frames(p, 2); await p.keyboard.press("Escape"); await frames(p, 3); const i = await state(p);
+        await p.evaluate(() => { __dr.room().querySelector('.node[data-node="flood"]').focus(); }); await frames(p, 2); await p.keyboard.press("Escape"); await settled(p); await frames(p, 3); const i = await state(p);
         check(a.dr.preview === "cold" && a.active !== null && J(a.ev) === J([["cold", SHAPES["upgrade-preview"]]]) && a.spec && J(a.lit) === J(["Temperature"]) && J(a.hl) === J(["stem"]) && a.info && a.fx
           && b.dr.preview === null && b.active === null && c.pv === "cold" && J(c.ids) === J(["cold", "heat", "cold"]) && d.dr.preview === null && e.dr.preview === "salt" && f.dr.preview === null && g.dr.preview === null && g.active === null && h.dr.preview === null && i.dr.preview === null && i.active === null && i.dr.room === null,
           `${tag} B12 · hovering Cold Tolerance is the real actions.preview: bloom:upgrade-preview {id:"cold"} with the unchanged 9 keys, the home map outlines it (activePreview), the specimen previews it (PREVIEW tag, the Stem anchor lit, the Temperature tendril lit), the information and effect cards describe it; the preview clears on: leaving the tree, empty tree space, a new node (replaces), keyboard focus leaving the tree, window blur, document hidden, and closing the room; keyboard focus previews`,
@@ -342,9 +351,9 @@ const hexToRgb = h => `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3,
         else check(!r.node, `${tag} B16 · Waterborne Seeds not offered on this world: not in the tree`, J(r)); }
       // ---- B17 · (029D) Terraform is the fourth room: the header nav opens it (still paused, same context, Spread's preview cleared); back to Spread for the checks below
       { const before = await p.evaluate(() => ({ ...__dr.state(), n: __EV.length })); await hoverNode(p, "seedOut");
-        await p.click('.dr .dr-room:not([hidden]) .rn[data-go="terraform"]'); await frames(p, 3);
+        await p.click('.dr .dr-room:not([hidden]) .rn[data-go="terraform"]'); await settled(p); await frames(p, 3);
         const r = await p.evaluate(n => ({ ...__dr.state(), n: __EV.filter(e => e.type === "play-pause").length, attr: document.querySelector('.dr .dr-room:not([hidden]) .rn[data-go="terraform"]').getAttribute("aria-disabled"), pressed: document.querySelector('.dr .dr-room:not([hidden]) .rn[data-go="terraform"]').getAttribute("aria-pressed"), hasTf: __dr.PV.rooms.has("terraform"), ctxSame: __dr.DR.state().context === n }), before.dr.context);
-        await p.click('.dr .dr-room:not([hidden]) .rn[data-go="spread"]'); await frames(p, 3); const back = await state(p);
+        await p.click('.dr .dr-room:not([hidden]) .rn[data-go="spread"]'); await settled(p); await frames(p, 3); const back = await state(p);
         check(r.dr.room === "terraform" && r.run === false && r.attr === null && r.pressed === "true" && r.hasTf && r.ctxSame && r.dr.preview === null && r.active === null && back.dr.room === "spread" && back.run === false,
           `${tag} B17 · Terraform in the room header is a ready room (029D): pressing it opens the Terraform room still paused with the same context and clears Spread's preview; Spread reopens the same way`, J({ room: r.dr.room, ctxSame: r.ctxSame, back: back.dr.room })); }
       // ---- B18 · the background is inert: no Tab reaches it, a click on the covered map selects nothing
@@ -355,11 +364,11 @@ const hexToRgb = h => `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3,
         check(tabs.every(t => t === "room" || t === "body") && tabs.filter(t => t === "room").length > 40 && s.sel === -1 && s.rs === 0 && s.room === "spread", `${tag} B18 · while a room is open 60 Tab presses never land on the Planet View (HUD, map, banner, footer are inert) and a click on the covered map selects nothing and emits no bloom:region-select`, J({ tabs: [...new Set(tabs)], ...s, r })); }
       // ---- B19 · anchors: every claimed 028D1 name resolves to exactly ONE production element; the shell's copies are legacy; Terraform / report anchors stay on the shell
       { const r = await p.evaluate(() => { const claimed = __dr.DR.state().claimedAnchors, one = n => { const e = document.querySelectorAll(`[data-tutorial="${n}"]`); return e.length === 1 && !!e[0].closest(".pv .dr"); };
-          const legacy = n => document.querySelectorAll(`[data-tutorial-legacy="${n}"]`).length >= 1; const shell = ["report", "report-continue"].map(n => [n, document.querySelectorAll(`[data-tutorial="${n}"]`).length, !!document.querySelector(`[data-tutorial="${n}"]`) && !document.querySelector(`[data-tutorial="${n}"]`).closest(".pv")]); // (029D) Terraform's anchors are production now
+          const legacy = n => document.querySelectorAll(`[data-tutorial-legacy="${n}"]`).length >= 1; const shell = ["report", "report-continue", "run-actions"].map(n => [n, document.querySelectorAll(`[data-tutorial="${n}"]`).length, !!document.querySelector(`[data-tutorial="${n}"]`) && !!document.querySelector(`[data-tutorial="${n}"]`).closest(".pv .rr")]); // (029D) Terraform's anchors are production; (029E) the production report owns the report anchors
           const banner = ["inspect", "readout", "limiting-factor", "colony-status"].map(n => document.querySelectorAll(`[data-tutorial="${n}"]`).length);
           // the shell renders its inspect / report anchors only while IT shows a selected region / the report: a legacy copy exists then, else nothing at all
           return { claimed, missing: claimed.filter(n => !one(n)), noLegacy: ["upgrades", "board-adapt", "upgrade-cold", "board-terraform", "upgrade-warm"].filter(n => !legacy(n)), shell, banner }; });
-        check(!r.missing.length && !r.noLegacy.length && r.shell.every(([, n, onShell]) => n <= 1 && (n === 0 || onShell)) && J(r.banner) === "[1,1,1,1]", `${tag} B19 · ${r.claimed.length} re-homed anchors (raw-signals, growth-focus, focus-*, local-upgrade, local-*, upgrades, board-adapt, board-spread, board-terraform, upgrade-<real id>) each resolve to ONE production element inside the rooms, the shell's copies are data-tutorial-legacy; only the report anchors stay on the shell (until the report converges); the banner keeps inspect / readout / limiting-factor / colony-status`, J({ missing: r.missing, noLegacy: r.noLegacy, shell: r.shell.map(s => s[0] + ":" + s[1]) })); }
+        check(!r.missing.length && !r.noLegacy.length && r.shell.every(([, n, inReport]) => n === 1 && inReport) && J(r.banner) === "[1,1,1,1]", `${tag} B19 · ${r.claimed.length} re-homed anchors (raw-signals, growth-focus, focus-*, local-upgrade, local-*, upgrades, board-adapt, board-spread, board-terraform, upgrade-<real id>) each resolve to ONE production element inside the rooms, the shell's copies are data-tutorial-legacy; only the report anchors stay on the shell (until the report converges); the banner keeps inspect / readout / limiting-factor / colony-status`, J({ missing: r.missing, noLegacy: r.noLegacy, shell: r.shell.map(s => s[0] + ":" + s[1]) })); }
       // ---- B20 · network / console / event shapes seen
       { const ext = p.reqs.filter(u => !u.startsWith(ORIGIN) && !u.startsWith("data:") && !u.startsWith("blob:"));
         const shapes = await p.evaluate(() => { const out = {}; for (const e of __EV) { const k = Object.keys(e.detail).join(); out[e.type] = out[e.type] || new Set(); out[e.type].add(k); } return Object.fromEntries(Object.entries(out).map(([t, s]) => [t, [...s]])); });
@@ -381,21 +390,21 @@ const hexToRgb = h => `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3,
         const pu = await q.evaluate(n => ({ pu: __EV.slice(n).filter(e => e.type === "upgrade-purchase").map(e => e.detail), spec: __dr.spec(), run: __dr.A.run().running, bio: __dr.A.hud().biomass, chill: __dr.A.region("chill_hollow").limiting.blocked, box: __dr.room().querySelector(".mm-ctx").textContent.replace(/\s+/g, " ") }), n0);
         await leaveTree(q); await openRoom(q, "region"); await q.click('.dr .dr-room:not([hidden]) #drtab-colony'); await q.evaluate(() => { const i = __dr.A.regions().find(r => r.isOrigin).index; __dr.DR.setCtx(i); }); await frames(q, 2);
         await q.click('.dr .dr-room:not([hidden]) [data-focus="leaves"]'); await frames(q, 3); const gf = await q.evaluate(n => __EV.slice(n).filter(e => e.type === "growth-focus").map(e => [e.detail.id, e.detail.focus]), n0);
-        await q.click(".dr .dr-room:not([hidden]) .rb.back"); await frames(q, 3); const s2 = await state(q);
+        await q.click(".dr .dr-room:not([hidden]) .rb.back"); await settled(q); await frames(q, 3); const s2 = await state(q);
         check(s0.run === false && s0.sel >= 0 && s1.run === false && s1.dr.wasRunning === false && s1.dr.contextId === "landing_meadow" && pv.length === 1 && pv[0].id === "cold" && pv[0].available === true && J(pv[0].gain) === '["chill_hollow"]' && fx.ctx === "chill_hollow" && /Opens Chill Hollow/.test(fx.box) && fx.cap === "Your plant in Chill Hollow"
           && pu.pu.length === 1 && pu.pu[0].cost === 140 && pu.pu[0].tier === 1 && pu.spec !== spec0 && pu.run === false && pu.bio === 10 && pu.chill === false,
           `${tag} B21 · training starts paused; Region Inspect opens still paused (context Landing Meadow, the origin); in Adapt the real Cold Tolerance preview fires bloom:upgrade-preview {available, gain:[chill_hollow]}; with Chill Hollow as the room context the effect box reads "Opens Chill Hollow"; the click is the real training-price purchase (bloom:upgrade-purchase cost 140, tier 1, Biomass 150 → 10), the specimen changes, Chill Hollow is no longer blocked; the colony focus goes through the real action; Back keeps training paused`,
           J({ start: [s0.run, s1.dr.contextId], pv: pv.map(d => [d.id, d.available, d.gain]), fx: [fx.ctx, fx.box.slice(0, 80)], pu: pu.pu.map(d => [d.id, d.cost, d.tier, d.biomass]), chill: pu.chill, gf, back: s2.run }));
         check(J(gf) === J([["landing_meadow", "leaves"]]) && s2.run === false && s2.dr.room === null, `${tag} B21b · the training colony's growth focus is the real action (bloom:growth-focus on landing_meadow) and Back returns to a still-paused training run`, J({ gf, run: s2.run }));
         // determinism: the same scripted actions through the rooms, twice → the same run tile for tile
-        const script = async (pg) => { await openRoom(pg, "adapt"); await pg.click('.dr .dr-room:not([hidden]) .node[data-node="cold"]'); await frames(pg, 3); await pg.click(".dr .dr-room:not([hidden]) .rb.back"); await frames(pg, 2);
+        const script = async (pg) => { await openRoom(pg, "adapt"); await pg.click('.dr .dr-room:not([hidden]) .node[data-node="cold"]'); await frames(pg, 3); await pg.click(".dr .dr-room:not([hidden]) .rb.back"); await settled(pg); await frames(pg, 2);
           return pg.evaluate(() => { BLOOM_API.advance(400); const s = BLOOM_API.state(), S = BLOOM_API.sim; let h = 0x811c9dc5; for (let i = 0; i < S.state.length; i++) { h ^= S.state[i]; h = Math.imul(h, 0x01000193); h ^= Math.round(S.dens[i] * 1000) & 255; h = Math.imul(h, 0x01000193); } return JSON.stringify([s.ticks, s.biomass, s.coverage, (h >>> 0).toString(16)]); }); };
         const q2 = await open("?training=1&ui=18&return=" + encodeURIComponent("/demos/main-menu.html")); await sleep(400); const h2 = await script(q2); await q2.context().close();
         const q3 = await open("?training=1&ui=18&return=" + encodeURIComponent("/demos/main-menu.html")); await sleep(400); const h3 = await script(q3);
         check(h2 === h3 && h2.length > 10, `${tag} B21c · deterministic training stays deterministic through the production rooms: two fresh loads, the same room purchase and 400 ticks → identical ticks, Biomass, coverage and tiles`, `${h2.slice(0, 60)}…`);
         await q3.click("#pvMenuBtn"); await q3.click('#pvMenu [data-act="restartTraining"]'); await q3.waitForFunction(() => window.BLOOM_RUN_UI && BLOOM_RUN_UI.adapter && BLOOM.decisionRooms && BLOOM.decisionRooms.instance, null, { timeout: 20000, polling: 100 }).catch(() => {}); await sleep(400);
         const re = await q3.evaluate(() => ({ url: location.search, running: BLOOM_RUN_UI.adapter.run().running, ticks: BLOOM_RUN_UI.adapter.run().ticks, menu: [...document.querySelectorAll("#pvMenu [data-act]")].map(b => b.dataset.act) }));
-        check(/training=1/.test(re.url) && /ui=18/.test(re.url) && re.running === false && re.ticks === 0 && J(re.menu) === '["restartTraining","skipTraining","mainMenu"]', `${tag} B21d · Restart training (the production menu, the page's own path) reopens the training run paused at tick 0 in the production view; Skip / Main menu remain in the menu`, J(re));
+        check(/training=1/.test(re.url) && !/ui=legacy/.test(re.url) && re.running === false && re.ticks === 0 && J(re.menu) === '["restartTraining","skipTraining","mainMenu"]', `${tag} B21d · Restart training (the production menu, the page's own path) reopens the training run paused at tick 0 in the production view; Skip / Main menu remain in the menu`, J(re));
         check(!q.errs.length && !q3.errs.length, `${tag} B21e · training pages: no console error`, [...q.errs, ...q3.errs].join(" | ") || "none"); await q.context().close(); await q3.context().close(); }
       // ---- B22 · reduced motion
       if (!FF) { const q = await open("?archetype=ocean_archipelago&seed=28&ui=18", { rm: true }); await openRoom(q, "adapt"); await hoverNode(q, "cold");
@@ -405,7 +414,7 @@ const hexToRgb = h => `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3,
       // ---- B23 · the mini-map region peek shot (evidence) + the 029B Planet View still behaves (banner, Map View) with the rooms mounted
       if (!FF) { const q = await open("?archetype=ocean_archipelago&seed=28&ui=18"); await openRoom(q, "region");
         await q.evaluate(() => { const room = __dr.room(), b = [...room.querySelectorAll(".mm-strip [data-r]")].find(x => +x.dataset.r !== __dr.DR.state().context); b.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse" })); }); await frames(q, 3); await shot(q, "11-room-minimap-region-peek.png");
-        await q.click(".dr .dr-room:not([hidden]) .rb.back"); await frames(q, 3);
+        await q.click(".dr .dr-room:not([hidden]) .rb.back"); await settled(q); await frames(q, 3);
         const r = await q.evaluate(async () => { const A = __dr.A, o = A.regions().find(x => x.isOrigin).index; A.actions.selectRegion(o); await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
           return { banner: !document.getElementById("pvBanner").hidden, name: document.querySelector("#pvBanner .bn-t b").textContent === A.regions()[o].name, tools: [...document.querySelectorAll(".pv-tool[data-room]")].map(b => b.dataset.tool + ":" + b.dataset.room) }; });
         check(r.banner && r.name && J(r.tools) === J(["region:ready", "adapt:ready", "spread:ready", "terraform:ready"]), `${tag} B23 · after a room closes the Planet View works as before (selection → banner); the tools read Region / Adapt / Spread / Terraform ready (029D)`, J(r)); await q.context().close(); }

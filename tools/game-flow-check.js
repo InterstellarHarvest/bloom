@@ -138,9 +138,10 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
   const shot = async (p, n) => { if (SHOTS) await p.screenshot({ path: path.join(SHOTS, n + ".png") }); };
   const visible = (p, sel) => p.$eval(sel, e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e); return r.width > 0 && r.height > 0 && cs.visibility !== "hidden" && cs.display !== "none"; }).catch(() => false);
   const text = p => p.evaluate(() => document.body.innerText);
+  // (BLOOM-029E) the run page's player UI is the production Planet View by default: its run menu (#pvMenuBtn / #pvMenu) and its report (#rr) carry the page's own actions
   const menuAct = async (p, act, answer) => { if (answer) p.once("dialog", d => answer === "accept" ? d.accept() : d.dismiss());
-    if (!(await p.evaluate(() => document.getElementById("playMenuWrap").classList.contains("open")))) await p.click("#btnMenu");
-    await p.click(`#playMenu button[data-act="${act}"]`); };
+    if (await p.evaluate(() => document.getElementById("pvMenu").hidden)) await p.click("#pvMenuBtn");
+    await p.click(`#pvMenu [data-act="${act}"]`); };
   const screenOn = p => p.evaluate(() => [...document.querySelectorAll(".screen.on")].map(e => e.id).join(","));
   const waitRun = (p, ms = 180000) => p.waitForFunction(() => (window.BLOOM_API && window.BLOOM_API.sim) || (window.BLOOM_API && window.BLOOM_API.run && window.BLOOM_API.run.failed), null, { timeout: ms });
   const ident = p => p.evaluate(() => ({ url: location.search, run: BLOOM_API.run, planet: BLOOM_RUN.planet.name, tiles: (() => { let h = 0x811c9dc5; const s = Array.from(BLOOM_API.sim.map.TILEMAP).join(","); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h >>> 0; })(),
@@ -281,9 +282,9 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
     "AD · the player's run screen shows no developer terms and the page holds no solution data", (runText.match(JARGON) || ["none"])[0]);
   await shot(p, "07-run");
   // the run menu (S): obvious routes out of a live run, with a confirmation
-  await p.click("#btnMenu"); await p.waitForTimeout(100);
-  const menu = await p.$$eval("#playMenu button", bs => bs.map(b => b.dataset.act));
-  check(await visible(p, "#playMenu") && J(menu) === J(["playAgain", "newWorld", "changeScenario", "changePlanet", "home"]),
+  await p.click("#pvMenuBtn"); await p.waitForTimeout(100);
+  const menu = await p.$$eval("#pvMenu [data-act]", bs => bs.map(b => b.dataset.act));
+  check(await visible(p, "#pvMenu") && J(menu) === J(["playAgain", "newWorld", "changeScenario", "changePlanet", "home"]),
     "S · an active run has an obvious Menu: Play this world again · Same planet, new world · Change scenario · Change planet · Home", menu.join(", "));
   await shot(p, "08-menu");
   let dlg = null; p.once("dialog", d => { dlg = d.message(); d.dismiss(); });
@@ -346,7 +347,7 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
   await p.goto(FILE + "/demos/demo-run.html?archetype=frozen_world&seed=11&scenario=volatile_climate"); await p.waitForFunction(() => window.BLOOM_API && window.BLOOM_API.sim);
   const dev = await ident(p);
   check(!dev.play && dev.run.publicSeed === 11 && dev.run.attempt === 1 && dev.planet === FPRI.name && /public seed 11 · attempt 1/.test(dev.footer) && /layer P PASS/.test(dev.footer)
-    && !(await p.$("#btnMenu")) && !(await p.$("#prep")) && dev.url === "?archetype=frozen_world&seed=11&scenario=volatile_climate",
+    && !(await p.$("#pvMenuBtn")) && !(await p.$("#prep")) && dev.url === "?archetype=frozen_world&seed=11&scenario=volatile_climate",
     "34 · the direct developer URL still works exactly as before (same world, developer footer, no player menu, no search, URL untouched)", dev.footer);
   await p.goto(FILE + "/demos/demo-run.html?archetype=frozen_world&seed=11"); await p.waitForFunction(() => window.BLOOM_API && window.BLOOM_API.sim);
   const dev2 = await p.evaluate(() => ({ s: BLOOM_RUN.scenario, id: BLOOM_API.run.scenarioId, pr: BLOOM_API.sim.pressure.active, pid: BLOOM_API.sim.pressure.id, cl: BLOOM_API.sim.climate.enabled, co: BLOOM_API.sim.competition.enabled }));
@@ -360,45 +361,45 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
 
   // ---- 43 / 44 · First Bloom ----
   await p.goto(FILE + "/index.html"); await p.click("#btnFirstBloom"); await p.waitForFunction(() => window.BLOOM_API && window.BLOOM_API.sim);
-  const fbUrl = p.url(), fbP = await p.evaluate(() => { BLOOM_API.advance(0); const st = BLOOM_API.state(); return { kind: BLOOM_RUN.kind, id: BLOOM_RUN.planet.id, play: BLOOM_RUN.play, sections: st.sections, genome: st.genome, sky: st.sky, scen: BLOOM_API.run.scenarioId, footer: document.getElementById("runId").textContent, prep: !!document.getElementById("prep"), menu: !!document.getElementById("btnMenu") }; });
+  const fbUrl = p.url(), fbP = await p.evaluate(() => { BLOOM_API.advance(0); const st = BLOOM_API.state(); return { kind: BLOOM_RUN.kind, id: BLOOM_RUN.planet.id, play: BLOOM_RUN.play, sections: st.sections, genome: st.genome, sky: st.sky, scen: BLOOM_API.run.scenarioId, footer: document.getElementById("runId").textContent, prep: !!document.getElementById("prep"), menu: !!document.getElementById("pvMenuBtn") }; });
   await p.goto(FILE + "/demos/demo-run.html"); await p.waitForFunction(() => window.BLOOM_API && window.BLOOM_API.sim);
-  const fbH = await p.evaluate(() => { const st = BLOOM_API.state(); return { kind: BLOOM_RUN.kind, id: BLOOM_RUN.planet.id, sections: st.sections, genome: st.genome, sky: st.sky, scen: BLOOM_API.run.scenarioId, menu: !!document.getElementById("btnMenu") }; });
+  const fbH = await p.evaluate(() => { const st = BLOOM_API.state(); return { kind: BLOOM_RUN.kind, id: BLOOM_RUN.planet.id, sections: st.sections, genome: st.genome, sky: st.sky, scen: BLOOM_API.run.scenarioId, menu: !!document.getElementById("pvMenuBtn") }; });
   check(/demo-run\.html\?play=1$/.test(fbUrl) && fbP.kind === "authored" && fbP.id === "first_bloom" && fbP.play && !fbP.prep && fbP.menu && !fbH.menu
     && J([fbP.sections, fbP.genome, fbP.sky, fbP.scen]) === J([fbH.sections, fbH.genome, fbH.sky, fbH.scen]),
     "43/44 · Start with First Bloom opens the accepted authored run straight away (no planet / scenario screens, no search): same planet, plant and sky as the plain demo URL, plus the player menu",
     `${fbUrl.split("/").pop()} · ${fbP.footer}`);
 
-  // ---- 45 / 46 · a won run (real shop buttons, earned Biomass): Bloom Report + actions ----
+  // ---- 45 / 46 · a won run (the page's real buy through the production adapter, earned Biomass): the production Bloom Report + actions ----
   await p.goto(FILE + "/demos/demo-run.html?play=1&archetype=frozen_world&seed=11&scenario=eden"); await waitRun(p);
-  await p.evaluate(() => { document.getElementById("btnPlay").click(); });
+  await p.evaluate(() => { BLOOM_RUN_UI.adapter.actions.pause(); });
   const plan = ["cold", "cold"]; let bi = 0;
   for (let i = 0; i < 400 && !(await p.evaluate(() => BLOOM_API.sim.won)); i++) {
-    if (bi < plan.length && !(await p.$eval(`button.buy[data-id="${plan[bi]}"]`, b => b.classList.contains("off")))) { await p.click(`button.buy[data-id="${plan[bi]}"]`); bi++; }
-    await p.evaluate(() => { BLOOM_API.advance(25); refreshShop(); }); }
-  await p.waitForTimeout(150);
-  const win = await p.evaluate(() => ({ on: document.getElementById("reportModal").classList.contains("on"), h2: document.querySelector("#report h2").textContent, sub: document.querySelector("#report .sub").textContent,
-    plant: !!document.getElementById("plantCv"), build: document.getElementById("report").innerText.includes("Your plant became"), cont: !!document.getElementById("reportContinue"),
-    acts: [...document.querySelectorAll("#runActions button")].map(b => b.dataset.act), txt: document.getElementById("report").innerText }));
-  check(win.on && /BLOOM/.test(win.h2) && win.plant && win.build && win.sub.includes("Frozen World · World Seed 11") && win.cont,
-    "45 · the Bloom Report still renders (world identity, build, drawn plant, regions, Keep playing)", win.sub);
-  check(J(win.acts) === J(["playAgain", "newWorld", "changeScenario", "changePlanet", "home"]) && win.txt.indexOf("WHAT NEXT?") > win.txt.indexOf("Your plant became") && !JARGON.test(win.txt),
+    if (bi < plan.length && await p.evaluate(id => { const u = BLOOM_RUN_UI.adapter.upgrade(id); return !!(u && u.canBuy); }, plan[bi])) { await p.evaluate(id => BLOOM_RUN_UI.adapter.actions.buy(id), plan[bi]); bi++; }
+    await p.evaluate(() => { BLOOM_API.advance(25); }); }
+  await p.waitForFunction(() => BLOOM.runReport.instance.state().open && !BLOOM.runReport.instance.state().busy, null, { timeout: 8000 }).catch(() => {}); await p.waitForTimeout(150);
+  const win = await p.evaluate(() => ({ on: BLOOM.runReport.instance.state().open, h2: document.getElementById("rrTitle").textContent, sub: document.getElementById("rrSum").textContent,
+    plant: !!document.querySelector("#rr .ps-svg"), build: /your plant became/i.test(document.getElementById("rrCard").innerText), cont: !document.getElementById("rrContinue").hidden,
+    acts: [...document.querySelectorAll("#rrActs [data-act]")].map(b => b.dataset.act), txt: document.getElementById("rrCard").innerText, legacy: document.getElementById("reportModal").classList.contains("on") }));
+  check(win.on && /BLOOM/.test(win.h2) && win.plant && win.build && win.sub.includes("Frozen World · World Seed 11") && win.cont && !win.legacy,
+    "45 · the production Bloom Report renders (world identity, build, the production plant specimen, regions, Keep playing); the engineering modal stays closed", win.sub);
+  check(J(win.acts) === J(["playAgain", "newWorld", "changeScenario", "changePlanet", "home"]) && win.txt.search(/Play this world again/) > win.txt.search(/your plant became/i) && win.txt.search(/your plant became/i) >= 0 && !JARGON.test(win.txt),
     "46 · a win offers Play again / Same planet, new world / Change scenario / Change planet / Home, after the report's science", win.acts.join(", "));
   await shot(p, "10-win-report");
-  const wa = await p.$eval('#runActions button[data-act="playAgain"]', b => b.dataset.go);
+  const wa = await p.evaluate(() => BLOOM_RUN_UI.adapter.reportActions().find(a => a.id === "playAgain").href);
   check(wa === "demo-run.html?play=1&archetype=frozen_world&seed=11&scenario=eden", "T · Play again from the report = same planet + World Seed + scenario", wa);
 
   // ---- 47 · extinction (Dying World, an idle plant): actions instead of the developer restart ----
   // (BLOOM-027B: Frozen 9 is the world whose idle Dying World run dies out (at ~390–400 s, inside the 3000 ticks advanced here) — no Ocean world's does under the cylindrical generator; see tools/dying-world-check.js FIX)
   await p.goto(FILE + "/demos/demo-run.html?play=1&archetype=frozen_world&seed=9&scenario=dying_world"); await waitRun(p);
-  await p.evaluate(() => { document.getElementById("btnPlay").click(); BLOOM_API.advance(3000); }); await p.waitForTimeout(150);
-  const loss = await p.evaluate(() => ({ lost: BLOOM_API.sim.lost, on: document.getElementById("reportModal").classList.contains("on"), why: (document.getElementById("lossWhy") || {}).textContent || "",
-    deb: !!document.getElementById("lossDebrief"), restart: !!document.getElementById("lossRestart"), acts: [...document.querySelectorAll("#runActions button")].map(b => b.dataset.act), txt: document.getElementById("report").innerText }));
+  await p.evaluate(() => { BLOOM_RUN_UI.adapter.actions.pause(); BLOOM_API.advance(3000); }); await p.waitForFunction(() => BLOOM.runReport.instance.state().open && !BLOOM.runReport.instance.state().busy, null, { timeout: 8000 }).catch(() => {}); await p.waitForTimeout(150);
+  const loss = await p.evaluate(() => ({ lost: BLOOM_API.sim.lost, on: BLOOM.runReport.instance.state().open, why: document.getElementById("rrSum").textContent,
+    deb: !!document.querySelector("#rr .rr-why"), restart: !!document.querySelector('#rr [data-act="restartRun"]'), acts: [...document.querySelectorAll("#rrActs [data-act]")].map(b => b.dataset.act), txt: document.getElementById("rrCard").innerText }));
   check(loss.lost && loss.on && loss.deb && !loss.restart && J(loss.acts) === J(["playAgain", "newWorld", "changeScenario", "changePlanet", "home"]) && loss.why.includes("World Seed 9") && !JARGON.test(loss.txt),
-    "47 · an extinction offers the same actions (the debrief stays; the developer \"Restart this run\" is the harness's only)", loss.why.slice(0, 120));
+    "47 · an extinction offers the same actions in the production Extinction report (the debrief stays; the developer \"Restart this run\" is the harness's only)", loss.why.slice(0, 120));
   await shot(p, "11-extinction");
   await p.goto(FILE + "/demos/demo-run.html?archetype=frozen_world&seed=9&scenario=dying_world"); await p.waitForFunction(() => window.BLOOM_API && window.BLOOM_API.sim);
-  await p.evaluate(() => { document.getElementById("btnPlay").click(); BLOOM_API.advance(3000); }); await p.waitForTimeout(150);
-  check(await p.evaluate(() => !!document.getElementById("lossRestart") && !document.getElementById("runActions")), "47b · the developer harness keeps its own extinction screen (Restart this run, no player actions)");
+  await p.evaluate(() => { BLOOM_RUN_UI.adapter.actions.pause(); BLOOM_API.advance(3000); }); await p.waitForFunction(() => BLOOM.runReport.instance.state().open && !BLOOM.runReport.instance.state().busy, null, { timeout: 8000 }).catch(() => {}); await p.waitForTimeout(150);
+  check(await p.evaluate(() => !!document.querySelector('#rr [data-act="restartRun"]') && JSON.stringify([...document.querySelectorAll("#rrActs [data-act]")].map(b => b.dataset.act)) === '["restartRun"]'), "47b · the developer harness (no play=1) keeps its own extinction action in the production report (Restart this run, no player actions)");
 
   // ---- worker path (http): responsive loading, cancel, same world as the harness ----
   const h = await newPage();

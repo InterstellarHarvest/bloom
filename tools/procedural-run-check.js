@@ -17,7 +17,8 @@ for (const f of ["content/config.js", "content/traits.js", "content/archetypes.j
 const { BLOOM, BLOOM_DATA } = globalThis, { config, traits, archetypes } = BLOOM_DATA, OA = archetypes.find(a => a.id === "ocean_archipelago");
 
 const PAGE = "file://" + encodeURI(path.join(ROOT, "demos/demo-run.html"));
-const url = (seed) => seed === undefined ? PAGE : `${PAGE}?archetype=ocean_archipelago&seed=${seed}`;
+// (BLOOM-029E) this suite reads the engineering shell's own DOM (the BLOOM-007 harness): every page opens with the developer flag ?ui=legacy
+const url = (seed) => seed === undefined ? `${PAGE}?ui=legacy` : `${PAGE}?archetype=ocean_archipelago&seed=${seed}&ui=legacy`;
 const shotsArg = process.argv.indexOf("--shots"), SHOTS = shotsArg > 0 ? process.argv[shotsArg + 1] : null;
 const TICK_S = config.tickMs / 1000, WATERBORNE = traits.find(t => t.effect.type === "crossing");
 const FB_NAMES = BLOOM_DATA.planets.first_bloom.sections.map(s => s.name);

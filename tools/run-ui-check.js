@@ -174,7 +174,10 @@ const EVTS = ["run-ready", "play-pause", "speed", "region-select", "upgrade-prev
     const page = async () => { const c = await browser.newContext({ viewport: { width: 1400, height: 900 } }); await c.addInitScript(INIT, EVTS);
       const p = await c.newPage(); p.errs = []; p.on("pageerror", e => p.errs.push(e.message));
       p.on("console", m => { if (m.type() === "error" && !/subscriber failed|__throw/.test(m.text())) p.errs.push("console: " + m.text()); }); return p; };
-    const open = async (q, url = RUN) => { const p = await page(); await p.goto(url + q); await p.waitForFunction(() => window.BLOOM_RUN && BLOOM_RUN.started && window.BLOOM_RUN_UI && BLOOM_RUN_UI.adapter, null, { timeout: 60000 });
+    // (BLOOM-029E) this suite compares the adapter's snapshots with the RENDERED engineering shell and drives its buttons: it opens every page
+    // with the developer flag ?ui=legacy (the production default hides the shell; its production counterparts are the planet-view / plant-rooms /
+    // terraform / run-ui-convergence suites)
+    const open = async (q, url = RUN) => { const p = await page(); await p.goto(url + q + (q ? "&" : "?") + "ui=legacy"); await p.waitForFunction(() => window.BLOOM_RUN && BLOOM_RUN.started && window.BLOOM_RUN_UI && BLOOM_RUN_UI.adapter, null, { timeout: 60000 });
       await p.waitForFunction(() => { const c = document.getElementById("trainingCover"); return !c || getComputedStyle(c).display === "none"; }, null, { timeout: 8000 }); return p; }; // (training: its black has lifted)
     const frames = (p, n = 3) => p.evaluate(n => new Promise(r => { const f = k => k ? requestAnimationFrame(() => f(k - 1)) : r(); f(n); }), n);
     const ev = p => p.evaluate(() => window.__EV.map(e => ({ type: e.type, detail: e.detail })));

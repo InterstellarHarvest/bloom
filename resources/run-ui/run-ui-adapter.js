@@ -29,6 +29,11 @@
 // SURFACE sky (Terraform + scenario drift / shock, i.e. what the ground is painted under) — and terraformPreview(id) reads just
 // that without showing anything. No Terraform rule is here: the page's computePreview computes it (docs/PRODUCTION_TERRAFORM_ROOM_v1.md).
 //
+// BLOOM-029E (additive; api stays 1): report() — a plain copy of the page's structured run-end report (winReport / lossReport in
+// demos/demo-run.html: coverage, time, identity, the owned Adapt / Spread build and the Terraform steps separately, regions held and given
+// up with their limiting factor, colony upgrades, analogs from the trait content, each scenario's final state; null until the run ends) —
+// reportActions() (the page's own post-run actions: Keep playing, the player / training actions, Restart this run) and
+// actions.reportAction(id) (the page's own continue-after-win / reload / goAction). The production report only displays and delegates.
 // Classic script, no dependencies: boots over file:// like every other run-page file.
 (function (root) {
   "use strict";
@@ -41,8 +46,9 @@
     "": ["sim", "run", "labels", "events", "categories", "boards", "speeds", "scenario", "view", "read", "act", "map"],
     view: ["running", "speed", "selected", "selectedWater", "coverage", "preview", "skyFx", "message", "tilePx", "canvas", "compBar"],
     read: ["skyNow", "catLamp", "isBlocked", "tileCounts", "limitText", "fixHint", "colonyWord", "colonyHint", "colonyTip", "focusUI",
-      "specUI", "geoInfo", "compWhy", "pressureStatus", "phaseName", "climForecast", "upgradeState", "offeredOn", "computePreview", "tileAt", "runMenu"],
-    act: ["setRunning", "setSpeed", "selectAt", "showPreview", "clearPreview", "buy", "chooseFocus", "buySpec", "collectBubbleAt", "placeBubble", "runAction"],
+      "specUI", "geoInfo", "compWhy", "pressureStatus", "phaseName", "climForecast", "upgradeState", "offeredOn", "computePreview", "tileAt", "runMenu",
+      "report", "reportActions"], // (BLOOM-029E) the structured run-end report and its actions
+    act: ["setRunning", "setSpeed", "selectAt", "showPreview", "clearPreview", "buy", "chooseFocus", "buySpec", "collectBubbleAt", "placeBubble", "runAction", "reportAction"],
     map: ["render", "crossings", "crossingTiming", "flashes"], // (BLOOM-029B) the map's render hints and the page's transient map feedback
   };
 
@@ -256,6 +262,10 @@
     }
     // the player / training run menu (null in the developer harness): the page's own label and items
     function runMenu() { const m = R.runMenu(); return m ? { label: m.label, items: m.items.map(a => ({ id: a.id, label: a.label, note: a.note || null, primary: !!a.primary })) } : null; }
+    // (BLOOM-029E) the run-end report as the page computed it at the win / extinction (a plain copy; null while the run is on) and the
+    // page's own post-run actions for it (id, label, note, primary; href only for the player's navigation links — the page navigates)
+    function report() { const r = R.report(); return r ? plain(r) : null; }
+    function reportActions() { return (R.reportActions() || []).map(a => ({ id: a.id, label: a.label, note: a.note || null, primary: !!a.primary, href: a.href || "" })); }
 
     // ---- actions: the run page's own functions (each fires its bloom:* event itself)
     const actions = Object.freeze({
@@ -281,12 +291,15 @@
       placeBubble(regionId) { return A.placeBubble(regionId); },
       // (BLOOM-029B) a run-menu item: the page's own path (training layer / leave confirmation / navigation); unknown id → false
       runAction(id) { const m = R.runMenu(); if (!m || !m.items.some(a => a.id === id)) return false; return A.runAction(id) !== false; },
+      // (BLOOM-029E) a report action: the page's own path (Keep playing = its continue-after-win, Restart this run = its reload, the player /
+      // training actions = goAction with its confirm / training-layer fade); unknown or not offered now → false, nothing happens
+      reportAction(id) { if (!(R.reportActions() || []).some(a => a.id === id)) return false; return A.reportAction(id) !== false; },
     });
 
     const adapter = Object.freeze({
       api: API_VERSION, events: Object.freeze(EVENTS.map(t => "bloom:" + t)),
       run: runInfo, hud, scenario, regions, region, selection, upgrades, upgrade, previewOf, activePreview, terraformPreview, wouldHelp, colony, bubbles,
-      message: () => V.message(), map, tileAt, surface, mapState, effects, runMenu, actions,
+      message: () => V.message(), map, tileAt, surface, mapState, effects, runMenu, report, reportActions, actions,
       subscribe(fn) { if (typeof fn !== "function") throw new TypeError("subscribe needs a function"); listeners.add(fn); return () => { listeners.delete(fn); }; },
       get revision() { return revision; },
     });
