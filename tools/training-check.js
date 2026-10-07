@@ -147,6 +147,9 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
   const BASE = `http://127.0.0.1:${server.address().port}`, RUN = `${BASE}/demos/demo-run.html`, MENU = `${BASE}/demos/main-menu.html?bg=1&workers=2`;
   const EVTS = ["run-ready", "play-pause", "speed", "region-select", "upgrade-preview", "upgrade-purchase", "growth-focus", "local-upgrade", "bubble-collect", "win"];
   const INIT = types => { window.__EV = []; for (const t of types) document.addEventListener("bloom:" + t, e => window.__EV.push({ type: t, detail: e.detail, at: performance.now() }));
+    // (BLOOM-029E) the arrival cover sampled AT bloom:run-ready (before the training layer's lift, two frames later): the production view's
+    // heavier first frame made the suite's own post-boot sample land inside the fade
+    document.addEventListener("bloom:run-ready", () => { const cv = document.getElementById("trainingCover"); window.__coverAtReady = { cover: !!cv, op: cv ? getComputedStyle(cv).opacity : null }; });
     addEventListener("pageshow", e => { window.__persisted = e.persisted; }); };
 
   for (const bname of BROWSERS) {
@@ -168,7 +171,7 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
 
     // B1 · ?training=1: paused, derived config, seeded, under a black that lifts
     { const c = await ctx(), p = watch(await c.newPage()); await p.goto(`${RUN}?training=1`); await ready(p);
-      const atOpen = await p.evaluate(() => { const cv = document.getElementById("trainingCover"); return { cover: !!cv, op: cv ? getComputedStyle(cv).opacity : null }; });
+      const atOpen = await p.evaluate(() => window.__coverAtReady || { cover: false, op: null });
       await lifted(p); await sleep(600);
       const s = await p.evaluate(() => ({ st: BLOOM_API.state(), btn: document.getElementById("btnPlay").textContent.trim(), pressed: document.getElementById("btnPlay").getAttribute("aria-pressed"),
         planet: BLOOM_RUN.planet.id, title: document.title, sub: document.querySelector("header h1 small").textContent, shared: JSON.stringify(BLOOM_DATA.config), own: sim.config !== BLOOM_DATA.config,
@@ -189,8 +192,11 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
       if (SHOTS && bname === "chromium") await p.screenshot({ path: path.join(SHOTS, "01-training-paused-landing.png") });
       await c.close(); }
 
-    // B2 · every bloom:* event fires from real player actions, with the documented detail
-    { const c = await ctx(), p = watch(await c.newPage()); await p.goto(`${RUN}?training=1`); await ready(p); await lifted(p);
+    // B2 · every bloom:* event fires from real player actions, with the documented detail — through the 028D1 engineering shell's own
+    // controls, the foundation's oracle (BLOOM-029E: the shell is the hidden sim host by default, so this page opens it with the developer
+    // flag ?ui=legacy; the production controls fire the same events through the same page functions: run-ui / planet-view / plant-rooms /
+    // terraform / run-ui-convergence suites)
+    { const c = await ctx(), p = watch(await c.newPage()); await p.goto(`${RUN}?training=1&ui=legacy`); await ready(p); await lifted(p);
       await p.click("#btnPlay"); await sleep(400); await p.click("#btnPlay");
       const pp = (await ev(p)).filter(e => e.type === "play-pause").map(e => e.detail.running), ticks = await p.evaluate(() => sim.ticks);
       await p.click("#btnSpeed"); const sp = await last(p, "speed");
@@ -240,13 +246,13 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
     { const c = await ctx(), p = watch(await c.newPage()); await p.goto(RUN); await ready(p); await sleep(700);
       const a = await p.evaluate(() => ({ st: BLOOM_API.state(), title: document.title, sub: document.querySelector("header h1 small").textContent, planet: BLOOM_RUN.planet.id, cover: !!document.getElementById("trainingCover"),
         mod: !!document.querySelector('script[src*="training-run"]'), ui: typeof window.BLOOM_TRAINING_UI, tr: BLOOM_RUN.training, same: sim.config === BLOOM_DATA.config, btn: document.getElementById("btnPlay").textContent.trim() }));
-      check(a.st.running && a.st.ticks > 0 && a.st.biomass >= D.config.econ.startBiomass && a.title === "BLOOM — Next Playable Slice: First Bloom (Eden run)" && a.sub === "· first bloom" && a.planet === "first_bloom"
+      check(a.st.running && a.st.ticks > 0 && a.st.biomass >= D.config.econ.startBiomass && a.title === "Strange Bloom — First Bloom" && a.sub === "· first bloom" && a.planet === "first_bloom"
         && !a.cover && !a.mod && a.ui === "undefined" && a.tr === undefined && a.same && a.btn === "⏸ pause",
-        `${B} B3a · no query: First Bloom runs at once on the shared config, as before — no black, no training layer`, `ticks ${a.st.ticks} after 0.7 s · "${a.title}" ${a.sub}`);
+        `${B} B3a · no query: First Bloom runs at once on the shared config, as before — no black, no training layer (BLOOM-029E: the production title "Strange Bloom — First Bloom")`, `ticks ${a.st.ticks} after 0.7 s · "${a.title}" ${a.sub}`);
       await p.goto(`${RUN}?play=1`); await ready(p);
       const pl = await p.evaluate(() => ({ acts: [...document.querySelectorAll("#playMenu button")].map(b => `${b.dataset.act}=${b.dataset.go}`), label: document.getElementById("btnMenu").textContent, title: document.title }));
-      check(J(pl.acts) === J(["playAgain=demo-run.html?play=1", "changePlanet=../index.html#/planet", "home=../index.html"]) && pl.label === "☰ Menu" && pl.title === "BLOOM — First Bloom",
-        `${B} B3b · ?play=1: the same player menu, links and title as before`, pl.acts.join(" · "));
+      check(J(pl.acts) === J(["playAgain=demo-run.html?play=1", "changePlanet=../index.html#/planet", "home=../index.html"]) && pl.label === "☰ Menu" && pl.title === "Strange Bloom — First Bloom",
+        `${B} B3b · ?play=1: the same player menu actions and links as before (the page's own; the production run menu lists them), the production title`, pl.acts.join(" · "));
       const rnd = async () => { await p.goto(RUN); await ready(p); return p.evaluate(() => { BLOOM_API.advance(400); return Array.from(sim.state).join(""); }); };
       const r1 = await rnd(), r2 = await rnd();
       check(r1 !== r2, `${B} B3c · ordinary runs keep their own live randomness (two loads, same ticks → different runs; only training is seeded)`);
@@ -286,9 +292,9 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
       check(leave && leave.max >= 0.999 && leave.state === "leaving" && leave.dur === toBlack && arr.url.startsWith(`${RUN}?training=1&return=`) && arr.ret === MENU && arr.paused && coverAnim === fromBlack && arr.status === null,
         `${B} B5a${R} · TRAINING: the title fades to full black and opens the training run (return= the title, query and all); it lifts its black (${fromBlack} ms) onto a paused landing`,
         `title black ${leave && leave.dur} ms, max ${leave && leave.max} over ${leave && leave.n} frames · lift ${coverAnim} ms · ${arr.url.replace(BASE, "")}`);
-      const exitVia = async act => { await p.click("#btnMenu"); const durP = p.waitForFunction(() => { const c = document.getElementById("trainingCover"), a = c && c.getAnimations()[0]; return a ? a.effect.getTiming().duration : null; }, null, { timeout: 5000, polling: "raf" }).then(h => h.jsonValue()).catch(() => null);
+      const exitVia = async act => { await p.click("#pvMenuBtn"); const durP = p.waitForFunction(() => { const c = document.getElementById("trainingCover"), a = c && c.getAnimations()[0]; return a ? a.effect.getTiming().duration : null; }, null, { timeout: 5000, polling: "raf" }).then(h => h.jsonValue()).catch(() => null);
         const navP = act === "restartTraining" ? p.waitForEvent("load", { timeout: 15000 }) : p.waitForURL(u => u.href.startsWith(`${BASE}/demos/main-menu.html`), { timeout: 15000 });
-        await p.click(`#playMenu [data-act="${act}"]`); const dur = await durP; await navP; return dur; };
+        await p.click(`#pvMenu [data-act="${act}"]`); const dur = await durP; await navP; return dur; };
       const d1 = await exitVia("mainMenu"); await title();
       const back1 = await p.evaluate(() => ({ url: location.href, status: (() => { try { return JSON.parse(localStorage.getItem("strange-bloom.training")); } catch { return "err"; } })() }));
       check(d1 === toBlack && back1.url === MENU && back1.status === null, `${B} B5b${R} · ☰ → Main menu: fades to black (${toBlack} ms) and returns to the very title page; nothing recorded`, `${d1} ms · ${back1.url.replace(BASE, "")}`);
@@ -341,7 +347,7 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
       await p.goto(`${FILE}?training=1`); await p.waitForFunction(() => window.BLOOM_RUN && BLOOM_RUN.started, null, { timeout: 15000 });
       const t1 = Date.now(); await lifted(p); const gone = Date.now() - t1;
       const s = await p.evaluate(() => ({ running: BLOOM_API.state().running, ui: typeof window.BLOOM_TRAINING_UI, ret: BLOOM_RUN.training.returnTo }));
-      await p.click("#btnMenu"); await Promise.all([p.waitForURL(/main-menu\.html/, { timeout: 10000 }), p.click('#playMenu [data-act="mainMenu"]')]);
+      await p.click("#pvMenuBtn"); await Promise.all([p.waitForURL(/main-menu\.html/, { timeout: 10000 }), p.click('#pvMenu [data-act="mainMenu"]')]);
       check(!s.running && s.ui === "undefined" && gone < 3000 && /^file:.*\/demos\/main-menu\.html$/.test(p.url()),
         `${B} B6 · over file:// the training layer cannot load: the black still clears (≤ 2 s), the run is paused, Main menu still leaves`, `black gone after ${gone} ms · → ${p.url().split("/").slice(-2).join("/")}`);
       await c.close();

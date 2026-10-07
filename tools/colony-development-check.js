@@ -20,6 +20,10 @@ const { BLOOM, BLOOM_DATA } = globalThis, { config, traits, archetypes } = BLOOM
 const STUDY = require("./colony-study.js");
 const OA = archetypes.find(a => a.id === "ocean_archipelago"), CROSS_ID = traits.find(t => t.effect.type === "crossing").id;
 const PAGE = "file://" + encodeURI(path.join(ROOT, "demos/demo-run.html"));
+// (BLOOM-029E) this suite drives the engineering shell's own controls and reads its DOM (the pre-029 playtest harness): it opens every page
+// with the developer flag ?ui=legacy. The production UI is the default run interface; its suites are planet-view / plant-rooms / terraform /
+// run-ui-convergence / game-flow.
+const legacy = q => (q ? q + "&" : "?") + "ui=legacy";
 const shotsArg = process.argv.indexOf("--shots"), SHOTS = shotsArg > 0 ? process.argv[shotsArg + 1] : null;
 const TPS = 1000 / config.tickMs, G = config.grow, COL = config.colony, EST = config.establish;
 const mb = BLOOM.gen.mulberry32, clone = o => JSON.parse(JSON.stringify(o)), fnv = BLOOM.archetype.fnv1a;
@@ -316,7 +320,7 @@ const PLANS = { wet: ["seedOut", "cold", "flood", "cold", "heat", "salt", "early
     const p = await browser.newPage({ viewport: { width: 1400, height: 900 } });
     p.errors = []; p.on("pageerror", e => p.errors.push(e.message)); p.on("console", m => { if (m.type() === "error") p.errors.push(m.text()); });
     await p.addInitScript(sd => { let a = sd; Math.random = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }, seed);
-    await p.goto(PAGE + query); await p.waitForTimeout(300);
+    await p.goto(PAGE + legacy(query)); await p.waitForTimeout(300);
     if (pause) await p.click("#btnPlay");
     return p;
   };

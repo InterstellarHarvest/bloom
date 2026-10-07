@@ -14,7 +14,9 @@
 //
 //   const pv = BLOOM.planetView.mount(adapter, { root: document.body })   → the instance (also BLOOM.planetView.instance)
 //
-// Migration (029B): demos/demo-run.html mounts it only with &ui=18, over the same run as the temporary shell, which it hides.
+// BLOOM-029E: this is the DEFAULT run interface. demos/demo-run.html mounts it on every run (First Bloom, planet=, generated, every
+// scenario, play=1, training=1) over the same run as the retired engineering shell, which stays hidden as the sim host; only the
+// developer flag ?ui=legacy shows that shell instead. The production run report (resources/run-ui/run-report.js) mounts over this view.
 // Classic script, no dependencies besides BLOOM.surface and BLOOM.runMap: boots over file://.
 (function (root) {
   "use strict";
@@ -53,7 +55,7 @@
   const LENSES = [["", "Plants / Normal", "off"], ["Temperature", "Temperature", "temp"], ["Water", "Water", "water"], ["Soil", "Soil", "soil"], ["Hazard", "Hazard", "hazard"]];
   const LAMP_ST = { green: "ok", yellow: "warn", red: "bad" }, ST_WORD = { ok: "OK", warn: "Strained", bad: "Blocked" }, ST_ICON = { ok: "check", warn: "alert", bad: "x" };
   const BOARD_CLASS = { Adapt: "plant", Spread: "spread", Terraform: "planet" }, BOARD_ROOM = { Adapt: "adapt", Spread: "spread", Terraform: "terraform" };
-  const ROOM_TITLE = { region: "Region Inspect", adapt: "Adapt", spread: "Spread", terraform: "Terraform" }, ROOM_MILESTONE = { region: "029C", adapt: "029C", spread: "029C", terraform: "029D" };
+  const ROOM_TITLE = { region: "Region Inspect", adapt: "Adapt", spread: "Spread", terraform: "Terraform" };
   const SHOCK_TINT = { tempUp: [255, 130, 60], tempDown: [110, 170, 255], moistUp: [70, 200, 200], moistDown: [230, 190, 110] };
   const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
   const mmss = s => { s = Math.max(0, Math.round(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
@@ -75,12 +77,12 @@
 
     // ---------------------------------------------------------------- DOM
     document.documentElement.classList.add("ui18");
-    const el = document.createElement("div"); el.className = "pv"; el.id = "pv"; el.dataset.ui = "18";
+    const el = document.createElement("div"); el.className = "pv"; el.id = "pv"; el.dataset.ui = "production";
     const kindLine = RUN.training ? "Training" : [RUN.kind === "procedural" ? RUN.archetypeName : null, RUN.scenarioId !== "eden" ? RUN.scenarioName : null].filter(Boolean).join(" · ") || "Authored world";
     const tool = (id, label, extra = "") => `<button type="button" class="pv-tool" data-tool="${id}" aria-pressed="false"${extra}>${ico(id === "region" ? "regions" : id)}<span class="tn">${label}</span></button>`;
     el.innerHTML =
       `<header class="pv-hud" id="pvHud">` +
-        `<div class="pv-id"><b id="pvName">${esc(RUN.planetName)}</b><small>${esc(kindLine)}<span class="pv-dev" title="BLOOM-029B migration path (&amp;ui=18)">UI 18</span></small></div>` +
+        `<div class="pv-id"><b id="pvName">${esc(RUN.planetName)}</b><small>${esc(kindLine)}</small></div>` +
         `<div class="pv-c">` +
           `<div class="pv-status" role="group" aria-label="Run status">` +
             `<div class="pv-cov" data-tutorial="coverage"><div class="row"><span class="pv-dot" aria-hidden="true"></span><span class="pv-state" id="pvState">GROWING</span></div>` +
@@ -296,16 +298,16 @@
     // ---------------------------------------------------------------- tools · room navigation seam (029C / 029D fill it)
     const rooms = { region: null, adapt: null, spread: null, terraform: null }; let activeRoom = null;
     function paintTools() { el.querySelectorAll(".pv-tool[data-tool]").forEach(b => { const t = b.dataset.tool; if (t === "mapview") return;
-      b.dataset.room = rooms[t] ? "ready" : "unavailable"; b.title = rooms[t] ? ROOM_TITLE[t] : `${ROOM_TITLE[t]} (arrives in BLOOM-${ROOM_MILESTONE[t]})`; }); }
+      b.dataset.room = rooms[t] ? "ready" : "unavailable"; b.title = rooms[t] ? ROOM_TITLE[t] : `${ROOM_TITLE[t]} is not available`; }); }
     /**
      * Open a room: name ∈ region | adapt | spread | terraform; ctx = { region (index or −1), item (upgrade id or null), opener }.
-     * 029C / 029D register the rooms (rooms.register(name, { open(ctx) → close() })). The accepted rules they implement: a room
-     * pauses the run (restoring it on Back), takes the home selection as its own context and clears the home selection.
-     * Until a room is registered this says so (development path only) and changes nothing.
+     * The rooms register themselves (rooms.register(name, { open(ctx) → close() })). The accepted rules they implement: a room
+     * pauses the run (restoring it on Back), takes the home selection as its own context and clears the home selection; (029E) the
+     * swap is wrapped in the SUBDUED mist and a request during a swap is ignored. Without a registered room nothing happens.
      */
     function openRoom(name, ctx = {}) {
       openLens(false); closeMenu();
-      const impl = rooms[name]; if (!impl) { toast(`${ROOM_TITLE[name]} arrives in BLOOM-${ROOM_MILESTONE[name]}. This development view has the Planet View only; open the run without &ui=18 for every control.`); return false; }
+      const impl = rooms[name]; if (!impl || el.dataset.transitioning) { if (!impl) toast(`${ROOM_TITLE[name]} is not available.`); return false; }
       return impl.open({ adapter: A, region: ctx.region === undefined ? A.selection().index : ctx.region, item: ctx.item || null, opener: ctx.opener || null, view: api });
     }
     function toast(m) { const t = $("pvToast"); t.innerHTML = ico("lock") + `<span>${esc(m)}</span>`; t.hidden = false; live(m); clearTimeout(state.toastTimer); state.toastTimer = setTimeout(() => { t.hidden = true; }, 4200); }

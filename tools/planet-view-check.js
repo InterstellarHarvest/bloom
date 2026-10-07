@@ -30,6 +30,12 @@ const info = (name, detail) => console.log(`INFO  ${name}  — ${detail}`);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const strip = src => src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`\\])\/\/.*$/gm, "$1");
 const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
+// (BLOOM-029E) this suite's own range: its base → the accepted BLOOM-029B final candidate 2750cbb while a later milestone is checked out on top
+// (as tools/run-ui-check.js already does), so later work that legitimately touches these files never trips this milestone's scope guards;
+// at or before 2750cbb the working tree is compared as before
+const END_SHA = "2750cbb0363c3be27165196ea6325171442203eb";
+const AT_END = (() => { try { return git(`merge-base --is-ancestor ${END_SHA} HEAD`) === "" && git("rev-parse HEAD") !== END_SHA; } catch { return false; } })();
+const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT_END ? [] : git("ls-files --others --exclude-standard").split("\n").filter(Boolean);
 
 (async () => {
   // ================================================================ Node
@@ -63,8 +69,8 @@ const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
     check(!hits.length && /SURFACE\.paintSurface\(/.test(tex) && /surface\.paintSurface\(/.test(map) && /surface\.surfacePlanet\(/.test(map) && !/\[\s*\d{2,3}\s*,\s*\d{2,3}\s*,\s*\d{2,3}\s*\]/.test(tex),
       "N3 · no duplicated terrain palette or terrain algorithm: the sphere texture (planet-texture.js) and the production map (run-map-renderer.js) both paint BLOOM.surface; neither has colour stops, a ground tint, water colours or stipple rules of its own",
       hits.length ? hits.map(([f, h]) => `${f}: ${h.join("/")}`).join(" · ") : "planet-texture.js → SURFACE.paintSurface · run-map-renderer.js → surface.paintSurface (the old 2D palette now lives only in the migration-only legacy shell)");
-    check(/MIGRATION-ONLY/.test(read("demos/demo-run.html")) && /BLOOM-029E/.test(read("demos/demo-run.html")),
-      "N3b · the legacy shell (and its own map palette) is marked migration-only in the run page, to be retired by BLOOM-029E", "demo-run.html header comment"); }
+    check(/RETIRED as a player-facing path/.test(read("demos/demo-run.html")) && /\?ui=legacy/.test(read("demos/demo-run.html")) && /const PROD=UI_MODE==="production"/.test(read("demos/demo-run.html")),
+      "N3b · (BLOOM-029E) the legacy shell (and its own map palette) is retired as a player-facing path in the run page: the production UI is the default and the shell is reachable only through the developer flag ?ui=legacy", "demo-run.html header comment + routing"); }
 
   // N4 · the same generated planet → the same canonical surface from the sphere's planet and from the run adapter's source
   const WORLDS = [["ocean_archipelago", 28], ["desert_world", 17], ["frozen_world", 11], ["desert_world", 22], ["frozen_world", 4]].map(([a, s]) => {
@@ -105,9 +111,9 @@ const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
       "resources/bloom-play.js", "content", "planets", "resources/planet-sphere/planet-sphere-view.js", "resources/destination-survey", "resources/main-menu", "resources/atmosphere-transition",
       "resources/training", "index.html", "demos/ui-mockups", "demos/destination-survey.html", "demos/main-menu.html", "demos/atmosphere-transition.html", "demos/planet-sphere.html", "demos/planet-sphere-grid.html"];
     // (BLOOM-029C) content/traits.js may differ ONLY by the presentation-only uiCategory field (tools/plant-rooms-check.js N2 proves gameplay unchanged)
-    const changed = git(`diff --name-only ${BASE_SHA} -- ${guarded.join(" ")}`).split("\n").filter(Boolean).filter(f => f !== "content/traits.js").join("\n");
+    const changed = git(`diff --name-only ${RANGE} -- ${guarded.join(" ")}`).split("\n").filter(Boolean).filter(f => f !== "content/traits.js").join("\n");
     // (BLOOM-029D) … and by the presentation-only uiBank / uiCategory on the four Terraform traits (tools/terraform-check.js N2 / N2b)
-    const traitLines = git(`diff ${BASE_SHA} -- content/traits.js`).split("\n").filter(l => /^[+-][^+-]/.test(l)), traitsOk = traitLines.every(l => /uiCategory|uiBank|BLOOM-029[CD]|presentation|Spread: Seeds|never read it|Terraform traits|Atmosphere|Dry the Sky|terraform-check|^[+-]\s*\/\//.test(l) || (l.startsWith("-") && traitLines.some(m => m.startsWith("+") && m.slice(1).replace(/ uiBank: "\w+", uiCategory: "[\w ]+",/, "").replace(/ uiCategory: "\w+",/, "") === l.slice(1))));
+    const traitLines = git(`diff ${RANGE} -- content/traits.js`).split("\n").filter(l => /^[+-][^+-]/.test(l)), traitsOk = traitLines.every(l => /uiCategory|uiBank|BLOOM-029[CD]|presentation|Spread: Seeds|never read it|Terraform traits|Atmosphere|Dry the Sky|terraform-check|^[+-]\s*\/\//.test(l) || (l.startsWith("-") && traitLines.some(m => m.startsWith("+") && m.slice(1).replace(/ uiBank: "\w+", uiCategory: "[\w ]+",/, "").replace(/ uiCategory: "\w+",/, "") === l.slice(1))));
     const texExports = src => [...src.matchAll(/export (?:const|function|class) (\w+)/g)].map(m => m[1]).sort().join();
     const texBase = texExports(git(`show ${BASE_SHA}:resources/planet-sphere/planet-texture.js`)), texNow = texExports(read("resources/planet-sphere/planet-texture.js"));
     check(!changed && traitsOk && texBase === texNow, "N6 · untouched: generator, topology, sim, validators, content (traits.js: only the 029C / 029D presentation-only uiCategory / uiBank fields), planets, PlanetSphereView (public API, interaction, projection), the survey, menu, transition and training layer; planet-texture.js keeps exactly its exports",
@@ -119,7 +125,7 @@ const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
     const shared = read("demos/ui-mockups/shared.js"), c18 = read("demos/ui-mockups/c18.js");
     const names = [...shared.matchAll(/\{ id:'(\w+)', name:'([^']+)', terrain:/g)].map(m => m[2]).concat([...c18.matchAll(/future:true, name:'([^']+)'/g)].map(m => m[1]));
     const added = ["resources/run-ui/planet-view.js", "resources/run-ui/run-map-renderer.js", "resources/run-ui/planet-view.css", "resources/planet-surface/planet-surface.js"].map(read).join("\n")
-      + git(`diff ${BASE_SHA} -- demos/demo-run.html resources/run-ui/run-ui-adapter.js resources/planet-sphere/planet-texture.js`).split("\n").filter(l => l.startsWith("+") && !l.startsWith("+++")).join("\n");
+      + git(`diff ${RANGE} -- demos/demo-run.html resources/run-ui/run-ui-adapter.js resources/planet-sphere/planet-texture.js`).split("\n").filter(l => l.startsWith("+") && !l.startsWith("+++")).join("\n");
     const leaks = names.filter(n => added.includes(n)).concat(/ui-mockups|shared\.js|c18\.js|BM\.|ROOMS2\d/.test(added.replace(/demos\/ui-mockups\/c18\.(css|js)|Concept 18['’]s|mockup file/g, "")) ? ["mockup reference"] : []);
     const adapterRules = { random: /Math\.random/.test(ad), dom: /\bdocument\b|querySelector|innerHTML/.test(ad), loop: /requestAnimationFrame|setInterval|setTimeout/.test(ad), simWrites: /\bsim\.[\w$.[\]]+\s*(?:[-+*/]?=(?!=)|\+\+|--)/.test(ad) };
     require(path.join(ROOT, "resources/run-ui/run-ui-adapter.js")); const RU = BLOOM.runUI;
@@ -147,6 +153,9 @@ const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
       worldPx(t, fx = 0.5, fy = 0.5) { const I = R.info(), [x, y] = tileXY(t, I.gridWidth); return px(R.worldCanvas, (x + fx) * I.tileDevicePx, (y + fy) * I.tileDevicePx); },
       client(t, copy = 0, fx = 0.5, fy = 0.5) { const I = R.info(), [x, y] = tileXY(t, I.gridWidth), p = R.clientOf(x + fx, y + fy); return { x: p.x + copy * I.worldWidth, y: p.y }; } };
     return true; })()`;
+  // (BLOOM-029E) room swaps run through the SUBDUED mist: the room seam's state is read once each swap has settled (as before, the swap
+  // itself happens at the covered point and the restore after the reveal)
+  const settled = p => p.waitForFunction(() => !BLOOM.decisionRooms.instance.state().transitioning, null, { timeout: 8000, polling: 20 });
   const paused = async p => { await p.evaluate(() => { BLOOM_RUN_UI.adapter.actions.pause(); }); };
   const frames = (p, n = 3) => p.evaluate(n => new Promise(r => { let k = 0; const f = () => (++k >= n ? r() : requestAnimationFrame(f)); requestAnimationFrame(f); }), n);
   const shot = async (p, name, clip) => { if (EVIDENCE) await p.screenshot({ path: path.join(EVD, name), ...(clip ? { clip } : {}) }); };
@@ -165,19 +174,19 @@ const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
         if (await p.evaluate(() => !!(window.BLOOM && BLOOM.planetView && BLOOM.planetView.instance))) await p.evaluate(H); await frames(p, 4); }
       return p; };
     try {
-      // ---- B1 · the legacy default path still boots (the regression harness)
-      { const p = await open("?archetype=ocean_archipelago&seed=28");
+      // ---- B1 · (BLOOM-029E) the engineering shell still boots behind the developer flag ?ui=legacy (the regression harness; the default is production since 029E)
+      { const p = await open("?archetype=ocean_archipelago&seed=28&ui=legacy");
         const r = await p.evaluate(() => ({ pv: !!document.querySelector(".pv"), ui18: document.documentElement.classList.contains("ui18"), header: getComputedStyle(document.querySelector("body > header")).display,
           canvas: document.getElementById("cv").width > 100, adapter: BLOOM_RUN_UI.adapter.api, anchors: ["biomass", "map", "inspect", "readout"].map(n => document.querySelectorAll(`[data-tutorial="${n}"]`).length) }));
         check(!r.pv && !r.ui18 && r.header !== "none" && r.canvas && r.adapter === 1 && J(r.anchors) === "[1,1,1,1]" && !p.errs.length,
-          `${tag} B1 · without &ui=18 the run is the legacy shell exactly (no production view, its own map drawn, its anchors in place)`, J(r) + (p.errs.length ? " errs " + p.errs.join(" | ") : "")); }
+          `${tag} B1 · with ?ui=legacy the run is the legacy shell exactly (no production view, its own map drawn, its anchors in place)`, J(r) + (p.errs.length ? " errs " + p.errs.join(" | ") : "")); }
 
       // ---- B2–B9 · ocean 28 (a cylinder) in the production Planet View, 1280×800
       const p = await open("?archetype=ocean_archipelago&seed=28&ui=18");
       await paused(p); await frames(p);
       { const r = await p.evaluate(() => { const hid = s => getComputedStyle(document.querySelector(s)).display === "none";
           const A = __pv.A, before = BLOOM_API.sim.ticks; BLOOM_API.advance(30); A.actions.pause();
-          return { mounted: !!document.querySelector(".pv[data-ui='18']"), legacyHidden: hid("body > header") && hid("body > main") && hid("body > footer"), wrap: __pv.R.info().wrapX,
+          return { mounted: !!document.querySelector(".pv[data-ui]"), legacyHidden: hid("body > header") && hid("body > main") && hid("body > footer"), wrap: __pv.R.info().wrapX,
             sameSim: A.run().ticks === BLOOM_API.sim.ticks && BLOOM_API.sim.ticks === before + 30, sameBio: A.hud().biomass === BLOOM_API.state().biomass,
             pvCount: document.querySelectorAll(".pv").length, cv: getComputedStyle(document.getElementById("cv")).display }; });
         check(r.mounted && r.legacyHidden && r.wrap && r.sameSim && r.sameBio && r.pvCount === 1,
@@ -337,11 +346,11 @@ const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
       // B17 · the room seam: Region / Adapt / Spread (BLOOM-029C) and Terraform (BLOOM-029D) are all registered (tools ready) and open /
       // close through it (a room pauses the run; Escape closes and restores it, no home selection).
       { const before = await p.evaluate(() => [__pv.A.selection().index, __pv.A.run().running, __EV.length]);
-        await p.click('[data-tool="terraform"]'); await frames(p, 3);
+        await p.click('[data-tool="terraform"]'); await settled(p); await frames(p, 3);
         const r = await p.evaluate(() => ({ st: [...document.querySelectorAll(".pv-tool[data-room]")].map(b => b.dataset.tool + ":" + b.dataset.room), rooms: ["region", "adapt", "spread", "terraform"].map(n => __pv.PV.rooms.has(n)), room: __pv.PV.state().room, running: __pv.A.run().running, layer: !!document.querySelector(".pv .dr:not([hidden]) .dr-room.r-terraform:not([hidden])") }));
-        await p.keyboard.press("Escape"); await frames(p, 3); const t = await p.evaluate(() => ({ room: __pv.PV.state().room, running: __pv.A.run().running, sel: __pv.A.selection().index }));
-        await p.click('[data-tool="adapt"]'); await frames(p, 3); const o = await p.evaluate(() => ({ room: __pv.PV.state().room, running: __pv.A.run().running, layer: !!document.querySelector(".pv .dr:not([hidden])") }));
-        await p.keyboard.press("Escape"); await frames(p, 3); const c = await p.evaluate(() => ({ room: __pv.PV.state().room, running: __pv.A.run().running, sel: __pv.A.selection().index }));
+        await p.keyboard.press("Escape"); await settled(p); await frames(p, 3); const t = await p.evaluate(() => ({ room: __pv.PV.state().room, running: __pv.A.run().running, sel: __pv.A.selection().index }));
+        await p.click('[data-tool="adapt"]'); await settled(p); await frames(p, 3); const o = await p.evaluate(() => ({ room: __pv.PV.state().room, running: __pv.A.run().running, layer: !!document.querySelector(".pv .dr:not([hidden])") }));
+        await p.keyboard.press("Escape"); await settled(p); await frames(p, 3); const c = await p.evaluate(() => ({ room: __pv.PV.state().room, running: __pv.A.run().running, sel: __pv.A.selection().index }));
         check(J(r.rooms) === "[true,true,true,true]" && J(r.st) === J(["region:ready", "adapt:ready", "spread:ready", "terraform:ready"]) && r.room === "terraform" && r.running === false && r.layer && t.room === null && t.running === before[1] && t.sel === -1
           && o.room === "adapt" && o.running === false && o.layer && c.room === null && c.running === before[1] && c.sel === -1,
           `${tag} B17 · the room seam: Region / Adapt / Spread (029C) and Terraform (029D) are registered — every tool reads ready — and open through it (Terraform and Adapt pause the run; Escape closes and restores it, no home selection)`, J({ ...r, tfClosed: t, open: o, closed: c })); }
@@ -417,16 +426,16 @@ const PROOF = { generatedAt: new Date().toISOString(), base: BASE_SHA };
         const r = await q.evaluate(() => { const one = n => { const e = document.querySelectorAll(`[data-tutorial="${n}"]`); return e.length === 1 && !!e[0].closest(".pv"); };
           const A = __pv.A, names = ["biomass", "coverage", "sky", "play-pause", "speed", "run-menu", "map", "message-log", "inspect", "readout", "limiting-factor", "colony-status"];
           return { paused: A.run().running === false && A.run().training, pressed: document.getElementById("pvPause").getAttribute("aria-pressed") === "true", label: document.getElementById("pvPause").getAttribute("aria-label"),
-            anchors: names.filter(one), missing: names.filter(n => !one(n)), legacyKept: ["report", "report-continue"].every(n => document.querySelectorAll(`[data-tutorial="${n}"]`).length <= 1 && !(document.querySelector(`[data-tutorial="${n}"]`) || {}).closest?.(".pv")) && ["growth-focus", "upgrades", "raw-signals", "board-terraform", "upgrade-warm"].every(one), // (029C / 029D) the rooms own these now; only the report anchors stay on the shell
+            anchors: names.filter(one), missing: names.filter(n => !one(n)), legacyKept: ["report", "report-continue", "run-actions"].every(one) && ["growth-focus", "upgrades", "raw-signals", "board-terraform", "upgrade-warm"].every(one), // (029C / 029D) the rooms own these now; (029E) the production report owns the report anchors; the report anchors stay on the shell
             ready: __EV.filter(e => e.type === "run-ready").map(e => e.detail), menu: [...document.querySelectorAll("#pvMenu [data-act]")].map(b => b.dataset.act) }; });
         check(r.paused && r.pressed && r.label === "Resume" && !r.missing.length && r.legacyKept && r.ready.length === 1 && r.ready[0].training === true && J(r.menu) === '["restartTraining","skipTraining","mainMenu"]',
-          `${tag} B21 · training in the production view: starts PAUSED (Pause shows Resume, pressed), every re-homed anchor resolves to ONE production element (${r.anchors.length}; the 029C rooms own growth-focus / upgrades / raw-signals, the 029D Terraform room board-terraform / upgrade-warm), only the report anchors stay on the shell, one bloom:run-ready {training:true}, the training menu lists Restart · Skip · Main menu`, J(r));
+          `${tag} B21 · training in the production view: starts PAUSED (Pause shows Resume, pressed), every re-homed anchor resolves to ONE production element (${r.anchors.length}; the 029C rooms own growth-focus / upgrades / raw-signals, the 029D Terraform room board-terraform / upgrade-warm), the 029E production report owns report / report-continue / run-actions, one bloom:run-ready {training:true}, the training menu lists Restart · Skip · Main menu`, J(r));
         if (!FF) await shot(q, "12-training-paused.png");
         await q.click("#pvPause"); await frames(q, 2); const go = await q.evaluate(() => [__pv.A.run().running, __EV.filter(e => e.type === "play-pause").map(e => e.detail.running)]);
         await q.click("#pvMenuBtn"); await q.click('#pvMenu [data-act="restartTraining"]'); await q.waitForFunction(() => window.BLOOM_RUN_UI && BLOOM_RUN_UI.adapter && BLOOM.planetView.instance, null, { timeout: 20000, polling: 100 }).catch(() => {});
         await sleep(400); const after = await q.evaluate(() => ({ url: location.search, running: BLOOM_RUN_UI.adapter.run().running, ticks: BLOOM_RUN_UI.adapter.run().ticks }));
         await q.evaluate(H); await q.click("#pvMenuBtn"); await q.click('#pvMenu [data-act="skipTraining"]'); await q.waitForURL(u => new URL(u).pathname.endsWith("/main-menu.html"), { timeout: 20000 }).catch(() => {});
-        check(go[0] === true && J(go[1]) === "[true]" && /training=1/.test(after.url) && /ui=18/.test(after.url) && after.running === false && new URL(q.url()).pathname === "/demos/main-menu.html",
+        check(go[0] === true && J(go[1]) === "[true]" && /training=1/.test(after.url) && !/ui=legacy/.test(after.url) && after.running === false && new URL(q.url()).pathname === "/demos/main-menu.html",
           `${tag} B22 · training actions: Resume = the real bloom:play-pause; Restart (production menu → the page's own path) reopens training paused in the production view; Skip leaves for the return page`, J({ go, after, skip: q.url().replace(ORIGIN, "") }));
         await q.context().close(); }
 

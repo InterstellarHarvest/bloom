@@ -223,3 +223,14 @@
 .dr .env-rows dd{margin:0; text-align:right; min-width:0} .dr .env-rows dd b{display:block; font-variant-numeric:tabular-nums; line-height:1.2} .dr .env-rows dd small{display:block; font-size:.74em; color:var(--ink-faint); font-weight:700; line-height:1.2}
 .dr .mc-k2{margin-top:.25em; padding-top:.45em; border-top:1px solid var(--line)}
 @media (max-width:1100px){ .dr .cond.mini{grid-template-columns:1.8em 4.6em auto 1fr} .dr .bank-legend small,.dr .g-read .g-hint{display:none} }
+
+/* ── BLOOM-029E: the SUBDUED mist is the transition; the incoming room gets only a restrained card entrance THROUGH it (a small opacity
+   rise, a few px of lift, scale → 1; ~180 ms, after the reveal has begun). Never a slide from an edge, a drawer, a spring, or any motion
+   of the map underneath. Absent under reduced motion (the component's own reduced path is authoritative; the controller skips the class). ── */
+.dr .dr-room.entering{animation:drEnter .18s cubic-bezier(.2,.7,.3,1) both}
+@keyframes drEnter{from{opacity:0; transform:translate3d(0,6px,0) scale(.992)} to{opacity:1; transform:translate3d(0,0,0) scale(1)}}
+@media (prefers-reduced-motion: reduce){ .dr .dr-room.entering{animation:none} }
+.pv.reduced .dr .dr-room.entering{animation:none}
+/* while a swap runs, the swap-affecting controls are locked at the controller too (the mist's overlay already blocks input) */
+.dr[data-transitioning] .rb, .dr[data-transitioning] .rn, .dr[data-transitioning] [data-go]{pointer-events:none}
+.pv[data-transitioning] .pv-tool, .pv[data-transitioning] .pv-banner [data-go]{pointer-events:none}

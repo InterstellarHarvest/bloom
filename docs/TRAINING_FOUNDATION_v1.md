@@ -172,14 +172,17 @@ never keeps the element.
 - **Shop:** `upgrades` · `board-spread` / `board-adapt` / `board-terraform` · `upgrade-<trait id>` (e.g. `upgrade-cold`,
   `upgrade-humid`)
 - **Footer / report:** `message-log` · `report` · `report-continue` · `run-actions`
-- **Production Planet View (`&ui=18`, BLOOM-029B):** `biomass`, `coverage`, `sky`, `play-pause`, `speed`, `run-menu` (+ its
+- **Production Planet View (BLOOM-029B; the default UI since BLOOM-029E):** `biomass`, `coverage`, `sky`, `play-pause`, `speed`, `run-menu` (+ its
   `action-*`), `map`, `message-log`, `inspect`, `readout`, `limiting-factor`, `colony-status` resolve to the new controls (one element
   each; the hidden shell's copies become `data-tutorial-legacy`); new `map-view`, `scenario-status`. `docs/PRODUCTION_PLANET_VIEW_v1.md` §7.
-- **Production rooms (`&ui=18`, BLOOM-029C):** `raw-signals`, `growth-focus` + `focus-*`, `local-upgrade` + `local-*` resolve to the
+- **Production rooms (BLOOM-029C):** `raw-signals`, `growth-focus` + `focus-*`, `local-upgrade` + `local-*` resolve to the
   Region Inspect room; `upgrades`, `board-adapt`, `board-spread` and every Adapt / Spread `upgrade-<id>` to the Adapt / Spread rooms (one
   element each, mounted while closed; the shell's copies become `data-tutorial-legacy`). **BLOOM-029D:** `board-terraform` and the
   Terraform `upgrade-warm/cool/humid/dry` resolve to the Terraform room the same way (`docs/PRODUCTION_TERRAFORM_ROOM_v1.md` §13);
-  `report`, `report-continue`, `run-actions` stay on the shell until the report converges.
+  **BLOOM-029E:** `report`, `report-continue`, `run-actions` resolve to the production report (`resources/run-ui/run-report.js`:
+  the section, its Keep playing button, its actions group), present from mount; `action-*` on its run actions while it is open (the run
+  menu's copies suspended meanwhile). Under the default UI every anchor above resolves to exactly one production element; the hidden shell
+  keeps only `data-tutorial-legacy` copies. Complete table: `docs/GAMEPLAY_UI_CONVERGENCE_v1.md` §10.
   `docs/PRODUCTION_PLANT_ROOMS_v1.md` §11. Room navigation is presentation state (no new event); 028D2 integration decides its contract.
 
 ## 10. Notes for 028D2
@@ -190,6 +193,7 @@ never keeps the element.
   so a tutorial should press the real button, or ask for a small explicit setter.
 - **Pacing.** The derived config is generous: about 4.9 Biomass/s once Meadow and Verge are established. Tune the data, not the
   engine.
-- **Layout.** The run page is still the temporary shell. Anchor names survive a reskin only if the reskin keeps them.
+- **Layout.** (Updated by 029E) The run page is the production Planet View + rooms + report by default; every anchor name was kept and
+  re-homed (`docs/GAMEPLAY_UI_CONVERGENCE_v1.md` §10). The shell exists only behind `?ui=legacy`.
 - **Integration.** TRAINING lives on `demos/main-menu.html` (the title's dev page). Root `index.html` integration is still the
   PMO's.

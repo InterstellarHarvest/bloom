@@ -389,12 +389,16 @@ console.log("\n# A · colony development under competition (controlled experimen
 async function browserPart() {
   let chromium; try { ({ chromium } = require("playwright")); } catch (e) { check(false, "Playwright available for part B", "npm i -g playwright; NODE_PATH=\"$(npm root -g)\""); return; }
   const PAGE = "file://" + encodeURI(path.join(ROOT, "demos/demo-run.html")), browser = await chromium.launch();
+  // (BLOOM-029E) this suite drives the engineering shell's own controls and reads its DOM (the pre-029 playtest harness): it opens every page
+  // with the developer flag ?ui=legacy. The production UI is the default run interface; its suites are planet-view / plant-rooms / terraform /
+  // run-ui-convergence / game-flow.
+  const legacy = q => (q ? q + "&" : "?") + "ui=legacy";
   if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
   const shot = async (p, n) => { if (SHOTS) await p.screenshot({ path: path.join(SHOTS, n) }); };
-  { const w = await browser.newPage(); await w.goto(PAGE); await w.waitForTimeout(200); await w.close(); } // headless warm-up (first page reads canvas blank)
+  { const w = await browser.newPage(); await w.goto(PAGE + legacy("")); await w.waitForTimeout(200); await w.close(); } // headless warm-up (first page reads canvas blank)
   const open = async (q, pause = true) => { const p = await browser.newPage({ viewport: { width: 1440, height: 920 } }); p.errors = [];
     p.on("pageerror", e => p.errors.push(e.message)); p.on("console", m => { if (m.type() === "error") p.errors.push(m.text()); });
-    await p.goto(PAGE + q, { timeout: 120000 }); await p.waitForTimeout(300); if (pause && await p.$("#btnPlay")) await p.click("#btnPlay"); return p; };
+    await p.goto(PAGE + legacy(q), { timeout: 120000 }); await p.waitForTimeout(300); if (pause && await p.$("#btnPlay")) await p.click("#btnPlay"); return p; };
   const NCQ = "?archetype=desert_world&seed=17&scenario=native_competition";
   console.log("\n# B · browser");
   // 42 / 50 · launch identity; no solution data

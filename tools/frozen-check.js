@@ -310,12 +310,16 @@ if (JSON_OUT) { fs.writeFileSync(JSON_OUT, J({ accepted: worlds.length, genFails
   let chromium; try { ({ chromium } = require("playwright")); }
   catch { console.error('Playwright not found. Run with NODE_PATH="$(npm root -g)" after `npm i -g playwright`, or pass --no-browser.'); process.exit(2); }
   const PAGE = "file://" + encodeURI(path.join(ROOT, "demos/demo-run.html")), TICK_S = config.tickMs / 1000;
+  // (BLOOM-029E) this suite drives the engineering shell's own controls and reads its DOM (the pre-029 playtest harness): it opens every page
+  // with the developer flag ?ui=legacy. The production UI is the default run interface; its suites are planet-view / plant-rooms / terraform /
+  // run-ui-convergence / game-flow.
+  const legacy = q => (q ? q + "&" : "?") + "ui=legacy";
   const browser = await chromium.launch();
   // headless Chromium returns an all-transparent canvas readback on the FIRST page of a session (BLOOM-003/010 quirk)
-  { const w = await browser.newPage(); await w.goto(PAGE); await w.waitForTimeout(200); await w.close(); }
+  { const w = await browser.newPage(); await w.goto(PAGE + legacy("")); await w.waitForTimeout(200); await w.close(); }
   const open = async (q, pause = true) => { const p = await browser.newPage({ viewport: { width: 1400, height: 900 } });
     p.errors = []; p.on("pageerror", e => p.errors.push(e.message)); p.on("console", m => { if (m.type() === "error") p.errors.push(m.text()); });
-    await p.goto(PAGE + q); await p.waitForTimeout(300); if (pause && await p.$("#btnPlay")) await p.click("#btnPlay"); return p; };
+    await p.goto(PAGE + legacy(q)); await p.waitForTimeout(300); if (pause && await p.$("#btnPlay")) await p.click("#btnPlay"); return p; };
   const shot = async (p, name) => { if (SHOTS) { await p.evaluate(() => typeof draw === "function" && draw()); await p.screenshot({ path: path.join(SHOTS, name) }); } };
   const clickTile = async (p, t) => { const r = await p.evaluate(t => { const b = document.getElementById("cv").getBoundingClientRect(), g = BLOOM_API.geometry();
     return { x: b.left + ((t % g.W) + 0.5) * g.tile, y: b.top + (((t / g.W) | 0) + 0.5) * g.tile }; }, t); await p.mouse.click(r.x, r.y); };

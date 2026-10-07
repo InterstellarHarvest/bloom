@@ -24,7 +24,7 @@
 | `content/traits.js` | + `uiCategory` on the nine Adapt / Spread traits (**presentation only**, §6) |
 | `resources/run-ui/run-ui-adapter.js` | + `uiCategory` on upgrade items (one additive copy; `api` stays 1, 10 events) |
 | `resources/run-ui/planet-view.js` / `.css` | room seam extensions: `rooms.claimAnchors`, `rooms.setActive`, `rooms.parts`, `state().room`, `toast` exposed; the toast now lives at the `.pv` root so it reads above the room veil |
-| `demos/demo-run.html` | loads the three files; with `&ui=18` mounts the rooms right after the Planet View (`BLOOM.decisionRooms.mount(pv)`) |
+| `demos/demo-run.html` | loads the three files; mounts the rooms right after the Planet View (`BLOOM.decisionRooms.mount(pv)`) — by default since BLOOM-029E (`&ui=18` was the migration flag; `?ui=legacy` shows the engineering shell instead) |
 | `tools/plant-rooms-check.js` (new) · `tools/planet-view-check.js` | the 26th suite · B17 (rooms registered, Terraform still on the seam) and N6 (traits.js may carry only `uiCategory`) updated |
 
 Untouched: `bloom-sim.js`, generator, topology, validators, planets, config, scenarios, training data, PlanetSphereView, the
@@ -195,7 +195,7 @@ For an active real preview, the room-context region is classified from the previ
 still blocked*; `worse` → *worse, still growing*; else *Unchanged*; plus the lists for other regions. With no preview it summarises
 the context (name, colony, limiting factor). Training: Chill Hollow + Cold Tolerance reads *Opens Chill Hollow* (QA B21).
 
-## 11. Tutorial anchors (028D1) — who owns what under `&ui=18`
+## 11. Tutorial anchors (028D1) — who owns what under the production default
 
 | anchor | owner |
 |---|---|
@@ -203,8 +203,8 @@ the context (name, colony, limiting factor). Training: Chill Hollow + Cold Toler
 | `inspect` `readout` `limiting-factor` `colony-status` | Planet View banner (029B) — kept there (one element each; the Region room repeats the information without the anchor) |
 | **`raw-signals` · `growth-focus` · `focus-balanced/roots/leaves/seeds` · `local-upgrade` · `local-rootNetwork/leafCanopy/seedReserve`** | **Region Inspect room (029C)** |
 | **`upgrades` (the Adapt tree card) · `board-adapt` · `board-spread` · `upgrade-<real Adapt / Spread id>`** | **Adapt / Spread rooms (029C)** |
-| `board-terraform` · `upgrade-warm/cool/humid/dry` | **the Terraform room (029D)** — the legacy shell until then |
-| `report` · `report-continue` · `run-actions` | the legacy shell (until the report converges) |
+| `board-terraform` · `upgrade-warm/cool/humid/dry` | **the Terraform room (029D)** |
+| `report` · `report-continue` · `run-actions` | **the production report (029E, `resources/run-ui/run-report.js`)**; `action-*` on its run actions while it is open (the menu's copies suspended) — `docs/GAMEPLAY_UI_CONVERGENCE_v1.md` §10 |
 
 The rooms call `pv.rooms.claimAnchors(names)`; the Planet View renames every shell copy to `data-tutorial-legacy` (again whenever
 the shell re-renders). Each claimed name resolves to exactly ONE element, inside the rooms (QA B19). The room DOM stays mounted
@@ -225,12 +225,14 @@ adapter.surface().planet, { render: adapter.surface().render })`, match regions 
 atmosphere and the Soil / Atmosphere banks; its previews are `actions.preview` of the real sky traits. The specimen is never
 mutated by Terraform.
 
-## 13. Transition seam (029E)
+## 13. Transition seam (029E) — filled
 
-Every swap is immediate in 029C. `controller.transition` is `null`; 029E sets it to a function the controller awaits around (a) the
-first open (Planet View → room), (b) room → room, (c) close (room → Planet View), covering the swap with the SUBDUED
-AtmosphereTransition (`conceal:"full"` if the swap must not be seen). The accepted order holds: pause, then transition, swap at
-covered, reveal; on Back restore the previous running state. AtmosphereTransition internals are untouched.
+*(029C text, kept for the record: every swap was immediate and `controller.transition` was `null`.)* BLOOM-029E filled the seam:
+`controller.transition` is the ONE gameplay transition bridge of the run (`resources/run-ui/gameplay-transition.js`, the unmodified
+AtmosphereTransition behind a guarded import, preset SUBDUED), and the controller's `open` / `close` run their swap inside it with the
+locked order — pause at once, conceal, swap at covered (selection carry / clear, inert, room swap), reveal, and only after the reveal
+completes Back restores the pre-room state / Resume runs; room → room clears the old preview before the conceal and never shows the
+Planet View in between; `state().transitioning` guards every request; `timeline()` records each swap. `docs/GAMEPLAY_UI_CONVERGENCE_v1.md` §5–§6.
 
 ## 14. Accessibility / input
 
@@ -250,7 +252,7 @@ focus on open / return on close, no colour-only category or status, controls ≥
   open room below 1500 px and as icons below 1100 px.
 - **Tightest tendrils** at 1024: 2.9 px clear with Temperature lit (Concept 18: 3 px). A smaller window would need a lighter weight
   or a wider gutter — not changed here (owner-approved weight).
-- **No transition** (029E); Terraform arrived in 029D; the Bloom Report / extinction remain the shell's modal.
+- Transitions arrived in 029E (the SUBDUED mist through `controller.transition`); Terraform arrived in 029D; the Bloom Report / extinction are the production report since 029E.
 - The 028D1 anchors `inspect / readout / limiting-factor / colony-status` stay on the banner; a coach that wants them inside the
   Region room needs a decision (duplicate active anchors were avoided on purpose).
 - Firefox tested at 1280×800; WebKit not run. `color-mix()` is used for the condition rows' tinted borders.

@@ -11,7 +11,8 @@ let chromium;
 try { ({ chromium } = require("playwright")); }
 catch { console.error('Playwright not found. Run with NODE_PATH="$(npm root -g)" after `npm i -g playwright`.'); process.exit(2); }
 
-const URL = "file://" + encodeURI(path.resolve(__dirname, "../demos/demo-run.html"));
+// (BLOOM-029E) this suite drives the engineering shell's own buttons (the Next Playable Slice harness): it opens the page with the developer flag ?ui=legacy
+const URL = "file://" + encodeURI(path.resolve(__dirname, "../demos/demo-run.html")) + "?ui=legacy";
 const shotsArg = process.argv.indexOf("--shots");
 const SHOTS = shotsArg > 0 ? process.argv[shotsArg + 1] : null;
 const TICK_S = 0.16;
