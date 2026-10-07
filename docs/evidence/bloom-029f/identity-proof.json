@@ -1,0 +1,325 @@
+{
+  "generatedAt": "2026-10-07T20:02:59.593Z",
+  "base": "3ab99337676e214c200b34cbbeeff844f67c7e8f",
+  "head": "ea151bf904a00582c3f92e0bb053ca777f015182",
+  "worlds": [
+    {
+      "pick": "volatile · first sector",
+      "candidateKey": "frozen_world:25452",
+      "classId": "volatile",
+      "sectorSeed": 77,
+      "provenanceSeed": 25452,
+      "attempt": 0,
+      "authored": false,
+      "planetId": "proc_4260823724",
+      "name": "Coriol-724",
+      "topology": "{\"wrapX\":true,\"wrapY\":false}",
+      "grid": [
+        60,
+        40
+      ],
+      "surveyFingerprint": "7a28839dec43d478",
+      "storedPayloadFingerprint": "7a28839dec43d478",
+      "storedPayloadIntegrity": "dd9e7ff623b56e62",
+      "gameplayFingerprint": "7a28839dec43d478",
+      "tilemapHash": "2400:12082",
+      "gameplayTilemapHash": "2400:12082",
+      "sectionDataHash": "1c0bda8e",
+      "gameplaySectionDataHash": "1c0bda8e",
+      "renderHintsHash": "077c3991",
+      "gameplayRenderHintsHash": "077c3991",
+      "startingSurfaceHash": "e6b80b1b:480x240",
+      "liveGlobeTextureHash": "e6b80b1b:480x240",
+      "gameplaySurfaceHash": "e6b80b1b:480x240",
+      "gameplayMapSignature": "ed701545",
+      "planetJsonIdentical": true,
+      "authoritativeDifferences": [],
+      "generatorOrSearchCalled": false,
+      "counters": {
+        "generateFromArchetype": 0,
+        "generatePlanet": 0,
+        "attemptPlanet": 0,
+        "searchWorld": 0,
+        "runSearch": 0,
+        "createSim": 1
+      },
+      "createSimCalls": 1,
+      "token": "x560155b75b9f02370234",
+      "url": "<origin>/demos/demo-run.html?play=1&expedition=x560155b75b9f02370234",
+      "cover": {
+        "createdAt": 33,
+        "readyAt": 95,
+        "paintedAt": 95,
+        "liftStartAt": 118,
+        "liftedAt": 867,
+        "framesAtLift": 3,
+        "surfaceRepaintsAtLift": 1,
+        "reducedMotion": false,
+        "waitedForPaintMs": 0,
+        "state": "lifted"
+      },
+      "coverAtReady": {
+        "cover": true,
+        "op": "1",
+        "state": "covered",
+        "planet": "proc_4260823724",
+        "pv": true,
+        "ui18": true
+      }
+    },
+    {
+      "pick": "stable · first sector",
+      "candidateKey": "frozen_world:78286",
+      "classId": "stable",
+      "sectorSeed": 77,
+      "provenanceSeed": 78286,
+      "attempt": 1,
+      "authored": false,
+      "planetId": "proc_2873087054",
+      "name": "Tharsis-54",
+      "topology": "{\"wrapX\":true,\"wrapY\":false}",
+      "grid": [
+        60,
+        40
+      ],
+      "surveyFingerprint": "50ffcc1b293b0739",
+      "storedPayloadFingerprint": "50ffcc1b293b0739",
+      "storedPayloadIntegrity": "d8521f4cc2fc95ef",
+      "gameplayFingerprint": "50ffcc1b293b0739",
+      "tilemapHash": "2400:31874",
+      "gameplayTilemapHash": "2400:31874",
+      "sectionDataHash": "7c731d96",
+      "gameplaySectionDataHash": "7c731d96",
+      "renderHintsHash": "077c3991",
+      "gameplayRenderHintsHash": "077c3991",
+      "startingSurfaceHash": "72e16424:480x240",
+      "liveGlobeTextureHash": "72e16424:480x240",
+      "gameplaySurfaceHash": "72e16424:480x240",
+      "gameplayMapSignature": "1baf48cb",
+      "planetJsonIdentical": true,
+      "authoritativeDifferences": [],
+      "generatorOrSearchCalled": false,
+      "counters": {
+        "generateFromArchetype": 0,
+        "generatePlanet": 0,
+        "attemptPlanet": 0,
+        "searchWorld": 0,
+        "runSearch": 0,
+        "createSim": 1
+      },
+      "createSimCalls": 1,
+      "token": "x10100f9dbce727fc14b6",
+      "url": "<origin>/demos/demo-run.html?play=1&expedition=x10100f9dbce727fc14b6",
+      "cover": {
+        "createdAt": 52,
+        "readyAt": 95,
+        "paintedAt": 95,
+        "liftStartAt": 116,
+        "liftedAt": 869,
+        "framesAtLift": 3,
+        "surfaceRepaintsAtLift": 1,
+        "reducedMotion": false,
+        "waitedForPaintMs": 0,
+        "state": "lifted"
+      },
+      "coverAtReady": {
+        "cover": true,
+        "op": "1",
+        "state": "covered",
+        "planet": "proc_2873087054",
+        "pv": true,
+        "ui18": true
+      }
+    },
+    {
+      "pick": "extreme · scanned second sector",
+      "candidateKey": "desert_world:35980",
+      "classId": "extreme",
+      "sectorSeed": 305406,
+      "provenanceSeed": 35980,
+      "attempt": 1,
+      "authored": false,
+      "planetId": "proc_1072048591",
+      "name": "Mistral-591",
+      "topology": "{\"wrapX\":true,\"wrapY\":false}",
+      "grid": [
+        60,
+        40
+      ],
+      "surveyFingerprint": "1d67d021bf01677f",
+      "storedPayloadFingerprint": "1d67d021bf01677f",
+      "storedPayloadIntegrity": "74f29ee58b76c12a",
+      "gameplayFingerprint": "1d67d021bf01677f",
+      "tilemapHash": "2400:20663",
+      "gameplayTilemapHash": "2400:20663",
+      "sectionDataHash": "d2bfac63",
+      "gameplaySectionDataHash": "d2bfac63",
+      "renderHintsHash": "a436709d",
+      "gameplayRenderHintsHash": "a436709d",
+      "startingSurfaceHash": "51f7dfa3:480x240",
+      "liveGlobeTextureHash": "51f7dfa3:480x240",
+      "gameplaySurfaceHash": "51f7dfa3:480x240",
+      "gameplayMapSignature": "186b4f82",
+      "planetJsonIdentical": true,
+      "authoritativeDifferences": [],
+      "generatorOrSearchCalled": false,
+      "counters": {
+        "generateFromArchetype": 0,
+        "generatePlanet": 0,
+        "attemptPlanet": 0,
+        "searchWorld": 0,
+        "runSearch": 0,
+        "createSim": 1
+      },
+      "createSimCalls": 1,
+      "token": "xb2594fe14847dadc66f8",
+      "url": "<origin>/demos/demo-run.html?play=1&expedition=xb2594fe14847dadc66f8",
+      "cover": {
+        "createdAt": 28,
+        "readyAt": 70,
+        "paintedAt": 70,
+        "liftStartAt": 91,
+        "liftedAt": 838,
+        "framesAtLift": 3,
+        "surfaceRepaintsAtLift": 1,
+        "reducedMotion": false,
+        "waitedForPaintMs": 0,
+        "state": "lifted"
+      },
+      "coverAtReady": {
+        "cover": true,
+        "op": "1",
+        "state": "covered",
+        "planet": "proc_1072048591",
+        "pv": true,
+        "ui18": true
+      }
+    }
+  ],
+  "failures": [
+    {
+      "label": "missing",
+      "reason": "missing",
+      "failed": true,
+      "sim": "undefined",
+      "counters": {
+        "generateFromArchetype": 0,
+        "generatePlanet": 0,
+        "attemptPlanet": 0,
+        "searchWorld": 0,
+        "runSearch": 0,
+        "createSim": 0
+      },
+      "text": "No expedition to start This expedition is not open in this tab any more. Expeditions live only in the tab that chose them, and only the most recent ones are kept. No other world was substituted and no run was started. Choose a destination again from the main menu. MAIN MENU"
+    },
+    {
+      "label": "malformed",
+      "reason": "malformed",
+      "failed": true,
+      "sim": "undefined",
+      "counters": {
+        "generateFromArchetype": 0,
+        "generatePlanet": 0,
+        "attemptPlanet": 0,
+        "searchWorld": 0,
+        "runSearch": 0,
+        "createSim": 0
+      },
+      "text": "No expedition to start The expedition data could not be read. No other world was substituted and no run was started. Choose a destination again from the main menu. MAIN MENU"
+    },
+    {
+      "label": "version",
+      "reason": "version",
+      "failed": true,
+      "sim": "undefined",
+      "counters": {
+        "generateFromArchetype": 0,
+        "generatePlanet": 0,
+        "attemptPlanet": 0,
+        "searchWorld": 0,
+        "runSearch": 0,
+        "createSim": 0
+      },
+      "text": "No expedition to start This expedition was prepared by another version of the game and cannot be opened here. No other world was substituted and no run was started. Choose a destination again from the main menu. MAIN MENU"
+    },
+    {
+      "label": "missing-fresh-tab",
+      "reason": "missing",
+      "failed": true,
+      "sim": "undefined",
+      "counters": {
+        "generateFromArchetype": 0,
+        "generatePlanet": 0,
+        "attemptPlanet": 0,
+        "searchWorld": 0,
+        "runSearch": 0,
+        "createSim": 0
+      },
+      "text": "No expedition to start This expedition is not open in this tab any more. Expeditions live only in the tab that chose them, and only the most recent ones are kept. No other world was substituted and no run was started. Choose a destination again from the main menu. MAIN MENU"
+    },
+    {
+      "label": "tampered",
+      "reason": "integrity",
+      "failed": true,
+      "sim": "undefined",
+      "counters": {
+        "generateFromArchetype": 0,
+        "generatePlanet": 0,
+        "attemptPlanet": 0,
+        "searchWorld": 0,
+        "runSearch": 0,
+        "createSim": 0
+      }
+    },
+    {
+      "label": "planet",
+      "reason": "planet",
+      "failed": true,
+      "sim": "undefined",
+      "counters": {
+        "generateFromArchetype": 0,
+        "generatePlanet": 0,
+        "attemptPlanet": 0,
+        "searchWorld": 0,
+        "runSearch": 0,
+        "createSim": 0
+      },
+      "text": "No expedition to start The expedition data holds no playable world. No other world was substituted and no run was started. Choose a destination again from the main menu. MAIN MENU"
+    },
+    {
+      "label": "link",
+      "reason": "link",
+      "failed": true,
+      "sim": "undefined",
+      "counters": {
+        "generateFromArchetype": 0,
+        "generatePlanet": 0,
+        "attemptPlanet": 0,
+        "searchWorld": 0,
+        "runSearch": 0,
+        "createSim": 0
+      },
+      "text": "No expedition to start This expedition link is not valid: it carries more than the expedition itself. No other world was substituted and no run was started. Choose a destination again from the main menu. MAIN MENU"
+    }
+  ],
+  "storage": {
+    "ss": [
+      "strange-bloom.expedition.x10100f9dbce727fc14b6",
+      "strange-bloom.expedition.index",
+      "strange-bloom.expedition.xb2594fe14847dadc66f8"
+    ],
+    "index": [
+      "x10100f9dbce727fc14b6",
+      "xb2594fe14847dadc66f8"
+    ],
+    "ls": [],
+    "lsPlanet": [],
+    "max": 2
+  },
+  "unchanged": {
+    "files": 48,
+    "differing": [],
+    "surveyBlob": "05ee2ed7f66cc392f551c9c51291ef16329c5aec",
+    "dirDiff": "(empty)"
+  }
+}

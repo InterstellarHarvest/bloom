@@ -1,0 +1,13 @@
+BLOOM-029F broad regression (run-all-suites.sh, 29 suites, 2026-10-07, on cf128fe): 1293 pass / 2 fail (qa-suites-summary.txt).
+Two misses, both in timing-sensitive checks on paths the expedition code never runs (no expedition= in either URL; expeditionBoot is not entered):
+
+1. slice-check "pacing: perfect-bot win in 4–8 min (humans slower)" — 235 s, 5 s under the 240 s floor. The known environment flake recorded by
+   028B–029D (a wall-clock pacing window on a headless bot run). Rerun, sequential, nothing else running: branch cf128fe 15/15 (pacing 245 s);
+   baseline 3ab9933 (the 029E worktree) 15/15 (pacing 255 s). Not a 029F regression: demos/demo-run.html's slice path (no query, ui=legacy) is
+   untouched — suite N10 of expedition-handoff-check proves harnessRun(), playBoot() and the training branch textually identical to 3ab9933.
+2. game-flow-check "47 · an extinction offers the same actions in the production Extinction report" — the production report did not open within
+   the check's 8 s window after a 3000-tick file:// Dying World advance under the broad run's load (the summary line reads CRASHED only because the
+   runner greps "check(s) FAILED" in lower case; the suite ended normally: 73 pass / 1 fail). Rerun, sequential: branch cf128fe 74/74; baseline
+   3ab9933 74/74. The game-flow path (play=1&archetype=…, root index.html links) is unchanged by 029F (expedition-handoff-check N10, E9b).
+
+With the reruns every one of the 29 suites is green on cf128fe: 1293 + 2 = 1295 checks, 0 failures outstanding.
