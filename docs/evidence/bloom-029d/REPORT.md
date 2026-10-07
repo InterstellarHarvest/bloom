@@ -117,11 +117,13 @@ Meadow, real training prices (= `sim.price`); two loads + Humidify + 400 ticks i
 
 See `qa-suites-summary.txt` and `suite-flakes.txt`.
 
-**27 suites · 1207 pass / 0 fail** on af708c2 (one run, 2026-10-07, this worktree; Node 20, Playwright Chromium + Firefox). Every suite exited 0,
-including the 029A–029C production suites (run-ui-check 40, planet-view-check 80, plant-rooms-check 66), training-check 82, sphere-texture-check
-14, destination-survey-check 11 and the new terraform-check 60. The environment flakes recorded by 028B–029C (colony-development-check [31]
-pixel count, slice-check pacing, native-competition-check 44, game-flow-check dialog race) did **not** occur in this run, so no classification
-against the 2d0fb08 baseline was needed (`suite-flakes.txt`).
+**27 suites · 1207 pass / 0 fail** on **eb54026** (the acceptance-correction commit: production code consumes PlanetSphereView through its public
+API only; the unmasked N4 source scan). Run 1 of the same suites on af708c2 was also 1207 / 0. Every suite exited 0, including the 029A–029C production
+suites (run-ui-check 40, planet-view-check 80, plant-rooms-check 66), training-check 82, sphere-texture-check 14, destination-survey-check 11 and
+terraform-check 60. The environment flakes recorded by 028B–029C (colony-development-check [31] pixel count, slice-check pacing,
+native-competition-check 44, game-flow-check dialog race) occurred in neither run, so no classification against the 2d0fb08 baseline was needed.
+The pixel-identity hashes in `terraform-proof.json` are unchanged by the correction (start / survey `96023cd9`, Warm preview `edfdc3fa`, after
+purchases `96023cd9`; 0 differing pixel values in Node); screenshots were not regenerated (the implementation did not change pixels or layout).
 
 ## 6. Limitations / risks for 029E / 029F
 

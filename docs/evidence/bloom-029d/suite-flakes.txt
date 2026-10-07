@@ -1,7 +1,8 @@
-BLOOM-029D broad run (run-all-suites.sh, 27 suites, 2026-10-07), from the 029D worktree under "Experiments & Projects/_worktrees", on af708c2.
+BLOOM-029D broad runs (run-all-suites.sh, 27 suites, 2026-10-07), from the 029D worktree under "Experiments & Projects/_worktrees".
 
-Run 1: 1207 pass / 0 fail, every suite exit 0.
-  No flake occurred. The known environment flakes of earlier milestones (colony-development-check [31] "foothold landing bright px" pixel count,
-  slice-check pacing, native-competition-check 44 live-run readout, game-flow-check one-shot dialog handler race) all passed this time, so no
-  reproduction / classification against the accepted 2d0fb08 baseline was required. The focused suite (tools/terraform-check.js) passed 60/60
-  in its evidence run (qa-terraform-check.log) and again inside the broad run.
+Run 1 (on af708c2, the implementation commit): 1207 pass / 0 fail, every suite exit 0.
+Run 2 (on eb54026, the acceptance correction — public-API-only sphere consumption, unmasked N4 scan): 1207 pass / 0 fail, every suite exit 0.
+  No flake occurred in either run. The known environment flakes of earlier milestones (colony-development-check [31] "foothold landing bright px"
+  pixel count, slice-check pacing, native-competition-check 44 live-run readout, game-flow-check one-shot dialog handler race) all passed both
+  times, so no reproduction / classification against the accepted 2d0fb08 baseline was required. The focused suite (tools/terraform-check.js)
+  passed 60/60 in both evidence runs (qa-terraform-check.log) and inside both broad runs.
