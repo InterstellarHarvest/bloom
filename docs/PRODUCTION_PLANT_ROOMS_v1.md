@@ -9,7 +9,8 @@
 > 029C productionizes the three accepted Concept 18 decision rooms against the REAL run: every region, colony, trait, tier,
 > price, availability, preview and purchase comes from `BLOOM_RUN_UI.adapter` and acts through `adapter.actions`, so every
 > `bloom:*` event fires unchanged from the run page's own action functions. No mockup file, region, node, cost or rule was
-> imported. Terraform is **not** built (029D), no transition runs (029E), no coach exists (028D2).
+> imported. Terraform was **not** built here; **BLOOM-029D** added it as the fourth room of this controller
+> (`docs/PRODUCTION_TERRAFORM_ROOM_v1.md`). No transition runs (029E), no coach exists (028D2).
 
 ---
 
@@ -58,8 +59,10 @@ the controller keeps only `wasRunning`, `room`, `ctx`, `peek`, `lens`, `hovered`
 Room → room keeps paused, keeps the context, clears the old transient preview; QA B3 counts exactly one `bloom:play-pause` across
 Region → Adapt → Spread.
 
-**Terraform** stays on the seam: its header-nav button is visibly unavailable (`aria-disabled`, ring, title) and pressing it calls
-`pv.openRoom("terraform", …)`, which says "arrives in BLOOM-029D" above the veil and changes nothing. No fake Terraform room.
+**Terraform** (029C state): stayed on the seam, its header-nav button visibly unavailable. **Since BLOOM-029D** it is the fourth
+registered room (`buildTerraform()` in the same file, same lifecycle rules); the header nav opens it like the others. When a room opens
+with a requested real node (`ctx.item`, a "Would help" suggestion) the controller arms `state.suspended` so a `pointerover` the browser may
+synthesise under the stationary pointer after the swap (Firefox) does not clear the deliberate focus preview (029D).
 
 ## 3. Home selection vs room context
 
@@ -125,8 +128,8 @@ and three real tabs (`role=tablist / tab / tabpanel`, `aria-selected`, roving ta
 - **Overview** — four condition rows with the accepted category identity (accent, tinted icon disc, category-coloured name, faint
   wash) and a separate status chip (icon + word) and the engine's reading (`conditions[k].word`, Temperature with the ground °C);
   the limiting box (`limiting.key` + the page's words); **Would help** = `adapter.wouldHelp(ctx)` as intrinsic buttons — an Adapt /
-  Spread suggestion opens that room with the same context and focuses the real node; a Terraform suggestion goes through the
-  seam and reports 029D.
+  Spread suggestion opens that room with the same context and focuses the real node; a Terraform suggestion does the same with
+  the Terraform room (since 029D; it reported the seam notice in 029C).
 - **Colony** — `adapter.colony(ctx)`: establishment bar, growth focus (Balanced / Roots / Leaves / Seeds: selected, availability,
   description) and local upgrades (Root Network / Leaf Canopy / Seed Reserve: ownership, price, block reason, synergy, tip).
   Clicks are `actions.setGrowthFocus(ctx, mode)` and `actions.buyLocalUpgrade(ctx, id)` → `bloom:growth-focus` /
@@ -200,7 +203,7 @@ the context (name, colony, limiting factor). Training: Chill Hollow + Cold Toler
 | `inspect` `readout` `limiting-factor` `colony-status` | Planet View banner (029B) — kept there (one element each; the Region room repeats the information without the anchor) |
 | **`raw-signals` · `growth-focus` · `focus-balanced/roots/leaves/seeds` · `local-upgrade` · `local-rootNetwork/leafCanopy/seedReserve`** | **Region Inspect room (029C)** |
 | **`upgrades` (the Adapt tree card) · `board-adapt` · `board-spread` · `upgrade-<real Adapt / Spread id>`** | **Adapt / Spread rooms (029C)** |
-| `board-terraform` · `upgrade-warm/cool/humid/dry` | the legacy shell (until 029D) |
+| `board-terraform` · `upgrade-warm/cool/humid/dry` | **the Terraform room (029D)** — the legacy shell until then |
 | `report` · `report-continue` · `run-actions` | the legacy shell (until the report converges) |
 
 The rooms call `pv.rooms.claimAnchors(names)`; the Planet View renames every shell copy to `data-tutorial-legacy` (again whenever
@@ -208,7 +211,11 @@ the shell re-renders). Each claimed name resolves to exactly ONE element, inside
 while closed, so a coach can resolve an anchor before opening its room. Nothing new was added to the event contract; room
 navigation is presentation state (`controller.state().room / context`), to be given an explicit contract during 028D2 integration.
 
-## 12. Terraform registration seam (029D)
+## 12. Terraform registration seam (029D) — filled
+
+*(029C text, kept for the record; BLOOM-029D filled this seam exactly this way: `docs/PRODUCTION_TERRAFORM_ROOM_v1.md`. One deviation,
+by design: the globe does **not** show the starting surface — it paints a presentation snapshot of the same authoritative planet under the
+run's CURRENT surface sky, so the flat map and the globe stay one surface live.)*
 
 `pv.rooms.register("terraform", { open(ctx) → close })` — the HUD tool, the banner's Terraform suggestions and the rooms' header
 nav already route there (`pv.openRoom("terraform", { region, item, opener })`). The controller's room → room rule (stay paused, keep
@@ -243,7 +250,7 @@ focus on open / return on close, no colour-only category or status, controls ≥
   open room below 1500 px and as icons below 1100 px.
 - **Tightest tendrils** at 1024: 2.9 px clear with Temperature lit (Concept 18: 3 px). A smaller window would need a lighter weight
   or a wider gutter — not changed here (owner-approved weight).
-- **No transition** (029E) and **no Terraform** (029D); the Bloom Report / extinction remain the shell's modal.
+- **No transition** (029E); Terraform arrived in 029D; the Bloom Report / extinction remain the shell's modal.
 - The 028D1 anchors `inspect / readout / limiting-factor / colony-status` stay on the banner; a coach that wants them inside the
   Region room needs a decision (duplicate active anchors were avoided on purpose).
 - Firefox tested at 1280×800; WebKit not run. `color-mix()` is used for the condition rows' tinted borders.

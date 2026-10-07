@@ -55,6 +55,7 @@ Region references in: an index (`0…n−1`) or a region id (`"chill_hollow"`). 
 | `upgrade(id)` | one item, plus `offered` |
 | `previewOf(id)` | **the real preview, computed without showing it**: `available, gain, lose, better, worse, reachHostile, climate, text`. No outline, no footer, no event. For a Terraform it includes the better / worse what-if; for a crossing, the reach |
 | `activePreview()` | what the main map outlines now, or null |
+| `terraformPreview(id)` | **(029D)** for a sky trait: `{ id, axis, available, currentSurfaceSky {temperature, moisture}, previewSurfaceSky, preview }` — the page's own what-if's exact current → preview SURFACE sky (Terraform + scenario drift / shock), read without showing anything; null for a non-sky trait. `previewOf` / `activePreview` results of a sky trait also carry `sky { axis, from, to, current, preview }`; `scenario().climate.bandNames` lists every band's name; upgrade items carry `uiBank` (presentation only) |
 | `wouldHelp(r)` | offered upgrades whose real preview opens region `r` now. The rules must allow the purchase; affordability is not required |
 | `colony(r)` | `living, focus, focusChoices[4] {id, name, icon, summary, description, selected, available}, localUpgrade, localUpgradeName, localPrice, localChoices[3] {id, name, mode, summary, description, block, available}, synergy, tip` |
 | `bubbles()` | `[{ tile, x, y, age, region }]` |
@@ -188,7 +189,8 @@ view.setPlanet(BLOOM_RUN.planet, { render: (BLOOM_RUN.archetype && BLOOM_RUN.arc
 - **Mechanics stay in the sim.** Terraform previews and purchases use `previewOf` / `actions.buy`, and the sky readout uses
   `hud().sky / skyNow / skyChange`. Preview decoration (atmosphere, open / worse regions) is drawn **outside** the view.
 - **The globe shows the starting surface under the starting sky** (`planet.globalClimate`): no plants, no Terraformed sky.
-  Showing the live state is the decoration layer's job, or a later sphere milestone.
+  Showing the live state is the decoration layer's job, or a later sphere milestone. *(029D did it without touching the sphere: a
+  presentation snapshot of the same planet with `globalClimate` = the current surface sky — `docs/PRODUCTION_TERRAFORM_ROOM_v1.md` §7.)*
 - **ES module over http(s) only.** The run page still boots over `file://`. Load the sphere with a guarded dynamic `import()`
   and keep a 2D fallback, as the training layer already does.
 - **Region identity.** `pickAt().region` indexes the **planet's** sections. The sim indexes its land-only layout, and the two

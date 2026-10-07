@@ -11,6 +11,11 @@
 // `uiCategory` (BLOOM-029C) is PRESENTATION ONLY: the PMO-locked Concept 18 category a trait is shown under in the production
 // Adapt / Spread rooms (Adapt: Hazard / Water / Temperature / Soil · Spread: Seeds / Growth / Reach). The simulation, effects,
 // costs, availability, previews and validation never read it (tools/plant-rooms-check.js proves the gameplay outputs unchanged).
+// `uiBank` + `uiCategory` on the Terraform traits (BLOOM-029D) are the same kind of PRESENTATION-ONLY metadata for the production
+// Terraform room: which side of the globe a real node sits on (bank: Atmosphere = the sky, right of the globe; Soil = the ground,
+// left — no real Soil Terraform trait exists yet) and its category inside the bank (Sky temperature · Rain). All four current
+// Terraform traits change the atmosphere, so all four are Atmosphere; Dry the Sky lowers atmospheric moisture and is Rain, not Soil.
+// Nothing in the engine reads uiBank either (tools/terraform-check.js proves gameplay identical with both fields stripped).
 (function (root) {
   "use strict";
   const D = root.BLOOM_DATA || (root.BLOOM_DATA = { planets: {} });
@@ -46,13 +51,13 @@
     { id: "earlyMat", board: "Spread", name: "Early Maturity", uiCategory: "Growth", sub: "seed neighbors sooner",
       effect: { type: "level", stat: "earlyMat", max: 1 }, cost: { base: 34, step: 0 },
       science: "like desert wildflowers: these 'ephemerals' race from seed to flower in weeks, before conditions turn bad." },
-    { id: "warm", board: "Terraform", name: "Warm the Sky", short: "Warm", sub: "+6°C globally",
+    { id: "warm", board: "Terraform", name: "Warm the Sky", short: "Warm", uiBank: "Atmosphere", uiCategory: "Sky temperature", sub: "+6°C globally",
       effect: { type: "sky", axis: "temp", delta: 6 }, cost: { base: 40, step: 18 } },
-    { id: "cool", board: "Terraform", name: "Cool the Sky", short: "Cool", sub: "−6°C globally",
+    { id: "cool", board: "Terraform", name: "Cool the Sky", short: "Cool", uiBank: "Atmosphere", uiCategory: "Sky temperature", sub: "−6°C globally",
       effect: { type: "sky", axis: "temp", delta: -6 }, cost: { base: 40, step: 18 } },
-    { id: "humid", board: "Terraform", name: "Humidify", short: "Humidify", sub: "+8 moisture globally",
+    { id: "humid", board: "Terraform", name: "Humidify", short: "Humidify", uiBank: "Atmosphere", uiCategory: "Rain", sub: "+8 moisture globally",
       effect: { type: "sky", axis: "moist", delta: 8, min: 0, max: 100 }, cost: { base: 40, step: 18 } },
-    { id: "dry", board: "Terraform", name: "Dry the Sky", short: "Dry", sub: "−8 moisture globally",
+    { id: "dry", board: "Terraform", name: "Dry the Sky", short: "Dry", uiBank: "Atmosphere", uiCategory: "Rain", sub: "−8 moisture globally",
       effect: { type: "sky", axis: "moist", delta: -8, min: 0, max: 100 }, cost: { base: 40, step: 18 } },
   ];
 })(typeof window !== "undefined" ? window : globalThis);
