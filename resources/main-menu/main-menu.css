@@ -65,6 +65,10 @@
 .mm-item.primary{color:var(--gold)}
 .mm-item.primary:hover, .mm-item.primary:focus-visible{color:#fff3cf}
 .mm-item small{margin-left:auto; font-size:11px; letter-spacing:.2em; color:var(--ink-faint); font-weight:700}
+/* (028D2) TRAINING's "Recommended" tag while no training record exists (a word, not a colour: read with the label) */
+.mm-item .mm-tag{margin-left:12px; padding:3px 9px; border:1px solid var(--gold-line); border-radius:999px; background:rgba(241,213,138,.14); color:var(--gold); font-size:10px; letter-spacing:.18em; text-transform:uppercase}
+.mm-item .mm-tag[hidden]{display:none}
+.mm-btn.primary{background:rgba(241,213,138,.22); color:var(--gold); border-color:var(--gold)}
 
 /* ── status (what Begin will meet: the first sector preparing) — small, bottom right, under the plaque's column ── */
 .mm-status{position:absolute; right:clamp(24px, 6cqw, 128px); bottom:clamp(12px, 2cqh, 22px); margin:0; max-width:min(60cqw, 460px); text-align:right;

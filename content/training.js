@@ -10,7 +10,9 @@
 //     econ.bubbleChance 0.011 → 0     no random bubbles: every bonus bubble is placed on purpose (demo-run.html placeBubble)
 //     econ.bubbleAutoTicks 60 → 375   a placed bubble waits ~60 s for the player before it collects itself at half value
 //   returnTo   where Skip / Main menu / the finished training go when the URL gives no return= (relative to demos/demo-run.html)
-//   copy       the training run's own menu and report actions (the run page's other copy is unchanged)
+//   copy       the training run's own menu and report actions (the run page's other copy is unchanged); (BLOOM-028D2) the finished
+//              training's Begin Expedition and the one Skip confirmation. The guided coach's step copy lives with its predicates in
+//              resources/training/training-steps.js (docs/GUIDED_TRAINING_v1.md).
 (function (root) {
   "use strict";
   const D = root.BLOOM_DATA || (root.BLOOM_DATA = { planets: {} });
@@ -26,6 +28,10 @@
       skip: "Skip training", skipNote: "Leave training. It stays open from the main menu.",
       mainMenu: "Main menu", mainMenuNote: "Back to the title. Training can be started again from there.",
       complete: "Training complete",
+      // (BLOOM-028D2) the finished training's first action (no Keep playing: training ends at its report)
+      beginExpedition: "Begin Expedition", beginExpeditionNote: "Choose your first real world in the Destination Survey.",
+      // (BLOOM-028D2) the one confirmation before a guided training is skipped (the coach's Skip Tutorial and the menu's Skip training)
+      skipConfirm: { title: "Skip training?", body: "You can start it again any time from the main menu.", keep: "Keep training", skip: "Skip training" },
     },
   };
 })(typeof window !== "undefined" ? window : globalThis);

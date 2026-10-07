@@ -9,7 +9,8 @@
 > the page only as the hidden simulation host the adapter wraps and as the historical regression oracle, shown by the developer flag
 > `?ui=legacy` alone. No gameplay mechanic, balance number, threshold, trait effect, planet generator, canonical surface, sphere or
 > AtmosphereTransition internal changed (`tools/run-ui-convergence-check.js` N2 / N10: byte-identical files, identical seeded runs).
-> The 029F selected-planet handoff was **not** done here (§13) — it is now done: `docs/EXPEDITION_HANDOFF_v1.md`; the 028D2 coach is still paused (§14).
+> The 029F selected-planet handoff was **not** done here (§13) — it is now done: `docs/EXPEDITION_HANDOFF_v1.md`; the 028D2 coach is now production (§14,
+> `docs/GUIDED_TRAINING_v1.md`).
 
 ## 1. What changed
 
@@ -260,10 +261,13 @@ DRAMATIC cover — the exact `detail.planet`, rehydrated, never regenerated — 
 and report take that planet object. The focused survey planet → gameplay crossing keeps the DRAMATIC preset (continued by an arrival
 cover on the run page); 029E's SUBDUED language starts only inside gameplay.
 
-## 14. 028D2 (still paused)
+## 14. 028D2 — Guided Training (production since BLOOM-028D2)
 
-No spotlight, callout, step director or first-run prompt was built; the paused 028D2 worktree was not touched or imported. Room
-navigation still needs no new `bloom:*` event. The coach returns to the Tutorial PMO after 029F, on the frozen anchor table above.
+Nothing in 029E built a coach. **BLOOM-028D2** now does, on the frozen anchor table above and the ten unchanged events:
+`docs/GUIDED_TRAINING_v1.md`. Room navigation still needs no new `bloom:*` event — the coach reads `controller.state()` and Region
+Inspect's selected tab; the only production-UI additions are the Planet View's read-only `regionPoint` / `regionRect` and the training
+report's actions (Begin Expedition · Restart training · Main menu; Keep playing is not offered after training — `reportActions()` /
+`reportAction()` in the run page). The paused c23815e draft was read only, never imported.
 
 ## 15. QA — `tools/run-ui-convergence-check.js` (28th suite)
 

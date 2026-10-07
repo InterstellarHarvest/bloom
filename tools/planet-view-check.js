@@ -434,7 +434,9 @@ const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT
         await q.click("#pvPause"); await frames(q, 2); const go = await q.evaluate(() => [__pv.A.run().running, __EV.filter(e => e.type === "play-pause").map(e => e.detail.running)]);
         await q.click("#pvMenuBtn"); await q.click('#pvMenu [data-act="restartTraining"]'); await q.waitForFunction(() => window.BLOOM_RUN_UI && BLOOM_RUN_UI.adapter && BLOOM.planetView.instance, null, { timeout: 20000, polling: 100 }).catch(() => {});
         await sleep(400); const after = await q.evaluate(() => ({ url: location.search, running: BLOOM_RUN_UI.adapter.run().running, ticks: BLOOM_RUN_UI.adapter.run().ticks }));
-        await q.evaluate(H); await q.click("#pvMenuBtn"); await q.click('#pvMenu [data-act="skipTraining"]'); await q.waitForURL(u => new URL(u).pathname.endsWith("/main-menu.html"), { timeout: 20000 }).catch(() => {});
+        // (BLOOM-028D2) a guided training asks ONCE before a skip (the production dialog; tools/guided-training-check.js G7): confirm it
+        await q.evaluate(H); await q.click("#pvMenuBtn"); await q.click('#pvMenu [data-act="skipTraining"]'); await q.click('[data-training-skip] [data-skip="skip"]', { timeout: 10000 }).catch(() => {});
+        await q.waitForURL(u => new URL(u).pathname.endsWith("/main-menu.html"), { timeout: 20000 }).catch(() => {});
         check(go[0] === true && J(go[1]) === "[true]" && /training=1/.test(after.url) && !/ui=legacy/.test(after.url) && after.running === false && new URL(q.url()).pathname === "/demos/main-menu.html",
           `${tag} B22 · training actions: Resume = the real bloom:play-pause; Restart (production menu → the page's own path) reopens training paused in the production view; Skip leaves for the return page`, J({ go, after, skip: q.url().replace(ORIGIN, "") }));
         await q.context().close(); }

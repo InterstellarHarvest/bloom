@@ -24,9 +24,18 @@
 // Reduced motion: 80 ms each way. No clouds, no zoom, no wipe; the AtmosphereTransition and its presets are untouched.
 // (028D1) The fade itself is ./black-fade.js, shared with the training run page; leaveTo() uses it to leave the title for
 // another page (TRAINING), and a page restored from the back-forward cache after such a departure lifts the black again.
+//
+// (BLOOM-028D2) FIRST-RUN RECOMMENDATION. While training is available here (a TRAINING hook) and the player has NO training record
+// (resources/training/training-store.js: neither "completed" nor "skipped"), TRAINING carries a small "Recommended" tag and the first
+// BEGIN EXPEDITION opens ONE menu dialog instead of the survey — it never starts training by itself. "Go to Expedition" records
+// "skipped" (the tag goes, it never asks again) and takes the ordinary path into the survey; "Start Training (~5 min)" leaves for the
+// training run through the usual black and records nothing (the training itself records "completed" on its win, "skipped" on a
+// confirmed skip). Closing the dialog (Escape) records nothing. The first-sector prefetch keeps running underneath throughout.
+// beginExpedition() itself never prompts (the run's "Choose another planet" / the finished training's Begin Expedition, ?begin=1).
 import { MainMenu } from "./main-menu.js";
 import { BlackFade } from "./black-fade.js";
 import { readSettings, reducedMotionFor } from "./main-menu-data.js";
+import { readTraining, writeTraining } from "../training/training-store.js";
 import { DestinationSurvey } from "../destination-survey/destination-survey.js";
 import { AtmosphereTransition } from "../atmosphere-transition/atmosphere-transition.js";
 
@@ -46,33 +55,41 @@ export class ExpeditionEntry {
    * trainingHref       (028D1) where TRAINING goes when there is no onTraining: a URL, or () → URL; the title fades to black and
    *                    navigates there (leaveTo)
    * transition         an AtmosphereTransition for the survey's departure (default: a private one over root)
-   * storage            Storage for settings (default localStorage)
+   * storage            Storage for settings and (028D2) the training record (default localStorage)
    */
   constructor(root, { reducedMotion = undefined, sectorSeed = null, firstBloom = false, worker = true, workers = null, background = null, descent = null,
     onBeginExpedition = null, onTraining = null, trainingHref = null, transition = null, storage = undefined, rng = Math.random } = {}) {
     if (!root || typeof root.appendChild !== "function") throw new TypeError("ExpeditionEntry: root must be a DOM element");
     this.root = root; this.descent = descent; this.onBeginExpedition = onBeginExpedition; this.forcedReducedMotion = reducedMotion;
     this.poolOpts = { worker, workers }; this.firstSector = { sectorSeed, firstBloom };
-    this.settings = readSettings(storage === undefined ? safe(() => globalThis.localStorage) : storage);
+    this.store = storage === undefined ? safe(() => globalThis.localStorage) : storage;
+    this.settings = readSettings(this.store);
     this.state = "menu"; this.survey = null; this.prefetch = null;
-    this.stats = { begins: 0, returns: 0, entries: [], exits: [], prefetches: [] };
+    this.stats = { begins: 0, returns: 0, entries: [], exits: [], prefetches: [], prompts: 0, promptChoices: [] };
     if (getComputedStyle(root).position === "static") root.style.position = "relative";
     this.menuHost = host(root, "ee-menu"); this.surveyHost = host(root, "ee-survey"); this.surveyHost.hidden = true;
     this.black = host(root, "ee-black"); this.black.setAttribute("aria-hidden", "true"); this._fader = new BlackFade(this.black); // the fade layer (above both screens, below the departure's clouds)
     this.black.style.cssText += "; z-index:9999; background:#000; opacity:0; display:none; pointer-events:auto; contain:strict";
     this.atx = transition || new AtmosphereTransition({ host: root });   // the survey's dramatic departure only (028C1)
+    const toTraining = this._toTraining = onTraining || (trainingHref ? () => { this.leaveTo(typeof trainingHref === "function" ? trainingHref() : trainingHref)
+      .catch(err => console.error("ExpeditionEntry: could not leave for training", err)); } : null);
     this.menu = new MainMenu(this.menuHost, { reducedMotion: this.reducedMotion, background, rng, storage,
-      onBegin: () => { this.beginExpedition().catch(err => console.error("ExpeditionEntry: could not enter the survey", err)); },
-      onTraining: onTraining || (trainingHref ? () => { this.leaveTo(typeof trainingHref === "function" ? trainingHref() : trainingHref)
-        .catch(err => console.error("ExpeditionEntry: could not leave for training", err)); } : null),
+      onBegin: () => this._beginPressed(),
+      onTraining: toTraining,
+      onRecommendChoice: c => this._recommendChoice(c),
       onSettingsChange: s => this._settingsChanged(s) });
+    this._syncTrainingTag();
     // (028D1) back from a page this title left for (leaveTo): a page restored from the back-forward cache would still be black
     this._onPageShow = e => { if (!e.persisted || this.state !== "leaving") return;
-      this.state = "menu"; this.menuHost.inert = false; this._fade(0, this.reducedMotion).then(() => this.menu.focusMenu()); };
+      this.state = "menu"; this.menuHost.inert = false; this._syncTrainingTag(); this._fade(0, this.reducedMotion).then(() => this.menu.focusMenu()); };
     addEventListener("pageshow", this._onPageShow);
     this._prefetchSector(this.firstSector);           // the first sector starts now, while the title is showing
     this.menu.shown.then(() => { if (this.state === "menu") this.atx.prepare(); }); // cloud bitmaps ready before the first transition
   }
+
+  /** (028D2) The stored training record ({ status: null | "completed" | "skipped" }); training counts as offered only with a TRAINING hook. */
+  get training() { return readTraining(this.store); }
+  get recommendsTraining() { return !!this._toTraining && this.training.status === null; }
 
   /** null follows the OS (the components each read it live); true / false force it — from Settings unless overridden. */
   get reducedMotion() { return this.forcedReducedMotion !== undefined ? this.forcedReducedMotion : reducedMotionFor(this.settings.motion); }
@@ -166,6 +183,22 @@ export class ExpeditionEntry {
   }
 
   // ---------------------------------------------------------------- internals
+  /** BEGIN EXPEDITION pressed on the menu: (028D2) the one first-run recommendation while there is no training record, else the survey. */
+  _beginPressed() {
+    if (this.state !== "menu") return;
+    if (this.recommendsTraining) { this.stats.prompts++; this.menu.openDialog("recommend", this.menu.items.begin); return; }
+    this.beginExpedition().catch(err => console.error("ExpeditionEntry: could not enter the survey", err));
+  }
+  /** (028D2) the recommendation's answer: the expedition records "skipped" and enters the survey; training just leaves for it */
+  _recommendChoice(choice) {
+    if (this.state !== "menu") return;
+    this.stats.promptChoices.push(choice);
+    if (choice === "expedition") { writeTraining(this.store, "skipped"); this._syncTrainingTag();
+      this.beginExpedition().catch(err => console.error("ExpeditionEntry: could not enter the survey", err)); }
+    else if (choice === "training" && this._toTraining) this._toTraining();
+  }
+  _syncTrainingTag() { this.menu.setTrainingRecommended(this.recommendsTraining); }
+
   /** The black layer to opacity `to` (1: covered, 0: clear): ./black-fade.js (220 / 250 ms, reduced motion 80 / 80 ms). */
   _fade(to, rm) { return this._fader.fade(to, rm); }
 

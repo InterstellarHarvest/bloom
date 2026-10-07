@@ -4,9 +4,14 @@
 Evidence and QA: `docs/evidence/bloom-028d1/REPORT.md`, suite `tools/training-check.js` (the 23rd).
 
 The title's **TRAINING** now opens a real, paused training run on the ordinary run page, on a hand-made world, and comes
-back through the same fade. Nothing here coaches yet: there are no callouts, no spotlight and no step logic. This document
-fixes what the tutorial layer will build on: the URL, the events, the anchors, the bubble hook, the training config and the
-status store.
+back through the same fade. This document fixes what the tutorial layer builds on: the URL, the events, the anchors, the bubble
+hook, the training config and the status store.
+
+> **BLOOM-028D2 (production):** the guided coach is built on exactly these contracts — `docs/GUIDED_TRAINING_v1.md`. Thirteen
+> outcome-driven lessons on the production UI (the player acts; the coach observes the events below, reads the adapter, re-finds the
+> anchors and places the one scripted bubble), the first-run "Recommended" tag and prompt on the title, one confirmation before a
+> skip, and Begin Expedition · Restart training · Main menu on the finished training (no Keep playing). The training config, the
+> world, the events, the anchors and the store are unchanged.
 
 ---
 
@@ -87,13 +92,15 @@ demos/demo-run.html?training=1[&planet=<authored id>][&return=<url>]
 - **Arrival:** the run page puts `#trainingCover` (full black) up before its first paint. The training layer lifts it
   (250 ms; reduced motion 80 ms) after the run's first two frames. If the layer cannot load (file://: ES modules are refused
   there), the run page drops the black by itself after 2 s.
-- **Exits** (☰ menu, and the report after a win). No confirm: nothing is lost in training.
+- **Exits** (☰ menu, and the report after a win). No confirm: nothing is lost in training. (028D2: a *guided* training asks once
+  before **Skip** — a production dialog shared by the coach's Skip Tutorial and the menu; Restart / Main menu still ask nothing.)
   - **Restart training:** black → the same URL as a fresh page (a paused landing, tick 0).
   - **Skip training:** records `skipped` → black → `return=`.
   - **Main menu:** black → `return=`. Nothing is recorded.
   - Over file://, these navigate without fade or status.
-- **Win:** `bloom:win` → the status is recorded `completed`. The report heads "★ TRAINING COMPLETE" and offers
-  *Restart training · Main menu*. "Keep playing" stays.
+- **Win:** `bloom:win` → the status is recorded `completed`. The report heads "TRAINING COMPLETE" and offers (028D2)
+  *Begin Expedition · Restart training · Main menu*; "Keep playing" is no longer offered after training. Begin Expedition fades to
+  the title with `begin=1`, which enters the Destination Survey at once.
 - **Motion:** both pages read the title's Settings choice through `main-menu-data.js` (`readSettings` → `reducedMotionFor`),
   else the OS.
 - **Back / Forward:** a page restored from the back-forward cache after leaving through its black lifts it again, and the
@@ -153,7 +160,8 @@ Purchases through the QA hook `BLOOM_API.buy` emit too (the event lives in `buy(
 - `writeTraining(storage, status)`: "completed" is never downgraded to "skipped".
 - `clearTraining(storage)`.
 - Bump `TRAINING_VERSION` to offer a rewritten training to everyone again.
-- The first-run prompt and the "Recommended" tag on TRAINING are **not built**. They read this.
+- (028D2) The first-run prompt and the "Recommended" tag on TRAINING read this: no record → the tag + one prompt on the first BEGIN
+  EXPEDITION ("Go to Expedition" writes `skipped`; "Start Training" writes nothing). `docs/GUIDED_TRAINING_v1.md` §3.
 
 ## 9. Anchors (`data-tutorial`)
 
@@ -185,7 +193,7 @@ never keeps the element.
   keeps only `data-tutorial-legacy` copies. Complete table: `docs/GAMEPLAY_UI_CONVERGENCE_v1.md` §10.
   `docs/PRODUCTION_PLANT_ROOMS_v1.md` §11. Room navigation is presentation state (no new event); 028D2 integration decides its contract.
 
-## 10. Notes for 028D2
+## 10. Notes for 028D2 (resolved in `docs/GUIDED_TRAINING_v1.md`)
 
 - **Biomass top-ups.** "Expedition supplies" would be a *second* page-side Biomass grant, which economy-check 3 forbids. Give
   them a declared, reported channel, or raise `content/training.js` numbers instead.

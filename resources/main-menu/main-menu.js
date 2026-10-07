@@ -1,6 +1,9 @@
 // BLOOM — Main Menu screen (BLOOM-028C): the opening title. One of twelve hand-painted backgrounds, the title STRANGE BLOOM /
 // UNKNOWN SOILS and the menu (BEGIN EXPEDITION · TRAINING · SETTINGS · CREDITS) as real HTML over it, with small dialogs for
-// Training (a placeholder until tutorial gameplay exists), Settings (motion) and Credits.
+// Training (a placeholder when no training hook is given), Settings (motion) and Credits.
+// (BLOOM-028D2) TRAINING can carry a small "Recommended" tag (setTrainingRecommended) and there is one more dialog, the first-run
+// recommendation ("recommend": Start Training (~5 min) · Go to Expedition), opened by ExpeditionEntry on a first BEGIN EXPEDITION;
+// the choice goes to onRecommendChoice("training" | "expedition"). This screen still decides nothing: the flow is ExpeditionEntry's.
 //
 //   import { MainMenu } from "<repo>/resources/main-menu/main-menu.js";
 //   const menu = new MainMenu(root, { onBegin() { … } });
@@ -40,13 +43,14 @@ export class MainMenu {
    * onBegin()          BEGIN EXPEDITION
    * onTraining()       TRAINING — the tutorial hook. Omitted: the "not yet open" placeholder dialog
    * onSettingsChange(settings)  after a setting changed (already persisted)
+   * onRecommendChoice(choice)    (028D2) the first-run recommendation's answer: "training" | "expedition" (the dialog is closed first)
    * baseUrl            where "resources/main-menu/backgrounds/…" resolves from (default: this module's repository root)
    * storage / session  Storage-like objects for settings / the last background (default: localStorage / sessionStorage)
    */
   constructor(root, { reducedMotion = null, background = null, previous = undefined, rng = Math.random, onBegin = null, onTraining = null, onSettingsChange = null,
-    baseUrl = new URL("../../", import.meta.url), storage = undefined, session = undefined } = {}) {
+    onRecommendChoice = null, baseUrl = new URL("../../", import.meta.url), storage = undefined, session = undefined } = {}) {
     if (!root || typeof root.appendChild !== "function") throw new TypeError("MainMenu: root must be a DOM element");
-    this.root = root; this.onBegin = onBegin; this.onTraining = onTraining; this.onSettingsChange = onSettingsChange; this.rng = rng; this.baseUrl = baseUrl;
+    this.root = root; this.onBegin = onBegin; this.onTraining = onTraining; this.onSettingsChange = onSettingsChange; this.onRecommendChoice = onRecommendChoice; this.rng = rng; this.baseUrl = baseUrl;
     this.storage = storage === undefined ? safe(() => globalThis.localStorage) : storage;
     this.session = session === undefined ? safe(() => globalThis.sessionStorage) : session;
     this.mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
@@ -67,6 +71,10 @@ export class MainMenu {
   // ---------------------------------------------------------------- public
   /** Status line under the plaque's column (e.g. the first sector preparing). Empty hides it. */
   setStatus(text) { this.statusEl.textContent = text || ""; }
+
+  /** (028D2) Show / hide the small "Recommended" tag on TRAINING (no training record yet). TRAINING itself is always there. */
+  setTrainingRecommended(on) { this.trainingTag.hidden = !on; this.items.training.classList.toggle("is-recommended", !!on); }
+  get trainingRecommended() { return !this.trainingTag.hidden; }
 
   /** The Settings motion choice took effect (null follows the OS; true / false force). */
   setReducedMotion(v) { this.forcedReducedMotion = v; this._applyMotionClass(); }
@@ -153,7 +161,7 @@ export class MainMenu {
         <span class="mm-corner tl" aria-hidden="true"></span><span class="mm-corner tr" aria-hidden="true"></span><span class="mm-corner bl" aria-hidden="true"></span><span class="mm-corner br" aria-hidden="true"></span>
         <div class="mm-plaque-inner">
           <header class="mm-title"><h1 id="mm-title">${TITLE.split(" ").map(w => `<span>${esc(w)}</span>`).join(" ")}</h1><p class="mm-sub">${esc(SUBTITLE)}</p></header>
-          <ul class="mm-nav" aria-label="Main menu">${ITEMS.map((it, i) => `<li style="--i:${i}"><button type="button" class="mm-item${it.primary ? " primary" : ""}" data-act="${it.id}">${esc(it.label)}</button></li>`).join("")}</ul>
+          <ul class="mm-nav" aria-label="Main menu">${ITEMS.map((it, i) => `<li style="--i:${i}"><button type="button" class="mm-item${it.primary ? " primary" : ""}" data-act="${it.id}">${esc(it.label)}${it.id === "training" ? ` <small class="mm-tag" hidden>Recommended</small>` : ""}</button></li>`).join("")}</ul>
         </div>
       </section>
       <p class="mm-status" role="status" aria-live="polite"></p>
@@ -162,6 +170,11 @@ export class MainMenu {
         <p>The training expedition — a guided first landing on a hand-made world — is not ready for recruits yet.</p>
         <p class="mm-note">Placeholder: tutorial gameplay arrives in a later milestone. Begin Expedition is the way out onto unknown soils for now.</p>
         <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">Back to menu</button></div></div></dialog>
+      <dialog class="mm-dialog" data-dialog="recommend" aria-labelledby="mm-dlg-recommend" aria-describedby="mm-dlg-recommend-d"><div class="mm-dialog-body">
+        <h2 id="mm-dlg-recommend">First expedition?</h2><p class="lede">Training recommended</p>
+        <p id="mm-dlg-recommend-d">A short guided landing on a hand-made world teaches you to read a region, change your plant and know which ground to let go.</p>
+        <p class="mm-note">Training stays open from the main menu, whatever you choose now.</p>
+        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="recommend-expedition">Go to Expedition</button><button type="button" class="mm-btn primary" data-act="recommend-training">Start Training (~5 min)</button></div></div></dialog>
       <dialog class="mm-dialog" data-dialog="settings" aria-labelledby="mm-dlg-settings"><div class="mm-dialog-body">
         <h2 id="mm-dlg-settings">Settings</h2><p class="lede">Expedition preferences</p>
         <fieldset><legend>Motion</legend>${MOTION_OPTIONS.map(m => `<label class="mm-choice"><input type="radio" name="mm-motion" value="${m.id}"><span><b>${esc(m.label)}</b><small>${esc(m.hint)}</small></span></label>`).join("")}</fieldset>
@@ -179,6 +192,7 @@ export class MainMenu {
     const q = s => r.querySelector(s);
     this.art = q(".mm-art"); this.plaque = q(".mm-plaque"); this.nav = q(".mm-nav"); this.statusEl = q(".mm-status"); this.titleEl = q("#mm-title");
     this.items = Object.fromEntries(ITEMS.map(it => [it.id, q(`[data-act="${it.id}"]`)]));
+    this.trainingTag = q(".mm-tag");
     this.dialogs = Object.fromEntries([...r.querySelectorAll("dialog")].map(d => [d.dataset.dialog, d]));
     for (const d of Object.values(this.dialogs)) d.addEventListener("close", () => { const o = this._opener; this._opener = null; if (o && o.isConnected && this.state === "shown") o.focus({ preventScroll: true }); });
     const radios = [...r.querySelectorAll('input[name="mm-motion"]')];
@@ -187,6 +201,8 @@ export class MainMenu {
       const b = e.target.closest("button"); if (!b || !r.contains(b)) return;
       const act = b.dataset.act;
       if (act === "close") this._closeDialog();
+      else if (act === "recommend-training" || act === "recommend-expedition") { // (028D2) the first-run recommendation's answer
+        this._closeDialog(); if (this.onRecommendChoice) this.onRecommendChoice(act === "recommend-training" ? "training" : "expedition"); }
       else if (act === "begin") { if (this.state === "shown") { this.stats.begins++; if (this.onBegin) this.onBegin(this); } }
       else if (act === "training") { if (this.onTraining) this.onTraining(this); else this.openDialog("training", b); }
       else if (act === "settings" || act === "credits") this.openDialog(act, b); // (the button itself: a click need not have focused it)

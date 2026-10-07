@@ -43,7 +43,7 @@
   const ROMAN = ["", "I", "II", "III", "IV", "V"];
   // presentation formatting only (the numbers are the report's): a signed value, a tenth, a percentage
   const r1 = v => Math.round(v * 10) / 10, sgn = v => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(r1(v))}`, pct = v => `${Math.round(v * 100)} %`;
-  const ACT_ICON = { keepPlaying: "play", restartRun: "restart", restartTraining: "restart", mainMenu: "home", home: "home", playAgain: "restart", newWorld: "world", changeScenario: "climate", changePlanet: "world", skipTraining: "x" };
+  const ACT_ICON = { keepPlaying: "play", restartRun: "restart", restartTraining: "restart", mainMenu: "home", home: "home", playAgain: "restart", newWorld: "world", changeScenario: "climate", changePlanet: "world", skipTraining: "x", beginExpedition: "world" }; // (028D2) + the finished training's Begin Expedition
   const CAT_COLOR = { Hazard: ["#8a5bb8", "#efe5f8", "#5e3a86"], Water: ["#3b8fd0", "#dcecf8", "#23679f"], Temperature: ["#d9601f", "#fde6d6", "#9c3f0e"], Soil: ["#8a6a3e", "#f1e6d2", "#5f452a"],
     Seeds: ["#c58a1a", "#fbefcf", "#8a5d00"], Growth: ["#3f9d4b", "#e2f2d6", "#2a7636"], Reach: ["#1f8f8f", "#d8f1ef", "#136060"], "Sky temperature": ["#d9601f", "#fde6d6", "#9c3f0e"], Rain: ["#3b8fd0", "#dcecf8", "#23679f"] };
   const catStyle = c => { const k = CAT_COLOR[c]; return k ? `--cat:${k[0]};--cat-soft:${k[1]};--cat-dark:${k[2]}` : ""; };
