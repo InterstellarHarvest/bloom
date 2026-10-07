@@ -1,0 +1,1206 @@
+{
+  "generatedAt": "2026-10-07T13:09:48.968Z",
+  "base": "2d0fb0899967db96bf23a3c17d4f78c9ab635f81",
+  "sphereUnchanged": {
+    "files": [
+      [
+        "resources/planet-sphere/planet-sphere-view.js",
+        true
+      ],
+      [
+        "resources/planet-sphere/planet-texture.js",
+        true
+      ]
+    ],
+    "diffStat": "(empty)",
+    "headBlob": "d7d64a0cfb53aab11464975bdc2137e92b8c7ed4"
+  },
+  "atmosphereRecipe": {
+    "stops": [
+      [
+        0,
+        0
+      ],
+      [
+        0.7369,
+        0
+      ],
+      [
+        0.7494,
+        0.039
+      ],
+      [
+        0.762,
+        0.093
+      ],
+      [
+        0.7745,
+        0.159
+      ],
+      [
+        0.787,
+        0.23
+      ],
+      [
+        0.7996,
+        0.301
+      ],
+      [
+        0.8121,
+        0.367
+      ],
+      [
+        0.8246,
+        0.421
+      ],
+      [
+        0.8371,
+        0.46
+      ],
+      [
+        0.8534,
+        0.447
+      ],
+      [
+        0.8697,
+        0.412
+      ],
+      [
+        0.886,
+        0.361
+      ],
+      [
+        0.9023,
+        0.298
+      ],
+      [
+        0.9186,
+        0.23
+      ],
+      [
+        0.9349,
+        0.162
+      ],
+      [
+        0.9511,
+        0.099
+      ],
+      [
+        0.9674,
+        0.048
+      ],
+      [
+        0.9837,
+        0.013
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "maxStep": 0.07100000000000001,
+    "peak": 0.46,
+    "peakAt": 113.59446999999999,
+    "HR": 113.6,
+    "face": 100,
+    "RO": 135.7,
+    "zeroAtFace": 0.00006138835666948971,
+    "atHR": 0.4599674986776134,
+    "atRO": 0,
+    "atMidOut": 0.2301235854985056
+  },
+  "nodeIdentity": {
+    "rows": [
+      "ocean_28 sky 8/54: 480×240 identical 6cce0719",
+      "ocean_28 sky 14/62: 480×240 identical fec2264",
+      "frozen_4 sky -18/46: 480×240 identical 7b52a70b",
+      "frozen_4 sky -12/54: 480×240 identical 9a0b0131",
+      "desert_25 sky 14/18: 480×240 identical eb813d9e",
+      "desert_25 sky 20/26: 480×240 identical 8b258010"
+    ],
+    "pixelValuesCompared": 2073600,
+    "different": 0
+  },
+  "sphere": {
+    "module": [
+      "http://127.0.0.1:49927/resources/planet-sphere/planet-sphere-view.js"
+    ],
+    "three": 1,
+    "identity": {
+      "sameId": true,
+      "sameGrid": true,
+      "sameTilemap": true,
+      "sameTopology": true,
+      "sameSections": true,
+      "sameSky": true,
+      "samePixels": true,
+      "textureHash": "96023cd9",
+      "flatHash": "96023cd9",
+      "size": [
+        480,
+        240
+      ],
+      "sky": {
+        "temperature": 8,
+        "moisture": 54
+      },
+      "startSky": {
+        "temperature": 8,
+        "moisture": 54
+      },
+      "planetId": "proc_580988495",
+      "uploads": 3
+    }
+  },
+  "startIdentity": {
+    "survey": {
+      "hash": "96023cd9",
+      "id": "proc_580988495",
+      "size": [
+        480,
+        240
+      ]
+    },
+    "terraform": {
+      "sameId": true,
+      "sameGrid": true,
+      "sameTilemap": true,
+      "sameTopology": true,
+      "sameSections": true,
+      "sameSky": true,
+      "samePixels": true,
+      "textureHash": "96023cd9",
+      "flatHash": "96023cd9",
+      "size": [
+        480,
+        240
+      ],
+      "sky": {
+        "temperature": 8,
+        "moisture": 54
+      },
+      "startSky": {
+        "temperature": 8,
+        "moisture": 54
+      },
+      "planetId": "proc_580988495",
+      "uploads": 3
+    }
+  },
+  "tree": {
+    "nodes": [
+      {
+        "id": "warm",
+        "uiCategory": "Sky temperature",
+        "uiBank": "Atmosphere",
+        "accent": "#d9601f",
+        "anchor": "upgrade-warm"
+      },
+      {
+        "id": "cool",
+        "uiCategory": "Sky temperature",
+        "uiBank": "Atmosphere",
+        "accent": "#d9601f",
+        "anchor": "upgrade-cool"
+      },
+      {
+        "id": "humid",
+        "uiCategory": "Rain",
+        "uiBank": "Atmosphere",
+        "accent": "#3b8fd0",
+        "anchor": "upgrade-humid"
+      },
+      {
+        "id": "dry",
+        "uiCategory": "Rain",
+        "uiBank": "Atmosphere",
+        "accent": "#3b8fd0",
+        "anchor": "upgrade-dry"
+      }
+    ],
+    "offeredTerraform": [
+      "warm",
+      "cool",
+      "humid",
+      "dry"
+    ],
+    "categoryLabels": [
+      "Sky temperature",
+      "Rain"
+    ],
+    "rings": 4,
+    "soilArrows": 0,
+    "pins": 0,
+    "soilNodes": 0,
+    "soilEmptyLine": true,
+    "soilReadout": "SoilThe ground · Moss HollowRichpH7Salinity3Nutrients49Toxicity11The ground suits your plant.No soil interventions available.",
+    "fakeNamesPresent": []
+  },
+  "previewIdentity": {
+    "trait": "warm",
+    "current": {
+      "temperature": 8,
+      "moisture": 54
+    },
+    "preview": {
+      "temperature": 14,
+      "moisture": 54
+    },
+    "textureSky": {
+      "temperature": 14,
+      "moisture": 54
+    },
+    "texHash": "edfdc3fa",
+    "flatPreviewHash": "edfdc3fa",
+    "flatCurrentHash": "96023cd9"
+  },
+  "purchases": [
+    {
+      "id": "warm",
+      "ok": true,
+      "purchase": [
+        [
+          "warm",
+          1,
+          200,
+          "id,board,name,cost,tier,biomass"
+        ]
+      ],
+      "biomass": [
+        2100.610350223215,
+        1900.610350223215,
+        200
+      ],
+      "sky": [
+        {
+          "temp": 8,
+          "moist": 54
+        },
+        {
+          "temp": 14,
+          "moist": 54
+        }
+      ]
+    },
+    {
+      "id": "cool",
+      "ok": true,
+      "purchase": [
+        [
+          "cool",
+          1,
+          200,
+          "id,board,name,cost,tier,biomass"
+        ]
+      ],
+      "biomass": [
+        3900.610350223215,
+        3700.610350223215,
+        200
+      ],
+      "sky": [
+        {
+          "temp": 14,
+          "moist": 54
+        },
+        {
+          "temp": 8,
+          "moist": 54
+        }
+      ]
+    },
+    {
+      "id": "humid",
+      "ok": true,
+      "purchase": [
+        [
+          "humid",
+          1,
+          200,
+          "id,board,name,cost,tier,biomass"
+        ]
+      ],
+      "biomass": [
+        5700.6103502232145,
+        5500.6103502232145,
+        200
+      ],
+      "sky": [
+        {
+          "temp": 8,
+          "moist": 54
+        },
+        {
+          "temp": 8,
+          "moist": 62
+        }
+      ]
+    },
+    {
+      "id": "dry",
+      "ok": true,
+      "purchase": [
+        [
+          "dry",
+          1,
+          200,
+          "id,board,name,cost,tier,biomass"
+        ]
+      ],
+      "biomass": [
+        7500.6103502232145,
+        7300.6103502232145,
+        200
+      ],
+      "sky": [
+        {
+          "temp": 8,
+          "moist": 62
+        },
+        {
+          "temp": 8,
+          "moist": 54
+        }
+      ]
+    }
+  ],
+  "currentIdentityAfterPurchases": {
+    "sameId": true,
+    "sameGrid": true,
+    "sameTilemap": true,
+    "sameTopology": true,
+    "sameSections": true,
+    "sameSky": true,
+    "samePixels": true,
+    "textureHash": "96023cd9",
+    "flatHash": "96023cd9",
+    "size": [
+      480,
+      240
+    ],
+    "sky": {
+      "temperature": 8,
+      "moisture": 54
+    },
+    "startSky": {
+      "temperature": 8,
+      "moisture": 54
+    },
+    "planetId": "proc_580988495",
+    "uploads": 31,
+    "authoritativeUnchanged": true,
+    "simSky": {
+      "temp": 8,
+      "moist": 54
+    }
+  },
+  "layout1280": {
+    "R": 115.95499999999998,
+    "HR": 129.795,
+    "zone": 155.745,
+    "RO": 152.285,
+    "cx": 615.1283496093749,
+    "cy": 444.8999938964844,
+    "face": 115.95781322506778,
+    "box": 298.27608861414205,
+    "em": 17.3,
+    "outside": [
+      {
+        "kind": "node",
+        "id": "warm",
+        "r": [
+          750.1,
+          244.2,
+          143.4,
+          108.9
+        ],
+        "d": 163.23169204711348
+      },
+      {
+        "kind": "node",
+        "id": "cool",
+        "r": [
+          779.9,
+          329,
+          143.4,
+          108.9
+        ],
+        "d": 164.92027372946356
+      },
+      {
+        "kind": "node",
+        "id": "humid",
+        "r": [
+          779.9,
+          461.1,
+          143.4,
+          90.5
+        ],
+        "d": 165.566110572799
+      },
+      {
+        "kind": "node",
+        "id": "dry",
+        "r": [
+          750.1,
+          536.7,
+          143.4,
+          108.9
+        ],
+        "d": 163.2316989122353
+      },
+      {
+        "kind": "label",
+        "id": "Sky temperature",
+        "r": [
+          755.3,
+          212.9,
+          179.1,
+          29.6
+        ],
+        "d": 246.19879996159307
+      },
+      {
+        "kind": "label",
+        "id": "Rain",
+        "r": [
+          785.1,
+          430.1,
+          79.7,
+          29.7
+        ],
+        "d": 169.9716503906251
+      },
+      {
+        "kind": "soil",
+        "id": "soil",
+        "r": [
+          303.8,
+          270.1,
+          143.4,
+          349.3
+        ],
+        "d": 167.9283496093749
+      },
+      {
+        "kind": "legend",
+        "id": "legend",
+        "r": [
+          306.3,
+          125.3,
+          295.8,
+          38.8
+        ],
+        "d": 281.1020712584839
+      },
+      {
+        "kind": "readout",
+        "id": "readout",
+        "r": [
+          307.6,
+          697.1,
+          123.1,
+          66.3
+        ],
+        "d": 312.43984896016565
+      }
+    ],
+    "minToCentre": [
+      129.79504763027867,
+      129.79499792648724,
+      129.79499792648724,
+      129.79500450635868
+    ],
+    "hits": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "crossings": 0,
+    "rings": [
+      129.79500000000002,
+      129.79500000000007,
+      129.79500000000007,
+      129.79500000000002
+    ],
+    "nodesIn": true,
+    "stage": [
+      295.183349609375,
+      118.39999389648438,
+      652.2666625976562,
+      652.7833251953125
+    ],
+    "connectors": 4,
+    "pins": 0,
+    "soilArrows": 0,
+    "atmo": {
+      "stops": [
+        [
+          0,
+          0
+        ],
+        [
+          0.7614,
+          0
+        ],
+        [
+          0.7728,
+          0.039
+        ],
+        [
+          0.7842,
+          0.093
+        ],
+        [
+          0.7955,
+          0.159
+        ],
+        [
+          0.8069,
+          0.23
+        ],
+        [
+          0.8182,
+          0.301
+        ],
+        [
+          0.8296,
+          0.367
+        ],
+        [
+          0.841,
+          0.421
+        ],
+        [
+          0.8523,
+          0.46
+        ],
+        [
+          0.8671,
+          0.447
+        ],
+        [
+          0.8819,
+          0.412
+        ],
+        [
+          0.8966,
+          0.361
+        ],
+        [
+          0.9114,
+          0.298
+        ],
+        [
+          0.9262,
+          0.23
+        ],
+        [
+          0.9409,
+          0.162
+        ],
+        [
+          0.9557,
+          0.099
+        ],
+        [
+          0.9705,
+          0.048
+        ],
+        [
+          0.9852,
+          0.013
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "color": "#6f96d6",
+      "peak": 0.46
+    },
+    "scroll": {
+      "doc": 0,
+      "dr": 0,
+      "pv": 0
+    },
+    "sizes": {
+      "small": [],
+      "chipMin": 37.7833251953125,
+      "infoOverflow": 0,
+      "infoBottom": -49.83331298828125,
+      "ctxBottom": -17.300018310546875,
+      "em": 17.3
+    }
+  },
+  "atmosphereProbe": {
+    "from": 124,
+    "to": 176,
+    "HR": 129.795,
+    "RO": 152.285,
+    "maxNeighbourJump": 5.1,
+    "at": 125,
+    "darkestAt": 129,
+    "depthBelowBackground": 49.3,
+    "background": 251.7,
+    "backgroundAtRO": 0.1,
+    "column": [
+      217.8,
+      212.8,
+      210.5,
+      206.4,
+      205.1,
+      202.4,
+      204.1,
+      203.3,
+      206.3,
+      207.4,
+      210.5,
+      211.6,
+      215.5,
+      217.5,
+      221.6,
+      223.7,
+      228,
+      230,
+      234.1,
+      236.2,
+      240.2,
+      241.4,
+      245.4,
+      246,
+      248.7,
+      248.9,
+      250.9,
+      251.7,
+      251.8,
+      250.8,
+      251.8,
+      251.7,
+      251.8,
+      251,
+      251.8,
+      251.7,
+      251.8,
+      251,
+      251.8,
+      251.7,
+      251.8,
+      251.7,
+      251.8,
+      251.7,
+      251.8,
+      251.7,
+      251.8,
+      251.7,
+      251.8,
+      251.7,
+      252,
+      251.7
+    ]
+  },
+  "layout1024": {
+    "R": 92.75,
+    "HR": 103.79,
+    "zone": 124.49,
+    "RO": 121.73,
+    "cx": 492.1199969482422,
+    "cy": 422.5500030517578,
+    "face": 92.74940527558388,
+    "box": 238.5848580825465,
+    "em": 13.8,
+    "outside": [
+      {
+        "kind": "node",
+        "id": "warm",
+        "r": [
+          591.8,
+          273,
+          114.6,
+          65.8
+        ],
+        "d": 130.1928032556634
+      },
+      {
+        "kind": "node",
+        "id": "cool",
+        "r": [
+          623.1,
+          340.6,
+          114.6,
+          65.8
+        ],
+        "d": 131.97190533598533
+      },
+      {
+        "kind": "node",
+        "id": "humid",
+        "r": [
+          623.1,
+          444.7,
+          114.6,
+          53.8
+        ],
+        "d": 132.83969122308898
+      },
+      {
+        "kind": "node",
+        "id": "dry",
+        "r": [
+          591.8,
+          506.3,
+          114.6,
+          65.8
+        ],
+        "d": 130.1927993294138
+      },
+      {
+        "kind": "label",
+        "id": "Sky temperature",
+        "r": [
+          595.9,
+          247.6,
+          147.2,
+          24.5
+        ],
+        "d": 182.77169488653539
+      },
+      {
+        "kind": "label",
+        "id": "Rain",
+        "r": [
+          627.2,
+          419.2,
+          65.3,
+          24.5
+        ],
+        "d": 135.08000305175784
+      },
+      {
+        "kind": "soil",
+        "id": "soil",
+        "r": [
+          243.4,
+          282.3,
+          114.6,
+          280.7
+        ],
+        "d": 134.1199969482422
+      },
+      {
+        "kind": "legend",
+        "id": "legend",
+        "r": [
+          245.3,
+          106.1,
+          96.3,
+          30.9
+        ],
+        "d": 322.7926172082592
+      },
+      {
+        "kind": "readout",
+        "id": "readout",
+        "r": [
+          246.4,
+          698.4,
+          58.1,
+          40
+        ],
+        "d": 333.60827938047885
+      }
+    ],
+    "minToCentre": [
+      103.79000188569191,
+      103.78999150510393,
+      103.78999150510393,
+      103.79000188569191
+    ],
+    "hits": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "crossings": 0,
+    "rings": [
+      103.79000000000005,
+      103.78999999999998,
+      103.78999999999998,
+      103.79000000000005
+    ],
+    "nodesIn": true,
+    "stage": [
+      236.4499969482422,
+      100.55000305175781,
+      521.2000122070312,
+      644.066650390625
+    ],
+    "connectors": 4,
+    "pins": 0,
+    "soilArrows": 0,
+    "atmo": {
+      "stops": [
+        [
+          0,
+          0
+        ],
+        [
+          0.7619,
+          0
+        ],
+        [
+          0.7733,
+          0.039
+        ],
+        [
+          0.7846,
+          0.093
+        ],
+        [
+          0.7959,
+          0.159
+        ],
+        [
+          0.8073,
+          0.23
+        ],
+        [
+          0.8186,
+          0.301
+        ],
+        [
+          0.83,
+          0.367
+        ],
+        [
+          0.8413,
+          0.421
+        ],
+        [
+          0.8526,
+          0.46
+        ],
+        [
+          0.8674,
+          0.447
+        ],
+        [
+          0.8821,
+          0.412
+        ],
+        [
+          0.8968,
+          0.361
+        ],
+        [
+          0.9116,
+          0.298
+        ],
+        [
+          0.9263,
+          0.23
+        ],
+        [
+          0.941,
+          0.162
+        ],
+        [
+          0.9558,
+          0.099
+        ],
+        [
+          0.9705,
+          0.048
+        ],
+        [
+          0.9853,
+          0.013
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "color": "#6f96d6",
+      "peak": 0.46
+    },
+    "scroll": {
+      "doc": 0,
+      "dr": 0,
+      "pv": 0
+    },
+    "sizes": {
+      "small": [],
+      "chipMin": 36,
+      "infoOverflow": 0,
+      "infoBottom": -161.03334045410156,
+      "ctxBottom": -13.79998779296875,
+      "em": 13.8
+    }
+  },
+  "layout1440": {
+    "R": 131.11,
+    "HR": 146.63,
+    "zone": 175.73000000000002,
+    "RO": 171.85000000000002,
+    "cx": 692.4100122070313,
+    "cy": 499.3333282470703,
+    "face": 131.11260793050715,
+    "box": 337.25995410461104,
+    "em": 19.4,
+    "outside": [
+      {
+        "kind": "node",
+        "id": "warm",
+        "r": [
+          831.3,
+          289.9,
+          161.7,
+          90.9
+        ],
+        "d": 182.59402677650414
+      },
+      {
+        "kind": "node",
+        "id": "cool",
+        "r": [
+          877,
+          385,
+          161.7,
+          90.9
+        ],
+        "d": 186.07144989531113
+      },
+      {
+        "kind": "node",
+        "id": "humid",
+        "r": [
+          877,
+          530.4,
+          161.7,
+          75.7
+        ],
+        "d": 187.1860082570613
+      },
+      {
+        "kind": "node",
+        "id": "dry",
+        "r": [
+          831.3,
+          617.8,
+          161.7,
+          90.9
+        ],
+        "d": 182.55076287254283
+      },
+      {
+        "kind": "label",
+        "id": "Sky temperature",
+        "r": [
+          837.1,
+          255.1,
+          198.1,
+          32.7
+        ],
+        "d": 256.2841031488536
+      },
+      {
+        "kind": "label",
+        "id": "Rain",
+        "r": [
+          882.9,
+          495.5,
+          88.3,
+          32.7
+        ],
+        "d": 190.4899877929687
+      },
+      {
+        "kind": "soil",
+        "id": "soil",
+        "r": [
+          341.4,
+          303.9,
+          161.7,
+          390.5
+        ],
+        "d": 189.31001220703132
+      },
+      {
+        "kind": "legend",
+        "id": "legend",
+        "r": [
+          344.1,
+          138.1,
+          329.7,
+          43.4
+        ],
+        "d": 318.3776956681416
+      },
+      {
+        "kind": "readout",
+        "id": "readout",
+        "r": [
+          345.7,
+          784.8,
+          137.9,
+          74.4
+        ],
+        "d": 353.68466446765177
+      }
+    ],
+    "minToCentre": [
+      146.6300199948118,
+      146.6299889846382,
+      146.6299889846382,
+      146.6300199948118
+    ],
+    "hits": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "crossings": 0,
+    "rings": [
+      146.62999999999994,
+      146.6299999999999,
+      146.6299999999999,
+      146.62999999999994
+    ],
+    "nodesIn": true,
+    "stage": [
+      331.70001220703125,
+      130.3333282470703,
+      734.566650390625,
+      737.5999755859375
+    ],
+    "connectors": 4,
+    "pins": 0,
+    "soilArrows": 0,
+    "atmo": {
+      "stops": [
+        [
+          0,
+          0
+        ],
+        [
+          0.7629,
+          0
+        ],
+        [
+          0.7742,
+          0.039
+        ],
+        [
+          0.7855,
+          0.093
+        ],
+        [
+          0.7968,
+          0.159
+        ],
+        [
+          0.8081,
+          0.23
+        ],
+        [
+          0.8194,
+          0.301
+        ],
+        [
+          0.8307,
+          0.367
+        ],
+        [
+          0.842,
+          0.421
+        ],
+        [
+          0.8532,
+          0.46
+        ],
+        [
+          0.8679,
+          0.447
+        ],
+        [
+          0.8826,
+          0.412
+        ],
+        [
+          0.8973,
+          0.361
+        ],
+        [
+          0.9119,
+          0.298
+        ],
+        [
+          0.9266,
+          0.23
+        ],
+        [
+          0.9413,
+          0.162
+        ],
+        [
+          0.956,
+          0.099
+        ],
+        [
+          0.9706,
+          0.048
+        ],
+        [
+          0.9853,
+          0.013
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "color": "#6f96d6",
+      "peak": 0.46
+    },
+    "scroll": {
+      "doc": 0,
+      "dr": 0,
+      "pv": 0
+    },
+    "sizes": {
+      "small": [],
+      "chipMin": 42.36665344238281,
+      "infoOverflow": 0,
+      "infoBottom": -61.616668701171875,
+      "ctxBottom": -19.399993896484375,
+      "em": 19.4
+    }
+  },
+  "lifecycle": {
+    "hiddenVisible": false,
+    "rendersWhileHidden": 0,
+    "before": {
+      "canvases": 1,
+      "textures": 1,
+      "geometries": 1,
+      "listeners": 8
+    },
+    "after": {
+      "disposed": true,
+      "rendererDisposed": true,
+      "canvases": 0,
+      "memory": {
+        "geometries": 0,
+        "textures": 0
+      },
+      "listeners": 0,
+      "layer": false,
+      "instance": null,
+      "pv": false
+    }
+  }
+}
