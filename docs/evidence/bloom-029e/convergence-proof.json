@@ -1,0 +1,859 @@
+{
+  "generatedAt": "2026-10-07T17:59:08.846Z",
+  "base": "0f5ce811704cc58fb77147952e7f6fc21e776f0c",
+  "unchanged": {
+    "files": 33,
+    "differing": [],
+    "atmosphereTransitionBlob": "190a628c9fe4d6178a02d35da29c7bec3d6c8482",
+    "surveyDiffStat": "(empty)"
+  },
+  "prepare": {
+    "chromium": {
+      "same": true,
+      "kind": "atmosphere",
+      "prep": {
+        "bitmaps": 8,
+        "maxTaskMs": 5.399999976158142,
+        "ms": 103,
+        "readyAt": 741,
+        "tookMs": 103
+      },
+      "runs": 0,
+      "atxRuns": 0,
+      "readyAt": 741,
+      "instances": "atx1-ekuh",
+      "moduleRequests": 1
+    },
+    "firefox": {
+      "same": true,
+      "kind": "atmosphere",
+      "prep": {
+        "bitmaps": 8,
+        "maxTaskMs": 8,
+        "ms": 174,
+        "readyAt": 885,
+        "tookMs": 174
+      },
+      "runs": 0,
+      "atxRuns": 0,
+      "readyAt": 885,
+      "instances": "atx1-blsd",
+      "moduleRequests": 1
+    }
+  },
+  "timings": {
+    "chromium": [
+      {
+        "kind": "open",
+        "from": null,
+        "to": "region",
+        "pauseAfterStartMs": 0.1,
+        "coveredMs": 163.6,
+        "swapDoneMs": 187.3,
+        "revealCompleteMs": 391.8,
+        "resumeMs": null,
+        "runningBefore": true,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 4,
+        "ticksAtEnd": 4,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "back",
+        "from": "region",
+        "to": null,
+        "pauseAfterStartMs": null,
+        "coveredMs": 124.9,
+        "swapDoneMs": 124.9,
+        "revealCompleteMs": 294.6,
+        "resumeMs": 294.7,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": true,
+        "ticksAtStart": 4,
+        "ticksAtEnd": 4,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "open",
+        "from": null,
+        "to": "adapt",
+        "pauseAfterStartMs": 0,
+        "coveredMs": 113.1,
+        "swapDoneMs": 125.6,
+        "revealCompleteMs": 323.4,
+        "resumeMs": null,
+        "runningBefore": true,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 5,
+        "ticksAtEnd": 5,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "back",
+        "from": "adapt",
+        "to": null,
+        "pauseAfterStartMs": null,
+        "coveredMs": 128.3,
+        "swapDoneMs": 128.5,
+        "revealCompleteMs": 280.1,
+        "resumeMs": 280.1,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": true,
+        "ticksAtStart": 5,
+        "ticksAtEnd": 5,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "open",
+        "from": null,
+        "to": "spread",
+        "pauseAfterStartMs": 0,
+        "coveredMs": 113.1,
+        "swapDoneMs": 122.6,
+        "revealCompleteMs": 317.4,
+        "resumeMs": null,
+        "runningBefore": true,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 6,
+        "ticksAtEnd": 6,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "back",
+        "from": "spread",
+        "to": null,
+        "pauseAfterStartMs": null,
+        "coveredMs": 126.9,
+        "swapDoneMs": 127,
+        "revealCompleteMs": 277,
+        "resumeMs": 277,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": true,
+        "ticksAtStart": 6,
+        "ticksAtEnd": 6,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "open",
+        "from": null,
+        "to": "terraform",
+        "pauseAfterStartMs": 0,
+        "coveredMs": 111.3,
+        "swapDoneMs": 143.1,
+        "revealCompleteMs": 388.2,
+        "resumeMs": null,
+        "runningBefore": true,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 7,
+        "ticksAtEnd": 7,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "back",
+        "from": "terraform",
+        "to": null,
+        "pauseAfterStartMs": null,
+        "coveredMs": 128,
+        "swapDoneMs": 128.1,
+        "revealCompleteMs": 289.4,
+        "resumeMs": 289.5,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": true,
+        "ticksAtStart": 7,
+        "ticksAtEnd": 7,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "switch",
+        "from": "adapt",
+        "to": "terraform",
+        "pauseAfterStartMs": null,
+        "coveredMs": 135.9,
+        "swapDoneMs": 145.4,
+        "revealCompleteMs": 342,
+        "resumeMs": null,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 7,
+        "ticksAtEnd": 7,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "switch",
+        "from": "terraform",
+        "to": "region",
+        "pauseAfterStartMs": null,
+        "coveredMs": 155.1,
+        "swapDoneMs": 156.5,
+        "revealCompleteMs": 355.6,
+        "resumeMs": null,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 7,
+        "ticksAtEnd": 7,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "switch",
+        "from": "region",
+        "to": "spread",
+        "pauseAfterStartMs": null,
+        "coveredMs": 131.5,
+        "swapDoneMs": 136.5,
+        "revealCompleteMs": 318.4,
+        "resumeMs": null,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 7,
+        "ticksAtEnd": 7,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "resume",
+        "from": "region",
+        "to": null,
+        "pauseAfterStartMs": null,
+        "coveredMs": 131.8,
+        "swapDoneMs": 131.9,
+        "revealCompleteMs": 283.4,
+        "resumeMs": 283.6,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": true,
+        "ticksAtStart": 8,
+        "ticksAtEnd": 8,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "report-open",
+        "pauseAfterStartMs": null,
+        "coveredMs": 103.4,
+        "swapDoneMs": 106.7,
+        "revealCompleteMs": 285,
+        "resumeMs": null,
+        "runningBefore": false,
+        "runningAtEnd": false,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "report-close",
+        "pauseAfterStartMs": null,
+        "coveredMs": 136,
+        "swapDoneMs": 136.1,
+        "revealCompleteMs": 294.3,
+        "resumeMs": 294.4,
+        "runningBefore": false,
+        "runningAtEnd": true,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "report-open",
+        "pauseAfterStartMs": null,
+        "coveredMs": 148.2,
+        "swapDoneMs": 150.3,
+        "revealCompleteMs": 333.4,
+        "resumeMs": null,
+        "runningBefore": false,
+        "runningAtEnd": false,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      }
+    ],
+    "firefox": [
+      {
+        "kind": "open",
+        "from": null,
+        "to": "region",
+        "pauseAfterStartMs": 1,
+        "coveredMs": 110,
+        "swapDoneMs": 123,
+        "revealCompleteMs": 375,
+        "resumeMs": null,
+        "runningBefore": true,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 1,
+        "ticksAtEnd": 1,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "back",
+        "from": "region",
+        "to": null,
+        "pauseAfterStartMs": null,
+        "coveredMs": 146,
+        "swapDoneMs": 146,
+        "revealCompleteMs": 283,
+        "resumeMs": 284,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": true,
+        "ticksAtStart": 1,
+        "ticksAtEnd": 1,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "open",
+        "from": null,
+        "to": "adapt",
+        "pauseAfterStartMs": 0,
+        "coveredMs": 110,
+        "swapDoneMs": 126,
+        "revealCompleteMs": 369,
+        "resumeMs": null,
+        "runningBefore": true,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 2,
+        "ticksAtEnd": 2,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "back",
+        "from": "adapt",
+        "to": null,
+        "pauseAfterStartMs": null,
+        "coveredMs": 169,
+        "swapDoneMs": 170,
+        "revealCompleteMs": 314,
+        "resumeMs": 314,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": true,
+        "ticksAtStart": 2,
+        "ticksAtEnd": 2,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "open",
+        "from": null,
+        "to": "spread",
+        "pauseAfterStartMs": 0,
+        "coveredMs": 113,
+        "swapDoneMs": 128,
+        "revealCompleteMs": 287,
+        "resumeMs": null,
+        "runningBefore": true,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 3,
+        "ticksAtEnd": 3,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "back",
+        "from": "spread",
+        "to": null,
+        "pauseAfterStartMs": null,
+        "coveredMs": 201,
+        "swapDoneMs": 201,
+        "revealCompleteMs": 349,
+        "resumeMs": 349,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": true,
+        "ticksAtStart": 3,
+        "ticksAtEnd": 3,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "open",
+        "from": null,
+        "to": "terraform",
+        "pauseAfterStartMs": 0,
+        "coveredMs": 111,
+        "swapDoneMs": 135,
+        "revealCompleteMs": 309,
+        "resumeMs": null,
+        "runningBefore": true,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 4,
+        "ticksAtEnd": 4,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "back",
+        "from": "terraform",
+        "to": null,
+        "pauseAfterStartMs": null,
+        "coveredMs": 106,
+        "swapDoneMs": 106,
+        "revealCompleteMs": 257,
+        "resumeMs": 257,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": true,
+        "ticksAtStart": 4,
+        "ticksAtEnd": 4,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "switch",
+        "from": "adapt",
+        "to": "terraform",
+        "pauseAfterStartMs": null,
+        "coveredMs": 105,
+        "swapDoneMs": 118,
+        "revealCompleteMs": 268,
+        "resumeMs": null,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 5,
+        "ticksAtEnd": 5,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "switch",
+        "from": "terraform",
+        "to": "region",
+        "pauseAfterStartMs": null,
+        "coveredMs": 94,
+        "swapDoneMs": 96,
+        "revealCompleteMs": 260,
+        "resumeMs": null,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 5,
+        "ticksAtEnd": 5,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "switch",
+        "from": "region",
+        "to": "spread",
+        "pauseAfterStartMs": null,
+        "coveredMs": 144,
+        "swapDoneMs": 153,
+        "revealCompleteMs": 305,
+        "resumeMs": null,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": false,
+        "ticksAtStart": 5,
+        "ticksAtEnd": 5,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "resume",
+        "from": "region",
+        "to": null,
+        "pauseAfterStartMs": null,
+        "coveredMs": 135,
+        "swapDoneMs": 135,
+        "revealCompleteMs": 286,
+        "resumeMs": 286,
+        "runningBefore": false,
+        "runningAtSwap": false,
+        "runningAtEnd": true,
+        "ticksAtStart": 5,
+        "ticksAtEnd": 5,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "report-open",
+        "pauseAfterStartMs": null,
+        "coveredMs": 161,
+        "swapDoneMs": 162,
+        "revealCompleteMs": 405,
+        "resumeMs": null,
+        "runningBefore": false,
+        "runningAtEnd": false,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "report-close",
+        "pauseAfterStartMs": null,
+        "coveredMs": 110,
+        "swapDoneMs": 110,
+        "revealCompleteMs": 279,
+        "resumeMs": 279,
+        "runningBefore": false,
+        "runningAtEnd": true,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      },
+      {
+        "kind": "report-open",
+        "pauseAfterStartMs": null,
+        "coveredMs": 137,
+        "swapDoneMs": 138,
+        "revealCompleteMs": 292,
+        "resumeMs": null,
+        "runningBefore": false,
+        "runningAtEnd": false,
+        "ran": true,
+        "immediate": false,
+        "error": null
+      }
+    ]
+  },
+  "report": {
+    "chromium": {
+      "training": {
+        "cov": 65,
+        "held": [
+          "landing_meadow",
+          "green_verge",
+          "chill_hollow",
+          "reed_fen",
+          "thirsty_flats"
+        ],
+        "gaveUp": [
+          [
+            "salt_pan",
+            "soil is hostile (salt/pH)"
+          ]
+        ],
+        "built": [
+          [
+            "cold",
+            1
+          ]
+        ],
+        "terra": [
+          [
+            "humid",
+            1
+          ]
+        ],
+        "spec": [],
+        "legacy": {
+          "held": [
+            "landing_meadow",
+            "green_verge",
+            "chill_hollow",
+            "reed_fen",
+            "thirsty_flats"
+          ],
+          "gaveUp": [
+            [
+              "salt_pan",
+              "soil is hostile (salt/pH)"
+            ]
+          ],
+          "owned": [
+            [
+              "cold",
+              1
+            ]
+          ],
+          "terra": [
+            [
+              "humid",
+              1
+            ]
+          ],
+          "spec": [],
+          "cov": 65,
+          "won": true,
+          "lost": false,
+          "lostReason": null
+        },
+        "analogs": 1
+      },
+      "pressure": {
+        "scenario": "Dying World",
+        "data": {
+          "title": "Dying World · Atmosphere thinning",
+          "phaseName": "Final harsh state",
+          "phase": 3,
+          "progress": 1,
+          "done": true,
+          "offsets": {
+            "moist": -21.6,
+            "temp": -8,
+            "rad": 8
+          },
+          "max": {
+            "moist": -21.6,
+            "temp": -8,
+            "rad": 8
+          }
+        },
+        "legacyLine": "Pressure: Dying World · Atmosphere thinning — Final harsh state (100% of the decline). Your plant endured: moisture −21.6, temperature −8 °C, radiation +8 — the final harsh state.",
+        "cov": [
+          70,
+          70
+        ]
+      },
+      "competition": {
+        "scenario": "Native Competition",
+        "data": {
+          "title": "Native Competition",
+          "startShare": 0.3172043010752688,
+          "peakShare": 0.38620071684587814,
+          "share": 0.17831541218637992,
+          "contested": 11,
+          "left": [
+            {
+              "index": 7,
+              "id": "sec_7",
+              "name": "Wadi Basin"
+            },
+            {
+              "index": 11,
+              "id": "sec_11",
+              "name": "Gold Pan"
+            },
+            {
+              "index": 12,
+              "id": "sec_12",
+              "name": "Amber Reach"
+            }
+          ]
+        },
+        "legacyLine": "Competition: Native Competition — native plants held 32% of the land at the start, 39% at their peak and 18% now. 11 regions became contested. Left to native vegetation: Wadi Basin, Gold Pan, Amber Reach. You did not need to remove every native plant.",
+        "cov": [
+          70,
+          70
+        ]
+      },
+      "climate": {
+        "scenario": "Volatile Climate",
+        "data": {
+          "title": "Volatile Climate",
+          "steps": 0,
+          "byAxis": [],
+          "peak": 0.05,
+          "peakBand": "Stable",
+          "level": 0.05,
+          "bandName": "Stable",
+          "shockCount": 0,
+          "shocks": [],
+          "swing": [],
+          "note": "Instability is the cost of changing a whole planet quickly, not a score: a heavily Terraformed win and a low-instability win are both wins."
+        },
+        "legacyLine": "Climate: Volatile Climate — 0 Terraform steps; instability peaked at 5% (Stable) and is 5% now. No climate shock. Instability is the cost of changing a whole planet quickly, not a score: a heavily Terraformed win and a low-instability win are both wins.",
+        "cov": [
+          70,
+          70
+        ]
+      }
+    },
+    "firefox": {
+      "training": {
+        "cov": 65,
+        "held": [
+          "landing_meadow",
+          "green_verge",
+          "chill_hollow",
+          "reed_fen",
+          "thirsty_flats"
+        ],
+        "gaveUp": [
+          [
+            "salt_pan",
+            "soil is hostile (salt/pH)"
+          ]
+        ],
+        "built": [
+          [
+            "cold",
+            1
+          ]
+        ],
+        "terra": [
+          [
+            "humid",
+            1
+          ]
+        ],
+        "spec": [],
+        "legacy": {
+          "held": [
+            "landing_meadow",
+            "green_verge",
+            "chill_hollow",
+            "reed_fen",
+            "thirsty_flats"
+          ],
+          "gaveUp": [
+            [
+              "salt_pan",
+              "soil is hostile (salt/pH)"
+            ]
+          ],
+          "owned": [
+            [
+              "cold",
+              1
+            ]
+          ],
+          "terra": [
+            [
+              "humid",
+              1
+            ]
+          ],
+          "spec": [],
+          "cov": 65,
+          "won": true,
+          "lost": false,
+          "lostReason": null
+        },
+        "analogs": 1
+      },
+      "climate": {
+        "scenario": "Volatile Climate",
+        "data": {
+          "title": "Volatile Climate",
+          "steps": 0,
+          "byAxis": [],
+          "peak": 0.05,
+          "peakBand": "Stable",
+          "level": 0.05,
+          "bandName": "Stable",
+          "shockCount": 0,
+          "shocks": [],
+          "swing": [],
+          "note": "Instability is the cost of changing a whole planet quickly, not a score: a heavily Terraformed win and a low-instability win are both wins."
+        },
+        "legacyLine": "Climate: Volatile Climate — 0 Terraform steps; instability peaked at 5% (Stable) and is 5% now. No climate shock. Instability is the cost of changing a whole planet quickly, not a score: a heavily Terraformed win and a low-instability win are both wins.",
+        "cov": [
+          70,
+          70
+        ]
+      }
+    }
+  },
+  "timingSummary": {
+    "swaps": 30,
+    "openOk": true,
+    "closeOk": true,
+    "swapOk": true,
+    "coveredMs": [
+      163.6,
+      124.9,
+      113.1,
+      128.3,
+      113.1,
+      126.9,
+      111.3,
+      128,
+      135.9,
+      155.1,
+      131.5,
+      131.8,
+      103.4,
+      136,
+      148.2,
+      110,
+      146,
+      110,
+      169,
+      113,
+      201,
+      111,
+      106,
+      105,
+      94,
+      144,
+      135,
+      161,
+      110,
+      137
+    ],
+    "revealCompleteMs": [
+      391.8,
+      294.6,
+      323.4,
+      280.1,
+      317.4,
+      277,
+      388.2,
+      289.4,
+      342,
+      355.6,
+      318.4,
+      283.4,
+      285,
+      294.3,
+      333.4,
+      375,
+      283,
+      369,
+      314,
+      287,
+      349,
+      309,
+      257,
+      268,
+      260,
+      305,
+      286,
+      405,
+      279,
+      292
+    ]
+  }
+}

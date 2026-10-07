@@ -248,8 +248,9 @@ const LEGACY_SUITES = ["slice-check", "economy-check", "procedural-run-check", "
 
       // ---- B4–B9 · the transition language on a running generated world
       const p = await open("?archetype=ocean_archipelago&seed=28");
-      // B4 · one instance, prepared early, module served once
-      { const r = await p.evaluate(() => ({ same: __cv.DR.transition === __cv.RR.transition && __cv.DR.transition !== null, kind: __cv.T.kind, prep: __cv.T.prepareStats, runs: __cv.T.runs, atxRuns: __cv.T.atx ? __cv.T.atx.runs : null, readyAt: __cv.T.prepareStats && __cv.T.prepareStats.readyAt, instances: __cv.T.atx ? __cv.T.atx.uid : null }));
+      // B4 · one instance, prepared early, module served once (the bitmaps decode in idle time: wait for the prepare to report, at most a few seconds)
+      { await p.waitForFunction(() => BLOOM.decisionRooms.instance.transition.prepareStats && BLOOM.decisionRooms.instance.transition.prepareStats.ms != null, null, { timeout: 10000, polling: 50 }).catch(() => {});
+        const r = await p.evaluate(() => ({ same: __cv.DR.transition === __cv.RR.transition && __cv.DR.transition !== null, kind: __cv.T.kind, prep: __cv.T.prepareStats, runs: __cv.T.runs, atxRuns: __cv.T.atx ? __cv.T.atx.runs : null, readyAt: __cv.T.prepareStats && __cv.T.prepareStats.readyAt, instances: __cv.T.atx ? __cv.T.atx.uid : null }));
         const mod = p.reqs.filter(u => /atmosphere-transition\.js/.test(u));
         PROOF.prepare = PROOF.prepare || {}; PROOF.prepare[bname] = { ...r, moduleRequests: mod.length };
         check(r.same && r.kind === "atmosphere" && r.prep && r.prep.bitmaps === 8 && r.runs === 0 && r.atxRuns === 0 && mod.length === 1 && mod[0].startsWith(ORIGIN),

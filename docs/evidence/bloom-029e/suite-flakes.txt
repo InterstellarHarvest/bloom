@@ -1,0 +1,16 @@
+BLOOM-029E flake log (suites run from the 029E worktree under "Experiments & Projects/_worktrees", Node 20, Playwright under `npm root -g`).
+
+slice-check "pacing: perfect-bot win in 4–8 min (humans slower)" — the known environment flake (recorded by 028B–029C).
+  029E, first run of the updated suite (?ui=legacy, the engineering shell): FAIL at 226 s.
+  029E, rerun: PASS at 247 s.
+  Accepted baseline 0f5ce81 (the untouched 029D worktree, same machine, same session): FAIL at 238 s.
+  → reproduced on the accepted baseline with the identical engine and shell; the sim's own randomness under this machine's pacing. Not a 029E change
+    (the engine, config and the shell's run loop are byte-identical to 0f5ce81; the suite only adds ?ui=legacy to its URL).
+
+(The broad run's own entries follow in qa-suites-summary.txt; any further flake is classified here against 0f5ce81.)
+
+Broad run (run-all-suites.sh, 28 suites, 2026-10-07, on 8688d3b): 1263 pass / 0 fail, every suite exit 0 — no flake occurred (slice-check 15/15 at pacing inside range;
+  colony-development-check [31], native-competition-check 44 and the game-flow-check dialog race all passed), so no further classification was needed.
+Focused evidence run (tools/run-ui-convergence-check.js --evidence): a first run failed Firefox B4 only — the suite read the bridge's prepareStats before the
+  eight cloud bitmaps had decoded (Firefox prepares in ~170 ms vs ~100 ms in Chromium); the same check passed inside the broad run. The suite now waits for the
+  prepare to report before B4 (no assertion changed); the rerun is 56/56 (qa-run-ui-convergence-check.log, convergence-proof.json).
