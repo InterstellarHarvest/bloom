@@ -295,12 +295,17 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
     try {
       // ============================================================ FILE:// — the double-clicked index.html, offline, a first-time player
       { const c = await ctx({ record: null, offline: true }), p = watch(await c.newPage(), "file");
+        // every resource each page references (its scripts, stylesheets, images and CSS url() backgrounds, as resolved URLs): Firefox's Playwright emits no
+        // request event for file: URLs and neither browser records file: in Resource Timing, so this DOM inventory is the positive list in both
+        const res = [], grab = async () => { try { res.push(...await p.evaluate(() => [location.href, ...[...document.scripts].map(s => s.src).filter(Boolean), ...[...document.querySelectorAll("link[href]")].map(l => l.href),
+          ...[...document.images].map(i => i.currentSrc || i.src).filter(Boolean), ...[...document.querySelectorAll("*")].map(e => getComputedStyle(e).backgroundImage).filter(b => b && b !== "none")
+            .flatMap(b => [...b.matchAll(/url\("?([^")]+)"?\)/g)].map(m => m[1]))])); } catch {} };
         await p.goto(FINDEX); await menuReady(p); await sleep(400);
         const boot = await p.evaluate(() => ({ url: location.href, protocol: location.protocol, state: BLOOM_TITLE_BOOT.state, served: BLOOM_TITLE_BOOT.served, portable: BLOOM_TITLE_BOOT.portable, scripts: BLOOM_TITLE_BOOT.scripts.length,
           bundle: !!window.BLOOM_PORTABLE, loaded: window.BLOOM_PORTABLE ? BLOOM_PORTABLE.loaded() : [], notice: !!document.getElementById("needsServer") || /needs to be opened through a web server/.test(document.body.innerText), failed: !!document.getElementById("bootFailed"),
           title: document.title, h1: document.getElementById("mm-title").textContent.replace(/\s+/g, " ").trim(), items: [...document.querySelectorAll(".mm-item")].map(b => b.dataset.act), tag: MENU_DEV.entry.menu.trainingRecommended,
           prefetch: MENU_DEV.entry.prefetch ? MENU_DEV.entry.prefetch.progress : null }));
-        F.boot = boot;
+        F.boot = { ...boot, url: boot.url.replace(FROOT, "<repo>") };   // (no local path in the evidence)
         check(boot.protocol === "file:" && boot.state === "mounted" && !boot.served && boot.portable && boot.scripts === 15 && boot.bundle && boot.loaded.includes("resources/main-menu/main-menu-page.js") && !boot.notice && !boot.failed
           && boot.title === "Strange Bloom — Unknown Soils" && /^Strange Bloom$/i.test(boot.h1) && J(boot.items) === J(["begin", "training", "settings", "credits"]) && boot.tag && boot.prefetch && boot.prefetch.total === 9,
           `${B} P6 · P7 · P8 · ${FINDEX.replace(FROOT, "<repo>")} over file:// boots the REAL title (no HTTP-required notice, no failure notice): the classic engine scripts, the module seam and the portable runtime's page composer; STRANGE BLOOM, BEGIN EXPEDITION · TRAINING (Recommended) · SETTINGS · CREDITS; the first sector already prefetching`,
@@ -342,7 +347,7 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
           && cells.source === "worker" && F.firstSurvey.workersStarted > 0 && /^blob:/.test(F.firstSurvey.workerUrl || "") && cells.tasks > 0,
           `${B} P14 · P15 · the first BEGIN EXPEDITION offers the one first-run recommendation (Go to Expedition · Start Training); the Destination Survey opens over file:// with nine distinct, fully validated worlds (layers 1–8, one class per column) built by the SAME survey worker, started from the portable runtime as blob: workers; an empty slot reads "Incoming" and never one that holds a world, none at the end (${samples.length} samples, up to ${F.firstSurvey.incomingSeen} incoming at once)`,
           J({ truthful, dialog: dlg.open, source: cells.source, workers: F.firstSurvey.workersStarted, url: (F.firstSurvey.workerUrl || "").slice(0, 10), tasks: cells.tasks, keys: F.firstSurvey.cells }));
-        await shot(p, `02-file-survey.png`);
+        await shot(p, `02-file-survey.png`); await grab();
         // P16 · Scan New Sector
         const seed0 = cells.seed; await p.click('.ds-btn.scan'); await p.waitForFunction(s => MENU_DEV.entry.survey.sectorSeed !== s && MENU_DEV.entry.survey.state === "survey", seed0, { timeout: 180000, polling: 100 });
         const cells2 = await CELLS(p);
@@ -372,7 +377,7 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
           `${B} P21 · the production gameplay UI over file:// (Planet View, ui18), titled with the chosen world; run menu Play again · Choose another planet · Main menu`, g.name);
         await shot(p, `04-file-gameplay.png`);
         // P22 · P23 · the four rooms, real Adapt / Spread purchases, Terraform's real sphere
-        const R1 = await ROOMS(p);
+        const R1 = await ROOMS(p); await grab();
         F.rooms = { rooms: R1.rooms, bought: R1.bought, terraform: [R1.t1.kind, R1.t2.kind] };
         check(J(R1.rooms) === J(["region", "adapt", "spread", "terraform"]) && R1.bought.adapt && R1.bought.adapt.after === R1.bought.adapt.before + 1 && R1.bought.spread && R1.bought.spread.after === R1.bought.spread.before + 1,
           `${B} P22 · Region Inspect, Adapt, Spread and Terraform all open over file://; a real Adapt purchase (${R1.bought.adapt && R1.bought.adapt.id}) and a real Spread purchase (${R1.bought.spread && R1.bought.spread.id}) each raise their tier through the run's own buy`, J(R1.bought));
@@ -416,7 +421,7 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
         await waitRun(p); await coached(p); await sleep(300);
         const t = await p.evaluate(() => ({ url: location.href, ret: BLOOM_RUN.training.returnTo, steps: BLOOM_TRAINING_UI.guide.director.steps.map(s => s.id), planet: BLOOM_RUN.planet.id, winAt: BLOOM_RUN_UI.adapter.hud().winPct,
           paused: !BLOOM_API.state().running, lesson: BLOOM_TRAINING_UI.guide.director.index + 1, coachCss: [...document.styleSheets].some(s => s.href && /training-coach\.css$/.test(s.href)), menu: BLOOM_RUN_UI.adapter.runMenu().items.map(a => a.id) }));
-        await shot(p, `06-file-training.png`);
+        await shot(p, `06-file-training.png`); await grab();
         await p.click(".tc-card .tc-skip"); await sleep(250);
         const sk = await p.evaluate(() => { const d = document.querySelector("[data-training-skip]"); return d ? { title: d.querySelector("h2").textContent, btns: [...d.querySelectorAll("button")].map(b => b.textContent) } : null; });
         await p.click('[data-skip="keep"]'); await sleep(150);
@@ -425,10 +430,12 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
         check(new URL(t.url).searchParams.get("return") === FINDEX && t.ret === FINDEX && J(t.steps) === J(LESSONS) && t.planet === "training_grounds" && t.winAt === 65 && t.paused && t.lesson === 1 && t.coachCss
           && sk && sk.title === "Skip training?" && J(sk.btns) === J(["Keep training", "Skip training"]) && back.url === FINDEX && back.rec && back.rec.status === "skipped",
           `${B} P12 · P13 · TRAINING over file:// opens the guided training on Training Grounds (65 % goal), paused, the coach mounted with its own stylesheet and the thirteen locked lessons; Skip opens the production confirmation (Keep training keeps it); Main menu returns to the file title (the earlier "skipped" kept)`, J({ lesson: t.lesson, winAt: t.winAt, ret: t.ret.replace(FROOT, "<repo>") }));
-        const ext = nonLocal(c, null);
-        check(!ext.length && !c.blocked.length && c.reqs.every(u => /^(file|data|blob):/.test(u)) && c.reqs.filter(u => u.startsWith("file:")).every(u => u.startsWith(FROOT)),
-          `${B} P10 · P36 (runtime) · OFFLINE (network disabled, every http(s) request blocked): the whole file:// session made ${c.reqs.length} requests, every one file: (inside the game folder), data: or blob: — no http(s) request was even attempted; Three.js, the paintings and the stylesheets are local`, ext.slice(0, 3).join(" | ") || `${c.reqs.filter(u => u.startsWith("file:")).length} file: requests`);
-        F.requests = { total: c.reqs.length, file: c.reqs.filter(u => u.startsWith("file:")).length, blob: c.reqs.filter(u => u.startsWith("blob:")).length, data: c.reqs.filter(u => u.startsWith("data:")).length, blockedHttp: c.blocked.length };
+        await grab(); const ext = nonLocal(c, null), resOut = res.filter(u => !/^(file|data|blob):/.test(u) || (u.startsWith("file:") && !u.startsWith(FROOT)));
+        const want = ["/dist/portable/strange-bloom.portable.js", "/resources/main-menu/backgrounds/menu-", "/resources/main-menu/main-menu.css", "/resources/training/training-coach.css", "/resources/bloom-sim.js"].filter(w => !res.some(u => u.includes(w)));
+        check(!ext.length && !c.blocked.length && c.reqs.every(u => /^(file|data|blob):/.test(u)) && c.reqs.filter(u => u.startsWith("file:")).every(u => u.startsWith(FROOT)) && new Set(res).size > 30 && !resOut.length && !want.length,
+          `${B} P10 · P36 (runtime) · OFFLINE (network disabled, every http(s) request routed to a block that logged none): every resource the file:// session's pages reference (${new Set(res).size} distinct scripts, stylesheets, images and backgrounds from the pages themselves${c.reqs.length ? `; ${c.reqs.length} request events, all file:` : "; Playwright reports no request events for file: in this browser"}) is file: inside the game folder, data: or blob: — the portable runtime, the paintings, the stylesheets, the engine; no http(s) request was even attempted`,
+          [...ext, ...resOut].slice(0, 3).join(" | ") || (want.length ? "missing " + want.join(", ") : `${new Set(res).size} local resources`));
+        F.requests = { requestEvents: c.reqs.length, referencedDistinct: new Set(res).size, referencedFile: new Set(res.filter(u => u.startsWith("file:"))).size, blockedHttp: c.blocked.length };
         await collectUnhandled(p); PROOF.browsers[bname].flows.push("file:// full player flow"); await c.close(); }
 
       // ============================================================ P28 · storage blocked over file:// (private mode, blocked site data)
