@@ -3,8 +3,8 @@
 // ONE SUBDUED mist per production run. The EXISTING, UNMODIFIED AtmosphereTransition (resources/atmosphere-transition/
 // atmosphere-transition.js, an ES module) is reached through a guarded dynamic import, exactly as the Terraform room reaches the
 // sphere (resources/run-ui/terraform-globe.js): over http(s) the module is imported once and ONE instance is built and prepared
-// early (its cloud bitmaps drawn in idle time, so the first room opens on the next frame); over file://, or when the module
-// genuinely fails to load, no request is made and every swap happens immediately. It is consumed through the component's public
+// early (its cloud bitmaps drawn in idle time, so the first room opens on the next frame); (BLOOM-031) over file:// the same from the portable
+// runtime; when the module genuinely fails to load (or a file:// page lacks the module seam), no request is made and every swap happens immediately. It is consumed through the component's public
 // API only — constructor, prepare(), run({ preset: "subdued", onCovered, onPhase }), dispose(), and the public `running` / `phase`
 // — never a private member. Presets, timings and the component's own reduced-motion path are untouched: the bridge passes the
 // player's Settings motion choice (main-menu-data.js readSettings → reducedMotionFor; null = follow the OS) to the constructor and
@@ -31,7 +31,11 @@
   const HERE = doc && doc.currentScript && doc.currentScript.src ? doc.currentScript.src : null;
   const MODULE_URL = HERE ? new URL("../atmosphere-transition/atmosphere-transition.js", HERE).href : "../resources/atmosphere-transition/atmosphere-transition.js";
   const SETTINGS_URL = HERE ? new URL("../main-menu/main-menu-data.js", HERE).href : "../resources/main-menu/main-menu-data.js";
-  const canLoadModules = () => !!(root.location && /^https?:$/.test(root.location.protocol));
+  // (BLOOM-031) served over http(s): import(); opened as a file (file://): the SAME source module from the portable runtime, through
+  // BLOOM.modules (resources/portable/module-loader.js). Without that seam (a page that does not load it) file:// stays module-less.
+  const modules = () => (root.BLOOM && root.BLOOM.modules) || null;
+  const canLoadModules = () => !!(root.location && /^https?:$/.test(root.location.protocol)) || !!(modules() && modules().portable);
+  const importModule = url => (modules() && modules().portable ? modules().load(url) : import(url));
   const PRESET = "subdued";
   // the watchdog: the SUBDUED preset conceals in ~90 ms (80 ms reduced); a covered point not reached by then is a throttled tab,
   // and the player must not wait on it. The hard cap bounds how long a consumer may stay locked on a run that never settles.
@@ -39,11 +43,11 @@
   const now = () => (root.performance ? performance.now() : Date.now());
 
   let loading = null;
-  /** → Promise<{ AtmosphereTransition, settings } | null>. Memoised; file:// → null without a request; a failed load → null (warned once). */
+  /** → Promise<{ AtmosphereTransition, settings } | null>. Memoised; no module loading (file:// without the portable seam) → null without a request; a failed load → null (warned once). */
   function load() {
     if (loading) return loading;
     loading = canLoadModules()
-      ? Promise.all([import(MODULE_URL), import(SETTINGS_URL).catch(() => null)])
+      ? Promise.all([importModule(MODULE_URL), importModule(SETTINGS_URL).catch(() => null)])
         .then(([m, s]) => (m && m.AtmosphereTransition ? { AtmosphereTransition: m.AtmosphereTransition, settings: s } : null))
         .catch(err => { console.warn("BLOOM.gameplayTransition: AtmosphereTransition could not load — immediate swaps", err && err.message); return null; })
       : Promise.resolve(null);

@@ -14,3 +14,6 @@ scratchpad/
 # node (if tooling is added later)
 node_modules/
 npm-debug.log*
+
+# GitHub Pages site assembled by tools/build-pages-site.mjs (CI / local QA only)
+_site/

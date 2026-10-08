@@ -14,8 +14,9 @@
   The page is thin: resources/main-menu/title-boot.js loads the engine scripts and mounts the ONE title composer
   (resources/main-menu/main-menu-page.js), which demos/main-menu.html (the developer alias) shares. docs/RELEASE_CANDIDATE_v1.md.
 
-  The full game needs HTTP(S) (ES modules, module workers, the Destination Survey). Opened as a file it shows a plain notice
-  instead. Local development, from the repository root:   python3 -m http.server 8767   →   http://localhost:8767/
+  Two ways in, one game (BLOOM-031, docs/PORTABLE_RUNTIME_v1.md): served over http(s) (development, GitHub Pages) the source ES modules
+  and module workers run as they are; double-clicked (file://) the same modules come from the generated portable runtime in
+  dist/portable/ (npm --prefix tools run build:portable). Local development server, from the repository root:  python3 -m http.server 8767
 -->
 <link rel="stylesheet" href="resources/destination-survey/destination-survey.css">
 <link rel="stylesheet" href="resources/main-menu/main-menu.css">

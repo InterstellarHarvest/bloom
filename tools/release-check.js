@@ -97,7 +97,8 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
       "R2–R7 · the root index.html is the Strange Bloom production title — one boot script (title-boot.js, data-run demos/demo-run.html, the canonical title = itself) and the title stylesheets — not the BLOOM-016 launcher: no hash router, no planet chooser, no scenario chooser, no briefing, no emoji icon table, no temporary mini-map renderer, no inline style or script",
       launcher.join(", ") || `${INDEX.split("\n").length} lines`); }
   // R8–R10 · R80 · ONE page composer, shared; nothing duplicated
-  { const files = git("ls-files --cached --others --exclude-standard -- '*.js' '*.html'").split("\n").filter(f => f && !f.startsWith("tools/") && !f.startsWith("docs/") && !f.startsWith("demos/ui-mockups/") && fs.existsSync(path.join(ROOT, f)));
+  { const files = git("ls-files --cached --others --exclude-standard -- '*.js' '*.html'").split("\n").filter(f => f && !f.startsWith("tools/") && !f.startsWith("docs/") && !f.startsWith("demos/ui-mockups/") && fs.existsSync(path.join(ROOT, f)))
+      .filter(f => !f.startsWith("dist/"));   // (BLOOM-031) dist/ is the GENERATED portable copy of these very sources (proved identical to a fresh build by portable-runtime-check P3–P5), not a duplicate
     const who = re => files.filter(f => re.test(strip(read(f))));
     const entries = who(/new ExpeditionEntry\(/), departs = who(/function departToGameplay\b/), packers = who(/\.pack\(detail\b/), trainQ = who(/\.trainingQuery\(\{/), beginParam = who(/get\("begin"\) === "1"/), mounts = who(/\.mountTitlePage\(/), boots = who(/title-boot\.js/);
     const docsThin = [INDEX, ALIAS].every(d => !/type="module"|ExpeditionEntry|departToGameplay|MENU_DEV|<script src="[^"]*content\//.test(d) && (d.match(/<script/g) || []).length === 1);
@@ -165,7 +166,8 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
   // the root smoke (Node HTTP, no browser): the canonical URL itself, /index.html and /?begin=1
   { const r1 = await get(HOME), r2 = await get(HOME + "index.html"), r3 = await get(HOME + "?begin=1");
     PROOF.rootSmoke = { "/": r1.status, "/index.html": r2.status, "/?begin=1": r3.status };
-    check(r1.status === 200 && r2.status === 200 && r3.status === 200 && r1.body === INDEX && r2.body === INDEX && /Strange Bloom — Unknown Soils/.test(r3.body) && !/scrHome|BLOOM-016 launcher/.test(r1.body),
+    const SERVED = read("index.html");   // (BLOOM-031) the file the server actually serves (its comment block changed after BLOOM-030)
+    check(r1.status === 200 && r2.status === 200 && r3.status === 200 && r1.body === SERVED && r2.body === SERVED && /Strange Bloom — Unknown Soils/.test(r3.body) && !/scrHome|BLOOM-016 launcher/.test(r1.body),
       "R2s · root smoke over HTTP: GET / , /index.html and /?begin=1 all answer 200 with the Strange Bloom title document (no redirect, no launcher)", J(PROOF.rootSmoke)); }
 
   // in every page: the bloom:* log, unhandled rejections, generator / search counters (on an expedition page every world-making function THROWS)
@@ -476,13 +478,14 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
           const c8 = await ctx(), f = watch(await c8.newPage(), "file-run"); let fileRun = null;
           try { await f.goto(FILE + "/demos/demo-run.html"); await waitRun(f); await f.waitForFunction(() => BLOOM.planetView && BLOOM.planetView.instance && BLOOM.planetView.instance.renderer.info().frames > 0, null, { timeout: 20000 });
             fileRun = await f.evaluate(() => ({ kind: BLOOM_RUN.kind, id: BLOOM_RUN.planet.id, pv: !!document.querySelector(".pv"), running: BLOOM_API.state().running })); } catch (e) { fileRun = { error: e.message }; }
-          await f.goto(FILE + "/index.html"); await sleep(400);
-          const fr = await f.evaluate(() => ({ title: document.title, note: (document.getElementById("needsServer") || { innerText: "" }).innerText, boot: window.BLOOM_TITLE_BOOT && BLOOM_TITLE_BOOT.state, scripts: document.scripts.length, app: document.getElementById("app").hidden, body: document.body.innerText.trim().length,
-            bg: getComputedStyle(document.body).backgroundColor }));
-          await shot(f, "20-file-http-required-notice.png"); await c8.close();
-          PROOF.fileProtocol = { root: { title: fr.title, notice: fr.note.replace(/\s+/g, " "), bootState: fr.boot, scriptsLoaded: fr.scripts }, demoRun: fileRun };
-          check(fr.title === "Strange Bloom — Unknown Soils" && /STRANGE BLOOM/i.test(fr.note) && /UNKNOWN SOILS/i.test(fr.note) && fr.note.includes("This build needs to be opened through a web server.") && fr.note.includes("python3 -m http.server 8767") && fr.boot === "needs-server" && fr.scripts === 1 && fr.app && fr.body > 40,
-            `${B} R62 · R63 · the root index.html over file:// shows the clear HTTP-required notice (STRANGE BLOOM / UNKNOWN SOILS / "This build needs to be opened through a web server." / the local command), never a blank page; nothing else loads (one script, no module)`, fr.note.replace(/\s+/g, " "));
+          // (BLOOM-031) the root over file:// is the real title now (the generated portable runtime; tools/portable-runtime-check.js covers the whole file:// game)
+          await f.goto(FILE + "/index.html"); await f.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready, null, { timeout: 30000 }).catch(() => {}); await sleep(400);
+          const fr = await f.evaluate(() => ({ title: document.title, note: (document.getElementById("needsServer") || { innerText: "" }).innerText, boot: window.BLOOM_TITLE_BOOT && BLOOM_TITLE_BOOT.state, portable: !!(window.BLOOM_TITLE_BOOT && BLOOM_TITLE_BOOT.portable),
+            app: document.getElementById("app").hidden, ready: !!(window.MENU_DEV && MENU_DEV.ready), items: [...document.querySelectorAll(".mm-item")].map(b => b.dataset.act), body: document.body.innerText.trim().length, bg: getComputedStyle(document.body).backgroundColor }));
+          await shot(f, "20-file-root-title.png"); await c8.close();
+          PROOF.fileProtocol = { root: { title: fr.title, bootState: fr.boot, portable: fr.portable, menu: fr.items }, demoRun: fileRun };
+          check(fr.title === "Strange Bloom — Unknown Soils" && !fr.note && fr.boot === "mounted" && fr.portable && fr.ready && !fr.app && J(fr.items) === J(["begin", "training", "settings", "credits"]) && fr.body > 40,
+            `${B} R62 · R63 · (BLOOM-031) the root index.html over file:// is the real Strange Bloom title (the generated portable runtime; the HTTP-required notice is retired), never a blank page`, J({ boot: fr.boot, portable: fr.portable, items: fr.items }));
           check(fileRun && fileRun.kind === "authored" && fileRun.id === "first_bloom" && fileRun.pv, `${B} R64 · the standalone direct demos/demo-run.html still boots over file:// (First Bloom, the production Planet View)`, J(fileRun)); }
         // ================= viewports =================
         for (const [w, h] of [[1024, 768], [1280, 800], [1440, 900]]) {

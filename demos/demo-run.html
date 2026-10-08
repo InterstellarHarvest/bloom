@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,"><!-- (BLOOM-031) as the root title: no implicit /favicon.ico request outside a hosted subpath -->
 <title>BLOOM — Next Playable Slice: First Bloom (Eden run)</title>
 <!--
   BLOOM demo-run.html — the "Next Playable Slice" (bible v1.1 + docs/NEXT_PLAYABLE_SLICE_v1.0.md).
@@ -369,6 +370,8 @@
 <script src="../resources/bloom-scenario.js"></script>
 <script src="../content/play.js"></script>
 <script src="../resources/bloom-play.js"></script>
+<!-- BLOOM-031: the module seam — import() when served; over file:// the same source modules from the generated portable runtime -->
+<script src="../resources/portable/module-loader.js"></script>
 <!-- BLOOM-029F: the expedition handoff (the exact survey planet, verbatim, from the session) and its arrival cover -->
 <script src="../resources/expedition/expedition-handoff.js"></script>
 <script src="../resources/expedition/expedition-arrival.js"></script>
@@ -383,12 +386,12 @@
 <!-- BLOOM-029C: the production decision rooms (Region Inspect · Adapt · Spread) over the Planet View, same adapter -->
 <link rel="stylesheet" href="../resources/run-ui/decision-rooms.css">
 <script src="../resources/run-ui/plant-specimen.js"></script>
-<!-- BLOOM-029D: the production Terraform room's globe helper (guarded dynamic import of the unmodified PlanetSphereView over http(s);
-     a flat canonical-surface fallback over file://), then the rooms (Terraform is the fourth room since 029D) -->
+<!-- BLOOM-029D: the production Terraform room's globe helper (guarded dynamic import of the unmodified PlanetSphereView over http(s),
+     and over file:// from the portable runtime (BLOOM-031); a flat canonical-surface fallback only if the module cannot load), then the rooms (Terraform is the fourth room since 029D) -->
 <script src="../resources/run-ui/terraform-globe.js"></script>
 <script src="../resources/run-ui/decision-rooms.js"></script>
-<!-- BLOOM-029E: the gameplay transition bridge (guarded dynamic import of the unmodified AtmosphereTransition over http(s); immediate swaps
-     over file://) and the production run report (Bloom Report / Extinction over the dimmed Planet View, the production plant specimen) -->
+<!-- BLOOM-029E: the gameplay transition bridge (guarded dynamic import of the unmodified AtmosphereTransition over http(s),
+     and over file:// from the portable runtime (BLOOM-031); immediate swaps only if the module cannot load) and the production run report (Bloom Report / Extinction over the dimmed Planet View, the production plant specimen) -->
 <script src="../resources/run-ui/gameplay-transition.js"></script>
 <link rel="stylesheet" href="../resources/run-ui/run-report.css">
 <script src="../resources/run-ui/run-report.js"></script>
@@ -474,7 +477,7 @@ function wireActions(el){ el.querySelectorAll("button[data-go]").forEach(b=>b.ad
 function goAction(act,href){
   if(TRAIN) return trainingGo(act); // (BLOOM-028D1) nothing to lose in training: no confirm
   if(!sim.won&&!sim.lost&&!confirm(PC.actions.confirmLeave)) return false; location.href=href; return true; }
-// (BLOOM-028D1) training actions go through the training layer (fade, status); without it (an ES module: not over file://) just go
+// (BLOOM-028D1) training actions go through the training layer (fade, status); without it (an ES module that could not load) just go
 function trainingGo(act){ const ui=window.BLOOM_TRAINING_UI; if(ui) return ui.go(act);
   if(act==="restartTraining") location.reload(); else location.href=act==="beginExpedition"&&BLOOM.expedition?BLOOM.expedition.withBegin(new URL(TRAIN.returnTo,location.href).href):TRAIN.returnTo; }
 // display names: generated worlds can repeat a biome name, so repeats get a number (First Bloom has none)
@@ -1615,7 +1618,9 @@ if(BLOOM_RUN.kind==="missing"){
     // module, loaded here in training mode only) lifts it once the run is drawn and owns the exits; without that layer the black just goes
     const c=document.createElement("div"); c.id="trainingCover"; c.className="training-cover"; c.setAttribute("aria-hidden","true"); document.body.appendChild(c);
     setTimeout(()=>{ if(!c.dataset.owner) c.remove(); },2000);
-    const m=document.createElement("script"); m.type="module"; m.src="../resources/training/training-run.js"; document.head.appendChild(m); }
+    // (BLOOM-031) over file:// the same module comes from the portable runtime (resources/portable/module-loader.js)
+    if(BLOOM.modules&&BLOOM.modules.portable) BLOOM.modules.load(new URL("../resources/training/training-run.js",location.href).href).catch(e=>console.warn("BLOOM: the training layer could not load",e&&e.message));
+    else { const m=document.createElement("script"); m.type="module"; m.src="../resources/training/training-run.js"; document.head.appendChild(m); } }
   const ui=document.createElement("script"); ui.textContent=document.getElementById("bloomUI").textContent; document.body.appendChild(ui);
 }
 }
@@ -1713,7 +1718,7 @@ function expeditionBoot(q){
   const X=BLOOM.expedition, XA=BLOOM.expeditionArrival, XC=BLOOM_DATA.play.expedition, token=q.get("expedition");
   const cover=XA.cover();                                                     // the descent's veil, before the first paint
   const combined=["archetype","seed","scenario","planet","training","candidates"].filter(k=>q.get(k)!==null);
-  const res=combined.length?{ok:false, reason:"link"}:X.load(token, X.storageOf(window));
+  const res=combined.length?{ok:false, reason:"link"}:X.load(token, X.transportOf(window)); // (BLOOM-031) sessionStorage when served; file:// adds window.name
   if(!res.ok){ // explicit failure: identify what happened, start nothing, substitute nothing
     const why=XC.failure[res.reason]||XC.failure.malformed;
     window.BLOOM_RUN={kind:"expedition", failed:true, play:true, summary:{kind:"expedition", failed:true, expedition:true, token, reason:res.reason, why}};

@@ -38,6 +38,13 @@ export class SectorPool {
     this.first = null;                                     // what prefetch() started: { seed, firstBloom, entry }
   }
 
+  /**
+   * (BLOOM-031) How a pool worker is started: null (the default) = the module worker ./survey-worker.js. The portable runtime
+   * (resources/portable/portable-entry.js, file:// only) sets a factory that starts the SAME worker code, bundled into one classic
+   * script, from a blob: URL — file:// pages cannot start module workers. A factory that throws falls back like a refused worker.
+   */
+  static workerFactory = null;
+
   static key(seed, firstBloom) { return seed + (firstBloom ? ":fb" : ""); }
 
   /** Start the first sector now (random seed unless given) and remember it, so a survey constructed later adopts it. Returns this. */
@@ -176,7 +183,7 @@ export class SectorPool {
 
   _spawn() {
     let w;
-    try { w = new Worker(new URL("./survey-worker.js", import.meta.url), { type: "module" }); }
+    try { w = SectorPool.workerFactory ? SectorPool.workerFactory() : new Worker(new URL("./survey-worker.js", import.meta.url), { type: "module" }); }
     catch { this._stopPool(new Error("worker failed")); return null; }
     const slot = { w, task: null };
     w.onmessage = e => {
