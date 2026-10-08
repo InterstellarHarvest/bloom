@@ -1,0 +1,11 @@
+BLOOM-030 broad regression (run-all-suites.sh, 31 suites, 2026-10-07, on the implementation commit 1fe7334): 1372 pass / 1 fail
+(qa-suites-summary.txt).
+
+1. dying-world-check "40 · a Dying World run is won through real shop clicks with earned Biomass (Ocean 28, the Drought strategy)" — an
+   ordinary scenario run with live Math.random: that run reached the win (70.0 %, 285 s) after four of its five planned purchases, so the
+   check's `i === plan.length` failed — the same variance recorded by BLOOM-028D2 (docs/evidence/bloom-028d2/suite-flakes.txt). The path is
+   a direct developer scenario run in the legacy shell; BLOOM-030 changed only the run page's title links (release-check R53–R55) and none
+   of the engine / scenario / content files (R78). Rerun, sequential, nothing else running: branch 1fe7334 63/63 (win at 315 s after all five
+   purchases); baseline 726f74d (a clean `git archive` export) 63/63. Not a BLOOM-030 regression.
+
+With the rerun every one of the 31 suites is green on 1fe7334: 1372 + 1 = 1373 checks, 0 failures outstanding.

@@ -11,6 +11,13 @@
 > AtmosphereTransition internal changed (`tools/run-ui-convergence-check.js` N2 / N10: byte-identical files, identical seeded runs).
 > The 029F selected-planet handoff was **not** done here (§13) — it is now done: `docs/EXPEDITION_HANDOFF_v1.md`; the 028D2 coach is now production (§14,
 > `docs/GUIDED_TRAINING_v1.md`).
+>
+> **BLOOM-030: the root entry.** The production run interface is reached from the repository root: `/` is the Strange Bloom title
+> (`docs/RELEASE_CANDIDATE_v1.md`), and every production return (an expedition's Main menu / Choose another planet, the failure state,
+> training's exits) goes back to it. The run page's only BLOOM-030 change is those title links; the production default, `?ui=legacy`
+> (developer-only, never linked), the transitions, the report and the anchors are unchanged. In the developer `?play=1` path the retired
+> launcher's routes became the root title (Change planet → `?begin=1`, Home → the title; no Change scenario), so this suite's B16
+> extinction action list is Play again · Same planet, new world · Change planet · Home.
 
 ## 1. What changed
 

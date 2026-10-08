@@ -73,7 +73,12 @@ stubs armed).
 - **Not consumed on boot:** a refresh and Play again replay the same token → the same exact planet (E7b / E7c). A token opened in a tab that
   never chose it, or pruned, is `missing` → the explicit failure state (§8).
 
-## 5. The departure (`demos/main-menu.html`)
+## 5. The departure (`demos/main-menu.html`; since BLOOM-030 `resources/main-menu/main-menu-page.js`)
+
+> (BLOOM-030) The departure below now lives in the ONE title composer `resources/main-menu/main-menu-page.js`, shared by the root
+> `index.html` (the canonical entry) and the `demos/main-menu.html` alias. Unchanged in meaning; two path details are explicit: the run
+> page is the composer's `runHref` (`BLOOM.expedition.runUrl(token, runHref)` — the page argument already existed; root:
+> `demos/demo-run.html`), and `returnTo` is the CANONICAL title (the root), not whichever title document departed.
 
 DestinationSurvey's accepted DRAMATIC descent is untouched. Its `descent.onCovered(detail, info)`, called only under full cloud cover
 (the veil at opacity 1, phase `covered`), now does — in this order — `departToGameplay`:
@@ -127,7 +132,7 @@ unchanged. Scenario choice in the Main Menu flow is a separate, later decision.
 `load()` reasons `missing` (unknown token, no token, no storage, pruned, another tab), `malformed`, `version`, `planet`, `integrity`,
 and the page's own `link`. Each shows the explicit failure state in place of the cover (`#expeditionFail`, an alert dialog in plain
 copy from `content/play.js`: a title, one sentence per reason, "No other world was substituted and no run was started…", one button
-**Main menu** → `main-menu.html`); the engineering shell stays hidden; `BLOOM_RUN = { kind: "expedition", failed: true, … }`,
+**Main menu** → `../index.html`, the root title since BLOOM-030; was `main-menu.html`); the engineering shell stays hidden; `BLOOM_RUN = { kind: "expedition", failed: true, … }`,
 `BLOOM_API = { run: summary }`; no sim, no `createSim`, no generator / search call, no First Bloom, no other sector planet, no stack trace
 (E8 covers all six).
 
@@ -148,8 +153,8 @@ the adapter; copy in `content/play.js`):
 | action | goes to |
 |---|---|
 | **Play again** (primary) | `demo-run.html?play=1&expedition=<the same token>` — the SAME stored planet (same fingerprint, planet JSON and canonical surface), a FRESH simulation (0 ticks, start Biomass, no upgrades, not won) |
-| **Choose another planet** | the title page's URL + `begin=1` — the Strange Bloom title enters the Destination Survey at once (the parameter is dropped from the address) |
-| **Main menu** | the title page's URL exactly (`returnTo`, validated by `BLOOM.play.safeReturn`: same origin only) — a fresh sector prefetch starts there |
+| **Choose another planet** | the title's URL + `begin=1` — the Strange Bloom title enters the Destination Survey at once (the parameter is dropped from the address); since BLOOM-030 the ROOT title (`/?begin=1`) |
+| **Main menu** | the title's URL exactly (`returnTo`, validated by `BLOOM.play.safeReturn`: same origin only; fallback `../index.html` since BLOOM-030) — a fresh sector prefetch starts there; since BLOOM-030 the ROOT title (`/`) |
 
 No root-launcher link, no `ui=legacy`, no scenario chooser, no "Same planet, new world" (it would bypass the 3×3 selection). Direct
 developer / player runs keep their existing action sets. Leaving a live run still asks first. The report's **World** line shows the planet
@@ -170,11 +175,13 @@ All ten `bloom:*` dispatch sites and detail key lists, the `data-tutorial` ancho
 default and the report anchors are those of 3ab9933 (N10, E6). The Main Menu return reuses the existing `action-mainMenu` anchor through the
 run menu / report. The 028D2 coach was not built and its worktree not touched.
 
-## 13. Remaining: root-site packaging
+## 13. Root-site packaging (done in BLOOM-030)
 
-The authoritative production flow is `demos/main-menu.html → Destination Survey → demos/demo-run.html`. Root `index.html` (the old
-launcher) is untouched and is linked from nothing in this flow; promoting the Main Menu to the root entry and the `file://` decision are
-packaging work for the PMO, separate from this identity contract.
+The authoritative production flow is now `/ (the root index.html, the Strange Bloom title) → Destination Survey → demos/demo-run.html`
+and back to `/`. The BLOOM-016 launcher is retired; `demos/main-menu.html` is a developer alias of the same title composer whose returns
+also go to the root. The full game requires HTTP(S); the root over `file://` shows a plain notice. The identity contract above is
+unchanged. `docs/RELEASE_CANDIDATE_v1.md`; QA `tools/release-check.js` (R30–R44); this suite's N7 / N8 and title URLs follow the code
+there (N8 reads the composer, the browser part uses `/` as the title).
 
 ## 14. Guided Training
 
