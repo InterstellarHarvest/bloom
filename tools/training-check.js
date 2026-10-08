@@ -117,9 +117,9 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
   { const P = BLOOM.play, here = "http://127.0.0.1:9/demos/demo-run.html?training=1";
     const cases = [["main-menu.html?bg=2", "http://127.0.0.1:9/demos/main-menu.html?bg=2"], ["/index.html", "http://127.0.0.1:9/index.html"], ["https://example.com/", null], ["//example.com/x", null],
       ["javascript:alert(1)", null], ["data:text/html,x", null], ["http://127.0.0.1:10/demos/main-menu.html", null], [null, null], ["http://[bad", null]];
-    const fb = "http://127.0.0.1:9/demos/main-menu.html", got = cases.map(([v, want]) => [v, P.safeReturn(v, here, T.returnTo), want || fb]);
+    const fb = "http://127.0.0.1:9/index.html", got = cases.map(([v, want]) => [v, P.safeReturn(v, here, T.returnTo), want || fb]);
     check(got.every(([, g, w]) => g === w) && P.trainingQuery() === "training=1" && P.trainingQuery({ planet: "first_bloom", returnTo: "http://a/b?c=1&d" }) === "training=1&planet=first_bloom&return=http%3A%2F%2Fa%2Fb%3Fc%3D1%26d",
-      "T7 · return= goes back only to the same origin (else the title page, content/training.js returnTo); trainingQuery builds the documented query",
+      "T7 · return= goes back only to the same origin (else the title page, content/training.js returnTo — since BLOOM-030 the ROOT index.html, the canonical Strange Bloom title); trainingQuery builds the documented query",
       got.filter(([, g, w]) => g !== w).map(([v, g]) => `${v} → ${g}`).join(" | ") || `${cases.length} return values resolved as documented`); }
 
   // T8 · source rules
@@ -140,11 +140,12 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
   // ================================================================ Browser
   let pw; try { pw = require("playwright"); } catch { console.error('Playwright not found. Run with NODE_PATH="$(npm root -g)".'); process.exit(2); }
   const MIME = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".jpg": "image/jpeg", ".png": "image/png", ".json": "application/json" };
-  const server = http.createServer((req, res) => { const u = decodeURIComponent(new URL(req.url, "http://x").pathname), f = path.join(ROOT, u);
+  // (BLOOM-030) "/" serves the root index.html, as any static web server does: the canonical Strange Bloom title
+  const server = http.createServer((req, res) => { const p0 = decodeURIComponent(new URL(req.url, "http://x").pathname), u = p0.endsWith("/") ? p0 + "index.html" : p0, f = path.join(ROOT, u);
     if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); return res.end(); }
     res.writeHead(200, { "content-type": MIME[path.extname(f)] || "application/octet-stream", "cache-control": "no-store" }); fs.createReadStream(f).pipe(res); });
   await new Promise(r => server.listen(0, "127.0.0.1", r));
-  const BASE = `http://127.0.0.1:${server.address().port}`, RUN = `${BASE}/demos/demo-run.html`, MENU = `${BASE}/demos/main-menu.html?bg=1&workers=2`;
+  const BASE = `http://127.0.0.1:${server.address().port}`, RUN = `${BASE}/demos/demo-run.html`, MENU = `${BASE}/?bg=1&workers=2`; // (BLOOM-030) the canonical title: the repository root
   const EVTS = ["run-ready", "play-pause", "speed", "region-select", "upgrade-preview", "upgrade-purchase", "growth-focus", "local-upgrade", "bubble-collect", "win"];
   const INIT = types => { window.__EV = []; for (const t of types) document.addEventListener("bloom:" + t, e => window.__EV.push({ type: t, detail: e.detail, at: performance.now() }));
     // (BLOOM-029E) the arrival cover sampled AT bloom:run-ready (before the training layer's lift, two frames later): the production view's
@@ -181,8 +182,8 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
         `${B} B1a · ?training=1 opens Training Grounds PAUSED at the landing (no tick after 0.6 s), with the training Biomass`, `ticks ${s.st.ticks} · button "${s.btn}" · Biomass ${s.st.biomass} · "${s.title}" ${s.sub}`);
       check(s.own && s.start === 150 && s.sharedStart === D.config.econ.startBiomass && s.shared === CONFIG0,
         `${B} B1b · the run's config is its own derived copy; the page's shared BLOOM_DATA.config is byte-identical to content/config.js`);
-      check(atOpen.cover && +atOpen.op === 1 && s.ui && Number.isFinite(s.liftedAt) && J(s.menu) === J(["restartTraining", "skipTraining", "mainMenu"]) && s.ret === `${BASE}/demos/main-menu.html`,
-        `${B} B1c · it opens under full black, the training layer lifts it once drawn; ☰ Training offers Restart · Skip · Main menu; no return= → the title page`, `return ${s.ret}`);
+      check(atOpen.cover && +atOpen.op === 1 && s.ui && Number.isFinite(s.liftedAt) && J(s.menu) === J(["restartTraining", "skipTraining", "mainMenu"]) && s.ret === `${BASE}/index.html`,
+        `${B} B1c · it opens under full black, the training layer lifts it once drawn; ☰ Training offers Restart · Skip · Main menu; no return= → the title page (BLOOM-030: the root index.html)`, `return ${s.ret}`);
       // seeded: the same scripted ticks + purchases on two loads → the same run
       const run = async () => { const q = watch(await c.newPage()); await q.goto(`${RUN}?training=1`); await ready(q);
         const h = await q.evaluate(() => { BLOOM_API.advance(60); BLOOM_API.buy("cold"); BLOOM_API.advance(500); return Array.from(sim.state).join("") + "|" + Math.round(sim.biomass * 1000) + "|" + sim.bubbles.length; }); await q.close(); return h; };
@@ -251,8 +252,8 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
         `${B} B3a · no query: First Bloom runs at once on the shared config, as before — no black, no training layer (BLOOM-029E: the production title "Strange Bloom — First Bloom")`, `ticks ${a.st.ticks} after 0.7 s · "${a.title}" ${a.sub}`);
       await p.goto(`${RUN}?play=1`); await ready(p);
       const pl = await p.evaluate(() => ({ acts: [...document.querySelectorAll("#playMenu button")].map(b => `${b.dataset.act}=${b.dataset.go}`), label: document.getElementById("btnMenu").textContent, title: document.title }));
-      check(J(pl.acts) === J(["playAgain=demo-run.html?play=1", "changePlanet=../index.html#/planet", "home=../index.html"]) && pl.label === "☰ Menu" && pl.title === "Strange Bloom — First Bloom",
-        `${B} B3b · ?play=1: the same player menu actions and links as before (the page's own; the production run menu lists them), the production title`, pl.acts.join(" · "));
+      check(J(pl.acts) === J(["playAgain=demo-run.html?play=1", "changePlanet=../index.html?begin=1", "home=../index.html"]) && pl.label === "☰ Menu" && pl.title === "Strange Bloom — First Bloom",
+        `${B} B3b · ?play=1: the same player menu actions as before (the page's own; the production run menu lists them), the production title; (BLOOM-030) the retired launcher's routes are now the root title: Change planet = its Destination Survey (begin=1), Home = the title`, pl.acts.join(" · "));
       const rnd = async () => { await p.goto(RUN); await ready(p); return p.evaluate(() => { BLOOM_API.advance(400); return Array.from(sim.state).join(""); }); };
       const r1 = await rnd(), r2 = await rnd();
       check(r1 !== r2, `${B} B3c · ordinary runs keep their own live randomness (two loads, same ticks → different runs; only training is seeded)`);
@@ -293,7 +294,7 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
         `${B} B5a${R} · TRAINING: the title fades to full black and opens the training run (return= the title, query and all); it lifts its black (${fromBlack} ms) onto a paused landing`,
         `title black ${leave && leave.dur} ms, max ${leave && leave.max} over ${leave && leave.n} frames · lift ${coverAnim} ms · ${arr.url.replace(BASE, "")}`);
       const exitVia = async act => { await p.click("#pvMenuBtn"); const durP = p.waitForFunction(() => { const c = document.getElementById("trainingCover"), a = c && c.getAnimations()[0]; return a ? a.effect.getTiming().duration : null; }, null, { timeout: 5000, polling: "raf" }).then(h => h.jsonValue()).catch(() => null);
-        const navP = act === "restartTraining" ? p.waitForEvent("load", { timeout: 15000 }) : p.waitForURL(u => u.href.startsWith(`${BASE}/demos/main-menu.html`), { timeout: 15000 });
+        const navP = act === "restartTraining" ? p.waitForEvent("load", { timeout: 15000 }) : p.waitForURL(u => u.pathname === "/", { timeout: 15000 });
         await p.click(`#pvMenu [data-act="${act}"]`);
         if (act === "skipTraining") await p.click('[data-training-skip] [data-skip="skip"]'); // (BLOOM-028D2) a guided training asks once before a skip
         const dur = await durP; await navP; return dur; };
@@ -349,9 +350,11 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
       await p.goto(`${FILE}?training=1`); await p.waitForFunction(() => window.BLOOM_RUN && BLOOM_RUN.started, null, { timeout: 15000 });
       const t1 = Date.now(); await lifted(p); const gone = Date.now() - t1;
       const s = await p.evaluate(() => ({ running: BLOOM_API.state().running, ui: typeof window.BLOOM_TRAINING_UI, ret: BLOOM_RUN.training.returnTo }));
-      await p.click("#pvMenuBtn"); await Promise.all([p.waitForURL(/main-menu\.html/, { timeout: 10000 }), p.click('#pvMenu [data-act="mainMenu"]')]);
-      check(!s.running && s.ui === "undefined" && gone < 3000 && /^file:.*\/demos\/main-menu\.html$/.test(p.url()),
-        `${B} B6 · over file:// the training layer cannot load: the black still clears (≤ 2 s), the run is paused, Main menu still leaves`, `black gone after ${gone} ms · → ${p.url().split("/").slice(-2).join("/")}`);
+      await p.click("#pvMenuBtn"); await Promise.all([p.waitForURL(u => /\/index\.html$/.test(u.pathname) && !/\/demos\//.test(u.pathname), { timeout: 10000 }), p.click('#pvMenu [data-act="mainMenu"]')]);
+      await p.waitForSelector("#needsServer", { timeout: 5000 }).catch(() => {});
+      const note = await p.evaluate(() => { const n = document.getElementById("needsServer"); return n ? n.innerText : null; });
+      check(!s.running && s.ui === "undefined" && gone < 3000 && /^file:.*\/index\.html$/.test(p.url()) && !/\/demos\//.test(p.url()) && note && note.includes("needs to be opened through a web server"),
+        `${B} B6 · over file:// the training layer cannot load: the black still clears (≤ 2 s), the run is paused, Main menu still leaves — (BLOOM-030) for the root index.html, which over file:// shows its plain "needs a web server" notice`, `black gone after ${gone} ms · → ${p.url().split("/").slice(-2).join("/")}`);
       await c.close();
     }
     await browser.close();

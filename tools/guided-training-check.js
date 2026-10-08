@@ -56,6 +56,13 @@ const sha256 = b => crypto.createHash("sha256").update(b).digest("hex");
 
 // the accepted starting point (BLOOM-029F final) and the paused old 028D2 draft's fingerprint, recorded before this milestone touched anything
 const BASE_SHA = "8f4c273b2baedab5739cdfc28478366c50ee3422";
+// (BLOOM-030) this suite's provenance / scope checks (N1, N8, N9, N10) are bounded by 028D2's own final commit once later milestones
+// build on it (BLOOM-030 packages the root title and retargets the run page's title links by design), exactly as the 029B–029F suites
+// bound theirs (END_SHA); at 726f74d itself the working tree is checked as before
+const END_SHA = "726f74d5f03200ed5ced730533f88a285494dbf4";
+const AT_END = (() => { try { return git(`merge-base --is-ancestor ${END_SHA} HEAD`) === "" && git("rev-parse HEAD") !== END_SHA; } catch { return false; } })();
+const TIP = AT_END ? END_SHA : "HEAD", RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA;
+const hashAt = f => AT_END ? git(`rev-parse ${END_SHA}:${f}`) : git(`hash-object "${f}"`), readAt = f => AT_END ? git(`show ${END_SHA}:${f}`) : read(f);
 const OLD_WT = path.resolve(ROOT, "../bloom-028d2-guided-training");
 const OLD_FP = { head: "c23815ed080dcd084ab4ea412c2a13292c18c181", status: "8abc76b1655aafc0162f675dd0d78ecd9de3b5322d761eb31bf412d0123f4d28", diff: "bde236ae96e4fbae62ba37ab92c46cd57dff1030e774dcb992696f08aa4cda9a",
   untracked: { "resources/training/training-coach.js": "7a600705398e2479bee80b04e4badbc1eba967e8005e7281e60b06dd84dd4b16", "resources/training/training-director.js": "f28082f914af4ad8fa99158b146af24fbeb3b8a8100ac570e06fb5eb4382632f",
@@ -79,9 +86,9 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
   // ================================================================ Node
   if (want("N")) {
     // N1 · the accepted starting point and this milestone's scope
-    { const head = git("rev-parse HEAD"), anc = (() => { try { git(`merge-base --is-ancestor ${BASE_SHA} HEAD`); return true; } catch { return false; } })();
-      const subjects = git(`log --format=%s ${BASE_SHA}..HEAD`).split("\n").filter(Boolean);
-      const first = git(`rev-list --first-parent --reverse ${BASE_SHA}..HEAD`).split("\n").filter(Boolean)[0] || null;
+    { const head = git(`rev-parse ${TIP}`), anc = (() => { try { git(`merge-base --is-ancestor ${BASE_SHA} ${TIP}`); return true; } catch { return false; } })();
+      const subjects = git(`log --format=%s ${BASE_SHA}..${TIP}`).split("\n").filter(Boolean);
+      const first = git(`rev-list --first-parent --reverse ${BASE_SHA}..${TIP}`).split("\n").filter(Boolean)[0] || null;
       const parentOfFirst = first ? git(`rev-parse ${first}^`) : head;
       check(anc && parentOfFirst === BASE_SHA && subjects.every(s => /^BLOOM-028D2\b/.test(s)),
         "N1 · the work starts at the accepted 029F final 8f4c273 exactly (the first commit's parent, or HEAD itself before any commit); every commit since is a BLOOM-028D2 commit; no merge, no other milestone",
@@ -226,16 +233,16 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
         offenders.join(" | ") || "clean"); }
 
     // N8 · the ten events and their detail keys; the adapter; BLOOM_RUN_UI additive
-    { const runBase = git(`show ${BASE_SHA}:demos/demo-run.html`), runAt = read("demos/demo-run.html");
+    { const runBase = git(`show ${BASE_SHA}:demos/demo-run.html`), runAt = readAt("demos/demo-run.html");
       const sites = s => (s.match(/emit\("[a-z-]+",\{[^]*?\}\)/g) || []).map(x => x.replace(/\s+/g, " ")).sort();
-      const adBase = git(`rev-parse ${BASE_SHA}:resources/run-ui/run-ui-adapter.js`), adAt = git("hash-object resources/run-ui/run-ui-adapter.js");
-      const pvDiff = git(`diff ${BASE_SHA} -- resources/run-ui/planet-view.js`).split("\n").filter(l => /^[+-][^+-]/.test(l));
+      const adBase = git(`rev-parse ${BASE_SHA}:resources/run-ui/run-ui-adapter.js`), adAt = hashAt("resources/run-ui/run-ui-adapter.js");
+      const pvDiff = git(`diff ${RANGE} -- resources/run-ui/planet-view.js`).split("\n").filter(l => /^[+-][^+-]/.test(l));
       check(J(sites(runBase)) === J(sites(runAt)) && sites(runAt).length >= 10 && adBase === adAt && pvDiff.every(l => l.startsWith("+")) && /window\.BLOOM_RUN_UI=\{ placeBubble \};/.test(runAt) && /window\.BLOOM_RUN_UI\.adapter=runUI\.adapter;/.test(runAt),
         "N8 · every bloom:* dispatch site in the run page is identical to 8f4c273 (same ten types, same detail keys, nothing tutorial-specific added); the run UI adapter is byte-identical (api 1, the same ten EVENTS); the Planet View gains only additive lines (regionPoint / regionRect); BLOOM_RUN_UI keeps placeBubble and .adapter",
         `${sites(runAt).length} dispatch sites · planet-view +${pvDiff.length}/-0`); }
 
     // N9 · protected files byte-identical; the training config unchanged
-    { const same = f => { try { return git(`rev-parse ${BASE_SHA}:${f}`) === git(`hash-object "${f}"`); } catch { return false; } };
+    { const same = f => { try { return git(`rev-parse ${BASE_SHA}:${f}`) === hashAt(f); } catch { return false; } };
       const PROTECTED = ["content/config.js", "content/traits.js", "content/archetypes.js", "content/scenarios.js", "content/play.js", "planets/first_bloom.js", "planets/training_grounds.js",
         "resources/bloom-sim.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/bloom-play-worker.js",
         "resources/run-ui/run-ui-adapter.js", "resources/run-ui/run-map-renderer.js", "resources/run-ui/decision-rooms.js", "resources/run-ui/decision-rooms.css", "resources/run-ui/terraform-globe.js", "resources/run-ui/gameplay-transition.js",
@@ -243,7 +250,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
         "resources/planet-sphere/planet-sphere-view.js", "resources/planet-sphere/planet-texture.js", "resources/expedition/expedition-handoff.js", "resources/expedition/expedition-arrival.js",
         "resources/training/training-store.js", "resources/main-menu/black-fade.js", "resources/main-menu/main-menu-data.js", "index.html", "demos/destination-survey.html", "demos/atmosphere-transition.html"];
       const dirs = ["resources/destination-survey", "resources/planet-sphere/vendor", "resources/main-menu/backgrounds", "planets", "tools/golden"];
-      const changedDirs = dirs.filter(d => git(`diff --name-only ${BASE_SHA} -- ${d}`) !== "" || git(`status --porcelain -- ${d}`) !== "");
+      const changedDirs = dirs.filter(d => git(`diff --name-only ${RANGE} -- ${d}`) !== "" || (!AT_END && git(`status --porcelain -- ${d}`) !== ""));
       const differ = PROTECTED.filter(f => !same(f));
       const ctxBase = { window: undefined, globalThis: {} }; vm.runInNewContext(git(`show ${BASE_SHA}:content/training.js`), ctxBase);
       const baseTraining = ctxBase.globalThis.BLOOM_DATA.training;
@@ -255,7 +262,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
     // N10 · anchors: the frozen production set unchanged; the coach adds none (its own markers are namespaced); mounted only by the training layer
     { const anchorsOf = s => [...new Set((s.match(/data-tutorial="([a-z-]+)"/g) || []).map(x => x.slice(15, -1)))].sort();
       const files = ["demos/demo-run.html", "resources/run-ui/planet-view.js", "resources/run-ui/decision-rooms.js", "resources/run-ui/run-report.js"];
-      const base = files.map(f => anchorsOf(git(`show ${BASE_SHA}:${f}`))), now = files.map(f => anchorsOf(read(f)));
+      const base = files.map(f => anchorsOf(git(`show ${BASE_SHA}:${f}`))), now = files.map(f => anchorsOf(readAt(f)));
       const coach = COACH_FILES.map(read).join("\n"), setsAnchor = /setAttribute\(\s*["']data-tutorial["']|dataset\.tutorial\s*=|data-tutorial="\$\{/.test(coach.replace(/\[data-tutorial="\$\{cssEsc\(t\.anchor\)\}"\]/g, ""));
       // real imports only (the modules' own header comments show usage examples): file:line:content with the content not a comment
       const importers = [...new Set(git("grep -n -E \"(import .* from|src=)[^;]*training-(coach|director|steps)\\.js\" -- '*.js' '*.html'").split("\n").filter(Boolean)
@@ -278,11 +285,12 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
   // ================================================================ browser
   let pw = null; try { pw = require("playwright"); } catch { check(false, "Playwright available (NODE_PATH=\"$(npm root -g)\")", "require('playwright') failed"); }
   const MIME = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".png": "image/png", ".jpg": "image/jpeg", ".json": "application/json", ".svg": "image/svg+xml" };
-  const server = http.createServer((req, res) => { const u = decodeURIComponent(new URL(req.url, "http://x").pathname), f = path.join(ROOT, u);
+  // (BLOOM-030) "/" serves the root index.html, as any static web server does: the canonical Strange Bloom title
+  const server = http.createServer((req, res) => { const p0 = decodeURIComponent(new URL(req.url, "http://x").pathname), u = p0.endsWith("/") ? p0 + "index.html" : p0, f = path.join(ROOT, u);
     if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); return res.end(); }
     res.writeHead(200, { "content-type": MIME[path.extname(f)] || "application/octet-stream", "cache-control": "no-store" }); fs.createReadStream(f).pipe(res); });
   await new Promise(r => server.listen(0, "127.0.0.1", r));
-  const ORIGIN = `http://127.0.0.1:${server.address().port}`, RUN = ORIGIN + "/demos/demo-run.html", MENU = ORIGIN + "/demos/main-menu.html";
+  const ORIGIN = `http://127.0.0.1:${server.address().port}`, RUN = ORIGIN + "/demos/demo-run.html", MENU = ORIGIN + "/"; // (BLOOM-030) the canonical title: the repository root
   if (EVIDENCE) fs.mkdirSync(EVD, { recursive: true });
   // in every page: the bloom:* log (type, tick, the detail's keys), unhandled rejections, document listener bookkeeping (QA: disposal)
   const INIT = () => {
@@ -339,7 +347,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
           coach: !!document.querySelector(".tc-layer, [data-training-coach]"), tui: !!window.BLOOM_TRAINING_UI, prod: document.documentElement.classList.contains("ui18") })).then(r => ({ ...r, loaded: seen.slice() })); };
       const r1 = await probe(""), r2 = await probe("?planet=training_grounds"), r3 = await probe("?archetype=ocean_archipelago&seed=28"), r4 = await probe("?archetype=frozen_world&seed=4&scenario=volatile_climate");
       // an expedition run: the exact handoff path, from a packed authored planet in this tab's session
-      await p.evaluate(() => { const X = BLOOM.expedition, env = X.pack({ planet: BLOOM_DATA.planets.first_bloom, candidate: { key: "qa-028d2", authored: true, archetypeId: null, seed: null } }, { token: X.newToken(), returnTo: location.origin + "/demos/main-menu.html" });
+      await p.evaluate(() => { const X = BLOOM.expedition, env = X.pack({ planet: BLOOM_DATA.planets.first_bloom, candidate: { key: "qa-028d2", authored: true, archetypeId: null, seed: null } }, { token: X.newToken(), returnTo: location.origin + "/" });
         X.store(env, sessionStorage); window.__tok = env.token; });
       const tok = await p.evaluate(() => window.__tok), r5 = await probe(`?play=1&expedition=${tok}`), r6 = await probe("?training=1&ui=legacy");
       const none = r => r && r.started && !r.coach && !r.tui && !r.loaded.length;
@@ -453,7 +461,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
         const t0b = Date.now();
         // sample the training black every frame until the page goes (kept in sessionStorage across the navigation)
         await p.evaluate(() => { const c = document.getElementById("trainingCover"); let max = 0; const f = () => { const o = c ? +getComputedStyle(c).opacity * (getComputedStyle(c).display === "none" ? 0 : 1) : 0; if (o > max) { max = o; sessionStorage.setItem("__blk", String(max)); } requestAnimationFrame(f); }; f(); });
-        await Promise.all([p.waitForURL(u => new URL(u).pathname.endsWith("/main-menu.html"), { timeout: 20000 }), p.click('#rr [data-act="beginExpedition"]')]);
+        await Promise.all([p.waitForURL(u => new URL(u).pathname === "/index.html", { timeout: 20000 }), p.click('#rr [data-act="beginExpedition"]')]);
         const fadeSeen = Date.now() - t0b;
         await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.entry && MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
         const t = await p.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state, events: MENU_DEV.events.map(e => e.type), handoffs: MENU_DEV.handoffs.length, ss: Object.keys(sessionStorage).filter(k => k.startsWith("strange-bloom.expedition")),
@@ -587,7 +595,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       await p.click("#pvMenuBtn"); await sleep(150); await p.click('#pvMenu [data-act="skipTraining"]'); await sleep(250);
       const d2 = await p.evaluate(() => { const d = document.querySelector("[data-training-skip]"); return d && { title: d.querySelector("h2").textContent, btns: [...d.querySelectorAll("button")].map(b => b.textContent) }; });
       const opened = await p.evaluate(() => BLOOM_TRAINING_UI.stats.skipDialog.opened);
-      await Promise.all([p.waitForURL(u => new URL(u).pathname.endsWith("/main-menu.html"), { timeout: 20000 }), p.click('[data-skip="skip"]')]);
+      await Promise.all([p.waitForURL(u => new URL(u).pathname === "/index.html", { timeout: 20000 }), p.click('[data-skip="skip"]')]);
       await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready, null, { timeout: 20000 }).catch(() => {});
       const t = await p.evaluate(() => ({ rec: JSON.parse(localStorage.getItem("strange-bloom.training")), title: document.title, state: MENU_DEV.entry.state, tag: !document.querySelector(".mm-tag").hidden, coach: !!document.querySelector(".tc-layer") }));
       check(d1 && d1.modal === "true" && d1.title === "Skip training?" && /start it again any time from the main menu/.test(d1.body) && J(d1.btns) === J(["Keep training", "Skip training"]) && d1.focus === "Keep training" && d1.pvInert
@@ -599,10 +607,10 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       // Main menu from training writes nothing; a completed record is never downgraded by a later skip
       if (FULL) {
         const c2 = await ctx({ record: null }), q = watch(await c2.newPage()); await q.goto(RUN + "?training=1"); await coached(q); await sleep(200);
-        await q.click("#pvMenuBtn"); await Promise.all([q.waitForURL(u => new URL(u).pathname.endsWith("/main-menu.html"), { timeout: 20000 }), q.click('#pvMenu [data-act="mainMenu"]')]);
+        await q.click("#pvMenuBtn"); await Promise.all([q.waitForURL(u => new URL(u).pathname === "/index.html", { timeout: 20000 }), q.click('#pvMenu [data-act="mainMenu"]')]);
         const mm = await q.evaluate(() => localStorage.getItem("strange-bloom.training")); await c2.close();
         const c3 = await ctx({ record: "completed" }), r = watch(await c3.newPage()); await r.goto(RUN + "?training=1"); await coached(r); await sleep(200);
-        await r.click(".tc-card .tc-skip"); await sleep(150); await Promise.all([r.waitForURL(u => new URL(u).pathname.endsWith("/main-menu.html"), { timeout: 20000 }), r.click('[data-skip="skip"]')]);
+        await r.click(".tc-card .tc-skip"); await sleep(150); await Promise.all([r.waitForURL(u => new URL(u).pathname === "/index.html", { timeout: 20000 }), r.click('[data-skip="skip"]')]);
         const kept = await r.evaluate(() => JSON.parse(localStorage.getItem("strange-bloom.training")).status); await c3.close();
         check(mm === null && kept === "completed", `${B} G7b · Main menu from a guided training records nothing (it may be offered again); a skip after a completed training keeps "completed" (never downgraded)`, `main menu → ${mm} · completed + skip → ${kept}`); }
       await c.close(); }
@@ -621,7 +629,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       await shot(p, "02-first-begin-recommendation.png");
       await p.click('[data-act="recommend-expedition"]'); await p.waitForFunction(() => MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
       const m2 = await M(p);
-      check(m0.tag && /Training Recommended/.test(m0.name) && J(m0.items) === J(["begin", "training", "settings", "credits"]) && m1.dlg && m1.state === "menu" && m1.prompts === 1 && /demos\/main-menu\.html/.test(dl.url)
+      check(m0.tag && /Training Recommended/.test(m0.name) && J(m0.items) === J(["begin", "training", "settings", "credits"]) && m1.dlg && m1.state === "menu" && m1.prompts === 1 && new URL(dl.url).pathname === "/"
         && J(dl.btns) === J(["Go to Expedition", "Start Training (~5 min)"]) && m2.state === "survey" && JSON.parse(m2.rec).status === "skipped" && !m2.tag && m2.survey && m2.survey.adopted,
         `${B} G9a · no training record: TRAINING carries "Recommended" (read with the label); the first BEGIN EXPEDITION opens ONE dialog ("${dl.h}": Go to Expedition · Start Training (~5 min)) and never starts training by itself; Go to Expedition records "skipped", drops the tag and enters the Destination Survey on the sector prefetched under the dialog`,
         J({ name: m0.name, prompts: m1.prompts, rec: m2.rec && JSON.parse(m2.rec).status, adopted: m2.survey && m2.survey.adopted }));
