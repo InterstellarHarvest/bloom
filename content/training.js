@@ -9,7 +9,8 @@
 //     econ.originTrickle 0.3 → 0.6    the home colony pays for the lessons; with no random bubbles this replaces their income
 //     econ.bubbleChance 0.011 → 0     no random bubbles: every bonus bubble is placed on purpose (demo-run.html placeBubble)
 //     econ.bubbleAutoTicks 60 → 375   a placed bubble waits ~60 s for the player before it collects itself at half value
-//   returnTo   where Skip / Main menu / the finished training go when the URL gives no return= (relative to demos/demo-run.html)
+//   returnTo   where Skip / Main menu / the finished training go when the URL gives no return= (relative to demos/demo-run.html):
+//              (BLOOM-030) the root index.html, the canonical Strange Bloom title
 //   copy       the training run's own menu and report actions (the run page's other copy is unchanged); (BLOOM-028D2) the finished
 //              training's Begin Expedition and the one Skip confirmation. The guided coach's step copy lives with its predicates in
 //              resources/training/training-steps.js (docs/GUIDED_TRAINING_v1.md).
@@ -20,7 +21,7 @@
     planetId: "training_grounds",
     rngSeed: 28041,
     config: { econ: { startBiomass: 150, originTrickle: 0.6, bubbleChance: 0, bubbleAutoTicks: 375 } },
-    returnTo: "main-menu.html",
+    returnTo: "../index.html",
     copy: {
       title: "Training",
       menu: "Training",
