@@ -14,6 +14,12 @@ being prepared while the title is showing.
 > (`docs/EXPEDITION_HANDOFF_v1.md`). The menu modules are byte-identical to 028D1; `?begin=1` (the run's "Choose another planet") enters
 > the survey at once.
 
+> **BLOOM-030: the title is the root.** The repository root `index.html` is now the canonical production entry (the BLOOM-016
+> launcher is retired). The page-level orchestration that lived inline in `demos/main-menu.html` is one module,
+> `resources/main-menu/main-menu-page.js`, mounted by both the root and the `demos/main-menu.html` developer alias through
+> `resources/main-menu/title-boot.js`; everything that comes back to the title comes back to the root (§10,
+> `docs/RELEASE_CANDIDATE_v1.md`). MainMenu, ExpeditionEntry and the menu data are byte-identical.
+
 ---
 
 ## 1. Files and ownership
@@ -27,7 +33,10 @@ being prepared while the title is showing.
 | `resources/main-menu/expedition-entry.js` | **`ExpeditionEntry`**: the flow menu ↔ survey — hosts, the fade through black between them (028C1), the `AtmosphereTransition` it hands to the survey's dramatic departure, the title-screen prefetch, the motion setting |
 | `resources/destination-survey/sector-pool.js` | **`SectorPool`**: the survey's worker pool + sector cache, lifted out of `DestinationSurvey` so a sector can be built before the screen exists (§5) |
 | `resources/destination-survey/destination-survey.js` | adds `sectors` (adopt a pool), `onExit` / `exit()` ("← Main menu"), `static prefetch()` — additive; the accepted behaviour is unchanged |
-| `demos/main-menu.html` | the entry page (localhost): menu → survey → 028B departure → (029F) the production run page with the exact selected planet |
+| `resources/main-menu/main-menu-page.js` | (BLOOM-030) **`mountTitlePage`**: the ONE page-level composition of the title — ExpeditionEntry, TRAINING → the training run, `?begin=1`, the exact-world departure (029F), the stranded notice, bfcache, development query parameters, `window.MENU_DEV` (§10) |
+| `resources/main-menu/title-boot.js` | (BLOOM-030) the entry documents' one classic script: `file://` → the HTTP-required notice; http(s) → the BLOOM classic scripts, then `mountTitlePage` with the document's `data-run` / `data-title` |
+| `index.html` (repository root) | (BLOOM-030) **the canonical production entry**: a thin document over `title-boot.js` (run page `demos/demo-run.html`, canonical title = itself) |
+| `demos/main-menu.html` | the developer / compatibility alias of the title: the same thin document and the same composer (run page `demo-run.html`, canonical title `../index.html`) — not a second product flow |
 | `tools/main-menu-check.js` | the 22nd regression suite |
 
 Not here: the sphere (`docs/PLANET_SPHERE_VIEW_v1.md`), the transition (`docs/ATMOSPHERE_TRANSITION_v1.md`), the survey
@@ -40,6 +49,7 @@ Not here: the sphere (`docs/PLANET_SPHERE_VIEW_v1.md`), the transition (`docs/AT
 <link rel="stylesheet" href="resources/main-menu/main-menu.css">
 <!-- the BLOOM classic scripts (content/config.js … resources/bloom-play.js), as on every BLOOM page -->
 <div id="app" style="position:relative; width:100%; height:100dvh"></div>
+<!-- (BLOOM-030) the product's own pages do not hand-compose this: they load title-boot.js, which mounts main-menu-page.js (§10) -->
 <script type="module">
   import { ExpeditionEntry } from "./resources/main-menu/expedition-entry.js";
   const entry = new ExpeditionEntry(document.getElementById("app"), {
@@ -49,7 +59,8 @@ Not here: the sphere (`docs/PLANET_SPHERE_VIEW_v1.md`), the transition (`docs/AT
 ```
 
 - Like the survey, it needs **http(s)** (ES modules + module workers). Locally: `python3 -m http.server 8767` →
-  `http://localhost:8767/demos/main-menu.html`. The root `file://` decision is still the PMO's (PLANET_SPHERE_VIEW §3).
+  `http://localhost:8767/` (the root title; the alias is `/demos/main-menu.html`). (BLOOM-030) The `file://` decision is made: the full
+  game requires HTTP(S); the root over `file://` shows a plain notice (`docs/RELEASE_CANDIDATE_v1.md` §4).
 - `ExpeditionEntry` options: `reducedMotion` (undefined = the Settings choice; null / true / false override), `sectorSeed` /
   `firstBloom` / `worker` / `workers` (the first visit's sector and pool), `background` (force a painting, 0 … 11),
   `descent`, `onBeginExpedition`, `onTraining`, `transition`, `storage`.
@@ -166,7 +177,8 @@ held 30–90 ms, fully revealed ≈ 0.55–0.63 s after the click; both fades at
 - **Begin before the prefetch completes** is handled honestly (§5). **A return while still loading** disposes the pool
   mid-work; `survey.ready` rejects quietly (the entry catches it).
 - **After the departure** (028B, unchanged) the survey disposes itself under the clouds; the entry's state is `"departed"`.
-  The gameplay handoff is `demos/main-menu.html`'s `descent.onCovered` (029F, `docs/EXPEDITION_HANDOFF_v1.md` §5); a title restored from
+  The gameplay handoff is the title page's `descent.onCovered` (029F, `docs/EXPEDITION_HANDOFF_v1.md` §5; since BLOOM-030 in
+  `resources/main-menu/main-menu-page.js`); a title restored from
   the back-forward cache in that state reloads itself.
 - `stats.entries[]` / `stats.exits[]` record each crossing: `blackMs`, `swappedMs`, `liftMs`, `revealedMs` (from the click).
 
@@ -189,8 +201,27 @@ held 30–90 ms, fully revealed ≈ 0.55–0.63 s after the click; both fades at
 
 ## 9. Out of scope (deliberately)
 
-- Root `index.html` integration and the `file://` decision; tutorial gameplay (TRAINING opens the 028D1 training run);
-  CONTINUE EXPEDITION (no save state exists); any sphere or survey redesign. (The gameplay handoff: done in 029F.)
+- CONTINUE EXPEDITION (no save state exists); any sphere or survey redesign. (The gameplay handoff: done in 029F; Guided Training:
+  028D2; the root `index.html` integration and the `file://` decision: done in BLOOM-030, §10.)
 - The survey's header kicker still reads "BLOOM · Expedition planning" (owner content decision; one string).
 - Credits copy and owner attribution are provisional.
 - Safari / WebKit untested here (not installed on this machine).
+
+## 10. The root entry (BLOOM-030)
+
+- **`/` is the title.** `index.html` at the repository root is a thin document: the two title stylesheets, `<div id="app">` and
+  `<script src="resources/main-menu/title-boot.js" data-run="demos/demo-run.html">`. `demos/main-menu.html` is the same document with
+  `data-run="demo-run.html" data-title="../index.html"`.
+- **One composer.** `title-boot.js` loads the BLOOM classic scripts (config → … → `bloom-play.js` → `expedition/expedition-handoff.js`, in
+  order) and imports `main-menu-page.js`, whose `mountTitlePage({ app, runHref, titleHref })` is the code that was inline in
+  `demos/main-menu.html` (029F / 028D2), moved unchanged in meaning: ExpeditionEntry with the development parameters, TRAINING →
+  `<runHref>?training=1&return=<title>`, `?begin=1` (consumed from the address), the DRAMATIC descent's `onCovered` → pack → store →
+  `survey.dispose()` → `<runHref>?play=1&expedition=<token>`, the stranded notice, the bfcache reload, `window.MENU_DEV` (+ `page`: the
+  resolved run page, title and training URLs).
+- **Returns.** `titleHref` is the canonical title (null = this page); the composer sends every return (`returnTo` in the handoff, the
+  training's `return=`) to it with this page's query and without `begin=1`. Root → `/`; the alias → `/index.html`.
+- **`file://`.** `title-boot.js` shows the HTTP-required notice (STRANGE BLOOM / UNKNOWN SOILS / "This build needs to be opened through a
+  web server." / `python3 -m http.server 8767`) and loads nothing else.
+- **Styles.** The page shell (`html.mm-page`: full-viewport app, night background) and the stranded notice moved from the alias's inline
+  `<style>` into `main-menu.css`.
+- QA: `tools/release-check.js` (the 31st suite).

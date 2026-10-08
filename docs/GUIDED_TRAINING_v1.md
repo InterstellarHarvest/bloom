@@ -35,7 +35,9 @@ black fade, root `index.html`.
 
 ## 2. Training entry
 
-- **TRAINING** on the title (`demos/main-menu.html`) → the usual black fade → `demo-run.html?training=1&return=<the title>`.
+- **TRAINING** on the title (`demos/main-menu.html`; since BLOOM-030 the root `/`) → the usual black fade →
+  `demo-run.html?training=1&return=<the title>` (BLOOM-030: `return=` is always the ROOT title, from the root or the alias; a training
+  run opened without `return=` falls back to `../index.html`, content/training.js).
 - The run page boots the training run exactly as 028D1 does (Training Grounds, derived config, seeded, **paused at tick 0**), mounts the
   production UI, and loads the training layer (`training-run.js`) — for `training=1` only.
 - Once the arrival black has lifted, the layer mounts the coach **if and only if** the run is a training run on the production UI
@@ -294,3 +296,10 @@ title lives. Promoting the title to the root entry needs only the root page to p
 `begin=1`, as `demos/main-menu.html` does. Out of scope here: root `index.html`, file:// packaging, save / resume of a training, any
 change to Concept 18, the Main Menu design, the survey, the expedition handoff, planet generation, topology, the canonical surface, the
 sphere or the AtmosphereTransition.
+
+**Done in BLOOM-030.** The title is the root `index.html` (`docs/RELEASE_CANDIDATE_v1.md`): its one composer
+(`resources/main-menu/main-menu-page.js`) passes TRAINING `return=<the root>` and honours `begin=1`, exactly through this seam. Every
+training exit — Skip (after its confirmation), Main menu, TRAINING COMPLETE's Begin Expedition (`/?begin=1` → the survey) — lands on the
+root; the training run's own fallback without `return=` is `../index.html` (`content/training.js` `returnTo`; the training planet,
+config, seed and copy are unchanged). This suite's provenance / scope checks (N1, N8, N9, N10) are now bounded by 028D2's final
+`726f74d` (END_SHA), as the 029B–029F suites bound theirs, and its title URLs are the root (`release-check` R17, R21, R45–R50).

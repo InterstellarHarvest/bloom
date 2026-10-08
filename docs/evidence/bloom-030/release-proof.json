@@ -1,0 +1,535 @@
+{
+  "milestone": "BLOOM-030",
+  "generatedAt": "2026-10-08T03:08:31.608Z",
+  "baseSha": "726f74d5f03200ed5ced730533f88a285494dbf4",
+  "head": "1fe73347ee16569817dbb5312ff92e543d2683f5",
+  "rootTitleUrl": "http://127.0.0.1:61750/",
+  "rootAssetRequests": [
+    "200 /",
+    "200 /resources/destination-survey/destination-survey.css",
+    "200 /resources/main-menu/main-menu.css",
+    "200 /resources/main-menu/title-boot.js",
+    "200 /content/config.js",
+    "200 /content/traits.js",
+    "200 /planets/first_bloom.js",
+    "200 /content/archetypes.js",
+    "200 /content/scenarios.js",
+    "200 /resources/bloom-sim.js",
+    "200 /resources/bloom-gen.js",
+    "200 /content/play.js",
+    "200 /resources/bloom-validate.js",
+    "200 /resources/bloom-witness.js",
+    "200 /resources/bloom-archetype.js",
+    "200 /resources/bloom-scenario.js",
+    "200 /resources/bloom-play.js",
+    "200 /resources/expedition/expedition-handoff.js",
+    "200 /resources/main-menu/main-menu-page.js",
+    "200 /resources/main-menu/expedition-entry.js",
+    "200 /resources/destination-survey/survey-data.js",
+    "200 /resources/main-menu/main-menu.js",
+    "200 /resources/main-menu/black-fade.js",
+    "200 /resources/main-menu/main-menu-data.js",
+    "200 /resources/training/training-store.js",
+    "200 /resources/destination-survey/destination-survey.js",
+    "200 /resources/atmosphere-transition/atmosphere-transition.js",
+    "200 /resources/planet-sphere/planet-sphere-view.js",
+    "200 /resources/destination-survey/sector-pool.js",
+    "200 /resources/planet-sphere/vendor/three-0.185.1/three.module.min.js",
+    "200 /resources/planet-sphere/planet-texture.js",
+    "200 /resources/planet-surface/planet-surface.js",
+    "200 /resources/planet-sphere/vendor/three-0.185.1/three.core.min.js",
+    "200 /resources/destination-survey/survey-worker.js",
+    "200 /resources/main-menu/backgrounds/menu-02.jpg",
+    "200 /resources/destination-survey/survey-worker.js",
+    "200 /resources/destination-survey/survey-worker.js",
+    "200 /resources/destination-survey/survey-worker.js",
+    "200 /resources/destination-survey/survey-worker.js",
+    "200 /resources/destination-survey/survey-worker.js",
+    "200 /content/config.js",
+    "200 /content/traits.js",
+    "200 /planets/first_bloom.js",
+    "200 /content/archetypes.js",
+    "200 /content/scenarios.js",
+    "200 /content/play.js",
+    "200 /resources/bloom-sim.js",
+    "200 /resources/bloom-gen.js",
+    "200 /resources/bloom-validate.js",
+    "200 /resources/bloom-witness.js",
+    "200 /resources/bloom-archetype.js",
+    "200 /resources/bloom-scenario.js",
+    "200 /resources/bloom-play.js",
+    "200 /resources/destination-survey/survey-data.js",
+    "200 /content/config.js",
+    "200 /content/traits.js",
+    "200 /planets/first_bloom.js",
+    "200 /content/archetypes.js",
+    "200 /content/scenarios.js",
+    "200 /content/play.js",
+    "200 /resources/bloom-sim.js",
+    "200 /resources/bloom-gen.js",
+    "200 /resources/bloom-validate.js",
+    "200 /resources/bloom-witness.js",
+    "200 /resources/bloom-archetype.js",
+    "200 /resources/bloom-scenario.js",
+    "200 /resources/bloom-play.js",
+    "200 /resources/destination-survey/survey-data.js",
+    "200 /content/config.js",
+    "200 /content/traits.js",
+    "200 /planets/first_bloom.js",
+    "200 /content/archetypes.js",
+    "200 /content/scenarios.js",
+    "200 /content/play.js",
+    "200 /resources/bloom-sim.js",
+    "200 /resources/bloom-gen.js",
+    "200 /resources/bloom-validate.js",
+    "200 /resources/bloom-witness.js",
+    "200 /resources/bloom-archetype.js",
+    "200 /resources/bloom-scenario.js",
+    "200 /resources/bloom-play.js",
+    "200 /resources/destination-survey/survey-data.js",
+    "200 /content/config.js",
+    "200 /content/traits.js",
+    "200 /planets/first_bloom.js",
+    "200 /content/archetypes.js",
+    "200 /content/scenarios.js",
+    "200 /content/play.js",
+    "200 /resources/bloom-sim.js",
+    "200 /resources/bloom-gen.js",
+    "200 /resources/bloom-validate.js",
+    "200 /resources/bloom-witness.js",
+    "200 /resources/bloom-archetype.js",
+    "200 /resources/bloom-scenario.js",
+    "200 /resources/bloom-play.js",
+    "200 /resources/destination-survey/survey-data.js",
+    "200 /content/config.js",
+    "200 /content/traits.js",
+    "200 /planets/first_bloom.js",
+    "200 /content/archetypes.js",
+    "200 /content/scenarios.js",
+    "200 /content/play.js",
+    "200 /resources/bloom-gen.js",
+    "200 /resources/bloom-sim.js",
+    "200 /resources/bloom-validate.js",
+    "200 /resources/bloom-witness.js",
+    "200 /resources/bloom-scenario.js",
+    "200 /resources/bloom-play.js",
+    "200 /resources/bloom-archetype.js",
+    "200 /resources/destination-survey/survey-data.js",
+    "200 /content/config.js",
+    "200 /content/traits.js",
+    "200 /planets/first_bloom.js",
+    "200 /content/archetypes.js",
+    "200 /content/scenarios.js",
+    "200 /content/play.js",
+    "200 /resources/bloom-gen.js",
+    "200 /resources/bloom-sim.js",
+    "200 /resources/bloom-validate.js",
+    "200 /resources/bloom-witness.js",
+    "200 /resources/bloom-scenario.js",
+    "200 /resources/bloom-play.js",
+    "200 /resources/bloom-archetype.js",
+    "200 /resources/destination-survey/survey-data.js",
+    "200 /resources/main-menu/backgrounds/menu-12.jpg"
+  ],
+  "rootSmoke": {
+    "/": 200,
+    "/index.html": 200,
+    "/?begin=1": 200
+  },
+  "firstSector": {
+    "seed": 501394,
+    "firstBloom": false,
+    "confirmed": 0,
+    "total": 9,
+    "ready": false,
+    "ms": 677
+  },
+  "selectedCandidate": {
+    "key": "frozen_world:39968",
+    "name": "Ymir-45",
+    "classId": "volatile",
+    "sectorSeed": 733179,
+    "provenanceSeed": 39968,
+    "attempt": 0,
+    "authored": false,
+    "fingerprint": "4dac1cbbefccb30e",
+    "texture": "7b6d5d4b:480x240"
+  },
+  "run": {
+    "url": "<origin>/demos/demo-run.html?play=1&expedition=x50bbf8062f453641a77f",
+    "token": "x50bbf8062f453641a77f",
+    "planetId": "proc_1738621045",
+    "name": "Ymir-45",
+    "fingerprint": "4dac1cbbefccb30e",
+    "storedFingerprint": "4dac1cbbefccb30e",
+    "canonicalSurface": "7b6d5d4b:480x240",
+    "counters": {
+      "generateFromArchetype": 0,
+      "generatePlanet": 0,
+      "attemptPlanet": 0,
+      "searchWorld": 0,
+      "runSearch": 0,
+      "createSim": 1
+    }
+  },
+  "rootReturnUrls": {
+    "playAgain": "demo-run.html?play=1&expedition=x50bbf8062f453641a77f",
+    "choosePlanet": "http://127.0.0.1:61750/?begin=1",
+    "mainMenu": "http://127.0.0.1:61750/"
+  },
+  "trainingReturnUrls": {
+    "trainingHref": "<origin>/demos/demo-run.html?training=1&return=http%3A%2F%2F127.0.0.1%3A61750%2F",
+    "returnTo": "<origin>/",
+    "mainMenu": "<origin>/",
+    "skip": "<origin>/",
+    "beginExpedition": "<origin>/?begin=1 → <origin>/"
+  },
+  "suiteTotals": {
+    "commit": "1fe7334",
+    "suites": 31,
+    "pass": 1372,
+    "fail": 1,
+    "perSuite": [
+      {
+        "suite": "sim-check",
+        "pass": 19,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "gen-check",
+        "pass": 47,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "crossing-check",
+        "pass": 14,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "topology-check",
+        "pass": 53,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "cylinder-gen-check",
+        "pass": 35,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "archetype-check",
+        "pass": 40,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "strategy-check",
+        "pass": 35,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "slice-check",
+        "pass": 15,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "surface-check",
+        "pass": 11,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "procedural-run-check",
+        "pass": 32,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "colony-development-check",
+        "pass": 68,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "desert-check",
+        "pass": 64,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "frozen-check",
+        "pass": 70,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "dying-world-check",
+        "pass": 62,
+        "fail": 1,
+        "exit": 1
+      },
+      {
+        "suite": "economy-check",
+        "pass": 39,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "native-competition-check",
+        "pass": 66,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "volatile-climate-check",
+        "pass": 78,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "game-flow-check",
+        "pass": 48,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "sphere-texture-check",
+        "pass": 14,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "destination-survey-check",
+        "pass": 11,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "atmosphere-transition-check",
+        "pass": 14,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "main-menu-check",
+        "pass": 17,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "training-check",
+        "pass": 82,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "run-ui-check",
+        "pass": 40,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "planet-view-check",
+        "pass": 80,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "plant-rooms-check",
+        "pass": 66,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "terraform-check",
+        "pass": 60,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "run-ui-convergence-check",
+        "pass": 56,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "expedition-handoff-check",
+        "pass": 32,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "guided-training-check",
+        "pass": 51,
+        "fail": 0,
+        "exit": 0
+      },
+      {
+        "suite": "release-check",
+        "pass": 53,
+        "fail": 0,
+        "exit": 0
+      }
+    ],
+    "reruns": [
+      {
+        "suite": "dying-world-check",
+        "check": "40 · a Dying World run is won through real shop clicks (Ocean 28, the Drought strategy)",
+        "classification": "live Math.random run variance (won after 4 of 5 planned purchases); not a BLOOM-030 path",
+        "branchRerun": "63/63 on 1fe7334",
+        "baseline": "63/63 on 726f74d (git archive export)"
+      }
+    ],
+    "outstanding": 0
+  },
+  "browsers": {
+    "chromium": {
+      "version": "147.0.7727.15",
+      "flows": [
+        "root expedition flow"
+      ]
+    },
+    "firefox": {
+      "version": "148.0.2",
+      "flows": [
+        "root expedition flow (1280x800)"
+      ]
+    }
+  },
+  "viewports": {
+    "1024x768": {
+      "title": 0,
+      "survey": 0,
+      "focus": 0,
+      "plaqueInside": true
+    },
+    "1280x800": {
+      "title": 0,
+      "survey": 0,
+      "focus": 0,
+      "plaqueInside": true
+    },
+    "1440x900": {
+      "title": 0,
+      "survey": 0,
+      "focus": 0,
+      "plaqueInside": true
+    }
+  },
+  "protectedFileHashes": {
+    "resources/bloom-sim.js": {
+      "gitBlob": "67f8b63fdeac7f7aa7f6811edb7ca1e194af9a78",
+      "sha256": "15afa2058a7c19648baaa2e9cc86898fae247c4a2197ea341798240fa6785e72"
+    },
+    "resources/bloom-gen.js": {
+      "gitBlob": "f02db3d64b90030bddac9d010ef496eae6c2be8e",
+      "sha256": "a420417d4a31e819fadcd693849d504b8922ad8cb0ec33e381b87a6696ef2246"
+    },
+    "resources/bloom-validate.js": {
+      "gitBlob": "1ba45d3631bf0cd439dababcbed01b2a65b47a56",
+      "sha256": "d1dcb78133f2fe544082b69ead92bdbb612a756a35c00b302e749d3271beeb26"
+    },
+    "resources/bloom-witness.js": {
+      "gitBlob": "fe6554d269bd2066d375f5b0e9bf517a446f2b65",
+      "sha256": "e4ca6ba2fb817a2f275e63d7dbc9fe13eabfdc8874876810d77299ab6b067e25"
+    },
+    "resources/bloom-archetype.js": {
+      "gitBlob": "478ff9001921cc55ac88f993725af76375353672",
+      "sha256": "3da4ce004008be3a29955e8f3e9c9cef279bbe8c55c453d3e5fe0748b5680448"
+    },
+    "resources/bloom-scenario.js": {
+      "gitBlob": "b49f9644104ca67deda10eb66f7ebed176ccc729",
+      "sha256": "7b98415e313e381e8b84ac7b551cb92e26dcf15b7e7f527a78706cf77463e917"
+    },
+    "resources/planet-surface/planet-surface.js": {
+      "gitBlob": "a7b5117f2ff188bfdff9ac8b428e2d31b0983a2a",
+      "sha256": "bc3ade86186ef7ee6f0991ba57a693c275f1e68e73e1b0f4940641f0ff3c84e5"
+    },
+    "resources/planet-sphere/planet-sphere-view.js": {
+      "gitBlob": "d7d64a0cfb53aab11464975bdc2137e92b8c7ed4",
+      "sha256": "9236b79cb3bd2f72a24e0ecb7d9d56d31092239f19ea4163b5c04cace56be382"
+    },
+    "resources/planet-sphere/planet-texture.js": {
+      "gitBlob": "c3cff706ca4804cad49f104aad7d3415ed717d90",
+      "sha256": "2b6566a4edda2c98af7bdc9080c18819491bd13dd1df2290fd3ed1f6cebfe7e0"
+    },
+    "resources/atmosphere-transition/atmosphere-transition.js": {
+      "gitBlob": "190a628c9fe4d6178a02d35da29c7bec3d6c8482",
+      "sha256": "f94bf451f1c9db14afb1d1588666dbfebce4c25a382bb05a152d12f6d4957808"
+    },
+    "resources/destination-survey/survey-data.js": {
+      "gitBlob": "a0a39b8052af9f0ffb5a3fbd8574cd5338f68be8",
+      "sha256": "7c70e6cde6015aeb22be01b829dd06adc2dd8c2ed892a23552f38c3cd8d45ffa"
+    },
+    "resources/destination-survey/survey-worker.js": {
+      "gitBlob": "fff6dda2b909390a99c00ab37eae8b8a1b057fe0",
+      "sha256": "3c42f8f263063e51a6803672a897152d9b01a2d5e60a96170bcabffd216c6d96"
+    },
+    "content/config.js": {
+      "gitBlob": "e22bd530c0bc51ea944319f7416b8db10c17888c",
+      "sha256": "f5a8a059702e7da4b3b1ad6db52f265eafdaadea7db20d597c7dc17b85ecb617"
+    },
+    "content/traits.js": {
+      "gitBlob": "25174e9ee67e492a37696a00fdfa1e4fc99579f3",
+      "sha256": "d17c9cac6c10815db58f28ef8302cc21da42b687561be7c6b3fc7e2b77d78390"
+    },
+    "planets/first_bloom.js": {
+      "gitBlob": "6868ae1bcb09bfdb002955dffa3e4f6de1abc4cb",
+      "sha256": "dfbe3c19a54d91388bf77bd91e710a5bb065ab3f8107b7d3c56fde43f850e078"
+    },
+    "planets/training_grounds.js": {
+      "gitBlob": "ad639a583e0499b48f763b390b124f277d544539",
+      "sha256": "b75fb66d304cd953749d58e9e515500e6b7264b32ef33d9709289b4b1353f20e"
+    }
+  },
+  "fileProtocol": {
+    "root": {
+      "title": "Strange Bloom — Unknown Soils",
+      "notice": "STRANGE BLOOM UNKNOWN SOILS This build needs to be opened through a web server. From the game folder run python3 -m http.server 8767 and open http://localhost:8767/",
+      "bootState": "needs-server",
+      "scriptsLoaded": 1
+    },
+    "demoRun": {
+      "kind": "authored",
+      "id": "first_bloom",
+      "pv": true,
+      "running": true
+    }
+  },
+  "oldWorktree": {
+    "path": "_worktrees/bloom-028d2-guided-training",
+    "head": "c23815ed080dcd084ab4ea412c2a13292c18c181",
+    "status": "8abc76b1655aafc0162f675dd0d78ecd9de3b5322d761eb31bf412d0123f4d28",
+    "diff": "bde236ae96e4fbae62ba37ab92c46cd57dff1030e774dcb992696f08aa4cda9a",
+    "untracked": {
+      "resources/training/training-coach.js": "7a600705398e2479bee80b04e4badbc1eba967e8005e7281e60b06dd84dd4b16",
+      "resources/training/training-director.js": "f28082f914af4ad8fa99158b146af24fbeb3b8a8100ac570e06fb5eb4382632f",
+      "resources/training/training-steps.js": "a047e8ef07a01f1c43bbb6e0df5d22c3ce321d6d5c39a8942893f6e226047cb0",
+      "tools/guided-training-check.js": "e061130f31e342dc7961534dd7c321167223f72de484da9857cbbfe22cbfaa27"
+    }
+  },
+  "children": {
+    "expedition-handoff-check": {
+      "exit": 0,
+      "pass": 32,
+      "fail": 0,
+      "seconds": 52
+    },
+    "guided-training-check": {
+      "exit": 0,
+      "pass": 40,
+      "fail": 0,
+      "seconds": 88
+    }
+  },
+  "totals": {
+    "pass": 53,
+    "fail": 0
+  }
+}
