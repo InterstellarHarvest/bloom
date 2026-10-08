@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Plant Evolution Visual Lab — BLOOM-032A</title>
+<!--
+  BLOOM-032A — PLANT EVOLUTION VISUAL LAB. An owner-facing DESIGN LAB, not gameplay: four candidate art / system directions for the
+  production plant, driven by the REAL trait data and legal tiers, compared side by side with the current production specimen
+  (resources/run-ui/plant-specimen.js, unchanged). Nothing here changes BLOOM_DATA, prices, mechanics or the production UI.
+  Opens over http(s) or as a file. docs/PLANT_EVOLUTION_VISUAL_LAB_v1.md.
+-->
+<link rel="stylesheet" href="../resources/plant-evolution-lab/lab.css">
+</head>
+<body>
+<div class="lab">
+  <header class="lab-head">
+    <div class="lab-title"><b>PLANT EVOLUTION VISUAL LAB</b><small>BLOOM-032A · design lab · not gameplay</small><small class="keys">1–4 concept · C compare · P preset · R reduced motion</small></div>
+    <nav class="strip" id="strip" aria-label="Concept directions"></nav>
+    <div class="modes" role="group" aria-label="View"><button type="button" data-mode="single" aria-pressed="true">Single</button><button type="button" data-mode="compare" aria-pressed="false">Compare (C)</button><button type="button" data-mode="rooms" aria-pressed="false">Room size</button></div>
+  </header>
+  <div class="lab-body">
+    <aside class="ctl" id="controls" aria-label="Lab controls"></aside>
+    <main class="stage" id="stage"></main>
+  </div>
+</div>
+<!-- the REAL trait data (ids, names, legal tiers) and the current production specimen, both unchanged -->
+<script src="../content/config.js"></script>
+<script src="../content/traits.js"></script>
+<script src="../resources/run-ui/plant-specimen.js"></script>
+<!-- the plant-visual pipeline: real state → model → skeleton → authored parts → organism (+ preview / mutation FX) -->
+<script src="../resources/plant-visual/plant-model.js"></script>
+<script src="../resources/plant-visual/pixel-parts.js"></script>
+<script src="../resources/plant-visual/plant-skeleton.js"></script>
+<script src="../resources/plant-visual/concepts.js"></script>
+<script src="../resources/plant-visual/plant-renderer.js"></script>
+<script src="../resources/plant-visual/mutation-fx.js"></script>
+<script src="../resources/plant-evolution-lab/lab.js"></script>
+</body>
+</html>
