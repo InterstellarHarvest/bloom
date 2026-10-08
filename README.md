@@ -96,26 +96,38 @@ When you win, you should be able to say: *I understood this planet, built the ri
 
 ## Play it
 
-The game runs in the browser from this repository. It has no build step and no dependencies to install. It does need to be
-served over HTTP, because opening `index.html` directly as a file only shows a notice.
+**On your computer:** download the repository (**Code → Download ZIP**, then unzip it) or clone it, and **double-click
+`index.html`**. That's it: no installation, no server, no internet connection needed.
 
-```sh
-git clone https://github.com/InterstellarHarvest/bloom.git
-cd bloom
-python3 -m http.server 8767
-```
+**Online:** once GitHub Pages is switched on for this repository, the game will be playable at
+**<https://interstellarharvest.github.io/bloom/>**.
 
-Then open **<http://localhost:8767/>** and press **Begin Expedition**.
+Then press **Begin Expedition**.
 
 Tested on desktop in Chromium-based browsers and Firefox (Safari hasn't been tested yet). There's no sound, and runs aren't saved between visits.
 
 ## For developers
+
+Develop against the source over HTTP (ES modules, module workers), from the repository root:
+
+```sh
+python3 -m http.server 8767        # then open http://localhost:8767/
+```
+
+A double-clicked copy runs a **generated portable runtime** (`dist/portable/`, built from the same source; never edit it by hand).
+After changing a module it contains, rebuild and commit it: `npm --prefix tools ci` once, then `npm --prefix tools run build:portable`
+([`docs/PORTABLE_RUNTIME_v1.md`](docs/PORTABLE_RUNTIME_v1.md)). Players never need Node or npm.
+
+Next up: the plant's visual evolution. The plant drawings you see today are functional, not the finished art; redesigning them is the
+next product milestone.
 
 How the game was built, its design, architecture, test suites and release history live in the docs:
 
 - [`GAME_BIBLE.md`](GAME_BIBLE.md): the design plan of record.
 - [`docs/RELEASE_CANDIDATE_v1.md`](docs/RELEASE_CANDIDATE_v1.md): the shipped product, player flow and developer URLs (including
   the experimental pressure scenarios Dying World, Native Competition and Volatile Climate).
+- [`docs/PORTABLE_RUNTIME_v1.md`](docs/PORTABLE_RUNTIME_v1.md): how one game runs from a double-clicked file and from GitHub Pages
+  (the portable build, the file-safe planet handoff, the Pages workflow and its one-time setting).
 - [`docs/DEVELOPMENT_NOTES.md`](docs/DEVELOPMENT_NOTES.md): the full development log, QA and architecture notes (formerly this README).
 
 ## Credits
