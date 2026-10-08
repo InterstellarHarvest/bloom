@@ -1,0 +1,41 @@
+BLOOM-031 — all 32 regression suites (sequential, one at a time; NODE_PATH="$(npm root -g)" node tools/<suite>.js)
+Suite 32 (portable-runtime-check, --evidence) on 7b069cd; the other 31 on 55f762f, which differs from 7b069cd only in tools/portable-runtime-check.js.
+Run from clean detached checkouts (npm --prefix tools ci from the lockfile). Chromium 147.0.7727.15 · Firefox 148.0.2 (Playwright builds), macOS 12.
+
+portable-runtime-check           exit 0   pass 71    fail 0      373s
+archetype-check                  exit 0   pass 40    fail 0       51s
+atmosphere-transition-check      exit 0   pass 14    fail 0        0s
+colony-development-check         exit 1   pass 67    fail 1       62s
+crossing-check                   exit 0   pass 14    fail 0        2s
+cylinder-gen-check               exit 0   pass 35    fail 0        9s
+desert-check                     exit 0   pass 64    fail 0       52s
+destination-survey-check         exit 0   pass 11    fail 0       58s
+dying-world-check                exit 0   pass 63    fail 0       58s
+economy-check                    exit 0   pass 39    fail 0      317s
+expedition-handoff-check         exit 0   pass 32    fail 0       52s
+frozen-check                     exit 0   pass 70    fail 0       79s
+game-flow-check                  exit 0   pass 48    fail 0      100s
+gen-check                        exit 0   pass 47    fail 0        6s
+guided-training-check            exit 0   pass 50    fail 0      116s
+main-menu-check                  exit 0   pass 17    fail 0       15s
+native-competition-check         exit 0   pass 66    fail 0      162s
+planet-view-check                exit 0   pass 80    fail 0       68s
+plant-rooms-check                exit 0   pass 66    fail 0       77s
+procedural-run-check             exit 0   pass 32    fail 0       15s
+release-check                    exit 0   pass 52    fail 0      248s
+run-ui-check                     exit 0   pass 40    fail 0       67s
+run-ui-convergence-check         exit 0   pass 57    fail 0      125s
+sim-check                        exit 0   pass 19    fail 0        1s
+slice-check                      exit 0   pass 15    fail 0        9s
+sphere-texture-check             exit 0   pass 14    fail 0        6s
+strategy-check                   exit 0   pass 35    fail 0       24s
+surface-check                    exit 0   pass 11    fail 0        3s
+terraform-check                  exit 0   pass 61    fail 0      111s
+topology-check                   exit 0   pass 53    fail 0        3s
+training-check                   exit 0   pass 83    fail 0       52s
+volatile-climate-check           exit 0   pass 78    fail 0      101s
+
+31 other suites: 1373 pass / 1 fail
+TOTAL 32 suites: 1444 pass / 1 fail   (portable-runtime-check also runs guided-training-check --file as a child: 50/50, Chromium + Firefox)
+The one miss: colony-development-check [31] — a known animation-timing flake, reproduced on production main 85ddd76; see suite-flakes.txt.
+Rerun on the branch (55f762f): colony-development-check 68/68.

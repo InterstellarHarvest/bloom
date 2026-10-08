@@ -1,0 +1,20 @@
+BLOOM-031 — suite misses and their classification against production main (85ddd76 = the 3cd91b9 code + a docs-only README)
+
+1. colony-development-check [31] "a successful foothold ends in a distinct bright burst; a plain seed arrival only in a faint ripple"
+   Full run on 55f762f: FAIL — "foothold landing: 28 bright px · arrival landing: 13 bright px (33 pale-ripple px)"; 67/68.
+   Rerun on 55f762f: PASS 68/68 ("foothold landing: 33 bright px · arrival landing: 9 bright px").
+   Production main 85ddd76, three runs: PASS, PASS, FAIL — the identical signature ("foothold landing: 28 bright px").
+   → Known randomized / animation-timing flake (pixel count sampled mid-burst; also recorded in BLOOM-029C). Not a BLOOM-031 regression:
+     the suite drives the legacy run shell's canvas animation, which BLOOM-031 does not touch (demo-run.html's changes are the module seam).
+
+Deterministic failures found on production main and fixed in the suites (not flakes; reported for the PMO):
+2. run-ui-convergence-check N4 and N9 FAIL on 85ddd76 (verified: 2 FAILED on a clean main checkout). The docs-only README rewrite (85ddd76)
+   moved the developer README to docs/DEVELOPMENT_NOTES.md, and both checks look for the ui=legacy policy / legacy-suite list in README.md.
+   BLOOM-031 points them at README.md + docs/DEVELOPMENT_NOTES.md (where that text now lives, byte-identical). Branch: 57/57.
+
+Timing races fixed in the suites during BLOOM-031 (seen only under load; the product path was unaffected):
+3. guided-training-check G3 / G4 / G10 (HTTP and --file alike): after clicking Play the suite read the lesson once and, if the director had
+   not yet polled lesson 1 → 2, its fast-forward loop exited at once ("lesson 2 (natural-spread) points at region:green_verge, expected
+   bubble"). It now waits for the director to leave lesson 1 (pastStart). G10 alone passed 3/3 (HTTP + file) before the fix.
+4. training-check B5a [firefox] (HTTP, reduced-motion training black "lift null ms") missed once in the first targeted run; it passed in
+   every later run (targeted rerun 83/83, full run 83/83). A path BLOOM-031 does not change (the HTTP training layer loads exactly as before).

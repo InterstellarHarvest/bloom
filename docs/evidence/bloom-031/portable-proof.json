@@ -1,0 +1,754 @@
+{
+ "milestone": "BLOOM-031",
+ "baseSha": "3cd91b935008710e1e8c344d8445706b42ecbbc5",
+ "mainSha": "85ddd7619479d80ecf04a66481eb01971e13b5bf",
+ "head": "7b069cd4ec2213ed1a0cf67727f5a60563acbf22",
+ "build": {
+  "fingerprint": "2b90d81a37bd4fc1dd35cda514510dae2119729b9365a5e66afe06148c010dc3",
+  "esbuild": "0.28.2",
+  "format": "bloom-portable/1",
+  "compare": [
+   {
+    "path": "dist/portable/strange-bloom.portable.js",
+    "ok": true,
+    "reason": "identical"
+   },
+   {
+    "path": "dist/portable/manifest.json",
+    "ok": true,
+    "reason": "identical"
+   }
+  ],
+  "committedAtHead": [
+   [
+    "dist/portable/strange-bloom.portable.js",
+    true
+   ],
+   [
+    "dist/portable/manifest.json",
+    true
+   ]
+  ]
+ },
+ "cleanRebuild": {
+  "source": "git archive 7b069cd",
+  "build1": 0,
+  "build2": 0,
+  "hashes1": [
+   "11faf827fd3c72b8349d4900de264d9e994ce2e6fa04258ba46be9d025b708bf",
+   "63c46736a5e74cf5b78a3eebfd0b924c177977d7d87d348648c524402cfa707e"
+  ],
+  "hashes2": [
+   "11faf827fd3c72b8349d4900de264d9e994ce2e6fa04258ba46be9d025b708bf",
+   "63c46736a5e74cf5b78a3eebfd0b924c177977d7d87d348648c524402cfa707e"
+  ],
+  "committed": [
+   "11faf827fd3c72b8349d4900de264d9e994ce2e6fa04258ba46be9d025b708bf",
+   "63c46736a5e74cf5b78a3eebfd0b924c177977d7d87d348648c524402cfa707e"
+  ],
+  "checkExit": 0
+ },
+ "sizes": {
+  "bundleJs": 1256642,
+  "generatedCss": 0,
+  "manifest": 8485,
+  "distPortableTotal": 1265127,
+  "threeJsInBundle": 787616,
+  "gameModulesInBundle": 250674,
+  "surveyWorkerText": 211757,
+  "vendoredThreeOnDisk": 750938
+ },
+ "launchOptions": {
+  "chromium": {},
+  "firefox": {}
+ },
+ "browsers": {
+  "chromium": {
+   "version": "147.0.7727.15",
+   "flows": [
+    "file:// full player flow",
+    "file:// storage blocked",
+    "file:// reduced motion",
+    "http root",
+    "http /bloom/ subpath"
+   ],
+   "errors": 0
+  },
+  "firefox": {
+   "version": "148.0.2",
+   "flows": [
+    "file:// full player flow",
+    "file:// storage blocked",
+    "file:// reduced motion",
+    "http root",
+    "http /bloom/ subpath"
+   ],
+   "errors": 0
+  }
+ },
+ "file": {
+  "chromium": {
+   "boot": {
+    "url": "<repo>/index.html",
+    "protocol": "file:",
+    "state": "mounted",
+    "served": false,
+    "portable": true,
+    "scripts": 15,
+    "bundle": true,
+    "loaded": [
+     "resources/main-menu/main-menu-page.js"
+    ],
+    "notice": false,
+    "failed": false,
+    "title": "Strange Bloom — Unknown Soils",
+    "h1": "Strange Bloom",
+    "items": [
+     "begin",
+     "training",
+     "settings",
+     "credits"
+    ],
+    "tag": true,
+    "prefetch": {
+     "seed": 436150,
+     "firstBloom": false,
+     "confirmed": 0,
+     "total": 9,
+     "ready": false,
+     "ms": 519
+    }
+   },
+   "defaultSecurity": {
+    "mod": "refused",
+    "worker": "refused"
+   },
+   "firstSurvey": {
+    "samples": 9,
+    "incomingSeen": 3,
+    "cells": [
+     "ocean_archipelago:37068",
+     "ocean_archipelago:33209",
+     "desert_world:87028",
+     "ocean_archipelago:8480",
+     "ocean_archipelago:99844",
+     "desert_world:88150",
+     "ocean_archipelago:86156",
+     "frozen_world:50340",
+     "frozen_world:16978"
+    ],
+    "source": "worker",
+    "workersStarted": 6,
+    "workerUrl": "blob:null/e1a542f9-e262-4f0e-8aab-4ece0a33fa94",
+    "workerTasks": 18
+   },
+   "run": {
+    "url": "<repo>/demos/demo-run.html?play=1&expedition=x77ad8faabe504afe20d7",
+    "token": "x77ad8faabe504afe20d7",
+    "planet": "proc_3007310619",
+    "name": "Eos-619",
+    "fingerprint": "21c7ed1d79da9a77",
+    "transport": "file",
+    "counters": {
+     "generateFromArchetype": 0,
+     "generatePlanet": 0,
+     "attemptPlanet": 0,
+     "searchWorld": 0,
+     "runSearch": 0,
+     "createSim": 1
+    }
+   },
+   "rooms": {
+    "rooms": [
+     "region",
+     "adapt",
+     "spread",
+     "terraform"
+    ],
+    "bought": {
+     "adapt": {
+      "id": "cold",
+      "before": 0,
+      "after": 1
+     },
+     "spread": {
+      "id": "seedOut",
+      "before": 0,
+      "after": 1
+     }
+    },
+    "terraform": [
+     "sphere",
+     "sphere"
+    ]
+   },
+   "returnUrls": {
+    "playAgain": "demo-run.html?play=1&expedition=x77ad8faabe504afe20d7",
+    "choosePlanet": "<repo>/index.html?begin=1",
+    "mainMenu": "<repo>/index.html"
+   },
+   "secondExpedition": {
+    "key": "ocean_archipelago:25745",
+    "token": "x37cf0b984d99cc95277f",
+    "handoffsKept": 2,
+    "windowNameBytes": 67643
+   },
+   "requests": {
+    "requestEvents": 274,
+    "referencedDistinct": 41,
+    "referencedFile": 40,
+    "blockedHttp": 0
+   },
+   "noStorage": {
+    "localStorage": "SecurityError",
+    "transport": "file",
+    "transportIsSession": "blocked",
+    "exact": true
+   }
+  },
+  "firefox": {
+   "boot": {
+    "url": "<repo>/index.html",
+    "protocol": "file:",
+    "state": "mounted",
+    "served": false,
+    "portable": true,
+    "scripts": 15,
+    "bundle": true,
+    "loaded": [
+     "resources/main-menu/main-menu-page.js"
+    ],
+    "notice": false,
+    "failed": false,
+    "title": "Strange Bloom — Unknown Soils",
+    "h1": "Strange Bloom",
+    "items": [
+     "begin",
+     "training",
+     "settings",
+     "credits"
+    ],
+    "tag": true,
+    "prefetch": {
+     "seed": 953523,
+     "firstBloom": false,
+     "confirmed": 0,
+     "total": 9,
+     "ready": false,
+     "ms": 494
+    }
+   },
+   "defaultSecurity": {
+    "mod": "loaded",
+    "worker": "started"
+   },
+   "firstSurvey": {
+    "samples": 19,
+    "incomingSeen": 2,
+    "cells": [
+     "frozen_world:70545",
+     "ocean_archipelago:52565",
+     "ocean_archipelago:70508",
+     "frozen_world:35389",
+     "frozen_world:39837",
+     "desert_world:34048",
+     "ocean_archipelago:62538",
+     "frozen_world:91321",
+     "desert_world:4729"
+    ],
+    "source": "worker",
+    "workersStarted": 8,
+    "workerUrl": "blob:null/657a0520-b915-4d6d-be32-d0f53660b5aa",
+    "workerTasks": 18
+   },
+   "run": {
+    "url": "<repo>/demos/demo-run.html?play=1&expedition=x34d08ca6a8669d970505",
+    "token": "x34d08ca6a8669d970505",
+    "planet": "proc_1755156573",
+    "name": "Pallas-573",
+    "fingerprint": "00c71eab43602e55",
+    "transport": "file",
+    "counters": {
+     "generateFromArchetype": 0,
+     "generatePlanet": 0,
+     "attemptPlanet": 0,
+     "searchWorld": 0,
+     "runSearch": 0,
+     "createSim": 1
+    }
+   },
+   "rooms": {
+    "rooms": [
+     "region",
+     "adapt",
+     "spread",
+     "terraform"
+    ],
+    "bought": {
+     "adapt": {
+      "id": "cold",
+      "before": 0,
+      "after": 1
+     },
+     "spread": {
+      "id": "seedOut",
+      "before": 0,
+      "after": 1
+     }
+    },
+    "terraform": [
+     "sphere",
+     "sphere"
+    ]
+   },
+   "returnUrls": {
+    "playAgain": "demo-run.html?play=1&expedition=x34d08ca6a8669d970505",
+    "choosePlanet": "<repo>/index.html?begin=1",
+    "mainMenu": "<repo>/index.html"
+   },
+   "secondExpedition": {
+    "key": "ocean_archipelago:32370",
+    "token": "x75e84c06796ac2b6815b",
+    "handoffsKept": 2,
+    "windowNameBytes": 64068
+   },
+   "requests": {
+    "requestEvents": 0,
+    "referencedDistinct": 41,
+    "referencedFile": 40,
+    "blockedHttp": 0
+   },
+   "noStorage": {
+    "localStorage": "SecurityError",
+    "transport": "file",
+    "transportIsSession": "blocked",
+    "exact": true
+   }
+  }
+ },
+ "http": {
+  "chromium": {
+   "requests": 163,
+   "distRequested": false,
+   "source": "worker",
+   "transport": "sessionStorage"
+  },
+  "firefox": {
+   "requests": 193,
+   "distRequested": false,
+   "source": "worker",
+   "transport": "sessionStorage"
+  }
+ },
+ "pages": {
+  "site": {
+   "files": 73,
+   "bytes": 5864709
+  },
+  "chromium": {
+   "title": "<pages>/bloom/",
+   "painting": "<pages>/bloom/resources/main-menu/backgrounds/menu-01.jpg",
+   "run": "<pages>/bloom/demos/demo-run.html?play=1&expedition=x9fc77451907552f7a7d2",
+   "returns": {
+    "playAgain": "demo-run.html?play=1&expedition=x9fc77451907552f7a7d2",
+    "choosePlanet": "<pages>/bloom/?begin=1",
+    "mainMenu": "<pages>/bloom/"
+   },
+   "training": "<pages>/bloom/demos/demo-run.html?training=1&return=http%3A%2F%2F127.0.0.1%3A58944%2Fbloom%2F",
+   "trainingReturn": "<pages>/bloom/",
+   "requests": 621,
+   "outside": 0,
+   "workerRequests": 24
+  },
+  "firefox": {
+   "title": "<pages>/bloom/",
+   "painting": "<pages>/bloom/resources/main-menu/backgrounds/menu-02.jpg",
+   "run": "<pages>/bloom/demos/demo-run.html?play=1&expedition=x4bbe1b9a5fa1e78048ed",
+   "returns": {
+    "playAgain": "demo-run.html?play=1&expedition=x4bbe1b9a5fa1e78048ed",
+    "choosePlanet": "<pages>/bloom/?begin=1",
+    "mainMenu": "<pages>/bloom/"
+   },
+   "training": "<pages>/bloom/demos/demo-run.html?training=1&return=http%3A%2F%2F127.0.0.1%3A58944%2Fbloom%2F",
+   "trainingReturn": "<pages>/bloom/",
+   "requests": 741,
+   "outside": 0,
+   "workerRequests": 32
+  }
+ },
+ "children": {
+  "guided-training-check --file": {
+   "exit": 0,
+   "pass": 50,
+   "fail": 0,
+   "seconds": 116
+  }
+ },
+ "checks": {
+  "pass": 71,
+  "fail": 0,
+  "results": [
+   {
+    "ok": true,
+    "name": "P1 · the exact start: BLOOM-031 branches from production main 85ddd76, which is the 3cd91b9 production code plus a docs-only README commit (3cd91b9 → 85ddd76 to"
+   },
+   {
+    "ok": true,
+    "name": "P37 · no gameplay source changed: of 104 runtime files outside the module seam (engine, generator, validator, sphere, surface, transitions, survey, rooms, repor"
+   },
+   {
+    "ok": true,
+    "name": "P2 · source mode unchanged: served over http(s) the title imports the source composer (no extra script), the survey starts its module workers (SectorPool.worker"
+   },
+   {
+    "ok": true,
+    "name": "P6 (source) · the file:// \"This build needs to be opened through a web server\" notice is retired from the title boot and the root document (a plain notice remai"
+   },
+   {
+    "ok": true,
+    "name": "P3 · the portable artifacts are generated from source: an in-memory build of tools/build-portable.mjs equals dist/portable/ byte for byte (dist/portable/strange"
+   },
+   {
+    "ok": true,
+    "name": "P4 · deterministic rebuild: from a clean copy (git archive 7b069cd) with dist/ deleted, `npm --prefix tools run build:portable` twice gives byte-identical artif"
+   },
+   {
+    "ok": true,
+    "name": "P4b · the generated header names the build (GENERATED — do not edit; format bloom-portable/1; esbuild version; the source fingerprint, equal to manifest.json's "
+   },
+   {
+    "ok": true,
+    "name": "P5 · no handwritten rules in the generated layer: every bundled module is a tracked source file at its current hash (36 inputs; the survey worker's 15 are the r"
+   },
+   {
+    "ok": true,
+    "name": "P40 · portable build size recorded: 1227 KiB JS (Three.js 769 KiB once · game modules 245 KiB · survey worker text 207 KiB), no generated CSS (the stylesheets l"
+   },
+   {
+    "ok": true,
+    "name": "P13 (source) · the thirteen guided lessons are unchanged (training-steps / director / coach / content/training.js / Training Grounds byte-identical to main)"
+   },
+   {
+    "ok": true,
+    "name": "P38 (source) · the ten bloom:* dispatch sites on the run page are character-identical to main (the same events, the same detail objects)"
+   },
+   {
+    "ok": true,
+    "name": "P39 (source) · the tutorial anchors (every data-tutorial literal on the run page and in the run UI / training) are unchanged"
+   },
+   {
+    "ok": true,
+    "name": "P35 · the GitHub Pages workflow is static-only: on push to main (or by hand) it copies the game's own files (tools/build-pages-site.mjs: index.html, the run pag"
+   },
+   {
+    "ok": true,
+    "name": "P36 (source) · no external runtime dependency: the repository root stays a static site (no package.json there); tools/package.json declares no runtime dependenc"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P6 · P7 · P8 · <repo>/index.html over file:// boots the REAL title (no HTTP-required notice, no failure notice): the classic engine scripts, the modu"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P9 · no special browser flag: launched with Playwright's defaults only (no --allow-file-access-from-files, no --disable-web-security, no prefs) — and"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P11 · all twelve menu paintings resolve to local files (file:///…/resources/main-menu/backgrounds/menu-01…12.jpg) and decode at 1280 × 720"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P44 · Settings works over file:// · keyboard: arrows / Home / End walk the title menu, Enter opens SETTINGS (focus inside); its motion choice persist"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P14 · P15 · the first BEGIN EXPEDITION offers the one first-run recommendation (Go to Expedition · Start Training); the Destination Survey opens over"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P16 · Scan New Sector over file:// brings the next sector (seed 436150 → 522939): nine new validated worlds"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P17 · candidate focus · sphere interaction: the survey's real PlanetSphereView globes draw through one WebGL renderer; the chosen world's own globe m"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P12 (expedition) · P18 · the DRAMATIC departure, then the exact selected candidate survives the FILE-SAFE handoff: the envelope travels in the tab's "
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P19 · P20 · no regeneration on the file:// expedition page (every generator / search / attempt function guarded to throw, none called; one createSim)"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P21 · the production gameplay UI over file:// (Planet View, ui18), titled with the chosen world; run menu Play again · Choose another planet · Main m"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P22 · Region Inspect, Adapt, Spread and Terraform all open over file://; a real Adapt purchase (cold) and a real Spread purchase (seedOut) each raise"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P23 · Terraform over file:// uses the REAL PlanetSphereView (from the portable runtime — never the flat fallback): it shows THIS planet and its textu"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P38 · P39 (runtime) · over file:// every bloom:* event that fired has its frozen detail shape (7 kinds) and every production data-tutorial anchor is "
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P24 · the production Bloom Report over file:// names the chosen world and carries its fingerprint; Keep playing · Play again (same token) · Choose an"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P25 · Play Again over file:// replays the SAME exact planet (same token, planet JSON, fingerprint) on a fresh simulation (nothing owned, not won), no"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P27 · Main menu from the run returns to the file:// title (a fresh prefetch starts)"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P26 · a second file:// expedition (another exact world, a new token; the transport keeps at most two handoffs, 66 KiB in window.name) → its report's "
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P12 · P13 · TRAINING over file:// opens the guided training on Training Grounds (65 % goal), paused, the coach mounted with its own stylesheet and th"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P10 · P36 (runtime) · OFFLINE (network disabled, every http(s) request routed to a block that logged none): every resource the file:// session's page"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P28 · persistence failure degrades safely: with localStorage AND sessionStorage throwing, the file:// title still boots, Settings still applies (noth"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P43 · reduced motion (the OS setting) over file://: the title, the DRAMATIC descent (its reduced variant) and the run's arrival all honour it"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P29 · P31 · the served root (http://…/) is the unchanged source path: the title imports the source composer (14 classic scripts, no seam, no portable"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P30 · the Pages artifact under the project subpath: /bloom/ is the Strange Bloom title (painting, composer, run page all resolved inside /bloom/); 62"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P31 · P32 · under /bloom/ the survey's module workers load (/bloom/resources/destination-survey/survey-worker.js), nine validated worlds; the exact s"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P33 · P34 · every production return is subpath-safe: the report's Play again (relative, same token) · Choose another planet (/bloom/?begin=1 → the su"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P39 · the direct run page (First Bloom) carries the identical tutorial anchor set over file:// and over http (46)"
+   },
+   {
+    "ok": true,
+    "name": "[chromium] P45 · chromium 147.0.7727.15 ran every flow: file:// full player flow · file:// storage blocked · file:// reduced motion · http root · http /bloom/ s"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P6 · P7 · P8 · <repo>/index.html over file:// boots the REAL title (no HTTP-required notice, no failure notice): the classic engine scripts, the modul"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P9 · no special browser flag: launched with Playwright's defaults only (no --allow-file-access-from-files, no --disable-web-security, no prefs) (Firef"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P11 · all twelve menu paintings resolve to local files (file:///…/resources/main-menu/backgrounds/menu-01…12.jpg) and decode at 1280 × 720"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P44 · Settings works over file:// · keyboard: arrows / Home / End walk the title menu, Enter opens SETTINGS (focus inside); its motion choice persists"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P14 · P15 · the first BEGIN EXPEDITION offers the one first-run recommendation (Go to Expedition · Start Training); the Destination Survey opens over "
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P16 · Scan New Sector over file:// brings the next sector (seed 953523 → 155964): nine new validated worlds"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P17 · candidate focus · sphere interaction: the survey's real PlanetSphereView globes draw through one WebGL renderer; the chosen world's own globe mo"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P12 (expedition) · P18 · the DRAMATIC departure, then the exact selected candidate survives the FILE-SAFE handoff: the envelope travels in the tab's w"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P19 · P20 · no regeneration on the file:// expedition page (every generator / search / attempt function guarded to throw, none called; one createSim) "
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P21 · the production gameplay UI over file:// (Planet View, ui18), titled with the chosen world; run menu Play again · Choose another planet · Main me"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P22 · Region Inspect, Adapt, Spread and Terraform all open over file://; a real Adapt purchase (cold) and a real Spread purchase (seedOut) each raise "
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P23 · Terraform over file:// uses the REAL PlanetSphereView (from the portable runtime — never the flat fallback): it shows THIS planet and its textur"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P38 · P39 (runtime) · over file:// every bloom:* event that fired has its frozen detail shape (7 kinds) and every production data-tutorial anchor is p"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P24 · the production Bloom Report over file:// names the chosen world and carries its fingerprint; Keep playing · Play again (same token) · Choose ano"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P25 · Play Again over file:// replays the SAME exact planet (same token, planet JSON, fingerprint) on a fresh simulation (nothing owned, not won), no "
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P27 · Main menu from the run returns to the file:// title (a fresh prefetch starts)"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P26 · a second file:// expedition (another exact world, a new token; the transport keeps at most two handoffs, 63 KiB in window.name) → its report's C"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P12 · P13 · TRAINING over file:// opens the guided training on Training Grounds (65 % goal), paused, the coach mounted with its own stylesheet and the"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P10 · P36 (runtime) · OFFLINE (network disabled, every http(s) request routed to a block that logged none): every resource the file:// session's pages"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P28 · persistence failure degrades safely: with localStorage AND sessionStorage throwing, the file:// title still boots, Settings still applies (nothi"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P43 · reduced motion (the OS setting) over file://: the title, the DRAMATIC descent (its reduced variant) and the run's arrival all honour it"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P29 · P31 · the served root (http://…/) is the unchanged source path: the title imports the source composer (14 classic scripts, no seam, no portable "
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P30 · the Pages artifact under the project subpath: /bloom/ is the Strange Bloom title (painting, composer, run page all resolved inside /bloom/); 741"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P31 · P32 · under /bloom/ the survey's module workers load (/bloom/resources/destination-survey/survey-worker.js), nine validated worlds; the exact se"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P33 · P34 · every production return is subpath-safe: the report's Play again (relative, same token) · Choose another planet (/bloom/?begin=1 → the sur"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P39 · the direct run page (First Bloom) carries the identical tutorial anchor set over file:// and over http (46)"
+   },
+   {
+    "ok": true,
+    "name": "[firefox] P46 · firefox 148.0.2 ran every flow: file:// full player flow · file:// storage blocked · file:// reduced motion · http root · http /bloom/ subpath"
+   },
+   {
+    "ok": true,
+    "name": "P41 · no console error and no page error on any page (file://, http root, /bloom/; both browsers)"
+   },
+   {
+    "ok": true,
+    "name": "P42 · no unhandled promise rejection on any page"
+   },
+   {
+    "ok": true,
+    "name": "P12 · P13 (child) · guided-training-check --file: the COMPLETE guided training over file:// in chromium + firefox — Recommended tag, the first-run recommendatio"
+   }
+  ]
+ },
+ "changedFiles": [
+  ".github/workflows/pages.yml",
+  ".gitignore",
+  "demos/demo-run.html",
+  "dist/portable/manifest.json",
+  "dist/portable/strange-bloom.portable.js",
+  "docs/evidence/bloom-031/01-file-title.png",
+  "docs/evidence/bloom-031/02-file-survey.png",
+  "docs/evidence/bloom-031/03-file-selected-globe.png",
+  "docs/evidence/bloom-031/04-file-gameplay.png",
+  "docs/evidence/bloom-031/05-file-report.png",
+  "docs/evidence/bloom-031/06-file-training.png",
+  "docs/evidence/bloom-031/07-http-bloom-title.png",
+  "docs/evidence/bloom-031/08-http-bloom-gameplay.png",
+  "docs/evidence/bloom-031/portable-proof.json",
+  "index.html",
+  "resources/destination-survey/sector-pool.js",
+  "resources/expedition/expedition-arrival.js",
+  "resources/expedition/expedition-handoff.js",
+  "resources/main-menu/main-menu-page.js",
+  "resources/main-menu/title-boot.js",
+  "resources/portable/module-loader.js",
+  "resources/portable/portable-entry.js",
+  "resources/portable/portable-root.js",
+  "resources/run-ui/gameplay-transition.js",
+  "resources/run-ui/terraform-globe.js",
+  "tools/build-pages-site.mjs",
+  "tools/build-portable.mjs",
+  "tools/expedition-handoff-check.js",
+  "tools/game-flow-check.js",
+  "tools/guided-training-check.js",
+  "tools/package-lock.json",
+  "tools/package.json",
+  "tools/portable-runtime-check.js",
+  "tools/release-check.js",
+  "tools/run-ui-convergence-check.js",
+  "tools/terraform-check.js",
+  "tools/training-check.js"
+ ],
+ "seamCode": {
+  "index.html": {
+   "added": 0,
+   "removed": 0
+  },
+  "demos/demo-run.html": {
+   "added": 5,
+   "removed": 2
+  },
+  "resources/main-menu/title-boot.js": {
+   "added": 13,
+   "removed": 10
+  },
+  "resources/main-menu/main-menu-page.js": {
+   "added": 1,
+   "removed": 1
+  },
+  "resources/destination-survey/sector-pool.js": {
+   "added": 2,
+   "removed": 1
+  },
+  "resources/expedition/expedition-handoff.js": {
+   "added": 24,
+   "removed": 2
+  },
+  "resources/expedition/expedition-arrival.js": {
+   "added": 4,
+   "removed": 2
+  },
+  "resources/run-ui/terraform-globe.js": {
+   "added": 4,
+   "removed": 2
+  },
+  "resources/run-ui/gameplay-transition.js": {
+   "added": 4,
+   "removed": 2
+  }
+ }
+}

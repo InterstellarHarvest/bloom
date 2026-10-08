@@ -2,6 +2,9 @@
 
 **From:** BLOOM-030 · **For:** the Main PMO (pre-main acceptance), the owner, and whoever hosts the static site next.
 Evidence: `docs/evidence/bloom-030/` (stills, `release-proof.json`, suite logs, `REPORT.md`). QA: `tools/release-check.js` (the 31st suite).
+**Updated by BLOOM-031 (portable runtime + GitHub playability):** the game now also runs from a double-clicked `index.html` and is
+ready for GitHub Pages — §1, §3, §4, §8, §9; the full design is `docs/PORTABLE_RUNTIME_v1.md` (QA: `tools/portable-runtime-check.js`,
+the 32nd suite; evidence `docs/evidence/bloom-031/`).
 
 The finished product is now the repository's root experience. The player reads **STRANGE BLOOM · UNKNOWN SOILS**; the project, its
 files, modules and repository stay **BLOOM**.
@@ -13,13 +16,14 @@ files, modules and repository stay **BLOOM**.
 | | |
 |---|---|
 | **Canonical entry** | the repository root: `/` (equivalently `/index.html`) — the Strange Bloom title |
-| **Requires** | **HTTP(S).** ES modules, module workers and the Destination Survey cannot run from `file://` (§4) |
-| **Local development** | from the repository root: `python3 -m http.server 8767` → <http://localhost:8767/> |
+| **Play locally** | (BLOOM-031) download / clone → double-click `index.html` (`file://`): the whole game, offline, no server, no flag (§4) |
+| **Play online** | (BLOOM-031) GitHub Pages, `https://interstellarharvest.github.io/bloom/` once Pages is enabled (one-time setting, §9); any static HTTP(S) host works |
+| **Local development** | from the repository root: `python3 -m http.server 8767` → <http://localhost:8767/> (the source modules) |
 | **Gameplay page** | `demos/demo-run.html` (the production run UI by default) |
 | **Scenario** | the product flow plays **Eden**; Dying World / Native Competition / Volatile Climate are direct developer URLs (§6) |
 | **Save / Continue** | none (no CONTINUE on the title; a run is not saved) |
 | **Audio** | none |
-| **Deployment** | none configured: the repository is a static site; no package manifest, build step, hosting config, analytics, external font or external request |
+| **Deployment** | (BLOOM-031) `.github/workflows/pages.yml`: on push to `main`, copy the game's static files and deploy with the official Pages actions; no server, analytics, external font or external request. The only build is the developer-run portable bundle (`dist/portable/`, committed; `tools/package.json` → esbuild) — players install nothing |
 
 ## 2. The player flow
 
@@ -53,8 +57,9 @@ index.html (root, canonical)          demos/main-menu.html (developer / compatib
    │                                     │  <script src="../resources/main-menu/title-boot.js" data-run="demo-run.html" data-title="../index.html">
    └──────────────┬──────────────────────┘
                   ▼
-resources/main-menu/title-boot.js     classic, no dependencies: file:// → the HTTP-required notice, nothing else loads;
-                  │                   http(s) → the BLOOM classic scripts in order, then import(main-menu-page.js)
+resources/main-menu/title-boot.js     classic, no dependencies: the BLOOM classic scripts in order, then the composer —
+                  │                   http(s): import(main-menu-page.js); (BLOOM-031) file://: the same module from the generated
+                  │                   portable runtime through resources/portable/module-loader.js
                   ▼
 resources/main-menu/main-menu-page.js   mountTitlePage({ app, runHref, titleHref }) — THE page-level composition (once, for both)
                   │                     ExpeditionEntry · TRAINING href · ?begin=1 · the exact-world departure · stranded notice ·
@@ -76,15 +81,20 @@ MainMenu · ExpeditionEntry · DestinationSurvey · BLOOM.expedition (handoff)  
   `runHref`. The payload (version 1, the same fields, `planet` verbatim, `returnTo` now the root), storage (sessionStorage, bounded,
   not consumed on boot) and the run page's boot are untouched.
 
-## 4. `file://`
+## 4. `file://` (BLOOM-031: the whole game)
 
-**The full production game requires HTTP(S)** — ES modules, module workers and the Destination Survey (and, through them, the title's
-first-sector prefetch and the exact-world handoff). The architecture is not bent to run the whole product from a file.
+*(BLOOM-030 shipped an HTTP-required notice here; BLOOM-031 retired it.)* Double-clicking the root `index.html` runs the **entire**
+normal game from `file://` under default browser security, with no server, flag or extension: the title and its twelve paintings,
+Settings, TRAINING (the complete guided training), the Destination Survey (nine validated worlds, Scan New Sector, the real spinning
+globes), the DRAMATIC descent, the exact selected planet, the four rooms with the real Terraform sphere, the report, Play again,
+Choose another planet and Main menu — offline.
 
-Opening the root `index.html` as a file shows a plain notice instead of a blank page — STRANGE BLOOM / UNKNOWN SOILS / *This build
-needs to be opened through a web server.* / the local command — and loads nothing else (`release-check` R62 / R63). The alias does the
-same. The standalone developer run `demos/demo-run.html` still boots over `file://` (First Bloom on the production Planet View; R64);
-its Main menu then leads to the root notice.
+The source architecture is not bent for this. Browsers refuse ES modules and module workers from `file://`, so a file page gets the
+same source modules from a **generated portable runtime** (`dist/portable/strange-bloom.portable.js`, built by
+`npm --prefix tools run build:portable`, committed so players build nothing), the survey's worker as a `blob:` worker built from the
+same worker code, and the exact-planet handoff through the tab's `window.name` (mirrored into `sessionStorage`) instead of
+`sessionStorage` alone. HTTP(S) keeps the source path unchanged. Design, guarantees and developer workflow:
+`docs/PORTABLE_RUNTIME_v1.md`.
 
 ## 5. Production gameplay UI
 
@@ -125,15 +135,23 @@ launcher-screen checks with "the root is the title" checks (RT1 / RT2).
 | keyboard (title menu, first-run dialog, survey entry / return) | ✓ | — |
 | training from the root (every exit) | ✓ | (guided-training-check: main path, Skip, one viewport) |
 | `file://` notice / standalone run | ✓ | ✓ (notice) |
+| (BLOOM-031) `file://` whole game, offline (title → survey → exact world → rooms → report → returns; training; storage blocked; reduced motion) | ✓ | ✓ |
+| (BLOOM-031) guided training complete over `file://` (`guided-training-check --file`) | ✓ | ✓ (its Firefox groups) |
+| (BLOOM-031) served at `/` and under the Pages subpath `/bloom/` (exact handoff, training, every return) | ✓ | ✓ |
 
-Safari / WebKit: not tested (no WebKit build on this machine). Totals on the implementation commit 1fe7334: **31 suites, 1372 pass / 1 fail** — the
+(The `file://` notice row is BLOOM-030's; since BLOOM-031 the root over `file://` is the real title.) Safari / WebKit: not tested (no WebKit build on this machine). Totals on the implementation commit 1fe7334: **31 suites, 1372 pass / 1 fail** — the
 one miss (dying-world-check #40, live-random run variance) reruns 63/63 on the branch and on 726f74d; release-check 53/53
 (`docs/evidence/bloom-030/REPORT.md`).
 
 ## 9. Known non-blocking limitations
 
-- **Hosting is not configured.** Any static host that serves the repository root over HTTP(S) works (the module worker and ES modules
-  need the right `text/javascript` MIME type, which every mainstream static host sends). No HTTPS-only feature is used.
+- **GitHub Pages needs one repository setting** (BLOOM-031): Settings → Pages → Build and deployment → Source: **GitHub Actions**; the
+  workflow is in the repository and publishes on the next push to `main`. Any other static host that serves the files over HTTP(S)
+  works too (ES modules and the module worker need the `text/javascript` MIME type, which every mainstream host sends).
+- **The plant's visual evolution is not final.** The production plant specimen is functional, not the finished art; its redesign is
+  the next product milestone (BLOOM-032).
+- After changing a module that the portable runtime contains, a developer must rebuild and commit `dist/portable/`
+  (`docs/PORTABLE_RUNTIME_v1.md` §11); `portable-runtime-check` P3 fails until they do.
 - **No scenario picker** in the product yet; scenarios are developer URLs. The retired launcher's copy (planet / scenario card text,
   the briefing lines) remains as unused data in `content/play.js`, `content/archetypes.js` (`display`) and `content/scenarios.js`
   (`display.card`) for a future picker; a few old header comments in protected / shared files (e.g. `resources/bloom-play.js`,
