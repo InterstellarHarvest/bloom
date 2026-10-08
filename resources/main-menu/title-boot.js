@@ -11,29 +11,31 @@
 //                (the root title returns to itself, at whatever address the player used: / or /index.html)
 //   data-app     the id of the app element (default "app")
 //
-// What it does, before any module:
-//   · file:// (or any non-http(s) address): the full product cannot run there (ES modules, module workers, the Destination Survey),
-//     so it shows a plain notice — STRANGE BLOOM / UNKNOWN SOILS / "This build needs to be opened through a web server." and the
-//     local command — and loads NOTHING else (no engine script, no module, no request that would fail into a blank page).
-//   · http(s): loads the BLOOM classic scripts the survey's workers and the expedition handoff need, in order, then imports the
-//     page composer (./main-menu-page.js) and mounts the title with the configuration above. All orchestration lives there.
+// What it does: loads the BLOOM classic scripts the survey and the expedition handoff need, in order, then the page composer
+// (./main-menu-page.js), and mounts the title with the configuration above. All orchestration lives there.
+//   · http(s) (development, GitHub Pages): the composer is imported as an ES module (its survey workers are module workers).
+//   · (BLOOM-031) file:// — a double-clicked index.html, the player's local copy — the SAME composer and modules come from the generated
+//     portable runtime (dist/portable/, built from this source by `npm --prefix tools run build:portable`) through the module seam
+//     resources/portable/module-loader.js, loaded here after the classic scripts. The old "needs a web server" notice is retired; a
+//     plain notice remains only for a portable runtime that is missing or broken (a damaged download), never a blank page.
 // Classic script, no dependencies; paths resolve from this file's own URL, never from guesses about the document's folder.
 (function () {
   "use strict";
   var me = document.currentScript;
   if (!me) return;
   var HERE = new URL(me.src, location.href), REPO = new URL("../../", HERE), d = me.dataset;
-  var TITLE = "Strange Bloom", SUBTITLE = "Unknown Soils", PORT = "8767";
+  var TITLE = "Strange Bloom", SUBTITLE = "Unknown Soils";
   // the classic scripts the title page carries (the expedition handoff last: it reads window.BLOOM)
   var CLASSIC = ["content/config.js", "content/traits.js", "planets/first_bloom.js", "content/archetypes.js", "content/scenarios.js", "content/play.js",
     "resources/bloom-sim.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js",
     "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/expedition/expedition-handoff.js"];
-  var boot = window.BLOOM_TITLE_BOOT = { served: /^https?:$/.test(location.protocol), repo: REPO.href, run: d.run || null, title: d.title || null, scripts: [], state: "booting", error: null };
+  var served = /^https?:$/.test(location.protocol);
+  var boot = window.BLOOM_TITLE_BOOT = { served: served, portable: !served, repo: REPO.href, run: d.run || null, title: d.title || null, scripts: [], state: "booting", error: null };
+  // (BLOOM-031) file://: the module seam last (it loads the portable runtime on first use)
+  var scripts = served ? CLASSIC : CLASSIC.concat(["resources/portable/module-loader.js"]);
 
-  if (!boot.served) { boot.state = "needs-server"; notice(); return; }
-
-  var pending = CLASSIC.length;
-  CLASSIC.forEach(function (f) {
+  var pending = scripts.length;
+  scripts.forEach(function (f) {
     var s = document.createElement("script"); s.src = new URL(f, REPO).href; s.async = false;   // async=false: executed in this order
     s.onload = function () { boot.scripts.push(f); if (--pending === 0) mount(); };
     s.onerror = function () { fail("could not load " + f); };
@@ -41,14 +43,16 @@
   });
 
   function mount() {
-    import(new URL("./main-menu-page.js", HERE).href).then(function (m) {
+    var page = new URL("./main-menu-page.js", HERE).href;
+    (served ? import(page) : window.BLOOM.modules.load(page)).then(function (m) {
       boot.state = "mounted";
       m.mountTitlePage({ app: document.getElementById(d.app || "app"), runHref: d.run || "demos/demo-run.html", titleHref: d.title || null });
     }, function (e) { fail(e && e.message || String(e)); });
   }
-  function fail(msg) { if (boot.state === "failed") return; boot.state = "failed"; boot.error = msg; console.error("Strange Bloom: the title could not start (" + msg + ")"); }
+  function fail(msg) { if (boot.state === "failed") return; boot.state = "failed"; boot.error = msg; console.error("Strange Bloom: the title could not start (" + msg + ")");
+    if (boot.portable) notice(); }
 
-  /** The file:// notice: the title's own words and colours, inline styles only (no stylesheet, no font, no request). */
+  /** (BLOOM-031) A local copy that cannot start (portable runtime missing / broken): the title's own words and colours, inline styles only. */
   function notice() {
     document.title = TITLE + " — " + SUBTITLE;
     var app = document.getElementById(d.app || "app"); if (app) app.hidden = true;
@@ -62,9 +66,9 @@
       ".tb-needs .tb-how{margin:0;font-size:14px;color:rgba(217,203,170,.75);max-width:40em;line-height:1.6}" +
       ".tb-needs code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:#f3e9d2;background:rgba(241,213,138,.1);border:1px solid rgba(214,174,96,.4);border-radius:4px;padding:2px 6px;white-space:nowrap}";
     document.head.appendChild(css);
-    var n = document.createElement("main"); n.className = "tb-needs"; n.id = "needsServer"; n.setAttribute("role", "alert");
-    n.innerHTML = "<h1></h1><p class=\"tb-sub\"></p><p class=\"tb-msg\">This build needs to be opened through a web server.</p>" +
-      "<p class=\"tb-how\">From the game folder run <code>python3 -m http.server " + PORT + "</code> and open <code>http://localhost:" + PORT + "/</code></p>";
+    var n = document.createElement("main"); n.className = "tb-needs"; n.id = "bootFailed"; n.setAttribute("role", "alert");
+    n.innerHTML = "<h1></h1><p class=\"tb-sub\"></p><p class=\"tb-msg\">This copy of the game could not start.</p>" +
+      "<p class=\"tb-how\">Its files may be incomplete: download the whole game folder again and open <code>index.html</code>.</p>";
     n.querySelector("h1").textContent = TITLE; n.querySelector(".tb-sub").textContent = SUBTITLE;
     (document.body || document.documentElement).appendChild(n);
   }

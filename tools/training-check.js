@@ -344,17 +344,28 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
       await c.close();
     }
 
-    // B6 · file:// (no ES modules there): the black still goes, actions still leave (without fade or status)
+    // B6 · file:// — (BLOOM-031) the training layer now loads there too, from the generated portable runtime (B6a); the degraded path
+    // the run page keeps for a layer that cannot load (the black still goes, actions still leave) is forced by a failing runtime (B6b)
     if (bname === "chromium") {
-      const c = await ctx(), p = await c.newPage(), FILE = "file://" + encodeURI(path.join(ROOT, "demos/demo-run.html"));
+      const FILE = "file://" + encodeURI(path.join(ROOT, "demos/demo-run.html"));
+      { const c = await ctx(), p = await c.newPage(); const errs = []; p.on("pageerror", e => errs.push(e.message));
+        await p.goto(`${FILE}?training=1`); await p.waitForFunction(() => window.BLOOM_RUN && BLOOM_RUN.started, null, { timeout: 15000 }); await lifted(p);
+        await p.waitForFunction(() => window.BLOOM_TRAINING_UI && BLOOM_TRAINING_UI.guide && BLOOM_TRAINING_UI.guide.mounted, null, { timeout: 20000 }).catch(() => {});
+        const s = await p.evaluate(() => ({ running: BLOOM_API.state().running, ui: typeof window.BLOOM_TRAINING_UI, mounted: !!(window.BLOOM_TRAINING_UI && BLOOM_TRAINING_UI.guide.mounted), portable: !!window.BLOOM_PORTABLE }));
+        await p.click("#pvMenuBtn"); await Promise.all([p.waitForURL(u => /\/index\.html$/.test(u.pathname) && !/\/demos\//.test(u.pathname), { timeout: 10000 }), p.click('#pvMenu [data-act="mainMenu"]')]);
+        await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready, null, { timeout: 30000 }).catch(() => {});
+        const t = await p.evaluate(() => ({ ready: !!(window.MENU_DEV && MENU_DEV.ready), notice: !!document.getElementById("needsServer") }));
+        check(!s.running && s.ui === "object" && s.mounted && s.portable && t.ready && !t.notice && !errs.length,
+          `${B} B6a · (BLOOM-031) over file:// the training layer loads from the portable runtime: the black lifts, the run is paused, the guided coach mounts; Main menu leaves (through the layer) for the root index.html, which over file:// is the real title`, J({ s, t }));
+        await c.close(); }
+      const c = await ctx(), p = await c.newPage();
+      await c.addInitScript(() => { window.BLOOM_PORTABLE = { load: () => Promise.reject(new Error("QA: the portable runtime is unavailable")) }; });
       await p.goto(`${FILE}?training=1`); await p.waitForFunction(() => window.BLOOM_RUN && BLOOM_RUN.started, null, { timeout: 15000 });
       const t1 = Date.now(); await lifted(p); const gone = Date.now() - t1;
       const s = await p.evaluate(() => ({ running: BLOOM_API.state().running, ui: typeof window.BLOOM_TRAINING_UI, ret: BLOOM_RUN.training.returnTo }));
       await p.click("#pvMenuBtn"); await Promise.all([p.waitForURL(u => /\/index\.html$/.test(u.pathname) && !/\/demos\//.test(u.pathname), { timeout: 10000 }), p.click('#pvMenu [data-act="mainMenu"]')]);
-      await p.waitForSelector("#needsServer", { timeout: 5000 }).catch(() => {});
-      const note = await p.evaluate(() => { const n = document.getElementById("needsServer"); return n ? n.innerText : null; });
-      check(!s.running && s.ui === "undefined" && gone < 3000 && /^file:.*\/index\.html$/.test(p.url()) && !/\/demos\//.test(p.url()) && note && note.includes("needs to be opened through a web server"),
-        `${B} B6 · over file:// the training layer cannot load: the black still clears (≤ 2 s), the run is paused, Main menu still leaves — (BLOOM-030) for the root index.html, which over file:// shows its plain "needs a web server" notice`, `black gone after ${gone} ms · → ${p.url().split("/").slice(-2).join("/")}`);
+      check(!s.running && s.ui === "undefined" && gone < 3000 && /^file:.*\/index\.html$/.test(p.url()) && !/\/demos\//.test(p.url()),
+        `${B} B6b · when the training layer cannot load (here: the portable runtime forced to fail over file://) the black still clears (≤ 2 s), the run is paused, Main menu still leaves for the root index.html`, `black gone after ${gone} ms · → ${p.url().split("/").slice(-2).join("/")}`);
       await c.close();
     }
     await browser.close();

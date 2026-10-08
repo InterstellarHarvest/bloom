@@ -1,6 +1,11 @@
 // BLOOM — Guided Training checks (BLOOM-028D2). The 30th regression suite. docs/GUIDED_TRAINING_v1.md §16.
 //
-//   NODE_PATH="$(npm root -g)" node tools/guided-training-check.js [--browsers chromium,firefox] [--evidence] [--only N,G3,…]
+//   NODE_PATH="$(npm root -g)" node tools/guided-training-check.js [--browsers chromium,firefox] [--evidence] [--only N,G3,…] [--file]
+//
+// (BLOOM-031) --file runs every browser group over file:// instead of the static server — the root index.html and demos/demo-run.html
+// opened as files, as a player's double-clicked local copy does (the generated portable runtime, docs/PORTABLE_RUNTIME_v1.md), with no
+// browser flag. The same checks, the same lessons, the same real input; it cannot be combined with --evidence (028D2's stills stay
+// HTTP). tools/portable-runtime-check.js runs it as a child.
 //
 // Node (production modules only): the accepted starting point (8f4c273) and the scope against it; the paused c23815e 028D2 worktree
 // byte-for-byte untouched (its status / diff / untracked files fingerprinted at the start of this milestone) and not imported wholesale;
@@ -45,6 +50,8 @@ for (const f of ["content/config.js", "content/traits.js", "planets/first_bloom.
 const D = BLOOM_DATA, J = JSON.stringify, read = f => fs.readFileSync(path.join(ROOT, f), "utf8");
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const BROWSERS = (argOf("--browsers") || "chromium,firefox").split(","), EVIDENCE = argv.includes("--evidence"), ONLY = argOf("--only") ? argOf("--only").split(",") : null;
+const FILE_MODE = argv.includes("--file"); // (BLOOM-031)
+if (FILE_MODE && EVIDENCE) { console.error("--file cannot be combined with --evidence (the BLOOM-028D2 evidence is the HTTP run)"); process.exit(2); }
 const want = g => !ONLY || ONLY.includes(g);
 const EVD = path.join(ROOT, "docs/evidence/bloom-028d2");
 let fails = 0, passes = 0; const t0 = Date.now(), results = [];
@@ -290,7 +297,9 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
     if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); return res.end(); }
     res.writeHead(200, { "content-type": MIME[path.extname(f)] || "application/octet-stream", "cache-control": "no-store" }); fs.createReadStream(f).pipe(res); });
   await new Promise(r => server.listen(0, "127.0.0.1", r));
-  const ORIGIN = `http://127.0.0.1:${server.address().port}`, RUN = ORIGIN + "/demos/demo-run.html", MENU = ORIGIN + "/"; // (BLOOM-030) the canonical title: the repository root
+  // (BLOOM-030) the canonical title: the repository root; (BLOOM-031) --file: the same documents as files (the root's index.html)
+  const ORIGIN = FILE_MODE ? "file://" + encodeURI(ROOT) : `http://127.0.0.1:${server.address().port}`, RUN = ORIGIN + "/demos/demo-run.html", MENU = ORIGIN + (FILE_MODE ? "/index.html" : "/");
+  const TITLE_PATH = new URL(ORIGIN + "/index.html").pathname, MENU_PATH = new URL(MENU).pathname;
   if (EVIDENCE) fs.mkdirSync(EVD, { recursive: true });
   // in every page: the bloom:* log (type, tick, the detail's keys), unhandled rejections, document listener bookkeeping (QA: disposal)
   const INIT = () => {
@@ -308,7 +317,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
   for (const bname of BROWSERS) {
     if (!pw) break; if (!pw[bname]) { info(`browser ${bname}`, "not a Playwright browser: skipped"); continue; }
     let browser; try { browser = await pw[bname].launch(); } catch (e) { check(false, `[${bname}] browser launches`, e.message.split("\n")[0]); continue; }
-    const B = `[${bname}]`, FULL = bname === "chromium";
+    const B = `[${bname}${FILE_MODE ? " file://" : ""}]`, FULL = bname === "chromium";
     const reqs = [], errsAll = [];
     const ctx = async ({ vw = 1280, vh = 800, record = undefined, settings = null, rm = false } = {}) => {
       const c = await browser.newContext({ viewport: { width: vw, height: vh }, reducedMotion: rm ? "reduce" : "no-preference" });
@@ -324,6 +333,8 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
         vw: document.documentElement.clientWidth, vh: document.documentElement.clientHeight, sw: document.documentElement.scrollWidth }; });
     const settle = async p => { await p.waitForFunction(() => { const s = BLOOM.decisionRooms.instance.state(), r = BLOOM.runReport && BLOOM.runReport.instance; return !s.transitioning && !(r && r.state().busy); }, null, { timeout: 8000 }).catch(() => {}); await sleep(260); };
     const adv = (p, n) => p.evaluate(n => BLOOM_API.advance(n), n);                     // QA: time only
+    // (BLOOM-031) lesson 1 → 2 happens on the director's own poll after Play; wait for it instead of reading the lesson once (a race under load)
+    const pastStart = p => p.waitForFunction(() => { const d = window.BLOOM_TRAINING_UI && BLOOM_TRAINING_UI.guide.director; return !!(d && d.current && d.current.id !== "start"); }, null, { timeout: 10000, polling: 20 }).catch(() => {});
     const ovA = (a, b) => !a || !b ? 0 : Math.max(0, Math.min(a[2], b[2]) - Math.max(a[0], b[0])) * Math.max(0, Math.min(a[3], b[3]) - Math.max(a[1], b[1]));
     // the coach's primary target, checked and used: the real control under its centre (never a coach element), the card off it, then a real click / hover
     const hitAt = (p, x, y) => p.evaluate(([x, y]) => { const e = document.elementFromPoint(x, y); if (!e) return null; const t = e.closest("[data-tutorial],[data-tool],[data-go],[data-act],[role=tab],[data-r],[data-node],canvas,button");
@@ -373,10 +384,10 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       const R = [], fit = async () => p.evaluate(() => Object.fromEntries(BLOOM_RUN_UI.adapter.regions().map(r => [r.id, +r.fitness.toFixed(3)])));
       const fit0 = await fit();
       // 1 · Play
-      R.push(await usePrim(p, "play-pause")); await sleep(300);
+      R.push(await usePrim(p, "play-pause")); await sleep(300); await pastStart(p);
       // 2 · natural spread (time only)
       let s = await G(p); const g2b = { id: s.id, body: s.body, prim: s.prim && s.prim.key }; await shot(p, "04-step02-green-verge.png");
-      for (let k = 0; k < 40 && (await G(p)).id === "natural-spread"; k++) { await adv(p, 10); await sleep(60); }
+      await pastStart(p); for (let k = 0; k < 40 && (await G(p)).id === "natural-spread"; k++) { await adv(p, 10); await sleep(60); }
       // 3 · the scripted bubble: clicked on the map where the coach points
       s = await G(p); await sleep(200); await shot(p, "05-step03-bubble.png");
       const bub = await p.evaluate(() => ({ bubbles: BLOOM_RUN_UI.adapter.bubbles().map(b => ({ tile: b.tile, region: b.region.id })), calls: BLOOM_TRAINING_UI.guide.director.stats.placeBubbleCalls }));
@@ -461,7 +472,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
         const t0b = Date.now();
         // sample the training black every frame until the page goes (kept in sessionStorage across the navigation)
         await p.evaluate(() => { const c = document.getElementById("trainingCover"); let max = 0; const f = () => { const o = c ? +getComputedStyle(c).opacity * (getComputedStyle(c).display === "none" ? 0 : 1) : 0; if (o > max) { max = o; sessionStorage.setItem("__blk", String(max)); } requestAnimationFrame(f); }; f(); });
-        await Promise.all([p.waitForURL(u => new URL(u).pathname === "/index.html", { timeout: 20000 }), p.click('#rr [data-act="beginExpedition"]')]);
+        await Promise.all([p.waitForURL(u => new URL(u).pathname === TITLE_PATH, { timeout: 20000 }), p.click('#rr [data-act="beginExpedition"]')]);
         const fadeSeen = Date.now() - t0b;
         await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.entry && MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
         const t = await p.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state, events: MENU_DEV.events.map(e => e.type), handoffs: MENU_DEV.handoffs.length, ss: Object.keys(sessionStorage).filter(k => k.startsWith("strange-bloom.expedition")),
@@ -475,7 +486,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
     // ---------------------------------------------------------------- G4 · the alternate route (Warm · Early Maturity · Roots on Green Verge · Seed Reserve · Drought; auto bubble)
     if (want("G4") && FULL) {
       const c = await ctx(), p = watch(await c.newPage()); await p.goto(RUN + "?training=1"); await coached(p); await sleep(300);
-      await usePrim(p, "play-pause"); for (let k = 0; k < 40 && (await G(p)).id === "natural-spread"; k++) { await adv(p, 10); await sleep(50); }
+      await usePrim(p, "play-pause"); await pastStart(p); for (let k = 0; k < 40 && (await G(p)).id === "natural-spread"; k++) { await adv(p, 10); await sleep(50); }
       const tile = await p.evaluate(() => BLOOM_RUN_UI.adapter.bubbles().map(b => b.tile)[0]);
       await adv(p, 380); await sleep(400);                                             // left alone: it collects itself (auto)
       const a3 = await G(p);
@@ -526,7 +537,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       await p.click('#pv .pv-tool[data-tool="adapt"]'); await settle(p); const e1 = await G(p);
       await p.click('[data-tutorial="upgrade-cold"]'); await sleep(300); const e2 = await G(p);
       await p.click('#dr .dr-room:not([hidden]) .rb.resume'); await settle(p);
-      for (let k = 0; k < 40 && (await G(p)).id === "natural-spread"; k++) { await adv(p, 10); await sleep(40); }
+      await pastStart(p); for (let k = 0; k < 40 && (await G(p)).id === "natural-spread"; k++) { await adv(p, 10); await sleep(40); }
       await adv(p, 80); await sleep(250);
       const bt = await p.evaluate(() => BLOOM_RUN_UI.adapter.bubbles()[0]); if (bt) { const pt = await p.evaluate(t => { const b = BLOOM_RUN_UI.adapter.bubbles().find(x => x.tile === t); const q = BLOOM.planetView.instance.renderer.clientOf(b.x, b.y); return [q.x, q.y]; }, bt.tile); await p.mouse.click(pt[0], pt[1]); await sleep(300); }
       const e3 = await G(p);
@@ -556,7 +567,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       const c = await ctx(), p = watch(await c.newPage()); await p.goto(RUN + "?training=1"); await coached(p); await sleep(300);
       await p.focus("#pvPause"); await p.keyboard.press("Enter"); await sleep(300);
       const k1 = await G(p);
-      for (let k = 0; k < 40 && (await G(p)).id === "natural-spread"; k++) { await adv(p, 10); await sleep(40); }
+      await pastStart(p); for (let k = 0; k < 40 && (await G(p)).id === "natural-spread"; k++) { await adv(p, 10); await sleep(40); }
       await adv(p, 380); await sleep(400);                                             // the bubble collects itself (no pointer)
       // the map by keyboard: focus, arrows to Chill Hollow (announced in pvLive), Enter
       await p.focus("#pvMap"); let picked = null;
@@ -595,7 +606,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       await p.click("#pvMenuBtn"); await sleep(150); await p.click('#pvMenu [data-act="skipTraining"]'); await sleep(250);
       const d2 = await p.evaluate(() => { const d = document.querySelector("[data-training-skip]"); return d && { title: d.querySelector("h2").textContent, btns: [...d.querySelectorAll("button")].map(b => b.textContent) }; });
       const opened = await p.evaluate(() => BLOOM_TRAINING_UI.stats.skipDialog.opened);
-      await Promise.all([p.waitForURL(u => new URL(u).pathname === "/index.html", { timeout: 20000 }), p.click('[data-skip="skip"]')]);
+      await Promise.all([p.waitForURL(u => new URL(u).pathname === TITLE_PATH, { timeout: 20000 }), p.click('[data-skip="skip"]')]);
       await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready, null, { timeout: 20000 }).catch(() => {});
       const t = await p.evaluate(() => ({ rec: JSON.parse(localStorage.getItem("strange-bloom.training")), title: document.title, state: MENU_DEV.entry.state, tag: !document.querySelector(".mm-tag").hidden, coach: !!document.querySelector(".tc-layer") }));
       check(d1 && d1.modal === "true" && d1.title === "Skip training?" && /start it again any time from the main menu/.test(d1.body) && J(d1.btns) === J(["Keep training", "Skip training"]) && d1.focus === "Keep training" && d1.pvInert
@@ -607,10 +618,10 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       // Main menu from training writes nothing; a completed record is never downgraded by a later skip
       if (FULL) {
         const c2 = await ctx({ record: null }), q = watch(await c2.newPage()); await q.goto(RUN + "?training=1"); await coached(q); await sleep(200);
-        await q.click("#pvMenuBtn"); await Promise.all([q.waitForURL(u => new URL(u).pathname === "/index.html", { timeout: 20000 }), q.click('#pvMenu [data-act="mainMenu"]')]);
+        await q.click("#pvMenuBtn"); await Promise.all([q.waitForURL(u => new URL(u).pathname === TITLE_PATH, { timeout: 20000 }), q.click('#pvMenu [data-act="mainMenu"]')]);
         const mm = await q.evaluate(() => localStorage.getItem("strange-bloom.training")); await c2.close();
         const c3 = await ctx({ record: "completed" }), r = watch(await c3.newPage()); await r.goto(RUN + "?training=1"); await coached(r); await sleep(200);
-        await r.click(".tc-card .tc-skip"); await sleep(150); await Promise.all([r.waitForURL(u => new URL(u).pathname === "/index.html", { timeout: 20000 }), r.click('[data-skip="skip"]')]);
+        await r.click(".tc-card .tc-skip"); await sleep(150); await Promise.all([r.waitForURL(u => new URL(u).pathname === TITLE_PATH, { timeout: 20000 }), r.click('[data-skip="skip"]')]);
         const kept = await r.evaluate(() => JSON.parse(localStorage.getItem("strange-bloom.training")).status); await c3.close();
         check(mm === null && kept === "completed", `${B} G7b · Main menu from a guided training records nothing (it may be offered again); a skip after a completed training keeps "completed" (never downgraded)`, `main menu → ${mm} · completed + skip → ${kept}`); }
       await c.close(); }
@@ -629,7 +640,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       await shot(p, "02-first-begin-recommendation.png");
       await p.click('[data-act="recommend-expedition"]'); await p.waitForFunction(() => MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
       const m2 = await M(p);
-      check(m0.tag && /Training Recommended/.test(m0.name) && J(m0.items) === J(["begin", "training", "settings", "credits"]) && m1.dlg && m1.state === "menu" && m1.prompts === 1 && new URL(dl.url).pathname === "/"
+      check(m0.tag && /Training Recommended/.test(m0.name) && J(m0.items) === J(["begin", "training", "settings", "credits"]) && m1.dlg && m1.state === "menu" && m1.prompts === 1 && new URL(dl.url).pathname === MENU_PATH
         && J(dl.btns) === J(["Go to Expedition", "Start Training (~5 min)"]) && m2.state === "survey" && JSON.parse(m2.rec).status === "skipped" && !m2.tag && m2.survey && m2.survey.adopted,
         `${B} G9a · no training record: TRAINING carries "Recommended" (read with the label); the first BEGIN EXPEDITION opens ONE dialog ("${dl.h}": Go to Expedition · Start Training (~5 min)) and never starts training by itself; Go to Expedition records "skipped", drops the tag and enters the Destination Survey on the sector prefetched under the dialog`,
         J({ name: m0.name, prompts: m1.prompts, rec: m2.rec && JSON.parse(m2.rec).status, adopted: m2.survey && m2.survey.adopted }));
@@ -659,7 +670,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       const out = [];
       for (const [w, h, name] of sizes) {
         const c = await ctx({ vw: w, vh: h }), p = watch(await c.newPage()); await p.goto(RUN + "?training=1"); await coached(p); await sleep(400);
-        const a = await G(p); await usePrim(p, "play-pause"); for (let k = 0; k < 40 && (await G(p)).id === "natural-spread"; k++) { await adv(p, 10); await sleep(40); }
+        const a = await G(p); await usePrim(p, "play-pause"); await pastStart(p); for (let k = 0; k < 40 && (await G(p)).id === "natural-spread"; k++) { await adv(p, 10); await sleep(40); }
         await usePrim(p, "bubble"); await sleep(200); await usePrim(p, "chill_hollow"); await sleep(300);
         const b = await G(p);                                                               // lesson 5: the banner's Would help
         if (name) await shot(p, name);

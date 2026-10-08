@@ -19,7 +19,11 @@
   const doc = root.document;
   const HERE = doc && doc.currentScript && doc.currentScript.src ? doc.currentScript.src : null;
   const SETTINGS_URL = HERE ? new URL("../main-menu/main-menu-data.js", HERE).href : "../resources/main-menu/main-menu-data.js";
-  const canLoadModules = () => !!(root.location && /^https?:$/.test(root.location.protocol));
+  // (BLOOM-031) served over http(s): import(); opened as a file (file://): the SAME source module from the portable runtime, through
+  // BLOOM.modules (resources/portable/module-loader.js). Without that seam (a page that does not load it) file:// stays module-less.
+  const modules = () => (root.BLOOM && root.BLOOM.modules) || null;
+  const canLoadModules = () => !!(root.location && /^https?:$/.test(root.location.protocol)) || !!(modules() && modules().portable);
+  const importModule = url => (modules() && modules().portable ? modules().load(url) : import(url));
   const T = { lift: 720, liftRm: 220, paintWait: 4000, extraFrames: 2 }; // paintWait: the cap on waiting for the surface (a stalled GPU process must not strand the player)
   const STYLE_ID = "bloom-xp-style", Z = 9500; // above the Planet View and its rooms, below AtmosphereTransition (10000)
   const now = () => (root.performance ? performance.now() : Date.now());
@@ -40,7 +44,7 @@
   const osReduced = () => !!(root.matchMedia && root.matchMedia("(prefers-reduced-motion: reduce)").matches);
   /** true / false from the Settings motion choice, else the OS (null = follow it). Resolves quickly; never rejects. */
   function reducedMotion() {
-    if (!settingsLoad) settingsLoad = canLoadModules() ? import(SETTINGS_URL).then(m => { try { return m.reducedMotionFor(m.readSettings(root.localStorage).motion); } catch (e) { return null; } }).catch(() => null) : Promise.resolve(null);
+    if (!settingsLoad) settingsLoad = canLoadModules() ? importModule(SETTINGS_URL).then(m => { try { return m.reducedMotionFor(m.readSettings(root.localStorage).motion); } catch (e) { return null; } }).catch(() => null) : Promise.resolve(null);
     return settingsLoad.then(s => (s === null ? osReduced() : s));
   }
 

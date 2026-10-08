@@ -58,7 +58,7 @@ export function mountTitlePage({ app, runHref = "demos/demo-run.html", titleHref
   async function departToGameplay(detail, rec) {
     const env = X.pack(detail, { token: X.newToken(), returnTo: titleUrl(), fingerprint: planetFingerprint(detail.planet) });
     if (JSON.stringify(env.planet) !== JSON.stringify(detail.planet)) throw new Error("expedition handoff: the packaged planet is not the selected planet");
-    X.store(env, X.storageOf(window));                                       // session-scoped, bounded (older handoffs pruned)
+    X.store(env, X.transportOf(window));                                     // session-scoped, bounded (older handoffs pruned); (BLOOM-031) file-safe over file://
     rec.token = env.token; rec.fingerprint = env.fingerprint; rec.integrity = env.integrity; rec.returnTo = env.returnTo; rec.storedAt = performance.now();
     detail.survey.dispose(); rec.surveyDisposedAt = performance.now();        // renderer, nine views, the pool's workers, DOM
     const href = runUrl(env.token); rec.href = href; ev("depart", { token: env.token });

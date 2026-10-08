@@ -2,8 +2,9 @@
 //
 // Presentation glue between the Terraform room (resources/run-ui/decision-rooms.js) and the EXISTING, UNMODIFIED PlanetSphereView
 // (resources/planet-sphere/planet-sphere-view.js, an ES module). It owns no simulation, no rule and no sphere internals:
-//   · load()        a guarded dynamic import of the sphere module: over http(s) the real PlanetSphereView is required; over file://
-//                   (modules cannot load there) or when the module genuinely fails to load, null — the room then shows the flat
+//   · load()        a guarded dynamic import of the sphere module: over http(s) the real PlanetSphereView is required, and (BLOOM-031) over
+//                   file:// too, from the portable runtime; when the module genuinely fails to load (or a file:// page lacks the module
+//                   seam), null — the room then shows the flat
 //                   canonical-surface fallback below instead of crashing. The import is attempted once per page.
 //   · snapshot()    a PRESENTATION SNAPSHOT of the exact authoritative planet (adapter.surface().planet: same id, grid, sections,
 //                   tilemap, topology — the very same arrays) whose `globalClimate` is the CURRENT (or a previewed) surface sky, so
@@ -27,14 +28,18 @@
   // the sphere module next to this file's folder (resolved from this script's own URL, so the page's location does not matter)
   const HERE = doc && doc.currentScript && doc.currentScript.src ? doc.currentScript.src : null;
   const MODULE_URL = HERE ? new URL("../planet-sphere/planet-sphere-view.js", HERE).href : "../resources/planet-sphere/planet-sphere-view.js";
-  const canLoadModules = () => !!(root.location && /^https?:$/.test(root.location.protocol));
+  // (BLOOM-031) served over http(s): import(); opened as a file (file://): the SAME source module from the portable runtime, through
+  // BLOOM.modules (resources/portable/module-loader.js). Without that seam (a page that does not load it) file:// stays module-less.
+  const modules = () => (root.BLOOM && root.BLOOM.modules) || null;
+  const canLoadModules = () => !!(root.location && /^https?:$/.test(root.location.protocol)) || !!(modules() && modules().portable);
+  const importModule = url => (modules() && modules().portable ? modules().load(url) : import(url));
 
   let loading = null;
-  /** → Promise<{ PlanetSphereView, PlanetSphereRenderer } | null>. Memoised. file:// (no module loading) → null without a request. */
+  /** → Promise<{ PlanetSphereView, PlanetSphereRenderer } | null>. Memoised. No module loading (file:// without the portable seam) → null without a request. */
   function load() {
     if (loading) return loading;
     loading = canLoadModules()
-      ? import(MODULE_URL).then(m => (m && m.PlanetSphereView ? m : null)).catch(err => { console.warn("BLOOM.terraformGlobe: PlanetSphereView could not load — flat fallback", err && err.message); return null; })
+      ? importModule(MODULE_URL).then(m => (m && m.PlanetSphereView ? m : null)).catch(err => { console.warn("BLOOM.terraformGlobe: PlanetSphereView could not load — flat fallback", err && err.message); return null; })
       : Promise.resolve(null);
     return loading;
   }

@@ -28,12 +28,21 @@
 // selection prunes the oldest beyond MAX_HANDOFFS. The handoff is NOT consumed on boot: a refresh and Play Again replay the same exact
 // planet from the same token. The URL carries only the token (no planet data).
 //
+// (BLOOM-031) THE FILE TRANSPORT. A double-clicked index.html (file://) is a chain of separate file documents, and browsers do not
+// promise one sessionStorage across them, so transportOf(window) — what the title stores into and the run page loads from — is:
+//   · served (http / https): the tab's sessionStorage, exactly as above;
+//   · file://: the TAB'S OWN NAME (window.name, which a same-tab navigation keeps), holding the same "strange-bloom.expedition.*" items
+//     as one JSON object after the marker NAME_PREFIX, mirrored into sessionStorage when the browser offers it (read back only if the
+//     name lost them). Same envelope, same verify / integrity, same MAX_HANDOFFS pruning, same token in the address; a refresh, Play
+//     Again (same token), Choose another planet and Main menu all keep the tab. Never localStorage, never the planet in the URL.
+//
 // Classic script, no dependencies, no DOM: boots over file:// like every other run-page file, Node can require it, and the ES-module
 // title page reads it as window.BLOOM.expedition. It owns no simulation and no screen.
 (function (root) {
   "use strict";
   const VERSION = 1, SOURCE = "destination-survey", SCENARIO = "eden", PARAM = "expedition";
   const KEY_PREFIX = "strange-bloom.expedition.", INDEX_KEY = "strange-bloom.expedition.index", MAX_HANDOFFS = 2;
+  const NAME_PREFIX = "strange-bloom.handoffs:"; // (BLOOM-031) the file transport's marker in window.name
   const TOKEN_RE = /^x[0-9a-f]{20}$/;
   const CANDIDATE_FIELDS = ["key", "name", "authored", "archetypeId", "seed", "attempt", "classId", "sectorSeed", "validation"];
   const isObj = x => x !== null && typeof x === "object" && !Array.isArray(x);
@@ -104,6 +113,40 @@
   function readIndex(storage) { try { const v = JSON.parse(storage.getItem(INDEX_KEY) || "[]"); return Array.isArray(v) ? v.filter(isToken) : []; } catch (e) { return []; } }
   function writeIndex(storage, tokens) { try { storage.setItem(INDEX_KEY, JSON.stringify(tokens)); } catch (e) { /* quota: the handoff itself may still be there */ } }
 
+  /**
+   * (BLOOM-031) A Storage-like view (getItem / setItem / removeItem / key / length) of the handoff items kept in the tab's name
+   * (win.name = NAME_PREFIX + JSON object of item → string). A name that is not ours reads as empty and is replaced on the first write.
+   */
+  function nameStorage(win = root) {
+    const read = () => { try { const n = win.name; if (typeof n === "string" && n.startsWith(NAME_PREFIX)) { const o = JSON.parse(n.slice(NAME_PREFIX.length)); if (isObj(o)) return o; } } catch (e) { /* not ours */ } return {}; };
+    const write = o => { win.name = NAME_PREFIX + JSON.stringify(o); };
+    const has = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+    return { kind: "window.name",
+      get length() { return Object.keys(read()).length; },
+      key(i) { const k = Object.keys(read())[i]; return k === undefined ? null : k; },
+      getItem(k) { const o = read(); return has(o, k) ? o[k] : null; },
+      setItem(k, v) { const o = read(); o[k] = String(v); write(o); },
+      removeItem(k) { const o = read(); if (has(o, k)) { delete o[k]; write(o); } } };
+  }
+
+  /**
+   * (BLOOM-031) Where this page keeps handoffs: sessionStorage when served over http(s) (storageOf); over file:// (any other scheme) the
+   * tab's name (nameStorage) mirrored into sessionStorage when available — reads prefer the name, writes go to both, failures of the
+   * mirror are ignored. null only without a window.
+   */
+  function transportOf(win = root) {
+    if (!win) return null;
+    const S = storageOf(win);
+    if (win.location && /^https?:$/.test(win.location.protocol)) return S;
+    const N = nameStorage(win), mirror = f => { try { if (S) f(S); } catch (e) { /* the name holds it */ } };
+    return { kind: "file",
+      get length() { return N.length; },
+      key: i => N.key(i),
+      getItem(k) { const v = N.getItem(k); if (v !== null) return v; try { return S ? S.getItem(k) : null; } catch (e) { return null; } },
+      setItem(k, v) { N.setItem(k, v); mirror(s => s.setItem(k, v)); },
+      removeItem(k) { N.removeItem(k); mirror(s => s.removeItem(k)); } };
+  }
+
   /** Keep the newest `keep` handoffs (default MAX_HANDOFFS); remove the rest and any orphan "strange-bloom.expedition.*" item. */
   function prune(storage, keep = MAX_HANDOFFS) {
     if (!storage) return [];
@@ -168,7 +211,7 @@
     return { kind: summary.kind, play: true, planet: P, archetype, seed: authored ? null : c.seed, scenario: null, render: payload.render || null, expedition, summary };
   }
 
-  const API = { version: VERSION, VERSION, SOURCE, SCENARIO, PARAM, KEY_PREFIX, INDEX_KEY, MAX_HANDOFFS, CANDIDATE_FIELDS: Object.freeze(CANDIDATE_FIELDS.slice()),
-    newToken, isToken, integrity, pack, verify, serialize, parse, storageOf, store, load, list, prune, runUrl, tokenOf, withBegin, toRun };
+  const API = { version: VERSION, VERSION, SOURCE, SCENARIO, PARAM, KEY_PREFIX, INDEX_KEY, MAX_HANDOFFS, NAME_PREFIX, CANDIDATE_FIELDS: Object.freeze(CANDIDATE_FIELDS.slice()),
+    newToken, isToken, integrity, pack, verify, serialize, parse, storageOf, nameStorage, transportOf, store, load, list, prune, runUrl, tokenOf, withBegin, toRun };
   root.BLOOM = Object.assign(root.BLOOM || {}, { expedition: Object.freeze(API) });
 })(typeof window !== "undefined" ? window : globalThis);

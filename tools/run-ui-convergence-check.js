@@ -81,18 +81,20 @@ const LEGACY_SUITES = ["slice-check", "economy-check", "procedural-run-check", "
       "resources/run-ui/planet-view.js", "resources/run-ui/decision-rooms.js", "resources/run-ui/run-report.js"].filter(f => fs.existsSync(path.join(ROOT, f)));
     const links = playerFiles.filter(f => /ui=legacy|ui=18/.test(strip(read(f))));
     const pageLinks = (code.match(/ui=legacy/g) || []).length, hrefLegacy = /href[^\n]*ui=legacy|demo-run\.html\?[^"'`\n]*ui=legacy/.test(code);
-    check(policy && !links.length && !hrefLegacy && /ui=legacy/.test(read("README.md")) && /developer/i.test(read("README.md").split("ui=legacy")[1] || ""),
+    const DEVDOC = read("README.md") + "\n" + (fs.existsSync(path.join(ROOT, "docs/DEVELOPMENT_NOTES.md")) ? read("docs/DEVELOPMENT_NOTES.md") : "");   // (BLOOM-031 note) the developer README moved to docs/DEVELOPMENT_NOTES.md on main 85ddd76
+    check(policy && !links.length && !hrefLegacy && /ui=legacy/.test(DEVDOC) && /developer/i.test(DEVDOC.split("ui=legacy")[1] || ""),
       "N4 · routing: no ui= and ui=18 mount production; ui=legacy is the one developer flag (documented in README as developer-only); no player-facing file (index, menu, survey, training layer, play data, the production view / rooms / report) links or mentions ui=legacy or ui=18; the run page builds no link to it",
       links.length ? "LINKS IN " + links.join(", ") : `policy ${policy} · run page mentions ui=legacy ${pageLinks}× (the policy line + comments), no href`); }
   // N5 · the transition bridge: public API only; the rooms and the report reach the component only through it
   { const br = strip(read("resources/run-ui/gameplay-transition.js")), dr = strip(read("resources/run-ui/decision-rooms.js")), rr = strip(read("resources/run-ui/run-report.js")), pv = strip(read("resources/run-ui/planet-view.js"));
     const pub = /new mod\.AtmosphereTransition\(/.test(br) && /B\.atx\.prepare\(\)/.test(br) && /atx\.run\(\{ preset: PRESET/.test(br) && /const PRESET = "subdued"/.test(br) && /B\.atx\.dispose\(\)/.test(br) && /atx\.running/.test(br) && /B\.atx\.phase/.test(br);
     const priv = /\.\s*_[a-zA-Z]/.test(br) || /_execute|_mount|_teardown|_block|_phase\b|_cloudKeys|_bitmaps|\.overlay\b|ATMOSPHERE_PRESETS|layoutClouds/.test(br);
-    const guarded = /import\(MODULE_URL\)/.test(br) && /\^https\?:\$/.test(br) && /atmosphere-transition\/atmosphere-transition\.js/.test(br) && /readSettings|reducedMotionFor/.test(br);
+    const guarded = /importModule\(MODULE_URL\)/.test(br) && /\? modules\(\)\.load\(url\) : import\(url\)\)/.test(br) && /\^https\?:\$/.test(br)   // (BLOOM-031) import() when served; the portable seam over file://
+      && /atmosphere-transition\/atmosphere-transition\.js/.test(br) && /readSettings|reducedMotionFor/.test(br);
     const only = !/AtmosphereTransition|atmosphere-transition|import\(/.test(dr + rr + pv) && (dr.match(/GT\.create\(/g) || []).length === 1 && /transition: T,/.test(dr) && /transition = null/.test(rr) && /T\.run\(\{ onCovered/.test(dr) && /T\.run\(\{ onCovered/.test(rr);
     const noQueue = !/queue|Queue/.test(dr.replace(/queueMicrotask/g, "")) && /state\.ignored\+\+/.test(dr) && /if \(state\.transitioning\)/.test(dr);
     const safety = /WATCHDOG_MS/.test(br) && /HARD_CAP_MS/.test(br) && /doc\.hidden/.test(br) && /atx\.running/.test(br) && /swapped/.test(br) && !/\.catch\(\s*\)/.test(br);
-    check(pub && !priv && guarded && only && noQueue && safety, "N5 · gameplay-transition.js consumes AtmosphereTransition through its public API only (constructor, prepare(), run({ preset: \"subdued\", onCovered, onPhase }), dispose(), running / phase; no private member, preset table or layout function), behind a guarded import (http(s) only; the Settings motion choice read through main-menu-data.js); the rooms, the Planet View and the report never import or name the component — they reach it only through ONE bridge instance created once by the rooms and shared with the report; a second request is ignored (no queue); the swap rolls forward on a rejecting run, a hidden page and a watchdog / hard cap",
+    check(pub && !priv && guarded && only && noQueue && safety, "N5 · gameplay-transition.js consumes AtmosphereTransition through its public API only (constructor, prepare(), run({ preset: \"subdued\", onCovered, onPhase }), dispose(), running / phase; no private member, preset table or layout function), behind a guarded import (http(s); BLOOM-031: over file:// through the portable module seam; the Settings motion choice read through main-menu-data.js); the rooms, the Planet View and the report never import or name the component — they reach it only through ONE bridge instance created once by the rooms and shared with the report; a second request is ignored (no queue); the swap rolls forward on a rejecting run, a hidden page and a watchdog / hard cap",
       `bridge ${br.split("\n").length} lines · create() sites in decision-rooms ${(dr.match(/GT\.create\(/g) || []).length}`); }
   // N6 · report truth lives in the run page; the production report holds no rule; the adapter stays api 1 (+ the report seams)
   { const run = strip(read("demos/demo-run.html")), rr = strip(read("resources/run-ui/run-report.js")), ad = strip(read("resources/run-ui/run-ui-adapter.js"));
@@ -130,7 +132,7 @@ const LEGACY_SUITES = ["slice-check", "economy-check", "procedural-run-check", "
   // N9 · the legacy-harness policy: the documented suites open ?ui=legacy; the production suites do not
   { const uses = LEGACY_SUITES.map(s => [s, /ui=legacy/.test(read(`tools/${s}.js`))]), missing = uses.filter(([, u]) => !u).map(([s]) => s);
     const prodSuites = ["planet-view-check", "plant-rooms-check", "terraform-check", "game-flow-check"].filter(s => /(open|goto)\([^)]*ui=legacy/.test(read(`tools/${s}.js`)));
-    const readme = read("README.md"), documented = LEGACY_SUITES.filter(s => !readme.includes(s));
+    const readme = read("README.md") + "\n" + (fs.existsSync(path.join(ROOT, "docs/DEVELOPMENT_NOTES.md")) ? read("docs/DEVELOPMENT_NOTES.md") : ""), documented = LEGACY_SUITES.filter(s => !readme.includes(s));
     check(!missing.length && !documented.length && prodSuites.every(s => s === "planet-view-check" || s === "game-flow-check"), "N9 · legacy regression policy: the engineering-shell suites (the playtest suites, the 029A adapter-vs-shell oracle, the 028D1 training event oracle) open ?ui=legacy explicitly and README lists each with its reason; the production suites use the default (planet-view-check and game-flow-check open ?ui=legacy only to prove the developer flag)",
       `${LEGACY_SUITES.length} legacy suites${missing.length ? " · NOT OPENING ui=legacy: " + missing.join(", ") : ""}${documented.length ? " · UNDOCUMENTED: " + documented.join(", ") : ""}`); }
   // N10 · gameplay unchanged: the engine, content and planets are byte-identical (N2); a seeded run on three worlds reproduces 0f5ce81's engine output exactly
@@ -211,8 +213,9 @@ const LEGACY_SUITES = ["slice-check", "economy-check", "procedural-run-check", "
     let browser; try { browser = await pw[bname].launch(); } catch (e) { check(false, `${tag} browser launches`, e.message.split("\n")[0]); continue; }
     console.log(`# ${bname}`);
     const pages = [];
-    const open = async (q, { w = 1280, h = 800, rm = false, file = false, settings = null, wait = true } = {}) => {
+    const open = async (q, { w = 1280, h = 800, rm = false, file = false, settings = null, wait = true, failPortable = false } = {}) => {
       const c = await browser.newContext({ viewport: { width: w, height: h }, reducedMotion: rm ? "reduce" : "no-preference" }); await c.addInitScript(INIT);
+      if (failPortable) await c.addInitScript(() => { window.BLOOM_PORTABLE = { load: () => Promise.reject(new Error("QA: the portable runtime is unavailable")) }; }); // (BLOOM-031) force the module-less fallback over file://
       if (settings) await c.addInitScript(s => { try { localStorage.setItem("strange-bloom.settings", s); } catch {} }, J(settings));
       const p = await c.newPage(); p.errs = []; p.reqs = []; p.on("pageerror", e => p.errs.push(e.message)); p.on("console", m => { if (m.type() === "error") p.errs.push(m.text()); }); p.on("request", r => p.reqs.push(r.url())); pages.push(p);
       await p.goto((file ? FILE : RUN) + q);
@@ -463,8 +466,14 @@ const LEGACY_SUITES = ["slice-check", "economy-check", "procedural-run-check", "
         const s = await open("?training=1&return=" + encodeURIComponent("/demos/main-menu.html"), { settings: { motion: "reduced" } }); await openRoom(s, "adapt");
         const sr = await s.evaluate(() => ({ setting: __cv.T.settingsMotion, red: __cv.T.last.reducedMotion, rm: __ATX[0] && __ATX[0].rm, bridge: __cv.T.reducedMotion(), entering: document.querySelector(".dr .dr-room:not([hidden])").classList.contains("entering") }));
         check(sr.setting === true && sr.red === true && sr.rm && sr.bridge && !sr.entering, `${tag} B19b · the player's Settings motion choice ("Reduced", main-menu-data.js) reaches the bridge (constructor reducedMotion true → the component's reduced path) and the rooms, with the OS unchanged`, J(sr)); await s.context().close(); }
-      // ---- B20 · file://: immediate swaps, mechanics intact (open / close / switch / report open / Keep playing), no request, no error
-      if (!FF) { const q = await open("?planet=training_grounds", { file: true });   // (an authored run; the training layer's own module cannot load over file://, as training-check B6 covers)
+      // ---- B20 · (BLOOM-031) over file:// the real AtmosphereTransition now loads (the portable runtime: B20a); the module-less fallback — immediate
+      // swaps, mechanics intact (open / close / switch / report open / Keep playing), no error — is forced by a failing portable runtime (B20)
+      if (!FF) { const q = await open("?planet=training_grounds", { file: true });
+        const r = await q.evaluate(async () => { const settle = () => new Promise(r => { const f = () => (__cv.DR.state().transitioning ? setTimeout(f, 10) : r()); f(); });
+          const t = Date.now(); while (__cv.T.kind === "pending" && Date.now() - t < 10000) await new Promise(r => setTimeout(r, 50));
+          __cv.DR.open("adapt"); await settle(); const imm = __cv.tl().pop().immediate; __cv.DR.close(false); await settle(); return { kind: __cv.T.kind, imm, portable: !!window.BLOOM_PORTABLE, room: __cv.DR.state().room }; });
+        check(r.kind === "atmosphere" && r.imm === false && r.portable && r.room === null && !q.errs.length, `${tag} B20a · (BLOOM-031) over file:// the room swaps use the REAL AtmosphereTransition, loaded from the generated portable runtime (no immediate fallback), no error`, J(r)); await q.context().close(); }
+      if (!FF) { const q = await open("?planet=training_grounds", { file: true, failPortable: true });   // (an authored run; the portable runtime forced to fail)
         const r = await q.evaluate(async () => { const T = __cv.T, A = __cv.A, out = { kind: T.kind, canLoad: BLOOM.gameplayTransition.canLoadModules() };
           const settle = () => new Promise(r => { const f = () => (__cv.DR.state().transitioning ? setTimeout(f, 10) : r()); f(); });
           __cv.DR.open("adapt"); await settle(); out.open = { ...__cv.state(), imm: __cv.tl().pop().immediate, atx: __ATX.length };
@@ -472,8 +481,8 @@ const LEGACY_SUITES = ["slice-check", "economy-check", "procedural-run-check", "
           BLOOM_API.addBiomass(5000); A.actions.buy("cold"); A.actions.buy("humid"); let n = 0; while (!BLOOM_API.sim.won && n < 20000) { BLOOM_API.advance(200); n += 200; }
           await new Promise(r => setTimeout(r, 100)); const rs = () => new Promise(r => { const f = () => (__cv.RR.state().busy ? setTimeout(f, 10) : r()); f(); }); await rs(); out.report = { ...__cv.RR.state(), imm: __cv.rtl().pop().immediate, won: A.run().won };
           __cv.RR.keepPlaying(); await rs(); out.keep = { open: __cv.RR.state().open, running: A.run().running, atx: __ATX.length, unhandled: __UNHANDLED.length }; return out; });
-        check(r.kind === "immediate" && !r.canLoad && r.open.room === "adapt" && r.open.imm && r.open.atx === 0 && r.open.running === false && r.sw.room === "terraform" && r.sw.running === false && r.back.room === null && r.back.running === true && J(r.back.pp) === "[false,true]" && r.report.open && r.report.imm && r.report.won && J(r.report.actions) === '["keepPlaying"]' && !r.keep.open && r.keep.running && r.keep.atx === 0 && r.keep.unhandled === 0 && !q.errs.length,
-          `${tag} B20 · over file:// (no ES module): every swap is immediate (no overlay, no request, no error), the mechanics are intact — open pauses, switch stays paused, Back resumes, the production report opens on the win and Keep playing resumes`, J(r) + (q.errs.length ? " errs " + q.errs.join(" | ") : "")); await q.context().close(); }
+        check(r.kind === "immediate" && r.canLoad && r.open.room === "adapt" && r.open.imm && r.open.atx === 0 && r.open.running === false && r.sw.room === "terraform" && r.sw.running === false && r.back.room === null && r.back.running === true && J(r.back.pp) === "[false,true]" && r.report.open && r.report.imm && r.report.won && J(r.report.actions) === '["keepPlaying"]' && !r.keep.open && r.keep.running && r.keep.atx === 0 && r.keep.unhandled === 0 && !q.errs.length,
+          `${tag} B20 · when the transition module cannot load (over file:// with the portable runtime forced to fail): every swap is immediate (no overlay, no error), the mechanics are intact — open pauses, switch stays paused, Back resumes, the production report opens on the win and Keep playing resumes`, J(r) + (q.errs.length ? " errs " + q.errs.join(" | ") : "")); await q.context().close(); }
       // ---- B21 · a deterministic mid-conceal still (the animations paused inside the conceal) — evidence only, plus the run-report's generated hrefs
       if (!FF && EVIDENCE) { const q = await open("?archetype=ocean_archipelago&seed=28"); await q.evaluate(() => { const A = __cv.A; A.actions.selectRegion(A.regions().find(x => !x.isOrigin).index); });
         await q.evaluate(() => { window.__freezeAt = "concealing"; window.__freezeDelay = 45; window.__frozen = false; }); await q.click('.pv-tool[data-tool="adapt"]');

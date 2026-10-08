@@ -166,10 +166,10 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
       && !/#\/(planet|scenario|brief)|BLOOM_LAUNCHER|scrBrief|btnFirstBloom/.test(INDEX_SRC),
       "RT1 · the root index.html is the Strange Bloom title (BEGIN EXPEDITION · TRAINING · SETTINGS · CREDITS); the BLOOM-016 launcher's screens, buttons, hash router and BLOOM_LAUNCHER are gone (a launcher hash route does nothing)", J({ title: r.title, items: r.items }));
     await t.context().close(); }
-  { await p.goto(FILE + "/index.html"); await p.waitForTimeout(300);
-    const r = await p.evaluate(() => ({ title: document.title, note: (document.getElementById("needsServer") || { innerText: "" }).innerText, launcher: !!document.getElementById("scrHome") }));
-    check(r.title === "Strange Bloom — Unknown Soils" && r.note.includes("needs to be opened through a web server") && !r.launcher,
-      "RT2 · over file:// the root shows the plain HTTP-required notice (the full game needs a web server), not the old launcher and not a blank page", r.note.replace(/\s+/g, " ").slice(0, 90)); }
+  { await p.goto(FILE + "/index.html"); await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready, null, { timeout: 30000 }).catch(() => {}); await p.waitForTimeout(300);
+    const r = await p.evaluate(() => ({ title: document.title, note: !!document.getElementById("needsServer"), boot: window.BLOOM_TITLE_BOOT && BLOOM_TITLE_BOOT.state, items: [...document.querySelectorAll(".mm-item")].map(b => b.dataset.act), launcher: !!document.getElementById("scrHome") }));
+    check(r.title === "Strange Bloom — Unknown Soils" && !r.note && r.boot === "mounted" && J(r.items) === J(["begin", "training", "settings", "credits"]) && !r.launcher,
+      "RT2 · (BLOOM-031) over file:// the root is the Strange Bloom title itself (the generated portable runtime; the HTTP-required notice is retired), not the old launcher and not a blank page", J(r)); }
 
   // ---- 21 / 29 / 31–33 · Start → Preparing planet → the accepted run (file://: the search runs between frames) ----
   await p.goto(FILE + "/demos/demo-run.html?play=1&archetype=frozen_world&scenario=volatile_climate", { waitUntil: "commit" }); // (BLOOM-030) the direct developer player URL

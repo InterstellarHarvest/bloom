@@ -1,0 +1,256 @@
+{
+  "format": "bloom-portable/1",
+  "esbuild": "0.28.2",
+  "fingerprint": "2b90d81a37bd4fc1dd35cda514510dae2119729b9365a5e66afe06148c010dc3",
+  "generated": "do not edit by hand: npm --prefix tools run build:portable",
+  "entry": "resources/portable/portable-entry.js",
+  "workerEntry": "resources/destination-survey/survey-worker.js",
+  "modules": [
+    "resources/main-menu/main-menu-page.js",
+    "resources/main-menu/main-menu-data.js",
+    "resources/planet-sphere/planet-sphere-view.js",
+    "resources/atmosphere-transition/atmosphere-transition.js",
+    "resources/training/training-run.js"
+  ],
+  "output": {
+    "path": "dist/portable/strange-bloom.portable.js",
+    "bytes": 1256642,
+    "sha256": "11faf827fd3c72b8349d4900de264d9e994ce2e6fa04258ba46be9d025b708bf",
+    "surveyWorkerTextBytes": 211757
+  },
+  "workerInputs": [
+    "content/archetypes.js",
+    "content/config.js",
+    "content/play.js",
+    "content/scenarios.js",
+    "content/traits.js",
+    "planets/first_bloom.js",
+    "resources/bloom-archetype.js",
+    "resources/bloom-gen.js",
+    "resources/bloom-play.js",
+    "resources/bloom-scenario.js",
+    "resources/bloom-sim.js",
+    "resources/bloom-validate.js",
+    "resources/bloom-witness.js",
+    "resources/destination-survey/survey-data.js",
+    "resources/destination-survey/survey-worker.js"
+  ],
+  "inputs": [
+    {
+      "path": "content/archetypes.js",
+      "bytes": 13639,
+      "sha256": "94b58b6aac79feba24a01d59952ec43fd7ea953773f272021cdd3dcaa7b328fc",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "content/config.js",
+      "bytes": 9667,
+      "sha256": "f5a8a059702e7da4b3b1ad6db52f265eafdaadea7db20d597c7dc17b85ecb617",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "content/play.js",
+      "bytes": 5471,
+      "sha256": "34f68329620e43e25b7f5a5146453c80bcfa910187706701fe1408219f0ed73a",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "content/scenarios.js",
+      "bytes": 16301,
+      "sha256": "ec32677d73b6b4f6154ce08d3c5127604a745ed32e880c0bad209215a332937f",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "content/traits.js",
+      "bytes": 6455,
+      "sha256": "d17c9cac6c10815db58f28ef8302cc21da42b687561be7c6b3fc7e2b77d78390",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "planets/first_bloom.js",
+      "bytes": 3410,
+      "sha256": "dfbe3c19a54d91388bf77bd91e710a5bb065ab3f8107b7d3c56fde43f850e078",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "resources/atmosphere-transition/atmosphere-transition.js",
+      "bytes": 30016,
+      "sha256": "f94bf451f1c9db14afb1d1588666dbfebce4c25a382bb05a152d12f6d4957808",
+      "bytesInBundle": 27106
+    },
+    {
+      "path": "resources/bloom-archetype.js",
+      "bytes": 14428,
+      "sha256": "3da4ce004008be3a29955e8f3e9c9cef279bbe8c55c453d3e5fe0748b5680448",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "resources/bloom-gen.js",
+      "bytes": 23563,
+      "sha256": "a420417d4a31e819fadcd693849d504b8922ad8cb0ec33e381b87a6696ef2246",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "resources/bloom-play.js",
+      "bytes": 8369,
+      "sha256": "5e8155870d7821aec621050999858d92fb6233a7819e2df0ee0cf253893e0573",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "resources/bloom-scenario.js",
+      "bytes": 5695,
+      "sha256": "7b98415e313e381e8b84ac7b551cb92e26dcf15b7e7f527a78706cf77463e917",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "resources/bloom-sim.js",
+      "bytes": 89502,
+      "sha256": "15afa2058a7c19648baaa2e9cc86898fae247c4a2197ea341798240fa6785e72",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "resources/bloom-validate.js",
+      "bytes": 13189,
+      "sha256": "d1dcb78133f2fe544082b69ead92bdbb612a756a35c00b302e749d3271beeb26",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "resources/bloom-witness.js",
+      "bytes": 39614,
+      "sha256": "e4ca6ba2fb817a2f275e63d7dbc9fe13eabfdc8874876810d77299ab6b067e25",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "resources/destination-survey/destination-survey.js",
+      "bytes": 47197,
+      "sha256": "10f80522313c3c7ffeb3c64bab8489ec32ef907a9b9b599de84cef7513ace54c",
+      "bytesInBundle": 46677
+    },
+    {
+      "path": "resources/destination-survey/sector-pool.js",
+      "bytes": 13646,
+      "sha256": "a734aab2082accc2da29e5b39d7bd2b3e0bd82c3a87428790d65aefad425b7e4",
+      "bytesInBundle": 13434
+    },
+    {
+      "path": "resources/destination-survey/survey-data.js",
+      "bytes": 22994,
+      "sha256": "7c70e6cde6015aeb22be01b829dd06adc2dd8c2ed892a23552f38c3cd8d45ffa",
+      "bytesInBundle": 15356
+    },
+    {
+      "path": "resources/destination-survey/survey-worker.js",
+      "bytes": 2468,
+      "sha256": "3c42f8f263063e51a6803672a897152d9b01a2d5e60a96170bcabffd216c6d96",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "resources/main-menu/black-fade.js",
+      "bytes": 2167,
+      "sha256": "ce9f9ad32b4cb3ce71b85dbf3ab993efaeb244d3bba4d4ff24ab5a06bcc9beb1",
+      "bytesInBundle": 1535
+    },
+    {
+      "path": "resources/main-menu/expedition-entry.js",
+      "bytes": 16926,
+      "sha256": "4d51ea2de29aab287326f3e45f10f8622baa727a4ee706516cb74c693aa59717",
+      "bytesInBundle": 14136
+    },
+    {
+      "path": "resources/main-menu/main-menu-data.js",
+      "bytes": 3094,
+      "sha256": "1781a7511c9fdc586c32a39b3c00b6dfecbc4c6a1512341e1c76b2ef4e43fbb6",
+      "bytesInBundle": 2487
+    },
+    {
+      "path": "resources/main-menu/main-menu-page.js",
+      "bytes": 8973,
+      "sha256": "47091cd7bcee72cf8fbfd28c1767180e16761cd62b9dc5ebb9eebe2ec91c0b6e",
+      "bytesInBundle": 5523
+    },
+    {
+      "path": "resources/main-menu/main-menu.js",
+      "bytes": 18610,
+      "sha256": "4fb0503e45673cdbbb6032467bc8cf2b0edd307c045cc7c24b9b4de300248656",
+      "bytesInBundle": 18620
+    },
+    {
+      "path": "resources/planet-sphere/planet-sphere-view.js",
+      "bytes": 29241,
+      "sha256": "9236b79cb3bd2f72a24e0ecb7d9d56d31092239f19ea4163b5c04cace56be382",
+      "bytesInBundle": 28017
+    },
+    {
+      "path": "resources/planet-sphere/planet-texture.js",
+      "bytes": 10735,
+      "sha256": "2b6566a4edda2c98af7bdc9080c18819491bd13dd1df2290fd3ed1f6cebfe7e0",
+      "bytesInBundle": 4648
+    },
+    {
+      "path": "resources/planet-sphere/vendor/three-0.185.1/three.core.min.js",
+      "bytes": 385386,
+      "sha256": "05b2609338c76cd65daf74f3ac515bc9a5045e1b3b33edc07d8c9bd55250fa90",
+      "bytesInBundle": 360773
+    },
+    {
+      "path": "resources/planet-sphere/vendor/three-0.185.1/three.module.min.js",
+      "bytes": 365552,
+      "sha256": "86bcee248b64f44bcfc23c331ae74619061957d59cab040171dcb6fb5900beb6",
+      "bytesInBundle": 426843
+    },
+    {
+      "path": "resources/planet-surface/planet-surface.js",
+      "bytes": 15876,
+      "sha256": "bc3ade86186ef7ee6f0991ba57a693c275f1e68e73e1b0f4940641f0ff3c84e5",
+      "bytesInBundle": 12613
+    },
+    {
+      "path": "resources/portable/portable-entry.js",
+      "bytes": 3476,
+      "sha256": "4a7ed16b2ac13df0c95537aa5cb4f1cf7d666e551c89f5f0e3044474f4301464",
+      "bytesInBundle": 1587
+    },
+    {
+      "path": "resources/portable/portable-root.js",
+      "bytes": 1351,
+      "sha256": "35e955b9534cf8f4cb1ce23bfbe01d5e4c82d8cbb78b55357abb863a0a6e31f3",
+      "bytesInBundle": 445
+    },
+    {
+      "path": "resources/training/training-coach.js",
+      "bytes": 21987,
+      "sha256": "7b59a285ded94e2972378333f947ab850bdb521ee3e445e20a26e020683ef608",
+      "bytesInBundle": 20505
+    },
+    {
+      "path": "resources/training/training-director.js",
+      "bytes": 12923,
+      "sha256": "34eefe89a25c1bf74f0cb71d35d9072f4a3185ea2b5265ea0f552f6797d68973",
+      "bytesInBundle": 13014
+    },
+    {
+      "path": "resources/training/training-run.js",
+      "bytes": 10404,
+      "sha256": "3390ed36245332236536d37986b2eca184a6135a57ff61bcc862c998ad4ef1aa",
+      "bytesInBundle": 8322
+    },
+    {
+      "path": "resources/training/training-steps.js",
+      "bytes": 18162,
+      "sha256": "76bf6cb9f24ba3634a14513253a81c516882affbf5473d333e8a4e12c0a02d12",
+      "bytesInBundle": 15326
+    },
+    {
+      "path": "resources/training/training-store.js",
+      "bytes": 2391,
+      "sha256": "ccb327c82b60a955f6c26815394b17d6d51b2f734724dc461336af8cbe3af341",
+      "bytesInBundle": 1323
+    },
+    {
+      "path": "tools/build-portable.mjs",
+      "bytes": 9002,
+      "sha256": "fea8e99921e0cffa77edfa684afca15b360521c47c3799438e90c827095070fc",
+      "bytesInBundle": 0
+    }
+  ]
+}
