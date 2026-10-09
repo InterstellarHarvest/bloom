@@ -6,8 +6,8 @@ This folder is what artists edit. The game never reads it directly. `tools/build
 **Full contract (read this first):** `docs/PLANT_SPRITE_PIPELINE_v1.md` § **ARTIST_HANDOFF**.
 
 ```
-contract.json                  engine rules (canvas 84×98, materials, treatments, layers, orientations, component registry) — engine-owned
-body-plan.json                 socket geometry the skeleton uses — engine-owned
+contract.json                  engine rules (canvas 84×98, materials, treatments, layers, orientations, the 34-component locked Organic Hybrid registry) — engine-owned
+body-plan.json                 socket geometry (4 cold layouts, 117 sockets) — engine-owned
 schema/plant-atlas.schema.json machine-readable structure of atlas.json
 schema/example-sprite-entries.json   annotated examples
 packs/<pack>/atlas.png         the pixel art (exact palette colours, alpha 0 or 255, no anti-aliasing)

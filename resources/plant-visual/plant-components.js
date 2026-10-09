@@ -2,49 +2,59 @@
 //
 // Stage 2: VISUAL MODEL (plant-visual-model.js) → which authored COMPONENTS the organism is made of. This is the ONLY place where "what a
 // trait looks like" becomes a component choice; the compositor draws whatever it is given and knows no trait, tier, price or rule.
+// Compatible axes STACK (no whole-plant combinations):
 //
-//   architecture.compact ≥ 2  → layout "compact" (short stout stem, low crowded rosette)        else layout "open"
-//   leaf.succulence ≥ 2       → leaf set "leaf.succulent" (on the body plan's succulent sockets)  else compact ≥ 2 → "leaf.cold"  else "leaf.base"
-//   surface.frost 1 / ≥ 2     → "frost.tuft" on every leaf tip / on every tip + margin point, plus "frost.collar" on the stem nodes (≥ 2)
-//   roots.storage 1 / ≥ 2     → a deeper procedural taproot / + "root.storage" on the primary-root socket
-//   surface.pigment           → treatment "pigment" (a recolour of masked pixels; no new component)
-//   surface.wax               → treatment "wax" (contract slot; drawn only if the pack defines the waxLeaf ramp)
-//   repro.seedHead 1 / ≥ 2    → "seedHead.small" at the apex / "seedHead.large" at the apex + two "seedHead.small" on side branches + "seed.drift" ×3
-//   repro.flower              → "flower" at the apex, or on the flower branch when a seed head holds the apex
-//   neither                   → "bud" at the apex
-// Tiers beyond the authored golden slice are HELD at the deepest authored tier and reported (heldAt); traits with no art yet are reported
-// (pending) and draw nothing. Pure, deterministic, no DOM.
+//   1 BODY / LAYOUT      architecture.compact 0–3  → layout open · dense · compact · cushion (body-plan data)
+//   2 PRIMARY LEAF       leaf.water               → "leaf.base" | "leaf.drought.<1–3>" | "leaf.flood.<1–3>" (one at a time; ≥ 3 already capped)
+//                                                     on the body plan's leaf set for that structure (fewer, larger storage / reed leaves)
+//   3 HEAT MODIFIER      leaf.heat 1 / 2 / 3       → authored angle step +1 capped at mid / +1 / the structure's ".heat" variant (+1)
+//                                                     + treatment wax level 1–3 — over WHICHEVER leaf structure is active
+//   4 SURFACE OVERLAYS   frost 1–3                 → "frost.hair.<t>" on leaf points (T1 tips · T2/T3 tips + margins) + "frost.collar.<t>" (T2, T3)
+//                        salt                      → "salt.crystal" on leaf tips + "salt.gland" on a margin point + treatment "toothed"
+//                                                     (with both, frost hairs move to the other margin points: never the same point)
+//                        pigment                   → treatment "pigment"
+//   5 REPRODUCTIVE       base                      → "bud" (closed, apical) + "bud.axil" (closed, axillary) — BASE never has a flower / seed head
+//                        flower                    → "flower" at the apex, or on the flower branch when a seed head holds the apex
+//                        seedHead 1 / 2            → "seedHead.small" at the apex / "seedHead.large" + 2 × "seedHead.small" on branches + 3 × "seed.drift"
+//                        pods                      → 2 × "pod" on the low pod stalks
+//   ROOTS                storage 1 / 2 / 3         → deeper procedural taproot (tier) / + "root.storage.2" / "root.storage.3"
+//                        aerial 1 / 2 / 3          → "root.aerial.<t>" on 2 / 3 / 4 aerial anchors; T3 + "root.stilt" on both stilt anchors
+// Pure, deterministic, no DOM.
 (function (root) {
   "use strict";
-  const AUTHORED_MAX = { cold: 2, drought: 2, seedOut: 2, rad: 1, earlyMat: 1, heat: 1 };
+  const LAYOUTS = ["open", "dense", "compact", "cushion"];
 
   function select(M) {
-    const compact = M.architecture.compact >= 2, succ = M.leaf.succulence >= 2;
+    const w = M.leaf.water, heat = M.leaf.heat, frost = M.surface.frost, salt = !!M.surface.salt;
+    const structure = w.arm ? `${w.arm}.${w.tier}` : "base", leafComponent = `leaf.${structure}${heat >= 3 ? ".heat" : ""}`;
     const S = {
-      layout: compact ? "compact" : "open",
-      leafSet: succ ? "leaf.succulent" : compact ? "leaf.cold" : "leaf.base",
-      leafSockets: succ ? "succulent" : "all",
-      frost: { tufts: M.surface.frost >= 2 ? "tip+margin" : M.surface.frost >= 1 ? "tip" : null, collars: M.surface.frost >= 2 },
-      roots: { taproot: Math.min(3, M.roots.storage), storage: M.roots.storage >= 2 },
+      layout: LAYOUTS[M.architecture.compact],
+      leaf: { component: leafComponent, set: structure, angle: { shift: (heat ? 1 : 0) + (M.condition === "strained" ? -1 : 0), cap: heat === 1 ? "mid" : "high" } },
+      leafPoints: [],
+      collars: frost >= 2 ? `frost.collar.${frost}` : null,
+      axils: "bud.axil",
+      roots: { taproot: M.roots.storage, storage: M.roots.storage >= 2 ? `root.storage.${M.roots.storage}` : null,
+        aerial: M.roots.aerial ? { component: `root.aerial.${M.roots.aerial}`, count: [0, 2, 3, 4][M.roots.aerial] } : null, stilt: M.roots.aerial >= 3 ? "root.stilt" : null },
       apex: M.repro.seedHead >= 2 ? "seedHead.large" : M.repro.seedHead >= 1 ? "seedHead.small" : M.repro.flower ? "flower" : "bud",
       flower: M.repro.flower ? (M.repro.seedHead ? "flower.1" : "flower.0") : null,
       sideHeads: M.repro.seedHead >= 2 ? 2 : 0,
       drift: M.repro.seedHead >= 2 ? 3 : 0,
-      treatments: [M.surface.pigment ? "pigment" : null, M.surface.wax ? "wax" : null].filter(Boolean),
-      posture: M.condition === "strained" ? -1 : 0,
+      pods: M.repro.pods ? "pod" : null,
+      treatments: [M.surface.pigment ? { id: "pigment", level: 1 } : null, M.surface.wax ? { id: "wax", level: M.surface.wax } : null, salt ? { id: "toothed", level: 1 } : null].filter(Boolean),
       stress: M.condition === "strained",
-      heldAt: Object.entries({ cold: M.genome.cold, drought: M.genome.drought, seedOut: M.genome.seedOut, heat: M.genome.heat })
-        .filter(([id, v]) => v > AUTHORED_MAX[id]).map(([id, v]) => ({ trait: id, tier: v, drawnAs: AUTHORED_MAX[id] })),
-      pending: Object.keys(M.pending),
+      capped: M.capped.slice(),
     };
-    const ids = new Set([S.leafSet, S.apex === "flower" ? "flower" : S.apex]);
-    if (S.frost.tufts) ids.add("frost.tuft"); if (S.frost.collars) ids.add("frost.collar"); if (S.roots.storage) ids.add("root.storage");
-    if (S.flower) ids.add("flower"); if (S.sideHeads) ids.add("seedHead.small"); if (S.drift) ids.add("seed.drift");
+    if (salt) S.leafPoints.push({ component: "salt.crystal", at: "tip" }, { component: "salt.gland", at: "margin:1" });
+    if (frost) S.leafPoints.push({ component: `frost.hair.${frost}`, at: salt ? "margin:0,2" : frost === 1 ? "tip" : "tip+margin" });
+    const ids = new Set([leafComponent, S.apex, S.axils]);
+    for (const p of S.leafPoints) ids.add(p.component);
+    for (const c of [S.collars, S.roots.storage, S.roots.aerial && S.roots.aerial.component, S.roots.stilt, S.flower && "flower", S.pods]) if (c) ids.add(c);
+    if (S.sideHeads) ids.add("seedHead.small"); if (S.drift) ids.add("seed.drift");
     S.components = [...ids].sort();
-    S.key = JSON.stringify([S.layout, S.leafSet, S.leafSockets, S.frost, S.roots, S.apex, S.flower, S.sideHeads, S.drift, S.treatments, S.posture, S.stress]);
+    S.key = JSON.stringify([S.layout, S.leaf, S.leafPoints, S.collars, S.roots, S.apex, S.flower, S.sideHeads, S.drift, S.pods, S.treatments, S.stress]);
     return S;
   }
 
   root.BLOOM = Object.assign(root.BLOOM || {}, { plantVisual: Object.assign((root.BLOOM && root.BLOOM.plantVisual) || {}, {
-    components: Object.freeze({ select, AUTHORED_MAX }) }) });
+    components: Object.freeze({ select, LAYOUTS }) }) });
 })(typeof window !== "undefined" ? window : globalThis);

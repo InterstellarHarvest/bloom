@@ -23,7 +23,7 @@ button,select,input{font:inherit; color:inherit}
 .box{display:grid; place-items:center; border:1px solid var(--line); border-radius:6px; overflow:hidden; background:#e7e1d0}
 .box canvas{display:block; image-rendering:pixelated; image-rendering:crisp-edges}
 .meta{font-size:11px; color:var(--dim)}
-.sheet{display:grid; grid-template-columns:repeat(7,auto); gap:8px; justify-content:start}
+.sheet{display:grid; grid-template-columns:repeat(8,auto); gap:8px; justify-content:start}
 .sheet .panel{padding:6px}
 .legend{font-size:11.5px; color:var(--dim); max-width:1100px; margin-top:10px}
 /* the production specimen inside its reference box (the production rooms' own rules for it) */

@@ -1,10 +1,10 @@
 // BLOOM — Plant Sprite Pipeline Proof page (BLOOM-032B1). docs/PLANT_SPRITE_PIPELINE_v1.md §9.
-// An ENGINEERING proof, not gameplay and not an art review: one neutral PIPELINE PROOF body plan through the golden-slice states, the
+// An ENGINEERING proof, not gameplay and not an art review: one neutral PIPELINE PROOF body plan through every locked Organic Hybrid state, the
 // same build re-skinned by swapping only the art pack (proof-angular, proof-round), the current production SVG for reference, every
 // production placement size, the ghost / outline preview and the grow / dissolve purchase FX. Reads the real trait data for ids, names and
 // legal tiers; never changes BLOOM_DATA, a price, a mechanic or the production UI. "Purchase" is a visual state change only.
 //
-// Keys: 1–7 golden-slice preset · V preview on/off · B purchase · R reduced motion.   QA: window.PLANT_PIPELINE_LAB.
+// Keys: 1–9 the first nine presets · V preview on/off · B purchase · R reduced motion.   QA: window.PLANT_PIPELINE_LAB.
 (function () {
   "use strict";
   const PV = BLOOM.plantVisual, PC = BLOOM.plantCompositor, FX = BLOOM.plantFx, ART = BLOOM.plantArt, PS = BLOOM.plantSpecimen, D = BLOOM_DATA;
@@ -12,12 +12,16 @@
   const CANVAS = ART.contract.canvas, PRIMARY = "proof", PACKS = ["proof", ...ART.packOrder.filter(p => p !== "proof")];
   const PRESETS = [
     { id: "base", name: "BASE", traits: {} },
-    { id: "cold2", name: "COLD T2", traits: { cold: 2 } },
-    { id: "drought2", name: "DROUGHT T2", traits: { drought: 2 } },
-    { id: "rad", name: "RADIATION", traits: { rad: 1 } },
-    { id: "seed2", name: "SEED OUTPUT T2", traits: { seedOut: 2 } },
-    { id: "early", name: "EARLY MATURITY", traits: { earlyMat: 1 } },
-    { id: "complex", name: "COMPLEX", traits: { cold: 2, drought: 2, rad: 1, seedOut: 2, earlyMat: 1 } },
+    { id: "cold1", name: "COLD T1", traits: { cold: 1 } }, { id: "cold2", name: "COLD T2", traits: { cold: 2 } }, { id: "cold3", name: "COLD T3", traits: { cold: 3 } },
+    { id: "heat1", name: "HEAT T1", traits: { heat: 1 } }, { id: "heat2", name: "HEAT T2", traits: { heat: 2 } }, { id: "heat3", name: "HEAT T3", traits: { heat: 3 } },
+    { id: "cold2heat1", name: "COLD T2 + HEAT T1", traits: { cold: 2, heat: 1 } },
+    { id: "drought1", name: "DROUGHT T1", traits: { drought: 1 } }, { id: "drought2", name: "DROUGHT T2", traits: { drought: 2 } }, { id: "drought3", name: "DROUGHT T3", traits: { drought: 3 } }, { id: "drought4", name: "DROUGHT T4 (= T3 art)", traits: { drought: 4 } },
+    { id: "flood1", name: "FLOOD T1", traits: { flood: 1 } }, { id: "flood2", name: "FLOOD T2", traits: { flood: 2 } }, { id: "flood3", name: "FLOOD T3", traits: { flood: 3 } }, { id: "flood4", name: "FLOOD T4 (= T3 art)", traits: { flood: 4 } },
+    { id: "salt", name: "SALT", traits: { salt: 1 } }, { id: "rad", name: "RADIATION", traits: { rad: 1 } },
+    { id: "seed1", name: "SEED OUTPUT T1", traits: { seedOut: 1 } }, { id: "seed2", name: "SEED OUTPUT T2", traits: { seedOut: 2 } },
+    { id: "early", name: "EARLY MATURITY", traits: { earlyMat: 1 } }, { id: "water", name: "WATERBORNE SEEDS", traits: { waterSeeds: 1 } },
+    { id: "maxDry", name: "MAXIMAL LEGAL DRY", traits: { cold: 2, heat: 1, drought: 3, salt: 1, rad: 1, seedOut: 2, earlyMat: 1, waterSeeds: 1 } },
+    { id: "maxWet", name: "MAXIMAL LEGAL WET", traits: { cold: 2, heat: 1, flood: 3, salt: 1, rad: 1, seedOut: 2, earlyMat: 1, waterSeeds: 1 } },
   ];
   // the production placements (measured specimen boxes in the real rooms and the report — docs §2)
   const PLACEMENTS = [
@@ -27,7 +31,7 @@
     { id: "room1440", label: "Adapt / Spread / Region · 1440×900", w: 290, h: 335 },
     { id: "journal", label: "Field Journal report", w: 296, h: 342 },
   ];
-  const PROPOSE = ["cold", "drought", "rad", "seedOut", "earlyMat"];
+  const PROPOSE = ["cold", "heat", "drought", "flood", "salt", "rad", "seedOut", "earlyMat", "waterSeeds"];
   const rmOS = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
   const S = { view: "compare", preset: "base", traits: {}, condition: "thriving", placement: "room1280", pack: PRIMARY, propose: "cold", preview: false, fx: "grow", reducedMotion: rmOS, busy: false };
   const LAB = window.PLANT_PIPELINE_LAB = { S, PRESETS, PLACEMENTS, PACKS, errors: [], ready: false, renders: 0, lastPurchase: null };
@@ -41,8 +45,8 @@
   function frame(pack, traits = S.traits, condition = S.condition) {
     const k = pack + JSON.stringify([traits, condition]); if (!cache.has(k)) { if (cache.size > 200) cache.clear(); cache.set(k, PC.render(selection(traits, condition), pack)); } return cache.get(k);
   }
-  /** The next tier a real purchase of this trait could add (real legal rules; capped at the golden slice's authored tiers). */
-  function nextTier(id, traits = S.traits) { const r = RULES.byId[id], cur = traits[id] || 0, cap = Math.min(r.max === null ? Infinity : r.max, PV.components.AUTHORED_MAX[id] || 1);
+  /** The next tier a real purchase of this trait could add (real legal rules; the uncapped water arms stop at the authored T3 art cap). */
+  function nextTier(id, traits = S.traits) { const r = RULES.byId[id], cur = traits[id] || 0, cap = r.max === null ? PV.model.VISUAL_CAP : r.max;
     if (cur >= cap) return null; const t = { ...traits, [id]: cur + 1 }; return PV.model.validate(t, RULES).legal ? cur + 1 : null; }
   const proposed = () => { const t = nextTier(S.propose); return t === null ? null : { ...S.traits, [S.propose]: t }; };
 
@@ -86,7 +90,7 @@
     } else {
       stage.append(el("div", { class: "sheet" }, PRESETS.map(pr => { const f = frame(S.pack, pr.traits), cv = canvasFor(f.rgba, 2, { "data-pack": S.pack, "data-preset": pr.id, "data-role": "sheet", "aria-label": pr.name });
         return el("div", { class: "panel", "data-sheet": pr.id }, el("h4", {}, el("span", {}, pr.name)), el("div", { class: "box" }, cv), el("span", { class: "meta" }, selection(pr.traits).components.length + " components")); })));
-      stage.append(el("p", { class: "legend" }, `Every golden-slice state in the ${ART.packs[S.pack].title} pack at 2×.`));
+      stage.append(el("p", { class: "legend" }, `Every locked Organic Hybrid state (incl. Cold + Heat, the T4 = T3 art cap and the maximal legal dry / wet organisms) in the ${ART.packs[S.pack].title} pack at 2×.`));
     }
     renderBar();
   }
@@ -107,7 +111,7 @@
   const btn = (label, pressed, on, attrs = {}) => el("button", { type: "button", "aria-pressed": pressed === null ? null : String(!!pressed), onclick: on, ...attrs }, label);
   function renderBar() {
     const bar = $("#bar"); bar.textContent = "";
-    bar.append(el("div", { class: "grp", id: "presets" }, el("span", {}, "Golden slice"), PRESETS.map((p, k) => btn(`${k + 1} ${p.name}`, S.preset === p.id, () => setPreset(p.id), { "data-preset": p.id }))));
+    bar.append(el("div", { class: "grp", id: "presets" }, el("span", {}, "Locked states"), PRESETS.map((p, k) => btn(`${k < 9 ? k + 1 + " " : ""}${p.name}`, S.preset === p.id, () => setPreset(p.id), { "data-preset": p.id }))));
     bar.append(el("div", { class: "grp" }, el("span", {}, "Condition"), ["thriving", "strained"].map(c => btn(c, S.condition === c, () => { S.condition = c; render(); }, { "data-condition": c }))));
     if (S.view === "compare") bar.append(el("div", { class: "grp" }, el("span", {}, "Placement"), PLACEMENTS.map(P => btn(P.label.replace("Adapt / Spread / Region · ", "Room "), S.placement === P.id, () => { S.placement = P.id; render(); }, { "data-placement": P.id }))));
     if (S.view !== "compare") bar.append(el("div", { class: "grp" }, el("span", {}, "Pack"), PACKS.map(p => btn(p, S.pack === p, () => { S.pack = p; render(); }, { "data-pack-pick": p }))));
@@ -120,9 +124,9 @@
       el("label", {}, el("input", { type: "checkbox", id: "rm", checked: S.reducedMotion, onchange: e => { S.reducedMotion = e.target.checked; } }), " reduced motion")));
     document.querySelectorAll("#views button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.view === S.view)));
   }
-  function head() { $("#views").append(...[["compare", "Pipeline + pack swap"], ["placements", "All placements"], ["sheet", "Golden-slice sheet"]].map(([v, l]) => btn(l, S.view === v, () => { S.view = v; render(); }, { "data-view": v }))); }
+  function head() { $("#views").append(...[["compare", "Pipeline + pack swap"], ["placements", "All placements"], ["sheet", "All locked states"]].map(([v, l]) => btn(l, S.view === v, () => { S.view = v; render(); }, { "data-view": v }))); }
   addEventListener("keydown", e => { const t = e.target; if (e.metaKey || e.ctrlKey || e.altKey || (t && t.tagName === "SELECT")) return;
-    if (/^[1-7]$/.test(e.key)) setPreset(PRESETS[+e.key - 1].id); else if (e.key === "v" || e.key === "V") { if (proposed() || S.preview) { S.preview = !S.preview; render(); } }
+    if (/^[1-9]$/.test(e.key)) setPreset(PRESETS[+e.key - 1].id); else if (e.key === "v" || e.key === "V") { if (proposed() || S.preview) { S.preview = !S.preview; render(); } }
     else if (e.key === "b" || e.key === "B") purchase(); else if (e.key === "r" || e.key === "R") { S.reducedMotion = !S.reducedMotion; renderBar(); } else return; e.preventDefault(); });
 
   Object.assign(LAB, { set(patch) { Object.assign(S, patch); render(); return S; }, setPreset, render, purchase, frame, selection, nextTier, proposed,
