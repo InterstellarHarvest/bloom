@@ -5,7 +5,7 @@
   "soilY": 68,
   "w": 84
  },
- "fingerprint": "e7d9cae6a90f57232860c47f11f2a30c806286e7e21ee4f1f6dbf24b288495ce",
+ "fingerprint": "3e830fa9c6430a9755c3d3cf7c4d2e5f8cf10140c64b18aae8ab29f79064b964",
  "format": "bloom-plant-art/1",
  "inputs": [
   {
@@ -15,6 +15,14 @@
   {
    "path": "art/plant/contract.json",
    "sha256": "cdbdda14dd5500342c14fef1143078c5696b6685fe7d2c68d7274e2e6156adcb"
+  },
+  {
+   "path": "art/plant/packs/organic-hybrid/atlas.json",
+   "sha256": "e766533f5c6bcc410fce741902d5fa5a166d486048dc65c2c072585771522ffb"
+  },
+  {
+   "path": "art/plant/packs/organic-hybrid/atlas.png",
+   "sha256": "628f988848c607c260c9365852f86b4ae86dd5025b04092731f901baa5c45ec9"
   },
   {
    "path": "art/plant/packs/proof-angular/atlas.json",
@@ -50,11 +58,20 @@
   }
  ],
  "output": {
-  "bytes": 185970,
+  "bytes": 255233,
   "path": "resources/plant-visual/generated/plant-atlas.js",
-  "sha256": "269eca78d860060a471f741a2947b39c720e7c958a817c32d1adb022e291e422"
+  "sha256": "6969f813e838e22b134bd0382b6896bf1c87d0290670c961c278039af9b37844"
  },
  "packs": {
+  "organic-hybrid": {
+   "authored": 55,
+   "baked": 37,
+   "missing": [],
+   "placementsProven": 17782,
+   "sprites": 92,
+   "status": "ORGANIC HYBRID — FINAL ART (PMO-approved; BLOOM-032B2 intake)",
+   "title": "Organic Hybrid — final art"
+  },
   "proof": {
    "authored": 55,
    "baked": 37,
