@@ -78,7 +78,7 @@
     LAB.renders++; const stage = $("#stage"); stage.textContent = "";
     const sel = selection(S.traits), owned = Object.entries(S.traits).filter(([, v]) => v).map(([k, v]) => `${NAMES[k]} T${v}`), tgt = proposed();
     stage.append(el("p", { class: "summary" }, el("b", {}, "Build: "), owned.join(" · ") || "no traits", "   ", el("b", {}, "Components: "), sel.components.join(", "),
-      sel.treatments.length ? ["   ", el("b", {}, "Treatments: "), sel.treatments.join(", ")] : "", "   ", el("b", {}, "Layout: "), sel.layout,
+      sel.treatments.length ? ["   ", el("b", {}, "Treatments: "), sel.treatments.map(t => t.id === "wax" ? `wax L${t.level}` : t.id).join(", ")] : "", "   ", el("b", {}, "Layout: "), sel.layout,
       S.preview ? ["   ", el("b", {}, "Previewing: "), tgt ? `${NAMES[S.propose]} → T${nextTier(S.propose)}` : `${NAMES[S.propose]}: no further authored tier`] : ""));
     const P = PLACEMENTS.find(p => p.id === S.placement);
     if (S.view === "compare") {
