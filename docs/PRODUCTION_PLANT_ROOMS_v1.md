@@ -139,6 +139,10 @@ and three real tabs (`role=tablist / tab / tabpanel`, `aria-selected`, roving ta
 
 ## 8. Production plant specimen (`BLOOM.plantSpecimen`)
 
+> **BLOOM-032C:** this section describes the provisional 029C SVG renderer, now RETIRED. The same `BLOOM.plantSpecimen` API now renders
+> the approved Organic Hybrid sprite organism: see `docs/PRODUCTION_PLANT_INTEGRATION_v1.md`. The SVG survives only as the developer
+> reference `resources/plant-sprite-lab/legacy-svg-specimen.js`.
+
 `mount(host, { reducedMotion }) → { render(state), highlight(part), anchorPoint(part) (client px), anchors(), signature(), parts }`,
 and the pure `draw(state) → { markup, anchors }` (QA N7 proves it deterministic and that every trait changes it).
 
