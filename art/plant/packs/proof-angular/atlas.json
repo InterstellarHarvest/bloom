@@ -5,7 +5,7 @@
   "status": "TEMPORARY PIPELINE PROOF — NOT FINAL ART",
   "about": "Deliberately simple placeholder sprites that exist only to prove the production sprite pipeline (BLOOM-032B1). Final art comes from the owner's art studio and replaces this pack by following docs/PLANT_SPRITE_PIPELINE_v1.md § ARTIST_HANDOFF.",
   "image": "atlas.png",
-  "swatch": [0, 0, 128, 59],
+  "swatch": [0, 0, 224, 71],
   "palette": {
     "ink": [
       "#1a1830"
@@ -70,6 +70,18 @@
       "#b46478",
       "#de96a6"
     ],
+    "salt": [
+      "#8a7a5a",
+      "#c4b080",
+      "#ece0b0",
+      "#fffbe6"
+    ],
+    "pod": [
+      "#2a4a6a",
+      "#3a6a96",
+      "#5a9ac4",
+      "#9ccae8"
+    ],
     "pigLeaf": [
       "#3a0a1e",
       "#6a1430",
@@ -93,6 +105,12 @@
       "#7084a4",
       "#9cb0cc",
       "#d0dcee"
+    ],
+    "waxCore": [
+      "#4a5a6a",
+      "#6e8296",
+      "#98aac0",
+      "#ccdaea"
     ]
   },
   "environment": {
@@ -115,7 +133,7 @@
       "id": "leaf.base.low",
       "component": "leaf.base",
       "angle": "low",
-      "rect": [0, 63, 15, 7],
+      "rect": [0, 75, 15, 7],
       "anchor": [0, 4],
       "attach": "leafSocket",
       "layer": "leaves",
@@ -123,26 +141,28 @@
       "orientation": "right",
       "mirror": true,
       "category": "structural",
+      "family": "leaf",
       "trait": null,
       "tier": 0,
       "points": {
         "tip": [14, 1],
         "margin": [
-          [6, 0],
+          [5, 1],
           [9, 0],
-          [13, 1]
+          [12, 1]
         ]
       },
       "masks": {
-        "pigment": [17, 63],
-        "wax": "auto"
+        "pigment": [17, 75],
+        "wax": "auto",
+        "toothed": [34, 75]
       }
     },
     {
       "id": "leaf.base.mid",
       "component": "leaf.base",
       "angle": "mid",
-      "rect": [34, 63, 12, 10],
+      "rect": [51, 75, 12, 10],
       "anchor": [0, 9],
       "attach": "leafSocket",
       "layer": "leaves",
@@ -150,26 +170,28 @@
       "orientation": "right",
       "mirror": true,
       "category": "structural",
+      "family": "leaf",
       "trait": null,
       "tier": 0,
       "points": {
         "tip": [11, 0],
         "margin": [
-          [3, 2],
+          [3, 3],
           [6, 1],
           [9, 0]
         ]
       },
       "masks": {
-        "pigment": [48, 63],
-        "wax": "auto"
+        "pigment": [65, 75],
+        "wax": "auto",
+        "toothed": [79, 75]
       }
     },
     {
       "id": "leaf.base.high",
       "component": "leaf.base",
       "angle": "high",
-      "rect": [62, 63, 7, 14],
+      "rect": [93, 75, 7, 14],
       "anchor": [0, 13],
       "attach": "leafSocket",
       "layer": "leaves",
@@ -177,80 +199,86 @@
       "orientation": "right",
       "mirror": true,
       "category": "structural",
+      "family": "leaf",
       "trait": null,
       "tier": 0,
       "points": {
         "tip": [6, 0],
         "margin": [
           [0, 6],
-          [3, 3],
+          [2, 4],
           [5, 1]
         ]
       },
       "masks": {
-        "pigment": [71, 63],
-        "wax": "auto"
+        "pigment": [102, 75],
+        "wax": "auto",
+        "toothed": [111, 75]
       }
     },
     {
-      "id": "leaf.cold.mid",
-      "component": "leaf.cold",
+      "id": "leaf.base.heat.mid",
+      "component": "leaf.base.heat",
       "angle": "mid",
-      "rect": [80, 63, 9, 8],
-      "anchor": [0, 7],
+      "rect": [120, 75, 10, 13],
+      "anchor": [0, 12],
       "attach": "leafSocket",
       "layer": "leaves",
       "order": 0,
       "orientation": "right",
       "mirror": true,
       "category": "structural",
-      "trait": "cold",
-      "tier": 2,
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
       "points": {
-        "tip": [8, 0],
+        "tip": [9, 0],
         "margin": [
-          [2, 2],
-          [5, 1],
-          [7, 0]
+          [3, 6],
+          [5, 4],
+          [8, 1]
         ]
       },
       "masks": {
-        "pigment": [91, 63],
-        "wax": "auto"
+        "pigment": [132, 75],
+        "wax": "auto",
+        "toothed": [144, 75]
       }
     },
     {
-      "id": "leaf.cold.high",
-      "component": "leaf.cold",
+      "id": "leaf.base.heat.high",
+      "component": "leaf.base.heat",
       "angle": "high",
-      "rect": [102, 63, 6, 10],
-      "anchor": [0, 9],
+      "rect": [156, 75, 5, 16],
+      "anchor": [0, 15],
       "attach": "leafSocket",
       "layer": "leaves",
       "order": 0,
       "orientation": "right",
       "mirror": true,
       "category": "structural",
-      "trait": "cold",
-      "tier": 2,
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
       "points": {
         "tip": [4, 0],
         "margin": [
-          [0, 3],
-          [1, 2],
-          [4, 0]
+          [0, 9],
+          [1, 5],
+          [3, 2]
         ]
       },
       "masks": {
-        "pigment": [110, 63],
-        "wax": "auto"
+        "pigment": [163, 75],
+        "wax": "auto",
+        "toothed": [170, 75]
       }
     },
     {
-      "id": "leaf.succulent.low",
-      "component": "leaf.succulent",
+      "id": "leaf.drought.1.low",
+      "component": "leaf.drought.1",
       "angle": "low",
-      "rect": [0, 79, 13, 8],
+      "rect": [177, 75, 14, 9],
       "anchor": [0, 5],
       "attach": "leafSocket",
       "layer": "leaves",
@@ -258,53 +286,57 @@
       "orientation": "right",
       "mirror": true,
       "category": "structural",
+      "family": "leaf",
       "trait": "drought",
-      "tier": 2,
+      "tier": 1,
       "points": {
-        "tip": [12, 1],
+        "tip": [13, 2],
         "margin": [
           [5, 1],
           [8, 0],
-          [11, 1]
+          [11, 0]
         ]
       },
       "masks": {
-        "pigment": "auto",
-        "wax": "auto"
+        "pigment": [193, 75],
+        "wax": "auto",
+        "toothed": [209, 75]
       }
     },
     {
-      "id": "leaf.succulent.mid",
-      "component": "leaf.succulent",
+      "id": "leaf.drought.1.mid",
+      "component": "leaf.drought.1",
       "angle": "mid",
-      "rect": [15, 79, 11, 10],
-      "anchor": [0, 9],
+      "rect": [0, 93, 12, 11],
+      "anchor": [0, 10],
       "attach": "leafSocket",
       "layer": "leaves",
       "order": 0,
       "orientation": "right",
       "mirror": true,
       "category": "structural",
+      "family": "leaf",
       "trait": "drought",
-      "tier": 2,
+      "tier": 1,
       "points": {
-        "tip": [10, 1],
+        "tip": [11, 2],
         "margin": [
-          [2, 3],
-          [5, 1],
+          [2, 4],
+          [4, 1],
           [7, 0]
         ]
       },
       "masks": {
-        "pigment": "auto",
-        "wax": "auto"
+        "pigment": [14, 93],
+        "wax": "auto",
+        "toothed": [28, 93]
       }
     },
     {
-      "id": "leaf.succulent.high",
-      "component": "leaf.succulent",
+      "id": "leaf.drought.1.high",
+      "component": "leaf.drought.1",
       "angle": "high",
-      "rect": [28, 79, 9, 13],
+      "rect": [42, 93, 9, 13],
       "anchor": [1, 12],
       "attach": "leafSocket",
       "layer": "leaves",
@@ -312,13 +344,157 @@
       "orientation": "right",
       "mirror": true,
       "category": "structural",
+      "family": "leaf",
+      "trait": "drought",
+      "tier": 1,
+      "points": {
+        "tip": [7, 0],
+        "margin": [
+          [0, 5],
+          [1, 3],
+          [3, 0]
+        ]
+      },
+      "masks": {
+        "pigment": [53, 93],
+        "wax": "auto",
+        "toothed": [64, 93]
+      }
+    },
+    {
+      "id": "leaf.drought.1.heat.mid",
+      "component": "leaf.drought.1.heat",
+      "angle": "mid",
+      "rect": [75, 93, 10, 12],
+      "anchor": [0, 11],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
+      "points": {
+        "tip": [9, 0],
+        "margin": [
+          [2, 5],
+          [4, 2],
+          [6, 1]
+        ]
+      },
+      "masks": {
+        "pigment": [87, 93],
+        "wax": "auto",
+        "toothed": [99, 93]
+      }
+    },
+    {
+      "id": "leaf.drought.1.heat.high",
+      "component": "leaf.drought.1.heat",
+      "angle": "high",
+      "rect": [111, 93, 7, 15],
+      "anchor": [1, 14],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
+      "points": {
+        "tip": [4, 0],
+        "margin": [
+          [0, 8],
+          [1, 5],
+          [2, 2]
+        ]
+      },
+      "masks": {
+        "pigment": [120, 93],
+        "wax": "auto",
+        "toothed": [129, 93]
+      }
+    },
+    {
+      "id": "leaf.drought.2.low",
+      "component": "leaf.drought.2",
+      "angle": "low",
+      "rect": [138, 93, 14, 9],
+      "anchor": [0, 5],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "drought",
+      "tier": 2,
+      "points": {
+        "tip": [13, 4],
+        "margin": [
+          [5, 0],
+          [7, 0],
+          [10, 0]
+        ]
+      },
+      "masks": {
+        "pigment": "auto",
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "leaf.drought.2.mid",
+      "component": "leaf.drought.2",
+      "angle": "mid",
+      "rect": [154, 93, 12, 11],
+      "anchor": [0, 10],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "drought",
+      "tier": 2,
+      "points": {
+        "tip": [11, 3],
+        "margin": [
+          [2, 4],
+          [4, 2],
+          [6, 1]
+        ]
+      },
+      "masks": {
+        "pigment": "auto",
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "leaf.drought.2.high",
+      "component": "leaf.drought.2",
+      "angle": "high",
+      "rect": [168, 93, 9, 13],
+      "anchor": [1, 12],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
       "trait": "drought",
       "tier": 2,
       "points": {
         "tip": [6, 0],
         "margin": [
-          [1, 6],
-          [2, 3],
+          [0, 6],
+          [1, 3],
           [3, 1]
         ]
       },
@@ -328,9 +504,635 @@
       }
     },
     {
-      "id": "root.storage",
-      "component": "root.storage",
-      "rect": [39, 79, 9, 16],
+      "id": "leaf.drought.2.heat.mid",
+      "component": "leaf.drought.2.heat",
+      "angle": "mid",
+      "rect": [179, 93, 10, 12],
+      "anchor": [0, 11],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
+      "points": {
+        "tip": [8, 0],
+        "margin": [
+          [2, 5],
+          [3, 3],
+          [6, 1]
+        ]
+      },
+      "masks": {
+        "pigment": "auto",
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "leaf.drought.2.heat.high",
+      "component": "leaf.drought.2.heat",
+      "angle": "high",
+      "rect": [191, 93, 6, 14],
+      "anchor": [1, 13],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
+      "points": {
+        "tip": [5, 0],
+        "margin": [
+          [0, 7],
+          [1, 4],
+          [2, 2]
+        ]
+      },
+      "masks": {
+        "pigment": "auto",
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "leaf.drought.3.low",
+      "component": "leaf.drought.3",
+      "angle": "low",
+      "rect": [199, 93, 12, 9],
+      "anchor": [0, 5],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "drought",
+      "tier": 3,
+      "points": {
+        "tip": [11, 4],
+        "margin": [
+          [4, 0],
+          [6, 0],
+          [9, 0]
+        ]
+      },
+      "masks": {
+        "pigment": "auto",
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "leaf.drought.3.mid",
+      "component": "leaf.drought.3",
+      "angle": "mid",
+      "rect": [213, 93, 11, 10],
+      "anchor": [0, 9],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "drought",
+      "tier": 3,
+      "points": {
+        "tip": [9, 3],
+        "margin": [
+          [1, 3],
+          [3, 1],
+          [5, 0]
+        ]
+      },
+      "masks": {
+        "pigment": "auto",
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "leaf.drought.3.high",
+      "component": "leaf.drought.3",
+      "angle": "high",
+      "rect": [0, 110, 10, 11],
+      "anchor": [2, 10],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "drought",
+      "tier": 3,
+      "points": {
+        "tip": [6, 0],
+        "margin": [
+          [0, 4],
+          [1, 2],
+          [3, 0]
+        ]
+      },
+      "masks": {
+        "pigment": "auto",
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "leaf.drought.3.heat.mid",
+      "component": "leaf.drought.3.heat",
+      "angle": "mid",
+      "rect": [12, 110, 9, 10],
+      "anchor": [0, 9],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
+      "points": {
+        "tip": [7, 0],
+        "margin": [
+          [1, 4],
+          [2, 2],
+          [4, 0]
+        ]
+      },
+      "masks": {
+        "pigment": "auto",
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "leaf.drought.3.heat.high",
+      "component": "leaf.drought.3.heat",
+      "angle": "high",
+      "rect": [23, 110, 6, 12],
+      "anchor": [1, 11],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
+      "points": {
+        "tip": [4, 0],
+        "margin": [
+          [0, 6],
+          [0, 3],
+          [1, 1]
+        ]
+      },
+      "masks": {
+        "pigment": "auto",
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "leaf.flood.1.low",
+      "component": "leaf.flood.1",
+      "angle": "low",
+      "rect": [31, 110, 15, 10],
+      "anchor": [0, 6],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "flood",
+      "tier": 1,
+      "points": {
+        "tip": [14, 3],
+        "margin": [
+          [5, 1],
+          [8, 0],
+          [12, 1]
+        ]
+      },
+      "masks": {
+        "pigment": [48, 110],
+        "wax": "auto",
+        "toothed": [65, 110]
+      }
+    },
+    {
+      "id": "leaf.flood.1.mid",
+      "component": "leaf.flood.1",
+      "angle": "mid",
+      "rect": [82, 110, 13, 11],
+      "anchor": [0, 10],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "flood",
+      "tier": 1,
+      "points": {
+        "tip": [12, 2],
+        "margin": [
+          [2, 3],
+          [4, 1],
+          [8, 0]
+        ]
+      },
+      "masks": {
+        "pigment": [97, 110],
+        "wax": "auto",
+        "toothed": [112, 110]
+      }
+    },
+    {
+      "id": "leaf.flood.1.high",
+      "component": "leaf.flood.1",
+      "angle": "high",
+      "rect": [127, 110, 10, 14],
+      "anchor": [1, 13],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "flood",
+      "tier": 1,
+      "points": {
+        "tip": [7, 0],
+        "margin": [
+          [0, 6],
+          [1, 3],
+          [4, 0]
+        ]
+      },
+      "masks": {
+        "pigment": [139, 110],
+        "wax": "auto",
+        "toothed": [151, 110]
+      }
+    },
+    {
+      "id": "leaf.flood.1.heat.mid",
+      "component": "leaf.flood.1.heat",
+      "angle": "mid",
+      "rect": [163, 110, 11, 13],
+      "anchor": [0, 12],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
+      "points": {
+        "tip": [9, 0],
+        "margin": [
+          [2, 6],
+          [4, 3],
+          [7, 1]
+        ]
+      },
+      "masks": {
+        "pigment": [176, 110],
+        "wax": "auto",
+        "toothed": [189, 110]
+      }
+    },
+    {
+      "id": "leaf.flood.1.heat.high",
+      "component": "leaf.flood.1.heat",
+      "angle": "high",
+      "rect": [202, 110, 7, 16],
+      "anchor": [1, 15],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
+      "points": {
+        "tip": [5, 0],
+        "margin": [
+          [0, 8],
+          [1, 5],
+          [2, 2]
+        ]
+      },
+      "masks": {
+        "pigment": [211, 110],
+        "wax": "auto",
+        "toothed": [0, 128]
+      }
+    },
+    {
+      "id": "leaf.flood.2.low",
+      "component": "leaf.flood.2",
+      "angle": "low",
+      "rect": [9, 128, 19, 6],
+      "anchor": [0, 4],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "flood",
+      "tier": 2,
+      "points": {
+        "tip": [18, 1],
+        "margin": [
+          [6, 1],
+          [10, 0],
+          [15, 0]
+        ]
+      },
+      "masks": {
+        "pigment": [30, 128],
+        "wax": "auto",
+        "toothed": [51, 128]
+      }
+    },
+    {
+      "id": "leaf.flood.2.mid",
+      "component": "leaf.flood.2",
+      "angle": "mid",
+      "rect": [72, 128, 15, 12],
+      "anchor": [0, 11],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "flood",
+      "tier": 2,
+      "points": {
+        "tip": [14, 0],
+        "margin": [
+          [4, 5],
+          [7, 2],
+          [10, 0]
+        ]
+      },
+      "masks": {
+        "pigment": [89, 128],
+        "wax": "auto",
+        "toothed": [106, 128]
+      }
+    },
+    {
+      "id": "leaf.flood.2.high",
+      "component": "leaf.flood.2",
+      "angle": "high",
+      "rect": [123, 128, 9, 17],
+      "anchor": [0, 16],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "flood",
+      "tier": 2,
+      "points": {
+        "tip": [8, 0],
+        "margin": [
+          [1, 9],
+          [3, 5],
+          [4, 2]
+        ]
+      },
+      "masks": {
+        "pigment": [134, 128],
+        "wax": "auto",
+        "toothed": [145, 128]
+      }
+    },
+    {
+      "id": "leaf.flood.2.heat.mid",
+      "component": "leaf.flood.2.heat",
+      "angle": "mid",
+      "rect": [156, 128, 12, 15],
+      "anchor": [0, 14],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
+      "points": {
+        "tip": [11, 0],
+        "margin": [
+          [3, 8],
+          [6, 4],
+          [9, 1]
+        ]
+      },
+      "masks": {
+        "pigment": [170, 128],
+        "wax": "auto",
+        "toothed": [184, 128]
+      }
+    },
+    {
+      "id": "leaf.flood.2.heat.high",
+      "component": "leaf.flood.2.heat",
+      "angle": "high",
+      "rect": [198, 128, 6, 19],
+      "anchor": [0, 18],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
+      "points": {
+        "tip": [4, 0],
+        "margin": [
+          [1, 11],
+          [2, 7],
+          [3, 3]
+        ]
+      },
+      "masks": {
+        "pigment": [206, 128],
+        "wax": "auto",
+        "toothed": [214, 128]
+      }
+    },
+    {
+      "id": "leaf.flood.3.low",
+      "component": "leaf.flood.3",
+      "angle": "low",
+      "rect": [0, 149, 19, 6],
+      "anchor": [0, 4],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "flood",
+      "tier": 3,
+      "points": {
+        "tip": [18, 1],
+        "margin": [
+          [7, 1],
+          [11, 0],
+          [15, 0]
+        ]
+      },
+      "masks": {
+        "pigment": [21, 149],
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "leaf.flood.3.mid",
+      "component": "leaf.flood.3",
+      "angle": "mid",
+      "rect": [42, 149, 15, 13],
+      "anchor": [0, 12],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "flood",
+      "tier": 3,
+      "points": {
+        "tip": [14, 0],
+        "margin": [
+          [4, 6],
+          [8, 3],
+          [11, 1]
+        ]
+      },
+      "masks": {
+        "pigment": [59, 149],
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "leaf.flood.3.high",
+      "component": "leaf.flood.3",
+      "angle": "high",
+      "rect": [76, 149, 9, 18],
+      "anchor": [0, 17],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "flood",
+      "tier": 3,
+      "points": {
+        "tip": [8, 0],
+        "margin": [
+          [1, 10],
+          [3, 6],
+          [5, 2]
+        ]
+      },
+      "masks": {
+        "pigment": [87, 149],
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "leaf.flood.3.heat.mid",
+      "component": "leaf.flood.3.heat",
+      "angle": "mid",
+      "rect": [98, 149, 12, 15],
+      "anchor": [0, 14],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
+      "points": {
+        "tip": [11, 0],
+        "margin": [
+          [3, 8],
+          [6, 5],
+          [9, 1]
+        ]
+      },
+      "masks": {
+        "pigment": [112, 149],
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "leaf.flood.3.heat.high",
+      "component": "leaf.flood.3.heat",
+      "angle": "high",
+      "rect": [126, 149, 6, 19],
+      "anchor": [0, 18],
+      "attach": "leafSocket",
+      "layer": "leaves",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "leaf",
+      "trait": "heat",
+      "tier": 3,
+      "points": {
+        "tip": [4, 0],
+        "margin": [
+          [1, 11],
+          [2, 7],
+          [3, 3]
+        ]
+      },
+      "masks": {
+        "pigment": [134, 149],
+        "wax": "auto"
+      }
+    },
+    {
+      "id": "root.storage.2",
+      "component": "root.storage.2",
+      "rect": [142, 149, 9, 16],
       "anchor": [4, 1],
       "attach": "primaryRoot",
       "layer": "rootStorage",
@@ -338,27 +1140,134 @@
       "orientation": "down",
       "mirror": false,
       "category": "structural",
+      "family": "root",
       "trait": "drought",
       "tier": 2
     },
     {
-      "id": "frost.tuft",
-      "component": "frost.tuft",
-      "rect": [50, 79, 3, 3],
-      "anchor": [1, 2],
-      "attach": "leafMargin",
+      "id": "root.storage.3",
+      "component": "root.storage.3",
+      "rect": [153, 149, 11, 22],
+      "anchor": [5, 1],
+      "attach": "primaryRoot",
+      "layer": "rootStorage",
+      "order": 0,
+      "orientation": "down",
+      "mirror": false,
+      "category": "structural",
+      "family": "root",
+      "trait": "drought",
+      "tier": 3
+    },
+    {
+      "id": "root.aerial.1",
+      "component": "root.aerial.1",
+      "rect": [166, 149, 1, 6],
+      "anchor": [0, 5],
+      "attach": "aerialRoot",
+      "layer": "aerialRoots",
+      "order": 0,
+      "orientation": "up",
+      "mirror": false,
+      "category": "structural",
+      "family": "root",
+      "trait": "flood",
+      "tier": 1
+    },
+    {
+      "id": "root.aerial.2",
+      "component": "root.aerial.2",
+      "rect": [169, 149, 2, 9],
+      "anchor": [0, 8],
+      "attach": "aerialRoot",
+      "layer": "aerialRoots",
+      "order": 0,
+      "orientation": "up",
+      "mirror": false,
+      "category": "structural",
+      "family": "root",
+      "trait": "flood",
+      "tier": 2
+    },
+    {
+      "id": "root.aerial.3",
+      "component": "root.aerial.3",
+      "rect": [173, 149, 3, 14],
+      "anchor": [1, 13],
+      "attach": "aerialRoot",
+      "layer": "aerialRoots",
+      "order": 0,
+      "orientation": "up",
+      "mirror": false,
+      "category": "structural",
+      "family": "root",
+      "trait": "flood",
+      "tier": 3
+    },
+    {
+      "id": "root.stilt",
+      "component": "root.stilt",
+      "rect": [178, 149, 9, 11],
+      "anchor": [0, 0],
+      "attach": "stiltRoot",
+      "layer": "aerialRoots",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "structural",
+      "family": "root",
+      "trait": "flood",
+      "tier": 3
+    },
+    {
+      "id": "frost.hair.1",
+      "component": "frost.hair.1",
+      "rect": [189, 149, 1, 3],
+      "anchor": [0, 2],
+      "attach": "leafPoint",
       "layer": "surface",
       "order": 0,
       "orientation": "up",
       "mirror": false,
       "category": "surface",
+      "family": "frost",
       "trait": "cold",
       "tier": 1
     },
     {
-      "id": "frost.collar",
-      "component": "frost.collar",
-      "rect": [55, 79, 11, 3],
+      "id": "frost.hair.2",
+      "component": "frost.hair.2",
+      "rect": [192, 149, 3, 4],
+      "anchor": [1, 3],
+      "attach": "leafPoint",
+      "layer": "surface",
+      "order": 0,
+      "orientation": "up",
+      "mirror": false,
+      "category": "surface",
+      "family": "frost",
+      "trait": "cold",
+      "tier": 2
+    },
+    {
+      "id": "frost.hair.3",
+      "component": "frost.hair.3",
+      "rect": [197, 149, 5, 5],
+      "anchor": [2, 4],
+      "attach": "leafPoint",
+      "layer": "surface",
+      "order": 0,
+      "orientation": "up",
+      "mirror": false,
+      "category": "surface",
+      "family": "frost",
+      "trait": "cold",
+      "tier": 3
+    },
+    {
+      "id": "frost.collar.2",
+      "component": "frost.collar.2",
+      "rect": [204, 149, 11, 3],
       "anchor": [5, 1],
       "attach": "stemNode",
       "layer": "surface",
@@ -366,13 +1275,59 @@
       "orientation": "up",
       "mirror": false,
       "category": "surface",
+      "family": "frost",
       "trait": "cold",
       "tier": 2
     },
     {
+      "id": "frost.collar.3",
+      "component": "frost.collar.3",
+      "rect": [0, 173, 15, 4],
+      "anchor": [7, 2],
+      "attach": "stemNode",
+      "layer": "surface",
+      "order": 0,
+      "orientation": "up",
+      "mirror": false,
+      "category": "surface",
+      "family": "frost",
+      "trait": "cold",
+      "tier": 3
+    },
+    {
+      "id": "salt.crystal",
+      "component": "salt.crystal",
+      "rect": [17, 173, 7, 7],
+      "anchor": [3, 6],
+      "attach": "leafPoint",
+      "layer": "surface",
+      "order": 0,
+      "orientation": "up",
+      "mirror": false,
+      "category": "surface",
+      "family": "salt",
+      "trait": "salt",
+      "tier": 1
+    },
+    {
+      "id": "salt.gland",
+      "component": "salt.gland",
+      "rect": [26, 173, 3, 3],
+      "anchor": [1, 2],
+      "attach": "leafPoint",
+      "layer": "surface",
+      "order": 0,
+      "orientation": "up",
+      "mirror": false,
+      "category": "surface",
+      "family": "salt",
+      "trait": "salt",
+      "tier": 1
+    },
+    {
       "id": "bud",
       "component": "bud",
-      "rect": [68, 79, 7, 11],
+      "rect": [31, 173, 7, 11],
       "anchor": [3, 10],
       "attach": "apex",
       "layer": "repro",
@@ -380,13 +1335,29 @@
       "orientation": "up",
       "mirror": false,
       "category": "reproductive",
+      "family": "bud",
+      "trait": null,
+      "tier": 0
+    },
+    {
+      "id": "bud.axil",
+      "component": "bud.axil",
+      "rect": [40, 173, 6, 6],
+      "anchor": [0, 5],
+      "attach": "axil",
+      "layer": "repro",
+      "order": 0,
+      "orientation": "right",
+      "mirror": true,
+      "category": "reproductive",
+      "family": "bud",
       "trait": null,
       "tier": 0
     },
     {
       "id": "flower",
       "component": "flower",
-      "rect": [77, 79, 15, 17],
+      "rect": [48, 173, 15, 17],
       "anchor": [7, 16],
       "attach": "flower",
       "layer": "repro",
@@ -394,13 +1365,14 @@
       "orientation": "up",
       "mirror": false,
       "category": "reproductive",
+      "family": "flower",
       "trait": "earlyMat",
       "tier": 1
     },
     {
       "id": "seedHead.small",
       "component": "seedHead.small",
-      "rect": [94, 79, 9, 12],
+      "rect": [65, 173, 9, 12],
       "anchor": [4, 11],
       "attach": "seedHead",
       "layer": "repro",
@@ -408,13 +1380,14 @@
       "orientation": "up",
       "mirror": false,
       "category": "reproductive",
+      "family": "seedHead",
       "trait": "seedOut",
       "tier": 1
     },
     {
       "id": "seedHead.large",
       "component": "seedHead.large",
-      "rect": [105, 79, 17, 18],
+      "rect": [76, 173, 17, 18],
       "anchor": [8, 17],
       "attach": "seedHead",
       "layer": "repro",
@@ -422,13 +1395,14 @@
       "orientation": "up",
       "mirror": false,
       "category": "reproductive",
+      "family": "seedHead",
       "trait": "seedOut",
       "tier": 2
     },
     {
       "id": "seed.drift",
       "component": "seed.drift",
-      "rect": [0, 99, 5, 4],
+      "rect": [95, 173, 5, 4],
       "anchor": [2, 3],
       "attach": "drift",
       "layer": "drift",
@@ -436,8 +1410,24 @@
       "orientation": "up",
       "mirror": false,
       "category": "reproductive",
+      "family": "seedHead",
       "trait": "seedOut",
       "tier": 2
+    },
+    {
+      "id": "pod",
+      "component": "pod",
+      "rect": [102, 173, 7, 10],
+      "anchor": [3, 0],
+      "attach": "pod",
+      "layer": "repro",
+      "order": 0,
+      "orientation": "down",
+      "mirror": false,
+      "category": "reproductive",
+      "family": "pod",
+      "trait": "waterSeeds",
+      "tier": 1
     }
   ]
 }

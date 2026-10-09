@@ -99,7 +99,7 @@ export function buildPlantArt(root) {
   const errors = [], read = rel => fs.readFileSync(path.join(root, rel)), rel = p => p.split(path.sep).join("/");
   const contractBuf = read(CONTRACT), bodyBuf = read(BODY), C = JSON.parse(contractBuf), B = JSON.parse(bodyBuf);
   if (C.format !== "bloom-plant-contract@1") errors.push(`${CONTRACT}: format ${C.format}`);
-  if (B.format !== "bloom-plant-body-plan@1") errors.push(`${BODY}: format ${B.format}`);
+  if (B.format !== "bloom-plant-body-plan@2") errors.push(`${BODY}: format ${B.format}`);
   const MAT = C.materials.map(m => m.name), MID = Object.fromEntries(MAT.map((m, i) => [m, i + 1])), SHADES = Object.fromEntries(C.materials.map(m => [m.name, m.shades]));
   const LAYERS = C.layers, COMP = C.components, ANG = Object.keys(C.angles), ORI = Object.keys(C.orientations);
   const sockets = socketsOf(root, B, C.canvas);
@@ -143,7 +143,7 @@ export function buildPlantArt(root) {
       const wantId = c.angles ? `${s.component}.${s.angle}` : s.component;
       if (s.id !== wantId) E(`${w}: id must be "${wantId}" (component[.angle])`);
       if (c.angles ? !c.angles.includes(s.angle) : s.angle !== undefined) E(`${w}: angle "${s.angle}" not allowed (contract: ${JSON.stringify(c.angles)})`);
-      for (const k of ["attach", "layer", "category", "trait", "tier"]) if (s[k] !== c[k]) E(`${w}: ${k} ${JSON.stringify(s[k])} ≠ contract ${JSON.stringify(c[k])}`);
+      for (const k of ["attach", "layer", "category", "family", "trait", "tier"]) if (s[k] !== c[k]) E(`${w}: ${k} ${JSON.stringify(s[k])} ≠ contract ${JSON.stringify(c[k])}`);
       if (!ORI.includes(s.orientation)) E(`${w}: orientation "${s.orientation}" not one of ${ORI.join(" / ")}`);
       else if (s.orientation !== c.orientation && !(s.orientation === "left" && c.orientation === "right")) E(`${w}: orientation ${s.orientation} ≠ contract ${c.orientation}`);
       if (!!s.mirror !== !!c.mirror && s.orientation !== "left") E(`${w}: mirror ${!!s.mirror} ≠ contract ${!!c.mirror}`);
@@ -168,13 +168,13 @@ export function buildPlantArt(root) {
       for (const [t, v] of Object.entries(s.masks || {})) {
         if (!C.treatments[t]) { E(`${w}: mask "${t}" is not a contract treatment (${Object.keys(C.treatments).join(" / ")})`); continue; }
         if (c.masks && !c.masks.includes(t)) E(`${w}: ${s.component} does not take a ${t} mask`);
-        if (v === "auto") { masks[t] = "auto"; continue; }
+        if (v === "auto") { if (C.treatments[t].masksOnly) E(`${w}: mask ${t} must be an authored rect [x, y] ("auto" is meaningless for a ${C.treatments[t].kind} treatment)`); else masks[t] = "auto"; continue; }
         if (!isPt(v) || !claim([v[0], v[1], rw, rh], `${w} mask ${t}`)) { if (!isPt(v)) E(`${w}: mask ${t} must be "auto" or [x, y] (top-left of a ${rw}×${rh} mask rect)`); continue; }
         const bits = new Uint8Array(rw * rh); for (let y = 0; y < rh; y++) for (let x = 0; x < rw; x++) if (A(v[0] + x, v[1] + y)) bits[y * rw + x] = 1;
         masks[t] = Buffer.from(bits).toString("base64");
       }
       const one = { w: rw, h: rh, ax: s.anchor[0], ay: s.anchor[1], component: s.component, angle: s.angle || null, attach: s.attach, layer: s.layer, z: LAYERS[s.layer] * 100 + s.order,
-        category: s.category, trait: s.trait, tier: s.tier, orientation: s.orientation, px: Buffer.from(px).toString("base64"), masks, points: { tip: pts.tip || null, margin: pts.margin || [] } };
+        category: s.category, family: s.family, trait: s.trait, tier: s.tier, orientation: s.orientation, px: Buffer.from(px).toString("base64"), masks, points: { tip: pts.tip || null, margin: pts.margin || [] } };
       const key = `${s.id}@${s.orientation === "left" ? "left" : s.orientation === "right" ? "right" : s.orientation}`;
       sprites[key] = one;
       if (s.mirror && s.orientation === "right" && !(M.sprites || []).some(o => o.id === s.id && o.orientation === "left")) {
@@ -190,25 +190,35 @@ export function buildPlantArt(root) {
     for (const [cid, c] of Object.entries(COMP)) for (const ang of c.angles || [null]) { const base = ang ? `${cid}.${ang}` : cid;
       for (const side of c.orientation === "right" ? ["right", "left"] : [c.orientation]) if (!sprites[`${base}@${side}`]) missing.push(`${base}@${side}`); }
     if (missing.length) E(`missing sprites the renderer can ask for: ${missing.join(", ")}`);
-    // static no-clipping proof: every sprite inside the canvas at every socket it can attach to (leaf-margin details: within their leaf's rect, at the leaf's socket)
+    // static no-clipping proof: every sprite inside the canvas at EVERY socket it can attach to (a left / right sprite only at sockets of its
+    // side); leaf-point details (attach leafPoint) at every tip / margin point of EVERY leaf drawing at every leaf socket that drawing can take
+    const sideOf = key => key.endsWith("@left") ? -1 : key.endsWith("@right") ? 1 : 0;
+    const fits = (sp, x, y) => { const x0 = x - sp.ax, y0 = y - sp.ay; return x0 >= 0 && y0 >= 0 && x0 + sp.w <= C.canvas.w && y0 + sp.h <= C.canvas.h; };
+    let placementsProven = 0;
+    const pointSprites = Object.entries(sprites).filter(([, sp]) => sp.attach === "leafPoint");
     for (const [key, sp] of Object.entries(sprites)) {
-      const side = key.endsWith("@left") ? -1 : key.endsWith("@right") ? 1 : 0;
-      for (const so of sockets.filter(q => q.attach === sp.attach && (sp.attach !== "leafSocket" || q.side === side))) {
+      if (sp.attach === "leafPoint") continue;
+      const side = sideOf(key);
+      for (const so of sockets.filter(q => q.attach === sp.attach && (!side || q.side === side))) {
+        placementsProven++;
+        if (!fits(sp, so.x, so.y)) E(`clip: ${key} at ${so.layout}/${so.socket} (${so.x}, ${so.y}) leaves the ${C.canvas.w}×${C.canvas.h} canvas`);
+        if (sp.attach !== "leafSocket") continue;
         const x0 = so.x - sp.ax, y0 = so.y - sp.ay;
-        if (x0 < 0 || y0 < 0 || x0 + sp.w > C.canvas.w || y0 + sp.h > C.canvas.h) E(`clip: ${key} at ${so.layout}/${so.socket} (${so.x}, ${so.y}) leaves the ${C.canvas.w}×${C.canvas.h} canvas`);
+        for (const pt of [sp.points.tip, ...sp.points.margin].filter(Boolean)) for (const [pk, ps] of pointSprites) { placementsProven++;
+          if (!fits(ps, x0 + pt[0], y0 + pt[1])) E(`clip: ${pk} on ${key}'s point (${pt}) at ${so.layout}/${so.socket} leaves the ${C.canvas.w}×${C.canvas.h} canvas`); }
       }
     }
     const render = { stemOutline: "self", ...(M.render || {}) };
     if (!["self", "ink", "none"].includes(render.stemOutline)) E(`render.stemOutline "${render.stemOutline}" (self / ink / none)`);
     for (const k of Object.keys(render)) if (k !== "stemOutline") E(`render.${k}: unknown render option`);
     packs[pid] = { title: M.title, status: M.status, about: M.about || "", palette, environment: env, render, sprites: stable(sprites) };
-    coverage[pid] = { sprites: Object.keys(sprites).length, authored: (M.sprites || []).length, baked: Object.values(sprites).filter(s => s.baked).length, missing };
+    coverage[pid] = { sprites: Object.keys(sprites).length, authored: (M.sprites || []).length, baked: Object.values(sprites).filter(s => s.baked).length, missing, placementsProven };
   }
   if (errors.length) return { errors };
   const listed = inputs.map(([p, b]) => ({ path: p, sha256: sha256(b) })).sort((a, b) => a.path < b.path ? -1 : 1);
   listed.push({ path: SELF, sha256: sha256(fs.readFileSync(path.join(root, SELF))) });
   const fingerprint = sha256(FORMAT + "\n" + listed.map(i => `${i.path} ${i.sha256}`).join("\n"));
-  const runtime = stable({ format: FORMAT, fingerprint, materials: MAT, shades: SHADES, contract: { canvas: C.canvas, layers: C.layers, treatments: C.treatments, components: C.components, angles: Object.keys(C.angles), proceduralLayers: C.proceduralLayers },
+  const runtime = stable({ format: FORMAT, fingerprint, materials: MAT, shades: SHADES, contract: { canvas: C.canvas, layers: C.layers, treatments: C.treatments, components: C.components, families: C.families, visualCap: C.visualCap, angles: Object.keys(C.angles), proceduralLayers: C.proceduralLayers },
     bodyPlan: B, packs, packOrder: packIds });
   const js = `// GENERATED by ${SELF} from art/plant/ — DO NOT EDIT. Rebuild: npm --prefix tools run build:plant-art (docs/PLANT_SPRITE_PIPELINE_v1.md).
 // format ${FORMAT} · source fingerprint ${fingerprint}

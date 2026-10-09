@@ -3,13 +3,15 @@
 // Stage 3: component selection (plant-components.js) + body plan (art/plant/body-plan.json) + an art pack (generated
 // resources/plant-visual/generated/plant-atlas.js) → ONE organism on the ONE canonical canvas (84 × 98 logical pixels).
 //
-//   skeleton   the body plan's integer geometry: stem path, sockets (leaf · apex · flower · seedHead · pod · drift · stemNode · rootCrown ·
-//              primaryRoot), primary root, lateral roots. sockets() is ALSO what tools/build-plant-art.mjs uses for its static clip proof.
+//   skeleton   the body plan's integer geometry: stem path, sockets (leaf · stemNode · collar · axil · apex · flower · seedHead · pod · drift ·
+//              stilt · aerial · rootCrown · primaryRoot), primary root, lateral roots. sockets() is ALSO what tools/build-plant-art.mjs uses
+//              for its static clip proof and the artist size budget. Leaf TIP / MARGIN points are not sockets: each leaf sprite declares them.
 //   placement  the skeleton chooses WHERE (a socket); the sprite owns its pixels and says, by its anchor, which of its pixels sits there.
 //              Leaf sockets choose an authored ANGLE variant (low / mid / high) and a side (right, or its left twin) — never a rotation.
 //   procedural only the connective tissue: stem, side branches to reproductive sockets, primary + lateral roots.
-//   treatments recolours declared by the contract (pigment, wax) applied through each sprite's mask; condition "strained" = one angle step
-//              of posture (authored variants) + a restrained colour shift at compose time.
+//   angles     the selection's angle { shift, cap } steps each socket's authored angle variant (heat lifts, strain droops) — never a rotation.
+//   treatments contract treatments through each sprite's masks: "recolour" (pigment, wax — optional per-level shade filter) or "clear"
+//              (toothed: authored notches); condition "strained" = a restrained colour shift at compose time.
 //   environment a plain specimen-box backdrop (sky, soil cutaway) from the pack's environment colours — identical for every build.
 //
 //   const F = BLOOM.plantCompositor.render(selection, packId)   → { W, H, rgba, plant { m, owner }, placements[], sig { anatomy, full }, clip }
@@ -37,29 +39,33 @@
     const at = t => path[R(t * H)];
     return { H, path, at };
   }
-  /** Every socket of every layout (+ the root sockets), with the room to the canvas edges — the art contract's size budget. */
+  /** Every socket of every layout (+ the shared root sockets), with the room to the canvas edges — the art contract's size budget. */
   function sockets(B, canvas) {
-    const out = [];
+    const out = [], [cx, soilY] = B.crown, edge = (p, side) => side < 0 ? p.x - p.l - 1 : p.x + p.r + 1;
     for (const [lid, L] of Object.entries(B.layouts)) {
-      const S = stemOf(L, B.crown), apex = S.path[S.H];
-      L.leaves.forEach((s, i) => { const p = S.at(s.t); out.push({ layout: lid, socket: `leaf.${i}`, attach: "leafSocket", x: s.side < 0 ? p.x - p.l - 1 : p.x + p.r + 1, y: p.y, side: s.side, angle: s.angle }); });
-      out.push({ layout: lid, socket: "apex", attach: "apex", x: apex.x, y: apex.y - 1, side: 0 });
+      const S = stemOf(L, B.crown), apex = S.path[S.H], push = o => out.push({ layout: lid, side: 0, ...o });
+      L.leaves.forEach((s, i) => { const p = S.at(s.t); push({ socket: `leaf.${i}`, attach: "leafSocket", x: edge(p, s.side), y: p.y, side: s.side, angle: s.angle }); });
+      L.leaves.forEach((s, i) => { const p = S.at(s.t); push({ socket: `stemNode.${i}`, attach: "stemNode", x: p.x, y: p.y }); });
+      L.collars.forEach((t, i) => { const p = S.at(t); push({ socket: `collar.${i}`, attach: "stemNode", x: p.x, y: p.y }); });
+      L.axils.forEach((a, i) => { const p = S.at(a.t); push({ socket: `axil.${i}`, attach: "axil", x: edge(p, a.side), y: p.y, side: a.side }); });
+      push({ socket: "apex", attach: "apex", x: apex.x, y: apex.y - 1 });
       const br = b => { const p = S.at(b.t); return { x: p.x + b.dx, y: p.y + b.dy, side: b.side }; };
-      out.push({ layout: lid, socket: "flower.0", attach: "flower", x: apex.x, y: apex.y - 1, side: 0 }, { layout: lid, socket: "flower.1", attach: "flower", ...br(L.flowerBranch) });
-      out.push({ layout: lid, socket: "seedHead.0", attach: "seedHead", x: apex.x, y: apex.y - 1, side: 0 });
-      L.headBranches.forEach((b, i) => out.push({ layout: lid, socket: `seedHead.${i + 1}`, attach: "seedHead", ...br(b) }));
-      L.podBranches.forEach((b, i) => out.push({ layout: lid, socket: `pod.${i}`, attach: "pod", ...br(b) }));
-      L.drift.forEach(([dx, dy], i) => out.push({ layout: lid, socket: `drift.${i}`, attach: "drift", x: apex.x + dx, y: apex.y + dy, side: 0 }));
-      L.collars.forEach((t, i) => { const p = S.at(t); out.push({ layout: lid, socket: `stemNode.${i}`, attach: "stemNode", x: p.x, y: p.y, side: 0 }); });
+      push({ socket: "flower.0", attach: "flower", x: apex.x, y: apex.y - 1 }); push({ socket: "flower.1", attach: "flower", ...br(L.flowerBranch) });
+      push({ socket: "seedHead.0", attach: "seedHead", x: apex.x, y: apex.y - 1 });
+      L.headBranches.forEach((b, i) => push({ socket: `seedHead.${i + 1}`, attach: "seedHead", ...br(b) }));
+      L.podBranches.forEach((b, i) => push({ socket: `pod.${i}`, attach: "pod", ...br(b) }));
+      L.drift.forEach(([dx, dy], i) => push({ socket: `drift.${i}`, attach: "drift", x: apex.x + dx, y: apex.y + dy }));
+      L.stilts.forEach((st, i) => { const p = S.path[st.dy]; push({ socket: `stilt.${i}`, attach: "stiltRoot", x: edge(p, st.side), y: p.y, side: st.side }); });
     }
-    out.push({ layout: "*", socket: "rootCrown", attach: "rootCrown", x: B.crown[0], y: B.crown[1], side: 0 });
-    out.push({ layout: "*", socket: "primaryRoot", attach: "primaryRoot", x: B.crown[0], y: B.crown[1] + B.roots.storageSocket, side: 0 });
+    out.push({ layout: "*", socket: "rootCrown", attach: "rootCrown", x: cx, y: soilY, side: 0 });
+    out.push({ layout: "*", socket: "primaryRoot", attach: "primaryRoot", x: cx, y: soilY + B.roots.storageSocket, side: 0 });
+    B.roots.aerial.dx.forEach((dx, i) => out.push({ layout: "*", socket: `aerial.${i}`, attach: "aerialRoot", x: cx + dx, y: soilY + B.roots.aerial.dy, side: dx < 0 ? -1 : 1 }));
     for (const s of out) s.room = { left: s.x, right: canvas.w - 1 - s.x, up: s.y, down: canvas.h - 1 - s.y };
     return out;
   }
   function skeleton(B, layoutId, taproot) {
     const L = B.layouts[layoutId], S = stemOf(L, B.crown), [cx, soilY] = B.crown, Rt = B.roots;
-    const so = {}; for (const s of sockets({ ...B, layouts: { [layoutId]: L } }, { w: 1e6, h: 1e6 })) so[s.socket] = s;
+    const so = {}; for (const s of sockets({ ...B, layouts: { [layoutId]: L } }, { w: 1e6, h: 1e6 })) so[s.socket] = s;   // this layout's sockets + the shared root sockets
     const D = Rt.depth[taproot], wv = Rt.wiggle, [w0, w1] = Rt.width[taproot], primary = [];
     for (let j = 0; j <= D; j++) { const f = j / D * (wv.length - 1), i = Math.min(wv.length - 2, Math.floor(f)); primary.push({ x: cx + R(wv[i] + (wv[i + 1] - wv[i]) * (f - i)), y: soilY + j, w: Math.max(1, R(w0 + (w1 - w0) * j / D)) }); }
     const laterals = Rt.laterals.map(l => { const p = primary[R(l.f * D)]; return { from: { x: p.x, y: p.y }, mid: { x: p.x + l.side * R(l.len * 0.6), y: p.y + 1 }, to: { x: p.x + l.side * l.len, y: p.y + l.drop } }; });
@@ -84,9 +90,17 @@
     const A = art(), P = A.packs[packId]; if (!P) throw new Error(`plant art pack "${packId}" is not in the generated atlas`);
     const C = A.contract, W = (canvas || C.canvas).w, H = (canvas || C.canvas).h, B = A.bodyPlan, MAT = A.materials, MID = Object.fromEntries(MAT.map((m, i) => [m, i + 1]));
     const sk = skeleton(B, sel.layout, sel.roots.taproot), b = Buf(W, H), placements = [], ops = [];
-    const treat = {}; for (const t of sel.treatments) { const T = C.treatments[t]; if (!T) continue; const map = {};
-      for (const [from, to] of Object.entries(T.map)) if (P.palette[to]) map[MID[from]] = MID[to]; if (Object.keys(map).length) treat[t] = { map, procedural: T.procedural }; }
-    const stemV = shade => { let m = MID.stem; for (const t of Object.values(treat)) if (t.procedural.includes("stem") && t.map[m]) m = t.map[m]; return m * 4 + shade; };
+    // treatments: contract-declared recolours (optionally limited to some shades at a level) and clears (authored notches)
+    const treat = [];
+    for (const { id, level } of sel.treatments) { const T = C.treatments[id]; if (!T) continue;
+      if (T.kind === "clear") { treat.push({ id, clear: true }); continue; }
+      const map = {}; for (const [from, to] of Object.entries(T.map)) if (P.palette[to]) map[MID[from]] = MID[to];
+      if (!Object.keys(map).length) continue;
+      const lv = T.levels ? T.levels[String(Math.min(level, Math.max(...Object.keys(T.levels).map(Number))))] : null;
+      treat.push({ id, map, shades: lv ? new Set(lv) : null, procedural: T.procedural }); }
+    const recolour = (v, d, i) => { for (const T of treat) { if (T.clear) continue; const mk = d ? d.masks[T.id] : "auto", m = v >> 2;
+        if (!mk || !T.map[m] || (T.shades && !T.shades.has(v & 3))) continue; if (mk === "auto" || mk[i]) v = T.map[m] * 4 + (v & 3); } return v; };
+    const stemV = shade => { let v = MID.stem * 4 + shade; for (const T of treat) if (!T.clear && T.procedural.includes("stem") && T.map[v >> 2] && (!T.shades || T.shades.has(shade))) v = T.map[v >> 2] * 4 + shade; return v; };
     const own = (kind, extra) => { placements.push({ kind, ...extra }); return placements.length; };
 
     // ---- PROCEDURAL connective tissue: roots, stem, side branches (z from the contract layers)
@@ -105,31 +119,38 @@
     // ---- AUTHORED sprites at sockets
     const keyFor = (component, angle, side) => { const c = C.components[component];
       if (c.orientation !== "right") return `${component}@${c.orientation}`;
-      return `${component}.${angle}@${side < 0 ? "left" : "right"}`; };
-    function place(component, at, { angle = null, side = 1, socket, z, trait = null } = {}) {
+      return `${c.angles ? component + "." + angle : component}@${side < 0 ? "left" : "right"}`; };
+    function place(component, at, { angle = null, side = 1, socket, z } = {}) {
       const key = keyFor(component, angle, side), sp = P.sprites[key]; if (!sp) throw new Error(`pack ${packId} has no sprite ${key}`);
-      const x0 = at.x - sp.ax, y0 = at.y - sp.ay, rec = { kind: "sprite", component, key, socket, x0, y0, w: sp.w, h: sp.h, anchor: { x: at.x, y: at.y }, trait: trait || sp.trait, category: sp.category, sp };
+      const x0 = at.x - sp.ax, y0 = at.y - sp.ay, rec = { kind: "sprite", component, key, socket, x0, y0, w: sp.w, h: sp.h, anchor: { x: at.x, y: at.y }, trait: sp.trait, category: sp.category, family: sp.family, sp };
       ops.push({ z: z !== undefined ? z : sp.z, seq: ops.length, draw: () => { const o = own("sprite", rec), d = spritePx(packId, key, sp);
         for (let y = 0; y < sp.h; y++) for (let x = 0; x < sp.w; x++) { const i = y * sp.w + x; let v = d.px[i]; if (!v) continue;
-          for (const [t, T] of Object.entries(treat)) { const mk = d.masks[t], m = v >> 2; if (!mk || !T.map[m]) continue; if (mk === "auto" || mk[i]) v = T.map[m] * 4 + (v & 3); }
-          put(b, x0 + x, y0 + y, v, o); } } });
+          if (treat.some(T => T.clear && d.masks[T.id] && d.masks[T.id] !== "auto" && d.masks[T.id][i])) continue;   // authored notch
+          put(b, x0 + x, y0 + y, recolour(v, d, i), o); } } });
       return rec;
     }
     const so = sk.sockets, L = sk.L;
-    // leaves (bottom → top), on the body plan's sockets for this leaf set; posture steps the AUTHORED angle variant
-    const leafIdx = sel.leafSockets === "succulent" ? L.succulentLeaves : L.leaves.map((_, i) => i), comp = C.components[sel.leafSet];
-    const leaves = leafIdx.map((i, n) => { const s = so[`leaf.${i}`]; let a = ANGLES.indexOf(s.angle) + sel.posture; a = Math.max(0, Math.min(2, a));
+    // leaves (bottom → top) on the body plan's leaf set for this structure; the angle step picks another AUTHORED variant
+    const leafIdx = B.leafSets[sel.leaf.set] || L.leaves.map((_, i) => i), comp = C.components[sel.leaf.component], ang = sel.leaf.angle, capI = ANGLES.indexOf(ang.cap);
+    const leaves = leafIdx.map((i, n) => { const s = so[`leaf.${i}`], a0 = ANGLES.indexOf(s.angle);
+      let a = ang.shift > 0 ? Math.min(a0 + ang.shift, Math.max(a0, capI)) : Math.max(0, a0 + ang.shift);
       let angle = ANGLES[a]; if (!comp.angles.includes(angle)) angle = comp.angles.reduce((best, x) => Math.abs(ANGLES.indexOf(x) - a) < Math.abs(ANGLES.indexOf(best) - a) ? x : best);
-      return place(sel.leafSet, s, { angle, side: s.side, socket: `leaf.${i}`, z: zL("leaves") + n }); });
-    // surface: frost tufts ride on the points each LEAF SPRITE declares; collars on stem nodes
-    if (sel.frost.tufts) leaves.forEach(lf => { const pts = [lf.sp.points.tip, ...(sel.frost.tufts === "tip+margin" ? lf.sp.points.margin : [])].filter(Boolean);
-      pts.forEach(p => place("frost.tuft", { x: lf.x0 + p[0], y: lf.y0 + p[1] - 1 }, { socket: lf.socket + ":margin" })); });
-    if (sel.frost.collars) L.collars.forEach((_, i) => place("frost.collar", so[`stemNode.${i}`], { socket: `stemNode.${i}` }));
-    if (sel.roots.storage) place("root.storage", so.primaryRoot, { socket: "primaryRoot" });
-    // reproductive: apex, flower, side heads (+ their procedural branches), drifting seeds
+      return place(sel.leaf.component, s, { angle, side: s.side, socket: `leaf.${i}`, z: zL("leaves") + n }); });
+    // surface details ride on the points each LEAF SPRITE declares (tip / margin[i])
+    const pointsOf = (sp, at) => { const out = []; for (const part of at.split("+")) { if (part === "tip") { if (sp.points.tip) out.push(sp.points.tip); }
+      else if (part === "margin") out.push(...sp.points.margin); else if (part.startsWith("margin:")) part.slice(7).split(",").forEach(k => { if (sp.points.margin[+k]) out.push(sp.points.margin[+k]); }); } return out; };
+    for (const lp of sel.leafPoints) leaves.forEach(lf => pointsOf(lf.sp, lp.at).forEach(p => place(lp.component, { x: lf.x0 + p[0], y: lf.y0 + p[1] }, { socket: lf.socket + ":point" })));
+    if (sel.collars) L.collars.forEach((_, i) => place(sel.collars, so[`collar.${i}`], { socket: `collar.${i}` }));
+    if (sel.axils) L.axils.forEach((a, i) => place(sel.axils, so[`axil.${i}`], { side: a.side, socket: `axil.${i}` }));
+    // roots: storage tuber, breathing roots, stilt roots
+    if (sel.roots.storage) place(sel.roots.storage, so.primaryRoot, { socket: "primaryRoot" });
+    if (sel.roots.aerial) for (let i = 0; i < sel.roots.aerial.count; i++) place(sel.roots.aerial.component, so[`aerial.${i}`], { socket: `aerial.${i}` });
+    if (sel.roots.stilt) L.stilts.forEach((st, i) => place(sel.roots.stilt, so[`stilt.${i}`], { side: st.side, socket: `stilt.${i}` }));
+    // reproductive: apex, flower, side heads, pods (+ their procedural stalks), drifting seeds
     place(sel.apex, so.apex, { socket: "apex" });
     if (sel.flower === "flower.1") { branchTo(L.flowerBranch.t, so["flower.1"], "flower.1"); place("flower", so["flower.1"], { socket: "flower.1" }); }
     for (let k = 1; k <= sel.sideHeads; k++) { branchTo(L.headBranches[k - 1].t, so[`seedHead.${k}`], `seedHead.${k}`); place("seedHead.small", so[`seedHead.${k}`], { socket: `seedHead.${k}` }); }
+    if (sel.pods) L.podBranches.forEach((pb, i) => { branchTo(pb.t, so[`pod.${i}`], `pod.${i}`); place(sel.pods, so[`pod.${i}`], { socket: `pod.${i}` }); });
     for (let k = 0; k < sel.drift; k++) place("seed.drift", so[`drift.${k}`], { socket: `drift.${k}` });
 
     ops.sort((a, c) => a.z - c.z || a.seq - c.seq).forEach(op => op.draw());
@@ -142,7 +163,7 @@
       rgba[i * 4] = c[0]; rgba[i * 4 + 1] = c[1]; rgba[i * 4 + 2] = c[2]; rgba[i * 4 + 3] = 255; }
     let x0 = W, y0 = H, x1 = -1, y1 = -1; for (let i = 0; i < b.m.length; i++) if (b.m[i]) { const x = i % W, y = (i / W) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
     return { W, H, pack: packId, rgba, env, plant: b, placements, skeleton: sk, clip: b.clip, bbox: { x0, y0, x1, y1 },
-      unrendered: sel.treatments.filter(t => !treat[t]), sig: { anatomy: fnv(b.m), full: fnv(rgba), key: sel.key } };
+      unrendered: sel.treatments.filter(t => !treat.some(T => T.id === t.id)).map(t => t.id), sig: { anatomy: fnv(b.m), full: fnv(rgba), key: sel.key } };
   }
 
   // ================================================================ the specimen-box backdrop (identical for every build of a pack)

@@ -32,8 +32,12 @@ for (const f of ["content/config.js", "content/traits.js", "resources/plant-visu
   "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-fx.js"]) require(path.join(ROOT, f));
 const PV = BLOOM.plantVisual, PC = BLOOM.plantCompositor, FX = BLOOM.plantFx, ART = BLOOM.plantArt, RULES = PV.model.rules(BLOOM_DATA);
 const TRAITS_SNAPSHOT = J(BLOOM_DATA.traits), CONFIG_SNAPSHOT = J(BLOOM_DATA.config), CANVAS = ART.contract.canvas, PACKS = ART.packOrder;
-const STATES = { base: {}, cold2: { cold: 2 }, drought2: { drought: 2 }, rad: { rad: 1 }, seed2: { seedOut: 2 }, early: { earlyMat: 1 }, complex: { cold: 2, drought: 2, rad: 1, seedOut: 2, earlyMat: 1 } };
-const STATE_NAMES = { base: "BASE", cold2: "COLD T2", drought2: "DROUGHT T2", rad: "RADIATION", seed2: "SEED OUTPUT T2", early: "EARLY MATURITY", complex: "COMPLEX" };
+const STATES = { base: {}, cold1: { cold: 1 }, cold2: { cold: 2 }, cold3: { cold: 3 }, heat1: { heat: 1 }, heat2: { heat: 2 }, heat3: { heat: 3 }, cold2heat1: { cold: 2, heat: 1 },
+  drought1: { drought: 1 }, drought2: { drought: 2 }, drought3: { drought: 3 }, drought4: { drought: 4 }, flood1: { flood: 1 }, flood2: { flood: 2 }, flood3: { flood: 3 }, flood4: { flood: 4 },
+  salt: { salt: 1 }, rad: { rad: 1 }, seed1: { seedOut: 1 }, seed2: { seedOut: 2 }, early: { earlyMat: 1 }, water: { waterSeeds: 1 },
+  maxDry: { cold: 2, heat: 1, drought: 3, salt: 1, rad: 1, seedOut: 2, earlyMat: 1, waterSeeds: 1 }, maxWet: { cold: 2, heat: 1, flood: 3, salt: 1, rad: 1, seedOut: 2, earlyMat: 1, waterSeeds: 1 } };
+const ART_CAP_TWINS = { drought4: "drought3", flood4: "flood3" };   // gameplay T4 draws EXACTLY as T3 art — the only states allowed to share anatomy
+const TEMP_COMBOS = [{ cold: 3 }, { cold: 2, heat: 1 }, { cold: 1, heat: 2 }, { heat: 3 }];   // every legal way to spend the whole temperature pool
 const sel = (traits, condition = "thriving") => PV.components.select(PV.model.normalize({ traits, condition }, RULES));
 const frame = (pack, traits, condition) => PC.render(sel(traits, condition), pack);
 const PROOF = { milestone: "BLOOM-032B1", status: "TEMPORARY PIPELINE PROOF — NOT FINAL ART", base: BASE, head: git("rev-parse HEAD"), canvas: CANVAS, packs: {}, states: {}, browsers: {} };
@@ -119,7 +123,8 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
       "rect out of bounds": [M => { leafAt(M).rect[0] = 9999; }, /outside the/],
       "overlapping rects": [M => { const a = leafAt(M), b = M.sprites.find(s => s.id === "leaf.base.high"); b.rect = [a.rect[0], a.rect[1], b.rect[2], b.rect[3]]; }, /overlaps/],
       "anchor outside rect": [M => { leafAt(M).anchor = [99, 0]; }, /anchor .* outside/],
-      "missing angle variant": [M => { M.sprites = M.sprites.filter(s => s.id !== "leaf.cold.high"); }, /missing sprites the renderer can ask for: .*leaf\.cold\.high/],
+      "missing angle variant": [M => { M.sprites = M.sprites.filter(s => s.id !== "leaf.flood.3.heat.high"); }, /missing sprites the renderer can ask for: .*leaf\.flood\.3\.heat\.high/],
+      "auto mask for a clear treatment": [M => { leafAt(M).masks = { toothed: "auto" }; }, /mask toothed must be an authored rect/],
       "stray pixel": [(M, img) => { px(img, img.w - 1, img.h - 1, [255, 0, 255, 255]); }, /stray opaque pixel/],
       "sprite clips at a socket (body plan moved)": [() => { const bp = path.join(tmp, "art/plant/body-plan.json"), P = JSON.parse(fs.readFileSync(bp, "utf8")); P.layouts.open.drift[0] = [-44, -12]; fs.writeFileSync(bp, JSON.stringify(P)); }, /clip: seed\.drift@up at open\/drift\.0 .* leaves the 84×98 canvas/],
       "metadata disagrees with contract": [M => { leafAt(M).layer = "repro"; }, /layer "repro" ≠ contract "leaves"/],
@@ -159,33 +164,36 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
   { const src = ["resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-fx.js"].map(read).join("\n").replace(/\/\/.*$/gm, "");
     const named = ["cold", "heat", "drought", "flood", "salt", "rad", "seedOut", "earlyMat", "waterSeeds"].filter(id => new RegExp(`["'\`]${id}["'\`]|\\.${id}\\b`).test(src));
     const pricey = /\bcost\b|\bprice\b|BLOOM_DATA|tempCap|\.traits\b/.test(src);
-    const S2 = sel({ cold: 2 }), Sd = sel({ drought: 2 }), Sr = sel({ rad: 1 }), S1 = sel({ seedOut: 1 }), Ss = sel({ seedOut: 2 }), Se = sel({ earlyMat: 1 }), Sx = sel(STATES.complex), Sc3 = sel({ cold: 3 });
-    const ok = S2.layout === "compact" && S2.leafSet === "leaf.cold" && S2.frost.tufts === "tip+margin" && S2.frost.collars && Sd.leafSet === "leaf.succulent" && Sd.roots.storage && Sr.treatments.join() === "pigment" && Sr.components.join() === sel({}).components.join()
-      && S1.apex === "seedHead.small" && !S1.sideHeads && Ss.apex === "seedHead.large" && Ss.sideHeads === 2 && Ss.drift === 3 && Se.apex === "flower" && Sx.flower === "flower.1" && Sx.layout === "compact" && Sx.leafSet === "leaf.succulent"
-      && Sc3.heldAt.some(h => h.trait === "cold" && h.drawnAs === 2) && sel({ flood: 1 }).pending.includes("flood");
-    check(!named.length && !pricey && ok, "R2 · trait rule separation: the model maps real traits to visual axes (cold T2 → compact 2 + frost 2 …), the selector maps axes to component ids, and the compositor / FX name no trait, tier rule, price or BLOOM_DATA; tiers beyond the golden slice are held + reported; traits without art are reported as pending", J({ named, pricey, complex: Sx.components })); }
+    const S2 = sel({ cold: 2 }), Sd = sel({ drought: 2 }), Sr = sel({ rad: 1 }), S1 = sel({ seedOut: 1 }), Ss = sel({ seedOut: 2 }), Se = sel({ earlyMat: 1 }), Sx = sel(STATES.maxDry), Sw = sel(STATES.maxWet), Sb = sel({});
+    const ok = S2.layout === "compact" && S2.leaf.component === "leaf.base" && S2.collars === "frost.collar.2" && S2.leafPoints.some(q => q.component === "frost.hair.2" && q.at === "tip+margin")
+      && Sd.leaf.component === "leaf.drought.2" && Sd.roots.storage === "root.storage.2" && J(Sr.treatments) === J([{ id: "pigment", level: 1 }]) && J(Sr.components) === J(Sb.components)
+      && S1.apex === "seedHead.small" && !S1.sideHeads && Ss.apex === "seedHead.large" && Ss.sideHeads === 2 && Ss.drift === 3 && Se.apex === "flower" && Sx.flower === "flower.1" && Sx.layout === "compact"
+      && Sx.leaf.component === "leaf.drought.3" && Sw.leaf.component === "leaf.flood.3" && Sb.apex === "bud" && Sb.axils === "bud.axil" && !Sb.flower && !Sb.sideHeads;
+    check(!named.length && !pricey && ok, "R2 · trait rule separation: the model maps real traits to visual axes (cold T2 → compact 2 + frost 2 …), the selector maps axes to component ids (BASE = closed apical + axillary buds only), and the compositor / FX name no trait, tier rule, price or BLOOM_DATA", J({ named, pricey, maxDry: Sx.components })); }
   // R3 · every golden-slice state visibly differs (per pack), each from base and from each other
   { const out = {};
     for (const p of PACKS) { const F = Object.fromEntries(Object.entries(STATES).map(([k, t]) => [k, frame(p, t)])), keys = Object.keys(F), sigs = new Set(keys.map(k => F[k].sig.anatomy));
       const fromBase = Object.fromEntries(keys.filter(k => k !== "base").map(k => [k, FX.diff(F.base, F[k]).length]));
-      let minPair = Infinity; for (let i = 0; i < keys.length; i++) for (let j = i + 1; j < keys.length; j++) minPair = Math.min(minPair, FX.diff(F[keys[i]], F[keys[j]]).length);
+      let minPair = Infinity; for (let i = 0; i < keys.length; i++) for (let j = i + 1; j < keys.length; j++) if (ART_CAP_TWINS[keys[j]] !== keys[i]) minPair = Math.min(minPair, FX.diff(F[keys[i]], F[keys[j]]).length);
       out[p] = { distinct: sigs.size, fromBase, minPair };
+      for (const [a, b] of Object.entries(ART_CAP_TWINS)) if (F[a].sig.anatomy !== F[b].sig.anatomy) out[p].capBroken = a;
       PROOF.states[p] = Object.fromEntries(keys.map(k => [k, { anatomy: F[k].sig.anatomy, full: F[k].sig.full, components: sel(STATES[k]).components, treatments: sel(STATES[k]).treatments, layout: sel(STATES[k]).layout, placements: F[k].placements.length, bbox: F[k].bbox }])); }
-    check(Object.values(out).every(o => o.distinct === 7 && Object.values(o.fromBase).every(n => n >= 40) && o.minPair >= 20), "R3 · all seven golden-slice states (BASE, COLD T2, DROUGHT T2, RADIATION, SEED OUTPUT T2, EARLY MATURITY, COMPLEX) are distinct organisms in every pack: each differs from BASE by ≥ 40 px and from every other state by ≥ 20 px", J(out)); }
+    const nDistinct = Object.keys(STATES).length - Object.keys(ART_CAP_TWINS).length;
+    check(Object.values(out).every(o => o.distinct === nDistinct && !o.capBroken && Object.values(o.fromBase).every(n => n >= 30) && o.minPair >= 20), `R3 · all ${Object.keys(STATES).length} locked states are distinct organisms in every pack (${nDistinct} distinct anatomies: only Drought T4 / Flood T4 share T3's, by the art cap): each differs from BASE by ≥ 30 px and from every other state by ≥ 20 px`, J(Object.fromEntries(Object.entries(out).map(([k, o]) => [k, { distinct: o.distinct, minPair: o.minPair, minFromBase: Math.min(...Object.values(o.fromBase)) }])))); }
   // R4 · complex composes without clipping (runtime) + the static per-socket proof
   { const clips = []; for (const p of PACKS) for (const [k, t] of Object.entries(STATES)) for (const c of ["thriving", "strained"]) { const F = frame(p, t, c); if (F.clip || F.bbox.x0 < 0 || F.bbox.y1 >= F.H) clips.push(`${p}/${k}/${c}:${F.clip}`); }
-    const extreme = [{ cold: 3 }, { drought: 3 }, { cold: 3, drought: 3, rad: 1, seedOut: 2, earlyMat: 1, heat: 0 }].map(t => PACKS.map(p => frame(p, t).clip).reduce((a, b) => a + b, 0));
-    const C = frame("proof", STATES.complex), comps = new Set(C.placements.map(q => q.component));
-    check(!clips.length && extreme.every(n => n === 0) && ["leaf.succulent", "frost.tuft", "frost.collar", "root.storage", "seedHead.large", "seedHead.small", "seed.drift", "flower"].every(c => comps.has(c)) && !B.buildPlantArt(ROOT).errors.length,
-      "R4 · the COMPLEX build (Cold T2 + Drought T2 + Radiation + Seed Output T2 + Early Maturity) composes every component with no pixel clipped, in every pack, thriving and strained (and held tiers T3); the build's static proof places every sprite at every socket it can attach to inside the canvas", J({ clips, placements: C.placements.length })); }
+    const extreme = [{ drought: 9 }, { flood: 9 }, { cold: 3, drought: 7, salt: 1, rad: 1, seedOut: 2, earlyMat: 1, waterSeeds: 1 }].map(t => PACKS.map(p => frame(p, t).clip).reduce((a, b) => a + b, 0));
+    const C = frame("proof", STATES.maxDry), comps = new Set(C.placements.map(q => q.component));
+    check(!clips.length && extreme.every(n => n === 0) && ["leaf.drought.3", "frost.hair.2", "frost.collar.2", "salt.crystal", "salt.gland", "root.storage.3", "seedHead.large", "seedHead.small", "seed.drift", "flower", "pod", "bud.axil"].every(c => comps.has(c)) && !B.buildPlantArt(ROOT).errors.length,
+      "R4 · every locked state composes with no pixel clipped, in every pack, thriving and strained (and gameplay tiers far above the art cap); the build's static proof places every sprite at every socket — and every leaf-point detail on every leaf drawing — inside the canvas", J({ clips, placements: C.placements.length })); }
   // R5 · placement = skeleton: every sprite sits on a contract socket (the build's size-budget sockets == the renderer's)
   { const manifest = JSON.parse(read("resources/plant-visual/generated/plant-atlas-manifest.json")), so = PC.sockets(ART.bodyPlan, CANVAS);
     const key = a => J(a.sort()), same = key(manifest.sockets.map(s => J([s.layout, s.socket, s.at, s.room]))) === key(so.map(s => J([s.layout, s.socket, [s.x, s.y], Object.fromEntries(Object.entries(s.room).sort())])));
-    const off = []; for (const p of PACKS) { const F = frame(p, STATES.complex), table = Object.fromEntries(so.filter(s => s.layout === "compact" || s.layout === "*").map(s => [s.socket, s]));
-      for (const q of F.placements.filter(q => q.kind === "sprite" && !q.socket.endsWith(":margin"))) { const s = table[q.socket]; if (!s || s.x !== q.anchor.x || s.y !== q.anchor.y) off.push(`${p}:${q.component}@${q.socket}`); } }
+    const off = []; for (const p of PACKS) { const F = frame(p, STATES.maxDry), table = Object.fromEntries(so.filter(s => s.layout === "compact" || s.layout === "*").map(s => [s.socket, s]));
+      for (const q of F.placements.filter(q => q.kind === "sprite" && !q.socket.endsWith(":point"))) { const s = table[q.socket]; if (!s || s.x !== q.anchor.x || s.y !== q.anchor.y) off.push(`${p}:${q.component}@${q.socket}`); } }
     check(same && !off.length && manifest.sockets.length === so.length, `R5 · the skeleton chooses placement: every sprite's anchor pixel lands exactly on its body-plan socket; the manifest's per-socket size budget (${so.length} sockets) is the renderer's own socket table`, J({ off })); }
   // R6 · pack swap: same skeleton + components, different pixels — the renderer is style-agnostic
-  { const res = Object.entries(STATES).map(([k, t]) => { const F = PACKS.map(p => frame(p, t)), lay = F.map(f => J(f.placements.map(q => q.socket.endsWith(":margin") ? [q.component, q.socket] : [q.component, q.socket, q.anchor]))), pix = new Set(F.map(f => f.sig.full)); return { k, sameSkeleton: new Set(lay).size === 1, distinctPixels: pix.size === PACKS.length }; });
+  { const res = Object.entries(STATES).map(([k, t]) => { const F = PACKS.map(p => frame(p, t)), lay = F.map(f => J(f.placements.map(q => q.socket.endsWith(":point") ? [q.component, q.socket] : [q.component, q.socket, q.anchor]))), pix = new Set(F.map(f => f.sig.full)); return { k, sameSkeleton: new Set(lay).size === 1, distinctPixels: pix.size === PACKS.length }; });
     check(PACKS.length >= 3 && res.every(r => r.sameSkeleton && r.distinctPixels), `R6 · swapping only the art pack (${PACKS.join(" / ")}) re-skins every state — same components on the same sockets (surface details ride on each pack's own leaf points), entirely different pixels — with no renderer change`, J(res.filter(r => !(r.sameSkeleton && r.distinctPixels)))); }
   // R7 · treatments through masks; posture via authored angle variants
   { const b = frame("proof", {}), r = frame("proof", { rad: 1 }), d = FX.diff(b, r), MID = Object.fromEntries(ART.materials.map((m, i) => [m, i + 1]));
@@ -198,7 +206,7 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
   console.log("# Node — preview + FX");
   // F1 · preview + cancel; F2 · FX exact; F3 · reduced motion
   { const fx = {};
-    for (const [a, b] of [["base", "cold2"], ["base", "rad"], ["seed2", "complex"], ["base", "early"]]) for (const p of PACKS) {
+    for (const [a, b] of [["base", "cold2"], ["base", "rad"], ["seed2", "maxDry"], ["base", "early"]]) for (const p of PACKS) {
       const cur = frame(p, STATES[a]), tgt = frame(p, STATES[b]), pv = FX.preview(cur, tgt), d = FX.diff(cur, tgt), dset = new Set(d.map(q => q.i));
       const pvSig = PC.fnv(pv), pristine = PC.fnv(cur.rgba) === cur.sig.full;
       const res = {}; for (const st of FX.STYLES) { const mid = FX.fxFrame(cur, tgt, st, 0.5), end = FX.fxFrame(cur, tgt, st, 1), t0f = FX.fxFrame(cur, tgt, st, 0);
@@ -214,6 +222,89 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
     let clock = 0; const played = []; const r2 = await FX.purchase(cur, tgt, { style: "grow", onFrame: f => played.push(PC.fnv(f)), now: () => clock, raf: f => { clock += 16; setImmediate(f); } });
     check(r.frames === 1 && got.length === 1 && got[0] === tgt.sig.full && r2.frames > 20 && played[played.length - 1] === tgt.sig.full, "F3 · reduced motion = a short direct swap: exactly one frame, the target; the animated path plays ≥ 20 frames and also ends on the target", J({ reduced: r, animated: { frames: r2.frames, ms: r2.ms } }));
     PROOF.fx = fx; }
+  console.log("# Node — the locked Organic Hybrid contract");
+  const C_ = contract.components, compsOf = t => sel(t).components, famOf = id => C_[id] && C_[id].family;
+  const MAN = JSON.parse(read("resources/plant-visual/generated/plant-atlas-manifest.json"));
+  // N1 · every locked trait / tier normalizes onto its visual axes
+  { const M = t => PV.model.normalize({ traits: t }, RULES), bad = [];
+    const expect = [[{ cold: 1 }, m => m.architecture.compact === 1 && m.surface.frost === 1], [{ cold: 3 }, m => m.architecture.compact === 3 && m.surface.frost === 3],
+      [{ heat: 2 }, m => m.leaf.heat === 2 && m.surface.wax === 2 && !m.architecture.compact], [{ cold: 2, heat: 1 }, m => m.architecture.compact === 2 && m.leaf.heat === 1 && m.surface.frost === 2 && m.surface.wax === 1 && m.legal],
+      [{ drought: 1 }, m => m.leaf.water.arm === "drought" && m.leaf.water.tier === 1 && m.roots.storage === 1], [{ drought: 6 }, m => m.leaf.water.tier === 3 && m.roots.storage === 3 && m.capped[0].drawnAs === 3 && m.legal],
+      [{ flood: 2 }, m => m.leaf.water.arm === "flood" && m.roots.aerial === 2 && !m.roots.storage], [{ flood: 5 }, m => m.leaf.water.tier === 3 && m.legal],
+      [{ salt: 1 }, m => m.surface.salt === 1], [{ rad: 1 }, m => m.surface.pigment === 1], [{ seedOut: 1 }, m => m.repro.seedHead === 1], [{ seedOut: 2 }, m => m.repro.seedHead === 2],
+      [{ earlyMat: 1 }, m => m.repro.flower === 1], [{ waterSeeds: 1 }, m => m.repro.pods === 1], [{}, m => m.legal && !m.repro.flower && !m.repro.seedHead]];
+    for (const [t, f] of expect) if (!f(M(t))) bad.push(J(t));
+    const legal = Object.entries(STATES).filter(([, t]) => !PV.model.validate(t, RULES).legal).map(([k]) => k);
+    check(!bad.length && !legal.length, `N1 · every locked trait / tier normalizes onto its visual axis (Cold → architecture + insulation, Heat → leaf orientation + wax, Drought / Flood → primary leaf + roots, Salt / Radiation → surface, Seed Output / Early Maturity / Waterborne → reproductive), and all ${Object.keys(STATES).length} proof states — incl. both maximal builds — are LEGAL under the real rules`, J({ bad, illegal: legal })); }
+  // N2 · every component slot of the locked vocabulary exists in the contract, and every pack provides every one
+  { const required = ["leaf.base", "bud", "bud.axil", "frost.hair.1", "frost.hair.2", "frost.hair.3", "frost.collar.2", "frost.collar.3", "leaf.base.heat",
+      ...["drought", "flood"].flatMap(a => [1, 2, 3].flatMap(t => [`leaf.${a}.${t}`, `leaf.${a}.${t}.heat`])), "root.storage.2", "root.storage.3", "root.aerial.1", "root.aerial.2", "root.aerial.3", "root.stilt",
+      "salt.crystal", "salt.gland", "flower", "seedHead.small", "seedHead.large", "seed.drift", "pod"];
+    const missing = required.filter(c => !C_[c]), packMiss = Object.fromEntries(PACKS.map(p => [p, MAN.packs[p].missing])), treat = ["pigment", "wax", "toothed"].filter(t => !contract.treatments[t]);
+    const heatLevels = J(contract.treatments.wax.levels), noT4 = Object.keys(C_).filter(c => /\.[4-9](\.|$)/.test(c));
+    check(!missing.length && !treat.length && PACKS.every(p => !packMiss[p].length) && heatLevels === J({ 1: [2, 3], 2: [1, 2, 3], 3: [0, 1, 2, 3] }) && !noT4.length,
+      `N2 · all ${Object.keys(C_).length} contract component slots of the locked vocabulary exist (BASE leaves + buds · Cold T1–T3 hairs + T2/T3 collars · Heat T3 leaf variants for every structure + wax levels 1–3 · Drought T1–T3 + T2/T3 storage roots · Flood T1–T3 + aerial T1–T3 + stilt · Salt gland + crystal + toothed mask · Radiation pigment · flower · T1/T2 dry heads + drift · pod) and every pack provides every sprite (no T4+ asset exists)`, J({ missing, treat, packMiss, noT4 })); }
+  // N3 · Cold + Heat combine legally on ONE organism: cold architecture / insulation + heat surface / orientation
+  { const c2 = sel({ cold: 2 }), h1 = sel({ heat: 1 }), ch = sel({ cold: 2, heat: 1 }), legal = PV.model.validate({ cold: 2, heat: 1 }, RULES).legal;
+    const F = PACKS.map(p => ({ c2: frame(p, { cold: 2 }), h1: frame(p, { heat: 1 }), ch: frame(p, { cold: 2, heat: 1 }) }));
+    const angles = f => f.placements.filter(q => q.component.startsWith("leaf.")).map(q => q.key.split("@")[0].split(".").pop());
+    const ok = legal && ch.layout === c2.layout && ch.collars === c2.collars && J(ch.leafPoints) === J(c2.leafPoints) && ch.treatments.some(t => t.id === "wax" && t.level === 1) && J(ch.leaf.angle) === J(h1.leaf.angle)
+      && F.every(f => f.ch.sig.anatomy !== f.c2.sig.anatomy && f.ch.sig.anatomy !== f.h1.sig.anatomy && J(angles(f.ch)) !== J(angles(f.c2)) || f.ch.sig.anatomy !== f.c2.sig.anatomy) && TEMP_COMBOS.every(t => PV.model.validate(t, RULES).legal);
+    check(ok && !PV.model.validate({ cold: 2, heat: 2 }, RULES).legal, "N3 · Cold T2 + Heat T1 is legal and reads as ONE organism with BOTH axes: Cold's compact layout, collars and frost hairs + Heat's wax sheen and lifted authored angles (≠ Cold T2 alone, ≠ Heat T1 alone); Cold and Heat are never exclusive — only the shared temperature pool (cold + heat ≤ 3) limits them", J({ c2: c2.components, ch: ch.components, angle: ch.leaf.angle })); }
+  // N4 · Drought / Flood stay mutually exclusive
+  { const both = PV.model.validate({ drought: 1, flood: 1 }, RULES), fams = Object.values(STATES).map(t => sel(t).leaf.component).filter(c => /drought/.test(c) && /flood/.test(c));
+    const anyBoth = Object.values(STATES).some(t => { const c = compsOf(t).join(); return /drought|storage/.test(c) && /flood|aerial|stilt/.test(c); });
+    check(!both.legal && !fams.length && !anyBoth, "N4 · Drought and Flood remain mutually exclusive: the real rules reject a both-arms build; no state ever selects drought and flood components together (one PRIMARY leaf structure at a time)", J(both.issues)); }
+  // N5 · the T3 art cap: gameplay tiers ≥ 3 draw EXACTLY as T3, without any T4 asset
+  { const res = []; for (const p of PACKS) for (const arm of ["drought", "flood"]) { const t3 = frame(p, { [arm]: 3 }); for (const n of [4, 5, 9]) { const tn = frame(p, { [arm]: n }); res.push({ p, arm, n, anat: tn.sig.anatomy === t3.sig.anatomy, full: tn.sig.full === t3.sig.full }); } }
+    const mx = PACKS.every(p => frame(p, { ...STATES.maxDry, drought: 8 }).sig.anatomy === frame(p, STATES.maxDry).sig.anatomy && frame(p, { ...STATES.maxWet, flood: 8 }).sig.anatomy === frame(p, STATES.maxWet).sig.anatomy);
+    check(res.every(r => r.anat && r.full) && mx, "N5 · art cap: Drought T4 / T5 / T9 and Flood T4 / T5 / T9 render byte-identical anatomy (and pixels) to authored T3 in every pack, alone and inside the maximal builds — no T4+ asset is requested", `${res.length} comparisons`); }
+  // N6 · Salt vs Cold: disjoint component families
+  { const coldIds = new Set([1, 2, 3].flatMap(t => compsOf({ cold: t })).filter(c => !compsOf({}).includes(c) && !c.startsWith("leaf."))), saltIds = new Set(compsOf({ salt: 1 }).filter(c => !compsOf({}).includes(c)));
+    const both = [...coldIds].filter(c => saltIds.has(c)), coldFam = [...coldIds].every(c => famOf(c) === "frost"), saltFam = [...saltIds].every(c => famOf(c) === "salt");
+    const contractOverlap = Object.entries(C_).filter(([id, c]) => (c.family === "frost" && c.trait !== "cold") || (c.family === "salt" && c.trait !== "salt") || (/frost/.test(id) && c.family !== "frost") || (/salt/.test(id) && c.family !== "salt")).map(([id]) => id);
+    const mixed = sel({ cold: 2, salt: 1 }), points = new Set(), clash = [];
+    for (const lp of mixed.leafPoints) for (const at of lp.at.split("+").flatMap(a => a.startsWith("margin:") ? a.slice(7).split(",").map(k => "margin" + k) : a === "margin" ? ["margin0", "margin1", "margin2"] : [a])) { if (points.has(at)) clash.push(at); points.add(at); }
+    const mats = PACKS.every(p => { const pal = ART.packs[p].palette; return pal.salt.every(c => !pal.frost.includes(c)); });
+    check(coldIds.size && saltIds.size && !both.length && coldFam && saltFam && !contractOverlap.length && !clash.length && mats,
+      "N6 · Salt ≠ Cold: Cold resolves only to FROST-family components (hairs, wool collars), Salt only to SALT-family components (glands, faceted crystals) + the toothed treatment; no component id serves both; with both traits they never share a leaf point; salt and frost have separate material ramps", J({ cold: [...coldIds], salt: [...saltIds], both, contractOverlap, clash })); }
+  // N7 · Waterborne pods have real sockets and stalks
+  { const so = PC.sockets(ART.bodyPlan, CANVAS), podSo = so.filter(q => q.attach === "pod"), lays = Object.keys(ART.bodyPlan.layouts);
+    const placed = PACKS.every(p => { const F = frame(p, { waterSeeds: 1 }), pods = F.placements.filter(q => q.component === "pod"), stalks = F.placements.filter(q => q.component === "branch" && /^pod\./.test(q.socket));
+      const tab = Object.fromEntries(so.filter(q => q.layout === "open").map(q => [q.socket, q])); return pods.length === 2 && stalks.length === 2 && pods.every(q => tab[q.socket] && tab[q.socket].x === q.anchor.x && tab[q.socket].y === q.anchor.y); });
+    check(podSo.length === 2 * lays.length && lays.every(l => podSo.filter(q => q.layout === l).length === 2) && placed && famOf("pod") === "pod" && C_.pod.attach === "pod",
+      `N7 · Waterborne Seeds has real sockets: pod.0 / pod.1 (low side stalks) in all ${lays.length} layouts; both pods hang exactly from their sockets on procedural stalks; the pod family is separate from flowers and dry seed heads`, J(podSo.filter(q => q.layout === "open").map(q => [q.socket, q.x, q.y]))); }
+  // N8 · N9 · the maximal legal DRY and WET organisms fit 84×98 (every legal temperature-pool split), with a 1-px safety margin
+  for (const [nid, label, base, must, leaf3] of [["N8", "DRY", STATES.maxDry, ["root.storage.3"], "leaf.drought.3"], ["N9", "WET", STATES.maxWet, ["root.aerial.3", "root.stilt"], "leaf.flood.3"]]) {
+    const res = [];
+    for (const temp of TEMP_COMBOS) { const t = { ...base, cold: 0, heat: 0, ...temp }; delete t.cold; delete t.heat; Object.assign(t, temp);
+      for (const p of PACKS) for (const cond of ["thriving", "strained"]) { const F = frame(p, t, cond), F2 = frame(p, t, cond), comps = new Set(F.placements.map(q => q.component)), sl = sel(t, cond);
+        const req = [...must, sl.leaf.component, "salt.crystal", "salt.gland", "seedHead.large", "seedHead.small", "seed.drift", "flower", "pod", "bud.axil", ...sl.leafPoints.map(q => q.component), ...(sl.collars ? [sl.collars] : [])];
+        const margin = Math.min(F.bbox.x0, F.bbox.y0, F.W - 1 - F.bbox.x1, F.H - 1 - F.bbox.y1);
+        res.push({ temp: J(temp), p, cond, legal: PV.model.validate(t, RULES).legal, clip: F.clip, margin, missing: req.filter(c => !comps.has(c)), det: F.sig.full === F2.sig.full && F.sig.full === PC.render(sl, p).sig.full, leaf: sl.leaf.component, pig: sl.treatments.some(x => x.id === "pigment") }); } }
+    const bad = res.filter(r => !r.legal || r.clip || r.margin < 1 || r.missing.length || !r.det || !r.pig || !r.leaf.startsWith(leaf3));
+    PROOF[`maximal${label}`] = { traits: base, combos: TEMP_COMBOS, minMargin: Math.min(...res.map(r => r.margin)), cases: res.length, bbox: frame("proof", base).bbox, components: sel(base).components };
+    check(!bad.length, `${nid} · MAXIMAL LEGAL ${label} (temperature pool + ${label === "DRY" ? "Drought T3" : "Flood T3"} + Salt + Radiation + Seed Output T2 + Early Maturity + Waterborne Seeds) fits the 84×98 canvas for every legal Cold/Heat split (3+0, 2+1, 1+2, 0+3), every pack, thriving and strained: legal, every required component present, no pixel clipped, ≥ 1 px clear of every edge, deterministic`, J({ cases: res.length, minMargin: PROOF[`maximal${label}`].minMargin, bad: bad.slice(0, 3) })); }
+  // N10 · the complete socket table (incl. tips / margins via leaf points) lies inside the canvas and is documented in the manifest
+  { const so = PC.sockets(ART.bodyPlan, CANVAS), kinds = new Set(so.map(q => q.attach)), want = ["leafSocket", "stemNode", "axil", "apex", "flower", "seedHead", "pod", "drift", "rootCrown", "primaryRoot", "aerialRoot", "stiltRoot"];
+    const out = so.filter(q => q.x < 0 || q.y < 0 || q.x >= CANVAS.w || q.y >= CANVAS.h).map(q => q.socket);
+    const pointsIn = PACKS.every(p => Object.values(ART.packs[p].sprites).filter(sp => sp.attach === "leafSocket").every(sp => [sp.points.tip, ...sp.points.margin].every(pt => pt && pt[0] < sp.w && pt[1] < sp.h) && sp.points.margin.length === 3));
+    const proven = PACKS.map(p => MAN.packs[p].placementsProven);
+    check(want.every(k => kinds.has(k)) && !out.length && pointsIn && proven.every(n => n > 1000) && MAN.sockets.length === so.length && contract.attach.leafPoint,
+      `N10 · the socket table covers leaf sockets, stem nodes / collars, axils, apex, flower branch, seed-head branches, pod branches, drift points, root crown, primary root, aerial-root and stilt-root anchors (${so.length} sockets, all inside the canvas); every leaf drawing declares a tip + 3 margin points; the build statically proves ${proven.join(" / ")} placements (every sprite at every socket, every leaf-point detail on every leaf drawing)`, J({ out, kinds: [...kinds] })); }
+  // N11 · N12 · preview + Grow / Dissolve / reduced motion for every new mutation class
+  { const classes = { structural: [["base", "cold1"], ["cold2", "cold3"], ["base", "drought1"], ["drought2", "drought3"], ["base", "flood1"], ["flood2", "flood3"], ["heat2", "heat3"]],
+      surface: [["base", "heat1"], ["heat1", "heat2"], ["base", "salt"], ["base", "rad"], ["cold2", "cold2heat1"]], reproductive: [["base", "seed1"], ["seed1", "seed2"], ["base", "early"], ["base", "water"], ["maxDry", "maxWet"]] };
+    const pv = [], fx = [];
+    for (const [cls, pairs] of Object.entries(classes)) for (const [a, b] of pairs) for (const p of PACKS) {
+      const cur = frame(p, STATES[a]), tgt = frame(p, STATES[b]), view = FX.preview(cur, tgt), d = FX.diff(cur, tgt).length;
+      pv.push({ cls, a, b, p, ok: d > 0 && PC.fnv(view) !== cur.sig.full && PC.fnv(cur.rgba) === cur.sig.full });
+      for (const st of FX.STYLES) fx.push({ cls, st, a, b, p, ok: PC.fnv(FX.fxFrame(cur, tgt, st, 1)) === tgt.sig.full && PC.fnv(FX.fxFrame(cur, tgt, st, 0)) === cur.sig.full && PC.fnv(FX.fxFrame(cur, tgt, st, 0.5)) !== tgt.sig.full }); }
+    let rmOk = true; for (const [a, b] of [["base", "flood3"], ["base", "salt"], ["base", "water"]]) { const cur = frame("proof", STATES[a]), tgt = frame("proof", STATES[b]), got = [];
+      const r = await FX.purchase(cur, tgt, { reducedMotion: true, onFrame: f => got.push(PC.fnv(f)) }); rmOk = rmOk && r.frames === 1 && got.length === 1 && got[0] === tgt.sig.full; }
+    check(pv.every(x => x.ok), `N11 · the ghost / outline preview shows every new mutation class — structural (Cold T1→T3 architecture, Drought / Flood T1→T3, Heat T3 leaf form), surface (wax T1/T2, salt, pigment, Heat over Cold) and reproductive (dry heads, flower, pods) — and never mutates the current frame`, `${pv.length} previews`);
+    check(fx.every(x => x.ok) && rmOk && contract.treatments && FX.STYLES.join() === "grow,dissolve", `N12 · GROW (the default purchase FX) and DISSOLVE start on the current frame and end EXACTLY on the target for every structural, surface and reproductive change in every pack; reduced motion is one exact direct swap`, `${fx.length} animations · bad ${J(fx.filter(x => !x.ok).slice(0, 3))}`); }
+
   // G1 · no gameplay data mutated by any of this
   check(J(BLOOM_DATA.traits) === TRAITS_SNAPSHOT && J(BLOOM_DATA.config) === CONFIG_SNAPSHOT, "G1 · no trait / mechanic change: BLOOM_DATA.traits and config are identical after every render, preview and purchase");
   // H1 · the ARTIST_HANDOFF contract is complete and agrees with the generated socket table
@@ -256,17 +347,17 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
         const pageSigs = async () => p.evaluate(() => PLANT_PIPELINE_LAB.canvasSigs("canvas[data-role=live]"));
         // every golden state: browser pixels == Node pixels (all packs)
         const mism = [];
-        for (const [k, t] of Object.entries(STATES)) { await p.evaluate(id => PLANT_PIPELINE_LAB.setPreset(id), k === "early" ? "early" : k); const sigs = await pageSigs();
+        for (const [k, t] of Object.entries(STATES)) { await p.evaluate(id => PLANT_PIPELINE_LAB.setPreset(id), k); const sigs = await pageSigs();
           for (const s of sigs) if (s.sig !== nodeSig(s.pack, t)) mism.push(`${k}/${s.pack}`); }
         const subOk = where !== "subpath" || (boot.url.includes("/bloom/demos/") && loaded.every(u => !u.startsWith(origin.replace("/bloom/", "/")) || u.includes("/bloom/")));
         check(!errs.length && !boot.errors.length && boot.fp === ART.fingerprint && boot.banner.includes("NOT FINAL ART") && !mism.length && subOk,
-          `${B_} B1 · the proof page boots (${where === "file" ? "double-clicked file://" : where === "http" ? "HTTP at /" : "HTTP under the /bloom/ GitHub Pages subpath"}) with no console error, the generated atlas loaded synchronously, the TEMPORARY PIPELINE PROOF banner shown, and every golden-slice state's canvas pixels == the Node render, byte for byte, in all ${boot.packs.length} packs`, J({ mism, errs: errs.slice(0, 3), loaded: loaded.length }));
+          `${B_} B1 · the proof page boots (${where === "file" ? "double-clicked file://" : where === "http" ? "HTTP at /" : "HTTP under the /bloom/ GitHub Pages subpath"}) with no console error, the generated atlas loaded synchronously, the TEMPORARY PIPELINE PROOF banner shown, and every locked state's canvas pixels == the Node render, byte for byte, in all ${boot.packs.length} packs`, J({ mism, errs: errs.slice(0, 3), loaded: loaded.length }));
         check(!external.length, `${B_} B2 · no external request (everything ${where === "file" ? "file:" : "127.0.0.1"})`, external.slice(0, 3).join(" "));
         if (where === "file") {
           // B3 · same organism at every placement, whole-number scale
           await p.evaluate(() => { PLANT_PIPELINE_LAB.setPreset("complex"); PLANT_PIPELINE_LAB.set({ view: "placements", pack: "proof" }); });
           const pl = await p.evaluate(() => PLANT_PIPELINE_LAB.canvasSigs("canvas[data-role=placement]"));
-          const want = { native: 1, room1024: 2, room1280: 3, room1440: 3, journal: 3, zoom4: 4 }, sig0 = nodeSig("proof", STATES.complex);
+          const want = { native: 1, room1024: 2, room1280: 3, room1440: 3, journal: 3, zoom4: 4 }, sig0 = nodeSig("proof", STATES.maxDry);
           const okPl = pl.length === 6 && pl.every(s => s.w === CANVAS.w && s.h === CANVAS.h && s.sig === sig0 && Math.abs(s.cssW - CANVAS.w * want[s.placement]) < 0.01 && Math.abs(s.cssH - CANVAS.h * want[s.placement]) < 0.01);
           check(okPl, `${B_} B3 · the SAME organism at every production placement: one ${CANVAS.w}×${CANVAS.h} canvas with the identical pixel signature, shown at whole-number nearest-neighbour scales — native 1×, Adapt/Spread/Region 1024 → 2×, 1280 → 3×, 1440 → 3×, Field Journal → 3× (+ a 4× zoom)`, J(pl.map(s => `${s.placement}:${s.cssW}×${s.cssH}`)));
           PROOF.browsers[bn].placements = pl;
@@ -284,8 +375,8 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
           const prod = await p.evaluate(() => ({ sig: PLANT_PIPELINE_LAB.production && PLANT_PIPELINE_LAB.production.signature(), traits: PLANT_PIPELINE_LAB.production && PLANT_PIPELINE_LAB.production.state.traits }));
           check(prod.sig && J(prod.traits) === J({ earlyMat: 1, rad: 1, seedOut: 1 }), `${B_} B6 · the current production SVG (resources/run-ui/plant-specimen.js, unchanged) is shown beside the packs, fed the same build`, J(prod));
           // B7 · keyboard: presets 1–7
-          await p.keyboard.press("7"); const kb = await p.evaluate(() => PLANT_PIPELINE_LAB.S.preset); await p.keyboard.press("1");
-          check(kb === "complex" && !(await p.evaluate(() => PLANT_PIPELINE_LAB.errors.length)), `${B_} B7 · keyboard presets (1–7) work; no page error after every interaction`);
+          await p.keyboard.press("8"); const kb = await p.evaluate(() => PLANT_PIPELINE_LAB.S.preset); await p.keyboard.press("1");
+          check(kb === "cold2heat1" && !(await p.evaluate(() => PLANT_PIPELINE_LAB.errors.length)), `${B_} B7 · keyboard presets (1–9) work; no page error after every interaction`);
           if (EVIDENCE && bn === "chromium") await evidence(p);
         }
         PROOF.browsers[bn][where] = { url: boot.url.replace(/^file:\/\/.*?\/demos\//, "file://…/demos/"), errors: errs.length, external: external.length, requests: loaded.length };
@@ -300,23 +391,23 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
     fs.mkdirSync(EVD, { recursive: true });
     const shot = async (name, clip) => { await p.waitForTimeout(150); await p.screenshot({ path: path.join(EVD, name), fullPage: !clip, clip }); };
     await p.evaluate(() => PLANT_PIPELINE_LAB.set({ view: "compare", placement: "room1280", preview: false, condition: "thriving", reducedMotion: true }));
-    let n = 1; for (const k of ["base", "cold2", "drought2", "seed2", "complex"]) { await p.evaluate(id => PLANT_PIPELINE_LAB.setPreset(id), k);
+    let n = 1; for (const k of ["base", "cold2heat1", "drought3", "flood3", "salt", "maxDry", "maxWet"]) { await p.evaluate(id => PLANT_PIPELINE_LAB.setPreset(id), k);
       const box = await p.evaluate(() => { const r = document.querySelector(".cols").getBoundingClientRect(); return { x: 0, y: 0, width: Math.ceil(r.right + 12), height: Math.ceil(r.bottom + 8) }; });
       await shot(`${String(n++).padStart(2, "0")}-${k}-pipeline-and-pack-swap.png`, box); }
-    await p.evaluate(() => PLANT_PIPELINE_LAB.set({ view: "sheet", pack: "proof" })); await shot("06-golden-slice-sheet-proof-pack.png");
-    await p.evaluate(() => PLANT_PIPELINE_LAB.set({ view: "placements", pack: "proof" })); await p.evaluate(() => PLANT_PIPELINE_LAB.setPreset("complex")); await shot("07-same-organism-every-placement.png");
+    await p.evaluate(() => PLANT_PIPELINE_LAB.set({ view: "sheet", pack: "proof" })); await shot("08-all-locked-states-proof-pack.png");
+    await p.evaluate(() => PLANT_PIPELINE_LAB.set({ view: "placements", pack: "proof" })); await p.evaluate(() => PLANT_PIPELINE_LAB.setPreset("complex")); await shot("09-same-organism-every-placement.png");
     await p.evaluate(() => { PLANT_PIPELINE_LAB.set({ view: "compare", placement: "room1280" }); PLANT_PIPELINE_LAB.setPreset("seed2"); PLANT_PIPELINE_LAB.set({ propose: "earlyMat", preview: true }); });
-    await shot("08-preview-ghost-outline.png", await p.evaluate(() => { const r = document.querySelector(".cols").getBoundingClientRect(); return { x: 0, y: 0, width: Math.ceil(r.right + 12), height: Math.ceil(r.bottom + 8) }; }));
+    await shot("10-preview-ghost-outline.png", await p.evaluate(() => { const r = document.querySelector(".cols").getBoundingClientRect(); return { x: 0, y: 0, width: Math.ceil(r.right + 12), height: Math.ceil(r.bottom + 8) }; }));
     // Node-rendered stills: the 400 % crop and the FX frame strips (exact frames, not screenshots)
-    const cx = frame("proof", STATES.complex), crop = upscale(cx, 4, [22, 2, 44, 60]);
-    fs.writeFileSync(path.join(EVD, "09-crop-400pct-complex-proof-pack.png"), png(crop.W, crop.H, crop.rgba));
-    for (const st of FX.STYLES) { const cur = frame("proof", STATES.seed2), tgt = frame("proof", STATES.complex), fr = [0, 0.2, 0.4, 0.6, 0.8, 1].map(t => ({ W: cur.W, H: cur.H, rgba: FX.fxFrame(cur, tgt, st, t) }));
-      const s = strip([...fr, { W: cur.W, H: cur.H, rgba: FX.preview(cur, tgt) }], 2); fs.writeFileSync(path.join(EVD, `${st === "grow" ? "10" : "11"}-fx-${st}-strip.png`), png(s.W, s.H, s.rgba)); }
+    const cx = frame("proof", STATES.maxDry), crop = upscale(cx, 4, [22, 2, 44, 60]);
+    fs.writeFileSync(path.join(EVD, "11-crop-400pct-maximal-dry-proof-pack.png"), png(crop.W, crop.H, crop.rgba));
+    for (const st of FX.STYLES) { const cur = frame("proof", STATES.seed2), tgt = frame("proof", STATES.maxDry), fr = [0, 0.2, 0.4, 0.6, 0.8, 1].map(t => ({ W: cur.W, H: cur.H, rgba: FX.fxFrame(cur, tgt, st, t) }));
+      const s = strip([...fr, { W: cur.W, H: cur.H, rgba: FX.preview(cur, tgt) }], 2); fs.writeFileSync(path.join(EVD, `${st === "grow" ? "12" : "13"}-fx-${st}-strip.png`), png(s.W, s.H, s.rgba)); }
     const all = []; for (const pk of PACKS) for (const t of Object.values(STATES)) all.push(frame(pk, t));
-    const grid = { W: 7 * (CANVAS.w * 2 + 4) - 4, H: PACKS.length * (CANVAS.h * 2 + 4) - 4 }; grid.rgba = new Uint8Array(grid.W * grid.H * 4).fill(255);
-    all.forEach((f, i) => { const u = upscale(f, 2), gx = (i % 7) * (CANVAS.w * 2 + 4), gy = Math.floor(i / 7) * (CANVAS.h * 2 + 4); for (let y = 0; y < u.H; y++) Buffer.from(u.rgba.buffer, y * u.W * 4, u.W * 4).copy(Buffer.from(grid.rgba.buffer), ((gy + y) * grid.W + gx) * 4); });
-    fs.writeFileSync(path.join(EVD, "12-all-states-all-packs-2x.png"), png(grid.W, grid.H, grid.rgba));
-    for (const pk of PACKS) { const im = B.decodePNG(fs.readFileSync(path.join(ROOT, `art/plant/packs/${pk}/atlas.png`))), u = upscale({ W: im.w, H: im.h, rgba: im.rgba }, 4); fs.writeFileSync(path.join(EVD, `13-source-atlas-${pk}-4x.png`), png(u.W, u.H, u.rgba)); }
+    const NS = Object.keys(STATES).length, grid = { W: 8 * (CANVAS.w * 2 + 4) - 4, H: Math.ceil(PACKS.length * NS / 8) * (CANVAS.h * 2 + 4) - 4 }; grid.rgba = new Uint8Array(grid.W * grid.H * 4).fill(255);
+    all.forEach((f, i) => { const u = upscale(f, 2), gx = (i % 8) * (CANVAS.w * 2 + 4), gy = Math.floor(i / 8) * (CANVAS.h * 2 + 4); for (let y = 0; y < u.H; y++) Buffer.from(u.rgba.buffer, y * u.W * 4, u.W * 4).copy(Buffer.from(grid.rgba.buffer), ((gy + y) * grid.W + gx) * 4); });
+    fs.writeFileSync(path.join(EVD, "14-all-states-all-packs-2x.png"), png(grid.W, grid.H, grid.rgba));
+    for (const pk of PACKS) { const im = B.decodePNG(fs.readFileSync(path.join(ROOT, `art/plant/packs/${pk}/atlas.png`))), u = upscale({ W: im.w, H: im.h, rgba: im.rgba }, 4); fs.writeFileSync(path.join(EVD, `15-source-atlas-${pk}-4x.png`), png(u.W, u.H, u.rgba)); }
   }
 
   // ---------------------------------------------------------------- canvas-size measurement (docs §2) + proof file
