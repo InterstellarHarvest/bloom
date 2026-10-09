@@ -4,6 +4,11 @@
 from accepted production main `bba000f` (BLOOM-031). Nothing in production changed: `resources/run-ui/plant-specimen.js` still draws
 the plant in every room.
 
+**BLOOM-032B2 update (final art intake).** The PMO-approved Organic Hybrid art (Art Studio Batches 1–6 + the final pack metadata
+closure) is now ingested mechanically as `art/plant/packs/organic-hybrid/` (**ORGANIC HYBRID — FINAL ART**) by
+`tools/intake-organic-hybrid-art.mjs` from the hash-verified deliveries in `art/plant/intake/organic-hybrid/`; the three proof packs below remain
+and stay TEMPORARY. Production is still unchanged (`plant-specimen.js` not replaced). Evidence + QA: `docs/evidence/bloom-032b2/REPORT.md`.
+
 **Scope.** 032B1 builds and proves the production plant SPRITE PIPELINE and the contract the art arrives in. It does **not** produce final art.
 The Plant Pixel Art Studio has locked the Organic Hybrid mutation language and an approved Base Species Kit design. Approved PNGs + metadata
 come back through the [ARTIST_HANDOFF](#artist_handoff) contract below for **mechanical** integration. That art is not ingested here. Every

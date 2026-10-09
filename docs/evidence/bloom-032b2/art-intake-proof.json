@@ -1,0 +1,3109 @@
+{
+ "milestone": "BLOOM-032B2",
+ "status": "ORGANIC HYBRID — FINAL ART (PMO-approved; BLOOM-032B2 intake)",
+ "base": "be0a82918144a2e3b8aa2fcf2aa8c642dd3128b2",
+ "head": "89a9acc956016c79b5ac8a26c54164b350660658",
+ "canvas": {
+  "h": 98,
+  "note": "84×98 is the PMO-APPROVED production target. One canonical logical plant canvas: every placement (Adapt, Spread, Region Inspect, Field Journal) shows this exact buffer, scaled by a whole number with nearest-neighbour and padded; anatomy is never re-laid-out per UI. The maximal legal dry and wet organisms are proven to fit with a 1-px safety margin.",
+  "soilY": 68,
+  "w": 84
+ },
+ "intake": {
+  "package": {
+   "wrapperSha256": "22878851bb9ed0d3bb4c5e0e724ee856241d3dea5dab1ceec214bb996a77a427",
+   "pmoAcceptanceSha256": "651a540cdea9aa1fe1c27de0d30f5e94a64eb69720dab7f5e11684aed2f5fe2f",
+   "productionMain": "be0a82918144a2e3b8aa2fcf2aa8c642dd3128b2",
+   "deliveries": [
+    {
+     "file": "batch1-base.zip",
+     "bytes": 6082,
+     "sha256": "54da449b36512749f41f324705a486b4bc2e905fe94b730734500d0051151e3d",
+     "ok": true
+    },
+    {
+     "file": "batch2-cold-heat-corrected.zip",
+     "bytes": 38071,
+     "sha256": "6c7173111d92a0f1bd1320e641196623a50bf4824e75d19a20f208753b55c6a2",
+     "ok": true
+    },
+    {
+     "file": "batch3-drought.zip",
+     "bytes": 50116,
+     "sha256": "e3a2a289990870155cec765a67c5a7d958700e4e0c469c25a1248897143faea1",
+     "ok": true
+    },
+    {
+     "file": "batch4-flood.zip",
+     "bytes": 50456,
+     "sha256": "76631a5858011fe05be432463404ec73e46a413d78925fb768023b1242f5dd16",
+     "ok": true
+    },
+    {
+     "file": "batch5-salt-radiation.zip",
+     "bytes": 39614,
+     "sha256": "7f9647de6b9c72ad5d8a3fc8bebf16a97746125d25b07586ccf36136bcf9c5b3",
+     "ok": true
+    },
+    {
+     "file": "batch6-reproduction-dispersal.zip",
+     "bytes": 43546,
+     "sha256": "23925120999a6e38cc08774af31cb219dd7ce9c266dcd6650e4939abe0e65d8f",
+     "ok": true
+    },
+    {
+     "file": "final-pack-metadata-closure.zip",
+     "bytes": 21874,
+     "sha256": "88cadd2d7dfc5e1cf2b465875cf5666475b87c44751f62de82da70c3da6ff435",
+     "ok": true
+    }
+   ]
+  },
+  "maskPolicy": {
+   "authored": "pigment + toothed for leaf.base.low / mid / high (Batch 5)",
+   "pigment": "auto on every other leaf drawing (contract default)",
+   "wax": "auto on every leaf drawing (contract default)",
+   "toothed": "none on Heat / Drought / Flood leaf drawings (no approved toothed mask; contract: no mask = no teeth)"
+  },
+  "palette": {
+   "materials": 18,
+   "colours": 69,
+   "environment": {
+    "sky": [
+     "#7d8c96",
+     "#aeb4aa"
+    ],
+    "soil": [
+     "#4a3d33",
+     "#3f332b",
+     "#6b5b4c"
+    ],
+    "turf": "#626b45"
+   },
+   "render": {
+    "stemOutline": "ink"
+   }
+  },
+  "sprites": [
+   {
+    "id": "leaf.base.low",
+    "delivery": "batch1-base.zip",
+    "sourceSha256": "a6d83225a85097256b5ddc66c9856b859d89c5f4ca33f7b31b3b590f1864ac45",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     0,
+     9,
+     18,
+     16
+    ],
+    "sourceSig": "c9cf932c5cafc8b7357d49ee871240b4d3fd6e91d1ef56061069ec0e9398c463",
+    "atlasSig": "c9cf932c5cafc8b7357d49ee871240b4d3fd6e91d1ef56061069ec0e9398c463",
+    "opaque": 121,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.base.mid",
+    "delivery": "batch1-base.zip",
+    "sourceSha256": "ea95fd12e2862a4829ba54236f71edf86cc08a668765105b0f2edf3e0bb1e70c",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     57,
+     9,
+     18,
+     16
+    ],
+    "sourceSig": "a48d8768d4ff68020e111132bdea874112f99c87fab38c63164da339b8ec7e1a",
+    "atlasSig": "a48d8768d4ff68020e111132bdea874112f99c87fab38c63164da339b8ec7e1a",
+    "opaque": 120,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.base.high",
+    "delivery": "batch1-base.zip",
+    "sourceSha256": "6fb60c04b715e181a0235d58e37d9b1a192005218dbda1972356a35acd065f70",
+    "size": [
+     16,
+     16
+    ],
+    "rect": [
+     114,
+     9,
+     16,
+     16
+    ],
+    "sourceSig": "280a7ba5144b9cbadc4faceb5a2c0fa3270261f03f1d20ef44d637dad44d0db9",
+    "atlasSig": "280a7ba5144b9cbadc4faceb5a2c0fa3270261f03f1d20ef44d637dad44d0db9",
+    "opaque": 102,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "bud",
+    "delivery": "batch1-base.zip",
+    "sourceSha256": "f0f212396bdbfaa6e3b8147d1343ebea017bf3c5ecf0f32170552428b23a1fc7",
+    "size": [
+     9,
+     12
+    ],
+    "rect": [
+     17,
+     26,
+     9,
+     12
+    ],
+    "sourceSig": "6cae422d868c0d0713300bc62f9c7fa5d701de0fd73260e2ae0ec2011d595af8",
+    "atlasSig": "6cae422d868c0d0713300bc62f9c7fa5d701de0fd73260e2ae0ec2011d595af8",
+    "opaque": 48,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "bud.axil",
+    "delivery": "batch1-base.zip",
+    "sourceSha256": "84fbc4ba0d730b1e2917eff4ea8bdbe161d6350084922e551bc928951e56c63f",
+    "size": [
+     6,
+     7
+    ],
+    "rect": [
+     27,
+     26,
+     6,
+     7
+    ],
+    "sourceSig": "ab62589816cd3e2eaf0355e17f05d4796addbc6f66829c21da3fc3f1e6c6a77d",
+    "atlasSig": "ab62589816cd3e2eaf0355e17f05d4796addbc6f66829c21da3fc3f1e6c6a77d",
+    "opaque": 24,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "frost.hair.1",
+    "delivery": "batch2-cold-heat-corrected.zip",
+    "sourceSha256": "47b32c55c906d673701d3a7de714f960e27ff0da79d3dba91cb1293ce11f6d88",
+    "size": [
+     3,
+     4
+    ],
+    "rect": [
+     34,
+     26,
+     3,
+     4
+    ],
+    "sourceSig": "7fcc6709ae838017f93e2c8de06aa9d8016824f0dfe95a0f2d40a0168c8213dc",
+    "atlasSig": "7fcc6709ae838017f93e2c8de06aa9d8016824f0dfe95a0f2d40a0168c8213dc",
+    "opaque": 5,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "frost"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "frost.hair.2",
+    "delivery": "batch2-cold-heat-corrected.zip",
+    "sourceSha256": "5048a493e3a52190663bf5ae7ecaf170d7cdd18d0ca49867a689a2b3a42c232f",
+    "size": [
+     5,
+     5
+    ],
+    "rect": [
+     38,
+     26,
+     5,
+     5
+    ],
+    "sourceSig": "c167ae786fda8f201353ce5db4590149bc60cb2325d15d4d97f91fa336929e58",
+    "atlasSig": "c167ae786fda8f201353ce5db4590149bc60cb2325d15d4d97f91fa336929e58",
+    "opaque": 10,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "frost"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "frost.hair.3",
+    "delivery": "batch2-cold-heat-corrected.zip",
+    "sourceSha256": "fa90327431e09ba1d3491ca3ce96247d529ec3e1d3f7fb2158f3bfee1e2cc218",
+    "size": [
+     7,
+     6
+    ],
+    "rect": [
+     44,
+     26,
+     7,
+     6
+    ],
+    "sourceSig": "f888f30e1a68529348071fa8f75ddd2b910dd6607e1d8c66668e6e7284f856cb",
+    "atlasSig": "f888f30e1a68529348071fa8f75ddd2b910dd6607e1d8c66668e6e7284f856cb",
+    "opaque": 16,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "frost"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "frost.collar.2",
+    "delivery": "batch2-cold-heat-corrected.zip",
+    "sourceSha256": "ff28b2688e9a6fbf52fc89132851e36c5bfc41019746eca547322a1d3cc29a7a",
+    "size": [
+     11,
+     6
+    ],
+    "rect": [
+     52,
+     26,
+     11,
+     6
+    ],
+    "sourceSig": "4362bfeb9e7ae34fc1f57a3a2073fe79effd3d5f9aba0e10aa8c524e2ecf1bd3",
+    "atlasSig": "4362bfeb9e7ae34fc1f57a3a2073fe79effd3d5f9aba0e10aa8c524e2ecf1bd3",
+    "opaque": 20,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "frost"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "frost.collar.3",
+    "delivery": "batch2-cold-heat-corrected.zip",
+    "sourceSha256": "39bd10f862e1bf479629c831aef60fc0e9a7b5f329b030d5515840f706054172",
+    "size": [
+     15,
+     7
+    ],
+    "rect": [
+     64,
+     26,
+     15,
+     7
+    ],
+    "sourceSig": "9c7d889a59d5f1cefb716104315efb2ed7f0b0c87af3ccc580d5b8e9877b28d6",
+    "atlasSig": "9c7d889a59d5f1cefb716104315efb2ed7f0b0c87af3ccc580d5b8e9877b28d6",
+    "opaque": 26,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "frost"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.base.heat.mid",
+    "delivery": "batch2-cold-heat-corrected.zip",
+    "sourceSha256": "a3061f374c983e563b2be6f78d8f6bc1d909afb1145551a15745e324d8777c1b",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     80,
+     26,
+     18,
+     16
+    ],
+    "sourceSig": "e49087a66ffeff28b17c549ee7fda748bc8441dbde2b51c0abe81204dbd96cb1",
+    "atlasSig": "e49087a66ffeff28b17c549ee7fda748bc8441dbde2b51c0abe81204dbd96cb1",
+    "opaque": 99,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.base.heat.high",
+    "delivery": "batch2-cold-heat-corrected.zip",
+    "sourceSha256": "a97c6e5af0767898c3196586e193aba10826ef25a600ca71ce2530694b2977c3",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     99,
+     26,
+     18,
+     16
+    ],
+    "sourceSig": "be68a2ba74c0ebf8c40549dc02f6f0316f83cfe13509db71e7304d756548dc78",
+    "atlasSig": "be68a2ba74c0ebf8c40549dc02f6f0316f83cfe13509db71e7304d756548dc78",
+    "opaque": 94,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.1.low",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "1d177b6b06572979e340396d630874b810b0e0dc1eaac614a867095ff97929e2",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     118,
+     26,
+     18,
+     16
+    ],
+    "sourceSig": "da29fe8b0a5463fcb3649c8d5a0c35b10d0c71ef788da2593f196e449713a523",
+    "atlasSig": "da29fe8b0a5463fcb3649c8d5a0c35b10d0c71ef788da2593f196e449713a523",
+    "opaque": 120,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.1.mid",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "3f0c85393b3da563bf4931eab5824d2c76e60d666a12f6ea6801d3bf9a5bb4f2",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     137,
+     26,
+     18,
+     16
+    ],
+    "sourceSig": "a4c77328f38e4d8df2f6d62c1dad323dc04418be6babab3e06860627409ef779",
+    "atlasSig": "a4c77328f38e4d8df2f6d62c1dad323dc04418be6babab3e06860627409ef779",
+    "opaque": 118,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.1.high",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "f5ba7476866ad538f49eefaf7f2c2c3dee4b1273ab87660a6601561564f88aa5",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     0,
+     43,
+     18,
+     16
+    ],
+    "sourceSig": "5a480de68b5d1a4645010b47fb478841a998b260460da401f7224592090ccf79",
+    "atlasSig": "5a480de68b5d1a4645010b47fb478841a998b260460da401f7224592090ccf79",
+    "opaque": 103,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.2.low",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "04ce9e3d3dbaad9ed3fab092810232135509d18ebabac2058320d7d54e267292",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     19,
+     43,
+     18,
+     16
+    ],
+    "sourceSig": "48c1a8e989831d3af516feceb8d1b8fb5e5122c22c6e502c5ce983c0c54a5d39",
+    "atlasSig": "48c1a8e989831d3af516feceb8d1b8fb5e5122c22c6e502c5ce983c0c54a5d39",
+    "opaque": 138,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.2.mid",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "a622264bd04fff29271a2a21dced1dda190a1ae3a3081bb33704329fb6bd189d",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     38,
+     43,
+     18,
+     16
+    ],
+    "sourceSig": "faba668a1f79e914730c493fc2578c11149232df68c3eeebd6a8f32d34b4ee06",
+    "atlasSig": "faba668a1f79e914730c493fc2578c11149232df68c3eeebd6a8f32d34b4ee06",
+    "opaque": 132,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.2.high",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "201396e055c9673830d033cde529c63dae0dbb728a9ad5bd4795cf599c424f1a",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     57,
+     43,
+     18,
+     16
+    ],
+    "sourceSig": "c14e54d5e66badfde9d3a9d8524dec37d4d63cac1229c824d903154310cdec5c",
+    "atlasSig": "c14e54d5e66badfde9d3a9d8524dec37d4d63cac1229c824d903154310cdec5c",
+    "opaque": 102,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.3.low",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "0f0cedbb34870d51d2b5419218dfa3edde80254f5157a89d46e143f94b33209f",
+    "size": [
+     16,
+     16
+    ],
+    "rect": [
+     76,
+     43,
+     16,
+     16
+    ],
+    "sourceSig": "557324bb5eb4358caa46c11f03f40f72d4662b63a60f83365a16d16119201b04",
+    "atlasSig": "557324bb5eb4358caa46c11f03f40f72d4662b63a60f83365a16d16119201b04",
+    "opaque": 99,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.3.mid",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "e04dbcfbf631c3802a49d12edba70e9304b7eb710d059dc645701984e5b809b9",
+    "size": [
+     16,
+     16
+    ],
+    "rect": [
+     93,
+     43,
+     16,
+     16
+    ],
+    "sourceSig": "d606a2efee78b22434080292563d9c9f8f5861bac19336ce06d5ac0491c13b5a",
+    "atlasSig": "d606a2efee78b22434080292563d9c9f8f5861bac19336ce06d5ac0491c13b5a",
+    "opaque": 105,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.3.high",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "4c8b701223878cc308e9e3f22c74ee724ce37655b826a815038dd551b5f22897",
+    "size": [
+     16,
+     16
+    ],
+    "rect": [
+     110,
+     43,
+     16,
+     16
+    ],
+    "sourceSig": "94abe80ec5f18d3273bb001c5504adfb5e60d557f0e4556419ed72e8412e1264",
+    "atlasSig": "94abe80ec5f18d3273bb001c5504adfb5e60d557f0e4556419ed72e8412e1264",
+    "opaque": 76,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.1.heat.mid",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "b68a7b4f430c0c3719c7986ee49eeb088363846b56e25210b15205f0a088650c",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     127,
+     43,
+     18,
+     16
+    ],
+    "sourceSig": "b4f386cbbdd7f6ae3e56a6e2fef630ef611ff6784cec33464cf2b936b4e11098",
+    "atlasSig": "b4f386cbbdd7f6ae3e56a6e2fef630ef611ff6784cec33464cf2b936b4e11098",
+    "opaque": 97,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.1.heat.high",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "a795e94ab100d9d0e136076613a4ed7800af03e83a0291c29e46b16950ac28a4",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     0,
+     60,
+     18,
+     16
+    ],
+    "sourceSig": "6aab7e5095b361598f94e90c0ab0cecb384d867399531316c4d814c293f76c1b",
+    "atlasSig": "6aab7e5095b361598f94e90c0ab0cecb384d867399531316c4d814c293f76c1b",
+    "opaque": 94,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.2.heat.mid",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "3778afe40702b7fdb369203f747364cccf26e272b30ccbef206de4cc3d6b4acc",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     19,
+     60,
+     18,
+     16
+    ],
+    "sourceSig": "c21186b240f358c4278cd157f4d5ca19779ec02a60f6e76db61ded11403947d0",
+    "atlasSig": "c21186b240f358c4278cd157f4d5ca19779ec02a60f6e76db61ded11403947d0",
+    "opaque": 103,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.2.heat.high",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "1bd28bb5ee6f6d56ed707c8a789f96e04da57c5ca846fcb1185e70a67edd06b5",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     38,
+     60,
+     18,
+     16
+    ],
+    "sourceSig": "a0016240a0929afa7b057abb2b01a7a2f86dce81f788084ef95d114f0ed79517",
+    "atlasSig": "a0016240a0929afa7b057abb2b01a7a2f86dce81f788084ef95d114f0ed79517",
+    "opaque": 99,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.3.heat.mid",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "9123de7b5263db0657509eec9771d66587ad24a72ad100380cd22a61a59022ec",
+    "size": [
+     16,
+     16
+    ],
+    "rect": [
+     57,
+     60,
+     16,
+     16
+    ],
+    "sourceSig": "a63f17d4c2a2ea579e5c36ba9f34c9d36959d61b209041903020858db09ec3c1",
+    "atlasSig": "a63f17d4c2a2ea579e5c36ba9f34c9d36959d61b209041903020858db09ec3c1",
+    "opaque": 80,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.drought.3.heat.high",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "f25f11f3f1d08f40b2e88329175ac59178053c04c81535f0a81fcdf7c986af23",
+    "size": [
+     16,
+     16
+    ],
+    "rect": [
+     74,
+     60,
+     16,
+     16
+    ],
+    "sourceSig": "d160fd7927b81b5fa4e197d1144cc6bebfae66c9679ef75fd0e89f61a7b64274",
+    "atlasSig": "d160fd7927b81b5fa4e197d1144cc6bebfae66c9679ef75fd0e89f61a7b64274",
+    "opaque": 72,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "core",
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "root.storage.2",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "6e380af611392eb7630c3f8869f9ccd1945011f8c2ae185f628e7aed9ca53b24",
+    "size": [
+     12,
+     20
+    ],
+    "rect": [
+     91,
+     60,
+     12,
+     20
+    ],
+    "sourceSig": "d178f5edb897fd12dc991bb255b64dc3634d39862f78b57fe566ed7bd74898e9",
+    "atlasSig": "d178f5edb897fd12dc991bb255b64dc3634d39862f78b57fe566ed7bd74898e9",
+    "opaque": 130,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "root",
+     "tuber"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "root.storage.3",
+    "delivery": "batch3-drought.zip",
+    "sourceSha256": "70f2675e4f7d76f3f6dd508cf3a15de9df67a2065b5a86b474f02c08388935c3",
+    "size": [
+     14,
+     24
+    ],
+    "rect": [
+     104,
+     60,
+     14,
+     24
+    ],
+    "sourceSig": "a7768757d9958d9b9f26d6fdbb0014d4ae0a1a4e93ccfc95018c2a2c98595ab7",
+    "atlasSig": "a7768757d9958d9b9f26d6fdbb0014d4ae0a1a4e93ccfc95018c2a2c98595ab7",
+    "opaque": 188,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "root",
+     "tuber"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.1.low",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "6c6f43885f1794f7db64cdc5e0e20b06084e74270ab666df571eabe1864fcc9a",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     119,
+     60,
+     18,
+     16
+    ],
+    "sourceSig": "c57460cadca9b04414e9ec3e64e5d8628a6afd9693cc8893893591abe9a088e8",
+    "atlasSig": "c57460cadca9b04414e9ec3e64e5d8628a6afd9693cc8893893591abe9a088e8",
+    "opaque": 118,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.1.mid",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "ac200a09a4f756067c2006ac444cd1bd83e65bdcebc02470de284bc7592caab8",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     138,
+     60,
+     18,
+     16
+    ],
+    "sourceSig": "7d62c0e6f75cbd83c31d0e80908822eccbc567b91ae84bba793de46c5a1d4588",
+    "atlasSig": "7d62c0e6f75cbd83c31d0e80908822eccbc567b91ae84bba793de46c5a1d4588",
+    "opaque": 117,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.1.high",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "a78177f3715b805bf00d0d61d0ff3b1e93e51f80cfb7dab94b523943054e80fa",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     0,
+     85,
+     18,
+     16
+    ],
+    "sourceSig": "3fb826f73911e5c48fe4575b3007fe3ec6b6829b4043d740d305affa778e5989",
+    "atlasSig": "3fb826f73911e5c48fe4575b3007fe3ec6b6829b4043d740d305affa778e5989",
+    "opaque": 100,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.2.low",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "2b773568100fc0322189b4341663c6079fc3a8c7fac5d3c5b5adae7afbefea10",
+    "size": [
+     20,
+     20
+    ],
+    "rect": [
+     19,
+     85,
+     20,
+     20
+    ],
+    "sourceSig": "b8648b12c8470c814720a2f0cf74cdd319293feabeb716e7f0ceb6d087a2154f",
+    "atlasSig": "b8648b12c8470c814720a2f0cf74cdd319293feabeb716e7f0ceb6d087a2154f",
+    "opaque": 134,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.2.mid",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "d6efaeaba9925d299b86ac242d9a7c36584bf75c3f70c17842b31e0eaab51d4a",
+    "size": [
+     20,
+     20
+    ],
+    "rect": [
+     40,
+     85,
+     20,
+     20
+    ],
+    "sourceSig": "85f16bc54feea69e49731459b3eb4c76bdb2e463446cd4b8d7951d874d45c0a7",
+    "atlasSig": "85f16bc54feea69e49731459b3eb4c76bdb2e463446cd4b8d7951d874d45c0a7",
+    "opaque": 150,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.2.high",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "af0cc2ffe9033e08b4b1777b19237ae6b7ffb9ee5bb456a63415b264a96aeeb6",
+    "size": [
+     20,
+     20
+    ],
+    "rect": [
+     61,
+     85,
+     20,
+     20
+    ],
+    "sourceSig": "ebb872188b411f2a8fecd0e9a4e5e0c5266481e5fec23ac456bb9c90d6a0b8fa",
+    "atlasSig": "ebb872188b411f2a8fecd0e9a4e5e0c5266481e5fec23ac456bb9c90d6a0b8fa",
+    "opaque": 119,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.3.low",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "d48033e76d75f67d240c0dcd818b6682f96a673503bd81212ef5106bea4fa61a",
+    "size": [
+     20,
+     20
+    ],
+    "rect": [
+     82,
+     85,
+     20,
+     20
+    ],
+    "sourceSig": "bcbb28578477f3fec86d7090bc4fcbef96cfd0ac8b2b6b6456bd917ecc14592e",
+    "atlasSig": "bcbb28578477f3fec86d7090bc4fcbef96cfd0ac8b2b6b6456bd917ecc14592e",
+    "opaque": 133,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.3.mid",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "b2e33425fcab5da0fa733d4ae36891db743bbfbe48cdb696eb0b57385f9097e4",
+    "size": [
+     20,
+     20
+    ],
+    "rect": [
+     103,
+     85,
+     20,
+     20
+    ],
+    "sourceSig": "12e0659b892535ccfd0a53e9fef5412b57016a6d6e3d1c038549146907ebba97",
+    "atlasSig": "12e0659b892535ccfd0a53e9fef5412b57016a6d6e3d1c038549146907ebba97",
+    "opaque": 158,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.3.high",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "a80296ab362e9dc31a985c7d530829e476282b0670b15bcbcb70955f309a4050",
+    "size": [
+     20,
+     20
+    ],
+    "rect": [
+     124,
+     85,
+     20,
+     20
+    ],
+    "sourceSig": "4682a0316aeaadb442a84053159f2c441a684d6822b9d52e0485394378e57697",
+    "atlasSig": "4682a0316aeaadb442a84053159f2c441a684d6822b9d52e0485394378e57697",
+    "opaque": 121,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.1.heat.mid",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "fd37da2b8bc9a51520d133e66bf40302f0dd545621855428f4e3525c8e105086",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     0,
+     106,
+     18,
+     16
+    ],
+    "sourceSig": "916895b9d5fcda37d4b38bf8d651bbf086f17319faae550f8b8315df4563ca5f",
+    "atlasSig": "916895b9d5fcda37d4b38bf8d651bbf086f17319faae550f8b8315df4563ca5f",
+    "opaque": 97,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.1.heat.high",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "6400d065d45e165c2fd6e8638c8b29ddf40cc26c5c66b0af6424aac5e591a0be",
+    "size": [
+     18,
+     16
+    ],
+    "rect": [
+     19,
+     106,
+     18,
+     16
+    ],
+    "sourceSig": "821b3c0bf19733bc5c25cffd42d05ee61f8a61e3acf95bcd26f87b59d26a3385",
+    "atlasSig": "821b3c0bf19733bc5c25cffd42d05ee61f8a61e3acf95bcd26f87b59d26a3385",
+    "opaque": 94,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.2.heat.mid",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "167fc019736ffaa1bed14f3634b019917876ab9f9b4e3929e6a1a3a4af48f693",
+    "size": [
+     20,
+     20
+    ],
+    "rect": [
+     38,
+     106,
+     20,
+     20
+    ],
+    "sourceSig": "877ae9f8bd90db26e4842eb23d39dd2ee85b860caff050cc1c853995cbb940e9",
+    "atlasSig": "877ae9f8bd90db26e4842eb23d39dd2ee85b860caff050cc1c853995cbb940e9",
+    "opaque": 117,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.2.heat.high",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "ba4f46494681fd6ab6a6a3b58a40834f5ef38882ef34192b0603465ea0cd21ca",
+    "size": [
+     20,
+     20
+    ],
+    "rect": [
+     59,
+     106,
+     20,
+     20
+    ],
+    "sourceSig": "6002c0129280e20ee9d1e74f429747cb7182d4a7c2a1647f83efad2912f87998",
+    "atlasSig": "6002c0129280e20ee9d1e74f429747cb7182d4a7c2a1647f83efad2912f87998",
+    "opaque": 93,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.3.heat.mid",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "206a3d335e679a3f0b00b380b14a43d4f331be5315ab2234665a29f26afed2eb",
+    "size": [
+     20,
+     20
+    ],
+    "rect": [
+     80,
+     106,
+     20,
+     20
+    ],
+    "sourceSig": "9e74434325f70d6ddd3d2e541360b0c3f784f57a6fbf06e2cf929eeaf4b5db21",
+    "atlasSig": "9e74434325f70d6ddd3d2e541360b0c3f784f57a6fbf06e2cf929eeaf4b5db21",
+    "opaque": 112,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "leaf.flood.3.heat.high",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "9b99a11e8f8415e911050dd16291adacccf43bfd587157e6412ba70f525074a6",
+    "size": [
+     20,
+     20
+    ],
+    "rect": [
+     101,
+     106,
+     20,
+     20
+    ],
+    "sourceSig": "682694037f272e199845a8ba9994e55ce614a5c4f1ddecb97848c6c080ccab9c",
+    "atlasSig": "682694037f272e199845a8ba9994e55ce614a5c4f1ddecb97848c6c080ccab9c",
+    "opaque": 96,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "leaf",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "root.aerial.1",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "1b20b0cb0fe15174ed731a6e459e54f5c5e2dec464eb3fb84510e2bea0154a46",
+    "size": [
+     5,
+     8
+    ],
+    "rect": [
+     122,
+     106,
+     5,
+     8
+    ],
+    "sourceSig": "447656c98eb3c732c5a65abdeeb1782b40119336e12778b030ae7d1f00541c16",
+    "atlasSig": "447656c98eb3c732c5a65abdeeb1782b40119336e12778b030ae7d1f00541c16",
+    "opaque": 9,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "root"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "root.aerial.2",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "4622d705f1354fd5867825d277bbeb35f2f5f458b06f7252c2481c3757b571ee",
+    "size": [
+     5,
+     11
+    ],
+    "rect": [
+     128,
+     106,
+     5,
+     11
+    ],
+    "sourceSig": "d5660016daec7ea7fa8667d2525ef0ac7d29c4e8fbef98182bc2aa476a478668",
+    "atlasSig": "d5660016daec7ea7fa8667d2525ef0ac7d29c4e8fbef98182bc2aa476a478668",
+    "opaque": 15,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "root"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "root.aerial.3",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "0a8c8c16fbb856eefc023f143f30570432247e9e212857738704a96470c53b36",
+    "size": [
+     7,
+     15
+    ],
+    "rect": [
+     134,
+     106,
+     7,
+     15
+    ],
+    "sourceSig": "31f44b6e89d63132816ab524eba526cc2da627e7a6fd658bc924b610c0f85afe",
+    "atlasSig": "31f44b6e89d63132816ab524eba526cc2da627e7a6fd658bc924b610c0f85afe",
+    "opaque": 20,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "root"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "root.stilt",
+    "delivery": "batch4-flood.zip",
+    "sourceSha256": "0500c6b98d99c7566ed97f13a0b4199c9c1c88aaaade98b6d5d77dae6a5469af",
+    "size": [
+     12,
+     16
+    ],
+    "rect": [
+     142,
+     106,
+     12,
+     16
+    ],
+    "sourceSig": "54d4d282d4418375a9ffdbdc3f6cb7942f9083a68046453cd7136a29612239d1",
+    "atlasSig": "54d4d282d4418375a9ffdbdc3f6cb7942f9083a68046453cd7136a29612239d1",
+    "opaque": 37,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "root"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "salt.crystal",
+    "delivery": "batch5-salt-radiation.zip",
+    "sourceSha256": "6cc9b6994f14005e61a81023f488b50ce8499d5f2e05b3b7b936250c0861f4e3",
+    "size": [
+     7,
+     7
+    ],
+    "rect": [
+     0,
+     127,
+     7,
+     7
+    ],
+    "sourceSig": "9740d69080e4ed442c075fad9d4b7b3dac7acb7127255d279fa854b195ab7712",
+    "atlasSig": "9740d69080e4ed442c075fad9d4b7b3dac7acb7127255d279fa854b195ab7712",
+    "opaque": 16,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "salt"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "salt.gland",
+    "delivery": "batch5-salt-radiation.zip",
+    "sourceSha256": "e681adc63ac28ed5dc32e3df6faf9af8ae3160dbb849ba28948725e99d901a08",
+    "size": [
+     4,
+     4
+    ],
+    "rect": [
+     8,
+     127,
+     4,
+     4
+    ],
+    "sourceSig": "fd4f0db0da5ed8c6e231fc17a2ad2c56049784226d8d2a7ef4e9b103e818534d",
+    "atlasSig": "fd4f0db0da5ed8c6e231fc17a2ad2c56049784226d8d2a7ef4e9b103e818534d",
+    "opaque": 6,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "salt"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "flower",
+    "delivery": "batch6-reproduction-dispersal.zip",
+    "sourceSha256": "8c494c75e5a5873942bc037e8862ecdf2f2a228a74320d3dda6e9665d1bda917",
+    "size": [
+     16,
+     18
+    ],
+    "rect": [
+     13,
+     127,
+     16,
+     18
+    ],
+    "sourceSig": "494c6b486f7b8684a0238f0a34b9e1b4dbea0503d725815e376706fb7143eb35",
+    "atlasSig": "494c6b486f7b8684a0238f0a34b9e1b4dbea0503d725815e376706fb7143eb35",
+    "opaque": 153,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "center",
+     "ink",
+     "petal",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "seedHead.small",
+    "delivery": "batch6-reproduction-dispersal.zip",
+    "sourceSha256": "48180a186863e252aeca3a0a9df6dfc9f4c6eb8e8ba1d8e9aced10712cd5ce1f",
+    "size": [
+     11,
+     13
+    ],
+    "rect": [
+     30,
+     127,
+     11,
+     13
+    ],
+    "sourceSig": "05ee7483158189926f14f1744916b80904a155fcba02a186148a1ceebbe88e72",
+    "atlasSig": "05ee7483158189926f14f1744916b80904a155fcba02a186148a1ceebbe88e72",
+    "opaque": 53,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "pappus",
+     "seed",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "seedHead.large",
+    "delivery": "batch6-reproduction-dispersal.zip",
+    "sourceSha256": "b2ba3dcc914f040844b6ce03614abbfae4cbfd5c062d580316d25b88bd780f23",
+    "size": [
+     18,
+     20
+    ],
+    "rect": [
+     42,
+     127,
+     18,
+     20
+    ],
+    "sourceSig": "11af1192cf502bce13209b3bb28291d24829fe88eebdd9253bacdf22817162e5",
+    "atlasSig": "11af1192cf502bce13209b3bb28291d24829fe88eebdd9253bacdf22817162e5",
+    "opaque": 94,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "pappus",
+     "seed",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "seed.drift",
+    "delivery": "batch6-reproduction-dispersal.zip",
+    "sourceSha256": "ca409d810fa188446e359be2925b44b18f047053ab9d6464bd7829fdb9f9d1bc",
+    "size": [
+     7,
+     7
+    ],
+    "rect": [
+     61,
+     127,
+     7,
+     7
+    ],
+    "sourceSig": "e1cdc597cf1ef43f1302a59cbd90d2eee1dbee2ac86a7ad2b867939ae75b26a5",
+    "atlasSig": "e1cdc597cf1ef43f1302a59cbd90d2eee1dbee2ac86a7ad2b867939ae75b26a5",
+    "opaque": 14,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "pappus",
+     "seed"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   },
+   {
+    "id": "pod",
+    "delivery": "batch6-reproduction-dispersal.zip",
+    "sourceSha256": "2e2c7b48978c7d250d9b6933f9eb62c6550266300c2e8efcbf551823b3bb7232",
+    "size": [
+     9,
+     11
+    ],
+    "rect": [
+     69,
+     127,
+     9,
+     11
+    ],
+    "sourceSig": "3af69d8efe7561e0e94b2ecc8f574e309f2e8fb43f880255cd37e391c1b9a8df",
+    "atlasSig": "3af69d8efe7561e0e94b2ecc8f574e309f2e8fb43f880255cd37e391c1b9a8df",
+    "opaque": 65,
+    "sameSize": true,
+    "atlasDiff": 0,
+    "runDiff": 0,
+    "partial": 0,
+    "unknown": 0,
+    "mirrorDiff": 0,
+    "materials": [
+     "ink",
+     "pod",
+     "seed",
+     "stem"
+    ],
+    "matsOk": true,
+    "treatmentOnly": []
+   }
+  ],
+  "atlas": {
+   "w": 160,
+   "h": 147,
+   "bytes": 4201,
+   "sha256": "628f988848c607c260c9365852f86b4ae86dd5025b04092731f901baa5c45ec9"
+  },
+  "generated": {
+   "bytes": 255233,
+   "fingerprint": "3e830fa9c6430a9755c3d3cf7c4d2e5f8cf10140c64b18aae8ab29f79064b964"
+  }
+ },
+ "states": {
+  "base": {
+   "traits": {},
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.base"
+   ],
+   "treatments": [],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   },
+   "anatomy": "a7b728dd",
+   "full": "2341bc80",
+   "unrendered": []
+  },
+  "cold1": {
+   "traits": {
+    "cold": 1
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "frost.hair.1",
+    "leaf.base"
+   ],
+   "treatments": [],
+   "layout": "dense",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 16,
+    "x1": 62,
+    "y1": 84
+   },
+   "anatomy": "a8185b54",
+   "full": "ebf9743c",
+   "unrendered": []
+  },
+  "cold2": {
+   "traits": {
+    "cold": 2
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "frost.collar.2",
+    "frost.hair.2",
+    "leaf.base"
+   ],
+   "treatments": [],
+   "layout": "compact",
+   "clip": 0,
+   "bbox": {
+    "x0": 22,
+    "y0": 26,
+    "x1": 63,
+    "y1": 84
+   },
+   "anatomy": "2f846ece",
+   "full": "621216dc",
+   "unrendered": []
+  },
+  "cold3": {
+   "traits": {
+    "cold": 3
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "frost.collar.3",
+    "frost.hair.3",
+    "leaf.base"
+   ],
+   "treatments": [],
+   "layout": "cushion",
+   "clip": 0,
+   "bbox": {
+    "x0": 20,
+    "y0": 32,
+    "x1": 64,
+    "y1": 84
+   },
+   "anatomy": "ec50490a",
+   "full": "d433330b",
+   "unrendered": []
+  },
+  "heat1": {
+   "traits": {
+    "heat": 1
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.base"
+   ],
+   "treatments": [
+    {
+     "id": "wax",
+     "level": 1
+    }
+   ],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   },
+   "anatomy": "e3dca505",
+   "full": "4f9115e7",
+   "unrendered": []
+  },
+  "heat2": {
+   "traits": {
+    "heat": 2
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.base"
+   ],
+   "treatments": [
+    {
+     "id": "wax",
+     "level": 2
+    }
+   ],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   },
+   "anatomy": "5785a65f",
+   "full": "f7eedde2",
+   "unrendered": []
+  },
+  "heat3": {
+   "traits": {
+    "heat": 3
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.base.heat"
+   ],
+   "treatments": [
+    {
+     "id": "wax",
+     "level": 3
+    }
+   ],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   },
+   "anatomy": "488c8330",
+   "full": "a423e789",
+   "unrendered": []
+  },
+  "cold2heat1": {
+   "traits": {
+    "cold": 2,
+    "heat": 1
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "frost.collar.2",
+    "frost.hair.2",
+    "leaf.base"
+   ],
+   "treatments": [
+    {
+     "id": "wax",
+     "level": 1
+    }
+   ],
+   "layout": "compact",
+   "clip": 0,
+   "bbox": {
+    "x0": 22,
+    "y0": 26,
+    "x1": 63,
+    "y1": 84
+   },
+   "anatomy": "e1a3fdfe",
+   "full": "4f112108",
+   "unrendered": []
+  },
+  "drought1": {
+   "traits": {
+    "drought": 1
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.drought.1"
+   ],
+   "treatments": [],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 89
+   },
+   "anatomy": "497023a3",
+   "full": "70f8d77f",
+   "unrendered": []
+  },
+  "drought2": {
+   "traits": {
+    "drought": 2
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.drought.2",
+    "root.storage.2"
+   ],
+   "treatments": [],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 93
+   },
+   "anatomy": "e73a831a",
+   "full": "e097c5dc",
+   "unrendered": []
+  },
+  "drought3": {
+   "traits": {
+    "drought": 3
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.drought.3",
+    "root.storage.3"
+   ],
+   "treatments": [],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 26,
+    "y0": 10,
+    "x1": 60,
+    "y1": 95
+   },
+   "anatomy": "2e81269b",
+   "full": "c7e20aa7",
+   "unrendered": []
+  },
+  "drought3heat3": {
+   "traits": {
+    "drought": 3,
+    "heat": 3
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.drought.3.heat",
+    "root.storage.3"
+   ],
+   "treatments": [
+    {
+     "id": "wax",
+     "level": 3
+    }
+   ],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 26,
+    "y0": 10,
+    "x1": 60,
+    "y1": 95
+   },
+   "anatomy": "b93921ad",
+   "full": "698b6395",
+   "unrendered": []
+  },
+  "flood1": {
+   "traits": {
+    "flood": 1
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.flood.1",
+    "root.aerial.1"
+   ],
+   "treatments": [],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   },
+   "anatomy": "3203d8ec",
+   "full": "ef47eebe",
+   "unrendered": []
+  },
+  "flood2": {
+   "traits": {
+    "flood": 2
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.flood.2",
+    "root.aerial.2"
+   ],
+   "treatments": [],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 22,
+    "y0": 10,
+    "x1": 64,
+    "y1": 84
+   },
+   "anatomy": "0c854cc5",
+   "full": "877f526d",
+   "unrendered": []
+  },
+  "flood3": {
+   "traits": {
+    "flood": 3
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.flood.3",
+    "root.aerial.3",
+    "root.stilt"
+   ],
+   "treatments": [],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 22,
+    "y0": 10,
+    "x1": 64,
+    "y1": 84
+   },
+   "anatomy": "b23837c6",
+   "full": "e51c566a",
+   "unrendered": []
+  },
+  "flood3heat3": {
+   "traits": {
+    "flood": 3,
+    "heat": 3
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.flood.3.heat",
+    "root.aerial.3",
+    "root.stilt"
+   ],
+   "treatments": [
+    {
+     "id": "wax",
+     "level": 3
+    }
+   ],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 22,
+    "y0": 10,
+    "x1": 64,
+    "y1": 84
+   },
+   "anatomy": "3d08895e",
+   "full": "2bd62194",
+   "unrendered": []
+  },
+  "salt": {
+   "traits": {
+    "salt": 1
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.base",
+    "salt.crystal",
+    "salt.gland"
+   ],
+   "treatments": [
+    {
+     "id": "toothed",
+     "level": 1
+    }
+   ],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 23,
+    "y0": 10,
+    "x1": 63,
+    "y1": 84
+   },
+   "anatomy": "dbf86ba4",
+   "full": "f023f33f",
+   "unrendered": []
+  },
+  "rad": {
+   "traits": {
+    "rad": 1
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.base"
+   ],
+   "treatments": [
+    {
+     "id": "pigment",
+     "level": 1
+    }
+   ],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   },
+   "anatomy": "d329dd3d",
+   "full": "43ceeca8",
+   "unrendered": []
+  },
+  "cold2salt": {
+   "traits": {
+    "cold": 2,
+    "salt": 1
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "frost.collar.2",
+    "frost.hair.2",
+    "leaf.base",
+    "salt.crystal",
+    "salt.gland"
+   ],
+   "treatments": [
+    {
+     "id": "toothed",
+     "level": 1
+    }
+   ],
+   "layout": "compact",
+   "clip": 0,
+   "bbox": {
+    "x0": 22,
+    "y0": 26,
+    "x1": 63,
+    "y1": 84
+   },
+   "anatomy": "552bcab9",
+   "full": "6b21491c",
+   "unrendered": []
+  },
+  "drought2rad": {
+   "traits": {
+    "drought": 2,
+    "rad": 1
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.drought.2",
+    "root.storage.2"
+   ],
+   "treatments": [
+    {
+     "id": "pigment",
+     "level": 1
+    }
+   ],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 93
+   },
+   "anatomy": "0152f50a",
+   "full": "8b68db99",
+   "unrendered": []
+  },
+  "seed1": {
+   "traits": {
+    "seedOut": 1
+   },
+   "components": [
+    "bud.axil",
+    "leaf.base",
+    "seedHead.small"
+   ],
+   "treatments": [],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 9,
+    "x1": 62,
+    "y1": 84
+   },
+   "anatomy": "407b55d4",
+   "full": "64ae1224",
+   "unrendered": []
+  },
+  "seed2": {
+   "traits": {
+    "seedOut": 2
+   },
+   "components": [
+    "bud.axil",
+    "leaf.base",
+    "seed.drift",
+    "seedHead.large",
+    "seedHead.small"
+   ],
+   "treatments": [],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 2,
+    "x1": 62,
+    "y1": 84
+   },
+   "anatomy": "2900bd96",
+   "full": "40b2c624",
+   "unrendered": []
+  },
+  "early": {
+   "traits": {
+    "earlyMat": 1
+   },
+   "components": [
+    "bud.axil",
+    "flower",
+    "leaf.base"
+   ],
+   "treatments": [],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 4,
+    "x1": 62,
+    "y1": 84
+   },
+   "anatomy": "8eea1cad",
+   "full": "9e9ab3d9",
+   "unrendered": []
+  },
+  "water": {
+   "traits": {
+    "waterSeeds": 1
+   },
+   "components": [
+    "bud",
+    "bud.axil",
+    "leaf.base",
+    "pod"
+   ],
+   "treatments": [],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   },
+   "anatomy": "7f9d3e91",
+   "full": "ee26bc10",
+   "unrendered": []
+  },
+  "earlySeed2": {
+   "traits": {
+    "earlyMat": 1,
+    "seedOut": 2
+   },
+   "components": [
+    "bud.axil",
+    "flower",
+    "leaf.base",
+    "seed.drift",
+    "seedHead.large",
+    "seedHead.small"
+   ],
+   "treatments": [],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 2,
+    "x1": 62,
+    "y1": 84
+   },
+   "anatomy": "0bfc6a77",
+   "full": "9ffc7977",
+   "unrendered": []
+  },
+  "allRepro": {
+   "traits": {
+    "earlyMat": 1,
+    "seedOut": 2,
+    "waterSeeds": 1
+   },
+   "components": [
+    "bud.axil",
+    "flower",
+    "leaf.base",
+    "pod",
+    "seed.drift",
+    "seedHead.large",
+    "seedHead.small"
+   ],
+   "treatments": [],
+   "layout": "open",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 2,
+    "x1": 62,
+    "y1": 84
+   },
+   "anatomy": "b7174d3b",
+   "full": "52c012cb",
+   "unrendered": []
+  },
+  "maxDry": {
+   "traits": {
+    "cold": 2,
+    "heat": 1,
+    "drought": 3,
+    "salt": 1,
+    "rad": 1,
+    "seedOut": 2,
+    "earlyMat": 1,
+    "waterSeeds": 1
+   },
+   "components": [
+    "bud.axil",
+    "flower",
+    "frost.collar.2",
+    "frost.hair.2",
+    "leaf.drought.3",
+    "pod",
+    "root.storage.3",
+    "salt.crystal",
+    "salt.gland",
+    "seed.drift",
+    "seedHead.large",
+    "seedHead.small"
+   ],
+   "treatments": [
+    {
+     "id": "pigment",
+     "level": 1
+    },
+    {
+     "id": "wax",
+     "level": 1
+    },
+    {
+     "id": "toothed",
+     "level": 1
+    }
+   ],
+   "layout": "compact",
+   "clip": 0,
+   "bbox": {
+    "x0": 23,
+    "y0": 18,
+    "x1": 62,
+    "y1": 95
+   },
+   "anatomy": "f4bb536f",
+   "full": "28ccb5e8",
+   "unrendered": []
+  },
+  "maxWet": {
+   "traits": {
+    "cold": 2,
+    "heat": 1,
+    "flood": 3,
+    "salt": 1,
+    "rad": 1,
+    "seedOut": 2,
+    "earlyMat": 1,
+    "waterSeeds": 1
+   },
+   "components": [
+    "bud.axil",
+    "flower",
+    "frost.collar.2",
+    "frost.hair.2",
+    "leaf.flood.3",
+    "pod",
+    "root.aerial.3",
+    "root.stilt",
+    "salt.crystal",
+    "salt.gland",
+    "seed.drift",
+    "seedHead.large",
+    "seedHead.small"
+   ],
+   "treatments": [
+    {
+     "id": "pigment",
+     "level": 1
+    },
+    {
+     "id": "wax",
+     "level": 1
+    },
+    {
+     "id": "toothed",
+     "level": 1
+    }
+   ],
+   "layout": "compact",
+   "clip": 0,
+   "bbox": {
+    "x0": 19,
+    "y0": 18,
+    "x1": 66,
+    "y1": 84
+   },
+   "anatomy": "92403241",
+   "full": "140a2d5a",
+   "unrendered": []
+  }
+ },
+ "fx": {
+  "Base → Cold T1": {
+   "label": "Base → Cold T1",
+   "diff": 1131,
+   "preview": true,
+   "grow": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 39,
+    "played": true
+   },
+   "dissolve": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 35,
+    "played": true
+   },
+   "reduced": true
+  },
+  "Cold T1 → Cold T2": {
+   "label": "Cold T1 → Cold T2",
+   "diff": 1144,
+   "preview": true,
+   "grow": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 39,
+    "played": true
+   },
+   "dissolve": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 35,
+    "played": true
+   },
+   "reduced": true
+  },
+  "Base → Drought T1": {
+   "label": "Base → Drought T1",
+   "diff": 467,
+   "preview": true,
+   "grow": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 39,
+    "played": true
+   },
+   "dissolve": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 35,
+    "played": true
+   },
+   "reduced": true
+  },
+  "Drought T2 → Radiation": {
+   "label": "Drought T2 → Radiation",
+   "diff": 508,
+   "preview": true,
+   "grow": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 39,
+    "played": true
+   },
+   "dissolve": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 35,
+    "played": true
+   },
+   "reduced": true
+  },
+  "Base → Early Maturity": {
+   "label": "Base → Early Maturity",
+   "diff": 151,
+   "preview": true,
+   "grow": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 39,
+    "played": true
+   },
+   "dissolve": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 35,
+    "played": true
+   },
+   "reduced": true
+  },
+  "Seed Output T1 → T2": {
+   "label": "Seed Output T1 → T2",
+   "diff": 243,
+   "preview": true,
+   "grow": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 39,
+    "played": true
+   },
+   "dissolve": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 35,
+    "played": true
+   },
+   "reduced": true
+  },
+  "Base → Waterborne Seeds": {
+   "label": "Base → Waterborne Seeds",
+   "diff": 140,
+   "preview": true,
+   "grow": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 39,
+    "played": true
+   },
+   "dissolve": {
+    "start": true,
+    "end": true,
+    "mid": true,
+    "leak": 0,
+    "frames": 35,
+    "played": true
+   },
+   "reduced": true
+  }
+ },
+ "browsers": {
+  "chromium": {
+   "purchases": [
+    {
+     "label": "Base → Cold T1",
+     "style": "grow",
+     "ok": true,
+     "frames": 35
+    },
+    {
+     "label": "Base → Cold T1",
+     "style": "dissolve",
+     "ok": true,
+     "frames": 36
+    },
+    {
+     "label": "Base → Cold T1",
+     "style": "reduced",
+     "ok": true,
+     "frames": 1
+    },
+    {
+     "label": "Cold T1 → Cold T2",
+     "style": "grow",
+     "ok": true,
+     "frames": 39
+    },
+    {
+     "label": "Cold T1 → Cold T2",
+     "style": "dissolve",
+     "ok": true,
+     "frames": 35
+    },
+    {
+     "label": "Cold T1 → Cold T2",
+     "style": "reduced",
+     "ok": true,
+     "frames": 1
+    },
+    {
+     "label": "Base → Drought T1",
+     "style": "grow",
+     "ok": true,
+     "frames": 39
+    },
+    {
+     "label": "Base → Drought T1",
+     "style": "dissolve",
+     "ok": true,
+     "frames": 35
+    },
+    {
+     "label": "Base → Drought T1",
+     "style": "reduced",
+     "ok": true,
+     "frames": 1
+    },
+    {
+     "label": "Drought T2 → Radiation",
+     "style": "grow",
+     "ok": true,
+     "frames": 38
+    },
+    {
+     "label": "Drought T2 → Radiation",
+     "style": "dissolve",
+     "ok": true,
+     "frames": 35
+    },
+    {
+     "label": "Drought T2 → Radiation",
+     "style": "reduced",
+     "ok": true,
+     "frames": 1
+    },
+    {
+     "label": "Base → Early Maturity",
+     "style": "grow",
+     "ok": true,
+     "frames": 38
+    },
+    {
+     "label": "Base → Early Maturity",
+     "style": "dissolve",
+     "ok": true,
+     "frames": 35
+    },
+    {
+     "label": "Base → Early Maturity",
+     "style": "reduced",
+     "ok": true,
+     "frames": 1
+    },
+    {
+     "label": "Seed Output T1 → T2",
+     "style": "grow",
+     "ok": true,
+     "frames": 38
+    },
+    {
+     "label": "Seed Output T1 → T2",
+     "style": "dissolve",
+     "ok": true,
+     "frames": 35
+    },
+    {
+     "label": "Seed Output T1 → T2",
+     "style": "reduced",
+     "ok": true,
+     "frames": 1
+    },
+    {
+     "label": "Base → Waterborne Seeds",
+     "style": "grow",
+     "ok": true,
+     "frames": 39
+    },
+    {
+     "label": "Base → Waterborne Seeds",
+     "style": "dissolve",
+     "ok": true,
+     "frames": 35
+    },
+    {
+     "label": "Base → Waterborne Seeds",
+     "style": "reduced",
+     "ok": true,
+     "frames": 1
+    }
+   ],
+   "file": {
+    "url": "file://…/demos/plant-sprite-pipeline-lab.html",
+    "errors": 0,
+    "external": 0,
+    "requests": 11
+   },
+   "http": {
+    "url": "http://127.0.0.1:37051/demos/plant-sprite-pipeline-lab.html",
+    "errors": 0,
+    "external": 0,
+    "requests": 11
+   },
+   "subpath": {
+    "url": "http://127.0.0.1:45981/bloom/demos/plant-sprite-pipeline-lab.html",
+    "errors": 0,
+    "external": 0,
+    "requests": 11
+   }
+  }
+ },
+ "changedFiles": [
+  "art/plant/README.md",
+  "art/plant/intake/organic-hybrid/PMO_FINAL_ACCEPTANCE.json",
+  "art/plant/intake/organic-hybrid/README.txt",
+  "art/plant/intake/organic-hybrid/approved-deliveries/batch1-base.zip",
+  "art/plant/intake/organic-hybrid/approved-deliveries/batch2-cold-heat-corrected.zip",
+  "art/plant/intake/organic-hybrid/approved-deliveries/batch3-drought.zip",
+  "art/plant/intake/organic-hybrid/approved-deliveries/batch4-flood.zip",
+  "art/plant/intake/organic-hybrid/approved-deliveries/batch5-salt-radiation.zip",
+  "art/plant/intake/organic-hybrid/approved-deliveries/batch6-reproduction-dispersal.zip",
+  "art/plant/intake/organic-hybrid/approved-deliveries/final-pack-metadata-closure.zip",
+  "art/plant/intake/organic-hybrid/intake-map.json",
+  "art/plant/packs/organic-hybrid/atlas.json",
+  "art/plant/packs/organic-hybrid/atlas.png",
+  "demos/plant-sprite-pipeline-lab.html",
+  "docs/PLANT_SPRITE_PIPELINE_v1.md",
+  "docs/evidence/bloom-032b1/REPORT.md",
+  "docs/evidence/bloom-032b2/01-base-real-art.png",
+  "docs/evidence/bloom-032b2/02-cold-progression-real-art.png",
+  "docs/evidence/bloom-032b2/03-heat-progression-real-art.png",
+  "docs/evidence/bloom-032b2/04-cold-heat-combination.png",
+  "docs/evidence/bloom-032b2/05-drought-progression.png",
+  "docs/evidence/bloom-032b2/06-flood-progression.png",
+  "docs/evidence/bloom-032b2/07-salt-vs-cold.png",
+  "docs/evidence/bloom-032b2/08-radiation.png",
+  "docs/evidence/bloom-032b2/09-reproduction-family.png",
+  "docs/evidence/bloom-032b2/10-maximal-dry.png",
+  "docs/evidence/bloom-032b2/11-maximal-wet.png",
+  "docs/evidence/bloom-032b2/12-current-svg-vs-organic-hybrid.png",
+  "docs/evidence/bloom-032b2/13-real-room-sizes.png",
+  "docs/evidence/bloom-032b2/14-preview.png",
+  "docs/evidence/bloom-032b2/15-grow-fx-strip.png",
+  "docs/evidence/bloom-032b2/art-intake-proof.json",
+  "docs/evidence/bloom-032b2/qa-organic-hybrid-art-intake-check.log",
+  "resources/plant-sprite-lab/lab.css",
+  "resources/plant-sprite-lab/lab.js",
+  "resources/plant-visual/generated/plant-atlas-manifest.json",
+  "resources/plant-visual/generated/plant-atlas.js",
+  "tools/intake-organic-hybrid-art.mjs",
+  "tools/organic-hybrid-art-intake-check.js",
+  "tools/plant-sprite-pipeline-check.js"
+ ],
+ "artCap": [
+  {
+   "arm": "drought",
+   "n": 4,
+   "same": true
+  },
+  {
+   "arm": "drought",
+   "n": 5,
+   "same": true
+  },
+  {
+   "arm": "drought",
+   "n": 9,
+   "same": true
+  },
+  {
+   "arm": "flood",
+   "n": 4,
+   "same": true
+  },
+  {
+   "arm": "flood",
+   "n": 5,
+   "same": true
+  },
+  {
+   "arm": "flood",
+   "n": 9,
+   "same": true
+  }
+ ],
+ "maximalDRY": {
+  "minMargin": 2,
+  "cases": 8,
+  "bbox": {
+   "x0": 23,
+   "y0": 18,
+   "x1": 62,
+   "y1": 95
+  }
+ },
+ "maximalWET": {
+  "minMargin": 2,
+  "cases": 8,
+  "bbox": {
+   "x0": 19,
+   "y0": 18,
+   "x1": 66,
+   "y1": 84
+  }
+ },
+ "results": [
+  {
+   "ok": true,
+   "name": "S1 · 032B2 starts from the exact accepted BLOOM-032B1 main be0a829"
+  },
+  {
+   "ok": true,
+   "name": "S2 · production boundary: all 87 files under content/, planets/, index.html, dist/ and resources/ (except the generated plant atlas and the proof page's own script / style) are byte-identical to be0a8"
+  },
+  {
+   "ok": true,
+   "name": "S3 · no production surface (game, Adapt / Spread / Inspect / Field Journal, portable bundle) loads the plant atlas or the new pack — only the review page does"
+  },
+  {
+   "ok": true,
+   "name": "S4 · body-plan sockets unchanged: the approved sprites fit the accepted sockets with no data change (the build's static clip proof passes on the accepted body plan)"
+  },
+  {
+   "ok": true,
+   "name": "I1 · intake hashes: PMO_FINAL_ACCEPTANCE.json is the file received in the wrapper; all 7 committed delivery ZIPs (batch1–6 + final metadata closure) match PMO_FINAL_ACCEPTANCE.json (SHA-256 + byte siz"
+  },
+  {
+   "ok": true,
+   "name": "I2 · 55 approved component sprites accounted for: every approved PNG in the deliveries is in the atlas exactly once, no sprite 56 exists; the runtime has 92 = 55 authored + 37 mirrored left twins bake"
+  },
+  {
+   "ok": true,
+   "name": "I3 · all approved metadata accounted for: every anchor / tip / 3 margin points == the studio manifests; contract category · family · attach · layer · orientation · trait / tier per component; the 6 ap"
+  },
+  {
+   "ok": true,
+   "name": "I4 · ONE converged Organic Hybrid palette: 18 materials (every contract material, ink 1 + 17 ramps × 4, dark → light), 69 unique plant colours; the environment (sky #7d8c96 #aeb4aa · soil #4a3d33 #3f3"
+  },
+  {
+   "ok": true,
+   "name": "I5 · source → atlas → runtime pixel integrity: for all 55 approved sprites the opaque / transparent matrix and the exact RGB of every opaque pixel are identical in the source PNG, the atlas rect and t"
+  },
+  {
+   "ok": true,
+   "name": "I6 · binary alpha: no approved sprite has (or acquired) partial alpha — every source pixel and every atlas pixel is alpha 0 or 255"
+  },
+  {
+   "ok": true,
+   "name": "I7 · every approved opaque pixel maps to its correct material · shade (exact palette colour; materials ⊆ the studio's declared materials_used per sprite; no treatment-only colour authored); no unknown"
+  },
+  {
+   "ok": true,
+   "name": "I8 · anchors valid (inside every rect, == studio), every leaf tip + 3 margin points on an opaque pixel of its own drawing, every sprite ≤ its contract maxSize, no sprite or mask rect clipped or overla"
+  },
+  {
+   "ok": true,
+   "name": "I9 · deterministic: two clean intakes of the PMO deliveries give identical bytes == the committed atlas.png / atlas.json / intake-map.json; two clean builds == the committed generated runtime; npm run"
+  },
+  {
+   "ok": true,
+   "name": "R1 · all 28 required real-art states render with the ORGANIC HYBRID pack in the accepted compositor — BASE · COLD T1 · COLD T2 · COLD T3 · HEAT T1 · HEAT T2 · HEAT T3 · COLD T2 + HEAT T1 · DROUGHT T1 "
+  },
+  {
+   "ok": true,
+   "name": "R2 · art cap with real art: Drought T4 / T5 / T9 draw EXACTLY the Drought T3 anatomy and pixels; Flood T4 / T5 / T9 EXACTLY Flood T3; no authored higher-tier asset exists"
+  },
+  {
+   "ok": true,
+   "name": "R3 · MAXIMAL LEGAL DRY with real art fits 84×98 for every legal Cold/Heat split (3+0, 2+1, 1+2, 0+3), thriving and strained: legal, every required component present, no pixel clipped, ≥ 1 px clear of "
+  },
+  {
+   "ok": true,
+   "name": "R4 · MAXIMAL LEGAL WET with real art fits 84×98 for every legal Cold/Heat split (3+0, 2+1, 1+2, 0+3), thriving and strained: legal, every required component present, no pixel clipped, ≥ 1 px clear of "
+  },
+  {
+   "ok": true,
+   "name": "R5 · Cold ≠ Salt in real pixels: Cold T1–T3 draw FROST material only (blue-white hairs / wool collars), Salt draws SALT material only (warm-neutral faceted crystals + glands) plus the approved Base no"
+  },
+  {
+   "ok": true,
+   "name": "R6 · GHOST / OUTLINE preview with real art for every required transition (Base → Cold T1 · Cold T1 → Cold T2 · Base → Drought T1 · Drought T2 → Radiation · Base → Early Maturity · Seed Output T1 → T2 "
+  },
+  {
+   "ok": true,
+   "name": "R7 · GROW (default purchase FX) and DISSOLVE (secondary) with real art: start on the current frame, in-between frames touch only the changed pixels, ≥ 20 frames, and END byte-for-byte on the exact tar"
+  },
+  {
+   "ok": true,
+   "name": "G1 · no gameplay / trait / balance change: BLOOM_DATA.traits and config identical after every render, preview and purchase (content/ byte-identical — S2)"
+  },
+  {
+   "ok": true,
+   "name": "[chromium · file] B1 · the review page boots (double-clicked file://) with no console error and no fetch / image decode (the generated atlas is a classic script); the real pack is first and labelled O"
+  },
+  {
+   "ok": true,
+   "name": "[chromium · file] B2 · no external request — works offline (everything file:)"
+  },
+  {
+   "ok": true,
+   "name": "[chromium · file] B3 · FINAL vs CURRENT PRODUCTION SVG mode (button or key C): the ORGANIC HYBRID final render and the unchanged production SVG side by side, fed the identical build"
+  },
+  {
+   "ok": true,
+   "name": "[chromium · file] B4 · real room sizes: the same 84×98 Organic Hybrid organism at native 1×, 1024 → 2×, 1280 → 3×, 1440 → 3×, Field Journal → 3× and a 4× zoom (one pixel signature)"
+  },
+  {
+   "ok": true,
+   "name": "[chromium · file] B5 · PREVIEW (ghost / outline) on → the real-art ghost (== the Node preview); off → the current pixels exactly, for all 7 required transitions"
+  },
+  {
+   "ok": true,
+   "name": "[chromium · file] B6 · PURCHASE with real art in the page: Base → Cold T1 · Cold T1 → Cold T2 · Base → Drought T1 · Drought T2 → Radiation · Base → Early Maturity · Seed Output T1 → T2 · Base → Waterb"
+  },
+  {
+   "ok": true,
+   "name": "[chromium · http] B1 · the review page boots (HTTP at /) with no console error and no fetch / image decode (the generated atlas is a classic script); the real pack is first and labelled ORGANIC HYBRID"
+  },
+  {
+   "ok": true,
+   "name": "[chromium · http] B2 · no external request — works offline (everything 127.0.0.1)"
+  },
+  {
+   "ok": true,
+   "name": "[chromium · http] B3 · FINAL vs CURRENT PRODUCTION SVG mode (button or key C): the ORGANIC HYBRID final render and the unchanged production SVG side by side, fed the identical build"
+  },
+  {
+   "ok": true,
+   "name": "[chromium · subpath] B1 · the review page boots (HTTP under /bloom/) with no console error and no fetch / image decode (the generated atlas is a classic script); the real pack is first and labelled OR"
+  },
+  {
+   "ok": true,
+   "name": "[chromium · subpath] B2 · no external request — works offline (everything 127.0.0.1)"
+  },
+  {
+   "ok": true,
+   "name": "[chromium · subpath] B3 · FINAL vs CURRENT PRODUCTION SVG mode (button or key C): the ORGANIC HYBRID final render and the unchanged production SVG side by side, fed the identical build"
+  }
+ ],
+ "summary": {
+  "passes": 33,
+  "fails": 0,
+  "seconds": 25,
+  "browsers": [
+   "chromium"
+  ]
+ }
+}
