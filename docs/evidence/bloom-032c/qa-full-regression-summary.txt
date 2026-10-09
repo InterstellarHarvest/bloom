@@ -1,0 +1,39 @@
+BLOOM-032C full regression on 090a66d — every tools/*-check.js, sequential, default browser matrix (Chromium 147.0.7727.15 + Firefox 148.0.2 wherever a suite has browsers; release-check --no-suites because its two child suites run on their own). macOS 12, non-root, Playwright 1.59.1.
+
+archetype-check rc=0 pass=40 fail=0 52s
+atmosphere-transition-check rc=0 pass=14 fail=0 0s
+colony-development-check rc=0 pass=68 fail=0 37s
+crossing-check rc=0 pass=14 fail=0 2s
+cylinder-gen-check rc=0 pass=35 fail=0 9s
+desert-check rc=0 pass=64 fail=0 52s
+destination-survey-check rc=0 pass=11 fail=0 57s
+dying-world-check rc=0 pass=63 fail=0 59s
+economy-check rc=0 pass=39 fail=0 319s
+expedition-handoff-check rc=0 pass=32 fail=0 54s
+frozen-check rc=0 pass=70 fail=0 79s
+game-flow-check rc=0 pass=48 fail=0 102s
+gen-check rc=0 pass=47 fail=0 5s
+guided-training-check rc=0 pass=50 fail=0 117s
+main-menu-check rc=0 pass=17 fail=0 15s
+native-competition-check rc=0 pass=66 fail=0 162s
+organic-hybrid-art-intake-check rc=0 pass=45 fail=0 34s
+planet-view-check rc=1 pass=79 fail=1 63s
+plant-rooms-check rc=0 pass=66 fail=0 78s
+plant-sprite-pipeline-check rc=0 pass=58 fail=0 20s
+portable-runtime-check rc=0 pass=71 fail=0 393s
+procedural-run-check rc=0 pass=32 fail=0 15s
+production-plant-integration-check rc=0 pass=50 fail=0 82s
+release-check rc=0 pass=50 fail=0 123s
+run-ui-check rc=0 pass=40 fail=0 68s
+run-ui-convergence-check rc=0 pass=57 fail=0 126s
+sim-check rc=0 pass=19 fail=0 2s
+slice-check rc=0 pass=15 fail=0 8s
+sphere-texture-check rc=0 pass=14 fail=0 6s
+strategy-check rc=0 pass=35 fail=0 25s
+surface-check rc=0 pass=11 fail=0 3s
+terraform-check rc=0 pass=61 fail=0 111s
+topology-check rc=0 pass=53 fail=0 3s
+training-check rc=0 pass=83 fail=0 54s
+volatile-climate-check rc=0 pass=78 fail=0 99s
+
+planet-view-check [firefox] B10 (Pause / Resume / speed) missed once in this run (an auto bubble-collect interleaved with the timed speed clicks); re-run: 80/80 twice on 090a66d and 80/80 twice on baseline ea1b785 — see qa-planet-view-check-rerun.log
