@@ -4,6 +4,9 @@
 from accepted production main `bba000f` (BLOOM-031). Nothing in production changed: `resources/run-ui/plant-specimen.js` still draws
 the plant in every room.
 
+**BLOOM-032C update (production).** The Organic Hybrid pack is now the production plant: `resources/run-ui/plant-specimen.js` is an
+adapter over this pipeline (`docs/PRODUCTION_PLANT_INTEGRATION_v1.md`). The pipeline itself is unchanged.
+
 **BLOOM-032B2 update (final art intake).** The PMO-approved Organic Hybrid art (Art Studio Batches 1–6 + the final pack metadata
 closure) is now ingested mechanically as `art/plant/packs/organic-hybrid/` (**ORGANIC HYBRID — FINAL ART**) by
 `tools/intake-organic-hybrid-art.mjs` from the hash-verified deliveries in `art/plant/intake/organic-hybrid/`; the three proof packs below remain
