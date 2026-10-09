@@ -1,0 +1,52 @@
+— A · Node: data, world search, retry, failure —
+PASS  7 · planet descriptions come from data (content/archetypes.js display: tagline, character, cue, detail, icon, previewSeed); none is written into index.html or demo-run.html  — Ocean Archipelago: "Fragmented islands surrounded by water." · Desert World: "A hot, dry world with scattered wet refuges." · Frozen World: "A mostly frozen planet with warmer refuges."
+PASS  12 · scenario descriptions come from data (content/scenarios.js display.card), flow copy from content/play.js; none is duplicated into the pages  — Eden: "No outside pressure." · Dying World: "The atmosphere is thinning." · Native Competition: "The planet already has native vegetation." · Volatile Climate: "Reshaping the climate has side effects."
+PASS  7/12b · the display metadata and flow content are plain data (no code, no DOM markup)
+PASS  13 · no Easy / Medium / Hard ranking anywhere in the selection data; the only tag is Eden's "Relaxed"  — Relaxed, —, —, —
+PASS  21/22 · Start runs the real production generator for the chosen planet (generateFromArchetype with the game's config + traits: layers 1–8)  — Frozen World seed 11 → Pallas-609, attempt 1, layers 12345678
+PASS  23 · a scenario that changes the run invokes the real layer P (validateScenario) on that same world  — {"status":"PASS","strategiesProven":1,"required":1} · steps terrain→scenario→ready
+PASS  31/33 · the accepted world is the selected planet and records its World Seed
+PASS  33b · reproducible: generating the same World Seed again gives the identical planet (tilemap, regions, name)  — Pallas-609 tilemap 83449292
+PASS  23b · Eden adds nothing to prove: no layer P call, the planet's layers 1–8 only
+PASS  20 · no witness strategy is exposed: the accepted world carries no witness plan, strategy signatures or builds (only a proven-strategy count)  — id,name,publicSeed,attempt,generationSeed,requestedWaterPct,actualWaterPct,landmasses,originLandmassShare,winnabilityChecked,validatedLayers,rejectedAttemptCount
+PASS  24/25 · a candidate layer P rejects is not started; the search retries the next World Seed and starts only the accepted one  — tried 7342:scenario/INCONCLUSIVE, 30:accepted · steps terrain→scenario→retry→terrain→scenario→ready
+PASS  24/25b · a World Seed with no acceptable planet (archetype layers) is skipped the same way  — tried 114:planet, 28:accepted
+PASS  26 · when every candidate is rejected the search ends in an explicit failure (no world)  — EXHAUSTED: no candidate passed (1 tried)
+PASS  27/28 · no silent Eden fallback and no silent planet substitution: every call is the chosen planet + chosen scenario
+PASS  R · a combination the scenario data marks DISALLOWED stops at once with the data's own reason (no generation); every shipped combination is allowed
+PASS  N · pickSeeds: distinct World Seeds in range from the caller's random source, skipping the seed to avoid  — [99999,12346,1,8]
+PASS  N2 · the world search, generator and layer P never call Math.random (the run's own live RNG is separate)  — 0 calls during all searches above
+PASS  L · the search is bounded by data (content/play.js search.maxCandidates)  — 6 candidates
+PASS  U · a run's URL keeps the existing query parameters (+ play=1)
+PASS  RT1 · the root index.html is the Strange Bloom title (BEGIN EXPEDITION · TRAINING · SETTINGS · CREDITS); the BLOOM-016 launcher's screens, buttons, hash router and BLOOM_LAUNCHER are gone (a launcher hash route does nothing)  — {"title":"Strange Bloom — Unknown Soils","items":["begin","training","settings","credits"]}
+PASS  RT2 · (BLOOM-031) over file:// the root is the Strange Bloom title itself (the generated portable runtime; the HTTP-required notice is retired), not the old launcher and not a blank page  — {"title":"Strange Bloom — Unknown Soils","note":false,"boot":"mounted","items":["begin","training","settings","credits"],"launcher":false}
+PASS  29 · loading feedback is visible: "Preparing planet…", the chosen planet + scenario, the current step, Cancel  — Preparing planet…Frozen World · Volatile Climate Shaping the terrain and checking your plant can reach new ground… Cancel
+PASS  21b · the player URL began a real world search (steps: terrain → scenario → ready); over file:// it runs on the page between frames  — main · terrain→scenario→ready · tried [{"seed":96244,"outcome":"accepted"}]
+PASS  31/32 · the accepted run is the selected planet + the selected scenario (layer P passed on it)  — Vesper-764 · Frozen World · Volatile Climate
+PASS  33/O/U · the World Seed is chosen automatically, shown ("World Seed: N") and written into the address (reload = the same world)  — Frozen World · World Seed: 96244 · Volatile Climate · ?play=1&archetype=frozen_world&seed=96244&scenario=volatile_climate
+PASS  AD · the player's run screen shows no developer terms and the page holds no solution data  — none
+PASS  S · an active run has an obvious Menu: Play this world again · Same planet, new world · Change planet · Home (BLOOM-030: no Change scenario — the product has no scenario chooser; scenarios stay direct URLs)  — playAgain, newWorld, changePlanet, home
+PASS  S2 · leaving a live run asks first; declining keeps the run  — Leave this run? It will not be saved.
+PASS  37 · Play this world again = the same planet, World Seed and scenario (identical map)  — Vesper-764 seed 96244 map 1639155268
+PASS  42/Z · the replay starts clean: a new page, no purchased traits, no Terraform, no instability or shocks, no colony upgrades from the abandoned run  — before: Warm the Sky ×2, 2 forcing steps · after: [] owned, 0 steps, tick 0
+PASS  38 · Same planet, new world = the same planet + scenario with a new World Seed  — 96244 → 77592 (Hollow-345)
+PASS  41 · a new run is genuinely new (new page, new map, nothing purchased)
+PASS  39/40 · Change planet opens the Strange Bloom title's Destination Survey at once (begin=1, consumed); Home returns to the title — never the retired launcher  — {"cp":{"url":"/index.html","state":"survey"},"hm":{"url":"/index.html","state":"menu","title":"Strange Bloom — Unknown Soils"}}
+PASS  24/25c · in the page: the rejected World Seed is skipped ("Finding another…") and only the accepted one starts  — [{"seed":7342,"outcome":"scenario"},{"seed":30,"outcome":"accepted"}]
+PASS  26/27/28 · bounded failure: a friendly explicit screen (Try again / Change selection / Home), nothing started, no Eden or other planet swapped in; (BLOOM-030) Change selection = the title's Destination Survey, Home = the title  — No playable world found We could not find a fair Ocean Archipelago for Native Competition this time. Nothing was started, and no other planet or scenario was swapped in. 
+PASS  26b · an unknown planet in a player link starts nothing (friendly screen)
+PASS  34 · the direct developer URL still works exactly as before (same world, developer footer, no player menu, no search, URL untouched)  — Frozen World · public seed 11 · attempt 1 · Pallas-609 (proc_1540155609) · layers 12345678 · scenario volatile_climate (layer P PASS)
+PASS  35 · no scenario in a developer URL still means Eden / default behaviour  — {"s":null,"id":"eden","pr":false,"pid":"eden","cl":false,"co":false}
+PASS  36 · malformed developer URLs still fail explicitly (NO WORLD GENERATED / NO RUN STARTED), with no search and no substitute  — 5 URLs
+PASS  43/44 · First Bloom's player URL (?play=1) opens the accepted authored run straight away (no search): same planet, plant and sky as the plain demo URL, plus the player menu  — demo-run.html?play=1 · First Bloom
+PASS  45 · the production Bloom Report renders (world identity, build, the production plant specimen, regions, Keep playing); the engineering modal stays closed  — You held 70 % of the land of Pallas-609 · Frozen World · World Seed 11 in 3m 40s.
+PASS  46 · a win offers Play again / Same planet, new world / Change planet / Home, after the report's science  — playAgain, newWorld, changePlanet, home
+PASS  T · Play again from the report = same planet + World Seed + scenario  — demo-run.html?play=1&archetype=frozen_world&seed=11&scenario=eden
+PASS  47 · an extinction offers the same actions in the production Extinction report (the debrief stays; the developer "Restart this run" is the harness's only)  — No living plants were left anywhere for 8 s, so the run is over after 6m 47s on Mistral-735 · Frozen World · World Seed 
+PASS  47b · the developer harness (no play=1) keeps its own extinction action in the production report (Restart this run, no player actions)
+PASS  M · served over http the search runs in a background worker, and the world it accepts is the production world (Frozen 11 = Pallas-609, attempt 1, same map as the harness)  — worker · Pallas-609
+PASS  M2/S3 · while a slow check runs (Ocean + Native Competition) the loading screen keeps animating and Cancel leaves at once for the Strange Bloom title (BLOOM-030; the briefing is retired), with nothing started  — 61 frames in 1 s during the check · cancel → title in 51 ms
+PASS  no browser errors
+# 51–58 · the other suites run separately (README → QA): every pre-existing suite, including Eden / Dying World / Native Competition / Volatile Climate / economy / colony / archetype suites
+
+ALL CHECKS PASS  (101.9 s)

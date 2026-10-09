@@ -1,0 +1,786 @@
+{
+ "milestone": "BLOOM-032C",
+ "base": "ea1b785517ccc9586cc7bb1ce91fc26f1f46c922",
+ "head": "090a66d8682e658b5916f8f840193999cd142712",
+ "pack": "organic-hybrid",
+ "states": {
+  "base": {
+   "traits": {},
+   "global": "a7b728dd",
+   "display": "5ef3c8d9",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   }
+  },
+  "cold1": {
+   "traits": {
+    "cold": 1
+   },
+   "global": "a8185b54",
+   "display": "8d25c24d",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 16,
+    "x1": 62,
+    "y1": 84
+   }
+  },
+  "cold2": {
+   "traits": {
+    "cold": 2
+   },
+   "global": "2f846ece",
+   "display": "774de291",
+   "clip": 0,
+   "bbox": {
+    "x0": 22,
+    "y0": 26,
+    "x1": 63,
+    "y1": 84
+   }
+  },
+  "cold3": {
+   "traits": {
+    "cold": 3
+   },
+   "global": "ec50490a",
+   "display": "7dadd206",
+   "clip": 0,
+   "bbox": {
+    "x0": 20,
+    "y0": 32,
+    "x1": 64,
+    "y1": 84
+   }
+  },
+  "heat1": {
+   "traits": {
+    "heat": 1
+   },
+   "global": "e3dca505",
+   "display": "10075006",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   }
+  },
+  "heat2": {
+   "traits": {
+    "heat": 2
+   },
+   "global": "5785a65f",
+   "display": "22ebee5b",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   }
+  },
+  "heat3": {
+   "traits": {
+    "heat": 3
+   },
+   "global": "488c8330",
+   "display": "40bc12e8",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   }
+  },
+  "cold2heat1": {
+   "traits": {
+    "cold": 2,
+    "heat": 1
+   },
+   "global": "e1a3fdfe",
+   "display": "7028be55",
+   "clip": 0,
+   "bbox": {
+    "x0": 22,
+    "y0": 26,
+    "x1": 63,
+    "y1": 84
+   }
+  },
+  "drought1": {
+   "traits": {
+    "drought": 1
+   },
+   "global": "497023a3",
+   "display": "163fb476",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 89
+   }
+  },
+  "drought2": {
+   "traits": {
+    "drought": 2
+   },
+   "global": "e73a831a",
+   "display": "b6c5ea3d",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 93
+   }
+  },
+  "drought3": {
+   "traits": {
+    "drought": 3
+   },
+   "global": "2e81269b",
+   "display": "5e3c5c56",
+   "clip": 0,
+   "bbox": {
+    "x0": 26,
+    "y0": 10,
+    "x1": 60,
+    "y1": 95
+   }
+  },
+  "flood1": {
+   "traits": {
+    "flood": 1
+   },
+   "global": "3203d8ec",
+   "display": "6f78078f",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   }
+  },
+  "flood2": {
+   "traits": {
+    "flood": 2
+   },
+   "global": "0c854cc5",
+   "display": "91561af4",
+   "clip": 0,
+   "bbox": {
+    "x0": 22,
+    "y0": 10,
+    "x1": 64,
+    "y1": 84
+   }
+  },
+  "flood3": {
+   "traits": {
+    "flood": 3
+   },
+   "global": "b23837c6",
+   "display": "efa51553",
+   "clip": 0,
+   "bbox": {
+    "x0": 22,
+    "y0": 10,
+    "x1": 64,
+    "y1": 84
+   }
+  },
+  "salt": {
+   "traits": {
+    "salt": 1
+   },
+   "global": "dbf86ba4",
+   "display": "0a240f86",
+   "clip": 0,
+   "bbox": {
+    "x0": 23,
+    "y0": 10,
+    "x1": 63,
+    "y1": 84
+   }
+  },
+  "rad": {
+   "traits": {
+    "rad": 1
+   },
+   "global": "d329dd3d",
+   "display": "e9bdae21",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   }
+  },
+  "seed1": {
+   "traits": {
+    "seedOut": 1
+   },
+   "global": "407b55d4",
+   "display": "75b52c1d",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 9,
+    "x1": 62,
+    "y1": 84
+   }
+  },
+  "seed2": {
+   "traits": {
+    "seedOut": 2
+   },
+   "global": "2900bd96",
+   "display": "51b9e01d",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 2,
+    "x1": 62,
+    "y1": 84
+   }
+  },
+  "early": {
+   "traits": {
+    "earlyMat": 1
+   },
+   "global": "8eea1cad",
+   "display": "ce6a3700",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 4,
+    "x1": 62,
+    "y1": 84
+   }
+  },
+  "water": {
+   "traits": {
+    "waterSeeds": 1
+   },
+   "global": "7f9d3e91",
+   "display": "3e498b05",
+   "clip": 0,
+   "bbox": {
+    "x0": 24,
+    "y0": 10,
+    "x1": 62,
+    "y1": 84
+   }
+  },
+  "maxDry": {
+   "traits": {
+    "cold": 2,
+    "heat": 1,
+    "drought": 3,
+    "salt": 1,
+    "rad": 1,
+    "seedOut": 2,
+    "earlyMat": 1,
+    "waterSeeds": 1
+   },
+   "global": "f4bb536f",
+   "display": "40ff58b5",
+   "clip": 0,
+   "bbox": {
+    "x0": 23,
+    "y0": 18,
+    "x1": 62,
+    "y1": 95
+   }
+  },
+  "maxWet": {
+   "traits": {
+    "cold": 2,
+    "heat": 1,
+    "flood": 3,
+    "salt": 1,
+    "rad": 1,
+    "seedOut": 2,
+    "earlyMat": 1,
+    "waterSeeds": 1
+   },
+   "global": "92403241",
+   "display": "eb9cb103",
+   "clip": 0,
+   "bbox": {
+    "x0": 19,
+    "y0": 18,
+    "x1": 66,
+    "y1": 84
+   }
+  }
+ },
+ "browsers": {
+  "chromium": {
+   "version": "147.0.7727.15",
+   "file": {
+    "region": {
+     "canvas": "2341bc80",
+     "scale": 3
+    }
+   },
+   "http": {
+    "region": {
+     "canvas": "2341bc80",
+     "scale": 3
+    }
+   },
+   "subpath": {
+    "region": {
+     "canvas": "2341bc80",
+     "scale": 3
+    }
+   },
+   "sizes": {
+    "1024x768": {
+     "scale": 2,
+     "box": true,
+     "k": 2,
+     "anchors": true,
+     "exact": true,
+     "render": "pixelated"
+    },
+    "1440x900": {
+     "scale": 3,
+     "box": true,
+     "k": 3,
+     "anchors": true,
+     "exact": true,
+     "render": "pixelated"
+    },
+    "1280x800": {
+     "scale": 3,
+     "box": true,
+     "k": 3,
+     "anchors": true,
+     "exact": true,
+     "render": "pixelated"
+    }
+   },
+   "localKinds": {
+    "empty": {
+     "exact": true,
+     "global": true,
+     "cls": "ps ghost",
+     "cond": "ok",
+     "living": false,
+     "viable": true
+    },
+    "blocked": {
+     "exact": true,
+     "global": true,
+     "cls": "ps ghost unviable",
+     "cond": "bad",
+     "living": false,
+     "viable": false
+    },
+    "stressed": {
+     "exact": true,
+     "global": true,
+     "cls": "ps stressed unviable",
+     "cond": "bad",
+     "living": true,
+     "viable": false,
+     "differsFromThriving": true
+    }
+   }
+  },
+  "firefox": {
+   "version": "148.0.2",
+   "file": {
+    "region": {
+     "canvas": "2341bc80",
+     "scale": 3
+    }
+   },
+   "http": {
+    "region": {
+     "canvas": "2341bc80",
+     "scale": 3
+    }
+   },
+   "subpath": {
+    "region": {
+     "canvas": "2341bc80",
+     "scale": 3
+    }
+   },
+   "sizes": {
+    "1024x768": {
+     "scale": 2,
+     "box": true,
+     "k": 2,
+     "anchors": true,
+     "exact": true,
+     "render": "crisp-edges"
+    },
+    "1440x900": {
+     "scale": 3,
+     "box": true,
+     "k": 3,
+     "anchors": true,
+     "exact": true,
+     "render": "crisp-edges"
+    },
+    "1280x800": {
+     "scale": 3,
+     "box": true,
+     "k": 3,
+     "anchors": true,
+     "exact": true,
+     "render": "crisp-edges"
+    }
+   },
+   "localKinds": {
+    "empty": {
+     "exact": true,
+     "global": true,
+     "cls": "ps ghost",
+     "cond": "ok",
+     "living": false,
+     "viable": true
+    },
+    "blocked": {
+     "exact": true,
+     "global": true,
+     "cls": "ps ghost unviable",
+     "cond": "bad",
+     "living": false,
+     "viable": false
+    },
+    "stressed": {
+     "exact": true,
+     "global": true,
+     "cls": "ps stressed unviable",
+     "cond": "bad",
+     "living": true,
+     "viable": false,
+     "differsFromThriving": true
+    }
+   }
+  }
+ },
+ "firefox": "HARD PRE-MERGE GATE",
+ "changedFiles": [
+  "demos/demo-run.html",
+  "demos/plant-sprite-pipeline-lab.html",
+  "docs/PLANT_SPRITE_PIPELINE_v1.md",
+  "docs/PRODUCTION_PLANT_INTEGRATION_v1.md",
+  "docs/PRODUCTION_PLANT_ROOMS_v1.md",
+  "resources/plant-sprite-lab/lab.js",
+  "resources/plant-sprite-lab/legacy-svg-specimen.js",
+  "resources/run-ui/decision-rooms.css",
+  "resources/run-ui/plant-specimen.js",
+  "resources/run-ui/run-report.css",
+  "tools/game-flow-check.js",
+  "tools/organic-hybrid-art-intake-check.js",
+  "tools/plant-rooms-check.js",
+  "tools/plant-sprite-pipeline-check.js",
+  "tools/production-plant-integration-check.js",
+  "tools/run-ui-convergence-check.js"
+ ],
+ "loadOrder": [
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  29,
+  31
+ ],
+ "local": {
+  "est0": {
+   "display": "4f112108",
+   "global": "e1a3fdfe",
+   "extras": 0
+  },
+  "est5": {
+   "display": "7028be55",
+   "global": "e1a3fdfe",
+   "extras": 14
+  },
+  "est1": {
+   "display": "59964411",
+   "global": "e1a3fdfe",
+   "extras": 20
+  },
+  "roots": {
+   "display": "193eff10",
+   "global": "e1a3fdfe",
+   "extras": 29
+  },
+  "leaves": {
+   "display": "3d8a7a94",
+   "global": "e1a3fdfe",
+   "extras": 14
+  },
+  "seeds": {
+   "display": "0dfab569",
+   "global": "e1a3fdfe",
+   "extras": 22
+  },
+  "rootNetwork": {
+   "display": "ae6a2f5a",
+   "global": "e1a3fdfe",
+   "extras": 70
+  },
+  "leafCanopy": {
+   "display": "1dbe6612",
+   "global": "e1a3fdfe",
+   "extras": 14
+  },
+  "seedReserve": {
+   "display": "08a86187",
+   "global": "e1a3fdfe",
+   "extras": 36
+  },
+  "warn": {
+   "display": "b37784ab",
+   "global": "e1a3fdfe",
+   "extras": 14
+  },
+  "bad": {
+   "display": "b37784ab",
+   "global": "e1a3fdfe",
+   "extras": 14
+  },
+  "none": {
+   "display": "c0761068",
+   "global": "e1a3fdfe",
+   "extras": 0
+  },
+  "unviable": {
+   "display": "5ccbe7f8",
+   "global": "e1a3fdfe",
+   "extras": 0
+  }
+ },
+ "results": [
+  {
+   "ok": true,
+   "name": "1 · 032C starts from the exact integrated BLOOM-032B2 main ea1b785"
+  },
+  {
+   "ok": true,
+   "name": "38 · no gameplay / trait / balance change: all 100 files under content/, planets/, index.html, dist/, resources/ and art/ are byte-identical to ea1b785 except the specimen adapter and its two style sh"
+  },
+  {
+   "ok": true,
+   "name": "2 · the production run page loads the accepted classic sprite runtime (generated atlas → model → selector → compositor → FX) BEFORE plant-specimen.js, which loads before decision-rooms.js and run-repo"
+  },
+  {
+   "ok": true,
+   "name": "3 · the provisional 029C SVG is NOT the production path: plant-specimen.js builds no SVG and no markup; the retired renderer survives only as resources/plant-sprite-lab/legacy-svg-specimen.js (BLOOM.l"
+  },
+  {
+   "ok": true,
+   "name": "11–23 · every required state renders through the production adapter as the real organic-hybrid compositor organism, unclipped and distinct: base · cold1 · cold2 · cold3 · heat1 · heat2 · heat3 · cold2"
+  },
+  {
+   "ok": true,
+   "name": "22 · 23 · maximal legal dry and wet fit 84×98 thriving and stressed (≥ 1 px clear); Drought / Flood T4 · T5 · T9 draw exactly the T3 organism (art cap)"
+  },
+  {
+   "ok": true,
+   "name": "9 · 33–36 · GLOBAL vs LOCAL: one owned genome keeps ONE organism signature through every local colony state, while establishment (sprout density), growth focus (roots / leaves / seeds), local upgrades"
+  },
+  {
+   "ok": true,
+   "name": "24 · 25 · preview = the accepted GHOST / OUTLINE of current → the REAL next tier (never mutates the owned organism); cancelling returns EXACTLY to the current pixels"
+  },
+  {
+   "ok": true,
+   "name": "30 · 31 · the seven logical parts (seedHead · pigment · flowers · leafShape · pods · stem · roots) map onto real placements: each highlight visibly changes the picture, each anchor sits ON a visible o"
+  },
+  {
+   "ok": true,
+   "name": "G1 · rendering, previewing and highlighting never touch BLOOM_DATA (traits, config)"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 42 · 4 · double-clicked file://: Region Inspect shows the real Organic Hybrid canvas (no SVG), its pixels == the adapter's draw == the Node render, byte for byte; no console error; 45 · off"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 43 · 4 · HTTP /: Region Inspect shows the real Organic Hybrid canvas (no SVG), its pixels == the adapter's draw == the Node render, byte for byte; no console error; every request local"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 44 · 4 · HTTP under /bloom/: Region Inspect shows the real Organic Hybrid canvas (no SVG), its pixels == the adapter's draw == the Node render, byte for byte; no console error; every reques"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 32 · region switch: the specimen re-renders the new region's local colony exactly (no FX replay; same global organism signature)"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 5 · 24 · 25 · 30 · Adapt: hovering Cold Tolerance shows the accepted GHOST / OUTLINE of the real next tier with the Temperature part (stem) highlighted — canvas == adapter pixels, PREVIEW t"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 31 · every category anchor (client px) lies inside the specimen canvas on a visible organism pixel"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 26 · 27 · buying Cold Tolerance (the page's real bloom:upgrade-purchase) GROWS the change into the specimen (35 frames) and the last frame is EXACTLY the new committed organism; the specime"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 28 · ordinary re-renders — a sim tick, Back + reopening the room, a hover preview, a region selection — never replay the GROW (one FX per purchase)"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 46 · keyboard: focusing a node previews it (accessible text says so); Enter buys it and the specimen grows it exactly"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 6 · Spread renders the real pack; Seed Output previews as ghost / outline (seed head highlighted) and its real purchase grows exactly"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 9 · 10 · the same owned genome draws the SAME organism (one signature) in Region Inspect, Adapt and Spread; a real Terraform purchase (warm) changes the sky only — the organism signature is"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 39 · 40 · 41 · one 84×98 organism at a whole-number nearest-neighbour scale — 1024×768 → 2×, 1280×800 → 3×, 1440×900 → 3× — the drawn content box exactly 84k × 98k (no border / padding / ma"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 33 · 34 · the real growth focus (roots / leaves / seeds, set through the page's own action) changes only the LOCAL presentation of the specimen in Region Inspect; the global organism signat"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 14 · 35 · 36 · stressed (seen), no-colony ghost (seen) and would-not-survive (seen) regions draw exactly the adapter's local presentation of the SAME global organism (stress = the accepted "
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 29 · reduced motion (OS setting): the purchase is one exact direct swap to the target"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 7 · 37 · Bloom Report (win): the report's specimen is the real Organic Hybrid organism at 3×, pixels exact, from the SAME owned genome as gameplay (same organism signature as the Adapt room"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 37 · Extinction report (loss): the real organism in its restrained unviable presentation, pixels exact"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 8 · Guided Training uses the real rooms: Adapt shows the real Organic Hybrid specimen; a preview does not move the training director (lesson \"start\" before and after)"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 47 · 48 · no console error and no unhandled promise rejection on any page"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] 49 · chromium 147.0.7727.15 ran every flow above"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 42 · 4 · double-clicked file://: Region Inspect shows the real Organic Hybrid canvas (no SVG), its pixels == the adapter's draw == the Node render, byte for byte; no console error; 45 · offl"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 43 · 4 · HTTP /: Region Inspect shows the real Organic Hybrid canvas (no SVG), its pixels == the adapter's draw == the Node render, byte for byte; no console error; every request local"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 44 · 4 · HTTP under /bloom/: Region Inspect shows the real Organic Hybrid canvas (no SVG), its pixels == the adapter's draw == the Node render, byte for byte; no console error; every request"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 32 · region switch: the specimen re-renders the new region's local colony exactly (no FX replay; same global organism signature)"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 5 · 24 · 25 · 30 · Adapt: hovering Cold Tolerance shows the accepted GHOST / OUTLINE of the real next tier with the Temperature part (stem) highlighted — canvas == adapter pixels, PREVIEW ta"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 31 · every category anchor (client px) lies inside the specimen canvas on a visible organism pixel"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 26 · 27 · buying Cold Tolerance (the page's real bloom:upgrade-purchase) GROWS the change into the specimen (33 frames) and the last frame is EXACTLY the new committed organism; the specimen"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 28 · ordinary re-renders — a sim tick, Back + reopening the room, a hover preview, a region selection — never replay the GROW (one FX per purchase)"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 46 · keyboard: focusing a node previews it (accessible text says so); Enter buys it and the specimen grows it exactly"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 6 · Spread renders the real pack; Seed Output previews as ghost / outline (seed head highlighted) and its real purchase grows exactly"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 9 · 10 · the same owned genome draws the SAME organism (one signature) in Region Inspect, Adapt and Spread; a real Terraform purchase (warm) changes the sky only — the organism signature is "
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 39 · 40 · 41 · one 84×98 organism at a whole-number nearest-neighbour scale — 1024×768 → 2×, 1280×800 → 3×, 1440×900 → 3× — the drawn content box exactly 84k × 98k (no border / padding / max"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 33 · 34 · the real growth focus (roots / leaves / seeds, set through the page's own action) changes only the LOCAL presentation of the specimen in Region Inspect; the global organism signatu"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 14 · 35 · 36 · stressed (seen), no-colony ghost (seen) and would-not-survive (seen) regions draw exactly the adapter's local presentation of the SAME global organism (stress = the accepted s"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 29 · reduced motion (OS setting): the purchase is one exact direct swap to the target"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 7 · 37 · Bloom Report (win): the report's specimen is the real Organic Hybrid organism at 3×, pixels exact, from the SAME owned genome as gameplay (same organism signature as the Adapt room)"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 37 · Extinction report (loss): the real organism in its restrained unviable presentation, pixels exact"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 8 · Guided Training uses the real rooms: Adapt shows the real Organic Hybrid specimen; a preview does not move the training director (lesson \"start\" before and after)"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 47 · 48 · no console error and no unhandled promise rejection on any page"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] 50 · firefox 148.0.2 ran every flow above"
+  }
+ ],
+ "summary": {
+  "passes": 50,
+  "fails": 0,
+  "seconds": 182,
+  "browsers": [
+   "chromium",
+   "firefox"
+  ]
+ }
+}
