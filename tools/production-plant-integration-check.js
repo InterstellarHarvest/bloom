@@ -127,7 +127,7 @@ function png(W, H, rgba) { const h = Buffer.alloc(13); h.writeUInt32BE(W, 0); h.
       const A = {}; for (const a of s.anchors()) A[a.part] = a.client && { x: a.client.x, y: a.client.y, inside: a.client.x >= r.left && a.client.x <= r.right && a.client.y >= r.top && a.client.y <= r.bottom,
         onPx: (() => { const v = D.anchors[a.part], i = v.y * D.W + v.x; return !!(D.frame.plant.m[i] || D.extras.has(i)); })() };
       return { pack: s.pack, canvas: __ps.hash(s.canvas), expect: D.sig, global: s.globalSignature(), globalExpect: D.globalSig, svg: !!s.el.querySelector("svg"), role: s.canvas.getAttribute("role"), aria: s.canvas.getAttribute("aria-label"),
-        scale: s.canvas.offsetWidth / s.canvas.width, cssW: r.width, cssH: r.height, render: getComputedStyle(s.canvas).imageRendering, previewing: s.el.classList.contains("previewing"),
+        scale: s.canvas.clientWidth / s.canvas.width, exactBox: s.canvas.clientWidth === s.canvas.offsetWidth && s.canvas.clientHeight === s.canvas.height * s.canvas.clientWidth / s.canvas.width, cssW: r.width, cssH: r.height, render: getComputedStyle(s.canvas).imageRendering, previewing: s.el.classList.contains("previewing"),
         highlighted: s.highlighted, fx: s.lastFx, animating: s.animating(), state: s.state, anchors: A }; } };`;
   const frames = (p, n = 3) => p.evaluate(n => new Promise(r => { let k = 0; const f = () => (++k >= n ? r() : requestAnimationFrame(f)); requestAnimationFrame(f); }), n);
   const settled = p => p.waitForFunction(() => !BLOOM.decisionRooms.instance.state().transitioning, null, { timeout: 8000, polling: 20 });
@@ -145,6 +145,9 @@ function png(W, H, rgba) { const h = Buffer.alloc(13); h.writeUInt32BE(W, 0); h.
     const tag = `[${bname}]`; let browser;
     try { browser = await pw[bname].launch(); } catch (e) { check(false, `${tag} ${bname === "firefox" ? "50" : "49"} · ${bname} launches${bname === "firefox" ? " — HARD PRE-MERGE GATE for BLOOM-032C" : ""}`, e.message.split("\n")[0]); PROOF.browsers[bname] = { unavailable: e.message.split("\n")[0] }; continue; }
     PROOF.browsers[bname] = { version: browser.version() }; console.log(`# ${bname} ${browser.version()}`);
+    // a fresh headless Chromium can lose its FIRST page's 2D contexts (the 032B1 pipeline check warms up the same way); the specimen itself
+    // repaints on "contextrestored", but a probe could land in between. Warm the browser once, then measure.
+    { const w = await browser.newPage(); await w.goto("file://" + encodeURI(ROOT) + "/demos/demo-run.html?ui=18"); await w.waitForTimeout(1500); await w.close(); }
     const srvRoot = await serve(null), srvSub = await serve("/bloom/");
     const ORIGINS = { file: "file://" + encodeURI(ROOT) + "/", http: `http://127.0.0.1:${srvRoot.address().port}/`, subpath: `http://127.0.0.1:${srvSub.address().port}/bloom/` };
     const pages = [];
@@ -210,9 +213,9 @@ function png(W, H, rgba) { const h = Buffer.alloc(13); h.writeUInt32BE(W, 0); h.
       // ---- 39 · 40 · 41 · room sizes: 2× at 1024, 3× at 1280 / 1440; anchors still on anatomy after resize
       { const out = {};
         for (const [w, h, k] of [[1024, 768, 2], [1440, 900, 3], [1280, 800, 3]]) { await p.setViewportSize({ width: w, height: h }); await sleep(250); await frames(p, 4); await openRoom(p, "adapt"); const r = await probe(p);
-          out[`${w}x${h}`] = { scale: r.scale, k, anchors: Object.values(r.anchors).every(a => a && a.inside && a.onPx), exact: r.canvas === r.expect, render: r.render }; }
+          out[`${w}x${h}`] = { scale: r.scale, box: r.exactBox, k, anchors: Object.values(r.anchors).every(a => a && a.inside && a.onPx), exact: r.canvas === r.expect, render: r.render }; }
         PROOF.browsers[bname].sizes = out;
-        check(Object.values(out).every(o => o.scale === o.k && o.anchors && o.exact && /pixelated|crisp-edges/.test(o.render)), `${tag} 39 · 40 · 41 · one 84×98 organism at a whole-number nearest-neighbour scale — 1024×768 → 2×, 1280×800 → 3×, 1440×900 → 3× — pixels exact and every anchor on the anatomy after each resize`, J(out)); }
+        check(Object.values(out).every(o => o.scale === o.k && o.box && o.anchors && o.exact && /pixelated|crisp-edges/.test(o.render)), `${tag} 39 · 40 · 41 · one 84×98 organism at a whole-number nearest-neighbour scale — 1024×768 → 2×, 1280×800 → 3×, 1440×900 → 3× — the drawn content box exactly 84k × 98k (no border / padding / max-size shrinking it), pixels exact and every anchor on the anatomy after each resize`, J(out)); }
       // ---- 15 · 16 · 17 · 18 · evidence rooms: drought / flood / salt+rad / maximal builds as REAL purchases
       if (EVIDENCE) { const room2 = async (traits, name) => { const q = await open(ORIGINS.file, RUNQ); await q.evaluate(t => { BLOOM_API.addBiomass(50000); for (const [id, n] of Object.entries(t)) for (let k = 0; k < n; k++) BLOOM_RUN_UI.adapter.actions.buy(id); }, traits);
           await openRoom(q, "adapt"); await fxDone(q).catch(() => {}); await shot(q, name, ".dr .dr-room:not([hidden])"); await q.context().close(); };
@@ -261,7 +264,7 @@ function png(W, H, rgba) { const h = Buffer.alloc(13); h.writeUInt32BE(W, 0); h.
         const loss = await l.evaluate(() => __ps.probe(__ps.rep())), lossCls = await l.evaluate(() => __ps.rep().el.className);
         if (EVIDENCE) await shot(l, "16-report-loss.png", "#rrCard");
         await l.context().close();
-        check(win.pack === "organic-hybrid" && win.canvas === win.expect && J(nz(win.state.traits)) === J(nz(owned)) && J(nz(live.state.traits)) === J(nz(owned)) && win.global === live.global && win.scale === 3 && !win.svg,
+        check(win.pack === "organic-hybrid" && win.canvas === win.expect && J(nz(win.state.traits)) === J(nz(owned)) && J(nz(live.state.traits)) === J(nz(owned)) && win.global === live.global && win.scale === 3 && win.exactBox && !win.svg,
           `${tag} 7 · 37 · Bloom Report (win): the report's specimen is the real Organic Hybrid organism at 3×, pixels exact, from the SAME owned genome as gameplay (same organism signature as the Adapt room)${sky ? "; Terraform is listed apart and does not alter anatomy" : ""}`, J({ scale: win.scale, traits: win.state.traits, owned, global: [win.global, live.global] }));
         check(loss.pack === "organic-hybrid" && loss.canvas === loss.expect && loss.state.viable === false && /unviable/.test(lossCls) && !loss.svg,
           `${tag} 37 · Extinction report (loss): the real organism in its restrained unviable presentation, pixels exact`, J({ cls: lossCls, scale: loss.scale })); }
@@ -286,17 +289,19 @@ function png(W, H, rgba) { const h = Buffer.alloc(13); h.writeUInt32BE(W, 0); h.
   // ---------------------------------------------------------------- 18 · the retired 029C SVG vs the new production specimen, identical states
   async function comparison(p) {
     const legacy = git(`show ${BASE}:resources/run-ui/plant-specimen.js`).replace("plantSpecimen:", "oldPlantSpecimen:");
-    await p.addScriptTag({ content: legacy });
+    await p.addScriptTag({ content: legacy }); await p.setViewportSize({ width: 1720, height: 900 }); await sleep(300);
     const clip = await p.evaluate(STATES => {
-      const old = document.createElement("div"); old.id = "__cmp"; old.style.cssText = "position:fixed;left:0;top:0;z-index:9999;background:#f3efe4;padding:12px;display:grid;grid-template-columns:repeat(6,auto);gap:8px;font:12px system-ui";
+      const css = document.createElement("style"); css.id = "__cmpcss"; document.head.append(css);   // the specimen's own room rules (decision-rooms.css scopes them to .dr)
+      css.textContent = "#__cmp .ps{position:relative;width:100%;height:100%;overflow:hidden} #__cmp .ps-canvas{position:absolute;display:block;image-rendering:pixelated;box-sizing:content-box;border:0;border-radius:0;max-width:none;max-height:none;background:transparent} #__cmp .ps-tag{display:none} #__cmp b{color:#25261f;font-size:12px;letter-spacing:.5px}";
+      const old = document.createElement("div"); old.id = "__cmp"; old.style.cssText = "position:fixed;left:0;top:0;z-index:9999;background:#f3efe4;padding:12px;display:grid;grid-template-columns:repeat(6,258px);gap:8px;font:12px system-ui;color:#25261f";
       const rows = [["BASE", {}], ["COLD T2 + HEAT T1", STATES.cold2heat1], ["DROUGHT T3", STATES.drought3], ["FLOOD T3", STATES.flood3], ["SEED T2 + EARLY + WATERBORNE", { seedOut: 2, earlyMat: 1, waterSeeds: 1 }], ["MAXIMAL DRY", STATES.maxDry]];
       const st = t => ({ traits: t, names: {}, preview: null, colony: { living: true, establishment: 1, word: "" }, focus: "balanced", local: null, condition: "ok", viable: true });
       for (const [label] of rows) { const h = document.createElement("b"); h.textContent = label; old.append(h); }
-      for (const [, t] of rows) { const b = document.createElement("div"); b.style.cssText = "width:170px;height:196px;position:relative;background:#dceefa"; old.append(b); const s = BLOOM.oldPlantSpecimen.mount(b, { reducedMotion: () => true }); s.render(st(t)); b.querySelector("svg").style.cssText = "width:100%;height:100%"; }
-      for (const [, t] of rows) { const b = document.createElement("div"); b.style.cssText = "width:170px;height:196px;position:relative"; old.append(b); const s = BLOOM.plantSpecimen.mount(b, { reducedMotion: () => true }); s.render(st(t)); }
-      const cap = document.createElement("div"); cap.style.cssText = "grid-column:1/-1;color:#444"; cap.textContent = "Top: the RETIRED provisional 029C SVG (production before BLOOM-032C). Bottom: the BLOOM-032C production specimen — the approved Organic Hybrid organism, 84×98 at 2×. Identical states."; old.append(cap);
+      for (const [, t] of rows) { const b = document.createElement("div"); b.style.cssText = "width:258px;height:298px;position:relative;background:#dceefa"; old.append(b); const s = BLOOM.oldPlantSpecimen.mount(b, { reducedMotion: () => true }); s.render(st(t)); b.querySelector("svg").style.cssText = "width:100%;height:100%"; }
+      for (const [, t] of rows) { const b = document.createElement("div"); b.style.cssText = "width:258px;height:298px;position:relative"; old.append(b); const s = BLOOM.plantSpecimen.mount(b, { reducedMotion: () => true }); s.render(st(t)); }
+      const cap = document.createElement("div"); cap.style.cssText = "grid-column:1/-1;color:#444"; cap.textContent = "Top: the RETIRED provisional 029C SVG (production before BLOOM-032C). Bottom: the BLOOM-032C production specimen — the approved Organic Hybrid organism, 84×98 at 3× in the 1280×800 room box (258×298). Identical states."; old.append(cap);
       document.body.append(old); const r = old.getBoundingClientRect(); return { x: 0, y: 0, width: Math.ceil(r.width), height: Math.ceil(r.height) }; }, STATES);
-    await sleep(200); await p.screenshot({ path: path.join(EVD, "18-current-vs-new-production-comparison.png"), clip }); await p.evaluate(() => document.getElementById("__cmp").remove());
+    await sleep(300); await p.screenshot({ path: path.join(EVD, "18-current-vs-new-production-comparison.png"), clip }); await p.evaluate(() => { document.getElementById("__cmp").remove(); document.getElementById("__cmpcss").remove(); });
   }
 
   PROOF.results = RESULTS; PROOF.summary = { passes, fails, seconds: Math.round((Date.now() - t0) / 1000), browsers: BROWSERS };

@@ -48,7 +48,7 @@
 .rr-plant{display:flex; flex-direction:column; gap:10px; min-width:0}
 .rr-spec{position:relative; border-radius:var(--r-md, 16px); overflow:hidden; background:#dceefa; aspect-ratio:170/196; border:2px solid var(--rr-line-2)}
 .rr .ps{position:relative; width:100%; height:100%; overflow:hidden}
-.rr .ps-canvas{position:absolute; display:block; image-rendering:pixelated; image-rendering:crisp-edges}   /* BLOOM-032C: the Organic Hybrid organism, whole-number scale */
+.rr .ps-canvas{position:absolute; display:block; box-sizing:content-box; border:0; border-radius:0; max-width:none; max-height:none; background:transparent; cursor:default;  image-rendering:pixelated; image-rendering:crisp-edges}   /* BLOOM-032C: the Organic Hybrid organism, whole-number scale */
 .rr .ps-tag{display:none}
 .rr-spec-cap{position:absolute; left:0; right:0; bottom:0; padding:22px 12px 8px; background:linear-gradient(transparent, rgba(47,58,44,.78)); color:#fff7e0; line-height:1.15; pointer-events:none}
 .rr-spec-cap b{display:block; font-size:14px} .rr-spec-cap small{display:block; font-size:12px; font-weight:700; opacity:.9}

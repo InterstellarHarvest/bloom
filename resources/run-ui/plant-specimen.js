@@ -38,7 +38,7 @@
   const PARTS = ["seedHead", "pigment", "flowers", "leafShape", "pods", "stem", "roots"]; // every anchor, top → bottom
   const PACK = "organic-hybrid";
   const ADAPT = ["pigment", "leafShape", "stem", "roots"], SPREAD = ["seedHead", "flowers", "pods"]; // tendril order per room: anchors keep it
-  const GAP = 5;   // minimum logical px between neighbouring anchors (≥ 10 client px at the 1024 layout's 2×): the tendrils need clear space
+  const GAP = 10;  // minimum logical px between neighbouring anchors (20 client px at 2×, 30 at 3×): the tendrils and their label plates need clear space
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
   const hex = h => [1, 3, 5].map(k => parseInt(h.slice(k, k + 2), 16));
   const hash = (a, b = 0) => { let h = Math.imul((a + 1) * 0x9e3779b1 ^ (b + 7) * 0x85ebca6b, 0x27d4eb2f) >>> 0; h ^= h >>> 15; return (h >>> 0) / 4294967296; };
@@ -196,7 +196,9 @@
     const ctx = cv.getContext("2d");
     let last = null, D = null, hl = null, k = 0, fit = "", anim = null, armed = false, committed = null, sig = "";
     const fx = { last: null };
-    const paint = rgba => { ctx.putImageData(new ImageData(new Uint8ClampedArray(rgba), p.W, p.H), 0, 0); };
+    let shown = null;   // the last painted frame: repainted if the browser drops and restores the canvas's 2D context
+    const paint = rgba => { shown = rgba; ctx.putImageData(new ImageData(new Uint8ClampedArray(rgba), p.W, p.H), 0, 0); };
+    cv.addEventListener("contextrestored", () => { if (shown) paint(shown); });
     // whole-number nearest-neighbour scale, centred; the padding continues the pack's own sky / soil
     function layout() {
       const w = box.clientWidth, h = box.clientHeight; if (!w || !h) return k;
