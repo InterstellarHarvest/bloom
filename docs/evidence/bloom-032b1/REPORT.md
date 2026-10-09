@@ -5,7 +5,7 @@ Botanical / Organic Hybrid / Strange Herbarium art comes from the owner's Plant 
 `docs/PLANT_SPRITE_PIPELINE_v1.md` § ARTIST_HANDOFF.
 
 * Base: accepted production main `bba000f` (BLOOM-031). Implementation `0777c80`. Branch `handoff/bloom-032b1-review`.
-* QA: `tools/plant-sprite-pipeline-check.js`: **46/46** (25 Node + 21 browser: Chromium and Firefox × file:// · HTTP `/` · HTTP `/bloom/`).
+* QA: `tools/plant-sprite-pipeline-check.js`: **46/46** (24 Node + 22 browser: Chromium and Firefox × file:// · HTTP `/` · HTTP `/bloom/`).
   Log: `qa-plant-sprite-pipeline-check.log`. Machine proof: `pipeline-proof.json`.
 * Regression: BLOOM-031 `portable-runtime-check`: **71/71** on 0777c80 (`qa-portable-runtime-check.log`); `npm --prefix tools run check:portable` OK.
 * Production: `resources/run-ui/plant-specimen.js` and every file under resources/, content/, planets/, demos/, index.html and dist/ that

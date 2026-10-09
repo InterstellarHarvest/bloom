@@ -36,7 +36,7 @@ art/plant/packs/<pack>/atlas.png + atlas.json  ──tools/build-plant-art.mjs�
 | Compositor | `resources/plant-visual/plant-compositor.js` | skeleton, placement, procedural connective tissue, treatments, compose, signatures |
 | FX | `resources/plant-visual/plant-fx.js` | diff, ghost/outline preview, grow, dissolve, reduced motion |
 | Proof page | `demos/plant-sprite-pipeline-lab.html` + `resources/plant-sprite-lab/` | engineering review page |
-| QA | `tools/plant-sprite-pipeline-check.js` | 23 Node + 21 browser checks (Chromium + Firefox) |
+| QA | `tools/plant-sprite-pipeline-check.js` | 24 Node + 22 browser checks (Chromium + Firefox) |
 
 **Rule separation.** The renderer (compositor + FX) names no trait, tier rule, price or `BLOOM_DATA`. The QA greps for this. It draws whatever
 component ids it is handed. Changing what a trait looks like is a change to the selector (and art), never to the renderer.
@@ -149,9 +149,9 @@ is always visible, and every pack panel repeats it.
 
 ## 10. QA — `tools/plant-sprite-pipeline-check.js`
 
-`NODE_PATH="$(npm root -g)" node tools/plant-sprite-pipeline-check.js [--browsers chromium,firefox] [--evidence]`. 44/44 on this branch.
+`NODE_PATH="$(npm root -g)" node tools/plant-sprite-pipeline-check.js [--browsers chromium,firefox] [--evidence]`. 46/46 on this branch.
 Node: S1 exact base · S2 no production/gameplay file changed · S3 032A untouched · S4 npm scripts, no new dependency · A1–A3 real PNG
-atlases, rects/anchors/points/masks valid, packs labelled temporary · A4 the validator **rejects** 11 kinds of broken art · A5 schema conformance ·
+atlases, rects/anchors/points/masks valid, packs labelled temporary · A4 the validator **rejects** 11 kinds of broken art · A5 schema conformance · H1 handoff doc complete + socket table == manifest ·
 D1 deterministic · D2 committed == clean rebuild · D3 no timestamp/path · D4 no sprite authored in JS · R1 one canvas · R2 rule separation ·
 R3 seven distinct states × 3 packs · R4 complex unclipped (runtime + static) · R5 anchors on sockets, one socket table · R6 pack swap = same
 skeleton, new pixels · R7 pigment via masks, posture via authored angles · F1 preview/cancel · F2 grow/dissolve exact · F3 reduced motion ·
