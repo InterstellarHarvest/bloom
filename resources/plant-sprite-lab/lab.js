@@ -1,15 +1,18 @@
-// BLOOM — Plant Sprite Pipeline Proof page (BLOOM-032B1). docs/PLANT_SPRITE_PIPELINE_v1.md §9.
-// An ENGINEERING proof, not gameplay and not an art review: one neutral PIPELINE PROOF body plan through every locked Organic Hybrid state, the
-// same build re-skinned by swapping only the art pack (proof-angular, proof-round), the current production SVG for reference, every
-// production placement size, the ghost / outline preview and the grow / dissolve purchase FX. Reads the real trait data for ids, names and
+// BLOOM — Plant Sprite Pipeline Proof page (BLOOM-032B1; BLOOM-032B2 adds the FINAL Organic Hybrid art). docs/PLANT_SPRITE_PIPELINE_v1.md §9.
+// A review page, not gameplay: the PMO-approved ORGANIC HYBRID — FINAL ART pack through every locked Organic Hybrid state in the accepted
+// compositor; the same build re-skinned by swapping only the art pack (the three TEMPORARY PIPELINE PROOF packs: proof, proof-angular,
+// proof-round); the current production SVG for reference (and the "Final vs production SVG" view: the two side by side on the identical
+// state); every production placement size, the ghost / outline preview and the grow / dissolve purchase FX. Reads the real trait data for ids, names and
 // legal tiers; never changes BLOOM_DATA, a price, a mechanic or the production UI. "Purchase" is a visual state change only.
 //
-// Keys: 1–9 the first nine presets · V preview on/off · B purchase · R reduced motion.   QA: window.PLANT_PIPELINE_LAB.
+// Keys: 1–9 the first nine presets · V preview on/off · B purchase · R reduced motion · C final vs production SVG.   QA: window.PLANT_PIPELINE_LAB.
 (function () {
   "use strict";
   const PV = BLOOM.plantVisual, PC = BLOOM.plantCompositor, FX = BLOOM.plantFx, ART = BLOOM.plantArt, PS = BLOOM.plantSpecimen, D = BLOOM_DATA;
   const RULES = PV.model.rules(D), NAMES = Object.fromEntries(Object.values(RULES.byId).map(t => [t.id, t.name]));
-  const CANVAS = ART.contract.canvas, PRIMARY = "proof", PACKS = ["proof", ...ART.packOrder.filter(p => p !== "proof")];
+  const FINAL = "organic-hybrid", CANVAS = ART.contract.canvas, PRIMARY = ART.packs[FINAL] ? FINAL : "proof";
+  const PACKS = [PRIMARY, ...["proof", "proof-angular", "proof-round"].filter(p => p !== PRIMARY && ART.packs[p]), ...ART.packOrder.filter(p => ![PRIMARY, "proof", "proof-angular", "proof-round"].includes(p))];
+  const isFinal = pack => pack === FINAL;
   const PRESETS = [
     { id: "base", name: "BASE", traits: {} },
     { id: "cold1", name: "COLD T1", traits: { cold: 1 } }, { id: "cold2", name: "COLD T2", traits: { cold: 2 } }, { id: "cold3", name: "COLD T3", traits: { cold: 3 } },
@@ -20,6 +23,10 @@
     { id: "salt", name: "SALT", traits: { salt: 1 } }, { id: "rad", name: "RADIATION", traits: { rad: 1 } },
     { id: "seed1", name: "SEED OUTPUT T1", traits: { seedOut: 1 } }, { id: "seed2", name: "SEED OUTPUT T2", traits: { seedOut: 2 } },
     { id: "early", name: "EARLY MATURITY", traits: { earlyMat: 1 } }, { id: "water", name: "WATERBORNE SEEDS", traits: { waterSeeds: 1 } },
+    { id: "drought3heat3", name: "DROUGHT T3 + HEAT T3", traits: { drought: 3, heat: 3 } }, { id: "flood3heat3", name: "FLOOD T3 + HEAT T3", traits: { flood: 3, heat: 3 } },
+    { id: "cold2salt", name: "COLD T2 + SALT", traits: { cold: 2, salt: 1 } }, { id: "drought2rad", name: "DROUGHT T2 + RADIATION", traits: { drought: 2, rad: 1 } },
+    { id: "earlySeed2", name: "EARLY MATURITY + SEED OUTPUT T2", traits: { earlyMat: 1, seedOut: 2 } },
+    { id: "allRepro", name: "ALL REPRODUCTIVE", traits: { earlyMat: 1, seedOut: 2, waterSeeds: 1 } },
     { id: "maxDry", name: "MAXIMAL LEGAL DRY", traits: { cold: 2, heat: 1, drought: 3, salt: 1, rad: 1, seedOut: 2, earlyMat: 1, waterSeeds: 1 } },
     { id: "maxWet", name: "MAXIMAL LEGAL WET", traits: { cold: 2, heat: 1, flood: 3, salt: 1, rad: 1, seedOut: 2, earlyMat: 1, waterSeeds: 1 } },
   ];
@@ -61,8 +68,8 @@
     const cur = frame(pack), tgtT = S.preview ? proposed() : null, k = scaleFor(P), A = ART.packs[pack];
     const rgba = tgtT ? FX.preview(cur, frame(pack, tgtT)) : cur.rgba;
     const cv = canvasFor(rgba, k, { "data-pack": pack, "data-placement": P.id, "data-role": role, "aria-label": `${A.title}: ${P.label}` });
-    return el("div", { class: "panel", "data-panel": pack, style: `width:${P.w + 18}px` },
-      el("h4", {}, el("span", {}, pack === PRIMARY ? "PIPELINE PROOF" : "PACK SWAP"), el("em", {}, A.title)), el("span", { class: "tag" }, A.status),
+    return el("div", { class: "panel" + (isFinal(pack) ? " final" : ""), "data-panel": pack, style: `width:${P.w + 18}px` },
+      el("h4", {}, el("span", {}, isFinal(pack) ? "ORGANIC HYBRID — FINAL ART" : "TEMPORARY PIPELINE PROOF"), el("em", {}, A.title)), el("span", { class: "tag" + (isFinal(pack) ? " ok" : "") }, A.status),
       el("div", { class: "box", style: `width:${P.w}px;height:${P.h}px` }, cv),
       el("span", { class: "meta" }, `${CANVAS.w}×${CANVAS.h} @ ${k}× · ${P.label}${tgtT ? " · preview: ghost / outline" : ""}`));
   }
@@ -81,9 +88,13 @@
       sel.treatments.length ? ["   ", el("b", {}, "Treatments: "), sel.treatments.map(t => t.id === "wax" ? `wax L${t.level}` : t.id).join(", ")] : "", "   ", el("b", {}, "Layout: "), sel.layout,
       S.preview ? ["   ", el("b", {}, "Previewing: "), tgt ? `${NAMES[S.propose]} → T${nextTier(S.propose)}` : `${NAMES[S.propose]}: no further authored tier`] : ""));
     const P = PLACEMENTS.find(p => p.id === S.placement);
-    if (S.view === "compare") {
+    if (S.view === "final") {
+      const Q = PLACEMENTS.find(p => p.id === "room1440");
+      stage.append(el("div", { class: "cols" }, packPanel(PRIMARY, Q), productionPanel(Q)));
+      stage.append(el("p", { class: "legend" }, `${isFinal(PRIMARY) ? "ORGANIC HYBRID — FINAL ART" : "(final art pack missing)"} beside the CURRENT PRODUCTION SVG (resources/run-ui/plant-specimen.js, unchanged), both fed the identical build, condition and preview — at the 1440×900 room size. Not yet used by the game: production replacement is a later, separately reviewed step.`));
+    } else if (S.view === "compare") {
       stage.append(el("div", { class: "cols" }, PACKS.map(p => packPanel(p, P)), productionPanel(P)));
-      stage.append(el("p", { class: "legend" }, "One build, one renderer, three art packs. Each pack is only a PNG atlas + its JSON metadata (art/plant/packs/<pack>/); swapping it changes the whole visual family — palette, silhouettes, outline — without touching any renderer code. All three are TEMPORARY PIPELINE PROOF art; final art comes from the owner's art studio."));
+      stage.append(el("p", { class: "legend" }, `One build, one renderer, ${PACKS.length} art packs. Each pack is only a PNG atlas + its JSON metadata (art/plant/packs/<pack>/); swapping it changes the whole visual family — palette, silhouettes, outline — without touching any renderer code. ${isFinal(PRIMARY) ? "ORGANIC HYBRID is the PMO-approved FINAL art; the other packs are TEMPORARY PIPELINE PROOF art." : "All packs are TEMPORARY PIPELINE PROOF art."}`));
     } else if (S.view === "placements") {
       stage.append(el("div", { class: "cols" }, PLACEMENTS.map(Q => packPanel(S.pack, Q, "placement")), packPanel(S.pack, { ...PLACEMENTS[0], id: "zoom4", label: "Native × 4 (nearest-neighbour)", fixed: 4, w: CANVAS.w * 4, h: CANVAS.h * 4 }, "placement")));
       stage.append(el("p", { class: "legend" }, `The same ${CANVAS.w}×${CANVAS.h} organism at every production placement: each UI scales the one canvas by a whole number (nearest-neighbour) and pads it — the anatomy is never re-laid-out.`));
@@ -124,10 +135,11 @@
       el("label", {}, el("input", { type: "checkbox", id: "rm", checked: S.reducedMotion, onchange: e => { S.reducedMotion = e.target.checked; } }), " reduced motion")));
     document.querySelectorAll("#views button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.view === S.view)));
   }
-  function head() { $("#views").append(...[["compare", "Pipeline + pack swap"], ["placements", "All placements"], ["sheet", "All locked states"]].map(([v, l]) => btn(l, S.view === v, () => { S.view = v; render(); }, { "data-view": v }))); }
+  function head() { $("#views").append(...[["final", "Final vs production SVG (C)"], ["compare", "Pipeline + pack swap"], ["placements", "All placements"], ["sheet", "All locked states"]].map(([v, l]) => btn(l, S.view === v, () => { S.view = v; render(); }, { "data-view": v }))); }
   addEventListener("keydown", e => { const t = e.target; if (e.metaKey || e.ctrlKey || e.altKey || (t && t.tagName === "SELECT")) return;
     if (/^[1-9]$/.test(e.key)) setPreset(PRESETS[+e.key - 1].id); else if (e.key === "v" || e.key === "V") { if (proposed() || S.preview) { S.preview = !S.preview; render(); } }
-    else if (e.key === "b" || e.key === "B") purchase(); else if (e.key === "r" || e.key === "R") { S.reducedMotion = !S.reducedMotion; renderBar(); } else return; e.preventDefault(); });
+    else if (e.key === "b" || e.key === "B") purchase(); else if (e.key === "r" || e.key === "R") { S.reducedMotion = !S.reducedMotion; renderBar(); }
+    else if (e.key === "c" || e.key === "C") { S.view = S.view === "final" ? "compare" : "final"; render(); } else return; e.preventDefault(); });
 
   Object.assign(LAB, { set(patch) { Object.assign(S, patch); render(); return S; }, setPreset, render, purchase, frame, selection, nextTier, proposed,
     canvasSig: sel => { const cv = document.querySelector(sel); return cv ? sigOf(cv) : null; }, canvasSigs: sel => [...document.querySelectorAll(sel)].map(cv => ({ pack: cv.dataset.pack, placement: cv.dataset.placement, sig: sigOf(cv), w: cv.width, h: cv.height, cssW: cv.getBoundingClientRect().width, cssH: cv.getBoundingClientRect().height })) });

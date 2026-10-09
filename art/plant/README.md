@@ -12,9 +12,15 @@ schema/plant-atlas.schema.json machine-readable structure of atlas.json
 schema/example-sprite-entries.json   annotated examples
 packs/<pack>/atlas.png         the pixel art (exact palette colours, alpha 0 or 255, no anti-aliasing)
 packs/<pack>/atlas.json        the metadata (palette, environment, one entry per sprite: rect, anchor, attach, layer, orientation, …)
+intake/organic-hybrid/         the PMO-approved delivery ZIPs + PMO_FINAL_ACCEPTANCE.json (hashes) + intake-map.json (source → atlas)
 ```
 
-The three packs here (`proof`, `proof-angular`, `proof-round`) are **TEMPORARY PIPELINE PROOF — NOT FINAL ART**. They were drawn
+`organic-hybrid` is **ORGANIC HYBRID — FINAL ART**: the PMO-approved Art Studio deliveries (kept unchanged, with their PMO hashes, in
+`intake/organic-hybrid/`) assembled mechanically by `node tools/intake-organic-hybrid-art.mjs` (`--check` proves the committed pack equals a
+clean intake; `intake/organic-hybrid/intake-map.json` records every sprite's source → atlas rect and pixel signature). Do not hand-edit its
+atlas: change the art at the studio, re-deliver, re-run the intake. (BLOOM-032B2; not yet used by production.)
+
+The other three packs (`proof`, `proof-angular`, `proof-round`) are **TEMPORARY PIPELINE PROOF — NOT FINAL ART**. They were drawn
 once by the BLOOM-032B1 engineering agent as deliberately simple placeholders and exported to PNG, so the pipeline could be proven. They are
 not art candidates. Approved art from the Plant Pixel Art Studio replaces them pack by pack.
 

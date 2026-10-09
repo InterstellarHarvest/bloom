@@ -1,0 +1,53 @@
+{
+  "project": "STRANGE BLOOM \u00b7 UNKNOWN SOILS",
+  "species": "Organic Hybrid",
+  "status": "FINAL PMO-APPROVED ART INTAKE",
+  "production_main": "be0a82918144a2e3b8aa2fcf2aa8c642dd3128b2",
+  "production_canvas": {
+    "width": 84,
+    "height": 98,
+    "soil_y": 68,
+    "crown": [
+      42,
+      68
+    ]
+  },
+  "contents": [
+    {
+      "file": "batch1-base.zip",
+      "bytes": 6082,
+      "sha256": "54da449b36512749f41f324705a486b4bc2e905fe94b730734500d0051151e3d"
+    },
+    {
+      "file": "batch2-cold-heat-corrected.zip",
+      "bytes": 38071,
+      "sha256": "6c7173111d92a0f1bd1320e641196623a50bf4824e75d19a20f208753b55c6a2"
+    },
+    {
+      "file": "batch3-drought.zip",
+      "bytes": 50116,
+      "sha256": "e3a2a289990870155cec765a67c5a7d958700e4e0c469c25a1248897143faea1"
+    },
+    {
+      "file": "batch4-flood.zip",
+      "bytes": 50456,
+      "sha256": "76631a5858011fe05be432463404ec73e46a413d78925fb768023b1242f5dd16"
+    },
+    {
+      "file": "batch5-salt-radiation.zip",
+      "bytes": 39614,
+      "sha256": "7f9647de6b9c72ad5d8a3fc8bebf16a97746125d25b07586ccf36136bcf9c5b3"
+    },
+    {
+      "file": "batch6-reproduction-dispersal.zip",
+      "bytes": 43546,
+      "sha256": "23925120999a6e38cc08774af31cb219dd7ce9c266dcd6650e4939abe0e65d8f"
+    },
+    {
+      "file": "final-pack-metadata-closure.zip",
+      "bytes": 21874,
+      "sha256": "88cadd2d7dfc5e1cf2b465875cf5666475b87c44751f62de82da70c3da6ff435"
+    }
+  ],
+  "integration_rule": "Treat every contained ZIP as canonical source delivery. Ingest mechanically into art/plant/packs/organic-hybrid/ against the accepted plant-art contract. Do not redraw, resample, anti-alias, recolor, or artistically reinterpret approved sprites. The metadata closure supplies waxCore, environment, and render.stemOutline."
+}

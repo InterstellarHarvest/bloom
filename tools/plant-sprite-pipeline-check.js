@@ -25,7 +25,9 @@ const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"} 
 const git = a => cp.execSync(`git ${a}`, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], maxBuffer: 64 << 20 }).trim();
 const BASE = "bba000fcd60bcd259af289c257b441087eff4b92", LAB_032A = "c561a34";
 const ALLOWED = p => p.startsWith("art/plant/") || p.startsWith("resources/plant-visual/") || p.startsWith("resources/plant-sprite-lab/") || p === "demos/plant-sprite-pipeline-lab.html"
-  || p === "tools/build-plant-art.mjs" || p === "tools/plant-sprite-pipeline-check.js" || p === "tools/package.json" || p.startsWith("docs/");
+  || p === "tools/build-plant-art.mjs" || p === "tools/plant-sprite-pipeline-check.js" || p === "tools/package.json" || p.startsWith("docs/")
+  || p === "tools/intake-organic-hybrid-art.mjs" || p === "tools/organic-hybrid-art-intake-check.js";   // BLOOM-032B2: the final-art intake + its focused QA
+const FINAL_PACKS = { "organic-hybrid": "ORGANIC HYBRID — FINAL ART (PMO-approved; BLOOM-032B2 intake)" };   // approved art; every other pack is temporary proof art
 const OWN_RUNTIME = ["resources/plant-visual/plant-visual-model.js", "resources/plant-visual/plant-components.js", "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-fx.js", "resources/plant-sprite-lab/lab.js"];
 
 // ---------------------------------------------------------------- the pipeline in Node (classic scripts → globalThis)
@@ -84,14 +86,14 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
     for (const p of packs) { const M = JSON.parse(read(`art/plant/packs/${p}/atlas.json`)), buf = fs.readFileSync(path.join(ROOT, `art/plant/packs/${p}/${M.image}`)), img = B.decodePNG(buf);
       info[p] = { image: `${img.w}×${img.h}`, bytes: buf.length, sprites: M.sprites.length, status: M.status };
       if (buf.slice(1, 4).toString() !== "PNG") bad.push(`${p}: not PNG`);
-      if (M.status !== "TEMPORARY PIPELINE PROOF — NOT FINAL ART") bad.push(`${p}: not labelled as temporary proof art`);
+      if (M.status !== (FINAL_PACKS[p] || "TEMPORARY PIPELINE PROOF — NOT FINAL ART")) bad.push(`${p}: ${FINAL_PACKS[p] ? "not labelled as the approved final art" : "not labelled as temporary proof art"}`);
       for (const s of M.sprites) { const [x, y, w, h] = s.rect;
         if (x < 0 || y < 0 || x + w > img.w || y + h > img.h) bad.push(`${p}/${s.id}: rect`);
         if (s.anchor[0] < 0 || s.anchor[1] < 0 || s.anchor[0] >= w || s.anchor[1] >= h) bad.push(`${p}/${s.id}: anchor`);
         for (const q of [...(s.points && s.points.tip ? [s.points.tip] : []), ...((s.points && s.points.margin) || [])]) if (q[0] < 0 || q[1] < 0 || q[0] >= w || q[1] >= h) bad.push(`${p}/${s.id}: point`);
         for (const [t, v] of Object.entries(s.masks || {})) if (v !== "auto" && (v[0] + w > img.w || v[1] + h > img.h)) bad.push(`${p}/${s.id}: mask ${t}`); } }
     PROOF.packs = info;
-    check(packs.length >= 1 && packs.includes("proof") && !bad.length, `A1–A3 · source art is real PNG atlases + JSON metadata (${packs.join(", ")}); all parse; every sprite / mask rect is inside its image; every anchor and attachment point lies inside its rect; every pack is labelled TEMPORARY PIPELINE PROOF — NOT FINAL ART`, J({ info, bad })); }
+    check(packs.length >= 1 && packs.includes("proof") && !bad.length, `A1–A3 · source art is real PNG atlases + JSON metadata (${packs.join(", ")}); all parse; every sprite / mask rect is inside its image; every anchor and attachment point lies inside its rect; every proof pack is labelled TEMPORARY PIPELINE PROOF — NOT FINAL ART (the approved organic-hybrid pack: FINAL ART)`, J({ info, bad })); }
   // A5 · the machine-readable schema (art/plant/schema/plant-atlas.schema.json) accepts every pack and the annotated examples, and rejects junk
   { const SCH = JSON.parse(read("art/plant/schema/plant-atlas.schema.json"));
     const V = (s, v, at = "$") => { const errs = [], E = m => errs.push(`${at}: ${m}`);
@@ -370,7 +372,7 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
           const buys = {};
           for (const [label, setup, traitsAfter] of [["grow", { fx: "grow", reducedMotion: false, propose: "earlyMat" }, { earlyMat: 1 }], ["dissolve", { fx: "dissolve", reducedMotion: false, propose: "rad" }, { earlyMat: 1, rad: 1 }], ["reduced", { reducedMotion: true, propose: "seedOut" }, { earlyMat: 1, rad: 1, seedOut: 1 }]]) {
             await p.evaluate(s => PLANT_PIPELINE_LAB.set(s), setup); const r = await p.evaluate(() => PLANT_PIPELINE_LAB.purchase()); const now = await pageSigs();
-            buys[label] = { ok: r && r.results.length === 3 && r.results.every(x => x.endSig === x.targetSig && x.endSig === nodeSig(x.pack, traitsAfter)) && now.every(s => s.sig === nodeSig(s.pack, traitsAfter)), frames: r && r.results.map(x => x.frames), style: r && r.style }; }
+            buys[label] = { ok: r && r.results.length === PACKS.length && r.results.every(x => x.endSig === x.targetSig && x.endSig === nodeSig(x.pack, traitsAfter)) && now.every(s => s.sig === nodeSig(s.pack, traitsAfter)), frames: r && r.results.map(x => x.frames), style: r && r.style }; }
           check(buys.grow.ok && buys.dissolve.ok && buys.reduced.ok && buys.reduced.frames.every(n => n === 1) && buys.grow.frames.every(n => n > 5), `${B_} B5 · Purchase (visual only): GROW and DISSOLVE animate in every pack and land EXACTLY on the target pixels; reduced motion lands exactly on the target in a single direct swap`, J(buys));
           // B6 · production reference fed the same build, unchanged module
           const prod = await p.evaluate(() => ({ sig: PLANT_PIPELINE_LAB.production && PLANT_PIPELINE_LAB.production.signature(), traits: PLANT_PIPELINE_LAB.production && PLANT_PIPELINE_LAB.production.state.traits }));
