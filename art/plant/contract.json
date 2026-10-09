@@ -1,0 +1,72 @@
+{
+  "format": "bloom-plant-contract@1",
+  "about": "BLOOM-032B1 production plant sprite contract. The fixed rules every plant art pack (art/plant/packs/<pack>/atlas.png + atlas.json) is validated against by tools/build-plant-art.mjs. Human-readable version: docs/PLANT_SPRITE_PIPELINE_v1.md section ARTIST_HANDOFF. Changing this file is an ENGINE change (renderer + QA), not an art change.",
+  "canvas": { "w": 84, "h": 98, "soilY": 68, "note": "One canonical logical plant canvas. Every placement (Adapt, Spread, Region Inspect, Field Journal) shows this exact buffer, scaled by a whole number with nearest-neighbour and padded; anatomy is never re-laid-out per UI." },
+  "pixel": {
+    "format": "PNG, 8-bit per channel; colour types RGBA (6), RGB (2), indexed (3, incl. tRNS) or grey (0 / 4); not interlaced",
+    "alpha": "every pixel is fully transparent (alpha 0) or fully opaque (alpha 255); partial alpha is a build error",
+    "palette": "every opaque pixel inside a sprite rect must be EXACTLY one of the pack's declared palette colours (atlas.json palette); arbitrary RGBA is a build error. A colour means a material + shade, so the renderer can recolour it (treatments, condition).",
+    "mask": "a mask rect has the sprite's exact size; any opaque pixel (any colour) = inside the mask, transparent = outside",
+    "strays": "no opaque pixel may lie outside every declared rect (sprite, mask, swatch)"
+  },
+  "materials": [
+    { "name": "ink", "shades": 1, "role": "outline / dark detail" },
+    { "name": "leaf", "shades": 4, "role": "leaf blade (0 darkest … 3 lightest)" },
+    { "name": "stem", "shades": 4, "role": "stem, petiole, stalks; also drawn procedurally by the renderer" },
+    { "name": "root", "shades": 4, "role": "roots; also drawn procedurally by the renderer" },
+    { "name": "core", "shades": 4, "role": "water-storage tissue (succulent leaves)" },
+    { "name": "petal", "shades": 4, "role": "petals" },
+    { "name": "center", "shades": 4, "role": "flower centre / stamens" },
+    { "name": "pappus", "shades": 4, "role": "seed fluff / dispersal structures" },
+    { "name": "seed", "shades": 4, "role": "seeds" },
+    { "name": "frost", "shades": 4, "role": "frost, insulating hairs, ice" },
+    { "name": "tuber", "shades": 4, "role": "storage root / tuber" },
+    { "name": "pigLeaf", "shades": 4, "role": "TREATMENT TARGET: leaf under protective pigment (never drawn in a sprite)", "treatmentOnly": true },
+    { "name": "pigStem", "shades": 4, "role": "TREATMENT TARGET: stem under protective pigment", "treatmentOnly": true },
+    { "name": "pigCore", "shades": 4, "role": "TREATMENT TARGET: storage tissue under protective pigment", "treatmentOnly": true },
+    { "name": "waxLeaf", "shades": 4, "role": "TREATMENT TARGET: leaf under a reflective wax cuticle", "treatmentOnly": true }
+  ],
+  "requiredMaterials": ["ink", "leaf", "stem", "root", "pigLeaf", "pigStem"],
+  "treatments": {
+    "pigment": { "trait": "rad", "kind": "surface", "map": { "leaf": "pigLeaf", "stem": "pigStem", "core": "pigCore" }, "procedural": ["stem"], "note": "Radiation Shielding: protective pigment. Recolours the masked pixels shade-for-shade; the procedural stem/branches take it too." },
+    "wax": { "trait": "heat", "kind": "surface", "map": { "leaf": "waxLeaf" }, "procedural": [], "note": "Heat Tolerance: reflective wax. Contract slot only in 032B1 (no golden-slice state uses it); a pack may omit waxLeaf." }
+  },
+  "layers": { "roots": 10, "rootStorage": 20, "stem": 30, "branch": 35, "leaves": 40, "surface": 50, "repro": 60, "drift": 70 },
+  "proceduralLayers": ["roots", "stem", "branch"],
+  "orientations": {
+    "right": "faces / grows toward +x from its anchor; the build bakes the mirrored left twin when \"mirror\": true",
+    "left": "an explicitly authored left-facing variant; overrides the baked mirror of the same id",
+    "up": "upright and centred on its anchor; never mirrored",
+    "down": "hangs below its anchor; never mirrored"
+  },
+  "angles": {
+    "low": "near horizontal (about 10° above horizontal): the lower stem nodes",
+    "mid": "about 40° above horizontal: the middle nodes",
+    "high": "about 65° above horizontal: the upper nodes and the compact (cold) rosette"
+  },
+  "attach": {
+    "leafSocket": "a stem node's left / right leaf socket (the anchor = the petiole base, on the stem's edge)",
+    "leafMargin": "a point declared by the leaf sprite itself (points.tip / points.margin) — surface details ride on whichever leaf was drawn",
+    "stemNode": "centred on the stem at a node",
+    "rootCrown": "where the stem meets the soil line",
+    "primaryRoot": "on the primary root just below the crown",
+    "apex": "the top of the stem",
+    "flower": "the flower socket (the apex, or the flower branch's tip when a seed head holds the apex)",
+    "seedHead": "a seed-head socket (index 0 = the apex, 1 and 2 = side branches)",
+    "pod": "a pod socket (side stalks low on the stem)",
+    "drift": "free points around the apex for drifting seeds"
+  },
+  "components": {
+    "leaf.base":      { "category": "structural",   "attach": "leafSocket",  "layer": "leaves",      "orientation": "right", "mirror": true, "angles": ["low", "mid", "high"], "trait": null,      "tier": 0, "maxSize": [18, 16], "points": ["tip", "margin"], "masks": ["pigment", "wax"] },
+    "leaf.cold":      { "category": "structural",   "attach": "leafSocket",  "layer": "leaves",      "orientation": "right", "mirror": true, "angles": ["mid", "high"],        "trait": "cold",    "tier": 2, "maxSize": [14, 14], "points": ["tip", "margin"], "masks": ["pigment", "wax"] },
+    "leaf.succulent": { "category": "structural",   "attach": "leafSocket",  "layer": "leaves",      "orientation": "right", "mirror": true, "angles": ["low", "mid", "high"], "trait": "drought", "tier": 2, "maxSize": [18, 16], "points": ["tip", "margin"], "masks": ["pigment", "wax"] },
+    "root.storage":   { "category": "structural",   "attach": "primaryRoot", "layer": "rootStorage", "orientation": "down",  "mirror": false, "angles": null, "trait": "drought", "tier": 2, "maxSize": [12, 20] },
+    "frost.tuft":     { "category": "surface",      "attach": "leafMargin",  "layer": "surface",     "orientation": "up",    "mirror": false, "angles": null, "trait": "cold",    "tier": 1, "maxSize": [5, 5] },
+    "frost.collar":   { "category": "surface",      "attach": "stemNode",    "layer": "surface",     "orientation": "up",    "mirror": false, "angles": null, "trait": "cold",    "tier": 2, "maxSize": [11, 6] },
+    "bud":            { "category": "reproductive", "attach": "apex",        "layer": "repro",       "orientation": "up",    "mirror": false, "angles": null, "trait": null,      "tier": 0, "maxSize": [9, 12] },
+    "flower":         { "category": "reproductive", "attach": "flower",      "layer": "repro",       "orientation": "up",    "mirror": false, "angles": null, "trait": "earlyMat", "tier": 1, "maxSize": [16, 18] },
+    "seedHead.small": { "category": "reproductive", "attach": "seedHead",    "layer": "repro",       "orientation": "up",    "mirror": false, "angles": null, "trait": "seedOut", "tier": 1, "maxSize": [11, 13] },
+    "seedHead.large": { "category": "reproductive", "attach": "seedHead",    "layer": "repro",       "orientation": "up",    "mirror": false, "angles": null, "trait": "seedOut", "tier": 2, "maxSize": [18, 20] },
+    "seed.drift":     { "category": "reproductive", "attach": "drift",       "layer": "drift",       "orientation": "up",    "mirror": false, "angles": null, "trait": "seedOut", "tier": 2, "maxSize": [7, 7] }
+  }
+}

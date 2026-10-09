@@ -1,10 +1,12 @@
 {
   "name": "strange-bloom-dev-tools",
   "private": true,
-  "description": "Developer tooling for STRANGE BLOOM · UNKNOWN SOILS. Players need nothing installed (open index.html). This manifest exists only to build the generated portable runtime (dist/portable/): npm --prefix tools ci && npm --prefix tools run build:portable",
+  "description": "Developer tooling for STRANGE BLOOM · UNKNOWN SOILS. Players need nothing installed (open index.html). This manifest exists only to build generated runtime files: the portable runtime (dist/portable/: npm --prefix tools ci && npm --prefix tools run build:portable) and the plant sprite atlas (resources/plant-visual/generated/: npm --prefix tools run build:plant-art — Node built-ins only)",
   "scripts": {
     "build:portable": "node build-portable.mjs",
-    "check:portable": "node build-portable.mjs --check"
+    "check:portable": "node build-portable.mjs --check",
+    "build:plant-art": "node build-plant-art.mjs",
+    "check:plant-art": "node build-plant-art.mjs --check"
   },
   "devDependencies": {
     "esbuild": "0.28.2"

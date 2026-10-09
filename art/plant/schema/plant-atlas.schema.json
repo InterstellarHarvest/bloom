@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bloom-plant-atlas@1",
+  "title": "BLOOM plant art pack metadata (art/plant/packs/<pack>/atlas.json)",
+  "description": "STRUCTURE only. tools/build-plant-art.mjs additionally enforces everything that needs the PNG or the contract: exact palette colours, alpha 0/255, rects inside the image and non-overlapping, no stray pixels, anchor/points inside the rect and on opaque pixels, metadata == art/plant/contract.json components, every component × angle × side present, and no sprite clipping at any socket. Human contract: docs/PLANT_SPRITE_PIPELINE_v1.md § ARTIST_HANDOFF.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "pack", "title", "status", "image", "palette", "environment", "sprites"],
+  "properties": {
+    "format": { "const": "bloom-plant-atlas@1" },
+    "pack": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "description": "= the folder name under art/plant/packs/" },
+    "title": { "type": "string" },
+    "status": { "type": "string", "description": "e.g. \"TEMPORARY PIPELINE PROOF — NOT FINAL ART\" or \"APPROVED <date> <who>\"" },
+    "about": { "type": "string" },
+    "image": { "type": "string", "pattern": "\\.png$", "description": "the atlas PNG, relative to this folder" },
+    "swatch": { "$ref": "#/$defs/rect", "description": "optional strip in the PNG showing exactly the declared palette (ignored by the renderer; validated)" },
+    "palette": {
+      "type": "object",
+      "description": "material → colour ramp, darkest first. ink has 1 colour, every other material 4. Every colour is unique across the pack. Required: ink, leaf, stem, root, pigLeaf, pigStem.",
+      "propertyNames": { "enum": ["ink", "leaf", "stem", "root", "core", "petal", "center", "pappus", "seed", "frost", "tuber", "pigLeaf", "pigStem", "pigCore", "waxLeaf"] },
+      "additionalProperties": { "type": "array", "items": { "type": "string", "pattern": "^#[0-9a-f]{6}$" }, "minItems": 1, "maxItems": 4 }
+    },
+    "environment": {
+      "type": "object", "additionalProperties": false, "required": ["sky", "soil", "turf"],
+      "properties": {
+        "sky": { "type": "array", "items": { "$ref": "#/$defs/hex" }, "minItems": 2, "maxItems": 2, "description": "top, bottom of the specimen-box sky" },
+        "soil": { "type": "array", "items": { "$ref": "#/$defs/hex" }, "minItems": 3, "maxItems": 3, "description": "stratum A, stratum B, pebble" },
+        "turf": { "$ref": "#/$defs/hex" }
+      }
+    },
+    "render": {
+      "type": "object", "additionalProperties": false,
+      "properties": { "stemOutline": { "enum": ["self", "ink", "none"], "description": "outline of the PROCEDURAL stem: its own darkest shade, the ink colour, or none (default self)" } }
+    },
+    "sprites": { "type": "array", "items": { "$ref": "#/$defs/sprite" }, "minItems": 1 }
+  },
+  "$defs": {
+    "hex": { "type": "string", "pattern": "^#[0-9a-f]{6}$" },
+    "rect": { "type": "array", "items": { "type": "integer", "minimum": 0 }, "minItems": 4, "maxItems": 4, "description": "[x, y, w, h] in atlas pixels; x, y = top-left" },
+    "point": { "type": "array", "items": { "type": "integer", "minimum": 0 }, "minItems": 2, "maxItems": 2, "description": "[x, y] relative to the sprite rect's top-left pixel" },
+    "sprite": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "component", "rect", "anchor", "attach", "layer", "order", "orientation", "mirror", "category", "trait", "tier"],
+      "properties": {
+        "id": { "type": "string", "description": "= component, or component.angle for angled components (leaf.base.mid)" },
+        "component": { "enum": ["leaf.base", "leaf.cold", "leaf.succulent", "root.storage", "frost.tuft", "frost.collar", "bud", "flower", "seedHead.small", "seedHead.large", "seed.drift"] },
+        "angle": { "enum": ["low", "mid", "high"] },
+        "rect": { "$ref": "#/$defs/rect" },
+        "anchor": { "$ref": "#/$defs/point", "description": "the ONE pixel of this sprite that is placed exactly on the socket" },
+        "attach": { "enum": ["leafSocket", "leafMargin", "stemNode", "rootCrown", "primaryRoot", "apex", "flower", "seedHead", "pod", "drift"] },
+        "layer": { "enum": ["roots", "rootStorage", "stem", "branch", "leaves", "surface", "repro", "drift"] },
+        "order": { "type": "integer", "description": "tie-break inside the layer (higher draws later / in front)" },
+        "orientation": { "enum": ["right", "left", "up", "down"] },
+        "mirror": { "type": "boolean", "description": "right-facing sprites: true = the build bakes the left twin" },
+        "category": { "enum": ["structural", "surface", "reproductive"] },
+        "trait": { "type": ["string", "null"] },
+        "tier": { "type": "integer", "minimum": 0 },
+        "points": {
+          "type": "object", "additionalProperties": false,
+          "properties": { "tip": { "$ref": "#/$defs/point" }, "margin": { "type": "array", "items": { "$ref": "#/$defs/point" } } },
+          "description": "leaf sprites: where surface details (frost tufts …) ride on THIS drawing"
+        },
+        "masks": {
+          "type": "object", "propertyNames": { "enum": ["pigment", "wax"] },
+          "additionalProperties": { "oneOf": [{ "const": "auto" }, { "$ref": "#/$defs/point" }] },
+          "description": "treatment → \"auto\" (every pixel of a recolourable material) or [x, y] = top-left of a mask rect of the sprite's exact size elsewhere in the PNG (opaque = inside)"
+        }
+      }
+    }
+  }
+}
