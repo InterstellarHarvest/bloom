@@ -1,14 +1,14 @@
 // BLOOM — Plant Sprite Pipeline Proof page (BLOOM-032B1; BLOOM-032B2 adds the FINAL Organic Hybrid art). docs/PLANT_SPRITE_PIPELINE_v1.md §9.
 // A review page, not gameplay: the PMO-approved ORGANIC HYBRID — FINAL ART pack through every locked Organic Hybrid state in the accepted
 // compositor; the same build re-skinned by swapping only the art pack (the three TEMPORARY PIPELINE PROOF packs: proof, proof-angular,
-// proof-round); the current production SVG for reference (and the "Final vs production SVG" view: the two side by side on the identical
-// state); every production placement size, the ghost / outline preview and the grow / dissolve purchase FX. Reads the real trait data for ids, names and
+// proof-round); the RETIRED 029C SVG for reference (the "Final vs production SVG" view: the two side by side on the identical state —
+// since BLOOM-032C the final pack IS production, and the SVG survives only as resources/plant-sprite-lab/legacy-svg-specimen.js); every production placement size, the ghost / outline preview and the grow / dissolve purchase FX. Reads the real trait data for ids, names and
 // legal tiers; never changes BLOOM_DATA, a price, a mechanic or the production UI. "Purchase" is a visual state change only.
 //
 // Keys: 1–9 the first nine presets · V preview on/off · B purchase · R reduced motion · C final vs production SVG.   QA: window.PLANT_PIPELINE_LAB.
 (function () {
   "use strict";
-  const PV = BLOOM.plantVisual, PC = BLOOM.plantCompositor, FX = BLOOM.plantFx, ART = BLOOM.plantArt, PS = BLOOM.plantSpecimen, D = BLOOM_DATA;
+  const PV = BLOOM.plantVisual, PC = BLOOM.plantCompositor, FX = BLOOM.plantFx, ART = BLOOM.plantArt, PS = BLOOM.legacyPlantSpecimen || BLOOM.plantSpecimen, D = BLOOM_DATA;   // (032C) the comparison panel shows the RETIRED 029C SVG (legacy reference)
   const RULES = PV.model.rules(D), NAMES = Object.fromEntries(Object.values(RULES.byId).map(t => [t.id, t.name]));
   const FINAL = "organic-hybrid", CANVAS = ART.contract.canvas, PRIMARY = ART.packs[FINAL] ? FINAL : "proof";
   const PACKS = [PRIMARY, ...["proof", "proof-angular", "proof-round"].filter(p => p !== PRIMARY && ART.packs[p]), ...ART.packOrder.filter(p => ![PRIMARY, "proof", "proof-angular", "proof-round"].includes(p))];
@@ -78,7 +78,7 @@
     const pv = S.preview && proposed() ? { id: S.propose, tier: nextTier(S.propose) } : null;
     sp.render({ traits: { ...S.traits }, preview: pv, colony: { living: true, establishment: 1, word: "" }, focus: "balanced", local: null, condition: S.condition === "strained" ? "warn" : "ok", viable: true, names: NAMES });
     LAB.production = sp;
-    return el("div", { class: "panel", "data-panel": "production", style: `width:${P.w + 18}px` }, el("h4", {}, el("span", {}, "CURRENT PRODUCTION"), el("em", {}, "plant-specimen.js (SVG)")), el("span", { class: "tag" }, "unchanged reference"), box, el("span", { class: "meta" }, P.label));
+    return el("div", { class: "panel", "data-panel": "production", style: `width:${P.w + 18}px` }, el("h4", {}, el("span", {}, "RETIRED 029C SVG"), el("em", {}, "legacy-svg-specimen.js")), el("span", { class: "tag" }, "legacy reference — replaced in production by Organic Hybrid (BLOOM-032C)"), box, el("span", { class: "meta" }, P.label));
   }
 
   function render() {
@@ -91,7 +91,7 @@
     if (S.view === "final") {
       const Q = PLACEMENTS.find(p => p.id === "room1440");
       stage.append(el("div", { class: "cols" }, packPanel(PRIMARY, Q), productionPanel(Q)));
-      stage.append(el("p", { class: "legend" }, `${isFinal(PRIMARY) ? "ORGANIC HYBRID — FINAL ART" : "(final art pack missing)"} beside the CURRENT PRODUCTION SVG (resources/run-ui/plant-specimen.js, unchanged), both fed the identical build, condition and preview — at the 1440×900 room size. Not yet used by the game: production replacement is a later, separately reviewed step.`));
+      stage.append(el("p", { class: "legend" }, `${isFinal(PRIMARY) ? "ORGANIC HYBRID — FINAL ART" : "(final art pack missing)"} beside the RETIRED 029C SVG (resources/plant-sprite-lab/legacy-svg-specimen.js — the plant production showed before BLOOM-032C), both fed the identical build, condition and preview — at the 1440×900 room size. Since BLOOM-032C the game's production specimen (resources/run-ui/plant-specimen.js) renders this Organic Hybrid organism.`));
     } else if (S.view === "compare") {
       stage.append(el("div", { class: "cols" }, PACKS.map(p => packPanel(p, P)), productionPanel(P)));
       stage.append(el("p", { class: "legend" }, `One build, one renderer, ${PACKS.length} art packs. Each pack is only a PNG atlas + its JSON metadata (art/plant/packs/<pack>/); swapping it changes the whole visual family — palette, silhouettes, outline — without touching any renderer code. ${isFinal(PRIMARY) ? "ORGANIC HYBRID is the PMO-approved FINAL art; the other packs are TEMPORARY PIPELINE PROOF art." : "All packs are TEMPORARY PIPELINE PROOF art."}`));

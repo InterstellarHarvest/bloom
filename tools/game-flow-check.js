@@ -291,7 +291,7 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
     await p.evaluate(() => { BLOOM_API.advance(25); }); }
   await p.waitForFunction(() => BLOOM.runReport.instance.state().open && !BLOOM.runReport.instance.state().busy, null, { timeout: 8000 }).catch(() => {}); await p.waitForTimeout(150);
   const win = await p.evaluate(() => ({ on: BLOOM.runReport.instance.state().open, h2: document.getElementById("rrTitle").textContent, sub: document.getElementById("rrSum").textContent,
-    plant: !!document.querySelector("#rr .ps-svg"), build: /your plant became/i.test(document.getElementById("rrCard").innerText), cont: !document.getElementById("rrContinue").hidden,
+    plant: !!document.querySelector('#rr .ps[data-pack="organic-hybrid"] canvas.ps-canvas[role="img"]'),   /* (BLOOM-032C) the Organic Hybrid specimen canvas */ build: /your plant became/i.test(document.getElementById("rrCard").innerText), cont: !document.getElementById("rrContinue").hidden,
     acts: [...document.querySelectorAll("#rrActs [data-act]")].map(b => b.dataset.act), txt: document.getElementById("rrCard").innerText, legacy: document.getElementById("reportModal").classList.contains("on") }));
   check(win.on && /BLOOM/.test(win.h2) && win.plant && win.build && win.sub.includes("Frozen World · World Seed 11") && win.cont && !win.legacy,
     "45 · the production Bloom Report renders (world identity, build, the production plant specimen, regions, Keep playing); the engineering modal stays closed", win.sub);
