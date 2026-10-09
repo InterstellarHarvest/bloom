@@ -2,45 +2,46 @@
  "milestone": "BLOOM-032B1",
  "status": "TEMPORARY PIPELINE PROOF — NOT FINAL ART",
  "base": "bba000fcd60bcd259af289c257b441087eff4b92",
- "head": "0777c808ba8d731641017b939b4c5dd202b7b290",
+ "head": "6dbedae16b9c026303f1c72ba43e2c265ec9efa6",
  "canvas": {
   "h": 98,
-  "note": "One canonical logical plant canvas. Every placement (Adapt, Spread, Region Inspect, Field Journal) shows this exact buffer, scaled by a whole number with nearest-neighbour and padded; anatomy is never re-laid-out per UI.",
+  "note": "84×98 is the PMO-APPROVED production target. One canonical logical plant canvas: every placement (Adapt, Spread, Region Inspect, Field Journal) shows this exact buffer, scaled by a whole number with nearest-neighbour and padded; anatomy is never re-laid-out per UI. The maximal legal dry and wet organisms are proven to fit with a 1-px safety margin.",
   "soilY": 68,
   "w": 84
  },
  "packs": {
   "proof": {
-   "image": "128×97",
-   "bytes": 1550,
-   "sprites": 16,
+   "image": "224×188",
+   "bytes": 3767,
+   "sprites": 55,
    "status": "TEMPORARY PIPELINE PROOF — NOT FINAL ART"
   },
   "proof-angular": {
-   "image": "128×104",
-   "bytes": 1500,
-   "sprites": 16,
+   "image": "224×192",
+   "bytes": 3953,
+   "sprites": 55,
    "status": "TEMPORARY PIPELINE PROOF — NOT FINAL ART"
   },
   "proof-round": {
-   "image": "128×99",
-   "bytes": 1429,
-   "sprites": 16,
+   "image": "224×146",
+   "bytes": 3256,
+   "sprites": 55,
    "status": "TEMPORARY PIPELINE PROOF — NOT FINAL ART"
   }
  },
  "states": {
   "proof": {
    "base": {
-    "anatomy": "bccd3368",
-    "full": "0af602b8",
+    "anatomy": "20e8a574",
+    "full": "fe72350c",
     "components": [
      "bud",
+     "bud.axil",
      "leaf.base"
     ],
     "treatments": [],
     "layout": "open",
-    "placements": 9,
+    "placements": 11,
     "bbox": {
      "x0": 28,
      "y0": 11,
@@ -48,55 +49,371 @@
      "y1": 84
     }
    },
-   "cold2": {
-    "anatomy": "8beb683c",
-    "full": "1da1e9ab",
+   "cold1": {
+    "anatomy": "481c6e37",
+    "full": "6f8ff336",
     "components": [
      "bud",
-     "frost.collar",
-     "frost.tuft",
-     "leaf.cold"
+     "bud.axil",
+     "frost.hair.1",
+     "leaf.base"
     ],
     "treatments": [],
-    "layout": "compact",
-    "placements": 35,
+    "layout": "dense",
+    "placements": 17,
     "bbox": {
-     "x0": 32,
-     "y0": 29,
-     "x1": 53,
+     "x0": 28,
+     "y0": 17,
+     "x1": 58,
      "y1": 84
     }
    },
-   "drought2": {
-    "anatomy": "d648432b",
-    "full": "574071ca",
+   "cold2": {
+    "anatomy": "5aba901b",
+    "full": "d2bdfab2",
     "components": [
      "bud",
-     "leaf.succulent",
-     "root.storage"
+     "bud.axil",
+     "frost.collar.2",
+     "frost.hair.2",
+     "leaf.base"
     ],
     "treatments": [],
-    "layout": "open",
-    "placements": 8,
+    "layout": "compact",
+    "placements": 36,
     "bbox": {
-     "x0": 30,
-     "y0": 11,
+     "x0": 29,
+     "y0": 27,
      "x1": 56,
-     "y1": 94
+     "y1": 84
     }
    },
-   "rad": {
-    "anatomy": "742223f0",
-    "full": "ade676c2",
+   "cold3": {
+    "anatomy": "fb70d17c",
+    "full": "480897b4",
     "components": [
      "bud",
+     "bud.axil",
+     "frost.collar.3",
+     "frost.hair.3",
+     "leaf.base"
+    ],
+    "treatments": [],
+    "layout": "cushion",
+    "placements": 37,
+    "bbox": {
+     "x0": 27,
+     "y0": 33,
+     "x1": 57,
+     "y1": 84
+    }
+   },
+   "heat1": {
+    "anatomy": "2432e505",
+    "full": "0f58f492",
+    "components": [
+     "bud",
+     "bud.axil",
      "leaf.base"
     ],
     "treatments": [
-     "pigment"
+     {
+      "id": "wax",
+      "level": 1
+     }
     ],
     "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 31,
+     "y0": 11,
+     "x1": 55,
+     "y1": 84
+    }
+   },
+   "heat2": {
+    "anatomy": "f304303d",
+    "full": "0b4dc0a8",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base"
+    ],
+    "treatments": [
+     {
+      "id": "wax",
+      "level": 2
+     }
+    ],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 31,
+     "y0": 11,
+     "x1": 55,
+     "y1": 84
+    }
+   },
+   "heat3": {
+    "anatomy": "91bc687f",
+    "full": "d0a19ef1",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base.heat"
+    ],
+    "treatments": [
+     {
+      "id": "wax",
+      "level": 3
+     }
+    ],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 32,
+     "y0": 11,
+     "x1": 54,
+     "y1": 84
+    }
+   },
+   "cold2heat1": {
+    "anatomy": "10367f87",
+    "full": "6314af0c",
+    "components": [
+     "bud",
+     "bud.axil",
+     "frost.collar.2",
+     "frost.hair.2",
+     "leaf.base"
+    ],
+    "treatments": [
+     {
+      "id": "wax",
+      "level": 1
+     }
+    ],
+    "layout": "compact",
+    "placements": 36,
+    "bbox": {
+     "x0": 29,
+     "y0": 27,
+     "x1": 56,
+     "y1": 84
+    }
+   },
+   "drought1": {
+    "anatomy": "e5d5d5a9",
+    "full": "823dd233",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.drought.1"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 29,
+     "y0": 11,
+     "x1": 57,
+     "y1": 89
+    }
+   },
+   "drought2": {
+    "anatomy": "9577b4fb",
+    "full": "bc7fe0b3",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.drought.2",
+     "root.storage.2"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 10,
+    "bbox": {
+     "x0": 29,
+     "y0": 11,
+     "x1": 57,
+     "y1": 93
+    }
+   },
+   "drought3": {
+    "anatomy": "56a0f391",
+    "full": "f0043e16",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.drought.3",
+     "root.storage.3"
+    ],
+    "treatments": [],
+    "layout": "open",
     "placements": 9,
+    "bbox": {
+     "x0": 31,
+     "y0": 11,
+     "x1": 55,
+     "y1": 95
+    }
+   },
+   "drought4": {
+    "anatomy": "56a0f391",
+    "full": "f0043e16",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.drought.3",
+     "root.storage.3"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 9,
+    "bbox": {
+     "x0": 31,
+     "y0": 11,
+     "x1": 55,
+     "y1": 95
+    }
+   },
+   "flood1": {
+    "anatomy": "0a278fc4",
+    "full": "5b4eedc1",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.flood.1",
+     "root.aerial.1"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 13,
+    "bbox": {
+     "x0": 28,
+     "y0": 11,
+     "x1": 58,
+     "y1": 84
+    }
+   },
+   "flood2": {
+    "anatomy": "b74f3274",
+    "full": "1a1553a7",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.flood.2",
+     "root.aerial.2"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 14,
+    "bbox": {
+     "x0": 25,
+     "y0": 11,
+     "x1": 61,
+     "y1": 84
+    }
+   },
+   "flood3": {
+    "anatomy": "01245e22",
+    "full": "d6e9cfb5",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.flood.3",
+     "root.aerial.3",
+     "root.stilt"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 15,
+    "bbox": {
+     "x0": 23,
+     "y0": 11,
+     "x1": 63,
+     "y1": 84
+    }
+   },
+   "flood4": {
+    "anatomy": "01245e22",
+    "full": "d6e9cfb5",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.flood.3",
+     "root.aerial.3",
+     "root.stilt"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 15,
+    "bbox": {
+     "x0": 23,
+     "y0": 11,
+     "x1": 63,
+     "y1": 84
+    }
+   },
+   "salt": {
+    "anatomy": "8b2833a3",
+    "full": "38eb28f0",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base",
+     "salt.crystal",
+     "salt.gland"
+    ],
+    "treatments": [
+     {
+      "id": "toothed",
+      "level": 1
+     }
+    ],
+    "layout": "open",
+    "placements": 23,
+    "bbox": {
+     "x0": 25,
+     "y0": 11,
+     "x1": 61,
+     "y1": 84
+    }
+   },
+   "rad": {
+    "anatomy": "ed169f44",
+    "full": "55cbda96",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base"
+    ],
+    "treatments": [
+     {
+      "id": "pigment",
+      "level": 1
+     }
+    ],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 28,
+     "y0": 11,
+     "x1": 58,
+     "y1": 84
+    }
+   },
+   "seed1": {
+    "anatomy": "a77533f8",
+    "full": "1f670eb8",
+    "components": [
+     "bud.axil",
+     "leaf.base",
+     "seedHead.small"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 11,
     "bbox": {
      "x0": 28,
      "y0": 11,
@@ -105,9 +422,10 @@
     }
    },
    "seed2": {
-    "anatomy": "d6ce606d",
-    "full": "cf08c08f",
+    "anatomy": "67d49b9e",
+    "full": "0e4d4bdb",
     "components": [
+     "bud.axil",
      "leaf.base",
      "seed.drift",
      "seedHead.large",
@@ -115,24 +433,25 @@
     ],
     "treatments": [],
     "layout": "open",
-    "placements": 16,
+    "placements": 18,
     "bbox": {
-     "x0": 26,
+     "x0": 27,
      "y0": 4,
      "x1": 61,
      "y1": 84
     }
    },
    "early": {
-    "anatomy": "de4f02ca",
-    "full": "91d00c86",
+    "anatomy": "be5c9a2e",
+    "full": "8c82d402",
     "components": [
+     "bud.axil",
      "flower",
      "leaf.base"
     ],
     "treatments": [],
     "layout": "open",
-    "placements": 9,
+    "placements": 11,
     "bbox": {
      "x0": 28,
      "y0": 6,
@@ -140,99 +459,366 @@
      "y1": 84
     }
    },
-   "complex": {
-    "anatomy": "32d5ff9e",
-    "full": "8d577955",
+   "water": {
+    "anatomy": "34c11996",
+    "full": "c7808402",
     "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base",
+     "pod"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 15,
+    "bbox": {
+     "x0": 28,
+     "y0": 11,
+     "x1": 58,
+     "y1": 84
+    }
+   },
+   "maxDry": {
+    "anatomy": "6efd8a6a",
+    "full": "80e8eb01",
+    "components": [
+     "bud.axil",
      "flower",
-     "frost.collar",
-     "frost.tuft",
-     "leaf.succulent",
-     "root.storage",
+     "frost.collar.2",
+     "frost.hair.2",
+     "leaf.drought.3",
+     "pod",
+     "root.storage.3",
+     "salt.crystal",
+     "salt.gland",
      "seed.drift",
      "seedHead.large",
      "seedHead.small"
     ],
     "treatments": [
-     "pigment"
+     {
+      "id": "pigment",
+      "level": 1
+     },
+     {
+      "id": "wax",
+      "level": 1
+     },
+     {
+      "id": "toothed",
+      "level": 1
+     }
     ],
     "layout": "compact",
     "placements": 35,
     "bbox": {
      "x0": 26,
-     "y0": 22,
+     "y0": 20,
      "x1": 61,
-     "y1": 94
+     "y1": 95
+    }
+   },
+   "maxWet": {
+    "anatomy": "8d176518",
+    "full": "fcb9f368",
+    "components": [
+     "bud.axil",
+     "flower",
+     "frost.collar.2",
+     "frost.hair.2",
+     "leaf.flood.3",
+     "pod",
+     "root.aerial.3",
+     "root.stilt",
+     "salt.crystal",
+     "salt.gland",
+     "seed.drift",
+     "seedHead.large",
+     "seedHead.small"
+    ],
+    "treatments": [
+     {
+      "id": "pigment",
+      "level": 1
+     },
+     {
+      "id": "wax",
+      "level": 1
+     },
+     {
+      "id": "toothed",
+      "level": 1
+     }
+    ],
+    "layout": "compact",
+    "placements": 45,
+    "bbox": {
+     "x0": 23,
+     "y0": 20,
+     "x1": 62,
+     "y1": 84
     }
    }
   },
   "proof-angular": {
    "base": {
-    "anatomy": "7d58445a",
-    "full": "f36ba4fc",
+    "anatomy": "c76adb72",
+    "full": "62e6574f",
     "components": [
      "bud",
+     "bud.axil",
      "leaf.base"
     ],
     "treatments": [],
     "layout": "open",
-    "placements": 9,
+    "placements": 11,
     "bbox": {
      "x0": 27,
      "y0": 11,
+     "x1": 59,
+     "y1": 84
+    }
+   },
+   "cold1": {
+    "anatomy": "45f9d721",
+    "full": "09ac426d",
+    "components": [
+     "bud",
+     "bud.axil",
+     "frost.hair.1",
+     "leaf.base"
+    ],
+    "treatments": [],
+    "layout": "dense",
+    "placements": 17,
+    "bbox": {
+     "x0": 27,
+     "y0": 17,
      "x1": 59,
      "y1": 84
     }
    },
    "cold2": {
-    "anatomy": "b98d2f5f",
-    "full": "9bf9b7a3",
+    "anatomy": "fb156412",
+    "full": "bf269658",
     "components": [
      "bud",
-     "frost.collar",
-     "frost.tuft",
-     "leaf.cold"
+     "bud.axil",
+     "frost.collar.2",
+     "frost.hair.2",
+     "leaf.base"
     ],
     "treatments": [],
     "layout": "compact",
-    "placements": 35,
+    "placements": 36,
     "bbox": {
-     "x0": 31,
-     "y0": 29,
+     "x0": 28,
+     "y0": 27,
+     "x1": 57,
+     "y1": 84
+    }
+   },
+   "cold3": {
+    "anatomy": "c58877d9",
+    "full": "881c75aa",
+    "components": [
+     "bud",
+     "bud.axil",
+     "frost.collar.3",
+     "frost.hair.3",
+     "leaf.base"
+    ],
+    "treatments": [],
+    "layout": "cushion",
+    "placements": 37,
+    "bbox": {
+     "x0": 26,
+     "y0": 33,
+     "x1": 58,
+     "y1": 84
+    }
+   },
+   "heat1": {
+    "anatomy": "eb1bb044",
+    "full": "6d31a265",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base"
+    ],
+    "treatments": [
+     {
+      "id": "wax",
+      "level": 1
+     }
+    ],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 30,
+     "y0": 11,
+     "x1": 56,
+     "y1": 84
+    }
+   },
+   "heat2": {
+    "anatomy": "084ccd85",
+    "full": "67d92acd",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base"
+    ],
+    "treatments": [
+     {
+      "id": "wax",
+      "level": 2
+     }
+    ],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 30,
+     "y0": 11,
+     "x1": 56,
+     "y1": 84
+    }
+   },
+   "heat3": {
+    "anatomy": "092c2053",
+    "full": "5a1a0a4f",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base.heat"
+    ],
+    "treatments": [
+     {
+      "id": "wax",
+      "level": 3
+     }
+    ],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 32,
+     "y0": 11,
      "x1": 54,
      "y1": 84
     }
    },
-   "drought2": {
-    "anatomy": "7fefb5ff",
-    "full": "3b77da7c",
+   "cold2heat1": {
+    "anatomy": "fb948c7e",
+    "full": "978111ee",
     "components": [
      "bud",
-     "leaf.succulent",
-     "root.storage"
-    ],
-    "treatments": [],
-    "layout": "open",
-    "placements": 8,
-    "bbox": {
-     "x0": 29,
-     "y0": 11,
-     "x1": 57,
-     "y1": 94
-    }
-   },
-   "rad": {
-    "anatomy": "a56ca652",
-    "full": "2c7459e4",
-    "components": [
-     "bud",
+     "bud.axil",
+     "frost.collar.2",
+     "frost.hair.2",
      "leaf.base"
     ],
     "treatments": [
-     "pigment"
+     {
+      "id": "wax",
+      "level": 1
+     }
     ],
+    "layout": "compact",
+    "placements": 36,
+    "bbox": {
+     "x0": 28,
+     "y0": 27,
+     "x1": 57,
+     "y1": 84
+    }
+   },
+   "drought1": {
+    "anatomy": "7877303b",
+    "full": "72777687",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.drought.1"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 28,
+     "y0": 11,
+     "x1": 58,
+     "y1": 89
+    }
+   },
+   "drought2": {
+    "anatomy": "e51a8a13",
+    "full": "ac749291",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.drought.2",
+     "root.storage.2"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 10,
+    "bbox": {
+     "x0": 28,
+     "y0": 11,
+     "x1": 58,
+     "y1": 93
+    }
+   },
+   "drought3": {
+    "anatomy": "5340f92a",
+    "full": "5c8f0ead",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.drought.3",
+     "root.storage.3"
+    ],
+    "treatments": [],
     "layout": "open",
     "placements": 9,
+    "bbox": {
+     "x0": 30,
+     "y0": 11,
+     "x1": 56,
+     "y1": 95
+    }
+   },
+   "drought4": {
+    "anatomy": "5340f92a",
+    "full": "5c8f0ead",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.drought.3",
+     "root.storage.3"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 9,
+    "bbox": {
+     "x0": 30,
+     "y0": 11,
+     "x1": 56,
+     "y1": 95
+    }
+   },
+   "flood1": {
+    "anatomy": "c431e7eb",
+    "full": "a9711ce7",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.flood.1",
+     "root.aerial.1"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 13,
     "bbox": {
      "x0": 27,
      "y0": 11,
@@ -240,10 +826,136 @@
      "y1": 84
     }
    },
-   "seed2": {
-    "anatomy": "4e0d9bc8",
-    "full": "1b022b64",
+   "flood2": {
+    "anatomy": "68ab67e0",
+    "full": "8cf87f44",
     "components": [
+     "bud",
+     "bud.axil",
+     "leaf.flood.2",
+     "root.aerial.2"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 14,
+    "bbox": {
+     "x0": 23,
+     "y0": 11,
+     "x1": 63,
+     "y1": 84
+    }
+   },
+   "flood3": {
+    "anatomy": "e44e48fb",
+    "full": "6cb7aa6d",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.flood.3",
+     "root.aerial.3",
+     "root.stilt"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 15,
+    "bbox": {
+     "x0": 23,
+     "y0": 11,
+     "x1": 63,
+     "y1": 84
+    }
+   },
+   "flood4": {
+    "anatomy": "e44e48fb",
+    "full": "6cb7aa6d",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.flood.3",
+     "root.aerial.3",
+     "root.stilt"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 15,
+    "bbox": {
+     "x0": 23,
+     "y0": 11,
+     "x1": 63,
+     "y1": 84
+    }
+   },
+   "salt": {
+    "anatomy": "7d1aa287",
+    "full": "d41d847b",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base",
+     "salt.crystal",
+     "salt.gland"
+    ],
+    "treatments": [
+     {
+      "id": "toothed",
+      "level": 1
+     }
+    ],
+    "layout": "open",
+    "placements": 23,
+    "bbox": {
+     "x0": 24,
+     "y0": 10,
+     "x1": 62,
+     "y1": 84
+    }
+   },
+   "rad": {
+    "anatomy": "e048ae62",
+    "full": "bf4bd487",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base"
+    ],
+    "treatments": [
+     {
+      "id": "pigment",
+      "level": 1
+     }
+    ],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 27,
+     "y0": 11,
+     "x1": 59,
+     "y1": 84
+    }
+   },
+   "seed1": {
+    "anatomy": "eee06cf8",
+    "full": "9bca01df",
+    "components": [
+     "bud.axil",
+     "leaf.base",
+     "seedHead.small"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 27,
+     "y0": 10,
+     "x1": 59,
+     "y1": 84
+    }
+   },
+   "seed2": {
+    "anatomy": "60f0f2f2",
+    "full": "c77ff69f",
+    "components": [
+     "bud.axil",
      "leaf.base",
      "seed.drift",
      "seedHead.large",
@@ -251,24 +963,25 @@
     ],
     "treatments": [],
     "layout": "open",
-    "placements": 16,
+    "placements": 18,
     "bbox": {
-     "x0": 26,
+     "x0": 27,
      "y0": 4,
      "x1": 61,
      "y1": 84
     }
    },
    "early": {
-    "anatomy": "b1bdcc3e",
-    "full": "357b68db",
+    "anatomy": "f41beefe",
+    "full": "43ae4d38",
     "components": [
+     "bud.axil",
      "flower",
      "leaf.base"
     ],
     "treatments": [],
     "layout": "open",
-    "placements": 9,
+    "placements": 11,
     "bbox": {
      "x0": 27,
      "y0": 5,
@@ -276,110 +989,503 @@
      "y1": 84
     }
    },
-   "complex": {
-    "anatomy": "edd944e9",
-    "full": "1a30f2fc",
+   "water": {
+    "anatomy": "c21abbec",
+    "full": "30eaa035",
     "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base",
+     "pod"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 15,
+    "bbox": {
+     "x0": 27,
+     "y0": 11,
+     "x1": 59,
+     "y1": 84
+    }
+   },
+   "maxDry": {
+    "anatomy": "b3df50cb",
+    "full": "f32c8d02",
+    "components": [
+     "bud.axil",
      "flower",
-     "frost.collar",
-     "frost.tuft",
-     "leaf.succulent",
-     "root.storage",
+     "frost.collar.2",
+     "frost.hair.2",
+     "leaf.drought.3",
+     "pod",
+     "root.storage.3",
+     "salt.crystal",
+     "salt.gland",
      "seed.drift",
      "seedHead.large",
      "seedHead.small"
     ],
     "treatments": [
-     "pigment"
+     {
+      "id": "pigment",
+      "level": 1
+     },
+     {
+      "id": "wax",
+      "level": 1
+     },
+     {
+      "id": "toothed",
+      "level": 1
+     }
     ],
     "layout": "compact",
     "placements": 35,
     "bbox": {
      "x0": 26,
-     "y0": 22,
+     "y0": 20,
      "x1": 61,
-     "y1": 94
+     "y1": 95
+    }
+   },
+   "maxWet": {
+    "anatomy": "c0ad27f9",
+    "full": "0171e3bb",
+    "components": [
+     "bud.axil",
+     "flower",
+     "frost.collar.2",
+     "frost.hair.2",
+     "leaf.flood.3",
+     "pod",
+     "root.aerial.3",
+     "root.stilt",
+     "salt.crystal",
+     "salt.gland",
+     "seed.drift",
+     "seedHead.large",
+     "seedHead.small"
+    ],
+    "treatments": [
+     {
+      "id": "pigment",
+      "level": 1
+     },
+     {
+      "id": "wax",
+      "level": 1
+     },
+     {
+      "id": "toothed",
+      "level": 1
+     }
+    ],
+    "layout": "compact",
+    "placements": 45,
+    "bbox": {
+     "x0": 23,
+     "y0": 20,
+     "x1": 62,
+     "y1": 84
     }
    }
   },
   "proof-round": {
    "base": {
-    "anatomy": "686bc136",
-    "full": "ce2820f3",
+    "anatomy": "d11a4e56",
+    "full": "601dfdf1",
     "components": [
      "bud",
+     "bud.axil",
      "leaf.base"
     ],
     "treatments": [],
     "layout": "open",
-    "placements": 9,
+    "placements": 11,
     "bbox": {
      "x0": 30,
      "y0": 11,
+     "x1": 56,
+     "y1": 84
+    }
+   },
+   "cold1": {
+    "anatomy": "84aef319",
+    "full": "03234cad",
+    "components": [
+     "bud",
+     "bud.axil",
+     "frost.hair.1",
+     "leaf.base"
+    ],
+    "treatments": [],
+    "layout": "dense",
+    "placements": 17,
+    "bbox": {
+     "x0": 30,
+     "y0": 17,
      "x1": 56,
      "y1": 84
     }
    },
    "cold2": {
-    "anatomy": "a603ffae",
-    "full": "e088eea9",
+    "anatomy": "4ed83ce9",
+    "full": "62e894a8",
     "components": [
      "bud",
-     "frost.collar",
-     "frost.tuft",
-     "leaf.cold"
+     "bud.axil",
+     "frost.collar.2",
+     "frost.hair.2",
+     "leaf.base"
     ],
     "treatments": [],
     "layout": "compact",
-    "placements": 35,
+    "placements": 36,
+    "bbox": {
+     "x0": 30,
+     "y0": 27,
+     "x1": 55,
+     "y1": 84
+    }
+   },
+   "cold3": {
+    "anatomy": "9008add9",
+    "full": "7ec7e410",
+    "components": [
+     "bud",
+     "bud.axil",
+     "frost.collar.3",
+     "frost.hair.3",
+     "leaf.base"
+    ],
+    "treatments": [],
+    "layout": "cushion",
+    "placements": 37,
+    "bbox": {
+     "x0": 28,
+     "y0": 33,
+     "x1": 56,
+     "y1": 84
+    }
+   },
+   "heat1": {
+    "anatomy": "89cf5d89",
+    "full": "ec1ddf71",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base"
+    ],
+    "treatments": [
+     {
+      "id": "wax",
+      "level": 1
+     }
+    ],
+    "layout": "open",
+    "placements": 11,
     "bbox": {
      "x0": 32,
-     "y0": 29,
+     "y0": 11,
+     "x1": 54,
+     "y1": 84
+    }
+   },
+   "heat2": {
+    "anatomy": "39d10410",
+    "full": "3a129205",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base"
+    ],
+    "treatments": [
+     {
+      "id": "wax",
+      "level": 2
+     }
+    ],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 32,
+     "y0": 11,
+     "x1": 54,
+     "y1": 84
+    }
+   },
+   "heat3": {
+    "anatomy": "e251a815",
+    "full": "cae0a4f7",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base.heat"
+    ],
+    "treatments": [
+     {
+      "id": "wax",
+      "level": 3
+     }
+    ],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 32,
+     "y0": 11,
      "x1": 53,
      "y1": 84
     }
    },
-   "drought2": {
-    "anatomy": "e63bbc36",
-    "full": "eb821493",
+   "cold2heat1": {
+    "anatomy": "311100e5",
+    "full": "5292537a",
     "components": [
      "bud",
-     "leaf.succulent",
-     "root.storage"
+     "bud.axil",
+     "frost.collar.2",
+     "frost.hair.2",
+     "leaf.base"
+    ],
+    "treatments": [
+     {
+      "id": "wax",
+      "level": 1
+     }
+    ],
+    "layout": "compact",
+    "placements": 36,
+    "bbox": {
+     "x0": 30,
+     "y0": 27,
+     "x1": 55,
+     "y1": 84
+    }
+   },
+   "drought1": {
+    "anatomy": "9f2ee9bd",
+    "full": "f50b5e45",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.drought.1"
     ],
     "treatments": [],
     "layout": "open",
-    "placements": 8,
+    "placements": 11,
     "bbox": {
      "x0": 30,
      "y0": 11,
      "x1": 56,
-     "y1": 94
+     "y1": 89
     }
    },
-   "rad": {
-    "anatomy": "a87f2b96",
-    "full": "afb57213",
+   "drought2": {
+    "anatomy": "1d78356c",
+    "full": "072d7d75",
     "components": [
      "bud",
-     "leaf.base"
+     "bud.axil",
+     "leaf.drought.2",
+     "root.storage.2"
     ],
-    "treatments": [
-     "pigment"
+    "treatments": [],
+    "layout": "open",
+    "placements": 10,
+    "bbox": {
+     "x0": 31,
+     "y0": 11,
+     "x1": 55,
+     "y1": 93
+    }
+   },
+   "drought3": {
+    "anatomy": "1e66ffab",
+    "full": "a4dcb501",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.drought.3",
+     "root.storage.3"
     ],
+    "treatments": [],
     "layout": "open",
     "placements": 9,
     "bbox": {
+     "x0": 32,
+     "y0": 11,
+     "x1": 54,
+     "y1": 95
+    }
+   },
+   "drought4": {
+    "anatomy": "1e66ffab",
+    "full": "a4dcb501",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.drought.3",
+     "root.storage.3"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 9,
+    "bbox": {
+     "x0": 32,
+     "y0": 11,
+     "x1": 54,
+     "y1": 95
+    }
+   },
+   "flood1": {
+    "anatomy": "7d388b12",
+    "full": "c9873fc9",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.flood.1",
+     "root.aerial.1"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 13,
+    "bbox": {
      "x0": 30,
      "y0": 11,
+     "x1": 56,
+     "y1": 84
+    }
+   },
+   "flood2": {
+    "anatomy": "a787b138",
+    "full": "ee4b3203",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.flood.2",
+     "root.aerial.2"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 14,
+    "bbox": {
+     "x0": 27,
+     "y0": 11,
+     "x1": 59,
+     "y1": 84
+    }
+   },
+   "flood3": {
+    "anatomy": "daecb989",
+    "full": "1049159f",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.flood.3",
+     "root.aerial.3",
+     "root.stilt"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 15,
+    "bbox": {
+     "x0": 26,
+     "y0": 11,
+     "x1": 60,
+     "y1": 84
+    }
+   },
+   "flood4": {
+    "anatomy": "daecb989",
+    "full": "1049159f",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.flood.3",
+     "root.aerial.3",
+     "root.stilt"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 15,
+    "bbox": {
+     "x0": 26,
+     "y0": 11,
+     "x1": 60,
+     "y1": 84
+    }
+   },
+   "salt": {
+    "anatomy": "995e4835",
+    "full": "a95004fd",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base",
+     "salt.crystal",
+     "salt.gland"
+    ],
+    "treatments": [
+     {
+      "id": "toothed",
+      "level": 1
+     }
+    ],
+    "layout": "open",
+    "placements": 23,
+    "bbox": {
+     "x0": 27,
+     "y0": 11,
+     "x1": 59,
+     "y1": 84
+    }
+   },
+   "rad": {
+    "anatomy": "78584cb6",
+    "full": "effaf389",
+    "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base"
+    ],
+    "treatments": [
+     {
+      "id": "pigment",
+      "level": 1
+     }
+    ],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 30,
+     "y0": 11,
+     "x1": 56,
+     "y1": 84
+    }
+   },
+   "seed1": {
+    "anatomy": "053d2199",
+    "full": "9d80c9b6",
+    "components": [
+     "bud.axil",
+     "leaf.base",
+     "seedHead.small"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 11,
+    "bbox": {
+     "x0": 30,
+     "y0": 10,
      "x1": 56,
      "y1": 84
     }
    },
    "seed2": {
-    "anatomy": "e9107850",
-    "full": "3151a17c",
+    "anatomy": "a17fc022",
+    "full": "ef0a4075",
     "components": [
+     "bud.axil",
      "leaf.base",
      "seed.drift",
      "seedHead.large",
@@ -387,24 +1493,25 @@
     ],
     "treatments": [],
     "layout": "open",
-    "placements": 16,
+    "placements": 18,
     "bbox": {
-     "x0": 26,
+     "x0": 27,
      "y0": 5,
      "x1": 61,
      "y1": 84
     }
    },
    "early": {
-    "anatomy": "44b24539",
-    "full": "0921f6e7",
+    "anatomy": "10c26359",
+    "full": "53e883f9",
     "components": [
+     "bud.axil",
      "flower",
      "leaf.base"
     ],
     "treatments": [],
     "layout": "open",
-    "placements": 9,
+    "placements": 11,
     "bbox": {
      "x0": 30,
      "y0": 5,
@@ -412,29 +1519,104 @@
      "y1": 84
     }
    },
-   "complex": {
-    "anatomy": "bedb9e9d",
-    "full": "793339b9",
+   "water": {
+    "anatomy": "4b149ae3",
+    "full": "d54ca8d4",
     "components": [
+     "bud",
+     "bud.axil",
+     "leaf.base",
+     "pod"
+    ],
+    "treatments": [],
+    "layout": "open",
+    "placements": 15,
+    "bbox": {
+     "x0": 30,
+     "y0": 11,
+     "x1": 57,
+     "y1": 84
+    }
+   },
+   "maxDry": {
+    "anatomy": "fecee7d6",
+    "full": "8db42111",
+    "components": [
+     "bud.axil",
      "flower",
-     "frost.collar",
-     "frost.tuft",
-     "leaf.succulent",
-     "root.storage",
+     "frost.collar.2",
+     "frost.hair.2",
+     "leaf.drought.3",
+     "pod",
+     "root.storage.3",
+     "salt.crystal",
+     "salt.gland",
      "seed.drift",
      "seedHead.large",
      "seedHead.small"
     ],
     "treatments": [
-     "pigment"
+     {
+      "id": "pigment",
+      "level": 1
+     },
+     {
+      "id": "wax",
+      "level": 1
+     },
+     {
+      "id": "toothed",
+      "level": 1
+     }
     ],
     "layout": "compact",
     "placements": 35,
     "bbox": {
      "x0": 26,
-     "y0": 22,
+     "y0": 20,
      "x1": 61,
-     "y1": 94
+     "y1": 95
+    }
+   },
+   "maxWet": {
+    "anatomy": "c9636a5d",
+    "full": "6c5f5311",
+    "components": [
+     "bud.axil",
+     "flower",
+     "frost.collar.2",
+     "frost.hair.2",
+     "leaf.flood.3",
+     "pod",
+     "root.aerial.3",
+     "root.stilt",
+     "salt.crystal",
+     "salt.gland",
+     "seed.drift",
+     "seedHead.large",
+     "seedHead.small"
+    ],
+    "treatments": [
+     {
+      "id": "pigment",
+      "level": 1
+     },
+     {
+      "id": "wax",
+      "level": 1
+     },
+     {
+      "id": "toothed",
+      "level": 1
+     }
+    ],
+    "layout": "compact",
+    "placements": 45,
+    "bbox": {
+     "x0": 25,
+     "y0": 20,
+     "x1": 61,
+     "y1": 84
     }
    }
   }
@@ -445,7 +1627,7 @@
     {
      "pack": "proof",
      "placement": "native",
-     "sig": "8d577955",
+     "sig": "80e8eb01",
      "w": 84,
      "h": 98,
      "cssW": 84,
@@ -454,7 +1636,7 @@
     {
      "pack": "proof",
      "placement": "room1024",
-     "sig": "8d577955",
+     "sig": "80e8eb01",
      "w": 84,
      "h": 98,
      "cssW": 168,
@@ -463,7 +1645,7 @@
     {
      "pack": "proof",
      "placement": "room1280",
-     "sig": "8d577955",
+     "sig": "80e8eb01",
      "w": 84,
      "h": 98,
      "cssW": 252,
@@ -472,7 +1654,7 @@
     {
      "pack": "proof",
      "placement": "room1440",
-     "sig": "8d577955",
+     "sig": "80e8eb01",
      "w": 84,
      "h": 98,
      "cssW": 252,
@@ -481,7 +1663,7 @@
     {
      "pack": "proof",
      "placement": "journal",
-     "sig": "8d577955",
+     "sig": "80e8eb01",
      "w": 84,
      "h": 98,
      "cssW": 252,
@@ -490,7 +1672,7 @@
     {
      "pack": "proof",
      "placement": "zoom4",
-     "sig": "8d577955",
+     "sig": "80e8eb01",
      "w": 84,
      "h": 98,
      "cssW": 336,
@@ -504,13 +1686,13 @@
     "requests": 11
    },
    "http": {
-    "url": "http://127.0.0.1:64007/demos/plant-sprite-pipeline-lab.html",
+    "url": "http://127.0.0.1:65118/demos/plant-sprite-pipeline-lab.html",
     "errors": 0,
     "external": 0,
     "requests": 11
    },
    "subpath": {
-    "url": "http://127.0.0.1:64008/bloom/demos/plant-sprite-pipeline-lab.html",
+    "url": "http://127.0.0.1:65119/bloom/demos/plant-sprite-pipeline-lab.html",
     "errors": 0,
     "external": 0,
     "requests": 11
@@ -521,7 +1703,7 @@
     {
      "pack": "proof",
      "placement": "native",
-     "sig": "8d577955",
+     "sig": "80e8eb01",
      "w": 84,
      "h": 98,
      "cssW": 84,
@@ -530,7 +1712,7 @@
     {
      "pack": "proof",
      "placement": "room1024",
-     "sig": "8d577955",
+     "sig": "80e8eb01",
      "w": 84,
      "h": 98,
      "cssW": 168,
@@ -539,7 +1721,7 @@
     {
      "pack": "proof",
      "placement": "room1280",
-     "sig": "8d577955",
+     "sig": "80e8eb01",
      "w": 84,
      "h": 98,
      "cssW": 252,
@@ -548,7 +1730,7 @@
     {
      "pack": "proof",
      "placement": "room1440",
-     "sig": "8d577955",
+     "sig": "80e8eb01",
      "w": 84,
      "h": 98,
      "cssW": 252,
@@ -557,7 +1739,7 @@
     {
      "pack": "proof",
      "placement": "journal",
-     "sig": "8d577955",
+     "sig": "80e8eb01",
      "w": 84,
      "h": 98,
      "cssW": 252,
@@ -566,7 +1748,7 @@
     {
      "pack": "proof",
      "placement": "zoom4",
-     "sig": "8d577955",
+     "sig": "80e8eb01",
      "w": 84,
      "h": 98,
      "cssW": 336,
@@ -580,13 +1762,13 @@
     "requests": 0
    },
    "http": {
-    "url": "http://127.0.0.1:64007/demos/plant-sprite-pipeline-lab.html",
+    "url": "http://127.0.0.1:65118/demos/plant-sprite-pipeline-lab.html",
     "errors": 0,
     "external": 0,
     "requests": 11
    },
    "subpath": {
-    "url": "http://127.0.0.1:64008/bloom/demos/plant-sprite-pipeline-lab.html",
+    "url": "http://127.0.0.1:65119/bloom/demos/plant-sprite-pipeline-lab.html",
     "errors": 0,
     "external": 0,
     "requests": 11
@@ -607,24 +1789,10 @@
   "art/plant/schema/plant-atlas.schema.json",
   "demos/plant-sprite-pipeline-lab.html",
   "docs/PLANT_SPRITE_PIPELINE_v1.md",
-  "docs/evidence/bloom-032b1/01-base-pipeline-and-pack-swap.png",
-  "docs/evidence/bloom-032b1/02-cold2-pipeline-and-pack-swap.png",
-  "docs/evidence/bloom-032b1/03-drought2-pipeline-and-pack-swap.png",
-  "docs/evidence/bloom-032b1/04-seed2-pipeline-and-pack-swap.png",
-  "docs/evidence/bloom-032b1/05-complex-pipeline-and-pack-swap.png",
-  "docs/evidence/bloom-032b1/06-golden-slice-sheet-proof-pack.png",
-  "docs/evidence/bloom-032b1/07-same-organism-every-placement.png",
-  "docs/evidence/bloom-032b1/08-preview-ghost-outline.png",
-  "docs/evidence/bloom-032b1/09-crop-400pct-complex-proof-pack.png",
-  "docs/evidence/bloom-032b1/10-fx-grow-strip.png",
-  "docs/evidence/bloom-032b1/11-fx-dissolve-strip.png",
-  "docs/evidence/bloom-032b1/12-all-states-all-packs-2x.png",
-  "docs/evidence/bloom-032b1/13-source-atlas-proof-4x.png",
-  "docs/evidence/bloom-032b1/13-source-atlas-proof-angular-4x.png",
-  "docs/evidence/bloom-032b1/13-source-atlas-proof-round-4x.png",
   "docs/evidence/bloom-032b1/REPORT.md",
   "docs/evidence/bloom-032b1/pipeline-proof.json",
   "docs/evidence/bloom-032b1/qa-plant-sprite-pipeline-check.log",
+  "docs/evidence/bloom-032b1/qa-portable-runtime-check.log",
   "resources/plant-sprite-lab/lab.css",
   "resources/plant-sprite-lab/lab.js",
   "resources/plant-visual/generated/plant-atlas-manifest.json",
@@ -638,61 +1806,61 @@
   "tools/plant-sprite-pipeline-check.js"
  ],
  "build": {
-  "fingerprint": "a2ba4bc48110376da1c7d125a6dcc1838536af0314dd60d482aaac902038ba8c",
+  "fingerprint": "e7d9cae6a90f57232860c47f11f2a30c806286e7e21ee4f1f6dbf24b288495ce",
   "output": {
-   "bytes": 43457,
+   "bytes": 185970,
    "path": "resources/plant-visual/generated/plant-atlas.js",
-   "sha256": "782612adcfd2003bf57ba0989384ac49bebaca43325fd5bec866edaae9624840"
+   "sha256": "269eca78d860060a471f741a2947b39c720e7c958a817c32d1adb022e291e422"
   },
   "inputs": [
    {
     "path": "art/plant/body-plan.json",
-    "sha256": "cb60f83b7ce54c8d6b2b0d4dcaac6c7f0072abdc06a8353d18bee6c90e428bb5"
+    "sha256": "f3e36cad0d77233730dcc84a303d19dccd7a2f94ae822d5576a2e07112c8ee33"
    },
    {
     "path": "art/plant/contract.json",
-    "sha256": "6e5883adca5724a983af185a4dbc6c7aa83991a3820d1ff1ee6d7be9e7b35cc9"
+    "sha256": "cdbdda14dd5500342c14fef1143078c5696b6685fe7d2c68d7274e2e6156adcb"
    },
    {
     "path": "art/plant/packs/proof-angular/atlas.json",
-    "sha256": "d0912fb8a0e4ad7b82e36aad4628efcccb97fd1733719138d453dab7e9b7bf43"
+    "sha256": "242ec327ac72bbc88d61afba7e999cb176f5fce07b833c930704c272ad641c54"
    },
    {
     "path": "art/plant/packs/proof-angular/atlas.png",
-    "sha256": "82c351dc1064e652cfa5e086701d884e45ba5dc0c94c712d6b54e2ff62bb24f2"
+    "sha256": "a93db953fc8eb34d32fa42a3dc250d81ab2be5f7e6199ab87747758901cbfa3c"
    },
    {
     "path": "art/plant/packs/proof-round/atlas.json",
-    "sha256": "2eb4c83c70c23d7e0ca4d3d9d9dfa08e0e61898d30e83f215a41599643394bcb"
+    "sha256": "ce18648af1b2cb1dc1d7790ade52d380eb180444b212f22c016826abe09ff6c5"
    },
    {
     "path": "art/plant/packs/proof-round/atlas.png",
-    "sha256": "252de9a6351c313c6b669f94fce234ef09e241cde6101b2fc833edb5af9affc1"
+    "sha256": "eb2437162ac7523b01cba5e8f79438abf69e75ae509289c9e54f2159d3fd60ef"
    },
    {
     "path": "art/plant/packs/proof/atlas.json",
-    "sha256": "3fbccef69a285e699267b6286e8dcbe1642613b8a80f40818ec452209e89d6c5"
+    "sha256": "020fa9188b2208d900bed8a17a9643cc1df00db4459d17bddaea7e206ffc5fe2"
    },
    {
     "path": "art/plant/packs/proof/atlas.png",
-    "sha256": "506bec8e863f4e418bdffa4d9399f2b604594d0e738f959b62e8b1859b487d05"
+    "sha256": "373d2b61258fff156aa334a987f141cbb7c2905c52e5c4c6597eab89972b7ade"
    },
    {
     "path": "resources/plant-visual/plant-compositor.js",
-    "sha256": "20b1f20b6081ff46dc0a678a72b4a3aced800854c68803ae591084dba15639e2"
+    "sha256": "b048c75be26c37d9f86406267bdb13c905c61caa1aad7be638a655b5e96bede8"
    },
    {
     "path": "tools/build-plant-art.mjs",
-    "sha256": "5525362e12af297b1fef64cd0362f5f1e9e5f0c3abc4196ea17481d7d1b76bee"
+    "sha256": "77623aee4cf30a8333a6039278da675881c0ed8fbfdf819da145a62592ee2348"
    }
   ]
  },
  "fx": {
   "proof:base→cold2": {
-   "diff": 741,
+   "diff": 802,
    "previewDiffers": true,
    "curIntact": true,
-   "anchors": 33,
+   "anchors": 34,
    "grow": {
     "exact": true,
     "mid": true,
@@ -707,10 +1875,10 @@
    }
   },
   "proof-angular:base→cold2": {
-   "diff": 686,
+   "diff": 743,
    "previewDiffers": true,
    "curIntact": true,
-   "anchors": 33,
+   "anchors": 34,
    "grow": {
     "exact": true,
     "mid": true,
@@ -725,10 +1893,10 @@
    }
   },
   "proof-round:base→cold2": {
-   "diff": 766,
+   "diff": 769,
    "previewDiffers": true,
    "curIntact": true,
-   "anchors": 33,
+   "anchors": 34,
    "grow": {
     "exact": true,
     "mid": true,
@@ -743,7 +1911,7 @@
    }
   },
   "proof:base→rad": {
-   "diff": 237,
+   "diff": 233,
    "previewDiffers": true,
    "curIntact": true,
    "anchors": 1,
@@ -761,7 +1929,7 @@
    }
   },
   "proof-angular:base→rad": {
-   "diff": 217,
+   "diff": 213,
    "previewDiffers": true,
    "curIntact": true,
    "anchors": 1,
@@ -779,7 +1947,7 @@
    }
   },
   "proof-round:base→rad": {
-   "diff": 610,
+   "diff": 590,
    "previewDiffers": true,
    "curIntact": true,
    "anchors": 1,
@@ -796,47 +1964,47 @@
     "leak": 0
    }
   },
-  "proof:seed2→complex": {
-   "diff": 1437,
-   "previewDiffers": true,
-   "curIntact": true,
-   "anchors": 30,
-   "grow": {
-    "exact": true,
-    "mid": true,
-    "start": true,
-    "leak": 0
-   },
-   "dissolve": {
-    "exact": true,
-    "mid": true,
-    "start": true,
-    "leak": 0
-   }
-  },
-  "proof-angular:seed2→complex": {
-   "diff": 1394,
-   "previewDiffers": true,
-   "curIntact": true,
-   "anchors": 30,
-   "grow": {
-    "exact": true,
-    "mid": true,
-    "start": true,
-    "leak": 0
-   },
-   "dissolve": {
-    "exact": true,
-    "mid": true,
-    "start": true,
-    "leak": 0
-   }
-  },
-  "proof-round:seed2→complex": {
+  "proof:seed2→maxDry": {
    "diff": 1527,
    "previewDiffers": true,
    "curIntact": true,
-   "anchors": 30,
+   "anchors": 28,
+   "grow": {
+    "exact": true,
+    "mid": true,
+    "start": true,
+    "leak": 0
+   },
+   "dissolve": {
+    "exact": true,
+    "mid": true,
+    "start": true,
+    "leak": 0
+   }
+  },
+  "proof-angular:seed2→maxDry": {
+   "diff": 1484,
+   "previewDiffers": true,
+   "curIntact": true,
+   "anchors": 28,
+   "grow": {
+    "exact": true,
+    "mid": true,
+    "start": true,
+    "leak": 0
+   },
+   "dissolve": {
+    "exact": true,
+    "mid": true,
+    "start": true,
+    "leak": 0
+   }
+  },
+  "proof-round:seed2→maxDry": {
+   "diff": 1617,
+   "previewDiffers": true,
+   "curIntact": true,
+   "anchors": 28,
    "grow": {
     "exact": true,
     "mid": true,
@@ -851,7 +2019,7 @@
    }
   },
   "proof:base→early": {
-   "diff": 123,
+   "diff": 125,
    "previewDiffers": true,
    "curIntact": true,
    "anchors": 1,
@@ -905,6 +2073,107 @@
    }
   }
  },
+ "maximalDRY": {
+  "traits": {
+   "cold": 2,
+   "heat": 1,
+   "drought": 3,
+   "salt": 1,
+   "rad": 1,
+   "seedOut": 2,
+   "earlyMat": 1,
+   "waterSeeds": 1
+  },
+  "combos": [
+   {
+    "cold": 3
+   },
+   {
+    "cold": 2,
+    "heat": 1
+   },
+   {
+    "cold": 1,
+    "heat": 2
+   },
+   {
+    "heat": 3
+   }
+  ],
+  "minMargin": 2,
+  "cases": 24,
+  "bbox": {
+   "x0": 26,
+   "y0": 20,
+   "x1": 61,
+   "y1": 95
+  },
+  "components": [
+   "bud.axil",
+   "flower",
+   "frost.collar.2",
+   "frost.hair.2",
+   "leaf.drought.3",
+   "pod",
+   "root.storage.3",
+   "salt.crystal",
+   "salt.gland",
+   "seed.drift",
+   "seedHead.large",
+   "seedHead.small"
+  ]
+ },
+ "maximalWET": {
+  "traits": {
+   "cold": 2,
+   "heat": 1,
+   "flood": 3,
+   "salt": 1,
+   "rad": 1,
+   "seedOut": 2,
+   "earlyMat": 1,
+   "waterSeeds": 1
+  },
+  "combos": [
+   {
+    "cold": 3
+   },
+   {
+    "cold": 2,
+    "heat": 1
+   },
+   {
+    "cold": 1,
+    "heat": 2
+   },
+   {
+    "heat": 3
+   }
+  ],
+  "minMargin": 4,
+  "cases": 24,
+  "bbox": {
+   "x0": 23,
+   "y0": 20,
+   "x1": 62,
+   "y1": 84
+  },
+  "components": [
+   "bud.axil",
+   "flower",
+   "frost.collar.2",
+   "frost.hair.2",
+   "leaf.flood.3",
+   "pod",
+   "root.aerial.3",
+   "root.stilt",
+   "salt.crystal",
+   "salt.gland",
+   "seed.drift",
+   "seedHead.large",
+   "seedHead.small"
+  ]
+ },
  "canvasChoice": [
   {
    "canvas": "84×98",
@@ -948,11 +2217,11 @@
   },
   {
    "ok": true,
-   "name": "A5 · the machine-readable schema accepts all 3 packs and the annotated example entries, and rejects a malformed pack (18 errors)"
+   "name": "A5 · the machine-readable schema accepts all 3 packs and the annotated example entries, and rejects a malformed pack (19 errors)"
   },
   {
    "ok": true,
-   "name": "A4 · the build validator enforces the art contract: an untouched copy builds, and each of 11 broken-art cases is rejected with its specific error"
+   "name": "A4 · the build validator enforces the art contract: an untouched copy builds, and each of 12 broken-art cases is rejected with its specific error"
   },
   {
    "ok": true,
@@ -976,19 +2245,19 @@
   },
   {
    "ok": true,
-   "name": "R2 · trait rule separation: the model maps real traits to visual axes (cold T2 → compact 2 + frost 2 …), the selector maps axes to component ids, and the compos"
+   "name": "R2 · trait rule separation: the model maps real traits to visual axes (cold T2 → compact 2 + frost 2 …), the selector maps axes to component ids (BASE = closed "
   },
   {
    "ok": true,
-   "name": "R3 · all seven golden-slice states (BASE, COLD T2, DROUGHT T2, RADIATION, SEED OUTPUT T2, EARLY MATURITY, COMPLEX) are distinct organisms in every pack: each di"
+   "name": "R3 · all 24 locked states are distinct organisms in every pack (22 distinct anatomies: only Drought T4 / Flood T4 share T3's, by the art cap): each differs from"
   },
   {
    "ok": true,
-   "name": "R4 · the COMPLEX build (Cold T2 + Drought T2 + Radiation + Seed Output T2 + Early Maturity) composes every component with no pixel clipped, in every pack, thriv"
+   "name": "R4 · every locked state composes with no pixel clipped, in every pack, thriving and strained (and gameplay tiers far above the art cap); the build's static proo"
   },
   {
    "ok": true,
-   "name": "R5 · the skeleton chooses placement: every sprite's anchor pixel lands exactly on its body-plan socket; the manifest's per-socket size budget (38 sockets) is th"
+   "name": "R5 · the skeleton chooses placement: every sprite's anchor pixel lands exactly on its body-plan socket; the manifest's per-socket size budget (117 sockets) is t"
   },
   {
    "ok": true,
@@ -1009,6 +2278,54 @@
   {
    "ok": true,
    "name": "F3 · reduced motion = a short direct swap: exactly one frame, the target; the animated path plays ≥ 20 frames and also ends on the target"
+  },
+  {
+   "ok": true,
+   "name": "N1 · every locked trait / tier normalizes onto its visual axis (Cold → architecture + insulation, Heat → leaf orientation + wax, Drought / Flood → primary leaf "
+  },
+  {
+   "ok": true,
+   "name": "N2 · all 34 contract component slots of the locked vocabulary exist (BASE leaves + buds · Cold T1–T3 hairs + T2/T3 collars · Heat T3 leaf variants for every str"
+  },
+  {
+   "ok": true,
+   "name": "N3 · Cold T2 + Heat T1 is legal and reads as ONE organism with BOTH axes: Cold's compact layout, collars and frost hairs + Heat's wax sheen and lifted authored "
+  },
+  {
+   "ok": true,
+   "name": "N4 · Drought and Flood remain mutually exclusive: the real rules reject a both-arms build; no state ever selects drought and flood components together (one PRIM"
+  },
+  {
+   "ok": true,
+   "name": "N5 · art cap: Drought T4 / T5 / T9 and Flood T4 / T5 / T9 render byte-identical anatomy (and pixels) to authored T3 in every pack, alone and inside the maximal "
+  },
+  {
+   "ok": true,
+   "name": "N6 · Salt ≠ Cold: Cold resolves only to FROST-family components (hairs, wool collars), Salt only to SALT-family components (glands, faceted crystals) + the toot"
+  },
+  {
+   "ok": true,
+   "name": "N7 · Waterborne Seeds has real sockets: pod.0 / pod.1 (low side stalks) in all 4 layouts; both pods hang exactly from their sockets on procedural stalks; the po"
+  },
+  {
+   "ok": true,
+   "name": "N8 · MAXIMAL LEGAL DRY (temperature pool + Drought T3 + Salt + Radiation + Seed Output T2 + Early Maturity + Waterborne Seeds) fits the 84×98 canvas for every l"
+  },
+  {
+   "ok": true,
+   "name": "N9 · MAXIMAL LEGAL WET (temperature pool + Flood T3 + Salt + Radiation + Seed Output T2 + Early Maturity + Waterborne Seeds) fits the 84×98 canvas for every leg"
+  },
+  {
+   "ok": true,
+   "name": "N10 · the socket table covers leaf sockets, stem nodes / collars, axils, apex, flower branch, seed-head branches, pod branches, drift points, root crown, primar"
+  },
+  {
+   "ok": true,
+   "name": "N11 · the ghost / outline preview shows every new mutation class — structural (Cold T1→T3 architecture, Drought / Flood T1→T3, Heat T3 leaf form), surface (wax "
+  },
+  {
+   "ok": true,
+   "name": "N12 · GROW (the default purchase FX) and DISSOLVE start on the current frame and end EXACTLY on the target for every structural, surface and reproductive change"
   },
   {
    "ok": true,
@@ -1048,7 +2365,7 @@
   },
   {
    "ok": true,
-   "name": "[chromium · file] B7 · keyboard presets (1–7) work; no page error after every interaction"
+   "name": "[chromium · file] B7 · keyboard presets (1–9) work; no page error after every interaction"
   },
   {
    "ok": true,
@@ -1092,7 +2409,7 @@
   },
   {
    "ok": true,
-   "name": "[firefox · file] B7 · keyboard presets (1–7) work; no page error after every interaction"
+   "name": "[firefox · file] B7 · keyboard presets (1–9) work; no page error after every interaction"
   },
   {
    "ok": true,
@@ -1112,8 +2429,8 @@
   }
  ],
  "summary": {
-  "passes": 46,
+  "passes": 58,
   "fails": 0,
-  "seconds": 18
+  "seconds": 21
  }
 }
