@@ -8,9 +8,10 @@
 // REJECTS broken art (off-palette, partial alpha, out-of-bounds, overlap, bad anchor, missing variant, stray pixel, socket clip, metadata
 // that disagrees with the contract); clean rebuild deterministic and == the committed generated output; no timestamp / machine path; no
 // sprite pixels in hand-written JS; one canonical canvas; the trait → component rules live only in the selector (the renderer names no
-// trait); every golden-slice state visibly differs; the complex build composes unclipped; pack swap = same skeleton, different pixels;
+// trait); every locked Organic Hybrid state visibly differs (T4 = T3 art); every state composes unclipped; pack swap = same skeleton, new pixels;
 // preview cancel exact; FX and reduced motion land exactly; the portable / Pages contract. Browser (Chromium + Firefox; file://, HTTP at /,
-// HTTP under /bloom/): the proof page boots with no error and no external request; browser pixels == Node pixels; the same organism at every
+// HTTP under /bloom/) — plus N1–N12 for the locked contract (normalization, slots, Cold+Heat, Drought/Flood, art cap, Salt≠Cold, pods, maximal dry/wet fit,
+// sockets, preview + FX per mutation class): the proof page boots with no error and no external request; browser pixels == Node pixels; the same organism at every
 // placement at a whole-number scale; preview on / off; purchase grow / dissolve / reduced motion end on the exact target.
 // --evidence writes docs/evidence/bloom-032b1/ (screenshots, 400 % crop, FX strip, pipeline-proof.json). Exits 1 on any failure.
 "use strict";
@@ -180,7 +181,7 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
       PROOF.states[p] = Object.fromEntries(keys.map(k => [k, { anatomy: F[k].sig.anatomy, full: F[k].sig.full, components: sel(STATES[k]).components, treatments: sel(STATES[k]).treatments, layout: sel(STATES[k]).layout, placements: F[k].placements.length, bbox: F[k].bbox }])); }
     const nDistinct = Object.keys(STATES).length - Object.keys(ART_CAP_TWINS).length;
     check(Object.values(out).every(o => o.distinct === nDistinct && !o.capBroken && Object.values(o.fromBase).every(n => n >= 30) && o.minPair >= 20), `R3 · all ${Object.keys(STATES).length} locked states are distinct organisms in every pack (${nDistinct} distinct anatomies: only Drought T4 / Flood T4 share T3's, by the art cap): each differs from BASE by ≥ 30 px and from every other state by ≥ 20 px`, J(Object.fromEntries(Object.entries(out).map(([k, o]) => [k, { distinct: o.distinct, minPair: o.minPair, minFromBase: Math.min(...Object.values(o.fromBase)) }])))); }
-  // R4 · complex composes without clipping (runtime) + the static per-socket proof
+  // R4 · every locked state composes without clipping (runtime) + the static per-socket proof
   { const clips = []; for (const p of PACKS) for (const [k, t] of Object.entries(STATES)) for (const c of ["thriving", "strained"]) { const F = frame(p, t, c); if (F.clip || F.bbox.x0 < 0 || F.bbox.y1 >= F.H) clips.push(`${p}/${k}/${c}:${F.clip}`); }
     const extreme = [{ drought: 9 }, { flood: 9 }, { cold: 3, drought: 7, salt: 1, rad: 1, seedOut: 2, earlyMat: 1, waterSeeds: 1 }].map(t => PACKS.map(p => frame(p, t).clip).reduce((a, b) => a + b, 0));
     const C = frame("proof", STATES.maxDry), comps = new Set(C.placements.map(q => q.component));
@@ -355,7 +356,7 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
         check(!external.length, `${B_} B2 · no external request (everything ${where === "file" ? "file:" : "127.0.0.1"})`, external.slice(0, 3).join(" "));
         if (where === "file") {
           // B3 · same organism at every placement, whole-number scale
-          await p.evaluate(() => { PLANT_PIPELINE_LAB.setPreset("complex"); PLANT_PIPELINE_LAB.set({ view: "placements", pack: "proof" }); });
+          await p.evaluate(() => { PLANT_PIPELINE_LAB.setPreset("maxDry"); PLANT_PIPELINE_LAB.set({ view: "placements", pack: "proof" }); });
           const pl = await p.evaluate(() => PLANT_PIPELINE_LAB.canvasSigs("canvas[data-role=placement]"));
           const want = { native: 1, room1024: 2, room1280: 3, room1440: 3, journal: 3, zoom4: 4 }, sig0 = nodeSig("proof", STATES.maxDry);
           const okPl = pl.length === 6 && pl.every(s => s.w === CANVAS.w && s.h === CANVAS.h && s.sig === sig0 && Math.abs(s.cssW - CANVAS.w * want[s.placement]) < 0.01 && Math.abs(s.cssH - CANVAS.h * want[s.placement]) < 0.01);
@@ -395,7 +396,7 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
       const box = await p.evaluate(() => { const r = document.querySelector(".cols").getBoundingClientRect(); return { x: 0, y: 0, width: Math.ceil(r.right + 12), height: Math.ceil(r.bottom + 8) }; });
       await shot(`${String(n++).padStart(2, "0")}-${k}-pipeline-and-pack-swap.png`, box); }
     await p.evaluate(() => PLANT_PIPELINE_LAB.set({ view: "sheet", pack: "proof" })); await shot("08-all-locked-states-proof-pack.png");
-    await p.evaluate(() => PLANT_PIPELINE_LAB.set({ view: "placements", pack: "proof" })); await p.evaluate(() => PLANT_PIPELINE_LAB.setPreset("complex")); await shot("09-same-organism-every-placement.png");
+    await p.evaluate(() => PLANT_PIPELINE_LAB.set({ view: "placements", pack: "proof" })); await p.evaluate(() => PLANT_PIPELINE_LAB.setPreset("maxDry")); await shot("09-same-organism-every-placement.png");
     await p.evaluate(() => { PLANT_PIPELINE_LAB.set({ view: "compare", placement: "room1280" }); PLANT_PIPELINE_LAB.setPreset("seed2"); PLANT_PIPELINE_LAB.set({ propose: "earlyMat", preview: true }); });
     await shot("10-preview-ghost-outline.png", await p.evaluate(() => { const r = document.querySelector(".cols").getBoundingClientRect(); return { x: 0, y: 0, width: Math.ceil(r.right + 12), height: Math.ceil(r.bottom + 8) }; }));
     // Node-rendered stills: the 400 % crop and the FX frame strips (exact frames, not screenshots)
