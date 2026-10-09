@@ -40,11 +40,12 @@
 
 /* ── left column: the production plant specimen above, the information card below (content height, with a floor) ── */
 .dr .lf-top{position:relative; flex:none; border-radius:var(--r-md); overflow:hidden; background:#dceefa; width:100%; aspect-ratio:170/196; max-height:56%}
-.dr .ps{position:relative; width:100%; height:100%} .dr .ps-svg{display:block; width:100%; height:100%}
+.dr .ps{position:relative; width:100%; height:100%; overflow:hidden}
+/* BLOOM-032C: the Organic Hybrid organism — one 84×98 canvas at a whole-number scale, nearest-neighbour, centred (plant-specimen.js sets size / offset) */
+.dr .ps-canvas{position:absolute; display:block; image-rendering:pixelated; image-rendering:crisp-edges}
 .dr .ps-tag{position:absolute; top:.6em; left:.6em; background:var(--ink); color:#fff7e0; font-size:.72em; font-weight:900; letter-spacing:1px; padding:.25em .7em; border-radius:.7em; opacity:0; transition:opacity .15s}
 .dr .ps.previewing .ps-tag{opacity:1}
-.dr .ps.ghost .ps-layer .ps-part{opacity:.55; filter:saturate(.6)} .dr .ps.unviable .ps-layer .ps-part{filter:saturate(.35) brightness(1.05)}
-.dr .ps-part{transition:opacity .15s, filter .15s} .dr .ps-part.dim{opacity:.38} .dr .ps-part.hl{filter:drop-shadow(0 0 .35em rgba(255,255,255,.95)) drop-shadow(0 0 .5em var(--cat, #ffd65a))}
+/* ghost (no colony), unviable, stressed and the part highlight are drawn in the specimen's own pixels (plant-specimen.js), not with CSS filters */
 .dr .spec-cap{position:absolute; left:0; right:0; bottom:0; padding:1.4em .8em .5em; background:linear-gradient(transparent, rgba(47,58,44,.75)); color:#fff7e0; line-height:1.15; pointer-events:none}
 .dr .spec-cap b{display:block; font-size:1em} .dr .spec-cap small{display:block; font-size:.78em; font-weight:700; opacity:.9}
 .dr .lf-info{flex:0 1 auto; min-height:7.5em; display:flex; flex-direction:column; gap:.55em; padding:.85em .95em; overflow:auto; transition:border-color .15s, background .15s}

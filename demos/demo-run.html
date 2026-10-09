@@ -385,6 +385,14 @@
 <script src="../resources/run-ui/planet-view.js"></script>
 <!-- BLOOM-029C: the production decision rooms (Region Inspect · Adapt · Spread) over the Planet View, same adapter -->
 <link rel="stylesheet" href="../resources/run-ui/decision-rooms.css">
+<!-- BLOOM-032C: the production plant is the approved ORGANIC HYBRID sprite organism. The accepted BLOOM-032B sprite runtime (classic scripts:
+     the generated atlas — no fetch, no image decode — then model, component selector, compositor, preview / purchase FX) loads BEFORE
+     plant-specimen.js, which keeps the 029C BLOOM.plantSpecimen API as an adapter over it (pack "organic-hybrid"). -->
+<script src="../resources/plant-visual/generated/plant-atlas.js"></script>
+<script src="../resources/plant-visual/plant-visual-model.js"></script>
+<script src="../resources/plant-visual/plant-components.js"></script>
+<script src="../resources/plant-visual/plant-compositor.js"></script>
+<script src="../resources/plant-visual/plant-fx.js"></script>
 <script src="../resources/run-ui/plant-specimen.js"></script>
 <!-- BLOOM-029D: the production Terraform room's globe helper (guarded dynamic import of the unmodified PlanetSphereView over http(s),
      and over file:// from the portable runtime (BLOOM-031); a flat canonical-surface fallback only if the module cannot load), then the rooms (Terraform is the fourth room since 029D) -->

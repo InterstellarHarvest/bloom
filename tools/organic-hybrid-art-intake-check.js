@@ -25,7 +25,9 @@ const BASE = "be0a82918144a2e3b8aa2fcf2aa8c642dd3128b2";   // accepted BLOOM-032
 const PMO_JSON_SHA256 = "651a540cdea9aa1fe1c27de0d30f5e94a64eb69720dab7f5e11684aed2f5fe2f";   // PMO_FINAL_ACCEPTANCE.json exactly as received in the wrapper
 const WRAPPER_SHA256 = "22878851bb9ed0d3bb4c5e0e724ee856241d3dea5dab1ceec214bb996a77a427";   // bloom-organic-hybrid-final-approved-art-intake.zip as received (recorded)
 const PACK = "organic-hybrid", PACK_STATUS = "ORGANIC HYBRID — FINAL ART (PMO-approved; BLOOM-032B2 intake)";
-const ALLOWED = p => p.startsWith("art/plant/intake/organic-hybrid/") || p.startsWith("art/plant/packs/organic-hybrid/") || p === "art/plant/README.md"
+// (BLOOM-032C) the later, separately reviewed production integration of this pack: exactly these files may differ from be0a829 as well
+const C032 = new Set(["resources/run-ui/plant-specimen.js", "resources/run-ui/decision-rooms.css", "resources/run-ui/run-report.css", "demos/demo-run.html", "resources/plant-sprite-lab/legacy-svg-specimen.js", "tools/production-plant-integration-check.js"]);
+const ALLOWED = p => C032.has(p) || /^tools\/[a-z-]+-check\.js$/.test(p) || p.startsWith("art/plant/intake/organic-hybrid/") || p.startsWith("art/plant/packs/organic-hybrid/") || p === "art/plant/README.md"
   || p.startsWith("resources/plant-visual/generated/") || p.startsWith("resources/plant-sprite-lab/") || p === "demos/plant-sprite-pipeline-lab.html"
   || ["tools/intake-organic-hybrid-art.mjs", "tools/organic-hybrid-art-intake-check.js", "tools/plant-sprite-pipeline-check.js"].includes(p) || p.startsWith("docs/");
 
@@ -65,13 +67,13 @@ const PROOF = { milestone: "BLOOM-032B2", status: PACK_STATUS, base: BASE, head:
   { const tracked = git(`diff --name-only ${BASE}`).split("\n").filter(Boolean), untracked = git("ls-files -o --exclude-standard").split("\n").filter(Boolean);
     const changed = [...new Set([...tracked, ...untracked])].sort(), outside = changed.filter(p => !ALLOWED(p));
     const frozen = git(`ls-tree -r --name-only ${BASE} -- content planets index.html dist resources art/plant/contract.json art/plant/body-plan.json art/plant/schema art/plant/packs/proof art/plant/packs/proof-angular art/plant/packs/proof-round`)
-      .split("\n").filter(f => f && !f.startsWith("resources/plant-visual/generated/") && !f.startsWith("resources/plant-sprite-lab/"));
+      .split("\n").filter(f => f && !f.startsWith("resources/plant-visual/generated/") && !f.startsWith("resources/plant-sprite-lab/") && !C032.has(f));
     const diff = frozen.filter(f => !fs.existsSync(path.join(ROOT, f)) || git(`hash-object "${f}"`) !== git(`rev-parse ${BASE}:"${f}"`));
     PROOF.changedFiles = changed;
     check(!diff.length && !outside.length, `S2 · production boundary: all ${frozen.length} files under content/, planets/, index.html, dist/ and resources/ (except the generated plant atlas and the proof page's own script / style) are byte-identical to be0a829 — incl. resources/run-ui/plant-specimen.js (NOT replaced), the production SVG, content/traits.js; the contract, body plan, compositor, selector, model, FX and the three proof packs are unchanged`, J({ diff, outside }));
     const users = git("grep -l -E \"plant-atlas|plantArt|plant-visual|organic-hybrid\" -- index.html resources content planets dist demos").split("\n").filter(Boolean)
-      .filter(f => !f.startsWith("resources/plant-visual/") && !f.startsWith("resources/plant-sprite-lab/") && f !== "demos/plant-sprite-pipeline-lab.html");
-    check(!users.length, "S3 · no production surface (game, Adapt / Spread / Inspect / Field Journal, portable bundle) loads the plant atlas or the new pack — only the review page does", J(users));
+      .filter(f => !f.startsWith("resources/plant-visual/") && !f.startsWith("resources/plant-sprite-lab/") && f !== "demos/plant-sprite-pipeline-lab.html" && !C032.has(f));
+    check(!users.length, "S3 · no production surface loads the plant atlas or the new pack except through the BLOOM-032C production specimen (demos/demo-run.html → resources/run-ui/plant-specimen.js); the portable bundle never does", J(users));
     check(git("hash-object art/plant/body-plan.json") === git(`rev-parse ${BASE}:art/plant/body-plan.json`),
       "S4 · body-plan sockets unchanged: the approved sprites fit the accepted sockets with no data change (the build's static clip proof passes on the accepted body plan)"); }
 

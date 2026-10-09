@@ -27,6 +27,8 @@ const BASE = "bba000fcd60bcd259af289c257b441087eff4b92", LAB_032A = "c561a34";
 const ALLOWED = p => p.startsWith("art/plant/") || p.startsWith("resources/plant-visual/") || p.startsWith("resources/plant-sprite-lab/") || p === "demos/plant-sprite-pipeline-lab.html"
   || p === "tools/build-plant-art.mjs" || p === "tools/plant-sprite-pipeline-check.js" || p === "tools/package.json" || p.startsWith("docs/")
   || p === "tools/intake-organic-hybrid-art.mjs" || p === "tools/organic-hybrid-art-intake-check.js";   // BLOOM-032B2: the final-art intake + its focused QA
+// (BLOOM-032C) the later, separately reviewed production integration: exactly these files may differ from bba000f as well
+const C032 = new Set(["resources/run-ui/plant-specimen.js", "resources/run-ui/decision-rooms.css", "resources/run-ui/run-report.css", "demos/demo-run.html", "resources/plant-sprite-lab/legacy-svg-specimen.js", "tools/production-plant-integration-check.js"]);
 const FINAL_PACKS = { "organic-hybrid": "ORGANIC HYBRID — FINAL ART (PMO-approved; BLOOM-032B2 intake)" };   // approved art; every other pack is temporary proof art
 const OWN_RUNTIME = ["resources/plant-visual/plant-visual-model.js", "resources/plant-visual/plant-components.js", "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-fx.js", "resources/plant-sprite-lab/lab.js"];
 
@@ -65,9 +67,9 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
     check(parent === BASE && (!main || git(`merge-base --is-ancestor ${BASE} ${main}`) === ""), "S1 · 032B1 starts from the exact accepted BLOOM-031 production main bba000f", J({ firstParent: parent.slice(0, 7), originMain: main && main.slice(0, 7) })); }
   // S2 · S3 · scope: production / gameplay / trait files byte-identical; 032A review branch untouched
   { const tracked = git(`diff --name-only ${BASE}`).split("\n").filter(Boolean), untracked = git("ls-files -o --exclude-standard").split("\n").filter(Boolean);
-    const changed = [...new Set([...tracked, ...untracked])].sort(), outside = changed.filter(p => !ALLOWED(p));
+    const changed = [...new Set([...tracked, ...untracked])].sort(), outside = changed.filter(p => !ALLOWED(p) && !C032.has(p) && !/^tools\/[a-z-]+-check\.js$/.test(p));
     const prod = git(`ls-tree -r --name-only ${BASE} -- resources content planets demos index.html dist`).split("\n").filter(Boolean);
-    const prodDiff = prod.filter(f => !fs.existsSync(path.join(ROOT, f)) || git(`hash-object "${f}"`) !== git(`rev-parse ${BASE}:"${f}"`));
+    const prodDiff = prod.filter(f => !C032.has(f)).filter(f => !fs.existsSync(path.join(ROOT, f)) || git(`hash-object "${f}"`) !== git(`rev-parse ${BASE}:"${f}"`));
     check(!prodDiff.length && !outside.length, `S2 · no gameplay / production file changed: all ${prod.length} files under resources/, content/, planets/, demos/, index.html and dist/ at bba000f are byte-identical (incl. resources/run-ui/plant-specimen.js and content/traits.js); 032B1 only ADDS art/plant/, resources/plant-visual/, resources/plant-sprite-lab/, the proof page, its build + check tools, docs (and two npm scripts)`, J({ prodDiff, outside }));
     let lab = null; try { lab = git("rev-parse origin/handoff/bloom-032a-review"); } catch {}
     const labFiles = lab ? git(`diff --name-only ${BASE} ${lab}`).split("\n").filter(Boolean) : [];

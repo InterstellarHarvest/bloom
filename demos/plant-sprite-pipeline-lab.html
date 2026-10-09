@@ -9,8 +9,8 @@
   BLOOM-032B1 — PRODUCTION PLANT SPRITE PIPELINE PROOF; BLOOM-032B2 — ORGANIC HYBRID FINAL ART INTAKE. A review page, not gameplay:
   the sprite pipeline (source PNG atlas + metadata → generated runtime atlas → skeleton / sockets → authored sprites + procedural
   stem / roots → treatments → preview diff → mutation FX) showing the PMO-approved ORGANIC HYBRID — FINAL ART pack, beside the three
-  TEMPORARY PIPELINE PROOF packs (not final art). Production resources/run-ui/plant-specimen.js is unchanged, not yet replaced, and shown
-  for reference. Opens as a file, over HTTP, or under a subpath.
+  TEMPORARY PIPELINE PROOF packs (not final art). Since BLOOM-032C production (resources/run-ui/plant-specimen.js) renders the Organic
+  Hybrid organism; the retired 029C SVG is shown for reference from resources/plant-sprite-lab/legacy-svg-specimen.js. Opens as a file, over HTTP, or under a subpath.
 -->
 <link rel="stylesheet" href="../resources/plant-sprite-lab/lab.css">
 </head>
@@ -27,7 +27,8 @@
 <!-- the REAL trait data (ids, names, legal tiers) and the current production specimen — both unchanged -->
 <script src="../content/config.js"></script>
 <script src="../content/traits.js"></script>
-<script src="../resources/run-ui/plant-specimen.js"></script>
+<!-- (BLOOM-032C) the RETIRED 029C SVG specimen, as a legacy reference for the comparison view only (production now renders the Organic Hybrid organism) -->
+<script src="../resources/plant-sprite-lab/legacy-svg-specimen.js"></script>
 <!-- the sprite pipeline: generated atlas (from art/plant/) → model → component selector → compositor → preview / mutation FX -->
 <script src="../resources/plant-visual/generated/plant-atlas.js"></script>
 <script src="../resources/plant-visual/plant-visual-model.js"></script>
