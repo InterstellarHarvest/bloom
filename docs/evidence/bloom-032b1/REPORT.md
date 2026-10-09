@@ -13,7 +13,7 @@ targeting `docs/PLANT_SPRITE_PIPELINE_v1.md` § ARTIST_HANDOFF. It was not inges
 * Production: `resources/run-ui/plant-specimen.js` and every file under resources/, content/, planets/, demos/, index.html and dist/ that
   existed at bba000f are byte-identical (QA S2). The 032A review branch is untouched (QA S3).
 
-**Contract:** 34 components (11 before) in 8 families, 3 treatments (pigment, wax levels 1–3, toothed), 15 materials, 4 cold layouts,
+**Contract:** 34 components (11 before) in 8 families, 3 treatments (pigment, wax levels 1–3, toothed), 18 materials, 4 cold layouts,
 117 sockets. Per pack: 55 authored sprites → 92 runtime sprites (mirrored twins baked); 17 782 placements statically proven inside the canvas.
 
 **84×98 maximal proofs (N8 / N9):** each one runs 4 legal temperature splits × 3 packs × thriving / strained = 24 cases, all legal, every
