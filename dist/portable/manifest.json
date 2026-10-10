@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "cb47099d9ccb04000c55bf633e1194d28a2ea9ddf09c53fd7116d8c51f6535b3",
+  "fingerprint": "b172d1d0b09de56dc48b1fcef741892c21b18535fee51bc6120d10680447b20f",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -14,15 +14,16 @@
   ],
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
-    "bytes": 1270049,
-    "sha256": "250397bf58d486b3cdda879d7697153e7a52c6558a3ea6c89bd3ea56f3cd496c",
-    "surveyWorkerTextBytes": 211603
+    "bytes": 1317026,
+    "sha256": "5d02cdc2a7491dcbc435d7b778ac220df09b9eaa09779d3af2d749934cc5c2aa",
+    "surveyWorkerTextBytes": 237905
   },
   "workerInputs": [
     "content/archetypes.js",
     "content/config.js",
     "content/play.js",
     "content/scenarios.js",
+    "content/species.js",
     "content/traits.js",
     "planets/first_bloom.js",
     "resources/bloom-archetype.js",
@@ -30,6 +31,7 @@
     "resources/bloom-play.js",
     "resources/bloom-scenario.js",
     "resources/bloom-sim.js",
+    "resources/bloom-species.js",
     "resources/bloom-validate.js",
     "resources/bloom-witness.js",
     "resources/destination-survey/survey-data.js",
@@ -44,8 +46,8 @@
     },
     {
       "path": "content/config.js",
-      "bytes": 9667,
-      "sha256": "f5a8a059702e7da4b3b1ad6db52f265eafdaadea7db20d597c7dc17b85ecb617",
+      "bytes": 10450,
+      "sha256": "37b583b7fda24b642910533aa0fb9c0b4e7652051f6ba129448bd6f31b6a944d",
       "bytesInBundle": 0
     },
     {
@@ -56,8 +58,14 @@
     },
     {
       "path": "content/scenarios.js",
-      "bytes": 16506,
-      "sha256": "63919039b5d9177dfee2b419b91ae8d4fbd346cd429791be3add3383b3488c8e",
+      "bytes": 16547,
+      "sha256": "80b1bb127afdd320f48305d948c1d6648111f07af55be0d368251498b993845c",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "content/species.js",
+      "bytes": 7986,
+      "sha256": "2e8d039ec25ee3b2f13c18741f2aae7a6bed35e1a2487c0d209fc97a23e844d7",
       "bytesInBundle": 0
     },
     {
@@ -74,9 +82,9 @@
     },
     {
       "path": "resources/app/app-controller.js",
-      "bytes": 13591,
-      "sha256": "5b7c703c3b50a5cc2611fdf872afe45d619333b9ecc3749fb15c007d74548571",
-      "bytesInBundle": 11895
+      "bytes": 16120,
+      "sha256": "0b14fd022f6e9ba5b6eaf51e270c858227ec7e174f031b88a7c2fdd485b3011e",
+      "bytesInBundle": 13690
     },
     {
       "path": "resources/atmosphere-transition/atmosphere-transition.js",
@@ -86,8 +94,8 @@
     },
     {
       "path": "resources/bloom-archetype.js",
-      "bytes": 14428,
-      "sha256": "3da4ce004008be3a29955e8f3e9c9cef279bbe8c55c453d3e5fe0748b5680448",
+      "bytes": 15866,
+      "sha256": "654fc0542d9c88e542cadf5c465cd87e9587ffe65a90ed7068d66a92a2a26ed1",
       "bytesInBundle": 0
     },
     {
@@ -98,56 +106,62 @@
     },
     {
       "path": "resources/bloom-play.js",
-      "bytes": 8376,
-      "sha256": "e1d66ec6d4e1bcc54c01dd0374722a74c5c830f1352d4097e6694b343b55a9af",
+      "bytes": 9313,
+      "sha256": "6b1a70763bb51066bfeff6b406f66e28d1b2069446d7ab630d82d2440c3ab079",
       "bytesInBundle": 0
     },
     {
       "path": "resources/bloom-scenario.js",
-      "bytes": 5737,
-      "sha256": "d319ae509ec555bcd8158b8806c95ca50470fa35917974ebbd32f83c4b81b36c",
+      "bytes": 5955,
+      "sha256": "97d6960c383722c359c6032ba93a55832826efb418fb8e83323e522b00926d79",
       "bytesInBundle": 0
     },
     {
       "path": "resources/bloom-sim.js",
-      "bytes": 90282,
-      "sha256": "1d742e9d837154c809667ff30233d5f4fb5310264a849e209235fa209d917fa6",
+      "bytes": 92940,
+      "sha256": "7306e34b6bd99eb2843e380971ea2e30925afeb1e7f32158f3f435fc19eda394",
+      "bytesInBundle": 0
+    },
+    {
+      "path": "resources/bloom-species.js",
+      "bytes": 15295,
+      "sha256": "9df5e49876b94364101dee2ee2507abb72737682c826cd8042144be65b2f676b",
       "bytesInBundle": 0
     },
     {
       "path": "resources/bloom-validate.js",
-      "bytes": 13189,
-      "sha256": "d1dcb78133f2fe544082b69ead92bdbb612a756a35c00b302e749d3271beeb26",
+      "bytes": 13542,
+      "sha256": "63a35684ea30cbb78b7245619b83b964884c1365dc8d5539b6edaaceb098e142",
       "bytesInBundle": 0
     },
     {
       "path": "resources/bloom-witness.js",
-      "bytes": 39638,
-      "sha256": "2c38331d5372aae9fa43a77c67537885fe4050671fd1c0fdc30c9623d73ee55b",
+      "bytes": 40278,
+      "sha256": "c1fa1df76fe8477bdaa42f529a2ced0362bcdd4a03a4e229e65ca778f9111863",
       "bytesInBundle": 0
     },
     {
       "path": "resources/destination-survey/destination-survey.js",
-      "bytes": 48566,
-      "sha256": "7852886b34e7b4eb376c3215583cd92eca0735d2952204f72aa0a4317764923d",
-      "bytesInBundle": 47623
+      "bytes": 51429,
+      "sha256": "1098265c614fcff33f48eea404b5a288b494e585a5a5eda3dde78091f4911dce",
+      "bytesInBundle": 50741
     },
     {
       "path": "resources/destination-survey/sector-pool.js",
-      "bytes": 13646,
-      "sha256": "a734aab2082accc2da29e5b39d7bd2b3e0bd82c3a87428790d65aefad425b7e4",
-      "bytesInBundle": 13434
+      "bytes": 18028,
+      "sha256": "6a2460380fa84ca0706ce8b05b13ae704cf459c6d6e13009bb0c5b5090ada5f8",
+      "bytesInBundle": 17225
     },
     {
       "path": "resources/destination-survey/survey-data.js",
-      "bytes": 23285,
-      "sha256": "a7b5ffd6dd00fce0c7ee1978793925d7e34b9fe7ff7d12daace3ac9c1a20174e",
-      "bytesInBundle": 15378
+      "bytes": 30798,
+      "sha256": "5c4b3b4e8b66df0824b5f39d0f52edc78f91d7c7130aa3561784939d9dbcfac7",
+      "bytesInBundle": 19741
     },
     {
       "path": "resources/destination-survey/survey-worker.js",
-      "bytes": 2468,
-      "sha256": "3c42f8f263063e51a6803672a897152d9b01a2d5e60a96170bcabffd216c6d96",
+      "bytes": 3710,
+      "sha256": "1bccef7ebabef48cb4b9f7fa786b3a50856fe414effd6556645c446e3636d29c",
       "bytesInBundle": 0
     },
     {
@@ -158,9 +172,9 @@
     },
     {
       "path": "resources/main-menu/expedition-entry.js",
-      "bytes": 20641,
-      "sha256": "3c6de15fd603e4485ca35a57a0c1b222049e0dae1d8f7af3c63678c6cb4173cc",
-      "bytesInBundle": 17075
+      "bytes": 27982,
+      "sha256": "45fbd0159f351a429e71ee85cfef3e7fbda9cd090c719534d90df4c47671980f",
+      "bytesInBundle": 24213
     },
     {
       "path": "resources/main-menu/main-menu-data.js",
