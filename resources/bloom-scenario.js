@@ -1,6 +1,6 @@
 // BLOOM — pressure-scenario validation layer (BLOOM-012). No DOM.
 //
-//   BLOOM.validateScenario(planet, config, traits, scenario, { archetypeId, minStrategies }) → verdict
+//   BLOOM.validateScenario(planet, config, traits, scenario, { archetypeId, minStrategies, species }) → verdict
 //
 // The archetype layers 1–8 (bloom-validate / bloom-archetype) keep validating the underlying DEFAULT-scenario planet; they say nothing
 // about a pressure run. This separate layer ("layer P") proves that ONE planet + ONE scenario is a fair combination, using
@@ -38,13 +38,15 @@
     const policy = (V.archetypes || {})[opts.archetypeId];
     if (policy && policy.allowed === false) return { ...base, ok: false, status: "DISALLOWED", reason: `${S.name} is not offered on this archetype: ${policy.reason}`, required: 0, strategies: [] };
     const need = opts.minStrategies || V.minStrategies || 1, t0 = Date.now();
-    const r = BLOOM.findStrategies(planet, config, traits, { minStrategies: need, pacing: V.pacing || null, scenario: S });
+    // (BLOOM-035B) opts.species: the player physiology layer P proves (Challenges prescribe the species); absent = the reference
+    const SPO = opts.species ? { species: opts.species } : {};
+    const r = BLOOM.findStrategies(planet, config, traits, { minStrategies: need, pacing: V.pacing || null, scenario: S, ...SPO });
     const max = BLOOM.pressure.maxOffsets(S.pressure, planet.globalClimate);
     const pressure = S.pressure ? { graceSeconds: S.pressure.graceSeconds, fullAtSeconds: S.pressure.graceSeconds + S.pressure.durationSeconds,
       maxOffsets: { temp: +max.temp.toFixed(2), moist: +max.moist.toFixed(2), rad: +max.rad.toFixed(2) }, holdFinalSeconds: V.holdFinalSeconds || 0 } : null;
     // competition (BLOOM-014): the competitor's starting state on this planet (planet-derived, so the same for every run)
     let competition = null;
-    if (S.competition) { const probe = BLOOM.createSim(planet, config, traits, { rng: () => 0.5, scenario: S }), C = probe.competition;
+    if (S.competition) { const probe = BLOOM.createSim(planet, config, traits, { rng: () => 0.5, scenario: S, ...SPO }), C = probe.competition;
       competition = { startShare: +C.startShare.toFixed(4), startTiles: C.tiles, holdAfterMarginSeconds: V.holdFinalSeconds || 0, confirmRngSeeds: V.confirmRngSeeds || [] }; }
     // climate instability (BLOOM-015): the mechanism's thresholds (the shocks themselves are each witness's own, in strategies[].climate)
     const climate = S.climateInstability ? { threshold: S.climateInstability.shocks.threshold, holdAfterShockSeconds: V.holdFinalSeconds || 0,
