@@ -1,4 +1,4 @@
-// BLOOM — authored tutorial planet "First Bloom" (friendly 9-section Eden; the Next Playable Slice).
+// BLOOM — authored tutorial planet "First Bloom" (friendly 9-section world, default scenario; the Next Playable Slice).
 // Same planet model the procedural generator will emit (bible §15/§18).
 // effTemp = globalClimate.temperature + tempOffset ; effMoist = globalClimate.moisture + moistureOffset.
 (function (root) {

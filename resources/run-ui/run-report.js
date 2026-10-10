@@ -59,6 +59,8 @@
     const live = m => { const l = view.el.querySelector("#pvLive"); if (l) l.textContent = m; };
     const state = { open: false, busy: false, kind: null, opener: null, shown: 0 };
     const TL = [];
+    // (BLOOM-033) the next run in the same document must not inherit this report's focus trap or its Escape guard: dispose() releases them
+    const life = new AbortController(), LIFE = { signal: life.signal };
     const tnow = () => performance.now();
 
     // ---------------------------------------------------------------- the layer (inside the Planet View, above the rooms, below the toast)
@@ -114,8 +116,8 @@
         ? `You held ${d.coveragePct} % of the land of ${world}${i.scenarioActive ? ` under ${i.scenarioName}` : ""} in ${d.elapsed.text}.`
         : `No living plants were left anywhere for ${d.graceSeconds} s, so the run is over after ${d.elapsed.text} on ${world}${i.scenarioActive ? ` under ${i.scenarioName}` : ""}.`;
       const facts = win
-        ? [["Coverage held", `${d.coveragePct} %`, `of land · goal ${Math.round(d.winAt * 100)} %`, "regions"], ["Time", d.elapsed.text, "to the bloom", "clock"], ["World", i.planetName, i.kind === "procedural" ? `${i.archetypeName} · ${i.seedWord} ${i.seed}` : "Authored world", "world"], ["Scenario", i.scenarioActive ? i.scenarioName : "Eden", i.scenarioActive ? "final state below" : "no pressure", "climate"]]
-        : [["Reason", "Extinction", cap(d.reason || d.lostReason || ""), "x"], ["Lasted", d.elapsed.text, "before the end", "clock"], ["World", i.planetName, i.kind === "procedural" ? `${i.archetypeName} · ${i.seedWord} ${i.seed}` : "Authored world", "world"], ["Scenario", i.scenarioActive ? i.scenarioName : "Eden", i.scenarioActive ? "final state below" : "no pressure", "climate"]];
+        ? [["Coverage held", `${d.coveragePct} %`, `of land · goal ${Math.round(d.winAt * 100)} %`, "regions"], ["Time", d.elapsed.text, "to the bloom", "clock"], ["World", i.planetName, i.kind === "procedural" ? `${i.archetypeName} · ${i.seedWord} ${i.seed}` : "Authored world", "world"], ["Scenario", i.scenarioActive ? i.scenarioName : "None", i.scenarioActive ? "final state below" : "no challenge modifier", "climate"]]
+        : [["Reason", "Extinction", cap(d.reason || d.lostReason || ""), "x"], ["Lasted", d.elapsed.text, "before the end", "clock"], ["World", i.planetName, i.kind === "procedural" ? `${i.archetypeName} · ${i.seedWord} ${i.seed}` : "Authored world", "world"], ["Scenario", i.scenarioActive ? i.scenarioName : "None", i.scenarioActive ? "final state below" : "no challenge modifier", "climate"]];
       $("rrFacts").innerHTML = facts.map(([k, v, n, ic]) => `<div class="rr-fact" role="listitem">${ico(ic)}<div><small>${esc(k)}</small><b>${esc(v)}</b><span>${esc(n)}</span></div></div>`).join("");
       // the plant: the production specimen from the real owned Adapt / Spread tiers (a loss shows its restrained unviable state; the anatomy stays true)
       const traits = {}, names = {}; for (const b of (d.built || [])) { traits[b.id] = b.tier; names[b.id] = b.name; }
@@ -202,8 +204,8 @@
       const i = f.indexOf(document.activeElement);
       if (e.shiftKey && (i <= 0)) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && (i === -1 || i === f.length - 1)) { e.preventDefault(); f[0].focus(); }
     });
-    document.addEventListener("keydown", e => { if (e.key === "Escape" && state.open) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
-    document.addEventListener("focusin", e => { if (state.open && !state.busy && !layer.contains(e.target)) { const f = focusables(); (f[0] || card).focus(); } });
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && state.open) { e.preventDefault(); e.stopImmediatePropagation(); } }, { capture: true, signal: life.signal });
+    document.addEventListener("focusin", e => { if (state.open && !state.busy && !layer.contains(e.target)) { const f = focusables(); (f[0] || card).focus(); } }, LIFE);
 
     // ---------------------------------------------------------------- the run ended: the page's win event / loss notice
     const unsub = A.subscribe(ch => { if (!state.open && !state.busy && (ch.reasons.includes("win") || ch.reasons.includes("loss")) && A.report()) open(); });
@@ -213,7 +215,7 @@
       el: layer, card, adapter: A, open, keepPlaying, render: () => { const d = A.report(); if (d) render(d); return !!d; }, specimen: spec, transition: T,
       timeline: () => TL.map(e => ({ ...e })),
       state: () => ({ open: state.open, busy: state.busy, kind: state.kind, shown: state.shown, transitioning: !!layer.dataset.transitioning, actions: [...layer.querySelectorAll("[data-act]")].filter(b => !b.hidden).map(b => b.dataset.act) }),
-      dispose() { unsub(); layer.remove(); instance = null; RR.instance = null; },
+      dispose() { if (instance !== api) return; unsub(); life.abort(); spec.dispose(); state.open = false; layer.remove(); instance = null; RR.instance = null; },
     };
     instance = api; RR.instance = api; return api;
   }

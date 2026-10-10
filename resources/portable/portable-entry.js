@@ -9,8 +9,9 @@
 // What the bundle provides (window.BLOOM_PORTABLE):
 //   load(path)   the module namespace of a source module by its repository path — evaluated lazily, once, on first load (as a real
 //                import would), so loading the bundle runs no game code. BLOOM.modules.load(url) is the only caller.
-//   modules      the paths it can load: exactly the modules the classic pages import dynamically (the title's page composer — and
-//                with it the whole title / survey / descent graph — the sphere, the gameplay transition, the settings, the training layer)
+//   modules      the paths it can load: exactly the modules the classic files import dynamically (the app — and with it the whole
+//                title / survey / descent / training graph — the sphere, the gameplay transition, the settings, and the training layer
+//                for the developer harness). (BLOOM-033) Nothing crosses a document boundary any more: no handoff code is bundled.
 //   the survey workers: the Destination Survey's worker (resources/destination-survey/survey-worker.js and the BLOOM classic scripts it
 //                imports, bundled by the build into ONE classic worker script) is started from a blob: URL — the same worker code and
 //                the same validation path as the module worker, which file:// pages cannot start. SectorPool still falls back to
@@ -20,7 +21,7 @@ import { SectorPool } from "../destination-survey/sector-pool.js";
 import surveyWorkerSource from "bloom-portable:survey-worker"; // (the build supplies it: the bundled survey worker, as text)
 
 const MODULES = {
-  "resources/main-menu/main-menu-page.js": () => import("../main-menu/main-menu-page.js"),
+  "resources/app/app-controller.js": () => import("../app/app-controller.js"),             // (BLOOM-033) the whole app: title, survey, runs
   "resources/main-menu/main-menu-data.js": () => import("../main-menu/main-menu-data.js"),
   "resources/planet-sphere/planet-sphere-view.js": () => import("../planet-sphere/planet-sphere-view.js"),
   "resources/atmosphere-transition/atmosphere-transition.js": () => import("../atmosphere-transition/atmosphere-transition.js"),

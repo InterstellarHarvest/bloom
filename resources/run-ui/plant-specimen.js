@@ -14,6 +14,7 @@
 //   sp.state · sp.parts · sp.el      // the last state · the seven logical parts · the specimen box
 //   (additive) sp.canvas (sp.svg names the same image element) · sp.globalSignature() · sp.scale() · sp.lastFx {seq, style, frames,
 //   endSig, targetSig, exact} · sp.animating() · sp.highlighted · sp.pack · BLOOM.plantSpecimen.mounted() (QA: the mounted specimens, read-only)
+//   sp.dispose()   (BLOOM-033) its owner releases it (listener, observer, element, its mounted() entry) when the run is disposed
 //
 // Behind it is the accepted BLOOM-032B pipeline, unchanged: BLOOM.plantVisual.model (normalize) → BLOOM.plantVisual.components (select) →
 // BLOOM.plantCompositor (the ONE canonical 84 × 98 organism from the generated atlas BLOOM.plantArt, pack "organic-hybrid") → BLOOM.plantFx
@@ -189,6 +190,7 @@
   }
 
   function mount(host, { reducedMotion = () => false } = {}) {
+    const life = new AbortController();   // (BLOOM-033) one run of many in the same document: dispose() releases the global listener
     const p = pipe(), box = document.createElement("div"); box.className = "ps"; box.dataset.pack = PACK; host.appendChild(box);
     const cv = document.createElement("canvas"); cv.className = "ps-canvas"; cv.width = p.W; cv.height = p.H; cv.setAttribute("role", "img"); cv.setAttribute("aria-label", "Your plant");
     const tag = document.createElement("span"); tag.className = "ps-tag"; tag.setAttribute("aria-hidden", "true"); tag.textContent = "PREVIEW";
@@ -208,10 +210,10 @@
       box.style.background = `linear-gradient(to bottom, ${rgb(p.env.sky[0])} 0, ${rgb(p.env.sky[0])} ${top}px, ${rgb(p.env.sky[1])} ${soil}px, ${rgb(p.env.soil[0])} ${soil}px, ${rgb(p.env.soil[1])} 100%)`;
       return k;
     }
-    if (typeof ResizeObserver === "function") new ResizeObserver(() => layout()).observe(box);
+    const ro = typeof ResizeObserver === "function" ? new ResizeObserver(() => layout()) : null; if (ro) ro.observe(box);
     const visible = () => box.isConnected && box.getClientRects().length > 0 && !box.closest("[hidden]");
     // a REAL purchase only (the page's own event); consumed by the very next render of a visible specimen
-    document.addEventListener("bloom:upgrade-purchase", () => { if (visible()) armed = true; });
+    document.addEventListener("bloom:upgrade-purchase", () => { if (visible()) armed = true; }, { signal: life.signal });
     function show() { if (!D) return; sig = D.sig; if (!anim) paint(D.rgba); }
     function render(st) {
       last = st; const S = readState(st); layout();
@@ -236,7 +238,9 @@
     const inst = Object.freeze({ el: box, canvas: cv, svg: cv, render, highlight, anchorPoint,
       anchors: () => PARTS.map(q => ({ part: q, view: D ? D.anchors[q] : null, client: anchorPoint(q) })),
       signature: () => sig, globalSignature: () => D ? D.globalSig : null, scale: () => layout(), animating: () => !!anim,
-      get state() { return last; }, get lastFx() { return fx.last; }, get highlighted() { return hl; }, parts: PARTS.slice(), pack: PACK });
+      get state() { return last; }, get lastFx() { return fx.last; }, get highlighted() { return hl; }, parts: PARTS.slice(), pack: PACK,
+      // (BLOOM-033) the owner (a room, the report) disposes its specimen with itself: listener, observer, element, and its MOUNTED entry
+      dispose() { life.abort(); if (ro) ro.disconnect(); box.remove(); const i = MOUNTED.indexOf(inst); if (i >= 0) MOUNTED.splice(i, 1); } });
     MOUNTED.push(inst); return inst;
   }
 

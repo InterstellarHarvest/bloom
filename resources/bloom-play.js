@@ -22,7 +22,7 @@
 //   2. when the scenario changes the run (BLOOM.pressure.isDynamic), BLOOM.validateScenario (layer P) on that world.
 // The first candidate that passes both is the run. A rejected candidate is never returned; the search moves on to the next
 // seed. A DISALLOWED combination stops at once (it is a property of planet + scenario, not of a seed). If every candidate is
-// rejected the outcome is an explicit failure: never a different planet, never a weaker scenario, never Eden instead.
+// rejected the outcome is an explicit failure: never a different planet, never a weaker scenario, never the default instead.
 (function (root) {
   "use strict";
   const BLOOM = root.BLOOM;

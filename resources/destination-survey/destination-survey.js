@@ -352,13 +352,13 @@ export class DestinationSurvey {
     r.innerHTML = `
       <header class="ds-head">
         <button type="button" class="ds-btn ghost ds-exit" data-act="exit"${this.onExit ? "" : " hidden"}><span aria-hidden="true">←</span> Main menu</button>
-        <div class="ds-title"><span class="ds-kicker">BLOOM · Expedition planning</span><h1>Destination Survey</h1></div>
+        <div class="ds-title"><span class="ds-kicker">Strange Bloom</span><h1>Destination Survey</h1></div>
         <p class="ds-sector" aria-live="polite"></p>
         <div class="ds-head-tools"><span class="ds-progress sr-only" role="status" hidden></span><button type="button" class="ds-btn scan" data-act="scan">${SCAN_ICON}<span>Scan <span class="lbl-long">new </span>sector</span></button></div>
       </header>
       <div class="ds-survey">
         <div class="ds-cols" aria-hidden="true">${SURVEY_CLASSES.map(c => `<div class="ds-colhead" data-class="${c.id}"><b>${c.label}</b><small>${esc(c.blurb)}</small></div>`).join("")}</div>
-        <div class="ds-grid" role="group" aria-label="Candidate worlds: three columns, Stable, Volatile and Extreme">${Array.from({ length: N }, (_, i) => {
+        <div class="ds-grid" role="group" aria-label="Candidate worlds: three columns, ${SURVEY_CLASSES.map(c => c.label).join(", ").replace(/, ([^,]*)$/, " and $1")}">${Array.from({ length: N }, (_, i) => {
           const c = SURVEY_CLASSES[i % COLS];
           return `<div class="ds-cell" data-class="${c.id}"><button type="button" class="ds-cand" data-index="${i}" disabled>
             <span class="ds-globe-slot"><span class="ds-globe"></span><span class="ds-halo"></span><span class="ds-incoming" aria-hidden="true" style="--d:${(-i * 0.37).toFixed(2)}s">Incoming</span></span>

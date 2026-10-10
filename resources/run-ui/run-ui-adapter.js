@@ -11,7 +11,7 @@
 //             (preview cleared, message, loss, bubble placed …) and a "tick" at most once per animation frame on which the sim ran.
 // It draws nothing, touches no DOM, runs no loop and keeps no game state of its own.
 //
-//   const runUI = BLOOM.runUI.createAdapter(host)   → { adapter, invalidate(reason), frame() }   (the latter two are the page's)
+//   const runUI = BLOOM.runUI.createAdapter(host)   → { adapter, invalidate(reason), frame(), dispose() }   (the latter three are the run's owner's)
 //   window.BLOOM_RUN_UI.adapter                      → the adapter (the run page publishes it before bloom:run-ready)
 //
 // BLOOM-029B (additive; api stays 1): four more reads and one action for the production Planet View — surface() (the canonical
@@ -68,6 +68,8 @@
     const { sim, run, labels: LABEL, view: V, read: R, act: A } = host, S = host.scenario;
     const M = sim.map, SEC = M.SEC, CFG = sim.config;
     const tickSeconds = t => t * CFG.tickMs / 1000;
+    // (BLOOM-033) a run with no scenario object plays the default scenario (no challenge modifier): its id and name, as the host names them
+    const DEFAULT_ID = (S.none && S.none.id) || "default", DEFAULT_NAME = (S.none && S.none.name) || "Default";
 
     // ---- region references (index or id in, { index, id, name } out)
     const indexOf = ref => typeof ref === "number" ? (Number.isInteger(ref) && ref >= 0 && ref < M.SC ? ref : -1)
@@ -79,16 +81,20 @@
     const listeners = new Set(); let revision = 0, pending = null, lastTicks = sim.ticks;
     const later = typeof queueMicrotask === "function" ? queueMicrotask : f => Promise.resolve().then(f);
     function flush() {
-      const p = pending; pending = null; revision++;
+      const p = pending; if (!p) return; pending = null; revision++;   // (BLOOM-033: nothing after dispose)
       const change = Object.freeze({ revision, ticks: sim.ticks, reasons: [...p.reasons], events: p.events });
       for (const fn of [...listeners]) { try { fn(change); } catch (err) { console.error("BLOOM run UI subscriber failed:", err); } }
     }
+    // (BLOOM-033) the run's owner (GameSession) disposes the boundary with the run: its event listeners go, subscribers are dropped and
+    // no notice is delivered after that (several runs share one document; a disposed run must never notify the next one's view)
+    const life = new AbortController(); let disposed = false;
     function invalidate(reason, event) {
+      if (disposed) return;
       if (!pending) { pending = { reasons: new Set(), events: [] }; later(flush); }
       pending.reasons.add(reason); if (event) pending.events.push(event);
     }
     function frame() { if (sim.ticks !== lastTicks) { lastTicks = sim.ticks; invalidate("tick"); } }
-    for (const type of EVENTS) host.events.addEventListener("bloom:" + type, e => invalidate(type, { type, detail: plain(e.detail) }));
+    for (const type of EVENTS) host.events.addEventListener("bloom:" + type, e => invalidate(type, { type, detail: plain(e.detail) }), { signal: life.signal });
 
     // ---- reads
     function runInfo() {
@@ -96,11 +102,12 @@
         planetId: run.planet.id, planetName: run.planet.name, kind: run.kind,
         archetypeId: run.archetype ? run.archetype.id : null, archetypeName: run.archetype ? run.archetype.name : null,
         seed: run.kind === "procedural" ? run.seed : null,
-        scenarioId: S.scn ? S.scn.id : "eden", scenarioName: S.scn ? S.scn.name : "Eden",
+        scenarioId: S.scn ? S.scn.id : DEFAULT_ID, scenarioName: S.scn ? S.scn.name : DEFAULT_NAME,
+        scenarioIsDefault: (S.scn ? S.scn.id : DEFAULT_ID) === DEFAULT_ID,   // (BLOOM-033) the default scenario is never named to the player
         mechanics: { pressure: S.press, competition: S.comp, climate: S.clim },
         training: !!run.training, play: !!run.play, started: !!run.started,
         // (BLOOM-029F) an expedition run's provenance: the exact Destination Survey planet (identity for the report / debugging; never a world source)
-        expedition: run.expedition ? { token: run.expedition.token, source: run.expedition.source, candidateKey: run.expedition.candidateKey, sectorSeed: run.expedition.sectorSeed, classId: run.expedition.classId, fingerprint: run.expedition.fingerprint } : null,
+        expedition: run.expedition ? { source: run.expedition.source, candidateKey: run.expedition.candidateKey, sectorSeed: run.expedition.sectorSeed, classId: run.expedition.classId, fingerprint: run.expedition.fingerprint } : null,
         running: V.running(), speed: V.speed(), speeds: host.speeds.slice(),
         ticks: sim.ticks, seconds: tickSeconds(sim.ticks), tickMs: CFG.tickMs,
         won: !!sim.won, lost: !!sim.lost, lostReason: sim.lostReason || null,
@@ -121,7 +128,7 @@
     }
     function scenario() {
       const scn = S.scn;
-      const out = { id: scn ? scn.id : "eden", name: scn ? scn.name : "Eden", title: scn && scn.display ? scn.display.title : null,
+      const out = { id: scn ? scn.id : DEFAULT_ID, name: scn ? scn.name : DEFAULT_NAME, title: scn && scn.display ? scn.display.title : null,
         summary: scn && scn.display ? scn.display.summary : null, pressure: null, competition: null, climate: null };
       if (S.press) { const P = sim.pressure, st = R.pressureStatus();
         out.pressure = { phase: P.phase, phaseName: R.phaseName(P.phase), progress: P.progress, seconds: P.seconds,
@@ -305,7 +312,7 @@
       subscribe(fn) { if (typeof fn !== "function") throw new TypeError("subscribe needs a function"); listeners.add(fn); return () => { listeners.delete(fn); }; },
       get revision() { return revision; },
     });
-    return { adapter, invalidate: reason => invalidate(reason), frame };
+    return { adapter, invalidate: reason => invalidate(reason), frame, dispose() { if (disposed) return; disposed = true; life.abort(); listeners.clear(); pending = null; } };
   }
 
   root.BLOOM = Object.assign(root.BLOOM || {}, { runUI: Object.freeze({ createAdapter, API_VERSION, EVENTS: Object.freeze(EVENTS.slice()) }) });

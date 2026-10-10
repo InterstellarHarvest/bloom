@@ -9,8 +9,8 @@
 // The question is not "how fast is a run" but "how long does a player wait between meaningful Biomass decisions".
 // Worlds are pinned by (archetype, public seed, generation attempt) through BLOOM.archetype.attemptPlanet, so a what-if
 // economy (--set) is measured on the SAME planet even when it would change which attempt the validator accepts.
-// Recipes are the broad strategies each world was accepted with at 4d1e52c (Eden) / the layer-P strategies (Dying World).
-// Dying World worlds also run "ignore…" recipes: an Eden strategy of the same planet bought as if there were no decline —
+// Recipes are the broad strategies each world was accepted with at 4d1e52c (default-scenario) / the layer-P strategies (Dying World).
+// Dying World worlds also run "ignore…" recipes: a default-scenario strategy of the same planet bought as if there were no decline —
 // if one of those still wins comfortably, the pressure can simply be ignored.
 //
 // Measured per world, averaged over N seeded mulberry32 run seeds (never Math.random):
@@ -60,21 +60,21 @@ const REACT = 25, EVERY = 12, CLICK_AFTER = 12, CHECK = [30, 60, 120, 180, 300, 
 
 // ---- worlds: [key, label, archetype id | null, public seed, attempt, scenario id, recipes]
 const WORLDS = [
-  ["fb", "First Bloom · Eden", null, null, null, "eden", {
+  ["fb", "First Bloom · default-scenario", null, null, null, "default", {
     wet: ["seedOut", "cold", "flood", "cold", "heat", "salt", "earlyMat", "seedOut"],
     dry: ["seedOut", "cold", "drought", "cold", "heat", "salt", "earlyMat", "seedOut"],
     terraformWater: ["seedOut", "heat", "salt", "cold", "humid", "humid"] }],
-  // BLOOM-027B fixture worlds (Ocean 28 attempt 8, Desert 17 attempt 0, Frozen 11 attempt 1; recipes = their proven strategies, "ignore…" = the Eden strategies under a scenario)
-  ["o28", "Ocean Archipelago 28 · Eden", "ocean_archipelago", 28, 8, "eden", {radSaltColdHeat: ["seedOut", "waterSeeds", "salt", "cold", "rad", "heat"], radSaltHeatDry: ["seedOut", "waterSeeds", "dry", "salt", "rad", "heat"]}],
+  // BLOOM-027B fixture worlds (Ocean 28 attempt 8, Desert 17 attempt 0, Frozen 11 attempt 1; recipes = their proven strategies, "ignore…" = the default-scenario strategies under a scenario)
+  ["o28", "Ocean Archipelago 28 · default-scenario", "ocean_archipelago", 28, 8, "default", {radSaltColdHeat: ["seedOut", "waterSeeds", "salt", "cold", "rad", "heat"], radSaltHeatDry: ["seedOut", "waterSeeds", "dry", "salt", "rad", "heat"]}],
   ["o28dw", "Ocean Archipelago 28 · Dying World", "ocean_archipelago", 28, 8, "dying_world", {radSaltHumid: ["seedOut", "rad", "waterSeeds", "humid", "salt"], radSaltColdDrought: ["seedOut", "rad", "waterSeeds", "drought", "salt", "cold"], ignoreRadSaltColdHeat: ["seedOut", "waterSeeds", "salt", "cold", "rad", "heat"], ignoreRadSaltHeatDry: ["seedOut", "waterSeeds", "dry", "salt", "rad", "heat"]}],
-  ["d17", "Desert World 17 · Eden", "desert_world", 17, 0, "eden", {droughtHumid: ["seedOut", "earlyMat", "drought", "humid"], saltDrought: ["seedOut", "earlyMat", "drought", "salt"]}],
+  ["d17", "Desert World 17 · default-scenario", "desert_world", 17, 0, "default", {droughtHumid: ["seedOut", "earlyMat", "drought", "humid"], saltDrought: ["seedOut", "earlyMat", "drought", "salt"]}],
   ["d17dw", "Desert World 17 · Dying World", "desert_world", 17, 0, "dying_world", {saltDroughtHumid: ["seedOut", "earlyMat", "drought", "humid", "salt"], radDroughtHumid: ["seedOut", "earlyMat", "drought", "humid", "rad"], ignoreDroughtHumid: ["seedOut", "earlyMat", "drought", "humid"], ignoreSaltDrought: ["seedOut", "earlyMat", "drought", "salt"]}],
-  ["f11", "Frozen World 11 · Eden", "frozen_world", 11, 1, "eden", {coldHeat: ["seedOut", "cold", "heat"], coldWarm: ["cold", "warm"]}],
+  ["f11", "Frozen World 11 · default-scenario", "frozen_world", 11, 1, "default", {coldHeat: ["seedOut", "cold", "heat"], coldWarm: ["cold", "warm"]}],
   ["f11dw", "Frozen World 11 · Dying World", "frozen_world", 11, 1, "dying_world", {radCold2: ["seedOut", "rad", "cold", "cold"], coldWarmDrought: ["seedOut", "cold", "cold", "warm", "drought"], ignoreColdHeat: ["seedOut", "cold", "heat"], ignoreColdWarm: ["cold", "warm"]}],
 ];
 // BLOOM-014: Native Competition worlds (a competing native organism; no clock). Opt-in only (--worlds …), so the default
 // world set — and tools/economy-check.js, which runs it — is exactly BLOOM-013's. Recipes = the layer-P witnesses' plans +
-// "ignore…" recipes (the planet's Eden strategy, bought as if the planet were empty).
+// "ignore…" recipes (the planet's default-scenario strategy, bought as if the planet were empty).
 const COMPETITION_WORLDS = [
   ["d17nc", "Desert World 17 · Native Competition", "desert_world", 17, 0, "native_competition", {saltDrought2Dry: ["seedOut", "drought", "salt", "drought", "dry", "dry"], radSaltHeatDrought2Dry: ["seedOut", "drought", "salt", "drought", "dry", "rad", "heat"], ignoreDroughtHumid: ["seedOut", "earlyMat", "drought", "humid"], ignoreSaltDrought: ["seedOut", "earlyMat", "drought", "salt"]}],
   ["o28nc", "Ocean Archipelago 28 · Native Competition", "ocean_archipelago", 28, 8, "native_competition", {radSaltWarmHeatDry: ["seedOut", "waterSeeds", "salt", "rad", "heat", "warm", "warm", "dry", "heat"], ignoreRadSaltColdHeat: ["seedOut", "waterSeeds", "salt", "cold", "rad", "heat"], ignoreRadSaltHeatDry: ["seedOut", "waterSeeds", "dry", "salt", "rad", "heat"]}],
@@ -84,9 +84,9 @@ const COMPETITION_WORLDS = [
 // Recipes = the layer-P witnesses' plans (an Adapt-heavy one and a Terraform-heavy one) + a deliberately Terraform-heavy
 // "reckless" recipe that stacks steps on one axis as fast as Biomass allows.
 const CLIMATE_WORLDS = [
-  // Eden controls for the Volatile Climate fixtures (tools/volatile-climate-check.js 53 compares dead waits with and without the scenario)
-  ["f4", "Frozen World 4 · Eden (Volatile Climate control)", "frozen_world", 4, 1, "eden", {strategyA: ["cold", "cold"], strategyB: ["seedOut", "cold", "warm", "warm"]}],
-  ["d22", "Desert World 22 · Eden (Volatile Climate control)", "desert_world", 22, 0, "eden", {strategyA: ["seedOut", "earlyMat", "drought", "drought"], strategyB: ["seedOut", "earlyMat", "drought", "humid", "rad"]}],
+  // default-scenario controls for the Volatile Climate fixtures (tools/volatile-climate-check.js 53 compares dead waits with and without the scenario)
+  ["f4", "Frozen World 4 · default-scenario (Volatile Climate control)", "frozen_world", 4, 1, "default", {strategyA: ["cold", "cold"], strategyB: ["seedOut", "cold", "warm", "warm"]}],
+  ["d22", "Desert World 22 · default-scenario (Volatile Climate control)", "desert_world", 22, 0, "default", {strategyA: ["seedOut", "earlyMat", "drought", "drought"], strategyB: ["seedOut", "earlyMat", "drought", "humid", "rad"]}],
   ["f4vc", "Frozen World 4 · Volatile Climate", "frozen_world", 4, 1, "volatile_climate", {adapt: ["cold", "cold"], terraform: ["seedOut", "cold", "warm", "warm"], reckless: ["seedOut", "warm", "warm", "warm", "cold"]}],  // layer P PASS, 2 strategies, shocks 0/1; reckless = three Warms stacked before any Adapt (as Frozen 22's was)
   ["d22vc", "Desert World 22 · Volatile Climate", "desert_world", 22, 0, "volatile_climate", {adapt: ["seedOut", "earlyMat", "drought", "drought"], terraform: ["seedOut", "drought", "humid", "humid"], reckless: ["seedOut", "drought", "humid", "humid", "rad"]}],  // layer P PASS, 3 strategies, shocks 0/0/1
   ["o28vc", "Ocean Archipelago 28 · Volatile Climate", "ocean_archipelago", 28, 8, "volatile_climate", {adapt: ["seedOut", "waterSeeds", "salt", "cold", "rad", "heat"], terraform: ["seedOut", "waterSeeds", "dry", "salt", "rad", "heat"], reckless: ["seedOut", "waterSeeds", "salt", "dry", "rad", "heat"]}],  // layer P PASS, 2 strategies, shocks 0/0
@@ -105,7 +105,7 @@ function planetOf(W) {
 // ---- per-world context: the strategy cores the meaningful-option rule reads (static; no simulation)
 function context(W, config, traits, scenarios = BLOOM_DATA.scenarios) {
   const planet = planetOf(W), scenario = BLOOM.pressure.resolveScenario(scenarios, W[5]);
-  const dyn = BLOOM.pressure.isDynamic(scenario) ? scenario : null; // (pressure and/or competition; Eden = none, as before)
+  const dyn = BLOOM.pressure.isDynamic(scenario) ? scenario : null; // (pressure and/or competition; default-scenario = none, as before)
   const classes = BLOOM.witness.strategyClasses(planet, config, traits, { scenario: dyn });
   const cores = classes.map(c => c.core.reduce((m, id) => (m[id] = (m[id] || 0) + 1, m), {}));
   return { planet, scenario: dyn, cores, classes: classes.length };

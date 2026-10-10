@@ -4,7 +4,7 @@
 // `deps = { BLOOM, BLOOM_DATA }` (default: globalThis), never re-implemented here.
 //
 // IDENTITY CONTRACT (028A1). Every archetype candidate is a FULLY VALIDATED world, produced by the play flow's own production
-// path — BLOOM.play.runSearch({ archetype, scenario: null (Eden), seeds: [seed] }): BLOOM.generateFromArchetype layers 1–8
+// path — BLOOM.play.runSearch({ archetype, scenario: null (the default), seeds: [seed] }): BLOOM.generateFromArchetype layers 1–8
 // (structure, reachability, winnability witness, strategy diversity, pacing) and then BLOOM.play.stripPlanet. That planet
 // object is what the globe draws, what the dossier measures, and what Begin Expedition hands on. It is AUTHORITATIVE: nobody
 // regenerates it from its seed later (the seed is provenance only). A world is never shown before it is validated.
@@ -12,21 +12,23 @@
 // PRESENTATION ONLY otherwise. Nothing here changes generation, validation, simulation or gameplay:
 //   · STABLE / VOLATILE / EXTREME classify how much land the STARTING plant can already live on, read from the engine's own
 //     evaluate() (the region lamps a player sees at the start of a run). No mechanic reads them. The bands were recalibrated in
-//     028A1 on validated worlds (90-world sample, tertiles 21% / 34%): ≥ 35% Stable, ≥ 20% Volatile, else Extreme.
+//     028A1 on validated worlds (90-world sample, tertiles 21% / 34%): ≥ 35% Favorable, ≥ 20% Precarious, else Extreme.
+//     (BLOOM-033: renamed from Stable / Volatile / Extreme — same thresholds, same columns, same worlds — so the survey's difficulty axis
+//     never collides with the separate Volatile Climate challenge mechanic. Ids favorable / precarious / extreme.)
 //   · the dossier words come from the same evaluate() plus plain planet data (tilemap, section conditions, starting sky).
 //   · a cheap STRUCTURAL world (generateFromArchetype with { winnability: false }, layers 1–3) is used only to PREDICT a draw's
 //     column, so slow validations are spent on draws that column needs. It is never shown, stored or returned.
 
 export const SURVEY_CLASSES = [
-  { id: "stable",   label: "Stable",   minHabitable: 0.35, blurb: "Broad footholds on arrival" },
-  { id: "volatile", label: "Volatile", minHabitable: 0.20, blurb: "Refuges beside hostile ground" },
+  { id: "favorable",  label: "Favorable",  minHabitable: 0.35, blurb: "Broad footholds on arrival" },
+  { id: "precarious", label: "Precarious", minHabitable: 0.20, blurb: "Refuges beside hostile ground" },
   { id: "extreme",  label: "Extreme",  minHabitable: 0,    blurb: "Little land habitable on arrival" },
 ];
 export const ROWS = 3; // a sector is a 3 × 3 matrix: one column per class, ROWS candidates each
 // A column's draw budget. A column needs 6–11 draws in practice; the budget only bounds a pathological stream. Since 028B a
 // column never borrows a world of another class (owner rule), so the budget is generous (was 60 with a "nearest" fill).
 export const MAX_DRAWS = 400;
-export const VALIDATION_PATH = "BLOOM.play.searchWorld (Eden) → generateFromArchetype layers 1–8 → stripPlanet";
+export const VALIDATION_PATH = "BLOOM.play.searchWorld (default scenario) → generateFromArchetype layers 1–8 → stripPlanet";
 
 const mulberry32 = a => () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 const deps0 = deps => ({ BLOOM: (deps && deps.BLOOM) || globalThis.BLOOM, BLOOM_DATA: (deps && deps.BLOOM_DATA) || globalThis.BLOOM_DATA });

@@ -12,7 +12,7 @@
 // orthogonal to the planet. A scenario's pressure channels shift the REAL environmental inputs through the ordinary
 // evaluation (sky temperature / sky moisture / surface radiation offsets that grow with the scenario clock); the planet
 // data and the player's Terraformed sky are never edited. A scenario may also enable extinction loss. No scenario (or
-// Eden) = no pressure, no loss: exactly the pre-BLOOM-012 engine (golden unchanged).
+// the default scenario: no challenge modifier) = no pressure, no loss: exactly the pre-BLOOM-012 engine (golden unchanged).
 // BLOOM-014: competition. A scenario's `competition` block (content/scenarios.js) switches on a second, native organism
 // with real tile state (sim.competition.native = stand density per land tile). It starts established on part of the land,
 // spreads into open ground, thickens, recedes where conditions turn against it, and contests the player's tiles at shared
@@ -53,7 +53,7 @@
   const BAR = 0, LIV = 1, DEAD = 2;
 
   // ---- pressure scenarios (BLOOM-012). A scenario is plain data (content/scenarios.js):
-  //   pressure: null (Eden) | { graceSeconds, durationSeconds, channels: { temperature?, moisture?, moistureShare?, radiation? },
+  //   pressure: null (default) | { graceSeconds, durationSeconds, channels: { temperature?, moisture?, moistureShare?, radiation? },
   //                             graceLabel, phases: [{ from (progress 0..1, ascending, first 0), id, name, note }] }
   //   loss:     { extinction: bool, extinctionGraceSeconds }
   // Progress is 0 through the grace period, then rises linearly to 1 over durationSeconds and stays there (the final,
@@ -121,14 +121,20 @@
       e.push("competition.events needs contestedTiles ≥ 1, advantageMargin 0..1, dominatedShare 0.05..1, dominatedPlayerBelow 0..1, retakeTiles ≥ 1, windowSeconds 1..600");
     return e;
   }
-  // a scenario changes the run at all (pressure clock and/or a competing organism); Eden / none = the plain engine
+  // a scenario changes the run at all (pressure clock and/or a competing organism); default / none = the plain engine
   const isDynamic = s => !!(s && (s.pressure || s.competition || s.climateInstability));
   // small deterministic helpers for planet-derived (not run-RNG) state: FNV-1a string hash → mulberry32 stream
   const fnv1a = str => { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193); } return h >>> 0; };
   function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  // scenario id → definition from a catalogue. null / undefined / "" = Eden; an unknown id throws (never a substitute)
+  // (BLOOM-033) the canonical no-challenge mode: "default" (no special pressure, no competing organism, no climate instability)
+  const DEFAULT_SCENARIO = "default";
+  // (BLOOM-033) LEGACY ALIAS — the ONE place the retired id survives: old developer links / evidence named the default scenario "eden".
+  // It is accepted here, at the resolver boundary only, and resolves to the default scenario; nothing else anywhere knows the old id.
+  const LEGACY_SCENARIO_ALIASES = Object.freeze({ eden: DEFAULT_SCENARIO });
+  // scenario id → definition from a catalogue. null / undefined / "" = the default scenario; an unknown id throws (never a substitute)
   function resolveScenario(catalogue, id) {
-    const want = id == null || id === "" ? "eden" : id, s = (catalogue || []).find(x => x.id === want);
+    const asked = id == null || id === "" ? DEFAULT_SCENARIO : id;
+    const want = Object.prototype.hasOwnProperty.call(LEGACY_SCENARIO_ALIASES, asked) ? LEGACY_SCENARIO_ALIASES[asked] : asked, s = (catalogue || []).find(x => x.id === want);
     if (!s) throw new Error(`unknown scenario "${want}" (known: ${(catalogue || []).map(x => x.id).join(", ") || "none"})`);
     const bad = checkScenario(s); if (bad.length) throw new Error(`scenario ${want}: ${bad.join("; ")}`);
     return s;
@@ -472,7 +478,7 @@
       // scenario pressure (BLOOM-012). active = the scenario has pressure channels; seconds = scenario clock (run time);
       // progress 0..1; offsets = the CURRENT environmental drift every evaluation uses; phase = index into the scenario's
       // phases (-1 = grace period, still stable); events = phase changes { tick, phase, progress } (UI milestone feedback).
-      scenario: SCN, pressure: { id: SCN ? SCN.id : "eden", name: SCN ? SCN.name : "Eden", active: !!PR, seconds: 0, progress: 0,
+      scenario: SCN, pressure: { id: SCN ? SCN.id : DEFAULT_SCENARIO, name: SCN ? SCN.name : "Default", active: !!PR, seconds: 0, progress: 0,
         offsets: { ...ZERO_OFFSETS }, phase: PR ? -1 : null, events: [], startsAt: PR ? PR.graceSeconds : null,
         fullAt: PR ? PR.graceSeconds + PR.durationSeconds : null, max: maxOffsets(PR, planet.globalClimate) },
       // extinction loss (BLOOM-012, only when the scenario enables it): zero Living tiles for graceTicks in a row → lost.
@@ -622,7 +628,7 @@
             place(t); placed++; grew = true; for (const u of NB[t]) if (ok(u) && !(nat[u] > 0)) f.push(u); break; }
           if (placed >= target) break; } }
     })();
-    // live competition state (UI, events, report, validation). Eden / no competition block: { enabled: false } and nothing else.
+    // live competition state (UI, events, report, validation). default / no competition block: { enabled: false } and nothing else.
     //  native/vigor/fitness: the per-tile stand density and per-region native vigor/fitness arrays; tiles / share: native-held land
     //  now (share of the colonizable land — the same denominator as the player's coverage); startShare / peakShare / peakTick;
     //  contested: regions with at least events.contestedTiles front tiles now; everContested[s] = 1 once region s has been;
@@ -816,7 +822,7 @@
       const g = C.grow;
       if (sim.lost) return 0; // a lost run is frozen
       sim.ticks++;
-      if (PR) updatePressure(); // (Eden: nothing to update — the run is exactly the pre-pressure engine)
+      if (PR) updatePressure(); // (default: nothing to update — the run is exactly the pre-pressure engine)
       if (CI) updateClimate(); // (BLOOM-015: settle, run shocks; after the drift so env = drift + shock)
       // 1. evaluate fitness + ease vigor
       for (let i = 0; i < SC; i++) { const e = evaluate(i); secFit[i] = e.fitness; secGrowth[i] = e.growthMod; vigor[i] += (e.fitness - vigor[i]) * C.vigorEase;
@@ -1037,7 +1043,7 @@
   }
 
   root.BLOOM = Object.assign(root.BLOOM || {}, { createSim, resolveLayout, growVoronoi,
-    pressure: { CHANNELS, CLIMATE_AXES, checkScenario, checkCompetition, checkClimateInstability, resolveScenario, isDynamic, progressAt, offsetsAt, maxOffsets, phaseAt },
+    pressure: { DEFAULT_SCENARIO, LEGACY_SCENARIO_ALIASES, CHANNELS, CLIMATE_AXES, checkScenario, checkCompetition, checkClimateInstability, resolveScenario, isDynamic, progressAt, offsetsAt, maxOffsets, phaseAt },
     geo: { RECT, CYLINDER, normalizeTopology, topologyOf, west, east, north, south, neighbors4, forEachNeighbor4, wrapDx, longitudeCenter,
       components, sectionAdjacency, sectionPieces, waterCrossings, reachableLandmasses }, util: { clamp, lerp, band, overLimit } });
 })(typeof window !== "undefined" ? window : globalThis);

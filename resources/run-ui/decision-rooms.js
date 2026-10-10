@@ -99,6 +99,9 @@
   const CAT_COLOR = { Hazard: ["#8a5bb8", "#efe5f8", "#5e3a86"], Water: ["#3b8fd0", "#dcecf8", "#23679f"], Temperature: ["#d9601f", "#fde6d6", "#9c3f0e"], Soil: ["#8a6a3e", "#f1e6d2", "#5f452a"],
     Seeds: ["#c58a1a", "#fbefcf", "#8a5d00"], Growth: ["#3f9d4b", "#e2f2d6", "#2a7636"], Reach: ["#1f8f8f", "#d8f1ef", "#136060"],
     "Sky temperature": ["#d9601f", "#fde6d6", "#9c3f0e"], Rain: ["#3b8fd0", "#dcecf8", "#23679f"] }; // Sky temperature = the warm / orange family, Rain = the blue family (Concept 18)
+  // (BLOOM-033) a category a world does not offer is explained, never silently missing: Reach (Waterborne Seeds) is offered only where seeds
+  // have real water to cross (the engine's own rule, sim.offered); on other worlds the Spread room says why it is not there
+  const CAT_ABSENT = { Reach: "No Reach upgrades on this world: there is no water gap your seeds would need to cross." };
   const CAT_ICON = { Hazard: "hazard", Water: "water", Temperature: "temp", Soil: "soil", Seeds: "seedOut", Growth: "colony", Reach: "reach", "Sky temperature": "temp", Rain: "humid" };
   const BANKS = { Soil: { side: -1, ico: "soil", to: "surface", word: "the ground", color: CAT_COLOR.Soil }, Atmosphere: { side: 1, ico: "air", to: "halo", word: "the air around the planet", color: ["#5a6fa8", "#e3eaf6", "#44579a"] } };
   const BANK_ORDER = ["Soil", "Atmosphere"], BANK_OF = u => (u.uiBank && BANKS[u.uiBank] ? u.uiBank : "Atmosphere"); // a real sky trait without metadata still reads as the sky
@@ -144,6 +147,10 @@
     const live = m => { const l = view.el.querySelector("#pvLive"); if (l) l.textContent = m; };
     const parts = view.rooms.parts();
     const rooms = {}; const miniMaps = [];
+    // (BLOOM-033) several runs share one document: everything global this controller attaches (document / window listeners, resize
+    // observers, the plant specimens) is released by dispose(), so a disposed run leaves nothing listening behind it
+    const life = new AbortController(), LIFE = { signal: life.signal }, ROS = [], SPECS = [];
+    const observe = (fn, el) => { const ro = new ResizeObserver(fn); ro.observe(el); ROS.push(ro); return ro; };
 
     // ---------------------------------------------------------------- scale calibration ("three chips across")
     const medianName = (() => { const ns = regs.map(r => r.name).sort((a, b) => a.length - b.length); return ns[Math.floor(ns.length / 2)] || "Region"; })();
@@ -196,7 +203,7 @@
       // whole-pixel tiles rarely fill the box's height exactly: the box takes the planet's real pixel height, so no bars show above / below
       const relayout = () => { const r = mapBox.getBoundingClientRect(); if (!r.width || !r.height) return; const dpr = Math.max(1, Math.min(2, root.devicePixelRatio || 1));
         const g = R.layout({ width: r.width, height: r.height, dpr }); const want = g.worldHeight; if (want && Math.abs(want - r.height) > 1) { mapBox.style.height = want + "px"; R.layout({ width: r.width, height: want, dpr }); } dirty = true; };
-      new ResizeObserver(relayout).observe(mapBox);
+      observe(relayout, mapBox);
       strip.innerHTML = regs.map(r => `<button type="button" class="rc" data-r="${r.index}" aria-pressed="false"><span class="rs"></span>${r.isOrigin ? ico("star", "org") : ""}${esc(r.name)}</button>`).join("");
       const peekText = i => { if (i < 0) { peek.textContent = "Hover a region to peek · click to switch"; peek.classList.remove("on"); return; } const r = A.region(i);
         peek.innerHTML = `<b>${esc(r.name)}</b> · ${esc(r.colony.label)} · ${esc(limitLine(r))}`; peek.classList.add("on"); };
@@ -243,7 +250,7 @@
     // the upper-left plant card (the production specimen + caption) and the content-height information card under it
     function specBlock(host) {
       const wrap = document.createElement("div"); wrap.className = "lf-top"; host.appendChild(wrap);
-      const spec = PS.mount(wrap, { reducedMotion: reduced });
+      const spec = PS.mount(wrap, { reducedMotion: reduced }); SPECS.push(spec);
       const capEl = document.createElement("div"); capEl.className = "spec-cap"; capEl.innerHTML = `<b class="sc-n"></b><small class="sc-w"></small>`; wrap.appendChild(capEl);
       const info = document.createElement("div"); info.className = "lf-info"; host.appendChild(info);
       return { wrap, spec, cap: capEl, info, caption(r, extra) { capEl.querySelector(".sc-n").textContent = `Your plant in ${r.name}`; capEl.querySelector(".sc-w").textContent = extra || specCaption(r); } };
@@ -331,9 +338,12 @@
       const edges = document.createElementNS("http://www.w3.org/2000/svg", "svg"); edges.setAttribute("class", "edges"); edges.setAttribute("aria-hidden", "true"); tree.appendChild(edges);
       const leaders = document.createElementNS("http://www.w3.org/2000/svg", "svg"); leaders.setAttribute("class", "dr-leaders"); leaders.setAttribute("aria-hidden", "true"); sec.appendChild(leaders);
       let items = [], cats = [], nodeEls = {}, lbls = {}, L = null, fitRaf = 0;
+      const absent = document.createElement("p"); absent.className = "cat-absent"; absent.hidden = true; absent.setAttribute("role", "note"); zm.appendChild(absent);
       // the REAL tree: offered items of this board from the adapter, grouped by the content's presentation category
       function readTree() {
         const b = A.upgrades().find(x => x.board === BOARD); items = b ? b.items : []; cats = CATS[BOARD].filter(c => items.some(u => u.uiCategory === c));
+        const gone = CATS[BOARD].filter(c => !cats.includes(c) && CAT_ABSENT[c]), note = gone.map(c => CAT_ABSENT[c]).join(" ");   // (BLOOM-033)
+        if (absent.textContent !== note) { absent.textContent = note; absent.hidden = !note; if (gone.length) { absent.dataset.cat = gone.join(" "); absent.setAttribute("style", catStyle(gone[0])); } }
         const want = new Set(items.map(u => u.id)); for (const k of Object.keys(nodeEls)) if (!want.has(k)) { nodeEls[k].remove(); delete nodeEls[k]; }
         for (const u of items) if (!nodeEls[u.id]) { const n = document.createElement("button"); n.type = "button"; n.className = "node card"; n.dataset.node = u.id; n.dataset.cat = u.uiCategory; n.dataset.tutorial = `upgrade-${u.id}`; n.setAttribute("style", catStyle(u.uiCategory)); tree.appendChild(n); nodeEls[u.id] = n; }
         for (const c of Object.keys(lbls)) if (!cats.includes(c)) { lbls[c].remove(); delete lbls[c]; }
@@ -449,11 +459,11 @@
           live(`Bought ${u.name}.`); if (state.hovered === u.id) { state.hovered = null; setHover(u.id); } } // still on the node: the preview re-reads the NEXT real tier
       });
       tree.addEventListener("keydown", e => { if (e.key !== "Enter" && e.key !== " ") return; const b = e.target.closest(".node"); if (!b) return; e.preventDefault(); b.click(); });
-      new ResizeObserver(() => relayout()).observe(tree); new ResizeObserver(() => drawLeaders()).observe(sp.wrap);
+      observe(() => relayout(), tree); observe(() => drawLeaders(), sp.wrap);
       function paint() { if (state.ctx < 0) return; readTree(); paintNodes(); paintPreview(); mm.paint(); relayout(); }
       rooms[id] = { sec, mm, tree, paint, onOpen() { paint(); requestAnimationFrame(() => { relayout(); drawLeaders(); }); }, clear() { clear(); mm.pk(-1); }, redraw() { relayout(); drawLeaders(); },
         focusNode(nid) { const n = nodeEls[nid]; if (n) { n.focus(); return true; } return false; }, focusFirst: () => sec.querySelector("h2").focus(),
-        measure() { return { em: state.em, categories: cats.slice(), items: items.map(u => ({ id: u.id, cat: u.uiCategory, tier: u.tier, price: u.price, canBuy: u.canBuy, rules: u.rules })),
+        measure() { return { em: state.em, categories: cats.slice(), absentNote: absent.hidden ? null : absent.textContent, items: items.map(u => ({ id: u.id, cat: u.uiCategory, tier: u.tier, price: u.price, canBuy: u.canBuy, rules: u.rules })),
           tendrils: [...leaders.querySelectorAll(".ld")].map(p => ({ cat: p.dataset.cat, d: p.getAttribute("d"), width: parseFloat(getComputedStyle(p).strokeWidth), lit: p.classList.contains("on") })),
           glow: parseFloat(leaders.style.getPropertyValue("--ld-glow")), vein: parseFloat(leaders.style.getPropertyValue("--vein")), idle: parseFloat(leaders.style.getPropertyValue("--ld-w")), litW: parseFloat(leaders.style.getPropertyValue("--ld-on")),
           chain: cats.map(c => ({ cat: c, anchor: !!leaders.querySelector(`.lead-g[data-cat="${c}"] .anchor`), plate: !!leaders.querySelector(`.lead-g[data-cat="${c}"] .aplate`), tendril: !!leaders.querySelector(`.lead-g[data-cat="${c}"] .ld`), port: !!edges.querySelector(`.port[data-cat="${c}"]`), label: !!lbls[c], cards: items.filter(u => u.uiCategory === c).length })),
@@ -686,7 +696,7 @@
         if (A.actions.buy(u.id)) { live(`Bought ${u.name}. The sky changes.`); if (state.hovered === u.id) { state.hovered = null; setHover(u.id); } } // still on the node: the NEXT real tier previews
       });
       stage.addEventListener("keydown", e => { if (e.key !== "Enter" && e.key !== " ") return; const b = e.target.closest(".node"); if (!b) return; e.preventDefault(); b.click(); });
-      new ResizeObserver(() => relayout()).observe(stage);
+      observe(() => relayout(), stage);
       function paint() { if (state.ctx < 0) return; readSurface(); readTree(); paintNodes(); paintSoil(A.region(state.ctx)); paintPreview(); mm.paint(); relayout(); }
       rooms[id] = { sec, mm, stage, paint, onOpen() { paint(); requestAnimationFrame(() => relayout()); }, clear() { clear(); mm.pk(-1); }, redraw() { relayout(); },
         focusNode(nid) { const n = nodeEls[nid]; if (n) { n.focus(); return true; } return false; }, focusFirst: () => sec.querySelector("h2").focus(),
@@ -794,12 +804,12 @@
       const a = e.target.closest("[data-act]"); if (a) { close(a.dataset.act === "resume"); return; }
       const g = e.target.closest(".rn[data-go]"); if (g) open(g.dataset.go, { region: state.ctx, opener: state.opener });
     });
-    document.addEventListener("keydown", e => { if (e.key === "Escape" && state.room) { e.preventDefault(); if (state.transitioning) { state.ignored++; return; } close(false); } });
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && state.room) { e.preventDefault(); if (state.transitioning) { state.ignored++; return; } close(false); } }, LIFE);
     // preview safety nets: the window losing focus, the tab hidden, the pointer leaving the window
-    root.addEventListener("blur", () => { state.suspended = true; for (const k in rooms) if (rooms[k].clear && !rooms[k].sec.hidden) rooms[k].clear(); });
-    root.addEventListener("focus", () => { state.suspended = false; });
-    document.addEventListener("visibilitychange", () => { if (document.hidden) { state.suspended = true; for (const k in rooms) if (!rooms[k].sec.hidden) rooms[k].clear(); } });
-    document.addEventListener("pointerout", e => { if (!e.relatedTarget) for (const k in rooms) if (!rooms[k].sec.hidden) rooms[k].clear(); });
+    root.addEventListener("blur", () => { state.suspended = true; for (const k in rooms) if (rooms[k].clear && !rooms[k].sec.hidden) rooms[k].clear(); }, LIFE);
+    root.addEventListener("focus", () => { state.suspended = false; }, LIFE);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) { state.suspended = true; for (const k in rooms) if (!rooms[k].sec.hidden) rooms[k].clear(); } }, LIFE);
+    document.addEventListener("pointerout", e => { if (!e.relatedTarget) for (const k in rooms) if (!rooms[k].sec.hidden) rooms[k].clear(); }, LIFE);
 
     // ---------------------------------------------------------------- build, subscribe, register
     buildRegion(); buildBoard("adapt"); buildBoard("spread"); buildTerraform();
@@ -811,7 +821,7 @@
       paintHeader(); miniMaps.forEach(m => m.invalidate());
     });
     let raf = 0, disposed = false; (function loop() { if (disposed) return; raf = requestAnimationFrame(loop); if (!state.room) return; for (const m of miniMaps) m.frame(); })();
-    new ResizeObserver(() => { if (!state.room) return; calibrate(); const room = rooms[state.room]; if (room.redraw) room.redraw(); miniMaps.forEach(m => m.relayout()); }).observe(layer);
+    observe(() => { if (!state.room) return; calibrate(); const room = rooms[state.room]; if (room.redraw) room.redraw(); miniMaps.forEach(m => m.relayout()); }, layer);
     // the 028D1 anchors these rooms now own (the hidden shell's copies become data-tutorial-legacy): docs/PRODUCTION_PLANT_ROOMS_v1.md §11
     const claimed = ["raw-signals", "growth-focus", "local-upgrade", "upgrades", "board-adapt", "board-spread", "board-terraform"]; // (029D) + the Terraform board and its real nodes
     const c0 = A.colony(origin()); for (const f of c0.focusChoices) claimed.push(`focus-${f.id}`); for (const l of c0.localChoices) claimed.push(`local-${l.id}`);
@@ -834,7 +844,8 @@
         transitioning: state.transitioning, transitionKind: state.transitionKind, transition: T ? T.kind : "none", ignored: state.ignored, swaps: TL.length }), // (029E)
       measure: name => rooms[name] && rooms[name].measure ? rooms[name].measure() : null,
       // (029D) disposing the rooms disposes the Terraform globe (its WebGL context, canvas and listeners) with them; (029E) and the transition
-      dispose() { disposed = true; cancelAnimationFrame(raf); unsub(); if (state.room) closeImmediate(); for (const k in rooms) if (rooms[k].dispose) rooms[k].dispose(); if (T) T.dispose(); layer.remove(); instance = null; DR.instance = null; },
+      dispose() { if (disposed) return; disposed = true; cancelAnimationFrame(raf); unsub(); if (state.room) closeImmediate(); for (const k in rooms) if (rooms[k].dispose) rooms[k].dispose(); if (T) T.dispose();
+        life.abort(); ROS.forEach(ro => ro.disconnect()); SPECS.forEach(sp => sp.dispose()); layer.remove(); instance = null; DR.instance = null; },
     };
     if (T) T.prepare(); // (029E) the mist's bitmaps drawn in idle time now, so the first room opens on the next frame (non-blocking; a swap before this resolves is immediate)
     // (029D) destroying the production view destroys the rooms with it (and the Terraform globe's WebGL context, canvas and listeners):

@@ -4,9 +4,12 @@
 //
 //   import { ExpeditionEntry } from "<repo>/resources/main-menu/expedition-entry.js";
 //   const entry = new ExpeditionEntry(root, { descent: { async onCovered(detail) { … mount gameplay from detail.planet … } } });
-//   entry.state                       // "menu" | "to-survey" | "survey" | "to-menu" | "departed" | "leaving" | "disposed"
-//   entry.beginExpedition()           // what BEGIN EXPEDITION does; entry.returnToMenu() what "← Main menu" does
-//   entry.leaveTo(href)               // (028D1) menu → black → another page (TRAINING with `trainingHref`)
+//   entry.state                       // "menu" | "to-survey" | "survey" | "to-menu" | "departed" | "leaving" | "away" | "returning" | "disposed"
+//   entry.beginExpedition()           // what EXPEDITION does; entry.returnToMenu() what "← Main menu" does
+//   entry.leave()                     // (BLOOM-033) menu → black, the title put away: the app mounts a run (training) under the black
+//   entry.enterRun()                  // (BLOOM-033) under the survey's DRAMATIC cover: the title / survey put away for the run
+//   entry.resume({ to })              // (BLOOM-033) back from a run, under black: "menu" (the title) or "survey" (a fresh sector)
+//   entry.fadeBlack(to)               // (BLOOM-033) the one fade layer, for the app's run exits (to 1: covered; 0: clear)
 //   entry.dispose();
 //
 // Needs the BLOOM classic scripts on the page (the survey's workers import them), destination-survey.css and main-menu.css.
@@ -22,8 +25,8 @@
 // menu shown with its next painting, decoded and settled (no entrance replay: the lifting black is the entrance) → black lifts.
 // The black only starts to lift after the new screen's first frames, so slow preparation stays black rather than half-shown.
 // Reduced motion: 80 ms each way. No clouds, no zoom, no wipe; the AtmosphereTransition and its presets are untouched.
-// (028D1) The fade itself is ./black-fade.js, shared with the training run page; leaveTo() uses it to leave the title for
-// another page (TRAINING), and a page restored from the back-forward cache after such a departure lifts the black again.
+// (028D1) The fade itself is ./black-fade.js, shared with the training layer. (BLOOM-033: the 028D1 leaveTo() — leave the title for
+// another page — and its back-forward-cache recovery are retired: nothing leaves the document; TRAINING is leave() + a run here.)
 //
 // (BLOOM-028D2) FIRST-RUN RECOMMENDATION. While training is available here (a TRAINING hook) and the player has NO training record
 // (resources/training/training-store.js: neither "completed" nor "skipped"), TRAINING carries a small "Recommended" tag and the first
@@ -31,7 +34,13 @@
 // "skipped" (the tag goes, it never asks again) and takes the ordinary path into the survey; "Start Training (~5 min)" leaves for the
 // training run through the usual black and records nothing (the training itself records "completed" on its win, "skipped" on a
 // confirmed skip). Closing the dialog (Escape) records nothing. The first-sector prefetch keeps running underneath throughout.
-// beginExpedition() itself never prompts (the run's "Choose another planet" / the finished training's Begin Expedition, ?begin=1).
+// beginExpedition() itself never prompts (?begin=1); resume({ to: "survey" }) never prompts either (the run's "Choose another planet",
+// the finished training's Begin Expedition).
+//
+// (BLOOM-033) ONE DOCUMENT. The app (resources/app/app-controller.js) keeps this entry for the whole visit: a run (an expedition, a
+// training) is mounted by the app in its own host while the title and the survey are put away (hidden, the menu's painting stopped, no
+// prefetch running), and the player comes back by resume() — the same black, the same fades, no page load. The first survey visit uses
+// the first-sector options (sectorSeed / firstBloom, development / QA); every later one scans a random sector.
 import { MainMenu } from "./main-menu.js";
 import { BlackFade } from "./black-fade.js";
 import { readSettings, reducedMotionFor } from "./main-menu-data.js";
@@ -51,38 +60,31 @@ export class ExpeditionEntry {
    * background         force the first painting (0 … 11; development / QA)
    * descent            the survey's departure consumer (docs/DESTINATION_SURVEY_v1.md §3.1); its `transition` defaults to this entry's
    * onBeginExpedition  passed to the survey
-   * onTraining         the menu's TRAINING hook (omitted: `trainingHref`, else the placeholder dialog)
-   * trainingHref       (028D1) where TRAINING goes when there is no onTraining: a URL, or () → URL; the title fades to black and
-   *                    navigates there (leaveTo)
+   * onTraining         the menu's TRAINING hook (the app: leave() + a training run; omitted: the placeholder dialog)
    * transition         an AtmosphereTransition for the survey's departure (default: a private one over root)
    * storage            Storage for settings and (028D2) the training record (default localStorage)
    */
   constructor(root, { reducedMotion = undefined, sectorSeed = null, firstBloom = false, worker = true, workers = null, background = null, descent = null,
-    onBeginExpedition = null, onTraining = null, trainingHref = null, transition = null, storage = undefined, rng = Math.random } = {}) {
+    onBeginExpedition = null, onTraining = null, transition = null, storage = undefined, rng = Math.random } = {}) {
     if (!root || typeof root.appendChild !== "function") throw new TypeError("ExpeditionEntry: root must be a DOM element");
     this.root = root; this.descent = descent; this.onBeginExpedition = onBeginExpedition; this.forcedReducedMotion = reducedMotion;
     this.poolOpts = { worker, workers }; this.firstSector = { sectorSeed, firstBloom };
     this.store = storage === undefined ? safe(() => globalThis.localStorage) : storage;
     this.settings = readSettings(this.store);
-    this.state = "menu"; this.survey = null; this.prefetch = null;
-    this.stats = { begins: 0, returns: 0, entries: [], exits: [], prefetches: [], prompts: 0, promptChoices: [] };
+    this.state = "menu"; this.survey = null; this.prefetch = null; this.surveyVisits = 0;
+    this.stats = { begins: 0, returns: 0, entries: [], exits: [], prefetches: [], prompts: 0, promptChoices: [], leaves: 0, runs: 0, resumes: [] };
     if (getComputedStyle(root).position === "static") root.style.position = "relative";
     this.menuHost = host(root, "ee-menu"); this.surveyHost = host(root, "ee-survey"); this.surveyHost.hidden = true;
     this.black = host(root, "ee-black"); this.black.setAttribute("aria-hidden", "true"); this._fader = new BlackFade(this.black); // the fade layer (above both screens, below the departure's clouds)
     this.black.style.cssText += "; z-index:9999; background:#000; opacity:0; display:none; pointer-events:auto; contain:strict";
     this.atx = transition || new AtmosphereTransition({ host: root });   // the survey's dramatic departure only (028C1)
-    const toTraining = this._toTraining = onTraining || (trainingHref ? () => { this.leaveTo(typeof trainingHref === "function" ? trainingHref() : trainingHref)
-      .catch(err => console.error("ExpeditionEntry: could not leave for training", err)); } : null);
+    const toTraining = this._toTraining = onTraining || null;
     this.menu = new MainMenu(this.menuHost, { reducedMotion: this.reducedMotion, background, rng, storage,
       onBegin: () => this._beginPressed(),
       onTraining: toTraining,
       onRecommendChoice: c => this._recommendChoice(c),
       onSettingsChange: s => this._settingsChanged(s) });
     this._syncTrainingTag();
-    // (028D1) back from a page this title left for (leaveTo): a page restored from the back-forward cache would still be black
-    this._onPageShow = e => { if (!e.persisted || this.state !== "leaving") return;
-      this.state = "menu"; this.menuHost.inert = false; this._syncTrainingTag(); this._fade(0, this.reducedMotion).then(() => this.menu.focusMenu()); };
-    addEventListener("pageshow", this._onPageShow);
     this._prefetchSector(this.firstSector);           // the first sector starts now, while the title is showing
     this.menu.shown.then(() => { if (this.state === "menu") this.atx.prepare(); }); // cloud bitmaps ready before the first transition
   }
@@ -95,7 +97,7 @@ export class ExpeditionEntry {
   get reducedMotion() { return this.forcedReducedMotion !== undefined ? this.forcedReducedMotion : reducedMotionFor(this.settings.motion); }
 
   // ---------------------------------------------------------------- public
-  /** BEGIN EXPEDITION: menu → black → the survey is mounted (its sector prefetched, or still filling in) and drawn → black lifts. */
+  /** EXPEDITION: menu → black → the survey is mounted (its sector prefetched, or still filling in) and drawn → black lifts. */
   async beginExpedition() {
     if (this.state !== "menu") return false;
     this.state = "to-survey"; this.stats.begins++;
@@ -106,20 +108,8 @@ export class ExpeditionEntry {
       if (this.state === "disposed") return false;
       rec.blackMs = Math.round(performance.now() - t0);
       this.menu.hide();
-      const pool = this.prefetch; this.prefetch = null;                // ownership passes to the survey
-      this.surveyHost.hidden = false;
-      this.survey = new DestinationSurvey(this.surveyHost, { sectors: pool && !pool.disposed ? pool : null, ...(pool ? {} : this.firstSector), ...this.poolOpts, reducedMotion: rm,
-        onExit: () => { this.returnToMenu().catch(err => console.error("ExpeditionEntry: could not return to the menu", err)); },
-        onBeginExpedition: d => this._announced(d),
-        descent: this.descent ? { ...this.descent, transition: this.descent.transition || this.atx } : null });
-      this.menuHost.inert = false;
-      this.survey.ready.then(() => { rec.surveyReadyMs = Math.round(performance.now() - t0); }, () => {}); // (rejects if disposed while loading: a return during the fill)
-      rec.adopted = this.survey.stats.adopted; rec.swappedMs = Math.round(performance.now() - t0);
-      await frame(); await frame();                                     // the survey's first layout and globe frames, drawn while black
+      await this._openSurvey(rm, rec, t0);
       if (this.state === "disposed") return false;
-      rec.liftMs = Math.round(performance.now() - t0);
-      await this._fade(0, rm);
-      rec.revealedMs = Math.round(performance.now() - t0);
       if (this.state === "to-survey") this.state = this.survey && this.survey.state !== "disposed" ? "survey" : "menu";
     } catch (err) {
       if (!this.survey && this.state !== "disposed") {                  // nothing was mounted: the menu is back as it was
@@ -127,6 +117,91 @@ export class ExpeditionEntry {
       }
       throw err;
     } finally { this.stats.entries.push(rec); }
+    return true;
+  }
+
+  /** (at full black, menu hidden) mount the survey — the prefetched sector's pool if there is one, else a fresh pool — draw it, lift the black. */
+  async _openSurvey(rm, rec, t0) {
+    const pool = this.prefetch; this.prefetch = null;                  // ownership passes to the survey
+    const first = this.surveyVisits++ === 0 ? this.firstSector : { sectorSeed: null, firstBloom: false };   // (BLOOM-033) later visits: a random sector
+    this.surveyHost.hidden = false; this.surveyHost.inert = false;
+    this.survey = new DestinationSurvey(this.surveyHost, { sectors: pool && !pool.disposed ? pool : null, ...(pool ? {} : first), ...this.poolOpts, reducedMotion: rm,
+      onExit: () => { this.returnToMenu().catch(err => console.error("ExpeditionEntry: could not return to the menu", err)); },
+      onBeginExpedition: d => this._announced(d),
+      descent: this.descent ? { ...this.descent, transition: this.descent.transition || this.atx } : null });
+    this.menuHost.inert = false;
+    this.survey.ready.then(() => { rec.surveyReadyMs = Math.round(performance.now() - t0); }, () => {}); // (rejects if disposed while loading: a return during the fill)
+    rec.adopted = this.survey.stats.adopted; rec.swappedMs = Math.round(performance.now() - t0);
+    await frame(); await frame();                                       // the survey's first layout and globe frames, drawn while black
+    if (this.state === "disposed") return;
+    rec.liftMs = Math.round(performance.now() - t0);
+    await this._fade(0, rm);
+    rec.revealedMs = Math.round(performance.now() - t0);
+  }
+
+  /** (BLOOM-033) The one black layer (above the title, the survey and a run; below the departure's clouds): to 1 covered, to 0 clear. */
+  fadeBlack(to, rm = this.reducedMotion) { return to && this.covered ? Promise.resolve() : this._fade(to, rm); }
+  /** (BLOOM-033) Is the black fully up (and not fading)? */
+  get covered() { return !this._fader.anim && this.black.style.display !== "none" && +(this.black.style.opacity || 0) >= 0.999; }
+
+  /**
+   * (BLOOM-033) Leave the title for a run in this same document (TRAINING): from the menu only — the menu is made inert, the black fades in,
+   * and at full black the title is put away (menu hidden, its prefetch stopped). The app then mounts the run under the black; the run's
+   * own arrival lifts it. Resolves true once the title is away.
+   */
+  async leave() {
+    if (this.state !== "menu") return false;
+    this.state = "leaving"; this.menuHost.inert = true; this.stats.leaves++;
+    await this._fade(1, this.reducedMotion);
+    if (this.state !== "leaving") return false;
+    this._putAway();
+    return true;
+  }
+
+  /** (BLOOM-033) Under the survey's DRAMATIC cover (descent.onCovered): the title and the survey go away for the run (the survey disposes itself after). */
+  enterRun() {
+    if (this.state === "disposed") return false;
+    this.stats.runs++; this.surveyHost.inert = true; this._putAway();
+    return true;
+  }
+  _putAway() {
+    this.state = "away"; this.menu.hide(); this.menuHost.inert = false;
+    if (this.prefetch) { this.prefetch.dispose(); this.prefetch = null; }   // no world generation competes with a run
+    this.surveyHost.hidden = true;
+  }
+
+  /**
+   * (BLOOM-033) Back from a run, which the app has disposed: `to` "menu" — the title with its next painting, settled, the training tag
+   * re-read, a fresh first-sector prefetch; or "survey" — a fresh survey (a random sector after the first visit). The black is brought to
+   * full cover first (normally it already is: the run's exit faded into it), and lifts once the screen has drawn. No page load.
+   */
+  async resume({ to = "menu" } = {}) {
+    if (this.state !== "away" && this.state !== "departed") return false;
+    this.state = "returning";
+    const rm = this.reducedMotion, t0 = performance.now(), rec = { to, at: t0, reducedMotion: rm };
+    this.stats.resumes.push(rec);
+    if (this.survey) { const s = this.survey; this.survey = null; if (s.state !== "disposed") s.dispose(); }   // (a departed survey is gone already)
+    if (!this.covered) await this._fade(1, rm);                       // (normally the run's exit already faded to full black: never re-fade from clear)
+    if (this.state === "disposed") return false;
+    rec.blackMs = Math.round(performance.now() - t0);
+    if (to === "survey") {
+      this.state = "to-survey"; this.stats.begins++;
+      await this._openSurvey(rm, rec, t0);
+      if (this.state === "disposed") return false;
+      if (this.state === "to-survey") this.state = this.survey && this.survey.state !== "disposed" ? "survey" : "menu";
+      return true;
+    }
+    this.menu.setStatus(""); this._syncTrainingTag();
+    const shown = this.menu.show({ settled: true });
+    rec.swappedMs = Math.round(performance.now() - t0);
+    await Promise.race([shown, sleep(T.paintingWait)]);
+    await frame(); await frame();
+    if (this.state === "disposed") return false;
+    rec.liftMs = Math.round(performance.now() - t0);
+    await this._fade(0, rm);
+    rec.revealedMs = Math.round(performance.now() - t0);
+    this.state = "menu"; this.menu.focusMenu();
+    if (!this.prefetch) this._prefetchSector({ sectorSeed: null, firstBloom: false });
     return true;
   }
 
@@ -158,23 +233,9 @@ export class ExpeditionEntry {
     return true;
   }
 
-  /**
-   * (028D1) Leave the title for another page — TRAINING: the menu is made inert, the black fades in (220 ms; reduced motion
-   * 80 ms) and, at full black, `navigate(href)` runs (default: location.assign). From the menu state only. The new page
-   * lifts its own black (the training run page does). Resolves true once navigation has been asked for.
-   */
-  async leaveTo(href, { navigate = h => location.assign(h) } = {}) {
-    if (this.state !== "menu" || !href) return false;
-    this.state = "leaving"; this.menuHost.inert = true;
-    await this._fade(1, this.reducedMotion);
-    if (this.state !== "leaving") return false;
-    navigate(String(href));
-    return true;
-  }
-
   dispose() {
     if (this.state === "disposed") return;
-    this.state = "disposed"; removeEventListener("pageshow", this._onPageShow);
+    this.state = "disposed";
     if (this.survey) { this.survey.dispose(); this.survey = null; }
     if (this.prefetch) { this.prefetch.dispose(); this.prefetch = null; }
     this._fader.cancel();
@@ -212,7 +273,7 @@ export class ExpeditionEntry {
   }
 
   _announced(detail) {
-    if (detail.descent) detail.descent.then(() => { if (this.state === "survey") { this.state = "departed"; this.survey = null; } }, () => {});
+    if (detail.descent) detail.descent.then(() => { if (this.state === "survey") { this.state = "departed"; this.survey = null; } else if (this.state === "away" && this.survey && this.survey.state === "disposed") this.survey = null; }, () => {});
     if (this.onBeginExpedition) this.onBeginExpedition(detail);
   }
 
