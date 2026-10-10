@@ -11,7 +11,10 @@
   const PV = BLOOM.plantVisual, PC = BLOOM.plantCompositor, FX = BLOOM.plantFx, ART = BLOOM.plantArt, PS = BLOOM.legacyPlantSpecimen || BLOOM.plantSpecimen, D = BLOOM_DATA;   // (032C) the comparison panel shows the RETIRED 029C SVG (legacy reference)
   const RULES = PV.model.rules(D), NAMES = Object.fromEntries(Object.values(RULES.byId).map(t => [t.id, t.name]));
   const FINAL = "organic-hybrid", CANVAS = ART.contract.canvas, PRIMARY = ART.packs[FINAL] ? FINAL : "proof";
-  const PACKS = [PRIMARY, ...["proof", "proof-angular", "proof-round"].filter(p => p !== PRIMARY && ART.packs[p]), ...ART.packOrder.filter(p => ![PRIMARY, "proof", "proof-angular", "proof-round"].includes(p))];
+  // (BLOOM-035B-5) this lab is the Organic Hybrid pipeline lab: it re-skins ONE Organic Hybrid build, so it shows the packs of body plan
+  // oh-stem@1 only (the rosette / candle / reed proof packs draw other body plans: tools/body-plan-check.js)
+  const OH_PACKS = ART.packOrder.filter(p => (ART.packs[p].bodyPlan || "oh-stem@1") === "oh-stem@1");
+  const PACKS = [PRIMARY, ...["proof", "proof-angular", "proof-round"].filter(p => p !== PRIMARY && ART.packs[p]), ...OH_PACKS.filter(p => ![PRIMARY, "proof", "proof-angular", "proof-round"].includes(p))];
   const isFinal = pack => pack === FINAL;
   const PRESETS = [
     { id: "base", name: "BASE", traits: {} },

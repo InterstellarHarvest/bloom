@@ -29,14 +29,18 @@ const ALLOWED = p => p.startsWith("art/plant/") || p.startsWith("resources/plant
   || p === "tools/intake-organic-hybrid-art.mjs" || p === "tools/organic-hybrid-art-intake-check.js";   // BLOOM-032B2: the final-art intake + its focused QA
 // (BLOOM-032C) the later, separately reviewed production integration: exactly these files may differ from bba000f as well
 const C032 = new Set(["resources/run-ui/plant-specimen.js", "resources/run-ui/decision-rooms.css", "resources/run-ui/run-report.css", "demos/demo-run.html", "resources/plant-sprite-lab/legacy-svg-specimen.js", "tools/production-plant-integration-check.js"]);
-const FINAL_PACKS = { "organic-hybrid": "ORGANIC HYBRID — FINAL ART (PMO-approved; BLOOM-032B2 intake)" };   // approved art; every other pack is temporary proof art
+// (BLOOM-035B-5) FINAL_PACKS per BODY PLAN: approved art; every other pack is temporary proof art. Only organic-hybrid (oh-stem@1) is final.
+const FINAL_PACKS_BY_PLAN = { "oh-stem": { "organic-hybrid": "ORGANIC HYBRID — FINAL ART (PMO-approved; BLOOM-032B2 intake)" }, rosette: {}, candle: {}, reed: {} };
+const FINAL_PACKS = Object.assign({}, ...Object.values(FINAL_PACKS_BY_PLAN));
 const OWN_RUNTIME = ["resources/plant-visual/plant-visual-model.js", "resources/plant-visual/plant-components.js", "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-fx.js", "resources/plant-sprite-lab/lab.js"];
 
 // ---------------------------------------------------------------- the pipeline in Node (classic scripts → globalThis)
 for (const f of ["content/config.js", "content/traits.js", "resources/plant-visual/generated/plant-atlas.js", "resources/plant-visual/plant-visual-model.js", "resources/plant-visual/plant-components.js",
   "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-fx.js"]) require(path.join(ROOT, f));
 const PV = BLOOM.plantVisual, PC = BLOOM.plantCompositor, FX = BLOOM.plantFx, ART = BLOOM.plantArt, RULES = PV.model.rules(BLOOM_DATA);
-const TRAITS_SNAPSHOT = J(BLOOM_DATA.traits), CONFIG_SNAPSHOT = J(BLOOM_DATA.config), CANVAS = ART.contract.canvas, PACKS = ART.packOrder;
+// (BLOOM-035B-5) this suite proves the Organic Hybrid pipeline: PACKS = the packs of body plan oh-stem@1 (the rosette / candle / reed proof
+// packs draw other body plans and are proven by tools/body-plan-check.js; P0 below keeps FINAL_PACKS per plan over every pack)
+const TRAITS_SNAPSHOT = J(BLOOM_DATA.traits), CONFIG_SNAPSHOT = J(BLOOM_DATA.config), CANVAS = ART.contract.canvas, PACKS = ART.packOrder.filter(p => PC.planRefOf(p) === "oh-stem@1");
 const STATES = { base: {}, cold1: { cold: 1 }, cold2: { cold: 2 }, cold3: { cold: 3 }, heat1: { heat: 1 }, heat2: { heat: 2 }, heat3: { heat: 3 }, cold2heat1: { cold: 2, heat: 1 },
   drought1: { drought: 1 }, drought2: { drought: 2 }, drought3: { drought: 3 }, drought4: { drought: 4 }, flood1: { flood: 1 }, flood2: { flood: 2 }, flood3: { flood: 3 }, flood4: { flood: 4 },
   salt: { salt: 1 }, rad: { rad: 1 }, seed1: { seedOut: 1 }, seed2: { seedOut: 2 }, early: { earlyMat: 1 }, water: { waterSeeds: 1 },
@@ -103,6 +107,11 @@ const existsNow = f => { if (!AT_END) return fs.existsSync(path.join(ROOT, f)); 
         for (const [t, v] of Object.entries(s.masks || {})) if (v !== "auto" && (v[0] + w > img.w || v[1] + h > img.h)) bad.push(`${p}/${s.id}: mask ${t}`); } }
     PROOF.packs = info;
     check(packs.length >= 1 && packs.includes("proof") && !bad.length, `A1–A3 · source art is real PNG atlases + JSON metadata (${packs.join(", ")}); all parse; every sprite / mask rect is inside its image; every anchor and attachment point lies inside its rect; every proof pack is labelled TEMPORARY PIPELINE PROOF — NOT FINAL ART (the approved organic-hybrid pack: FINAL ART)`, J({ info, bad })); }
+  // P0 · (BLOOM-035B-5) FINAL_PACKS per body plan: every pack resolves to a plan; only organic-hybrid (oh-stem@1) is final art
+  { const all = ART.packOrder, byPlan = {}; for (const p of all) (byPlan[PC.planOf(p).id] = byPlan[PC.planOf(p).id] || []).push(p);
+    const finals = all.filter(p => FINAL_PACKS[p]), wrongPlan = finals.filter(p => !FINAL_PACKS_BY_PLAN[PC.planOf(p).id][p]);
+    check(J(finals) === J(["organic-hybrid"]) && !wrongPlan.length && Object.keys(byPlan).every(pl => FINAL_PACKS_BY_PLAN[pl]) && all.every(p => p === "organic-hybrid" || ART.packs[p].status === "TEMPORARY PIPELINE PROOF — NOT FINAL ART"),
+      `P0 · FINAL_PACKS per body plan: ${Object.entries(byPlan).map(([pl, ps]) => `${pl}: ${ps.join(" / ")}`).join(" · ")} — only organic-hybrid (oh-stem@1) is final; every other pack is TEMPORARY PIPELINE PROOF — NOT FINAL ART`, J({ finals, wrongPlan })); }
   // A5 · the machine-readable schema (art/plant/schema/plant-atlas.schema.json) accepts every pack and the annotated examples, and rejects junk
   { const SCH = JSON.parse(read("art/plant/schema/plant-atlas.schema.json"));
     const V = (s, v, at = "$") => { const errs = [], E = m => errs.push(`${at}: ${m}`);
