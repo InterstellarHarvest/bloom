@@ -55,11 +55,16 @@
 /* ========================================================================== */
 if(!BLOOM||!BLOOM_DATA||!BLOOM.createSim||!BLOOM_DATA.config||!BLOOM_DATA.traits) throw new Error("BLOOM.gameSession: the BLOOM engine / content classic scripts are not loaded");
 if(!BLOOM_RUN||!BLOOM_RUN.planet) throw new Error("BLOOM.gameSession: a run needs its planet");
+// (BLOOM-035B) …and its species: the canonical frozen object (BLOOM.species.resolve). It is the PLAYER's starting physiology only — the
+// planet, the scenario, the native competitor and the shared config are untouched by it. Never a fallback: a run without one is an error.
+if(!BLOOM.species||!BLOOM_RUN.species||typeof BLOOM_RUN.species.id!=="string"||BLOOM.species.resolve(BLOOM_RUN.species.id)!==BLOOM_RUN.species)
+  throw new Error("BLOOM.gameSession: a run needs its species — the canonical BLOOM.species.resolve(id) object");
+const SPECIES=BLOOM_RUN.species;
 // BLOOM-028D1: a training run (?training=1) plays on its own derived config (content/training.js through BLOOM.play.deriveConfig:
 // a copy — the shared config is never touched) with a seeded random stream; every other run is created exactly as before
 const TRAIN=BLOOM_RUN.training||null, TC=TRAIN?BLOOM_DATA.training.copy:null;
 const sim=BLOOM.createSim(BLOOM_RUN.planet, TRAIN?TRAIN.config:BLOOM_DATA.config, BLOOM_DATA.traits,
-  TRAIN?{scenario:BLOOM_RUN.scenario||undefined, rng:BLOOM.gen.mulberry32(TRAIN.rngSeed)}:{scenario:BLOOM_RUN.scenario||undefined});
+  TRAIN?{scenario:BLOOM_RUN.scenario||undefined, rng:BLOOM.gen.mulberry32(TRAIN.rngSeed), species:SPECIES}:{scenario:BLOOM_RUN.scenario||undefined, species:SPECIES});
 const CFG=sim.config;
 // BLOOM-012: the run's pressure scenario (null / default = no pressure: every readout below is exactly as before)
 const SCN=BLOOM_RUN.scenario||null, PRESS=!!(SCN&&SCN.pressure), PS=sim.pressure;
@@ -965,9 +970,10 @@ let REPORT=null; // the current run-end report (null until a win or an extinctio
 const elapsed=()=>({ ticks:sim.ticks, seconds:sim.ticks*CFG.tickMs/1000, mins:Math.floor(sim.ticks*CFG.tickMs/60000), secs:Math.round(sim.ticks*CFG.tickMs/1000)%60,
   text:`${Math.floor(sim.ticks*CFG.tickMs/60000)}m ${String(Math.round(sim.ticks*CFG.tickMs/1000)%60).padStart(2,"0")}s` });
 const reportIdentity=()=>({ planetId:BLOOM_RUN.planet.id, planetName:BLOOM_RUN.planet.name, kind:BLOOM_RUN.kind, archetypeId:RUN_ARCH, archetypeName:RUN_ARCH?BLOOM_RUN.archetype.name:null,
-  seed:RUN_ARCH?BLOOM_RUN.seed:null, seedWord:SEEDWORD, scenarioId:RUN_SCN, scenarioName:SCN?SCN.name:DEFAULT_NAME, scenarioTitle:SCN&&SCN.display?SCN.display.title:null, scenarioActive:SCEN, training:!!TRAIN, play:PLAY,
+  seed:RUN_ARCH?BLOOM_RUN.seed:null, seedWord:SEEDWORD, species:BLOOM.species.provenance(SPECIES), scenarioId:RUN_SCN, scenarioName:SCN?SCN.name:DEFAULT_NAME, scenarioTitle:SCN&&SCN.display?SCN.display.title:null, scenarioActive:SCEN, training:!!TRAIN, play:PLAY,
   // (BLOOM-029F) the exact selected world's provenance (the seed above is provenance too: the run was never regenerated from it)
-  expedition:XP?{ source:XP.source, candidateKey:XP.candidateKey, sectorSeed:XP.sectorSeed, classId:XP.classId, authored:XP.authored, archetypeId:XP.archetypeId, seed:XP.seed, attempt:XP.attempt, fingerprint:XP.fingerprint, validation:XP.validation }:null });
+  expedition:XP?{ source:XP.source, candidateKey:XP.candidateKey, sectorSeed:XP.sectorSeed, classId:XP.classId, authored:XP.authored, archetypeId:XP.archetypeId, seed:XP.seed, attempt:XP.attempt, fingerprint:XP.fingerprint, validation:XP.validation,
+    speciesId:XP.speciesId, physiologyVersion:XP.physiologyVersion, physiologyKey:XP.physiologyKey }:null });
 // BLOOM-012: the scenario's identity and how far the decline got, with the drift the plant endured (pressure runs only)
 function pressureReportData(){ if(!PRESS) return null; const o=PS.offsets;
   return { title:SCN.display.title, phaseName:phaseName(PS.phase), phase:PS.phase, progress:PS.progress, done:PS.progress>=1, offsets:{moist:o.moist, temp:o.temp, rad:o.rad}, max:{moist:PS.max.moist, temp:PS.max.temp, rad:PS.max.rad} }; }
@@ -1316,38 +1322,58 @@ const API=root.BLOOM_API={
   }
 
   /**
-   * The run descriptor of an expedition: the Destination Survey's Begin Expedition `detail` → { kind, play, planet, archetype, seed, … }.
+   * The run descriptor of an expedition: the Destination Survey's Begin Expedition `detail` → { kind, play, planet, archetype, seed, species, … }.
    * `planet` IS detail.planet — the very object the survey validated, drew and the player chose (no copy, no regeneration: nothing here
    * or on the way to the sim calls a generator, a world search or an attempt loop). `archetype` is the static archetype CONTENT looked up by
    * candidate.archetypeId (display name, render context) — never a generator call. `seed` / `attempt` are provenance. The scenario is the
    * default (no challenge modifier): the only one the survey validates.
+   * (BLOOM-035B) `species` IS the species the candidate was classified and validated for: detail.species (the survey's canonical object)
+   * and the candidate's provenance (speciesId + physiologyKey) must name the same species and the same physiology revision, or this throws
+   * — an unknown id throws too. Play Again passes the same `detail` again: the SAME planet object and the SAME species object.
    */
   function expeditionRun(detail, { BLOOM_DATA = root.BLOOM_DATA, fingerprint = null } = {}) {
     if (!detail || !detail.planet || typeof detail.planet !== "object") throw new TypeError("BLOOM.gameSession.expeditionRun: detail.planet is required (the survey's selected planet)");
     if (!detail.candidate || typeof detail.candidate.key !== "string") throw new TypeError("BLOOM.gameSession.expeditionRun: detail.candidate is required");
     const P = detail.planet, c = detail.candidate, authored = !!c.authored, D = BLOOM_DATA || {}, render = detail.render || null;
+    const species = runSpecies(detail);
     const A = !authored && Array.isArray(D.archetypes) ? D.archetypes.find(a => a.id === c.archetypeId) || null : null;
     const archetype = authored ? null : A || { id: c.archetypeId, name: (P.archetype && P.archetype.name) || c.archetypeId || "Unknown world type", render, display: null, standIn: true };
     const pa = P.archetype || null, S = defaultScenario();
     const expedition = { source: "destination-survey", candidateKey: c.key, sectorSeed: c.sectorSeed ?? null, classId: c.classId ?? null, authored, archetypeId: c.archetypeId ?? null,
-      seed: c.seed ?? null, attempt: c.attempt ?? null, validation: c.validation ?? null, fingerprint };
+      seed: c.seed ?? null, attempt: c.attempt ?? null, validation: c.validation ?? null, fingerprint,
+      speciesId: species.id, physiologyVersion: species.physiologyVersion, physiologyKey: species.physiologyKey };
     const summary = { kind: authored ? "authored" : "procedural", expedition: true, source: expedition.source, candidateKey: c.key, sectorSeed: expedition.sectorSeed, classId: expedition.classId,
       planetId: P.id, name: P.name, archetypeId: expedition.archetypeId, archetype: archetype ? archetype.name : null, publicSeed: expedition.seed, attempt: expedition.attempt,
       validatedLayers: pa ? pa.validatedLayers || null : null, landmasses: pa ? pa.landmasses ?? null : null, actualWaterPct: pa ? pa.actualWaterPct ?? null : null,
-      scenarioId: S.id, scenario: S.name, fingerprint, validation: expedition.validation };
-    return { kind: summary.kind, play: true, planet: P, archetype, seed: authored ? null : expedition.seed, scenario: null, render, expedition, summary };
+      scenarioId: S.id, scenario: S.name, fingerprint, validation: expedition.validation, species: root.BLOOM.species.provenance(species) };
+    return { kind: summary.kind, play: true, planet: P, archetype, seed: authored ? null : expedition.seed, scenario: null, render, species, expedition, summary };
+  }
+  /** (035B) the expedition's species from the survey detail: the canonical object, cross-checked with the candidate's provenance. */
+  function runSpecies(detail) {
+    const B = root.BLOOM, c = detail.candidate;
+    if (!B.species) throw new Error("BLOOM.gameSession.expeditionRun: load content/species.js and resources/bloom-species.js");
+    const id = (detail.species && detail.species.id) || c.speciesId;
+    if (typeof id !== "string") throw new TypeError("BLOOM.gameSession.expeditionRun: the survey detail names no species (detail.species / candidate.speciesId)");
+    const sp = B.species.resolve(id); // an unknown id throws (never a silent fallback)
+    if (detail.species && detail.species !== sp) throw new Error(`BLOOM.gameSession.expeditionRun: detail.species is not the canonical ${id} object`);
+    if (c.speciesId != null && c.speciesId !== sp.id) throw new Error(`BLOOM.gameSession.expeditionRun: the candidate was surveyed for ${c.speciesId}, not ${sp.id}`);
+    if (c.physiologyKey != null && c.physiologyKey !== sp.physiologyKey) throw new Error(`BLOOM.gameSession.expeditionRun: the candidate was validated for physiology ${c.physiologyKey}, now ${sp.physiologyKey}`);
+    return sp;
   }
 
   /** The training run descriptor: the authored training world (content/training.js) on its derived config (BLOOM.play.deriveConfig — the
-   *  shared config is never touched) with its seeded random stream; default scenario. `returnTo` is only a developer harness's. */
+   *  shared config is never touched) with its seeded random stream; default scenario. `returnTo` is only a developer harness's.
+   *  (BLOOM-035B) Training is ALWAYS Organic Hybrid (BLOOM.species.TRAINING_ID), whatever species the player chose last: the guided lessons
+   *  are written against its limits. Nothing here reads a last-chosen species. */
   function trainingRun({ BLOOM_DATA = root.BLOOM_DATA, planetId = null, returnTo = null } = {}) {
     const D = BLOOM_DATA, T = D && D.training, B = root.BLOOM;
     if (!T || !B.play || !B.play.deriveConfig) throw new Error("BLOOM.gameSession.trainingRun: the training data (content/training.js) or BLOOM.play is not loaded");
+    if (!B.species) throw new Error("BLOOM.gameSession.trainingRun: load content/species.js and resources/bloom-species.js");
     const id = planetId || T.planetId, P = Object.prototype.hasOwnProperty.call(D.planets, id) ? D.planets[id] : null;
     if (!P) throw new Error(`BLOOM.gameSession.trainingRun: unknown training planet "${id}"`);
-    const S = defaultScenario();
-    return { kind: "authored", planet: P, planetParam: planetId, play: true, scenario: null,
-      summary: { kind: "authored", planetId: P.id, name: P.name, scenarioId: S.id, scenario: S.name, training: true },
+    const S = defaultScenario(), species = B.species.resolve(B.species.TRAINING_ID);
+    return { kind: "authored", planet: P, planetParam: planetId, play: true, scenario: null, species,
+      summary: { kind: "authored", planetId: P.id, name: P.name, scenarioId: S.id, scenario: S.name, training: true, species: B.species.provenance(species) },
       training: { planetId: P.id, rngSeed: T.rngSeed, config: B.play.deriveConfig(D.config, T.config), returnTo } };
   }
   /** the default scenario (no challenge modifier): { id, name } from the scenario catalogue */

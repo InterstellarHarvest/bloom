@@ -24,7 +24,13 @@
 //
 // RELOAD POLICY. Runs are not saved: a reload returns to the title. The address never changes (no token, no planet, no screen in it).
 //
-// Development / QA query parameters (never needed by a player): ?bg=<1…12> · &rm=1 | &rm=0 · &sector=<n> · &firstBloom=1 ·
+// SPECIES (BLOOM-035B). A run's species travels with its planet: the survey's detail.species (the canonical BLOOM.species object the
+// candidate was classified and validated for) → expeditionRun → GameSession → createSim; Play Again reuses the SAME planet and the SAME
+// species objects; Choose Another Planet opens a survey for the same species; Main Menu clears the run. TRAINING is always Organic
+// Hybrid (BLOOM.gameSession.trainingRun). The Species Selection screen (resources/species-select/) exists only behind the DEVELOPMENT flag
+// ?species=1 — loaded lazily, never in the production flow, never a Settings entry — so candidate species and their proof art stay hidden.
+//
+// Development / QA query parameters (never needed by a player): ?species=1 (035B: the species flow) · ?bg=<1…12> · &rm=1 | &rm=0 · &sector=<n> · &firstBloom=1 ·
 // &workers=<1…8> · &worker=0 · &begin=1 (enter the survey at once; dropped from the address) · &hold=<ms> / &fail=1 / &seed=<n> (the
 // departure's covered work / cloud layout). window.MENU_DEV (QA): { ready, errors, events, hooks, departures, results, entry, page, app }.
 import { ExpeditionEntry } from "../main-menu/expedition-entry.js";
@@ -37,6 +43,10 @@ const TRAINING_URL = new URL("../training/training-run.js", import.meta.url).hre
 let trainingModule = null;
 const loadTraining = () => trainingModule || (trainingModule = (window.BLOOM.modules && BLOOM.modules.portable ? BLOOM.modules.load(TRAINING_URL) : import(TRAINING_URL)));
 const RUN_ACTIONS = new Set(["playAgain", "choosePlanet", "mainMenu", "restartRun"]);
+// (035B) the Species Selection screen: development flag only, loaded on the first EXPEDITION of a ?species=1 visit (never otherwise)
+const SPECIES_URL = new URL("../species-select/species-select.js", import.meta.url).href;
+let speciesModule = null;
+const loadSpeciesScreen = () => speciesModule || (speciesModule = (window.BLOOM.modules && BLOOM.modules.portable ? BLOOM.modules.load(SPECIES_URL) : import(SPECIES_URL)));
 
 export class AppController {
   /**
@@ -45,14 +55,19 @@ export class AppController {
    * entry        ExpeditionEntry options (QA / development: reducedMotion, background, sectorSeed, firstBloom, workers, worker, seed …)
    * dev          { hold, fail } — the departure's covered work (development / QA)
    */
-  constructor(app, { runScripts = Promise.resolve(), entry = {}, dev = {}, onEvent = null } = {}) {
+  constructor(app, { runScripts = Promise.resolve(), entry = {}, dev = {}, onEvent = null, speciesFlow = false } = {}) {
     if (!app || typeof app.appendChild !== "function") throw new TypeError("AppController: app must be a DOM element");
-    this.app = app; this.runScripts = runScripts; this.dev = dev; this.onEvent = onEvent;
+    this.app = app; this.runScripts = runScripts; this.dev = dev; this.onEvent = onEvent; this.speciesFlow = !!speciesFlow;
     this.session = null; this.expedition = null; this.busy = false; this.disposed = false;
     this.stats = { sessions: [], actions: [], departures: [] };
     this.runHost = document.createElement("div"); this.runHost.className = "app-run"; this.runHost.hidden = true; app.appendChild(this.runHost);
     const seed = entry.seed ?? null;
-    this.entry = new ExpeditionEntry(app, { ...entry,
+    // (035B) the species screen factory (flag only): the screen draws real specimens, so it waits for the run's classic scripts (the sprite runtime)
+    const speciesScreen = this.speciesFlow ? (host, opts) => {
+      const view = { ready: null, inner: null, focus() { if (this.inner) this.inner.focus(); }, dispose() { this.disposed = true; if (this.inner) this.inner.dispose(); } };
+      view.ready = Promise.all([loadSpeciesScreen(), this.runScripts]).then(([M]) => { if (!view.disposed) { view.inner = new M.SpeciesSelect(host, opts); this._ev("species-screen", { focused: opts.species.id }); return view.inner.ready; } });
+      return view; } : null;
+    this.entry = new ExpeditionEntry(app, { ...entry, speciesFlow: this.speciesFlow, speciesScreen,
       onTraining: () => { this.startTraining().catch(err => this._error("training", err)); },
       onBeginExpedition: d => this._ev("begin-expedition", { key: d.candidate.key }),
       descent: {
@@ -64,18 +79,18 @@ export class AppController {
   }
 
   /** "title" | "survey" | "run" — the screen the player is on (or moving to). */
-  get screen() { if (this.session) return "run"; const s = this.entry.state; return s === "survey" || s === "to-survey" ? "survey" : "title"; }
+  get screen() { if (this.session) return "run"; const s = this.entry.state; return s === "species" ? "species" : s === "survey" || s === "to-survey" ? "survey" : "title"; }
 
   // ---------------------------------------------------------------- survey → run (under the DRAMATIC descent's full cover)
   async _depart(detail, info) {
-    const rec = { at: performance.now(), concealed: info.concealed, reducedMotion: info.reducedMotion, key: detail.candidate.key, planet: detail.planet };
+    const rec = { at: performance.now(), concealed: info.concealed, reducedMotion: info.reducedMotion, key: detail.candidate.key, planet: detail.planet, species: detail.species };
     this.stats.departures.push(rec);
     if (this.dev.hold) await new Promise(r => setTimeout(r, this.dev.hold));
     if (this.dev.fail) throw new Error("dev: covered work failed (fail=1)");
     await this.runScripts;
     rec.fingerprint = planetFingerprint(detail.planet);          // the survey's own identity algorithm, once (QA / provenance)
-    // the exact selection, kept for Play Again: the same objects the survey handed over (planet, candidate provenance, render hints)
-    const selected = { planet: detail.planet, candidate: detail.candidate, render: detail.render || null };
+    // the exact selection, kept for Play Again: the same objects the survey handed over (planet, (035B) species, candidate provenance, render hints)
+    const selected = { planet: detail.planet, species: detail.species, candidate: detail.candidate, render: detail.render || null };
     this.entry.enterRun();
     try {
       await this._mount(BLOOM.gameSession.expeditionRun(selected, { fingerprint: rec.fingerprint }));
@@ -84,8 +99,8 @@ export class AppController {
       throw err;
     }
     this.expedition = { selected, fingerprint: rec.fingerprint };
-    rec.sessionAt = performance.now(); rec.planetIsSelected = this.session.planet === detail.planet;
-    this._ev("depart", { key: rec.key, fingerprint: rec.fingerprint });
+    rec.sessionAt = performance.now(); rec.planetIsSelected = this.session.planet === detail.planet; rec.speciesIsSelected = this.session.run.species === detail.species;
+    this._ev("depart", { key: rec.key, fingerprint: rec.fingerprint, species: detail.species.id });
   }
 
   // ---------------------------------------------------------------- title → training
@@ -108,7 +123,8 @@ export class AppController {
     const s = BLOOM.gameSession.create(run, { host: this.runHost, onAction: id => this._runAction(id) });
     this.session = s; this.runHost.hidden = false;
     const rec = { kind: run.training ? "training" : "expedition", planetId: run.planet.id, planetName: run.planet.name, fingerprint: run.expedition ? run.expedition.fingerprint : null,
-      planetIsSelected: !!(this.expedition && run.planet === this.expedition.selected.planet) || null, at: t0, readyMs: null, painted: null };
+      planetIsSelected: !!(this.expedition && run.planet === this.expedition.selected.planet) || null, at: t0, readyMs: null, painted: null,
+      speciesId: run.species.id, physiologyKey: run.species.physiologyKey, speciesIsSelected: !!(this.expedition && !run.training && run.species === this.expedition.selected.species) || null };
     this.stats.sessions.push(rec);
     if (T) T.mountTraining(s, { fader: { fade: to => this.entry.fadeBlack(to) }, onAction: id => this._trainingAction(id) });
     const r = await s.ready; rec.readyMs = Math.round(performance.now() - t0); rec.painted = r.painted;
@@ -132,7 +148,7 @@ export class AppController {
     this._disposeSession();
     await this._mount(BLOOM.gameSession.expeditionRun(X.selected, { fingerprint: X.fingerprint }));
     await this.entry.fadeBlack(0);
-    this._ev("play-again", { fingerprint: X.fingerprint });
+    this._ev("play-again", { fingerprint: X.fingerprint, species: X.selected.species.id });
   }
   async _leaveRun(to) {
     await this.entry.fadeBlack(1);
@@ -142,13 +158,13 @@ export class AppController {
     this._disposeSession();
     if (to === "menu") this.expedition = null;
     await this.entry.resume({ to });
-    this._ev(to === "survey" ? "choose-planet" : "main-menu");
+    this._ev(to === "survey" ? "choose-planet" : to === "species" ? "choose-species" : "main-menu", { species: this.entry.species.id });
   }
   /** Training's actions — called by its layer at full black (it already confirmed a skip and recorded the status). */
   _trainingAction(id) {
     this.stats.actions.push({ id, at: performance.now(), training: true });
     const go = id === "restartTraining" ? async () => { this._disposeSession(); await this._mount(BLOOM.gameSession.trainingRun()); }
-      : () => this._backTo(id === "beginExpedition" ? "survey" : "menu");
+      : () => this._backTo(id === "beginExpedition" ? (this.speciesFlow ? "species" : "survey") : "menu"); // (035B) the flag flow chooses a species first
     this.busy = true;
     go().catch(err => this._error(id, err)).finally(() => { this.busy = false; });
   }
@@ -172,7 +188,7 @@ export function mountApp({ app, runScripts = Promise.resolve() } = {}) {
   // ?begin=1 enters the survey at once; it is dropped from the address so a reload lands on the title
   if (begin) { const u = new URL(location.href); u.searchParams.delete("begin"); history.replaceState(null, "", u.href); }
   document.title = TITLE_TEXT;
-  const controller = new AppController(app, { runScripts,
+  const controller = new AppController(app, { runScripts, speciesFlow: q.get("species") === "1",
     entry: { reducedMotion: rm, background: q.has("bg") ? +q.get("bg") - 1 : null, sectorSeed: q.has("sector") ? +q.get("sector") : null, firstBloom: q.get("firstBloom") === "1",
       workers: q.has("workers") ? +q.get("workers") : null, worker: q.get("worker") !== "0", seed: q.has("seed") ? +q.get("seed") : null },
     dev: { hold: +(q.get("hold") || 0), fail: q.get("fail") === "1" },

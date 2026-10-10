@@ -81,7 +81,7 @@
     const card = layer.querySelector("#rrCard"), $ = id => layer.querySelector("#" + id);
     // the production specimen, mounted once (hidden until the first report); re-rendered from the real owned tiers at each report
     const plantHost = document.createElement("div"); plantHost.className = "rr-spec"; $("rrPlant").appendChild(plantHost);
-    const spec = PS.mount(plantHost, { reducedMotion: reduced });
+    const spec = PS.mount(plantHost, { reducedMotion: reduced, species: A.run().species }); // (035B) the run's species: its body plan + pack
     const specCap = document.createElement("div"); specCap.className = "rr-spec-cap"; plantHost.appendChild(specCap);
     const build = document.createElement("div"); build.className = "rr-build"; $("rrPlant").appendChild(build);
     // the 028D1 anchors this report now owns (the hidden shell's copies become data-tutorial-legacy)
@@ -123,7 +123,9 @@
       const traits = {}, names = {}; for (const b of (d.built || [])) { traits[b.id] = b.tier; names[b.id] = b.name; }
       spec.highlight(null);
       spec.render({ traits, names, preview: null, colony: { living: win, establishment: 1, word: win ? "dense" : "none" }, focus: "balanced", local: null, condition: win ? "ok" : "bad", viable: win });
-      specCap.innerHTML = `<b>${win ? "Your plant, as it bloomed" : "Your plant, as it was"}</b><small>${(d.built || []).length ? `${d.built.length} adaptation${d.built.length === 1 ? "" : "s"}` : "the unmodified pioneer"}</small>`;
+      // (035B) the report names the species (the caption's second line: "<species> · n adaptations")
+      layer.dataset.species = i.species ? i.species.id : "";
+      specCap.innerHTML = `<b>${win ? "Your plant, as it bloomed" : "Your plant, as it was"}</b><small>${i.species ? `<span class="rr-species">${esc(i.species.name)}</span> · ` : ""}${(d.built || []).length ? `${d.built.length} adaptation${d.built.length === 1 ? "" : "s"}` : "the unmodified pioneer"}</small>`;
       const builtChips = (d.built || []).map(b => chip(`${ico("leaf")}${esc(tierWord(b))}`, "ow", catStyle(b.uiCategory))).join("") || chip("The unmodified pioneer", "ow none");
       const tfChips = (d.terraform || []).map(t => chip(`${ico(t.axis === "temp" ? "temp" : "humid")}${esc(t.name)}${t.tier > 1 ? ` ${ROMAN[t.tier] || t.tier}` : ""}`, "ow", catStyle(t.uiCategory))).join("");
       build.innerHTML = `<section class="rr-sec" aria-label="Your plant became"><h3>${ico("adapt")}${win ? "Your plant became" : "Your plant had become"}</h3><div class="rr-chips">${builtChips}</div></section>` +

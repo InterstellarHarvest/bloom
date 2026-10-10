@@ -184,6 +184,37 @@ const arche = (ctx, id) => ctx.BLOOM_DATA.archetypes.find(a => a.id === id);
     "Q13 · an unknown species id throws (UNKNOWN_SPECIES — the study's role id \"dry_heat\", an empty id), a non-string throws, and createSim refuses an id string or an unresolved (unfrozen) physiology object: never a silent fallback",
     [e1, e4, e5].map(e => e && e.message.slice(0, 64)).join(" | ")); }
 
+// ---------------------------------------------------------------------------------------------------- Q14 · Training is Organic Hybrid
+// the run descriptors (resources/run/game-session.js) in this engine's context: the browser suites drive the same objects end to end
+vm.runInContext(read("resources/run/game-session.js"), NOW, { filename: "resources/run/game-session.js" });
+const GS = BLOOM.gameSession;
+{ const T1 = GS.trainingRun(), app = read("resources/app/app-controller.js"), gs = read("resources/run/game-session.js");
+  const body = gs.slice(gs.indexOf("function trainingRun("), gs.indexOf("function defaultScenario"));
+  // whatever the entry's last species was, Training's descriptor resolves the TRAINING_ID — it takes no species input at all
+  const noInput = !/species\s*[,}=]/.test(body.slice(0, body.indexOf(")"))) && /B\.species\.resolve\(B\.species\.TRAINING_ID\)/.test(body) && !/lastSpecies|entry\.species/.test(body);
+  const appTraining = /_mount\(BLOOM\.gameSession\.trainingRun\(\)\)/.test(app) && (app.match(/trainingRun\(/g) || []).length === 2;
+  check(S.TRAINING_ID === "organic_hybrid" && T1.species === S.resolve("organic_hybrid") && T1.summary.species.id === "organic_hybrid" && noInput && appTraining,
+    "Q14 · Training always resolves Organic Hybrid: trainingRun() carries the canonical organic_hybrid object (summary too), takes no species input and reads no last-chosen species; the app starts and restarts Training only through trainingRun()",
+    `${T1.species.physiologyKey} · app calls ${(app.match(/trainingRun\(/g) || []).length}`); }
+
+// ---------------------------------------------------------------------------------------------------- Q15 · Play Again keeps planet + species
+{ const planet = BLOOM.play.stripPlanet(BLOOM.generateFromArchetype(arche(NOW, "frozen_world"), 22, { config: C, traits: D.traits })), sp = S.resolve("woolly_candle");
+  const cand = { key: "frozen_world:22", authored: false, archetypeId: "frozen_world", seed: 22, attempt: planet.archetype.attempt, classId: "favorable", sectorSeed: 77,
+    validation: { path: "test" }, speciesId: sp.id, physiologyVersion: sp.physiologyVersion, physiologyKey: sp.physiologyKey };
+  const selected = { planet, species: sp, candidate: cand, render: null };
+  const a = GS.expeditionRun(selected, { fingerprint: "f" }), b = GS.expeditionRun(selected, { fingerprint: "f" });   // Begin Expedition, then Play Again
+  const same = a.planet === planet && b.planet === planet && a.species === sp && b.species === sp && a.summary.species.physiologyKey === sp.physiologyKey && a.expedition.speciesId === sp.id;
+  const wrong = [
+    { ...selected, species: S.resolve("reed_spire") },                                                   // detail.species ≠ the candidate's species
+    { ...selected, species: { ...sp } },                                                                  // not the canonical object
+    { ...selected, candidate: { ...cand, physiologyKey: "woolly_candle/p0#00000000" } },                  // a stale physiology revision
+    { ...selected, species: null, candidate: { ...cand, speciesId: "dry_heat" } },                        // an unknown id
+    { ...selected, species: null, candidate: { ...cand, speciesId: undefined } }].map(x => throws(() => GS.expeditionRun(x)));   // no species at all
+  const app = read("resources/app/app-controller.js");
+  const appKeeps = /const selected = \{ planet: detail\.planet, species: detail\.species,/.test(app) && /_playAgain\(\) \{[\s\S]*?expeditionRun\(X\.selected,/.test(app);
+  check(same && wrong.every(Boolean) && appKeeps, "Q15 · Play Again preserves planet + species: the run descriptor of the kept selection carries the SAME planet object and the SAME canonical species object every time (the app keeps detail.species beside detail.planet and replays X.selected); a mismatched, copied, stale, unknown or missing species throws instead of substituting one",
+    wrong.map(e => e ? e.message.slice(0, 48) : "ACCEPTED").join(" | ")); }
+
 // ---------------------------------------------------------------------------------------------------- Q16 · no Challenge / reference coupling
 { const P = BLOOM.play, base = scen(NOW, null);
   const refused = ["referencePlant", "genomeBase", "species", "physiology"].map(k => throws(() => P.deriveConfig(C, { [k]: { tempFloor: -20 } })));
