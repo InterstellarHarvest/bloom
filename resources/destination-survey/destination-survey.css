@@ -58,6 +58,14 @@
 .ds[data-state="focus"] .ds-head-tools{opacity:0; pointer-events:none}
 .ds[data-state="loading"] .ds-head-tools{opacity:.4; pointer-events:none} /* first sector still being validated */
 .ds-sector:empty{visibility:hidden}
+/* (035B, development flag ?species=1 only) the species this survey is for, with Change; absent from the production flow */
+.ds-species{display:inline-flex; align-items:center; gap:8px; padding:3px 4px 3px 12px; border:2px solid var(--line); border-radius:var(--bloom-r-pill); background:rgba(9,13,25,.6); color:var(--ink-soft); font-size:13.5px; font-weight:700; white-space:nowrap}
+.ds-species-k{font-size:11px; letter-spacing:1.2px; text-transform:uppercase}
+.ds-species b{color:var(--ink); font-weight:900}
+.ds-species .ds-btn{min-height:32px; padding:4px 12px; font-size:13px}
+.ds[data-state="focus"] .ds-species{opacity:.6}
+.ds-hab-for{font-weight:700; color:var(--ink-soft)}
+@media (max-width:640px){ .ds-species-k{display:none} .ds-species{font-size:12.5px} }
 .ds[data-state="focus"] .ds-sector{opacity:.6}
 /* (028C) back to the Main Menu: a quiet ghost button before the title; only while surveying (gone in focus and while departing) */
 .ds-exit{margin-left:-8px; transition:opacity .25s}

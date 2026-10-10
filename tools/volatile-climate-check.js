@@ -410,9 +410,12 @@ check(LP.primary.status === "PASS" && LP.primary.climate && LP.primary.climate.t
 
 console.log("\n# A · economy and decision cadence");
 { // 50 · BLOOM-013 values (hashes computed from `git archive 9252924`)
-  const h = { econ: fnv(J(config.econ)), costs: fnv(J(traits.map(t => [t.id, t.cost]))), colony: fnv(J([config.colony.specCost, config.colony.modes, config.colony.specializations])), config: fnv(J(config)) };
+  // (BLOOM-035B) the PMO-mandated rename genomeBase → referencePlant (same numbers, same position) is the ONLY config change since:
+  // the whole-config hash is taken with that one key mapped back, so any other difference still fails here
+  const asOf9252924 = Object.fromEntries(Object.entries(config).map(([k, v]) => [k === "referencePlant" ? "genomeBase" : k, v]));
+  const h = { econ: fnv(J(config.econ)), costs: fnv(J(traits.map(t => [t.id, t.cost]))), colony: fnv(J([config.colony.specCost, config.colony.modes, config.colony.specializations])), config: fnv(J(asOf9252924)) };
   check(h.econ === "0be1e07b" && h.costs === "35490a04" && h.colony === "ee8bb155" && h.config === "58caa476" && config.econ.startBiomass === 100 && config.econ.originTrickle === 0.3,
-    "50 · the BLOOM-013 economy is unchanged: config.econ, every trait cost, local upgrade prices and the whole config equal 9252924", J(h)); }
+    "50 · the BLOOM-013 economy is unchanged: config.econ, every trait cost, local upgrade prices and the whole config equal 9252924 (apart from BLOOM-035B's genomeBase → referencePlant rename, mapped back)", J(h)); }
 const E = require("./economy-study.js");
 const CAD = E.study({ seeds: [1, 2, 3, 4], worlds: ["f4vc", "d22vc", "o28vc"], rows: [["balanced", "none"], ["situational", "canopyOrigin", "extend"]], bubbleModes: ["auto", "click"] });
 { const rows = []; for (const [w, W] of Object.entries(CAD.worlds)) for (const [rn, R] of Object.entries(W.recipes)) for (const [k, x] of Object.entries(R)) if (k !== "plan") rows.push({ w, rn, k, ...x });

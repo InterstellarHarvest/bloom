@@ -38,7 +38,7 @@
 // a "Main menu" back button; the consumer runs the transition back and disposes the survey (which disposes the pool it owns).
 import { PlanetSphereView, PlanetSphereRenderer } from "../planet-sphere/planet-sphere-view.js";
 import { AtmosphereTransition } from "../atmosphere-transition/atmosphere-transition.js";
-import { SURVEY_CLASSES, ROWS, nextSectorSeed, sectorLabel } from "./survey-data.js";
+import { SURVEY_CLASSES, ROWS, nextSectorSeed, sectorLabel, speciesFor } from "./survey-data.js";
 import { SectorPool } from "./sector-pool.js";
 // (BLOOM-034) the production icon family, shared with the title
 import { ico } from "../ui/bloom-icons.js";
@@ -89,17 +89,24 @@ export class DestinationSurvey {
    *                    the pool from here and disposes it with itself. Omitted: a private pool, as before.
    * onExit             (028C) called when the player leaves for the Main Menu (a "Main menu" header button appears; Escape
    *                    in the survey state leaves too). The survey changes nothing itself: the consumer transitions and disposes it.
+   * species            (035B) the species this survey is FOR (a BLOOM.species.resolve object or id; default Organic Hybrid): every
+   *                    sector is classified, described and validated for it (the worlds themselves never depend on it)
+   * onChangeSpecies    (035B, development flag ?species=1 only) shows the species chip with a "Change" button in the header; called with
+   *                    this survey (state survey / loading). Without it the screen shows no species control at all (production flow).
    */
-  constructor(root, { sectorSeed = null, firstBloom = false, reducedMotion = null, worker = true, workers = null, onBeginExpedition = null, descent = null, sectors = null, onExit = null } = {}) {
+  constructor(root, { sectorSeed = null, firstBloom = false, reducedMotion = null, worker = true, workers = null, onBeginExpedition = null, descent = null, sectors = null, onExit = null,
+    species = null, onChangeSpecies = null } = {}) {
     if (!root || typeof root.appendChild !== "function") throw new TypeError("DestinationSurvey: root must be a DOM element");
     if (descent && typeof descent.onCovered !== "function") throw new TypeError("DestinationSurvey: descent.onCovered must be a function");
     if (sectors && (!(sectors instanceof SectorPool) || sectors.disposed)) throw new TypeError("DestinationSurvey: sectors must be a live SectorPool");
     this.root = root; this.onBeginExpedition = onBeginExpedition; this.forcedReducedMotion = reducedMotion; this.descent = descent; this.onExit = onExit;
+    this.onChangeSpecies = typeof onChangeSpecies === "function" ? onChangeSpecies : null;
+    this.species = species != null ? speciesFor(species) : sectors ? sectors.species : speciesFor(null); // (035B) frozen; an unknown id throws
     this.mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
     // (028C) the pool: adopted (its prefetched sector is the first shown) or private. Validations run one per task (028B), so the
     // pool uses the machine: hardware threads − 2 (the page's main and compositor threads keep theirs), at most 8.
-    this.sectors = sectors || new SectorPool({ worker, workers });
-    const pre = sectors && sectors.first;
+    this.sectors = sectors || new SectorPool({ worker, workers, species: this.species });
+    const pre0 = sectors && sectors.first, pre = pre0 && pre0.species.physiologyKey === this.species.physiologyKey ? pre0 : null; // (035B) adopt only this species' prefetch
     this.firstBloom = !!firstBloom || !!(pre && sectorSeed == null && pre.firstBloom);
     this.sectorSeed = sectorSeed != null ? sectorSeed >>> 0 : pre ? pre.seed : 1 + Math.floor(Math.random() * 999998);
     this.state = "loading"; this.selected = null; this.cells = new Array(N).fill(null); this.sector = null;
@@ -111,7 +118,7 @@ export class DestinationSurvey {
     this.views = this.globes.map((g, i) => new PlanetSphereView(g, { renderer: this.host, interactive: false, reducedMotion,
       distance: GLOBE_DISTANCE, yaw: i * 0.7 + 0.35, ariaLabel: "Planet globe: drag sideways or press the left and right arrow keys to spin it" }));
     this.sectors.onProgress = e => this._progress(e);
-    const e = this.sectors.sector(this.sectorSeed, this.firstBloom);
+    const e = this.sectors.sector(this.sectorSeed, this.firstBloom, this.species);
     this.stats.adopted = pre ? { seed: pre.seed, ready: e.ready, confirmed: e.found.reduce((a, b) => a + b, 0) } : null;
     let first;
     if (e.ready) first = e.promise.then(s => this._swapIn(s, { first: true })); // (028C) prefetched in full: the single sweep, as a prefetched scan
@@ -126,8 +133,8 @@ export class DestinationSurvey {
 
   /** (028C) Start validating a sector with no screen — on the title screen, while the player reads the menu. Returns the
    *  SectorPool to pass as `sectors`; `pool.progress` / `pool.ready` report it; `pool.dispose()` if no survey ever takes it. */
-  static prefetch({ sectorSeed = null, firstBloom = false, worker = true, workers = null } = {}) {
-    return new SectorPool({ worker, workers }).prefetch({ sectorSeed, firstBloom });
+  static prefetch({ sectorSeed = null, firstBloom = false, worker = true, workers = null, species = null } = {}) {
+    return new SectorPool({ worker, workers, species }).prefetch({ sectorSeed, firstBloom });
   }
 
   get reducedMotion() { return this.forcedReducedMotion ?? !!(this.mq && this.mq.matches); }
@@ -140,7 +147,7 @@ export class DestinationSurvey {
 
   // ---------------------------------------------------------------- public
   /** Is the sector after the one on screen already validated and waiting (prefetched)? */
-  get nextSectorReady() { const e = this.sectors.get(nextSectorSeed(this.sectorSeed), false); return !!(e && e.ready); }
+  get nextSectorReady() { const e = this.sectors.get(nextSectorSeed(this.sectorSeed), false, this.species); return !!(e && e.ready); }
 
   /**
    * SCAN NEW SECTOR: the next sector's nine validated worlds replace these in a short corner-to-corner sweep. Normally that
@@ -152,7 +159,7 @@ export class DestinationSurvey {
     if (this.state !== "survey") return false;
     this.state = "scanning"; this.scanBtn.setAttribute("aria-busy", "true");
     try {
-      const seed = nextSectorSeed(this.sectorSeed), e = this.sectors.sector(seed, false), p = e.promise, prefetched = e.ready, t0 = performance.now();
+      const seed = nextSectorSeed(this.sectorSeed), e = this.sectors.sector(seed, false, this.species), p = e.promise, prefetched = e.ready, t0 = performance.now();
       if (!prefetched) { this.stats.scanWaits++; this._awaiting = e; await this._sweepOut(); if (this.state === "disposed") return false; this._fillIn(e); this._progress(e); }
       const sector = await p;
       this._awaiting = null; this._progress(null);
@@ -172,6 +179,17 @@ export class DestinationSurvey {
     if (!this.onExit || (this.state !== "survey" && this.state !== "loading")) return false;
     this.stats.exits++;
     this.onExit(this);
+    return true;
+  }
+
+  /**
+   * (035B) Change Species (development flag flow): only with an `onChangeSpecies` consumer, from the survey (or still-loading) state.
+   * The consumer shows the species screen and later opens a survey for the new species on the SAME sector seed (this.sectorSeed).
+   */
+  changeSpecies() {
+    if (!this.onChangeSpecies || (this.state !== "survey" && this.state !== "loading")) return false;
+    this.stats.speciesChanges = (this.stats.speciesChanges || 0) + 1;
+    this.onChangeSpecies(this);
     return true;
   }
 
@@ -241,7 +259,10 @@ export class DestinationSurvey {
     if (this.state !== "focus") return null;
     const i = this.selected, c = this.cells[i];
     const detail = { candidate: { key: c.key, name: c.name, authored: c.authored, archetypeId: c.archetypeId, seed: c.seed, attempt: c.attempt, classId: c.classId,
-      sectorSeed: this.sectorSeed, validation: c.validation }, planet: c.planet, render: c.render, dossier: c.dossier,
+      sectorSeed: this.sectorSeed, validation: c.validation,
+      // (035B) provenance: the species this world was classified and validated for, and its exact physiology revision
+      speciesId: c.species.id, physiologyVersion: c.species.physiologyVersion, physiologyKey: c.species.physiologyKey, physicalKey: c.physicalKey, playability: c.playability },
+      planet: c.planet, species: this.species, render: c.render, dossier: c.dossier,
       view: this.views[i], container: this.globes[i], globe: this.globes[i], survey: this };
     this.stats.begins++;
     let go = null;
@@ -336,17 +357,20 @@ export class DestinationSurvey {
     this.sectors.resume(); this._prefetch();
   }
 
-  /** Tear the screen down: animations, the renderer and its nine views, the worker pool (owned), listeners and the built DOM. */
-  dispose() {
-    if (this.state === "disposed") return;
+  /** Tear the screen down: animations, the renderer and its nine views, the worker pool (owned), listeners and the built DOM.
+   *  (035B) `keepPool: true` (Change Species): the pool — its workers and its physical / evaluation caches — is released instead of
+   *  disposed and returned, so the next species' survey of the same sector seed adopts it and validates nothing twice. */
+  dispose({ keepPool = false } = {}) {
+    if (this.state === "disposed") return null;
     this.state = "disposed";
     if (this._atx && !this._atx.running) { this._atx.dispose(); this._atx = null; } // prepared in focus, never used (a running one is ours to finish)
     for (const a of this.root.getAnimations({ subtree: true })) a.cancel();
     this.host.dispose();          // (planet objects are not touched: a Begin Expedition consumer may still hold detail.planet)
-    this.sectors.dispose();       // workers terminated, pending work rejected, entries forgotten (an adopted pool is ours by then)
+    if (keepPool) this.sectors.release(); else this.sectors.dispose(); // workers terminated, pending work rejected, entries forgotten (an adopted pool is ours by then)
     this.root.removeEventListener("keydown", this._onKey); this.root.removeEventListener("click", this._onClick);
     this.root.replaceChildren(); this.root.classList.remove("ds", "rm");
     for (const k of ["state", "class", "departPhase"]) delete this.root.dataset[k];
+    return keepPool ? this.sectors : null;
   }
 
   // ---------------------------------------------------------------- DOM
@@ -359,7 +383,8 @@ export class DestinationSurvey {
       <header class="ds-head">
         <button type="button" class="ds-btn ghost ds-exit" data-act="exit"${this.onExit ? "" : " hidden"}>${ico("back")}<span class="lbl">Main menu</span></button>
         <div class="ds-title"><span class="ds-kicker">Strange Bloom</span><h1>Destination Survey</h1></div>
-        <p class="ds-sector" aria-live="polite"></p>
+        <p class="ds-sector" aria-live="polite"></p>${this.onChangeSpecies ? `
+        <div class="ds-species" data-species="${esc(this.species.id)}"><span class="ds-species-k">Species</span><b>${esc(this.species.name)}</b><button type="button" class="ds-btn ghost ds-species-change" data-act="species">Change<span class="sr-only"> species</span></button></div>` : ""}
         <div class="ds-head-tools"><span class="ds-progress sr-only" role="status" hidden></span><button type="button" class="ds-btn scan" data-act="scan">${ico("scan")}<span>Scan <span class="lbl-long">new </span>sector</span></button></div>
       </header>
       <div class="ds-survey">
@@ -377,7 +402,7 @@ export class DestinationSurvey {
           <div class="ds-chip-row"><span class="ds-chip"></span><span class="ds-chip-note"></span></div>
           <h2 tabindex="-1"></h2>
           <p class="ds-type"></p><p class="ds-tagline"></p>
-          <div class="ds-hab"><div class="ds-hab-top"><span>Ground your plant can live on at landing</span><b></b></div>
+          <div class="ds-hab"><div class="ds-hab-top"><span>Ground your plant can live on at landing${this.onChangeSpecies ? `<small class="ds-hab-for"> · for ${esc(this.species.name)}</small>` : ""}</span><b></b></div>
             <div class="ds-bar" role="img"><i class="g"></i><i class="y"></i><i class="r"></i></div>
             <div class="ds-bar-key" aria-hidden="true"><span class="ok">${ico("check")}<span>Suits</span></span><span class="warn">${ico("alert")}<span>Marginal</span></span><span class="bad">${ico("x")}<span>Hostile</span></span></div></div>
           <dl class="ds-rows"></dl>
@@ -403,6 +428,7 @@ export class DestinationSurvey {
       else if (b.dataset.act === "return") this.returnToSurvey();
       else if (b.dataset.act === "begin") this.beginExpedition();
       else if (b.dataset.act === "exit") this.exit();
+      else if (b.dataset.act === "species") this.changeSpecies();
     };
     this._onKey = e => {
       if (e.key !== "Escape") return;
@@ -416,6 +442,7 @@ export class DestinationSurvey {
     this.root.dataset.state = mode;
     const focus = mode === "focus";
     this.focus.inert = !focus; this.grid.inert = focus; this.head.querySelector(".ds-head-tools").inert = focus; this.exitBtn.inert = focus;
+    const chip = this.head.querySelector(".ds-species"); if (chip) chip.inert = focus;
   }
 
   _placeholder(text) { this.placeholderEl.textContent = text || ""; this.placeholderEl.hidden = !text; }
@@ -570,7 +597,7 @@ export class DestinationSurvey {
     await Promise.all(SURVEY_CLASSES.map((_, col) => this._settleColumn(fill, col, { cells: sector.cells.filter((_, i) => i % COLS === col) })));
     if (this.state === "disposed") return;
     this.sector = sector; this._fill = null; fill.e.listener = null;
-    this.sectors.forget(sector.sectorSeed); // shown: the cells hold it now
+    this.sectors.forget(sector.sectorSeed, this.species); // shown: the cells hold it now
     // the worlds keep the rows they landed in: each column holds exactly the sector's worlds of that column (its class)
     for (let i = 0; i < N; i++) { this.slots[i].classList.remove("is-incoming"); this.buttons[i].disabled = !this.cells[i]; }
     this._placeholder(null);
@@ -589,7 +616,7 @@ export class DestinationSurvey {
   /** Put a sector on screen: a corner-to-corner sweep (slightly irregular), or one restrained fade under reduced motion. */
   async _swapIn(sector, { first }) {
     this.sector = sector;
-    this.sectors.forget(sector.sectorSeed); // shown: the cells hold it now
+    this.sectors.forget(sector.sectorSeed, this.species); // shown: the cells hold it now
     const assign = i => {
       const cand = sector.cells[i]; this.cells[i] = cand;
       if (!cand) { this.views[i].setPlanet(null); this.buttons[i].disabled = true; return; }
@@ -626,7 +653,7 @@ export class DestinationSurvey {
   }
 
   // ---------------------------------------------------------------- sectors (validated; SectorPool: workers, main-thread fallback)
-  _prefetch() { if (!this.sectors.disposed) this.sectors.sector(nextSectorSeed(this.sectorSeed), false); }
+  _prefetch() { if (!this.sectors.disposed) this.sectors.sector(nextSectorSeed(this.sectorSeed), false, this.species); }
 
   /** Header / placeholder: how many of the awaited sector's nine worlds are validated so far (null clears it). */
   _progress(e) {
