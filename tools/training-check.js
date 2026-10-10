@@ -15,6 +15,9 @@
 "use strict";
 const path = require("path"), fs = require("fs"), http = require("http");
 const ROOT = path.resolve(__dirname, "..");
+// (BLOOM-033) the run page's code = the developer harness demos/demo-run.html + the GameSession it wraps (resources/run/game-session.js, the
+// same file index.html uses); source checks of "the run page" read both
+const RUN_PAGE_SRC = () => ["demos/demo-run.html", "resources/run/game-session.js"].filter(f => fs.existsSync(path.join(ROOT, f))).map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
 for (const f of ["content/config.js", "content/traits.js", "planets/first_bloom.js", "planets/training_grounds.js", "content/archetypes.js", "content/scenarios.js",
   "content/play.js", "content/training.js", "resources/bloom-sim.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js",
   "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-play.js"]) require(path.join(ROOT, f));
@@ -123,7 +126,7 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
       got.filter(([, g, w]) => g !== w).map(([v, g]) => `${v} → ${g}`).join(" | ") || `${cases.length} return values resolved as documented`); }
 
   // T8 · source rules
-  { const simSrc = read("resources/bloom-sim.js"), run = read("demos/demo-run.html"), tr = read("resources/training/training-run.js"), ee = read("resources/main-menu/expedition-entry.js");
+  { const simSrc = read("resources/bloom-sim.js"), run = RUN_PAGE_SRC(), tr = read("resources/training/training-run.js"), ee = read("resources/main-menu/expedition-entry.js");
     const anchors = ["biomass", "coverage", "sky", "play-pause", "speed", "map", "inspect", "upgrades", "message-log", "report", "limiting-factor", "readout", "colony-status", "raw-signals",
       "growth-focus", "local-upgrade", "run-menu", "run-actions", "report-continue"].filter(a => !run.includes(`data-tutorial="${a}"`));
     const dyn = ["focus-${k}", "local-${id}", "board-${gname.toLowerCase()}", "upgrade-${u.id}", "action-${a.id}"].filter(a => !run.includes(`data-tutorial="${a}"`));
@@ -171,7 +174,8 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
       for (const t of M.SEC_TILES[s]) { const d = ((t % M.W) + .5 - c.x) ** 2 + (((t / M.W) | 0) + .5 - c.y) ** 2; if (d < bd) { bd = d; best = t; } } return best; }, id);
 
     // B1 · ?training=1: paused, derived config, seeded, under a black that lifts
-    { const c = await ctx(), p = watch(await c.newPage()); await p.goto(`${RUN}?training=1`); await ready(p);
+    // (BLOOM-033) through the foundation's shell oracle (?ui=legacy): the production DOM no longer holds a hidden shell to read these controls from
+    { const c = await ctx(), p = watch(await c.newPage()); await p.goto(`${RUN}?training=1&ui=legacy`); await ready(p);
       const atOpen = await p.evaluate(() => window.__coverAtReady || { cover: false, op: null });
       await lifted(p); await sleep(600);
       const s = await p.evaluate(() => ({ st: BLOOM_API.state(), btn: document.getElementById("btnPlay").textContent.trim(), pressed: document.getElementById("btnPlay").getAttribute("aria-pressed"),
@@ -185,7 +189,7 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
       check(atOpen.cover && +atOpen.op === 1 && s.ui && Number.isFinite(s.liftedAt) && J(s.menu) === J(["restartTraining", "skipTraining", "mainMenu"]) && s.ret === `${BASE}/index.html`,
         `${B} B1c · it opens under full black, the training layer lifts it once drawn; ☰ Training offers Restart · Skip · Main menu; no return= → the title page (BLOOM-030: the root index.html)`, `return ${s.ret}`);
       // seeded: the same scripted ticks + purchases on two loads → the same run
-      const run = async () => { const q = watch(await c.newPage()); await q.goto(`${RUN}?training=1`); await ready(q);
+      const run = async () => { const q = watch(await c.newPage()); await q.goto(`${RUN}?training=1&ui=legacy`); await ready(q);
         const h = await q.evaluate(() => { BLOOM_API.advance(60); BLOOM_API.buy("cold"); BLOOM_API.advance(500); return Array.from(sim.state).join("") + "|" + Math.round(sim.biomass * 1000) + "|" + sim.bubbles.length; }); await q.close(); return h; };
       const h1 = await run(), h2 = await run();
       check(h1 === h2, `${B} B1d · the training run is seeded: two page loads, same scripted ticks + purchase → tile-for-tile the same run`, `${h1.length} chars · ${fnv(Buffer.from(h1))}`);
@@ -234,7 +238,7 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
       await p.evaluate(() => { for (let k = 0; k < 80 && sim.biomass < sim.price(sim.traitById.humid); k++) BLOOM_API.advance(25); refreshShop(); }); await p.click('[data-tutorial="upgrade-humid"]');
       const won = await p.evaluate(() => { for (let k = 0; k < 40 && !sim.won; k++) BLOOM_API.advance(150); return sim.won; }); await sleep(200);
       const w = await last(p, "win"), rep = await p.evaluate(() => ({ h2: document.querySelector("#report h2").textContent, acts: [...document.querySelectorAll("#runActions button")].map(b => b.dataset.act),
-        modal: document.getElementById("reportModal").classList.contains("on"), status: BLOOM_TRAINING_UI.status().status, order: window.__EV.map(e => e.type).filter(t => t !== "upgrade-preview") }));
+        modal: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")), status: BLOOM_TRAINING_UI.status().status, order: window.__EV.map(e => e.type).filter(t => t !== "upgrade-preview") }));
       check(won && w && w.detail.training === true && w.detail.planetId === "training_grounds" && w.detail.coverage >= 0.65 && rep.modal && /TRAINING COMPLETE/.test(rep.h2)
         && J(rep.acts) === J(["beginExpedition", "restartTraining", "mainMenu"]) && rep.status === "completed",
         `${B} B2g · reaching 65 % → bloom:win {coverage, ticks, planetId, training}; the report reads Training complete with (BLOOM-028D2) Begin Expedition · Restart training · Main menu, and the status is recorded "completed"`,
@@ -245,14 +249,15 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
 
     // B3 · ordinary runs are unchanged
     { const c = await ctx(), p = watch(await c.newPage()); await p.goto(RUN); await ready(p); await sleep(700);
-      const a = await p.evaluate(() => ({ st: BLOOM_API.state(), title: document.title, sub: document.querySelector("header h1 small").textContent, planet: BLOOM_RUN.planet.id, cover: !!document.getElementById("trainingCover"),
-        mod: !!document.querySelector('script[src*="training-run"]'), ui: typeof window.BLOOM_TRAINING_UI, tr: BLOOM_RUN.training, same: sim.config === BLOOM_DATA.config, btn: document.getElementById("btnPlay").textContent.trim() }));
-      check(a.st.running && a.st.ticks > 0 && a.st.biomass >= D.config.econ.startBiomass && a.title === "Strange Bloom — First Bloom" && a.sub === "· first bloom" && a.planet === "first_bloom"
-        && !a.cover && !a.mod && a.ui === "undefined" && a.tr === undefined && a.same && a.btn === "⏸ pause",
+      // (BLOOM-033) the production run's own readouts (the Planet View, the adapter); the engineering shell is not in this DOM at all
+      const a = await p.evaluate(() => ({ st: BLOOM_API.state(), title: document.title, sub: document.getElementById("pvName").textContent, planet: BLOOM_RUN.planet.id, cover: !!document.getElementById("trainingCover"),
+        mod: !!document.querySelector('script[src*="training-run"]'), ui: typeof window.BLOOM_TRAINING_UI, tr: BLOOM_RUN.training, same: sim.config === BLOOM_DATA.config, running: BLOOM_RUN_UI.adapter.run().running, shell: !!document.querySelector("#shellHeader, #btnPlay") }));
+      check(a.st.running && a.st.ticks > 0 && a.st.biomass >= D.config.econ.startBiomass && a.title === "Strange Bloom — First Bloom" && a.sub === "First Bloom" && a.planet === "first_bloom"
+        && !a.cover && !a.mod && a.ui === "undefined" && a.tr === undefined && a.same && a.running && !a.shell,
         `${B} B3a · no query: First Bloom runs at once on the shared config, as before — no black, no training layer (BLOOM-029E: the production title "Strange Bloom — First Bloom")`, `ticks ${a.st.ticks} after 0.7 s · "${a.title}" ${a.sub}`);
       await p.goto(`${RUN}?play=1`); await ready(p);
-      const pl = await p.evaluate(() => ({ acts: [...document.querySelectorAll("#playMenu button")].map(b => `${b.dataset.act}=${b.dataset.go}`), label: document.getElementById("btnMenu").textContent, title: document.title }));
-      check(J(pl.acts) === J(["playAgain=demo-run.html?play=1", "changePlanet=../index.html?begin=1", "home=../index.html"]) && pl.label === "☰ Menu" && pl.title === "Strange Bloom — First Bloom",
+      const pl = await p.evaluate(() => { const m = BLOOM_RUN_UI.adapter.runMenu(); return { acts: playActions().map(b => `${b.id}=${b.href}`) /* the page's own actions (harness bridge) */, label: m.label, shown: [...document.querySelectorAll("#pvMenu [data-act]")].map(b => b.dataset.act), title: document.title }; });
+      check(J(pl.acts) === J(["playAgain=demo-run.html?play=1", "changePlanet=../index.html?begin=1", "home=../index.html"]) && pl.label === "Menu" && J(pl.shown) === J(["playAgain", "changePlanet", "home"]) && pl.title === "Strange Bloom — First Bloom",
         `${B} B3b · ?play=1: the same player menu actions as before (the page's own; the production run menu lists them), the production title; (BLOOM-030) the retired launcher's routes are now the root title: Change planet = its Destination Survey (begin=1), Home = the title`, pl.acts.join(" · "));
       const rnd = async () => { await p.goto(RUN); await ready(p); return p.evaluate(() => { BLOOM_API.advance(400); return Array.from(sim.state).join(""); }); };
       const r1 = await rnd(), r2 = await rnd();
@@ -266,7 +271,7 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
           running: window.BLOOM_API.state ? BLOOM_API.state().running : null })); };
       const fb = await go("planet=first_bloom"), tg = await go("planet=training_grounds"), tgc = await p.evaluate(() => ({ shared: sim.config === BLOOM_DATA.config, bio: sim.config.econ.startBiomass }));
       await p.goto(`${RUN}?play=1&planet=training_grounds`); await ready(p);
-      const again = await p.evaluate(() => document.querySelector('#playMenu [data-act="playAgain"]').dataset.go);
+      const again = await p.evaluate(() => playActions().find(a => a.id === "playAgain").href);   // (BLOOM-033: the page's own action, via the harness bridge)
       const bad = await go("planet=nowhere"), mix = await go("planet=first_bloom&archetype=desert_world&seed=3"), trA = await go("training=1&archetype=desert_world"), trS = await go("training=1&scenario=dying_world"),
         junk = await go("planet=__proto__");
       check(fb.started && fb.planet === "first_bloom" && fb.running && tg.started && tg.planet === "training_grounds" && tg.running && tgc.shared && tgc.bio === D.config.econ.startBiomass && again === "demo-run.html?play=1&planet=training_grounds",
@@ -275,71 +280,43 @@ const plateau = (buys, seed = 7, ticks = 6000) => { const s = newSim(tcfg(), see
         `${B} B4b · an unknown planet, planet= with a seed, training with an archetype or a scenario → the explicit no-run page, never a substitute`, [bad, mix, trA, trS, junk].map(r => r.fail.split("\n")[2] || r.fail.split("\n")[1]).join(" | ").slice(0, 300));
       check(!p.errs.length, `${B} B4c · no page errors`, p.errs.join(" | ")); await c.close(); }
 
-    // B5 · the title's TRAINING → training → Main menu / Restart / Skip, through the black; the training status
+    // B5 · (BLOOM-033) the title's TRAINING → training → Main menu / Restart / Skip, all inside index.html, through the ONE black (the
+    // title's fade layer, which the training layer lifts and fades into); the training status. Replaces the 028D1 page crossings
+    // (demo-run.html?training=1&return=…, Restart = a reload, the back-forward-cache restores, leaveTo): nothing leaves the document now.
     for (const rmCase of [null, "reduced"]) {
       const c = await ctx(rmCase ? { motion: rmCase } : null), p = watch(await c.newPage()), R = rmCase ? " (Settings: reduced motion)" : "";
       const toBlack = rmCase ? 80 : 220, fromBlack = rmCase ? 80 : 250;
-      const title = async () => { await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready, null, { timeout: 20000 }); };
-      const sampleTitleLeave = () => p.evaluate(() => { const E = MENU_DEV.entry; window.__leave = []; const f = () => { const cs = getComputedStyle(E.black);
-        window.__leave.push(cs.display === "none" ? 0 : +cs.opacity); try { sessionStorage.setItem("__leave", JSON.stringify({ max: Math.max(...window.__leave), n: window.__leave.length,
-          dur: (E.black.getAnimations()[0] || { effect: { getTiming: () => ({}) } }).effect.getTiming().duration ?? window.__dur, state: E.state })); } catch {} requestAnimationFrame(f); };
-        new MutationObserver(() => { const a = E.black.getAnimations()[0]; if (a) window.__dur = a.effect.getTiming().duration; }).observe(E.black, { attributes: true }); f(); });
-      await p.goto(MENU); await title(); await sampleTitleLeave();
-      await Promise.all([p.waitForURL(/demo-run\.html\?training=1/, { timeout: 15000 }), p.click('.mm-item[data-act="training"]')]);
-      await ready(p); const leave = await p.evaluate(() => JSON.parse(sessionStorage.getItem("__leave") || "null"));
-      const coverAnim = await p.waitForFunction(() => { const c = document.getElementById("trainingCover"), a = c && c.getAnimations()[0]; return a ? a.effect.getTiming().duration : null; }, null, { timeout: 8000 }).then(h => h.jsonValue()).catch(() => null);
-      await lifted(p);
-      const arr = await p.evaluate(() => ({ url: location.href, ret: BLOOM_RUN.training.returnTo, paused: !BLOOM_API.state().running, status: BLOOM_TRAINING_UI.status().status }));
-      check(leave && leave.max >= 0.999 && leave.state === "leaving" && leave.dur === toBlack && arr.url.startsWith(`${RUN}?training=1&return=`) && arr.ret === MENU && arr.paused && coverAnim === fromBlack && arr.status === null,
-        `${B} B5a${R} · TRAINING: the title fades to full black and opens the training run (return= the title, query and all); it lifts its black (${fromBlack} ms) onto a paused landing`,
-        `title black ${leave && leave.dur} ms, max ${leave && leave.max} over ${leave && leave.n} frames · lift ${coverAnim} ms · ${arr.url.replace(BASE, "")}`);
-      const exitVia = async act => { await p.click("#pvMenuBtn"); const durP = p.waitForFunction(() => { const c = document.getElementById("trainingCover"), a = c && c.getAnimations()[0]; return a ? a.effect.getTiming().duration : null; }, null, { timeout: 5000, polling: "raf" }).then(h => h.jsonValue()).catch(() => null);
-        const navP = act === "restartTraining" ? p.waitForEvent("load", { timeout: 15000 }) : p.waitForURL(u => u.pathname === "/", { timeout: 15000 });
-        await p.click(`#pvMenu [data-act="${act}"]`);
-        if (act === "skipTraining") await p.click('[data-training-skip] [data-skip="skip"]'); // (BLOOM-028D2) a guided training asks once before a skip
-        const dur = await durP; await navP; return dur; };
-      const d1 = await exitVia("mainMenu"); await title();
-      const back1 = await p.evaluate(() => ({ url: location.href, status: (() => { try { return JSON.parse(localStorage.getItem("strange-bloom.training")); } catch { return "err"; } })() }));
-      check(d1 === toBlack && back1.url === MENU && back1.status === null, `${B} B5b${R} · ☰ → Main menu: fades to black (${toBlack} ms) and returns to the very title page; nothing recorded`, `${d1} ms · ${back1.url.replace(BASE, "")}`);
-      // back / forward never leaves a page black: the training page that left through its black (Back), the title that left through
-      // its black (TRAINING, then Back) — restored from the back-forward cache (pageshow persisted) or reloaded
-      await p.goBack({ timeout: 15000 }); await ready(p); await lifted(p);
-      const bk = await p.evaluate(() => ({ persisted: window.__persisted, cover: (c => c ? getComputedStyle(c).display : "none")(document.getElementById("trainingCover")), leaving: BLOOM_TRAINING_UI.stats.leaving }));
-      await p.goForward({ timeout: 15000 }); await title();
-      await Promise.all([p.waitForURL(/demo-run\.html\?training=1/, { timeout: 15000 }), p.click('.mm-item[data-act="training"]')]); await ready(p);
-      await p.goBack({ timeout: 15000 }); await title();
-      await p.waitForFunction(() => getComputedStyle(MENU_DEV.entry.black).display === "none" && !MENU_DEV.entry.menuHost.inert && MENU_DEV.entry.state === "menu", null, { timeout: 5000 }).catch(() => null);
-      const fw = await p.evaluate(() => ({ persisted: window.__persisted, black: getComputedStyle(MENU_DEV.entry.black).display, inert: MENU_DEV.entry.menuHost.inert, state: MENU_DEV.entry.state,
-        focus: document.activeElement && document.activeElement.dataset.act }));
-      check(bk.cover === "none" && !bk.leaving && fw.black === "none" && !fw.inert && fw.state === "menu", `${B} B5c${R} · Back to a training page that left through its black, and Back to a title that left for TRAINING: neither stays black`,
-        `training page ${bk.persisted ? "restored from the back-forward cache" : "reloaded"} · title ${fw.persisted ? "restored from the back-forward cache" : "reloaded"} (focus ${fw.focus})`);
-      await sampleTitleLeave();
-      // Restart: the same URL again, a fresh page, paused
-      await Promise.all([p.waitForURL(/demo-run\.html\?training=1/, { timeout: 15000 }), p.click('.mm-item[data-act="training"]')]); await ready(p); await lifted(p);
-      const o1 = await p.evaluate(() => { BLOOM_API.advance(300); return { origin: performance.timeOrigin, url: location.href, ticks: sim.ticks }; });
-      const d2 = await exitVia("restartTraining"); await ready(p); await lifted(p);
-      const o2 = await p.evaluate(() => ({ origin: performance.timeOrigin, url: location.href, ticks: sim.ticks, running: BLOOM_API.state().running, bio: BLOOM_API.state().biomass }));
-      check(d2 === toBlack && o2.origin !== o1.origin && o2.url === o1.url && o1.ticks === 300 && o2.ticks === 0 && !o2.running && o2.bio === 150,
-        `${B} B5d${R} · ☰ → Restart training: through the black, the same URL as a fresh page — back at a paused landing (tick 0, 150 Biomass)`, `${d2} ms · tick ${o1.ticks} → ${o2.ticks}`);
-      const d3 = await exitVia("skipTraining"); await title();
-      const sk = await p.evaluate(() => JSON.parse(localStorage.getItem("strange-bloom.training")));
-      check(d3 === toBlack && sk && sk.status === "skipped" && sk.v === 1 && Number.isFinite(sk.at) && p.url() === MENU,
-        `${B} B5e${R} · ☰ → Skip training: records "skipped" and returns to the title through the black`, J(sk));
-      // the back-forward-cache restore paths themselves (Playwright reloads on Back / Forward above, so restore them directly): a real
-      // leaveTo() with navigation held back, then the browser's own pageshow { persisted: true }; the same for the training page
-      const tr = await p.evaluate(async () => { const E = MENU_DEV.entry; let nav = null; const ok = await E.leaveTo("demo-run.html?training=1", { navigate: h => { nav = h; } });
-        const during = { state: E.state, black: +getComputedStyle(E.black).opacity, inert: E.menuHost.inert };
-        dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true })); await new Promise(r => setTimeout(r, 450));
-        return { ok, nav, during, after: { state: E.state, black: getComputedStyle(E.black).display, inert: E.menuHost.inert } }; });
-      await p.goto(`${RUN}?training=1`); await ready(p); await lifted(p);
-      const rr = await p.evaluate(async () => { const U = BLOOM_TRAINING_UI, c = document.getElementById("trainingCover"); U.stats.leaving = true; c.style.display = ""; c.style.opacity = "1";
-        dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true })); await new Promise(r => setTimeout(r, 450));
-        return { display: getComputedStyle(c).display, leaving: U.stats.leaving }; });
-      check(tr.ok && tr.nav === "demo-run.html?training=1" && tr.during.state === "leaving" && tr.during.black === 1 && tr.during.inert && tr.after.state === "menu" && tr.after.black === "none" && !tr.after.inert
-        && rr.display === "none" && rr.leaving === false,
-        `${B} B5g${R} · restored from the back-forward cache (pageshow persisted): the title that left for TRAINING and a training page that left through its black both lift their black and take input again`,
-        `title ${J(tr.during)} → ${J(tr.after)} · training cover → ${rr.display}`);
-      check(!p.errs.length, `${B} B5f${R} · no page errors across the title ↔ training crossings`, p.errs.join(" | "));
+      let navs = 0; p.on("framenavigated", f => { if (f === p.mainFrame()) navs++; });
+      const title = async () => { await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready && MENU_DEV.entry.state === "menu" && !window.BLOOM_APP.session && !BLOOM_APP.busy, null, { timeout: 30000 }); };
+      // every fade of the one black, recorded: { to, ms }
+      const watchBlack = () => p.evaluate(() => { const E = MENU_DEV.entry, a0 = E.black.animate.bind(E.black); window.__fades = [];
+        E.black.animate = (k, o) => { window.__fades.push({ to: k[k.length - 1].opacity, ms: o.duration }); return a0(k, o); }; });
+      const fades = () => p.evaluate(() => window.__fades.splice(0));
+      const inTraining = () => p.waitForFunction(() => window.BLOOM_APP && BLOOM_APP.session && BLOOM_APP.session.run.training && window.BLOOM_TRAINING_UI && BLOOM_TRAINING_UI.stats.liftedAt && !BLOOM_APP.busy, null, { timeout: 30000 });
+      await p.goto(MENU); await title(); await watchBlack();
+      await p.click('.mm-item[data-act="training"]'); await inTraining();
+      const f1 = await fades(), arr = await p.evaluate(() => ({ url: location.href, paused: !BLOOM_API.state().running, ticks: BLOOM_API.state().ticks, status: BLOOM_TRAINING_UI.status().status, ret: BLOOM_RUN.training.returnTo, planet: BLOOM_RUN.planet.id }));
+      check(J(f1) === J([{ to: 1, ms: toBlack }, { to: 0, ms: fromBlack }]) && arr.url === MENU && arr.paused && arr.ticks === 0 && arr.status === null && arr.ret === null && arr.planet === "training_grounds" && navs === 1,
+        `${B} B5a${R} · TRAINING: the title fades to full black (${toBlack} ms), the training run is mounted inside index.html (the address unchanged, no return=, no page load) and its layer lifts the same black (${fromBlack} ms) onto a paused landing`,
+        `${J(f1)} · ${arr.url.replace(BASE, "")}`);
+      const exitVia = async act => { await p.click("#pvMenuBtn"); await p.click(`#pvMenu [data-act="${act}"]`);
+        if (act === "skipTraining") await p.click('[data-training-skip] [data-skip="skip"]'); }; // (BLOOM-028D2) a guided training asks once before a skip
+      await exitVia("mainMenu"); await title();
+      const f2 = await fades(), back1 = await p.evaluate(() => ({ url: location.href, status: (() => { try { return JSON.parse(localStorage.getItem("strange-bloom.training")); } catch { return "err"; } })(), run: window.BLOOM_RUN, focus: document.activeElement && document.activeElement.dataset.act }));
+      check(J(f2) === J([{ to: 1, ms: toBlack }, { to: 0, ms: fromBlack }]) && back1.url === MENU && back1.status === null && back1.run === null && back1.focus === "begin" && navs === 1,
+        `${B} B5b${R} · ☰ → Main menu: fades to black (${toBlack} ms), the training session is disposed and the title shown in the same document (${fromBlack} ms lift, focus on EXPEDITION); nothing recorded`, `${J(f2)}`);
+      // Restart: a fresh training SESSION (not a page), paused at the landing
+      await p.click('.mm-item[data-act="training"]'); await inTraining(); await fades();
+      const o1 = await p.evaluate(() => { BLOOM_API.advance(300); window.__s1 = BLOOM_APP.session; return { ticks: BLOOM_API.sim.ticks, sessions: BLOOM_APP.stats.sessions.length }; });
+      await exitVia("restartTraining"); await p.waitForFunction(n => BLOOM_APP.stats.sessions.length === n + 1 && BLOOM_APP.session && BLOOM_TRAINING_UI && BLOOM_TRAINING_UI.stats.liftedAt && !BLOOM_APP.busy, o1.sessions, { timeout: 30000 });
+      const f3 = await fades(), o2 = await p.evaluate(() => ({ fresh: BLOOM_APP.session !== window.__s1 && window.__s1.disposed, url: location.href, ticks: BLOOM_API.sim.ticks, running: BLOOM_API.state().running, bio: BLOOM_API.state().biomass, pv: document.querySelectorAll("#pv").length }));
+      check(J(f3) === J([{ to: 1, ms: toBlack }, { to: 0, ms: fromBlack }]) && o2.fresh && o2.url === MENU && o1.ticks === 300 && o2.ticks === 0 && !o2.running && o2.bio === 150 && o2.pv === 1 && navs === 1,
+        `${B} B5d${R} · ☰ → Restart training: through the black, a FRESH training session in the same document (the previous one disposed) — back at a paused landing (tick 0, 150 Biomass)`, `${J(f3)} · tick ${o1.ticks} → ${o2.ticks}`);
+      await exitVia("skipTraining"); await title();
+      const f4 = await fades(), sk = await p.evaluate(() => JSON.parse(localStorage.getItem("strange-bloom.training")));
+      check(J(f4) === J([{ to: 1, ms: toBlack }, { to: 0, ms: fromBlack }]) && sk && sk.status === "skipped" && sk.v === 1 && Number.isFinite(sk.at) && p.url() === MENU && navs === 1,
+        `${B} B5e${R} · ☰ → Skip training (confirmed): records "skipped" and returns to the title through the black, in the same document`, J(sk));
+      check(!p.errs.length && navs === 1, `${B} B5f${R} · no page errors and ONE document load across every title ↔ training crossing (the 028D1 back-forward-cache restores have nothing left to restore)`, p.errs.join(" | "));
       if (SHOTS && bname === "chromium" && !rmCase) await p.screenshot({ path: path.join(SHOTS, "03-title-after-skip.png") });
       await c.close();
     }

@@ -13,6 +13,9 @@
 "use strict";
 const path = require("path"), fs = require("fs");
 const ROOT = path.resolve(__dirname, "..");
+// (BLOOM-033) the run page's code = the developer harness demos/demo-run.html + the GameSession it wraps (resources/run/game-session.js, the
+// same file index.html uses); source checks of "the run page" read both
+const RUN_PAGE_SRC = () => ["demos/demo-run.html", "resources/run/game-session.js"].filter(f => fs.existsSync(path.join(ROOT, f))).map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
 const E = require("./economy-study.js"); // loads content + engine
 require(path.join(ROOT, "resources/bloom-scenario.js"));
 const { BLOOM, BLOOM_DATA } = globalThis, { config, traits, archetypes, scenarios } = BLOOM_DATA;
@@ -53,7 +56,7 @@ console.log("\n# A · the economy is data");
   const c = JSON.parse(J(config)), sim = BLOOM.createSim(BLOOM_DATA.planets.first_bloom, c, traits, { rng: mb(9) }), B = c.econ.bubbleValue * c.econ.autoCollectShare;
   let bad = 0, bubbles = 0; for (let t = 0; t < 2500; t++) { const b0 = sim.biomass; sim.tick(); const extra = sim.biomass - b0 - sim.income, k = Math.round(extra / B);
     if (Math.abs(extra - k * B) > 1e-6 || k < 0) bad++; bubbles += k; }
-  const ui = fs.readFileSync(path.join(ROOT, "demos/demo-run.html"), "utf8"), grants = (ui.match(/biomass\s*\+=/g) || []).length;
+  const ui = RUN_PAGE_SRC(), grants = (ui.match(/biomass\s*\+=/g) || []).length;
   const study = fs.readFileSync(path.join(__dirname, "economy-study.js"), "utf8").replace(/\/\/.*$/gm, "");
   check(bad === 0 && bubbles > 0 && grants === 1 && /addBiomass\(x\)\{ sim\.biomass\+=x;/.test(ui) && !/addBiomass\(|biomass\s*\+=|biomass\s*=[^=]/.test(study),
     "3 · no hidden or test-only Biomass: 2500 ticks of First Bloom gain exactly the reported income + auto-collected bubbles; the page's only grant is the BLOOM_API test hook; the economy study never grants",
@@ -125,9 +128,9 @@ console.log("\n# D · strategies still bind");
   check(dw.every(k => [...p(k), ...w(k)].every(r => r.progressAtWin >= 0.70)), "16 · a normal successful Dying World run lives through most of the decline (pressure ≥ 70% at the win, player and witness-like bots)",
     dw.map(k => `${k} ${[...p(k), ...w(k)].map(r => r.progressAtWin).join("/")}`).join(" · "));
   const ig = dw.map(k => ignores(k).map(([n, r]) => ({ k, n, ...r[WIT] }))).flat(), strict = ig.filter(x => x.n !== "ignoreHeatRad");
-  // (BLOOM-027B: the claim is that ignoring the decline never wins; the drift closes 10 % of Desert 17's land to its Eden strategies and that is already enough, so the closure clause is ≥ 10 %)
-  check(strict.every(x => x.won === `0/${SEEDS.length}` && x.maxClosed >= 0.10), "17 · Dying World cannot be ignored: buying the planet's Eden strategy as if nothing were declining never wins (the drift closes ≥ 10% of the land to it)",
-    ig.map(x => `${x.k} ${x.n} won ${x.won}, drift closed up to ${(x.maxClosed * 100).toFixed(0)}%${x.n === "ignoreHeatRad" ? " (this Eden build already holds Radiation Shielding, a Dying World answer)" : ""}`).join(" · "));
+  // (BLOOM-027B: the claim is that ignoring the decline never wins; the drift closes 10 % of Desert 17's land to its default-scenario strategies and that is already enough, so the closure clause is ≥ 10 %)
+  check(strict.every(x => x.won === `0/${SEEDS.length}` && x.maxClosed >= 0.10), "17 · Dying World cannot be ignored: buying the planet's default-scenario strategy as if nothing were declining never wins (the drift closes ≥ 10% of the land to it)",
+    ig.map(x => `${x.k} ${x.n} won ${x.won}, drift closed up to ${(x.maxClosed * 100).toFixed(0)}%${x.n === "ignoreHeatRad" ? " (this default-scenario build already holds Radiation Shielding, a Dying World answer)" : ""}`).join(" · "));
   EVID.ignoreRecipes = ig.map(x => ({ world: x.k, recipe: x.n, won: x.won, maxClosed: x.maxClosed, win: x.win })); }
 { // 27–31 · the rules that make choices binding
   const fb = BLOOM.createSim(BLOOM_DATA.planets.first_bloom, config, traits, { rng: () => 0.5 }); fb.biomass = 1e9;
@@ -218,7 +221,7 @@ async function browserPart() {
       const before = await p.evaluate(() => BLOOM_API.sim.biomass); await p.click(`button.buy[data-id="${plan[i]}"]`); await p.mouse.move(5, 5);
       buys.push({ id: plan[i], s: r1(st.ticks * config.tickMs / 1000), spent: r1(before - await p.evaluate(() => BLOOM_API.sim.biomass)) }); i++; } }
   await p.waitForTimeout(150);
-  const rep = await p.evaluate(() => ({ on: document.getElementById("reportModal").classList.contains("on"), text: document.getElementById("report").innerText, spent: BLOOM_API.sim.spent }));
+  const rep = await p.evaluate(() => ({ on: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")), text: document.getElementById("report").innerText, spent: BLOOM_API.sim.spent }));
   check(won && i === plan.length && rep.spent.global === buys.reduce((a, b) => a + b.spent, 0) && rep.spent.local === s0.specPrice,
     "38 · a First Bloom run won through real clicks after spending the start on a Root Network (so the first global upgrade waits for the Biomass that bought it): every click spent its price, the run's spend adds up",
     `${buys.map(b => `${b.id}@${b.s}s(${b.spent})`).join(" → ")} · spent global ${rep.spent.global}, local ${rep.spent.local}`);

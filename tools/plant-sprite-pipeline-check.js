@@ -59,6 +59,13 @@ function upscale(F, k, crop) { const [cx, cy, cw, ch] = crop || [0, 0, F.W, F.H]
 function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W * k + gap, -gap), H = Math.max(...frames.map(f => f.H * k)), o = new Uint8Array(W * H * 4).fill(255); let x0 = 0;
   for (const f of frames) { const u = upscale(f, k); for (let y = 0; y < u.H; y++) Buffer.from(u.rgba.buffer, y * u.W * 4, u.W * 4).copy(Buffer.from(o.buffer), (y * W + x0) * 4); x0 += u.W + gap; } return { W, H, rgba: o }; }
 
+// (BLOOM-033) later milestones' changes are not 032B1's: once HEAD is past 032B1's accepted end on main (END_SHA), this suite's scope checks are
+// evaluated over BASE … END_SHA — the END_SHA pattern of run-ui-convergence / guided-training; at END_SHA itself the working tree is checked as before
+const END_SHA = "be0a82918144a2e3b8aa2fcf2aa8c642dd3128b2";
+const AT_END = (() => { try { return git(`merge-base --is-ancestor ${END_SHA} HEAD`) === "" && git("rev-parse HEAD") !== END_SHA; } catch { return false; } })();
+const RANGE = AT_END ? `${BASE} ${END_SHA}` : BASE, untrackedNow = () => AT_END ? [] : git("ls-files -o --exclude-standard").split("\n").filter(Boolean);
+const hashNow = f => AT_END ? git(`rev-parse ${END_SHA}:"${f}"`) : git(`hash-object "${f}"`);
+const existsNow = f => { if (!AT_END) return fs.existsSync(path.join(ROOT, f)); try { git(`cat-file -e ${END_SHA}:"${f}"`); return true; } catch { return false; } };
 (async () => {
   console.log("# Node — scope");
   // S1 · the exact start
@@ -66,10 +73,10 @@ function strip(frames, k, gap = 4) { const W = frames.reduce((n, f) => n + f.W *
     let main = null; try { main = git("rev-parse origin/main"); } catch {}
     check(parent === BASE && (!main || git(`merge-base --is-ancestor ${BASE} ${main}`) === ""), "S1 · 032B1 starts from the exact accepted BLOOM-031 production main bba000f", J({ firstParent: parent.slice(0, 7), originMain: main && main.slice(0, 7) })); }
   // S2 · S3 · scope: production / gameplay / trait files byte-identical; 032A review branch untouched
-  { const tracked = git(`diff --name-only ${BASE}`).split("\n").filter(Boolean), untracked = git("ls-files -o --exclude-standard").split("\n").filter(Boolean);
+  { const tracked = git(`diff --name-only ${RANGE}`).split("\n").filter(Boolean), untracked = untrackedNow();
     const changed = [...new Set([...tracked, ...untracked])].sort(), outside = changed.filter(p => !ALLOWED(p) && !C032.has(p) && !/^tools\/[a-z-]+-check\.js$/.test(p));
     const prod = git(`ls-tree -r --name-only ${BASE} -- resources content planets demos index.html dist`).split("\n").filter(Boolean);
-    const prodDiff = prod.filter(f => !C032.has(f)).filter(f => !fs.existsSync(path.join(ROOT, f)) || git(`hash-object "${f}"`) !== git(`rev-parse ${BASE}:"${f}"`));
+    const prodDiff = prod.filter(f => !C032.has(f)).filter(f => !existsNow(f) || hashNow(f) !== git(`rev-parse ${BASE}:"${f}"`));
     check(!prodDiff.length && !outside.length, `S2 · no gameplay / production file changed: all ${prod.length} files under resources/, content/, planets/, demos/, index.html and dist/ at bba000f are byte-identical (incl. resources/run-ui/plant-specimen.js and content/traits.js); 032B1 only ADDS art/plant/, resources/plant-visual/, resources/plant-sprite-lab/, the proof page, its build + check tools, docs (and two npm scripts)`, J({ prodDiff, outside }));
     let lab = null; try { lab = git("rev-parse origin/handoff/bloom-032a-review"); } catch {}
     const labFiles = lab ? git(`diff --name-only ${BASE} ${lab}`).split("\n").filter(Boolean) : [];

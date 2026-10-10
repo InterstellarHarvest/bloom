@@ -477,11 +477,16 @@ const PLANS = { wet: ["seedOut", "cold", "flood", "cold", "heat", "salt", "early
       "[32] seeds that wash up on hostile ground show only the travel + faint arrival ripple — never a foothold burst", `${hostileArr.length} animations landed on currently hostile regions, 0 as footholds`);
     // replay each recorded event's animation at a pinned phase (travel, then just after landing), drawn and measured in the
     // same synchronous step; pixel-check the bright foothold burst vs the faint arrival ripple around the landing tile
-    const phase = (a, ms) => p.evaluate(({ a, ms }) => { XANIM.length = 0; XANIM.push({ ...a, t0: performance.now() - ms }); draw();
+    // (BLOOM-033) only the pixels the ANIMATION changed are classified: the same frame is drawn first without it, so young seedling stands around
+    // the landing (whose pale green sits inside the burst's colour window) never count as burst — which crossing pair a run yields depends on how
+    // many real-time ticks pass before the first pause, so the surroundings vary between runs; the animation itself does not
+    const phase = (a, ms) => p.evaluate(({ a, ms }) => {
       const c = cv.getContext("2d"), d = window.devicePixelRatio || 1, x = ((a.to % W) + .5) * TILE, y = (((a.to / W) | 0) + .5) * TILE, R = TILE * 2.2;
       const near = (q, w, tol) => Math.abs(q[0] - w[0]) + Math.abs(q[1] - w[1]) + Math.abs(q[2] - w[2]) < tol;
-      let bright = 0, pale = 0; for (let dx = -R; dx <= R; dx += 1.5) for (let dy = -R; dy <= R; dy += 1.5) { const q = c.getImageData((x + dx) * d, (y + dy) * d, 1, 1).data;
-        if (near(q, [255, 226, 120], 70) || near(q, [150, 240, 120], 70)) bright++; if (near(q, [190, 220, 255], 90)) pale++; } return { bright, pale }; }, { a, ms });
+      const grab = () => { const out = []; for (let dx = -R; dx <= R; dx += 1.5) for (let dy = -R; dy <= R; dy += 1.5) out.push(c.getImageData((x + dx) * d, (y + dy) * d, 1, 1).data); return out; };
+      XANIM.length = 0; draw(); const base = grab(); XANIM.push({ ...a, t0: performance.now() - ms }); draw(); const now = grab();
+      let bright = 0, pale = 0; now.forEach((q, k) => { const b = base[k]; if (q[0] === b[0] && q[1] === b[1] && q[2] === b[2]) return;
+        if (near(q, [255, 226, 120], 70) || near(q, [150, 240, 120], 70)) bright++; if (near(q, [190, 220, 255], 90)) pale++; }); return { bright, pale }; }, { a, ms });
     const replay = async (a, file) => { await phase(a, 650); await shot(p, file.replace(".png", "-travel.png"));
       const px = await phase(a, 1300 + 120); await shot(p, file.replace(".png", "-landing.png")); return px; };
     const pxF = foot ? await replay(foot, "crossing-foothold.png") : null, pxA = arrival ? await replay(arrival, "crossing-arrival.png") : null;

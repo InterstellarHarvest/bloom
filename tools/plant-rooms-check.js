@@ -22,6 +22,9 @@
 "use strict";
 const path = require("path"), fs = require("fs"), http = require("http"), { execSync } = require("child_process");
 const ROOT = path.resolve(__dirname, ".."), BASE_SHA = "2750cbb0363c3be27165196ea6325171442203eb";
+// (BLOOM-033) the run page's code = the developer harness demos/demo-run.html + the GameSession it wraps (resources/run/game-session.js, the
+// same file index.html uses); source checks of "the run page" read both
+const RUN_PAGE_SRC = () => ["demos/demo-run.html", "resources/run/game-session.js"].filter(f => fs.existsSync(path.join(ROOT, f))).map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const BROWSERS = (argOf("--browsers") || "chromium,firefox").split(","), EVIDENCE = argv.includes("--evidence");
 const EVD = path.join(ROOT, "docs/evidence/bloom-029c");
@@ -108,7 +111,7 @@ const hexToRgb = h => `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3,
   // N5 · the adapter and the run page's event contract
   { const ad = strip(read("resources/run-ui/run-ui-adapter.js")); const RU = BLOOM.runUI;
     const adAdded = git(`diff ${RANGE} -- resources/run-ui/run-ui-adapter.js`).split("\n").filter(l => /^\+[^+]/.test(l));
-    const runBase = git(`show ${BASE_SHA}:demos/demo-run.html`), runAt = read("demos/demo-run.html");
+    const runBase = git(`show ${BASE_SHA}:demos/demo-run.html`), runAt = RUN_PAGE_SRC();
     const sites = s => EVTS.map(t => [t, (s.match(new RegExp(`emit\\("${t}"`, "g")) || []).length]);
     const keysOf = s => EVTS.map(t => { const m = [...s.matchAll(new RegExp(`emit\\("${t}",\\s*\\{([^}]*)\\}`, "g"))].map(x => x[1].replace(/\s+/g, "")); return [t, m.join(" | ")]; });
     const same = J(sites(runBase)) === J(sites(runAt)) && J(keysOf(runBase)) === J(keysOf(runAt));
@@ -376,8 +379,8 @@ const hexToRgb = h => `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3,
           const legacy = n => document.querySelectorAll(`[data-tutorial-legacy="${n}"]`).length >= 1; const shell = ["report", "report-continue", "run-actions"].map(n => [n, document.querySelectorAll(`[data-tutorial="${n}"]`).length, !!document.querySelector(`[data-tutorial="${n}"]`) && !!document.querySelector(`[data-tutorial="${n}"]`).closest(".pv .rr")]); // (029D) Terraform's anchors are production; (029E) the production report owns the report anchors
           const banner = ["inspect", "readout", "limiting-factor", "colony-status"].map(n => document.querySelectorAll(`[data-tutorial="${n}"]`).length);
           // the shell renders its inspect / report anchors only while IT shows a selected region / the report: a legacy copy exists then, else nothing at all
-          return { claimed, missing: claimed.filter(n => !one(n)), noLegacy: ["upgrades", "board-adapt", "upgrade-cold", "board-terraform", "upgrade-warm"].filter(n => !legacy(n)), shell, banner }; });
-        check(!r.missing.length && !r.noLegacy.length && r.shell.every(([, n, inReport]) => n === 1 && inReport) && J(r.banner) === "[1,1,1,1]", `${tag} B19 · ${r.claimed.length} re-homed anchors (raw-signals, growth-focus, focus-*, local-upgrade, local-*, upgrades, board-adapt, board-spread, board-terraform, upgrade-<real id>) each resolve to ONE production element inside the rooms, the shell's copies are data-tutorial-legacy; only the report anchors stay on the shell (until the report converges); the banner keeps inspect / readout / limiting-factor / colony-status`, J({ missing: r.missing, noLegacy: r.noLegacy, shell: r.shell.map(s => s[0] + ":" + s[1]) })); }
+          return { claimed, missing: claimed.filter(n => !one(n)), noLegacy: ["upgrades", "board-adapt", "upgrade-cold", "board-terraform", "upgrade-warm"].filter(n => !legacy(n)), legacyAny: document.querySelectorAll("[data-tutorial-legacy]").length, shell, banner }; });
+        check(!r.missing.length && r.noLegacy.length === 5 && r.legacyAny === 0 /* (BLOOM-033: the production DOM holds no shell, so no legacy copy at all) */ && r.shell.every(([, n, inReport]) => n === 1 && inReport) && J(r.banner) === "[1,1,1,1]", `${tag} B19 · ${r.claimed.length} re-homed anchors (raw-signals, growth-focus, focus-*, local-upgrade, local-*, upgrades, board-adapt, board-spread, board-terraform, upgrade-<real id>) each resolve to ONE production element inside the rooms, the shell's copies are data-tutorial-legacy; only the report anchors stay on the shell (until the report converges); the banner keeps inspect / readout / limiting-factor / colony-status`, J({ missing: r.missing, noLegacy: r.noLegacy, shell: r.shell.map(s => s[0] + ":" + s[1]) })); }
       // ---- B20 · network / console / event shapes seen
       { const ext = p.reqs.filter(u => !u.startsWith(ORIGIN) && !u.startsWith("data:") && !u.startsWith("blob:"));
         const shapes = await p.evaluate(() => { const out = {}; for (const e of __EV) { const k = Object.keys(e.detail).join(); out[e.type] = out[e.type] || new Set(); out[e.type].add(k); } return Object.fromEntries(Object.entries(out).map(([t, s]) => [t, [...s]])); });

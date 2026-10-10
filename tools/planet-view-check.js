@@ -20,6 +20,9 @@
 "use strict";
 const path = require("path"), fs = require("fs"), http = require("http"), { execSync } = require("child_process");
 const ROOT = path.resolve(__dirname, ".."), BASE_SHA = "57c73f85a9ad4b949c55e6781724f9501d8d2d71";
+// (BLOOM-033) the run page's code = the developer harness demos/demo-run.html + the GameSession it wraps (resources/run/game-session.js, the
+// same file index.html uses); source checks of "the run page" read both
+const RUN_PAGE_SRC = () => ["demos/demo-run.html", "resources/run/game-session.js"].filter(f => fs.existsSync(path.join(ROOT, f))).map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const BROWSERS = (argOf("--browsers") || "chromium,firefox").split(","), EVIDENCE = argv.includes("--evidence");
 const EVD = path.join(ROOT, "docs/evidence/bloom-029b");
@@ -69,7 +72,7 @@ const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT
     check(!hits.length && /SURFACE\.paintSurface\(/.test(tex) && /surface\.paintSurface\(/.test(map) && /surface\.surfacePlanet\(/.test(map) && !/\[\s*\d{2,3}\s*,\s*\d{2,3}\s*,\s*\d{2,3}\s*\]/.test(tex),
       "N3 · no duplicated terrain palette or terrain algorithm: the sphere texture (planet-texture.js) and the production map (run-map-renderer.js) both paint BLOOM.surface; neither has colour stops, a ground tint, water colours or stipple rules of its own",
       hits.length ? hits.map(([f, h]) => `${f}: ${h.join("/")}`).join(" · ") : "planet-texture.js → SURFACE.paintSurface · run-map-renderer.js → surface.paintSurface (the old 2D palette now lives only in the migration-only legacy shell)");
-    check(/RETIRED as a player-facing path/.test(read("demos/demo-run.html")) && /\?ui=legacy/.test(read("demos/demo-run.html")) && /const PROD=UI_MODE==="production"/.test(read("demos/demo-run.html")),
+    check(/RETIRED as a player-facing path/.test(RUN_PAGE_SRC()) && /\?ui=legacy/.test(RUN_PAGE_SRC()) && /const UI_MODE=SHELL\?"legacy":"production";/.test(RUN_PAGE_SRC()) && /const PROD=!SHELL&&/.test(RUN_PAGE_SRC()) && /shell:SHELL_MODE/.test(RUN_PAGE_SRC()),   // (BLOOM-033: the harness asks the GameSession for the shell)
       "N3b · (BLOOM-029E) the legacy shell (and its own map palette) is retired as a player-facing path in the run page: the production UI is the default and the shell is reachable only through the developer flag ?ui=legacy", "demo-run.html header comment + routing"); }
 
   // N4 · the same generated planet → the same canonical surface from the sphere's planet and from the run adapter's source
@@ -176,7 +179,7 @@ const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT
     try {
       // ---- B1 · (BLOOM-029E) the engineering shell still boots behind the developer flag ?ui=legacy (the regression harness; the default is production since 029E)
       { const p = await open("?archetype=ocean_archipelago&seed=28&ui=legacy");
-        const r = await p.evaluate(() => ({ pv: !!document.querySelector(".pv"), ui18: document.documentElement.classList.contains("ui18"), header: getComputedStyle(document.querySelector("body > header")).display,
+        const r = await p.evaluate(() => ({ pv: !!document.querySelector(".pv"), ui18: document.documentElement.classList.contains("ui18"), header: (e => e ? getComputedStyle(e).display : "none")(document.querySelector("body > header")) /* (BLOOM-033: absent = not shown) */,
           canvas: document.getElementById("cv").width > 100, adapter: BLOOM_RUN_UI.adapter.api, anchors: ["biomass", "map", "inspect", "readout"].map(n => document.querySelectorAll(`[data-tutorial="${n}"]`).length) }));
         check(!r.pv && !r.ui18 && r.header !== "none" && r.canvas && r.adapter === 1 && J(r.anchors) === "[1,1,1,1]" && !p.errs.length,
           `${tag} B1 · with ?ui=legacy the run is the legacy shell exactly (no production view, its own map drawn, its anchors in place)`, J(r) + (p.errs.length ? " errs " + p.errs.join(" | ") : "")); }
@@ -184,11 +187,11 @@ const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT
       // ---- B2–B9 · ocean 28 (a cylinder) in the production Planet View, 1280×800
       const p = await open("?archetype=ocean_archipelago&seed=28&ui=18");
       await paused(p); await frames(p);
-      { const r = await p.evaluate(() => { const hid = s => getComputedStyle(document.querySelector(s)).display === "none";
+      { const r = await p.evaluate(() => { const hid = s => { const e = document.querySelector(s); return !e || getComputedStyle(e).display === "none"; };   // (BLOOM-033: absent = not shown)
           const A = __pv.A, before = BLOOM_API.sim.ticks; BLOOM_API.advance(30); A.actions.pause();
           return { mounted: !!document.querySelector(".pv[data-ui]"), legacyHidden: hid("body > header") && hid("body > main") && hid("body > footer"), wrap: __pv.R.info().wrapX,
             sameSim: A.run().ticks === BLOOM_API.sim.ticks && BLOOM_API.sim.ticks === before + 30, sameBio: A.hud().biomass === BLOOM_API.state().biomass,
-            pvCount: document.querySelectorAll(".pv").length, cv: getComputedStyle(document.getElementById("cv")).display }; });
+            pvCount: document.querySelectorAll(".pv").length, cv: (e => e ? getComputedStyle(e).display : "none")(document.getElementById("cv")) /* (BLOOM-033: absent = not shown) */ }; });
         check(r.mounted && r.legacyHidden && r.wrap && r.sameSim && r.sameBio && r.pvCount === 1,
           `${tag} B2 · &ui=18 mounts the production Planet View over the SAME run: one sim (adapter ticks / Biomass = BLOOM_API's after advancing), the legacy shell hidden`, J(r)); }
       { await frames(p, 2);

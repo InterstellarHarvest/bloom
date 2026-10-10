@@ -3,9 +3,9 @@
 //
 //   node tools/destination-survey-check.js
 //
-// resources/destination-survey/survey-data.js decides which worlds a sector shows, how each is classified (Stable / Volatile /
+// resources/destination-survey/survey-data.js decides which worlds a sector shows, how each is classified (Favorable / Precarious /
 // Extreme) and what its dossier says. Contract (028A1): every candidate is a FULLY VALIDATED world from the play flow's own
-// production path (BLOOM.play.runSearch, Eden: generateFromArchetype layers 1–8, then stripPlanet), and that planet object is
+// production path (BLOOM.play.runSearch, default-scenario: generateFromArchetype layers 1–8, then stripPlanet), and that planet object is
 // authoritative — it IS the world a run of that seed would play, it is what the dossier measures, and nothing regenerates it.
 // Also: classification and dossier values come from the engine's evaluate() or plain planet data, sectors are reproducible
 // from their seed (columns independently), results are plain data (a worker can post them), and nothing in BLOOM_DATA or the
@@ -38,7 +38,7 @@ const info = (name, detail) => console.log(`INFO  ${name}  — ${detail}`);
       for (let col = 0; col < 3; col++) { const h = [0, 1, 2].map(r => s.cells[r * 3 + col].habitable); if (!(h[0] >= h[1] && h[1] >= h[2])) bad.push(`${s.sectorSeed} col ${col} order`); }
       if (new Set(s.cells.map(c => c.key)).size !== 9) bad.push(`${s.sectorSeed} duplicate world`);
     }
-    check(!bad.length, "S1 every sector is a 3 × 3 matrix: column = class (Stable / Volatile / Extreme), 9 distinct worlds, each column ordered most → least habitable", bad.join("; ") || SEEDS.length + " sectors");
+    check(!bad.length, "S1 every sector is a 3 × 3 matrix: column = class (Favorable / Precarious / Extreme), 9 distinct worlds, each column ordered most → least habitable", bad.join("; ") || SEEDS.length + " sectors");
     info("validated sector build cost (Node, one thread: three columns in sequence)", sectors.map(s => `${s.label}: ${s.ms} ms · columns ${s.columns.map(c => `${c.ms} ms/${c.validations}v/${c.wasted}w`).join(", ")}`).join(" · "));
     const nearest = all.filter(c => c.filledBy).length, src = fs.readFileSync(path.join(ROOT, "resources/destination-survey/survey-data.js"), "utf8").replace(/\/\/.*$/gm, "");
     check(nearest === 0 && all.length === sectors.length * 9 && !/filledBy\s*=|aside\.push/.test(src) && S.MAX_DRAWS >= 200,
@@ -53,7 +53,7 @@ const info = (name, detail) => console.log(`INFO  ${name}  — ${detail}`);
       if (Math.abs(green / land - c.habitable) > 1e-12 || want !== c.classId) bad.push(`${c.key} ${c.habitable} vs ${green / land} ${c.classId}/${want}`);
     }
     check(!bad.length && J(S.SURVEY_CLASSES.map(c => c.minHabitable)) === J([0.35, 0.20, 0]),
-      "S3 habitable share = green-lamp land / all land from the engine's own evaluate() under the starting plant and sky; class = its band (≥ 35% Stable, ≥ 20% Volatile, else Extreme — recalibrated on validated worlds)", bad.slice(0, 3).join("; ") || all.length + " worlds"); }
+      "S3 habitable share = green-lamp land / all land from the engine's own evaluate() under the starting plant and sky; class = its band (≥ 35% Favorable, ≥ 20% Precarious, else Extreme — recalibrated on validated worlds)", bad.slice(0, 3).join("; ") || all.length + " worlds"); }
 
   // 3. THE IDENTITY CONTRACT: each candidate IS the validated world a run of its seed plays (independent production re-run)
   { const bad = []; let substituted = 0, attemptDiffers = 0;
@@ -100,8 +100,8 @@ const info = (name, detail) => console.log(`INFO  ${name}  — ${detail}`);
 
   // 6. First Bloom (authored, legacy rectangle) as a candidate: unchanged, measured the same way
   { const col = S.buildColumn(1, 0, undefined, { firstBloom: true }), fb = col.cells.find(c => c.authored);
-    check(fb && fb.planet === D.planets.first_bloom && !fb.planet.topology && fb.name === "First Bloom" && fb.classId === "stable" && fb.validation.path === "authored" && col.cells.length === 3 && col.cells[0] === fb && fb.fingerprint === S.planetFingerprint(D.planets.first_bloom),
-      "S7 First Bloom can join a sector (development flag): the authored planet object itself (no topology: still a rectangle; played as authored), measured like any world (35% → Stable), top of its column", fb ? `${fb.classId} · ${Math.round(fb.habitable * 100)}% habitable` : "missing"); }
+    check(fb && fb.planet === D.planets.first_bloom && !fb.planet.topology && fb.name === "First Bloom" && fb.classId === "favorable" && fb.validation.path === "authored" && col.cells.length === 3 && col.cells[0] === fb && fb.fingerprint === S.planetFingerprint(D.planets.first_bloom),
+      "S7 First Bloom can join a sector (development flag): the authored planet object itself (no topology: still a rectangle; played as authored), measured like any world (35% → Favorable), top of its column", fb ? `${fb.classId} · ${Math.round(fb.habitable * 100)}% habitable` : "missing"); }
 
   // 7. fingerprint: deterministic, survives the worker boundary, sensitive to any gameplay-relevant change
   { const c = sectors[0].cells[4], clone = structuredClone(c), p2 = structuredClone(c.planet), p3 = structuredClone(c.planet);

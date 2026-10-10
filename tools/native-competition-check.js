@@ -1,7 +1,7 @@
 // BLOOM — competition-scenario QA (BLOOM-014): the generic competition mechanism and Native Competition on all three production
 // archetypes. Two parts:
-//   A · Node: Native Competition is plain scenario data and the engine never names it; Eden and Dying World are unchanged
-//       (First Bloom golden, procedural Eden runs, Dying World runs and layer P verdicts pinned to 8a15863); native state is real,
+//   A · Node: Native Competition is plain scenario data and the engine never names it; default-scenario and Dying World are unchanged
+//       (First Bloom golden, procedural default-scenario runs, Dying World runs and layer P verdicts pinned to 8a15863); native state is real,
 //       planet-derived, deterministic, inside its configured start range, kept off the origin buffer and off water; it spreads,
 //       recedes, responds to the player's plants and to the environment; strong colonies hold / reclaim and young ones lose;
 //       red ground stays red (Roots included); Adapt acts only through the player's fitness, Terraform only through the
@@ -21,6 +21,9 @@
 "use strict";
 const path = require("path"), fs = require("fs");
 const ROOT = path.resolve(__dirname, "..");
+// (BLOOM-033) the run page's code = the developer harness demos/demo-run.html + the GameSession it wraps (resources/run/game-session.js, the
+// same file index.html uses); source checks of "the run page" read both
+const RUN_PAGE_SRC = () => ["demos/demo-run.html", "resources/run/game-session.js"].filter(f => fs.existsSync(path.join(ROOT, f))).map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
 for (const f of ["content/config.js", "content/traits.js", "content/archetypes.js", "content/scenarios.js", "planets/first_bloom.js", "resources/bloom-sim.js",
   "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js", "resources/bloom-scenario.js"]) require(path.join(ROOT, f));
 const { BLOOM, BLOOM_DATA } = globalThis, { config, traits, archetypes, scenarios } = BLOOM_DATA;
@@ -30,7 +33,7 @@ const SHOTS = arg("--shots"), JSON_OUT = arg("--json"), NO_BROWSER = process.arg
 const J = o => JSON.stringify(o), clone = o => JSON.parse(J(o)), pct = x => (x * 100).toFixed(1) + "%";
 const fnv = s => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return (h >>> 0).toString(16).padStart(8, "0"); };
 const mul = GOLD.mulberry32, TICK_S = config.tickMs / 1000, G = config.grow.growThresh;
-const EDEN = scenarios.find(s => s.id === "eden"), DW = scenarios.find(s => s.id === "dying_world"), NC = scenarios.find(s => s.id === "native_competition");
+const DEFAULT_SCN = scenarios.find(s => s.id === "default"), DW = scenarios.find(s => s.id === "dying_world"), NC = scenarios.find(s => s.id === "native_competition");
 const CP = NC.competition;
 let fails = 0; const t0 = Date.now(), EVID = {};
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (!ok) fails++; };
@@ -54,11 +57,11 @@ const PLAN_CACHE = {}, planOf = k => k === "primary" ? BUILD : (PLAN_CACHE[k] ??
 // a probe in one build (static environment, no ticking)
 function probe(planet, items = [], scenario = NC) { const s = BLOOM.createSim(planet, config, traits, { rng: () => 0.5, scenario }); s.biomass = Infinity; for (const id of items) s.buy(id); s.biomass = 0; return s; }
 
-console.log("# A · scenario data, architecture, Eden / Dying World compatibility");
+console.log("# A · scenario data, architecture, default-scenario / Dying World compatibility");
 // 1 · plain data
 { const c = NC.competition, keys = o => Object.keys(o).sort().join(",");
   check(J(clone(scenarios)) === J(scenarios) && !/function|=>/.test(J(scenarios)) && scenarios.every(s => BLOOM.pressure.checkScenario(s).length === 0)
-    && NC.pressure === null && NC.loss.extinction === true && keys(c) === "contest,events,growth,start,tolerance" && BLOOM.pressure.isDynamic(NC) && !BLOOM.pressure.isDynamic(EDEN),
+    && NC.pressure === null && NC.loss.extinction === true && keys(c) === "contest,events,growth,start,tolerance" && BLOOM.pressure.isDynamic(NC) && !BLOOM.pressure.isDynamic(DEFAULT_SCN),
     "1 · Native Competition is scenario data (content/scenarios.js): a competition block (tolerance, start, growth, contest, events), no pressure clock, extinction loss; it passes the engine's scenario check",
     `start ${J(c.start)} · contest ${J(c.contest)}`);
   const broken = clone(NC); broken.competition.contest.nativeVigour = 9; broken.competition.start.coverShare = [0.5, 0.2];
@@ -66,10 +69,10 @@ console.log("# A · scenario data, architecture, Eden / Dying World compatibilit
   check(errs.length === 2 && errs.every(e => /competition\./.test(e)), "1b · a malformed competition block is refused with the reason (never silently clamped)", errs.join(" | ")); }
 // 2 · no scenario-specific code
 { const code = ["resources/bloom-sim.js", "resources/bloom-witness.js", "resources/bloom-scenario.js", "resources/bloom-archetype.js", "resources/bloom-validate.js", "resources/bloom-gen.js"]
-    .map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n"), ui = fs.readFileSync(path.join(ROOT, "demos/demo-run.html"), "utf8");
+    .map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n"), ui = RUN_PAGE_SRC();
   check(!/native_competition/.test(code) && !/native_competition/.test(ui) && !/Native Competition/.test(code) && !/\bdying/i.test(code) && !/scenario\.id\s*===|SCN\.id\s*===/.test(code + ui),
     "2 · no scenario-id special case: the engine, generator, witness, validators and UI never name Native Competition (or Dying World); they read the scenario's competition data"); }
-// 3 · Eden unchanged: First Bloom golden (explicit Eden and no scenario) + procedural Eden runs pinned since BLOOM-013
+// 3 · default-scenario unchanged: First Bloom golden (explicit default-scenario and no scenario) + procedural default-scenario runs pinned since BLOOM-013
 { const want = JSON.parse(fs.readFileSync(path.join(__dirname, "golden/first_bloom.json"), "utf8")), ids = Object.keys(want.static.prices.start), planet = BLOOM_DATA.planets.first_bloom;
   const adapter = scenario => { let sim; return {
     reset(seed) { sim = BLOOM.createSim(planet, config, traits, { rng: mul(seed), ...(scenario ? { scenario } : {}) }); }, tick() { sim.tick(); }, buy(id) { return sim.buy(id); },
@@ -81,16 +84,16 @@ console.log("# A · scenario data, architecture, Eden / Dying World compatibilit
     traitIds: traits.map(t => t.id).filter(id => ids.includes(id)), get sectionCount() { return sim.map.SC; },
     get map() { return { tilemap: sim.map.TILEMAP, area: sim.map.AREA, cent: sim.map.CENT }; } }; };
   const same = got => GOLD.PARTS.every(p => J(clone(got[p])) === J(want[p]));
-  // procedural Eden runs: the same pins as tools/dying-world-check.js (BLOOM-027B generator; were geometry vs 1b7ea2a, runs = BLOOM-013 data)
+  // procedural default-scenario runs: the same pins as tools/dying-world-check.js (BLOOM-027B generator; were geometry vs 1b7ea2a, runs = BLOOM-013 data)
   const BASE_FP = { "ocean_archipelago:30": "4f5d4a29,ef774658,ae0fbccc,6d7c152c,a9ab53f1,b65e2cd7", "desert_world:17": "8aeda063,f99cae45,4fb52470,1e751fb5,d9691906,a99afb94",
     "frozen_world:11": "7a37679f,36899074,6ff6e65f,fd3d2368,0fde15ea,50a5bad2" }; // (BLOOM-027B generator + fixtures, = tools/dying-world-check.js)
   const fp = (sim, plan, ticks) => { let k = 0; const tr = []; for (let t = 1; t <= ticks; t++) { sim.tick(); if (k < plan.length && sim.biomass >= sim.price(sim.traitById[plan[k]]) && sim.buy(plan[k])) k++;
     if (t % 500 === 0) tr.push(fnv(Array.from(sim.state).join("") + "|" + sim.biomass + "|" + Array.from(sim.dens).join(","))); } return tr.join(","); };
   const rows = Object.entries(BASE_FP).map(([key, want]) => { const [id, seed] = key.split(":"), p = gen(id, +seed), plan = p.archetype.strategies.list[0].purchases.map(x => x[0]);
-    return { key, a: fp(BLOOM.createSim(p, config, traits, { rng: mul(12345) }), plan, 3000) === want, b: fp(BLOOM.createSim(p, config, traits, { rng: mul(12345), scenario: EDEN }), plan, 3000) === want }; });
-  const eden = BLOOM.createSim(DPRI, config, traits, { scenario: EDEN });
-  check(same(GOLD.runGolden(adapter(EDEN))) && same(GOLD.runGolden(adapter(null))) && rows.every(r => r.a && r.b) && eden.competition.enabled === false && !eden.nativeEvaluate,
-    "3 · Eden is unchanged: First Bloom golden bit-for-bit (with Eden and with no scenario); Ocean 30 / Desert 17 / Frozen 11 Eden 3000-tick runs equal their BLOOM-013 pins; no native layer exists",
+    return { key, a: fp(BLOOM.createSim(p, config, traits, { rng: mul(12345) }), plan, 3000) === want, b: fp(BLOOM.createSim(p, config, traits, { rng: mul(12345), scenario: DEFAULT_SCN }), plan, 3000) === want }; });
+  const dflt = BLOOM.createSim(DPRI, config, traits, { scenario: DEFAULT_SCN });
+  check(same(GOLD.runGolden(adapter(DEFAULT_SCN))) && same(GOLD.runGolden(adapter(null))) && rows.every(r => r.a && r.b) && dflt.competition.enabled === false && !dflt.nativeEvaluate,
+    "3 · default-scenario is unchanged: First Bloom golden bit-for-bit (with default-scenario and with no scenario); Ocean 30 / Desert 17 / Frozen 11 default-scenario 3000-tick runs equal their BLOOM-013 pins; no native layer exists",
     rows.map(r => `${r.key} ${r.a && r.b ? "✓" : "✗"}`).join(" · ")); }
 // 4 / 36 / 37 · Dying World and the archetype records pinned to the BLOOM-027B generator (were 8a15863, computed from `git archive 8a15863`)
 const PIN = { planets: {"desert_world:17": "b72e23dd", "ocean_archipelago:30": "be10566d", "frozen_world:11": "290a7b3f"},
@@ -291,9 +294,9 @@ console.log("\n# A · economy");
   check(J(E) === J(want) && fnv(prices) === "c76e356c" && !keysOf(NC).some(k => /^(econ|cost|price|biomass|startBiomass|income|yield)/i.test(k)), "22 · the economy is BLOOM-013's: config.econ values and every trait price unchanged; the scenario carries no economy settings",
     `start ${E.startBiomass}, trickle ${E.originTrickle}, costScale ${E.costScale} · prices ${fnv(prices)}`); }
 { // 24 / 25 · coverage
-  const s = ncSim(DPRI, 4), eden = BLOOM.createSim(DPRI, config, traits, { rng: mul(4) }); let ok = true; for (let t = 0; t < 1200; t++) { const c = s.tick(); if (t % 100 === 0) { let l = 0; for (const i of s.map.LAND_TILES) if (s.state[i] === s.LIV) l++; if (Math.abs(c - l / s.map.LAND) > 1e-12) ok = false; } }
-  check(ok && s.map.LAND === eden.map.LAND && s.competition.tiles > 0, "24 · native cover never counts toward the player's coverage: coverage = the player's Living tiles / the same colonizable-land denominator as Eden",
-    `land ${s.map.LAND} (Eden ${eden.map.LAND}) · natives ${s.competition.tiles} tiles, coverage ${pct(s.coverage())}`); }
+  const s = ncSim(DPRI, 4), dflt = BLOOM.createSim(DPRI, config, traits, { rng: mul(4) }); let ok = true; for (let t = 0; t < 1200; t++) { const c = s.tick(); if (t % 100 === 0) { let l = 0; for (const i of s.map.LAND_TILES) if (s.state[i] === s.LIV) l++; if (Math.abs(c - l / s.map.LAND) > 1e-12) ok = false; } }
+  check(ok && s.map.LAND === dflt.map.LAND && s.competition.tiles > 0, "24 · native cover never counts toward the player's coverage: coverage = the player's Living tiles / the same colonizable-land denominator as default-scenario",
+    `land ${s.map.LAND} (default-scenario ${dflt.map.LAND}) · natives ${s.competition.tiles} tiles, coverage ${pct(s.coverage())}`); }
 
 console.log("\n# A · extinction");
 { // 26 · a doomed run (mechanism: every player tile cleared) is lost after the grace, then frozen
@@ -338,16 +341,16 @@ check(LPdef.status === "PASS" && LPdef.competition && LPdef.competition.startSha
 for (const [k, n, label] of [["ocean", 32, "Ocean 30"], ["primary", 33, "Desert 17"], ["frozen", 34, "Frozen 11"]]) { const v = k === "primary" ? LPdef : LP[k];
   check(v.status === "PASS", `${n} · ${label} + Native Competition is viable: layer P PASS (≥ 1 broad strategy, margin + 60 s hold, confirmed under ${NC.validation.confirmRngSeeds.length} more simulation seeds)`,
     `${v.status}${v.reason ? " " + v.reason : ""} · ${v.strategies.map(sumS).join(" | ")}`); }
-{ // the Eden strategies of the primary fixture are no longer enough
+{ // the default-scenario strategies of the primary fixture are no longer enough
   const rows = DPRI.archetype.strategies.list.map(st => { const plan = st.purchases.map(x => x[0]), r = BLOOM.witness.simulate(DPRI, config, traits, plan, 0.73, false, NC); return { sig: st.signature, peak: r.peak, ok: r.ok }; });
-  check(rows.every(r => !r.ok && r.peak < 0.70), "P · the primary fixture's accepted Eden strategies no longer win under competition (real competitive runs of the Eden witness plans)",
+  check(rows.every(r => !r.ok && r.peak < 0.70), "P · the primary fixture's accepted default-scenario strategies no longer win under competition (real competitive runs of the default-scenario witness plans)",
     rows.map(r => `[${r.sig}] peaks at ${pct(r.peak)}`).join(" · "));
-  EVID.edenUnderCompetition = rows; }
+  EVID.defaultUnderCompetition = rows; }
 { // 35 · Waterborne Seeds stays geography-driven
   const off = Object.fromEntries(Object.entries(WORLDS).map(([k, p]) => { const s = ncSim(p); return [k, s.offered(s.traitById.waterSeeds)]; }));
   const ow = LP.ocean.strategies[0], uses = ow.purchases.some(p => p.id === "waterSeeds");
-  const sea = ncSim(WORLDS.ocean), eden = BLOOM.createSim(WORLDS.ocean, config, traits, {});
-  check(off.ocean && !off.primary && !off.frozen && uses && J(sea.map.CROSSINGS) === J(eden.map.CROSSINGS), "35 · Waterborne Seeds remains geography-driven: offered only where a real water crossing exists (Ocean 13, not Desert 17 / Frozen 22), the same crossings as Eden, and part of the Ocean witness",
+  const sea = ncSim(WORLDS.ocean), dflt = BLOOM.createSim(WORLDS.ocean, config, traits, {});
+  check(off.ocean && !off.primary && !off.frozen && uses && J(sea.map.CROSSINGS) === J(dflt.map.CROSSINGS), "35 · Waterborne Seeds remains geography-driven: offered only where a real water crossing exists (Ocean 13, not Desert 17 / Frozen 22), the same crossings as default-scenario, and part of the Ocean witness",
     `offered ${J(off)} · Ocean witness ${ow.purchases.map(p => p.id).join(" → ")}`); }
 
 console.log("\n# A · colony development under competition (controlled experiments, mechanism)");
@@ -460,7 +463,7 @@ async function browserPart() {
       `${buys.join(" → ")} · win at ${won ? Math.round(won.ticks * TICK_S) : "—"} s with ${pct(fin.cov)} of the land; natives ${pct(fin.c.share)} (peak ${pct(fin.c.peakShare)})`);
     EVID.browserWin = { buys, winSeconds: won && Math.round(won.ticks * TICK_S), coverage: fin.cov, native: fin.c.share, nativePeak: fin.c.peakShare };
     await p.waitForTimeout(150);
-    const rep = await p.evaluate(() => ({ on: document.getElementById("reportModal").classList.contains("on"), text: document.getElementById("report").innerText, c: (document.getElementById("repComp") || {}).innerText || "" }));
+    const rep = await p.evaluate(() => ({ on: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")), text: document.getElementById("report").innerText, c: (document.getElementById("repComp") || {}).innerText || "" }));
     check(rep.on && /under Native Competition/.test(rep.text) && /Competition: Native Competition/.test(rep.c) && /at the start/.test(rep.c) && /at their peak/.test(rep.c) && /contested/.test(rep.c) && /did not need to remove every native plant/.test(rep.c) && /Ymir-961/.test(rep.text),
       "49 · the Bloom Report identifies Native Competition in one concise line (native land at start / peak / now, contested regions, land left to native vegetation) without implying eradication", rep.c.replace(/\n/g, " "));
     await shot(p, "nc-desert25-report.png"); check(p.errors.length === 0, "no browser errors (Native Competition win)", p.errors.join(" | ")); await p.close(); }
@@ -468,19 +471,19 @@ async function browserPart() {
   { const p = await open(NCQ); await p.evaluate(() => { BLOOM_API.advance(60); const S = BLOOM_API.sim; for (const i of S.map.LAND_TILES) if (S.state[i] !== S.BAR) { S.state[i] = S.BAR; S.dens[i] = 0; } });
     let st; for (let n = 0; n < 30; n++) { st = await p.evaluate(() => { BLOOM_API.advance(5); return { lost: BLOOM_API.sim.lost, t: BLOOM_API.sim.ticks }; }); if (st.lost) break; }
     await p.waitForTimeout(150);
-    const r = await p.evaluate(() => ({ on: document.getElementById("reportModal").classList.contains("on"), text: document.getElementById("report").innerText, btn: !!document.getElementById("lossRestart"), why: BLOOM_API.competition().lostReason }));
+    const r = await p.evaluate(() => ({ on: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")), text: document.getElementById("report").innerText, btn: !!document.getElementById("lossRestart"), why: BLOOM_API.competition().lostReason }));
     check(st.lost && r.on && /EXTINCTION/.test(r.text) && /No living plants were left anywhere for 8 s/.test(r.text) && /native vegetation overgrew your last colonies/.test(r.text) && /Competition: Native Competition/.test(r.text) && r.btn,
       "48 · a doomed run loses by extinction: the loss screen gives the reason, the scenario's own debrief and the competition line, and offers a restart", `${r.why} at ${Math.round(st.t * TICK_S)} s`);
     await shot(p, "nc-desert25-extinction.png"); await p.click("#lossRestart"); await p.waitForTimeout(800);
-    const again = await p.evaluate(() => ({ t: BLOOM_API.sim.ticks, lost: BLOOM_API.sim.lost, on: document.getElementById("reportModal").classList.contains("on") }));
+    const again = await p.evaluate(() => ({ t: BLOOM_API.sim.ticks, lost: BLOOM_API.sim.lost, on: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")) }));
     check(!again.lost && !again.on && again.t < 30, "48b · restart reloads the same launch as a fresh run", J(again));
     check(p.errors.length === 0, "no browser errors (extinction control)", p.errors.join(" | ")); await p.close(); }
-  // V · explicit failures + the other archetypes + Eden unchanged
+  // V · explicit failures + the other archetypes + default-scenario unchanged
   for (const [q, want] of [["?archetype=desert_world&seed=17&scenario=native_competitions", /unknown scenario "native_competitions"/], ["?archetype=desert_world&seed=17&scenario=Native%20Competition", /must be a scenario id/]]) {
     const p = await open(q, false), r = await p.evaluate(() => ({ fail: (document.getElementById("genFail") || {}).innerText || "", sim: !!(window.BLOOM_API && BLOOM_API.sim) }));
     check(want.test(r.fail) && /NO RUN STARTED/.test(r.fail) && !r.sim, `V · ${q.slice(1)} fails explicitly: no run started, no substitute`, r.fail.split("\n").slice(1, 3).join(" / ")); await p.close(); }
   { const p = await open("?archetype=desert_world&seed=17"), r = await p.evaluate(() => ({ bar: !!document.getElementById("cbar"), c: BLOOM_API.sim.competition.enabled, run: BLOOM_API.run.scenarioId, title: document.title }));
-    check(!r.bar && !r.c && r.run === "eden" && !/Native/.test(r.title), "V · no scenario parameter = Eden: no native layer, no competition bar", r.title); await p.close(); }
+    check(!r.bar && !r.c && r.run === "default" && !/Native/.test(r.title), "V · no scenario parameter = default-scenario: no native layer, no competition bar", r.title); await p.close(); }
   for (const [id, seed, name] of [["ocean_archipelago", 30, "Ocean Archipelago"], ["frozen_world", 11, "Frozen World"]]) {
     const p = await open(`?archetype=${id}&seed=${seed}&scenario=native_competition`); await p.evaluate(() => { BLOOM_API.addBiomass(600); BLOOM_API.buy("seedOut"); BLOOM_API.advance(1800); pollCompetition(performance.now()); renderComp(); draw(); });
     const r = await p.evaluate(() => ({ run: BLOOM_API.run, bar: document.getElementById("cbar").innerText, c: BLOOM_API.competition() }));

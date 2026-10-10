@@ -1,8 +1,8 @@
 // BLOOM — pressure-scenario QA (BLOOM-012): the scenario catalogue, the generic pressure model, extinction loss, the
 // scenario validation layer ("layer P") and Dying World on all three production archetypes. Two parts:
-//   A · Node: plain-data catalogue, Eden = the pre-BLOOM-012 engine bit-for-bit (First Bloom golden, Ocean / Desert / Frozen
+//   A · Node: plain-data catalogue, default-scenario = the pre-BLOOM-012 engine bit-for-bit (First Bloom golden, Ocean / Desert / Frozen
 //       fixture worlds and runs pinned to 1b7ea2a), the pressure clock (grace, monotonic rise, final state), each channel
-//       following the data, pressure acting ONLY through the ordinary environmental evaluation (an Eden sim of the same
+//       following the data, pressure acting ONLY through the ordinary environmental evaluation (a default-scenario sim of the same
 //       shifted conditions evaluates and earns identically), green → yellow → red caused by the decline, Adapt and
 //       Terraform answers, Roots never rescuing red ground, extinction grace, layer P on Ocean 28 / Desert 17 / Frozen 11 (extinction on Frozen 9)
 //       with real pressured witnesses (≥ 2 broad strategies on the primary fixture), water / Waterborne Seeds untouched
@@ -18,6 +18,9 @@
 "use strict";
 const path = require("path"), fs = require("fs");
 const ROOT = path.resolve(__dirname, "..");
+// (BLOOM-033) the run page's code = the developer harness demos/demo-run.html + the GameSession it wraps (resources/run/game-session.js, the
+// same file index.html uses); source checks of "the run page" read both
+const RUN_PAGE_SRC = () => ["demos/demo-run.html", "resources/run/game-session.js"].filter(f => fs.existsSync(path.join(ROOT, f))).map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
 for (const f of ["content/config.js", "content/traits.js", "content/archetypes.js", "content/scenarios.js", "planets/first_bloom.js", "resources/bloom-sim.js",
   "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js", "resources/bloom-scenario.js"]) require(path.join(ROOT, f));
 const { BLOOM, BLOOM_DATA } = globalThis, { config, traits, archetypes, scenarios } = BLOOM_DATA;
@@ -27,7 +30,7 @@ const SHOTS = arg("--shots"), JSON_OUT = arg("--json"), NO_BROWSER = process.arg
 const J = o => JSON.stringify(o), clone = o => JSON.parse(J(o)), pct = x => (x * 100).toFixed(1) + "%", r1 = v => Math.round(v * 10) / 10;
 const fnv = s => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return (h >>> 0).toString(16).padStart(8, "0"); };
 const mul = GOLD.mulberry32, TICK_S = config.tickMs / 1000, G = config.grow.growThresh;
-const EDEN = scenarios.find(s => s.id === "eden"), DW = scenarios.find(s => s.id === "dying_world"), P = DW.pressure;
+const DEFAULT_SCN = scenarios.find(s => s.id === "default"), DW = scenarios.find(s => s.id === "dying_world"), P = DW.pressure;
 const at = s => Math.round(s / TICK_S); // seconds → tick
 // GRACE_TICK = the first tick whose clock has reached graceSeconds (the decline's start); a grace that is not a whole number of
 // ticks (e.g. 45 s = 281.25 ticks, tried during BLOOM-013) starts on the next whole tick. FIRST_DRIFT = the first tick with progress > 0.
@@ -57,20 +60,20 @@ const runFp = (sim, plan, ticks, every = 500) => { let k = 0; const tr = [];
     if (t % every === 0) tr.push(fnv(Array.from(sim.state).join("") + "|" + sim.biomass + "|" + Array.from(sim.dens).join(","))); }
   return tr.join(","); };
 
-console.log("# A · catalogue + Eden compatibility");
+console.log("# A · catalogue + default-scenario compatibility");
 // 1 · plain data
 check(J(clone(scenarios)) === J(scenarios) && !/function|=>/.test(J(scenarios)) && new Set(scenarios.map(s => s.id)).size === scenarios.length
   && scenarios.every(s => BLOOM.pressure.checkScenario(s).length === 0),
   "1 · the scenario catalogue (content/scenarios.js) is plain JSON-shaped data; every entry passes the engine's scenario check", scenarios.map(s => s.id).join(", "));
-check(EDEN.pressure === null && EDEN.loss.extinction === false && P.graceSeconds >= 0 && P.durationSeconds > 0 && DW.loss.extinction === true
+check(DEFAULT_SCN.pressure === null && DEFAULT_SCN.loss.extinction === false && P.graceSeconds >= 0 && P.durationSeconds > 0 && DW.loss.extinction === true
   && DW.loss.extinctionGraceSeconds > 0 && DW.validation && DW.display && DW.display.title && Object.keys(DW.display.channels).length === 3,
   "1b · Dying World owns its numbers as data: grace, duration, channel maxima, extinction grace, validation policy, display labels",
   `grace ${P.graceSeconds} s · duration ${P.durationSeconds} s · channels ${J(P.channels)} · extinction after ${DW.loss.extinctionGraceSeconds} s · phases ${P.phases.map(p => `${p.name}@${p.from}`).join(", ")}`);
 { const code = ["resources/bloom-sim.js", "resources/bloom-witness.js", "resources/bloom-scenario.js", "resources/bloom-archetype.js", "resources/bloom-validate.js"]
-    .map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n"), ui = fs.readFileSync(path.join(ROOT, "demos/demo-run.html"), "utf8");
+    .map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n"), ui = RUN_PAGE_SRC();
   check(!/dying/i.test(code) && !/["'`]dying_world["'`]/.test(ui) && !/moistureShare|extinctionGraceSeconds\s*[:=]\s*\d/.test(ui.replace(/SCN\.loss\.extinctionGraceSeconds/g, "")),
     "1c · no scenario-specific code: the engine, witness, validators and UI never name Dying World; the UI reads the scenario's own data"); }
-// 2 / 3 · First Bloom golden, with an explicit Eden scenario and without any scenario
+// 2 / 3 · First Bloom golden, with an explicit default-scenario scenario and without any scenario
 { const want = JSON.parse(fs.readFileSync(path.join(__dirname, "golden/first_bloom.json"), "utf8")), ids = Object.keys(want.static.prices.start), planet = BLOOM_DATA.planets.first_bloom;
   const adapter = scenario => { let sim; return {
     reset(seed) { sim = BLOOM.createSim(planet, config, traits, { rng: mul(seed), ...(scenario ? { scenario } : {}) }); }, tick() { sim.tick(); }, buy(id) { return sim.buy(id); },
@@ -82,9 +85,9 @@ check(EDEN.pressure === null && EDEN.loss.extinction === false && P.graceSeconds
     traitIds: traits.map(t => t.id).filter(id => ids.includes(id)), get sectionCount() { return sim.map.SC; },
     get map() { return { tilemap: sim.map.TILEMAP, area: sim.map.AREA, cent: sim.map.CENT }; } }; };
   const same = got => GOLD.PARTS.every(p => J(clone(got[p])) === J(want[p]));
-  check(same(GOLD.runGolden(adapter(EDEN))), "2 · Eden as an explicit scenario reproduces the accepted First Bloom golden bit-for-bit (layout, evaluations, previews, prices, all 6 runs)");
+  check(same(GOLD.runGolden(adapter(DEFAULT_SCN))), "2 · default-scenario as an explicit scenario reproduces the accepted First Bloom golden bit-for-bit (layout, evaluations, previews, prices, all 6 runs)");
   check(same(GOLD.runGolden(adapter(null))), "3 · First Bloom with no scenario is unchanged (same golden)"); }
-// 4 / 29 · procedural Eden fixtures: the generated GEOMETRY (the planet minus its validator record) pinned to the pre-BLOOM-012
+// 4 / 29 · procedural default-scenario fixtures: the generated GEOMETRY (the planet minus its validator record) pinned to the pre-BLOOM-012
 // engine (1b7ea2a), and a 3000-tick seeded run pinned to the 4d1e52c engine running the BLOOM-013 data. BLOOM-013 is a data-only
 // retune (resources/ untouched since 4d1e52c): it changes the economy, so the runs and the `planet.archetype` record (witness
 // times) move, while every fixture keeps its attempt and its exact geometry.
@@ -103,13 +106,13 @@ const BASE_FP = { // geometry + run: the BLOOM-027B cylindrical generator (docs/
   "desert_world:22": { geometry: "144c9496", run: "670d879a,39deaa17,2817add1,21c8aa61,b2387fbd,492cf740" } };
 { const rows = [];
   for (const key of Object.keys(BASE_FP)) { const [id, seed] = key.split(":"), p = gen(id, +seed), { archetype: _, ...geometry } = p, plan = p.archetype.strategies.list[0].purchases.map(x => x[0]);
-    const a = runFp(BLOOM.createSim(p, config, traits, { rng: mul(12345) }), plan, 3000), b = runFp(BLOOM.createSim(p, config, traits, { rng: mul(12345), scenario: EDEN }), plan, 3000);
-    rows.push({ key, planet: fnv(J(geometry)) === BASE_FP[key].geometry, run: a === BASE_FP[key].run, eden: b === BASE_FP[key].run }); }
-  check(rows.every(r => r.planet && r.run && r.eden), "4 · Ocean 28/8, Desert 17/4, Frozen 11/4 (+ Ocean 30, Frozen 9) Eden worlds are pinned: the BLOOM-027B generated geometry, and the same 3000-tick run with no scenario and with Eden (were 1b7ea2a geometry / 4d1e52c runs until the cylindrical generator)",
-    rows.map(r => `${r.key} ${r.planet && r.run && r.eden ? "✓" : `geometry ${r.planet} run ${r.run} eden ${r.eden}`}`).join(" · ")); }
+    const a = runFp(BLOOM.createSim(p, config, traits, { rng: mul(12345) }), plan, 3000), b = runFp(BLOOM.createSim(p, config, traits, { rng: mul(12345), scenario: DEFAULT_SCN }), plan, 3000);
+    rows.push({ key, planet: fnv(J(geometry)) === BASE_FP[key].geometry, run: a === BASE_FP[key].run, dflt: b === BASE_FP[key].run }); }
+  check(rows.every(r => r.planet && r.run && r.dflt), "4 · Ocean 28/8, Desert 17/4, Frozen 11/4 (+ Ocean 30, Frozen 9) default-scenario worlds are pinned: the BLOOM-027B generated geometry, and the same 3000-tick run with no scenario and with default-scenario (were 1b7ea2a geometry / 4d1e52c runs until the cylindrical generator)",
+    rows.map(r => `${r.key} ${r.planet && r.run && r.dflt ? "✓" : `geometry ${r.planet} run ${r.run} dflt ${r.dflt}`}`).join(" · ")); }
 { const sigs = OAP.archetype.strategies.list.map(x => x.signature);
   check(OAP.archetype.attempt === 8 && sigs.length === 2 && sigs.some(s => /Temperature:cold=Adapt/.test(s) && /salt/.test(s) && /rad/.test(s)) && sigs.some(s => /Water:wet=Terraform/.test(s) && /Temperature:heat/.test(s)),
-    "29 · no-pressure Ocean 28 keeps its accepted Eden baseline (attempt 8, layers 1–8, Rad+Salt+Cold+Heat Adapt vs Rad+Salt+Heat + Dry the Sky)", sigs.join(" | ")); }
+    "29 · no-pressure Ocean 28 keeps its accepted default-scenario baseline (attempt 8, layers 1–8, Rad+Salt+Cold+Heat Adapt vs Rad+Salt+Heat + Dry the Sky)", sigs.join(" | ")); }
 
 console.log("\n# A · the pressure clock and channels");
 { // 5 · determinism
@@ -121,8 +124,8 @@ console.log("\n# A · the pressure clock and channels");
   const throws = f => { try { f(); return null; } catch (e) { return e.message; } };
   const u = throws(() => BLOOM.pressure.resolveScenario(scenarios, "volcano_world")), c = throws(() => BLOOM.pressure.resolveScenario(scenarios, "Dying_World"));
   const bad = throws(() => BLOOM.createSim(OAP, config, traits, { scenario: { id: "broken", name: "Broken", pressure: { graceSeconds: 1, durationSeconds: 0, channels: { wind: 3 }, phases: [] }, loss: { extinction: true } } }));
-  check(/unknown scenario "volcano_world"/.test(u || "") && /unknown scenario/.test(c || "") && /scenario broken/.test(bad || "") && BLOOM.pressure.resolveScenario(scenarios, null).id === "eden",
-    "6 · an unknown scenario id fails explicitly (never a substitute); a malformed definition is refused; no id = Eden", `${u} · ${bad && bad.slice(0, 90)}…`); }
+  check(/unknown scenario "volcano_world"/.test(u || "") && /unknown scenario/.test(c || "") && /scenario broken/.test(bad || "") && BLOOM.pressure.resolveScenario(scenarios, null).id === "default",
+    "6 · an unknown scenario id fails explicitly (never a substitute); a malformed definition is refused; no id = default-scenario", `${u} · ${bad && bad.slice(0, 90)}…`); }
 const clock = (() => { // one no-purchase pressured run, recording the pressure state every tick
   const sim = BLOOM.createSim(OAP, config, traits, { rng: mul(5), scenario: DW }), rows = [];
   const fresh = { progress: sim.pressure.progress, offsets: { ...sim.pressure.offsets }, phase: sim.pressure.phase };
@@ -159,7 +162,7 @@ const clock = (() => { // one no-purchase pressured run, recording the pressure 
     "14 · the planet data and the scenario data are never mutated by a full pressured run (the sky the player Terraformed is the sim's own state)"); }
 
 console.log("\n# A · pressure acts through the ordinary environment");
-// an Eden planet whose climate IS the pressured one: sky + drift (moisture clamped like the engine), radiation + drift
+// a default-scenario planet whose climate IS the pressured one: sky + drift (moisture clamped like the engine), radiation + drift
 const shifted = (planet, off) => { const q = clone(planet); q.globalClimate.temperature += off.temp; q.globalClimate.moisture = Math.min(100, Math.max(0, q.globalClimate.moisture + off.moist));
   for (const s of q.sections) if (s.local) s.local.radiation = Math.max(0, s.local.radiation + off.rad); return q; };
 { // 15 · fitness and readouts use the effective conditions
@@ -167,7 +170,7 @@ const shifted = (planet, off) => { const q = clone(planet); q.globalClimate.temp
     const A = probeAt(w, items, 1), off = A.off, B = BLOOM.createSim(shifted(w, off), config, traits, { rng: () => 0.5 }); B.biomass = Infinity; items.forEach(id => B.buy(id));
     A.s.map.SEC.forEach((s, i) => { if (i === A.s.map.ORIGIN) return; n++; const a = A.ev(i), b = B.evaluate(i);
       if (Math.abs(a.fitness - b.fitness) > 1e-9 || a.limitKey !== b.limitKey || Math.abs(a.effT - b.effT) > 1e-9 || Math.abs(a.effM - b.effM) > 1e-9 || Math.abs(a.effRad - s.local.radiation - off.rad) > 1e-9) bad.push(`${k}:${s.name}`); }); }
-  check(!bad.length && n > 100, "15 · every pressured evaluation equals an Eden evaluation of the same shifted conditions (fitness, limiting factor, effective temperature / moisture / radiation)",
+  check(!bad.length && n > 100, "15 · every pressured evaluation equals a default-scenario evaluation of the same shifted conditions (fitness, limiting factor, effective temperature / moisture / radiation)",
     `${n} region evaluations across 3 worlds × 3 builds at the final state${bad.length ? " · differ: " + bad.slice(0, 4).join(", ") : ""}`); }
 // 16 · a region turns green → yellow → red because of the decline (no purchase, same plant, same sky)
 const lampTrace = (planet, scenario, ticks) => { const sim = BLOOM.createSim(planet, config, traits, { rng: mul(5), ...(scenario ? { scenario } : {}) }), T = sim.map.SEC.map(() => []);
@@ -175,9 +178,9 @@ const lampTrace = (planet, scenario, ticks) => { const sim = BLOOM.createSim(pla
   return { sim, T }; };
 { const P0 = lampTrace(OAP, DW, FULL_TICK + 100), E0 = lampTrace(OAP, null, FULL_TICK + 100), M = P0.sim.map, rows = [];
   M.SEC.forEach((s, i) => { const seq = P0.T[i].map(x => x.lamp).join(">"); if (/green>yellow.*>red/.test(seq) && E0.T[i].every(x => x.lamp === "green"))
-    rows.push(`${s.name}: ${P0.T[i].map(x => `${x.lamp}@${Math.round(x.t * TICK_S)}s${x.lamp !== "green" ? `(${x.limit})` : ""}`).join(" → ")} (Eden: green throughout)`); });
+    rows.push(`${s.name}: ${P0.T[i].map(x => `${x.lamp}@${Math.round(x.t * TICK_S)}s${x.lamp !== "green" ? `(${x.limit})` : ""}`).join(" → ")} (default-scenario: green throughout)`); });
   EVID.transitions = rows;
-  check(rows.length >= 1, "16 · a region turns green → yellow → red purely through scenario pressure (it stays green in the same Eden run)", rows.join(" · ")); }
+  check(rows.length >= 1, "16 · a region turns green → yellow → red purely through scenario pressure (it stays green in the same default-scenario run)", rows.join(" · ")); }
 { // 17 · Adapt reverses a scenario-induced blocker (and Radiation Shielding leaves temperature / moisture alone — 20)
   const start = probeAt(OAP, [], 0), fin = probeAt(OAP, [], 1), shield = probeAt(OAP, ["rad"], 1), dry = probeAt(OAP, ["drought"], 1), M = fin.s.map, out = [];
   M.SEC.forEach((s, i) => { if (i === M.ORIGIN) return; const a = start.ev(i), b = fin.ev(i);
@@ -224,7 +227,7 @@ const lampTrace = (planet, scenario, ticks) => { const sim = BLOOM.createSim(pla
 { // 22 · Biomass changes only through real colony condition
   const e = BLOOM.createSim(OAP, config, traits, { rng: mul(21) }), d = BLOOM.createSim(OAP, config, traits, { rng: mul(21), scenario: DW }); let same = true;
   for (let t = 1; t < FIRST_DRIFT; t++) { e.tick(); d.tick(); if (e.biomass !== d.biomass || fnv(Array.from(e.state).join("")) !== fnv(Array.from(d.state).join(""))) same = false; }
-  // final state: a pressured run vs an Eden run on the shifted planet, from the SAME colony state and the SAME random draws
+  // final state: a pressured run vs a default-scenario run on the shifted planet, from the SAME colony state and the SAME random draws
   const plan = ["rad", "drought", "waterSeeds"]; let srcA = mul(8), srcB = mul(99);
   const A = BLOOM.createSim(OAP, config, traits, { rng: () => srcA(), scenario: DW }); A.biomass = 1e4; plan.forEach(id => A.buy(id));
   for (let t = 0; t < FULL_TICK + 250; t++) A.tick();
@@ -234,7 +237,7 @@ const lampTrace = (planet, scenario, ticks) => { const sim = BLOOM.createSim(pla
   let incA = 0, incB = 0, sameState = true; for (let k = 0; k < 40; k++) { A.tick(); B.tick(); incA += A.income; incB += B.income; if (fnv(Array.from(A.state).join("")) !== fnv(Array.from(B.state).join(""))) sameState = false; }
   const src = fs.readFileSync(path.join(ROOT, "resources/bloom-sim.js"), "utf8"), econ = src.slice(src.indexOf("// 3. economy"), src.indexOf("// 4. bubbles"));
   check(same && !/pressure|offsets|SCN|PR\b/.test(econ) && oA >= config.categories.originFitnessFloor && Math.abs(oA - oB) < 1e-9 && sameState && Math.abs(incA - incB) < 1e-9 && incA > 0,
-    "22 · pressure reaches Biomass only through colony condition: identical to Eden while the atmosphere is stable, the economy code never reads pressure, and in the final state a pressured colony earns exactly what the same colony earns in an Eden world with those conditions",
+    "22 · pressure reaches Biomass only through colony condition: identical to default-scenario while the atmosphere is stable, the economy code never reads pressure, and in the final state a pressured colony earns exactly what the same colony earns in a default-scenario world with those conditions",
     `grace: ${same ? "bit-identical" : "DIFFERS"} · final state, same colonies + same draws for 40 ticks: income ${incA.toFixed(4)} vs ${incB.toFixed(4)} (origin fitness ${oA.toFixed(3)} vs ${oB.toFixed(3)})`); }
 
 console.log("\n# A · extinction loss");
@@ -257,11 +260,11 @@ console.log("\n# A · extinction loss");
   const g = Math.round(DW.loss.extinctionGraceSeconds / TICK_S), short = gap(g - 1), long = gap(g);
   check(!short.lost && short.zero === 0 && long.lostDuring, "24 · a temporary zero-Living spell shorter than the grace never loses (the counter resets when plants are back); one lasting the full grace does",
     `${g - 1} ticks with no living plants → survives (counter back to ${short.zero}); ${g} ticks → lost`); }
-{ // 26 · Eden never gets the new loss; a won pressure run is never lost afterwards
-  const e = BLOOM.createSim(OAP, config, traits, { rng: mul(5), scenario: EDEN }), n = BLOOM.createSim(OAP, config, traits, { rng: mul(5) });
+{ // 26 · default-scenario never gets the new loss; a won pressure run is never lost afterwards
+  const e = BLOOM.createSim(OAP, config, traits, { rng: mul(5), scenario: DEFAULT_SCN }), n = BLOOM.createSim(OAP, config, traits, { rng: mul(5) });
   for (const s of [e, n]) { for (const i of s.map.LAND_TILES) s.state[i] = s.BAR; for (let k = 0; k < 500; k++) s.tick(); }
   check(!e.lost && !n.lost && !e.extinction.enabled && !n.extinction.enabled && e.coverage() === 0,
-    "26 · Eden is not given the pressure loss: an Eden run with no living plants for 80 s is still not lost (extinction disabled)"); }
+    "26 · default-scenario is not given the pressure loss: a default-scenario run with no living plants for 80 s is still not lost (extinction disabled)"); }
 
 console.log("\n# A · layer P — Dying World on the three production archetypes");
 const LP = {};
@@ -286,32 +289,32 @@ for (const [k, label, n] of [["desert", "Desert 17", 30], ["frozen", "Frozen 11"
   check(v.status === "PASS" && v.strategies.length >= 1, `${n} · ${label} + Dying World is proven viable by layer P (real pressured witnesses; ${v.strategies.length} distinct strategies)`,
     v.strategies.map(show).join(" ‖ ") || v.reason);
   EVID[k + "Strategies"] = v.strategies.map(x => ({ signature: x.signature, purchases: x.purchases, winSeconds: x.winSeconds, hold: x.hold, held: x.held })); }
-{ // the Eden strategies are no longer enough in the final state (what changed per archetype)
+{ // the default-scenario strategies are no longer enough in the final state (what changed per archetype)
   const rows = Object.entries(WORLDS).map(([k, w]) => { const M = probeAt(w).s.map; return `${k}: ` + w.archetype.strategies.list.map(st => {
     const cov = p => { const pr = probeAt(w, st.minimalBuild, p); return M.SEC.reduce((a, _, i) => a + (pr.ev(i).fitness > G ? M.AREA[i] : 0), 0) / M.LAND; };
     return `[${st.signature}] ${pct(cov(0))} → ${pct(cov(1))}`; }).join(" · "); });
-  EVID.edenStrategiesUnderPressure = rows;
+  EVID.defaultStrategiesUnderPressure = rows;
   check(Object.entries(WORLDS).every(([k, w]) => w.archetype.strategies.list.every(st => { const M = probeAt(w).s.map, pr = probeAt(w, st.minimalBuild, 1);
     return M.SEC.reduce((a, _, i) => a + (pr.ev(i).fitness > G ? M.AREA[i] : 0), 0) / M.LAND < 0.70; })),
-    "28b · every accepted Eden strategy of the three fixtures falls below 70% growable land in the final state — the earlier solution is no longer enough", rows.join(" | ")); }
+    "28b · every accepted default-scenario strategy of the three fixtures falls below 70% growable land in the final state — the earlier solution is no longer enough", rows.join(" | ")); }
 { // 32 · water never colonized under pressure; 33 · Waterborne Seeds stays geography-driven
-  const plan = LP.primary.strategies[0].purchases.map(p => p.id), sim = BLOOM.createSim(OAP, config, traits, { rng: mul(31), scenario: DW }), eden = BLOOM.createSim(OAP, config, traits, { rng: mul(31) });
+  const plan = LP.primary.strategies[0].purchases.map(p => p.id), sim = BLOOM.createSim(OAP, config, traits, { rng: mul(31), scenario: DW }), dflt = BLOOM.createSim(OAP, config, traits, { rng: mul(31) });
   let k = 0, wet = 0; const water = []; for (let i = 0; i < sim.map.N; i++) if (sim.map.TILEMAP[i] < 0) water.push(i);
   for (let t = 1; t <= FULL_TICK + 1500 && !sim.lost; t++) { sim.tick(); if (k < plan.length && sim.biomass >= sim.price(sim.traitById[plan[k]]) && sim.buy(plan[k])) k++;
     if (t % 100 === 0) for (const i of water) if (sim.state[i] !== 0 || sim.dens[i] !== 0) wet++; }
-  check(water.length > 0 && wet === 0 && sim.map.LAND === eden.map.LAND, "32 · pressure never colonizes water or changes the land denominator (every water tile Barren with no plants, checked every 100 ticks through the final state)",
+  check(water.length > 0 && wet === 0 && sim.map.LAND === dflt.map.LAND, "32 · pressure never colonizes water or changes the land denominator (every water tile Barren with no plants, checked every 100 ticks through the final state)",
     `${water.length} water tiles · ${sim.map.LAND} land tiles in both runs`);
   const landing = new Set(BLOOM.geo.waterCrossings(sim.map.TILEMAP, sim.map.W, sim.map.H, config.crossing.maxGap).pairs.map(p => p[1])), took = sim.crossing.events.filter(e => e.took);
   const offerSame = Object.values(WORLDS).every(w => { const a = BLOOM.createSim(w, config, traits, { scenario: DW }), b = BLOOM.createSim(w, config, traits, {}), t = traits.find(x => x.effect.type === "crossing");
     return a.offered(t) === b.offered(t) && J(a.map.CROSSINGS) === J(b.map.CROSSINGS); });
-  check(J(sim.map.CROSSINGS) === J(eden.map.CROSSINGS) && took.length > 0 && took.every(e => landing.has(e.to)) && offerSame,
-    "33 · Waterborne Seeds stays geography-driven under pressure: the same crossings and offer rule as Eden, footholds only on real landing tiles",
-    `${sim.map.CROSSINGS.links.length} crossing links · ${sim.crossing.footholds} footholds, all on landing tiles · Desert 17 / Frozen 11 offer Waterborne Seeds exactly as in Eden`); }
-{ // DISALLOWED + EDEN statuses of the generic layer (data-driven archetype policy)
+  check(J(sim.map.CROSSINGS) === J(dflt.map.CROSSINGS) && took.length > 0 && took.every(e => landing.has(e.to)) && offerSame,
+    "33 · Waterborne Seeds stays geography-driven under pressure: the same crossings and offer rule as default-scenario, footholds only on real landing tiles",
+    `${sim.map.CROSSINGS.links.length} crossing links · ${sim.crossing.footholds} footholds, all on landing tiles · Desert 17 / Frozen 11 offer Waterborne Seeds exactly as in default-scenario`); }
+{ // DISALLOWED + DEFAULT_SCN statuses of the generic layer (data-driven archetype policy)
   const d = clone(DW); d.validation.archetypes = { desert_world: { allowed: false, reason: "test policy" } };
-  const x = BLOOM.validateScenario(WORLDS.desert, config, traits, d, { archetypeId: "desert_world" }), e = BLOOM.validateScenario(OAP, config, traits, EDEN, { archetypeId: "ocean_archipelago" });
-  check(x.status === "DISALLOWED" && !x.ok && /test policy/.test(x.reason) && e.status === "EDEN" && e.ok && J(DW.validation.archetypes) === "{}",
-    "P · layer P supports an explicit per-archetype rejection as data (DISALLOWED with its reason) and adds nothing to prove for Eden; Dying World currently disallows no archetype"); }
+  const x = BLOOM.validateScenario(WORLDS.desert, config, traits, d, { archetypeId: "desert_world" }), e = BLOOM.validateScenario(OAP, config, traits, DEFAULT_SCN, { archetypeId: "ocean_archipelago" });
+  check(x.status === "DISALLOWED" && !x.ok && /test policy/.test(x.reason) && e.status === "DEFAULT" && e.ok && J(DW.validation.archetypes) === "{}",
+    "P · layer P supports an explicit per-archetype rejection as data (DISALLOWED with its reason) and adds nothing to prove for default-scenario; Dying World currently disallows no archetype"); }
 console.log(`\n(Node part ${((Date.now() - t0) / 1000).toFixed(1)} s)`);
 
 // ---------------------------------------------------------------------------------------------------------- B · browser
@@ -392,18 +395,18 @@ async function browserPart() {
       `${buys.join(" → ")} · win at ${won ? Math.round(won.ticks * TICK_S) : "—"} s with ${pct(fin.cov)} of the land, pressure ${pct(fin.pr)}`);
     EVID.browserWin = { buys, winSeconds: won && Math.round(won.ticks * TICK_S), coverage: fin.cov, pressure: fin.pr };
     await p.waitForTimeout(150);
-    const rep = await p.evaluate(() => ({ on: document.getElementById("reportModal").classList.contains("on"), text: document.getElementById("report").innerText, pr: (document.getElementById("repPressure") || {}).innerText || "" }));
+    const rep = await p.evaluate(() => ({ on: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")), text: document.getElementById("report").innerText, pr: (document.getElementById("repPressure") || {}).innerText || "" }));
     check(rep.on && /under Dying World/.test(rep.text) && /Pressure: Dying World · Atmosphere thinning/.test(rep.pr) && /moisture −/.test(rep.pr) && /temperature −/.test(rep.pr) && /radiation \+/.test(rep.pr) && rep.text.includes(OAP.name) && /Ocean Archipelago · public seed 28/.test(rep.text),
       "42 · the Bloom Report names the planet, archetype and scenario, the final pressure state and the drift the plant endured, beside the usual build summary", rep.pr.replace(/\n/g, " "));
     await shot(p, "dw-ocean13-report.png"); check(p.errors.length === 0, "no browser errors (Dying World win)", p.errors.join(" | ")); await p.close(); }
   // 41 · an intentionally doomed control (no purchases) loses by extinction (BLOOM-027B: on the extinction fixture world, Frozen 9)
   { const p = await open(EXTQ); let st; for (let n = 0; n < 200; n++) { st = await p.evaluate(() => { BLOOM_API.advance(50); return { lost: BLOOM_API.sim.lost, t: BLOOM_API.sim.ticks }; }); if (st.lost) break; }
     await p.waitForTimeout(150);
-    const r = await p.evaluate(() => ({ on: document.getElementById("reportModal").classList.contains("on"), text: document.getElementById("report").innerText, btn: !!document.getElementById("lossRestart"), why: BLOOM_API.pressure().lostReason }));
+    const r = await p.evaluate(() => ({ on: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")), text: document.getElementById("report").innerText, btn: !!document.getElementById("lossRestart"), why: BLOOM_API.pressure().lostReason }));
     check(st.lost && r.on && /EXTINCTION/.test(r.text) && /No living plants were left anywhere for 8 s/.test(r.text) && r.btn && /Final harsh state/.test(r.text),
       "41 · an intentionally doomed control (no purchases) loses by extinction: a clear loss screen with the reason, the pressure reached and a restart button", `${r.why} at ${Math.round(st.t * TICK_S)} s`);
     await shot(p, "dw-ocean13-extinction.png"); await p.click("#lossRestart"); await p.waitForTimeout(500);
-    const again = await p.evaluate(() => ({ t: BLOOM_API.sim.ticks, lost: BLOOM_API.sim.lost, on: document.getElementById("reportModal").classList.contains("on") }));
+    const again = await p.evaluate(() => ({ t: BLOOM_API.sim.ticks, lost: BLOOM_API.sim.lost, on: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")) }));
     check(!again.lost && !again.on && again.t < 20, "41b · restart reloads the same launch as a fresh run", J(again));
     check(p.errors.length === 0, "no browser errors (extinction control)", p.errors.join(" | ")); await p.close(); }
   // R · explicit failures and other launches
@@ -412,8 +415,8 @@ async function browserPart() {
     check(want.test(r.fail) && /NO RUN STARTED/.test(r.fail) && !r.sim && /run not started/.test(r.title), `R · ${q.slice(1)} fails explicitly: no run started, no substitute`, r.fail.split("\n").slice(1, 3).join(" / "));
     await p.close(); }
   { const p = await open("?archetype=ocean_archipelago&seed=28"), r = await p.evaluate(() => ({ bar: !!document.getElementById("pbar"), run: BLOOM_API.run, title: document.title, rid: document.getElementById("runId").textContent, ext: BLOOM_API.sim.extinction.enabled }));
-    check(!r.bar && r.run.scenarioId === "eden" && !/Dying/.test(r.title) && !/scenario/.test(r.rid) && !r.ext, "R · no scenario parameter = Eden: no pressure bar, no loss rule, the familiar title and footer", r.title);
-    check(p.errors.length === 0, "no browser errors (Ocean 28 Eden)", p.errors.join(" | ")); await p.close(); }
+    check(!r.bar && r.run.scenarioId === "default" && !/Dying/.test(r.title) && !/scenario/.test(r.rid) && !r.ext, "R · no scenario parameter = default-scenario: no pressure bar, no loss rule, the familiar title and footer", r.title);
+    check(p.errors.length === 0, "no browser errors (Ocean 28 default-scenario)", p.errors.join(" | ")); await p.close(); }
   for (const [id, seed, name] of [["desert_world", 17, "Desert World"], ["frozen_world", 11, "Frozen World"]]) {
     const p = await open(`?archetype=${id}&seed=${seed}&scenario=dying_world`); await p.evaluate(() => { BLOOM_API.advance(2200); pollPressure(performance.now()); renderPressure(); });
     const r = await p.evaluate(() => ({ run: BLOOM_API.run, bar: document.getElementById("pbar").innerText, pr: BLOOM_API.pressure() }));

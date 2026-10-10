@@ -1,6 +1,6 @@
 // BLOOM — climate-instability QA (BLOOM-015): the generic climate-instability mechanism and Volatile Climate on all three
 // production archetypes. Numbered after the directive's items 1–69. Two parts:
-//   A · Node: Volatile Climate is plain scenario data and the engine never names it; Eden, Dying World and Native Competition
+//   A · Node: Volatile Climate is plain scenario data and the engine never names it; default-scenario, Dying World and Native Competition
 //       are unchanged (runs + layer P verdicts on the three fixtures pinned to 9252924); no block = no climate state; instability
 //       is deterministic, starts at its baseline, rises ONLY with Terraform (more when steps compound), settles by itself; bands,
 //       shock triggering / kind / duration / size follow the data; a shock moves the real effective temperature / moisture,
@@ -21,6 +21,9 @@
 "use strict";
 const path = require("path"), fs = require("fs");
 const ROOT = path.resolve(__dirname, "..");
+// (BLOOM-033) the run page's code = the developer harness demos/demo-run.html + the GameSession it wraps (resources/run/game-session.js, the
+// same file index.html uses); source checks of "the run page" read both
+const RUN_PAGE_SRC = () => ["demos/demo-run.html", "resources/run/game-session.js"].filter(f => fs.existsSync(path.join(ROOT, f))).map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
 for (const f of ["content/config.js", "content/traits.js", "content/archetypes.js", "content/scenarios.js", "planets/first_bloom.js", "resources/bloom-sim.js",
   "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js", "resources/bloom-scenario.js"]) require(path.join(ROOT, f));
 const { BLOOM, BLOOM_DATA } = globalThis, { config, traits, archetypes, scenarios } = BLOOM_DATA;
@@ -30,7 +33,7 @@ const SHOTS = arg("--shots"), JSON_OUT = arg("--json"), NO_BROWSER = process.arg
 const J = o => JSON.stringify(o), clone = o => JSON.parse(J(o)), pct = x => (x * 100).toFixed(1) + "%", r2 = x => Math.round(x * 100) / 100;
 const fnv = s => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return (h >>> 0).toString(16).padStart(8, "0"); };
 const mul = GOLD.mulberry32, TICK_S = config.tickMs / 1000, G = config.grow.growThresh, TPS = 1 / TICK_S;
-const EDEN = scenarios.find(s => s.id === "eden"), DW = scenarios.find(s => s.id === "dying_world"), NC = scenarios.find(s => s.id === "native_competition");
+const DEFAULT_SCN = scenarios.find(s => s.id === "default"), DW = scenarios.find(s => s.id === "dying_world"), NC = scenarios.find(s => s.id === "native_competition");
 const VC = scenarios.find(s => s.id === "volatile_climate"), CI = VC.climateInstability, K = CI.shocks;
 let fails = 0; const t0 = Date.now(), EVID = {};
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (!ok) fails++; };
@@ -81,7 +84,7 @@ console.log("# A · scenario data, architecture, compatibility");
 // 1 · plain data
 { const keys = o => Object.keys(o).sort().join(",");
   check(J(clone(scenarios)) === J(scenarios) && !/function|=>/.test(J(scenarios)) && scenarios.every(s => BLOOM.pressure.checkScenario(s).length === 0)
-    && VC.pressure === null && !VC.competition && VC.loss.extinction === true && keys(CI) === "axes,bands,baseline,forcing,settling,shocks" && BLOOM.pressure.isDynamic(VC) && !BLOOM.pressure.isDynamic(EDEN),
+    && VC.pressure === null && !VC.competition && VC.loss.extinction === true && keys(CI) === "axes,bands,baseline,forcing,settling,shocks" && BLOOM.pressure.isDynamic(VC) && !BLOOM.pressure.isDynamic(DEFAULT_SCN),
     "1 · Volatile Climate is scenario data (content/scenarios.js): a climateInstability block (baseline, axes, forcing, settling, shocks, bands), no pressure clock, no competitor, extinction loss; it passes the engine's scenario check",
     `forcing ${J(CI.forcing)} · settling ${J(CI.settling)} · shocks ${J(CI.shocks)}`);
   const broken = clone(VC); broken.climateInstability.shocks.threshold = 3; broken.climateInstability.axes.temp.magnitude = [9, 2]; broken.climateInstability.axes.light = { unit: 1 };
@@ -89,19 +92,19 @@ console.log("# A · scenario data, architecture, compatibility");
   check(errs.length >= 3 && errs.every(e => /climateInstability\./.test(e)) && errs.some(e => /axes must name sky axes/.test(e)) && errs.some(e => /axes\.temp\.magnitude/.test(e)) && errs.some(e => /shocks needs threshold/.test(e)), "1b · a malformed climateInstability block is refused with the reason (never silently clamped)", errs.join(" | ")); }
 // 2 · no scenario-specific code
 { const code = ["resources/bloom-sim.js", "resources/bloom-witness.js", "resources/bloom-scenario.js", "resources/bloom-archetype.js", "resources/bloom-validate.js", "resources/bloom-gen.js"]
-    .map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n"), ui = fs.readFileSync(path.join(ROOT, "demos/demo-run.html"), "utf8");
-  check(!/volatile_climate|Volatile Climate|volatile/i.test(code) && !/volatile_climate/.test(ui) && !/scenario\.id\s*===|SCN\.id\s*===|\.id\s*===\s*"(eden|dying_world|native_competition|volatile_climate)"/.test(code + ui),
+    .map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n"), ui = RUN_PAGE_SRC();
+  check(!/volatile_climate|Volatile Climate|volatile/i.test(code) && !/volatile_climate/.test(ui) && !/scenario\.id\s*===|SCN\.id\s*===|\.id\s*===\s*"(dflt|dying_world|native_competition|volatile_climate)"/.test(code + ui),
     "2 · no scenario-id special case: the engine, generator, witness, validators and UI never name Volatile Climate; they read the scenario's climateInstability data"); }
-// 3–5 · Eden, Dying World and Native Competition unchanged: First Bloom golden + runs and layer P verdicts on the three fixtures
+// 3–5 · default-scenario, Dying World and Native Competition unchanged: First Bloom golden + runs and layer P verdicts on the three fixtures
 // pinned to the BLOOM-027B generator (docs/evidence/bloom-027b/repin.json, this file's runFp and layer-P fingerprint; were 9252924 until the cylindrical generator)
 const PIN = {
-  "ocean_archipelago:28": { planet: "59193a12", edenRun: "510a5831", dying_worldRun: "88045c4f", dying_worldLayerP: "82fb5502", native_competitionRun: "4921ad02", native_competitionLayerP: "1628b558" },
-  "desert_world:22": { planet: "90b74016", edenRun: "dcfbec58", dying_worldRun: "e612a2f7", dying_worldLayerP: "1172c15b", native_competitionRun: "8b41997a", native_competitionLayerP: "60e190cf" },
-  "frozen_world:4": { planet: "bd61cd5a", edenRun: "2c2daf13", dying_worldRun: "5aeb4113", dying_worldLayerP: "1c17405a", native_competitionRun: "2861e5db", native_competitionLayerP: "d2849761" } };
+  "ocean_archipelago:28": { planet: "59193a12", defaultRun: "510a5831", dying_worldRun: "88045c4f", dying_worldLayerP: "82fb5502", native_competitionRun: "4921ad02", native_competitionLayerP: "1628b558" },
+  "desert_world:22": { planet: "90b74016", defaultRun: "dcfbec58", dying_worldRun: "e612a2f7", dying_worldLayerP: "1172c15b", native_competitionRun: "8b41997a", native_competitionLayerP: "60e190cf" },
+  "frozen_world:4": { planet: "bd61cd5a", defaultRun: "2c2daf13", dying_worldRun: "5aeb4113", dying_worldLayerP: "1c17405a", native_competitionRun: "2861e5db", native_competitionLayerP: "d2849761" } };
 const PINROWS = {};
 { for (const [k, [id, seed]] of Object.entries(FIX)) { const key = `${id}:${seed}`, p = WORLDS[k], plan = p.archetype.strategies.list[0].purchases.map(x => x[0]), row = PINROWS[key] = { planet: fnv(J(p)) === PIN[key].planet };
-    for (const S of [EDEN, DW, NC]) { row[S.id + "Run"] = fnv(runFp(BLOOM.createSim(p, config, traits, { rng: mul(4242), scenario: S }), plan, 3000)) === PIN[key][S.id + "Run"];
-      if (S !== EDEN) { const v = BLOOM.validateScenario(p, config, traits, S, { archetypeId: id }); row[S.id + "Status"] = v.status;
+    for (const S of [DEFAULT_SCN, DW, NC]) { row[S.id + "Run"] = fnv(runFp(BLOOM.createSim(p, config, traits, { rng: mul(4242), scenario: S }), plan, 3000)) === PIN[key][S.id + "Run"];
+      if (S !== DEFAULT_SCN) { const v = BLOOM.validateScenario(p, config, traits, S, { archetypeId: id }); row[S.id + "Status"] = v.status;
         row[S.id + "LayerP"] = fnv(J({ status: v.status, strategies: v.strategies.map(x => ({ sig: x.signature, purchases: x.purchases, margin: x.marginSeconds, hold: x.hold, trace: x.trace, competition: x.competition, confirm: x.confirm })) })) === PIN[key][S.id + "LayerP"];
         row[S.id + "Climate"] = v.climate === null && v.strategies.every(x => !x.climate); } } }
   const want = JSON.parse(fs.readFileSync(path.join(__dirname, "golden/first_bloom.json"), "utf8")), ids = Object.keys(want.static.prices.start), planet = BLOOM_DATA.planets.first_bloom;
@@ -115,24 +118,24 @@ const PINROWS = {};
     traitIds: traits.map(t => t.id).filter(id => ids.includes(id)), get sectionCount() { return sim.map.SC; },
     get map() { return { tilemap: sim.map.TILEMAP, area: sim.map.AREA, cent: sim.map.CENT }; } }; };
   const same = got => GOLD.PARTS.every(p => J(clone(got[p])) === J(want[p])), rows = Object.entries(PINROWS);
-  check(same(GOLD.runGolden(adapter(EDEN))) && same(GOLD.runGolden(adapter(null))) && rows.every(([, r]) => r.planet && r.edenRun),
-    "3 · Eden is unchanged: First Bloom golden bit-for-bit (with Eden and with no scenario); the three fixture worlds and their Eden 3000-tick runs equal 9252924",
-    rows.map(([k, r]) => `${k} ${r.planet && r.edenRun ? "✓" : "✗"}`).join(" · "));
+  check(same(GOLD.runGolden(adapter(DEFAULT_SCN))) && same(GOLD.runGolden(adapter(null))) && rows.every(([, r]) => r.planet && r.defaultRun),
+    "3 · default-scenario is unchanged: First Bloom golden bit-for-bit (with default-scenario and with no scenario); the three fixture worlds and their default-scenario 3000-tick runs equal 9252924",
+    rows.map(([k, r]) => `${k} ${r.planet && r.defaultRun ? "✓" : "✗"}`).join(" · "));
   check(rows.every(([, r]) => r.dying_worldRun && r.dying_worldLayerP && r.dying_worldClimate), "4 · Dying World is unchanged: its runs and layer P verdicts (strategies, purchases, margins, holds, traces) on the three fixtures equal 9252924, with no climate record",
     rows.map(([k, r]) => `${k} run ${r.dying_worldRun ? "✓" : "✗"} layer P ${r.dying_worldStatus} ${r.dying_worldLayerP ? "✓" : "✗"}`).join(" · "));
   check(rows.every(([, r]) => r.native_competitionRun && r.native_competitionLayerP && r.native_competitionClimate), "5 · Native Competition is unchanged: its runs (incl. every native stand) and layer P verdicts (incl. competition records, confirmation seeds) on the three fixtures equal 9252924",
     rows.map(([k, r]) => `${k} run ${r.native_competitionRun ? "✓" : "✗"} layer P ${r.native_competitionStatus} ${r.native_competitionLayerP ? "✓" : "✗"}`).join(" · ")); }
-// 6 · no block = no climate state, no behaviour; with the block but no Terraform, the run is the Eden run bit-for-bit (no RNG draws)
-{ const sims = [EDEN, DW, NC, null].map(S => BLOOM.createSim(FPRI, config, traits, { rng: mul(1), ...(S ? { scenario: S } : {}) }));
+// 6 · no block = no climate state, no behaviour; with the block but no Terraform, the run is the default-scenario run bit-for-bit (no RNG draws)
+{ const sims = [DEFAULT_SCN, DW, NC, null].map(S => BLOOM.createSim(FPRI, config, traits, { rng: mul(1), ...(S ? { scenario: S } : {}) }));
   sims.forEach(s => { s.biomass = 1e6; s.buy("warm"); s.buy("warm"); for (let t = 0; t < 200; t++) s.tick(); });
   const none = sims.every(s => s.climate.enabled === false && Object.keys(s.climate).length === 1 && s.climatePreview("warm") === null && s.envOffsets() === s.pressure.offsets);
-  const plan = ["seedOut", "earlyMat", "cold", "cold"], eden = runFp(BLOOM.createSim(FPRI, config, traits, { rng: mul(31), scenario: EDEN }), plan, 3000), vc = runFp(vcSim(FPRI, 31), plan, 3000);
+  const plan = ["seedOut", "earlyMat", "cold", "cold"], dflt = runFp(BLOOM.createSim(FPRI, config, traits, { rng: mul(31), scenario: DEFAULT_SCN }), plan, 3000), vc = runFp(vcSim(FPRI, 31), plan, 3000);
   // count RNG draws in both
   const counted = S => { let n = 0; const r = mul(31), s = BLOOM.createSim(FPRI, config, traits, { rng: () => (n++, r()), scenario: S }); let k = 0;
     for (let t = 0; t < 2000; t++) { s.tick(); if (k < plan.length && s.biomass >= s.price(s.traitById[plan[k]]) && s.buy(plan[k])) k++; } return n; };
-  const nE = counted(EDEN), nV = counted(VC);
-  check(none && eden === vc && nE === nV, "6 · no climateInstability block = no climate state and no behaviour (Eden, Dying World, Native Competition, no scenario: climate { enabled: false } only, even after Terraform); and with the block, a run that never Terraforms is the Eden run bit-for-bit with the same number of RNG draws",
-    `Adapt-only Frozen 4 run: Eden ${eden.split(",").pop()} = Volatile ${vc.split(",").pop()} · RNG draws ${nE} = ${nV}`); }
+  const nE = counted(DEFAULT_SCN), nV = counted(VC);
+  check(none && dflt === vc && nE === nV, "6 · no climateInstability block = no climate state and no behaviour (default-scenario, Dying World, Native Competition, no scenario: climate { enabled: false } only, even after Terraform); and with the block, a run that never Terraforms is the default-scenario run bit-for-bit with the same number of RNG draws",
+    `Adapt-only Frozen 4 run: default-scenario ${dflt.split(",").pop()} = Volatile ${vc.split(",").pop()} · RNG draws ${nE} = ${nV}`); }
 
 console.log("\n# A · the instability state");
 const probeSim = (planet = FPRI, scenario = VC) => { const s = vcSim(planet, 3, scenario); s.biomass = 1e7; return s; };
@@ -235,14 +238,14 @@ const SHOCK_RUN = run(FPRI, { schedule: [[20, "seedOut"], [60, "cold"], [150, "w
     const prevState = s.state.slice(); s.tick(); for (const i of s.map.LAND_TILES) if (prevState[i] === s.LIV && s.state[i] === s.DEAD) { deaths++; if (!(s.vigor[s.map.TILEMAP[i]] < G + 1e-9 && s.vigor[s.map.TILEMAP[i]] < config.grow.dieThresh + 0.05)) bad++; } }
   check(bad === 0 && deaths > 0 && R.shocks.length >= 1, "23 · no direct coverage damage: during the shock tiles die only through the ordinary die-back rule (their region's vigor under the die threshold) — the shock itself removes nothing",
     `${deaths} tile deaths in the run, ${bad} outside the die-back rule`); }
-{ // 24 · no Biomass penalty: with bubbles off, Biomass = start + Σ income − spent exactly; prices equal Eden's at the same build
-  const cfg = clone(config); cfg.econ.bubbleChance = 0; const s = BLOOM.createSim(FPRI, cfg, traits, { rng: mul(7), scenario: VC }), e = BLOOM.createSim(FPRI, cfg, traits, { rng: mul(7), scenario: EDEN });
+{ // 24 · no Biomass penalty: with bubbles off, Biomass = start + Σ income − spent exactly; prices equal default-scenario's at the same build
+  const cfg = clone(config); cfg.econ.bubbleChance = 0; const s = BLOOM.createSim(FPRI, cfg, traits, { rng: mul(7), scenario: VC }), e = BLOOM.createSim(FPRI, cfg, traits, { rng: mul(7), scenario: DEFAULT_SCN });
   let sumInc = 0, granted = 0, k = 0; const sch = [[20, "seedOut"], [60, "cold"], [150, "warm"], [170, "warm"]];
   for (let t = 1; t <= ticksOf(420); t++) { while (k < sch.length && ticksOf(sch[k][0]) === t) { const p = s.price(s.traitById[sch[k][1]]), pe = e.price(e.traitById[sch[k][1]]); if (p !== pe) granted = NaN; s.biomass += p; granted += p; s.buy(sch[k][1]); e.biomass += pe; e.buy(sch[k][1]); k++; }
     s.tick(); e.tick(); sumInc += s.income; }
   const want = cfg.econ.startBiomass + sumInc + granted - s.spent.global - s.spent.local, pricesSame = traits.every(t => s.price(t) === e.price(t));
-  check(Math.abs(s.biomass - want) < 1e-6 && pricesSame && s.climate.shocks.length >= 1 && !Number.isNaN(granted), "24 · no direct Biomass penalty: through a run with a real shock, Biomass is exactly start + passive income + (mechanism) grants − spending; every price equals the Eden price at the same build",
-    `Biomass ${s.biomass.toFixed(3)} = ${want.toFixed(3)} · income ${sumInc.toFixed(1)} vs Eden ${(e.biomass - cfg.econ.startBiomass - granted + e.spent.global).toFixed(1)} (lower only because stressed colonies yield less)`); }
+  check(Math.abs(s.biomass - want) < 1e-6 && pricesSame && s.climate.shocks.length >= 1 && !Number.isNaN(granted), "24 · no direct Biomass penalty: through a run with a real shock, Biomass is exactly start + passive income + (mechanism) grants − spending; every price equals the default-scenario price at the same build",
+    `Biomass ${s.biomass.toFixed(3)} = ${want.toFixed(3)} · income ${sumInc.toFixed(1)} vs default-scenario ${(e.biomass - cfg.econ.startBiomass - granted + e.spent.global).toFixed(1)} (lower only because stressed colonies yield less)`); }
 // (BLOOM-027B: the mechanism runs of 25–27 — real purchases seedOut, cold, warm, warm, no purchase during the shock — use the scenario as written when its
 // cold snap pushes a living region of this fixture world to red, and otherwise the smallest controlled variant (snap magnitude 12 / 16 / 20 / 24 °C, as the
 // shock labs below already do) that does. Frozen 22's old world went red at the written size; Frozen 4's regions have wider temperature margins (its
@@ -337,12 +340,12 @@ console.log("\n# A · loss");
   // (BLOOM-027B: the reckless stack is 3, 4 or 5 Humidify steps 5 s apart — the smallest that drowns this fixture's colony; Frozen 22's old world drowned at 3)
   // (…and on the first of the three fixture worlds — frozen, desert, ocean — that this reckless build drowns; Frozen 4's only colony survives the surge)
   let sch, rk, ed, RW = FPRI; outer: for (const w of [FPRI, WORLDS.desert, WORLDS.ocean]) for (const n of [3, 4, 5]) { sch = [[20, "seedOut"], [40, "warm"], [60, "warm"], ...Array.from({ length: n }, (_, i) => [200 + 5 * i, "humid"])];
-    rk = run(w, { schedule: sch, seed: 5, seconds: 420 }); ed = run(w, { schedule: sch, seed: 5, seconds: 420, scenario: EDEN }); RW = w; if (rk.lost && !ed.lost && rk.shocks.length >= 1) break outer; }
+    rk = run(w, { schedule: sch, seed: 5, seconds: 420 }); ed = run(w, { schedule: sch, seed: 5, seconds: 420, scenario: DEFAULT_SCN }); RW = w; if (rk.lost && !ed.lost && rk.shocks.length >= 1) break outer; }
   // (BLOOM-027B: on the new fixture worlds the reckless build dies of the heat pulse its two stacked Warms raise (10.6 °C, below the Critical band) before the Humidify
   // stack even lands — Frozen 22's old colony survived that pulse and drowned in the Critical surge. The claim kept here: the scenario's own shock kills a reckless real
   // build that the identical purchases survive without the scenario; the shock's band is no longer asserted)
   check(rk.lost && !ed.lost && rk.shocks.length >= 1, `37b · a reckless real build can die out: no Adapt, two quick Warms and then a stack of Humidify steps (${sch.filter(x => x[1] === "humid").length}) → the scenario's shock (${rk.shocks.map(x => `${x.kind} ${x.magnitude.toFixed(1)}`).join("/")}) kills the only colony (extinction) on ${RW.name}; the identical purchases without the scenario survive`,
-    `shocks ${rk.shocks.map(x => `${x.kind} ${r2(x.magnitude)} @${sec(x.startTick)} s`).join(", ")} · extinct at ${rk.lostAt} s; Eden: alive, ${pct(ed.cov.at(-1))}`);
+    `shocks ${rk.shocks.map(x => `${x.kind} ${r2(x.magnitude)} @${sec(x.startTick)} s`).join(", ")} · extinct at ${rk.lostAt} s; default-scenario: alive, ${pct(ed.cov.at(-1))}`);
   EVID.recklessExtinction = { schedule: sch, shocks: rk.shocks, lostAt: rk.lostAt }; }
 
 console.log("\n# A · layer P with real witnesses");
@@ -372,13 +375,13 @@ check(LP.primary.status === "PASS" && LP.primary.climate && LP.primary.climate.t
   // (the stack lands at 200 s, when colonies already stand on the land the warming opened)
   const spaced = run(FPRI, { schedule: [[20, "seedOut"], [60, "cold"], [200, "warm"], [380, "warm"], [560, "warm"]], seconds: 800 });
   const stacked = run(FPRI, { schedule: [[20, "seedOut"], [60, "cold"], [200, "warm"], [203, "warm"], [206, "warm"]], seconds: 800 });
-  const eden = run(FPRI, { schedule: [[20, "seedOut"], [60, "cold"], [200, "warm"], [203, "warm"], [206, "warm"]], seconds: 800, scenario: EDEN });
+  const dflt = run(FPRI, { schedule: [[20, "seedOut"], [60, "cold"], [200, "warm"], [203, "warm"], [206, "warm"]], seconds: 800, scenario: DEFAULT_SCN });
   const dip = R => { let m = 0; for (const x of R.shocks) { const c0 = R.cov[x.startTick - 1], mn = Math.min(...R.cov.slice(x.startTick, x.endTick + 1)); m = Math.max(m, c0 - mn); } return m; };
   const big = R => Math.max(0, ...R.shocks.map(x => x.magnitude));
-  check(stacked.peak > spaced.peak + 0.3 && big(stacked) > big(spaced) && dip(stacked) > dip(spaced) && dip(stacked) > 0.02 && (stacked.win === null || stacked.win > eden.win + 15),
+  check(stacked.peak > spaced.peak + 0.3 && big(stacked) > big(spaced) && dip(stacked) > dip(spaced) && dip(stacked) > 0.02 && (stacked.win === null || stacked.win > dflt.win + 15),
     "44 · over-Terraforming is measurably harmful: the same three Warm steps stacked 3 s apart reach a far higher instability, a larger shock and a deeper coverage loss than spaced 3 minutes apart, and win later than the identical purchases without the scenario",
-    `stacked: peak ${pct(stacked.peak)}, largest shock ${r2(big(stacked))} °C, worst dip −${pct(dip(stacked))}, win ${stacked.win ?? "—"} s (Eden ${eden.win} s) · spaced: peak ${pct(spaced.peak)}, largest ${r2(big(spaced))} °C, dip −${pct(dip(spaced))}`);
-  EVID.overTerraform = { stacked: { peak: stacked.peak, shocks: stacked.shocks, win: stacked.win }, spaced: { peak: spaced.peak, shocks: spaced.shocks, win: spaced.win }, edenWin: eden.win }; }
+    `stacked: peak ${pct(stacked.peak)}, largest shock ${r2(big(stacked))} °C, worst dip −${pct(dip(stacked))}, win ${stacked.win ?? "—"} s (default-scenario ${dflt.win} s) · spaced: peak ${pct(spaced.peak)}, largest ${r2(big(spaced))} °C, dip −${pct(dip(spaced))}`);
+  EVID.overTerraform = { stacked: { peak: stacked.peak, shocks: stacked.shocks, win: stacked.win }, spaced: { peak: spaced.peak, shocks: spaced.shocks, win: spaced.win }, defaultWin: dflt.win }; }
 { // 45 · never Terraforming is not the only viable strategy
   const tStrats = [...LP2.primary.strategies, ...LP2.desert.strategies].filter(x => tfSteps(x) >= 1), heavy = tStrats.filter(x => x.climate.shocks.length >= 1);
   check(tStrats.length >= 2 && heavy.length >= 2, "45 · \"never Terraform\" is not the only viable answer: Terraform strategies pass layer P on Frozen 4 and Desert 22, including Terraform-heavy ones that live through real shocks",
@@ -399,8 +402,8 @@ check(LP.primary.status === "PASS" && LP.primary.climate && LP.primary.climate.t
   EVID.ocean = { layerP: v.strategies.map(sumS), maxTerraformStepsPerCore: maxSteps, moistureShock: sh, moved: moved.map(l => ({ name: l.name, from: l.from, to: l.to, s: l.s })) }; }
 { // 48 / 49
   const off = Object.fromEntries(Object.entries(WORLDS).map(([k, p]) => { const s = vcSim(p); return [k, s.offered(s.traitById.waterSeeds)]; }));
-  const ow = LP.ocean.strategies[0], uses = ow.purchases.some(p => p.id === "waterSeeds"), sea = vcSim(WORLDS.ocean), eden = BLOOM.createSim(WORLDS.ocean, config, traits, {});
-  check(off.ocean && !off.primary && !off.desert && uses && J(sea.map.CROSSINGS) === J(eden.map.CROSSINGS), "48 · Waterborne Seeds remains geography-driven: offered only where a real water crossing exists (Ocean 28), the same crossings as Eden, part of the Ocean witness",
+  const ow = LP.ocean.strategies[0], uses = ow.purchases.some(p => p.id === "waterSeeds"), sea = vcSim(WORLDS.ocean), dflt = BLOOM.createSim(WORLDS.ocean, config, traits, {});
+  check(off.ocean && !off.primary && !off.desert && uses && J(sea.map.CROSSINGS) === J(dflt.map.CROSSINGS), "48 · Waterborne Seeds remains geography-driven: offered only where a real water crossing exists (Ocean 28), the same crossings as default-scenario, part of the Ocean witness",
     `offered ${J(off)} · Ocean witness ${ow.purchases.map(p => p.id).join(" → ")}`);
   const vs = Object.values(WORLDS).map(p => vcSim(p));
   check(vs.every(s => s.competition.enabled === false && s.nativeEvaluate === null && J(Object.keys(s.competition)) === J(["enabled"])), "49 · competition is unaffected: a scenario with no competition block has no native layer at all (and Native Competition itself is pinned unchanged, item 5)"); }
@@ -422,12 +425,12 @@ const CAD = E.study({ seeds: [1, 2, 3, 4], worlds: ["f4vc", "d22vc", "o28vc"], r
   const tf = rows.filter(r => r.shocksMax > 0);
   // the same worlds without the scenario (BLOOM-013 recipes): the dead wait must not grow
   const EDC = E.study({ seeds: [1, 2, 3, 4], worlds: ["f4", "d22", "o28"], rows: [["balanced", "none"], ["situational", "canopyOrigin", "extend"]], bubbleModes: ["auto", "click"] });
-  const edenDead = Object.fromEntries(Object.entries(EDC.worlds).map(([w, W]) => [w, Math.max(...Object.values(W.recipes).flatMap(R => Object.values(R).filter(x => x.deadWaitWorst !== undefined).map(x => x.deadWaitWorst)))]));
+  const defaultDead = Object.fromEntries(Object.entries(EDC.worlds).map(([w, W]) => [w, Math.max(...Object.values(W.recipes).flatMap(R => Object.values(R).filter(x => x.deadWaitWorst !== undefined).map(x => x.deadWaitWorst)))]));
   const vcDead = w => Math.max(...rows.filter(r => r.w === w).map(r => r.deadWaitWorst));
   const reckSlow = ["f4vc", "d22vc"].map(w => ({ w, reckless: Math.max(...reck.filter(r => r.w === w).map(r => r.win)), terraform: Math.max(...rows.filter(r => r.w === w && r.rn === "terraform").map(r => r.win)) }));
   EVID.recklessCadence = reckSlow;
-  check(tf.length > 0 && rows.every(r => r.deadWaitWorst <= 120) && ["f4", "d22", "o28"].every(w => vcDead(w + "vc") <= edenDead[w]), "53 · no mandatory idle wait: the recipe bots buy each upgrade 4 s after it becomes affordable (never waiting for the climate to settle), live through their shocks and still win; the longest stretch with nothing meaningful affordable stays inside the policy (≤ 120 s) and is no longer than in the same worlds without the scenario",
-    `recipes that met a shock: ${[...new Set(tf.map(r => `${r.w}/${r.rn}`))].join(", ")} · worst dead wait ${["f4", "d22", "o28"].map(w => `${w} ${vcDead(w + "vc")} s (Eden ${edenDead[w]} s)`).join(", ")} · reckless control wins later than the Terraform-heavy recipe (slowest seed): ${reckSlow.map(x => `${x.w} ${x.reckless} vs ${x.terraform} s`).join(", ")}`);
+  check(tf.length > 0 && rows.every(r => r.deadWaitWorst <= 120) && ["f4", "d22", "o28"].every(w => vcDead(w + "vc") <= defaultDead[w]), "53 · no mandatory idle wait: the recipe bots buy each upgrade 4 s after it becomes affordable (never waiting for the climate to settle), live through their shocks and still win; the longest stretch with nothing meaningful affordable stays inside the policy (≤ 120 s) and is no longer than in the same worlds without the scenario",
+    `recipes that met a shock: ${[...new Set(tf.map(r => `${r.w}/${r.rn}`))].join(", ")} · worst dead wait ${["f4", "d22", "o28"].map(w => `${w} ${vcDead(w + "vc")} s (default-scenario ${defaultDead[w]} s)`).join(", ")} · reckless control wins later than the Terraform-heavy recipe (slowest seed): ${reckSlow.map(x => `${x.w} ${x.reckless} vs ${x.terraform} s`).join(", ")}`);
   EVID.cadence = Object.fromEntries(Object.entries(CAD.worlds).map(([w, W]) => [w, { opening: W.opening, recipes: Object.fromEntries(Object.entries(W.recipes).map(([rn, R]) => [rn, Object.fromEntries(Object.entries(R).map(([k, x]) => [k, k === "plan" ? x : { won: x.won, win: x.win, first: x.first, maxGapWorst: x.maxGapWorst, deadWaitWorst: x.deadWaitWorst, shocks: x.shocks, shocksMax: x.shocksMax, peakInstability: x.peakInstability, example: x.example }]))]))}])); }
 
 // ---------------------------------------------------------------------------------------------------------- B · browser
@@ -522,7 +525,7 @@ async function browserPart() {
       `${buys.join(" → ")} · win at ${won ? Math.round(won.ticks * TICK_S) : "—"} s with ${pct(fin.cov)}; peak instability ${pct(fin.c.peak)}, shocks ${fin.c.shocks.map(x => `${x.kind} @${Math.round(x.startTick * TICK_S)} s`).join(", ") || "none"}`);
     EVID.browserWin = { buys, winSeconds: won && Math.round(won.ticks * TICK_S), coverage: fin.cov, peak: fin.c.peak, shocks: fin.c.shocks };
     await p.waitForTimeout(150);
-    const rep = await p.evaluate(() => ({ on: document.getElementById("reportModal").classList.contains("on"), text: document.getElementById("report").innerText, c: (document.getElementById("repClimate") || {}).innerText || "" }));
+    const rep = await p.evaluate(() => ({ on: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")), text: document.getElementById("report").innerText, c: (document.getElementById("repClimate") || {}).innerText || "" }));
     check(rep.on && /under Volatile Climate/.test(rep.text) && /Climate: Volatile Climate/.test(rep.c) && /Terraform step/.test(rep.c) && /instability peaked at \d+%/.test(rep.c) && /is \d+% now/.test(rep.c)
       && /(climate shock|No climate shock)/.test(rep.c) && /not a score/.test(rep.c) && /Eos-103/.test(rep.text),
       "61 · the Bloom Report identifies Volatile Climate in one concise line (Terraform steps, peak and final instability, the shocks and the largest swing) without grading lower instability as better", rep.c.replace(/\n/g, " "));
@@ -531,15 +534,15 @@ async function browserPart() {
   { const p = await open(VCQ); await p.evaluate(() => { BLOOM_API.advance(60); const S = BLOOM_API.sim; for (const i of S.map.LAND_TILES) if (S.state[i] !== S.BAR) { S.state[i] = S.BAR; S.dens[i] = 0; } });
     let st; for (let n = 0; n < 30; n++) { st = await p.evaluate(() => { BLOOM_API.advance(5); return { lost: BLOOM_API.sim.lost, t: BLOOM_API.sim.ticks }; }); if (st.lost) break; }
     await p.waitForTimeout(150);
-    const r = await p.evaluate(() => ({ on: document.getElementById("reportModal").classList.contains("on"), text: document.getElementById("report").innerText, btn: !!document.getElementById("lossRestart") }));
+    const r = await p.evaluate(() => ({ on: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")), text: document.getElementById("report").innerText, btn: !!document.getElementById("lossRestart") }));
     check(st.lost && r.on && /EXTINCTION/.test(r.text) && /a climate shock pushed your last colonies/.test(r.text) && /Climate: Volatile Climate/.test(r.text) && r.btn,
       "37c · the extinction screen gives the reason, the scenario's own debrief and the climate line, and offers a restart");
     check(p.errors.length === 0, "no browser errors (extinction screen)", p.errors.join(" | ")); await p.close(); }
-  // V · explicit failure, Eden unchanged, the other archetypes launch
+  // V · explicit failure, default-scenario unchanged, the other archetypes launch
   { const p = await open("?archetype=frozen_world&seed=4&scenario=volatile_climat", false), r = await p.evaluate(() => ({ fail: (document.getElementById("genFail") || {}).innerText || "", sim: !!(window.BLOOM_API && BLOOM_API.sim) }));
     check(/unknown scenario "volatile_climat"/.test(r.fail) && /NO RUN STARTED/.test(r.fail) && !r.sim, "V · a misspelt scenario fails explicitly: no run started, no substitute"); await p.close(); }
   { const p = await open("?archetype=frozen_world&seed=4"), r = await p.evaluate(() => ({ bar: !!document.getElementById("vbar"), c: BLOOM_API.sim.climate.enabled, run: BLOOM_API.run.scenarioId }));
-    check(!r.bar && !r.c && r.run === "eden", "V · no scenario parameter = Eden: no climate layer, no climate bar"); await p.close(); }
+    check(!r.bar && !r.c && r.run === "default", "V · no scenario parameter = default-scenario: no climate layer, no climate bar"); await p.close(); }
   for (const [id, seed, name, ax] of [["desert_world", 22, "Desert World", "humid"], ["ocean_archipelago", 28, "Ocean Archipelago", "dry"]]) {
     const p = await open(`?archetype=${id}&seed=${seed}&scenario=volatile_climate`); await p.evaluate(() => { BLOOM_API.advance(900); BLOOM_API.addBiomass(3000); renderShop(); });
     for (let k = 0; k < 2; k++) { await p.click(`#shop button[data-id="${ax}"]`); await p.mouse.move(5, 5); }

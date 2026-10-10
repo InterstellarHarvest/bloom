@@ -320,7 +320,7 @@ if (JSON_OUT) { fs.writeFileSync(JSON_OUT, J({ accepted: worlds.length, genFails
   check(!!won && i === plan.length && fin.cov >= 0.70 && fin.genome.waterArm === "dry" && fin.local === 0,
     "29 · the Desert run is won through real shop clicks with the organism-first strategy (no local upgrades needed)",
     `${buys.join(" → ")} · win at ${won ? Math.round(won.ticks * TICK_S) : "—"} s with ${pct(fin.cov)} of the land`);
-  const rep = await p.evaluate(() => ({ on: document.getElementById("reportModal").classList.contains("on"), text: document.getElementById("report").innerText }));
+  const rep = await p.evaluate(() => ({ on: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")), text: document.getElementById("report").innerText }));
   check(rep.on && rep.text.includes(pos.name) && new RegExp(`Desert World · public seed ${FIX.positive}`).test(rep.text) && /Drought Adaptation/.test(rep.text) && !LEAK.test(rep.text),
     "30 · the Bloom Report identifies the generated Desert World (name, archetype, public seed) and its build — no Ocean wording", rep.text.split("\n").slice(0, 2).join(" / "));
   await shot(p, "desert25-report.png");
