@@ -1,5 +1,12 @@
 # Release Candidate v1 — Strange Bloom · Unknown Soils
 
+> **Milestone-era document (BLOOM-030 / 031).** It records the release candidate as it was then — a root title that handed the selected
+> planet to `demos/demo-run.html` through a session handoff. **Since BLOOM-033 the game is one document:** `index.html` holds the title,
+> Training, the survey, gameplay and every return flow; `demos/demo-run.html` is a developer harness only; the normal mode is `default`
+> (formerly "Eden"); the survey classes are Favorable / Precarious / Extreme; the title's main action is EXPEDITION. Current architecture:
+> [`SINGLE_DOCUMENT_APP_v1.md`](SINGLE_DOCUMENT_APP_v1.md) · current direction and roadmap:
+> [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md). Do not use this file as the present roadmap.
+
 **From:** BLOOM-030 · **For:** the Main PMO (pre-main acceptance), the owner, and whoever hosts the static site next.
 Evidence: `docs/evidence/bloom-030/` (stills, `release-proof.json`, suite logs, `REPORT.md`). QA: `tools/release-check.js` (the 31st suite).
 **Updated by BLOOM-031 (portable runtime + GitHub playability):** the game now also runs from a double-clicked `index.html` and is

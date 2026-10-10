@@ -15,14 +15,16 @@ you're the one bringing a planet to life. There's nothing to install and no acco
 
 ## Choose your world
 
-![The Destination Survey: nine candidate worlds sorted into Stable, Volatile and Extreme](docs/screenshots/destination-survey.png)
+![The Destination Survey: nine candidate worlds sorted into Favorable, Precarious and Extreme](docs/screenshots/destination-survey.png)
 
-Every expedition begins at the **Destination Survey**: a sector of nine planets, each one a real globe you can spin and
+Choose **Expedition** on the title screen and every expedition begins at the **Destination Survey**: a sector of nine planets, each one a real globe you can spin and
 study before you commit. They're sorted by how much of the land your plant could live on the moment it lands:
 
-- **Stable**: broad footholds on arrival.
-- **Volatile**: refuges beside hostile ground.
+- **Favorable**: broad footholds on arrival.
+- **Precarious**: refuges beside hostile ground.
 - **Extreme**: little land you can live on at first. Every inch is earned.
+
+That choice *is* the difficulty: there's no separate easy / normal / hard setting.
 
 Each world is generated fresh and **proven winnable before it's offered**. Pick one and you descend through the clouds onto
 exactly the planet you chose. Don't like this sector? Scan a new one.
@@ -102,7 +104,7 @@ When you win, you should be able to say: *I understood this planet, built the ri
 **Online:** once GitHub Pages is switched on for this repository, the game will be playable at
 **<https://interstellarharvest.github.io/bloom/>**.
 
-Then press **Begin Expedition**.
+Then choose **Expedition**. The whole game runs in that one page: title, training, the survey, the expedition and its report.
 
 Tested on desktop in Chromium-based browsers and Firefox (Safari hasn't been tested yet). There's no sound, and runs aren't saved between visits.
 
@@ -118,16 +120,22 @@ A double-clicked copy runs a **generated portable runtime** (`dist/portable/`, b
 After changing a module it contains, rebuild and commit it: `npm --prefix tools ci` once, then `npm --prefix tools run build:portable`
 ([`docs/PORTABLE_RUNTIME_v1.md`](docs/PORTABLE_RUNTIME_v1.md)). Players never need Node or npm.
 
-Next up: the plant's visual evolution. The plant drawings you see today are functional, not the finished art; redesigning them is the
-next product milestone.
+The whole game is one application, `index.html`. `demos/demo-run.html` is a developer harness only (direct runs, scenarios, the
+historical engineering shell for regression suites); players never see it ([`docs/SINGLE_DOCUMENT_APP_v1.md`](docs/SINGLE_DOCUMENT_APP_v1.md)).
+
+**What's decided and what's next:** [`docs/PRODUCT_DIRECTION_CURRENT.md`](docs/PRODUCT_DIRECTION_CURRENT.md) is the current product-direction
+record and roadmap (visual-system convergence, then plant species, then Challenges).
 
 How the game was built, its design, architecture, test suites and release history live in the docs:
 
-- [`GAME_BIBLE.md`](GAME_BIBLE.md): the design plan of record.
-- [`docs/RELEASE_CANDIDATE_v1.md`](docs/RELEASE_CANDIDATE_v1.md): the shipped product, player flow and developer URLs (including
-  the experimental pressure scenarios Dying World, Native Competition and Volatile Climate).
+- [`docs/PRODUCT_DIRECTION_CURRENT.md`](docs/PRODUCT_DIRECTION_CURRENT.md): **the current product decisions and roadmap** (this wins over
+  older documents about the current direction).
+- [`GAME_BIBLE.md`](GAME_BIBLE.md): the broad design bible.
+- [`docs/SINGLE_DOCUMENT_APP_v1.md`](docs/SINGLE_DOCUMENT_APP_v1.md): the production architecture: one document, GameSession, the developer harness.
+- [`docs/RELEASE_CANDIDATE_v1.md`](docs/RELEASE_CANDIDATE_v1.md): the BLOOM-030 release candidate (milestone-era: player flow, developer
+  URLs; the pressure mechanics Dying World, Native Competition and Volatile Climate, today developer-harness runs and future Challenge ingredients).
 - [`docs/PORTABLE_RUNTIME_v1.md`](docs/PORTABLE_RUNTIME_v1.md): how one game runs from a double-clicked file and from GitHub Pages
-  (the portable build, the file-safe planet handoff, the Pages workflow and its one-time setting).
+  (the portable build, the Pages workflow and its one-time setting).
 - [`docs/DEVELOPMENT_NOTES.md`](docs/DEVELOPMENT_NOTES.md): the full development log, QA and architecture notes (formerly this README).
 
 ## Credits

@@ -1,5 +1,9 @@
 # Destination Survey v1 — integration handoff (Menu / Tutorial workstream)
 
+> **Current names (BLOOM-033):** the three classes are **Favorable / Precarious / Extreme** (ids `favorable` / `precarious` / `extreme`);
+> they were Stable / Volatile / Extreme when this document was written. Same thresholds, columns and worlds. The survey's departure now
+> mounts the run inside `index.html` ([`SINGLE_DOCUMENT_APP_v1.md`](SINGLE_DOCUMENT_APP_v1.md)). Direction: [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §5.
+
 **From:** BLOOM-028A, validated identity BLOOM-028A1, departure BLOOM-028B · **For:** the Main Menu (which enters this
 screen) and the Main PMO (which connects the expedition descent to the real game). Evidence and QA:
 `docs/evidence/bloom-028a/REPORT.md`, `docs/evidence/bloom-028a1/REPORT.md`, `docs/evidence/bloom-028b/REPORT.md`.
