@@ -88,6 +88,29 @@ starting adaptations / state, or combinations of these; `referencePlant` remains
 developer query flag `?species=1` (no Developer section in normal Settings) until the real species art is accepted. Without the flag the
 Expedition flow is the Organic Hybrid flow.
 
+## 0.2 Implementation (BLOOM-035B — CANDIDATE on `handoff/bloom-035b-review`, pending PMO review)
+
+What BLOOM-035B built against §0.1 (evidence and numbers: [`docs/evidence/bloom-035b/REPORT.md`](evidence/bloom-035b/REPORT.md)):
+
+| Area | Implementation |
+|---|---|
+| Reference physiology | `content/config.js` `referencePlant` (frozen; numerically the pre-035B `genomeBase`; **no `genomeBase` key, no alias**). `WORLD_GEN_VERSION = 1` in `resources/bloom-archetype.js` (`BLOOM.archetype.WORLD_GEN_VERSION`). Readers: `createSim`'s default player physiology (no species) and `nativeProfile` (the native competitor). |
+| Species data | `content/species.js` (`organic_hybrid` released; `cinder_rosette`, `woolly_candle`, `reed_spire` `status: "candidate"`), the §0.1 numbers; `resources/bloom-species.js`: `resolve` (frozen; unknown id throws `UNKNOWN_SPECIES`), `list` / `ids` (role order), `check` / `checkSpecies` (refuses modifiers, softness, starting genomes, ranking copy), `physiologyKey = "<id>/p<physiologyVersion>#<fnv of the numbers>"`, `provenance`, `validateFor` (S-layers). |
+| The seam | `createSim(planet, config, traits, { species })` — a resolved species only (an id string or a bare physiology throws); it replaces `derived()`'s base and nothing else; `sim.species` provenance. No species ≡ Organic Hybrid ≡ the 5ff53d3 engine, bit for bit. `deriveConfig` and `checkScenario` refuse `referencePlant` / `genomeBase` / `species` / `physiology`. |
+| Validation | the witness, `validatePlanet` (layers 4–8) and `validateScenario` (layer P) take `opts.species`; `generateFromArchetype` **refuses** `species` / `speciesId` / `physiology` / `referencePlant`. |
+| Playability | `BLOOM.species.validateFor`: **S2 winnability required** (findWitness with the species; Organic Hybrid reuses its world's own layer 4–6 proof — numerically identical physiology); **S1 foothold measured and reported** (`low` flag, never a rejection — see the deviation below); S3 / S4 and required-condition bypass **recorded only** (`diagnostics`). |
+| Survey | `survey-data.js`: `physicalCandidate` (species-free; key `<archetype>:<seed>@w<WORLD_GEN_VERSION>`) + `evaluateSpecies` (key `<physical>|<physiologyKey>`) composed by `makeCandidate(spec, deps, { species, cache })`; columns accept a world only if its class *for the species* is the column's and the species can win it (`speciesRejected`); sector key `<seed>|<physiologyKey>[|fb]`; global thresholds and `MAX_DRAWS` unchanged. Workers resolve `{ id, physiologyKey }` themselves; a new `evaluate` task; `SectorPool` holds the page session's physical + evaluation caches and survives a species switch (`release`). |
+| Run identity | `expeditionRun(detail)` takes `detail.species` cross-checked with the candidate's `speciesId` + `physiologyKey`; `GameSession` requires the canonical species object; the report names the species; Play Again = the same planet + species objects; Choose another planet = the same species' survey; `trainingRun()` is always Organic Hybrid; the harness takes `&species=<id>` (unknown = explicit failure; `training=1` refuses it). |
+| Species Selection | `resources/species-select/` — **only** behind `index.html?species=1` (lazily loaded; never in the normal flow; no Settings entry). Without the flag EXPEDITION is the Organic Hybrid survey, unchanged. |
+| Body plans | `bloom-plant-body-plan@3` with `oh-stem@1` (Organic Hybrid, migrated byte-identically), `rosette@1`, `candle@1`, `reed@1`; per-plan contracts and grammars; three TEMPORARY engineering proof packs (`proof-cinder-rosette`, `proof-woolly-candle`, `proof-reed-spire`), never final art. See [`SPECIES_BODY_PLANS_v1.md`](SPECIES_BODY_PLANS_v1.md). |
+
+**Deviation (recorded for the PMO): S1 foothold is reported, not an offer gate.** The design text (§6.3) proposed "S1 + S2 required" with a
+0.05 minimum. As a gate it would remove about a fifth of the Desert worlds the production Organic Hybrid survey offers today (the 035A study:
+20 % of Desert worlds are below 0.05 for Organic Hybrid) — changing the accepted no-flag flow — while the study itself (§5.3) concludes those
+worlds are winnable and correctly shown as Extreme. 035B therefore measures S1 for every offered world (`playability.s1`: reachable /
+growable shares, `low`), shows it in QA and calibration, and keeps S2 winnability as the only offer gate (the PMO's "required offer gate:
+species can win the planet"). The origin is a protected refuge for every species, so no offered world has zero foothold.
+
 ---
 
 ## 1. Current-state dependency map
