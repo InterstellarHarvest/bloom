@@ -120,7 +120,7 @@ export class MainMenu {
     for (const a of this.root.getAnimations({ subtree: true })) a.cancel();
     this.root.removeEventListener("click", this._onClick); this.root.removeEventListener("keydown", this._onKey);
     this.art.removeAttribute("src"); this._preload = null; this.next = null;
-    this.root.replaceChildren(); this.root.classList.remove("mm", "rm", "motion-full", "is-receded", "is-settled"); this.root.style.display = "";
+    this.root.replaceChildren(); this.root.classList.remove("mm", "mm-screen", "rm", "motion-full", "is-receded", "is-settled"); this.root.style.display = "";
   }
 
   // ---------------------------------------------------------------- the painting
@@ -153,7 +153,7 @@ export class MainMenu {
   // ---------------------------------------------------------------- DOM
   _build() {
     const r = this.root;
-    r.classList.add("mm");
+    r.classList.add("mm", "mm-screen");   // (BLOOM-034) .mm-screen carries the root-level styles: the rooms' mini-map is a ".mm" too
     if (!r.hasAttribute("aria-label")) r.setAttribute("aria-label", `${TITLE}: main menu`);
     r.innerHTML = `
       <div class="mm-bg" aria-hidden="true"><img class="mm-art" alt="" decoding="async"></div>

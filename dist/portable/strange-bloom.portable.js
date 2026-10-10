@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: 8addfc541e99c646f29444f1a537b90c37fc67a41cb21f4cad00729b67e9eba0  (36 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: 8325f25af84b66dab5b10bdce9ca3bf32c138f1ced2002d60e49466fec61161f  (36 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {
@@ -815,7 +815,7 @@
           this._preload = null;
           this.next = null;
           this.root.replaceChildren();
-          this.root.classList.remove("mm", "rm", "motion-full", "is-receded", "is-settled");
+          this.root.classList.remove("mm", "mm-screen", "rm", "motion-full", "is-receded", "is-settled");
           this.root.style.display = "";
         }
         // ---------------------------------------------------------------- the painting
@@ -870,7 +870,7 @@
         // ---------------------------------------------------------------- DOM
         _build() {
           const r2 = this.root;
-          r2.classList.add("mm");
+          r2.classList.add("mm", "mm-screen");
           if (!r2.hasAttribute("aria-label")) r2.setAttribute("aria-label", `${TITLE}: main menu`);
           r2.innerHTML = `
       <div class="mm-bg" aria-hidden="true"><img class="mm-art" alt="" decoding="async"></div>
