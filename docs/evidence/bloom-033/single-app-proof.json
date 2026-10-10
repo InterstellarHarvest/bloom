@@ -1,0 +1,243 @@
+{
+  "milestone": "BLOOM-033",
+  "base": "f5623d771b1956a2ba7ed3592a62fd20c460afe5",
+  "head": "f5971d00505ef001303156db8c41474d3e2a4eee",
+  "browsers": {
+    "chromium": {
+      "version": "147.0.7727.15",
+      "identity": {
+        "first": {
+          "same": true,
+          "json": true,
+          "fpSurvey": "fa52ae16cffb0711",
+          "fpDepart": "fa52ae16cffb0711",
+          "renderSame": true,
+          "surface": true,
+          "scenario": "default",
+          "kind": "procedural",
+          "title": "Strange Bloom — Pallas-997",
+          "key": true,
+          "seedProv": 82254,
+          "fp": "fa52ae16cffb0711"
+        },
+        "gen": {
+          "gen": {
+            "generateFromArchetype": 0,
+            "generatePlanet": 0,
+            "attemptPlanet": 0,
+            "searchWorld": 0,
+            "runSearch": 0
+          },
+          "workers": 0
+        }
+      },
+      "flow": {
+        "navs": 1,
+        "html": [
+          "/?sector=77&workers=3&bg=3"
+        ],
+        "sets": [
+          "strange-bloom.training",
+          "strange-bloom.menu.last-background",
+          "strange-bloom.menu.last-background",
+          "strange-bloom.menu.last-background",
+          "strange-bloom.menu.last-background",
+          "strange-bloom.training"
+        ],
+        "name": ""
+      },
+      "storageBlocked": {
+        "ok": true,
+        "fingerprint": "02fa2e72338aceb5",
+        "recommendAsked": true
+      },
+      "file": {
+        "ok": true,
+        "navs": 1,
+        "offline": true
+      },
+      "pages": {
+        "ok": true,
+        "path": "/bloom/"
+      }
+    },
+    "firefox": {
+      "version": "148.0.2",
+      "identity": {
+        "first": {
+          "same": true,
+          "json": true,
+          "fpSurvey": "7a28839dec43d478",
+          "fpDepart": "7a28839dec43d478",
+          "renderSame": true,
+          "surface": true,
+          "scenario": "default",
+          "kind": "procedural",
+          "title": "Strange Bloom — Coriol-724",
+          "key": true,
+          "seedProv": 25452,
+          "fp": "7a28839dec43d478"
+        },
+        "gen": {
+          "gen": {
+            "generateFromArchetype": 0,
+            "generatePlanet": 0,
+            "attemptPlanet": 0,
+            "searchWorld": 0,
+            "runSearch": 0
+          },
+          "workers": 0
+        }
+      },
+      "flow": {
+        "navs": 1,
+        "html": [
+          "/?sector=77&workers=3&bg=3"
+        ],
+        "sets": [
+          "strange-bloom.training",
+          "strange-bloom.menu.last-background",
+          "strange-bloom.menu.last-background",
+          "strange-bloom.menu.last-background",
+          "strange-bloom.menu.last-background",
+          "strange-bloom.training"
+        ],
+        "name": ""
+      },
+      "storageBlocked": {
+        "ok": true,
+        "fingerprint": "02fa2e72338aceb5",
+        "recommendAsked": true
+      },
+      "file": {
+        "ok": true,
+        "navs": 1,
+        "offline": true
+      },
+      "pages": {
+        "ok": true,
+        "path": "/bloom/"
+      }
+    }
+  },
+  "node": {
+    "defaultVsEden": {
+      "base": "f5623d771b1956a2ba7ed3592a62fd20c460afe5",
+      "rows": [
+        {
+          "planet": "first_bloom",
+          "sameWorld": true,
+          "hash": "5b160d609ba62837a2643e81fa1945986949336180f416bb1bc55d6021492c00",
+          "identical": true,
+          "ticks": 1473,
+          "won": true,
+          "labels": [
+            "eden/Eden",
+            "eden/Eden",
+            "default/Default",
+            "default/Default",
+            "default/Default"
+          ]
+        },
+        {
+          "planet": "training_grounds",
+          "sameWorld": true,
+          "hash": "308787bcbae9e7bca1abb9b3013bafbd5c769c17e68497010f3dfe2d03f14f5d",
+          "identical": true,
+          "ticks": 1337,
+          "won": true,
+          "labels": [
+            "eden/Eden",
+            "eden/Eden",
+            "default/Default",
+            "default/Default",
+            "default/Default"
+          ]
+        },
+        {
+          "planet": "proc_2384095703",
+          "sameWorld": true,
+          "hash": "0ea5e402c4a821c77a3ea50f24aada6a4e2dedaca57e1fd60beaa32a29213f0b",
+          "identical": true,
+          "ticks": 3000,
+          "won": false,
+          "labels": [
+            "eden/Eden",
+            "eden/Eden",
+            "default/Default",
+            "default/Default",
+            "default/Default"
+          ]
+        },
+        {
+          "planet": "proc_3804767584",
+          "sameWorld": true,
+          "hash": "4f323ac9ecf3fc90eb5d40c1571f0797e812777bf5c921a6aaf56058dcf4d370",
+          "identical": true,
+          "ticks": 2765,
+          "won": true,
+          "labels": [
+            "eden/Eden",
+            "eden/Eden",
+            "default/Default",
+            "default/Default",
+            "default/Default"
+          ]
+        },
+        {
+          "planet": "proc_1911454268",
+          "sameWorld": true,
+          "hash": "170160508b68a0130f7ee148d3573cf25bf613070af3ace56dca2a398a1ca9f6",
+          "identical": true,
+          "ticks": 3000,
+          "won": false,
+          "labels": [
+            "eden/Eden",
+            "eden/Eden",
+            "default/Default",
+            "default/Default",
+            "default/Default"
+          ]
+        }
+      ],
+      "layerP": {
+        "old": "EDEN",
+        "new": "DEFAULT",
+        "okOld": true,
+        "okNew": true
+      }
+    },
+    "surveyClasses": {
+      "classes": [
+        "favorable:Favorable:0.35",
+        "precarious:Precarious:0.2",
+        "extreme:Extreme:0"
+      ],
+      "oldThresholds": [
+        0.35,
+        0.2,
+        0
+      ],
+      "sampled": 401,
+      "identicalClassification": 401
+    },
+    "portable": {
+      "fingerprint": "8addfc541e99c646f29444f1a537b90c37fc67a41cb21f4cad00729b67e9eba0",
+      "bytes": 1266802,
+      "sha256": "f06b5251bd4a49c7f3d3f4e6108f9baf2abcf29c47092f100526f18f922ac1dd",
+      "modules": [
+        "resources/app/app-controller.js",
+        "resources/main-menu/main-menu-data.js",
+        "resources/planet-sphere/planet-sphere-view.js",
+        "resources/atmosphere-transition/atmosphere-transition.js",
+        "resources/training/training-run.js"
+      ],
+      "inputs": 36
+    }
+  },
+  "result": {
+    "passes": 59,
+    "fails": 0,
+    "seconds": 376
+  }
+}
