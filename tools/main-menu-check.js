@@ -118,8 +118,9 @@ const mulberry32 = a => () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.i
     const survey = read("resources/destination-survey/destination-survey.js"), pool = read("resources/destination-survey/sector-pool.js"), worker = read("resources/destination-survey/survey-worker.js");
     const imports = s => [...s.matchAll(/^import .* from "([^"]+)";?$/gm)].map(m => m[1]);
     const mi = imports(menu), di = imports(data), ei = imports(entry), code = s => s.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, ""); // (comments and copy may name the other screens; code may not touch them)
-    check(mi.length === 1 && mi[0] === "./main-menu-data.js" && di.length === 0 && !/import\(|PlanetSphere|DestinationSurvey|AtmosphereTransition|SectorPool/.test(code(menu)) && !/new Worker|getContext|WebGL|createElement\("canvas"\)|<canvas/.test(code(menu) + code(data)),
-      "M7 MainMenu imports only its data module and its code never touches the survey, sphere, transition, pool, workers, canvas or WebGL (the screen is plain HTML / CSS over one <img>)", J(mi));
+    // (BLOOM-034) the one addition: the production icon family shared with the survey (pure data + a string helper; no DOM, no screens)
+    check(J(mi) === J(["./main-menu-data.js", "../ui/bloom-icons.js"]) && di.length === 0 && !/import\(|PlanetSphere|DestinationSurvey|AtmosphereTransition|SectorPool/.test(code(menu)) && !/new Worker|getContext|WebGL|createElement\("canvas"\)|<canvas/.test(code(menu) + code(data)),
+      "M7 MainMenu imports only its data module (and, since BLOOM-034, the shared icon module ../ui/bloom-icons.js) and its code never touches the survey, sphere, transition, pool, workers, canvas or WebGL (the screen is plain HTML / CSS over one <img>)", J(mi));
     check(ei.includes("./main-menu.js") && ei.includes("../destination-survey/destination-survey.js") && ei.includes("../atmosphere-transition/atmosphere-transition.js") && !ei.some(i => /planet-sphere/.test(i)) && !/new Worker|new PlanetSphere/.test(entry),
       "M7b ExpeditionEntry composes menu + survey + transition and never touches the sphere or workers itself", J(ei));
     const rules = css.replace(/\/\*[\s\S]*?\*\//g, "");
