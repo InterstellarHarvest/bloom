@@ -1,0 +1,420 @@
+{
+ "organic_hybrid": {
+  "ocean_archipelago": {
+   "n": 118,
+   "median": 0.4367,
+   "classes": {
+    "F": 84,
+    "P": 25,
+    "E": 9
+   },
+   "noFoothold": 7,
+   "winnable": 118,
+   "winRate": 1
+  },
+  "desert_world": {
+   "n": 120,
+   "median": 0.1378,
+   "classes": {
+    "F": 2,
+    "P": 21,
+    "E": 97
+   },
+   "noFoothold": 24,
+   "winnable": 120,
+   "winRate": 1
+  },
+  "frozen_world": {
+   "n": 120,
+   "median": 0.2731,
+   "classes": {
+    "F": 29,
+    "P": 64,
+    "E": 27
+   },
+   "noFoothold": 11,
+   "winnable": 120,
+   "winRate": 1
+  }
+ },
+ "dry_heat": {
+  "ocean_archipelago": {
+   "n": 118,
+   "median": 0.0975,
+   "classes": {
+    "F": 3,
+    "P": 24,
+    "E": 91
+   },
+   "noFoothold": 14,
+   "winnable": 118,
+   "winRate": 1
+  },
+  "desert_world": {
+   "n": 120,
+   "median": 0.3338,
+   "classes": {
+    "F": 54,
+    "P": 47,
+    "E": 19
+   },
+   "noFoothold": 6,
+   "winnable": 120,
+   "winRate": 1
+  },
+  "frozen_world": {
+   "n": 120,
+   "median": 0.1762,
+   "classes": {
+    "F": 5,
+    "P": 36,
+    "E": 79
+   },
+   "noFoothold": 18,
+   "winnable": 120,
+   "winRate": 1
+  }
+ },
+ "cold_v2": {
+  "ocean_archipelago": {
+   "n": 118,
+   "median": 0.2934,
+   "classes": {
+    "F": 45,
+    "P": 39,
+    "E": 34
+   },
+   "noFoothold": 8,
+   "winnable": 118,
+   "winRate": 1
+  },
+  "desert_world": {
+   "n": 120,
+   "median": 0.1228,
+   "classes": {
+    "F": 2,
+    "P": 15,
+    "E": 103
+   },
+   "noFoothold": 20,
+   "winnable": 120,
+   "winRate": 1
+  },
+  "frozen_world": {
+   "n": 120,
+   "median": 0.3741,
+   "classes": {
+    "F": 72,
+    "P": 38,
+    "E": 10
+   },
+   "noFoothold": 5,
+   "winnable": 120,
+   "winRate": 1
+  }
+ },
+ "wet_flood": {
+  "ocean_archipelago": {
+   "n": 118,
+   "median": 0.5902,
+   "classes": {
+    "F": 113,
+    "P": 5,
+    "E": 0
+   },
+   "noFoothold": 2,
+   "winnable": 118,
+   "winRate": 1
+  },
+  "desert_world": {
+   "n": 120,
+   "median": 0.0523,
+   "classes": {
+    "F": 0,
+    "P": 1,
+    "E": 119
+   },
+   "noFoothold": 36,
+   "winnable": 120,
+   "winRate": 1
+  },
+  "frozen_world": {
+   "n": 120,
+   "median": 0.2194,
+   "classes": {
+    "F": 12,
+    "P": 56,
+    "E": 52
+   },
+   "noFoothold": 15,
+   "winnable": 120,
+   "winRate": 1
+  }
+ },
+ "cold_rad": {
+  "ocean_archipelago": {
+   "n": 118,
+   "median": 0.235,
+   "classes": {
+    "F": 32,
+    "P": 42,
+    "E": 44
+   },
+   "noFoothold": 10,
+   "winnable": 118,
+   "winRate": 1
+  },
+  "desert_world": {
+   "n": 120,
+   "median": 0.0904,
+   "classes": {
+    "F": 0,
+    "P": 5,
+    "E": 115
+   },
+   "noFoothold": 23,
+   "winnable": 120,
+   "winRate": 1
+  },
+  "frozen_world": {
+   "n": 120,
+   "median": 0.4611,
+   "classes": {
+    "F": 94,
+    "P": 23,
+    "E": 3
+   },
+   "noFoothold": 3,
+   "winnable": 120,
+   "winRate": 1
+  }
+ },
+ "cold_only": {
+  "ocean_archipelago": {
+   "n": 118,
+   "median": 0.235,
+   "classes": {
+    "F": 32,
+    "P": 41,
+    "E": 45
+   },
+   "noFoothold": 10,
+   "winnable": 118,
+   "winRate": 1
+  },
+  "desert_world": {
+   "n": 120,
+   "median": 0.0805,
+   "classes": {
+    "F": 0,
+    "P": 4,
+    "E": 116
+   },
+   "noFoothold": 24,
+   "winnable": 120,
+   "winRate": 1
+  },
+  "frozen_world": {
+   "n": 120,
+   "median": 0.4546,
+   "classes": {
+    "F": 93,
+    "P": 23,
+    "E": 4
+   },
+   "noFoothold": 3,
+   "winnable": 120,
+   "winRate": 1
+  }
+ },
+ "cold_dry": {
+  "ocean_archipelago": {
+   "n": 118,
+   "median": 0.225,
+   "classes": {
+    "F": 26,
+    "P": 40,
+    "E": 52
+   },
+   "noFoothold": 11,
+   "winnable": 117,
+   "winRate": 0.9915254237288136
+  },
+  "desert_world": {
+   "n": 120,
+   "median": 0.1099,
+   "classes": {
+    "F": 0,
+    "P": 15,
+    "E": 105
+   },
+   "noFoothold": 18,
+   "winnable": 120,
+   "winRate": 1
+  },
+  "frozen_world": {
+   "n": 120,
+   "median": 0.4563,
+   "classes": {
+    "F": 97,
+    "P": 20,
+    "E": 3
+   },
+   "noFoothold": 4,
+   "winnable": 120,
+   "winRate": 1
+  }
+ },
+ "dry_v2": {
+  "ocean_archipelago": {
+   "n": 118,
+   "median": 0.1737,
+   "classes": {
+    "F": 9,
+    "P": 39,
+    "E": 70
+   },
+   "noFoothold": 11,
+   "winnable": 118,
+   "winRate": 1
+  },
+  "desert_world": {
+   "n": 120,
+   "median": 0.2449,
+   "classes": {
+    "F": 24,
+    "P": 62,
+    "E": 34
+   },
+   "noFoothold": 10,
+   "winnable": 120,
+   "winRate": 1
+  },
+  "frozen_world": {
+   "n": 120,
+   "median": 0.2135,
+   "classes": {
+    "F": 8,
+    "P": 57,
+    "E": 55
+   },
+   "noFoothold": 17,
+   "winnable": 120,
+   "winRate": 1
+  }
+ },
+ "dry_sharp": {
+  "ocean_archipelago": {
+   "n": 118,
+   "median": 0.0786,
+   "classes": {
+    "F": 3,
+    "P": 19,
+    "E": 96
+   },
+   "noFoothold": 16,
+   "winnable": 118,
+   "winRate": 1
+  },
+  "desert_world": {
+   "n": 120,
+   "median": 0.3137,
+   "classes": {
+    "F": 48,
+    "P": 47,
+    "E": 25
+   },
+   "noFoothold": 8,
+   "winnable": 118,
+   "winRate": 0.9833333333333333
+  },
+  "frozen_world": {
+   "n": 120,
+   "median": 0.1567,
+   "classes": {
+    "F": 4,
+    "P": 28,
+    "E": 88
+   },
+   "noFoothold": 19,
+   "winnable": 120,
+   "winRate": 1
+  }
+ },
+ "wet_nosalt": {
+  "ocean_archipelago": {
+   "n": 118,
+   "median": 0.5499,
+   "classes": {
+    "F": 108,
+    "P": 10,
+    "E": 0
+   },
+   "noFoothold": 4,
+   "winnable": 118,
+   "winRate": 1
+  },
+  "desert_world": {
+   "n": 120,
+   "median": 0.052,
+   "classes": {
+    "F": 0,
+    "P": 1,
+    "E": 119
+   },
+   "noFoothold": 37,
+   "winnable": 120,
+   "winRate": 1
+  },
+  "frozen_world": {
+   "n": 120,
+   "median": 0.2172,
+   "classes": {
+    "F": 11,
+    "P": 56,
+    "E": 53
+   },
+   "noFoothold": 15,
+   "winnable": 120,
+   "winRate": 1
+  }
+ },
+ "wet_v1": {
+  "ocean_archipelago": {
+   "n": 118,
+   "median": 0.5479,
+   "classes": {
+    "F": 108,
+    "P": 9,
+    "E": 1
+   },
+   "noFoothold": 3,
+   "winnable": 118,
+   "winRate": 1
+  },
+  "desert_world": {
+   "n": 120,
+   "median": 0,
+   "classes": {
+    "F": 0,
+    "P": 0,
+    "E": 120
+   },
+   "noFoothold": 42,
+   "winnable": 120,
+   "winRate": 1
+  },
+  "frozen_world": {
+   "n": 120,
+   "median": 0.1468,
+   "classes": {
+    "F": 1,
+    "P": 29,
+    "E": 90
+   },
+   "noFoothold": 22,
+   "winnable": 120,
+   "winRate": 1
+  }
+ }
+}

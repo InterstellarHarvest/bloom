@@ -1,0 +1,154 @@
+{
+ "organic_hybrid": {
+  "role": "A · balanced generalist (today's plant)",
+  "config": {}
+ },
+ "dry_heat": {
+  "role": "B · dry / heat specialist",
+  "config": {
+   "genomeBase": {
+    "tempFloor": 2,
+    "tempCeil": 34,
+    "waterPos": 34,
+    "waterTol": 16,
+    "saltTol": 15,
+    "radTol": 35,
+    "toxTol": 25
+   }
+  }
+ },
+ "cold_rad": {
+  "role": "C · cold / radiation specialist",
+  "config": {
+   "genomeBase": {
+    "tempFloor": -20,
+    "tempCeil": 12,
+    "waterPos": 46,
+    "waterTol": 18,
+    "saltTol": 15,
+    "radTol": 50,
+    "toxTol": 25
+   }
+  }
+ },
+ "wet_flood": {
+  "role": "D · wet / flood specialist",
+  "config": {
+   "genomeBase": {
+    "tempFloor": -6,
+    "tempCeil": 24,
+    "waterPos": 62,
+    "waterTol": 20,
+    "saltTol": 60,
+    "radTol": 30,
+    "toxTol": 25
+   }
+  }
+ },
+ "cold_only": {
+  "role": "C′ sensitivity · C without its radiation strength (radTol 30)",
+  "config": {
+   "genomeBase": {
+    "tempFloor": -20,
+    "tempCeil": 12,
+    "waterPos": 46,
+    "waterTol": 18,
+    "saltTol": 15,
+    "radTol": 30,
+    "toxTol": 25
+   }
+  }
+ },
+ "wet_nosalt": {
+  "role": "D′ sensitivity · D without its salt strength (saltTol 15)",
+  "config": {
+   "genomeBase": {
+    "tempFloor": -6,
+    "tempCeil": 24,
+    "waterPos": 62,
+    "waterTol": 20,
+    "saltTol": 15,
+    "radTol": 30,
+    "toxTol": 25
+   }
+  }
+ },
+ "dry_sharp": {
+  "role": "B″ sensitivity · B with sharper edges (Temperature soft 7, Water soft 8)",
+  "config": {
+   "genomeBase": {
+    "tempFloor": 2,
+    "tempCeil": 34,
+    "waterPos": 34,
+    "waterTol": 16,
+    "saltTol": 15,
+    "radTol": 35,
+    "toxTol": 25
+   },
+   "categories": {
+    "Temperature": {
+     "soft": 7
+    },
+    "Water": {
+     "soft": 8
+    }
+   }
+  }
+ },
+ "cold_dry": {
+  "role": "C‴ alternative · cold + dry-hardy (physiological drought) instead of radiation",
+  "config": {
+   "genomeBase": {
+    "tempFloor": -20,
+    "tempCeil": 12,
+    "waterPos": 42,
+    "waterTol": 20,
+    "saltTol": 15,
+    "radTol": 30,
+    "toxTol": 25
+   }
+  }
+ },
+ "wet_v1": {
+  "role": "D draft v1 (too wet: 50–86, kept for the record)",
+  "config": {
+   "genomeBase": {
+    "tempFloor": -6,
+    "tempCeil": 24,
+    "waterPos": 68,
+    "waterTol": 18,
+    "saltTol": 60,
+    "radTol": 30,
+    "toxTol": 25
+   }
+  }
+ },
+ "cold_v2": {
+  "role": "C v2 · cold, narrower home advantage (−14 … 16 °C, same 30° width as A)",
+  "config": {
+   "genomeBase": {
+    "tempFloor": -14,
+    "tempCeil": 16,
+    "waterPos": 46,
+    "waterTol": 18,
+    "saltTol": 15,
+    "radTol": 50,
+    "toxTol": 25
+   }
+  }
+ },
+ "dry_v2": {
+  "role": "B v2 · dry / heat, narrower home advantage (0 … 32 °C, water 22 … 54)",
+  "config": {
+   "genomeBase": {
+    "tempFloor": 0,
+    "tempCeil": 32,
+    "waterPos": 38,
+    "waterTol": 16,
+    "saltTol": 15,
+    "radTol": 35,
+    "toxTol": 25
+   }
+  }
+ }
+}
