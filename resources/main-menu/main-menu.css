@@ -7,19 +7,23 @@
 
   Performance: no backdrop-filter, no will-change, no animated filters (028B lesson: live filters and will-change cost whole
   frames in software compositing). Entrances animate opacity and transform only; the plaque's drop-shadow is static.
+
+  SCOPE (BLOOM-034 fix). The root-level rules select .mm-screen — a class only MainMenu's own root carries — never a bare .mm: in the one
+  document (BLOOM-033) the decision rooms' mini-map card is also a ".mm", and the menu's root rule (its serif, its ink, container-type:size)
+  had collapsed that card to a thin strip. Child classes (.mm-plaque, .mm-item, …) are the menu's alone.
 */
-.mm{
+.mm-screen{
   --serif:"Palatino Linotype",Palatino,"Book Antiqua","Iowan Old Style","Hoefler Text",Georgia,"Times New Roman",serif;
   --ink:#f3e9d2; --ink-soft:#d9cbaa; --ink-faint:rgba(217,203,170,.62); --gold:#f1d58a; --gold-deep:#c9983d; --gold-line:rgba(214,174,96,.55);
   --plaque:rgba(14,10,18,.76); --plaque-2:rgba(9,6,13,.84); --night:#0a0810; --focus:#ffd479; --ease:cubic-bezier(.2,.8,.2,1);
   position:relative; width:100%; height:100%; overflow:hidden; container-type:size; isolation:isolate;
   background:var(--night); color:var(--ink); font-family:var(--serif); font-size:16px; line-height:1.35;
 }
-.mm *, .mm *::before, .mm *::after{box-sizing:border-box}
-.mm [hidden]{display:none !important}
-.mm button{font:inherit; color:inherit}
-.mm :focus-visible{outline:3px solid var(--focus); outline-offset:3px}
-.mm .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.mm-screen *, .mm-screen *::before, .mm-screen *::after{box-sizing:border-box}
+.mm-screen [hidden]{display:none !important}
+.mm-screen button{font:inherit; color:inherit}
+.mm-screen :focus-visible{outline:3px solid var(--focus); outline-offset:3px}
+.mm-screen .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
 
 /* ── the painting ── */
 .mm-bg{position:absolute; inset:0; overflow:hidden; background:var(--night)}
