@@ -1,0 +1,10 @@
+BLOOM-035B-5 body plans — QA summary. Each suite: NODE_PATH="$(npm root -g)" node tools/<suite>.js (Chromium + Firefox, default browsers).
+5ff53d3 = the same suites on a clean detached worktree of 5ff53d3 (baseline); HEAD = this branch.
+The PNGs in this folder are TEMPORARY ENGINEERING PROOF — NOT FINAL ART (except the unchanged Organic Hybrid row / column).
+
+plant-sprite-pipeline-check              5ff53d3: 58/58   HEAD: 59/59   (HEAD last line: OK — 59/59 checks passed (26 s))
+production-plant-integration-check       5ff53d3: 50/50   HEAD: 50/50   (HEAD last line: OK — 50/50 checks passed (101 s))
+organic-hybrid-art-intake-check          5ff53d3: 45/45   HEAD: 45/45   (HEAD last line: OK — 45/45 checks passed (41 s))
+run-ui-convergence-check                 5ff53d3: 57/57   HEAD: 57/57   (HEAD last line: ALL CHECKS PASS  (160.0 s))
+plant-rooms-check                        5ff53d3: 66/66   HEAD: 66/66   (HEAD last line: ALL CHECKS PASS  (95.3 s))
+body-plan-check (new, full, --evidence)  HEAD: 15/15   (OK — 15/15 checks passed (801 s))
