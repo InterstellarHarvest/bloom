@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: bcb8da7910d7c80c4bf8431552cc850c1f0e71a9ec065a0abb9e62459b3622c1  (37 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: cb47099d9ccb04000c55bf633e1194d28a2ea9ddf09c53fd7116d8c51f6535b3  (37 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {
@@ -12793,7 +12793,7 @@
         cloudsAfter: 1e3
       };
       DOLLY_TO = 1.45;
-      CLASS_ICON = { favorable: "check", precarious: "alert", extreme: "x" };
+      CLASS_ICON = { favorable: "check", precarious: "alert", extreme: "hazard" };
       ROW_CAT = { climate: ["temperature", "temp"], water: ["water", "water"], soil: ["soil", "soil"], atmosphere: [null, "sky"], solar: ["hazard", "heat"] };
       hash01 = (a2, b2) => {
         let h2 = Math.imul(a2 >>> 0 ^ 2654435769, 2246822507) ^ Math.imul(b2 + 1, 3266489909);
@@ -13320,7 +13320,7 @@
           });
           q2(".ds-rows").innerHTML = d2.rows.map((r2) => {
             const [cat, icon] = ROW_CAT[r2.id] || [null, "info"];
-            return `<div class="ds-row"${cat ? ` data-cat="${cat}"` : ""}><dt><span class="ds-row-i" aria-hidden="true">${ico(icon)}</span>${esc2(r2.label)}</dt><dd><b>${esc2(r2.word)}</b>${esc2(r2.value)}</dd></div>`;
+            return `<div class="ds-row"${cat ? ` data-cat="${cat}"` : ""}><dt><span class="ds-row-i" aria-hidden="true">${ico(icon)}</span>${esc2(r2.label)}</dt><dd><b>${esc2(r2.word)}</b><span class="ds-row-v">${esc2(r2.value)}</span></dd></div>`;
           }).join("");
           q2(".ds-challenges ul").innerHTML = d2.challenges.length ? d2.challenges.map((c2) => `<li>${esc2(c2.text)}${c2.share != null ? ` <small>· ${pct2(c2.share)}% of land</small>` : ""}</li>`).join("") : "<li>Nothing stands out: most land suits your plant from the start.</li>";
           q2(".ds-cue span").textContent = d2.cue || "";
