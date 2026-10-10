@@ -15,7 +15,8 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-10, BLOOM-034 closeout — BLOOM-034 accepted and integrated into production `main` (`455b51b`).*
+*Last updated: 2026-10-10, BLOOM-035A closeout — the species design accepted by the PMO (decisions LOCKED below, §6); BLOOM-035B
+implementation is NEXT. BLOOM-034 remains integrated in production `main` (`455b51b`).*
 
 ---
 
@@ -70,7 +71,8 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
 ```
 
 - Today (BLOOM-033): EXPEDITION → Destination Survey → focus → Begin Expedition → gameplay → report (Organic Hybrid only).
-- **Species Selection: PLANNED** (BLOOM-035, after the visual-system pass).
+- **Species Selection: LOCKED DESIGN · PLANNED** (BLOOM-035B). Until the real species art is accepted it is reachable only behind the
+  explicit developer query flag `?species=1`; without the flag EXPEDITION keeps today's Organic Hybrid flow.
 
 ## 5. Destination Survey / difficulty
 
@@ -87,22 +89,44 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
 
 ## 6. Plant species
 
-**LOCKED DESIGN · PLANNED** (BLOOM-035 + species art production). Nothing of this exists in production.
+**LOCKED DESIGN · PLANNED** (BLOOM-035B + species art production). The design is accepted (BLOOM-035A COMPLETE); no species mechanic is
+in production `main` yet.
 
 - Plant choices are genuinely different biological species — **not** Organic Hybrid recolours, not Organic Hybrid with purchased
   mutations pre-applied, not cosmetic skins.
-- Target first production set: **four species in total**, including Organic Hybrid.
+- **Four species in total.** Accepted concepts: **Organic Hybrid** (balanced generalist) · **Cinder Rosette** (dry / heat specialist) ·
+  **Woolly Candle** (cold specialist) · **Reed Spire** (wet / flood specialist). Other concepts are historical alternatives only.
 - Each species has a distinct baseline physiology, roughly two understandable natural advantages, at least one meaningful natural
   disadvantage, its own recognizable body / silhouette, and can evolve further through the existing Adapt / Spread systems.
-- Organic Hybrid remains the balanced generalist.
-- Candidate strategic roles presently favoured (names and exact stats NOT locked): Organic Hybrid — balanced generalist · a dry / heat
-  specialist · a cold / radiation specialist · a wet / flood specialist.
+- Organic Hybrid remains the balanced generalist and keeps a "Recommended first expedition" note. No species is ever labelled Easy;
+  species are not difficulty levels (no stars, no Easy / Hard, no overall score; strengths always paired with weaknesses).
 - Species selection shows a fully grown specimen rendered from that species' actual in-game sprite system; clicking a species focuses /
   zooms it and opens a dossier in the same interaction language as the Destination Survey.
-- **Design candidate (BLOOM-035A, review branch `handoff/bloom-035a-species-design`, not merged; nothing implemented):**
-  [`SPECIES_SYSTEM_v1.md`](SPECIES_SYSTEM_v1.md) (architecture: one physical planet per World Seed via a reference physiology; the
-  `createSim(…, { species })` seam; species-relative survey), [`SPECIES_STUDY_v1.md`](SPECIES_STUDY_v1.md) (measurements),
-  [`SPECIES_BODY_PLANS_v1.md`](SPECIES_BODY_PLANS_v1.md) (body-plan layer, concepts, art plan). Pending PMO choice.
+
+**PMO decisions LOCKED for BLOOM-035B** (full record: [`SPECIES_SYSTEM_v1.md`](SPECIES_SYSTEM_v1.md) §0.1; measurements:
+[`SPECIES_STUDY_v1.md`](SPECIES_STUDY_v1.md); body plans / concepts: [`SPECIES_BODY_PLANS_v1.md`](SPECIES_BODY_PLANS_v1.md)):
+
+- **One physical planet per World Seed, whatever the species.** World generation reads a new explicit **`config.referencePlant`**
+  (numerically identical to today's `genomeBase`), a world-generation constant that belongs to no playable species.
+  `WORLD_GEN_VERSION` stays 1; any change to `referencePlant` needs an explicit `WORLD_GEN_VERSION` decision. Organic Hybrid has its own
+  physiology object, numerically equal to `referencePlant`, so retuning Organic Hybrid never changes world generation.
+- Physiology only (no growth / economy modifiers, no species-specific Adapt scales or softness, no starting genome for Expedition
+  species). Implementation values v1:
+
+  | species | temperature | water window | salt | radiation | toxicity |
+  |---|---|---|---|---|---|
+  | Organic Hybrid | −6 … 24 °C | 32 … 68 | 15 | 30 | 25 |
+  | Cinder Rosette | 2 … 34 °C | 18 … 50 | 15 | 35 | 25 |
+  | Woolly Candle | −14 … 16 °C | 28 … 64 | 15 | 50 | 25 |
+  | Reed Spire | −6 … 24 °C | 42 … 82 | 60 | 30 | 25 |
+
+- The cold species is a **cold specialist**; its radiation tolerance is a latent secondary strength and the copy says so honestly.
+- Species winnability is required for a world to be offered; strategy diversity and pacing are recorded diagnostics, never offer gates.
+- The Destination Survey is species-relative (same thresholds; the same planet may classify differently per species); planet identity
+  never depends on the species. Native Competition's native stays on `referencePlant`.
+- A Challenge never changes `referencePlant`; it may choose a species, a world recipe, a scenario, starting adaptations / state.
+- Species mechanics may land in `main` before the art; the Species Selection screen stays behind `?species=1` until the real art is
+  accepted, so the game never shows proof art as a species.
 
 ## 7. Species art architecture
 
@@ -179,7 +203,8 @@ This is not a gameplay-code feature; product code does not work around repositor
 |---|---|---|
 | **BLOOM-033** — Single-document production application | `index.html` is the whole game; GameSession; `default`; Favorable / Precarious / Extreme; EXPEDITION | **IMPLEMENTED / COMPLETE** (in production `main`) |
 | **BLOOM-034** — Visual-system convergence | shared theme tokens (`resources/ui/bloom-theme.css`); title / menu restyle; Destination Survey convergence; the dark-space BLOOM planning language; **no species mechanics yet** | **IMPLEMENTED / COMPLETE** (in production `main`) |
-| **BLOOM-035** — Species system + Species Selection | species data / model; baseline physiology; simulation / validator support; species-aware Destination Survey classification; selection / focus / dossier UI; Organic Hybrid remains one species | **NEXT** — PLANNED (not started) |
+| **BLOOM-035A** — Species design / research | species architecture, the reference physiology, the strategic-distinctness study, body plans and concepts | **ACCEPTED / COMPLETE** (docs + research in `main`) |
+| **BLOOM-035B** — Species system implementation + Species Selection | species data / model; `config.referencePlant`; simulation / validator support; species-aware Destination Survey; run plumbing; body-plan layer with proof packs; the Species Selection screen behind `?species=1` | **NEXT** — PLANNED (not started) |
 | **Species art production** | three additional real species packs (four total, unless balancing / design proves a different count better), on the same production compositor architecture | PLANNED |
 | **BLOOM-036** — Challenges | the main-menu CHALLENGES route; authored challenge definitions; one generated challenge planet; assigned species / start state; the challenge dossier; Dying World / Native Competition / Volatile Climate as challenge ingredients | PLANNED |
 | **Final hardening** | full documentation reconciliation; dead historical production-path cleanup; Pages enablement / release; a Safari / WebKit production test if practical; final end-to-end release QA | PLANNED |

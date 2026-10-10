@@ -1,6 +1,8 @@
 # Strange Bloom — species body plans, concepts and art plan v1 (BLOOM-035A design)
 
-**Status: DESIGN CANDIDATE (BLOOM-035A).** No sprite, atlas, body plan, selector or compositor was changed. No final species art was
+**Status: ACCEPTED (PMO, 2026-10-10).** Concepts accepted: **Cinder Rosette** (dry / heat), **Woolly Candle** (cold), **Reed Spire**
+(wet / flood) beside Organic Hybrid; the other concepts in §3 remain historical design alternatives only. BLOOM-035B implements the
+body-plan layer with temporary engineering proof packs only — no final species art. In BLOOM-035A no sprite, atlas, body plan, selector or compositor was changed. No final species art was
 produced. Companion to [`SPECIES_SYSTEM_v1.md`](SPECIES_SYSTEM_v1.md) (architecture) and [`SPECIES_STUDY_v1.md`](SPECIES_STUDY_v1.md)
 (measurements). The production pipeline this extends: [`PLANT_SPRITE_PIPELINE_v1.md`](PLANT_SPRITE_PIPELINE_v1.md),
 [`PRODUCTION_PLANT_INTEGRATION_v1.md`](PRODUCTION_PLANT_INTEGRATION_v1.md).
