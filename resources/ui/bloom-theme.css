@@ -1,0 +1,82 @@
+/*
+  STRANGE BLOOM — the shared visual-token system (BLOOM-034). docs/VISUAL_SYSTEM_v1.md.
+
+  ONE source for the game's visual language. Every player-facing surface reads its type, colour, shape and motion from these tokens:
+  the title / main menu (resources/main-menu/main-menu.css), the Destination Survey (resources/destination-survey/destination-survey.css),
+  the Planet View (resources/run-ui/planet-view.css), the decision rooms, the run report and the training coach. Load this file FIRST,
+  before any surface stylesheet (index.html, demos/*.html).
+
+  Two families of surfaces, one language:
+  · LIGHT — gameplay: cream cards on the planet (the Concept 18 / BLOOM-029 production language). The values here are exactly the ones
+    gameplay shipped with (BLOOM-033): moving them into this file changes no gameplay pixel.
+  · NIGHT — planning (title, menu, Destination Survey): the DARK counterparts of the same surfaces. Darker than gameplay, keeping the
+    outer-space feeling — darkness, stars, planets, atmospheric glow, restrained translucent dark surfaces. Not neon, not a sci-fi HUD.
+    Night ink is the gameplay card's cream; night accents are the gameplay semantic hues lifted just enough to read on the dark.
+
+  Rules: tokens only, plus two neutral primitives (.bloom-ic, .bloom-sr-only). No element selectors, no web fonts, no external URL,
+  no backdrop-filter. Colour never carries meaning alone: every status keeps its icon and its word (OK / warning / blocked).
+*/
+:root{
+  /* ── type: the rounded sans-serif family of gameplay (system fonts only; no web font is ever loaded) ── */
+  --bloom-font:ui-rounded,"SF Pro Rounded","Nunito","Varela Round","Trebuchet MS",system-ui,sans-serif;
+  --bloom-kicker-size:11px; --bloom-kicker-weight:900; --bloom-kicker-track:1.4px;   /* small uppercase labels above a title */
+
+  /* ── shape: the irregular rounded-corner family and the chunky control proportions ── */
+  --bloom-r-lg:22px 18px 24px 18px;   /* cards, banners, dossiers, dialogs */
+  --bloom-r-md:16px 13px 17px 14px;   /* inner boxes, chips with a body */
+  --bloom-r-btn:14px;                  /* buttons (gameplay .pv-btn) */
+  --bloom-r-pill:999px;
+  --bloom-control-min:44px;            /* the smallest touch target */
+  --bloom-control-lg:52px;             /* a primary action */
+  --bloom-lip:2px;                     /* the chunky bottom lip under a control (box-shadow 0 lip 0) */
+
+  /* ── motion ── */
+  --bloom-ease:cubic-bezier(.2,.8,.2,1);
+
+  /* ── semantic hues (gameplay) ── */
+  --bloom-leaf:#3f9d4b; --bloom-leaf-dark:#2a7636; --bloom-leaf-soft:#e2f2d6;          /* growth · Plant / Adapt · the primary action */
+  --bloom-bloom:#d9607e; --bloom-bloom-dark:#a83d5a; --bloom-bloom-soft:#fbe3e9;       /* bloom pink · Spread */
+  --bloom-sky:#3b8fd0; --bloom-sky-dark:#23679f; --bloom-sky-soft:#dcecf8;             /* sky blue · Terraform / the planet */
+  --bloom-gold:#f2b324; --bloom-gold-deep:#a86f00; --bloom-gold-soft:#fff1c7;          /* Biomass gold */
+  --bloom-pressure:#8a5bb8; --bloom-pressure-soft:#efe5f8;                             /* pressure violet */
+  --bloom-ok:#3f9d4b; --bloom-warn:#d98a1c; --bloom-bad:#c4466a;                       /* OK · warning (Strained) · blocked */
+  --bloom-focus:#1f6fd1;
+
+  /* ── category identity (the four player-facing categories) ── */
+  --bloom-cat-temperature:#d9601f; --bloom-cat-temperature-soft:#fde6d6; --bloom-cat-temperature-dark:#9c3f0e;
+  --bloom-cat-water:#3b8fd0;       --bloom-cat-water-soft:#dcecf8;       --bloom-cat-water-dark:#23679f;
+  --bloom-cat-soil:#8a6a3e;        --bloom-cat-soil-soft:#f1e6d2;        --bloom-cat-soil-dark:#5f452a;
+  --bloom-cat-hazard:#8a5bb8;      --bloom-cat-hazard-soft:#efe5f8;      --bloom-cat-hazard-dark:#5e3a86;
+
+  /* ── LIGHT surfaces (gameplay) ── */
+  --bloom-paper:#fbf6ea; --bloom-paper-2:#f4ecd8; --bloom-card:#fffdf7; --bloom-line:#e4d8bd; --bloom-line-2:#d3c39f;
+  --bloom-ink:#2f3a2c; --bloom-ink-soft:#5f6b57; --bloom-ink-faint:#8a937f;
+  --bloom-frame:#242c22;                                                                /* the dark olive around the map */
+  --bloom-shadow-lg:0 4px 0 rgba(80,60,20,.08), 0 18px 48px rgba(60,45,15,.20);
+
+  /* ── NIGHT surfaces (planning): the dark counterparts ── */
+  --bloom-space-0:#03050b; --bloom-space-1:#0a1124; --bloom-space-2:#121b36;            /* deep space → the faint glow near a world */
+  --bloom-night-card:rgba(12,18,33,.90);   /* ↔ --bloom-card: a restrained translucent dark card */
+  --bloom-night-card-solid:#0e1527;        /* ↔ --bloom-card where nothing may show through (dialogs) */
+  --bloom-night-paper:#151e34;             /* ↔ --bloom-paper: a raised control */
+  --bloom-night-paper-2:#1d2843;           /* ↔ --bloom-paper-2: hover */
+  --bloom-night-line:#27324d;              /* ↔ --bloom-line */
+  --bloom-night-line-2:#3a4766;            /* ↔ --bloom-line-2: control borders and lips */
+  --bloom-night-line-3:#55648a;            /* a control's border under the pointer */
+  --bloom-night-ink:#f6f1e3;               /* ↔ --bloom-ink: the gameplay card's cream, as text */
+  --bloom-night-ink-soft:#c3c6c0;          /* ↔ --bloom-ink-soft */
+  --bloom-night-ink-faint:#8e97a6;         /* ↔ --bloom-ink-faint */
+  --bloom-night-shadow:0 4px 0 rgba(0,0,0,.28), 0 22px 56px rgba(0,0,0,.50);           /* ↔ --bloom-shadow-lg */
+  --bloom-night-veil:rgba(3,5,11,.62);     /* behind a modal dialog */
+
+  /* semantic hues on night: the same hue, lifted to read on the dark (≥ 4.5 : 1 on --bloom-night-card-solid) */
+  --bloom-leaf-night:#7fcf86; --bloom-bloom-night:#f28fab; --bloom-sky-night:#7ab8ec; --bloom-gold-night:#f6c453; --bloom-pressure-night:#b99ae0;
+  --bloom-ok-night:#7fcf86; --bloom-warn-night:#f2b54e; --bloom-bad-night:#f08aa6;
+  --bloom-focus-night:#7db7ff;              /* ↔ --bloom-focus: the same 3 px ring, lifted for the dark */
+  --bloom-cat-temperature-night:#f2995f; --bloom-cat-water-night:#7ab8ec; --bloom-cat-soil-night:#d2ab78; --bloom-cat-hazard-night:#b99ae0;
+}
+
+/* ── primitives ── */
+/* the production icon family: 24 × 24 inline-SVG strokes, never emoji (identical to gameplay's .pv .ic) */
+.bloom-ic{pointer-events:none; width:1.25em; height:1.25em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex:none; vertical-align:-.28em}
+.bloom-sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap}

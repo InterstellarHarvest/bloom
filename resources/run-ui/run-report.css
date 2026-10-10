@@ -7,7 +7,7 @@
 */
 .pv.in-report > .pv-hud, .pv.in-report > .pv-stage, .pv.in-report > .pv-foot{filter:saturate(.78) brightness(.92); pointer-events:none; user-select:none}
 .rr{position:absolute; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; padding:24px; font-size:15px;
-  --rr-bg:#fffdf7; --rr-paper:#fbf6ea; --rr-line:#e4d8bd; --rr-line-2:#d3c39f; --rr-ink:#2f3a2c; --rr-soft:#5f6b57; --rr-faint:#8a937f}
+  --rr-bg:var(--bloom-card); --rr-paper:var(--bloom-paper); --rr-line:var(--bloom-line); --rr-line-2:var(--bloom-line-2); --rr-ink:var(--bloom-ink); --rr-soft:var(--bloom-ink-soft); --rr-faint:var(--bloom-ink-faint)}   /* (BLOOM-034) from the shared theme */
 .rr-veil{position:absolute; inset:0; background:radial-gradient(80% 70% at 50% 45%, rgba(36,44,34,.42), rgba(36,44,34,.62))}
 .rr-card{position:relative; width:min(900px, 100%); max-height:100%; overflow:hidden; background:var(--rr-bg); color:var(--rr-ink);
   border:3px solid var(--rr-ink); border-radius:var(--r-lg, 22px 18px 24px 18px); box-shadow:var(--shadow-lg, 0 18px 48px rgba(60,45,15,.25)); padding:0; outline:none;

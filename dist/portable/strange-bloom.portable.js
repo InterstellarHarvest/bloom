@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: 8325f25af84b66dab5b10bdce9ca3bf32c138f1ced2002d60e49466fec61161f  (36 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: bcb8da7910d7c80c4bf8431552cc850c1f0e71a9ec065a0abb9e62459b3622c1  (37 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {
@@ -649,6 +649,35 @@
     }
   });
 
+  // resources/ui/bloom-icons.js
+  var ICONS, ico;
+  var init_bloom_icons = __esm({
+    "resources/ui/bloom-icons.js"() {
+      ICONS = Object.freeze({
+        back: '<path d="M15 5l-7 7 7 7"/><path d="M8 12h12"/>',
+        world: '<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c3 3 3 13 0 16M12 4c-3 3-3 13 0 16"/>',
+        journal: '<path d="M6 3h11a2 2 0 0 1 2 2v16H8a2 2 0 0 1-2-2z"/><path d="M6 3v16a2 2 0 0 0 2 2"/><path d="M10 8h5M10 12h5"/>',
+        info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.6" r=".9"/>',
+        play: '<path d="M7.5 5l11 7-11 7z"/>',
+        check: '<path d="M5 12.5l4.5 4.5L19 7"/>',
+        alert: '<path d="M12 5v9"/><circle cx="12" cy="18" r="1"/>',
+        x: '<path d="M6 6l12 12M18 6L6 18"/>',
+        star: '<path d="M12 3.5l2.6 5.3 5.9.9-4.25 4.15 1 5.85L12 16.9l-5.25 2.8 1-5.85L3.5 9.7l5.9-.9z"/>',
+        temp: '<path d="M10 4a2 2 0 0 1 4 0v9.5a4 4 0 1 1-4 0z"/><circle cx="12" cy="17" r="1.6"/>',
+        water: '<path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>',
+        soil: '<path d="M3 14h18M3 18h18"/><circle cx="8" cy="9" r="1.3"/><circle cx="14" cy="7" r="1.3"/><circle cx="17" cy="11" r="1.3"/>',
+        hazard: '<path d="M12 4l9 16H3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r=".9"/>',
+        sky: '<path d="M7 17a4 4 0 0 1-.5-8A6 6 0 0 1 18 9a3.5 3.5 0 0 1 0 8z"/>',
+        heat: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+        adapt: '<path d="M5 19C5 10 10 5 20 4c0 10-5 15-14 15z"/><path d="M5 19l9-9"/>',
+        // new for the planning screens, on the same 24 grid and stroke
+        settings: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/>',
+        scan: '<circle cx="12" cy="12" r="8.5"/><path d="M12 12l5.2-5.2"/><path d="M12 7.5a4.5 4.5 0 1 0 4.5 4.5"/>'
+      });
+      ico = (name2, cls = "") => `<svg class="ic bloom-ic${cls ? " " + cls : ""}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[name2] || ICONS.info}</svg>`;
+    }
+  });
+
   // resources/main-menu/main-menu.js
   function safe(f2) {
     try {
@@ -657,11 +686,12 @@
       return null;
     }
   }
-  var EASE, T, LAST_KEY, esc, ITEMS, MainMenu;
+  var EASE, T, LAST_KEY, esc, ITEMS, ITEM_ICON, MainMenu;
   var init_main_menu = __esm({
     "resources/main-menu/main-menu.js"() {
       init_portable_root();
       init_main_menu_data();
+      init_bloom_icons();
       EASE = "cubic-bezier(.2,.8,.2,1)";
       T = { recede: 220, recedeRm: 110 };
       LAST_KEY = "strange-bloom.menu.last-background";
@@ -673,6 +703,7 @@
         { id: "settings", label: "Settings" },
         { id: "credits", label: "Credits" }
       ];
+      ITEM_ICON = { begin: "world", training: "journal", settings: "settings", credits: "info" };
       MainMenu = class {
         /**
          * root               the screen element (any sized box)
@@ -875,37 +906,36 @@
           r2.innerHTML = `
       <div class="mm-bg" aria-hidden="true"><img class="mm-art" alt="" decoding="async"></div>
       <section class="mm-plaque" aria-labelledby="mm-title">
-        <span class="mm-corner tl" aria-hidden="true"></span><span class="mm-corner tr" aria-hidden="true"></span><span class="mm-corner bl" aria-hidden="true"></span><span class="mm-corner br" aria-hidden="true"></span>
         <div class="mm-plaque-inner">
           <header class="mm-title"><h1 id="mm-title">${TITLE.split(" ").map((w2) => `<span>${esc(w2)}</span>`).join(" ")}</h1><p class="mm-sub">${esc(SUBTITLE)}</p></header>
-          <ul class="mm-nav" aria-label="Main menu">${ITEMS.map((it2, i2) => `<li style="--i:${i2}"><button type="button" class="mm-item${it2.primary ? " primary" : ""}" data-act="${it2.id}">${esc(it2.label)}${it2.id === "training" ? ` <small class="mm-tag" hidden>Recommended</small>` : ""}</button></li>`).join("")}</ul>
+          <ul class="mm-nav" aria-label="Main menu">${ITEMS.map((it2, i2) => `<li style="--i:${i2}"><button type="button" class="mm-item${it2.primary ? " primary" : ""}" data-act="${it2.id}"><span class="mm-ico" aria-hidden="true">${ico(ITEM_ICON[it2.id])}</span>${esc(it2.label)}${it2.id === "training" ? ` <small class="mm-tag" hidden>${ico("star")}Recommended</small>` : ""}</button></li>`).join("")}</ul>
         </div>
       </section>
       <p class="mm-status" role="status" aria-live="polite"></p>
       <dialog class="mm-dialog" data-dialog="training" aria-labelledby="mm-dlg-training"><div class="mm-dialog-body">
-        <h2 id="mm-dlg-training">Training</h2><p class="lede">Not yet open</p>
+        <p class="lede">Not yet open</p><h2 id="mm-dlg-training">Training</h2>
         <p>The training expedition — a guided first landing on a hand-made world — is not ready for recruits yet.</p>
-        <p class="mm-note">Placeholder: tutorial gameplay arrives in a later milestone. Expedition is the way out onto unknown soils for now.</p>
-        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">Back to menu</button></div></div></dialog>
+        <p class="mm-note">${ico("info")}<span>Placeholder: tutorial gameplay arrives in a later milestone. Expedition is the way out onto unknown soils for now.</span></p>
+        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">${ico("back")}Back to menu</button></div></div></dialog>
       <dialog class="mm-dialog" data-dialog="recommend" aria-labelledby="mm-dlg-recommend" aria-describedby="mm-dlg-recommend-d"><div class="mm-dialog-body">
-        <h2 id="mm-dlg-recommend">First expedition?</h2><p class="lede">Training recommended</p>
+        <p class="lede">Training recommended</p><h2 id="mm-dlg-recommend">First expedition?</h2>
         <p id="mm-dlg-recommend-d">A short guided landing on a hand-made world teaches you to read a region, change your plant and know which ground to let go.</p>
-        <p class="mm-note">Training stays open from the main menu, whatever you choose now.</p>
-        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="recommend-expedition">Go to Expedition</button><button type="button" class="mm-btn primary" data-act="recommend-training">Start Training (~5 min)</button></div></div></dialog>
+        <p class="mm-note">${ico("info")}<span>Training stays open from the main menu, whatever you choose now.</span></p>
+        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="recommend-expedition">${ico("world")}Go to Expedition</button><button type="button" class="mm-btn primary" data-act="recommend-training">${ico("journal")}Start Training (~5 min)</button></div></div></dialog>
       <dialog class="mm-dialog" data-dialog="settings" aria-labelledby="mm-dlg-settings"><div class="mm-dialog-body">
-        <h2 id="mm-dlg-settings">Settings</h2><p class="lede">Expedition preferences</p>
+        <p class="lede">Expedition preferences</p><h2 id="mm-dlg-settings">Settings</h2>
         <fieldset><legend>Motion</legend>${MOTION_OPTIONS.map((m2) => `<label class="mm-choice"><input type="radio" name="mm-motion" value="${m2.id}"><span><b>${esc(m2.label)}</b><small>${esc(m2.hint)}</small></span></label>`).join("")}</fieldset>
         <div class="mm-rule"></div>
         <p>Motion covers the menu, the atmosphere between screens and the turning worlds of the Destination Survey. Nothing is switched off by reducing it.</p>
-        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">Done</button></div></div></dialog>
+        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">${ico("check")}Done</button></div></div></dialog>
       <dialog class="mm-dialog" data-dialog="credits" aria-labelledby="mm-dlg-credits"><div class="mm-dialog-body">
-        <h2 id="mm-dlg-credits">Credits</h2><p class="lede">${esc(TITLE)} · ${esc(SUBTITLE)}</p>
+        <p class="lede">${esc(TITLE)} · ${esc(SUBTITLE)}</p><h2 id="mm-dlg-credits">Credits</h2>
         <dl class="mm-credits">
           <dt>A BLOOM project</dt><dd>Design, worlds, simulation and code by the BLOOM project team.</dd>
           <dt>Menu paintings</dt><dd>Twelve hand-painted expedition vistas by the project's owner.</dd>
           <dt>Open source</dt><dd>Three.js r185.1 (MIT) draws the globes of the Destination Survey.</dd>
         </dl>
-        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">Back to menu</button></div></div></dialog>`;
+        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">${ico("back")}Back to menu</button></div></div></dialog>`;
           const q2 = (s2) => r2.querySelector(s2);
           this.art = q2(".mm-art");
           this.plaque = q2(".mm-plaque");
@@ -12730,13 +12760,14 @@
   });
 
   // resources/destination-survey/destination-survey.js
-  var COLS, N3, GLOBE_DISTANCE, EASE_OUT, EASE_IN, EASE_FLIP, T3, DOLLY_TO, SCAN_ICON, hash01, esc2, pct2, rowCol, DestinationSurvey;
+  var COLS, N3, GLOBE_DISTANCE, EASE_OUT, EASE_IN, EASE_FLIP, T3, DOLLY_TO, CLASS_ICON, ROW_CAT, hash01, esc2, pct2, rowCol, DestinationSurvey;
   var init_destination_survey = __esm({
     "resources/destination-survey/destination-survey.js"() {
       init_planet_sphere_view();
       init_atmosphere_transition();
       init_survey_data();
       init_sector_pool();
+      init_bloom_icons();
       COLS = SURVEY_CLASSES.length;
       N3 = ROWS * COLS;
       GLOBE_DISTANCE = 3.6;
@@ -12762,7 +12793,8 @@
         cloudsAfter: 1e3
       };
       DOLLY_TO = 1.45;
-      SCAN_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5" opacity=".6"/><path d="M12 12 L19 6"/></svg>`;
+      CLASS_ICON = { favorable: "check", precarious: "alert", extreme: "x" };
+      ROW_CAT = { climate: ["temperature", "temp"], water: ["water", "water"], soil: ["soil", "soil"], atmosphere: [null, "sky"], solar: ["hazard", "heat"] };
       hash01 = (a2, b2) => {
         let h2 = Math.imul(a2 >>> 0 ^ 2654435769, 2246822507) ^ Math.imul(b2 + 1, 3266489909);
         h2 ^= h2 >>> 15;
@@ -12794,7 +12826,7 @@
          * sectors            (028C) a SectorPool to adopt — normally DestinationSurvey.prefetch(…) started on the title screen. Its
          *                    prefetched sector becomes the first one shown (sectorSeed / firstBloom default to it); the survey owns
          *                    the pool from here and disposes it with itself. Omitted: a private pool, as before.
-         * onExit             (028C) called when the player leaves for the Main Menu (a "← Main menu" header button appears; Escape
+         * onExit             (028C) called when the player leaves for the Main Menu (a "Main menu" header button appears; Escape
          *                    in the survey state leaves too). The survey changes nothing itself: the consumer transitions and disposes it.
          */
         constructor(root, { sectorSeed = null, firstBloom = false, reducedMotion = null, worker = true, workers = null, onBeginExpedition = null, descent = null, sectors = null, onExit = null } = {}) {
@@ -13175,13 +13207,13 @@
           if (!r2.hasAttribute("aria-label")) r2.setAttribute("aria-label", "Destination survey");
           r2.innerHTML = `
       <header class="ds-head">
-        <button type="button" class="ds-btn ghost ds-exit" data-act="exit"${this.onExit ? "" : " hidden"}><span aria-hidden="true">←</span> Main menu</button>
+        <button type="button" class="ds-btn ghost ds-exit" data-act="exit"${this.onExit ? "" : " hidden"}>${ico("back")}<span class="lbl">Main menu</span></button>
         <div class="ds-title"><span class="ds-kicker">Strange Bloom</span><h1>Destination Survey</h1></div>
         <p class="ds-sector" aria-live="polite"></p>
-        <div class="ds-head-tools"><span class="ds-progress sr-only" role="status" hidden></span><button type="button" class="ds-btn scan" data-act="scan">${SCAN_ICON}<span>Scan <span class="lbl-long">new </span>sector</span></button></div>
+        <div class="ds-head-tools"><span class="ds-progress sr-only" role="status" hidden></span><button type="button" class="ds-btn scan" data-act="scan">${ico("scan")}<span>Scan <span class="lbl-long">new </span>sector</span></button></div>
       </header>
       <div class="ds-survey">
-        <div class="ds-cols" aria-hidden="true">${SURVEY_CLASSES.map((c2) => `<div class="ds-colhead" data-class="${c2.id}"><b>${c2.label}</b><small>${esc2(c2.blurb)}</small></div>`).join("")}</div>
+        <div class="ds-cols" aria-hidden="true">${SURVEY_CLASSES.map((c2) => `<div class="ds-colhead" data-class="${c2.id}"><b><span class="ds-st-i">${ico(CLASS_ICON[c2.id])}</span>${c2.label}</b><small>${esc2(c2.blurb)}</small></div>`).join("")}</div>
         <div class="ds-grid" role="group" aria-label="Candidate worlds: three columns, ${SURVEY_CLASSES.map((c2) => c2.label).join(", ").replace(/, ([^,]*)$/, " and $1")}">${Array.from({ length: N3 }, (_2, i2) => {
             const c2 = SURVEY_CLASSES[i2 % COLS];
             return `<div class="ds-cell" data-class="${c2.id}"><button type="button" class="ds-cand" data-index="${i2}" disabled>
@@ -13197,14 +13229,15 @@
           <h2 tabindex="-1"></h2>
           <p class="ds-type"></p><p class="ds-tagline"></p>
           <div class="ds-hab"><div class="ds-hab-top"><span>Ground your plant can live on at landing</span><b></b></div>
-            <div class="ds-bar" role="img"><i class="g"></i><i class="y"></i><i class="r"></i></div></div>
+            <div class="ds-bar" role="img"><i class="g"></i><i class="y"></i><i class="r"></i></div>
+            <div class="ds-bar-key" aria-hidden="true"><span class="ok">${ico("check")}<span>Suits</span></span><span class="warn">${ico("alert")}<span>Marginal</span></span><span class="bad">${ico("x")}<span>Hostile</span></span></div></div>
           <dl class="ds-rows"></dl>
-          <section class="ds-challenges"><h3>Expected challenges</h3><ul></ul></section>
-          <p class="ds-cue"></p>
+          <section class="ds-challenges"><h3>${ico("hazard")}Expected challenges</h3><ul></ul></section>
+          <p class="ds-cue">${ico("adapt")}<span></span></p>
           <p class="ds-seed"></p>
           <div class="ds-actions">
-            <button type="button" class="ds-btn ghost" data-act="return"><span aria-hidden="true">←</span> Return to survey</button>
-            <button type="button" class="ds-btn go" data-act="begin">Begin expedition</button>
+            <button type="button" class="ds-btn ghost" data-act="return">${ico("back")}Return to survey</button>
+            <button type="button" class="ds-btn go" data-act="begin">${ico("world")}Begin expedition</button>
           </div>
         </aside>
       </div>`;
@@ -13270,7 +13303,7 @@
         _fillDossier(cand) {
           const d2 = cand.dossier, cls = SURVEY_CLASSES.find((c2) => c2.id === cand.classId), q2 = (s2) => this.dossier.querySelector(s2);
           this.dossier.dataset.class = cand.classId;
-          q2(".ds-chip").textContent = cls.label;
+          q2(".ds-chip").innerHTML = `<span class="ds-st-i">${ico(CLASS_ICON[cls.id])}</span>${esc2(cls.label)}`;
           q2(".ds-chip-note").textContent = cls.blurb;
           this.dossierTitle.textContent = d2.name;
           q2(".ds-type").textContent = cand.worldType;
@@ -13282,9 +13315,16 @@
           [["g", h2.green], ["y", h2.yellow], ["r", h2.red]].forEach(([k2, v2]) => {
             bar.querySelector("." + k2).style.width = (v2 * 100).toFixed(1) + "%";
           });
-          q2(".ds-rows").innerHTML = d2.rows.map((r2) => `<dt>${esc2(r2.label)}</dt><dd><b>${esc2(r2.word)}</b>${esc2(r2.value)}</dd>`).join("");
+          [["ok", "Suits", h2.green], ["warn", "Marginal", h2.yellow], ["bad", "Hostile", h2.red]].forEach(([k2, w2, v2]) => {
+            q2(`.ds-bar-key .${k2} span`).textContent = `${w2} ${pct2(v2)}%`;
+          });
+          q2(".ds-rows").innerHTML = d2.rows.map((r2) => {
+            const [cat, icon] = ROW_CAT[r2.id] || [null, "info"];
+            return `<div class="ds-row"${cat ? ` data-cat="${cat}"` : ""}><dt><span class="ds-row-i" aria-hidden="true">${ico(icon)}</span>${esc2(r2.label)}</dt><dd><b>${esc2(r2.word)}</b>${esc2(r2.value)}</dd></div>`;
+          }).join("");
           q2(".ds-challenges ul").innerHTML = d2.challenges.length ? d2.challenges.map((c2) => `<li>${esc2(c2.text)}${c2.share != null ? ` <small>· ${pct2(c2.share)}% of land</small>` : ""}</li>`).join("") : "<li>Nothing stands out: most land suits your plant from the start.</li>";
-          q2(".ds-cue").textContent = d2.cue || "";
+          q2(".ds-cue span").textContent = d2.cue || "";
+          q2(".ds-cue").hidden = !d2.cue;
           q2(".ds-seed").textContent = cand.authored ? "Authored world · First Bloom" : `World Seed ${cand.seed} · ${this.sector ? this.sector.label : ""}`;
         }
         // ---------------------------------------------------------------- animation helpers

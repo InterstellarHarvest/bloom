@@ -7,9 +7,9 @@
   clicks (every coach element but the card itself is pointer-events:none). Reduced motion: no pulse, no glide, no entrance lift —
   the card and ring jump to place, opacity only.
 */
-.tc-layer{--card:#fffdf7; --paper:#fbf6ea; --line-2:#d3c39f; --ink:#2f3a2c; --ink-soft:#5f6b57; --gold:#f2b324; --gold-deep:#a86f00; --gold-soft:#fff1c7;
-  --leaf:#3f9d4b; --focus:#1f6fd1; --r-md:16px 13px 17px 14px;
-  --font:ui-rounded,"SF Pro Rounded","Nunito","Varela Round","Trebuchet MS",system-ui,sans-serif;
+.tc-layer{--card:var(--bloom-card); --paper:var(--bloom-paper); --line-2:var(--bloom-line-2); --ink:var(--bloom-ink); --ink-soft:var(--bloom-ink-soft); --gold:var(--bloom-gold); --gold-deep:var(--bloom-gold-deep); --gold-soft:var(--bloom-gold-soft);
+  --leaf:var(--bloom-leaf); --focus:var(--bloom-focus); --r-md:var(--bloom-r-md);   /* (BLOOM-034) from the shared theme, resources/ui/bloom-theme.css */
+  --font:var(--bloom-font);
   position:fixed; inset:0; z-index:500; pointer-events:none; font-family:var(--font); color:var(--ink)}
 .tc-layer *{box-sizing:border-box}
 .tc-card{position:fixed; left:0; top:0; width:340px; pointer-events:auto; background:var(--card); color:var(--ink);
@@ -51,16 +51,17 @@
    the OS (it follows prefers-reduced-motion changes live), so Settings "full" can keep the motion on a reduced OS: no @media rule here */
 .tc-rm .tc-card{transition:opacity .12s linear} .tc-rm .tc-card.tc-in{animation:none} .tc-rm .tc-ring{animation:none} .tc-rm .tc-bar i{transition:none}
 
-/* the one Skip confirmation (training-run.js): a production dialog, never window.confirm */
+/* the one Skip confirmation (training-run.js): a production dialog, never window.confirm. (BLOOM-034: colours, radius and font from
+   the shared theme, resources/ui/bloom-theme.css — the same values) */
 .tsk{position:fixed; inset:0; z-index:700; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(36,44,34,.55);
-  font-family:ui-rounded,"SF Pro Rounded","Nunito","Varela Round","Trebuchet MS",system-ui,sans-serif; color:#2f3a2c}
+  font-family:var(--bloom-font); color:var(--bloom-ink)}
 .tsk[hidden]{display:none}
-.tsk-card{width:min(420px,100%); background:#fffdf7; border:3px solid #2f3a2c; border-radius:22px 18px 24px 18px; padding:18px 20px 16px;
+.tsk-card{width:min(420px,100%); background:var(--bloom-card); border:3px solid var(--bloom-ink); border-radius:var(--bloom-r-lg); padding:18px 20px 16px;
   box-shadow:0 4px 0 rgba(80,60,20,.10), 0 18px 48px rgba(30,24,8,.35)}
 .tsk-card h2{margin:0 0 6px; font-size:22px; font-weight:900}
-.tsk-card p{margin:0 0 14px; font-size:15px; line-height:1.4; color:#5f6b57}
+.tsk-card p{margin:0 0 14px; font-size:15px; line-height:1.4; color:var(--bloom-ink-soft)}
 .tsk-acts{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap}
-.tsk-btn{font:inherit; font-size:15px; font-weight:800; min-height:44px; padding:6px 16px; border-radius:14px; border:2px solid #d3c39f; background:#fbf6ea; color:#2f3a2c; cursor:pointer;
-  box-shadow:0 2px 0 #d3c39f}
-.tsk-btn.primary{background:#2f3a2c; color:#fff7e0; border-color:#2f3a2c; box-shadow:0 2px 0 #11160f}
-.tsk-btn:focus-visible{outline:3px solid #1f6fd1; outline-offset:3px}
+.tsk-btn{font:inherit; font-size:15px; font-weight:800; min-height:44px; padding:6px 16px; border-radius:var(--bloom-r-btn); border:2px solid var(--bloom-line-2); background:var(--bloom-paper); color:var(--bloom-ink); cursor:pointer;
+  box-shadow:0 2px 0 var(--bloom-line-2)}
+.tsk-btn.primary{background:var(--bloom-ink); color:#fff7e0; border-color:var(--bloom-ink); box-shadow:0 2px 0 #11160f}
+.tsk-btn:focus-visible{outline:3px solid var(--bloom-focus); outline-offset:3px}
