@@ -10,6 +10,7 @@
 //   BLOOM.species.physiologyHash(p)        → 8-hex FNV of the seven physiology numbers (key order fixed)
 //   BLOOM.species.sameAsReference(sp, cfg) → is this species' physiology numerically config.referencePlant?
 //   BLOOM.species.DEFAULT_ID / TRAINING_ID → "organic_hybrid" (the Expedition flow without the species screen; Training, always)
+//   BLOOM.species.validateFor(planet, sp, { config, traits, diagnostics }) → the species playability verdict (S-layers, 035B-2)
 //
 // A species is the PLAYER's starting physiology only (createSim(…, { species })). It is never an input to world generation
 // (generateFromArchetype refuses it) and never reaches the native competitor (config.referencePlant). Content: content/species.js.
@@ -126,5 +127,57 @@
   // provenance / reports: the small plain record that names a species and its exact physiology revision
   const provenance = sp => ({ id: sp.id, name: sp.name, version: sp.version, physiologyVersion: sp.physiologyVersion, physiologyKey: sp.physiologyKey });
 
-  BLOOM.species = { KEYS, ROLES, CATEGORIES, DEFAULT_ID, TRAINING_ID, resolve, list, ids, check, checkSpecies, physiologyHash, sameAsReference, provenance };
+  // ------------------------------------------------------------------------------------------------ species playability (035B-2)
+  // The S-layers (docs/SPECIES_SYSTEM_v1.md §6.3, PMO decisions §0.1). A FINISHED physical planet + a species → a verdict. The planet
+  // is never regenerated, re-rolled or edited; a species rejection only means "not offered to this species".
+  //   S1 FOOTHOLD  measured and REPORTED: the share of the land growable at landing (fitness > grow.growThresh, no purchase, the
+  //                starting sky) and reachable over land from the origin (= the witness's early.reachableShare in the default scenario),
+  //                against FOOTHOLD.min (0.05). It is recorded with a `low` flag and never rejects a world: such a world is what the
+  //                Survey shows as Extreme (SPECIES_STUDY §5.3), and as a gate it would remove a fifth of the Desert worlds the
+  //                production Organic Hybrid survey offers today. The origin itself is always a protected refuge for every species.
+  //   S2 WINNABLE  REQUIRED — the offer gate: BLOOM.findWitness with THIS species (layers 4–6: a real, no-cheat engine run that
+  //                earns its Biomass and wins with margin). For a physiology numerically equal to config.referencePlant on a world
+  //                whose own construction proved layers 4–6, that proof IS this species' proof (the engine is bit-identical): reused.
+  //   S3 DIVERSE · S4 PACED  RECORDED ONLY (opts.diagnostics): findStrategies with the archetype's own policy — distinct strategies,
+  //                pacing, the fastest margin, and whether a winner bypasses the archetype's requiredConditions. Never an offer gate.
+  const FOOTHOLD = Object.freeze({ min: 0.05 });
+  function foothold(planet, sp, { config, traits }) {
+    const B = root.BLOOM, sim = B.createSim(planet, config, traits, { rng: () => 0.5, species: sp }), M = sim.map, G = config.grow;
+    const grow = M.SEC.map((_, i) => sim.evaluate(i).fitness > G.growThresh), seen = new Set([M.ORIGIN]), st = [M.ORIGIN];
+    while (st.length) { const a = st.pop(); for (const b of M.NBRS[a]) if (grow[b] && !seen.has(b)) { seen.add(b); st.push(b); } }
+    let r = 0, g = 0; for (let i = 0; i < M.SC; i++) { if (seen.has(i)) r += M.AREA[i]; if (grow[i]) g += M.AREA[i]; }
+    const reachableShare = +(r / M.LAND).toFixed(4);
+    return { reachableShare, growableShare: +(g / M.LAND).toFixed(4), min: FOOTHOLD.min, low: reachableShare < FOOTHOLD.min };
+  }
+  const provedByConstruction = planet => { const a = planet && planet.archetype;
+    return !!(a && a.winnabilityChecked && Array.isArray(a.validatedLayers) && [4, 5, 6].every(l => a.validatedLayers.includes(l))); };
+  function validateFor(planet, sp, { config, traits, archetype = null, diagnostics = false } = {}) {
+    const B = root.BLOOM, t0 = Date.now();
+    if (!sp || typeof sp.physiologyKey !== "string") throw new TypeError("BLOOM.species.validateFor: a resolved species is required (BLOOM.species.resolve(id))");
+    if (!config || !traits) throw new TypeError("BLOOM.species.validateFor: pass { config, traits }");
+    if (!B.findWitness) throw new Error("BLOOM.species.validateFor: load resources/bloom-witness.js");
+    const s1 = foothold(planet, sp, { config, traits });
+    let s2;
+    if (sameAsReference(sp, config) && provedByConstruction(planet)) s2 = { ok: true, reused: true, layer: null, reason: null,
+      note: "the reference physiology's layers 4–6 proof from this world's construction (numerically identical physiology)" };
+    else { const w = B.findWitness(planet, config, traits, { species: sp }), x = w.witness;
+      s2 = { ok: !!w.ok, reused: false, layer: w.layer, reason: w.reason || null, inconclusive: !!w.inconclusive,
+        ...(x ? { spend: x.totalSpent, purchases: x.purchases.length, build: x.purchases.map(p => p.id), winSeconds: x.winSeconds, marginSeconds: x.marginSeconds, usedCrossing: !!x.usedCrossing } : {}),
+        simulations: w.search && w.search.simulations }; }
+    let diag = null;
+    if (diagnostics) {
+      const V = archetype && archetype.validation || {}, need = V.minStrategies || 1, P = V.pacing || null;
+      const r = B.findStrategies(planet, config, traits, { species: sp, minStrategies: need, pacing: P });
+      const all = [...(r.strategies || []), ...(r.slow || [])], req = V.requiredConditions || [];
+      diag = { s3: { status: r.layer7 ? r.layer7.status : r.status, distinct: r.layer7 ? r.layer7.strategies : 0, required: need },
+        s4: { status: r.layer8 ? r.layer8.status : r.status, qualifying: r.layer8 ? r.layer8.qualifying : 0 },
+        fastestMarginSeconds: all.length ? Math.min(...all.map(x => x.marginSeconds)) : null,
+        minimalBuild: all.length ? Math.min(...all.map(x => x.minimalBuild.length)) : null,
+        bypass: req.length ? all.filter(x => req.some(c => !x.tokens.some(t => t.startsWith(c + "=")))).map(x => x.signature) : [] };
+    }
+    return { ok: s2.ok, speciesId: sp.id, physiologyKey: sp.physiologyKey, s1, s2, diagnostics: diag, ms: Date.now() - t0 };
+  }
+
+  BLOOM.species = { KEYS, ROLES, CATEGORIES, DEFAULT_ID, TRAINING_ID, FOOTHOLD, resolve, list, ids, check, checkSpecies, physiologyHash, sameAsReference, provenance,
+    foothold, validateFor };
 })(typeof window !== "undefined" ? window : globalThis);

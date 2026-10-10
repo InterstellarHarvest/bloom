@@ -1,7 +1,9 @@
 // BLOOM — winnability witness solver (bible §10.3 layers 4–6, BLOOM-005) plus strategy diversity and
 // pacing (layers 7–8, BLOOM-006). No DOM.
 //
-//   BLOOM.findWitness(planet, config, traits, { excludeTraits, measurePeak }) → { ok, layer, reason, witness, best, search, early }
+//   BLOOM.findWitness(planet, config, traits, { excludeTraits, measurePeak, species }) → { ok, layer, reason, witness, best, search, early }
+//   (BLOOM-035B) every function here takes opts.species — the PLAYER physiology the proof is for (BLOOM.species.resolve); absent =
+//   the reference physiology (config.referencePlant), which is what world construction always uses
 //   BLOOM.findStrategies(planet, config, traits, { minStrategies, pacing, excludeTraits, measurePeak }) → layers 4–8 verdict
 //   BLOOM.witness.strategyOf(planet, config, traits, items) → { sufficient, coverage, signature } (order-independent)
 //   BLOOM.witness.strategyClasses(planet, config, traits) → static candidate classes (no simulation)
@@ -108,7 +110,10 @@
   function prepare(planet, config, traits, opts) {
     const t0 = Date.now(), V = config.validation, G = config.grow;
     const excluded = new Set(opts.excludeTraits || []), SCN = opts.scenario || null;
-    const probe = BLOOM.createSim(planet, config, traits, { rng: () => 0.5, scenario: SCN });
+    // (BLOOM-035B) opts.species: whose physiology the witness proves (a BLOOM.species.resolve object). Absent = the reference
+    // physiology (config.referencePlant): world construction (generateFromArchetype) never passes one.
+    const SP = opts.species || null, withSpecies = o => (SP ? { ...o, species: SP } : o);
+    const probe = BLOOM.createSim(planet, config, traits, withSpecies({ rng: () => 0.5, scenario: SCN }));
     // static estimates under pressure use the final state (undefined → the probe's own, unpressured offsets)
     const FIN = SCN && SCN.pressure ? BLOOM.pressure.offsetsAt(SCN.pressure, 1, planet.globalClimate) : undefined;
     const M = probe.map, target = probe.winAt + V.winMargin;
@@ -216,11 +221,11 @@
       return { ...r, search, early, bestStatic: { coverage: bestStatic.cov, build: bestStatic.items } }; };
     const CONFIRM = (SCN && SCN.validation && SCN.validation.confirmRngSeeds) || [];
     const run = (cand, opening, measurePeak) => { search.simulations++;
-      const plan = [...opening.o, ...order(cand.items, opening.mode)], r = simulate(planet, config, traits, plan, target, !!measurePeak, SCN);
+      const plan = [...opening.o, ...order(cand.items, opening.mode)], r = simulate(planet, config, traits, plan, target, !!measurePeak, SCN, null, SP);
       if (SCN && FIN) r.order = opening.mode;
       if (r.ok && CONFIRM.length) { // robustness: the same plan under other simulation seeds (each a full run: margin + hold)
         // (confirmation runs verify a found witness; they are counted apart and never use up the search budget)
-        r.confirm = CONFIRM.map(seed => { search.confirmations = (search.confirmations || 0) + 1; const c = simulate(planet, config, traits, plan, target, false, SCN, seed);
+        r.confirm = CONFIRM.map(seed => { search.confirmations = (search.confirmations || 0) + 1; const c = simulate(planet, config, traits, plan, target, false, SCN, seed, SP);
           return { rngSeed: seed, ok: c.ok, marginSeconds: c.marginSeconds, hold: c.hold && { coverage: c.hold.coverage, held: c.hold.held }, lost: c.lost,
             ...(c.climate ? { shocks: c.climate.shocks.length, noEvidence: c.climate.noEvidence } : {}) }; });
         if (r.confirm.some(c => !c.ok)) { r.ok = false; r.unconfirmed = true; } }
@@ -346,8 +351,8 @@
   // final pressure state and record whether the win threshold still holds there (r.hold); ok needs both
   // competition (BLOOM-014): any scenario that changes the run (BLOOM.pressure.isDynamic) must hold the win threshold
   // holdFinalSeconds after the later of the margin and the final pressure state (no pressure clock: after the margin)
-  function simulate(planet, config, traits, plan, target, measurePeak = false, scenario = null, rngSeed = null) {
-    const V = config.validation, sim = BLOOM.createSim(planet, config, traits, { rng: mulberry32(rngSeed ?? V.rngSeed), scenario }); // never Math.random
+  function simulate(planet, config, traits, plan, target, measurePeak = false, scenario = null, rngSeed = null, species = null) {
+    const V = config.validation, sim = BLOOM.createSim(planet, config, traits, { rng: mulberry32(rngSeed ?? V.rngSeed), scenario, ...(species ? { species } : {}) }); // never Math.random
     const sec = t => +(t * config.tickMs / 1000).toFixed(1), P = scenario && scenario.pressure, DYN = BLOOM.pressure.isDynamic(scenario);
     const fullTick = P ? Math.ceil(sim.pressure.fullAt * 1000 / config.tickMs) : 0;
     const holdTicks = DYN ? Math.round(((scenario.validation || {}).holdFinalSeconds || 0) * 1000 / config.tickMs) : 0;

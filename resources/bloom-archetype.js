@@ -89,7 +89,15 @@
     return { planet, generationSeed, sections, requestedWater };
   }
 
-  function generateFromArchetype(archetype, publicSeed, { config, traits, winnability } = {}) {
+  // (BLOOM-035B) WORLD CONSTRUCTION IS SPECIES-FREE: every probe below (origin refuge, refuges, the layer 4–8 witness and the
+  // archetype's requiredConditions) runs on the reference physiology, config.referencePlant — createSim / validatePlanet are called
+  // WITHOUT a species. A species can only accept or reject a finished world (BLOOM.species.validateFor), never shape one, so a
+  // `species` (or a physiology) passed here is refused: one (archetype, seed, WORLD_GEN_VERSION) = one physical planet.
+  const SPECIES_FREE = ["species", "speciesId", "physiology", "referencePlant"];
+  function generateFromArchetype(archetype, publicSeed, opts = {}) {
+    const refused = Object.keys(opts || {}).filter(k => SPECIES_FREE.includes(k));
+    if (refused.length) throw new Error(`generateFromArchetype: world construction is species-free — "${refused.join("\", \"")}" is refused (a World Seed names one physical planet for every species; evaluate a species on the finished world with BLOOM.species.validateFor)`);
+    const { config, traits, winnability } = opts || {};
     if (!config || !traits) throw new Error("generateFromArchetype: pass { config, traits }");
     const bad = checkArchetype(archetype, config);
     if (bad.length) throw new Error(`archetype ${archetype && archetype.id}: ${bad.join("; ")}`);

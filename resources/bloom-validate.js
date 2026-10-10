@@ -147,6 +147,8 @@
         if (JSON.stringify(opts.regenerate(planet.params)) !== JSON.stringify(generated)) err(`determinism: seed ${planet.params.seed} does not reproduce this planet`); }
     }
     // --- layers 4–6 (+ 7–8 when a strategy policy is given): real witness builds under the real economy
+    // (BLOOM-035B) opts.species: layers 4–8 prove THIS player physiology (a BLOOM.species.resolve object); absent = the reference
+    // physiology. Layers 1–3 and determinism are physical (no plant). World construction never passes a species.
     if (opts.winnability && !errors.length) {
       if (!BLOOM.findWitness) err("winnability: resources/bloom-witness.js is not loaded");
       else if (!opts.traits) err("winnability: needs the trait catalogue (opts.traits)");
@@ -155,11 +157,11 @@
         const sp = opts.strategies;
         if (sp) {
           const r = BLOOM.findStrategies(planet, config, opts.traits, { minStrategies: sp.minStrategies, pacing: sp.pacing,
-            excludeTraits: opts.excludeTraits, measurePeak: opts.measurePeak });
+            excludeTraits: opts.excludeTraits, measurePeak: opts.measurePeak, ...(opts.species ? { species: opts.species } : {}) });
           stats.witness = r.first; stats.strategies = r;
           if (!r.ok) err(`layer ${r.layer} (${LAYER[r.layer]})${r.status === "INCONCLUSIVE" ? " INCONCLUSIVE" : ""}: ${r.reason}`);
         } else {
-          const w = BLOOM.findWitness(planet, config, opts.traits, { excludeTraits: opts.excludeTraits, measurePeak: opts.measurePeak });
+          const w = BLOOM.findWitness(planet, config, opts.traits, { excludeTraits: opts.excludeTraits, measurePeak: opts.measurePeak, ...(opts.species ? { species: opts.species } : {}) });
           stats.witness = w;
           if (!w.ok) err(`layer ${w.layer} (${LAYER[w.layer]}): ${w.reason}`);
         }

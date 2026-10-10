@@ -136,6 +136,27 @@ const arche = (ctx, id) => ctx.BLOOM_DATA.archetypes.find(a => a.id === id);
   check(rows.every(r => r.ok), `Q6 · a run without a species == an Organic Hybrid run == the accepted ${BASE_SHA} engine, bit for bit (fixed plan with purchases, colony focus and local upgrades; whole-state fingerprints every 250 ticks) — default, Dying World, Native Competition and Volatile Climate`,
     rows.map(r => `${r.name} ${r.ok ? "=" : "≠"} ${r.fp} (${r.ticks} ticks${r.won ? ", won" : ""})`).join(" · ")); }
 
+// ---------------------------------------------------------------------------------------------------- Q8 · generation refuses species
+{ const A = arche(NOW, "ocean_archipelago"), sp = S.resolve("reed_spire");
+  const refused = [{ species: sp }, { species: null }, { speciesId: "reed_spire" }, { physiology: sp.physiology }, { referencePlant: sp.physiology }]
+    .map(o => throws(() => BLOOM.generateFromArchetype(A, 28, { config: C, traits: D.traits, ...o })));
+  const src = read("resources/bloom-archetype.js").replace(/\/\/.*$/gm, ""), body = src.slice(src.indexOf("function generateFromArchetype"), src.indexOf("root.BLOOM.generateFromArchetype ="));
+  const probes = (body.match(/createSim\([^)]*\)/g) || []), validates = (body.match(/validatePlanet\([^)]*\)/g) || []);
+  check(refused.every(e => e && /species-free/.test(e.message)) && probes.length === 2 && probes.every(c => !/species|physiology/.test(c)) && validates.length === 2 && validates.every(c => !/species|physiology/.test(c)),
+    "Q8 · generateFromArchetype refuses a species (also species: null, speciesId, a physiology or a referencePlant override) and its own probes (origin refuge, refuges) and layer 4–8 validation call createSim / validatePlanet without one — world construction reads config.referencePlant only",
+    `${refused.filter(Boolean).length}/5 refused · probes: ${probes.join(" · ")} · validatePlanet: ${validates.length}`); }
+
+// ---------------------------------------------------------------------------------------------------- Q12 · playability deterministic
+{ const worlds = [["ocean_archipelago", 28], ["desert_world", 25], ["frozen_world", 22]].map(([a, sd]) => [`${a} ${sd}`, BLOOM.play.runSearch({ archetype: arche(NOW, a), scenario: null, seeds: [sd], config: C, traits: D.traits }).planet]);
+  worlds.push(["first_bloom", D.planets.first_bloom]);
+  const strip = v => J({ ...v, ms: 0 }), rows = [];
+  for (const [n, p] of worlds) for (const sp of S.list()) { const a = S.validateFor(p, sp, { config: C, traits: D.traits }), b = S.validateFor(p, sp, { config: C, traits: D.traits });
+    rows.push({ n: `${n} · ${sp.id}`, same: strip(a) === strip(b), ok: a.ok, reused: a.s2.reused, authored: !p.archetype, low: a.s1.low, foot: a.s1.reachableShare }); }
+  const reuseRule = rows.every(r => r.reused === (r.n.endsWith("organic_hybrid") && !r.authored));
+  check(rows.every(r => r.same && r.ok) && reuseRule,
+    "Q12 · the species playability verdict (S1 foothold reported, S2 winnability required) is deterministic — identical twice for all four species on Ocean 28, Desert 25, Frozen 22 and the authored First Bloom — and every one is winnable; Organic Hybrid reuses its world's own layer 4–6 proof on validated worlds (numerically the reference) and is proven afresh on the authored world",
+    rows.map(r => `${r.n}: ${r.ok ? "winnable" : "NOT winnable"}${r.reused ? " (reused)" : ""} foothold ${r.foot}${r.low ? " LOW" : ""}`).join(" · ")); }
+
 // ---------------------------------------------------------------------------------------------------- Q9 · natives species-free
 { const desert = BLOOM.generateFromArchetype(arche(NOW, "desert_world"), 25, { config: C, traits: D.traits }), NC = scen(NOW, "native_competition");
   const view = sp => { const sim = BLOOM.createSim(desert, C, D.traits, { rng: BLOOM.gen.mulberry32(3), scenario: NC, ...(sp ? { species: sp } : {}) }), M = sim.map;
