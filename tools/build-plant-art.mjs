@@ -4,22 +4,33 @@
 //   npm --prefix tools run build:plant-art          (= node tools/build-plant-art.mjs)           write the generated files
 //   npm --prefix tools run check:plant-art          (= node tools/build-plant-art.mjs --check)   rebuild in memory; exit 1 unless the committed files match
 //   node tools/build-plant-art.mjs --root <dir> [--check] [--out <dir>]                      another checkout / another output directory
+//   node tools/build-plant-art.mjs --briefs [--check]                                          (035B-5) write / verify docs/species-art-briefs/
 //
-// INPUTS (the only things an artist edits):
-//   art/plant/contract.json                  the fixed engine contract (canvas, materials, treatments, layers, orientations, components)
-//   art/plant/body-plan.json                 where the skeleton puts every socket (data, not renderer code)
-//   art/plant/packs/<pack>/atlas.png + atlas.json   one art pack: true pixel art + its metadata
+// INPUTS (the only things an artist edits are the packs):
+//   art/plant/contract.json                  the fixed engine contract (canvas, materials, treatments, layers, orientations, components) — SHARED
+//                                            materials / treatments / pixel rules of every plan + the Organic Hybrid (oh-stem) registry
+//   art/plant/body-plan.json                 Organic Hybrid's socket geometry (body-plan@2), referenced by art/plant/body-plans/oh-stem.json
+//   art/plant/body-plans/<plan>.json         (BLOOM-035B-5) one body plan @3 per plan: canvas, ground, crown, axes / architectures, roots, local
+//                                            colony layer, anchors; its contract + grammar
+//   art/plant/contracts/<plan>.json          (BLOOM-035B-5) a plan's component registry (shared parts by reference)
+//   resources/plant-visual/grammars/<plan>.js (BLOOM-035B-5) each plan's grammar (trait → look), bundled below
+//   art/plant/packs/<pack>/atlas.png + atlas.json   one art pack: true pixel art + its metadata; atlas.json "bodyPlan": "<plan>@<version>"
 // OUTPUTS (generated, committed, never edited by hand):
 //   resources/plant-visual/generated/plant-atlas.js            a classic script: BLOOM.plantArt (works over file://, HTTP and any subpath;
-//                                                              no fetch, no image decode, no canvas — synchronous, exact pixels)
-//   resources/plant-visual/generated/plant-atlas-manifest.json what was built from what (hashes), coverage and the per-socket size budget
+//                                                              no fetch, no image decode, no canvas — synchronous, exact pixels); per plan:
+//                                                              bodyPlans, contracts; per pack: its bodyPlan
+//   resources/plant-visual/generated/plant-atlas-manifest.json what was built from what (hashes), coverage, the per-socket size budget
+//                                                              (`sockets` = Organic Hybrid's, `bodyPlans.<plan>.sockets` per plan)
+//   resources/plant-visual/plant-components.js                 (BLOOM-035B-5) the GRAMMAR BUNDLE: every grammars/<plan>.js, concatenated, at the
+//                                                              path every existing page already loads (BLOOM.plantVisual.grammars + .components)
 //
 // VALIDATES (any failure = exit 1, nothing written): PNG decodes (8-bit, not interlaced); alpha is 0 or 255; every sprite / mask / swatch
 // rect is inside the image and no two overlap; no stray opaque pixel outside a rect; every opaque sprite pixel is EXACTLY a declared palette
 // colour; palette colours unique and ramps the contract's length; the swatch strip shows the palette; ids unique and = component[.angle];
 // metadata (attach, layer, orientation, mirror, category, trait, tier) agrees with the contract's component registry; anchors and points lie
 // inside their rects; masks are the sprite's size; every component × angle the renderer can ask for exists in every pack; and every sprite
-// fits inside the canvas at every socket the body plan can put it on (the static no-clipping proof).
+// fits inside the canvas at every socket the body plan can put it on (the static no-clipping proof). (BLOOM-035B-5) All of it PER BODY
+// PLAN: each pack is validated against its own plan's contract, coverage and sockets; a sprite body's points.tip must be its plan's crown point.
 //
 // REPRODUCIBLE: no timestamp, no absolute path, no machine name; keys sorted; the same inputs always give the same bytes. Node built-ins only.
 import fs from "node:fs";
@@ -31,7 +42,9 @@ import { fileURLToPath } from "node:url";
 export const FORMAT = "bloom-plant-art/1";
 export const OUT_JS = "resources/plant-visual/generated/plant-atlas.js";
 export const OUT_MANIFEST = "resources/plant-visual/generated/plant-atlas-manifest.json";
+export const OUT_GRAMMARS = "resources/plant-visual/plant-components.js";
 const SELF = "tools/build-plant-art.mjs", CONTRACT = "art/plant/contract.json", BODY = "art/plant/body-plan.json", PACKS = "art/plant/packs";
+const PLANS = "art/plant/body-plans", GRAMMARS = "resources/plant-visual/grammars";
 const sha256 = b => crypto.createHash("sha256").update(b).digest("hex");
 
 // ================================================================ PNG decoding (the subset pixel editors write: 8-bit, non-interlaced)
@@ -96,14 +109,52 @@ export const socketsOf = (root, body, canvas) => compositorOf(root).sockets(body
 // ================================================================ build
 export function buildPlantArt(root) {
   root = path.resolve(root);
-  const errors = [], read = rel => fs.readFileSync(path.join(root, rel)), rel = p => p.split(path.sep).join("/");
+  const errors = [], read = rel => fs.readFileSync(path.join(root, rel)), rel = p => p.split(path.sep).join("/"), json = (f, buf) => { try { return JSON.parse(buf); } catch (e) { errors.push(`${f}: ${e.message}`); return null; } };
   const contractBuf = read(CONTRACT), bodyBuf = read(BODY), C = JSON.parse(contractBuf), B = JSON.parse(bodyBuf);
   if (C.format !== "bloom-plant-contract@1") errors.push(`${CONTRACT}: format ${C.format}`);
   if (B.format !== "bloom-plant-body-plan@2") errors.push(`${BODY}: format ${B.format}`);
   const MAT = C.materials.map(m => m.name), MID = Object.fromEntries(MAT.map((m, i) => [m, i + 1])), SHADES = Object.fromEntries(C.materials.map(m => [m.name, m.shades]));
-  const LAYERS = C.layers, COMP = C.components, ANG = Object.keys(C.angles), ORI = Object.keys(C.orientations);
-  const sockets = socketsOf(root, B, C.canvas);
+  const ORI = Object.keys(C.orientations), compositor = compositorOf(root);
   const inputs = [[CONTRACT, contractBuf], [BODY, bodyBuf], [COMPOSITOR, read(COMPOSITOR)]];
+
+  // ---- body plans (art/plant/body-plans/<plan>.json @3) + their contracts (shared parts by reference) + grammars
+  const plans = {};
+  for (const f of fs.readdirSync(path.join(root, PLANS)).filter(n => n.endsWith(".json")).sort()) {
+    const file = `${PLANS}/${f}`, buf = read(file), Pl = json(file, buf), E = m => errors.push(`${file}: ${m}`); if (!Pl) continue; inputs.push([file, buf]);
+    if (Pl.format !== "bloom-plant-body-plan@3") { E(`format ${Pl.format} (bloom-plant-body-plan@3)`); continue; }
+    if (Pl.id !== f.replace(/\.json$/, "")) E(`id "${Pl.id}" ≠ file name`);
+    if (!Number.isInteger(Pl.version) || Pl.version < 1) E(`version ${Pl.version}`);
+    if (!Pl.canvas || Pl.canvas.w !== C.canvas.w || Pl.canvas.h !== C.canvas.h) E(`canvas must be the canonical ${C.canvas.w}×${C.canvas.h} (one specimen box for every species in v1)`);
+    if (!Pl.ground || Pl.ground.y !== C.canvas.soilY || !["soil", "waterlogged"].includes(Pl.ground.kind)) E(`ground { y: ${C.canvas.soilY}, kind: soil | waterlogged } required`);
+    if (!Array.isArray(Pl.crown) || Pl.crown[1] !== C.canvas.soilY) E("crown [x, soil row] required");
+    const grammarFile = `${GRAMMARS}/${Pl.grammar}.js`; if (!fs.existsSync(path.join(root, grammarFile))) E(`grammar ${grammarFile} does not exist`);
+    // the plan's contract: the shared contract itself (Organic Hybrid), or a plan contract whose sharedKeys come from it
+    let PC_, contractFile = Pl.contract;
+    if (contractFile === CONTRACT) PC_ = C;
+    else { const cbuf = fs.existsSync(path.join(root, contractFile || "")) ? read(contractFile) : null; if (!cbuf) { E(`contract ${contractFile} does not exist`); continue; }
+      const K = json(contractFile, cbuf); if (!K) continue; inputs.push([contractFile, cbuf]);
+      if (K.format !== "bloom-plant-plan-contract@1" || K.plan !== Pl.id) errors.push(`${contractFile}: format bloom-plant-plan-contract@1 for plan "${Pl.id}" required`);
+      if (K.shared !== CONTRACT) errors.push(`${contractFile}: shared must be ${CONTRACT}`);
+      PC_ = { ...Object.fromEntries((K.sharedKeys || []).map(k => [k, C[k]])), angles: K.angles, layers: K.layers, proceduralLayers: K.proceduralLayers, attach: K.attach, components: K.components, families: K.families, visualCap: K.visualCap };
+      for (const k of ["canvas", "materials", "requiredMaterials", "treatments", "orientations"]) if (!PC_[k]) errors.push(`${contractFile}: sharedKeys must include ${k}`); }
+    const angs = Object.keys(PC_.angles || {});
+    if (JSON.stringify(Pl.angles) !== JSON.stringify(angs)) E(`angles ${JSON.stringify(Pl.angles)} ≠ the contract's ${JSON.stringify(angs)} (same order: lowest → highest)`);
+    for (const [cid, c] of Object.entries(PC_.components)) { if (c.angles && c.angles.some(a => !angs.includes(a))) E(`component ${cid}: angle not one of the plan's ${angs.join(" / ")}`);
+      if (!(c.layer in PC_.layers)) E(`component ${cid}: layer ${c.layer} not in the contract's layers`); if (PC_.attach && !(c.attach in PC_.attach)) E(`component ${cid}: attach ${c.attach} not in the contract's attach kinds`); }
+    // the plan's skeleton: Organic Hybrid's accepted body-plan@2 (referenced), or the plan's own axes
+    let geometry = null, sockets = [];
+    if (Pl.skeleton) { if (Pl.skeleton.kind !== "stem@2" || Pl.skeleton.source !== BODY) E(`skeleton { kind: "stem@2", source: "${BODY}" } is the only referenced skeleton`); else { geometry = B; sockets = compositor.sockets(B, C.canvas); } }
+    else { try { sockets = compositor.sockets(Pl, PC_.canvas); } catch (e) { E(e.message); }
+      for (const [aid, A] of Object.entries(Pl.architectures || {})) for (const ax of A.axes) { if (ax.kind === "sprite" && !(PC_.components[ax.body] && PC_.components[ax.body].attach === "body")) E(`${aid}/${ax.id}: body "${ax.body}" is not a body component of the contract`);
+        for (const [set, idx] of Object.entries(A.leafSets || {})) if (!Array.isArray(idx) || idx.some(i => !Number.isInteger(i))) E(`${aid}: leafSets.${set} must be leaf indices`); } }
+    for (const s of sockets) if (s.x < 0 || s.y < 0 || s.x >= C.canvas.w || s.y >= C.canvas.h) E(`socket ${s.layout}/${s.socket} (${s.x}, ${s.y}) is outside the canvas`);
+    const kinds = new Set(sockets.map(s => s.attach)); for (const [cid, c] of Object.entries(PC_.components)) if (c.attach !== "leafPoint" && !kinds.has(c.attach)) E(`component ${cid}: no socket of attach kind ${c.attach} in this plan`);
+    inputs.push([grammarFile, fs.existsSync(path.join(root, grammarFile)) ? read(grammarFile) : Buffer.alloc(0)]);
+    plans[Pl.id] = { Pl, C: PC_, ref: `${Pl.id}@${Pl.version}`, contractFile, grammarFile, geometry, sockets, packs: [] };
+  }
+  if (!plans["oh-stem"]) errors.push(`${PLANS}/oh-stem.json (Organic Hybrid's plan) is required`);
+  const planOfRef = ref => Object.values(plans).find(q => q.ref === ref) || null;
+
   const packIds = fs.readdirSync(path.join(root, PACKS)).filter(n => fs.statSync(path.join(root, PACKS, n)).isDirectory() && !n.startsWith(".")).sort();
   const packs = {}, coverage = {};
   for (const pid of packIds) {
@@ -111,6 +162,14 @@ export function buildPlantArt(root) {
     if (M.format !== "bloom-plant-atlas@1") E(`format ${M.format}`);
     if (M.pack !== pid) E(`pack id "${M.pack}" ≠ folder "${pid}"`);
     if (!/^[a-z0-9][a-z0-9-]*$/.test(pid)) E("pack folder must be lower-case kebab");
+    // (035B-5) the pack's body plan: its declaration, or — for a PMO-locked pack whose atlas.json the intake owns — a plan's lockedPacks list
+    const locked = Object.values(plans).filter(q => (q.Pl.lockedPacks || []).includes(pid));
+    if (M.bodyPlan === undefined && locked.length !== 1) { E(`atlas.json must declare "bodyPlan": "<plan>@<version>" (${Object.values(plans).map(q => q.ref).join(" / ")})`); continue; }
+    if (M.bodyPlan !== undefined && locked.length) E(`declares bodyPlan although ${locked[0].ref} lists it in lockedPacks`);
+    const plan = M.bodyPlan !== undefined ? planOfRef(M.bodyPlan) : locked[0];
+    if (!plan) { E(`bodyPlan "${M.bodyPlan}" is not a body plan in ${PLANS}/ (${Object.values(plans).map(q => q.ref).join(" / ")})`); continue; }
+    plan.packs.push(pid);
+    const PCt = plan.C, LAYERS = PCt.layers, COMP = PCt.components, sockets = plan.sockets;
     const imgRel = `${dir}/${M.image}`, imgBuf = read(imgRel); inputs.push([`${dir}/atlas.json`, metaBuf], [imgRel, imgBuf]);
     let img; try { img = decodePNG(imgBuf); } catch (e) { E(`${M.image}: ${e.message}`); continue; }
     // palette: colour → material·shade (exact, unique)
@@ -123,6 +182,8 @@ export function buildPlantArt(root) {
     }
     for (const m of C.requiredMaterials) if (!palette[m]) E(`palette: required material "${m}" missing`);
     const env = M.environment || {}; if (!(Array.isArray(env.sky) && env.sky.length === 2 && Array.isArray(env.soil) && env.soil.length === 3 && typeof env.turf === "string")) E("environment: { sky [2], soil [3], turf } required");
+    if (env.water !== undefined && !(Array.isArray(env.water) && env.water.length === 2 && env.water.every(h => /^#[0-9a-f]{6}$/.test(h)))) E("environment.water: [2] #rrggbb colours");
+    if (plan.Pl.ground.kind === "waterlogged" && !env.water) E(`environment.water [2] required: body plan ${plan.ref} stands on waterlogged ground`);
     // rects
     const rects = [], owner = new Uint8Array(img.w * img.h);
     const claim = (r, what) => { if (!isRect(r)) { E(`${what}: rect must be [x, y, w, h] integers`); return false; }
@@ -139,7 +200,7 @@ export function buildPlantArt(root) {
     for (const s of M.sprites || []) {
       const w = `sprite "${s.id}"`, c = COMP[s.component];
       if (ids.has(s.id)) E(`${w}: duplicate id`); ids.add(s.id);
-      if (!c) { E(`${w}: unknown component "${s.component}"`); continue; }
+      if (!c) { E(`${w}: unknown component "${s.component}"${plan.ref !== "oh-stem@1" ? ` (body plan ${plan.ref})` : ""}`); continue; }
       const wantId = c.angles ? `${s.component}.${s.angle}` : s.component;
       if (s.id !== wantId) E(`${w}: id must be "${wantId}" (component[.angle])`);
       if (c.angles ? !c.angles.includes(s.angle) : s.angle !== undefined) E(`${w}: angle "${s.angle}" not allowed (contract: ${JSON.stringify(c.angles)})`);
@@ -185,24 +246,27 @@ export function buildPlantArt(root) {
       }
     }
     for (let i = 0; i < img.w * img.h; i++) if (img.rgba[i * 4 + 3] && !owner[i]) { E(`stray opaque pixel at (${i % img.w}, ${(i / img.w) | 0}) outside every declared rect`); break; }
-    // coverage: everything the renderer can ask for
+    // coverage: everything the renderer can ask for (this plan's contract)
     const missing = [];
     for (const [cid, c] of Object.entries(COMP)) for (const ang of c.angles || [null]) { const base = ang ? `${cid}.${ang}` : cid;
       for (const side of c.orientation === "right" ? ["right", "left"] : [c.orientation]) if (!sprites[`${base}@${side}`]) missing.push(`${base}@${side}`); }
     if (missing.length) E(`missing sprites the renderer can ask for: ${missing.join(", ")}`);
+    // (035B-5) a sprite BODY's crown point: points.tip = anchor + the plan's `top` for the architecture that names it (the rosette crown sits there)
+    if (!plan.geometry) for (const [aid, Ar] of Object.entries(plan.Pl.architectures)) for (const ax of Ar.axes) if (ax.kind === "sprite") { const sp = sprites[`${ax.body}@up`];
+      if (sp && !(sp.points.tip && sp.points.tip[0] - sp.ax === ax.top[0] && sp.points.tip[1] - sp.ay === ax.top[1])) E(`sprite "${ax.body}": points.tip must be the anchor + [${ax.top}] (the ${aid} crown point of body plan ${plan.ref})`); }
     // static no-clipping proof: every sprite inside the canvas at EVERY socket it can attach to (a left / right sprite only at sockets of its
     // side); leaf-point details (attach leafPoint) at every tip / margin point of EVERY leaf drawing at every leaf socket that drawing can take
     const sideOf = key => key.endsWith("@left") ? -1 : key.endsWith("@right") ? 1 : 0;
     const fits = (sp, x, y) => { const x0 = x - sp.ax, y0 = y - sp.ay; return x0 >= 0 && y0 >= 0 && x0 + sp.w <= C.canvas.w && y0 + sp.h <= C.canvas.h; };
     let placementsProven = 0;
-    const pointSprites = Object.entries(sprites).filter(([, sp]) => sp.attach === "leafPoint");
+    const pointSprites = Object.entries(sprites).filter(([, sp]) => sp.attach === "leafPoint"), LEAFY = new Set(["leafSocket", "radialLeaf"]);
     for (const [key, sp] of Object.entries(sprites)) {
       if (sp.attach === "leafPoint") continue;
       const side = sideOf(key);
       for (const so of sockets.filter(q => q.attach === sp.attach && (!side || q.side === side))) {
         placementsProven++;
         if (!fits(sp, so.x, so.y)) E(`clip: ${key} at ${so.layout}/${so.socket} (${so.x}, ${so.y}) leaves the ${C.canvas.w}×${C.canvas.h} canvas`);
-        if (sp.attach !== "leafSocket") continue;
+        if (!LEAFY.has(sp.attach)) continue;
         const x0 = so.x - sp.ax, y0 = so.y - sp.ay;
         for (const pt of [sp.points.tip, ...sp.points.margin].filter(Boolean)) for (const [pk, ps] of pointSprites) { placementsProven++;
           if (!fits(ps, x0 + pt[0], y0 + pt[1])) E(`clip: ${pk} on ${key}'s point (${pt}) at ${so.layout}/${so.socket} leaves the ${C.canvas.w}×${C.canvas.h} canvas`); }
@@ -211,15 +275,21 @@ export function buildPlantArt(root) {
     const render = { stemOutline: "self", ...(M.render || {}) };
     if (!["self", "ink", "none"].includes(render.stemOutline)) E(`render.stemOutline "${render.stemOutline}" (self / ink / none)`);
     for (const k of Object.keys(render)) if (k !== "stemOutline") E(`render.${k}: unknown render option`);
-    packs[pid] = { title: M.title, status: M.status, about: M.about || "", palette, environment: env, render, sprites: stable(sprites) };
-    coverage[pid] = { sprites: Object.keys(sprites).length, authored: (M.sprites || []).length, baked: Object.values(sprites).filter(s => s.baked).length, missing, placementsProven };
+    packs[pid] = { title: M.title, status: M.status, about: M.about || "", palette, environment: env, render, sprites: stable(sprites), ...(M.bodyPlan !== undefined ? { bodyPlan: M.bodyPlan } : {}) };
+    coverage[pid] = { sprites: Object.keys(sprites).length, authored: (M.sprites || []).length, baked: Object.values(sprites).filter(s => s.baked).length, missing, placementsProven, bodyPlan: plan.ref };
   }
+  // the grammar bundle: every plan's grammar at the path existing pages load (plant-components.js); Organic Hybrid's first
+  const gOrder = Object.values(plans).map(q => q.grammarFile).sort((a, b) => (a.endsWith("/oh-stem.js") ? -1 : b.endsWith("/oh-stem.js") ? 1 : a < b ? -1 : 1));
   if (errors.length) return { errors };
   const listed = inputs.map(([p, b]) => ({ path: p, sha256: sha256(b) })).sort((a, b) => a.path < b.path ? -1 : 1);
   listed.push({ path: SELF, sha256: sha256(fs.readFileSync(path.join(root, SELF))) });
   const fingerprint = sha256(FORMAT + "\n" + listed.map(i => `${i.path} ${i.sha256}`).join("\n"));
-  const runtime = stable({ format: FORMAT, fingerprint, materials: MAT, shades: SHADES, contract: { canvas: C.canvas, layers: C.layers, treatments: C.treatments, components: C.components, families: C.families, visualCap: C.visualCap, angles: Object.keys(C.angles), proceduralLayers: C.proceduralLayers },
-    bodyPlan: B, packs, packOrder: packIds });
+  const contractRT = K => ({ canvas: K.canvas, layers: K.layers, treatments: K.treatments, components: K.components, families: K.families, visualCap: K.visualCap, angles: Object.keys(K.angles), proceduralLayers: K.proceduralLayers });
+  const planRT = q => { const P = { ...q.Pl }; delete P.format; delete P.about; delete P.skeleton; delete P.lockedPacks;
+    return { ...P, ref: q.ref, contract: q.Pl.id, ...(q.geometry ? { skeleton: "stem@2", stem2: q.geometry } : { skeleton: "axes" }), packs: q.packs.slice() }; };
+  const runtime = stable({ format: FORMAT, fingerprint, materials: MAT, shades: SHADES, contract: contractRT(C), bodyPlan: B,
+    bodyPlans: Object.fromEntries(Object.values(plans).map(q => [q.Pl.id, planRT(q)])), contracts: Object.fromEntries(Object.values(plans).map(q => [q.Pl.id, contractRT(q.C)])),
+    packs, packOrder: packIds });
   const js = `// GENERATED by ${SELF} from art/plant/ — DO NOT EDIT. Rebuild: npm --prefix tools run build:plant-art (docs/PLANT_SPRITE_PIPELINE_v1.md).
 // format ${FORMAT} · source fingerprint ${fingerprint}
 // Sprite pixels: base64 bytes, one per pixel = material id × 4 + shade (0 = transparent); materials[id - 1] names the material.
@@ -229,11 +299,119 @@ export function buildPlantArt(root) {
   root.BLOOM = Object.assign(root.BLOOM || {}, { plantArt: ART });
 })(typeof window !== "undefined" ? window : globalThis);
 `;
-  const sizeBudget = sockets.map(s => ({ layout: s.layout, socket: s.socket, attach: s.attach, at: [s.x, s.y], side: s.side, ...(s.angle ? { angle: s.angle } : {}), room: s.room }));
-  const manifest = stable({ format: FORMAT, fingerprint, inputs: listed, output: { path: OUT_JS, sha256: sha256(Buffer.from(js, "utf8")), bytes: Buffer.byteLength(js, "utf8") },
-    canvas: C.canvas, packs: Object.fromEntries(packIds.map(p => [p, { title: packs[p].title, status: packs[p].status, ...coverage[p] }])), sockets: sizeBudget });
-  return { errors: [], files: { [OUT_JS]: Buffer.from(js, "utf8"), [OUT_MANIFEST]: Buffer.from(JSON.stringify(manifest, null, 1) + "\n", "utf8") }, manifest, runtime };
+  const grammars = `// GENERATED by ${SELF} — DO NOT EDIT. The plant GRAMMAR BUNDLE (BLOOM-035B-5, docs/SPECIES_BODY_PLANS_v1.md §2.3): every body plan's
+// grammar from ${GRAMMARS}/<plan>.js, concatenated unchanged, at the path every existing page and tool already loads
+// (BLOOM.plantVisual.grammars[<plan>]; BLOOM.plantVisual.components = the Organic Hybrid "oh-stem" grammar, as before 035B).
+// Edit the grammar files, then: npm --prefix tools run build:plant-art.  Sources: ${gOrder.map(f => f.split("/").pop()).join(" · ")}
+` + gOrder.map(f => `\n// ---------------------------------------------------------------- ${f}\n` + read(f).toString("utf8")).join("");
+  const sizeBudget = so => so.map(s => ({ layout: s.layout, socket: s.socket, attach: s.attach, at: [s.x, s.y], side: s.side, ...(s.angle ? { angle: s.angle } : {}), room: s.room }));
+  const files = { [OUT_JS]: Buffer.from(js, "utf8"), [OUT_GRAMMARS]: Buffer.from(grammars, "utf8") };
+  const manifest = stable({ format: FORMAT, fingerprint, inputs: listed, output: { path: OUT_JS, sha256: sha256(files[OUT_JS]), bytes: files[OUT_JS].length },
+    grammars: { path: OUT_GRAMMARS, sha256: sha256(files[OUT_GRAMMARS]), bytes: files[OUT_GRAMMARS].length, sources: gOrder },
+    canvas: C.canvas, packs: Object.fromEntries(packIds.map(p => [p, { title: packs[p].title, status: packs[p].status, ...coverage[p] }])), sockets: sizeBudget(plans["oh-stem"].sockets),
+    bodyPlans: Object.fromEntries(Object.values(plans).map(q => [q.Pl.id, { ref: q.ref, contract: q.contractFile, grammar: q.grammarFile, skeleton: q.geometry ? "stem@2 (" + BODY + ")" : "axes",
+      packs: q.packs, components: Object.keys(q.C.components).length, socketCount: q.sockets.length, sockets: sizeBudget(q.sockets) }])) });
+  files[OUT_MANIFEST] = Buffer.from(JSON.stringify(manifest, null, 1) + "\n", "utf8");
+  return { errors: [], files, manifest, runtime };
 }
+
+// ================================================================ art briefs (BLOOM-035B-5): docs/species-art-briefs/<SPECIES>_ART_BRIEF_v1.{md,json}
+// Generated from the plan manifests, contracts, the build's socket tables and the plan grammars — the numbers cannot drift from the engine.
+export const BRIEFS_DIR = "docs/species-art-briefs";
+const BRIEF = {
+  rosette: { file: "CINDER_ROSETTE_ART_BRIEF_v1", species: "cinder_rosette", name: "Cinder Rosette", role: "dry / heat specialist (concept B1)", proof: "proof-cinder-rosette", pack: "cinder-rosette",
+    silhouette: "a low, wide star of thick, upward-curving leaves pressed to the ground; when it flowers, ONE tall, narrow spike far above the rosette — a strong \"low mass + one vertical line\" read, nothing like Organic Hybrid's leafy upright stem.",
+    anatomy: "ground rosette (radial leaves around a short caudex), thick fleshy leaves with toothed margins and a pale waxy bloom, a shallow wide root fan; reproduction only on the spike (Early Maturity / Seed Output / Waterborne Seeds).",
+    inspiration: "agave and aloe rosettes, Haworthia windows, Welwitschia's ground-hugging habit (inspiration only — never copied).",
+    innate: "A dry specialist is ALREADY succulent at tier 0: `leaf.base` is a thick fleshy rosette leaf. Buying Drought deepens what it has (fatter leaves, translucent window tips, a deeper caudex tuber); buying Flood is drawn too (softer, longer, channelled leaves and breathing roots at the crown).",
+    traits: { cold: "the rosette closes: open → cupped → closed (two-point wool fringe) → ball (three-point fringe); frost hairs on the leaves", heat: "more wax, a steeper leaf angle; Heat T3 swaps in each structure's `.heat` drawing (narrower, upright)", drought: "fatter leaves, a translucent window tip, a deeper caudex (storage tuber T2 / T3); T3 uses the architecture's six-leaf set", flood: "softer, longer, channelled leaves; adventitious breathing roots at the crown (2 / 3 / 4)", salt: "crystals in the leaf channels (tip) + a gland on margin point 1 + authored toothed notches", rad: "the pigment treatment (recolour through the pigment mask; the caudex and spike take it too)", seedOut: "the spike grows: T1 a capsule at its tip; T2 a large capsule + two small ones on spike branches + drifting winged seeds", earlyMat: "the spike grows and blooms (on its tip, or its flower branch when a capsule holds the tip)", waterSeeds: "the spike grows with two corky, buoyant capsules on low stalks" } },
+  candle: { file: "WOOLLY_CANDLE_ART_BRIEF_v1", species: "woolly_candle", name: "Woolly Candle", role: "cold specialist (+ radiation, latent) (concept C1)", proof: "proof-woolly-candle", pack: "woolly-candle",
+    silhouette: "a stout, upright woolly trunk wearing a skirt of dead leaves, topped by a tight rosette of silver-haired leaves; a tall candle-like flower column when it flowers — tall, vertical and soft-edged, the opposite of the dry rosette.",
+    anatomy: "an authored TRUNK sprite (wool + marcescent skirt, one drawing per Cold architecture) + a radial CROWN rosette on the trunk top + a procedural inflorescence COLUMN for reproduction; a taproot.",
+    inspiration: "Andean frailejón (Espeletia), East-African giant groundsels and lobelias (inspiration only — never copied).",
+    innate: "A cold specialist is ALREADY insulated at tier 0: `body.trunk.0` already carries wool and a light skirt; its leaves are already silver-haired and it carries a dark-red pigment tint in its BASE palette (radiation is a latent strength). Buying Cold thickens the skirt and folds the crown; buying Heat is drawn too (lifted, waxed leaves).",
+    traits: { cold: "a thicker skirt per architecture (`body.trunk.1–3`), wool bands on the trunk (T2: two, T3: three), the crown leaves fold up into a night-closed bud; frost hairs", heat: "lifted leaf angles + wax; Heat T3 swaps in each structure's `.heat` drawing (open, pale)", drought: "leaves narrow and silver; a storage root (T2 / T3)", flood: "breathing roots (2 / 3 / 4) and, at T3, stilt-like roots from the trunk base", salt: "crystals on the leaf tips + glands at the leaf bases (margin 1) + toothed notches", rad: "deeper pigment (leaf + trunk + column through the pigment masks)", seedOut: "the column grows: T1 a plumed head at its top; T2 a large head + two small ones + drifting plumed seeds", earlyMat: "the column grows and opens early (flower at its top, or its flower branch)", waterSeeds: "the column grows with two floating plumed achene bundles on low stalks" } },
+  reed: { file: "REED_SPIRE_ART_BRIEF_v1", species: "reed_spire", name: "Reed Spire", role: "wet / flood specialist (+ salt) (concept D1)", proof: "proof-reed-spire", pack: "reed-spire",
+    silhouette: "a clump of tall, thin, upright culms each ending in a starburst umbel — a vertical fountain, the tallest silhouette of the four, with a visible horizontal rhizome in the soil cutaway, standing in shallow water.",
+    anatomy: "3–5 procedural CULMS from a rhizome (the engine draws culms, rhizome and rootlets); the authored parts are the leaves (two sheathing culm leaves per culm, the same drawing on both), the umbels (closed bract umbel = bud, flowering umbel, seed umbels), roots and surface details; ground is waterlogged.",
+    inspiration: "papyrus and sedges (umbels), reeds (Phragmites) and rice (aerenchyma), mangrove salt glands (inspiration only — never copied).",
+    innate: "A wet specialist ALREADY stands in water at tier 0 (the plan's waterlogged ground; three tall culms). Buying Flood adds culms and aerenchyma-banded sheaths; buying Drought is drawn too (three short culms, hardened sheaths, a storage node on the rhizome).",
+    traits: { cold: "the culms bunch (open → dense → bunched → tight); frost hairs on the sheaths and frost collars on every culm node (T2 / T3)", heat: "lifted sheaths + wax; Heat T3 swaps in each structure's `.heat` drawing", drought: "three SHORT culms (s0–s2) instead of the tall ones, hardened sheaths, a storage node on the rhizome (T2 / T3)", flood: "more culms (T1–T2: four, T3: five), aerenchyma-banded sheaths, a deeper rhizome, breathing roots (2 / 3 / 4)", salt: "crystals on the sheath tips + glands (margin 1) + toothed notches", rad: "the pigment treatment (sheaths + culms)", seedOut: "umbels swell to seed heads: T1 the first culm; T2 a large head on the first, small heads on the next two, drifting seeds", earlyMat: "a flowering umbel on the first free culm (else the second culm's flower branch)", waterSeeds: "two floating seed bundles on low stalks (culms 1 and 2)" } } };
+const ANCHOR = { radialLeaf: "the leaf base: the one pixel touching the rosette heart (drawn facing right; leftmost column)", leafSocket: "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+  leafPoint: "the pixel that sits ON the leaf's tip / margin point (usually bottom-centre)", body: "its BOTTOM-CENTRE pixel, on the soil row (68); points.tip = the plan's crown point for that architecture (exact, checked)",
+  stemNode: "its centre pixel (on the trunk / culm / rosette-rim point)", stiltRoot: "its top-left pixel on the trunk's edge 8 rows above the soil (it must reach the soil)", primaryRoot: "its top-centre pixel (hangs from the root socket)",
+  aerialRoot: "its BOTTOM pixel, buried one row into the soil (row 69); it rises upward", apex: "the bottom pixel of its stalk (sits on the apex)", flower: "the bottom pixel of its stalk", seedHead: "the bottom pixel of its stalk", pod: "its stalk's top pixel (the pod hangs below)", drift: "the seed pixel" };
+export function artBriefs(root, built) {
+  root = path.resolve(root);
+  const g = {}, run = f => new Function("globalThis", "window", fs.readFileSync(path.join(root, f), "utf8"))(g, undefined);
+  for (const f of ["content/config.js", "content/traits.js", "resources/plant-visual/plant-visual-model.js", OUT_GRAMMARS]) run(f);
+  const PV = g.BLOOM.plantVisual, RULES = PV.model.rules(g.BLOOM_DATA), C0 = JSON.parse(fs.readFileSync(path.join(root, CONTRACT), "utf8")), M = built.manifest, out = {};
+  for (const [plan, T] of Object.entries(BRIEF)) {
+    const Pl = JSON.parse(fs.readFileSync(path.join(root, `${PLANS}/${plan}.json`), "utf8")), K = JSON.parse(fs.readFileSync(path.join(root, Pl.contract), "utf8")), so = M.bodyPlans[plan].sockets, gr = PV.grammars[plan];
+    const sel = t => gr.select(PV.model.normalize({ traits: t }, RULES)), S0 = sel({});
+    const room = (c) => { if (c.attach === "leafPoint") return null; const ss = so.filter(s => s.attach === c.attach), min = k => Math.min(...ss.map(s => s.room[k]));
+      if (c.orientation === "right") { const back = Math.min(...ss.map(s => s.side < 0 ? s.room.right : s.room.left)), outw = Math.min(...ss.map(s => s.side < 0 ? s.room.left : s.room.right)); return { back, out: outw, up: min("up"), down: min("down") }; }
+      return { left: min("left"), right: min("right"), up: min("up"), down: min("down") }; };
+    const comps = Object.entries(K.components).map(([id, c]) => ({ id, family: c.family, category: c.category, attach: c.attach, layer: c.layer, orientation: c.orientation, mirror: c.mirror, angles: c.angles, trait: c.trait, tier: c.tier,
+      ...(c.variantOf ? { variantOf: c.variantOf } : {}), maxSize: c.maxSize, points: c.points || null, masks: c.masks || null, anchor: ANCHOR[c.attach], drawings: (c.angles || [null]).length, tightestRoom: room(c) }));
+    const trunkTops = []; for (const [aid, A] of Object.entries(Pl.architectures)) for (const ax of A.axes) if (ax.kind === "sprite") trunkTops.push({ architecture: aid, body: ax.body, top: ax.top });
+    const AX = { cold: [1, 2, 3], heat: [1, 2, 3], drought: [1, 2, 3], flood: [1, 2, 3], salt: [1], rad: [1], seedOut: [1, 2], earlyMat: [1], waterSeeds: [1] }, adapt = [];
+    const placeStr = S => S.place.map(p => `${p.component} @ ${[].concat(p.sockets).join(", ")}${p.count !== undefined ? ` (×${p.count})` : ""}`);
+    for (const [id, tiers] of Object.entries(AX)) for (const n of tiers) { const S = sel({ [id]: n }), base = new Set(placeStr(S0));
+      adapt.push({ trait: id, tier: n, architecture: S.architecture, axes: S.axes, leaf: S.leaf.component, leafAngle: S.leaf.angle, leafPoints: S.leafPoints.map(p => `${p.component} @ ${p.at}`), adds: placeStr(S).filter(x => !base.has(x)), treatments: S.treatments, components: S.components, drawn: T.traits[id] }); }
+    const batches = [
+      ["1 · base body", c => (c.family === "leaf" && c.trait === null) || c.id === "bud" || (c.family === "body" && c.tier === 0)],
+      ["2 · cold + heat", c => c.family === "frost" || c.id === "leaf.base.heat" || (c.family === "body" && c.tier > 0)],
+      ["3 · drought", c => /^leaf\.drought\./.test(c.id) || /^root\.storage\./.test(c.id)],
+      ["4 · flood", c => /^leaf\.flood\./.test(c.id) || /^root\.(aerial|stilt)/.test(c.id)],
+      ["5 · salt + radiation", c => c.family === "salt"],
+      ["6 · reproduction + dispersal", c => ["flower", "seedHead", "pod"].includes(c.family)]].map(([name, f]) => { const list = comps.filter(f); return { batch: name, components: list.map(c => c.id), drawings: list.reduce((n, c) => n + c.drawings, 0) }; });
+    batches.push({ batch: "5 · salt + radiation (masks)", components: comps.filter(c => c.masks).map(c => c.id), drawings: 0, note: "every leaf drawing: a `toothed` notch mask (authored rect, required to show Salt notches) and optionally an authored `pigment` / `wax` mask (default \"auto\")" });
+    batches.push({ batch: "7 · metadata closure", components: [], drawings: 0, note: "atlas.json: bodyPlan, palette (18 ramps), environment (sky 2 · soil 3 · turf" + (Pl.ground.kind === "waterlogged" ? " · water 2" : "") + "), render.stemOutline, swatch; every anchor / point" });
+    const J_ = { format: "bloom-species-art-brief@1", generatedBy: `${SELF} --briefs`, species: T.species, name: T.name, role: T.role, bodyPlan: `${Pl.id}@${Pl.version}`, plan: `${PLANS}/${plan}.json`, contract: Pl.contract, grammar: `${GRAMMARS}/${Pl.grammar}.js`,
+      replacesPack: T.proof, newPack: T.pack, canvas: { w: Pl.canvas.w, h: Pl.canvas.h, soilY: C0.canvas.soilY }, ground: Pl.ground, crown: Pl.crown, angles: Pl.angles, partLabels: Pl.partLabels || {},
+      architectures: Object.fromEntries(Object.entries(Pl.architectures).map(([aid, A]) => [aid, { about: A.about, axes: A.axes.map(a => ({ id: a.id, kind: a.kind, from: a.from || "the soil crown", at: a.at || [0, 0], part: a.part, ...(a.height ? { height: a.height } : {}), ...(a.body ? { body: a.body, top: a.top } : {}), ...(a.caudex ? { caudex: a.caudex } : {}), sockets: Object.fromEntries(Object.entries(a.sockets || {}).map(([k, v]) => [k, v.length])) })), leafSets: A.leafSets || {} }])),
+      bodyTops: trunkTops, sockets: so, components: comps, drawings: comps.reduce((n, c) => n + c.drawings, 0), unmutated: { architecture: S0.architecture, axes: S0.axes, leaf: S0.leaf.component, place: placeStr(S0) }, adaptations: adapt, batches,
+      materials: C0.materials, requiredMaterials: C0.requiredMaterials, treatments: C0.treatments, pixel: C0.pixel, layers: K.layers, clipProof: { proofPack: T.proof, placementsProven: M.packs[T.proof].placementsProven, sockets: so.length } };
+    out[plan] = { json: J_, md: briefMd(J_, T, Pl, K) };
+  }
+  out.index = indexMd(out);
+  return out;
+}
+const tbl = (head, rows) => `| ${head.join(" | ")} |\n|${head.map(() => "---").join("|")}|\n` + rows.map(r => `| ${r.join(" | ")} |`).join("\n") + "\n";
+function briefMd(B, T, Pl, K) {
+  const L = [], p = s => L.push(s);
+  p(`# ${B.name} — production art brief v1 (body plan \`${B.bodyPlan}\`)\n`);
+  p(`**Status: BRIEF for the next phase (species art production). No final art exists yet.** The pack in production today is \`${B.replacesPack}\` — **TEMPORARY PIPELINE PROOF — NOT FINAL ART** (flat engineering fills + a hazard checker); it only proves that every legal model renders. Your delivery replaces it as \`art/plant/packs/${B.newPack}/\` (or the id the PMO assigns), declaring \`"bodyPlan": "${B.bodyPlan}"\`.\n`);
+  p(`GENERATED by \`node tools/build-plant-art.mjs --briefs\` from \`${B.plan}\`, \`${B.contract}\`, the build's socket table and the plan grammar \`${B.grammar}\` — every number below is the engine's own; the machine-readable twin is \`${T.file}.json\`. Do not redesign the plan: if a number does not work for the drawing, ask for an engine change (a plan / contract change is reviewed separately). Companion documents: \`docs/SPECIES_BODY_PLANS_v1.md\` (§${{ rosette: "3.1", candle: "3.2", reed: "3.3" }[Pl.id]} concept, §2 architecture), \`docs/PLANT_SPRITE_PIPELINE_v1.md\` § ARTIST_HANDOFF (the shared pixel contract every pack follows), \`art/plant/README.md\`.\n`);
+  p(`## 1. The species\n\n- **Role:** ${B.role}. Species id \`${B.species}\` → \`{ bodyPlan: "${B.bodyPlan}", pack: "${B.newPack}" }\` once accepted.\n- **Silhouette:** ${T.silhouette}\n- **Anatomy:** ${T.anatomy}\n- **Inspiration:** ${T.inspiration}\n- **Innate strength in the base body:** ${T.innate}\n${Object.keys(B.partLabels).length ? `- **Room part labels** (the rooms keep the seven logical parts; this plan renames): ${Object.entries(B.partLabels).map(([k, v]) => `\`${k}\` → "${v}"`).join(", ")}.\n` : ""}`);
+  p(`## 2. Canvas, soil, crown\n\n**${B.canvas.w} × ${B.canvas.h} logical pixels**, y down — the ONE canonical specimen canvas of every species (no per-species size). Soil row **${B.canvas.soilY}** (rows 0–${B.canvas.soilY - 1} sky, ${B.canvas.soilY}–${B.canvas.h - 1} soil cutaway); crown **(${B.crown[0]}, ${B.crown[1]})**; ground \`${B.ground.kind}\`${B.ground.kind === "waterlogged" ? " — the specimen box paints a 3-row standing-water band (rows 65–67) from your `environment.water` colours; culms rise through it" : ""}. Shown at whole-number nearest-neighbour scales only (rooms 2× / 3×, journal 3×). 1 logical pixel = 1 art pixel.\n`);
+  p(`## 3. Plan axes per architecture (Cold selects the architecture)\n\nThe engine draws the procedural parts (stems / caudex / culms / column / spike, stalks to branch sockets, ${Pl.roots.kind === "rhizome" ? "the rhizome, its risers and rootlets" : "the taproot and lateral roots"}) from your \`stem\` / \`root\` colours; you author every sprite. Angles authored for this plan, lowest → highest: ${B.angles.map(a => `\`${a}\` (${K.angles[a]})`).join(" · ")}.\n`);
+  p(tbl(["Architecture", "About", "Axes (kind · origin · size · sockets)"], Object.entries(B.architectures).map(([id, A]) => [`\`${id}\``, A.about, A.axes.map(a => `**${a.id}** ${a.kind} from ${a.from}${a.at[0] || a.at[1] ? ` +[${a.at}]` : ""}${a.height ? ` h ${a.height}` : ""}${a.body ? ` body \`${a.body}\` top [${a.top}]` : ""}${a.caudex ? ` caudex h ${a.caudex.height}` : ""} — ${Object.entries(a.sockets).map(([k, v]) => `${k} ${v}`).join(", ") || "no sockets"}`).join("<br>")])));
+  if (B.bodyTops.length) p(`\n**Sprite body crown points (exact, checked by the build):** ${B.bodyTops.map(t => `\`${t.body}\` (${t.architecture}): points.tip = anchor + [${t.top}]`).join(" · ")}. The crown rosette is placed on that pixel, so the trunk's top must end exactly there.\n`);
+  p(`\n## 4. Socket table (${B.sockets.length} sockets; x, y on the canvas; room = free pixels to each edge)\n`);
+  p(tbl(["Arch.", "Socket", "Attach", "x, y", "Side", "Angle", "Room L · R · U · D"], B.sockets.map(s => [s.layout, `\`${s.socket}\``, s.attach, `${s.at[0]}, ${s.at[1]}`, s.side || "", s.angle || "", `${s.room.left} · ${s.room.right} · ${s.room.up} · ${s.room.down}`])));
+  p(`\n## 5. Component inventory (${B.components.length} components, ${B.drawings} drawings + masks)\n\nEvery pack of this plan must provide every component × angle (drawn facing right where \`orientation: right\`; the build bakes the mirrored left twin unless you author one). Max extent = the tightest room from the anchor across every socket the component can take (right-facing: back = toward the plant, out = away). The build's static clip proof places your exact sprites at every socket (the proof pack: ${B.clipProof.placementsProven} placements).\n`);
+  p(tbl(["Component", "Family · category", "Attach · layer", "Orient. · mirror", "Angles", "Trait / tier", "maxSize", "Points · masks", "Anchor pixel", "Max extent from the anchor"], B.components.map(c => [`\`${c.id}\``, `${c.family} · ${c.category}`, `${c.attach} · ${c.layer}`, `${c.orientation} · ${c.mirror}`, c.angles ? c.angles.join(" / ") : "—", c.trait ? `${c.trait} ${c.tier}` : "base", `${c.maxSize[0]}×${c.maxSize[1]}`, `${c.points ? c.points.join("+") : "—"} · ${c.masks ? c.masks.join(", ") : "—"}`, c.anchor,
+    c.tightestRoom ? (c.tightestRoom.back !== undefined ? `back ${c.tightestRoom.back} · out ${c.tightestRoom.out} · up ${c.tightestRoom.up} · down ${c.tightestRoom.down}` : `${c.tightestRoom.left} · ${c.tightestRoom.right} · ${c.tightestRoom.up} · ${c.tightestRoom.down}`) : "rides on leaf points — proven per drawing"])));
+  p(`\nLeaf drawings declare \`points.tip\` + exactly 3 \`points.margin\` (on opaque pixels): frost hairs and salt details ride on them (Salt: crystal on the tip + gland on margin 1; with Cold too, hairs move to margins 0 and 2). \`toothed\` is an authored notch mask (pixels CLEARED for Salt); \`pigment\` / \`wax\` default to "auto".\n`);
+  p(`## 6. Adaptation variants — what each trait tier draws on this plan\n\n(from the plan grammar; "adds" = placements beyond the unmutated plant. Unmutated: architecture \`${B.unmutated.architecture}\`, axes ${B.unmutated.axes.join(", ")}, leaf \`${B.unmutated.leaf}\`, ${B.unmutated.place.join("; ")}.)\n`);
+  p(tbl(["Trait · tier", "What is drawn", "Architecture · axes", "Leaf drawing", "Adds", "Treatments"], B.adaptations.map(a => [`${a.trait} T${a.tier}`, a.drawn, `${a.architecture} · ${a.axes.join(", ")}`, `\`${a.leaf}\` (shift ${a.leafAngle.shift}, cap ${a.leafAngle.cap})`, [...a.leafPoints.map(x => `${x} (leaf points)`), ...a.adds].join("<br>") || "—", a.treatments.map(t => `${t.id} ${t.level}`).join(", ") || "—"])));
+  p(`\nGameplay Drought / Flood tiers above 3 draw EXACTLY the T3 drawings (no T4+ asset is ever requested). Strained colonies step every leaf one authored angle lower and get the shared stress tint; no extra drawing.\n`);
+  p(`## 7. Spread / reproduction components\n\n${B.components.filter(c => c.category === "reproductive").map(c => `- \`${c.id}\` (${c.maxSize[0]}×${c.maxSize[1]}, ${c.attach}): ${c.family === "bud" ? "BASE — closed, never an open flower" : c.trait === "earlyMat" ? "Early Maturity" : c.trait === "seedOut" ? `Seed Output T${c.tier}` : "Waterborne Seeds"}`).join("\n")}\n`);
+  p(`## 8. Palette, pixels, mirrors\n\n- **18 materials** in the shared contract order (\`art/plant/contract.json\`): ${B.materials.map(m => `\`${m.name}\`${m.treatmentOnly ? "*" : ""} (${m.shades})`).join(", ")} — * = treatment target only, NEVER drawn. Shade 0 → 3 runs dark → light (treatments map shade for shade; Heat T1 wax touches shades 2–3). Every colour unique across the pack, \`#rrggbb\` lower-case; required: ${B.requiredMaterials.join(", ")}.\n- **Environment** (specimen box, separate from the plant palette): sky [top, bottom], soil [stratum A, stratum B, pebble], turf${B.ground.kind === "waterlogged" ? ", **water [deep, light] (required: waterlogged ground)**" : ""}; optional \`render.stemOutline\` self / ink / none for the procedural parts.\n- **Alpha:** ${B.pixel.alpha}\n- **Palette:** ${B.pixel.palette}\n- **Strays / masks:** ${B.pixel.strays}; ${B.pixel.mask}\n- **Mirrors:** right-facing components are drawn facing right; the build bakes the left twin (anchor x and points mirrored) unless an explicit \`orientation: "left"\` drawing of the same id exists. No rotation ever happens at runtime; every angle is a drawing.\n`);
+  p(`## 9. Delivery batches (independent per species — review this pack on its own)\n\n${B.batches.map(b => `- **Batch ${b.batch}** — ${b.drawings ? `${b.drawings} drawings: ` : ""}${b.components.map(c => `\`${c}\``).join(", ") || ""}${b.note ? ` ${b.note}` : ""}`).join("\n")}\n\nRecommended species order (packs are independent): Cinder Rosette → Woolly Candle → Reed Spire, or the PMO's priority.\n`);
+  p(`## 10. Acceptance\n\n1. Each batch: PNG(s) + per-sprite metadata (rect, anchor, points, masks) + a preview, reviewed by the PMO.\n2. Final: \`PMO_FINAL_ACCEPTANCE.json\` (SHA-256 + bytes of every approved delivery ZIP), kept unchanged with the ZIPs under \`art/plant/intake/${B.newPack}/\`, as for Organic Hybrid; intake assembles \`art/plant/packs/${B.newPack}/atlas.{png,json}\` mechanically (a generalized \`tools/intake-plant-art.mjs --pack <id>\` is planned — design §2.6; not built in 035B-5).\n3. \`npm --prefix tools run build:plant-art\` passes: palette exact, binary alpha, no strays, metadata == \`${B.contract}\`, every component × angle × side present, the body crown points exact, and the static clip proof of every sprite at every socket inside ${B.canvas.w}×${B.canvas.h}; \`check:plant-art\` passes.\n4. \`tools/body-plan-check.js\` P1–P4 with the real pack: every legal model renders unclipped (≥ 1 px margin), every §2.4 axis visibly distinct, every specimen part anchor on the anatomy; then the species is switched from the proof pack to the real pack (one line in \`content/species.js\`) and the integration suites run with it.\n`);
+  return L.join("\n");
+}
+function indexMd(out) {
+  return `# Species art briefs (BLOOM-035B-5)\n\nProduction art briefs for the three accepted species body plans, GENERATED from the engine (\`node tools/build-plant-art.mjs --briefs\`; \`--briefs --check\` proves they match). Each Markdown brief has a machine-readable JSON twin with the same numbers. **No final art exists yet**: the packs in use are TEMPORARY PIPELINE PROOF — NOT FINAL ART. Commission and review each species as an independent pack.\n\n` +
+    tbl(["Species", "Body plan", "Brief", "Drawings", "Sockets", "Replaces the proof pack"], ["rosette", "candle", "reed"].map(k => { const B = out[k].json; return [`${B.name} (${B.role})`, `\`${B.bodyPlan}\``, `[${BRIEF[k].file}.md](${BRIEF[k].file}.md) · [json](${BRIEF[k].file}.json)`, `${B.drawings} (+ masks)`, `${B.sockets.length}`, `\`${B.replacesPack}\``]; })) +
+    `\nShared rules for every pack: \`docs/PLANT_SPRITE_PIPELINE_v1.md\` § ARTIST_HANDOFF (pixel format, palette, anchors, masks). Organic Hybrid's art is final and LOCKED (\`art/plant/intake/organic-hybrid/\`); it has no brief here.\n`;
+}
+export function briefFiles(root, built) { const b = artBriefs(root, built), files = {};
+  for (const k of ["rosette", "candle", "reed"]) { files[`${BRIEFS_DIR}/${BRIEF[k].file}.md`] = Buffer.from(b[k].md, "utf8"); files[`${BRIEFS_DIR}/${BRIEF[k].file}.json`] = Buffer.from(JSON.stringify(b[k].json, null, 1) + "\n", "utf8"); }
+  files[`${BRIEFS_DIR}/README.md`] = Buffer.from(b.index, "utf8"); return files; }
 
 // ================================================================ CLI
 if (process.argv[1] && fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url))) {
@@ -241,7 +419,12 @@ if (process.argv[1] && fs.realpathSync(process.argv[1]) === fs.realpathSync(file
   const root = path.resolve(opt("--root") || path.join(path.dirname(fileURLToPath(import.meta.url)), "..")), out = path.resolve(opt("--out") || root);
   const r = buildPlantArt(root);
   if (r.errors.length) { console.error(`build-plant-art: ${r.errors.length} error(s)\n  ` + r.errors.join("\n  ")); process.exit(1); }
-  if (argv.includes("--check")) {
+  if (argv.includes("--briefs")) {   // (035B-5) docs/species-art-briefs/ from the plans, contracts, socket tables and grammars
+    const files = briefFiles(root, r), check = argv.includes("--check");
+    const bad = Object.entries(files).filter(([p, b]) => { const f = path.join(out, p); return !fs.existsSync(f) || !fs.readFileSync(f).equals(b); }).map(([p]) => p);
+    if (check) { if (bad.length) { console.error(`briefs --check FAILED — regenerate: node tools/build-plant-art.mjs --briefs\n  ${bad.join("\n  ")}`); process.exit(1); } console.log(`briefs --check OK — ${Object.keys(files).length} brief files match the engine`); }
+    else { for (const [p, b] of Object.entries(files)) { fs.mkdirSync(path.dirname(path.join(out, p)), { recursive: true }); fs.writeFileSync(path.join(out, p), b); } console.log(`briefs — ${Object.keys(files).join(" · ")}`); }
+  } else if (argv.includes("--check")) {
     const bad = Object.entries(r.files).filter(([p, b]) => { const f = path.join(out, p); return !fs.existsSync(f) || !fs.readFileSync(f).equals(b); }).map(([p]) => p);
     if (bad.length) { console.error(`check:plant-art FAILED — the committed generated files differ from a clean rebuild:\n  ${bad.join("\n  ")}\nRun: npm --prefix tools run build:plant-art`); process.exit(1); }
     console.log(`check:plant-art OK — ${Object.keys(r.files).length} generated files match a clean rebuild (fingerprint ${r.manifest.fingerprint.slice(0, 12)})`);
