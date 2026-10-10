@@ -1,0 +1,313 @@
+{
+ "mismatches": {
+  "habitable": 0,
+  "class": 0,
+  "winnable": 0,
+  "spend": 0,
+  "purchases": 0,
+  "win": 0,
+  "distinct": 0,
+  "missing": 0,
+  "compared": 1432
+ },
+ "flags": [],
+ "summary": {
+  "organic_hybrid": {
+   "ocean_archipelago": {
+    "n": 118,
+    "median": 0.4367,
+    "classes": {
+     "F": 84,
+     "P": 25,
+     "E": 9
+    },
+    "lowFoothold": 7,
+    "winnable": 118,
+    "verdictOk": 118,
+    "strategies": {
+     "l7": 118,
+     "l8": 118,
+     "two": 118,
+     "tooFast": 2,
+     "bypass": 0,
+     "medianDistinct": 2
+    }
+   },
+   "desert_world": {
+    "n": 120,
+    "median": 0.1378,
+    "classes": {
+     "F": 2,
+     "P": 21,
+     "E": 97
+    },
+    "lowFoothold": 24,
+    "winnable": 120,
+    "verdictOk": 120,
+    "strategies": {
+     "l7": 120,
+     "l8": 120,
+     "two": 120,
+     "tooFast": 10,
+     "bypass": 0,
+     "medianDistinct": 2
+    }
+   },
+   "frozen_world": {
+    "n": 120,
+    "median": 0.2731,
+    "classes": {
+     "F": 29,
+     "P": 64,
+     "E": 27
+    },
+    "lowFoothold": 11,
+    "winnable": 120,
+    "verdictOk": 120,
+    "strategies": {
+     "l7": 120,
+     "l8": 120,
+     "two": 120,
+     "tooFast": 23,
+     "bypass": 0,
+     "medianDistinct": 2
+    }
+   },
+   "fill": {
+    "F": 9.391304347826088,
+    "P": 9.818181818181818,
+    "E": 8.1203007518797
+   }
+  },
+  "cinder_rosette": {
+   "ocean_archipelago": {
+    "n": 118,
+    "median": 0.0975,
+    "classes": {
+     "F": 3,
+     "P": 24,
+     "E": 91
+    },
+    "lowFoothold": 14,
+    "winnable": 118,
+    "verdictOk": 118,
+    "strategies": {
+     "l7": 106,
+     "l8": 91,
+     "two": 106,
+     "tooFast": 0,
+     "bypass": 0,
+     "medianDistinct": 2
+    }
+   },
+   "desert_world": {
+    "n": 120,
+    "median": 0.3338,
+    "classes": {
+     "F": 54,
+     "P": 47,
+     "E": 19
+    },
+    "lowFoothold": 6,
+    "winnable": 120,
+    "verdictOk": 120,
+    "strategies": {
+     "l7": 95,
+     "l8": 43,
+     "two": 95,
+     "tooFast": 83,
+     "bypass": 11,
+     "medianDistinct": 2
+    }
+   },
+   "frozen_world": {
+    "n": 120,
+    "median": 0.1762,
+    "classes": {
+     "F": 5,
+     "P": 36,
+     "E": 79
+    },
+    "lowFoothold": 18,
+    "winnable": 120,
+    "verdictOk": 120,
+    "strategies": {
+     "l7": 120,
+     "l8": 112,
+     "two": 120,
+     "tooFast": 3,
+     "bypass": 0,
+     "medianDistinct": 2
+    }
+   },
+   "fill": {
+    "F": 17.419354838709676,
+    "P": 10.093457943925234,
+    "E": 5.714285714285715
+   }
+  },
+  "woolly_candle": {
+   "ocean_archipelago": {
+    "n": 118,
+    "median": 0.2934,
+    "classes": {
+     "F": 45,
+     "P": 39,
+     "E": 34
+    },
+    "lowFoothold": 8,
+    "winnable": 118,
+    "verdictOk": 118,
+    "strategies": {
+     "l7": 115,
+     "l8": 110,
+     "two": 115,
+     "tooFast": 0,
+     "bypass": 0,
+     "medianDistinct": 2
+    }
+   },
+   "desert_world": {
+    "n": 120,
+    "median": 0.1228,
+    "classes": {
+     "F": 2,
+     "P": 15,
+     "E": 103
+    },
+    "lowFoothold": 20,
+    "winnable": 120,
+    "verdictOk": 120,
+    "strategies": {
+     "l7": 120,
+     "l8": 118,
+     "two": 120,
+     "tooFast": 27,
+     "bypass": 0,
+     "medianDistinct": 2
+    }
+   },
+   "frozen_world": {
+    "n": 120,
+    "median": 0.3741,
+    "classes": {
+     "F": 72,
+     "P": 38,
+     "E": 10
+    },
+    "lowFoothold": 5,
+    "winnable": 120,
+    "verdictOk": 120,
+    "strategies": {
+     "l7": 119,
+     "l8": 66,
+     "two": 119,
+     "tooFast": 80,
+     "bypass": 7,
+     "medianDistinct": 2
+    }
+   },
+   "fill": {
+    "F": 9.07563025210084,
+    "P": 11.73913043478261,
+    "E": 7.346938775510204
+   }
+  },
+  "reed_spire": {
+   "ocean_archipelago": {
+    "n": 118,
+    "median": 0.5902,
+    "classes": {
+     "F": 113,
+     "P": 5,
+     "E": 0
+    },
+    "lowFoothold": 2,
+    "winnable": 118,
+    "verdictOk": 118,
+    "strategies": {
+     "l7": 83,
+     "l8": 79,
+     "two": 83,
+     "tooFast": 2,
+     "bypass": 0,
+     "medianDistinct": 2
+    }
+   },
+   "desert_world": {
+    "n": 120,
+    "median": 0.0523,
+    "classes": {
+     "F": 0,
+     "P": 1,
+     "E": 119
+    },
+    "lowFoothold": 36,
+    "winnable": 120,
+    "verdictOk": 120,
+    "strategies": {
+     "l7": 116,
+     "l8": 116,
+     "two": 116,
+     "tooFast": 2,
+     "bypass": 0,
+     "medianDistinct": 2
+    }
+   },
+   "frozen_world": {
+    "n": 120,
+    "median": 0.2194,
+    "classes": {
+     "F": 12,
+     "P": 56,
+     "E": 52
+    },
+    "lowFoothold": 15,
+    "winnable": 120,
+    "verdictOk": 120,
+    "strategies": {
+     "l7": 120,
+     "l8": 120,
+     "two": 120,
+     "tooFast": 13,
+     "bypass": 0,
+     "medianDistinct": 2
+    }
+   },
+   "fill": {
+    "F": 8.640000000000002,
+    "P": 17.41935483870968,
+    "E": 6.315789473684211
+   }
+  }
+ },
+ "best": {
+  "ocean_archipelago": {
+   "n": 118,
+   "cnt": {
+    "reed_spire": 106,
+    "organic_hybrid": 14,
+    "woolly_candle": 2
+   }
+  },
+  "desert_world": {
+   "n": 120,
+   "cnt": {
+    "cinder_rosette": 119,
+    "woolly_candle": 10,
+    "organic_hybrid": 9,
+    "reed_spire": 2
+   }
+  },
+  "frozen_world": {
+   "n": 120,
+   "cnt": {
+    "organic_hybrid": 28,
+    "reed_spire": 9,
+    "woolly_candle": 95,
+    "cinder_rosette": 2
+   }
+  }
+ },
+ "ms": 339834
+}

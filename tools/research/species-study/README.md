@@ -1,4 +1,10 @@
-# Species strategic-distinctness study (BLOOM-035A research tool)
+# Species strategic-distinctness study (BLOOM-035A research tool) — HISTORICAL
+
+> **BLOOM-035B:** superseded by [`tools/research/species-study.js`](../species-study.js), which reruns this exact sample on the production
+> species code (content/species.js, `createSim(…, { species })`, the survey's assessment, `BLOOM.species.validateFor`) and compares every
+> world with the results kept here (`results/`, the accepted 035A data). These scripts applied each physiology as a derived config over
+> `config.genomeBase`; since 035B `genomeBase` no longer exists and `deriveConfig` refuses physiology overrides, so they no longer run —
+> they are kept as the record of the accepted method.
 
 **Research only — not a QA gate, not production.** Read-only against the repository: it loads the BLOOM classic scripts, generates /
 evaluates worlds, and writes results into this folder. It never edits a planet, the config or any content file. Results and method:
