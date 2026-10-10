@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: b172d1d0b09de56dc48b1fcef741892c21b18535fee51bc6120d10680447b20f  (39 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: 68d43a0c807f2d7837a22d04fc79800c50033cfc58f7aac568de4d7c3581d955  (40 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {
@@ -15693,6 +15693,278 @@
     }
   });
 
+  // resources/species-select/species-select.js
+  var species_select_exports = {};
+  __export(species_select_exports, {
+    SpeciesSelect: () => SpeciesSelect
+  });
+  function attachCss() {
+    if (document.querySelector('link[data-bloom="species-select"]')) return;
+    const l2 = document.createElement("link");
+    l2.rel = "stylesheet";
+    l2.href = CSS_URL;
+    l2.dataset.bloom = "species-select";
+    document.head.appendChild(l2);
+  }
+  var CSS_URL, esc5, CAT, HABIT, T_AXIS, M_AXIS, signed2, SpeciesSelect;
+  var init_species_select = __esm({
+    "resources/species-select/species-select.js"() {
+      init_portable_root();
+      init_bloom_icons();
+      CSS_URL = new URL("./species-select.css", sourceUrl("resources/species-select/species-select.js")).href;
+      esc5 = (s2) => String(s2 == null ? "" : s2).replace(/[&<>"]/g, (c2) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c2]);
+      CAT = { Temperature: ["temperature", "temp"], Water: ["water", "water"], Soil: ["soil", "soil"], Hazard: ["hazard", "hazard"] };
+      HABIT = { "oh-stem": "Leafy stem", rosette: "Ground rosette", candle: "Woolly trunk", reed: "Culm clump" };
+      T_AXIS = [-45, 45];
+      M_AXIS = [0, 100];
+      signed2 = (t2) => (t2 > 0 ? "+" : t2 < 0 ? "−" : "") + Math.abs(t2) + " °C";
+      SpeciesSelect = class {
+        constructor(host2, { species = null, reducedMotion = null, onChoose = null, onBack = null } = {}) {
+          if (!host2 || typeof host2.appendChild !== "function") throw new TypeError("SpeciesSelect: host must be a DOM element");
+          const B2 = window.BLOOM;
+          if (!B2 || !B2.species) throw new Error("SpeciesSelect: load content/species.js and resources/bloom-species.js");
+          if (!B2.plantSpecimen || typeof B2.plantSpecimen.drawSpecies !== "function") throw new Error("SpeciesSelect: needs the plant sprite runtime (BLOOM.plantSpecimen.drawSpecies)");
+          this.host = host2;
+          this.onChoose = onChoose;
+          this.onBack = onBack;
+          this.forcedReducedMotion = reducedMotion;
+          this.list = B2.species.list();
+          this.reference = this.list.find((s2) => s2.id === B2.species.DEFAULT_ID);
+          const start = species ? B2.species.resolve(typeof species === "string" ? species : species.id) : this.reference;
+          this.index = Math.max(0, this.list.indexOf(start));
+          this.opened = null;
+          this.state = "cards";
+          this.disposed = false;
+          this.mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+          this.stats = { opens: 0, closes: 0, moves: 0, chosen: null };
+          attachCss();
+          this._build();
+          this.ready = new Promise((res) => {
+            const l2 = document.querySelector('link[data-bloom="species-select"]'), done = () => res(this);
+            if (!l2 || l2.sheet) return done();
+            l2.addEventListener("load", done, { once: true });
+            l2.addEventListener("error", done, { once: true });
+            setTimeout(done, 3e3);
+          });
+        }
+        get reducedMotion() {
+          return this.forcedReducedMotion ?? !!(this.mq && this.mq.matches);
+        }
+        get selected() {
+          return this.list[this.index];
+        }
+        /** Focus the selected card (the radiogroup's one tab stop). */
+        focus() {
+          if (this.state === "cards") this.cards[this.index].focus({ preventScroll: false });
+          else this.dossierTitle.focus({ preventScroll: true });
+        }
+        /** Open the dossier of species `id` (default: the selected card). */
+        open(id2 = this.selected.id) {
+          if (this.disposed) return false;
+          const i2 = this.list.findIndex((s2) => s2.id === id2);
+          if (i2 < 0) throw new Error(`SpeciesSelect: unknown species "${id2}"`);
+          this._select(i2, false);
+          this.opened = this.list[i2];
+          this.state = "dossier";
+          this.stats.opens++;
+          this._fillDossier(this.opened);
+          this.root.dataset.state = "dossier";
+          this.root.dataset.species = this.opened.id;
+          this.cardsEl.inert = true;
+          this.dossier.inert = false;
+          this.dossier.hidden = false;
+          this.headTools.inert = true;
+          if (!this.reducedMotion) {
+            this.dossier.animate([{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "none" }], { duration: 260, easing: "cubic-bezier(.2,.8,.2,1)" });
+            this.cards[i2].animate([{ transform: "scale(1)" }, { transform: "scale(1.035)" }], { duration: 260, easing: "cubic-bezier(.2,.8,.2,1)", fill: "forwards" });
+          }
+          this.dossierTitle.focus({ preventScroll: true });
+          return true;
+        }
+        /** Close the dossier: focus returns to its card. */
+        close() {
+          if (this.state !== "dossier") return false;
+          const i2 = this.index;
+          this.state = "cards";
+          this.opened = null;
+          this.stats.closes++;
+          this.root.dataset.state = "cards";
+          delete this.root.dataset.species;
+          this.dossier.hidden = true;
+          this.dossier.inert = true;
+          this.cardsEl.inert = false;
+          this.headTools.inert = false;
+          for (const a2 of this.cards[i2].getAnimations()) a2.cancel();
+          this.cards[i2].focus({ preventScroll: true });
+          return true;
+        }
+        /** "Survey for <name>": hand the chosen species to the consumer (the entry fades to the survey). */
+        choose() {
+          if (this.state !== "dossier" || !this.opened) return false;
+          this.stats.chosen = this.opened.id;
+          this.state = "chosen";
+          this.root.dataset.state = "chosen";
+          if (this.onChoose) this.onChoose(this.opened);
+          return true;
+        }
+        back() {
+          if (this.state === "dossier") return this.close();
+          if (this.state !== "cards") return false;
+          if (this.onBack) this.onBack();
+          return true;
+        }
+        dispose() {
+          if (this.disposed) return;
+          this.disposed = true;
+          this.state = "disposed";
+          this.root.removeEventListener("keydown", this._onKey);
+          this.root.removeEventListener("click", this._onClick);
+          this.root.remove();
+        }
+        // ---------------------------------------------------------------- DOM
+        _build() {
+          const r2 = this.root = document.createElement("section");
+          r2.className = "ss";
+          r2.dataset.state = "cards";
+          r2.setAttribute("aria-label", "Choose your plant species");
+          if (this.forcedReducedMotion === true) r2.classList.add("rm");
+          const tid = "ss-title-" + Math.floor(Math.random() * 1e9).toString(36), did = tid + "-d";
+          r2.innerHTML = `
+      <header class="ss-head">
+        <button type="button" class="ss-btn ghost" data-act="back">${ico("back")}<span>Back</span></button>
+        <div class="ss-title"><span class="ss-kicker">Expedition</span><h1 id="${tid}">Choose your plant</h1></div>
+        <p class="ss-dev" role="note"><b>Development build</b> · species flag · the three new species use temporary engineering proof art</p>
+      </header>
+      <p class="ss-lede">Each species starts with a different body. The worlds you are offered next are judged by what <em>this</em> plant can live on.</p>
+      <div class="ss-cards" role="radiogroup" aria-labelledby="${tid}">${this.list.map((sp2, i2) => this._card(sp2, i2)).join("")}</div>
+      <aside class="ss-dossier" id="${did}" role="dialog" aria-modal="false" aria-labelledby="${did}-h" hidden inert>
+        <div class="ss-dossier-in">
+          <div class="ss-d-spec"><canvas class="ss-d-canvas" width="84" height="98" aria-hidden="true"></canvas><span class="ss-proof" hidden>Temporary proof art</span></div>
+          <div class="ss-d-main">
+            <p class="ss-d-role"></p><h2 id="${did}-h" tabindex="-1"></h2><p class="ss-d-short"></p>
+            <p class="ss-d-note" hidden></p>
+            <section class="ss-glance" aria-label="Physiology at a glance"></section>
+            <dl class="ss-rows"></dl>
+          </div>
+          <div class="ss-actions">
+            <button type="button" class="ss-btn ghost" data-act="close">${ico("back")}<span>Back</span></button>
+            <button type="button" class="ss-btn go" data-act="choose">${ico("world")}<span class="ss-go-l"></span></button>
+          </div>
+        </div>
+      </aside>`;
+          this.host.appendChild(r2);
+          const q2 = (s2) => r2.querySelector(s2);
+          this.cardsEl = q2(".ss-cards");
+          this.cards = [...r2.querySelectorAll(".ss-card")];
+          this.dossier = q2(".ss-dossier");
+          this.dossierTitle = q2(".ss-dossier h2");
+          this.headTools = q2(".ss-head");
+          this.cards.forEach((c2, i2) => this._paint(c2.querySelector("canvas"), this.list[i2]));
+          this._select(this.index, false);
+          this._onClick = (e2) => {
+            const b2 = e2.target.closest("button, .ss-card");
+            if (!b2 || !r2.contains(b2)) return;
+            if (b2.classList.contains("ss-card")) {
+              this._select(+b2.dataset.index, false);
+              this.open(this.list[+b2.dataset.index].id);
+              return;
+            }
+            const act = b2.dataset.act;
+            if (act === "back") this.back();
+            else if (act === "close") this.close();
+            else if (act === "choose") this.choose();
+          };
+          this._onKey = (e2) => {
+            if (e2.key === "Escape") {
+              e2.preventDefault();
+              this.back();
+              return;
+            }
+            if (this.state !== "cards" || !e2.target.classList || !e2.target.classList.contains("ss-card")) return;
+            const n2 = this.cards.length, k2 = e2.key;
+            const to = k2 === "ArrowRight" || k2 === "ArrowDown" ? (this.index + 1) % n2 : k2 === "ArrowLeft" || k2 === "ArrowUp" ? (this.index + n2 - 1) % n2 : k2 === "Home" ? 0 : k2 === "End" ? n2 - 1 : null;
+            if (to !== null) {
+              e2.preventDefault();
+              this._select(to, true);
+              this.stats.moves++;
+              return;
+            }
+            if (k2 === "Enter" || k2 === " ") {
+              e2.preventDefault();
+              this.open(this.selected.id);
+            }
+          };
+          r2.addEventListener("click", this._onClick);
+          r2.addEventListener("keydown", this._onKey);
+        }
+        _card(sp2, i2) {
+          const P2 = sp2.presentation, proof = sp2.status === "candidate";
+          const chip = (x2, dir) => {
+            const [cat, icon] = CAT[x2.category];
+            return `<li class="ss-chip ${dir}${x2.latent ? " latent" : ""}" data-cat="${cat}"><span class="ss-chip-dir" aria-hidden="true">${dir === "up" ? "▲" : "▼"}</span><span class="ss-chip-i" aria-hidden="true">${ico(icon)}</span><span class="ss-chip-t"><span class="sr-only">${dir === "up" ? x2.latent ? "Latent strength" : "Strength" : "Weakness"}, ${esc5(x2.category)}: </span>${esc5(x2.text)}${x2.latent ? ` <small>(latent)</small>` : ""}</span></li>`;
+          };
+          return `<div class="ss-card" role="radio" aria-checked="false" tabindex="-1" data-index="${i2}" data-species="${esc5(sp2.id)}" data-role="${esc5(sp2.role)}"${proof ? ' data-proof="true"' : ""}
+        aria-label="${esc5(sp2.name)}, ${esc5(P2.roleLabel)}${P2.note ? `. ${esc5(P2.note)}` : ""}">
+      <div class="ss-spec"><canvas width="84" height="98" aria-hidden="true"></canvas>${proof ? `<span class="ss-proof">Temporary proof art</span>` : ""}</div>
+      <div class="ss-card-t">
+        <h3>${esc5(sp2.name)}</h3><p class="ss-role">${esc5(P2.roleLabel)}</p>${P2.note ? `<p class="ss-note">${ico("info")}<span>${esc5(P2.note)}</span></p>` : ""}
+        <ul class="ss-chips" aria-label="Strengths and weaknesses">${P2.strengths.map((x2) => chip(x2, "up")).join("")}${P2.weaknesses.map((x2) => chip(x2, "down")).join("")}</ul>
+      </div>
+    </div>`;
+        }
+        /** The species' fully grown, unmutated specimen from its own body plan + pack (the real sprite system), 84 × 98 logical pixels. */
+        _paint(canvas, sp2) {
+          const img = window.BLOOM.plantSpecimen.drawSpecies(sp2, { traits: {}, condition: "ok" });
+          canvas.width = img.w;
+          canvas.height = img.h;
+          canvas.getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(img.rgba), img.w, img.h), 0, 0);
+          canvas.dataset.signature = img.signature || "";
+          canvas.dataset.pack = sp2.art.pack;
+          canvas.dataset.plan = sp2.art.bodyPlan;
+        }
+        _select(i2, focus) {
+          this.index = i2;
+          this.cards.forEach((c2, j2) => {
+            c2.setAttribute("aria-checked", String(j2 === i2));
+            c2.tabIndex = j2 === i2 ? 0 : -1;
+          });
+          if (focus) this.cards[i2].focus();
+        }
+        _fillDossier(sp2) {
+          const P2 = sp2.presentation, p2 = sp2.physiology, ref = this.reference.physiology, d2 = this.dossier, q2 = (s2) => d2.querySelector(s2);
+          d2.dataset.species = sp2.id;
+          d2.dataset.proof = String(sp2.status === "candidate");
+          this._paint(q2(".ss-d-canvas"), sp2);
+          q2(".ss-proof").hidden = sp2.status !== "candidate";
+          q2(".ss-d-role").textContent = P2.roleLabel;
+          this.dossierTitle.textContent = sp2.name;
+          q2(".ss-d-short").textContent = sp2.short;
+          q2(".ss-d-note").hidden = !P2.note;
+          q2(".ss-d-note").innerHTML = P2.note ? `${ico("info")}<span>${esc5(P2.note)}</span>` : "";
+          const pos = (v2, [a2, b2]) => ((Math.min(b2, Math.max(a2, v2)) - a2) / (b2 - a2) * 100).toFixed(2) + "%";
+          const bar = (label, cat, lo2, hi3, rlo, rhi, axis, fmt) => `<div class="ss-range" data-cat="${cat}" tabindex="0" aria-label="${esc5(label)}: ${esc5(fmt(lo2))} to ${esc5(fmt(hi3))}${sp2.id !== this.reference.id ? ` (Organic Hybrid: ${esc5(fmt(rlo))} to ${esc5(fmt(rhi))})` : ""}">
+        <span class="ss-range-l">${esc5(label)}</span><span class="ss-track"><i class="ref" style="left:${pos(rlo, axis)};right:calc(100% - ${pos(rhi, axis)})"></i><i class="win" style="left:${pos(lo2, axis)};right:calc(100% - ${pos(hi3, axis)})"></i></span>
+        <span class="ss-axis" aria-hidden="true"><span>${esc5(fmt(axis[0]))}</span><span class="ss-exact">${esc5(fmt(lo2))} … ${esc5(fmt(hi3))}</span><span>${esc5(fmt(axis[1]))}</span></span></div>`;
+          const tick = (label, cat, v2, refV, note) => `<div class="ss-tol" data-cat="${cat}"><span class="ss-range-l">${esc5(label)}</span><b>tolerates up to ${v2}</b>${v2 !== refV ? `<small> · Organic Hybrid ${refV}</small>` : ""}${note ? `<small class="ss-latent"> · ${esc5(note)}</small>` : ""}</div>`;
+          const latentRad = P2.strengths.find((x2) => x2.category === "Hazard" && x2.latent);
+          q2(".ss-glance").innerHTML = `<h3>Physiology at a glance</h3>` + bar("Temperature", "temperature", p2.tempFloor, p2.tempCeil, ref.tempFloor, ref.tempCeil, T_AXIS, signed2) + bar("Ground moisture", "water", p2.waterPos - p2.waterTol, p2.waterPos + p2.waterTol, ref.waterPos - ref.waterTol, ref.waterPos + ref.waterTol, M_AXIS, String) + `<div class="ss-tols">${tick("Salt", "soil", p2.saltTol, ref.saltTol)}${tick("Radiation", "hazard", p2.radTol, ref.radTol, latentRad ? "latent: pays once the heat is under control" : "")}</div>`;
+          const row = (cat, icon, label, word, value) => `<div class="ss-row"${cat ? ` data-cat="${cat}"` : ""}><dt><span class="ss-row-i" aria-hidden="true">${ico(icon)}</span>${esc5(label)}</dt><dd><b>${esc5(word)}</b><span class="ss-row-v">${esc5(value)}</span></dd></div>`;
+          const S2 = P2.strengths, W2 = P2.weaknesses, by = (c2) => [...S2.filter((x2) => x2.category === c2).map((x2) => x2.text + (x2.latent ? " (latent)" : "")), ...W2.filter((x2) => x2.category === c2).map((x2) => "Struggles: " + x2.text.toLowerCase())].join(" · ");
+          q2(".ss-rows").innerHTML = [
+            row(null, "adapt", "Habit", HABIT[sp2.art.bodyPlan.split("@")[0]] || "Plant", P2.dossier.habit),
+            row("water", "water", "Water strategy", `${p2.waterPos - p2.waterTol} … ${p2.waterPos + p2.waterTol} moisture`, P2.dossier.water),
+            row("temperature", "temp", "Temperature", `${signed2(p2.tempFloor)} to ${signed2(p2.tempCeil)}`, by("Temperature") || "Neither cold nor heat is a strength"),
+            row("soil", "soil", "Soil", `Salt up to ${p2.saltTol}`, by("Soil") || "Ordinary soils; salty ground is hostile"),
+            row("hazard", "hazard", "Hazard", `Radiation up to ${p2.radTol}`, by("Hazard") || "Ordinary radiation tolerance"),
+            row(null, "journal", "Reproduction", "Seeds", P2.dossier.reproduction),
+            row(null, "info", "Real plants", "Analogy", P2.dossier.science)
+          ].join("");
+          q2(".ss-go-l").textContent = `Survey for ${sp2.name}`;
+        }
+      };
+    }
+  });
+
   // resources/portable/portable-entry.js
   init_portable_root();
   init_sector_pool();
@@ -15707,7 +15979,9 @@
     "resources/main-menu/main-menu-data.js": () => Promise.resolve().then(() => (init_main_menu_data(), main_menu_data_exports)),
     "resources/planet-sphere/planet-sphere-view.js": () => Promise.resolve().then(() => (init_planet_sphere_view(), planet_sphere_view_exports)),
     "resources/atmosphere-transition/atmosphere-transition.js": () => Promise.resolve().then(() => (init_atmosphere_transition(), atmosphere_transition_exports)),
-    "resources/training/training-run.js": () => Promise.resolve().then(() => (init_training_run(), training_run_exports))
+    "resources/training/training-run.js": () => Promise.resolve().then(() => (init_training_run(), training_run_exports)),
+    "resources/species-select/species-select.js": () => Promise.resolve().then(() => (init_species_select(), species_select_exports))
+    // (035B) the ?species=1 development flow only
   };
   var loaded = /* @__PURE__ */ new Map();
   function load(path) {
