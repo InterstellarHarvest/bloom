@@ -1,0 +1,17 @@
+PASS  wet build wins via real shop clicks  — buys at 32, 80, 104, 161, 188, 219 s
+FAIL  pacing: perfect-bot win in 4–8 min (humans slower)  — 231 s
+PASS  Bloom Report opens with a drawn plant
+PASS  report lists a real-plant analog per adaptation  — 5 analogs
+PASS  report names the region the wet build gave up  — Dust Reach — too dry / Ember Scar — too dry
+PASS  no page errors during the run
+PASS  dry build also wins (≥2 broad strategies)  — 274 s
+PASS  Terraform water build wins with NO water Adaptation (Humidify ×2 instead of Drought; gives up Marsh Low)  — 267 s, buys at 33, 84, 140, 172, 212, 259 s, water arm none
+PASS  shop unlocks during normal play (no test-hook purchases)  — first affordable at 29 s
+PASS  preview warns that Flood tier 2 closes home regions  — Flood Adaptation — ⚠ closes: Fern Shade, Cool Glen
+PASS  hovering an upgrade shows its preview in the log  — Cold Tolerance — no region changes state yet.
+PASS  raw-signals panel stays open across re-renders
+PASS  Salt Barren with Salt Handling reads thriving, not 'blocked'  — ✓ Thriving here — no blocker. / Low nutrients slow growth here, but it is not a wall.
+PASS  the tested build with neither water Adaptation nor water Terraform stays under 70%  — 67.6%
+PASS  over-committing (Flood ×2) loses the home regions  — 24.3%
+
+1 check(s) FAILED

@@ -186,7 +186,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
       const surveyReady = p => p.waitForFunction(() => { const s = MENU_DEV.entry.survey; return s && s.state === "survey" && s.cells.every(Boolean); }, null, { timeout: 180000, polling: 100 });
       const focusOn = async (p, i) => { await p.evaluate(i => MENU_DEV.entry.survey.select(i), i); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000, polling: 50 }); await sleep(1100); };
       const runReady = p => p.waitForFunction(() => window.BLOOM_APP && BLOOM_APP.session && !BLOOM_APP.busy && !document.querySelector(".atx") && MENU_DEV.entry.state === "away" && document.getElementById("pv"), null, { timeout: 90000, polling: 50 });
-      const shot = async (p, name, opts = {}) => { if (EVIDENCE && shotOn) await p.screenshot({ path: path.join(EVD, name), ...opts }); };
+      const shot = async (p, name, opts = {}) => { if (EVIDENCE && shotOn) await p.screenshot({ path: path.join(EVD, name), ...(name.endsWith(".jpg") ? { type: "jpeg", quality: 90 } : {}), ...opts }); };   // (stills over a painting: JPEG — the paintings are JPEG themselves)
       const local = (p, o) => p.reqs.filter(u => !(u.startsWith(o) || u.startsWith("data:") || u.startsWith("blob:") || u.startsWith("file:")));
       const css = (p, sel, props) => p.evaluate(([sel, props]) => { const e = document.querySelector(sel); if (!e) return null; const s = getComputedStyle(e); return Object.fromEntries(props.map(k => [k, s.getPropertyValue(k)])); }, [sel, props]);
       const tokenRgb = (p, name) => p.evaluate(n => { const d = document.createElement("i"); d.style.color = `var(${n})`; document.body.append(d); const c = getComputedStyle(d).color; d.remove(); return c; }, name);
@@ -205,7 +205,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
           && items.every(i => i.icon && i.h >= 44) && card["border-top-left-radius"] === "22px" && card["border-top-right-radius"] === "18px" && !p.errs.length,
           `[${bn}] T1 · the title speaks the gameplay language: every interface element (title, subtitle, menu, status, dialogs) in the gameplay font family; EXPEDITION is the gameplay leaf button (white word on --bloom-leaf); four chunky icon + word entries (≥ 44 px), the labels unchanged; one dark planning card with the gameplay's irregular corners`,
           `${els.map(([s, f]) => s + "=" + (normF(f) === normF(gameFont) ? "game" : f)).join(" ")} · ${prim["background-color"]} · ${items.map(i => `${i.text} ${Math.round(i.h)}px`).join(" · ")}`);
-        await shot(p, "01-title-1440x900.png");
+        await shot(p, "01-title-1440x900.jpg");
         // T2 · every painting loads untouched and the title stays readable over it
         const paint = await p.evaluate(async () => {
           const urls = Array.from({ length: 12 }, (_, i) => `resources/main-menu/backgrounds/menu-${String(i + 1).padStart(2, "0")}.jpg`);
@@ -235,7 +235,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         const dlg = {};
         for (const [name, act] of [["settings", "settings"], ["credits", "credits"]]) { await p.click(`.mm-item[data-act="${act}"]`); await sleep(350);
           dlg[name] = await p.evaluate(n => { const d = document.querySelector(`[data-dialog="${n}"]`), s = getComputedStyle(d); return { open: d.open, font: s.fontFamily, radius: s.borderTopLeftRadius, bg: s.backgroundColor, h2: getComputedStyle(d.querySelector("h2")).fontFamily, btns: [...d.querySelectorAll(".mm-btn")].map(b => b.textContent) }; }, name);
-          await shot(p, `02-${name}-1440x900.png`); await p.keyboard.press("Escape"); await sleep(200); }
+          await shot(p, `02-${name}-1440x900.jpg`); await p.keyboard.press("Escape"); await sleep(200); }
         const solid = await tokenRgb(p, "--bloom-night-card-solid");
         check(Object.values(dlg).every(d => d.open && normF(d.font) === normF(gameFont) && normF(d.h2) === normF(gameFont) && d.radius === "22px" && d.bg === solid) && J(dlg.settings.btns) === J(["Done"]) && J(dlg.credits.btns) === J(["Back to menu"]),
           `[${bn}] D1 · Settings and Credits are the night card (solid, the gameplay corners), in the gameplay font; their buttons keep their words (icons beside them, not in them)`, J(Object.fromEntries(Object.entries(dlg).map(([k, d]) => [k, d.btns]))));
@@ -243,7 +243,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         await p.focus('.mm-item[data-act="begin"]'); await p.keyboard.press("ArrowDown"); await sleep(60);
         const kb = await p.evaluate(() => { const a = document.activeElement, s = getComputedStyle(a); return { act: a.dataset.act, outline: `${s.outlineStyle} ${s.outlineWidth}`, color: s.outlineColor }; });
         const fcol = await tokenRgb(p, "--bloom-focus-night");
-        await shot(p, "08-title-keyboard-focus-1440x900.png");
+        await shot(p, "08-title-keyboard-focus-1440x900.jpg");
         check(kb.act === "training" && kb.outline === "solid 3px" && kb.color === fcol, `[${bn}] A1 · keyboard: ↓ moves along the menu and the focused entry shows the gameplay's 3 px focus ring in the night focus colour`, J(kb));
         check(!p.errs.length && !local(p, HEAD_O).length, `[${bn}] T3 · the title: no console error, no unhandled rejection, every request local`, J(p.errs.slice(0, 3)));
         await c.close(); }
@@ -252,7 +252,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         const tag = await p.evaluate(() => { const t = document.querySelector(".mm-tag"); return { shown: !t.hidden, text: t.textContent, name: document.querySelector('.mm-item[data-act="training"]').textContent.replace(/\s+/g, " ").trim() }; });
         await p.click('.mm-item[data-act="begin"]'); await sleep(500);
         const d = await p.evaluate(() => { const d = document.querySelector('[data-dialog="recommend"]'); return { open: d.open, btns: [...d.querySelectorAll(".mm-btn")].map(b => b.textContent), primary: getComputedStyle(d.querySelector(".mm-btn.primary")).backgroundColor }; });
-        const leaf = await tokenRgb(p, "--bloom-leaf"); await shot(p, "03-recommend-1440x900.png");
+        const leaf = await tokenRgb(p, "--bloom-leaf"); await shot(p, "03-recommend-1440x900.jpg");
         check(tag.shown && tag.text === "Recommended" && tag.name === "Training Recommended" && d.open && J(d.btns) === J(["Go to Expedition", "Start Training (~5 min)"]) && d.primary === leaf,
           `[${bn}] D2 · the first-run recommendation: TRAINING's Biomass-gold "Recommended" tag (a word), the dialog's two buttons with their exact words, Start Training the leaf primary`, J({ tag, btns: d.btns }));
         await c.close(); }
@@ -264,7 +264,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         const hs = () => p.evaluate(() => ({ sx: document.documentElement.scrollWidth > innerWidth + 0.5 || document.body.scrollWidth > innerWidth + 0.5 }));
         const title = await p.evaluate(() => { const r = document.querySelector(".mm-plaque").getBoundingClientRect(); return { inside: r.left >= 0 && r.top >= 0 && r.right <= innerWidth + .5 && r.bottom <= innerHeight + .5,
           items: [...document.querySelectorAll(".mm-item")].every(b => { const q = b.getBoundingClientRect(); return q.bottom <= innerHeight && q.right <= innerWidth && q.height >= 44; }) }; });
-        const t1 = await hs(); if (w !== 1440) await shot(p, `01-title-${tag}.png`);
+        const t1 = await hs(); if (w !== 1440) await shot(p, `01-title-${tag}.jpg`);
         await p.click('.mm-item[data-act="begin"]'); await surveyReady(p); await sleep(1200);
         const sv = await p.evaluate(() => { const g = (() => { const d = document.createElement("i"); d.style.fontFamily = "var(--bloom-font)"; document.body.append(d); const f = getComputedStyle(d).fontFamily.replace(/\s+/g, ""); d.remove(); return f; })(), f = s => getComputedStyle(document.querySelector(s)).fontFamily.replace(/\s+/g, "");
           const tok = n => { const d = document.createElement("i"); d.style.color = `var(${n})`; document.body.append(d); const c = getComputedStyle(d).color; d.remove(); return c; };
@@ -310,7 +310,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
           await p.click('.pv-tool[data-tool="adapt"]'); await sleep(700); res.adapt = await snap(p, "#pv");
           res.miniMap = await p.evaluate(() => { const m = document.querySelector("#dr .dr-room:not([hidden]) .z-map .mm"), cv = m && m.querySelector(".mm-cv"), s = m && getComputedStyle(m), k = m && m.querySelector(".mm-k");
             const ref = (() => { const d = document.createElement("i"); d.style.fontFamily = "var(--bloom-font)"; d.style.color = "var(--bloom-ink-soft)"; document.getElementById("pv").append(d); const r = getComputedStyle(d); const o = { font: r.fontFamily, soft: r.color }; d.remove(); return o; })();
-            return m && { roomEm: getComputedStyle(document.getElementById("dr")).fontSize, h: Math.round(m.getBoundingClientRect().height), canvasH: cv ? Math.round(cv.getBoundingClientRect().height) : 0, font: s.fontFamily, gameFont: ref.font, container: s.containerType, kicker: k && getComputedStyle(k).color, soft: ref.soft }; }); if (origin === HEAD_O) await shot(p, "07-adapt-unchanged-1440x900.png");
+            return m && { roomEm: getComputedStyle(document.getElementById("dr")).fontSize, h: Math.round(m.getBoundingClientRect().height), canvasH: cv ? Math.round(cv.getBoundingClientRect().height) : 0, font: s.fontFamily, gameFont: ref.font, container: s.containerType, kicker: k && getComputedStyle(k).color, soft: ref.soft }; }); if (origin === HEAD_O) await shot(p, "07-adapt-minimap-repaired-1440x900.png");
           await p.keyboard.press("Escape"); await sleep(500);
           await p.evaluate(() => { const s = BLOOM_API.sim; BLOOM_API.advance(40); s.won = true; s.onWin(s.coverage()); });
           await p.waitForFunction(() => BLOOM.runReport.instance && BLOOM.runReport.instance.state().open && !BLOOM.runReport.instance.state().busy, null, { timeout: 20000, polling: 30 }); await sleep(400);
@@ -365,7 +365,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
     const browser = await pw.firefox.launch(); const c = await browser.newContext({ viewport: { width: 2560, height: 1440 } });
     await c.addInitScript(() => { try { localStorage.setItem("strange-bloom.training", '{"v":1,"status":"completed","at":1}'); } catch (e) { /* none */ } });
     const p = await c.newPage(); await p.goto(HEAD_O + "/" + Q); await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready && MENU_DEV.entry.state === "menu", null, { timeout: 60000 }); await sleep(2600);
-    await p.screenshot({ path: path.join(EVD, "11-firefox-title-2560x1440.png") });
+    await p.screenshot({ path: path.join(EVD, "11-firefox-title-2560x1440.jpg"), type: "jpeg", quality: 90 });
     await p.click('.mm-item[data-act="begin"]'); await p.waitForFunction(() => { const s = MENU_DEV.entry.survey; return s && s.state === "survey" && s.cells.every(Boolean); }, null, { timeout: 180000 }); await sleep(1200);
     await p.evaluate(() => MENU_DEV.entry.survey.select(1)); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000 }); await sleep(1200);
     await p.screenshot({ path: path.join(EVD, "12-firefox-focus-2560x1440.png") }); await browser.close();

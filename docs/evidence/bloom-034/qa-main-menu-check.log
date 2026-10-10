@@ -1,0 +1,19 @@
+PASS  M1 twelve menu backgrounds menu-01 … menu-12.jpg: present, JPEG, 1280 × 720, complete; BACKGROUNDS lists exactly them  — 12 files, 3875 KB in all (296–362 KB)
+PASS  M2 player-facing title is exactly "Strange Bloom" / "Unknown Soils"  — Strange Bloom · Unknown Soils
+PASS  M2b the menu renders TITLE / SUBTITLE from data (no other spelling), the entry page's <title> is the player title, no visible menu string names the game BLOOM (credits: "A BLOOM project")  — ok
+PASS  M3 pickBackground: never the painting just shown (36 000 draws), every other painting reachable from every previous one, a first show reaches all twelve, edge values safe, a one-entry list returns 0, an invalid previous is ignored  — repeats 0, reach 11/11/11/11/11/11/11/11/11/11/11/11, first-show distinct 12
+PASS  M3b the pick is uniform over the other eleven (22 000 draws, each within ±25 % of 2 000)  — min 1896, max 2063
+PASS  M4 settings: defaults, round trip, unknown values and keys rejected, malformed JSON → defaults, a throwing Storage never throws (the choice still applies), no storage at all is fine; motion → reducedMotion mapping  — {"d":{"motion":"system"},"w":{"motion":"reduced"},"r":{"motion":"reduced"},"junk":{"motion":"reduced"},"bad":{"motion":"system"},"b1":{"motion":"system"},"b2":{"motion":"full"}}
+PASS  M5 prefetch(): the pool's sector IS survey-data's buildSector for the seed (same worlds, same fingerprints, same classes), every world fully validated (layers 1–8), the assembled cells are the very objects reported as confirmed, progress 0 → 9 of 9, one sectorTimes entry  — 7792 ms (main-thread path in Node); progress seen [0,1,2,3,4,5,6,7,8,9]
+PASS  M5b sector() caches by (seed, firstBloom), forget(seed) drops both, dispose() clears everything and refuses new work; idempotent  — SectorPool: disposed
+PASS  M6 halt(): pool work is refused as `halted` (never falls back to the main thread); resume() lifts it (Node has no Worker: the request then fails as "no worker", the fallback's cue)  — halted / no worker
+PASS  M7 MainMenu imports only its data module (and, since BLOOM-034, the shared icon module ../ui/bloom-icons.js) and its code never touches the survey, sphere, transition, pool, workers, canvas or WebGL (the screen is plain HTML / CSS over one <img>)  — ["./main-menu-data.js","../ui/bloom-icons.js"]
+PASS  M7b ExpeditionEntry composes menu + survey + transition and never touches the sphere or workers itself  — ["./main-menu.js","./black-fade.js","./main-menu-data.js","../training/training-store.js","../destination-survey/destination-survey.js","../atmosphere-transition/atmosphere-transition.js"]
+PASS  M7c main-menu.css: no backdrop-filter, no will-change, no animated or transitioned filter (028B compositing lesson)
+PASS  M7d the one worker spawn point moved to sector-pool.js; destination-survey.js imports SectorPool and exposes static prefetch()
+PASS  M7e survey-worker.js still serves the accepted plan / validate / column tasks (semantics untouched; byte identity is checked by the milestone's provenance QA)
+PASS  M7f entrances / recede animate the independent `translate` property, never the plaque's layout transform
+PASS  M7g (028C1; 028D1: the fade lives in black-fade.js) menu ↔ survey is a fade through black: ExpeditionEntry never runs the AtmosphereTransition itself (it only hands it to the survey's dramatic departure); its fade (BlackFade) animates opacity alone (no zoom, wipe, clouds), 220 / 250 ms, reduced 80 / 80 ms
+PASS  M7h (028C1) the return shows the menu `settled` under the black (no entrance replay, no painting fade), so the screen is complete before the black lifts
+
+ALL CHECKS PASS (15013 ms)
