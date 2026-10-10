@@ -22,7 +22,7 @@ const SPECIES_FILES = ["content/species.js", "resources/bloom-species.js"];
 const read = f => fs.readFileSync(path.join(ROOT, f), "utf8");
 const git = cmd => execSync(`git ${cmd}`, { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 28 });
 // a fresh, isolated engine (its own globals) from a source reader: the current tree, or the accepted base
-const ctxOf = (src, files) => { const c = vm.createContext({ console, performance }); c.globalThis = c; for (const f of files) vm.runInContext(src(f), c, { filename: f }); return c; };
+const ctxOf = (src, files) => { const c = vm.createContext({ console, performance }); c.globalThis = c; c.window = undefined; for (const f of files) vm.runInContext(src(f), c, { filename: f }); return c; };
 const NOW = ctxOf(read, [...ENGINE.slice(0, 3), SPECIES_FILES[0], ...ENGINE.slice(3, 9), SPECIES_FILES[1], ...ENGINE.slice(9)]);
 const { BLOOM, BLOOM_DATA: D } = NOW, S = BLOOM.species, C = D.config;
 const J = JSON.stringify, sha = x => crypto.createHash("sha256").update(typeof x === "string" ? x : J(x)).digest("hex").slice(0, 16);
@@ -195,5 +195,34 @@ const arche = (ctx, id) => ctx.BLOOM_DATA.archetypes.find(a => a.id === id);
     "Q16 · no Challenge / referencePlant coupling: deriveConfig refuses referencePlant / genomeBase / species / physiology overrides (Training's economy overrides still derive), a scenario (the Challenge ingredient) carrying referencePlant / genomeBase / physiology is invalid, no shipped scenario names it, and config.referencePlant cannot be written at run time",
     `refused ${refused.filter(Boolean).length}/4 · training derives ${training} · scenario refuses ${scenarioRefuses} · frozen ${!!frozen}`); }
 
-console.log(`\n${fails ? fails + " FAILED" : "ALL CHECKS PASS"} (${passes}/${passes + fails})`);
-process.exit(fails ? 1 : 0);
+(async () => {
+  const SD = await import("file://" + path.join(ROOT, "resources/destination-survey/survey-data.js")), deps = { BLOOM, BLOOM_DATA: D };
+  const FIX = JSON.parse(read("tools/fixtures/species-study-v1.json"));
+
+  // -------------------------------------------------------------------------------------------------- Q7 · one seed = one planet
+  { const OLD = ctxOf(f => git(`show ${BASE_SHA}:${f}`), ENGINE), rows = [];
+    for (const w of FIX.worlds.filter((_, i) => i % 2 === 0)) {   // 6 study worlds, 2 per archetype
+      const old = OLD.BLOOM.play.runSearch({ archetype: arche(OLD, w.archetypeId), scenario: null, seeds: [w.seed], config: OLD.BLOOM_DATA.config, traits: OLD.BLOOM_DATA.traits });
+      const oldFp = SD.planetFingerprint(old.planet);
+      // a FRESH cache per species: nothing is shared, so equal fingerprints mean each species' survey produced the same world itself
+      const fps = S.list().map(sp => SD.makeCandidate({ archetypeId: w.archetypeId, seed: w.seed }, deps, { species: sp, cache: SD.createSurveyCache() }));
+      rows.push({ n: `${w.archetypeId}:${w.seed}`, ok: fps.every(c => c.fingerprint === oldFp && c.physicalKey === `${w.archetypeId}:${w.seed}@w1` && c.attempt === old.planet.archetype.attempt), fp: oldFp,
+        classes: fps.map(c => c.classId[0].toUpperCase()).join("") }); }
+    check(rows.every(r => r.ok), `Q7 · the same (archetype, seed) yields the SAME physical planet for all four species: each species' survey candidate, built with its own empty cache, has the planetFingerprint (and accepted attempt) of the ${BASE_SHA} generator's world — while its class may differ (OH / Cinder / Woolly / Reed)`,
+      rows.map(r => `${r.n} ${r.fp}${r.ok ? "" : " ✗"} ${r.classes}`).join(" · ")); }
+
+  // -------------------------------------------------------------------------------------------------- Q11 · classification fixtures
+  { const bad = [], rows = [];
+    for (const w of FIX.worlds) { const phys = SD.physicalCandidate({ archetypeId: w.archetypeId, seed: w.seed }, deps);
+      for (const sp of S.list()) { const want = w.species[sp.id], a = SD.assessWorld(phys.planet, deps, sp), cls = SD.classFor(a.habitable).id;
+        if (Math.abs(a.habitable - want.habitable) > 5e-5 || cls !== want.classId) bad.push(`${w.archetypeId}:${w.seed} × ${sp.id} ${a.habitable.toFixed(4)} ${cls} ≠ study ${want.habitable} ${want.classId}`);
+        rows.push(cls); } }
+    const fb = S.list().map(sp => [sp.id, SD.makeCandidate({ authored: "first_bloom" }, deps, { species: sp })]);
+    for (const [id, c] of fb) if (c.classId !== FIX.firstBloom[id].classId) bad.push(`first_bloom × ${id} ${c.classId} ≠ study ${FIX.firstBloom[id].classId}`);
+    const tally = k => rows.filter(x => x === k).length;
+    check(!bad.length, "Q11 · species classification fixtures: on 12 study worlds (4 per archetype) the production survey assessment (createSim with the species) reproduces the accepted 035A study's landing habitable share (±0.00005) and class for all four species; First Bloom's class per species matches the study (OH / Woolly / Reed Favorable, Cinder Extreme)",
+      bad.join("; ") || `48 world × species classes (${tally("favorable")} F · ${tally("precarious")} P · ${tally("extreme")} E) · First Bloom ${fb.map(([id, c]) => `${id} ${c.habitable.toFixed(4)} ${c.classId}`).join(", ")}`); }
+
+  console.log(`\n${fails ? fails + " FAILED" : "ALL CHECKS PASS"} (${passes}/${passes + fails})`);
+  process.exit(fails ? 1 : 0);
+})().catch(e => { console.error(e); process.exit(2); });

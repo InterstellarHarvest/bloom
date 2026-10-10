@@ -1,0 +1,341 @@
+{
+ "source": "BLOOM-035A study (tools/research/species-study/results, 035A commit fefe894): per-world landing habitable share and class for the accepted physiologies (study role id → production species id)",
+ "map": {
+  "organic_hybrid": "organic_hybrid",
+  "dry_heat": "cinder_rosette",
+  "cold_v2": "woolly_candle",
+  "wet_flood": "reed_spire"
+ },
+ "worlds": [
+  {
+   "archetypeId": "ocean_archipelago",
+   "seed": 15723,
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.7615,
+     "classId": "favorable",
+     "winnable": true
+    },
+    "cinder_rosette": {
+     "habitable": 0.145,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "woolly_candle": {
+     "habitable": 0.3889,
+     "classId": "favorable",
+     "winnable": true
+    },
+    "reed_spire": {
+     "habitable": 0.8035,
+     "classId": "favorable",
+     "winnable": true
+    }
+   }
+  },
+  {
+   "archetypeId": "ocean_archipelago",
+   "seed": 26807,
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.6768,
+     "classId": "favorable",
+     "winnable": true
+    },
+    "cinder_rosette": {
+     "habitable": 0.1523,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "woolly_candle": {
+     "habitable": 0.5822,
+     "classId": "favorable",
+     "winnable": true
+    },
+    "reed_spire": {
+     "habitable": 0.8477,
+     "classId": "favorable",
+     "winnable": true
+    }
+   }
+  },
+  {
+   "archetypeId": "ocean_archipelago",
+   "seed": 27818,
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.5405,
+     "classId": "favorable",
+     "winnable": true
+    },
+    "cinder_rosette": {
+     "habitable": 0.1204,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "woolly_candle": {
+     "habitable": 0,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "reed_spire": {
+     "habitable": 0.5713,
+     "classId": "favorable",
+     "winnable": true
+    }
+   }
+  },
+  {
+   "archetypeId": "ocean_archipelago",
+   "seed": 40187,
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.4367,
+     "classId": "favorable",
+     "winnable": true
+    },
+    "cinder_rosette": {
+     "habitable": 0,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "woolly_candle": {
+     "habitable": 0.104,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "reed_spire": {
+     "habitable": 0.5376,
+     "classId": "favorable",
+     "winnable": true
+    }
+   }
+  },
+  {
+   "archetypeId": "desert_world",
+   "seed": 78138,
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.1447,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "cinder_rosette": {
+     "habitable": 0.4259,
+     "classId": "favorable",
+     "winnable": true
+    },
+    "woolly_candle": {
+     "habitable": 0.2518,
+     "classId": "precarious",
+     "winnable": true
+    },
+    "reed_spire": {
+     "habitable": 0.082,
+     "classId": "extreme",
+     "winnable": true
+    }
+   }
+  },
+  {
+   "archetypeId": "desert_world",
+   "seed": 8904,
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.1488,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "cinder_rosette": {
+     "habitable": 0.4886,
+     "classId": "favorable",
+     "winnable": true
+    },
+    "woolly_candle": {
+     "habitable": 0.1424,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "reed_spire": {
+     "habitable": 0,
+     "classId": "extreme",
+     "winnable": true
+    }
+   }
+  },
+  {
+   "archetypeId": "desert_world",
+   "seed": 90169,
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.0852,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "cinder_rosette": {
+     "habitable": 0.2022,
+     "classId": "precarious",
+     "winnable": true
+    },
+    "woolly_candle": {
+     "habitable": 0.0852,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "reed_spire": {
+     "habitable": 0.0337,
+     "classId": "extreme",
+     "winnable": true
+    }
+   }
+  },
+  {
+   "archetypeId": "desert_world",
+   "seed": 5562,
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.052,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "cinder_rosette": {
+     "habitable": 0.2294,
+     "classId": "precarious",
+     "winnable": true
+    },
+    "woolly_candle": {
+     "habitable": 0.1219,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "reed_spire": {
+     "habitable": 0.052,
+     "classId": "extreme",
+     "winnable": true
+    }
+   }
+  },
+  {
+   "archetypeId": "frozen_world",
+   "seed": 34260,
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.2491,
+     "classId": "precarious",
+     "winnable": true
+    },
+    "cinder_rosette": {
+     "habitable": 0.1621,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "woolly_candle": {
+     "habitable": 0.1599,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "reed_spire": {
+     "habitable": 0.2491,
+     "classId": "precarious",
+     "winnable": true
+    }
+   }
+  },
+  {
+   "archetypeId": "frozen_world",
+   "seed": 37038,
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.2647,
+     "classId": "precarious",
+     "winnable": true
+    },
+    "cinder_rosette": {
+     "habitable": 0.0862,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "woolly_candle": {
+     "habitable": 0.3385,
+     "classId": "precarious",
+     "winnable": true
+    },
+    "reed_spire": {
+     "habitable": 0.2647,
+     "classId": "precarious",
+     "winnable": true
+    }
+   }
+  },
+  {
+   "archetypeId": "frozen_world",
+   "seed": 70201,
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.259,
+     "classId": "precarious",
+     "winnable": true
+    },
+    "cinder_rosette": {
+     "habitable": 0.1738,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "woolly_candle": {
+     "habitable": 0.3153,
+     "classId": "precarious",
+     "winnable": true
+    },
+    "reed_spire": {
+     "habitable": 0.259,
+     "classId": "precarious",
+     "winnable": true
+    }
+   }
+  },
+  {
+   "archetypeId": "frozen_world",
+   "seed": 17667,
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.2602,
+     "classId": "precarious",
+     "winnable": true
+    },
+    "cinder_rosette": {
+     "habitable": 0.1898,
+     "classId": "extreme",
+     "winnable": true
+    },
+    "woolly_candle": {
+     "habitable": 0.3199,
+     "classId": "precarious",
+     "winnable": true
+    },
+    "reed_spire": {
+     "habitable": 0.1986,
+     "classId": "extreme",
+     "winnable": true
+    }
+   }
+  }
+ ],
+ "firstBloom": {
+  "organic_hybrid": {
+   "habitable": 0.3529,
+   "classId": "favorable"
+  },
+  "cinder_rosette": {
+   "habitable": 0.1313,
+   "classId": "extreme"
+  },
+  "woolly_candle": {
+   "habitable": 0.3529,
+   "classId": "favorable"
+  },
+  "reed_spire": {
+   "habitable": 0.3529,
+   "classId": "favorable"
+  }
+ }
+}
