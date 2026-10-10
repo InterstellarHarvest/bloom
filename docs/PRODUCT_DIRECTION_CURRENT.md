@@ -15,8 +15,7 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-10, BLOOM-034 candidate — the visual-system convergence is implemented on the review branch
-`handoff/bloom-034-review`, pending PMO / owner visual review (not merged). BLOOM-033 is in production `main` (`62b7f56`).*
+*Last updated: 2026-10-10, BLOOM-034 closeout — BLOOM-034 accepted and integrated into production `main` (`455b51b`).*
 
 ---
 
@@ -131,11 +130,10 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
 
 ## 9. Menu / planning visual direction
 
-**LOCKED DESIGN · CANDIDATE (BLOOM-034)** — implemented and tested on `handoff/bloom-034-review`, pending PMO / owner visual review;
-production `main` still has the BLOOM-033 look. The system is described in [`VISUAL_SYSTEM_v1.md`](VISUAL_SYSTEM_v1.md):
+**LOCKED DESIGN · IMPLEMENTED** in production `main` by BLOOM-034. The system is described in [`VISUAL_SYSTEM_v1.md`](VISUAL_SYSTEM_v1.md):
 `resources/ui/bloom-theme.css` is the shared visual-token system (gameplay reads its exact BLOOM-033 values from it; the title / menu
 and the Destination Survey use its dark NIGHT counterparts); `resources/ui/bloom-icons.js` gives the planning screens the gameplay
-icon family. The candidate also repairs a BLOOM-033 one-document regression: the menu's root styles had collapsed the decision rooms'
+icon family. BLOOM-034 also repaired a BLOOM-033 one-document regression: the menu's root styles had collapsed the decision rooms'
 mini-map card (`BLOOM-034 (fix)`, an isolated commit).
 
 The decisions (unchanged):
@@ -176,8 +174,8 @@ This is not a gameplay-code feature; product code does not work around repositor
 | Step | Scope | Status |
 |---|---|---|
 | **BLOOM-033** — Single-document production application | `index.html` is the whole game; GameSession; `default`; Favorable / Precarious / Extreme; EXPEDITION | **IMPLEMENTED / COMPLETE** (in production `main`) |
-| **BLOOM-034** — Visual-system convergence | shared theme tokens (`resources/ui/bloom-theme.css`); title / menu restyle; Destination Survey convergence; the dark-space BLOOM planning language; **no species mechanics yet** | **CANDIDATE** — on `handoff/bloom-034-review`, pending PMO / owner visual review (not merged) |
-| **BLOOM-035** — Species system + Species Selection | species data / model; baseline physiology; simulation / validator support; species-aware Destination Survey classification; selection / focus / dossier UI; Organic Hybrid remains one species | PLANNED |
+| **BLOOM-034** — Visual-system convergence | shared theme tokens (`resources/ui/bloom-theme.css`); title / menu restyle; Destination Survey convergence; the dark-space BLOOM planning language; **no species mechanics yet** | **IMPLEMENTED / COMPLETE** (in production `main`) |
+| **BLOOM-035** — Species system + Species Selection | species data / model; baseline physiology; simulation / validator support; species-aware Destination Survey classification; selection / focus / dossier UI; Organic Hybrid remains one species | **NEXT** — PLANNED (not started) |
 | **Species art production** | three additional real species packs (four total, unless balancing / design proves a different count better), on the same production compositor architecture | PLANNED |
 | **BLOOM-036** — Challenges | the main-menu CHALLENGES route; authored challenge definitions; one generated challenge planet; assigned species / start state; the challenge dossier; Dying World / Native Competition / Volatile Climate as challenge ingredients | PLANNED |
 | **Final hardening** | full documentation reconciliation; dead historical production-path cleanup; Pages enablement / release; a Safari / WebKit production test if practical; final end-to-end release QA | PLANNED |
