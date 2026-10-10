@@ -69,7 +69,7 @@ const code = src => src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`\\])\
   // 5. the consumer: one renderer, no generation in the departure
   { const ds = code(read("resources/destination-survey/destination-survey.js"));
     const renderers = (ds.match(/new PlanetSphereRenderer\(/g) || []).length, views = (ds.match(/new PlanetSphereView\(/g) || []).length;
-    const depart = ds.slice(ds.indexOf("async _depart("), ds.indexOf("dispose() {", ds.indexOf("async _depart(")));
+    const depart = ds.slice(ds.indexOf("async _depart("), ds.indexOf("\n  dispose(", ds.indexOf("async _depart("))); // (035B: the method now takes { keepPool })
     check(renderers === 1 && views === 1 && /new AtmosphereTransition\(/.test(ds), "A10 Destination Survey: still exactly one PlanetSphereRenderer and one view-construction site (the nine views); it invokes AtmosphereTransition", `renderers ${renderers}, view sites ${views}`);
     check(depart.length > 500 && !/generate|attemptPlanet|runSearch|searchWorld|columnCandidates|setPlanet|setYaw|lookAt|new PlanetSphere|setAutoRotate/.test(depart),
       "A11 the departure code never generates, re-plans, re-creates or re-orients a planet (no generator / setPlanet / setYaw / lookAt / setAutoRotate / new view; only the public setDistance camera dolly)", `${depart.length} chars checked`); }

@@ -71,7 +71,13 @@ function png(W, H, rgba) { const h = Buffer.alloc(13); h.writeUInt32BE(W, 0); h.
 
 (async () => {
   console.log(`# Node — scope (HEAD ${PROOF.head.slice(0, 7)} vs ${BASE})`);
-  { const changed = [...new Set([...git(`diff --name-only ${BASE}`).split("\n"), ...git("ls-files -o --exclude-standard").split("\n")])].filter(Boolean).sort();
+  // the slice's OWN changes: the files of its BLOOM-035B-5 commits (+ the working tree while one of them is HEAD or none exists yet) — the
+  // other 035B slices on the same branch (engine, survey, run, Species Selection) legitimately work elsewhere; the locked delivery below is
+  // still checked over the WHOLE branch
+  { const own = git(`log --format=%H%x09%s ${BASE}..HEAD`).split("\n").filter(Boolean).map(l => l.split("\t")).filter(([, sub]) => /^BLOOM-035B-5\b/.test(sub)).map(([h]) => h);
+    const withTree = !own.length || own[0] === git("rev-parse HEAD");
+    const changed = [...new Set([...(own.length ? own.flatMap(h => git(`show --name-only --format= ${h}`).split("\n")) : git(`diff --name-only ${BASE}`).split("\n")),
+      ...(withTree ? [...git(`diff --name-only HEAD`).split("\n"), ...git("ls-files -o --exclude-standard").split("\n")] : [])])].filter(Boolean).sort();
     const MAY = p => (p.startsWith("art/plant/") && !p.startsWith("art/plant/packs/organic-hybrid/") && !p.startsWith("art/plant/intake/")) || p.startsWith("resources/plant-visual/") || p === "resources/run-ui/plant-specimen.js"
       || p.startsWith("resources/plant-sprite-lab/") || ["tools/build-plant-art.mjs", "tools/plant-sprite-pipeline-check.js", "tools/production-plant-integration-check.js", "tools/organic-hybrid-art-intake-check.js", "tools/intake-plant-art.mjs", "tools/body-plan-check.js"].includes(p)
       || ["docs/SPECIES_BODY_PLANS_v1.md", "docs/PLANT_SPRITE_PIPELINE_v1.md"].includes(p) || p.startsWith("docs/species-art-briefs/") || p.startsWith("docs/evidence/bloom-035b/body-plans/");
