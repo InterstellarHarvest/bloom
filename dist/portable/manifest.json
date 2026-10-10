@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "b172d1d0b09de56dc48b1fcef741892c21b18535fee51bc6120d10680447b20f",
+  "fingerprint": "68d43a0c807f2d7837a22d04fc79800c50033cfc58f7aac568de4d7c3581d955",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -10,12 +10,13 @@
     "resources/main-menu/main-menu-data.js",
     "resources/planet-sphere/planet-sphere-view.js",
     "resources/atmosphere-transition/atmosphere-transition.js",
-    "resources/training/training-run.js"
+    "resources/training/training-run.js",
+    "resources/species-select/species-select.js"
   ],
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
-    "bytes": 1317026,
-    "sha256": "5d02cdc2a7491dcbc435d7b778ac220df09b9eaa09779d3af2d749934cc5c2aa",
+    "bytes": 1334239,
+    "sha256": "3af5f11557b9bb68b00eba3d109ce75192c3ec48d5d1bf98028cd720f9bbc0a3",
     "surveyWorkerTextBytes": 237905
   },
   "workerInputs": [
@@ -220,15 +221,21 @@
     },
     {
       "path": "resources/portable/portable-entry.js",
-      "bytes": 3654,
-      "sha256": "a714bfb5a618a694d424773bf6d89449f8410dc9afc7bc29191d3be17d47e159",
-      "bytesInBundle": 1624
+      "bytes": 3802,
+      "sha256": "847565d7a2bec8ecd21b5ef32b259620d5633f25383a96bdd300b82df0ebba8a",
+      "bytesInBundle": 1810
     },
     {
       "path": "resources/portable/portable-root.js",
       "bytes": 1351,
       "sha256": "35e955b9534cf8f4cb1ce23bfbe01d5e4c82d8cbb78b55357abb863a0a6e31f3",
       "bytesInBundle": 445
+    },
+    {
+      "path": "resources/species-select/species-select.js",
+      "bytes": 16978,
+      "sha256": "7305e447318ee78e883b8d6a272734240d24818182a465743e14ceb3da93b496",
+      "bytesInBundle": 16978
     },
     {
       "path": "resources/training/training-coach.js",

@@ -26,6 +26,7 @@ const MODULES = {
   "resources/planet-sphere/planet-sphere-view.js": () => import("../planet-sphere/planet-sphere-view.js"),
   "resources/atmosphere-transition/atmosphere-transition.js": () => import("../atmosphere-transition/atmosphere-transition.js"),
   "resources/training/training-run.js": () => import("../training/training-run.js"),
+  "resources/species-select/species-select.js": () => import("../species-select/species-select.js"), // (035B) the ?species=1 development flow only
 };
 
 const loaded = new Map();

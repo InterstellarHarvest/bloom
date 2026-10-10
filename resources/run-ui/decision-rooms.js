@@ -108,6 +108,9 @@
   // Concept 18 Terraform geometry (em; docs/UI_CONCEPT_REVIEW_v9.md §7 exclusion zone, v10 §4–5): halo band from the face, the clearance nothing
   // may enter, the lane the banks start outside, top / bottom bands for the legend and readout, the bank step cap, the Soil arrow (future real nodes)
   const TF = { haloIn: 0.3, haloW: 1, clear: 1, lane: 0.7, topbot: 2.6, margin: 0.5, stepMax: 4.9, catGap: 0.45, soilW: [8, 9.6], nodeW: [7.8, 9.4], ring: 0.42, soilGap: 0.1, soilHead: [0.62, 1], soilNose: 0.16 };
+  // (035B) a body plan may name a part for its body ("Trunk", "Culms", "Rosette"…; BLOOM.plantSpecimen sp.partLabels) — the part id, the
+  // category and the mechanics never change; Organic Hybrid's plan names none, so its rooms read exactly as before
+  const partOf = (cat, spec) => { const p = CAT_PART[cat], l = spec && spec.partLabels && spec.partLabels[p[0]]; return l ? [p[0], l, p[2]] : p; };
   const CAT_PART = { Hazard: ["pigment", "Leaf pigment", "leaves"], Water: ["leafShape", "Leaf shape", "water"], Temperature: ["stem", "Stem", "stem"], Soil: ["roots", "Roots", "roots"],
     Seeds: ["seedHead", "Seed head", "crown"], Growth: ["flowers", "Flowers", "colony"], Reach: ["pods", "Pods", "pods"] };
   const COND_CAT = ["Temperature", "Water", "Soil", "Hazard"];
@@ -402,7 +405,7 @@
         leaders.style.setProperty("--ld-w", idle + "px"); leaders.style.setProperty("--ld-on", lit + "px"); leaders.style.setProperty("--ld-glow", lit * TENDRIL.glow + "px"); leaders.style.setProperty("--vein", vein + "px");
         const box = sp.wrap.getBoundingClientRect(), tr = tree.getBoundingClientRect(), boxR = box.right - rr.left, treeL = tr.left - rr.left, treeT = tr.top - rr.top;
         const on = state.hovered ? (items.find(u => u.id === state.hovered) || {}).uiCategory : null;
-        for (const c of cats) { const part = CAT_PART[c], a = sp.spec.anchorPoint(part[0]), port = L.ports[c]; if (!a) continue;
+        for (const c of cats) { const part = partOf(c, sp.spec), a = sp.spec.anchorPoint(part[0]), port = L.ports[c]; if (!a) continue;
           const Ax = a.x - rr.left, Ay = a.y - rr.top, Bx = treeL + port.x, By = treeT + port.y, x0 = boxR - 0.5 * em, dx = Bx - x0, isLit = on === c;
           const d = `M${Ax} ${Ay}H${x0}C${x0 + dx * TENSION[0]} ${Ay},${Bx - dx * TENSION[1]} ${By},${Bx} ${By}`;
           const g = svgEl("g", { class: `lead-g${isLit ? " on" : ""}`, "data-cat": c }, leaders); g.setAttribute("style", catStyle(c));
@@ -427,7 +430,7 @@
       function paintPreview() {
         const pv = state.preview, u = state.hovered ? items.find(x => x.id === state.hovered) : null;
         if (!u || !pv) { sp.spec.highlight(null); sp.spec.render(specState(state.ctx)); sp.caption(A.region(state.ctx)); paintInfoBase(); return; }
-        const part = CAT_PART[u.uiCategory], real = A.upgrade(u.id), r = A.region(state.ctx);
+        const part = partOf(u.uiCategory, sp.spec), real = A.upgrade(u.id), r = A.region(state.ctx);
         sp.spec.render(specState(state.ctx, real && real.rules ? { id: u.id, tier: real.tier + 1 } : null)); sp.spec.highlight(part[0]); sp.caption(r, `Preview · ${u.name}`);
         const fx = effectFor(pv, state.ctx), elsewhere = [pv.gain && pv.gain.length ? `<b>Opens:</b> ${esc(names(pv.gain))}` : "", pv.lose && pv.lose.length ? `<b>Closes:</b> ${esc(names(pv.lose))}` : "", pv.reachHostile && pv.reachHostile.length ? `<b>Reachable, hostile:</b> ${esc(names(pv.reachHostile))}` : ""].filter(Boolean);
         sp.info.setAttribute("style", catStyle(u.uiCategory)); sp.info.classList.add("pvw");
