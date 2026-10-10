@@ -520,3 +520,127 @@ record: `docs/SPECIES_BODY_PLANS_v1.md` § Implementation (035B-5).
 - QA: this suite (`tools/plant-sprite-pipeline-check.js`) proves the Organic Hybrid plan (`PACKS` = the oh-stem@1 packs; `FINAL_PACKS` per
   plan, check P0); `tools/body-plan-check.js` proves the migration byte-identical against 5ff53d3 and every legal model of every new plan.
 - New species art follows `docs/species-art-briefs/` (generated from the plans: `node tools/build-plant-art.mjs --briefs`).
+
+## SPECIES_ART_INTAKE — the real-pack intake of the three species lanes (BLOOM-035C0)
+
+`tools/intake-plant-art.mjs --pack <pack-id>` turns a species lane's PMO-approved Art Studio deliveries into its production pack
+`art/plant/packs/<pack-id>/atlas.{png,json}` — mechanically, as `tools/intake-organic-hybrid-art.mjs` did for Organic Hybrid (which stays
+locked and untouched: Organic Hybrid is not a lane of this tool). Tooling only: no lane has deliveries yet, so no real pack exists and
+`content/species.js` still points the three candidate species at their TEMPORARY PIPELINE PROOF packs.
+
+```
+node tools/intake-plant-art.mjs --list                       every lane and its state (awaiting deliveries / ready / REFUSED)
+node tools/intake-plant-art.mjs --pack <id> --dry-run        assemble + prove with the plant-art build in a scratch copy; write nothing
+node tools/intake-plant-art.mjs --pack <id>                  the same, then write the pack + art/plant/intake/<id>/intake-map.json
+node tools/intake-plant-art.mjs --pack <id> --check          the committed pack + map equal a clean intake, byte for byte
+npm --prefix tools run build:plant-art                       then regenerate the runtime (check:plant-art must pass)
+```
+
+**Lanes are data.** One lane per generated brief `docs/species-art-briefs/*_ART_BRIEF_v1.json` (`newPack`, `bodyPlan`, `plan`, `contract`,
+batch table): `cinder-rosette` (`rosette@1`, 60 drawings), `woolly-candle` (`candle@1`, 58), `reed-spire` (`reed@1`, 53). The plan
+contract is the authority for the drawings (every component × angle) and their metadata; the brief assigns each component to a delivery
+batch (1 base body · 2 cold + heat · 3 drought · 4 flood · 5 salt + radiation, which also carries the masks · 6 reproduction + dispersal ·
+7 metadata closure). A brief whose component table no longer equals its contract is refused (regenerate: `build-plant-art.mjs --briefs`).
+Each lane is independent: one lane's deliveries never depend on another's.
+
+### Delivery folder (per lane)
+
+```
+art/plant/intake/<pack-id>/
+  README.txt                         what the lane is (committed with C0)
+  PMO_FINAL_ACCEPTANCE.json          the PMO's record (below) — committed unchanged
+  approved-deliveries/*.zip          exactly the accepted ZIPs — committed unchanged (dot-files such as .DS_Store are ignored)
+  intake-map.json                    written by the intake: provenance, delivery → atlas rect + pixel signature per drawing / mask
+```
+
+### `PMO_FINAL_ACCEPTANCE.json` — format `bloom-plant-art-acceptance@1`
+
+```json
+{
+  "format": "bloom-plant-art-acceptance@1",
+  "project": "STRANGE BLOOM · UNKNOWN SOILS",
+  "pack": "cinder-rosette",
+  "species": "cinder_rosette",
+  "bodyPlan": "rosette@1",
+  "status": "FINAL PMO-APPROVED ART INTAKE",
+  "production_main": "<sha, optional>",
+  "deliveries": [
+    { "file": "batch1-base-body.zip", "batch": 1, "bytes": 6082, "sha256": "<64 lower-case hex>" },
+    { "file": "batch7-metadata-closure.zip", "batch": 7, "bytes": 2087, "sha256": "…" }
+  ],
+  "integration_rule": "<optional text>", "notes": "<optional text>"
+}
+```
+
+Required: `format`, `pack` (= the lane), `species` (= the brief's species id), `bodyPlan` (= the lane's plan ref), `status` exactly
+`FINAL PMO-APPROVED ART INTAKE`, and one `{ file, batch, bytes, sha256 }` per accepted delivery (`file` a plain `*.zip` name, unique;
+`batch` one of the brief's batches). Any other key is refused (typos must not pass silently). A batch may be split over several ZIPs; every
+drawing still arrives exactly once.
+
+### `delivery.json` inside each ZIP — format `bloom-plant-art-delivery@1`
+
+Exactly one per ZIP (at the root or in one top folder; paths are relative to it). Every other file in the ZIP must be a declared sprite,
+mask or attachment (`__MACOSX/`, `.DS_Store` and `._*` are ignored).
+
+```json
+{
+  "format": "bloom-plant-art-delivery@1",
+  "pack": "cinder-rosette",
+  "bodyPlan": "rosette@1",
+  "batch": 1,
+  "sprites": [
+    { "id": "leaf.base.flat", "file": "sprites/leaf.base.flat.png", "anchor": [0, 14], "size": [20, 18],
+      "points": { "tip": [19, 13], "margin": [[6, 12], [11, 12], [15, 13]] } },
+    { "id": "bud", "file": "sprites/bud.png", "anchor": [3, 9] }
+  ],
+  "masks": [ { "sprite": "leaf.base.flat", "treatment": "toothed", "file": "masks/toothed.leaf.base.flat.png" } ],
+  "palette": { "leaf": ["#…", "#…", "#…", "#…"] },
+  "environment": { "sky": ["#…", "#…"], "soil": ["#…", "#…", "#…"], "turf": "#…", "water": ["#…", "#…"] },
+  "render": { "stemOutline": "ink" },
+  "attachments": ["preview/contact-sheet.png"],
+  "notes": "<optional text>"
+}
+```
+
+- `sprites` — `id` = `component[.angle]` of the lane's contract; it must belong to THIS batch per the brief. One PNG per drawing, drawn
+  facing the contract's orientation (right-facing leaves face right: the build bakes every mirrored left twin; an authored left drawing or
+  any `rotate` / `flip` key is refused — no runtime rotation, every angle is its own drawing). `anchor` required; `points` exactly the
+  contract's (`tip` + exactly 3 `margin` for leaves; `tip` for a trunk body; none otherwise); `size` optional (checked against the PNG).
+- `masks` — batch 5 only (the brief's mask batch): one PNG per (drawing, treatment) the component takes (`pigment` / `wax` / `toothed`;
+  trunk bodies `pigment`). Omitted `pigment` / `wax` = the contract default `"auto"`; omitted `toothed` = no teeth.
+- `palette` — any delivery may declare ramps; all declarations must agree; together they must give all 18 contract materials (shade 0 → 3
+  dark → light, lower-case `#rrggbb`, every colour unique).
+- `environment` + `render` — the metadata closure (batch 7) only, exactly one closure delivery. `environment`: sky 2 · soil 3 · turf, plus
+  water 2 if and only if the plan's ground is `waterlogged` (Reed Spire); no environment colour may be a plant colour. `render` is exactly
+  `{ "stemOutline": "self" | "ink" | "none" }`: the shared stress treatment stays the engine default (no per-pack stress tint in v1; a
+  genuine need found with final art is a separate, reviewed visual change).
+- `attachments` — previews / notes travelling with the delivery; recorded in the provenance map, never ingested.
+
+### What is refused (exit 1, nothing written)
+
+Missing `PMO_FINAL_ACCEPTANCE.json` (the lane is "awaiting deliveries") · an accepted delivery missing on disk · a ZIP on disk that the
+record does not list · SHA-256 or byte-count mismatch · not a ZIP / CRC error · wrong `pack` or `bodyPlan` (record or delivery.json) ·
+a delivery whose `batch` differs from the record's · an undeclared file in a ZIP · a drawing outside the contract or outside its batch ·
+a duplicate drawing or mask · incomplete coverage (any component × angle missing) · a batch with no delivery · partial alpha · an opaque
+pixel that is not an exact palette colour, or is a treatment-only colour (pig* / wax*) · an empty drawing · maxSize exceeded · an anchor
+outside the drawing, on a transparent pixel, or off the contract's anchor convention (leaf `radialLeaf` / `leafSocket`: leftmost column;
+`stiltRoot`: top-left; `primaryRoot`: top row, centre column; `pod`: top row; `aerialRoot` / `apex` / `flower` / `seedHead`: bottom row;
+trunk `body`: bottom row, centre column; `leafPoint` / `stemNode` / `drift`: opaque only) · a required point missing or on a transparent
+pixel · a mask of the wrong size, empty, partially transparent, outside its drawing's opaque pixels, of a treatment the component does not
+take, or outside batch 5 · an incomplete / contradictory palette · environment that does not match the plan's ground · any render option
+other than `stemOutline` · any unknown key · a stale brief.
+
+Then the normal production build proves the assembled pack — on a scratch copy, before anything is written: palette, binary alpha, no
+strays, contract metadata, every component × angle × side, the trunk crown points, the static clip proof of every sprite at every socket.
+After the intake, `build:plant-art` regenerates the runtime and `tools/body-plan-check.js` (P1–P4) is run with the real pack; switching
+the species from its proof pack to the real pack (`content/species.js`) and releasing Species Selection are separate, reviewed steps
+(BLOOM-035C).
+
+**Output** (deterministic; independent of ZIP entry order or compression): `atlas.png` (160 px wide: the swatch strip — one 2-px column
+per material, one 2×2 block per shade — then the drawings in contract order, each followed by its masks, 1-px transparent gutters) and
+`atlas.json` (`bodyPlan` declared; status `<SPECIES> — FINAL ART (PMO-approved; tools/intake-plant-art.mjs)`).
+
+**QA:** `tools/species-art-intake-check.js` proves all of this WITHOUT final art, on scratch trees, with controlled fixture deliveries cut
+from the proof packs' own pixels: each lane assembles, the build passes, the pack is lossless (runtime == the proof pack it was cut from),
+sampled legal models render pixel-identical with ≥ 1 px margin, output is deterministic, the CLI writes / checks / dry-runs, lanes are
+independent, every refusal above fires with its reason, and Organic Hybrid's intake, delivery and pack are byte-identical to the C0 base.

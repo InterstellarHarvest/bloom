@@ -13,6 +13,9 @@ schema/example-sprite-entries.json   annotated examples
 packs/<pack>/atlas.png         the pixel art (exact palette colours, alpha 0 or 255, no anti-aliasing)
 packs/<pack>/atlas.json        the metadata (palette, environment, one entry per sprite: rect, anchor, attach, layer, orientation, …)
 intake/organic-hybrid/         the PMO-approved delivery ZIPs + PMO_FINAL_ACCEPTANCE.json (hashes) + intake-map.json (source → atlas)
+intake/<species-pack>/         (BLOOM-035C0) the three species lanes cinder-rosette / woolly-candle / reed-spire: PMO_FINAL_ACCEPTANCE.json +
+                               approved-deliveries/*.zip, ingested by `node tools/intake-plant-art.mjs --pack <id>` (README.txt per lane;
+                               schemas: docs/PLANT_SPRITE_PIPELINE_v1.md § SPECIES_ART_INTAKE) — awaiting deliveries, no final art yet
 body-plans/<plan>.json         (BLOOM-035B-5) one BODY PLAN @3 per plan — oh-stem (Organic Hybrid: references body-plan.json + contract.json,
                                which stay byte-pinned), rosette (Cinder Rosette), candle (Woolly Candle), reed (Reed Spire)
 contracts/<plan>.json          (BLOOM-035B-5) a plan's component registry; materials / treatments / pixel rules shared from contract.json
