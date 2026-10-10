@@ -83,7 +83,7 @@
       intent: "The planet is already alive: native vegetation, adapted to the planet's starting conditions, holds part of the land and spreads into open ground. The player's plant competes with it for light, water, nutrients and space at moving fronts, finds the places it can win, strengthens vulnerable colonies, and decides whether to adapt the organism or alter the environment. The competitor reacts locally to what the player does; there is no clock.",
       pressure: null,
       // BLOOM-014 generic competition mechanism (resources/bloom-sim.js; the engine never names this scenario):
-      //   tolerance  the native's comfort windows: the baseline plant's (content/config.js genomeBase) width × breadth, centred
+      //   tolerance  the native's comfort windows: the reference physiology's (content/config.js referencePlant — never the player's species) width × breadth, centred
       //              `adaptation` of the way from the baseline centre to the planet's median STARTING ground; salt/radiation
       //              limits move the same way toward the hardyShare quantile of the starting land
       //   start      starting native cover (from the planet, never the run RNG): coverShare of the colonizable land, in

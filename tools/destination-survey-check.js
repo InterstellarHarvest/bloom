@@ -13,8 +13,8 @@
 "use strict";
 const path = require("path"), fs = require("fs");
 const ROOT = path.resolve(__dirname, "..");
-for (const f of ["content/config.js", "content/traits.js", "planets/first_bloom.js", "content/archetypes.js", "content/scenarios.js", "content/play.js",
-  "resources/bloom-sim.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js",
+for (const f of ["content/config.js", "content/traits.js", "content/species.js", "planets/first_bloom.js", "content/archetypes.js", "content/scenarios.js", "content/play.js",
+  "resources/bloom-sim.js", "resources/bloom-species.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js",
   "resources/bloom-scenario.js", "resources/bloom-play.js"])
   require(path.join(ROOT, f));
 const { BLOOM, BLOOM_DATA } = globalThis, D = BLOOM_DATA;

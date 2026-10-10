@@ -240,7 +240,8 @@ const listShares = (o, order, names) => order.filter(k => o[k] >= 0.005).map(k =
  * Every value is read from the planet data or the engine's evaluate() (see `source` on each row); nothing is invented.
  */
 export function surveyDossier(cand, deps) {
-  const { BLOOM_DATA: D } = deps0(deps), p = cand.planet, w = cand.assessment || assessWorld(p, deps), C = D.config;
+  const { BLOOM, BLOOM_DATA: D } = deps0(deps), p = cand.planet, w = cand.assessment || assessWorld(p, deps), C = D.config;
+  const SP = cand.species && cand.species.physiology ? cand.species : BLOOM.species.resolve(BLOOM.species.DEFAULT_ID); // (035B) the plant it is judged for
   const sky = p.globalClimate;
   // climate: the land's starting temperatures (sky + each region's offset), area-weighted
   const totalA = w.temps.reduce((a, [, n]) => a + n, 0), mean = w.temps.reduce((a, [t, n]) => a + t * n, 0) / totalA;
@@ -258,7 +259,7 @@ export function surveyDossier(cand, deps) {
   const humid = sky.moisture < 30 ? "dry air" : sky.moisture < 60 ? "moderate humidity" : "humid air";
   // solar exposure: light and surface radiation over the land (area-weighted); radiation above the starting plant's tolerance
   let light = 0, rad = 0, strong = 0;
-  for (const r of w.regions) { light += r.light * r.area; rad += r.radiation * r.area; if (r.radiation > C.genomeBase.radTol) strong += r.area; }
+  for (const r of w.regions) { light += r.light * r.area; rad += r.radiation * r.area; if (r.radiation > SP.physiology.radTol) strong += r.area; }
   light /= totalA; rad /= totalA; strong /= totalA;
   const lightWord = light < 40 ? "Dim" : light < 70 ? "Moderate" : "Bright";
   // expected challenges: what limits the starting plant on the land it cannot yet live on (engine limiting factor)

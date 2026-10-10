@@ -10,7 +10,8 @@
 //   BLOOM.play.stripPlanet(planet)                       → the planet with its validator solutions removed
 //   BLOOM.play.runQuery({ archetype, seed, scenario })   → "play=1&archetype=…&seed=…&scenario=…" for demo-run.html
 //   BLOOM.play.deriveConfig(base, overrides)             → a NEW config: a deep copy of `base` with `overrides` merged in
-//                                                          (BLOOM-028D1: the training run's config; `base` is never touched)
+//                                                          (BLOOM-028D1: the training run's config; `base` is never touched;
+//                                                          BLOOM-035B: it refuses referencePlant / species / physiology overrides)
 //   BLOOM.play.trainingQuery({ planet, returnTo })       → "training=1[&planet=…][&return=…]" for demo-run.html (028D1)
 //   BLOOM.play.safeReturn(value, here, fallback)         → where a training run may go back to: `value` (the return= parameter)
 //                                                          resolved against `here`, only if it is the same origin; else
@@ -97,7 +98,13 @@
   // (BLOOM-028D1) A run that needs its own numbers (the training run) gets a derived copy, never an edit of the shared config:
   // `base` is deep-copied (config is plain data) and `overrides` merged in, object by object. An override may only change a
   // key the base already has, with a value of the same kind, so a typo is refused instead of silently adding a dead setting.
+  // (BLOOM-035B) Never a physiology: config.referencePlant is the world-generation reference (a WORLD_GEN_VERSION decision, never a
+  // run's override), and a player's physiology is a species, chosen with createSim(…, { species }) — so the native competitor and
+  // world construction can never be moved by expressing a species as a derived config. Economy overrides (Training) stay allowed.
+  const PHYSIOLOGY_OVERRIDES = ["referencePlant", "genomeBase", "species", "physiology", "playerPhysiology"];
   function deriveConfig(base, overrides) {
+    for (const k of Object.keys(overrides || {})) if (PHYSIOLOGY_OVERRIDES.includes(k))
+      throw new Error(`deriveConfig: "${k}" cannot be overridden — config.referencePlant is the world-generation reference physiology and a player's physiology is a species (createSim(…, { species }))`);
     const out = JSON.parse(JSON.stringify(base));
     const merge = (dst, src, at) => { for (const k of Object.keys(src || {})) {
       const p = at ? `${at}.${k}` : k, v = src[k], o = dst[k];

@@ -12,10 +12,13 @@
 "use strict";
 const fs = require("fs"), path = require("path");
 const ROOT = path.resolve(__dirname, "..");
-for (const f of ["content/config.js", "content/traits.js", "planets/first_bloom.js", "resources/bloom-sim.js"]) require(path.join(ROOT, f));
+for (const f of ["content/config.js", "content/traits.js", "content/species.js", "planets/first_bloom.js", "resources/bloom-sim.js", "resources/bloom-species.js"]) require(path.join(ROOT, f));
 const { BLOOM, BLOOM_DATA } = globalThis;
 const GOLD = require("./golden/scenarios.js");
 const GOLDEN_PATH = path.join(__dirname, "golden/first_bloom.json");
+// (BLOOM-035B) the three specialists' own golden runs (same harness, same seeds; written with --write-species, only for an intended
+// physiology change — which also bumps that species' physiologyVersion)
+const SPECIES_GOLDEN_PATH = path.join(__dirname, "golden/species_specialists.json");
 
 let fails = 0;
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (!ok) fails++; };
@@ -23,10 +26,10 @@ const clone = o => JSON.parse(JSON.stringify(o));
 
 // the golden pins the traits that existed when it was captured (adc87d0); traits added later are
 // checked separately below (not offered on First Bloom, and unpurchased they change nothing)
-function adapter(planet, config, traits, goldenIds) {
+function adapter(planet, config, traits, goldenIds, extra = {}) {
   let sim;
   return {
-    reset(seed) { sim = BLOOM.createSim(planet, config, traits, { rng: GOLD.mulberry32(seed) }); },
+    reset(seed) { sim = BLOOM.createSim(planet, config, traits, { rng: GOLD.mulberry32(seed), ...extra }); },
     tick() { sim.tick(); }, buy(id) { return sim.buy(id); }, addBiomass(x) { sim.biomass += x; },
     read() { return { biomass: sim.biomass, ticks: sim.ticks, won: sim.won, tiles: sim.state, vigor: sim.vigor, dens: sim.dens, bubbles: sim.bubbles.length }; },
     setColonyFocus(id, mode) { return sim.setColonyFocus(sim.map.SIDX[id], mode); },
@@ -60,6 +63,22 @@ for (const part of GOLD.PARTS) {
     : `buys ${got[part].buys.map(b => b.join("@")).join(" ")} · final cov-hash ${got[part].trace.at(-1)[2]} won=${got[part].trace.at(-1)[5]}`;
   check(!d, `golden ${part} matches bit-for-bit`, d || extra);
 }
+
+// 1b · (BLOOM-035B) species: an Organic Hybrid run IS the golden (its physiology is numerically config.referencePlant, its own object);
+// each specialist is deterministic (two runs identical) and pinned by its own golden fixture
+{ const OH = BLOOM.species.resolve("organic_hybrid"), gotOH = GOLD.runGolden(adapter(planet, config, traits, goldenIds, { species: OH }));
+  for (const part of GOLD.PARTS) { const d = firstDiff(JSON.parse(JSON.stringify(gotOH[part])), want[part], part);
+    check(!d, `golden ${part}: species organic_hybrid reproduces it bit-for-bit (the no-species run)`, d || "identical"); }
+  const spec = {}; for (const sp of BLOOM.species.list().filter(x => x.id !== "organic_hybrid")) {
+    const a = JSON.parse(JSON.stringify(GOLD.runGolden(adapter(planet, config, traits, goldenIds, { species: sp })))), b = JSON.parse(JSON.stringify(GOLD.runGolden(adapter(planet, config, traits, goldenIds, { species: sp }))));
+    const same = !firstDiff(a, b), differs = !!firstDiff(a.static, want.static);
+    check(same && differs, `species ${sp.id}: deterministic (two golden runs identical) and not the reference plant (its static evaluation differs)`, sp.physiologyKey);
+    spec[sp.physiologyKey] = a; }
+  if (process.argv.includes("--write-species")) { fs.writeFileSync(SPECIES_GOLDEN_PATH, JSON.stringify(spec)); console.log("species golden written:", SPECIES_GOLDEN_PATH); }
+  const pinned = fs.existsSync(SPECIES_GOLDEN_PATH) ? JSON.parse(fs.readFileSync(SPECIES_GOLDEN_PATH, "utf8")) : {};
+  for (const k of Object.keys(spec)) { const d = pinned[k] ? firstDiff(spec[k], pinned[k], k) : `${k}: no pinned golden (a physiology change needs a physiologyVersion bump and --write-species)`;
+    check(!d, `species golden ${k} matches bit-for-bit`, d || "static + " + GOLD.PARTS.filter(p => p !== "static").length + " runs"); }
+  check(Object.keys(pinned).sort().join() === Object.keys(spec).sort().join(), "the species golden pins exactly the current specialists' physiology keys", Object.keys(pinned).join(", ")); }
 
 // 2 · content is pure data (no functions / code hidden in config, traits, planet)
 for (const [name, obj] of [["config", config], ["traits", traits], ["first_bloom", planet]])

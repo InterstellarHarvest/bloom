@@ -10,11 +10,13 @@
 //   out: { id, progress: { found, draws, validations } } … (column task only), then { id, result } or { id, error }
 import "../../content/config.js";
 import "../../content/traits.js";
+import "../../content/species.js";
 import "../../planets/first_bloom.js";
 import "../../content/archetypes.js";
 import "../../content/scenarios.js";
 import "../../content/play.js";
 import "../bloom-sim.js";
+import "../bloom-species.js";
 import "../bloom-gen.js";
 import "../bloom-validate.js";
 import "../bloom-witness.js";
