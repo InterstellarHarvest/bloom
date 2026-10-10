@@ -3,6 +3,10 @@
 > **Current state (BLOOM-033):** the title's main action reads **EXPEDITION** (was BEGIN EXPEDITION); TRAINING and the survey's
 > returns stay inside `index.html` (no page navigation, no `?begin=1` round trip). Architecture: [`SINGLE_DOCUMENT_APP_v1.md`](SINGLE_DOCUMENT_APP_v1.md);
 > current direction (the planned menu with CHALLENGES and the BLOOM-034 restyle): [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md).
+>
+> **Look (BLOOM-034):** the serif / gold plaque, its corner marks and the gold marker described below are retired: the title and menu
+> use the game's own visual language on a dark planning card (the shared tokens of `resources/ui/bloom-theme.css`, icon + word entries).
+> See [`VISUAL_SYSTEM_v1.md`](VISUAL_SYSTEM_v1.md) §5. Behaviour (paintings, rotation, dialogs, keyboard, fades) is unchanged.
 
 **From:** BLOOM-028C · **For:** the Main PMO (root `index.html` integration, gameplay handoff) and the Tutorial workstream
 (the TRAINING hook). Evidence and QA: `docs/evidence/bloom-028c/REPORT.md`; the menu ↔ survey fade (028C1):

@@ -3,6 +3,10 @@
 > **Current names (BLOOM-033):** the three classes are **Favorable / Precarious / Extreme** (ids `favorable` / `precarious` / `extreme`);
 > they were Stable / Volatile / Extreme when this document was written. Same thresholds, columns and worlds. The survey's departure now
 > mounts the run inside `index.html` ([`SINGLE_DOCUMENT_APP_v1.md`](SINGLE_DOCUMENT_APP_v1.md)). Direction: [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §5.
+>
+> **Look (BLOOM-034):** the colours, buttons and dossier styling described below are superseded by the shared visual system: the classes
+> are the gameplay statuses (Favorable = OK, Precarious = warning, Extreme = blocked; icon + word), the dossier rows are gameplay
+> condition boxes, buttons are gameplay buttons. See [`VISUAL_SYSTEM_v1.md`](VISUAL_SYSTEM_v1.md) §6. Behaviour is unchanged.
 
 **From:** BLOOM-028A, validated identity BLOOM-028A1, departure BLOOM-028B · **For:** the Main Menu (which enters this
 screen) and the Main PMO (which connects the expedition descent to the real game). Evidence and QA:
