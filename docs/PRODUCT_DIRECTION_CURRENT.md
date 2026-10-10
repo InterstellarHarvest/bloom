@@ -99,6 +99,10 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
   specialist · a cold / radiation specialist · a wet / flood specialist.
 - Species selection shows a fully grown specimen rendered from that species' actual in-game sprite system; clicking a species focuses /
   zooms it and opens a dossier in the same interaction language as the Destination Survey.
+- **Design candidate (BLOOM-035A, review branch `handoff/bloom-035a-species-design`, not merged; nothing implemented):**
+  [`SPECIES_SYSTEM_v1.md`](SPECIES_SYSTEM_v1.md) (architecture: one physical planet per World Seed via a reference physiology; the
+  `createSim(…, { species })` seam; species-relative survey), [`SPECIES_STUDY_v1.md`](SPECIES_STUDY_v1.md) (measurements),
+  [`SPECIES_BODY_PLANS_v1.md`](SPECIES_BODY_PLANS_v1.md) (body-plan layer, concepts, art plan). Pending PMO choice.
 
 ## 7. Species art architecture
 
