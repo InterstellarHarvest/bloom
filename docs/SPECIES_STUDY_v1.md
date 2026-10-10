@@ -1,6 +1,8 @@
 # Strange Bloom — species strategic-distinctness study v1 (BLOOM-035A)
 
-**Status: RESEARCH (BLOOM-035A).** Read-only measurement. No production file was changed; the measurement scripts live in
+**Status: RESEARCH — ACCEPTED by the PMO (2026-10-10) as the basis of BLOOM-035B.** The accepted physiologies are `organic_hybrid`,
+`dry_heat` (→ production `cinder_rosette`), `cold_v2` (→ `woolly_candle`) and `wet_flood` (→ `reed_spire`); the locked values are in
+[`SPECIES_SYSTEM_v1.md`](SPECIES_SYSTEM_v1.md) §0.1. Strategy diversity and pacing are recorded diagnostics, never offer gates. Read-only measurement. No production file was changed; the measurement scripts live in
 [`tools/research/species-study/`](../tools/research/species-study/) (kept out of the production paths and out of every QA gate until the
 PMO accepts the methodology). Architecture: [`SPECIES_SYSTEM_v1.md`](SPECIES_SYSTEM_v1.md). Concepts and art: [`SPECIES_BODY_PLANS_v1.md`](SPECIES_BODY_PLANS_v1.md).
 

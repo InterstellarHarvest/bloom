@@ -1,8 +1,9 @@
 # Strange Bloom — species system v1 (BLOOM-035A design)
 
-**Status: DESIGN CANDIDATE (BLOOM-035A).** Design, research and architecture only. Nothing in this document exists in production;
-no production mechanic, data file or sprite was changed by BLOOM-035A. The PMO chooses the architecture and the concepts, then issues
-BLOOM-035B. [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §4–§7 wins about what is decided.
+**Status: ACCEPTED (PMO, 2026-10-10) — BLOOM-035A design COMPLETE; BLOOM-035B implements it.** The PMO accepted this design
+with the decisions recorded as **LOCKED** in §0.1 below; where §0.1 and a later section differ, **§0.1 wins** (the later sections are kept
+as the reviewed design text). BLOOM-035A itself changed no production mechanic, data file or sprite.
+[`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §4–§7 wins about what is decided for the product.
 
 Companion documents:
 
@@ -39,6 +40,53 @@ content files are byte-identical there to `79f5540` and to `726f74d` (release-ch
    trapped species (every physiology could win 100 % of worlds). Growth / economy modifiers are not recommended for v1.
 7. **Art needs a body-plan layer** (one manifest, one component contract and one small grammar per body plan); Organic Hybrid's plan is
    migrated byte-identically. Details in the body-plans document.
+
+---
+
+## 0.1 PMO decisions — LOCKED for BLOOM-035B (2026-10-10)
+
+**Reference physiology (§2.3, §12.1).**
+
+- A new explicit key **`config.referencePlant`**, numerically identical to today's `genomeBase`. It belongs to **world generation**, not
+  to any playable species. `WORLD_GEN_VERSION` stays **1**; any future change to `referencePlant` requires an explicit `WORLD_GEN_VERSION`
+  decision.
+- The meaning of `genomeBase` is **not** merely renamed: production readers migrate to the explicit concept. If a temporary legacy alias
+  is technically necessary it must point to the same object, and no new production logic may read it.
+- Organic Hybrid has its **own** species physiology object, numerically equal to `referencePlant` (QA pins the equality; the two objects
+  have different semantic ownership). Retuning Organic Hybrid never changes world generation.
+
+**Cold role (§3.5, §12.2).** The production candidate is a **COLD SPECIALIST**. Its additional radiation tolerance stays; radiation is a
+**latent secondary strength**, not a promise that it thrives on irradiated landing ground, and player copy must say so honestly (e.g.
+"Handles harsh radiation once heat is under control"). Cold + dry is **not** substituted at this stage.
+
+**Strategy diversity (§6.3, §12.3).** Species-specific **winnability is required**. Strategy diversity and pacing are **recorded
+diagnostics only**: they never reject an otherwise winnable species / world pair. World construction keeps every existing reference
+physiology validation exactly as today.
+
+**Organic Hybrid note (§7.2, §12.4).** Organic Hybrid keeps a "Recommended first expedition" / "Balanced generalist" note. It is never
+labelled Easy, and species are never presented as difficulty levels.
+
+**Physiology values for 035B v1 (§3.4, §12.5)** — the implementation values; not tuned casually during implementation. A retune needs a
+concrete measured defect (study tool evidence, documented first) and changes that species' physiology version.
+
+| id | concept | tempFloor | tempCeil | waterPos | waterTol (window) | saltTol | radTol | toxTol |
+|---|---|---|---|---|---|---|---|---|
+| `organic_hybrid` | Organic Hybrid — generalist | −6 | 24 | 50 | 18 (32 … 68) | 15 | 30 | 25 |
+| `cinder_rosette` | Cinder Rosette — dry / heat | 2 | 34 | 34 | 16 (18 … 50) | 15 | 35 | 25 |
+| `woolly_candle` | Woolly Candle — cold | −14 | 16 | 46 | 18 (28 … 64) | 15 | 50 | 25 |
+| `reed_spire` | Reed Spire — wet / flood | −6 | 24 | 62 | 20 (42 … 82) | 60 | 30 | 25 |
+
+(The study's role ids `dry_heat`, `cold_v2`, `wet_flood` are these physiologies; production uses the concept ids above.)
+
+**Challenges (§4.3, §12.7).** A Challenge **never** changes `referencePlant`. It may choose a species, a world recipe, a scenario,
+starting adaptations / state, or combinations of these; `referencePlant` remains a world-generation constant.
+
+**Species concepts accepted:** generalist **Organic Hybrid** · dry / heat **Cinder Rosette** · cold **Woolly Candle** · wet / flood
+**Reed Spire**. The alternates (SPECIES_BODY_PLANS §3) remain historical design alternatives only.
+
+**Developer flag (§8, §12.6).** Species mechanics may live on `main`; the Species Selection screen is reachable only with the explicit
+developer query flag `?species=1` (no Developer section in normal Settings) until the real species art is accepted. Without the flag the
+Expedition flow is the Organic Hybrid flow.
 
 ---
 
@@ -636,13 +684,13 @@ Authored-world saves carry the authored planet id plus the same species fields.
 | Art: three new body plans balloon the compositor | narrow body-plan layer (one skeleton generalization: multiple axes + rosette / sprite-body axes), no skeletal animation |
 | Species screen reads as a difficulty choice | no power ordering, no stars / difficulty words, strengths always paired with weaknesses |
 
-## 12. Unresolved design choices (for the PMO)
+## 12. Design choices (RESOLVED by the PMO, 2026-10-10 — see §0.1)
 
-1. Reference physiology as a **new key** (`config.referencePlant`) or keep the `genomeBase` key with a new meaning (§2.3).
-2. Cold role: **cold + radiation** (recommended, latent strength) vs **cold + dry-hardy** (§3.5).
-3. S3 strategy diversity for species: recorded only (recommended) or required at `minStrategies: 1` / the archetype's own count.
-4. Whether Organic Hybrid keeps the "good first expedition" note.
-5. Exact physiology numbers (study values are a calibrated starting point, not final).
-6. Whether species mechanics land on `main` behind a flag before the art (recommended) or wait for the art.
+1. Reference physiology as a **new key** (`config.referencePlant`) or keep the `genomeBase` key with a new meaning (§2.3). → **new key**.
+2. Cold role: **cold + radiation** (recommended, latent strength) vs **cold + dry-hardy** (§3.5). → **cold specialist, radiation latent**.
+3. S3 strategy diversity for species: recorded only (recommended) or required at `minStrategies: 1` / the archetype's own count. → **recorded only** (S3 / S4).
+4. Whether Organic Hybrid keeps the "good first expedition" note. → **kept** ("Recommended first expedition"; never "Easy").
+5. Exact physiology numbers (study values are a calibrated starting point, not final). → **the §0.1 table** for 035B v1.
+6. Whether species mechanics land on `main` behind a flag before the art (recommended) or wait for the art. → **behind `?species=1`**.
 7. Whether a Challenge may change the *reference* physiology (recommended: never — a Challenge changes the species, the world recipe,
-   or both, never the reference).
+   or both, never the reference). → **never**.
