@@ -14,15 +14,13 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-10, with BLOOM-033 (branch `agent/bloom-033-single-document-app`, awaiting PMO review — not yet merged to
-`main`).*
+*Last updated: 2026-10-10, BLOOM-033 closeout — BLOOM-033 accepted and integrated into production `main` (`62b7f56`).*
 
 ---
 
 ## 1. Production application architecture
 
-**LOCKED DESIGN · implemented by BLOOM-033 on its review branch (its full regression green apart from one classified live-random flake), pending PMO acceptance.** It becomes
-IMPLEMENTED in production `main` when BLOOM-033 is merged; until then production `main` still runs the two-document flow of BLOOM-030.
+**LOCKED DESIGN · IMPLEMENTED** in production `main` by BLOOM-033.
 
 - `index.html` is the single player-facing Strange Bloom application.
 - Title, expedition planning, the Destination Survey, Training, gameplay, the decision rooms, the report and every return flow live in
@@ -34,7 +32,7 @@ IMPLEMENTED in production `main` when BLOOM-033 is merged; until then production
 
 ## 2. Normal gameplay mode terminology
 
-**LOCKED DESIGN · implemented by BLOOM-033 (review branch).**
+**LOCKED DESIGN · IMPLEMENTED** (BLOOM-033).
 
 - The canonical no-special-pressure gameplay mode is **`default`** (scenario id `default`).
 - **`eden` is retired** as the active canonical term: it sounds like a particular biome / world rather than "ordinary rules".
@@ -56,7 +54,7 @@ STRANGE BLOOM · UNKNOWN SOILS
   CREDITS
 ```
 
-- **Implemented by BLOOM-033 (review branch):** BEGIN EXPEDITION → **EXPEDITION**; menu today: EXPEDITION · TRAINING · SETTINGS · CREDITS.
+- **IMPLEMENTED** (BLOOM-033): BEGIN EXPEDITION → **EXPEDITION**; menu today: EXPEDITION · TRAINING · SETTINGS · CREDITS.
 - **CHALLENGES: PLANNED** (BLOOM-036). It is not added as a fake or disabled control before then.
 
 ## 4. Expedition definition
@@ -75,7 +73,7 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
 
 ## 5. Destination Survey / difficulty
 
-**LOCKED DESIGN · the rename is implemented by BLOOM-033 (review branch).**
+**LOCKED DESIGN · the rename is IMPLEMENTED** (BLOOM-033).
 
 - The 3 × 3 Destination Survey itself is the normal Expedition difficulty choice. There is **no** separate Easy / Normal / Hard setting.
 - The three player-facing classes are **FAVORABLE · PRECARIOUS · EXTREME**, replacing the confusing Stable / Volatile / Extreme naming —
@@ -168,8 +166,8 @@ This is not a gameplay-code feature; product code does not work around repositor
 
 | Step | Scope | Status |
 |---|---|---|
-| **BLOOM-033** — Single-document production application | `index.html` is the whole game; GameSession; `default`; Favorable / Precarious / Extreme; EXPEDITION | **CURRENT** (review branch, awaiting PMO) |
-| **BLOOM-034** — Visual-system convergence | shared theme tokens; title / menu restyle; Destination Survey convergence; the dark-space BLOOM planning language; **no species mechanics yet** | PLANNED (not started) |
+| **BLOOM-033** — Single-document production application | `index.html` is the whole game; GameSession; `default`; Favorable / Precarious / Extreme; EXPEDITION | **IMPLEMENTED / COMPLETE** (in production `main`) |
+| **BLOOM-034** — Visual-system convergence | shared theme tokens; title / menu restyle; Destination Survey convergence; the dark-space BLOOM planning language; **no species mechanics yet** | **NEXT** — PLANNED (not started) |
 | **BLOOM-035** — Species system + Species Selection | species data / model; baseline physiology; simulation / validator support; species-aware Destination Survey classification; selection / focus / dossier UI; Organic Hybrid remains one species | PLANNED |
 | **Species art production** | three additional real species packs (four total, unless balancing / design proves a different count better), on the same production compositor architecture | PLANNED |
 | **BLOOM-036** — Challenges | the main-menu CHALLENGES route; authored challenge definitions; one generated challenge planet; assigned species / start state; the challenge dossier; Dying World / Native Competition / Volatile Climate as challenge ingredients | PLANNED |
