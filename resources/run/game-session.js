@@ -1,0 +1,1357 @@
+// BLOOM — GameSession (BLOOM-033): ONE run of the game — the simulation, its production run UI and its whole lifecycle — as a value
+// that an app creates and disposes, so the entire game lives in ONE document (index.html). docs/SINGLE_DOCUMENT_APP_v1.md.
+//
+//   const session = BLOOM.gameSession.create(run, { host, onAction })     // the sim is created from run.planet, here, once
+//   await session.ready                                                    // run-ready + the production surface painted + 2 frames
+//   session.dispose()                                                      // the loop stops; the view, rooms, report, adapter, listeners go
+//
+//   run        the run descriptor: { kind, planet, archetype, seed, scenario, play, training, expedition, render, summary }.
+//              BLOOM.gameSession.expeditionRun(detail) builds it from the Destination Survey's Begin Expedition detail — the EXACT
+//              selected planet object, never regenerated; BLOOM.gameSession.trainingRun() the training run; the developer harness
+//              (demos/demo-run.html) builds its own (First Bloom, planet=, archetype=&seed=, scenario=, play=1 …).
+//   host       where the production Planet View mounts (default document.body)
+//   onAction   (the product) the player's run / report / training actions: onAction(id) with id ∈ playAgain · choosePlanet · mainMenu ·
+//              restartTraining · skipTraining · beginExpedition (· restartRun). Leaving a live run still asks first (the run is not saved).
+//              Without it (a developer harness) the historical hrefs apply: every action opens a fresh page.
+//   shell      (DEVELOPER HARNESS ONLY: demos/demo-run.html ?ui=legacy) drive the historical engineering shell the harness page carries
+//              (header HUD, inspect / shop sidebars, canvas, footer, report modal) instead of the production UI. index.html never sets
+//              it, so the production DOM never contains that shell, visible or hidden.
+//   titleHref  (harness) where the harness's historical hrefs send the player (default "../index.html")
+//
+// WHAT THIS IS. The run logic that lived in demos/demo-run.html's inert <script id="bloomUI"> (BLOOM-002 … BLOOM-032C), moved here
+// UNCHANGED as code: the same sim wiring, the same read rules and copy, the same actions and their bloom:* events, the same report
+// truth (winReport / lossReport), the same adapter host. What changed is only its container — a function per run instead of a page
+// per run — and that the shell's DOM writes are skipped unless a harness asks for the shell. No rule, number, threshold, price,
+// message or event changed; the sim is created exactly as before (BLOOM.createSim(planet, config, traits, { scenario, rng })).
+//
+// ONE AT A TIME. A document holds at most one live session (BLOOM.gameSession.instance). While it lives it publishes the historical
+// run globals — window.BLOOM_RUN (the run descriptor), window.BLOOM_RUN_UI ({ placeBubble, adapter }), window.BLOOM_API (the test hook)
+// — and dispose() withdraws them. The production view / rooms / report singletons (BLOOM.planetView.instance …) are this session's.
+//
+// session.debug (developer harness only): live accessors for this run's former page-level bindings (sim, selected, draw, renderInspect …),
+// which demos/demo-run.html installs on window so the historical oracle suites keep reading and driving them by name.
+//
+// Classic script, no dependencies besides the BLOOM classic scripts (engine, content, run UI): boots over file:// like every other file.
+(function (root) {
+  "use strict";
+  const doc = root.document;
+  let current = null;   // the live session of this document
+
+  function create(run, opts = {}) {
+    if (current && !current.disposed) throw new Error("BLOOM.gameSession: one session at a time — dispose the current one first");
+    const BLOOM = root.BLOOM, BLOOM_DATA = root.BLOOM_DATA, BLOOM_RUN = run;
+    const host = opts.host || doc.body, onAction = typeof opts.onAction === "function" ? opts.onAction : null, SHELL = !!opts.shell;
+    // the engineering shell's elements (a developer harness's page only); null on the production path, where the shell does not exist
+    const $ = id => SHELL ? doc.getElementById(id) : null;
+    const life = new AbortController(), LIFE = { signal: life.signal };
+    let disposed = false, raf = 0, PV = null, DR = null, RR = null, trainingLayer = null;
+    root.BLOOM_RUN = BLOOM_RUN;
+    const DEFAULT_NAME = (() => { try { return BLOOM.pressure.resolveScenario(BLOOM_DATA.scenarios, null).name; } catch (e) { return "Default"; } })();
+/* ---- the run (BLOOM-002 … BLOOM-032C, formerly demos/demo-run.html <script id="bloomUI">): kept at column 0 so every string is byte-identical ---- */
+/* ========================================================================== */
+/*  ENGINE WIRING — simulation lives in resources/bloom-sim.js; numbers in    */
+/*  content/config.js; upgrades in content/traits.js; planet in planets/.     */
+/*  This file is UI + rendering only.                                         */
+/* ========================================================================== */
+if(!BLOOM||!BLOOM_DATA||!BLOOM.createSim||!BLOOM_DATA.config||!BLOOM_DATA.traits) throw new Error("BLOOM.gameSession: the BLOOM engine / content classic scripts are not loaded");
+if(!BLOOM_RUN||!BLOOM_RUN.planet) throw new Error("BLOOM.gameSession: a run needs its planet");
+// BLOOM-028D1: a training run (?training=1) plays on its own derived config (content/training.js through BLOOM.play.deriveConfig:
+// a copy — the shared config is never touched) with a seeded random stream; every other run is created exactly as before
+const TRAIN=BLOOM_RUN.training||null, TC=TRAIN?BLOOM_DATA.training.copy:null;
+const sim=BLOOM.createSim(BLOOM_RUN.planet, TRAIN?TRAIN.config:BLOOM_DATA.config, BLOOM_DATA.traits,
+  TRAIN?{scenario:BLOOM_RUN.scenario||undefined, rng:BLOOM.gen.mulberry32(TRAIN.rngSeed)}:{scenario:BLOOM_RUN.scenario||undefined});
+const CFG=sim.config;
+// BLOOM-012: the run's pressure scenario (null / default = no pressure: every readout below is exactly as before)
+const SCN=BLOOM_RUN.scenario||null, PRESS=!!(SCN&&SCN.pressure), PS=sim.pressure;
+// BLOOM-014: a competition scenario (the engine's native layer); SCEN = the run has any scenario mechanics at all
+const CS=sim.competition, COMP=!!CS.enabled;
+// BLOOM-015: a climate-instability scenario (the engine's sim.climate); SCEN = the run has any scenario mechanics at all
+const CL=sim.climate, CLIM=!!CL.enabled, SCEN=PRESS||COMP||CLIM;
+const {W,H,N,SEC,SC,SIDX,ORIGIN,TILEMAP,AREA,CENT,SEC_TILES}=sim.map;
+const {state,dens,vigor,secFit,bubbles,genome,tf,BAR,LIV,DEAD}=sim, G=sim.sky;
+const {evaluate,lampOf,livingCountBySection}=sim;
+const {clamp}=BLOOM.util;
+const mix=(c1,c2,k)=>[c1[0]+(c2[0]-c1[0])*k,c1[1]+(c2[1]-c1[1])*k,c1[2]+(c2[2]-c1[2])*k];
+let running=!TRAIN, speed=1; // (BLOOM-028D1: a training run starts paused)
+// BLOOM-028D1: generic run events for the layers built on this page (the tutorial). Each is a CustomEvent "bloom:<type>" on
+// document, dispatched at the real action point AFTER the action took effect; detail is plain data. They change nothing here.
+const emit=(type,detail)=>{ if(!disposed) doc.dispatchEvent(new CustomEvent("bloom:"+type,{detail})); }; // (BLOOM-033) never after dispose
+// BLOOM-029E: the PRODUCTION Planet View + rooms + report are the DEFAULT interface over this same run. (BLOOM-033) The engineering
+// shell is no longer built at all on the production path: its functions below keep the run's truth (the messages, the report, the
+// read rules the adapter shares) and write their DOM only when a DEVELOPER harness asks for the shell (opts.shell: demos/demo-run.html
+// ?ui=legacy, the historical regression oracle; never index.html). UI_MODE / PROD keep their 029E meaning.
+const UI_MODE=SHELL?"legacy":"production";
+const PROD=!SHELL&&!!(BLOOM.planetView&&BLOOM.decisionRooms&&BLOOM.runUI);
+// BLOOM-029A: the run UI boundary (resources/run-ui/run-ui-adapter.js), created near the end of this script. Until then (and if the
+// adapter file is missing) these two hooks do nothing, so the shell never depends on it.
+let runUI={ invalidate(){}, frame(){} };
+const secRef=i=>i>=0?{index:i, id:SEC[i].id, name:LABEL[i]}:{index:-1, id:null, name:null};
+sim.onWin=cov=>{ running=false; onWin(cov); emit("win",{coverage:cov, ticks:sim.ticks, planetId:BLOOM_RUN.planet.id, training:!!TRAIN}); };
+sim.onLoss=why=>{ running=false; onLoss(why); runUI.invalidate("loss"); };
+// BLOOM-016 player mode (play: true): player wording, a run menu and post-run actions. (BLOOM-033) In the product (index.html) every
+// action is the app's: opts.onAction(id) (a new run is genuinely new: a fresh session, nothing of this sim carries over). A developer
+// harness without onAction (demos/demo-run.html ?play=1) keeps the historical hrefs: every action opens a fresh page.
+const TITLE_HREF=opts.titleHref||"../index.html"; // (BLOOM-030) the canonical Strange Bloom title (the repository root), for harness hrefs
+const PLAY=!!BLOOM_RUN.play, PC=BLOOM_DATA.play||null, SEEDWORD=PLAY?"World Seed":"public seed";
+const RUN_ARCH=BLOOM_RUN.kind==="procedural"?BLOOM_RUN.archetype.id:null, RUN_SCN=SCN?SCN.id:BLOOM.pressure.DEFAULT_SCENARIO;
+// BLOOM-029F: an expedition run (the exact Destination Survey planet): its own three actions. (BLOOM-033) They are the app's
+// (opts.onAction): Play again = a fresh session on the SAME planet object (never the seed), Choose another planet = the Destination
+// Survey, Main menu = the title — all inside index.html. Never ui=legacy, no scenario chooser.
+const XP=BLOOM_RUN.expedition||null, XC=XP&&PC?PC.expedition:null;
+// (BLOOM-028D1) an authored world opened by planet= is replayed by the same planet=; First Bloom's own links are unchanged
+const AUTH_Q=BLOOM_RUN.planetParam?"&planet="+encodeURIComponent(BLOOM_RUN.planetParam):"";
+function playActions(){ const X=PC.actions, q=BLOOM.play.runQuery;
+  if(XP) return [{id:"playAgain", label:XC.playAgain, note:XC.playAgainNote, primary:true},
+    {id:"choosePlanet", label:XC.choosePlanet, note:XC.choosePlanetNote}, {id:"mainMenu", label:XC.mainMenu, note:XC.mainMenuNote}];
+  if(TRAIN) return sim.won // (BLOOM-028D1) training: its own three; (BLOOM-028D2) finished: Begin Expedition · Restart training · Main menu
+    ? [{id:"beginExpedition", label:TC.beginExpedition, note:TC.beginExpeditionNote, primary:true}, {id:"restartTraining", label:TC.restart, note:TC.restartNote},
+       {id:"mainMenu", label:TC.mainMenu, note:TC.mainMenuNote}]
+    : [{id:"restartTraining", label:TC.restart, note:TC.restartNote, primary:true}, {id:"skipTraining", label:TC.skip, note:TC.skipNote}, {id:"mainMenu", label:TC.mainMenu, note:TC.mainMenuNote}];
+  // (BLOOM-030) the BLOOM-016 launcher is retired: a direct developer play run leaves for the Strange Bloom title (TITLE_HREF) —
+  // "Change planet" opens its Destination Survey (begin=1), Home the title. No scenario chooser exists in the product (yet), so there
+  // is no "Change scenario"; scenario runs stay reachable through their direct URLs.
+  if(!RUN_ARCH) return [{id:"playAgain", label:X.playAgain, href:"demo-run.html?play=1"+AUTH_Q, primary:true},
+    {id:"changePlanet", label:PC.choose.action, href:TITLE_HREF+"?begin=1"}, {id:"home", label:X.home, href:TITLE_HREF}];
+  return [{id:"playAgain", label:X.playAgain, note:X.playAgainNote, href:"demo-run.html?"+q({archetype:RUN_ARCH, seed:BLOOM_RUN.seed, scenario:RUN_SCN}), primary:true},
+    {id:"newWorld", label:X.newWorld, href:"demo-run.html?"+q({archetype:RUN_ARCH, scenario:RUN_SCN})+"&avoid="+BLOOM_RUN.seed},
+    {id:"changePlanet", label:X.changePlanet, href:TITLE_HREF+"?begin=1"},
+    {id:"home", label:X.home, href:TITLE_HREF}]; }
+const actBtn=a=>`<button type="button" data-act="${a.id}" data-go="${a.href||""}" data-tutorial="action-${a.id}"${a.primary?' class="primary"':""}>${a.label}${a.note?`<small>${a.note}</small>`:""}</button>`;
+function runActionsHtml(){ return `<div class="runacts" id="runActions" data-tutorial="run-actions"><h3>WHAT NEXT?</h3><div class="grid">${playActions().map(actBtn).join("")}</div></div>`; }
+// leaving a live run asks first (it is not saved); after a win or an extinction it just goes
+function wireActions(el){ el.querySelectorAll("button[data-go]").forEach(b=>b.addEventListener("click",()=>goAction(b.dataset.act,b.dataset.go))); }
+// (BLOOM-029B) one run-menu / post-run action, extracted unchanged so the shell's buttons and the run UI adapter take the same path.
+// (BLOOM-033) the app's onAction when there is one (index.html), else the harness's href (a fresh page, as before)
+function goAction(act,href){
+  if(TRAIN) return trainingGo(act); // (BLOOM-028D1) nothing to lose in training: no confirm
+  if(!sim.won&&!sim.lost&&!confirm(PC.actions.confirmLeave)) return false;
+  if(onAction){ onAction(act); return true; } location.href=href; return true; }
+// (BLOOM-028D1) training actions go through the training layer (fade, status; session.attachTraining); without it (an ES module that
+// could not load) the app's onAction, else the harness's historical navigation
+function trainingGo(act){ if(trainingLayer) return trainingLayer.go(act);
+  if(onAction){ onAction(act); return true; }
+  if(act==="restartTraining") location.reload(); else { const u=new URL(TRAIN.returnTo,location.href); if(act==="beginExpedition") u.searchParams.set("begin","1"); u.hash=""; location.href=u.href; } }
+// display names: generated worlds can repeat a biome name, so repeats get a number (First Bloom has none)
+const LABEL=SEC.map((s,i)=>{ const same=SEC.filter(x=>x.name===s.name); return same.length>1?`${s.name} ${same.indexOf(s)+1}`:s.name; });
+// geography for water worlds (BLOOM-007): landmass per section, crossing links from the engine's own geometry
+const LANDMASS=sim.map.LANDMASS, XLINKS=sim.map.CROSSINGS.links, MULTI_MASS=new Set(LANDMASS).size>1;
+const CROSS_T=sim.traits.find(u=>u.effect.type==="crossing"&&sim.offered(u))||null;
+const ownsCrossing=()=>!!(CROSS_T&&sim.ownedTier(CROSS_T)>0);
+function livingMasses(){ const liv=livingCountBySection(), m=new Set([LANDMASS[ORIGIN]]); SEC.forEach((_,i)=>{ if(liv[i]>0) m.add(LANDMASS[i]); }); return m; }
+function crossingHops(){ // landmass → water crossings needed from land the plant already lives on
+  const hops=new Map(), q=[...livingMasses()]; q.forEach(m=>hops.set(m,0));
+  while(q.length){ const a=q.shift(); for(const l of XLINKS) if(l.from===a&&!hops.has(l.to)){ hops.set(l.to,hops.get(a)+1); q.push(l.to); } }
+  return hops; }
+
+/* limiting-factor copy (UI text; thresholds live in config.categories) */
+const LIMIT_MSG={ Temperature:e=>e.cats.Temperature.word==="freezing"||e.cats.Temperature.word==="cold"?"too cold":"too hot",
+  Water:e=>e.cats.Water.word==="parched"||e.cats.Water.word==="dry"?"too dry":"too wet",
+  Soil:e=>e.cats.Soil.word==="hostile"?"soil is hostile (salt/pH)":"soil is marginal (salt/pH)",
+  Hazard:e=>e.cats.Hazard.word==="lethal"?"hazard is lethal":"hazard is stressful" };
+const FIX_HINT={ Temperature:e=> (e.cats.Temperature.word==="freezing"||e.cats.Temperature.word==="cold")
+    ? "Adapt: Cold Tolerance — or Terraform: Warm the sky"
+    : "Adapt: Heat Tolerance — or Terraform: Cool the sky",
+  Water:e=> (e.cats.Water.word==="parched"||e.cats.Water.word==="dry")
+    ? "Adapt: Drought — or Terraform: Humidify"
+    : "Adapt: Flood — or Terraform: Dry the sky",
+  Soil:e=> "Adapt: Salt Handling (must evolve — not terraformable)",
+  Hazard:e=> e.cats.Hazard.word==="lethal" ? "Adapt: Radiation Shielding (toxicity here has no cure yet — may be a sacrifice zone)" : "Radiation Shielding reduces this." };
+
+/* ========================================================================== */
+/*  RENDER                                                                     */
+/* ========================================================================== */
+const cv=SHELL?$("cv"):null, ctx=cv?cv.getContext("2d"):null; // (BLOOM-033) the shell's canvas: developer harness only
+const dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+let TILE=14, selected=-1, selectedWater=false, rawOpen=false, preview=null; // preview={gain:[],lose:[],reachHostile?}
+const TEMP_STOPS=[[-40,[44,62,104]],[-20,[78,104,140]],[0,[100,126,116]],[12,[92,140,88]],[25,[156,146,84]],[40,[182,100,60]],[60,[150,58,46]]];
+function stops(v){ const S=TEMP_STOPS; if(v<=S[0][0])return S[0][1].slice(); if(v>=S[S.length-1][0])return S[S.length-1][1].slice();
+  for(let i=0;i<S.length-1;i++){const[a,ca]=S[i],[b,cb]=S[i+1]; if(v>=a&&v<=b)return mix(ca,cb,(v-a)/(b-a));} return S[0][1].slice(); }
+// BLOOM-010: an archetype may carry a tiny temporary terrain treatment (archetype.render, data only): a ground tint mixed
+// into bare ground, its own water colours and a faint dune stipple. Worlds without it (First Bloom, Ocean) draw as before.
+// (BLOOM-029F) an expedition run keeps the survey's exact render hints (detail.render, as selected), never a reconstruction
+const RENDER=XP?(BLOOM_RUN.render||null):(BLOOM_RUN.kind==="procedural"&&BLOOM_RUN.archetype.render)||null;
+// BLOOM-011: render.tintBy "cold" weights the ground tint by how cold the ground is NOW (live sky + local offset), so mild
+// refuges and geothermal ground keep their own colour, and warming the sky visibly thaws the map; "dry" (default) = BLOOM-010
+const TINT_COLD=!!(RENDER&&RENDER.tintBy==="cold"), FROST_BELOW=-8;
+const coldWeight=t=>clamp((4-t)/24,0.12,1);
+// (BLOOM-012: drawn from the sky every region sees now — under pressure that includes the scenario drift, so the map dries
+// and cools with the decline; without pressure it is exactly the player's sky, as before)
+let DRAW_T=0, DRAW_M=0;
+function barrenColor(i){ const L=SEC[i].local, t=DRAW_T+L.tempOffset; let c=stops(t);
+  const m=DRAW_M+L.moistureOffset; if(m<35)c=mix(c,[150,138,104],0.4); else if(m>68)c=mix(c,[64,104,104],0.35);
+  if(RENDER&&RENDER.ground) c=mix(c,RENDER.ground,RENDER.groundMix*(TINT_COLD?coldWeight(t):(m<35?1:0.5))); // wetter basins keep more of their own colour
+  return mix(c,[10,12,18],0.55); } // dim: barren ground
+// BLOOM-008/009: Living tiles are drawn from their stand density (sim.dens): a new seedling stand is a tiny, pale
+// sprout on bare ground; it grows into a larger, darker patch and finally a full, dark tile; low vigor still reads sickly.
+const SPARSE_C=[190,222,120], DENSE_C=[24,104,46], SICK_C=[128,122,70];
+function livingColor(d,v){ const c=mix(SPARSE_C,DENSE_C,Math.pow(clamp(d,0,1),0.75));
+  return mix(SICK_C,c,clamp((v-0.2)/0.5,0,1)); }
+const DFULL=0.78; // stand density at which the plant patch fills its tile
+const patchFrac=d=>0.24+0.76*Math.pow(clamp((d-0.03)/(DFULL-0.03),0,1),0.8); // share of the tile side the patch covers
+// small fixed per-tile offset so young patches sit irregularly (organic) rather than in a perfect grid; 0 once full
+const JIT=new Float32Array(N*2); for(let i=0;i<N;i++){ const h=Math.imul(i^0x9e3779b9,0x85ebca6b)>>>0; JIT[2*i]=((h&255)/255-0.5)*0.8; JIT[2*i+1]=(((h>>8)&255)/255-0.5)*0.8; }
+// BLOOM-014: native vegetation = a violet stand (pale when sparse, deep plum when dense) PLUS a diagonal hatch, so it never
+// reads by colour alone: player stands are solid squares, native stands are hatched; fronts are amber lines on tile edges
+const NAT_SPARSE=[178,146,204], NAT_DENSE=[92,52,128], NAT_HATCH="rgba(232,214,250,0.75)", FRONT_C="#ffb347";
+const nativeColor=d=>mix(NAT_SPARSE,NAT_DENSE,Math.pow(clamp(d,0,1),0.8));
+const DEAD_C=[92,66,44], WATER_C=(RENDER&&RENDER.water)||[24,52,92], WATER_C2=(RENDER&&RENDER.waterAlt)||[30,62,104];
+const DUNE=!!(RENDER&&RENDER.dunes), duneAt=(x,y)=>(x*7+y*13+((y>>1)*3))%9===0; // sparse, fixed stipple on bare ground
+const FROST=!!(RENDER&&RENDER.frost), frostAt=(x,y)=>(x*5+y*11+((x>>2)*3))%8===0; // ice glints on bare ground below FROST_BELOW °C
+function fit(){ if(!SHELL) return; const st=doc.querySelector(".stage"); TILE=Math.max(6,Math.floor(Math.min((st.clientWidth-24)/W,(st.clientHeight-24)/H))); }
+function resize(){ if(!SHELL) return; fit(); cv.width=W*TILE*dpr; cv.height=H*TILE*dpr; cv.style.width=W*TILE+"px"; cv.style.height=H*TILE+"px"; ctx.setTransform(dpr,0,0,dpr,0,0); draw(); }
+const rgb=c=>`rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`;
+
+function draw(){
+  if(!SHELL) return; // (BLOOM-029B/E) the production map draws the run instead; (BLOOM-033) the shell exists only in a developer harness
+  ctx.clearRect(0,0,cv.width,cv.height);
+  if(PRESS||CLIM){ const k=skyNow(); DRAW_T=k.t; DRAW_M=k.m; } else { DRAW_T=G.temp; DRAW_M=G.moist; }
+  const frosty=FROST?SEC.map(s=>DRAW_T+s.local.tempOffset<FROST_BELOW):null; // (live: warming the sky melts the glints)
+  const natHatch=[]; // native tiles drawn this frame (x, y, density) → one hatch path after the ground pass
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+    const i=y*W+x,s=TILEMAP[i]; let c;
+    if(s<0) c=((x+y)%7===0)?WATER_C2:WATER_C; // water: never colonizable, not in the coverage denominator
+    else if(state[i]===LIV){ // ground, then a plant patch whose size and shade follow the stand's density
+      const f=patchFrac(dens[i]); if(f<1){ ctx.fillStyle=rgb(barrenColor(s)); ctx.fillRect(x*TILE,y*TILE,TILE+.5,TILE+.5); }
+      const sz=TILE*f, o=(TILE-sz)/2, ox=o*JIT[2*i], oy=o*JIT[2*i+1]; ctx.fillStyle=rgb(livingColor(dens[i],vigor[s]));
+      ctx.fillRect(x*TILE+o+ox,y*TILE+o+oy,sz+(f<1?0:.5),sz+(f<1?0:.5)); continue; }
+    else if(state[i]===DEAD) c=DEAD_C;
+    else if(COMP&&CS.native[i]>0){ const d=CS.native[i]; ctx.fillStyle=rgb(mix(barrenColor(s),nativeColor(d),0.45+0.55*clamp(d/0.8,0,1)));
+      ctx.fillRect(x*TILE,y*TILE,TILE+.5,TILE+.5); natHatch.push(x,y,d); continue; }
+    else c=barrenColor(s);
+    ctx.fillStyle=rgb(c); ctx.fillRect(x*TILE,y*TILE,TILE+.5,TILE+.5);
+    if(DUNE&&state[i]===BAR&&duneAt(x,y)){ ctx.fillStyle=rgb(mix(c,[236,206,150],0.35)); ctx.fillRect(x*TILE+TILE*.15,y*TILE+TILE*.55,TILE*.7,Math.max(1,TILE*.14)); } // a wind ripple
+    if(FROST&&state[i]===BAR&&s>=0&&frosty[s]&&frostAt(x,y)){ const g=Math.max(1,TILE*.16); ctx.fillStyle=rgb(mix(c,[236,244,255],0.6)); // a small ice glint
+      ctx.fillRect(x*TILE+TILE*.3,y*TILE+TILE*.3,g,g); ctx.fillRect(x*TILE+TILE*.3+g,y*TILE+TILE*.3+g,g,g); ctx.fillRect(x*TILE+TILE*.62,y*TILE+TILE*.62,g,g); }
+  }
+  if(natHatch.length){ ctx.strokeStyle=NAT_HATCH; ctx.lineWidth=Math.max(1,TILE*0.12); ctx.beginPath(); // "/" marks: one on a young stand, two on a dense one
+    for(let k=0;k<natHatch.length;k+=3){ const x=natHatch[k]*TILE, y=natHatch[k+1]*TILE, d=natHatch[k+2];
+      if(d>0.45){ ctx.moveTo(x+TILE*0.12,y+TILE*0.55); ctx.lineTo(x+TILE*0.55,y+TILE*0.12); ctx.moveTo(x+TILE*0.45,y+TILE*0.88); ctx.lineTo(x+TILE*0.88,y+TILE*0.45); }
+      else { ctx.moveTo(x+TILE*0.25,y+TILE*0.75); ctx.lineTo(x+TILE*0.75,y+TILE*0.25); } }
+    ctx.stroke(); }
+  // BLOOM-012: a faint haze over the whole map that thickens as the atmosphere thins (temporary feedback, not weather art)
+  if(PRESS&&PS.progress>0){ ctx.fillStyle=`rgba(200,182,226,${(0.22*PS.progress).toFixed(3)})`; ctx.fillRect(0,0,W*TILE,H*TILE); }
+  // BLOOM-015: a faint tint of the active shock's kind over the whole map, following the shock's own ramp (temporary feedback)
+  if(CLIM) for(const ax in CL.axes){ const A=CL.axes[ax]; if(!A.shock||!A.offset) continue; const c=SHOCK_UI[A.shock.id]||SHOCK_UI.fallback, k=Math.abs(A.offset)/A.shock.magnitude;
+    ctx.fillStyle=`rgba(${c.rgb},${(0.16*k).toFixed(3)})`; ctx.fillRect(0,0,W*TILE,H*TILE); }
+  // purchase preview tint: green = would open, red = would close
+  if(preview){ for(const [list,col] of [[preview.gain,"rgba(102,209,127,0.28)"],[preview.lose,"rgba(226,96,79,0.34)"]])
+    for(const sec of list){ ctx.fillStyle=col; for(const t of SEC_TILES[sec]) ctx.fillRect((t%W)*TILE,((t/W)|0)*TILE,TILE,TILE); } } // exact size: overlap would double the alpha into grid seams
+  // borders
+  ctx.strokeStyle="rgba(5,7,12,0.8)"; ctx.lineWidth=1.4; ctx.beginPath();
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const s=TILEMAP[y*W+x];
+    if(x+1>=W||TILEMAP[y*W+x+1]!==s){ctx.moveTo((x+1)*TILE,y*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);} if(x===0){ctx.moveTo(0,y*TILE);ctx.lineTo(0,(y+1)*TILE);}
+    if(y+1>=H||TILEMAP[(y+1)*W+x]!==s){ctx.moveTo(x*TILE,(y+1)*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);} if(y===0){ctx.moveTo(x*TILE,0);ctx.lineTo((x+1)*TILE,0);}
+  }
+  ctx.stroke();
+  // BLOOM-014 fronts: an amber line on every tile edge where a Living player tile touches native cover
+  if(COMP){ ctx.strokeStyle=FRONT_C; ctx.lineWidth=Math.max(2,TILE*0.2); ctx.beginPath(); const NA=CS.native, liv=t=>state[t]===LIV, nat=t=>NA[t]>0;
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const i=y*W+x;
+      if(x+1<W&&((liv(i)&&nat(i+1))||(nat(i)&&liv(i+1)))){ ctx.moveTo((x+1)*TILE,y*TILE+1); ctx.lineTo((x+1)*TILE,(y+1)*TILE-1); }
+      if(y+1<H&&((liv(i)&&nat(i+W))||(nat(i)&&liv(i+W)))){ ctx.moveTo(x*TILE+1,(y+1)*TILE); ctx.lineTo((x+1)*TILE-1,(y+1)*TILE); } }
+    ctx.stroke(); }
+  // selection + purchase preview outlines
+  if(selected>=0) outline(selected,"#7fe3c0",3);
+  if(preview){ preview.gain.forEach(i=>outline(i,"#66d17f",3,[6,4])); preview.lose.forEach(i=>outline(i,"#e2604f",3,[6,4]));
+    (preview.reachHostile||[]).forEach(i=>outline(i,"#e7c14e",2,[3,4])); } // reachable across water, ground hostile now
+  // BLOOM-011 sky changes (a Terraform preview, and for a few seconds after a Terraform purchase): regions the new sky
+  // helps but does not open yet (thin pale-green dots) and regions it makes worse but does not close (thin orange dots)
+  const sk=preview&&preview.better?preview:(skyFx&&performance.now()<skyFx.until?skyFx:null);
+  if(sk){ if(sk===skyFx){ sk.gain.forEach(i=>outline(i,"#66d17f",3)); sk.lose.forEach(i=>outline(i,"#e2604f",3)); }
+    sk.better.forEach(i=>outline(i,"#b6f0a8",2,[2,4])); sk.worse.forEach(i=>outline(i,"#f0a050",2,[2,4])); }
+  // BLOOM-012: regions the scenario's decline just pushed across a threshold (orange = worse, pale green = opened)
+  if(PRESS||CLIM){ const now=performance.now(); for(const x of PX_FX) if(now<x.until) outline(x.sec,x.worse?"#ff9a50":"#b6f0a8",3,[5,3]); }
+  // BLOOM-014: a region a competition event just named (amber = the native gained, mint = your plant gained, violet = contact)
+  if(COMP){ const now=performance.now(); for(const x of CX_FX) if(now<x.until) outline(x.sec,x.color,3,[5,3]); }
+  // bubbles
+  for(const b of bubbles){ const px=b.x*TILE,py=b.y*TILE, r=Math.max(4,TILE*0.42);
+    ctx.beginPath(); ctx.arc(px,py,r,0,7); ctx.fillStyle="rgba(255,212,121,0.92)"; ctx.fill();
+    ctx.lineWidth=1.5; ctx.strokeStyle="#7a5a15"; ctx.stroke(); }
+  // labels
+  const fs=Math.max(8,Math.min(12,TILE)); ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.font=`${fs}px "DejaVu Sans Mono",monospace`;
+  SEC.forEach((s,i)=>{ const px=CENT[i].x*TILE,py=CENT[i].y*TILE;
+    ctx.lineWidth=3; ctx.strokeStyle="rgba(5,7,12,0.9)"; ctx.strokeText(LABEL[i].toUpperCase(),px,py);
+    ctx.fillStyle=i===selected?"#fff":"rgba(232,238,248,0.9)"; ctx.fillText(LABEL[i].toUpperCase(),px,py);
+    if(s.isOrigin){ctx.fillStyle="#ffd479"; ctx.fillText("★",px,py+fs+1);}
+  });
+  drawBadges(); drawCrossings(performance.now());
+}
+// BLOOM-009: one small badge per region that is NOT on Balanced (its focus icon) and/or owns a local upgrade (gold ring
+// + dot), just above the region's name, so the map shows at a glance which colony does what
+function drawBadges(){
+  const r=Math.max(7,Math.min(11,TILE*0.75)), fs=Math.max(8,Math.min(12,TILE));
+  SEC.forEach((_,i)=>{ const m=sim.getColonyFocus(i), sp=sim.getSpecialization(i); if(m==="balanced"&&!sp) return;
+    const px=CENT[i].x*TILE, py=CENT[i].y*TILE-fs-r-1, u=FOCUS_UI[m];
+    ctx.beginPath(); ctx.arc(px,py,r,0,7); ctx.fillStyle=m==="balanced"?"#3a3f4c":u.color; ctx.fill();
+    ctx.lineWidth=sp?3:1.5; ctx.strokeStyle=sp?"#ffd479":"rgba(5,7,12,0.9)"; ctx.stroke();
+    if(sp){ ctx.beginPath(); ctx.arc(px+r*0.8,py-r*0.8,Math.max(2.5,r*0.32),0,7); ctx.fillStyle="#ffd479"; ctx.fill(); ctx.lineWidth=1; ctx.strokeStyle="#5a3f0a"; ctx.stroke(); }
+    if(m!=="balanced"){ ctx.fillStyle="#10131a"; ctx.font=`bold ${Math.round(r*1.2)}px "DejaVu Sans Mono",monospace`; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(u.icon,px,py+0.5); }
+  });
+}
+// BLOOM-009: Waterborne crossing feedback. Each animation is one real engine event (sim.crossing.events): a few seed dots
+// travel from the source coastal tile over the water to the landing tile. took:false (seeds ARRIVED) ends in a faint
+// pale ripple; took:true (a new FOOTHOLD) ends in a bright gold-green burst. Temporary visuals.
+const XANIM=[], XHIST=[]; let lastXid=0; const XTRAVEL=1300, XLAND=700, XMAX_ARRIVALS=6;
+function pollCrossings(now){
+  for(const e of sim.crossing.events){ if(e.id<=lastXid) continue; lastXid=e.id;
+    if(!e.took&&XANIM.filter(a=>!a.took).length>=XMAX_ARRIVALS) continue; // too many at once (fast speed): skip extra ARRIVALS, never footholds
+    const a={id:e.id, from:e.from, to:e.to, took:e.took, t0:now}; XANIM.push(a); XHIST.push({id:e.id, from:e.from, to:e.to, took:e.took, tick:e.tick}); if(XHIST.length>200) XHIST.shift();
+    const sec=TILEMAP[e.to];
+    if(e.took) log(`🌊 Waterborne seeds crossed the water and took root in ${LABEL[sec]}!`);
+    else if(!XWARNED.has(sec)&&evaluate(sec).fitness<=CFG.grow.growThresh){ XWARNED.add(sec); const ev=evaluate(sec);
+      log(`🌊 Seeds washed up on ${LABEL[sec]}, but they cannot take root there: ${LIMIT_MSG[ev.limitKey](ev)}.`); } }
+  for(let k=XANIM.length-1;k>=0;k--) if(now-XANIM[k].t0>XTRAVEL+XLAND) XANIM.splice(k,1);
+}
+const XWARNED=new Set();
+function drawCrossings(now){
+  for(const a of XANIM){
+    const x0=((a.from%W)+.5)*TILE, y0=(((a.from/W)|0)+.5)*TILE, x1=((a.to%W)+.5)*TILE, y1=(((a.to/W)|0)+.5)*TILE;
+    const dx=x1-x0, dy=y1-y0, L=Math.hypot(dx,dy)||1, cx=(x0+x1)/2-dy/L*L*0.22, cy=(y0+y1)/2+dx/L*L*0.22; // gentle arc
+    const t=(now-a.t0)/XTRAVEL;
+    for(let k=0;k<3;k++){ const u=clamp(t-k*0.12,0,1); if(t-k*0.12<0||t-k*0.12>1) continue;
+      const bx=(1-u)*(1-u)*x0+2*(1-u)*u*cx+u*u*x1, by=(1-u)*(1-u)*y0+2*(1-u)*u*cy+u*u*y1;
+      ctx.beginPath(); ctx.arc(bx,by,Math.max(2.5,TILE*0.27),0,7); ctx.fillStyle="#f4e2b0"; ctx.fill(); ctx.lineWidth=1.4; ctx.strokeStyle="#6b4a1a"; ctx.stroke(); }
+    const lt=(now-a.t0-XTRAVEL)/XLAND; if(lt<0||lt>1) continue;
+    if(a.took){ ctx.beginPath(); ctx.arc(x1,y1,TILE*(0.6+2.2*lt),0,7); ctx.lineWidth=3.5; ctx.strokeStyle=`rgba(255,226,120,${1-lt})`; ctx.stroke();
+      ctx.beginPath(); ctx.arc(x1,y1,TILE*0.7*(1-lt*0.5),0,7); ctx.fillStyle=`rgba(150,240,120,${0.9*(1-lt)})`; ctx.fill(); }
+    else { ctx.beginPath(); ctx.arc(x1,y1,TILE*(0.35+1.0*lt),0,7); ctx.lineWidth=1.5; ctx.strokeStyle=`rgba(190,220,255,${0.7*(1-lt)})`; ctx.stroke(); }
+  }
+}
+
+function outline(sec,color,width,dash){
+  outlinePath(sec,"rgba(5,7,12,0.85)",width+2,[]); outlinePath(sec,color,width,dash); } // dark underlay: readable over light seedlings and dark stands
+function outlinePath(sec,color,width,dash){
+  ctx.strokeStyle=color; ctx.lineWidth=width; ctx.setLineDash(dash||[]); ctx.beginPath();
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){ if(TILEMAP[y*W+x]!==sec)continue;
+    if(x+1>=W||TILEMAP[y*W+x+1]!==sec){ctx.moveTo((x+1)*TILE,y*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);}
+    if(x===0||TILEMAP[y*W+x-1]!==sec){ctx.moveTo(x*TILE,y*TILE);ctx.lineTo(x*TILE,(y+1)*TILE);}
+    if(y+1>=H||TILEMAP[(y+1)*W+x]!==sec){ctx.moveTo(x*TILE,(y+1)*TILE);ctx.lineTo((x+1)*TILE,(y+1)*TILE);}
+    if(y===0||TILEMAP[(y-1)*W+x]!==sec){ctx.moveTo(x*TILE,y*TILE);ctx.lineTo((x+1)*TILE,y*TILE);}
+  } ctx.stroke(); ctx.setLineDash([]);
+}
+
+/* ========================================================================== */
+/*  UI: HUD / INSPECT / SHOP                                                   */
+/* ========================================================================== */
+// Biomass readout (BLOOM-009): big number, passive income per second (the engine's sim.income; bubbles are one-off
+// gains), a gold glow on gains ≥ 5 (a bubble) and a red glow + floating "−N" on spending
+let bioShown=null, bioFxUntil=0;
+function renderHUD(cov){
+  if(!SHELL) return;
+  const b=Math.floor(sim.biomass), box=$("bioBox"), now=performance.now();
+  if(bioShown!==null&&b!==bioShown){ const d=b-bioShown;
+    if(d<=-1){ box.classList.remove("up"); box.classList.add("down"); bioFxUntil=now+700; const f=document.createElement("span"); f.className="spend"; f.textContent="−"+(-d); box.appendChild(f); setTimeout(()=>f.remove(),1100); }
+    else if(d>=5){ box.classList.remove("down"); box.classList.add("up"); bioFxUntil=now+500; } }
+  if(now>bioFxUntil){ box.classList.remove("up"); box.classList.remove("down"); }
+  bioShown=b; document.getElementById("hBio").textContent=b;
+  if(sim.ticks) document.getElementById("hBioRate").textContent=`+${(sim.income*1000/CFG.tickMs).toFixed(1)}/s`;
+  document.getElementById("hCov").textContent=Math.round(cov*100)+"%";
+  document.getElementById("hCovFill").style.width=Math.round(cov*100)+"%";
+  document.getElementById("hCovWin").style.left=Math.round(sim.winAt*100)+"%";
+  document.getElementById("hWinPct").textContent="/ "+Math.round(sim.winAt*100)+"%";
+  document.getElementById("hSky").textContent=PRESS||CLIM?(()=>{ const k=skyNow(); return `${degC(r1(k.t))} · moist ${r1(k.m)}`; })():`${degC(G.temp)} · moist ${G.moist}`;
+  const dl=document.getElementById("hSkyDelta"), dt=skyFx&&now<skyFx.until?skyFx.delta:""; if(dl.textContent!==dt) dl.textContent=dt;
+}
+// (BLOOM-029A) the inspect panel's read rules, shared with the run UI adapter (resources/run-ui/) so both read them the same way:
+// a category's lamp (soft soil reads yellow, not green), "growth blocked", and the region's dead / barren / native tile counts
+const catLamp=c=>c.soft&&c.f>CFG.categories.lamp.green?"yellow":lampOf(c.f);
+const isBlocked=e=>e.limitF<CFG.categories.blockedBelow;
+function tileCounts(i){ let dead=0,barr=0,natv=0; for(const t of SEC_TILES[i]){ if(state[t]===DEAD)dead++; else if(COMP&&CS.native[t]>0)natv++; else if(state[t]===BAR)barr++; }
+  return {dead,barr,natv}; }
+function renderInspect(){
+  if(!SHELL) return;
+  const el=$("inspMain"), more=$("inspMore");
+  const curRaw=more.querySelector("details.raw"); if(curRaw) rawOpen=curRaw.open; // read synchronously: the toggle event can lag a re-render
+  renderColonyCtl();
+  if(selected<0&&selectedWater){ more.innerHTML=""; el.innerHTML=`<h2>WATER</h2><div class="secname">Open water</div><div class="geo">🌊 Not land: nothing grows here and it does not count toward coverage. Ordinary spread cannot cross water${CROSS_T?`; ${CROSS_T.name} carries seeds over gaps of up to ${CFG.crossing.maxGap} water tiles`:""}.</div>`; return; }
+  if(selected<0){ more.innerHTML=""; el.innerHTML='<h2>SECTION</h2><p style="color:var(--dim);font-style:italic">Click a region to read it. The plant starts in its protected origin (★) and spreads into suitable ground on its own. Click a region your plant lives in to set its growth focus or buy it a local upgrade.</p>'; return; }
+  const s=SEC[selected], e=evaluate(selected), liv=livingCountBySection()[selected];
+  const {dead,barr,natv}=tileCounts(selected);
+  const total=AREA[selected];
+  const catRow=k=>{ const c=e.cats[k]; return `<div class="cat"><span class="lamp ${catLamp(c)}"></span><span class="lbl">${k}</span><span class="st">${c.word}</span>${e.terraformable[k]?'<span class="tag">terraformable</span>':''}</div>`; };
+  // BLOOM-011: the temperature as numbers, so the two answers to cold read differently — Cold Tolerance lowers the
+  // bottom of the plant's range, warming the sky raises this ground's temperature (and every other region's)
+  const dv=sim.derived(), RD=PRESS||CLIM, tline=`<div class="tline" id="tline">Ground here <b>${degC(RD?r1(e.effT):e.effT)}</b> · sky ${degC(RD?r1(e.skyT):G.temp)} · suits your plant <b>${degC(dv.tempFloor)} to ${degC(dv.tempCeil)}</b></div>`;
+  const blocked = isBlocked(e);
+  const limitHtml = blocked
+    ? `<div class="limit" data-tutorial="limiting-factor">▲ Growth blocked: <b>${LIMIT_MSG[e.limitKey](e)}</b><div class="fixhint">${FIX_HINT[e.limitKey](e)}</div></div>`
+    : `<div class="limit ok" data-tutorial="limiting-factor">✓ Thriving here — no blocker.${e.cats.Soil.soft?'<div class="fixhint">Low nutrients slow growth here, but it is not a wall.</div>':''}</div>`;
+  const cs=sim.colonyStatus(selected), pct=Math.round(cs.establishment*100);
+  el.innerHTML=`<h2>SECTION</h2>
+    <div class="secname">${LABEL[selected]}${s.isOrigin?'<span class="badge">★ ORIGIN</span>':''}</div>
+    <div class="cats" data-tutorial="readout">${catRow("Temperature")}${catRow("Water")}${catRow("Soil")}${catRow("Hazard")}</div>${tline}
+    ${limitHtml}${pressNote(selected,e)}${climNote(selected,e)}${compNote(selected)}${geoNote(selected)}${thermNote(selected)}
+    <div class="colony" id="colony" data-tutorial="colony-status">Colony: <span class="cw">${COLONY_WORD[cs.word]}</span> <span style="color:var(--dim)">· ${pct}% established</span>
+      <div class="dbar"><i style="width:${pct}%"></i></div><div class="fixhint">${COLONY_HINT[cs.word]}</div></div>`;
+  more.innerHTML=`<div class="vitals">vigor ${Math.round(vigor[selected]*100)}%
+      <div class="vbar"><i class="vl" style="width:${liv/total*100}%"></i><i class="vd" style="width:${dead/total*100}%"></i><i class="vb" style="flex:1"></i></div>
+      <div style="color:var(--dim);margin-top:3px">living ${liv} · dead ${dead} · barren ${barr}${COMP?` · native plants ${natv}`:""}</div>
+    </div>
+    <details class="raw" data-tutorial="raw-signals"${rawOpen?' open':''}><summary>raw signals ▾</summary>
+      <table class="kv">
+        <tr><td>effective temp</td><td>${e.effT>0?'+':''}${RD?r1(e.effT):e.effT}°C</td></tr>
+        <tr><td>effective moist</td><td>${RD?r1(e.effM):e.effM}</td></tr>
+        <tr><td>light</td><td>${s.local.light}</td></tr><tr><td>soil pH</td><td>${s.local.ph}</td></tr>
+        <tr><td>salinity</td><td>${s.local.salinity}</td></tr><tr><td>nutrients</td><td>${s.local.nutrients}</td></tr>
+        <tr><td>toxicity</td><td>${s.local.toxicity}</td></tr><tr><td>radiation</td><td>${PRESS&&PS.offsets.rad?`${s.local.radiation} + ${r1(PS.offsets.rad)} thin air = ${r1(e.effRad)}`:s.local.radiation}</td></tr>
+      </table></details>`;
+}
+
+/* ---- colony development (BLOOM-009): effects are config.colony (engine); this is only the temporary control + copy ---- */
+const COLONY_WORD={none:"No plants yet", sparse:"Sparse", establishing:"Establishing", established:"Established", dense:"Dense"};
+const COLONY_HINT={ none:"Nothing grows here yet.",
+  sparse:"Tiny seedlings: they make little Biomass and few seeds yet.",
+  establishing:"The stand is thickening; its Biomass and seeds are growing.",
+  established:"A full-strength colony: it seeds its neighbors and yields well.",
+  dense:"A dense, mature stand at close to its full yield." };
+const pctOf=x=>Math.round(x*100);
+const CM=CFG.colony, FM=CM.modes, SPEC=CM.specializations;
+const FOCUS_UI={
+  balanced:{ name:"Balanced", icon:"◇", color:"#9aa3b5", sub:"no special focus",
+    what:"Balanced: this colony shares its energy evenly between roots, leaves and seeds. This is the normal way to grow." },
+  roots:{ name:"Roots", icon:"▼", color:"#d99a5b", sub:"young or struggling colonies",
+    what:`Roots: stands thicken ${pctOf(FM.roots.establishBonus)}% faster and lose fewer plants on marginal ground. The cost is ${pctOf(FM.roots.yieldCost)}% less Biomass from this colony. Roots cannot keep plants alive where it is too cold, too hot, too salty, too wet or dry, or too toxic for your plant.` },
+  leaves:{ name:"Leaves", icon:"❦", color:"#7fdc74", sub:"mature, productive colonies",
+    what:`Leaves: up to ${pctOf(FM.leaves.yieldBonus)}% more Biomass. The bonus grows as the colony fills in: seedlings have little leaf area, dense stands earn the full bonus. The cost is ${pctOf(FM.leaves.seedCost)}% fewer seeds. It does not change where your plant can live.` },
+  seeds:{ name:"Seeds", icon:"✿", color:"#f5a6dc", sub:CROSS_T?"frontier or coastal colonies":"frontier colonies",
+    what:`Seeds: this colony spreads into open ground ${pctOf(FM.seeds.seedBonus)}% faster${CROSS_T?` and, with ${CROSS_T.name}, sends ${pctOf(FM.seeds.crossingBonus)}% more seeds over water`:""}. The cost is ${pctOf(FM.seeds.yieldCost)}% less Biomass from this colony. Seeds only take root where the ground suits your plant.` },
+};
+const SPEC_UI={
+  rootNetwork:{ sub:"thicker stands, holds on under stress, regrows fast", what:`${SPEC.rootNetwork.name}: a deep, spreading root system. This colony establishes much faster, loses fewer plants on marginal ground and regrows quickly after die-back. It still cannot survive ground that is too hostile for your plant.` },
+  leafCanopy:{ sub:"more Biomass from an established colony", what:`${SPEC.leafCanopy.name}: a full leaf canopy. Up to ${pctOf(SPEC.leafCanopy.effect.yieldBonus)}% more Biomass from this colony, growing as the colony fills in, so it pays best on a big, established colony.` },
+  // (water-crossing wording only where a crossing trait is offered — no sea talk on a desert or on First Bloom)
+  seedReserve:{ sub:CROSS_T?"stronger spread and sea crossings from here":"stronger spread from here", what:`${SPEC.seedReserve.name}: a large store of seeds. This colony spreads ${pctOf(SPEC.seedReserve.effect.seedBonus)}% faster${CROSS_T?` and sends ${pctOf(SPEC.seedReserve.effect.crossingBonus)}% more seeds over water. It is most useful on a frontier or coastal colony`:`. It is most useful on a frontier colony pushing into open ground`}.` },
+};
+const MATCH_NOTE=`When the colony's focus matches its upgrade, the upgrade works ${pctOf(CM.synergy)}% better.`;
+// a short, situation-based tip (young / stressed / frontier / mature), from what the player can see in this panel
+function colonyTip(i){
+  const e=evaluate(i), cs=sim.colonyStatus(i), liv=livingCountBySection()[i]; if(!liv) return "";
+  if(COMP){ const c=sim.competitionAt(i); // (BLOOM-014) a front: the same three tools, read for competition
+    if(c.contact&&c.side==="native"&&c.playerFitness>CM.protectAbove) return "Native plants are pushing in here: Roots thicken this colony so it holds. Roots cannot help where your plant is poorly suited.";
+    if(c.contact&&c.side!=="native") return "This colony is on a front it can win: Seeds push into native cover faster.";
+    if(!c.contact&&cs.establishment>=CFG.establish.status.established&&!c.nativeTiles) return "Safe behind the front and established: Leaves turn it into a Biomass producer."; }
+  if(e.fitness<=CFG.categories.lamp.green&&e.fitness>CM.protectAbove) return "This ground is marginal for your plant: Roots help a colony hold on here.";
+  if(cs.establishment<CFG.establish.status.established) return "A young colony: Roots thicken it up; Seeds fill the open ground faster.";
+  let open=0; for(const t of SEC_TILES[i]) if(state[t]===BAR) open++;
+  if(open>AREA[i]*0.1) return "Established with open ground around it: Seeds spread it further.";
+  return "Established and filled in: Leaves turn it into a Biomass producer.";
+}
+let colonyKey="", tipTick=-1;
+function renderColonyCtl(force){
+  if(!SHELL) return;
+  const box=$("focusBox"), liv=selected>=0?livingCountBySection()[selected]>0:false;
+  const m=selected>=0?sim.getColonyFocus(selected):null, sp=selected>=0?sim.getSpecialization(selected):null;
+  const key=`${selected}|${m}|${sp}|${liv}|${sim.specPrice()}`; if(!force&&key===colonyKey) return; colonyKey=key; // re-render only on change: keeps clicks reliable
+  if(selected<0){ box.innerHTML=""; return; }
+  const btn=k=>{ const u=FOCUS_UI[k], on=m===k;
+    return `<button class="fbtn ${liv?"":"off"}" data-focus="${k}" data-tutorial="focus-${k}" aria-pressed="${on}" aria-disabled="${!liv}" title="${u.what.replace(/"/g,"&quot;")}"><span><span class="fi">${u.icon}</span>${u.name}${on?" ✓":""}</span><small>${u.sub}</small></button>`; };
+  const price=sim.specPrice();
+  const sbtn=id=>{ const S=SPEC[id], u=SPEC_UI[id], why=sim.specBlock(selected,id);
+    return `<button class="sbtn ${why?"off":""} ${why==="biomass"?"poor":""}" data-spec="${id}" data-tutorial="local-${id}" aria-disabled="${!!why}" title="${(u.what+" "+MATCH_NOTE).replace(/"/g,"&quot;")}">
+      <span><b>${FOCUS_UI[S.mode].icon} ${S.name}</b><small>${u.sub}</small></span><span class="scost"><i></i>${price}<span class="need"></span></span></button>`; };
+  const local=!liv?`<div class="fnote">Local upgrades need a living colony here.</div>`
+    : sp?`<div class="owned" id="specOwned">${FOCUS_UI[SPEC[sp].mode].icon} <b>${SPEC[sp].name}</b> built here<small>${SPEC_UI[sp].what}${SPEC[sp].mode===m?` Focus matches: +${pctOf(CM.synergy)}% effect.`:""}</small></div>`
+    : `<div class="fnote">Spend Biomass to improve THIS colony for good (one upgrade per colony). Each one you build makes the next cost more.</div>${sbtn("rootNetwork")}${sbtn("leafCanopy")}${sbtn("seedReserve")}`;
+  box.innerHTML=`<div class="focus" id="focusCtl" data-tutorial="growth-focus"><h3>GROWTH FOCUS · ${LABEL[selected].toUpperCase()}</h3>
+    <div class="fnote">${liv?"Each colony keeps its own focus until you change it. Free, one click.":"A growth focus needs a living colony here first."}</div>
+    <div class="fgrid">${btn("balanced")}${btn("roots")}${btn("leaves")}${btn("seeds")}</div>
+    ${liv?`<div class="fstate" id="fstate">${FOCUS_UI[m].what}</div><div class="ftip" id="ftip">💡 ${colonyTip(selected)}</div>`:""}
+    <div class="local" id="localCtl" data-tutorial="local-upgrade"><h3>LOCAL UPGRADE</h3>${local}</div>
+    <details class="fsci"><summary>the science ▾</summary><p>A plant has only so much sugar from photosynthesis to spend. Real plants shift how much goes into roots (water, nutrients, anchoring), leaves (catching light) or flowers and seeds (offspring) as conditions change. Putting more into one means less for the others. They don't decide this consciously: hormones steer the growth. Here, the focus stands in for those signals.</p></details></div>`;
+  box.querySelectorAll("button.fbtn").forEach(b=>b.addEventListener("click",()=>chooseFocus(b.dataset.focus)));
+  box.querySelectorAll("button.sbtn").forEach(b=>b.addEventListener("click",()=>buySpec(b.dataset.spec)));
+  refreshColonyCtl();
+}
+// cheap per-frame pass: affordability of the local-upgrade buttons, in place (no re-render → clicks land)
+function refreshColonyCtl(){
+  if(!SHELL||selected<0) return; const price=sim.specPrice();
+  doc.querySelectorAll("#focusBox button.sbtn").forEach(b=>{ const why=sim.specBlock(selected,b.dataset.spec);
+    b.classList.toggle("off",!!why); b.classList.toggle("poor",why==="biomass"); b.setAttribute("aria-disabled",!!why);
+    const need=b.querySelector(".need"), txt=why==="biomass"?`need ${Math.ceil(price-sim.biomass)} more`:""; if(need.textContent!==txt) need.textContent=txt; });
+  const tip=$("ftip"); if(tip&&sim.ticks!==tipTick){ tipTick=sim.ticks; const t="💡 "+colonyTip(selected); if(tip.textContent!==t) tip.textContent=t; }
+}
+// (BLOOM-029A) `i` = the region acted on; omitted = the selected region, exactly as the buttons above have always used it
+function chooseFocus(mode,i=selected){
+  if(i<0) return false;
+  const was=sim.getColonyFocus(i);
+  if(!sim.setColonyFocus(i,mode)){ log(`${LABEL[i]} has no living plants yet, so there is no colony to direct.`); return false; }
+  log(mode===was?`${LABEL[i]} is already on ${FOCUS_UI[mode].name}.`:`${LABEL[i]}: ${FOCUS_UI[mode].name} focus. Other colonies keep their own focus. ${FOCUS_UI[mode].what}`);
+  renderColonyCtl(true); draw(); emit("growth-focus",{...secRef(i), focus:mode, previous:was, changed:mode!==was}); return true;
+}
+function buySpec(id,i=selected){
+  if(i<0) return false; const why=sim.specBlock(i,id), price=sim.specPrice();
+  if(why){ log(why==="biomass"?`${SPEC[id].name} costs ${price} Biomass. You have ${Math.floor(sim.biomass)}: ${Math.ceil(price-sim.biomass)} more needed.`
+    : why==="hasOne"?`${LABEL[i]} already has its local upgrade (one per colony).` : `${LABEL[i]} has no living colony to upgrade.`); return false; }
+  sim.buySpecialization(i,id);
+  log(`Built ${SPEC[id].name} in ${LABEL[i]} for ${price} Biomass. ${SPEC_UI[id].what}`);
+  renderColonyCtl(true); renderHUD(lastCov); draw(); emit("local-upgrade",{...secRef(i), upgrade:id, upgradeName:SPEC[id].name, cost:price}); return true;
+}
+
+// (BLOOM-029A) the facts behind the island note, shared with the run UI adapter: null = no note (one landmass, or the plant is there)
+function geoInfo(i){
+  if(!MULTI_MASS||livingMasses().has(LANDMASS[i])) return null;
+  return { landmass:LANDMASS[i], hops:crossingHops().get(LANDMASS[i]), crossing:CROSS_T?CROSS_T.id:null, owned:ownsCrossing(), maxGap:CFG.crossing.maxGap };
+}
+// island note (water worlds only): geographic access, kept separate from the environment readout above
+function geoNote(i){
+  const info=geoInfo(i); if(!info) return "";
+  const h=info.hops, g=CFG.crossing.maxGap;
+  if(!CROSS_T||h===undefined) return `<div class="geo">🌊 Separate island: no water gap of ≤ ${g} tiles links it to land your plant holds yet.</div>`;
+  const far=h>1?` It is ${h} crossings away, so seeds need a foothold on a nearer island first.`:"";
+  return ownsCrossing()
+    ? `<div class="geo">🌊 Island across water. ${CROSS_T.name} can carry seeds here; they take root only if the ground above suits your plant.${far}</div>`
+    : `<div class="geo">🌊 Island across water: ordinary spread cannot cross it. ${CROSS_T.name} would let seeds drift over.${far}</div>`;
+}
+
+// geothermal ground (BLOOM-011, generator tag): why this region is warmer than the ground around it
+function thermNote(i){
+  if(!SEC[i].geothermal) return "";
+  return `<div class="therm">Geothermal ground: heat from below (hot springs, warm soil) keeps it warmer than the land around it.${G.temp>BLOOM_RUN.planet.globalClimate.temperature?" Your warmer sky adds to that heat.":""}</div>`;
+}
+const degC=t=>`${t>0?"+":t<0?"−":""}${Math.abs(t)}°C`;
+
+/* ---- pressure scenario readouts (BLOOM-012; temporary functional UI). Numbers come from the engine's live sim.pressure; the
+   scenario's copy, phases and channel notes from content/scenarios.js. Scenario drift is always shown apart from Terraform. ---- */
+const r1=v=>Math.round(v*10)/10, sgn=v=>`${v>0?"+":v<0?"−":""}${Math.abs(r1(v))}`;
+const BASE=BLOOM_RUN.planet.globalClimate;
+// the sky every region sees right now = the player's (Terraformed) sky + the scenario drift (same formula as the engine)
+// (BLOOM-015: with climate instability the engine's env = drift + the active shock)
+function skyNow(){ const o=CLIM?CL.env:PS.offsets; return { t:G.temp+o.temp, m:o.moist?clamp(G.moist+o.moist,0,100):G.moist }; }
+const mmss=s=>{ s=Math.max(0,Math.ceil(s)); return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; };
+function phaseName(k){ return k<0?SCN.pressure.graceLabel:SCN.pressure.phases[k].name; }
+function pressNote(i,e){
+  if(!PRESS) return ""; const o=PS.offsets;
+  if(PS.progress<=0) return `<div class="press" id="pressNote">☁ ${SCN.display.title}: the decline has not started yet. This region's conditions will change when it does.</div>`;
+  const L=SEC[i].local;
+  return `<div class="press" id="pressNote">☁ Thinning atmosphere here: temperature <b>${sgn(o.temp)} °C</b> · moisture <b>${sgn(o.moist)}</b> · radiation ${L.radiation} → <b>${r1(e.effRad)}</b>
+    <div class="fixhint">Already counted in the lamps above. Terraform changes the sky; the thinning keeps pulling it the other way.</div></div>`;
+}
+// the bar: identity, phase, progress (phase ticks), time to the next stage, the live drift, the sky as base + Terraform + drift
+function buildPressureBar(){
+  if(!PRESS||!SHELL) return; const P=SCN.pressure, dur=P.durationSeconds;
+  const el=document.createElement("div"); el.className="pbar"; el.id="pbar";
+  el.innerHTML=`<div class="prow"><span class="pid" id="pId">☁ ${SCN.display.title.toUpperCase()}</span><span class="pphase" id="pPhase"></span>
+    <span class="ptrack" title="atmosphere lost so far">${P.phases.slice(1).map(ph=>`<i class="ptick" style="left:${ph.from*100}%"></i>`).join("")}<i class="pfill" id="pFill"></i></span>
+    <span id="pPct"></span><span class="pnext" id="pNext"></span></div>
+    <div class="prow"><span class="chip">moisture <b id="pMoist"></b></span><span class="chip">temperature <b id="pTemp"></b></span><span class="chip">radiation <b id="pRad"></b></span>
+    <span class="psky" id="pSky"></span><span class="pwarn" id="pWarn"></span></div>`;
+  el.title=SCN.display.summary+" "+Object.values(SCN.display.channels).join("; ")+".";
+  doc.querySelector("header").appendChild(el);
+}
+let pbarText="";
+// (BLOOM-029A) the bar's live status as data — the next stage (text + seconds to it) and the extinction countdown (seconds, or null
+// while any plant lives) — shared with the run UI adapter
+function pressureStatus(){
+  const P=SCN.pressure, k=PS.phase, s=PS.seconds; let next, nextIn=null;
+  if(k<0){ nextIn=P.graceSeconds-s; next=`decline begins in ${mmss(nextIn)}`; }
+  else if(PS.progress>=1) next="conditions have stopped changing";
+  else { const n=P.phases[k+1]; nextIn=P.graceSeconds+n.from*P.durationSeconds-s; next=`${n.name} in ${mmss(nextIn)}`; }
+  const liv=sim.coverage()>0, X=sim.extinction, extinctionIn=!liv&&!sim.lost&&!sim.won?(X.graceTicks-X.zeroTicks)*CFG.tickMs/1000:null;
+  return { next, nextIn, extinctionIn };
+}
+function renderPressure(){
+  if(!PRESS||!SHELL) return; const o=PS.offsets, k=PS.phase, st=pressureStatus(), next=st.next;
+  const sk=skyNow(), tfT=G.temp-BASE.temperature, tfM=G.moist-BASE.moisture;
+  const warn=st.extinctionIn!==null?`⚠ No living plants left! Extinction in ${mmss(st.extinctionIn)}`:"";
+  const vals=[`${phaseName(k)}`, `${Math.round(PS.progress*100)}% lost`, next, `${sgn(o.moist)}`, `${sgn(o.temp)} °C`, `${sgn(o.rad)}`,
+    `Sky now <b>${degC(r1(sk.t))}</b> = base ${degC(BASE.temperature)} · Terraform ${sgn(tfT)} · thinning ${sgn(o.temp)} — moisture <b>${r1(sk.m)}</b> = base ${BASE.moisture} · Terraform ${sgn(tfM)} · thinning ${sgn(o.moist)}`, warn];
+  const key=vals.join("|"); if(key===pbarText) return; pbarText=key;
+  $("pPhase").textContent=vals[0]; $("pPct").textContent=vals[1]; $("pNext").textContent=vals[2];
+  $("pMoist").textContent=vals[3]; $("pTemp").textContent=vals[4]; $("pRad").textContent=vals[5];
+  $("pSky").innerHTML=vals[6]; $("pWarn").textContent=vals[7];
+  $("pFill").style.width=(PS.progress*100).toFixed(1)+"%";
+}
+// milestones: one message + a short glow each time the engine enters a new phase (sim.pressure.events — real thresholds)
+let phaseSeen=0; const PHASE_HIST=[];
+function pollPressure(now){
+  if(!PRESS){ if(CLIM) checkThresholds(now); return; }
+  while(phaseSeen<PS.events.length){ const ev=PS.events[phaseSeen++]; if(ev.phase<0) continue; const ph=SCN.pressure.phases[ev.phase], o=PS.offsets;
+    PHASE_HIST.push({phase:ph.id, tick:ev.tick, progress:ev.progress});
+    log(`☁ ${ph.name}: ${ph.note} Now: moisture ${sgn(o.moist)}, temperature ${sgn(o.temp)} °C, radiation ${sgn(o.rad)}.`);
+    pulse("pbar",2500); }
+  checkThresholds(now);
+}
+// threshold feedback: every few ticks, compare each region's lamp with the last check. A change the player's own purchase did not
+// cause (no purchase since the last check) is the decline's doing: a living colony that got worse, or a region that opened up.
+// (BLOOM-015 fix: "no purchase since the last check" is a purchase COUNT, not a tick — a purchase made on the same tick as a
+// check used to be read as already seen, and its own land changes were then blamed on the scenario)
+const PX_FX=[], PX_HIST=[]; let pxLamp=null, pxTick=-1, buyTick=-1, buyCount=0, pxBuys=0;
+function checkThresholds(now){
+  if(sim.ticks-pxTick<5) return; const fresh=pxLamp===null, liv=livingCountBySection(), bought=buyCount!==pxBuys; pxTick=sim.ticks; pxBuys=buyCount;
+  const lamps=SEC.map((_,i)=>evaluate(i)), rank={green:2,yellow:1,red:0};
+  if(!fresh&&!bought&&(PS.progress>0||CLIM)){ const msgs=[], why=climWhy();
+    SEC.forEach((_,i)=>{ const a=pxLamp[i], b=lampOf(lamps[i].fitness), g=CFG.grow.growThresh;
+      if(rank[b]<rank[a.lamp]&&liv[i]>0){ PX_FX.push({sec:i, worse:true, until:now+7000}); PX_HIST.push({sec:i, name:LABEL[i], from:a.lamp, to:b, tick:sim.ticks, limit:lamps[i].limitKey, cause:why.cause});
+        msgs.push(`${LABEL[i]} is now ${b==="red"?"too hostile":"marginal"} for your plant (${LIMIT_MSG[lamps[i].limitKey](lamps[i])})`); }
+      else if(a.f<=g&&lamps[i].fitness>g){ PX_FX.push({sec:i, worse:false, until:now+7000}); PX_HIST.push({sec:i, name:LABEL[i], from:a.lamp, to:b, tick:sim.ticks, opened:true, cause:why.cause});
+        msgs.push(`${LABEL[i]} can now support your plant`); } });
+    if(msgs.length) log(`${why.text} changed the land: ${msgs.join("; ")}.`); }
+  pxLamp=lamps.map(e=>({lamp:lampOf(e.fitness), f:e.fitness}));
+  for(let k=PX_FX.length-1;k>=0;k--) if(now>PX_FX[k].until) PX_FX.splice(k,1);
+}
+
+/* ---- competition readouts (BLOOM-014; temporary functional UI). Every number is the engine's live competition state
+   (sim.competition, sim.competitionAt); the words explain the engine's own contest rule: the better-suited organism pushes,
+   an established colony holds, a young one can be overgrown. ---- */
+const SIDE_UI={ player:{icon:"▲", name:"Your advantage", cls:"mine"}, native:{icon:"▼", name:"Native advantage", cls:"theirs"},
+  even:{icon:"◆", name:"Even contest", cls:""}, none:{icon:"—", name:"No native plants here", cls:""} };
+const NLIM={ cold:"too cold for them", hot:"too hot for them", dry:"too dry for them", wet:"too wet for them", salt:"too salty for them", hazard:"too harsh (radiation/toxicity) for them" };
+const suitWord=f=>f>CFG.categories.lamp.green?"well":f>CFG.grow.growThresh?"only partly":"poorly";
+function compWhy(i,c){
+  const youSuit=c.playerFitness, theySuit=c.nativeFitness, young=c.playerTiles>0&&c.playerMaturity<CFG.establish.status.established;
+  if(c.side==="none") return c.nativeCanGrow?"Native vegetation could spread in here: this ground suits it. Plants already growing here block it."
+    :`Native plants cannot spread here: it is ${NLIM[c.nativeLimitSide]||"unsuitable for them"}.`;
+  if(c.side==="native"){
+    if(!c.playerCanGrow) return "Your plant cannot grow here, so the native plants keep this ground.";
+    if(theySuit>youSuit+0.05) return `The native plants are better suited to this ground than your plant${youSuit>CFG.categories.lamp.green?" (yours grows well here, theirs grows even better)":` (it suits yours only ${suitWord(youSuit)==="poorly"?"poorly":"partly"})`}, so they push into your plants where they meet.`;
+    if(young) return "Your colony here is still young, so established native plants are reclaiming space. Established colonies hold; Roots thicken a young colony faster.";
+    return "The native plants here are more established than your plants, so they are holding and reclaiming space.";
+  }
+  if(c.side==="player"){
+    if(youSuit>theySuit+0.05) return `Your plant is better suited here (the ground is ${NLIM[c.nativeLimitSide]||"less ideal for them"}), so your colony is pushing native cover back.`;
+    return "Both plants suit this ground, but your colony is more established here, so it is pushing native cover back.";
+  }
+  return "Both plants suit this ground about equally. The more established side holds; this front moves slowly. Strengthening your colony here, or changing what suits each plant, tips it.";
+}
+function compNote(i){
+  if(!COMP) return ""; const c=sim.competitionAt(i), u=SIDE_UI[c.side], pct=x=>Math.round(x*100);
+  const trend=c.recent.gained+c.recent.lost>=1?` · lately: you took ${Math.round(c.recent.gained)}, they took ${Math.round(c.recent.lost)} tiles`:"";
+  return `<div class="comp ${u.cls}" id="compNote"><div class="ch">🌿 Competition: <b id="compSide">${u.icon} ${u.name}</b>${c.contested?' <span class="badge">CONTESTED</span>':""}</div>
+    <div class="cn">native cover <b>${pct(c.nativeShare)}%</b> · your plants <b>${pct(c.playerShare)}%</b> · suits you ${pct(Math.min(1,c.playerFitness))}% · suits them ${pct(Math.min(1,c.nativeFitness))}%${trend}</div>
+    <div class="cw" id="compWhy">${compWhy(i,c)}</div></div>`;
+}
+// the status bar: native-held land (share of the land, same denominator as your coverage), its trend, contested regions and
+// who leads in them. Never a countdown: competition has no clock.
+const CHIST=[]; let cbarText="", compBar=null; // (BLOOM-029A) compBar = the bar's last trend + leads, for the run UI adapter
+function buildCompBar(){
+  if(!COMP||!SHELL) return; const el=document.createElement("div"); el.className="cbar"; el.id="cbar";
+  el.innerHTML=`<span class="cid" id="cId">🌿 ${SCN.display.title.toUpperCase()}</span><span>native plants hold <b id="cNative"></b> of the land</span>
+    <span class="ctrend" id="cTrend"></span><span>contested regions <b id="cCont"></b></span><span id="cLead"></span>
+    <span class="key"><i class="sw"></i>native plants<i class="fr"></i>front</span>`;
+  el.title=SCN.display.summary; doc.querySelector("header").appendChild(el);
+}
+function compTrend(){ // native share now vs ~20 game-seconds ago (samples every 2 s of game time)
+  const per=Math.round(2000/CFG.tickMs); if(!CHIST.length||sim.ticks-CHIST[CHIST.length-1].t>=per){ CHIST.push({t:sim.ticks, v:CS.share}); if(CHIST.length>12) CHIST.shift(); }
+  const d=CS.share-CHIST[0].v; return d>0.005?["up","▲ spreading"]:d<-0.005?["dn","▼ retreating"]:["flat","steady"]; }
+function renderComp(){
+  if(!COMP) return; const t=compTrend(); let mine=0, theirs=0; SEC.forEach((_,i)=>{ const R=CS.regions[i]; if(R.contested){ if(R.side==="player") mine++; else if(R.side==="native") theirs++; } });
+  compBar={trend:t[0], trendText:t[1], playerLeads:mine, nativeLeads:theirs};
+  if(!SHELL) return; // (BLOOM-033) the trend + leads above are truth (the adapter's compBar); the bar is the shell's
+  const vals=[`${Math.round(CS.share*100)}%`, t[1], t[0], `${CS.contested}`, CS.contested?`you lead ${mine} · natives lead ${theirs}`:""];
+  const key=vals.join("|"); if(key===cbarText) return; cbarText=key;
+  $("cNative").textContent=vals[0]; const tr=$("cTrend"); tr.textContent=vals[1]; tr.className="ctrend "+vals[2];
+  $("cCont").textContent=vals[3]; $("cLead").textContent=vals[4];
+}
+// competition events (sim.competition.events — real engine transitions): one message + a short outline each
+const CX_FX=[], CX_HIST=[]; let cxSeen=0;
+const CX_MSG={ contested:n=>`🌿 First contact in ${n}: your plant has met native vegetation. Where they meet, the better-suited plant pushes, and established colonies hold.`,
+  playerAdvantage:n=>`🌿 Your plant has the advantage in ${n} and is pushing native cover back.`,
+  nativeRetake:n=>`🌿 Native plants are reclaiming ground in ${n}: your colony there is losing space.`,
+  nativeDominated:n=>`🌿 ${n} is now dominated by native vegetation.` };
+const CX_COLOR={ contested:"#c79af0", playerAdvantage:"#7fe3c0", nativeRetake:"#ffb347", nativeDominated:"#ffb347" };
+function pollCompetition(now){
+  if(!COMP) return;
+  for(const ev of CS.events){ if(ev.id<=cxSeen) continue; cxSeen=ev.id;
+    const msg=CX_MSG[ev.type](LABEL[ev.sec]); CX_HIST.push({type:ev.type, sec:ev.sec, name:LABEL[ev.sec], tick:ev.tick, msg}); CX_FX.push({sec:ev.sec, color:CX_COLOR[ev.type], type:ev.type, until:now+6000});
+    log(msg); pulse("cbar",1800); }
+  for(let k=CX_FX.length-1;k>=0;k--) if(now>CX_FX[k].until) CX_FX.splice(k,1);
+}
+// Terraform + natives: regions holding (or touching) native cover where the new sky suits the native plants clearly less / more
+function nativeSkyShift(before,after){
+  const nb=[], nw=[]; if(!COMP) return {nb,nw};
+  SEC.forEach((_,i)=>{ const c=sim.competitionAt(i); if(!c.nativeTiles&&!c.contact) return; const d=after[i]-before[i];
+    if(d<=-0.1) nb.push(i); else if(d>=0.1) nw.push(i); });
+  return {nb,nw}; } // nb = suits them less (good for you), nw = suits them more
+
+/* ---- climate-instability readouts (BLOOM-015; temporary functional UI). Every number is the engine's live sim.climate (and
+   sim.climatePreview for a Terraform step not yet bought); copy, bands and shock names come from content/scenarios.js. ---- */
+const CI_D=CLIM?SCN.climateInstability:null, AXNAME=CLIM?SCN.display.axes:{}, BANDS=CLIM?CI_D.bands:[];
+const SHOCK_UI={ heat_pulse:{rgb:"255,130,60", cls:"hot"}, cold_snap:{rgb:"110,170,255", cls:"cold"}, wet_surge:{rgb:"70,200,200", cls:"cold"},
+  dry_spell:{rgb:"230,190,110", cls:"hot"}, fallback:{rgb:"220,220,220", cls:""} };
+const AXUNIT={temp:" °C", moist:""}, axVal=(ax,v)=>`${sgn(v)}${AXUNIT[ax]}`;
+const lowerName=n=>n.charAt(0).toLowerCase()+n.slice(1);
+// a settled climate absorbs one Terraform step without a shock exactly when baseline + one step stays under the threshold
+const ONE_STEP_SAFE=CLIM&&CI_D.baseline+CI_D.forcing.perStep<CI_D.shocks.threshold;
+const pctI=x=>Math.round(x*100), bandOf=v=>BANDS.reduce((k,b,i)=>v>=b.from?i:k,0);
+const tfOf=ax=>ax==="temp"?G.temp-BASE.temperature:G.moist-BASE.moisture;
+// the cause of a land change the player did not buy: an active climate shock (BLOOM-015) or the scenario's drift (BLOOM-012)
+function climWhy(){
+  if(CLIM) for(const ax in CL.axes){ const A=CL.axes[ax]; if(A.shock) return {cause:"shock", text:`🌪 The ${lowerName(A.shock.name)}${sim.ticks>A.shock.endTick-A.shock.ramp?" (easing)":""}`}; }
+  if(CLIM&&!PRESS){ const last=CL.shocks[CL.shocks.length-1]; return {cause:"shock", text:`🌪 The end of the ${last?lowerName(last.name):"climate shock"}`}; }
+  return {cause:"pressure", text:"☁ The thinning atmosphere"};
+}
+function climNote(i,e){
+  if(!CLIM) return ""; const parts=[];
+  for(const ax in CL.axes){ const A=CL.axes[ax];
+    if(A.shock) parts.push(`🌪 <b>${A.shock.name}</b>: ${AXNAME[ax]} <b>${axVal(ax,A.offset)}</b> here now, over in ${mmss((A.shock.endTick-sim.ticks)*CFG.tickMs/1000)}. Already counted in the lamps above. Your Terraform (${axVal(ax,tfOf(ax))}) stays when it passes.`);
+    else if(A.pending) parts.push(`⚠ A <b>${lowerName(A.pending.name)}</b> is coming in ${mmss((A.pending.startTick-sim.ticks)*CFG.tickMs/1000)}: ${AXNAME[ax]} will swing ${A.pending.sign>0?"up":"down"} for a while. Colonies close to their ${ax==="temp"?(A.pending.sign>0?"heat":"cold"):(A.pending.sign>0?"wet":"dry")} limit here may die back until it passes.`); }
+  return parts.length?`<div class="clim" id="climNote">${parts.join("<br>")}</div>`:"";
+}
+// the bar: identity, overall instability (meter with the shock threshold marked) + band, each axis, the shock, a forecast, the sky
+function buildClimateBar(){
+  if(!CLIM||!SHELL) return; const el=document.createElement("div"); el.className="climbar"; el.id="vbar";
+  el.innerHTML=`<span class="vid" id="vId">🌪 ${SCN.display.title.toUpperCase()}</span><span>instability</span>
+    <span class="vtrack" title="climate instability (the most unsettled sky axis); the white mark is where shocks start">${BANDS.slice(1).map(b=>`<i class="vtick" style="left:${b.from*100}%;opacity:${b.from===CI_D.shocks.threshold?1:0.4}"></i>`).join("")}<i class="vfill" id="vFill"></i></span>
+    <b id="vPct"></b><span class="vband" id="vBand"></span>${Object.keys(CL.axes).map(ax=>`<span class="chip" id="vAx_${ax}">${AXNAME[ax]} <b></b></span>`).join("")}
+    <span class="vshock" id="vShock"></span><span class="vrow2"><span id="vFc"></span><span id="vSky"></span></span>`;
+  el.title=SCN.display.summary+" "+SCN.display.science; doc.querySelector("header").appendChild(el);
+}
+function settleSeconds(lv,to){ const b=CI_D.baseline; return lv<=to?0:CI_D.settling.halfLifeSeconds*Math.log2((lv-b)/Math.max(1e-6,to-b)); }
+function climForecast(){
+  for(const ax in CL.axes){ const A=CL.axes[ax]; if(A.shock) return `Temporary: your Terraform stays. Colonies it pushed past their ${ax==="temp"?(A.shock.sign>0?"heat":"cold"):(A.shock.sign>0?"wet":"dry")} limit can regrow when it passes.`; }
+  for(const ax in CL.axes){ const A=CL.axes[ax]; if(A.pending) return `${AXNAME[ax][0].toUpperCase()+AXNAME[ax].slice(1)} will swing ${A.pending.sign>0?"up":"down"}: colonies near their ${ax==="temp"?(A.pending.sign>0?"heat":"cold"):(A.pending.sign>0?"wet":"dry")} limit may die back until it passes.`; }
+  const lv=CL.level, th=CI_D.shocks.threshold;
+  for(const ax in CL.axes){ const A=CL.axes[ax]; if(A.level>=th) return `⚠ ${AXNAME[ax]} still volatile: it can swing again in ${mmss((A.quietUntil-sim.ticks)*CFG.tickMs/1000)} unless it settles below ${pctI(th)}%.`; }
+  // which axis one more Terraform step would push over the threshold now
+  const risky=[...new Set(UP.filter(u=>u.effect.type==="sky"&&sim.canBuy(u)).map(u=>u.effect.axis))].filter(ax=>{ const t=UP.find(u=>u.effect.type==="sky"&&u.effect.axis===ax&&sim.canBuy(u)), p=t&&sim.climatePreview(t.id); return p&&p.triggersShock; });
+  if(risky.length) return `One more ${risky.map(ax=>AXNAME[ax]).join(" or ")} Terraform step now would set off a shock. Settles below ${pctI(th)}% in about ${mmss(settleSeconds(Math.max(...risky.map(ax=>CL.axes[ax].level)),BANDS[1].from))}.`;
+  if(lv>=BANDS[1].from) return `Settling: back to ${BANDS[0].name} in about ${mmss(settleSeconds(lv,BANDS[1].from))}.`;
+  return ONE_STEP_SAFE?"Settled: one Terraform step causes no shock; several close together can.":"Settled.";
+}
+let vbarText="";
+function renderClimate(){
+  if(!CLIM||!SHELL) return; const lv=CL.level, b=CL.band;
+  let shock=""; for(const ax in CL.axes){ const A=CL.axes[ax];
+    if(A.shock) shock=`${A.shock.name}: ${AXNAME[ax]} ${axVal(ax,A.offset)} · ${mmss((A.shock.endTick-sim.ticks)*CFG.tickMs/1000)} left`;
+    else if(A.pending&&!shock) shock=`⚠ ${A.pending.name} in ${mmss((A.pending.startTick-sim.ticks)*CFG.tickMs/1000)}`; }
+  const sk=skyNow(), P=PRESS?PS.offsets:{temp:0,moist:0}, o=CL.offsets, dr=(ax,v)=>PRESS?` · thinning ${sgn(P[ax])}`:"";
+  const shk=ax=>{ const A=CL.axes[ax]; return A&&A.shock?` · ${lowerName(A.shock.name)} ${sgn(o[ax])}`:""; }; // (the shock term appears only while one runs)
+  const vals=[`${pctI(lv)}%`, BANDS[b].name, `b${Math.min(3,b)}`, ...Object.keys(CL.axes).map(ax=>`${pctI(CL.axes[ax].level)}%`), shock, climForecast(),
+    `Sky now <b>${degC(r1(sk.t))}</b> = base ${degC(BASE.temperature)} · Terraform ${sgn(tfOf("temp"))}${dr("temp")}${shk("temp")} — moisture <b>${r1(sk.m)}</b> = base ${BASE.moisture} · Terraform ${sgn(tfOf("moist"))}${dr("moist")}${shk("moist")}`];
+  const key=vals.join("|"); if(key===vbarText) return; vbarText=key;
+  $("vPct").textContent=vals[0]; const bd=$("vBand"); bd.textContent=vals[1]; bd.className="vband "+vals[2];
+  Object.keys(CL.axes).forEach((ax,k)=>{ const c=$("vAx_"+ax), A=CL.axes[ax]; c.querySelector("b").textContent=vals[3+k];
+    c.className="chip"+(A.shock||A.pending?" "+(SHOCK_UI[(A.shock||A.pending).id]||SHOCK_UI.fallback).cls:""); });
+  const n=Object.keys(CL.axes).length; $("vShock").textContent=vals[3+n]; $("vFc").textContent=vals[4+n];
+  $("vSky").innerHTML=vals[5+n]; $("vFill").style.width=(lv*100).toFixed(1)+"%";
+}
+// climate events (sim.climate.events — real engine transitions): one message + a glow on the bar each (no spam: band rises
+// caused by a purchase are already in the purchase message; only "settled back" band changes are announced)
+const CL_HIST=[]; let clSeen=0;
+function pollClimate(){
+  if(!CLIM) return;
+  for(const ev of CL.events){ if(ev.id<=clSeen) continue; clSeen=ev.id; let msg=null;
+    if(ev.type==="shockWarning") msg=`⚠ 🌪 ${AXNAME[ev.axis][0].toUpperCase()+AXNAME[ev.axis].slice(1)} is unstable after your Terraforming: a ${lowerName(ev.name)} is coming in ${mmss((ev.startTick-sim.ticks)*CFG.tickMs/1000)}. Colonies near their ${ev.axis==="temp"?(ev.sign>0?"heat":"cold"):(ev.sign>0?"wet":"dry")} limit may die back until it passes.`;
+    else if(ev.type==="shockStart") msg=`🌪 ${ev.name}! ${AXNAME[ev.axis]} ${axVal(ev.axis,ev.sign*ev.magnitude)} for ${CI_D.shocks.durationSeconds} s. It is temporary: your Terraform stays.`;
+    else if(ev.type==="shockEnd") msg=`🌪 The ${lowerName(ev.name)} has passed: ${AXNAME[ev.axis]} is back to your Terraformed sky.`;
+    else if(ev.type==="band"&&ev.to<ev.from&&ev.cause==="settling") msg=`🌪 The climate has settled to ${BANDS[ev.to].name} (${pctI(ev.level)}%).`;
+    CL_HIST.push({...ev, shown:!!msg});
+    if(msg){ log(msg); pulse("vbar",1800); } }
+}
+// a Terraform step's climate effect, in words (preview: "would"; after a purchase: "now")
+function climPreviewWords(c,done){
+  if(!c) return ""; const ax=AXNAME[c.axis];
+  const head=`🌪 instability: ${ax} ${pctI(c.axisBefore)}% → ${pctI(c.axisAfter)}%${c.bandAfter!==c.bandBefore?` · ${BANDS[c.bandBefore].name} → ${BANDS[c.bandAfter].name}`:` · ${BANDS[c.bandAfter].name}`}`;
+  const tail=c.triggersShock?` · ⚠ ${done?"this sets":"this will set"} off a ${ax} shock in ~${CI_D.shocks.warningSeconds} s (likely a ${lowerName(c.kind.name)}, about ${axVal(c.axis,c.kind.sign*c.magnitude)})`
+    : c.addsToActive?` · adds to the ${ax} swing already under way`
+    : c.afterQuiet?` · ⚠ ${ax} stays volatile: another shock can follow after the current quiet spell`
+    : c.axisAfter>=BANDS[1].from?` · no shock from this step; another ${ax} step soon would add more`:" · no shock";
+  return head+tail;
+}
+// BLOOM-015: one climate line in the Bloom Report / extinction screen — what the climate went through, never a grade
+function climateReport(){
+  if(!CLIM) return ""; const sh=CL.shocks, kinds={}; sh.forEach(x=>{ kinds[x.name]=(kinds[x.name]||0)+1; });
+  const swing=Object.keys(CL.axes).filter(ax=>CL.axes[ax].maxSwing>0).map(ax=>{ const big=sh.filter(x=>x.axis===ax).reduce((m,x)=>x.magnitude>m.magnitude?x:m,{magnitude:0,sign:1});
+    return `${AXNAME[ax]} ${axVal(ax,big.sign*CL.axes[ax].maxSwing)}`; });
+  const steps=CL.forcing.length, byAx=Object.keys(CL.axes).map(ax=>[ax,CL.forcing.filter(f=>f.axis===ax).length]).filter(x=>x[1]).map(([ax,n])=>`${AXNAME[ax]} ${n}`);
+  return `<div class="clim" id="repClimate"><b>Climate: ${SCN.display.title}</b> — ${steps} Terraform step${steps===1?"":"s"}${byAx.length?` (${byAx.join(", ")})`:""}; instability peaked at
+    <b>${pctI(CL.peak)}%</b> (${BANDS[bandOf(CL.peak)].name}) and is <b>${pctI(CL.level)}%</b> now.
+    ${sh.length?`${sh.length} climate shock${sh.length===1?"":"s"}: ${Object.entries(kinds).map(([k,n])=>`${lowerName(k)}${n>1?` ×${n}`:""}`).join(", ")}; largest temporary swing ${swing.join(", ")}.`:"No climate shock."}
+    Instability is the cost of changing a whole planet quickly, not a score: a heavily Terraformed win and a low-instability win are both wins.</div>`;
+}
+
+/* ---- upgrade catalogue = content/traits.js; prices/effects/rules = engine ---- */
+const UP=sim.traits, upById=sim.traitById;
+// BLOOM-011 Terraform readability: what a sky change does to EVERY region, not only the ones that switch between open and
+// blocked. A what-if on a copy of the sky (restored at once, like the engine's own previewOf): fitness before / after.
+// better = the region's conditions improve but it stays blocked; worse = they deteriorate but it can still grow there.
+let skyFx=null; // the last Terraform purchase's effect, outlined on the map / shown in the HUD for a few seconds
+function skyWhatIf(u){
+  const e=u.effect, ax=e.axis, o=G[ax], before=SEC.map((_,i)=>evaluate(i)), nf0=COMP?SEC.map((_,i)=>sim.nativeEvaluate(i).fitness):null;
+  let v=o+e.delta; if(e.min!==undefined||e.max!==undefined) v=clamp(v,e.min??-Infinity,e.max??Infinity);
+  G[ax]=v; const after=SEC.map((_,i)=>evaluate(i)), nf1=COMP?SEC.map((_,i)=>sim.nativeEvaluate(i).fitness):null, skyAfter=skyNow(); G[ax]=o;
+  // (BLOOM-029D) skyAfter = the surface sky under the what-if (Terraform + drift / shock), read with the same skyNow the map paints under
+  return {...skyDiff(ax,o,v,before,after), skyAfter, ...(COMP?nativeSkyShift(nf0,nf1):{})};
+}
+// (better = the ground moved closer to the plant's tolerance window on the changed axis, e.g. −32 °C → −26 °C on frozen
+// ground: still deadly, but nearer; worse = the region can still grow but its fitness dropped)
+function skyDiff(ax,from,to,before,after){
+  const g=CFG.grow.growThresh, ok=f=>f>g, out={axis:ax, from, to, gain:[], lose:[], better:[], worse:[]}, d=sim.derived();
+  const [lo,hi]=ax==="temp"?[d.tempFloor,d.tempCeil]:[d.waterPos-d.waterTol,d.waterPos+d.waterTol];
+  const off=e=>{ const v=ax==="temp"?e.effT:e.effM; return v<lo?lo-v:v>hi?v-hi:0; };
+  SEC.forEach((_,i)=>{ const a=before[i].fitness, b=after[i].fitness;
+    if(ok(b)&&!ok(a)) out.gain.push(i); else if(ok(a)&&!ok(b)) out.lose.push(i);
+    else if(!ok(b)&&off(after[i])<off(before[i])) out.better.push(i);
+    else if(ok(b)&&b<a-0.01) out.worse.push(i); });
+  out.after=after; return out;
+}
+function skyWords(d){
+  const nm=a=>a.map(i=>LABEL[i]).join(", "), why=i=>LIMIT_MSG[d.after[i].limitKey](d.after[i]);
+  const sky=d.axis==="temp"?`sky ${degC(d.from)} → ${degC(d.to)}`:`sky moisture ${d.from} → ${d.to}`;
+  let drift=PRESS&&PS.progress>0?(d.axis==="temp"?` (thinning air ${sgn(PS.offsets.temp)} °C on top)`:` (thinning air ${sgn(PS.offsets.moist)} on top)`):"";
+  if(CLIM&&CL.axes[d.axis]&&CL.axes[d.axis].shock) drift+=` (${lowerName(CL.axes[d.axis].shock.name)} ${axVal(d.axis,CL.offsets[d.axis])} on top for now)`;
+  return [sky+drift, d.gain.length?`opens: ${nm(d.gain)}`:"", d.lose.length?`⚠ closes: ${d.lose.map(i=>`${LABEL[i]} (${why(i)})`).join(", ")}`:"",
+    d.better.length?`closer, still blocked: ${nm(d.better)}`:"", d.worse.length?`⚠ worse, still growing: ${nm(d.worse)}`:"",
+    d.nb&&d.nb.length?`🌿 suits native plants less: ${nm(d.nb)}`:"", d.nw&&d.nw.length?`🌿 suits native plants more: ${nm(d.nw)}`:""].filter(Boolean).join(" · ");
+}
+
+// (BLOOM-029A) the shop's read rules, shared with the run UI adapter: the boards in order, what a board offers (e.g. a crossing trait
+// only where water can be crossed), and one upgrade's state — price, owned tier, allowed by the rules, affordable now, and why not
+const BOARDS=["Spread","Adapt","Terraform"];
+const offeredOn=board=>UP.filter(x=>x.board===board && sim.offered(x));
+function upgradeState(u){ const cost=sim.price(u), tier=sim.ownedTier(u), rules=sim.canBuy(u);
+  return { cost, tier, rules, canBuy:rules && sim.biomass>=cost, why:rules?"":sim.why(u) }; }
+function renderShop(){
+  if(!SHELL) return;
+  const el=$("shop"); const groups=BOARDS;
+  let html='<h2>UPGRADES</h2>';
+  for(const gname of groups){
+    html+=`<div class="grp" data-tutorial="board-${gname.toLowerCase()}"><h3>${gname}</h3>`;
+    if(gname==="Adapt") html+=`<div class="temppool">temp points: cold ${genome.cold} · heat ${genome.heat} / cap ${CFG.scales.tempCap}</div>`;
+    for(const u of offeredOn(gname)){
+      const {cost,tier,rules,canBuy,why}=upgradeState(u);
+      const label = tier>0 ? `${u.name} <small>·${["I","II","III","IV"][tier-1]||("+"+tier)} owned · ${u.sub}</small>` : `${u.name} <small>${u.sub}</small>`;
+      const title = why;
+      html+=`<button class="buy ${tier>0?'owned':''} ${canBuy?'':'off'} ${rules&&!canBuy?'poor':''}" data-id="${u.id}" data-tutorial="upgrade-${u.id}" aria-disabled="${!canBuy}" title="${title}">
+        <span class="nm">${label}</span><span class="cost">${cost}</span></button>`;
+    }
+    html+='</div>';
+  }
+  el.innerHTML=html;
+  // (BLOOM-012 fix: right after a purchase the re-rendered button sits under the pointer; its hover preview of the NEXT tier
+  // must not overwrite the purchase message — it previews again once the pointer leaves and comes back)
+  el.querySelectorAll("button.buy").forEach(b=>{ b.addEventListener("click",()=>{ if(buy(b.dataset.id)) justBought=b.dataset.id; });
+    b.addEventListener("mouseenter",()=>{ if(b.dataset.id!==justBought) showPreview(b.dataset.id); }); b.addEventListener("focus",()=>{ if(b.dataset.id!==justBought) showPreview(b.dataset.id); });
+    b.addEventListener("mouseleave",()=>{ justBought=null; clearPreview(); }); b.addEventListener("blur",clearPreview); });
+}
+// cheap per-frame pass: toggle affordability in place (a full re-render every frame would eat clicks)
+function refreshShop(){
+  if(!SHELL) return;
+  doc.querySelectorAll("#shop button.buy").forEach(b=>{ const st=upgradeState(upById[b.dataset.id]);
+    const off=!st.canBuy; if(b.classList.contains("off")!==off){ b.classList.toggle("off",off); b.setAttribute("aria-disabled",off); }
+    b.classList.toggle("poor",st.rules&&off); });
+}
+// (BLOOM-028D1) a preview shown = one bloom:upgrade-preview with what it showed (region ids); available false = not buyable now
+function showPreview(id){ describePreview(id); const u=upById[id], ids=a=>(a||[]).map(i=>SEC[i].id), P=preview||{};
+  emit("upgrade-preview",{id, board:u.board, name:u.name, available:!!preview, gain:ids(P.gain), lose:ids(P.lose), better:ids(P.better), worse:ids(P.worse), reachHostile:ids(P.reachHostile)}); }
+// (BLOOM-029A) the preview itself, computed without showing it: { data, text }. data = what the map outlines (null = not available
+// now), text = what the footer says. describePreview shows it (as always); the run UI adapter reads it for rooms that preview in place
+function computePreview(id){
+  let data=sim.previewOf(id); const u=upById[id];
+  if(!data) return { data:null, text:sim.why(u)||(sim.ownedTier(u)>0?`${u.name} — already evolved.`:"Not available.") };
+  const nm=a=>a.map(i=>LABEL[i]).join(", ");
+  if(u.effect.type==="crossing"){ // geographic access, not a promise that the far shore suits the plant
+    const hops=crossingHops(), home=livingMasses(), reach=SEC.map((_,i)=>i).filter(i=>!home.has(LANDMASS[i])&&hops.has(LANDMASS[i]));
+    const ok=reach.filter(i=>evaluate(i).fitness>CFG.grow.growThresh), bad=reach.filter(i=>!ok.includes(i));
+    const isl=new Set(reach.map(i=>LANDMASS[i])).size, far=reach.some(i=>hops.get(LANDMASS[i])>1);
+    data={gain:ok,lose:[],reachHostile:bad};
+    const why={}; bad.forEach(i=>{ const e=evaluate(i), w=LIMIT_MSG[e.limitKey](e); why[w]=(why[w]||0)+1; });
+    // counts + outline key first (the footer is one line); the region names follow
+    return { data, text:`${u.name} — seeds float across water gaps of up to ${CFG.crossing.maxGap} tiles. Reachable: ${reach.length} region(s) on ${isl} island(s) — `+
+      `${ok.length} can take root now (green outline), ${bad.length} reachable but hostile now (yellow outline${bad.length?`: ${Object.entries(why).map(([w,n])=>`${w} ×${n}`).join(", ")}`:""}).`+
+      (far?" Farther islands need a foothold on a nearer one first.":"")+
+      (ok.length?` Can take root: ${nm(ok)}.`:"")+(bad.length?` Hostile: ${nm(bad)}.`:"") }; }
+  if(u.effect.type==="sky"){ // Terraform: the whole sky changes, so name every region it helps or hurts (engine decides open/closed)
+    const d=skyWhatIf(u), c=CLIM?sim.climatePreview(id):null;
+    // (BLOOM-029D) sky = the exact current → preview SURFACE sky of this what-if, for the production Terraform room's globe (read-only;
+    // the map's outline code and the bloom:upgrade-preview detail pick their own keys, so neither changes)
+    data={gain:data.gain, lose:data.lose, better:d.better, worse:d.worse, climate:c, sky:{axis:d.axis, from:d.from, to:d.to, current:skyNow(), preview:d.skyAfter}};
+    return { data, text:`${u.name} — ${skyWords({...d, gain:data.gain, lose:data.lose})}.${c?" "+climPreviewWords(c,false)+".":""}` }; }
+  return { data, text:`${u.name} — ` + (data.gain.length||data.lose.length
+    ? [data.gain.length?`opens: ${nm(data.gain)}`:"", data.lose.length?`⚠ closes: ${nm(data.lose)}`:""].filter(Boolean).join(" · ")
+    : (u.board==="Spread"?"no region changes; your plant spreads faster.":"no region changes state yet.")) };
+}
+function describePreview(id){ const r=computePreview(id); preview=r.data; log(r.text); }
+function clearPreview(){ preview=null; runUI.invalidate("preview-clear"); }
+let justBought=null;
+function buy(id){
+  const u=upById[id], sky=u.effect.type==="sky", ax=u.effect.axis, from=sky&&G[ax], before=sky&&SEC.map((_,i)=>evaluate(i));
+  const nf0=sky&&COMP?SEC.map((_,i)=>sim.nativeEvaluate(i).fitness):null, cp=sky&&CLIM?sim.climatePreview(id):null, cost=sim.price(u);
+  if(!sim.buy(id)) return false;
+  if(sky){ // BLOOM-011: say what the new sky did — regions opened / closed / helped / hurt — and outline them for a few seconds
+    const d={...skyDiff(ax,from,G[ax],before,SEC.map((_,i)=>evaluate(i))), ...(COMP?nativeSkyShift(nf0,SEC.map((_,i)=>sim.nativeEvaluate(i).fitness)):{})}, ch=G[ax]-from;
+    skyFx={...d, until:performance.now()+8000, delta:ax==="temp"?`${ch>0?"▲ +":"▼ −"}${Math.abs(ch)}°C`:`${ch>0?"▲ +":"▼ −"}${Math.abs(ch)} moist`};
+    log(`Bought ${u.name}. ${skyWords(d).replace(/^sky/,"Sky")}.${cp?" "+climPreviewWords(cp,true)+".":""}`); }
+  else log(`Bought ${u.name}. `);
+  // (a pointer click marks its button in justBought after this re-render — see renderShop)
+  justBought=null; buyTick=sim.ticks; buyCount++; renderShop(); preview=null; if(selected>=0) renderInspect(); draw();
+  emit("upgrade-purchase",{id, board:u.board, name:u.name, cost, tier:sim.ownedTier(u), biomass:Math.floor(sim.biomass)});
+  return true;
+}
+
+/* ========================================================================== */
+/*  INTERACTION                                                                */
+/* ========================================================================== */
+// (BLOOM-033) the shell's canvas; none in production
+function tileAt(ev){ if(!cv) return {sec:-2,tile:-1}; const r=cv.getBoundingClientRect(); const x=Math.floor((ev.clientX-r.left)/TILE),y=Math.floor((ev.clientY-r.top)/TILE);
+  if(x<0||y<0||x>=W||y>=H)return{sec:-2,tile:-1}; return {sec:TILEMAP[y*W+x],tile:y*W+x}; }
+// (BLOOM-029A) the map's two actions as functions, so the map click and the run UI adapter take the same path
+// a bubble collected by the player: bubbles[k]
+function collectBubbleAt(k){ const b=bubbles[k]; if(!b) return false; sim.collectBubble(k); renderHUD(lastCov); draw();
+  BUB_SEEN.delete(b); emit("bubble-collect",{how:"click", tile:b.tile, ...secRef(TILEMAP[b.tile]), value:CFG.econ.bubbleValue}); return true; }
+// a map click on section `sec` (−1 water, −2 outside the map) at `tile` (−1 = none): clicking the selected region again deselects
+function selectAt(sec,tile){
+  selectedWater=sec===-1&&tile>=0; // water tile (sec -2 = outside the map)
+  const was=selected; selected=(sec<0||sec===selected)?-1:sec; renderInspect(); draw();
+  emit("region-select",{...secRef(selected), previous:was>=0?SEC[was].id:null, water:selectedWater, tile});
+}
+if(SHELL) cv.addEventListener("click",e=>{
+  const {sec,tile}=tileAt(e);
+  // bubble hit first
+  for(let k=bubbles.length-1;k>=0;k--){ const b=bubbles[k]; const px=b.x*TILE,py=b.y*TILE; const r=cv.getBoundingClientRect();
+    if(Math.hypot(e.clientX-r.left-px,e.clientY-r.top-py)<=Math.max(6,TILE*0.55)){ collectBubbleAt(k); return; } }
+  selectAt(sec,tile);
+});
+// (BLOOM-028D1) a bubble that left the map without a click collected itself (the engine's auto-collect): one event each. Checked
+// once a frame (a rolled bubble lives ≥ econ.bubbleAutoTicks ticks, far longer than a frame; only BLOOM_API.advance can skip frames)
+let BUB_SEEN=new Set();
+function pollBubbles(){ if(!BUB_SEEN.size&&!bubbles.length) return; const now=new Set(bubbles);
+  for(const b of BUB_SEEN) if(!now.has(b)) emit("bubble-collect",{how:"auto", tile:b.tile, ...secRef(TILEMAP[b.tile]), value:CFG.econ.bubbleValue*CFG.econ.autoCollectShare});
+  BUB_SEEN=now; }
+// (BLOOM-028D1) a bonus bubble placed on purpose (scripted training moments, QA): on the Living tile of region `sectionId` (default:
+// the origin) nearest that region's centre — the same tile for the same map state. Returns the tile, or -1 (nothing living there).
+function placeBubble(sectionId){ const s=sectionId==null?ORIGIN:SIDX[sectionId]; if(s===undefined) return -1;
+  const c=CENT[s]; let best=-1, bd=Infinity;
+  for(const t of SEC_TILES[s]){ if(state[t]!==LIV||bubbles.some(b=>b.tile===t)) continue;
+    const dx=(t%W)+.5-c.x, dy=((t/W)|0)+.5-c.y, d=dx*dx+dy*dy; if(d<bd) { bd=d; best=t; } }
+  if(best<0||!sim.placeBubble(best)) return -1; BUB_SEEN.add(bubbles[bubbles.length-1]); draw(); runUI.invalidate("bubble-place"); return best; }
+const RUN_UI=root.BLOOM_RUN_UI={ placeBubble };
+// (BLOOM-029A) the footer's message, for the run UI adapter. (BLOOM-033) It is the run's truth, kept here; the shell's footer only shows it
+let lastMessage=SHELL?$("log").textContent:"Watch the plant spread. When a region stalls, read its blocker and buy the answer.";
+function log(m){ const l=$("log"); if(l) l.textContent=m; lastMessage=m; runUI.invalidate("message"); }
+// (BLOOM-033) the shell's status bars glow on a milestone (developer harness only)
+function pulse(id,ms){ const b=$(id); if(!b) return; b.classList.add("pulse"); setTimeout(()=>b.classList.remove("pulse"),ms); }
+
+// (BLOOM-029A) the ⏸ / ▶ and speed buttons' actions as functions, so the buttons and the run UI adapter take the same path
+function setRunning(r){ running=r;
+  const bp=$("btnPlay"); if(bp){ bp.textContent=running?"⏸ pause":"▶ play"; bp.setAttribute("aria-pressed",running); } emit("play-pause",{running}); }
+const SPEEDS=[1,2,4]; // 1× → 2× → 4× → 1×
+function setSpeed(n){ speed=n; const bs=$("btnSpeed"); if(bs) bs.textContent="▶ "+speed+"×"; emit("speed",{speed}); }
+if(SHELL){ $("btnPlay").addEventListener("click",()=>setRunning(!running));
+  $("btnSpeed").addEventListener("click",()=>setSpeed(speed===1?2:speed===2?4:1)); }
+
+/* ========================================================================== */
+/*  BLOOM REPORT                                                               */
+/* ========================================================================== */
+// tiny programmatic portrait of the final plant: each owned trait adds a visible feature (the engineering modal only; the production
+// report shows the production plant specimen, resources/run-ui/plant-specimen.js, from the same owned tiers)
+function drawPlant(c){
+  const S=4, X=c.getContext("2d"), px=(x,y,col,w=1,h=1)=>{X.fillStyle=col;X.fillRect(x*S,y*S,w*S,h*S);};
+  X.clearRect(0,0,c.width,c.height);
+  const leaf = genome.rad?"#7a5bb0": genome.heat?"#8fc9a4":"#5fbf6e", stem="#3f8a4c", soil="#5b4330";
+  px(0,40,soil,34,10);                                           // ground
+  if(genome.waterArm==="wet"){ px(0,39,"#3a6f9a",34,2); }        // standing water
+  const rootLen = genome.waterArm==="dry" ? 9 : 4;                // drought → deep taproot
+  px(16,41,"#c9a66b",1,rootLen); px(14,42,"#c9a66b",1,2); px(18,42,"#c9a66b",1,2);
+  if(genome.waterArm==="wet"){ [9,12,21,24].forEach(x=>px(x,36,"#b89868",1,4)); } // snorkel roots poke above water
+  px(16,14,stem,1,26);                                           // stem
+  const lw = genome.waterArm==="dry" ? 3 : 2;                     // succulent → thick leaves
+  [[30,-1],[25,1],[20,-1],[16,1]].forEach(([y,d])=>{
+    const x0 = d<0 ? 16-7 : 17; px(x0,y,leaf,7,lw);
+    if(genome.cold) for(let k=0;k<7;k+=2) px(x0+k,y-1,"#e8f0ff");                 // frost hairs
+    if(genome.salt) px(d<0?x0:x0+6,y+lw-1,"#ffffff");                           // salt crystal
+  });
+  if(genome.earlyMat){ px(15,11,"#ffd479",3,3); px(16,12,"#e2604f"); }           // early flower
+  if(genome.seedOut){ for(let k=0;k<genome.seedOut*3;k++) px(20+k*3,8-(k%2)*3,"#f4f1e4"); } // drifting seeds
+  if(genome.waterSeeds){ px(0,38,"#3a6f9a",8,2); px(2,36,"#8a5a2b",3,3); px(3,36,"#b98a4a"); } // a floating seed pod
+}
+
+// (BLOOM-029E) REPORT TRUTH, as structured data. The calculations below are the ones the Bloom Report / extinction screen have always
+// made — "held" = a region more than 40 % living, "gave up" = an unfit region (fitness at or under the growth threshold) and its named
+// limiting factor, the owned Adapt / Spread build and the Terraform steps as separate lists, the colony upgrades, the real-plant analogs
+// from the trait content, each scenario's final state — written once here and READ by both presentations: the engineering modal (the
+// legacy*Html renderers below, ?ui=legacy) and the production report (resources/run-ui/run-report.js, through adapter.report()).
+// Nothing is re-derived elsewhere; no rule, threshold or outcome changed.
+let REPORT=null; // the current run-end report (null until a win or an extinction)
+const elapsed=()=>({ ticks:sim.ticks, seconds:sim.ticks*CFG.tickMs/1000, mins:Math.floor(sim.ticks*CFG.tickMs/60000), secs:Math.round(sim.ticks*CFG.tickMs/1000)%60,
+  text:`${Math.floor(sim.ticks*CFG.tickMs/60000)}m ${String(Math.round(sim.ticks*CFG.tickMs/1000)%60).padStart(2,"0")}s` });
+const reportIdentity=()=>({ planetId:BLOOM_RUN.planet.id, planetName:BLOOM_RUN.planet.name, kind:BLOOM_RUN.kind, archetypeId:RUN_ARCH, archetypeName:RUN_ARCH?BLOOM_RUN.archetype.name:null,
+  seed:RUN_ARCH?BLOOM_RUN.seed:null, seedWord:SEEDWORD, scenarioId:RUN_SCN, scenarioName:SCN?SCN.name:DEFAULT_NAME, scenarioTitle:SCN&&SCN.display?SCN.display.title:null, scenarioActive:SCEN, training:!!TRAIN, play:PLAY,
+  // (BLOOM-029F) the exact selected world's provenance (the seed above is provenance too: the run was never regenerated from it)
+  expedition:XP?{ source:XP.source, candidateKey:XP.candidateKey, sectorSeed:XP.sectorSeed, classId:XP.classId, authored:XP.authored, archetypeId:XP.archetypeId, seed:XP.seed, attempt:XP.attempt, fingerprint:XP.fingerprint, validation:XP.validation }:null });
+// BLOOM-012: the scenario's identity and how far the decline got, with the drift the plant endured (pressure runs only)
+function pressureReportData(){ if(!PRESS) return null; const o=PS.offsets;
+  return { title:SCN.display.title, phaseName:phaseName(PS.phase), phase:PS.phase, progress:PS.progress, done:PS.progress>=1, offsets:{moist:o.moist, temp:o.temp, rad:o.rad}, max:{moist:PS.max.moist, temp:PS.max.temp, rad:PS.max.rad} }; }
+function pressureReport(){ const d=pressureReportData(); if(!d) return ""; const o=d.offsets;
+  return `<div class="press" id="repPressure"><b>Pressure: ${d.title}</b> — ${d.phaseName} (${Math.round(d.progress*100)}% of the decline).
+    Your plant endured: moisture <b>${sgn(o.moist)}</b>, temperature <b>${sgn(o.temp)} °C</b>, radiation <b>${sgn(o.rad)}</b>${d.done?" — the final harsh state.":`. The decline continues if you keep playing (final: moisture ${sgn(d.max.moist)}, temperature ${sgn(d.max.temp)} °C, radiation ${sgn(d.max.rad)}).`}</div>`;
+}
+// BLOOM-014: one competition line — how much land the native plants held at the start, at their peak and now, how many regions
+// were contested, and the regions left to them (winning never needed every native plant gone)
+function competitionReportData(){ if(!COMP) return null; const contested=CS.everContested.reduce((a,b)=>a+b,0);
+  const left=SEC.map((_,i)=>i).filter(i=>sim.competitionAt(i).nativeShare>=0.4).map(i=>secRef(i));
+  return { title:SCN.display.title, startShare:CS.startShare, peakShare:CS.peakShare, share:CS.share, contested, left }; }
+function competitionReport(){ const d=competitionReportData(); if(!d) return ""; const pct=x=>Math.round(x*100), left=d.left.map(r=>r.name);
+  return `<div class="comp" id="repComp"><b>Competition: ${d.title}</b> — native plants held <b>${pct(d.startShare)}%</b> of the land at the start,
+    <b>${pct(d.peakShare)}%</b> at their peak and <b>${pct(d.share)}%</b> now. ${d.contested} region${d.contested===1?"":"s"} became contested.
+    ${left.length?`Left to native vegetation: ${left.join(", ")}. You did not need to remove every native plant.`:"Hardly any native cover is left: your plant out-competed it almost everywhere."}</div>`;
+}
+// BLOOM-015: one climate line in the Bloom Report / extinction screen — what the climate went through, never a grade
+function climateReportData(){ if(!CLIM) return null; const sh=CL.shocks, kinds={}; sh.forEach(x=>{ kinds[x.name]=(kinds[x.name]||0)+1; });
+  const swing=Object.keys(CL.axes).filter(ax=>CL.axes[ax].maxSwing>0).map(ax=>{ const big=sh.filter(x=>x.axis===ax).reduce((m,x)=>x.magnitude>m.magnitude?x:m,{magnitude:0,sign:1});
+    return { axis:ax, name:AXNAME[ax], maxSwing:CL.axes[ax].maxSwing, text:`${AXNAME[ax]} ${axVal(ax,big.sign*CL.axes[ax].maxSwing)}` }; });
+  const byAxis=Object.keys(CL.axes).map(ax=>[ax,CL.forcing.filter(f=>f.axis===ax).length]).filter(x=>x[1]).map(([ax,n])=>({ axis:ax, name:AXNAME[ax], steps:n, text:`${AXNAME[ax]} ${n}` }));
+  return { title:SCN.display.title, steps:CL.forcing.length, byAxis, peak:CL.peak, peakBand:BANDS[bandOf(CL.peak)].name, level:CL.level, bandName:BANDS[CL.band].name,
+    shockCount:sh.length, shocks:Object.entries(kinds).map(([name,n])=>({ name, count:n, text:`${lowerName(name)}${n>1?` ×${n}`:""}` })), swing,
+    note:"Instability is the cost of changing a whole planet quickly, not a score: a heavily Terraformed win and a low-instability win are both wins." }; }
+function climateReport(){ const d=climateReportData(); if(!d) return "";
+  return `<div class="clim" id="repClimate"><b>Climate: ${d.title}</b> — ${d.steps} Terraform step${d.steps===1?"":"s"}${d.byAxis.length?` (${d.byAxis.map(x=>x.text).join(", ")})`:""}; instability peaked at
+    <b>${pctI(d.peak)}%</b> (${d.peakBand}) and is <b>${pctI(d.level)}%</b> now.
+    ${d.shockCount?`${d.shockCount} climate shock${d.shockCount===1?"":"s"}: ${d.shocks.map(x=>x.text).join(", ")}; largest temporary swing ${d.swing.map(x=>x.text).join(", ")}.`:"No climate shock."}
+    ${d.note}</div>`;
+}
+// the Bloom Report's truth (acceptance Q10: build list + real-plant analogs come from the trait data, content/traits.js)
+function winReport(cov){
+  const owned=UP.filter(u=>u.board!=="Terraform" && sim.ownedTier(u)>0);
+  const built=owned.map(u=>({ id:u.id, name:u.name, short:u.short||null, board:u.board, tier:sim.ownedTier(u), single:(u.effect.type==="level"||u.effect.type==="crossing")&&u.effect.max===1, science:u.science||null, uiCategory:u.uiCategory||null }));
+  const terraform=UP.filter(u=>u.board==="Terraform" && sim.ownedTier(u)>0).map(u=>({ id:u.id, name:u.name, short:u.short||null, tier:sim.ownedTier(u), axis:u.effect.axis||null, uiCategory:u.uiCategory||null }));
+  const held=[], gaveUp=[]; const liv=livingCountBySection();
+  // a region your plant CAN grow in is just still filling in — only unfit regions count as given up
+  SEC.forEach((s,i)=>{ if(liv[i]/AREA[i]>0.4) held.push({ region:secRef(i), livingShare:liv[i]/AREA[i] });
+    else { const e=evaluate(i); if(e.fitness<=CFG.grow.growThresh) gaveUp.push({ region:secRef(i), limitKey:e.limitKey, reason:LIMIT_MSG[e.limitKey](e) }); } });
+  const colonyUpgrades=SEC.map((_,i)=>{ const sp=sim.getSpecialization(i); return sp?{ region:secRef(i), upgrade:sp, name:SPEC[sp].name }:null; }).filter(Boolean);
+  return { kind:"win", heading:TRAIN?TC.complete.toUpperCase():"BLOOM", coverage:cov, coveragePct:Math.round(cov*100), winAt:sim.winAt, elapsed:elapsed(), identity:reportIdentity(),
+    built, terraform, held, gaveUp, colonyUpgrades, analogs:built.filter(b=>b.science).map(b=>({ id:b.id, name:b.name, science:b.science })),
+    pressure:pressureReportData(), competition:competitionReportData(), climate:climateReportData(),
+    why:{ lead:"every region has a limiting factor: the one condition furthest outside your plant's tolerance. You fixed enough of them to hold the planet",
+      gaveUpNote:"No plant tolerates everything. Adapting to one extreme costs you another, so choosing what to sacrifice was the real strategy." } };
+}
+// BLOOM-012: extinction (scenarios that enable it): the engine has confirmed no living plants for the scenario's grace period
+function lossReport(why){
+  return { kind:"loss", heading:"EXTINCTION", reason:why, lostReason:sim.lostReason||why, graceSeconds:SCN.loss.extinctionGraceSeconds, elapsed:elapsed(), identity:reportIdentity(),
+    pressure:pressureReportData(), competition:competitionReportData(), climate:climateReportData(),
+    debrief:(SCN.display&&SCN.display.lossNote)||"the planet kept changing and your plant could no longer live on any of its land. Adapting to the new conditions (Adapt), pushing the sky back (Terraform) or protecting your strongest colonies earlier can keep a foothold alive." };
+}
+// the engineering modal's markup (?ui=legacy only), rendered from the structured report — the same words as before
+function legacyWinHtml(d){ const lbl=b=>b.single?b.name:`${b.short||b.name} ×${b.tier}`, I=d.identity;
+  return `
+    <h2>★ ${d.heading}</h2>
+    <div class="sub">You held ${d.coveragePct}% of the land${I.kind==="procedural"?` of <b>${I.planetName}</b> (${I.archetypeName} · ${I.seedWord} ${I.seed})`:""}${I.scenarioActive?` under <b>${I.scenarioName}</b>`:""} in ${d.elapsed.text}.</div>
+    ${pressureReport()}${competitionReport()}${climateReport()}
+    <div class="top"><canvas id="plantCv" width="136" height="200"></canvas>
+      <div><b>Your plant became:</b><ul>${d.built.map(b=>`<li>${lbl(b)}</li>`).join('')||'<li>the unmodified pioneer</li>'}</ul>
+      ${d.terraform.length?`<div style="margin-top:8px"><b>You reshaped the sky:</b> ${d.terraform.map(t=>`${t.short||t.name} ×${t.tier}`).join(', ')}</div>`:''}</div></div>
+    <div style="margin-top:10px"><b>Regions bloomed:</b> ${d.held.map(h=>h.region.name).join(', ')}</div>
+    ${d.colonyUpgrades.length?`<div style="margin-top:6px"><b>Colony upgrades:</b> ${d.colonyUpgrades.map(c=>`${c.name} in ${c.region.name}`).join(', ')}</div>`:''}
+    <div class="debrief"><b>Why it worked:</b> every region has a <i>limiting factor</i>: the one condition furthest outside your plant's tolerance. You fixed enough of them to hold the planet${d.gaveUp.length?`, and your build gave these up:<ul>${d.gaveUp.map(g=>`<li><b>${g.region.name}</b> — ${g.reason}</li>`).join('')}</ul>${d.why.gaveUpNote}`:"."}</div>
+    ${d.built.length?`<div><b>Real plants do this too:</b><ul class="analog">${d.analogs.map(a=>`<li><b>${a.name}</b> — ${a.science}</li>`).join('')}</ul></div>`:''}
+    <button class="btn" id="reportContinue" data-tutorial="report-continue"${TRAIN?" hidden":""}>Keep playing →</button>${PLAY?runActionsHtml():""}`; } // (028D2) training ends at its report (the anchor stays, hidden, as in the production report)
+function legacyLossHtml(d){ const I=d.identity, e=d.elapsed;
+  return `<h2>✕ EXTINCTION</h2>
+    <div class="sub" id="lossWhy">No living plants were left anywhere for ${d.graceSeconds} s, so the run is over (${e.mins}m ${String(e.secs).padStart(2,"0")}s${I.kind==="procedural"?` on <b>${I.planetName}</b>, ${I.archetypeName} · ${I.seedWord} ${I.seed}`:""}).</div>
+    ${pressureReport()}${competitionReport()}${climateReport()}
+    <div class="debrief" id="lossDebrief"><b>What happened:</b> ${d.debrief}</div>
+    ${PLAY?runActionsHtml():`<button class="btn" id="lossRestart">Restart this run ↻</button>`}`; }
+// (BLOOM-029E) the report's actions and their one real path. Keep playing = the continue-after-win the modal's button has always made
+// (running again; no bloom:play-pause, as before); Restart this run = the harness's reload (an extinction outside player mode);
+// the player / training actions = goAction (the page's own confirm / training-layer path). The production report only invokes these.
+function reportActions(){ if(!REPORT) return []; const out=[];
+  if(REPORT.kind==="win"&&!TRAIN) out.push({ id:"keepPlaying", label:"Keep playing", note:null, primary:true, href:"" }); // (028D2) no Keep playing after training
+  if(PLAY) out.push(...playActions().map(a=>({ id:a.id, label:a.label, note:a.note||null, primary:!!a.primary, href:a.href||"" })));
+  else if(REPORT.kind==="loss") out.push({ id:"restartRun", label:"Restart this run", note:null, primary:true, href:"" });
+  return out; }
+function reportAction(id){ if(!REPORT) return false;
+  if(id==="keepPlaying"){ if(REPORT.kind!=="win"||TRAIN) return false; continueAfterWin(); return true; }
+  if(id==="restartRun"){ if(PLAY||REPORT.kind!=="loss") return false; if(onAction) onAction("restartRun"); else location.reload(); return true; }
+  const a=PLAY&&playActions().find(x=>x.id===id); return a?goAction(a.id,a.href||""):false; }
+function continueAfterWin(){ const m=$("reportModal"); if(m) m.classList.remove("on"); running=true; const bp=$("btnPlay"); if(bp) bp.textContent="⏸ pause"; runUI.invalidate("continue"); }
+function onLoss(why){
+  REPORT=lossReport(why);
+  if(SHELL){ const r=$("report"); r.classList.add("lost"); r.innerHTML=legacyLossHtml(REPORT);
+    $("reportModal").classList.add("on");
+    if(PLAY) wireActions(r); else $("lossRestart").addEventListener("click",()=>location.reload()); }
+  log(`✕ Extinction: ${why}.`);
+}
+function onWin(cov){
+  REPORT=winReport(cov);
+  if(SHELL){ $("report").innerHTML=legacyWinHtml(REPORT);
+    if(PLAY) wireActions($("report"));
+    drawPlant($("plantCv"));
+    $("reportModal").classList.add("on");
+    $("reportContinue").addEventListener("click",continueAfterWin); }
+  log(`★ Bloom! ${Math.round(cov*100)}% coverage.`);
+}
+
+/* ========================================================================== */
+/*  MAIN LOOP                                                                   */
+/* ========================================================================== */
+let lastCov=0, acc=0, last=0, lastInspectTick=-1;
+function frame(ts){
+  if(disposed) return; // (BLOOM-033) a disposed run stops at once
+  if(!last)last=ts; const dt=ts-last; last=ts;
+  if(running){ acc+=dt*speed;
+    while(acc>=CFG.tickMs){ lastCov=sim.tick(); acc-=CFG.tickMs; if(!running)break; }
+  }
+  pollBubbles(); pollCrossings(performance.now()); pollPressure(performance.now()); pollCompetition(performance.now()); pollClimate(); renderHUD(lastCov); renderPressure(); renderComp(); renderClimate(); refreshShop(); refreshColonyCtl(); draw();
+  runUI.frame(); // (BLOOM-029A) one "the run advanced" notice for the adapter's subscribers, only on frames where the sim ticked
+  // re-read the inspected section every 3 sim ticks (not every frame — while paused that would swallow clicks)
+  if(selected>=0 && sim.ticks%3===0 && sim.ticks!==lastInspectTick){ lastInspectTick=sim.ticks; renderInspect(); }
+  raf=requestAnimationFrame(frame);
+}
+if(SHELL) root.addEventListener("resize",resize,LIFE);
+// (BLOOM-033) the shell's run identity (title, header, footer) and its scenario bars + run menu: developer harness only
+if(SHELL&&BLOOM_RUN.kind==="procedural"){ const a=BLOOM_RUN.planet.archetype; // unobtrusive run identity for QA / playtest notes
+  document.title=`BLOOM — ${BLOOM_RUN.archetype.name} · seed ${BLOOM_RUN.seed} (playtest harness)`;
+  doc.querySelector("header h1 small").textContent="· "+BLOOM_RUN.planet.name.toLowerCase();
+  $("runId").textContent=`${BLOOM_RUN.archetype.name} · public seed ${a.publicSeed} · attempt ${a.attempt} · ${BLOOM_RUN.planet.name} (${BLOOM_RUN.planet.id}) · layers ${a.validatedLayers.join("")}`; }
+// (BLOOM-028D1) an authored world shows its own name (First Bloom: "· first bloom", as before)
+if(SHELL&&BLOOM_RUN.kind==="authored") doc.querySelector("header h1 small").textContent="· "+BLOOM_RUN.planet.name.toLowerCase();
+if(SHELL&&SCEN){ // BLOOM-012/014: scenario identity (title, header, footer) + the temporary pressure / competition bar
+  document.title=document.title.replace(/^BLOOM — /,`BLOOM — ${SCN.name} · `);
+  doc.querySelector("header h1 small").textContent+=" · "+SCN.name.toLowerCase();
+  const rid=$("runId"); rid.textContent=(rid.textContent?rid.textContent+" · ":"")+`scenario ${SCN.id} (layer P ${BLOOM_RUN.summary.scenarioValidation.status})`;
+  buildPressureBar(); buildCompBar(); buildClimateBar(); }
+if(SHELL&&PLAY){ // BLOOM-016: player identity (no developer terms) + the run menu in the header
+  const nm=RUN_ARCH?BLOOM_RUN.archetype.name:BLOOM_RUN.planet.name, sc=SCN?SCN.name:DEFAULT_NAME;
+  document.title=RUN_ARCH?`BLOOM — ${nm} · ${sc}`:TRAIN?`BLOOM — ${TC.title} · ${nm}`:`BLOOM — ${nm}`;
+  $("runId").textContent=RUN_ARCH?`${nm} · ${SEEDWORD}: ${BLOOM_RUN.seed} · ${sc}`:TRAIN?`${TC.title} · ${nm}`:nm;
+  const m=document.createElement("span"); m.className="pmenu"; m.id="playMenuWrap";
+  m.innerHTML=`<button class="tb" id="btnMenu" aria-haspopup="true" aria-expanded="false" aria-controls="playMenu" data-tutorial="run-menu">☰ ${TRAIN?TC.menu:PC.actions.menu}</button><div class="pm" id="playMenu">${playActions().map(actBtn).join("")}</div>`;
+  doc.querySelector("header .controls").appendChild(m); wireActions(m.querySelector(".pm"));
+  const mb=m.querySelector("#btnMenu"), setOpen=o=>{ m.classList.toggle("open",o); mb.setAttribute("aria-expanded",o); };
+  mb.addEventListener("click",()=>{ const o=!m.classList.contains("open"); setOpen(o); if(o) m.querySelector(".pm button").focus(); });
+  doc.addEventListener("click",e=>{ if(!m.contains(e.target)) setOpen(false); },LIFE);
+  doc.addEventListener("keydown",e=>{ if(e.key==="Escape"&&m.classList.contains("open")){ setOpen(false); mb.focus(); } },LIFE); }
+if(PROD){ // (BLOOM-029E) the game's own identity in the player's tab — Strange Bloom + the world (never engineering wording)
+  const nm=BLOOM_RUN.planet.name; document.title=`Strange Bloom — ${TRAIN?`${TC.title} · ${nm}`:[nm, SCN?SCN.name:null].filter(Boolean).join(" · ")}`; }
+/* ========================================================================== */
+/*  RUN UI BOUNDARY (BLOOM-029A) — docs/RUN_UI_PRODUCTION_BOUNDARY_v1.md       */
+/*  The future run screen reads and acts through BLOOM_RUN_UI.adapter, never   */
+/*  through the globals above. This host is the whole list of what it may      */
+/*  reach: this page's live state (getters) and its own read rules / actions   */
+/*  (the same functions the temporary shell uses). Nothing here is copied.     */
+/* ========================================================================== */
+if(BLOOM.runUI){
+  runUI=BLOOM.runUI.createAdapter({
+    sim, run:BLOOM_RUN, labels:LABEL, events:document, categories:["Temperature","Water","Soil","Hazard"], boards:BOARDS, speeds:SPEEDS,
+    scenario:{ scn:SCN, press:PRESS, comp:COMP, clim:CLIM, bands:BANDS, axisNames:AXNAME, none:{ id:BLOOM.pressure.DEFAULT_SCENARIO, name:DEFAULT_NAME } },
+    view:{ running:()=>running, speed:()=>speed, selected:()=>selected, selectedWater:()=>selectedWater, coverage:()=>lastCov, preview:()=>preview,
+      skyFx:()=>skyFx, message:()=>lastMessage, tilePx:()=>TILE, canvas:cv, compBar:()=>compBar },
+    read:{ skyNow, catLamp, isBlocked, tileCounts, limitText:e=>LIMIT_MSG[e.limitKey](e), fixHint:e=>FIX_HINT[e.limitKey](e),
+      colonyWord:w=>COLONY_WORD[w], colonyHint:w=>COLONY_HINT[w], colonyTip, focusUI:FOCUS_UI, specUI:SPEC_UI, geoInfo, compWhy,
+      pressureStatus, phaseName, climForecast, upgradeState, offeredOn, computePreview, tileAt:(x,y)=>tileAt({clientX:x, clientY:y}),
+      runMenu:()=>PLAY?{label:TRAIN?TC.menu:PC.actions.menu, items:playActions()}:null,
+      report:()=>REPORT, reportActions }, // (BLOOM-029E) the structured run-end report and its actions (the modal reads the same)
+    act:{ setRunning, setSpeed, selectAt, showPreview, clearPreview, buy, chooseFocus, buySpec, collectBubbleAt, placeBubble,
+      runAction:id=>{ const a=PLAY&&playActions().find(x=>x.id===id); return a?goAction(a.id,a.href||""):false; }, reportAction },
+    // (BLOOM-029B) the map's render hints and this page's own transient map feedback, for the production map
+    map:{ render:RENDER, crossings:()=>XANIM, crossingTiming:{travel:XTRAVEL, land:XLAND}, flashes:()=>({thresholds:PX_FX, competition:CX_FX}) } });
+  RUN_UI.adapter=runUI.adapter;
+  // (BLOOM-029B/E) the default: mount the production Planet View on the adapter (before bloom:run-ready, so anchors and controls exist),
+  // the four rooms into its room seam (029C / 029D) and the production run report over it (029E), sharing the rooms' one transition
+  if(PROD){ PV=BLOOM.planetView.mount(runUI.adapter,{root:host}); DR=BLOOM.decisionRooms.mount(PV);
+    if(BLOOM.runReport) RR=BLOOM.runReport.mount(PV,{ transition:DR.transition }); }
+}
+// BLOOM-008/009: open on the origin so its colony status and growth focus are the first thing in view
+selected=ORIGIN; renderInspect(); log(`Your plant has just sprouted in ${LABEL[ORIGIN]}: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish.`);
+if(PRESS) log(`☁ ${SCN.display.title}. ${SCN.display.summary} The decline begins in ${mmss(SCN.pressure.graceSeconds)}. Your plant sprouted in ${LABEL[ORIGIN]}.`);
+if(CLIM&&!PRESS&&!COMP) log(`🌪 ${SCN.display.title}. ${SCN.display.summary} Terraform unsettles the part of the climate it changes; Adapt and Spread do not. Your plant sprouted in ${LABEL[ORIGIN]}.`);
+if(COMP&&!PRESS) log(`🌿 ${SCN.display.title}. ${SCN.display.summary} Native plants (violet, hatched) hold ${Math.round(CS.share*100)}% of the land. Your plant sprouted in ${LABEL[ORIGIN]}.`);
+resize(); renderShop(); renderHUD(0); raf=requestAnimationFrame(frame);
+if(TRAIN&&SHELL){ const bp=$("btnPlay"); bp.textContent="▶ play"; bp.setAttribute("aria-pressed","false"); } // paused at the landing
+BLOOM_RUN.started=true; emit("run-ready",{planetId:BLOOM_RUN.planet.id, kind:BLOOM_RUN.kind, training:!!TRAIN, running});
+
+/* ========================================================================== */
+/*  TEST HOOK — headless winnability / behavior checks                        */
+/* ========================================================================== */
+const API=root.BLOOM_API={
+  buy, sim, advance(n){ let c=lastCov; running=false; for(let k=0;k<n;k++){ c=sim.tick(); if(sim.won||sim.lost)break; } lastCov=c; return c; },
+  coverage(){ return sim.coverage(); },
+  addBiomass(x){ sim.biomass+=x; renderShop(); },
+  state(){ return {biomass:Math.floor(sim.biomass), ticks:sim.ticks, won:sim.won, running, speed, genome:{...genome}, tf:{...tf}, sky:{...G},
+    coverage:this.coverage(), vigor:[...vigor].map(v=>+v.toFixed(2)),
+    secFit:[...secFit].map(v=>+v.toFixed(2)), sections:SEC.map(s=>s.id)}; },
+  evalSection(id){ return evaluate(SIDX[id]); },
+  // BLOOM-007 harness diagnostics (tests only): run identity, water geometry, living tiles per landmass
+  run:BLOOM_RUN.summary,
+  geometry(){ return { W, H, tile:TILE, water:TILEMAP.filter(v=>v<0).length, land:sim.map.LAND, landmasses:new Set(LANDMASS).size,
+    originMass:LANDMASS[ORIGIN], centers:CENT.map(c=>({x:c.x*TILE,y:c.y*TILE})), mass:[...LANDMASS] }; },
+  livingByMass(){ const liv=livingCountBySection(), out={}; SEC.forEach((_,i)=>{ out[LANDMASS[i]]=(out[LANDMASS[i]]||0)+liv[i]; }); return out; },
+  crossing(){ return { ...sim.crossing }; },
+  // BLOOM-008/009 diagnostics (tests only): colony establishment/status per section; per-region focus + local upgrade;
+  // the crossing animations the map has started (each one a real engine event)
+  colony(){ return SEC.map((_,i)=>({ ...sim.colonyStatus(i), living:livingCountBySection()[i], focus:sim.getColonyFocus(i), spec:sim.getSpecialization(i) })); },
+  colonies(){ return { focus:[...sim.colonies.focus], spec:[...sim.colonies.spec] }; },
+  crossAnims(){ return { active:XANIM.map(a=>({...a})), history:XHIST.map(a=>({...a})) }; },
+  // BLOOM-012 diagnostics (tests only): the live pressure state, the milestones and threshold changes the UI showed, loss state
+  pressure(){ return { ...PS, offsets:{...PS.offsets}, max:{...PS.max}, events:PS.events.map(e=>({...e})), lost:sim.lost, lostReason:sim.lostReason,
+    extinction:{...sim.extinction}, phases:PHASE_HIST.map(x=>({...x})), thresholds:PX_HIST.map(x=>({...x})) }; },
+  // BLOOM-014 diagnostics (tests only): the live competition state, per-region readouts, the events the UI showed, the bar text
+  competition(){ if(!COMP) return {enabled:false};
+    return { enabled:true, share:CS.share, startShare:CS.startShare, peakShare:CS.peakShare, tiles:CS.tiles, contested:CS.contested, flips:{...CS.flips},
+      everContested:[...CS.everContested], events:CS.events.map(e=>({...e})), uiEvents:CX_HIST.map(e=>({...e})), regions:SEC.map((_,i)=>sim.competitionAt(i)),
+      nativeTiles:[...CS.native].map((d,t)=>d>0?t:-1).filter(t=>t>=0), bar:$("cbar")?$("cbar").textContent.replace(/\s+/g," ").trim():null,
+      lost:sim.lost, lostReason:sim.lostReason, extinction:{...sim.extinction} }; },
+  // BLOOM-015 diagnostics (tests only): the live climate state, the events the UI showed, the land changes it attributed to a
+  // shock, the bar text, and a what-if for one Terraform step (the same engine preview the shop uses)
+  climate(){ if(!CLIM) return {enabled:false};
+    return { enabled:true, level:CL.level, band:CL.band, bandName:BANDS[CL.band].name, peak:CL.peak, offsets:{...CL.offsets}, env:{...CL.env},
+      axes:Object.fromEntries(Object.entries(CL.axes).map(([k,A])=>[k,{level:A.level, count:A.count, offset:A.offset, shock:A.shock&&{...A.shock}, pending:A.pending&&{...A.pending}, maxSwing:A.maxSwing}])),
+      shocks:CL.shocks.map(x=>({...x})), forcing:CL.forcing.map(x=>({...x})), events:CL.events.map(e=>({...e})), uiEvents:CL_HIST.map(e=>({...e})),
+      thresholds:PX_HIST.map(x=>({...x})), bar:$("vbar")?$("vbar").textContent.replace(/\s+/g," ").trim():null,
+      lost:sim.lost, lostReason:sim.lostReason, extinction:{...sim.extinction} }; },
+  climatePreview(id){ return CLIM?sim.climatePreview(id):null; },
+  // colour of the pixel at the centre of a tile (canvas readback; tests only)
+  tilePixel(t){ if(!ctx) return null; const x=((t%W)+0.5)*TILE*dpr|0, y=(((t/W)|0)+0.5)*TILE*dpr|0, d=ctx.getImageData(x,y,1,1).data; return [d[0],d[1],d[2]]; }
+};
+
+/* ========================================================================== */
+/*  (BLOOM-033) THE SESSION — this run as a value: ready, dispose, debug       */
+/* ========================================================================== */
+    // the run's former page-level bindings, live (getters; setters for the `let`s), for a developer harness only (session.debug):
+    // GENERATED from this function's own top-level declarations — the historical oracle suites read and drive them by name
+    const DEV = {
+      get TRAIN(){return TRAIN;}, get TC(){return TC;}, get sim(){return sim;}, get CFG(){return CFG;}, get SCN(){return SCN;},
+      get PRESS(){return PRESS;}, get PS(){return PS;}, get CS(){return CS;}, get COMP(){return COMP;}, get CL(){return CL;},
+      get CLIM(){return CLIM;}, get SCEN(){return SCEN;}, get W(){return W;}, get H(){return H;}, get N(){return N;}, get SEC(){return SEC;},
+      get SC(){return SC;}, get SIDX(){return SIDX;}, get ORIGIN(){return ORIGIN;}, get TILEMAP(){return TILEMAP;}, get AREA(){return AREA;},
+      get CENT(){return CENT;}, get SEC_TILES(){return SEC_TILES;}, get state(){return state;}, get dens(){return dens;}, get vigor(){return vigor;},
+      get secFit(){return secFit;}, get bubbles(){return bubbles;}, get genome(){return genome;}, get tf(){return tf;}, get BAR(){return BAR;},
+      get LIV(){return LIV;}, get DEAD(){return DEAD;}, get G(){return G;}, get evaluate(){return evaluate;}, get lampOf(){return lampOf;},
+      get livingCountBySection(){return livingCountBySection;}, get clamp(){return clamp;}, get mix(){return mix;}, get emit(){return emit;},
+      get UI_MODE(){return UI_MODE;}, get PROD(){return PROD;}, get secRef(){return secRef;}, get TITLE_HREF(){return TITLE_HREF;},
+      get PLAY(){return PLAY;}, get PC(){return PC;}, get SEEDWORD(){return SEEDWORD;}, get RUN_ARCH(){return RUN_ARCH;},
+      get RUN_SCN(){return RUN_SCN;}, get XP(){return XP;}, get XC(){return XC;}, get AUTH_Q(){return AUTH_Q;}, get actBtn(){return actBtn;},
+      get LABEL(){return LABEL;}, get LANDMASS(){return LANDMASS;}, get XLINKS(){return XLINKS;}, get MULTI_MASS(){return MULTI_MASS;},
+      get CROSS_T(){return CROSS_T;}, get ownsCrossing(){return ownsCrossing;}, get LIMIT_MSG(){return LIMIT_MSG;}, get FIX_HINT(){return FIX_HINT;},
+      get cv(){return cv;}, get ctx(){return ctx;}, get dpr(){return dpr;}, get TEMP_STOPS(){return TEMP_STOPS;}, get RENDER(){return RENDER;},
+      get TINT_COLD(){return TINT_COLD;}, get FROST_BELOW(){return FROST_BELOW;}, get coldWeight(){return coldWeight;},
+      get SPARSE_C(){return SPARSE_C;}, get DENSE_C(){return DENSE_C;}, get SICK_C(){return SICK_C;}, get DFULL(){return DFULL;},
+      get patchFrac(){return patchFrac;}, get JIT(){return JIT;}, get NAT_SPARSE(){return NAT_SPARSE;}, get NAT_DENSE(){return NAT_DENSE;},
+      get NAT_HATCH(){return NAT_HATCH;}, get FRONT_C(){return FRONT_C;}, get nativeColor(){return nativeColor;}, get DEAD_C(){return DEAD_C;},
+      get WATER_C(){return WATER_C;}, get WATER_C2(){return WATER_C2;}, get DUNE(){return DUNE;}, get duneAt(){return duneAt;},
+      get FROST(){return FROST;}, get frostAt(){return frostAt;}, get rgb(){return rgb;}, get XANIM(){return XANIM;}, get XHIST(){return XHIST;},
+      get XTRAVEL(){return XTRAVEL;}, get XLAND(){return XLAND;}, get XMAX_ARRIVALS(){return XMAX_ARRIVALS;}, get XWARNED(){return XWARNED;},
+      get catLamp(){return catLamp;}, get isBlocked(){return isBlocked;}, get COLONY_WORD(){return COLONY_WORD;},
+      get COLONY_HINT(){return COLONY_HINT;}, get pctOf(){return pctOf;}, get CM(){return CM;}, get FM(){return FM;}, get SPEC(){return SPEC;},
+      get FOCUS_UI(){return FOCUS_UI;}, get SPEC_UI(){return SPEC_UI;}, get MATCH_NOTE(){return MATCH_NOTE;}, get degC(){return degC;},
+      get r1(){return r1;}, get sgn(){return sgn;}, get BASE(){return BASE;}, get mmss(){return mmss;}, get PHASE_HIST(){return PHASE_HIST;},
+      get PX_FX(){return PX_FX;}, get PX_HIST(){return PX_HIST;}, get SIDE_UI(){return SIDE_UI;}, get NLIM(){return NLIM;},
+      get suitWord(){return suitWord;}, get CHIST(){return CHIST;}, get CX_FX(){return CX_FX;}, get CX_HIST(){return CX_HIST;},
+      get CX_MSG(){return CX_MSG;}, get CX_COLOR(){return CX_COLOR;}, get CI_D(){return CI_D;}, get AXNAME(){return AXNAME;},
+      get BANDS(){return BANDS;}, get SHOCK_UI(){return SHOCK_UI;}, get AXUNIT(){return AXUNIT;}, get axVal(){return axVal;},
+      get lowerName(){return lowerName;}, get ONE_STEP_SAFE(){return ONE_STEP_SAFE;}, get pctI(){return pctI;}, get bandOf(){return bandOf;},
+      get tfOf(){return tfOf;}, get CL_HIST(){return CL_HIST;}, get UP(){return UP;}, get upById(){return upById;}, get BOARDS(){return BOARDS;},
+      get offeredOn(){return offeredOn;}, get RUN_UI(){return RUN_UI;}, get SPEEDS(){return SPEEDS;}, get elapsed(){return elapsed;},
+      get reportIdentity(){return reportIdentity;}, get API(){return API;}, get running(){return running;}, set running(v){running=v;},
+      get speed(){return speed;}, set speed(v){speed=v;}, get runUI(){return runUI;}, set runUI(v){runUI=v;},
+      get TILE(){return TILE;}, set TILE(v){TILE=v;}, get selected(){return selected;}, set selected(v){selected=v;},
+      get selectedWater(){return selectedWater;}, set selectedWater(v){selectedWater=v;}, get rawOpen(){return rawOpen;}, set rawOpen(v){rawOpen=v;},
+      get preview(){return preview;}, set preview(v){preview=v;}, get DRAW_T(){return DRAW_T;}, set DRAW_T(v){DRAW_T=v;},
+      get DRAW_M(){return DRAW_M;}, set DRAW_M(v){DRAW_M=v;}, get lastXid(){return lastXid;}, set lastXid(v){lastXid=v;},
+      get bioShown(){return bioShown;}, set bioShown(v){bioShown=v;}, get bioFxUntil(){return bioFxUntil;}, set bioFxUntil(v){bioFxUntil=v;},
+      get colonyKey(){return colonyKey;}, set colonyKey(v){colonyKey=v;}, get tipTick(){return tipTick;}, set tipTick(v){tipTick=v;},
+      get pbarText(){return pbarText;}, set pbarText(v){pbarText=v;}, get phaseSeen(){return phaseSeen;}, set phaseSeen(v){phaseSeen=v;},
+      get pxLamp(){return pxLamp;}, set pxLamp(v){pxLamp=v;}, get pxTick(){return pxTick;}, set pxTick(v){pxTick=v;},
+      get buyTick(){return buyTick;}, set buyTick(v){buyTick=v;}, get buyCount(){return buyCount;}, set buyCount(v){buyCount=v;},
+      get pxBuys(){return pxBuys;}, set pxBuys(v){pxBuys=v;}, get cbarText(){return cbarText;}, set cbarText(v){cbarText=v;},
+      get compBar(){return compBar;}, set compBar(v){compBar=v;}, get cxSeen(){return cxSeen;}, set cxSeen(v){cxSeen=v;},
+      get vbarText(){return vbarText;}, set vbarText(v){vbarText=v;}, get clSeen(){return clSeen;}, set clSeen(v){clSeen=v;},
+      get skyFx(){return skyFx;}, set skyFx(v){skyFx=v;}, get justBought(){return justBought;}, set justBought(v){justBought=v;},
+      get BUB_SEEN(){return BUB_SEEN;}, set BUB_SEEN(v){BUB_SEEN=v;}, get lastMessage(){return lastMessage;}, set lastMessage(v){lastMessage=v;},
+      get REPORT(){return REPORT;}, set REPORT(v){REPORT=v;}, get lastCov(){return lastCov;}, set lastCov(v){lastCov=v;},
+      get acc(){return acc;}, set acc(v){acc=v;}, get last(){return last;}, set last(v){last=v;},
+      get lastInspectTick(){return lastInspectTick;}, set lastInspectTick(v){lastInspectTick=v;}, get playActions(){return playActions;},
+      get runActionsHtml(){return runActionsHtml;}, get wireActions(){return wireActions;}, get goAction(){return goAction;},
+      get trainingGo(){return trainingGo;}, get livingMasses(){return livingMasses;}, get crossingHops(){return crossingHops;},
+      get stops(){return stops;}, get barrenColor(){return barrenColor;}, get livingColor(){return livingColor;}, get fit(){return fit;},
+      get resize(){return resize;}, get draw(){return draw;}, get drawBadges(){return drawBadges;}, get pollCrossings(){return pollCrossings;},
+      get drawCrossings(){return drawCrossings;}, get outline(){return outline;}, get outlinePath(){return outlinePath;},
+      get renderHUD(){return renderHUD;}, get tileCounts(){return tileCounts;}, get renderInspect(){return renderInspect;},
+      get colonyTip(){return colonyTip;}, get renderColonyCtl(){return renderColonyCtl;}, get refreshColonyCtl(){return refreshColonyCtl;},
+      get chooseFocus(){return chooseFocus;}, get buySpec(){return buySpec;}, get geoInfo(){return geoInfo;}, get geoNote(){return geoNote;},
+      get thermNote(){return thermNote;}, get skyNow(){return skyNow;}, get phaseName(){return phaseName;}, get pressNote(){return pressNote;},
+      get buildPressureBar(){return buildPressureBar;}, get pressureStatus(){return pressureStatus;}, get renderPressure(){return renderPressure;},
+      get pollPressure(){return pollPressure;}, get checkThresholds(){return checkThresholds;}, get compWhy(){return compWhy;},
+      get compNote(){return compNote;}, get buildCompBar(){return buildCompBar;}, get compTrend(){return compTrend;},
+      get renderComp(){return renderComp;}, get pollCompetition(){return pollCompetition;}, get nativeSkyShift(){return nativeSkyShift;},
+      get climWhy(){return climWhy;}, get climNote(){return climNote;}, get buildClimateBar(){return buildClimateBar;},
+      get settleSeconds(){return settleSeconds;}, get climForecast(){return climForecast;}, get renderClimate(){return renderClimate;},
+      get pollClimate(){return pollClimate;}, get climPreviewWords(){return climPreviewWords;}, get climateReport(){return climateReport;},
+      get skyWhatIf(){return skyWhatIf;}, get skyDiff(){return skyDiff;}, get skyWords(){return skyWords;}, get upgradeState(){return upgradeState;},
+      get renderShop(){return renderShop;}, get refreshShop(){return refreshShop;}, get showPreview(){return showPreview;},
+      get computePreview(){return computePreview;}, get describePreview(){return describePreview;}, get clearPreview(){return clearPreview;},
+      get buy(){return buy;}, get tileAt(){return tileAt;}, get collectBubbleAt(){return collectBubbleAt;}, get selectAt(){return selectAt;},
+      get pollBubbles(){return pollBubbles;}, get placeBubble(){return placeBubble;}, get log(){return log;}, get pulse(){return pulse;},
+      get setRunning(){return setRunning;}, get setSpeed(){return setSpeed;}, get drawPlant(){return drawPlant;},
+      get pressureReportData(){return pressureReportData;}, get pressureReport(){return pressureReport;},
+      get competitionReportData(){return competitionReportData;}, get competitionReport(){return competitionReport;},
+      get climateReportData(){return climateReportData;}, get winReport(){return winReport;}, get lossReport(){return lossReport;},
+      get legacyWinHtml(){return legacyWinHtml;}, get legacyLossHtml(){return legacyLossHtml;}, get reportActions(){return reportActions;},
+      get reportAction(){return reportAction;}, get continueAfterWin(){return continueAfterWin;}, get onLoss(){return onLoss;},
+      get onWin(){return onWin;}, get frame(){return frame;} };
+    const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+    // ready: the run is up (run-ready fired above, synchronously), the production surface has painted (frames + a surface repaint, capped
+    // at 4 s so a stalled GPU process never strands the player) and two more frames have had a chance to render — the 029F arrival rule
+    const ready = (async () => {
+      const t0 = performance.now(), painted = () => { if (!PV || !PV.renderer) return !PROD; const i = PV.renderer.info(); return i.frames > 0 && i.surfaceRepaints > 0; };
+      while (!disposed && !painted() && performance.now() - t0 < 4000) await nextFrame();
+      const ok = painted(), waitedMs = Math.round(performance.now() - t0);
+      for (let k = 0; k < 2 && !disposed; k++) await nextFrame();
+      return { painted: ok, waitedMs, disposed };
+    })();
+    const session = {
+      run: BLOOM_RUN, planet: BLOOM_RUN.planet, sim, api: API, runUI: RUN_UI, shell: SHELL, ready, createdAt: performance.now(),
+      get adapter() { return RUN_UI.adapter || null; }, get planetView() { return PV; }, get rooms() { return DR; }, get report() { return RR; },
+      get disposed() { return disposed; }, get state() { return disposed ? "disposed" : sim.won ? "won" : sim.lost ? "lost" : "running"; },
+      get training() { return trainingLayer; },
+      /** (training) the training layer (resources/training/training-run.js) that owns this run's training actions; disposed with it. */
+      attachTraining(layer) { trainingLayer = layer || null; },
+      debug: opts.debug ? DEV : null,
+      /** Stop this run and remove everything it put in the document. Idempotent. */
+      dispose() {
+        if (disposed) return;
+        const t = trainingLayer; trainingLayer = null; if (t) { try { t.dispose(); } catch (e) { console.error("BLOOM.gameSession: the training layer could not be disposed", e); } }
+        disposed = true; running = false; cancelAnimationFrame(raf); life.abort();
+        sim.onWin = () => {}; sim.onLoss = () => {};
+        if (RR) RR.dispose(); if (PV) PV.dispose();            // (the Planet View's dispose disposes the rooms, their globe and transition)
+        if (runUI.dispose) runUI.dispose();
+        if (root.BLOOM_RUN === BLOOM_RUN) root.BLOOM_RUN = null;
+        if (root.BLOOM_API === API) root.BLOOM_API = null;
+        if (root.BLOOM_RUN_UI === RUN_UI) root.BLOOM_RUN_UI = null;
+        if (current === session) current = null;
+      },
+    };
+    current = session;
+    return session;
+  }
+
+  /**
+   * The run descriptor of an expedition: the Destination Survey's Begin Expedition `detail` → { kind, play, planet, archetype, seed, … }.
+   * `planet` IS detail.planet — the very object the survey validated, drew and the player chose (no copy, no regeneration: nothing here
+   * or on the way to the sim calls a generator, a world search or an attempt loop). `archetype` is the static archetype CONTENT looked up by
+   * candidate.archetypeId (display name, render context) — never a generator call. `seed` / `attempt` are provenance. The scenario is the
+   * default (no challenge modifier): the only one the survey validates.
+   */
+  function expeditionRun(detail, { BLOOM_DATA = root.BLOOM_DATA, fingerprint = null } = {}) {
+    if (!detail || !detail.planet || typeof detail.planet !== "object") throw new TypeError("BLOOM.gameSession.expeditionRun: detail.planet is required (the survey's selected planet)");
+    if (!detail.candidate || typeof detail.candidate.key !== "string") throw new TypeError("BLOOM.gameSession.expeditionRun: detail.candidate is required");
+    const P = detail.planet, c = detail.candidate, authored = !!c.authored, D = BLOOM_DATA || {}, render = detail.render || null;
+    const A = !authored && Array.isArray(D.archetypes) ? D.archetypes.find(a => a.id === c.archetypeId) || null : null;
+    const archetype = authored ? null : A || { id: c.archetypeId, name: (P.archetype && P.archetype.name) || c.archetypeId || "Unknown world type", render, display: null, standIn: true };
+    const pa = P.archetype || null, S = defaultScenario();
+    const expedition = { source: "destination-survey", candidateKey: c.key, sectorSeed: c.sectorSeed ?? null, classId: c.classId ?? null, authored, archetypeId: c.archetypeId ?? null,
+      seed: c.seed ?? null, attempt: c.attempt ?? null, validation: c.validation ?? null, fingerprint };
+    const summary = { kind: authored ? "authored" : "procedural", expedition: true, source: expedition.source, candidateKey: c.key, sectorSeed: expedition.sectorSeed, classId: expedition.classId,
+      planetId: P.id, name: P.name, archetypeId: expedition.archetypeId, archetype: archetype ? archetype.name : null, publicSeed: expedition.seed, attempt: expedition.attempt,
+      validatedLayers: pa ? pa.validatedLayers || null : null, landmasses: pa ? pa.landmasses ?? null : null, actualWaterPct: pa ? pa.actualWaterPct ?? null : null,
+      scenarioId: S.id, scenario: S.name, fingerprint, validation: expedition.validation };
+    return { kind: summary.kind, play: true, planet: P, archetype, seed: authored ? null : expedition.seed, scenario: null, render, expedition, summary };
+  }
+
+  /** The training run descriptor: the authored training world (content/training.js) on its derived config (BLOOM.play.deriveConfig — the
+   *  shared config is never touched) with its seeded random stream; default scenario. `returnTo` is only a developer harness's. */
+  function trainingRun({ BLOOM_DATA = root.BLOOM_DATA, planetId = null, returnTo = null } = {}) {
+    const D = BLOOM_DATA, T = D && D.training, B = root.BLOOM;
+    if (!T || !B.play || !B.play.deriveConfig) throw new Error("BLOOM.gameSession.trainingRun: the training data (content/training.js) or BLOOM.play is not loaded");
+    const id = planetId || T.planetId, P = Object.prototype.hasOwnProperty.call(D.planets, id) ? D.planets[id] : null;
+    if (!P) throw new Error(`BLOOM.gameSession.trainingRun: unknown training planet "${id}"`);
+    const S = defaultScenario();
+    return { kind: "authored", planet: P, planetParam: planetId, play: true, scenario: null,
+      summary: { kind: "authored", planetId: P.id, name: P.name, scenarioId: S.id, scenario: S.name, training: true },
+      training: { planetId: P.id, rngSeed: T.rngSeed, config: B.play.deriveConfig(D.config, T.config), returnTo } };
+  }
+  /** the default scenario (no challenge modifier): { id, name } from the scenario catalogue */
+  function defaultScenario() { const s = root.BLOOM.pressure.resolveScenario(root.BLOOM_DATA.scenarios, null); return { id: s.id, name: s.name }; }
+
+  root.BLOOM = Object.assign(root.BLOOM || {}, { gameSession: Object.freeze({ version: 1, create, expeditionRun, trainingRun, get instance() { return current; } }) });
+})(typeof window !== "undefined" ? window : globalThis);

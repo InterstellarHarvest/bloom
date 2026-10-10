@@ -74,13 +74,15 @@
     const RUN = A.run(), MENU = A.runMenu(), mq = root.matchMedia ? root.matchMedia("(prefers-reduced-motion: reduce)") : null;
     const reduced = () => !!(mq && mq.matches) || document.documentElement.classList.contains("reduce-motion");
     const state = { lens: null, lensPv: null, hover: -1, focus: -1, helpPreview: null, lensOpen: false, menuOpen: false, scnOpen: false, toastTimer: 0 };
+    // (BLOOM-033) one run of many in the same document: the global listeners and observers below are released by dispose()
+    const life = new AbortController(), LIFE = { signal: life.signal };
     const MAP0 = A.map(), IDX = {}; MAP0.regions.forEach(r => { IDX[r.id] = r.index; });
     const idx = list => (list || []).map(id => IDX[id]).filter(i => i >= 0);
 
     // ---------------------------------------------------------------- DOM
     document.documentElement.classList.add("ui18");
     const el = document.createElement("div"); el.className = "pv"; el.id = "pv"; el.dataset.ui = "production";
-    const kindLine = RUN.training ? "Training" : [RUN.kind === "procedural" ? RUN.archetypeName : null, RUN.scenarioId !== "eden" ? RUN.scenarioName : null].filter(Boolean).join(" · ") || "Authored world";
+    const kindLine = RUN.training ? "Training" : [RUN.kind === "procedural" ? RUN.archetypeName : null, !RUN.scenarioIsDefault ? RUN.scenarioName : null].filter(Boolean).join(" · ") || "Authored world";
     const tool = (id, label, extra = "") => `<button type="button" class="pv-tool" data-tool="${id}" aria-pressed="false"${extra}>${ico(id === "region" ? "regions" : id)}<span class="tn">${label}</span></button>`;
     el.innerHTML =
       `<header class="pv-hud" id="pvHud">` +
@@ -173,7 +175,7 @@
       const pb = $("pvPause"); pb.innerHTML = ico(r.running ? "pause" : "play"); pb.setAttribute("aria-pressed", String(!r.running)); pb.setAttribute("aria-label", r.running ? "Pause" : "Resume"); pb.title = r.running ? "Pause" : "Resume";
       const sp = $("pvSpeed"); sp.textContent = r.speed + "×"; sp.setAttribute("aria-label", `Speed ${r.speed} times. Press to cycle 1, 2, 4`); sp.title = "Speed: 1× → 2× → 4×";
       const name = r.kind === "procedural" ? `${r.archetypeName} · ${r.play ? "World Seed" : "seed"} ${r.seed}` : r.planetName;
-      $("pvRunId").textContent = [r.training ? "Training" : null, name, r.scenarioId !== "eden" ? r.scenarioName : null].filter(Boolean).join(" · ");
+      $("pvRunId").textContent = [r.training ? "Training" : null, name, !r.scenarioIsDefault ? r.scenarioName : null].filter(Boolean).join(" · ");
     }
     function paintLog() { const m = stripGlyph(A.message()); const L = $("pvLog"); if (L.dataset.m !== m) { L.dataset.m = m; L.innerHTML = ico("info") + esc(m); } }
 
@@ -286,7 +288,7 @@
     lensPop.addEventListener("focusout", e => { if (!lensPop.contains(e.relatedTarget)) previewLens(undefined); });
     lensPop.addEventListener("keydown", e => { if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return; e.preventDefault();
       const bs = [...lensPop.querySelectorAll("[data-lens]")], k = bs.indexOf(document.activeElement); bs[(k + (e.key === "ArrowDown" ? 1 : bs.length - 1)) % bs.length].focus(); });
-    root.addEventListener("blur", () => { if (state.lensPv !== null) previewLens(undefined); });
+    root.addEventListener("blur", () => { if (state.lensPv !== null) previewLens(undefined); }, LIFE);
 
     // ---------------------------------------------------------------- run menu (player / training): the page's own items and path
     function openMenu(open) { if (!menuPop || open === state.menuOpen) return; state.menuOpen = open; menuPop.hidden = !open; menuBtn.setAttribute("aria-expanded", String(open));
@@ -355,9 +357,9 @@
     document.addEventListener("click", e => {
       if (state.lensOpen && !e.target.closest("#pvLens") && !e.target.closest('[data-tool="mapview"]')) openLens(false);
       if (state.menuOpen && !e.target.closest("#pvMenu") && !e.target.closest("#pvMenuBtn")) openMenu(false);
-    });
+    }, LIFE);
     document.addEventListener("keydown", e => { if (e.key !== "Escape") return;
-      if (state.lensOpen) { e.preventDefault(); openLens(false, true); } else if (state.menuOpen) { e.preventDefault(); closeMenu(true); } });
+      if (state.lensOpen) { e.preventDefault(); openLens(false, true); } else if (state.menuOpen) { e.preventDefault(); closeMenu(true); } }, LIFE);
 
     // ---------------------------------------------------------------- frame: draw the map when something changed (or is animating)
     let lastBubbles = [], lastFx = null;
@@ -395,8 +397,8 @@
       if (sel) { const s = A.selection(); live(s.index >= 0 ? `${s.name} selected` : "No region selected"); }
       dirty = true;
     });
-    new ResizeObserver(() => { relayout(); if (state.lensOpen) placePop(lensPop, mapviewBtn); if (state.menuOpen) placePop(menuPop, menuBtn, true); }).observe(stage);
-    if (mq && mq.addEventListener) mq.addEventListener("change", () => { el.classList.toggle("reduced", reduced()); dirty = true; });
+    const stageRO = new ResizeObserver(() => { if (disposed) return; relayout(); if (state.lensOpen) placePop(lensPop, mapviewBtn); if (state.menuOpen) placePop(menuPop, menuBtn, true); }); stageRO.observe(stage);
+    if (mq && mq.addEventListener) mq.addEventListener("change", () => { el.classList.toggle("reduced", reduced()); dirty = true; }, LIFE);
     relayout(); paintHud(); paintLog(); paintScenario(); paintBanner(true); paintLens(); loop();
 
     // (BLOOM-028D2) read-only presentation geometry for an instruction placed over the map (the guided training's callout): where a region
@@ -423,7 +425,8 @@
         selection: A.selection().index, banner: !banner.hidden, scenarioOpen: state.scnOpen, layerShown: el.dataset.layer || null, room: activeRoom }),
       redraw() { dirty = true; },
       regionPoint, regionRect, // (BLOOM-028D2) read-only map geometry (above)
-      dispose() { disposed = true; cancelAnimationFrame(raf); unsub(); anchorWatch.disconnect(); el.remove(); document.documentElement.classList.remove("ui18"); instance = null; },
+      dispose() { if (disposed) return; disposed = true; cancelAnimationFrame(raf); clearTimeout(state.toastTimer); unsub(); anchorWatch.disconnect(); stageRO.disconnect(); life.abort(); el.remove(); document.documentElement.classList.remove("ui18");
+        if (R.dispose) R.dispose(); instance = null; if (PV.instance === api) PV.instance = null; },
     };
     instance = api; PV.instance = api;
     return api;

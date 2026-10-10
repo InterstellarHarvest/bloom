@@ -4,14 +4,15 @@
 //
 //   node tools/build-pages-site.mjs [outDir]          (default: _site, gitignored; replaced each time)
 //
-// The site is the served (HTTP) production path — the root index.html title, the run page and its alias, and the content / planets /
-// resources they load by RELATIVE URLs — so the same game runs at / and under any subpath. No server code, no generated bundle (the
-// portable runtime in dist/ is for file:// copies only), no developer demos, docs, tools or evidence. Node built-ins only.
+// The site is the served (HTTP) production path — (BLOOM-033) the ONE production document, the root index.html, and the content /
+// planets / resources it loads by RELATIVE URLs — so the same game runs at / and under any subpath. No server code, no generated bundle
+// (the portable runtime in dist/ is for file:// copies only), no developer pages (demos/demo-run.html is a developer harness since
+// BLOOM-033; the demos/main-menu.html alias with it), docs, tools or evidence. Node built-ins only.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const SITE = ["index.html", "demos/demo-run.html", "demos/main-menu.html", "content", "planets", "resources"];
+export const SITE = ["index.html", "content", "planets", "resources"];
 const SKIP = /(^|\/)(\.DS_Store|Icon\r?|\._.*)$/;
 
 export function buildSite(root, out) {

@@ -1,23 +1,22 @@
-// BLOOM — the Strange Bloom title's document boot (BLOOM-030). The ONE classic script an entry document loads for the title: the
-// repository root index.html (the canonical production entry) and demos/main-menu.html (the developer / compatibility alias) are
-// both thin documents that only say where things are:
+// BLOOM — the Strange Bloom app's document boot (BLOOM-030; BLOOM-033 one document). The ONE classic script the production document
+// (the repository root index.html) loads: it says where things are and mounts the app. demos/main-menu.html (a developer alias) is the
+// same thin document one folder down.
 //
 //   <div id="app"></div>
-//   <script src="resources/main-menu/title-boot.js" data-run="demos/demo-run.html"></script>           (root index.html)
-//   <script src="../resources/main-menu/title-boot.js" data-run="demo-run.html" data-title="../index.html"></script>   (the alias)
+//   <script src="resources/main-menu/title-boot.js"></script>            (root index.html)
 //
-//   data-run     the gameplay page, relative to the document (training, expeditions)
-//   data-title   the CANONICAL title, relative to the document: where gameplay and training come back to. Omitted = this very page
-//                (the root title returns to itself, at whatever address the player used: / or /index.html)
 //   data-app     the id of the app element (default "app")
 //
-// What it does: loads the BLOOM classic scripts the survey and the expedition handoff need, in order, then the page composer
-// (./main-menu-page.js), and mounts the title with the configuration above. All orchestration lives there.
-//   · http(s) (development, GitHub Pages): the composer is imported as an ES module (its survey workers are module workers).
-//   · (BLOOM-031) file:// — a double-clicked index.html, the player's local copy — the SAME composer and modules come from the generated
-//     portable runtime (dist/portable/, built from this source by `npm --prefix tools run build:portable`) through the module seam
-//     resources/portable/module-loader.js, loaded here after the classic scripts. The old "needs a web server" notice is retired; a
-//     plain notice remains only for a portable runtime that is missing or broken (a damaged download), never a blank page.
+// What it does, in order:
+//   1. loads the BLOOM classic scripts the title and the Destination Survey need (engine, content, validation path), in order;
+//   2. mounts the app (resources/app/app-controller.js: TITLE · SURVEY · RUN, all inside this document);
+//   3. right after the title is up, loads the RUN's classic scripts in the background (the run UI, the plant sprite runtime, the training
+//      world, the GameSession) — the app awaits them before the first run, so the title never waits for gameplay code.
+//   · http(s) (development, GitHub Pages): the app is imported as an ES module (its survey workers are module workers).
+//   · (BLOOM-031) file:// — a double-clicked index.html, the player's local copy — the SAME modules come from the generated portable
+//     runtime (dist/portable/, built from this source by `npm --prefix tools run build:portable`) through the module seam
+//     resources/portable/module-loader.js. A plain notice remains only for a portable runtime that is missing or broken (a damaged
+//     download), never a blank page. Since BLOOM-033 nothing has to survive a document navigation: the selected planet stays in memory.
 // Classic script, no dependencies; paths resolve from this file's own URL, never from guesses about the document's folder.
 (function () {
   "use strict";
@@ -25,28 +24,44 @@
   if (!me) return;
   var HERE = new URL(me.src, location.href), REPO = new URL("../../", HERE), d = me.dataset;
   var TITLE = "Strange Bloom", SUBTITLE = "Unknown Soils";
-  // the classic scripts the title page carries (the expedition handoff last: it reads window.BLOOM)
+  // the classic scripts the title and the survey need (the module seam last: it reads window.BLOOM)
   var CLASSIC = ["content/config.js", "content/traits.js", "planets/first_bloom.js", "content/archetypes.js", "content/scenarios.js", "content/play.js",
     "resources/bloom-sim.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js",
-    "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/expedition/expedition-handoff.js"];
+    "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/portable/module-loader.js"];
+  // (BLOOM-033) the run's classic scripts, after the title is up: the training world, the run UI boundary, the production Planet View on the
+  // canonical surface, the Organic Hybrid sprite runtime (generated atlas → model → components → compositor → FX) under the plant
+  // specimen, the Terraform globe helper, the rooms, the gameplay transition, the run report, and the GameSession that composes them
+  var RUN = ["planets/training_grounds.js", "content/training.js", "resources/run-ui/run-ui-adapter.js", "resources/planet-surface/planet-surface.js",
+    "resources/run-ui/run-map-renderer.js", "resources/run-ui/planet-view.js", "resources/plant-visual/generated/plant-atlas.js",
+    "resources/plant-visual/plant-visual-model.js", "resources/plant-visual/plant-components.js", "resources/plant-visual/plant-compositor.js",
+    "resources/plant-visual/plant-fx.js", "resources/run-ui/plant-specimen.js", "resources/run-ui/terraform-globe.js", "resources/run-ui/decision-rooms.js",
+    "resources/run-ui/gameplay-transition.js", "resources/run-ui/run-report.js", "resources/run/game-session.js"];
   var served = /^https?:$/.test(location.protocol);
-  var boot = window.BLOOM_TITLE_BOOT = { served: served, portable: !served, repo: REPO.href, run: d.run || null, title: d.title || null, scripts: [], state: "booting", error: null };
-  // (BLOOM-031) file://: the module seam last (it loads the portable runtime on first use)
-  var scripts = served ? CLASSIC : CLASSIC.concat(["resources/portable/module-loader.js"]);
+  var boot = window.BLOOM_TITLE_BOOT = { served: served, portable: !served, repo: REPO.href, scripts: [], runScripts: [], state: "booting", error: null, runReady: null };
 
-  var pending = scripts.length;
-  scripts.forEach(function (f) {
-    var s = document.createElement("script"); s.src = new URL(f, REPO).href; s.async = false;   // async=false: executed in this order
-    s.onload = function () { boot.scripts.push(f); if (--pending === 0) mount(); };
-    s.onerror = function () { fail("could not load " + f); };
-    document.head.appendChild(s);
-  });
+  function loadAll(list, into) {
+    return new Promise(function (resolve, reject) {
+      var pending = list.length;
+      list.forEach(function (f) {
+        var s = document.createElement("script"); s.src = new URL(f, REPO).href; s.async = false;   // async=false: executed in this order
+        s.onload = function () { into.push(f); if (--pending === 0) resolve(); };
+        s.onerror = function () { reject(new Error("could not load " + f)); };
+        document.head.appendChild(s);
+      });
+    });
+  }
+
+  loadAll(CLASSIC, boot.scripts).then(mount, function (e) { fail(e.message); });
 
   function mount() {
-    var page = new URL("./main-menu-page.js", HERE).href;
+    var page = new URL("../app/app-controller.js", HERE).href;
     (served ? import(page) : window.BLOOM.modules.load(page)).then(function (m) {
+      var runReady = boot.runReady = new Promise(function (res, rej) { boot._run = { res: res, rej: rej }; });
+      runReady.catch(function (e) { console.error("Strange Bloom: the game could not load its run files (" + (e && e.message) + ")"); });
+      m.mountApp({ app: document.getElementById(d.app || "app"), runScripts: runReady });
       boot.state = "mounted";
-      m.mountTitlePage({ app: document.getElementById(d.app || "app"), runHref: d.run || "demos/demo-run.html", titleHref: d.title || null });
+      // the run's scripts: after the title's first frame, in the background
+      requestAnimationFrame(function () { loadAll(RUN, boot.runScripts).then(boot._run.res, boot._run.rej); });
     }, function (e) { fail(e && e.message || String(e)); });
   }
   function fail(msg) { if (boot.state === "failed") return; boot.state = "failed"; boot.error = msg; console.error("Strange Bloom: the title could not start (" + msg + ")");

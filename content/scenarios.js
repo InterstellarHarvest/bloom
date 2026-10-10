@@ -2,7 +2,7 @@
 // A scenario is NOT a planet: any planet (an archetype world or an authored one) runs under any scenario that accepts it.
 // The engine (resources/bloom-sim.js, createSim(…, { scenario })) reads one definition; nothing here is code.
 //
-//   pressure     null = no outside pressure (Eden). Otherwise the world changes over the run, through the SAME
+//   pressure     null = no outside pressure (the default scenario). Otherwise the world changes over the run, through the SAME
 //                environmental inputs the player already reads:
 //                  graceSeconds     time before the decline starts (the starting planet, unchanged)
 //                  durationSeconds  time from the start of the decline to the final state; progress rises linearly 0 → 1
@@ -26,7 +26,7 @@
 //                see the volatile_climate entry
 //   display.card (BLOOM-016) the launcher's scenario card + briefing: tagline (what changes, one line), detail (one more
 //                sentence), cue (the key strategic idea, never a build), icon (a temporary icon key), tag (optional short label,
-//                e.g. Eden's "Relaxed"; scenarios are not ranked by difficulty)
+//                e.g. the default's "Relaxed"; scenarios are not ranked by difficulty)
 //   display      short player-facing copy for the temporary pressure / competition bar, Bloom Report and loss screen (lossNote)
 // Terraform never touches scenario progress: it changes the player's sky; the scenario drift is added on top of it.
 (function (root) {
@@ -34,11 +34,12 @@
   const D = root.BLOOM_DATA || (root.BLOOM_DATA = { planets: {} });
   D.scenarios = [
     {
-      id: "eden", name: "Eden",
-      intent: "No outside pressure: the planet stays as it is. Open experimentation (bible §11.2).",
+      // (BLOOM-033) the canonical no-challenge mode; its retired id is accepted only by the resolver's one marked legacy alias (bloom-sim.js)
+      id: "default", name: "Default",
+      intent: "No challenge modifier: the planet stays as it is. Open experimentation (bible §11.2).",
       pressure: null,
       loss: { extinction: false },
-      display: { title: "Eden", summary: "No outside pressure. The planet stays as it is.",
+      display: { title: "Default", summary: "No outside pressure. The planet stays as it is.",
         card: { tagline: "No outside pressure.", detail: "The planet stays as it is for the whole run.", cue: "Experiment freely while learning the planet.", icon: "leaf", tag: "Relaxed" } },
     },
     {
@@ -47,7 +48,7 @@
       pressure: {
         // BLOOM-013: the faster economy shortened runs by about a third, so the clock was rescaled with them (was grace 60 s,
         // decline 420 s → final state at 480 s; now final at 290 s): a normal run lives through the whole decline again, and
-        // buying the planet's Eden strategy as if nothing were changing no longer wins (docs/evidence/bloom-013/dying-world-clock-*)
+        // buying the planet's default-scenario strategy as if nothing were changing no longer wins (docs/evidence/bloom-013/dying-world-clock-*)
         graceSeconds: 40, durationSeconds: 250,
         channels: { moistureShare: -0.4, temperature: -8, radiation: 8 },
         graceLabel: "Atmosphere stable (for now)",
@@ -62,7 +63,7 @@
       validation: {
         minStrategies: 1, holdFinalSeconds: 60,
         // BLOOM-013 decision cadence (was margin 300–1200 s, first purchase 30–150 s, gap ≤ 300 s): the same first-purchase and gap
-        // limits as Eden; the margin floor (240 s) also rejects a pressure run won before the decline has done much
+        // limits as the default scenario; the margin floor (240 s) also rejects a pressure run won before the decline has done much
         pacing: { marginSeconds: [240, 900], firstPurchaseSeconds: [0, 60], maxPurchaseGapSeconds: 120 },
         archetypes: {},
       },

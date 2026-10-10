@@ -1,8 +1,8 @@
 // BLOOM — Main Menu screen (BLOOM-028C): the opening title. One of twelve hand-painted backgrounds, the title STRANGE BLOOM /
-// UNKNOWN SOILS and the menu (BEGIN EXPEDITION · TRAINING · SETTINGS · CREDITS) as real HTML over it, with small dialogs for
+// UNKNOWN SOILS and the menu (EXPEDITION · TRAINING · SETTINGS · CREDITS) as real HTML over it, with small dialogs for
 // Training (a placeholder when no training hook is given), Settings (motion) and Credits.
 // (BLOOM-028D2) TRAINING can carry a small "Recommended" tag (setTrainingRecommended) and there is one more dialog, the first-run
-// recommendation ("recommend": Start Training (~5 min) · Go to Expedition), opened by ExpeditionEntry on a first BEGIN EXPEDITION;
+// recommendation ("recommend": Start Training (~5 min) · Go to Expedition), opened by ExpeditionEntry on a first EXPEDITION;
 // the choice goes to onRecommendChoice("training" | "expedition"). This screen still decides nothing: the flow is ExpeditionEntry's.
 //
 //   import { MainMenu } from "<repo>/resources/main-menu/main-menu.js";
@@ -27,7 +27,7 @@ const T = { recede: 220, recedeRm: 110 };
 const LAST_KEY = "strange-bloom.menu.last-background";
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const ITEMS = [
-  { id: "begin", label: "Begin Expedition", primary: true },
+  { id: "begin", label: "Expedition", primary: true },   // (BLOOM-033) the title enters expedition planning; "Begin Expedition" is the survey's decision
   { id: "training", label: "Training" },
   { id: "settings", label: "Settings" },
   { id: "credits", label: "Credits" },
@@ -40,7 +40,7 @@ export class MainMenu {
    * background         force a painting index 0 … 11 (development / QA); default: the random rule above
    * previous           the index to avoid on the first show (default: the last one shown in this tab, from sessionStorage)
    * rng                () → [0, 1) for the picks (QA)
-   * onBegin()          BEGIN EXPEDITION
+   * onBegin()          EXPEDITION (the menu's id stays "begin")
    * onTraining()       TRAINING — the tutorial hook. Omitted: the "not yet open" placeholder dialog
    * onSettingsChange(settings)  after a setting changed (already persisted)
    * onRecommendChoice(choice)    (028D2) the first-run recommendation's answer: "training" | "expedition" (the dialog is closed first)
@@ -168,7 +168,7 @@ export class MainMenu {
       <dialog class="mm-dialog" data-dialog="training" aria-labelledby="mm-dlg-training"><div class="mm-dialog-body">
         <h2 id="mm-dlg-training">Training</h2><p class="lede">Not yet open</p>
         <p>The training expedition — a guided first landing on a hand-made world — is not ready for recruits yet.</p>
-        <p class="mm-note">Placeholder: tutorial gameplay arrives in a later milestone. Begin Expedition is the way out onto unknown soils for now.</p>
+        <p class="mm-note">Placeholder: tutorial gameplay arrives in a later milestone. Expedition is the way out onto unknown soils for now.</p>
         <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">Back to menu</button></div></div></dialog>
       <dialog class="mm-dialog" data-dialog="recommend" aria-labelledby="mm-dlg-recommend" aria-describedby="mm-dlg-recommend-d"><div class="mm-dialog-body">
         <h2 id="mm-dlg-recommend">First expedition?</h2><p class="lede">Training recommended</p>

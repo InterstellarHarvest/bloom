@@ -8,11 +8,11 @@
 <link rel="icon" href="data:,">
 <title>Strange Bloom — Unknown Soils</title>
 <!--
-  STRANGE BLOOM · UNKNOWN SOILS — the canonical production entry (BLOOM-030; the project stays BLOOM internally).
-  /  →  the title (one of twelve paintings; BEGIN EXPEDITION · TRAINING · SETTINGS · CREDITS)  →  Guided Training, or the
-  Destination Survey  →  the exact selected planet (DRAMATIC descent, session handoff)  →  demos/demo-run.html  →  back here.
-  The page is thin: resources/main-menu/title-boot.js loads the engine scripts and mounts the ONE title composer
-  (resources/main-menu/main-menu-page.js), which demos/main-menu.html (the developer alias) shares. docs/RELEASE_CANDIDATE_v1.md.
+  STRANGE BLOOM · UNKNOWN SOILS — the game. ONE document (BLOOM-033; the project stays BLOOM internally): the title (one of twelve
+  paintings; EXPEDITION · TRAINING · SETTINGS · CREDITS), Training, the Destination Survey, the DRAMATIC departure, gameplay, its decision
+  rooms, the Bloom / Extinction report and every way back all happen here, mounted and disposed in place — no other page is ever opened.
+  The page is thin: resources/main-menu/title-boot.js loads the engine scripts and mounts the app (resources/app/app-controller.js).
+  docs/SINGLE_DOCUMENT_APP_v1.md · docs/RELEASE_CANDIDATE_v1.md. (demos/demo-run.html is a developer harness only; it is never loaded here.)
 
   Two ways in, one game (BLOOM-031, docs/PORTABLE_RUNTIME_v1.md): served over http(s) (development, GitHub Pages) the source ES modules
   and module workers run as they are; double-clicked (file://) the same modules come from the generated portable runtime in
@@ -20,9 +20,12 @@
 -->
 <link rel="stylesheet" href="resources/destination-survey/destination-survey.css">
 <link rel="stylesheet" href="resources/main-menu/main-menu.css">
+<link rel="stylesheet" href="resources/run-ui/planet-view.css">
+<link rel="stylesheet" href="resources/run-ui/decision-rooms.css">
+<link rel="stylesheet" href="resources/run-ui/run-report.css">
 </head>
 <body>
 <div id="app"></div>
-<script src="resources/main-menu/title-boot.js" data-run="demos/demo-run.html"></script>
+<script src="resources/main-menu/title-boot.js"></script>
 </body>
 </html>

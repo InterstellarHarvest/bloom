@@ -6,17 +6,19 @@
 <link rel="icon" href="data:,">
 <title>Strange Bloom — Unknown Soils</title>
 <!--
-  Developer / compatibility alias of the Strange Bloom title (BLOOM-030). The canonical production entry is the repository root
-  index.html; this page mounts the SAME title composer (resources/main-menu/main-menu-page.js, through title-boot.js) so older
-  links and development habits keep working, but it is not a second product flow: gameplay and training come back to the ROOT
-  title (data-title), never here. Serve the repository root over http:  python3 -m http.server 8767
-  →  http://localhost:8767/ (this alias: /demos/main-menu.html). Query parameters: see main-menu-page.js.
+  Developer / compatibility alias of the Strange Bloom app (BLOOM-030; BLOOM-033). The production document is the repository root
+  index.html; this page mounts the SAME app (resources/app/app-controller.js, through title-boot.js) one folder down, so older links and
+  development habits keep working. It is not a second product flow and nothing in the game links to it. Serve the repository root over
+  http:  python3 -m http.server 8767  →  http://localhost:8767/ (this alias: /demos/main-menu.html). Query parameters: app-controller.js.
 -->
 <link rel="stylesheet" href="../resources/destination-survey/destination-survey.css">
 <link rel="stylesheet" href="../resources/main-menu/main-menu.css">
+<link rel="stylesheet" href="../resources/run-ui/planet-view.css">
+<link rel="stylesheet" href="../resources/run-ui/decision-rooms.css">
+<link rel="stylesheet" href="../resources/run-ui/run-report.css">
 </head>
 <body>
 <div id="app"></div>
-<script src="../resources/main-menu/title-boot.js" data-run="demo-run.html" data-title="../index.html"></script>
+<script src="../resources/main-menu/title-boot.js"></script>
 </body>
 </html>

@@ -12,7 +12,7 @@
 .ds{
   --font:ui-rounded,"SF Pro Rounded","Nunito","Varela Round","Trebuchet MS",system-ui,sans-serif;
   --space-0:#03050b; --space-1:#0a1124; --ink:#edf1f8; --ink-soft:#aab5ca; --ink-faint:#717e97; --line:#27324d; --panel:rgba(14,20,36,.86);
-  --stable:#86d98f; --volatile:#f2c45a; --extreme:#f2604e; --sky:#4f9fe0; --sky-dark:#2b6ea8; --leaf:#3f9d4b; --leaf-dark:#2a7636;
+  --favorable:#86d98f; --precarious:#f2c45a; --extreme:#f2604e; --sky:#4f9fe0; --sky-dark:#2b6ea8; --leaf:#3f9d4b; --leaf-dark:#2a7636;
   --focus:#ffd479; --r-lg:22px 18px 24px 18px; --r-md:16px 13px 17px 14px; --ease:cubic-bezier(.2,.8,.2,1);
   --head:76px; --colhead:46px; --cap:44px; --gapY:8px; --padX:clamp(16px,3cqw,40px); --gapX:clamp(18px,5cqw,110px);
   /* a candidate globe box: as big as three rows (or three columns) allow */
@@ -34,7 +34,7 @@
 .ds .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
 /* focus-state backdrop: a soft glow behind the focused planet; ::before precedes the canvas, so it paints beneath the globes */
 .ds::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .6s var(--ease);
-  background:radial-gradient(48% 62% at 30% 56%, color-mix(in srgb, var(--cls, var(--stable)) 12%, transparent), transparent 70%),
+  background:radial-gradient(48% 62% at 30% 56%, color-mix(in srgb, var(--cls, var(--favorable)) 12%, transparent), transparent 70%),
              linear-gradient(90deg, transparent 35%, rgba(3,5,11,.55) 100%)}
 .ds[data-state="focus"]::before{opacity:1}
 
@@ -79,8 +79,8 @@
 .ds-colhead small{font-size:12px; color:var(--ink-faint); font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:calc(var(--G) + var(--gapX) * .8)}
 .ds-grid{row-gap:var(--gapY); padding-top:6px}
 .ds-cell{display:flex; justify-content:center}
-.ds [data-class="stable"]{--cls:var(--stable)} .ds [data-class="volatile"]{--cls:var(--volatile)} .ds [data-class="extreme"]{--cls:var(--extreme)}
-.ds[data-class="stable"]{--cls:var(--stable)} .ds[data-class="volatile"]{--cls:var(--volatile)} .ds[data-class="extreme"]{--cls:var(--extreme)}
+.ds [data-class="favorable"]{--cls:var(--favorable)} .ds [data-class="precarious"]{--cls:var(--precarious)} .ds [data-class="extreme"]{--cls:var(--extreme)}
+.ds[data-class="favorable"]{--cls:var(--favorable)} .ds[data-class="precarious"]{--cls:var(--precarious)} .ds[data-class="extreme"]{--cls:var(--extreme)}
 /* a candidate: the whole globe + caption is one real button (keyboard / screen reader); no background (it would tint the globe) */
 .ds-cand{position:relative; display:flex; flex-direction:column; align-items:center; width:var(--G); padding:0; border:0; background:none; cursor:pointer; border-radius:24px}
 .ds-globe-slot{position:relative; display:block; width:var(--G); height:var(--G)}

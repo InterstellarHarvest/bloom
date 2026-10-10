@@ -171,7 +171,7 @@
 
     // ---- stage 2 helpers: order a build greedily by static gain; opening variants for the Spread boosters.
     // Under pressure (BLOOM-012) the gain is measured in the starting world first and in the final world as the
-    // tie-break: buy what opens land now, then prepare for the decline (what a person would do). Eden: unchanged.
+    // tie-break: buy what opens land now, then prepare for the decline (what a person would do). Default scenario: unchanged.
     // Two orders are tried under pressure ("now" first, then "final" = gain in the final world only).
     const order = (items, mode = "final") => { const left = items.slice(), out = [];
       while (left.length) { let bi = 0, bc = -2, bn = -2, bp = Infinity;
@@ -183,7 +183,7 @@
       return out; };
     const openings = [boosters.slice(0, 1).map(t => t.id), [], boosters.map(t => t.id)]
       .filter((o, i, a) => a.findIndex(x => x.join() === o.join()) === i)
-      .flatMap(o => SCN && FIN ? [{ o, mode: "now" }, { o, mode: "final" }] : [{ o, mode: "final" }]); // Eden: the BLOOM-006 list
+      .flatMap(o => SCN && FIN ? [{ o, mode: "now" }, { o, mode: "final" }] : [{ o, mode: "final" }]); // default scenario: the BLOOM-006 list
 
     // ---- layer 7 (see header): candidate classes by minimal sufficient core, then effect tokens per core
     const counts = items => items.reduce((m, id) => (m[id] = (m[id] || 0) + 1, m), {});
