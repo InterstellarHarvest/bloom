@@ -1,0 +1,6338 @@
+{
+ "format": "bloom-species-art-brief@1",
+ "generatedBy": "tools/build-plant-art.mjs --briefs",
+ "species": "reed_spire",
+ "name": "Reed Spire",
+ "role": "wet / flood specialist (+ salt) (concept D1)",
+ "bodyPlan": "reed@1",
+ "plan": "art/plant/body-plans/reed.json",
+ "contract": "art/plant/contracts/reed.json",
+ "grammar": "resources/plant-visual/grammars/reed.js",
+ "replacesPack": "proof-reed-spire",
+ "newPack": "reed-spire",
+ "canvas": {
+  "w": 84,
+  "h": 98,
+  "soilY": 68
+ },
+ "ground": {
+  "y": 68,
+  "kind": "waterlogged"
+ },
+ "crown": [
+  42,
+  68
+ ],
+ "angles": [
+  "low",
+  "mid",
+  "high"
+ ],
+ "partLabels": {
+  "stem": "Culms",
+  "leafShape": "Sheaths"
+ },
+ "architectures": {
+  "open": {
+   "about": "no Cold: the culms fan out (tall culms c0–c4; the three short culms s0–s2 replace c0–c2 under Drought)",
+   "axes": [
+    {
+     "id": "c0",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      0,
+      0
+     ],
+     "part": "stem",
+     "height": 49,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "drift": 3
+     }
+    },
+    {
+     "id": "c1",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      -6,
+      0
+     ],
+     "part": "stem",
+     "height": 42,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "flower": 1,
+      "pod": 1
+     }
+    },
+    {
+     "id": "c2",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      6,
+      0
+     ],
+     "part": "stem",
+     "height": 44,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "pod": 1
+     }
+    },
+    {
+     "id": "c3",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      -12,
+      0
+     ],
+     "part": "stem",
+     "height": 34,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1
+     }
+    },
+    {
+     "id": "c4",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      12,
+      0
+     ],
+     "part": "stem",
+     "height": 36,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1
+     }
+    },
+    {
+     "id": "s0",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      0,
+      0
+     ],
+     "part": "stem",
+     "height": 32,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "drift": 3
+     }
+    },
+    {
+     "id": "s1",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      -6,
+      0
+     ],
+     "part": "stem",
+     "height": 27,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "flower": 1,
+      "pod": 1
+     }
+    },
+    {
+     "id": "s2",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      6,
+      0
+     ],
+     "part": "stem",
+     "height": 28,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "pod": 1
+     }
+    }
+   ],
+   "leafSets": {}
+  },
+  "dense": {
+   "about": "Cold T1: the culms draw closer (tall culms c0–c4; the three short culms s0–s2 replace c0–c2 under Drought)",
+   "axes": [
+    {
+     "id": "c0",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      0,
+      0
+     ],
+     "part": "stem",
+     "height": 47,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "drift": 3
+     }
+    },
+    {
+     "id": "c1",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      -5,
+      0
+     ],
+     "part": "stem",
+     "height": 40,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "flower": 1,
+      "pod": 1
+     }
+    },
+    {
+     "id": "c2",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      5,
+      0
+     ],
+     "part": "stem",
+     "height": 42,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "pod": 1
+     }
+    },
+    {
+     "id": "c3",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      -10,
+      0
+     ],
+     "part": "stem",
+     "height": 32,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1
+     }
+    },
+    {
+     "id": "c4",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      10,
+      0
+     ],
+     "part": "stem",
+     "height": 34,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1
+     }
+    },
+    {
+     "id": "s0",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      0,
+      0
+     ],
+     "part": "stem",
+     "height": 30,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "drift": 3
+     }
+    },
+    {
+     "id": "s1",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      -5,
+      0
+     ],
+     "part": "stem",
+     "height": 25,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "flower": 1,
+      "pod": 1
+     }
+    },
+    {
+     "id": "s2",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      5,
+      0
+     ],
+     "part": "stem",
+     "height": 26,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "pod": 1
+     }
+    }
+   ],
+   "leafSets": {}
+  },
+  "bunched": {
+   "about": "Cold T2: the culms bunch (tall culms c0–c4; the three short culms s0–s2 replace c0–c2 under Drought)",
+   "axes": [
+    {
+     "id": "c0",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      0,
+      0
+     ],
+     "part": "stem",
+     "height": 45,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "drift": 3
+     }
+    },
+    {
+     "id": "c1",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      -3,
+      0
+     ],
+     "part": "stem",
+     "height": 38,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "flower": 1,
+      "pod": 1
+     }
+    },
+    {
+     "id": "c2",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      3,
+      0
+     ],
+     "part": "stem",
+     "height": 40,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "pod": 1
+     }
+    },
+    {
+     "id": "c3",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      -7,
+      0
+     ],
+     "part": "stem",
+     "height": 30,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1
+     }
+    },
+    {
+     "id": "c4",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      7,
+      0
+     ],
+     "part": "stem",
+     "height": 32,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1
+     }
+    },
+    {
+     "id": "s0",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      0,
+      0
+     ],
+     "part": "stem",
+     "height": 28,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "drift": 3
+     }
+    },
+    {
+     "id": "s1",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      -3,
+      0
+     ],
+     "part": "stem",
+     "height": 23,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "flower": 1,
+      "pod": 1
+     }
+    },
+    {
+     "id": "s2",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      3,
+      0
+     ],
+     "part": "stem",
+     "height": 24,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "pod": 1
+     }
+    }
+   ],
+   "leafSets": {}
+  },
+  "tight": {
+   "about": "Cold T3: a tight, upright bundle (tall culms c0–c4; the three short culms s0–s2 replace c0–c2 under Drought)",
+   "axes": [
+    {
+     "id": "c0",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      0,
+      0
+     ],
+     "part": "stem",
+     "height": 43,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "drift": 3
+     }
+    },
+    {
+     "id": "c1",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      -2,
+      0
+     ],
+     "part": "stem",
+     "height": 36,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "flower": 1,
+      "pod": 1
+     }
+    },
+    {
+     "id": "c2",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      2,
+      0
+     ],
+     "part": "stem",
+     "height": 38,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "pod": 1
+     }
+    },
+    {
+     "id": "c3",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      -4,
+      0
+     ],
+     "part": "stem",
+     "height": 28,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1
+     }
+    },
+    {
+     "id": "c4",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      4,
+      0
+     ],
+     "part": "stem",
+     "height": 30,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1
+     }
+    },
+    {
+     "id": "s0",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      0,
+      0
+     ],
+     "part": "stem",
+     "height": 26,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "drift": 3
+     }
+    },
+    {
+     "id": "s1",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      -2,
+      0
+     ],
+     "part": "stem",
+     "height": 21,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "flower": 1,
+      "pod": 1
+     }
+    },
+    {
+     "id": "s2",
+     "kind": "stem",
+     "from": "the soil crown",
+     "at": [
+      2,
+      0
+     ],
+     "part": "stem",
+     "height": 22,
+     "sockets": {
+      "leaf": 2,
+      "collar": 1,
+      "pod": 1
+     }
+    }
+   ],
+   "leafSets": {}
+  }
+ },
+ "bodyTops": [],
+ "sockets": [
+  {
+   "at": [
+    42,
+    18
+   ],
+   "attach": "apex",
+   "layout": "open",
+   "room": {
+    "down": 79,
+    "left": 42,
+    "right": 41,
+    "up": 18
+   },
+   "side": 0,
+   "socket": "c0.apex"
+  },
+  {
+   "at": [
+    42,
+    18
+   ],
+   "attach": "flower",
+   "layout": "open",
+   "room": {
+    "down": 79,
+    "left": 42,
+    "right": 41,
+    "up": 18
+   },
+   "side": 0,
+   "socket": "c0.flower.0"
+  },
+  {
+   "at": [
+    42,
+    18
+   ],
+   "attach": "seedHead",
+   "layout": "open",
+   "room": {
+    "down": 79,
+    "left": 42,
+    "right": 41,
+    "up": 18
+   },
+   "side": 0,
+   "socket": "c0.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    41,
+    58
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 39,
+    "left": 41,
+    "right": 42,
+    "up": 58
+   },
+   "side": -1,
+   "socket": "c0.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    45,
+    47
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 50,
+    "left": 45,
+    "right": 38,
+    "up": 47
+   },
+   "side": 1,
+   "socket": "c0.leaf.1"
+  },
+  {
+   "at": [
+    43,
+    41
+   ],
+   "attach": "stemNode",
+   "layout": "open",
+   "room": {
+    "down": 56,
+    "left": 43,
+    "right": 40,
+    "up": 41
+   },
+   "side": 0,
+   "socket": "c0.collar.0"
+  },
+  {
+   "at": [
+    52,
+    13
+   ],
+   "attach": "drift",
+   "layout": "open",
+   "room": {
+    "down": 84,
+    "left": 52,
+    "right": 31,
+    "up": 13
+   },
+   "side": 0,
+   "socket": "c0.drift.0"
+  },
+  {
+   "at": [
+    57,
+    19
+   ],
+   "attach": "drift",
+   "layout": "open",
+   "room": {
+    "down": 78,
+    "left": 57,
+    "right": 26,
+    "up": 19
+   },
+   "side": 0,
+   "socket": "c0.drift.1"
+  },
+  {
+   "at": [
+    31,
+    15
+   ],
+   "attach": "drift",
+   "layout": "open",
+   "room": {
+    "down": 82,
+    "left": 31,
+    "right": 52,
+    "up": 15
+   },
+   "side": 0,
+   "socket": "c0.drift.2"
+  },
+  {
+   "at": [
+    31,
+    25
+   ],
+   "attach": "apex",
+   "layout": "open",
+   "room": {
+    "down": 72,
+    "left": 31,
+    "right": 52,
+    "up": 25
+   },
+   "side": 0,
+   "socket": "c1.apex"
+  },
+  {
+   "at": [
+    31,
+    25
+   ],
+   "attach": "flower",
+   "layout": "open",
+   "room": {
+    "down": 72,
+    "left": 31,
+    "right": 52,
+    "up": 25
+   },
+   "side": 0,
+   "socket": "c1.flower.0"
+  },
+  {
+   "at": [
+    31,
+    25
+   ],
+   "attach": "seedHead",
+   "layout": "open",
+   "room": {
+    "down": 72,
+    "left": 31,
+    "right": 52,
+    "up": 25
+   },
+   "side": 0,
+   "socket": "c1.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    34,
+    60
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 37,
+    "left": 34,
+    "right": 49,
+    "up": 60
+   },
+   "side": -1,
+   "socket": "c1.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    36,
+    50
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 47,
+    "left": 36,
+    "right": 47,
+    "up": 50
+   },
+   "side": 1,
+   "socket": "c1.leaf.1"
+  },
+  {
+   "at": [
+    34,
+    45
+   ],
+   "attach": "stemNode",
+   "layout": "open",
+   "room": {
+    "down": 52,
+    "left": 34,
+    "right": 49,
+    "up": 45
+   },
+   "side": 0,
+   "socket": "c1.collar.0"
+  },
+  {
+   "at": [
+    25,
+    30
+   ],
+   "attach": "flower",
+   "layout": "open",
+   "room": {
+    "down": 67,
+    "left": 25,
+    "right": 58,
+    "up": 30
+   },
+   "side": -1,
+   "socket": "c1.flower.1"
+  },
+  {
+   "at": [
+    27,
+    51
+   ],
+   "attach": "pod",
+   "layout": "open",
+   "room": {
+    "down": 46,
+    "left": 27,
+    "right": 56,
+    "up": 51
+   },
+   "side": -1,
+   "socket": "c1.pod.0"
+  },
+  {
+   "at": [
+    53,
+    23
+   ],
+   "attach": "apex",
+   "layout": "open",
+   "room": {
+    "down": 74,
+    "left": 53,
+    "right": 30,
+    "up": 23
+   },
+   "side": 0,
+   "socket": "c2.apex"
+  },
+  {
+   "at": [
+    53,
+    23
+   ],
+   "attach": "flower",
+   "layout": "open",
+   "room": {
+    "down": 74,
+    "left": 53,
+    "right": 30,
+    "up": 23
+   },
+   "side": 0,
+   "socket": "c2.flower.0"
+  },
+  {
+   "at": [
+    53,
+    23
+   ],
+   "attach": "seedHead",
+   "layout": "open",
+   "room": {
+    "down": 74,
+    "left": 53,
+    "right": 30,
+    "up": 23
+   },
+   "side": 0,
+   "socket": "c2.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    48,
+    59
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 38,
+    "left": 48,
+    "right": 35,
+    "up": 59
+   },
+   "side": -1,
+   "socket": "c2.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    52,
+    50
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 47,
+    "left": 52,
+    "right": 31,
+    "up": 50
+   },
+   "side": 1,
+   "socket": "c2.leaf.1"
+  },
+  {
+   "at": [
+    50,
+    44
+   ],
+   "attach": "stemNode",
+   "layout": "open",
+   "room": {
+    "down": 53,
+    "left": 50,
+    "right": 33,
+    "up": 44
+   },
+   "side": 0,
+   "socket": "c2.collar.0"
+  },
+  {
+   "at": [
+    57,
+    51
+   ],
+   "attach": "pod",
+   "layout": "open",
+   "room": {
+    "down": 46,
+    "left": 57,
+    "right": 26,
+    "up": 51
+   },
+   "side": 1,
+   "socket": "c2.pod.0"
+  },
+  {
+   "at": [
+    23,
+    33
+   ],
+   "attach": "apex",
+   "layout": "open",
+   "room": {
+    "down": 64,
+    "left": 23,
+    "right": 60,
+    "up": 33
+   },
+   "side": 0,
+   "socket": "c3.apex"
+  },
+  {
+   "at": [
+    23,
+    33
+   ],
+   "attach": "flower",
+   "layout": "open",
+   "room": {
+    "down": 64,
+    "left": 23,
+    "right": 60,
+    "up": 33
+   },
+   "side": 0,
+   "socket": "c3.flower.0"
+  },
+  {
+   "at": [
+    23,
+    33
+   ],
+   "attach": "seedHead",
+   "layout": "open",
+   "room": {
+    "down": 64,
+    "left": 23,
+    "right": 60,
+    "up": 33
+   },
+   "side": 0,
+   "socket": "c3.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    28,
+    61
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 36,
+    "left": 28,
+    "right": 55,
+    "up": 61
+   },
+   "side": -1,
+   "socket": "c3.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    29,
+    54
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 43,
+    "left": 29,
+    "right": 54,
+    "up": 54
+   },
+   "side": 1,
+   "socket": "c3.leaf.1"
+  },
+  {
+   "at": [
+    26,
+    49
+   ],
+   "attach": "stemNode",
+   "layout": "open",
+   "room": {
+    "down": 48,
+    "left": 26,
+    "right": 57,
+    "up": 49
+   },
+   "side": 0,
+   "socket": "c3.collar.0"
+  },
+  {
+   "at": [
+    61,
+    31
+   ],
+   "attach": "apex",
+   "layout": "open",
+   "room": {
+    "down": 66,
+    "left": 61,
+    "right": 22,
+    "up": 31
+   },
+   "side": 0,
+   "socket": "c4.apex"
+  },
+  {
+   "at": [
+    61,
+    31
+   ],
+   "attach": "flower",
+   "layout": "open",
+   "room": {
+    "down": 66,
+    "left": 61,
+    "right": 22,
+    "up": 31
+   },
+   "side": 0,
+   "socket": "c4.flower.0"
+  },
+  {
+   "at": [
+    61,
+    31
+   ],
+   "attach": "seedHead",
+   "layout": "open",
+   "room": {
+    "down": 66,
+    "left": 61,
+    "right": 22,
+    "up": 31
+   },
+   "side": 0,
+   "socket": "c4.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    54,
+    61
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 36,
+    "left": 54,
+    "right": 29,
+    "up": 61
+   },
+   "side": -1,
+   "socket": "c4.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    59,
+    53
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 44,
+    "left": 59,
+    "right": 24,
+    "up": 53
+   },
+   "side": 1,
+   "socket": "c4.leaf.1"
+  },
+  {
+   "at": [
+    58,
+    48
+   ],
+   "attach": "stemNode",
+   "layout": "open",
+   "room": {
+    "down": 49,
+    "left": 58,
+    "right": 25,
+    "up": 48
+   },
+   "side": 0,
+   "socket": "c4.collar.0"
+  },
+  {
+   "at": [
+    42,
+    35
+   ],
+   "attach": "apex",
+   "layout": "open",
+   "room": {
+    "down": 62,
+    "left": 42,
+    "right": 41,
+    "up": 35
+   },
+   "side": 0,
+   "socket": "s0.apex"
+  },
+  {
+   "at": [
+    42,
+    35
+   ],
+   "attach": "flower",
+   "layout": "open",
+   "room": {
+    "down": 62,
+    "left": 42,
+    "right": 41,
+    "up": 35
+   },
+   "side": 0,
+   "socket": "s0.flower.0"
+  },
+  {
+   "at": [
+    42,
+    35
+   ],
+   "attach": "seedHead",
+   "layout": "open",
+   "room": {
+    "down": 62,
+    "left": 42,
+    "right": 41,
+    "up": 35
+   },
+   "side": 0,
+   "socket": "s0.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    41,
+    62
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 35,
+    "left": 41,
+    "right": 42,
+    "up": 62
+   },
+   "side": -1,
+   "socket": "s0.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    45,
+    55
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 42,
+    "left": 45,
+    "right": 38,
+    "up": 55
+   },
+   "side": 1,
+   "socket": "s0.leaf.1"
+  },
+  {
+   "at": [
+    43,
+    50
+   ],
+   "attach": "stemNode",
+   "layout": "open",
+   "room": {
+    "down": 47,
+    "left": 43,
+    "right": 40,
+    "up": 50
+   },
+   "side": 0,
+   "socket": "s0.collar.0"
+  },
+  {
+   "at": [
+    52,
+    30
+   ],
+   "attach": "drift",
+   "layout": "open",
+   "room": {
+    "down": 67,
+    "left": 52,
+    "right": 31,
+    "up": 30
+   },
+   "side": 0,
+   "socket": "s0.drift.0"
+  },
+  {
+   "at": [
+    57,
+    36
+   ],
+   "attach": "drift",
+   "layout": "open",
+   "room": {
+    "down": 61,
+    "left": 57,
+    "right": 26,
+    "up": 36
+   },
+   "side": 0,
+   "socket": "s0.drift.1"
+  },
+  {
+   "at": [
+    31,
+    32
+   ],
+   "attach": "drift",
+   "layout": "open",
+   "room": {
+    "down": 65,
+    "left": 31,
+    "right": 52,
+    "up": 32
+   },
+   "side": 0,
+   "socket": "s0.drift.2"
+  },
+  {
+   "at": [
+    31,
+    40
+   ],
+   "attach": "apex",
+   "layout": "open",
+   "room": {
+    "down": 57,
+    "left": 31,
+    "right": 52,
+    "up": 40
+   },
+   "side": 0,
+   "socket": "s1.apex"
+  },
+  {
+   "at": [
+    31,
+    40
+   ],
+   "attach": "flower",
+   "layout": "open",
+   "room": {
+    "down": 57,
+    "left": 31,
+    "right": 52,
+    "up": 40
+   },
+   "side": 0,
+   "socket": "s1.flower.0"
+  },
+  {
+   "at": [
+    31,
+    40
+   ],
+   "attach": "seedHead",
+   "layout": "open",
+   "room": {
+    "down": 57,
+    "left": 31,
+    "right": 52,
+    "up": 40
+   },
+   "side": 0,
+   "socket": "s1.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    34,
+    63
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 34,
+    "left": 34,
+    "right": 49,
+    "up": 63
+   },
+   "side": -1,
+   "socket": "s1.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    36,
+    57
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 40,
+    "left": 36,
+    "right": 47,
+    "up": 57
+   },
+   "side": 1,
+   "socket": "s1.leaf.1"
+  },
+  {
+   "at": [
+    33,
+    53
+   ],
+   "attach": "stemNode",
+   "layout": "open",
+   "room": {
+    "down": 44,
+    "left": 33,
+    "right": 50,
+    "up": 53
+   },
+   "side": 0,
+   "socket": "s1.collar.0"
+  },
+  {
+   "at": [
+    25,
+    42
+   ],
+   "attach": "flower",
+   "layout": "open",
+   "room": {
+    "down": 55,
+    "left": 25,
+    "right": 58,
+    "up": 42
+   },
+   "side": -1,
+   "socket": "s1.flower.1"
+  },
+  {
+   "at": [
+    27,
+    58
+   ],
+   "attach": "pod",
+   "layout": "open",
+   "room": {
+    "down": 39,
+    "left": 27,
+    "right": 56,
+    "up": 58
+   },
+   "side": -1,
+   "socket": "s1.pod.0"
+  },
+  {
+   "at": [
+    53,
+    39
+   ],
+   "attach": "apex",
+   "layout": "open",
+   "room": {
+    "down": 58,
+    "left": 53,
+    "right": 30,
+    "up": 39
+   },
+   "side": 0,
+   "socket": "s2.apex"
+  },
+  {
+   "at": [
+    53,
+    39
+   ],
+   "attach": "flower",
+   "layout": "open",
+   "room": {
+    "down": 58,
+    "left": 53,
+    "right": 30,
+    "up": 39
+   },
+   "side": 0,
+   "socket": "s2.flower.0"
+  },
+  {
+   "at": [
+    53,
+    39
+   ],
+   "attach": "seedHead",
+   "layout": "open",
+   "room": {
+    "down": 58,
+    "left": 53,
+    "right": 30,
+    "up": 39
+   },
+   "side": 0,
+   "socket": "s2.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    48,
+    62
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 35,
+    "left": 48,
+    "right": 35,
+    "up": 62
+   },
+   "side": -1,
+   "socket": "s2.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    52,
+    56
+   ],
+   "attach": "leafSocket",
+   "layout": "open",
+   "room": {
+    "down": 41,
+    "left": 52,
+    "right": 31,
+    "up": 56
+   },
+   "side": 1,
+   "socket": "s2.leaf.1"
+  },
+  {
+   "at": [
+    50,
+    53
+   ],
+   "attach": "stemNode",
+   "layout": "open",
+   "room": {
+    "down": 44,
+    "left": 50,
+    "right": 33,
+    "up": 53
+   },
+   "side": 0,
+   "socket": "s2.collar.0"
+  },
+  {
+   "at": [
+    57,
+    57
+   ],
+   "attach": "pod",
+   "layout": "open",
+   "room": {
+    "down": 40,
+    "left": 57,
+    "right": 26,
+    "up": 57
+   },
+   "side": 1,
+   "socket": "s2.pod.0"
+  },
+  {
+   "at": [
+    42,
+    68
+   ],
+   "attach": "rootCrown",
+   "layout": "*",
+   "room": {
+    "down": 29,
+    "left": 42,
+    "right": 41,
+    "up": 68
+   },
+   "side": 0,
+   "socket": "rootCrown"
+  },
+  {
+   "at": [
+    42,
+    73
+   ],
+   "attach": "primaryRoot",
+   "layout": "*",
+   "room": {
+    "down": 24,
+    "left": 42,
+    "right": 41,
+    "up": 73
+   },
+   "side": 0,
+   "socket": "primaryRoot"
+  },
+  {
+   "at": [
+    25,
+    69
+   ],
+   "attach": "aerialRoot",
+   "layout": "*",
+   "room": {
+    "down": 28,
+    "left": 25,
+    "right": 58,
+    "up": 69
+   },
+   "side": -1,
+   "socket": "aerial.0"
+  },
+  {
+   "at": [
+    60,
+    69
+   ],
+   "attach": "aerialRoot",
+   "layout": "*",
+   "room": {
+    "down": 28,
+    "left": 60,
+    "right": 23,
+    "up": 69
+   },
+   "side": 1,
+   "socket": "aerial.1"
+  },
+  {
+   "at": [
+    19,
+    69
+   ],
+   "attach": "aerialRoot",
+   "layout": "*",
+   "room": {
+    "down": 28,
+    "left": 19,
+    "right": 64,
+    "up": 69
+   },
+   "side": -1,
+   "socket": "aerial.2"
+  },
+  {
+   "at": [
+    66,
+    69
+   ],
+   "attach": "aerialRoot",
+   "layout": "*",
+   "room": {
+    "down": 28,
+    "left": 66,
+    "right": 17,
+    "up": 69
+   },
+   "side": 1,
+   "socket": "aerial.3"
+  },
+  {
+   "at": [
+    42,
+    20
+   ],
+   "attach": "apex",
+   "layout": "dense",
+   "room": {
+    "down": 77,
+    "left": 42,
+    "right": 41,
+    "up": 20
+   },
+   "side": 0,
+   "socket": "c0.apex"
+  },
+  {
+   "at": [
+    42,
+    20
+   ],
+   "attach": "flower",
+   "layout": "dense",
+   "room": {
+    "down": 77,
+    "left": 42,
+    "right": 41,
+    "up": 20
+   },
+   "side": 0,
+   "socket": "c0.flower.0"
+  },
+  {
+   "at": [
+    42,
+    20
+   ],
+   "attach": "seedHead",
+   "layout": "dense",
+   "room": {
+    "down": 77,
+    "left": 42,
+    "right": 41,
+    "up": 20
+   },
+   "side": 0,
+   "socket": "c0.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    41,
+    59
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 38,
+    "left": 41,
+    "right": 42,
+    "up": 59
+   },
+   "side": -1,
+   "socket": "c0.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    45,
+    48
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 49,
+    "left": 45,
+    "right": 38,
+    "up": 48
+   },
+   "side": 1,
+   "socket": "c0.leaf.1"
+  },
+  {
+   "at": [
+    43,
+    42
+   ],
+   "attach": "stemNode",
+   "layout": "dense",
+   "room": {
+    "down": 55,
+    "left": 43,
+    "right": 40,
+    "up": 42
+   },
+   "side": 0,
+   "socket": "c0.collar.0"
+  },
+  {
+   "at": [
+    52,
+    15
+   ],
+   "attach": "drift",
+   "layout": "dense",
+   "room": {
+    "down": 82,
+    "left": 52,
+    "right": 31,
+    "up": 15
+   },
+   "side": 0,
+   "socket": "c0.drift.0"
+  },
+  {
+   "at": [
+    57,
+    21
+   ],
+   "attach": "drift",
+   "layout": "dense",
+   "room": {
+    "down": 76,
+    "left": 57,
+    "right": 26,
+    "up": 21
+   },
+   "side": 0,
+   "socket": "c0.drift.1"
+  },
+  {
+   "at": [
+    31,
+    17
+   ],
+   "attach": "drift",
+   "layout": "dense",
+   "room": {
+    "down": 80,
+    "left": 31,
+    "right": 52,
+    "up": 17
+   },
+   "side": 0,
+   "socket": "c0.drift.2"
+  },
+  {
+   "at": [
+    33,
+    27
+   ],
+   "attach": "apex",
+   "layout": "dense",
+   "room": {
+    "down": 70,
+    "left": 33,
+    "right": 50,
+    "up": 27
+   },
+   "side": 0,
+   "socket": "c1.apex"
+  },
+  {
+   "at": [
+    33,
+    27
+   ],
+   "attach": "flower",
+   "layout": "dense",
+   "room": {
+    "down": 70,
+    "left": 33,
+    "right": 50,
+    "up": 27
+   },
+   "side": 0,
+   "socket": "c1.flower.0"
+  },
+  {
+   "at": [
+    33,
+    27
+   ],
+   "attach": "seedHead",
+   "layout": "dense",
+   "room": {
+    "down": 70,
+    "left": 33,
+    "right": 50,
+    "up": 27
+   },
+   "side": 0,
+   "socket": "c1.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    35,
+    60
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 37,
+    "left": 35,
+    "right": 48,
+    "up": 60
+   },
+   "side": -1,
+   "socket": "c1.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    37,
+    51
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 46,
+    "left": 37,
+    "right": 46,
+    "up": 51
+   },
+   "side": 1,
+   "socket": "c1.leaf.1"
+  },
+  {
+   "at": [
+    35,
+    46
+   ],
+   "attach": "stemNode",
+   "layout": "dense",
+   "room": {
+    "down": 51,
+    "left": 35,
+    "right": 48,
+    "up": 46
+   },
+   "side": 0,
+   "socket": "c1.collar.0"
+  },
+  {
+   "at": [
+    27,
+    31
+   ],
+   "attach": "flower",
+   "layout": "dense",
+   "room": {
+    "down": 66,
+    "left": 27,
+    "right": 56,
+    "up": 31
+   },
+   "side": -1,
+   "socket": "c1.flower.1"
+  },
+  {
+   "at": [
+    28,
+    52
+   ],
+   "attach": "pod",
+   "layout": "dense",
+   "room": {
+    "down": 45,
+    "left": 28,
+    "right": 55,
+    "up": 52
+   },
+   "side": -1,
+   "socket": "c1.pod.0"
+  },
+  {
+   "at": [
+    51,
+    25
+   ],
+   "attach": "apex",
+   "layout": "dense",
+   "room": {
+    "down": 72,
+    "left": 51,
+    "right": 32,
+    "up": 25
+   },
+   "side": 0,
+   "socket": "c2.apex"
+  },
+  {
+   "at": [
+    51,
+    25
+   ],
+   "attach": "flower",
+   "layout": "dense",
+   "room": {
+    "down": 72,
+    "left": 51,
+    "right": 32,
+    "up": 25
+   },
+   "side": 0,
+   "socket": "c2.flower.0"
+  },
+  {
+   "at": [
+    51,
+    25
+   ],
+   "attach": "seedHead",
+   "layout": "dense",
+   "room": {
+    "down": 72,
+    "left": 51,
+    "right": 32,
+    "up": 25
+   },
+   "side": 0,
+   "socket": "c2.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    47,
+    60
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 37,
+    "left": 47,
+    "right": 36,
+    "up": 60
+   },
+   "side": -1,
+   "socket": "c2.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    51,
+    50
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 47,
+    "left": 51,
+    "right": 32,
+    "up": 50
+   },
+   "side": 1,
+   "socket": "c2.leaf.1"
+  },
+  {
+   "at": [
+    49,
+    45
+   ],
+   "attach": "stemNode",
+   "layout": "dense",
+   "room": {
+    "down": 52,
+    "left": 49,
+    "right": 34,
+    "up": 45
+   },
+   "side": 0,
+   "socket": "c2.collar.0"
+  },
+  {
+   "at": [
+    56,
+    51
+   ],
+   "attach": "pod",
+   "layout": "dense",
+   "room": {
+    "down": 46,
+    "left": 56,
+    "right": 27,
+    "up": 51
+   },
+   "side": 1,
+   "socket": "c2.pod.0"
+  },
+  {
+   "at": [
+    27,
+    35
+   ],
+   "attach": "apex",
+   "layout": "dense",
+   "room": {
+    "down": 62,
+    "left": 27,
+    "right": 56,
+    "up": 35
+   },
+   "side": 0,
+   "socket": "c3.apex"
+  },
+  {
+   "at": [
+    27,
+    35
+   ],
+   "attach": "flower",
+   "layout": "dense",
+   "room": {
+    "down": 62,
+    "left": 27,
+    "right": 56,
+    "up": 35
+   },
+   "side": 0,
+   "socket": "c3.flower.0"
+  },
+  {
+   "at": [
+    27,
+    35
+   ],
+   "attach": "seedHead",
+   "layout": "dense",
+   "room": {
+    "down": 62,
+    "left": 27,
+    "right": 56,
+    "up": 35
+   },
+   "side": 0,
+   "socket": "c3.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    30,
+    62
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 35,
+    "left": 30,
+    "right": 53,
+    "up": 62
+   },
+   "side": -1,
+   "socket": "c3.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    32,
+    55
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 42,
+    "left": 32,
+    "right": 51,
+    "up": 55
+   },
+   "side": 1,
+   "socket": "c3.leaf.1"
+  },
+  {
+   "at": [
+    29,
+    50
+   ],
+   "attach": "stemNode",
+   "layout": "dense",
+   "room": {
+    "down": 47,
+    "left": 29,
+    "right": 54,
+    "up": 50
+   },
+   "side": 0,
+   "socket": "c3.collar.0"
+  },
+  {
+   "at": [
+    57,
+    33
+   ],
+   "attach": "apex",
+   "layout": "dense",
+   "room": {
+    "down": 64,
+    "left": 57,
+    "right": 26,
+    "up": 33
+   },
+   "side": 0,
+   "socket": "c4.apex"
+  },
+  {
+   "at": [
+    57,
+    33
+   ],
+   "attach": "flower",
+   "layout": "dense",
+   "room": {
+    "down": 64,
+    "left": 57,
+    "right": 26,
+    "up": 33
+   },
+   "side": 0,
+   "socket": "c4.flower.0"
+  },
+  {
+   "at": [
+    57,
+    33
+   ],
+   "attach": "seedHead",
+   "layout": "dense",
+   "room": {
+    "down": 64,
+    "left": 57,
+    "right": 26,
+    "up": 33
+   },
+   "side": 0,
+   "socket": "c4.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    52,
+    61
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 36,
+    "left": 52,
+    "right": 31,
+    "up": 61
+   },
+   "side": -1,
+   "socket": "c4.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    56,
+    54
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 43,
+    "left": 56,
+    "right": 27,
+    "up": 54
+   },
+   "side": 1,
+   "socket": "c4.leaf.1"
+  },
+  {
+   "at": [
+    55,
+    49
+   ],
+   "attach": "stemNode",
+   "layout": "dense",
+   "room": {
+    "down": 48,
+    "left": 55,
+    "right": 28,
+    "up": 49
+   },
+   "side": 0,
+   "socket": "c4.collar.0"
+  },
+  {
+   "at": [
+    42,
+    37
+   ],
+   "attach": "apex",
+   "layout": "dense",
+   "room": {
+    "down": 60,
+    "left": 42,
+    "right": 41,
+    "up": 37
+   },
+   "side": 0,
+   "socket": "s0.apex"
+  },
+  {
+   "at": [
+    42,
+    37
+   ],
+   "attach": "flower",
+   "layout": "dense",
+   "room": {
+    "down": 60,
+    "left": 42,
+    "right": 41,
+    "up": 37
+   },
+   "side": 0,
+   "socket": "s0.flower.0"
+  },
+  {
+   "at": [
+    42,
+    37
+   ],
+   "attach": "seedHead",
+   "layout": "dense",
+   "room": {
+    "down": 60,
+    "left": 42,
+    "right": 41,
+    "up": 37
+   },
+   "side": 0,
+   "socket": "s0.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    41,
+    62
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 35,
+    "left": 41,
+    "right": 42,
+    "up": 62
+   },
+   "side": -1,
+   "socket": "s0.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    45,
+    55
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 42,
+    "left": 45,
+    "right": 38,
+    "up": 55
+   },
+   "side": 1,
+   "socket": "s0.leaf.1"
+  },
+  {
+   "at": [
+    43,
+    51
+   ],
+   "attach": "stemNode",
+   "layout": "dense",
+   "room": {
+    "down": 46,
+    "left": 43,
+    "right": 40,
+    "up": 51
+   },
+   "side": 0,
+   "socket": "s0.collar.0"
+  },
+  {
+   "at": [
+    52,
+    32
+   ],
+   "attach": "drift",
+   "layout": "dense",
+   "room": {
+    "down": 65,
+    "left": 52,
+    "right": 31,
+    "up": 32
+   },
+   "side": 0,
+   "socket": "s0.drift.0"
+  },
+  {
+   "at": [
+    57,
+    38
+   ],
+   "attach": "drift",
+   "layout": "dense",
+   "room": {
+    "down": 59,
+    "left": 57,
+    "right": 26,
+    "up": 38
+   },
+   "side": 0,
+   "socket": "s0.drift.1"
+  },
+  {
+   "at": [
+    31,
+    34
+   ],
+   "attach": "drift",
+   "layout": "dense",
+   "room": {
+    "down": 63,
+    "left": 31,
+    "right": 52,
+    "up": 34
+   },
+   "side": 0,
+   "socket": "s0.drift.2"
+  },
+  {
+   "at": [
+    33,
+    42
+   ],
+   "attach": "apex",
+   "layout": "dense",
+   "room": {
+    "down": 55,
+    "left": 33,
+    "right": 50,
+    "up": 42
+   },
+   "side": 0,
+   "socket": "s1.apex"
+  },
+  {
+   "at": [
+    33,
+    42
+   ],
+   "attach": "flower",
+   "layout": "dense",
+   "room": {
+    "down": 55,
+    "left": 33,
+    "right": 50,
+    "up": 42
+   },
+   "side": 0,
+   "socket": "s1.flower.0"
+  },
+  {
+   "at": [
+    33,
+    42
+   ],
+   "attach": "seedHead",
+   "layout": "dense",
+   "room": {
+    "down": 55,
+    "left": 33,
+    "right": 50,
+    "up": 42
+   },
+   "side": 0,
+   "socket": "s1.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    35,
+    63
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 34,
+    "left": 35,
+    "right": 48,
+    "up": 63
+   },
+   "side": -1,
+   "socket": "s1.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    37,
+    57
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 40,
+    "left": 37,
+    "right": 46,
+    "up": 57
+   },
+   "side": 1,
+   "socket": "s1.leaf.1"
+  },
+  {
+   "at": [
+    35,
+    54
+   ],
+   "attach": "stemNode",
+   "layout": "dense",
+   "room": {
+    "down": 43,
+    "left": 35,
+    "right": 48,
+    "up": 54
+   },
+   "side": 0,
+   "socket": "s1.collar.0"
+  },
+  {
+   "at": [
+    27,
+    43
+   ],
+   "attach": "flower",
+   "layout": "dense",
+   "room": {
+    "down": 54,
+    "left": 27,
+    "right": 56,
+    "up": 43
+   },
+   "side": -1,
+   "socket": "s1.flower.1"
+  },
+  {
+   "at": [
+    28,
+    58
+   ],
+   "attach": "pod",
+   "layout": "dense",
+   "room": {
+    "down": 39,
+    "left": 28,
+    "right": 55,
+    "up": 58
+   },
+   "side": -1,
+   "socket": "s1.pod.0"
+  },
+  {
+   "at": [
+    51,
+    41
+   ],
+   "attach": "apex",
+   "layout": "dense",
+   "room": {
+    "down": 56,
+    "left": 51,
+    "right": 32,
+    "up": 41
+   },
+   "side": 0,
+   "socket": "s2.apex"
+  },
+  {
+   "at": [
+    51,
+    41
+   ],
+   "attach": "flower",
+   "layout": "dense",
+   "room": {
+    "down": 56,
+    "left": 51,
+    "right": 32,
+    "up": 41
+   },
+   "side": 0,
+   "socket": "s2.flower.0"
+  },
+  {
+   "at": [
+    51,
+    41
+   ],
+   "attach": "seedHead",
+   "layout": "dense",
+   "room": {
+    "down": 56,
+    "left": 51,
+    "right": 32,
+    "up": 41
+   },
+   "side": 0,
+   "socket": "s2.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    47,
+    63
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 34,
+    "left": 47,
+    "right": 36,
+    "up": 63
+   },
+   "side": -1,
+   "socket": "s2.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    51,
+    57
+   ],
+   "attach": "leafSocket",
+   "layout": "dense",
+   "room": {
+    "down": 40,
+    "left": 51,
+    "right": 32,
+    "up": 57
+   },
+   "side": 1,
+   "socket": "s2.leaf.1"
+  },
+  {
+   "at": [
+    49,
+    54
+   ],
+   "attach": "stemNode",
+   "layout": "dense",
+   "room": {
+    "down": 43,
+    "left": 49,
+    "right": 34,
+    "up": 54
+   },
+   "side": 0,
+   "socket": "s2.collar.0"
+  },
+  {
+   "at": [
+    56,
+    58
+   ],
+   "attach": "pod",
+   "layout": "dense",
+   "room": {
+    "down": 39,
+    "left": 56,
+    "right": 27,
+    "up": 58
+   },
+   "side": 1,
+   "socket": "s2.pod.0"
+  },
+  {
+   "at": [
+    42,
+    22
+   ],
+   "attach": "apex",
+   "layout": "bunched",
+   "room": {
+    "down": 75,
+    "left": 42,
+    "right": 41,
+    "up": 22
+   },
+   "side": 0,
+   "socket": "c0.apex"
+  },
+  {
+   "at": [
+    42,
+    22
+   ],
+   "attach": "flower",
+   "layout": "bunched",
+   "room": {
+    "down": 75,
+    "left": 42,
+    "right": 41,
+    "up": 22
+   },
+   "side": 0,
+   "socket": "c0.flower.0"
+  },
+  {
+   "at": [
+    42,
+    22
+   ],
+   "attach": "seedHead",
+   "layout": "bunched",
+   "room": {
+    "down": 75,
+    "left": 42,
+    "right": 41,
+    "up": 22
+   },
+   "side": 0,
+   "socket": "c0.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    41,
+    59
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 38,
+    "left": 41,
+    "right": 42,
+    "up": 59
+   },
+   "side": -1,
+   "socket": "c0.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    45,
+    49
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 48,
+    "left": 45,
+    "right": 38,
+    "up": 49
+   },
+   "side": 1,
+   "socket": "c0.leaf.1"
+  },
+  {
+   "at": [
+    43,
+    43
+   ],
+   "attach": "stemNode",
+   "layout": "bunched",
+   "room": {
+    "down": 54,
+    "left": 43,
+    "right": 40,
+    "up": 43
+   },
+   "side": 0,
+   "socket": "c0.collar.0"
+  },
+  {
+   "at": [
+    52,
+    17
+   ],
+   "attach": "drift",
+   "layout": "bunched",
+   "room": {
+    "down": 80,
+    "left": 52,
+    "right": 31,
+    "up": 17
+   },
+   "side": 0,
+   "socket": "c0.drift.0"
+  },
+  {
+   "at": [
+    57,
+    23
+   ],
+   "attach": "drift",
+   "layout": "bunched",
+   "room": {
+    "down": 74,
+    "left": 57,
+    "right": 26,
+    "up": 23
+   },
+   "side": 0,
+   "socket": "c0.drift.1"
+  },
+  {
+   "at": [
+    31,
+    19
+   ],
+   "attach": "drift",
+   "layout": "bunched",
+   "room": {
+    "down": 78,
+    "left": 31,
+    "right": 52,
+    "up": 19
+   },
+   "side": 0,
+   "socket": "c0.drift.2"
+  },
+  {
+   "at": [
+    37,
+    29
+   ],
+   "attach": "apex",
+   "layout": "bunched",
+   "room": {
+    "down": 68,
+    "left": 37,
+    "right": 46,
+    "up": 29
+   },
+   "side": 0,
+   "socket": "c1.apex"
+  },
+  {
+   "at": [
+    37,
+    29
+   ],
+   "attach": "flower",
+   "layout": "bunched",
+   "room": {
+    "down": 68,
+    "left": 37,
+    "right": 46,
+    "up": 29
+   },
+   "side": 0,
+   "socket": "c1.flower.0"
+  },
+  {
+   "at": [
+    37,
+    29
+   ],
+   "attach": "seedHead",
+   "layout": "bunched",
+   "room": {
+    "down": 68,
+    "left": 37,
+    "right": 46,
+    "up": 29
+   },
+   "side": 0,
+   "socket": "c1.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    38,
+    60
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 37,
+    "left": 38,
+    "right": 45,
+    "up": 60
+   },
+   "side": -1,
+   "socket": "c1.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    40,
+    52
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 45,
+    "left": 40,
+    "right": 43,
+    "up": 52
+   },
+   "side": 1,
+   "socket": "c1.leaf.1"
+  },
+  {
+   "at": [
+    38,
+    47
+   ],
+   "attach": "stemNode",
+   "layout": "bunched",
+   "room": {
+    "down": 50,
+    "left": 38,
+    "right": 45,
+    "up": 47
+   },
+   "side": 0,
+   "socket": "c1.collar.0"
+  },
+  {
+   "at": [
+    30,
+    33
+   ],
+   "attach": "flower",
+   "layout": "bunched",
+   "room": {
+    "down": 64,
+    "left": 30,
+    "right": 53,
+    "up": 33
+   },
+   "side": -1,
+   "socket": "c1.flower.1"
+  },
+  {
+   "at": [
+    31,
+    53
+   ],
+   "attach": "pod",
+   "layout": "bunched",
+   "room": {
+    "down": 44,
+    "left": 31,
+    "right": 52,
+    "up": 53
+   },
+   "side": -1,
+   "socket": "c1.pod.0"
+  },
+  {
+   "at": [
+    47,
+    27
+   ],
+   "attach": "apex",
+   "layout": "bunched",
+   "room": {
+    "down": 70,
+    "left": 47,
+    "right": 36,
+    "up": 27
+   },
+   "side": 0,
+   "socket": "c2.apex"
+  },
+  {
+   "at": [
+    47,
+    27
+   ],
+   "attach": "flower",
+   "layout": "bunched",
+   "room": {
+    "down": 70,
+    "left": 47,
+    "right": 36,
+    "up": 27
+   },
+   "side": 0,
+   "socket": "c2.flower.0"
+  },
+  {
+   "at": [
+    47,
+    27
+   ],
+   "attach": "seedHead",
+   "layout": "bunched",
+   "room": {
+    "down": 70,
+    "left": 47,
+    "right": 36,
+    "up": 27
+   },
+   "side": 0,
+   "socket": "c2.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    44,
+    60
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 37,
+    "left": 44,
+    "right": 39,
+    "up": 60
+   },
+   "side": -1,
+   "socket": "c2.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    48,
+    51
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 46,
+    "left": 48,
+    "right": 35,
+    "up": 51
+   },
+   "side": 1,
+   "socket": "c2.leaf.1"
+  },
+  {
+   "at": [
+    46,
+    46
+   ],
+   "attach": "stemNode",
+   "layout": "bunched",
+   "room": {
+    "down": 51,
+    "left": 46,
+    "right": 37,
+    "up": 46
+   },
+   "side": 0,
+   "socket": "c2.collar.0"
+  },
+  {
+   "at": [
+    53,
+    52
+   ],
+   "attach": "pod",
+   "layout": "bunched",
+   "room": {
+    "down": 45,
+    "left": 53,
+    "right": 30,
+    "up": 52
+   },
+   "side": 1,
+   "socket": "c2.pod.0"
+  },
+  {
+   "at": [
+    32,
+    37
+   ],
+   "attach": "apex",
+   "layout": "bunched",
+   "room": {
+    "down": 60,
+    "left": 32,
+    "right": 51,
+    "up": 37
+   },
+   "side": 0,
+   "socket": "c3.apex"
+  },
+  {
+   "at": [
+    32,
+    37
+   ],
+   "attach": "flower",
+   "layout": "bunched",
+   "room": {
+    "down": 60,
+    "left": 32,
+    "right": 51,
+    "up": 37
+   },
+   "side": 0,
+   "socket": "c3.flower.0"
+  },
+  {
+   "at": [
+    32,
+    37
+   ],
+   "attach": "seedHead",
+   "layout": "bunched",
+   "room": {
+    "down": 60,
+    "left": 32,
+    "right": 51,
+    "up": 37
+   },
+   "side": 0,
+   "socket": "c3.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    33,
+    62
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 35,
+    "left": 33,
+    "right": 50,
+    "up": 62
+   },
+   "side": -1,
+   "socket": "c3.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    36,
+    55
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 42,
+    "left": 36,
+    "right": 47,
+    "up": 55
+   },
+   "side": 1,
+   "socket": "c3.leaf.1"
+  },
+  {
+   "at": [
+    33,
+    51
+   ],
+   "attach": "stemNode",
+   "layout": "bunched",
+   "room": {
+    "down": 46,
+    "left": 33,
+    "right": 50,
+    "up": 51
+   },
+   "side": 0,
+   "socket": "c3.collar.0"
+  },
+  {
+   "at": [
+    52,
+    35
+   ],
+   "attach": "apex",
+   "layout": "bunched",
+   "room": {
+    "down": 62,
+    "left": 52,
+    "right": 31,
+    "up": 35
+   },
+   "side": 0,
+   "socket": "c4.apex"
+  },
+  {
+   "at": [
+    52,
+    35
+   ],
+   "attach": "flower",
+   "layout": "bunched",
+   "room": {
+    "down": 62,
+    "left": 52,
+    "right": 31,
+    "up": 35
+   },
+   "side": 0,
+   "socket": "c4.flower.0"
+  },
+  {
+   "at": [
+    52,
+    35
+   ],
+   "attach": "seedHead",
+   "layout": "bunched",
+   "room": {
+    "down": 62,
+    "left": 52,
+    "right": 31,
+    "up": 35
+   },
+   "side": 0,
+   "socket": "c4.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    49,
+    62
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 35,
+    "left": 49,
+    "right": 34,
+    "up": 62
+   },
+   "side": -1,
+   "socket": "c4.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    52,
+    55
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 42,
+    "left": 52,
+    "right": 31,
+    "up": 55
+   },
+   "side": 1,
+   "socket": "c4.leaf.1"
+  },
+  {
+   "at": [
+    51,
+    50
+   ],
+   "attach": "stemNode",
+   "layout": "bunched",
+   "room": {
+    "down": 47,
+    "left": 51,
+    "right": 32,
+    "up": 50
+   },
+   "side": 0,
+   "socket": "c4.collar.0"
+  },
+  {
+   "at": [
+    42,
+    39
+   ],
+   "attach": "apex",
+   "layout": "bunched",
+   "room": {
+    "down": 58,
+    "left": 42,
+    "right": 41,
+    "up": 39
+   },
+   "side": 0,
+   "socket": "s0.apex"
+  },
+  {
+   "at": [
+    42,
+    39
+   ],
+   "attach": "flower",
+   "layout": "bunched",
+   "room": {
+    "down": 58,
+    "left": 42,
+    "right": 41,
+    "up": 39
+   },
+   "side": 0,
+   "socket": "s0.flower.0"
+  },
+  {
+   "at": [
+    42,
+    39
+   ],
+   "attach": "seedHead",
+   "layout": "bunched",
+   "room": {
+    "down": 58,
+    "left": 42,
+    "right": 41,
+    "up": 39
+   },
+   "side": 0,
+   "socket": "s0.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    41,
+    62
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 35,
+    "left": 41,
+    "right": 42,
+    "up": 62
+   },
+   "side": -1,
+   "socket": "s0.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    45,
+    56
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 41,
+    "left": 45,
+    "right": 38,
+    "up": 56
+   },
+   "side": 1,
+   "socket": "s0.leaf.1"
+  },
+  {
+   "at": [
+    43,
+    53
+   ],
+   "attach": "stemNode",
+   "layout": "bunched",
+   "room": {
+    "down": 44,
+    "left": 43,
+    "right": 40,
+    "up": 53
+   },
+   "side": 0,
+   "socket": "s0.collar.0"
+  },
+  {
+   "at": [
+    52,
+    34
+   ],
+   "attach": "drift",
+   "layout": "bunched",
+   "room": {
+    "down": 63,
+    "left": 52,
+    "right": 31,
+    "up": 34
+   },
+   "side": 0,
+   "socket": "s0.drift.0"
+  },
+  {
+   "at": [
+    57,
+    40
+   ],
+   "attach": "drift",
+   "layout": "bunched",
+   "room": {
+    "down": 57,
+    "left": 57,
+    "right": 26,
+    "up": 40
+   },
+   "side": 0,
+   "socket": "s0.drift.1"
+  },
+  {
+   "at": [
+    31,
+    36
+   ],
+   "attach": "drift",
+   "layout": "bunched",
+   "room": {
+    "down": 61,
+    "left": 31,
+    "right": 52,
+    "up": 36
+   },
+   "side": 0,
+   "socket": "s0.drift.2"
+  },
+  {
+   "at": [
+    37,
+    44
+   ],
+   "attach": "apex",
+   "layout": "bunched",
+   "room": {
+    "down": 53,
+    "left": 37,
+    "right": 46,
+    "up": 44
+   },
+   "side": 0,
+   "socket": "s1.apex"
+  },
+  {
+   "at": [
+    37,
+    44
+   ],
+   "attach": "flower",
+   "layout": "bunched",
+   "room": {
+    "down": 53,
+    "left": 37,
+    "right": 46,
+    "up": 44
+   },
+   "side": 0,
+   "socket": "s1.flower.0"
+  },
+  {
+   "at": [
+    37,
+    44
+   ],
+   "attach": "seedHead",
+   "layout": "bunched",
+   "room": {
+    "down": 53,
+    "left": 37,
+    "right": 46,
+    "up": 44
+   },
+   "side": 0,
+   "socket": "s1.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    38,
+    63
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 34,
+    "left": 38,
+    "right": 45,
+    "up": 63
+   },
+   "side": -1,
+   "socket": "s1.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    40,
+    58
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 39,
+    "left": 40,
+    "right": 43,
+    "up": 58
+   },
+   "side": 1,
+   "socket": "s1.leaf.1"
+  },
+  {
+   "at": [
+    38,
+    55
+   ],
+   "attach": "stemNode",
+   "layout": "bunched",
+   "room": {
+    "down": 42,
+    "left": 38,
+    "right": 45,
+    "up": 55
+   },
+   "side": 0,
+   "socket": "s1.collar.0"
+  },
+  {
+   "at": [
+    30,
+    45
+   ],
+   "attach": "flower",
+   "layout": "bunched",
+   "room": {
+    "down": 52,
+    "left": 30,
+    "right": 53,
+    "up": 45
+   },
+   "side": -1,
+   "socket": "s1.flower.1"
+  },
+  {
+   "at": [
+    31,
+    59
+   ],
+   "attach": "pod",
+   "layout": "bunched",
+   "room": {
+    "down": 38,
+    "left": 31,
+    "right": 52,
+    "up": 59
+   },
+   "side": -1,
+   "socket": "s1.pod.0"
+  },
+  {
+   "at": [
+    47,
+    43
+   ],
+   "attach": "apex",
+   "layout": "bunched",
+   "room": {
+    "down": 54,
+    "left": 47,
+    "right": 36,
+    "up": 43
+   },
+   "side": 0,
+   "socket": "s2.apex"
+  },
+  {
+   "at": [
+    47,
+    43
+   ],
+   "attach": "flower",
+   "layout": "bunched",
+   "room": {
+    "down": 54,
+    "left": 47,
+    "right": 36,
+    "up": 43
+   },
+   "side": 0,
+   "socket": "s2.flower.0"
+  },
+  {
+   "at": [
+    47,
+    43
+   ],
+   "attach": "seedHead",
+   "layout": "bunched",
+   "room": {
+    "down": 54,
+    "left": 47,
+    "right": 36,
+    "up": 43
+   },
+   "side": 0,
+   "socket": "s2.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    44,
+    63
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 34,
+    "left": 44,
+    "right": 39,
+    "up": 63
+   },
+   "side": -1,
+   "socket": "s2.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    48,
+    58
+   ],
+   "attach": "leafSocket",
+   "layout": "bunched",
+   "room": {
+    "down": 39,
+    "left": 48,
+    "right": 35,
+    "up": 58
+   },
+   "side": 1,
+   "socket": "s2.leaf.1"
+  },
+  {
+   "at": [
+    46,
+    55
+   ],
+   "attach": "stemNode",
+   "layout": "bunched",
+   "room": {
+    "down": 42,
+    "left": 46,
+    "right": 37,
+    "up": 55
+   },
+   "side": 0,
+   "socket": "s2.collar.0"
+  },
+  {
+   "at": [
+    53,
+    59
+   ],
+   "attach": "pod",
+   "layout": "bunched",
+   "room": {
+    "down": 38,
+    "left": 53,
+    "right": 30,
+    "up": 59
+   },
+   "side": 1,
+   "socket": "s2.pod.0"
+  },
+  {
+   "at": [
+    42,
+    24
+   ],
+   "attach": "apex",
+   "layout": "tight",
+   "room": {
+    "down": 73,
+    "left": 42,
+    "right": 41,
+    "up": 24
+   },
+   "side": 0,
+   "socket": "c0.apex"
+  },
+  {
+   "at": [
+    42,
+    24
+   ],
+   "attach": "flower",
+   "layout": "tight",
+   "room": {
+    "down": 73,
+    "left": 42,
+    "right": 41,
+    "up": 24
+   },
+   "side": 0,
+   "socket": "c0.flower.0"
+  },
+  {
+   "at": [
+    42,
+    24
+   ],
+   "attach": "seedHead",
+   "layout": "tight",
+   "room": {
+    "down": 73,
+    "left": 42,
+    "right": 41,
+    "up": 24
+   },
+   "side": 0,
+   "socket": "c0.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    41,
+    59
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 38,
+    "left": 41,
+    "right": 42,
+    "up": 59
+   },
+   "side": -1,
+   "socket": "c0.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    45,
+    50
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 47,
+    "left": 45,
+    "right": 38,
+    "up": 50
+   },
+   "side": 1,
+   "socket": "c0.leaf.1"
+  },
+  {
+   "at": [
+    43,
+    44
+   ],
+   "attach": "stemNode",
+   "layout": "tight",
+   "room": {
+    "down": 53,
+    "left": 43,
+    "right": 40,
+    "up": 44
+   },
+   "side": 0,
+   "socket": "c0.collar.0"
+  },
+  {
+   "at": [
+    52,
+    19
+   ],
+   "attach": "drift",
+   "layout": "tight",
+   "room": {
+    "down": 78,
+    "left": 52,
+    "right": 31,
+    "up": 19
+   },
+   "side": 0,
+   "socket": "c0.drift.0"
+  },
+  {
+   "at": [
+    57,
+    25
+   ],
+   "attach": "drift",
+   "layout": "tight",
+   "room": {
+    "down": 72,
+    "left": 57,
+    "right": 26,
+    "up": 25
+   },
+   "side": 0,
+   "socket": "c0.drift.1"
+  },
+  {
+   "at": [
+    31,
+    21
+   ],
+   "attach": "drift",
+   "layout": "tight",
+   "room": {
+    "down": 76,
+    "left": 31,
+    "right": 52,
+    "up": 21
+   },
+   "side": 0,
+   "socket": "c0.drift.2"
+  },
+  {
+   "at": [
+    39,
+    31
+   ],
+   "attach": "apex",
+   "layout": "tight",
+   "room": {
+    "down": 66,
+    "left": 39,
+    "right": 44,
+    "up": 31
+   },
+   "side": 0,
+   "socket": "c1.apex"
+  },
+  {
+   "at": [
+    39,
+    31
+   ],
+   "attach": "flower",
+   "layout": "tight",
+   "room": {
+    "down": 66,
+    "left": 39,
+    "right": 44,
+    "up": 31
+   },
+   "side": 0,
+   "socket": "c1.flower.0"
+  },
+  {
+   "at": [
+    39,
+    31
+   ],
+   "attach": "seedHead",
+   "layout": "tight",
+   "room": {
+    "down": 66,
+    "left": 39,
+    "right": 44,
+    "up": 31
+   },
+   "side": 0,
+   "socket": "c1.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    39,
+    61
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 36,
+    "left": 39,
+    "right": 44,
+    "up": 61
+   },
+   "side": -1,
+   "socket": "c1.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    42,
+    53
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 44,
+    "left": 42,
+    "right": 41,
+    "up": 53
+   },
+   "side": 1,
+   "socket": "c1.leaf.1"
+  },
+  {
+   "at": [
+    39,
+    48
+   ],
+   "attach": "stemNode",
+   "layout": "tight",
+   "room": {
+    "down": 49,
+    "left": 39,
+    "right": 44,
+    "up": 48
+   },
+   "side": 0,
+   "socket": "c1.collar.0"
+  },
+  {
+   "at": [
+    32,
+    34
+   ],
+   "attach": "flower",
+   "layout": "tight",
+   "room": {
+    "down": 63,
+    "left": 32,
+    "right": 51,
+    "up": 34
+   },
+   "side": -1,
+   "socket": "c1.flower.1"
+  },
+  {
+   "at": [
+    33,
+    54
+   ],
+   "attach": "pod",
+   "layout": "tight",
+   "room": {
+    "down": 43,
+    "left": 33,
+    "right": 50,
+    "up": 54
+   },
+   "side": -1,
+   "socket": "c1.pod.0"
+  },
+  {
+   "at": [
+    45,
+    29
+   ],
+   "attach": "apex",
+   "layout": "tight",
+   "room": {
+    "down": 68,
+    "left": 45,
+    "right": 38,
+    "up": 29
+   },
+   "side": 0,
+   "socket": "c2.apex"
+  },
+  {
+   "at": [
+    45,
+    29
+   ],
+   "attach": "flower",
+   "layout": "tight",
+   "room": {
+    "down": 68,
+    "left": 45,
+    "right": 38,
+    "up": 29
+   },
+   "side": 0,
+   "socket": "c2.flower.0"
+  },
+  {
+   "at": [
+    45,
+    29
+   ],
+   "attach": "seedHead",
+   "layout": "tight",
+   "room": {
+    "down": 68,
+    "left": 45,
+    "right": 38,
+    "up": 29
+   },
+   "side": 0,
+   "socket": "c2.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    43,
+    60
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 37,
+    "left": 43,
+    "right": 40,
+    "up": 60
+   },
+   "side": -1,
+   "socket": "c2.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    46,
+    52
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 45,
+    "left": 46,
+    "right": 37,
+    "up": 52
+   },
+   "side": 1,
+   "socket": "c2.leaf.1"
+  },
+  {
+   "at": [
+    45,
+    47
+   ],
+   "attach": "stemNode",
+   "layout": "tight",
+   "room": {
+    "down": 50,
+    "left": 45,
+    "right": 38,
+    "up": 47
+   },
+   "side": 0,
+   "socket": "c2.collar.0"
+  },
+  {
+   "at": [
+    51,
+    53
+   ],
+   "attach": "pod",
+   "layout": "tight",
+   "room": {
+    "down": 44,
+    "left": 51,
+    "right": 32,
+    "up": 53
+   },
+   "side": 1,
+   "socket": "c2.pod.0"
+  },
+  {
+   "at": [
+    37,
+    39
+   ],
+   "attach": "apex",
+   "layout": "tight",
+   "room": {
+    "down": 58,
+    "left": 37,
+    "right": 46,
+    "up": 39
+   },
+   "side": 0,
+   "socket": "c3.apex"
+  },
+  {
+   "at": [
+    37,
+    39
+   ],
+   "attach": "flower",
+   "layout": "tight",
+   "room": {
+    "down": 58,
+    "left": 37,
+    "right": 46,
+    "up": 39
+   },
+   "side": 0,
+   "socket": "c3.flower.0"
+  },
+  {
+   "at": [
+    37,
+    39
+   ],
+   "attach": "seedHead",
+   "layout": "tight",
+   "room": {
+    "down": 58,
+    "left": 37,
+    "right": 46,
+    "up": 39
+   },
+   "side": 0,
+   "socket": "c3.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    37,
+    62
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 35,
+    "left": 37,
+    "right": 46,
+    "up": 62
+   },
+   "side": -1,
+   "socket": "c3.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    40,
+    56
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 41,
+    "left": 40,
+    "right": 43,
+    "up": 56
+   },
+   "side": 1,
+   "socket": "c3.leaf.1"
+  },
+  {
+   "at": [
+    38,
+    53
+   ],
+   "attach": "stemNode",
+   "layout": "tight",
+   "room": {
+    "down": 44,
+    "left": 38,
+    "right": 45,
+    "up": 53
+   },
+   "side": 0,
+   "socket": "c3.collar.0"
+  },
+  {
+   "at": [
+    47,
+    37
+   ],
+   "attach": "apex",
+   "layout": "tight",
+   "room": {
+    "down": 60,
+    "left": 47,
+    "right": 36,
+    "up": 37
+   },
+   "side": 0,
+   "socket": "c4.apex"
+  },
+  {
+   "at": [
+    47,
+    37
+   ],
+   "attach": "flower",
+   "layout": "tight",
+   "room": {
+    "down": 60,
+    "left": 47,
+    "right": 36,
+    "up": 37
+   },
+   "side": 0,
+   "socket": "c4.flower.0"
+  },
+  {
+   "at": [
+    47,
+    37
+   ],
+   "attach": "seedHead",
+   "layout": "tight",
+   "room": {
+    "down": 60,
+    "left": 47,
+    "right": 36,
+    "up": 37
+   },
+   "side": 0,
+   "socket": "c4.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    45,
+    62
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 35,
+    "left": 45,
+    "right": 38,
+    "up": 62
+   },
+   "side": -1,
+   "socket": "c4.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    48,
+    55
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 42,
+    "left": 48,
+    "right": 35,
+    "up": 55
+   },
+   "side": 1,
+   "socket": "c4.leaf.1"
+  },
+  {
+   "at": [
+    47,
+    51
+   ],
+   "attach": "stemNode",
+   "layout": "tight",
+   "room": {
+    "down": 46,
+    "left": 47,
+    "right": 36,
+    "up": 51
+   },
+   "side": 0,
+   "socket": "c4.collar.0"
+  },
+  {
+   "at": [
+    42,
+    41
+   ],
+   "attach": "apex",
+   "layout": "tight",
+   "room": {
+    "down": 56,
+    "left": 42,
+    "right": 41,
+    "up": 41
+   },
+   "side": 0,
+   "socket": "s0.apex"
+  },
+  {
+   "at": [
+    42,
+    41
+   ],
+   "attach": "flower",
+   "layout": "tight",
+   "room": {
+    "down": 56,
+    "left": 42,
+    "right": 41,
+    "up": 41
+   },
+   "side": 0,
+   "socket": "s0.flower.0"
+  },
+  {
+   "at": [
+    42,
+    41
+   ],
+   "attach": "seedHead",
+   "layout": "tight",
+   "room": {
+    "down": 56,
+    "left": 42,
+    "right": 41,
+    "up": 41
+   },
+   "side": 0,
+   "socket": "s0.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    41,
+    63
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 34,
+    "left": 41,
+    "right": 42,
+    "up": 63
+   },
+   "side": -1,
+   "socket": "s0.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    45,
+    57
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 40,
+    "left": 45,
+    "right": 38,
+    "up": 57
+   },
+   "side": 1,
+   "socket": "s0.leaf.1"
+  },
+  {
+   "at": [
+    43,
+    54
+   ],
+   "attach": "stemNode",
+   "layout": "tight",
+   "room": {
+    "down": 43,
+    "left": 43,
+    "right": 40,
+    "up": 54
+   },
+   "side": 0,
+   "socket": "s0.collar.0"
+  },
+  {
+   "at": [
+    52,
+    36
+   ],
+   "attach": "drift",
+   "layout": "tight",
+   "room": {
+    "down": 61,
+    "left": 52,
+    "right": 31,
+    "up": 36
+   },
+   "side": 0,
+   "socket": "s0.drift.0"
+  },
+  {
+   "at": [
+    57,
+    42
+   ],
+   "attach": "drift",
+   "layout": "tight",
+   "room": {
+    "down": 55,
+    "left": 57,
+    "right": 26,
+    "up": 42
+   },
+   "side": 0,
+   "socket": "s0.drift.1"
+  },
+  {
+   "at": [
+    31,
+    38
+   ],
+   "attach": "drift",
+   "layout": "tight",
+   "room": {
+    "down": 59,
+    "left": 31,
+    "right": 52,
+    "up": 38
+   },
+   "side": 0,
+   "socket": "s0.drift.2"
+  },
+  {
+   "at": [
+    39,
+    46
+   ],
+   "attach": "apex",
+   "layout": "tight",
+   "room": {
+    "down": 51,
+    "left": 39,
+    "right": 44,
+    "up": 46
+   },
+   "side": 0,
+   "socket": "s1.apex"
+  },
+  {
+   "at": [
+    39,
+    46
+   ],
+   "attach": "flower",
+   "layout": "tight",
+   "room": {
+    "down": 51,
+    "left": 39,
+    "right": 44,
+    "up": 46
+   },
+   "side": 0,
+   "socket": "s1.flower.0"
+  },
+  {
+   "at": [
+    39,
+    46
+   ],
+   "attach": "seedHead",
+   "layout": "tight",
+   "room": {
+    "down": 51,
+    "left": 39,
+    "right": 44,
+    "up": 46
+   },
+   "side": 0,
+   "socket": "s1.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    39,
+    64
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 33,
+    "left": 39,
+    "right": 44,
+    "up": 64
+   },
+   "side": -1,
+   "socket": "s1.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    42,
+    59
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 38,
+    "left": 42,
+    "right": 41,
+    "up": 59
+   },
+   "side": 1,
+   "socket": "s1.leaf.1"
+  },
+  {
+   "at": [
+    39,
+    56
+   ],
+   "attach": "stemNode",
+   "layout": "tight",
+   "room": {
+    "down": 41,
+    "left": 39,
+    "right": 44,
+    "up": 56
+   },
+   "side": 0,
+   "socket": "s1.collar.0"
+  },
+  {
+   "at": [
+    32,
+    47
+   ],
+   "attach": "flower",
+   "layout": "tight",
+   "room": {
+    "down": 50,
+    "left": 32,
+    "right": 51,
+    "up": 47
+   },
+   "side": -1,
+   "socket": "s1.flower.1"
+  },
+  {
+   "at": [
+    33,
+    60
+   ],
+   "attach": "pod",
+   "layout": "tight",
+   "room": {
+    "down": 37,
+    "left": 33,
+    "right": 50,
+    "up": 60
+   },
+   "side": -1,
+   "socket": "s1.pod.0"
+  },
+  {
+   "at": [
+    45,
+    45
+   ],
+   "attach": "apex",
+   "layout": "tight",
+   "room": {
+    "down": 52,
+    "left": 45,
+    "right": 38,
+    "up": 45
+   },
+   "side": 0,
+   "socket": "s2.apex"
+  },
+  {
+   "at": [
+    45,
+    45
+   ],
+   "attach": "flower",
+   "layout": "tight",
+   "room": {
+    "down": 52,
+    "left": 45,
+    "right": 38,
+    "up": 45
+   },
+   "side": 0,
+   "socket": "s2.flower.0"
+  },
+  {
+   "at": [
+    45,
+    45
+   ],
+   "attach": "seedHead",
+   "layout": "tight",
+   "room": {
+    "down": 52,
+    "left": 45,
+    "right": 38,
+    "up": 45
+   },
+   "side": 0,
+   "socket": "s2.seedHead.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    43,
+    64
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 33,
+    "left": 43,
+    "right": 40,
+    "up": 64
+   },
+   "side": -1,
+   "socket": "s2.leaf.0"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    46,
+    59
+   ],
+   "attach": "leafSocket",
+   "layout": "tight",
+   "room": {
+    "down": 38,
+    "left": 46,
+    "right": 37,
+    "up": 59
+   },
+   "side": 1,
+   "socket": "s2.leaf.1"
+  },
+  {
+   "at": [
+    44,
+    56
+   ],
+   "attach": "stemNode",
+   "layout": "tight",
+   "room": {
+    "down": 41,
+    "left": 44,
+    "right": 39,
+    "up": 56
+   },
+   "side": 0,
+   "socket": "s2.collar.0"
+  },
+  {
+   "at": [
+    51,
+    60
+   ],
+   "attach": "pod",
+   "layout": "tight",
+   "room": {
+    "down": 37,
+    "left": 51,
+    "right": 32,
+    "up": 60
+   },
+   "side": 1,
+   "socket": "s2.pod.0"
+  }
+ ],
+ "components": [
+  {
+   "id": "leaf.base",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "low",
+    "mid",
+    "high"
+   ],
+   "trait": null,
+   "tier": 0,
+   "maxSize": [
+    8,
+    14
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 3,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "leaf.drought.1",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "low",
+    "mid",
+    "high"
+   ],
+   "trait": "drought",
+   "tier": 1,
+   "maxSize": [
+    8,
+    13
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 3,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "leaf.drought.2",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "low",
+    "mid",
+    "high"
+   ],
+   "trait": "drought",
+   "tier": 2,
+   "maxSize": [
+    8,
+    12
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 3,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "leaf.drought.3",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "low",
+    "mid",
+    "high"
+   ],
+   "trait": "drought",
+   "tier": 3,
+   "maxSize": [
+    7,
+    11
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 3,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "leaf.flood.1",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "low",
+    "mid",
+    "high"
+   ],
+   "trait": "flood",
+   "tier": 1,
+   "maxSize": [
+    9,
+    15
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 3,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "leaf.flood.2",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "low",
+    "mid",
+    "high"
+   ],
+   "trait": "flood",
+   "tier": 2,
+   "maxSize": [
+    10,
+    16
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 3,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "leaf.flood.3",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "low",
+    "mid",
+    "high"
+   ],
+   "trait": "flood",
+   "tier": 3,
+   "maxSize": [
+    10,
+    16
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 3,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "leaf.base.heat",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "mid",
+    "high"
+   ],
+   "trait": "heat",
+   "tier": 3,
+   "variantOf": "leaf.base",
+   "maxSize": [
+    8,
+    14
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 2,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "leaf.drought.1.heat",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "mid",
+    "high"
+   ],
+   "trait": "heat",
+   "tier": 3,
+   "variantOf": "leaf.drought.1",
+   "maxSize": [
+    8,
+    13
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 2,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "leaf.drought.2.heat",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "mid",
+    "high"
+   ],
+   "trait": "heat",
+   "tier": 3,
+   "variantOf": "leaf.drought.2",
+   "maxSize": [
+    8,
+    12
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 2,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "leaf.drought.3.heat",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "mid",
+    "high"
+   ],
+   "trait": "heat",
+   "tier": 3,
+   "variantOf": "leaf.drought.3",
+   "maxSize": [
+    7,
+    11
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 2,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "leaf.flood.1.heat",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "mid",
+    "high"
+   ],
+   "trait": "heat",
+   "tier": 3,
+   "variantOf": "leaf.flood.1",
+   "maxSize": [
+    9,
+    15
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 2,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "leaf.flood.2.heat",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "mid",
+    "high"
+   ],
+   "trait": "heat",
+   "tier": 3,
+   "variantOf": "leaf.flood.2",
+   "maxSize": [
+    10,
+    16
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 2,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "leaf.flood.3.heat",
+   "family": "leaf",
+   "category": "structural",
+   "attach": "leafSocket",
+   "layer": "leaves",
+   "orientation": "right",
+   "mirror": true,
+   "angles": [
+    "mid",
+    "high"
+   ],
+   "trait": "heat",
+   "tier": 3,
+   "variantOf": "leaf.flood.3",
+   "maxSize": [
+    10,
+    16
+   ],
+   "points": [
+    "tip",
+    "margin"
+   ],
+   "masks": [
+    "pigment",
+    "wax",
+    "toothed"
+   ],
+   "anchor": "the sheath base: the pixel touching the culm's edge (drawn facing right)",
+   "drawings": 2,
+   "tightestRoom": {
+    "back": 29,
+    "out": 24,
+    "up": 47,
+    "down": 33
+   }
+  },
+  {
+   "id": "root.storage.2",
+   "family": "root",
+   "category": "structural",
+   "attach": "primaryRoot",
+   "layer": "rootStorage",
+   "orientation": "down",
+   "mirror": false,
+   "angles": null,
+   "trait": "drought",
+   "tier": 2,
+   "maxSize": [
+    12,
+    8
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "its top-centre pixel (hangs from the root socket)",
+   "drawings": 1,
+   "tightestRoom": {
+    "left": 42,
+    "right": 41,
+    "up": 73,
+    "down": 24
+   }
+  },
+  {
+   "id": "root.storage.3",
+   "family": "root",
+   "category": "structural",
+   "attach": "primaryRoot",
+   "layer": "rootStorage",
+   "orientation": "down",
+   "mirror": false,
+   "angles": null,
+   "trait": "drought",
+   "tier": 3,
+   "maxSize": [
+    16,
+    10
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "its top-centre pixel (hangs from the root socket)",
+   "drawings": 1,
+   "tightestRoom": {
+    "left": 42,
+    "right": 41,
+    "up": 73,
+    "down": 24
+   }
+  },
+  {
+   "id": "root.aerial.1",
+   "family": "root",
+   "category": "structural",
+   "attach": "aerialRoot",
+   "layer": "aerialRoots",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "flood",
+   "tier": 1,
+   "maxSize": [
+    5,
+    8
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "its BOTTOM pixel, buried one row into the soil (row 69); it rises upward",
+   "drawings": 1,
+   "tightestRoom": {
+    "left": 19,
+    "right": 17,
+    "up": 69,
+    "down": 28
+   }
+  },
+  {
+   "id": "root.aerial.2",
+   "family": "root",
+   "category": "structural",
+   "attach": "aerialRoot",
+   "layer": "aerialRoots",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "flood",
+   "tier": 2,
+   "maxSize": [
+    5,
+    11
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "its BOTTOM pixel, buried one row into the soil (row 69); it rises upward",
+   "drawings": 1,
+   "tightestRoom": {
+    "left": 19,
+    "right": 17,
+    "up": 69,
+    "down": 28
+   }
+  },
+  {
+   "id": "root.aerial.3",
+   "family": "root",
+   "category": "structural",
+   "attach": "aerialRoot",
+   "layer": "aerialRoots",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "flood",
+   "tier": 3,
+   "maxSize": [
+    7,
+    15
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "its BOTTOM pixel, buried one row into the soil (row 69); it rises upward",
+   "drawings": 1,
+   "tightestRoom": {
+    "left": 19,
+    "right": 17,
+    "up": 69,
+    "down": 28
+   }
+  },
+  {
+   "id": "frost.hair.1",
+   "family": "frost",
+   "category": "surface",
+   "attach": "leafPoint",
+   "layer": "surface",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "cold",
+   "tier": 1,
+   "maxSize": [
+    3,
+    4
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "the pixel that sits ON the leaf's tip / margin point (usually bottom-centre)",
+   "drawings": 1,
+   "tightestRoom": null
+  },
+  {
+   "id": "frost.hair.2",
+   "family": "frost",
+   "category": "surface",
+   "attach": "leafPoint",
+   "layer": "surface",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "cold",
+   "tier": 2,
+   "maxSize": [
+    5,
+    5
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "the pixel that sits ON the leaf's tip / margin point (usually bottom-centre)",
+   "drawings": 1,
+   "tightestRoom": null
+  },
+  {
+   "id": "frost.hair.3",
+   "family": "frost",
+   "category": "surface",
+   "attach": "leafPoint",
+   "layer": "surface",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "cold",
+   "tier": 3,
+   "maxSize": [
+    7,
+    6
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "the pixel that sits ON the leaf's tip / margin point (usually bottom-centre)",
+   "drawings": 1,
+   "tightestRoom": null
+  },
+  {
+   "id": "frost.collar.2",
+   "family": "frost",
+   "category": "surface",
+   "attach": "stemNode",
+   "layer": "surface",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "cold",
+   "tier": 2,
+   "maxSize": [
+    7,
+    4
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "its centre pixel (on the trunk / culm / rosette-rim point)",
+   "drawings": 1,
+   "tightestRoom": {
+    "left": 26,
+    "right": 25,
+    "up": 41,
+    "down": 41
+   }
+  },
+  {
+   "id": "frost.collar.3",
+   "family": "frost",
+   "category": "surface",
+   "attach": "stemNode",
+   "layer": "surface",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "cold",
+   "tier": 3,
+   "maxSize": [
+    9,
+    5
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "its centre pixel (on the trunk / culm / rosette-rim point)",
+   "drawings": 1,
+   "tightestRoom": {
+    "left": 26,
+    "right": 25,
+    "up": 41,
+    "down": 41
+   }
+  },
+  {
+   "id": "salt.crystal",
+   "family": "salt",
+   "category": "surface",
+   "attach": "leafPoint",
+   "layer": "surface",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "salt",
+   "tier": 1,
+   "maxSize": [
+    7,
+    7
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "the pixel that sits ON the leaf's tip / margin point (usually bottom-centre)",
+   "drawings": 1,
+   "tightestRoom": null
+  },
+  {
+   "id": "salt.gland",
+   "family": "salt",
+   "category": "surface",
+   "attach": "leafPoint",
+   "layer": "surface",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "salt",
+   "tier": 1,
+   "maxSize": [
+    4,
+    4
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "the pixel that sits ON the leaf's tip / margin point (usually bottom-centre)",
+   "drawings": 1,
+   "tightestRoom": null
+  },
+  {
+   "id": "bud",
+   "family": "bud",
+   "category": "reproductive",
+   "attach": "apex",
+   "layer": "repro",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": null,
+   "tier": 0,
+   "maxSize": [
+    11,
+    9
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "the bottom pixel of its stalk (sits on the apex)",
+   "drawings": 1,
+   "tightestRoom": {
+    "left": 23,
+    "right": 22,
+    "up": 18,
+    "down": 51
+   }
+  },
+  {
+   "id": "flower",
+   "family": "flower",
+   "category": "reproductive",
+   "attach": "flower",
+   "layer": "repro",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "earlyMat",
+   "tier": 1,
+   "maxSize": [
+    15,
+    12
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "the bottom pixel of its stalk",
+   "drawings": 1,
+   "tightestRoom": {
+    "left": 23,
+    "right": 22,
+    "up": 18,
+    "down": 50
+   }
+  },
+  {
+   "id": "seedHead.small",
+   "family": "seedHead",
+   "category": "reproductive",
+   "attach": "seedHead",
+   "layer": "repro",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "seedOut",
+   "tier": 1,
+   "maxSize": [
+    11,
+    11
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "the bottom pixel of its stalk",
+   "drawings": 1,
+   "tightestRoom": {
+    "left": 23,
+    "right": 22,
+    "up": 18,
+    "down": 51
+   }
+  },
+  {
+   "id": "seedHead.large",
+   "family": "seedHead",
+   "category": "reproductive",
+   "attach": "seedHead",
+   "layer": "repro",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "seedOut",
+   "tier": 2,
+   "maxSize": [
+    16,
+    15
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "the bottom pixel of its stalk",
+   "drawings": 1,
+   "tightestRoom": {
+    "left": 23,
+    "right": 22,
+    "up": 18,
+    "down": 51
+   }
+  },
+  {
+   "id": "seed.drift",
+   "family": "seedHead",
+   "category": "reproductive",
+   "attach": "drift",
+   "layer": "drift",
+   "orientation": "up",
+   "mirror": false,
+   "angles": null,
+   "trait": "seedOut",
+   "tier": 2,
+   "maxSize": [
+    7,
+    7
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "the seed pixel",
+   "drawings": 1,
+   "tightestRoom": {
+    "left": 31,
+    "right": 26,
+    "up": 13,
+    "down": 55
+   }
+  },
+  {
+   "id": "pod",
+   "family": "pod",
+   "category": "reproductive",
+   "attach": "pod",
+   "layer": "repro",
+   "orientation": "down",
+   "mirror": false,
+   "angles": null,
+   "trait": "waterSeeds",
+   "tier": 1,
+   "maxSize": [
+    9,
+    11
+   ],
+   "points": null,
+   "masks": null,
+   "anchor": "its stalk's top pixel (the pod hangs below)",
+   "drawings": 1,
+   "tightestRoom": {
+    "left": 27,
+    "right": 26,
+    "up": 51,
+    "down": 37
+   }
+  }
+ ],
+ "drawings": 53,
+ "unmutated": {
+  "architecture": "open",
+  "axes": [
+   "c0",
+   "c1",
+   "c2"
+  ],
+  "leaf": "leaf.base",
+  "place": [
+   "bud @ c0.apex, c1.apex, c2.apex"
+  ]
+ },
+ "adaptations": [
+  {
+   "trait": "cold",
+   "tier": 1,
+   "architecture": "dense",
+   "axes": [
+    "c0",
+    "c1",
+    "c2"
+   ],
+   "leaf": "leaf.base",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [
+    "frost.hair.1 @ tip"
+   ],
+   "adds": [],
+   "treatments": [],
+   "components": [
+    "bud",
+    "frost.hair.1",
+    "leaf.base"
+   ],
+   "drawn": "the culms bunch (open → dense → bunched → tight); frost hairs on the sheaths and frost collars on every culm node (T2 / T3)"
+  },
+  {
+   "trait": "cold",
+   "tier": 2,
+   "architecture": "bunched",
+   "axes": [
+    "c0",
+    "c1",
+    "c2"
+   ],
+   "leaf": "leaf.base",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [
+    "frost.hair.2 @ tip+margin"
+   ],
+   "adds": [
+    "frost.collar.2 @ *.collar.*"
+   ],
+   "treatments": [],
+   "components": [
+    "bud",
+    "frost.collar.2",
+    "frost.hair.2",
+    "leaf.base"
+   ],
+   "drawn": "the culms bunch (open → dense → bunched → tight); frost hairs on the sheaths and frost collars on every culm node (T2 / T3)"
+  },
+  {
+   "trait": "cold",
+   "tier": 3,
+   "architecture": "tight",
+   "axes": [
+    "c0",
+    "c1",
+    "c2"
+   ],
+   "leaf": "leaf.base",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [
+    "frost.hair.3 @ tip+margin"
+   ],
+   "adds": [
+    "frost.collar.3 @ *.collar.*"
+   ],
+   "treatments": [],
+   "components": [
+    "bud",
+    "frost.collar.3",
+    "frost.hair.3",
+    "leaf.base"
+   ],
+   "drawn": "the culms bunch (open → dense → bunched → tight); frost hairs on the sheaths and frost collars on every culm node (T2 / T3)"
+  },
+  {
+   "trait": "heat",
+   "tier": 1,
+   "architecture": "open",
+   "axes": [
+    "c0",
+    "c1",
+    "c2"
+   ],
+   "leaf": "leaf.base",
+   "leafAngle": {
+    "shift": 1,
+    "cap": "mid"
+   },
+   "leafPoints": [],
+   "adds": [],
+   "treatments": [
+    {
+     "id": "wax",
+     "level": 1
+    }
+   ],
+   "components": [
+    "bud",
+    "leaf.base"
+   ],
+   "drawn": "lifted sheaths + wax; Heat T3 swaps in each structure's `.heat` drawing"
+  },
+  {
+   "trait": "heat",
+   "tier": 2,
+   "architecture": "open",
+   "axes": [
+    "c0",
+    "c1",
+    "c2"
+   ],
+   "leaf": "leaf.base",
+   "leafAngle": {
+    "shift": 1,
+    "cap": "high"
+   },
+   "leafPoints": [],
+   "adds": [],
+   "treatments": [
+    {
+     "id": "wax",
+     "level": 2
+    }
+   ],
+   "components": [
+    "bud",
+    "leaf.base"
+   ],
+   "drawn": "lifted sheaths + wax; Heat T3 swaps in each structure's `.heat` drawing"
+  },
+  {
+   "trait": "heat",
+   "tier": 3,
+   "architecture": "open",
+   "axes": [
+    "c0",
+    "c1",
+    "c2"
+   ],
+   "leaf": "leaf.base.heat",
+   "leafAngle": {
+    "shift": 1,
+    "cap": "high"
+   },
+   "leafPoints": [],
+   "adds": [],
+   "treatments": [
+    {
+     "id": "wax",
+     "level": 3
+    }
+   ],
+   "components": [
+    "bud",
+    "leaf.base.heat"
+   ],
+   "drawn": "lifted sheaths + wax; Heat T3 swaps in each structure's `.heat` drawing"
+  },
+  {
+   "trait": "drought",
+   "tier": 1,
+   "architecture": "open",
+   "axes": [
+    "s0",
+    "s1",
+    "s2"
+   ],
+   "leaf": "leaf.drought.1",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [],
+   "adds": [
+    "bud @ s0.apex, s1.apex, s2.apex"
+   ],
+   "treatments": [],
+   "components": [
+    "bud",
+    "leaf.drought.1"
+   ],
+   "drawn": "three SHORT culms (s0–s2) instead of the tall ones, hardened sheaths, a storage node on the rhizome (T2 / T3)"
+  },
+  {
+   "trait": "drought",
+   "tier": 2,
+   "architecture": "open",
+   "axes": [
+    "s0",
+    "s1",
+    "s2"
+   ],
+   "leaf": "leaf.drought.2",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [],
+   "adds": [
+    "root.storage.2 @ primaryRoot",
+    "bud @ s0.apex, s1.apex, s2.apex"
+   ],
+   "treatments": [],
+   "components": [
+    "bud",
+    "leaf.drought.2",
+    "root.storage.2"
+   ],
+   "drawn": "three SHORT culms (s0–s2) instead of the tall ones, hardened sheaths, a storage node on the rhizome (T2 / T3)"
+  },
+  {
+   "trait": "drought",
+   "tier": 3,
+   "architecture": "open",
+   "axes": [
+    "s0",
+    "s1",
+    "s2"
+   ],
+   "leaf": "leaf.drought.3",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [],
+   "adds": [
+    "root.storage.3 @ primaryRoot",
+    "bud @ s0.apex, s1.apex, s2.apex"
+   ],
+   "treatments": [],
+   "components": [
+    "bud",
+    "leaf.drought.3",
+    "root.storage.3"
+   ],
+   "drawn": "three SHORT culms (s0–s2) instead of the tall ones, hardened sheaths, a storage node on the rhizome (T2 / T3)"
+  },
+  {
+   "trait": "flood",
+   "tier": 1,
+   "architecture": "open",
+   "axes": [
+    "c0",
+    "c1",
+    "c2",
+    "c3"
+   ],
+   "leaf": "leaf.flood.1",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [],
+   "adds": [
+    "root.aerial.1 @ aerial.* (×2)",
+    "bud @ c0.apex, c1.apex, c2.apex, c3.apex"
+   ],
+   "treatments": [],
+   "components": [
+    "bud",
+    "leaf.flood.1",
+    "root.aerial.1"
+   ],
+   "drawn": "more culms (T1–T2: four, T3: five), aerenchyma-banded sheaths, a deeper rhizome, breathing roots (2 / 3 / 4)"
+  },
+  {
+   "trait": "flood",
+   "tier": 2,
+   "architecture": "open",
+   "axes": [
+    "c0",
+    "c1",
+    "c2",
+    "c3"
+   ],
+   "leaf": "leaf.flood.2",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [],
+   "adds": [
+    "root.aerial.2 @ aerial.* (×3)",
+    "bud @ c0.apex, c1.apex, c2.apex, c3.apex"
+   ],
+   "treatments": [],
+   "components": [
+    "bud",
+    "leaf.flood.2",
+    "root.aerial.2"
+   ],
+   "drawn": "more culms (T1–T2: four, T3: five), aerenchyma-banded sheaths, a deeper rhizome, breathing roots (2 / 3 / 4)"
+  },
+  {
+   "trait": "flood",
+   "tier": 3,
+   "architecture": "open",
+   "axes": [
+    "c0",
+    "c1",
+    "c2",
+    "c3",
+    "c4"
+   ],
+   "leaf": "leaf.flood.3",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [],
+   "adds": [
+    "root.aerial.3 @ aerial.* (×4)",
+    "bud @ c0.apex, c1.apex, c2.apex, c3.apex, c4.apex"
+   ],
+   "treatments": [],
+   "components": [
+    "bud",
+    "leaf.flood.3",
+    "root.aerial.3"
+   ],
+   "drawn": "more culms (T1–T2: four, T3: five), aerenchyma-banded sheaths, a deeper rhizome, breathing roots (2 / 3 / 4)"
+  },
+  {
+   "trait": "salt",
+   "tier": 1,
+   "architecture": "open",
+   "axes": [
+    "c0",
+    "c1",
+    "c2"
+   ],
+   "leaf": "leaf.base",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [
+    "salt.crystal @ tip",
+    "salt.gland @ margin:1"
+   ],
+   "adds": [],
+   "treatments": [
+    {
+     "id": "toothed",
+     "level": 1
+    }
+   ],
+   "components": [
+    "bud",
+    "leaf.base",
+    "salt.crystal",
+    "salt.gland"
+   ],
+   "drawn": "crystals on the sheath tips + glands (margin 1) + toothed notches"
+  },
+  {
+   "trait": "rad",
+   "tier": 1,
+   "architecture": "open",
+   "axes": [
+    "c0",
+    "c1",
+    "c2"
+   ],
+   "leaf": "leaf.base",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [],
+   "adds": [],
+   "treatments": [
+    {
+     "id": "pigment",
+     "level": 1
+    }
+   ],
+   "components": [
+    "bud",
+    "leaf.base"
+   ],
+   "drawn": "the pigment treatment (sheaths + culms)"
+  },
+  {
+   "trait": "seedOut",
+   "tier": 1,
+   "architecture": "open",
+   "axes": [
+    "c0",
+    "c1",
+    "c2"
+   ],
+   "leaf": "leaf.base",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [],
+   "adds": [
+    "seedHead.small @ c0.seedHead.0",
+    "bud @ c1.apex, c2.apex"
+   ],
+   "treatments": [],
+   "components": [
+    "bud",
+    "leaf.base",
+    "seedHead.small"
+   ],
+   "drawn": "umbels swell to seed heads: T1 the first culm; T2 a large head on the first, small heads on the next two, drifting seeds"
+  },
+  {
+   "trait": "seedOut",
+   "tier": 2,
+   "architecture": "open",
+   "axes": [
+    "c0",
+    "c1",
+    "c2"
+   ],
+   "leaf": "leaf.base",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [],
+   "adds": [
+    "seedHead.large @ c0.seedHead.0",
+    "seedHead.small @ c1.seedHead.0, c2.seedHead.0",
+    "seed.drift @ c0.drift.*"
+   ],
+   "treatments": [],
+   "components": [
+    "leaf.base",
+    "seed.drift",
+    "seedHead.large",
+    "seedHead.small"
+   ],
+   "drawn": "umbels swell to seed heads: T1 the first culm; T2 a large head on the first, small heads on the next two, drifting seeds"
+  },
+  {
+   "trait": "earlyMat",
+   "tier": 1,
+   "architecture": "open",
+   "axes": [
+    "c0",
+    "c1",
+    "c2"
+   ],
+   "leaf": "leaf.base",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [],
+   "adds": [
+    "flower @ c0.flower.0",
+    "bud @ c1.apex, c2.apex"
+   ],
+   "treatments": [],
+   "components": [
+    "bud",
+    "flower",
+    "leaf.base"
+   ],
+   "drawn": "a flowering umbel on the first free culm (else the second culm's flower branch)"
+  },
+  {
+   "trait": "waterSeeds",
+   "tier": 1,
+   "architecture": "open",
+   "axes": [
+    "c0",
+    "c1",
+    "c2"
+   ],
+   "leaf": "leaf.base",
+   "leafAngle": {
+    "shift": 0,
+    "cap": "high"
+   },
+   "leafPoints": [],
+   "adds": [
+    "pod @ c1.pod.0, c2.pod.0"
+   ],
+   "treatments": [],
+   "components": [
+    "bud",
+    "leaf.base",
+    "pod"
+   ],
+   "drawn": "two floating seed bundles on low stalks (culms 1 and 2)"
+  }
+ ],
+ "batches": [
+  {
+   "batch": "1 · base body",
+   "components": [
+    "leaf.base",
+    "bud"
+   ],
+   "drawings": 4
+  },
+  {
+   "batch": "2 · cold + heat",
+   "components": [
+    "leaf.base.heat",
+    "frost.hair.1",
+    "frost.hair.2",
+    "frost.hair.3",
+    "frost.collar.2",
+    "frost.collar.3"
+   ],
+   "drawings": 7
+  },
+  {
+   "batch": "3 · drought",
+   "components": [
+    "leaf.drought.1",
+    "leaf.drought.2",
+    "leaf.drought.3",
+    "leaf.drought.1.heat",
+    "leaf.drought.2.heat",
+    "leaf.drought.3.heat",
+    "root.storage.2",
+    "root.storage.3"
+   ],
+   "drawings": 17
+  },
+  {
+   "batch": "4 · flood",
+   "components": [
+    "leaf.flood.1",
+    "leaf.flood.2",
+    "leaf.flood.3",
+    "leaf.flood.1.heat",
+    "leaf.flood.2.heat",
+    "leaf.flood.3.heat",
+    "root.aerial.1",
+    "root.aerial.2",
+    "root.aerial.3"
+   ],
+   "drawings": 18
+  },
+  {
+   "batch": "5 · salt + radiation",
+   "components": [
+    "salt.crystal",
+    "salt.gland"
+   ],
+   "drawings": 2
+  },
+  {
+   "batch": "6 · reproduction + dispersal",
+   "components": [
+    "flower",
+    "seedHead.small",
+    "seedHead.large",
+    "seed.drift",
+    "pod"
+   ],
+   "drawings": 5
+  },
+  {
+   "batch": "5 · salt + radiation (masks)",
+   "components": [
+    "leaf.base",
+    "leaf.drought.1",
+    "leaf.drought.2",
+    "leaf.drought.3",
+    "leaf.flood.1",
+    "leaf.flood.2",
+    "leaf.flood.3",
+    "leaf.base.heat",
+    "leaf.drought.1.heat",
+    "leaf.drought.2.heat",
+    "leaf.drought.3.heat",
+    "leaf.flood.1.heat",
+    "leaf.flood.2.heat",
+    "leaf.flood.3.heat"
+   ],
+   "drawings": 0,
+   "note": "every leaf drawing: a `toothed` notch mask (authored rect, required to show Salt notches) and optionally an authored `pigment` / `wax` mask (default \"auto\")"
+  },
+  {
+   "batch": "7 · metadata closure",
+   "components": [],
+   "drawings": 0,
+   "note": "atlas.json: bodyPlan, palette (18 ramps), environment (sky 2 · soil 3 · turf · water 2), render.stemOutline, swatch; every anchor / point"
+  }
+ ],
+ "materials": [
+  {
+   "name": "ink",
+   "shades": 1,
+   "role": "outline / dark detail"
+  },
+  {
+   "name": "leaf",
+   "shades": 4,
+   "role": "leaf blade (0 darkest … 3 lightest)"
+  },
+  {
+   "name": "stem",
+   "shades": 4,
+   "role": "stem, petiole, stalks; also drawn procedurally by the renderer"
+  },
+  {
+   "name": "root",
+   "shades": 4,
+   "role": "roots; also drawn procedurally by the renderer"
+  },
+  {
+   "name": "core",
+   "shades": 4,
+   "role": "water-storage tissue (succulent leaves)"
+  },
+  {
+   "name": "petal",
+   "shades": 4,
+   "role": "petals"
+  },
+  {
+   "name": "center",
+   "shades": 4,
+   "role": "flower centre / stamens"
+  },
+  {
+   "name": "pappus",
+   "shades": 4,
+   "role": "seed fluff / dispersal structures"
+  },
+  {
+   "name": "seed",
+   "shades": 4,
+   "role": "seeds"
+  },
+  {
+   "name": "frost",
+   "shades": 4,
+   "role": "frost, insulating hairs, ice"
+  },
+  {
+   "name": "tuber",
+   "shades": 4,
+   "role": "storage root / tuber"
+  },
+  {
+   "name": "salt",
+   "shades": 4,
+   "role": "salt glands, faceted crystals / deposits (NEVER frost colours: salt must not read as snow)"
+  },
+  {
+   "name": "pod",
+   "shades": 4,
+   "role": "buoyant waterborne pods / fruit"
+  },
+  {
+   "name": "pigLeaf",
+   "shades": 4,
+   "role": "TREATMENT TARGET: leaf under protective pigment (never drawn in a sprite)",
+   "treatmentOnly": true
+  },
+  {
+   "name": "pigStem",
+   "shades": 4,
+   "role": "TREATMENT TARGET: stem under protective pigment",
+   "treatmentOnly": true
+  },
+  {
+   "name": "pigCore",
+   "shades": 4,
+   "role": "TREATMENT TARGET: storage tissue under protective pigment",
+   "treatmentOnly": true
+  },
+  {
+   "name": "waxLeaf",
+   "shades": 4,
+   "role": "TREATMENT TARGET: leaf under a reflective wax cuticle",
+   "treatmentOnly": true
+  },
+  {
+   "name": "waxCore",
+   "shades": 4,
+   "role": "TREATMENT TARGET: storage tissue under a reflective wax cuticle",
+   "treatmentOnly": true
+  }
+ ],
+ "requiredMaterials": [
+  "ink",
+  "leaf",
+  "stem",
+  "root",
+  "core",
+  "frost",
+  "salt",
+  "pod",
+  "pigLeaf",
+  "pigStem",
+  "pigCore",
+  "waxLeaf",
+  "waxCore"
+ ],
+ "treatments": {
+  "pigment": {
+   "trait": "rad",
+   "kind": "recolour",
+   "map": {
+    "leaf": "pigLeaf",
+    "stem": "pigStem",
+    "core": "pigCore"
+   },
+   "procedural": [
+    "stem"
+   ],
+   "note": "Radiation Shielding: protective red/violet pigment. Recolours masked pixels shade-for-shade; the procedural stem and branches take it too."
+  },
+  "wax": {
+   "trait": "heat",
+   "kind": "recolour",
+   "map": {
+    "leaf": "waxLeaf",
+    "core": "waxCore"
+   },
+   "procedural": [],
+   "levels": {
+    "1": [
+     2,
+     3
+    ],
+    "2": [
+     1,
+     2,
+     3
+    ],
+    "3": [
+     0,
+     1,
+     2,
+     3
+    ]
+   },
+   "note": "Heat Tolerance: reflective wax cuticle. Level = heat tier: T1 recolours only the lit shades (2–3) — a sheen; T2 shades 1–3; T3 every shade. Applied to whichever leaf structure is active."
+  },
+  "toothed": {
+   "trait": "salt",
+   "kind": "clear",
+   "map": {},
+   "procedural": [],
+   "masksOnly": true,
+   "note": "Salt Handling: tougher, toothed margins. Pixels inside the sprite's authored 'toothed' mask are CLEARED (notches cut into the margin). No mask = no teeth (for leaf forms where teeth are inappropriate)."
+  }
+ },
+ "pixel": {
+  "format": "PNG, 8-bit per channel; colour types RGBA (6), RGB (2), indexed (3, incl. tRNS) or grey (0 / 4); not interlaced",
+  "alpha": "every pixel is fully transparent (alpha 0) or fully opaque (alpha 255); partial alpha is a build error",
+  "palette": "every opaque pixel inside a sprite rect must be EXACTLY one of the pack's declared palette colours (atlas.json palette); arbitrary RGBA is a build error. A colour means a material + shade, so the renderer can recolour it (treatments, condition).",
+  "mask": "a mask rect has the sprite's exact size; any opaque pixel (any colour) = inside the mask, transparent = outside",
+  "strays": "no opaque pixel may lie outside every declared rect (sprite, mask, swatch)"
+ },
+ "layers": {
+  "roots": 10,
+  "aerialRoots": 15,
+  "rootStorage": 20,
+  "stem": 30,
+  "branch": 35,
+  "leaves": 40,
+  "surface": 50,
+  "repro": 60,
+  "drift": 70
+ },
+ "clipProof": {
+  "proofPack": "proof-reed-spire",
+  "placementsProven": 47294,
+  "sockets": 246
+ }
+}
