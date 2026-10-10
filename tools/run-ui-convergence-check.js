@@ -148,7 +148,8 @@ const LEGACY_SUITES = ["slice-check", "economy-check", "procedural-run-check", "
     const fnv = a => { let h = 0x811c9dc5; for (let i = 0; i < a.length; i++) { h ^= a[i] & 0xff; h = Math.imul(h, 0x01000193); } return (h >>> 0).toString(16); };
     const rows = [];
     for (const [key, planet] of [["first_bloom", BLOOM_DATA.planets.first_bloom], ["training_grounds", BLOOM_DATA.planets.training_grounds], ["ocean_28", BLOOM.generateFromArchetype(archetypes.find(a => a.id === "ocean_archipelago"), 28, { config, traits })]]) {
-      const mk = c => { const s = c(planet, config, traits, { rng: BLOOM.gen.mulberry32(5) }); s.biomass = 1e4; for (const id of ["cold", "humid", "seedOut"]) s.buy(id); let cov = 0; for (let t = 0; t < 900; t++) cov = s.tick(); return `${cov.toFixed(6)}/${fnv(s.state)}/${Math.round(s.biomass * 1000)}`; };
+      // (BLOOM-035B) the 0f5ce81 engine reads the pre-035B key name for the same numbers: hand it config.referencePlant as genomeBase
+      const mk = c => { const s = c(planet, c === createBase ? { ...config, genomeBase: config.referencePlant } : config, traits, { rng: BLOOM.gen.mulberry32(5) }); s.biomass = 1e4; for (const id of ["cold", "humid", "seedOut"]) s.buy(id); let cov = 0; for (let t = 0; t < 900; t++) cov = s.tick(); return `${cov.toFixed(6)}/${fnv(s.state)}/${Math.round(s.biomass * 1000)}`; };
       const a = mk(createNow), b = mk(createBase); rows.push(`${key} ${a === b ? "identical" : "DIFF"}`); }
     check(rows.every(r => /identical/.test(r)), "N10 · gameplay balance unchanged: the current engine and the engine at 0f5ce81 give identical seeded 900-tick runs (coverage, tiles, Biomass) on First Bloom, Training Grounds and Ocean 28 with the same purchases", rows.join(" · ")); }
 
