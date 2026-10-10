@@ -241,11 +241,12 @@ function png(W, H, rgba) { const h = Buffer.alloc(13); h.writeUInt32BE(W, 0); h.
   // P6 · the grammar bundle, proof-pack regeneration, check:plant-art, the legacy selection shape
   { let cpa = "", mpp = ""; try { cpa = cp.execSync("node tools/build-plant-art.mjs --check", { cwd: ROOT, encoding: "utf8" }).trim(); } catch (e) { cpa = "FAILED " + e.stdout + e.stderr; }
     try { mpp = cp.execSync("node art/plant/proof-packs/make-proof-packs.mjs --check", { cwd: ROOT, encoding: "utf8" }).trim(); } catch (e) { mpp = "FAILED " + e.stdout + e.stderr; }
+    let brf = ""; try { brf = cp.execSync("node tools/build-plant-art.mjs --briefs --check", { cwd: ROOT, encoding: "utf8" }).trim(); } catch (e) { brf = "FAILED " + e.stdout + e.stderr; }
     const sep = context("grammars", ["content/config.js", "content/traits.js", "resources/plant-visual/plant-visual-model.js", ...["oh-stem", "rosette", "candle", "reed"].map(p => `resources/plant-visual/grammars/${p}.js`)].map(f => [f, read(f)]));
     const R2 = sep.BLOOM.plantVisual.model.rules(sep.BLOOM_DATA), sameSel = sample.filter((_, i) => i % 11 === 0).every(m => ["oh-stem", "rosette", "candle", "reed"].every(p => J(sep.BLOOM.plantVisual.grammars[p].select(sep.BLOOM.plantVisual.model.normalize(m, R2))) === J(PV.grammars[p].select(PV.model.normalize(m, RULES)))));
     const pkg = JSON.parse(read("tools/package.json"));
-    check(/^check:plant-art OK/.test(cpa) && /^make-proof-packs --check OK/.test(mpp) && sameSel && pkg.scripts["check:plant-art"] === "node build-plant-art.mjs --check",
-      `P6 · npm run check:plant-art passes (the generated atlas, manifest and grammar bundle == a clean rebuild of art/plant/ + grammars/: ${cpa.slice(0, 60)}); the proof packs == a clean regeneration (${mpp.slice(0, 50)}); the four grammar files loaded on their own select exactly what the generated bundle selects`, J({ cpa: cpa.slice(0, 200), mpp: mpp.slice(0, 200) })); }
+    check(/^check:plant-art OK/.test(cpa) && /^make-proof-packs --check OK/.test(mpp) && /^briefs --check OK/.test(brf) && sameSel && pkg.scripts["check:plant-art"] === "node build-plant-art.mjs --check",
+      `P6 · npm run check:plant-art passes (the generated atlas, manifest and grammar bundle == a clean rebuild of art/plant/ + grammars/: ${cpa.slice(0, 60)}); the proof packs == a clean regeneration (${mpp.slice(0, 50)}); the art briefs == a regeneration from the plans (${brf.slice(0, 40)}); the four grammar files loaded on their own select exactly what the generated bundle selects`, J({ cpa: cpa.slice(0, 200), mpp: mpp.slice(0, 200), brf: brf.slice(0, 200) })); }
 
   // ---------------------------------------------------------------- browsers: the specimen mounted with each species (file://)
   let pw = null; try { pw = require("playwright"); } catch { check(false, "B0 · Playwright available (NODE_PATH=\"$(npm root -g)\")"); }
