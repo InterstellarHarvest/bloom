@@ -58,6 +58,9 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
   // ================================================================================================ NODE
   console.log("# V · the shared token system, its consumers, the icon family, contrast, scope, the portable runtime, the docs");
   const THEME = read("resources/ui/bloom-theme.css"), T = rootTokens(THEME);
+  const { ICONS: ICONS_SRC } = await import("file://" + path.join(ROOT, "resources/ui/bloom-icons.js"));
+  // (as a browser serializes them: <path …/> → <path …></path>)
+  const ICONS = Object.fromEntries(Object.entries(ICONS_SRC).map(([k, v]) => [k, v.replace(/<(\w+)([^>]*?)\/>/g, "<$1$2></$1>")]));
   const tv = v => { const m = /^var\((--bloom-[\w-]+)\)$/.exec(v); return m ? T[m[1]] : null; };
   // V1 · the theme file
   { const rules = stripCss(THEME).replace(/:root\s*\{[\s\S]*?\n\}/, ""), sels = [...rules.matchAll(/([^{}]+)\{[^}]*\}/g)].map(m => m[1].trim());
@@ -103,10 +106,10 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
       "V4 · the title / menu and the Destination Survey read their font and colours from the theme: the gameplay font family only (no serif anywhere — the boot notice included), no gold-plaque tokens, no ornamental corner marks; the survey classes ARE the gameplay statuses (Favorable = OK, Precarious = warning, Extreme = blocked, on-night values); at most a couple of literal colours left in either stylesheet (gradient stops of the title)",
       J({ fonts, serif, plaque, hexMenu: hexes(mm), hexSurvey: hexes(ds) })); }
   // V5 · the icon family
-  { const { ICONS, ico } = await import("file://" + path.join(ROOT, "resources/ui/bloom-icons.js"));
+  { const { ico } = await import("file://" + path.join(ROOT, "resources/ui/bloom-icons.js"));
     const tableOf = f => { const src = read(f), i = src.indexOf("const I = {"), body = src.slice(i, src.indexOf("\n  };", i)); const o = {};
       for (const m of body.matchAll(/(\w+): '([^']*)'/g)) o[m[1]] = m[2]; return o; };
-    const G = Object.assign({}, tableOf("resources/run-ui/run-report.js"), tableOf("resources/run-ui/decision-rooms.js"), tableOf("resources/run-ui/planet-view.js"));
+    const ICONS = ICONS_SRC, G = Object.assign({}, tableOf("resources/run-ui/run-report.js"), tableOf("resources/run-ui/decision-rooms.js"), tableOf("resources/run-ui/planet-view.js"));
     const shared = Object.keys(ICONS).filter(k => G[k]), differ = shared.filter(k => G[k] !== ICONS[k]), fresh = Object.keys(ICONS).filter(k => !G[k]);
     const plan = ["resources/main-menu/main-menu.js", "resources/destination-survey/destination-survey.js"].map(read).join("\n");
     const code = plan.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, ""), rawSvg = (code.match(/<svg/g) || []).length, arrows = /←|→/.test(code), emoji = /\p{Extended_Pictographic}/u.test(plan + read("resources/ui/bloom-icons.js"));
@@ -122,12 +125,13 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
       "--bloom-ok-night", "--bloom-warn-night", "--bloom-bad-night", "--bloom-cat-temperature-night", "--bloom-cat-water-night", "--bloom-cat-soil-night", "--bloom-cat-hazard-night"];
     for (const k of text) for (const [b, c] of Object.entries(bgs)) rows.push({ k, on: b, ratio: +contrast(hex(T[k]), c).toFixed(2) });
     const focus = Object.entries(bgs).map(([b, c]) => ({ on: b, ratio: +contrast(hex(T["--bloom-focus-night"]), c).toFixed(2) }));
-    const white = { leaf: +contrast([255, 255, 255], hex(T["--bloom-leaf"])).toFixed(2), sky: +contrast([255, 255, 255], hex(T["--bloom-sky"])).toFixed(2) };
-    PROOF.node.contrast = { text: rows, focus, whiteOnButtons: white };
+    const white = Object.fromEntries(["--bloom-leaf-btn-night", "--bloom-leaf-btn-night-hover", "--bloom-sky-btn-night", "--bloom-sky-btn-night-hover"].map(k => [k.slice(8), +contrast([255, 255, 255], hex(T[k])).toFixed(2)]));
+    const gameplayPair = { leaf: +contrast([255, 255, 255], hex(T["--bloom-leaf"])).toFixed(2), sky: +contrast([255, 255, 255], hex(T["--bloom-sky"])).toFixed(2) };   // (gameplay's own buttons: unchanged, reported)
+    PROOF.node.contrast = { text: rows, focus, whiteOnPlanningButtons: white, gameplayButtonsUnchanged: gameplayPair };
     const low = rows.filter(r => r.ratio < 4.5), inkMin = Math.min(...rows.filter(r => r.k === "--bloom-night-ink").map(r => r.ratio));
-    check(!low.length && inkMin >= 12 && focus.every(f => f.ratio >= 3),
-      "V6 · night text tokens meet WCAG AA (≥ 4.5 : 1) on every night surface (the solid card, deep space, a raised control) — ink ≥ 12 : 1 — and the night focus ring ≥ 3 : 1 (non-text); the leaf / sky buttons keep gameplay's white label (the same pairing as gameplay's Resume / Plant / Terraform buttons)",
-      `min ${Math.min(...rows.map(r => r.ratio))} : 1 · ink ≥ ${inkMin} · focus ${focus.map(f => f.ratio).join(" / ")} · white on leaf ${white.leaf}, on sky ${white.sky}${low.length ? " · LOW " + J(low) : ""}`); }
+    check(!low.length && inkMin >= 12 && focus.every(f => f.ratio >= 3) && Object.values(white).every(r => r >= 4.5),
+      "V6 · night text tokens meet WCAG AA (≥ 4.5 : 1) on every night surface (the solid card, deep space, a raised control) — ink ≥ 12 : 1 — and the night focus ring ≥ 3 : 1 (non-text); the planning leaf / sky button shades carry a white word at ≥ 4.5 : 1 at rest and under the pointer / pressed (gameplay's own leaf / sky buttons are not changed)",
+      `min ${Math.min(...rows.map(r => r.ratio))} : 1 · ink ≥ ${inkMin} · focus ${focus.map(f => f.ratio).join(" / ")} · white on ${Object.entries(white).map(([k, v]) => k + " " + v).join(", ")} · (gameplay leaf ${gameplayPair.leaf} / sky ${gameplayPair.sky}, unchanged)${low.length ? " · LOW " + J(low) : ""}`); }
   // V7 · scope: what this milestone may touch, and what stays byte-identical
   { const changed = [...new Set([...git(`diff --name-only ${BASE_SHA}`).split("\n"), ...git("ls-files --others --exclude-standard").split("\n")].filter(Boolean))];
     const ALLOWED = p => /^(resources\/ui\/|tools\/|docs\/)/.test(p) || ["index.html", "README.md", "GAME_BIBLE.md", "demos/main-menu.html", "demos/demo-run.html", "demos/destination-survey.html", "demos/expedition-descent.html",
@@ -195,7 +199,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
       { const c = await context(), p = await page(c); await p.goto(HEAD_O + "/" + Q); await menuReady(p); await sleep(2600);
         const gameFont = await p.evaluate(() => { const d = document.createElement("i"); d.style.fontFamily = "var(--bloom-font)"; document.body.append(d); const f = getComputedStyle(d).fontFamily; d.remove(); return f; });   // the gameplay family, as the browser resolves it
         const els = await p.evaluate(() => [".mm", "#mm-title", ".mm-sub", ".mm-item", ".mm-status", ".mm-dialog"].map(s => { const e = document.querySelector(s); return [s, e && getComputedStyle(e).fontFamily]; }));
-        const leaf = await tokenRgb(p, "--bloom-leaf"), prim = await css(p, ".mm-item.primary", ["background-color", "color", "border-top-left-radius", "min-height"]);
+        const leaf = await tokenRgb(p, "--bloom-leaf-btn-night"), prim = await css(p, ".mm-item.primary", ["background-color", "color", "border-top-left-radius", "min-height"]);
         const items = await p.evaluate(() => [...document.querySelectorAll(".mm-item")].map(b => ({ text: b.innerText.trim(), icon: !!b.querySelector(".mm-ico svg.bloom-ic"), h: b.getBoundingClientRect().height })));
         const card = await css(p, ".mm-plaque", ["border-top-left-radius", "border-top-right-radius", "font-family"]);
         const normF = s => (s || "").replace(/\s+/g, "").replace(/'/g, '"');
@@ -203,7 +207,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         B.title = { gameFont, els, prim, items, card };
         check(allGame && prim["background-color"] === leaf && prim.color === "rgb(255, 255, 255)" && J(items.map(i => i.text)) === J(["EXPEDITION", "TRAINING", "SETTINGS", "CREDITS"])
           && items.every(i => i.icon && i.h >= 44) && card["border-top-left-radius"] === "22px" && card["border-top-right-radius"] === "18px" && !p.errs.length,
-          `[${bn}] T1 · the title speaks the gameplay language: every interface element (title, subtitle, menu, status, dialogs) in the gameplay font family; EXPEDITION is the gameplay leaf button (white word on --bloom-leaf); four chunky icon + word entries (≥ 44 px), the labels unchanged; one dark planning card with the gameplay's irregular corners`,
+          `[${bn}] T1 · the title speaks the gameplay language: every interface element (title, subtitle, menu, status, dialogs) in the gameplay font family; EXPEDITION is the leaf button in its planning shade (white word on --bloom-leaf-btn-night, ≥ 4.5 : 1); four chunky icon + word entries (≥ 44 px), the labels unchanged; one dark planning card with the gameplay's irregular corners`,
           `${els.map(([s, f]) => s + "=" + (normF(f) === normF(gameFont) ? "game" : f)).join(" ")} · ${prim["background-color"]} · ${items.map(i => `${i.text} ${Math.round(i.h)}px`).join(" · ")}`);
         await shot(p, "01-title-1440x900.jpg");
         // T2 · every painting loads untouched and the title stays readable over it
@@ -252,7 +256,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         const tag = await p.evaluate(() => { const t = document.querySelector(".mm-tag"); return { shown: !t.hidden, text: t.textContent, name: document.querySelector('.mm-item[data-act="training"]').textContent.replace(/\s+/g, " ").trim() }; });
         await p.click('.mm-item[data-act="begin"]'); await sleep(500);
         const d = await p.evaluate(() => { const d = document.querySelector('[data-dialog="recommend"]'); return { open: d.open, btns: [...d.querySelectorAll(".mm-btn")].map(b => b.textContent), primary: getComputedStyle(d.querySelector(".mm-btn.primary")).backgroundColor }; });
-        const leaf = await tokenRgb(p, "--bloom-leaf"); await shot(p, "03-recommend-1440x900.jpg");
+        const leaf = await tokenRgb(p, "--bloom-leaf-btn-night"); await shot(p, "03-recommend-1440x900.jpg");
         check(tag.shown && tag.text === "Recommended" && tag.name === "Training Recommended" && d.open && J(d.btns) === J(["Go to Expedition", "Start Training (~5 min)"]) && d.primary === leaf,
           `[${bn}] D2 · the first-run recommendation: TRAINING's Biomass-gold "Recommended" tag (a word), the dialog's two buttons with their exact words, Start Training the leaf primary`, J({ tag, btns: d.btns }));
         await c.close(); }
@@ -268,26 +272,46 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         await p.click('.mm-item[data-act="begin"]'); await surveyReady(p); await sleep(1200);
         const sv = await p.evaluate(() => { const g = (() => { const d = document.createElement("i"); d.style.fontFamily = "var(--bloom-font)"; document.body.append(d); const f = getComputedStyle(d).fontFamily.replace(/\s+/g, ""); d.remove(); return f; })(), f = s => getComputedStyle(document.querySelector(s)).fontFamily.replace(/\s+/g, "");
           const tok = n => { const d = document.createElement("i"); d.style.color = `var(${n})`; document.body.append(d); const c = getComputedStyle(d).color; d.remove(); return c; };
-          const heads = [...document.querySelectorAll(".ds-colhead b")].map(b => ({ text: b.textContent.trim(), icon: !!b.querySelector(".ds-st-i svg.bloom-ic"), color: getComputedStyle(b).color }));
+          const heads = [...document.querySelectorAll(".ds-colhead b")].map(b => ({ text: b.textContent.trim(), icon: !!b.querySelector(".ds-st-i svg.bloom-ic"), color: getComputedStyle(b).color, glyph: (b.querySelector(".ds-st-i svg") || {}).innerHTML }));
           return { fonts: [".ds", ".ds-title h1", ".ds-name", ".ds-btn.scan"].every(s => f(s) === g), heads, want: [tok("--bloom-ok-night"), tok("--bloom-warn-night"), tok("--bloom-bad-night")],
-            scanBg: getComputedStyle(document.querySelector(".ds-btn.scan")).backgroundColor, sky: tok("--bloom-sky"), exitIcon: !!document.querySelector(".ds-exit svg.bloom-ic"), arrows: /←/.test(document.querySelector(".ds").innerText) }; });
+            scanBg: getComputedStyle(document.querySelector(".ds-btn.scan")).backgroundColor, sky: tok("--bloom-sky-btn-night"), exitIcon: !!document.querySelector(".ds-exit svg.bloom-ic"), arrows: /←/.test(document.querySelector(".ds").innerText) }; });
         const t2 = await hs(); if (tag === "1440x900") await p.hover('.ds-cand[data-index="4"]'), await sleep(350);
         await shot(p, `04-survey-${tag}.png`); await p.mouse.move(1, 1);
+        if (tag === "1440x900") await shot(p, "13-survey-class-headings-1440x900.png", { clip: await p.evaluate(() => { const r = document.querySelector(".ds-cols").getBoundingClientRect(); return { x: Math.max(0, r.left - 24), y: Math.max(0, r.top - 10), width: r.width + 48, height: r.height + 20 }; }) });
         await focusOn(p, 1);
         const fo = await p.evaluate(() => { const go = document.querySelector(".ds-btn.go"), r = go.getBoundingClientRect(), hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
           const rows = [...document.querySelectorAll(".ds-row")].map(x => ({ cat: x.dataset.cat || null, icon: !!x.querySelector(".ds-row-i svg"), label: x.querySelector("dt").textContent }));
           const d = document.querySelector(".ds-dossier").getBoundingClientRect();
-          return { visible: r.top >= 0 && r.bottom <= innerHeight + .5 && r.left >= 0 && r.right <= innerWidth + .5, hit: !!hit && go.contains(hit), rows, key: document.querySelector(".ds-bar-key").textContent.replace(/\s+/g, " ").trim(),
+          // dossier readability: in each row the primary descriptor and the secondary explanation are separate, distinguishable parts
+          const sep = [...document.querySelectorAll(".ds-row")].map(x => { const b = x.querySelector("dd > b"), v = x.querySelector("dd > .ds-row-v"); if (!b || !v) return { ok: false };
+            const rb = b.getBoundingClientRect(), rv = v.getBoundingClientRect(), sb = getComputedStyle(b), sv = getComputedStyle(v);
+            const apart = rv.left >= rb.right - 0.5 || rv.top >= rb.bottom - 0.5;
+            return { ok: apart && sb.color !== sv.color && +sb.fontWeight > +sv.fontWeight && parseFloat(sb.fontSize) > parseFloat(sv.fontSize), side: rv.left >= rb.right - 0.5 ? "beside" : "below", word: b.textContent, value: v.textContent }; });
+          const dz = document.querySelector(".ds-dossier"), fits = dz.scrollHeight <= dz.clientHeight + 1;
+          return { visible: r.top >= 0 && r.bottom <= innerHeight + .5 && r.left >= 0 && r.right <= innerWidth + .5, hit: !!hit && go.contains(hit), rows, sep, fits, key: document.querySelector(".ds-bar-key").textContent.replace(/\s+/g, " ").trim(),
             chip: document.querySelector(".ds-chip").textContent, chipIcon: !!document.querySelector(".ds-chip svg.bloom-ic"), dossierX: d.left >= -0.5 && d.right <= innerWidth + .5, goText: go.textContent }; });
         const t3 = await hs(); await shot(p, `05-focus-${tag}.png`);
         if (tag === "1440x900") {
-          check(sv.fonts && J(sv.heads.map(x => x.text)) === J(["Favorable", "Precarious", "Extreme"]) && sv.heads.every(x => x.icon) && J(sv.heads.map(x => x.color)) === J(sv.want) && sv.scanBg === sv.sky && sv.exitIcon && !sv.arrows,
-            `[${bn}] S1 · the Destination Survey in the gameplay language: the gameplay font; FAVORABLE · PRECARIOUS · EXTREME are the gameplay statuses (OK / warning / blocked colours on night, each with its status icon and its word); Scan new sector is the gameplay sky button; the back control is the gameplay back icon (no text arrows)`,
-            `${sv.heads.map(x => `${x.text}:${x.color}`).join(" · ")}`);
+          check(sv.fonts && J(sv.heads.map(x => x.text)) === J(["Favorable", "Precarious", "Extreme"]) && sv.heads.every(x => x.icon) && J(sv.heads.map(x => x.color)) === J(sv.want) && sv.scanBg === sv.sky && sv.exitIcon && !sv.arrows
+            && J(sv.heads.map(x => x.glyph)) === J([ICONS.check, ICONS.alert, ICONS.hazard]) && !sv.heads.some(x => x.glyph === ICONS.x),
+            `[${bn}] S1 · the Destination Survey in the gameplay language: the gameplay font; FAVORABLE · PRECARIOUS · EXTREME carry the gameplay status colours on night (OK leaf, warning amber, severe bloom red) with an icon and a word — Extreme, a PLAYABLE class, shows the severe-warning hazard sign, never the blocked cross; Scan new sector is the planning sky button; the back control is the gameplay back icon (no text arrows)`,
+            `${sv.heads.map(x => `${x.text}:${x.color}:${Object.keys(ICONS).find(k => ICONS[k] === x.glyph)}`).join(" · ")}`);
           check(J(fo.rows.map(r => r.cat)) === J(["temperature", "water", "soil", null, "hazard"]) && fo.rows.every(r => r.icon) && /^Suits \d+%\s*Marginal \d+%\s*Hostile \d+%$/.test(fo.key) && fo.chipIcon && /^(Favorable|Precarious|Extreme)$/.test(fo.chip) && fo.goText === "Begin expedition",
             `[${bn}] S2 · the dossier: the class chip is a status pill (icon + word); habitability on arrival has its key in words (Suits · Marginal · Hostile, with shares — never colour alone); the five condition rows carry the gameplay category identity (Climate = Temperature, Water, Soil, Atmosphere neutral, Solar exposure = Hazard) with their icons; Begin expedition keeps its word`,
             `${fo.chip} · ${fo.key} · ${fo.rows.map(r => r.label + ":" + r.cat).join(" ")}`);
+          // the Extreme dossier (a playable high-risk world) and the separate row parts
+          await p.evaluate(() => MENU_DEV.entry.survey.returnToSurvey()); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "survey", null, { timeout: 20000, polling: 50 }); await sleep(900);
+          await focusOn(p, 2);
+          const ex = await p.evaluate(() => ({ chip: document.querySelector(".ds-chip").textContent, glyph: (document.querySelector(".ds-chip .ds-st-i svg") || {}).innerHTML, cls: document.querySelector(".ds-dossier").dataset.class,
+            go: !document.querySelector(".ds-btn.go").disabled, key: (document.querySelector(".ds-bar-key .bad svg") || {}).innerHTML }));
+          await shot(p, "05b-focus-extreme-1440x900.png");
+          check(ex.chip === "Extreme" && ex.cls === "extreme" && ex.glyph === ICONS.hazard && ex.go && ex.key === ICONS.x,
+            `[${bn}] S3 · the Extreme dossier communicates HIGH RISK, not prohibition: its chip carries the hazard sign (the cross stays only on the habitability key's Hostile ground) and Begin expedition is available`, J({ chip: ex.chip, go: ex.go }));
+          check(fo.sep.length === 5 && fo.sep.every(r => r.ok) && fo.fits,
+            `[${bn}] S4 · dossier readability: every condition row shows its primary descriptor and its secondary explanation as two separate parts (bold, larger, ink — beside a rule — lighter, smaller, soft), and at 1440×900 the whole dossier fits without scrolling`,
+            fo.sep.map(r => `${r.word} | ${r.value} (${r.side})`).join(" · ") + ` · fits ${fo.fits}`);
         }
+        if (tag === "1024x768") check(fo.sep.every(r => r.ok) && fo.visible && fo.hit, `[${bn}] S5 · 1024×768: the two-part rows hold and Begin expedition stays visible in the dossier's action bar`, J({ sides: fo.sep.map(r => r.side) }));
         const L = { title, t1: t1.sx, t2: t2.sx, t3: t3.sx, go: fo.visible && fo.hit, dossierX: fo.dossierX };
         (B.layout = B.layout || {})[tag] = L;
         const phone = w < 600;   // (a phone stacks the planet over the dossier, which then scrolls with the page: Begin is reached by scrolling)
@@ -338,6 +362,41 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
           `[${bn}] G2 · REPAIRED (a BLOOM-033 one-document regression): on 79f5540 the menu's root rule also hit the decision rooms' mini-map card (".mm"): container-type:size collapsed it to a ${mb && mb.h} px strip (its planet map and region strip invisible), in the menu's serif and cream ink; now the menu's root rules select only its own root (.mm-screen) and the card is gameplay's again (as accepted in BLOOM-032C) — the gameplay font and ink, ${mh && mh.h} px tall, its map canvas ${mh && mh.canvasH} px; the room's scale probe, which measures that card, gives the room em ${mh && mh.roomEm} again (${mb && mb.roomEm} while collapsed)`,
           J({ head: mh, base: mb })); }
 
+      // ------------------------------------------------------------------ C · planning button contrast (computed styles, every state)
+      { const CONTRAST = sel => { const e = document.querySelector(sel); if (!e) return null;
+          const parse = c => { const m = c.match(/[\d.]+/g).map(Number); return [m[0], m[1], m[2], m.length > 3 ? m[3] : 1]; };
+          const layers = []; for (let x = e; x; x = x.parentElement) { const b = parse(getComputedStyle(x).backgroundColor); if (b[3] > 0) layers.push(b); if (b[3] >= 1) break; }
+          let bg = [3, 5, 11]; for (const l of layers.reverse()) bg = bg.map((v, i) => l[i] * l[3] + v * (1 - l[3]));
+          const fg0 = parse(getComputedStyle(e).color), fg = fg0.slice(0, 3).map((v, i) => v * fg0[3] + bg[i] * (1 - fg0[3]));
+          const L = ([r, g, b]) => { const f = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+          const a = L(fg), b = L(bg); return { ratio: Math.round((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) * 100) / 100, bg: bg.map(Math.round).join(","), size: getComputedStyle(e).fontSize, fv: e.matches(":focus-visible"), act: e.matches(":active") }; };
+        const states = async (p, sel) => { const out = {}, el = p.locator(sel).first();
+          await p.mouse.move(1, 1); await p.evaluate(() => document.activeElement && document.activeElement.blur && document.activeElement.blur()); await sleep(120); out.normal = await p.evaluate(CONTRAST, sel);
+          await el.hover(); await sleep(120); out.hover = await p.evaluate(CONTRAST, sel); await p.mouse.move(1, 1);
+          await p.evaluate(s => document.querySelector(s).focus({ focusVisible: true }), sel); await sleep(120); out.focus = await p.evaluate(CONTRAST, sel);
+          await p.evaluate(() => document.activeElement && document.activeElement.blur && document.activeElement.blur());
+          const bx = await el.boundingBox(); await p.mouse.move(bx.x + bx.width / 2, bx.y + bx.height / 2); await p.mouse.down(); await sleep(120); out.active = await p.evaluate(CONTRAST, sel);
+          await p.mouse.move(1, 1); await p.mouse.up(); await sleep(60); return out; };
+        const rows = {};
+        { const c = await context({ reducedMotion: "reduce" }), p = await page(c); await p.goto(HEAD_O + "/" + Q); await menuReady(p); await sleep(600);
+          rows["EXPEDITION (title primary)"] = await states(p, ".mm-item.primary"); rows["TRAINING (title entry)"] = await states(p, '.mm-item[data-act="training"]');
+          await shot(p, "14-title-primary-button-1440x900.png", { clip: await p.evaluate(() => { const r = document.querySelector(".mm-plaque").getBoundingClientRect(); return { x: r.left - 12, y: r.top - 12, width: r.width + 24, height: r.height + 24 }; }) });
+          await p.click('.mm-item[data-act="settings"]'); await sleep(200); rows["Done (dialog)"] = await states(p, '[data-dialog="settings"] .mm-btn'); await p.keyboard.press("Escape"); await sleep(150);
+          await p.click('.mm-item[data-act="begin"]'); await surveyReady(p); await sleep(600);
+          rows["Scan new sector"] = await states(p, ".ds-btn.scan"); rows["Main menu (ghost)"] = await states(p, ".ds-exit");
+          await focusOn(p, 1); rows["Begin expedition"] = await states(p, ".ds-btn.go"); rows["Return to survey (ghost)"] = await states(p, '.ds-btn[data-act="return"]');
+          await c.close(); }
+        { const c = await context({ reducedMotion: "reduce", trained: false }), p = await page(c); await p.goto(HEAD_O + "/" + Q); await menuReady(p); await sleep(600);
+          await p.click('.mm-item[data-act="begin"]'); await sleep(400);
+          rows["Start Training (dialog primary)"] = await states(p, '[data-dialog="recommend"] .mm-btn.primary'); rows["Go to Expedition (dialog)"] = await states(p, '[data-act="recommend-expedition"]');
+          await c.close(); }
+        B.buttonContrast = rows;
+        const all = Object.entries(rows).flatMap(([k, v]) => Object.entries(v).map(([st, r]) => ({ k, st, ...(r || { ratio: 0 }) })));
+        const low = all.filter(r => r.ratio < 4.5), fvOk = Object.values(rows).every(v => v.focus && v.focus.fv), actOk = Object.values(rows).every(v => v.active && v.active.act);
+        check(all.length === 36 && !low.length && fvOk && actOk,
+          `[${bn}] C1 · every planning button's word has ≥ 4.5 : 1 contrast against its own computed surface in all four states — at rest, under the pointer, keyboard-focused (:focus-visible) and pressed (:active) — the leaf / sky primaries on their planning shades, the raised and ghost controls on the night card (gameplay's own buttons unchanged)`,
+          Object.entries(rows).map(([k, v]) => `${k} ${["normal", "hover", "focus", "active"].map(s => v[s] && v[s].ratio).join("/")}`).join(" · ") + (low.length ? ` · LOW ${J(low)}` : "") + (fvOk && actOk ? "" : ` · states not reached ${J(all.filter(r => (r.st === "focus" && !r.fv) || (r.st === "active" && !r.act)).map(r => r.k + ":" + r.st))}`)); }
+
       // ------------------------------------------------------------------ A · reduced motion
       { const c = await context({ reducedMotion: "reduce" }), p = await page(c); await p.goto(HEAD_O + "/" + Q); await menuReady(p); await sleep(400);
         const rm = await p.evaluate(() => { const a = document.querySelector(".mm-plaque").getAnimations().map(x => x.effect.getTiming().duration); return { durations: a, item: getComputedStyle(document.querySelector(".mm-item")).transitionDuration }; });
@@ -353,7 +412,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
           font: (() => { const d = document.createElement("i"); d.style.fontFamily = "var(--bloom-font)"; document.body.append(d); const f = getComputedStyle(d).fontFamily; d.remove(); return getComputedStyle(document.querySelector(".mm-item")).fontFamily === f; })() }));
         await p.click('.mm-item[data-act="begin"]'); await surveyReady(p); await focusOn(p, 0);
         const s = await p.evaluate(() => ({ rows: document.querySelectorAll(".ds-row[data-cat]").length, heads: document.querySelectorAll(".ds-colhead svg.bloom-ic").length }));
-        const leaf = await tokenRgb(p, "--bloom-leaf");
+        const leaf = await tokenRgb(p, "--bloom-leaf-btn-night");
         check(r.boot && r.prim === leaf && r.icons === 4 && r.font && s.rows === 4 && s.heads === 3 && !p.errs.length,
           `[${bn}] P1 · file:// offline (the portable runtime): the restyled title (gameplay font, leaf EXPEDITION, four icons) and the restyled survey (status heads, category rows) — the theme stylesheet and the shared icon module work without a server`, J({ ...r, ...s }));
         await c.close(); }
