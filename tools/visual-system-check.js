@@ -38,6 +38,11 @@ const J = JSON.stringify, read = f => fs.readFileSync(path.join(ROOT, f), "utf8"
 const sha256 = b => crypto.createHash("sha256").update(b).digest("hex");
 const git = a => cp.execSync(`git ${a}`, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], maxBuffer: 256 << 20 }).trim();
 const atBase = f => git(`show ${BASE_SHA}:"${f}"`);
+// (BLOOM-035B) V7's scope is BLOOM-034's OWN range: 79f5540 → its integrated end (455b51b, the corrected review tip) — later milestones that
+// legitimately work elsewhere (e.g. BLOOM-035B's species engine and survey) never trip it; with no later commit the working tree is used
+const END_034 = "455b51b";
+const LATER = (() => { try { return git(`rev-list --count ${END_034}..HEAD`) !== "0"; } catch (e) { return false; } })();
+const V7_DIFF = LATER ? `${BASE_SHA} ${END_034}` : BASE_SHA, hashV7 = f => LATER ? git(`rev-parse ${END_034}:"${f}"`) : git(`hash-object "${f}"`);
 const stripCss = s => s.replace(/\/\*[\s\S]*?\*\//g, "");
 const PROOF = { milestone: "BLOOM-034", base: BASE_SHA, head: null, node: {}, browsers: {} };
 try { PROOF.head = git("rev-parse HEAD"); } catch (e) { /* not a checkout */ }
@@ -133,13 +138,13 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
       "V6 · night text tokens meet WCAG AA (≥ 4.5 : 1) on every night surface (the solid card, deep space, a raised control) — ink ≥ 12 : 1 — and the night focus ring ≥ 3 : 1 (non-text); the planning leaf / sky button shades carry a white word at ≥ 4.5 : 1 at rest and under the pointer / pressed (gameplay's own leaf / sky buttons are not changed)",
       `min ${Math.min(...rows.map(r => r.ratio))} : 1 · ink ≥ ${inkMin} · focus ${focus.map(f => f.ratio).join(" / ")} · white on ${Object.entries(white).map(([k, v]) => k + " " + v).join(", ")} · (gameplay leaf ${gameplayPair.leaf} / sky ${gameplayPair.sky}, unchanged)${low.length ? " · LOW " + J(low) : ""}`); }
   // V7 · scope: what this milestone may touch, and what stays byte-identical
-  { const changed = [...new Set([...git(`diff --name-only ${BASE_SHA}`).split("\n"), ...git("ls-files --others --exclude-standard").split("\n")].filter(Boolean))];
+  { const changed = [...new Set([...git(`diff --name-only ${V7_DIFF}`).split("\n"), ...(LATER ? [] : git("ls-files --others --exclude-standard").split("\n"))].filter(Boolean))];
     const ALLOWED = p => /^(resources\/ui\/|tools\/|docs\/)/.test(p) || ["index.html", "README.md", "GAME_BIBLE.md", "demos/main-menu.html", "demos/demo-run.html", "demos/destination-survey.html", "demos/expedition-descent.html",
       "resources/main-menu/main-menu.css", "resources/main-menu/main-menu.js", "resources/main-menu/title-boot.js", "resources/destination-survey/destination-survey.css", "resources/destination-survey/destination-survey.js",
       "resources/run-ui/planet-view.css", "resources/run-ui/run-report.css", "resources/training/training-coach.css", "dist/portable/strange-bloom.portable.js", "dist/portable/manifest.json"].includes(p);
     const outside = changed.filter(p => !ALLOWED(p));
     const PROTECTED = git(`ls-tree -r --name-only ${BASE_SHA} -- content planets resources/bloom-sim.js resources/bloom-gen.js resources/bloom-validate.js resources/bloom-witness.js resources/bloom-archetype.js resources/bloom-scenario.js resources/bloom-play.js resources/bloom-play-worker.js resources/planet-sphere resources/planet-surface resources/atmosphere-transition resources/plant-visual resources/main-menu/backgrounds resources/destination-survey/survey-data.js resources/destination-survey/survey-worker.js resources/destination-survey/sector-pool.js resources/main-menu/main-menu-data.js resources/main-menu/expedition-entry.js resources/main-menu/black-fade.js resources/app resources/run resources/training/training-run.js resources/training/training-coach.js resources/training/training-director.js resources/training/training-steps.js resources/training/training-store.js resources/run-ui/planet-view.js resources/run-ui/decision-rooms.js resources/run-ui/decision-rooms.css resources/run-ui/run-report.js resources/run-ui/run-ui-adapter.js resources/run-ui/run-map-renderer.js resources/run-ui/plant-specimen.js resources/run-ui/terraform-globe.js resources/run-ui/gameplay-transition.js art`).split("\n").filter(Boolean);
-    const differ = PROTECTED.filter(f => git(`rev-parse ${BASE_SHA}:"${f}"`) !== git(`hash-object "${f}"`));
+    const differ = PROTECTED.filter(f => git(`rev-parse ${BASE_SHA}:"${f}"`) !== hashV7(f));
     const paintings = PROTECTED.filter(f => /backgrounds\/menu-\d\d\.jpg$/.test(f));
     PROOF.node.scope = { changed: changed.filter(p => !p.startsWith("docs/evidence/")), protectedFiles: PROTECTED.length, paintings: paintings.map(f => ({ f, sha256: sha256(fs.readFileSync(path.join(ROOT, f))) })) };
     check(!outside.length && !differ.length && paintings.length === 12,

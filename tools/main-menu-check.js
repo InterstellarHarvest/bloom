@@ -127,8 +127,11 @@ const mulberry32 = a => () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.i
     check(!/backdrop-filter|will-change/.test(rules) && !/@keyframes[^}]*filter/.test(rules) && !/transition:[^;]*filter/.test(rules), "M7c main-menu.css: no backdrop-filter, no will-change, no animated or transitioned filter (028B compositing lesson)");
     check(/new Worker\(new URL\("\.\/survey-worker\.js", import\.meta\.url\)/.test(pool) && !/new Worker/.test(survey) && /from "\.\/sector-pool\.js"/.test(survey) && /static prefetch\(/.test(survey),
       "M7d the one worker spawn point moved to sector-pool.js; destination-survey.js imports SectorPool and exposes static prefetch()");
-    check(/type === "plan"/.test(worker) && /type === "validate"/.test(worker) && /columnCandidates\(sectorSeed, column, undefined, \{ firstBloom \}\)/.test(worker),
-      "M7e survey-worker.js still serves the accepted plan / validate / column tasks (semantics untouched; byte identity is checked by the milestone's provenance QA)");
+    // (BLOOM-035B) every task carries the species ({ id, physiologyKey }, resolved in the worker — unknown / stale = an error) and the worker
+    // gains the "evaluate" task (the species evaluation of a physical world the page already holds)
+    check(/type === "plan"/.test(worker) && /type === "validate"/.test(worker) && /type === "evaluate"/.test(worker) && /const species = speciesFor\(e\.data\.species \|\| null\)/.test(worker)
+      && /columnCandidates\(sectorSeed, column, undefined, \{ firstBloom, species, cache \}\)/.test(worker) && /species: \{ id: sp\.id, physiologyKey: sp\.physiologyKey \}/.test(pool),
+      "M7e survey-worker.js serves the accepted plan / validate / column tasks, now FOR a species (035B: { id, physiologyKey } in every message from the pool, resolved in the worker) plus the species \"evaluate\" task");
     check(/translate:/.test(css) && !/@keyframes mm-rise\{[^}]*transform/.test(css), "M7f entrances / recede animate the independent `translate` property, never the plaque's layout transform");
     // 028C1: menu ↔ survey is a plain fade through black owned by the entry; the AtmosphereTransition is only handed to the survey's departure
     // (028D1) the fade itself moved, unchanged, to ./black-fade.js (shared with the training run page): the entry delegates to it
