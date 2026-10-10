@@ -38,10 +38,14 @@ stylesheet is only ever added inside those documents. Under `file://` the same `
 | LIGHT surfaces | `--bloom-paper(-2)`, `--bloom-card`, `--bloom-line(-2)`, `--bloom-ink(-soft/-faint)`, `--bloom-frame`, `--bloom-shadow-lg` | Gameplay. |
 | NIGHT surfaces | `--bloom-space-0/1/2`, `--bloom-night-card` (translucent), `--bloom-night-card-solid`, `--bloom-night-paper(-2)` (raised controls), `--bloom-night-line(-2/-3)`, `--bloom-night-ink(-soft/-faint)`, `--bloom-night-shadow`, `--bloom-night-veil` | Each is the dark counterpart of a LIGHT token (↔ in the file). Night ink IS the gameplay card's cream. |
 | Hues on night | `--bloom-{leaf,bloom,sky,gold,pressure,ok,warn,bad}-night`, `--bloom-focus-night` | The same hue, lifted to read on the dark. |
+| Planning buttons | `--bloom-{leaf,sky}-btn-night(-hover/-lip/-rim)` | The leaf / sky primaries of the planning screens: gameplay's DARK shade of the hue as the surface, the hue itself as the rim, one step deeper under the pointer / focused / pressed. |
 
 **Contrast** (WCAG 2.x, V6): every night text token ≥ 4.5 : 1 on the solid night card, on deep space and on a raised control (the
-lowest is 5.6 : 1; night ink ≥ 14 : 1); the night focus ring ≥ 7.9 : 1. The leaf and sky buttons keep gameplay's white label (3.4 : 1
-on leaf — the pairing gameplay's Resume / Plant buttons use; the labels are 15–19 px heavy).
+lowest is 5.6 : 1; night ink ≥ 14 : 1); the night focus ring ≥ 7.9 : 1. **Buttons** (PMO review): a white word on gameplay's leaf /
+sky is only 3.4 / 3.5 : 1, so the planning primaries use the planning button shades — white on leaf 5.61 : 1 and sky 5.98 : 1 at rest,
+7.67 / 8.15 : 1 under the pointer, focused and pressed; the raised and ghost controls carry ink at ≥ 10.5 : 1. `visual-system-check`
+C1 measures every planning button's computed word against its computed surface in all four states (≥ 4.5 : 1, both browsers).
+Gameplay's own buttons are unchanged.
 
 ## 3. The NIGHT planning language
 
@@ -65,7 +69,7 @@ word (the suites read those words). Shared glyphs are byte-identical to the game
   gradient with a soft pink glow (one static filter, never animated); UNKNOWN SOILS a leaf-green kicker between two leaf dots.
   Readability is measured on all twelve paintings through the card's least opaque stop (T2: worst 5.2 : 1, painting 09).
 - Menu: EXPEDITION · TRAINING · SETTINGS · CREDITS as chunky icon + word buttons (world · journal · settings · info).
-  EXPEDITION is the gameplay leaf button; the others are raised night controls. TRAINING's "Recommended" is a Biomass-gold pill
+  EXPEDITION is the leaf button in its planning shade (white ≥ 5.6 : 1); the others are raised night controls. TRAINING's "Recommended" is a Biomass-gold pill
   with a star (a word, not a colour).
 - Status ("Surveying sector · n of 9 worlds"): a night pill with a leaf dot.
 - Dialogs (Training placeholder, the first-run recommendation, Settings, Credits): the solid night card; kicker above the heading;
@@ -80,12 +84,16 @@ word (the suites read those words). Shared glyphs are byte-identical to the game
 
 - The deep-space ground (starfield, the glow near the top, the globes, the focus glow) is unchanged — the darker planning feeling.
 - Header: the gameplay back button (icon + "Main menu"), the leaf kicker "Strange Bloom" over "Destination Survey", the sector as a
-  night pill with a sky dot, **Scan new sector** as the gameplay sky button.
-- The three classes ARE the gameplay statuses: **Favorable = OK** (leaf, check), **Precarious = warning** (amber, alert),
-  **Extreme = blocked** (bloom red, cross) — column heads and the dossier chip are status pills, icon + word.
+  night pill with a sky dot, **Scan new sector** as the sky button in its planning shade.
+- The three classes carry the gameplay status colours: **Favorable = OK** (leaf, check), **Precarious = warning** (amber, alert),
+  **Extreme = severe** (bloom red, the hazard sign) — column heads and the dossier chip are status pills, icon + word. Extreme is a
+  PLAYABLE class: it signals high risk, never prohibition, so it never shows the blocked cross; the cross stays for genuinely hostile
+  ground (the habitability key's "Hostile") and unavailable actions.
 - Dossier (the night card): name, world type, tagline; habitability on arrival as the gameplay meter with a word key
   (Suits · Marginal · Hostile with shares); the five rows as gameplay condition boxes with the category identity — Climate =
-  Temperature, Water, Soil, Atmosphere (neutral, cloud), Solar exposure = Hazard (sun); expected challenges in the "blocked" tint
+  Temperature, Water, Soil, Atmosphere (neutral, cloud), Solar exposure = Hazard (sun). Each row has two separate parts: on the left
+  the category kicker over its **primary descriptor** (bold, ink); past a thin rule on the right, the **secondary explanation**
+  (smaller, soft) — e.g. "Fertile | fertile 100 %" no longer runs together; on a phone the explanation drops under the descriptor; expected challenges in the "blocked" tint
   with its icon; the cue as a leaf note; Return to survey (ghost) · **Begin expedition** (leaf primary).
 - The action bar is sticky: on a short screen (1024 × 768, 1280 × 720) the dossier scrolls under it and Begin expedition stays in
   view (it was cut off at 1024 × 768 before). Below 820 px of height the dossier is a little more compact.
