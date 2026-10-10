@@ -1,0 +1,73 @@
+# A · engine: per-region allocation, local specializations, density (deterministic, production engine)
+PASS  data model: every land region starts Balanced with no specialization; modes = Balanced / Roots / Leaves / Seeds  — sim.colonies = { focus: [9 × "balanced"], spec: [9 × null] }
+PASS  the BLOOM-008 single global focus is removed (no sim.setFocus / clearFocus / sim.focus, no config.focus): one model only
+PASS  [1] Region A set to Roots stays Roots after Region B is set to Seeds (an empty region / unknown mode / bad index is refused)  — A = Meadow Hollow: roots · B = Fern Shade: seeds
+PASS  [2] several regions hold different allocations at the same time  — Meadow Hollow roots · Fern Shade seeds · Cool Glen leaves · the other 6 Balanced
+PASS  [4] changing Region A later changes only Region A  — Meadow Hollow roots → leaves; every other region unchanged
+PASS  [6] allocations survive ordinary simulation ticks (1500 more ticks, bit-identical colony state)  — {"focus":["leaves","seeds","leaves","balanced","balanced","balanced","balanced","balanced","balanced"],"spec":[null,null,null,null,null,null,null,null,null]}
+PASS  Balanced can be chosen again and carries no modifier at all (the baseline)
+PASS  [7] an allocation + specialization survive die-back while the colony still exists  — 115/144 tiles left after 8 s: still seeds + seedReserve
+PASS  [7] total loss: the region KEEPS its allocation and specialization (dormant — nothing lives there; it cannot be changed or upgraded while empty); when recolonized they apply again  — Test lost every plant at 20 s (red ground), stayed roots + rootNetwork while empty, recolonized 1 s after the sky was restored → active again (establishBonus 3)
+PASS  Roots speeds establishment of a young, marginal-but-viable colony (yellow ground)  — fitness 0.62; establishment after 32 s: Balanced 30.3% → Roots 56.3%
+PASS  …in the marginal band (between die and grow thresholds) stands only hold at Balanced; with Roots they keep thickening  — fitness 0.45; establishment Balanced 5.0% (unchanged) vs Roots 20.7%
+PASS  …and under stress (yellow ground below the die threshold) Roots cuts die-back: more of the colony survives  — fitness 0.32; survivors of 144 after 96 s: Balanced 18.8 vs Roots 49.3
+PASS  [8] Roots — even with a Root Network — does NOT rescue red, blocked ground: die-back, thinning and recovery are bit-identical to Balanced; the colony still collapses  — fitness 0.05 (red); survivors after 144 s: Balanced 0.0 = Roots 0.0 = Roots + Root Network 0.0 of 144
+PASS  [8/10] no allocation or specialization lets plants spread into ground below the grow threshold (1500 ticks next to a dense, invested colony)  — Test living: 0 / 0 / 0
+PASS  Roots has a cost: on a thriving colony that is already dense it only lowers that colony's Biomass (sugar goes below ground)  — 300 ticks: Balanced 261.8 vs Roots 235.2 Biomass
+PASS  [9] no allocation changes environmental fitness, tolerance, category word, limiting factor or purchase preview  — 9 sections × 4 modes compared
+PASS  [9] Leaves raises that colony's own Biomass with identical plant cover, and the bonus scales with establishment: large on a dense stand, tiny on fresh seedlings  — extra Biomass as a share of the Test colony's own yield: dense stand +50.0% · seedling stand (first 1.92 s) +4.4% (config.colony.yieldRampTo 0.75)
+PASS  Leaves has a cost: fewer seeds, so the colony spreads more slowly into open ground  — Test tiles colonized in 6.4 s: Balanced 13 vs Leaves 9
+PASS  [10] Seeds increases outbound colonization from its colony; the destination's fitness is untouched  — Test tiles colonized from Home in 2.4 s: Balanced 5.5 → Seeds 7.3 (11/12 seeds higher)
+PASS  [10] Seeds strengthens Waterborne source pressure: the first foothold across a 3-tile strait arrives sooner  — first foothold: Balanced 13.9 s → Seeds 6.1 s (mean of 8 seeds)
+PASS  [18] Seed Reserve (bought for the coastal source colony, allocation left Balanced) makes Waterborne footholds arrive sooner  — first foothold: 13.9 s → Seed Reserve 6.1 s
+PASS  [10/18/32] Seeds + Seed Reserve + Waterborne Seeds cannot establish on a hostile island: seed ARRIVAL events happen, no FOOTHOLD event ever does  — 212 / 212 / 212 arrival events, 0 footholds; island limit: scorching
+PASS  [30/31] every crossing event is a real engine source → landing pair (geography crossing, different landmasses, gap ≤ maxGap); each foothold event is exactly one real new foothold  — 1 events (1 footholds = sim.crossing.footholds 1, 0 arrivals) · gaps 3
+PASS  [30] without Waterborne Seeds there is no crossing event at all (nothing for the map to animate)  — 1500 ticks next to a 3-tile strait
+PASS  [13] insufficient Biomass blocks a local purchase (no state change)  — price 90 = (18 + 8 × 0 bought) × costScale 5; with 89 Biomass → refused, Biomass unchanged
+PASS  [12] a local specialization spends real, ordinary Biomass (the same sim.biomass the shop uses)  — 500 → 410 Biomass; sim.spent.local 90
+PASS  [15] at most one specialization per region: a second (of any kind) is refused  — Meadow Hollow keeps leafCanopy
+PASS  [14] a specialization belongs to the one region it was bought for: every other region's modifiers stay zero  — origin yieldBonus 0.5; 8 other regions 0
+PASS  changing that colony's allocation afterwards keeps its specialization (no removal, no refund)  — now Seeds + Leaf Canopy
+PASS  each specialization bought makes the next one cost more (a bounded local sink)  — next price 130
+PASS  matching allocation + specialization combine with a bounded, data-driven synergy (capped)  — Leaves 0.5 + Leaf Canopy 0.5 × (1 + 0.25) = 1.125 (cap 1.2)
+PASS  [19] no specialization changes the plant's tolerances or any region's Temperature / Water / Soil / Hazard evaluation  — after buying rootNetwork, seedReserve, leafCanopy: derived() + every evaluate() bit-identical
+PASS  [20] the global shop keeps working after local investment; local purchases never change global prices  — bought Seed Output, Cold, Salt after a Leaf Canopy; spent global 470 / local 90
+PASS  [16] Root Network establishes a colony more strongly than the free Roots allocation (and stacks, capped, with it)  — establishment after 24 s on yellow ground: Balanced 24.7% · Roots 46.9% · Root Network 52.8% · both 62.6%
+PASS  [16] …and regrows faster after die-back (dead ground clears and is recolonized sooner under a Root Network)  — 9.6 s after half the colony died: dead tiles left Balanced 21.3 vs Root Network 2.5 · living 107.0 vs 131.0
+PASS  [17] Leaf Canopy raises that colony's Biomass, and pays far more on an established, productive colony than on a newly seeded patch  — extra Biomass as a share of the colony's own yield: dense colony +50.0% · seedling colony (first 1.92 s) +4.4%
+PASS  [24] a new Living tile starts as a tiny seedling stand, well under BLOOM-008's  — seedlingDensity 0.15 → 0.05 (origin at t = 0 and Fern Shade's first tiles at 24 s)
+PASS  [25] density still reaches a mature, full stand: Sparse → Establishing → Established → Dense  — origin: sparse @ 0.2 s, establishing @ 30.6 s, established @ 63 s, dense @ 123.2 s; max stand density 0.999
+PASS  [27] once every origin tile is Living the colony keeps thickening for a long time (tile-full ≠ mature)  — all tiles Living at 65 s at 41.8% establishment → 99.9% later
+PASS  [5/22] ignoring allocation and local investment entirely is legal: every broad First Bloom build wins with every region Balanced and nothing bought locally  — wet 249 s · dry 262 s · terraformWater 256 s
+PASS  [11] a sensible multi-colony allocation (young/stressed → Roots, open frontier → Seeds, filled-in → Leaves) beats a badly placed one; Balanced sits between and still wins  — wet build, 4 RNG seeds: situational 200 s (28 focus changes) · Balanced 249 s · misplaced 298 s
+PASS  Leaves is not the automatic answer: Leaves on every colony loses to situational play by a clear margin and does not bring the first purchase forward  — Leaves everywhere 245 s (first buy 33 s) vs situational 200 s · Balanced first buy 28 s
+PASS  [21] local investment never soft-locks the global game: even a bot that buys a specialization for every colony (or spends its opening Biomass on one) still buys its whole global recipe and wins  — over-investor: 850 local / 1030 global Biomass, win 311 s · opening Root Network: win 262 s
+PASS  [23/33/36] Ocean Archipelago seed 13 stays production-valid (layers 1–8 re-validated, witnesses buy only global traits — no local choices) and winnable  — attempt 2 · Borea-703 · 2 strategies · strategy 1 bot: Balanced 394 s [355–478] · situational 289 s [253–313]
+PASS  [23/34/36] Ocean Archipelago seed 8 stays production-valid (layers 1–8 re-validated, witnesses buy only global traits — no local choices) and winnable  — attempt 1 · Coriol-220 · 2 strategies · strategy 1 bot: Balanced 349 s [268–477] · situational 310 s [253–407]
+PASS  [35] seed 114 (was 35 before BLOOM-027B) still fails explicitly (no acceptable world in every attempt)  — 24 attempts rejected
+PASS  allocation effects are config data: with every config.colony mode value at 0 each mode is bit-identical to Balanced; raising leaves.yieldBonus raises Biomass  — Leaves +50% → 1053 Biomass at 240 s; +100% → 1257
+
+# B · UI: per-region controls, badges, local upgrades, density rendering, Biomass HUD, crossing feedback (seeded page RNG)
+PASS  a new run opens on the origin: four focus buttons (Balanced pressed), three local upgrades with their Biomass cost, affordable from the starting Biomass  — buttons balanced/roots/leaves/seeds · upgrades rootNetwork 90 · leafCanopy 90 · seedReserve 90
+PASS  the inspect panel leads with the colony status + establishment %  — Colony: Sparse · 0% established
+PASS  [1/2/3/28] through real map + button clicks: origin Roots, Fern Shade Seeds, Cool Glen Leaves all held at once; selecting other regions cleared nothing; the origin's panel shows its own Roots pressed  — focus = ["roots","seeds","leaves","balanced","balanced","balanced","balanced","balanced","balanced"]
+PASS  [4] changing Fern Shade later changes only Fern Shade  — ["roots","roots","leaves","balanced","balanced","balanced","balanced","balanced","balanced"]
+PASS  [28] each directed region shows a small focus badge on the map in its focus colour (Balanced regions show none)  — roots 55px · seeds 53px · leaves 57px
+PASS  [13] UI: an unaffordable local upgrade says how much Biomass is missing, and clicking it changes nothing  — button: "need 5 more" · log: Leaf Canopy costs 90 Biomass. You have 85: 5 more needed.
+PASS  [12/15] UI: buying Leaf Canopy for the origin spends real Biomass (HUD follows) and the panel then shows it as built — no second upgrade offered there  — 400 → 310 (price 90) · panel: ❦ Leaf Canopy built here
+PASS  [14] UI: another colony still offers its own upgrade (at the next, higher price); the origin's upgrade stays with the origin  — Fern Shade upgrades at 130
+PASS  [29] Biomass is the most prominent HUD element: its number is ≥ 2× the size of the other status text, in a larger box, near the top-left  — Biomass 30px vs coverage 12px / sky 12px · box 9880 px² vs coverage group 5774 px²
+PASS  no browser errors (per-region controls)
+PASS  focus clicks land while the game runs live at 1×, and one click keeps working with no further input  — 8/8 live clicks registered; 9 ticks later the origin is still leaves
+PASS  no browser errors (live 1×)
+PASS  [24/25/26] the same origin region, from just seeded to Dense: at every stage the plant patches are bigger and a darker green (tiny pale sprouts → full dark tiles)  — just seeded (sparse 0.5%): mean stand 0.05, patch 8.2% of tile, plant lum 194 · low density (sparse 6.1%): mean stand 0.17, patch 19.1% of tile, plant lum 176 · establishing (establishing 19.5%): mean stand 0.24, patch 27.3% of tile, plant lum 166 · established (established 40.6%): mean stand 0.40, patch 46.3% of tile, plant lum 145 · dense (dense 87.6%): mean stand 0.88, patch 100.0% of tile, plant lum 95
+PASS  [26] rendering tracks the real stand density: each tile's drawn patch area matches its sim.dens mapping  — 619 tile samples, mean |drawn − expected| area 0.1%
+PASS  [27] a filled region keeps visibly thickening inside (Established → Dense changes the picture)  — all 315 origin tiles Living; established 40.6% (patch 46.3%, lum 145) → dense 87.6% (patch 100.0%, lum 95)
+PASS  every density shade stays distinct from water, dead ground, barren ground and the outline colours (RGB distance)  — min distance: water 69 · dead 74 · barren 43 · outlines 53
+PASS  no browser errors (density rendering)
+PASS  [30] crossing animations appear only for real engine events: none before Waterborne Seeds; after it, each animation copies one engine event's source → landing pair (different landmasses)  — before: 0 events / 0 animations · after: 2 animations (1 footholds, 1 arrivals)
+PASS  [32] seeds that wash up on hostile ground show only the travel + faint arrival ripple — never a foothold burst  — 0 animations landed on currently hostile regions, 0 as footholds
+PASS  [31] a successful foothold ends in a distinct bright burst; a plain seed arrival only in a faint ripple  — foothold landing: 41 bright px · arrival landing: 9 bright px (0 pale-ripple px)
+PASS  no browser errors (crossing feedback)
+
+ALL CHECKS PASS  (24.0 s)

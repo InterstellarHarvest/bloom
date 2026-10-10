@@ -1,0 +1,41 @@
+BLOOM-033 full regression on ae77b55b5d4e0cff0fa70a7c2cc6b01b0dfb725b (= ae77b55, the docs commit; product code = f5971d0) — every tools/*-check.js, sequential, nothing else running, default browser matrix (Chromium 147.0.7727.15 + Firefox 148.0.2 wherever a suite has browsers; release-check --no-suites because its child suites run on their own; portable-runtime-check WITH its guided-training-check --file child). macOS 12, Playwright 1.59.1.
+
+archetype-check rc=0 pass=40 fail=0 50s
+atmosphere-transition-check rc=0 pass=14 fail=0 1s
+colony-development-check rc=0 pass=68 fail=0 24s
+crossing-check rc=0 pass=14 fail=0 1s
+cylinder-gen-check rc=0 pass=35 fail=0 10s
+desert-check rc=0 pass=64 fail=0 52s
+destination-survey-check rc=0 pass=11 fail=0 57s
+dying-world-check rc=0 pass=63 fail=0 58s
+economy-check rc=0 pass=39 fail=0 317s
+frozen-check rc=0 pass=70 fail=0 78s
+game-flow-check rc=0 pass=48 fail=0 97s
+gen-check rc=0 pass=47 fail=0 5s
+guided-training-check rc=0 pass=50 fail=0 125s
+main-menu-check rc=0 pass=17 fail=0 15s
+native-competition-check rc=0 pass=66 fail=0 162s
+organic-hybrid-art-intake-check rc=0 pass=45 fail=0 34s
+planet-view-check rc=0 pass=80 fail=0 65s
+plant-rooms-check rc=0 pass=66 fail=0 77s
+plant-sprite-pipeline-check rc=0 pass=58 fail=0 21s
+portable-runtime-check rc=0 pass=71 fail=0 400s
+procedural-run-check rc=0 pass=32 fail=0 15s
+production-plant-integration-check rc=0 pass=50 fail=0 82s
+release-check rc=0 pass=50 fail=0 121s
+run-ui-check rc=0 pass=40 fail=0 68s
+run-ui-convergence-check rc=0 pass=57 fail=0 125s
+sim-check rc=0 pass=19 fail=0 1s
+single-app-flow-check rc=0 pass=59 fail=0 380s
+slice-check rc=1 pass=14 fail=1 10s
+sphere-texture-check rc=0 pass=14 fail=0 6s
+strategy-check rc=0 pass=35 fail=0 25s
+surface-check rc=0 pass=11 fail=0 2s
+terraform-check rc=0 pass=61 fail=0 114s
+topology-check rc=0 pass=53 fail=0 3s
+training-check rc=0 pass=75 fail=0 39s
+volatile-climate-check rc=0 pass=78 fail=0 102s
+
+TOTAL: 35 suites · 1614 passed · 1 missed
+
+The one miss: slice-check 'pacing: perfect-bot win in 4–8 min' — 230 s (floor 240 s). The suite does not seed Math.random (live bonus-bubble rolls), so the bot's win time varies run to run. Re-run on an idle machine: branch 255 / 244 / 249 s PASS, baseline f5623d7 246 / 260 / 255 s PASS. Classified: live-random flake, reproduced in neither tree; the 240 s floor leaves a thin margin (worth seeding in a later milestone).

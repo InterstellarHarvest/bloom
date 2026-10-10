@@ -21,7 +21,7 @@ not rewritten to match later plans.
 
 ## 1. Production application architecture
 
-**LOCKED DESIGN · implemented by BLOOM-033 on its review branch (all of its QA green), pending PMO acceptance.** It becomes
+**LOCKED DESIGN · implemented by BLOOM-033 on its review branch (its full regression green apart from one classified live-random flake), pending PMO acceptance.** It becomes
 IMPLEMENTED in production `main` when BLOOM-033 is merged; until then production `main` still runs the two-document flow of BLOOM-030.
 
 - `index.html` is the single player-facing Strange Bloom application.
