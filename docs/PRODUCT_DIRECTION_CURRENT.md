@@ -15,8 +15,10 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-10, BLOOM-035B review handoff — the species system implementation is a CANDIDATE on `handoff/bloom-035b-review`
-(not in production `main`; pending PMO review). BLOOM-035A (the accepted design) and BLOOM-034 are in production `main`.*
+*Last updated: 2026-10-10, BLOOM-035B closeout — the species system is IMPLEMENTED / COMPLETE in production `main` (PMO-accepted
+`2180fcd`, fast-forwarded). Organic Hybrid remains the only normal player-facing Expedition choice; Species Selection and the three
+candidate species stay behind `?species=1` on TEMPORARY PIPELINE PROOF art. NEXT: BLOOM-035C (final species art, real-pack intake, the
+normal Species Selection release); BLOOM-036 Challenges follow that release.*
 
 ---
 
@@ -57,7 +59,9 @@ STRANGE BLOOM · UNKNOWN SOILS
 ```
 
 - **IMPLEMENTED** (BLOOM-033): BEGIN EXPEDITION → **EXPEDITION**; menu today: EXPEDITION · TRAINING · SETTINGS · CREDITS.
-- **CHALLENGES: PLANNED** (BLOOM-036). It is not added as a fake or disabled control before then.
+- **CHALLENGES: PLANNED** (BLOOM-036). It is not added as a fake or disabled control before then: the real CHALLENGES entry is added at
+  the **beginning of BLOOM-036**, as part of its first functional Challenge slice (036A), and BLOOM-036 begins only after the BLOOM-035C
+  species release.
 
 ## 4. Expedition definition
 
@@ -70,9 +74,14 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
            → Begin Expedition → gameplay → Bloom / Extinction report
 ```
 
-- Today (BLOOM-033): EXPEDITION → Destination Survey → focus → Begin Expedition → gameplay → report (Organic Hybrid only).
-- **Species Selection: LOCKED DESIGN · PLANNED** (BLOOM-035B). Until the real species art is accepted it is reachable only behind the
-  explicit developer query flag `?species=1`; without the flag EXPEDITION keeps today's Organic Hybrid flow.
+- Today (normal players): EXPEDITION → Destination Survey → focus → Begin Expedition → gameplay → report (Organic Hybrid only).
+- **Species Selection: IMPLEMENTED behind `?species=1`** (BLOOM-035B) · **normal release PLANNED** (BLOOM-035C). Until the three real
+  species packs are accepted and integrated it is reachable only behind the explicit developer query flag `?species=1`; without the flag
+  EXPEDITION keeps the Organic Hybrid flow.
+- **At the BLOOM-035C release** (all three real packs accepted and integrated): Cinder Rosette, Woolly Candle and Reed Spire switch from
+  their proof packs to their real packs and take their production release status; ordinary EXPEDITION no longer needs `?species=1` and
+  becomes EXPEDITION → Choose Plant Species → Destination Survey → Begin Expedition. An explicit developer mechanism may remain for
+  engineering, but normal players never need a query flag.
 
 ## 5. Destination Survey / difficulty
 
@@ -89,9 +98,18 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
 
 ## 6. Plant species
 
-**LOCKED DESIGN · CANDIDATE** (BLOOM-035B on the review branch `handoff/bloom-035b-review`; species art production PLANNED). The design is
-accepted (BLOOM-035A COMPLETE). Production `main` has no species mechanic yet; the 035B candidate implements the system with temporary
-engineering proof art behind the `?species=1` developer flag only ([`SPECIES_SYSTEM_v1.md`](SPECIES_SYSTEM_v1.md) §0.2).
+**LOCKED DESIGN · Species system IMPLEMENTED** (BLOOM-035B **IMPLEMENTED / COMPLETE**, PMO-accepted, in production `main`; design
+BLOOM-035A COMPLETE; record [`evidence/bloom-035b/REPORT.md`](evidence/bloom-035b/REPORT.md)). The product state, precisely:
+
+- **Organic Hybrid remains the ONLY normal player-facing Expedition choice** for now.
+- **Species Selection and the three candidate species** (Cinder Rosette, Woolly Candle, Reed Spire) **remain behind `?species=1`**
+  ([`SPECIES_SYSTEM_v1.md`](SPECIES_SYSTEM_v1.md) §0.2); their mechanics (physiology, species-relative survey, run plumbing) are live in
+  `main` behind that flag.
+- Cinder Rosette, Woolly Candle and Reed Spire still render with **TEMPORARY PIPELINE PROOF ART** (`art/plant/packs/proof-*`; never shown
+  to normal players as a species).
+- **Final species art is NEXT** (BLOOM-035C: three production packs per [`species-art-briefs/`](species-art-briefs/README.md), the
+  real-pack intake `tools/intake-plant-art.mjs`, then the normal Species Selection release — §1).
+- **Challenges remain PLANNED** (BLOOM-036, §8).
 
 - Plant choices are genuinely different biological species — **not** Organic Hybrid recolours, not Organic Hybrid with purchased
   mutations pre-applied, not cosmetic skins.
@@ -131,7 +149,8 @@ engineering proof art behind the `?species=1` developer flag only ([`SPECIES_SYS
 
 ## 7. Species art architecture
 
-**LOCKED DESIGN · PLANNED.**
+**LOCKED DESIGN · the body-plan layer IMPLEMENTED** (BLOOM-035B: per-species body plans, contracts, grammars and proof packs —
+[`SPECIES_BODY_PLANS_v1.md`](SPECIES_BODY_PLANS_v1.md)) · **final species packs NEXT** (BLOOM-035C).
 
 - Different species need genuine new authored sprite families.
 - Reuse the production architecture proven by Organic Hybrid: species art pack → species body plan → visual model → component selection
@@ -141,7 +160,19 @@ engineering proof art behind the `?species=1` developer flag only ([`SPECIES_SYS
 
 ## 8. Challenges
 
-**LOCKED DESIGN · PLANNED** (BLOOM-036). Nothing of this exists in production.
+**LOCKED DESIGN · PLANNED** (BLOOM-036). Nothing of this exists in production. **Sequence (locked):** BLOOM-035B species engineering
+(complete) → BLOOM-035C three final species art packs + real-pack intake + the normal Species Selection release → **then** BLOOM-036.
+Challenges are not implemented during the species art work.
+
+Reserved shape of BLOOM-036 (not implemented):
+
+- **036A** — the main-menu CHALLENGES entry (added here, as part of the first functional slice — never earlier as a dead / disabled
+  button); the Challenge hub / selection screen; the challenge definition schema; routing inside the existing single-document app.
+- **036B** — the challenge dossier; prescribed species; world recipe / authored world selection; starting owned adaptations / starting
+  state where specified; special-mechanics composition.
+- **036C** — Dying World, Native Competition and Volatile Climate migrated / reused as Challenge ingredients (not duplicated mechanics).
+- **036D** — the initial authored Challenge set; a generated Challenge planet where appropriate; the completion / result / replay flow;
+  browser / portable / full regression.
 
 - CHALLENGES are **not** modifiers chosen during a normal Expedition. They are separate, SimCity-style contained challenge runs.
 - Flow: CHALLENGES → choose one authored challenge → the game generates ONE fresh planet satisfying that challenge's recipe → challenge
@@ -205,7 +236,7 @@ This is not a gameplay-code feature; product code does not work around repositor
 | **BLOOM-033** — Single-document production application | `index.html` is the whole game; GameSession; `default`; Favorable / Precarious / Extreme; EXPEDITION | **IMPLEMENTED / COMPLETE** (in production `main`) |
 | **BLOOM-034** — Visual-system convergence | shared theme tokens (`resources/ui/bloom-theme.css`); title / menu restyle; Destination Survey convergence; the dark-space BLOOM planning language; **no species mechanics yet** | **IMPLEMENTED / COMPLETE** (in production `main`) |
 | **BLOOM-035A** — Species design / research | species architecture, the reference physiology, the strategic-distinctness study, body plans and concepts | **ACCEPTED / COMPLETE** (docs + research in `main`) |
-| **BLOOM-035B** — Species system implementation + Species Selection | species data / model; `config.referencePlant`; simulation / validator support; species-aware Destination Survey; run plumbing; body-plan layer with proof packs; the Species Selection screen behind `?species=1` | **CANDIDATE** — review branch `handoff/bloom-035b-review`, pending PMO review (not merged) |
-| **Species art production** | three additional real species packs (four total, unless balancing / design proves a different count better), on the same production compositor architecture | PLANNED |
-| **BLOOM-036** — Challenges | the main-menu CHALLENGES route; authored challenge definitions; one generated challenge planet; assigned species / start state; the challenge dossier; Dying World / Native Competition / Volatile Climate as challenge ingredients | PLANNED |
+| **BLOOM-035B** — Species system implementation + Species Selection | species data / model; `config.referencePlant`; simulation / validator support; species-aware Destination Survey; run plumbing; body-plan layer with proof packs; the Species Selection screen behind `?species=1` | **IMPLEMENTED / COMPLETE** (PMO-accepted `2180fcd`, in production `main`; Species Selection still behind `?species=1`, candidate species on TEMPORARY PIPELINE PROOF art) |
+| **BLOOM-035C** — Final species art + Species Selection release | three final production species packs (Cinder Rosette, Woolly Candle, Reed Spire; four species total) on the same compositor architecture; the generalized real-pack intake (`tools/intake-plant-art.mjs`, 035C0 tooling); then switch the three species to their real packs and release Species Selection in the normal EXPEDITION flow (no `?species=1`) | **NEXT** |
+| **BLOOM-036** — Challenges | begins only after the 035C release: 036A CHALLENGES menu entry + hub + definition schema + routing · 036B dossier, prescribed species, world recipe, starting state, mechanics composition · 036C Dying World / Native Competition / Volatile Climate as ingredients · 036D initial authored set, generated Challenge planet, result / replay, full regression | PLANNED |
 | **Final hardening** | full documentation reconciliation; dead historical production-path cleanup; Pages enablement / release; a Safari / WebKit production test if practical; final end-to-end release QA | PLANNED |
