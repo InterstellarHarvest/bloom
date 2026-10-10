@@ -35,7 +35,8 @@ const ALLOWED = p => C032.has(p) || /^tools\/[a-z-]+-check\.js$/.test(p) || p.st
 for (const f of ["content/config.js", "content/traits.js", "resources/plant-visual/generated/plant-atlas.js", "resources/plant-visual/plant-visual-model.js", "resources/plant-visual/plant-components.js",
   "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-fx.js"]) require(path.join(ROOT, f));
 const PV = BLOOM.plantVisual, PC = BLOOM.plantCompositor, FX = BLOOM.plantFx, ART = BLOOM.plantArt, RULES = PV.model.rules(BLOOM_DATA);
-const TRAITS_SNAPSHOT = J(BLOOM_DATA.traits), CONFIG_SNAPSHOT = J(BLOOM_DATA.config), CANVAS = ART.contract.canvas, PACKS = ART.packOrder;
+// (BLOOM-035B-5) the packs of Organic Hybrid's body plan (oh-stem@1); the rosette / candle / reed proof packs belong to tools/body-plan-check.js
+const TRAITS_SNAPSHOT = J(BLOOM_DATA.traits), CONFIG_SNAPSHOT = J(BLOOM_DATA.config), CANVAS = ART.contract.canvas, PACKS = ART.packOrder.filter(p => PC.planRefOf(p) === "oh-stem@1");
 /** The required real-art states (BLOOM-032B2 brief) + the art-cap twins. */
 const STATES = { base: {}, cold1: { cold: 1 }, cold2: { cold: 2 }, cold3: { cold: 3 }, heat1: { heat: 1 }, heat2: { heat: 2 }, heat3: { heat: 3 }, cold2heat1: { cold: 2, heat: 1 },
   drought1: { drought: 1 }, drought2: { drought: 2 }, drought3: { drought: 3 }, drought3heat3: { drought: 3, heat: 3 }, flood1: { flood: 1 }, flood2: { flood: 2 }, flood3: { flood: 3 }, flood3heat3: { flood: 3, heat: 3 },
