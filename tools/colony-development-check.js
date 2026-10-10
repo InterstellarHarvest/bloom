@@ -43,7 +43,7 @@ function labPlanet({ testTempOffset = 0, gap = 0, third = false } = {}) {
   return { id: "lab", name: "Lab", gridWidth: W, gridHeight: H, origin: "home", globalClimate: { temperature: 10, moisture: 50 }, tilemap, sections };
 }
 // temperature offset that gives the Test section fitness f (< 1) under the lab sky: band ceiling + soft × (1 − f)
-const offFor = f => config.genomeBase.tempCeil + config.categories.Temperature.soft * (1 - f) - 10;
+const offFor = f => config.referencePlant.tempCeil + config.categories.Temperature.soft * (1 - f) - 10;
 // fill a section with Living stands of density d (no Barren tiles left there → its own spread draws no randomness)
 function fill(sim, i, d = EST.seedlingDensity) { for (const t of sim.map.SEC_TILES[i]) { sim.state[t] = sim.LIV; sim.dens[t] = d; } }
 function labRun({ fit, mode, spec, seed = 7, ticks = 400, cfg = config, fillHome = true, d0 }) {

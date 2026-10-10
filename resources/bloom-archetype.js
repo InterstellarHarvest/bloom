@@ -73,6 +73,11 @@
 
   // attempt k's raw planet for an archetype + public seed (before any validation) — the deterministic unit
   // generateFromArchetype retries over; exposed so fixtures/diagnostics can address one attempt directly
+  // (BLOOM-035B) WORLD_GEN_VERSION: the version of the world a (archetype, public seed) pair names — this generator, its acceptance
+  // rules and the reference physiology they read (config.referencePlant). A World Seed names ONE physical planet per version, whatever
+  // species the player brings. Changing config.referencePlant (or anything else that changes accepted worlds) is a deliberate bump.
+  const WORLD_GEN_VERSION = 1;
+
   function attemptPlanet(A, publicSeed, k) {
     const g = A.geography || {}, seed = publicSeed >>> 0;
     const generationSeed = fnv1a(`${A.id}|${seed}|${k}`), r = BLOOM.gen.mulberry32(generationSeed ^ 0x5eed5eed);
@@ -145,5 +150,5 @@
   }
 
   root.BLOOM.generateFromArchetype = generateFromArchetype;
-  root.BLOOM.archetype = { generateFromArchetype, attemptPlanet, checkArchetype, fnv1a };
+  root.BLOOM.archetype = { WORLD_GEN_VERSION, generateFromArchetype, attemptPlanet, checkArchetype, fnv1a };
 })(typeof window !== "undefined" ? window : globalThis);

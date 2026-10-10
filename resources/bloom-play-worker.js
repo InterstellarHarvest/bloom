@@ -5,8 +5,8 @@
 //   in:  { archetypeId, scenarioId, seeds }
 //   out: { type: "step", step } … then { type: "done", result } or { type: "error", message }
 "use strict";
-importScripts("../content/config.js", "../content/traits.js", "../planets/first_bloom.js", "../content/archetypes.js", "../content/scenarios.js",
-  "bloom-sim.js", "bloom-gen.js", "bloom-validate.js", "bloom-witness.js", "bloom-archetype.js", "bloom-scenario.js", "bloom-play.js");
+importScripts("../content/config.js", "../content/traits.js", "../content/species.js", "../planets/first_bloom.js", "../content/archetypes.js", "../content/scenarios.js",
+  "bloom-sim.js", "bloom-species.js", "bloom-gen.js", "bloom-validate.js", "bloom-witness.js", "bloom-archetype.js", "bloom-scenario.js", "bloom-play.js");
 self.onmessage = e => {
   const { archetypeId, scenarioId, seeds } = e.data, D = self.BLOOM_DATA;
   try {

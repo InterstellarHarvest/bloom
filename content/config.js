@@ -15,7 +15,13 @@
 
     // trait points → environmental tolerance (bible trait effects are unit points)
     scales: { degPerTempPoint: 12, tempCap: 3, waterShiftPerPt: 20, waterTolPerPt: 5, saltPerPt: 70, radPerPt: 30 },
-    genomeBase: { tempFloor: -6, tempCeil: 24, waterPos: 50, waterTol: 18, saltTol: 15, radTol: 30, toxTol: 25 },
+    // (BLOOM-035B) THE REFERENCE PHYSIOLOGY — a WORLD-GENERATION constant, not a playable species. World construction
+    // (resources/bloom-archetype.js: its origin / refuge probes, the layer 4–8 witness and requiredConditions) and the native
+    // competitor (Native Competition) read it; the PLAYER's starting physiology is the selected species' own object
+    // (content/species.js, through createSim(…, { species })) — Organic Hybrid's is numerically equal but separately owned, so a
+    // species retune never changes a planet. Numerically identical to the pre-035B genomeBase. Any change to these numbers is a
+    // deliberate WORLD_GEN_VERSION decision (resources/bloom-archetype.js), never a balance tweak (docs/SPECIES_SYSTEM_v1.md §0.1).
+    referencePlant: Object.freeze({ tempFloor: -6, tempCeil: 24, waterPos: 50, waterTol: 18, saltTol: 15, radTol: 30, toxTol: 25 }),
 
     // raw signals → the four player-facing categories (bible §5)
     categories: {

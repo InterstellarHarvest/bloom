@@ -64,10 +64,23 @@
   // data, never the Terraformed sky, so Terraform cannot change how far the scenario has progressed.)
   const CHANNELS = { temperature: "temp", moisture: "moist", moistureShare: "moist", radiation: "rad" };
   const ZERO_OFFSETS = Object.freeze({ temp: 0, moist: 0, rad: 0 });
+  // (BLOOM-035B) createSim's species: a resolved species (BLOOM.species.resolve) — never an id string, never a bare physiology
+  const PHYSIOLOGY_KEYS = ["tempFloor", "tempCeil", "waterPos", "waterTol", "saltTol", "radTol", "toxTol"];
+  function checkedSpecies(sp) {
+    if (typeof sp !== "object" || typeof sp.id !== "string" || typeof sp.physiologyKey !== "string" || !sp.physiology || !Object.isFrozen(sp.physiology))
+      throw new Error("bloom-sim: opts.species must be a resolved species (BLOOM.species.resolve(id)), got " + (typeof sp === "string" ? `"${sp}"` : typeof sp));
+    const keys = Object.keys(sp.physiology);
+    if (keys.length !== PHYSIOLOGY_KEYS.length || !PHYSIOLOGY_KEYS.every(k => Number.isFinite(sp.physiology[k])))
+      throw new Error(`bloom-sim: species ${sp.id}: physiology must be exactly { ${PHYSIOLOGY_KEYS.join(", ")} } (finite numbers)`);
+    return sp;
+  }
   function checkScenario(s) {
     const e = [], P = s && s.pressure, L = s && s.loss;
     if (!s || typeof s.id !== "string" || !/^[a-z][a-z0-9_]*$/.test(s.id)) e.push("id must be a lower-case identifier");
     if (!s || typeof s.name !== "string" || !s.name) e.push("name missing");
+    // (BLOOM-035B, PMO) a scenario / Challenge NEVER changes the reference physiology (a world-generation constant) and never carries a
+    // player physiology: it may name a species elsewhere (BLOOM-036), never edit one through scenario data
+    for (const k of ["referencePlant", "genomeBase", "physiology", "playerPhysiology"]) if (s && k in s) e.push(`${k} is not scenario data (config.referencePlant is a world-generation constant; a player's physiology is a species)`);
     if (P != null) {
       if (!(P.graceSeconds >= 0)) e.push("pressure.graceSeconds must be ≥ 0");
       if (!(P.durationSeconds > 0)) e.push("pressure.durationSeconds must be > 0");
@@ -381,11 +394,19 @@
       else if (e.type === "waterArm" && !("waterArm" in genome)) { genome.waterArm = null; genome.waterPts = 0; }
     }
     const sky = { temp: planet.globalClimate.temperature, moist: planet.globalClimate.moisture };
+    // (BLOOM-035B) the PLAYER's starting physiology: the selected species' (opts.species, a BLOOM.species.resolve() object), else the
+    // world-generation reference physiology (config.referencePlant) — so a call without a species, and an Organic Hybrid call (its
+    // physiology is numerically the reference), are the pre-035B engine bit for bit. It feeds derived() ONLY: purchased adaptations stay
+    // sim.genome + the shared config.scales, the environment stays planet / sky / scenario, and the native competitor reads
+    // config.referencePlant explicitly (nativeProfile) — never the player's species. config is never copied or edited.
+    const SPECIES = opts.species == null ? null : checkedSpecies(opts.species);
+    const PB = SPECIES ? SPECIES.physiology : C.referencePlant;
+    if (!PB) throw new Error("bloom-sim: config.referencePlant (the reference physiology) is missing");
     const tf = Object.fromEntries(traits.filter(t => t.effect.type === "sky").map(t => [t.id, 0]));
     const lvl = k => genome[k] || 0;
 
     function derived() {
-      const s = C.scales, b = C.genomeBase;
+      const s = C.scales, b = PB;
       const waterPos = b.waterPos + (genome.waterArm === "wet" ? +1 : genome.waterArm === "dry" ? -1 : 0) * lvl("waterPts") * s.waterShiftPerPt;
       return {
         tempFloor: b.tempFloor - lvl("cold") * s.degPerTempPoint,
@@ -469,6 +490,8 @@
       // derived from the same pressure the tick already computes, no extra randomness.
       crossing: { arrivals: 0, footholds: 0, seedArrivals: 0, events: [], nextEventId: 1 },
       state, dens, vigor, secFit, bubbles, genome, sky, tf, winAt,
+      // (BLOOM-035B) provenance of the player's species (null: a reference-physiology run — world generation, validation probes)
+      species: SPECIES ? Object.freeze({ id: SPECIES.id, name: SPECIES.name, version: SPECIES.version, physiologyVersion: SPECIES.physiologyVersion, physiologyKey: SPECIES.physiologyKey }) : null,
       // colony development (BLOOM-009): per land section, its growth allocation (one of MODES; "balanced" = default)
       // and its local specialization id (config.colony.specializations) or null. Region-owned, persistent.
       colonies: { focus: SEC.map(() => "balanced"), spec: SEC.map(() => null) },
@@ -527,7 +550,7 @@
     const NB = CP ? Array.from({ length: N }, (_, t) => TILEMAP[t] >= 0 ? nb4(t).filter(u => TILEMAP[u] >= 0) : []) : null; // land neighbours per tile
     const GN = CP && CP.growth, KC = CP && CP.contest, EV = CP && CP.events;
     const NP = CP ? (function nativeProfile() {
-      const b = C.genomeBase, TL = CP.tolerance, gc = planet.globalClimate;
+      const b = C.referencePlant, TL = CP.tolerance, gc = planet.globalClimate; // (BLOOM-035B) the reference, never the player's species
       const rows = SEC.map((s, i) => ({ a: AREA[i], t: gc.temperature + s.local.tempOffset, m: gc.moisture + s.local.moistureOffset, salt: s.local.salinity, rad: s.local.radiation }));
       const q = (key, share) => { const r = rows.slice().sort((x, y) => x[key] - y[key]); let acc = 0;
         for (const x of r) { acc += x.a; if (acc >= share * LAND) return x[key]; } return r[r.length - 1][key]; };
