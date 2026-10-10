@@ -401,7 +401,7 @@ if (JSON_OUT) { fs.writeFileSync(JSON_OUT, J({ accepted: worlds.length, genFails
     // (the leak scan skips the real-plant analog list: it is generic trait science shown on every world — e.g. Early
     // Maturity's "desert wildflowers" — not wording about this world)
     const rep = await p.evaluate(() => { const r = document.getElementById("report"), a = r.querySelector(".analog");
-      return { on: document.getElementById("reportModal").classList.contains("on"), text: r.innerText, world: r.innerText.replace(a ? a.innerText : "", "") }; });
+      return { on: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")), text: r.innerText, world: r.innerText.replace(a ? a.innerText : "", "") }; });
     check(rep.on && rep.text.includes(pos.name) && new RegExp(`Frozen World · public seed ${FIX.positive}`).test(rep.text) && /Cold Tolerance/.test(rep.text) && /antifreeze/.test(rep.text) && !LEAK.test(rep.world),
       "43 · the Bloom Report identifies the generated Frozen World (name, archetype, public seed), its build and the real-plant analog — no Ocean/Desert wording", rep.text.split("\n").slice(0, 3).join(" / "));
     await shot(p, "frozen22-report.png");

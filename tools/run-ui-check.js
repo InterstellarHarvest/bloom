@@ -17,6 +17,9 @@
 "use strict";
 const path = require("path"), fs = require("fs"), http = require("http"), { execSync } = require("child_process");
 const ROOT = path.resolve(__dirname, ".."), BASE_SHA = "c23815ed080dcd084ab4ea412c2a13292c18c181";
+// (BLOOM-033) the run page's code = the developer harness demos/demo-run.html + the GameSession it wraps (resources/run/game-session.js, the
+// same file index.html uses); source checks of "the run page" read both
+const RUN_PAGE_SRC = () => ["demos/demo-run.html", "resources/run/game-session.js"].filter(f => fs.existsSync(path.join(ROOT, f))).map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const BROWSERS = (argOf("--browsers") || "chromium,firefox").split(",");
 const read = f => fs.readFileSync(path.join(ROOT, f), "utf8"), J = JSON.stringify, git = c => execSync("git " + c, { cwd: ROOT, encoding: "utf8" }).trim();
@@ -36,7 +39,7 @@ const EVTS = ["run-ready", "play-pause", "speed", "region-select", "upgrade-prev
   const withTree = !end || end === head, range = end ? `${BASE_SHA} ${end}` : BASE_SHA;
   const changed = new Set([...git(`diff --name-only ${withTree ? BASE_SHA : range}`).split("\n"),
     ...(withTree ? git("ls-files --others --exclude-standard").split("\n") : [])].filter(Boolean));
-  const runAt = end && !withTree ? git(`show ${end}:demos/demo-run.html`) : read("demos/demo-run.html"), runBase = git(`show ${BASE_SHA}:demos/demo-run.html`);
+  const runAt = end && !withTree ? git(`show ${end}:demos/demo-run.html`) : RUN_PAGE_SRC(), runBase = git(`show ${BASE_SHA}:demos/demo-run.html`);
   const added = git(`diff ${withTree ? BASE_SHA : range} -- demos/demo-run.html ${ADAPTER}`).split("\n").filter(l => l.startsWith("+") && !l.startsWith("+++")).join("\n")
     + (withTree && !git(`ls-files ${ADAPTER}`) ? "\n" + src : "");
 
@@ -53,7 +56,7 @@ const EVTS = ["run-ready", "play-pause", "speed", "region-select", "upgrade-prev
     dom: /\bdocument\b|getElementById|querySelector|innerHTML|textContent|createElement|\.style\b/.test(code),
     loop: /requestAnimationFrame|setInterval|setTimeout/.test(code),
     pageGlobals: /\b(BLOOM_DATA|BLOOM_RUN|BLOOM_API|BLOOM_TRAINING_UI|window\.)/.test(code.replace(/typeof window !== "undefined" \? window/, "")),
-    ids: /["'`](first_bloom|training_grounds|eden|dying_world|native_competition|volatile_climate|ocean_archipelago|desert_world|frozen_world)["'`]/.test(code.replace(/"eden"/g, "")),
+    ids: /["'`](first_bloom|training_grounds|dflt|dying_world|native_competition|volatile_climate|ocean_archipelago|desert_world|frozen_world)["'`]/.test(code.replace(/"default"/g, "")),
   };
   check(Object.values(rules).every(v => !v), "N2 · the adapter owns no rules: no randomness, no writes to the sim, no direct engine actions (only the page's own), no DOM, no loop or timer, no page globals, no planet / scenario id",
     Object.entries(rules).filter(([, v]) => v).map(([k]) => k).join(", ") || `${src.length} bytes, ${src.split("\n").length} lines`);

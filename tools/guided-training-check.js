@@ -274,7 +274,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       // real imports only (the modules' own header comments show usage examples): file:line:content with the content not a comment
       const importers = [...new Set(git("grep -n -E \"(import .* from|src=)[^;]*training-(coach|director|steps)\\.js\" -- '*.js' '*.html'").split("\n").filter(Boolean)
         .map(l => l.match(/^([^:]+):\d+:(.*)$/)).filter(m => m && !/^\s*(\/\/|\*)/.test(m[2])).map(m => m[1]))].filter(f => !f.startsWith("tools/") && !f.startsWith("docs/"));
-      const loader = /if\(BLOOM_RUN\.training\)\{[^]*?m\.src="\.\.\/resources\/training\/training-run\.js"/.test(read("demos/demo-run.html"));
+      const loader = /if\(BLOOM_RUN\.training\)\{[^]*?m\.src="\.\.\/resources\/training\/training-run\.js"/.test(readAt("demos/demo-run.html"));   // (BLOOM-033: 028D2's loader, at END_SHA; the one-document loaders: tools/single-app-flow-check.js S10)
       check(J(base) === J(now) && !setsAnchor && /data-coach=|data-training-coach/.test(coach) && J(importers.sort()) === J(["resources/training/training-run.js"]) && loader,
         "N10 · the production data-tutorial anchors are exactly 8f4c273's (run page, Planet View, rooms, report); the coach never writes one (its own markers are data-coach / data-training-coach); only the training layer imports the coach, and the run page loads that layer only for ?training=1",
         `${now.flat().length} anchor names · importers ${importers.join(", ")}`); }
@@ -357,13 +357,17 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
         return p.evaluate(() => ({ started: !!(window.BLOOM_RUN && BLOOM_RUN.started), training: !!(window.BLOOM_RUN && BLOOM_RUN.training), kind: window.BLOOM_RUN && BLOOM_RUN.kind, expedition: !!(window.BLOOM_RUN && BLOOM_RUN.expedition),
           coach: !!document.querySelector(".tc-layer, [data-training-coach]"), tui: !!window.BLOOM_TRAINING_UI, prod: document.documentElement.classList.contains("ui18") })).then(r => ({ ...r, loaded: seen.slice() })); };
       const r1 = await probe(""), r2 = await probe("?planet=training_grounds"), r3 = await probe("?archetype=ocean_archipelago&seed=28"), r4 = await probe("?archetype=frozen_world&seed=4&scenario=volatile_climate");
-      // an expedition run: the exact handoff path, from a packed authored planet in this tab's session
-      await p.evaluate(() => { const X = BLOOM.expedition, env = X.pack({ planet: BLOOM_DATA.planets.first_bloom, candidate: { key: "qa-028d2", authored: true, archetypeId: null, seed: null } }, { token: X.newToken(), returnTo: location.origin + "/" });
-        X.store(env, sessionStorage); window.__tok = env.token; });
-      const tok = await p.evaluate(() => window.__tok), r5 = await probe(`?play=1&expedition=${tok}`), r6 = await probe("?training=1&ui=legacy");
+      // (BLOOM-033) an expedition run: inside index.html, from the Destination Survey's exact selection (the retired handoff no longer exists)
+      seen.length = 0; await p.goto(MENU + "?begin=1&sector=77&workers=3");
+      await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.entry.survey && MENU_DEV.entry.survey.state === "survey" && MENU_DEV.entry.survey.cells.every(Boolean), null, { timeout: 120000, polling: 100 });
+      await p.evaluate(() => MENU_DEV.entry.survey.select(0)); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000 }); await p.click(".ds-btn.go");
+      await p.waitForFunction(() => window.BLOOM_APP && BLOOM_APP.session && BLOOM_APP.stats.sessions[0].readyMs !== null && !document.querySelector(".atx"), null, { timeout: 60000, polling: 50 }); await sleep(900);
+      const r5 = await p.evaluate(() => ({ started: !!(window.BLOOM_RUN && BLOOM_RUN.started), training: !!(window.BLOOM_RUN && BLOOM_RUN.training), kind: window.BLOOM_RUN && BLOOM_RUN.kind, expedition: !!(window.BLOOM_RUN && BLOOM_RUN.expedition),
+        coach: !!document.querySelector(".tc-layer, [data-training-coach]"), tui: !!window.BLOOM_TRAINING_UI, prod: document.documentElement.classList.contains("ui18") })).then(r => ({ ...r, loaded: seen.slice() }));
+      const r6 = await probe("?training=1&ui=legacy");
       const none = r => r && r.started && !r.coach && !r.tui && !r.loaded.length;
       check(none(r1) && none(r2) && r2.kind === "authored" && none(r3) && r3.kind === "procedural" && none(r4) && none(r5) && r5.expedition && r6.started && r6.training && !r6.prod && !r6.coach && !!r6.tui,
-        `${B} G1 · the coach never mounts outside production training: First Bloom, planet=training_grounds as an ORDINARY authored run, a generated world, a scenario run and an exact expedition-handoff run never even load the training layer; ?ui=legacy training loads the foundation layer but mounts no coach`,
+        `${B} G1 · the coach never mounts outside production training: First Bloom, planet=training_grounds as an ORDINARY authored run, a generated world, a scenario run and (BLOOM-033) an exact-planet expedition inside index.html never even load the training layer; ?ui=legacy training loads the foundation layer but mounts no coach`,
         J({ first: r1, authored: r2, gen: r3, scenario: r4, expedition: r5, legacy: r6 }));
       check(!p.errs.length, `${B} G1b · no page errors`, p.errs.join(" | ")); await c.close(); }
 
@@ -475,7 +479,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
         await Promise.all([p.waitForURL(u => new URL(u).pathname === TITLE_PATH, { timeout: 20000 }), p.click('#rr [data-act="beginExpedition"]')]);
         const fadeSeen = Date.now() - t0b;
         await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.entry && MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
-        const t = await p.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state, events: MENU_DEV.events.map(e => e.type), handoffs: MENU_DEV.handoffs.length, ss: Object.keys(sessionStorage).filter(k => k.startsWith("strange-bloom.expedition")),
+        const t = await p.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state, events: MENU_DEV.events.map(e => e.type), handoffs: (MENU_DEV.departures || MENU_DEV.handoffs || []).length,   /* (BLOOM-033: departures) */ ss: Object.keys(sessionStorage).filter(k => k.startsWith("strange-bloom.expedition")),
           rec: JSON.parse(localStorage.getItem("strange-bloom.training")), prompts: MENU_DEV.entry.stats.prompts, dialog: document.querySelector('[data-dialog="recommend"]').open, black: +(sessionStorage.getItem("__blk") || 0) }));
         check(t.black >= 0.999 && t.state === "survey" && !/begin=1/.test(t.url) && t.events.includes("auto-begin") && !t.handoffs && !t.ss.length && t.rec.status === "completed" && !t.prompts && !t.dialog,
           `${B} G8 · Begin Expedition leaves through the training black, opens the Strange Bloom title and enters the Destination Survey at once (the accepted begin=1 path, consumed from the address); no world is packed or handed off (the survey still owns generation); no prompt; still "completed"`,
@@ -651,7 +655,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       // Start Training (~5 min): the training run through the black; nothing recorded
       const c2 = await ctx({ record: null }), q = watch(await c2.newPage()); await q.goto(MENU + "?bg=5&workers=3&sector=79"); await menuReady(q); await sleep(300);
       await q.click('.mm-item[data-act="begin"]'); await sleep(400);
-      await Promise.all([q.waitForURL(u => /demo-run\.html\?training=1/.test(u.href), { timeout: 20000 }), q.click('[data-act="recommend-training"]')]);
+      await q.click('[data-act="recommend-training"]');   // (BLOOM-033) the training run starts inside index.html (no navigation)
       await coached(q); const tr = await q.evaluate(() => ({ rec: localStorage.getItem("strange-bloom.training"), training: !!BLOOM_RUN.training, lesson: BLOOM_TRAINING_UI.guide.director.index + 1 }));
       await c2.close();
       // completed: no tag, no prompt
@@ -659,7 +663,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       const m4 = await M(r); await r.click('.mm-item[data-act="begin"]'); await r.waitForFunction(() => MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
       const m5 = await M(r); await c3.close();
       check(!m3.tag && m3.prompts === 0 && m3.state === "survey" && J(m3.items) === J(m0.items) && tr.training && tr.rec === null && tr.lesson === 1 && !m4.tag && J(m4.items) === J(m0.items) && m5.state === "survey" && m5.prompts === 0 && !p.errs.length && !q.errs.length && !r.errs.length,
-        `${B} G9b · with a "skipped" or "completed" record there is no tag and BEGIN EXPEDITION goes straight to the survey (it never asks again); Start Training (~5 min) opens the real training run (lesson 1) through the black and writes nothing; TRAINING stays in the menu in every state`,
+        `${B} G9b · with a "skipped" or "completed" record there is no tag and EXPEDITION goes straight to the survey (it never asks again); Start Training (~5 min) opens the real training run (lesson 1) through the black — inside index.html — and writes nothing; TRAINING stays in the menu in every state`,
         J({ skipped: [m3.tag, m3.prompts], startTraining: tr, completed: [m4.tag, m5.prompts] }));
       proof.firstRun = { noRecord: { tag: m0.tag, label: m0.name, dialog: dl, choice: "Go to Expedition", record: m2.rec && JSON.parse(m2.rec).status, survey: m2.state, prefetchAdopted: m2.survey && m2.survey.adopted },
         afterSkipped: { tag: m3.tag, prompts: m3.prompts }, startTraining: tr, completed: { tag: m4.tag, prompts: m5.prompts } }; }

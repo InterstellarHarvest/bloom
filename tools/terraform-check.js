@@ -27,6 +27,9 @@
 "use strict";
 const path = require("path"), fs = require("fs"), http = require("http"), zlib = require("zlib"), { execSync } = require("child_process");
 const ROOT = path.resolve(__dirname, ".."), BASE_SHA = "2d0fb0899967db96bf23a3c17d4f78c9ab635f81";
+// (BLOOM-033) the run page's code = the developer harness demos/demo-run.html + the GameSession it wraps (resources/run/game-session.js, the
+// same file index.html uses); source checks of "the run page" read both
+const RUN_PAGE_SRC = () => ["demos/demo-run.html", "resources/run/game-session.js"].filter(f => fs.existsSync(path.join(ROOT, f))).map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const BROWSERS = (argOf("--browsers") || "chromium,firefox").split(","), EVIDENCE = argv.includes("--evidence");
 const EVD = path.join(ROOT, "docs/evidence/bloom-029d");
@@ -126,7 +129,7 @@ function rasterCanvas() { const cv = { width: 0, height: 0, px: null }; const ct
       leaks.length ? "LEAKS " + leaks.join(", ") : `${DRS.split("\n").length} + ${TGS.split("\n").length} lines scanned for ${new Set(fakeNames).size} mockup names`); }
   // N5 · adapter + run page contract
   { const RU = BLOOM.runUI, ad = strip(read("resources/run-ui/run-ui-adapter.js")), adAdded = git(`diff ${RANGE} -- resources/run-ui/run-ui-adapter.js`).split("\n").filter(l => /^\+[^+]/.test(l));
-    const runBase = git(`show ${BASE_SHA}:demos/demo-run.html`), runAt = read("demos/demo-run.html");
+    const runBase = git(`show ${BASE_SHA}:demos/demo-run.html`), runAt = RUN_PAGE_SRC();
     const sites = s => EVTS.map(t => [t, (s.match(new RegExp(`emit\\("${t}"`, "g")) || []).length]), keysOf = s => EVTS.map(t => { const m = [...s.matchAll(new RegExp(`emit\\("${t}",\\s*\\{([^}]*)\\}`, "g"))].map(x => x[1].replace(/\s+/g, "")); return [t, m.join(" | ")]; });
     const same = J(sites(runBase)) === J(sites(runAt)) && J(keysOf(runBase)) === J(keysOf(runAt));
     const seam = /skyAfter=skyNow\(\)/.test(runAt) && /sky:\{axis:d\.axis, from:d\.from, to:d\.to, current:skyNow\(\), preview:d\.skyAfter\}/.test(runAt) && /function terraformPreview\(id\)/.test(ad) && /terraformPreview, wouldHelp/.test(ad) && /sky: skyShape\(d\.sky\)/.test(ad) && /bandNames: S\.bands\.map/.test(ad);
@@ -426,8 +429,8 @@ function rasterCanvas() { const cv = { width: 0, height: 0, px: null }; const ct
       { const q = await open("?archetype=ocean_archipelago&seed=28&ui=18");
         const r = await q.evaluate(() => { const one = n => { const e = document.querySelectorAll(`[data-tutorial="${n}"]`); return e.length === 1 && !!e[0].closest(".pv .dr .r-terraform"); }, legacy = n => document.querySelectorAll(`[data-tutorial-legacy="${n}"]`).length === 1 && !document.querySelector(`[data-tutorial-legacy="${n}"]`).closest(".pv");
           const names = ["board-terraform", "upgrade-warm", "upgrade-cool", "upgrade-humid", "upgrade-dry"], all = [...document.querySelectorAll('.pv .dr [data-tutorial^="upgrade-"]')].map(e => e.dataset.tutorial), offered = __tf.A.upgrades().flatMap(b => b.items.map(u => "upgrade-" + u.id));
-          return { room: __tf.DR.state().room, ok: names.filter(one), missing: names.filter(n => !one(n)), legacy: names.filter(legacy), fake: all.filter(a => !offered.includes(a)), count: [all.length, offered.length], claimed: __tf.DR.state().claimedAnchors.filter(n => names.includes(n)).length }; });
-        check(r.room === null && !r.missing.length && r.legacy.length === 5 && !r.fake.length && r.count[0] === r.count[1] && r.claimed === 5, `${tag} B20 · on a fresh page, before any room has opened, board-terraform and upgrade-warm / cool / humid / dry each resolve to ONE production element inside the Terraform room (painted at mount); the shell's copies are data-tutorial-legacy; no upgrade-* anchor exists for anything but a real offered trait`, J(r)); await q.context().close(); }
+          return { room: __tf.DR.state().room, ok: names.filter(one), missing: names.filter(n => !one(n)), legacy: names.filter(legacy), legacyAny: document.querySelectorAll("[data-tutorial-legacy]").length, fake: all.filter(a => !offered.includes(a)), count: [all.length, offered.length], claimed: __tf.DR.state().claimedAnchors.filter(n => names.includes(n)).length }; });
+        check(r.room === null && !r.missing.length && r.legacy.length === 0 && r.legacyAny === 0 /* (BLOOM-033: no shell, so no legacy copies) */ && !r.fake.length && r.count[0] === r.count[1] && r.claimed === 5, `${tag} B20 · on a fresh page, before any room has opened, board-terraform and upgrade-warm / cool / humid / dry each resolve to ONE production element inside the Terraform room (painted at mount); the shell's copies are data-tutorial-legacy; no upgrade-* anchor exists for anything but a real offered trait`, J(r)); await q.context().close(); }
       // ---- B21 · training: paused start, Terraform opens paused with the training run's real nodes / prices, preview / purchase real, Back paused, determinism, menu
       { const q = await open("?training=1&ui=18&return=" + encodeURIComponent("/demos/main-menu.html")); await sleep(400); await frames(q, 3);
         const s0 = await state(q); await openRoom(q, "terraform"); const s1 = await q.evaluate(() => { const A = __tf.A, b = A.upgrades().find(x => x.board === "Terraform"); return { ...__tf.state(), nodes: __tf.nodes().map(n => [n.id, n.text, n.dis]), items: b.items.map(u => [u.id, u.price, u.canBuy]), simPrice: b.items.map(u => BLOOM_API.sim.price(BLOOM_API.sim.traitById[u.id])), id: __tf.identity(), planet: A.run().planetId }; });

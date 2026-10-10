@@ -48,7 +48,7 @@ const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"} 
   check(wet.secs >= 240 && wet.secs <= 480, "pacing: perfect-bot win in 4–8 min (humans slower)", `${Math.round(wet.secs)} s`);
   if (wet.won) {
     const rep = await wet.p.evaluate(() => ({
-      modal: document.getElementById("reportModal").classList.contains("on"),
+      modal: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")),
       plant: !!document.getElementById("plantCv"),
       analogs: document.querySelectorAll(".analog li").length,
       gaveUp: document.querySelector(".debrief").innerText,

@@ -4,7 +4,7 @@
 //       no difficulty ladder; BLOOM.play.searchWorld runs the REAL production path (generateFromArchetype layers 1–8, then
 //       validateScenario layer P for a scenario that changes the run), never starts a rejected candidate, retries the next seed,
 //       stops with an explicit failure when every candidate is rejected, stops at once on a DISALLOWED combination (scenario
-//       data), never falls back to Eden or another planet, never uses Math.random, never hands back solution data; an accepted
+//       data), never falls back to default-scenario or another planet, never uses Math.random, never hands back solution data; an accepted
 //       World Seed reproduces the same planet
 //   B · real browser (file:// = main-thread search; http = worker search): (BLOOM-030) the BLOOM-016 launcher is RETIRED — the root
 //       index.html is the Strange Bloom title (RT1; over file:// its HTTP-required notice, RT2) — so its screen checks (1–19, 30 / AA,
@@ -20,6 +20,9 @@
 "use strict";
 const path = require("path"), fs = require("fs"), http = require("http");
 const ROOT = path.resolve(__dirname, "..");
+// (BLOOM-033) the run page's code = the developer harness demos/demo-run.html + the GameSession it wraps (resources/run/game-session.js, the
+// same file index.html uses); source checks of "the run page" read both
+const RUN_PAGE_SRC = () => ["demos/demo-run.html", "resources/run/game-session.js"].filter(f => fs.existsSync(path.join(ROOT, f))).map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
 for (const f of ["content/config.js", "content/traits.js", "planets/first_bloom.js", "content/archetypes.js", "content/scenarios.js", "content/play.js",
   "resources/bloom-sim.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js",
   "resources/bloom-scenario.js", "resources/bloom-play.js"]) require(path.join(ROOT, f));
@@ -31,7 +34,7 @@ const fnv = s => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^=
 let fails = 0; const t0 = Date.now();
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (!ok) fails++; };
 const arch = id => archetypes.find(a => a.id === id), scen = id => scenarios.find(s => s.id === id);
-const INDEX_SRC = fs.readFileSync(path.join(ROOT, "index.html"), "utf8"), RUN_SRC = fs.readFileSync(path.join(ROOT, "demos/demo-run.html"), "utf8");
+const INDEX_SRC = fs.readFileSync(path.join(ROOT, "index.html"), "utf8"), RUN_SRC = RUN_PAGE_SRC();
 // player-visible developer terms (AD): never on a player screen
 const JARGON = /\b(archetypes?|layer\s*P|layers?\s*\d|witness(es)?|validat(e|ed|ion|or)|generation attempts?|attempt \d|fixtures?|public seed|sweep)\b/i;
 const RANKING = /\b(Easy|Medium|Hard|Extreme|Normal|Difficulty)\b/;
@@ -53,7 +56,7 @@ check(!/function|=>/.test(J(BLOOM_DATA.play) + J(archetypes) + J(scenarios)) && 
   "7/12b · the display metadata and flow content are plain data (no code, no DOM markup)");
 check(!RANKING.test(J(dS) + J(dA) + J(PLAYDATA)) && scenarios.every(s => !("difficulty" in s) && !("difficulty" in (s.display || {})))
   && dS.filter(c => c.tag).every(c => c.tag === "Relaxed"),
-  "13 · no Easy / Medium / Hard ranking anywhere in the selection data; the only tag is Eden's \"Relaxed\"", dS.map(c => c.tag || "—").join(", "));
+  "13 · no Easy / Medium / Hard ranking anywhere in the selection data; the only tag is default-scenario's \"Relaxed\"", dS.map(c => c.tag || "—").join(", "));
 
 // spies on the production path (the module functions the search calls through BLOOM.*)
 const CALLS = { gen: [], scen: [], random: 0 };
@@ -78,8 +81,8 @@ check(fz.planet.archetype.id === "frozen_world" && fz.seed === 11 && fz.planet.a
 const FPRI = realGen(arch("frozen_world"), 11, { config, traits });
 check(fnv(J(fz.planet.tilemap)) === fnv(J(FPRI.tilemap)) && fz.planet.name === FPRI.name && J(fz.planet.sections) === J(FPRI.sections),
   "33b · reproducible: generating the same World Seed again gives the identical planet (tilemap, regions, name)", `${FPRI.name} tilemap ${fnv(J(FPRI.tilemap))}`);
-reset(); const ed = search("frozen_world", "eden", [11]).r;
-check(ed.ok && CALLS.scen.length === 0 && ed.scenarioValidation === null, "23b · Eden adds nothing to prove: no layer P call, the planet's layers 1–8 only");
+reset(); const ed = search("frozen_world", "default", [11]).r;
+check(ed.ok && CALLS.scen.length === 0 && ed.scenarioValidation === null, "23b · default-scenario adds nothing to prove: no layer P call, the planet's layers 1–8 only");
 // 20 · nothing the validators found reaches the run
 const noSolutions = res => { const s = J(res); return !/witness|"strategies"|minimalBuild|signature|"purchases"|rejectedAttempts"/.test(s); };
 check(noSolutions(fz) && noSolutions(ed) && !("strategies" in fz.scenarioValidation),
@@ -94,15 +97,15 @@ check(rt.ok && rt.seed === 30 && J(rt.tried.map(t => t.outcome)) === J(["scenari
   && CALLS.scen.length === 2 && rt.planet.archetype.publicSeed === 30,
   "24/25 · a candidate layer P rejects is not started; the search retries the next World Seed and starts only the accepted one",
   `tried ${rt.tried.map(t => `${t.seed}:${t.outcome}${t.status ? "/" + t.status : ""}`).join(", ")} · steps ${rtSteps.map(s => s.step).join("→")}`);
-reset(); const pl = search("ocean_archipelago", "eden", [114, 28]).r;
+reset(); const pl = search("ocean_archipelago", "default", [114, 28]).r;
 check(pl.ok && pl.seed === 28 && J(pl.tried.map(t => t.outcome)) === J(["planet", "accepted"]) && CALLS.gen.every(c => c.id === "ocean_archipelago"),
   "24/25b · a World Seed with no acceptable planet (archetype layers) is skipped the same way", `tried ${pl.tried.map(t => `${t.seed}:${t.outcome}`).join(", ")}`);
-// 26 / 27 / 28 · bounded failure: explicit, no Eden, no other planet
+// 26 / 27 / 28 · bounded failure: explicit, no default-scenario, no other planet
 reset(); const bf = search("ocean_archipelago", "native_competition", [7342]);
 check(!bf.r.ok && bf.r.status === "EXHAUSTED" && !bf.r.planet && bf.r.tried.length === 1 && !bf.steps.some(s => s.step === "ready"),
   "26 · when every candidate is rejected the search ends in an explicit failure (no world)", `${bf.r.status}: ${bf.r.reason}`);
 check(CALLS.scen.every(c => c.s === "native_competition") && CALLS.gen.every(c => c.id === "ocean_archipelago") && !bf.r.scenarioValidation,
-  "27/28 · no silent Eden fallback and no silent planet substitution: every call is the chosen planet + chosen scenario");
+  "27/28 · no silent default-scenario fallback and no silent planet substitution: every call is the chosen planet + chosen scenario");
 // DISALLOWED (R) is scenario data, decided before any generation
 const DIS = clone(scen("native_competition")); DIS.validation.archetypes = { desert_world: { allowed: false, reason: "test-only reason from data" } };
 reset(); const ds = BLOOM.play.runSearch({ archetype: arch("desert_world"), scenario: DIS, seeds: [25, 9], config, traits });
@@ -147,7 +150,8 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
   const screenOn = p => p.evaluate(() => [...document.querySelectorAll(".screen.on")].map(e => e.id).join(","));
   const waitRun = (p, ms = 180000) => p.waitForFunction(() => (window.BLOOM_API && window.BLOOM_API.sim) || (window.BLOOM_API && window.BLOOM_API.run && window.BLOOM_API.run.failed), null, { timeout: ms });
   const ident = p => p.evaluate(() => ({ url: location.search, run: BLOOM_API.run, planet: BLOOM_RUN.planet.name, tiles: (() => { let h = 0x811c9dc5; const s = Array.from(BLOOM_API.sim.map.TILEMAP).join(","); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h >>> 0; })(),
-    footer: document.getElementById("runId").textContent, title: document.title, scenario: BLOOM_RUN.scenario ? BLOOM_RUN.scenario.id : null, play: !!BLOOM_RUN.play }));
+    // (BLOOM-033) the production page holds no engineering shell: the player-facing run line is the Planet View's (#pvRunId); the seed is the run's own
+    footer: (document.getElementById("runId") || document.getElementById("pvRunId") || {}).textContent || "", seed: BLOOM_RUN_UI.adapter.run().seed, title: document.title, scenario: BLOOM_RUN.scenario ? BLOOM_RUN.scenario.id : null, play: !!BLOOM_RUN.play }));
 
   // warm-up page (the first page of a headless session can read canvases back blank)
   { const w = await newPage(); await w.goto(FILE + "/demos/demo-run.html"); await w.waitForTimeout(200); await w.close(); }
@@ -185,8 +189,8 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
   check(run1.run.archetypeId === "frozen_world" && run1.scenario === "volatile_climate" && run1.run.scenarioId === "volatile_climate" && run1.run.scenarioValidation.status === "PASS",
     "31/32 · the accepted run is the selected planet + the selected scenario (layer P passed on it)", `${run1.planet} · ${run1.run.archetype} · ${run1.run.scenario}`);
   const seed1 = run1.run.publicSeed;
-  check(run1.url === `?play=1&archetype=frozen_world&seed=${seed1}&scenario=volatile_climate` && run1.footer.includes(`World Seed: ${seed1}`) && seed1 >= 1 && seed1 <= 99999,
-    "33/O/U · the World Seed is chosen automatically, shown (\"World Seed: N\") and written into the address (reload = the same world)", `${run1.footer} · ${run1.url}`);
+  check(run1.url === `?play=1&archetype=frozen_world&seed=${seed1}&scenario=volatile_climate` && run1.seed === seed1 && seed1 >= 1 && seed1 <= 99999,
+    "33/O/U · the World Seed is chosen automatically, carried by the run (the report names it: \"World Seed N\") and written into the address (reload = the same world)", `${run1.footer} · ${run1.url}`);
   const runText = await text(p);
   const runData = await p.evaluate(() => JSON.stringify([BLOOM_RUN.summary, BLOOM_RUN.planet.archetype, BLOOM_API.run, window.BLOOM_PLAY_LOG]));
   check(!JARGON.test(runText) && !/witness|minimalBuild|signature|"strategies"|"purchases"/.test(runData) && !/layer P/.test(run1.footer),
@@ -210,7 +214,7 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
   const run2 = await ident(p);
   const fresh = await p.evaluate(() => { const s = BLOOM_API.sim; return { old: !!window.__oldPage, ticks: s.ticks, owned: BLOOM_DATA.traits.filter(u => s.ownedTier(u) > 0).map(u => u.id), tf: { ...s.tf },
     forcing: BLOOM_API.climate().forcing.length, shocks: BLOOM_API.climate().shocks.length, spec: s.colonies.spec.filter(Boolean).length, lost: s.lost, won: s.won,
-    bio: s.biomass, log: document.getElementById("log").textContent }; });
+    bio: s.biomass, log: BLOOM_RUN_UI.adapter.message() }; });
   check(run2.run.publicSeed === seed1 && run2.run.archetypeId === "frozen_world" && run2.scenario === "volatile_climate" && run2.tiles === run1.tiles && run2.planet === run1.planet,
     "37 · Play this world again = the same planet, World Seed and scenario (identical map)", `${run2.planet} seed ${run2.run.publicSeed} map ${run2.tiles}`);
   check(dirty.tf > 0 && dirty.steps > 0 && !fresh.old && fresh.owned.length === 0 && J(Object.values(fresh.tf).filter(Boolean)) === "[]" && fresh.forcing === 0 && fresh.shocks === 0
@@ -229,11 +233,11 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
   check(fresh3.owned === 0 && fresh3.forcing === 0 && run3.tiles !== run1.tiles, "41 · a new run is genuinely new (new page, new map, nothing purchased)");
 
   // ---- 39 / 40 · (BLOOM-030) Change planet → the root title's Destination Survey; Home → the root title (http: the title needs a server) ----
-  { const t = await newPage(); await t.goto(HTTP + "/demos/demo-run.html?play=1&archetype=frozen_world&seed=11&scenario=eden"); await waitRun(t);
+  { const t = await newPage(); await t.goto(HTTP + "/demos/demo-run.html?play=1&archetype=frozen_world&seed=11&scenario=default"); await waitRun(t);
     await Promise.all([t.waitForURL(u => u.pathname === "/index.html" && u.searchParams.get("begin") === "1", { timeout: 20000 }), menuAct(t, "changePlanet", "accept")]);
     await t.waitForFunction(() => window.MENU_DEV && MENU_DEV.entry && MENU_DEV.entry.state === "survey", null, { timeout: 90000 });
     const cp = await t.evaluate(() => ({ url: location.pathname + location.search, state: MENU_DEV.entry.state }));
-    await t.goto(HTTP + "/demos/demo-run.html?play=1&archetype=frozen_world&seed=11&scenario=eden"); await waitRun(t);
+    await t.goto(HTTP + "/demos/demo-run.html?play=1&archetype=frozen_world&seed=11&scenario=default"); await waitRun(t);
     await Promise.all([t.waitForURL(u => u.pathname === "/index.html" && !u.search, { timeout: 20000 }), menuAct(t, "home", "accept")]);
     await t.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready, null, { timeout: 30000 });
     const hm = await t.evaluate(() => ({ url: location.pathname + location.search, state: MENU_DEV.entry.state, title: document.title }));
@@ -251,20 +255,20 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
     btns: [...document.querySelectorAll("#playFail button")].map(b => b.id), go: [...document.querySelectorAll("#playFail button")].map(b => b.dataset.go), focus: document.activeElement.id }));
   check(!ff.sim && !ff.run && ff.txt.includes(PLAYDATA.failure.title) && ff.txt.includes("Ocean Archipelago") && ff.txt.includes("Native Competition") && !JARGON.test(ff.txt)
     && J(ff.btns) === J(["failRetry", "failChange", "failHome"]) && ff.focus === "failRetry" && J(ff.go) === J(["demo-run.html?play=1&archetype=ocean_archipelago&scenario=native_competition", "../index.html?begin=1", "../index.html"]),
-    "26/27/28 · bounded failure: a friendly explicit screen (Try again / Change selection / Home), nothing started, no Eden or other planet swapped in; (BLOOM-030) Change selection = the title's Destination Survey, Home = the title", ff.txt.replace(/\s+/g, " ").slice(0, 170));
+    "26/27/28 · bounded failure: a friendly explicit screen (Try again / Change selection / Home), nothing started, no default-scenario or other planet swapped in; (BLOOM-030) Change selection = the title's Destination Survey, Home = the title", ff.txt.replace(/\s+/g, " ").slice(0, 170));
   await shot(p, "09-no-world");
-  await p.goto(FILE + "/demos/demo-run.html?play=1&archetype=moon_base&scenario=eden"); await waitRun(p);
+  await p.goto(FILE + "/demos/demo-run.html?play=1&archetype=moon_base&scenario=default"); await waitRun(p);
   check(!!(await p.$("#playFail")) && !(await p.evaluate(() => !!(window.BLOOM_API && window.BLOOM_API.sim))), "26b · an unknown planet in a player link starts nothing (friendly screen)");
 
   // ---- 34–36 · the developer harness is unchanged ----
   await p.goto(FILE + "/demos/demo-run.html?archetype=frozen_world&seed=11&scenario=volatile_climate"); await p.waitForFunction(() => window.BLOOM_API && window.BLOOM_API.sim);
   const dev = await ident(p);
-  check(!dev.play && dev.run.publicSeed === 11 && dev.run.attempt === 1 && dev.planet === FPRI.name && /public seed 11 · attempt 1/.test(dev.footer) && /layer P PASS/.test(dev.footer)
+  check(!dev.play && dev.run.publicSeed === 11 && dev.run.attempt === 1 && dev.planet === FPRI.name && dev.run.scenarioValidation && dev.run.scenarioValidation.status === "PASS" /* (BLOOM-033: the developer identity as data; the shell footer exists only with ?ui=legacy) */
     && !(await p.$("#pvMenuBtn")) && !(await p.$("#prep")) && dev.url === "?archetype=frozen_world&seed=11&scenario=volatile_climate",
     "34 · the direct developer URL still works exactly as before (same world, developer footer, no player menu, no search, URL untouched)", dev.footer);
   await p.goto(FILE + "/demos/demo-run.html?archetype=frozen_world&seed=11"); await p.waitForFunction(() => window.BLOOM_API && window.BLOOM_API.sim);
   const dev2 = await p.evaluate(() => ({ s: BLOOM_RUN.scenario, id: BLOOM_API.run.scenarioId, pr: BLOOM_API.sim.pressure.active, pid: BLOOM_API.sim.pressure.id, cl: BLOOM_API.sim.climate.enabled, co: BLOOM_API.sim.competition.enabled }));
-  check(dev2.s === null && dev2.id === "eden" && dev2.pid === "eden" && dev2.pr === false && !dev2.cl && !dev2.co, "35 · no scenario in a developer URL still means Eden / default behaviour", J(dev2));
+  check(dev2.s === null && dev2.id === "default" && dev2.pid === "default" && dev2.pr === false && !dev2.cl && !dev2.co, "35 · no scenario in a developer URL still means default-scenario / default behaviour", J(dev2));
   const bad = [];
   for (const u of ["?archetype=frozen_world&seed=abc", "?archetype=frozen_world", "?archetype=nowhere&seed=3", "?archetype=frozen_world&seed=11&scenario=bogus", "?archetype=frozen_world&seed=11&scenario=Bad!"]) {
     await p.goto(FILE + "/demos/demo-run.html" + u); await p.waitForTimeout(150);
@@ -274,7 +278,7 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
 
   // ---- 43 / 44 · First Bloom ----
   await p.goto(FILE + "/demos/demo-run.html?play=1"); await p.waitForFunction(() => window.BLOOM_API && window.BLOOM_API.sim); // (BLOOM-030) the retired launcher's First Bloom button opened exactly this URL
-  const fbUrl = p.url(), fbP = await p.evaluate(() => { BLOOM_API.advance(0); const st = BLOOM_API.state(); return { kind: BLOOM_RUN.kind, id: BLOOM_RUN.planet.id, play: BLOOM_RUN.play, sections: st.sections, genome: st.genome, sky: st.sky, scen: BLOOM_API.run.scenarioId, footer: document.getElementById("runId").textContent, prep: !!document.getElementById("prep"), menu: !!document.getElementById("pvMenuBtn") }; });
+  const fbUrl = p.url(), fbP = await p.evaluate(() => { BLOOM_API.advance(0); const st = BLOOM_API.state(); return { kind: BLOOM_RUN.kind, id: BLOOM_RUN.planet.id, play: BLOOM_RUN.play, sections: st.sections, genome: st.genome, sky: st.sky, scen: BLOOM_API.run.scenarioId, footer: (document.getElementById("runId") || document.getElementById("pvRunId") || {}).textContent || "", prep: !!document.getElementById("prep"), menu: !!document.getElementById("pvMenuBtn") }; });
   await p.goto(FILE + "/demos/demo-run.html"); await p.waitForFunction(() => window.BLOOM_API && window.BLOOM_API.sim);
   const fbH = await p.evaluate(() => { const st = BLOOM_API.state(); return { kind: BLOOM_RUN.kind, id: BLOOM_RUN.planet.id, sections: st.sections, genome: st.genome, sky: st.sky, scen: BLOOM_API.run.scenarioId, menu: !!document.getElementById("pvMenuBtn") }; });
   check(/demo-run\.html\?play=1$/.test(fbUrl) && fbP.kind === "authored" && fbP.id === "first_bloom" && fbP.play && !fbP.prep && fbP.menu && !fbH.menu
@@ -283,7 +287,7 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
     `${fbUrl.split("/").pop()} · ${fbP.footer}`);
 
   // ---- 45 / 46 · a won run (the page's real buy through the production adapter, earned Biomass): the production Bloom Report + actions ----
-  await p.goto(FILE + "/demos/demo-run.html?play=1&archetype=frozen_world&seed=11&scenario=eden"); await waitRun(p);
+  await p.goto(FILE + "/demos/demo-run.html?play=1&archetype=frozen_world&seed=11&scenario=default"); await waitRun(p);
   await p.evaluate(() => { BLOOM_RUN_UI.adapter.actions.pause(); });
   const plan = ["cold", "cold"]; let bi = 0;
   for (let i = 0; i < 400 && !(await p.evaluate(() => BLOOM_API.sim.won)); i++) {
@@ -292,14 +296,14 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
   await p.waitForFunction(() => BLOOM.runReport.instance.state().open && !BLOOM.runReport.instance.state().busy, null, { timeout: 8000 }).catch(() => {}); await p.waitForTimeout(150);
   const win = await p.evaluate(() => ({ on: BLOOM.runReport.instance.state().open, h2: document.getElementById("rrTitle").textContent, sub: document.getElementById("rrSum").textContent,
     plant: !!document.querySelector('#rr .ps[data-pack="organic-hybrid"] canvas.ps-canvas[role="img"]'),   /* (BLOOM-032C) the Organic Hybrid specimen canvas */ build: /your plant became/i.test(document.getElementById("rrCard").innerText), cont: !document.getElementById("rrContinue").hidden,
-    acts: [...document.querySelectorAll("#rrActs [data-act]")].map(b => b.dataset.act), txt: document.getElementById("rrCard").innerText, legacy: document.getElementById("reportModal").classList.contains("on") }));
+    acts: [...document.querySelectorAll("#rrActs [data-act]")].map(b => b.dataset.act), txt: document.getElementById("rrCard").innerText, legacy: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")) }));
   check(win.on && /BLOOM/.test(win.h2) && win.plant && win.build && win.sub.includes("Frozen World · World Seed 11") && win.cont && !win.legacy,
     "45 · the production Bloom Report renders (world identity, build, the production plant specimen, regions, Keep playing); the engineering modal stays closed", win.sub);
   check(J(win.acts) === J(["playAgain", "newWorld", "changePlanet", "home"]) && win.txt.search(/Play this world again/) > win.txt.search(/your plant became/i) && win.txt.search(/your plant became/i) >= 0 && !JARGON.test(win.txt),
     "46 · a win offers Play again / Same planet, new world / Change planet / Home, after the report's science", win.acts.join(", "));
   await shot(p, "10-win-report");
   const wa = await p.evaluate(() => BLOOM_RUN_UI.adapter.reportActions().find(a => a.id === "playAgain").href);
-  check(wa === "demo-run.html?play=1&archetype=frozen_world&seed=11&scenario=eden", "T · Play again from the report = same planet + World Seed + scenario", wa);
+  check(wa === "demo-run.html?play=1&archetype=frozen_world&seed=11&scenario=default", "T · Play again from the report = same planet + World Seed + scenario", wa);
 
   // ---- 47 · extinction (Dying World, an idle plant): actions instead of the developer restart ----
   // (BLOOM-027B: Frozen 9 is the world whose idle Dying World run dies out (at ~390–400 s, inside the 3000 ticks advanced here) — no Ocean world's does under the cylindrical generator; see tools/dying-world-check.js FIX)
@@ -336,7 +340,7 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
   // (R in the browser was the retired launcher's disabled scenario card; the Node check R above keeps the data rule itself)
 
   check(!errs.length, "no browser errors", errs.slice(0, 3).join(" | "));
-  console.log("# 51–58 · the other suites run separately (README → QA): every pre-existing suite, including Eden / Dying World / Native Competition / Volatile Climate / economy / colony / archetype suites");
+  console.log("# 51–58 · the other suites run separately (README → QA): every pre-existing suite, including default-scenario / Dying World / Native Competition / Volatile Climate / economy / colony / archetype suites");
   await browser.close(); server.close(); finish();
 })().catch(e => { console.error(e); fails++; server.close(); finish(); });
 

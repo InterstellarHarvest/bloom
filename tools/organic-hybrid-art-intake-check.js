@@ -56,6 +56,13 @@ const sel = (traits, condition = "thriving") => PV.components.select(PV.model.no
 const frame = (pack, traits, condition) => PC.render(sel(traits, condition), pack);
 const PROOF = { milestone: "BLOOM-032B2", status: PACK_STATUS, base: BASE, head: git("rev-parse HEAD"), canvas: CANVAS, intake: {}, states: {}, fx: {}, browsers: {} };
 
+// (BLOOM-033) later milestones' changes are not 032B2's: once HEAD is past 032B2's accepted end on main (END_SHA), this suite's scope checks are
+// evaluated over BASE … END_SHA — the END_SHA pattern of run-ui-convergence / guided-training; at END_SHA itself the working tree is checked as before
+const END_SHA = "ea1b785517ccc9586cc7bb1ce91fc26f1f46c922";
+const AT_END = (() => { try { return git(`merge-base --is-ancestor ${END_SHA} HEAD`) === "" && git("rev-parse HEAD") !== END_SHA; } catch { return false; } })();
+const RANGE = AT_END ? `${BASE} ${END_SHA}` : BASE, untrackedNow = () => AT_END ? [] : git("ls-files -o --exclude-standard").split("\n").filter(Boolean);
+const hashNow = f => AT_END ? git(`rev-parse ${END_SHA}:"${f}"`) : git(`hash-object "${f}"`);
+const existsNow = f => { if (!AT_END) return fs.existsSync(path.join(ROOT, f)); try { git(`cat-file -e ${END_SHA}:"${f}"`); return true; } catch { return false; } };
 (async () => {
   const B = await import(path.join(ROOT, "tools/build-plant-art.mjs")), I = await import(path.join(ROOT, "tools/intake-organic-hybrid-art.mjs"));
   const contract = JSON.parse(read("art/plant/contract.json")), atlasJson = JSON.parse(read(`art/plant/packs/${PACK}/atlas.json`)), MAP = JSON.parse(read("art/plant/intake/organic-hybrid/intake-map.json"));
@@ -64,14 +71,14 @@ const PROOF = { milestone: "BLOOM-032B2", status: PACK_STATUS, base: BASE, head:
   console.log("# Node — scope");
   { const first = git(`rev-list --first-parent --reverse ${BASE}..HEAD`).split("\n").filter(Boolean)[0] || null, parent = first ? git(`rev-parse ${first}^`) : git("rev-parse HEAD");
     check(parent === BASE, "S1 · 032B2 starts from the exact accepted BLOOM-032B1 main be0a829", J({ firstParent: parent.slice(0, 7) })); }
-  { const tracked = git(`diff --name-only ${BASE}`).split("\n").filter(Boolean), untracked = git("ls-files -o --exclude-standard").split("\n").filter(Boolean);
+  { const tracked = git(`diff --name-only ${RANGE}`).split("\n").filter(Boolean), untracked = untrackedNow();
     const changed = [...new Set([...tracked, ...untracked])].sort(), outside = changed.filter(p => !ALLOWED(p));
     const frozen = git(`ls-tree -r --name-only ${BASE} -- content planets index.html dist resources art/plant/contract.json art/plant/body-plan.json art/plant/schema art/plant/packs/proof art/plant/packs/proof-angular art/plant/packs/proof-round`)
       .split("\n").filter(f => f && !f.startsWith("resources/plant-visual/generated/") && !f.startsWith("resources/plant-sprite-lab/") && !C032.has(f));
-    const diff = frozen.filter(f => !fs.existsSync(path.join(ROOT, f)) || git(`hash-object "${f}"`) !== git(`rev-parse ${BASE}:"${f}"`));
+    const diff = frozen.filter(f => !existsNow(f) || hashNow(f) !== git(`rev-parse ${BASE}:"${f}"`));
     PROOF.changedFiles = changed;
     check(!diff.length && !outside.length, `S2 · production boundary: all ${frozen.length} files under content/, planets/, index.html, dist/ and resources/ (except the generated plant atlas and the proof page's own script / style) are byte-identical to be0a829 — incl. resources/run-ui/plant-specimen.js (NOT replaced), the production SVG, content/traits.js; the contract, body plan, compositor, selector, model, FX and the three proof packs are unchanged`, J({ diff, outside }));
-    const users = git("grep -l -E \"plant-atlas|plantArt|plant-visual|organic-hybrid\" -- index.html resources content planets dist demos").split("\n").filter(Boolean)
+    const users = git(`grep -l -E "plant-atlas|plantArt|plant-visual|organic-hybrid" ${AT_END ? END_SHA : ""} -- index.html resources content planets dist demos`).split("\n").filter(Boolean).map(f => AT_END ? f.slice(END_SHA.length + 1) : f)
       .filter(f => !f.startsWith("resources/plant-visual/") && !f.startsWith("resources/plant-sprite-lab/") && f !== "demos/plant-sprite-pipeline-lab.html" && !C032.has(f));
     check(!users.length, "S3 · no production surface loads the plant atlas or the new pack except through the BLOOM-032C production specimen (demos/demo-run.html → resources/run-ui/plant-specimen.js); the portable bundle never does", J(users));
     check(git("hash-object art/plant/body-plan.json") === git(`rev-parse ${BASE}:art/plant/body-plan.json`),

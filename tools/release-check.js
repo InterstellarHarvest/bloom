@@ -16,14 +16,19 @@
 // canonical surface == the focused globe, four rooms, the Terraform sphere's identity, the report) → Play again / Choose another planet /
 // Main menu back to ROOT; TRAINING from ROOT and every training exit back to ROOT; direct developer URLs, ?ui=legacy, file://, viewports,
 // reduced motion, keyboard, bfcache; every request local, no console error, no unhandled rejection. Unless --no-suites, it then runs
-// expedition-handoff-check and guided-training-check (Chromium) as children (R52 / R60 / R61).
+// single-app-flow-check (BLOOM-033; replaces expedition-handoff-check) and guided-training-check (Chromium) as children (R52 / R60 / R61).
 // --evidence writes docs/evidence/bloom-030/ (stills + release-proof.json). Exits 1 on any failure.
+// (BLOOM-033) The game is ONE document now (index.html; docs/SINGLE_DOCUMENT_APP_v1.md): the run mounts inside the root, so the session
+// handoff, the run page navigation, its ROOT return URLs and the back-forward-cache rules are retired. The browser flows below prove the
+// same release journeys INSIDE the root document (the exact planet object, no generator after the selection — armed at Begin Expedition —,
+// one document load, the address unchanged); the source checks keep BLOOM-030's own guarantees bound to BLOOM-030's range (END). The
+// two-document child suite (expedition-handoff-check) is retired; tools/single-app-flow-check.js takes its place as a child.
 "use strict";
 const path = require("path"), fs = require("fs"), http = require("http"), cp = require("child_process"), crypto = require("crypto");
 const ROOT = path.resolve(__dirname, "..");
 for (const f of ["content/config.js", "content/traits.js", "planets/first_bloom.js", "planets/training_grounds.js", "content/archetypes.js", "content/scenarios.js",
   "content/play.js", "content/training.js", "resources/bloom-sim.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js",
-  "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/expedition/expedition-handoff.js"]) require(path.join(ROOT, f));
+  "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-play.js"]) require(path.join(ROOT, f));   // (BLOOM-033: the handoff module is gone)
 const D = BLOOM_DATA, J = JSON.stringify, read = f => fs.readFileSync(path.join(ROOT, f), "utf8");
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const BROWSERS = (argOf("--browsers") || "chromium,firefox").split(","), EVIDENCE = argv.includes("--evidence"), SUITES = !argv.includes("--no-suites");
@@ -97,9 +102,11 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
       "R2–R7 · the root index.html is the Strange Bloom production title — one boot script (title-boot.js, data-run demos/demo-run.html, the canonical title = itself) and the title stylesheets — not the BLOOM-016 launcher: no hash router, no planet chooser, no scenario chooser, no briefing, no emoji icon table, no temporary mini-map renderer, no inline style or script",
       launcher.join(", ") || `${INDEX.split("\n").length} lines`); }
   // R8–R10 · R80 · ONE page composer, shared; nothing duplicated
-  { const files = git("ls-files --cached --others --exclude-standard -- '*.js' '*.html'").split("\n").filter(f => f && !f.startsWith("tools/") && !f.startsWith("docs/") && !f.startsWith("demos/ui-mockups/") && fs.existsSync(path.join(ROOT, f)))
+  // (BLOOM-033) BLOOM-030's composer guarantee, evaluated on BLOOM-030's own tree (END) once a later milestone has built on it (the one-document
+  // app has ONE composer too — resources/app/app-controller.js; tools/single-app-flow-check.js S1)
+  { const files = (WITH_TREE ? git("ls-files --cached --others --exclude-standard -- '*.js' '*.html'") : git(`ls-tree -r --name-only ${END}`)).split("\n").filter(f => f && /\.(js|html)$/.test(f) && !f.startsWith("tools/") && !f.startsWith("docs/") && !f.startsWith("demos/ui-mockups/") && existsAt(f))
       .filter(f => !f.startsWith("dist/"));   // (BLOOM-031) dist/ is the GENERATED portable copy of these very sources (proved identical to a fresh build by portable-runtime-check P3–P5), not a duplicate
-    const who = re => files.filter(f => re.test(strip(read(f))));
+    const who = re => files.filter(f => re.test(strip(readAt(f))));
     const entries = who(/new ExpeditionEntry\(/), departs = who(/function departToGameplay\b/), packers = who(/\.pack\(detail\b/), trainQ = who(/\.trainingQuery\(\{/), beginParam = who(/get\("begin"\) === "1"/), mounts = who(/\.mountTitlePage\(/), boots = who(/title-boot\.js/);
     const docsThin = [INDEX, ALIAS].every(d => !/type="module"|ExpeditionEntry|departToGameplay|MENU_DEV|<script src="[^"]*content\//.test(d) && (d.match(/<script/g) || []).length === 1);
     const aliasCfg = /<script src="\.\.\/resources\/main-menu\/title-boot\.js" data-run="demo-run\.html" data-title="\.\.\/index\.html"><\/script>/.test(ALIAS);
@@ -172,7 +179,7 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
 
   // in every page: the bloom:* log, unhandled rejections, generator / search counters (on an expedition page every world-making function THROWS)
   const INIT = () => {
-    const XP = window.__XP = { calls: { generateFromArchetype: 0, generatePlanet: 0, attemptPlanet: 0, searchWorld: 0, runSearch: 0, createSim: 0 }, forbid: /[?&]expedition=/.test(location.search), threw: [] };
+    const XP = window.__XP = { calls: { generateFromArchetype: 0, generatePlanet: 0, attemptPlanet: 0, searchWorld: 0, runSearch: 0, createSim: 0 }, forbid: false /* (BLOOM-033) armed by the suite at Begin Expedition */, threw: [] };
     const wrap = (holder, name, forbidable) => { const d = Object.getOwnPropertyDescriptor(holder, name); if (d && d.get && d.get.__xp) return; let raw = d ? d.value : undefined;
       const mk = fn => fn && typeof fn === "function" ? function (...a) { XP.calls[name]++; if (forbidable && XP.forbid) { XP.threw.push(name); throw new Error("030 guard: " + name + " on an expedition page"); } return fn.apply(this, a); } : fn;
       let cur = mk(raw); const get = () => cur; get.__xp = true; Object.defineProperty(holder, name, { configurable: true, enumerable: true, get, set(v) { raw = v; cur = mk(v); } }); };
@@ -206,19 +213,27 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
     prefetch: E.prefetch ? { seed: E.prefetch.first.seed, ...E.prefetch.progress } : null, rec: localStorage.getItem("strange-bloom.training"), prompts: E.stats.prompts, page: MENU_DEV.page, text: document.body.innerText,
     dialogs: [...document.querySelectorAll("dialog")].filter(d => d.open).map(d => d.dataset.dialog), rm: m.reducedMotion, entries: E.stats.entries.slice(), exits: E.stats.exits.slice() }; });
   // the survey side of the identity proof (the survey's own functions) and the gameplay side (the run's canonical surface)
+  // (BLOOM-033) Begin Expedition inside the root: arm the generator guard, reset the createSim count, press the button; the run is a session
+  const DEPART = async p => { await p.evaluate(() => { __XP.forbid = true; __XP.calls.createSim = 0; }); await p.click(".ds-btn.go"); };
+  const disarm = p => p.evaluate(() => { __XP.forbid = false; });
+  const runIn = (p, n = 1) => p.waitForFunction(n => window.BLOOM_APP && BLOOM_APP.session && BLOOM_APP.stats.sessions.length >= n && BLOOM_APP.stats.sessions[n - 1].readyMs !== null && !BLOOM_APP.busy && !document.querySelector(".atx"), n, { timeout: 60000, polling: 50 });
+  const titleIn = p => p.waitForFunction(() => !BLOOM_APP.session && MENU_DEV.entry.state === "menu" && !BLOOM_APP.busy, null, { timeout: 30000, polling: 50 });
+  const surveyIn = p => p.waitForFunction(() => !BLOOM_APP.session && !BLOOM_APP.busy && MENU_DEV.entry.state === "survey" && MENU_DEV.entry.survey && MENU_DEV.entry.survey.state === "survey", null, { timeout: 180000, polling: 100 });
+  const trainingIn = (p, n) => p.waitForFunction(n => window.BLOOM_APP && BLOOM_APP.session && BLOOM_APP.session.run.training && window.BLOOM_TRAINING_UI && BLOOM_TRAINING_UI.stats.liftedAt && !BLOOM_APP.busy && (!n || BLOOM_APP.stats.sessions.length >= n), n || 0, { timeout: 30000, polling: 50 });
   const SURVEY_CAP = async i => { const S = await import("/resources/destination-survey/survey-data.js"), T = await import("/resources/planet-sphere/planet-texture.js");
     const s = MENU_DEV.entry.survey, c = s.cells[i], v = s.views[i], p = c.planet; const cv = document.createElement("canvas"); T.drawPlanetTexture(cv, p, { render: c.render || null });
     const hash = canvas => { const d = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data; let h = 0x811c9dc5; for (let k = 0; k < d.length; k++) { h ^= d[k]; h = Math.imul(h, 0x01000193); } return (h >>> 0).toString(16).padStart(8, "0") + ":" + canvas.width + "x" + canvas.height; };
+    window.__pickRef = c.planet;   // (BLOOM-033) the exact object, for the run-side identity
     return { key: c.key, name: c.name, classId: c.classId, authored: c.authored, archetypeId: c.archetypeId, seed: c.seed, attempt: c.attempt, sectorSeed: s.sectorSeed, fingerprint: S.planetFingerprint(p), candFingerprint: c.fingerprint,
       planet: JSON.stringify(p), texture: hash(cv), liveTexture: v._canvas && v._canvas.width ? hash(v._canvas) : null, selected: s.selected, inFocus: s.focusSlot.contains(s.globes[i]), state: s.state }; };
   const GAME_CAP = async () => { const S = await import("/resources/destination-survey/survey-data.js"); const A = BLOOM_RUN_UI.adapter, R = BLOOM_RUN, p = R.planet, src = A.surface();
     const cv = document.createElement("canvas"); cv.width = 480; cv.height = 240; const tw = 480 / src.planet.gridWidth, th = 240 / src.planet.gridHeight; let texture = null;
     if (Number.isInteger(tw) && Number.isInteger(th)) { BLOOM.surface.paintSurface(cv.getContext("2d"), src.planet, { render: src.render, sky: src.startSky, tileW: tw, tileH: th });
       const d = cv.getContext("2d").getImageData(0, 0, 480, 240).data; let h = 0x811c9dc5; for (let k = 0; k < d.length; k++) { h ^= d[k]; h = Math.imul(h, 0x01000193); } texture = (h >>> 0).toString(16).padStart(8, "0") + ":480x240"; }
-    const X = BLOOM.expedition, stored = X.load(R.expedition.token, sessionStorage);
-    return { url: location.href, path: location.pathname, id: p.id, name: p.name, fingerprint: S.planetFingerprint(p), stored: stored.ok ? { fingerprint: stored.payload.fingerprint, planet: JSON.stringify(stored.payload.planet), returnTo: stored.payload.returnTo, version: stored.payload.version, source: stored.payload.source, scenario: stored.payload.scenario, keys: Object.keys(stored.payload).sort() } : null,
-      planet: JSON.stringify(p), texture, counters: __XP.calls, threw: __XP.threw, forbid: __XP.forbid, ui18: document.documentElement.classList.contains("ui18"), pv: document.querySelectorAll(".pv").length, title: document.title,
-      xp: { token: R.expedition.token, returnTo: R.expedition.returnTo, chooseHref: R.expedition.chooseHref, playAgainHref: R.expedition.playAgainHref }, ss: Object.keys(sessionStorage).filter(k => k.startsWith("strange-bloom.expedition")),
+    const S2 = window.BLOOM_APP && BLOOM_APP.session;   // (BLOOM-033) the app's session: the run's planet IS the selected object
+    return { url: location.href, path: location.pathname, id: p.id, name: p.name, fingerprint: S.planetFingerprint(p), sameObject: !!(S2 && window.__pickRef && S2.planet === window.__pickRef), runFingerprint: R.expedition ? R.expedition.fingerprint : null,
+      planet: JSON.stringify(p), texture, counters: { ...__XP.calls }, threw: __XP.threw.slice(), forbid: __XP.forbid, ui18: document.documentElement.classList.contains("ui18"), pv: document.querySelectorAll(".pv").length, title: document.title,
+      nameUntouched: window.name === "", sessions: window.BLOOM_APP ? BLOOM_APP.stats.sessions.length : null, ss: (() => { try { return Object.keys(sessionStorage).filter(k => /expedition|handoff/.test(k)); } catch (e) { return []; } })(),
       lsPlanet: Object.keys(localStorage).filter(k => /tilemap|sections|gridWidth/.test(localStorage.getItem(k) || "")), menu: A.runMenu().items.map(a => [a.id, a.href || null]), unhandled: window.__UNHANDLED }; };
   const ANCHORS = p => p.evaluate(() => { const a = [...document.querySelectorAll("[data-tutorial]")].filter(e => e.offsetParent !== null || e.closest(".pv")).map(e => e.dataset.tutorial); return { n: a.length, dup: a.filter((x, i) => a.indexOf(x) !== i) }; });
   const SHAPES = p => p.evaluate(() => { const o = {}; for (const e of window.__EV) o[e.type] = e.keys; return o; });
@@ -245,16 +260,16 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
         const m0 = await M_STATE(p);
         const rootReqs = LOG.slice(logFrom).map(([u, s]) => `${s} ${u}`); PROOF.rootTitleUrl = m0.url; PROOF.rootAssetRequests = rootReqs; PROOF.firstSector = m0.prefetch;
         const req404 = LOG.slice(logFrom).filter(([, s]) => s !== 200);
-        const needed = ["/", "/resources/main-menu/title-boot.js", "/resources/main-menu/main-menu-page.js", "/resources/main-menu/expedition-entry.js", "/resources/main-menu/main-menu.js", "/resources/destination-survey/destination-survey.js",
-          "/resources/destination-survey/survey-worker.js", "/resources/expedition/expedition-handoff.js", "/content/config.js", "/resources/bloom-play.js", "/resources/main-menu/main-menu.css", "/resources/destination-survey/destination-survey.css"];
+        const needed = ["/", "/resources/main-menu/title-boot.js", "/resources/app/app-controller.js", "/resources/main-menu/expedition-entry.js", "/resources/main-menu/main-menu.js", "/resources/destination-survey/destination-survey.js",
+          "/resources/destination-survey/survey-worker.js", "/content/config.js", "/resources/bloom-play.js", "/resources/main-menu/main-menu.css", "/resources/destination-survey/destination-survey.css"];
         const missing = needed.filter(n => !LOG.slice(logFrom).some(([u, s]) => u === n && s === 200)), bgReq = LOG.slice(logFrom).filter(([u]) => /\/resources\/main-menu\/backgrounds\/menu-\d\d\.jpg$/.test(u));
         check(m0.url === HOME && m0.title === "Strange Bloom — Unknown Soils" && /^Strange Bloom$/i.test(m0.h1) && /^Unknown Soils$/i.test(m0.sub) && !req404.length && !missing.length && bgReq.length >= 1 && bgReq.every(([, s]) => s === 200)
-          && m0.page.title === HOME && m0.page.run === RUNP,
+          && m0.page.document === "/" /* (BLOOM-033: the one document) */,
           `${B} R2b · R11 · R12 · the canonical URL / is the Strange Bloom title: "Strange Bloom — Unknown Soils", STRANGE BLOOM / UNKNOWN SOILS, every relative asset 200 (boot, composer, components, stylesheets, engine scripts, the survey's module worker, the painting) — no 404, no redirect; the composer's canonical title is / itself and its run page demos/demo-run.html`,
           `${rootReqs.length} requests · ${missing.join(", ") || "all needed present"}${req404.length ? " · 404: " + req404.map(r => r[0]).join(",") : ""}`);
         const vis = m0.text.replace(/\s+/g, " ");
         check(J(m0.items) === J(["begin", "training", "settings", "credits"]) && !/continue/i.test(vis) && !DEV_COPY.test(vis) && !EMOJI.test(vis) && !/BLOOM\b/i.test(vis.replace(/STRANGE BLOOM/gi, "")),
-          `${B} R15 · R80 · the title menu is BEGIN EXPEDITION · TRAINING · SETTINGS · CREDITS (no CONTINUE); nothing player-visible names a milestone, the playtest harness, a development handoff, a temporary shell, ui=18 / ui=legacy, "training not ready" or the old launcher; no emoji; the game is never called BLOOM`, m0.items.join(" · "));
+          `${B} R15 · R80 · the title menu is (BLOOM-033) EXPEDITION · TRAINING · SETTINGS · CREDITS (no CONTINUE); nothing player-visible names a milestone, the playtest harness, a development handoff, a temporary shell, ui=18 / ui=legacy, "training not ready" or the old launcher; no emoji; the game is never called BLOOM`, m0.items.join(" · "));
         await shot(p, "01-root-title.png");
         // R13 · R14 · the twelve paintings and the background rule
         const pt = await p.evaluate(async () => { const m = MENU_DEV.entry.menu, out = [];
@@ -297,7 +312,7 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
           `${B} R19 · R74 · at the root the first BEGIN EXPEDITION (Enter) opens the ONE first-run dialog ("${d1.h}"): focus inside, Tab / Shift+Tab move between Go to Expedition · Start Training (~5 min), Escape closes it with nothing recorded and focus back on BEGIN`, J({ focus: d1.focus, tab1, tab2 }));
         // R20 · R24 · Go to Expedition: "skipped", the black fade, the survey
         await p.click('.mm-item[data-act="begin"]'); await sleep(200); await p.click('[data-act="recommend-expedition"]'); await surveyReady(p);
-        const s1 = await p.evaluate(() => { const E = MENU_DEV.entry, s = E.survey, cls = ["stable", "volatile", "extreme"]; return { rec: JSON.parse(localStorage.getItem("strange-bloom.training")), tag: E.menu.trainingRecommended, url: location.href, entry: E.stats.entries[E.stats.entries.length - 1], adopted: s.stats.adopted, seed: s.sectorSeed,
+        const s1 = await p.evaluate(() => { const E = MENU_DEV.entry, s = E.survey, cls = ["favorable", "precarious", "extreme"]; return { rec: JSON.parse(localStorage.getItem("strange-bloom.training")), tag: E.menu.trainingRecommended, url: location.href, entry: E.stats.entries[E.stats.entries.length - 1], adopted: s.stats.adopted, seed: s.sectorSeed,
           cells: s.cells.map((c, i) => c && { ok: c.authored || (c.validation.validated && c.planet.archetype.winnabilityChecked && c.planet.archetype.validatedLayers.join() === "1,2,3,4,5,6,7,8"), col: c.classId === cls[i % 3], key: c.key }) }; });
         check(s1.rec && s1.rec.status === "skipped" && !s1.tag && s1.url === HOME && s1.entry.blackMs >= 200 && s1.entry.blackMs < 1500 && s1.entry.liftMs >= s1.entry.swappedMs && s1.entry.revealedMs > s1.entry.liftMs && s1.adopted && s1.seed === m1.prefetch.seed,
           `${B} R20 · R24 · Go to Expedition records "skipped", drops the tag and fades through black (${s1.entry.blackMs} ms to black; the survey mounted and drawn under it, then the black lifts) into the Destination Survey on the sector prefetched at the root`, J(s1.entry));
@@ -322,20 +337,19 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
           `${B} R30 · the chosen candidate survives focus: the same live globe moved into the focus slot, its texture pixels = drawPlanetTexture of the candidate's planet, the survey's planetFingerprint = the candidate's`, J({ key: cap.key, cls: cap.classId, fp: cap.fingerprint }));
         await shot(p, "05-selected-focused-destination.png");
         PROOF.selectedCandidate = { key: cap.key, name: cap.name, classId: cap.classId, sectorSeed: cap.sectorSeed, provenanceSeed: cap.seed, attempt: cap.attempt, authored: cap.authored, fingerprint: cap.fingerprint, texture: cap.texture };
-        await p.click(".ds-btn.go"); await p.waitForFunction(() => document.querySelector(".atx") && document.querySelector(".atx").dataset.atxPreset === "dramatic", null, { timeout: 10000, polling: 20 });
+        let navs = 0; p.on("framenavigated", f => { if (f === p.mainFrame()) navs++; });   // (BLOOM-033) from here on: no document load at all
+        await DEPART(p); await p.waitForFunction(() => document.querySelector(".atx") && document.querySelector(".atx").dataset.atxPreset === "dramatic", null, { timeout: 10000, polling: 20 });
         await sleep(650); const atx = await p.evaluate(() => { const o = document.querySelector(".atx"); return { preset: o.dataset.atxPreset, phase: o.dataset.atxPhase, rm: o.classList.contains("rm") }; });
         await shot(p, "06-dramatic-descent.png");
-        await p.waitForURL(u => u.pathname === "/demos/demo-run.html" && /^\?play=1&expedition=x[0-9a-f]{20}$/.test(u.search), { timeout: 30000 });
-        await waitRun(p); await waitProd(p); await waitLift(p); await frames(p, 3);
+        await runIn(p); await waitProd(p); await frames(p, 3);
         const g = await p.evaluate(GAME_CAP);
         await shot(p, "07-first-gameplay-frame-root-flow.png");
-        PROOF.run = { url: g.url.replace(ORIGIN, "<origin>"), token: g.xp.token, planetId: g.id, name: g.name, fingerprint: g.fingerprint, storedFingerprint: g.stored && g.stored.fingerprint, canonicalSurface: g.texture, counters: g.counters };
-        check(atx.preset === "dramatic" && !atx.rm && g.path === "/demos/demo-run.html" && g.stored && g.stored.version === 1 && g.stored.source === "destination-survey" && g.stored.scenario === "eden" && g.stored.planet === cap.planet && g.planet === cap.planet
-          && J(g.stored.keys) === J(["candidate", "createdAt", "fingerprint", "integrity", "planet", "render", "returnTo", "scenario", "source", "token", "version"]) && g.stored.returnTo === HOME && !g.lsPlanet.length && g.ss.length >= 2,
-          `${B} R31 · R32 · R34 · Begin Expedition plays the unchanged DRAMATIC transition; under it the exact planet is packaged verbatim into the session handoff (version 1, the same envelope fields, the planet JSON identical to the survey's, returnTo = the ROOT title) and the run boots on demos/demo-run.html?play=1&expedition=<token> — nothing in localStorage, only the token in the address`,
-          J({ atx, path: g.path, returnTo: g.stored && g.stored.returnTo }));
-        check(g.fingerprint === cap.fingerprint && g.stored.fingerprint === cap.fingerprint && g.texture === cap.texture && g.counters.createSim === 1 && GEN_NAMES.every(n => g.counters[n] === 0) && !g.threw.length && g.forbid,
-          `${B} R33 · R35 · R36 · no regeneration: on the run page every generator / search / attempt function is guarded to throw and none was called, one createSim; the selected planet's fingerprint is unchanged (survey == stored == gameplay) and the gameplay canonical surface equals the focused globe's texture pixel for pixel`,
+        PROOF.run = { url: g.url.replace(ORIGIN, "<origin>"), sameObject: g.sameObject, planetId: g.id, name: g.name, fingerprint: g.fingerprint, runFingerprint: g.runFingerprint, canonicalSurface: g.texture, counters: g.counters };
+        check(atx.preset === "dramatic" && !atx.rm && g.path === "/" && g.url === s1.url && g.sameObject && g.planet === cap.planet && !g.ss.length && !g.lsPlanet.length && g.nameUntouched && navs === 0,
+          `${B} R31 · R32 · R34 · (BLOOM-033) Begin Expedition plays the unchanged DRAMATIC transition; under it the exact selected planet OBJECT becomes the run inside the root document (no handoff, no session or local storage of the planet, no token, window.name untouched, no document load: the address is still /)`,
+          J({ atx, path: g.path, sameObject: g.sameObject }));
+        check(g.fingerprint === cap.fingerprint && g.runFingerprint === cap.fingerprint && g.texture === cap.texture && g.counters.createSim === 1 && GEN_NAMES.every(n => g.counters[n] === 0) && !g.threw.length && g.forbid,
+          `${B} R33 · R35 · R36 · no regeneration: from Begin Expedition on every generator / search / attempt function is guarded to throw and none was called, one createSim; the selected planet's fingerprint is unchanged (survey == ruored == gameplay) and the gameplay canonical surface equals the focused globe's texture pixel for pixel`,
           J({ fp: g.fingerprint, texture: g.texture, counters: g.counters }));
         check(g.ui18 && g.pv === 1 && g.title === `Strange Bloom — ${cap.name}` && J(g.menu.map(a => a[0])) === J(["playAgain", "choosePlanet", "mainMenu"]),
           `${B} R55 · the production run UI is the default (Planet View, ui18), titled with the chosen world; the run menu is Play again · Choose another planet · Main menu`, J(g.menu));
@@ -367,94 +381,85 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
         await shot(p, "11-production-bloom-report.png");
         const H = Object.fromEntries(rep.acts); hrefsSeen.push(...rep.acts.map(a => a[1]).filter(Boolean), ...g.menu.map(a => a[1]).filter(Boolean));
         PROOF.rootReturnUrls = { playAgain: H.playAgain, choosePlanet: H.choosePlanet, mainMenu: H.mainMenu };
-        check(rep.kind === "win" && rep.name === cap.name && rep.xp === cap.fingerprint && J(rep.shown) === J(["keepPlaying", "playAgain", "choosePlanet", "mainMenu"]) && H.playAgain === `demo-run.html?play=1&expedition=${g.xp.token}` && H.choosePlanet === `${HOME}?begin=1` && H.mainMenu === HOME && !DEV_COPY.test(rep.text) && !EMOJI.test(rep.text),
-          `${B} R39 · the production Bloom Report names the chosen world and carries its fingerprint; its actions are Keep playing · Play again (the same token) · Choose another planet (ROOT + begin=1) · Main menu (ROOT)`, J(H));
-        await Promise.all([p.waitForEvent("load", { timeout: 30000 }), p.click('#rr [data-act="playAgain"]')]); await waitRun(p); await waitProd(p); await waitLift(p);
+        check(rep.kind === "win" && rep.name === cap.name && rep.xp === cap.fingerprint && J(rep.shown) === J(["keepPlaying", "playAgain", "choosePlanet", "mainMenu"]) && H.playAgain === null && H.choosePlanet === null && H.mainMenu === null,
+          `${B} R39 · the production Bloom Report names the chosen world and carries its fingerprint; its actions are Keep playing · Play again · Choose another planet · Main menu — (BLOOM-033) app actions inside the root, no URL among them`, J(H));
+        await p.evaluate(() => { __XP.calls.createSim = 0; }); await p.click('#rr [data-act="playAgain"]'); await runIn(p, 2); await waitProd(p);
         const g2 = await p.evaluate(GAME_CAP), at2 = await p.evaluate(() => ({ ticks: BLOOM_API.sim.ticks < 200, owned: BLOOM_API.sim.traits.filter(u => BLOOM_API.sim.ownedTier(u) > 0).length, won: BLOOM_API.sim.won }));
-        check(g2.xp.token === g.xp.token && g2.fingerprint === cap.fingerprint && g2.planet === cap.planet && g2.texture === cap.texture && at2.owned === 0 && !at2.won && g2.counters.createSim === 1 && GEN_NAMES.every(n => g2.counters[n] === 0),
-          `${B} R40 · Play again keeps the exact planet: the same token, fingerprint, planet JSON and canonical surface on a fresh simulation (nothing owned, not won), no generator`, g2.xp.token);
-        await Promise.all([p.waitForURL(u => u.pathname === "/" && u.searchParams.get("begin") === "1", { timeout: 30000 }), runMenu(p, "choosePlanet")]);
-        await menuReady(p); await surveyReady(p);
+        check(g2.sameObject && navs === 0 && g2.fingerprint === cap.fingerprint && g2.planet === cap.planet && g2.texture === cap.texture && at2.owned === 0 && !at2.won && g2.counters.createSim === 1 && GEN_NAMES.every(n => g2.counters[n] === 0),
+          `${B} R40 · Play again keeps the exact planet: the same object, fingerprint, planet JSON and canonical surface on a fresh simulation (nothing owned, not won), no generator, no document load`, g2.name);
+        await disarm(p); await runMenu(p, "choosePlanet"); await surveyIn(p);   // (a live run asks first: the page's dialog handler accepts)
         const cA = await p.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state, events: MENU_DEV.events.map(e => e.type), cells: MENU_DEV.entry.survey.cells.length, prompts: MENU_DEV.entry.stats.prompts }));
         await shot(p, "12-choose-another-planet-root-survey.png");
-        check(cA.url === HOME && cA.state === "survey" && cA.events.includes("auto-begin") && cA.cells === 9 && !cA.prompts,
-          `${B} R41 · Choose another planet lands on the ROOT title with begin=1 and enters the Destination Survey at once (begin=1 consumed: the address is / again); no prompt`, J(cA));
-        await p.goto(`${RUNP}?play=1&expedition=${g.xp.token}`); await waitRun(p); await waitProd(p); await waitLift(p);
-        await Promise.all([p.waitForURL(u => u.href === HOME, { timeout: 30000 }), runMenu(p, "mainMenu")]); await menuReady(p); await sleep(300);
+        check(cA.url === HOME && cA.state === "survey" && cA.events.includes("choose-planet") && cA.cells === 9 && cA.prompts === r2.prompts /* no new prompt */ && navs === 0,
+          `${B} R41 · Choose another planet opens the Destination Survey inside the root (the address stays /, no document load); no prompt`, J({ url: cA.url, state: cA.state, cells: cA.cells }));
+        await p.click('.ds-cand[data-index="2"]'); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000, polling: 50 }); await p.evaluate(SURVEY_CAP, 2);
+        await DEPART(p); await runIn(p, 3); await waitProd(p);
+        await disarm(p); await runMenu(p, "mainMenu"); await titleIn(p); await sleep(300);
         const mm = await M_STATE(p); await shot(p, "13-main-menu-root-title.png");
-        check(mm.url === HOME && mm.state === "menu" && mm.title === "Strange Bloom — Unknown Soils" && mm.prefetch && mm.prefetch.total === 9, `${B} R42 · Main menu from a root-started expedition returns to the ROOT title (/), which starts a fresh prefetch`, mm.url.replace(ORIGIN, ""));
+        check(mm.url === HOME && mm.state === "menu" && mm.title === "Strange Bloom — Unknown Soils" && mm.prefetch && mm.prefetch.total === 9, `${B} R42 · Main menu from a root-started expedition returns to the root title inside the same document (/), which starts a fresh prefetch`, mm.url.replace(ORIGIN, ""));
         // R43 · R44 · the failure state's one action; no normal action reaches demos/main-menu.html or the old launcher
         const fp = watch(await c.newPage(), "fail"); await fp.goto(`${RUNP}?play=1&expedition=x0123456789abcdef0123`); await waitRun(fp); await frames(fp, 3);
-        const fgo = await fp.evaluate(() => (document.getElementById("xpFailAction") || { dataset: {} }).dataset.go); hrefsSeen.push(fgo);
-        await Promise.all([fp.waitForURL(u => u.pathname === "/index.html", { timeout: 20000 }), fp.click("#xpFailAction")]); await menuReady(fp);
-        const fl = await fp.evaluate(() => ({ title: document.title, state: MENU_DEV.entry.state })); await fp.close();
-        const bad = hrefsSeen.filter(h => /main-menu\.html|#\/|ui=legacy|ui=18|changeScenario/.test(h));
-        check(fgo === "../index.html" && fl.state === "menu" && !bad.length,
-          `${B} R43 · R44 · no normal production action returns to demos/main-menu.html or the retired launcher: every report / run-menu / failure-state target is the run page (same token) or the ROOT title (the failure state's Main menu → ../index.html → the title)`, `${hrefsSeen.length} targets${bad.length ? " · bad: " + bad.join(", ") : ""}`);
-        // R76 · the title after a departure, restored from the back-forward cache, starts afresh (the composer's pageshow rule)
-        const bf = await p.evaluate(async () => { const o = performance.timeOrigin; MENU_DEV.entry.state = "departed"; dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true })); return o; });
-        await p.waitForFunction(o => performance.timeOrigin !== o, bf, { timeout: 15000 }).catch(() => {}); await menuReady(p);
-        const bf2 = await p.evaluate(o => ({ reloaded: performance.timeOrigin !== o, state: MENU_DEV.entry.state, url: location.href }), bf);
-        const bfl = await p.evaluate(async () => { const E = MENU_DEV.entry; let nav = null; const ok = await E.leaveTo("demos/demo-run.html?training=1", { navigate: h => { nav = h; } }); const during = E.state;
-          dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true })); await new Promise(r => setTimeout(r, 500)); return { ok, nav, during, after: E.state, black: getComputedStyle(E.black).display, inert: E.menuHost.inert }; });
-        check(bf2.reloaded && bf2.state === "menu" && bf2.url === HOME && bfl.ok && bfl.during === "leaving" && bfl.after === "menu" && bfl.black === "none" && !bfl.inert,
-          `${B} R76 · back-forward cache at the root: a title restored after a departure reloads itself fresh (never stuck behind its clouds); a title restored after leaving for TRAINING lifts its black and takes input again`, J({ bf2, bfl }));
-        await collectUnhandled(p); PROOF.browsers[bname].flows.push("root expedition flow"); await c.close();
+        const fl = await fp.evaluate(() => ({ failed: !!(window.BLOOM_RUN && BLOOM_RUN.failed), why: window.BLOOM_RUN && BLOOM_RUN.summary && BLOOM_RUN.summary.why, shown: !!document.getElementById("genFail"), started: !!(window.BLOOM_RUN && BLOOM_RUN.started) })); await fp.close();
+        const bad = hrefsSeen.filter(h => /main-menu\.html|#\/|ui=legacy|ui=18|changeScenario|demo-run|expedition=/.test(h));
+        check(fl.failed && fl.shown && !fl.started && /retired/.test(fl.why || "") && !bad.length,
+          `${B} R43 · R44 · (BLOOM-033) no production action leads anywhere but the root: the report / run-menu actions carry no URL at all; a stale two-document expedition link on the developer harness is an explicit "retired" failure (never First Bloom, never another world)`, J({ fl, bad }));
+        // R76 · (BLOOM-033) the back-forward-cache rules guarded page departures that no longer exist: across the whole root flow the browser loaded ONE document
+        check(navs === 0 && (await p.evaluate(() => location.href)) === HOME, `${B} R76 · one document for the whole root flow: survey → the run → report → Play again → Choose another planet → a second run → Main menu, and the address never changed (no departure for the back-forward cache to restore)`, `navigations after the title: ${navs}`);
 
         // ================= TRAINING from the root =================
         { const c2 = await ctx({ record: null }), q = watch(await c2.newPage(), "training");
           await q.goto(HOME); await menuReady(q);
-          await Promise.all([q.waitForURL(u => u.pathname === "/demos/demo-run.html" && u.searchParams.get("training") === "1", { timeout: 20000 }), q.click('.mm-item[data-act="training"]')]);
-          await waitRun(q); await lifted(q); await coached(q); await sleep(300);
+          let qnavs = 0; q.on("framenavigated", f => { if (f === q.mainFrame()) qnavs++; });
+          await q.click('.mm-item[data-act="training"]'); await trainingIn(q); await coached(q); await sleep(300);
           const t = await q.evaluate(() => ({ url: location.href, ret: BLOOM_RUN.training.returnTo, steps: BLOOM_TRAINING_UI.guide.director.steps.length, planet: BLOOM_RUN.planet.id, paused: !BLOOM_API.state().running, rec: localStorage.getItem("strange-bloom.training"), menu: BLOOM_RUN_UI.adapter.runMenu().items.map(a => a.id) }));
           await q.evaluate(() => { const c = BLOOM_TRAINING_UI.guide.coach; void c; }); await shot(q, "14-guided-training-from-root.png");
-          PROOF.trainingReturnUrls.trainingHref = t.url.replace(ORIGIN, "<origin>"); PROOF.trainingReturnUrls.returnTo = t.ret.replace(ORIGIN, "<origin>");
-          check(new URL(t.url).searchParams.get("return") === HOME && t.ret === HOME && t.steps === 13 && t.planet === "training_grounds" && t.paused && t.rec === null && J(t.menu) === J(["restartTraining", "skipTraining", "mainMenu"]),
-            `${B} R17 · R45 · R51 · TRAINING from the root opens demos/demo-run.html?training=1&return=<ROOT> through the black: the guided coach mounts (13 lessons) on a paused Training Grounds; the training's return target is the ROOT title; nothing recorded`, t.url.replace(ORIGIN, ""));
-          await Promise.all([q.waitForURL(u => u.href === HOME, { timeout: 20000 }), runMenu(q, "mainMenu")]); await menuReady(q);
+          PROOF.trainingReturnUrls.trainingHref = t.url.replace(ORIGIN, "<origin>"); PROOF.trainingReturnUrls.returnTo = t.ret;   // (BLOOM-033: no URL; the app's actions)
+          check(t.url === HOME && t.ret === null && qnavs === 0 && t.steps === 13 && t.planet === "training_grounds" && t.paused && t.rec === null && J(t.menu) === J(["restartTraining", "skipTraining", "mainMenu"]),
+            `${B} R17 · R45 · R51 · (BLOOM-033) TRAINING from the root runs inside the root document through the black (the address stays /, no document load): the guided coach mounts (13 lessons) on a paused Training Grounds; no return URL — its exits are the app's`, t.url.replace(ORIGIN, ""));
+          await runMenu(q, "mainMenu"); await titleIn(q);
           const mm1 = await q.evaluate(() => ({ url: location.href, rec: localStorage.getItem("strange-bloom.training"), tag: MENU_DEV.entry.menu.trainingRecommended }));
-          await Promise.all([q.waitForURL(u => u.searchParams.get("training") === "1", { timeout: 20000 }), q.click('.mm-item[data-act="training"]')]); await waitRun(q); await lifted(q); await coached(q);
+          await q.click('.mm-item[data-act="training"]'); await trainingIn(q); await coached(q);
           await q.click(".tc-card .tc-skip"); await sleep(200);
-          await Promise.all([q.waitForURL(u => u.href === HOME, { timeout: 20000 }), q.click('[data-skip="skip"]')]); await menuReady(q);
+          await q.click('[data-skip="skip"]'); await titleIn(q);
           const sk = await q.evaluate(() => ({ url: location.href, rec: JSON.parse(localStorage.getItem("strange-bloom.training")), tag: MENU_DEV.entry.menu.trainingRecommended }));
           PROOF.trainingReturnUrls.mainMenu = mm1.url.replace(ORIGIN, "<origin>"); PROOF.trainingReturnUrls.skip = sk.url.replace(ORIGIN, "<origin>");
-          check(mm1.url === HOME && mm1.rec === null && mm1.tag && sk.url === HOME && sk.rec && sk.rec.status === "skipped" && !sk.tag,
-            `${B} R46 · R47 · R50 · training's Main menu returns to the ROOT title recording nothing (still Recommended); Skip Tutorial → the one confirmation → Skip returns to the ROOT title and records "skipped" (the tag goes)`, J({ mm1: mm1.rec, sk: sk.rec }));
+          check(mm1.url === HOME && mm1.rec === null && mm1.tag && sk.url === HOME && sk.rec && sk.rec.status === "skipped" && !sk.tag && qnavs === 0,
+            `${B} R46 · R47 · R50 · (BLOOM-033, in the same document) training's Main menu returns to the ROOT title recording nothing (still Recommended); Skip Tutorial → the one confirmation → Skip returns to the ROOT title and records "skipped" (the tag goes)`, J({ mm1: mm1.rec, sk: sk.rec }));
           await collectUnhandled(q); await c2.close(); }
         // ================= TRAINING COMPLETE from the root: Restart, then Begin Expedition =================
         { const c3 = await ctx({ record: null }), q = watch(await c3.newPage(), "training-complete");
           await q.goto(HOME); await menuReady(q);
-          await Promise.all([q.waitForURL(u => u.searchParams.get("training") === "1", { timeout: 20000 }), q.click('.mm-item[data-act="training"]')]); await waitRun(q); await lifted(q); await coached(q);
+          let qnavs = 0; q.on("framenavigated", f => { if (f === q.mainFrame()) qnavs++; });
+          await q.click('.mm-item[data-act="training"]'); await trainingIn(q); await coached(q);
           await win(q); await reportOpen(q); await frames(q, 3);
           const tc = await q.evaluate(() => ({ acts: BLOOM.runReport.instance.state().actions, rec: JSON.parse(localStorage.getItem("strange-bloom.training")), head: document.getElementById("rrTitle").textContent }));
           await shot(q, "15-training-complete.png");
-          const o1 = await q.evaluate(() => ({ origin: performance.timeOrigin, url: location.href }));
-          await Promise.all([q.waitForEvent("load", { timeout: 20000 }), q.click('#rr [data-act="restartTraining"]')]); await waitRun(q); await lifted(q);
-          const o2 = await q.evaluate(() => ({ origin: performance.timeOrigin, url: location.href, ticks: BLOOM_API.sim.ticks, running: BLOOM_API.state().running, rec: JSON.parse(localStorage.getItem("strange-bloom.training")) }));
+          const o1 = await q.evaluate(() => { window.__s1 = BLOOM_APP.session; return { origin: performance.timeOrigin, url: location.href, n: BLOOM_APP.stats.sessions.length }; });
+          await q.click('#rr [data-act="restartTraining"]'); await trainingIn(q, o1.n + 1);
+          const o2 = await q.evaluate(() => ({ fresh: BLOOM_APP.session !== window.__s1 && window.__s1.disposed, origin: performance.timeOrigin, url: location.href, ticks: BLOOM_API.sim.ticks, running: BLOOM_API.state().running, rec: JSON.parse(localStorage.getItem("strange-bloom.training")) }));
           await coached(q); await win(q); await reportOpen(q); await frames(q, 2);
-          await Promise.all([q.waitForURL(u => u.pathname === "/" && u.searchParams.get("begin") === "1", { timeout: 20000 }), q.click('#rr [data-act="beginExpedition"]')]);
-          await menuReady(q); await surveyReady(q);
-          const be = await q.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state, prompts: MENU_DEV.entry.stats.prompts, handoffs: MENU_DEV.handoffs.length, rec: JSON.parse(localStorage.getItem("strange-bloom.training")) }));
-          PROOF.trainingReturnUrls.beginExpedition = "<origin>/?begin=1 → " + be.url.replace(ORIGIN, "<origin>");
-          check(J(tc.acts) === J(["beginExpedition", "restartTraining", "mainMenu"]) && tc.rec.status === "completed" && o2.origin !== o1.origin && o2.url === o1.url && o2.ticks === 0 && !o2.running && o2.rec.status === "completed",
-            `${B} R49 · R50 · TRAINING COMPLETE offers Begin Expedition · Restart training · Main menu and records "completed"; Restart training reopens the same URL as a fresh page (tick 0, paused) and "completed" is never downgraded`, J({ acts: tc.acts, head: tc.head }));
-          check(be.url === HOME && be.state === "survey" && !be.prompts && !be.handoffs && be.rec.status === "completed",
-            `${B} R48 · TRAINING COMPLETE → Begin Expedition lands on the ROOT title with begin=1 and enters the Destination Survey at once (no prompt, no world packed)`, J(be));
+          await q.click('#rr [data-act="beginExpedition"]'); await surveyIn(q);
+          const be = await q.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state, prompts: MENU_DEV.entry.stats.prompts, handoffs: MENU_DEV.departures.length, rec: JSON.parse(localStorage.getItem("strange-bloom.training")) }));
+          PROOF.trainingReturnUrls.beginExpedition = "(in the document) → " + be.url.replace(ORIGIN, "<origin>");
+          check(J(tc.acts) === J(["beginExpedition", "restartTraining", "mainMenu"]) && tc.rec.status === "completed" && o2.fresh && o2.origin === o1.origin /* (BLOOM-033: a fresh SESSION, the same document) */ && o2.url === o1.url && o2.ticks === 0 && !o2.running && o2.rec.status === "completed",
+            `${B} R49 · R50 · TRAINING COMPLETE offers Begin Expedition · Restart training · Main menu and records "completed"; Restart training is a fresh training SESSION in the same document (tick 0, paused) and "completed" is never downgraded`, J({ acts: tc.acts, head: tc.head }));
+          check(be.url === HOME && be.state === "survey" && !be.prompts && !be.handoffs && be.rec.status === "completed" && qnavs === 0,
+            `${B} R48 · TRAINING COMPLETE → Begin Expedition enters the Destination Survey inside the root document at once (no prompt, nothing departed, no document load)`, J(be));
           await collectUnhandled(q); await c3.close(); }
         // ================= R21 · the first-run prompt's Start Training =================
         { const c4 = await ctx({ record: null }), q = watch(await c4.newPage(), "start-training");
           await q.goto(HOME); await menuReady(q); await q.click('.mm-item[data-act="begin"]'); await sleep(200);
-          await Promise.all([q.waitForURL(u => u.searchParams.get("training") === "1", { timeout: 20000 }), q.click('[data-act="recommend-training"]')]); await waitRun(q); await lifted(q); await coached(q);
+          await q.click('[data-act="recommend-training"]'); await trainingIn(q); await coached(q);
           const st = await q.evaluate(() => ({ rec: localStorage.getItem("strange-bloom.training"), ret: BLOOM_RUN.training.returnTo, mounted: BLOOM_TRAINING_UI.guide.mounted }));
-          check(st.rec === null && st.ret === HOME && st.mounted, `${B} R21 · the first-run dialog's Start Training (~5 min) records nothing and starts the REAL guided training (the coach mounted; return = ROOT)`, J(st));
+          check(st.rec === null && st.ret === null && st.mounted, `${B} R21 · the first-run dialog's Start Training (~5 min) records nothing and starts the REAL guided training inside the root document (the coach mounted)`, J(st));
           await collectUnhandled(q); await c4.close(); }
         // ================= ?begin=1 directly at the root =================
         { const c5 = await ctx({ record: "completed" }), q = watch(await c5.newPage(), "begin"); const lf = LOG.length;
           await q.goto(HOME + "?begin=1"); await menuReady(q); await surveyReady(q);
           const b = await q.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state, events: MENU_DEV.events.map(e => e.type) }));
           const idx = await get(HOME + "index.html"); await q.goto(HOME + "index.html"); await menuReady(q);
-          const ix = await q.evaluate(() => ({ title: document.title, page: MENU_DEV.page.title }));
-          check(b.url === HOME && b.state === "survey" && b.events.includes("auto-begin") && LOG.slice(lf).some(([u, s]) => u === "/" && s === 200) && idx.status === 200 && ix.title === "Strange Bloom — Unknown Soils" && ix.page === HOME + "index.html",
+          const ix = await q.evaluate(() => ({ title: document.title, page: MENU_DEV.page.document }));
+          check(b.url === HOME && b.state === "survey" && b.events.includes("auto-begin") && LOG.slice(lf).some(([u, s]) => u === "/" && s === 200) && idx.status === 200 && ix.title === "Strange Bloom — Unknown Soils" && ix.page === "/index.html" /* (BLOOM-033: the one document at its own address) */,
             `${B} R26 · /?begin=1 opens the root title straight into the Destination Survey (begin=1 dropped from the address); /index.html is the same title (its canonical return is itself)`, J({ b: b.url, ix }));
           await collectUnhandled(q); await c5.close(); }
         // ================= direct developer URLs, ui=legacy, file:// =================
@@ -470,8 +475,8 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
             await collectUnhandled(r); await c6.close(); }
           check(direct.every(d => d[1]), `${B} R57 · R58 · R59 · direct developer runs are unchanged: no query (First Bloom), planet=, archetype= & seed= (the generator once, as before), Dying World / Native Competition / Volatile Climate scenario URLs, play=1 — each boots the production run UI, no expedition`, J(direct.map(d => [d[0], d[1], d[2]])));
           const c7 = await ctx(), l = watch(await c7.newPage(), "legacy"); await l.goto(RUNP + "?archetype=ocean_archipelago&seed=28&ui=legacy"); await waitRun(l); await sleep(400);
-          const lg = await l.evaluate(() => ({ pv: !!document.querySelector(".pv"), header: getComputedStyle(document.querySelector("body > header")).display, canvas: document.getElementById("cv").width > 100 }));
-          await l.goto(RUNP + "?archetype=ocean_archipelago&seed=28"); await waitRun(l); await waitProd(l); const dflt = await l.evaluate(() => ({ pv: !!document.querySelector(".pv"), header: getComputedStyle(document.querySelector("body > header")).display }));
+          const lg = await l.evaluate(() => ({ pv: !!document.querySelector(".pv"), header: (e => e ? getComputedStyle(e).display : "none")(document.querySelector("body > header")) /* (BLOOM-033: absent = not shown) */, canvas: document.getElementById("cv").width > 100 }));
+          await l.goto(RUNP + "?archetype=ocean_archipelago&seed=28"); await waitRun(l); await waitProd(l); const dflt = await l.evaluate(() => ({ pv: !!document.querySelector(".pv"), header: (e => e ? getComputedStyle(e).display : "none")(document.querySelector("body > header")) /* (BLOOM-033: absent = not shown) */ }));
           await c7.close();
           check(!lg.pv && lg.header !== "none" && lg.canvas && dflt.pv && dflt.header === "none" && !hrefsSeen.some(h => /ui=legacy/.test(h)),
             `${B} R56 · ?ui=legacy still opens the engineering shell, but only when explicitly requested: the same URL without it is the production UI, and no production action ever links to it`, J({ lg, dflt }));
@@ -504,9 +509,9 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
           await r.click('.ds-cand[data-index="1"]'); await r.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000 });
           const cap2 = await r.evaluate(SURVEY_CAP, 1); await r.click(".ds-btn.go"); await r.waitForFunction(() => document.querySelector(".atx") && document.querySelector(".atx").dataset.atxPreset === "dramatic", null, { timeout: 10000, polling: 20 });
           const atx2 = await r.evaluate(() => document.querySelector(".atx").classList.contains("rm"));
-          await r.waitForURL(u => u.pathname === "/demos/demo-run.html", { timeout: 30000 }); await waitRun(r); await waitProd(r); await waitLift(r);
+          await runIn(r); await waitProd(r);
           const g3 = await r.evaluate(GAME_CAP); await shot(r, "19-reduced-motion.png");
-          check(a.rm && e.reducedMotion !== false && e.blackMs < 220 && atx2 && g3.fingerprint === cap2.fingerprint && g3.xp.returnTo === HOME,
+          check(a.rm && e.reducedMotion !== false && e.blackMs < 220 && atx2 && g3.fingerprint === cap2.fingerprint && g3.sameObject && g3.path === "/",
             `${B} R72 · reduced motion (OS) through the root flow: the title at rest, the menu → survey black fade short (${e.blackMs} ms), the DRAMATIC departure in its reduced form, and the same exact-world handoff (fingerprint kept, return = ROOT)`, J({ black: e.blackMs, atxRm: atx2 }));
           await collectUnhandled(r); await c10.close(); }
       } else {
@@ -515,13 +520,13 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
         const m0 = await M_STATE(p); await shot(p, "18-firefox-root.png");
         await p.click('.mm-item[data-act="begin"]'); await surveyReady(p);
         await p.click('.ds-cand[data-index="4"]'); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000, polling: 50 });
-        const cap = await p.evaluate(SURVEY_CAP, 4); await p.click(".ds-btn.go");
-        await p.waitForURL(u => u.pathname === "/demos/demo-run.html" && /expedition=x/.test(u.search), { timeout: 45000 }); await waitRun(p); await waitProd(p); await waitLift(p);
+        const cap = await p.evaluate(SURVEY_CAP, 4); await DEPART(p);
+        await runIn(p); await waitProd(p);
         const g = await p.evaluate(GAME_CAP), sc = await hscroll(p);
-        await Promise.all([p.waitForURL(u => u.href === HOME, { timeout: 30000 }), runMenu(p, "mainMenu")]); await menuReady(p);
+        await disarm(p); await runMenu(p, "mainMenu"); await titleIn(p);
         const back = await p.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state }));
-        check(m0.title === "Strange Bloom — Unknown Soils" && J(m0.items) === J(["begin", "training", "settings", "credits"]) && g.fingerprint === cap.fingerprint && g.planet === cap.planet && g.counters.createSim === 1 && GEN_NAMES.every(n => g.counters[n] === 0) && g.xp.returnTo === HOME && back.url === HOME && back.state === "menu" && sc <= 0,
-          `${B} R71 · Firefox 1280×800: the root title → the survey → the exact candidate → the run on demos/demo-run.html (same fingerprint and planet JSON, no generator, return = ROOT) → Main menu back to the ROOT title; no horizontal scroll`, J({ fp: g.fingerprint, back: back.url.replace(ORIGIN, "") }));
+        check(m0.title === "Strange Bloom — Unknown Soils" && J(m0.items) === J(["begin", "training", "settings", "credits"]) && g.fingerprint === cap.fingerprint && g.planet === cap.planet && g.counters.createSim === 1 && GEN_NAMES.every(n => g.counters[n] === 0) && g.sameObject && g.path === "/" && back.url === HOME && back.state === "menu" && sc <= 0,
+          `${B} R71 · Firefox 1280×800: the root title → the survey → the exact candidate → the run inside the root document (the same planet object, fingerprint and JSON, no generator) → Main menu back to the ROOT title; no horizontal scroll`, J({ fp: g.fingerprint, back: back.url.replace(ORIGIN, "") }));
         await collectUnhandled(p); PROOF.browsers[bname].flows.push("root expedition flow (1280x800)"); await c.close();
       }
     } catch (e) { check(false, `${B} the browser flow ran to the end`, e.message.split("\n")[0] + " @ " + ((e.stack || "").split("\n").find(l => /release-check\.js:\d+/.test(l)) || "").trim()); }
@@ -535,14 +540,15 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
 
   // ================================================================ children: R52 · R60 · R61
   if (SUITES) {
-    for (const [name, args, items] of [["expedition-handoff-check", ["--browsers", "chromium"], "R60"], ["guided-training-check", ["--browsers", "chromium"], "R52 · R61"]]) {
+    // (BLOOM-033) the two-document expedition-handoff-check is retired; the one-document app's flow suite takes its place
+    for (const [name, args, items] of [["single-app-flow-check", ["--browsers", "chromium"], "R60"], ["guided-training-check", ["--browsers", "chromium"], "R52 · R61"]]) {
       const t1 = Date.now(), r = cp.spawnSync(process.execPath, [path.join(ROOT, "tools", name + ".js"), ...args], { cwd: ROOT, env: process.env, encoding: "utf8", maxBuffer: 256 << 20, timeout: 1500000 });
       const out = (r.stdout || "") + (r.stderr || ""), pass = (out.match(/^PASS/gm) || []).length, fail = (out.match(/^FAIL/gm) || []).length;
       const alt = name === "guided-training-check" ? (out.split("\n").find(l => /G4 /.test(l)) || "") : "";
       PROOF.children[name] = { exit: r.status, pass, fail, seconds: Math.round((Date.now() - t1) / 1000) };
       check(r.status === 0 && fail === 0 && pass > 0 && (!alt || /^PASS/.test(alt)), `${items} · ${name} (Chromium) still green${name === "guided-training-check" ? " — including G4, the guided alternate route (Warm the Sky · Early Maturity · Roots · Seed Reserve · Drought) to a real win" : ""}`,
         `${pass} pass / ${fail} fail · exit ${r.status} · ${PROOF.children[name].seconds} s${fail ? " · " + out.split("\n").filter(l => /^FAIL/.test(l)).slice(0, 2).join(" | ").slice(0, 300) : ""}`); }
-  } else info("R52 · R60 · R61 · child suites", "--no-suites: expedition-handoff-check and guided-training-check not run here (run them on their own)");
+  } else info("R52 · R60 · R61 · child suites", "--no-suites: single-app-flow-check and guided-training-check not run here (run them on their own)");
 
   if (EVIDENCE) { PROOF.totals = { pass: passes, fail: fails }; const f = path.join(EVD, "release-proof.json"); let prev = null; try { prev = JSON.parse(fs.readFileSync(f, "utf8")); } catch {}
     if (prev && prev.suiteTotals) PROOF.suiteTotals = prev.suiteTotals; fs.writeFileSync(f, JSON.stringify(PROOF, null, 2) + "\n"); }

@@ -60,7 +60,7 @@ const shot = async (p, name) => { if (SHOTS) await p.screenshot({ path: path.joi
     const p = await open(undefined);
     const r = await p.evaluate(() => ({ title: document.title, h1: document.querySelector("header h1").innerText, runId: document.getElementById("runId").textContent,
       run: BLOOM_API.run, shop: [...document.querySelectorAll("button.buy")].map(b => b.dataset.id), water: BLOOM_API.geometry().water }));
-    check(r.title === "BLOOM — Next Playable Slice: First Bloom (Eden run)" && /first bloom/.test(r.h1) && r.runId === "" && r.run.kind === "authored" && r.water === 0,
+    check(r.title === "BLOOM — developer run harness" /* (BLOOM-033: demo-run.html is the developer harness; its title no longer names a scenario) */ && /first bloom/.test(r.h1) && r.runId === "" && r.run.kind === "authored" && r.water === 0,
       "no parameters → the accepted First Bloom run (same title/header, no run-identity line, no water)", `${r.shop.length} upgrades`);
     check(!r.shop.includes(WATERBORNE.id) && r.shop.length === traits.length - 1, "Waterborne Seeds is absent from the First Bloom shop (sim.offered)");
     await shot(p, "first-bloom.png");
@@ -135,7 +135,7 @@ const shot = async (p, name) => { if (SHOTS) await p.screenshot({ path: path.joi
     check(run.won && fin.cov >= 0.70 && fin.land + fin.water === fin.n && Math.abs(fin.cov - fin.living / fin.land) < 1e-9 && fin.waterNotBarren === 0,
       "seed 28 reaches the 70% win through real UI clicks; coverage = living land / land tiles, water never colonized",
       `win at ${Math.round(run.secs || 0)} s · ${(fin.cov * 100).toFixed(1)}% of ${fin.land} land tiles (${fin.water} water tiles excluded)`);
-    const rep = await p.evaluate(() => ({ on: document.getElementById("reportModal").classList.contains("on"), text: document.getElementById("report").innerText,
+    const rep = await p.evaluate(() => ({ on: !!(document.getElementById("reportModal") && document.getElementById("reportModal").classList.contains("on")), text: document.getElementById("report").innerText,
       analog: [...document.querySelectorAll(".analog li")].map(li => li.innerText), labels: SEC.map((_, i) => LABEL[i]) }));
     const namesInReport = rep.labels.filter(n => rep.text.includes(n));
     check(rep.on && rep.text.includes(ref28.name) && /Ocean Archipelago · public seed 28/.test(rep.text) && /Waterborne Seeds/.test(rep.text),

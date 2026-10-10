@@ -17,6 +17,9 @@
 "use strict";
 const path = require("path"), fs = require("fs"), cp = require("child_process"), http = require("http"), zlib = require("zlib");
 const ROOT = path.resolve(__dirname, "..");
+// (BLOOM-033) the run page's code = the developer harness demos/demo-run.html + the GameSession it wraps (resources/run/game-session.js, the
+// same file index.html uses); source checks of "the run page" read both
+const RUN_PAGE_SRC = () => ["demos/demo-run.html", "resources/run/game-session.js"].filter(f => fs.existsSync(path.join(ROOT, f))).map(f => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const BROWSERS = (argOf("--browsers") ?? "chromium,firefox").split(",").filter(Boolean), EVIDENCE = argv.includes("--evidence"), EVD = path.join(ROOT, "docs/evidence/bloom-032c");
 const J = JSON.stringify, read = f => fs.readFileSync(path.join(ROOT, f), "utf8"), sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -49,18 +52,25 @@ function png(W, H, rgba) { const h = Buffer.alloc(13); h.writeUInt32BE(W, 0); h.
   for (let y = 0; y < H; y++) Buffer.from(rgba.buffer, rgba.byteOffset + y * W * 4, W * 4).copy(raw, y * (W * 4 + 1) + 1);
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk("IHDR", h), chunk("IDAT", zlib.deflateSync(raw)), chunk("IEND", Buffer.alloc(0))]); }
 
+// (BLOOM-033) later milestones' changes are not 032C's: once HEAD is past 032C's accepted end on main (END_SHA), this suite's scope checks are
+// evaluated over BASE … END_SHA — the END_SHA pattern of run-ui-convergence / guided-training; at END_SHA itself the working tree is checked as before
+const END_SHA = "f5623d771b1956a2ba7ed3592a62fd20c460afe5";
+const AT_END = (() => { try { return git(`merge-base --is-ancestor ${END_SHA} HEAD`) === "" && git("rev-parse HEAD") !== END_SHA; } catch { return false; } })();
+const RANGE = AT_END ? `${BASE} ${END_SHA}` : BASE, untrackedNow = () => AT_END ? [] : git("ls-files -o --exclude-standard").split("\n").filter(Boolean);
+const hashNow = f => AT_END ? git(`rev-parse ${END_SHA}:"${f}"`) : git(`hash-object "${f}"`);
+const existsNow = f => { if (!AT_END) return fs.existsSync(path.join(ROOT, f)); try { git(`cat-file -e ${END_SHA}:"${f}"`); return true; } catch { return false; } };
 (async () => {
   console.log("# Node — scope");
   { const first = git(`rev-list --first-parent --reverse ${BASE}..HEAD`).split("\n").filter(Boolean)[0] || null, parent = first ? git(`rev-parse ${first}^`) : git("rev-parse HEAD");
     let main = null; try { main = git("rev-parse origin/main"); } catch {}
     check(parent === BASE && (!main || git(`merge-base --is-ancestor ${BASE} ${main}`) === ""), "1 · 032C starts from the exact integrated BLOOM-032B2 main ea1b785", J({ firstParent: parent.slice(0, 7), originMain: main && main.slice(0, 7) })); }
-  { const tracked = git(`diff --name-only ${BASE}`).split("\n").filter(Boolean), untracked = git("ls-files -o --exclude-standard").split("\n").filter(Boolean);
+  { const tracked = git(`diff --name-only ${RANGE}`).split("\n").filter(Boolean), untracked = untrackedNow();
     const changed = [...new Set([...tracked, ...untracked])].sort(), outside = changed.filter(p => !ALLOWED(p));
     const frozen = git(`ls-tree -r --name-only ${BASE} -- content planets index.html dist resources art`).split("\n").filter(f => f && !OWN.includes(f));
-    const diff = frozen.filter(f => !fs.existsSync(path.join(ROOT, f)) || git(`hash-object "${f}"`) !== git(`rev-parse ${BASE}:"${f}"`));
+    const diff = frozen.filter(f => !existsNow(f) || hashNow(f) !== git(`rev-parse ${BASE}:"${f}"`));
     PROOF.changedFiles = changed;
     check(!diff.length && !outside.length, `38 · no gameplay / trait / balance change: all ${frozen.length} files under content/, planets/, index.html, dist/, resources/ and art/ are byte-identical to ea1b785 except the specimen adapter and its two style sheets — the rules, the sim, decision-rooms.js, run-report.js, the adapter, training, the accepted sprite pipeline (model, selector, compositor, FX, generated atlas) and the approved art are untouched`, J({ diff, outside })); }
-  { const html = read("demos/demo-run.html"), srcs = [...html.matchAll(/<script([^>]*)src="\.\.\/([^"]+)"/g)].map(m => ({ attrs: m[1], src: m[2] })), at = s => srcs.findIndex(x => x.src === s);
+  { const html = RUN_PAGE_SRC(), srcs = [...html.matchAll(/<script([^>]*)src="\.\.\/([^"]+)"/g)].map(m => ({ attrs: m[1], src: m[2] })), at = s => srcs.findIndex(x => x.src === s);
     const order = [...RUNTIME, "resources/run-ui/plant-specimen.js", "resources/run-ui/decision-rooms.js", "resources/run-ui/run-report.js"].map(at);
     const psSrc = read("resources/run-ui/plant-specimen.js"), code = psSrc.replace(/\/\/.*$/gm, "");
     const classic = RUNTIME.concat("resources/run-ui/plant-specimen.js").every(s => !/type=/.test(srcs[at(s)].attrs));
