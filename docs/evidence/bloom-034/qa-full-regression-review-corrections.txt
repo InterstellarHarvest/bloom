@@ -1,0 +1,41 @@
+# BLOOM-034 review corrections — full regression on 0db235c (every tools/*-check.js sequential, release-check --no-suites)
+# part 1 (20 suites, archetype … portable-runtime), run 2026-10-10 12:21–12:48 on the clean 0db235c tree:
+archetype-check rc=0 pass=40 fail=0 51s
+atmosphere-transition-check rc=0 pass=14 fail=0 0s
+colony-development-check rc=0 pass=68 fail=0 25s
+crossing-check rc=0 pass=14 fail=0 1s
+cylinder-gen-check rc=0 pass=35 fail=0 9s
+desert-check rc=0 pass=64 fail=0 54s
+destination-survey-check rc=0 pass=11 fail=0 59s
+dying-world-check rc=0 pass=63 fail=0 59s
+economy-check rc=0 pass=39 fail=0 326s
+frozen-check rc=0 pass=70 fail=0 79s
+game-flow-check rc=0 pass=48 fail=0 102s
+gen-check rc=0 pass=47 fail=0 6s
+guided-training-check rc=0 pass=50 fail=0 126s
+main-menu-check rc=0 pass=17 fail=0 15s
+native-competition-check rc=0 pass=66 fail=0 168s
+organic-hybrid-art-intake-check rc=0 pass=45 fail=0 34s
+planet-view-check rc=0 pass=80 fail=0 66s
+plant-rooms-check rc=0 pass=66 fail=0 78s
+plant-sprite-pipeline-check rc=0 pass=58 fail=0 22s
+portable-runtime-check rc=0 pass=71 fail=0 388s
+# part 2 (16 suites, procedural-run … volatile-climate), resumed after part 1 was interrupted mid procedural-run-check (session end), 12:50–13:20:
+procedural-run-check rc=0 pass=32 fail=0 15s
+production-plant-integration-check rc=0 pass=50 fail=0 87s
+release-check rc=0 pass=50 fail=0 154s
+run-ui-check rc=0 pass=40 fail=0 77s
+run-ui-convergence-check rc=0 pass=57 fail=0 133s
+sim-check rc=0 pass=19 fail=0 2s
+single-app-flow-check rc=0 pass=59 fail=0 385s
+slice-check rc=0 pass=15 fail=0 9s
+sphere-texture-check rc=0 pass=14 fail=0 6s
+strategy-check rc=0 pass=35 fail=0 25s
+surface-check rc=0 pass=11 fail=0 3s
+terraform-check rc=0 pass=61 fail=0 115s
+topology-check rc=0 pass=53 fail=0 3s
+training-check rc=0 pass=75 fail=0 39s
+visual-system-check rc=0 pass=54 fail=0 208s
+volatile-climate-check rc=0 pass=78 fail=0 101s
+DONE
+# TOTAL: 36 suites · 1669 passed · 0 failed

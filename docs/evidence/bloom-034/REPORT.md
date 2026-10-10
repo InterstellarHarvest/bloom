@@ -57,6 +57,21 @@ Chromium 147.0.7727.15, Firefox 148.0.2.
 | `paintings/title-painting-01…12.jpg` | the new title over each of the twelve paintings (1280×720) |
 | `before-79f5540/*` | the same views on 79f5540, for side-by-side review |
 
+## Review corrections (PMO conditional acceptance, Part A)
+
+| SHA | |
+|---|---|
+| `978b862` | corrections — planning-button contrast ≥ 4.5 : 1 (planning-only button tokens; gameplay colours unchanged); Extreme carries the severe-warning hazard sign (the blocked cross stays on Hostile ground); dossier rows separate the primary descriptor from secondary facts (presentation only; survey data unchanged); portable runtime regenerated |
+| `3e613ff` | QA — visual-system-check: computed contrast of every planning button in four states (minimum 5.61 : 1), Extreme semantics, two-part rows, 1024 × 768 Begin expedition in view (46 → 54 checks) |
+| `0db235c` | docs — VISUAL_SYSTEM_v1 / DESTINATION_SURVEY_v1 record the three corrections |
+
+- **visual-system-check 54 / 54** (Chromium 147 + Firefox 148) with `--evidence` on `0db235c` — every screenshot in this folder was
+  re-captured on the corrected tree (`qa-visual-system-check.log`); new `05b-focus-extreme-1440x900.png` shows an Extreme dossier
+  (hazard sign, two-part rows).
+- **Full regression on `0db235c`: 36 suites · 1669 passed · 0 failed** (`qa-full-regression-review-corrections.txt`). The run was
+  interrupted once by a session end during `procedural-run-check` after 20 green suites; it was resumed from that suite on the same clean
+  tree. Neither earlier flake recurred (run-ui-convergence 57 / 57, slice-check 15 / 15).
+
 ## Known issues / notes for review
 
 - The PMO implementation brief referenced by the directive was not available to this session; the work follows

@@ -1,7 +1,7 @@
 {
  "milestone": "BLOOM-034",
  "base": "79f554060bb2c4a3e2e8bcc2628de1486e5ff902",
- "head": "db4b1e53136b9ef0f3fca5b85d57f3d82cf96404",
+ "head": "0db235c4c99a716f3e5f491916e85f01a0ef3e70",
  "node": {
   "gameplayTokens": {
    "compared": 68,
@@ -273,7 +273,13 @@
      "ratio": 7.96
     }
    ],
-   "whiteOnButtons": {
+   "whiteOnPlanningButtons": {
+    "leaf-btn-night": 5.61,
+    "leaf-btn-night-hover": 7.67,
+    "sky-btn-night": 5.98,
+    "sky-btn-night-hover": 8.15
+   },
+   "gameplayButtonsUnchanged": {
     "leaf": 3.42,
     "sky": 3.49
    }
@@ -358,7 +364,7 @@
    ]
   },
   "portable": {
-   "fingerprint": "bcb8da7910d7c80c4bf8431552cc850c1f0e71a9ec065a0abb9e62459b3622c1",
+   "fingerprint": "cb47099d9ccb04000c55bf633e1194d28a2ea9ddf09c53fd7116d8c51f6535b3",
    "modules": [
     "resources/app/app-controller.js",
     "resources/main-menu/main-menu-data.js",
@@ -400,7 +406,7 @@
      ]
     ],
     "prim": {
-     "background-color": "rgb(63, 157, 75)",
+     "background-color": "rgb(42, 118, 54)",
      "color": "rgb(255, 255, 255)",
      "border-top-left-radius": "14px",
      "min-height": "60px"
@@ -633,6 +639,278 @@
      "kicker": "rgb(217, 203, 170)",
      "soft": "rgb(47, 58, 44)"
     }
+   },
+   "buttonContrast": {
+    "EXPEDITION (title primary)": {
+     "normal": {
+      "ratio": 5.61,
+      "bg": "42,118,54",
+      "size": "19px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "19px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "19px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "19px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "TRAINING (title entry)": {
+     "normal": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 12.95,
+      "bg": "29,40,67",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 12.95,
+      "bg": "29,40,67",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Done (dialog)": {
+     "normal": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 12.95,
+      "bg": "29,40,67",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 12.95,
+      "bg": "29,40,67",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Scan new sector": {
+     "normal": {
+      "ratio": 5.98,
+      "bg": "35,103,159",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 8.15,
+      "bg": "27,82,130",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 8.15,
+      "bg": "27,82,130",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 8.15,
+      "bg": "27,82,130",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Main menu (ghost)": {
+     "normal": {
+      "ratio": 11.8,
+      "bg": "3,5,11",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 11.8,
+      "bg": "3,5,11",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Begin expedition": {
+     "normal": {
+      "ratio": 5.61,
+      "bg": "42,118,54",
+      "size": "16.5px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "16.5px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "16.5px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "16.5px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Return to survey (ghost)": {
+     "normal": {
+      "ratio": 10.53,
+      "bg": "14,21,39",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 10.53,
+      "bg": "14,21,39",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Start Training (dialog primary)": {
+     "normal": {
+      "ratio": 5.61,
+      "bg": "42,118,54",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Go to Expedition (dialog)": {
+     "normal": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 12.95,
+      "bg": "29,40,67",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 12.95,
+      "bg": "29,40,67",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    }
    }
   },
   "firefox": {
@@ -666,7 +944,7 @@
      ]
     ],
     "prim": {
-     "background-color": "rgb(63, 157, 75)",
+     "background-color": "rgb(42, 118, 54)",
      "color": "rgb(255, 255, 255)",
      "border-top-left-radius": "14px",
      "min-height": "60px"
@@ -857,9 +1135,9 @@
      "first": []
     },
     "report": {
-     "elements": 153,
-     "onlyHead": 0,
-     "onlyBase": 0,
+     "elements": 152,
+     "onlyHead": 1,
+     "onlyBase": 3,
      "differ": 0,
      "first": []
     },
@@ -899,12 +1177,284 @@
      "kicker": "rgb(217, 203, 170)",
      "soft": "rgb(47, 58, 44)"
     }
+   },
+   "buttonContrast": {
+    "EXPEDITION (title primary)": {
+     "normal": {
+      "ratio": 5.61,
+      "bg": "42,118,54",
+      "size": "19px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "19px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "19px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "19px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "TRAINING (title entry)": {
+     "normal": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 12.95,
+      "bg": "29,40,67",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 12.95,
+      "bg": "29,40,67",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Done (dialog)": {
+     "normal": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 12.95,
+      "bg": "29,40,67",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 12.95,
+      "bg": "29,40,67",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Scan new sector": {
+     "normal": {
+      "ratio": 5.98,
+      "bg": "35,103,159",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 8.15,
+      "bg": "27,82,130",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 8.15,
+      "bg": "27,82,130",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 8.15,
+      "bg": "27,82,130",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Main menu (ghost)": {
+     "normal": {
+      "ratio": 11.8,
+      "bg": "3,5,11",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 11.8,
+      "bg": "3,5,11",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Begin expedition": {
+     "normal": {
+      "ratio": 5.61,
+      "bg": "42,118,54",
+      "size": "16.5px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "16.5px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "16.5px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "16.5px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Return to survey (ghost)": {
+     "normal": {
+      "ratio": 10.53,
+      "bg": "14,21,39",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 10.53,
+      "bg": "14,21,39",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Start Training (dialog primary)": {
+     "normal": {
+      "ratio": 5.61,
+      "bg": "42,118,54",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 7.67,
+      "bg": "33,95,43",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    },
+    "Go to Expedition (dialog)": {
+     "normal": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "hover": {
+      "ratio": 12.95,
+      "bg": "29,40,67",
+      "size": "16px",
+      "fv": false,
+      "act": false
+     },
+     "focus": {
+      "ratio": 14.69,
+      "bg": "21,30,52",
+      "size": "16px",
+      "fv": true,
+      "act": false
+     },
+     "active": {
+      "ratio": 12.95,
+      "bg": "29,40,67",
+      "size": "16px",
+      "fv": false,
+      "act": true
+     }
+    }
    }
   }
  },
  "result": {
-  "passes": 46,
+  "passes": 54,
   "fails": 0,
-  "seconds": 232
+  "seconds": 259
  }
 }
