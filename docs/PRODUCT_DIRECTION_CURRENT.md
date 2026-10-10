@@ -7,6 +7,7 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 |---|---|
 | **LOCKED DESIGN** | an owner / PMO decision; not necessarily implemented yet |
 | **IMPLEMENTED** | present in production `main` |
+| **CANDIDATE** | implemented and tested on a review branch, pending PMO / owner review; not in production `main` yet |
 | **PLANNED** | accepted future work, not implemented yet |
 
 **Precedence.** If an older design document conflicts with this file about the *current* direction, this file wins.
@@ -14,7 +15,8 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-10, BLOOM-033 closeout — BLOOM-033 accepted and integrated into production `main` (`62b7f56`).*
+*Last updated: 2026-10-10, BLOOM-034 candidate — the visual-system convergence is implemented on the review branch
+`handoff/bloom-034-review`, pending PMO / owner visual review (not merged). BLOOM-033 is in production `main` (`62b7f56`).*
 
 ---
 
@@ -129,7 +131,14 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
 
 ## 9. Menu / planning visual direction
 
-**LOCKED DESIGN · PLANNED for BLOOM-034.** Not started.
+**LOCKED DESIGN · CANDIDATE (BLOOM-034)** — implemented and tested on `handoff/bloom-034-review`, pending PMO / owner visual review;
+production `main` still has the BLOOM-033 look. The system is described in [`VISUAL_SYSTEM_v1.md`](VISUAL_SYSTEM_v1.md):
+`resources/ui/bloom-theme.css` is the shared visual-token system (gameplay reads its exact BLOOM-033 values from it; the title / menu
+and the Destination Survey use its dark NIGHT counterparts); `resources/ui/bloom-icons.js` gives the planning screens the gameplay
+icon family. The candidate also repairs a BLOOM-033 one-document regression: the menu's root styles had collapsed the decision rooms'
+mini-map card (`BLOOM-034 (fix)`, an isolated commit).
+
+The decisions (unchanged):
 
 - The title / menu and the Destination Survey currently diverge too much from the production gameplay visual language.
 - Planning screens stay **darker** than gameplay and keep the outer-space feeling, but must look like the same game.
@@ -167,7 +176,7 @@ This is not a gameplay-code feature; product code does not work around repositor
 | Step | Scope | Status |
 |---|---|---|
 | **BLOOM-033** — Single-document production application | `index.html` is the whole game; GameSession; `default`; Favorable / Precarious / Extreme; EXPEDITION | **IMPLEMENTED / COMPLETE** (in production `main`) |
-| **BLOOM-034** — Visual-system convergence | shared theme tokens; title / menu restyle; Destination Survey convergence; the dark-space BLOOM planning language; **no species mechanics yet** | **NEXT** — PLANNED (not started) |
+| **BLOOM-034** — Visual-system convergence | shared theme tokens (`resources/ui/bloom-theme.css`); title / menu restyle; Destination Survey convergence; the dark-space BLOOM planning language; **no species mechanics yet** | **CANDIDATE** — on `handoff/bloom-034-review`, pending PMO / owner visual review (not merged) |
 | **BLOOM-035** — Species system + Species Selection | species data / model; baseline physiology; simulation / validator support; species-aware Destination Survey classification; selection / focus / dossier UI; Organic Hybrid remains one species | PLANNED |
 | **Species art production** | three additional real species packs (four total, unless balancing / design proves a different count better), on the same production compositor architecture | PLANNED |
 | **BLOOM-036** — Challenges | the main-menu CHALLENGES route; authored challenge definitions; one generated challenge planet; assigned species / start state; the challenge dossier; Dying World / Native Competition / Volatile Climate as challenge ingredients | PLANNED |

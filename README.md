@@ -124,7 +124,9 @@ The whole game is one application, `index.html`. `demos/demo-run.html` is a deve
 historical engineering shell for regression suites); players never see it ([`docs/SINGLE_DOCUMENT_APP_v1.md`](docs/SINGLE_DOCUMENT_APP_v1.md)).
 
 **What's decided and what's next:** [`docs/PRODUCT_DIRECTION_CURRENT.md`](docs/PRODUCT_DIRECTION_CURRENT.md) is the current product-direction
-record and roadmap (visual-system convergence, then plant species, then Challenges).
+record and roadmap (visual-system convergence, then plant species, then Challenges). The game's one visual language — the shared
+tokens in `resources/ui/bloom-theme.css`, light for gameplay, dark for the planning screens — is described in
+[`docs/VISUAL_SYSTEM_v1.md`](docs/VISUAL_SYSTEM_v1.md).
 
 How the game was built, its design, architecture, test suites and release history live in the docs:
 
