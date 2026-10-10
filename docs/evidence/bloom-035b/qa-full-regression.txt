@@ -1,0 +1,47 @@
+# BLOOM-035B full regression — every tools/*-check.js, sequential, in a clean detached worktree at 8df8388 (nothing else running);
+# the two pins fixed in 65bb896 re-run there (atmosphere-transition, body-plan).
+archetype exit=0 pass=40 fail=0 51s :: ALL CHECKS PASS  (50.5 s)
+atmosphere-transition exit=1 pass=13 fail=1 0s :: 1 check(s) FAILED  (0.0 s)
+body-plan exit=1 pass=14 fail=2 776s :: FAIL — 14/15 checks passed (776 s)
+colony-development exit=0 pass=68 fail=0 24s :: ALL CHECKS PASS  (23.7 s)
+crossing exit=0 pass=14 fail=0 1s :: ALL CHECKS PASS
+cylinder-gen exit=0 pass=35 fail=0 9s :: ALL CHECKS PASS  (9.1 s)
+desert exit=0 pass=64 fail=0 54s :: ALL CHECKS PASS  (53.3 s)
+destination-survey exit=0 pass=18 fail=0 124s :: ALL CHECKS PASS  (123.9 s)
+dying-world exit=0 pass=63 fail=0 58s :: ALL CHECKS PASS  (58.1 s)
+economy exit=0 pass=39 fail=0 319s :: ALL CHECKS PASS  (319.3 s)
+frozen exit=0 pass=70 fail=0 78s :: ALL CHECKS PASS  (78.2 s)
+game-flow exit=0 pass=48 fail=0 104s :: ALL CHECKS PASS  (103.5 s)
+gen exit=0 pass=47 fail=0 5s :: ALL CHECKS PASS
+guided-training exit=0 pass=50 fail=0 126s :: ALL 50 CHECKS PASS  (125.7 s)
+main-menu exit=0 pass=17 fail=0 15s :: ALL CHECKS PASS (14904 ms)
+native-competition exit=0 pass=66 fail=0 163s :: ALL CHECKS PASS  (162.8 s)
+organic-hybrid-art-intake exit=0 pass=45 fail=0 34s :: OK — 45/45 checks passed (34 s)
+planet-view exit=0 pass=80 fail=0 72s :: ALL CHECKS PASS  (71.3 s)
+plant-rooms exit=0 pass=66 fail=0 76s :: ALL CHECKS PASS  (76.2 s)
+plant-sprite-pipeline exit=0 pass=59 fail=0 23s :: OK — 59/59 checks passed (23 s)
+portable-runtime exit=0 pass=71 fail=0 390s :: ALL 71 CHECKS PASS  (389.9 s)
+procedural-run exit=0 pass=32 fail=0 15s :: ALL CHECKS PASS  (14.3 s)
+production-plant-integration exit=0 pass=50 fail=0 82s :: OK — 50/50 checks passed (82 s)
+release exit=0 pass=52 fail=0 400s :: ALL CHECKS PASS (52)  (400.5 s)
+run-ui exit=0 pass=40 fail=0 69s :: ALL CHECKS PASS  (68.2 s)
+run-ui-convergence exit=0 pass=57 fail=0 125s :: ALL CHECKS PASS  (125.4 s)
+sim exit=0 pass=32 fail=0 10s :: ALL CHECKS PASS
+single-app-flow exit=0 pass=59 fail=0 377s :: OK — 59 passed, 0 failed (377 s)
+slice exit=0 pass=15 fail=0 9s :: ALL CHECKS PASS
+species exit=0 pass=17 fail=0 210s :: ALL CHECKS PASS (17/17)
+species-selection exit=0 pass=56 fail=0 179s :: ALL CHECKS PASS (56/56) (179 s)
+sphere-texture exit=0 pass=14 fail=0 6s :: ALL CHECKS PASS  (6.0 s)
+strategy exit=0 pass=35 fail=0 25s :: ALL CHECKS PASS  (24.4 s)
+surface exit=0 pass=11 fail=0 3s :: ALL CHECKS PASS
+terraform exit=0 pass=61 fail=0 111s :: ALL CHECKS PASS  (111.0 s)
+topology exit=0 pass=53 fail=0 3s :: ALL CHECKS PASS  (2.9 s)
+training exit=0 pass=75 fail=0 38s :: ALL CHECKS PASS  (38.4 s)
+visual-system exit=0 pass=54 fail=0 210s :: OK — 54/54 checks passed (210 s)
+volatile-climate exit=0 pass=78 fail=0 98s :: ALL CHECKS PASS  (98.1 s)
+DONE
+
+# re-run at 65bb896
+atmosphere-transition exit=0 pass=14 fail=0 0s :: ALL CHECKS PASS  (0.0 s)
+body-plan exit=0 pass=15 fail=0 766s :: OK — 15/15 checks passed (766 s)
+DONE
