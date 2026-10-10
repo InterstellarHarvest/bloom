@@ -1,5 +1,9 @@
 # Expedition Handoff v1 — the exact Destination Survey planet becomes the gameplay planet
 
+> **Retired by BLOOM-033 (history).** The two-document expedition handoff described here (token, sessionStorage / window.name envelope,
+> arrival cover) no longer exists: the selected planet object goes straight from the Destination Survey into the run inside `index.html`
+> ([`SINGLE_DOCUMENT_APP_v1.md`](SINGLE_DOCUMENT_APP_v1.md) §2.2). `resources/expedition/` and `tools/expedition-handoff-check.js` are deleted.
+
 **From:** BLOOM-029F · **For:** the Main PMO (acceptance; root-site packaging), the Tutorial PMO (BLOOM-028D2 resumes after this
 milestone is accepted). Evidence and QA: `docs/evidence/bloom-029f/REPORT.md`, suite `tools/expedition-handoff-check.js` (the 29th).
 

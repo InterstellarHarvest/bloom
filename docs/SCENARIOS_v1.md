@@ -1,5 +1,9 @@
 # BLOOM — Pressure scenarios v1 (BLOOM-012, BLOOM-014, BLOOM-015)
 
+> **Current names (BLOOM-033):** the no-pressure scenario is **`default`** (formerly `eden` / "Eden"; mechanics bit-identical; `eden` is
+> accepted only by one legacy alias at the resolver). Dying World, Native Competition and Volatile Climate are planned Challenge
+> ingredients, not Expedition choices ([`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §8).
+
 Pressure scenarios are bible §11.3. This note covers the scenario catalogue, the engine contract, the validation layer and the three scenarios built so far: **Dying World** (§5, a changing physical environment), **Native Competition** (§6, BLOOM-014: a competing organism that responds to the player) and **Volatile Climate** (§7, BLOOM-015: the player's own Terraforming unsettles the climate). Numbers below are the current values in `content/scenarios.js`; the data file is the source of truth.
 
 ## 1. Scenarios are not planets

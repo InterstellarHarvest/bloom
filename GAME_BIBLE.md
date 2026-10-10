@@ -8,6 +8,13 @@
 **Tutorial mode:** A small number of authored planets that introduce systems gradually.
 **Player fantasy:** *I figured out how to make this plant thrive and take over the planet.*
 
+> **Current status (2026-10-10, BLOOM-033).** Production decisions made after the older sections of this bible were written — the
+> one-document application, the `default` mode (formerly "Eden"), the Favorable / Precarious / Extreme survey classes, the planned plant
+> species and Challenges, the planned visual-system convergence — are summarized in
+> **[`docs/PRODUCT_DIRECTION_CURRENT.md`](docs/PRODUCT_DIRECTION_CURRENT.md)**, which wins about the *current* direction. Older "future" /
+> "not implemented" / "next" passages below may describe the planning state at the time they were written; the milestone documents in
+> `docs/` and `docs/evidence/` record what each milestone actually did.
+
 ---
 
 ## 1. DESIGN NORTH STAR
@@ -469,16 +476,18 @@ The threshold is not 100% because some regions should remain legitimate sacrific
 
 After winning, the player may continue toward 100% or optional performance goals.
 
-### 11.2 Eden
+### 11.2 Default (formerly "Eden")
 
-Eden is the sandbox and systems testbed:
+*(BLOOM-033: the canonical no-challenge mode is `default`; "Eden" is retired as the active term because it sounds like a particular
+world. Historical addenda below may still say Eden.)* The default mode is the sandbox and systems testbed:
 
 - no external loss clock;
 - origin refuge and trickle income;
 - open experimentation;
 - useful for tutorials, accessibility, and testing new starters.
 
-Eden is not the only intended experience and should not determine the balance of pressure modes.
+The default mode is not the only intended experience and should not determine the balance of pressure modes. *(Current direction:
+the pressure mechanics become ingredients of authored Challenges — `docs/PRODUCT_DIRECTION_CURRENT.md` §8.)*
 
 ### 11.3 Pressure scenarios
 
@@ -486,7 +495,7 @@ Pressure changes decisions rather than merely shortening the timer.
 
 | Scenario | Strategic change | Science idea |
 |---|---|---|
-| **Eden** | No external loss pressure | open experimentation |
+| **Default** *(formerly Eden)* | No external loss pressure | open experimentation |
 | **Native Competition** | Another organism claims space and responds to the player | competition and invasive dynamics |
 | **Dying World** | Habitability steadily degrades | planetary habitability factors |
 | **Volatile Climate** | Heavy Terraform use raises instability and creates shocks | feedback loops and tipping points |
@@ -499,7 +508,7 @@ The origin may be immune to the player’s own Terraform effects but not to scen
 
 The procedural archetype phase is complete enough for production (Ocean Archipelago, Desert World, Frozen World; all three human gates passed). Pressure scenarios are the next phase. BLOOM-012 built the reusable architecture and the first scenario, **Dying World**. Details: `docs/SCENARIOS_v1.md`.
 
-- **Orthogonal to planets.** A run is planet + scenario. Scenarios are plain data in `content/scenarios.js` (`eden`, `dying_world`) and reach the engine separately from the planet. No archetype is cloned to make a pressure variant, and no simulation code names a scenario. No scenario, or Eden, is exactly the earlier engine.
+- **Orthogonal to planets.** A run is planet + scenario. Scenarios are plain data in `content/scenarios.js` (`eden` — `default` since BLOOM-033 —, `dying_world`) and reach the engine separately from the planet. No archetype is cloned to make a pressure variant, and no simulation code names a scenario. No scenario, or Eden, is exactly the earlier engine.
 - **Pressure works through the environment the player already reads.** A scenario's channels add a drift that grows over the run to the sky temperature, the sky moisture and each region's surface radiation, inside the ordinary evaluation. There is no pressure damage stat, no direct coverage drain and no currency penalty. Biomass changes only because colonies' real conditions change.
 - **Clock.** A grace period, then a linear decline to a final state that stays. Reaching the final state is not a loss: a plant suited to the final world can still win and hold 70% there.
 - **Terraform and drift stay separate.** Terraform changes the player's sky; the drift is added on top of it and is never undone by it. The UI writes the sky as base + Terraform + thinning = now.
@@ -647,7 +656,7 @@ The Adapt screen and final Bloom Report should display the resulting organism pr
 | Transmission | **Spread** | reproduction, maturity, geographic crossing |
 | Abilities | **Adapt** | Temperature, Water, Soil, Hazard traits |
 | Symptoms/risk board | **Terraform** | global changes with scenario-dependent risk |
-| Cure bar | **Pressure meter** | scenario-specific threat; hidden in Eden |
+| Cure bar | **Pressure meter** | scenario-specific threat; hidden in the default mode |
 | News ticker | **Field Log** | concise warnings and flavor |
 | Overview | **Planet Health** | living/dead/barren totals, climate, genome |
 | End screen | **Bloom Report** | outcome, unlocks, plant build, science debrief |
@@ -694,7 +703,7 @@ Build one small authored test planet with:
 - a small set of Spread choices;
 - warming/cooling and humidifying/drying Terraform choices;
 - die-back and recovery;
-- an Eden run with no external pressure;
+- a default-mode run with no external pressure;
 - a 70% simultaneous living-coverage win.
 
 Temporary buttons and compact lists are acceptable. Final hex boards and production art are not required.
@@ -803,7 +812,7 @@ Category derivation and thresholds must live in configuration and be testable in
 
 ## 19. INVARIANTS
 
-1. **No soft-lock:** the origin remains survivable in Eden and supplies a small Biomass trickle.
+1. **No soft-lock:** the origin remains survivable in the default mode and supplies a small Biomass trickle.
 2. **Readable failure:** every stalled or dying section names one dominant limiting factor.
 3. **No flicker:** hysteresis and damped die-back are present from the first simulation build.
 4. **Geographic reachability:** generated land is reachable with available Spread traits.

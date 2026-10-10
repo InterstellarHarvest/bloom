@@ -1,5 +1,10 @@
 # Portable Runtime v1 — Strange Bloom · Unknown Soils
 
+> **Updated by BLOOM-033:** the game is one document, so nothing has to survive a file:// navigation any more — the window.name / session
+> "file-safe handoff" described below is **retired** and deleted; the portable runtime's module list starts with the app
+> (`resources/app/app-controller.js`, which replaced the page composer `main-menu-page.js`); the Pages site is `index.html` + `content/`
+> + `planets/` + `resources/` (no `demos/`). [`SINGLE_DOCUMENT_APP_v1.md`](SINGLE_DOCUMENT_APP_v1.md) §4.
+
 **From:** BLOOM-031 · **For:** developers and whoever maintains or hosts the game.
 QA: `tools/portable-runtime-check.js` (the 32nd suite) · evidence: `docs/evidence/bloom-031/`.
 

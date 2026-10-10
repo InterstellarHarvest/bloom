@@ -1,5 +1,9 @@
 # Training Foundation v1 — contracts for the tutorial layer (BLOOM-028D1)
 
+> **Current state (BLOOM-033):** Training is a run configuration inside `index.html` (`BLOOM.gameSession.trainingRun()` + the training
+> layer `mountTraining(session, …)`); its exits are app actions, not page loads. `demos/demo-run.html?training=1` remains as a developer
+> harness path. [`SINGLE_DOCUMENT_APP_v1.md`](SINGLE_DOCUMENT_APP_v1.md).
+
 **From:** BLOOM-028D1 · **For:** the Tutorial workstream (028D2: coaching callouts / spotlight / step logic) and the Main PMO.
 Evidence and QA: `docs/evidence/bloom-028d1/REPORT.md`, suite `tools/training-check.js` (the 23rd).
 
