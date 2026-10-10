@@ -1,20 +1,9476 @@
 {
+ "bodyPlans": {
+  "candle": {
+   "components": 37,
+   "contract": "art/plant/contracts/candle.json",
+   "grammar": "resources/plant-visual/grammars/candle.js",
+   "packs": [
+    "proof-woolly-candle"
+   ],
+   "ref": "candle@1",
+   "skeleton": "axes",
+   "socketCount": 107,
+   "sockets": [
+    {
+     "at": [
+      42,
+      68
+     ],
+     "attach": "body",
+     "layout": "open",
+     "room": {
+      "down": 29,
+      "left": 42,
+      "right": 41,
+      "up": 68
+     },
+     "side": 0,
+     "socket": "trunk.body"
+    },
+    {
+     "at": [
+      42,
+      59
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 38,
+      "left": 42,
+      "right": 41,
+      "up": 59
+     },
+     "side": 0,
+     "socket": "trunk.collar.0"
+    },
+    {
+     "at": [
+      42,
+      50
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 47,
+      "left": 42,
+      "right": 41,
+      "up": 50
+     },
+     "side": 0,
+     "socket": "trunk.collar.1"
+    },
+    {
+     "at": [
+      37,
+      60
+     ],
+     "attach": "stiltRoot",
+     "layout": "open",
+     "room": {
+      "down": 37,
+      "left": 37,
+      "right": 46,
+      "up": 60
+     },
+     "side": -1,
+     "socket": "trunk.stilt.0"
+    },
+    {
+     "at": [
+      47,
+      60
+     ],
+     "attach": "stiltRoot",
+     "layout": "open",
+     "room": {
+      "down": 37,
+      "left": 47,
+      "right": 36,
+      "up": 60
+     },
+     "side": 1,
+     "socket": "trunk.stilt.1"
+    },
+    {
+     "at": [
+      42,
+      39
+     ],
+     "attach": "apex",
+     "layout": "open",
+     "room": {
+      "down": 58,
+      "left": 42,
+      "right": 41,
+      "up": 39
+     },
+     "side": 0,
+     "socket": "crown.apex"
+    },
+    {
+     "at": [
+      42,
+      39
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 58,
+      "left": 42,
+      "right": 41,
+      "up": 39
+     },
+     "side": 0,
+     "socket": "crown.flower.0"
+    },
+    {
+     "at": [
+      42,
+      39
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 58,
+      "left": 42,
+      "right": 41,
+      "up": 39
+     },
+     "side": 0,
+     "socket": "crown.seedHead.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      41,
+      38
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 59,
+      "left": 41,
+      "right": 42,
+      "up": 38
+     },
+     "side": -1,
+     "socket": "crown.leaf.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      43,
+      38
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 59,
+      "left": 43,
+      "right": 40,
+      "up": 38
+     },
+     "side": 1,
+     "socket": "crown.leaf.1"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      39,
+      40
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 57,
+      "left": 39,
+      "right": 44,
+      "up": 40
+     },
+     "side": -1,
+     "socket": "crown.leaf.2"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      40
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 57,
+      "left": 45,
+      "right": 38,
+      "up": 40
+     },
+     "side": 1,
+     "socket": "crown.leaf.3"
+    },
+    {
+     "angle": "low",
+     "at": [
+      40,
+      42
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 55,
+      "left": 40,
+      "right": 43,
+      "up": 42
+     },
+     "side": -1,
+     "socket": "crown.leaf.4"
+    },
+    {
+     "angle": "low",
+     "at": [
+      44,
+      42
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 55,
+      "left": 44,
+      "right": 39,
+      "up": 42
+     },
+     "side": 1,
+     "socket": "crown.leaf.5"
+    },
+    {
+     "at": [
+      42,
+      22
+     ],
+     "attach": "apex",
+     "layout": "open",
+     "room": {
+      "down": 75,
+      "left": 42,
+      "right": 41,
+      "up": 22
+     },
+     "side": 0,
+     "socket": "column.apex"
+    },
+    {
+     "at": [
+      42,
+      22
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 75,
+      "left": 42,
+      "right": 41,
+      "up": 22
+     },
+     "side": 0,
+     "socket": "column.flower.0"
+    },
+    {
+     "at": [
+      42,
+      22
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 75,
+      "left": 42,
+      "right": 41,
+      "up": 22
+     },
+     "side": 0,
+     "socket": "column.seedHead.0"
+    },
+    {
+     "at": [
+      50,
+      22
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 75,
+      "left": 50,
+      "right": 33,
+      "up": 22
+     },
+     "side": 1,
+     "socket": "column.flower.1"
+    },
+    {
+     "at": [
+      34,
+      28
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 69,
+      "left": 34,
+      "right": 49,
+      "up": 28
+     },
+     "side": -1,
+     "socket": "column.seedHead.1"
+    },
+    {
+     "at": [
+      51,
+      31
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 66,
+      "left": 51,
+      "right": 32,
+      "up": 31
+     },
+     "side": 1,
+     "socket": "column.seedHead.2"
+    },
+    {
+     "at": [
+      34,
+      38
+     ],
+     "attach": "pod",
+     "layout": "open",
+     "room": {
+      "down": 59,
+      "left": 34,
+      "right": 49,
+      "up": 38
+     },
+     "side": -1,
+     "socket": "column.pod.0"
+    },
+    {
+     "at": [
+      50,
+      36
+     ],
+     "attach": "pod",
+     "layout": "open",
+     "room": {
+      "down": 61,
+      "left": 50,
+      "right": 33,
+      "up": 36
+     },
+     "side": 1,
+     "socket": "column.pod.1"
+    },
+    {
+     "at": [
+      51,
+      14
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 83,
+      "left": 51,
+      "right": 32,
+      "up": 14
+     },
+     "side": 0,
+     "socket": "column.drift.0"
+    },
+    {
+     "at": [
+      56,
+      20
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 77,
+      "left": 56,
+      "right": 27,
+      "up": 20
+     },
+     "side": 0,
+     "socket": "column.drift.1"
+    },
+    {
+     "at": [
+      32,
+      16
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 81,
+      "left": 32,
+      "right": 51,
+      "up": 16
+     },
+     "side": 0,
+     "socket": "column.drift.2"
+    },
+    {
+     "at": [
+      42,
+      68
+     ],
+     "attach": "rootCrown",
+     "layout": "*",
+     "room": {
+      "down": 29,
+      "left": 42,
+      "right": 41,
+      "up": 68
+     },
+     "side": 0,
+     "socket": "rootCrown"
+    },
+    {
+     "at": [
+      42,
+      70
+     ],
+     "attach": "primaryRoot",
+     "layout": "*",
+     "room": {
+      "down": 27,
+      "left": 42,
+      "right": 41,
+      "up": 70
+     },
+     "side": 0,
+     "socket": "primaryRoot"
+    },
+    {
+     "at": [
+      32,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 32,
+      "right": 51,
+      "up": 69
+     },
+     "side": -1,
+     "socket": "aerial.0"
+    },
+    {
+     "at": [
+      53,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 53,
+      "right": 30,
+      "up": 69
+     },
+     "side": 1,
+     "socket": "aerial.1"
+    },
+    {
+     "at": [
+      27,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 27,
+      "right": 56,
+      "up": 69
+     },
+     "side": -1,
+     "socket": "aerial.2"
+    },
+    {
+     "at": [
+      58,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 58,
+      "right": 25,
+      "up": 69
+     },
+     "side": 1,
+     "socket": "aerial.3"
+    },
+    {
+     "at": [
+      42,
+      68
+     ],
+     "attach": "body",
+     "layout": "dense",
+     "room": {
+      "down": 29,
+      "left": 42,
+      "right": 41,
+      "up": 68
+     },
+     "side": 0,
+     "socket": "trunk.body"
+    },
+    {
+     "at": [
+      42,
+      59
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 38,
+      "left": 42,
+      "right": 41,
+      "up": 59
+     },
+     "side": 0,
+     "socket": "trunk.collar.0"
+    },
+    {
+     "at": [
+      42,
+      50
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 47,
+      "left": 42,
+      "right": 41,
+      "up": 50
+     },
+     "side": 0,
+     "socket": "trunk.collar.1"
+    },
+    {
+     "at": [
+      36,
+      60
+     ],
+     "attach": "stiltRoot",
+     "layout": "dense",
+     "room": {
+      "down": 37,
+      "left": 36,
+      "right": 47,
+      "up": 60
+     },
+     "side": -1,
+     "socket": "trunk.stilt.0"
+    },
+    {
+     "at": [
+      48,
+      60
+     ],
+     "attach": "stiltRoot",
+     "layout": "dense",
+     "room": {
+      "down": 37,
+      "left": 48,
+      "right": 35,
+      "up": 60
+     },
+     "side": 1,
+     "socket": "trunk.stilt.1"
+    },
+    {
+     "at": [
+      42,
+      40
+     ],
+     "attach": "apex",
+     "layout": "dense",
+     "room": {
+      "down": 57,
+      "left": 42,
+      "right": 41,
+      "up": 40
+     },
+     "side": 0,
+     "socket": "crown.apex"
+    },
+    {
+     "at": [
+      42,
+      40
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 57,
+      "left": 42,
+      "right": 41,
+      "up": 40
+     },
+     "side": 0,
+     "socket": "crown.flower.0"
+    },
+    {
+     "at": [
+      42,
+      40
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 57,
+      "left": 42,
+      "right": 41,
+      "up": 40
+     },
+     "side": 0,
+     "socket": "crown.seedHead.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      41,
+      39
+     ],
+     "attach": "radialLeaf",
+     "layout": "dense",
+     "room": {
+      "down": 58,
+      "left": 41,
+      "right": 42,
+      "up": 39
+     },
+     "side": -1,
+     "socket": "crown.leaf.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      43,
+      39
+     ],
+     "attach": "radialLeaf",
+     "layout": "dense",
+     "room": {
+      "down": 58,
+      "left": 43,
+      "right": 40,
+      "up": 39
+     },
+     "side": 1,
+     "socket": "crown.leaf.1"
+    },
+    {
+     "angle": "high",
+     "at": [
+      40,
+      41
+     ],
+     "attach": "radialLeaf",
+     "layout": "dense",
+     "room": {
+      "down": 56,
+      "left": 40,
+      "right": 43,
+      "up": 41
+     },
+     "side": -1,
+     "socket": "crown.leaf.2"
+    },
+    {
+     "angle": "high",
+     "at": [
+      44,
+      41
+     ],
+     "attach": "radialLeaf",
+     "layout": "dense",
+     "room": {
+      "down": 56,
+      "left": 44,
+      "right": 39,
+      "up": 41
+     },
+     "side": 1,
+     "socket": "crown.leaf.3"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      40,
+      43
+     ],
+     "attach": "radialLeaf",
+     "layout": "dense",
+     "room": {
+      "down": 54,
+      "left": 40,
+      "right": 43,
+      "up": 43
+     },
+     "side": -1,
+     "socket": "crown.leaf.4"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      44,
+      43
+     ],
+     "attach": "radialLeaf",
+     "layout": "dense",
+     "room": {
+      "down": 54,
+      "left": 44,
+      "right": 39,
+      "up": 43
+     },
+     "side": 1,
+     "socket": "crown.leaf.5"
+    },
+    {
+     "at": [
+      42,
+      24
+     ],
+     "attach": "apex",
+     "layout": "dense",
+     "room": {
+      "down": 73,
+      "left": 42,
+      "right": 41,
+      "up": 24
+     },
+     "side": 0,
+     "socket": "column.apex"
+    },
+    {
+     "at": [
+      42,
+      24
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 73,
+      "left": 42,
+      "right": 41,
+      "up": 24
+     },
+     "side": 0,
+     "socket": "column.flower.0"
+    },
+    {
+     "at": [
+      42,
+      24
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 73,
+      "left": 42,
+      "right": 41,
+      "up": 24
+     },
+     "side": 0,
+     "socket": "column.seedHead.0"
+    },
+    {
+     "at": [
+      50,
+      24
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 73,
+      "left": 50,
+      "right": 33,
+      "up": 24
+     },
+     "side": 1,
+     "socket": "column.flower.1"
+    },
+    {
+     "at": [
+      34,
+      29
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 68,
+      "left": 34,
+      "right": 49,
+      "up": 29
+     },
+     "side": -1,
+     "socket": "column.seedHead.1"
+    },
+    {
+     "at": [
+      51,
+      33
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 64,
+      "left": 51,
+      "right": 32,
+      "up": 33
+     },
+     "side": 1,
+     "socket": "column.seedHead.2"
+    },
+    {
+     "at": [
+      34,
+      39
+     ],
+     "attach": "pod",
+     "layout": "dense",
+     "room": {
+      "down": 58,
+      "left": 34,
+      "right": 49,
+      "up": 39
+     },
+     "side": -1,
+     "socket": "column.pod.0"
+    },
+    {
+     "at": [
+      50,
+      37
+     ],
+     "attach": "pod",
+     "layout": "dense",
+     "room": {
+      "down": 60,
+      "left": 50,
+      "right": 33,
+      "up": 37
+     },
+     "side": 1,
+     "socket": "column.pod.1"
+    },
+    {
+     "at": [
+      51,
+      16
+     ],
+     "attach": "drift",
+     "layout": "dense",
+     "room": {
+      "down": 81,
+      "left": 51,
+      "right": 32,
+      "up": 16
+     },
+     "side": 0,
+     "socket": "column.drift.0"
+    },
+    {
+     "at": [
+      56,
+      22
+     ],
+     "attach": "drift",
+     "layout": "dense",
+     "room": {
+      "down": 75,
+      "left": 56,
+      "right": 27,
+      "up": 22
+     },
+     "side": 0,
+     "socket": "column.drift.1"
+    },
+    {
+     "at": [
+      32,
+      18
+     ],
+     "attach": "drift",
+     "layout": "dense",
+     "room": {
+      "down": 79,
+      "left": 32,
+      "right": 51,
+      "up": 18
+     },
+     "side": 0,
+     "socket": "column.drift.2"
+    },
+    {
+     "at": [
+      42,
+      68
+     ],
+     "attach": "body",
+     "layout": "compact",
+     "room": {
+      "down": 29,
+      "left": 42,
+      "right": 41,
+      "up": 68
+     },
+     "side": 0,
+     "socket": "trunk.body"
+    },
+    {
+     "at": [
+      42,
+      59
+     ],
+     "attach": "stemNode",
+     "layout": "compact",
+     "room": {
+      "down": 38,
+      "left": 42,
+      "right": 41,
+      "up": 59
+     },
+     "side": 0,
+     "socket": "trunk.collar.0"
+    },
+    {
+     "at": [
+      42,
+      50
+     ],
+     "attach": "stemNode",
+     "layout": "compact",
+     "room": {
+      "down": 47,
+      "left": 42,
+      "right": 41,
+      "up": 50
+     },
+     "side": 0,
+     "socket": "trunk.collar.1"
+    },
+    {
+     "at": [
+      35,
+      60
+     ],
+     "attach": "stiltRoot",
+     "layout": "compact",
+     "room": {
+      "down": 37,
+      "left": 35,
+      "right": 48,
+      "up": 60
+     },
+     "side": -1,
+     "socket": "trunk.stilt.0"
+    },
+    {
+     "at": [
+      49,
+      60
+     ],
+     "attach": "stiltRoot",
+     "layout": "compact",
+     "room": {
+      "down": 37,
+      "left": 49,
+      "right": 34,
+      "up": 60
+     },
+     "side": 1,
+     "socket": "trunk.stilt.1"
+    },
+    {
+     "at": [
+      42,
+      41
+     ],
+     "attach": "apex",
+     "layout": "compact",
+     "room": {
+      "down": 56,
+      "left": 42,
+      "right": 41,
+      "up": 41
+     },
+     "side": 0,
+     "socket": "crown.apex"
+    },
+    {
+     "at": [
+      42,
+      41
+     ],
+     "attach": "flower",
+     "layout": "compact",
+     "room": {
+      "down": 56,
+      "left": 42,
+      "right": 41,
+      "up": 41
+     },
+     "side": 0,
+     "socket": "crown.flower.0"
+    },
+    {
+     "at": [
+      42,
+      41
+     ],
+     "attach": "seedHead",
+     "layout": "compact",
+     "room": {
+      "down": 56,
+      "left": 42,
+      "right": 41,
+      "up": 41
+     },
+     "side": 0,
+     "socket": "crown.seedHead.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      42,
+      41
+     ],
+     "attach": "radialLeaf",
+     "layout": "compact",
+     "room": {
+      "down": 56,
+      "left": 42,
+      "right": 41,
+      "up": 41
+     },
+     "side": -1,
+     "socket": "crown.leaf.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      42,
+      41
+     ],
+     "attach": "radialLeaf",
+     "layout": "compact",
+     "room": {
+      "down": 56,
+      "left": 42,
+      "right": 41,
+      "up": 41
+     },
+     "side": 1,
+     "socket": "crown.leaf.1"
+    },
+    {
+     "angle": "high",
+     "at": [
+      40,
+      42
+     ],
+     "attach": "radialLeaf",
+     "layout": "compact",
+     "room": {
+      "down": 55,
+      "left": 40,
+      "right": 43,
+      "up": 42
+     },
+     "side": -1,
+     "socket": "crown.leaf.2"
+    },
+    {
+     "angle": "high",
+     "at": [
+      44,
+      42
+     ],
+     "attach": "radialLeaf",
+     "layout": "compact",
+     "room": {
+      "down": 55,
+      "left": 44,
+      "right": 39,
+      "up": 42
+     },
+     "side": 1,
+     "socket": "crown.leaf.3"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      40,
+      44
+     ],
+     "attach": "radialLeaf",
+     "layout": "compact",
+     "room": {
+      "down": 53,
+      "left": 40,
+      "right": 43,
+      "up": 44
+     },
+     "side": -1,
+     "socket": "crown.leaf.4"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      44,
+      44
+     ],
+     "attach": "radialLeaf",
+     "layout": "compact",
+     "room": {
+      "down": 53,
+      "left": 44,
+      "right": 39,
+      "up": 44
+     },
+     "side": 1,
+     "socket": "crown.leaf.5"
+    },
+    {
+     "at": [
+      42,
+      26
+     ],
+     "attach": "apex",
+     "layout": "compact",
+     "room": {
+      "down": 71,
+      "left": 42,
+      "right": 41,
+      "up": 26
+     },
+     "side": 0,
+     "socket": "column.apex"
+    },
+    {
+     "at": [
+      42,
+      26
+     ],
+     "attach": "flower",
+     "layout": "compact",
+     "room": {
+      "down": 71,
+      "left": 42,
+      "right": 41,
+      "up": 26
+     },
+     "side": 0,
+     "socket": "column.flower.0"
+    },
+    {
+     "at": [
+      42,
+      26
+     ],
+     "attach": "seedHead",
+     "layout": "compact",
+     "room": {
+      "down": 71,
+      "left": 42,
+      "right": 41,
+      "up": 26
+     },
+     "side": 0,
+     "socket": "column.seedHead.0"
+    },
+    {
+     "at": [
+      50,
+      26
+     ],
+     "attach": "flower",
+     "layout": "compact",
+     "room": {
+      "down": 71,
+      "left": 50,
+      "right": 33,
+      "up": 26
+     },
+     "side": 1,
+     "socket": "column.flower.1"
+    },
+    {
+     "at": [
+      34,
+      31
+     ],
+     "attach": "seedHead",
+     "layout": "compact",
+     "room": {
+      "down": 66,
+      "left": 34,
+      "right": 49,
+      "up": 31
+     },
+     "side": -1,
+     "socket": "column.seedHead.1"
+    },
+    {
+     "at": [
+      51,
+      34
+     ],
+     "attach": "seedHead",
+     "layout": "compact",
+     "room": {
+      "down": 63,
+      "left": 51,
+      "right": 32,
+      "up": 34
+     },
+     "side": 1,
+     "socket": "column.seedHead.2"
+    },
+    {
+     "at": [
+      34,
+      40
+     ],
+     "attach": "pod",
+     "layout": "compact",
+     "room": {
+      "down": 57,
+      "left": 34,
+      "right": 49,
+      "up": 40
+     },
+     "side": -1,
+     "socket": "column.pod.0"
+    },
+    {
+     "at": [
+      50,
+      38
+     ],
+     "attach": "pod",
+     "layout": "compact",
+     "room": {
+      "down": 59,
+      "left": 50,
+      "right": 33,
+      "up": 38
+     },
+     "side": 1,
+     "socket": "column.pod.1"
+    },
+    {
+     "at": [
+      51,
+      18
+     ],
+     "attach": "drift",
+     "layout": "compact",
+     "room": {
+      "down": 79,
+      "left": 51,
+      "right": 32,
+      "up": 18
+     },
+     "side": 0,
+     "socket": "column.drift.0"
+    },
+    {
+     "at": [
+      56,
+      24
+     ],
+     "attach": "drift",
+     "layout": "compact",
+     "room": {
+      "down": 73,
+      "left": 56,
+      "right": 27,
+      "up": 24
+     },
+     "side": 0,
+     "socket": "column.drift.1"
+    },
+    {
+     "at": [
+      32,
+      20
+     ],
+     "attach": "drift",
+     "layout": "compact",
+     "room": {
+      "down": 77,
+      "left": 32,
+      "right": 51,
+      "up": 20
+     },
+     "side": 0,
+     "socket": "column.drift.2"
+    },
+    {
+     "at": [
+      42,
+      68
+     ],
+     "attach": "body",
+     "layout": "closed",
+     "room": {
+      "down": 29,
+      "left": 42,
+      "right": 41,
+      "up": 68
+     },
+     "side": 0,
+     "socket": "trunk.body"
+    },
+    {
+     "at": [
+      42,
+      61
+     ],
+     "attach": "stemNode",
+     "layout": "closed",
+     "room": {
+      "down": 36,
+      "left": 42,
+      "right": 41,
+      "up": 61
+     },
+     "side": 0,
+     "socket": "trunk.collar.0"
+    },
+    {
+     "at": [
+      42,
+      55
+     ],
+     "attach": "stemNode",
+     "layout": "closed",
+     "room": {
+      "down": 42,
+      "left": 42,
+      "right": 41,
+      "up": 55
+     },
+     "side": 0,
+     "socket": "trunk.collar.1"
+    },
+    {
+     "at": [
+      42,
+      49
+     ],
+     "attach": "stemNode",
+     "layout": "closed",
+     "room": {
+      "down": 48,
+      "left": 42,
+      "right": 41,
+      "up": 49
+     },
+     "side": 0,
+     "socket": "trunk.collar.2"
+    },
+    {
+     "at": [
+      34,
+      60
+     ],
+     "attach": "stiltRoot",
+     "layout": "closed",
+     "room": {
+      "down": 37,
+      "left": 34,
+      "right": 49,
+      "up": 60
+     },
+     "side": -1,
+     "socket": "trunk.stilt.0"
+    },
+    {
+     "at": [
+      50,
+      60
+     ],
+     "attach": "stiltRoot",
+     "layout": "closed",
+     "room": {
+      "down": 37,
+      "left": 50,
+      "right": 33,
+      "up": 60
+     },
+     "side": 1,
+     "socket": "trunk.stilt.1"
+    },
+    {
+     "at": [
+      42,
+      42
+     ],
+     "attach": "apex",
+     "layout": "closed",
+     "room": {
+      "down": 55,
+      "left": 42,
+      "right": 41,
+      "up": 42
+     },
+     "side": 0,
+     "socket": "crown.apex"
+    },
+    {
+     "at": [
+      42,
+      42
+     ],
+     "attach": "flower",
+     "layout": "closed",
+     "room": {
+      "down": 55,
+      "left": 42,
+      "right": 41,
+      "up": 42
+     },
+     "side": 0,
+     "socket": "crown.flower.0"
+    },
+    {
+     "at": [
+      42,
+      42
+     ],
+     "attach": "seedHead",
+     "layout": "closed",
+     "room": {
+      "down": 55,
+      "left": 42,
+      "right": 41,
+      "up": 42
+     },
+     "side": 0,
+     "socket": "crown.seedHead.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      42,
+      42
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 55,
+      "left": 42,
+      "right": 41,
+      "up": 42
+     },
+     "side": -1,
+     "socket": "crown.leaf.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      42,
+      42
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 55,
+      "left": 42,
+      "right": 41,
+      "up": 42
+     },
+     "side": 1,
+     "socket": "crown.leaf.1"
+    },
+    {
+     "angle": "high",
+     "at": [
+      41,
+      43
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 54,
+      "left": 41,
+      "right": 42,
+      "up": 43
+     },
+     "side": -1,
+     "socket": "crown.leaf.2"
+    },
+    {
+     "angle": "high",
+     "at": [
+      43,
+      43
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 54,
+      "left": 43,
+      "right": 40,
+      "up": 43
+     },
+     "side": 1,
+     "socket": "crown.leaf.3"
+    },
+    {
+     "angle": "high",
+     "at": [
+      41,
+      44
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 53,
+      "left": 41,
+      "right": 42,
+      "up": 44
+     },
+     "side": -1,
+     "socket": "crown.leaf.4"
+    },
+    {
+     "angle": "high",
+     "at": [
+      43,
+      44
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 53,
+      "left": 43,
+      "right": 40,
+      "up": 44
+     },
+     "side": 1,
+     "socket": "crown.leaf.5"
+    },
+    {
+     "at": [
+      42,
+      28
+     ],
+     "attach": "apex",
+     "layout": "closed",
+     "room": {
+      "down": 69,
+      "left": 42,
+      "right": 41,
+      "up": 28
+     },
+     "side": 0,
+     "socket": "column.apex"
+    },
+    {
+     "at": [
+      42,
+      28
+     ],
+     "attach": "flower",
+     "layout": "closed",
+     "room": {
+      "down": 69,
+      "left": 42,
+      "right": 41,
+      "up": 28
+     },
+     "side": 0,
+     "socket": "column.flower.0"
+    },
+    {
+     "at": [
+      42,
+      28
+     ],
+     "attach": "seedHead",
+     "layout": "closed",
+     "room": {
+      "down": 69,
+      "left": 42,
+      "right": 41,
+      "up": 28
+     },
+     "side": 0,
+     "socket": "column.seedHead.0"
+    },
+    {
+     "at": [
+      50,
+      28
+     ],
+     "attach": "flower",
+     "layout": "closed",
+     "room": {
+      "down": 69,
+      "left": 50,
+      "right": 33,
+      "up": 28
+     },
+     "side": 1,
+     "socket": "column.flower.1"
+    },
+    {
+     "at": [
+      34,
+      33
+     ],
+     "attach": "seedHead",
+     "layout": "closed",
+     "room": {
+      "down": 64,
+      "left": 34,
+      "right": 49,
+      "up": 33
+     },
+     "side": -1,
+     "socket": "column.seedHead.1"
+    },
+    {
+     "at": [
+      51,
+      36
+     ],
+     "attach": "seedHead",
+     "layout": "closed",
+     "room": {
+      "down": 61,
+      "left": 51,
+      "right": 32,
+      "up": 36
+     },
+     "side": 1,
+     "socket": "column.seedHead.2"
+    },
+    {
+     "at": [
+      34,
+      41
+     ],
+     "attach": "pod",
+     "layout": "closed",
+     "room": {
+      "down": 56,
+      "left": 34,
+      "right": 49,
+      "up": 41
+     },
+     "side": -1,
+     "socket": "column.pod.0"
+    },
+    {
+     "at": [
+      50,
+      40
+     ],
+     "attach": "pod",
+     "layout": "closed",
+     "room": {
+      "down": 57,
+      "left": 50,
+      "right": 33,
+      "up": 40
+     },
+     "side": 1,
+     "socket": "column.pod.1"
+    },
+    {
+     "at": [
+      51,
+      20
+     ],
+     "attach": "drift",
+     "layout": "closed",
+     "room": {
+      "down": 77,
+      "left": 51,
+      "right": 32,
+      "up": 20
+     },
+     "side": 0,
+     "socket": "column.drift.0"
+    },
+    {
+     "at": [
+      56,
+      26
+     ],
+     "attach": "drift",
+     "layout": "closed",
+     "room": {
+      "down": 71,
+      "left": 56,
+      "right": 27,
+      "up": 26
+     },
+     "side": 0,
+     "socket": "column.drift.1"
+    },
+    {
+     "at": [
+      32,
+      22
+     ],
+     "attach": "drift",
+     "layout": "closed",
+     "room": {
+      "down": 75,
+      "left": 32,
+      "right": 51,
+      "up": 22
+     },
+     "side": 0,
+     "socket": "column.drift.2"
+    }
+   ]
+  },
+  "oh-stem": {
+   "components": 34,
+   "contract": "art/plant/contract.json",
+   "grammar": "resources/plant-visual/grammars/oh-stem.js",
+   "packs": [
+    "organic-hybrid",
+    "proof",
+    "proof-angular",
+    "proof-round"
+   ],
+   "ref": "oh-stem@1",
+   "skeleton": "stem@2 (art/plant/body-plan.json)",
+   "socketCount": 117,
+   "sockets": [
+    {
+     "angle": "low",
+     "at": [
+      41,
+      61
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 36,
+      "left": 41,
+      "right": 42,
+      "up": 61
+     },
+     "side": -1,
+     "socket": "leaf.0"
+    },
+    {
+     "angle": "low",
+     "at": [
+      45,
+      55
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 42,
+      "left": 45,
+      "right": 38,
+      "up": 55
+     },
+     "side": 1,
+     "socket": "leaf.1"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      42,
+      48
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 49,
+      "left": 42,
+      "right": 41,
+      "up": 48
+     },
+     "side": -1,
+     "socket": "leaf.2"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      41
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 56,
+      "left": 45,
+      "right": 38,
+      "up": 41
+     },
+     "side": 1,
+     "socket": "leaf.3"
+    },
+    {
+     "angle": "high",
+     "at": [
+      41,
+      35
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 62,
+      "left": 41,
+      "right": 42,
+      "up": 35
+     },
+     "side": -1,
+     "socket": "leaf.4"
+    },
+    {
+     "angle": "high",
+     "at": [
+      43,
+      29
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 68,
+      "left": 43,
+      "right": 40,
+      "up": 29
+     },
+     "side": 1,
+     "socket": "leaf.5"
+    },
+    {
+     "at": [
+      43,
+      61
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 36,
+      "left": 43,
+      "right": 40,
+      "up": 61
+     },
+     "side": 0,
+     "socket": "stemNode.0"
+    },
+    {
+     "at": [
+      43,
+      55
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 42,
+      "left": 43,
+      "right": 40,
+      "up": 55
+     },
+     "side": 0,
+     "socket": "stemNode.1"
+    },
+    {
+     "at": [
+      44,
+      48
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 49,
+      "left": 44,
+      "right": 39,
+      "up": 48
+     },
+     "side": 0,
+     "socket": "stemNode.2"
+    },
+    {
+     "at": [
+      43,
+      41
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 56,
+      "left": 43,
+      "right": 40,
+      "up": 41
+     },
+     "side": 0,
+     "socket": "stemNode.3"
+    },
+    {
+     "at": [
+      42,
+      35
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 62,
+      "left": 42,
+      "right": 41,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "stemNode.4"
+    },
+    {
+     "at": [
+      41,
+      29
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 68,
+      "left": 41,
+      "right": 42,
+      "up": 29
+     },
+     "side": 0,
+     "socket": "stemNode.5"
+    },
+    {
+     "at": [
+      46,
+      51
+     ],
+     "attach": "axil",
+     "layout": "open",
+     "room": {
+      "down": 46,
+      "left": 46,
+      "right": 37,
+      "up": 51
+     },
+     "side": 1,
+     "socket": "axil.0"
+    },
+    {
+     "at": [
+      41,
+      38
+     ],
+     "attach": "axil",
+     "layout": "open",
+     "room": {
+      "down": 59,
+      "left": 41,
+      "right": 42,
+      "up": 38
+     },
+     "side": -1,
+     "socket": "axil.1"
+    },
+    {
+     "at": [
+      42,
+      21
+     ],
+     "attach": "apex",
+     "layout": "open",
+     "room": {
+      "down": 76,
+      "left": 42,
+      "right": 41,
+      "up": 21
+     },
+     "side": 0,
+     "socket": "apex"
+    },
+    {
+     "at": [
+      42,
+      21
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 76,
+      "left": 42,
+      "right": 41,
+      "up": 21
+     },
+     "side": 0,
+     "socket": "flower.0"
+    },
+    {
+     "at": [
+      53,
+      23
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 74,
+      "left": 53,
+      "right": 30,
+      "up": 23
+     },
+     "side": 1,
+     "socket": "flower.1"
+    },
+    {
+     "at": [
+      42,
+      21
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 76,
+      "left": 42,
+      "right": 41,
+      "up": 21
+     },
+     "side": 0,
+     "socket": "seedHead.0"
+    },
+    {
+     "at": [
+      31,
+      31
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 66,
+      "left": 31,
+      "right": 52,
+      "up": 31
+     },
+     "side": -1,
+     "socket": "seedHead.1"
+    },
+    {
+     "at": [
+      56,
+      40
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 57,
+      "left": 56,
+      "right": 27,
+      "up": 40
+     },
+     "side": 1,
+     "socket": "seedHead.2"
+    },
+    {
+     "at": [
+      34,
+      58
+     ],
+     "attach": "pod",
+     "layout": "open",
+     "room": {
+      "down": 39,
+      "left": 34,
+      "right": 49,
+      "up": 58
+     },
+     "side": -1,
+     "socket": "pod.0"
+    },
+    {
+     "at": [
+      54,
+      52
+     ],
+     "attach": "pod",
+     "layout": "open",
+     "room": {
+      "down": 45,
+      "left": 54,
+      "right": 29,
+      "up": 52
+     },
+     "side": 1,
+     "socket": "pod.1"
+    },
+    {
+     "at": [
+      52,
+      10
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 87,
+      "left": 52,
+      "right": 31,
+      "up": 10
+     },
+     "side": 0,
+     "socket": "drift.0"
+    },
+    {
+     "at": [
+      59,
+      16
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 81,
+      "left": 59,
+      "right": 24,
+      "up": 16
+     },
+     "side": 0,
+     "socket": "drift.1"
+    },
+    {
+     "at": [
+      30,
+      12
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 85,
+      "left": 30,
+      "right": 53,
+      "up": 12
+     },
+     "side": 0,
+     "socket": "drift.2"
+    },
+    {
+     "at": [
+      41,
+      59
+     ],
+     "attach": "stiltRoot",
+     "layout": "open",
+     "room": {
+      "down": 38,
+      "left": 41,
+      "right": 42,
+      "up": 59
+     },
+     "side": -1,
+     "socket": "stilt.0"
+    },
+    {
+     "at": [
+      45,
+      59
+     ],
+     "attach": "stiltRoot",
+     "layout": "open",
+     "room": {
+      "down": 38,
+      "left": 45,
+      "right": 38,
+      "up": 59
+     },
+     "side": 1,
+     "socket": "stilt.1"
+    },
+    {
+     "angle": "low",
+     "at": [
+      41,
+      62
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 35,
+      "left": 41,
+      "right": 42,
+      "up": 62
+     },
+     "side": -1,
+     "socket": "leaf.0"
+    },
+    {
+     "angle": "low",
+     "at": [
+      45,
+      57
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 40,
+      "left": 45,
+      "right": 38,
+      "up": 57
+     },
+     "side": 1,
+     "socket": "leaf.1"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      42,
+      51
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 46,
+      "left": 42,
+      "right": 41,
+      "up": 51
+     },
+     "side": -1,
+     "socket": "leaf.2"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      46
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 51,
+      "left": 45,
+      "right": 38,
+      "up": 46
+     },
+     "side": 1,
+     "socket": "leaf.3"
+    },
+    {
+     "angle": "high",
+     "at": [
+      41,
+      40
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 57,
+      "left": 41,
+      "right": 42,
+      "up": 40
+     },
+     "side": -1,
+     "socket": "leaf.4"
+    },
+    {
+     "angle": "high",
+     "at": [
+      43,
+      35
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 62,
+      "left": 43,
+      "right": 40,
+      "up": 35
+     },
+     "side": 1,
+     "socket": "leaf.5"
+    },
+    {
+     "at": [
+      43,
+      62
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 35,
+      "left": 43,
+      "right": 40,
+      "up": 62
+     },
+     "side": 0,
+     "socket": "stemNode.0"
+    },
+    {
+     "at": [
+      43,
+      57
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 40,
+      "left": 43,
+      "right": 40,
+      "up": 57
+     },
+     "side": 0,
+     "socket": "stemNode.1"
+    },
+    {
+     "at": [
+      44,
+      51
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 46,
+      "left": 44,
+      "right": 39,
+      "up": 51
+     },
+     "side": 0,
+     "socket": "stemNode.2"
+    },
+    {
+     "at": [
+      43,
+      46
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 51,
+      "left": 43,
+      "right": 40,
+      "up": 46
+     },
+     "side": 0,
+     "socket": "stemNode.3"
+    },
+    {
+     "at": [
+      42,
+      40
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 57,
+      "left": 42,
+      "right": 41,
+      "up": 40
+     },
+     "side": 0,
+     "socket": "stemNode.4"
+    },
+    {
+     "at": [
+      41,
+      35
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 62,
+      "left": 41,
+      "right": 42,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "stemNode.5"
+    },
+    {
+     "at": [
+      46,
+      54
+     ],
+     "attach": "axil",
+     "layout": "dense",
+     "room": {
+      "down": 43,
+      "left": 46,
+      "right": 37,
+      "up": 54
+     },
+     "side": 1,
+     "socket": "axil.0"
+    },
+    {
+     "at": [
+      42,
+      43
+     ],
+     "attach": "axil",
+     "layout": "dense",
+     "room": {
+      "down": 54,
+      "left": 42,
+      "right": 41,
+      "up": 43
+     },
+     "side": -1,
+     "socket": "axil.1"
+    },
+    {
+     "at": [
+      42,
+      27
+     ],
+     "attach": "apex",
+     "layout": "dense",
+     "room": {
+      "down": 70,
+      "left": 42,
+      "right": 41,
+      "up": 27
+     },
+     "side": 0,
+     "socket": "apex"
+    },
+    {
+     "at": [
+      42,
+      27
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 70,
+      "left": 42,
+      "right": 41,
+      "up": 27
+     },
+     "side": 0,
+     "socket": "flower.0"
+    },
+    {
+     "at": [
+      53,
+      28
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 69,
+      "left": 53,
+      "right": 30,
+      "up": 28
+     },
+     "side": 1,
+     "socket": "flower.1"
+    },
+    {
+     "at": [
+      42,
+      27
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 70,
+      "left": 42,
+      "right": 41,
+      "up": 27
+     },
+     "side": 0,
+     "socket": "seedHead.0"
+    },
+    {
+     "at": [
+      31,
+      35
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 62,
+      "left": 31,
+      "right": 52,
+      "up": 35
+     },
+     "side": -1,
+     "socket": "seedHead.1"
+    },
+    {
+     "at": [
+      56,
+      43
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 54,
+      "left": 56,
+      "right": 27,
+      "up": 43
+     },
+     "side": 1,
+     "socket": "seedHead.2"
+    },
+    {
+     "at": [
+      34,
+      59
+     ],
+     "attach": "pod",
+     "layout": "dense",
+     "room": {
+      "down": 38,
+      "left": 34,
+      "right": 49,
+      "up": 59
+     },
+     "side": -1,
+     "socket": "pod.0"
+    },
+    {
+     "at": [
+      54,
+      54
+     ],
+     "attach": "pod",
+     "layout": "dense",
+     "room": {
+      "down": 43,
+      "left": 54,
+      "right": 29,
+      "up": 54
+     },
+     "side": 1,
+     "socket": "pod.1"
+    },
+    {
+     "at": [
+      52,
+      16
+     ],
+     "attach": "drift",
+     "layout": "dense",
+     "room": {
+      "down": 81,
+      "left": 52,
+      "right": 31,
+      "up": 16
+     },
+     "side": 0,
+     "socket": "drift.0"
+    },
+    {
+     "at": [
+      59,
+      22
+     ],
+     "attach": "drift",
+     "layout": "dense",
+     "room": {
+      "down": 75,
+      "left": 59,
+      "right": 24,
+      "up": 22
+     },
+     "side": 0,
+     "socket": "drift.1"
+    },
+    {
+     "at": [
+      30,
+      18
+     ],
+     "attach": "drift",
+     "layout": "dense",
+     "room": {
+      "down": 79,
+      "left": 30,
+      "right": 53,
+      "up": 18
+     },
+     "side": 0,
+     "socket": "drift.2"
+    },
+    {
+     "at": [
+      41,
+      59
+     ],
+     "attach": "stiltRoot",
+     "layout": "dense",
+     "room": {
+      "down": 38,
+      "left": 41,
+      "right": 42,
+      "up": 59
+     },
+     "side": -1,
+     "socket": "stilt.0"
+    },
+    {
+     "at": [
+      45,
+      59
+     ],
+     "attach": "stiltRoot",
+     "layout": "dense",
+     "room": {
+      "down": 38,
+      "left": 45,
+      "right": 38,
+      "up": 59
+     },
+     "side": 1,
+     "socket": "stilt.1"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      40,
+      65
+     ],
+     "attach": "leafSocket",
+     "layout": "compact",
+     "room": {
+      "down": 32,
+      "left": 40,
+      "right": 43,
+      "up": 65
+     },
+     "side": -1,
+     "socket": "leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      62
+     ],
+     "attach": "leafSocket",
+     "layout": "compact",
+     "room": {
+      "down": 35,
+      "left": 45,
+      "right": 38,
+      "up": 62
+     },
+     "side": 1,
+     "socket": "leaf.1"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      41,
+      58
+     ],
+     "attach": "leafSocket",
+     "layout": "compact",
+     "room": {
+      "down": 39,
+      "left": 41,
+      "right": 42,
+      "up": 58
+     },
+     "side": -1,
+     "socket": "leaf.2"
+    },
+    {
+     "angle": "high",
+     "at": [
+      46,
+      54
+     ],
+     "attach": "leafSocket",
+     "layout": "compact",
+     "room": {
+      "down": 43,
+      "left": 46,
+      "right": 37,
+      "up": 54
+     },
+     "side": 1,
+     "socket": "leaf.3"
+    },
+    {
+     "angle": "high",
+     "at": [
+      41,
+      49
+     ],
+     "attach": "leafSocket",
+     "layout": "compact",
+     "room": {
+      "down": 48,
+      "left": 41,
+      "right": 42,
+      "up": 49
+     },
+     "side": -1,
+     "socket": "leaf.4"
+    },
+    {
+     "angle": "high",
+     "at": [
+      44,
+      45
+     ],
+     "attach": "leafSocket",
+     "layout": "compact",
+     "room": {
+      "down": 52,
+      "left": 44,
+      "right": 39,
+      "up": 45
+     },
+     "side": 1,
+     "socket": "leaf.5"
+    },
+    {
+     "at": [
+      42,
+      65
+     ],
+     "attach": "stemNode",
+     "layout": "compact",
+     "room": {
+      "down": 32,
+      "left": 42,
+      "right": 41,
+      "up": 65
+     },
+     "side": 0,
+     "socket": "stemNode.0"
+    },
+    {
+     "at": [
+      42,
+      62
+     ],
+     "attach": "stemNode",
+     "layout": "compact",
+     "room": {
+      "down": 35,
+      "left": 42,
+      "right": 41,
+      "up": 62
+     },
+     "side": 0,
+     "socket": "stemNode.1"
+    },
+    {
+     "at": [
+      43,
+      58
+     ],
+     "attach": "stemNode",
+     "layout": "compact",
+     "room": {
+      "down": 39,
+      "left": 43,
+      "right": 40,
+      "up": 58
+     },
+     "side": 0,
+     "socket": "stemNode.2"
+    },
+    {
+     "at": [
+      43,
+      54
+     ],
+     "attach": "stemNode",
+     "layout": "compact",
+     "room": {
+      "down": 43,
+      "left": 43,
+      "right": 40,
+      "up": 54
+     },
+     "side": 0,
+     "socket": "stemNode.3"
+    },
+    {
+     "at": [
+      43,
+      49
+     ],
+     "attach": "stemNode",
+     "layout": "compact",
+     "room": {
+      "down": 48,
+      "left": 43,
+      "right": 40,
+      "up": 49
+     },
+     "side": 0,
+     "socket": "stemNode.4"
+    },
+    {
+     "at": [
+      42,
+      45
+     ],
+     "attach": "stemNode",
+     "layout": "compact",
+     "room": {
+      "down": 52,
+      "left": 42,
+      "right": 41,
+      "up": 45
+     },
+     "side": 0,
+     "socket": "stemNode.5"
+    },
+    {
+     "at": [
+      43,
+      60
+     ],
+     "attach": "stemNode",
+     "layout": "compact",
+     "room": {
+      "down": 37,
+      "left": 43,
+      "right": 40,
+      "up": 60
+     },
+     "side": 0,
+     "socket": "collar.0"
+    },
+    {
+     "at": [
+      43,
+      51
+     ],
+     "attach": "stemNode",
+     "layout": "compact",
+     "room": {
+      "down": 46,
+      "left": 43,
+      "right": 40,
+      "up": 51
+     },
+     "side": 0,
+     "socket": "collar.1"
+    },
+    {
+     "at": [
+      46,
+      55
+     ],
+     "attach": "axil",
+     "layout": "compact",
+     "room": {
+      "down": 42,
+      "left": 46,
+      "right": 37,
+      "up": 55
+     },
+     "side": 1,
+     "socket": "axil.0"
+    },
+    {
+     "at": [
+      42,
+      37
+     ],
+     "attach": "apex",
+     "layout": "compact",
+     "room": {
+      "down": 60,
+      "left": 42,
+      "right": 41,
+      "up": 37
+     },
+     "side": 0,
+     "socket": "apex"
+    },
+    {
+     "at": [
+      42,
+      37
+     ],
+     "attach": "flower",
+     "layout": "compact",
+     "room": {
+      "down": 60,
+      "left": 42,
+      "right": 41,
+      "up": 37
+     },
+     "side": 0,
+     "socket": "flower.0"
+    },
+    {
+     "at": [
+      54,
+      36
+     ],
+     "attach": "flower",
+     "layout": "compact",
+     "room": {
+      "down": 61,
+      "left": 54,
+      "right": 29,
+      "up": 36
+     },
+     "side": 1,
+     "socket": "flower.1"
+    },
+    {
+     "at": [
+      42,
+      37
+     ],
+     "attach": "seedHead",
+     "layout": "compact",
+     "room": {
+      "down": 60,
+      "left": 42,
+      "right": 41,
+      "up": 37
+     },
+     "side": 0,
+     "socket": "seedHead.0"
+    },
+    {
+     "at": [
+      30,
+      42
+     ],
+     "attach": "seedHead",
+     "layout": "compact",
+     "room": {
+      "down": 55,
+      "left": 30,
+      "right": 53,
+      "up": 42
+     },
+     "side": -1,
+     "socket": "seedHead.1"
+    },
+    {
+     "at": [
+      57,
+      49
+     ],
+     "attach": "seedHead",
+     "layout": "compact",
+     "room": {
+      "down": 48,
+      "left": 57,
+      "right": 26,
+      "up": 49
+     },
+     "side": 1,
+     "socket": "seedHead.2"
+    },
+    {
+     "at": [
+      32,
+      59
+     ],
+     "attach": "pod",
+     "layout": "compact",
+     "room": {
+      "down": 38,
+      "left": 32,
+      "right": 51,
+      "up": 59
+     },
+     "side": -1,
+     "socket": "pod.0"
+    },
+    {
+     "at": [
+      55,
+      56
+     ],
+     "attach": "pod",
+     "layout": "compact",
+     "room": {
+      "down": 41,
+      "left": 55,
+      "right": 28,
+      "up": 56
+     },
+     "side": 1,
+     "socket": "pod.1"
+    },
+    {
+     "at": [
+      52,
+      26
+     ],
+     "attach": "drift",
+     "layout": "compact",
+     "room": {
+      "down": 71,
+      "left": 52,
+      "right": 31,
+      "up": 26
+     },
+     "side": 0,
+     "socket": "drift.0"
+    },
+    {
+     "at": [
+      59,
+      32
+     ],
+     "attach": "drift",
+     "layout": "compact",
+     "room": {
+      "down": 65,
+      "left": 59,
+      "right": 24,
+      "up": 32
+     },
+     "side": 0,
+     "socket": "drift.1"
+    },
+    {
+     "at": [
+      30,
+      28
+     ],
+     "attach": "drift",
+     "layout": "compact",
+     "room": {
+      "down": 69,
+      "left": 30,
+      "right": 53,
+      "up": 28
+     },
+     "side": 0,
+     "socket": "drift.2"
+    },
+    {
+     "at": [
+      41,
+      59
+     ],
+     "attach": "stiltRoot",
+     "layout": "compact",
+     "room": {
+      "down": 38,
+      "left": 41,
+      "right": 42,
+      "up": 59
+     },
+     "side": -1,
+     "socket": "stilt.0"
+    },
+    {
+     "at": [
+      46,
+      59
+     ],
+     "attach": "stiltRoot",
+     "layout": "compact",
+     "room": {
+      "down": 38,
+      "left": 46,
+      "right": 37,
+      "up": 59
+     },
+     "side": 1,
+     "socket": "stilt.1"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      39,
+      66
+     ],
+     "attach": "leafSocket",
+     "layout": "cushion",
+     "room": {
+      "down": 31,
+      "left": 39,
+      "right": 44,
+      "up": 66
+     },
+     "side": -1,
+     "socket": "leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      64
+     ],
+     "attach": "leafSocket",
+     "layout": "cushion",
+     "room": {
+      "down": 33,
+      "left": 45,
+      "right": 38,
+      "up": 64
+     },
+     "side": 1,
+     "socket": "leaf.1"
+    },
+    {
+     "angle": "high",
+     "at": [
+      40,
+      60
+     ],
+     "attach": "leafSocket",
+     "layout": "cushion",
+     "room": {
+      "down": 37,
+      "left": 40,
+      "right": 43,
+      "up": 60
+     },
+     "side": -1,
+     "socket": "leaf.2"
+    },
+    {
+     "angle": "high",
+     "at": [
+      46,
+      57
+     ],
+     "attach": "leafSocket",
+     "layout": "cushion",
+     "room": {
+      "down": 40,
+      "left": 46,
+      "right": 37,
+      "up": 57
+     },
+     "side": 1,
+     "socket": "leaf.3"
+    },
+    {
+     "angle": "high",
+     "at": [
+      41,
+      54
+     ],
+     "attach": "leafSocket",
+     "layout": "cushion",
+     "room": {
+      "down": 43,
+      "left": 41,
+      "right": 42,
+      "up": 54
+     },
+     "side": -1,
+     "socket": "leaf.4"
+    },
+    {
+     "angle": "high",
+     "at": [
+      46,
+      50
+     ],
+     "attach": "leafSocket",
+     "layout": "cushion",
+     "room": {
+      "down": 47,
+      "left": 46,
+      "right": 37,
+      "up": 50
+     },
+     "side": 1,
+     "socket": "leaf.5"
+    },
+    {
+     "at": [
+      42,
+      66
+     ],
+     "attach": "stemNode",
+     "layout": "cushion",
+     "room": {
+      "down": 31,
+      "left": 42,
+      "right": 41,
+      "up": 66
+     },
+     "side": 0,
+     "socket": "stemNode.0"
+    },
+    {
+     "at": [
+      42,
+      64
+     ],
+     "attach": "stemNode",
+     "layout": "cushion",
+     "room": {
+      "down": 33,
+      "left": 42,
+      "right": 41,
+      "up": 64
+     },
+     "side": 0,
+     "socket": "stemNode.1"
+    },
+    {
+     "at": [
+      42,
+      60
+     ],
+     "attach": "stemNode",
+     "layout": "cushion",
+     "room": {
+      "down": 37,
+      "left": 42,
+      "right": 41,
+      "up": 60
+     },
+     "side": 0,
+     "socket": "stemNode.2"
+    },
+    {
+     "at": [
+      43,
+      57
+     ],
+     "attach": "stemNode",
+     "layout": "cushion",
+     "room": {
+      "down": 40,
+      "left": 43,
+      "right": 40,
+      "up": 57
+     },
+     "side": 0,
+     "socket": "stemNode.3"
+    },
+    {
+     "at": [
+      43,
+      54
+     ],
+     "attach": "stemNode",
+     "layout": "cushion",
+     "room": {
+      "down": 43,
+      "left": 43,
+      "right": 40,
+      "up": 54
+     },
+     "side": 0,
+     "socket": "stemNode.4"
+    },
+    {
+     "at": [
+      43,
+      50
+     ],
+     "attach": "stemNode",
+     "layout": "cushion",
+     "room": {
+      "down": 47,
+      "left": 43,
+      "right": 40,
+      "up": 50
+     },
+     "side": 0,
+     "socket": "stemNode.5"
+    },
+    {
+     "at": [
+      42,
+      62
+     ],
+     "attach": "stemNode",
+     "layout": "cushion",
+     "room": {
+      "down": 35,
+      "left": 42,
+      "right": 41,
+      "up": 62
+     },
+     "side": 0,
+     "socket": "collar.0"
+    },
+    {
+     "at": [
+      43,
+      56
+     ],
+     "attach": "stemNode",
+     "layout": "cushion",
+     "room": {
+      "down": 41,
+      "left": 43,
+      "right": 40,
+      "up": 56
+     },
+     "side": 0,
+     "socket": "collar.1"
+    },
+    {
+     "at": [
+      42,
+      49
+     ],
+     "attach": "stemNode",
+     "layout": "cushion",
+     "room": {
+      "down": 48,
+      "left": 42,
+      "right": 41,
+      "up": 49
+     },
+     "side": 0,
+     "socket": "collar.2"
+    },
+    {
+     "at": [
+      46,
+      58
+     ],
+     "attach": "axil",
+     "layout": "cushion",
+     "room": {
+      "down": 39,
+      "left": 46,
+      "right": 37,
+      "up": 58
+     },
+     "side": 1,
+     "socket": "axil.0"
+    },
+    {
+     "at": [
+      42,
+      43
+     ],
+     "attach": "apex",
+     "layout": "cushion",
+     "room": {
+      "down": 54,
+      "left": 42,
+      "right": 41,
+      "up": 43
+     },
+     "side": 0,
+     "socket": "apex"
+    },
+    {
+     "at": [
+      42,
+      43
+     ],
+     "attach": "flower",
+     "layout": "cushion",
+     "room": {
+      "down": 54,
+      "left": 42,
+      "right": 41,
+      "up": 43
+     },
+     "side": 0,
+     "socket": "flower.0"
+    },
+    {
+     "at": [
+      54,
+      42
+     ],
+     "attach": "flower",
+     "layout": "cushion",
+     "room": {
+      "down": 55,
+      "left": 54,
+      "right": 29,
+      "up": 42
+     },
+     "side": 1,
+     "socket": "flower.1"
+    },
+    {
+     "at": [
+      42,
+      43
+     ],
+     "attach": "seedHead",
+     "layout": "cushion",
+     "room": {
+      "down": 54,
+      "left": 42,
+      "right": 41,
+      "up": 43
+     },
+     "side": 0,
+     "socket": "seedHead.0"
+    },
+    {
+     "at": [
+      31,
+      47
+     ],
+     "attach": "seedHead",
+     "layout": "cushion",
+     "room": {
+      "down": 50,
+      "left": 31,
+      "right": 52,
+      "up": 47
+     },
+     "side": -1,
+     "socket": "seedHead.1"
+    },
+    {
+     "at": [
+      57,
+      53
+     ],
+     "attach": "seedHead",
+     "layout": "cushion",
+     "room": {
+      "down": 44,
+      "left": 57,
+      "right": 26,
+      "up": 53
+     },
+     "side": 1,
+     "socket": "seedHead.2"
+    },
+    {
+     "at": [
+      30,
+      61
+     ],
+     "attach": "pod",
+     "layout": "cushion",
+     "room": {
+      "down": 36,
+      "left": 30,
+      "right": 53,
+      "up": 61
+     },
+     "side": -1,
+     "socket": "pod.0"
+    },
+    {
+     "at": [
+      56,
+      58
+     ],
+     "attach": "pod",
+     "layout": "cushion",
+     "room": {
+      "down": 39,
+      "left": 56,
+      "right": 27,
+      "up": 58
+     },
+     "side": 1,
+     "socket": "pod.1"
+    },
+    {
+     "at": [
+      52,
+      32
+     ],
+     "attach": "drift",
+     "layout": "cushion",
+     "room": {
+      "down": 65,
+      "left": 52,
+      "right": 31,
+      "up": 32
+     },
+     "side": 0,
+     "socket": "drift.0"
+    },
+    {
+     "at": [
+      59,
+      38
+     ],
+     "attach": "drift",
+     "layout": "cushion",
+     "room": {
+      "down": 59,
+      "left": 59,
+      "right": 24,
+      "up": 38
+     },
+     "side": 0,
+     "socket": "drift.1"
+    },
+    {
+     "at": [
+      30,
+      34
+     ],
+     "attach": "drift",
+     "layout": "cushion",
+     "room": {
+      "down": 63,
+      "left": 30,
+      "right": 53,
+      "up": 34
+     },
+     "side": 0,
+     "socket": "drift.2"
+    },
+    {
+     "at": [
+      41,
+      59
+     ],
+     "attach": "stiltRoot",
+     "layout": "cushion",
+     "room": {
+      "down": 38,
+      "left": 41,
+      "right": 42,
+      "up": 59
+     },
+     "side": -1,
+     "socket": "stilt.0"
+    },
+    {
+     "at": [
+      46,
+      59
+     ],
+     "attach": "stiltRoot",
+     "layout": "cushion",
+     "room": {
+      "down": 38,
+      "left": 46,
+      "right": 37,
+      "up": 59
+     },
+     "side": 1,
+     "socket": "stilt.1"
+    },
+    {
+     "at": [
+      42,
+      68
+     ],
+     "attach": "rootCrown",
+     "layout": "*",
+     "room": {
+      "down": 29,
+      "left": 42,
+      "right": 41,
+      "up": 68
+     },
+     "side": 0,
+     "socket": "rootCrown"
+    },
+    {
+     "at": [
+      42,
+      70
+     ],
+     "attach": "primaryRoot",
+     "layout": "*",
+     "room": {
+      "down": 27,
+      "left": 42,
+      "right": 41,
+      "up": 70
+     },
+     "side": 0,
+     "socket": "primaryRoot"
+    },
+    {
+     "at": [
+      35,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 35,
+      "right": 48,
+      "up": 69
+     },
+     "side": -1,
+     "socket": "aerial.0"
+    },
+    {
+     "at": [
+      50,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 50,
+      "right": 33,
+      "up": 69
+     },
+     "side": 1,
+     "socket": "aerial.1"
+    },
+    {
+     "at": [
+      30,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 30,
+      "right": 53,
+      "up": 69
+     },
+     "side": -1,
+     "socket": "aerial.2"
+    },
+    {
+     "at": [
+      55,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 55,
+      "right": 28,
+      "up": 69
+     },
+     "side": 1,
+     "socket": "aerial.3"
+    }
+   ]
+  },
+  "reed": {
+   "components": 32,
+   "contract": "art/plant/contracts/reed.json",
+   "grammar": "resources/plant-visual/grammars/reed.js",
+   "packs": [
+    "proof-reed-spire"
+   ],
+   "ref": "reed@1",
+   "skeleton": "axes",
+   "socketCount": 246,
+   "sockets": [
+    {
+     "at": [
+      42,
+      18
+     ],
+     "attach": "apex",
+     "layout": "open",
+     "room": {
+      "down": 79,
+      "left": 42,
+      "right": 41,
+      "up": 18
+     },
+     "side": 0,
+     "socket": "c0.apex"
+    },
+    {
+     "at": [
+      42,
+      18
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 79,
+      "left": 42,
+      "right": 41,
+      "up": 18
+     },
+     "side": 0,
+     "socket": "c0.flower.0"
+    },
+    {
+     "at": [
+      42,
+      18
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 79,
+      "left": 42,
+      "right": 41,
+      "up": 18
+     },
+     "side": 0,
+     "socket": "c0.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      41,
+      58
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 39,
+      "left": 41,
+      "right": 42,
+      "up": 58
+     },
+     "side": -1,
+     "socket": "c0.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      47
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 50,
+      "left": 45,
+      "right": 38,
+      "up": 47
+     },
+     "side": 1,
+     "socket": "c0.leaf.1"
+    },
+    {
+     "at": [
+      43,
+      41
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 56,
+      "left": 43,
+      "right": 40,
+      "up": 41
+     },
+     "side": 0,
+     "socket": "c0.collar.0"
+    },
+    {
+     "at": [
+      52,
+      13
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 84,
+      "left": 52,
+      "right": 31,
+      "up": 13
+     },
+     "side": 0,
+     "socket": "c0.drift.0"
+    },
+    {
+     "at": [
+      57,
+      19
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 78,
+      "left": 57,
+      "right": 26,
+      "up": 19
+     },
+     "side": 0,
+     "socket": "c0.drift.1"
+    },
+    {
+     "at": [
+      31,
+      15
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 82,
+      "left": 31,
+      "right": 52,
+      "up": 15
+     },
+     "side": 0,
+     "socket": "c0.drift.2"
+    },
+    {
+     "at": [
+      31,
+      25
+     ],
+     "attach": "apex",
+     "layout": "open",
+     "room": {
+      "down": 72,
+      "left": 31,
+      "right": 52,
+      "up": 25
+     },
+     "side": 0,
+     "socket": "c1.apex"
+    },
+    {
+     "at": [
+      31,
+      25
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 72,
+      "left": 31,
+      "right": 52,
+      "up": 25
+     },
+     "side": 0,
+     "socket": "c1.flower.0"
+    },
+    {
+     "at": [
+      31,
+      25
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 72,
+      "left": 31,
+      "right": 52,
+      "up": 25
+     },
+     "side": 0,
+     "socket": "c1.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      34,
+      60
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 37,
+      "left": 34,
+      "right": 49,
+      "up": 60
+     },
+     "side": -1,
+     "socket": "c1.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      36,
+      50
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 47,
+      "left": 36,
+      "right": 47,
+      "up": 50
+     },
+     "side": 1,
+     "socket": "c1.leaf.1"
+    },
+    {
+     "at": [
+      34,
+      45
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 52,
+      "left": 34,
+      "right": 49,
+      "up": 45
+     },
+     "side": 0,
+     "socket": "c1.collar.0"
+    },
+    {
+     "at": [
+      25,
+      30
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 67,
+      "left": 25,
+      "right": 58,
+      "up": 30
+     },
+     "side": -1,
+     "socket": "c1.flower.1"
+    },
+    {
+     "at": [
+      27,
+      51
+     ],
+     "attach": "pod",
+     "layout": "open",
+     "room": {
+      "down": 46,
+      "left": 27,
+      "right": 56,
+      "up": 51
+     },
+     "side": -1,
+     "socket": "c1.pod.0"
+    },
+    {
+     "at": [
+      53,
+      23
+     ],
+     "attach": "apex",
+     "layout": "open",
+     "room": {
+      "down": 74,
+      "left": 53,
+      "right": 30,
+      "up": 23
+     },
+     "side": 0,
+     "socket": "c2.apex"
+    },
+    {
+     "at": [
+      53,
+      23
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 74,
+      "left": 53,
+      "right": 30,
+      "up": 23
+     },
+     "side": 0,
+     "socket": "c2.flower.0"
+    },
+    {
+     "at": [
+      53,
+      23
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 74,
+      "left": 53,
+      "right": 30,
+      "up": 23
+     },
+     "side": 0,
+     "socket": "c2.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      48,
+      59
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 38,
+      "left": 48,
+      "right": 35,
+      "up": 59
+     },
+     "side": -1,
+     "socket": "c2.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      52,
+      50
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 47,
+      "left": 52,
+      "right": 31,
+      "up": 50
+     },
+     "side": 1,
+     "socket": "c2.leaf.1"
+    },
+    {
+     "at": [
+      50,
+      44
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 53,
+      "left": 50,
+      "right": 33,
+      "up": 44
+     },
+     "side": 0,
+     "socket": "c2.collar.0"
+    },
+    {
+     "at": [
+      57,
+      51
+     ],
+     "attach": "pod",
+     "layout": "open",
+     "room": {
+      "down": 46,
+      "left": 57,
+      "right": 26,
+      "up": 51
+     },
+     "side": 1,
+     "socket": "c2.pod.0"
+    },
+    {
+     "at": [
+      23,
+      33
+     ],
+     "attach": "apex",
+     "layout": "open",
+     "room": {
+      "down": 64,
+      "left": 23,
+      "right": 60,
+      "up": 33
+     },
+     "side": 0,
+     "socket": "c3.apex"
+    },
+    {
+     "at": [
+      23,
+      33
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 64,
+      "left": 23,
+      "right": 60,
+      "up": 33
+     },
+     "side": 0,
+     "socket": "c3.flower.0"
+    },
+    {
+     "at": [
+      23,
+      33
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 64,
+      "left": 23,
+      "right": 60,
+      "up": 33
+     },
+     "side": 0,
+     "socket": "c3.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      28,
+      61
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 36,
+      "left": 28,
+      "right": 55,
+      "up": 61
+     },
+     "side": -1,
+     "socket": "c3.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      29,
+      54
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 43,
+      "left": 29,
+      "right": 54,
+      "up": 54
+     },
+     "side": 1,
+     "socket": "c3.leaf.1"
+    },
+    {
+     "at": [
+      26,
+      49
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 48,
+      "left": 26,
+      "right": 57,
+      "up": 49
+     },
+     "side": 0,
+     "socket": "c3.collar.0"
+    },
+    {
+     "at": [
+      61,
+      31
+     ],
+     "attach": "apex",
+     "layout": "open",
+     "room": {
+      "down": 66,
+      "left": 61,
+      "right": 22,
+      "up": 31
+     },
+     "side": 0,
+     "socket": "c4.apex"
+    },
+    {
+     "at": [
+      61,
+      31
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 66,
+      "left": 61,
+      "right": 22,
+      "up": 31
+     },
+     "side": 0,
+     "socket": "c4.flower.0"
+    },
+    {
+     "at": [
+      61,
+      31
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 66,
+      "left": 61,
+      "right": 22,
+      "up": 31
+     },
+     "side": 0,
+     "socket": "c4.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      54,
+      61
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 36,
+      "left": 54,
+      "right": 29,
+      "up": 61
+     },
+     "side": -1,
+     "socket": "c4.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      59,
+      53
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 44,
+      "left": 59,
+      "right": 24,
+      "up": 53
+     },
+     "side": 1,
+     "socket": "c4.leaf.1"
+    },
+    {
+     "at": [
+      58,
+      48
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 49,
+      "left": 58,
+      "right": 25,
+      "up": 48
+     },
+     "side": 0,
+     "socket": "c4.collar.0"
+    },
+    {
+     "at": [
+      42,
+      35
+     ],
+     "attach": "apex",
+     "layout": "open",
+     "room": {
+      "down": 62,
+      "left": 42,
+      "right": 41,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "s0.apex"
+    },
+    {
+     "at": [
+      42,
+      35
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 62,
+      "left": 42,
+      "right": 41,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "s0.flower.0"
+    },
+    {
+     "at": [
+      42,
+      35
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 62,
+      "left": 42,
+      "right": 41,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "s0.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      41,
+      62
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 35,
+      "left": 41,
+      "right": 42,
+      "up": 62
+     },
+     "side": -1,
+     "socket": "s0.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      55
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 42,
+      "left": 45,
+      "right": 38,
+      "up": 55
+     },
+     "side": 1,
+     "socket": "s0.leaf.1"
+    },
+    {
+     "at": [
+      43,
+      50
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 47,
+      "left": 43,
+      "right": 40,
+      "up": 50
+     },
+     "side": 0,
+     "socket": "s0.collar.0"
+    },
+    {
+     "at": [
+      52,
+      30
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 67,
+      "left": 52,
+      "right": 31,
+      "up": 30
+     },
+     "side": 0,
+     "socket": "s0.drift.0"
+    },
+    {
+     "at": [
+      57,
+      36
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 61,
+      "left": 57,
+      "right": 26,
+      "up": 36
+     },
+     "side": 0,
+     "socket": "s0.drift.1"
+    },
+    {
+     "at": [
+      31,
+      32
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 65,
+      "left": 31,
+      "right": 52,
+      "up": 32
+     },
+     "side": 0,
+     "socket": "s0.drift.2"
+    },
+    {
+     "at": [
+      31,
+      40
+     ],
+     "attach": "apex",
+     "layout": "open",
+     "room": {
+      "down": 57,
+      "left": 31,
+      "right": 52,
+      "up": 40
+     },
+     "side": 0,
+     "socket": "s1.apex"
+    },
+    {
+     "at": [
+      31,
+      40
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 57,
+      "left": 31,
+      "right": 52,
+      "up": 40
+     },
+     "side": 0,
+     "socket": "s1.flower.0"
+    },
+    {
+     "at": [
+      31,
+      40
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 57,
+      "left": 31,
+      "right": 52,
+      "up": 40
+     },
+     "side": 0,
+     "socket": "s1.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      34,
+      63
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 34,
+      "left": 34,
+      "right": 49,
+      "up": 63
+     },
+     "side": -1,
+     "socket": "s1.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      36,
+      57
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 40,
+      "left": 36,
+      "right": 47,
+      "up": 57
+     },
+     "side": 1,
+     "socket": "s1.leaf.1"
+    },
+    {
+     "at": [
+      33,
+      53
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 44,
+      "left": 33,
+      "right": 50,
+      "up": 53
+     },
+     "side": 0,
+     "socket": "s1.collar.0"
+    },
+    {
+     "at": [
+      25,
+      42
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 55,
+      "left": 25,
+      "right": 58,
+      "up": 42
+     },
+     "side": -1,
+     "socket": "s1.flower.1"
+    },
+    {
+     "at": [
+      27,
+      58
+     ],
+     "attach": "pod",
+     "layout": "open",
+     "room": {
+      "down": 39,
+      "left": 27,
+      "right": 56,
+      "up": 58
+     },
+     "side": -1,
+     "socket": "s1.pod.0"
+    },
+    {
+     "at": [
+      53,
+      39
+     ],
+     "attach": "apex",
+     "layout": "open",
+     "room": {
+      "down": 58,
+      "left": 53,
+      "right": 30,
+      "up": 39
+     },
+     "side": 0,
+     "socket": "s2.apex"
+    },
+    {
+     "at": [
+      53,
+      39
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 58,
+      "left": 53,
+      "right": 30,
+      "up": 39
+     },
+     "side": 0,
+     "socket": "s2.flower.0"
+    },
+    {
+     "at": [
+      53,
+      39
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 58,
+      "left": 53,
+      "right": 30,
+      "up": 39
+     },
+     "side": 0,
+     "socket": "s2.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      48,
+      62
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 35,
+      "left": 48,
+      "right": 35,
+      "up": 62
+     },
+     "side": -1,
+     "socket": "s2.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      52,
+      56
+     ],
+     "attach": "leafSocket",
+     "layout": "open",
+     "room": {
+      "down": 41,
+      "left": 52,
+      "right": 31,
+      "up": 56
+     },
+     "side": 1,
+     "socket": "s2.leaf.1"
+    },
+    {
+     "at": [
+      50,
+      53
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 44,
+      "left": 50,
+      "right": 33,
+      "up": 53
+     },
+     "side": 0,
+     "socket": "s2.collar.0"
+    },
+    {
+     "at": [
+      57,
+      57
+     ],
+     "attach": "pod",
+     "layout": "open",
+     "room": {
+      "down": 40,
+      "left": 57,
+      "right": 26,
+      "up": 57
+     },
+     "side": 1,
+     "socket": "s2.pod.0"
+    },
+    {
+     "at": [
+      42,
+      68
+     ],
+     "attach": "rootCrown",
+     "layout": "*",
+     "room": {
+      "down": 29,
+      "left": 42,
+      "right": 41,
+      "up": 68
+     },
+     "side": 0,
+     "socket": "rootCrown"
+    },
+    {
+     "at": [
+      42,
+      73
+     ],
+     "attach": "primaryRoot",
+     "layout": "*",
+     "room": {
+      "down": 24,
+      "left": 42,
+      "right": 41,
+      "up": 73
+     },
+     "side": 0,
+     "socket": "primaryRoot"
+    },
+    {
+     "at": [
+      25,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 25,
+      "right": 58,
+      "up": 69
+     },
+     "side": -1,
+     "socket": "aerial.0"
+    },
+    {
+     "at": [
+      60,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 60,
+      "right": 23,
+      "up": 69
+     },
+     "side": 1,
+     "socket": "aerial.1"
+    },
+    {
+     "at": [
+      19,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 19,
+      "right": 64,
+      "up": 69
+     },
+     "side": -1,
+     "socket": "aerial.2"
+    },
+    {
+     "at": [
+      66,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 66,
+      "right": 17,
+      "up": 69
+     },
+     "side": 1,
+     "socket": "aerial.3"
+    },
+    {
+     "at": [
+      42,
+      20
+     ],
+     "attach": "apex",
+     "layout": "dense",
+     "room": {
+      "down": 77,
+      "left": 42,
+      "right": 41,
+      "up": 20
+     },
+     "side": 0,
+     "socket": "c0.apex"
+    },
+    {
+     "at": [
+      42,
+      20
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 77,
+      "left": 42,
+      "right": 41,
+      "up": 20
+     },
+     "side": 0,
+     "socket": "c0.flower.0"
+    },
+    {
+     "at": [
+      42,
+      20
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 77,
+      "left": 42,
+      "right": 41,
+      "up": 20
+     },
+     "side": 0,
+     "socket": "c0.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      41,
+      59
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 38,
+      "left": 41,
+      "right": 42,
+      "up": 59
+     },
+     "side": -1,
+     "socket": "c0.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      48
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 49,
+      "left": 45,
+      "right": 38,
+      "up": 48
+     },
+     "side": 1,
+     "socket": "c0.leaf.1"
+    },
+    {
+     "at": [
+      43,
+      42
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 55,
+      "left": 43,
+      "right": 40,
+      "up": 42
+     },
+     "side": 0,
+     "socket": "c0.collar.0"
+    },
+    {
+     "at": [
+      52,
+      15
+     ],
+     "attach": "drift",
+     "layout": "dense",
+     "room": {
+      "down": 82,
+      "left": 52,
+      "right": 31,
+      "up": 15
+     },
+     "side": 0,
+     "socket": "c0.drift.0"
+    },
+    {
+     "at": [
+      57,
+      21
+     ],
+     "attach": "drift",
+     "layout": "dense",
+     "room": {
+      "down": 76,
+      "left": 57,
+      "right": 26,
+      "up": 21
+     },
+     "side": 0,
+     "socket": "c0.drift.1"
+    },
+    {
+     "at": [
+      31,
+      17
+     ],
+     "attach": "drift",
+     "layout": "dense",
+     "room": {
+      "down": 80,
+      "left": 31,
+      "right": 52,
+      "up": 17
+     },
+     "side": 0,
+     "socket": "c0.drift.2"
+    },
+    {
+     "at": [
+      33,
+      27
+     ],
+     "attach": "apex",
+     "layout": "dense",
+     "room": {
+      "down": 70,
+      "left": 33,
+      "right": 50,
+      "up": 27
+     },
+     "side": 0,
+     "socket": "c1.apex"
+    },
+    {
+     "at": [
+      33,
+      27
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 70,
+      "left": 33,
+      "right": 50,
+      "up": 27
+     },
+     "side": 0,
+     "socket": "c1.flower.0"
+    },
+    {
+     "at": [
+      33,
+      27
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 70,
+      "left": 33,
+      "right": 50,
+      "up": 27
+     },
+     "side": 0,
+     "socket": "c1.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      35,
+      60
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 37,
+      "left": 35,
+      "right": 48,
+      "up": 60
+     },
+     "side": -1,
+     "socket": "c1.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      37,
+      51
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 46,
+      "left": 37,
+      "right": 46,
+      "up": 51
+     },
+     "side": 1,
+     "socket": "c1.leaf.1"
+    },
+    {
+     "at": [
+      35,
+      46
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 51,
+      "left": 35,
+      "right": 48,
+      "up": 46
+     },
+     "side": 0,
+     "socket": "c1.collar.0"
+    },
+    {
+     "at": [
+      27,
+      31
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 66,
+      "left": 27,
+      "right": 56,
+      "up": 31
+     },
+     "side": -1,
+     "socket": "c1.flower.1"
+    },
+    {
+     "at": [
+      28,
+      52
+     ],
+     "attach": "pod",
+     "layout": "dense",
+     "room": {
+      "down": 45,
+      "left": 28,
+      "right": 55,
+      "up": 52
+     },
+     "side": -1,
+     "socket": "c1.pod.0"
+    },
+    {
+     "at": [
+      51,
+      25
+     ],
+     "attach": "apex",
+     "layout": "dense",
+     "room": {
+      "down": 72,
+      "left": 51,
+      "right": 32,
+      "up": 25
+     },
+     "side": 0,
+     "socket": "c2.apex"
+    },
+    {
+     "at": [
+      51,
+      25
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 72,
+      "left": 51,
+      "right": 32,
+      "up": 25
+     },
+     "side": 0,
+     "socket": "c2.flower.0"
+    },
+    {
+     "at": [
+      51,
+      25
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 72,
+      "left": 51,
+      "right": 32,
+      "up": 25
+     },
+     "side": 0,
+     "socket": "c2.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      47,
+      60
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 37,
+      "left": 47,
+      "right": 36,
+      "up": 60
+     },
+     "side": -1,
+     "socket": "c2.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      51,
+      50
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 47,
+      "left": 51,
+      "right": 32,
+      "up": 50
+     },
+     "side": 1,
+     "socket": "c2.leaf.1"
+    },
+    {
+     "at": [
+      49,
+      45
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 52,
+      "left": 49,
+      "right": 34,
+      "up": 45
+     },
+     "side": 0,
+     "socket": "c2.collar.0"
+    },
+    {
+     "at": [
+      56,
+      51
+     ],
+     "attach": "pod",
+     "layout": "dense",
+     "room": {
+      "down": 46,
+      "left": 56,
+      "right": 27,
+      "up": 51
+     },
+     "side": 1,
+     "socket": "c2.pod.0"
+    },
+    {
+     "at": [
+      27,
+      35
+     ],
+     "attach": "apex",
+     "layout": "dense",
+     "room": {
+      "down": 62,
+      "left": 27,
+      "right": 56,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "c3.apex"
+    },
+    {
+     "at": [
+      27,
+      35
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 62,
+      "left": 27,
+      "right": 56,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "c3.flower.0"
+    },
+    {
+     "at": [
+      27,
+      35
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 62,
+      "left": 27,
+      "right": 56,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "c3.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      30,
+      62
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 35,
+      "left": 30,
+      "right": 53,
+      "up": 62
+     },
+     "side": -1,
+     "socket": "c3.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      32,
+      55
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 42,
+      "left": 32,
+      "right": 51,
+      "up": 55
+     },
+     "side": 1,
+     "socket": "c3.leaf.1"
+    },
+    {
+     "at": [
+      29,
+      50
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 47,
+      "left": 29,
+      "right": 54,
+      "up": 50
+     },
+     "side": 0,
+     "socket": "c3.collar.0"
+    },
+    {
+     "at": [
+      57,
+      33
+     ],
+     "attach": "apex",
+     "layout": "dense",
+     "room": {
+      "down": 64,
+      "left": 57,
+      "right": 26,
+      "up": 33
+     },
+     "side": 0,
+     "socket": "c4.apex"
+    },
+    {
+     "at": [
+      57,
+      33
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 64,
+      "left": 57,
+      "right": 26,
+      "up": 33
+     },
+     "side": 0,
+     "socket": "c4.flower.0"
+    },
+    {
+     "at": [
+      57,
+      33
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 64,
+      "left": 57,
+      "right": 26,
+      "up": 33
+     },
+     "side": 0,
+     "socket": "c4.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      52,
+      61
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 36,
+      "left": 52,
+      "right": 31,
+      "up": 61
+     },
+     "side": -1,
+     "socket": "c4.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      56,
+      54
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 43,
+      "left": 56,
+      "right": 27,
+      "up": 54
+     },
+     "side": 1,
+     "socket": "c4.leaf.1"
+    },
+    {
+     "at": [
+      55,
+      49
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 48,
+      "left": 55,
+      "right": 28,
+      "up": 49
+     },
+     "side": 0,
+     "socket": "c4.collar.0"
+    },
+    {
+     "at": [
+      42,
+      37
+     ],
+     "attach": "apex",
+     "layout": "dense",
+     "room": {
+      "down": 60,
+      "left": 42,
+      "right": 41,
+      "up": 37
+     },
+     "side": 0,
+     "socket": "s0.apex"
+    },
+    {
+     "at": [
+      42,
+      37
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 60,
+      "left": 42,
+      "right": 41,
+      "up": 37
+     },
+     "side": 0,
+     "socket": "s0.flower.0"
+    },
+    {
+     "at": [
+      42,
+      37
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 60,
+      "left": 42,
+      "right": 41,
+      "up": 37
+     },
+     "side": 0,
+     "socket": "s0.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      41,
+      62
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 35,
+      "left": 41,
+      "right": 42,
+      "up": 62
+     },
+     "side": -1,
+     "socket": "s0.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      55
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 42,
+      "left": 45,
+      "right": 38,
+      "up": 55
+     },
+     "side": 1,
+     "socket": "s0.leaf.1"
+    },
+    {
+     "at": [
+      43,
+      51
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 46,
+      "left": 43,
+      "right": 40,
+      "up": 51
+     },
+     "side": 0,
+     "socket": "s0.collar.0"
+    },
+    {
+     "at": [
+      52,
+      32
+     ],
+     "attach": "drift",
+     "layout": "dense",
+     "room": {
+      "down": 65,
+      "left": 52,
+      "right": 31,
+      "up": 32
+     },
+     "side": 0,
+     "socket": "s0.drift.0"
+    },
+    {
+     "at": [
+      57,
+      38
+     ],
+     "attach": "drift",
+     "layout": "dense",
+     "room": {
+      "down": 59,
+      "left": 57,
+      "right": 26,
+      "up": 38
+     },
+     "side": 0,
+     "socket": "s0.drift.1"
+    },
+    {
+     "at": [
+      31,
+      34
+     ],
+     "attach": "drift",
+     "layout": "dense",
+     "room": {
+      "down": 63,
+      "left": 31,
+      "right": 52,
+      "up": 34
+     },
+     "side": 0,
+     "socket": "s0.drift.2"
+    },
+    {
+     "at": [
+      33,
+      42
+     ],
+     "attach": "apex",
+     "layout": "dense",
+     "room": {
+      "down": 55,
+      "left": 33,
+      "right": 50,
+      "up": 42
+     },
+     "side": 0,
+     "socket": "s1.apex"
+    },
+    {
+     "at": [
+      33,
+      42
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 55,
+      "left": 33,
+      "right": 50,
+      "up": 42
+     },
+     "side": 0,
+     "socket": "s1.flower.0"
+    },
+    {
+     "at": [
+      33,
+      42
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 55,
+      "left": 33,
+      "right": 50,
+      "up": 42
+     },
+     "side": 0,
+     "socket": "s1.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      35,
+      63
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 34,
+      "left": 35,
+      "right": 48,
+      "up": 63
+     },
+     "side": -1,
+     "socket": "s1.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      37,
+      57
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 40,
+      "left": 37,
+      "right": 46,
+      "up": 57
+     },
+     "side": 1,
+     "socket": "s1.leaf.1"
+    },
+    {
+     "at": [
+      35,
+      54
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 43,
+      "left": 35,
+      "right": 48,
+      "up": 54
+     },
+     "side": 0,
+     "socket": "s1.collar.0"
+    },
+    {
+     "at": [
+      27,
+      43
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 54,
+      "left": 27,
+      "right": 56,
+      "up": 43
+     },
+     "side": -1,
+     "socket": "s1.flower.1"
+    },
+    {
+     "at": [
+      28,
+      58
+     ],
+     "attach": "pod",
+     "layout": "dense",
+     "room": {
+      "down": 39,
+      "left": 28,
+      "right": 55,
+      "up": 58
+     },
+     "side": -1,
+     "socket": "s1.pod.0"
+    },
+    {
+     "at": [
+      51,
+      41
+     ],
+     "attach": "apex",
+     "layout": "dense",
+     "room": {
+      "down": 56,
+      "left": 51,
+      "right": 32,
+      "up": 41
+     },
+     "side": 0,
+     "socket": "s2.apex"
+    },
+    {
+     "at": [
+      51,
+      41
+     ],
+     "attach": "flower",
+     "layout": "dense",
+     "room": {
+      "down": 56,
+      "left": 51,
+      "right": 32,
+      "up": 41
+     },
+     "side": 0,
+     "socket": "s2.flower.0"
+    },
+    {
+     "at": [
+      51,
+      41
+     ],
+     "attach": "seedHead",
+     "layout": "dense",
+     "room": {
+      "down": 56,
+      "left": 51,
+      "right": 32,
+      "up": 41
+     },
+     "side": 0,
+     "socket": "s2.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      47,
+      63
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 34,
+      "left": 47,
+      "right": 36,
+      "up": 63
+     },
+     "side": -1,
+     "socket": "s2.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      51,
+      57
+     ],
+     "attach": "leafSocket",
+     "layout": "dense",
+     "room": {
+      "down": 40,
+      "left": 51,
+      "right": 32,
+      "up": 57
+     },
+     "side": 1,
+     "socket": "s2.leaf.1"
+    },
+    {
+     "at": [
+      49,
+      54
+     ],
+     "attach": "stemNode",
+     "layout": "dense",
+     "room": {
+      "down": 43,
+      "left": 49,
+      "right": 34,
+      "up": 54
+     },
+     "side": 0,
+     "socket": "s2.collar.0"
+    },
+    {
+     "at": [
+      56,
+      58
+     ],
+     "attach": "pod",
+     "layout": "dense",
+     "room": {
+      "down": 39,
+      "left": 56,
+      "right": 27,
+      "up": 58
+     },
+     "side": 1,
+     "socket": "s2.pod.0"
+    },
+    {
+     "at": [
+      42,
+      22
+     ],
+     "attach": "apex",
+     "layout": "bunched",
+     "room": {
+      "down": 75,
+      "left": 42,
+      "right": 41,
+      "up": 22
+     },
+     "side": 0,
+     "socket": "c0.apex"
+    },
+    {
+     "at": [
+      42,
+      22
+     ],
+     "attach": "flower",
+     "layout": "bunched",
+     "room": {
+      "down": 75,
+      "left": 42,
+      "right": 41,
+      "up": 22
+     },
+     "side": 0,
+     "socket": "c0.flower.0"
+    },
+    {
+     "at": [
+      42,
+      22
+     ],
+     "attach": "seedHead",
+     "layout": "bunched",
+     "room": {
+      "down": 75,
+      "left": 42,
+      "right": 41,
+      "up": 22
+     },
+     "side": 0,
+     "socket": "c0.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      41,
+      59
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 38,
+      "left": 41,
+      "right": 42,
+      "up": 59
+     },
+     "side": -1,
+     "socket": "c0.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      49
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 48,
+      "left": 45,
+      "right": 38,
+      "up": 49
+     },
+     "side": 1,
+     "socket": "c0.leaf.1"
+    },
+    {
+     "at": [
+      43,
+      43
+     ],
+     "attach": "stemNode",
+     "layout": "bunched",
+     "room": {
+      "down": 54,
+      "left": 43,
+      "right": 40,
+      "up": 43
+     },
+     "side": 0,
+     "socket": "c0.collar.0"
+    },
+    {
+     "at": [
+      52,
+      17
+     ],
+     "attach": "drift",
+     "layout": "bunched",
+     "room": {
+      "down": 80,
+      "left": 52,
+      "right": 31,
+      "up": 17
+     },
+     "side": 0,
+     "socket": "c0.drift.0"
+    },
+    {
+     "at": [
+      57,
+      23
+     ],
+     "attach": "drift",
+     "layout": "bunched",
+     "room": {
+      "down": 74,
+      "left": 57,
+      "right": 26,
+      "up": 23
+     },
+     "side": 0,
+     "socket": "c0.drift.1"
+    },
+    {
+     "at": [
+      31,
+      19
+     ],
+     "attach": "drift",
+     "layout": "bunched",
+     "room": {
+      "down": 78,
+      "left": 31,
+      "right": 52,
+      "up": 19
+     },
+     "side": 0,
+     "socket": "c0.drift.2"
+    },
+    {
+     "at": [
+      37,
+      29
+     ],
+     "attach": "apex",
+     "layout": "bunched",
+     "room": {
+      "down": 68,
+      "left": 37,
+      "right": 46,
+      "up": 29
+     },
+     "side": 0,
+     "socket": "c1.apex"
+    },
+    {
+     "at": [
+      37,
+      29
+     ],
+     "attach": "flower",
+     "layout": "bunched",
+     "room": {
+      "down": 68,
+      "left": 37,
+      "right": 46,
+      "up": 29
+     },
+     "side": 0,
+     "socket": "c1.flower.0"
+    },
+    {
+     "at": [
+      37,
+      29
+     ],
+     "attach": "seedHead",
+     "layout": "bunched",
+     "room": {
+      "down": 68,
+      "left": 37,
+      "right": 46,
+      "up": 29
+     },
+     "side": 0,
+     "socket": "c1.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      38,
+      60
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 37,
+      "left": 38,
+      "right": 45,
+      "up": 60
+     },
+     "side": -1,
+     "socket": "c1.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      40,
+      52
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 45,
+      "left": 40,
+      "right": 43,
+      "up": 52
+     },
+     "side": 1,
+     "socket": "c1.leaf.1"
+    },
+    {
+     "at": [
+      38,
+      47
+     ],
+     "attach": "stemNode",
+     "layout": "bunched",
+     "room": {
+      "down": 50,
+      "left": 38,
+      "right": 45,
+      "up": 47
+     },
+     "side": 0,
+     "socket": "c1.collar.0"
+    },
+    {
+     "at": [
+      30,
+      33
+     ],
+     "attach": "flower",
+     "layout": "bunched",
+     "room": {
+      "down": 64,
+      "left": 30,
+      "right": 53,
+      "up": 33
+     },
+     "side": -1,
+     "socket": "c1.flower.1"
+    },
+    {
+     "at": [
+      31,
+      53
+     ],
+     "attach": "pod",
+     "layout": "bunched",
+     "room": {
+      "down": 44,
+      "left": 31,
+      "right": 52,
+      "up": 53
+     },
+     "side": -1,
+     "socket": "c1.pod.0"
+    },
+    {
+     "at": [
+      47,
+      27
+     ],
+     "attach": "apex",
+     "layout": "bunched",
+     "room": {
+      "down": 70,
+      "left": 47,
+      "right": 36,
+      "up": 27
+     },
+     "side": 0,
+     "socket": "c2.apex"
+    },
+    {
+     "at": [
+      47,
+      27
+     ],
+     "attach": "flower",
+     "layout": "bunched",
+     "room": {
+      "down": 70,
+      "left": 47,
+      "right": 36,
+      "up": 27
+     },
+     "side": 0,
+     "socket": "c2.flower.0"
+    },
+    {
+     "at": [
+      47,
+      27
+     ],
+     "attach": "seedHead",
+     "layout": "bunched",
+     "room": {
+      "down": 70,
+      "left": 47,
+      "right": 36,
+      "up": 27
+     },
+     "side": 0,
+     "socket": "c2.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      44,
+      60
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 37,
+      "left": 44,
+      "right": 39,
+      "up": 60
+     },
+     "side": -1,
+     "socket": "c2.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      48,
+      51
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 46,
+      "left": 48,
+      "right": 35,
+      "up": 51
+     },
+     "side": 1,
+     "socket": "c2.leaf.1"
+    },
+    {
+     "at": [
+      46,
+      46
+     ],
+     "attach": "stemNode",
+     "layout": "bunched",
+     "room": {
+      "down": 51,
+      "left": 46,
+      "right": 37,
+      "up": 46
+     },
+     "side": 0,
+     "socket": "c2.collar.0"
+    },
+    {
+     "at": [
+      53,
+      52
+     ],
+     "attach": "pod",
+     "layout": "bunched",
+     "room": {
+      "down": 45,
+      "left": 53,
+      "right": 30,
+      "up": 52
+     },
+     "side": 1,
+     "socket": "c2.pod.0"
+    },
+    {
+     "at": [
+      32,
+      37
+     ],
+     "attach": "apex",
+     "layout": "bunched",
+     "room": {
+      "down": 60,
+      "left": 32,
+      "right": 51,
+      "up": 37
+     },
+     "side": 0,
+     "socket": "c3.apex"
+    },
+    {
+     "at": [
+      32,
+      37
+     ],
+     "attach": "flower",
+     "layout": "bunched",
+     "room": {
+      "down": 60,
+      "left": 32,
+      "right": 51,
+      "up": 37
+     },
+     "side": 0,
+     "socket": "c3.flower.0"
+    },
+    {
+     "at": [
+      32,
+      37
+     ],
+     "attach": "seedHead",
+     "layout": "bunched",
+     "room": {
+      "down": 60,
+      "left": 32,
+      "right": 51,
+      "up": 37
+     },
+     "side": 0,
+     "socket": "c3.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      33,
+      62
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 35,
+      "left": 33,
+      "right": 50,
+      "up": 62
+     },
+     "side": -1,
+     "socket": "c3.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      36,
+      55
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 42,
+      "left": 36,
+      "right": 47,
+      "up": 55
+     },
+     "side": 1,
+     "socket": "c3.leaf.1"
+    },
+    {
+     "at": [
+      33,
+      51
+     ],
+     "attach": "stemNode",
+     "layout": "bunched",
+     "room": {
+      "down": 46,
+      "left": 33,
+      "right": 50,
+      "up": 51
+     },
+     "side": 0,
+     "socket": "c3.collar.0"
+    },
+    {
+     "at": [
+      52,
+      35
+     ],
+     "attach": "apex",
+     "layout": "bunched",
+     "room": {
+      "down": 62,
+      "left": 52,
+      "right": 31,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "c4.apex"
+    },
+    {
+     "at": [
+      52,
+      35
+     ],
+     "attach": "flower",
+     "layout": "bunched",
+     "room": {
+      "down": 62,
+      "left": 52,
+      "right": 31,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "c4.flower.0"
+    },
+    {
+     "at": [
+      52,
+      35
+     ],
+     "attach": "seedHead",
+     "layout": "bunched",
+     "room": {
+      "down": 62,
+      "left": 52,
+      "right": 31,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "c4.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      49,
+      62
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 35,
+      "left": 49,
+      "right": 34,
+      "up": 62
+     },
+     "side": -1,
+     "socket": "c4.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      52,
+      55
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 42,
+      "left": 52,
+      "right": 31,
+      "up": 55
+     },
+     "side": 1,
+     "socket": "c4.leaf.1"
+    },
+    {
+     "at": [
+      51,
+      50
+     ],
+     "attach": "stemNode",
+     "layout": "bunched",
+     "room": {
+      "down": 47,
+      "left": 51,
+      "right": 32,
+      "up": 50
+     },
+     "side": 0,
+     "socket": "c4.collar.0"
+    },
+    {
+     "at": [
+      42,
+      39
+     ],
+     "attach": "apex",
+     "layout": "bunched",
+     "room": {
+      "down": 58,
+      "left": 42,
+      "right": 41,
+      "up": 39
+     },
+     "side": 0,
+     "socket": "s0.apex"
+    },
+    {
+     "at": [
+      42,
+      39
+     ],
+     "attach": "flower",
+     "layout": "bunched",
+     "room": {
+      "down": 58,
+      "left": 42,
+      "right": 41,
+      "up": 39
+     },
+     "side": 0,
+     "socket": "s0.flower.0"
+    },
+    {
+     "at": [
+      42,
+      39
+     ],
+     "attach": "seedHead",
+     "layout": "bunched",
+     "room": {
+      "down": 58,
+      "left": 42,
+      "right": 41,
+      "up": 39
+     },
+     "side": 0,
+     "socket": "s0.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      41,
+      62
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 35,
+      "left": 41,
+      "right": 42,
+      "up": 62
+     },
+     "side": -1,
+     "socket": "s0.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      56
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 41,
+      "left": 45,
+      "right": 38,
+      "up": 56
+     },
+     "side": 1,
+     "socket": "s0.leaf.1"
+    },
+    {
+     "at": [
+      43,
+      53
+     ],
+     "attach": "stemNode",
+     "layout": "bunched",
+     "room": {
+      "down": 44,
+      "left": 43,
+      "right": 40,
+      "up": 53
+     },
+     "side": 0,
+     "socket": "s0.collar.0"
+    },
+    {
+     "at": [
+      52,
+      34
+     ],
+     "attach": "drift",
+     "layout": "bunched",
+     "room": {
+      "down": 63,
+      "left": 52,
+      "right": 31,
+      "up": 34
+     },
+     "side": 0,
+     "socket": "s0.drift.0"
+    },
+    {
+     "at": [
+      57,
+      40
+     ],
+     "attach": "drift",
+     "layout": "bunched",
+     "room": {
+      "down": 57,
+      "left": 57,
+      "right": 26,
+      "up": 40
+     },
+     "side": 0,
+     "socket": "s0.drift.1"
+    },
+    {
+     "at": [
+      31,
+      36
+     ],
+     "attach": "drift",
+     "layout": "bunched",
+     "room": {
+      "down": 61,
+      "left": 31,
+      "right": 52,
+      "up": 36
+     },
+     "side": 0,
+     "socket": "s0.drift.2"
+    },
+    {
+     "at": [
+      37,
+      44
+     ],
+     "attach": "apex",
+     "layout": "bunched",
+     "room": {
+      "down": 53,
+      "left": 37,
+      "right": 46,
+      "up": 44
+     },
+     "side": 0,
+     "socket": "s1.apex"
+    },
+    {
+     "at": [
+      37,
+      44
+     ],
+     "attach": "flower",
+     "layout": "bunched",
+     "room": {
+      "down": 53,
+      "left": 37,
+      "right": 46,
+      "up": 44
+     },
+     "side": 0,
+     "socket": "s1.flower.0"
+    },
+    {
+     "at": [
+      37,
+      44
+     ],
+     "attach": "seedHead",
+     "layout": "bunched",
+     "room": {
+      "down": 53,
+      "left": 37,
+      "right": 46,
+      "up": 44
+     },
+     "side": 0,
+     "socket": "s1.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      38,
+      63
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 34,
+      "left": 38,
+      "right": 45,
+      "up": 63
+     },
+     "side": -1,
+     "socket": "s1.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      40,
+      58
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 39,
+      "left": 40,
+      "right": 43,
+      "up": 58
+     },
+     "side": 1,
+     "socket": "s1.leaf.1"
+    },
+    {
+     "at": [
+      38,
+      55
+     ],
+     "attach": "stemNode",
+     "layout": "bunched",
+     "room": {
+      "down": 42,
+      "left": 38,
+      "right": 45,
+      "up": 55
+     },
+     "side": 0,
+     "socket": "s1.collar.0"
+    },
+    {
+     "at": [
+      30,
+      45
+     ],
+     "attach": "flower",
+     "layout": "bunched",
+     "room": {
+      "down": 52,
+      "left": 30,
+      "right": 53,
+      "up": 45
+     },
+     "side": -1,
+     "socket": "s1.flower.1"
+    },
+    {
+     "at": [
+      31,
+      59
+     ],
+     "attach": "pod",
+     "layout": "bunched",
+     "room": {
+      "down": 38,
+      "left": 31,
+      "right": 52,
+      "up": 59
+     },
+     "side": -1,
+     "socket": "s1.pod.0"
+    },
+    {
+     "at": [
+      47,
+      43
+     ],
+     "attach": "apex",
+     "layout": "bunched",
+     "room": {
+      "down": 54,
+      "left": 47,
+      "right": 36,
+      "up": 43
+     },
+     "side": 0,
+     "socket": "s2.apex"
+    },
+    {
+     "at": [
+      47,
+      43
+     ],
+     "attach": "flower",
+     "layout": "bunched",
+     "room": {
+      "down": 54,
+      "left": 47,
+      "right": 36,
+      "up": 43
+     },
+     "side": 0,
+     "socket": "s2.flower.0"
+    },
+    {
+     "at": [
+      47,
+      43
+     ],
+     "attach": "seedHead",
+     "layout": "bunched",
+     "room": {
+      "down": 54,
+      "left": 47,
+      "right": 36,
+      "up": 43
+     },
+     "side": 0,
+     "socket": "s2.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      44,
+      63
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 34,
+      "left": 44,
+      "right": 39,
+      "up": 63
+     },
+     "side": -1,
+     "socket": "s2.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      48,
+      58
+     ],
+     "attach": "leafSocket",
+     "layout": "bunched",
+     "room": {
+      "down": 39,
+      "left": 48,
+      "right": 35,
+      "up": 58
+     },
+     "side": 1,
+     "socket": "s2.leaf.1"
+    },
+    {
+     "at": [
+      46,
+      55
+     ],
+     "attach": "stemNode",
+     "layout": "bunched",
+     "room": {
+      "down": 42,
+      "left": 46,
+      "right": 37,
+      "up": 55
+     },
+     "side": 0,
+     "socket": "s2.collar.0"
+    },
+    {
+     "at": [
+      53,
+      59
+     ],
+     "attach": "pod",
+     "layout": "bunched",
+     "room": {
+      "down": 38,
+      "left": 53,
+      "right": 30,
+      "up": 59
+     },
+     "side": 1,
+     "socket": "s2.pod.0"
+    },
+    {
+     "at": [
+      42,
+      24
+     ],
+     "attach": "apex",
+     "layout": "tight",
+     "room": {
+      "down": 73,
+      "left": 42,
+      "right": 41,
+      "up": 24
+     },
+     "side": 0,
+     "socket": "c0.apex"
+    },
+    {
+     "at": [
+      42,
+      24
+     ],
+     "attach": "flower",
+     "layout": "tight",
+     "room": {
+      "down": 73,
+      "left": 42,
+      "right": 41,
+      "up": 24
+     },
+     "side": 0,
+     "socket": "c0.flower.0"
+    },
+    {
+     "at": [
+      42,
+      24
+     ],
+     "attach": "seedHead",
+     "layout": "tight",
+     "room": {
+      "down": 73,
+      "left": 42,
+      "right": 41,
+      "up": 24
+     },
+     "side": 0,
+     "socket": "c0.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      41,
+      59
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 38,
+      "left": 41,
+      "right": 42,
+      "up": 59
+     },
+     "side": -1,
+     "socket": "c0.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      50
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 47,
+      "left": 45,
+      "right": 38,
+      "up": 50
+     },
+     "side": 1,
+     "socket": "c0.leaf.1"
+    },
+    {
+     "at": [
+      43,
+      44
+     ],
+     "attach": "stemNode",
+     "layout": "tight",
+     "room": {
+      "down": 53,
+      "left": 43,
+      "right": 40,
+      "up": 44
+     },
+     "side": 0,
+     "socket": "c0.collar.0"
+    },
+    {
+     "at": [
+      52,
+      19
+     ],
+     "attach": "drift",
+     "layout": "tight",
+     "room": {
+      "down": 78,
+      "left": 52,
+      "right": 31,
+      "up": 19
+     },
+     "side": 0,
+     "socket": "c0.drift.0"
+    },
+    {
+     "at": [
+      57,
+      25
+     ],
+     "attach": "drift",
+     "layout": "tight",
+     "room": {
+      "down": 72,
+      "left": 57,
+      "right": 26,
+      "up": 25
+     },
+     "side": 0,
+     "socket": "c0.drift.1"
+    },
+    {
+     "at": [
+      31,
+      21
+     ],
+     "attach": "drift",
+     "layout": "tight",
+     "room": {
+      "down": 76,
+      "left": 31,
+      "right": 52,
+      "up": 21
+     },
+     "side": 0,
+     "socket": "c0.drift.2"
+    },
+    {
+     "at": [
+      39,
+      31
+     ],
+     "attach": "apex",
+     "layout": "tight",
+     "room": {
+      "down": 66,
+      "left": 39,
+      "right": 44,
+      "up": 31
+     },
+     "side": 0,
+     "socket": "c1.apex"
+    },
+    {
+     "at": [
+      39,
+      31
+     ],
+     "attach": "flower",
+     "layout": "tight",
+     "room": {
+      "down": 66,
+      "left": 39,
+      "right": 44,
+      "up": 31
+     },
+     "side": 0,
+     "socket": "c1.flower.0"
+    },
+    {
+     "at": [
+      39,
+      31
+     ],
+     "attach": "seedHead",
+     "layout": "tight",
+     "room": {
+      "down": 66,
+      "left": 39,
+      "right": 44,
+      "up": 31
+     },
+     "side": 0,
+     "socket": "c1.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      39,
+      61
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 36,
+      "left": 39,
+      "right": 44,
+      "up": 61
+     },
+     "side": -1,
+     "socket": "c1.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      42,
+      53
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 44,
+      "left": 42,
+      "right": 41,
+      "up": 53
+     },
+     "side": 1,
+     "socket": "c1.leaf.1"
+    },
+    {
+     "at": [
+      39,
+      48
+     ],
+     "attach": "stemNode",
+     "layout": "tight",
+     "room": {
+      "down": 49,
+      "left": 39,
+      "right": 44,
+      "up": 48
+     },
+     "side": 0,
+     "socket": "c1.collar.0"
+    },
+    {
+     "at": [
+      32,
+      34
+     ],
+     "attach": "flower",
+     "layout": "tight",
+     "room": {
+      "down": 63,
+      "left": 32,
+      "right": 51,
+      "up": 34
+     },
+     "side": -1,
+     "socket": "c1.flower.1"
+    },
+    {
+     "at": [
+      33,
+      54
+     ],
+     "attach": "pod",
+     "layout": "tight",
+     "room": {
+      "down": 43,
+      "left": 33,
+      "right": 50,
+      "up": 54
+     },
+     "side": -1,
+     "socket": "c1.pod.0"
+    },
+    {
+     "at": [
+      45,
+      29
+     ],
+     "attach": "apex",
+     "layout": "tight",
+     "room": {
+      "down": 68,
+      "left": 45,
+      "right": 38,
+      "up": 29
+     },
+     "side": 0,
+     "socket": "c2.apex"
+    },
+    {
+     "at": [
+      45,
+      29
+     ],
+     "attach": "flower",
+     "layout": "tight",
+     "room": {
+      "down": 68,
+      "left": 45,
+      "right": 38,
+      "up": 29
+     },
+     "side": 0,
+     "socket": "c2.flower.0"
+    },
+    {
+     "at": [
+      45,
+      29
+     ],
+     "attach": "seedHead",
+     "layout": "tight",
+     "room": {
+      "down": 68,
+      "left": 45,
+      "right": 38,
+      "up": 29
+     },
+     "side": 0,
+     "socket": "c2.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      43,
+      60
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 37,
+      "left": 43,
+      "right": 40,
+      "up": 60
+     },
+     "side": -1,
+     "socket": "c2.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      46,
+      52
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 45,
+      "left": 46,
+      "right": 37,
+      "up": 52
+     },
+     "side": 1,
+     "socket": "c2.leaf.1"
+    },
+    {
+     "at": [
+      45,
+      47
+     ],
+     "attach": "stemNode",
+     "layout": "tight",
+     "room": {
+      "down": 50,
+      "left": 45,
+      "right": 38,
+      "up": 47
+     },
+     "side": 0,
+     "socket": "c2.collar.0"
+    },
+    {
+     "at": [
+      51,
+      53
+     ],
+     "attach": "pod",
+     "layout": "tight",
+     "room": {
+      "down": 44,
+      "left": 51,
+      "right": 32,
+      "up": 53
+     },
+     "side": 1,
+     "socket": "c2.pod.0"
+    },
+    {
+     "at": [
+      37,
+      39
+     ],
+     "attach": "apex",
+     "layout": "tight",
+     "room": {
+      "down": 58,
+      "left": 37,
+      "right": 46,
+      "up": 39
+     },
+     "side": 0,
+     "socket": "c3.apex"
+    },
+    {
+     "at": [
+      37,
+      39
+     ],
+     "attach": "flower",
+     "layout": "tight",
+     "room": {
+      "down": 58,
+      "left": 37,
+      "right": 46,
+      "up": 39
+     },
+     "side": 0,
+     "socket": "c3.flower.0"
+    },
+    {
+     "at": [
+      37,
+      39
+     ],
+     "attach": "seedHead",
+     "layout": "tight",
+     "room": {
+      "down": 58,
+      "left": 37,
+      "right": 46,
+      "up": 39
+     },
+     "side": 0,
+     "socket": "c3.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      37,
+      62
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 35,
+      "left": 37,
+      "right": 46,
+      "up": 62
+     },
+     "side": -1,
+     "socket": "c3.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      40,
+      56
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 41,
+      "left": 40,
+      "right": 43,
+      "up": 56
+     },
+     "side": 1,
+     "socket": "c3.leaf.1"
+    },
+    {
+     "at": [
+      38,
+      53
+     ],
+     "attach": "stemNode",
+     "layout": "tight",
+     "room": {
+      "down": 44,
+      "left": 38,
+      "right": 45,
+      "up": 53
+     },
+     "side": 0,
+     "socket": "c3.collar.0"
+    },
+    {
+     "at": [
+      47,
+      37
+     ],
+     "attach": "apex",
+     "layout": "tight",
+     "room": {
+      "down": 60,
+      "left": 47,
+      "right": 36,
+      "up": 37
+     },
+     "side": 0,
+     "socket": "c4.apex"
+    },
+    {
+     "at": [
+      47,
+      37
+     ],
+     "attach": "flower",
+     "layout": "tight",
+     "room": {
+      "down": 60,
+      "left": 47,
+      "right": 36,
+      "up": 37
+     },
+     "side": 0,
+     "socket": "c4.flower.0"
+    },
+    {
+     "at": [
+      47,
+      37
+     ],
+     "attach": "seedHead",
+     "layout": "tight",
+     "room": {
+      "down": 60,
+      "left": 47,
+      "right": 36,
+      "up": 37
+     },
+     "side": 0,
+     "socket": "c4.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      62
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 35,
+      "left": 45,
+      "right": 38,
+      "up": 62
+     },
+     "side": -1,
+     "socket": "c4.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      48,
+      55
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 42,
+      "left": 48,
+      "right": 35,
+      "up": 55
+     },
+     "side": 1,
+     "socket": "c4.leaf.1"
+    },
+    {
+     "at": [
+      47,
+      51
+     ],
+     "attach": "stemNode",
+     "layout": "tight",
+     "room": {
+      "down": 46,
+      "left": 47,
+      "right": 36,
+      "up": 51
+     },
+     "side": 0,
+     "socket": "c4.collar.0"
+    },
+    {
+     "at": [
+      42,
+      41
+     ],
+     "attach": "apex",
+     "layout": "tight",
+     "room": {
+      "down": 56,
+      "left": 42,
+      "right": 41,
+      "up": 41
+     },
+     "side": 0,
+     "socket": "s0.apex"
+    },
+    {
+     "at": [
+      42,
+      41
+     ],
+     "attach": "flower",
+     "layout": "tight",
+     "room": {
+      "down": 56,
+      "left": 42,
+      "right": 41,
+      "up": 41
+     },
+     "side": 0,
+     "socket": "s0.flower.0"
+    },
+    {
+     "at": [
+      42,
+      41
+     ],
+     "attach": "seedHead",
+     "layout": "tight",
+     "room": {
+      "down": 56,
+      "left": 42,
+      "right": 41,
+      "up": 41
+     },
+     "side": 0,
+     "socket": "s0.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      41,
+      63
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 34,
+      "left": 41,
+      "right": 42,
+      "up": 63
+     },
+     "side": -1,
+     "socket": "s0.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      57
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 40,
+      "left": 45,
+      "right": 38,
+      "up": 57
+     },
+     "side": 1,
+     "socket": "s0.leaf.1"
+    },
+    {
+     "at": [
+      43,
+      54
+     ],
+     "attach": "stemNode",
+     "layout": "tight",
+     "room": {
+      "down": 43,
+      "left": 43,
+      "right": 40,
+      "up": 54
+     },
+     "side": 0,
+     "socket": "s0.collar.0"
+    },
+    {
+     "at": [
+      52,
+      36
+     ],
+     "attach": "drift",
+     "layout": "tight",
+     "room": {
+      "down": 61,
+      "left": 52,
+      "right": 31,
+      "up": 36
+     },
+     "side": 0,
+     "socket": "s0.drift.0"
+    },
+    {
+     "at": [
+      57,
+      42
+     ],
+     "attach": "drift",
+     "layout": "tight",
+     "room": {
+      "down": 55,
+      "left": 57,
+      "right": 26,
+      "up": 42
+     },
+     "side": 0,
+     "socket": "s0.drift.1"
+    },
+    {
+     "at": [
+      31,
+      38
+     ],
+     "attach": "drift",
+     "layout": "tight",
+     "room": {
+      "down": 59,
+      "left": 31,
+      "right": 52,
+      "up": 38
+     },
+     "side": 0,
+     "socket": "s0.drift.2"
+    },
+    {
+     "at": [
+      39,
+      46
+     ],
+     "attach": "apex",
+     "layout": "tight",
+     "room": {
+      "down": 51,
+      "left": 39,
+      "right": 44,
+      "up": 46
+     },
+     "side": 0,
+     "socket": "s1.apex"
+    },
+    {
+     "at": [
+      39,
+      46
+     ],
+     "attach": "flower",
+     "layout": "tight",
+     "room": {
+      "down": 51,
+      "left": 39,
+      "right": 44,
+      "up": 46
+     },
+     "side": 0,
+     "socket": "s1.flower.0"
+    },
+    {
+     "at": [
+      39,
+      46
+     ],
+     "attach": "seedHead",
+     "layout": "tight",
+     "room": {
+      "down": 51,
+      "left": 39,
+      "right": 44,
+      "up": 46
+     },
+     "side": 0,
+     "socket": "s1.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      39,
+      64
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 33,
+      "left": 39,
+      "right": 44,
+      "up": 64
+     },
+     "side": -1,
+     "socket": "s1.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      42,
+      59
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 38,
+      "left": 42,
+      "right": 41,
+      "up": 59
+     },
+     "side": 1,
+     "socket": "s1.leaf.1"
+    },
+    {
+     "at": [
+      39,
+      56
+     ],
+     "attach": "stemNode",
+     "layout": "tight",
+     "room": {
+      "down": 41,
+      "left": 39,
+      "right": 44,
+      "up": 56
+     },
+     "side": 0,
+     "socket": "s1.collar.0"
+    },
+    {
+     "at": [
+      32,
+      47
+     ],
+     "attach": "flower",
+     "layout": "tight",
+     "room": {
+      "down": 50,
+      "left": 32,
+      "right": 51,
+      "up": 47
+     },
+     "side": -1,
+     "socket": "s1.flower.1"
+    },
+    {
+     "at": [
+      33,
+      60
+     ],
+     "attach": "pod",
+     "layout": "tight",
+     "room": {
+      "down": 37,
+      "left": 33,
+      "right": 50,
+      "up": 60
+     },
+     "side": -1,
+     "socket": "s1.pod.0"
+    },
+    {
+     "at": [
+      45,
+      45
+     ],
+     "attach": "apex",
+     "layout": "tight",
+     "room": {
+      "down": 52,
+      "left": 45,
+      "right": 38,
+      "up": 45
+     },
+     "side": 0,
+     "socket": "s2.apex"
+    },
+    {
+     "at": [
+      45,
+      45
+     ],
+     "attach": "flower",
+     "layout": "tight",
+     "room": {
+      "down": 52,
+      "left": 45,
+      "right": 38,
+      "up": 45
+     },
+     "side": 0,
+     "socket": "s2.flower.0"
+    },
+    {
+     "at": [
+      45,
+      45
+     ],
+     "attach": "seedHead",
+     "layout": "tight",
+     "room": {
+      "down": 52,
+      "left": 45,
+      "right": 38,
+      "up": 45
+     },
+     "side": 0,
+     "socket": "s2.seedHead.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      43,
+      64
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 33,
+      "left": 43,
+      "right": 40,
+      "up": 64
+     },
+     "side": -1,
+     "socket": "s2.leaf.0"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      46,
+      59
+     ],
+     "attach": "leafSocket",
+     "layout": "tight",
+     "room": {
+      "down": 38,
+      "left": 46,
+      "right": 37,
+      "up": 59
+     },
+     "side": 1,
+     "socket": "s2.leaf.1"
+    },
+    {
+     "at": [
+      44,
+      56
+     ],
+     "attach": "stemNode",
+     "layout": "tight",
+     "room": {
+      "down": 41,
+      "left": 44,
+      "right": 39,
+      "up": 56
+     },
+     "side": 0,
+     "socket": "s2.collar.0"
+    },
+    {
+     "at": [
+      51,
+      60
+     ],
+     "attach": "pod",
+     "layout": "tight",
+     "room": {
+      "down": 37,
+      "left": 51,
+      "right": 32,
+      "up": 60
+     },
+     "side": 1,
+     "socket": "s2.pod.0"
+    }
+   ]
+  },
+  "rosette": {
+   "components": 32,
+   "contract": "art/plant/contracts/rosette.json",
+   "grammar": "resources/plant-visual/grammars/rosette.js",
+   "packs": [
+    "proof-cinder-rosette"
+   ],
+   "ref": "rosette@1",
+   "skeleton": "axes",
+   "socketCount": 106,
+   "sockets": [
+    {
+     "at": [
+      42,
+      61
+     ],
+     "attach": "apex",
+     "layout": "open",
+     "room": {
+      "down": 36,
+      "left": 42,
+      "right": 41,
+      "up": 61
+     },
+     "side": 0,
+     "socket": "main.apex"
+    },
+    {
+     "at": [
+      42,
+      61
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 36,
+      "left": 42,
+      "right": 41,
+      "up": 61
+     },
+     "side": 0,
+     "socket": "main.flower.0"
+    },
+    {
+     "at": [
+      42,
+      61
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 36,
+      "left": 42,
+      "right": 41,
+      "up": 61
+     },
+     "side": 0,
+     "socket": "main.seedHead.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      41,
+      62
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 35,
+      "left": 41,
+      "right": 42,
+      "up": 62
+     },
+     "side": -1,
+     "socket": "main.leaf.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      43,
+      62
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 35,
+      "left": 43,
+      "right": 40,
+      "up": 62
+     },
+     "side": 1,
+     "socket": "main.leaf.1"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      40,
+      63
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 34,
+      "left": 40,
+      "right": 43,
+      "up": 63
+     },
+     "side": -1,
+     "socket": "main.leaf.2"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      44,
+      63
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 34,
+      "left": 44,
+      "right": 39,
+      "up": 63
+     },
+     "side": 1,
+     "socket": "main.leaf.3"
+    },
+    {
+     "angle": "low",
+     "at": [
+      39,
+      66
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 31,
+      "left": 39,
+      "right": 44,
+      "up": 66
+     },
+     "side": -1,
+     "socket": "main.leaf.4"
+    },
+    {
+     "angle": "low",
+     "at": [
+      45,
+      66
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 31,
+      "left": 45,
+      "right": 38,
+      "up": 66
+     },
+     "side": 1,
+     "socket": "main.leaf.5"
+    },
+    {
+     "angle": "flat",
+     "at": [
+      40,
+      67
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 30,
+      "left": 40,
+      "right": 43,
+      "up": 67
+     },
+     "side": -1,
+     "socket": "main.leaf.6"
+    },
+    {
+     "angle": "flat",
+     "at": [
+      44,
+      67
+     ],
+     "attach": "radialLeaf",
+     "layout": "open",
+     "room": {
+      "down": 30,
+      "left": 44,
+      "right": 39,
+      "up": 67
+     },
+     "side": 1,
+     "socket": "main.leaf.7"
+    },
+    {
+     "at": [
+      37,
+      66
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 31,
+      "left": 37,
+      "right": 46,
+      "up": 66
+     },
+     "side": 0,
+     "socket": "main.collar.0"
+    },
+    {
+     "at": [
+      47,
+      66
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 31,
+      "left": 47,
+      "right": 36,
+      "up": 66
+     },
+     "side": 0,
+     "socket": "main.collar.1"
+    },
+    {
+     "at": [
+      42,
+      61
+     ],
+     "attach": "stemNode",
+     "layout": "open",
+     "room": {
+      "down": 36,
+      "left": 42,
+      "right": 41,
+      "up": 61
+     },
+     "side": 0,
+     "socket": "main.collar.2"
+    },
+    {
+     "at": [
+      42,
+      25
+     ],
+     "attach": "apex",
+     "layout": "open",
+     "room": {
+      "down": 72,
+      "left": 42,
+      "right": 41,
+      "up": 25
+     },
+     "side": 0,
+     "socket": "spike.apex"
+    },
+    {
+     "at": [
+      42,
+      25
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 72,
+      "left": 42,
+      "right": 41,
+      "up": 25
+     },
+     "side": 0,
+     "socket": "spike.flower.0"
+    },
+    {
+     "at": [
+      42,
+      25
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 72,
+      "left": 42,
+      "right": 41,
+      "up": 25
+     },
+     "side": 0,
+     "socket": "spike.seedHead.0"
+    },
+    {
+     "at": [
+      50,
+      26
+     ],
+     "attach": "flower",
+     "layout": "open",
+     "room": {
+      "down": 71,
+      "left": 50,
+      "right": 33,
+      "up": 26
+     },
+     "side": 1,
+     "socket": "spike.flower.1"
+    },
+    {
+     "at": [
+      33,
+      35
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 62,
+      "left": 33,
+      "right": 50,
+      "up": 35
+     },
+     "side": -1,
+     "socket": "spike.seedHead.1"
+    },
+    {
+     "at": [
+      52,
+      42
+     ],
+     "attach": "seedHead",
+     "layout": "open",
+     "room": {
+      "down": 55,
+      "left": 52,
+      "right": 31,
+      "up": 42
+     },
+     "side": 1,
+     "socket": "spike.seedHead.2"
+    },
+    {
+     "at": [
+      35,
+      53
+     ],
+     "attach": "pod",
+     "layout": "open",
+     "room": {
+      "down": 44,
+      "left": 35,
+      "right": 48,
+      "up": 53
+     },
+     "side": -1,
+     "socket": "spike.pod.0"
+    },
+    {
+     "at": [
+      51,
+      49
+     ],
+     "attach": "pod",
+     "layout": "open",
+     "room": {
+      "down": 48,
+      "left": 51,
+      "right": 32,
+      "up": 49
+     },
+     "side": 1,
+     "socket": "spike.pod.1"
+    },
+    {
+     "at": [
+      52,
+      16
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 81,
+      "left": 52,
+      "right": 31,
+      "up": 16
+     },
+     "side": 0,
+     "socket": "spike.drift.0"
+    },
+    {
+     "at": [
+      58,
+      22
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 75,
+      "left": 58,
+      "right": 25,
+      "up": 22
+     },
+     "side": 0,
+     "socket": "spike.drift.1"
+    },
+    {
+     "at": [
+      30,
+      18
+     ],
+     "attach": "drift",
+     "layout": "open",
+     "room": {
+      "down": 79,
+      "left": 30,
+      "right": 53,
+      "up": 18
+     },
+     "side": 0,
+     "socket": "spike.drift.2"
+    },
+    {
+     "at": [
+      42,
+      68
+     ],
+     "attach": "rootCrown",
+     "layout": "*",
+     "room": {
+      "down": 29,
+      "left": 42,
+      "right": 41,
+      "up": 68
+     },
+     "side": 0,
+     "socket": "rootCrown"
+    },
+    {
+     "at": [
+      42,
+      70
+     ],
+     "attach": "primaryRoot",
+     "layout": "*",
+     "room": {
+      "down": 27,
+      "left": 42,
+      "right": 41,
+      "up": 70
+     },
+     "side": 0,
+     "socket": "primaryRoot"
+    },
+    {
+     "at": [
+      33,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 33,
+      "right": 50,
+      "up": 69
+     },
+     "side": -1,
+     "socket": "aerial.0"
+    },
+    {
+     "at": [
+      52,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 52,
+      "right": 31,
+      "up": 69
+     },
+     "side": 1,
+     "socket": "aerial.1"
+    },
+    {
+     "at": [
+      28,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 28,
+      "right": 55,
+      "up": 69
+     },
+     "side": -1,
+     "socket": "aerial.2"
+    },
+    {
+     "at": [
+      57,
+      69
+     ],
+     "attach": "aerialRoot",
+     "layout": "*",
+     "room": {
+      "down": 28,
+      "left": 57,
+      "right": 26,
+      "up": 69
+     },
+     "side": 1,
+     "socket": "aerial.3"
+    },
+    {
+     "at": [
+      42,
+      61
+     ],
+     "attach": "apex",
+     "layout": "cupped",
+     "room": {
+      "down": 36,
+      "left": 42,
+      "right": 41,
+      "up": 61
+     },
+     "side": 0,
+     "socket": "main.apex"
+    },
+    {
+     "at": [
+      42,
+      61
+     ],
+     "attach": "flower",
+     "layout": "cupped",
+     "room": {
+      "down": 36,
+      "left": 42,
+      "right": 41,
+      "up": 61
+     },
+     "side": 0,
+     "socket": "main.flower.0"
+    },
+    {
+     "at": [
+      42,
+      61
+     ],
+     "attach": "seedHead",
+     "layout": "cupped",
+     "room": {
+      "down": 36,
+      "left": 42,
+      "right": 41,
+      "up": 61
+     },
+     "side": 0,
+     "socket": "main.seedHead.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      41,
+      62
+     ],
+     "attach": "radialLeaf",
+     "layout": "cupped",
+     "room": {
+      "down": 35,
+      "left": 41,
+      "right": 42,
+      "up": 62
+     },
+     "side": -1,
+     "socket": "main.leaf.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      43,
+      62
+     ],
+     "attach": "radialLeaf",
+     "layout": "cupped",
+     "room": {
+      "down": 35,
+      "left": 43,
+      "right": 40,
+      "up": 62
+     },
+     "side": 1,
+     "socket": "main.leaf.1"
+    },
+    {
+     "angle": "high",
+     "at": [
+      40,
+      63
+     ],
+     "attach": "radialLeaf",
+     "layout": "cupped",
+     "room": {
+      "down": 34,
+      "left": 40,
+      "right": 43,
+      "up": 63
+     },
+     "side": -1,
+     "socket": "main.leaf.2"
+    },
+    {
+     "angle": "high",
+     "at": [
+      44,
+      63
+     ],
+     "attach": "radialLeaf",
+     "layout": "cupped",
+     "room": {
+      "down": 34,
+      "left": 44,
+      "right": 39,
+      "up": 63
+     },
+     "side": 1,
+     "socket": "main.leaf.3"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      39,
+      66
+     ],
+     "attach": "radialLeaf",
+     "layout": "cupped",
+     "room": {
+      "down": 31,
+      "left": 39,
+      "right": 44,
+      "up": 66
+     },
+     "side": -1,
+     "socket": "main.leaf.4"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      45,
+      66
+     ],
+     "attach": "radialLeaf",
+     "layout": "cupped",
+     "room": {
+      "down": 31,
+      "left": 45,
+      "right": 38,
+      "up": 66
+     },
+     "side": 1,
+     "socket": "main.leaf.5"
+    },
+    {
+     "angle": "low",
+     "at": [
+      40,
+      67
+     ],
+     "attach": "radialLeaf",
+     "layout": "cupped",
+     "room": {
+      "down": 30,
+      "left": 40,
+      "right": 43,
+      "up": 67
+     },
+     "side": -1,
+     "socket": "main.leaf.6"
+    },
+    {
+     "angle": "low",
+     "at": [
+      44,
+      67
+     ],
+     "attach": "radialLeaf",
+     "layout": "cupped",
+     "room": {
+      "down": 30,
+      "left": 44,
+      "right": 39,
+      "up": 67
+     },
+     "side": 1,
+     "socket": "main.leaf.7"
+    },
+    {
+     "at": [
+      37,
+      66
+     ],
+     "attach": "stemNode",
+     "layout": "cupped",
+     "room": {
+      "down": 31,
+      "left": 37,
+      "right": 46,
+      "up": 66
+     },
+     "side": 0,
+     "socket": "main.collar.0"
+    },
+    {
+     "at": [
+      47,
+      66
+     ],
+     "attach": "stemNode",
+     "layout": "cupped",
+     "room": {
+      "down": 31,
+      "left": 47,
+      "right": 36,
+      "up": 66
+     },
+     "side": 0,
+     "socket": "main.collar.1"
+    },
+    {
+     "at": [
+      42,
+      61
+     ],
+     "attach": "stemNode",
+     "layout": "cupped",
+     "room": {
+      "down": 36,
+      "left": 42,
+      "right": 41,
+      "up": 61
+     },
+     "side": 0,
+     "socket": "main.collar.2"
+    },
+    {
+     "at": [
+      42,
+      27
+     ],
+     "attach": "apex",
+     "layout": "cupped",
+     "room": {
+      "down": 70,
+      "left": 42,
+      "right": 41,
+      "up": 27
+     },
+     "side": 0,
+     "socket": "spike.apex"
+    },
+    {
+     "at": [
+      42,
+      27
+     ],
+     "attach": "flower",
+     "layout": "cupped",
+     "room": {
+      "down": 70,
+      "left": 42,
+      "right": 41,
+      "up": 27
+     },
+     "side": 0,
+     "socket": "spike.flower.0"
+    },
+    {
+     "at": [
+      42,
+      27
+     ],
+     "attach": "seedHead",
+     "layout": "cupped",
+     "room": {
+      "down": 70,
+      "left": 42,
+      "right": 41,
+      "up": 27
+     },
+     "side": 0,
+     "socket": "spike.seedHead.0"
+    },
+    {
+     "at": [
+      50,
+      28
+     ],
+     "attach": "flower",
+     "layout": "cupped",
+     "room": {
+      "down": 69,
+      "left": 50,
+      "right": 33,
+      "up": 28
+     },
+     "side": 1,
+     "socket": "spike.flower.1"
+    },
+    {
+     "at": [
+      34,
+      37
+     ],
+     "attach": "seedHead",
+     "layout": "cupped",
+     "room": {
+      "down": 60,
+      "left": 34,
+      "right": 49,
+      "up": 37
+     },
+     "side": -1,
+     "socket": "spike.seedHead.1"
+    },
+    {
+     "at": [
+      52,
+      43
+     ],
+     "attach": "seedHead",
+     "layout": "cupped",
+     "room": {
+      "down": 54,
+      "left": 52,
+      "right": 31,
+      "up": 43
+     },
+     "side": 1,
+     "socket": "spike.seedHead.2"
+    },
+    {
+     "at": [
+      35,
+      53
+     ],
+     "attach": "pod",
+     "layout": "cupped",
+     "room": {
+      "down": 44,
+      "left": 35,
+      "right": 48,
+      "up": 53
+     },
+     "side": -1,
+     "socket": "spike.pod.0"
+    },
+    {
+     "at": [
+      51,
+      49
+     ],
+     "attach": "pod",
+     "layout": "cupped",
+     "room": {
+      "down": 48,
+      "left": 51,
+      "right": 32,
+      "up": 49
+     },
+     "side": 1,
+     "socket": "spike.pod.1"
+    },
+    {
+     "at": [
+      52,
+      18
+     ],
+     "attach": "drift",
+     "layout": "cupped",
+     "room": {
+      "down": 79,
+      "left": 52,
+      "right": 31,
+      "up": 18
+     },
+     "side": 0,
+     "socket": "spike.drift.0"
+    },
+    {
+     "at": [
+      58,
+      24
+     ],
+     "attach": "drift",
+     "layout": "cupped",
+     "room": {
+      "down": 73,
+      "left": 58,
+      "right": 25,
+      "up": 24
+     },
+     "side": 0,
+     "socket": "spike.drift.1"
+    },
+    {
+     "at": [
+      30,
+      20
+     ],
+     "attach": "drift",
+     "layout": "cupped",
+     "room": {
+      "down": 77,
+      "left": 30,
+      "right": 53,
+      "up": 20
+     },
+     "side": 0,
+     "socket": "spike.drift.2"
+    },
+    {
+     "at": [
+      42,
+      62
+     ],
+     "attach": "apex",
+     "layout": "closed",
+     "room": {
+      "down": 35,
+      "left": 42,
+      "right": 41,
+      "up": 62
+     },
+     "side": 0,
+     "socket": "main.apex"
+    },
+    {
+     "at": [
+      42,
+      62
+     ],
+     "attach": "flower",
+     "layout": "closed",
+     "room": {
+      "down": 35,
+      "left": 42,
+      "right": 41,
+      "up": 62
+     },
+     "side": 0,
+     "socket": "main.flower.0"
+    },
+    {
+     "at": [
+      42,
+      62
+     ],
+     "attach": "seedHead",
+     "layout": "closed",
+     "room": {
+      "down": 35,
+      "left": 42,
+      "right": 41,
+      "up": 62
+     },
+     "side": 0,
+     "socket": "main.seedHead.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      42,
+      64
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 33,
+      "left": 42,
+      "right": 41,
+      "up": 64
+     },
+     "side": -1,
+     "socket": "main.leaf.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      42,
+      64
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 33,
+      "left": 42,
+      "right": 41,
+      "up": 64
+     },
+     "side": 1,
+     "socket": "main.leaf.1"
+    },
+    {
+     "angle": "high",
+     "at": [
+      40,
+      64
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 33,
+      "left": 40,
+      "right": 43,
+      "up": 64
+     },
+     "side": -1,
+     "socket": "main.leaf.2"
+    },
+    {
+     "angle": "high",
+     "at": [
+      44,
+      64
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 33,
+      "left": 44,
+      "right": 39,
+      "up": 64
+     },
+     "side": 1,
+     "socket": "main.leaf.3"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      40,
+      66
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 31,
+      "left": 40,
+      "right": 43,
+      "up": 66
+     },
+     "side": -1,
+     "socket": "main.leaf.4"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      44,
+      66
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 31,
+      "left": 44,
+      "right": 39,
+      "up": 66
+     },
+     "side": 1,
+     "socket": "main.leaf.5"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      41,
+      67
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 30,
+      "left": 41,
+      "right": 42,
+      "up": 67
+     },
+     "side": -1,
+     "socket": "main.leaf.6"
+    },
+    {
+     "angle": "mid",
+     "at": [
+      43,
+      67
+     ],
+     "attach": "radialLeaf",
+     "layout": "closed",
+     "room": {
+      "down": 30,
+      "left": 43,
+      "right": 40,
+      "up": 67
+     },
+     "side": 1,
+     "socket": "main.leaf.7"
+    },
+    {
+     "at": [
+      37,
+      66
+     ],
+     "attach": "stemNode",
+     "layout": "closed",
+     "room": {
+      "down": 31,
+      "left": 37,
+      "right": 46,
+      "up": 66
+     },
+     "side": 0,
+     "socket": "main.collar.0"
+    },
+    {
+     "at": [
+      47,
+      66
+     ],
+     "attach": "stemNode",
+     "layout": "closed",
+     "room": {
+      "down": 31,
+      "left": 47,
+      "right": 36,
+      "up": 66
+     },
+     "side": 0,
+     "socket": "main.collar.1"
+    },
+    {
+     "at": [
+      42,
+      62
+     ],
+     "attach": "stemNode",
+     "layout": "closed",
+     "room": {
+      "down": 35,
+      "left": 42,
+      "right": 41,
+      "up": 62
+     },
+     "side": 0,
+     "socket": "main.collar.2"
+    },
+    {
+     "at": [
+      42,
+      31
+     ],
+     "attach": "apex",
+     "layout": "closed",
+     "room": {
+      "down": 66,
+      "left": 42,
+      "right": 41,
+      "up": 31
+     },
+     "side": 0,
+     "socket": "spike.apex"
+    },
+    {
+     "at": [
+      42,
+      31
+     ],
+     "attach": "flower",
+     "layout": "closed",
+     "room": {
+      "down": 66,
+      "left": 42,
+      "right": 41,
+      "up": 31
+     },
+     "side": 0,
+     "socket": "spike.flower.0"
+    },
+    {
+     "at": [
+      42,
+      31
+     ],
+     "attach": "seedHead",
+     "layout": "closed",
+     "room": {
+      "down": 66,
+      "left": 42,
+      "right": 41,
+      "up": 31
+     },
+     "side": 0,
+     "socket": "spike.seedHead.0"
+    },
+    {
+     "at": [
+      50,
+      31
+     ],
+     "attach": "flower",
+     "layout": "closed",
+     "room": {
+      "down": 66,
+      "left": 50,
+      "right": 33,
+      "up": 31
+     },
+     "side": 1,
+     "socket": "spike.flower.1"
+    },
+    {
+     "at": [
+      34,
+      40
+     ],
+     "attach": "seedHead",
+     "layout": "closed",
+     "room": {
+      "down": 57,
+      "left": 34,
+      "right": 49,
+      "up": 40
+     },
+     "side": -1,
+     "socket": "spike.seedHead.1"
+    },
+    {
+     "at": [
+      52,
+      45
+     ],
+     "attach": "seedHead",
+     "layout": "closed",
+     "room": {
+      "down": 52,
+      "left": 52,
+      "right": 31,
+      "up": 45
+     },
+     "side": 1,
+     "socket": "spike.seedHead.2"
+    },
+    {
+     "at": [
+      35,
+      55
+     ],
+     "attach": "pod",
+     "layout": "closed",
+     "room": {
+      "down": 42,
+      "left": 35,
+      "right": 48,
+      "up": 55
+     },
+     "side": -1,
+     "socket": "spike.pod.0"
+    },
+    {
+     "at": [
+      51,
+      52
+     ],
+     "attach": "pod",
+     "layout": "closed",
+     "room": {
+      "down": 45,
+      "left": 51,
+      "right": 32,
+      "up": 52
+     },
+     "side": 1,
+     "socket": "spike.pod.1"
+    },
+    {
+     "at": [
+      52,
+      22
+     ],
+     "attach": "drift",
+     "layout": "closed",
+     "room": {
+      "down": 75,
+      "left": 52,
+      "right": 31,
+      "up": 22
+     },
+     "side": 0,
+     "socket": "spike.drift.0"
+    },
+    {
+     "at": [
+      58,
+      28
+     ],
+     "attach": "drift",
+     "layout": "closed",
+     "room": {
+      "down": 69,
+      "left": 58,
+      "right": 25,
+      "up": 28
+     },
+     "side": 0,
+     "socket": "spike.drift.1"
+    },
+    {
+     "at": [
+      30,
+      24
+     ],
+     "attach": "drift",
+     "layout": "closed",
+     "room": {
+      "down": 73,
+      "left": 30,
+      "right": 53,
+      "up": 24
+     },
+     "side": 0,
+     "socket": "spike.drift.2"
+    },
+    {
+     "at": [
+      42,
+      63
+     ],
+     "attach": "apex",
+     "layout": "ball",
+     "room": {
+      "down": 34,
+      "left": 42,
+      "right": 41,
+      "up": 63
+     },
+     "side": 0,
+     "socket": "main.apex"
+    },
+    {
+     "at": [
+      42,
+      63
+     ],
+     "attach": "flower",
+     "layout": "ball",
+     "room": {
+      "down": 34,
+      "left": 42,
+      "right": 41,
+      "up": 63
+     },
+     "side": 0,
+     "socket": "main.flower.0"
+    },
+    {
+     "at": [
+      42,
+      63
+     ],
+     "attach": "seedHead",
+     "layout": "ball",
+     "room": {
+      "down": 34,
+      "left": 42,
+      "right": 41,
+      "up": 63
+     },
+     "side": 0,
+     "socket": "main.seedHead.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      42,
+      64
+     ],
+     "attach": "radialLeaf",
+     "layout": "ball",
+     "room": {
+      "down": 33,
+      "left": 42,
+      "right": 41,
+      "up": 64
+     },
+     "side": -1,
+     "socket": "main.leaf.0"
+    },
+    {
+     "angle": "high",
+     "at": [
+      42,
+      64
+     ],
+     "attach": "radialLeaf",
+     "layout": "ball",
+     "room": {
+      "down": 33,
+      "left": 42,
+      "right": 41,
+      "up": 64
+     },
+     "side": 1,
+     "socket": "main.leaf.1"
+    },
+    {
+     "angle": "high",
+     "at": [
+      41,
+      65
+     ],
+     "attach": "radialLeaf",
+     "layout": "ball",
+     "room": {
+      "down": 32,
+      "left": 41,
+      "right": 42,
+      "up": 65
+     },
+     "side": -1,
+     "socket": "main.leaf.2"
+    },
+    {
+     "angle": "high",
+     "at": [
+      43,
+      65
+     ],
+     "attach": "radialLeaf",
+     "layout": "ball",
+     "room": {
+      "down": 32,
+      "left": 43,
+      "right": 40,
+      "up": 65
+     },
+     "side": 1,
+     "socket": "main.leaf.3"
+    },
+    {
+     "angle": "high",
+     "at": [
+      41,
+      66
+     ],
+     "attach": "radialLeaf",
+     "layout": "ball",
+     "room": {
+      "down": 31,
+      "left": 41,
+      "right": 42,
+      "up": 66
+     },
+     "side": -1,
+     "socket": "main.leaf.4"
+    },
+    {
+     "angle": "high",
+     "at": [
+      43,
+      66
+     ],
+     "attach": "radialLeaf",
+     "layout": "ball",
+     "room": {
+      "down": 31,
+      "left": 43,
+      "right": 40,
+      "up": 66
+     },
+     "side": 1,
+     "socket": "main.leaf.5"
+    },
+    {
+     "angle": "high",
+     "at": [
+      41,
+      66
+     ],
+     "attach": "radialLeaf",
+     "layout": "ball",
+     "room": {
+      "down": 31,
+      "left": 41,
+      "right": 42,
+      "up": 66
+     },
+     "side": -1,
+     "socket": "main.leaf.6"
+    },
+    {
+     "angle": "high",
+     "at": [
+      43,
+      66
+     ],
+     "attach": "radialLeaf",
+     "layout": "ball",
+     "room": {
+      "down": 31,
+      "left": 43,
+      "right": 40,
+      "up": 66
+     },
+     "side": 1,
+     "socket": "main.leaf.7"
+    },
+    {
+     "at": [
+      37,
+      66
+     ],
+     "attach": "stemNode",
+     "layout": "ball",
+     "room": {
+      "down": 31,
+      "left": 37,
+      "right": 46,
+      "up": 66
+     },
+     "side": 0,
+     "socket": "main.collar.0"
+    },
+    {
+     "at": [
+      47,
+      66
+     ],
+     "attach": "stemNode",
+     "layout": "ball",
+     "room": {
+      "down": 31,
+      "left": 47,
+      "right": 36,
+      "up": 66
+     },
+     "side": 0,
+     "socket": "main.collar.1"
+    },
+    {
+     "at": [
+      42,
+      63
+     ],
+     "attach": "stemNode",
+     "layout": "ball",
+     "room": {
+      "down": 34,
+      "left": 42,
+      "right": 41,
+      "up": 63
+     },
+     "side": 0,
+     "socket": "main.collar.2"
+    },
+    {
+     "at": [
+      42,
+      35
+     ],
+     "attach": "apex",
+     "layout": "ball",
+     "room": {
+      "down": 62,
+      "left": 42,
+      "right": 41,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "spike.apex"
+    },
+    {
+     "at": [
+      42,
+      35
+     ],
+     "attach": "flower",
+     "layout": "ball",
+     "room": {
+      "down": 62,
+      "left": 42,
+      "right": 41,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "spike.flower.0"
+    },
+    {
+     "at": [
+      42,
+      35
+     ],
+     "attach": "seedHead",
+     "layout": "ball",
+     "room": {
+      "down": 62,
+      "left": 42,
+      "right": 41,
+      "up": 35
+     },
+     "side": 0,
+     "socket": "spike.seedHead.0"
+    },
+    {
+     "at": [
+      50,
+      35
+     ],
+     "attach": "flower",
+     "layout": "ball",
+     "room": {
+      "down": 62,
+      "left": 50,
+      "right": 33,
+      "up": 35
+     },
+     "side": 1,
+     "socket": "spike.flower.1"
+    },
+    {
+     "at": [
+      34,
+      43
+     ],
+     "attach": "seedHead",
+     "layout": "ball",
+     "room": {
+      "down": 54,
+      "left": 34,
+      "right": 49,
+      "up": 43
+     },
+     "side": -1,
+     "socket": "spike.seedHead.1"
+    },
+    {
+     "at": [
+      52,
+      48
+     ],
+     "attach": "seedHead",
+     "layout": "ball",
+     "room": {
+      "down": 49,
+      "left": 52,
+      "right": 31,
+      "up": 48
+     },
+     "side": 1,
+     "socket": "spike.seedHead.2"
+    },
+    {
+     "at": [
+      35,
+      57
+     ],
+     "attach": "pod",
+     "layout": "ball",
+     "room": {
+      "down": 40,
+      "left": 35,
+      "right": 48,
+      "up": 57
+     },
+     "side": -1,
+     "socket": "spike.pod.0"
+    },
+    {
+     "at": [
+      51,
+      54
+     ],
+     "attach": "pod",
+     "layout": "ball",
+     "room": {
+      "down": 43,
+      "left": 51,
+      "right": 32,
+      "up": 54
+     },
+     "side": 1,
+     "socket": "spike.pod.1"
+    },
+    {
+     "at": [
+      52,
+      26
+     ],
+     "attach": "drift",
+     "layout": "ball",
+     "room": {
+      "down": 71,
+      "left": 52,
+      "right": 31,
+      "up": 26
+     },
+     "side": 0,
+     "socket": "spike.drift.0"
+    },
+    {
+     "at": [
+      58,
+      32
+     ],
+     "attach": "drift",
+     "layout": "ball",
+     "room": {
+      "down": 65,
+      "left": 58,
+      "right": 25,
+      "up": 32
+     },
+     "side": 0,
+     "socket": "spike.drift.1"
+    },
+    {
+     "at": [
+      30,
+      28
+     ],
+     "attach": "drift",
+     "layout": "ball",
+     "room": {
+      "down": 69,
+      "left": 30,
+      "right": 53,
+      "up": 28
+     },
+     "side": 0,
+     "socket": "spike.drift.2"
+    }
+   ]
+  }
+ },
  "canvas": {
   "h": 98,
   "note": "84×98 is the PMO-APPROVED production target. One canonical logical plant canvas: every placement (Adapt, Spread, Region Inspect, Field Journal) shows this exact buffer, scaled by a whole number with nearest-neighbour and padded; anatomy is never re-laid-out per UI. The maximal legal dry and wet organisms are proven to fit with a 1-px safety margin.",
   "soilY": 68,
   "w": 84
  },
- "fingerprint": "3e830fa9c6430a9755c3d3cf7c4d2e5f8cf10140c64b18aae8ab29f79064b964",
+ "fingerprint": "fa93cf2b68dfebdcf9b16cf2186a41338722b9d536a5bae84490af624318e15c",
  "format": "bloom-plant-art/1",
+ "grammars": {
+  "bytes": 21913,
+  "path": "resources/plant-visual/plant-components.js",
+  "sha256": "83533c708b039f725deec9ae4b77b884c689a08c2e1c88e8fdecd8ab58e9fa21",
+  "sources": [
+   "resources/plant-visual/grammars/oh-stem.js",
+   "resources/plant-visual/grammars/candle.js",
+   "resources/plant-visual/grammars/reed.js",
+   "resources/plant-visual/grammars/rosette.js"
+  ]
+ },
  "inputs": [
   {
    "path": "art/plant/body-plan.json",
    "sha256": "f3e36cad0d77233730dcc84a303d19dccd7a2f94ae822d5576a2e07112c8ee33"
   },
   {
+   "path": "art/plant/body-plans/candle.json",
+   "sha256": "49387ed6ba01893e4abd77a31b80f5e7db940e41165ac1db1c46030059fa2b03"
+  },
+  {
+   "path": "art/plant/body-plans/oh-stem.json",
+   "sha256": "7681ae3f2e92fe6256b4fff77ad85d3cf4a87f7d859212ed2ffa50ea0b4a385b"
+  },
+  {
+   "path": "art/plant/body-plans/reed.json",
+   "sha256": "364440d33476fe9571d10b9dc01486192c413cdfe42174a053f73f022377af53"
+  },
+  {
+   "path": "art/plant/body-plans/rosette.json",
+   "sha256": "254873312b5bd9f94757f07ddfc39fc3cdaaac5b9a627511ce39ddc924e22da6"
+  },
+  {
    "path": "art/plant/contract.json",
    "sha256": "cdbdda14dd5500342c14fef1143078c5696b6685fe7d2c68d7274e2e6156adcb"
+  },
+  {
+   "path": "art/plant/contracts/candle.json",
+   "sha256": "06c06f17f2e9bd010a169a064bd830c810ff66f0802316c02da5b4149f8b59ea"
+  },
+  {
+   "path": "art/plant/contracts/reed.json",
+   "sha256": "7d777741f34bb98bc060268d1b949e0a111423eb161d3dc6b0c628239337bcdf"
+  },
+  {
+   "path": "art/plant/contracts/rosette.json",
+   "sha256": "45fa4ce582c7269416b9b88903c8ecb66936a1b77319edc560412bdf86c0e454"
   },
   {
    "path": "art/plant/packs/organic-hybrid/atlas.json",
@@ -26,46 +9482,87 @@
   },
   {
    "path": "art/plant/packs/proof-angular/atlas.json",
-   "sha256": "242ec327ac72bbc88d61afba7e999cb176f5fce07b833c930704c272ad641c54"
+   "sha256": "ef47a60dcc593529f4c5886b2b81cc6aa41cb892433bc431dc012cf281aa250c"
   },
   {
    "path": "art/plant/packs/proof-angular/atlas.png",
    "sha256": "a93db953fc8eb34d32fa42a3dc250d81ab2be5f7e6199ab87747758901cbfa3c"
   },
   {
+   "path": "art/plant/packs/proof-cinder-rosette/atlas.json",
+   "sha256": "73b4ecc86c148e9a5494d7721a4a4699a955fc82dcfd898919c17717beac2ffe"
+  },
+  {
+   "path": "art/plant/packs/proof-cinder-rosette/atlas.png",
+   "sha256": "5d2ffe4b2c168a74a4b3e65aa9bc1da15ba716dd9766992cb2b865609cb793ff"
+  },
+  {
+   "path": "art/plant/packs/proof-reed-spire/atlas.json",
+   "sha256": "54c4a0a06ba3d3cd847be99e94efc58bc59c715e67fb3bf42f081a88415dd9a4"
+  },
+  {
+   "path": "art/plant/packs/proof-reed-spire/atlas.png",
+   "sha256": "c33dcbde8c0cc9ae7d7427582d50b43b09a0773cbf85aaf53585c53a74493fa9"
+  },
+  {
    "path": "art/plant/packs/proof-round/atlas.json",
-   "sha256": "ce18648af1b2cb1dc1d7790ade52d380eb180444b212f22c016826abe09ff6c5"
+   "sha256": "7d554a8c6329d49d8ae9dc12bafbc507da8cb31a88fc2bf735ba64ca97d855f5"
   },
   {
    "path": "art/plant/packs/proof-round/atlas.png",
    "sha256": "eb2437162ac7523b01cba5e8f79438abf69e75ae509289c9e54f2159d3fd60ef"
   },
   {
+   "path": "art/plant/packs/proof-woolly-candle/atlas.json",
+   "sha256": "a5c9370860d434a629e99068b153d094e47e5e84fbc5ce4b343ccc10a378f6ce"
+  },
+  {
+   "path": "art/plant/packs/proof-woolly-candle/atlas.png",
+   "sha256": "9a88db25b9b267cde9807c0d679ad8df33ecfdef749fe5e8d24ae88599ac5530"
+  },
+  {
    "path": "art/plant/packs/proof/atlas.json",
-   "sha256": "020fa9188b2208d900bed8a17a9643cc1df00db4459d17bddaea7e206ffc5fe2"
+   "sha256": "1b999ecc0c1ee569b029047d1d240b755b6da8349f6b1e18a7c934a1631a96aa"
   },
   {
    "path": "art/plant/packs/proof/atlas.png",
    "sha256": "373d2b61258fff156aa334a987f141cbb7c2905c52e5c4c6597eab89972b7ade"
   },
   {
+   "path": "resources/plant-visual/grammars/candle.js",
+   "sha256": "07b28eaba191da2fa0df1a01ca2f8869702f799f874eb3d13f62eb05ba2abf0e"
+  },
+  {
+   "path": "resources/plant-visual/grammars/oh-stem.js",
+   "sha256": "a6cdd14654c7533dc95dd9ecdec9b9e02a709e59f9be0e8a324f04c0768b6935"
+  },
+  {
+   "path": "resources/plant-visual/grammars/reed.js",
+   "sha256": "2d1df3a23f15ad1e936f73ea08fdadd5f0cdc59ba238b5339206cc20b3e5f2ac"
+  },
+  {
+   "path": "resources/plant-visual/grammars/rosette.js",
+   "sha256": "46f4d2022f159ca19678c343a57b579d33729b7b9cf0b9e3d84b98cbccc79494"
+  },
+  {
    "path": "resources/plant-visual/plant-compositor.js",
-   "sha256": "b048c75be26c37d9f86406267bdb13c905c61caa1aad7be638a655b5e96bede8"
+   "sha256": "aac542586f81b3e354efc49ed81ad1ca4be7605d6d8fa9d61b05974f841d5fd8"
   },
   {
    "path": "tools/build-plant-art.mjs",
-   "sha256": "77623aee4cf30a8333a6039278da675881c0ed8fbfdf819da145a62592ee2348"
+   "sha256": "8c08110f24500b7638beea2fc00bdb1942cf25a325802afd67d37e335ba76910"
   }
  ],
  "output": {
-  "bytes": 255233,
+  "bytes": 577028,
   "path": "resources/plant-visual/generated/plant-atlas.js",
-  "sha256": "6969f813e838e22b134bd0382b6896bf1c87d0290670c961c278039af9b37844"
+  "sha256": "69c3a8f3cbe6493db3ce1cd81fbc98ea746bb53f51da28deac8220d7dba27b88"
  },
  "packs": {
   "organic-hybrid": {
    "authored": 55,
    "baked": 37,
+   "bodyPlan": "oh-stem@1",
    "missing": [],
    "placementsProven": 17782,
    "sprites": 92,
@@ -75,6 +9572,7 @@
   "proof": {
    "authored": 55,
    "baked": 37,
+   "bodyPlan": "oh-stem@1",
    "missing": [],
    "placementsProven": 17782,
    "sprites": 92,
@@ -84,20 +9582,52 @@
   "proof-angular": {
    "authored": 55,
    "baked": 37,
+   "bodyPlan": "oh-stem@1",
    "missing": [],
    "placementsProven": 17782,
    "sprites": 92,
    "status": "TEMPORARY PIPELINE PROOF — NOT FINAL ART",
    "title": "Silhouette pack — angular"
   },
+  "proof-cinder-rosette": {
+   "authored": 60,
+   "baked": 42,
+   "bodyPlan": "rosette@1",
+   "missing": [],
+   "placementsProven": 28334,
+   "sprites": 102,
+   "status": "TEMPORARY PIPELINE PROOF — NOT FINAL ART",
+   "title": "TEMPORARY PIPELINE PROOF — Cinder Rosette (rosette@1)"
+  },
+  "proof-reed-spire": {
+   "authored": 53,
+   "baked": 35,
+   "bodyPlan": "reed@1",
+   "missing": [],
+   "placementsProven": 47294,
+   "sprites": 88,
+   "status": "TEMPORARY PIPELINE PROOF — NOT FINAL ART",
+   "title": "TEMPORARY PIPELINE PROOF — Reed Spire (reed@1)"
+  },
   "proof-round": {
    "authored": 55,
    "baked": 37,
+   "bodyPlan": "oh-stem@1",
    "missing": [],
    "placementsProven": 17782,
    "sprites": 92,
    "status": "TEMPORARY PIPELINE PROOF — NOT FINAL ART",
    "title": "Silhouette pack — round"
+  },
+  "proof-woolly-candle": {
+   "authored": 58,
+   "baked": 36,
+   "bodyPlan": "candle@1",
+   "missing": [],
+   "placementsProven": 17768,
+   "sprites": 94,
+   "status": "TEMPORARY PIPELINE PROOF — NOT FINAL ART",
+   "title": "TEMPORARY PIPELINE PROOF — Woolly Candle (candle@1)"
   }
  },
  "sockets": [

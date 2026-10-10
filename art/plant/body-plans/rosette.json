@@ -1,0 +1,203 @@
+{
+  "format": "bloom-plant-body-plan@3",
+  "id": "rosette",
+  "version": 1,
+  "name": "Cinder Rosette (B1) — rosette + optional spike stem",
+  "about": "BLOOM-035B-5 body plan of the dry / heat specialist (docs/SPECIES_BODY_PLANS_v1.md §3.1): a `rosette` axis (radial leaf sockets around a short procedural caudex, listed BACK → FRONT: later leaves draw in front) + a `stem` SPIKE axis that the grammar draws only for reproduction. Integer logical pixels, y down, soil row 68; a radial leaf socket sits at heart + (round(r·sin a), round(r·cos a / 2) + dy) and faces right for a > 0, left for a < 0. Cold selects the architecture (open → cupped → closed → ball).",
+  "canvas": {"w": 84, "h": 98},
+  "ground": {"y": 68, "kind": "soil"},
+  "crown": [42, 68],
+  "contract": "art/plant/contracts/rosette.json",
+  "grammar": "rosette",
+  "angles": ["flat", "low", "mid", "high"],
+  "partLabels": {"stem": "Rosette"},
+  "architectures": {
+    "open": {
+      "about": "no Cold: a low, wide star of fleshy leaves pressed to the ground; the outer leaves lie flat",
+      "axes": [
+        {
+          "id": "main",
+          "kind": "rosette",
+          "at": [0, -1],
+          "part": "stem",
+          "caudex": {"height": 5, "width": [7, 5]},
+          "sockets": {
+            "leaf": [
+              {"a": -165, "r": 2, "dy": -4, "angle": "high"},
+              {"a": 165, "r": 2, "dy": -4, "angle": "high"},
+              {"a": -125, "r": 3, "dy": -3, "angle": "mid"},
+              {"a": 125, "r": 3, "dy": -3, "angle": "mid"},
+              {"a": -80, "r": 3, "dy": -1, "angle": "low"},
+              {"a": 80, "r": 3, "dy": -1, "angle": "low"},
+              {"a": -35, "r": 3, "dy": -1, "angle": "flat"},
+              {"a": 35, "r": 3, "dy": -1, "angle": "flat"}
+            ],
+            "collar": [{"dx": -5, "dy": -1}, {"dx": 5, "dy": -1}, {"dx": 0, "dy": -6}]
+          }
+        },
+        {
+          "id": "spike",
+          "kind": "stem",
+          "from": "main.apex",
+          "at": [0, 1],
+          "part": "flowers",
+          "height": 36,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+          "sockets": {
+            "flower": [{"t": 0.86, "side": 1, "dx": 8, "dy": -5}],
+            "seedHead": [{"t": 0.66, "side": -1, "dx": -9, "dy": -3}, {"t": 0.5, "side": 1, "dx": 9, "dy": -2}],
+            "pod": [{"t": 0.28, "side": -1, "dx": -8, "dy": 1}, {"t": 0.4, "side": 1, "dx": 8, "dy": 1}],
+            "drift": [[10, -10], [16, -4], [-12, -8]]
+          }
+        }
+      ],
+      "leafSets": {"drought.3": [2, 3, 4, 5, 6, 7]}
+    },
+    "cupped": {
+      "about": "Cold T1: the leaves lift and cup inward",
+      "axes": [
+        {
+          "id": "main",
+          "kind": "rosette",
+          "at": [0, -1],
+          "part": "stem",
+          "caudex": {"height": 5, "width": [7, 5]},
+          "sockets": {
+            "leaf": [
+              {"a": -165, "r": 2, "dy": -4, "angle": "high"},
+              {"a": 165, "r": 2, "dy": -4, "angle": "high"},
+              {"a": -125, "r": 2, "dy": -3, "angle": "high"},
+              {"a": 125, "r": 2, "dy": -3, "angle": "high"},
+              {"a": -80, "r": 3, "dy": -1, "angle": "mid"},
+              {"a": 80, "r": 3, "dy": -1, "angle": "mid"},
+              {"a": -35, "r": 3, "dy": -1, "angle": "low"},
+              {"a": 35, "r": 3, "dy": -1, "angle": "low"}
+            ],
+            "collar": [{"dx": -5, "dy": -1}, {"dx": 5, "dy": -1}, {"dx": 0, "dy": -6}]
+          }
+        },
+        {
+          "id": "spike",
+          "kind": "stem",
+          "from": "main.apex",
+          "at": [0, 1],
+          "part": "flowers",
+          "height": 34,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+          "sockets": {
+            "flower": [{"t": 0.86, "side": 1, "dx": 8, "dy": -5}],
+            "seedHead": [{"t": 0.66, "side": -1, "dx": -9, "dy": -3}, {"t": 0.5, "side": 1, "dx": 9, "dy": -2}],
+            "pod": [{"t": 0.28, "side": -1, "dx": -8, "dy": 1}, {"t": 0.4, "side": 1, "dx": 8, "dy": 1}],
+            "drift": [[10, -10], [16, -4], [-12, -8]]
+          }
+        }
+      ],
+      "leafSets": {"drought.3": [2, 3, 4, 5, 6, 7]}
+    },
+    "closed": {
+      "about": "Cold T2: the rosette closes; a two-point wool fringe on the rim",
+      "axes": [
+        {
+          "id": "main",
+          "kind": "rosette",
+          "at": [0, -1],
+          "part": "stem",
+          "caudex": {"height": 4, "width": [7, 5]},
+          "sockets": {
+            "leaf": [
+              {"a": -165, "r": 1, "dy": -3, "angle": "high"},
+              {"a": 165, "r": 1, "dy": -3, "angle": "high"},
+              {"a": -125, "r": 2, "dy": -2, "angle": "high"},
+              {"a": 125, "r": 2, "dy": -2, "angle": "high"},
+              {"a": -80, "r": 2, "dy": -1, "angle": "mid"},
+              {"a": 80, "r": 2, "dy": -1, "angle": "mid"},
+              {"a": -35, "r": 2, "dy": -1, "angle": "mid"},
+              {"a": 35, "r": 2, "dy": -1, "angle": "mid"}
+            ],
+            "collar": [{"dx": -5, "dy": -1}, {"dx": 5, "dy": -1}, {"dx": 0, "dy": -5}]
+          }
+        },
+        {
+          "id": "spike",
+          "kind": "stem",
+          "from": "main.apex",
+          "at": [0, 1],
+          "part": "flowers",
+          "height": 31,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+          "sockets": {
+            "flower": [{"t": 0.86, "side": 1, "dx": 8, "dy": -5}],
+            "seedHead": [{"t": 0.66, "side": -1, "dx": -9, "dy": -3}, {"t": 0.5, "side": 1, "dx": 9, "dy": -2}],
+            "pod": [{"t": 0.28, "side": -1, "dx": -8, "dy": 1}, {"t": 0.4, "side": 1, "dx": 8, "dy": 1}],
+            "drift": [[10, -10], [16, -4], [-12, -8]]
+          }
+        }
+      ],
+      "leafSets": {"drought.3": [2, 3, 4, 5, 6, 7]}
+    },
+    "ball": {
+      "about": "Cold T3: a tight, hair-fringed ball; a three-point wool fringe",
+      "axes": [
+        {
+          "id": "main",
+          "kind": "rosette",
+          "at": [0, -1],
+          "part": "stem",
+          "caudex": {"height": 3, "width": [7, 5]},
+          "sockets": {
+            "leaf": [
+              {"a": -165, "r": 1, "dy": -3, "angle": "high"},
+              {"a": 165, "r": 1, "dy": -3, "angle": "high"},
+              {"a": -125, "r": 1, "dy": -2, "angle": "high"},
+              {"a": 125, "r": 1, "dy": -2, "angle": "high"},
+              {"a": -80, "r": 1, "dy": -1, "angle": "high"},
+              {"a": 80, "r": 1, "dy": -1, "angle": "high"},
+              {"a": -35, "r": 1, "dy": -1, "angle": "high"},
+              {"a": 35, "r": 1, "dy": -1, "angle": "high"}
+            ],
+            "collar": [{"dx": -5, "dy": -1}, {"dx": 5, "dy": -1}, {"dx": 0, "dy": -4}]
+          }
+        },
+        {
+          "id": "spike",
+          "kind": "stem",
+          "from": "main.apex",
+          "at": [0, 1],
+          "part": "flowers",
+          "height": 28,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+          "sockets": {
+            "flower": [{"t": 0.86, "side": 1, "dx": 8, "dy": -5}],
+            "seedHead": [{"t": 0.66, "side": -1, "dx": -9, "dy": -3}, {"t": 0.5, "side": 1, "dx": 9, "dy": -2}],
+            "pod": [{"t": 0.28, "side": -1, "dx": -8, "dy": 1}, {"t": 0.4, "side": 1, "dx": 8, "dy": 1}],
+            "drift": [[10, -10], [16, -4], [-12, -8]]
+          }
+        }
+      ],
+      "leafSets": {"drought.3": [2, 3, 4, 5, 6, 7]}
+    }
+  },
+  "roots": {
+    "kind": "taproot",
+    "about": "a wide, shallow fan of lateral roots around a slender central root; the caudex tuber hangs from primaryRoot",
+    "depth": [20, 22, 24, 26],
+    "width": [[3, 1], [3, 1], [4, 2], [4, 2]],
+    "wiggle": [0, 0, 1, 0, -1, 0, 1, 0, 0, 0, 0],
+    "laterals": [
+      {"f": 0.12, "side": -1, "len": 18, "drop": 3},
+      {"f": 0.18, "side": 1, "len": 17, "drop": 3},
+      {"f": 0.35, "side": -1, "len": 14, "drop": 4},
+      {"f": 0.45, "side": 1, "len": 13, "drop": 4},
+      {"f": 0.7, "side": -1, "len": 9, "drop": 3},
+      {"f": 0.8, "side": 1, "len": 8, "drop": 3}
+    ],
+    "storage": {"dx": 0, "dy": 2},
+    "aerial": {"dy": 1, "dx": [-9, 10, -14, 15]}
+  },
+  "local": {"sprouts": [-31, 32, -36, 37, -27, 28, -39, 40], "laterals": "primary", "seedBank": {"y": [3, 12]}},
+  "anchors": {"stem": {"at": [0, -2]}, "roots": {"at": [0, 11]}, "seedHead": "spike.apex", "flowers": "spike.flower.1", "pods": "spike.pod.0"}
+}

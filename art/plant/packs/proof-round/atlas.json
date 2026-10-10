@@ -1,6 +1,7 @@
 {
   "format": "bloom-plant-atlas@1",
   "pack": "proof-round",
+  "bodyPlan": "oh-stem@1",
   "title": "Silhouette pack — round",
   "status": "TEMPORARY PIPELINE PROOF — NOT FINAL ART",
   "about": "Deliberately simple placeholder sprites that exist only to prove the production sprite pipeline (BLOOM-032B1). Final art comes from the owner's art studio and replaces this pack by following docs/PLANT_SPRITE_PIPELINE_v1.md § ARTIST_HANDOFF.",

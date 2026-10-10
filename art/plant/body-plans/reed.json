@@ -1,0 +1,482 @@
+{
+  "format": "bloom-plant-body-plan@3",
+  "id": "reed",
+  "version": 1,
+  "name": "Reed Spire (D1) — multi-stem culms + rhizome",
+  "about": "BLOOM-035B-5 body plan of the wet / flood specialist (docs/SPECIES_BODY_PLANS_v1.md §3.3): several `stem` CULM axes from the crown (the grammar draws c0–c2, + c3 / c4 with Flood, or the short s0–s2 under Drought), two sheathing culm-leaf sockets per culm, an umbel at every culm apex, a horizontal RHIZOME in the soil cutaway and waterlogged ground (a shallow water band over the soil line). Integer logical pixels, y down, soil row 68. Cold selects the architecture (open → dense → bunched → tight).",
+  "canvas": {"w": 84, "h": 98},
+  "ground": {"y": 68, "kind": "waterlogged"},
+  "crown": [42, 68],
+  "contract": "art/plant/contracts/reed.json",
+  "grammar": "reed",
+  "angles": ["low", "mid", "high"],
+  "partLabels": {"stem": "Culms", "leafShape": "Sheaths"},
+  "architectures": {
+    "open": {
+      "about": "no Cold: the culms fan out (tall culms c0–c4; the three short culms s0–s2 replace c0–c2 under Drought)",
+      "axes": [
+        {
+          "id": "c0",
+          "kind": "stem",
+          "at": [0, 0],
+          "part": "stem",
+          "height": 49,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "drift": [[10, -6], [15, 0], [-11, -4]]
+          }
+        },
+        {
+          "id": "c1",
+          "kind": "stem",
+          "at": [-6, 0],
+          "part": "stem",
+          "height": 42,
+          "width": [2, 1],
+          "bend": [0, 0, -1, -2, -2, -2, -3, -4, -4, -4, -5],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "flower": [{"t": 0.82, "side": -1, "dx": -7, "dy": -4}],
+            "pod": [{"t": 0.42, "side": -1, "dx": -7, "dy": 1}]
+          }
+        },
+        {
+          "id": "c2",
+          "kind": "stem",
+          "at": [6, 0],
+          "part": "stem",
+          "height": 44,
+          "width": [2, 1],
+          "bend": [0, 0, 1, 2, 2, 2, 3, 4, 4, 4, 5],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "pod": [{"t": 0.42, "side": 1, "dx": 7, "dy": 1}]
+          }
+        },
+        {
+          "id": "c3",
+          "kind": "stem",
+          "at": [-12, 0],
+          "part": "stem",
+          "height": 34,
+          "width": [2, 1],
+          "bend": [0, -1, -1, -2, -3, -4, -4, -5, -6, -6, -7],
+          "sockets": {"leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}], "collar": [{"t": 0.55}]}
+        },
+        {
+          "id": "c4",
+          "kind": "stem",
+          "at": [12, 0],
+          "part": "stem",
+          "height": 36,
+          "width": [2, 1],
+          "bend": [0, 1, 1, 2, 3, 4, 4, 5, 6, 6, 7],
+          "sockets": {"leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}], "collar": [{"t": 0.55}]}
+        },
+        {
+          "id": "s0",
+          "kind": "stem",
+          "at": [0, 0],
+          "part": "stem",
+          "height": 32,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "drift": [[10, -6], [15, 0], [-11, -4]]
+          }
+        },
+        {
+          "id": "s1",
+          "kind": "stem",
+          "at": [-6, 0],
+          "part": "stem",
+          "height": 27,
+          "width": [2, 1],
+          "bend": [0, 0, -1, -2, -2, -2, -3, -4, -4, -4, -5],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "flower": [{"t": 0.82, "side": -1, "dx": -7, "dy": -4}],
+            "pod": [{"t": 0.42, "side": -1, "dx": -7, "dy": 1}]
+          }
+        },
+        {
+          "id": "s2",
+          "kind": "stem",
+          "at": [6, 0],
+          "part": "stem",
+          "height": 28,
+          "width": [2, 1],
+          "bend": [0, 0, 1, 2, 2, 2, 3, 4, 4, 4, 5],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "pod": [{"t": 0.42, "side": 1, "dx": 7, "dy": 1}]
+          }
+        }
+      ]
+    },
+    "dense": {
+      "about": "Cold T1: the culms draw closer (tall culms c0–c4; the three short culms s0–s2 replace c0–c2 under Drought)",
+      "axes": [
+        {
+          "id": "c0",
+          "kind": "stem",
+          "at": [0, 0],
+          "part": "stem",
+          "height": 47,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "drift": [[10, -6], [15, 0], [-11, -4]]
+          }
+        },
+        {
+          "id": "c1",
+          "kind": "stem",
+          "at": [-5, 0],
+          "part": "stem",
+          "height": 40,
+          "width": [2, 1],
+          "bend": [0, 0, -1, -1, -2, -2, -2, -3, -3, -4, -4],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "flower": [{"t": 0.82, "side": -1, "dx": -7, "dy": -4}],
+            "pod": [{"t": 0.42, "side": -1, "dx": -7, "dy": 1}]
+          }
+        },
+        {
+          "id": "c2",
+          "kind": "stem",
+          "at": [5, 0],
+          "part": "stem",
+          "height": 42,
+          "width": [2, 1],
+          "bend": [0, 0, 1, 1, 2, 2, 2, 3, 3, 4, 4],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "pod": [{"t": 0.42, "side": 1, "dx": 7, "dy": 1}]
+          }
+        },
+        {
+          "id": "c3",
+          "kind": "stem",
+          "at": [-10, 0],
+          "part": "stem",
+          "height": 32,
+          "width": [2, 1],
+          "bend": [0, 0, -1, -2, -2, -2, -3, -4, -4, -4, -5],
+          "sockets": {"leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}], "collar": [{"t": 0.55}]}
+        },
+        {
+          "id": "c4",
+          "kind": "stem",
+          "at": [10, 0],
+          "part": "stem",
+          "height": 34,
+          "width": [2, 1],
+          "bend": [0, 0, 1, 2, 2, 2, 3, 4, 4, 4, 5],
+          "sockets": {"leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}], "collar": [{"t": 0.55}]}
+        },
+        {
+          "id": "s0",
+          "kind": "stem",
+          "at": [0, 0],
+          "part": "stem",
+          "height": 30,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "drift": [[10, -6], [15, 0], [-11, -4]]
+          }
+        },
+        {
+          "id": "s1",
+          "kind": "stem",
+          "at": [-5, 0],
+          "part": "stem",
+          "height": 25,
+          "width": [2, 1],
+          "bend": [0, 0, -1, -1, -2, -2, -2, -3, -3, -4, -4],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "flower": [{"t": 0.82, "side": -1, "dx": -7, "dy": -4}],
+            "pod": [{"t": 0.42, "side": -1, "dx": -7, "dy": 1}]
+          }
+        },
+        {
+          "id": "s2",
+          "kind": "stem",
+          "at": [5, 0],
+          "part": "stem",
+          "height": 26,
+          "width": [2, 1],
+          "bend": [0, 0, 1, 1, 2, 2, 2, 3, 3, 4, 4],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "pod": [{"t": 0.42, "side": 1, "dx": 7, "dy": 1}]
+          }
+        }
+      ]
+    },
+    "bunched": {
+      "about": "Cold T2: the culms bunch (tall culms c0–c4; the three short culms s0–s2 replace c0–c2 under Drought)",
+      "axes": [
+        {
+          "id": "c0",
+          "kind": "stem",
+          "at": [0, 0],
+          "part": "stem",
+          "height": 45,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "drift": [[10, -6], [15, 0], [-11, -4]]
+          }
+        },
+        {
+          "id": "c1",
+          "kind": "stem",
+          "at": [-3, 0],
+          "part": "stem",
+          "height": 38,
+          "width": [2, 1],
+          "bend": [0, 0, 0, -1, -1, -1, -1, -1, -2, -2, -2],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "flower": [{"t": 0.82, "side": -1, "dx": -7, "dy": -4}],
+            "pod": [{"t": 0.42, "side": -1, "dx": -7, "dy": 1}]
+          }
+        },
+        {
+          "id": "c2",
+          "kind": "stem",
+          "at": [3, 0],
+          "part": "stem",
+          "height": 40,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "pod": [{"t": 0.42, "side": 1, "dx": 7, "dy": 1}]
+          }
+        },
+        {
+          "id": "c3",
+          "kind": "stem",
+          "at": [-7, 0],
+          "part": "stem",
+          "height": 30,
+          "width": [2, 1],
+          "bend": [0, 0, -1, -1, -1, -2, -2, -2, -2, -3, -3],
+          "sockets": {"leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}], "collar": [{"t": 0.55}]}
+        },
+        {
+          "id": "c4",
+          "kind": "stem",
+          "at": [7, 0],
+          "part": "stem",
+          "height": 32,
+          "width": [2, 1],
+          "bend": [0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3],
+          "sockets": {"leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}], "collar": [{"t": 0.55}]}
+        },
+        {
+          "id": "s0",
+          "kind": "stem",
+          "at": [0, 0],
+          "part": "stem",
+          "height": 28,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "drift": [[10, -6], [15, 0], [-11, -4]]
+          }
+        },
+        {
+          "id": "s1",
+          "kind": "stem",
+          "at": [-3, 0],
+          "part": "stem",
+          "height": 23,
+          "width": [2, 1],
+          "bend": [0, 0, 0, -1, -1, -1, -1, -1, -2, -2, -2],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "flower": [{"t": 0.82, "side": -1, "dx": -7, "dy": -4}],
+            "pod": [{"t": 0.42, "side": -1, "dx": -7, "dy": 1}]
+          }
+        },
+        {
+          "id": "s2",
+          "kind": "stem",
+          "at": [3, 0],
+          "part": "stem",
+          "height": 24,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "pod": [{"t": 0.42, "side": 1, "dx": 7, "dy": 1}]
+          }
+        }
+      ]
+    },
+    "tight": {
+      "about": "Cold T3: a tight, upright bundle (tall culms c0–c4; the three short culms s0–s2 replace c0–c2 under Drought)",
+      "axes": [
+        {
+          "id": "c0",
+          "kind": "stem",
+          "at": [0, 0],
+          "part": "stem",
+          "height": 43,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "drift": [[10, -6], [15, 0], [-11, -4]]
+          }
+        },
+        {
+          "id": "c1",
+          "kind": "stem",
+          "at": [-2, 0],
+          "part": "stem",
+          "height": 36,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "flower": [{"t": 0.82, "side": -1, "dx": -7, "dy": -4}],
+            "pod": [{"t": 0.42, "side": -1, "dx": -7, "dy": 1}]
+          }
+        },
+        {
+          "id": "c2",
+          "kind": "stem",
+          "at": [2, 0],
+          "part": "stem",
+          "height": 38,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "pod": [{"t": 0.42, "side": 1, "dx": 7, "dy": 1}]
+          }
+        },
+        {
+          "id": "c3",
+          "kind": "stem",
+          "at": [-4, 0],
+          "part": "stem",
+          "height": 28,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1],
+          "sockets": {"leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}], "collar": [{"t": 0.55}]}
+        },
+        {
+          "id": "c4",
+          "kind": "stem",
+          "at": [4, 0],
+          "part": "stem",
+          "height": 30,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+          "sockets": {"leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}], "collar": [{"t": 0.55}]}
+        },
+        {
+          "id": "s0",
+          "kind": "stem",
+          "at": [0, 0],
+          "part": "stem",
+          "height": 26,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "drift": [[10, -6], [15, 0], [-11, -4]]
+          }
+        },
+        {
+          "id": "s1",
+          "kind": "stem",
+          "at": [-2, 0],
+          "part": "stem",
+          "height": 21,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "flower": [{"t": 0.82, "side": -1, "dx": -7, "dy": -4}],
+            "pod": [{"t": 0.42, "side": -1, "dx": -7, "dy": 1}]
+          }
+        },
+        {
+          "id": "s2",
+          "kind": "stem",
+          "at": [2, 0],
+          "part": "stem",
+          "height": 22,
+          "width": [2, 1],
+          "bend": [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+          "sockets": {
+            "leaf": [{"t": 0.2, "side": -1, "angle": "mid"}, {"t": 0.42, "side": 1, "angle": "mid"}],
+            "collar": [{"t": 0.55}],
+            "pod": [{"t": 0.42, "side": 1, "dx": 7, "dy": 1}]
+          }
+        }
+      ]
+    }
+  },
+  "roots": {
+    "kind": "rhizome",
+    "about": "a horizontal rhizome (depth by the water tier) with hanging rootlets; vertical risers join every drawn culm to it",
+    "depth": [4, 5, 6, 7],
+    "width": [2, 2, 3, 3],
+    "span": [-20, 20],
+    "wiggle": [0, 1, 0, -1, 0, 1, 0],
+    "rootlets": [
+      {"f": 0.0, "dx": -3, "len": 9},
+      {"f": 0.15, "dx": -1, "len": 13},
+      {"f": 0.3, "dx": -2, "len": 11},
+      {"f": 0.45, "dx": 0, "len": 18},
+      {"f": 0.6, "dx": 1, "len": 12},
+      {"f": 0.75, "dx": 2, "len": 15},
+      {"f": 0.9, "dx": 1, "len": 10},
+      {"f": 1.0, "dx": 3, "len": 8}
+    ],
+    "storage": {"dx": 0, "dy": 5},
+    "aerial": {"dy": 1, "dx": [-17, 18, -23, 24]}
+  },
+  "local": {"sprouts": [-30, 31, -35, 36, -26, 27, -39, 40], "laterals": "primary", "seedBank": {"y": [3, 12]}},
+  "anchors": {"stem": {"at": [0, -20]}, "roots": {"at": [0, 9]}, "seedHead": "c0.apex", "flowers": "c1.flower.1", "pods": "c1.pod.0"}
+}

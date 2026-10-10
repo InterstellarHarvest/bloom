@@ -1,0 +1,220 @@
+{
+  "format": "bloom-plant-body-plan@3",
+  "id": "candle",
+  "version": 1,
+  "name": "Woolly Candle (C1) — sprite trunk + rosette crown + inflorescence column",
+  "about": "BLOOM-035B-5 body plan of the cold specialist (docs/SPECIES_BODY_PLANS_v1.md §3.2): a `sprite` TRUNK axis (the authored woolly trunk + dead-leaf skirt, one drawing per architecture, anchored bottom-centre on the soil row; its points.tip is the crown point `top`), a `rosette` CROWN axis on the trunk top, and a `stem` COLUMN axis the grammar draws only for reproduction. Integer logical pixels, y down, soil row 68. Cold selects the architecture (open → dense → compact → closed).",
+  "canvas": {"w": 84, "h": 98},
+  "ground": {"y": 68, "kind": "soil"},
+  "crown": [42, 68],
+  "contract": "art/plant/contracts/candle.json",
+  "grammar": "candle",
+  "angles": ["low", "mid", "high"],
+  "partLabels": {"stem": "Trunk"},
+  "architectures": {
+    "open": {
+      "about": "no Cold: a woolly trunk with a light dead-leaf skirt, an open crown",
+      "axes": [
+        {
+          "id": "trunk",
+          "kind": "sprite",
+          "part": "stem",
+          "body": "body.trunk.0",
+          "top": [0, -28],
+          "sockets": {"collar": [{"dx": 0, "dy": -9}, {"dx": 0, "dy": -18}], "stilt": [{"dx": -5, "dy": -8, "side": -1}, {"dx": 5, "dy": -8, "side": 1}]}
+        },
+        {
+          "id": "crown",
+          "kind": "rosette",
+          "from": "trunk.top",
+          "at": [0, 0],
+          "part": "stem",
+          "sockets": {
+            "leaf": [
+              {"a": -150, "r": 2, "dy": -1, "angle": "high"},
+              {"a": 150, "r": 2, "dy": -1, "angle": "high"},
+              {"a": -105, "r": 3, "dy": 0, "angle": "mid"},
+              {"a": 105, "r": 3, "dy": 0, "angle": "mid"},
+              {"a": -50, "r": 3, "dy": 1, "angle": "low"},
+              {"a": 50, "r": 3, "dy": 1, "angle": "low"}
+            ]
+          }
+        },
+        {
+          "id": "column",
+          "kind": "stem",
+          "from": "crown.apex",
+          "at": [0, 1],
+          "part": "flowers",
+          "height": 17,
+          "width": [3, 2],
+          "bend": [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+          "sockets": {
+            "flower": [{"t": 0.8, "side": 1, "dx": 8, "dy": -4}],
+            "seedHead": [{"t": 0.6, "side": -1, "dx": -8, "dy": -2}, {"t": 0.45, "side": 1, "dx": 8, "dy": -1}],
+            "pod": [{"t": 0.2, "side": -1, "dx": -8, "dy": 1}, {"t": 0.3, "side": 1, "dx": 8, "dy": 1}],
+            "drift": [[9, -9], [14, -3], [-10, -7]]
+          }
+        }
+      ]
+    },
+    "dense": {
+      "about": "Cold T1: a thicker skirt, the crown leaves lift",
+      "axes": [
+        {
+          "id": "trunk",
+          "kind": "sprite",
+          "part": "stem",
+          "body": "body.trunk.1",
+          "top": [0, -27],
+          "sockets": {"collar": [{"dx": 0, "dy": -9}, {"dx": 0, "dy": -18}], "stilt": [{"dx": -6, "dy": -8, "side": -1}, {"dx": 6, "dy": -8, "side": 1}]}
+        },
+        {
+          "id": "crown",
+          "kind": "rosette",
+          "from": "trunk.top",
+          "at": [0, 0],
+          "part": "stem",
+          "sockets": {
+            "leaf": [
+              {"a": -150, "r": 2, "dy": -1, "angle": "high"},
+              {"a": 150, "r": 2, "dy": -1, "angle": "high"},
+              {"a": -105, "r": 2, "dy": 0, "angle": "high"},
+              {"a": 105, "r": 2, "dy": 0, "angle": "high"},
+              {"a": -50, "r": 3, "dy": 1, "angle": "mid"},
+              {"a": 50, "r": 3, "dy": 1, "angle": "mid"}
+            ]
+          }
+        },
+        {
+          "id": "column",
+          "kind": "stem",
+          "from": "crown.apex",
+          "at": [0, 1],
+          "part": "flowers",
+          "height": 16,
+          "width": [3, 2],
+          "bend": [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+          "sockets": {
+            "flower": [{"t": 0.8, "side": 1, "dx": 8, "dy": -4}],
+            "seedHead": [{"t": 0.6, "side": -1, "dx": -8, "dy": -2}, {"t": 0.45, "side": 1, "dx": 8, "dy": -1}],
+            "pod": [{"t": 0.2, "side": -1, "dx": -8, "dy": 1}, {"t": 0.3, "side": 1, "dx": 8, "dy": 1}],
+            "drift": [[9, -9], [14, -3], [-10, -7]]
+          }
+        }
+      ]
+    },
+    "compact": {
+      "about": "Cold T2: thick skirt + two wool bands; the crown half-closed",
+      "axes": [
+        {
+          "id": "trunk",
+          "kind": "sprite",
+          "part": "stem",
+          "body": "body.trunk.2",
+          "top": [0, -26],
+          "sockets": {"collar": [{"dx": 0, "dy": -9}, {"dx": 0, "dy": -18}], "stilt": [{"dx": -7, "dy": -8, "side": -1}, {"dx": 7, "dy": -8, "side": 1}]}
+        },
+        {
+          "id": "crown",
+          "kind": "rosette",
+          "from": "trunk.top",
+          "at": [0, 0],
+          "part": "stem",
+          "sockets": {
+            "leaf": [
+              {"a": -150, "r": 1, "dy": -1, "angle": "high"},
+              {"a": 150, "r": 1, "dy": -1, "angle": "high"},
+              {"a": -105, "r": 2, "dy": 0, "angle": "high"},
+              {"a": 105, "r": 2, "dy": 0, "angle": "high"},
+              {"a": -50, "r": 2, "dy": 1, "angle": "mid"},
+              {"a": 50, "r": 2, "dy": 1, "angle": "mid"}
+            ]
+          }
+        },
+        {
+          "id": "column",
+          "kind": "stem",
+          "from": "crown.apex",
+          "at": [0, 1],
+          "part": "flowers",
+          "height": 15,
+          "width": [3, 2],
+          "bend": [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+          "sockets": {
+            "flower": [{"t": 0.8, "side": 1, "dx": 8, "dy": -4}],
+            "seedHead": [{"t": 0.6, "side": -1, "dx": -8, "dy": -2}, {"t": 0.45, "side": 1, "dx": 8, "dy": -1}],
+            "pod": [{"t": 0.2, "side": -1, "dx": -8, "dy": 1}, {"t": 0.3, "side": 1, "dx": 8, "dy": 1}],
+            "drift": [[9, -9], [14, -3], [-10, -7]]
+          }
+        }
+      ]
+    },
+    "closed": {
+      "about": "Cold T3: the thickest skirt + three wool bands; the crown folds into a night-closed bud",
+      "axes": [
+        {
+          "id": "trunk",
+          "kind": "sprite",
+          "part": "stem",
+          "body": "body.trunk.3",
+          "top": [0, -25],
+          "sockets": {
+            "collar": [{"dx": 0, "dy": -7}, {"dx": 0, "dy": -13}, {"dx": 0, "dy": -19}],
+            "stilt": [{"dx": -8, "dy": -8, "side": -1}, {"dx": 8, "dy": -8, "side": 1}]
+          }
+        },
+        {
+          "id": "crown",
+          "kind": "rosette",
+          "from": "trunk.top",
+          "at": [0, 0],
+          "part": "stem",
+          "sockets": {
+            "leaf": [
+              {"a": -150, "r": 1, "dy": -1, "angle": "high"},
+              {"a": 150, "r": 1, "dy": -1, "angle": "high"},
+              {"a": -105, "r": 1, "dy": 0, "angle": "high"},
+              {"a": 105, "r": 1, "dy": 0, "angle": "high"},
+              {"a": -50, "r": 1, "dy": 1, "angle": "high"},
+              {"a": 50, "r": 1, "dy": 1, "angle": "high"}
+            ]
+          }
+        },
+        {
+          "id": "column",
+          "kind": "stem",
+          "from": "crown.apex",
+          "at": [0, 1],
+          "part": "flowers",
+          "height": 14,
+          "width": [3, 2],
+          "bend": [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+          "sockets": {
+            "flower": [{"t": 0.8, "side": 1, "dx": 8, "dy": -4}],
+            "seedHead": [{"t": 0.6, "side": -1, "dx": -8, "dy": -2}, {"t": 0.45, "side": 1, "dx": 8, "dy": -1}],
+            "pod": [{"t": 0.2, "side": -1, "dx": -8, "dy": 1}, {"t": 0.3, "side": 1, "dx": 8, "dy": 1}],
+            "drift": [[9, -9], [14, -3], [-10, -7]]
+          }
+        }
+      ]
+    }
+  },
+  "roots": {
+    "kind": "taproot",
+    "about": "a taproot like Organic Hybrid's (the same numbers)",
+    "depth": [16, 21, 25, 27],
+    "width": [[2, 1], [3, 1], [3, 2], [4, 2]],
+    "wiggle": [0, 1, 1, 0, -1, -1, 0, 0, 1, 1, 0],
+    "laterals": [
+      {"f": 0.22, "side": -1, "len": 11, "drop": 5},
+      {"f": 0.38, "side": 1, "len": 10, "drop": 5},
+      {"f": 0.58, "side": -1, "len": 8, "drop": 4},
+      {"f": 0.78, "side": 1, "len": 6, "drop": 3}
+    ],
+    "storage": {"dx": 0, "dy": 2},
+    "aerial": {"dy": 1, "dx": [-10, 11, -15, 16]}
+  },
+  "local": {"sprouts": [-30, 31, -22, 24, -36, 37, -15, 17], "laterals": "primary", "seedBank": {"y": [3, 12]}},
+  "anchors": {"stem": {"at": [0, -12]}, "roots": {"at": [0, 14]}, "seedHead": "column.apex", "flowers": "column.flower.1", "pods": "column.pod.0"}
+}

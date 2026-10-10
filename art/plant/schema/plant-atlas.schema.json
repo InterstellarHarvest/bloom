@@ -15,6 +15,11 @@
       "pattern": "^[a-z0-9][a-z0-9-]*$",
       "description": "= the folder name under art/plant/packs/"
     },
+    "bodyPlan": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*@[1-9][0-9]*$",
+      "description": "(BLOOM-035B-5) the body plan this pack draws: \"<plan>@<version>\" of art/plant/body-plans/<plan>.json (oh-stem@1 · rosette@1 · candle@1 · reed@1). Omitted only by a PMO-locked pack listed in a plan's lockedPacks (the Organic Hybrid delivery = oh-stem@1). The pack is validated against THAT plan's contract."
+    },
     "title": {
       "type": "string"
     },
@@ -75,6 +80,15 @@
         },
         "turf": {
           "$ref": "#/$defs/hex"
+        },
+        "water": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hex"
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "(BLOOM-035B-5) standing water band, deep and light — required by a body plan on waterlogged ground (reed@1)"
         }
       }
     },
@@ -131,10 +145,13 @@
           "description": "= component, or component.angle for angled components (leaf.base.mid, leaf.flood.2.heat.high)"
         },
         "component": {
-          "enum": ["leaf.base", "leaf.drought.1", "leaf.drought.2", "leaf.drought.3", "leaf.flood.1", "leaf.flood.2", "leaf.flood.3", "leaf.base.heat", "leaf.drought.1.heat", "leaf.drought.2.heat", "leaf.drought.3.heat", "leaf.flood.1.heat", "leaf.flood.2.heat", "leaf.flood.3.heat", "root.storage.2", "root.storage.3", "root.aerial.1", "root.aerial.2", "root.aerial.3", "root.stilt", "frost.hair.1", "frost.hair.2", "frost.hair.3", "frost.collar.2", "frost.collar.3", "salt.crystal", "salt.gland", "bud", "bud.axil", "flower", "seedHead.small", "seedHead.large", "seed.drift", "pod"]
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9]*(\\.[a-zA-Z0-9]+)*$",
+          "description": "a component id of the pack's body-plan contract (oh-stem: art/plant/contract.json; others: art/plant/contracts/<plan>.json); the build checks it against THAT registry"
         },
         "angle": {
-          "enum": ["low", "mid", "high"]
+          "enum": ["flat", "low", "mid", "high"],
+          "description": "one of the plan's authored angle steps (oh-stem / candle / reed: low · mid · high; rosette: flat · low · mid · high)"
         },
         "rect": {
           "$ref": "#/$defs/rect"
@@ -144,10 +161,10 @@
           "description": "the ONE pixel of this sprite that is placed exactly on the socket"
         },
         "attach": {
-          "enum": ["leafSocket", "leafPoint", "stemNode", "axil", "rootCrown", "primaryRoot", "aerialRoot", "stiltRoot", "apex", "flower", "seedHead", "pod", "drift"]
+          "enum": ["leafSocket", "radialLeaf", "leafPoint", "body", "stemNode", "axil", "rootCrown", "primaryRoot", "aerialRoot", "stiltRoot", "apex", "flower", "seedHead", "pod", "drift"]
         },
         "layer": {
-          "enum": ["roots", "aerialRoots", "rootStorage", "stem", "branch", "leaves", "surface", "repro", "drift"]
+          "enum": ["roots", "aerialRoots", "rootStorage", "stem", "body", "branch", "leaves", "surface", "repro", "drift"]
         },
         "order": {
           "type": "integer",
@@ -164,7 +181,7 @@
           "enum": ["structural", "surface", "reproductive"]
         },
         "family": {
-          "enum": ["leaf", "root", "frost", "salt", "bud", "flower", "seedHead", "pod"],
+          "enum": ["leaf", "root", "frost", "salt", "bud", "flower", "seedHead", "pod", "body"],
           "description": "frost and salt are separate families (Cold insulation never doubles as Salt crystals)"
         },
         "trait": {

@@ -1,0 +1,17 @@
+{
+  "format": "bloom-plant-body-plan@3",
+  "id": "oh-stem",
+  "version": 1,
+  "name": "Organic Hybrid — one stem (the accepted body plan @2)",
+  "about": "BLOOM-035B-5: Organic Hybrid's body plan in the per-plan layout. Its geometry IS the accepted body-plan@2 file art/plant/body-plan.json (one procedural stem per Cold layout, 117 sockets; byte-pinned by tools/organic-hybrid-art-intake-check.js S4) and its contract IS art/plant/contract.json (the locked 34-component Organic Hybrid registry + the shared materials / treatments / pixel rules). Both are REFERENCED, not copied, so the locked delivery and its PMO-pinned files stay byte-identical; skeleton `stem@2` is drawn by the accepted BLOOM-032B compositor path. Packs without a bodyPlan declaration are this plan only if listed in lockedPacks (the PMO-locked Organic Hybrid delivery, whose atlas.json the intake tool owns).",
+  "canvas": {"w": 84, "h": 98},
+  "ground": {"y": 68, "kind": "soil"},
+  "crown": [42, 68],
+  "contract": "art/plant/contract.json",
+  "grammar": "oh-stem",
+  "angles": ["low", "mid", "high"],
+  "skeleton": {"kind": "stem@2", "source": "art/plant/body-plan.json"},
+  "lockedPacks": ["organic-hybrid"],
+  "partLabels": {},
+  "local": {"sprouts": [-30, 31, -22, 24, -36, 37, -15, 17], "laterals": "primary", "seedBank": {"y": [3, 12]}}
+}
