@@ -184,7 +184,7 @@ const RANKING = /\b(easy|easier|hard|difficulty|beginner|expert|stars?|rating|sc
         await winNow(p); await reportOpen(p);
         const rep = await p.evaluate(() => ({ species: document.querySelector("#rr").dataset.species, cap: document.querySelector(".rr-spec-cap").textContent, packs: [...new Set(BLOOM.plantSpecimen.mounted().map(x => x.pack))] }));
         check(rep.species === "reed_spire" && /Reed Spire/.test(rep.cap), `[${bn}] F6 · the report names the species (Reed Spire)`, J(rep));
-        await shot(p, "report-reed_spire.png");
+        await p.waitForTimeout(900); await shot(p, "report-reed_spire.png");   // (the report's own entrance has settled; the win is the suite's QA shortcut)
         await p.click('#rrActs [data-act="playAgain"]'); await runReady(p, 2);
         const pa = await p.evaluate(() => { const S = BLOOM_APP.session, k = window.__pick; return { planetSame: S.planet === k.planet, speciesSame: S.run.species === k.species, sessions: BLOOM_APP.stats.sessions.length, ev: MENU_DEV.events.filter(e => e.type === "play-again").map(e => e.species) }; });
         check(pa.planetSame && pa.speciesSame && pa.sessions === 2 && J(pa.ev) === J(["reed_spire"]), `[${bn}] F7 · Play Again: a fresh session on the SAME planet object with the SAME species object`, J(pa));
