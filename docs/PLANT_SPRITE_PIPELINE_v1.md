@@ -499,3 +499,24 @@ purchase FX; dissolve kept as secondary; reduced motion = one direct swap. Remai
 
 Not started (by instruction): production integration, replacing `plant-specimen.js`, ingesting final art, merging to main.
 
+
+---
+
+## Addendum — BLOOM-035B-5 body plans (per-plan contracts, grammars and packs)
+
+The pipeline above is now **one body plan of four**: Organic Hybrid is body plan `oh-stem@1`, whose geometry and contract ARE
+`art/plant/body-plan.json` and `art/plant/contract.json` (kept byte-identical, referenced by `art/plant/body-plans/oh-stem.json`). Everything
+in this document (ARTIST_HANDOFF H1–H17, the 117 sockets, the 17 782-placement clip proof) still describes that plan exactly. Full
+record: `docs/SPECIES_BODY_PLANS_v1.md` § Implementation (035B-5).
+
+- Every pack declares `"bodyPlan": "<plan>@<version>"` in `atlas.json` (the locked `organic-hybrid` delivery is listed in `oh-stem.json`
+  `lockedPacks` instead) and is validated against THAT plan's contract (`art/plant/contracts/<plan>.json` for rosette / candle / reed;
+  materials, treatments, pixel rules, orientations shared from `contract.json`), coverage, sockets and clip proof.
+- The selector is per plan: `resources/plant-visual/grammars/<plan>.js`; `plant-components.js` is the GENERATED bundle of all grammars
+  (`BLOOM.plantVisual.components` = the oh-stem grammar, unchanged). `npm --prefix tools run check:plant-art` now covers the atlas, the
+  manifest and the bundle.
+- Generated runtime: `BLOOM.plantArt.bodyPlans` / `.contracts` per plan, `packs[p].bodyPlan`; the manifest keeps `sockets` (Organic Hybrid's
+  size budget, this document's H13 / H14 tables) and adds `bodyPlans.<plan>.sockets`.
+- QA: this suite (`tools/plant-sprite-pipeline-check.js`) proves the Organic Hybrid plan (`PACKS` = the oh-stem@1 packs; `FINAL_PACKS` per
+  plan, check P0); `tools/body-plan-check.js` proves the migration byte-identical against 5ff53d3 and every legal model of every new plan.
+- New species art follows `docs/species-art-briefs/` (generated from the plans: `node tools/build-plant-art.mjs --briefs`).

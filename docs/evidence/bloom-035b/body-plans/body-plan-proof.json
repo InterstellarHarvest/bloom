@@ -1,0 +1,480 @@
+{
+ "milestone": "BLOOM-035B-5",
+ "status": "TEMPORARY PIPELINE PROOF — NOT FINAL ART",
+ "base": "5ff53d3",
+ "head": "271700bc15878abacb6277029f36ee3b5a3b215e",
+ "oh": {
+  "models": 6720,
+  "legalGenomes": 3360,
+  "distinctSelections": 6720,
+  "renders": 26880,
+  "packs": [
+   "organic-hybrid",
+   "proof",
+   "proof-angular",
+   "proof-round"
+  ],
+  "sockets": 117,
+  "clipProof": {
+   "organic-hybrid": 17782,
+   "proof": 17782,
+   "proof-angular": 17782,
+   "proof-round": 17782
+  },
+  "specimenFrames": 10080
+ },
+ "plans": {
+  "coverage": {
+   "rosette": {
+    "components": 32,
+    "drawings": 60,
+    "runtimeSprites": 102,
+    "sockets": 106,
+    "manifestSockets": 106,
+    "clipProof": 28334,
+    "missing": 0,
+    "foreign": 0,
+    "extra": 0
+   },
+   "candle": {
+    "components": 37,
+    "drawings": 58,
+    "runtimeSprites": 94,
+    "sockets": 107,
+    "manifestSockets": 107,
+    "clipProof": 17768,
+    "missing": 0,
+    "foreign": 0,
+    "extra": 0
+   },
+   "reed": {
+    "components": 32,
+    "drawings": 53,
+    "runtimeSprites": 88,
+    "sockets": 246,
+    "manifestSockets": 246,
+    "clipProof": 47294,
+    "missing": 0,
+    "foreign": 0,
+    "extra": 0
+   }
+  },
+  "enumeration": {
+   "rosette": {
+    "models": 6720,
+    "legalSelections": 6720,
+    "distinctAnatomies": 3192,
+    "minMargin": 3,
+    "spritePlacements": 217152,
+    "bad": [],
+    "badN": 0,
+    "atlasPartialAlpha": 0,
+    "atlasOffPalette": 0
+   },
+   "candle": {
+    "models": 6720,
+    "legalSelections": 6720,
+    "distinctAnatomies": 3024,
+    "minMargin": 2,
+    "spritePlacements": 185856,
+    "bad": [],
+    "badN": 0,
+    "atlasPartialAlpha": 0,
+    "atlasOffPalette": 0
+   },
+   "reed": {
+    "models": 6720,
+    "legalSelections": 6720,
+    "distinctAnatomies": 2784,
+    "minMargin": 3,
+    "spritePlacements": 216640,
+    "bad": [],
+    "badN": 0,
+    "atlasPartialAlpha": 0,
+    "atlasOffPalette": 0
+   }
+  },
+  "axes": {
+   "rosette": {
+    "fromBase": {
+     "cold1": 486,
+     "cold2": 686,
+     "cold3": 645,
+     "heat1": 314,
+     "heat2": 464,
+     "heat3": 490,
+     "drought1": 432,
+     "drought2": 652,
+     "drought3": 795,
+     "flood1": 258,
+     "flood2": 287,
+     "flood3": 417,
+     "salt1": 280,
+     "rad1": 390,
+     "seedOut1": 182,
+     "seedOut2": 416,
+     "earlyMat1": 228,
+     "waterSeeds1": 241
+    },
+    "tierSteps": {
+     "cold1": 486,
+     "cold2": 613,
+     "cold3": 485,
+     "heat1": 314,
+     "heat2": 230,
+     "heat3": 446,
+     "drought1": 432,
+     "drought2": 379,
+     "drought3": 504,
+     "flood1": 258,
+     "flood2": 310,
+     "flood3": 201,
+     "salt1": 280,
+     "rad1": 390,
+     "seedOut1": 182,
+     "seedOut2": 318,
+     "earlyMat1": 228,
+     "waterSeeds1": 241
+    },
+    "bad": [],
+    "strained": 408
+   },
+   "candle": {
+    "fromBase": {
+     "cold1": 434,
+     "cold2": 647,
+     "cold3": 771,
+     "heat1": 146,
+     "heat2": 226,
+     "heat3": 256,
+     "drought1": 237,
+     "drought2": 432,
+     "drought3": 532,
+     "flood1": 140,
+     "flood2": 213,
+     "flood3": 368,
+     "salt1": 210,
+     "rad1": 367,
+     "seedOut1": 131,
+     "seedOut2": 355,
+     "earlyMat1": 159,
+     "waterSeeds1": 192
+    },
+    "tierSteps": {
+     "cold1": 434,
+     "cold2": 532,
+     "cold3": 676,
+     "heat1": 146,
+     "heat2": 100,
+     "heat3": 200,
+     "drought1": 237,
+     "drought2": 332,
+     "drought3": 250,
+     "flood1": 140,
+     "flood2": 225,
+     "flood3": 241,
+     "salt1": 210,
+     "rad1": 367,
+     "seedOut1": 131,
+     "seedOut2": 288,
+     "earlyMat1": 159,
+     "waterSeeds1": 192
+    },
+    "bad": [],
+    "strained": 216
+   },
+   "reed": {
+    "fromBase": {
+     "cold1": 709,
+     "cold2": 918,
+     "cold3": 928,
+     "heat1": 18,
+     "heat2": 276,
+     "heat3": 270,
+     "drought1": 944,
+     "drought2": 1138,
+     "drought3": 1186,
+     "flood1": 504,
+     "flood2": 693,
+     "flood3": 963,
+     "salt1": 200,
+     "rad1": 303,
+     "seedOut1": 58,
+     "seedOut2": 269,
+     "earlyMat1": 87,
+     "waterSeeds1": 115
+    },
+    "tierSteps": {
+     "cold1": 709,
+     "cold2": 796,
+     "cold3": 579,
+     "heat1": 18,
+     "heat2": 276,
+     "heat3": 209,
+     "drought1": 944,
+     "drought2": 402,
+     "drought3": 389,
+     "flood1": 504,
+     "flood2": 460,
+     "flood3": 528,
+     "salt1": 200,
+     "rad1": 303,
+     "seedOut1": 58,
+     "seedOut2": 256,
+     "earlyMat1": 87,
+     "waterSeeds1": 115
+    },
+    "bad": [],
+    "strained": 213
+   }
+  }
+ },
+ "browsers": {
+  "chromium": {
+   "version": "147.0.7727.15",
+   "species": {
+    "organic_hybrid": [
+     "2368c515",
+     "b227d171",
+     "9e78c3cb"
+    ],
+    "cinder_rosette": [
+     "869b653b",
+     "24071158",
+     "148be68c"
+    ],
+    "woolly_candle": [
+     "0835a63e",
+     "e65f3ed3",
+     "d95c7ece"
+    ],
+    "reed_spire": [
+     "e7577285",
+     "ce7c6c37",
+     "15ae465b"
+    ]
+   }
+  },
+  "firefox": {
+   "version": "148.0.2",
+   "species": {
+    "organic_hybrid": [
+     "2368c515",
+     "b227d171",
+     "9e78c3cb"
+    ],
+    "cinder_rosette": [
+     "869b653b",
+     "24071158",
+     "148be68c"
+    ],
+    "woolly_candle": [
+     "0835a63e",
+     "e65f3ed3",
+     "d95c7ece"
+    ],
+    "reed_spire": [
+     "e7577285",
+     "ce7c6c37",
+     "15ae465b"
+    ]
+   }
+  }
+ },
+ "changedFiles": [
+  "art/plant/README.md",
+  "art/plant/body-plans/candle.json",
+  "art/plant/body-plans/oh-stem.json",
+  "art/plant/body-plans/reed.json",
+  "art/plant/body-plans/rosette.json",
+  "art/plant/contracts/candle.json",
+  "art/plant/contracts/reed.json",
+  "art/plant/contracts/rosette.json",
+  "art/plant/packs/proof-angular/atlas.json",
+  "art/plant/packs/proof-cinder-rosette/README.md",
+  "art/plant/packs/proof-cinder-rosette/atlas.json",
+  "art/plant/packs/proof-cinder-rosette/atlas.png",
+  "art/plant/packs/proof-reed-spire/README.md",
+  "art/plant/packs/proof-reed-spire/atlas.json",
+  "art/plant/packs/proof-reed-spire/atlas.png",
+  "art/plant/packs/proof-round/atlas.json",
+  "art/plant/packs/proof-woolly-candle/README.md",
+  "art/plant/packs/proof-woolly-candle/atlas.json",
+  "art/plant/packs/proof-woolly-candle/atlas.png",
+  "art/plant/packs/proof/atlas.json",
+  "art/plant/proof-packs/make-proof-packs.mjs",
+  "art/plant/schema/plant-atlas.schema.json",
+  "docs/PLANT_SPRITE_PIPELINE_v1.md",
+  "docs/SPECIES_BODY_PLANS_v1.md",
+  "docs/species-art-briefs/CINDER_ROSETTE_ART_BRIEF_v1.json",
+  "docs/species-art-briefs/CINDER_ROSETTE_ART_BRIEF_v1.md",
+  "docs/species-art-briefs/README.md",
+  "docs/species-art-briefs/REED_SPIRE_ART_BRIEF_v1.json",
+  "docs/species-art-briefs/REED_SPIRE_ART_BRIEF_v1.md",
+  "docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v1.json",
+  "docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v1.md",
+  "resources/plant-sprite-lab/lab.js",
+  "resources/plant-visual/generated/plant-atlas-manifest.json",
+  "resources/plant-visual/generated/plant-atlas.js",
+  "resources/plant-visual/grammars/candle.js",
+  "resources/plant-visual/grammars/oh-stem.js",
+  "resources/plant-visual/grammars/reed.js",
+  "resources/plant-visual/grammars/rosette.js",
+  "resources/plant-visual/plant-components.js",
+  "resources/plant-visual/plant-compositor.js",
+  "resources/run-ui/plant-specimen.js",
+  "tools/body-plan-check.js",
+  "tools/build-plant-art.mjs",
+  "tools/organic-hybrid-art-intake-check.js",
+  "tools/plant-sprite-pipeline-check.js"
+ ],
+ "registry": {
+  "plans": {
+   "candle": {
+    "ref": "candle@1",
+    "packs": [
+     "proof-woolly-candle"
+    ],
+    "skeleton": "axes"
+   },
+   "oh-stem": {
+    "ref": "oh-stem@1",
+    "packs": [
+     "organic-hybrid",
+     "proof",
+     "proof-angular",
+     "proof-round"
+    ],
+    "skeleton": "stem@2"
+   },
+   "reed": {
+    "ref": "reed@1",
+    "packs": [
+     "proof-reed-spire"
+    ],
+    "skeleton": "axes"
+   },
+   "rosette": {
+    "ref": "rosette@1",
+    "packs": [
+     "proof-cinder-rosette"
+    ],
+    "skeleton": "axes"
+   }
+  },
+  "finalPacks": {
+   "oh-stem": {
+    "organic-hybrid": "ORGANIC HYBRID — FINAL ART (PMO-approved; BLOOM-032B2 intake)"
+   },
+   "rosette": {},
+   "candle": {},
+   "reed": {}
+  }
+ },
+ "species": {
+  "organic_hybrid": {
+   "bad": [],
+   "badN": 0,
+   "signature": "2368c515",
+   "global": "a7b728dd",
+   "plan": "oh-stem@1",
+   "pack": "organic-hybrid"
+  },
+  "cinder_rosette": {
+   "bad": [],
+   "badN": 0,
+   "signature": "869b653b",
+   "global": "ac70d649",
+   "plan": "rosette@1",
+   "pack": "proof-cinder-rosette"
+  },
+  "woolly_candle": {
+   "bad": [],
+   "badN": 0,
+   "signature": "0835a63e",
+   "global": "1d7dd1d1",
+   "plan": "candle@1",
+   "pack": "proof-woolly-candle"
+  },
+  "reed_spire": {
+   "bad": [],
+   "badN": 0,
+   "signature": "e7577285",
+   "global": "6cd2bec3",
+   "plan": "reed@1",
+   "pack": "proof-reed-spire"
+  }
+ },
+ "results": [
+  {
+   "ok": true,
+   "name": "S1 · scope: every changed file is in the 035B-5 file set (art/plant/ except the locked delivery, resources/plant-visual/, plant-specimen.js, the plant build + checks, the body-plan / pipeline docs, ar"
+  },
+  {
+   "ok": true,
+   "name": "O1 · the Organic Hybrid grammar is the accepted selector MOVED, not edited: select() source byte-identical (grammars/oh-stem.js and the generated bundle plant-components.js); over the complete legal-m"
+  },
+  {
+   "ok": true,
+   "name": "O2 · every render byte-identical: 26880 renders (6720 models × 4 Organic Hybrid-plan packs organic-hybrid / proof / proof-angular / proof-round) — same placements (component, sprite key, socket, posit"
+  },
+  {
+   "ok": true,
+   "name": "O3 · the same 117 sockets (the renderer's table, the plan's, and the manifest size budget == 5ff53d3); the same static clip proof: organic-hybrid 17782 · proof 17782 · proof-angular 17782 · proof-roun"
+  },
+  {
+   "ok": true,
+   "name": "O4 · the production specimen (resources/run-ui/plant-specimen.js) is byte-identical for Organic Hybrid: 10080 displayed frames (genomes × local colony states — establishment, growth focus, local upgra"
+  },
+  {
+   "ok": true,
+   "name": "O5 · the generalized skeleton is a superset, not a fork: Organic Hybrid's body-plan@2 restated as one @3 `stem` axis per layout gives the identical stem path in all four layouts and the identical leaf"
+  },
+  {
+   "ok": true,
+   "name": "P0 · four body plans oh-stem@1 · rosette@1 · candle@1 · reed@1; the species art mapping resolves (organic_hybrid → organic-hybrid, cinder_rosette → proof-cinder-rosette, woolly_candle → proof-woolly-c"
+  },
+  {
+   "ok": true,
+   "name": "P1 · per-plan contract coverage and static clip proof: every pack of a plan covers every component × angle × side of THAT plan's contract and nothing else; the build places every sprite at every socke"
+  },
+  {
+   "ok": true,
+   "name": "P2 · EVERY legal model of each new plan (6720 = 3360 legal genomes × thriving / strained) renders with its proof pack: the grammar names only that plan's contract components, architectures and axes; e"
+  },
+  {
+   "ok": true,
+   "name": "P3 · design §2.4 on every new plan: each single trait at each tier (Cold T1–T3 architecture, Heat T1–T3, Drought T1–T3, Flood T1–T3, Salt, Radiation, Seed Output T1–T2, Early Maturity, Waterborne Seed"
+  },
+  {
+   "ok": true,
+   "name": "P4 · the specimen with each species (organic_hybrid · cinder_rosette · woolly_candle · reed_spire): drawSpecies() → a deterministic 84×98 frame (fully grown, thriving, fully established colony; \"thriv"
+  },
+  {
+   "ok": true,
+   "name": "P5 · refusals throw (never a silent Organic Hybrid fallback): an unknown pack, a pack of another plan, an unknown plan version, a plan ≠ the pack's, a species without / with malformed art, no species "
+  },
+  {
+   "ok": true,
+   "name": "P6 · npm run check:plant-art passes (the generated atlas, manifest and grammar bundle == a clean rebuild of art/plant/ + grammars/: check:plant-art OK — 3 generated files match a clean rebuild); the p"
+  },
+  {
+   "ok": true,
+   "name": "[chromium 147.0.7727.15] B1 · file://: BLOOM.plantSpecimen.mount(host, { species }) for organic_hybrid · cinder_rosette · woolly_candle · reed_spire paints canvas pixels == the Node frame (three build"
+  },
+  {
+   "ok": true,
+   "name": "[firefox 148.0.2] B1 · file://: BLOOM.plantSpecimen.mount(host, { species }) for organic_hybrid · cinder_rosette · woolly_candle · reed_spire paints canvas pixels == the Node frame (three builds each,"
+  }
+ ],
+ "summary": {
+  "passes": 15,
+  "fails": 0,
+  "seconds": 801,
+  "browsers": [
+   "chromium",
+   "firefox"
+  ],
+  "quick": false
+ }
+}
