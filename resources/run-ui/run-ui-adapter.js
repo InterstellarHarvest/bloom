@@ -106,6 +106,9 @@
         scenarioIsDefault: (S.scn ? S.scn.id : DEFAULT_ID) === DEFAULT_ID,   // (BLOOM-033) the default scenario is never named to the player
         mechanics: { pressure: S.press, competition: S.comp, climate: S.clim },
         training: !!run.training, play: !!run.play, started: !!run.started,
+        // (BLOOM-035B, additive) the run's species: plain identity + its art (the specimen's body plan and pack); null only for a run without one
+        species: run.species ? { id: run.species.id, name: run.species.name, roleLabel: run.species.presentation.roleLabel, version: run.species.version,
+          physiologyVersion: run.species.physiologyVersion, physiologyKey: run.species.physiologyKey, art: { bodyPlan: run.species.art.bodyPlan, pack: run.species.art.pack } } : null,
         // (BLOOM-029F) an expedition run's provenance: the exact Destination Survey planet (identity for the report / debugging; never a world source)
         expedition: run.expedition ? { source: run.expedition.source, candidateKey: run.expedition.candidateKey, sectorSeed: run.expedition.sectorSeed, classId: run.expedition.classId, fingerprint: run.expedition.fingerprint } : null,
         running: V.running(), speed: V.speed(), speeds: host.speeds.slice(),

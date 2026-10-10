@@ -41,11 +41,19 @@
 // training) is mounted by the app in its own host while the title and the survey are put away (hidden, the menu's painting stopped, no
 // prefetch running), and the player comes back by resume() — the same black, the same fades, no page load. The first survey visit uses
 // the first-sector options (sectorSeed / firstBloom, development / QA); every later one scans a random sector.
+//
+// (BLOOM-035B) SPECIES. Every survey is FOR this entry's species (`entry.species`, a BLOOM.species.resolve object): Organic Hybrid unless
+// the DEVELOPMENT species flow is on (`speciesFlow`, the app's ?species=1 — never a normal-player control, never a Settings entry). With
+// it, EXPEDITION opens CHOOSE PLANT SPECIES first (`speciesScreen`, a factory the app supplies: the Species Selection screen) and the
+// survey shows the species with a Change button; Change Species returns to the species screen and the next survey keeps the SAME
+// sector seed and the same pool (its physical cache: nothing is validated twice), evaluated for the new species. The run's "Choose another
+// planet" reopens a survey for the same species; the title's prefetch is for the last species chosen in this session.
 import { MainMenu } from "./main-menu.js";
 import { BlackFade } from "./black-fade.js";
 import { readSettings, reducedMotionFor } from "./main-menu-data.js";
 import { readTraining, writeTraining } from "../training/training-store.js";
 import { DestinationSurvey } from "../destination-survey/destination-survey.js";
+import { speciesFor } from "../destination-survey/survey-data.js";
 import { AtmosphereTransition } from "../atmosphere-transition/atmosphere-transition.js";
 
 const T = { paintingWait: 2000 }; // cap on waiting, black, for a painting that never decodes (fade timings: ./black-fade.js FADE)
@@ -65,16 +73,21 @@ export class ExpeditionEntry {
    * storage            Storage for settings and (028D2) the training record (default localStorage)
    */
   constructor(root, { reducedMotion = undefined, sectorSeed = null, firstBloom = false, worker = true, workers = null, background = null, descent = null,
-    onBeginExpedition = null, onTraining = null, transition = null, storage = undefined, rng = Math.random } = {}) {
+    onBeginExpedition = null, onTraining = null, transition = null, storage = undefined, rng = Math.random, speciesFlow = false, speciesScreen = null } = {}) {
     if (!root || typeof root.appendChild !== "function") throw new TypeError("ExpeditionEntry: root must be a DOM element");
     this.root = root; this.descent = descent; this.onBeginExpedition = onBeginExpedition; this.forcedReducedMotion = reducedMotion;
     this.poolOpts = { worker, workers }; this.firstSector = { sectorSeed, firstBloom };
     this.store = storage === undefined ? safe(() => globalThis.localStorage) : storage;
     this.settings = readSettings(this.store);
     this.state = "menu"; this.survey = null; this.prefetch = null; this.surveyVisits = 0;
-    this.stats = { begins: 0, returns: 0, entries: [], exits: [], prefetches: [], prompts: 0, promptChoices: [], leaves: 0, runs: 0, resumes: [] };
+    // (035B) the survey's species; the development species flow and its screen factory (both off / absent in the production flow)
+    this.speciesFlow = !!speciesFlow; this.speciesScreen = typeof speciesScreen === "function" ? speciesScreen : null; this.species = speciesFor(null);
+    if (this.speciesFlow && !this.speciesScreen) throw new TypeError("ExpeditionEntry: the species flow needs a speciesScreen factory");
+    this.speciesView = null; this.carry = null; // carry: { pool, sectorSeed, firstBloom } kept across Change Species
+    this.stats = { begins: 0, returns: 0, entries: [], exits: [], prefetches: [], prompts: 0, promptChoices: [], leaves: 0, runs: 0, resumes: [], species: [] };
     if (getComputedStyle(root).position === "static") root.style.position = "relative";
     this.menuHost = host(root, "ee-menu"); this.surveyHost = host(root, "ee-survey"); this.surveyHost.hidden = true;
+    this.speciesHost = host(root, "ee-species"); this.speciesHost.hidden = true; // (035B) CHOOSE PLANT SPECIES (development flag only)
     this.black = host(root, "ee-black"); this.black.setAttribute("aria-hidden", "true"); this._fader = new BlackFade(this.black); // the fade layer (above both screens, below the departure's clouds)
     this.black.style.cssText += "; z-index:9999; background:#000; opacity:0; display:none; pointer-events:auto; contain:strict";
     this.atx = transition || new AtmosphereTransition({ host: root });   // the survey's dramatic departure only (028C1)
@@ -108,11 +121,12 @@ export class ExpeditionEntry {
       if (this.state === "disposed") return false;
       rec.blackMs = Math.round(performance.now() - t0);
       this.menu.hide();
+      if (this.speciesFlow) { await this._openSpecies(rm, rec, t0); return true; } // (035B) EXPEDITION → Choose Plant Species → Survey
       await this._openSurvey(rm, rec, t0);
       if (this.state === "disposed") return false;
       if (this.state === "to-survey") this.state = this.survey && this.survey.state !== "disposed" ? "survey" : "menu";
     } catch (err) {
-      if (!this.survey && this.state !== "disposed") {                  // nothing was mounted: the menu is back as it was
+      if (!this.survey && !this.speciesView && this.state !== "disposed") { // nothing was mounted: the menu is back as it was
         this.menuHost.inert = false; this.menu.show({ rotate: false, settled: true }); this.state = "menu"; this._fade(0, rm).catch(() => {});
       }
       throw err;
@@ -122,10 +136,17 @@ export class ExpeditionEntry {
 
   /** (at full black, menu hidden) mount the survey — the prefetched sector's pool if there is one, else a fresh pool — draw it, lift the black. */
   async _openSurvey(rm, rec, t0) {
-    const pool = this.prefetch; this.prefetch = null;                  // ownership passes to the survey
-    const first = this.surveyVisits++ === 0 ? this.firstSector : { sectorSeed: null, firstBloom: false };   // (BLOOM-033) later visits: a random sector
+    // (035B) a Change Species carries the previous survey's pool and its sector seed: the same part of space, through another plant's eyes
+    const carry = this.carry; this.carry = null;
+    const pool = carry ? carry.pool : this.prefetch; if (!carry) this.prefetch = null; // ownership passes to the survey
+    const visit = this.surveyVisits++;
+    const first = carry ? { sectorSeed: carry.sectorSeed, firstBloom: carry.firstBloom } : visit === 0 ? this.firstSector : { sectorSeed: null, firstBloom: false };   // (BLOOM-033) later visits: a random sector
+    const adopt = pool && !pool.disposed && !(carry == null && pool.first && pool.first.species.physiologyKey !== this.species.physiologyKey) ? pool : null;
+    if (pool && !adopt && !carry) pool.dispose();                     // a title prefetch for another species: not this survey's
     this.surveyHost.hidden = false; this.surveyHost.inert = false;
-    this.survey = new DestinationSurvey(this.surveyHost, { sectors: pool && !pool.disposed ? pool : null, ...(pool ? {} : first), ...this.poolOpts, reducedMotion: rm,
+    rec.species = this.species.id;
+    this.survey = new DestinationSurvey(this.surveyHost, { sectors: adopt, ...(adopt && !carry ? {} : first), ...this.poolOpts, reducedMotion: rm, species: this.species,
+      onChangeSpecies: this.speciesFlow ? sv => { this.changeSpecies(sv).catch(err => console.error("ExpeditionEntry: could not change species", err)); } : null,
       onExit: () => { this.returnToMenu().catch(err => console.error("ExpeditionEntry: could not return to the menu", err)); },
       onBeginExpedition: d => this._announced(d),
       descent: this.descent ? { ...this.descent, transition: this.descent.transition || this.atx } : null });
@@ -166,6 +187,7 @@ export class ExpeditionEntry {
   }
   _putAway() {
     this.state = "away"; this.menu.hide(); this.menuHost.inert = false;
+    if (this.speciesView) this._closeSpecies();
     if (this.prefetch) { this.prefetch.dispose(); this.prefetch = null; }   // no world generation competes with a run
     this.surveyHost.hidden = true;
   }
@@ -184,6 +206,7 @@ export class ExpeditionEntry {
     if (!this.covered) await this._fade(1, rm);                       // (normally the run's exit already faded to full black: never re-fade from clear)
     if (this.state === "disposed") return false;
     rec.blackMs = Math.round(performance.now() - t0);
+    if (to === "species" && this.speciesFlow) { this.state = "to-survey"; this.stats.begins++; await this._openSpecies(rm, rec, t0); return true; } // (035B)
     if (to === "survey") {
       this.state = "to-survey"; this.stats.begins++;
       await this._openSurvey(rm, rec, t0);
@@ -233,14 +256,88 @@ export class ExpeditionEntry {
     return true;
   }
 
+  // ---------------------------------------------------------------- (035B) species (development flag flow)
+  /** Choose the species the next survey is for (an id or a resolved object; an unknown id THROWS). Only the species flow may choose a
+   *  species other than Organic Hybrid: the production flow has no control for it. */
+  setSpecies(species) {
+    const sp = speciesFor(species);
+    if (!this.speciesFlow && sp.id !== this.species.id) throw new Error("ExpeditionEntry: the species can only change in the species flow (development flag)");
+    this.species = sp; this.stats.species.push({ id: sp.id, at: performance.now() });
+    return sp;
+  }
+
+  /** At full black: mount CHOOSE PLANT SPECIES (the app's screen), focused on this entry's species; lift the black. */
+  async _openSpecies(rm, rec, t0) {
+    this.speciesHost.hidden = false; this.speciesHost.inert = false;
+    const view = this.speciesView = this.speciesScreen(this.speciesHost, { species: this.species, reducedMotion: rm,
+      onChoose: sp => { this._speciesChosen(sp).catch(err => console.error("ExpeditionEntry: could not open the survey", err)); },
+      onBack: () => { this._speciesBack().catch(err => console.error("ExpeditionEntry: could not return to the menu", err)); } });
+    this.state = "species"; this.menuHost.inert = false;
+    if (view.ready) await view.ready;
+    await frame(); await frame();
+    if (this.state === "disposed") return;
+    rec.speciesMs = Math.round(performance.now() - t0);
+    await this._fade(0, rm);
+    if (view.focus) view.focus();
+  }
+  _closeSpecies() { const v = this.speciesView; this.speciesView = null; if (v) v.dispose(); this.speciesHost.hidden = true; this.speciesHost.replaceChildren(); }
+
+  /** "Survey for <species>": black → the species screen goes → the survey for that species (a carried sector seed, if any) → black lifts. */
+  async _speciesChosen(sp) {
+    if (this.state !== "species") return false;
+    const rm = this.reducedMotion, t0 = performance.now(), rec = { at: t0, reducedMotion: rm, fromSpecies: true };
+    this.state = "to-survey"; this.speciesHost.inert = true; this.stats.entries.push(rec);
+    await this._fade(1, rm);
+    if (this.state === "disposed") return false;
+    this.setSpecies(sp); this._closeSpecies();
+    await this._openSurvey(rm, rec, t0);
+    if (this.state === "to-survey") this.state = this.survey && this.survey.state !== "disposed" ? "survey" : "menu";
+    return true;
+  }
+
+  /** Back from the species screen: black → the title (a carried pool is let go) → black lifts. */
+  async _speciesBack() {
+    if (this.state !== "species") return false;
+    const rm = this.reducedMotion; this.state = "to-menu"; this.speciesHost.inert = true; this.stats.returns++;
+    await this._fade(1, rm);
+    if (this.state === "disposed") return false;
+    this._closeSpecies();
+    if (this.carry) { if (this.carry.pool) this.carry.pool.dispose(); this.carry = null; }
+    this.menu.setStatus(""); this._syncTrainingTag();
+    const shown = this.menu.show({ settled: true });
+    await Promise.race([shown, sleep(T.paintingWait)]); await frame(); await frame();
+    if (this.state === "disposed") return false;
+    await this._fade(0, rm);
+    this.state = "menu"; this.menu.focusMenu();
+    if (!this.prefetch) this._prefetchSector({ sectorSeed: null, firstBloom: false });
+    return true;
+  }
+
+  /** Change Species from the survey: black → the survey goes (its pool and sector seed are carried) → the species screen → black lifts. */
+  async changeSpecies(survey = this.survey) {
+    if (this.state !== "survey" || !this.speciesFlow || !survey) return false;
+    const rm = this.reducedMotion, t0 = performance.now(), rec = { at: t0, reducedMotion: rm, change: true, sectorSeed: survey.sectorSeed, from: this.species.id };
+    this.state = "to-survey"; this.surveyHost.inert = true; this.stats.species.push({ change: true, sectorSeed: survey.sectorSeed, at: t0 });
+    await this._fade(1, rm);
+    if (this.state === "disposed") return false;
+    const seed = survey.sectorSeed, firstBloom = survey.firstBloom;
+    this.survey = null; const pool = survey.dispose({ keepPool: true });
+    this.carry = { pool, sectorSeed: seed, firstBloom };
+    this.surveyHost.hidden = true; this.surveyHost.inert = false;
+    await this._openSpecies(rm, rec, t0);
+    return true;
+  }
+
   dispose() {
     if (this.state === "disposed") return;
     this.state = "disposed";
     if (this.survey) { this.survey.dispose(); this.survey = null; }
     if (this.prefetch) { this.prefetch.dispose(); this.prefetch = null; }
+    if (this.speciesView) { this.speciesView.dispose(); this.speciesView = null; }
+    if (this.carry && this.carry.pool) { this.carry.pool.dispose(); this.carry = null; }
     this._fader.cancel();
     this.menu.dispose(); this.atx.dispose();
-    this.menuHost.remove(); this.surveyHost.remove(); this.black.remove();
+    this.menuHost.remove(); this.surveyHost.remove(); this.speciesHost.remove(); this.black.remove();
   }
 
   // ---------------------------------------------------------------- internals
@@ -264,7 +361,7 @@ export class ExpeditionEntry {
   _fade(to, rm) { return this._fader.fade(to, rm); }
 
   _prefetchSector(first) {
-    const pool = this.prefetch = DestinationSurvey.prefetch({ ...first, ...this.poolOpts }), rec = { seed: pool.first.seed, at: performance.now(), readyMs: null };
+    const pool = this.prefetch = DestinationSurvey.prefetch({ ...first, ...this.poolOpts, species: this.species }), rec = { seed: pool.first.seed, species: this.species.id, at: performance.now(), readyMs: null };
     this.stats.prefetches.push(rec);
     const status = () => { if (this.prefetch !== pool || this.state !== "menu") return; const p = pool.progress;
       this.menu.setStatus(p.ready ? "Sector surveyed · nine worlds ready" : `Surveying sector · ${p.confirmed} of ${p.total} worlds`); };

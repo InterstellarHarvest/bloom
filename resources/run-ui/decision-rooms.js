@@ -250,7 +250,7 @@
     // the upper-left plant card (the production specimen + caption) and the content-height information card under it
     function specBlock(host) {
       const wrap = document.createElement("div"); wrap.className = "lf-top"; host.appendChild(wrap);
-      const spec = PS.mount(wrap, { reducedMotion: reduced }); SPECS.push(spec);
+      const spec = PS.mount(wrap, { reducedMotion: reduced, species: A.run().species }); SPECS.push(spec); // (035B) the run's species: its body plan + pack
       const capEl = document.createElement("div"); capEl.className = "spec-cap"; capEl.innerHTML = `<b class="sc-n"></b><small class="sc-w"></small>`; wrap.appendChild(capEl);
       const info = document.createElement("div"); info.className = "lf-info"; host.appendChild(info);
       return { wrap, spec, cap: capEl, info, caption(r, extra) { capEl.querySelector(".sc-n").textContent = `Your plant in ${r.name}`; capEl.querySelector(".sc-w").textContent = extra || specCaption(r); } };

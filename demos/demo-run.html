@@ -443,6 +443,14 @@ function harnessRun(){
   if(training&&!(BLOOM_DATA.training&&BLOOM.play&&BLOOM.play.deriveConfig)) return fail("the training data (content/training.js) or BLOOM.play is not loaded", {badPlanet:true, ...who});
   // (BLOOM-033) an expedition= link is retired: expeditions start inside index.html and never cross a document (explicit failure, never First Bloom)
   if(q.get("expedition")!==null) return fail("expedition links are retired: an expedition starts inside index.html, from the Destination Survey, and never leaves it", {badPlanet:true, planetName:"Expedition link"});
+  // (BLOOM-035B) species=<id> (content/species.js) names the PLAYER's species for a developer run, on any world (authored or procedural);
+  // none → Organic Hybrid. An unknown / malformed id is an explicit failure — never another species. Training is always Organic Hybrid.
+  const spText=q.get("species"); let species=null;
+  if(training&&spText!==null) return fail("training is always Organic Hybrid: leave out species=", {badSpecies:true, speciesId:spText, ...who});
+  if(spText!==null){
+    if(!/^[a-z][a-z0-9_]{0,40}$/.test(spText)) return fail(`"species" must be a species id from content/species.js (got "${spText}")`, {badSpecies:true, speciesId:spText});
+    try { species=BLOOM.species.resolve(spText); } catch(e){ return fail(e.message, {badSpecies:true, speciesId:spText}); } }
+  else species=BLOOM.species.resolve(BLOOM.species.DEFAULT_ID);
   let scenario=null; // null = no scenario parameter: the default scenario, the engine exactly as before BLOOM-012
   if(scText!==null){
     if(!/^[a-z][a-z0-9_]{0,40}$/.test(scText)) return fail(`"scenario" must be a scenario id from content/scenarios.js (got "${scText}")`, {badScenario:true});
@@ -450,8 +458,9 @@ function harnessRun(){
   const withScenario=(run)=>{ // layer P for a scenario that changes the run (pressure and/or competition); the default adds nothing to prove
     const D0=BLOOM.pressure.resolveScenario(BLOOM_DATA.scenarios,null);
     run.scenario=scenario; run.summary.scenarioId=scenario?scenario.id:D0.id; run.summary.scenario=scenario?scenario.name:D0.name;
+    run.species=species; run.summary.species=BLOOM.species.provenance(species); // (035B)
     if(!BLOOM.pressure.isDynamic(scenario)) return run;
-    const v=BLOOM.validateScenario(run.planet, BLOOM_DATA.config, BLOOM_DATA.traits, scenario, {archetypeId:run.archetype?run.archetype.id:null});
+    const v=BLOOM.validateScenario(run.planet, BLOOM_DATA.config, BLOOM_DATA.traits, scenario, {archetypeId:run.archetype?run.archetype.id:null, species});
     if(!v.ok) return fail(v.reason||`${scenario.name} ${v.status}`, {archetype:run.archetype&&run.archetype.name, planetName:run.planet.name, scenario:scenario.name, scenarioRejected:v.status});
     run.summary.scenarioValidation={status:v.status, strategiesProven:v.strategies.length, required:v.required}; // a count only — no builds, no plans
     return run; };
@@ -463,7 +472,7 @@ function harnessRun(){
     if(training&&!run.failed){ // (BLOOM-033) the SAME training run descriptor the app builds (BLOOM.gameSession.trainingRun); the derived
       // config is built once, there; content/config.js is never edited. return= is this harness's own (where its exits navigate)
       const T=BLOOM.gameSession.trainingRun({planetId:P.id, returnTo:BLOOM.play.safeReturn(q.get("return"), location.href, BLOOM_DATA.training.returnTo)});
-      run.play=true; run.summary.training=true; run.training=T.training; }
+      run.play=true; run.summary.training=true; run.training=T.training; run.species=T.species; run.summary.species=T.summary.species; }
     return run; }
   const A=(BLOOM_DATA.archetypes||[]).find(a=>a.id===aid);
   if(!A) return fail(`unknown archetype "${aid}" (known: ${(BLOOM_DATA.archetypes||[]).map(a=>a.id).join(", ")})`);
@@ -494,13 +503,14 @@ if(BLOOM_RUN.kind==="missing"){
 } else if(BLOOM_RUN.failed){ // explicit failure state: identify the request, start nothing
   shell();
   const f=BLOOM_RUN.summary, esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  const scen=f.badScenario||f.scenarioRejected, where=f.kind==="authored"?(f.planetName?esc(f.planetName):"First Bloom")
+  const scen=f.badScenario||f.scenarioRejected||f.badSpecies, where=f.kind==="authored"?(f.planetName?esc(f.planetName):"First Bloom")
     :`${f.archetype?esc(f.archetype):`archetype <code>${esc(f.archetypeId)}</code>`} · public seed <code>${esc(f.seed)}</code>`;
   document.title=scen?"BLOOM — run not started":"BLOOM — generation failed"; document.querySelector("header h1 small").textContent=scen?"· run not started":"· generation failed";
   document.querySelector("main").innerHTML=`<div class="genfail" id="genFail" style="grid-column:1/-1;align-self:start"><h2>${scen?"NO RUN STARTED":"NO WORLD GENERATED"}</h2>
-    <div>${where}${f.scenarioId!==null&&f.scenarioId!==undefined?` · scenario <code>${esc(f.scenarioId)}</code>`:""}</div>
+    <div>${where}${f.scenarioId!==null&&f.scenarioId!==undefined?` · scenario <code>${esc(f.scenarioId)}</code>`:""}${f.speciesId!=null?` · species <code>${esc(f.speciesId)}</code>`:""}</div>
     <p>${esc(f.why)}.${f.rejectedByLayer?` Rejected attempts: ${Object.entries(f.rejectedByLayer).map(([k,n])=>`${esc(k)} ${n}`).join(" · ")}.`:""}</p>
     <p style="color:var(--dim)">${f.scenarioRejected?`This planet + scenario combination did not pass the scenario validation layer (${esc(f.scenarioRejected)}). No other scenario or seed was substituted and no run was started.`
+      :f.badSpecies?`Known species: ${BLOOM.species.ids().map(x=>`<code>${esc(x)}</code>`).join(", ")}. Leave <code>species=</code> out for Organic Hybrid. No other species was substituted and no run was started.`
       :f.badPlanet?`No other world was substituted and no run was started.`
       :f.badScenario?`Known scenarios: ${(BLOOM_DATA.scenarios||[]).map(x=>`<code>${esc(x.id)}</code>`).join(", ")}. Leave <code>scenario=</code> out (or <code>scenario=default</code>) for the default scenario. No other scenario was substituted and no run was started.`
       :`${f.attempts?"This public seed is not playable under the current validation policy.":"The launch parameters are invalid."} No other seed was substituted and no world was started. Try a different <code>seed=</code> value.`}</p></div>`;
@@ -594,8 +604,8 @@ function playBoot(q){
   searchWorker().then(res=>{ clearTimeout(slowT); if(cancelled) return; LOG.state=res.ok?"accepted":"failed"; LOG.tried=res.tried.map(t=>({seed:t.seed, outcome:t.outcome}));
     if(!res.ok) return playFail(P,{title:P.failure.title, A, S, retry:"demo-run.html?"+BLOOM.play.runQuery({archetype:A.id, scenario:S.id}),
       body:fill(replay?P.failure.replayBody:P.failure.body, names), reason:res.status==="DISALLOWED"?res.reason:null});
-    const planet=res.planet, run={kind:"procedural", play:true, planet, archetype:A, seed:res.seed, scenario:S,
-      summary:{...procSummary(A, planet), scenarioId:S.id, scenario:S.name}};
+    const planet=res.planet, OH=BLOOM.species.resolve(BLOOM.species.DEFAULT_ID), run={kind:"procedural", play:true, planet, archetype:A, seed:res.seed, scenario:S, species:OH, // (035B) this legacy search path is Organic Hybrid's
+      summary:{...procSummary(A, planet), scenarioId:S.id, scenario:S.name, species:BLOOM.species.provenance(OH)}};
     if(res.scenarioValidation) run.summary.scenarioValidation=res.scenarioValidation; // a count only — no builds, no plans
     history.replaceState(null, "", location.pathname+"?"+BLOOM.play.runQuery({archetype:A.id, seed:res.seed, scenario:S.id}));
     prep.remove(); startRun(run);
