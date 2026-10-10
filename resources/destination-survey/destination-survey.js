@@ -57,8 +57,9 @@ const DOLLY_TO = 1.45; // the view's closest camera distance: the disc is then ~
 // the chosen one flies; on the way back each reappears — under its cover, which then fades — as soon as the rest of the flight
 // can no longer touch it, all finishing exactly as the globe lands.
 // (BLOOM-034) the gameplay status language for the three classes (icon + word, never colour alone) and the gameplay category identity
-// for the dossier's condition rows (presentation only: survey-data.js and its rows are unchanged)
-const CLASS_ICON = { favorable: "check", precarious: "alert", extreme: "x" };
+// for the dossier's condition rows (presentation only: survey-data.js and its rows are unchanged). Extreme is a PLAYABLE class: it
+// carries the severe-warning hazard sign, never the blocked cross (which stays for hostile ground — the habitability key — only).
+const CLASS_ICON = { favorable: "check", precarious: "alert", extreme: "hazard" };
 const ROW_CAT = { climate: ["temperature", "temp"], water: ["water", "water"], soil: ["soil", "soil"], atmosphere: [null, "sky"], solar: ["hazard", "heat"] };
 const hash01 = (a, b) => { let h = Math.imul((a >>> 0) ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(b + 1, 0xc2b2ae35); h ^= h >>> 15; h = Math.imul(h, 0x2c1b3c6d); h ^= h >>> 12; return (h >>> 0) / 4294967296; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -440,7 +441,7 @@ export class DestinationSurvey {
     [["g", h.green], ["y", h.yellow], ["r", h.red]].forEach(([k, v]) => { bar.querySelector("." + k).style.width = (v * 100).toFixed(1) + "%"; });
     [["ok", "Suits", h.green], ["warn", "Marginal", h.yellow], ["bad", "Hostile", h.red]].forEach(([k, w, v]) => { q(`.ds-bar-key .${k} span`).textContent = `${w} ${pct(v)}%`; });
     q(".ds-rows").innerHTML = d.rows.map(r => { const [cat, icon] = ROW_CAT[r.id] || [null, "info"];
-      return `<div class="ds-row"${cat ? ` data-cat="${cat}"` : ""}><dt><span class="ds-row-i" aria-hidden="true">${ico(icon)}</span>${esc(r.label)}</dt><dd><b>${esc(r.word)}</b>${esc(r.value)}</dd></div>`; }).join("");
+      return `<div class="ds-row"${cat ? ` data-cat="${cat}"` : ""}><dt><span class="ds-row-i" aria-hidden="true">${ico(icon)}</span>${esc(r.label)}</dt><dd><b>${esc(r.word)}</b><span class="ds-row-v">${esc(r.value)}</span></dd></div>`; }).join("");
     q(".ds-challenges ul").innerHTML = d.challenges.length ? d.challenges.map(c => `<li>${esc(c.text)}${c.share != null ? ` <small>· ${pct(c.share)}% of land</small>` : ""}</li>`).join("")
       : "<li>Nothing stands out: most land suits your plant from the start.</li>";
     q(".ds-cue span").textContent = d.cue || ""; q(".ds-cue").hidden = !d.cue;

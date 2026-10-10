@@ -73,6 +73,11 @@
   --bloom-leaf-night:#7fcf86; --bloom-bloom-night:#f28fab; --bloom-sky-night:#7ab8ec; --bloom-gold-night:#f6c453; --bloom-pressure-night:#b99ae0;
   --bloom-ok-night:#7fcf86; --bloom-warn-night:#f2b54e; --bloom-bad-night:#f08aa6;
   --bloom-focus-night:#7db7ff;              /* ↔ --bloom-focus: the same 3 px ring, lifted for the dark */
+  /* planning buttons (BLOOM-034 review): a white word on the gameplay leaf / sky is 3.4–3.5 : 1, too little for 15–17 px. On the dark
+     planning screens the primary / sky buttons are the gameplay DARK shade of the same hue (white ≥ 5.6 : 1), rimmed with the gameplay hue
+     itself; pointer and press go one step deeper (≥ 7.6 : 1). Gameplay's own buttons are unchanged. */
+  --bloom-leaf-btn-night:#2a7636; --bloom-leaf-btn-night-hover:#215f2b; --bloom-leaf-btn-night-lip:#174a20; --bloom-leaf-btn-night-rim:#3f9d4b;
+  --bloom-sky-btn-night:#23679f;  --bloom-sky-btn-night-hover:#1b5282;  --bloom-sky-btn-night-lip:#123a5c;  --bloom-sky-btn-night-rim:#3b8fd0;
   --bloom-cat-temperature-night:#f2995f; --bloom-cat-water-night:#7ab8ec; --bloom-cat-soil-night:#d2ab78; --bloom-cat-hazard-night:#b99ae0;
 }
 
