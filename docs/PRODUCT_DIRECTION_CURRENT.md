@@ -15,8 +15,8 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-10, BLOOM-035A closeout — the species design accepted by the PMO (decisions LOCKED below, §6); BLOOM-035B
-implementation is NEXT. BLOOM-034 remains integrated in production `main` (`455b51b`).*
+*Last updated: 2026-10-10, BLOOM-035B review handoff — the species system implementation is a CANDIDATE on `handoff/bloom-035b-review`
+(not in production `main`; pending PMO review). BLOOM-035A (the accepted design) and BLOOM-034 are in production `main`.*
 
 ---
 
@@ -89,8 +89,9 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
 
 ## 6. Plant species
 
-**LOCKED DESIGN · PLANNED** (BLOOM-035B + species art production). The design is accepted (BLOOM-035A COMPLETE); no species mechanic is
-in production `main` yet.
+**LOCKED DESIGN · CANDIDATE** (BLOOM-035B on the review branch `handoff/bloom-035b-review`; species art production PLANNED). The design is
+accepted (BLOOM-035A COMPLETE). Production `main` has no species mechanic yet; the 035B candidate implements the system with temporary
+engineering proof art behind the `?species=1` developer flag only ([`SPECIES_SYSTEM_v1.md`](SPECIES_SYSTEM_v1.md) §0.2).
 
 - Plant choices are genuinely different biological species — **not** Organic Hybrid recolours, not Organic Hybrid with purchased
   mutations pre-applied, not cosmetic skins.
@@ -204,7 +205,7 @@ This is not a gameplay-code feature; product code does not work around repositor
 | **BLOOM-033** — Single-document production application | `index.html` is the whole game; GameSession; `default`; Favorable / Precarious / Extreme; EXPEDITION | **IMPLEMENTED / COMPLETE** (in production `main`) |
 | **BLOOM-034** — Visual-system convergence | shared theme tokens (`resources/ui/bloom-theme.css`); title / menu restyle; Destination Survey convergence; the dark-space BLOOM planning language; **no species mechanics yet** | **IMPLEMENTED / COMPLETE** (in production `main`) |
 | **BLOOM-035A** — Species design / research | species architecture, the reference physiology, the strategic-distinctness study, body plans and concepts | **ACCEPTED / COMPLETE** (docs + research in `main`) |
-| **BLOOM-035B** — Species system implementation + Species Selection | species data / model; `config.referencePlant`; simulation / validator support; species-aware Destination Survey; run plumbing; body-plan layer with proof packs; the Species Selection screen behind `?species=1` | **NEXT** — PLANNED (not started) |
+| **BLOOM-035B** — Species system implementation + Species Selection | species data / model; `config.referencePlant`; simulation / validator support; species-aware Destination Survey; run plumbing; body-plan layer with proof packs; the Species Selection screen behind `?species=1` | **CANDIDATE** — review branch `handoff/bloom-035b-review`, pending PMO review (not merged) |
 | **Species art production** | three additional real species packs (four total, unless balancing / design proves a different count better), on the same production compositor architecture | PLANNED |
 | **BLOOM-036** — Challenges | the main-menu CHALLENGES route; authored challenge definitions; one generated challenge planet; assigned species / start state; the challenge dossier; Dying World / Native Competition / Volatile Climate as challenge ingredients | PLANNED |
 | **Final hardening** | full documentation reconciliation; dead historical production-path cleanup; Pages enablement / release; a Safari / WebKit production test if practical; final end-to-end release QA | PLANNED |
