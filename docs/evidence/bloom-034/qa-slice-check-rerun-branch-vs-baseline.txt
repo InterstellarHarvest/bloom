@@ -1,0 +1,6 @@
+[bloom-034-visual-system #1] PASS  pacing: perfect-bot win in 4–8 min (humans slower)  — 241 s
+[bloom-034-baseline-tmp #1] PASS  pacing: perfect-bot win in 4–8 min (humans slower)  — 260 s
+[bloom-034-visual-system #2] PASS  pacing: perfect-bot win in 4–8 min (humans slower)  — 246 s
+[bloom-034-baseline-tmp #2] PASS  pacing: perfect-bot win in 4–8 min (humans slower)  — 243 s
+[bloom-034-visual-system #3] PASS  pacing: perfect-bot win in 4–8 min (humans slower)  — 256 s
+[bloom-034-baseline-tmp #3] PASS  pacing: perfect-bot win in 4–8 min (humans slower)  — 247 s

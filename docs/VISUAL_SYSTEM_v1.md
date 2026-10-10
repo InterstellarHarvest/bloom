@@ -63,7 +63,7 @@ word (the suites read those words). Shared glyphs are byte-identical to the game
   serif / gold plaque, its double rule and its corner marks.
 - The title is the one expressive element: the gameplay family at 900 weight — STRANGE in night ink, BLOOM in a bloom-pink
   gradient with a soft pink glow (one static filter, never animated); UNKNOWN SOILS a leaf-green kicker between two leaf dots.
-  Readability is measured on all twelve paintings through the card's least opaque stop (T2: worst ≥ 5.3 : 1).
+  Readability is measured on all twelve paintings through the card's least opaque stop (T2: worst 5.2 : 1, painting 09).
 - Menu: EXPEDITION · TRAINING · SETTINGS · CREDITS as chunky icon + word buttons (world · journal · settings · info).
   EXPEDITION is the gameplay leaf button; the others are raised night controls. TRAINING's "Recommended" is a Biomass-gold pill
   with a star (a word, not a colour).

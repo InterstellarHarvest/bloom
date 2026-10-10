@@ -1,0 +1,910 @@
+{
+ "milestone": "BLOOM-034",
+ "base": "79f554060bb2c4a3e2e8bcc2628de1486e5ff902",
+ "head": "db4b1e53136b9ef0f3fca5b85d57f3d82cf96404",
+ "node": {
+  "gameplayTokens": {
+   "compared": 68,
+   "differing": []
+  },
+  "icons": {
+   "shared": [
+    "back",
+    "world",
+    "journal",
+    "info",
+    "play",
+    "check",
+    "alert",
+    "x",
+    "star",
+    "temp",
+    "water",
+    "soil",
+    "hazard",
+    "sky",
+    "heat",
+    "adapt"
+   ],
+   "fresh": [
+    "scan",
+    "settings"
+   ]
+  },
+  "contrast": {
+   "text": [
+    {
+     "k": "--bloom-night-ink",
+     "on": "card",
+     "ratio": 16.11
+    },
+    {
+     "k": "--bloom-night-ink",
+     "on": "space",
+     "ratio": 16.64
+    },
+    {
+     "k": "--bloom-night-ink",
+     "on": "raised",
+     "ratio": 14.69
+    },
+    {
+     "k": "--bloom-night-ink-soft",
+     "on": "card",
+     "ratio": 10.53
+    },
+    {
+     "k": "--bloom-night-ink-soft",
+     "on": "space",
+     "ratio": 10.87
+    },
+    {
+     "k": "--bloom-night-ink-soft",
+     "on": "raised",
+     "ratio": 9.6
+    },
+    {
+     "k": "--bloom-night-ink-faint",
+     "on": "card",
+     "ratio": 6.17
+    },
+    {
+     "k": "--bloom-night-ink-faint",
+     "on": "space",
+     "ratio": 6.37
+    },
+    {
+     "k": "--bloom-night-ink-faint",
+     "on": "raised",
+     "ratio": 5.62
+    },
+    {
+     "k": "--bloom-leaf-night",
+     "on": "card",
+     "ratio": 9.67
+    },
+    {
+     "k": "--bloom-leaf-night",
+     "on": "space",
+     "ratio": 9.99
+    },
+    {
+     "k": "--bloom-leaf-night",
+     "on": "raised",
+     "ratio": 8.82
+    },
+    {
+     "k": "--bloom-bloom-night",
+     "on": "card",
+     "ratio": 8.04
+    },
+    {
+     "k": "--bloom-bloom-night",
+     "on": "space",
+     "ratio": 8.31
+    },
+    {
+     "k": "--bloom-bloom-night",
+     "on": "raised",
+     "ratio": 7.33
+    },
+    {
+     "k": "--bloom-sky-night",
+     "on": "card",
+     "ratio": 8.57
+    },
+    {
+     "k": "--bloom-sky-night",
+     "on": "space",
+     "ratio": 8.85
+    },
+    {
+     "k": "--bloom-sky-night",
+     "on": "raised",
+     "ratio": 7.81
+    },
+    {
+     "k": "--bloom-gold-night",
+     "on": "card",
+     "ratio": 11.2
+    },
+    {
+     "k": "--bloom-gold-night",
+     "on": "space",
+     "ratio": 11.57
+    },
+    {
+     "k": "--bloom-gold-night",
+     "on": "raised",
+     "ratio": 10.21
+    },
+    {
+     "k": "--bloom-pressure-night",
+     "on": "card",
+     "ratio": 7.58
+    },
+    {
+     "k": "--bloom-pressure-night",
+     "on": "space",
+     "ratio": 7.83
+    },
+    {
+     "k": "--bloom-pressure-night",
+     "on": "raised",
+     "ratio": 6.91
+    },
+    {
+     "k": "--bloom-ok-night",
+     "on": "card",
+     "ratio": 9.67
+    },
+    {
+     "k": "--bloom-ok-night",
+     "on": "space",
+     "ratio": 9.99
+    },
+    {
+     "k": "--bloom-ok-night",
+     "on": "raised",
+     "ratio": 8.82
+    },
+    {
+     "k": "--bloom-warn-night",
+     "on": "card",
+     "ratio": 9.95
+    },
+    {
+     "k": "--bloom-warn-night",
+     "on": "space",
+     "ratio": 10.28
+    },
+    {
+     "k": "--bloom-warn-night",
+     "on": "raised",
+     "ratio": 9.07
+    },
+    {
+     "k": "--bloom-bad-night",
+     "on": "card",
+     "ratio": 7.7
+    },
+    {
+     "k": "--bloom-bad-night",
+     "on": "space",
+     "ratio": 7.95
+    },
+    {
+     "k": "--bloom-bad-night",
+     "on": "raised",
+     "ratio": 7.02
+    },
+    {
+     "k": "--bloom-cat-temperature-night",
+     "on": "card",
+     "ratio": 8.22
+    },
+    {
+     "k": "--bloom-cat-temperature-night",
+     "on": "space",
+     "ratio": 8.49
+    },
+    {
+     "k": "--bloom-cat-temperature-night",
+     "on": "raised",
+     "ratio": 7.49
+    },
+    {
+     "k": "--bloom-cat-water-night",
+     "on": "card",
+     "ratio": 8.57
+    },
+    {
+     "k": "--bloom-cat-water-night",
+     "on": "space",
+     "ratio": 8.85
+    },
+    {
+     "k": "--bloom-cat-water-night",
+     "on": "raised",
+     "ratio": 7.81
+    },
+    {
+     "k": "--bloom-cat-soil-night",
+     "on": "card",
+     "ratio": 8.51
+    },
+    {
+     "k": "--bloom-cat-soil-night",
+     "on": "space",
+     "ratio": 8.79
+    },
+    {
+     "k": "--bloom-cat-soil-night",
+     "on": "raised",
+     "ratio": 7.76
+    },
+    {
+     "k": "--bloom-cat-hazard-night",
+     "on": "card",
+     "ratio": 7.58
+    },
+    {
+     "k": "--bloom-cat-hazard-night",
+     "on": "space",
+     "ratio": 7.83
+    },
+    {
+     "k": "--bloom-cat-hazard-night",
+     "on": "raised",
+     "ratio": 6.91
+    }
+   ],
+   "focus": [
+    {
+     "on": "card",
+     "ratio": 8.73
+    },
+    {
+     "on": "space",
+     "ratio": 9.02
+    },
+    {
+     "on": "raised",
+     "ratio": 7.96
+    }
+   ],
+   "whiteOnButtons": {
+    "leaf": 3.42,
+    "sky": 3.49
+   }
+  },
+  "scope": {
+   "changed": [
+    "README.md",
+    "demos/demo-run.html",
+    "demos/destination-survey.html",
+    "demos/expedition-descent.html",
+    "demos/main-menu.html",
+    "dist/portable/manifest.json",
+    "dist/portable/strange-bloom.portable.js",
+    "docs/DESTINATION_SURVEY_v1.md",
+    "docs/MAIN_MENU_v1.md",
+    "docs/PRODUCT_DIRECTION_CURRENT.md",
+    "docs/VISUAL_SYSTEM_v1.md",
+    "index.html",
+    "resources/destination-survey/destination-survey.css",
+    "resources/destination-survey/destination-survey.js",
+    "resources/main-menu/main-menu.css",
+    "resources/main-menu/main-menu.js",
+    "resources/main-menu/title-boot.js",
+    "resources/run-ui/planet-view.css",
+    "resources/run-ui/run-report.css",
+    "resources/training/training-coach.css",
+    "resources/ui/bloom-icons.js",
+    "resources/ui/bloom-theme.css",
+    "tools/main-menu-check.js",
+    "tools/visual-system-check.js"
+   ],
+   "protectedFiles": 87,
+   "paintings": [
+    {
+     "f": "resources/main-menu/backgrounds/menu-01.jpg",
+     "sha256": "b0831d12a1a27dc83a26e7333e4e7f7950da7af5b44f32d383574b3a4ca04ef7"
+    },
+    {
+     "f": "resources/main-menu/backgrounds/menu-02.jpg",
+     "sha256": "0b5e86400ebd7489127551102303ab81ed14bdb6aeae80da3a0cffce8cc023ce"
+    },
+    {
+     "f": "resources/main-menu/backgrounds/menu-03.jpg",
+     "sha256": "50208d194f9d19edb731b79ded27c69759934e135166866c714a268a2abd0a47"
+    },
+    {
+     "f": "resources/main-menu/backgrounds/menu-04.jpg",
+     "sha256": "df24a8d71d229b8541d2a90ca890be106078f7dfdd05ae5c7a38cd5b9be8b5a4"
+    },
+    {
+     "f": "resources/main-menu/backgrounds/menu-05.jpg",
+     "sha256": "a31429ddb070fe34c4c0197736e5b850f1c6c7140b4b4ccfa21c76d8826b65ce"
+    },
+    {
+     "f": "resources/main-menu/backgrounds/menu-06.jpg",
+     "sha256": "314c38e5d3516d241c5f766d9fe29c5a7e01a356c81f9122304143c4a2f57f21"
+    },
+    {
+     "f": "resources/main-menu/backgrounds/menu-07.jpg",
+     "sha256": "13f4ee264663befa3fe135bebbb91f1a2b9ea5ca2e7ad8bfc0a957e2d41a13da"
+    },
+    {
+     "f": "resources/main-menu/backgrounds/menu-08.jpg",
+     "sha256": "0ad94e1466b2c2b7e95cdb575cc8443339db44a037329b5480cdfbe97bbb7f1b"
+    },
+    {
+     "f": "resources/main-menu/backgrounds/menu-09.jpg",
+     "sha256": "2a4fa91d24413bf52a2375251b8399f6698295b94602ac13414c27a3495fe128"
+    },
+    {
+     "f": "resources/main-menu/backgrounds/menu-10.jpg",
+     "sha256": "9138f38d81089658357291b86750559104ed55d704df162dba4d29f772dd445b"
+    },
+    {
+     "f": "resources/main-menu/backgrounds/menu-11.jpg",
+     "sha256": "b08960497ac49e4a632de7b25864fc0f4c59ba9d855f3a84fcca75cf563ccaa2"
+    },
+    {
+     "f": "resources/main-menu/backgrounds/menu-12.jpg",
+     "sha256": "6796d6e2e8e55d316c6a53e7d467db28e476708054ee9284f81144974c5f3587"
+    }
+   ]
+  },
+  "portable": {
+   "fingerprint": "bcb8da7910d7c80c4bf8431552cc850c1f0e71a9ec065a0abb9e62459b3622c1",
+   "modules": [
+    "resources/app/app-controller.js",
+    "resources/main-menu/main-menu-data.js",
+    "resources/planet-sphere/planet-sphere-view.js",
+    "resources/atmosphere-transition/atmosphere-transition.js",
+    "resources/training/training-run.js"
+   ]
+  }
+ },
+ "browsers": {
+  "chromium": {
+   "version": "147.0.7727.15",
+   "title": {
+    "gameFont": "ui-rounded, \"SF Pro Rounded\", Nunito, \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif",
+    "els": [
+     [
+      ".mm",
+      "ui-rounded, \"SF Pro Rounded\", Nunito, \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+     ],
+     [
+      "#mm-title",
+      "ui-rounded, \"SF Pro Rounded\", Nunito, \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+     ],
+     [
+      ".mm-sub",
+      "ui-rounded, \"SF Pro Rounded\", Nunito, \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+     ],
+     [
+      ".mm-item",
+      "ui-rounded, \"SF Pro Rounded\", Nunito, \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+     ],
+     [
+      ".mm-status",
+      "ui-rounded, \"SF Pro Rounded\", Nunito, \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+     ],
+     [
+      ".mm-dialog",
+      "ui-rounded, \"SF Pro Rounded\", Nunito, \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+     ]
+    ],
+    "prim": {
+     "background-color": "rgb(63, 157, 75)",
+     "color": "rgb(255, 255, 255)",
+     "border-top-left-radius": "14px",
+     "min-height": "60px"
+    },
+    "items": [
+     {
+      "text": "EXPEDITION",
+      "icon": true,
+      "h": 60
+     },
+     {
+      "text": "TRAINING",
+      "icon": true,
+      "h": 54
+     },
+     {
+      "text": "SETTINGS",
+      "icon": true,
+      "h": 54
+     },
+     {
+      "text": "CREDITS",
+      "icon": true,
+      "h": 54
+     }
+    ],
+    "card": {
+     "border-top-left-radius": "22px",
+     "border-top-right-radius": "18px",
+     "font-family": "ui-rounded, \"SF Pro Rounded\", Nunito, \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+    }
+   },
+   "paintings": [
+    {
+     "u": "menu-01.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.46
+    },
+    {
+     "u": "menu-02.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.48
+    },
+    {
+     "u": "menu-03.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.35
+    },
+    {
+     "u": "menu-04.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.44
+    },
+    {
+     "u": "menu-05.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.34
+    },
+    {
+     "u": "menu-06.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.36
+    },
+    {
+     "u": "menu-07.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.66
+    },
+    {
+     "u": "menu-08.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.27
+    },
+    {
+     "u": "menu-09.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.2
+    },
+    {
+     "u": "menu-10.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.38
+    },
+    {
+     "u": "menu-11.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.6
+    },
+    {
+     "u": "menu-12.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.26
+    }
+   ],
+   "layout": {
+    "1440x900": {
+     "title": {
+      "inside": true,
+      "items": true
+     },
+     "t1": false,
+     "t2": false,
+     "t3": false,
+     "go": true,
+     "dossierX": true
+    },
+    "390x844": {
+     "title": {
+      "inside": true,
+      "items": true
+     },
+     "t1": false,
+     "t2": false,
+     "t3": false,
+     "go": false,
+     "dossierX": true
+    },
+    "1024x768": {
+     "title": {
+      "inside": true,
+      "items": true
+     },
+     "t1": false,
+     "t2": false,
+     "t3": false,
+     "go": true,
+     "dossierX": true
+    },
+    "1280x720": {
+     "title": {
+      "inside": true,
+      "items": true
+     },
+     "t1": false,
+     "t2": false,
+     "t3": false,
+     "go": true,
+     "dossierX": true
+    },
+    "1920x1080": {
+     "title": {
+      "inside": true,
+      "items": true
+     },
+     "t1": false,
+     "t2": false,
+     "t3": false,
+     "go": true,
+     "dossierX": true
+    },
+    "2560x1440": {
+     "title": {
+      "inside": true,
+      "items": true
+     },
+     "t1": false,
+     "t2": false,
+     "t3": false,
+     "go": true,
+     "dossierX": true
+    }
+   },
+   "gameplayIdentity": {
+    "run": {
+     "elements": 1127,
+     "onlyHead": 0,
+     "onlyBase": 0,
+     "differ": 0,
+     "first": []
+    },
+    "adapt": {
+     "elements": 1174,
+     "onlyHead": 0,
+     "onlyBase": 0,
+     "differ": 0,
+     "first": []
+    },
+    "report": {
+     "elements": 153,
+     "onlyHead": 0,
+     "onlyBase": 0,
+     "differ": 0,
+     "first": []
+    },
+    "coach": {
+     "elements": 19,
+     "onlyHead": 0,
+     "onlyBase": 0,
+     "differ": 0,
+     "first": []
+    },
+    "trainingRun": {
+     "elements": 74,
+     "onlyHead": 0,
+     "onlyBase": 0,
+     "differ": 0,
+     "first": []
+    }
+   },
+   "miniMapRepair": {
+    "head": {
+     "roomEm": "15.7px",
+     "h": 649,
+     "canvasH": 280,
+     "font": "ui-rounded, \"SF Pro Rounded\", Nunito, \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif",
+     "gameFont": "ui-rounded, \"SF Pro Rounded\", Nunito, \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif",
+     "container": "normal",
+     "kicker": "rgb(95, 107, 87)",
+     "soft": "rgb(95, 107, 87)"
+    },
+    "base": {
+     "roomEm": "19.5px",
+     "h": 28,
+     "canvasH": 280,
+     "font": "\"Palatino Linotype\", Palatino, \"Book Antiqua\", \"Iowan Old Style\", \"Hoefler Text\", Georgia, \"Times New Roman\", serif",
+     "gameFont": "ui-rounded, \"SF Pro Rounded\", Nunito, \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif",
+     "container": "size",
+     "kicker": "rgb(217, 203, 170)",
+     "soft": "rgb(47, 58, 44)"
+    }
+   }
+  },
+  "firefox": {
+   "version": "148.0.2",
+   "title": {
+    "gameFont": "ui-rounded, \"SF Pro Rounded\", \"Nunito\", \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif",
+    "els": [
+     [
+      ".mm",
+      "ui-rounded, \"SF Pro Rounded\", \"Nunito\", \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+     ],
+     [
+      "#mm-title",
+      "ui-rounded, \"SF Pro Rounded\", \"Nunito\", \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+     ],
+     [
+      ".mm-sub",
+      "ui-rounded, \"SF Pro Rounded\", \"Nunito\", \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+     ],
+     [
+      ".mm-item",
+      "ui-rounded, \"SF Pro Rounded\", \"Nunito\", \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+     ],
+     [
+      ".mm-status",
+      "ui-rounded, \"SF Pro Rounded\", \"Nunito\", \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+     ],
+     [
+      ".mm-dialog",
+      "ui-rounded, \"SF Pro Rounded\", \"Nunito\", \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+     ]
+    ],
+    "prim": {
+     "background-color": "rgb(63, 157, 75)",
+     "color": "rgb(255, 255, 255)",
+     "border-top-left-radius": "14px",
+     "min-height": "60px"
+    },
+    "items": [
+     {
+      "text": "EXPEDITION",
+      "icon": true,
+      "h": 60
+     },
+     {
+      "text": "TRAINING",
+      "icon": true,
+      "h": 54
+     },
+     {
+      "text": "SETTINGS",
+      "icon": true,
+      "h": 54
+     },
+     {
+      "text": "CREDITS",
+      "icon": true,
+      "h": 54
+     }
+    ],
+    "card": {
+     "border-top-left-radius": "22px",
+     "border-top-right-radius": "18px",
+     "font-family": "ui-rounded, \"SF Pro Rounded\", \"Nunito\", \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif"
+    }
+   },
+   "paintings": [
+    {
+     "u": "menu-01.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.46
+    },
+    {
+     "u": "menu-02.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.48
+    },
+    {
+     "u": "menu-03.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.35
+    },
+    {
+     "u": "menu-04.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.44
+    },
+    {
+     "u": "menu-05.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.34
+    },
+    {
+     "u": "menu-06.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.36
+    },
+    {
+     "u": "menu-07.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.66
+    },
+    {
+     "u": "menu-08.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.27
+    },
+    {
+     "u": "menu-09.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.2
+    },
+    {
+     "u": "menu-10.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.38
+    },
+    {
+     "u": "menu-11.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.6
+    },
+    {
+     "u": "menu-12.jpg",
+     "w": 1280,
+     "h": 720,
+     "worst": 5.26
+    }
+   ],
+   "layout": {
+    "1440x900": {
+     "title": {
+      "inside": true,
+      "items": true
+     },
+     "t1": false,
+     "t2": false,
+     "t3": false,
+     "go": true,
+     "dossierX": true
+    },
+    "390x844": {
+     "title": {
+      "inside": true,
+      "items": true
+     },
+     "t1": false,
+     "t2": false,
+     "t3": false,
+     "go": false,
+     "dossierX": true
+    },
+    "1024x768": {
+     "title": {
+      "inside": true,
+      "items": true
+     },
+     "t1": false,
+     "t2": false,
+     "t3": false,
+     "go": true,
+     "dossierX": true
+    },
+    "1280x720": {
+     "title": {
+      "inside": true,
+      "items": true
+     },
+     "t1": false,
+     "t2": false,
+     "t3": false,
+     "go": true,
+     "dossierX": true
+    },
+    "1920x1080": {
+     "title": {
+      "inside": true,
+      "items": true
+     },
+     "t1": false,
+     "t2": false,
+     "t3": false,
+     "go": true,
+     "dossierX": true
+    },
+    "2560x1440": {
+     "title": {
+      "inside": true,
+      "items": true
+     },
+     "t1": false,
+     "t2": false,
+     "t3": false,
+     "go": true,
+     "dossierX": true
+    }
+   },
+   "gameplayIdentity": {
+    "run": {
+     "elements": 1127,
+     "onlyHead": 0,
+     "onlyBase": 0,
+     "differ": 0,
+     "first": []
+    },
+    "adapt": {
+     "elements": 1174,
+     "onlyHead": 0,
+     "onlyBase": 0,
+     "differ": 0,
+     "first": []
+    },
+    "report": {
+     "elements": 153,
+     "onlyHead": 0,
+     "onlyBase": 0,
+     "differ": 0,
+     "first": []
+    },
+    "coach": {
+     "elements": 19,
+     "onlyHead": 0,
+     "onlyBase": 0,
+     "differ": 0,
+     "first": []
+    },
+    "trainingRun": {
+     "elements": 74,
+     "onlyHead": 0,
+     "onlyBase": 0,
+     "differ": 0,
+     "first": []
+    }
+   },
+   "miniMapRepair": {
+    "head": {
+     "roomEm": "15.7px",
+     "h": 649,
+     "canvasH": 280,
+     "font": "ui-rounded, \"SF Pro Rounded\", \"Nunito\", \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif",
+     "gameFont": "ui-rounded, \"SF Pro Rounded\", \"Nunito\", \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif",
+     "container": "normal",
+     "kicker": "rgb(95, 107, 87)",
+     "soft": "rgb(95, 107, 87)"
+    },
+    "base": {
+     "roomEm": "19.5px",
+     "h": 28,
+     "canvasH": 280,
+     "font": "\"Palatino Linotype\", Palatino, \"Book Antiqua\", \"Iowan Old Style\", \"Hoefler Text\", Georgia, \"Times New Roman\", serif",
+     "gameFont": "ui-rounded, \"SF Pro Rounded\", \"Nunito\", \"Varela Round\", \"Trebuchet MS\", system-ui, sans-serif",
+     "container": "size",
+     "kicker": "rgb(217, 203, 170)",
+     "soft": "rgb(47, 58, 44)"
+    }
+   }
+  }
+ },
+ "result": {
+  "passes": 46,
+  "fails": 0,
+  "seconds": 232
+ }
+}
