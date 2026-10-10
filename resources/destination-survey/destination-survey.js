@@ -35,11 +35,13 @@
 // out). DestinationSurvey.prefetch(opts) starts a sector with no screen at all — the Main Menu calls it while the title shows —
 // and `new DestinationSurvey(root, { sectors: pool })` adopts it: a finished sector arrives with the prefetched-scan sweep, a
 // half-built one shows what is already confirmed and fills in the rest (the accepted 028B behaviour). The `onExit` option adds
-// a "← Main menu" button; the consumer runs the transition back and disposes the survey (which disposes the pool it owns).
+// a "Main menu" back button; the consumer runs the transition back and disposes the survey (which disposes the pool it owns).
 import { PlanetSphereView, PlanetSphereRenderer } from "../planet-sphere/planet-sphere-view.js";
 import { AtmosphereTransition } from "../atmosphere-transition/atmosphere-transition.js";
 import { SURVEY_CLASSES, ROWS, nextSectorSeed, sectorLabel } from "./survey-data.js";
 import { SectorPool } from "./sector-pool.js";
+// (BLOOM-034) the production icon family, shared with the title
+import { ico } from "../ui/bloom-icons.js";
 
 const COLS = SURVEY_CLASSES.length, N = ROWS * COLS;
 const GLOBE_DISTANCE = 3.6;                 // the disc fills ~92% of its box, in the grid and in focus alike (no reframing)
@@ -54,7 +56,10 @@ const DOLLY_TO = 1.45; // the view's closest camera distance: the disc is then ~
 // other worlds DARKEN away (a background-coloured disc fades over each; globe pixels ignore CSS opacity) and are hidden before
 // the chosen one flies; on the way back each reappears — under its cover, which then fades — as soon as the rest of the flight
 // can no longer touch it, all finishing exactly as the globe lands.
-const SCAN_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5" opacity=".6"/><path d="M12 12 L19 6"/></svg>`;
+// (BLOOM-034) the gameplay status language for the three classes (icon + word, never colour alone) and the gameplay category identity
+// for the dossier's condition rows (presentation only: survey-data.js and its rows are unchanged)
+const CLASS_ICON = { favorable: "check", precarious: "alert", extreme: "x" };
+const ROW_CAT = { climate: ["temperature", "temp"], water: ["water", "water"], soil: ["soil", "soil"], atmosphere: [null, "sky"], solar: ["hazard", "heat"] };
 const hash01 = (a, b) => { let h = Math.imul((a >>> 0) ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(b + 1, 0xc2b2ae35); h ^= h >>> 15; h = Math.imul(h, 0x2c1b3c6d); h ^= h >>> 12; return (h >>> 0) / 4294967296; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const pct = x => Math.round(x * 100);
@@ -81,7 +86,7 @@ export class DestinationSurvey {
    * sectors            (028C) a SectorPool to adopt — normally DestinationSurvey.prefetch(…) started on the title screen. Its
    *                    prefetched sector becomes the first one shown (sectorSeed / firstBloom default to it); the survey owns
    *                    the pool from here and disposes it with itself. Omitted: a private pool, as before.
-   * onExit             (028C) called when the player leaves for the Main Menu (a "← Main menu" header button appears; Escape
+   * onExit             (028C) called when the player leaves for the Main Menu (a "Main menu" header button appears; Escape
    *                    in the survey state leaves too). The survey changes nothing itself: the consumer transitions and disposes it.
    */
   constructor(root, { sectorSeed = null, firstBloom = false, reducedMotion = null, worker = true, workers = null, onBeginExpedition = null, descent = null, sectors = null, onExit = null } = {}) {
@@ -351,13 +356,13 @@ export class DestinationSurvey {
     if (!r.hasAttribute("aria-label")) r.setAttribute("aria-label", "Destination survey");
     r.innerHTML = `
       <header class="ds-head">
-        <button type="button" class="ds-btn ghost ds-exit" data-act="exit"${this.onExit ? "" : " hidden"}><span aria-hidden="true">←</span> Main menu</button>
+        <button type="button" class="ds-btn ghost ds-exit" data-act="exit"${this.onExit ? "" : " hidden"}>${ico("back")}<span class="lbl">Main menu</span></button>
         <div class="ds-title"><span class="ds-kicker">Strange Bloom</span><h1>Destination Survey</h1></div>
         <p class="ds-sector" aria-live="polite"></p>
-        <div class="ds-head-tools"><span class="ds-progress sr-only" role="status" hidden></span><button type="button" class="ds-btn scan" data-act="scan">${SCAN_ICON}<span>Scan <span class="lbl-long">new </span>sector</span></button></div>
+        <div class="ds-head-tools"><span class="ds-progress sr-only" role="status" hidden></span><button type="button" class="ds-btn scan" data-act="scan">${ico("scan")}<span>Scan <span class="lbl-long">new </span>sector</span></button></div>
       </header>
       <div class="ds-survey">
-        <div class="ds-cols" aria-hidden="true">${SURVEY_CLASSES.map(c => `<div class="ds-colhead" data-class="${c.id}"><b>${c.label}</b><small>${esc(c.blurb)}</small></div>`).join("")}</div>
+        <div class="ds-cols" aria-hidden="true">${SURVEY_CLASSES.map(c => `<div class="ds-colhead" data-class="${c.id}"><b><span class="ds-st-i">${ico(CLASS_ICON[c.id])}</span>${c.label}</b><small>${esc(c.blurb)}</small></div>`).join("")}</div>
         <div class="ds-grid" role="group" aria-label="Candidate worlds: three columns, ${SURVEY_CLASSES.map(c => c.label).join(", ").replace(/, ([^,]*)$/, " and $1")}">${Array.from({ length: N }, (_, i) => {
           const c = SURVEY_CLASSES[i % COLS];
           return `<div class="ds-cell" data-class="${c.id}"><button type="button" class="ds-cand" data-index="${i}" disabled>
@@ -372,14 +377,15 @@ export class DestinationSurvey {
           <h2 tabindex="-1"></h2>
           <p class="ds-type"></p><p class="ds-tagline"></p>
           <div class="ds-hab"><div class="ds-hab-top"><span>Ground your plant can live on at landing</span><b></b></div>
-            <div class="ds-bar" role="img"><i class="g"></i><i class="y"></i><i class="r"></i></div></div>
+            <div class="ds-bar" role="img"><i class="g"></i><i class="y"></i><i class="r"></i></div>
+            <div class="ds-bar-key" aria-hidden="true"><span class="ok">${ico("check")}<span>Suits</span></span><span class="warn">${ico("alert")}<span>Marginal</span></span><span class="bad">${ico("x")}<span>Hostile</span></span></div></div>
           <dl class="ds-rows"></dl>
-          <section class="ds-challenges"><h3>Expected challenges</h3><ul></ul></section>
-          <p class="ds-cue"></p>
+          <section class="ds-challenges"><h3>${ico("hazard")}Expected challenges</h3><ul></ul></section>
+          <p class="ds-cue">${ico("adapt")}<span></span></p>
           <p class="ds-seed"></p>
           <div class="ds-actions">
-            <button type="button" class="ds-btn ghost" data-act="return"><span aria-hidden="true">←</span> Return to survey</button>
-            <button type="button" class="ds-btn go" data-act="begin">Begin expedition</button>
+            <button type="button" class="ds-btn ghost" data-act="return">${ico("back")}Return to survey</button>
+            <button type="button" class="ds-btn go" data-act="begin">${ico("world")}Begin expedition</button>
           </div>
         </aside>
       </div>`;
@@ -424,7 +430,7 @@ export class DestinationSurvey {
   _fillDossier(cand) {
     const d = cand.dossier, cls = SURVEY_CLASSES.find(c => c.id === cand.classId), q = s => this.dossier.querySelector(s);
     this.dossier.dataset.class = cand.classId;
-    q(".ds-chip").textContent = cls.label; q(".ds-chip-note").textContent = cls.blurb;
+    q(".ds-chip").innerHTML = `<span class="ds-st-i">${ico(CLASS_ICON[cls.id])}</span>${esc(cls.label)}`; q(".ds-chip-note").textContent = cls.blurb;
     this.dossierTitle.textContent = d.name;
     q(".ds-type").textContent = cand.worldType;
     q(".ds-tagline").textContent = d.tagline;
@@ -432,10 +438,12 @@ export class DestinationSurvey {
     q(".ds-hab-top b").textContent = `${pct(h.green)}% of the land`;
     const bar = q(".ds-bar"); bar.setAttribute("aria-label", `At landing: ${pct(h.green)}% of the land suits your plant, ${pct(h.yellow)}% is marginal, ${pct(h.red)}% is hostile`);
     [["g", h.green], ["y", h.yellow], ["r", h.red]].forEach(([k, v]) => { bar.querySelector("." + k).style.width = (v * 100).toFixed(1) + "%"; });
-    q(".ds-rows").innerHTML = d.rows.map(r => `<dt>${esc(r.label)}</dt><dd><b>${esc(r.word)}</b>${esc(r.value)}</dd>`).join("");
+    [["ok", "Suits", h.green], ["warn", "Marginal", h.yellow], ["bad", "Hostile", h.red]].forEach(([k, w, v]) => { q(`.ds-bar-key .${k} span`).textContent = `${w} ${pct(v)}%`; });
+    q(".ds-rows").innerHTML = d.rows.map(r => { const [cat, icon] = ROW_CAT[r.id] || [null, "info"];
+      return `<div class="ds-row"${cat ? ` data-cat="${cat}"` : ""}><dt><span class="ds-row-i" aria-hidden="true">${ico(icon)}</span>${esc(r.label)}</dt><dd><b>${esc(r.word)}</b>${esc(r.value)}</dd></div>`; }).join("");
     q(".ds-challenges ul").innerHTML = d.challenges.length ? d.challenges.map(c => `<li>${esc(c.text)}${c.share != null ? ` <small>· ${pct(c.share)}% of land</small>` : ""}</li>`).join("")
       : "<li>Nothing stands out: most land suits your plant from the start.</li>";
-    q(".ds-cue").textContent = d.cue || "";
+    q(".ds-cue span").textContent = d.cue || ""; q(".ds-cue").hidden = !d.cue;
     q(".ds-seed").textContent = cand.authored ? "Authored world · First Bloom" : `World Seed ${cand.seed} · ${this.sector ? this.sector.label : ""}`;
   }
 

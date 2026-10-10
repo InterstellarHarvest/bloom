@@ -72,14 +72,15 @@
     document.title = TITLE + " — " + SUBTITLE;
     var app = document.getElementById(d.app || "app"); if (app) app.hidden = true;
     var css = document.createElement("style");
-    css.textContent = "html,body{margin:0;height:100%;background:#0a0810;color:#f3e9d2}" +
+    // (BLOOM-034) the game's own planning language (resources/ui/bloom-theme.css's NIGHT values, written out: a damaged copy may lack the theme)
+    css.textContent = "html,body{margin:0;height:100%;background:#03050b;color:#f6f1e3}" +
       ".tb-needs{min-height:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px 16px;text-align:center;" +
-      "font-family:\"Palatino Linotype\",Palatino,\"Book Antiqua\",\"Iowan Old Style\",Georgia,serif}" +
-      ".tb-needs h1{margin:0;font-size:clamp(30px,7vw,56px);letter-spacing:.09em;text-transform:uppercase;color:#f1d58a;line-height:1}" +
-      ".tb-needs .tb-sub{margin:0 0 10px;font-weight:700;font-size:clamp(12px,2vw,16px);letter-spacing:.42em;text-transform:uppercase;color:#d9cbaa}" +
-      ".tb-needs .tb-msg{margin:0;font-size:19px;max-width:34em}" +
-      ".tb-needs .tb-how{margin:0;font-size:14px;color:rgba(217,203,170,.75);max-width:40em;line-height:1.6}" +
-      ".tb-needs code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:#f3e9d2;background:rgba(241,213,138,.1);border:1px solid rgba(214,174,96,.4);border-radius:4px;padding:2px 6px;white-space:nowrap}";
+      "font-family:ui-rounded,\"SF Pro Rounded\",\"Nunito\",\"Varela Round\",\"Trebuchet MS\",system-ui,sans-serif}" +
+      ".tb-needs h1{margin:0;font-size:clamp(30px,7vw,56px);font-weight:900;letter-spacing:.07em;text-transform:uppercase;color:#f6f1e3;line-height:1}" +
+      ".tb-needs .tb-sub{margin:0 0 10px;font-weight:900;font-size:clamp(11px,2vw,14px);letter-spacing:.34em;text-transform:uppercase;color:#7fcf86}" +
+      ".tb-needs .tb-msg{margin:0;font-size:19px;font-weight:800;max-width:34em}" +
+      ".tb-needs .tb-how{margin:0;font-size:15px;font-weight:600;color:#c3c6c0;max-width:40em;line-height:1.6}" +
+      ".tb-needs code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:#f6f1e3;background:#151e34;border:2px solid #3a4766;border-radius:8px;padding:2px 6px;white-space:nowrap}";
     document.head.appendChild(css);
     var n = document.createElement("main"); n.className = "tb-needs"; n.id = "bootFailed"; n.setAttribute("role", "alert");
     n.innerHTML = "<h1></h1><p class=\"tb-sub\"></p><p class=\"tb-msg\">This copy of the game could not start.</p>" +

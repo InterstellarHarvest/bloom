@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "8325f25af84b66dab5b10bdce9ca3bf32c138f1ced2002d60e49466fec61161f",
+  "fingerprint": "bcb8da7910d7c80c4bf8431552cc850c1f0e71a9ec065a0abb9e62459b3622c1",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -14,8 +14,8 @@
   ],
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
-    "bytes": 1266828,
-    "sha256": "9b2e11fe979443b977a007aa0587028f01b9d20c8964521f4a982ccfa3d937cb",
+    "bytes": 1270014,
+    "sha256": "28f96012ec35b6dc3412b216a8f23e8cf65692065bf6f8c9e887da5e4369112f",
     "surveyWorkerTextBytes": 211603
   },
   "workerInputs": [
@@ -128,9 +128,9 @@
     },
     {
       "path": "resources/destination-survey/destination-survey.js",
-      "bytes": 47233,
-      "sha256": "ad57b47e9721bdb0392d0a344e0f76c8183c37994852d14b7e892c7e04996c43",
-      "bytesInBundle": 46684
+      "bytes": 48363,
+      "sha256": "881670a1afb01e421fa7d99cce7de8a324d40d77e703b182e90b4cb04ae80fac",
+      "bytesInBundle": 47588
     },
     {
       "path": "resources/destination-survey/sector-pool.js",
@@ -170,9 +170,9 @@
     },
     {
       "path": "resources/main-menu/main-menu.js",
-      "bytes": 18829,
-      "sha256": "08b717f6f64aaa2024dcafda92ace6755b093c72ffa13a6176e88ff5c7f4a7b0",
-      "bytesInBundle": 18734
+      "bytes": 19347,
+      "sha256": "89d0370e51533b64f4e6b778aa6f5fdfa79e771251ba2e31230d0620f69e6c22",
+      "bytesInBundle": 18863
     },
     {
       "path": "resources/planet-sphere/planet-sphere-view.js",
@@ -245,6 +245,12 @@
       "bytes": 2391,
       "sha256": "ccb327c82b60a955f6c26815394b17d6d51b2f734724dc461336af8cbe3af341",
       "bytesInBundle": 1316
+    },
+    {
+      "path": "resources/ui/bloom-icons.js",
+      "bytes": 2698,
+      "sha256": "d76460a0678d111343c61b16b371b4e228fe2eb923d2bde7666b8b5eb587dcc3",
+      "bytesInBundle": 2119
     },
     {
       "path": "tools/build-portable.mjs",

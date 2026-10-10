@@ -7,17 +7,18 @@
 */
 html.ui18 body > header, html.ui18 body > main, html.ui18 body > footer{display:none !important}
 html.ui18 #reportModal{display:none !important}   /* (029E) the engineering report modal never shows over the production report */
-html.ui18 body{background:#242c22}
+html.ui18 body{background:var(--bloom-frame)}
 .pv{
-  --paper:#fbf6ea; --paper-2:#f4ecd8; --card:#fffdf7; --line:#e4d8bd; --line-2:#d3c39f;
-  --ink:#2f3a2c; --ink-soft:#5f6b57; --ink-faint:#8a937f;
-  --leaf:#3f9d4b; --leaf-dark:#2a7636; --leaf-soft:#e2f2d6; --bloom:#d9607e; --bloom-dark:#a83d5a; --bloom-soft:#fbe3e9;
-  --sky:#3b8fd0; --sky-dark:#23679f; --sky-soft:#dcecf8; --gold:#f2b324; --gold-deep:#a86f00; --gold-soft:#fff1c7;
-  --ok:#3f9d4b; --warn:#d98a1c; --bad:#c4466a; --pressure:#8a5bb8; --pressure-soft:#efe5f8; --focus:#1f6fd1;
-  --frame:#242c22;
-  --r-lg:22px 18px 24px 18px; --r-md:16px 13px 17px 14px;
-  --shadow-lg:0 4px 0 rgba(80,60,20,.08), 0 18px 48px rgba(60,45,15,.20);
-  --font:ui-rounded,"SF Pro Rounded","Nunito","Varela Round","Trebuchet MS",system-ui,sans-serif;
+  /* (BLOOM-034) the gameplay tokens now come from the shared theme, resources/ui/bloom-theme.css — the same values, one source */
+  --paper:var(--bloom-paper); --paper-2:var(--bloom-paper-2); --card:var(--bloom-card); --line:var(--bloom-line); --line-2:var(--bloom-line-2);
+  --ink:var(--bloom-ink); --ink-soft:var(--bloom-ink-soft); --ink-faint:var(--bloom-ink-faint);
+  --leaf:var(--bloom-leaf); --leaf-dark:var(--bloom-leaf-dark); --leaf-soft:var(--bloom-leaf-soft); --bloom:var(--bloom-bloom); --bloom-dark:var(--bloom-bloom-dark); --bloom-soft:var(--bloom-bloom-soft);
+  --sky:var(--bloom-sky); --sky-dark:var(--bloom-sky-dark); --sky-soft:var(--bloom-sky-soft); --gold:var(--bloom-gold); --gold-deep:var(--bloom-gold-deep); --gold-soft:var(--bloom-gold-soft);
+  --ok:var(--bloom-ok); --warn:var(--bloom-warn); --bad:var(--bloom-bad); --pressure:var(--bloom-pressure); --pressure-soft:var(--bloom-pressure-soft); --focus:var(--bloom-focus);
+  --frame:var(--bloom-frame);
+  --r-lg:var(--bloom-r-lg); --r-md:var(--bloom-r-md);
+  --shadow-lg:var(--bloom-shadow-lg);
+  --font:var(--bloom-font);
   position:fixed; inset:0; z-index:10; display:grid; grid-template-rows:auto minmax(0,1fr) auto; overflow:hidden;
   background:var(--frame); color:var(--ink); font-family:var(--font); font-size:15px; line-height:1.35;
 }
@@ -128,10 +129,10 @@ html.ui18 body{background:#242c22}
 .bn-c{grid-area:c; display:grid; grid-template-columns:repeat(2, minmax(12.5em, max-content)); gap:6px 8px; font-size:13px}
 .bc{position:relative; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:8px; min-height:44px; padding:4px 7px 4px 9px; border-radius:10px;
   background:linear-gradient(90deg, var(--cat-soft) 0, var(--card) 88%); border:1.5px solid color-mix(in srgb, var(--cat) 34%, var(--card)); border-left:5px solid var(--cat); overflow:hidden}
-.bc[data-cat="Temperature"]{--cat:#d9601f; --cat-soft:#fde6d6; --cat-dark:#9c3f0e}
-.bc[data-cat="Water"]{--cat:#3b8fd0; --cat-soft:#dcecf8; --cat-dark:#23679f}
-.bc[data-cat="Soil"]{--cat:#8a6a3e; --cat-soft:#f1e6d2; --cat-dark:#5f452a}
-.bc[data-cat="Hazard"]{--cat:#8a5bb8; --cat-soft:#efe5f8; --cat-dark:#5e3a86}
+.bc[data-cat="Temperature"]{--cat:var(--bloom-cat-temperature); --cat-soft:var(--bloom-cat-temperature-soft); --cat-dark:var(--bloom-cat-temperature-dark)}
+.bc[data-cat="Water"]{--cat:var(--bloom-cat-water); --cat-soft:var(--bloom-cat-water-soft); --cat-dark:var(--bloom-cat-water-dark)}
+.bc[data-cat="Soil"]{--cat:var(--bloom-cat-soil); --cat-soft:var(--bloom-cat-soil-soft); --cat-dark:var(--bloom-cat-soil-dark)}
+.bc[data-cat="Hazard"]{--cat:var(--bloom-cat-hazard); --cat-soft:var(--bloom-cat-hazard-soft); --cat-dark:var(--bloom-cat-hazard-dark)}
 .bc-i{display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:var(--card); border:1.5px solid color-mix(in srgb, var(--cat) 45%, var(--card)); color:var(--cat-dark)} .bc-i .ic{width:17px; height:17px; stroke-width:2.2}
 .bc-t{display:flex; flex-direction:column; min-width:0; line-height:1.12} .bc-t small{font-size:10.5px; font-weight:900; letter-spacing:.9px; text-transform:uppercase; color:var(--cat-dark)}
 .bc-t b{font-size:13.5px; font-weight:800; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}

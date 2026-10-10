@@ -4,6 +4,8 @@
 // (BLOOM-028D2) TRAINING can carry a small "Recommended" tag (setTrainingRecommended) and there is one more dialog, the first-run
 // recommendation ("recommend": Start Training (~5 min) · Go to Expedition), opened by ExpeditionEntry on a first EXPEDITION;
 // the choice goes to onRecommendChoice("training" | "expedition"). This screen still decides nothing: the flow is ExpeditionEntry's.
+// (BLOOM-034) The game's own visual language (docs/VISUAL_SYSTEM_v1.md): one dark planning card, chunky icon + word entries from the
+// production icon family (../ui/bloom-icons.js), the dialogs' kicker above their heading; the ornamental corner marks are gone.
 //
 //   import { MainMenu } from "<repo>/resources/main-menu/main-menu.js";
 //   const menu = new MainMenu(root, { onBegin() { … } });
@@ -21,6 +23,8 @@
 // (across reloads too, via sessionStorage). The next painting is chosen and preloaded while the current one is up, so a return
 // swaps instantly; only two of the twelve files are ever requested per visit.
 import { TITLE, SUBTITLE, BACKGROUNDS, pickBackground, MOTION_OPTIONS, readSettings, writeSettings, reducedMotionFor } from "./main-menu-data.js";
+// (BLOOM-034) the production icon family, shared with the Destination Survey
+import { ico } from "../ui/bloom-icons.js";
 
 const EASE = "cubic-bezier(.2,.8,.2,1)";
 const T = { recede: 220, recedeRm: 110 };
@@ -32,6 +36,7 @@ const ITEMS = [
   { id: "settings", label: "Settings" },
   { id: "credits", label: "Credits" },
 ];
+const ITEM_ICON = { begin: "world", training: "journal", settings: "settings", credits: "info" };   // (BLOOM-034) the gameplay icon family
 
 export class MainMenu {
   /**
@@ -158,37 +163,36 @@ export class MainMenu {
     r.innerHTML = `
       <div class="mm-bg" aria-hidden="true"><img class="mm-art" alt="" decoding="async"></div>
       <section class="mm-plaque" aria-labelledby="mm-title">
-        <span class="mm-corner tl" aria-hidden="true"></span><span class="mm-corner tr" aria-hidden="true"></span><span class="mm-corner bl" aria-hidden="true"></span><span class="mm-corner br" aria-hidden="true"></span>
         <div class="mm-plaque-inner">
           <header class="mm-title"><h1 id="mm-title">${TITLE.split(" ").map(w => `<span>${esc(w)}</span>`).join(" ")}</h1><p class="mm-sub">${esc(SUBTITLE)}</p></header>
-          <ul class="mm-nav" aria-label="Main menu">${ITEMS.map((it, i) => `<li style="--i:${i}"><button type="button" class="mm-item${it.primary ? " primary" : ""}" data-act="${it.id}">${esc(it.label)}${it.id === "training" ? ` <small class="mm-tag" hidden>Recommended</small>` : ""}</button></li>`).join("")}</ul>
+          <ul class="mm-nav" aria-label="Main menu">${ITEMS.map((it, i) => `<li style="--i:${i}"><button type="button" class="mm-item${it.primary ? " primary" : ""}" data-act="${it.id}"><span class="mm-ico" aria-hidden="true">${ico(ITEM_ICON[it.id])}</span>${esc(it.label)}${it.id === "training" ? ` <small class="mm-tag" hidden>${ico("star")}Recommended</small>` : ""}</button></li>`).join("")}</ul>
         </div>
       </section>
       <p class="mm-status" role="status" aria-live="polite"></p>
       <dialog class="mm-dialog" data-dialog="training" aria-labelledby="mm-dlg-training"><div class="mm-dialog-body">
-        <h2 id="mm-dlg-training">Training</h2><p class="lede">Not yet open</p>
+        <p class="lede">Not yet open</p><h2 id="mm-dlg-training">Training</h2>
         <p>The training expedition — a guided first landing on a hand-made world — is not ready for recruits yet.</p>
-        <p class="mm-note">Placeholder: tutorial gameplay arrives in a later milestone. Expedition is the way out onto unknown soils for now.</p>
-        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">Back to menu</button></div></div></dialog>
+        <p class="mm-note">${ico("info")}<span>Placeholder: tutorial gameplay arrives in a later milestone. Expedition is the way out onto unknown soils for now.</span></p>
+        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">${ico("back")}Back to menu</button></div></div></dialog>
       <dialog class="mm-dialog" data-dialog="recommend" aria-labelledby="mm-dlg-recommend" aria-describedby="mm-dlg-recommend-d"><div class="mm-dialog-body">
-        <h2 id="mm-dlg-recommend">First expedition?</h2><p class="lede">Training recommended</p>
+        <p class="lede">Training recommended</p><h2 id="mm-dlg-recommend">First expedition?</h2>
         <p id="mm-dlg-recommend-d">A short guided landing on a hand-made world teaches you to read a region, change your plant and know which ground to let go.</p>
-        <p class="mm-note">Training stays open from the main menu, whatever you choose now.</p>
-        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="recommend-expedition">Go to Expedition</button><button type="button" class="mm-btn primary" data-act="recommend-training">Start Training (~5 min)</button></div></div></dialog>
+        <p class="mm-note">${ico("info")}<span>Training stays open from the main menu, whatever you choose now.</span></p>
+        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="recommend-expedition">${ico("world")}Go to Expedition</button><button type="button" class="mm-btn primary" data-act="recommend-training">${ico("journal")}Start Training (~5 min)</button></div></div></dialog>
       <dialog class="mm-dialog" data-dialog="settings" aria-labelledby="mm-dlg-settings"><div class="mm-dialog-body">
-        <h2 id="mm-dlg-settings">Settings</h2><p class="lede">Expedition preferences</p>
+        <p class="lede">Expedition preferences</p><h2 id="mm-dlg-settings">Settings</h2>
         <fieldset><legend>Motion</legend>${MOTION_OPTIONS.map(m => `<label class="mm-choice"><input type="radio" name="mm-motion" value="${m.id}"><span><b>${esc(m.label)}</b><small>${esc(m.hint)}</small></span></label>`).join("")}</fieldset>
         <div class="mm-rule"></div>
         <p>Motion covers the menu, the atmosphere between screens and the turning worlds of the Destination Survey. Nothing is switched off by reducing it.</p>
-        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">Done</button></div></div></dialog>
+        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">${ico("check")}Done</button></div></div></dialog>
       <dialog class="mm-dialog" data-dialog="credits" aria-labelledby="mm-dlg-credits"><div class="mm-dialog-body">
-        <h2 id="mm-dlg-credits">Credits</h2><p class="lede">${esc(TITLE)} · ${esc(SUBTITLE)}</p>
+        <p class="lede">${esc(TITLE)} · ${esc(SUBTITLE)}</p><h2 id="mm-dlg-credits">Credits</h2>
         <dl class="mm-credits">
           <dt>A BLOOM project</dt><dd>Design, worlds, simulation and code by the BLOOM project team.</dd>
           <dt>Menu paintings</dt><dd>Twelve hand-painted expedition vistas by the project's owner.</dd>
           <dt>Open source</dt><dd>Three.js r185.1 (MIT) draws the globes of the Destination Survey.</dd>
         </dl>
-        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">Back to menu</button></div></div></dialog>`;
+        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">${ico("back")}Back to menu</button></div></div></dialog>`;
     const q = s => r.querySelector(s);
     this.art = q(".mm-art"); this.plaque = q(".mm-plaque"); this.nav = q(".mm-nav"); this.statusEl = q(".mm-status"); this.titleEl = q("#mm-title");
     this.items = Object.fromEntries(ITEMS.map(it => [it.id, q(`[data-act="${it.id}"]`)]));
