@@ -59,6 +59,10 @@ STRANGE BLOOM · UNKNOWN SOILS
 ```
 
 - **IMPLEMENTED** (BLOOM-033): BEGIN EXPEDITION → **EXPEDITION**; menu today: EXPEDITION · TRAINING · SETTINGS · CREDITS.
+- **UI correction (2026-10-10, owner / PMO): no survey-complete banner.** The title's status line shows "Surveying sector · n of 9
+  worlds" only while the prefetched sector is actually being generated and disappears when it is ready; the rejected "Sector surveyed ·
+  nine worlds ready" banner (and any toast / badge / "9 worlds" replacement) must not return — the Destination Survey's 3 × 3 matrix shows
+  readiness. Guarded by `main-menu-check` M8 and `release-check` R16b.
 - **CHALLENGES: PLANNED** (BLOOM-036). It is not added as a fake or disabled control before then: the real CHALLENGES entry is added at
   the **beginning of BLOOM-036**, as part of its first functional Challenge slice (036A), and BLOOM-036 begins only after the BLOOM-035C
   species release.
