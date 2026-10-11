@@ -138,7 +138,7 @@ const GEN = [["generateFromArchetype", null], ["generatePlanet", null], ["attemp
   // S7 · the Spread room explains an absent Reach category; the survey and the title wording
   { const dr = read("resources/run-ui/decision-rooms.js"), ds = read("resources/destination-survey/destination-survey.js"), mm = read("resources/main-menu/main-menu.js");
     check(/const CAT_ABSENT = \{ Reach: "No Reach upgrades on this world: there is no water gap your seeds would need to cross\." \};/.test(dr) && /absentNote:/.test(dr)
-      && /<span class="ds-kicker">Strange Bloom<\/span><h1>Destination Survey<\/h1>/.test(ds) && !/BLOOM · Expedition planning/.test(ds)
+      && /<span class="ds-kicker">Strange Bloom<\/span>(`\})?<h1>Destination Survey<\/h1>/.test(ds)   /* (036A: a Challenge survey's kicker names the Challenge instead) */ && !/BLOOM · Expedition planning/.test(ds)
       && /\{ id: "begin", label: "Expedition", primary: true \}/.test(mm) && !/label: "Begin Expedition"/.test(mm),
       "S7 · product wording: the title's main action is EXPEDITION (the survey's own button keeps \"Begin expedition\"); the survey kicker reads Strange Bloom over \"Destination Survey\" (no \"BLOOM · Expedition planning\"); the Spread room explains a Reach category the world does not offer instead of dropping it silently");
   }

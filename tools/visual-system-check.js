@@ -262,7 +262,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         const kb = await p.evaluate(() => { const a = document.activeElement, s = getComputedStyle(a); return { act: a.dataset.act, outline: `${s.outlineStyle} ${s.outlineWidth}`, color: s.outlineColor }; });
         const fcol = await tokenRgb(p, "--bloom-focus-night");
         await shot(p, "08-title-keyboard-focus-1440x900.jpg");
-        check(kb.act === "training" && kb.outline === "solid 3px" && kb.color === fcol, `[${bn}] A1 · keyboard: ↓ moves along the menu and the focused entry shows the gameplay's 3 px focus ring in the night focus colour`, J(kb));
+        check(kb.act === "challenges" /* (036A) the entry after EXPEDITION */ && kb.outline === "solid 3px" && kb.color === fcol, `[${bn}] A1 · keyboard: ↓ moves along the menu and the focused entry shows the gameplay's 3 px focus ring in the night focus colour`, J(kb));
         check(!p.errs.length && !local(p, HEAD_O).length, `[${bn}] T3 · the title: no console error, no unhandled rejection, every request local`, J(p.errs.slice(0, 3)));
         await c.close(); }
       // the first-run recommendation (untrained)
@@ -428,8 +428,8 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         await p.click('.mm-item[data-act="begin"]'); await surveyReady(p); await focusOn(p, 0);
         const s = await p.evaluate(() => ({ rows: document.querySelectorAll(".ds-row[data-cat]").length, heads: document.querySelectorAll(".ds-colhead svg.bloom-ic").length }));
         const leaf = await tokenRgb(p, "--bloom-leaf-btn-night");
-        check(r.boot && r.prim === leaf && r.icons === 4 && r.font && s.rows === 4 && s.heads === 3 && !p.errs.length,
-          `[${bn}] P1 · file:// offline (the portable runtime): the restyled title (gameplay font, leaf EXPEDITION, four icons) and the restyled survey reached through it (EXPEDITION → Choose Plant Species → Survey: status heads, category rows) — the theme stylesheet and the shared icon module work without a server`, J({ ...r, ...s }));
+        check(r.boot && r.prim === leaf && r.icons === 5 /* (036A) + CHALLENGES */ && r.font && s.rows === 4 && s.heads === 3 && !p.errs.length,
+          `[${bn}] P1 · file:// offline (the portable runtime): the restyled title (gameplay font, leaf EXPEDITION, five icons) and the restyled survey reached through it (EXPEDITION → Choose Plant Species → Survey: status heads, category rows) — the theme stylesheet and the shared icon module work without a server`, J({ ...r, ...s }));
         await c.close(); }
     } catch (e) { check(false, `[${bn}] browser run`, e && e.stack || String(e)); }
     await browser.close();

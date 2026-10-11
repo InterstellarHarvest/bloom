@@ -232,7 +232,11 @@ const info = (name, detail) => console.log(`INFO  ${name}  — ${detail}`);
     const want = c.classId, colIdx = S.SURVEY_CLASSES.findIndex(k => k.id === want);
     const r = S.columnFromValidated(77, colIdx, { results: [{ draw: 1, cand: unwinnable }], exhausted: true });
     const src = fs.readFileSync(path.join(ROOT, "resources/destination-survey/survey-data.js"), "utf8").replace(/\/\/.*$/gm, "");
-    const seqRule = /else if \(!c\.playable\) stats\.speciesRejected\+\+/.test(src) && /else if \(!r\.cand\.playable\) stats\.speciesRejected\+\+/.test(src);
+    // (036A) the rule names its counter through rejectedAs(): a Challenge survey's layer-P failure is scenarioRejected, everything else (the
+    // species cannot win it) stays speciesRejected — the same rule on both acceptance paths
+    const counter = "(?:\\.speciesRejected|\\[rejectedAs\\((?:c|r\\.cand)\\)\\])";
+    const seqRule = new RegExp(`else if \\(!c\\.playable\\) stats${counter}\\+\\+`).test(src) && new RegExp(`else if \\(!r\\.cand\\.playable\\) stats${counter}\\+\\+`).test(src)
+      && (!/rejectedAs/.test(src) || /const rejectedAs = c => c\.scenarioId && c\.playability\.ok \? "scenarioRejected" : "speciesRejected";/.test(src));
     check(r.done && r.column.cells.length === 0 && r.column.stats.speciesRejected === 1 && seqRule,
       "S15 · species rejection: a validated world of the right class that the species cannot win is not offered to it (speciesRejected, sequential and parallel acceptance alike) — the world itself is untouched and the column keeps drawing",
       `rejected ${r.column.stats.speciesRejected} · sector totals ${SPECIES.map(sp => `${sp.id} ${bySp.get(sp.physiologyKey).reduce((a, x) => a + x.columns.reduce((b, c2) => b + c2.speciesRejected, 0), 0)}`).join(", ")}`); }

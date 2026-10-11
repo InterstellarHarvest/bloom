@@ -301,7 +301,7 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
         // R22 · R23 · Settings (a real motion change, persisted) and Credits; R73 · keyboard title navigation
         await p.focus('.mm-item[data-act="begin"]'); const kbd = [];
         for (const key of ["ArrowDown", "ArrowDown", "ArrowDown", "ArrowDown", "End", "Home"]) { await p.keyboard.press(key); kbd.push(await p.evaluate(() => document.activeElement && document.activeElement.dataset.act)); }
-        await p.keyboard.press("ArrowDown"); await p.keyboard.press("ArrowDown"); await p.keyboard.press("Enter"); await sleep(150);
+        await p.keyboard.press("ArrowDown"); await p.keyboard.press("ArrowDown"); await p.keyboard.press("ArrowDown"); await p.keyboard.press("Enter"); await sleep(150);   // (036A) begin → challenges → training → settings
         const st1 = await p.evaluate(() => ({ open: document.querySelector('[data-dialog="settings"]').open, focusIn: !!document.activeElement.closest('[data-dialog="settings"]') }));
         await p.click('[data-dialog="settings"] input[value="reduced"]'); await sleep(100);
         const st2 = await p.evaluate(() => ({ stored: localStorage.getItem("strange-bloom.settings"), rm: MENU_DEV.entry.reducedMotion }));
@@ -311,7 +311,7 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
         const cr = await p.evaluate(() => { const d = document.querySelector('[data-dialog="credits"]'); return { open: d.open, text: d.innerText }; });
         await p.click('[data-dialog="credits"] [data-act="close"]'); await sleep(120);
         const cr2 = await p.evaluate(() => ({ open: document.querySelector('[data-dialog="credits"]').open, focus: document.activeElement.dataset.act }));
-        check(J(kbd) === J(["training", "settings", "credits", "begin", "credits", "begin"]) && st1.open && st1.focusIn && /"motion":"reduced"/.test(st2.stored) && st2.rm === true && !st3.open && st3.focus === "settings" && /"motion":"system"/.test(st3.stored),
+        check(J(kbd) === J(["challenges", "training", "settings", "credits", "credits", "begin"]) /* (036A: + CHALLENGES) */ && st1.open && st1.focusIn && /"motion":"reduced"/.test(st2.stored) && st2.rm === true && !st3.open && st3.focus === "settings" && /"motion":"system"/.test(st3.stored),
           `${B} R22 · R73 · keyboard alone walks the title menu (↓ wraps, Home / End) and Enter opens SETTINGS with focus inside; its motion choice persists and applies at once (reduced → the entry's reduced motion); Escape closes it and focus returns to SETTINGS`, J({ kbd, st2 }));
         check(cr.open && /Strange Bloom · Unknown Soils/i.test(cr.text) && /A BLOOM project/i.test(cr.text) && !cr2.open && cr2.focus === "credits", `${B} R23 · CREDITS opens its dialog (the player title, "A BLOOM project", the paintings, Three.js) and closes back to the menu`, cr.text.split("\n").slice(0, 2).join(" · "));
         // R19 · R74 · the first-run prompt by keyboard: Enter on BEGIN, focus inside, Tab between its two answers, Escape records nothing
