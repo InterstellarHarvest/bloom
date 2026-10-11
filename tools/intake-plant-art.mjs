@@ -8,8 +8,8 @@
 //   node tools/intake-plant-art.mjs --list                       every species lane and whether its deliveries are in
 //   [--root <dir>]                                               another checkout (the QA suite runs on scratch trees)
 //
-// LANES (data, not code): one per generated art brief docs/species-art-briefs/*_ART_BRIEF_v1.json (format bloom-species-art-brief@1) —
-// today cinder-rosette (rosette@1), woolly-candle (candle@1), reed-spire (reed@1). The brief names the pack id, the body plan and its
+// LANES (data, not code): one per pack, from its newest generated art brief docs/species-art-briefs/*_ART_BRIEF_v<n>.json (format
+// bloom-species-art-brief@1) — today cinder-rosette (rosette@1), woolly-candle (candle@2, brief v2 — BLOOM-035C2A), reed-spire (reed@1). The brief names the pack id, the body plan and its
 // contract; the CONTRACT is the authority for the drawings (every component × angle) and their metadata; the brief's batch table says which
 // delivery batch each drawing belongs to (and is checked against the contract, so a stale brief is refused). Organic Hybrid is NOT a lane:
 // its locked delivery stays with tools/intake-organic-hybrid-art.mjs (this tool only imports that tool's ZIP / PNG helpers).
@@ -61,19 +61,20 @@ export const ANCHOR_EDGE = { radialLeaf: ["start"], leafSocket: ["start"], stilt
 
 // ================================================================ lanes
 const readJSON = (root, rel) => JSON.parse(fs.readFileSync(path.join(root, rel), "utf8"));
-/** Every species lane: one per generated art brief. */
+/** Every species lane: one per pack, from its NEWEST generated art brief (035C2A: WOOLLY_CANDLE_ART_BRIEF_v2 — body plan revision candle@2 —
+ *  supersedes v1 for the woolly-candle lane; an older brief stays on disk as history and is never a lane). */
 export function lanes(root) {
   root = path.resolve(root);
-  return fs.readdirSync(path.join(root, BRIEFS)).filter(f => /_ART_BRIEF_v\d+\.json$/.test(f)).sort().map(f => { const B = readJSON(root, `${BRIEFS}/${f}`);
-    return { pack: B.newPack, species: B.species, name: B.name, bodyPlan: B.bodyPlan, brief: `${BRIEFS}/${f}`, proofPack: B.replacesPack }; })
-    .filter(l => l.pack).sort((a, b) => a.pack < b.pack ? -1 : 1);
+  const all = fs.readdirSync(path.join(root, BRIEFS)).filter(f => /_ART_BRIEF_v\d+\.json$/.test(f)).sort().map(f => { const B = readJSON(root, `${BRIEFS}/${f}`);
+    return { pack: B.newPack, species: B.species, name: B.name, bodyPlan: B.bodyPlan, brief: `${BRIEFS}/${f}`, proofPack: B.replacesPack, v: +/_v(\d+)\.json$/.exec(f)[1] }; }).filter(l => l.pack);
+  return all.filter(l => !all.some(o => o.pack === l.pack && o.v > l.v)).map(({ v, ...l }) => l).sort((a, b) => a.pack < b.pack ? -1 : 1);
 }
 /** One lane, resolved and cross-checked: brief ↔ body plan ↔ plan contract ↔ shared contract. Throws on a pack that is not a lane. */
 export function lane(root, pack) {
   root = path.resolve(root);
   if (LOCKED[pack]) throw new Error(`${pack} is the PMO-locked Organic Hybrid delivery — it is ingested only by ${LOCKED[pack]}`);
   const L = lanes(root).find(l => l.pack === pack);
-  if (!L) throw new Error(`no species lane "${pack}" (lanes: ${lanes(root).map(l => l.pack).join(", ")}; a lane is a ${BRIEFS}/*_ART_BRIEF_v1.json)`);
+  if (!L) throw new Error(`no species lane "${pack}" (lanes: ${lanes(root).map(l => l.pack).join(", ")}; a lane is a pack's newest ${BRIEFS}/*_ART_BRIEF_v<n>.json)`);
   const errors = [], B = readJSON(root, L.brief), C0 = readJSON(root, CONTRACT);
   if (B.format !== FORMAT.brief) errors.push(`${L.brief}: format ${B.format}`);
   const Pl = readJSON(root, B.plan), K = readJSON(root, B.contract), ref = `${Pl.id}@${Pl.version}`;
