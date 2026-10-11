@@ -15,7 +15,12 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-11, BLOOM-035C integration closeout. The PMO accepted BLOOM-035C2 and production `main` was fast-forwarded to the
+*Last updated: 2026-10-11, **BLOOM-036A review candidate** (branch `handoff/bloom-036a-review`, NOT merged; production `main` is the
+035C closeout below). On this candidate: the main menu gains **CHALLENGES** and a first playable Challenge hub (Dying World · Native
+Competition · Volatile Climate) — **BLOOM-036A: CANDIDATE** · **Challenges: CANDIDATE / first playable foundation** · **036B: NEXT /
+planned**. Design: [`CHALLENGES_SYSTEM_v1.md`](CHALLENGES_SYSTEM_v1.md); record: [`evidence/bloom-036a/REPORT.md`](evidence/bloom-036a/REPORT.md).*
+
+*Production `main` (2026-10-11, BLOOM-035C integration closeout): The PMO accepted BLOOM-035C2 and production `main` was fast-forwarded to the
 exact accepted review head `4ac7301` (from `e534750`; no merge commit, squash, cherry-pick or rebase); this docs-only closeout follows it.
 **BLOOM-035C: IMPLEMENTED / COMPLETE** — the three PMO-accepted species packs (Cinder Rosette · Reed Spire · Woolly Candle on body-plan
 revision `candle@2`) are in production, all four species are released, Species Selection is the normal EXPEDITION flow, and the plant
@@ -65,9 +70,10 @@ STRANGE BLOOM · UNKNOWN SOILS
   worlds" only while the prefetched sector is actually being generated and disappears when it is ready; the rejected "Sector surveyed ·
   nine worlds ready" banner (and any toast / badge / "9 worlds" replacement) must not return — the Destination Survey's 3 × 3 matrix shows
   readiness. Guarded by `main-menu-check` M8 and `release-check` R16b.
-- **CHALLENGES: PLANNED** (BLOOM-036; **036A is NEXT**). It is not added as a fake or disabled control before then: the real CHALLENGES
-  entry is added at the **beginning of BLOOM-036**, as part of its first functional Challenge slice (036A). The BLOOM-035C species release
-  that had to come first is complete.
+- **CHALLENGES: CANDIDATE** (BLOOM-036A, review branch; not in production `main` until PMO integration). The real CHALLENGES entry
+  arrives with its first functional Challenge slice — never as a fake, disabled or "coming soon" control: menu on the candidate
+  EXPEDITION · **CHALLENGES** · TRAINING · SETTINGS · CREDITS (the shared `challenge` pennant glyph + the word; `MainMenu` renders it only
+  with a real hook).
 
 ## 4. Expedition definition
 
@@ -117,8 +123,8 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
 | Normal Species Selection (EXPEDITION → Choose Plant Species) | **IMPLEMENTED** |
 | `?species=1` | **not required** (ignored: one behaviour path) |
 | Dynamic region specimen environments | **IMPLEMENTED** |
-| Challenges | **NEXT** |
-| BLOOM-036A | **NEXT** |
+| Challenges | **CANDIDATE** (BLOOM-036A first playable foundation, §8) |
+| BLOOM-036A | **CANDIDATE** |
 
 - **The final species art is in production** — `cinder-rosette` (`rosette@1`), `woolly-candle` (**`candle@2`**, the Woolly fidelity
   revision: candle@1's sockets with larger native component maxima; brief [`WOOLLY_CANDLE_ART_BRIEF_v2`](species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.md)),
@@ -136,7 +142,8 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
   decision that the Terraform room has *no plant* (the UI concept reviews' "a land scene instead of a plant", Concepts 15–17,
   [`UI_CONCEPT_REVIEW_v7.md`](UI_CONCEPT_REVIEW_v7.md) / [`UI_CONCEPT_REVIEW_v8.md`](UI_CONCEPT_REVIEW_v8.md), and the BLOOM-029D production
   room). Those documents remain the record of what was decided then; this file records that the decision changed in BLOOM-035C2.
-- **Challenges: NEXT** (BLOOM-036, §8) — **BLOOM-036A is NEXT**; not started.
+- **Challenges: CANDIDATE** (BLOOM-036A, §8). Inside a Challenge every released species stays open (none prescribed in 036A); the species
+  screen names the Challenge and drops Organic Hybrid's "Recommended first expedition" note.
 
 - Plant choices are genuinely different biological species — **not** Organic Hybrid recolours, not Organic Hybrid with purchased
   mutations pre-applied, not cosmetic skins.
@@ -188,9 +195,28 @@ Candle on body-plan revision `candle@2`).
 
 ## 8. Challenges
 
-**LOCKED DESIGN · PLANNED** (BLOOM-036) · **Challenges: NEXT** · **BLOOM-036A: NEXT**. Nothing of this exists in production.
-**Sequence (locked):** BLOOM-035B species engineering (complete) → BLOOM-035C three final species art packs + real-pack intake + the normal
-Species Selection release (**complete**) → **then** BLOOM-036, beginning with 036A.
+**LOCKED DESIGN** (BLOOM-036) · **BLOOM-036A: CANDIDATE** · **Challenges: CANDIDATE / first playable foundation** · **036B: NEXT /
+planned**. Nothing of this is in production `main` until the PMO integrates 036A. **Sequence (locked):** BLOOM-035B species engineering
+(complete) → BLOOM-035C final species art + the normal Species Selection release (complete) → BLOOM-036, beginning with 036A.
+
+**BLOOM-036A CANDIDATE** ([`CHALLENGES_SYSTEM_v1.md`](CHALLENGES_SYSTEM_v1.md)):
+
+- A **Challenge is a product definition that references a scenario** (`content/challenges.js`, resolved and frozen by
+  `resources/bloom-challenges.js`); the scenario's mechanics stay in `content/scenarios.js` and the engine — a Challenge carrying a
+  mechanics key, a verbatim copy of scenario text, the default scenario or a not-yet-implemented launch / completion policy is refused.
+- The initial released set: **Dying World** (`dying_world`) · **Native Competition** (`native_competition`) · **Volatile Climate**
+  (`volatile_climate`) — no difficulty labels, stars, scores or recommended skill; content order is not a ranking.
+- Flow (one document, application state only — no query string, sessionStorage or `window.name`): MAIN MENU → CHALLENGES → the hub →
+  BEGIN CHALLENGE → Choose Plant Species (all four released species) → the Destination Survey for that species **and** that Challenge's
+  scenario → Begin challenge → Run → Report ("Challenge · <name>").
+- **036A world policy (interim, PMO directive):** the existing species-relative Destination Survey, every offered world also proven under the
+  scenario (the engine's layer P with the species) as a third cached layer over the same physical worlds — no authored Challenge worlds
+  yet. The locked target below (one fresh planet from the Challenge's recipe, no 3 × 3 survey) is 036B.
+- Invariants: Play Again = same Challenge / scenario / species / planet, a fresh simulation; Choose Another Planet = that Challenge's survey;
+  Change Species = same Challenge and sector seed, re-evaluated; Main Menu clears it; Expedition = the default scenario, no residue;
+  Training = Organic Hybrid, no Challenge.
+- **Not in 036A (036B+):** prescribed species, starting owned adaptations, special Biomass, authored / recipe Challenge planets, bespoke win
+  thresholds, medals, scoring, difficulty tiers, unlock trees, campaign progression.
 
 Reserved shape of BLOOM-036 (not implemented):
 
@@ -266,5 +292,6 @@ This is not a gameplay-code feature; product code does not work around repositor
 | **BLOOM-035A** — Species design / research | species architecture, the reference physiology, the strategic-distinctness study, body plans and concepts | **ACCEPTED / COMPLETE** (docs + research in `main`) |
 | **BLOOM-035B** — Species system implementation + Species Selection | species data / model; `config.referencePlant`; simulation / validator support; species-aware Destination Survey; run plumbing; body-plan layer with proof packs; the Species Selection screen behind `?species=1` | **IMPLEMENTED / COMPLETE** (PMO-accepted `2180fcd`, in production `main`; Species Selection still behind `?species=1`, candidate species on TEMPORARY PIPELINE PROOF art) |
 | **BLOOM-035C** — Final species art + Species Selection release | three final production species packs (Cinder Rosette, Woolly Candle, Reed Spire; four species total) on the same compositor architecture; the generalized real-pack intake (035C0: `tools/intake-plant-art.mjs --pack <id>`, schemas in `PLANT_SPRITE_PIPELINE_v1.md` § SPECIES_ART_INTAKE); the three species on their real packs (Woolly Candle on `candle@2`); Species Selection released in the normal EXPEDITION flow (`?species=1` not required); dynamic region specimen environments | **IMPLEMENTED / COMPLETE** (PMO-accepted 035C2 `4ac7301`, in production `main`) |
-| **BLOOM-036** — Challenges | 036A CHALLENGES menu entry + hub + definition schema + routing · 036B dossier, prescribed species, world recipe, starting state, mechanics composition · 036C Dying World / Native Competition / Volatile Climate as ingredients · 036D initial authored set, generated Challenge planet, result / replay, full regression | **NEXT** (036A NEXT; PLANNED beyond it) |
+| **BLOOM-036A** — Challenges foundation + first playable hub | the CHALLENGES menu entry; the Challenge hub; the definition schema (`content/challenges.js`, `BLOOM.challenges`); single-document routing; Dying World / Native Competition / Volatile Climate playable through Species Selection and a scenario-proven Destination Survey | **CANDIDATE** (review branch `handoff/bloom-036a-review`) |
+| **BLOOM-036B+** — Challenges, continued | 036B dossier, prescribed species, world recipe / one generated Challenge planet, starting state, mechanics composition · 036C the three mechanics as ingredients · 036D initial authored set, result / replay, full regression | **036B: NEXT / planned** |
 | **Final hardening** | full documentation reconciliation; dead historical production-path cleanup; Pages enablement / release; a Safari / WebKit production test if practical; final end-to-end release QA | PLANNED |
