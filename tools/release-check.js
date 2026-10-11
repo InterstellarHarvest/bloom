@@ -274,8 +274,8 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
           `${B} R2b · R11 · R12 · the canonical URL / is the Strange Bloom title: "Strange Bloom — Unknown Soils", STRANGE BLOOM / UNKNOWN SOILS, every relative asset 200 (boot, composer, components, stylesheets, engine scripts, the survey's module worker, the painting) — no 404, no redirect; the composer's canonical title is / itself and its run page demos/demo-run.html`,
           `${rootReqs.length} requests · ${missing.join(", ") || "all needed present"}${req404.length ? " · 404: " + req404.map(r => r[0]).join(",") : ""}`);
         const vis = m0.text.replace(/\s+/g, " ");
-        check(J(m0.items) === J(["begin", "training", "settings", "credits"]) && !/continue/i.test(vis) && !DEV_COPY.test(vis) && !EMOJI.test(vis) && !/BLOOM\b/i.test(vis.replace(/STRANGE BLOOM/gi, "")),
-          `${B} R15 · R80 · the title menu is (BLOOM-033) EXPEDITION · TRAINING · SETTINGS · CREDITS (no CONTINUE); nothing player-visible names a milestone, the playtest harness, a development handoff, a temporary shell, ui=18 / ui=legacy, "training not ready" or the old launcher; no emoji; the game is never called BLOOM`, m0.items.join(" · "));
+        check(J(m0.items) === J(["begin", "challenges", "training", "settings", "credits"]) && !/continue/i.test(vis) && !DEV_COPY.test(vis) && !EMOJI.test(vis) && !/BLOOM\b/i.test(vis.replace(/STRANGE BLOOM/gi, "")),
+          `${B} R15 · R80 · the title menu is (BLOOM-033; BLOOM-036A + CHALLENGES) EXPEDITION · CHALLENGES · TRAINING · SETTINGS · CREDITS (no CONTINUE); nothing player-visible names a milestone, the playtest harness, a development handoff, a temporary shell, ui=18 / ui=legacy, "training not ready" or the old launcher; no emoji; the game is never called BLOOM`, m0.items.join(" · "));
         await shot(p, "01-root-title.png");
         // R13 · R14 · the twelve paintings and the background rule
         const pt = await p.evaluate(async () => { const m = MENU_DEV.entry.menu, out = [];
@@ -502,7 +502,7 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
             app: document.getElementById("app").hidden, ready: !!(window.MENU_DEV && MENU_DEV.ready), items: [...document.querySelectorAll(".mm-item")].map(b => b.dataset.act), body: document.body.innerText.trim().length, bg: getComputedStyle(document.body).backgroundColor }));
           await shot(f, "20-file-root-title.png"); await c8.close();
           PROOF.fileProtocol = { root: { title: fr.title, bootState: fr.boot, portable: fr.portable, menu: fr.items }, demoRun: fileRun };
-          check(fr.title === "Strange Bloom — Unknown Soils" && !fr.note && fr.boot === "mounted" && fr.portable && fr.ready && !fr.app && J(fr.items) === J(["begin", "training", "settings", "credits"]) && fr.body > 40,
+          check(fr.title === "Strange Bloom — Unknown Soils" && !fr.note && fr.boot === "mounted" && fr.portable && fr.ready && !fr.app && J(fr.items) === J(["begin", "challenges", "training", "settings", "credits"]) && fr.body > 40,
             `${B} R62 · R63 · (BLOOM-031) the root index.html over file:// is the real Strange Bloom title (the generated portable runtime; the HTTP-required notice is retired), never a blank page`, J({ boot: fr.boot, portable: fr.portable, items: fr.items }));
           check(fileRun && fileRun.kind === "authored" && fileRun.id === "first_bloom" && fileRun.pv, `${B} R64 · the standalone direct demos/demo-run.html still boots over file:// (First Bloom, the production Planet View)`, J(fileRun)); }
         // ================= viewports =================
@@ -538,7 +538,7 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
         const g = await p.evaluate(GAME_CAP), sc = await hscroll(p);
         await disarm(p); await runMenu(p, "mainMenu"); await titleIn(p);
         const back = await p.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state }));
-        check(m0.title === "Strange Bloom — Unknown Soils" && J(m0.items) === J(["begin", "training", "settings", "credits"]) && g.fingerprint === cap.fingerprint && g.planet === cap.planet && g.counters.createSim === 1 && GEN_NAMES.every(n => g.counters[n] === 0) && g.sameObject && g.path === "/" && back.url === HOME && back.state === "menu" && sc <= 0,
+        check(m0.title === "Strange Bloom — Unknown Soils" && J(m0.items) === J(["begin", "challenges", "training", "settings", "credits"]) && g.fingerprint === cap.fingerprint && g.planet === cap.planet && g.counters.createSim === 1 && GEN_NAMES.every(n => g.counters[n] === 0) && g.sameObject && g.path === "/" && back.url === HOME && back.state === "menu" && sc <= 0,
           `${B} R71 · Firefox 1280×800: the root title → the survey → the exact candidate → the run inside the root document (the same planet object, fingerprint and JSON, no generator) → Main menu back to the ROOT title; no horizontal scroll`, J({ fp: g.fingerprint, back: back.url.replace(ORIGIN, "") }));
         await collectUnhandled(p); PROOF.browsers[bname].flows.push("root expedition flow (1280x800)"); await c.close();
       }
