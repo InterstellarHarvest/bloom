@@ -5,9 +5,10 @@
 // still be marked on screen as temporary proof art — card, dossier and a development note.
 //
 //   import { SpeciesSelect } from "<repo>/resources/species-select/species-select.js";
-//   const s = new SpeciesSelect(host, { species, reducedMotion, challenge, onChoose(sp), onBack() });
+//   const s = new SpeciesSelect(host, { species, reducedMotion, challenge, onChoose(sp), onBack(), onSelect(sp) });
 //   (036A) `challenge` (a resolved Challenge, or null): the screen is reached from the CHALLENGES hub — its kicker names the Challenge;
-//   nothing else changes (every released species stays open: species are never prescribed in 036A)
+//   nothing else changes (every released species stays open: a prescribed species skips this screen altogether, 036B)
+//   (036B) `onSelect(sp)`: the selected card changed (a Challenge launch prepares that plant's world early)
 //   await s.ready · s.focus() · s.open(id) · s.close() · s.choose() · s.dispose()
 //
 // Layout (BLOOM-034 night planning language, resources/ui/bloom-theme.css): four cards in ROLE order (generalist first — never a power
@@ -16,7 +17,8 @@
 // strength is marked as such), and Organic Hybrid's "Recommended first expedition" note. No stars, no Easy / Hard, no score, no numbers
 // on the cards. Choosing a card (click / Enter / Space) opens its dossier: physiology at a glance (temperature and moisture windows on
 // fixed axes, Organic Hybrid's window as a faint outline; salt / radiation tolerances), two-part rows in the survey's dossier language,
-// and the primary "Survey for <name>". Keyboard: a roving-tabindex radiogroup (← → ↑ ↓ Home End), Enter / Space opens, Escape closes the
+// and the primary "Survey for <name>" ((036B) inside a Challenge "Continue with <name>": the Challenge's one world is prepared next).
+// Keyboard: a roving-tabindex radiogroup (← → ↑ ↓ Home End), Enter / Space opens, Escape closes the
 // dossier and, from the cards, goes Back. Phone (≤ 640 px): a vertical list; the dossier is a bottom sheet with the primary action pinned.
 import { ico } from "../ui/bloom-icons.js";
 
@@ -32,12 +34,13 @@ const T_AXIS = [-45, 45], M_AXIS = [0, 100];
 const signed = t => (t > 0 ? "+" : t < 0 ? "−" : "") + Math.abs(t) + " °C";
 
 export class SpeciesSelect {
-  constructor(host, { species = null, reducedMotion = null, onChoose = null, onBack = null, challenge = null } = {}) {
+  constructor(host, { species = null, reducedMotion = null, onChoose = null, onBack = null, challenge = null, onSelect = null } = {}) {
     if (!host || typeof host.appendChild !== "function") throw new TypeError("SpeciesSelect: host must be a DOM element");
     const B = window.BLOOM;
     if (!B || !B.species) throw new Error("SpeciesSelect: load content/species.js and resources/bloom-species.js");
     if (!B.plantSpecimen || typeof B.plantSpecimen.drawSpecies !== "function") throw new Error("SpeciesSelect: needs the plant sprite runtime (BLOOM.plantSpecimen.drawSpecies)");
     this.host = host; this.onChoose = onChoose; this.onBack = onBack; this.forcedReducedMotion = reducedMotion; this.challenge = challenge || null;
+    this.onSelect = typeof onSelect === "function" ? onSelect : null;   // (036B) the selected card changed (a Challenge launch prepares its world early)
     this.list = B.species.list(); this.reference = this.list.find(s => s.id === B.species.DEFAULT_ID);
     const start = species ? B.species.resolve(typeof species === "string" ? species : species.id) : this.reference;
     this.index = Math.max(0, this.list.indexOf(start)); this.opened = null; this.state = "cards"; this.disposed = false;
@@ -123,7 +126,7 @@ export class SpeciesSelect {
           </div>
           <div class="ss-actions">
             <button type="button" class="ss-btn ghost" data-act="close">${ico("back")}<span>Back</span></button>
-            <button type="button" class="ss-btn go" data-act="choose">${ico("world")}<span class="ss-go-l"></span></button>
+            <button type="button" class="ss-btn go" data-act="choose">${ico(this.challenge ? "challenge" : "world")}<span class="ss-go-l"></span></button>
           </div>
         </div>
       </aside>`;
@@ -178,9 +181,10 @@ export class SpeciesSelect {
   }
 
   _select(i, focus) {
-    this.index = i;
+    const changed = i !== this.index; this.index = i;
     this.cards.forEach((c, j) => { c.setAttribute("aria-checked", String(j === i)); c.tabIndex = j === i ? 0 : -1; });
     if (focus) this.cards[i].focus();
+    if (changed && this.onSelect && this.list) this.onSelect(this.list[i]);   // (036B) e.g. a Challenge launch prepares the selected plant's world early
   }
 
   _fillDossier(sp) {
@@ -210,6 +214,6 @@ export class SpeciesSelect {
       row("hazard", "hazard", "Hazard", `Radiation up to ${p.radTol}`, by("Hazard") || "Ordinary radiation tolerance"),
       row(null, "journal", "Reproduction", "Seeds", P.dossier.reproduction),
       row(null, "info", "Real plants", "Analogy", P.dossier.science)].join("");
-    q(".ss-go-l").textContent = `Survey for ${sp.name}`;
+    q(".ss-go-l").textContent = this.challenge ? `Continue with ${sp.name}` : `Survey for ${sp.name}`; // (036B) a Challenge has no survey: its one world is prepared next
   }
 }

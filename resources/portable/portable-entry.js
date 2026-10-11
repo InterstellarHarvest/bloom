@@ -28,6 +28,7 @@ const MODULES = {
   "resources/training/training-run.js": () => import("../training/training-run.js"),
   "resources/species-select/species-select.js": () => import("../species-select/species-select.js"), // (035B; 035C2: the normal Expedition flow) Species Selection
   "resources/challenges/challenge-hub.js": () => import("../challenges/challenge-hub.js"),     // (036A) the CHALLENGES hub
+  "resources/challenges/challenge-world-screen.js": () => import("../challenges/challenge-world-screen.js"), // (036B) PREPARING CHALLENGE WORLD / the dossier + the launch's search
 };
 
 const loaded = new Map();

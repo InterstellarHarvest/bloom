@@ -38,7 +38,7 @@
 // a "Main menu" back button; the consumer runs the transition back and disposes the survey (which disposes the pool it owns).
 import { PlanetSphereView, PlanetSphereRenderer } from "../planet-sphere/planet-sphere-view.js";
 import { AtmosphereTransition } from "../atmosphere-transition/atmosphere-transition.js";
-import { SURVEY_CLASSES, ROWS, nextSectorSeed, sectorLabel, speciesFor, scenarioFor } from "./survey-data.js";
+import { SURVEY_CLASSES, ROWS, nextSectorSeed, sectorLabel, speciesFor } from "./survey-data.js";
 import { SectorPool } from "./sector-pool.js";
 // (BLOOM-034) the production icon family, shared with the title
 import { ico } from "../ui/bloom-icons.js";
@@ -93,25 +93,20 @@ export class DestinationSurvey {
    *                    sector is classified, described and validated for it (the worlds themselves never depend on it)
    * onChangeSpecies    (035B; 035C2 normal flow) shows the species chip with a "Change" button in the header; called with
    *                    this survey (state survey / loading). Without it the screen shows no species control at all (production flow).
-   * challenge          (036A) a resolved Challenge (BLOOM.challenges.resolve): the survey is FOR its scenario too — every world shown is
-   *                    also proven under the scenario's real mechanics with this species (survey-data's scenario layer); the header names
-   *                    the Challenge, the primary action is "Begin challenge" and the Begin detail carries `challenge`. Null: an Expedition.
    */
   constructor(root, { sectorSeed = null, firstBloom = false, reducedMotion = null, worker = true, workers = null, onBeginExpedition = null, descent = null, sectors = null, onExit = null,
-    species = null, onChangeSpecies = null, challenge = null } = {}) {
+    species = null, onChangeSpecies = null } = {}) {
     if (!root || typeof root.appendChild !== "function") throw new TypeError("DestinationSurvey: root must be a DOM element");
     if (descent && typeof descent.onCovered !== "function") throw new TypeError("DestinationSurvey: descent.onCovered must be a function");
     if (sectors && (!(sectors instanceof SectorPool) || sectors.disposed)) throw new TypeError("DestinationSurvey: sectors must be a live SectorPool");
     this.root = root; this.onBeginExpedition = onBeginExpedition; this.forcedReducedMotion = reducedMotion; this.descent = descent; this.onExit = onExit;
     this.onChangeSpecies = typeof onChangeSpecies === "function" ? onChangeSpecies : null;
     this.species = species != null ? speciesFor(species) : sectors ? sectors.species : speciesFor(null); // (035B) frozen; an unknown id throws
-    if (challenge && (typeof challenge.id !== "string" || typeof challenge.scenario !== "string")) throw new TypeError("DestinationSurvey: challenge must be a resolved Challenge");
-    this.challenge = challenge || null; this.scenario = scenarioFor(this.challenge ? this.challenge.scenario : null); // (036A) null: an Expedition
     this.mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
     // (028C) the pool: adopted (its prefetched sector is the first shown) or private. Validations run one per task (028B), so the
     // pool uses the machine: hardware threads − 2 (the page's main and compositor threads keep theirs), at most 8.
     this.sectors = sectors || new SectorPool({ worker, workers, species: this.species });
-    const pre0 = sectors && sectors.first, pre = pre0 && pre0.species.physiologyKey === this.species.physiologyKey && (pre0.scenario || null) === this.scenario ? pre0 : null; // (035B) adopt only this species' (036A) and scenario's prefetch
+    const pre0 = sectors && sectors.first, pre = pre0 && pre0.species.physiologyKey === this.species.physiologyKey ? pre0 : null; // (035B) adopt only this species' prefetch
     this.firstBloom = !!firstBloom || !!(pre && sectorSeed == null && pre.firstBloom);
     this.sectorSeed = sectorSeed != null ? sectorSeed >>> 0 : pre ? pre.seed : 1 + Math.floor(Math.random() * 999998);
     this.state = "loading"; this.selected = null; this.cells = new Array(N).fill(null); this.sector = null;
@@ -123,7 +118,7 @@ export class DestinationSurvey {
     this.views = this.globes.map((g, i) => new PlanetSphereView(g, { renderer: this.host, interactive: false, reducedMotion,
       distance: GLOBE_DISTANCE, yaw: i * 0.7 + 0.35, ariaLabel: "Planet globe: drag sideways or press the left and right arrow keys to spin it" }));
     this.sectors.onProgress = e => this._progress(e);
-    const e = this.sectors.sector(this.sectorSeed, this.firstBloom, this.species, this.scenario);
+    const e = this.sectors.sector(this.sectorSeed, this.firstBloom, this.species);
     this.stats.adopted = pre ? { seed: pre.seed, ready: e.ready, confirmed: e.found.reduce((a, b) => a + b, 0) } : null;
     let first;
     if (e.ready) first = e.promise.then(s => this._swapIn(s, { first: true })); // (028C) prefetched in full: the single sweep, as a prefetched scan
@@ -138,8 +133,8 @@ export class DestinationSurvey {
 
   /** (028C) Start validating a sector with no screen — on the title screen, while the player reads the menu. Returns the
    *  SectorPool to pass as `sectors`; `pool.progress` / `pool.ready` report it; `pool.dispose()` if no survey ever takes it. */
-  static prefetch({ sectorSeed = null, firstBloom = false, worker = true, workers = null, species = null, scenario = null } = {}) {
-    return new SectorPool({ worker, workers, species }).prefetch({ sectorSeed, firstBloom, scenario });
+  static prefetch({ sectorSeed = null, firstBloom = false, worker = true, workers = null, species = null } = {}) {
+    return new SectorPool({ worker, workers, species }).prefetch({ sectorSeed, firstBloom });
   }
 
   get reducedMotion() { return this.forcedReducedMotion ?? !!(this.mq && this.mq.matches); }
@@ -152,7 +147,7 @@ export class DestinationSurvey {
 
   // ---------------------------------------------------------------- public
   /** Is the sector after the one on screen already validated and waiting (prefetched)? */
-  get nextSectorReady() { const e = this.sectors.get(nextSectorSeed(this.sectorSeed), false, this.species, this.scenario); return !!(e && e.ready); }
+  get nextSectorReady() { const e = this.sectors.get(nextSectorSeed(this.sectorSeed), false, this.species); return !!(e && e.ready); }
 
   /**
    * SCAN NEW SECTOR: the next sector's nine validated worlds replace these in a short corner-to-corner sweep. Normally that
@@ -164,7 +159,7 @@ export class DestinationSurvey {
     if (this.state !== "survey") return false;
     this.state = "scanning"; this.scanBtn.setAttribute("aria-busy", "true");
     try {
-      const seed = nextSectorSeed(this.sectorSeed), e = this.sectors.sector(seed, false, this.species, this.scenario), p = e.promise, prefetched = e.ready, t0 = performance.now();
+      const seed = nextSectorSeed(this.sectorSeed), e = this.sectors.sector(seed, false, this.species), p = e.promise, prefetched = e.ready, t0 = performance.now();
       if (!prefetched) { this.stats.scanWaits++; this._awaiting = e; await this._sweepOut(); if (this.state === "disposed") return false; this._fillIn(e); this._progress(e); }
       const sector = await p;
       this._awaiting = null; this._progress(null);
@@ -266,10 +261,8 @@ export class DestinationSurvey {
     const detail = { candidate: { key: c.key, name: c.name, authored: c.authored, archetypeId: c.archetypeId, seed: c.seed, attempt: c.attempt, classId: c.classId,
       sectorSeed: this.sectorSeed, validation: c.validation,
       // (035B) provenance: the species this world was classified and validated for, and its exact physiology revision
-      speciesId: c.species.id, physiologyVersion: c.species.physiologyVersion, physiologyKey: c.species.physiologyKey, physicalKey: c.physicalKey, playability: c.playability,
-      // (036A) the scenario this world was proven under (a Challenge survey) — null for an Expedition
-      scenarioId: c.scenarioId || null, scenarioValidation: c.scenarioValidation || null },
-      planet: c.planet, species: this.species, challenge: this.challenge, render: c.render, dossier: c.dossier,
+      speciesId: c.species.id, physiologyVersion: c.species.physiologyVersion, physiologyKey: c.species.physiologyKey, physicalKey: c.physicalKey, playability: c.playability },
+      planet: c.planet, species: this.species, render: c.render, dossier: c.dossier,
       view: this.views[i], container: this.globes[i], globe: this.globes[i], survey: this };
     this.stats.begins++;
     let go = null;
@@ -389,7 +382,7 @@ export class DestinationSurvey {
     r.innerHTML = `
       <header class="ds-head">
         <button type="button" class="ds-btn ghost ds-exit" data-act="exit"${this.onExit ? "" : " hidden"}>${ico("back")}<span class="lbl">Main menu</span></button>
-        <div class="ds-title">${this.challenge ? `<span class="ds-kicker ds-challenge" data-challenge="${esc(this.challenge.id)}">${ico(this.challenge.presentation.icon)}<span>Challenge · <b>${esc(this.challenge.name)}</b></span></span>` : `<span class="ds-kicker">Strange Bloom</span>`}<h1>Destination Survey</h1></div>
+        <div class="ds-title"><span class="ds-kicker">Strange Bloom</span><h1>Destination Survey</h1></div>
         <p class="ds-sector" aria-live="polite"></p>${this.onChangeSpecies ? `
         <div class="ds-species" data-species="${esc(this.species.id)}"><span class="ds-species-k">Species</span><b>${esc(this.species.name)}</b><button type="button" class="ds-btn ghost ds-species-change" data-act="species">Change<span class="sr-only"> species</span></button></div>` : ""}
         <div class="ds-head-tools"><span class="ds-progress sr-only" role="status" hidden></span><button type="button" class="ds-btn scan" data-act="scan">${ico("scan")}<span>Scan <span class="lbl-long">new </span>sector</span></button></div>
@@ -413,12 +406,12 @@ export class DestinationSurvey {
             <div class="ds-bar" role="img"><i class="g"></i><i class="y"></i><i class="r"></i></div>
             <div class="ds-bar-key" aria-hidden="true"><span class="ok">${ico("check")}<span>Suits</span></span><span class="warn">${ico("alert")}<span>Marginal</span></span><span class="bad">${ico("x")}<span>Hostile</span></span></div></div>
           <dl class="ds-rows"></dl>
-          <section class="ds-challenges"><h3>${ico("hazard")}Expected challenges</h3><ul></ul></section>
+          <section class="ds-challenges"><h3>${ico("hazard")}Expected hazards</h3><ul></ul></section>
           <p class="ds-cue">${ico("adapt")}<span></span></p>
           <p class="ds-seed"></p>
           <div class="ds-actions">
             <button type="button" class="ds-btn ghost" data-act="return">${ico("back")}Return to survey</button>
-            <button type="button" class="ds-btn go" data-act="begin">${ico(this.challenge ? "challenge" : "world")}${this.challenge ? "Begin challenge" : "Begin expedition"}</button>
+            <button type="button" class="ds-btn go" data-act="begin">${ico("world")}Begin expedition</button>
           </div>
         </aside>
       </div>`;
@@ -479,8 +472,7 @@ export class DestinationSurvey {
     q(".ds-challenges ul").innerHTML = d.challenges.length ? d.challenges.map(c => `<li>${esc(c.text)}${c.share != null ? ` <small>· ${pct(c.share)}% of land</small>` : ""}</li>`).join("")
       : "<li>Nothing stands out: most land suits your plant from the start.</li>";
     q(".ds-cue span").textContent = d.cue || ""; q(".ds-cue").hidden = !d.cue;
-    q(".ds-seed").textContent = (cand.authored ? "Authored world · First Bloom" : `World Seed ${cand.seed} · ${this.sector ? this.sector.label : ""}`)
-      + (this.challenge ? ` · proven for ${this.challenge.name}` : ""); // (036A) every world shown here passed the Challenge's own layer P
+    q(".ds-seed").textContent = cand.authored ? "Authored world · First Bloom" : `World Seed ${cand.seed} · ${this.sector ? this.sector.label : ""}`;
   }
 
   // ---------------------------------------------------------------- animation helpers
@@ -605,7 +597,7 @@ export class DestinationSurvey {
     await Promise.all(SURVEY_CLASSES.map((_, col) => this._settleColumn(fill, col, { cells: sector.cells.filter((_, i) => i % COLS === col) })));
     if (this.state === "disposed") return;
     this.sector = sector; this._fill = null; fill.e.listener = null;
-    this.sectors.forget(sector.sectorSeed, this.species, this.scenario); // shown: the cells hold it now
+    this.sectors.forget(sector.sectorSeed, this.species); // shown: the cells hold it now
     // the worlds keep the rows they landed in: each column holds exactly the sector's worlds of that column (its class)
     for (let i = 0; i < N; i++) { this.slots[i].classList.remove("is-incoming"); this.buttons[i].disabled = !this.cells[i]; }
     this._placeholder(null);
@@ -624,7 +616,7 @@ export class DestinationSurvey {
   /** Put a sector on screen: a corner-to-corner sweep (slightly irregular), or one restrained fade under reduced motion. */
   async _swapIn(sector, { first }) {
     this.sector = sector;
-    this.sectors.forget(sector.sectorSeed, this.species, this.scenario); // shown: the cells hold it now
+    this.sectors.forget(sector.sectorSeed, this.species); // shown: the cells hold it now
     const assign = i => {
       const cand = sector.cells[i]; this.cells[i] = cand;
       if (!cand) { this.views[i].setPlanet(null); this.buttons[i].disabled = true; return; }
@@ -661,7 +653,7 @@ export class DestinationSurvey {
   }
 
   // ---------------------------------------------------------------- sectors (validated; SectorPool: workers, main-thread fallback)
-  _prefetch() { if (!this.sectors.disposed) this.sectors.sector(nextSectorSeed(this.sectorSeed), false, this.species, this.scenario); }
+  _prefetch() { if (!this.sectors.disposed) this.sectors.sector(nextSectorSeed(this.sectorSeed), false, this.species); }
 
   /** Header / placeholder: how many of the awaited sector's nine worlds are validated so far (null clears it). */
   _progress(e) {

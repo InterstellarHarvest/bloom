@@ -43,7 +43,7 @@
   const ROMAN = ["", "I", "II", "III", "IV", "V"];
   // presentation formatting only (the numbers are the report's): a signed value, a tenth, a percentage
   const r1 = v => Math.round(v * 10) / 10, sgn = v => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(r1(v))}`, pct = v => `${Math.round(v * 100)} %`;
-  const ACT_ICON = { keepPlaying: "play", restartRun: "restart", restartTraining: "restart", mainMenu: "home", home: "home", playAgain: "restart", newWorld: "world", changeScenario: "climate", changePlanet: "world", skipTraining: "x", beginExpedition: "world" }; // (028D2) + the finished training's Begin Expedition
+  const ACT_ICON = { keepPlaying: "play", restartRun: "restart", restartTraining: "restart", mainMenu: "home", home: "home", playAgain: "restart", newWorld: "world", changeScenario: "climate", changePlanet: "world", skipTraining: "x", beginExpedition: "world", retryChallenge: "restart", challenges: "challenge" }; // (028D2) + the finished training's Begin Expedition; (036B) a Challenge run's Retry / Challenges
   const CAT_COLOR = { Hazard: ["#8a5bb8", "#efe5f8", "#5e3a86"], Water: ["#3b8fd0", "#dcecf8", "#23679f"], Temperature: ["#d9601f", "#fde6d6", "#9c3f0e"], Soil: ["#8a6a3e", "#f1e6d2", "#5f452a"],
     Seeds: ["#c58a1a", "#fbefcf", "#8a5d00"], Growth: ["#3f9d4b", "#e2f2d6", "#2a7636"], Reach: ["#1f8f8f", "#d8f1ef", "#136060"], "Sky temperature": ["#d9601f", "#fde6d6", "#9c3f0e"], Rain: ["#3b8fd0", "#dcecf8", "#23679f"] };
   const catStyle = c => { const k = CAT_COLOR[c]; return k ? `--cat:${k[0]};--cat-soft:${k[1]};--cat-dark:${k[2]}` : ""; };
@@ -115,6 +115,13 @@
           C.shockCount ? `${C.shockCount} climate shock${C.shockCount === 1 ? "" : "s"}: ${C.shocks.map(x => x.text).join(", ")}; largest temporary swing ${C.swing.map(x => x.text).join(", ")}.` : "No climate shock.", C.note] }); }
       return out.map(c => `<section class="rr-scn" aria-label="${esc(c.title)}"><h3>${ico(c.icon)}${esc(c.title)}</h3>${c.lines.map(l => `<p>${esc(l)}</p>`).join("")}</section>`).join("");
     }
+    // (036B) a Challenge's prescribed starting state: what the CHALLENGE gave the plant at landing (never counted as the player's purchases)
+    function startNote(i) {
+      const st = i.startingState; if (!st) return "";
+      const T = (window.BLOOM_DATA && BLOOM_DATA.traits) || [], n = {}; for (const id of st.adaptations) n[id] = (n[id] || 0) + 1;
+      const parts = [...Object.entries(n).map(([id, k]) => ((T.find(t => t.id === id) || {}).name || id) + (k > 1 ? ` ×${k}` : "")), ...(st.biomass != null ? [`${st.biomass} Biomass`] : [])];
+      return `<p class="rr-note rr-given" data-given="challenge">${ico("info")}<span>Given by the Challenge at landing: ${esc(parts.join(" · "))}.</span></p>`;
+    }
     function render(d) {
       const win = d.kind === "win", i = d.identity;
       layer.dataset.kind = d.kind; layer.dataset.training = String(!!i.training);
@@ -140,6 +147,7 @@
       const builtChips = (d.built || []).map(b => chip(`${ico("leaf")}${esc(tierWord(b))}`, "ow", catStyle(b.uiCategory))).join("") || chip("The unmodified pioneer", "ow none");
       const tfChips = (d.terraform || []).map(t => chip(`${ico(t.axis === "temp" ? "temp" : "humid")}${esc(t.name)}${t.tier > 1 ? ` ${ROMAN[t.tier] || t.tier}` : ""}`, "ow", catStyle(t.uiCategory))).join("");
       build.innerHTML = `<section class="rr-sec" aria-label="Your plant became"><h3>${ico("adapt")}${win ? "Your plant became" : "Your plant had become"}</h3><div class="rr-chips">${builtChips}</div></section>` +
+        startNote(i) +
         (tfChips ? `<section class="rr-sec rr-sky" aria-label="You reshaped the sky"><h3>${ico("terraform")}You reshaped the sky</h3><div class="rr-chips">${tfChips}</div><p class="rr-note">Terraform changed the planet's sky, not your plant.</p></section>` : "");
       // the text column
       let html = "";

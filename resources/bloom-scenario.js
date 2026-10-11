@@ -1,6 +1,6 @@
 // BLOOM — pressure-scenario validation layer (BLOOM-012). No DOM.
 //
-//   BLOOM.validateScenario(planet, config, traits, scenario, { archetypeId, minStrategies, species }) → verdict
+//   BLOOM.validateScenario(planet, config, traits, scenario, { archetypeId, minStrategies, species, startingState }) → verdict
 //
 // The archetype layers 1–8 (bloom-validate / bloom-archetype) keep validating the underlying DEFAULT-scenario planet; they say nothing
 // about a pressure run. This separate layer ("layer P") proves that ONE planet + ONE scenario is a fair combination, using
@@ -39,7 +39,8 @@
     if (policy && policy.allowed === false) return { ...base, ok: false, status: "DISALLOWED", reason: `${S.name} is not offered on this archetype: ${policy.reason}`, required: 0, strategies: [] };
     const need = opts.minStrategies || V.minStrategies || 1, t0 = Date.now();
     // (BLOOM-035B) opts.species: the player physiology layer P proves (Challenges prescribe the species); absent = the reference
-    const SPO = opts.species ? { species: opts.species } : {};
+    // (BLOOM-036B) opts.startingState: a prescribed start (a Challenge's) — every witness and probe starts from it
+    const SPO = { ...(opts.species ? { species: opts.species } : {}), ...(opts.startingState ? { startingState: opts.startingState } : {}) };
     const r = BLOOM.findStrategies(planet, config, traits, { minStrategies: need, pacing: V.pacing || null, scenario: S, ...SPO });
     const max = BLOOM.pressure.maxOffsets(S.pressure, planet.globalClimate);
     const pressure = S.pressure ? { graceSeconds: S.pressure.graceSeconds, fullAtSeconds: S.pressure.graceSeconds + S.pressure.durationSeconds,

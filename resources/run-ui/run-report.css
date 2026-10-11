@@ -59,6 +59,8 @@
 .rr-sec p{margin:0; font-size:14px; line-height:1.4}
 .rr-sky{border-color:#bcd4ec; background:linear-gradient(var(--sky-soft, #dcecf8), var(--rr-bg) 70%)} .rr-sky h3 .ic{color:var(--sky-dark, #23679f)}
 .rr-note{font-size:12px !important; font-weight:700; color:var(--rr-faint)}
+/* (036B) what a Challenge gave the plant at landing — provenance, never a purchase */
+.rr-given{display:flex; gap:6px; align-items:flex-start; margin:8px 0 0} .rr-given .ic{width:14px; height:14px; flex:none; margin-top:1px}
 .rr-chips{display:flex; flex-wrap:wrap; gap:6px}
 .rr-chip{display:inline-flex; align-items:center; gap:5px; padding:5px 10px; border-radius:10px; font-size:13.5px; font-weight:800; background:var(--rr-paper); border:1.5px solid var(--rr-line-2); color:var(--rr-ink)}
 .rr-chip .ic{width:16px; height:16px} .rr-chip i{font-style:normal; font-weight:700; color:var(--rr-soft)}

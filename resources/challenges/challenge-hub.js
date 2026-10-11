@@ -1,9 +1,9 @@
-// BLOOM — the CHALLENGES hub (BLOOM-036A). docs/CHALLENGES_SYSTEM_v1.md §3 (flow), §5 (hub).
+// BLOOM — the CHALLENGES hub (BLOOM-036A; 036B copy for the one-planet launch). docs/CHALLENGES_SYSTEM_v1.md §3 (flow), §7 (hub).
 //
 // The main menu's CHALLENGES opens this screen inside the one document (the app loads this module lazily on the first CHALLENGES, like the
 // Species Selection screen). It lists every released Challenge (BLOOM.challenges.list(): content order, which is not a ranking) and shows
-// the selected one's dossier; BEGIN CHALLENGE hands the resolved Challenge to the flow (ExpeditionEntry: → Choose Plant Species →
-// the Challenge's Destination Survey → Begin challenge → the run).
+// the selected one's dossier; BEGIN CHALLENGE hands the resolved Challenge to the flow (ExpeditionEntry, 036B: → Choose Plant Species if
+// the Challenge allows it → PREPARING CHALLENGE WORLD → the Challenge Planet Dossier → Begin challenge → the run). No Destination Survey.
 //
 //   import { ChallengeHub } from "<repo>/resources/challenges/challenge-hub.js";
 //   const h = new ChallengeHub(host, { challenge, reducedMotion, onChoose(ch), onBack() });
@@ -23,12 +23,17 @@ function attachCss() { if (document.querySelector('link[data-bloom="challenge-hu
   const l = document.createElement("link"); l.rel = "stylesheet"; l.href = CSS_URL; l.dataset.bloom = "challenge-hub"; document.head.appendChild(l); }
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const NARROW = 700;
-// the 036A launch / completion policies in player words (BLOOM.challenges.LAUNCH_POLICIES; a policy without words here is a programming error)
+// the launch / completion policies in player words (BLOOM.challenges.LAUNCH_POLICIES; a policy without words here is a programming error).
+// (036B) A Challenge generates ONE world: no Destination Survey, no choosing among worlds. Functions take the resolved Challenge.
+const traitName = id => { const t = (window.BLOOM_DATA.traits || []).find(x => x.id === id); return t ? t.name : id; };
 const POLICY_WORDS = {
-  species: { "player-choice": "You choose your plant: every species is open." },
-  world: { "destination-survey": "You choose the world on a Destination Survey; every world it offers has been proven winnable under this Challenge with your plant." },
-  startingState: { "none": "Your plant lands as it always does: nothing owned yet." },
-  win: { "bloom": "Win with the normal Bloom: cover the planet's target share of land." },
+  species: { "player-choice": () => "You choose your plant: every species is open.",
+    prescribed: c => `This Challenge prescribes the plant: ${window.BLOOM.challenges.speciesOf(c).name}.` },
+  world: { recipe: () => "One qualifying Challenge world is generated for your plant: there is no survey and no choosing among worlds." },
+  startingState: { normal: () => "Your plant lands as it always does: nothing owned yet.",
+    prescribed: c => { const st = window.BLOOM.challenges.startingStateOf(c), n = {}; for (const id of st.adaptations) n[id] = (n[id] || 0) + 1;
+      return "Your plant lands with what the Challenge gives it: " + [...Object.entries(n).map(([id, k]) => traitName(id) + (k > 1 ? ` ×${k}` : "")), ...(st.biomass != null ? [`${st.biomass} Biomass`] : [])].join(" · ") + "."; } },
+  win: { bloom: () => "Win with the normal Bloom: cover the planet's target share of land." },
 };
 
 export class ChallengeHub {
@@ -116,8 +121,8 @@ export class ChallengeHub {
         <button type="button" class="ch-btn ghost" data-act="back">${ico("back")}<span>Main menu</span></button>
         <div class="ch-title"><span class="ch-kicker">${ico("challenge")}Challenges</span><h1 id="${tid}">Choose a challenge</h1></div>
       </header>
-      <p class="ch-lede">Each Challenge is a contained run with one special pressure from the planet itself. You still choose your plant and your world;
-        the Challenge decides what pushes back.</p>
+      <p class="ch-lede">Each Challenge is a contained run with its own starting situation and pressure. Read the brief, choose what the Challenge
+        allows, and find a way to bloom.</p>
       <div class="ch-body">
         <div class="ch-list" role="radiogroup" aria-labelledby="${tid}">${this.list.map((c, i) => this._card(c, i)).join("")}</div>
         <aside class="ch-dossier" id="${did}" aria-labelledby="${did}-h">
@@ -181,7 +186,7 @@ export class ChallengeHub {
 
   /** The player words for a Challenge's launch / completion policies (throws for a policy the hub cannot describe). */
   _words(c) {
-    const w = k => { const t = POLICY_WORDS[k] && POLICY_WORDS[k][k === "win" ? c.completion.win : c.launch[k]]; if (!t) throw new Error(`ChallengeHub: no words for ${k} policy of ${c.id}`); return t; };
+    const w = k => { const f = POLICY_WORDS[k] && POLICY_WORDS[k][k === "win" ? c.completion.win : c.launch[k].policy]; if (!f) throw new Error(`ChallengeHub: no words for ${k} policy of ${c.id}`); return f(c); };
     return { species: w("species"), world: w("world"), startingState: w("startingState"), win: w("win") };
   }
 

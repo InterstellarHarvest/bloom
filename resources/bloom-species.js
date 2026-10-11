@@ -10,7 +10,8 @@
 //   BLOOM.species.physiologyHash(p)        → 8-hex FNV of the seven physiology numbers (key order fixed)
 //   BLOOM.species.sameAsReference(sp, cfg) → is this species' physiology numerically config.referencePlant?
 //   BLOOM.species.DEFAULT_ID / TRAINING_ID → "organic_hybrid" (the Expedition flow without the species screen; Training, always)
-//   BLOOM.species.validateFor(planet, sp, { config, traits, diagnostics }) → the species playability verdict (S-layers, 035B-2)
+//   BLOOM.species.validateFor(planet, sp, { config, traits, diagnostics, startingState }) → the species playability verdict (S-layers, 035B-2;
+//                                       036B: startingState = a prescribed start the S2 proof runs from, never the construction proof)
 //
 // A species is the PLAYER's starting physiology only (createSim(…, { species })). It is never an input to world generation
 // (generateFromArchetype refuses it) and never reaches the native competitor (config.referencePlant). Content: content/species.js.
@@ -151,23 +152,25 @@
   }
   const provedByConstruction = planet => { const a = planet && planet.archetype;
     return !!(a && a.winnabilityChecked && Array.isArray(a.validatedLayers) && [4, 5, 6].every(l => a.validatedLayers.includes(l))); };
-  function validateFor(planet, sp, { config, traits, archetype = null, diagnostics = false } = {}) {
+  function validateFor(planet, sp, { config, traits, archetype = null, diagnostics = false, startingState = null } = {}) {
     const B = root.BLOOM, t0 = Date.now();
     if (!sp || typeof sp.physiologyKey !== "string") throw new TypeError("BLOOM.species.validateFor: a resolved species is required (BLOOM.species.resolve(id))");
     if (!config || !traits) throw new TypeError("BLOOM.species.validateFor: pass { config, traits }");
     if (!B.findWitness) throw new Error("BLOOM.species.validateFor: load resources/bloom-witness.js");
     const s1 = foothold(planet, sp, { config, traits });
     let s2;
-    if (sameAsReference(sp, config) && provedByConstruction(planet)) s2 = { ok: true, reused: true, layer: null, reason: null,
+    // (BLOOM-036B) a prescribed starting state is proven from that start: the construction proof (a normal start) is never reused for it
+    const ST = startingState ? { startingState } : {};
+    if (!startingState && sameAsReference(sp, config) && provedByConstruction(planet)) s2 = { ok: true, reused: true, layer: null, reason: null,
       note: "the reference physiology's layers 4–6 proof from this world's construction (numerically identical physiology)" };
-    else { const w = B.findWitness(planet, config, traits, { species: sp }), x = w.witness;
+    else { const w = B.findWitness(planet, config, traits, { species: sp, ...ST }), x = w.witness;
       s2 = { ok: !!w.ok, reused: false, layer: w.layer, reason: w.reason || null, inconclusive: !!w.inconclusive,
         ...(x ? { spend: x.totalSpent, purchases: x.purchases.length, build: x.purchases.map(p => p.id), winSeconds: x.winSeconds, marginSeconds: x.marginSeconds, usedCrossing: !!x.usedCrossing } : {}),
         simulations: w.search && w.search.simulations }; }
     let diag = null;
     if (diagnostics) {
       const V = archetype && archetype.validation || {}, need = V.minStrategies || 1, P = V.pacing || null;
-      const r = B.findStrategies(planet, config, traits, { species: sp, minStrategies: need, pacing: P });
+      const r = B.findStrategies(planet, config, traits, { species: sp, minStrategies: need, pacing: P, ...ST });
       const all = [...(r.strategies || []), ...(r.slow || [])], req = V.requiredConditions || [];
       diag = { s3: { status: r.layer7 ? r.layer7.status : r.status, distinct: r.layer7 ? r.layer7.strategies : 0, required: need },
         s4: { status: r.layer8 ? r.layer8.status : r.status, qualifying: r.layer8 ? r.layer8.qualifying : 0 },

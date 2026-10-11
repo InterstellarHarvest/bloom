@@ -64,11 +64,6 @@
 .ds-species b{color:var(--ink); font-weight:900}
 .ds-species .ds-btn{min-height:32px; padding:4px 12px; font-size:13px}
 .ds[data-state="focus"] .ds-species{opacity:.6}
-/* (036A) a Challenge survey: the title's kicker names the Challenge — its scenario glyph + the words (never colour alone), in the pressure
-   violet of the run's scenario feedback; it stays visible on a phone, where the plain kicker hides */
-.ds-kicker.ds-challenge{display:inline-flex; align-items:center; gap:6px; color:var(--bloom-pressure-night); white-space:nowrap}
-.ds-kicker.ds-challenge .ic{width:15px; height:15px; flex:none}
-.ds-kicker.ds-challenge b{font-weight:inherit; color:var(--ink)}
 .ds-hab-for{font-weight:700; color:var(--ink-soft)}
 @media (max-width:640px){ .ds-species-k{display:none} .ds-species{font-size:12.5px} }
 .ds[data-state="focus"] .ds-sector{opacity:.6}
@@ -193,7 +188,7 @@
 .ds-rows dd b{grid-column:1; grid-row:2; align-self:start; color:var(--ink); font-size:15px; font-weight:800; line-height:1.2}
 .ds-row-v{grid-column:2; grid-row:1 / -1; align-self:stretch; display:flex; align-items:center; padding-left:12px; border-left:1.5px solid color-mix(in srgb, var(--cat) 30%, transparent);
   font-size:13px; font-weight:600; color:var(--ink-soft); line-height:1.3}
-/* expected challenges: the gameplay "blocked" tint, a heading with its icon */
+/* expected hazards (036B: the heading was "Expected challenges" — CHALLENGES is now a top-level mode; the class name stays): the gameplay "blocked" tint, a heading with its icon */
 .ds-challenges{margin:12px 0 0; padding:10px 14px 10px; border-radius:var(--r-md); background:color-mix(in srgb, var(--extreme) 9%, transparent); border:2px solid color-mix(in srgb, var(--extreme) 30%, transparent)}
 .ds-challenges h3{display:flex; align-items:center; gap:6px; margin:0 0 4px; font-size:var(--bloom-kicker-size); font-weight:var(--bloom-kicker-weight); letter-spacing:var(--bloom-kicker-track); text-transform:uppercase; color:var(--extreme)}
 .ds-challenges h3 .ic{width:16px; height:16px; stroke-width:2.4}
@@ -228,7 +223,7 @@
   .ds-dossier{justify-self:center; max-height:none; transform:translateY(20px)}
 }
 @container (max-width: 560px){
-  .ds-title h1{font-size:19px} .ds-kicker{display:none} .ds-kicker.ds-challenge{display:inline-flex; font-size:10.5px; letter-spacing:.8px} .ds-btn.scan .lbl-long{display:none}
+  .ds-title h1{font-size:19px} .ds-kicker{display:none} .ds-btn.scan .lbl-long{display:none}
   .ds-exit .lbl{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
   .ds-row{grid-template-columns:minmax(0,1fr); grid-template-rows:auto auto auto}
   .ds-row-v{grid-column:1; grid-row:3; border-left:0; padding:2px 0 0}

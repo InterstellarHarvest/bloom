@@ -9,8 +9,12 @@
 //        { id, type: "validate", archetypeId, seed, species }                   ONE fully validated candidate for that species, or null
 //        { id, type: "evaluate", physical, species }                           (035B) the species EVALUATION of a physical candidate the
 //                                                                                page already holds (no planet in the result)
-//        { id, type: "scenario", physical, species, scenario }               (036A) the SCENARIO VALIDATION (layer P with the species) of a
-//                                                                                physical candidate the page already holds (plain verdict)
+//        { id, type: "challenge-physical", archetypeId, seed }                  (036B) the species-free PHYSICAL candidate of a Challenge draw
+//                                                                                (survey-data physicalCandidate), or null — the launch's prefetch
+//        { id, type: "challenge-draw", pick, species, scenario, recipe, startingState, physical }   (036B) ONE Challenge draw through the
+//                                                                                rule (challenge-world.js evaluateDraw); `physical` = a world the
+//                                                                                page already holds for it (or null); posts { id, progress:
+//                                                                                { stage: "scenario" } } when its Challenge proof starts
 //   out: { id, progress: { found, draws, validations } } … (column task only), then { id, result } or { id, error }
 // (035B) `species` = { id, physiologyKey }: the worker resolves the id itself (BLOOM.species.resolve — an unknown id is an error) and
 // refuses a physiology that is not the page's (no object crosses the boundary, no silent substitution). Each worker keeps a small
@@ -30,19 +34,23 @@ import "../bloom-witness.js";
 import "../bloom-archetype.js";
 import "../bloom-scenario.js";
 import "../bloom-play.js";
-import { columnCandidates, planColumn, makeCandidate, evaluateSpecies, validateScenarioFor, speciesFor } from "./survey-data.js";
+import { columnCandidates, planColumn, makeCandidate, evaluateSpecies, physicalCandidate, speciesFor } from "./survey-data.js";
+import { evaluateDraw } from "../challenges/challenge-world.js";
 
-const cache = { physical: null, evaluation: null, scenario: null, structural: new Map(), stats: { physicalHits: 0, physicalMisses: 0, evaluationHits: 0, evaluationMisses: 0, scenarioHits: 0, scenarioMisses: 0 } };
+const cache = { physical: null, evaluation: null, structural: new Map(), stats: { physicalHits: 0, physicalMisses: 0, evaluationHits: 0, evaluationMisses: 0 } };
 
 self.onmessage = e => {
   const { id, type, sectorSeed, column, firstBloom } = e.data;
   try {
     const species = speciesFor(e.data.species || null);   // throws on an unknown id or a physiology other than the page's
-    if (type === "plan") { self.postMessage({ id, result: planColumn(sectorSeed, column, undefined, { firstBloom, fromDraw: e.data.fromDraw, want: e.data.want, species, cache, scenario: e.data.scenario || null }) }); return; }
+    if (type === "plan") { self.postMessage({ id, result: planColumn(sectorSeed, column, undefined, { firstBloom, fromDraw: e.data.fromDraw, want: e.data.want, species, cache }) }); return; }
     if (type === "validate") { self.postMessage({ id, result: makeCandidate({ archetypeId: e.data.archetypeId, seed: e.data.seed }, undefined, { species, cache }) }); return; }
     if (type === "evaluate") { self.postMessage({ id, result: evaluateSpecies(e.data.physical, species) }); return; }
-    if (type === "scenario") { self.postMessage({ id, result: validateScenarioFor(e.data.physical, species, e.data.scenario) }); return; } // (036A)
-    const it = columnCandidates(sectorSeed, column, undefined, { firstBloom, species, cache, scenario: e.data.scenario || null });
+    // (036B) a Challenge launch: the stream's physical worlds (species-free), and one draw through the Challenge rule
+    if (type === "challenge-physical") { self.postMessage({ id, result: physicalCandidate({ archetypeId: e.data.archetypeId, seed: e.data.seed }) }); return; }
+    if (type === "challenge-draw") { self.postMessage({ id, result: evaluateDraw(e.data.pick, { species, scenarioId: e.data.scenario, recipe: e.data.recipe,
+      startingState: e.data.startingState || null, physical: e.data.physical || null }, undefined, cache, stage => self.postMessage({ id, progress: { stage } })) }); return; }
+    const it = columnCandidates(sectorSeed, column, undefined, { firstBloom, species, cache });
     for (;;) { const r = it.next(); if (r.done) { self.postMessage({ id, result: r.value }); return; } self.postMessage({ id, progress: r.value }); }
   } catch (err) { self.postMessage({ id, error: String((err && err.message) || err) }); }
 };
