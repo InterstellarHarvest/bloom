@@ -1,0 +1,60 @@
+{
+ "format": "bloom-plant-art-acceptance@1",
+ "project": "STRANGE BLOOM · UNKNOWN SOILS",
+ "pack": "woolly-candle",
+ "species": "woolly_candle",
+ "bodyPlan": "candle@2",
+ "status": "FINAL PMO-APPROVED ART INTAKE",
+ "production_main": "e534750f62962b4cb23ee63886e1ef29bbae442a",
+ "deliveries": [
+  {
+   "file": "woolly-candle-batch1-base-body.zip",
+   "batch": 1,
+   "bytes": 4689,
+   "sha256": "afbf731410769675ed56a697902150d783c3cb29333b1a30bf85c023e25efb16"
+  },
+  {
+   "file": "woolly-candle-batch2-cold-heat.zip",
+   "batch": 2,
+   "bytes": 8269,
+   "sha256": "ec5bbdc8e2e7fef9425687a37262a20a6477f2d606828592145411dceb58a99f"
+  },
+  {
+   "file": "woolly-candle-batch3-drought.zip",
+   "batch": 3,
+   "bytes": 13521,
+   "sha256": "1537bbb6adbd931fcf62d4ba09e72a7e1cbc650b6c020a6325f385df657feeb3"
+  },
+  {
+   "file": "woolly-candle-batch4-flood.zip",
+   "batch": 4,
+   "bytes": 14581,
+   "sha256": "897b69092eb43b75bc2a6ebb67c72f89ebe4c4f8585e33116fb103a729b65480"
+  },
+  {
+   "file": "woolly-candle-batch5-salt-radiation.zip",
+   "batch": 5,
+   "bytes": 13839,
+   "sha256": "3632ad68535ab70e069e393e492ad23617409751ae58d0bf5736170bc816c4a3"
+  },
+  {
+   "file": "woolly-candle-batch6-reproduction-dispersal.zip",
+   "batch": 6,
+   "bytes": 3657,
+   "sha256": "eddeba14c1747e2d343fe99795a42023992a03e633612fd9d04c9bcd9ef94e95"
+  },
+  {
+   "file": "woolly-candle-batch7-metadata-closure.zip",
+   "batch": 7,
+   "bytes": 154981,
+   "sha256": "b6a7cf7d964c34829564141068ab14685cc7a9cf0a8266514ca6992a756f7bbe"
+  }
+ ],
+ "integration_rule": "BLOOM-035C2: ingest only with node tools/intake-plant-art.mjs --pack woolly-candle; the deliveries are the PMO-accepted source candidate WOOLLY_CANDLE_PRODUCTION_SOURCE_CANDIDATE_CANDLE2, converted mechanically by tools/species-source-deliveries.mjs (source provenance: art/plant/intake/woolly-candle/SOURCE_PROVENANCE.json).",
+ "notes": [
+  "PMO FINAL SOURCE VERDICT: FINAL SOURCE ACCEPTED — 58 canonical sprites, 35 toothed masks; production body plan candle@2; origin CANONICAL_REFERENCE_TRANSCRIPTION; accepted actual-size exceptions seedHead.large 24 × 22 (max 24 × 24), root.storage.3 18 × 27 (max 18 × 28); no Woolly pixel may be redesigned.",
+  "Source candidate WOOLLY_CANDLE_PRODUCTION_SOURCE_CANDIDATE_CANDLE2: ZIP WOOLLY_CANDLE_PRODUCTION_SOURCE_CANDIDATE_CANDLE2.zip (15376001 B, SHA-256 48a9db4883e597c9dd15c123f3474af581f4b3bc073fb99802c2f7b6084d3b69); aggregate package hash cdcf99c910864ad98d58c12c8953dc92fbdf2218217c54715adb7b922632082c over 142 files.",
+  "Origins: CANONICAL_REFERENCE_TRANSCRIPTION 58.",
+  "Acceptance record created by the engineering agent under explicit PMO authorization for exactly this accepted candidate (BLOOM-035C2)."
+ ]
+}

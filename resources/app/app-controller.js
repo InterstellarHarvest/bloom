@@ -27,10 +27,11 @@
 // SPECIES (BLOOM-035B). A run's species travels with its planet: the survey's detail.species (the canonical BLOOM.species object the
 // candidate was classified and validated for) → expeditionRun → GameSession → createSim; Play Again reuses the SAME planet and the SAME
 // species objects; Choose Another Planet opens a survey for the same species; Main Menu clears the run. TRAINING is always Organic
-// Hybrid (BLOOM.gameSession.trainingRun). The Species Selection screen (resources/species-select/) exists only behind the DEVELOPMENT flag
-// ?species=1 — loaded lazily, never in the production flow, never a Settings entry — so candidate species and their proof art stay hidden.
+// Hybrid (BLOOM.gameSession.trainingRun). (BLOOM-035C2) Species Selection (resources/species-select/, loaded lazily on the first EXPEDITION)
+// is the normal flow: EXPEDITION → Choose Plant Species → Destination Survey → Begin Expedition → gameplay, all four species on their
+// PMO-accepted art. The old development flag ?species=1 is ignored — there is one behaviour path.
 //
-// Development / QA query parameters (never needed by a player): ?species=1 (035B: the species flow) · ?bg=<1…12> · &rm=1 | &rm=0 · &sector=<n> · &firstBloom=1 ·
+// Development / QA query parameters (never needed by a player): ?bg=<1…12> · &rm=1 | &rm=0 · &sector=<n> · &firstBloom=1 ·
 // &workers=<1…8> · &worker=0 · &begin=1 (enter the survey at once; dropped from the address) · &hold=<ms> / &fail=1 / &seed=<n> (the
 // departure's covered work / cloud layout). window.MENU_DEV (QA): { ready, errors, events, hooks, departures, results, entry, page, app }.
 import { ExpeditionEntry } from "../main-menu/expedition-entry.js";
@@ -43,7 +44,7 @@ const TRAINING_URL = new URL("../training/training-run.js", import.meta.url).hre
 let trainingModule = null;
 const loadTraining = () => trainingModule || (trainingModule = (window.BLOOM.modules && BLOOM.modules.portable ? BLOOM.modules.load(TRAINING_URL) : import(TRAINING_URL)));
 const RUN_ACTIONS = new Set(["playAgain", "choosePlanet", "mainMenu", "restartRun"]);
-// (035B) the Species Selection screen: development flag only, loaded on the first EXPEDITION of a ?species=1 visit (never otherwise)
+// (035B; 035C2 released) the Species Selection screen, loaded on the first EXPEDITION
 const SPECIES_URL = new URL("../species-select/species-select.js", import.meta.url).href;
 let speciesModule = null;
 const loadSpeciesScreen = () => speciesModule || (speciesModule = (window.BLOOM.modules && BLOOM.modules.portable ? BLOOM.modules.load(SPECIES_URL) : import(SPECIES_URL)));
@@ -62,7 +63,7 @@ export class AppController {
     this.stats = { sessions: [], actions: [], departures: [] };
     this.runHost = document.createElement("div"); this.runHost.className = "app-run"; this.runHost.hidden = true; app.appendChild(this.runHost);
     const seed = entry.seed ?? null;
-    // (035B) the species screen factory (flag only): the screen draws real specimens, so it waits for the run's classic scripts (the sprite runtime)
+    // (035B) the species screen factory: the screen draws real specimens, so it waits for the run's classic scripts (the sprite runtime)
     const speciesScreen = this.speciesFlow ? (host, opts) => {
       const view = { ready: null, inner: null, focus() { if (this.inner) this.inner.focus(); }, dispose() { this.disposed = true; if (this.inner) this.inner.dispose(); } };
       view.ready = Promise.all([loadSpeciesScreen(), this.runScripts]).then(([M]) => { if (!view.disposed) { view.inner = new M.SpeciesSelect(host, opts); this._ev("species-screen", { focused: opts.species.id }); return view.inner.ready; } });
@@ -164,7 +165,7 @@ export class AppController {
   _trainingAction(id) {
     this.stats.actions.push({ id, at: performance.now(), training: true });
     const go = id === "restartTraining" ? async () => { this._disposeSession(); await this._mount(BLOOM.gameSession.trainingRun()); }
-      : () => this._backTo(id === "beginExpedition" ? (this.speciesFlow ? "species" : "survey") : "menu"); // (035B) the flag flow chooses a species first
+      : () => this._backTo(id === "beginExpedition" ? (this.speciesFlow ? "species" : "survey") : "menu"); // (035B) the species flow chooses a species first
     this.busy = true;
     go().catch(err => this._error(id, err)).finally(() => { this.busy = false; });
   }
@@ -188,7 +189,8 @@ export function mountApp({ app, runScripts = Promise.resolve() } = {}) {
   // ?begin=1 enters the survey at once; it is dropped from the address so a reload lands on the title
   if (begin) { const u = new URL(location.href); u.searchParams.delete("begin"); history.replaceState(null, "", u.href); }
   document.title = TITLE_TEXT;
-  const controller = new AppController(app, { runScripts, speciesFlow: q.get("species") === "1",
+  // (035C2) Species Selection is the normal Expedition flow for every visit; ?species=1 is ignored (no second behaviour path)
+  const controller = new AppController(app, { runScripts, speciesFlow: true,
     entry: { reducedMotion: rm, background: q.has("bg") ? +q.get("bg") - 1 : null, sectorSeed: q.has("sector") ? +q.get("sector") : null, firstBloom: q.get("firstBloom") === "1",
       workers: q.has("workers") ? +q.get("workers") : null, worker: q.get("worker") !== "0", seed: q.has("seed") ? +q.get("seed") : null },
     dev: { hold: +(q.get("hold") || 0), fail: q.get("fail") === "1" },

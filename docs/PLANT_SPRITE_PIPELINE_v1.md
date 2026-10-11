@@ -623,7 +623,7 @@ record does not list · SHA-256 or byte-count mismatch · not a ZIP / CRC error 
 a delivery whose `batch` differs from the record's · an undeclared file in a ZIP · a drawing outside the contract or outside its batch ·
 a duplicate drawing or mask · incomplete coverage (any component × angle missing) · a batch with no delivery · partial alpha · an opaque
 pixel that is not an exact palette colour, or is a treatment-only colour (pig* / wax*) · an empty drawing · maxSize exceeded · an anchor
-outside the drawing, on a transparent pixel, or off the contract's anchor convention (leaf `radialLeaf` / `leafSocket`: leftmost column;
+outside the drawing, on a transparent pixel, or off the contract's anchor convention (rosette leaf `radialLeaf`: leftmost column; stem leaf `leafSocket`: column 0 or 1 — ARTIST_HANDOFF H6's "petiole's first pixel, the one that touches the stem": a sheath may wrap one pixel over the stem's edge, as the locked Organic Hybrid and accepted Reed Spire leaves do (035C2);
 `stiltRoot`: top-left; `primaryRoot`: top row, centre column; `pod`: top row; `aerialRoot` / `apex` / `flower` / `seedHead`: bottom row;
 trunk `body`: bottom row, centre column; `leafPoint` / `stemNode` / `drift`: opaque only) · a required point missing or on a transparent
 pixel · a mask of the wrong size, empty, partially transparent, outside its drawing's opaque pixels, of a treatment the component does not

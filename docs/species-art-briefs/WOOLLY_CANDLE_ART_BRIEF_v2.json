@@ -47,7 +47,7 @@
      "body": "body.trunk.0",
      "top": [
       0,
-      -34
+      -28
      ],
      "sockets": {
       "collar": 2,
@@ -76,7 +76,7 @@
       1
      ],
      "part": "flowers",
-     "height": 9,
+     "height": 17,
      "sockets": {
       "flower": 1,
       "seedHead": 2,
@@ -102,7 +102,7 @@
      "body": "body.trunk.1",
      "top": [
       0,
-      -33
+      -27
      ],
      "sockets": {
       "collar": 2,
@@ -131,7 +131,7 @@
       1
      ],
      "part": "flowers",
-     "height": 10,
+     "height": 16,
      "sockets": {
       "flower": 1,
       "seedHead": 2,
@@ -157,7 +157,7 @@
      "body": "body.trunk.2",
      "top": [
       0,
-      -32
+      -26
      ],
      "sockets": {
       "collar": 2,
@@ -186,7 +186,7 @@
       1
      ],
      "part": "flowers",
-     "height": 11,
+     "height": 15,
      "sockets": {
       "flower": 1,
       "seedHead": 2,
@@ -212,7 +212,7 @@
      "body": "body.trunk.3",
      "top": [
       0,
-      -31
+      -25
      ],
      "sockets": {
       "collar": 3,
@@ -241,7 +241,7 @@
       1
      ],
      "part": "flowers",
-     "height": 12,
+     "height": 14,
      "sockets": {
       "flower": 1,
       "seedHead": 2,
@@ -259,7 +259,7 @@
    "body": "body.trunk.0",
    "top": [
     0,
-    -34
+    -28
    ]
   },
   {
@@ -267,7 +267,7 @@
    "body": "body.trunk.1",
    "top": [
     0,
-    -33
+    -27
    ]
   },
   {
@@ -275,7 +275,7 @@
    "body": "body.trunk.2",
    "top": [
     0,
-    -32
+    -26
    ]
   },
   {
@@ -283,7 +283,7 @@
    "body": "body.trunk.3",
    "top": [
     0,
-    -31
+    -25
    ]
   }
  ],
@@ -307,15 +307,15 @@
   {
    "at": [
     42,
-    56
+    59
    ],
    "attach": "stemNode",
    "layout": "open",
    "room": {
-    "down": 41,
+    "down": 38,
     "left": 42,
     "right": 41,
-    "up": 56
+    "up": 59
    },
    "side": 0,
    "socket": "trunk.collar.0"
@@ -323,47 +323,47 @@
   {
    "at": [
     42,
-    44
+    50
    ],
    "attach": "stemNode",
    "layout": "open",
    "room": {
-    "down": 53,
+    "down": 47,
     "left": 42,
     "right": 41,
-    "up": 44
+    "up": 50
    },
    "side": 0,
    "socket": "trunk.collar.1"
   },
   {
    "at": [
-    34,
-    57
+    37,
+    60
    ],
    "attach": "stiltRoot",
    "layout": "open",
    "room": {
-    "down": 40,
-    "left": 34,
-    "right": 49,
-    "up": 57
+    "down": 37,
+    "left": 37,
+    "right": 46,
+    "up": 60
    },
    "side": -1,
    "socket": "trunk.stilt.0"
   },
   {
    "at": [
-    50,
-    57
+    47,
+    60
    ],
    "attach": "stiltRoot",
    "layout": "open",
    "room": {
-    "down": 40,
-    "left": 50,
-    "right": 33,
-    "up": 57
+    "down": 37,
+    "left": 47,
+    "right": 36,
+    "up": 60
    },
    "side": 1,
    "socket": "trunk.stilt.1"
@@ -371,15 +371,15 @@
   {
    "at": [
     42,
-    33
+    39
    ],
    "attach": "apex",
    "layout": "open",
    "room": {
-    "down": 64,
+    "down": 58,
     "left": 42,
     "right": 41,
-    "up": 33
+    "up": 39
    },
    "side": 0,
    "socket": "crown.apex"
@@ -387,15 +387,15 @@
   {
    "at": [
     42,
-    33
+    39
    ],
    "attach": "flower",
    "layout": "open",
    "room": {
-    "down": 64,
+    "down": 58,
     "left": 42,
     "right": 41,
-    "up": 33
+    "up": 39
    },
    "side": 0,
    "socket": "crown.flower.0"
@@ -403,15 +403,15 @@
   {
    "at": [
     42,
-    33
+    39
    ],
    "attach": "seedHead",
    "layout": "open",
    "room": {
-    "down": 64,
+    "down": 58,
     "left": 42,
     "right": 41,
-    "up": 33
+    "up": 39
    },
    "side": 0,
    "socket": "crown.seedHead.0"
@@ -420,15 +420,15 @@
    "angle": "high",
    "at": [
     41,
-    32
+    38
    ],
    "attach": "radialLeaf",
    "layout": "open",
    "room": {
-    "down": 65,
+    "down": 59,
     "left": 41,
     "right": 42,
-    "up": 32
+    "up": 38
    },
    "side": -1,
    "socket": "crown.leaf.0"
@@ -437,15 +437,15 @@
    "angle": "high",
    "at": [
     43,
-    32
+    38
    ],
    "attach": "radialLeaf",
    "layout": "open",
    "room": {
-    "down": 65,
+    "down": 59,
     "left": 43,
     "right": 40,
-    "up": 32
+    "up": 38
    },
    "side": 1,
    "socket": "crown.leaf.1"
@@ -453,16 +453,16 @@
   {
    "angle": "mid",
    "at": [
-    38,
-    33
+    39,
+    40
    ],
    "attach": "radialLeaf",
    "layout": "open",
    "room": {
-    "down": 64,
-    "left": 38,
-    "right": 45,
-    "up": 33
+    "down": 57,
+    "left": 39,
+    "right": 44,
+    "up": 40
    },
    "side": -1,
    "socket": "crown.leaf.2"
@@ -470,16 +470,16 @@
   {
    "angle": "mid",
    "at": [
-    46,
-    33
+    45,
+    40
    ],
    "attach": "radialLeaf",
    "layout": "open",
    "room": {
-    "down": 64,
-    "left": 46,
-    "right": 37,
-    "up": 33
+    "down": 57,
+    "left": 45,
+    "right": 38,
+    "up": 40
    },
    "side": 1,
    "socket": "crown.leaf.3"
@@ -487,16 +487,16 @@
   {
    "angle": "low",
    "at": [
-    39,
-    36
+    40,
+    42
    ],
    "attach": "radialLeaf",
    "layout": "open",
    "room": {
-    "down": 61,
-    "left": 39,
-    "right": 44,
-    "up": 36
+    "down": 55,
+    "left": 40,
+    "right": 43,
+    "up": 42
    },
    "side": -1,
    "socket": "crown.leaf.4"
@@ -504,16 +504,16 @@
   {
    "angle": "low",
    "at": [
-    45,
-    36
+    44,
+    42
    ],
    "attach": "radialLeaf",
    "layout": "open",
    "room": {
-    "down": 61,
-    "left": 45,
-    "right": 38,
-    "up": 36
+    "down": 55,
+    "left": 44,
+    "right": 39,
+    "up": 42
    },
    "side": 1,
    "socket": "crown.leaf.5"
@@ -521,15 +521,15 @@
   {
    "at": [
     42,
-    24
+    22
    ],
    "attach": "apex",
    "layout": "open",
    "room": {
-    "down": 73,
+    "down": 75,
     "left": 42,
     "right": 41,
-    "up": 24
+    "up": 22
    },
    "side": 0,
    "socket": "column.apex"
@@ -537,15 +537,15 @@
   {
    "at": [
     42,
-    24
+    22
    ],
    "attach": "flower",
    "layout": "open",
    "room": {
-    "down": 73,
+    "down": 75,
     "left": 42,
     "right": 41,
-    "up": 24
+    "up": 22
    },
    "side": 0,
    "socket": "column.flower.0"
@@ -553,143 +553,143 @@
   {
    "at": [
     42,
-    24
+    22
    ],
    "attach": "seedHead",
    "layout": "open",
    "room": {
-    "down": 73,
+    "down": 75,
     "left": 42,
     "right": 41,
-    "up": 24
+    "up": 22
    },
    "side": 0,
    "socket": "column.seedHead.0"
   },
   {
    "at": [
-    53,
-    23
+    50,
+    22
    ],
    "attach": "flower",
    "layout": "open",
    "room": {
-    "down": 74,
-    "left": 53,
-    "right": 30,
-    "up": 23
+    "down": 75,
+    "left": 50,
+    "right": 33,
+    "up": 22
    },
    "side": 1,
    "socket": "column.flower.1"
   },
   {
    "at": [
-    30,
-    27
+    34,
+    28
    ],
    "attach": "seedHead",
    "layout": "open",
    "room": {
-    "down": 70,
-    "left": 30,
-    "right": 53,
-    "up": 27
+    "down": 69,
+    "left": 34,
+    "right": 49,
+    "up": 28
    },
    "side": -1,
    "socket": "column.seedHead.1"
   },
   {
    "at": [
-    55,
-    29
+    51,
+    31
    ],
    "attach": "seedHead",
    "layout": "open",
    "room": {
-    "down": 68,
-    "left": 55,
-    "right": 28,
-    "up": 29
+    "down": 66,
+    "left": 51,
+    "right": 32,
+    "up": 31
    },
    "side": 1,
    "socket": "column.seedHead.2"
   },
   {
    "at": [
-    31,
-    33
+    34,
+    38
    ],
    "attach": "pod",
    "layout": "open",
    "room": {
-    "down": 64,
-    "left": 31,
-    "right": 52,
-    "up": 33
+    "down": 59,
+    "left": 34,
+    "right": 49,
+    "up": 38
    },
    "side": -1,
    "socket": "column.pod.0"
   },
   {
    "at": [
-    53,
-    32
+    50,
+    36
    ],
    "attach": "pod",
    "layout": "open",
    "room": {
-    "down": 65,
-    "left": 53,
-    "right": 30,
-    "up": 32
+    "down": 61,
+    "left": 50,
+    "right": 33,
+    "up": 36
    },
    "side": 1,
    "socket": "column.pod.1"
   },
   {
    "at": [
-    55,
-    12
+    51,
+    14
    ],
    "attach": "drift",
    "layout": "open",
    "room": {
-    "down": 85,
-    "left": 55,
-    "right": 28,
-    "up": 12
+    "down": 83,
+    "left": 51,
+    "right": 32,
+    "up": 14
    },
    "side": 0,
    "socket": "column.drift.0"
   },
   {
    "at": [
-    62,
-    21
+    56,
+    20
    ],
    "attach": "drift",
    "layout": "open",
    "room": {
-    "down": 76,
-    "left": 62,
-    "right": 21,
-    "up": 21
+    "down": 77,
+    "left": 56,
+    "right": 27,
+    "up": 20
    },
    "side": 0,
    "socket": "column.drift.1"
   },
   {
    "at": [
-    28,
-    15
+    32,
+    16
    ],
    "attach": "drift",
    "layout": "open",
    "room": {
-    "down": 82,
-    "left": 28,
-    "right": 55,
-    "up": 15
+    "down": 81,
+    "left": 32,
+    "right": 51,
+    "up": 16
    },
    "side": 0,
    "socket": "column.drift.2"
@@ -713,30 +713,30 @@
   {
    "at": [
     42,
-    69
+    70
    ],
    "attach": "primaryRoot",
    "layout": "*",
    "room": {
-    "down": 28,
+    "down": 27,
     "left": 42,
     "right": 41,
-    "up": 69
+    "up": 70
    },
    "side": 0,
    "socket": "primaryRoot"
   },
   {
    "at": [
-    28,
+    32,
     69
    ],
    "attach": "aerialRoot",
    "layout": "*",
    "room": {
     "down": 28,
-    "left": 28,
-    "right": 55,
+    "left": 32,
+    "right": 51,
     "up": 69
    },
    "side": -1,
@@ -744,15 +744,15 @@
   },
   {
    "at": [
-    57,
+    53,
     69
    ],
    "attach": "aerialRoot",
    "layout": "*",
    "room": {
     "down": 28,
-    "left": 57,
-    "right": 26,
+    "left": 53,
+    "right": 30,
     "up": 69
    },
    "side": 1,
@@ -760,15 +760,15 @@
   },
   {
    "at": [
-    22,
+    27,
     69
    ],
    "attach": "aerialRoot",
    "layout": "*",
    "room": {
     "down": 28,
-    "left": 22,
-    "right": 61,
+    "left": 27,
+    "right": 56,
     "up": 69
    },
    "side": -1,
@@ -776,15 +776,15 @@
   },
   {
    "at": [
-    63,
+    58,
     69
    ],
    "attach": "aerialRoot",
    "layout": "*",
    "room": {
     "down": 28,
-    "left": 63,
-    "right": 20,
+    "left": 58,
+    "right": 25,
     "up": 69
    },
    "side": 1,
@@ -809,15 +809,15 @@
   {
    "at": [
     42,
-    56
+    59
    ],
    "attach": "stemNode",
    "layout": "dense",
    "room": {
-    "down": 41,
+    "down": 38,
     "left": 42,
     "right": 41,
-    "up": 56
+    "up": 59
    },
    "side": 0,
    "socket": "trunk.collar.0"
@@ -825,47 +825,47 @@
   {
    "at": [
     42,
-    44
+    50
    ],
    "attach": "stemNode",
    "layout": "dense",
    "room": {
-    "down": 53,
+    "down": 47,
     "left": 42,
     "right": 41,
-    "up": 44
+    "up": 50
    },
    "side": 0,
    "socket": "trunk.collar.1"
   },
   {
    "at": [
-    33,
-    57
+    36,
+    60
    ],
    "attach": "stiltRoot",
    "layout": "dense",
    "room": {
-    "down": 40,
-    "left": 33,
-    "right": 50,
-    "up": 57
+    "down": 37,
+    "left": 36,
+    "right": 47,
+    "up": 60
    },
    "side": -1,
    "socket": "trunk.stilt.0"
   },
   {
    "at": [
-    51,
-    57
+    48,
+    60
    ],
    "attach": "stiltRoot",
    "layout": "dense",
    "room": {
-    "down": 40,
-    "left": 51,
-    "right": 32,
-    "up": 57
+    "down": 37,
+    "left": 48,
+    "right": 35,
+    "up": 60
    },
    "side": 1,
    "socket": "trunk.stilt.1"
@@ -873,15 +873,15 @@
   {
    "at": [
     42,
-    34
+    40
    ],
    "attach": "apex",
    "layout": "dense",
    "room": {
-    "down": 63,
+    "down": 57,
     "left": 42,
     "right": 41,
-    "up": 34
+    "up": 40
    },
    "side": 0,
    "socket": "crown.apex"
@@ -889,15 +889,15 @@
   {
    "at": [
     42,
-    34
+    40
    ],
    "attach": "flower",
    "layout": "dense",
    "room": {
-    "down": 63,
+    "down": 57,
     "left": 42,
     "right": 41,
-    "up": 34
+    "up": 40
    },
    "side": 0,
    "socket": "crown.flower.0"
@@ -905,15 +905,15 @@
   {
    "at": [
     42,
-    34
+    40
    ],
    "attach": "seedHead",
    "layout": "dense",
    "room": {
-    "down": 63,
+    "down": 57,
     "left": 42,
     "right": 41,
-    "up": 34
+    "up": 40
    },
    "side": 0,
    "socket": "crown.seedHead.0"
@@ -922,15 +922,15 @@
    "angle": "high",
    "at": [
     41,
-    33
+    39
    ],
    "attach": "radialLeaf",
    "layout": "dense",
    "room": {
-    "down": 64,
+    "down": 58,
     "left": 41,
     "right": 42,
-    "up": 33
+    "up": 39
    },
    "side": -1,
    "socket": "crown.leaf.0"
@@ -939,15 +939,15 @@
    "angle": "high",
    "at": [
     43,
-    33
+    39
    ],
    "attach": "radialLeaf",
    "layout": "dense",
    "room": {
-    "down": 64,
+    "down": 58,
     "left": 43,
     "right": 40,
-    "up": 33
+    "up": 39
    },
    "side": 1,
    "socket": "crown.leaf.1"
@@ -955,16 +955,16 @@
   {
    "angle": "high",
    "at": [
-    39,
-    35
+    40,
+    41
    ],
    "attach": "radialLeaf",
    "layout": "dense",
    "room": {
-    "down": 62,
-    "left": 39,
-    "right": 44,
-    "up": 35
+    "down": 56,
+    "left": 40,
+    "right": 43,
+    "up": 41
    },
    "side": -1,
    "socket": "crown.leaf.2"
@@ -972,422 +972,16 @@
   {
    "angle": "high",
    "at": [
-    45,
-    35
+    44,
+    41
    ],
    "attach": "radialLeaf",
    "layout": "dense",
    "room": {
-    "down": 62,
-    "left": 45,
-    "right": 38,
-    "up": 35
-   },
-   "side": 1,
-   "socket": "crown.leaf.3"
-  },
-  {
-   "angle": "mid",
-   "at": [
-    39,
-    37
-   ],
-   "attach": "radialLeaf",
-   "layout": "dense",
-   "room": {
-    "down": 60,
-    "left": 39,
-    "right": 44,
-    "up": 37
-   },
-   "side": -1,
-   "socket": "crown.leaf.4"
-  },
-  {
-   "angle": "mid",
-   "at": [
-    45,
-    37
-   ],
-   "attach": "radialLeaf",
-   "layout": "dense",
-   "room": {
-    "down": 60,
-    "left": 45,
-    "right": 38,
-    "up": 37
-   },
-   "side": 1,
-   "socket": "crown.leaf.5"
-  },
-  {
-   "at": [
-    42,
-    24
-   ],
-   "attach": "apex",
-   "layout": "dense",
-   "room": {
-    "down": 73,
-    "left": 42,
-    "right": 41,
-    "up": 24
-   },
-   "side": 0,
-   "socket": "column.apex"
-  },
-  {
-   "at": [
-    42,
-    24
-   ],
-   "attach": "flower",
-   "layout": "dense",
-   "room": {
-    "down": 73,
-    "left": 42,
-    "right": 41,
-    "up": 24
-   },
-   "side": 0,
-   "socket": "column.flower.0"
-  },
-  {
-   "at": [
-    42,
-    24
-   ],
-   "attach": "seedHead",
-   "layout": "dense",
-   "room": {
-    "down": 73,
-    "left": 42,
-    "right": 41,
-    "up": 24
-   },
-   "side": 0,
-   "socket": "column.seedHead.0"
-  },
-  {
-   "at": [
-    53,
-    23
-   ],
-   "attach": "flower",
-   "layout": "dense",
-   "room": {
-    "down": 74,
-    "left": 53,
-    "right": 30,
-    "up": 23
-   },
-   "side": 1,
-   "socket": "column.flower.1"
-  },
-  {
-   "at": [
-    30,
-    27
-   ],
-   "attach": "seedHead",
-   "layout": "dense",
-   "room": {
-    "down": 70,
-    "left": 30,
-    "right": 53,
-    "up": 27
-   },
-   "side": -1,
-   "socket": "column.seedHead.1"
-  },
-  {
-   "at": [
-    55,
-    29
-   ],
-   "attach": "seedHead",
-   "layout": "dense",
-   "room": {
-    "down": 68,
-    "left": 55,
-    "right": 28,
-    "up": 29
-   },
-   "side": 1,
-   "socket": "column.seedHead.2"
-  },
-  {
-   "at": [
-    31,
-    34
-   ],
-   "attach": "pod",
-   "layout": "dense",
-   "room": {
-    "down": 63,
-    "left": 31,
-    "right": 52,
-    "up": 34
-   },
-   "side": -1,
-   "socket": "column.pod.0"
-  },
-  {
-   "at": [
-    53,
-    33
-   ],
-   "attach": "pod",
-   "layout": "dense",
-   "room": {
-    "down": 64,
-    "left": 53,
-    "right": 30,
-    "up": 33
-   },
-   "side": 1,
-   "socket": "column.pod.1"
-  },
-  {
-   "at": [
-    55,
-    12
-   ],
-   "attach": "drift",
-   "layout": "dense",
-   "room": {
-    "down": 85,
-    "left": 55,
-    "right": 28,
-    "up": 12
-   },
-   "side": 0,
-   "socket": "column.drift.0"
-  },
-  {
-   "at": [
-    62,
-    21
-   ],
-   "attach": "drift",
-   "layout": "dense",
-   "room": {
-    "down": 76,
-    "left": 62,
-    "right": 21,
-    "up": 21
-   },
-   "side": 0,
-   "socket": "column.drift.1"
-  },
-  {
-   "at": [
-    28,
-    15
-   ],
-   "attach": "drift",
-   "layout": "dense",
-   "room": {
-    "down": 82,
-    "left": 28,
-    "right": 55,
-    "up": 15
-   },
-   "side": 0,
-   "socket": "column.drift.2"
-  },
-  {
-   "at": [
-    42,
-    68
-   ],
-   "attach": "body",
-   "layout": "compact",
-   "room": {
-    "down": 29,
-    "left": 42,
-    "right": 41,
-    "up": 68
-   },
-   "side": 0,
-   "socket": "trunk.body"
-  },
-  {
-   "at": [
-    42,
-    56
-   ],
-   "attach": "stemNode",
-   "layout": "compact",
-   "room": {
-    "down": 41,
-    "left": 42,
-    "right": 41,
-    "up": 56
-   },
-   "side": 0,
-   "socket": "trunk.collar.0"
-  },
-  {
-   "at": [
-    42,
-    44
-   ],
-   "attach": "stemNode",
-   "layout": "compact",
-   "room": {
-    "down": 53,
-    "left": 42,
-    "right": 41,
-    "up": 44
-   },
-   "side": 0,
-   "socket": "trunk.collar.1"
-  },
-  {
-   "at": [
-    31,
-    57
-   ],
-   "attach": "stiltRoot",
-   "layout": "compact",
-   "room": {
-    "down": 40,
-    "left": 31,
-    "right": 52,
-    "up": 57
-   },
-   "side": -1,
-   "socket": "trunk.stilt.0"
-  },
-  {
-   "at": [
-    53,
-    57
-   ],
-   "attach": "stiltRoot",
-   "layout": "compact",
-   "room": {
-    "down": 40,
-    "left": 53,
-    "right": 30,
-    "up": 57
-   },
-   "side": 1,
-   "socket": "trunk.stilt.1"
-  },
-  {
-   "at": [
-    42,
-    35
-   ],
-   "attach": "apex",
-   "layout": "compact",
-   "room": {
-    "down": 62,
-    "left": 42,
-    "right": 41,
-    "up": 35
-   },
-   "side": 0,
-   "socket": "crown.apex"
-  },
-  {
-   "at": [
-    42,
-    35
-   ],
-   "attach": "flower",
-   "layout": "compact",
-   "room": {
-    "down": 62,
-    "left": 42,
-    "right": 41,
-    "up": 35
-   },
-   "side": 0,
-   "socket": "crown.flower.0"
-  },
-  {
-   "at": [
-    42,
-    35
-   ],
-   "attach": "seedHead",
-   "layout": "compact",
-   "room": {
-    "down": 62,
-    "left": 42,
-    "right": 41,
-    "up": 35
-   },
-   "side": 0,
-   "socket": "crown.seedHead.0"
-  },
-  {
-   "angle": "high",
-   "at": [
-    42,
-    35
-   ],
-   "attach": "radialLeaf",
-   "layout": "compact",
-   "room": {
-    "down": 62,
-    "left": 42,
-    "right": 41,
-    "up": 35
-   },
-   "side": -1,
-   "socket": "crown.leaf.0"
-  },
-  {
-   "angle": "high",
-   "at": [
-    42,
-    35
-   ],
-   "attach": "radialLeaf",
-   "layout": "compact",
-   "room": {
-    "down": 62,
-    "left": 42,
-    "right": 41,
-    "up": 35
-   },
-   "side": 1,
-   "socket": "crown.leaf.1"
-  },
-  {
-   "angle": "high",
-   "at": [
-    39,
-    36
-   ],
-   "attach": "radialLeaf",
-   "layout": "compact",
-   "room": {
-    "down": 61,
-    "left": 39,
-    "right": 44,
-    "up": 36
-   },
-   "side": -1,
-   "socket": "crown.leaf.2"
-  },
-  {
-   "angle": "high",
-   "at": [
-    45,
-    36
-   ],
-   "attach": "radialLeaf",
-   "layout": "compact",
-   "room": {
-    "down": 61,
-    "left": 45,
-    "right": 38,
-    "up": 36
+    "down": 56,
+    "left": 44,
+    "right": 39,
+    "up": 41
    },
    "side": 1,
    "socket": "crown.leaf.3"
@@ -1396,15 +990,15 @@
    "angle": "mid",
    "at": [
     40,
-    38
+    43
    ],
    "attach": "radialLeaf",
-   "layout": "compact",
+   "layout": "dense",
    "room": {
-    "down": 59,
+    "down": 54,
     "left": 40,
     "right": 43,
-    "up": 38
+    "up": 43
    },
    "side": -1,
    "socket": "crown.leaf.4"
@@ -1413,15 +1007,15 @@
    "angle": "mid",
    "at": [
     44,
-    38
+    43
    ],
    "attach": "radialLeaf",
-   "layout": "compact",
+   "layout": "dense",
    "room": {
-    "down": 59,
+    "down": 54,
     "left": 44,
     "right": 39,
-    "up": 38
+    "up": 43
    },
    "side": 1,
    "socket": "crown.leaf.5"
@@ -1432,7 +1026,7 @@
     24
    ],
    "attach": "apex",
-   "layout": "compact",
+   "layout": "dense",
    "room": {
     "down": 73,
     "left": 42,
@@ -1448,7 +1042,7 @@
     24
    ],
    "attach": "flower",
-   "layout": "compact",
+   "layout": "dense",
    "room": {
     "down": 73,
     "left": 42,
@@ -1464,7 +1058,7 @@
     24
    ],
    "attach": "seedHead",
-   "layout": "compact",
+   "layout": "dense",
    "room": {
     "down": 73,
     "left": 42,
@@ -1476,128 +1070,128 @@
   },
   {
    "at": [
-    53,
-    23
+    50,
+    24
    ],
    "attach": "flower",
-   "layout": "compact",
+   "layout": "dense",
    "room": {
-    "down": 74,
-    "left": 53,
-    "right": 30,
-    "up": 23
+    "down": 73,
+    "left": 50,
+    "right": 33,
+    "up": 24
    },
    "side": 1,
    "socket": "column.flower.1"
   },
   {
    "at": [
-    30,
-    27
+    34,
+    29
    ],
    "attach": "seedHead",
-   "layout": "compact",
+   "layout": "dense",
    "room": {
-    "down": 70,
-    "left": 30,
-    "right": 53,
-    "up": 27
+    "down": 68,
+    "left": 34,
+    "right": 49,
+    "up": 29
    },
    "side": -1,
    "socket": "column.seedHead.1"
   },
   {
    "at": [
-    55,
-    30
+    51,
+    33
    ],
    "attach": "seedHead",
-   "layout": "compact",
+   "layout": "dense",
    "room": {
-    "down": 67,
-    "left": 55,
-    "right": 28,
-    "up": 30
+    "down": 64,
+    "left": 51,
+    "right": 32,
+    "up": 33
    },
    "side": 1,
    "socket": "column.seedHead.2"
   },
   {
    "at": [
-    31,
-    35
+    34,
+    39
    ],
    "attach": "pod",
-   "layout": "compact",
+   "layout": "dense",
    "room": {
-    "down": 62,
-    "left": 31,
-    "right": 52,
-    "up": 35
+    "down": 58,
+    "left": 34,
+    "right": 49,
+    "up": 39
    },
    "side": -1,
    "socket": "column.pod.0"
   },
   {
    "at": [
-    53,
-    34
+    50,
+    37
    ],
    "attach": "pod",
-   "layout": "compact",
+   "layout": "dense",
    "room": {
-    "down": 63,
-    "left": 53,
-    "right": 30,
-    "up": 34
+    "down": 60,
+    "left": 50,
+    "right": 33,
+    "up": 37
    },
    "side": 1,
    "socket": "column.pod.1"
   },
   {
    "at": [
-    55,
-    12
+    51,
+    16
    ],
    "attach": "drift",
-   "layout": "compact",
+   "layout": "dense",
    "room": {
-    "down": 85,
-    "left": 55,
-    "right": 28,
-    "up": 12
+    "down": 81,
+    "left": 51,
+    "right": 32,
+    "up": 16
    },
    "side": 0,
    "socket": "column.drift.0"
   },
   {
    "at": [
-    62,
-    21
+    56,
+    22
    ],
    "attach": "drift",
-   "layout": "compact",
+   "layout": "dense",
    "room": {
-    "down": 76,
-    "left": 62,
-    "right": 21,
-    "up": 21
+    "down": 75,
+    "left": 56,
+    "right": 27,
+    "up": 22
    },
    "side": 0,
    "socket": "column.drift.1"
   },
   {
    "at": [
-    28,
-    15
+    32,
+    18
    ],
    "attach": "drift",
-   "layout": "compact",
+   "layout": "dense",
    "room": {
-    "down": 82,
-    "left": 28,
-    "right": 55,
-    "up": 15
+    "down": 79,
+    "left": 32,
+    "right": 51,
+    "up": 18
    },
    "side": 0,
    "socket": "column.drift.2"
@@ -1608,7 +1202,7 @@
     68
    ],
    "attach": "body",
-   "layout": "closed",
+   "layout": "compact",
    "room": {
     "down": 29,
     "left": 42,
@@ -1624,7 +1218,7 @@
     59
    ],
    "attach": "stemNode",
-   "layout": "closed",
+   "layout": "compact",
    "room": {
     "down": 38,
     "left": 42,
@@ -1637,63 +1231,47 @@
   {
    "at": [
     42,
-    51
+    50
    ],
    "attach": "stemNode",
-   "layout": "closed",
+   "layout": "compact",
    "room": {
-    "down": 46,
+    "down": 47,
     "left": 42,
     "right": 41,
-    "up": 51
+    "up": 50
    },
    "side": 0,
    "socket": "trunk.collar.1"
   },
   {
    "at": [
-    42,
-    43
-   ],
-   "attach": "stemNode",
-   "layout": "closed",
-   "room": {
-    "down": 54,
-    "left": 42,
-    "right": 41,
-    "up": 43
-   },
-   "side": 0,
-   "socket": "trunk.collar.2"
-  },
-  {
-   "at": [
-    30,
-    57
+    35,
+    60
    ],
    "attach": "stiltRoot",
-   "layout": "closed",
+   "layout": "compact",
    "room": {
-    "down": 40,
-    "left": 30,
-    "right": 53,
-    "up": 57
+    "down": 37,
+    "left": 35,
+    "right": 48,
+    "up": 60
    },
    "side": -1,
    "socket": "trunk.stilt.0"
   },
   {
    "at": [
-    54,
-    57
+    49,
+    60
    ],
    "attach": "stiltRoot",
-   "layout": "closed",
+   "layout": "compact",
    "room": {
-    "down": 40,
-    "left": 54,
-    "right": 29,
-    "up": 57
+    "down": 37,
+    "left": 49,
+    "right": 34,
+    "up": 60
    },
    "side": 1,
    "socket": "trunk.stilt.1"
@@ -1701,15 +1279,15 @@
   {
    "at": [
     42,
-    36
+    41
    ],
    "attach": "apex",
-   "layout": "closed",
+   "layout": "compact",
    "room": {
-    "down": 61,
+    "down": 56,
     "left": 42,
     "right": 41,
-    "up": 36
+    "up": 41
    },
    "side": 0,
    "socket": "crown.apex"
@@ -1717,15 +1295,15 @@
   {
    "at": [
     42,
-    36
+    41
    ],
    "attach": "flower",
-   "layout": "closed",
+   "layout": "compact",
    "room": {
-    "down": 61,
+    "down": 56,
     "left": 42,
     "right": 41,
-    "up": 36
+    "up": 41
    },
    "side": 0,
    "socket": "crown.flower.0"
@@ -1733,15 +1311,15 @@
   {
    "at": [
     42,
-    36
+    41
    ],
    "attach": "seedHead",
-   "layout": "closed",
+   "layout": "compact",
    "room": {
-    "down": 61,
+    "down": 56,
     "left": 42,
     "right": 41,
-    "up": 36
+    "up": 41
    },
    "side": 0,
    "socket": "crown.seedHead.0"
@@ -1750,15 +1328,15 @@
    "angle": "high",
    "at": [
     42,
-    36
+    41
    ],
    "attach": "radialLeaf",
-   "layout": "closed",
+   "layout": "compact",
    "room": {
-    "down": 61,
+    "down": 56,
     "left": 42,
     "right": 41,
-    "up": 36
+    "up": 41
    },
    "side": -1,
    "socket": "crown.leaf.0"
@@ -1767,15 +1345,437 @@
    "angle": "high",
    "at": [
     42,
-    36
+    41
+   ],
+   "attach": "radialLeaf",
+   "layout": "compact",
+   "room": {
+    "down": 56,
+    "left": 42,
+    "right": 41,
+    "up": 41
+   },
+   "side": 1,
+   "socket": "crown.leaf.1"
+  },
+  {
+   "angle": "high",
+   "at": [
+    40,
+    42
+   ],
+   "attach": "radialLeaf",
+   "layout": "compact",
+   "room": {
+    "down": 55,
+    "left": 40,
+    "right": 43,
+    "up": 42
+   },
+   "side": -1,
+   "socket": "crown.leaf.2"
+  },
+  {
+   "angle": "high",
+   "at": [
+    44,
+    42
+   ],
+   "attach": "radialLeaf",
+   "layout": "compact",
+   "room": {
+    "down": 55,
+    "left": 44,
+    "right": 39,
+    "up": 42
+   },
+   "side": 1,
+   "socket": "crown.leaf.3"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    40,
+    44
+   ],
+   "attach": "radialLeaf",
+   "layout": "compact",
+   "room": {
+    "down": 53,
+    "left": 40,
+    "right": 43,
+    "up": 44
+   },
+   "side": -1,
+   "socket": "crown.leaf.4"
+  },
+  {
+   "angle": "mid",
+   "at": [
+    44,
+    44
+   ],
+   "attach": "radialLeaf",
+   "layout": "compact",
+   "room": {
+    "down": 53,
+    "left": 44,
+    "right": 39,
+    "up": 44
+   },
+   "side": 1,
+   "socket": "crown.leaf.5"
+  },
+  {
+   "at": [
+    42,
+    26
+   ],
+   "attach": "apex",
+   "layout": "compact",
+   "room": {
+    "down": 71,
+    "left": 42,
+    "right": 41,
+    "up": 26
+   },
+   "side": 0,
+   "socket": "column.apex"
+  },
+  {
+   "at": [
+    42,
+    26
+   ],
+   "attach": "flower",
+   "layout": "compact",
+   "room": {
+    "down": 71,
+    "left": 42,
+    "right": 41,
+    "up": 26
+   },
+   "side": 0,
+   "socket": "column.flower.0"
+  },
+  {
+   "at": [
+    42,
+    26
+   ],
+   "attach": "seedHead",
+   "layout": "compact",
+   "room": {
+    "down": 71,
+    "left": 42,
+    "right": 41,
+    "up": 26
+   },
+   "side": 0,
+   "socket": "column.seedHead.0"
+  },
+  {
+   "at": [
+    50,
+    26
+   ],
+   "attach": "flower",
+   "layout": "compact",
+   "room": {
+    "down": 71,
+    "left": 50,
+    "right": 33,
+    "up": 26
+   },
+   "side": 1,
+   "socket": "column.flower.1"
+  },
+  {
+   "at": [
+    34,
+    31
+   ],
+   "attach": "seedHead",
+   "layout": "compact",
+   "room": {
+    "down": 66,
+    "left": 34,
+    "right": 49,
+    "up": 31
+   },
+   "side": -1,
+   "socket": "column.seedHead.1"
+  },
+  {
+   "at": [
+    51,
+    34
+   ],
+   "attach": "seedHead",
+   "layout": "compact",
+   "room": {
+    "down": 63,
+    "left": 51,
+    "right": 32,
+    "up": 34
+   },
+   "side": 1,
+   "socket": "column.seedHead.2"
+  },
+  {
+   "at": [
+    34,
+    40
+   ],
+   "attach": "pod",
+   "layout": "compact",
+   "room": {
+    "down": 57,
+    "left": 34,
+    "right": 49,
+    "up": 40
+   },
+   "side": -1,
+   "socket": "column.pod.0"
+  },
+  {
+   "at": [
+    50,
+    38
+   ],
+   "attach": "pod",
+   "layout": "compact",
+   "room": {
+    "down": 59,
+    "left": 50,
+    "right": 33,
+    "up": 38
+   },
+   "side": 1,
+   "socket": "column.pod.1"
+  },
+  {
+   "at": [
+    51,
+    18
+   ],
+   "attach": "drift",
+   "layout": "compact",
+   "room": {
+    "down": 79,
+    "left": 51,
+    "right": 32,
+    "up": 18
+   },
+   "side": 0,
+   "socket": "column.drift.0"
+  },
+  {
+   "at": [
+    56,
+    24
+   ],
+   "attach": "drift",
+   "layout": "compact",
+   "room": {
+    "down": 73,
+    "left": 56,
+    "right": 27,
+    "up": 24
+   },
+   "side": 0,
+   "socket": "column.drift.1"
+  },
+  {
+   "at": [
+    32,
+    20
+   ],
+   "attach": "drift",
+   "layout": "compact",
+   "room": {
+    "down": 77,
+    "left": 32,
+    "right": 51,
+    "up": 20
+   },
+   "side": 0,
+   "socket": "column.drift.2"
+  },
+  {
+   "at": [
+    42,
+    68
+   ],
+   "attach": "body",
+   "layout": "closed",
+   "room": {
+    "down": 29,
+    "left": 42,
+    "right": 41,
+    "up": 68
+   },
+   "side": 0,
+   "socket": "trunk.body"
+  },
+  {
+   "at": [
+    42,
+    61
+   ],
+   "attach": "stemNode",
+   "layout": "closed",
+   "room": {
+    "down": 36,
+    "left": 42,
+    "right": 41,
+    "up": 61
+   },
+   "side": 0,
+   "socket": "trunk.collar.0"
+  },
+  {
+   "at": [
+    42,
+    55
+   ],
+   "attach": "stemNode",
+   "layout": "closed",
+   "room": {
+    "down": 42,
+    "left": 42,
+    "right": 41,
+    "up": 55
+   },
+   "side": 0,
+   "socket": "trunk.collar.1"
+  },
+  {
+   "at": [
+    42,
+    49
+   ],
+   "attach": "stemNode",
+   "layout": "closed",
+   "room": {
+    "down": 48,
+    "left": 42,
+    "right": 41,
+    "up": 49
+   },
+   "side": 0,
+   "socket": "trunk.collar.2"
+  },
+  {
+   "at": [
+    34,
+    60
+   ],
+   "attach": "stiltRoot",
+   "layout": "closed",
+   "room": {
+    "down": 37,
+    "left": 34,
+    "right": 49,
+    "up": 60
+   },
+   "side": -1,
+   "socket": "trunk.stilt.0"
+  },
+  {
+   "at": [
+    50,
+    60
+   ],
+   "attach": "stiltRoot",
+   "layout": "closed",
+   "room": {
+    "down": 37,
+    "left": 50,
+    "right": 33,
+    "up": 60
+   },
+   "side": 1,
+   "socket": "trunk.stilt.1"
+  },
+  {
+   "at": [
+    42,
+    42
+   ],
+   "attach": "apex",
+   "layout": "closed",
+   "room": {
+    "down": 55,
+    "left": 42,
+    "right": 41,
+    "up": 42
+   },
+   "side": 0,
+   "socket": "crown.apex"
+  },
+  {
+   "at": [
+    42,
+    42
+   ],
+   "attach": "flower",
+   "layout": "closed",
+   "room": {
+    "down": 55,
+    "left": 42,
+    "right": 41,
+    "up": 42
+   },
+   "side": 0,
+   "socket": "crown.flower.0"
+  },
+  {
+   "at": [
+    42,
+    42
+   ],
+   "attach": "seedHead",
+   "layout": "closed",
+   "room": {
+    "down": 55,
+    "left": 42,
+    "right": 41,
+    "up": 42
+   },
+   "side": 0,
+   "socket": "crown.seedHead.0"
+  },
+  {
+   "angle": "high",
+   "at": [
+    42,
+    42
    ],
    "attach": "radialLeaf",
    "layout": "closed",
    "room": {
-    "down": 61,
+    "down": 55,
     "left": 42,
     "right": 41,
-    "up": 36
+    "up": 42
+   },
+   "side": -1,
+   "socket": "crown.leaf.0"
+  },
+  {
+   "angle": "high",
+   "at": [
+    42,
+    42
+   ],
+   "attach": "radialLeaf",
+   "layout": "closed",
+   "room": {
+    "down": 55,
+    "left": 42,
+    "right": 41,
+    "up": 42
    },
    "side": 1,
    "socket": "crown.leaf.1"
@@ -1784,15 +1784,15 @@
    "angle": "high",
    "at": [
     41,
-    37
+    43
    ],
    "attach": "radialLeaf",
    "layout": "closed",
    "room": {
-    "down": 60,
+    "down": 54,
     "left": 41,
     "right": 42,
-    "up": 37
+    "up": 43
    },
    "side": -1,
    "socket": "crown.leaf.2"
@@ -1801,15 +1801,15 @@
    "angle": "high",
    "at": [
     43,
-    37
+    43
    ],
    "attach": "radialLeaf",
    "layout": "closed",
    "room": {
-    "down": 60,
+    "down": 54,
     "left": 43,
     "right": 40,
-    "up": 37
+    "up": 43
    },
    "side": 1,
    "socket": "crown.leaf.3"
@@ -1818,15 +1818,15 @@
    "angle": "high",
    "at": [
     41,
-    38
+    44
    ],
    "attach": "radialLeaf",
    "layout": "closed",
    "room": {
-    "down": 59,
+    "down": 53,
     "left": 41,
     "right": 42,
-    "up": 38
+    "up": 44
    },
    "side": -1,
    "socket": "crown.leaf.4"
@@ -1835,15 +1835,15 @@
    "angle": "high",
    "at": [
     43,
-    38
+    44
    ],
    "attach": "radialLeaf",
    "layout": "closed",
    "room": {
-    "down": 59,
+    "down": 53,
     "left": 43,
     "right": 40,
-    "up": 38
+    "up": 44
    },
    "side": 1,
    "socket": "crown.leaf.5"
@@ -1851,15 +1851,15 @@
   {
    "at": [
     42,
-    24
+    28
    ],
    "attach": "apex",
    "layout": "closed",
    "room": {
-    "down": 73,
+    "down": 69,
     "left": 42,
     "right": 41,
-    "up": 24
+    "up": 28
    },
    "side": 0,
    "socket": "column.apex"
@@ -1867,15 +1867,15 @@
   {
    "at": [
     42,
-    24
+    28
    ],
    "attach": "flower",
    "layout": "closed",
    "room": {
-    "down": 73,
+    "down": 69,
     "left": 42,
     "right": 41,
-    "up": 24
+    "up": 28
    },
    "side": 0,
    "socket": "column.flower.0"
@@ -1883,143 +1883,143 @@
   {
    "at": [
     42,
-    24
-   ],
-   "attach": "seedHead",
-   "layout": "closed",
-   "room": {
-    "down": 73,
-    "left": 42,
-    "right": 41,
-    "up": 24
-   },
-   "side": 0,
-   "socket": "column.seedHead.0"
-  },
-  {
-   "at": [
-    53,
-    23
-   ],
-   "attach": "flower",
-   "layout": "closed",
-   "room": {
-    "down": 74,
-    "left": 53,
-    "right": 30,
-    "up": 23
-   },
-   "side": 1,
-   "socket": "column.flower.1"
-  },
-  {
-   "at": [
-    30,
     28
    ],
    "attach": "seedHead",
    "layout": "closed",
    "room": {
     "down": 69,
-    "left": 30,
-    "right": 53,
+    "left": 42,
+    "right": 41,
     "up": 28
+   },
+   "side": 0,
+   "socket": "column.seedHead.0"
+  },
+  {
+   "at": [
+    50,
+    28
+   ],
+   "attach": "flower",
+   "layout": "closed",
+   "room": {
+    "down": 69,
+    "left": 50,
+    "right": 33,
+    "up": 28
+   },
+   "side": 1,
+   "socket": "column.flower.1"
+  },
+  {
+   "at": [
+    34,
+    33
+   ],
+   "attach": "seedHead",
+   "layout": "closed",
+   "room": {
+    "down": 64,
+    "left": 34,
+    "right": 49,
+    "up": 33
    },
    "side": -1,
    "socket": "column.seedHead.1"
   },
   {
    "at": [
-    55,
-    31
+    51,
+    36
    ],
    "attach": "seedHead",
    "layout": "closed",
    "room": {
-    "down": 66,
-    "left": 55,
-    "right": 28,
-    "up": 31
+    "down": 61,
+    "left": 51,
+    "right": 32,
+    "up": 36
    },
    "side": 1,
    "socket": "column.seedHead.2"
   },
   {
    "at": [
-    31,
-    36
+    34,
+    41
    ],
    "attach": "pod",
    "layout": "closed",
    "room": {
-    "down": 61,
-    "left": 31,
-    "right": 52,
-    "up": 36
+    "down": 56,
+    "left": 34,
+    "right": 49,
+    "up": 41
    },
    "side": -1,
    "socket": "column.pod.0"
   },
   {
    "at": [
-    53,
-    34
+    50,
+    40
    ],
    "attach": "pod",
    "layout": "closed",
    "room": {
-    "down": 63,
-    "left": 53,
-    "right": 30,
-    "up": 34
+    "down": 57,
+    "left": 50,
+    "right": 33,
+    "up": 40
    },
    "side": 1,
    "socket": "column.pod.1"
   },
   {
    "at": [
-    55,
-    12
+    51,
+    20
    ],
    "attach": "drift",
    "layout": "closed",
    "room": {
-    "down": 85,
-    "left": 55,
-    "right": 28,
-    "up": 12
+    "down": 77,
+    "left": 51,
+    "right": 32,
+    "up": 20
    },
    "side": 0,
    "socket": "column.drift.0"
   },
   {
    "at": [
-    62,
-    21
+    56,
+    26
    ],
    "attach": "drift",
    "layout": "closed",
    "room": {
-    "down": 76,
-    "left": 62,
-    "right": 21,
-    "up": 21
+    "down": 71,
+    "left": 56,
+    "right": 27,
+    "up": 26
    },
    "side": 0,
    "socket": "column.drift.1"
   },
   {
    "at": [
-    28,
-    15
+    32,
+    22
    ],
    "attach": "drift",
    "layout": "closed",
    "room": {
-    "down": 82,
-    "left": 28,
-    "right": 55,
-    "up": 15
+    "down": 75,
+    "left": 32,
+    "right": 51,
+    "up": 22
    },
    "side": 0,
    "socket": "column.drift.2"
@@ -2178,9 +2178,9 @@
    "drawings": 3,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2215,9 +2215,9 @@
    "drawings": 3,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2252,9 +2252,9 @@
    "drawings": 3,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2289,9 +2289,9 @@
    "drawings": 3,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2326,9 +2326,9 @@
    "drawings": 3,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2363,9 +2363,9 @@
    "drawings": 3,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2400,9 +2400,9 @@
    "drawings": 3,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2437,9 +2437,9 @@
    "drawings": 2,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2474,9 +2474,9 @@
    "drawings": 2,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2511,9 +2511,9 @@
    "drawings": 2,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2548,9 +2548,9 @@
    "drawings": 2,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2585,9 +2585,9 @@
    "drawings": 2,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2622,9 +2622,9 @@
    "drawings": 2,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2659,9 +2659,9 @@
    "drawings": 2,
    "tightestRoom": {
     "back": 41,
-    "out": 37,
-    "up": 32,
-    "down": 59
+    "out": 38,
+    "up": 38,
+    "down": 53
    }
   },
   {
@@ -2686,8 +2686,8 @@
    "tightestRoom": {
     "left": 42,
     "right": 41,
-    "up": 69,
-    "down": 28
+    "up": 70,
+    "down": 27
    }
   },
   {
@@ -2712,8 +2712,8 @@
    "tightestRoom": {
     "left": 42,
     "right": 41,
-    "up": 69,
-    "down": 28
+    "up": 70,
+    "down": 27
    }
   },
   {
@@ -2736,8 +2736,8 @@
    "anchor": "its BOTTOM pixel, buried one row into the soil (row 69); it rises upward",
    "drawings": 1,
    "tightestRoom": {
-    "left": 22,
-    "right": 20,
+    "left": 27,
+    "right": 25,
     "up": 69,
     "down": 28
    }
@@ -2762,8 +2762,8 @@
    "anchor": "its BOTTOM pixel, buried one row into the soil (row 69); it rises upward",
    "drawings": 1,
    "tightestRoom": {
-    "left": 22,
-    "right": 20,
+    "left": 27,
+    "right": 25,
     "up": 69,
     "down": 28
    }
@@ -2788,8 +2788,8 @@
    "anchor": "its BOTTOM pixel, buried one row into the soil (row 69); it rises upward",
    "drawings": 1,
    "tightestRoom": {
-    "left": 22,
-    "right": 20,
+    "left": 27,
+    "right": 25,
     "up": 69,
     "down": 28
    }
@@ -2814,10 +2814,10 @@
    "anchor": "its top-left pixel on the trunk's edge 8 rows above the soil (it must reach the soil)",
    "drawings": 1,
    "tightestRoom": {
-    "back": 49,
-    "out": 29,
-    "up": 57,
-    "down": 40
+    "back": 46,
+    "out": 33,
+    "up": 60,
+    "down": 37
    }
   },
   {
@@ -2905,8 +2905,8 @@
    "tightestRoom": {
     "left": 42,
     "right": 41,
-    "up": 43,
-    "down": 38
+    "up": 49,
+    "down": 36
    }
   },
   {
@@ -2931,8 +2931,8 @@
    "tightestRoom": {
     "left": 42,
     "right": 41,
-    "up": 43,
-    "down": 38
+    "up": 49,
+    "down": 36
    }
   },
   {
@@ -2999,8 +2999,8 @@
    "tightestRoom": {
     "left": 42,
     "right": 41,
-    "up": 24,
-    "down": 61
+    "up": 22,
+    "down": 55
    }
   },
   {
@@ -3024,9 +3024,9 @@
    "drawings": 1,
    "tightestRoom": {
     "left": 42,
-    "right": 30,
-    "up": 23,
-    "down": 61
+    "right": 33,
+    "up": 22,
+    "down": 55
    }
   },
   {
@@ -3049,10 +3049,10 @@
    "anchor": "the bottom pixel of its stalk",
    "drawings": 1,
    "tightestRoom": {
-    "left": 30,
-    "right": 28,
-    "up": 24,
-    "down": 61
+    "left": 34,
+    "right": 32,
+    "up": 22,
+    "down": 55
    }
   },
   {
@@ -3075,10 +3075,10 @@
    "anchor": "the bottom pixel of its stalk",
    "drawings": 1,
    "tightestRoom": {
-    "left": 30,
-    "right": 28,
-    "up": 24,
-    "down": 61
+    "left": 34,
+    "right": 32,
+    "up": 22,
+    "down": 55
    }
   },
   {
@@ -3101,10 +3101,10 @@
    "anchor": "the seed pixel",
    "drawings": 1,
    "tightestRoom": {
-    "left": 28,
-    "right": 21,
-    "up": 12,
-    "down": 76
+    "left": 32,
+    "right": 27,
+    "up": 14,
+    "down": 71
    }
   },
   {
@@ -3127,10 +3127,10 @@
    "anchor": "its stalk's top pixel (the pod hangs below)",
    "drawings": 1,
    "tightestRoom": {
-    "left": 31,
-    "right": 30,
-    "up": 32,
-    "down": 61
+    "left": 34,
+    "right": 33,
+    "up": 36,
+    "down": 56
    }
   }
  ],
@@ -3930,15 +3930,15 @@
   "drift": 70
  },
  "clipProof": {
-  "proofPack": "proof-woolly-candle-c2",
-  "placementsProven": 17768,
-  "sockets": 107
+  "proofPack": null,
+  "sockets": 107,
+  "proof": "the accepted woolly-candle pack itself: the plant-art build's static clip proof + tools/candle2-contract-check.js (complete legal-model enumeration)"
  },
  "revision": {
   "of": "candle@1",
   "briefV1": "docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v1.md",
-  "statement": "candle@2 is a FIDELITY contract revision, not a new species design. The ONLY artistic change from brief v1 is the increased native resolution of every Woolly component (the maxima below). The previously approved Woolly Candle visual design remains the source of truth: draw that approved design, at these native sizes, onto these sockets. Same component categories, adaptation semantics, reproduction semantics, body-plan behaviour and attachment meaning as v1; same grammar; no gameplay change; the organism canvas stays 84 × 98 (soil row 68, crown 42,68).",
-  "proofPack": "proof-woolly-candle-c2",
+  "statement": "candle@2 is a FIDELITY contract revision, not a new species design. The ONLY artistic change from brief v1 is the increased native resolution of every Woolly component (the production maxima below). The previously approved Woolly Candle visual design remains the source of truth. Same component categories, adaptation semantics, reproduction semantics, body-plan behaviour, sockets and attachment meaning as v1; same grammar; no gameplay change; the organism canvas stays 84 × 98 (soil row 68, crown 42,68).",
+  "acceptedSource": "WOOLLY_CANDLE_PRODUCTION_SOURCE_CANDIDATE_CANDLE2 (origin CANONICAL_REFERENCE_TRANSCRIPTION) — PMO FINAL SOURCE ACCEPTED (BLOOM-035C2)",
   "playerProofPack": "proof-woolly-candle",
   "maxima": [
    {
@@ -3950,9 +3950,7 @@
     "v2": [
      24,
      40
-    ],
-    "clearanceAtMax": 29,
-    "tightest": "top edge at open/trunk.body"
+    ]
    },
    {
     "id": "body.trunk.1",
@@ -3963,9 +3961,7 @@
     "v2": [
      24,
      40
-    ],
-    "clearanceAtMax": 29,
-    "tightest": "top edge at open/trunk.body"
+    ]
    },
    {
     "id": "body.trunk.2",
@@ -3976,9 +3972,7 @@
     "v2": [
      24,
      40
-    ],
-    "clearanceAtMax": 29,
-    "tightest": "top edge at open/trunk.body"
+    ]
    },
    {
     "id": "body.trunk.3",
@@ -3989,9 +3983,7 @@
     "v2": [
      24,
      40
-    ],
-    "clearanceAtMax": 29,
-    "tightest": "top edge at open/trunk.body"
+    ]
    },
    {
     "id": "leaf.base",
@@ -4002,9 +3994,7 @@
     "v2": [
      20,
      20
-    ],
-    "clearanceAtMax": 15,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "leaf.drought.1",
@@ -4015,9 +4005,7 @@
     "v2": [
      19,
      20
-    ],
-    "clearanceAtMax": 15,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "leaf.drought.2",
@@ -4028,9 +4016,7 @@
     "v2": [
      18,
      20
-    ],
-    "clearanceAtMax": 15,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "leaf.drought.3",
@@ -4041,9 +4027,7 @@
     "v2": [
      17,
      20
-    ],
-    "clearanceAtMax": 15,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "leaf.flood.1",
@@ -4054,9 +4038,7 @@
     "v2": [
      21,
      20
-    ],
-    "clearanceAtMax": 15,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "leaf.flood.2",
@@ -4067,9 +4049,7 @@
     "v2": [
      22,
      21
-    ],
-    "clearanceAtMax": 14,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "leaf.flood.3",
@@ -4080,9 +4060,7 @@
     "v2": [
      22,
      21
-    ],
-    "clearanceAtMax": 14,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "leaf.base.heat",
@@ -4093,9 +4071,7 @@
     "v2": [
      20,
      20
-    ],
-    "clearanceAtMax": 15,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "leaf.drought.1.heat",
@@ -4106,9 +4082,7 @@
     "v2": [
      19,
      20
-    ],
-    "clearanceAtMax": 15,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "leaf.drought.2.heat",
@@ -4119,9 +4093,7 @@
     "v2": [
      18,
      20
-    ],
-    "clearanceAtMax": 15,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "leaf.drought.3.heat",
@@ -4132,9 +4104,7 @@
     "v2": [
      17,
      20
-    ],
-    "clearanceAtMax": 15,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "leaf.flood.1.heat",
@@ -4145,9 +4115,7 @@
     "v2": [
      21,
      20
-    ],
-    "clearanceAtMax": 15,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "leaf.flood.2.heat",
@@ -4158,9 +4126,7 @@
     "v2": [
      22,
      21
-    ],
-    "clearanceAtMax": 14,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "leaf.flood.3.heat",
@@ -4171,9 +4137,7 @@
     "v2": [
      22,
      21
-    ],
-    "clearanceAtMax": 14,
-    "tightest": "top edge at open/crown.leaf.0"
+    ]
    },
    {
     "id": "root.storage.2",
@@ -4184,9 +4148,7 @@
     "v2": [
      16,
      24
-    ],
-    "clearanceAtMax": 5,
-    "tightest": "bottom edge at */primaryRoot"
+    ]
    },
    {
     "id": "root.storage.3",
@@ -4198,8 +4160,15 @@
      18,
      28
     ],
-    "clearanceAtMax": 1,
-    "tightest": "bottom edge at */primaryRoot"
+    "acceptedActual": [
+     18,
+     27
+    ],
+    "acceptedCanvas": [
+     18,
+     28
+    ],
+    "note": "accepted actual art 18 × 27 on an 18 × 28 canvas (one transparent row), within the 18 × 28 maximum"
    },
    {
     "id": "root.aerial.1",
@@ -4210,9 +4179,7 @@
     "v2": [
      7,
      10
-    ],
-    "clearanceAtMax": 17,
-    "tightest": "right edge at */aerial.3"
+    ]
    },
    {
     "id": "root.aerial.2",
@@ -4223,9 +4190,7 @@
     "v2": [
      9,
      14
-    ],
-    "clearanceAtMax": 16,
-    "tightest": "right edge at */aerial.3"
+    ]
    },
    {
     "id": "root.aerial.3",
@@ -4236,9 +4201,7 @@
     "v2": [
      11,
      18
-    ],
-    "clearanceAtMax": 15,
-    "tightest": "right edge at */aerial.3"
+    ]
    },
    {
     "id": "root.stilt",
@@ -4249,9 +4212,7 @@
     "v2": [
      14,
      16
-    ],
-    "clearanceAtMax": 16,
-    "tightest": "right edge at closed/trunk.stilt.1"
+    ]
    },
    {
     "id": "frost.hair.1",
@@ -4262,9 +4223,7 @@
     "v2": [
      5,
      6
-    ],
-    "clearanceAtMax": 9,
-    "tightest": "top edge at leaf.flood.2.heat.mid point at open/crown.leaf.0"
+    ]
    },
    {
     "id": "frost.hair.2",
@@ -4275,9 +4234,7 @@
     "v2": [
      7,
      8
-    ],
-    "clearanceAtMax": 7,
-    "tightest": "top edge at leaf.flood.2.heat.mid point at open/crown.leaf.0"
+    ]
    },
    {
     "id": "frost.hair.3",
@@ -4288,9 +4245,7 @@
     "v2": [
      9,
      10
-    ],
-    "clearanceAtMax": 5,
-    "tightest": "top edge at leaf.flood.2.heat.mid point at open/crown.leaf.0"
+    ]
    },
    {
     "id": "frost.collar.2",
@@ -4301,9 +4256,7 @@
     "v2": [
      25,
      9
-    ],
-    "clearanceAtMax": 29,
-    "tightest": "right edge at open/trunk.collar.0"
+    ]
    },
    {
     "id": "frost.collar.3",
@@ -4314,9 +4267,7 @@
     "v2": [
      29,
      11
-    ],
-    "clearanceAtMax": 27,
-    "tightest": "right edge at open/trunk.collar.0"
+    ]
    },
    {
     "id": "salt.crystal",
@@ -4327,9 +4278,7 @@
     "v2": [
      9,
      9
-    ],
-    "clearanceAtMax": 6,
-    "tightest": "top edge at leaf.flood.2.heat.mid point at open/crown.leaf.0"
+    ]
    },
    {
     "id": "salt.gland",
@@ -4340,9 +4289,7 @@
     "v2": [
      5,
      5
-    ],
-    "clearanceAtMax": 10,
-    "tightest": "top edge at leaf.flood.2.heat.mid point at open/crown.leaf.0"
+    ]
    },
    {
     "id": "bud",
@@ -4353,9 +4300,7 @@
     "v2": [
      12,
      14
-    ],
-    "clearanceAtMax": 11,
-    "tightest": "top edge at open/column.apex"
+    ]
    },
    {
     "id": "flower",
@@ -4366,9 +4311,7 @@
     "v2": [
      20,
      22
-    ],
-    "clearanceAtMax": 2,
-    "tightest": "top edge at open/column.flower.1"
+    ]
    },
    {
     "id": "seedHead.small",
@@ -4379,9 +4322,7 @@
     "v2": [
      16,
      18
-    ],
-    "clearanceAtMax": 7,
-    "tightest": "top edge at open/column.seedHead.0"
+    ]
    },
    {
     "id": "seedHead.large",
@@ -4393,8 +4334,11 @@
      24,
      24
     ],
-    "clearanceAtMax": 1,
-    "tightest": "top edge at open/column.seedHead.0"
+    "acceptedActual": [
+     24,
+     22
+    ],
+    "note": "accepted actual size, within the 24 × 24 maximum"
    },
    {
     "id": "seed.drift",
@@ -4405,9 +4349,7 @@
     "v2": [
      10,
      10
-    ],
-    "clearanceAtMax": 3,
-    "tightest": "top edge at open/column.drift.0"
+    ]
    },
    {
     "id": "pod",
@@ -4418,9 +4360,7 @@
     "v2": [
      14,
      17
-    ],
-    "clearanceAtMax": 23,
-    "tightest": "right edge at open/column.pod.1"
+    ]
    }
   ],
   "reduced": [],
@@ -4429,1349 +4369,57 @@
     "body": "body.trunk.0",
     "top": [
      0,
-     -34
+     -28
     ],
     "topV1": [
      0,
      -28
     ],
-    "column": 9,
-    "columnV1": 17,
-    "budget": 43
+    "column": 17,
+    "columnV1": 17
    },
    "dense": {
     "body": "body.trunk.1",
     "top": [
      0,
-     -33
+     -27
     ],
     "topV1": [
      0,
      -27
     ],
-    "column": 10,
-    "columnV1": 16,
-    "budget": 43
+    "column": 16,
+    "columnV1": 16
    },
    "compact": {
     "body": "body.trunk.2",
     "top": [
      0,
-     -32
+     -26
     ],
     "topV1": [
      0,
      -26
     ],
-    "column": 11,
-    "columnV1": 15,
-    "budget": 43
+    "column": 15,
+    "columnV1": 15
    },
    "closed": {
     "body": "body.trunk.3",
     "top": [
      0,
-     -31
+     -25
     ],
     "topV1": [
      0,
      -25
     ],
-    "column": 12,
-    "columnV1": 14,
-    "budget": 43
+    "column": 14,
+    "columnV1": 14
    }
   },
-  "socketsMoved": [
-   {
-    "layout": "open",
-    "socket": "trunk.collar.0",
-    "attach": "stemNode",
-    "from": [
-     42,
-     59
-    ],
-    "to": [
-     42,
-     56
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "trunk.collar.1",
-    "attach": "stemNode",
-    "from": [
-     42,
-     50
-    ],
-    "to": [
-     42,
-     44
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "trunk.stilt.0",
-    "attach": "stiltRoot",
-    "from": [
-     37,
-     60
-    ],
-    "to": [
-     34,
-     57
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "trunk.stilt.1",
-    "attach": "stiltRoot",
-    "from": [
-     47,
-     60
-    ],
-    "to": [
-     50,
-     57
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "crown.apex",
-    "attach": "apex",
-    "from": [
-     42,
-     39
-    ],
-    "to": [
-     42,
-     33
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "crown.flower.0",
-    "attach": "flower",
-    "from": [
-     42,
-     39
-    ],
-    "to": [
-     42,
-     33
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "crown.seedHead.0",
-    "attach": "seedHead",
-    "from": [
-     42,
-     39
-    ],
-    "to": [
-     42,
-     33
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "crown.leaf.0",
-    "attach": "radialLeaf",
-    "from": [
-     41,
-     38
-    ],
-    "to": [
-     41,
-     32
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "crown.leaf.1",
-    "attach": "radialLeaf",
-    "from": [
-     43,
-     38
-    ],
-    "to": [
-     43,
-     32
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "crown.leaf.2",
-    "attach": "radialLeaf",
-    "from": [
-     39,
-     40
-    ],
-    "to": [
-     38,
-     33
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "crown.leaf.3",
-    "attach": "radialLeaf",
-    "from": [
-     45,
-     40
-    ],
-    "to": [
-     46,
-     33
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "crown.leaf.4",
-    "attach": "radialLeaf",
-    "from": [
-     40,
-     42
-    ],
-    "to": [
-     39,
-     36
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "crown.leaf.5",
-    "attach": "radialLeaf",
-    "from": [
-     44,
-     42
-    ],
-    "to": [
-     45,
-     36
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "column.apex",
-    "attach": "apex",
-    "from": [
-     42,
-     22
-    ],
-    "to": [
-     42,
-     24
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "column.flower.0",
-    "attach": "flower",
-    "from": [
-     42,
-     22
-    ],
-    "to": [
-     42,
-     24
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "column.seedHead.0",
-    "attach": "seedHead",
-    "from": [
-     42,
-     22
-    ],
-    "to": [
-     42,
-     24
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "column.flower.1",
-    "attach": "flower",
-    "from": [
-     50,
-     22
-    ],
-    "to": [
-     53,
-     23
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "column.seedHead.1",
-    "attach": "seedHead",
-    "from": [
-     34,
-     28
-    ],
-    "to": [
-     30,
-     27
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "column.seedHead.2",
-    "attach": "seedHead",
-    "from": [
-     51,
-     31
-    ],
-    "to": [
-     55,
-     29
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "column.pod.0",
-    "attach": "pod",
-    "from": [
-     34,
-     38
-    ],
-    "to": [
-     31,
-     33
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "column.pod.1",
-    "attach": "pod",
-    "from": [
-     50,
-     36
-    ],
-    "to": [
-     53,
-     32
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "column.drift.0",
-    "attach": "drift",
-    "from": [
-     51,
-     14
-    ],
-    "to": [
-     55,
-     12
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "column.drift.1",
-    "attach": "drift",
-    "from": [
-     56,
-     20
-    ],
-    "to": [
-     62,
-     21
-    ]
-   },
-   {
-    "layout": "open",
-    "socket": "column.drift.2",
-    "attach": "drift",
-    "from": [
-     32,
-     16
-    ],
-    "to": [
-     28,
-     15
-    ]
-   },
-   {
-    "layout": "*",
-    "socket": "primaryRoot",
-    "attach": "primaryRoot",
-    "from": [
-     42,
-     70
-    ],
-    "to": [
-     42,
-     69
-    ]
-   },
-   {
-    "layout": "*",
-    "socket": "aerial.0",
-    "attach": "aerialRoot",
-    "from": [
-     32,
-     69
-    ],
-    "to": [
-     28,
-     69
-    ]
-   },
-   {
-    "layout": "*",
-    "socket": "aerial.1",
-    "attach": "aerialRoot",
-    "from": [
-     53,
-     69
-    ],
-    "to": [
-     57,
-     69
-    ]
-   },
-   {
-    "layout": "*",
-    "socket": "aerial.2",
-    "attach": "aerialRoot",
-    "from": [
-     27,
-     69
-    ],
-    "to": [
-     22,
-     69
-    ]
-   },
-   {
-    "layout": "*",
-    "socket": "aerial.3",
-    "attach": "aerialRoot",
-    "from": [
-     58,
-     69
-    ],
-    "to": [
-     63,
-     69
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "trunk.collar.0",
-    "attach": "stemNode",
-    "from": [
-     42,
-     59
-    ],
-    "to": [
-     42,
-     56
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "trunk.collar.1",
-    "attach": "stemNode",
-    "from": [
-     42,
-     50
-    ],
-    "to": [
-     42,
-     44
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "trunk.stilt.0",
-    "attach": "stiltRoot",
-    "from": [
-     36,
-     60
-    ],
-    "to": [
-     33,
-     57
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "trunk.stilt.1",
-    "attach": "stiltRoot",
-    "from": [
-     48,
-     60
-    ],
-    "to": [
-     51,
-     57
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "crown.apex",
-    "attach": "apex",
-    "from": [
-     42,
-     40
-    ],
-    "to": [
-     42,
-     34
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "crown.flower.0",
-    "attach": "flower",
-    "from": [
-     42,
-     40
-    ],
-    "to": [
-     42,
-     34
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "crown.seedHead.0",
-    "attach": "seedHead",
-    "from": [
-     42,
-     40
-    ],
-    "to": [
-     42,
-     34
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "crown.leaf.0",
-    "attach": "radialLeaf",
-    "from": [
-     41,
-     39
-    ],
-    "to": [
-     41,
-     33
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "crown.leaf.1",
-    "attach": "radialLeaf",
-    "from": [
-     43,
-     39
-    ],
-    "to": [
-     43,
-     33
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "crown.leaf.2",
-    "attach": "radialLeaf",
-    "from": [
-     40,
-     41
-    ],
-    "to": [
-     39,
-     35
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "crown.leaf.3",
-    "attach": "radialLeaf",
-    "from": [
-     44,
-     41
-    ],
-    "to": [
-     45,
-     35
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "crown.leaf.4",
-    "attach": "radialLeaf",
-    "from": [
-     40,
-     43
-    ],
-    "to": [
-     39,
-     37
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "crown.leaf.5",
-    "attach": "radialLeaf",
-    "from": [
-     44,
-     43
-    ],
-    "to": [
-     45,
-     37
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "column.flower.1",
-    "attach": "flower",
-    "from": [
-     50,
-     24
-    ],
-    "to": [
-     53,
-     23
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "column.seedHead.1",
-    "attach": "seedHead",
-    "from": [
-     34,
-     29
-    ],
-    "to": [
-     30,
-     27
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "column.seedHead.2",
-    "attach": "seedHead",
-    "from": [
-     51,
-     33
-    ],
-    "to": [
-     55,
-     29
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "column.pod.0",
-    "attach": "pod",
-    "from": [
-     34,
-     39
-    ],
-    "to": [
-     31,
-     34
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "column.pod.1",
-    "attach": "pod",
-    "from": [
-     50,
-     37
-    ],
-    "to": [
-     53,
-     33
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "column.drift.0",
-    "attach": "drift",
-    "from": [
-     51,
-     16
-    ],
-    "to": [
-     55,
-     12
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "column.drift.1",
-    "attach": "drift",
-    "from": [
-     56,
-     22
-    ],
-    "to": [
-     62,
-     21
-    ]
-   },
-   {
-    "layout": "dense",
-    "socket": "column.drift.2",
-    "attach": "drift",
-    "from": [
-     32,
-     18
-    ],
-    "to": [
-     28,
-     15
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "trunk.collar.0",
-    "attach": "stemNode",
-    "from": [
-     42,
-     59
-    ],
-    "to": [
-     42,
-     56
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "trunk.collar.1",
-    "attach": "stemNode",
-    "from": [
-     42,
-     50
-    ],
-    "to": [
-     42,
-     44
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "trunk.stilt.0",
-    "attach": "stiltRoot",
-    "from": [
-     35,
-     60
-    ],
-    "to": [
-     31,
-     57
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "trunk.stilt.1",
-    "attach": "stiltRoot",
-    "from": [
-     49,
-     60
-    ],
-    "to": [
-     53,
-     57
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "crown.apex",
-    "attach": "apex",
-    "from": [
-     42,
-     41
-    ],
-    "to": [
-     42,
-     35
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "crown.flower.0",
-    "attach": "flower",
-    "from": [
-     42,
-     41
-    ],
-    "to": [
-     42,
-     35
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "crown.seedHead.0",
-    "attach": "seedHead",
-    "from": [
-     42,
-     41
-    ],
-    "to": [
-     42,
-     35
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "crown.leaf.0",
-    "attach": "radialLeaf",
-    "from": [
-     42,
-     41
-    ],
-    "to": [
-     42,
-     35
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "crown.leaf.1",
-    "attach": "radialLeaf",
-    "from": [
-     42,
-     41
-    ],
-    "to": [
-     42,
-     35
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "crown.leaf.2",
-    "attach": "radialLeaf",
-    "from": [
-     40,
-     42
-    ],
-    "to": [
-     39,
-     36
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "crown.leaf.3",
-    "attach": "radialLeaf",
-    "from": [
-     44,
-     42
-    ],
-    "to": [
-     45,
-     36
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "crown.leaf.4",
-    "attach": "radialLeaf",
-    "from": [
-     40,
-     44
-    ],
-    "to": [
-     40,
-     38
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "crown.leaf.5",
-    "attach": "radialLeaf",
-    "from": [
-     44,
-     44
-    ],
-    "to": [
-     44,
-     38
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "column.apex",
-    "attach": "apex",
-    "from": [
-     42,
-     26
-    ],
-    "to": [
-     42,
-     24
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "column.flower.0",
-    "attach": "flower",
-    "from": [
-     42,
-     26
-    ],
-    "to": [
-     42,
-     24
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "column.seedHead.0",
-    "attach": "seedHead",
-    "from": [
-     42,
-     26
-    ],
-    "to": [
-     42,
-     24
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "column.flower.1",
-    "attach": "flower",
-    "from": [
-     50,
-     26
-    ],
-    "to": [
-     53,
-     23
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "column.seedHead.1",
-    "attach": "seedHead",
-    "from": [
-     34,
-     31
-    ],
-    "to": [
-     30,
-     27
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "column.seedHead.2",
-    "attach": "seedHead",
-    "from": [
-     51,
-     34
-    ],
-    "to": [
-     55,
-     30
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "column.pod.0",
-    "attach": "pod",
-    "from": [
-     34,
-     40
-    ],
-    "to": [
-     31,
-     35
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "column.pod.1",
-    "attach": "pod",
-    "from": [
-     50,
-     38
-    ],
-    "to": [
-     53,
-     34
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "column.drift.0",
-    "attach": "drift",
-    "from": [
-     51,
-     18
-    ],
-    "to": [
-     55,
-     12
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "column.drift.1",
-    "attach": "drift",
-    "from": [
-     56,
-     24
-    ],
-    "to": [
-     62,
-     21
-    ]
-   },
-   {
-    "layout": "compact",
-    "socket": "column.drift.2",
-    "attach": "drift",
-    "from": [
-     32,
-     20
-    ],
-    "to": [
-     28,
-     15
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "trunk.collar.0",
-    "attach": "stemNode",
-    "from": [
-     42,
-     61
-    ],
-    "to": [
-     42,
-     59
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "trunk.collar.1",
-    "attach": "stemNode",
-    "from": [
-     42,
-     55
-    ],
-    "to": [
-     42,
-     51
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "trunk.collar.2",
-    "attach": "stemNode",
-    "from": [
-     42,
-     49
-    ],
-    "to": [
-     42,
-     43
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "trunk.stilt.0",
-    "attach": "stiltRoot",
-    "from": [
-     34,
-     60
-    ],
-    "to": [
-     30,
-     57
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "trunk.stilt.1",
-    "attach": "stiltRoot",
-    "from": [
-     50,
-     60
-    ],
-    "to": [
-     54,
-     57
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "crown.apex",
-    "attach": "apex",
-    "from": [
-     42,
-     42
-    ],
-    "to": [
-     42,
-     36
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "crown.flower.0",
-    "attach": "flower",
-    "from": [
-     42,
-     42
-    ],
-    "to": [
-     42,
-     36
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "crown.seedHead.0",
-    "attach": "seedHead",
-    "from": [
-     42,
-     42
-    ],
-    "to": [
-     42,
-     36
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "crown.leaf.0",
-    "attach": "radialLeaf",
-    "from": [
-     42,
-     42
-    ],
-    "to": [
-     42,
-     36
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "crown.leaf.1",
-    "attach": "radialLeaf",
-    "from": [
-     42,
-     42
-    ],
-    "to": [
-     42,
-     36
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "crown.leaf.2",
-    "attach": "radialLeaf",
-    "from": [
-     41,
-     43
-    ],
-    "to": [
-     41,
-     37
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "crown.leaf.3",
-    "attach": "radialLeaf",
-    "from": [
-     43,
-     43
-    ],
-    "to": [
-     43,
-     37
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "crown.leaf.4",
-    "attach": "radialLeaf",
-    "from": [
-     41,
-     44
-    ],
-    "to": [
-     41,
-     38
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "crown.leaf.5",
-    "attach": "radialLeaf",
-    "from": [
-     43,
-     44
-    ],
-    "to": [
-     43,
-     38
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "column.apex",
-    "attach": "apex",
-    "from": [
-     42,
-     28
-    ],
-    "to": [
-     42,
-     24
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "column.flower.0",
-    "attach": "flower",
-    "from": [
-     42,
-     28
-    ],
-    "to": [
-     42,
-     24
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "column.seedHead.0",
-    "attach": "seedHead",
-    "from": [
-     42,
-     28
-    ],
-    "to": [
-     42,
-     24
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "column.flower.1",
-    "attach": "flower",
-    "from": [
-     50,
-     28
-    ],
-    "to": [
-     53,
-     23
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "column.seedHead.1",
-    "attach": "seedHead",
-    "from": [
-     34,
-     33
-    ],
-    "to": [
-     30,
-     28
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "column.seedHead.2",
-    "attach": "seedHead",
-    "from": [
-     51,
-     36
-    ],
-    "to": [
-     55,
-     31
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "column.pod.0",
-    "attach": "pod",
-    "from": [
-     34,
-     41
-    ],
-    "to": [
-     31,
-     36
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "column.pod.1",
-    "attach": "pod",
-    "from": [
-     50,
-     40
-    ],
-    "to": [
-     53,
-     34
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "column.drift.0",
-    "attach": "drift",
-    "from": [
-     51,
-     20
-    ],
-    "to": [
-     55,
-     12
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "column.drift.1",
-    "attach": "drift",
-    "from": [
-     56,
-     26
-    ],
-    "to": [
-     62,
-     21
-    ]
-   },
-   {
-    "layout": "closed",
-    "socket": "column.drift.2",
-    "attach": "drift",
-    "from": [
-     32,
-     22
-    ],
-    "to": [
-     28,
-     15
-    ]
-   }
-  ],
-  "socketsMovedCount": 99,
+  "socketsMoved": [],
+  "socketsMovedCount": 0,
   "sockets": 107,
   "socketsV1": 107
  }

@@ -1,0 +1,3017 @@
+{
+ "format": "bloom-plant-art-intake@1",
+ "milestone": "BLOOM-035C0 intake",
+ "tool": "tools/intake-plant-art.mjs",
+ "pack": "woolly-candle",
+ "species": "woolly_candle",
+ "bodyPlan": "candle@2",
+ "brief": {
+  "path": "docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.json",
+  "sha256": "08835e669e150b9e57289d8a13678d9edfd8837fdf330b9eb6f195388f5ac180"
+ },
+ "acceptance": {
+  "path": "art/plant/intake/woolly-candle/PMO_FINAL_ACCEPTANCE.json",
+  "sha256": "c7ee891982840d2fdc1721f63e9cb50b69f7aba79aeb5e2a2c268f41f1aeb7ea",
+  "status": "FINAL PMO-APPROVED ART INTAKE",
+  "deliveries": [
+   {
+    "file": "woolly-candle-batch1-base-body.zip",
+    "batch": 1,
+    "bytes": 4689,
+    "sha256": "afbf731410769675ed56a697902150d783c3cb29333b1a30bf85c023e25efb16",
+    "match": true
+   },
+   {
+    "file": "woolly-candle-batch2-cold-heat.zip",
+    "batch": 2,
+    "bytes": 8269,
+    "sha256": "ec5bbdc8e2e7fef9425687a37262a20a6477f2d606828592145411dceb58a99f",
+    "match": true
+   },
+   {
+    "file": "woolly-candle-batch3-drought.zip",
+    "batch": 3,
+    "bytes": 13521,
+    "sha256": "1537bbb6adbd931fcf62d4ba09e72a7e1cbc650b6c020a6325f385df657feeb3",
+    "match": true
+   },
+   {
+    "file": "woolly-candle-batch4-flood.zip",
+    "batch": 4,
+    "bytes": 14581,
+    "sha256": "897b69092eb43b75bc2a6ebb67c72f89ebe4c4f8585e33116fb103a729b65480",
+    "match": true
+   },
+   {
+    "file": "woolly-candle-batch5-salt-radiation.zip",
+    "batch": 5,
+    "bytes": 13839,
+    "sha256": "3632ad68535ab70e069e393e492ad23617409751ae58d0bf5736170bc816c4a3",
+    "match": true
+   },
+   {
+    "file": "woolly-candle-batch6-reproduction-dispersal.zip",
+    "batch": 6,
+    "bytes": 3657,
+    "sha256": "eddeba14c1747e2d343fe99795a42023992a03e633612fd9d04c9bcd9ef94e95",
+    "match": true
+   },
+   {
+    "file": "woolly-candle-batch7-metadata-closure.zip",
+    "batch": 7,
+    "bytes": 154981,
+    "sha256": "b6a7cf7d964c34829564141068ab14685cc7a9cf0a8266514ca6992a756f7bbe",
+    "match": true
+   }
+  ]
+ },
+ "atlas": {
+  "path": "art/plant/packs/woolly-candle/atlas.png",
+  "w": 160,
+  "h": 288,
+  "gutter": 1,
+  "swatch": [
+   0,
+   0,
+   36,
+   8
+  ]
+ },
+ "palette": {
+  "materials": 18,
+  "colours": 69,
+  "declaredBy": {
+   "ink": "woolly-candle-batch7-metadata-closure.zip",
+   "leaf": "woolly-candle-batch7-metadata-closure.zip",
+   "stem": "woolly-candle-batch7-metadata-closure.zip",
+   "root": "woolly-candle-batch7-metadata-closure.zip",
+   "core": "woolly-candle-batch7-metadata-closure.zip",
+   "petal": "woolly-candle-batch7-metadata-closure.zip",
+   "center": "woolly-candle-batch7-metadata-closure.zip",
+   "pappus": "woolly-candle-batch7-metadata-closure.zip",
+   "seed": "woolly-candle-batch7-metadata-closure.zip",
+   "frost": "woolly-candle-batch7-metadata-closure.zip",
+   "tuber": "woolly-candle-batch7-metadata-closure.zip",
+   "salt": "woolly-candle-batch7-metadata-closure.zip",
+   "pod": "woolly-candle-batch7-metadata-closure.zip",
+   "pigLeaf": "woolly-candle-batch7-metadata-closure.zip",
+   "pigStem": "woolly-candle-batch7-metadata-closure.zip",
+   "pigCore": "woolly-candle-batch7-metadata-closure.zip",
+   "waxLeaf": "woolly-candle-batch7-metadata-closure.zip",
+   "waxCore": "woolly-candle-batch7-metadata-closure.zip"
+  }
+ },
+ "environment": {
+  "sky": [
+   "#90aabd",
+   "#c7d1d0"
+  ],
+  "soil": [
+   "#51443d",
+   "#40332d",
+   "#706154"
+  ],
+  "turf": "#938b64"
+ },
+ "render": {
+  "stemOutline": "ink"
+ },
+ "maskPolicy": "authored masks as delivered; every other pigment / wax mask = the contract default \"auto\"; no authored toothed mask = no teeth (contract)",
+ "attachments": [
+  "woolly-candle-batch7-metadata-closure.zip:source/WOOLLY_CANDLE_CANDLE2_CANONICAL_MANIFEST.json",
+  "woolly-candle-batch7-metadata-closure.zip:source/WOOLLY_CANDLE_CANDLE2_SOURCE_MAP.json",
+  "woolly-candle-batch7-metadata-closure.zip:source/WOOLLY_CANDLE_CANDLE2_VISUAL_EQUIVALENCE_REPORT.json",
+  "woolly-candle-batch7-metadata-closure.zip:source/WOOLLY_CANDLE_PRODUCTION_PALETTE_v1.json",
+  "woolly-candle-batch7-metadata-closure.zip:source/SHA256SUMS.txt",
+  "woolly-candle-batch7-metadata-closure.zip:source/README.md",
+  "woolly-candle-batch7-metadata-closure.zip:source/V4_TO_CANDLE2_CHANGE_REPORT.json",
+  "woolly-candle-batch7-metadata-closure.zip:production/WOOLLY_CANDLE_PRODUCTION_PALETTE_v1.candle2.json"
+ ],
+ "sprites": [
+  {
+   "id": "body.trunk.0",
+   "side": "up",
+   "delivery": "woolly-candle-batch1-base-body.zip",
+   "entry": "sprites/body.trunk.0.png",
+   "sourceSha256": "94556e3a83c57d5c1281b4b08ef97e6a65e4288482bdd712e0d3686d30bfa0a0",
+   "size": [
+    24,
+    34
+   ],
+   "anchor": [
+    11,
+    33
+   ],
+   "points": {
+    "tip": [
+     11,
+     5
+    ]
+   },
+   "rect": [
+    0,
+    9,
+    24,
+    34
+   ],
+   "w": 24,
+   "h": 34,
+   "opaque": 454,
+   "partial": 0,
+   "sig": "6ba42783812f2c6806885788df981598f6930920e575785403216205cee1bb43",
+   "masks": {}
+  },
+  {
+   "id": "body.trunk.1",
+   "side": "up",
+   "delivery": "woolly-candle-batch2-cold-heat.zip",
+   "entry": "sprites/body.trunk.1.png",
+   "sourceSha256": "d5af53920ea7a003de389eee3523b6aad8d8ca5f769b2bd8456b9652105dc742",
+   "size": [
+    24,
+    34
+   ],
+   "anchor": [
+    11,
+    33
+   ],
+   "points": {
+    "tip": [
+     11,
+     6
+    ]
+   },
+   "rect": [
+    25,
+    9,
+    24,
+    34
+   ],
+   "w": 24,
+   "h": 34,
+   "opaque": 461,
+   "partial": 0,
+   "sig": "41fdfb6471987c07df2470d798597d15d7283f8348321c951ca87ecd60be74cd",
+   "masks": {}
+  },
+  {
+   "id": "body.trunk.2",
+   "side": "up",
+   "delivery": "woolly-candle-batch2-cold-heat.zip",
+   "entry": "sprites/body.trunk.2.png",
+   "sourceSha256": "72aff70ad1a808c5153cddbbd3df6b67512d7ec69696d22e522ed1b41d0d0392",
+   "size": [
+    24,
+    34
+   ],
+   "anchor": [
+    11,
+    33
+   ],
+   "points": {
+    "tip": [
+     11,
+     7
+    ]
+   },
+   "rect": [
+    50,
+    9,
+    24,
+    34
+   ],
+   "w": 24,
+   "h": 34,
+   "opaque": 480,
+   "partial": 0,
+   "sig": "d64da69336b8f0ab9b760785eb4f5514e0efbfc6557c3fbc3a4c41e1e983ab4c",
+   "masks": {}
+  },
+  {
+   "id": "body.trunk.3",
+   "side": "up",
+   "delivery": "woolly-candle-batch2-cold-heat.zip",
+   "entry": "sprites/body.trunk.3.png",
+   "sourceSha256": "b6375f03b3d4bc8c495b8dfb879ffdda3f2d030c822b333daf9f5616e70aac8f",
+   "size": [
+    24,
+    34
+   ],
+   "anchor": [
+    11,
+    33
+   ],
+   "points": {
+    "tip": [
+     11,
+     8
+    ]
+   },
+   "rect": [
+    75,
+    9,
+    24,
+    34
+   ],
+   "w": 24,
+   "h": 34,
+   "opaque": 501,
+   "partial": 0,
+   "sig": "9690ded431e65fdb0f63275ae069f7bcc87ed523fe560311b0d2618409d97ca8",
+   "masks": {}
+  },
+  {
+   "id": "leaf.base.low",
+   "side": "right",
+   "delivery": "woolly-candle-batch1-base-body.zip",
+   "entry": "sprites/leaf.base.low.png",
+   "sourceSha256": "bfd070c0cd18b9ba5f62c452a7f92f33fb02e6991b163d71d133f531e2d70e2c",
+   "size": [
+    20,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     18,
+     9
+    ],
+    "margin": [
+     [
+      5,
+      11
+     ],
+     [
+      7,
+      10
+     ],
+     [
+      10,
+      8
+     ]
+    ]
+   },
+   "rect": [
+    100,
+    9,
+    20,
+    20
+   ],
+   "w": 20,
+   "h": 20,
+   "opaque": 131,
+   "partial": 0,
+   "sig": "dd603afe83265d3aef3f33245ce207fd1ddbdc00c8f00adbb14d3d3a8a96a037",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.low.png",
+     "sourceSha256": "6c68042a6f0b52118fe2bf76311a93df6ed478949334e8cf13c67fceb194f243",
+     "rect": [
+      121,
+      9,
+      20,
+      20
+     ],
+     "w": 20,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "897af45f72b2a04a076fe0055607dc1295523c4a7e308f2b055c312145ee317a"
+    }
+   }
+  },
+  {
+   "id": "leaf.base.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch1-base-body.zip",
+   "entry": "sprites/leaf.base.mid.png",
+   "sourceSha256": "57beac2a18644d8ff3041333e125cc6af893f72372273244ef36f9a139108a01",
+   "size": [
+    20,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     18,
+     1
+    ],
+    "margin": [
+     [
+      4,
+      11
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      9,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    44,
+    20,
+    20
+   ],
+   "w": 20,
+   "h": 20,
+   "opaque": 162,
+   "partial": 0,
+   "sig": "f834cc20b2eaf8604586c95334d5079fda08c3b52077a2ecb25dc826aa79b58a",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.mid.png",
+     "sourceSha256": "396ca1417ba6cbd2a4ebb1ef6a2440738f4958f9319b2376bc4131d6671e47fc",
+     "rect": [
+      21,
+      44,
+      20,
+      20
+     ],
+     "w": 20,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "07492dba24a88190273f40c3086ebb21628345f9acaafd704f3c4120a3296161"
+    }
+   }
+  },
+  {
+   "id": "leaf.base.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch1-base-body.zip",
+   "entry": "sprites/leaf.base.high.png",
+   "sourceSha256": "134cf02f8ec4896b2d1814cdf9b0f45789b74981f2c88968b94cf97335c48281",
+   "size": [
+    20,
+    20
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     12,
+     0
+    ],
+    "margin": [
+     [
+      2,
+      11
+     ],
+     [
+      3,
+      7
+     ],
+     [
+      5,
+      4
+     ]
+    ]
+   },
+   "rect": [
+    42,
+    44,
+    20,
+    20
+   ],
+   "w": 20,
+   "h": 20,
+   "opaque": 136,
+   "partial": 0,
+   "sig": "6c213173db963830c25af9fd8e2bc67574ff252eac9691fb72edfa4c1065a9e9",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.high.png",
+     "sourceSha256": "946852af310d55d7c31dd8e93a1c83214d69200559992b2a752dbe7fdd13eedb",
+     "rect": [
+      63,
+      44,
+      20,
+      20
+     ],
+     "w": 20,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "c5481b532cacf8e5e4f0218fca30ce4d1b81d26899fab708985906c5d872fe25"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.low",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.low.png",
+   "sourceSha256": "4078ded3876319fe5da42b6aa96857bb747dca36d11d31dcfdcae76ab8eda1ef",
+   "size": [
+    19,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     17,
+     9
+    ],
+    "margin": [
+     [
+      5,
+      12
+     ],
+     [
+      7,
+      11
+     ],
+     [
+      10,
+      10
+     ]
+    ]
+   },
+   "rect": [
+    84,
+    44,
+    19,
+    20
+   ],
+   "w": 19,
+   "h": 20,
+   "opaque": 124,
+   "partial": 0,
+   "sig": "de6f72e16ff0c5edee5cf9e4a5bdc3fecddf495dc7a679a16fb10237618719f4",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.low.png",
+     "sourceSha256": "3def215d34b17df137db8c743a585b3b258f655875e7cebde3f5e6c6875e5277",
+     "rect": [
+      104,
+      44,
+      19,
+      20
+     ],
+     "w": 19,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "53fc98c9744bfa16abd7bce74068409c61a44d03816ea1981e0184b22c1e66ca"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.mid.png",
+   "sourceSha256": "68a692597dba7db6a090ae7099e6ba54115c628c583ac9b9a88666c0c1728baf",
+   "size": [
+    19,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     15,
+     2
+    ],
+    "margin": [
+     [
+      3,
+      12
+     ],
+     [
+      5,
+      8
+     ],
+     [
+      8,
+      5
+     ]
+    ]
+   },
+   "rect": [
+    124,
+    44,
+    19,
+    20
+   ],
+   "w": 19,
+   "h": 20,
+   "opaque": 131,
+   "partial": 0,
+   "sig": "e0b142dfe4e938daddd4faf7e5217499ceccd5862420384b7028e3186b393c07",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.mid.png",
+     "sourceSha256": "fb002e4aa97460d9396839fbb8a911250afd768236dbb9cff435ff155b957e9a",
+     "rect": [
+      0,
+      65,
+      19,
+      20
+     ],
+     "w": 19,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "f93ca89eef8213f7d2613da5a56b51496ef8a2938dc0f44a1434d1bd077f9375"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.high.png",
+   "sourceSha256": "905e80522e377f23512780064bef0a14680e3e1c95a049cb467309040387200c",
+   "size": [
+    19,
+    20
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     11,
+     0
+    ],
+    "margin": [
+     [
+      1,
+      12
+     ],
+     [
+      3,
+      7
+     ],
+     [
+      5,
+      5
+     ]
+    ]
+   },
+   "rect": [
+    20,
+    65,
+    19,
+    20
+   ],
+   "w": 19,
+   "h": 20,
+   "opaque": 141,
+   "partial": 0,
+   "sig": "db1869c122c5056f8ba168f06150fb19312d982fbea2e6d7d2177aeb235764cc",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.high.png",
+     "sourceSha256": "3e8504e5fa52ec1c603f9b2f7d36e9a30c7e45717dd52d8940917cfb95c7ca4b",
+     "rect": [
+      40,
+      65,
+      19,
+      20
+     ],
+     "w": 19,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "5e3e69be3fa21787d2f579a0068ab5890e61fd98906d1f1e58f3ac7f4488be7c"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.low",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.low.png",
+   "sourceSha256": "97c3fc6e81d41387aa1c545fbb64c09405b4119c887ab63b7e0e19aaee6a2757",
+   "size": [
+    18,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     16,
+     9
+    ],
+    "margin": [
+     [
+      5,
+      13
+     ],
+     [
+      7,
+      12
+     ],
+     [
+      10,
+      10
+     ]
+    ]
+   },
+   "rect": [
+    60,
+    65,
+    18,
+    20
+   ],
+   "w": 18,
+   "h": 20,
+   "opaque": 98,
+   "partial": 0,
+   "sig": "d0b1256d6bdd6f1fc6e1950d9728c61f079f498a125a30d695656ae02e9de6e5",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.low.png",
+     "sourceSha256": "e5d1ab9fc73b24a99ad83be570cf8053fb8bbce11ce4dd834eec8027642f3139",
+     "rect": [
+      79,
+      65,
+      18,
+      20
+     ],
+     "w": 18,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "8623822ef895688bee78fd6b7422b3c23098b2793cc4a35f1b49ea13a962f612"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.mid.png",
+   "sourceSha256": "79b113fc5c6e7fea686475227ace02a88db2b2622737366850454fd8f319c215",
+   "size": [
+    18,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     14,
+     2
+    ],
+    "margin": [
+     [
+      3,
+      12
+     ],
+     [
+      5,
+      8
+     ],
+     [
+      8,
+      5
+     ]
+    ]
+   },
+   "rect": [
+    98,
+    65,
+    18,
+    20
+   ],
+   "w": 18,
+   "h": 20,
+   "opaque": 114,
+   "partial": 0,
+   "sig": "3a1d12cca951dcf9d3d26c7530fd4631752a8d42b2ac3824063fe8546f113e47",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.mid.png",
+     "sourceSha256": "8c0781593120661328e25341b78df5f398054333bdf360775b457e1bd8b19516",
+     "rect": [
+      117,
+      65,
+      18,
+      20
+     ],
+     "w": 18,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "45b29f4aa945ce42511151e177bdf88ba006080c76f338d9af96fcc92fd7d839"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.high.png",
+   "sourceSha256": "9d365d9e35130069f11957374f60fb70bda4591e6fb539f988361979ee19e34c",
+   "size": [
+    18,
+    20
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     11,
+     0
+    ],
+    "margin": [
+     [
+      2,
+      12
+     ],
+     [
+      4,
+      8
+     ],
+     [
+      6,
+      5
+     ]
+    ]
+   },
+   "rect": [
+    136,
+    65,
+    18,
+    20
+   ],
+   "w": 18,
+   "h": 20,
+   "opaque": 111,
+   "partial": 0,
+   "sig": "c568b38e86f914ded5d15a31df7cf8e24eb0ac601cb6d406fe4eeba1380cb5a0",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.high.png",
+     "sourceSha256": "d65d05635f2b1c1a871b5e70e4c9b8def12b9e6d6b5d39f026cfd5c447e94dec",
+     "rect": [
+      0,
+      86,
+      18,
+      20
+     ],
+     "w": 18,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "89c32e28fe47ef734e4a53e385c7f57e3cb2bdae7bdb9be9b6b6fbd0b2e130f8"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.low",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.low.png",
+   "sourceSha256": "a7497d5fad78d386393cde10fbc363e308c67973aef234d12456f695cde3ca4e",
+   "size": [
+    17,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     15,
+     9
+    ],
+    "margin": [
+     [
+      4,
+      13
+     ],
+     [
+      7,
+      12
+     ],
+     [
+      9,
+      10
+     ]
+    ]
+   },
+   "rect": [
+    19,
+    86,
+    17,
+    20
+   ],
+   "w": 17,
+   "h": 20,
+   "opaque": 81,
+   "partial": 0,
+   "sig": "b21affbfe256f4c709e1eae07d97344cf2c212c81726c9f11e047efff9521839",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.low.png",
+     "sourceSha256": "6ee129614ee76f4b77a066f11db8b094995b5411225f3f10ad255d918da67e38",
+     "rect": [
+      37,
+      86,
+      17,
+      20
+     ],
+     "w": 17,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "f0cfea182e3bbbaeb88b090267d9cb0358cb9a4b29603c0d12263b8a6675c0fc"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.mid.png",
+   "sourceSha256": "84e12c6052ef3f0c7d6d7bdb8051828133d31acd3b29d1dfe5e4986d886d44b3",
+   "size": [
+    17,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     13,
+     2
+    ],
+    "margin": [
+     [
+      3,
+      13
+     ],
+     [
+      5,
+      9
+     ],
+     [
+      7,
+      6
+     ]
+    ]
+   },
+   "rect": [
+    55,
+    86,
+    17,
+    20
+   ],
+   "w": 17,
+   "h": 20,
+   "opaque": 93,
+   "partial": 0,
+   "sig": "bc44a15b489e144a8270995fd4601328164852c244a802cfa2433bf0a25d66d2",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.mid.png",
+     "sourceSha256": "f63278ba4f2595507ef3406f30d2ab2d61ed8121b0474728acb105ee154fddc8",
+     "rect": [
+      73,
+      86,
+      17,
+      20
+     ],
+     "w": 17,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "0852719d1582d7842aec4d8b1f606c8946316a0deddeb5228c319d5ea7b62f17"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.high.png",
+   "sourceSha256": "58898473d1849b3b8c11459189573f6e01670f686d54a7147e660514aef3e43f",
+   "size": [
+    17,
+    20
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     11,
+     0
+    ],
+    "margin": [
+     [
+      2,
+      12
+     ],
+     [
+      4,
+      8
+     ],
+     [
+      6,
+      5
+     ]
+    ]
+   },
+   "rect": [
+    91,
+    86,
+    17,
+    20
+   ],
+   "w": 17,
+   "h": 20,
+   "opaque": 96,
+   "partial": 0,
+   "sig": "4c431fe963b646e84256e5c84e12f7ede971b0002a83c054c59f190a8ff19589",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.high.png",
+     "sourceSha256": "351357812f177b32e230cf39a33c3292c9242b5b05f77be076bd5454044a9036",
+     "rect": [
+      109,
+      86,
+      17,
+      20
+     ],
+     "w": 17,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "263c587a48d895984b2638b2345cb59d66538a1da523c4272dd70976cd6f0b04"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.low",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.low.png",
+   "sourceSha256": "3666a8bd218f2a1568ab48a6ad638aed8b89324cf30b4b7efe4330bb952302ca",
+   "size": [
+    21,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     19,
+     10
+    ],
+    "margin": [
+     [
+      5,
+      12
+     ],
+     [
+      9,
+      9
+     ],
+     [
+      13,
+      8
+     ]
+    ]
+   },
+   "rect": [
+    127,
+    86,
+    21,
+    20
+   ],
+   "w": 21,
+   "h": 20,
+   "opaque": 116,
+   "partial": 0,
+   "sig": "1a976bdbace5657c89c525c651d7a3eda87c53f62b745ba1dfde73f3447a8c6c",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.low.png",
+     "sourceSha256": "2260861c2d7fa7d853ba5c9481070bfa9a12fe12f8e0ad2861add46db639da36",
+     "rect": [
+      0,
+      107,
+      21,
+      20
+     ],
+     "w": 21,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "82839767652e15b2a430a259583f40986079d808f4581605c3760a922f80378c"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.mid.png",
+   "sourceSha256": "4d718c8660dc558fabb534160ff2405418b1a4cc15233a7cf62344846e25d1c6",
+   "size": [
+    21,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     18,
+     1
+    ],
+    "margin": [
+     [
+      4,
+      12
+     ],
+     [
+      6,
+      5
+     ],
+     [
+      10,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    22,
+    107,
+    21,
+    20
+   ],
+   "w": 21,
+   "h": 20,
+   "opaque": 156,
+   "partial": 0,
+   "sig": "3155ce600321305064618ae4c496b60f037edd3f9cd41b3ae0b2aecabd674d7b",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.mid.png",
+     "sourceSha256": "c4e16db98b2ffb6d789a25073abc7fac1c235b6a7d665d470051c406527a1cb3",
+     "rect": [
+      44,
+      107,
+      21,
+      20
+     ],
+     "w": 21,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "1a86391fc86988fd7af4efb53030e3d7a2c7de2ea95c8200b395847547f21bd7"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.high.png",
+   "sourceSha256": "9430334b96904235cb243317a7fedc8932fe790cdac20eed7fdacc4285967971",
+   "size": [
+    21,
+    20
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     14,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      13
+     ],
+     [
+      4,
+      5
+     ],
+     [
+      8,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    66,
+    107,
+    21,
+    20
+   ],
+   "w": 21,
+   "h": 20,
+   "opaque": 139,
+   "partial": 0,
+   "sig": "6dd10260d6ae7293a0d1df19816adf542c64b01d0d4931810efb13a817d0a150",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.high.png",
+     "sourceSha256": "c9201547c12e8b509be8ea8509df46bd4d6e9affcf2d4c4e3354365b96a63426",
+     "rect": [
+      88,
+      107,
+      21,
+      20
+     ],
+     "w": 21,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "fc5f3ab59ec367eb3889d664b49ced6f84d5c10ebec227fcdb26b14757cab833"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.low",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.low.png",
+   "sourceSha256": "1bbdf949f335b5a87fb5823ab9ad546f850e62f4acbb53af4150ed667896b77b",
+   "size": [
+    22,
+    21
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     20,
+     10
+    ],
+    "margin": [
+     [
+      4,
+      13
+     ],
+     [
+      8,
+      9
+     ],
+     [
+      14,
+      8
+     ]
+    ]
+   },
+   "rect": [
+    110,
+    107,
+    22,
+    21
+   ],
+   "w": 22,
+   "h": 21,
+   "opaque": 138,
+   "partial": 0,
+   "sig": "94fd3ab109156ee205d1092b2304e16fac65b944a39898e34ebfc58e21798b36",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.low.png",
+     "sourceSha256": "4ac96a3a7e96aeeedf57744e1927092b6ab37846c41432468c4b6c7cbddd7d5c",
+     "rect": [
+      133,
+      107,
+      22,
+      21
+     ],
+     "w": 22,
+     "h": 21,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "25ada38fb237b84d02502fe60e7ef14a724a716b966915b2498cae59d40fb4f4"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.mid.png",
+   "sourceSha256": "c6fa249936376d58b01b321ee2fa390905c3d444cfac09d6af3a79ef0fc7d208",
+   "size": [
+    22,
+    21
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     19,
+     1
+    ],
+    "margin": [
+     [
+      4,
+      13
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      11,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    129,
+    22,
+    21
+   ],
+   "w": 22,
+   "h": 21,
+   "opaque": 169,
+   "partial": 0,
+   "sig": "c1d3c08fd4ec730373bd2096463a7449a0792593d1faeef9da4ffd1d4786a3bf",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.mid.png",
+     "sourceSha256": "d1afd27eb4925a1dd75d0d735215ff144ec1363dcd47a621c5fc0b3b09151cd1",
+     "rect": [
+      23,
+      129,
+      22,
+      21
+     ],
+     "w": 22,
+     "h": 21,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "5d8f90c2656dbf3df0894dbf21ca1d348da6a4199ee7ba92fc338414250485e0"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.high.png",
+   "sourceSha256": "b8ed67cce07d555772c7a6d59f1622e81a9b90c957e96bf9cd2fc4d2974b9ada",
+   "size": [
+    22,
+    21
+   ],
+   "anchor": [
+    0,
+    20
+   ],
+   "points": {
+    "tip": [
+     15,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      14
+     ],
+     [
+      5,
+      6
+     ],
+     [
+      8,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    46,
+    129,
+    22,
+    21
+   ],
+   "w": 22,
+   "h": 21,
+   "opaque": 159,
+   "partial": 0,
+   "sig": "c045bf42a34a74774caa00a006495542460eb97d98205eba1251e8c3c016076b",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.high.png",
+     "sourceSha256": "ea857566fd9fc70b5373cc12af3b075bfa8ac0f71d6a4515b9311fba83499d2b",
+     "rect": [
+      69,
+      129,
+      22,
+      21
+     ],
+     "w": 22,
+     "h": 21,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "fc1542d8e7453552eddbde2b4948885d2137b48ac65cc6ed9d31e5cf831aa13d"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.low",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.low.png",
+   "sourceSha256": "1bbdf949f335b5a87fb5823ab9ad546f850e62f4acbb53af4150ed667896b77b",
+   "size": [
+    22,
+    21
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     20,
+     10
+    ],
+    "margin": [
+     [
+      4,
+      13
+     ],
+     [
+      8,
+      9
+     ],
+     [
+      14,
+      8
+     ]
+    ]
+   },
+   "rect": [
+    92,
+    129,
+    22,
+    21
+   ],
+   "w": 22,
+   "h": 21,
+   "opaque": 138,
+   "partial": 0,
+   "sig": "94fd3ab109156ee205d1092b2304e16fac65b944a39898e34ebfc58e21798b36",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.low.png",
+     "sourceSha256": "4ac96a3a7e96aeeedf57744e1927092b6ab37846c41432468c4b6c7cbddd7d5c",
+     "rect": [
+      115,
+      129,
+      22,
+      21
+     ],
+     "w": 22,
+     "h": 21,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "25ada38fb237b84d02502fe60e7ef14a724a716b966915b2498cae59d40fb4f4"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.mid.png",
+   "sourceSha256": "c6fa249936376d58b01b321ee2fa390905c3d444cfac09d6af3a79ef0fc7d208",
+   "size": [
+    22,
+    21
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     19,
+     1
+    ],
+    "margin": [
+     [
+      4,
+      13
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      11,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    138,
+    129,
+    22,
+    21
+   ],
+   "w": 22,
+   "h": 21,
+   "opaque": 169,
+   "partial": 0,
+   "sig": "c1d3c08fd4ec730373bd2096463a7449a0792593d1faeef9da4ffd1d4786a3bf",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.mid.png",
+     "sourceSha256": "d1afd27eb4925a1dd75d0d735215ff144ec1363dcd47a621c5fc0b3b09151cd1",
+     "rect": [
+      0,
+      151,
+      22,
+      21
+     ],
+     "w": 22,
+     "h": 21,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "5d8f90c2656dbf3df0894dbf21ca1d348da6a4199ee7ba92fc338414250485e0"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.high.png",
+   "sourceSha256": "b8ed67cce07d555772c7a6d59f1622e81a9b90c957e96bf9cd2fc4d2974b9ada",
+   "size": [
+    22,
+    21
+   ],
+   "anchor": [
+    0,
+    20
+   ],
+   "points": {
+    "tip": [
+     15,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      14
+     ],
+     [
+      5,
+      6
+     ],
+     [
+      8,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    23,
+    151,
+    22,
+    21
+   ],
+   "w": 22,
+   "h": 21,
+   "opaque": 159,
+   "partial": 0,
+   "sig": "c045bf42a34a74774caa00a006495542460eb97d98205eba1251e8c3c016076b",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.high.png",
+     "sourceSha256": "ea857566fd9fc70b5373cc12af3b075bfa8ac0f71d6a4515b9311fba83499d2b",
+     "rect": [
+      46,
+      151,
+      22,
+      21
+     ],
+     "w": 22,
+     "h": 21,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "fc1542d8e7453552eddbde2b4948885d2137b48ac65cc6ed9d31e5cf831aa13d"
+    }
+   }
+  },
+  {
+   "id": "leaf.base.heat.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch2-cold-heat.zip",
+   "entry": "sprites/leaf.base.heat.mid.png",
+   "sourceSha256": "fcacebd6afa09902f083a147d1a32ea4ea7d56f876266410294ec009578134bc",
+   "size": [
+    20,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     18,
+     1
+    ],
+    "margin": [
+     [
+      4,
+      11
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      9,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    69,
+    151,
+    20,
+    20
+   ],
+   "w": 20,
+   "h": 20,
+   "opaque": 177,
+   "partial": 0,
+   "sig": "c41937313cdc401f41d6cdd7462400d76b80ca375467ccc01b751395310b4e0c",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.heat.mid.png",
+     "sourceSha256": "43052ba1982e1383c75caa99add5cba73c258ae897a26b8e7ff48445d8ebb6e3",
+     "rect": [
+      90,
+      151,
+      20,
+      20
+     ],
+     "w": 20,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "a1c389d0fb4659caba4de98e5992b611a855e8959b0417f01066fd0f4e808f0f"
+    }
+   }
+  },
+  {
+   "id": "leaf.base.heat.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch2-cold-heat.zip",
+   "entry": "sprites/leaf.base.heat.high.png",
+   "sourceSha256": "821e318a2eca7a4522d5f1f2abe189f4e79378e9cd5ac0ac1c6359db39b02147",
+   "size": [
+    20,
+    20
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     12,
+     0
+    ],
+    "margin": [
+     [
+      1,
+      11
+     ],
+     [
+      3,
+      6
+     ],
+     [
+      5,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    111,
+    151,
+    20,
+    20
+   ],
+   "w": 20,
+   "h": 20,
+   "opaque": 153,
+   "partial": 0,
+   "sig": "076efcb5bf6a7de943d13455c4744a2f30553e6733f9f07ea05bfacd7ed505f3",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.heat.high.png",
+     "sourceSha256": "8c4268df46e4068624a2537862a405a8841ecfd617781a85965cbbf2ee95b415",
+     "rect": [
+      132,
+      151,
+      20,
+      20
+     ],
+     "w": 20,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "aa341711ce984dc94691e2c8618d62b2bfcdc6d358fe4d050f0ecb7e03dc2611"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.heat.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.heat.mid.png",
+   "sourceSha256": "b40225889fd8830521dc62804c2b1a353bc13ac5f3dfe15bdfe7937365811582",
+   "size": [
+    19,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     15,
+     2
+    ],
+    "margin": [
+     [
+      3,
+      12
+     ],
+     [
+      5,
+      7
+     ],
+     [
+      8,
+      4
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    173,
+    19,
+    20
+   ],
+   "w": 19,
+   "h": 20,
+   "opaque": 149,
+   "partial": 0,
+   "sig": "b4dd42218aef94ecda0b98fb97bb09e5e9552534ca2ae85de82084d999b7847d",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.heat.mid.png",
+     "sourceSha256": "9665eb887213cf38bb6ac88112256b4d54ed7a673e92e86b16e5a283b814cc03",
+     "rect": [
+      20,
+      173,
+      19,
+      20
+     ],
+     "w": 19,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "749d01bdfaeb15f88a8ae98885f5860c634950f0b2d7db2d75e35b63a1e28696"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.heat.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.heat.high.png",
+   "sourceSha256": "1be4be09d96e16df43480ccb98e4063a0c03982029209c02b64fbaa83a65c838",
+   "size": [
+    19,
+    20
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     11,
+     0
+    ],
+    "margin": [
+     [
+      1,
+      12
+     ],
+     [
+      3,
+      6
+     ],
+     [
+      5,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    40,
+    173,
+    19,
+    20
+   ],
+   "w": 19,
+   "h": 20,
+   "opaque": 151,
+   "partial": 0,
+   "sig": "4caece5b439c70aa4e128a575b333bfe5ea3913af9b289a3913f0aa2a18e0696",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.heat.high.png",
+     "sourceSha256": "3d5506d7b5a2abd4966e64d90d9998a374a54d82bab96118915366df5fb51091",
+     "rect": [
+      60,
+      173,
+      19,
+      20
+     ],
+     "w": 19,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "305e2eee0b582d0073e89e7d5eceffefbda105c4198b11bcb1bc2b933633e089"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.heat.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.heat.mid.png",
+   "sourceSha256": "4fbc092300f25ea5e2bceacc71e767a539bd04f5385b18d228ee6431d9fcf337",
+   "size": [
+    18,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     14,
+     2
+    ],
+    "margin": [
+     [
+      3,
+      12
+     ],
+     [
+      4,
+      7
+     ],
+     [
+      8,
+      4
+     ]
+    ]
+   },
+   "rect": [
+    80,
+    173,
+    18,
+    20
+   ],
+   "w": 18,
+   "h": 20,
+   "opaque": 129,
+   "partial": 0,
+   "sig": "52a7ad1d5b3b2a4faf02dfa49bc25f0d36506984d2fadf47e4ffd4dc6afa9781",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.heat.mid.png",
+     "sourceSha256": "26084757b1600878f994c84b2bafbdbe9aabea2da66670967742408fc99b698e",
+     "rect": [
+      99,
+      173,
+      18,
+      20
+     ],
+     "w": 18,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "a894aa3024bd47681b1d8f246004d2ab9915f0c10a7f9667e55a41415ebeffb1"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.heat.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.heat.high.png",
+   "sourceSha256": "4951cf55d8ca18c36208afea2ea7e11118ea1f0757bdba2c7243653b4a2b3628",
+   "size": [
+    18,
+    20
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     11,
+     0
+    ],
+    "margin": [
+     [
+      2,
+      12
+     ],
+     [
+      3,
+      7
+     ],
+     [
+      6,
+      4
+     ]
+    ]
+   },
+   "rect": [
+    118,
+    173,
+    18,
+    20
+   ],
+   "w": 18,
+   "h": 20,
+   "opaque": 124,
+   "partial": 0,
+   "sig": "fd781598c8fd0e4ad2b0d7bac982227a960d2d0fbcad7bf270798eb441df2ca3",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.heat.high.png",
+     "sourceSha256": "4021b463acc4e94a192eecc99655e61aa8cc51a10d3a8b02ad1344c8dc40d6c1",
+     "rect": [
+      137,
+      173,
+      18,
+      20
+     ],
+     "w": 18,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "55795012190f2d8ac78b26c47feb0aecf140efbeed941b680a09c8e4ea098e21"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.heat.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.heat.mid.png",
+   "sourceSha256": "83fea84a98d5c51ce1a2aa4f45f2330ce13c7628ebb621ed80f27715c93d9127",
+   "size": [
+    17,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     13,
+     2
+    ],
+    "margin": [
+     [
+      3,
+      13
+     ],
+     [
+      5,
+      8
+     ],
+     [
+      7,
+      5
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    194,
+    17,
+    20
+   ],
+   "w": 17,
+   "h": 20,
+   "opaque": 101,
+   "partial": 0,
+   "sig": "c1a892aec6f463fc1da7f78a01ac6bf567433c1c7f2087d9020e347ce61f90e3",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.heat.mid.png",
+     "sourceSha256": "375ee84ba994a3da5c0ab23e0834f763ab71b7c3948a3742fd44cf2c9719a4af",
+     "rect": [
+      18,
+      194,
+      17,
+      20
+     ],
+     "w": 17,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "9f7a95caec1c3a5f38e479683702d5f6f5e2cea0b326bbeb9d089c04d417e7e6"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.heat.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.heat.high.png",
+   "sourceSha256": "46430c4bd285fe176e1ad65527af21c1007d836389f5ea49acacccb5776a0fbb",
+   "size": [
+    17,
+    20
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     11,
+     0
+    ],
+    "margin": [
+     [
+      2,
+      12
+     ],
+     [
+      4,
+      7
+     ],
+     [
+      6,
+      4
+     ]
+    ]
+   },
+   "rect": [
+    36,
+    194,
+    17,
+    20
+   ],
+   "w": 17,
+   "h": 20,
+   "opaque": 106,
+   "partial": 0,
+   "sig": "f2f381748282be6daad9184547095e70113422dfaa9118949629cffbd82e7711",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.heat.high.png",
+     "sourceSha256": "d6e01a21a18cc60264c6d6753eb586c1e42f94fa6857dfe60464cd1d201e8878",
+     "rect": [
+      54,
+      194,
+      17,
+      20
+     ],
+     "w": 17,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "8c6b6f0eb236e39c48df22a85f237127162b6ecd2c7e1f949a0fdac16a26839e"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.heat.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.heat.mid.png",
+   "sourceSha256": "0a0ac7db15f1d72f484aca7402fa20eaca0cc3319db6f6d5b5e0ef762ccff0f1",
+   "size": [
+    21,
+    20
+   ],
+   "anchor": [
+    0,
+    18
+   ],
+   "points": {
+    "tip": [
+     18,
+     1
+    ],
+    "margin": [
+     [
+      3,
+      12
+     ],
+     [
+      6,
+      4
+     ],
+     [
+      10,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    72,
+    194,
+    21,
+    20
+   ],
+   "w": 21,
+   "h": 20,
+   "opaque": 171,
+   "partial": 0,
+   "sig": "9ca15b629892a7c5c2eae39eed27ff9e72d8d683206f3f3437df4c4816e13e5e",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.heat.mid.png",
+     "sourceSha256": "6f3542c9b5dff0d56172b12a8439cbe36fa569a042cc5006760e317d78190266",
+     "rect": [
+      94,
+      194,
+      21,
+      20
+     ],
+     "w": 21,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "7df62d86d921e5d53ec2571460ca53694b900c51a0d4c4bf27a0a1e54eba17e3"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.heat.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.heat.high.png",
+   "sourceSha256": "2b8d3ce86c23cc45162694f89d4b51d47ae2cc46667ab5ae4925f42afb28dafd",
+   "size": [
+    21,
+    20
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     14,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      13
+     ],
+     [
+      4,
+      4
+     ],
+     [
+      8,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    116,
+    194,
+    21,
+    20
+   ],
+   "w": 21,
+   "h": 20,
+   "opaque": 151,
+   "partial": 0,
+   "sig": "6665cbf4fbdd4c571218248664eca04c2081c33fc408de058e1b55d988eb827a",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.heat.high.png",
+     "sourceSha256": "91dc1de5ec172c8772691ce844eab54c30eda353131b9a21540a0f60c4b667cf",
+     "rect": [
+      138,
+      194,
+      21,
+      20
+     ],
+     "w": 21,
+     "h": 20,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "3c1cf2c6bf8a107446e0b6cf16b26a07b57d87dc78f72e5fb66f4e7bdf1da761"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.heat.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.heat.mid.png",
+   "sourceSha256": "dacdae264afca9998f5ffee8d6a4e4ec5c47a0b86f8ae25fb15189fd89c595bd",
+   "size": [
+    22,
+    21
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     19,
+     1
+    ],
+    "margin": [
+     [
+      3,
+      13
+     ],
+     [
+      7,
+      5
+     ],
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    215,
+    22,
+    21
+   ],
+   "w": 22,
+   "h": 21,
+   "opaque": 188,
+   "partial": 0,
+   "sig": "c3ad3bba9a1c042ec32fff66cfd6b91982d9b982283dfe07335cf99d02cfbbd4",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.heat.mid.png",
+     "sourceSha256": "ecfb28287c954f580962ac9835afb20364fdb8ee71dad917b6ab25718e42641f",
+     "rect": [
+      23,
+      215,
+      22,
+      21
+     ],
+     "w": 22,
+     "h": 21,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "fcfd9bd4ce398766abb1dd67ff2546f48c63041c6ce0614615b405f4bd3e5de1"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.heat.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.heat.high.png",
+   "sourceSha256": "721863980ea271ac3baa22efbeaf0510d24bd8fccdbecdaa36d531972b90ed09",
+   "size": [
+    22,
+    21
+   ],
+   "anchor": [
+    0,
+    20
+   ],
+   "points": {
+    "tip": [
+     15,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      14
+     ],
+     [
+      4,
+      5
+     ],
+     [
+      7,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    46,
+    215,
+    22,
+    21
+   ],
+   "w": 22,
+   "h": 21,
+   "opaque": 176,
+   "partial": 0,
+   "sig": "7643889eabee86f8c5dbe1f78b2939cee963312d9885755ee771bf17dd9eeaee",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.heat.high.png",
+     "sourceSha256": "aa69225dff845f3f469f4663888e5b3cdd8d6fe9cf52b007539af6956d24ac0b",
+     "rect": [
+      69,
+      215,
+      22,
+      21
+     ],
+     "w": 22,
+     "h": 21,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "d5aa8601a8d6f50c8c77b99f3354308893f58d29a3041afafc8354daef464d3d"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.heat.mid",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.heat.mid.png",
+   "sourceSha256": "dacdae264afca9998f5ffee8d6a4e4ec5c47a0b86f8ae25fb15189fd89c595bd",
+   "size": [
+    22,
+    21
+   ],
+   "anchor": [
+    0,
+    19
+   ],
+   "points": {
+    "tip": [
+     19,
+     1
+    ],
+    "margin": [
+     [
+      3,
+      13
+     ],
+     [
+      7,
+      5
+     ],
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    92,
+    215,
+    22,
+    21
+   ],
+   "w": 22,
+   "h": 21,
+   "opaque": 188,
+   "partial": 0,
+   "sig": "c3ad3bba9a1c042ec32fff66cfd6b91982d9b982283dfe07335cf99d02cfbbd4",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.heat.mid.png",
+     "sourceSha256": "ecfb28287c954f580962ac9835afb20364fdb8ee71dad917b6ab25718e42641f",
+     "rect": [
+      115,
+      215,
+      22,
+      21
+     ],
+     "w": 22,
+     "h": 21,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "fcfd9bd4ce398766abb1dd67ff2546f48c63041c6ce0614615b405f4bd3e5de1"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.heat.high",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.heat.high.png",
+   "sourceSha256": "721863980ea271ac3baa22efbeaf0510d24bd8fccdbecdaa36d531972b90ed09",
+   "size": [
+    22,
+    21
+   ],
+   "anchor": [
+    0,
+    20
+   ],
+   "points": {
+    "tip": [
+     15,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      14
+     ],
+     [
+      4,
+      5
+     ],
+     [
+      7,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    138,
+    215,
+    22,
+    21
+   ],
+   "w": 22,
+   "h": 21,
+   "opaque": 176,
+   "partial": 0,
+   "sig": "7643889eabee86f8c5dbe1f78b2939cee963312d9885755ee771bf17dd9eeaee",
+   "masks": {
+    "toothed": {
+     "delivery": "woolly-candle-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.heat.high.png",
+     "sourceSha256": "aa69225dff845f3f469f4663888e5b3cdd8d6fe9cf52b007539af6956d24ac0b",
+     "rect": [
+      0,
+      237,
+      22,
+      21
+     ],
+     "w": 22,
+     "h": 21,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "d5aa8601a8d6f50c8c77b99f3354308893f58d29a3041afafc8354daef464d3d"
+    }
+   }
+  },
+  {
+   "id": "root.storage.2",
+   "side": "down",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/root.storage.2.png",
+   "sourceSha256": "5bdd262eff31dbc70fe9604514ec3d9ccb9af72c77028e7500ca048ff40c8d24",
+   "size": [
+    16,
+    24
+   ],
+   "anchor": [
+    8,
+    0
+   ],
+   "rect": [
+    23,
+    237,
+    16,
+    24
+   ],
+   "w": 16,
+   "h": 24,
+   "opaque": 182,
+   "partial": 0,
+   "sig": "3262f3a4e1e1e152d47aaabd74d2fdd5d7eff7412374ef6e1aca8aae452baf4d",
+   "masks": {}
+  },
+  {
+   "id": "root.storage.3",
+   "side": "down",
+   "delivery": "woolly-candle-batch3-drought.zip",
+   "entry": "sprites/root.storage.3.png",
+   "sourceSha256": "66e17fd017808d7c3c437e892490706bdeb2e951bb8847927eff191a6041fbe8",
+   "size": [
+    18,
+    28
+   ],
+   "anchor": [
+    9,
+    0
+   ],
+   "rect": [
+    40,
+    237,
+    18,
+    28
+   ],
+   "w": 18,
+   "h": 28,
+   "opaque": 228,
+   "partial": 0,
+   "sig": "2d558edc25fe85ecd6cf8f67d3c91afca4281fd96813a694b791b390d43648c3",
+   "masks": {}
+  },
+  {
+   "id": "root.aerial.1",
+   "side": "up",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/root.aerial.1.png",
+   "sourceSha256": "b0121fa53a61e80b3986890aced10679ce9c7006e4f5c6708bcaa941973c7d9f",
+   "size": [
+    7,
+    10
+   ],
+   "anchor": [
+    3,
+    9
+   ],
+   "rect": [
+    59,
+    237,
+    7,
+    10
+   ],
+   "w": 7,
+   "h": 10,
+   "opaque": 21,
+   "partial": 0,
+   "sig": "9a83708b4dd72eb26074ceaf27ab8b66d8fe98960cd70ff3869997f4531a5f37",
+   "masks": {}
+  },
+  {
+   "id": "root.aerial.2",
+   "side": "up",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/root.aerial.2.png",
+   "sourceSha256": "3d083186b15bbee5abb737137b093eff7257c46697a13329218b235f50f261a2",
+   "size": [
+    9,
+    14
+   ],
+   "anchor": [
+    4,
+    13
+   ],
+   "rect": [
+    67,
+    237,
+    9,
+    14
+   ],
+   "w": 9,
+   "h": 14,
+   "opaque": 33,
+   "partial": 0,
+   "sig": "5369055e7d5fae2cd89960213073a76fc6ce58bd5431e787767ee39ee1a4fa29",
+   "masks": {}
+  },
+  {
+   "id": "root.aerial.3",
+   "side": "up",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/root.aerial.3.png",
+   "sourceSha256": "37e15ff7c31bd70dd1efb87b8f2a5099460699264bf8760b612fea50726cf2d3",
+   "size": [
+    11,
+    18
+   ],
+   "anchor": [
+    5,
+    17
+   ],
+   "rect": [
+    77,
+    237,
+    11,
+    18
+   ],
+   "w": 11,
+   "h": 18,
+   "opaque": 53,
+   "partial": 0,
+   "sig": "001b331d9352c8f71f62bb82e37f8a6e7d036a3746dfeed362568f5e49df6321",
+   "masks": {}
+  },
+  {
+   "id": "root.stilt",
+   "side": "right",
+   "delivery": "woolly-candle-batch4-flood.zip",
+   "entry": "sprites/root.stilt.png",
+   "sourceSha256": "aeb7a5127a6930d6acf5d10ce9c096709a3036f967a307c9116427d22c86153d",
+   "size": [
+    14,
+    16
+   ],
+   "anchor": [
+    0,
+    0
+   ],
+   "rect": [
+    89,
+    237,
+    14,
+    16
+   ],
+   "w": 14,
+   "h": 16,
+   "opaque": 101,
+   "partial": 0,
+   "sig": "5579782988d4f22dac8d6ae9a876248cc1c75d95ece59ef71dddc2a4801e74a5",
+   "masks": {}
+  },
+  {
+   "id": "frost.hair.1",
+   "side": "up",
+   "delivery": "woolly-candle-batch2-cold-heat.zip",
+   "entry": "sprites/frost.hair.1.png",
+   "sourceSha256": "5f31df1db889f9f7703fc2e2b0bac819dbe70e5446d2c6a6c2cfc6f15df0531b",
+   "size": [
+    5,
+    6
+   ],
+   "anchor": [
+    2,
+    5
+   ],
+   "rect": [
+    104,
+    237,
+    5,
+    6
+   ],
+   "w": 5,
+   "h": 6,
+   "opaque": 20,
+   "partial": 0,
+   "sig": "690a0e40d312b114751f63b2a9eeccbb962f0ed8bb498438835e28f5a52ea0ec",
+   "masks": {}
+  },
+  {
+   "id": "frost.hair.2",
+   "side": "up",
+   "delivery": "woolly-candle-batch2-cold-heat.zip",
+   "entry": "sprites/frost.hair.2.png",
+   "sourceSha256": "f1bab83bdd85f48a7ba11ed36cff3bf1153d0bd2d0ab35fad03f22ea647b8581",
+   "size": [
+    7,
+    8
+   ],
+   "anchor": [
+    3,
+    7
+   ],
+   "rect": [
+    110,
+    237,
+    7,
+    8
+   ],
+   "w": 7,
+   "h": 8,
+   "opaque": 26,
+   "partial": 0,
+   "sig": "d153d2bfc54a96faaa35d6c08ef8a435cd5d1e39bdab3b56f85daa7bfcea5bac",
+   "masks": {}
+  },
+  {
+   "id": "frost.hair.3",
+   "side": "up",
+   "delivery": "woolly-candle-batch2-cold-heat.zip",
+   "entry": "sprites/frost.hair.3.png",
+   "sourceSha256": "7ad9dc921e81d192461470b809f5b31960e872187321019891188d7b59b4b047",
+   "size": [
+    9,
+    10
+   ],
+   "anchor": [
+    4,
+    9
+   ],
+   "rect": [
+    118,
+    237,
+    9,
+    10
+   ],
+   "w": 9,
+   "h": 10,
+   "opaque": 47,
+   "partial": 0,
+   "sig": "7f29d664dba95c603810b5565e954de7cc20ce7b7914b0486dad081d135e3608",
+   "masks": {}
+  },
+  {
+   "id": "frost.collar.2",
+   "side": "up",
+   "delivery": "woolly-candle-batch2-cold-heat.zip",
+   "entry": "sprites/frost.collar.2.png",
+   "sourceSha256": "657ef1888a7faabc2f5ff1f9975e5e3dd0d55790777b95806e36b684f54aa4c1",
+   "size": [
+    25,
+    9
+   ],
+   "anchor": [
+    12,
+    1
+   ],
+   "rect": [
+    128,
+    237,
+    25,
+    9
+   ],
+   "w": 25,
+   "h": 9,
+   "opaque": 64,
+   "partial": 0,
+   "sig": "31fc829e34c7962e290a58721b70c1a1b73d18b3f3ed8fd280016e4b31f8eb03",
+   "masks": {}
+  },
+  {
+   "id": "frost.collar.3",
+   "side": "up",
+   "delivery": "woolly-candle-batch2-cold-heat.zip",
+   "entry": "sprites/frost.collar.3.png",
+   "sourceSha256": "13079aa06378fb56695dd6eb1208890d06177b4a76c0fd60f91549a02dbc5a8f",
+   "size": [
+    29,
+    11
+   ],
+   "anchor": [
+    14,
+    2
+   ],
+   "rect": [
+    0,
+    266,
+    29,
+    11
+   ],
+   "w": 29,
+   "h": 11,
+   "opaque": 86,
+   "partial": 0,
+   "sig": "8246d0bf2cd3f211fe57c0eaff5f070256045e0b51b3ef571fd15e4c55716cfa",
+   "masks": {}
+  },
+  {
+   "id": "salt.crystal",
+   "side": "up",
+   "delivery": "woolly-candle-batch5-salt-radiation.zip",
+   "entry": "sprites/salt.crystal.png",
+   "sourceSha256": "5cefc51c8679c50cd5c020be727e4877a83192cb039dc9c83e761c6287e49439",
+   "size": [
+    9,
+    9
+   ],
+   "anchor": [
+    4,
+    8
+   ],
+   "rect": [
+    30,
+    266,
+    9,
+    9
+   ],
+   "w": 9,
+   "h": 9,
+   "opaque": 46,
+   "partial": 0,
+   "sig": "e2f7752cc2c23fc91a6ada07d839d55dd52adac45e931a7153538e91d11c231b",
+   "masks": {}
+  },
+  {
+   "id": "salt.gland",
+   "side": "up",
+   "delivery": "woolly-candle-batch5-salt-radiation.zip",
+   "entry": "sprites/salt.gland.png",
+   "sourceSha256": "6938647b129181b982d99e9b95b963557252ff8e09e707afb3a35a1cce7ce397",
+   "size": [
+    5,
+    5
+   ],
+   "anchor": [
+    2,
+    4
+   ],
+   "rect": [
+    40,
+    266,
+    5,
+    5
+   ],
+   "w": 5,
+   "h": 5,
+   "opaque": 15,
+   "partial": 0,
+   "sig": "0eefb1fbb8173366e5113f860df5c77bd88eb26fba19d4b65161954fc8cb7391",
+   "masks": {}
+  },
+  {
+   "id": "bud",
+   "side": "up",
+   "delivery": "woolly-candle-batch1-base-body.zip",
+   "entry": "sprites/bud.png",
+   "sourceSha256": "36e44db789d2385120a70675afe0c7040c87eb3285c340c235a82be5d303e736",
+   "size": [
+    12,
+    14
+   ],
+   "anchor": [
+    5,
+    13
+   ],
+   "rect": [
+    46,
+    266,
+    12,
+    14
+   ],
+   "w": 12,
+   "h": 14,
+   "opaque": 86,
+   "partial": 0,
+   "sig": "9aec902de435a766ebd3cc8c34f2eb2485eeb1ac852dbad9b7d52e5c9a56515a",
+   "masks": {}
+  },
+  {
+   "id": "flower",
+   "side": "up",
+   "delivery": "woolly-candle-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/flower.png",
+   "sourceSha256": "3035011a0a9f3fa8eb5c3b3d8c17272351c686205a995238dc52beb58771d7a0",
+   "size": [
+    20,
+    22
+   ],
+   "anchor": [
+    9,
+    21
+   ],
+   "rect": [
+    59,
+    266,
+    20,
+    22
+   ],
+   "w": 20,
+   "h": 22,
+   "opaque": 210,
+   "partial": 0,
+   "sig": "8157c9dc9d3ff95eb482381e20d51b5ac049231c122d10d09447366d023f70e7",
+   "masks": {}
+  },
+  {
+   "id": "seedHead.small",
+   "side": "up",
+   "delivery": "woolly-candle-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/seedHead.small.png",
+   "sourceSha256": "0968a817b6ed3b92b6e890549ed11b9665fd0b58a1ea7f1ac959740a5177dd64",
+   "size": [
+    16,
+    18
+   ],
+   "anchor": [
+    8,
+    17
+   ],
+   "rect": [
+    80,
+    266,
+    16,
+    18
+   ],
+   "w": 16,
+   "h": 18,
+   "opaque": 132,
+   "partial": 0,
+   "sig": "2dd9a07eecf2910541d1632cc2d406e250a0d92abb4d12651060d144888bc163",
+   "masks": {}
+  },
+  {
+   "id": "seedHead.large",
+   "side": "up",
+   "delivery": "woolly-candle-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/seedHead.large.png",
+   "sourceSha256": "ccf549e248d65772969fb622b59de96022f8e288e2f6d53e37fdcedb96d859cd",
+   "size": [
+    24,
+    22
+   ],
+   "anchor": [
+    12,
+    21
+   ],
+   "rect": [
+    97,
+    266,
+    24,
+    22
+   ],
+   "w": 24,
+   "h": 22,
+   "opaque": 286,
+   "partial": 0,
+   "sig": "b4c2613e0b2ccf3a66dd671e3ae4fe8cb4f00a0c07fe0a8d28a89e7262add2ee",
+   "masks": {}
+  },
+  {
+   "id": "seed.drift",
+   "side": "up",
+   "delivery": "woolly-candle-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/seed.drift.png",
+   "sourceSha256": "c7b7e32ca7ed155b2bab6ae06b40940642298542859d1881e4ee7c2fd2d5cb94",
+   "size": [
+    10,
+    10
+   ],
+   "anchor": [
+    2,
+    8
+   ],
+   "rect": [
+    122,
+    266,
+    10,
+    10
+   ],
+   "w": 10,
+   "h": 10,
+   "opaque": 36,
+   "partial": 0,
+   "sig": "5f97bf0a37b401065806fffe078b353ba730f34503aaa5eb0e7c9fb059d0d998",
+   "masks": {}
+  },
+  {
+   "id": "pod",
+   "side": "down",
+   "delivery": "woolly-candle-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/pod.png",
+   "sourceSha256": "46043fda4297a6609efabd9ed50ca01274a6a972155afa94d3f4090fedf6d94e",
+   "size": [
+    14,
+    17
+   ],
+   "anchor": [
+    7,
+    0
+   ],
+   "rect": [
+    133,
+    266,
+    14,
+    17
+   ],
+   "w": 14,
+   "h": 17,
+   "opaque": 105,
+   "partial": 0,
+   "sig": "12e91588cdce0fe7a483fbe83088dd651df3b0b3ea1c8f17ada2f108a448a95a",
+   "masks": {}
+  }
+ ]
+}

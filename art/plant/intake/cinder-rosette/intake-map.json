@@ -1,0 +1,3305 @@
+{
+ "format": "bloom-plant-art-intake@1",
+ "milestone": "BLOOM-035C0 intake",
+ "tool": "tools/intake-plant-art.mjs",
+ "pack": "cinder-rosette",
+ "species": "cinder_rosette",
+ "bodyPlan": "rosette@1",
+ "brief": {
+  "path": "docs/species-art-briefs/CINDER_ROSETTE_ART_BRIEF_v1.json",
+  "sha256": "8934c50f75baf9ee8d67ca21a55b191a1de9680967c847e63cd7fc54a4783fe0"
+ },
+ "acceptance": {
+  "path": "art/plant/intake/cinder-rosette/PMO_FINAL_ACCEPTANCE.json",
+  "sha256": "77e296c1888b7b10b4575ee776da15d7bb9024b59c41b63467c1ed628aff3ee2",
+  "status": "FINAL PMO-APPROVED ART INTAKE",
+  "deliveries": [
+   {
+    "file": "cinder-rosette-batch1-base-body.zip",
+    "batch": 1,
+    "bytes": 4568,
+    "sha256": "6f2cefe52c9de8811423ccfe9fe1f824bfbe2dedf830e054e7a1096a9d005a57",
+    "match": true
+   },
+   {
+    "file": "cinder-rosette-batch2-cold-heat.zip",
+    "batch": 2,
+    "bytes": 4483,
+    "sha256": "ad7dac754ba2144246650b6863659e1ea4a7b7ca3e1497c8b6323457354a633f",
+    "match": true
+   },
+   {
+    "file": "cinder-rosette-batch3-drought.zip",
+    "batch": 3,
+    "bytes": 15873,
+    "sha256": "0b18c8ffb800c0148aaa0981d0737ef5e378267d688cdc835d13f2a1fbc604e8",
+    "match": true
+   },
+   {
+    "file": "cinder-rosette-batch4-flood.zip",
+    "batch": 4,
+    "bytes": 19923,
+    "sha256": "d34d91ab8436e520fbbca658ff1090e84b2392ed6519c9bfa2f0d4f0645701e8",
+    "match": true
+   },
+   {
+    "file": "cinder-rosette-batch5-salt-radiation.zip",
+    "batch": 5,
+    "bytes": 16435,
+    "sha256": "d807693683048189fb8a6bb9e23c47f8d9119ae27b824d8132ce356d06c76058",
+    "match": true
+   },
+   {
+    "file": "cinder-rosette-batch6-reproduction-dispersal.zip",
+    "batch": 6,
+    "bytes": 2948,
+    "sha256": "de7d60c36a52a41da6475dd29ab2decc63cb685a77ce150a995a189dd27a046b",
+    "match": true
+   },
+   {
+    "file": "cinder-rosette-batch7-metadata-closure.zip",
+    "batch": 7,
+    "bytes": 393772,
+    "sha256": "63fd8b7aa0bf77055c6c10e5aa04eb650ef66f1623449897d3f3f96a1418fc57",
+    "match": true
+   }
+  ]
+ },
+ "atlas": {
+  "path": "art/plant/packs/cinder-rosette/atlas.png",
+  "w": 160,
+  "h": 260,
+  "gutter": 1,
+  "swatch": [
+   0,
+   0,
+   36,
+   8
+  ]
+ },
+ "palette": {
+  "materials": 18,
+  "colours": 69,
+  "declaredBy": {
+   "ink": "cinder-rosette-batch7-metadata-closure.zip",
+   "leaf": "cinder-rosette-batch7-metadata-closure.zip",
+   "stem": "cinder-rosette-batch7-metadata-closure.zip",
+   "root": "cinder-rosette-batch7-metadata-closure.zip",
+   "core": "cinder-rosette-batch7-metadata-closure.zip",
+   "petal": "cinder-rosette-batch7-metadata-closure.zip",
+   "center": "cinder-rosette-batch7-metadata-closure.zip",
+   "pappus": "cinder-rosette-batch7-metadata-closure.zip",
+   "seed": "cinder-rosette-batch7-metadata-closure.zip",
+   "frost": "cinder-rosette-batch7-metadata-closure.zip",
+   "tuber": "cinder-rosette-batch7-metadata-closure.zip",
+   "salt": "cinder-rosette-batch7-metadata-closure.zip",
+   "pod": "cinder-rosette-batch7-metadata-closure.zip",
+   "pigLeaf": "cinder-rosette-batch7-metadata-closure.zip",
+   "pigStem": "cinder-rosette-batch7-metadata-closure.zip",
+   "pigCore": "cinder-rosette-batch7-metadata-closure.zip",
+   "waxLeaf": "cinder-rosette-batch7-metadata-closure.zip",
+   "waxCore": "cinder-rosette-batch7-metadata-closure.zip"
+  }
+ },
+ "environment": {
+  "sky": [
+   "#73b3dc",
+   "#aed5e5"
+  ],
+  "soil": [
+   "#85513e",
+   "#593d35",
+   "#c99165"
+  ],
+  "turf": "#ae7151"
+ },
+ "render": {
+  "stemOutline": "ink"
+ },
+ "maskPolicy": "authored masks as delivered; every other pigment / wax mask = the contract default \"auto\"; no authored toothed mask = no teeth (contract)",
+ "attachments": [
+  "cinder-rosette-batch7-metadata-closure.zip:source/CINDER_ROSETTE_CANONICAL_MANIFEST.json",
+  "cinder-rosette-batch7-metadata-closure.zip:source/CINDER_ROSETTE_SOURCE_MAP.json",
+  "cinder-rosette-batch7-metadata-closure.zip:source/CINDER_ROSETTE_PRODUCTION_PALETTE_v1.json",
+  "cinder-rosette-batch7-metadata-closure.zip:source/SOURCE_AND_CANONICAL_SHA256SUMS.txt",
+  "cinder-rosette-batch7-metadata-closure.zip:source/V3_1_README.md",
+  "cinder-rosette-batch7-metadata-closure.zip:source/README.md",
+  "cinder-rosette-batch7-metadata-closure.zip:source/original-manifests/BATCH3_candidate_manifest.json"
+ ],
+ "sprites": [
+  {
+   "id": "leaf.base.flat",
+   "side": "right",
+   "delivery": "cinder-rosette-batch1-base-body.zip",
+   "entry": "sprites/leaf.base.flat.png",
+   "sourceSha256": "0d71dfb2e576aaa01b8af7a9b2798424eef146043d501b4392d5dc7b8e48a445",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    15
+   ],
+   "points": {
+    "tip": [
+     19,
+     13
+    ],
+    "margin": [
+     [
+      5,
+      12
+     ],
+     [
+      9,
+      12
+     ],
+     [
+      14,
+      12
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    9,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 140,
+   "partial": 0,
+   "sig": "5af11b014064713f378ac718c679bbbed6d053b90f8581d4b4323ccf6e38ddf9",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.flat.png",
+     "sourceSha256": "20ff0c18a0c324f1bf9d3a37f6cff087256f1b4caa9b085e33766bf923c8271a",
+     "rect": [
+      21,
+      9,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "0cebd295f9cfa88b508aea5f01dd42295e39717521b38da8e8b0a457f903bc28"
+    }
+   }
+  },
+  {
+   "id": "leaf.base.low",
+   "side": "right",
+   "delivery": "cinder-rosette-batch1-base-body.zip",
+   "entry": "sprites/leaf.base.low.png",
+   "sourceSha256": "7d0c7b0199c78f9f88ada7ce9f8a795f399fdb16b556cd10353e94c930c86f82",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    15
+   ],
+   "points": {
+    "tip": [
+     19,
+     5
+    ],
+    "margin": [
+     [
+      5,
+      12
+     ],
+     [
+      9,
+      12
+     ],
+     [
+      14,
+      10
+     ]
+    ]
+   },
+   "rect": [
+    42,
+    9,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 154,
+   "partial": 0,
+   "sig": "996bb82afd45f101c45bed31ee41ef6d7717cd5d1ced9d82cffeabfba4e21f1f",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.low.png",
+     "sourceSha256": "84b0d1f3617c6cc337e3003bda0d35b3e6af041a0f1bef8afa3e6eb5fd1c93aa",
+     "rect": [
+      63,
+      9,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "ea8808b712a1376bea2da435b9f603b5ddad6284efb82fc9827f737e1aac5c76"
+    }
+   }
+  },
+  {
+   "id": "leaf.base.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch1-base-body.zip",
+   "entry": "sprites/leaf.base.mid.png",
+   "sourceSha256": "df9335b31a8f6a69bdbd73af15803c1d78d79bcbebb8dc9ad7fe5033f62b2cbf",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     18,
+     3
+    ],
+    "margin": [
+     [
+      5,
+      14
+     ],
+     [
+      9,
+      12
+     ],
+     [
+      13,
+      9
+     ]
+    ]
+   },
+   "rect": [
+    84,
+    9,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 155,
+   "partial": 0,
+   "sig": "e01aca07db25c0f40e3bfc5300b991faaec34177fd883c0c9e0cda670fed298a",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.mid.png",
+     "sourceSha256": "30a4050bf254bb1d008bca91819c196d4ba4801e3fe13b0a004de26e7ffb2b4d",
+     "rect": [
+      105,
+      9,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "ed2ef236776c885d8b17c06bda3bef7ca0ddde6d4a8542d3020798524ee44864"
+    }
+   }
+  },
+  {
+   "id": "leaf.base.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch1-base-body.zip",
+   "entry": "sprites/leaf.base.high.png",
+   "sourceSha256": "06a31badafc0f5d2a8c98b95eb30f166dbf3daa5b0d8d1794bb04c78f2bb6aba",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     17,
+     1
+    ],
+    "margin": [
+     [
+      4,
+      14
+     ],
+     [
+      8,
+      12
+     ],
+     [
+      12,
+      8
+     ]
+    ]
+   },
+   "rect": [
+    126,
+    9,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 147,
+   "partial": 0,
+   "sig": "b0211ffe737996546f4462c71cc95b454408ee750937a9da5cec47f14ed16f1c",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.high.png",
+     "sourceSha256": "e2476d76f50849ed5641591a1d90a61764f9d4752b1ecac2c784ead1c957a561",
+     "rect": [
+      0,
+      28,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "27fae2d49a233133fc0eb84c323c912dc14765a6b20b7f48b4444f6734fa8cbf"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.flat",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.flat.png",
+   "sourceSha256": "d2573beec0970514987fdd4c443f54ff9af1a31ae86350bfde219133bcf26c62",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    14
+   ],
+   "points": {
+    "tip": [
+     19,
+     13
+    ],
+    "margin": [
+     [
+      5,
+      11
+     ],
+     [
+      9,
+      10
+     ],
+     [
+      13,
+      10
+     ]
+    ]
+   },
+   "rect": [
+    21,
+    28,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 92,
+   "partial": 0,
+   "sig": "bf2ac7f61da0bfbe168374430fa06539c6b066ad4100f17f588b83f2e33b025d",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.flat.png",
+     "sourceSha256": "f609d7c3931f78cd8c1a4cd31dc6be8c6c66e63756e0f73bc34da596ecae5645",
+     "rect": [
+      42,
+      28,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "d6ea07bff93105213a782be9b2bd9c796f2c0d78d84ea95ee8ff36a5ec588afc"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.low",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.low.png",
+   "sourceSha256": "06cb7deb38cf5fb844d581be9776938a22946b4197fcf4f4e11c04dd6827d878",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    14
+   ],
+   "points": {
+    "tip": [
+     19,
+     10
+    ],
+    "margin": [
+     [
+      5,
+      10
+     ],
+     [
+      9,
+      8
+     ],
+     [
+      13,
+      8
+     ]
+    ]
+   },
+   "rect": [
+    63,
+    28,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 94,
+   "partial": 0,
+   "sig": "d8a4b76d5d4d109391527a43d4d3dcb516b6f49931fff7321932be4020aac51e",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.low.png",
+     "sourceSha256": "0fa0cc95de7c51cf3b0dbfc7bcea40d36800911bbcd562e0246687f346187f9e",
+     "rect": [
+      84,
+      28,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "4b5c25c77ffdb9b6a7fe275f4b7f99b97a1e3cfe3f20e0d6487accee82742e15"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.mid.png",
+   "sourceSha256": "1f17a1cbf7711d3c5a67731eb7078ad441479b27f93ef9f231f7332002e8e3ae",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     17,
+     5
+    ],
+    "margin": [
+     [
+      4,
+      10
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      10,
+      6
+     ]
+    ]
+   },
+   "rect": [
+    105,
+    28,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 96,
+   "partial": 0,
+   "sig": "4468a08dc9c8650394824117cdc820867e9233546d046c57824f703f94c1f443",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.mid.png",
+     "sourceSha256": "8f85c4484e042237752cdcdc1b4cb5676b21a4830b1b184d0511f366b76b2af3",
+     "rect": [
+      126,
+      28,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "d1c372dac0f85f368a6482482fc91d661c021a7b1ee13459dd49fa176515628e"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.high.png",
+   "sourceSha256": "75bc3bfdc041b8bb109692d2af75f8d07d3c9b29040fdd2d7880bf6698ffb67f",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     12,
+     1
+    ],
+    "margin": [
+     [
+      2,
+      9
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      7,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    47,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 88,
+   "partial": 0,
+   "sig": "15a794f7e4a321aec3d98de95de8473cf5cfc98516f24eb8eec8e01688b960c7",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.high.png",
+     "sourceSha256": "fe84a7aa1e631672dca703624550afdad5fd73b29039312bffcb1e57225931b5",
+     "rect": [
+      21,
+      47,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "fa73673c816486ac890250b5d632a8fb844528e85f3e248987f7bed41693d777"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.flat",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.flat.png",
+   "sourceSha256": "b475b895a8eb0b992d13b8f5c911ef28a68213545dbc2dd7e0afd4e26b10f267",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    14
+   ],
+   "points": {
+    "tip": [
+     19,
+     12
+    ],
+    "margin": [
+     [
+      6,
+      9
+     ],
+     [
+      9,
+      8
+     ],
+     [
+      13,
+      9
+     ]
+    ]
+   },
+   "rect": [
+    42,
+    47,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 118,
+   "partial": 0,
+   "sig": "358d3c587740940a68f258e7c9bb3b478ea8894eaed2777c04aec62b3ab98fd1",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.flat.png",
+     "sourceSha256": "f00d3cb5547a7adaa0564effb04c99d43b1ce1f4a68d3fe4c268136493b1c617",
+     "rect": [
+      63,
+      47,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "ba1e63431da1ca9348a4c09603fc8ec7c46f887ea3e56704bc7e561907f4fb0e"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.low",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.low.png",
+   "sourceSha256": "76b4dde9e8f93d61e1f81c2b82edfe744b3ef4c2886306f3c58f7fade2e9bf99",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    14
+   ],
+   "points": {
+    "tip": [
+     18,
+     9
+    ],
+    "margin": [
+     [
+      4,
+      9
+     ],
+     [
+      8,
+      7
+     ],
+     [
+      12,
+      6
+     ]
+    ]
+   },
+   "rect": [
+    84,
+    47,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 118,
+   "partial": 0,
+   "sig": "3e0d7d5e2da15bdac7fb075dde0bbc2473e8157a1cc356062f4708a5f2eee6f8",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.low.png",
+     "sourceSha256": "242fc22ccb160d95d7a1add3895477663271aa95d303231882652a14fbb385df",
+     "rect": [
+      105,
+      47,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "080f22d236d6d3ad5cfac8b1f5130405b08411caf605dc44d629e5c484c84096"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.mid.png",
+   "sourceSha256": "d9b167d56bd1bd568259358b2e22ce4b8c6ff68275bfb2290a3e1a70ad3eb19d",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     16,
+     4
+    ],
+    "margin": [
+     [
+      3,
+      9
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      10,
+      4
+     ]
+    ]
+   },
+   "rect": [
+    126,
+    47,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 118,
+   "partial": 0,
+   "sig": "91505d26135427ac39971d8d672c6f2bae23bddd1387ff15c000e8acb3b7a980",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.mid.png",
+     "sourceSha256": "ab8b944452ceb562171d9786a762d1a3d9cfed615f3a90290f93675b506d1fc1",
+     "rect": [
+      0,
+      66,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "39f1b8f81a4e7dd69d5e7548a820e297a7ba076bf367d9eb05a7ddfd3881cab6"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.high.png",
+   "sourceSha256": "f3bfa412966f70f083a1d438e6fef836a0917934eee8b9bab0e39dbcbde1c9e8",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     11,
+     1
+    ],
+    "margin": [
+     [
+      1,
+      9
+     ],
+     [
+      2,
+      5
+     ],
+     [
+      5,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    21,
+    66,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 115,
+   "partial": 0,
+   "sig": "45611a9337b47dc81a394be85b8fb9d1c51d72806cc6ac75f15c51ab6c61ee21",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.high.png",
+     "sourceSha256": "3dc2e06a93d8f1417a214c500f76eafae7676fdd62f241bc87f8339b3424680f",
+     "rect": [
+      42,
+      66,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "493989f2d8ec738eb98bbe31ccb7bcfbba8dbe4e32d073e2ab0e63c47c25ed13"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.flat",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.flat.png",
+   "sourceSha256": "eda70fac32d188bb13ae066d651e1c61ed7adcd82890c2e3de970588339ecb1d",
+   "size": [
+    18,
+    18
+   ],
+   "anchor": [
+    0,
+    14
+   ],
+   "points": {
+    "tip": [
+     17,
+     11
+    ],
+    "margin": [
+     [
+      5,
+      8
+     ],
+     [
+      8,
+      7
+     ],
+     [
+      11,
+      7
+     ]
+    ]
+   },
+   "rect": [
+    63,
+    66,
+    18,
+    18
+   ],
+   "w": 18,
+   "h": 18,
+   "opaque": 130,
+   "partial": 0,
+   "sig": "62f3f203a992ce76ffe292b98ece884e614923ef416e997fe2bddfb8e20b8975",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.flat.png",
+     "sourceSha256": "fe247798e543acb127ea016327bfad739e646a69d7fcec198976d066e37af994",
+     "rect": [
+      82,
+      66,
+      18,
+      18
+     ],
+     "w": 18,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "8bbd8e5b405dbc0237422cb721d2661d4a303524ded04ba14d4f7870f1db7a1e"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.low",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.low.png",
+   "sourceSha256": "92f7eea756e81967797a1fc31521a962b09d467e71c451e80534a32767737303",
+   "size": [
+    18,
+    18
+   ],
+   "anchor": [
+    0,
+    14
+   ],
+   "points": {
+    "tip": [
+     16,
+     8
+    ],
+    "margin": [
+     [
+      3,
+      8
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      10,
+      5
+     ]
+    ]
+   },
+   "rect": [
+    101,
+    66,
+    18,
+    18
+   ],
+   "w": 18,
+   "h": 18,
+   "opaque": 124,
+   "partial": 0,
+   "sig": "9f0f181e5f78bf98b3c7973aeefd12743ad20ad05ed1ee59adf7fb5ed5918d2b",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.low.png",
+     "sourceSha256": "fa98aea4d41373649dd90eaa706b0699d5c1f6ee2dd62d5ab91414f74481abde",
+     "rect": [
+      120,
+      66,
+      18,
+      18
+     ],
+     "w": 18,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "db96d69874936279b08c95cfaddce278a5aabf7c25231e832948d5bb3f06df4e"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.mid.png",
+   "sourceSha256": "5c02975c5a45a0584fc2562ee6c7bc85d0b55a3631956bab3bd7ddde9393a8f5",
+   "size": [
+    18,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     13,
+     4
+    ],
+    "margin": [
+     [
+      1,
+      9
+     ],
+     [
+      3,
+      6
+     ],
+     [
+      6,
+      4
+     ]
+    ]
+   },
+   "rect": [
+    139,
+    66,
+    18,
+    18
+   ],
+   "w": 18,
+   "h": 18,
+   "opaque": 129,
+   "partial": 0,
+   "sig": "3c3786379df02a3f6e64ca48899d3232921fb9fd53bbb3e8fad67d6449c5e893",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.mid.png",
+     "sourceSha256": "5936e02af3dab274e31dee37efa38e7ae9206a79bf72164d93e984e73c6275ab",
+     "rect": [
+      0,
+      85,
+      18,
+      18
+     ],
+     "w": 18,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "b7c4b0578095916cbdf5ca3a9aefe8d205a9fe7ad1826fa1cf862c6064979c09"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.high.png",
+   "sourceSha256": "0517eaecc77c34f473807b6cbce5c9083d3c6f60ded93a15b5544901ad1f9dab",
+   "size": [
+    18,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     9,
+     1
+    ],
+    "margin": [
+     [
+      1,
+      9
+     ],
+     [
+      1,
+      5
+     ],
+     [
+      3,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    19,
+    85,
+    18,
+    18
+   ],
+   "w": 18,
+   "h": 18,
+   "opaque": 116,
+   "partial": 0,
+   "sig": "4203893a9f70eceb2a1c85971382358e0fb2f9f1857206b9b91c84e39be1fe9a",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.high.png",
+     "sourceSha256": "4909be09a3036f3cc8e36f73cff518945ba181a0e1b99f55052cc6aef2fdd03d",
+     "rect": [
+      38,
+      85,
+      18,
+      18
+     ],
+     "w": 18,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "a47c47001431437a4b14c9b69e4aa3b9c1f831b4c84fe73de02789fcda123335"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.flat",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.flat.png",
+   "sourceSha256": "622dc2343f3795be18b1f4227f026ae5f89128d8d41528ea8b4869c268bcc932",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    15
+   ],
+   "points": {
+    "tip": [
+     19,
+     13
+    ],
+    "margin": [
+     [
+      5,
+      12
+     ],
+     [
+      9,
+      12
+     ],
+     [
+      14,
+      12
+     ]
+    ]
+   },
+   "rect": [
+    57,
+    85,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 133,
+   "partial": 0,
+   "sig": "3e7b004c2eecf949874d32f3d4a477f71638c48cb3a144f4643e3062f071cf30",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.flat.png",
+     "sourceSha256": "d9a23b254f550f885966eba43b1f351dfd4c7e79396fd4b8764b16b985d7008b",
+     "rect": [
+      78,
+      85,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "e610df1feb729c0734896c5a07afe2eeaffa7054fb7fbe54f6ab48f18ba6bb74"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.low",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.low.png",
+   "sourceSha256": "821f5e74390509be89ec01db083ff1b053ec5ae2ffbdeb9236946573fa2aad0a",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    15
+   ],
+   "points": {
+    "tip": [
+     19,
+     5
+    ],
+    "margin": [
+     [
+      5,
+      12
+     ],
+     [
+      9,
+      12
+     ],
+     [
+      14,
+      10
+     ]
+    ]
+   },
+   "rect": [
+    99,
+    85,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 158,
+   "partial": 0,
+   "sig": "3dd05912052dbc1fc7a464d559b8769c064a33243d230789232f0a506056307d",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.low.png",
+     "sourceSha256": "34156d9e064c1be2a0b5feb0b57461045dbe65dde76226ad57385d3fd20203f2",
+     "rect": [
+      120,
+      85,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "179b61433fabdf5079db4464be0a8183e599a3c9c69874cd75dd39a0bfccffa1"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.mid.png",
+   "sourceSha256": "fa7582ca5a5a8a2ae89c9695b5bdacc8f53fe1cb4a40cf123185d4a080fda92e",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     18,
+     3
+    ],
+    "margin": [
+     [
+      5,
+      14
+     ],
+     [
+      9,
+      12
+     ],
+     [
+      13,
+      9
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    104,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 142,
+   "partial": 0,
+   "sig": "b3fa1fd394b389aae01c14ab22dfbbc8c67fd9d00af7a55857a8df84e42d4aae",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.mid.png",
+     "sourceSha256": "cc9eefc70475973fefecb973c80a81a07823acd820fe85049363ff7a1816e067",
+     "rect": [
+      21,
+      104,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "5c5cc90bf21f4eefd48832077aac0283f8eaee4aadb56a6f5e42234cb474ab8a"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.high.png",
+   "sourceSha256": "c67718dfca1020138296181cadbbd50a834395094d2f3ad00f8d2beace7df17b",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     17,
+     1
+    ],
+    "margin": [
+     [
+      4,
+      14
+     ],
+     [
+      8,
+      12
+     ],
+     [
+      12,
+      8
+     ]
+    ]
+   },
+   "rect": [
+    42,
+    104,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 126,
+   "partial": 0,
+   "sig": "f5a538e8dc62c986c407fb8ff3b956c5d92a2d08f89f2ddab0a94244a80d0cc7",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.high.png",
+     "sourceSha256": "20722b752814af7b35eceb3aee33bbbbd4454a526defbac8531070581df328a3",
+     "rect": [
+      63,
+      104,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "05d7fe2db42268088a7f6f0739ee1f6268e35fe57c06f2e47b5f0753ce677017"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.flat",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.flat.png",
+   "sourceSha256": "8463cb745e4f092d25a630508c90b7fa06a32ebf31907f130ec0c090bcb7b0ee",
+   "size": [
+    22,
+    19
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     21,
+     14
+    ],
+    "margin": [
+     [
+      5,
+      13
+     ],
+     [
+      10,
+      13
+     ],
+     [
+      15,
+      14
+     ]
+    ]
+   },
+   "rect": [
+    84,
+    104,
+    22,
+    19
+   ],
+   "w": 22,
+   "h": 19,
+   "opaque": 155,
+   "partial": 0,
+   "sig": "38950d33e1410202f85fd3ef13d08e92ab18ef43864274be251df637b5e174ee",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.flat.png",
+     "sourceSha256": "7233d984e7cfcf9d010922ff77e192a653c1bba93274eeb55f18d7349bacb8da",
+     "rect": [
+      107,
+      104,
+      22,
+      19
+     ],
+     "w": 22,
+     "h": 19,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "822be3f60e4e74e4fe3798db604942ea8fcaa295f6689ca4c0fbc23409e6ea5e"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.low",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.low.png",
+   "sourceSha256": "ac9e8e158fe0d4d259fbe873670c9886bd77b0cefde4600d78857c9aa9601d7d",
+   "size": [
+    22,
+    19
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     21,
+     6
+    ],
+    "margin": [
+     [
+      5,
+      14
+     ],
+     [
+      10,
+      13
+     ],
+     [
+      15,
+      11
+     ]
+    ]
+   },
+   "rect": [
+    130,
+    104,
+    22,
+    19
+   ],
+   "w": 22,
+   "h": 19,
+   "opaque": 181,
+   "partial": 0,
+   "sig": "f75d37a3be88d2b3ebacd81fdd63bb8f6fd9358edfe7e66167df8e8eb309a2a1",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.low.png",
+     "sourceSha256": "acc871b663584357d4c4d6a823605978c21c7e116ac9c00ef2fb288acabc975e",
+     "rect": [
+      0,
+      124,
+      22,
+      19
+     ],
+     "w": 22,
+     "h": 19,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "abd499d0bd775cb790a7a6b1c87397b82dd761e338930974df4b25e76a147e45"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.mid.png",
+   "sourceSha256": "97105948f78e394b4ad9fd3de1021f5825a2952bf261efbbfd2517330eeec4a9",
+   "size": [
+    22,
+    19
+   ],
+   "anchor": [
+    0,
+    17
+   ],
+   "points": {
+    "tip": [
+     20,
+     2
+    ],
+    "margin": [
+     [
+      5,
+      14
+     ],
+     [
+      10,
+      12
+     ],
+     [
+      14,
+      10
+     ]
+    ]
+   },
+   "rect": [
+    23,
+    124,
+    22,
+    19
+   ],
+   "w": 22,
+   "h": 19,
+   "opaque": 194,
+   "partial": 0,
+   "sig": "e2cc9d65893477b79c985e7bdec4beb6acbea28d3970b43e58d1870c46236093",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.mid.png",
+     "sourceSha256": "be7911ce36d6add292656210fdac40cbe0a145c4242b5ff625f85db2844bc8b3",
+     "rect": [
+      46,
+      124,
+      22,
+      19
+     ],
+     "w": 22,
+     "h": 19,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "50a2b136b170dc6f211049137a5d2fc9d2308e6d1987c939f8f18123a32b8b72"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.high.png",
+   "sourceSha256": "66cf1c4b8982a37f1d16c44f6f49e03ad0b142a0ca6604f6544b5ee59cab5b5a",
+   "size": [
+    22,
+    19
+   ],
+   "anchor": [
+    0,
+    17
+   ],
+   "points": {
+    "tip": [
+     19,
+     1
+    ],
+    "margin": [
+     [
+      5,
+      14
+     ],
+     [
+      9,
+      12
+     ],
+     [
+      14,
+      7
+     ]
+    ]
+   },
+   "rect": [
+    69,
+    124,
+    22,
+    19
+   ],
+   "w": 22,
+   "h": 19,
+   "opaque": 186,
+   "partial": 0,
+   "sig": "a588b8ee78cdc88c61de24c310828a17554069b9ee981585688c05c274b55bef",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.high.png",
+     "sourceSha256": "7176c90cbc9897daf49357fb80698e0171cd39221833ec201367183655a87978",
+     "rect": [
+      92,
+      124,
+      22,
+      19
+     ],
+     "w": 22,
+     "h": 19,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "b161187f8c8ca6ccb9b2a673cdb7604de6b2e6baf7e70a3ddc60bab4a1de53dd"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.flat",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.flat.png",
+   "sourceSha256": "285cd4253045af33d8dcc555f79545b5effe8e1efb66fd79fa420492b301fad2",
+   "size": [
+    22,
+    19
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     21,
+     14
+    ],
+    "margin": [
+     [
+      5,
+      14
+     ],
+     [
+      10,
+      14
+     ],
+     [
+      15,
+      15
+     ]
+    ]
+   },
+   "rect": [
+    115,
+    124,
+    22,
+    19
+   ],
+   "w": 22,
+   "h": 19,
+   "opaque": 134,
+   "partial": 0,
+   "sig": "1901c20b81379e4e44080b37126fda11f7736e9438ec8dfca06db1f7e48e71c0",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.flat.png",
+     "sourceSha256": "a5a7605a65507704616013e2d04cad2b2bed28f928ef06cffbb55bb6cc1b5d91",
+     "rect": [
+      138,
+      124,
+      22,
+      19
+     ],
+     "w": 22,
+     "h": 19,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "eead4b8210ba391a6ad4b5ceb0624b06663ebfe8268b73ea006584c9f132d4ca"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.low",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.low.png",
+   "sourceSha256": "45c9b6e4e58b4676666352d0e382756a5ee27d19f39e9b41ea037ef72a5cc7e3",
+   "size": [
+    22,
+    19
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     21,
+     6
+    ],
+    "margin": [
+     [
+      5,
+      14
+     ],
+     [
+      10,
+      14
+     ],
+     [
+      15,
+      12
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    144,
+    22,
+    19
+   ],
+   "w": 22,
+   "h": 19,
+   "opaque": 183,
+   "partial": 0,
+   "sig": "fc9bcd92820055fce120790965773c3f3b1d88980035bc6278ff0523d52c9ca9",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.low.png",
+     "sourceSha256": "6f4a44b21f0b2be6b82e919251daee878ef5b38b3a38bd751751ac1160626dcf",
+     "rect": [
+      23,
+      144,
+      22,
+      19
+     ],
+     "w": 22,
+     "h": 19,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "b9eb6a3c07b9cdb1e130756a5c7e0282330a7a461ae99fc5523c4246dbc66013"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.mid.png",
+   "sourceSha256": "350bc67deaeacd692956b6b0bcec241757aaa1598481b4ac85c5d633885ef28b",
+   "size": [
+    22,
+    19
+   ],
+   "anchor": [
+    0,
+    17
+   ],
+   "points": {
+    "tip": [
+     20,
+     3
+    ],
+    "margin": [
+     [
+      5,
+      15
+     ],
+     [
+      10,
+      13
+     ],
+     [
+      14,
+      11
+     ]
+    ]
+   },
+   "rect": [
+    46,
+    144,
+    22,
+    19
+   ],
+   "w": 22,
+   "h": 19,
+   "opaque": 201,
+   "partial": 0,
+   "sig": "9f14733f5d455f675529d6a274dbcb7d5fdf593bd45d6fb44a0ff0dbf565e217",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.mid.png",
+     "sourceSha256": "ff37b6b6b4be22f477e09ae257ec7eafe6a2de8023be646e142a6fd51377b0d8",
+     "rect": [
+      69,
+      144,
+      22,
+      19
+     ],
+     "w": 22,
+     "h": 19,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "8e86c6b3bde72369b3b47ada5a05285d71bd7ee42f994c5e7389f2ac667b73db"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.high.png",
+   "sourceSha256": "b57e08924153ad5e6f7bbe915c0bc139d36f842e9558f79ca4ac5bd561566575",
+   "size": [
+    22,
+    19
+   ],
+   "anchor": [
+    0,
+    17
+   ],
+   "points": {
+    "tip": [
+     19,
+     1
+    ],
+    "margin": [
+     [
+      5,
+      15
+     ],
+     [
+      9,
+      13
+     ],
+     [
+      14,
+      8
+     ]
+    ]
+   },
+   "rect": [
+    92,
+    144,
+    22,
+    19
+   ],
+   "w": 22,
+   "h": 19,
+   "opaque": 208,
+   "partial": 0,
+   "sig": "8355561dd8425544643a2e15b0b8a025e6558b2296d90bd9bfbecfc4f5a97abf",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.high.png",
+     "sourceSha256": "0e9200722aa14d60792c7751ed2b964c34172d9efe58c8cfddb79d6f3a6fce79",
+     "rect": [
+      115,
+      144,
+      22,
+      19
+     ],
+     "w": 22,
+     "h": 19,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "0728c03351572abbdb4c5d447a75f02265c5648ac59db8863a89195af15f5214"
+    }
+   }
+  },
+  {
+   "id": "leaf.base.heat.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch2-cold-heat.zip",
+   "entry": "sprites/leaf.base.heat.mid.png",
+   "sourceSha256": "559b1e7cc9181a2a7c66ed44822097806ae5531c0088c23e95c908767cd5863e",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     18,
+     2
+    ],
+    "margin": [
+     [
+      5,
+      13
+     ],
+     [
+      9,
+      10
+     ],
+     [
+      13,
+      8
+     ]
+    ]
+   },
+   "rect": [
+    138,
+    144,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 186,
+   "partial": 0,
+   "sig": "bf8245b9a3570788cf3e32bc3d08343232cd60c67d0956b729287c94150de239",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.heat.mid.png",
+     "sourceSha256": "eb6764921ea03ea342fd0c47f3757f34105c4ad8327765b7b57d1aa0a621e638",
+     "rect": [
+      0,
+      164,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "68901dffc0cf34103dcd6a15bd0e348972097fda2542f6718eb67eb4fc132087"
+    }
+   }
+  },
+  {
+   "id": "leaf.base.heat.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch2-cold-heat.zip",
+   "entry": "sprites/leaf.base.heat.high.png",
+   "sourceSha256": "6a28daf850da03591bbe3da139f8bc1b5eb88cb169df2086d199f0d9dd2ce18f",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     17,
+     1
+    ],
+    "margin": [
+     [
+      4,
+      14
+     ],
+     [
+      8,
+      11
+     ],
+     [
+      12,
+      7
+     ]
+    ]
+   },
+   "rect": [
+    21,
+    164,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 172,
+   "partial": 0,
+   "sig": "2d70b0a1065274126ad9e7cb23ae9434947bcc3fac56fd7378b00a51fe5ce29b",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.heat.high.png",
+     "sourceSha256": "eac29087313aff6a100ca3db2460f8c6e71eec9ae2738f9a4e54200d360890ed",
+     "rect": [
+      42,
+      164,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "91e49c6855a0ae83e4a0a9346dda36c51a30ce4ffc02ecb6676e9dcaa2ae7fe3"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.heat.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.heat.mid.png",
+   "sourceSha256": "d882ac354d3b26fa8553f6f2321d2b6df68fcfa0b9e668bf85f21d7d9ff6e561",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     10,
+     3
+    ],
+    "margin": [
+     [
+      2,
+      10
+     ],
+     [
+      3,
+      7
+     ],
+     [
+      5,
+      5
+     ]
+    ]
+   },
+   "rect": [
+    63,
+    164,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 71,
+   "partial": 0,
+   "sig": "3440941134d0a875e4d75bf2227ff1d99effbdd15460936df01b933b8b7c6f6f",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.heat.mid.png",
+     "sourceSha256": "46aa512df5be93ac6883423b91f72e0cf364f74065e898fc3809efa7213ed22d",
+     "rect": [
+      84,
+      164,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "68c251b96f61c76a0adc90ba739273a8a23dff7244ccc3259918b42593243244"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.heat.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.heat.high.png",
+   "sourceSha256": "cd5ca8973bfcd2c741c06d9d73bee5f07fb4d4d951d5d69f8bc8c2e6e8aaa3c3",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     8,
+     1
+    ],
+    "margin": [
+     [
+      1,
+      10
+     ],
+     [
+      2,
+      6
+     ],
+     [
+      4,
+      4
+     ]
+    ]
+   },
+   "rect": [
+    105,
+    164,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 73,
+   "partial": 0,
+   "sig": "57f6a5fef4db15eb374f055db3acc16a7eb362b12cd99830615d546620635c47",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.heat.high.png",
+     "sourceSha256": "16ebca27ec63ee66b9952f628a698f3afa9567e1f204f59b373cbd2f84af8bad",
+     "rect": [
+      126,
+      164,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "87cc6ae2755e4c1cbb2fbdf5cc10526e6556f2816f660b348f92874c0186b74a"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.heat.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.heat.mid.png",
+   "sourceSha256": "eadf361f8e728a207e66749890e7aae7857212a4485ed28e9140a98893090732",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     10,
+     2
+    ],
+    "margin": [
+     [
+      1,
+      9
+     ],
+     [
+      2,
+      6
+     ],
+     [
+      4,
+      4
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    183,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 96,
+   "partial": 0,
+   "sig": "c0aab358664fa8d3e6cda26dbfd7d524b2f601875a7182423eea48212d1503da",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.heat.mid.png",
+     "sourceSha256": "52bd541906f1887b1411a97abd05a47d31d273f52ab8e9ab1523223ec03389dc",
+     "rect": [
+      21,
+      183,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "bb6fc1c355ad95cfa4afe5ca3400d78c4b1c65be011ad2bad359e85c9af38525"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.heat.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.heat.high.png",
+   "sourceSha256": "59252e21cc1d534d5758bed259b838e7a0d8cd27cb2a01da2e0d34ca564ff3f2",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     8,
+     1
+    ],
+    "margin": [
+     [
+      1,
+      10
+     ],
+     [
+      1,
+      6
+     ],
+     [
+      4,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    42,
+    183,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 88,
+   "partial": 0,
+   "sig": "b0221d253eb977a37699161e0d747f720eb8fe889ccbd22da473567dcdad3a57",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.heat.high.png",
+     "sourceSha256": "3012f97b9cfcfdfcf323a4d8dd048e00e6b9056d60d7e43dd1b97ae844e1f59c",
+     "rect": [
+      63,
+      183,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "384889e71bf785151484fda4fa1f705d9ba89f43b41e935194b7d0d3ae11545b"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.heat.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.heat.mid.png",
+   "sourceSha256": "3179dc1fd18d3b3b90bdfdf0cb73f819cf585018795a7206f9c99088c48510c2",
+   "size": [
+    18,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     10,
+     2
+    ],
+    "margin": [
+     [
+      1,
+      9
+     ],
+     [
+      1,
+      6
+     ],
+     [
+      5,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    84,
+    183,
+    18,
+    18
+   ],
+   "w": 18,
+   "h": 18,
+   "opaque": 109,
+   "partial": 0,
+   "sig": "746b2d860cd9d0a9d7332ca28f5a5df74aa27c4382e66ef59b36b732b753e681",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.heat.mid.png",
+     "sourceSha256": "c4d3f95f3d9df824b219743cb1e395f5f8056a02897b9f17a6ce84fd8d13d2e6",
+     "rect": [
+      103,
+      183,
+      18,
+      18
+     ],
+     "w": 18,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "d82e91a12b216788f301f9e5547c72b60f6ae9ab1be16e1f84aece54c0bf484a"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.heat.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.heat.high.png",
+   "sourceSha256": "4ec5acec113f5ea46fe4582c09c536e7c801afce230003894fd71756c97f5f2a",
+   "size": [
+    18,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     8,
+     1
+    ],
+    "margin": [
+     [
+      1,
+      9
+     ],
+     [
+      1,
+      5
+     ],
+     [
+      2,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    122,
+    183,
+    18,
+    18
+   ],
+   "w": 18,
+   "h": 18,
+   "opaque": 103,
+   "partial": 0,
+   "sig": "e0bdd16a078939ff9b53c9b43cfd86dd8511eb80a9dc2416d6f59c6a239cba42",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.heat.high.png",
+     "sourceSha256": "ed743b6ecf3d105e858b10029d71317d74f7eb56b82e43b547adb2a445895282",
+     "rect": [
+      141,
+      183,
+      18,
+      18
+     ],
+     "w": 18,
+     "h": 18,
+     "opaque": 2,
+     "partial": 0,
+     "sig": "29489c818578e64fc97bd79c34021554f568b480ccf79b6bfbd1b3b5f61fef38"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.heat.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.heat.mid.png",
+   "sourceSha256": "8283d588d2a9dee69e6bbd8afab3822d297c78e3203e00734cc7402f9bcc9eff",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     18,
+     2
+    ],
+    "margin": [
+     [
+      5,
+      13
+     ],
+     [
+      9,
+      10
+     ],
+     [
+      13,
+      8
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    202,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 186,
+   "partial": 0,
+   "sig": "740b7f7c895385d1f48166a3f3ed7eac9b6cab008e8a5dbcaaf7e1898b17725b",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.heat.mid.png",
+     "sourceSha256": "6e360640e4fc8448310f2fd225c5145de469ff3040ae694eda61e5d50a629d20",
+     "rect": [
+      21,
+      202,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "8c8e0100725011743e9397274612d80ff690e73fc33ae5ae9e2e30b11ace2bcb"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.heat.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.heat.high.png",
+   "sourceSha256": "c4b32864f4e947d448428e39feecbcc990c4dea0cddb2ba2d48ab9ed74471cda",
+   "size": [
+    20,
+    18
+   ],
+   "anchor": [
+    0,
+    16
+   ],
+   "points": {
+    "tip": [
+     17,
+     1
+    ],
+    "margin": [
+     [
+      4,
+      14
+     ],
+     [
+      8,
+      11
+     ],
+     [
+      12,
+      7
+     ]
+    ]
+   },
+   "rect": [
+    42,
+    202,
+    20,
+    18
+   ],
+   "w": 20,
+   "h": 18,
+   "opaque": 143,
+   "partial": 0,
+   "sig": "02c2a4c0591bc3ae6074333de277cfe07526b3dd9471e4ba99ad6add0599b4fd",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.heat.high.png",
+     "sourceSha256": "c6da636a07113b28af547439a76189df95c1d0cbd2fe28c4a31ae32c875b3bac",
+     "rect": [
+      63,
+      202,
+      20,
+      18
+     ],
+     "w": 20,
+     "h": 18,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "d7d90035d94bfbf7f1aad785d303f3337e962b518093e84a5dda2d1598e6008a"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.heat.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.heat.mid.png",
+   "sourceSha256": "9902ee854717d2a3ec7a3890aced964a8cc5714f8b75dd6554db0da502ca5934",
+   "size": [
+    22,
+    19
+   ],
+   "anchor": [
+    0,
+    17
+   ],
+   "points": {
+    "tip": [
+     20,
+     2
+    ],
+    "margin": [
+     [
+      5,
+      14
+     ],
+     [
+      10,
+      11
+     ],
+     [
+      14,
+      9
+     ]
+    ]
+   },
+   "rect": [
+    84,
+    202,
+    22,
+    19
+   ],
+   "w": 22,
+   "h": 19,
+   "opaque": 193,
+   "partial": 0,
+   "sig": "afa2573e994a3e7f582ebf79f5a1f5f7cf15ab9f5724e53df8f85f1b78c19dc1",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.heat.mid.png",
+     "sourceSha256": "ee9642a7e67984e6a988f55a8c71bf24fa89d19210f67cf50ec8ac125204a7c0",
+     "rect": [
+      107,
+      202,
+      22,
+      19
+     ],
+     "w": 22,
+     "h": 19,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "da25992020d681a59ac934a34f95a1e52f2d58c4c181389dc5d8a956a5cdc3d1"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.heat.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.heat.high.png",
+   "sourceSha256": "51edabed8b57db27e62f8226a458b706f1e8d277158e5f0e36bab80d0d9e3b3b",
+   "size": [
+    22,
+    19
+   ],
+   "anchor": [
+    0,
+    17
+   ],
+   "points": {
+    "tip": [
+     19,
+     1
+    ],
+    "margin": [
+     [
+      5,
+      14
+     ],
+     [
+      9,
+      11
+     ],
+     [
+      14,
+      6
+     ]
+    ]
+   },
+   "rect": [
+    130,
+    202,
+    22,
+    19
+   ],
+   "w": 22,
+   "h": 19,
+   "opaque": 215,
+   "partial": 0,
+   "sig": "396296eaa2c330b27422f49cf95e7d7a3822be32597d0a4d854e0f0e0d135d6c",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.heat.high.png",
+     "sourceSha256": "a0b69994d4a639f52cebbff7390e299be5fe5fe77e53a64b6b509b421a440f43",
+     "rect": [
+      0,
+      222,
+      22,
+      19
+     ],
+     "w": 22,
+     "h": 19,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "5b2376439802b23a662a4781c8e0693c722ed6c2c072dbf009723f6a9865f68b"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.heat.mid",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.heat.mid.png",
+   "sourceSha256": "358a7bd8d048fc05d352ae6a0e9858e8049c238dccfcb6f20f42c9856af02df2",
+   "size": [
+    22,
+    19
+   ],
+   "anchor": [
+    0,
+    17
+   ],
+   "points": {
+    "tip": [
+     20,
+     2
+    ],
+    "margin": [
+     [
+      5,
+      14
+     ],
+     [
+      10,
+      12
+     ],
+     [
+      14,
+      10
+     ]
+    ]
+   },
+   "rect": [
+    23,
+    222,
+    22,
+    19
+   ],
+   "w": 22,
+   "h": 19,
+   "opaque": 222,
+   "partial": 0,
+   "sig": "0ce66209d117332390a895d17bccb0fc80dfa28081f35d76239f764b2be292ba",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.heat.mid.png",
+     "sourceSha256": "59819e034bc8d8f27b043c7baa1238ce34ad366b9c3b925b90f15c43aef54c0b",
+     "rect": [
+      46,
+      222,
+      22,
+      19
+     ],
+     "w": 22,
+     "h": 19,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "fbc8539e55eec28597132efc6ab9e490d029f5f74b7255fdd17631270d6c746d"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.heat.high",
+   "side": "right",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.heat.high.png",
+   "sourceSha256": "1b7b54843ccaf652126f3562288d17ba70c14a8cdf6835544ae050c0189d444c",
+   "size": [
+    22,
+    19
+   ],
+   "anchor": [
+    0,
+    17
+   ],
+   "points": {
+    "tip": [
+     19,
+     1
+    ],
+    "margin": [
+     [
+      5,
+      14
+     ],
+     [
+      9,
+      12
+     ],
+     [
+      14,
+      7
+     ]
+    ]
+   },
+   "rect": [
+    69,
+    222,
+    22,
+    19
+   ],
+   "w": 22,
+   "h": 19,
+   "opaque": 170,
+   "partial": 0,
+   "sig": "e4a6d89006be4fc3d2011bd56ab49d55633497723d60b361751396be3f3fe7d6",
+   "masks": {
+    "toothed": {
+     "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.heat.high.png",
+     "sourceSha256": "449ac48d633b1fc37cda2f2f721dcd908e594b29695ebc0f433630f36f44b356",
+     "rect": [
+      92,
+      222,
+      22,
+      19
+     ],
+     "w": 22,
+     "h": 19,
+     "opaque": 4,
+     "partial": 0,
+     "sig": "2495c334a20a99df442b50fbb607c79be20b50e14bfc4dcd2120d2fc39ced16e"
+    }
+   }
+  },
+  {
+   "id": "root.storage.2",
+   "side": "down",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/root.storage.2.png",
+   "sourceSha256": "5f828f12f84c202021cfeac53d8b5d34c910b0fc6614dac861da655499c91698",
+   "size": [
+    12,
+    12
+   ],
+   "anchor": [
+    5,
+    0
+   ],
+   "rect": [
+    115,
+    222,
+    12,
+    12
+   ],
+   "w": 12,
+   "h": 12,
+   "opaque": 63,
+   "partial": 0,
+   "sig": "1be0bb4f24122e66b05f46dd330092a656b7a648e75213bbc52c8e3479446313",
+   "masks": {}
+  },
+  {
+   "id": "root.storage.3",
+   "side": "down",
+   "delivery": "cinder-rosette-batch3-drought.zip",
+   "entry": "sprites/root.storage.3.png",
+   "sourceSha256": "d15f9309be49fb43c6aa09250f60a42cf1b8aeb929e196cf20b139dacc23e775",
+   "size": [
+    14,
+    16
+   ],
+   "anchor": [
+    6,
+    0
+   ],
+   "rect": [
+    128,
+    222,
+    14,
+    16
+   ],
+   "w": 14,
+   "h": 16,
+   "opaque": 115,
+   "partial": 0,
+   "sig": "25923cbce15f396ec0571d656a1d67b339d5301379d6f7ec05e1288c88fd55be",
+   "masks": {}
+  },
+  {
+   "id": "root.aerial.1",
+   "side": "up",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/root.aerial.1.png",
+   "sourceSha256": "9973d31f2a559f92caa0b58520c1b531437483677fd687e9e3b62d6f82278f50",
+   "size": [
+    5,
+    8
+   ],
+   "anchor": [
+    2,
+    7
+   ],
+   "rect": [
+    143,
+    222,
+    5,
+    8
+   ],
+   "w": 5,
+   "h": 8,
+   "opaque": 15,
+   "partial": 0,
+   "sig": "5e63598d299eefe73394fc0b73bf344f0746ff105665d82dca054922b1a36aaf",
+   "masks": {}
+  },
+  {
+   "id": "root.aerial.2",
+   "side": "up",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/root.aerial.2.png",
+   "sourceSha256": "0e99dbc3073e6398fd9f7f174d3a7f7aa35902dcdef39efca62b7f5db9296c13",
+   "size": [
+    5,
+    11
+   ],
+   "anchor": [
+    2,
+    10
+   ],
+   "rect": [
+    149,
+    222,
+    5,
+    11
+   ],
+   "w": 5,
+   "h": 11,
+   "opaque": 24,
+   "partial": 0,
+   "sig": "abaff99c1e9c511509007ebbf4f5de5d69c3e618f634ee8af397e45a8269f9a9",
+   "masks": {}
+  },
+  {
+   "id": "root.aerial.3",
+   "side": "up",
+   "delivery": "cinder-rosette-batch4-flood.zip",
+   "entry": "sprites/root.aerial.3.png",
+   "sourceSha256": "2b6c4ba77b5a2d005bb9d2e4d5421e79df9d04c649ab0fbf96ffd94a1824b08f",
+   "size": [
+    7,
+    15
+   ],
+   "anchor": [
+    3,
+    14
+   ],
+   "rect": [
+    0,
+    242,
+    7,
+    15
+   ],
+   "w": 7,
+   "h": 15,
+   "opaque": 45,
+   "partial": 0,
+   "sig": "b4d6ff16704afc599c9f1b7c90652c67d9090cbb54545c9e749f084a408f6ddd",
+   "masks": {}
+  },
+  {
+   "id": "frost.hair.1",
+   "side": "up",
+   "delivery": "cinder-rosette-batch2-cold-heat.zip",
+   "entry": "sprites/frost.hair.1.png",
+   "sourceSha256": "30754533f4000090cb2b6e10b1ae863913553e69741feb2b0fcc804add4029c1",
+   "size": [
+    3,
+    4
+   ],
+   "anchor": [
+    1,
+    3
+   ],
+   "rect": [
+    8,
+    242,
+    3,
+    4
+   ],
+   "w": 3,
+   "h": 4,
+   "opaque": 7,
+   "partial": 0,
+   "sig": "cf5b7fe2a7cf1337f371b13b508bfca70da74cf7faa32d0577747ccf9305ea38",
+   "masks": {}
+  },
+  {
+   "id": "frost.hair.2",
+   "side": "up",
+   "delivery": "cinder-rosette-batch2-cold-heat.zip",
+   "entry": "sprites/frost.hair.2.png",
+   "sourceSha256": "673e7ae5b14902780022c0493a45c95707632a583d18dac1db199e9ae9942b2d",
+   "size": [
+    5,
+    5
+   ],
+   "anchor": [
+    2,
+    4
+   ],
+   "rect": [
+    12,
+    242,
+    5,
+    5
+   ],
+   "w": 5,
+   "h": 5,
+   "opaque": 10,
+   "partial": 0,
+   "sig": "4c3e94e057267a5ca8d233b9bc0a4c0e22fe60bf0eec8f41dc831f9d0d6e916d",
+   "masks": {}
+  },
+  {
+   "id": "frost.hair.3",
+   "side": "up",
+   "delivery": "cinder-rosette-batch2-cold-heat.zip",
+   "entry": "sprites/frost.hair.3.png",
+   "sourceSha256": "33f21a43493a09a188da558ba4ea47051fcf49c4a304f5e5ff32e53c277c167e",
+   "size": [
+    7,
+    6
+   ],
+   "anchor": [
+    3,
+    5
+   ],
+   "rect": [
+    18,
+    242,
+    7,
+    6
+   ],
+   "w": 7,
+   "h": 6,
+   "opaque": 20,
+   "partial": 0,
+   "sig": "a120c412b1cd1e4ba784130d8255fed88d640f16b45557650847a0a81dbe66cf",
+   "masks": {}
+  },
+  {
+   "id": "frost.collar.2",
+   "side": "up",
+   "delivery": "cinder-rosette-batch2-cold-heat.zip",
+   "entry": "sprites/frost.collar.2.png",
+   "sourceSha256": "8f58c0a0ab5a3749a5821f5a028ec46b7d75a81dea324be02e8ac9aaf065a8a1",
+   "size": [
+    13,
+    6
+   ],
+   "anchor": [
+    6,
+    3
+   ],
+   "rect": [
+    26,
+    242,
+    13,
+    6
+   ],
+   "w": 13,
+   "h": 6,
+   "opaque": 35,
+   "partial": 0,
+   "sig": "911a6c0b1458d1db9e945d7fd2dca422dfba594af3bff989955ac9bc269bed20",
+   "masks": {}
+  },
+  {
+   "id": "frost.collar.3",
+   "side": "up",
+   "delivery": "cinder-rosette-batch2-cold-heat.zip",
+   "entry": "sprites/frost.collar.3.png",
+   "sourceSha256": "0c08aa927ead849450c89e6f113d9d63260a0bf5b030987bab20ebd21e9cfcba",
+   "size": [
+    17,
+    7
+   ],
+   "anchor": [
+    8,
+    3
+   ],
+   "rect": [
+    40,
+    242,
+    17,
+    7
+   ],
+   "w": 17,
+   "h": 7,
+   "opaque": 63,
+   "partial": 0,
+   "sig": "d1601ddd243e9ea7920537aebc4b0414e97552e525ae7f0792b662f62fee893c",
+   "masks": {}
+  },
+  {
+   "id": "salt.crystal",
+   "side": "up",
+   "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+   "entry": "sprites/salt.crystal.png",
+   "sourceSha256": "1ae632a5b708887f8d42780bd8f5b080db13bdb6992805741ae9f4d90d79d42c",
+   "size": [
+    7,
+    7
+   ],
+   "anchor": [
+    3,
+    6
+   ],
+   "rect": [
+    58,
+    242,
+    7,
+    7
+   ],
+   "w": 7,
+   "h": 7,
+   "opaque": 23,
+   "partial": 0,
+   "sig": "6f23e65beec3a374a2ecc2aa144d8c204fca5c0de77ea5d94024d0095646fc66",
+   "masks": {}
+  },
+  {
+   "id": "salt.gland",
+   "side": "up",
+   "delivery": "cinder-rosette-batch5-salt-radiation.zip",
+   "entry": "sprites/salt.gland.png",
+   "sourceSha256": "7a1a0d910a731841f5ef8eb8d236c3e7f9a2bae99ea061847b1fffaa549be09a",
+   "size": [
+    4,
+    4
+   ],
+   "anchor": [
+    1,
+    3
+   ],
+   "rect": [
+    66,
+    242,
+    4,
+    4
+   ],
+   "w": 4,
+   "h": 4,
+   "opaque": 12,
+   "partial": 0,
+   "sig": "5045ffe4cb9f323ac0c8e5fb0a361553fcec0ae5ae4b300dfe83f3213f9b08a4",
+   "masks": {}
+  },
+  {
+   "id": "bud",
+   "side": "up",
+   "delivery": "cinder-rosette-batch1-base-body.zip",
+   "entry": "sprites/bud.png",
+   "sourceSha256": "a70db911e19c5b1fbbf0092cc77048c5b28017571dbc8b5afce9c8dde0da89ba",
+   "size": [
+    9,
+    10
+   ],
+   "anchor": [
+    4,
+    9
+   ],
+   "rect": [
+    71,
+    242,
+    9,
+    10
+   ],
+   "w": 9,
+   "h": 10,
+   "opaque": 42,
+   "partial": 0,
+   "sig": "263391ebdf49688c0b5a4c5ea359a713eca191b34bb09881ba1b7f2a49d7ea2f",
+   "masks": {}
+  },
+  {
+   "id": "flower",
+   "side": "up",
+   "delivery": "cinder-rosette-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/flower.png",
+   "sourceSha256": "a9659fc949bdeac900f3723214f28c69a0a50904c81b749437f5822eceeacd79",
+   "size": [
+    16,
+    16
+   ],
+   "anchor": [
+    7,
+    15
+   ],
+   "rect": [
+    81,
+    242,
+    16,
+    16
+   ],
+   "w": 16,
+   "h": 16,
+   "opaque": 107,
+   "partial": 0,
+   "sig": "c323cf75b637572e7cb6ea76814cd34e1b7665dfc6656d88ebffdc3b30950ef3",
+   "masks": {}
+  },
+  {
+   "id": "seedHead.small",
+   "side": "up",
+   "delivery": "cinder-rosette-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/seedHead.small.png",
+   "sourceSha256": "3c732834619aba5dc0a27e34dda8995fec61732f558c709c72954882f71146b1",
+   "size": [
+    11,
+    13
+   ],
+   "anchor": [
+    5,
+    12
+   ],
+   "rect": [
+    98,
+    242,
+    11,
+    13
+   ],
+   "w": 11,
+   "h": 13,
+   "opaque": 50,
+   "partial": 0,
+   "sig": "b455b5203d85d0a3d07e68ae7491f5646ba98f21354a90710d67ca103fdea76b",
+   "masks": {}
+  },
+  {
+   "id": "seedHead.large",
+   "side": "up",
+   "delivery": "cinder-rosette-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/seedHead.large.png",
+   "sourceSha256": "11b75972184b9ba7efccae43014ba479b98d87a6b8fdac9d5860bb5c6d3c3fde",
+   "size": [
+    16,
+    18
+   ],
+   "anchor": [
+    7,
+    17
+   ],
+   "rect": [
+    110,
+    242,
+    16,
+    18
+   ],
+   "w": 16,
+   "h": 18,
+   "opaque": 103,
+   "partial": 0,
+   "sig": "b5ae5892f3d1cf0f9dba928dc366eed17955ee1614725677a277af0efc5ec5ce",
+   "masks": {}
+  },
+  {
+   "id": "seed.drift",
+   "side": "up",
+   "delivery": "cinder-rosette-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/seed.drift.png",
+   "sourceSha256": "a2f08363b9b3bf5bdb67c207cc5400e685c1a6f53d305d229f18827f4246bcb3",
+   "size": [
+    7,
+    7
+   ],
+   "anchor": [
+    2,
+    4
+   ],
+   "rect": [
+    127,
+    242,
+    7,
+    7
+   ],
+   "w": 7,
+   "h": 7,
+   "opaque": 29,
+   "partial": 0,
+   "sig": "cbab4b1550a5354c43d04f9713679436159f62d1fb0f1fece6a1814327c730cf",
+   "masks": {}
+  },
+  {
+   "id": "pod",
+   "side": "down",
+   "delivery": "cinder-rosette-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/pod.png",
+   "sourceSha256": "695e5a70a141381c6c2a91bc7d7688043f791befee27bceda8c9d949f801542f",
+   "size": [
+    9,
+    11
+   ],
+   "anchor": [
+    4,
+    0
+   ],
+   "rect": [
+    135,
+    242,
+    9,
+    11
+   ],
+   "w": 9,
+   "h": 11,
+   "opaque": 49,
+   "partial": 0,
+   "sig": "e5eef60e70c0cfc93202b24d1162c0530f78cd3d69cde092428fc3e3997f27e9",
+   "masks": {}
+  }
+ ]
+}

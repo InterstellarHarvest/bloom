@@ -91,7 +91,7 @@ export class DestinationSurvey {
    *                    in the survey state leaves too). The survey changes nothing itself: the consumer transitions and disposes it.
    * species            (035B) the species this survey is FOR (a BLOOM.species.resolve object or id; default Organic Hybrid): every
    *                    sector is classified, described and validated for it (the worlds themselves never depend on it)
-   * onChangeSpecies    (035B, development flag ?species=1 only) shows the species chip with a "Change" button in the header; called with
+   * onChangeSpecies    (035B; 035C2 normal flow) shows the species chip with a "Change" button in the header; called with
    *                    this survey (state survey / loading). Without it the screen shows no species control at all (production flow).
    */
   constructor(root, { sectorSeed = null, firstBloom = false, reducedMotion = null, worker = true, workers = null, onBeginExpedition = null, descent = null, sectors = null, onExit = null,
@@ -183,7 +183,7 @@ export class DestinationSurvey {
   }
 
   /**
-   * (035B) Change Species (development flag flow): only with an `onChangeSpecies` consumer, from the survey (or still-loading) state.
+   * (035B) Change Species: only with an `onChangeSpecies` consumer, from the survey (or still-loading) state.
    * The consumer shows the species screen and later opens a survey for the new species on the SAME sector seed (this.sectorSeed).
    */
   changeSpecies() {

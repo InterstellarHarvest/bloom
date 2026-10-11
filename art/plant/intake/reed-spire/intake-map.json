@@ -1,0 +1,2861 @@
+{
+ "format": "bloom-plant-art-intake@1",
+ "milestone": "BLOOM-035C0 intake",
+ "tool": "tools/intake-plant-art.mjs",
+ "pack": "reed-spire",
+ "species": "reed_spire",
+ "bodyPlan": "reed@1",
+ "brief": {
+  "path": "docs/species-art-briefs/REED_SPIRE_ART_BRIEF_v1.json",
+  "sha256": "7227108c3c13953f568a94428640ac6525e3fe9819263d8cd7cddfa2e86dded8"
+ },
+ "acceptance": {
+  "path": "art/plant/intake/reed-spire/PMO_FINAL_ACCEPTANCE.json",
+  "sha256": "72fbed3b1e2f973dbdf89355a5963c19d0b409c6045406b91ca6262d566e77c1",
+  "status": "FINAL PMO-APPROVED ART INTAKE",
+  "deliveries": [
+   {
+    "file": "reed-spire-batch1-base-body.zip",
+    "batch": 1,
+    "bytes": 2754,
+    "sha256": "9052bc8ab73ae762deed09c682a3c28514d1df099f6d2e175ad3a57ea3d34515",
+    "match": true
+   },
+   {
+    "file": "reed-spire-batch2-cold-heat.zip",
+    "batch": 2,
+    "bytes": 3691,
+    "sha256": "54550a18f12c578790f1cb5f5a99b2c0b1fc372f81aef42be23823a81a20d5b0",
+    "match": true
+   },
+   {
+    "file": "reed-spire-batch3-drought.zip",
+    "batch": 3,
+    "bytes": 10817,
+    "sha256": "ed9fa6c01d32a20bbca2a959e89e5b1cfd45878295bd43cce16ce7102e7b0e7a",
+    "match": true
+   },
+   {
+    "file": "reed-spire-batch4-flood.zip",
+    "batch": 4,
+    "bytes": 11756,
+    "sha256": "751b63410d76dd50380717b8953450ac5090962c592d3d9ac86088543f7f4b54",
+    "match": true
+   },
+   {
+    "file": "reed-spire-batch5-salt-radiation.zip",
+    "batch": 5,
+    "bytes": 13559,
+    "sha256": "0cd66e40a05161fb742d760733b8eb7214d604aa9df086d35f3ba75705482725",
+    "match": true
+   },
+   {
+    "file": "reed-spire-batch6-reproduction-dispersal.zip",
+    "batch": 6,
+    "bytes": 2755,
+    "sha256": "12b841ac34ad91dfb56893a0bbb166f7045416de505cf8cb9137024a3bc84ca9",
+    "match": true
+   },
+   {
+    "file": "reed-spire-batch7-metadata-closure.zip",
+    "batch": 7,
+    "bytes": 201822,
+    "sha256": "51b9e27a8327837ce2cc067aad6a45b540fcbe92a92a2a9c40744c856b320607",
+    "match": true
+   }
+  ]
+ },
+ "atlas": {
+  "path": "art/plant/packs/reed-spire/atlas.png",
+  "w": 160,
+  "h": 107,
+  "gutter": 1,
+  "swatch": [
+   0,
+   0,
+   36,
+   8
+  ]
+ },
+ "palette": {
+  "materials": 18,
+  "colours": 69,
+  "declaredBy": {
+   "ink": "reed-spire-batch7-metadata-closure.zip",
+   "leaf": "reed-spire-batch7-metadata-closure.zip",
+   "stem": "reed-spire-batch7-metadata-closure.zip",
+   "root": "reed-spire-batch7-metadata-closure.zip",
+   "core": "reed-spire-batch7-metadata-closure.zip",
+   "petal": "reed-spire-batch7-metadata-closure.zip",
+   "center": "reed-spire-batch7-metadata-closure.zip",
+   "pappus": "reed-spire-batch7-metadata-closure.zip",
+   "seed": "reed-spire-batch7-metadata-closure.zip",
+   "frost": "reed-spire-batch7-metadata-closure.zip",
+   "tuber": "reed-spire-batch7-metadata-closure.zip",
+   "salt": "reed-spire-batch7-metadata-closure.zip",
+   "pod": "reed-spire-batch7-metadata-closure.zip",
+   "pigLeaf": "reed-spire-batch7-metadata-closure.zip",
+   "pigStem": "reed-spire-batch7-metadata-closure.zip",
+   "pigCore": "reed-spire-batch7-metadata-closure.zip",
+   "waxLeaf": "reed-spire-batch7-metadata-closure.zip",
+   "waxCore": "reed-spire-batch7-metadata-closure.zip"
+  }
+ },
+ "environment": {
+  "sky": [
+   "#34546e",
+   "#7da4a4"
+  ],
+  "soil": [
+   "#372f28",
+   "#302620",
+   "#957958"
+  ],
+  "turf": "#516f57",
+  "water": [
+   "#34708a",
+   "#a4d2d2"
+  ]
+ },
+ "render": {
+  "stemOutline": "ink"
+ },
+ "maskPolicy": "authored masks as delivered; every other pigment / wax mask = the contract default \"auto\"; no authored toothed mask = no teeth (contract)",
+ "attachments": [
+  "reed-spire-batch7-metadata-closure.zip:source/REED_SPIRE_CANONICAL_MANIFEST.json",
+  "reed-spire-batch7-metadata-closure.zip:source/REED_SPIRE_SOURCE_MAP.json",
+  "reed-spire-batch7-metadata-closure.zip:source/REED_SPIRE_PRODUCTION_PALETTE_v1.json",
+  "reed-spire-batch7-metadata-closure.zip:source/REED_SPIRE_VISUAL_EQUIVALENCE_REPORT.json",
+  "reed-spire-batch7-metadata-closure.zip:source/SHA256SUMS.txt",
+  "reed-spire-batch7-metadata-closure.zip:source/README_V3_1.txt",
+  "reed-spire-batch7-metadata-closure.zip:source/README_PMO_REVIEW.txt"
+ ],
+ "sprites": [
+  {
+   "id": "leaf.base.low",
+   "side": "right",
+   "delivery": "reed-spire-batch1-base-body.zip",
+   "entry": "sprites/leaf.base.low.png",
+   "sourceSha256": "06a4e810280eb982231ade0beb5d8a024d0eb05e4375ad0a9f41a1ffd3426863",
+   "size": [
+    6,
+    12
+   ],
+   "anchor": [
+    1,
+    11
+   ],
+   "points": {
+    "tip": [
+     4,
+     1
+    ],
+    "margin": [
+     [
+      3,
+      9
+     ],
+     [
+      5,
+      6
+     ],
+     [
+      4,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    9,
+    6,
+    12
+   ],
+   "w": 6,
+   "h": 12,
+   "opaque": 28,
+   "partial": 0,
+   "sig": "0b4491fc264e642b7b7bfebee23ce3629807b014a031a6e4faa03b81aff900db",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.low.png",
+     "sourceSha256": "66bcbfb43f833721a5fc42bce295f98601ac5df92203335e99ff3b4725bee4b2",
+     "rect": [
+      7,
+      9,
+      6,
+      12
+     ],
+     "w": 6,
+     "h": 12,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "ff8ba258f53c383170ecea282c5dffd3afb8ab050cc4a3ded4f4d824562696ed"
+    }
+   }
+  },
+  {
+   "id": "leaf.base.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch1-base-body.zip",
+   "entry": "sprites/leaf.base.mid.png",
+   "sourceSha256": "399a26f6de1dec06f328fd45aa86b81f98dea28fd280b3b50af3736a9ec04419",
+   "size": [
+    7,
+    13
+   ],
+   "anchor": [
+    1,
+    12
+   ],
+   "points": {
+    "tip": [
+     6,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      10
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      6,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    14,
+    9,
+    7,
+    13
+   ],
+   "w": 7,
+   "h": 13,
+   "opaque": 40,
+   "partial": 0,
+   "sig": "0733032c9fc91a9c86ea57c643c774762b4c892aeec7da2d85755ffcd4a20b38",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.mid.png",
+     "sourceSha256": "065b1ac7a3a58d2fbf038be1a43e6e42c1842f2668df92f51efbc38f99721096",
+     "rect": [
+      22,
+      9,
+      7,
+      13
+     ],
+     "w": 7,
+     "h": 13,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "292bc60b83e7743c2d26fce06c013cb65f8be5709c4d1faa48e143a705d98be1"
+    }
+   }
+  },
+  {
+   "id": "leaf.base.high",
+   "side": "right",
+   "delivery": "reed-spire-batch1-base-body.zip",
+   "entry": "sprites/leaf.base.high.png",
+   "sourceSha256": "abaf8bdcc8003a833f39aea16e5b92ce908c6214756904ed8fe93a61ff9ecb33",
+   "size": [
+    7,
+    14
+   ],
+   "anchor": [
+    1,
+    13
+   ],
+   "points": {
+    "tip": [
+     5,
+     0
+    ],
+    "margin": [
+     [
+      2,
+      11
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    30,
+    9,
+    7,
+    14
+   ],
+   "w": 7,
+   "h": 14,
+   "opaque": 43,
+   "partial": 0,
+   "sig": "9437dea513ea9794d08a9cbb65db623f4afb7851e938925c7bf16a1b6996dc30",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.high.png",
+     "sourceSha256": "a95e51aabc3b155be7d1e621336a75717a36bcb7879602f193a254937e6efb03",
+     "rect": [
+      38,
+      9,
+      7,
+      14
+     ],
+     "w": 7,
+     "h": 14,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "73170f59f8f28322a85fa5ad27ee22160141cd890fb595471edf60aa69804e4d"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.low",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.low.png",
+   "sourceSha256": "4e2169334b4099c9c8771e5163bf45a4e890c202ecdf6fb5d5e2f9136cab61fe",
+   "size": [
+    8,
+    13
+   ],
+   "anchor": [
+    1,
+    12
+   ],
+   "points": {
+    "tip": [
+     7,
+     4
+    ],
+    "margin": [
+     [
+      3,
+      9
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      6,
+      5
+     ]
+    ]
+   },
+   "rect": [
+    46,
+    9,
+    8,
+    13
+   ],
+   "w": 8,
+   "h": 13,
+   "opaque": 38,
+   "partial": 0,
+   "sig": "cdee8b56db01417066013673eaa7a71a59663947f15cf35d9f927d5e7016fa82",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.low.png",
+     "sourceSha256": "7527d6bf9b3a3c100f84d9c2c6193dc517bb4a77e621fea1d32546e94390a8a4",
+     "rect": [
+      55,
+      9,
+      8,
+      13
+     ],
+     "w": 8,
+     "h": 13,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "0fd1e5e3da1b90cdc734982c0d66f8aeb7aa1a73cc1b490b5a7dfeae76fd669e"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.mid.png",
+   "sourceSha256": "62de37c5cc7839d7befbf2e078acd3a1823a8c67be8b60739d13195abdbe3273",
+   "size": [
+    8,
+    13
+   ],
+   "anchor": [
+    1,
+    12
+   ],
+   "points": {
+    "tip": [
+     7,
+     1
+    ],
+    "margin": [
+     [
+      3,
+      9
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      6,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    64,
+    9,
+    8,
+    13
+   ],
+   "w": 8,
+   "h": 13,
+   "opaque": 47,
+   "partial": 0,
+   "sig": "8931e41d84080d1234df96dc6ca4cc098c2e874287d0db6c15d22b5257247917",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.mid.png",
+     "sourceSha256": "2a2976c82ba7c3f1986791db4700c389f666c14e0a9ff8e069a42ff0060befd9",
+     "rect": [
+      73,
+      9,
+      8,
+      13
+     ],
+     "w": 8,
+     "h": 13,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "6bef143be9ae85c27813b4254cc0ff97a3e31226820181f43db71fb9ef9c318b"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.high",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.high.png",
+   "sourceSha256": "0a625b0a493b5a696d66903e8a165f108b7eefafcec2cea8edbc4d5df0a19d75",
+   "size": [
+    8,
+    13
+   ],
+   "anchor": [
+    1,
+    12
+   ],
+   "points": {
+    "tip": [
+     4,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      9
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    82,
+    9,
+    8,
+    13
+   ],
+   "w": 8,
+   "h": 13,
+   "opaque": 48,
+   "partial": 0,
+   "sig": "2ee45f5a1d465f432554bc77cefd95aedf437c39c4ef7e1034f3a3f83c43bb0d",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.high.png",
+     "sourceSha256": "c72847e69087fcf303dae490bda2fb7c9d9b7dd6d7e79ccdeb16fcbcb095e377",
+     "rect": [
+      91,
+      9,
+      8,
+      13
+     ],
+     "w": 8,
+     "h": 13,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "0fad22bf66308fd5080fa1975756cde1234c9c67d7cd3ec2858f0e79d1e8f966"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.low",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.low.png",
+   "sourceSha256": "377241d500cb47cb0e23e5e1e65f059a772e07dc29dea6e0c75457e38839a835",
+   "size": [
+    8,
+    12
+   ],
+   "anchor": [
+    1,
+    11
+   ],
+   "points": {
+    "tip": [
+     6,
+     4
+    ],
+    "margin": [
+     [
+      4,
+      8
+     ],
+     [
+      6,
+      5
+     ],
+     [
+      5,
+      6
+     ]
+    ]
+   },
+   "rect": [
+    100,
+    9,
+    8,
+    12
+   ],
+   "w": 8,
+   "h": 12,
+   "opaque": 31,
+   "partial": 0,
+   "sig": "4619adad360ee0543d6986a6912b6d3e614e5c7b774cda1f2cd9c611dbbf9cd4",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.low.png",
+     "sourceSha256": "04dc39ee9bdd32162d422bba988dc13441668faebe2c0335d078c7703187b18d",
+     "rect": [
+      109,
+      9,
+      8,
+      12
+     ],
+     "w": 8,
+     "h": 12,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "bdc92370d84a7b1cb614dd86a288af77afe99924f4dc78ccd257077d15aeb018"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.mid.png",
+   "sourceSha256": "1ee4089848985e0a04fc749e523ba9df7e9ead0fded277c8b4b684cc5759e81c",
+   "size": [
+    8,
+    12
+   ],
+   "anchor": [
+    1,
+    11
+   ],
+   "points": {
+    "tip": [
+     6,
+     1
+    ],
+    "margin": [
+     [
+      3,
+      8
+     ],
+     [
+      4,
+      5
+     ],
+     [
+      6,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    118,
+    9,
+    8,
+    12
+   ],
+   "w": 8,
+   "h": 12,
+   "opaque": 38,
+   "partial": 0,
+   "sig": "74fdb7ba3761c66cdff8a31062fc02d7b0878391774b7344be1ff9d169a36ad8",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.mid.png",
+     "sourceSha256": "04dc39ee9bdd32162d422bba988dc13441668faebe2c0335d078c7703187b18d",
+     "rect": [
+      127,
+      9,
+      8,
+      12
+     ],
+     "w": 8,
+     "h": 12,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "bdc92370d84a7b1cb614dd86a288af77afe99924f4dc78ccd257077d15aeb018"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.high",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.high.png",
+   "sourceSha256": "198a094f3048ff15450896dd77cf5f9c13958adddcc9c87a4d1f1f6d88c68594",
+   "size": [
+    8,
+    12
+   ],
+   "anchor": [
+    1,
+    11
+   ],
+   "points": {
+    "tip": [
+     3,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      8
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      4,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    136,
+    9,
+    8,
+    12
+   ],
+   "w": 8,
+   "h": 12,
+   "opaque": 37,
+   "partial": 0,
+   "sig": "93499f8de60a84a0c638b2f73766ab3c18dcb97a8fae7ae4856d96d6958ccf46",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.high.png",
+     "sourceSha256": "37686203a92c0b7eedc19b82d0c69f44f39c34d61972b807cf698b4323135953",
+     "rect": [
+      145,
+      9,
+      8,
+      12
+     ],
+     "w": 8,
+     "h": 12,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "6074552260a7a66fa0c6f1402e10742961c5131f38baabc987e965ac76f636bc"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.low",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.low.png",
+   "sourceSha256": "22351d6dca1a5ee0d3ec34dd9645069f720eeccde9debba9e09d7183b2e622e9",
+   "size": [
+    7,
+    11
+   ],
+   "anchor": [
+    1,
+    10
+   ],
+   "points": {
+    "tip": [
+     5,
+     4
+    ],
+    "margin": [
+     [
+      3,
+      7
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      5
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    24,
+    7,
+    11
+   ],
+   "w": 7,
+   "h": 11,
+   "opaque": 24,
+   "partial": 0,
+   "sig": "8e1a734ff6cf7eafd6eb8a823c575ab48116f7ebc7cbe9cc23221d00e6cd5310",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.low.png",
+     "sourceSha256": "fc983b8b2ccdd9cd4fc09492cf002101800dc607f2ecd761971c63c3f9380228",
+     "rect": [
+      8,
+      24,
+      7,
+      11
+     ],
+     "w": 7,
+     "h": 11,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "65b3e46af6b29d8dcc0c050b29ed8c3bf5c709fe6a36945186ea98bb64ead2c7"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.mid.png",
+   "sourceSha256": "55e184f58d8824d5912f3acaa91b8fb4019a97f65e961b5073cbb3a632aaa408",
+   "size": [
+    7,
+    11
+   ],
+   "anchor": [
+    1,
+    10
+   ],
+   "points": {
+    "tip": [
+     5,
+     1
+    ],
+    "margin": [
+     [
+      3,
+      7
+     ],
+     [
+      4,
+      4
+     ],
+     [
+      4,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    16,
+    24,
+    7,
+    11
+   ],
+   "w": 7,
+   "h": 11,
+   "opaque": 33,
+   "partial": 0,
+   "sig": "73e048328feeed07e81a09df7e64a6433fd11a3700d881db702911f034dcc96c",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.mid.png",
+     "sourceSha256": "ede464e07466b48f0d364e62d06168f78e4633dd57d2c686fbfb401879932cca",
+     "rect": [
+      24,
+      24,
+      7,
+      11
+     ],
+     "w": 7,
+     "h": 11,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "661f8967afce8ab21b5be9b99556929158845fda7dd04ac815b3c0684732a30e"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.high",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.high.png",
+   "sourceSha256": "6fb805a5762d63d6f80b6d6e79f3c8e28b3e1c9657111ecc27e8077e12136bc1",
+   "size": [
+    7,
+    11
+   ],
+   "anchor": [
+    1,
+    10
+   ],
+   "points": {
+    "tip": [
+     3,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      7
+     ],
+     [
+      3,
+      4
+     ],
+     [
+      4,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    32,
+    24,
+    7,
+    11
+   ],
+   "w": 7,
+   "h": 11,
+   "opaque": 32,
+   "partial": 0,
+   "sig": "6dd00cd75056e444935688550d4d85e0d3074350519c6e413bbed9c09ab34f46",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.high.png",
+     "sourceSha256": "27d660dd8c1bf59d4a0f561992be720a75f101222e0edb9880e9cfbe7faac51e",
+     "rect": [
+      40,
+      24,
+      7,
+      11
+     ],
+     "w": 7,
+     "h": 11,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "035b09d020960e70b50cda1dd7edcd4d0c1bbd176b796e6f136dcfffc171bdd6"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.low",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.low.png",
+   "sourceSha256": "5fb66407725bfb5f6c44a269366fde15638ddd543d9f91f59983283ffd0991a0",
+   "size": [
+    9,
+    15
+   ],
+   "anchor": [
+    1,
+    14
+   ],
+   "points": {
+    "tip": [
+     8,
+     2
+    ],
+    "margin": [
+     [
+      4,
+      12
+     ],
+     [
+      8,
+      8
+     ],
+     [
+      8,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    48,
+    24,
+    9,
+    15
+   ],
+   "w": 9,
+   "h": 15,
+   "opaque": 41,
+   "partial": 0,
+   "sig": "f131133460c01d8a643f1eca51dfad9a0a9ea355ed1d1e6e1cfa78d5b6bee7e8",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.low.png",
+     "sourceSha256": "e06054c667fc9af52b03c094464eddc503f7fe9d18d5f7b9752b1e837e704749",
+     "rect": [
+      58,
+      24,
+      9,
+      15
+     ],
+     "w": 9,
+     "h": 15,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "eb41fb382351e35656d61ea021700de617b3d7b893b8bc0fd8b5a11f826e5cf6"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.mid.png",
+   "sourceSha256": "949ac10f662cb2edb6c2d4a3d2ea022c1425afe6533582b0fe599bde755d2174",
+   "size": [
+    9,
+    15
+   ],
+   "anchor": [
+    1,
+    14
+   ],
+   "points": {
+    "tip": [
+     8,
+     1
+    ],
+    "margin": [
+     [
+      3,
+      12
+     ],
+     [
+      8,
+      7
+     ],
+     [
+      7,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    68,
+    24,
+    9,
+    15
+   ],
+   "w": 9,
+   "h": 15,
+   "opaque": 47,
+   "partial": 0,
+   "sig": "54bf635fb6df8d0baa26085c99532addb4c6af6b66eb3386ed38aa04555ebdab",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.mid.png",
+     "sourceSha256": "190a2f4f6bf301ed2bf5646d44a066b5ebb1982637702dc220327912e4562abb",
+     "rect": [
+      78,
+      24,
+      9,
+      15
+     ],
+     "w": 9,
+     "h": 15,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "baa96aeab01d9dca4d19b286c6b26dec7721f3ac49587f9281885c08d0eb7600"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.high",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.high.png",
+   "sourceSha256": "01fced2888b91b3e84ce1152f772746b354726dc0b262bf358d0c46a8e38fb7e",
+   "size": [
+    9,
+    15
+   ],
+   "anchor": [
+    1,
+    14
+   ],
+   "points": {
+    "tip": [
+     7,
+     0
+    ],
+    "margin": [
+     [
+      2,
+      12
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      6,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    88,
+    24,
+    9,
+    15
+   ],
+   "w": 9,
+   "h": 15,
+   "opaque": 49,
+   "partial": 0,
+   "sig": "07846e395129713a7538865c43b55f85a3d1dc6e2484673337b8b5d101de1bd5",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.high.png",
+     "sourceSha256": "e9f5478fd7b5b547f64886e18f77c73194a345247cadd796045f88067cf28bf4",
+     "rect": [
+      98,
+      24,
+      9,
+      15
+     ],
+     "w": 9,
+     "h": 15,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "f8c6f93cadb765abbcfcf345900e462531518c5bbfa6165f9d388874e8e4bc50"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.low",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.low.png",
+   "sourceSha256": "cf1688bf14d9054754c3f2b421cc25f0c20dd510f9b907a7f0bfadeb0f65499d",
+   "size": [
+    10,
+    16
+   ],
+   "anchor": [
+    1,
+    15
+   ],
+   "points": {
+    "tip": [
+     9,
+     2
+    ],
+    "margin": [
+     [
+      4,
+      13
+     ],
+     [
+      8,
+      8
+     ],
+     [
+      9,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    108,
+    24,
+    10,
+    16
+   ],
+   "w": 10,
+   "h": 16,
+   "opaque": 48,
+   "partial": 0,
+   "sig": "23e57c80b9866b459c8ee9e5cc28c536dc2da5605de7094928412a39f7bdb05e",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.low.png",
+     "sourceSha256": "f2aac200c637dc5ef96497cf1e7a2cafbfb9e7b96fb6883997ff4cc426821c4c",
+     "rect": [
+      119,
+      24,
+      10,
+      16
+     ],
+     "w": 10,
+     "h": 16,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "bf456fcac5ad556defc0f922ab56751185a8fd58a4e961871ba26d891b993b5e"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.mid.png",
+   "sourceSha256": "ec06c80591ad57f76ee74c9d67dd5d0a87f6b43f3ea921bbef148fea6547bc57",
+   "size": [
+    10,
+    16
+   ],
+   "anchor": [
+    1,
+    15
+   ],
+   "points": {
+    "tip": [
+     9,
+     1
+    ],
+    "margin": [
+     [
+      3,
+      13
+     ],
+     [
+      7,
+      8
+     ],
+     [
+      8,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    130,
+    24,
+    10,
+    16
+   ],
+   "w": 10,
+   "h": 16,
+   "opaque": 51,
+   "partial": 0,
+   "sig": "08df4543d85fef70798b54c1c4751d394c15e8de640b35f0a498a9410bda8b6d",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.mid.png",
+     "sourceSha256": "10325a8335221efdfa7110925ea8a2edcee3021c050d9846f508944d2c6b82f5",
+     "rect": [
+      141,
+      24,
+      10,
+      16
+     ],
+     "w": 10,
+     "h": 16,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "ab847cf5d17c7e14393ab8203f503202ba4b9e971017a922f5b9b1fdaccc48a4"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.high",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.high.png",
+   "sourceSha256": "c6ef6cd80a5021972e318470a14a9034f47f8bc5523b2c906d9567b522c4c532",
+   "size": [
+    10,
+    16
+   ],
+   "anchor": [
+    1,
+    15
+   ],
+   "points": {
+    "tip": [
+     8,
+     0
+    ],
+    "margin": [
+     [
+      2,
+      13
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    41,
+    10,
+    16
+   ],
+   "w": 10,
+   "h": 16,
+   "opaque": 56,
+   "partial": 0,
+   "sig": "ece45897c9bf1da4333884c8137a7012ebdb971d833b9cad67077b6f40e3bac6",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.high.png",
+     "sourceSha256": "29c763da4a4bc179523d467cc27ca29bc759cfd0cae393ce0e326f44f2699fcc",
+     "rect": [
+      11,
+      41,
+      10,
+      16
+     ],
+     "w": 10,
+     "h": 16,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "825c569edb9ea319baea052a806624c2945aa05f9e46fdf6851361e8ff0bb823"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.low",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.low.png",
+   "sourceSha256": "f3e1c50056e7d5d5fecb9d0099a7db1c59598330312a72fca4202810530ff402",
+   "size": [
+    10,
+    16
+   ],
+   "anchor": [
+    1,
+    15
+   ],
+   "points": {
+    "tip": [
+     9,
+     2
+    ],
+    "margin": [
+     [
+      4,
+      13
+     ],
+     [
+      9,
+      8
+     ],
+     [
+      9,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    22,
+    41,
+    10,
+    16
+   ],
+   "w": 10,
+   "h": 16,
+   "opaque": 49,
+   "partial": 0,
+   "sig": "f0d23f892ae318290354bd58dd321ce3637206c613aec4ae8bc554569b7da3f0",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.low.png",
+     "sourceSha256": "f2aac200c637dc5ef96497cf1e7a2cafbfb9e7b96fb6883997ff4cc426821c4c",
+     "rect": [
+      33,
+      41,
+      10,
+      16
+     ],
+     "w": 10,
+     "h": 16,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "bf456fcac5ad556defc0f922ab56751185a8fd58a4e961871ba26d891b993b5e"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.mid.png",
+   "sourceSha256": "871fd2d14ab7abbd41add7d878c27ee1fd86bae5a49a819e5bbb4d65e9aabb06",
+   "size": [
+    10,
+    16
+   ],
+   "anchor": [
+    1,
+    15
+   ],
+   "points": {
+    "tip": [
+     9,
+     1
+    ],
+    "margin": [
+     [
+      3,
+      13
+     ],
+     [
+      8,
+      8
+     ],
+     [
+      8,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    44,
+    41,
+    10,
+    16
+   ],
+   "w": 10,
+   "h": 16,
+   "opaque": 51,
+   "partial": 0,
+   "sig": "ce0b4c6da2372b2471ef65745225e4586a9951d308bedfb3c7189d6f9cef6d57",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.mid.png",
+     "sourceSha256": "10325a8335221efdfa7110925ea8a2edcee3021c050d9846f508944d2c6b82f5",
+     "rect": [
+      55,
+      41,
+      10,
+      16
+     ],
+     "w": 10,
+     "h": 16,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "ab847cf5d17c7e14393ab8203f503202ba4b9e971017a922f5b9b1fdaccc48a4"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.high",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.high.png",
+   "sourceSha256": "4496c0220613e8a6ec57d6de88245d8b5f0768ac167c900811968ceeb770bd49",
+   "size": [
+    10,
+    16
+   ],
+   "anchor": [
+    1,
+    15
+   ],
+   "points": {
+    "tip": [
+     8,
+     0
+    ],
+    "margin": [
+     [
+      2,
+      13
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    66,
+    41,
+    10,
+    16
+   ],
+   "w": 10,
+   "h": 16,
+   "opaque": 56,
+   "partial": 0,
+   "sig": "8c9838d790f34c6f16f32d262044e9be30f08b074f34cda50e187b8de902c54c",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.high.png",
+     "sourceSha256": "29c763da4a4bc179523d467cc27ca29bc759cfd0cae393ce0e326f44f2699fcc",
+     "rect": [
+      77,
+      41,
+      10,
+      16
+     ],
+     "w": 10,
+     "h": 16,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "825c569edb9ea319baea052a806624c2945aa05f9e46fdf6851361e8ff0bb823"
+    }
+   }
+  },
+  {
+   "id": "leaf.base.heat.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch2-cold-heat.zip",
+   "entry": "sprites/leaf.base.heat.mid.png",
+   "sourceSha256": "0fd084ead7970b6737729842840aa4c5cfeb6d08e0046c1d6dfce03150980d9d",
+   "size": [
+    7,
+    13
+   ],
+   "anchor": [
+    1,
+    12
+   ],
+   "points": {
+    "tip": [
+     6,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      10
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      6,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    88,
+    41,
+    7,
+    13
+   ],
+   "w": 7,
+   "h": 13,
+   "opaque": 40,
+   "partial": 0,
+   "sig": "4c64b82d67111847b769c455107842afdbc00db23bdb7b77bda5171bbf968b4d",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.heat.mid.png",
+     "sourceSha256": "065b1ac7a3a58d2fbf038be1a43e6e42c1842f2668df92f51efbc38f99721096",
+     "rect": [
+      96,
+      41,
+      7,
+      13
+     ],
+     "w": 7,
+     "h": 13,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "292bc60b83e7743c2d26fce06c013cb65f8be5709c4d1faa48e143a705d98be1"
+    }
+   }
+  },
+  {
+   "id": "leaf.base.heat.high",
+   "side": "right",
+   "delivery": "reed-spire-batch2-cold-heat.zip",
+   "entry": "sprites/leaf.base.heat.high.png",
+   "sourceSha256": "4569abd27b48f13c64af673bf1dfde691a311c28401280db946a70b8e22e2f6e",
+   "size": [
+    7,
+    14
+   ],
+   "anchor": [
+    1,
+    13
+   ],
+   "points": {
+    "tip": [
+     5,
+     0
+    ],
+    "margin": [
+     [
+      2,
+      11
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    104,
+    41,
+    7,
+    14
+   ],
+   "w": 7,
+   "h": 14,
+   "opaque": 43,
+   "partial": 0,
+   "sig": "a4e3211d1ba047ed239317c5773809b0390b66b5f5147ad485c2d8abdda71385",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.base.heat.high.png",
+     "sourceSha256": "a95e51aabc3b155be7d1e621336a75717a36bcb7879602f193a254937e6efb03",
+     "rect": [
+      112,
+      41,
+      7,
+      14
+     ],
+     "w": 7,
+     "h": 14,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "73170f59f8f28322a85fa5ad27ee22160141cd890fb595471edf60aa69804e4d"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.heat.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.heat.mid.png",
+   "sourceSha256": "27eecf36770c7e733f72753b89050a4358e44b22f37e1977315b09e6bc9f00d0",
+   "size": [
+    8,
+    13
+   ],
+   "anchor": [
+    1,
+    12
+   ],
+   "points": {
+    "tip": [
+     7,
+     1
+    ],
+    "margin": [
+     [
+      3,
+      9
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      6,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    120,
+    41,
+    8,
+    13
+   ],
+   "w": 8,
+   "h": 13,
+   "opaque": 47,
+   "partial": 0,
+   "sig": "0104333538a5dcc431ad43d99f7a99b93197e2db2009597959e9f55ea5ae2344",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.heat.mid.png",
+     "sourceSha256": "2a2976c82ba7c3f1986791db4700c389f666c14e0a9ff8e069a42ff0060befd9",
+     "rect": [
+      129,
+      41,
+      8,
+      13
+     ],
+     "w": 8,
+     "h": 13,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "6bef143be9ae85c27813b4254cc0ff97a3e31226820181f43db71fb9ef9c318b"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.1.heat.high",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.1.heat.high.png",
+   "sourceSha256": "f59461bc711c1af7af19625fb192ea127db6538e25b12993e1038939b9edd292",
+   "size": [
+    8,
+    13
+   ],
+   "anchor": [
+    1,
+    12
+   ],
+   "points": {
+    "tip": [
+     4,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      9
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    138,
+    41,
+    8,
+    13
+   ],
+   "w": 8,
+   "h": 13,
+   "opaque": 48,
+   "partial": 0,
+   "sig": "30338338c0cb4fa19b27e356d047bffe387a8dac301370514c84834e22fafdb0",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.1.heat.high.png",
+     "sourceSha256": "c72847e69087fcf303dae490bda2fb7c9d9b7dd6d7e79ccdeb16fcbcb095e377",
+     "rect": [
+      147,
+      41,
+      8,
+      13
+     ],
+     "w": 8,
+     "h": 13,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "0fad22bf66308fd5080fa1975756cde1234c9c67d7cd3ec2858f0e79d1e8f966"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.heat.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.heat.mid.png",
+   "sourceSha256": "d68cd7b73720d845ea8ca76755570fad12a4a8719c7a41e1338bfb2f735676a5",
+   "size": [
+    8,
+    12
+   ],
+   "anchor": [
+    1,
+    11
+   ],
+   "points": {
+    "tip": [
+     6,
+     1
+    ],
+    "margin": [
+     [
+      3,
+      8
+     ],
+     [
+      4,
+      5
+     ],
+     [
+      6,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    58,
+    8,
+    12
+   ],
+   "w": 8,
+   "h": 12,
+   "opaque": 38,
+   "partial": 0,
+   "sig": "af918a0753620a6f13012ce89d8b6f65b772d7d24090943aaf6906290b60cbde",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.heat.mid.png",
+     "sourceSha256": "04dc39ee9bdd32162d422bba988dc13441668faebe2c0335d078c7703187b18d",
+     "rect": [
+      9,
+      58,
+      8,
+      12
+     ],
+     "w": 8,
+     "h": 12,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "bdc92370d84a7b1cb614dd86a288af77afe99924f4dc78ccd257077d15aeb018"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.2.heat.high",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.2.heat.high.png",
+   "sourceSha256": "b68f920c1252ff0ae83570a79f793aa5178b1192aef2b4beefbc811d9fd92af9",
+   "size": [
+    8,
+    12
+   ],
+   "anchor": [
+    1,
+    11
+   ],
+   "points": {
+    "tip": [
+     3,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      8
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      4,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    18,
+    58,
+    8,
+    12
+   ],
+   "w": 8,
+   "h": 12,
+   "opaque": 37,
+   "partial": 0,
+   "sig": "42d83ec70ee5bff28ce474199a03332ecb9558515962ff911886adcc38b115b9",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.2.heat.high.png",
+     "sourceSha256": "37686203a92c0b7eedc19b82d0c69f44f39c34d61972b807cf698b4323135953",
+     "rect": [
+      27,
+      58,
+      8,
+      12
+     ],
+     "w": 8,
+     "h": 12,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "6074552260a7a66fa0c6f1402e10742961c5131f38baabc987e965ac76f636bc"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.heat.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.heat.mid.png",
+   "sourceSha256": "37f84ef83999aaddfca618a998863fed498d7aac052435283de1019e0dbb52f1",
+   "size": [
+    7,
+    11
+   ],
+   "anchor": [
+    1,
+    10
+   ],
+   "points": {
+    "tip": [
+     5,
+     1
+    ],
+    "margin": [
+     [
+      3,
+      7
+     ],
+     [
+      4,
+      4
+     ],
+     [
+      4,
+      3
+     ]
+    ]
+   },
+   "rect": [
+    36,
+    58,
+    7,
+    11
+   ],
+   "w": 7,
+   "h": 11,
+   "opaque": 33,
+   "partial": 0,
+   "sig": "9632076ae388c40ee2f5e35adf311162fde99dcb835abd0fd54f03cc41381af7",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.heat.mid.png",
+     "sourceSha256": "ede464e07466b48f0d364e62d06168f78e4633dd57d2c686fbfb401879932cca",
+     "rect": [
+      44,
+      58,
+      7,
+      11
+     ],
+     "w": 7,
+     "h": 11,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "661f8967afce8ab21b5be9b99556929158845fda7dd04ac815b3c0684732a30e"
+    }
+   }
+  },
+  {
+   "id": "leaf.drought.3.heat.high",
+   "side": "right",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/leaf.drought.3.heat.high.png",
+   "sourceSha256": "d28751ceb10853b821955b0861ef9a2d8152e93db13923af8acafe6cb18379ff",
+   "size": [
+    7,
+    11
+   ],
+   "anchor": [
+    1,
+    10
+   ],
+   "points": {
+    "tip": [
+     3,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      7
+     ],
+     [
+      3,
+      4
+     ],
+     [
+      4,
+      2
+     ]
+    ]
+   },
+   "rect": [
+    52,
+    58,
+    7,
+    11
+   ],
+   "w": 7,
+   "h": 11,
+   "opaque": 32,
+   "partial": 0,
+   "sig": "98aa7d007a341cfa931ca443ddff53860a0203af4749346062d9d667361679c2",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.drought.3.heat.high.png",
+     "sourceSha256": "27d660dd8c1bf59d4a0f561992be720a75f101222e0edb9880e9cfbe7faac51e",
+     "rect": [
+      60,
+      58,
+      7,
+      11
+     ],
+     "w": 7,
+     "h": 11,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "035b09d020960e70b50cda1dd7edcd4d0c1bbd176b796e6f136dcfffc171bdd6"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.heat.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.heat.mid.png",
+   "sourceSha256": "56b9b51f66efb3aa26ec17d52755d5dd83ea8dbf14afa32e82906a63673b8499",
+   "size": [
+    9,
+    15
+   ],
+   "anchor": [
+    1,
+    14
+   ],
+   "points": {
+    "tip": [
+     8,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      12
+     ],
+     [
+      8,
+      7
+     ],
+     [
+      8,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    68,
+    58,
+    9,
+    15
+   ],
+   "w": 9,
+   "h": 15,
+   "opaque": 48,
+   "partial": 0,
+   "sig": "7402ab6df24f8c38fdd2482e6ca8b641677a6b497dbd105d4b50d17c3ee50d90",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.heat.mid.png",
+     "sourceSha256": "e9f5478fd7b5b547f64886e18f77c73194a345247cadd796045f88067cf28bf4",
+     "rect": [
+      78,
+      58,
+      9,
+      15
+     ],
+     "w": 9,
+     "h": 15,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "f8c6f93cadb765abbcfcf345900e462531518c5bbfa6165f9d388874e8e4bc50"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.1.heat.high",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.1.heat.high.png",
+   "sourceSha256": "21b5f2bb0fd427942d3a64175a4cb75a7116a2d5adced6ba1d0bcb8edd4c4c09",
+   "size": [
+    9,
+    15
+   ],
+   "anchor": [
+    1,
+    14
+   ],
+   "points": {
+    "tip": [
+     7,
+     0
+    ],
+    "margin": [
+     [
+      2,
+      12
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      6,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    88,
+    58,
+    9,
+    15
+   ],
+   "w": 9,
+   "h": 15,
+   "opaque": 49,
+   "partial": 0,
+   "sig": "c7dba970b6281c5c6a013314813b1538c3f09f869ef4dc1fdb3f109321f245df",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.1.heat.high.png",
+     "sourceSha256": "e9f5478fd7b5b547f64886e18f77c73194a345247cadd796045f88067cf28bf4",
+     "rect": [
+      98,
+      58,
+      9,
+      15
+     ],
+     "w": 9,
+     "h": 15,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "f8c6f93cadb765abbcfcf345900e462531518c5bbfa6165f9d388874e8e4bc50"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.heat.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.heat.mid.png",
+   "sourceSha256": "fad92130125fe079e31da9a43f6f407a6f8b2fdf8ec58b5519b40c55d8380a03",
+   "size": [
+    10,
+    16
+   ],
+   "anchor": [
+    1,
+    15
+   ],
+   "points": {
+    "tip": [
+     9,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      13
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      8,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    108,
+    58,
+    10,
+    16
+   ],
+   "w": 10,
+   "h": 16,
+   "opaque": 56,
+   "partial": 0,
+   "sig": "eafa137e2160c4d2d399e3febc9c4ff415f0fe96eb4800994b55a6dbc3c25a5b",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.heat.mid.png",
+     "sourceSha256": "84b5a0032720cef40d168b8fe0527688f4bd350c659324f06dde332a06a1b449",
+     "rect": [
+      119,
+      58,
+      10,
+      16
+     ],
+     "w": 10,
+     "h": 16,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "f3cdbc9c1cc5eb4d7d87fc8fa952dde19f837a7509c3854a6d68186f9432fd77"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.2.heat.high",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.2.heat.high.png",
+   "sourceSha256": "0564fe903f305706fecb202d770392431c3fab9d3c67b9cc75ee65305e38ddf2",
+   "size": [
+    10,
+    16
+   ],
+   "anchor": [
+    1,
+    15
+   ],
+   "points": {
+    "tip": [
+     8,
+     0
+    ],
+    "margin": [
+     [
+      2,
+      13
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    130,
+    58,
+    10,
+    16
+   ],
+   "w": 10,
+   "h": 16,
+   "opaque": 56,
+   "partial": 0,
+   "sig": "e2a5af8fdfdf22b7c3ef74d5ccd4629533f07a4f4bf421b9abe338a4094415af",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.2.heat.high.png",
+     "sourceSha256": "29c763da4a4bc179523d467cc27ca29bc759cfd0cae393ce0e326f44f2699fcc",
+     "rect": [
+      141,
+      58,
+      10,
+      16
+     ],
+     "w": 10,
+     "h": 16,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "825c569edb9ea319baea052a806624c2945aa05f9e46fdf6851361e8ff0bb823"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.heat.mid",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.heat.mid.png",
+   "sourceSha256": "df7af435c51de59db588fcd0d732da0a204391a2260923d73a5a53627c887ec8",
+   "size": [
+    10,
+    16
+   ],
+   "anchor": [
+    1,
+    15
+   ],
+   "points": {
+    "tip": [
+     9,
+     0
+    ],
+    "margin": [
+     [
+      3,
+      13
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      8,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    75,
+    10,
+    16
+   ],
+   "w": 10,
+   "h": 16,
+   "opaque": 56,
+   "partial": 0,
+   "sig": "66ac9d79006c4de76d2e182ec1e30f3fd66a506fcf7fc1ffa557480294c30fad",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.heat.mid.png",
+     "sourceSha256": "84b5a0032720cef40d168b8fe0527688f4bd350c659324f06dde332a06a1b449",
+     "rect": [
+      11,
+      75,
+      10,
+      16
+     ],
+     "w": 10,
+     "h": 16,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "f3cdbc9c1cc5eb4d7d87fc8fa952dde19f837a7509c3854a6d68186f9432fd77"
+    }
+   }
+  },
+  {
+   "id": "leaf.flood.3.heat.high",
+   "side": "right",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/leaf.flood.3.heat.high.png",
+   "sourceSha256": "eda65e04e780410faf128456f2e83f6b4dfa0ef86834411f8243dbb0ad16d49a",
+   "size": [
+    10,
+    16
+   ],
+   "anchor": [
+    1,
+    15
+   ],
+   "points": {
+    "tip": [
+     8,
+     0
+    ],
+    "margin": [
+     [
+      2,
+      13
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      1
+     ]
+    ]
+   },
+   "rect": [
+    22,
+    75,
+    10,
+    16
+   ],
+   "w": 10,
+   "h": 16,
+   "opaque": 56,
+   "partial": 0,
+   "sig": "0a442b11df12fd31e0d58276f496b827dacafee26269a7eb6e4af1ea0104379f",
+   "masks": {
+    "toothed": {
+     "delivery": "reed-spire-batch5-salt-radiation.zip",
+     "entry": "masks/toothed.leaf.flood.3.heat.high.png",
+     "sourceSha256": "29c763da4a4bc179523d467cc27ca29bc759cfd0cae393ce0e326f44f2699fcc",
+     "rect": [
+      33,
+      75,
+      10,
+      16
+     ],
+     "w": 10,
+     "h": 16,
+     "opaque": 1,
+     "partial": 0,
+     "sig": "825c569edb9ea319baea052a806624c2945aa05f9e46fdf6851361e8ff0bb823"
+    }
+   }
+  },
+  {
+   "id": "root.storage.2",
+   "side": "down",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/root.storage.2.png",
+   "sourceSha256": "e95686afe22dd3dd62c882112ed318bc64a116f3e868d2e7869f640f7d920218",
+   "size": [
+    12,
+    8
+   ],
+   "anchor": [
+    6,
+    0
+   ],
+   "rect": [
+    44,
+    75,
+    12,
+    8
+   ],
+   "w": 12,
+   "h": 8,
+   "opaque": 47,
+   "partial": 0,
+   "sig": "b52773d9bf2ba3a15187235f44dcf1379cfb235f8af8e0ca739d29305b992949",
+   "masks": {}
+  },
+  {
+   "id": "root.storage.3",
+   "side": "down",
+   "delivery": "reed-spire-batch3-drought.zip",
+   "entry": "sprites/root.storage.3.png",
+   "sourceSha256": "98b5eb21ab534ba792ad499d746c243ebe340589d91ce8684d15fb48cada33b0",
+   "size": [
+    16,
+    10
+   ],
+   "anchor": [
+    8,
+    0
+   ],
+   "rect": [
+    57,
+    75,
+    16,
+    10
+   ],
+   "w": 16,
+   "h": 10,
+   "opaque": 77,
+   "partial": 0,
+   "sig": "1107232c7867accce37261cc430dc456e49ce0079a1bee2000fb7efe0ea6467d",
+   "masks": {}
+  },
+  {
+   "id": "root.aerial.1",
+   "side": "up",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/root.aerial.1.png",
+   "sourceSha256": "e718d30b73d569cd897f972aafddebd5db7ad87ca17217574e385b59bab8cce6",
+   "size": [
+    5,
+    8
+   ],
+   "anchor": [
+    2,
+    7
+   ],
+   "rect": [
+    74,
+    75,
+    5,
+    8
+   ],
+   "w": 5,
+   "h": 8,
+   "opaque": 15,
+   "partial": 0,
+   "sig": "ffdc7d0ffa164ed7a8d78c6d13d92ca8d8075c1407230413fc08774765850f5b",
+   "masks": {}
+  },
+  {
+   "id": "root.aerial.2",
+   "side": "up",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/root.aerial.2.png",
+   "sourceSha256": "4c6bb855e8a38721662a8fcb7fcbfd22d141e7aa43f0389e3828481a18293593",
+   "size": [
+    5,
+    11
+   ],
+   "anchor": [
+    2,
+    10
+   ],
+   "rect": [
+    80,
+    75,
+    5,
+    11
+   ],
+   "w": 5,
+   "h": 11,
+   "opaque": 26,
+   "partial": 0,
+   "sig": "c220518e14f917d7597d4cb6f1df73a7acc14c43de8cc6c4264dd4e221dcdc55",
+   "masks": {}
+  },
+  {
+   "id": "root.aerial.3",
+   "side": "up",
+   "delivery": "reed-spire-batch4-flood.zip",
+   "entry": "sprites/root.aerial.3.png",
+   "sourceSha256": "2fbf76aaddce73e8fd76136f7949be3b6bae08dea3c511fcd836b9c55e12e82c",
+   "size": [
+    7,
+    15
+   ],
+   "anchor": [
+    3,
+    14
+   ],
+   "rect": [
+    86,
+    75,
+    7,
+    15
+   ],
+   "w": 7,
+   "h": 15,
+   "opaque": 38,
+   "partial": 0,
+   "sig": "e1a6b38c3a224bea444b5c2b33d60f15da16d23ef3b07a5a314e352f0349b27a",
+   "masks": {}
+  },
+  {
+   "id": "frost.hair.1",
+   "side": "up",
+   "delivery": "reed-spire-batch2-cold-heat.zip",
+   "entry": "sprites/frost.hair.1.png",
+   "sourceSha256": "301d02cfebb12194ce77683630f74d30663fc8e34a428be7c715d5d278495077",
+   "size": [
+    3,
+    4
+   ],
+   "anchor": [
+    1,
+    3
+   ],
+   "rect": [
+    94,
+    75,
+    3,
+    4
+   ],
+   "w": 3,
+   "h": 4,
+   "opaque": 6,
+   "partial": 0,
+   "sig": "e65befe73077c603372856fdb1adfa2dbf7d356ca642918e1a121bb348ac0694",
+   "masks": {}
+  },
+  {
+   "id": "frost.hair.2",
+   "side": "up",
+   "delivery": "reed-spire-batch2-cold-heat.zip",
+   "entry": "sprites/frost.hair.2.png",
+   "sourceSha256": "ce00a01c750aa54aba5bd319685191622e11d394dc87da1449873eabf5080395",
+   "size": [
+    5,
+    5
+   ],
+   "anchor": [
+    2,
+    4
+   ],
+   "rect": [
+    98,
+    75,
+    5,
+    5
+   ],
+   "w": 5,
+   "h": 5,
+   "opaque": 13,
+   "partial": 0,
+   "sig": "2c9049095fd5312f3c56bca74eb8579784bfaa4f29f678d8a2127732d040c0de",
+   "masks": {}
+  },
+  {
+   "id": "frost.hair.3",
+   "side": "up",
+   "delivery": "reed-spire-batch2-cold-heat.zip",
+   "entry": "sprites/frost.hair.3.png",
+   "sourceSha256": "b379be02b9ffc1f49ac6f3406e8ad83448d4f90f5140389caa66b272e477f319",
+   "size": [
+    7,
+    6
+   ],
+   "anchor": [
+    3,
+    5
+   ],
+   "rect": [
+    104,
+    75,
+    7,
+    6
+   ],
+   "w": 7,
+   "h": 6,
+   "opaque": 22,
+   "partial": 0,
+   "sig": "deb7d21edc4c266d6872667d909d23840749ffc17eae855dde2c514a2968485e",
+   "masks": {}
+  },
+  {
+   "id": "frost.collar.2",
+   "side": "up",
+   "delivery": "reed-spire-batch2-cold-heat.zip",
+   "entry": "sprites/frost.collar.2.png",
+   "sourceSha256": "67205322d301448ae590a84ee3eafad821e9405218f49229ff65ce128523433f",
+   "size": [
+    7,
+    4
+   ],
+   "anchor": [
+    3,
+    2
+   ],
+   "rect": [
+    112,
+    75,
+    7,
+    4
+   ],
+   "w": 7,
+   "h": 4,
+   "opaque": 19,
+   "partial": 0,
+   "sig": "556d8006518df464824966aac9a1aeadc70f75565a2ff3dc6388754f8503b707",
+   "masks": {}
+  },
+  {
+   "id": "frost.collar.3",
+   "side": "up",
+   "delivery": "reed-spire-batch2-cold-heat.zip",
+   "entry": "sprites/frost.collar.3.png",
+   "sourceSha256": "19ee622b452676557ef62a4066b5ef964152e305d5c46dfb046a1314b9168f27",
+   "size": [
+    9,
+    5
+   ],
+   "anchor": [
+    4,
+    2
+   ],
+   "rect": [
+    120,
+    75,
+    9,
+    5
+   ],
+   "w": 9,
+   "h": 5,
+   "opaque": 32,
+   "partial": 0,
+   "sig": "0d1a3c1ca60722f7983b6dc2b184fbac99eba97e321023db6efbdaed08a280dc",
+   "masks": {}
+  },
+  {
+   "id": "salt.crystal",
+   "side": "up",
+   "delivery": "reed-spire-batch5-salt-radiation.zip",
+   "entry": "sprites/salt.crystal.png",
+   "sourceSha256": "fe9999a4f695c6c722269d64fa47b4f9ebc2a276ffeb2eaa80f0dfe84a6db1fa",
+   "size": [
+    7,
+    7
+   ],
+   "anchor": [
+    3,
+    6
+   ],
+   "rect": [
+    130,
+    75,
+    7,
+    7
+   ],
+   "w": 7,
+   "h": 7,
+   "opaque": 26,
+   "partial": 0,
+   "sig": "3483e300967830a0fb7e05afae9c60be08aaf16c6c2a6d8506bee18a3814f64e",
+   "masks": {}
+  },
+  {
+   "id": "salt.gland",
+   "side": "up",
+   "delivery": "reed-spire-batch5-salt-radiation.zip",
+   "entry": "sprites/salt.gland.png",
+   "sourceSha256": "065682cad339c82479bb1ec6cffb8af78716b84441eea7337106d82446fff629",
+   "size": [
+    4,
+    4
+   ],
+   "anchor": [
+    1,
+    3
+   ],
+   "rect": [
+    138,
+    75,
+    4,
+    4
+   ],
+   "w": 4,
+   "h": 4,
+   "opaque": 12,
+   "partial": 0,
+   "sig": "8d88cb5135bbd78b20b1d0824240a04d4d18656f56850a195b14ae853d37dfa1",
+   "masks": {}
+  },
+  {
+   "id": "bud",
+   "side": "up",
+   "delivery": "reed-spire-batch1-base-body.zip",
+   "entry": "sprites/bud.png",
+   "sourceSha256": "40030b2191ab99fc5b6045313d0379fed1a923889c5100cbf80a6ef620c0f865",
+   "size": [
+    9,
+    8
+   ],
+   "anchor": [
+    4,
+    7
+   ],
+   "rect": [
+    143,
+    75,
+    9,
+    8
+   ],
+   "w": 9,
+   "h": 8,
+   "opaque": 44,
+   "partial": 0,
+   "sig": "72ef937407baaf0bf68bc853de9e59ee3be71cbf09ec4209a837039905040fa4",
+   "masks": {}
+  },
+  {
+   "id": "flower",
+   "side": "up",
+   "delivery": "reed-spire-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/flower.png",
+   "sourceSha256": "0df734910199b764ca8ec12123a9d4780ec0a354518e6588ca022f383f93b83f",
+   "size": [
+    15,
+    12
+   ],
+   "anchor": [
+    7,
+    11
+   ],
+   "rect": [
+    0,
+    92,
+    15,
+    12
+   ],
+   "w": 15,
+   "h": 12,
+   "opaque": 63,
+   "partial": 0,
+   "sig": "814f8b1c16ca169ea26bfed0da7f8895ba1484a1fdc459133524081d68159681",
+   "masks": {}
+  },
+  {
+   "id": "seedHead.small",
+   "side": "up",
+   "delivery": "reed-spire-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/seedHead.small.png",
+   "sourceSha256": "0f00081c29ea6d63c524002ea7a53a838545af7740e78fa968eb8b90a76b05b7",
+   "size": [
+    11,
+    11
+   ],
+   "anchor": [
+    5,
+    10
+   ],
+   "rect": [
+    16,
+    92,
+    11,
+    11
+   ],
+   "w": 11,
+   "h": 11,
+   "opaque": 52,
+   "partial": 0,
+   "sig": "4ae7427987903a846b24fa80c4cf1c8faa30730528e80f8d28adfaa0ea970f00",
+   "masks": {}
+  },
+  {
+   "id": "seedHead.large",
+   "side": "up",
+   "delivery": "reed-spire-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/seedHead.large.png",
+   "sourceSha256": "24de932089fdd50ece85510b2fa2c4006d40217bbb982f2ba167dfaf17ece1b5",
+   "size": [
+    16,
+    15
+   ],
+   "anchor": [
+    8,
+    14
+   ],
+   "rect": [
+    28,
+    92,
+    16,
+    15
+   ],
+   "w": 16,
+   "h": 15,
+   "opaque": 100,
+   "partial": 0,
+   "sig": "fb4e9995b50b482ca9d52ee0094a3713917118ff7c6ef136fcbcf4be37b3c5fa",
+   "masks": {}
+  },
+  {
+   "id": "seed.drift",
+   "side": "up",
+   "delivery": "reed-spire-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/seed.drift.png",
+   "sourceSha256": "24fc214c38d383a046e1994842d8f8a082c98236ef7af0c9b7e65ffaf7dbcb20",
+   "size": [
+    7,
+    7
+   ],
+   "anchor": [
+    4,
+    4
+   ],
+   "rect": [
+    45,
+    92,
+    7,
+    7
+   ],
+   "w": 7,
+   "h": 7,
+   "opaque": 12,
+   "partial": 0,
+   "sig": "936872ea6701b37fff0d5666e2956e2e231fe291182ac6e35fba4a9c9713cd30",
+   "masks": {}
+  },
+  {
+   "id": "pod",
+   "side": "down",
+   "delivery": "reed-spire-batch6-reproduction-dispersal.zip",
+   "entry": "sprites/pod.png",
+   "sourceSha256": "45d80856720cd1d80a194a445ab6ab1a8e952c366f7ee2de8929d6a40c0103d2",
+   "size": [
+    9,
+    11
+   ],
+   "anchor": [
+    4,
+    0
+   ],
+   "rect": [
+    53,
+    92,
+    9,
+    11
+   ],
+   "w": 9,
+   "h": 11,
+   "opaque": 35,
+   "partial": 0,
+   "sig": "7254bae7a3f1e4ebc0726a798b73e2dc6b883a7947c4fe3751dba0822fe71b1c",
+   "masks": {}
+  }
+ ]
+}

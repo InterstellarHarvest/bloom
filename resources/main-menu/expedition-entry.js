@@ -43,8 +43,8 @@
 // the first-sector options (sectorSeed / firstBloom, development / QA); every later one scans a random sector.
 //
 // (BLOOM-035B) SPECIES. Every survey is FOR this entry's species (`entry.species`, a BLOOM.species.resolve object): Organic Hybrid unless
-// the DEVELOPMENT species flow is on (`speciesFlow`, the app's ?species=1 — never a normal-player control, never a Settings entry). With
-// it, EXPEDITION opens CHOOSE PLANT SPECIES first (`speciesScreen`, a factory the app supplies: the Species Selection screen) and the
+// the species flow is on (`speciesFlow` — BLOOM-035C2: the app always turns it on; an entry built without it, e.g. by a component test,
+// is Organic Hybrid only). With it, EXPEDITION opens CHOOSE PLANT SPECIES first (`speciesScreen`, a factory the app supplies: the Species Selection screen) and the
 // survey shows the species with a Change button; Change Species returns to the species screen and the next survey keeps the SAME
 // sector seed and the same pool (its physical cache: nothing is validated twice), evaluated for the new species. The run's "Choose another
 // planet" reopens a survey for the same species; the title's prefetch is for the last species chosen in this session.
@@ -87,7 +87,7 @@ export class ExpeditionEntry {
     this.stats = { begins: 0, returns: 0, entries: [], exits: [], prefetches: [], prompts: 0, promptChoices: [], leaves: 0, runs: 0, resumes: [], species: [] };
     if (getComputedStyle(root).position === "static") root.style.position = "relative";
     this.menuHost = host(root, "ee-menu"); this.surveyHost = host(root, "ee-survey"); this.surveyHost.hidden = true;
-    this.speciesHost = host(root, "ee-species"); this.speciesHost.hidden = true; // (035B) CHOOSE PLANT SPECIES (development flag only)
+    this.speciesHost = host(root, "ee-species"); this.speciesHost.hidden = true; // (035B) CHOOSE PLANT SPECIES (035C2: the normal flow)
     this.black = host(root, "ee-black"); this.black.setAttribute("aria-hidden", "true"); this._fader = new BlackFade(this.black); // the fade layer (above both screens, below the departure's clouds)
     this.black.style.cssText += "; z-index:9999; background:#000; opacity:0; display:none; pointer-events:auto; contain:strict";
     this.atx = transition || new AtmosphereTransition({ host: root });   // the survey's dramatic departure only (028C1)
@@ -256,12 +256,12 @@ export class ExpeditionEntry {
     return true;
   }
 
-  // ---------------------------------------------------------------- (035B) species (development flag flow)
+  // ---------------------------------------------------------------- (035B) species (035C2: the normal flow)
   /** Choose the species the next survey is for (an id or a resolved object; an unknown id THROWS). Only the species flow may choose a
    *  species other than Organic Hybrid: the production flow has no control for it. */
   setSpecies(species) {
     const sp = speciesFor(species);
-    if (!this.speciesFlow && sp.id !== this.species.id) throw new Error("ExpeditionEntry: the species can only change in the species flow (development flag)");
+    if (!this.speciesFlow && sp.id !== this.species.id) throw new Error("ExpeditionEntry: the species can only change in the species flow");
     this.species = sp; this.stats.species.push({ id: sp.id, at: performance.now() });
     return sp;
   }

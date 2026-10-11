@@ -58,7 +58,7 @@
 .ds[data-state="focus"] .ds-head-tools{opacity:0; pointer-events:none}
 .ds[data-state="loading"] .ds-head-tools{opacity:.4; pointer-events:none} /* first sector still being validated */
 .ds-sector:empty{visibility:hidden}
-/* (035B, development flag ?species=1 only) the species this survey is for, with Change; absent from the production flow */
+/* (035B; 035C2 normal flow) the species this survey is for, with Change */
 .ds-species{display:inline-flex; align-items:center; gap:8px; padding:3px 4px 3px 12px; border:2px solid var(--line); border-radius:var(--bloom-r-pill); background:rgba(9,13,25,.6); color:var(--ink-soft); font-size:13.5px; font-weight:700; white-space:nowrap}
 .ds-species-k{font-size:11px; letter-spacing:1.2px; text-transform:uppercase}
 .ds-species b{color:var(--ink); font-weight:900}

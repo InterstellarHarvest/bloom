@@ -1,0 +1,930 @@
+{
+ "format": "bloom-species-source-provenance@1",
+ "milestone": "BLOOM-035C2",
+ "tool": "tools/species-source-deliveries.mjs",
+ "pack": "woolly-candle",
+ "species": "woolly_candle",
+ "bodyPlan": "candle@2",
+ "identity": "WOOLLY_CANDLE_PRODUCTION_SOURCE_CANDIDATE_CANDLE2",
+ "pmo": {
+  "status": "FINAL SOURCE ACCEPTED",
+  "verdict": "FINAL SOURCE ACCEPTED — 58 canonical sprites, 35 toothed masks; production body plan candle@2; origin CANONICAL_REFERENCE_TRANSCRIPTION; accepted actual-size exceptions seedHead.large 24 × 22 (max 24 × 24), root.storage.3 18 × 27 (max 18 × 28); no Woolly pixel may be redesigned"
+ },
+ "sourceZip": {
+  "name": "WOOLLY_CANDLE_PRODUCTION_SOURCE_CANDIDATE_CANDLE2.zip",
+  "bytes": 15376001,
+  "sha256": "48a9db4883e597c9dd15c123f3474af581f4b3bc073fb99802c2f7b6084d3b69",
+  "entries": 142,
+  "root": "WOOLLY_CANDLE_PRODUCTION_SOURCE_CANDIDATE_CANDLE2/"
+ },
+ "aggregate": {
+  "algorithm": "sha256 over the sorted records \"<relative path>\\t<sha256 of the file>\\n\" (paths relative to the candidate root)",
+  "sha256": "cdcf99c910864ad98d58c12c8953dc92fbdf2218217c54715adb7b922632082c",
+  "files": 142,
+  "bytes": 16191135
+ },
+ "checksums": {
+  "file": "SHA256SUMS.txt",
+  "lines": 141,
+  "verified": 141
+ },
+ "origins": {
+  "CANONICAL_REFERENCE_TRANSCRIPTION": 58
+ },
+ "counts": {
+  "drawings": 58,
+  "masks": 35
+ },
+ "mapping": {
+  "environment": "the candidate's production palette environment (sky, soil, turf) verbatim",
+  "render": "the candidate's production palette render verbatim",
+  "palette": "RGB values verbatim from the locked palette; its bodyPlan metadata corrected candle@1 → candle@2 in the production derivative only"
+ },
+ "derived": [
+  {
+   "path": "production/WOOLLY_CANDLE_PRODUCTION_PALETTE_v1.candle2.json",
+   "from": "WOOLLY_CANDLE_PRODUCTION_PALETTE_v1.json",
+   "sha256": "34f064b134d12b54a0968c7214d94aec2230b242d08933880880491ae016b04f",
+   "change": "bodyPlan \"candle@1\" → \"candle@2\" (the only change; PMO metadata correction)"
+  }
+ ],
+ "usedInDeliveries": [
+  "README.md",
+  "SHA256SUMS.txt",
+  "V4_TO_CANDLE2_CHANGE_REPORT.json",
+  "WOOLLY_CANDLE_CANDLE2_CANONICAL_MANIFEST.json",
+  "WOOLLY_CANDLE_CANDLE2_SOURCE_MAP.json",
+  "WOOLLY_CANDLE_CANDLE2_VISUAL_EQUIVALENCE_REPORT.json",
+  "WOOLLY_CANDLE_PRODUCTION_PALETTE_v1.json",
+  "masks/leaf.base.heat.high.toothed.png",
+  "masks/leaf.base.heat.mid.toothed.png",
+  "masks/leaf.base.high.toothed.png",
+  "masks/leaf.base.low.toothed.png",
+  "masks/leaf.base.mid.toothed.png",
+  "masks/leaf.drought.1.heat.high.toothed.png",
+  "masks/leaf.drought.1.heat.mid.toothed.png",
+  "masks/leaf.drought.1.high.toothed.png",
+  "masks/leaf.drought.1.low.toothed.png",
+  "masks/leaf.drought.1.mid.toothed.png",
+  "masks/leaf.drought.2.heat.high.toothed.png",
+  "masks/leaf.drought.2.heat.mid.toothed.png",
+  "masks/leaf.drought.2.high.toothed.png",
+  "masks/leaf.drought.2.low.toothed.png",
+  "masks/leaf.drought.2.mid.toothed.png",
+  "masks/leaf.drought.3.heat.high.toothed.png",
+  "masks/leaf.drought.3.heat.mid.toothed.png",
+  "masks/leaf.drought.3.high.toothed.png",
+  "masks/leaf.drought.3.low.toothed.png",
+  "masks/leaf.drought.3.mid.toothed.png",
+  "masks/leaf.flood.1.heat.high.toothed.png",
+  "masks/leaf.flood.1.heat.mid.toothed.png",
+  "masks/leaf.flood.1.high.toothed.png",
+  "masks/leaf.flood.1.low.toothed.png",
+  "masks/leaf.flood.1.mid.toothed.png",
+  "masks/leaf.flood.2.heat.high.toothed.png",
+  "masks/leaf.flood.2.heat.mid.toothed.png",
+  "masks/leaf.flood.2.high.toothed.png",
+  "masks/leaf.flood.2.low.toothed.png",
+  "masks/leaf.flood.2.mid.toothed.png",
+  "masks/leaf.flood.3.heat.high.toothed.png",
+  "masks/leaf.flood.3.heat.mid.toothed.png",
+  "masks/leaf.flood.3.high.toothed.png",
+  "masks/leaf.flood.3.low.toothed.png",
+  "masks/leaf.flood.3.mid.toothed.png",
+  "source-canonical/body.trunk.0.png",
+  "source-canonical/body.trunk.1.png",
+  "source-canonical/body.trunk.2.png",
+  "source-canonical/body.trunk.3.png",
+  "source-canonical/bud.png",
+  "source-canonical/flower.png",
+  "source-canonical/frost.collar.2.png",
+  "source-canonical/frost.collar.3.png",
+  "source-canonical/frost.hair.1.png",
+  "source-canonical/frost.hair.2.png",
+  "source-canonical/frost.hair.3.png",
+  "source-canonical/leaf.base.heat.high.png",
+  "source-canonical/leaf.base.heat.mid.png",
+  "source-canonical/leaf.base.high.png",
+  "source-canonical/leaf.base.low.png",
+  "source-canonical/leaf.base.mid.png",
+  "source-canonical/leaf.drought.1.heat.high.png",
+  "source-canonical/leaf.drought.1.heat.mid.png",
+  "source-canonical/leaf.drought.1.high.png",
+  "source-canonical/leaf.drought.1.low.png",
+  "source-canonical/leaf.drought.1.mid.png",
+  "source-canonical/leaf.drought.2.heat.high.png",
+  "source-canonical/leaf.drought.2.heat.mid.png",
+  "source-canonical/leaf.drought.2.high.png",
+  "source-canonical/leaf.drought.2.low.png",
+  "source-canonical/leaf.drought.2.mid.png",
+  "source-canonical/leaf.drought.3.heat.high.png",
+  "source-canonical/leaf.drought.3.heat.mid.png",
+  "source-canonical/leaf.drought.3.high.png",
+  "source-canonical/leaf.drought.3.low.png",
+  "source-canonical/leaf.drought.3.mid.png",
+  "source-canonical/leaf.flood.1.heat.high.png",
+  "source-canonical/leaf.flood.1.heat.mid.png",
+  "source-canonical/leaf.flood.1.high.png",
+  "source-canonical/leaf.flood.1.low.png",
+  "source-canonical/leaf.flood.1.mid.png",
+  "source-canonical/leaf.flood.2.heat.high.png",
+  "source-canonical/leaf.flood.2.heat.mid.png",
+  "source-canonical/leaf.flood.2.high.png",
+  "source-canonical/leaf.flood.2.low.png",
+  "source-canonical/leaf.flood.2.mid.png",
+  "source-canonical/leaf.flood.3.heat.high.png",
+  "source-canonical/leaf.flood.3.heat.mid.png",
+  "source-canonical/leaf.flood.3.high.png",
+  "source-canonical/leaf.flood.3.low.png",
+  "source-canonical/leaf.flood.3.mid.png",
+  "source-canonical/pod.png",
+  "source-canonical/root.aerial.1.png",
+  "source-canonical/root.aerial.2.png",
+  "source-canonical/root.aerial.3.png",
+  "source-canonical/root.stilt.png",
+  "source-canonical/root.storage.2.png",
+  "source-canonical/root.storage.3.png",
+  "source-canonical/salt.crystal.png",
+  "source-canonical/salt.gland.png",
+  "source-canonical/seed.drift.png",
+  "source-canonical/seedHead.large.png",
+  "source-canonical/seedHead.small.png"
+ ],
+ "deliveries": [
+  {
+   "file": "woolly-candle-batch1-base-body.zip",
+   "batch": 1,
+   "bytes": 4689,
+   "sha256": "afbf731410769675ed56a697902150d783c3cb29333b1a30bf85c023e25efb16",
+   "drawings": 5,
+   "masks": 0,
+   "entries": 6
+  },
+  {
+   "file": "woolly-candle-batch2-cold-heat.zip",
+   "batch": 2,
+   "bytes": 8269,
+   "sha256": "ec5bbdc8e2e7fef9425687a37262a20a6477f2d606828592145411dceb58a99f",
+   "drawings": 10,
+   "masks": 0,
+   "entries": 11
+  },
+  {
+   "file": "woolly-candle-batch3-drought.zip",
+   "batch": 3,
+   "bytes": 13521,
+   "sha256": "1537bbb6adbd931fcf62d4ba09e72a7e1cbc650b6c020a6325f385df657feeb3",
+   "drawings": 17,
+   "masks": 0,
+   "entries": 18
+  },
+  {
+   "file": "woolly-candle-batch4-flood.zip",
+   "batch": 4,
+   "bytes": 14581,
+   "sha256": "897b69092eb43b75bc2a6ebb67c72f89ebe4c4f8585e33116fb103a729b65480",
+   "drawings": 19,
+   "masks": 0,
+   "entries": 20
+  },
+  {
+   "file": "woolly-candle-batch5-salt-radiation.zip",
+   "batch": 5,
+   "bytes": 13839,
+   "sha256": "3632ad68535ab70e069e393e492ad23617409751ae58d0bf5736170bc816c4a3",
+   "drawings": 2,
+   "masks": 35,
+   "entries": 38
+  },
+  {
+   "file": "woolly-candle-batch6-reproduction-dispersal.zip",
+   "batch": 6,
+   "bytes": 3657,
+   "sha256": "eddeba14c1747e2d343fe99795a42023992a03e633612fd9d04c9bcd9ef94e95",
+   "drawings": 5,
+   "masks": 0,
+   "entries": 6
+  },
+  {
+   "file": "woolly-candle-batch7-metadata-closure.zip",
+   "batch": 7,
+   "bytes": 154981,
+   "sha256": "b6a7cf7d964c34829564141068ab14685cc7a9cf0a8266514ca6992a756f7bbe",
+   "drawings": 0,
+   "masks": 0,
+   "entries": 9
+  }
+ ],
+ "inventory": [
+  {
+   "path": "README.md",
+   "bytes": 1909,
+   "sha256": "bc63eb46f57012455e79dbf95a6e0451cbdbc832f07aa3403678d6f3c124b82d"
+  },
+  {
+   "path": "SHA256SUMS.txt",
+   "bytes": 14690,
+   "sha256": "9f4d6a97395140349d7c407bfca367fd970ed4c55bf18226a7adbf2e27f86bbd"
+  },
+  {
+   "path": "V4_TO_CANDLE2_CHANGE_REPORT.json",
+   "bytes": 31754,
+   "sha256": "60cd68c773f83387bd88642ba352a64662d5c9d54acf5e18e0edf97ea06d9608"
+  },
+  {
+   "path": "WOOLLY_CANDLE_CANDLE2_CANONICAL_MANIFEST.json",
+   "bytes": 50708,
+   "sha256": "c5d92364fcf7cb4c3c70a4195ed47de856ee18b69f5bd7cdcc8468608ff46c30"
+  },
+  {
+   "path": "WOOLLY_CANDLE_CANDLE2_SOURCE_MAP.json",
+   "bytes": 43513,
+   "sha256": "85b3b3c608713955428b4449c5c09edd2a43d594b002d6dd2e750945d8403133"
+  },
+  {
+   "path": "WOOLLY_CANDLE_CANDLE2_VISUAL_EQUIVALENCE_REPORT.json",
+   "bytes": 3535,
+   "sha256": "ee594c477a0dda66f68797264483c7f07f7268eda1fdbc4fa7557f98d383c376"
+  },
+  {
+   "path": "WOOLLY_CANDLE_PRODUCTION_PALETTE_v1.json",
+   "bytes": 2585,
+   "sha256": "7eefa79dffa96f796828b099724e528c73ee58d58fcc0f01e292b2bd81c802d3"
+  },
+  {
+   "path": "atlas.json",
+   "bytes": 50098,
+   "sha256": "f860d29e54e0d72f97e14c803209f18cc72159f97077172bb04793dbf4f72b39"
+  },
+  {
+   "path": "atlas.png",
+   "bytes": 10859,
+   "sha256": "03368b51b593e5ffd5d87cc9fb137d00ff7403a0eef09a84b875e1ea599e0ecc"
+  },
+  {
+   "path": "masks/leaf.base.heat.high.toothed.png",
+   "bytes": 87,
+   "sha256": "8c4268df46e4068624a2537862a405a8841ecfd617781a85965cbbf2ee95b415"
+  },
+  {
+   "path": "masks/leaf.base.heat.mid.toothed.png",
+   "bytes": 86,
+   "sha256": "43052ba1982e1383c75caa99add5cba73c258ae897a26b8e7ff48445d8ebb6e3"
+  },
+  {
+   "path": "masks/leaf.base.high.toothed.png",
+   "bytes": 86,
+   "sha256": "946852af310d55d7c31dd8e93a1c83214d69200559992b2a752dbe7fdd13eedb"
+  },
+  {
+   "path": "masks/leaf.base.low.toothed.png",
+   "bytes": 86,
+   "sha256": "6c68042a6f0b52118fe2bf76311a93df6ed478949334e8cf13c67fceb194f243"
+  },
+  {
+   "path": "masks/leaf.base.mid.toothed.png",
+   "bytes": 86,
+   "sha256": "396ca1417ba6cbd2a4ebb1ef6a2440738f4958f9319b2376bc4131d6671e47fc"
+  },
+  {
+   "path": "masks/leaf.drought.1.heat.high.toothed.png",
+   "bytes": 86,
+   "sha256": "3d5506d7b5a2abd4966e64d90d9998a374a54d82bab96118915366df5fb51091"
+  },
+  {
+   "path": "masks/leaf.drought.1.heat.mid.toothed.png",
+   "bytes": 85,
+   "sha256": "9665eb887213cf38bb6ac88112256b4d54ed7a673e92e86b16e5a283b814cc03"
+  },
+  {
+   "path": "masks/leaf.drought.1.high.toothed.png",
+   "bytes": 85,
+   "sha256": "3e8504e5fa52ec1c603f9b2f7d36e9a30c7e45717dd52d8940917cfb95c7ca4b"
+  },
+  {
+   "path": "masks/leaf.drought.1.low.toothed.png",
+   "bytes": 85,
+   "sha256": "3def215d34b17df137db8c743a585b3b258f655875e7cebde3f5e6c6875e5277"
+  },
+  {
+   "path": "masks/leaf.drought.1.mid.toothed.png",
+   "bytes": 85,
+   "sha256": "fb002e4aa97460d9396839fbb8a911250afd768236dbb9cff435ff155b957e9a"
+  },
+  {
+   "path": "masks/leaf.drought.2.heat.high.toothed.png",
+   "bytes": 85,
+   "sha256": "4021b463acc4e94a192eecc99655e61aa8cc51a10d3a8b02ad1344c8dc40d6c1"
+  },
+  {
+   "path": "masks/leaf.drought.2.heat.mid.toothed.png",
+   "bytes": 85,
+   "sha256": "26084757b1600878f994c84b2bafbdbe9aabea2da66670967742408fc99b698e"
+  },
+  {
+   "path": "masks/leaf.drought.2.high.toothed.png",
+   "bytes": 84,
+   "sha256": "d65d05635f2b1c1a871b5e70e4c9b8def12b9e6d6b5d39f026cfd5c447e94dec"
+  },
+  {
+   "path": "masks/leaf.drought.2.low.toothed.png",
+   "bytes": 85,
+   "sha256": "e5d1ab9fc73b24a99ad83be570cf8053fb8bbce11ce4dd834eec8027642f3139"
+  },
+  {
+   "path": "masks/leaf.drought.2.mid.toothed.png",
+   "bytes": 85,
+   "sha256": "8c0781593120661328e25341b78df5f398054333bdf360775b457e1bd8b19516"
+  },
+  {
+   "path": "masks/leaf.drought.3.heat.high.toothed.png",
+   "bytes": 84,
+   "sha256": "d6e01a21a18cc60264c6d6753eb586c1e42f94fa6857dfe60464cd1d201e8878"
+  },
+  {
+   "path": "masks/leaf.drought.3.heat.mid.toothed.png",
+   "bytes": 85,
+   "sha256": "375ee84ba994a3da5c0ab23e0834f763ab71b7c3948a3742fd44cf2c9719a4af"
+  },
+  {
+   "path": "masks/leaf.drought.3.high.toothed.png",
+   "bytes": 84,
+   "sha256": "351357812f177b32e230cf39a33c3292c9242b5b05f77be076bd5454044a9036"
+  },
+  {
+   "path": "masks/leaf.drought.3.low.toothed.png",
+   "bytes": 84,
+   "sha256": "6ee129614ee76f4b77a066f11db8b094995b5411225f3f10ad255d918da67e38"
+  },
+  {
+   "path": "masks/leaf.drought.3.mid.toothed.png",
+   "bytes": 84,
+   "sha256": "f63278ba4f2595507ef3406f30d2ab2d61ed8121b0474728acb105ee154fddc8"
+  },
+  {
+   "path": "masks/leaf.flood.1.heat.high.toothed.png",
+   "bytes": 87,
+   "sha256": "91dc1de5ec172c8772691ce844eab54c30eda353131b9a21540a0f60c4b667cf"
+  },
+  {
+   "path": "masks/leaf.flood.1.heat.mid.toothed.png",
+   "bytes": 86,
+   "sha256": "6f3542c9b5dff0d56172b12a8439cbe36fa569a042cc5006760e317d78190266"
+  },
+  {
+   "path": "masks/leaf.flood.1.high.toothed.png",
+   "bytes": 87,
+   "sha256": "c9201547c12e8b509be8ea8509df46bd4d6e9affcf2d4c4e3354365b96a63426"
+  },
+  {
+   "path": "masks/leaf.flood.1.low.toothed.png",
+   "bytes": 87,
+   "sha256": "2260861c2d7fa7d853ba5c9481070bfa9a12fe12f8e0ad2861add46db639da36"
+  },
+  {
+   "path": "masks/leaf.flood.1.mid.toothed.png",
+   "bytes": 86,
+   "sha256": "c4e16db98b2ffb6d789a25073abc7fac1c235b6a7d665d470051c406527a1cb3"
+  },
+  {
+   "path": "masks/leaf.flood.2.heat.high.toothed.png",
+   "bytes": 88,
+   "sha256": "aa69225dff845f3f469f4663888e5b3cdd8d6fe9cf52b007539af6956d24ac0b"
+  },
+  {
+   "path": "masks/leaf.flood.2.heat.mid.toothed.png",
+   "bytes": 88,
+   "sha256": "ecfb28287c954f580962ac9835afb20364fdb8ee71dad917b6ab25718e42641f"
+  },
+  {
+   "path": "masks/leaf.flood.2.high.toothed.png",
+   "bytes": 87,
+   "sha256": "ea857566fd9fc70b5373cc12af3b075bfa8ac0f71d6a4515b9311fba83499d2b"
+  },
+  {
+   "path": "masks/leaf.flood.2.low.toothed.png",
+   "bytes": 87,
+   "sha256": "4ac96a3a7e96aeeedf57744e1927092b6ab37846c41432468c4b6c7cbddd7d5c"
+  },
+  {
+   "path": "masks/leaf.flood.2.mid.toothed.png",
+   "bytes": 87,
+   "sha256": "d1afd27eb4925a1dd75d0d735215ff144ec1363dcd47a621c5fc0b3b09151cd1"
+  },
+  {
+   "path": "masks/leaf.flood.3.heat.high.toothed.png",
+   "bytes": 88,
+   "sha256": "aa69225dff845f3f469f4663888e5b3cdd8d6fe9cf52b007539af6956d24ac0b"
+  },
+  {
+   "path": "masks/leaf.flood.3.heat.mid.toothed.png",
+   "bytes": 88,
+   "sha256": "ecfb28287c954f580962ac9835afb20364fdb8ee71dad917b6ab25718e42641f"
+  },
+  {
+   "path": "masks/leaf.flood.3.high.toothed.png",
+   "bytes": 87,
+   "sha256": "ea857566fd9fc70b5373cc12af3b075bfa8ac0f71d6a4515b9311fba83499d2b"
+  },
+  {
+   "path": "masks/leaf.flood.3.low.toothed.png",
+   "bytes": 87,
+   "sha256": "4ac96a3a7e96aeeedf57744e1927092b6ab37846c41432468c4b6c7cbddd7d5c"
+  },
+  {
+   "path": "masks/leaf.flood.3.mid.toothed.png",
+   "bytes": 87,
+   "sha256": "d1afd27eb4925a1dd75d0d735215ff144ec1363dcd47a621c5fc0b3b09151cd1"
+  },
+  {
+   "path": "qa/LOCAL_NATIVE_QA.json",
+   "bytes": 220,
+   "sha256": "c35197e18a2d414071fabf25f0e6c798aaeb94ef4a69df9770fb2249264b5beb"
+  },
+  {
+   "path": "qa/build_candle2.py",
+   "bytes": 18185,
+   "sha256": "b85c617c2777d2084ec2d1c3db532b28fab0174aea15e309b85338b8635b0971"
+  },
+  {
+   "path": "qa/finalize_candle2.py",
+   "bytes": 8293,
+   "sha256": "e94641d1f4a1b6a92ef3abc5c4e12c900b562bcc0a5f45b3f33d00fabd7ca3cd"
+  },
+  {
+   "path": "qa/package_candle2.py",
+   "bytes": 8465,
+   "sha256": "f3bd3f83ed6273da14d0c12d445a98342fa2dd83aa84a3ec1a0c675540947707"
+  },
+  {
+   "path": "qa/review_candle2.py",
+   "bytes": 10622,
+   "sha256": "d8e3738f0500b71a0b3656a15e88a447805f931dc2e7e13ca17ee03383d8aa38"
+  },
+  {
+   "path": "review/ASSEMBLED_CANDLE2_13_STATES.png",
+   "bytes": 77246,
+   "sha256": "2ca055d181a683c1e57d0cb9326d584e4af5649f7f102a93de4a56d1e1bef477"
+  },
+  {
+   "path": "review/CANDLE2_NATIVE_CATALOG.png",
+   "bytes": 83015,
+   "sha256": "5fbcaa025622b17ad826e9402e4838944eabb42cbdc54ca0a512d74818ee32c0"
+  },
+  {
+   "path": "review/closeplates/01_TRUNKS.png",
+   "bytes": 355358,
+   "sha256": "6fc74be4635e78b01fb3bfaf7c486e38a4a309eca4b6a5c49694415e2ef50f11"
+  },
+  {
+   "path": "review/closeplates/02_BASE_HEAT_LEAVES.png",
+   "bytes": 276328,
+   "sha256": "435484beac8b4b113c59a2efc5fc9f1b2934f0b93ec7ecfea1079cc89e12bc2e"
+  },
+  {
+   "path": "review/closeplates/03_DROUGHT_T1.png",
+   "bytes": 156023,
+   "sha256": "09044918bc5d555fbbecc6b73964fc96d9097e74b7891b13a30384a46e930362"
+  },
+  {
+   "path": "review/closeplates/04_DROUGHT_T2.png",
+   "bytes": 148435,
+   "sha256": "25b19f6f3055084b3d91d24cd4cffc37c7531598a62b73882a518530b26310fd"
+  },
+  {
+   "path": "review/closeplates/05_DROUGHT_T3.png",
+   "bytes": 136334,
+   "sha256": "3d8f1b1d6678a829e7f94dde3c498af37993f11674f588b9000d5d74147d6aa7"
+  },
+  {
+   "path": "review/closeplates/06_FLOOD_T1.png",
+   "bytes": 134767,
+   "sha256": "aa09870b2848d03e7bbd9e10b46f4a2e3e50bd48e57118d8527f6a729df9d01a"
+  },
+  {
+   "path": "review/closeplates/07_FLOOD_T2.png",
+   "bytes": 160137,
+   "sha256": "ec1f09c9017c37601f392e836417c5ddc2f5edeb5dc55eb18ef738b9543f4bcf"
+  },
+  {
+   "path": "review/closeplates/08_FLOOD_T3.png",
+   "bytes": 155880,
+   "sha256": "c2b55024486908d2c04e8bdc5eed6a1ae7fe5caba07590c613717a6fa8e2d353"
+  },
+  {
+   "path": "review/closeplates/09_FROST_WOOL.png",
+   "bytes": 142041,
+   "sha256": "698f40341789005372ffe6d8cc3599e850e8b06d2c54e286294a2f786b4ff44e"
+  },
+  {
+   "path": "review/closeplates/10_ROOTS.png",
+   "bytes": 189826,
+   "sha256": "ddde79dcf312d3ce9797088a9bcef4d581f9684f48240746f5801604cbb6c4df"
+  },
+  {
+   "path": "review/closeplates/11_SALT.png",
+   "bytes": 85175,
+   "sha256": "7b3846b3326715f675162f6776c756ea7e9008fba918cbdceb33407cd61210b0"
+  },
+  {
+   "path": "review/closeplates/12_REPRODUCTION.png",
+   "bytes": 480193,
+   "sha256": "7cd42abc569750c47e3e4395183afd51e4c7fa9f1978c2d228cb7eae2405c870"
+  },
+  {
+   "path": "review/closeplates/13_BUD.png",
+   "bytes": 44476,
+   "sha256": "bc5b06a6806466630084c62eee5bb102ae741c2f12aa0a75433bab444ba2c32b"
+  },
+  {
+   "path": "review/locked-reference/REFERENCE_PROVENANCE_README.txt",
+   "bytes": 496,
+   "sha256": "7cef76508418bdab8e4e91d108cebcad8b5b027d7fe59e7bde0aa26c9ad586aa"
+  },
+  {
+   "path": "review/locked-reference/a_large_pixel_art_sprite_sheet_concept_sheet_on.png",
+   "bytes": 2153436,
+   "sha256": "f88e45f12c36374d0226a45c0d3d167da8d76073a7f70a608f8b895471df9a6a"
+  },
+  {
+   "path": "review/locked-reference/strange_bloom_woolly_candle_asset_sheet.png",
+   "bytes": 2465321,
+   "sha256": "aa31d8ef05bbf49dac8b56ab875149ff392decd2d2eba11fc5a5364402fb6844"
+  },
+  {
+   "path": "review/locked-reference/strange_bloom_woolly_candle_batch_2.png",
+   "bytes": 2406436,
+   "sha256": "1e897263b64d3747dc73bffd90e04b3fc8c553a70fefb54f96c0c140cc30fc2e"
+  },
+  {
+   "path": "review/locked-reference/strange_bloom_woolly_candle_sprite_sheet.png",
+   "bytes": 1760304,
+   "sha256": "51e124bf05e7cdabd339a53c3b3f2f9735e64fbbc408fc562117f9cb8ccbab9c"
+  },
+  {
+   "path": "review/locked-reference/woolly_candle_batch_4_sprite_sheet.png",
+   "bytes": 2396995,
+   "sha256": "ac17d3b59418e7cb89bc04d2bfd0f854f7851212c13384535ea906b1deb08eb1"
+  },
+  {
+   "path": "review/locked-reference/woolly_candle_pixel_art_sheet.png",
+   "bytes": 2065091,
+   "sha256": "0c7516356019995e12498947ac862b11f6ade35e47b1ba78ad587268925966f5"
+  },
+  {
+   "path": "review/specimens/SPECIMEN_BASE.png",
+   "bytes": 2654,
+   "sha256": "05b57377db99af6a231f6474830f6b311d59dd82c5d07bc0bab406e594c97eeb"
+  },
+  {
+   "path": "review/specimens/SPECIMEN_COLD_T1.png",
+   "bytes": 2605,
+   "sha256": "892b0dfdc448e6c9b7f41439a836264b9a8ba45038e18a9cc940acdeb6bc19d7"
+  },
+  {
+   "path": "review/specimens/SPECIMEN_COLD_T2.png",
+   "bytes": 2814,
+   "sha256": "2d95470c7d8ea3cc0b179a0b04374931e5644dc30650198cb2cfafbcecbd69f3"
+  },
+  {
+   "path": "review/specimens/SPECIMEN_COLD_T3.png",
+   "bytes": 2597,
+   "sha256": "e2e981c428d0e1fca78b409e8f43a7a7e6841db54263bd267d591679b3b325c2"
+  },
+  {
+   "path": "review/specimens/SPECIMEN_DROUGHT_T3.png",
+   "bytes": 2876,
+   "sha256": "59c1f8d56804688989b9daf9088e481dbd6fdfb33c1669e62befe51ddb8615b7"
+  },
+  {
+   "path": "review/specimens/SPECIMEN_EARLY_MATURITY.png",
+   "bytes": 3012,
+   "sha256": "b85e4e0af79f66659f82dc9e97b65e808a53a7efdc8eddb8ae4332de3d9b6e0a"
+  },
+  {
+   "path": "review/specimens/SPECIMEN_FLOOD_T3.png",
+   "bytes": 3142,
+   "sha256": "2073882574f4d0c642a219dde752e5a4169fe1172649fa6a330a25a4ccc8d385"
+  },
+  {
+   "path": "review/specimens/SPECIMEN_HEAT_T3.png",
+   "bytes": 2426,
+   "sha256": "d6d8a0179894a72ba63f386babb4341e276a2df43cae43137133a23ae4992772"
+  },
+  {
+   "path": "review/specimens/SPECIMEN_RADIATION.png",
+   "bytes": 2617,
+   "sha256": "2fb30ef5d8ec31f6d7389d87d8a279dd65bf9a2cd848e30cd75414483050541a"
+  },
+  {
+   "path": "review/specimens/SPECIMEN_SALT.png",
+   "bytes": 2931,
+   "sha256": "6e59eeca83b03fea39d8a946c37791c24b6d4316e39b432b2a12069932b8dd47"
+  },
+  {
+   "path": "review/specimens/SPECIMEN_SEED_OUTPUT_T1.png",
+   "bytes": 2970,
+   "sha256": "0931b88ec57f66a75a314d764f0cbf5aa2d93c637817d3f483c7136c78872553"
+  },
+  {
+   "path": "review/specimens/SPECIMEN_SEED_OUTPUT_T2.png",
+   "bytes": 3487,
+   "sha256": "2e45c847a719cdcf270c9e5a42ca94f72319f7bd61023e19f32bef297602f085"
+  },
+  {
+   "path": "review/specimens/SPECIMEN_WATERBORNE_SEEDS.png",
+   "bytes": 3126,
+   "sha256": "e0dd531333a504f2ab095c23f8fb97ee6b071dc8c8c21598853d3b196dfa3ee4"
+  },
+  {
+   "path": "source-canonical/body.trunk.0.png",
+   "bytes": 999,
+   "sha256": "94556e3a83c57d5c1281b4b08ef97e6a65e4288482bdd712e0d3686d30bfa0a0"
+  },
+  {
+   "path": "source-canonical/body.trunk.1.png",
+   "bytes": 1050,
+   "sha256": "d5af53920ea7a003de389eee3523b6aad8d8ca5f769b2bd8456b9652105dc742"
+  },
+  {
+   "path": "source-canonical/body.trunk.2.png",
+   "bytes": 1046,
+   "sha256": "72aff70ad1a808c5153cddbbd3df6b67512d7ec69696d22e522ed1b41d0d0392"
+  },
+  {
+   "path": "source-canonical/body.trunk.3.png",
+   "bytes": 1084,
+   "sha256": "b6375f03b3d4bc8c495b8dfb879ffdda3f2d030c822b333daf9f5616e70aac8f"
+  },
+  {
+   "path": "source-canonical/bud.png",
+   "bytes": 263,
+   "sha256": "36e44db789d2385120a70675afe0c7040c87eb3285c340c235a82be5d303e736"
+  },
+  {
+   "path": "source-canonical/flower.png",
+   "bytes": 547,
+   "sha256": "3035011a0a9f3fa8eb5c3b3d8c17272351c686205a995238dc52beb58771d7a0"
+  },
+  {
+   "path": "source-canonical/frost.collar.2.png",
+   "bytes": 241,
+   "sha256": "657ef1888a7faabc2f5ff1f9975e5e3dd0d55790777b95806e36b684f54aa4c1"
+  },
+  {
+   "path": "source-canonical/frost.collar.3.png",
+   "bytes": 269,
+   "sha256": "13079aa06378fb56695dd6eb1208890d06177b4a76c0fd60f91549a02dbc5a8f"
+  },
+  {
+   "path": "source-canonical/frost.hair.1.png",
+   "bytes": 136,
+   "sha256": "5f31df1db889f9f7703fc2e2b0bac819dbe70e5446d2c6a6c2cfc6f15df0531b"
+  },
+  {
+   "path": "source-canonical/frost.hair.2.png",
+   "bytes": 164,
+   "sha256": "f1bab83bdd85f48a7ba11ed36cff3bf1153d0bd2d0ab35fad03f22ea647b8581"
+  },
+  {
+   "path": "source-canonical/frost.hair.3.png",
+   "bytes": 183,
+   "sha256": "7ad9dc921e81d192461470b809f5b31960e872187321019891188d7b59b4b047"
+  },
+  {
+   "path": "source-canonical/leaf.base.heat.high.png",
+   "bytes": 290,
+   "sha256": "821e318a2eca7a4522d5f1f2abe189f4e79378e9cd5ac0ac1c6359db39b02147"
+  },
+  {
+   "path": "source-canonical/leaf.base.heat.mid.png",
+   "bytes": 374,
+   "sha256": "fcacebd6afa09902f083a147d1a32ea4ea7d56f876266410294ec009578134bc"
+  },
+  {
+   "path": "source-canonical/leaf.base.high.png",
+   "bytes": 357,
+   "sha256": "134cf02f8ec4896b2d1814cdf9b0f45789b74981f2c88968b94cf97335c48281"
+  },
+  {
+   "path": "source-canonical/leaf.base.low.png",
+   "bytes": 398,
+   "sha256": "bfd070c0cd18b9ba5f62c452a7f92f33fb02e6991b163d71d133f531e2d70e2c"
+  },
+  {
+   "path": "source-canonical/leaf.base.mid.png",
+   "bytes": 419,
+   "sha256": "57beac2a18644d8ff3041333e125cc6af893f72372273244ef36f9a139108a01"
+  },
+  {
+   "path": "source-canonical/leaf.drought.1.heat.high.png",
+   "bytes": 320,
+   "sha256": "1be4be09d96e16df43480ccb98e4063a0c03982029209c02b64fbaa83a65c838"
+  },
+  {
+   "path": "source-canonical/leaf.drought.1.heat.mid.png",
+   "bytes": 336,
+   "sha256": "b40225889fd8830521dc62804c2b1a353bc13ac5f3dfe15bdfe7937365811582"
+  },
+  {
+   "path": "source-canonical/leaf.drought.1.high.png",
+   "bytes": 332,
+   "sha256": "905e80522e377f23512780064bef0a14680e3e1c95a049cb467309040387200c"
+  },
+  {
+   "path": "source-canonical/leaf.drought.1.low.png",
+   "bytes": 371,
+   "sha256": "4078ded3876319fe5da42b6aa96857bb747dca36d11d31dcfdcae76ab8eda1ef"
+  },
+  {
+   "path": "source-canonical/leaf.drought.1.mid.png",
+   "bytes": 351,
+   "sha256": "68a692597dba7db6a090ae7099e6ba54115c628c583ac9b9a88666c0c1728baf"
+  },
+  {
+   "path": "source-canonical/leaf.drought.2.heat.high.png",
+   "bytes": 323,
+   "sha256": "4951cf55d8ca18c36208afea2ea7e11118ea1f0757bdba2c7243653b4a2b3628"
+  },
+  {
+   "path": "source-canonical/leaf.drought.2.heat.mid.png",
+   "bytes": 334,
+   "sha256": "4fbc092300f25ea5e2bceacc71e767a539bd04f5385b18d228ee6431d9fcf337"
+  },
+  {
+   "path": "source-canonical/leaf.drought.2.high.png",
+   "bytes": 343,
+   "sha256": "9d365d9e35130069f11957374f60fb70bda4591e6fb539f988361979ee19e34c"
+  },
+  {
+   "path": "source-canonical/leaf.drought.2.low.png",
+   "bytes": 364,
+   "sha256": "97c3fc6e81d41387aa1c545fbb64c09405b4119c887ab63b7e0e19aaee6a2757"
+  },
+  {
+   "path": "source-canonical/leaf.drought.2.mid.png",
+   "bytes": 381,
+   "sha256": "79b113fc5c6e7fea686475227ace02a88db2b2622737366850454fd8f319c215"
+  },
+  {
+   "path": "source-canonical/leaf.drought.3.heat.high.png",
+   "bytes": 327,
+   "sha256": "46430c4bd285fe176e1ad65527af21c1007d836389f5ea49acacccb5776a0fbb"
+  },
+  {
+   "path": "source-canonical/leaf.drought.3.heat.mid.png",
+   "bytes": 291,
+   "sha256": "83fea84a98d5c51ce1a2aa4f45f2330ce13c7628ebb621ed80f27715c93d9127"
+  },
+  {
+   "path": "source-canonical/leaf.drought.3.high.png",
+   "bytes": 323,
+   "sha256": "58898473d1849b3b8c11459189573f6e01670f686d54a7147e660514aef3e43f"
+  },
+  {
+   "path": "source-canonical/leaf.drought.3.low.png",
+   "bytes": 340,
+   "sha256": "a7497d5fad78d386393cde10fbc363e308c67973aef234d12456f695cde3ca4e"
+  },
+  {
+   "path": "source-canonical/leaf.drought.3.mid.png",
+   "bytes": 333,
+   "sha256": "84e12c6052ef3f0c7d6d7bdb8051828133d31acd3b29d1dfe5e4986d886d44b3"
+  },
+  {
+   "path": "source-canonical/leaf.flood.1.heat.high.png",
+   "bytes": 353,
+   "sha256": "2b8d3ce86c23cc45162694f89d4b51d47ae2cc46667ab5ae4925f42afb28dafd"
+  },
+  {
+   "path": "source-canonical/leaf.flood.1.heat.mid.png",
+   "bytes": 389,
+   "sha256": "0a0ac7db15f1d72f484aca7402fa20eaca0cc3319db6f6d5b5e0ef762ccff0f1"
+  },
+  {
+   "path": "source-canonical/leaf.flood.1.high.png",
+   "bytes": 404,
+   "sha256": "9430334b96904235cb243317a7fedc8932fe790cdac20eed7fdacc4285967971"
+  },
+  {
+   "path": "source-canonical/leaf.flood.1.low.png",
+   "bytes": 366,
+   "sha256": "3666a8bd218f2a1568ab48a6ad638aed8b89324cf30b4b7efe4330bb952302ca"
+  },
+  {
+   "path": "source-canonical/leaf.flood.1.mid.png",
+   "bytes": 421,
+   "sha256": "4d718c8660dc558fabb534160ff2405418b1a4cc15233a7cf62344846e25d1c6"
+  },
+  {
+   "path": "source-canonical/leaf.flood.2.heat.high.png",
+   "bytes": 366,
+   "sha256": "721863980ea271ac3baa22efbeaf0510d24bd8fccdbecdaa36d531972b90ed09"
+  },
+  {
+   "path": "source-canonical/leaf.flood.2.heat.mid.png",
+   "bytes": 388,
+   "sha256": "dacdae264afca9998f5ffee8d6a4e4ec5c47a0b86f8ae25fb15189fd89c595bd"
+  },
+  {
+   "path": "source-canonical/leaf.flood.2.high.png",
+   "bytes": 396,
+   "sha256": "b8ed67cce07d555772c7a6d59f1622e81a9b90c957e96bf9cd2fc4d2974b9ada"
+  },
+  {
+   "path": "source-canonical/leaf.flood.2.low.png",
+   "bytes": 357,
+   "sha256": "1bbdf949f335b5a87fb5823ab9ad546f850e62f4acbb53af4150ed667896b77b"
+  },
+  {
+   "path": "source-canonical/leaf.flood.2.mid.png",
+   "bytes": 445,
+   "sha256": "c6fa249936376d58b01b321ee2fa390905c3d444cfac09d6af3a79ef0fc7d208"
+  },
+  {
+   "path": "source-canonical/leaf.flood.3.heat.high.png",
+   "bytes": 366,
+   "sha256": "721863980ea271ac3baa22efbeaf0510d24bd8fccdbecdaa36d531972b90ed09"
+  },
+  {
+   "path": "source-canonical/leaf.flood.3.heat.mid.png",
+   "bytes": 388,
+   "sha256": "dacdae264afca9998f5ffee8d6a4e4ec5c47a0b86f8ae25fb15189fd89c595bd"
+  },
+  {
+   "path": "source-canonical/leaf.flood.3.high.png",
+   "bytes": 396,
+   "sha256": "b8ed67cce07d555772c7a6d59f1622e81a9b90c957e96bf9cd2fc4d2974b9ada"
+  },
+  {
+   "path": "source-canonical/leaf.flood.3.low.png",
+   "bytes": 357,
+   "sha256": "1bbdf949f335b5a87fb5823ab9ad546f850e62f4acbb53af4150ed667896b77b"
+  },
+  {
+   "path": "source-canonical/leaf.flood.3.mid.png",
+   "bytes": 445,
+   "sha256": "c6fa249936376d58b01b321ee2fa390905c3d444cfac09d6af3a79ef0fc7d208"
+  },
+  {
+   "path": "source-canonical/pod.png",
+   "bytes": 309,
+   "sha256": "46043fda4297a6609efabd9ed50ca01274a6a972155afa94d3f4090fedf6d94e"
+  },
+  {
+   "path": "source-canonical/root.aerial.1.png",
+   "bytes": 150,
+   "sha256": "b0121fa53a61e80b3986890aced10679ce9c7006e4f5c6708bcaa941973c7d9f"
+  },
+  {
+   "path": "source-canonical/root.aerial.2.png",
+   "bytes": 171,
+   "sha256": "3d083186b15bbee5abb737137b093eff7257c46697a13329218b235f50f261a2"
+  },
+  {
+   "path": "source-canonical/root.aerial.3.png",
+   "bytes": 208,
+   "sha256": "37e15ff7c31bd70dd1efb87b8f2a5099460699264bf8760b612fea50726cf2d3"
+  },
+  {
+   "path": "source-canonical/root.stilt.png",
+   "bytes": 273,
+   "sha256": "aeb7a5127a6930d6acf5d10ce9c096709a3036f967a307c9116427d22c86153d"
+  },
+  {
+   "path": "source-canonical/root.storage.2.png",
+   "bytes": 408,
+   "sha256": "5bdd262eff31dbc70fe9604514ec3d9ccb9af72c77028e7500ca048ff40c8d24"
+  },
+  {
+   "path": "source-canonical/root.storage.3.png",
+   "bytes": 434,
+   "sha256": "66e17fd017808d7c3c437e892490706bdeb2e951bb8847927eff191a6041fbe8"
+  },
+  {
+   "path": "source-canonical/salt.crystal.png",
+   "bytes": 176,
+   "sha256": "5cefc51c8679c50cd5c020be727e4877a83192cb039dc9c83e761c6287e49439"
+  },
+  {
+   "path": "source-canonical/salt.gland.png",
+   "bytes": 115,
+   "sha256": "6938647b129181b982d99e9b95b963557252ff8e09e707afb3a35a1cce7ce397"
+  },
+  {
+   "path": "source-canonical/seed.drift.png",
+   "bytes": 173,
+   "sha256": "c7b7e32ca7ed155b2bab6ae06b40940642298542859d1881e4ee7c2fd2d5cb94"
+  },
+  {
+   "path": "source-canonical/seedHead.large.png",
+   "bytes": 543,
+   "sha256": "ccf549e248d65772969fb622b59de96022f8e288e2f6d53e37fdcedb96d859cd"
+  },
+  {
+   "path": "source-canonical/seedHead.small.png",
+   "bytes": 434,
+   "sha256": "0968a817b6ed3b92b6e890549ed11b9665fd0b58a1ea7f1ac959740a5177dd64"
+  }
+ ]
+}
