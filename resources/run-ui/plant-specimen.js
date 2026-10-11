@@ -198,11 +198,13 @@
     };
     for (const order of [SPREAD, ADAPT]) { let prev = -Infinity;
       for (const part of order) { const t = want[part] || { x: F.W / 2, y: F.H / 2 }, q = pick(part, t, prev + GAP); A[part] = { x: q.x, y: Math.max(q.y, prev + GAP) }; prev = A[part].y; }
-      // (035C2) the cascade pushed its last anchor past the anatomy (onto no plant pixel — e.g. a low, closed rosette above a short taproot):
-      // walk back up, each anchor on its own part's (else any) anatomy at least GAP above the next. Never runs when the cascade already fits.
+      // (035C2) the Adapt cascade pushed its last anchor past the anatomy (onto no plant pixel — e.g. a low, closed rosette above a short
+      // taproot): walk back up, each anchor on a DRAWN pixel of its own part (else any part) at least GAP above the next. Never runs when the
+      // cascade already fits.
+      // (Body plans @3 only: Organic Hybrid keeps the accepted rule byte for byte.)
       const last = order[order.length - 1], L = A[last];
-      if (L && !F.plant.m[L.y * W + L.x]) { let limit = Infinity;
-        for (let k = order.length - 1; k >= 0; k--) { const part = order[k], px = (masks[part].px.length ? masks[part].px : any).filter(i => at(i).y <= limit), q = px.length ? nearest(px, A[part].x, A[part].y) : null;
+      if (Ah && order === ADAPT && L && !F.plant.m[L.y * W + L.x]) { let limit = Infinity;
+        for (let k = order.length - 1; k >= 0; k--) { const part = order[k], drawn = i => F.plant.m[i] && at(i).y <= limit, own = masks[part].px.filter(drawn), px = own.length ? own : any.filter(drawn), q = px.length ? nearest(px, A[part].x, A[part].y) : null;
           if (q && (k === order.length - 1 || A[part].y > limit || !F.plant.m[A[part].y * W + A[part].x])) A[part] = q; else if (A[part].y > limit) A[part] = { x: A[part].x, y: limit };
           limit = A[part].y - GAP; } } }
     return A;

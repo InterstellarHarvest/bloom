@@ -193,8 +193,11 @@ function png(W, H, rgba) { const h = Buffer.alloc(13); h.writeUInt32BE(W, 0); h.
         if (err.length && r.bad.length < 4) r.bad.push(`${J(m)}: ${err.slice(0, 3).join("; ")}`); if (err.length) r.badN = (r.badN || 0) + 1; }
       // the art pack itself: binary alpha, every opaque pixel an exact palette colour (the build validates it too)
       const B = await import(path.join(ROOT, "tools/build-plant-art.mjs")), A = JSON.parse(read(`art/plant/packs/${pack}/atlas.json`)), img = B.decodePNG(fs.readFileSync(path.join(ROOT, `art/plant/packs/${pack}/atlas.png`)));
-      const cols = new Set(Object.values(A.palette).flat()); let partial = 0, offPal = 0;
-      for (let i = 0; i < img.w * img.h; i++) { const a = img.rgba[i * 4 + 3]; if (a && a !== 255) partial++; if (a === 255 && !cols.has("#" + [0, 1, 2].map(k => img.rgba[i * 4 + k].toString(16).padStart(2, "0")).join(""))) offPal++; }
+      // (035C2) palette membership over the SPRITE rects (+ the swatch): a mask rect's pixels are boolean membership in any colour (the real packs'
+      // toothed masks keep the delivered mask colours); partial alpha over the whole atlas
+      const cols = new Set(Object.values(A.palette).flat()), inArt = new Uint8Array(img.w * img.h); let partial = 0, offPal = 0;
+      for (const r of [...A.sprites.map(s => s.rect), ...(A.swatch ? [A.swatch] : [])]) for (let y = r[1]; y < r[1] + r[3]; y++) for (let x = r[0]; x < r[0] + r[2]; x++) inArt[y * img.w + x] = 1;
+      for (let i = 0; i < img.w * img.h; i++) { const a = img.rgba[i * 4 + 3]; if (a && a !== 255) partial++; if (a === 255 && inArt[i] && !cols.has("#" + [0, 1, 2].map(k => img.rgba[i * 4 + k].toString(16).padStart(2, "0")).join(""))) offPal++; }
       rows[plan] = { models: r.models, legalSelections: r.selections.size, distinctAnatomies: r.anatomies.size, minMargin: r.minMargin, spritePlacements: r.placements, bad: r.bad, badN: r.badN || 0, atlasPartialAlpha: partial, atlasOffPalette: offPal }; }
     PROOF.plans.enumeration = rows;
     check(Object.values(rows).every(r => r.models === 6720 && !r.bad.length && !r.badN && r.minMargin >= 1 && !r.atlasPartialAlpha && !r.atlasOffPalette),
