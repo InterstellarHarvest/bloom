@@ -112,6 +112,9 @@ BLOOM-035A COMPLETE; record [`evidence/bloom-035b/REPORT.md`](evidence/bloom-035
   source candidates via `tools/species-source-deliveries.mjs` → `tools/intake-plant-art.mjs` (provenance:
   `art/plant/intake/<pack>/SOURCE_PROVENANCE.json` + `PMO_FINAL_ACCEPTANCE.json`); all four species are `released` and selectable in the
   normal EXPEDITION flow. The proof packs stay in the repository as engineering / proof-compatibility material only; no species uses one.
+- **Specimen environment (035C2 candidate):** the plant specimen stands in a deterministic, region-driven environment scene (sky, sun,
+  clouds, horizon, ground and soil cues, standing water) with runtime weather FX; Terraform previews change only the scene, Adapt previews
+  only the organism; the Terraform room shows the plant in its region's scene ([`VISUAL_DIRECTION_v1.0.md`](VISUAL_DIRECTION_v1.0.md) §3).
 - **BLOOM-035C is not IMPLEMENTED until the PMO integrates the candidate.**
 - **Challenges: NEXT / PLANNED** (BLOOM-036, §8) — not started.
 

@@ -281,7 +281,8 @@
     }
     // the padding around the canvas continues the backdrop: the scene's (035C2) or the pack's own sky / soil
     let padTop = 0, padSoil = 0;
-    function padBg(top, soil) { if (top !== undefined) { padTop = top; padSoil = soil; } const rgb = c => `rgb(${c.join(",")})`, B = D && D.scene ? D.bg : null, px = (x, y) => { const i = (y * p.W + x) * 4; return [B[i], B[i + 1], B[i + 2]]; };
+    function padBg(top, soil) { if (top !== undefined) { padTop = top; padSoil = soil; } if (!fit) return;   // (a box never laid out keeps no background, as before)
+      const rgb = c => `rgb(${c.join(",")})`, B = D && D.scene ? D.bg : null, px = (x, y) => { const i = (y * p.W + x) * 4; return [B[i], B[i + 1], B[i + 2]]; };
       if (!B) { const c = [p.env.sky[0], p.env.sky[1], p.env.soil[0], p.env.soil[1]];
         box.style.background = `linear-gradient(to bottom, ${rgb(c[0])} 0, ${rgb(c[0])} ${padTop}px, ${rgb(c[1])} ${padSoil}px, ${rgb(c[2])} ${padSoil}px, ${rgb(c[3])} 100%)`; return; }
       // a scene: the sky colour is sampled ABOVE its skyline (the horizon would tint the margins), the soil below the ground line

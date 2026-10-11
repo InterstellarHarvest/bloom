@@ -339,7 +339,8 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
           "font-family", "font-size", "font-weight", "letter-spacing", "line-height", "box-shadow", "padding-top", "padding-left", "outline-color", "opacity", "fill", "stroke"];
         const snap = (p, root) => p.evaluate(([root, STYLE]) => { const out = {}, r = document.querySelector(root); if (!r) return null;
           const key = e => { const parts = []; for (let x = e; x && x !== r.parentElement; x = x.parentElement) { const i = x.parentElement ? [...x.parentElement.children].indexOf(x) : 0; parts.unshift(`${x.tagName.toLowerCase()}${x.id ? "#" + x.id : ""}${typeof x.className === "string" && x.className ? "." + x.className.trim().split(/\s+/).sort().join(".") : ""}[${i}]`); } return parts.join(">"); };
-          for (const e of [r, ...r.querySelectorAll("*")]) { if (e.closest("canvas")) continue; const s = getComputedStyle(e); out[key(e)] = STYLE.map(k => s.getPropertyValue(k)).join("|"); }
+          // (035C2) the specimen box's own background is its ENVIRONMENT scene's padding (region-driven art, like the canvas inside it): not a theme value
+          for (const e of [r, ...r.querySelectorAll("*")]) { if (e.closest("canvas")) continue; const s = getComputedStyle(e), ps = e.classList && e.classList.contains("ps"); out[key(e)] = STYLE.map(k => ps && k === "background-image" ? "(specimen scene)" : s.getPropertyValue(k)).join("|"); }
           return out; }, [root, STYLE]);
         const gameplay = async origin => { const c = await context({ reducedMotion: "reduce" }), p = await page(c), res = {};
           await p.goto(origin + "/" + Q); await menuReady(p); await p.click('.mm-item[data-act="begin"]'); await surveyReady(p); await focusOn(p, 1); await p.click(".ds-btn.go"); await runReady(p); await sleep(800);
