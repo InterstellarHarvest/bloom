@@ -76,9 +76,59 @@ planet (same species) → Main menu (no "Sector surveyed" banner) → Training (
 Viewports 390×844 · 1024×768 · 1440×900 · 2560×1440: no horizontal overflow, primary visible (pinned on phone), contrast ≥ 4.5:1;
 keyboard radiogroup (← → Home End, Enter, Escape), visible focus, reduced motion.
 
+## 8b. Dynamic specimen environment (PMO additional requirement)
+
+- `resources/plant-visual/plant-environment.js`: scene = planet + region + the sky its ground sees now (Terraform + scenario drift; a
+  Terraform preview adds its sky change) → static low-res procedural geography (sky gradient / temperature impression, sun, clouds,
+  archetype horizon — dunes / sea / peaks / ridges — with snow caps, dry-cracked / muddy / snow / salt ground, standing water, soil cues) +
+  weather FX spec → overlay canvas (drifting clouds, rain, snow, haze, dust, ripples; reduced motion = one still frame). Deterministic
+  (stable ids hashed; no Math.random; animation time never in a signature). Environment art is not bound by the plant pixel contract.
+- `plant-specimen.js`: organism layer + environment layer, each with its own signature (`organismSignature()` / `environmentSignature()`);
+  no scene = the previous frame byte for byte.
+- Rooms: every specimen state carries its region scene ("Your plant in <region>" is now a visual statement); the **Terraform room shows the
+  plant in its region scene (no tendrils)** and its previews change only the scene; the report uses the best-established living region
+  (else the origin) under the final sky; Species Selection: one neutral showcase for all four cards.
+- QA `tools/specimen-environment-check.js` 15/15: determinism; species independence over 42 real regions; Terraform (real sky traits) moves
+  only the environment signature (organism signature AND pixels identical); Adapt moves only the organism; region content (dry, wet, cold,
+  sun, rain, snow) incl. Cinder Rosette in wet / snow and Reed Spire in dry regions; no scene = previous frame; showcase; browser file://
+  (cards share one environment, region switch, Adapt / Terraform previews, FX animation, reduced motion still frame), Chromium + Firefox.
+- Evidence `environment/`: `01-cinder-dry-region` · `02-cinder-wet-region` · `03-cinder-cold-region` · `04-woolly-clear-sun` ·
+  `05-reed-rain` · `06-woolly-snow` · `07-oh-standing-water` · `08a/08b-terraform-before/preview` · `09a/09b-adapt-before/preview`
+  (engine renders) + `{chromium,firefox}-{adapt-other-region,adapt-preview,terraform-before,terraform-preview}.png` (browser).
+
 ## 9. QA
 
-FOCUSED (filled at hand-off) · FULL SEQUENTIAL REGRESSION (filled at hand-off).
+**Full sequential regression** — every `tools/*-check.js` (42 suites), one at a time, on the final environment-layer code (`164eef3`):
+**41/42 green on the first pass; the 42nd (visual-system-check G1) differed only in the specimen box's background** — the intended
+environment-scene padding vs the 034-era base. After the padding fix (`padBg` only on laid-out boxes) and a G1 exemption of exactly that
+one property: visual-system-check **54/54**; the specimen-touching suites re-run green after the fix (specimen-environment 15/15,
+plant-rooms, terraform, species-selection 68/68). **Zero failures.**
+
+| Suite | Result | Suite | Result |
+|---|---|---|---|
+| archetype | 40/40 | planet-view | 80/80 |
+| atmosphere-transition | 14/14 | plant-rooms | 66/66 |
+| body-plan | 15/15 (OH byte-identity O1–O6, P1–P5 real packs) | plant-sprite-pipeline | 59/59 |
+| candle2-contract | 15/15 | portable-runtime | 71/71 (file:// · / · /bloom/) |
+| colony-development | 68/68 | procedural-run | 32/32 |
+| crossing | 14/14 | production-plant-integration | 50/50 |
+| cylinder-gen | 35/35 | release | 53/53 (incl. single-app-flow + guided-training children) |
+| desert | 64/64 | run-ui | 40/40 |
+| destination-survey | 18/18 | run-ui-convergence | 57/57 |
+| dying-world | 63/63 | sim | 32/32 |
+| economy | 39/39 | single-app-flow | 59/59 |
+| frozen | 70/70 | slice | 15/15 |
+| game-flow | 48/48 | species-art-intake | 16/16 |
+| gen | 47/47 | species | 17/17 |
+| guided-training | 50/50 | species-selection | 68/68 (Chromium + Firefox) |
+| main-menu | 18/18 (M8 banner) | specimen-environment | 15/15 |
+| native-competition | 66/66 | sphere-texture | 14/14 |
+| organic-hybrid-art-intake | 45/45 | strategy | 35/35 |
+| surface | 11/11 | terraform | 61/61 |
+| topology | 53/53 | training | 75/75 |
+| visual-system | 54/54 (after the fix) | volatile-climate | 78/78 |
+
+Survey banner: main-menu-check M8 + release-check R16b green; species-selection F9b asserts no "Sector surveyed" banner on return.
 
 ## 10. Evidence (`docs/evidence/bloom-035c2/`)
 
@@ -89,7 +139,9 @@ FOCUSED (filled at hand-off) · FULL SEQUENTIAL REGRESSION (filled at hand-off).
 
 ## 11. Known concerns (for PMO review)
 
-1. **Cinder environment (specimen box) is an engineering mapping** — the accepted Cinder candidate declares no sky / soil / turf; colours were taken from its own studio reference palette (Batch 3 `referencePalette`: sky [sky, skyL], soil [soil, soilD, soilL], turf soil2). PMO confirmation requested.
+1. **Pack environment colours are now engineering-only** — with the region-driven scene every player surface ignores a pack's own `environment` (it remains required pack metadata and the no-scene engineering backdrop). Cinder's (which its candidate did not declare) was mapped from its studio reference palette (Batch 3 `referencePalette`).
+7. **The Terraform room now shows the plant in its environment** (029D had locked "no specimen here"); required so a Terraform preview visibly changes only the scene around an unchanged plant. No tendrils / anchors; terraform-check updated accordingly.
+8. The environment's look (thresholds, colours, horizon kinds) is a first implementation of the locked direction — tuning it is presentation-only and never touches the organism or gameplay.
 2. **`render.stemOutline: "ink"` for Cinder and Reed** — not declared by those candidates; the repository-wide convention (OH final art included).
 3. **Two C0 rule corrections** (stem-leaf anchor column 0–1; `.heat` drawings may hold wax-treatment targets) — required to ingest the accepted Reed / Woolly pixels unchanged; documented in PLANT_SPRITE_PIPELINE § SPECIES_ART_INTAKE / 035C2 and pinned by tests.
 4. **candle@2 storage socket offset** (dy 2 → 1) — the one geometry change; the accepted `root.storage.3` PNG has 28 opaque rows (the 1-px stub + 27).

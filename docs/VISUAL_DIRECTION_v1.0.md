@@ -41,6 +41,17 @@ The panel is one integrated scene: the plant grows upward from the soil into the
 | **Plant** | accumulated adaptations; current growth and maturity; the local Roots / Leaves / Seeds allocation; the local specialization where appropriate; temporary stress or health |
 | **Soil / belowground** | soil colour and condition; wetness or dryness where that is visually appropriate; visible roots; local root changes, including a Root Network |
 
+> **BLOOM-035C2 (review candidate) — the specimen environment is IMPLEMENTED** (`resources/plant-visual/plant-environment.js`, composited
+> by `resources/run-ui/plant-specimen.js`): a deterministic generated scene behind the pixel organism — static low-resolution procedural
+> geography (sky gradient and temperature impression, sun, clouds, the archetype's horizon with snow caps, dry / cracked / muddy / snowy /
+> salt-crusted ground, standing water, a soil cutaway with moisture / mineral cues) — plus runtime weather FX on an overlay canvas (drifting
+> clouds, rain, snow, haze, dust, water ripples; reduced motion = one still frame). It is **region-driven, never species-driven** (planet +
+> region + the sky its ground sees now): the same region shows the same scene for every species; standing water belongs to the region, not
+> to Reed Spire. The organism and the scene keep separate signatures: a Terraform preview changes only the scene (the Terraform room shows
+> the plant in its region's scene, without tendrils), an Adapt preview changes only the organism. Species Selection uses one neutral,
+> presentation-only showcase scene; the report shows the real final plant in a representative region. Environment art is not bound by the
+> plant sprite pixel contract. QA: `tools/specimen-environment-check.js`.
+
 ### 3.1 Science / visual separation (must hold)
 
 - **Adapt** (organism traits) changes **the plant**.
