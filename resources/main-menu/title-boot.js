@@ -34,7 +34,7 @@
   var RUN = ["planets/training_grounds.js", "content/training.js", "resources/run-ui/run-ui-adapter.js", "resources/planet-surface/planet-surface.js",
     "resources/run-ui/run-map-renderer.js", "resources/run-ui/planet-view.js", "resources/plant-visual/generated/plant-atlas.js",
     "resources/plant-visual/plant-visual-model.js", "resources/plant-visual/plant-components.js", "resources/plant-visual/plant-compositor.js",
-    "resources/plant-visual/plant-fx.js", "resources/run-ui/plant-specimen.js", "resources/run-ui/terraform-globe.js", "resources/run-ui/decision-rooms.js",
+    "resources/plant-visual/plant-fx.js", "resources/plant-visual/plant-environment.js", "resources/run-ui/plant-specimen.js", "resources/run-ui/terraform-globe.js", "resources/run-ui/decision-rooms.js",
     "resources/run-ui/gameplay-transition.js", "resources/run-ui/run-report.js", "resources/run/game-session.js"];
   var served = /^https?:$/.test(location.protocol);
   var boot = window.BLOOM_TITLE_BOOT = { served: served, portable: !served, repo: REPO.href, scripts: [], runScripts: [], state: "booting", error: null, runReady: null };

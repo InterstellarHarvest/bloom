@@ -164,10 +164,11 @@ export class SpeciesSelect {
 
   /** The species' fully grown, unmutated specimen from its own body plan + pack (the real sprite system), 84 × 98 logical pixels. */
   _paint(canvas, sp) {
-    const img = window.BLOOM.plantSpecimen.drawSpecies(sp, { traits: {}, condition: "ok" });
+    // (035C2) before any planet exists: the neutral, presentation-only showcase scene, the same for all four cards (BLOOM.plantEnvironment)
+    const PE = window.BLOOM.plantEnvironment, img = window.BLOOM.plantSpecimen.drawSpecies(sp, { traits: {}, condition: "ok", scene: PE ? PE.showcase() : null });
     canvas.width = img.w; canvas.height = img.h;
     canvas.getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(img.rgba), img.w, img.h), 0, 0);
-    canvas.dataset.signature = img.signature || ""; canvas.dataset.pack = sp.art.pack; canvas.dataset.plan = sp.art.bodyPlan;
+    canvas.dataset.signature = img.signature || ""; canvas.dataset.organism = img.organismSignature || ""; canvas.dataset.environment = img.environmentSignature || ""; canvas.dataset.pack = sp.art.pack; canvas.dataset.plan = sp.art.bodyPlan;
   }
 
   _select(i, focus) {

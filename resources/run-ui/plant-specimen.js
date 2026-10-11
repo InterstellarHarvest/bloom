@@ -43,7 +43,10 @@
 //                   focus seeds · seedReserve      → a seed bank: seeds resting in the topsoil
 //                   no colony here                 → the organism thinned to a dither over its backdrop (a ghost of what would grow)
 //                   viable false                   → a restrained desaturation (would not survive / the run was lost)
-//   ENVIRONMENT     the pack's own specimen backdrop (sky / soil / turf), never re-coloured by a region; Terraform never reaches here.
+//   ENVIRONMENT     (035C2) state.scene (BLOOM.plantEnvironment.region() for a run's region under its current / previewed sky, or showcase()
+//                   for Species Selection): a deterministic environment scene behind the organism + a weather FX overlay canvas above it.
+//                   Region-driven, never species-driven; Terraform changes only it, Adapt only the organism (sp.organismSignature() /
+//                   sp.environmentSignature()). Without a scene: the pack's own static backdrop, exactly the pre-035C2 frame.
 // A real purchase (the page's bloom:upgrade-purchase) GROWS the change into the visible specimen once; every other render (first paint,
 // region switch, hover preview, tick, report) paints the exact frame directly. Pixels are shown on one canvas scaled by a whole number,
 // nearest-neighbour, centred and padded in the host box. Classic script; boots over file://; Node can require it (draw / describe).
@@ -128,15 +131,18 @@
     return out;
   }
   /** Apply the local layer to one organism picture (a compositor frame, a preview or an FX frame) of frame F. */
-  function present(p, rgba, F, L, extras, part) {
-    const W = F.W, o = new Uint8ClampedArray(rgba), env = F.env, m = F.plant.m;
+  function present(p, rgba, F, L, extras, part, bg) {
+    // (035C2) bg = the backdrop the organism is shown over: the pack's own (F.env, the legacy frame, byte for byte) or a scene's environment.
+    // An organism pixel is told apart from the backdrop exactly as before (against F.env); every backdrop pixel is then the bg's.
+    const W = F.W, o = new Uint8ClampedArray(rgba), env = bg || F.env, m = F.plant.m;
+    if (env !== F.env) for (let i = 0; i < m.length; i++) if (sameAsEnv(rgba, F.env, i)) { o[i * 4] = env[i * 4]; o[i * 4 + 1] = env[i * 4 + 1]; o[i * 4 + 2] = env[i * 4 + 2]; }
     const canopy = (L.up === "leafCanopy" ? 1 : 0) + (L.living && L.focus === "leaves" ? 1 : 0);
     if (canopy) { const R = {}; for (const mat of ["leaf", "waxLeaf", "pigLeaf"]) if (p.pack.palette[mat]) R[p.MID[mat]] = p.ramp(mat);
       const occ = rgbaKey(rgba, F);
       for (let i = 0; i < m.length; i++) { const v = m[i], r = v && R[v >> 2]; if (!r || !occ[i]) continue; const s = v & 3, lift = canopy >= 2 ? 1 : (s === 0 ? 1 : 0); if (!lift) continue;
         let c = r[Math.min(3, s + lift)]; if (L.strained) c = c.map((x, k) => Math.round(x + (STRESS[k] - x) * 0.3)); o[i * 4] = c[0]; o[i * 4 + 1] = c[1]; o[i * 4 + 2] = c[2]; } }
     for (const [i, e] of extras) { o[i * 4] = e.c[0]; o[i * 4 + 1] = e.c[1]; o[i * 4 + 2] = e.c[2]; }
-    const plantPx = i => (m[i] && !sameAsEnv(rgba, env, i)) || extras.has(i);
+    const plantPx = i => (m[i] && !sameAsEnv(rgba, F.env, i)) || extras.has(i);
     if (!L.living || !L.viable) for (let i = 0; i < m.length; i++) { if (!plantPx(i)) continue; const x = i % W, y = (i / W) | 0;
       if (!L.living && (x + y) % 2) { o[i * 4] = env[i * 4]; o[i * 4 + 1] = env[i * 4 + 1]; o[i * 4 + 2] = env[i * 4 + 2]; continue; }
       if (!L.viable) { const g = 0.3 * o[i * 4] + 0.59 * o[i * 4 + 1] + 0.11 * o[i * 4 + 2]; for (let k = 0; k < 3; k++) o[i * 4 + k] = Math.round(o[i * 4 + k] + (g + 8 - o[i * 4 + k]) * 0.55); } }
@@ -211,22 +217,33 @@
   }
 
   // ---------------------------------------------------------------- draw: production state → the displayed frame (pure)
-  function draw(st, { highlight = null, species } = {}) {
+  /** (035C2) The scene's environment raster for this pipeline (a region / showcase scene from BLOOM.plantEnvironment), or null = the pack's backdrop. */
+  function sceneOf(p, scene) {
+    if (scene == null) return null;
+    const PE = root.BLOOM && root.BLOOM.plantEnvironment;
+    if (!PE) throw new TypeError("BLOOM.plantSpecimen: a scene needs resources/plant-visual/plant-environment.js loaded");
+    if (!PE.isScene(scene)) throw new TypeError("BLOOM.plantSpecimen: scene must come from BLOOM.plantEnvironment.region() / showcase()");
+    return { scene, bg: PE.paint(scene, p.W, p.H, p.soilY), sig: PE.signature(scene, p.W, p.H, p.soilY), fx: PE.fx(scene) };
+  }
+  const KEYS = new Map();   // a constant key backdrop per canvas size: the organism layer's own signature never depends on any environment
+  const keyBg = (W, H) => { let k = KEYS.get(W + "x" + H); if (!k) { k = new Uint8ClampedArray(W * H * 4); for (let i = 3; i < k.length; i += 4) k[i] = 255; KEYS.set(W + "x" + H, k); } return k; };
+  function draw(st, { highlight = null, species, scene } = {}) {
     const p = pipe(artOf(species)), S = readState(st), cur = organism(p, S.traits, S.condition), tgt = S.preview ? organism(p, S.preview, S.condition) : null, shown = tgt || cur;
     const extras = localExtras(p, shown, S.local), masks = partMasks(tgt ? [cur, tgt] : [cur], extras);
     const base = tgt ? p.FX.preview(cur, tgt) : cur.rgba, hl = highlight && masks[highlight] ? masks[highlight] : null;
-    const rgba = present(p, base, shown, S.local, extras, hl), anchors = anchorsOf(p, shown, masks);
-    const global = organism(p, S.traits, "thriving");
-    return { W: p.W, H: p.H, rgba, anchors, sig: fnv(rgba), globalSig: global.sig.anatomy, key: JSON.stringify([S, highlight]), pack: p.packId,
+    const E = sceneOf(p, scene !== undefined ? scene : (st && st.scene)), rgba = present(p, base, shown, S.local, extras, hl, E ? E.bg : null), anchors = anchorsOf(p, shown, masks);
+    const global = organism(p, S.traits, "thriving"), organismSig = fnv(present(p, base, shown, S.local, extras, hl, keyBg(p.W, p.H)));
+    return { W: p.W, H: p.H, rgba, anchors, sig: fnv(rgba), globalSig: global.sig.anatomy, organismSig, envSig: E ? E.sig : null, scene: E ? E.scene : null, fx: E ? E.fx : null, bg: E ? E.bg : shown.env,
+      key: JSON.stringify([S, highlight, E ? E.sig : null]), pack: p.packId,
       ghost: !S.local.living, stressed: S.local.strained, viable: S.local.viable, previewing: !!tgt, frame: cur, target: tgt, local: S.local, extras };
   }
   /** (035B-5) The Species Selection specimen: a fully grown plant (traits; {} = unmutated) with a thriving, fully established colony. Pure. */
   const CONDITION = { ok: "ok", warn: "warn", bad: "bad", thriving: "ok", strained: "warn" };
-  function drawSpecies(species, { traits = {}, condition = "ok" } = {}) {
+  function drawSpecies(species, { traits = {}, condition = "ok", scene = null } = {}) {
     if (!species) throw new TypeError("BLOOM.plantSpecimen.drawSpecies: a species { id, art: { bodyPlan, pack } } is required");
     if (!CONDITION[condition]) throw new TypeError(`BLOOM.plantSpecimen.drawSpecies: condition "${condition}" (ok | warn | bad)`);
-    const p = pipe(artOf(species)), D = draw({ traits, names: {}, preview: null, colony: { living: true, establishment: 1, word: "" }, focus: "balanced", local: null, condition: CONDITION[condition], viable: true }, { species });
-    return { w: D.W, h: D.H, rgba: D.rgba, signature: D.sig, globalSignature: D.globalSig, pack: p.packId, plan: p.planRef };
+    const p = pipe(artOf(species)), D = draw({ traits, names: {}, preview: null, colony: { living: true, establishment: 1, word: "" }, focus: "balanced", local: null, condition: CONDITION[condition], viable: true }, { species, scene });
+    return { w: D.W, h: D.H, rgba: D.rgba, signature: D.sig, globalSignature: D.globalSig, organismSignature: D.organismSig, environmentSignature: D.envSig, pack: p.packId, plan: p.planRef };
   }
 
   function describe(st) {
@@ -241,7 +258,11 @@
     const box = document.createElement("div"); box.className = "ps"; box.dataset.pack = p.packId; box.dataset.plan = p.planRef; host.appendChild(box);
     const cv = document.createElement("canvas"); cv.className = "ps-canvas"; cv.width = p.W; cv.height = p.H; cv.setAttribute("role", "img"); cv.setAttribute("aria-label", "Your plant");
     const tag = document.createElement("span"); tag.className = "ps-tag"; tag.setAttribute("aria-hidden", "true"); tag.textContent = "PREVIEW";
-    box.append(cv, tag);
+    // (035C2) the weather FX overlay: its own canvas above the specimen (never part of the organism or the static environment pixels)
+    const fxc = document.createElement("canvas"); fxc.className = "ps-fx"; fxc.setAttribute("aria-hidden", "true");
+    Object.assign(fxc.style, { position: "absolute", pointerEvents: "none", imageRendering: "pixelated" });
+    box.append(cv, fxc, tag);
+    const PE = root.BLOOM && root.BLOOM.plantEnvironment, fxl = PE && typeof fxc.getContext === "function" ? PE.mountFx(fxc, { reducedMotion }) : null; let fxKey = "";
     const ctx = cv.getContext("2d");
     let last = null, D = null, hl = null, k = 0, fit = "", anim = null, armed = false, committed = null, sig = "";
     const fx = { last: null };
@@ -254,14 +275,24 @@
       const s = Math.max(1, Math.floor(Math.min(w / p.W, h / p.H))), key = `${w}x${h}`; if (key === fit && s === k) return k; fit = key; k = s;
       const cw = p.W * s, ch = p.H * s, left = Math.floor((w - cw) / 2), top = Math.floor((h - ch) / 2), soil = top + p.soilY * s, rgb = c => `rgb(${c.join(",")})`;
       Object.assign(cv.style, { width: cw + "px", height: ch + "px", left: left + "px", top: top + "px" });
-      box.style.background = `linear-gradient(to bottom, ${rgb(p.env.sky[0])} 0, ${rgb(p.env.sky[0])} ${top}px, ${rgb(p.env.sky[1])} ${soil}px, ${rgb(p.env.soil[0])} ${soil}px, ${rgb(p.env.soil[1])} 100%)`;
+      Object.assign(fxc.style, { width: cw + "px", height: ch + "px", left: left + "px", top: top + "px" });
+      padBg(top, soil); fxKey = "";
       return k;
     }
-    const ro = typeof ResizeObserver === "function" ? new ResizeObserver(() => layout()) : null; if (ro) ro.observe(box);
+    // the padding around the canvas continues the backdrop: the scene's (035C2) or the pack's own sky / soil
+    let padTop = 0, padSoil = 0;
+    function padBg(top, soil) { if (top !== undefined) { padTop = top; padSoil = soil; } const rgb = c => `rgb(${c.join(",")})`, B = D && D.scene ? D.bg : null, px = (x, y) => { const i = (y * p.W + x) * 4; return [B[i], B[i + 1], B[i + 2]]; };
+      if (!B) { const c = [p.env.sky[0], p.env.sky[1], p.env.soil[0], p.env.soil[1]];
+        box.style.background = `linear-gradient(to bottom, ${rgb(c[0])} 0, ${rgb(c[0])} ${padTop}px, ${rgb(c[1])} ${padSoil}px, ${rgb(c[2])} ${padSoil}px, ${rgb(c[3])} 100%)`; return; }
+      // a scene: the sky colour is sampled ABOVE its skyline (the horizon would tint the margins), the soil below the ground line
+      const hy = Math.max(1, p.soilY - 24), s = (padSoil - padTop) / p.soilY, c = [px(0, 0), px(0, hy), px(0, p.soilY + 2), px(0, p.H - 1)];
+      box.style.background = `linear-gradient(to bottom, ${rgb(c[0])} 0, ${rgb(c[0])} ${padTop}px, ${rgb(c[1])} ${Math.round(padTop + hy * s)}px, ${rgb(c[1])} ${padSoil}px, ${rgb(c[2])} ${padSoil}px, ${rgb(c[3])} 100%)`; }
+    function syncFx() { if (!fxl) return; const key = `${D && D.envSig}|${k}`; if (key === fxKey) return; fxKey = key; fxl.set(D && D.scene ? D.fx : null, { W: p.W, H: p.H, soilY: p.soilY, scale: Math.max(1, k) }); }
+    const ro = typeof ResizeObserver === "function" ? new ResizeObserver(() => { layout(); syncFx(); }) : null; if (ro) ro.observe(box);
     const visible = () => box.isConnected && box.getClientRects().length > 0 && !box.closest("[hidden]");
     // a REAL purchase only (the page's own event); consumed by the very next render of a visible specimen
     document.addEventListener("bloom:upgrade-purchase", () => { if (visible()) armed = true; }, { signal: life.signal });
-    function show() { if (!D) return; sig = D.sig; if (!anim) paint(D.rgba); }
+    function show() { if (!D) return; sig = D.sig; if (!anim) paint(D.rgba); padBg(); syncFx(); }
     function render(st) {
       last = st; const S = readState(st); layout();
       D = draw(st, { highlight: hl, species });
@@ -271,7 +302,7 @@
       committed = now;
       if (armed) { armed = false;
         if (from && from.key !== now.key && !anim) {   // the committed organism changed because of a real purchase: GROW it in
-          const extras = localExtras(p, now.core, now.local), mk = rgba => present(p, rgba, now.core, now.local, extras, null), targetSig = fnv(mk(now.core.rgba)); let endSig = null;
+          const extras = localExtras(p, now.core, now.local), bg = D.scene ? D.bg : null, mk = rgba => present(p, rgba, now.core, now.local, extras, null, bg), targetSig = fnv(mk(now.core.rgba)); let endSig = null;
           anim = p.FX.purchase(from.core, now.core, { style: "grow", reducedMotion: !!reducedMotion(), onFrame: rgba => { const o = mk(rgba); endSig = fnv(o); paint(o); } })
             .then(r => { fx.last = Object.assign({ seq: ++fxSeq, endSig, targetSig, exact: endSig === targetSig }, r); anim = null; show(); return fx.last; });
           fx.last = { pending: true }; sig = D.sig; return; } }
@@ -284,11 +315,13 @@
     }
     const inst = Object.freeze({ el: box, canvas: cv, svg: cv, render, highlight, anchorPoint,
       anchors: () => PARTS.map(q => ({ part: q, view: D ? D.anchors[q] : null, client: anchorPoint(q) })),
-      signature: () => sig, globalSignature: () => D ? D.globalSig : null, scale: () => layout(), animating: () => !!anim,
+      signature: () => sig, globalSignature: () => D ? D.globalSig : null,
+      // (035C2) the organism layer and the environment scene, each with its own signature (QA: Terraform moves only the second, Adapt only the first)
+      organismSignature: () => D ? D.organismSig : null, environmentSignature: () => D ? D.envSig : null, get scene() { return D ? D.scene : null; }, fxState: () => fxl ? fxl.state() : null, scale: () => layout(), animating: () => !!anim,
       get state() { return last; }, get lastFx() { return fx.last; }, get highlighted() { return hl; }, parts: PARTS.slice(), pack: p.packId, plan: p.planRef,
       species: species ? (species.id || null) : null, partLabels: Object.freeze(Object.assign({}, p.plan.partLabels || {})),
       // (BLOOM-033) the owner (a room, the report) disposes its specimen with itself: listener, observer, element, and its MOUNTED entry
-      dispose() { life.abort(); if (ro) ro.disconnect(); box.remove(); const i = MOUNTED.indexOf(inst); if (i >= 0) MOUNTED.splice(i, 1); } });
+      dispose() { life.abort(); if (ro) ro.disconnect(); if (fxl) fxl.dispose(); box.remove(); const i = MOUNTED.indexOf(inst); if (i >= 0) MOUNTED.splice(i, 1); } });
     MOUNTED.push(inst); return inst;
   }
 

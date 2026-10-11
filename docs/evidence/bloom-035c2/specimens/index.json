@@ -23,105 +23,105 @@
    "states": {
     "base": {
      "traits": {},
-     "signature": "2368c515",
+     "signature": "9d90f068",
      "plan": "oh-stem@1",
      "pack": "organic-hybrid",
-     "sha256": "df3d86a54c6180ded3aabfa326f01d541107b33f1f622337e447f0ccc67c7bef"
+     "sha256": "d84601acb31483b27fb1d68b4b9effb6f18a42e5befc64caf6df42e8ff20f87f"
     },
     "cold3": {
      "traits": {
       "cold": 3
      },
-     "signature": "76b18472",
+     "signature": "3d768b21",
      "plan": "oh-stem@1",
      "pack": "organic-hybrid",
-     "sha256": "763c7121cbbf0fc5b27c770e925d74a18a44544cbb529fff09aee9795c14921d"
+     "sha256": "65398c3b92c0ec3f0a46b6babdbd739990103cfbd0a0db18c9c88d99fe7ab88d"
     },
     "heat3": {
      "traits": {
       "heat": 3
      },
-     "signature": "e15365d2",
+     "signature": "d0d74ac7",
      "plan": "oh-stem@1",
      "pack": "organic-hybrid",
-     "sha256": "62e7d0c39b4d97f52062e98aff222abe9b118b7b0153ffb1cc1d87503872e8e5"
+     "sha256": "5a3ca306a35c3de1bed77dc94fe582a5866296516cd70b1991b6f92a3a50a8bc"
     },
     "drought3": {
      "traits": {
       "drought": 3
      },
-     "signature": "c92a6544",
+     "signature": "80463fa3",
      "plan": "oh-stem@1",
      "pack": "organic-hybrid",
-     "sha256": "fb2a3ee51843fc1f9f7435b4b606d5d2f0bd737cbc39071ab2579ebcbdc2b104"
+     "sha256": "bd7a6066052028e4dfe52e479988fefffce4aac4a15c031cea911450650e4db2"
     },
     "flood3": {
      "traits": {
       "flood": 3
      },
-     "signature": "1adc0457",
+     "signature": "6fd0a7c0",
      "plan": "oh-stem@1",
      "pack": "organic-hybrid",
-     "sha256": "78e71d203617e7b32d4eda3834039f440b430ca4cc008d04363b19408c9a31a4"
+     "sha256": "1f1b4bb865317d40be0c888ee9d08719bccd58cc30f894d9a396f21c9d593e09"
     },
     "salt": {
      "traits": {
       "salt": 1
      },
-     "signature": "6842897a",
+     "signature": "a59affb7",
      "plan": "oh-stem@1",
      "pack": "organic-hybrid",
-     "sha256": "e2dc5ed935a46ed846743889a4f8b501abd837538118ef6eccde12fb08b52cdb"
+     "sha256": "b25ab138d22ddd535d5778527e560c9a687caf84f930bd7ee4c631dbc2b46bc6"
     },
     "radiation": {
      "traits": {
       "rad": 1
      },
-     "signature": "51394265",
+     "signature": "32366a40",
      "plan": "oh-stem@1",
      "pack": "organic-hybrid",
-     "sha256": "59648a253cfe434b69c4826401099bbbdfc145913c916f57b82f37202c2f0d24"
+     "sha256": "1ba2416902982bad0bc7ff5cecb702769516f150fc29fcafeb45119d12df0075"
     },
     "earlyMaturity": {
      "traits": {
       "earlyMat": 1
      },
-     "signature": "205144f4",
+     "signature": "3fcee277",
      "plan": "oh-stem@1",
      "pack": "organic-hybrid",
-     "sha256": "37e315bf65e0dc03f41c9c79b86ee9221fe5add2a9d1cd34e7149f40dfb37eab"
+     "sha256": "7a4cbc71619f9aee05386c0b034486e50f7988e0ed02300bc8be669b31d8f5dc"
     },
     "seedOutput1": {
      "traits": {
       "seedOut": 1
      },
-     "signature": "ff246949",
+     "signature": "84a55c3e",
      "plan": "oh-stem@1",
      "pack": "organic-hybrid",
-     "sha256": "9d11116890171a76e7e43877f1d7aa35a6a3df95d6d08e8725d02a9d2ef8ba32"
+     "sha256": "dd08131a641d0c4f70a899c778ec22b8031138517fbeb83d34ce754c967d6e40"
     },
     "seedOutput2": {
      "traits": {
       "seedOut": 2
      },
-     "signature": "db291d49",
+     "signature": "a3c39460",
      "plan": "oh-stem@1",
      "pack": "organic-hybrid",
-     "sha256": "a2da3460a53eac813464e048ecc9382e57a6e744017bcef2470fdc2d40250f5b"
+     "sha256": "c74b5753c8826a4d5d402d6e979a70e062426920c6ab4ee7ee6a66db2d190a83"
     },
     "waterborneSeeds": {
      "traits": {
       "waterSeeds": 1
      },
-     "signature": "88f40059",
+     "signature": "7cd4deec",
      "plan": "oh-stem@1",
      "pack": "organic-hybrid",
-     "sha256": "84a13e2c46bc49434b335a6174023479bc97df45ad7ffd1bf04730a42ade3862"
+     "sha256": "6ff4f3be560d71ddd9e87b8c9e57e8180ff344e04d57d15d3cc5fb59204d81cf"
     }
    },
    "sheet": {
     "file": "organic_hybrid-sheet.png",
-    "sha256": "2164daebcfcf791d34c6005960569942985b74c390d99761068e6433996b1212"
+    "sha256": "c74df6391bac7cee61ba90bd690671df93c92657d90ef01f942ee03b40e0b68e"
    }
   },
   "cinder_rosette": {
@@ -131,105 +131,105 @@
    "states": {
     "base": {
      "traits": {},
-     "signature": "c8eec674",
+     "signature": "98440ab8",
      "plan": "rosette@1",
      "pack": "cinder-rosette",
-     "sha256": "55dd9436f920656717ce91a9666d12042ce9c9457668a4d8fb22b02a15efcc65"
+     "sha256": "1e2b0bdd6f7bf07613820d8bbd97c97b33ba7207f219856d043cab313a4a22bb"
     },
     "cold3": {
      "traits": {
       "cold": 3
      },
-     "signature": "d84b9562",
+     "signature": "61c50900",
      "plan": "rosette@1",
      "pack": "cinder-rosette",
-     "sha256": "0ee0d7d9f2516542d2fabf5ff3d3015326017da111867e631340467f526898a5"
+     "sha256": "cf8405c23a40ccfce9c7e5f670970157260ef9635b852d517e799c89ae5463a6"
     },
     "heat3": {
      "traits": {
       "heat": 3
      },
-     "signature": "fa660564",
+     "signature": "75a993f0",
      "plan": "rosette@1",
      "pack": "cinder-rosette",
-     "sha256": "99287ff5b97bb31d6676e87b3651417a642bc239d3e4c780589ecda6952b3594"
+     "sha256": "62ab4360945361e05853ff9dce14f8a065b32b8e39f7f5bbb080741b51f3a154"
     },
     "drought3": {
      "traits": {
       "drought": 3
      },
-     "signature": "35d06ddd",
+     "signature": "9e3e6db2",
      "plan": "rosette@1",
      "pack": "cinder-rosette",
-     "sha256": "7548936a2cd99bfbd0b561b8c8bf507fd9155c955f8ac3716d5d00d43812cc0f"
+     "sha256": "f22e4108490ab45cc38a6901f83c45e3f032fa7072d1e8cf1702e2f380d2b747"
     },
     "flood3": {
      "traits": {
       "flood": 3
      },
-     "signature": "86c367e0",
+     "signature": "e84743a2",
      "plan": "rosette@1",
      "pack": "cinder-rosette",
-     "sha256": "f8f4b2d0d5f81336e8c967691a7cf1f01a30df4171d864b017170411c592297f"
+     "sha256": "dc68e5331d317c2fe8b60420bf04c26f0ca853bb704b479e15813fb5c076f776"
     },
     "salt": {
      "traits": {
       "salt": 1
      },
-     "signature": "2d169aff",
+     "signature": "cfaa1a20",
      "plan": "rosette@1",
      "pack": "cinder-rosette",
-     "sha256": "8edf2be00a99740f7e19b0d33937654421a472b6fdedf7b0477efbaad5f01963"
+     "sha256": "43504735109136b49d45369c45ef5fe23ae86d65758f25c06317ff0a260848de"
     },
     "radiation": {
      "traits": {
       "rad": 1
      },
-     "signature": "505bcf7c",
+     "signature": "41974f44",
      "plan": "rosette@1",
      "pack": "cinder-rosette",
-     "sha256": "808037ce89d220f15fb028390fbbb6b251ab029c5c68babe5517b9a661e0bd01"
+     "sha256": "2b2137b97ce539b2b9800b8f625ef19c1dc4a3452e578f243cda769cc1a22c27"
     },
     "earlyMaturity": {
      "traits": {
       "earlyMat": 1
      },
-     "signature": "68567086",
+     "signature": "bab1722b",
      "plan": "rosette@1",
      "pack": "cinder-rosette",
-     "sha256": "2d48b9fdc738f8fa06e74c92b54cce3a04c18c566080ff6d143eb3d1ef7ccbd2"
+     "sha256": "8592e43519da25976ae4ac5673490dd0ffc277e7af69d792d64ffa31cfe169f3"
     },
     "seedOutput1": {
      "traits": {
       "seedOut": 1
      },
-     "signature": "f9933afb",
+     "signature": "ab99146a",
      "plan": "rosette@1",
      "pack": "cinder-rosette",
-     "sha256": "1158439108e3d327e4a56cd7d6346334e0a98ae8ec95cc2af9421a8214c8a610"
+     "sha256": "8b817f1cc3d3fb0a0024ba32f54827f46f35220dc52457fcc322fe79a1ae1bbb"
     },
     "seedOutput2": {
      "traits": {
       "seedOut": 2
      },
-     "signature": "17043dd8",
+     "signature": "222dfb3b",
      "plan": "rosette@1",
      "pack": "cinder-rosette",
-     "sha256": "1e820bdb8ca0bd7af71cdf3a7e8c3c328d06dc7b5b4e2618c189126db1a6f25a"
+     "sha256": "197fc753bc2872ab30f96026a6216264279fac4348a4ddbfd533366e1647d0e9"
     },
     "waterborneSeeds": {
      "traits": {
       "waterSeeds": 1
      },
-     "signature": "ba1d265e",
+     "signature": "85f4aa88",
      "plan": "rosette@1",
      "pack": "cinder-rosette",
-     "sha256": "b2bd928b5b4c838e8f60950d8c4b7889942991206e675b4b5371aa6de97a51cb"
+     "sha256": "9d3a9e315fc7948266dae75522e65dd93e53e26756e34cf4ae9e69905717cc4a"
     }
    },
    "sheet": {
     "file": "cinder_rosette-sheet.png",
-    "sha256": "55b10752afb6e6ab6083fed565843fa2abff80aec787d588fc1c01f382be5b87"
+    "sha256": "af48a6d22cca79139c32563c3fc7e16b87ed08904d8b5830009fd0971afafc25"
    }
   },
   "woolly_candle": {
@@ -239,105 +239,105 @@
    "states": {
     "base": {
      "traits": {},
-     "signature": "0bd03638",
+     "signature": "a48eab48",
      "plan": "candle@2",
      "pack": "woolly-candle",
-     "sha256": "e716251a20aa3058bcd1f20c7aa05259d808ecdf719c6fcb557ef0784a23c13d"
+     "sha256": "3af8da6045bfb4db3f569db3cfa75ebb0f738c939efebd00575e825ca03525ae"
     },
     "cold3": {
      "traits": {
       "cold": 3
      },
-     "signature": "1a8a0bdd",
+     "signature": "f8e062e2",
      "plan": "candle@2",
      "pack": "woolly-candle",
-     "sha256": "db9e8e79216c3f2854bb6fc29adf722df59de26749882cc682886d95c297342c"
+     "sha256": "150838d0b20e1f9e024661b12d6ccaf7487c950f2695b3c3150edc0ed38dc6a0"
     },
     "heat3": {
      "traits": {
       "heat": 3
      },
-     "signature": "5c2a0541",
+     "signature": "1bfcdce5",
      "plan": "candle@2",
      "pack": "woolly-candle",
-     "sha256": "0c1e36d2c94868aeedf3da7316779cf7238c67368e991ced51c47d399bd2e64e"
+     "sha256": "c86764ba3f4b356ca621e2ef8301389356a0b4f1f219fb776987b416ba7bbd64"
     },
     "drought3": {
      "traits": {
       "drought": 3
      },
-     "signature": "2ade9e20",
+     "signature": "a991bbf6",
      "plan": "candle@2",
      "pack": "woolly-candle",
-     "sha256": "cfe1ff5b387eb63719b16f9bd4e61fa6855eba45606c481a11feefad03519828"
+     "sha256": "e9261690dacb40a533213174901b8186301208ffd768f739cb66ab4e0d3fd786"
     },
     "flood3": {
      "traits": {
       "flood": 3
      },
-     "signature": "5891be16",
+     "signature": "1c6d81e9",
      "plan": "candle@2",
      "pack": "woolly-candle",
-     "sha256": "e8b17663558afd1d643cc92066e4e81a17dd13dda406055284233f392cfe2040"
+     "sha256": "3c4b79e3b5d533d5c4cdaf85f6b55991b71c44cb68d2b5b09ee1085bb331a414"
     },
     "salt": {
      "traits": {
       "salt": 1
      },
-     "signature": "074a9dfe",
+     "signature": "c0f78e27",
      "plan": "candle@2",
      "pack": "woolly-candle",
-     "sha256": "226c10ddec36ad55ab681eea9d55a76fb874580c49d9168c39420c0d2b791e84"
+     "sha256": "94aa9f8af82190db3185b5459ff73a441dfab7142e7411fdde2c3d40fa870a46"
     },
     "radiation": {
      "traits": {
       "rad": 1
      },
-     "signature": "53aad601",
+     "signature": "c90c9285",
      "plan": "candle@2",
      "pack": "woolly-candle",
-     "sha256": "dcc1257fe3081ad73a19233354bdd8ac556f2148abdd6ef4ecf3659676d42cb9"
+     "sha256": "3895c311a7753817775ac82bf3a277d82ba1a2bf689714963e833328d430e8de"
     },
     "earlyMaturity": {
      "traits": {
       "earlyMat": 1
      },
-     "signature": "c431518e",
+     "signature": "0998aeea",
      "plan": "candle@2",
      "pack": "woolly-candle",
-     "sha256": "a0e404b9813ce0152956680d1a15d998c4fd29953cbaa6e026ef6b0f13ccf796"
+     "sha256": "3c84b7c1f560ca40f3456ef69f87a9474e20368c5437ec81e23f8effa085c8f7"
     },
     "seedOutput1": {
      "traits": {
       "seedOut": 1
      },
-     "signature": "3b3be1e5",
+     "signature": "cf07e811",
      "plan": "candle@2",
      "pack": "woolly-candle",
-     "sha256": "5edc3f9f449771ca710ac5dd16b8e9e582024e46aeba2e36b8fe2f210d6f782e"
+     "sha256": "73a9d81db1926edfe8aebb1e64248a4f1069643b7670988462ee0f10c93bfbb6"
     },
     "seedOutput2": {
      "traits": {
       "seedOut": 2
      },
-     "signature": "27b6cf81",
+     "signature": "1fa39fc4",
      "plan": "candle@2",
      "pack": "woolly-candle",
-     "sha256": "f0d37184129d73366ef655f8f917ebd43a5af7180aba8945067985732dbf3d06"
+     "sha256": "084700fc7ca9a850d2d99d52e8c85eada6b9793c17fa1db0b4d966fb58be6661"
     },
     "waterborneSeeds": {
      "traits": {
       "waterSeeds": 1
      },
-     "signature": "af8d7397",
+     "signature": "a42721a1",
      "plan": "candle@2",
      "pack": "woolly-candle",
-     "sha256": "2cb2a4374dd32c84896f6bf833499e8d01c810201757a2d7b9bc2f0efd4d2d47"
+     "sha256": "7d118e03dc2e1a7a37d6d5264ffeb32fd1a591b4e69147b5585a14925126afdd"
     }
    },
    "sheet": {
     "file": "woolly_candle-sheet.png",
-    "sha256": "c3b40acf7279087b4757f09ddacbe99ad0e76074a174289bcc995e9f021b7f4b"
+    "sha256": "ee1b66788482f0cb2807378f145df7f4e3eaa2182ed40221d6e36f482c06ab0e"
    }
   },
   "reed_spire": {
@@ -347,105 +347,105 @@
    "states": {
     "base": {
      "traits": {},
-     "signature": "b809bfc6",
+     "signature": "2527198e",
      "plan": "reed@1",
      "pack": "reed-spire",
-     "sha256": "12a66774d702c106dec18afa9ec0fca1c7c35cd345a732116af8e3d441db0087"
+     "sha256": "4ddf9a303dc4596d9188f715a32fe4da4b9ff8ba5794a8198b1c2ad7c8282c43"
     },
     "cold3": {
      "traits": {
       "cold": 3
      },
-     "signature": "e5d8fd0a",
+     "signature": "0a80f202",
      "plan": "reed@1",
      "pack": "reed-spire",
-     "sha256": "b7ea498e47e81e0645cf46d163936e715f9376eae30f696184ceae60c87d8c44"
+     "sha256": "8108e1525a5e6c6455f4b97cf538047c0b6809b6ed658346b83fe06f28dc9edc"
     },
     "heat3": {
      "traits": {
       "heat": 3
      },
-     "signature": "3972b3ac",
+     "signature": "264946a1",
      "plan": "reed@1",
      "pack": "reed-spire",
-     "sha256": "ea23df8ab225f21463904edf6709c01a117b48d0b0e4b78942c5a17fda4601fd"
+     "sha256": "c2d27ac70dd650f24ec78cc3f2a4d9f0cecaef36f2830d347040f298393cefba"
     },
     "drought3": {
      "traits": {
       "drought": 3
      },
-     "signature": "bddc7f8e",
+     "signature": "5031cb35",
      "plan": "reed@1",
      "pack": "reed-spire",
-     "sha256": "89c6d3b0951d1008c8b24a5372740646e88644926323039cb8958568b86b6ba5"
+     "sha256": "71d23b8126566ea94152901ad86f32e9e807584619c00f3119a6ad4ed5c03a8d"
     },
     "flood3": {
      "traits": {
       "flood": 3
      },
-     "signature": "def90078",
+     "signature": "4516150d",
      "plan": "reed@1",
      "pack": "reed-spire",
-     "sha256": "7e8bffafa9936d8806efb08c79f1b3c4d7dbb83ae573e20bca877ea0196da0cb"
+     "sha256": "d3f052be209b0f0086c5e29a708a0639c79c8c8aeb47bc0f60f6d9de5fe39000"
     },
     "salt": {
      "traits": {
       "salt": 1
      },
-     "signature": "2150e416",
+     "signature": "7f34cb82",
      "plan": "reed@1",
      "pack": "reed-spire",
-     "sha256": "1782aac51e11bf3e3be6b33a782d1a89ecfac1f6fe6b5915194b507574309934"
+     "sha256": "46c3bd13404d41b9f8ba556ce68fb214865cc6789a5768e76d3b7630f0476f4f"
     },
     "radiation": {
      "traits": {
       "rad": 1
      },
-     "signature": "b869218a",
+     "signature": "d1f22b86",
      "plan": "reed@1",
      "pack": "reed-spire",
-     "sha256": "fed3417a87779b13f466e8ab5b6a2ac6be8faa1be1babb1fdf42b59b482bca00"
+     "sha256": "77fe4c39b5978de37414bee2f57c626852accd3b61206e0c14db9f1a3476407f"
     },
     "earlyMaturity": {
      "traits": {
       "earlyMat": 1
      },
-     "signature": "5e8c893e",
+     "signature": "8027e01f",
      "plan": "reed@1",
      "pack": "reed-spire",
-     "sha256": "d5b61deead1fe9ac573bd1fd2dc56df649358dba1539123fa3218435b3cfcf5b"
+     "sha256": "a2ba40ebdb3a20e4d78a93132caf82a3b7208ce47f465d70a1d5c8250b651005"
     },
     "seedOutput1": {
      "traits": {
       "seedOut": 1
      },
-     "signature": "d0d27b09",
+     "signature": "8fd8c640",
      "plan": "reed@1",
      "pack": "reed-spire",
-     "sha256": "37c353ec81c577be5e1f41a39ff5249887f3b8703c913fce9422304e753cf72d"
+     "sha256": "6e2996b0f8e097ff60d410cb780ff325ee3d7514186a6bcc556541f2f02ce44a"
     },
     "seedOutput2": {
      "traits": {
       "seedOut": 2
      },
-     "signature": "e3a12529",
+     "signature": "969e7f07",
      "plan": "reed@1",
      "pack": "reed-spire",
-     "sha256": "017f7a19ade923bfaf52971d4c6dd5498606049bc7d96ba5ad41f9950360192c"
+     "sha256": "0b602a8c8b27719aec7726947d1ae1ce1547249afbfd686a48557d0c7be427b0"
     },
     "waterborneSeeds": {
      "traits": {
       "waterSeeds": 1
      },
-     "signature": "7a50a8ec",
+     "signature": "b8724de4",
      "plan": "reed@1",
      "pack": "reed-spire",
-     "sha256": "13de935560cea95dbdcfd4bd09cdc621685a25cd4358e938acc7b955cc60a5e4"
+     "sha256": "3a82c1edff592c81be55e06c7dde645ff05f0753231f4d0131ef7de76b593822"
     }
    },
    "sheet": {
     "file": "reed_spire-sheet.png",
-    "sha256": "425eb9440ca3f0a1d055e01435fe7b9c2048d3559b07dcd444cf6569aaa1ca02"
+    "sha256": "58949ac1f2d5e1b4a093e77b0f626100cfe60f92ad440f43e69d0aa7c4ad5da5"
    }
   }
  }

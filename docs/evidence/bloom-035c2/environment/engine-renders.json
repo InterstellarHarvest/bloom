@@ -1,0 +1,71 @@
+{
+ "tool": "tools/specimen-environment-check.js --evidence",
+ "rows": [
+  {
+   "file": "01-cinder-dry-region.png",
+   "note": "Cinder Rosette · dry region sec_0 (desert_world)",
+   "envSig": "d9398429-c199cad0",
+   "organismSig": "91164ad1"
+  },
+  {
+   "file": "02-cinder-wet-region.png",
+   "note": "Cinder Rosette · wet region sec_7 — a dry specialist outside its strength",
+   "envSig": "bf455b67-aae925ea",
+   "organismSig": "91164ad1"
+  },
+  {
+   "file": "03-cinder-cold-region.png",
+   "note": "Cinder Rosette · cold region sec_0",
+   "envSig": "5cc2fb0d-2c32d391",
+   "organismSig": "91164ad1"
+  },
+  {
+   "file": "04-woolly-clear-sun.png",
+   "note": "Woolly Candle · clear sky, sun (sec_0)",
+   "envSig": "d9398429-c199cad0",
+   "organismSig": "4e07416f"
+  },
+  {
+   "file": "05-reed-rain.png",
+   "note": "Reed Spire · overcast rain region (sec_7; rain streaks are the FX overlay in the browser)",
+   "envSig": "bf455b67-aae925ea",
+   "organismSig": "ddb03439"
+  },
+  {
+   "file": "06-woolly-snow.png",
+   "note": "Woolly Candle · snow (sec_10; flakes are the FX overlay)",
+   "envSig": "f971157d-683f6a05",
+   "organismSig": "4e07416f"
+  },
+  {
+   "file": "07-oh-standing-water.png",
+   "note": "Organic Hybrid · standing water (sec_7) — water from the region, not the species",
+   "envSig": "bf455b67-aae925ea",
+   "organismSig": "53b5ef8f"
+  },
+  {
+   "file": "08a-terraform-before.png",
+   "note": "Terraform preview · before",
+   "envSig": "d9398429-c199cad0",
+   "organismSig": "37c6888e"
+  },
+  {
+   "file": "08b-terraform-preview.png",
+   "note": "Terraform preview · humid ×3: environment changed, organism identical",
+   "envSig": "ea52ea67-f2239832",
+   "organismSig": "37c6888e"
+  },
+  {
+   "file": "09a-adapt-before.png",
+   "note": "Adapt preview · before",
+   "envSig": "d9398429-c199cad0",
+   "organismSig": "91164ad1"
+  },
+  {
+   "file": "09b-adapt-preview.png",
+   "note": "Adapt preview · Cold II: organism changed, environment identical",
+   "envSig": "d9398429-c199cad0",
+   "organismSig": "24b66fec"
+  }
+ ]
+}

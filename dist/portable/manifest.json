@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "f4e5e6059afec5705d56aa263ce51df66a8c17d163162df9be667c0e03d1a546",
+  "fingerprint": "8e69a6247de863df0423c2146086b6ffb400f103dc318e93c78f876c9735e2f0",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -15,8 +15,8 @@
   ],
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
-    "bytes": 1334227,
-    "sha256": "0be7e1bd2d8acb453c4a1c823accbeaf917fd829411e256cb49d19ca53900fc8",
+    "bytes": 1334433,
+    "sha256": "89e0cfc30543358ab146788e59fd4822a52506f2345ed6313fdb794080913792",
     "surveyWorkerTextBytes": 237884
   },
   "workerInputs": [
@@ -233,9 +233,9 @@
     },
     {
       "path": "resources/species-select/species-select.js",
-      "bytes": 17025,
-      "sha256": "f41c454159f24c7299efd56dd6681f0a2b7b3765a50373ec1df7bc25d46ee61e",
-      "bytesInBundle": 17025
+      "bytes": 17352,
+      "sha256": "955846854d16b5ff7b196e066f21e6a28d30c0c4febf00351c667bcd5b54ef87",
+      "bytesInBundle": 17231
     },
     {
       "path": "resources/training/training-coach.js",
