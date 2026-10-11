@@ -104,6 +104,8 @@
         seed: run.kind === "procedural" ? run.seed : null,
         scenarioId: S.scn ? S.scn.id : DEFAULT_ID, scenarioName: S.scn ? S.scn.name : DEFAULT_NAME,
         scenarioIsDefault: (S.scn ? S.scn.id : DEFAULT_ID) === DEFAULT_ID,   // (BLOOM-033) the default scenario is never named to the player
+        // (BLOOM-036A, additive) a Challenge run's Challenge (null for an Expedition / Training): the run identifies it by name
+        challenge: run.challenge ? { id: run.challenge.id, name: run.challenge.name, version: run.challenge.version, scenarioId: run.challenge.scenario, icon: run.challenge.presentation.icon } : null,
         mechanics: { pressure: S.press, competition: S.comp, climate: S.clim },
         training: !!run.training, play: !!run.play, started: !!run.started,
         // (BLOOM-035B, additive) the run's species: plain identity + its art (the specimen's body plan and pack); null only for a run without one

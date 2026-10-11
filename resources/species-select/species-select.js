@@ -5,7 +5,9 @@
 // still be marked on screen as temporary proof art — card, dossier and a development note.
 //
 //   import { SpeciesSelect } from "<repo>/resources/species-select/species-select.js";
-//   const s = new SpeciesSelect(host, { species, reducedMotion, onChoose(sp), onBack() });
+//   const s = new SpeciesSelect(host, { species, reducedMotion, challenge, onChoose(sp), onBack() });
+//   (036A) `challenge` (a resolved Challenge, or null): the screen is reached from the CHALLENGES hub — its kicker names the Challenge;
+//   nothing else changes (every released species stays open: species are never prescribed in 036A)
 //   await s.ready · s.focus() · s.open(id) · s.close() · s.choose() · s.dispose()
 //
 // Layout (BLOOM-034 night planning language, resources/ui/bloom-theme.css): four cards in ROLE order (generalist first — never a power
@@ -30,12 +32,12 @@ const T_AXIS = [-45, 45], M_AXIS = [0, 100];
 const signed = t => (t > 0 ? "+" : t < 0 ? "−" : "") + Math.abs(t) + " °C";
 
 export class SpeciesSelect {
-  constructor(host, { species = null, reducedMotion = null, onChoose = null, onBack = null } = {}) {
+  constructor(host, { species = null, reducedMotion = null, onChoose = null, onBack = null, challenge = null } = {}) {
     if (!host || typeof host.appendChild !== "function") throw new TypeError("SpeciesSelect: host must be a DOM element");
     const B = window.BLOOM;
     if (!B || !B.species) throw new Error("SpeciesSelect: load content/species.js and resources/bloom-species.js");
     if (!B.plantSpecimen || typeof B.plantSpecimen.drawSpecies !== "function") throw new Error("SpeciesSelect: needs the plant sprite runtime (BLOOM.plantSpecimen.drawSpecies)");
-    this.host = host; this.onChoose = onChoose; this.onBack = onBack; this.forcedReducedMotion = reducedMotion;
+    this.host = host; this.onChoose = onChoose; this.onBack = onBack; this.forcedReducedMotion = reducedMotion; this.challenge = challenge || null;
     this.list = B.species.list(); this.reference = this.list.find(s => s.id === B.species.DEFAULT_ID);
     const start = species ? B.species.resolve(typeof species === "string" ? species : species.id) : this.reference;
     this.index = Math.max(0, this.list.indexOf(start)); this.opened = null; this.state = "cards"; this.disposed = false;
@@ -99,12 +101,13 @@ export class SpeciesSelect {
   _build() {
     const r = this.root = document.createElement("section");
     r.className = "ss"; r.dataset.state = "cards"; r.setAttribute("aria-label", "Choose your plant species");
+    if (this.challenge) r.dataset.challenge = this.challenge.id;
     if (this.forcedReducedMotion === true) r.classList.add("rm");
     const tid = "ss-title-" + Math.floor(Math.random() * 1e9).toString(36), did = tid + "-d";
     r.innerHTML = `
       <header class="ss-head">
         <button type="button" class="ss-btn ghost" data-act="back">${ico("back")}<span>Back</span></button>
-        <div class="ss-title"><span class="ss-kicker">Expedition</span><h1 id="${tid}">Choose your plant</h1></div>
+        <div class="ss-title"><span class="ss-kicker">${this.challenge ? `Challenge · ${esc(this.challenge.name)}` : "Expedition"}</span><h1 id="${tid}">Choose your plant</h1></div>
         ${this.list.some(sp => sp.status === "candidate") ? `<p class="ss-dev" role="note"><b>Development build</b> · a candidate species uses temporary engineering proof art</p>` : ""}
       </header>
       <p class="ss-lede">Each species starts with a different body. The worlds you are offered next are judged by what <em>this</em> plant can live on.</p>
@@ -147,16 +150,19 @@ export class SpeciesSelect {
     r.addEventListener("click", this._onClick); r.addEventListener("keydown", this._onKey);
   }
 
+  /** (036A) the species' note — Organic Hybrid's "Recommended first expedition" speaks about Expeditions: none inside a Challenge */
+  _note(sp) { return this.challenge ? null : sp.presentation.note; }
+
   _card(sp, i) {
-    const P = sp.presentation, proof = sp.status === "candidate";
+    const P = sp.presentation, proof = sp.status === "candidate", note = this._note(sp);
     const chip = (x, dir) => { const [cat, icon] = CAT[x.category];
       return `<li class="ss-chip ${dir}${x.latent ? " latent" : ""}" data-cat="${cat}"><span class="ss-chip-dir" aria-hidden="true">${dir === "up" ? "▲" : "▼"}</span><span class="ss-chip-i" aria-hidden="true">${ico(icon)}</span>`
         + `<span class="ss-chip-t"><span class="sr-only">${dir === "up" ? (x.latent ? "Latent strength" : "Strength") : "Weakness"}, ${esc(x.category)}: </span>${esc(x.text)}${x.latent ? ` <small>(latent)</small>` : ""}</span></li>`; };
     return `<div class="ss-card" role="radio" aria-checked="false" tabindex="-1" data-index="${i}" data-species="${esc(sp.id)}" data-role="${esc(sp.role)}"${proof ? ' data-proof="true"' : ""}
-        aria-label="${esc(sp.name)}, ${esc(P.roleLabel)}${P.note ? `. ${esc(P.note)}` : ""}">
+        aria-label="${esc(sp.name)}, ${esc(P.roleLabel)}${note ? `. ${esc(note)}` : ""}">
       <div class="ss-spec"><canvas width="84" height="98" aria-hidden="true"></canvas>${proof ? `<span class="ss-proof">Temporary proof art</span>` : ""}</div>
       <div class="ss-card-t">
-        <h3>${esc(sp.name)}</h3><p class="ss-role">${esc(P.roleLabel)}</p>${P.note ? `<p class="ss-note">${ico("info")}<span>${esc(P.note)}</span></p>` : ""}
+        <h3>${esc(sp.name)}</h3><p class="ss-role">${esc(P.roleLabel)}</p>${note ? `<p class="ss-note">${ico("info")}<span>${esc(note)}</span></p>` : ""}
         <ul class="ss-chips" aria-label="Strengths and weaknesses">${P.strengths.map(x => chip(x, "up")).join("")}${P.weaknesses.map(x => chip(x, "down")).join("")}</ul>
       </div>
     </div>`;
@@ -182,7 +188,7 @@ export class SpeciesSelect {
     d.dataset.species = sp.id; d.dataset.proof = String(sp.status === "candidate");
     this._paint(q(".ss-d-canvas"), sp); q(".ss-proof").hidden = sp.status !== "candidate";
     q(".ss-d-role").textContent = P.roleLabel; this.dossierTitle.textContent = sp.name; q(".ss-d-short").textContent = sp.short;
-    q(".ss-d-note").hidden = !P.note; q(".ss-d-note").innerHTML = P.note ? `${ico("info")}<span>${esc(P.note)}</span>` : "";
+    const note = this._note(sp); q(".ss-d-note").hidden = !note; q(".ss-d-note").innerHTML = note ? `${ico("info")}<span>${esc(note)}</span>` : "";
     // physiology at a glance: the species' window solid, Organic Hybrid's as a faint outline, on fixed labelled axes; exact values on hover / focus
     const pos = (v, [a, b]) => ((Math.min(b, Math.max(a, v)) - a) / (b - a) * 100).toFixed(2) + "%";
     const bar = (label, cat, lo, hi, rlo, rhi, axis, fmt) => `<div class="ss-range" data-cat="${cat}" tabindex="0" aria-label="${esc(label)}: ${esc(fmt(lo))} to ${esc(fmt(hi))}${sp.id !== this.reference.id ? ` (Organic Hybrid: ${esc(fmt(rlo))} to ${esc(fmt(rhi))})` : ""}">

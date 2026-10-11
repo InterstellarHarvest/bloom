@@ -82,7 +82,8 @@
     // ---------------------------------------------------------------- DOM
     document.documentElement.classList.add("ui18");
     const el = document.createElement("div"); el.className = "pv"; el.id = "pv"; el.dataset.ui = "production";
-    const kindLine = RUN.training ? "Training" : [RUN.kind === "procedural" ? RUN.archetypeName : null, !RUN.scenarioIsDefault ? RUN.scenarioName : null].filter(Boolean).join(" · ") || "Authored world";
+    // (036A) a Challenge run's line names its Challenge (the world type stays in the footer's run identity)
+    const kindLine = RUN.training ? "Training" : RUN.challenge ? `Challenge · ${RUN.challenge.name}` : [RUN.kind === "procedural" ? RUN.archetypeName : null, !RUN.scenarioIsDefault ? RUN.scenarioName : null].filter(Boolean).join(" · ") || "Authored world";
     const tool = (id, label, extra = "") => `<button type="button" class="pv-tool" data-tool="${id}" aria-pressed="false"${extra}>${ico(id === "region" ? "regions" : id)}<span class="tn">${label}</span></button>`;
     el.innerHTML =
       `<header class="pv-hud" id="pvHud">` +
@@ -175,7 +176,7 @@
       const pb = $("pvPause"); pb.innerHTML = ico(r.running ? "pause" : "play"); pb.setAttribute("aria-pressed", String(!r.running)); pb.setAttribute("aria-label", r.running ? "Pause" : "Resume"); pb.title = r.running ? "Pause" : "Resume";
       const sp = $("pvSpeed"); sp.textContent = r.speed + "×"; sp.setAttribute("aria-label", `Speed ${r.speed} times. Press to cycle 1, 2, 4`); sp.title = "Speed: 1× → 2× → 4×";
       const name = r.kind === "procedural" ? `${r.archetypeName} · ${r.play ? "World Seed" : "seed"} ${r.seed}` : r.planetName;
-      $("pvRunId").textContent = [r.training ? "Training" : null, name, !r.scenarioIsDefault ? r.scenarioName : null].filter(Boolean).join(" · ");
+      $("pvRunId").textContent = [r.training ? "Training" : null, r.challenge ? `Challenge · ${r.challenge.name}` : null, name, !r.challenge && !r.scenarioIsDefault ? r.scenarioName : null].filter(Boolean).join(" · ");
     }
     function paintLog() { const m = stripGlyph(A.message()); const L = $("pvLog"); if (L.dataset.m !== m) { L.dataset.m = m; L.innerHTML = ico("info") + esc(m); } }
 

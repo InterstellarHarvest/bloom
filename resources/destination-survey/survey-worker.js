@@ -9,6 +9,8 @@
 //        { id, type: "validate", archetypeId, seed, species }                   ONE fully validated candidate for that species, or null
 //        { id, type: "evaluate", physical, species }                           (035B) the species EVALUATION of a physical candidate the
 //                                                                                page already holds (no planet in the result)
+//        { id, type: "scenario", physical, species, scenario }               (036A) the SCENARIO VALIDATION (layer P with the species) of a
+//                                                                                physical candidate the page already holds (plain verdict)
 //   out: { id, progress: { found, draws, validations } } … (column task only), then { id, result } or { id, error }
 // (035B) `species` = { id, physiologyKey }: the worker resolves the id itself (BLOOM.species.resolve — an unknown id is an error) and
 // refuses a physiology that is not the page's (no object crosses the boundary, no silent substitution). Each worker keeps a small
@@ -28,18 +30,19 @@ import "../bloom-witness.js";
 import "../bloom-archetype.js";
 import "../bloom-scenario.js";
 import "../bloom-play.js";
-import { columnCandidates, planColumn, makeCandidate, evaluateSpecies, speciesFor } from "./survey-data.js";
+import { columnCandidates, planColumn, makeCandidate, evaluateSpecies, validateScenarioFor, speciesFor } from "./survey-data.js";
 
-const cache = { physical: null, evaluation: null, structural: new Map(), stats: { physicalHits: 0, physicalMisses: 0, evaluationHits: 0, evaluationMisses: 0 } };
+const cache = { physical: null, evaluation: null, scenario: null, structural: new Map(), stats: { physicalHits: 0, physicalMisses: 0, evaluationHits: 0, evaluationMisses: 0, scenarioHits: 0, scenarioMisses: 0 } };
 
 self.onmessage = e => {
   const { id, type, sectorSeed, column, firstBloom } = e.data;
   try {
     const species = speciesFor(e.data.species || null);   // throws on an unknown id or a physiology other than the page's
-    if (type === "plan") { self.postMessage({ id, result: planColumn(sectorSeed, column, undefined, { firstBloom, fromDraw: e.data.fromDraw, want: e.data.want, species, cache }) }); return; }
+    if (type === "plan") { self.postMessage({ id, result: planColumn(sectorSeed, column, undefined, { firstBloom, fromDraw: e.data.fromDraw, want: e.data.want, species, cache, scenario: e.data.scenario || null }) }); return; }
     if (type === "validate") { self.postMessage({ id, result: makeCandidate({ archetypeId: e.data.archetypeId, seed: e.data.seed }, undefined, { species, cache }) }); return; }
     if (type === "evaluate") { self.postMessage({ id, result: evaluateSpecies(e.data.physical, species) }); return; }
-    const it = columnCandidates(sectorSeed, column, undefined, { firstBloom, species, cache });
+    if (type === "scenario") { self.postMessage({ id, result: validateScenarioFor(e.data.physical, species, e.data.scenario) }); return; } // (036A)
+    const it = columnCandidates(sectorSeed, column, undefined, { firstBloom, species, cache, scenario: e.data.scenario || null });
     for (;;) { const r = it.next(); if (r.done) { self.postMessage({ id, result: r.value }); return; } self.postMessage({ id, progress: r.value }); }
   } catch (err) { self.postMessage({ id, error: String((err && err.message) || err) }); }
 };
