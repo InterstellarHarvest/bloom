@@ -324,7 +324,7 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
           prefetch: MENU_DEV.entry.prefetch ? MENU_DEV.entry.prefetch.progress : null }));
         F.boot = { ...boot, url: boot.url.replace(FROOT, "<repo>") };   // (no local path in the evidence)
         check(boot.protocol === "file:" && boot.state === "mounted" && !boot.served && boot.portable && boot.scripts === 16 /* (035B: + content/species.js, resources/bloom-species.js) */ && boot.bundle && boot.loaded.includes("resources/app/app-controller.js") && !boot.notice && !boot.failed
-          && boot.title === "Strange Bloom — Unknown Soils" && /^Strange Bloom$/i.test(boot.h1) && J(boot.items) === J(["begin", "training", "settings", "credits"]) && boot.tag && boot.prefetch && boot.prefetch.total === 9,
+          && boot.title === "Strange Bloom — Unknown Soils" && /^Strange Bloom$/i.test(boot.h1) && J(boot.items) === J(["begin", "challenges", "training", "settings", "credits"]) && boot.tag && boot.prefetch && boot.prefetch.total === 9,
           `${B} P6 · P7 · P8 · ${FINDEX.replace(FROOT, "<repo>")} over file:// boots the REAL title (no HTTP-required notice, no failure notice): the classic engine scripts, the module seam and the portable runtime's page composer; STRANGE BLOOM, BEGIN EXPEDITION · TRAINING (Recommended) · SETTINGS · CREDITS; the first sector already prefetching`,
           J({ state: boot.state, loaded: boot.loaded, prefetch: boot.prefetch }));
         await shot(p, `01-file-title.png`);

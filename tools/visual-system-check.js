@@ -125,13 +125,13 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
       for (const m of body.matchAll(/(\w+): '([^']*)'/g)) o[m[1]] = m[2]; return o; };
     const ICONS = ICONS_SRC, G = Object.assign({}, tableOf("resources/run-ui/run-report.js"), tableOf("resources/run-ui/decision-rooms.js"), tableOf("resources/run-ui/planet-view.js"));
     const shared = Object.keys(ICONS).filter(k => G[k]), differ = shared.filter(k => G[k] !== ICONS[k]), fresh = Object.keys(ICONS).filter(k => !G[k]);
-    const plan = ["resources/main-menu/main-menu.js", "resources/destination-survey/destination-survey.js"].map(read).join("\n");
+    const plan = ["resources/main-menu/main-menu.js", "resources/destination-survey/destination-survey.js", "resources/challenges/challenge-hub.js"].filter(f => fs.existsSync(path.join(ROOT, f))).map(read).join("\n"); // (036A) + the Challenge hub
     const code = plan.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, ""), rawSvg = (code.match(/<svg/g) || []).length, arrows = /←|→/.test(code), emoji = /\p{Extended_Pictographic}/u.test(plan + read("resources/ui/bloom-icons.js"));
     const sample = ico("world"), shape = /^<svg class="ic bloom-ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false">/.test(sample) && !/<title|<text/.test(Object.values(ICONS).join(""));
     const imports = /import \{ ico \} from "\.\.\/ui\/bloom-icons\.js";/.test(read("resources/main-menu/main-menu.js")) && /import \{ ico \} from "\.\.\/ui\/bloom-icons\.js";/.test(read("resources/destination-survey/destination-survey.js"));
     PROOF.node.icons = { shared, fresh };
-    check(shared.length >= 15 && !differ.length && J(fresh.sort()) === J(["scan", "settings"]) && !rawSvg && !arrows && !emoji && shape && imports,
-      "V5 · the planning screens speak the gameplay icon language: resources/ui/bloom-icons.js (imported by the menu and the survey) carries every glyph gameplay already has with IDENTICAL path data, plus two new ones on the same 24-grid stroke (settings, scan); decorative (aria-hidden) beside a real word; no inline SVG of their own, no text arrows, no emoji",
+    check(shared.length >= 15 && !differ.length && J(fresh.sort()) === J(["challenge", "scan", "settings"]) && !rawSvg && !arrows && !emoji && shape && imports,
+      "V5 · the planning screens speak the gameplay icon language: resources/ui/bloom-icons.js (imported by the menu and the survey) carries every glyph gameplay already has with IDENTICAL path data, plus the new ones on the same 24-grid stroke (settings, scan; BLOOM-036A challenge — the CHALLENGES entry's pennant); decorative (aria-hidden) beside a real word; no inline SVG of their own, no text arrows, no emoji",
       `${shared.length} shared (identical) · new ${J(fresh)} · differing ${J(differ)}`); }
   // V6 · contrast of the night tokens (WCAG 2.x)
   { const bgs = { card: hex(T["--bloom-night-card-solid"]), space: hex(T["--bloom-space-1"]), raised: hex(T["--bloom-night-paper"]) }, rows = [];
@@ -172,7 +172,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
   // V10 · docs
   { const pd = read("docs/PRODUCT_DIRECTION_CURRENT.md"), vs = fs.existsSync(path.join(ROOT, "docs/VISUAL_SYSTEM_v1.md")) ? read("docs/VISUAL_SYSTEM_v1.md") : "";
     const honest = !/Species (exist|are implemented)|Challenges (exist|are implemented)|BLOOM-035 (has begun|is in progress)|BLOOM-036 (has begun|is in progress)/i.test(pd);
-    check(/bloom-theme\.css/.test(pd) && /VISUAL_SYSTEM_v1\.md/.test(pd) && /bloom-theme\.css/.test(vs) && /BLOOM-034/.test(vs) && honest && /CHALLENGES: PLANNED/.test(pd),
+    check(/bloom-theme\.css/.test(pd) && /VISUAL_SYSTEM_v1\.md/.test(pd) && /bloom-theme\.css/.test(vs) && /BLOOM-034/.test(vs) && honest && /CHALLENGES: (PLANNED|CANDIDATE|IMPLEMENTED)/.test(pd),   // (BLOOM-036A) CHALLENGES moves on with the roadmap
       "V10 · docs: docs/VISUAL_SYSTEM_v1.md records the token system, the night counterparts and the planning-screen language; docs/PRODUCT_DIRECTION_CURRENT.md records BLOOM-034's state honestly (Species, Challenges still PLANNED)"); }
 
   // ================================================================================================ BROWSER
@@ -219,9 +219,9 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         const normF = s => (s || "").replace(/\s+/g, "").replace(/'/g, '"');
         const allGame = els.every(([, f]) => normF(f) === normF(gameFont));
         B.title = { gameFont, els, prim, items, card };
-        check(allGame && prim["background-color"] === leaf && prim.color === "rgb(255, 255, 255)" && J(items.map(i => i.text)) === J(["EXPEDITION", "TRAINING", "SETTINGS", "CREDITS"])
+        check(allGame && prim["background-color"] === leaf && prim.color === "rgb(255, 255, 255)" && J(items.map(i => i.text)) === J(["EXPEDITION", "CHALLENGES", "TRAINING", "SETTINGS", "CREDITS"])
           && items.every(i => i.icon && i.h >= 44) && card["border-top-left-radius"] === "22px" && card["border-top-right-radius"] === "18px" && !p.errs.length,
-          `[${bn}] T1 · the title speaks the gameplay language: every interface element (title, subtitle, menu, status, dialogs) in the gameplay font family; EXPEDITION is the leaf button in its planning shade (white word on --bloom-leaf-btn-night, ≥ 4.5 : 1); four chunky icon + word entries (≥ 44 px), the labels unchanged; one dark planning card with the gameplay's irregular corners`,
+          `[${bn}] T1 · the title speaks the gameplay language: every interface element (title, subtitle, menu, status, dialogs) in the gameplay font family; EXPEDITION is the leaf button in its planning shade (white word on --bloom-leaf-btn-night, ≥ 4.5 : 1); five chunky icon + word entries (≥ 44 px; BLOOM-036A added CHALLENGES), the labels unchanged; one dark planning card with the gameplay's irregular corners`,
           `${els.map(([s, f]) => s + "=" + (normF(f) === normF(gameFont) ? "game" : f)).join(" ")} · ${prim["background-color"]} · ${items.map(i => `${i.text} ${Math.round(i.h)}px`).join(" · ")}`);
         await shot(p, "01-title-1440x900.jpg");
         // T2 · every painting loads untouched and the title stays readable over it
