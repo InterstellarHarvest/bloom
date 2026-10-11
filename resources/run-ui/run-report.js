@@ -89,6 +89,15 @@
     // the run menu's action-<id> anchors are suspended while the report is open (its own run actions carry them then) and restored after
     const coverMenu = on => view.el.querySelectorAll(on ? '#pvMenu [data-tutorial^="action-"]' : '#pvMenu [data-tutorial-covered^="action-"]').forEach(b => { if (on) { b.setAttribute("data-tutorial-covered", b.dataset.tutorial); b.removeAttribute("data-tutorial"); } else { b.setAttribute("data-tutorial", b.getAttribute("data-tutorial-covered")); b.removeAttribute("data-tutorial-covered"); } });
 
+    // (035C2) the report's environment: the real final plant in a REPRESENTATIVE region scene under the final sky — a win: its best-established
+    // living region; otherwise (and as a fallback) the origin region. Region-driven (BLOOM.plantEnvironment), never species-driven.
+    function reportScene(win) {
+      const PE = root.BLOOM.plantEnvironment; if (!PE || !A.regions) return null;
+      const regs = A.regions(), best = win ? regs.filter(r => r.living).sort((a, b) => b.colony.establishment - a.colony.establishment || a.index - b.index)[0] : null;
+      const pick = best || regs.find(r => r.isOrigin) || regs[0], r = pick && A.region(pick.index), R0 = A.run(); if (!r) return null;
+      return PE.region({ planetId: R0.planetId, archetypeId: R0.archetypeId, regionId: r.id, sky: { temperature: r.raw.effectiveTemp, moisture: r.raw.effectiveMoist },
+        salinity: r.raw.salinity, toxicity: r.raw.toxicity, radiation: r.raw.effectiveRadiation });
+    }
     // ---------------------------------------------------------------- rendering (from adapter.report() only)
     const chip = (text, cls, style) => `<span class="rr-chip${cls ? " " + cls : ""}"${style ? ` style="${style}"` : ""}>${text}</span>`;
     const tierWord = b => b.single ? b.name : `${b.name}${b.tier > 1 ? ` ${ROMAN[b.tier] || b.tier}` : ""}`;
@@ -122,7 +131,7 @@
       // the plant: the production specimen from the real owned Adapt / Spread tiers (a loss shows its restrained unviable state; the anatomy stays true)
       const traits = {}, names = {}; for (const b of (d.built || [])) { traits[b.id] = b.tier; names[b.id] = b.name; }
       spec.highlight(null);
-      spec.render({ traits, names, preview: null, colony: { living: win, establishment: 1, word: win ? "dense" : "none" }, focus: "balanced", local: null, condition: win ? "ok" : "bad", viable: win });
+      spec.render({ traits, names, preview: null, colony: { living: win, establishment: 1, word: win ? "dense" : "none" }, focus: "balanced", local: null, condition: win ? "ok" : "bad", viable: win, scene: reportScene(win) });
       // (035B) the report names the species (the caption's second line: "<species> · n adaptations")
       layer.dataset.species = i.species ? i.species.id : "";
       specCap.innerHTML = `<b>${win ? "Your plant, as it bloomed" : "Your plant, as it was"}</b><small>${i.species ? `<span class="rr-species">${esc(i.species.name)}</span> · ` : ""}${(d.built || []).length ? `${d.built.length} adaptation${d.built.length === 1 ? "" : "s"}` : "the unmodified pioneer"}</small>`;

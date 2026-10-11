@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: f4e5e6059afec5705d56aa263ce51df66a8c17d163162df9be667c0e03d1a546  (40 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: 8e69a6247de863df0423c2146086b6ffb400f103dc318e93c78f876c9735e2f0  (40 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {
@@ -15915,11 +15915,13 @@
         }
         /** The species' fully grown, unmutated specimen from its own body plan + pack (the real sprite system), 84 × 98 logical pixels. */
         _paint(canvas, sp2) {
-          const img = window.BLOOM.plantSpecimen.drawSpecies(sp2, { traits: {}, condition: "ok" });
+          const PE = window.BLOOM.plantEnvironment, img = window.BLOOM.plantSpecimen.drawSpecies(sp2, { traits: {}, condition: "ok", scene: PE ? PE.showcase() : null });
           canvas.width = img.w;
           canvas.height = img.h;
           canvas.getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(img.rgba), img.w, img.h), 0, 0);
           canvas.dataset.signature = img.signature || "";
+          canvas.dataset.organism = img.organismSignature || "";
+          canvas.dataset.environment = img.environmentSignature || "";
           canvas.dataset.pack = sp2.art.pack;
           canvas.dataset.plan = sp2.art.bodyPlan;
         }

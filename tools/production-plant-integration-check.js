@@ -30,7 +30,7 @@ const BASE = "ea1b785517ccc9586cc7bb1ce91fc26f1f46c922";   // BLOOM-032B2 integr
 const OWN = ["resources/run-ui/plant-specimen.js", "resources/run-ui/decision-rooms.css", "resources/run-ui/run-report.css", "demos/demo-run.html", "demos/plant-sprite-pipeline-lab.html",
   "resources/plant-sprite-lab/lab.js", "resources/plant-sprite-lab/legacy-svg-specimen.js", "tools/production-plant-integration-check.js"];
 const ALLOWED = p => OWN.includes(p) || p.startsWith("docs/") || /^tools\/[a-z-]+-check\.js$/.test(p);
-const RUNTIME = ["resources/plant-visual/generated/plant-atlas.js", "resources/plant-visual/plant-visual-model.js", "resources/plant-visual/plant-components.js", "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-fx.js"];
+const RUNTIME = ["resources/plant-visual/generated/plant-atlas.js", "resources/plant-visual/plant-visual-model.js", "resources/plant-visual/plant-components.js", "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-fx.js", "resources/plant-visual/plant-environment.js"];   // (035C2) + the specimen environment (page states carry a region scene)
 
 for (const f of ["content/config.js", "content/traits.js", ...RUNTIME, "resources/run-ui/plant-specimen.js"]) require(path.join(ROOT, f));
 const PS = BLOOM.plantSpecimen, PV = BLOOM.plantVisual, PC = BLOOM.plantCompositor, FX = BLOOM.plantFx, RULES = PV.model.rules(BLOOM_DATA);

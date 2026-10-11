@@ -175,9 +175,15 @@
     const lampSt = r => r.limiting && r.limiting.blocked ? "bad" : LAMP_ST[r.lamp] || "ok";
     const limitLine = r => r.limiting.blocked ? `${cap(r.limiting.key)}: ${r.limiting.text}` : r.limiting.softSoil ? "Growing · the soil is marginal here" : "Nothing holding the plant back";
     const traitTiers = () => { const t = {}, nm = {}; for (const b of A.upgrades()) if (b.board !== "Terraform") for (const u of b.items) { t[u.id] = u.tier; nm[u.id] = u.name; } return { tiers: t, names: nm }; };
-    const specState = (i, preview) => { const r = A.region(i), c = A.colony(i), { tiers, names: nm } = traitTiers();
+    // (035C2) the specimen's ENVIRONMENT: this region of this planet under the sky its ground sees now (Terraform + scenario drift), plus a
+    // Terraform preview's sky change `d` — never the species (BLOOM.plantEnvironment; absent → the pack backdrop, as before)
+    const PE = root.BLOOM.plantEnvironment;
+    const sceneFor = (i, d) => { if (!PE) return null; const r = A.region(i), R0 = A.run(); if (!r) return null; d = d || { t: 0, m: 0 };
+      return PE.region({ planetId: R0.planetId, archetypeId: R0.archetypeId, regionId: r.id, sky: { temperature: r.raw.effectiveTemp + d.t, moisture: r.raw.effectiveMoist + d.m },
+        salinity: r.raw.salinity, toxicity: r.raw.toxicity, radiation: r.raw.effectiveRadiation }); };
+    const specState = (i, preview, d) => { const r = A.region(i), c = A.colony(i), { tiers, names: nm } = traitTiers();
       return { traits: tiers, names: nm, preview: preview || null, colony: { living: c.living, establishment: r.colony.establishment, word: r.colony.word }, focus: c.focus, local: c.localUpgrade,
-        condition: lampSt(r), viable: !r.limiting.blocked, region: { name: r.name } }; };
+        condition: lampSt(r), viable: !r.limiting.blocked, region: { name: r.name }, scene: sceneFor(i, d) }; };
     const specCaption = r => !r.living ? (r.limiting.blocked ? "No colony yet · would not survive yet" : "No colony yet") : `${r.colony.label} · ${lampSt(r) === "ok" ? "thriving" : "stressed"}`;
     function roomShell(id) {
       const R = ROOMS[id], sec = document.createElement("section"); sec.className = `dr-room r-${id}`; sec.dataset.room = id; sec.hidden = true; sec.setAttribute("role", "dialog"); sec.setAttribute("aria-modal", "true"); sec.setAttribute("aria-labelledby", `drt-${id}`);
@@ -478,14 +484,16 @@
     // globe is the unmodified PlanetSphereView painting a presentation snapshot of the exact authoritative planet under the run's CURRENT
     // surface sky (adapter.surface + BLOOM.terraformGlobe.snapshot), previews repaint it to the page's own what-if sky (preview.sky from
     // actions.preview) and the Soil side is the room-context region's real environmental readout (adapter.region) — no fake Soil skill,
-    // cost, lock, arrow or pin. The plant specimen is never shown here. Future REAL Soil traits (uiBank "Soil") would take the Soil bank
+    // cost, lock, arrow or pin. (035C2) The plant is shown IN its environment (no tendrils): Terraform previews change only the scene around it. Future REAL Soil traits (uiBank "Soil") would take the Soil bank
     // and the accepted near-surface arrow; the layout, connectors and anchors below already handle both banks.
     function buildTerraform() {
       const id = "terraform", sec = roomShell(id), R0 = ROOMS[id], zf = sec.querySelector(".z-focus"), zm = sec.querySelector(".z-main"), zmap = sec.querySelector(".z-map");
       const mm = mapBlock(id, zmap, `<div class="mm-ctx tf"><span class="mc-k">Planet readout</span><dl class="env-rows"></dl><span class="mc-k mc-k2">Region effect of this choice</span><div class="mc-rows"></div></div>`);
-      // LEFT: the environment / land focus (sky + ground of the room-context region, from real values; no plant) and the information card
+      // LEFT: (035C2) the plant IN its environment — the room-context region's scene under the current / previewed sky. Terraform changes only the
+      // scene around the plant; the organism (and its signature) never changes here. No tendrils, no anchors. Then the information card.
       const env = document.createElement("div"); env.className = "lf-top env"; zf.appendChild(env);
-      const envSvg = svgMk("svg", { viewBox: "0 0 400 300", class: "env-svg", role: "img", "aria-label": "The land around the region: its sky and ground now. No plant is drawn here: Terraform changes the environment." }, env);
+      const envSpec = PS.mount(env, { reducedMotion: reduced, species: A.run().species }); SPECS.push(envSpec);
+      envSpec.canvas.setAttribute("aria-label", "Your plant in the land around the region. Terraform changes the sky and ground around it, never the plant.");
       const envTag = document.createElement("div"); envTag.className = "ps-tag"; envTag.textContent = "PREVIEW"; env.appendChild(envTag);
       const envCap = document.createElement("div"); envCap.className = "spec-cap"; envCap.innerHTML = `<b class="sc-n"></b><small class="sc-w"></small>`; env.appendChild(envCap);
       const info = document.createElement("div"); info.className = "lf-info"; zf.appendChild(info);
@@ -599,37 +607,12 @@
           `<dl class="soil-rows"><div><dt>pH</dt><dd>${esc(num(R.ph))}</dd></div><div><dt>Salinity</dt><dd>${esc(num(R.salinity))}</dd></div><div><dt>Nutrients</dt><dd>${esc(num(R.nutrients))}</dd></div><div><dt>Toxicity</dt><dd>${esc(num(R.toxicity))}</dd></div></dl>${rel}` +
           (L && L.banks.Soil.length ? "" : `<p class="bank-empty">No soil interventions available.</p>`) + `</div>`;
       }
-      // ---- the environment focus (left): sky + ground of the room-context region under `sky`, from real values only. The ground colour is the
-      // canonical surface's own colour for this region under that sky (BLOOM.surface, the one terrain palette); sky, snow, haze, rain, lake,
-      // cracks, salt and toxicity cues follow the region's real raw readings. Static (no animation).
-      const hex = c => `rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`, mixc = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+      // ---- the environment focus (left): (035C2) the plant specimen in the room-context region's scene under `sky` (the committed surface sky or
+      // the real preview sky): the scene follows the region's real raw readings (BLOOM.plantEnvironment), the organism is the run's own.
       function paintScene(r, sky, previewing) {
-        const sec0 = src.planet.sections.find(x => x.id === r.id) || { local: { tempOffset: 0, moistureOffset: 0 } };
-        const tile = SF.surfaceTiles({ gridWidth: 1, gridHeight: 1, globalClimate: sky, sections: [{ local: sec0.local }], tilemap: [0], topology: null }, { render: src.render })[0];
-        const t = sky.temperature + sec0.local.tempOffset, m = Math.max(0, Math.min(100, sky.moisture + sec0.local.moistureOffset)); // the ground's own temperature / moisture under this sky
-        let top = t < 0 ? mixc([223, 233, 247], [143, 205, 242], Math.max(0, Math.min(1, (t + 30) / 30))) : t > 28 ? mixc([143, 205, 242], [242, 181, 138], Math.min(1, (t - 28) / 24)) : [143, 205, 242];
-        let bot = [230, 245, 253]; if (m > 65) { const k = Math.min(1, (m - 65) / 35) * 0.7; top = mixc(top, [156, 176, 194], k); bot = mixc(bot, [224, 232, 239], k); } if (m < 30) { const k = Math.min(1, (30 - m) / 30) * 0.6; top = mixc(top, [239, 210, 148], k); bot = mixc(bot, [251, 240, 210], k); }
-        const g1 = tile.rgb, g2 = mixc(g1, [47, 58, 44], 0.22), far = mixc(g1, [183, 195, 204], 0.55), snow = t < -8, caps = t < 4, rain = m > 68 && t >= 0, flakes = m > 55 && t < -2, haze = m < 28, lake = Math.max(0, Math.min(1, (m - 25) / 50)), cracks = m < 32;
-        const salt = r.raw.salinity > 1.2, toxic = r.raw.toxicity > 0.5, rad = r.raw.effectiveRadiation, hot = t > 32;
-        const pt = (n, f) => { let s = ""; for (let i = 0; i < n; i++) s += f(i); return s; };
-        envSvg.innerHTML = `<defs><linearGradient id="tfsky-${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${hex(top)}"/><stop offset="1" stop-color="${hex(bot)}"/></linearGradient></defs>` +
-          `<rect x="0" y="0" width="400" height="300" fill="url(#tfsky-${id})"/>` +
-          (rain ? "" : `<circle cx="312" cy="68" r="${30 + (hot ? 10 : 0)}" fill="#fff3b0" opacity="${0.35 + Math.min(0.3, rad / 100)}"/><circle cx="312" cy="68" r="${20 + (hot ? 6 : 0)}" fill="${hot ? "#ffb347" : "#ffd65a"}"/>`) +
-          (rad > 40 ? pt(7, i => `<line x1="${300 + Math.cos(i) * 42}" y1="${56 + Math.sin(i) * 42}" x2="${300 + Math.cos(i) * 56}" y2="${56 + Math.sin(i) * 56}" stroke="#f2b324" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>`) : "") +
-          (haze ? pt(4, i => `<rect x="0" y="${84 + i * 26}" width="400" height="10" rx="5" fill="#f5deaa" opacity=".5"/>`) : "") +
-          (rain || flakes ? `<g fill="#e9eef2"><ellipse cx="70" cy="80" rx="46" ry="18"/><ellipse cx="230" cy="62" rx="54" ry="20"/><ellipse cx="330" cy="100" rx="40" ry="15"/></g>` : `<g fill="#fff" opacity=".9"><ellipse cx="90" cy="86" rx="34" ry="12"/><ellipse cx="236" cy="66" rx="30" ry="10"/></g>`) +
-          `<path d="M0 190 L60 120 L110 165 L160 105 L215 160 L260 125 L320 170 L360 140 L400 175 V300 H0z" fill="${hex(far)}"/>` +
-          (caps ? `<path d="M48 134 L60 120 L72 134z M148 118 L160 105 L173 120z M250 136 L260 125 L271 137z M350 150 L360 140 L371 152z" fill="#fff" opacity=".95"/>` : "") +
-          `<path d="M0 215 C60 190 110 195 170 205 C230 215 280 185 340 200 C370 208 390 212 400 214 V300 H0z" fill="${hex(g1)}"/>` +
-          (snow ? `<path d="M0 215 C60 190 110 195 170 205 C230 215 280 185 340 200 C370 208 390 212 400 214 V222 C330 214 280 228 200 218 C130 210 70 220 0 223z" fill="#fff" opacity=".9"/>` : "") +
-          (lake > 0.05 ? `<ellipse cx="120" cy="258" rx="${50 + 44 * lake}" ry="${10 + 8 * lake}" fill="#7fb4d6" opacity="${0.55 + 0.4 * lake}"/>` : "") +
-          `<path d="M0 262 C80 246 160 250 220 262 C300 276 360 262 400 268 V300 H0z" fill="${hex(g2)}"/>` +
-          (cracks ? `<g stroke="#8a6a3e" stroke-width="1.8" fill="none"><path d="M250 282l14 6-5 9"/><path d="M320 274l-10 7 7 10"/><path d="M60 286l12-4 6 8"/></g>` : "") +
-          (salt ? pt(28, i => `<rect x="${(i * 37) % 400}" y="${238 + (i * 53) % 55}" width="3" height="3" fill="#fff"/>`) : "") + (toxic ? pt(16, i => `<circle cx="${(i * 61 + 20) % 400}" cy="${246 + (i * 29) % 48}" r="2" fill="#5e3a86" opacity=".8"/>`) : "") +
-          (rain ? pt(30, i => `<line x1="${(i * 89) % 400}" y1="${20 + (i * 47) % 170}" x2="${(i * 89) % 400 - 4}" y2="${30 + (i * 47) % 170}" stroke="#6f93b3" stroke-width="1.6" stroke-linecap="round"/>`) : "") +
-          (flakes ? pt(26, i => `<circle cx="${(i * 97) % 400}" cy="${(i * 61) % 190}" r="2.2" fill="#fff"/>`) : "");
-        env.classList.toggle("previewing", !!previewing);
-        envCap.querySelector(".sc-n").textContent = `Land around ${r.name}`; envCap.querySelector(".sc-w").textContent = `${previewing ? "Preview · " : ""}sky ${fmtT(sky.temperature)} · ${fmtM(sky.moisture)}`;
+        envSpec.render(specState(state.ctx, null, { t: sky.temperature - src.sky.temperature, m: sky.moisture - src.sky.moisture }));
+        env.classList.toggle("previewing", !!previewing); env.dataset.envSig = envSpec.environmentSignature() || ""; env.dataset.orgSig = envSpec.organismSignature() || "";
+        envCap.querySelector(".sc-n").textContent = `Your plant in ${r.name}`; envCap.querySelector(".sc-w").textContent = `${previewing ? "Preview · " : ""}sky ${fmtT(sky.temperature)} · ${fmtM(sky.moisture)}`;
       }
       // ---- the information card (left): the current environment, or the REAL Terraform action under preview (it changes the planet / sky, not the plant)
       const condRows = r => r.conditions.map(cd => { const s = LAMP_ST[cd.lamp] || "ok", reading = cap(cd.word) + (cd.key === "Temperature" ? ` · ${degC(r.temperature.ground)}` : "");
