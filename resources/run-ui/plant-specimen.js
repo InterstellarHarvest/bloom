@@ -80,7 +80,7 @@
     const grammar = PV.grammars && PV.grammars[plan.grammar];
     if (!grammar || typeof grammar.select !== "function") throw new TypeError(`BLOOM.plantSpecimen: body plan "${art.bodyPlan}" needs its grammar "${plan.grammar}" (resources/plant-visual/plant-components.js) loaded`);
     const pack = ART.packs[art.pack], MAT = ART.materials, MID = Object.fromEntries(MAT.map((m, i) => [m, i + 1]));
-    const ramp = m => pack.palette[m].map(hex), C = ART.contracts[plan.id];
+    const ramp = m => pack.palette[m].map(hex), C = ART.contracts[plan.key || plan.id];
     // RULES: the accepted model reads the real trait data itself (the specimen reads no page global)
     P = { PV, ART, PC, FX, pack, packId: art.pack, plan, planRef: art.bodyPlan, grammar, MAT, MID, ramp, RULES: PV.model.rules(), W: C.canvas.w, H: C.canvas.h, soilY: plan.crown[1], crownX: plan.crown[0],
       local: plan.local, env: { sky: pack.environment.sky.map(hex), soil: pack.environment.soil.map(hex) } };

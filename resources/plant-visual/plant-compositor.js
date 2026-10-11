@@ -43,12 +43,12 @@
   function planRefOf(packId) { const A = art(), P = A && A.packs[packId]; if (!P) throw new Error(`plant art pack "${packId}" is not in the generated atlas`); return P.bodyPlan || LEGACY_PLAN; }
   /** The runtime body plan of a pack (throws on an unknown plan or version — never a silent fallback). */
   function planOf(packId) {
-    const A = art(), ref = planRefOf(packId), id = ref.split("@")[0], Pl = A.bodyPlans && A.bodyPlans[id];
+    const A = art(), ref = planRefOf(packId), id = ref.split("@")[0], Pl = A.bodyPlans && (A.bodyPlans[ref] || A.bodyPlans[id]);   // a plan revision is keyed by its ref (035C2A)
     if (!Pl) throw new Error(`plant art pack "${packId}" declares body plan "${ref}", which is not in the generated atlas`);
     if (`${Pl.id}@${Pl.version}` !== ref) throw new Error(`plant art pack "${packId}" declares body plan "${ref}", the atlas has "${Pl.id}@${Pl.version}"`);
     return Pl;
   }
-  const contractOf = Pl => { const A = art(), C = A.contracts && A.contracts[Pl.id]; if (!C) throw new Error(`body plan "${Pl.id}" has no contract in the generated atlas`); return C; };
+  const contractOf = Pl => { const A = art(), C = A.contracts && A.contracts[Pl.key || Pl.id]; if (!C) throw new Error(`body plan "${Pl.id}" has no contract in the generated atlas`); return C; };
 
   // ================================================================ skeleton (integer geometry from the body plan)
   function stemOf(L, crown) {
