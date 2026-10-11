@@ -15,7 +15,7 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-10, BLOOM-035B closeout — the species system is IMPLEMENTED / COMPLETE in production `main` (PMO-accepted
+*Last updated: 2026-10-10, BLOOM-035C0 closeout (the real-pack intake tooling is in `main`; no species art yet), after the BLOOM-035B closeout — the species system is IMPLEMENTED / COMPLETE in production `main` (PMO-accepted
 `2180fcd`, fast-forwarded). Organic Hybrid remains the only normal player-facing Expedition choice; Species Selection and the three
 candidate species stay behind `?species=1` on TEMPORARY PIPELINE PROOF art. NEXT: BLOOM-035C (final species art, real-pack intake, the
 normal Species Selection release); BLOOM-036 Challenges follow that release.*
@@ -108,7 +108,8 @@ BLOOM-035A COMPLETE; record [`evidence/bloom-035b/REPORT.md`](evidence/bloom-035
 - Cinder Rosette, Woolly Candle and Reed Spire still render with **TEMPORARY PIPELINE PROOF ART** (`art/plant/packs/proof-*`; never shown
   to normal players as a species).
 - **Final species art is NEXT** (BLOOM-035C: three production packs per [`species-art-briefs/`](species-art-briefs/README.md), the
-  real-pack intake `tools/intake-plant-art.mjs`, then the normal Species Selection release — §1).
+  real-pack intake `tools/intake-plant-art.mjs` — **035C0 IMPLEMENTED**, tooling only, all three lanes awaiting deliveries — then
+  the normal Species Selection release — §1).
 - **Challenges remain PLANNED** (BLOOM-036, §8).
 
 - Plant choices are genuinely different biological species — **not** Organic Hybrid recolours, not Organic Hybrid with purchased
@@ -237,6 +238,6 @@ This is not a gameplay-code feature; product code does not work around repositor
 | **BLOOM-034** — Visual-system convergence | shared theme tokens (`resources/ui/bloom-theme.css`); title / menu restyle; Destination Survey convergence; the dark-space BLOOM planning language; **no species mechanics yet** | **IMPLEMENTED / COMPLETE** (in production `main`) |
 | **BLOOM-035A** — Species design / research | species architecture, the reference physiology, the strategic-distinctness study, body plans and concepts | **ACCEPTED / COMPLETE** (docs + research in `main`) |
 | **BLOOM-035B** — Species system implementation + Species Selection | species data / model; `config.referencePlant`; simulation / validator support; species-aware Destination Survey; run plumbing; body-plan layer with proof packs; the Species Selection screen behind `?species=1` | **IMPLEMENTED / COMPLETE** (PMO-accepted `2180fcd`, in production `main`; Species Selection still behind `?species=1`, candidate species on TEMPORARY PIPELINE PROOF art) |
-| **BLOOM-035C** — Final species art + Species Selection release | three final production species packs (Cinder Rosette, Woolly Candle, Reed Spire; four species total) on the same compositor architecture; the generalized real-pack intake (`tools/intake-plant-art.mjs`, 035C0 tooling); then switch the three species to their real packs and release Species Selection in the normal EXPEDITION flow (no `?species=1`) | **NEXT** |
+| **BLOOM-035C** — Final species art + Species Selection release | three final production species packs (Cinder Rosette, Woolly Candle, Reed Spire; four species total) on the same compositor architecture; the generalized real-pack intake (**035C0 IMPLEMENTED**: `tools/intake-plant-art.mjs --pack <id>`, schemas in `PLANT_SPRITE_PIPELINE_v1.md` § SPECIES_ART_INTAKE; lanes `art/plant/intake/{cinder-rosette,woolly-candle,reed-spire}/` awaiting deliveries); then switch the three species to their real packs and release Species Selection in the normal EXPEDITION flow (no `?species=1`) | **NEXT** |
 | **BLOOM-036** — Challenges | begins only after the 035C release: 036A CHALLENGES menu entry + hub + definition schema + routing · 036B dossier, prescribed species, world recipe, starting state, mechanics composition · 036C Dying World / Native Competition / Volatile Climate as ingredients · 036D initial authored set, generated Challenge planet, result / replay, full regression | PLANNED |
 | **Final hardening** | full documentation reconciliation; dead historical production-path cleanup; Pages enablement / release; a Safari / WebKit production test if practical; final end-to-end release QA | PLANNED |
