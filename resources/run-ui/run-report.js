@@ -119,8 +119,8 @@
     // (036B) a Challenge's prescribed starting state: what the CHALLENGE gave the plant at landing (never counted as the player's purchases)
     function startNote(i) {
       const st = i.startingState; if (!st) return "";
-      const T = (window.BLOOM_DATA && BLOOM_DATA.traits) || [], n = {}; for (const id of st.adaptations) n[id] = (n[id] || 0) + 1;
-      const parts = [...Object.entries(n).map(([id, k]) => ((T.find(t => t.id === id) || {}).name || id) + (k > 1 ? ` ×${k}` : "")), ...(st.biomass != null ? [`${st.biomass} Biomass`] : [])];
+      const n = new Map(); st.adaptations.forEach((id, k) => { const w = (st.names && st.names[k]) || id; n.set(w, (n.get(w) || 0) + 1); }); // (names: the report data's own)
+      const parts = [...[...n].map(([w, k]) => w + (k > 1 ? ` ×${k}` : "")), ...(st.biomass != null ? [`${st.biomass} Biomass`] : [])];
       return `<p class="rr-note rr-given" data-given="challenge">${ico("info")}<span>Given by the Challenge at landing: ${esc(parts.join(" · "))}.</span></p>`;
     }
     function render(d) {

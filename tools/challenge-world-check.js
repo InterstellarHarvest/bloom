@@ -438,7 +438,7 @@ async function browserChecks() {
         await winNow(p); await reportOpen(p); const RG = await reportFacts(p);
         await shot(p, "12b-fixture-starting-state-report.png");
         check(/Cold Tolerance · Salt Handling · 250 Biomass \(given by the Challenge\)/.test(XS.start) && RS.genome.cold === 1 && RS.genome.salt === 1 && RS.start.biomass === 250 && RS.spent === 0
-            && J(RS.cr) === J({ adaptations: ["cold", "salt"], biomass: 250, source: "challenge" }) && J(RG.identity.startingState) === J({ adaptations: ["cold", "salt"], biomass: 250, source: "challenge" })
+            && J(RS.cr) === J({ adaptations: ["cold", "salt"], biomass: 250, source: "challenge" }) && J(RG.identity.startingState) === J({ adaptations: ["cold", "salt"], names: ["Cold Tolerance", "Salt Handling"], biomass: 250, source: "challenge" })
             && /Given by the Challenge at landing: Cold Tolerance · Salt Handling · 250 Biomass/.test(RG.given || ""),
           `[${bn}] X2 · a PRESCRIBED STARTING STATE (QA fixture): the dossier says what the plant lands with; the run starts with Cold Tolerance + Salt Handling owned and exactly 250 Biomass, nothing spent; the run / report provenance records it as the Challenge's (\"Given by the Challenge at landing\"), never as a purchase`,
           J({ XS: XS.start, RS, given: RG.given }));
