@@ -1,0 +1,1720 @@
+{
+ "format": "bloom-035c2-survey-calibration@1",
+ "tool": "tools/species-survey-calibration.mjs",
+ "base": "e534750",
+ "head": "30ecf02",
+ "worlds": 72,
+ "generated": 72,
+ "species": [
+  "organic_hybrid",
+  "cinder_rosette",
+  "woolly_candle",
+  "reed_spire"
+ ],
+ "identical": true,
+ "differences": [],
+ "distribution": {
+  "head": {
+   "organic_hybrid": {
+    "favorable": 24,
+    "precarious": 24,
+    "extreme": 24
+   },
+   "cinder_rosette": {
+    "favorable": 14,
+    "precarious": 22,
+    "extreme": 36
+   },
+   "woolly_candle": {
+    "favorable": 28,
+    "precarious": 12,
+    "extreme": 32
+   },
+   "reed_spire": {
+    "favorable": 28,
+    "precarious": 11,
+    "extreme": 33
+   }
+  },
+  "base": {
+   "organic_hybrid": {
+    "favorable": 24,
+    "precarious": 24,
+    "extreme": 24
+   },
+   "cinder_rosette": {
+    "favorable": 14,
+    "precarious": 22,
+    "extreme": 36
+   },
+   "woolly_candle": {
+    "favorable": 28,
+    "precarious": 12,
+    "extreme": 32
+   },
+   "reed_spire": {
+    "favorable": 28,
+    "precarious": 11,
+    "extreme": 33
+   }
+  }
+ },
+ "rows": [
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 1,
+   "fingerprint": "816e29ae4a8e2151",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.523705,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.111356,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.455347,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.538037,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 2,
+   "fingerprint": "22a6e41cbc4667e6",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.449552,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.098655,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.285874,
+     "class": "precarious"
+    },
+    "reed_spire": {
+     "habitable": 0.486547,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 3,
+   "fingerprint": "4bf42ca76d23588f",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.498084,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.11622,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.181354,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.591315,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 4,
+   "fingerprint": "84dce8177e222540",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.373026,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.027947,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.394897,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.517618,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 5,
+   "fingerprint": "d081adfe8fdbde7a",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.621444,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.09628,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.28337,
+     "class": "precarious"
+    },
+    "reed_spire": {
+     "habitable": 0.621444,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 6,
+   "fingerprint": "e469616b436757eb",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.384203,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.108434,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.384203,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.57162,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 7,
+   "fingerprint": "ea97cb182bef3030",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.456033,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.275051,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.424335,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.420245,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 8,
+   "fingerprint": "37044af4bba234d2",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.425764,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.043668,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.383188,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.747817,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 9,
+   "fingerprint": "7f3789dc0582f878",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.363169,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.108025,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.180041,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.697531,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 10,
+   "fingerprint": "63025e3a18bac448",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.212042,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.11911,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.151832,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.413613,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 11,
+   "fingerprint": "92339ca131d95f79",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.24586,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.187261,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.35414,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 12,
+   "fingerprint": "af62aadd29dd87e5",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.651736,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.116461,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.421053,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.854423,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 13,
+   "fingerprint": "189ad6156440125a",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.315942,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.271014,
+     "class": "precarious"
+    },
+    "reed_spire": {
+     "habitable": 0.65942,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 14,
+   "fingerprint": "b600238ec63cd1dd",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.290554,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.330595,
+     "class": "precarious"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 15,
+   "fingerprint": "1607fcc28f7311a0",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.506329,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.43153,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.643268,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 16,
+   "fingerprint": "179099c6e31a2c7b",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.312277,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.278903,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.133492,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.691299,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 17,
+   "fingerprint": "f88111912efb3419",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.430131,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.06441,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.300218,
+     "class": "precarious"
+    },
+    "reed_spire": {
+     "habitable": 0.677948,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 18,
+   "fingerprint": "1d026e19361d1875",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.258262,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.365973,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.310894,
+     "class": "precarious"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 19,
+   "fingerprint": "6bcd3b265566c1fd",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.412833,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.067797,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.618644,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 20,
+   "fingerprint": "ddfd3314daf1a014",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.654562,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.342644,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.344507,
+     "class": "precarious"
+    },
+    "reed_spire": {
+     "habitable": 0.76257,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 21,
+   "fingerprint": "203c676f9f2640b9",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.194277,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.600904,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 22,
+   "fingerprint": "6e4864014e1da643",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.381877,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.14671,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.367853,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.437972,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 23,
+   "fingerprint": "f253b874cd2b9c7c",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.14364,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.360746,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "ocean_archipelago",
+   "seed": 24,
+   "fingerprint": "c4db3d294ec4eb1a",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.290541,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.220721,
+     "class": "precarious"
+    },
+    "reed_spire": {
+     "habitable": 0.384009,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 1,
+   "fingerprint": "21e9500815129516",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.086111,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.373148,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0.239352,
+     "class": "precarious"
+    },
+    "reed_spire": {
+     "habitable": 0,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 2,
+   "fingerprint": "7622150f8b6aaf18",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.146062,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.467491,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0.146062,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.146062,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 3,
+   "fingerprint": "55fd86b18774b5d9",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.14386,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.25614,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.14386,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.03114,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 4,
+   "fingerprint": "e120b76d1363fa1d",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.224824,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.566745,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0.35644,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 5,
+   "fingerprint": "7afcdeadbc53dc50",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.103741,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.264456,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.103741,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 6,
+   "fingerprint": "c34bbc52345718ad",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.101316,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.322807,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.179386,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.117544,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 7,
+   "fingerprint": "a673ab0c2704c778",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.164427,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.554211,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0.206093,
+     "class": "precarious"
+    },
+    "reed_spire": {
+     "habitable": 0,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 8,
+   "fingerprint": "c540e15b85455eca",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.228261,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.404891,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0.228261,
+     "class": "precarious"
+    },
+    "reed_spire": {
+     "habitable": 0.062047,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 9,
+   "fingerprint": "90fae0b47462354a",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.101316,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.379825,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.101316,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 10,
+   "fingerprint": "963adbce0d101724",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.061813,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.292582,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.141484,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 11,
+   "fingerprint": "67eb398338913e9a",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.10779,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.350543,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0.10779,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.026721,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 12,
+   "fingerprint": "17ac2750b969d15d",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.120833,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.417593,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0.058333,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 13,
+   "fingerprint": "08d70df9913159cb",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.109375,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.232205,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.109375,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.109375,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 14,
+   "fingerprint": "4524ab131c1cb411",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.149194,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.507616,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0.149194,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 15,
+   "fingerprint": "11350c44b2e13f56",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.133681,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.217882,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.133681,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.095486,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 16,
+   "fingerprint": "d20d7dff5529afc8",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.133242,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.419872,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0.197344,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.038004,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 17,
+   "fingerprint": "e050ce00447d9626",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.202957,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.393817,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0.116487,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.147401,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 18,
+   "fingerprint": "093f55532b20ff79",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.068421,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.190789,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 19,
+   "fingerprint": "085177d181d84c5e",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.070055,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.443223,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 20,
+   "fingerprint": "1d9030a3d245b9e5",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.098684,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.354386,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0.098684,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.098684,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 21,
+   "fingerprint": "63bfe8aeacf4eeb6",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.076465,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.345696,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.076465,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 22,
+   "fingerprint": "5185f438635e1d99",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.187963,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.325,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.142593,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 23,
+   "fingerprint": "08f8d197f4df6e07",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.130495,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.318681,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.130495,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "desert_world",
+   "seed": 24,
+   "fingerprint": "50a3892d5a6a48bf",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.22017,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.22017,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.098958,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.144886,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 1,
+   "fingerprint": "f4de4c585235dab5",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.102083,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.095833,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.180729,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.102083,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 2,
+   "fingerprint": "3cf78254d204b782",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.335249,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.274904,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.399904,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.142241,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 3,
+   "fingerprint": "6065e675846fe5d2",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.537791,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.473837,
+     "class": "favorable"
+    },
+    "woolly_candle": {
+     "habitable": 0.207849,
+     "class": "precarious"
+    },
+    "reed_spire": {
+     "habitable": 0.411822,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 4,
+   "fingerprint": "811e539f2511ca17",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.209302,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.145833,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.455426,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.209302,
+     "class": "precarious"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 5,
+   "fingerprint": "792077cc1b13c6b2",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.495833,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.17963,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.666667,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.469907,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 6,
+   "fingerprint": "e64d7a9d4d6d7087",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.34127,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.274306,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.373512,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.139881,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 7,
+   "fingerprint": "a528ad4591276944",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.220785,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.072797,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.289272,
+     "class": "precarious"
+    },
+    "reed_spire": {
+     "habitable": 0.187261,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 8,
+   "fingerprint": "01377b5f2d8b9989",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.184397,
+     "class": "extreme"
+    },
+    "cinder_rosette": {
+     "habitable": 0.079787,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.594415,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.135638,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 9,
+   "fingerprint": "28c318f548c9a8dd",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.403736,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.323755,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.586207,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.260057,
+     "class": "precarious"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 10,
+   "fingerprint": "a55a9c5294ec672a",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.203405,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.098118,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.390233,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.125,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 11,
+   "fingerprint": "3804478d1b1d947c",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.436275,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.296078,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.538235,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.215686,
+     "class": "precarious"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 12,
+   "fingerprint": "76c233a483df8ee1",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.284131,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.046099,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.196365,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.255762,
+     "class": "precarious"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 13,
+   "fingerprint": "056d59d9334d3982",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.228395,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.076646,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.228395,
+     "class": "precarious"
+    },
+    "reed_spire": {
+     "habitable": 0.194444,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 14,
+   "fingerprint": "a47035a155487e4f",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.35348,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.187729,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.560897,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.35348,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 15,
+   "fingerprint": "e9b8fdc41f991c87",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.347549,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.184804,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.465686,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.281373,
+     "class": "precarious"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 16,
+   "fingerprint": "09907501ba5b10f3",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.305871,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.271307,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.401042,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.232481,
+     "class": "precarious"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 17,
+   "fingerprint": "997451ef0a9b3e91",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.521084,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.272088,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.381024,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.406124,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 18,
+   "fingerprint": "2bc8468a3100f0bd",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.498656,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.249104,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.558244,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.405018,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 19,
+   "fingerprint": "dc0f27404b85d122",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.405344,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.194293,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.621377,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.322464,
+     "class": "precarious"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 20,
+   "fingerprint": "24831cd0b134cb64",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.294944,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.082397,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.416199,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.294944,
+     "class": "precarious"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 21,
+   "fingerprint": "c16f4eec135fd625",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.503136,
+     "class": "favorable"
+    },
+    "cinder_rosette": {
+     "habitable": 0.159946,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.455645,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.355735,
+     "class": "favorable"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 22,
+   "fingerprint": "922b0db75ec08b4a",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.255268,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.241379,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.443008,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.202586,
+     "class": "precarious"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 23,
+   "fingerprint": "6ba163037eb8ab60",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.228241,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.228241,
+     "class": "precarious"
+    },
+    "woolly_candle": {
+     "habitable": 0.163426,
+     "class": "extreme"
+    },
+    "reed_spire": {
+     "habitable": 0.084259,
+     "class": "extreme"
+    }
+   }
+  },
+  {
+   "archetype": "frozen_world",
+   "seed": 24,
+   "fingerprint": "b931cff04e3adf35",
+   "species": {
+    "organic_hybrid": {
+     "habitable": 0.291667,
+     "class": "precarious"
+    },
+    "cinder_rosette": {
+     "habitable": 0.032197,
+     "class": "extreme"
+    },
+    "woolly_candle": {
+     "habitable": 0.43608,
+     "class": "favorable"
+    },
+    "reed_spire": {
+     "habitable": 0.032197,
+     "class": "extreme"
+    }
+   }
+  }
+ ]
+}

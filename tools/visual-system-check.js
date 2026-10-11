@@ -34,6 +34,15 @@ let fails = 0, passes = 0; const t0 = Date.now();
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (ok) passes++; else fails++; return ok; };
 const info = (name, detail) => console.log(`INFO  ${name}  — ${detail}`);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+// (BLOOM-035C2) EXPEDITION opens CHOOSE PLANT SPECIES first: when that screen is up (fully drawn, the black lifted), open the selected
+// species' dossier (Organic Hybrid on a fresh visit) and press "Survey for <name>"; the survey is then FOR that species. The 79f5540
+// base tree (G1) has no species screen: there the survey simply appears.
+const throughSpecies = async p => {
+  const at = await (await p.waitForFunction(() => { const e = MENU_DEV.entry, v = e.speciesView;
+    if (e.state === "species" && v && v.inner && !e.covered && e.black.style.display === "none") return "species";
+    return e.survey && !v ? "survey" : false; }, null, { timeout: 60000, polling: 50 })).jsonValue();
+  if (at === "species") { await p.evaluate(() => { const i = MENU_DEV.entry.speciesView.inner; i.open(i.selected.id); }); await p.click(".ss-btn.go"); }
+  return at; };
 const J = JSON.stringify, read = f => fs.readFileSync(path.join(ROOT, f), "utf8");
 const sha256 = b => crypto.createHash("sha256").update(b).digest("hex");
 const git = a => cp.execSync(`git ${a}`, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], maxBuffer: 256 << 20 }).trim();
@@ -192,7 +201,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
       const page = async c => { const p = await c.newPage(); p.errs = []; p.reqs = [];
         p.on("pageerror", e => p.errs.push("pageerror: " + e.message)); p.on("console", m => { if (m.type() === "error") p.errs.push("console: " + m.text()); }); p.on("request", r => p.reqs.push(r.url())); return p; };
       const menuReady = p => p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready && MENU_DEV.entry.state === "menu", null, { timeout: 60000, polling: 100 });
-      const surveyReady = p => p.waitForFunction(() => { const s = MENU_DEV.entry.survey; return s && s.state === "survey" && s.cells.every(Boolean); }, null, { timeout: 180000, polling: 100 });
+      const surveyReady = async p => { await throughSpecies(p); await p.waitForFunction(() => { const s = MENU_DEV.entry.survey; return s && s.state === "survey" && s.cells.every(Boolean); }, null, { timeout: 180000, polling: 100 }); };
       const focusOn = async (p, i) => { await p.evaluate(i => MENU_DEV.entry.survey.select(i), i); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000, polling: 50 }); await sleep(1100); };
       const runReady = p => p.waitForFunction(() => window.BLOOM_APP && BLOOM_APP.session && !BLOOM_APP.busy && !document.querySelector(".atx") && MENU_DEV.entry.state === "away" && document.getElementById("pv"), null, { timeout: 90000, polling: 50 });
       const shot = async (p, name, opts = {}) => { if (EVIDENCE && shotOn) await p.screenshot({ path: path.join(EVD, name), ...(name.endsWith(".jpg") ? { type: "jpeg", quality: 90 } : {}), ...opts }); };   // (stills over a painting: JPEG — the paintings are JPEG themselves)
@@ -321,7 +330,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         (B.layout = B.layout || {})[tag] = L;
         const phone = w < 600;   // (a phone stacks the planet over the dossier, which then scrolls with the page: Begin is reached by scrolling)
         check(title.inside && title.items && !L.t1 && !L.t2 && !L.t3 && fo.dossierX && (phone || L.go) && !p.errs.length,
-          `[${bn}] L · ${tag}: no horizontal scroll on the title, the survey or the dossier; the title card and every menu entry (≥ 44 px) inside the viewport; ${phone ? "the stacked dossier inside the width" : "Begin expedition visible and unobscured (the dossier's action bar stays in view)"}`, J(L));
+          `[${bn}] L · ${tag}: no horizontal scroll on the title, the survey (EXPEDITION → Choose Plant Species → Survey) or the dossier; the title card and every menu entry (≥ 44 px) inside the viewport; ${phone ? "the stacked dossier inside the width" : "Begin expedition visible and unobscured (the dossier's action bar stays in view)"}`, J(L));
         await c.close();
       }
 
@@ -419,7 +428,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         const s = await p.evaluate(() => ({ rows: document.querySelectorAll(".ds-row[data-cat]").length, heads: document.querySelectorAll(".ds-colhead svg.bloom-ic").length }));
         const leaf = await tokenRgb(p, "--bloom-leaf-btn-night");
         check(r.boot && r.prim === leaf && r.icons === 4 && r.font && s.rows === 4 && s.heads === 3 && !p.errs.length,
-          `[${bn}] P1 · file:// offline (the portable runtime): the restyled title (gameplay font, leaf EXPEDITION, four icons) and the restyled survey (status heads, category rows) — the theme stylesheet and the shared icon module work without a server`, J({ ...r, ...s }));
+          `[${bn}] P1 · file:// offline (the portable runtime): the restyled title (gameplay font, leaf EXPEDITION, four icons) and the restyled survey reached through it (EXPEDITION → Choose Plant Species → Survey: status heads, category rows) — the theme stylesheet and the shared icon module work without a server`, J({ ...r, ...s }));
         await c.close(); }
     } catch (e) { check(false, `[${bn}] browser run`, e && e.stack || String(e)); }
     await browser.close();
@@ -430,7 +439,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
     await c.addInitScript(() => { try { localStorage.setItem("strange-bloom.training", '{"v":1,"status":"completed","at":1}'); } catch (e) { /* none */ } });
     const p = await c.newPage(); await p.goto(HEAD_O + "/" + Q); await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready && MENU_DEV.entry.state === "menu", null, { timeout: 60000 }); await sleep(2600);
     await p.screenshot({ path: path.join(EVD, "11-firefox-title-2560x1440.jpg"), type: "jpeg", quality: 90 });
-    await p.click('.mm-item[data-act="begin"]'); await p.waitForFunction(() => { const s = MENU_DEV.entry.survey; return s && s.state === "survey" && s.cells.every(Boolean); }, null, { timeout: 180000 }); await sleep(1200);
+    await p.click('.mm-item[data-act="begin"]'); await throughSpecies(p); await p.waitForFunction(() => { const s = MENU_DEV.entry.survey; return s && s.state === "survey" && s.cells.every(Boolean); }, null, { timeout: 180000 }); await sleep(1200);
     await p.evaluate(() => MENU_DEV.entry.survey.select(1)); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000 }); await sleep(1200);
     await p.screenshot({ path: path.join(EVD, "12-firefox-focus-2560x1440.png") }); await browser.close();
   }

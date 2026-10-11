@@ -644,3 +644,30 @@ per material, one 2×2 block per shade — then the drawings in contract order, 
 from the proof packs' own pixels: each lane assembles, the build passes, the pack is lossless (runtime == the proof pack it was cut from),
 sampled legal models render pixel-identical with ≥ 1 px margin, output is deterministic, the CLI writes / checks / dry-runs, lanes are
 independent, every refusal above fires with its reason, and Organic Hybrid's intake, delivery and pack are byte-identical to the C0 base.
+
+### 035C2 — the three species packs ingested (review candidate)
+
+The PMO-accepted source candidates (Cinder Rosette v3.1, Reed Spire v3.1, Woolly Candle candle@2) arrived as the owner's local ZIPs
+(`_art_intake/035c2/`, never committed). `tools/species-source-deliveries.mjs --pack <id> --source <ZIP> [--check]` bridges such a
+candidate to the C0 intake without touching a pixel: it verifies every canonical PNG against the candidate's manifest SHA-256 and checksum
+file, writes `art/plant/intake/<pack>/SOURCE_PROVENANCE.json` (the ZIP's bytes + SHA-256, the complete relative inventory with a SHA-256
+per file, and the **aggregate package hash** = SHA-256 of the sorted `"<path>\t<sha256>\n"` records — the local equivalent of a source-ZIP
+provenance hash), the seven C0 delivery ZIPs (STORED, fixed timestamps, sorted entries: byte-reproducible; the canonical PNGs byte for
+byte; the candidate's manifests as closure attachments) and `PMO_FINAL_ACCEPTANCE.json` (PMO-authorized for exactly these candidates).
+Then `intake-plant-art.mjs --pack <id>` as above. Mappings the candidates did not declare are recorded in the provenance `mapping`
+(Cinder's specimen-box environment from its studio reference palette; `render.stemOutline: "ink"` for Cinder and Reed). Woolly's locked
+palette file still said `bodyPlan: "candle@1"`: the closure carries it unchanged plus a production derivative with only that field set
+to `candle@2`.
+
+**Lanes follow the newest brief** per pack: `woolly-candle` follows `WOOLLY_CANDLE_ART_BRIEF_v2` = body plan revision **`candle@2`**
+(`art/plant/body-plans/candle@2.json` + `contracts/candle@2.json` beside candle@1, which is unchanged; the build keys a revision file
+`<id>@<n>.json` by its ref; the compositor resolves `bodyPlans["candle@2"]`).
+
+**Two C0 rules narrowed** (evidence-backed; no accepted pixel was changed; both pinned by `species-art-intake-check` R4 / R-series):
+- a stem leaf's (`leafSocket`) anchor may be column 0 **or 1** (H6: "the petiole's first pixel, the one that touches the stem" — a sheath
+  may wrap one pixel over the stem's edge, as 14 locked Organic Hybrid leaves and all 35 accepted Reed Spire sheaths do); rosette leaves
+  (`radialLeaf`) keep column 0;
+- a trait's own VARIANT drawing may paint the targets of that trait's recolour treatment: the Heat T3 `.heat` leaves may contain `waxLeaf` /
+  `waxCore` (they render only at wax level 3, where the treatment maps every leaf / core shade onto those ramps anyway — the accepted Reed
+  (6 drawings) and Woolly (14) Heat T3 leaves paint their wax sheen). `pig*` stays forbidden everywhere; `wax*` stays forbidden in every
+  other drawing (build-plant-art and intake share `paintableTargets`).
