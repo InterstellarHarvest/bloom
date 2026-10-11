@@ -713,15 +713,15 @@
   {
    "at": [
     42,
-    70
+    69
    ],
    "attach": "primaryRoot",
    "layout": "*",
    "room": {
-    "down": 27,
+    "down": 28,
     "left": 42,
     "right": 41,
-    "up": 70
+    "up": 69
    },
    "side": 0,
    "socket": "primaryRoot"
@@ -2686,8 +2686,8 @@
    "tightestRoom": {
     "left": 42,
     "right": 41,
-    "up": 70,
-    "down": 27
+    "up": 69,
+    "down": 28
    }
   },
   {
@@ -2712,8 +2712,8 @@
    "tightestRoom": {
     "left": 42,
     "right": 41,
-    "up": 70,
-    "down": 27
+    "up": 69,
+    "down": 28
    }
   },
   {
@@ -4168,7 +4168,7 @@
      18,
      28
     ],
-    "note": "accepted actual art 18 × 27 on an 18 × 28 canvas (one transparent row), within the 18 × 28 maximum"
+    "note": "accepted actual organ 18 × 27 + its 1-px attachment stub (row 0) = an 18 × 28 canvas, within the 18 × 28 maximum; hung one row higher (storage socket dy 1) for ≥ 1 px margin"
    },
    {
     "id": "root.aerial.1",
@@ -4418,8 +4418,22 @@
     "columnV1": 14
    }
   },
-  "socketsMoved": [],
-  "socketsMovedCount": 0,
+  "socketsMoved": [
+   {
+    "layout": "*",
+    "socket": "primaryRoot",
+    "attach": "primaryRoot",
+    "from": [
+     42,
+     70
+    ],
+    "to": [
+     42,
+     69
+    ]
+   }
+  ],
+  "socketsMovedCount": 1,
   "sockets": 107,
   "socketsV1": 107
  }

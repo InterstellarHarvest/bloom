@@ -3,7 +3,7 @@
   "id": "candle",
   "version": 2,
   "name": "Woolly Candle (C1) — candle@2 fidelity revision: sprite trunk + rosette crown + inflorescence column at production authoring resolution",
-  "about": "BLOOM-035C2 body plan REVISION candle@2 of the cold specialist (docs/SPECIES_BODY_PLANS_v1.md §3.2; revision record docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.md §0). The SAME anatomy, grammar, architectures, socket geometry and gameplay as candle@1 — a fidelity contract revision, not a new species design: the plan contract art/plant/contracts/candle@2.json raises the maximum native size of every Woolly component to the PMO production maxima. The accepted Woolly Candle source (CANONICAL_REFERENCE_TRANSCRIPTION, candle@2) was composed on candle@1's sockets — its trunk crown points are exactly candle@1's (open −28 · dense −27 · compact −26 · closed −25) — and the complete legal-model enumeration proves it renders unclipped with ≥ 1 px margin on them, so no socket moved. Canonical canvas 84 × 98, soil row 68, crown 42,68. candle@1 (art/plant/body-plans/candle.json) is unchanged and remains historical / proof-compatibility material.",
+  "about": "BLOOM-035C2 body plan REVISION candle@2 of the cold specialist (docs/SPECIES_BODY_PLANS_v1.md §3.2; revision record docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.md §0). The SAME anatomy, grammar, architectures, socket geometry and gameplay as candle@1 — a fidelity contract revision, not a new species design: the plan contract art/plant/contracts/candle@2.json raises the maximum native size of every Woolly component to the PMO production maxima. The accepted Woolly Candle source (CANONICAL_REFERENCE_TRANSCRIPTION, candle@2) was composed on candle@1's sockets — its trunk crown points are exactly candle@1's (open −28 · dense −27 · compact −26 · closed −25) — so they are kept, with ONE attachment offset: the storage-root socket sits one row under the soil (dy 1, candle@1: 2) so the accepted 18 × 28-canvas storage organ keeps ≥ 1 px of canvas below it — the complete legal-model enumeration then renders every model unclipped with ≥ 1 px margin. Canonical canvas 84 × 98, soil row 68, crown 42,68. candle@1 (art/plant/body-plans/candle.json) is unchanged and remains historical / proof-compatibility material.",
   "canvas": {
     "w": 84,
     "h": 98
@@ -710,7 +710,7 @@
   },
   "roots": {
     "kind": "taproot",
-    "about": "a taproot like Organic Hybrid's (the same numbers)",
+    "about": "a taproot like Organic Hybrid's (candle@1's numbers); the storage socket sits ONE row under the soil (dy 1; candle@1: 2) — the accepted 18 × 27 storage organ + its 1-px attachment stub fills its 18 × 28 canvas, and at dy 2 its last row would touch the canvas edge (0 px margin)",
     "depth": [
       16,
       21,
@@ -776,7 +776,7 @@
     ],
     "storage": {
       "dx": 0,
-      "dy": 2
+      "dy": 1
     },
     "aerial": {
       "dy": 1,

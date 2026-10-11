@@ -1,29 +1,33 @@
-// BLOOM — Species Selection + species run identity in the browser (BLOOM-035B-6). docs/SPECIES_SYSTEM_v1.md §7 / §10.1, §0.1.
+// BLOOM — Species Selection + species run identity in the browser (BLOOM-035B-6; BLOOM-035C2: the RELEASED normal flow, real art).
+// docs/SPECIES_SYSTEM_v1.md §7 / §10.1, §0.1.
 //
 //   NODE_PATH="$(npm root -g)" node tools/species-selection-check.js [--browsers chromium,firefox] [--evidence]
 //
-// The DEVELOPMENT species flow (index.html?species=1) in Chromium AND Firefox, served over HTTP (a real static server: "/" = the repository,
-// "/bloom/" = the Pages site), over file:// (offline), and the production flow WITHOUT the flag:
+// The NORMAL Expedition flow (index.html — no query flag; ?species=1 is ignored) in Chromium AND Firefox, served over HTTP (a real static
+// server: "/" = the repository, "/bloom/" = the Pages site) and over file:// (offline):
 //   L · layout at 390 × 844, 1024 × 768, 1440 × 900, 2560 × 1440: four cards in role order (Organic Hybrid first, "Recommended first
-//       expedition"), strengths AND weaknesses on every specialist, no stars / Easy / Hard / score, every specimen drawn by the species'
-//       own body plan + pack at a whole-number scale, candidate species marked as temporary proof art, no horizontal overflow, the
-//       dossier's primary action visible (the phone bottom sheet keeps it pinned), the primary button's contrast ≥ 4.5 : 1
+//       expedition"), strengths AND weaknesses on every specialist (▲ / ▼ + a spoken label: never colour alone), no stars / Easy / Hard /
+//       score, every specimen drawn by the species' own body plan + its PMO-accepted REAL pack at a whole-number scale, NO proof-art marking
+//       and no development note, no horizontal overflow, the dossier's primary action visible (pinned on the phone sheet), contrast ≥ 4.5 : 1
 //   K · keyboard: a roving-tabindex radiogroup (← → Home End), the visible focus ring, Enter opens the dossier, Escape closes it (focus back
 //       to its card) and Escape again goes Back to the title; R · reduced motion: no animation runs
 //   F · the flow: EXPEDITION → species → Survey for Woolly Candle (sector 77) → Change Species → Reed Spire on the SAME sector seed, the
 //       pool (physical cache) kept → species-specific classes → Begin Expedition → the EXACT planet and the EXACT species in the run
-//       (sim.species, the rooms' specimen pack) → report names the species → Play Again (same planet + species) → Choose another planet
-//       (the same species' survey) → Main menu (title; EXPEDITION re-opens the species screen on the last species) → Training (Organic Hybrid)
-//   P · file:// offline · H · /bloom/ — the same flag flow reaches a run with the exact planet + species
-//   N · WITHOUT the flag: EXPEDITION goes straight to the Organic Hybrid survey; no species screen, no species chip, the species module is
-//       never requested, the run is Organic Hybrid; Settings carries no developer / species control
-// --evidence writes docs/evidence/bloom-035b/ stills. Exits 1 on any failure.
+//       (sim.species, the rooms' specimen pack = reed-spire) → report names the species → Play Again (same planet + species) → Choose another
+//       planet (the same species' survey) → Main menu (title; no "Sector surveyed" banner; EXPEDITION re-opens the species screen on the last
+//       species) → Training (Organic Hybrid)
+//   S · each specialist (Cinder Rosette, Woolly Candle, Reed Spire): its survey → Begin → its Adapt room specimen and report from its REAL pack
+//   P · file:// offline · H · /bloom/ — the same normal flow reaches a run with the exact planet + species
+//   N · ?species=1 is a no-op (the same species screen, one behaviour path); no proof pack is ever mounted; Settings has no species /
+//       developer control
+// --evidence writes docs/evidence/bloom-035c2/ stills. Exits 1 on any failure.
 "use strict";
 const path = require("path"), fs = require("fs"), http = require("http"), os = require("os");
 const ROOT = path.resolve(__dirname, "..");
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const BROWSERS = (argOf("--browsers") || "chromium,firefox").split(","), EVIDENCE = argv.includes("--evidence");
-const EVD = path.join(ROOT, "docs/evidence/bloom-035b");
+const EVD = path.join(ROOT, "docs/evidence/bloom-035c2");
+const REAL = { organic_hybrid: "organic-hybrid", cinder_rosette: "cinder-rosette", woolly_candle: "woolly-candle", reed_spire: "reed-spire" };
 let fails = 0, passes = 0; const t0 = Date.now();
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (ok) passes++; else fails++; return ok; };
 const info = (name, detail) => console.log(`INFO  ${name}  — ${detail}`);
@@ -35,7 +39,7 @@ const RANKING = /\b(easy|easier|hard|difficulty|beginner|expert|stars?|rating|sc
 (async () => {
   let pw; try { pw = require("playwright"); } catch (e) { check(false, "playwright", "not installed: NODE_PATH=\"$(npm root -g)\""); return done(); }
   const { buildSite } = await import("file://" + path.join(ROOT, "tools/build-pages-site.mjs"));
-  const SITE_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "bloom035b-site-")); buildSite(ROOT, SITE_DIR);
+  const SITE_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "bloom035c2-site-")); buildSite(ROOT, SITE_DIR);
   const SD = await import("file://" + path.join(ROOT, "resources/destination-survey/survey-data.js"));
   const TYPES = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".json": "application/json", ".png": "image/png", ".jpg": "image/jpeg", ".webp": "image/webp", ".svg": "image/svg+xml" };
   const srv = http.createServer((req, res) => {
@@ -82,22 +86,24 @@ const RANKING = /\b(easy|easier|hard|difficulty|beginner|expert|stars?|rating|sc
       // ------------------------------------------------------------------ L · layout at four viewports
       for (const [w, h] of VIEWPORTS) {
         const c = await context({ width: w, height: h }), p = await page(c);
-        await p.goto(`${ORIGIN}/?species=1&sector=77&workers=3&bg=3`); await menuReady(p); await openSpecies(p);
+        await p.goto(`${ORIGIN}/?sector=77&workers=3&bg=3`); await menuReady(p); await openSpecies(p);
         const L = await p.evaluate(([SS, RANK]) => { const s = eval(SS), cards = [...document.querySelectorAll(".ss-card")], rank = new RegExp(RANK, "i");
           const card = el => { const cv = el.querySelector("canvas"), r = cv.getBoundingClientRect(), chips = [...el.querySelectorAll(".ss-chip")];
             return { id: el.dataset.species, role: el.getAttribute("role"), proof: !!el.querySelector(".ss-proof"), note: (el.querySelector(".ss-note") || {}).textContent || null,
-              up: chips.filter(x => x.classList.contains("up")).length, down: chips.filter(x => x.classList.contains("down")).length, latent: chips.filter(x => x.classList.contains("latent")).map(x => x.textContent.trim()),
+              up: chips.filter(x => x.classList.contains("up")).length, down: chips.filter(x => x.classList.contains("down")).length,
+              cue: chips.every(x => { const d = x.querySelector(".ss-chip-dir"), sr = x.querySelector(".sr-only"); return d && /^[▲▼]$/.test(d.textContent) && (d.textContent === "▲") === x.classList.contains("up") && sr && /^(Latent strength|Strength|Weakness), /.test(sr.textContent); }), latent: chips.filter(x => x.classList.contains("latent")).map(x => x.textContent.trim()),
               pack: cv.dataset.pack, plan: cv.dataset.plan, sig: cv.dataset.signature, k: r.width / 84, kh: r.height / 98, inView: r.width > 0 && r.top < innerHeight || true }; };
           return { cards: cards.map(card), group: document.querySelector(".ss-cards").getAttribute("role"), text: document.querySelector(".ss").innerText, rankHit: (document.querySelector(".ss").innerText.match(rank) || [null])[0],
             dev: !!document.querySelector(".ss-dev"), focusedId: s.selected.id }; }, [SS, RANKING.source]);
         const ids = L.cards.map(x => x.id), sigs = new Set(L.cards.map(x => x.sig));
         const kOk = L.cards.every(x => Number.isInteger(Math.round(x.k * 1000) / 1000) && Math.abs(x.k - x.kh) < 0.01 && x.k >= 1);
         check(J(ids) === J(IDS) && L.group === "radiogroup" && L.cards.every(x => x.role === "radio") && L.cards[0].note === "Recommended first expedition" && L.cards.slice(1).every(x => !x.note)
-          && L.cards.slice(1).every(x => x.up >= 1 && x.down >= 1 && x.proof) && !L.cards[0].proof && !L.rankHit && L.dev && kOk && sigs.size === 4 && L.cards[2].latent.length === 1,
-          `[${bn}] L1 ${w}×${h} · four cards in ROLE order (Organic Hybrid first with "Recommended first expedition"); every specialist shows strengths AND weaknesses and is marked TEMPORARY PROOF ART; Woolly Candle's radiation chip is the latent one; no star / Easy / Hard / score words; four distinct specimens at a whole-number scale; the development-build note`,
+          && L.cards.slice(1).every(x => x.up >= 1 && x.down >= 1) && L.cards.every(x => !x.proof && x.cue && x.pack === REAL[x.id]) && !L.rankHit && !L.dev && kOk && sigs.size === 4 && L.cards[2].latent.length === 1
+          && L.cards.find(x => x.id === "woolly_candle").plan === "candle@2",
+          `[${bn}] L1 ${w}×${h} · four cards in ROLE order (Organic Hybrid first with "Recommended first expedition"); every specialist shows strengths AND weaknesses (▲ / ▼ + spoken label, never colour alone); every specimen from its PMO-accepted REAL pack (Woolly Candle on candle@2); no proof-art badge, no development note; Woolly Candle's radiation chip is the latent one; no star / Easy / Hard / score words; four distinct specimens at a whole-number scale; the development-build note`,
           `${L.cards.map(x => `${x.id} ×${x.k} ${x.pack}/${x.plan} ↑${x.up}↓${x.down}`).join(" · ")}${L.rankHit ? ` · RANKING WORD "${L.rankHit}"` : ""}`);
         const ov = await noOverflow(p);
-        await shot(p, `species-${w}x${h}.png`, { firefox: w === 1440 });
+        await shot(p, `species-cards-${w}x${h}.png`, { firefox: w === 1440 });
         // the dossier of each species: primary visible, contrast, no overflow
         const rows = [];
         for (const id of IDS) {
@@ -113,9 +119,9 @@ const RANKING = /\b(easy|easier|hard|difficulty|beginner|expert|stars?|rating|sc
           if (w === 1440 || (w === 390 && id === "organic_hybrid")) await shot(p, `dossier-${id}-${w}x${h}.png`, { firefox: w === 1440 && id === "woolly_candle" });
           await p.evaluate(SS => eval(SS).close(), SS);
         }
-        check(rows.every(r => r.visible && r.contrast >= 4.5 && r.focus && r.bars === 2 && r.rows.length === 7 && r.label === `Survey for ${r.title}` && r.ov && r.proof === (r.id !== "organic_hybrid"))
+        check(rows.every(r => r.visible && r.contrast >= 4.5 && r.focus && r.bars === 2 && r.rows.length === 7 && r.label === `Survey for ${r.title}` && r.ov && !r.proof)
           && rows.find(r => r.id === "woolly_candle").latent && ov.doc && ov.ss,
-          `[${bn}] L2 ${w}×${h} · each dossier: focus on its heading, two range bars (temperature, moisture) + seven two-part rows, the primary "Survey for <name>" fully VISIBLE in the viewport${w === 390 ? " (pinned at the bottom of the phone sheet)" : ""} with contrast ≥ 4.5 : 1, proof art labelled, Woolly Candle's radiation marked latent; no horizontal overflow`,
+          `[${bn}] L2 ${w}×${h} · each dossier: focus on its heading, two range bars (temperature, moisture) + seven two-part rows, the primary "Survey for <name>" fully VISIBLE in the viewport${w === 390 ? " (pinned at the bottom of the phone sheet)" : ""} with contrast ≥ 4.5 : 1, no proof-art label, Woolly Candle's radiation marked latent; no horizontal overflow`,
           `${rows.map(r => `${r.id} ${r.contrast}:1${r.visible ? "" : " HIDDEN"}`).join(" · ")} · overflow ${J(ov)}`);
         check(!p.errs.length, `[${bn}] L3 ${w}×${h} · no console error / page error`, p.errs.join(" | ") || "clean");
         await c.close();
@@ -123,7 +129,7 @@ const RANKING = /\b(easy|easier|hard|difficulty|beginner|expert|stars?|rating|sc
 
       // ------------------------------------------------------------------ K · keyboard + visible focus · R · reduced motion
       { const c = await context({ reducedMotion: "reduce" }), p = await page(c);
-        await p.goto(`${ORIGIN}/?species=1&sector=77&workers=3`); await menuReady(p);
+        await p.goto(`${ORIGIN}/?sector=77&workers=3`); await menuReady(p);
         await p.focus('.mm-item[data-act="begin"]'); await p.keyboard.press("Enter"); await speciesReady(p);   // keyboard all the way
         const k = [];
         const st = () => p.evaluate(() => { const a = document.activeElement, cs = getComputedStyle(a); return { id: a.dataset && a.dataset.species, checked: a.getAttribute && a.getAttribute("aria-checked"), outline: parseFloat(cs.outlineWidth) || 0, os: cs.outlineStyle,
@@ -145,7 +151,7 @@ const RANKING = /\b(easy|easier|hard|difficulty|beginner|expert|stars?|rating|sc
         await c.close(); }
 
       // ------------------------------------------------------------------ F · the whole flag flow
-      { const c = await context(), p = await page(c), U = `${ORIGIN}/?species=1&sector=77&workers=3&bg=3`;
+      { const c = await context(), p = await page(c), U = `${ORIGIN}/?sector=77&workers=3&bg=3`;
         await p.goto(U); await menuReady(p); await openSpecies(p);
         await chooseSpecies(p, "woolly_candle");
         const S1 = await p.evaluate(() => { const s = MENU_DEV.entry.survey; return { seed: s.sectorSeed, species: s.species.id, chip: (document.querySelector(".ds-species b") || {}).textContent,
@@ -178,7 +184,7 @@ const RANKING = /\b(easy|easier|hard|difficulty|beginner|expert|stars?|rating|sc
         await p.waitForTimeout(400); await shot(p, "run-reed_spire.png");
         await p.click('.pv-tool[data-tool="adapt"]').catch(() => {}); await p.waitForTimeout(900);
         const packs = await p.evaluate(() => [...new Set(BLOOM.plantSpecimen.mounted().map(x => x.pack))]);
-        check(packs.length >= 1 && packs.every(x => x === "proof-reed-spire"), `[${bn}] F5 · the rooms' specimen is the run species' body plan + pack (Reed Spire's temporary proof pack, behind the flag only)`, packs.join(","));
+        check(packs.length >= 1 && packs.every(x => x === "reed-spire"), `[${bn}] F5 · the rooms' specimen is the run species' body plan + its REAL pack (reed-spire)`, packs.join(","));
         await shot(p, "run-adapt-reed_spire.png");
         await p.keyboard.press("Escape").catch(() => {}); await p.waitForTimeout(400);
         await winNow(p); await reportOpen(p);
@@ -192,6 +198,9 @@ const RANKING = /\b(easy|easier|hard|difficulty|beginner|expert|stars?|rating|sc
         const cp = await p.evaluate(() => { const s = MENU_DEV.entry.survey; return { species: s.species.id, chip: (document.querySelector(".ds-species b") || {}).textContent, cells: s.cells.every(c => c.species.id === "reed_spire") }; });
         check(cp.species === "reed_spire" && cp.chip === "Reed Spire" && cp.cells, `[${bn}] F8 · Choose another planet: a survey for the SAME species (Reed Spire)`, J(cp));
         await p.click(".ds-exit"); await menuReady(p);
+        await p.waitForFunction(() => { const pool = MENU_DEV.entry.prefetch; return !pool || (pool.progress && pool.progress.ready); }, null, { timeout: 180000, polling: 200 }).catch(() => {});
+        const banner = await p.evaluate(() => ({ status: (document.querySelector(".mm-status") || {}).textContent || "", text: document.body.innerText }));
+        check(!/sector surveyed|nine worlds ready/i.test(banner.text) && !/surveyed/i.test(banner.status), `[${bn}] F9b · back on the title with the sector surveyed: NO "Sector surveyed · nine worlds ready" banner (the owner correction; progress text only while worlds are generated)`, J(banner.status));
         await openSpecies(p);
         const again = await p.evaluate(SS => eval(SS).selected.id, SS);
         check(again === "reed_spire", `[${bn}] F9 · Main menu → title; EXPEDITION re-opens the species screen on the last species chosen this session`, again);
@@ -200,37 +209,56 @@ const RANKING = /\b(easy|easier|hard|difficulty|beginner|expert|stars?|rating|sc
         const tr = await p.evaluate(() => ({ species: BLOOM_APP.session.run.species.id, sim: BLOOM_APP.session.sim.species.id, packs: [...new Set(BLOOM.plantSpecimen.mounted().map(x => x.pack))] }));
         check(tr.species === "organic_hybrid" && tr.sim === "organic_hybrid", `[${bn}] F10 · Training is Organic Hybrid even after Reed Spire was chosen`, J(tr));
         await p.waitForTimeout(1500); await shot(p, "training-organic_hybrid.png");
-        check(!p.errs.length, `[${bn}] F11 · the flag flow: no console error / page error`, p.errs.join(" | ") || "clean");
+        check(!p.errs.length, `[${bn}] F11 · the normal flow: no console error / page error`, p.errs.join(" | ") || "clean");
         await c.close(); }
 
       // ------------------------------------------------------------------ P · file:// offline · H · /bloom/
-      for (const [tag, url, opts] of [["P", `${FILE_INDEX}?species=1&sector=77&workers=3`, { offline: true }], ["H", `${ORIGIN}/bloom/?species=1&sector=77&workers=3`, {}]]) {
+      for (const [tag, url, opts] of [["P", `${FILE_INDEX}?sector=77&workers=3`, { offline: true }], ["H", `${ORIGIN}/bloom/?sector=77&workers=3`, {}]]) {
         const c = await context(opts), p = await page(c);
         await p.goto(url); await menuReady(p); await openSpecies(p); await chooseSpecies(p, "cinder_rosette");
         await pick(p, 2); await p.click(".ds-btn.go"); await runReady(p, 1);
         const id = await runIdentity(p); id.fpNode = SD.planetFingerprint(JSON.parse(id.planetJson)); delete id.planetJson;
         const where = await p.evaluate(() => ({ href: location.href, portable: !!(window.BLOOM.modules && BLOOM.modules.portable) }));
         const outside = tag === "H" ? p.reqs.filter(u => u.startsWith("http") && !u.startsWith(`${ORIGIN}/bloom/`)) : p.reqs.filter(u => /^https?:/.test(u));
+        await p.click('.pv-tool[data-tool="adapt"]').catch(() => {}); await p.waitForTimeout(900);
+        const ppacks = await p.evaluate(() => [...new Set(BLOOM.plantSpecimen.mounted().map(x => x.pack))]), artReq = p.reqs.filter(u => /_art_intake|art\/plant\/|proof-/.test(u));
+        check(ppacks.length >= 1 && ppacks.every(x => x === "cinder-rosette") && !artReq.length, `[${bn}] ${tag}2 · ${tag === "P" ? "file://" : "/bloom/"}: the Cinder Rosette rooms draw its REAL pack from the bundled runtime — no request for art sources, _art_intake or a proof pack`, `${ppacks.join(",")} · art requests ${artReq.length}`);
         check(id.planetSame && id.speciesSame && id.simSpecies === id.want && id.fpNode === id.fp && !outside.length && where.href === url && (tag !== "P" || where.portable) && !p.errs.length,
-          `[${bn}] ${tag}1 · ${tag === "P" ? "file:// OFFLINE (the portable runtime)" : "HTTP /bloom/ (the Pages site)"}: the flag flow (species → Cinder Rosette survey → Begin) reaches a run with the exact planet AND the exact species; ${tag === "P" ? "no network request" : "every request under /bloom/"}`,
+          `[${bn}] ${tag}1 · ${tag === "P" ? "file:// OFFLINE (the portable runtime)" : "HTTP /bloom/ (the Pages site)"}: the normal flow (species → Cinder Rosette survey → Begin) reaches a run with the exact planet AND the exact species; ${tag === "P" ? "no network request" : "every request under /bloom/"}`,
           `${id.simSpecies} · ${id.fpNode} · outside ${outside.length}${p.errs.length ? " · " + p.errs.join(" | ") : ""}`);
         await c.close(); }
 
-      // ------------------------------------------------------------------ N · WITHOUT the flag: the production flow
+      // ------------------------------------------------------------------ S · each specialist: survey → Begin → Adapt room → report (REAL pack)
+      for (const id of ["cinder_rosette", "woolly_candle", "reed_spire"]) {
+        const c = await context(), p = await page(c);
+        await p.goto(`${ORIGIN}/?sector=${id === "cinder_rosette" ? 31 : id === "woolly_candle" ? 77 : 52}&workers=3&bg=3`); await menuReady(p); await openSpecies(p);
+        await p.evaluate(([id, SS]) => eval(SS).open(id), [id, SS]); await p.waitForTimeout(400); await shot(p, `dossier-focused-${id}.png`);
+        await p.click(".ss-btn.go"); await surveyReady(p); await shot(p, `survey-${id}.png`);
+        await pick(p, 0); await p.click(".ds-btn.go"); await runReady(p, 1);
+        const idn = await runIdentity(p); idn.fpNode = SD.planetFingerprint(JSON.parse(idn.planetJson)); delete idn.planetJson;
+        await p.click('.pv-tool[data-tool="adapt"]').catch(() => {}); await p.waitForTimeout(900);
+        const adapt = await p.evaluate(() => [...new Set(BLOOM.plantSpecimen.mounted().map(x => x.pack))]); await shot(p, `adapt-${id}.png`);
+        await p.keyboard.press("Escape").catch(() => {}); await p.waitForTimeout(400);
+        await winNow(p); await reportOpen(p); await p.waitForTimeout(900);
+        const rep = await p.evaluate(() => ({ species: document.querySelector("#rr").dataset.species, cap: document.querySelector(".rr-spec-cap").textContent, packs: [...new Set(BLOOM.plantSpecimen.mounted().map(x => x.pack))] }));
+        await shot(p, `report-${id}.png`);
+        const name = { cinder_rosette: "Cinder Rosette", woolly_candle: "Woolly Candle", reed_spire: "Reed Spire" }[id];
+        check(idn.planetSame && idn.speciesSame && idn.simSpecies === idn.want && idn.fpNode === idn.fp && adapt.length >= 1 && adapt.every(x => x === REAL[id]) && rep.species === id && rep.cap.includes(name) && rep.packs.every(x => x === REAL[id]) && !p.errs.length,
+          `[${bn}] S · ${name}: its survey → Begin → the exact planet + species; the Adapt room and the report draw its REAL pack (${REAL[id]}); the report names it`, `${idn.simSpecies} · adapt ${adapt.join(",")} · report ${rep.packs.join(",")} "${rep.cap}"${p.errs.length ? " · " + p.errs.join(" | ") : ""}`);
+        await c.close(); }
+
+      // ------------------------------------------------------------------ N · ?species=1 is a no-op; no proof pack; Settings
       { const c = await context(), p = await page(c);
-        await p.goto(`${ORIGIN}/?sector=77&workers=3&bg=3`); await menuReady(p);
+        await p.goto(`${ORIGIN}/?species=1&sector=77&workers=3&bg=3`); await menuReady(p);
+        const flag = await p.evaluate(() => ({ flow: MENU_DEV.entry.speciesFlow, href: location.href })); await openSpecies(p);
+        const ids = await p.evaluate(() => [...document.querySelectorAll(".ss-card")].map(x => x.dataset.species + ":" + x.querySelector("canvas").dataset.pack));
+        await p.click('.ss-head [data-act="back"]'); await menuReady(p);
         await p.click('.mm-item[data-act="settings"]').catch(() => {}); await p.waitForTimeout(300);
         const settings = await p.evaluate(() => (document.querySelector(".mm-dialog, [role=dialog]") || {}).innerText || "");
         await p.keyboard.press("Escape"); await p.waitForTimeout(200);
-        await p.click('.mm-item[data-act="begin"]'); await surveyReady(p);
-        const n = await p.evaluate(() => { const s = MENU_DEV.entry.survey; return { flow: MENU_DEV.entry.speciesFlow, screen: !!document.querySelector(".ss"), chip: !!document.querySelector(".ds-species"), hab: !!document.querySelector(".ds-hab-for"),
-          species: s.species.id, cells: s.cells.every(c => c.species.id === "organic_hybrid"), text: document.querySelector(".ds").innerText }; });
-        await pick(p, 4); await p.click(".ds-btn.go"); await runReady(p, 1);
-        const r = await p.evaluate(() => ({ species: BLOOM_APP.session.run.species.id, packs: [...new Set(BLOOM.plantSpecimen.mounted().map(x => x.pack))] }));
-        const mod = p.reqs.filter(u => /species-select/.test(u));
-        check(!n.flow && !n.screen && !n.chip && !n.hab && n.species === "organic_hybrid" && n.cells && !/Cinder|Woolly|Reed|Change species/i.test(n.text) && r.species === "organic_hybrid" && !mod.length && !/species|developer/i.test(settings) && !p.errs.length,
-          `[${bn}] N1 · WITHOUT ?species=1 the production flow is unchanged: EXPEDITION → the Organic Hybrid survey (no species screen, no species chip, no candidate name anywhere), the run is Organic Hybrid, the species module is never requested, Settings has no species / developer control`,
-          `${J(n).slice(0, 120)} · run ${r.species} · packs ${r.packs.join(",")} · species-select requests ${mod.length}`);
+        const proofs = await p.evaluate(() => { const A = BLOOM.plantArt, S = BLOOM_DATA.species; return { speciesPacks: S.map(s => s.art.pack), statuses: S.map(s => s.status), proofUsed: S.filter(s => /PROOF/.test(A.packs[s.art.pack].status)).map(s => s.id) }; });
+        check(flag.flow && J(ids) === J(Object.entries(REAL).map(([k, v]) => `${k}:${v}`)) && proofs.proofUsed.length === 0 && proofs.statuses.every(x => x === "released") && !/species|developer/i.test(settings) && !p.errs.length,
+          `[${bn}] N1 · ?species=1 is a no-op (the same normal species flow, one behaviour path); all four species released on their REAL packs — no species uses a TEMPORARY PIPELINE PROOF pack; Settings has no species / developer control`, `${ids.join(" ")} · ${J(proofs.statuses)}`);
         await c.close(); }
     } catch (e) { check(false, `[${bn}] the suite ran to the end`, String(e && e.stack || e).slice(0, 600)); }
     await browser.close();

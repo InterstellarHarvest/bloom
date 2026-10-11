@@ -232,17 +232,21 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
   const fresh3 = await p.evaluate(() => ({ owned: BLOOM_DATA.traits.filter(u => BLOOM_API.sim.ownedTier(u) > 0).length, forcing: BLOOM_API.climate().forcing.length }));
   check(fresh3.owned === 0 && fresh3.forcing === 0 && run3.tiles !== run1.tiles, "41 · a new run is genuinely new (new page, new map, nothing purchased)");
 
-  // ---- 39 / 40 · (BLOOM-030) Change planet → the root title's Destination Survey; Home → the root title (http: the title needs a server) ----
+  // ---- 39 / 40 · (BLOOM-030) Change planet → the root title's expedition entry (BLOOM-035C2: Choose Plant Species, then the Destination Survey); Home → the root title (http: the title needs a server) ----
   { const t = await newPage(); await t.goto(HTTP + "/demos/demo-run.html?play=1&archetype=frozen_world&seed=11&scenario=default"); await waitRun(t);
     await Promise.all([t.waitForURL(u => u.pathname === "/index.html" && u.searchParams.get("begin") === "1", { timeout: 20000 }), menuAct(t, "changePlanet", "accept")]);
-    await t.waitForFunction(() => window.MENU_DEV && MENU_DEV.entry && MENU_DEV.entry.state === "survey", null, { timeout: 90000 });
+    // (BLOOM-035C2) begin=1 opens Choose Plant Species first; the preselected species' "Survey for …" → the Destination Survey
+    await t.waitForFunction(() => { const e = window.MENU_DEV && MENU_DEV.entry, v = e && e.speciesView; return !!e && e.state === "species" && !!(v && v.inner) && !e.covered && e.black.style.display === "none"; }, null, { timeout: 90000, polling: 50 });
     const cp = await t.evaluate(() => ({ url: location.pathname + location.search, state: MENU_DEV.entry.state }));
+    await t.evaluate(() => { const v = MENU_DEV.entry.speciesView.inner; v.open(v.selected.id); }); await t.click(".ss-btn.go");
+    await t.waitForFunction(() => MENU_DEV.entry.state === "survey", null, { timeout: 90000 });
+    cp.then = await t.evaluate(() => MENU_DEV.entry.state);
     await t.goto(HTTP + "/demos/demo-run.html?play=1&archetype=frozen_world&seed=11&scenario=default"); await waitRun(t);
     await Promise.all([t.waitForURL(u => u.pathname === "/index.html" && !u.search, { timeout: 20000 }), menuAct(t, "home", "accept")]);
     await t.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready, null, { timeout: 30000 });
     const hm = await t.evaluate(() => ({ url: location.pathname + location.search, state: MENU_DEV.entry.state, title: document.title }));
-    check(cp.state === "survey" && cp.url === "/index.html" && hm.state === "menu" && hm.url === "/index.html" && hm.title === "Strange Bloom — Unknown Soils",
-      "39/40 · Change planet opens the Strange Bloom title's Destination Survey at once (begin=1, consumed); Home returns to the title — never the retired launcher", J({ cp, hm }));
+    check(cp.state === "species" && cp.then === "survey" && cp.url === "/index.html" && hm.state === "menu" && hm.url === "/index.html" && hm.title === "Strange Bloom — Unknown Soils",
+      "39/40 · Change planet opens the Strange Bloom title's Choose Plant Species at once (BLOOM-035C2; begin=1, consumed) and from there its Destination Survey; Home returns to the title — never the retired launcher", J({ cp, hm }));
     await t.context().close(); }
 
   // ---- 24–28 in the browser: retry, bounded failure ----

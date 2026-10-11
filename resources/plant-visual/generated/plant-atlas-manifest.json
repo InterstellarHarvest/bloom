@@ -2185,15 +2185,15 @@
     {
      "at": [
       42,
-      70
+      69
      ],
      "attach": "primaryRoot",
      "layout": "*",
      "room": {
-      "down": 27,
+      "down": 28,
       "left": 42,
       "right": 41,
-      "up": 70
+      "up": 69
      },
      "side": 0,
      "socket": "primaryRoot"
@@ -11173,7 +11173,7 @@
   "soilY": 68,
   "w": 84
  },
- "fingerprint": "63f512a2f3e74afa6f22ea8345532b6c12b5529e9c9c5a7cfa0c039c8eb9f470",
+ "fingerprint": "da9efe7c2d335f6a33cc2a911a640b6e6ec761d678c57fabe2b25dcd3a7801d4",
  "format": "bloom-plant-art/1",
  "grammars": {
   "bytes": 21913,
@@ -11197,7 +11197,7 @@
   },
   {
    "path": "art/plant/body-plans/candle@2.json",
-   "sha256": "f0396eac410af6f54c86a9b7ad7db8cea1ef02ea06c6cd12be254ff35e29a6f0"
+   "sha256": "cad1e5ddff151fa2e9f8ea9f3b199da445872b92423e872a5e38b9e8881a1dc1"
   },
   {
    "path": "art/plant/body-plans/oh-stem.json",
@@ -11329,17 +11329,17 @@
   },
   {
    "path": "resources/plant-visual/plant-compositor.js",
-   "sha256": "48013ff39b777e654a22571e9b826cb3c9e486a987acba96dc2db9951b8889ab"
+   "sha256": "924b5eb8ffea18324fe375a9c63fca828a3f0571ef02e3776ff19f7be198b2a7"
   },
   {
    "path": "tools/build-plant-art.mjs",
-   "sha256": "07680e2320cc8e34777ccfbf9fe251f20dc2ed1f39b8ec6f7e8f999a8b291fec"
+   "sha256": "b2f12b0ab88edf36398a16e0736f4b8b78311d5ba89a3f66f9fe461648a552d0"
   }
  ],
  "output": {
-  "bytes": 890317,
+  "bytes": 890548,
   "path": "resources/plant-visual/generated/plant-atlas.js",
-  "sha256": "6e59fe77236c0e705737de9ab3babd93ca2318af5c3cc1fae74f753ef8edde57"
+  "sha256": "220fb2f049598a07fd448dc2076f485598855bbcd628068dfb5f99a70512812e"
  },
  "packs": {
   "cinder-rosette": {

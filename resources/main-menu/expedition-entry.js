@@ -289,6 +289,7 @@ export class ExpeditionEntry {
     this.state = "to-survey"; this.speciesHost.inert = true; this.stats.entries.push(rec);
     await this._fade(1, rm);
     if (this.state === "disposed") return false;
+    rec.blackMs = Math.round(performance.now() - t0);
     this.setSpecies(sp); this._closeSpecies();
     await this._openSurvey(rm, rec, t0);
     if (this.state === "to-survey") this.state = this.survey && this.survey.state !== "disposed" ? "survey" : "menu";

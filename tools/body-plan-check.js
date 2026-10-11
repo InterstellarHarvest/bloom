@@ -28,12 +28,15 @@ let fails = 0, passes = 0; const RESULTS = [], t0 = Date.now();
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); RESULTS.push({ ok: !!ok, name: name.slice(0, 200) }); ok ? passes++ : fails++; };
 const git = a => cp.execSync(`git ${a}`, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], maxBuffer: 256 << 20 }).trim();
 const BASE = "5ff53d3";   // production main before BLOOM-035B-5 (BLOOM-035A accepted)
-const PLANS = { rosette: { pack: "proof-cinder-rosette", species: "cinder_rosette" }, candle: { pack: "proof-woolly-candle", species: "woolly_candle" }, reed: { pack: "proof-reed-spire", species: "reed_spire" } };
+// (035C2) the P · checks run on the PMO-accepted REAL packs; the key is the generated plan key ("candle@2" = a plan revision), grammar the plan's grammar
+const PLANS = { rosette: { pack: "cinder-rosette", species: "cinder_rosette", grammar: "rosette" }, "candle@2": { pack: "woolly-candle", species: "woolly_candle", grammar: "candle" }, reed: { pack: "reed-spire", species: "reed_spire", grammar: "reed" } };
+const PLAN_IDS = new Set(["rosette", "candle", "reed"]);
 const SPECIES = { organic_hybrid: { id: "organic_hybrid", art: { bodyPlan: "oh-stem@1", pack: "organic-hybrid" } },
-  cinder_rosette: { id: "cinder_rosette", art: { bodyPlan: "rosette@1", pack: "proof-cinder-rosette" } },
-  woolly_candle: { id: "woolly_candle", art: { bodyPlan: "candle@1", pack: "proof-woolly-candle" } },
-  reed_spire: { id: "reed_spire", art: { bodyPlan: "reed@1", pack: "proof-reed-spire" } } };
-const FINAL_PACKS = { "oh-stem": { "organic-hybrid": "ORGANIC HYBRID — FINAL ART (PMO-approved; BLOOM-032B2 intake)" }, rosette: {}, candle: {}, reed: {} };
+  cinder_rosette: { id: "cinder_rosette", art: { bodyPlan: "rosette@1", pack: "cinder-rosette" } },
+  woolly_candle: { id: "woolly_candle", art: { bodyPlan: "candle@2", pack: "woolly-candle" } },
+  reed_spire: { id: "reed_spire", art: { bodyPlan: "reed@1", pack: "reed-spire" } } };
+const FINAL_PACKS = { "oh-stem": { "organic-hybrid": "ORGANIC HYBRID — FINAL ART (PMO-approved; BLOOM-032B2 intake)" }, rosette: { "cinder-rosette": "CINDER ROSETTE — FINAL ART (PMO-approved; tools/intake-plant-art.mjs)" },
+  candle: { "woolly-candle": "WOOLLY CANDLE — FINAL ART (PMO-approved; tools/intake-plant-art.mjs)" }, reed: { "reed-spire": "REED SPIRE — FINAL ART (PMO-approved; tools/intake-plant-art.mjs)" } };
 const PROOF_STATUS = "TEMPORARY PIPELINE PROOF — NOT FINAL ART";
 const RUNTIME = ["content/config.js", "content/traits.js", "resources/plant-visual/generated/plant-atlas.js", "resources/plant-visual/plant-visual-model.js", "resources/plant-visual/plant-components.js",
   "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-fx.js", "resources/run-ui/plant-specimen.js"];
@@ -144,13 +147,13 @@ function png(W, H, rgba) { const h = Buffer.alloc(13); h.writeUInt32BE(W, 0); h.
     const finals = Object.values(FINAL_PACKS).flatMap(o => Object.keys(o));
     for (const p of dirs) { const M = JSON.parse(read(`art/plant/packs/${p}/atlas.json`)), plan = PC.planOf(p).id, fin = FINAL_PACKS[plan] && FINAL_PACKS[plan][p];
       if (fin ? M.status !== fin : M.status !== PROOF_STATUS) bad.push(`${p}: status`);
-      if (!fin && PLANS[plan]) { const md = fs.existsSync(path.join(ROOT, `art/plant/packs/${p}/README.md`)) ? read(`art/plant/packs/${p}/README.md`) : "";
+      if (!fin && PLAN_IDS.has(plan)) { const md = fs.existsSync(path.join(ROOT, `art/plant/packs/${p}/README.md`)) ? read(`art/plant/packs/${p}/README.md`) : "";
         if (!M.title.startsWith("TEMPORARY PIPELINE PROOF") || !M.about.startsWith(PROOF_STATUS) || !md.includes(`**${PROOF_STATUS}.**`) || !/hazard checker/.test(M.about)) bad.push(`${p}: proof marking`); } }
     const planIds = Object.keys(ART.bodyPlans).sort(), refs = Object.values(SPECIES).map(s => s.art);
-    const declared = refs.every(a => ART.packs[a.pack] && PC.planRefOf(a.pack) === a.bodyPlan), onlyOneFinal = finals.length === 1 && finals[0] === "organic-hybrid" && Object.keys(PLANS).every(pl => !Object.keys(FINAL_PACKS[pl]).length);
+    const declared = refs.every(a => ART.packs[a.pack] && PC.planRefOf(a.pack) === a.bodyPlan), finalsOk = J(finals.slice().sort()) === J(["cinder-rosette", "organic-hybrid", "reed-spire", "woolly-candle"]) && Object.values(SPECIES).every(s => FINAL_PACKS[PC.planOf(s.art.pack).id][s.art.pack]);
     PROOF.registry = { plans: Object.fromEntries(planIds.map(id => [id, { ref: ART.bodyPlans[id].ref, packs: ART.bodyPlans[id].packs, skeleton: ART.bodyPlans[id].skeleton }])), finalPacks: FINAL_PACKS };
-    check(J(planIds) === J(["candle", "oh-stem", "reed", "rosette"]) && declared && onlyOneFinal && !bad.length,
-      `P0 · four body plans oh-stem@1 · rosette@1 · candle@1 · reed@1; the species art mapping resolves (organic_hybrid → organic-hybrid, cinder_rosette → proof-cinder-rosette, woolly_candle → proof-woolly-candle, reed_spire → proof-reed-spire, each pack declaring exactly that plan); FINAL_PACKS per plan: only organic-hybrid (oh-stem) is final; the three new packs are status / title / about / README "${PROOF_STATUS}" with the hazard-checker look`, J({ bad, plans: PROOF.registry.plans })); }
+    check(J(planIds) === J(["candle", "candle@2", "oh-stem", "reed", "rosette"]) && declared && finalsOk && !bad.length,
+      `P0 · body plans oh-stem@1 · rosette@1 · candle@1 (historical / proof compatibility) · candle@2 (BLOOM-035C2 revision) · reed@1; the species art mapping resolves (organic_hybrid → organic-hybrid, cinder_rosette → cinder-rosette, woolly_candle → woolly-candle (candle@2), reed_spire → reed-spire, each pack declaring exactly that plan); FINAL_PACKS per plan: the four species packs are FINAL ART (PMO-approved); every remaining proof pack is status / title / about / README "${PROOF_STATUS}" with the hazard-checker look and no species uses one`, J({ bad, plans: PROOF.registry.plans })); }
   // P1 · contract coverage + static clip proof per plan
   { const rows = {};
     for (const [plan, { pack }] of Object.entries(PLANS)) { const C = ART.contracts[plan], P = ART.packs[pack], need = [];
@@ -165,14 +168,14 @@ function png(W, H, rgba) { const h = Buffer.alloc(13); h.writeUInt32BE(W, 0); h.
   // P2 · every legal model of every new plan
   { const rows = {};
     for (const [plan, { pack }] of Object.entries(PLANS)) {
-      const g = PV.grammars[plan], C = ART.contracts[plan], Pl = ART.bodyPlans[plan], pal = ART.packs[pack].palette, socks = new Map(PC.planSockets(Pl, C.canvas).map(s => [`${s.layout}|${s.socket}`, s]));
+      const g = PV.grammars[PLANS[plan].grammar], C = ART.contracts[plan], Pl = ART.bodyPlans[plan], pal = ART.packs[pack].palette, socks = new Map(PC.planSockets(Pl, C.canvas).map(s => [`${s.layout}|${s.socket}`, s]));
       const colourOf = v => pal[ART.materials[(v >> 2) - 1]] && pal[ART.materials[(v >> 2) - 1]][v & 3];
       const r = { models: 0, selections: new Set(), anatomies: new Set(), bad: [], minMargin: Infinity, placements: 0 };
       for (const m of MODELS) { let S, F, F2; r.models++;
         try { S = g.select(PV.model.normalize(m, RULES)); F = PC.render(S, pack); F2 = PC.render(g.select(PV.model.normalize(m, RULES)), pack); } catch (e) { if (r.bad.length < 4) r.bad.push(`${J(m)}: ${e.message}`); continue; }
         r.selections.add(S.key); if (m.condition === "thriving") r.anatomies.add(F.sig.anatomy);
         const err = [];
-        if (S.plan !== plan) err.push("plan");
+        if (S.plan !== PLANS[plan].grammar) err.push("plan");
         for (const c of S.components) if (!C.components[c]) err.push(`component ${c} not in contract`);
         if (!S.components.includes(S.leaf.component)) err.push("leaf not in components");
         const arch = Pl.architectures[S.architecture]; if (!arch) err.push(`architecture ${S.architecture}`);
@@ -195,11 +198,11 @@ function png(W, H, rgba) { const h = Buffer.alloc(13); h.writeUInt32BE(W, 0); h.
       rows[plan] = { models: r.models, legalSelections: r.selections.size, distinctAnatomies: r.anatomies.size, minMargin: r.minMargin, spritePlacements: r.placements, bad: r.bad, badN: r.badN || 0, atlasPartialAlpha: partial, atlasOffPalette: offPal }; }
     PROOF.plans.enumeration = rows;
     check(Object.values(rows).every(r => r.models === 6720 && !r.bad.length && !r.badN && r.minMargin >= 1 && !r.atlasPartialAlpha && !r.atlasOffPalette),
-      `P2 · EVERY legal model of each new plan (6720 = ${GENOMES.length} legal genomes × thriving / strained) renders with its proof pack: the grammar names only that plan's contract components, architectures and axes; every sprite lands exactly on a plan socket of its own attach kind (or a leaf point); no pixel clipped and ≥ 1 px clear of every edge; deterministic (rendered twice, identical); every treatment rendered; output alpha 255 and every thriving plant pixel EXACTLY its palette colour; the atlas has binary alpha — ${Object.entries(rows).map(([k, r]) => `${k}: ${r.legalSelections} legal selections · ${r.distinctAnatomies} distinct thriving anatomies · ${r.spritePlacements} sprite placements · min margin ${r.minMargin} px`).join(" | ")}`, J(Object.fromEntries(Object.entries(rows).map(([k, r]) => [k, { bad: r.bad, badN: r.badN }])))); }
+      `P2 · EVERY legal model of each new plan (6720 = ${GENOMES.length} legal genomes × thriving / strained) renders with its PMO-accepted REAL pack (cinder-rosette · woolly-candle (candle@2) · reed-spire): the grammar names only that plan's contract components, architectures and axes; every sprite lands exactly on a plan socket of its own attach kind (or a leaf point); no pixel clipped and ≥ 1 px clear of every edge; deterministic (rendered twice, identical); every treatment rendered; output alpha 255 and every thriving plant pixel EXACTLY its palette colour; the atlas has binary alpha — ${Object.entries(rows).map(([k, r]) => `${k}: ${r.legalSelections} legal selections · ${r.distinctAnatomies} distinct thriving anatomies · ${r.spritePlacements} sprite placements · min margin ${r.minMargin} px`).join(" | ")}`, J(Object.fromEntries(Object.entries(rows).map(([k, r]) => [k, { bad: r.bad, badN: r.badN }])))); }
   // P3 · design §2.4: a visible, distinct answer per axis (each single trait at each tier) + condition + art cap
   { const rows = {};
     const AX = { cold: [1, 2, 3], heat: [1, 2, 3], drought: [1, 2, 3], flood: [1, 2, 3], salt: [1], rad: [1], seedOut: [1, 2], earlyMat: [1], waterSeeds: [1] };
-    for (const [plan, { pack }] of Object.entries(PLANS)) { const g = PV.grammars[plan], fr = (t, c = "thriving") => PC.render(g.select(PV.model.normalize({ traits: t, condition: c }, RULES)), pack);
+    for (const [plan, { pack }] of Object.entries(PLANS)) { const g = PV.grammars[PLANS[plan].grammar], fr = (t, c = "thriving") => PC.render(g.select(PV.model.normalize({ traits: t, condition: c }, RULES)), pack);
       const base = fr({}), out = { fromBase: {}, tierSteps: {}, bad: [] };
       for (const [id, tiers] of Object.entries(AX)) { let prev = base; for (const n of tiers) { const F = fr({ [id]: n }), d = FX.diff(base, F).length, step = FX.diff(prev, F).length; out.fromBase[`${id}${n}`] = d; out.tierSteps[`${id}${n}`] = step;
           if (F.sig.full === base.sig.full || d < 6 || step < 6) out.bad.push(`${id}${n}: ${d} px from base, ${step} px from the tier below`); prev = F; } }
@@ -297,7 +300,7 @@ ${RUNTIME.map(f => `<script src="${url(f)}"></script>`).join("\n")}
     const cells = (plan, pack, list) => list.map(([cap, t, c]) => ({ cap, rgba: PC.render(fr(plan, pack, t, c), pack).rgba }));
     const LIST = [["BASE", {}], ["COLD 1", { cold: 1 }], ["COLD 3", { cold: 3 }], ["HEAT 3", { heat: 3 }], ["DROUGHT 3", { drought: 3 }], ["FLOOD 3", { flood: 3 }], ["SALT+COLD 2", { salt: 1, cold: 2 }], ["RAD", { rad: 1 }],
       ["SEED 2+EARLY", { seedOut: 2, earlyMat: 1 }], ["WATERBORNE", { waterSeeds: 1 }], ["MAX DRY", { cold: 2, heat: 1, drought: 3, salt: 1, rad: 1, seedOut: 2, earlyMat: 1, waterSeeds: 1 }], ["MAX WET", { cold: 2, heat: 1, flood: 3, salt: 1, rad: 1, seedOut: 2, earlyMat: 1, waterSeeds: 1 }], ["STRAINED", {}, "strained"]];
-    const ROWS = [["oh-stem", "organic-hybrid", "ORGANIC HYBRID (UNCHANGED)"], ["rosette", "proof-cinder-rosette", "ROSETTE@1 PROOF"], ["candle", "proof-woolly-candle", "CANDLE@1 PROOF"], ["reed", "proof-reed-spire", "REED@1 PROOF"]];
+    const ROWS = [["oh-stem", "organic-hybrid", "ORGANIC HYBRID (UNCHANGED)"], ["rosette", "cinder-rosette", "CINDER ROSETTE · ROSETTE@1"], ["candle", "woolly-candle", "WOOLLY CANDLE · CANDLE@2"], ["reed", "reed-spire", "REED SPIRE · REED@1"]];
     fs.writeFileSync(path.join(EVD, "01-contact-sheet-all-plans-2x.png"), sheet(ROWS.map(([pl, pk, label]) => ({ label, cells: cells(pl, pk, LIST) })), 2, "TEMPORARY ENGINEERING PROOF - NOT FINAL ART - BLOOM-035B-5 BODY PLANS (ORGANIC HYBRID ROW = THE APPROVED ART, UNCHANGED)"));
     const SEL = Object.values(SPECIES).map(sp => ({ cap: sp.id.replace(/_/g, " "), rgba: PS.drawSpecies(sp).rgba }));
     fs.writeFileSync(path.join(EVD, "02-species-selection-specimens-4x.png"), sheet([{ label: "DRAWSPECIES()", cells: SEL }], 4, "TEMPORARY ENGINEERING PROOF - NOT FINAL ART - SPECIES SPECIMENS"));

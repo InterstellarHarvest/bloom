@@ -9,7 +9,7 @@
 //   [--root <dir>]                                               another checkout (the QA suite runs on scratch trees)
 //
 // LANES (data, not code): one per pack, from its newest generated art brief docs/species-art-briefs/*_ART_BRIEF_v<n>.json (format
-// bloom-species-art-brief@1) — today cinder-rosette (rosette@1), woolly-candle (candle@2, brief v2 — BLOOM-035C2A), reed-spire (reed@1). The brief names the pack id, the body plan and its
+// bloom-species-art-brief@1) — today cinder-rosette (rosette@1), woolly-candle (candle@2, brief v2 — BLOOM-035C2), reed-spire (reed@1). The brief names the pack id, the body plan and its
 // contract; the CONTRACT is the authority for the drawings (every component × angle) and their metadata; the brief's batch table says which
 // delivery batch each drawing belongs to (and is checked against the contract, so a stale brief is refused). Organic Hybrid is NOT a lane:
 // its locked delivery stays with tools/intake-organic-hybrid-art.mjs (this tool only imports that tool's ZIP / PNG helpers).
@@ -63,7 +63,7 @@ export const ANCHOR_EDGE = { radialLeaf: ["start"], leafSocket: ["base"], stiltR
 
 // ================================================================ lanes
 const readJSON = (root, rel) => JSON.parse(fs.readFileSync(path.join(root, rel), "utf8"));
-/** Every species lane: one per pack, from its NEWEST generated art brief (035C2A: WOOLLY_CANDLE_ART_BRIEF_v2 — body plan revision candle@2 —
+/** Every species lane: one per pack, from its NEWEST generated art brief (035C2: WOOLLY_CANDLE_ART_BRIEF_v2 — body plan revision candle@2 —
  *  supersedes v1 for the woolly-candle lane; an older brief stays on disk as history and is never a lane). */
 export function lanes(root) {
   root = path.resolve(root);

@@ -195,7 +195,12 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
   const SEED_RECORD = status => { try { if (!sessionStorage.getItem("__seeded")) { sessionStorage.setItem("__seeded", "1"); if (status) localStorage.setItem("strange-bloom.training", JSON.stringify({ v: 1, status, at: 1 })); else localStorage.removeItem("strange-bloom.training"); } } catch {} };
   const frames = (p, n = 3) => p.evaluate(n => new Promise(r => { let k = 0; const f = () => (++k >= n ? r() : requestAnimationFrame(f)); requestAnimationFrame(f); }), n);
   const menuReady = p => p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready, null, { timeout: 30000, polling: 50 });
-  const surveyReady = p => p.waitForFunction(() => MENU_DEV.entry.survey && MENU_DEV.entry.survey.state === "survey" && MENU_DEV.entry.state === "survey", null, { timeout: 120000, polling: 100 });
+  // (035C2) EXPEDITION / Begin Expedition open Choose Plant Species first: pass through it with the selected species (Organic Hybrid on a fresh
+  // visit) via "Survey for <name>"; returns the first screen reached ("species" | "survey")
+  const viaSpecies = async p => { const at = await (await p.waitForFunction(() => { const e = MENU_DEV.entry, v = e.speciesView, s = e.survey;
+      if (e.state === "species") return v && v.inner && v.inner.state === "cards" && !e.covered && e.black.style.display === "none" ? "species" : false; return s && s.state !== "disposed" ? "survey" : false; }, null, { timeout: 120000, polling: 50 })).jsonValue();
+    if (at === "species") { await p.evaluate(() => { const s = MENU_DEV.entry.speciesView.inner; s.open(s.selected.id); }); await p.click(".ss-btn.go"); } return at; };
+  const surveyReady = async p => { const first = await viaSpecies(p); await p.waitForFunction(() => MENU_DEV.entry.survey && MENU_DEV.entry.survey.state === "survey" && MENU_DEV.entry.state === "survey", null, { timeout: 120000, polling: 100 }); return first; };
   const menuBack = p => p.waitForFunction(() => MENU_DEV.entry.state === "menu" && getComputedStyle(MENU_DEV.entry.black).display === "none", null, { timeout: 20000, polling: 50 });
   const waitRun = p => p.waitForFunction(() => window.BLOOM_RUN && (BLOOM_RUN.started || BLOOM_RUN.failed), null, { timeout: 120000, polling: 50 });
   const waitProd = async p => { await p.waitForFunction(() => BLOOM.planetView && BLOOM.planetView.instance && BLOOM.planetView.instance.renderer.info().frames > 0 && BLOOM.decisionRooms.instance && BLOOM.runReport.instance, null, { timeout: 30000, polling: 100 }); await frames(p, 3); };
@@ -218,7 +223,8 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
   const disarm = p => p.evaluate(() => { __XP.forbid = false; });
   const runIn = (p, n = 1) => p.waitForFunction(n => window.BLOOM_APP && BLOOM_APP.session && BLOOM_APP.stats.sessions.length >= n && BLOOM_APP.stats.sessions[n - 1].readyMs !== null && !BLOOM_APP.busy && !document.querySelector(".atx"), n, { timeout: 60000, polling: 50 });
   const titleIn = p => p.waitForFunction(() => !BLOOM_APP.session && MENU_DEV.entry.state === "menu" && !BLOOM_APP.busy, null, { timeout: 30000, polling: 50 });
-  const surveyIn = p => p.waitForFunction(() => !BLOOM_APP.session && !BLOOM_APP.busy && MENU_DEV.entry.state === "survey" && MENU_DEV.entry.survey && MENU_DEV.entry.survey.state === "survey", null, { timeout: 180000, polling: 100 });
+  const surveyIn = async p => { await p.waitForFunction(() => !BLOOM_APP.session && !BLOOM_APP.busy && (MENU_DEV.entry.state === "species" || MENU_DEV.entry.state === "survey"), null, { timeout: 180000, polling: 100 }); const first = await viaSpecies(p);
+    await p.waitForFunction(() => !BLOOM_APP.session && !BLOOM_APP.busy && MENU_DEV.entry.state === "survey" && MENU_DEV.entry.survey && MENU_DEV.entry.survey.state === "survey", null, { timeout: 180000, polling: 100 }); return first; };
   const trainingIn = (p, n) => p.waitForFunction(n => window.BLOOM_APP && BLOOM_APP.session && BLOOM_APP.session.run.training && window.BLOOM_TRAINING_UI && BLOOM_TRAINING_UI.stats.liftedAt && !BLOOM_APP.busy && (!n || BLOOM_APP.stats.sessions.length >= n), n || 0, { timeout: 30000, polling: 50 });
   const SURVEY_CAP = async i => { const S = await import("/resources/destination-survey/survey-data.js"), T = await import("/resources/planet-sphere/planet-texture.js");
     const s = MENU_DEV.entry.survey, c = s.cells[i], v = s.views[i], p = c.planet; const cv = document.createElement("canvas"); T.drawPlanetTexture(cv, p, { render: c.render || null });
@@ -322,7 +328,7 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
         const s1 = await p.evaluate(() => { const E = MENU_DEV.entry, s = E.survey, cls = ["favorable", "precarious", "extreme"]; return { rec: JSON.parse(localStorage.getItem("strange-bloom.training")), tag: E.menu.trainingRecommended, url: location.href, entry: E.stats.entries[E.stats.entries.length - 1], adopted: s.stats.adopted, seed: s.sectorSeed,
           cells: s.cells.map((c, i) => c && { ok: c.authored || (c.validation.validated && c.planet.archetype.winnabilityChecked && c.planet.archetype.validatedLayers.join() === "1,2,3,4,5,6,7,8"), col: c.classId === cls[i % 3], key: c.key }) }; });
         check(s1.rec && s1.rec.status === "skipped" && !s1.tag && s1.url === HOME && s1.entry.blackMs >= 200 && s1.entry.blackMs < 1500 && s1.entry.liftMs >= s1.entry.swappedMs && s1.entry.revealedMs > s1.entry.liftMs && s1.adopted && s1.seed === m1.prefetch.seed,
-          `${B} R20 · R24 · Go to Expedition records "skipped", drops the tag and fades through black (${s1.entry.blackMs} ms to black; the survey mounted and drawn under it, then the black lifts) into the Destination Survey on the sector prefetched at the root`, J(s1.entry));
+          `${B} R20 · R24 · Go to Expedition records "skipped", drops the tag and opens Choose Plant Species; "Survey for Organic Hybrid" fades through black (${s1.entry.blackMs} ms to black; the survey mounted and drawn under it, then the black lifts) into the Destination Survey on the sector prefetched at the root`, J(s1.entry));
         check(s1.cells.length === 9 && s1.cells.every(x => x && x.ok && x.col) && new Set(s1.cells.map(x => x.key)).size === 9,
           `${B} R29 · the survey shows nine distinct worlds, every one fully validated (layers 1–8, winnability checked) or the authored world, one class per column`, s1.cells.map(x => x.key).join(" "));
         await shot(p, "04-root-destination-survey.png");
@@ -336,7 +342,7 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
         await p.focus('.mm-item[data-act="begin"]'); await p.keyboard.press("Enter"); await surveyReady(p);
         const r2 = await p.evaluate(() => ({ state: MENU_DEV.entry.state, prompts: MENU_DEV.entry.stats.prompts, url: location.href, active: document.activeElement && (document.activeElement.className || document.activeElement.tagName) }));
         check(r1.state === "menu" && r1.url === HOME && r1.bg !== bgBefore && ex && ex.blackMs >= 200 && ex.revealedMs > ex.liftMs && r1.prefetch && r2.state === "survey" && r2.url === HOME,
-          `${B} R25 · R27 · R28 · R75 · from the survey (Tab reaches its controls: ${kFocus}), Escape (keyboard) fades through black back to the root title (still /) with the NEXT painting (${bgBefore + 1} → ${r1.bg + 1}) and a fresh prefetch; Enter on BEGIN EXPEDITION (keyboard) enters the survey again — no second prompt`, J({ exit: ex, r2 }));
+          `${B} R25 · R27 · R28 · R75 · from the survey (Tab reaches its controls: ${kFocus}), Escape (keyboard) fades through black back to the root title (still /) with the NEXT painting (${bgBefore + 1} → ${r1.bg + 1}) and a fresh prefetch; Enter on BEGIN EXPEDITION (keyboard) enters Choose Plant Species → the survey again — no second prompt`, J({ exit: ex, r2 }));
         // R30 · R31 · R32 · R33 · R34 · R35 · R36 · the exact candidate → DRAMATIC → handoff → the run
         await p.click('.ds-cand[data-index="4"]'); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000, polling: 50 });
         const cap = await p.evaluate(SURVEY_CAP, 4);
@@ -445,13 +451,13 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
           await q.click('#rr [data-act="restartTraining"]'); await trainingIn(q, o1.n + 1);
           const o2 = await q.evaluate(() => ({ fresh: BLOOM_APP.session !== window.__s1 && window.__s1.disposed, origin: performance.timeOrigin, url: location.href, ticks: BLOOM_API.sim.ticks, running: BLOOM_API.state().running, rec: JSON.parse(localStorage.getItem("strange-bloom.training")) }));
           await coached(q); await win(q); await reportOpen(q); await frames(q, 2);
-          await q.click('#rr [data-act="beginExpedition"]'); await surveyIn(q);
+          await q.click('#rr [data-act="beginExpedition"]'); const beFirst = await surveyIn(q);
           const be = await q.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state, prompts: MENU_DEV.entry.stats.prompts, handoffs: MENU_DEV.departures.length, rec: JSON.parse(localStorage.getItem("strange-bloom.training")) }));
           PROOF.trainingReturnUrls.beginExpedition = "(in the document) → " + be.url.replace(ORIGIN, "<origin>");
           check(J(tc.acts) === J(["beginExpedition", "restartTraining", "mainMenu"]) && tc.rec.status === "completed" && o2.fresh && o2.origin === o1.origin /* (BLOOM-033: a fresh SESSION, the same document) */ && o2.url === o1.url && o2.ticks === 0 && !o2.running && o2.rec.status === "completed",
             `${B} R49 · R50 · TRAINING COMPLETE offers Begin Expedition · Restart training · Main menu and records "completed"; Restart training is a fresh training SESSION in the same document (tick 0, paused) and "completed" is never downgraded`, J({ acts: tc.acts, head: tc.head }));
-          check(be.url === HOME && be.state === "survey" && !be.prompts && !be.handoffs && be.rec.status === "completed" && qnavs === 0,
-            `${B} R48 · TRAINING COMPLETE → Begin Expedition enters the Destination Survey inside the root document at once (no prompt, nothing departed, no document load)`, J(be));
+          check(beFirst === "species" && be.url === HOME && be.state === "survey" && !be.prompts && !be.handoffs && be.rec.status === "completed" && qnavs === 0,
+            `${B} R48 · TRAINING COMPLETE → Begin Expedition enters Choose Plant Species inside the root document at once, then the Destination Survey (no prompt, nothing departed, no document load)`, J({ first: beFirst, ...be }));
           await collectUnhandled(q); await c3.close(); }
         // ================= R21 · the first-run prompt's Start Training =================
         { const c4 = await ctx({ record: null }), q = watch(await c4.newPage(), "start-training");
@@ -462,12 +468,12 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
           await collectUnhandled(q); await c4.close(); }
         // ================= ?begin=1 directly at the root =================
         { const c5 = await ctx({ record: "completed" }), q = watch(await c5.newPage(), "begin"); const lf = LOG.length;
-          await q.goto(HOME + "?begin=1"); await menuReady(q); await surveyReady(q);
+          await q.goto(HOME + "?begin=1"); await menuReady(q); const bFirst = await surveyReady(q);
           const b = await q.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state, events: MENU_DEV.events.map(e => e.type) }));
           const idx = await get(HOME + "index.html"); await q.goto(HOME + "index.html"); await menuReady(q);
           const ix = await q.evaluate(() => ({ title: document.title, page: MENU_DEV.page.document }));
-          check(b.url === HOME && b.state === "survey" && b.events.includes("auto-begin") && LOG.slice(lf).some(([u, s]) => u === "/" && s === 200) && idx.status === 200 && ix.title === "Strange Bloom — Unknown Soils" && ix.page === "/index.html" /* (BLOOM-033: the one document at its own address) */,
-            `${B} R26 · /?begin=1 opens the root title straight into the Destination Survey (begin=1 dropped from the address); /index.html is the same title (its canonical return is itself)`, J({ b: b.url, ix }));
+          check(bFirst === "species" && b.url === HOME && b.state === "survey" && b.events.includes("auto-begin") && LOG.slice(lf).some(([u, s]) => u === "/" && s === 200) && idx.status === 200 && ix.title === "Strange Bloom — Unknown Soils" && ix.page === "/index.html" /* (BLOOM-033: the one document at its own address) */,
+            `${B} R26 · /?begin=1 opens the root title straight into Choose Plant Species, and from there the Destination Survey (begin=1 dropped from the address); /index.html is the same title (its canonical return is itself)`, J({ b: b.url, ix }));
           await collectUnhandled(q); await c5.close(); }
         // ================= direct developer URLs, ui=legacy, file:// =================
         { const direct = [];
