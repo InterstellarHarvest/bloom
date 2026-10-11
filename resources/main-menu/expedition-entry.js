@@ -5,6 +5,7 @@
 //   import { ExpeditionEntry } from "<repo>/resources/main-menu/expedition-entry.js";
 //   const entry = new ExpeditionEntry(root, { descent: { async onCovered(detail) { … mount gameplay from detail.planet … } } });
 //   entry.state                       // "menu" | "to-survey" | "survey" | "to-menu" | "departed" | "leaving" | "away" | "returning" | "disposed"
+//                                     // (035B) "species" · (036A) "to-challenges" | "challenges"
 //   entry.beginExpedition()           // what EXPEDITION does; entry.returnToMenu() what "← Main menu" does
 //   entry.leave()                     // (BLOOM-033) menu → black, the title put away: the app mounts a run (training) under the black
 //   entry.enterRun()                  // (BLOOM-033) under the survey's DRAMATIC cover: the title / survey put away for the run
@@ -48,12 +49,20 @@
 // survey shows the species with a Change button; Change Species returns to the species screen and the next survey keeps the SAME
 // sector seed and the same pool (its physical cache: nothing is validated twice), evaluated for the new species. The run's "Choose another
 // planet" reopens a survey for the same species; the title's prefetch is for the last species chosen in this session.
+//
+// (BLOOM-036A) CHALLENGES. With a `challengeScreen` factory (the app's Challenge hub) the menu shows CHALLENGES: menu → black → the hub →
+// BEGIN CHALLENGE → black → Choose Plant Species → the Challenge's Destination Survey (`entry.challenge`: every world also proven under its
+// scenario; "Begin challenge") → the run. The Challenge is this entry's state, carried explicitly through every screen (never the URL or
+// storage): Back from the species screen returns to the hub; Change Species keeps the Challenge and the sector seed; the run's "Choose
+// another planet" reopens a survey for the same Challenge and species; EVERY return to the title clears it (Main menu from the survey,
+// the hub's own Main menu, resume({ to: "menu" })), and EXPEDITION always starts with no Challenge. A Challenge survey reuses the title's
+// pool and its sector seed (the same physical worlds, validated once) with its own species / scenario layers.
 import { MainMenu } from "./main-menu.js";
 import { BlackFade } from "./black-fade.js";
 import { readSettings, reducedMotionFor } from "./main-menu-data.js";
 import { readTraining, writeTraining } from "../training/training-store.js";
 import { DestinationSurvey } from "../destination-survey/destination-survey.js";
-import { speciesFor } from "../destination-survey/survey-data.js";
+import { speciesFor, scenarioFor } from "../destination-survey/survey-data.js";
 import { AtmosphereTransition } from "../atmosphere-transition/atmosphere-transition.js";
 
 const T = { paintingWait: 2000 }; // cap on waiting, black, for a painting that never decodes (fade timings: ./black-fade.js FADE)
@@ -73,7 +82,7 @@ export class ExpeditionEntry {
    * storage            Storage for settings and (028D2) the training record (default localStorage)
    */
   constructor(root, { reducedMotion = undefined, sectorSeed = null, firstBloom = false, worker = true, workers = null, background = null, descent = null,
-    onBeginExpedition = null, onTraining = null, transition = null, storage = undefined, rng = Math.random, speciesFlow = false, speciesScreen = null } = {}) {
+    onBeginExpedition = null, onTraining = null, transition = null, storage = undefined, rng = Math.random, speciesFlow = false, speciesScreen = null, challengeScreen = null } = {}) {
     if (!root || typeof root.appendChild !== "function") throw new TypeError("ExpeditionEntry: root must be a DOM element");
     this.root = root; this.descent = descent; this.onBeginExpedition = onBeginExpedition; this.forcedReducedMotion = reducedMotion;
     this.poolOpts = { worker, workers }; this.firstSector = { sectorSeed, firstBloom };
@@ -84,16 +93,20 @@ export class ExpeditionEntry {
     this.speciesFlow = !!speciesFlow; this.speciesScreen = typeof speciesScreen === "function" ? speciesScreen : null; this.species = speciesFor(null);
     if (this.speciesFlow && !this.speciesScreen) throw new TypeError("ExpeditionEntry: the species flow needs a speciesScreen factory");
     this.speciesView = null; this.carry = null; // carry: { pool, sectorSeed, firstBloom } kept across Change Species
-    this.stats = { begins: 0, returns: 0, entries: [], exits: [], prefetches: [], prompts: 0, promptChoices: [], leaves: 0, runs: 0, resumes: [], species: [] };
+    // (036A) the Challenge hub factory (the app's), the Challenge the flow is in (null: an Expedition) and the hub view
+    this.challengeScreen = typeof challengeScreen === "function" ? challengeScreen : null; this.challenge = null; this.challengeView = null;
+    this.stats = { begins: 0, returns: 0, entries: [], exits: [], prefetches: [], prompts: 0, promptChoices: [], leaves: 0, runs: 0, resumes: [], species: [], challenges: [] };
     if (getComputedStyle(root).position === "static") root.style.position = "relative";
     this.menuHost = host(root, "ee-menu"); this.surveyHost = host(root, "ee-survey"); this.surveyHost.hidden = true;
     this.speciesHost = host(root, "ee-species"); this.speciesHost.hidden = true; // (035B) CHOOSE PLANT SPECIES (035C2: the normal flow)
+    this.challengeHost = host(root, "ee-challenges"); this.challengeHost.hidden = true; // (036A) the CHALLENGES hub
     this.black = host(root, "ee-black"); this.black.setAttribute("aria-hidden", "true"); this._fader = new BlackFade(this.black); // the fade layer (above both screens, below the departure's clouds)
     this.black.style.cssText += "; z-index:9999; background:#000; opacity:0; display:none; pointer-events:auto; contain:strict";
     this.atx = transition || new AtmosphereTransition({ host: root });   // the survey's dramatic departure only (028C1)
     const toTraining = this._toTraining = onTraining || null;
     this.menu = new MainMenu(this.menuHost, { reducedMotion: this.reducedMotion, background, rng, storage,
       onBegin: () => this._beginPressed(),
+      onChallenges: this.challengeScreen ? () => { this.beginChallenges().catch(err => console.error("ExpeditionEntry: could not open the Challenges", err)); } : null,
       onTraining: toTraining,
       onRecommendChoice: c => this._recommendChoice(c),
       onSettingsChange: s => this._settingsChanged(s) });
@@ -114,6 +127,7 @@ export class ExpeditionEntry {
   async beginExpedition() {
     if (this.state !== "menu") return false;
     this.state = "to-survey"; this.stats.begins++;
+    this.challenge = null;                                              // (036A) EXPEDITION never carries a Challenge
     const rm = this.reducedMotion, t0 = performance.now(), rec = { at: t0, prefetch: this.prefetch ? this.prefetch.progress : null, reducedMotion: rm };
     this.menuHost.inert = true;                                         // no menu input while it fades
     try {
@@ -141,11 +155,15 @@ export class ExpeditionEntry {
     const pool = carry ? carry.pool : this.prefetch; if (!carry) this.prefetch = null; // ownership passes to the survey
     const visit = this.surveyVisits++;
     const first = carry ? { sectorSeed: carry.sectorSeed, firstBloom: carry.firstBloom } : visit === 0 ? this.firstSector : { sectorSeed: null, firstBloom: false };   // (BLOOM-033) later visits: a random sector
-    const adopt = pool && !pool.disposed && !(carry == null && pool.first && pool.first.species.physiologyKey !== this.species.physiologyKey) ? pool : null;
+    // (036A) a Challenge survey reuses the title's pool AND its sector seed: the same physical worlds (validated once, shared physical cache),
+    // judged for this species and proven under this Challenge's scenario (their own cache layers)
+    const reuse = !carry && !!this.challenge && !!pool && !pool.disposed && !!pool.first;
+    const adopt = pool && !pool.disposed && (reuse || !(carry == null && pool.first && pool.first.species.physiologyKey !== this.species.physiologyKey)) ? pool : null;
     if (pool && !adopt && !carry) pool.dispose();                     // a title prefetch for another species: not this survey's
     this.surveyHost.hidden = false; this.surveyHost.inert = false;
-    rec.species = this.species.id;
-    this.survey = new DestinationSurvey(this.surveyHost, { sectors: adopt, ...(adopt && !carry ? {} : first), ...this.poolOpts, reducedMotion: rm, species: this.species,
+    rec.species = this.species.id; rec.challenge = this.challenge ? this.challenge.id : null;
+    const where = reuse ? { sectorSeed: pool.first.seed, firstBloom: pool.first.firstBloom } : adopt && !carry ? {} : first;
+    this.survey = new DestinationSurvey(this.surveyHost, { sectors: adopt, ...where, ...this.poolOpts, reducedMotion: rm, species: this.species, challenge: this.challenge,
       onChangeSpecies: this.speciesFlow ? sv => { this.changeSpecies(sv).catch(err => console.error("ExpeditionEntry: could not change species", err)); } : null,
       onExit: () => { this.returnToMenu().catch(err => console.error("ExpeditionEntry: could not return to the menu", err)); },
       onBeginExpedition: d => this._announced(d),
@@ -188,6 +206,7 @@ export class ExpeditionEntry {
   _putAway() {
     this.state = "away"; this.menu.hide(); this.menuHost.inert = false;
     if (this.speciesView) this._closeSpecies();
+    if (this.challengeView) this._closeChallenges();
     if (this.prefetch) { this.prefetch.dispose(); this.prefetch = null; }   // no world generation competes with a run
     this.surveyHost.hidden = true;
   }
@@ -214,6 +233,7 @@ export class ExpeditionEntry {
       if (this.state === "to-survey") this.state = this.survey && this.survey.state !== "disposed" ? "survey" : "menu";
       return true;
     }
+    this.challenge = null;                                              // (036A) the title never carries a Challenge
     this.menu.setStatus(""); this._syncTrainingTag();
     const shown = this.menu.show({ settled: true });
     rec.swappedMs = Math.round(performance.now() - t0);
@@ -241,6 +261,7 @@ export class ExpeditionEntry {
     const s = this.survey; this.survey = null;
     s.dispose();                                                        // renderer (one context), nine views, workers (the pool it owned), listeners, DOM
     this.surveyHost.hidden = true; this.surveyHost.inert = false;
+    this.challenge = null;                                              // (036A) the title never carries a Challenge
     this.menu.setStatus("");                                            // that sector went with the survey; the fresh prefetch reports its own
     const shown = this.menu.show({ settled: true });                    // the next painting (preloaded) at rest, no entrance; focus on Begin
     rec.swappedMs = Math.round(performance.now() - t0);
@@ -269,7 +290,7 @@ export class ExpeditionEntry {
   /** At full black: mount CHOOSE PLANT SPECIES (the app's screen), focused on this entry's species; lift the black. */
   async _openSpecies(rm, rec, t0) {
     this.speciesHost.hidden = false; this.speciesHost.inert = false;
-    const view = this.speciesView = this.speciesScreen(this.speciesHost, { species: this.species, reducedMotion: rm,
+    const view = this.speciesView = this.speciesScreen(this.speciesHost, { species: this.species, reducedMotion: rm, challenge: this.challenge, // (036A) the screen names it
       onChoose: sp => { this._speciesChosen(sp).catch(err => console.error("ExpeditionEntry: could not open the survey", err)); },
       onBack: () => { this._speciesBack().catch(err => console.error("ExpeditionEntry: could not return to the menu", err)); } });
     this.state = "species"; this.menuHost.inert = false;
@@ -304,6 +325,7 @@ export class ExpeditionEntry {
     if (this.state === "disposed") return false;
     this._closeSpecies();
     if (this.carry) { if (this.carry.pool) this.carry.pool.dispose(); this.carry = null; }
+    if (this.challenge && this.challengeScreen) { await this._openChallenges(rm, { at: performance.now(), back: true }, performance.now()); return true; } // (036A) back to the hub
     this.menu.setStatus(""); this._syncTrainingTag();
     const shown = this.menu.show({ settled: true });
     await Promise.race([shown, sleep(T.paintingWait)]); await frame(); await frame();
@@ -329,16 +351,85 @@ export class ExpeditionEntry {
     return true;
   }
 
+  // ---------------------------------------------------------------- (036A) Challenges
+  /** CHALLENGES: menu → black → the Challenge hub → black lifts. The flow carries no Challenge until the hub's BEGIN CHALLENGE. */
+  async beginChallenges() {
+    if (this.state !== "menu" || !this.challengeScreen) return false;
+    this.state = "to-challenges"; this.challenge = null;
+    const rm = this.reducedMotion, t0 = performance.now(), rec = { at: t0, reducedMotion: rm, hub: true };
+    this.stats.challenges.push(rec); this.menuHost.inert = true;
+    try {
+      await this._fade(1, rm);
+      if (this.state === "disposed") return false;
+      this.menu.hide();
+      await this._openChallenges(rm, rec, t0);
+    } catch (err) {
+      if (!this.challengeView && this.state !== "disposed") { this.menuHost.inert = false; this.menu.show({ rotate: false, settled: true }); this.state = "menu"; this._fade(0, rm).catch(() => {}); }
+      throw err;
+    }
+    return true;
+  }
+
+  /** (at full black) mount the hub (the app's screen), focused on the last Challenge chosen in this visit; lift the black. */
+  async _openChallenges(rm, rec, t0) {
+    this.challengeHost.hidden = false; this.challengeHost.inert = false;
+    const last = this._lastChallenge || null;
+    const view = this.challengeView = this.challengeScreen(this.challengeHost, { challenge: last, reducedMotion: rm,
+      onChoose: ch => { this._challengeChosen(ch).catch(err => console.error("ExpeditionEntry: could not start the Challenge", err)); },
+      onBack: () => { this._challengesBack().catch(err => console.error("ExpeditionEntry: could not return to the menu", err)); } });
+    this.state = "challenges"; this.menuHost.inert = false;
+    if (view.ready) await view.ready;
+    await frame(); await frame();
+    if (this.state === "disposed") return;
+    rec.hubMs = Math.round(performance.now() - t0);
+    await this._fade(0, rm);
+    if (view.focus) view.focus();
+  }
+  _closeChallenges() { const v = this.challengeView; this.challengeView = null; if (v) v.dispose(); this.challengeHost.hidden = true; this.challengeHost.replaceChildren(); }
+
+  /** BEGIN CHALLENGE: black → the hub goes → the flow is in this Challenge → Choose Plant Species (every released species) → black lifts. */
+  async _challengeChosen(ch) {
+    if (this.state !== "challenges") return false;
+    if (!ch || typeof ch.id !== "string" || !scenarioFor(ch.scenario)) throw new TypeError("ExpeditionEntry: a Challenge needs a real scenario");
+    const rm = this.reducedMotion, t0 = performance.now(), rec = { at: t0, reducedMotion: rm, challenge: ch.id, scenario: ch.scenario };
+    this.state = "to-survey"; this.challengeHost.inert = true; this.stats.challenges.push(rec);
+    await this._fade(1, rm);
+    if (this.state === "disposed") return false;
+    this.challenge = ch; this._lastChallenge = ch; this._closeChallenges();
+    if (this.speciesFlow) { await this._openSpecies(rm, rec, t0); return true; }
+    await this._openSurvey(rm, rec, t0);                                // (an entry without the species flow: Organic Hybrid's survey for it)
+    if (this.state === "to-survey") this.state = this.survey && this.survey.state !== "disposed" ? "survey" : "menu";
+    return true;
+  }
+
+  /** The hub's Main menu: black → the title (no Challenge) → black lifts. */
+  async _challengesBack() {
+    if (this.state !== "challenges") return false;
+    const rm = this.reducedMotion; this.state = "to-menu"; this.challengeHost.inert = true; this.stats.returns++;
+    await this._fade(1, rm);
+    if (this.state === "disposed") return false;
+    this._closeChallenges(); this.challenge = null;
+    this.menu.setStatus(""); this._syncTrainingTag();
+    const shown = this.menu.show({ settled: true });
+    await Promise.race([shown, sleep(T.paintingWait)]); await frame(); await frame();
+    if (this.state === "disposed") return false;
+    await this._fade(0, rm);
+    this.state = "menu"; this.menu.focusMenu();
+    if (!this.prefetch) this._prefetchSector({ sectorSeed: null, firstBloom: false });
+    return true;
+  }
+
   dispose() {
     if (this.state === "disposed") return;
     this.state = "disposed";
+    if (this.challengeView) { this.challengeView.dispose(); this.challengeView = null; }
     if (this.survey) { this.survey.dispose(); this.survey = null; }
     if (this.prefetch) { this.prefetch.dispose(); this.prefetch = null; }
     if (this.speciesView) { this.speciesView.dispose(); this.speciesView = null; }
     if (this.carry && this.carry.pool) { this.carry.pool.dispose(); this.carry = null; }
     this._fader.cancel();
     this.menu.dispose(); this.atx.dispose();
-    this.menuHost.remove(); this.surveyHost.remove(); this.speciesHost.remove(); this.black.remove();
+    this.menuHost.remove(); this.surveyHost.remove(); this.speciesHost.remove(); this.challengeHost.remove(); this.black.remove();
   }
 
   // ---------------------------------------------------------------- internals

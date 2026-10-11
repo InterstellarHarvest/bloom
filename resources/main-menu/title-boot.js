@@ -25,9 +25,10 @@
   var HERE = new URL(me.src, location.href), REPO = new URL("../../", HERE), d = me.dataset;
   var TITLE = "Strange Bloom", SUBTITLE = "Unknown Soils";
   // the classic scripts the title and the survey need (the module seam last: it reads window.BLOOM)
-  var CLASSIC = ["content/config.js", "content/traits.js", "content/species.js", "planets/first_bloom.js", "content/archetypes.js", "content/scenarios.js", "content/play.js",
+  // (BLOOM-036A) + the Challenge catalogue and its resolver (the CHALLENGES hub and a Challenge survey read them before any run)
+  var CLASSIC = ["content/config.js", "content/traits.js", "content/species.js", "planets/first_bloom.js", "content/archetypes.js", "content/scenarios.js", "content/challenges.js", "content/play.js",
     "resources/bloom-sim.js", "resources/bloom-species.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js",
-    "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/portable/module-loader.js"];
+    "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/bloom-challenges.js", "resources/portable/module-loader.js"];
   // (BLOOM-033) the run's classic scripts, after the title is up: the training world, the run UI boundary, the production Planet View on the
   // canonical surface, the Organic Hybrid sprite runtime (generated atlas → model → components → compositor → FX) under the plant
   // specimen, the Terraform globe helper, the rooms, the gameplay transition, the run report, and the GameSession that composes them

@@ -27,6 +27,7 @@ const MODULES = {
   "resources/atmosphere-transition/atmosphere-transition.js": () => import("../atmosphere-transition/atmosphere-transition.js"),
   "resources/training/training-run.js": () => import("../training/training-run.js"),
   "resources/species-select/species-select.js": () => import("../species-select/species-select.js"), // (035B; 035C2: the normal Expedition flow) Species Selection
+  "resources/challenges/challenge-hub.js": () => import("../challenges/challenge-hub.js"),     // (036A) the CHALLENGES hub
 };
 
 const loaded = new Map();

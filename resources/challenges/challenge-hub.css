@@ -1,0 +1,110 @@
+/*
+  BLOOM — the CHALLENGES hub (BLOOM-036A). Scoped under .ch.
+  The BLOOM-034 night planning language (resources/ui/bloom-theme.css, loaded first by the page): the space background of the planning
+  screens, night cards with the irregular corner family, the gameplay font, the leaf primary button, the night focus ring. A Challenge is
+  identified by its scenario glyph AND its name (the pressure violet is an accent, never the only signal). No ranking cues: the cards are
+  equal in size and weight, in content order.
+*/
+.ch{
+  --ink:var(--bloom-night-ink); --ink-soft:var(--bloom-night-ink-soft); --ink-faint:var(--bloom-night-ink-faint); --line:var(--bloom-night-line); --line-2:var(--bloom-night-line-2);
+  --panel:var(--bloom-night-card); --raised:var(--bloom-night-paper); --raised-2:var(--bloom-night-paper-2); --focus:var(--bloom-focus-night);
+  --accent:var(--bloom-pressure-night); --padX:clamp(16px, 3cqw, 44px);
+  position:absolute; inset:0; overflow:hidden; container-type:size; isolation:isolate;
+  color:var(--ink); font-family:var(--bloom-font); font-size:16px; line-height:1.35;
+  background:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.55), transparent 60%) 0 0/173px 191px,
+    radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,.4), transparent 60%) 0 0/241px 227px,
+    radial-gradient(120% 90% at 50% 0%, var(--bloom-space-2) 0%, var(--bloom-space-1) 45%, var(--bloom-space-0) 100%);
+}
+.ch *, .ch *::before, .ch *::after{box-sizing:border-box}
+/* the scrolling layer (not positioned: the phone sheet is placed on .ch itself, so it never scrolls away with the list) */
+.ch-scroll{height:100%; overflow:auto; display:flex; flex-direction:column}
+.ch [hidden]{display:none !important}
+.ch button{font:inherit; color:inherit}
+.ch :focus-visible{outline:3px solid var(--focus); outline-offset:4px; border-radius:12px}
+.ch .ic{width:1.2em; height:1.2em; flex:none}
+
+/* ── header ── */
+.ch-head{display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:14px var(--padX) 0; max-width:1480px; width:100%; margin:0 auto}
+.ch-title{display:flex; flex-direction:column; line-height:1.1; min-width:0}
+.ch-kicker{display:inline-flex; align-items:center; gap:6px; font-size:var(--bloom-kicker-size); font-weight:var(--bloom-kicker-weight); letter-spacing:var(--bloom-kicker-track); text-transform:uppercase; color:var(--bloom-leaf-night)}
+.ch-kicker .ic{width:15px; height:15px}
+.ch-title h1{margin:2px 0 0; font-size:clamp(23px, 2.4cqw, 30px); font-weight:900; letter-spacing:.2px}
+.ch-lede{margin:8px auto 0; padding:0 var(--padX); max-width:1480px; width:100%; color:var(--ink-soft); font-weight:600; font-size:15px}
+
+/* ── buttons (the survey's night controls) ── */
+.ch-btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:var(--bloom-control-min); padding:6px 17px 6px 13px; cursor:pointer;
+  border:2px solid var(--line-2); border-radius:var(--bloom-r-btn); background:var(--raised); font-weight:800; font-size:15px; box-shadow:0 var(--bloom-lip) 0 var(--line-2);
+  transition:transform .12s var(--bloom-ease), background .15s, border-color .15s; white-space:nowrap}
+.ch-btn:hover{transform:translateY(-1px); background:var(--raised-2)}
+.ch-btn.ghost{background:transparent; box-shadow:none; border-color:transparent; color:var(--ink-soft); padding-left:9px}
+.ch-btn.ghost:hover{color:var(--ink); background:var(--raised); border-color:var(--line-2); transform:none}
+.ch-btn.go{background:var(--bloom-leaf-btn-night); border-color:var(--bloom-leaf-btn-night-rim); color:#fff; box-shadow:0 3px 0 var(--bloom-leaf-btn-night-lip);
+  min-height:var(--bloom-control-lg); font-size:16.5px; font-weight:900; padding:8px 22px 8px 16px}
+.ch-btn.go:hover, .ch-btn.go:focus-visible{background:var(--bloom-leaf-btn-night-hover)}
+
+/* ── the body: the cards (left) and the selected Challenge's dossier (right) ── */
+.ch-body{flex:1 1 auto; min-height:0; display:grid; grid-template-columns:minmax(300px, 5fr) minmax(0, 7fr); gap:clamp(14px, 1.8cqw, 28px);
+  padding:16px var(--padX) 20px; max-width:1480px; width:100%; margin:0 auto; align-items:stretch}
+.ch-list{display:flex; flex-direction:column; gap:clamp(10px, 1.4cqh, 16px); min-width:0}
+.ch-card{position:relative; display:grid; grid-template-columns:auto minmax(0, 1fr); gap:14px; align-items:start; padding:14px 16px; cursor:pointer;
+  border:2px solid var(--line-2); border-radius:var(--bloom-r-lg); background:var(--panel); box-shadow:var(--bloom-night-shadow);
+  transition:transform .18s var(--bloom-ease), border-color .18s, box-shadow .18s}
+.ch-card:hover{transform:translateY(-2px); border-color:var(--bloom-night-line-3)}
+.ch-card[aria-checked="true"]{border-color:var(--bloom-leaf-night); box-shadow:0 0 0 2px color-mix(in srgb, var(--bloom-leaf-night) 35%, transparent), var(--bloom-night-shadow)}
+.ch-card[aria-checked="true"]::after{content:""; position:absolute; right:-2px; top:50%; width:8px; height:34px; transform:translate(50%, -50%); border-radius:4px; background:var(--bloom-leaf-night)}
+.ch-card:focus-visible{outline:3px solid var(--focus); outline-offset:4px; border-radius:var(--bloom-r-lg)}
+.ch-card-i, .ch-d-i{display:grid; place-items:center; width:48px; height:48px; border-radius:50%; color:var(--accent);
+  border:2px solid color-mix(in srgb, var(--accent) 55%, transparent); background:color-mix(in srgb, var(--accent) 16%, transparent)}
+.ch-card-i .ic{width:26px; height:26px}
+.ch-card-t{display:flex; flex-direction:column; gap:3px; min-width:0}
+.ch-card h3{margin:0; font-size:21px; font-weight:900; line-height:1.1}
+.ch-card-short{font-weight:800; color:var(--ink); font-size:15px}
+.ch-card-tag{font-weight:600; color:var(--ink-soft); font-size:14px}
+
+.ch-dossier{position:relative; display:flex; flex-direction:column; min-height:0; min-width:0; border:2px solid var(--line-2); border-radius:var(--bloom-r-lg);
+  background:var(--bloom-night-card-solid, var(--panel)); box-shadow:var(--bloom-night-shadow); overflow:hidden}
+.ch-d-main{flex:1 1 auto; min-height:0; overflow:auto; padding:18px 22px 12px}
+.ch-d-kicker{display:flex; align-items:center; gap:10px; margin:0; font-size:var(--bloom-kicker-size); font-weight:var(--bloom-kicker-weight); letter-spacing:var(--bloom-kicker-track); text-transform:uppercase; color:var(--accent)}
+.ch-d-i{width:40px; height:40px} .ch-d-i .ic{width:22px; height:22px}
+.ch-dossier h2{margin:8px 0 0; font-size:32px; font-weight:900; line-height:1.05} .ch-dossier h2:focus{outline:none}
+.ch-d-short{margin:4px 0 0; font-weight:800; font-size:17px}
+.ch-d-brief{margin:8px 0 0; color:var(--ink-soft); font-weight:600; max-width:72ch}
+/* two-part rows: the survey's dossier language (a labelled heading row, then its text) */
+.ch-rows{margin:14px 0 0; display:grid; gap:8px}
+.ch-row{--cat:var(--ink-soft); position:relative; padding:8px 12px 9px 52px; border-radius:10px; border:1.5px solid color-mix(in srgb, var(--cat) 26%, transparent); border-left:5px solid var(--cat);
+  background:linear-gradient(90deg, color-mix(in srgb, var(--cat) 11%, transparent), transparent 85%)}
+.ch-row.changes{--cat:var(--accent)} .ch-row.idea{--cat:var(--bloom-leaf-night)} .ch-row.science{--cat:var(--bloom-sky-night)} .ch-row.run{--cat:var(--bloom-gold-night)}
+.ch-row-i{position:absolute; left:10px; top:9px; display:grid; place-items:center; width:30px; height:30px; border-radius:50%; color:var(--cat);
+  border:1.5px solid color-mix(in srgb, var(--cat) 50%, transparent); background:color-mix(in srgb, var(--cat) 14%, transparent)}
+.ch-row-i .ic{width:17px; height:17px}
+.ch-rows dt{font-size:11px; font-weight:900; letter-spacing:.9px; text-transform:uppercase; color:var(--cat); min-height:30px; display:flex; align-items:center}
+.ch-rows dd{margin:0; font-size:14.5px; font-weight:600; color:var(--ink); line-height:1.4}
+.ch-rows dd p{margin:0}
+.ch-rows dd ul{margin:2px 0 0; padding-left:18px; display:grid; gap:3px}
+.ch-actions{flex:none; display:flex; justify-content:flex-end; align-items:center; gap:10px; padding:12px 20px 14px; border-top:1.5px solid var(--line); background:var(--panel)}
+.ch-close{display:none}
+
+/* large screens: a wider dossier column and roomier type */
+@container (min-width:1900px){ .ch{font-size:17px} .ch-card h3{font-size:24px} .ch-dossier h2{font-size:38px} .ch-rows dd{font-size:15.5px} }
+/* between phone and desktop: the cards a little tighter */
+@container (max-width:1100px){ .ch-body{grid-template-columns:minmax(260px, 4fr) minmax(0, 6fr)} .ch-card{padding:12px} .ch-card-i{width:42px; height:42px} .ch-card h3{font-size:19px} }
+/* phone: one vertical list; a card opens its dossier as a sheet with BEGIN CHALLENGE pinned (the selected card's own button opens it) */
+@container (max-width:700px){
+  .ch-scroll{display:block}
+  .ch-title h1{font-size:22px}
+  .ch-lede{font-size:14px}
+  .ch-body{display:block; padding:12px var(--padX) 20px}
+  .ch-list{gap:10px}
+  .ch-card[aria-checked="true"]::after{display:none}
+  .ch-dossier{display:none; position:absolute; z-index:3; left:0; right:0; bottom:0; top:auto; height:86%; border-radius:var(--bloom-r-lg) var(--bloom-r-lg) 0 0; border-bottom:0}
+  .ch[data-sheet="true"] .ch-dossier{display:flex}
+  .ch[data-sheet="true"] .ch-list, .ch[data-sheet="true"] .ch-lede, .ch[data-sheet="true"] .ch-head{opacity:.28; filter:saturate(.6)}
+  .ch-d-main{padding:14px 14px 8px}
+  .ch-dossier h2{font-size:26px}
+  .ch-row{padding:7px 10px 8px 48px}
+  .ch-close{display:inline-flex}
+  .ch-actions{padding:10px 12px 12px} .ch-actions .ch-btn.go{flex:1}
+}
+.ch.rm *, .ch.rm *::before, .ch.rm *::after{transition:none !important; animation:none !important}
+@media (prefers-reduced-motion: reduce){ .ch *, .ch *::before, .ch *::after{transition:none !important; animation:none !important} }

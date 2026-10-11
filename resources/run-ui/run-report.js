@@ -118,15 +118,17 @@
     function render(d) {
       const win = d.kind === "win", i = d.identity;
       layer.dataset.kind = d.kind; layer.dataset.training = String(!!i.training);
-      $("rrKicker").textContent = win ? (i.training ? "Training · field journal" : "Field journal · expedition debrief") : "Field journal · the run is over";
+      $("rrKicker").textContent = win ? (i.training ? "Training · field journal" : i.challenge ? "Field journal · challenge debrief" : "Field journal · expedition debrief") : "Field journal · the run is over";
       $("rrTitle").innerHTML = `${ico(win ? "star" : "x", "rr-mark")}<span>${esc(d.heading)}</span>`;
       const world = identityLine(d);
       $("rrSum").textContent = win
         ? `You held ${d.coveragePct} % of the land of ${world}${i.scenarioActive ? ` under ${i.scenarioName}` : ""} in ${d.elapsed.text}.`
         : `No living plants were left anywhere for ${d.graceSeconds} s, so the run is over after ${d.elapsed.text} on ${world}${i.scenarioActive ? ` under ${i.scenarioName}` : ""}.`;
+      // (036A) a Challenge run names its Challenge (the scenario's final state follows below); an Expedition keeps "Scenario · None"
+      const mode = i.challenge ? ["Challenge", i.challenge.name, "its final state below", i.challenge.icon] : ["Scenario", i.scenarioActive ? i.scenarioName : "None", i.scenarioActive ? "final state below" : "no challenge modifier", "climate"];
       const facts = win
-        ? [["Coverage held", `${d.coveragePct} %`, `of land · goal ${Math.round(d.winAt * 100)} %`, "regions"], ["Time", d.elapsed.text, "to the bloom", "clock"], ["World", i.planetName, i.kind === "procedural" ? `${i.archetypeName} · ${i.seedWord} ${i.seed}` : "Authored world", "world"], ["Scenario", i.scenarioActive ? i.scenarioName : "None", i.scenarioActive ? "final state below" : "no challenge modifier", "climate"]]
-        : [["Reason", "Extinction", cap(d.reason || d.lostReason || ""), "x"], ["Lasted", d.elapsed.text, "before the end", "clock"], ["World", i.planetName, i.kind === "procedural" ? `${i.archetypeName} · ${i.seedWord} ${i.seed}` : "Authored world", "world"], ["Scenario", i.scenarioActive ? i.scenarioName : "None", i.scenarioActive ? "final state below" : "no challenge modifier", "climate"]];
+        ? [["Coverage held", `${d.coveragePct} %`, `of land · goal ${Math.round(d.winAt * 100)} %`, "regions"], ["Time", d.elapsed.text, "to the bloom", "clock"], ["World", i.planetName, i.kind === "procedural" ? `${i.archetypeName} · ${i.seedWord} ${i.seed}` : "Authored world", "world"], mode]
+        : [["Reason", "Extinction", cap(d.reason || d.lostReason || ""), "x"], ["Lasted", d.elapsed.text, "before the end", "clock"], ["World", i.planetName, i.kind === "procedural" ? `${i.archetypeName} · ${i.seedWord} ${i.seed}` : "Authored world", "world"], mode];
       $("rrFacts").innerHTML = facts.map(([k, v, n, ic]) => `<div class="rr-fact" role="listitem">${ico(ic)}<div><small>${esc(k)}</small><b>${esc(v)}</b><span>${esc(n)}</span></div></div>`).join("");
       // the plant: the production specimen from the real owned Adapt / Spread tiers (a loss shows its restrained unviable state; the anatomy stays true)
       const traits = {}, names = {}; for (const b of (d.built || [])) { traits[b.id] = b.tier; names[b.id] = b.name; }

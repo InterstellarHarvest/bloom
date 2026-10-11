@@ -1,9 +1,11 @@
 // BLOOM — Main Menu screen (BLOOM-028C): the opening title. One of twelve hand-painted backgrounds, the title STRANGE BLOOM /
-// UNKNOWN SOILS and the menu (EXPEDITION · TRAINING · SETTINGS · CREDITS) as real HTML over it, with small dialogs for
+// UNKNOWN SOILS and the menu (EXPEDITION · CHALLENGES · TRAINING · SETTINGS · CREDITS) as real HTML over it, with small dialogs for
 // Training (a placeholder when no training hook is given), Settings (motion) and Credits.
 // (BLOOM-028D2) TRAINING can carry a small "Recommended" tag (setTrainingRecommended) and there is one more dialog, the first-run
 // recommendation ("recommend": Start Training (~5 min) · Go to Expedition), opened by ExpeditionEntry on a first EXPEDITION;
 // the choice goes to onRecommendChoice("training" | "expedition"). This screen still decides nothing: the flow is ExpeditionEntry's.
+// (BLOOM-036A) CHALLENGES sits between EXPEDITION and TRAINING — rendered only with a real onChallenges hook (the app's Challenge hub):
+// the menu never shows a disabled or "coming soon" entry.
 // (BLOOM-034) The game's own visual language (docs/VISUAL_SYSTEM_v1.md): one dark planning card, chunky icon + word entries from the
 // production icon family (../ui/bloom-icons.js), the dialogs' kicker above their heading; the ornamental corner marks are gone.
 //
@@ -32,11 +34,12 @@ const LAST_KEY = "strange-bloom.menu.last-background";
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const ITEMS = [
   { id: "begin", label: "Expedition", primary: true },   // (BLOOM-033) the title enters expedition planning; "Begin Expedition" is the survey's decision
+  { id: "challenges", label: "Challenges", hook: "onChallenges" },   // (BLOOM-036A) only with its hook: never a dead entry
   { id: "training", label: "Training" },
   { id: "settings", label: "Settings" },
   { id: "credits", label: "Credits" },
 ];
-const ITEM_ICON = { begin: "world", training: "journal", settings: "settings", credits: "info" };   // (BLOOM-034) the gameplay icon family
+const ITEM_ICON = { begin: "world", challenges: "challenge", training: "journal", settings: "settings", credits: "info" };   // (BLOOM-034) the gameplay icon family
 
 export class MainMenu {
   /**
@@ -46,16 +49,17 @@ export class MainMenu {
    * previous           the index to avoid on the first show (default: the last one shown in this tab, from sessionStorage)
    * rng                () → [0, 1) for the picks (QA)
    * onBegin()          EXPEDITION (the menu's id stays "begin")
+   * onChallenges()     (036A) CHALLENGES — the Challenge hub. Omitted: there is no CHALLENGES entry at all (never a dead control)
    * onTraining()       TRAINING — the tutorial hook. Omitted: the "not yet open" placeholder dialog
    * onSettingsChange(settings)  after a setting changed (already persisted)
    * onRecommendChoice(choice)    (028D2) the first-run recommendation's answer: "training" | "expedition" (the dialog is closed first)
    * baseUrl            where "resources/main-menu/backgrounds/…" resolves from (default: this module's repository root)
    * storage / session  Storage-like objects for settings / the last background (default: localStorage / sessionStorage)
    */
-  constructor(root, { reducedMotion = null, background = null, previous = undefined, rng = Math.random, onBegin = null, onTraining = null, onSettingsChange = null,
+  constructor(root, { reducedMotion = null, background = null, previous = undefined, rng = Math.random, onBegin = null, onChallenges = null, onTraining = null, onSettingsChange = null,
     onRecommendChoice = null, baseUrl = new URL("../../", import.meta.url), storage = undefined, session = undefined } = {}) {
     if (!root || typeof root.appendChild !== "function") throw new TypeError("MainMenu: root must be a DOM element");
-    this.root = root; this.onBegin = onBegin; this.onTraining = onTraining; this.onSettingsChange = onSettingsChange; this.onRecommendChoice = onRecommendChoice; this.rng = rng; this.baseUrl = baseUrl;
+    this.root = root; this.onBegin = onBegin; this.onChallenges = typeof onChallenges === "function" ? onChallenges : null; this.onTraining = onTraining; this.onSettingsChange = onSettingsChange; this.onRecommendChoice = onRecommendChoice; this.rng = rng; this.baseUrl = baseUrl;
     this.storage = storage === undefined ? safe(() => globalThis.localStorage) : storage;
     this.session = session === undefined ? safe(() => globalThis.sessionStorage) : session;
     this.mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
@@ -165,7 +169,7 @@ export class MainMenu {
       <section class="mm-plaque" aria-labelledby="mm-title">
         <div class="mm-plaque-inner">
           <header class="mm-title"><h1 id="mm-title">${TITLE.split(" ").map(w => `<span>${esc(w)}</span>`).join(" ")}</h1><p class="mm-sub">${esc(SUBTITLE)}</p></header>
-          <ul class="mm-nav" aria-label="Main menu">${ITEMS.map((it, i) => `<li style="--i:${i}"><button type="button" class="mm-item${it.primary ? " primary" : ""}" data-act="${it.id}"><span class="mm-ico" aria-hidden="true">${ico(ITEM_ICON[it.id])}</span>${esc(it.label)}${it.id === "training" ? ` <small class="mm-tag" hidden>${ico("star")}Recommended</small>` : ""}</button></li>`).join("")}</ul>
+          <ul class="mm-nav" aria-label="Main menu">${this._entries().map((it, i) => `<li style="--i:${i}"><button type="button" class="mm-item${it.primary ? " primary" : ""}" data-act="${it.id}"><span class="mm-ico" aria-hidden="true">${ico(ITEM_ICON[it.id])}</span>${esc(it.label)}${it.id === "training" ? ` <small class="mm-tag" hidden>${ico("star")}Recommended</small>` : ""}</button></li>`).join("")}</ul>
         </div>
       </section>
       <p class="mm-status" role="status" aria-live="polite"></p>
@@ -195,7 +199,7 @@ export class MainMenu {
         <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">${ico("back")}Back to menu</button></div></div></dialog>`;
     const q = s => r.querySelector(s);
     this.art = q(".mm-art"); this.plaque = q(".mm-plaque"); this.nav = q(".mm-nav"); this.statusEl = q(".mm-status"); this.titleEl = q("#mm-title");
-    this.items = Object.fromEntries(ITEMS.map(it => [it.id, q(`[data-act="${it.id}"]`)]));
+    this.items = Object.fromEntries(this._entries().map(it => [it.id, q(`[data-act="${it.id}"]`)]));
     this.trainingTag = q(".mm-tag");
     this.dialogs = Object.fromEntries([...r.querySelectorAll("dialog")].map(d => [d.dataset.dialog, d]));
     for (const d of Object.values(this.dialogs)) d.addEventListener("close", () => { const o = this._opener; this._opener = null; if (o && o.isConnected && this.state === "shown") o.focus({ preventScroll: true }); });
@@ -208,6 +212,7 @@ export class MainMenu {
       else if (act === "recommend-training" || act === "recommend-expedition") { // (028D2) the first-run recommendation's answer
         this._closeDialog(); if (this.onRecommendChoice) this.onRecommendChoice(act === "recommend-training" ? "training" : "expedition"); }
       else if (act === "begin") { if (this.state === "shown") { this.stats.begins++; if (this.onBegin) this.onBegin(this); } }
+      else if (act === "challenges") { if (this.state === "shown" && this.onChallenges) this.onChallenges(this); } // (036A)
       else if (act === "training") { if (this.onTraining) this.onTraining(this); else this.openDialog("training", b); }
       else if (act === "settings" || act === "credits") this.openDialog(act, b); // (the button itself: a click need not have focused it)
     };
@@ -219,6 +224,9 @@ export class MainMenu {
     };
     r.addEventListener("click", this._onClick); r.addEventListener("keydown", this._onKey);
   }
+
+  /** The entries this menu shows: (036A) CHALLENGES only with its hook. */
+  _entries() { return ITEMS.filter(it => !it.hook || this[it.hook]); }
 
   _setMotion(id) {
     this.settings = writeSettings(this.storage, { motion: id });

@@ -24,7 +24,13 @@
 //   evaluation `${physicalKey}|${physiologyKey}` → that species' class / dossier / playability
 // A pick already validated physically costs only its species evaluation ("evaluate" worker task, the page's own planet object kept);
 // a pick already evaluated for this species costs nothing. Switching species keeps the sector seed and both caches.
-import { SURVEY_CLASSES, ROWS, columnCandidates, columnFromValidated, assembleSector, createSurveyCache, physicalKey, evaluationKey, composeCandidate, sectorKey, speciesFor } from "./survey-data.js";
+//
+// SCENARIO (BLOOM-036A). A Challenge survey's sectors are also FOR one scenario: the sector key carries it, and a third cache holds
+//   scenario   `${evaluationKey}|s:${scenarioId}` → layer P (BLOOM.validateScenario with the species) on the canonical physical planet
+// A pick asks for it only once it is already a column match for the species (its class, S2 winnable): a "scenario" worker task with the
+// page's own physical candidate. The physical worlds — and so a sector's draws — are the Expedition's: a Challenge sector is the same part
+// of space, filtered by the scenario's real mechanics, and shares the pool's physical cache with every other sector of this pool.
+import { SURVEY_CLASSES, ROWS, columnCandidates, columnFromValidated, assembleSector, createSurveyCache, physicalKey, evaluationKey, scenarioKey, scenarioFor, composeCandidate, sectorKey, speciesFor } from "./survey-data.js";
 
 const now = () => (globalThis.performance ? performance.now() : Date.now());
 const N = ROWS * SURVEY_CLASSES.length;
@@ -55,13 +61,13 @@ export class SectorPool {
    */
   static workerFactory = null;
 
-  static key(seed, firstBloom, species) { return sectorKey(seed, speciesFor(species), firstBloom); }
+  static key(seed, firstBloom, species, scenario = null) { return sectorKey(seed, speciesFor(species), firstBloom, scenarioFor(scenario)); }
 
   /** Start the first sector now (random seed unless given) and remember it, so a survey constructed later adopts it. Returns this. */
-  prefetch({ sectorSeed = null, firstBloom = false, species = null } = {}) {
+  prefetch({ sectorSeed = null, firstBloom = false, species = null, scenario = null } = {}) {
     if (this.disposed) throw new Error("SectorPool: disposed");
-    const seed = sectorSeed == null ? 1 + Math.floor(Math.random() * 999998) : sectorSeed >>> 0, sp = species ? speciesFor(species) : this.species;
-    this.first = { seed, firstBloom: !!firstBloom, species: sp, entry: this.sector(seed, !!firstBloom, sp) };
+    const seed = sectorSeed == null ? 1 + Math.floor(Math.random() * 999998) : sectorSeed >>> 0, sp = species ? speciesFor(species) : this.species, scn = scenarioFor(scenario);
+    this.first = { seed, firstBloom: !!firstBloom, species: sp, scenario: scn, entry: this.sector(seed, !!firstBloom, sp, scn) };
     return this;
   }
 
@@ -72,15 +78,16 @@ export class SectorPool {
   get progress() {
     const f = this.first; if (!f) return null;
     const e = f.entry;
-    return { seed: f.seed, firstBloom: f.firstBloom, species: f.species.id, confirmed: e.found.reduce((a, b) => a + b, 0), total: N, ready: e.ready, ms: e.ready ? e.ms : Math.round(now() - e.t0) };
+    return { seed: f.seed, firstBloom: f.firstBloom, species: f.species.id, scenario: f.scenario, confirmed: e.found.reduce((a, b) => a + b, 0), total: N, ready: e.ready, ms: e.ready ? e.ms : Math.round(now() - e.t0) };
   }
 
-  get(seed, firstBloom, species = null) { return this.entries.get(SectorPool.key(seed, firstBloom, species || this.species)) || null; }
+  get(seed, firstBloom, species = null, scenario = null) { return this.entries.get(SectorPool.key(seed, firstBloom, species || this.species, scenario)) || null; }
 
   /** Drop the entries for a seed — for one species (035B), or every species when none is given (the survey calls this once the
    *  sector is on screen: the cells hold it now). Another species' sector of the same seed stays (switching back is cheap). */
-  forget(seed, species = null) { const sp = species ? speciesFor(species) : null;
-    for (const k of [...this.entries.keys()]) { const e = this.entries.get(k); if (e.seed === seed && (!sp || e.species.physiologyKey === sp.physiologyKey)) this.entries.delete(k); } }
+  forget(seed, species = null, scenario = undefined) { const sp = species ? speciesFor(species) : null, scn = scenario === undefined ? undefined : scenarioFor(scenario);
+    for (const k of [...this.entries.keys()]) { const e = this.entries.get(k);
+      if (e.seed === seed && (!sp || e.species.physiologyKey === sp.physiologyKey) && (scn === undefined || e.scenario === scn)) this.entries.delete(k); } } // (036A) one scenario's
 
   /**
    * The validated sector for a seed: a cached entry whose `promise` resolves with the assembled sector when all three columns
@@ -90,19 +97,19 @@ export class SectorPool {
    *   shown[col]: worlds already certain to be in the sector, in the order they became certain; cols[col]: finished columns.
    *   A screen that starts showing this sector late replays them, then follows through entry.listener { cell, column }.
    */
-  sector(seed, firstBloom, species = null) {
+  sector(seed, firstBloom, species = null, scenario = null) {
     if (this.disposed) throw new Error("SectorPool: disposed");
-    const sp = species ? speciesFor(species) : this.species, key = SectorPool.key(seed, firstBloom, sp);
+    const sp = species ? speciesFor(species) : this.species, scn = scenarioFor(scenario), key = SectorPool.key(seed, firstBloom, sp, scn);
     let e = this.entries.get(key);
     if (!e) {
-      e = { key, seed, firstBloom: !!firstBloom, species: sp, found: [0, 0, 0], shown: [[], [], []], cols: [null, null, null], listener: null, ready: false, t0: now(), ms: null };
-      e.promise = Promise.all(SURVEY_CLASSES.map((_, col) => this._column(seed, col, firstBloom, sp, pr => {
+      e = { key, seed, firstBloom: !!firstBloom, species: sp, scenario: scn, found: [0, 0, 0], shown: [[], [], []], cols: [null, null, null], listener: null, ready: false, t0: now(), ms: null };
+      e.promise = Promise.all(SURVEY_CLASSES.map((_, col) => this._column(seed, col, firstBloom, sp, scn, pr => {
         if (pr.cell) { e.shown[col].push(pr.cell); if (e.listener) e.listener.cell(col, pr.cell); }
         e.found[col] = Math.max(pr.found || 0, e.shown[col].length); if (this.onProgress) this.onProgress(e);
       }).then(c => { e.cols[col] = c; if (e.listener) e.listener.column(col, c); return c; })))
         .then(cols => { e.ready = true; e.ms = Math.round(now() - e.t0);
-          this.stats.sectorTimes.push({ seed, species: sp.id, ms: e.ms, columns: cols.map(c => c.stats) });
-          return assembleSector(seed, cols, { id: sp.id, name: sp.name, version: sp.version, physiologyVersion: sp.physiologyVersion, physiologyKey: sp.physiologyKey }); });
+          this.stats.sectorTimes.push({ seed, species: sp.id, scenario: scn, ms: e.ms, columns: cols.map(c => c.stats) });
+          return assembleSector(seed, cols, { id: sp.id, name: sp.name, version: sp.version, physiologyVersion: sp.physiologyVersion, physiologyKey: sp.physiologyKey }, scn); });
       e.promise.catch(() => { if (this.entries.get(key) === e) this.entries.delete(key); });
       this.entries.set(key, e);
     }
@@ -132,10 +139,10 @@ export class SectorPool {
   }
 
   // ---------------------------------------------------------------- columns (028B parallel path; main-thread fallback)
-  _column(sectorSeed, column, firstBloom, sp, onProgress) {
-    return this._columnParallel(sectorSeed, column, firstBloom, sp, onProgress).then(r => { this.source = "worker"; return r; }, err => {
+  _column(sectorSeed, column, firstBloom, sp, scn, onProgress) {
+    return this._columnParallel(sectorSeed, column, firstBloom, sp, scn, onProgress).then(r => { this.source = "worker"; return r; }, err => {
       if (this.disposed || err.halted) throw err; // (halted for a departure: never fall back to main-thread generation)
-      return this._columnOnMainThread(sectorSeed, column, firstBloom, sp, onProgress).then(r => { this.source = "main-thread"; return r; });
+      return this._columnOnMainThread(sectorSeed, column, firstBloom, sp, scn, onProgress).then(r => { this.source = "main-thread"; return r; });
     });
   }
 
@@ -143,16 +150,18 @@ export class SectorPool {
    *  stays the canonical one) and its species evaluation (cached), recomposed on the canonical physical object. */
   _adopt(cand) {
     if (!cand) return null;
-    const C = this.cache, { species, speciesKey, habitable, classId, assessment, dossier, playability, playable, ...phys } = cand;
+    const C = this.cache, { species, speciesKey, habitable, classId, assessment, dossier, playability, playable, scenarioId = null, scenarioValidation = null, ...phys } = cand;
     let P = C.physical.get(phys.physicalKey); if (!P) { C.physical.set(phys.physicalKey, phys); P = phys; }
     const ev = { key: speciesKey, species, habitable, classId, assessment, dossier, playability };
     if (!C.evaluation.has(speciesKey)) C.evaluation.set(speciesKey, ev);
-    return composeCandidate(P, C.evaluation.get(speciesKey));
+    if (scenarioValidation && !C.scenario.has(scenarioValidation.key)) C.scenario.set(scenarioValidation.key, scenarioValidation); // (036A)
+    return composeCandidate(P, C.evaluation.get(speciesKey), scenarioValidation ? C.scenario.get(scenarioValidation.key) : null, scenarioId);
   }
 
   /** (035B) One pick for species `sp`: from the caches when possible (no worker at all for a known evaluation; an "evaluate" task for a
    *  world already validated physically), else a full "validate" task. Resolves with the candidate (or null: no world for the seed). */
-  _candidate(pick, sp, group) {
+  _candidate(pick, sp, group, scn = null, want = null) {
+    if (scn) return this._candidate(pick, sp, group).then(c => this._scenario(c, sp, group, scn, want)); // (036A) + layer P for a column match
     const C = this.cache, pk = physicalKey(pick), ek = evaluationKey(pk, sp), spm = { id: sp.id, physiologyKey: sp.physiologyKey };
     if (C.physical.has(pk)) {
       const P = C.physical.get(pk); C.stats.physicalHits++;
@@ -167,14 +176,28 @@ export class SectorPool {
       return this._adopt(c); });
   }
 
+  /** (036A) A species candidate → the Challenge candidate: layer P (from the cache, else a "scenario" worker task on the page's own physical
+   *  candidate) only for a world that already belongs in this column for the species; any other is composed unplayable without a proof. */
+  _scenario(c, sp, group, scn, want) {
+    if (!c) return Promise.resolve(null);
+    const C = this.cache, P = C.physical.get(c.physicalKey), ev = C.evaluation.get(c.speciesKey);
+    if (!P || !ev) return Promise.reject(new Error("SectorPool: a candidate without its cached physical world / evaluation"));
+    if (!c.playable || c.classId !== want) return Promise.resolve(composeCandidate(P, ev, null, scn));
+    const sk = scenarioKey(ev.key, scn);
+    if (C.scenario.has(sk)) { C.stats.scenarioHits++; return Promise.resolve(composeCandidate(P, ev, C.scenario.get(sk), scn)); }
+    C.stats.scenarioMisses++;
+    return this._viaPool({ type: "scenario", physical: P, species: { id: sp.id, physiologyKey: sp.physiologyKey }, scenario: scn, group })
+      .then(sv => { if (!C.scenario.has(sk)) C.scenario.set(sk, sv); return composeCandidate(P, ev, C.scenario.get(sk), scn); });
+  }
+
   /**
    * One column, its validations in parallel (028B): a worker plans the column's next predicted draws (cheap), every pick is
    * validated as its own pool task, and the results are accepted IN STREAM ORDER with survey-data's columnFromValidated — the
    * sequential column's exact rule, so the sector is identical to the one-worker / Node result (tools/destination-survey-check
    * S11). Picks beyond the stopping point are speculative: queued ones are dropped, running ones finish and are ignored.
    */
-  async _columnParallel(sectorSeed, column, firstBloom, sp, onProgress) {
-    const t0 = now(), group = Symbol("column"), base = { sectorSeed, column, firstBloom, species: { id: sp.id, physiologyKey: sp.physiologyKey } }, want = SURVEY_CLASSES[column].id;
+  async _columnParallel(sectorSeed, column, firstBloom, sp, scn, onProgress) {
+    const t0 = now(), group = Symbol("column"), base = { sectorSeed, column, firstBloom, species: { id: sp.id, physiologyKey: sp.physiologyKey }, scenario: scn }, want = SURVEY_CLASSES[column].id;
     const picks = [], pending = [], results = [], known = new Map(), emitted = new Set(); let predictions = 0, predictMs = 0, fb = null, need = ROWS;
     // A validated pick of this class is CERTAIN to be in the column once fewer than `need` earlier picks are still undecided or
     // matching (only those could take its place) — then it can be shown at once, even while earlier picks are still validating.
@@ -187,7 +210,7 @@ export class SectorPool {
       }
     };
     const add = plan => { predictions += plan.predictions; predictMs += plan.predictMs;
-      for (const p of plan.picks) { const j = picks.push(p) - 1, v = this._candidate(p, sp, group);
+      for (const p of plan.picks) { const j = picks.push(p) - 1, v = this._candidate(p, sp, group, scn, want);
         v.then(c => { known.set(j, c); emit(); }, () => {}); pending.push(v); } };
     let plan = await this._viaPool({ type: "plan", ...base, fromDraw: 0, want: ROWS + 1, group }); fb = this._adopt(plan.fb);
     if (fb) { need = ROWS - 1; if (onProgress) onProgress({ cell: fb }); }
@@ -248,8 +271,8 @@ export class SectorPool {
     this._pool = []; this._queue = [];
   }
 
-  async _columnOnMainThread(sectorSeed, column, firstBloom, sp, onProgress) {
-    const it = columnCandidates(sectorSeed, column, undefined, { firstBloom, species: sp, cache: this.cache });
+  async _columnOnMainThread(sectorSeed, column, firstBloom, sp, scn, onProgress) {
+    const it = columnCandidates(sectorSeed, column, undefined, { firstBloom, species: sp, cache: this.cache, scenario: scn });
     for (;;) { const r = it.next(); if (r.done) return r.value; if (onProgress) onProgress(r.value); await new Promise(res => setTimeout(res, 0)); if (this.disposed) throw new Error("disposed"); }
   }
 }
