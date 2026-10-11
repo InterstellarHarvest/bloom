@@ -353,7 +353,7 @@ export function surveyDossier(cand, deps, species) {
   for (const r of w.regions) { light += r.light * r.area; rad += r.radiation * r.area; if (r.radiation > SP.physiology.radTol) strong += r.area; }
   light /= totalA; rad /= totalA; strong /= totalA;
   const lightWord = light < 40 ? "Dim" : light < 70 ? "Moderate" : "Bright";
-  // expected challenges: what limits the starting plant on the land it cannot yet live on (engine limiting factor)
+  // expected hazards (the survey heading; 036B — formerly "Expected challenges"): what limits the starting plant on the land it cannot yet live on (engine limiting factor)
   const challenges = Object.entries(w.limits).filter(([, s]) => s >= 0.03).sort((a, b) => b[1] - a[1]).slice(0, 3)
     .map(([k, s]) => ({ key: k, text: LIMIT_PHRASES[k] || k.replace(":", " · "), share: s }));
   if (w.landmasses > 1) challenges.push({ key: "crossing", text: `Water crossings between ${w.landmasses} landmasses`, share: null });

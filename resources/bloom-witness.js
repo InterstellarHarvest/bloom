@@ -6,7 +6,8 @@
 //   the reference physiology (config.referencePlant), which is what world construction always uses
 //   (BLOOM-036B) and opts.startingState — a prescribed start (createSim's startingState: adaptations owned, starting Biomass) every
 //   probe and simulation starts from; absent = the normal start (unchanged)
-//   BLOOM.findStrategies(planet, config, traits, { minStrategies, pacing, excludeTraits, measurePeak }) → layers 4–8 verdict
+//   BLOOM.findStrategies(planet, config, traits, { minStrategies, pacing, excludeTraits, measurePeak, maxRuns }) → layers 4–8 verdict
+//   (BLOOM-036B) maxRuns: opt-in cap on all simulation runs including confirmation reruns (an early stop; absent = unchanged)
 //   BLOOM.witness.strategyOf(planet, config, traits, items) → { sufficient, coverage, signature } (order-independent)
 //   BLOOM.witness.strategyClasses(planet, config, traits) → static candidate classes (no simulation)
 //   measurePeak: keep a passing witness running to its plateau to report true peak coverage (slower)
@@ -287,6 +288,9 @@
       for (const cand of cl.members.slice(0, D.maxBuildsPerClass)) {
         for (const opening of X.openings) {
           if (X.search.simulations >= D.maxSimulations) { budgetOut = true; break; }
+          // (BLOOM-036B) opts.maxRuns: an opt-in cap on ALL simulation runs, confirmation reruns included — checked only before a new
+          // witness run starts, so a winner always completes its confirmations (a proof found within it is the proof found without it)
+          if (opts.maxRuns && X.search.simulations + (X.search.confirmations || 0) >= opts.maxRuns) { budgetOut = true; break; }
           const r = X.run(cand, opening, opts.measurePeak);
           if (!r.ok) { if (!best || r.peak > best.peak) best = r; continue; }
           // a witness proves its strategy only if its whole core was bought before the margin was reached

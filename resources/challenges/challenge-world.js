@@ -38,14 +38,15 @@ import { physicalCandidate, evaluateSpecies, assessWorld, classFor, physicalKey,
 
 export const FORMAT = 1;                       // the Challenge instance format
 export const RULE_VERSION = 1;                 // the selection rule below (stages + proof budget); recorded in every instance
-// PROOF BUDGET (early stop, BLOOM-036B recipe study): layer P may run at most this many witness simulations for a Challenge world (the
-// scenario validator's own budget is config.validation.diversity.maxSimulations = 40). Counted in simulations, never in time, so it is
-// deterministic. It never weakens a proof: the validator's search is ordered, so a world proven within the budget gets the SAME witness
-// and verdict as under the full budget; a world that cannot be proven within it (most such searches end INCONCLUSIVE / FAIL after all 40
-// simulations — the slow 30–140 s waits) is simply not offered. Confirmation-seed runs are not part of the budget (as in the validator).
+// PROOF BUDGET (early stop, BLOOM-036B recipe study + browser timing): layer P may use at most this many simulation RUNS in all — witness
+// candidates AND the scenario's confirmation reruns (validation.confirmRngSeeds: every winning witness is replayed under two more seeds,
+// and the validator does not count those against its own 40-simulation budget). Counted in runs, never in time, so it is deterministic.
+// It never weakens a proof: the validator's search is ordered and the cap is only checked before a NEW witness run starts (a winner always
+// completes its confirmations), so a world proven within it gets the SAME witness and verdict as under the full budget; a world that cannot
+// be proven within it is simply not offered (most such searches would end INCONCLUSIVE / FAIL — the slow 15–140 s waits).
 export const MAX_DRAWS = 160;                  // a launch's draw budget: only bounds a pathological stream (the study's worst case is far below)
 export const RULE_PATH = "challenge-world rule 1: stream (launch seed · Challenge id · version · recipe version) → structural prediction (arrival band) → "
-  + "physicalCandidate (BLOOM.play.runSearch, layers 1–8) → recipe → BLOOM.species.validateFor S2 → native cover → BLOOM.validateScenario (layer P, proof budget 6 simulations)";
+  + "physicalCandidate (BLOOM.play.runSearch, layers 1–8) → recipe → BLOOM.species.validateFor S2 → native cover → BLOOM.validateScenario (layer P, proof budget: 6 simulation runs, confirmations included)";
 export const STAGES = Object.freeze(["predicted", "physical", "recipe", "species", "cover", "scenario", "ok"]);
 
 const deps0 = deps => ({ BLOOM: (deps && deps.BLOOM) || globalThis.BLOOM, BLOOM_DATA: (deps && deps.BLOOM_DATA) || globalThis.BLOOM_DATA });
@@ -106,22 +107,15 @@ export function nativeStartShare(planet, scenarioId, species, deps) {
 }
 
 export const PROOF_BUDGET = 6;
-/** the scenario validator's config with the Challenge proof budget: a deep copy (BLOOM.play.deriveConfig), every other value identical */
-const proofConfigs = new WeakMap();
-export function proofConfig(BLOOM, C) {
-  let c = proofConfigs.get(C);
-  if (!c) { c = BLOOM.play.deriveConfig(C, { validation: { diversity: { maxSimulations: Math.min(PROOF_BUDGET, C.validation.diversity.maxSimulations) } } }); proofConfigs.set(C, c); }
-  return c;
-}
 
 /** Layer P for a Challenge world: the engine's BLOOM.validateScenario with the species and the starting state (plain verdict + evidence). */
 export function validateScenarioFor(phys, species, scenarioId, startingState, deps) {
   const { BLOOM, BLOOM_DATA: D } = deps0(deps), sp = speciesFor(species, deps), S = BLOOM.pressure.resolveScenario(D.scenarios, scenarioId);
   if (S.id !== scenarioId || S.id === BLOOM.pressure.DEFAULT_SCENARIO) throw new Error(`challenge-world: "${scenarioId}" is not a real Challenge scenario`);
-  const t0 = now(), v = BLOOM.validateScenario(phys.planet, proofConfig(BLOOM, D.config), D.traits, S, { archetypeId: phys.archetypeId || undefined, species: sp, ...(startingState ? { startingState } : {}) });
+  const t0 = now(), v = BLOOM.validateScenario(phys.planet, D.config, D.traits, S, { archetypeId: phys.archetypeId || undefined, species: sp, maxRuns: PROOF_BUDGET, ...(startingState ? { startingState } : {}) });
   const w = (v.strategies || [])[0] || null;
   return { scenarioId: S.id, ok: !!v.ok, status: v.status, reason: v.reason || null, required: v.required, strategiesProven: (v.strategies || []).length,
-    proofBudget: PROOF_BUDGET, simulations: v.search ? v.search.simulations : null,
+    proofBudget: PROOF_BUDGET, simulations: v.search ? v.search.simulations : null, confirmations: v.search ? v.search.confirmations || 0 : null,
     path: "BLOOM.validateScenario (layer P) with the species" + (startingState ? " and the prescribed starting state" : ""), ms: Math.round(now() - t0),
     competition: v.competition ? { startShare: v.competition.startShare } : null,
     witness: w ? { signature: w.signature, marginSeconds: w.marginSeconds, purchases: w.purchases.length,

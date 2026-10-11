@@ -15,7 +15,7 @@
 //
 // THE DOSSIER. CHALLENGE (name, what changes, the strategic idea) · YOUR PLANT (the species — a prescribed one says so — its specimen with
 // any prescribed adaptations, and a prescribed starting state) · YOUR WORLD (a PlanetSphereView of the EXACT accepted planet, its name, world
-// type, World Seed, the ground the plant can live on at landing, the conditions rows and the expected hazards — the survey's own dossier
+// type, World Seed, the ground the plant can live on at landing and its foothold, the conditions rows and the expected hazards — the survey's own dossier
 // data, computed for this species and starting state). Primary BEGIN CHALLENGE, secondary Back. Nothing here regenerates, rerolls or
 // offers another world: entering the Challenge again from the hub is the route to a fresh instance.
 //
@@ -199,7 +199,8 @@ export class ChallengeWorldScreen {
               <p class="cw-type"></p><p class="cw-tagline"></p>
               <div class="cw-hab"><div class="cw-hab-top"><span>Ground your plant can live on at landing</span><b></b></div>
                 <div class="cw-bar" role="img"><i class="g"></i><i class="y"></i><i class="r"></i></div>
-                <div class="cw-bar-key" aria-hidden="true"><span class="ok">${ico("check")}<span>Suits</span></span><span class="warn">${ico("alert")}<span>Marginal</span></span><span class="bad">${ico("x")}<span>Hostile</span></span></div></div>
+                <div class="cw-bar-key" aria-hidden="true"><span class="ok">${ico("check")}<span>Suits</span></span><span class="warn">${ico("alert")}<span>Marginal</span></span><span class="bad">${ico("x")}<span>Hostile</span></span></div>
+                <p class="cw-foot" hidden></p></div>
               <dl class="cw-rows"></dl>
               <section class="cw-hazards"><h3>${ico("hazard")}Expected hazards</h3><ul></ul></section>
             </section>
@@ -231,6 +232,11 @@ export class ChallengeWorldScreen {
     const bar = q(".cw-bar"); bar.setAttribute("aria-label", `At landing: ${pct(h.green)}% of the land suits your plant, ${pct(h.yellow)}% is marginal, ${pct(h.red)}% is hostile`);
     [["g", h.green], ["y", h.yellow], ["r", h.red]].forEach(([k, v]) => { bar.querySelector("." + k).style.width = (v * 100).toFixed(1) + "%"; });
     [["ok", "Suits", h.green], ["warn", "Marginal", h.yellow], ["bad", "Hostile", h.red]].forEach(([k, w, v]) => { q(`.cw-bar-key .${k} span`).textContent = `${w} ${pct(v)}%`; });
+    // the foothold (the S1 measure: land the plant can grow on at landing AND reach over land from its landing region) — shown for the normal
+    // start only (S1 is measured without a prescribed start, so it would understate one)
+    const s1 = X.candidate.playability && X.candidate.playability.s1, foot = q(".cw-foot");
+    foot.hidden = !(s1 && X.startingState === null && Number.isFinite(s1.reachableShare));
+    if (!foot.hidden) foot.textContent = `Foothold: ${pct(s1.reachableShare)}% of the land is growable at landing and reachable over land from your landing region.`;
     q(".cw-rows").innerHTML = d.rows.map(r => { const [cat, icon] = ROW_CAT[r.id] || [null, "info"];
       return `<div class="cw-row"${cat ? ` data-cat="${cat}"` : ""}><dt><span class="cw-row-i" aria-hidden="true">${ico(icon)}</span>${esc(r.label)}</dt><dd><b>${esc(r.word)}</b><span class="cw-row-v">${esc(r.value)}</span></dd></div>`; }).join("");
     q(".cw-hazards ul").innerHTML = d.challenges.length ? d.challenges.map(c => `<li>${esc(c.text)}${c.share != null ? ` <small>· ${pct(c.share)}% of land</small>` : ""}</li>`).join("")
