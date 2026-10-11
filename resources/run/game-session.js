@@ -7,11 +7,13 @@
 //
 //   run        the run descriptor: { kind, planet, archetype, seed, scenario, play, training, expedition, render, summary }.
 //              BLOOM.gameSession.expeditionRun(detail) builds it from the Destination Survey's Begin Expedition detail — the EXACT
-//              selected planet object, never regenerated; BLOOM.gameSession.trainingRun() the training run; the developer harness
+//              selected planet object, never regenerated; (036B) BLOOM.gameSession.challengeRun(instance) from a Challenge instance — its
+//              exact planet, Challenge, scenario, species and starting state; BLOOM.gameSession.trainingRun() the training run; the developer harness
 //              (demos/demo-run.html) builds its own (First Bloom, planet=, archetype=&seed=, scenario=, play=1 …).
 //   host       where the production Planet View mounts (default document.body)
 //   onAction   (the product) the player's run / report / training actions: onAction(id) with id ∈ playAgain · choosePlanet · mainMenu ·
-//              restartTraining · skipTraining · beginExpedition (· restartRun). Leaving a live run still asks first (the run is not saved).
+//              restartTraining · skipTraining · beginExpedition (· restartRun) · (036B, a Challenge run) retryChallenge · challenges.
+//              Leaving a live run still asks first (the run is not saved).
 //              Without it (a developer harness) the historical hrefs apply: every action opens a fresh page.
 //   shell      (DEVELOPER HARNESS ONLY: demos/demo-run.html ?ui=legacy) drive the historical engineering shell the harness page carries
 //              (header HUD, inspect / shop sidebars, canvas, footer, report modal) instead of the production UI. index.html never sets
@@ -63,8 +65,10 @@ const SPECIES=BLOOM_RUN.species;
 // BLOOM-028D1: a training run (?training=1) plays on its own derived config (content/training.js through BLOOM.play.deriveConfig:
 // a copy — the shared config is never touched) with a seeded random stream; every other run is created exactly as before
 const TRAIN=BLOOM_RUN.training||null, TC=TRAIN?BLOOM_DATA.training.copy:null;
+// (BLOOM-036B) a Challenge's prescribed starting state (owned adaptations / Biomass) — the engine's own createSim startingState; null = normal
+const START=TRAIN?null:(BLOOM_RUN.startingState||null);
 const sim=BLOOM.createSim(BLOOM_RUN.planet, TRAIN?TRAIN.config:BLOOM_DATA.config, BLOOM_DATA.traits,
-  TRAIN?{scenario:BLOOM_RUN.scenario||undefined, rng:BLOOM.gen.mulberry32(TRAIN.rngSeed), species:SPECIES}:{scenario:BLOOM_RUN.scenario||undefined, species:SPECIES});
+  TRAIN?{scenario:BLOOM_RUN.scenario||undefined, rng:BLOOM.gen.mulberry32(TRAIN.rngSeed), species:SPECIES}:{scenario:BLOOM_RUN.scenario||undefined, species:SPECIES, ...(START?{startingState:START}:{})});
 const CFG=sim.config;
 // BLOOM-012: the run's pressure scenario (null / default = no pressure: every readout below is exactly as before)
 const SCN=BLOOM_RUN.scenario||null, PRESS=!!(SCN&&SCN.pressure), PS=sim.pressure;
@@ -103,9 +107,14 @@ const RUN_ARCH=BLOOM_RUN.kind==="procedural"?BLOOM_RUN.archetype.id:null, RUN_SC
 // (opts.onAction): Play again = a fresh session on the SAME planet object (never the seed), Choose another planet = the Destination
 // Survey, Main menu = the title — all inside index.html. Never ui=legacy, no scenario chooser.
 const XP=BLOOM_RUN.expedition||null, XC=XP&&PC?PC.expedition:null;
+// (BLOOM-036B) a CHALLENGE run (the Challenge instance's exact planet): its own actions — Retry Challenge (the same instance, a fresh
+// simulation) · Challenges (the hub) · Main menu — never the Expedition's "Choose another planet"
+const CX=BLOOM_RUN.challengeRun||null, CC=CX&&PC?PC.challenge:null;
 // (BLOOM-028D1) an authored world opened by planet= is replayed by the same planet=; First Bloom's own links are unchanged
 const AUTH_Q=BLOOM_RUN.planetParam?"&planet="+encodeURIComponent(BLOOM_RUN.planetParam):"";
 function playActions(){ const X=PC.actions, q=BLOOM.play.runQuery;
+  if(CX) return [{id:"retryChallenge", label:CC.retry, note:CC.retryNote, primary:true},
+    {id:"challenges", label:CC.challenges, note:CC.challengesNote}, {id:"mainMenu", label:CC.mainMenu, note:CC.mainMenuNote}];
   if(XP) return [{id:"playAgain", label:XC.playAgain, note:XC.playAgainNote, primary:true},
     {id:"choosePlanet", label:XC.choosePlanet, note:XC.choosePlanetNote}, {id:"mainMenu", label:XC.mainMenu, note:XC.mainMenuNote}];
   if(TRAIN) return sim.won // (BLOOM-028D1) training: its own three; (BLOOM-028D2) finished: Begin Expedition · Restart training · Main menu
@@ -174,7 +183,7 @@ function stops(v){ const S=TEMP_STOPS; if(v<=S[0][0])return S[0][1].slice(); if(
 // BLOOM-010: an archetype may carry a tiny temporary terrain treatment (archetype.render, data only): a ground tint mixed
 // into bare ground, its own water colours and a faint dune stipple. Worlds without it (First Bloom, Ocean) draw as before.
 // (BLOOM-029F) an expedition run keeps the survey's exact render hints (detail.render, as selected), never a reconstruction
-const RENDER=XP?(BLOOM_RUN.render||null):(BLOOM_RUN.kind==="procedural"&&BLOOM_RUN.archetype.render)||null;
+const RENDER=XP||CX?(BLOOM_RUN.render||null):(BLOOM_RUN.kind==="procedural"&&BLOOM_RUN.archetype.render)||null;
 // BLOOM-011: render.tintBy "cold" weights the ground tint by how cold the ground is NOW (live sky + local offset), so mild
 // refuges and geothermal ground keep their own colour, and warming the sky visibly thaws the map; "dry" (default) = BLOOM-010
 const TINT_COLD=!!(RENDER&&RENDER.tintBy==="cold"), FROST_BELOW=-8;
@@ -973,7 +982,10 @@ const reportIdentity=()=>({ planetId:BLOOM_RUN.planet.id, planetName:BLOOM_RUN.p
   seed:RUN_ARCH?BLOOM_RUN.seed:null, seedWord:SEEDWORD, species:BLOOM.species.provenance(SPECIES), challenge:BLOOM_RUN.challenge?BLOOM.challenges.provenance(BLOOM_RUN.challenge):null, scenarioId:RUN_SCN, scenarioName:SCN?SCN.name:DEFAULT_NAME, scenarioTitle:SCN&&SCN.display?SCN.display.title:null, scenarioActive:SCEN, training:!!TRAIN, play:PLAY,
   // (BLOOM-029F) the exact selected world's provenance (the seed above is provenance too: the run was never regenerated from it)
   expedition:XP?{ source:XP.source, candidateKey:XP.candidateKey, sectorSeed:XP.sectorSeed, classId:XP.classId, authored:XP.authored, archetypeId:XP.archetypeId, seed:XP.seed, attempt:XP.attempt, fingerprint:XP.fingerprint, validation:XP.validation,
-    speciesId:XP.speciesId, physiologyVersion:XP.physiologyVersion, physiologyKey:XP.physiologyKey }:null });
+    speciesId:XP.speciesId, physiologyVersion:XP.physiologyVersion, physiologyKey:XP.physiologyKey }:null,
+  // (BLOOM-036B) a Challenge run's provenance (challenge id / version, recipe version, launch seed, planet seed / fingerprint, species,
+  // scenario) and the starting state the CHALLENGE gave — never counted as the player's purchases
+  challengeRun:CX?{ ...CX }:null, startingState:sim.startingState?{ adaptations:[...sim.startingState.adaptations], biomass:sim.startingState.biomass, source:sim.startingState.source }:null });
 // BLOOM-012: the scenario's identity and how far the decline got, with the drift the plant endured (pressure runs only)
 function pressureReportData(){ if(!PRESS) return null; const o=PS.offsets;
   return { title:SCN.display.title, phaseName:phaseName(PS.phase), phase:PS.phase, progress:PS.progress, done:PS.progress>=1, offsets:{moist:o.moist, temp:o.temp, rad:o.rad}, max:{moist:PS.max.moist, temp:PS.max.temp, rad:PS.max.rad} }; }
@@ -1330,43 +1342,71 @@ const API=root.BLOOM_API={
    * (BLOOM-035B) `species` IS the species the candidate was classified and validated for: detail.species (the survey's canonical object)
    * and the candidate's provenance (speciesId + physiologyKey) must name the same species and the same physiology revision, or this throws
    * — an unknown id throws too. Play Again passes the same `detail` again: the SAME planet object and the SAME species object.
-   * (BLOOM-036A) A CHALLENGE run: `detail.challenge` (the canonical BLOOM.challenges.resolve object the survey was for) — the run plays the
-   * Challenge's scenario (the catalogue's own scenario object through the engine's resolver: nothing copied, nothing tuned) and the candidate's
-   * provenance must say the world was proven under that scenario (candidate.scenarioId + a passing scenarioValidation), or this throws. An
-   * Expedition (no challenge) must carry no scenario provenance either: the default scenario, no Challenge residue.
+   * (BLOOM-036B) An Expedition only: a Challenge is never launched through the Destination Survey any more (challengeRun below), so a
+   * detail carrying a Challenge, or a candidate carrying scenario provenance, is refused (no Challenge residue in an Expedition).
    */
   function expeditionRun(detail, { BLOOM_DATA = root.BLOOM_DATA, fingerprint = null } = {}) {
     if (!detail || !detail.planet || typeof detail.planet !== "object") throw new TypeError("BLOOM.gameSession.expeditionRun: detail.planet is required (the survey's selected planet)");
     if (!detail.candidate || typeof detail.candidate.key !== "string") throw new TypeError("BLOOM.gameSession.expeditionRun: detail.candidate is required");
+    if (detail.challenge || detail.instance) throw new Error("BLOOM.gameSession.expeditionRun: a Challenge is launched from its own generated planet (challengeRun), never from the Destination Survey");
+    if (detail.candidate.scenarioId != null) throw new Error(`BLOOM.gameSession.expeditionRun: an Expedition candidate carries scenario provenance (${detail.candidate.scenarioId}): no Challenge residue`);
     const P = detail.planet, c = detail.candidate, authored = !!c.authored, D = BLOOM_DATA || {}, render = detail.render || null;
-    const species = runSpecies(detail), challenge = runChallenge(detail);
+    const species = runSpecies(detail);
     const A = !authored && Array.isArray(D.archetypes) ? D.archetypes.find(a => a.id === c.archetypeId) || null : null;
     const archetype = authored ? null : A || { id: c.archetypeId, name: (P.archetype && P.archetype.name) || c.archetypeId || "Unknown world type", render, display: null, standIn: true };
-    const pa = P.archetype || null, scenario = challenge ? root.BLOOM.challenges.scenarioOf(challenge) : null, S = scenario ? { id: scenario.id, name: scenario.name } : defaultScenario();
+    const pa = P.archetype || null, S = defaultScenario();
     const expedition = { source: "destination-survey", candidateKey: c.key, sectorSeed: c.sectorSeed ?? null, classId: c.classId ?? null, authored, archetypeId: c.archetypeId ?? null,
       seed: c.seed ?? null, attempt: c.attempt ?? null, validation: c.validation ?? null, fingerprint,
-      speciesId: species.id, physiologyVersion: species.physiologyVersion, physiologyKey: species.physiologyKey,
-      challengeId: challenge ? challenge.id : null, scenarioId: challenge ? scenario.id : null, scenarioValidation: challenge ? c.scenarioValidation : null };
+      speciesId: species.id, physiologyVersion: species.physiologyVersion, physiologyKey: species.physiologyKey };
     const summary = { kind: authored ? "authored" : "procedural", expedition: true, source: expedition.source, candidateKey: c.key, sectorSeed: expedition.sectorSeed, classId: expedition.classId,
       planetId: P.id, name: P.name, archetypeId: expedition.archetypeId, archetype: archetype ? archetype.name : null, publicSeed: expedition.seed, attempt: expedition.attempt,
       validatedLayers: pa ? pa.validatedLayers || null : null, landmasses: pa ? pa.landmasses ?? null : null, actualWaterPct: pa ? pa.actualWaterPct ?? null : null,
-      scenarioId: S.id, scenario: S.name, fingerprint, validation: expedition.validation, species: root.BLOOM.species.provenance(species),
-      challenge: challenge ? root.BLOOM.challenges.provenance(challenge) : null, scenarioValidation: expedition.scenarioValidation };
-    return { kind: summary.kind, play: true, planet: P, archetype, seed: authored ? null : expedition.seed, scenario, challenge, render, species, expedition, summary };
+      scenarioId: S.id, scenario: S.name, fingerprint, validation: expedition.validation, species: root.BLOOM.species.provenance(species), challenge: null };
+    return { kind: summary.kind, play: true, planet: P, archetype, seed: authored ? null : expedition.seed, scenario: null, challenge: null, render, species, expedition, summary };
   }
-  /** (036A) the run's Challenge from the survey detail: the canonical object, cross-checked with the candidate's scenario provenance. */
-  function runChallenge(detail) {
-    const B = root.BLOOM, c = detail.candidate, ch = detail.challenge || null;
-    if (!ch) {
-      if (c.scenarioId != null) throw new Error(`BLOOM.gameSession.expeditionRun: an Expedition candidate carries scenario provenance (${c.scenarioId}): no Challenge residue`);
-      return null;
-    }
-    if (!B.challenges) throw new Error("BLOOM.gameSession.expeditionRun: load content/challenges.js and resources/bloom-challenges.js");
-    const r = B.challenges.resolve(ch.id); // an unknown id throws (never a silent Expedition)
-    if (r !== ch) throw new Error(`BLOOM.gameSession.expeditionRun: detail.challenge is not the canonical ${ch.id} object`);
-    if (c.scenarioId !== r.scenario) throw new Error(`BLOOM.gameSession.expeditionRun: the candidate was surveyed for scenario ${c.scenarioId}, not ${r.scenario} (${r.name})`);
-    if (!c.scenarioValidation || !c.scenarioValidation.ok) throw new Error(`BLOOM.gameSession.expeditionRun: the candidate was not proven under ${r.name}`);
-    return r;
+
+  /**
+   * (BLOOM-036B) The run descriptor of a CHALLENGE: a Challenge instance (resources/challenges/challenge-world.js makeInstance, the dossier's
+   * BEGIN CHALLENGE) → { kind, play, planet, archetype, seed, scenario, challenge, species, startingState, challengeRun, render, summary }.
+   * `planet` IS instance.planet — the exact object the Challenge's selection accepted and the dossier drew (no copy, no regeneration, no
+   * search). Every part is cross-checked against the CURRENT catalogue, and an instance made under another Challenge version, recipe
+   * version, physiology or starting state is refused — an old instance is never reinterpreted under new data. Retry Challenge passes the
+   * same instance again: the same planet, Challenge, scenario, species and starting state objects, a fresh simulation.
+   */
+  function challengeRun(X, { BLOOM_DATA = root.BLOOM_DATA, fingerprint = null } = {}) {
+    const B = root.BLOOM, D = BLOOM_DATA || {};
+    if (!X || X.kind !== "challenge-instance" || X.format !== 1) throw new TypeError("BLOOM.gameSession.challengeRun: a Challenge instance (format 1) is required");
+    if (!B.challenges) throw new Error("BLOOM.gameSession.challengeRun: load content/challenges.js and resources/bloom-challenges.js");
+    const ch = B.challenges.resolve(X.challengeId);                                  // an unknown id throws (never a silent Expedition)
+    if (ch !== X.challenge) throw new Error(`BLOOM.gameSession.challengeRun: the instance's Challenge is not the canonical ${X.challengeId} object`);
+    if (ch.version !== X.challengeVersion || ch.launch.world.recipe.version !== X.recipeVersion)
+      throw new Error(`BLOOM.gameSession.challengeRun: the instance was made under ${X.challengeId} v${X.challengeVersion} / recipe ${X.recipeVersion}, now v${ch.version} / recipe ${ch.launch.world.recipe.version}`);
+    const scenario = B.challenges.scenarioOf(ch);
+    if (scenario.id !== X.scenarioId) throw new Error(`BLOOM.gameSession.challengeRun: the instance plays ${X.scenarioId}, the Challenge ${scenario.id}`);
+    const species = B.species.resolve(X.speciesId);
+    if (species !== X.species || species.physiologyKey !== X.candidate.physiologyKey) throw new Error(`BLOOM.gameSession.challengeRun: the instance's species is not the canonical ${X.speciesId} (physiology ${X.candidate.physiologyKey})`);
+    const pres = B.challenges.speciesOf(ch); if (pres && pres !== species) throw new Error(`BLOOM.gameSession.challengeRun: ${ch.name} prescribes ${pres.name}`);
+    const start = B.challenges.startingStateOf(ch);
+    if (start !== X.startingState) throw new Error(`BLOOM.gameSession.challengeRun: the instance's starting state is not ${ch.name}'s`);
+    const sv = X.candidate.scenarioValidation;
+    if (!sv || !sv.ok || sv.scenarioId !== scenario.id) throw new Error(`BLOOM.gameSession.challengeRun: the instance's planet was not proven under ${ch.name}`);
+    if (!X.candidate.playability || !X.candidate.playability.ok) throw new Error("BLOOM.gameSession.challengeRun: the instance's planet was not proven winnable for its species");
+    const P = X.planet;
+    if (!P || typeof P !== "object") throw new TypeError("BLOOM.gameSession.challengeRun: the instance has no planet");
+    const A = Array.isArray(D.archetypes) ? D.archetypes.find(a => a.id === X.archetypeId) || null : null;
+    const archetype = A || { id: X.archetypeId, name: (P.archetype && P.archetype.name) || X.archetypeId, render: X.render || null, display: null, standIn: true };
+    const pa = P.archetype || null;
+    const challengeRun = { source: "challenge-recipe", challengeId: ch.id, challengeVersion: ch.version, recipeVersion: X.recipeVersion, recipeKey: ch.recipeKey, ruleVersion: X.ruleVersion,
+      scenarioId: scenario.id, speciesId: species.id, speciesPolicy: X.speciesPolicy, physiologyKey: species.physiologyKey, launchSeed: X.launchSeed, draw: X.draw,
+      planetSeed: X.worldSeed, archetypeId: X.archetypeId, attempt: X.candidate.attempt, fingerprint: fingerprint || X.fingerprint, instanceFingerprint: X.fingerprint,
+      startingState: start ? { adaptations: [...start.adaptations], biomass: start.biomass, source: "challenge" } : null, scenarioValidation: { status: sv.status, strategiesProven: sv.strategiesProven } };
+    const summary = { kind: "procedural", challenge: B.challenges.provenance(ch), source: challengeRun.source, planetId: P.id, name: P.name, archetypeId: X.archetypeId,
+      archetype: archetype.name, publicSeed: X.worldSeed, attempt: X.candidate.attempt, validatedLayers: pa ? pa.validatedLayers || null : null,
+      landmasses: pa ? pa.landmasses ?? null : null, actualWaterPct: pa ? pa.actualWaterPct ?? null : null, scenarioId: scenario.id, scenario: scenario.name,
+      fingerprint: challengeRun.fingerprint, validation: X.candidate.validation, species: B.species.provenance(species), scenarioValidation: challengeRun.scenarioValidation,
+      challengeRun, startingState: challengeRun.startingState };
+    return { kind: "procedural", play: true, planet: P, archetype, seed: X.worldSeed, scenario, challenge: ch, species, startingState: start, render: X.render || null,
+      challengeRun, expedition: null, summary };
   }
   /** (035B) the expedition's species from the survey detail: the canonical object, cross-checked with the candidate's provenance. */
   function runSpecies(detail) {
@@ -1399,5 +1439,5 @@ const API=root.BLOOM_API={
   /** the default scenario (no challenge modifier): { id, name } from the scenario catalogue */
   function defaultScenario() { const s = root.BLOOM.pressure.resolveScenario(root.BLOOM_DATA.scenarios, null); return { id: s.id, name: s.name }; }
 
-  root.BLOOM = Object.assign(root.BLOOM || {}, { gameSession: Object.freeze({ version: 1, create, expeditionRun, trainingRun, get instance() { return current; } }) });
+  root.BLOOM = Object.assign(root.BLOOM || {}, { gameSession: Object.freeze({ version: 1, create, expeditionRun, challengeRun, trainingRun, get instance() { return current; } }) });
 })(typeof window !== "undefined" ? window : globalThis);

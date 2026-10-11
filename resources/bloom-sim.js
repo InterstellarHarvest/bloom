@@ -26,6 +26,12 @@
 // warning, then a temporary offset on the same sky inputs every evaluation already reads, then a full return. Permanent
 // Terraform is never undone and planet data is never edited. sim.climate holds the live state; no block = no state, no
 // extra RNG draws (shock timing and type come from the purchases and a planet-derived hash, never from the run RNG).
+// BLOOM-036B: a prescribed STARTING STATE. createSim(…, { startingState: { adaptations: [traitId…], biomass } }) lands the plant with
+// those plant adaptations already owned (one tier per id, applied in order through the engine's own legality rule and effect — never
+// paid for: sim.spent stays 0) and/or the given starting Biomass instead of config.econ.startBiomass. Only Adapt / Spread plant traits
+// whose effect needs no world feature (tempPoint, waterArm, level); a Terraform step (the planet's sky) or a crossing (only on maps
+// that have one) is refused. sim.startingState records it (null = the normal start), so a run knows what it was GIVEN, not bought.
+// Absent = the normal start, bit for bit.
 //
 // ⚠ tools/golden/first_bloom.json pins this file's behavior bit-for-bit under a seeded RNG
 // (run traces last regenerated on purpose by BLOOM-009, an owner-authorized gameplay retune).
@@ -66,6 +72,21 @@
   const ZERO_OFFSETS = Object.freeze({ temp: 0, moist: 0, rad: 0 });
   // (BLOOM-035B) createSim's species: a resolved species (BLOOM.species.resolve) — never an id string, never a bare physiology
   const PHYSIOLOGY_KEYS = ["tempFloor", "tempCeil", "waterPos", "waterTol", "saltTol", "radTol", "toxTol"];
+  // (BLOOM-036B) the plant-trait effects a starting state may hold: they change only the plant, never need a world feature
+  const STARTING_EFFECTS = Object.freeze(["tempPoint", "waterArm", "level"]), STARTING_BOARDS = Object.freeze(["Adapt", "Spread"]);
+  function checkedStart(st, traitById) {
+    if (!st || typeof st !== "object" || Array.isArray(st)) throw new Error("bloom-sim: opts.startingState must be { adaptations, biomass }");
+    const extra = Object.keys(st).filter(k => !["adaptations", "biomass", "source"].includes(k));
+    if (extra.length) throw new Error(`bloom-sim: opts.startingState: unknown key(s) ${extra.join(", ")}`);
+    const ad = st.adaptations == null ? [] : st.adaptations;
+    if (!Array.isArray(ad) || ad.some(id => typeof id !== "string")) throw new Error("bloom-sim: opts.startingState.adaptations must be a list of trait ids");
+    for (const id of ad) { const t = traitById[id];
+      if (!t) throw new Error(`bloom-sim: opts.startingState: unknown trait "${id}"`);
+      if (!STARTING_BOARDS.includes(t.board) || !STARTING_EFFECTS.includes(t.effect.type))
+        throw new Error(`bloom-sim: opts.startingState: "${id}" (${t.board} · ${t.effect.type}) cannot be a starting adaptation (plant traits only: ${STARTING_EFFECTS.join(" / ")})`); }
+    if (st.biomass != null && !(Number.isFinite(st.biomass) && st.biomass >= 0)) throw new Error("bloom-sim: opts.startingState.biomass must be a number ≥ 0 (or null: the normal start)");
+    return { adaptations: ad.slice(), biomass: st.biomass == null ? null : st.biomass, source: typeof st.source === "string" ? st.source : "challenge" };
+  }
   function checkedSpecies(sp) {
     if (typeof sp !== "object" || typeof sp.id !== "string" || typeof sp.physiologyKey !== "string" || !sp.physiology || !Object.isFrozen(sp.physiology))
       throw new Error("bloom-sim: opts.species must be a resolved species (BLOOM.species.resolve(id)), got " + (typeof sp === "string" ? `"${sp}"` : typeof sp));
@@ -1057,6 +1078,15 @@
       const cost = specPrice(); sim.biomass -= cost; sim.spent.local += cost; sim.colonies.spec[i] = id; return true;
     }
 
+    // (BLOOM-036B) the prescribed starting state: owned before the first tick, through the engine's own legality rule and effect (no cost)
+    const START = opts.startingState == null ? null : checkedStart(opts.startingState, traitById);
+    if (START) {
+      for (const id of START.adaptations) { const t = traitById[id];
+        if (!canBuy(t)) throw new Error(`bloom-sim: opts.startingState: "${id}" is not legal there (${why(t) || "its level is already at the maximum"})`);
+        applyTrait(t); }
+      if (START.biomass != null) sim.biomass = START.biomass;
+    }
+    sim.startingState = START ? Object.freeze({ adaptations: Object.freeze(START.adaptations), biomass: sim.biomass, source: START.source }) : null;
     Object.assign(sim, { derived, evaluate, lampOf, tick, coverage, livingCountBySection, collectBubble, placeBubble,
       traitById, offered, price, canBuy, ownedTier, why, buy, previewOf, establishment, colonyStatus,
       nativeEvaluate: CP ? nativeEvaluate : null, competitionAt, holdsAgainstNatives,
@@ -1066,6 +1096,7 @@
   }
 
   root.BLOOM = Object.assign(root.BLOOM || {}, { createSim, resolveLayout, growVoronoi,
+    startingState: Object.freeze({ EFFECTS: STARTING_EFFECTS, BOARDS: STARTING_BOARDS }),
     pressure: { DEFAULT_SCENARIO, LEGACY_SCENARIO_ALIASES, CHANNELS, CLIMATE_AXES, checkScenario, checkCompetition, checkClimateInstability, resolveScenario, isDynamic, progressAt, offsetsAt, maxOffsets, phaseAt },
     geo: { RECT, CYLINDER, normalizeTopology, topologyOf, west, east, north, south, neighbors4, forEachNeighbor4, wrapDx, longitudeCenter,
       components, sectionAdjacency, sectionPieces, waterCrossings, reachableLandmasses }, util: { clamp, lerp, band, overLimit } });

@@ -81,5 +81,15 @@
       mainMenu: "Main menu",
       mainMenuNote: "Back to the title.",
     },
+    // (BLOOM-036B) a Challenge run: the Challenge instance's one generated planet. Its post-run actions — never the Expedition's
+    // "Choose another planet" (a Challenge offers no alternatives; a new one comes from beginning the Challenge again on the hub).
+    challenge: {
+      retry: "Retry challenge",
+      retryNote: "The same Challenge, plant and planet. A fresh start: your choices make the run.",
+      challenges: "Challenges",
+      challengesNote: "Back to the Challenges. Beginning one again prepares a fresh world.",
+      mainMenu: "Main menu",
+      mainMenuNote: "Back to the title.",
+    },
   };
 })(typeof window !== "undefined" ? window : globalThis);

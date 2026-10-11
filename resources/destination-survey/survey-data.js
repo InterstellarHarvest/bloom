@@ -30,14 +30,11 @@
 // A sector column accepts a candidate only if its class (for this species) is the column's AND the species can win it; a world the
 // species cannot win is rejected FOR THAT SPECIES (counted as speciesRejected) and never regenerated. Thresholds stay global.
 //
-// SCENARIO (BLOOM-036A, docs/CHALLENGES_SYSTEM_v1.md §3). A Challenge survey is also FOR one scenario (a real, non-default scenario id of
-// content/scenarios.js). A third, cached layer on top of the two above — never a second world system:
-//   SCENARIO VALIDATION validateScenarioFor(phys, species, scenario)  the engine's own layer P (BLOOM.validateScenario) on the SAME
-//                       physical planet object with THIS species: a real witness under the scenario's real mechanics that wins with margin
-//                       and still holds — key `${physicalKey}|${physiologyKey}|s:${scenarioId}`. The planet is never regenerated, mutated
-//                       or re-rolled for a scenario: a world that fails is only not offered under that Challenge (scenarioRejected).
-// It runs only for a world that already belongs in the column for this species (its class, and S2 winnable), so a Challenge survey costs
-// the Expedition survey plus one layer-P proof per offered world. Without a scenario nothing here changes (the Expedition survey).
+// CHALLENGE WORLDS (BLOOM-036B, docs/CHALLENGES_SYSTEM_v1.md §4). A Challenge never uses this survey: it generates ONE world from its recipe
+// (resources/challenges/challenge-world.js), reusing these same two layers — physicalCandidate (the same production validation, the same
+// species-free planet object) and evaluateSpecies. The only addition here is an optional prescribed STARTING STATE (createSim's
+// startingState) for assessWorld / evaluateSpecies: the lamps and the S2 proof then start from it, and its evaluation key gains a
+// `|start:…` suffix. Without one (every Expedition call) nothing here changes.
 
 export const SURVEY_CLASSES = [
   { id: "favorable",  label: "Favorable",  minHabitable: 0.35, blurb: "Broad footholds on arrival" },
@@ -50,7 +47,6 @@ export const ROWS = 3; // a sector is a 3 × 3 matrix: one column per class, ROW
 export const MAX_DRAWS = 400;
 export const VALIDATION_PATH = "BLOOM.play.searchWorld (default scenario) → generateFromArchetype layers 1–8 → stripPlanet";
 export const PLAYABILITY_PATH = "BLOOM.species.validateFor: S2 winnability (findWitness with the species) required · S1 foothold reported";
-export const SCENARIO_PATH = "BLOOM.validateScenario (layer P) with the species: a real witness under the scenario's mechanics wins with margin and holds";
 
 const mulberry32 = a => () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 const deps0 = deps => ({ BLOOM: (deps && deps.BLOOM) || globalThis.BLOOM, BLOOM_DATA: (deps && deps.BLOOM_DATA) || globalThis.BLOOM_DATA });
@@ -74,22 +70,10 @@ export const worldGenVersion = deps => deps0(deps).BLOOM.archetype.WORLD_GEN_VER
 export const physicalKey = (spec, deps) => spec.authored ? `authored:${spec.authored}` : `${spec.archetypeId}:${spec.seed >>> 0}@w${worldGenVersion(deps)}`;
 /** (035B) species evaluation key. */
 export const evaluationKey = (physKey, sp) => `${physKey}|${sp.physiologyKey}`;
-/** (036A) scenario validation key: per physical world × species physiology × scenario. */
-export const scenarioKey = (evalKey, scenarioId) => `${evalKey}|s:${scenarioId}`;
-/** (035B) a page / run cache for physical candidates and species evaluations (plain Maps: session memory, never storage); (036A) and
- *  scenario validations. */
-export const createSurveyCache = () => ({ physical: new Map(), evaluation: new Map(), scenario: new Map(), structural: new Map(),
-  stats: { physicalHits: 0, physicalMisses: 0, evaluationHits: 0, evaluationMisses: 0, scenarioHits: 0, scenarioMisses: 0 } });
-
-/** (036A) The scenario a survey call is for: null / "" / the default → null (the Expedition survey: no scenario layer); otherwise a real
- *  scenario id of content/scenarios.js — an unknown id THROWS (never a silent Expedition). Returns the scenario id. */
-export function scenarioFor(scenario, deps) {
-  if (scenario == null || scenario === "") return null;
-  const { BLOOM, BLOOM_DATA: D } = deps0(deps), id = typeof scenario === "string" ? scenario : scenario.id;
-  const S = BLOOM.pressure.resolveScenario(D.scenarios, id);           // throws on an unknown id
-  if (S.id !== id) throw new Error(`survey: scenario "${id}" is a retired alias (use "${S.id}")`);
-  return S.id === BLOOM.pressure.DEFAULT_SCENARIO ? null : S.id;
-}
+/** (036B) the evaluation-key suffix of a prescribed starting state ("" for the normal start: every Expedition key is unchanged). */
+export const startKey = st => st ? `|start:${(st.adaptations || []).join("+")}:${st.biomass == null ? "-" : st.biomass}` : "";
+/** (035B) a page / run cache for physical candidates and species evaluations (plain Maps: session memory, never storage). */
+export const createSurveyCache = () => ({ physical: new Map(), evaluation: new Map(), structural: new Map(), stats: { physicalHits: 0, physicalMisses: 0, evaluationHits: 0, evaluationMisses: 0 } });
 
 /** The class a starting habitable-land share falls in (shares ≥ a class's minHabitable belong to the first such class). */
 export const classFor = habitable => SURVEY_CLASSES.find(c => habitable >= c.minHabitable) || SURVEY_CLASSES[SURVEY_CLASSES.length - 1];
@@ -121,9 +105,10 @@ export function planetFingerprint(planet) {
  * per-section lamps (green / yellow / red) and limiting conditions, area-weighted over the land. (035B) For `species` (default
  * Organic Hybrid): the same planet routinely assesses differently for different species; the physical rows do not change.
  */
-export function assessWorld(planet, deps, species) {
+export function assessWorld(planet, deps, species, startingState = null) {
   const { BLOOM, BLOOM_DATA: D } = deps0(deps), sp = speciesFor(species, deps);
-  const sim = BLOOM.createSim(planet, D.config, D.traits, { rng: () => 0.5, species: sp }), M = sim.map;
+  // (BLOOM-036B) a prescribed starting state (a Challenge's): the lamps the plant meets WITH what it lands owning; absent = unchanged
+  const sim = BLOOM.createSim(planet, D.config, D.traits, { rng: () => 0.5, species: sp, ...(startingState ? { startingState } : {}) }), M = sim.map;
   let land = 0; const lamps = { green: 0, yellow: 0, red: 0 }, limits = {}, words = { Temperature: {}, Water: {}, Soil: {}, Hazard: {} };
   const temps = [], regions = [];
   M.SEC.forEach((sec, i) => {
@@ -200,14 +185,14 @@ export function physicalCandidate(spec, deps, cache) {
  * (035B) The SPECIES EVALUATION of a physical candidate: plain data (no planet: postable from a worker and merged onto the page's
  * own physical candidate). Species-relative: habitable share, class, limits, the dossier, and the playability verdict.
  */
-export function evaluateSpecies(phys, species, deps, cache) {
-  const { BLOOM, BLOOM_DATA: D } = deps0(deps), sp = speciesFor(species, deps), key = evaluationKey(phys.physicalKey, sp);
+export function evaluateSpecies(phys, species, deps, cache, startingState = null) {
+  const { BLOOM, BLOOM_DATA: D } = deps0(deps), sp = speciesFor(species, deps), key = evaluationKey(phys.physicalKey, sp) + startKey(startingState);
   const C = cache && cache.evaluation;
   if (C && C.has(key)) { cache.stats.evaluationHits++; return C.get(key); }
   if (cache) cache.stats.evaluationMisses++;
-  const t0 = now(), w = assessWorld(phys.planet, deps, sp), cls = classFor(w.habitable);
+  const t0 = now(), w = assessWorld(phys.planet, deps, sp, startingState), cls = classFor(w.habitable);
   const A = phys.archetypeId ? D.archetypes.find(a => a.id === phys.archetypeId) : null;
-  const v = BLOOM.species.validateFor(phys.planet, sp, { config: D.config, traits: D.traits, archetype: A });
+  const v = BLOOM.species.validateFor(phys.planet, sp, { config: D.config, traits: D.traits, archetype: A, ...(startingState ? { startingState } : {}) });
   const ev = { key, species: BLOOM.species.provenance(sp), habitable: w.habitable, classId: cls.id, assessment: w,
     playability: { ok: v.ok, path: PLAYABILITY_PATH, s1: v.s1, s2: v.s2, ms: v.ms }, ms: Math.round(now() - t0) };
   ev.dossier = surveyDossier({ ...phys, ...ev }, deps, sp);
@@ -215,47 +200,20 @@ export function evaluateSpecies(phys, species, deps, cache) {
   return ev;
 }
 
-/**
- * (036A) The SCENARIO VALIDATION of a physical candidate for a species: the engine's layer P (BLOOM.validateScenario) on the physical
- * planet object itself, with the species. Plain data (postable from a worker). The planet is read, never changed.
- */
-export function validateScenarioFor(phys, species, scenario, deps, cache) {
-  const { BLOOM, BLOOM_DATA: D } = deps0(deps), sp = speciesFor(species, deps), id = scenarioFor(scenario, deps);
-  if (!id) throw new Error("survey: validateScenarioFor needs a real (non-default) scenario");
-  const key = scenarioKey(evaluationKey(phys.physicalKey, sp), id), C = cache && cache.scenario;
-  if (C && C.has(key)) { cache.stats.scenarioHits++; return C.get(key); }
-  if (cache) cache.stats.scenarioMisses++;
-  const t0 = now(), S = BLOOM.pressure.resolveScenario(D.scenarios, id);
-  const v = BLOOM.validateScenario(phys.planet, D.config, D.traits, S, { archetypeId: phys.archetypeId || undefined, species: sp });
-  const sv = { key, scenarioId: id, ok: !!v.ok, status: v.status, reason: v.reason || null, required: v.required, strategiesProven: (v.strategies || []).length,
-    path: SCENARIO_PATH, ms: Math.round(now() - t0) };
-  if (C) C.set(key, sv);
-  return sv;
-}
-
-/** (035B) A physical candidate + its species evaluation → the survey candidate (the physical object's planet, by identity).
- *  (036A) With `scenarioId` (a Challenge survey): + its scenario validation `sv` — offered (`playable`) only when the species can win it
- *  AND layer P passed; no verdict yet (sv null) is never playable. */
-export function composeCandidate(phys, ev, sv = null, scenarioId = null) {
+/** (035B) A physical candidate + its species evaluation → the survey candidate (the physical object's planet, by identity). */
+export function composeCandidate(phys, ev) {
   if (!phys || !ev) return null;
-  const c = { ...phys, species: ev.species, speciesKey: ev.key, habitable: ev.habitable, classId: ev.classId, assessment: ev.assessment, dossier: ev.dossier,
+  return { ...phys, species: ev.species, speciesKey: ev.key, habitable: ev.habitable, classId: ev.classId, assessment: ev.assessment, dossier: ev.dossier,
     playability: ev.playability, playable: !!ev.playability.ok };
-  if (scenarioId) { c.scenarioId = scenarioId; c.scenarioValidation = sv || null; c.playable = c.playable && !!(sv && sv.ok); }
-  return c;
 }
 
 /**
  * One survey candidate for `species` (default Organic Hybrid): physicalCandidate + evaluateSpecies (null when no world passes the
  * physical validation for that seed). `cache` (createSurveyCache) shares physical candidates across species and sectors.
- * (036A) `scenario`: + validateScenarioFor, only for a world the species can win and (with `want`) of the wanted class.
  */
-export function makeCandidate(spec, deps, { species = null, cache = null, scenario = null, want = null } = {}) {
+export function makeCandidate(spec, deps, { species = null, cache = null } = {}) {
   const phys = physicalCandidate(spec, deps, cache);
-  if (!phys) return null;
-  const ev = evaluateSpecies(phys, species, deps, cache), id = scenarioFor(scenario, deps);
-  if (!id) return composeCandidate(phys, ev);
-  const due = ev.playability.ok && (want == null || ev.classId === want);
-  return composeCandidate(phys, ev, due ? validateScenarioFor(phys, species, id, deps, cache) : null, id);
+  return phys && composeCandidate(phys, evaluateSpecies(phys, species, deps, cache));
 }
 
 /**
@@ -267,11 +225,11 @@ export function makeCandidate(spec, deps, { species = null, cache = null, scenar
  * A generator: yields { found, draws, validations } after each draw; returns { column, cells, stats }.
  * `firstBloom: true` puts the authored First Bloom at the top of its own class column.
  */
-export function* columnCandidates(sectorSeed, column, deps, { firstBloom = false, maxDraws = MAX_DRAWS, species = null, cache = null, scenario = null } = {}) {
-  const { BLOOM_DATA: D } = deps0(deps), want = SURVEY_CLASSES[column].id, t0 = now(), sp = speciesFor(species, deps), scn = scenarioFor(scenario, deps);
+export function* columnCandidates(sectorSeed, column, deps, { firstBloom = false, maxDraws = MAX_DRAWS, species = null, cache = null } = {}) {
+  const { BLOOM_DATA: D } = deps0(deps), want = SURVEY_CLASSES[column].id, t0 = now(), sp = speciesFor(species, deps);
   const rng = mulberry32(((sectorSeed >>> 0) ^ 0x5eed0028) + column * 0x9e3779b1), pol = (D.play && D.play.search) || { seedMin: 1, seedMax: 99999 };
-  const cells = [], seen = new Set(), stats = { draws: 0, predictions: 0, validations: 0, wasted: 0, failed: 0, speciesRejected: 0, scenarioRejected: 0, predictMs: 0, validateMs: 0, byArchetype: {}, species: sp.physiologyKey, scenario: scn };
-  if (firstBloom) { const fb = makeCandidate({ authored: "first_bloom" }, deps, { species: sp, cache, scenario: scn, want }); if (fb && fb.classId === want && fb.playable) { cells.push(fb); seen.add(fb.key); } }
+  const cells = [], seen = new Set(), stats = { draws: 0, predictions: 0, validations: 0, wasted: 0, failed: 0, speciesRejected: 0, predictMs: 0, validateMs: 0, byArchetype: {}, species: sp.physiologyKey };
+  if (firstBloom) { const fb = makeCandidate({ authored: "first_bloom" }, deps, { species: sp, cache }); if (fb && fb.classId === want && fb.playable) { cells.push(fb); seen.add(fb.key); } }
   yield { found: cells.length, draws: 0, validations: 0 };
   while (cells.length < ROWS && stats.draws < maxDraws) {
     stats.draws++;
@@ -279,12 +237,12 @@ export function* columnCandidates(sectorSeed, column, deps, { firstBloom = false
     const key = `${A.id}:${seed}`; if (seen.has(key)) continue; seen.add(key);
     let t = now(); const predicted = predictClass(A.id, seed, deps, sp, cache); stats.predictions++; stats.predictMs += now() - t;
     if (predicted !== want) continue;
-    t = now(); const c = makeCandidate({ archetypeId: A.id, seed }, deps, { species: sp, cache, scenario: scn, want }); const ms = now() - t;
+    t = now(); const c = makeCandidate({ archetypeId: A.id, seed }, deps, { species: sp, cache }); const ms = now() - t;
     stats.validations++; stats.validateMs += ms;
     const by = stats.byArchetype[A.id] || (stats.byArchetype[A.id] = { validations: 0, ms: 0, maxMs: 0 }); by.validations++; by.ms += ms; by.maxMs = Math.max(by.maxMs, ms);
     if (!c) stats.failed++;
     else if (c.classId !== want) stats.wasted++; // validated, but its real class belongs to another column
-    else if (!c.playable) stats[rejectedAs(c)]++; // (035B) this species cannot win it / (036A) layer P failed: not offered (the world is untouched)
+    else if (!c.playable) stats.speciesRejected++; // (035B) this species cannot win it: not offered to it (the world is untouched)
     else cells.push(c);
     yield { found: cells.length, draws: stats.draws, validations: stats.validations };
   }
@@ -304,11 +262,11 @@ export function* columnCandidates(sectorSeed, column, deps, { firstBloom = false
  *     → { fb, picks: [{ draw, archetypeId, seed }], nextDraw, exhausted, predictions, predictMs }
  *     (fb: the First Bloom candidate when firstBloom and fromDraw = 0 and it belongs to this column, else null)
  */
-export function planColumn(sectorSeed, column, deps, { firstBloom = false, fromDraw = 0, want = ROWS + 1, maxDraws = MAX_DRAWS, species = null, cache = null, scenario = null } = {}) {
+export function planColumn(sectorSeed, column, deps, { firstBloom = false, fromDraw = 0, want = ROWS + 1, maxDraws = MAX_DRAWS, species = null, cache = null } = {}) {
   const { BLOOM_DATA: D } = deps0(deps), wantClass = SURVEY_CLASSES[column].id, sp = speciesFor(species, deps);
   const rng = mulberry32(((sectorSeed >>> 0) ^ 0x5eed0028) + column * 0x9e3779b1), pol = (D.play && D.play.search) || { seedMin: 1, seedMax: 99999 };
   const seen = new Set(), picks = []; let fb = null, draws = 0, predictions = 0, predictMs = 0;
-  if (firstBloom) { const c = makeCandidate({ authored: "first_bloom" }, deps, { species: sp, cache, scenario, want: wantClass }); if (c && c.classId === wantClass && c.playable) { seen.add(c.key); if (fromDraw === 0) fb = c; } }
+  if (firstBloom) { const c = makeCandidate({ authored: "first_bloom" }, deps, { species: sp, cache }); if (c && c.classId === wantClass && c.playable) { seen.add(c.key); if (fromDraw === 0) fb = c; } }
   const next = () => { draws++; const A = D.archetypes[Math.floor(rng() * D.archetypes.length)], seed = pol.seedMin + Math.floor(rng() * (pol.seedMax - pol.seedMin + 1)); return { A, seed, key: `${A.id}:${seed}` }; };
   while (draws < fromDraw) { const d = next(); seen.add(d.key); } // replay the stream (rng only) up to where the last plan stopped
   while (picks.length < want && draws < maxDraws) {
@@ -326,11 +284,11 @@ export function planColumn(sectorSeed, column, deps, { firstBloom = false, fromD
  */
 export function columnFromValidated(sectorSeed, column, { fb = null, results, exhausted = false, maxDraws = MAX_DRAWS, stats: extra = null }) {
   const want = SURVEY_CLASSES[column].id, cells = fb ? [fb] : [];
-  const stats = { draws: 0, validations: 0, wasted: 0, failed: 0, speciesRejected: 0, scenarioRejected: 0, parallel: true, ...(extra || {}) };
+  const stats = { draws: 0, validations: 0, wasted: 0, failed: 0, speciesRejected: 0, parallel: true, ...(extra || {}) };
   for (const r of results) {
     if (cells.length >= ROWS) break;
     stats.draws = r.draw; stats.validations++;
-    if (!r.cand) stats.failed++; else if (r.cand.classId !== want) stats.wasted++; else if (!r.cand.playable) stats[rejectedAs(r.cand)]++; else cells.push(r.cand);
+    if (!r.cand) stats.failed++; else if (r.cand.classId !== want) stats.wasted++; else if (!r.cand.playable) stats.speciesRejected++; else cells.push(r.cand);
   }
   if (cells.length < ROWS && !exhausted) return { done: false };
   if (cells.length < ROWS) stats.draws = maxDraws;
@@ -339,26 +297,23 @@ export function columnFromValidated(sectorSeed, column, { fb = null, results, ex
   return { done: true, column: { sectorSeed: sectorSeed >>> 0, column, cells, stats } };
 }
 
-/** (036A) why a candidate of the right class is not offered: the species cannot win it, or (a Challenge survey) layer P failed */
-const rejectedAs = c => c.scenarioId && c.playability.ok ? "scenarioRejected" : "speciesRejected";
-
 export function buildColumn(sectorSeed, column, deps, opts) { const it = columnCandidates(sectorSeed, column, deps, opts); for (;;) { const r = it.next(); if (r.done) return r.value; } }
 
 /** Three column results → the sector: cells in row-major order (cells[row * 3 + col], col = class index). */
-export function assembleSector(sectorSeed, columns, species = null, scenario = null) {
+export function assembleSector(sectorSeed, columns, species = null) {
   const byCol = SURVEY_CLASSES.map((_, ci) => columns.find(c => c.column === ci));
   const cells = [];
   for (let r = 0; r < ROWS; r++) for (let ci = 0; ci < SURVEY_CLASSES.length; ci++) cells.push((byCol[ci] && byCol[ci].cells[r]) || null);
-  return { sectorSeed: sectorSeed >>> 0, label: sectorLabel(sectorSeed), cells, columns: byCol.map(c => c && c.stats), ...(species ? { species } : {}), ...(scenario ? { scenario } : {}) };
+  return { sectorSeed: sectorSeed >>> 0, label: sectorLabel(sectorSeed), cells, columns: byCol.map(c => c && c.stats), ...(species ? { species } : {}) };
 }
 
 /** A whole sector, synchronously (Node, tests, and the page's no-worker fallback). */
 export function buildSector(sectorSeed, deps, opts = {}) {
-  const sp = speciesFor(opts.species, deps), scn = scenarioFor(opts.scenario, deps), o = { ...opts, species: sp, scenario: scn };
-  return assembleSector(sectorSeed, SURVEY_CLASSES.map((_, ci) => buildColumn(sectorSeed, ci, deps, o)), deps0(deps).BLOOM.species.provenance(sp), scn);
+  const sp = speciesFor(opts.species, deps), o = { ...opts, species: sp };
+  return assembleSector(sectorSeed, SURVEY_CLASSES.map((_, ci) => buildColumn(sectorSeed, ci, deps, o)), deps0(deps).BLOOM.species.provenance(sp));
 }
-/** (035B) The sector key: one sector per (sector seed, species physiology, First Bloom state); (036A) and scenario (a Challenge survey). */
-export const sectorKey = (sectorSeed, sp, firstBloom, scenario = null) => `${sectorSeed >>> 0}|${sp.physiologyKey}${firstBloom ? "|fb" : ""}${scenario ? "|s:" + scenario : ""}`;
+/** (035B) The sector key: one sector per (sector seed, species physiology, First Bloom state). */
+export const sectorKey = (sectorSeed, sp, firstBloom) => `${sectorSeed >>> 0}|${sp.physiologyKey}${firstBloom ? "|fb" : ""}`;
 
 // ---------------------------------------------------------------- dossier
 const TEMP_WORDS = [[-10, "Frigid"], [2, "Cold"], [16, "Mild"], [26, "Warm"], [Infinity, "Hot"]];

@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "685515cc8db5d23f23eb1bb03254002f30518434f73f2f50284cea3eec567da8",
+  "fingerprint": "40f444cd502a7a0dbfff2e29f4eafaa3554e4b7998351ee3421edff11a2976d2",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -12,13 +12,14 @@
     "resources/atmosphere-transition/atmosphere-transition.js",
     "resources/training/training-run.js",
     "resources/species-select/species-select.js",
-    "resources/challenges/challenge-hub.js"
+    "resources/challenges/challenge-hub.js",
+    "resources/challenges/challenge-world-screen.js"
   ],
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
-    "bytes": 1368908,
-    "sha256": "262e0cf9f48488e1c6e15413c062b2200abca790f576cdc3335736ce7482ae0e",
-    "surveyWorkerTextBytes": 240659
+    "bytes": 1436408,
+    "sha256": "be819d6f958ee49ba2329013168a61bb5d514676be5f2f97b7210843ef56687f",
+    "surveyWorkerTextBytes": 247732
   },
   "workerInputs": [
     "content/archetypes.js",
@@ -36,6 +37,7 @@
     "resources/bloom-species.js",
     "resources/bloom-validate.js",
     "resources/bloom-witness.js",
+    "resources/challenges/challenge-world.js",
     "resources/destination-survey/survey-data.js",
     "resources/destination-survey/survey-worker.js"
   ],
@@ -54,8 +56,8 @@
     },
     {
       "path": "content/play.js",
-      "bytes": 4811,
-      "sha256": "004ede43c11b38934b1d89517375e0ee7633b2746182e1883ad4cfa68e2e5581",
+      "bytes": 5427,
+      "sha256": "10877c1990a6d92e740009eafabbe8d868c504e025d3391afc27524b3cb10e80",
       "bytesInBundle": 0
     },
     {
@@ -84,9 +86,9 @@
     },
     {
       "path": "resources/app/app-controller.js",
-      "bytes": 19388,
-      "sha256": "33078e2a31e315bee48c8177d0d94125408b9022bae4b7f50a8c248597e4e5ac",
-      "bytesInBundle": 16015
+      "bytes": 23655,
+      "sha256": "8997c97cf621876745b7acc08cc373b572f8a8dcc5180906bbc2d89eaaeca931",
+      "bytesInBundle": 20443
     },
     {
       "path": "resources/atmosphere-transition/atmosphere-transition.js",
@@ -114,20 +116,20 @@
     },
     {
       "path": "resources/bloom-scenario.js",
-      "bytes": 5955,
-      "sha256": "97d6960c383722c359c6032ba93a55832826efb418fb8e83323e522b00926d79",
+      "bytes": 6167,
+      "sha256": "0efa462f615e893f4a5775570b91fc758eec27504c5288b32945037a95851e71",
       "bytesInBundle": 0
     },
     {
       "path": "resources/bloom-sim.js",
-      "bytes": 92940,
-      "sha256": "7306e34b6bd99eb2843e380971ea2e30925afeb1e7f32158f3f435fc19eda394",
+      "bytes": 96102,
+      "sha256": "c8c362a74cbabf64bb57fdb6f3e38a7949bed0a2e818828c0a8e5cc89a159d9e",
       "bytesInBundle": 0
     },
     {
       "path": "resources/bloom-species.js",
-      "bytes": 15295,
-      "sha256": "9df5e49876b94364101dee2ee2507abb72737682c826cd8042144be65b2f676b",
+      "bytes": 15693,
+      "sha256": "4a9c10dcb6767e9091be024fae4689d60d6096805d1b57be86e3f7b5814e8eaa",
       "bytesInBundle": 0
     },
     {
@@ -138,38 +140,56 @@
     },
     {
       "path": "resources/bloom-witness.js",
-      "bytes": 40278,
-      "sha256": "c1fa1df76fe8477bdaa42f529a2ced0362bcdd4a03a4e229e65ca778f9111863",
+      "bytes": 40915,
+      "sha256": "3ecb709cc4884dd7c38ec637fb67b0203b5b2413274f39832f5be8d30bf52b60",
       "bytesInBundle": 0
     },
     {
       "path": "resources/challenges/challenge-hub.js",
-      "bytes": 14115,
-      "sha256": "d2728f4eb587c8bd2426dcd24821aa341a506e7702b481da6a0d13093bbd802e",
-      "bytesInBundle": 14306
+      "bytes": 14946,
+      "sha256": "f58c9b217c6d7b7e3f2c20e33363a3f8bd086e950bd755ec3c159892a155cd17",
+      "bytesInBundle": 15049
+    },
+    {
+      "path": "resources/challenges/challenge-world-screen.js",
+      "bytes": 22836,
+      "sha256": "847cdebceae2205bd4393ebf441e1ecf664e4531ba62e3caa0e2e430fb6571c3",
+      "bytesInBundle": 23484
+    },
+    {
+      "path": "resources/challenges/challenge-world-search.js",
+      "bytes": 17970,
+      "sha256": "5bb19287faaed07e9a7bef4838282cd39b0f76764faff50d02e5631f35851c43",
+      "bytesInBundle": 18332
+    },
+    {
+      "path": "resources/challenges/challenge-world.js",
+      "bytes": 19403,
+      "sha256": "de4043b4f77d33a432080832e70eecbf1bb380ab01bc4a821ea3f7ef384512db",
+      "bytesInBundle": 11447
     },
     {
       "path": "resources/destination-survey/destination-survey.js",
-      "bytes": 53006,
-      "sha256": "ff82daa80215fcdaa2ea83b35186f1b62af37e162c5a167c0fa07e1c740b2dde",
-      "bytesInBundle": 52275
+      "bytes": 51387,
+      "sha256": "7524257f7e4af34c92c6eedd3f3c69935deafe7dc9b81350127fed86eb23196f",
+      "bytesInBundle": 50699
     },
     {
       "path": "resources/destination-survey/sector-pool.js",
-      "bytes": 20820,
-      "sha256": "3ebd9df3ea7e8739da3336de048f09b7a97e6fa98497db0f3ffd0ddd2bf37a85",
-      "bytesInBundle": 19428
+      "bytes": 18028,
+      "sha256": "6a2460380fa84ca0706ce8b05b13ae704cf459c6d6e13009bb0c5b5090ada5f8",
+      "bytesInBundle": 17225
     },
     {
       "path": "resources/destination-survey/survey-data.js",
-      "bytes": 35692,
-      "sha256": "2490ec0ffdbbc3ebec289792e2a0e431b407d47143e00a879e1aa621cec525b9",
-      "bytesInBundle": 22538
+      "bytes": 31996,
+      "sha256": "61493d81267e3d3ba19fe6d583e36bf94341c641efe7f0e54a50afb853e6baef",
+      "bytesInBundle": 20049
     },
     {
       "path": "resources/destination-survey/survey-worker.js",
-      "bytes": 4283,
-      "sha256": "6ce25ce32829ad259854292756b47943ef3b31df9f734eb2b07df32722b0d650",
+      "bytes": 5264,
+      "sha256": "ea0aad74faee144d82e6352ec279fe4f387d44f44187e51db97cc4749f9fcb9e",
       "bytesInBundle": 0
     },
     {
@@ -180,9 +200,9 @@
     },
     {
       "path": "resources/main-menu/expedition-entry.js",
-      "bytes": 35321,
-      "sha256": "536e60df14e2ecbe2ca3ae555fd9ffd08a89e1fca066cc5b8913d1080ff5ef98",
-      "bytesInBundle": 30480
+      "bytes": 42780,
+      "sha256": "0257006f7f96a632fe775d15bb0a001689f675f72420f762116f5e222e6b5936",
+      "bytesInBundle": 37934
     },
     {
       "path": "resources/main-menu/main-menu-data.js",
@@ -228,9 +248,9 @@
     },
     {
       "path": "resources/portable/portable-entry.js",
-      "bytes": 3942,
-      "sha256": "815e516973a5d9d4ca17b808679a124d0eeadeca1d20d4b5a2ce26785ac4f4bb",
-      "bytesInBundle": 1987
+      "bytes": 4123,
+      "sha256": "c898e55910294b91145f281f80e1642b47740862e7649b97ec701c39a4f3502a",
+      "bytesInBundle": 2218
     },
     {
       "path": "resources/portable/portable-root.js",
@@ -240,9 +260,9 @@
     },
     {
       "path": "resources/species-select/species-select.js",
-      "bytes": 18032,
-      "sha256": "87e7ebc200edf8b349bf2b5e4c4dd373fc9897fc8d88617c4cf77a8645f00576",
-      "bytesInBundle": 17718
+      "bytes": 18776,
+      "sha256": "118fdaccd88c6600ec51de99dcad7231fcdf3aaf58e9567279d959aa669f2b37",
+      "bytesInBundle": 18017
     },
     {
       "path": "resources/training/training-coach.js",
