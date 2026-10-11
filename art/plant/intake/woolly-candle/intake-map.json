@@ -7,7 +7,7 @@
  "bodyPlan": "candle@2",
  "brief": {
   "path": "docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.json",
-  "sha256": "08835e669e150b9e57289d8a13678d9edfd8837fdf330b9eb6f195388f5ac180"
+  "sha256": "f9792a5595e94c085573a71b34fdf10b5b86e7511e91001634b152deebdeb53e"
  },
  "acceptance": {
   "path": "art/plant/intake/woolly-candle/PMO_FINAL_ACCEPTANCE.json",

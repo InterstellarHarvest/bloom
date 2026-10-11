@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "575fec9301d9572d4d401e732bd9b825a15e16e3933b8b8b227d97bed9a6c2a8",
+  "fingerprint": "f4e5e6059afec5705d56aa263ce51df66a8c17d163162df9be667c0e03d1a546",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -15,9 +15,9 @@
   ],
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
-    "bytes": 1334203,
-    "sha256": "428c83174ea0677c106c7175ba8cafdcda490210c1e1f03408a55a76ad5779df",
-    "surveyWorkerTextBytes": 237905
+    "bytes": 1334227,
+    "sha256": "0be7e1bd2d8acb453c4a1c823accbeaf917fd829411e256cb49d19ca53900fc8",
+    "surveyWorkerTextBytes": 237884
   },
   "workerInputs": [
     "content/archetypes.js",
@@ -65,8 +65,8 @@
     },
     {
       "path": "content/species.js",
-      "bytes": 7986,
-      "sha256": "2e8d039ec25ee3b2f13c18741f2aae7a6bed35e1a2487c0d209fc97a23e844d7",
+      "bytes": 8130,
+      "sha256": "5e4191e4980e2dc21a0fd6e895ab5bb9286aa651e2cc0872f9f9b6cd9dcd415b",
       "bytesInBundle": 0
     },
     {
@@ -83,9 +83,9 @@
     },
     {
       "path": "resources/app/app-controller.js",
-      "bytes": 16120,
-      "sha256": "0b14fd022f6e9ba5b6eaf51e270c858227ec7e174f031b88a7c2fdd485b3011e",
-      "bytesInBundle": 13690
+      "bytes": 16234,
+      "sha256": "4abcf07b996421e64f4fa23af6de452b2ab6621754fff63d2b01d1a1f5fa445a",
+      "bytesInBundle": 13669
     },
     {
       "path": "resources/atmosphere-transition/atmosphere-transition.js",
@@ -143,9 +143,9 @@
     },
     {
       "path": "resources/destination-survey/destination-survey.js",
-      "bytes": 51429,
-      "sha256": "1098265c614fcff33f48eea404b5a288b494e585a5a5eda3dde78091f4911dce",
-      "bytesInBundle": 50741
+      "bytes": 51390,
+      "sha256": "576a6bf0f1d63e898f5455a65237dcb9bf0eed762e3becbc0f8763150b5632f7",
+      "bytesInBundle": 50702
     },
     {
       "path": "resources/destination-survey/sector-pool.js",
@@ -173,9 +173,9 @@
     },
     {
       "path": "resources/main-menu/expedition-entry.js",
-      "bytes": 28220,
-      "sha256": "bed6c39ac0611d7371a893f545b0bd389455c8c9f62ea2c4a1052971980454a9",
-      "bytesInBundle": 24177
+      "bytes": 28286,
+      "sha256": "e00ec382fb7e033bc6f98c644853a8cf702b6438f38f60182c4dc0a8fc59ff67",
+      "bytesInBundle": 24219
     },
     {
       "path": "resources/main-menu/main-menu-data.js",
@@ -221,9 +221,9 @@
     },
     {
       "path": "resources/portable/portable-entry.js",
-      "bytes": 3802,
-      "sha256": "847565d7a2bec8ecd21b5ef32b259620d5633f25383a96bdd300b82df0ebba8a",
-      "bytesInBundle": 1810
+      "bytes": 3818,
+      "sha256": "26c4bb6a13e5d594084c2fbcd5d4b09f8ca08f39536c1e4c8ce9d4ca36ba0b0c",
+      "bytesInBundle": 1826
     },
     {
       "path": "resources/portable/portable-root.js",
@@ -233,9 +233,9 @@
     },
     {
       "path": "resources/species-select/species-select.js",
-      "bytes": 16978,
-      "sha256": "7305e447318ee78e883b8d6a272734240d24818182a465743e14ceb3da93b496",
-      "bytesInBundle": 16978
+      "bytes": 17025,
+      "sha256": "f41c454159f24c7299efd56dd6681f0a2b7b3765a50373ec1df7bc25d46ee61e",
+      "bytesInBundle": 17025
     },
     {
       "path": "resources/training/training-coach.js",

@@ -32,7 +32,8 @@
 //   G6 the keyboard alone: Play, the map (arrows + Enter), the Adapt room by Tab, a focus preview, Enter to buy
 //   G7 Skip: the coach's Skip Tutorial and the menu's Skip training open the SAME production dialog; Keep training / Escape keep the
 //      lesson and record nothing; confirming records "skipped" and returns to the title through the black; Restart / Main menu record nothing
-//   G8 Begin Expedition: the training fade, the title, the Destination Survey at once (begin=1 consumed), no world packed or run
+//   G8 Begin Expedition: the training fade, the title, Choose Plant Species at once (begin=1 consumed; BLOOM-035C2), then the Destination
+//      Survey for the chosen species; no world packed or run
 //   G9 the title: Recommended with no record, gone after skipped / completed; the first BEGIN EXPEDITION's one dialog (never auto-training);
 //      Start Training (~5 min) → the training run, nothing recorded; Go to Expedition → "skipped" → the survey on the prefetched sector
 //   G10 the callout at 1024×768 · 1280×800 · 1440×900 · 860×700 (docked) · Firefox 1280×800: inside the viewport, off the target, no
@@ -324,6 +325,15 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       await c.addInitScript(INIT); if (record !== undefined) await c.addInitScript(SEED_RECORD, record); if (settings) await c.addInitScript(SEED_SETTINGS, J(settings));
       c.on("request", r => reqs.push(r.url())); return c; };
     const watch = p => { p.errs = []; p.on("pageerror", e => { p.errs.push(e.message); errsAll.push(e.message); }); p.on("console", m => { if (m.type() === "error") { p.errs.push("console: " + m.text()); errsAll.push(m.text()); } }); return p; };
+    // (BLOOM-035C2) EXPEDITION / begin=1 opens CHOOSE PLANT SPECIES first: wait for that screen (ready, black lifted) or an already-open survey;
+    // on the species screen open the preselected species' dossier and press its "Survey for …" → the Destination Survey FOR that species
+    const speciesReady = (p, timeout = 60000) => p.waitForFunction(() => { const e = window.MENU_DEV && MENU_DEV.entry, v = e && e.speciesView;
+      return !!e && e.state === "species" && !!(v && v.inner) && !e.covered && e.black.style.display === "none"; }, null, { timeout, polling: 50 });
+    const throughSpecies = async (p, timeout = 60000) => { try {
+      await p.waitForFunction(() => { const e = window.MENU_DEV && MENU_DEV.entry, v = e && e.speciesView;
+        return !!e && (e.state === "survey" || (e.state === "species" && !!(v && v.inner) && !e.covered && e.black.style.display === "none")); }, null, { timeout, polling: 50 });
+      if (await p.evaluate(() => MENU_DEV.entry.state) !== "species") return false;
+      await p.evaluate(() => { const v = MENU_DEV.entry.speciesView.inner; v.open(v.selected.id); }); await p.click(".ss-btn.go"); return true; } catch { return false; } };
     const coached = p => p.waitForFunction(() => window.BLOOM_TRAINING_UI && BLOOM_TRAINING_UI.guide && BLOOM_TRAINING_UI.guide.mounted && BLOOM_TRAINING_UI.guide.coach.stats.places > 0, null, { timeout: 20000 });
     const G = p => p.evaluate(() => { const g = BLOOM_TRAINING_UI.guide, d = g.director, c = g.coach, A = BLOOM_RUN_UI.adapter, dr = BLOOM.decisionRooms.instance.state();
       const card = document.querySelector(".tc-card"), cr = card.getBoundingClientRect();
@@ -358,7 +368,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
           coach: !!document.querySelector(".tc-layer, [data-training-coach]"), tui: !!window.BLOOM_TRAINING_UI, prod: document.documentElement.classList.contains("ui18") })).then(r => ({ ...r, loaded: seen.slice() })); };
       const r1 = await probe(""), r2 = await probe("?planet=training_grounds"), r3 = await probe("?archetype=ocean_archipelago&seed=28"), r4 = await probe("?archetype=frozen_world&seed=4&scenario=volatile_climate");
       // (BLOOM-033) an expedition run: inside index.html, from the Destination Survey's exact selection (the retired handoff no longer exists)
-      seen.length = 0; await p.goto(MENU + "?begin=1&sector=77&workers=3");
+      seen.length = 0; await p.goto(MENU + "?begin=1&sector=77&workers=3"); await throughSpecies(p, 120000);   // (BLOOM-035C2) Choose Plant Species first
       await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.entry.survey && MENU_DEV.entry.survey.state === "survey" && MENU_DEV.entry.survey.cells.every(Boolean), null, { timeout: 120000, polling: 100 });
       await p.evaluate(() => MENU_DEV.entry.survey.select(0)); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000 }); await p.click(".ds-btn.go");
       await p.waitForFunction(() => window.BLOOM_APP && BLOOM_APP.session && BLOOM_APP.stats.sessions[0].readyMs !== null && !document.querySelector(".atx"), null, { timeout: 60000, polling: 50 }); await sleep(900);
@@ -471,19 +481,24 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
         bubble: { placed: bub, collected: end.log[2].how }, tradeoffPreview: tradeoff.preview, tradeoffCopy: s11.body, final: { coverage: end.cov, ticks: end.ticks, winAt: end.winAt, record: end.status }, completionActions: end.acts, keepPlaying: end.keep, focus: end.focus };
       else proof.runs.firefox = { browser: bname, lessons: end.log.map(e => ({ index: e.index, id: e.id, how: e.how, tick: e.tick })), completionActions: end.acts };
       await shot(p, "19-firefox-1280-complete.png");
-      // ---- G8 · Begin Expedition: the training fade → the title → the Destination Survey at once; no world packed
+      // ---- G8 · Begin Expedition: the training fade → the title → (BLOOM-035C2) Choose Plant Species at once → the Destination Survey; no world packed
       if (want("G8")) {
         const t0b = Date.now();
         // sample the training black every frame until the page goes (kept in sessionStorage across the navigation)
         await p.evaluate(() => { const c = document.getElementById("trainingCover"); let max = 0; const f = () => { const o = c ? +getComputedStyle(c).opacity * (getComputedStyle(c).display === "none" ? 0 : 1) : 0; if (o > max) { max = o; sessionStorage.setItem("__blk", String(max)); } requestAnimationFrame(f); }; f(); });
         await Promise.all([p.waitForURL(u => new URL(u).pathname === TITLE_PATH, { timeout: 20000 }), p.click('#rr [data-act="beginExpedition"]')]);
         const fadeSeen = Date.now() - t0b;
-        await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.entry && MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
+        await speciesReady(p, 30000).catch(() => {});
         const t = await p.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state, events: MENU_DEV.events.map(e => e.type), handoffs: (MENU_DEV.departures || MENU_DEV.handoffs || []).length,   /* (BLOOM-033: departures) */ ss: Object.keys(sessionStorage).filter(k => k.startsWith("strange-bloom.expedition")),
           rec: JSON.parse(localStorage.getItem("strange-bloom.training")), prompts: MENU_DEV.entry.stats.prompts, dialog: document.querySelector('[data-dialog="recommend"]').open, black: +(sessionStorage.getItem("__blk") || 0) }));
-        check(t.black >= 0.999 && t.state === "survey" && !/begin=1/.test(t.url) && t.events.includes("auto-begin") && !t.handoffs && !t.ss.length && t.rec.status === "completed" && !t.prompts && !t.dialog,
-          `${B} G8 · Begin Expedition leaves through the training black, opens the Strange Bloom title and enters the Destination Survey at once (the accepted begin=1 path, consumed from the address); no world is packed or handed off (the survey still owns generation); no prompt; still "completed"`,
-          `black ${t.black} before leaving · ${fadeSeen} ms to the title · ${t.url.replace(ORIGIN, "")}`);
+        // (BLOOM-035C2) from the species screen, the preselected species' "Survey for …" → the Destination Survey (still nothing packed or handed off)
+        await throughSpecies(p, 30000); await p.waitForFunction(() => MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
+        const t2 = await p.evaluate(() => ({ state: MENU_DEV.entry.state, species: MENU_DEV.entry.species && MENU_DEV.entry.species.id, handoffs: (MENU_DEV.departures || MENU_DEV.handoffs || []).length,
+          ss: Object.keys(sessionStorage).filter(k => k.startsWith("strange-bloom.expedition")), prompts: MENU_DEV.entry.stats.prompts }));
+        check(t.black >= 0.999 && t.state === "species" && !/begin=1/.test(t.url) && t.events.includes("auto-begin") && !t.handoffs && !t.ss.length && t.rec.status === "completed" && !t.prompts && !t.dialog
+          && t2.state === "survey" && !t2.handoffs && !t2.ss.length && !t2.prompts,
+          `${B} G8 · Begin Expedition leaves through the training black, opens the Strange Bloom title and enters Choose Plant Species at once (BLOOM-035C2; the accepted begin=1 path, consumed from the address), and from there the Destination Survey; no world is packed or handed off (the survey still owns generation); no prompt; still "completed"`,
+          `black ${t.black} before leaving · ${fadeSeen} ms to the title · ${t.url.replace(ORIGIN, "")} · ${t.state} → ${t2.state} (${t2.species})`);
         if (bname === "chromium") proof.completion.beginExpedition = { url: t.url.replace(ORIGIN, ""), events: t.events, handoffs: t.handoffs, record: t.rec }; }
       await c.close(); }
 
@@ -642,15 +657,15 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       await p.click('.mm-item[data-act="begin"]'); await sleep(500);
       const m1 = await M(p), dl = await p.evaluate(() => { const d = document.querySelector('[data-dialog="recommend"]'); return { h: d.querySelector("h2").textContent, btns: [...d.querySelectorAll(".mm-btn")].map(b => b.textContent), focus: document.activeElement && document.activeElement.textContent, url: location.href }; });
       await shot(p, "02-first-begin-recommendation.png");
-      await p.click('[data-act="recommend-expedition"]'); await p.waitForFunction(() => MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
+      await p.click('[data-act="recommend-expedition"]'); await throughSpecies(p); await p.waitForFunction(() => MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
       const m2 = await M(p);
       check(m0.tag && /Training Recommended/.test(m0.name) && J(m0.items) === J(["begin", "training", "settings", "credits"]) && m1.dlg && m1.state === "menu" && m1.prompts === 1 && new URL(dl.url).pathname === MENU_PATH
         && J(dl.btns) === J(["Go to Expedition", "Start Training (~5 min)"]) && m2.state === "survey" && JSON.parse(m2.rec).status === "skipped" && !m2.tag && m2.survey && m2.survey.adopted,
-        `${B} G9a · no training record: TRAINING carries "Recommended" (read with the label); the first BEGIN EXPEDITION opens ONE dialog ("${dl.h}": Go to Expedition · Start Training (~5 min)) and never starts training by itself; Go to Expedition records "skipped", drops the tag and enters the Destination Survey on the sector prefetched under the dialog`,
+        `${B} G9a · no training record: TRAINING carries "Recommended" (read with the label); the first BEGIN EXPEDITION opens ONE dialog ("${dl.h}": Go to Expedition · Start Training (~5 min)) and never starts training by itself; Go to Expedition records "skipped", drops the tag and enters the expedition (BLOOM-035C2: Choose Plant Species, then the Destination Survey for the preselected Organic Hybrid on the sector prefetched under the dialog)`,
         J({ name: m0.name, prompts: m1.prompts, rec: m2.rec && JSON.parse(m2.rec).status, adopted: m2.survey && m2.survey.adopted }));
       // back to the title (a fresh page, the record kept): no tag, no prompt, TRAINING still there
       await p.goto(MENU + "?bg=4&workers=3&sector=78"); await menuReady(p); await sleep(300);
-      await p.click('.mm-item[data-act="begin"]'); await p.waitForFunction(() => MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
+      await p.click('.mm-item[data-act="begin"]'); await throughSpecies(p); await p.waitForFunction(() => MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
       const m3 = await M(p); await c.close();
       // Start Training (~5 min): the training run through the black; nothing recorded
       const c2 = await ctx({ record: null }), q = watch(await c2.newPage()); await q.goto(MENU + "?bg=5&workers=3&sector=79"); await menuReady(q); await sleep(300);
@@ -660,10 +675,10 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       await c2.close();
       // completed: no tag, no prompt
       const c3 = await ctx({ record: "completed" }), r = watch(await c3.newPage()); await r.goto(MENU + "?bg=6&workers=3&sector=80"); await menuReady(r); await sleep(300);
-      const m4 = await M(r); await r.click('.mm-item[data-act="begin"]'); await r.waitForFunction(() => MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
+      const m4 = await M(r); await r.click('.mm-item[data-act="begin"]'); await throughSpecies(r); await r.waitForFunction(() => MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
       const m5 = await M(r); await c3.close();
       check(!m3.tag && m3.prompts === 0 && m3.state === "survey" && J(m3.items) === J(m0.items) && tr.training && tr.rec === null && tr.lesson === 1 && !m4.tag && J(m4.items) === J(m0.items) && m5.state === "survey" && m5.prompts === 0 && !p.errs.length && !q.errs.length && !r.errs.length,
-        `${B} G9b · with a "skipped" or "completed" record there is no tag and EXPEDITION goes straight to the survey (it never asks again); Start Training (~5 min) opens the real training run (lesson 1) through the black — inside index.html — and writes nothing; TRAINING stays in the menu in every state`,
+        `${B} G9b · with a "skipped" or "completed" record there is no tag and EXPEDITION goes straight on — Choose Plant Species, then the survey (BLOOM-035C2) — never asking again; Start Training (~5 min) opens the real training run (lesson 1) through the black — inside index.html — and writes nothing; TRAINING stays in the menu in every state`,
         J({ skipped: [m3.tag, m3.prompts], startTraining: tr, completed: [m4.tag, m5.prompts] }));
       proof.firstRun = { noRecord: { tag: m0.tag, label: m0.name, dialog: dl, choice: "Go to Expedition", record: m2.rec && JSON.parse(m2.rec).status, survey: m2.state, prefetchAdopted: m2.survey && m2.survey.adopted },
         afterSkipped: { tag: m3.tag, prompts: m3.prompts }, startTraining: tr, completed: { tag: m4.tag, prompts: m5.prompts } }; }

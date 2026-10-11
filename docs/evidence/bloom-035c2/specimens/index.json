@@ -266,10 +266,10 @@
      "traits": {
       "drought": 3
      },
-     "signature": "860c088a",
+     "signature": "2ade9e20",
      "plan": "candle@2",
      "pack": "woolly-candle",
-     "sha256": "a398d271fad8ada6b6a9520d0cda4115efdcea72dee1027728687ef050c56d5a"
+     "sha256": "cfe1ff5b387eb63719b16f9bd4e61fa6855eba45606c481a11feefad03519828"
     },
     "flood3": {
      "traits": {
@@ -337,7 +337,7 @@
    },
    "sheet": {
     "file": "woolly_candle-sheet.png",
-    "sha256": "0fca61b6fb00935eb6f5ce0b3c18074498e58fbfcdb2a78bb7ab2260e206c5bf"
+    "sha256": "c3b40acf7279087b4757f09ddacbe99ad0e76074a174289bcc995e9f021b7f4b"
    }
   },
   "reed_spire": {

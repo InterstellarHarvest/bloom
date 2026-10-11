@@ -29,8 +29,9 @@ const ALLOWED = p => p.startsWith("art/plant/") || p.startsWith("resources/plant
   || p === "tools/intake-organic-hybrid-art.mjs" || p === "tools/organic-hybrid-art-intake-check.js";   // BLOOM-032B2: the final-art intake + its focused QA
 // (BLOOM-032C) the later, separately reviewed production integration: exactly these files may differ from bba000f as well
 const C032 = new Set(["resources/run-ui/plant-specimen.js", "resources/run-ui/decision-rooms.css", "resources/run-ui/run-report.css", "demos/demo-run.html", "resources/plant-sprite-lab/legacy-svg-specimen.js", "tools/production-plant-integration-check.js"]);
-// (BLOOM-035B-5) FINAL_PACKS per BODY PLAN: approved art; every other pack is temporary proof art. Only organic-hybrid (oh-stem@1) is final.
-const FINAL_PACKS_BY_PLAN = { "oh-stem": { "organic-hybrid": "ORGANIC HYBRID — FINAL ART (PMO-approved; BLOOM-032B2 intake)" }, rosette: {}, candle: {}, reed: {} };
+// (BLOOM-035B-5) FINAL_PACKS per BODY PLAN: approved art; every other pack is temporary proof art. (BLOOM-035C2) the four species packs are final.
+const FINAL_PACKS_BY_PLAN = { "oh-stem": { "organic-hybrid": "ORGANIC HYBRID — FINAL ART (PMO-approved; BLOOM-032B2 intake)" }, rosette: { "cinder-rosette": "CINDER ROSETTE — FINAL ART (PMO-approved; tools/intake-plant-art.mjs)" },
+  candle: { "woolly-candle": "WOOLLY CANDLE — FINAL ART (PMO-approved; tools/intake-plant-art.mjs)" }, reed: { "reed-spire": "REED SPIRE — FINAL ART (PMO-approved; tools/intake-plant-art.mjs)" } };
 const FINAL_PACKS = Object.assign({}, ...Object.values(FINAL_PACKS_BY_PLAN));
 const OWN_RUNTIME = ["resources/plant-visual/plant-visual-model.js", "resources/plant-visual/plant-components.js", "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-fx.js", "resources/plant-sprite-lab/lab.js"];
 
@@ -106,12 +107,12 @@ const existsNow = f => { if (!AT_END) return fs.existsSync(path.join(ROOT, f)); 
         for (const q of [...(s.points && s.points.tip ? [s.points.tip] : []), ...((s.points && s.points.margin) || [])]) if (q[0] < 0 || q[1] < 0 || q[0] >= w || q[1] >= h) bad.push(`${p}/${s.id}: point`);
         for (const [t, v] of Object.entries(s.masks || {})) if (v !== "auto" && (v[0] + w > img.w || v[1] + h > img.h)) bad.push(`${p}/${s.id}: mask ${t}`); } }
     PROOF.packs = info;
-    check(packs.length >= 1 && packs.includes("proof") && !bad.length, `A1–A3 · source art is real PNG atlases + JSON metadata (${packs.join(", ")}); all parse; every sprite / mask rect is inside its image; every anchor and attachment point lies inside its rect; every proof pack is labelled TEMPORARY PIPELINE PROOF — NOT FINAL ART (the approved organic-hybrid pack: FINAL ART)`, J({ info, bad })); }
-  // P0 · (BLOOM-035B-5) FINAL_PACKS per body plan: every pack resolves to a plan; only organic-hybrid (oh-stem@1) is final art
+    check(packs.length >= 1 && packs.includes("proof") && !bad.length, `A1–A3 · source art is real PNG atlases + JSON metadata (${packs.join(", ")}); all parse; every sprite / mask rect is inside its image; every anchor and attachment point lies inside its rect; every proof pack is labelled TEMPORARY PIPELINE PROOF — NOT FINAL ART (the approved organic-hybrid, cinder-rosette, woolly-candle and reed-spire packs: FINAL ART)`, J({ info, bad })); }
+  // P0 · (BLOOM-035B-5) FINAL_PACKS per body plan: every pack resolves to a plan; (035C2) the four species packs are final art
   { const all = ART.packOrder, byPlan = {}; for (const p of all) (byPlan[PC.planOf(p).id] = byPlan[PC.planOf(p).id] || []).push(p);
     const finals = all.filter(p => FINAL_PACKS[p]), wrongPlan = finals.filter(p => !FINAL_PACKS_BY_PLAN[PC.planOf(p).id][p]);
-    check(J(finals) === J(["organic-hybrid"]) && !wrongPlan.length && Object.keys(byPlan).every(pl => FINAL_PACKS_BY_PLAN[pl]) && all.every(p => p === "organic-hybrid" || ART.packs[p].status === "TEMPORARY PIPELINE PROOF — NOT FINAL ART"),
-      `P0 · FINAL_PACKS per body plan: ${Object.entries(byPlan).map(([pl, ps]) => `${pl}: ${ps.join(" / ")}`).join(" · ")} — only organic-hybrid (oh-stem@1) is final; every other pack is TEMPORARY PIPELINE PROOF — NOT FINAL ART`, J({ finals, wrongPlan })); }
+    check(J(finals.slice().sort()) === J(["cinder-rosette", "organic-hybrid", "reed-spire", "woolly-candle"]) && !wrongPlan.length && Object.keys(byPlan).every(pl => FINAL_PACKS_BY_PLAN[pl]) && all.every(p => FINAL_PACKS[p] ? ART.packs[p].status === FINAL_PACKS[p] : ART.packs[p].status === "TEMPORARY PIPELINE PROOF — NOT FINAL ART"),
+      `P0 · FINAL_PACKS per body plan: ${Object.entries(byPlan).map(([pl, ps]) => `${pl}: ${ps.join(" / ")}`).join(" · ")} — final art: organic-hybrid (oh-stem@1), cinder-rosette (rosette@1), woolly-candle (candle@2), reed-spire (reed@1); every other pack is TEMPORARY PIPELINE PROOF — NOT FINAL ART`, J({ finals, wrongPlan })); }
   // A5 · the machine-readable schema (art/plant/schema/plant-atlas.schema.json) accepts every pack and the annotated examples, and rejects junk
   { const SCH = JSON.parse(read("art/plant/schema/plant-atlas.schema.json"));
     const V = (s, v, at = "$") => { const errs = [], E = m => errs.push(`${at}: ${m}`);

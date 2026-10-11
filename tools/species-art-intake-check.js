@@ -45,9 +45,9 @@ function zip(entries, deflate = true) {
   const I = await import(path.join(ROOT, "tools/intake-plant-art.mjs")), Bd = await import(path.join(ROOT, "tools/build-plant-art.mjs")), OHI = await import(path.join(ROOT, "tools/intake-organic-hybrid-art.mjs"));
   const LANES = { "cinder-rosette": { proof: "proof-cinder-rosette", plan: "rosette", species: "cinder_rosette" }, "woolly-candle": { proof: "proof-woolly-candle", plan: "candle", species: "woolly_candle" }, "reed-spire": { proof: "proof-reed-spire", plan: "reed", species: "reed_spire" } };
 
-  /** A scratch plant-art tree: the inputs the intake + build read, copied from this tree (lane intake folders left empty). */
+  /** A scratch plant-art tree: the inputs the intake + build read, copied from this tree (lane intake folders and the lanes' ingested packs left out). */
   function tree() { const d = scratch();
-    for (const rel of ["art/plant", "resources/plant-visual", "docs/species-art-briefs", "tools/build-plant-art.mjs"]) fs.cpSync(path.join(ROOT, rel), path.join(d, rel), { recursive: true, filter: s => !/[\\/]intake[\\/](cinder-rosette|woolly-candle|reed-spire)([\\/]|$)/.test(s) && !s.endsWith(".DS_Store") });
+    for (const rel of ["art/plant", "resources/plant-visual", "docs/species-art-briefs", "tools/build-plant-art.mjs"]) fs.cpSync(path.join(ROOT, rel), path.join(d, rel), { recursive: true, filter: s => !/[\\/](intake|packs)[\\/](cinder-rosette|woolly-candle|reed-spire)([\\/]|$)/.test(s) && !s.endsWith(".DS_Store") });
     return d; }
   /** Fixture deliveries for one lane, cut from its proof pack: { deliveries: [{ file, batch, manifest, entries: Map(name → Buffer | {w,h,rgba}) }], acceptance } */
   function fixture(pack, root = ROOT) {
@@ -78,7 +78,7 @@ function zip(entries, deflate = true) {
   // ================================================================ L · lanes
   console.log("# L · lanes");
   { const ls = I.lanes(ROOT), rows = ls.map(l => { const L = I.lane(ROOT, l.pack); return { pack: l.pack, plan: L.ref, drawings: L.drawings.length, brief: L.B.drawings, batches: Object.keys(L.batches).join(""), mask: L.maskBatch.n, closure: L.closure, errors: L.errors.length }; });
-    const want = { "cinder-rosette": ["rosette@1", 60], "reed-spire": ["reed@1", 53], "woolly-candle": ["candle@1", 58] };
+    const want = { "cinder-rosette": ["rosette@1", 60], "reed-spire": ["reed@1", 53], "woolly-candle": ["candle@2", 58] };   // (035C2) the woolly-candle lane follows brief v2 / candle@2
     let refusedOH = "", refusedX = ""; try { I.lane(ROOT, "organic-hybrid"); } catch (e) { refusedOH = e.message; } try { I.lane(ROOT, "proof-cinder-rosette"); } catch (e) { refusedX = e.message; }
     check(J(rows.map(r => r.pack)) === J(Object.keys(want)) && rows.every(r => r.plan === want[r.pack][0] && r.drawings === want[r.pack][1] && r.brief === r.drawings && r.batches === "1234567" && r.mask === 5 && r.closure === 7 && !r.errors)
       && /intake-organic-hybrid-art\.mjs/.test(refusedOH) && /no species lane/.test(refusedX),
@@ -112,9 +112,9 @@ function zip(entries, deflate = true) {
       const r = I.assemble(root, pack); if (r.errors.length) { bad.push(`${pack}: ${r.errors.slice(0, 3).join(" | ")}`); continue; }
       const pr = I.proveWithBuild(root, r.files, pack); if (pr.errors.length) { bad.push(`${pack}: ${pr.errors.slice(0, 3).join(" | ")}`); continue; }
       const N = pr.runtime.packs[pack], P = pr.runtime.packs[LANES[pack].proof];
-      const lossless = J(N.sprites) === J(P.sprites) && J(N.palette) === J(P.palette) && J(N.environment) === J(P.environment) && J(N.render) === J(P.render) && N.bodyPlan === P.bodyPlan;
+      const lossless = J(N.sprites) === J(P.sprites) && J(N.palette) === J(P.palette) && J(N.environment) === J(P.environment) && J(N.render) === J(P.render) && N.bodyPlan === FX[pack].L.ref && P.bodyPlan === `${LANES[pack].plan}@1`;
       if (!lossless) bad.push(`${pack}: runtime ≠ proof`);
-      if (!/— FINAL ART \(PMO-approved; tools\/intake-plant-art\.mjs\)$/.test(r.atlas.status) || r.atlas.bodyPlan !== `${LANES[pack].plan}@1`) bad.push(`${pack}: status / bodyPlan`);
+      if (!/— FINAL ART \(PMO-approved; tools\/intake-plant-art\.mjs\)$/.test(r.atlas.status) || r.atlas.bodyPlan !== FX[pack].L.ref) bad.push(`${pack}: status / bodyPlan`);
       const map = r.map; if (map.sprites.length !== r.atlas.sprites.length || map.acceptance.deliveries.some(d => !d.match) || map.attachments.length !== 1) bad.push(`${pack}: provenance map`);
       rows[pack] = { drawings: r.atlas.sprites.length, masks: map.sprites.reduce((n, s) => n + Object.keys(s.masks).length, 0), atlas: `${map.atlas.w}×${map.atlas.h}`, runtime: pr.coverage.sprites, placements: pr.coverage.placementsProven, lossless };
       built[pack] = { root, r, pr }; write(all, FX[pack]); }
@@ -129,12 +129,15 @@ function zip(entries, deflate = true) {
       const PV = g.BLOOM.plantVisual, PC = g.BLOOM.plantCompositor, ART = g.BLOOM.plantArt, RULES = PV.model.rules(g.BLOOM_DATA), gr = PV.grammars[LANES[pack].plan], pal = ART.packs[pack].palette;
       let n = 0, diff = 0, err = 0, minMargin = Infinity;
       for (let k = 0; k < MODELS.length; k += 5) { const S = gr.select(PV.model.normalize(MODELS[k], RULES)), F = PC.render(S, pack), Fp = PC.render(S, LANES[pack].proof); n++;
-        if (Buffer.compare(Buffer.from(F.rgba), Buffer.from(Fp.rgba)) !== 0) diff++;
+        // (035C2) woolly-candle is candle@2 (its proof pack candle@1): identical sockets except the storage root (dy 2 → 1), so only models
+        // that draw a storage organ (Drought T2+) may differ from the proof
+        const moved = FX[pack].L.ref !== `${LANES[pack].plan}@1` && (MODELS[k].traits.drought || 0) >= 2;
+        if (!moved && Buffer.compare(Buffer.from(F.rgba), Buffer.from(Fp.rgba)) !== 0) diff++;
         const margin = Math.min(F.bbox.x0, F.bbox.y0, F.W - 1 - F.bbox.x1, F.H - 1 - F.bbox.y1); minMargin = Math.min(minMargin, margin);
         let e = F.clip || margin < 1 || F.unrendered.length; for (let i = 0; i < F.plant.m.length && !e; i++) { if (F.rgba[i * 4 + 3] !== 255) e = true; const v = F.plant.m[i]; if (v && !(pal[ART.materials[(v >> 2) - 1]] || [])[v & 3]) e = true; }
         if (e) err++; }
       rows[pack] = { models: n, diff, err, minMargin }; if (diff || err || n < 1300) bad.push(`${pack}: ${J(rows[pack])}`); }
-    check(!bad.length, `A2 · legal models with the assembled packs (every 5th of the 6720 legal genome × condition models per plan, rendered by the production compositor from the build's own runtime): pixel-identical to the proof pack, nothing clipped (≥ 1 px margin), every treatment rendered, opaque output, every plant material in the pack palette — ${Object.entries(rows).map(([p, r]) => `${p}: ${r.models} models, min margin ${r.minMargin} px`).join(" · ")}`, J(bad)); }
+    check(!bad.length, `A2 · legal models with the assembled packs (every 5th of the 6720 legal genome × condition models per plan, rendered by the production compositor from the build's own runtime): pixel-identical to the proof pack (woolly-candle / candle@2: except where its one moved socket — the storage root — draws), nothing clipped (≥ 1 px margin), every treatment rendered, opaque output, every plant material in the pack palette — ${Object.entries(rows).map(([p, r]) => `${p}: ${r.models} models, min margin ${r.minMargin} px`).join(" · ")}`, J(bad)); }
   { const bad = [], pack = "reed-spire", a = built[pack].r;
     const again = I.assemble(built[pack].root, pack); if (!Object.keys(a.files).every(p => again.files[p].equals(a.files[p]))) bad.push("re-assembly differs");
     const other = tree(); write(other, FX[pack], { deflate: false, reverse: true }); const b = I.assemble(other, pack);
@@ -149,7 +152,7 @@ function zip(entries, deflate = true) {
     const build = node(["tools/build-plant-art.mjs", "--root", root, "--check"]); if (build.status !== 1 || !/differ from a clean rebuild/.test(build.stderr)) bad.push("the runtime must need a rebuild after an intake");
     const rb = node(["tools/build-plant-art.mjs", "--root", root]); const rbc = node(["tools/build-plant-art.mjs", "--root", root, "--check"]); if (rb.status !== 0 || rbc.status !== 0) bad.push(`build:plant-art ${rb.stderr.slice(0, 200)}`);
     const j = path.join(root, `art/plant/packs/${pack}/atlas.json`); fs.appendFileSync(j, " "); const tam = node(["tools/intake-plant-art.mjs", "--root", root, "--pack", pack, "--check"]); if (tam.status !== 1) bad.push("--check missed a tampered atlas.json");
-    const list = node(["tools/intake-plant-art.mjs", "--root", root, "--list"]); if (!/woolly-candle\s+candle@1.*ready/.test(list.stdout) || !/cinder-rosette.*awaiting deliveries/.test(list.stdout)) bad.push(`--list ${list.stdout}`);
+    const list = node(["tools/intake-plant-art.mjs", "--root", root, "--list"]); if (!/woolly-candle\s+candle@2.*ready/.test(list.stdout) || !/cinder-rosette.*awaiting deliveries/.test(list.stdout)) bad.push(`--list ${list.stdout}`);
     check(!bad.length, "A4 · CLI: --dry-run proves and writes nothing; the intake writes art/plant/packs/<pack>/atlas.{png,json} + intake-map.json, after which build:plant-art regenerates the runtime and check:plant-art passes; --check verifies a clean intake and catches a tampered pack; --list reports each lane", J(bad)); }
   { const bad = [], counts = {};
     for (const pack of Object.keys(LANES)) { const only = tree(); write(only, FX[pack]); for (const q of Object.keys(LANES)) { const r = I.assemble(only, q); if (q === pack ? r.errors.length : !r.awaiting) bad.push(`${pack} alone: ${q}`); } }
@@ -183,7 +186,7 @@ function zip(entries, deflate = true) {
     () => refuse("wrong pack id in a delivery.json", WC, fx => { fx.deliveries[0].manifest.pack = "reed-spire"; }, /wrong pack id "reed-spire" in delivery\.json/),
     () => refuse("wrong bodyPlan in a delivery.json", WC, fx => { fx.deliveries[1].manifest.bodyPlan = "oh-stem@1"; }, /wrong bodyPlan "oh-stem@1" in delivery\.json/),
     () => refuse("an undeclared extra drawing in a ZIP", WC, fx => { fx.deliveries[0].entries.set("sprites/leaf.base.extra.png", S(fx, "bud").img); }, /undeclared file sprites\/leaf\.base\.extra\.png/),
-    () => refuse("a declared drawing outside the contract", WC, fx => { const d = fx.deliveries[0]; d.entries.set("sprites/leaf.base.flat.png", S(fx, "bud").img); d.manifest.sprites.push({ id: "leaf.base.flat", file: "sprites/leaf.base.flat.png", anchor: [0, 0] }); }, /"leaf\.base\.flat": not a drawing of candle@1/),
+    () => refuse("a declared drawing outside the contract", WC, fx => { const d = fx.deliveries[0]; d.entries.set("sprites/leaf.base.flat.png", S(fx, "bud").img); d.manifest.sprites.push({ id: "leaf.base.flat", file: "sprites/leaf.base.flat.png", anchor: [0, 0] }); }, /"leaf\.base\.flat": not a drawing of candle@2/),
     () => refuse("a drawing delivered in the wrong batch", WC, fx => { const b1 = fx.deliveries[0], b6 = fx.deliveries.find(d => d.batch === 6), s = b6.manifest.sprites.find(x => x.id === "pod");
       b6.manifest.sprites = b6.manifest.sprites.filter(x => x !== s); b1.manifest.sprites.push(s); b1.entries.set(s.file, b6.entries.get(s.file)); b6.entries.delete(s.file); }, /"pod": belongs to batch 6/),
     () => refuse("the same drawing in two deliveries", WC, fx => { const b2 = fx.deliveries.find(d => d.batch === 2), s = b2.manifest.sprites.find(x => x.id === "frost.hair.1");
@@ -201,6 +204,9 @@ function zip(entries, deflate = true) {
   group("R4 · pixels and geometry: refused on", [
     () => refuse("partial alpha (one pixel at 128)", RS, fx => px(fx, "leaf.base.mid", img => { const [x, y] = opaqueAt(img); img.rgba[(y * img.w + x) * 4 + 3] = 128; }), /partial alpha 128 — alpha must be exactly 0 or 255/),
     () => refuse("an off-palette pixel", RS, fx => px(fx, "bud", img => { const [x, y] = opaqueAt(img), i = (y * img.w + x) * 4; img.rgba[i] ^= 1; }), /is not a declared palette colour/),
+    // (035C2) a trait's own variant drawing may paint its recolour treatment's targets (a ".heat" leaf: waxLeaf / waxCore) — nothing else may
+    () => refuse("a pigment colour in a Heat T3 .heat leaf (pig* is never paintable)", RS, fx => px(fx, "leaf.base.heat.mid", img => { const [x, y] = opaqueAt(img), i = (y * img.w + x) * 4, h = FX[RS].deliveries.find(d => d.batch === 7).manifest.palette.pigLeaf[1]; [1, 3, 5].forEach((k, j) => img.rgba[i + j] = parseInt(h.slice(k, k + 2), 16)); }), /treatment-only material pigLeaf/),
+    () => refuse("a wax colour in a NON-heat leaf", RS, fx => px(fx, "leaf.base.mid", img => { const [x, y] = opaqueAt(img), i = (y * img.w + x) * 4, h = FX[RS].deliveries.find(d => d.batch === 7).manifest.palette.waxLeaf[1]; [1, 3, 5].forEach((k, j) => img.rgba[i + j] = parseInt(h.slice(k, k + 2), 16)); }), /treatment-only material waxLeaf/),
     () => refuse("a treatment-only colour drawn", RS, fx => px(fx, "flower", img => { const [x, y] = opaqueAt(img), i = (y * img.w + x) * 4, h = FX[RS].deliveries.find(d => d.batch === 7).manifest.palette.waxLeaf[1]; [1, 3, 5].forEach((k, j) => img.rgba[i + j] = parseInt(h.slice(k, k + 2), 16)); }), /treatment-only material waxLeaf/),
     () => refuse("maxSize exceeded", RS, fx => { const { s, d, img } = S(fx, "salt.gland"), big = { w: img.w + 4, h: img.h, rgba: new Uint8Array((img.w + 4) * img.h * 4) }; for (let y = 0; y < img.h; y++) big.rgba.set(img.rgba.subarray(y * img.w * 4, (y + 1) * img.w * 4), y * big.w * 4); d.entries.set(s.file, big); delete s.size; }, /exceeds the contract's maxSize/),
     () => refuse("a declared size that is not the PNG's", RS, fx => { S(fx, "salt.gland").s.size = [9, 9]; }, /delivery\.json says \[9,9\]/),

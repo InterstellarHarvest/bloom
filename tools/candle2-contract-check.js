@@ -1,26 +1,24 @@
-// BLOOM — candle@2 contract revision check (BLOOM-035C2A). docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.md §0.
+// BLOOM — candle@2 contract revision check (BLOOM-035C2). docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.md §0.
 //
 //   node tools/candle2-contract-check.js
 //
-// Woolly Candle's production body plan REVISION candle@2 = the SAME anatomy, grammar, sockets (by name / attach kind) and gameplay as
-// candle@1 at production authoring resolution (larger native component maxima). Proves, in Node, with the temporary engineering proof pack
-// proof-woolly-candle-c2 (every drawing at its FULL candle@2 maximum):
-//   V · version separation — candle@1's plan, contract, grammar and player proof pack are byte-identical to the 035C2A base; candle@1 and
-//       candle@2 coexist in the generated atlas and each pack resolves to its own revision; an unknown revision (candle@3) is refused.
-//   K · the contract — the same registry as candle@1 except maxSize; every maxSize is EXACTLY the PMO candle@2 maximum (none reduced).
-//   S · sockets — the same sockets per architecture as candle@1 (names, attach kinds, sides, angles); only coordinates moved; vertical budget.
-//   C · the static clip proof — the build passes with every drawing at its full maximum (placements counted), every sprite at every socket.
-//   E · the COMPLETE legal-model enumeration (6720 = every legal genome × thriving / strained): grammar names only contract components and
-//       plan sockets, every sprite on a socket of its own attach kind, nothing clipped, ≥ 1 px from every edge, deterministic, every treatment
-//       rendered, exact palette, binary alpha; each design §2.4 axis visibly distinct; the specimen draws a candle@2 species.
-//   X · not exposed — content/species.js keeps woolly_candle on proof-woolly-candle / candle@1; no player surface names the c2 pack; the
-//       engineering pack is marked TEMPORARY; the v2 brief matches the engine and the woolly-candle intake lane follows it.
+// Woolly Candle's production body plan REVISION candle@2 = the SAME anatomy, grammar, sockets and gameplay as candle@1 at production authoring
+// resolution (the PMO-locked larger native maxima). Proves, in Node, with the PMO-accepted woolly-candle pack (BLOOM-035C2):
+//   V · version separation — candle@1's plan, contract, grammar, proof pack and brief v1 are byte-identical to the 035C2 base; candle@1 and
+//       candle@2 coexist in the generated atlas and each pack resolves to its own revision; malformed / unknown revisions are refused.
+//   K · the contract — the same registry as candle@1 except maxSize; every maxSize is EXACTLY the PMO production maximum.
+//   S · sockets — the same sockets, axes and coordinates as candle@1 (the accepted art was composed on them); trunk crowns = the art's tips.
+//   C · the build's static clip proof with the real pack; every drawing within its maximum; the accepted actual-size exceptions; per-component
+//       clearance of the real sprites at their tightest socket.
+//   E · the COMPLETE legal-model enumeration (6720) with the real pack; each design §2.4 axis visibly distinct; the specimen draws woolly_candle.
+//   X · the species uses it (woolly_candle → woolly-candle / candle@2, released); the v2 brief matches the engine; the intake lane follows it.
 "use strict";
 const path = require("path"), fs = require("fs"), cp = require("child_process");
 const ROOT = path.resolve(__dirname, "..");
-const BASE = "e534750f62962b4cb23ee63886e1ef29bbae442a";   // origin/main at the start of BLOOM-035C2A
-const PACK = "proof-woolly-candle-c2", PLAYER = "proof-woolly-candle", PROOF_STATUS = "TEMPORARY PIPELINE PROOF — NOT FINAL ART";
-// the PMO candle@2 target maxima (BLOOM-035C2A directive) — the contract must carry exactly these (no clip-proof reduction was needed)
+const BASE = "e534750f62962b4cb23ee63886e1ef29bbae442a";   // origin/main at the start of BLOOM-035C2
+const PACK = "woolly-candle", PLAYER = "proof-woolly-candle", FINAL_STATUS = "WOOLLY CANDLE — FINAL ART (PMO-approved; tools/intake-plant-art.mjs)";
+const EXCEPTIONS = { "seedHead.large": { canvas: [24, 22] }, "root.storage.3": { canvas: [18, 28], stubRows: 1 } };   // PMO-accepted actual sizes: 24 × 22; 18 × 27 + a 1-px stub
+// the PMO-locked candle@2 production maxima (BLOOM-035C2) — the contract must carry exactly these
 const PMO = { "body.trunk.0": [24, 40], "body.trunk.1": [24, 40], "body.trunk.2": [24, 40], "body.trunk.3": [24, 40], "leaf.base": [20, 20], "leaf.base.heat": [20, 20],
   "leaf.drought.1": [19, 20], "leaf.drought.2": [18, 20], "leaf.drought.3": [17, 20], "leaf.flood.1": [21, 20], "leaf.flood.2": [22, 21], "leaf.flood.3": [22, 21],
   "frost.hair.1": [5, 6], "frost.hair.2": [7, 8], "frost.hair.3": [9, 10], "frost.collar.2": [25, 9], "frost.collar.3": [29, 11], "root.storage.2": [16, 24], "root.storage.3": [18, 28],
@@ -33,10 +31,10 @@ let fails = 0, passes = 0; const t0 = Date.now();
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); ok ? passes++ : fails++; };
 
 (async () => {
-  const Bd = await import(path.join(ROOT, "tools/build-plant-art.mjs")), MP = await import(path.join(ROOT, "art/plant/proof-packs/make-proof-packs.mjs")), I = await import(path.join(ROOT, "tools/intake-plant-art.mjs"));
+  const Bd = await import(path.join(ROOT, "tools/build-plant-art.mjs")), I = await import(path.join(ROOT, "tools/intake-plant-art.mjs"));
   for (const f of ["content/config.js", "content/traits.js", "content/species.js", "resources/plant-visual/generated/plant-atlas.js", "resources/plant-visual/plant-visual-model.js", "resources/plant-visual/plant-components.js",
     "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-fx.js", "resources/run-ui/plant-specimen.js"]) require(path.join(ROOT, f));
-  const PV = BLOOM.plantVisual, PC = BLOOM.plantCompositor, FX = BLOOM.plantFx, ART = BLOOM.plantArt, PS = BLOOM.plantSpecimen, RULES = PV.model.rules(BLOOM_DATA);
+  const PROOF = {}; const PV = BLOOM.plantVisual, PC = BLOOM.plantCompositor, FX = BLOOM.plantFx, ART = BLOOM.plantArt, PS = BLOOM.plantSpecimen, RULES = PV.model.rules(BLOOM_DATA);
   const P1 = JSON.parse(read("art/plant/body-plans/candle.json")), P2 = JSON.parse(read("art/plant/body-plans/candle@2.json")), K1 = JSON.parse(read("art/plant/contracts/candle.json")), K2 = JSON.parse(read("art/plant/contracts/candle@2.json"));
 
   // ================================================================ V · version separation
@@ -44,7 +42,7 @@ const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"} 
   { const frozen = ["art/plant/body-plans/candle.json", "art/plant/contracts/candle.json", "resources/plant-visual/grammars/candle.js", `art/plant/packs/${PLAYER}/atlas.json`, `art/plant/packs/${PLAYER}/atlas.png`, `art/plant/packs/${PLAYER}/README.md`, "docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v1.md", "docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v1.json"];
     const changed = frozen.filter(f => !fs.readFileSync(path.join(ROOT, f)).equals(cp.execSync(`git show ${BASE}:${f}`, { cwd: ROOT, maxBuffer: 64 << 20 })));
     check(!changed.length && P1.version === 1 && P1.contract === "art/plant/contracts/candle.json",
-      `V1 · candle@1 preserved: its body plan, contract, grammar, player proof pack (${PLAYER}) and brief v1 are byte-identical to the 035C2A base ${BASE.slice(0, 7)}`, changed.join(", ")); }
+      `V1 · candle@1 preserved as historical / proof-compatibility material: its body plan, contract, grammar, proof pack (${PLAYER}) and brief v1 are byte-identical to the 035C2 base ${BASE.slice(0, 7)}`, changed.join(", ")); }
   { const r1 = PC.planOf(PLAYER), r2 = PC.planOf(PACK), c1 = ART.contracts.candle, c2 = ART.contracts["candle@2"];
     let refused = false; try { PS.drawSpecies({ id: "x", art: { bodyPlan: "candle@3", pack: PACK } }); } catch (e) { refused = e instanceof TypeError; }
     let wrong = false; try { PS.drawSpecies({ id: "x", art: { bodyPlan: "candle@1", pack: PACK } }); } catch (e) { wrong = e instanceof TypeError; }
@@ -79,27 +77,33 @@ const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"} 
     const same = (x, y) => J(x) === J(y), structure = Object.keys(P1.architectures).every(aid => same(P1.architectures[aid].axes.map(a => [a.id, a.kind, a.from, a.at, a.part, a.body, Object.keys(a.sockets || {}).map(k => [k, a.sockets[k].length])]), P2.architectures[aid].axes.map(a => [a.id, a.kind, a.from, a.at, a.part, a.body, Object.keys(a.sockets || {}).map(k => [k, a.sockets[k].length])])));
     const keep = same(P1.angles, P2.angles) && same(P1.canvas, P2.canvas) && same(P1.ground, P2.ground) && same(P1.crown, P2.crown) && same(P1.anchors, P2.anchors) && same(P1.local, P2.local) && same(P1.partLabels, P2.partLabels)
       && same(Object.keys(P1.architectures), Object.keys(P2.architectures)) && same({ ...P1.roots, about: 0, storage: 0, aerial: 0 }, { ...P2.roots, about: 0, storage: 0, aerial: 0 }) && P2.roots.aerial.dx.length === P1.roots.aerial.dx.length;
-    check(J(a) === J(b) && structure && keep && so2.length === so1.length && moved.length > 0 && so2.every(s => s.x >= 0 && s.y >= 0 && s.x < 84 && s.y < 98),
-      `S1 · the same ${so2.length} sockets as candle@1 in every architecture (name, attach kind, side, angle), the same axes (kind, origin, part, body drawing, socket groups and counts), canvas 84×98, soil row 68, crown 42,68, angles, specimen anchors, local colony layer and taproot numbers; only coordinates moved (${moved.length} sockets), all on the canvas`); }
-  { const rows = Object.fromEntries(Object.entries(P2.architectures).map(([aid, A]) => { const tr = A.axes.find(x => x.kind === "sprite"), col = A.axes.find(x => x.id === "column"), apex = so2.find(s => s.layout === aid && s.socket === "column.apex");
-      return [aid, { top: tr.top[1], column: col.height, budget: -tr.top[1] + col.height, apexY: apex.y, largeHeadTop: apex.y - (PMO["seedHead.large"][1] - 1) }]; }));
-    check(Object.values(rows).every(r => r.budget <= 43 && r.largeHeadTop >= 1) && rows.open.top < P1.architectures.open.axes[0].top[1],
-      `S2 · vertical budget: trunk crown height |top| + column height ≤ 43 in every architecture, so the 24-row seed head on the column apex keeps ≥ 1 px of sky; the trunk crowns rose with the larger trunk (open −28 → ${rows.open.top}) — ${Object.entries(rows).map(([k, r]) => `${k} top ${r.top} + column ${r.column} = ${r.budget}, large head top row ${r.largeHeadTop}`).join(" · ")}`); }
+    const geo = J(Object.fromEntries(Object.entries(P1.architectures).map(([k, v]) => [k, v.axes]))) === J(Object.fromEntries(Object.entries(P2.architectures).map(([k, v]) => [k, v.axes]))) && J({ ...P1.roots, about: 0, storage: 0 }) === J({ ...P2.roots, about: 0, storage: 0 }) && J(P2.roots.storage) === J({ dx: 0, dy: 1 }) && J(P1.roots.storage) === J({ dx: 0, dy: 2 });
+    check(J(a) === J(b) && structure && keep && geo && so2.length === so1.length && J(moved.map(s => s.socket)) === J(["primaryRoot"]),
+      `S1 · the same ${so2.length} sockets as candle@1 in every architecture (name, attach kind, side, angle), the same axes, roots, canvas 84×98, soil row 68, crown 42,68, angles, specimen anchors and local colony layer; ONE attachment offset — primaryRoot (storage dy 2 → 1: the accepted 18 × 28-canvas storage organ keeps ≥ 1 px margin); every other socket at its candle@1 coordinates`, J(moved.map(s => s.socket))); }
+  { const A = JSON.parse(read(`art/plant/packs/${PACK}/atlas.json`)), rows = Object.entries(P2.architectures).map(([aid, Ar]) => { const tr = Ar.axes.find(x => x.kind === "sprite"), sp = A.sprites.find(x => x.id === tr.body);
+      return { aid, body: tr.body, top: tr.top, tip: [sp.points.tip[0] - sp.anchor[0], sp.points.tip[1] - sp.anchor[1]], size: sp.rect.slice(2) }; });
+    check(rows.every(r => J(r.top) === J(r.tip)) && J(rows.map(r => r.top[1])) === J([-28, -27, -26, -25]),
+      `S2 · each architecture's trunk crown point is exactly the accepted trunk drawing's tip (points.tip − anchor) — ${rows.map(r => `${r.aid} ${r.body} ${r.size.join("×")} top [${r.top}]`).join(" · ")}`); }
 
   // ================================================================ C · static clip proof (the build) + the proof pack
   console.log("# C · static clip proof");
   const built = Bd.buildPlantArt(ROOT), MAN = built.manifest;
   { const committed = ["resources/plant-visual/generated/plant-atlas.js", "resources/plant-visual/generated/plant-atlas-manifest.json", "resources/plant-visual/plant-components.js"].every(f => built.files && fs.readFileSync(path.join(ROOT, f)).equals(built.files[f]));
-    const A = JSON.parse(read(`art/plant/packs/${PACK}/atlas.json`)), atMax = A.sprites.filter(s => J(s.rect.slice(2)) === J(K2.components[s.component].maxSize)).length, cov = MAN.packs[PACK];
-    const regen = MP.makeAll(ROOT)[PACK], same = J(regen.atlas) === J(A) && Buffer.from(regen.rgba).equals(Buffer.from(Bd.decodePNG(fs.readFileSync(path.join(ROOT, `art/plant/packs/${PACK}/atlas.png`))).rgba));
-    check(!built.errors.length && committed && cov.bodyPlan === "candle@2" && !cov.missing.length && cov.authored === 58 && atMax === 58 && cov.placementsProven > 5000 && same,
-      `C1 · the plant-art build passes (committed generated files == a clean rebuild) with ${PACK}: 58 drawings (${cov.sprites} runtime sprites with baked left twins), EVERY drawing at its full candle@2 maximum (${atMax}/58), every component × angle × side present, body crown points exact; static clip proof ${cov.placementsProven} placements — every sprite at every socket of its attach kind and every leaf-point detail on every leaf drawing inside 84×98; the pack equals a clean regeneration`, J(built.errors.slice(0, 3))); }
-  { const R = JSON.parse(read("docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.json")).revision, tight = R.maxima.filter(m => m.clearanceAtMax !== null).sort((a, b) => a.clearanceAtMax - b.clearanceAtMax);
-    check(R.maxima.every(m => m.clearanceAtMax === null || m.clearanceAtMax >= 1) && R.reduced.length === 0,
-      `C2 · per-component clearance at the full maximum ≥ 1 px everywhere (the drawing at its maximum, at its tightest socket); tightest: ${tight.slice(0, 4).map(m => `${m.id} ${m.clearanceAtMax} px (${m.tightest})`).join(" · ")}`); }
+    const A = JSON.parse(read(`art/plant/packs/${PACK}/atlas.json`)), cov = MAN.packs[PACK], over = A.sprites.filter(s => s.rect[2] > K2.components[s.component].maxSize[0] || s.rect[3] > K2.components[s.component].maxSize[1]);
+    const img = Bd.decodePNG(fs.readFileSync(path.join(ROOT, `art/plant/packs/${PACK}/atlas.png`))), opaqueBox = s => { let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1; const [rx, ry, w, h] = s.rect; for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (img.rgba[((ry + y) * img.w + rx + x) * 4 + 3]) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); } return [x1 - x0 + 1, y1 - y0 + 1]; };
+    const ex = Object.entries(EXCEPTIONS).map(([id, e]) => { const sp = A.sprites.find(x => x.id === id); return { id, canvas: sp.rect.slice(2), art: opaqueBox(sp), ok: J(sp.rect.slice(2)) === J(e.canvas) }; });
+    check(!built.errors.length && committed && cov.bodyPlan === "candle@2" && !cov.missing.length && cov.authored === 58 && !over.length && ex.every(e => e.ok) && A.status === FINAL_STATUS,
+      `C1 · the plant-art build passes (committed generated files == a clean rebuild) with the PMO-accepted ${PACK} pack (${A.status}): 58 drawings (${cov.sprites} runtime sprites with baked left twins), every one within its candle@2 maximum, every component × angle × side present, body crown points exact; static clip proof ${cov.placementsProven} placements inside 84×98; accepted actual-size exceptions ${ex.map(e => `${e.id} ${e.art.join("×")} art on a ${e.canvas.join("×")} canvas`).join(", ")}`, J({ errors: built.errors.slice(0, 3), over: over.map(s => s.id), ex })); }
+  { const pack = ART.packs[PACK], so = PC.sockets(ART.bodyPlans["candle@2"], ART.contracts["candle@2"].canvas), cl = {}, side = k => k.endsWith("@left") ? -1 : k.endsWith("@right") ? 1 : 0, pts = Object.entries(pack.sprites).filter(([, sp]) => sp.attach === "leafPoint");
+    const note = (sp, x0, y0, at) => { const c = Math.min(x0, y0, 84 - (x0 + sp.w), 98 - (y0 + sp.h)); if (!cl[sp.component] || c < cl[sp.component].c) cl[sp.component] = { c, at }; };
+    for (const [k, sp] of Object.entries(pack.sprites)) { if (sp.attach === "leafPoint") continue; for (const q of so.filter(q => q.attach === sp.attach && (!side(k) || q.side === side(k)))) { const x0 = q.x - sp.ax, y0 = q.y - sp.ay; note(sp, x0, y0, `${q.layout}/${q.socket}`);
+      if (sp.attach === "radialLeaf") for (const p of [sp.points.tip, ...sp.points.margin].filter(Boolean)) for (const [, ps] of pts) note(ps, x0 + p[0] - ps.ax, y0 + p[1] - ps.ay, `${k.split("@")[0]} point at ${q.layout}/${q.socket}`); } }
+    const rows = Object.entries(cl).sort((a, b) => a[1].c - b[1].c);
+    PROOF.clearance = Object.fromEntries(rows.map(([k, v]) => [k, v]));
+    check(rows.every(([, v]) => v.c >= 0), `C2 · per-component clearance of the accepted sprites at their tightest socket (rect inside the canvas everywhere); tightest: ${rows.slice(0, 5).map(([k, v]) => `${k} ${v.c} px (${v.at})`).join(" · ")}`); }
 
   // ================================================================ E · the complete legal-model enumeration
-  console.log("# E · complete legal-model enumeration (candle@2, full-size proof pack)");
+  console.log("# E · complete legal-model enumeration (candle@2, the accepted woolly-candle pack)");
   const genomes = () => { const out = [], W = [{}, { drought: 1 }, { drought: 2 }, { drought: 3 }, { flood: 1 }, { flood: 2 }, { flood: 3 }];
     for (let c = 0; c <= 3; c++) for (let h = 0; h + c <= 3; h++) for (const w of W) for (const salt of [0, 1]) for (const rad of [0, 1]) for (const seedOut of [0, 1, 2]) for (const earlyMat of [0, 1]) for (const waterSeeds of [0, 1])
       out.push(Object.assign({}, c ? { cold: c } : {}, h ? { heat: h } : {}, w, salt ? { salt } : {}, rad ? { rad } : {}, seedOut ? { seedOut } : {}, earlyMat ? { earlyMat } : {}, waterSeeds ? { waterSeeds } : {})); return out; };
@@ -125,29 +129,28 @@ const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"} 
       if (err.length) { r.badN++; if (r.bad.length < 4) r.bad.push(`${J(m)}: ${err.slice(0, 3).join("; ")}`); } }
     const allComps = Object.keys(C.components).filter(c => !c.startsWith("body.")).every(c => r.comps.has(c));
     check(r.models === 6720 && !r.badN && r.minMargin >= 1 && allComps && ["pigment", "wax", "toothed"].every(t => r.treatments.has(t)),
-      `E1 · EVERY legal model of candle@2 (${r.models} = ${MODELS.length / 2} legal genomes × thriving / strained) renders with the full-size proof pack: only contract components, plan architectures and axes; every one of the ${r.placements} sprite placements on a plan socket of its own attach kind (or a leaf point); nothing clipped, min margin ${r.minMargin} px (≥ 1); deterministic; every treatment (pigment, wax, toothed) rendered; alpha 255 and every thriving plant pixel EXACTLY its palette colour; every non-body component reached — ${r.selections.size} distinct selections, ${r.anatomies.size} distinct thriving anatomies`, J(r.bad)); }
+      `E1 · EVERY legal model of candle@2 (${r.models} = ${MODELS.length / 2} legal genomes × thriving / strained) renders with the accepted ${PACK} pack: only contract components, plan architectures and axes; every one of the ${r.placements} sprite placements on a plan socket of its own attach kind (or a leaf point); nothing clipped, min margin ${r.minMargin} px (≥ 1); deterministic; every treatment (pigment, wax, toothed) rendered; alpha 255 and every thriving plant pixel EXACTLY its palette colour; every non-body component reached — ${r.selections.size} distinct selections, ${r.anatomies.size} distinct thriving anatomies`, J(r.bad)); }
   { const AX = { cold: [1, 2, 3], heat: [1, 2, 3], drought: [1, 2, 3], flood: [1, 2, 3], salt: [1], rad: [1], seedOut: [1, 2], earlyMat: [1], waterSeeds: [1] }, fr = (t, c = "thriving") => PC.render(g.select(PV.model.normalize({ traits: t, condition: c }, RULES)), PACK);
     const base = fr({}), bad = [], steps = [];
     for (const [id, tiers] of Object.entries(AX)) { let prev = base; for (const n of tiers) { const F = fr({ [id]: n }), d = FX.diff(base, F).length, step = FX.diff(prev, F).length; steps.push(Math.min(d, step)); if (F.sig.full === base.sig.full || d < 6 || step < 6) bad.push(`${id}${n}: ${d}/${step}`); prev = F; } }
     if (fr({}, "strained").sig.full === base.sig.full) bad.push("strained = thriving");
     for (const arm of ["drought", "flood"]) for (const n of [4, 5, 9]) if (fr({ [arm]: n }).sig.full !== fr({ [arm]: 3 }).sig.full) bad.push(`${arm}${n} ≠ T3`);
     check(!bad.length, `E2 · design §2.4 on candle@2: each single trait at each tier (Cold, Heat, Drought, Flood T1–T3, Salt, Radiation, Seed Output T1–T2, Early Maturity, Waterborne Seeds) differs from the unmutated plant AND the tier below (≥ 6 px; min ${Math.min(...steps)}); strained ≠ thriving; Drought / Flood T4 · T5 · T9 = T3`, bad.join(", ")); }
-  { const sp = { id: "woolly_candle", art: { bodyPlan: "candle@2", pack: PACK } }, bad = [], d1 = PS.drawSpecies(sp), d2 = PS.drawSpecies(sp);
+  { const sp = (Array.isArray(BLOOM_DATA.species) ? BLOOM_DATA.species : Object.values(BLOOM_DATA.species)).find(s => s.id === "woolly_candle"), bad = [], d1 = PS.drawSpecies(sp), d2 = PS.drawSpecies(sp);
     if (!(d1.w === 84 && d1.h === 98 && d1.signature === d2.signature && d1.plan === "candle@2" && d1.pack === PACK)) bad.push("drawSpecies");
     const room = t => ({ traits: t, names: {}, preview: null, colony: { living: true, establishment: 0.6, word: "" }, focus: "balanced", local: null, condition: "ok", viable: true });
     for (const t of [{}, { cold: 3 }, { cold: 2, heat: 1, drought: 3, salt: 1, rad: 1, seedOut: 2, earlyMat: 1, waterSeeds: 1 }, { cold: 3, flood: 3, salt: 1, seedOut: 2, earlyMat: 1, waterSeeds: 1 }]) { const d = PS.draw(room(t), { species: sp });
       for (const part of PS.PARTS) { const a = d.anchors[part], i = a && a.y * d.W + a.x; if (!a || !(d.frame.plant.m[i] || d.extras.has(i))) bad.push(`${J(t)} ${part} anchor`); if (PS.draw(room(t), { highlight: part, species: sp }).sig === d.sig) bad.push(`${J(t)} ${part} highlight`); } }
-    check(!bad.length, "E3 · the production specimen draws a candle@2 species (engineering object only — no species uses it): 84×98, deterministic, plan candle@2; every one of the seven part anchors lands on the anatomy and every highlight shows, for the base, Cold T3 and two maximal models", bad.slice(0, 4).join("; ")); }
+    check(!bad.length, "E3 · the production specimen draws the released woolly_candle species: 84×98, deterministic, plan candle@2, pack woolly-candle; every one of the seven part anchors lands on the anatomy and every highlight shows, for the base, Cold T3 and two maximal models", bad.slice(0, 4).join("; ")); }
 
   // ================================================================ X · not exposed; brief; lane
   console.log("# X · not exposed · brief · intake lane");
-  { const defs = BLOOM_DATA.species, woolly = (Array.isArray(defs) ? defs : Object.values(defs)).find(s => s.id === "woolly_candle"), A = JSON.parse(read(`art/plant/packs/${PACK}/atlas.json`)), md = read(`art/plant/packs/${PACK}/README.md`);
-    const surfaces = ["content/species.js", "index.html", "resources/species-select/species-select.js", "resources/run-ui/plant-specimen.js", "resources/run-ui/run-ui-adapter.js"].filter(f => read(f).includes(PACK) || read(f).includes("candle@2"));
-    check(woolly && woolly.art.bodyPlan === "candle@1" && woolly.art.pack === PLAYER && !surfaces.length && A.status === PROOF_STATUS && A.title.includes("engineering only") && /TEMPORARY ENGINEERING PROOF/.test(A.about) && /hazard checker/.test(A.about) && md.includes("**Engineering only (BLOOM-035C2A).**"),
-      `X1 · not exposed: content/species.js keeps woolly_candle on ${PLAYER} (candle@1); no player surface names ${PACK} or candle@2; the pack is "${PROOF_STATUS}", titled "engineering only", its about / README say TEMPORARY ENGINEERING PROOF and that it is not the player proof pack`, surfaces.join(", ")); }
+  { const defs = BLOOM_DATA.species, woolly = (Array.isArray(defs) ? defs : Object.values(defs)).find(s => s.id === "woolly_candle"), A = JSON.parse(read(`art/plant/packs/${PACK}/atlas.json`)), stale = fs.existsSync(path.join(ROOT, "art/plant/packs/proof-woolly-candle-c2"));
+    check(woolly && woolly.status === "released" && woolly.art.bodyPlan === "candle@2" && woolly.art.pack === PACK && A.bodyPlan === "candle@2" && A.status === FINAL_STATUS && !stale,
+      `X1 · woolly_candle is released on ${PACK} (candle@2, "${FINAL_STATUS}"); the temporary candle@2 engineering pack is gone; ${PLAYER} (candle@1) stays only as proof-compatibility material`); }
   { const r = cp.spawnSync(process.execPath, ["tools/build-plant-art.mjs", "--briefs", "--check"], { cwd: ROOT, encoding: "utf8" }), B = JSON.parse(read("docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.json")), md = read("docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.md");
     const maxOk = B.components.every(c => J(c.maxSize) === J(PMO[c.id])) && B.revision.maxima.every(m => J(m.v2) === J(PMO[m.id]));
-    check(r.status === 0 && B.bodyPlan === "candle@2" && B.newPack === "woolly-candle" && B.replacesPack === PLAYER && B.clipProof.proofPack === PACK && maxOk && /The ONLY artistic change from brief v1 is the increased native resolution/.test(md) && /previously approved Woolly Candle visual design remains the source of truth/.test(md),
+    check(r.status === 0 && B.bodyPlan === "candle@2" && B.newPack === "woolly-candle" && B.replacesPack === PLAYER && B.clipProof.proofPack === null && maxOk && /The ONLY artistic change from brief v1 is the increased native resolution/.test(md) && /previously approved Woolly Candle visual design remains the source of truth/.test(md),
       `X2 · docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.{md,json} match the engine (briefs --check), body plan candle@2, pack woolly-candle, the finalized maxima = the contract = the PMO table, and state that the only artistic change is native resolution with the approved design as source of truth`, (r.stdout + r.stderr).trim().split("\n").pop()); }
   { const L = I.lane(ROOT, "woolly-candle"), list = I.lanes(ROOT);
     check(!L.errors.length && L.ref === "candle@2" && L.brief.endsWith("WOOLLY_CANDLE_ART_BRIEF_v2.json") && L.drawings.length === 58 && list.filter(l => l.pack === "woolly-candle").length === 1,

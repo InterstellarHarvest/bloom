@@ -7,9 +7,16 @@ Body plan:   reed@1   (53 drawings + masks)
 Brief:       docs/species-art-briefs/REED_SPIRE_ART_BRIEF_v1.md (+ .json)
 Replaces:    art/plant/packs/proof-reed-spire  (TEMPORARY PIPELINE PROOF — NOT FINAL ART)
 
-STATUS: awaiting deliveries. No final art exists yet.
+STATUS: INGESTED (BLOOM-035C2 review candidate). The PMO-accepted source candidate REED_SPIRE_PRODUCTION_SOURCE_CANDIDATE_v3_1
+(10868753 B ZIP, SHA-256 73ed7a565b101745b0edc9960daa14e5ec150bbbe1b5f678673b22617dda5983; aggregate package hash
+c167a10c747cc221c130adf843eb36c93c406b7d50f3a03690628b6fbff5dfee over 166 files) was converted mechanically into the 7 C0 deliveries here by
+tools/species-source-deliveries.mjs (SOURCE_PROVENANCE.json = the complete source inventory) and ingested by
+tools/intake-plant-art.mjs into art/plant/packs/reed-spire/ (intake-map.json). The species uses this pack.
 
-When the PMO has approved the Reed Spire batches, place here, unchanged:
+  node tools/species-source-deliveries.mjs --pack reed-spire --source <path to REED_SPIRE_PRODUCTION_SOURCE_CANDIDATE_v3_1.zip> --check
+  node tools/intake-plant-art.mjs --pack reed-spire --check
+
+The lane format (for any future re-delivery), unchanged:
 
   PMO_FINAL_ACCEPTANCE.json        format bloom-plant-art-acceptance@1 (pack "reed-spire", bodyPlan "reed@1",
                                    status "FINAL PMO-APPROVED ART INTAKE", one {file, batch, bytes, sha256}

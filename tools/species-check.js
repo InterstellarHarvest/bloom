@@ -84,8 +84,8 @@ const arche = (ctx, id) => ctx.BLOOM_DATA.archetypes.find(a => a.id === id);
 // ---------------------------------------------------------------------------------------------------- Q2 · ids and versions
 { const ids = S.ids(), list = S.list();
   check(J(ids) === J(IDS) && list.every(sp => Number.isInteger(sp.version) && Number.isInteger(sp.physiologyVersion) && sp.physiologyKey === `${sp.id}/p${sp.physiologyVersion}#${S.physiologyHash(sp.physiology)}`)
-    && new Set(list.map(s => s.physiologyKey)).size === 4 && list[0].id === "organic_hybrid" && list.filter(s => s.status === "candidate").map(s => s.id).join() === IDS.slice(1).join(),
-    "Q2 · stable ids in role order (organic_hybrid · cinder_rosette · woolly_candle · reed_spire), integer version + physiologyVersion, unique physiology keys \"<id>/p<n>#<hash>\"; the three new species are status \"candidate\"",
+    && new Set(list.map(s => s.physiologyKey)).size === 4 && list[0].id === "organic_hybrid" && list.every(s => s.status === "released") && list.slice(1).every(s => s.version === 2 && s.physiologyVersion === 1),
+    "Q2 · stable ids in role order (organic_hybrid · cinder_rosette · woolly_candle · reed_spire), integer version + physiologyVersion, unique physiology keys \"<id>/p<n>#<hash>\"; (035C2) all four species are status \"released\" — the three specialists at definition version 2 (their PMO-accepted art), physiologyVersion still 1",
     list.map(s => s.physiologyKey).join(" · ")); }
 
 // ---------------------------------------------------------------------------------------------------- Q3 · physiology stability

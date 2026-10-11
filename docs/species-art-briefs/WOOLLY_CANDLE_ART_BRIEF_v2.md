@@ -33,7 +33,7 @@ These are MAXIMA, not mandatory filled rectangles; every angle of a leaf structu
 | `leaf.flood.2.heat` | 16 × 15 | **22 × 21** | — |
 | `leaf.flood.3.heat` | 16 × 15 | **22 × 21** | — |
 | `root.storage.2` | 12 × 20 | **16 × 24** | — |
-| `root.storage.3` | 14 × 24 | **18 × 28** | 18 × 27 (on a 18 × 28 canvas) — accepted actual art 18 × 27 on an 18 × 28 canvas (one transparent row), within the 18 × 28 maximum |
+| `root.storage.3` | 14 × 24 | **18 × 28** | 18 × 27 (on a 18 × 28 canvas) — accepted actual organ 18 × 27 + its 1-px attachment stub (row 0) = an 18 × 28 canvas, within the 18 × 28 maximum; hung one row higher (storage socket dy 1) for ≥ 1 px margin |
 | `root.aerial.1` | 5 × 8 | **7 × 10** | — |
 | `root.aerial.2` | 5 × 11 | **9 × 14** | — |
 | `root.aerial.3` | 7 × 15 | **11 × 18** | — |
@@ -55,7 +55,7 @@ These are MAXIMA, not mandatory filled rectangles; every angle of a leaf structu
 
 ### 0.2 Geometry (sockets keep their names, attach kinds, meaning and coordinates)
 
-The accepted Woolly Candle art was composed on the candle@1 sockets: its trunk crown points are exactly candle@1's, and the complete legal-model enumeration renders it unclipped with ≥ 1 px margin, so **0 of 107 sockets moved**. The vertical stack of the tallest model — trunk crown point, column, a 22-row seed head on the column apex — leaves exactly 1 px of sky; a full 24 × 24 seed head or an 18 × 28 storage organ drawn edge to edge would need sockets moved first (an engine change).
+The accepted Woolly Candle art was composed on the candle@1 sockets: its trunk crown points are exactly candle@1's, so the geometry is kept: **1 of 107 sockets moved** — only the attachment offsets the accepted art needs for ≥ 1 px margin in the complete legal-model enumeration (below). The vertical stack of the tallest model — trunk crown point, column, a 22-row seed head on the column apex — leaves exactly 1 px of sky; a full 24 × 24 seed head would need the column shortened first (an engine change).
 
 | Architecture | Trunk drawing | Crown point (points.tip = anchor + top) | Column height |
 |---|---|---|---|
@@ -66,6 +66,10 @@ The accepted Woolly Candle art was composed on the candle@1 sockets: its trunk c
 
 
 The trunk drawing is anchored bottom-centre on the soil row; its crown point (where the rosette sits) is |top| rows above the anchor; the drawing may extend above its crown point (wool / skirt behind the rosette) within 24 × 40.
+
+| Arch. | Socket | Attach | v1 x, y | v2 x, y (why: the accepted art's margin) |
+|---|---|---|---|---|
+| * | `primaryRoot` | primaryRoot | 42, 70 | **42, 69** |
 
 ### 0.3 Proof
 
@@ -130,7 +134,7 @@ The engine draws the procedural parts (stems / caudex / culms / column / spike, 
 | open | `column.drift.1` | drift | 56, 20 |  |  | 56 · 27 · 20 · 77 |
 | open | `column.drift.2` | drift | 32, 16 |  |  | 32 · 51 · 16 · 81 |
 | * | `rootCrown` | rootCrown | 42, 68 |  |  | 42 · 41 · 68 · 29 |
-| * | `primaryRoot` | primaryRoot | 42, 70 |  |  | 42 · 41 · 70 · 27 |
+| * | `primaryRoot` | primaryRoot | 42, 69 |  |  | 42 · 41 · 69 · 28 |
 | * | `aerial.0` | aerialRoot | 32, 69 | -1 |  | 32 · 51 · 69 · 28 |
 | * | `aerial.1` | aerialRoot | 53, 69 | 1 |  | 53 · 30 · 69 · 28 |
 | * | `aerial.2` | aerialRoot | 27, 69 | -1 |  | 27 · 56 · 69 · 28 |
@@ -237,8 +241,8 @@ Every pack of this plan must provide every component × angle (drawn facing righ
 | `leaf.flood.1.heat` | leaf · structural | radialLeaf · leaves | right · true | mid / high | heat 3 | 21×20 | tip+margin · pigment, wax, toothed | the leaf base: the one pixel touching the rosette heart (drawn facing right; leftmost column) | back 41 · out 38 · up 38 · down 53 |
 | `leaf.flood.2.heat` | leaf · structural | radialLeaf · leaves | right · true | mid / high | heat 3 | 22×21 | tip+margin · pigment, wax, toothed | the leaf base: the one pixel touching the rosette heart (drawn facing right; leftmost column) | back 41 · out 38 · up 38 · down 53 |
 | `leaf.flood.3.heat` | leaf · structural | radialLeaf · leaves | right · true | mid / high | heat 3 | 22×21 | tip+margin · pigment, wax, toothed | the leaf base: the one pixel touching the rosette heart (drawn facing right; leftmost column) | back 41 · out 38 · up 38 · down 53 |
-| `root.storage.2` | root · structural | primaryRoot · rootStorage | down · false | — | drought 2 | 16×24 | — · — | its top-centre pixel (hangs from the root socket) | 42 · 41 · 70 · 27 |
-| `root.storage.3` | root · structural | primaryRoot · rootStorage | down · false | — | drought 3 | 18×28 | — · — | its top-centre pixel (hangs from the root socket) | 42 · 41 · 70 · 27 |
+| `root.storage.2` | root · structural | primaryRoot · rootStorage | down · false | — | drought 2 | 16×24 | — · — | its top-centre pixel (hangs from the root socket) | 42 · 41 · 69 · 28 |
+| `root.storage.3` | root · structural | primaryRoot · rootStorage | down · false | — | drought 3 | 18×28 | — · — | its top-centre pixel (hangs from the root socket) | 42 · 41 · 69 · 28 |
 | `root.aerial.1` | root · structural | aerialRoot · aerialRoots | up · false | — | flood 1 | 7×10 | — · — | its BOTTOM pixel, buried one row into the soil (row 69); it rises upward | 27 · 25 · 69 · 28 |
 | `root.aerial.2` | root · structural | aerialRoot · aerialRoots | up · false | — | flood 2 | 9×14 | — · — | its BOTTOM pixel, buried one row into the soil (row 69); it rises upward | 27 · 25 · 69 · 28 |
 | `root.aerial.3` | root · structural | aerialRoot · aerialRoots | up · false | — | flood 3 | 11×18 | — · — | its BOTTOM pixel, buried one row into the soil (row 69); it rises upward | 27 · 25 · 69 · 28 |

@@ -215,7 +215,12 @@ const GEN = [["generateFromArchetype", null], ["generatePlanet", null], ["attemp
         p.on("pageerror", e => p.errs.push("pageerror: " + e.message)); p.on("console", m => { if (m.type() === "error") p.errs.push("console: " + m.text()); });
         p.on("framenavigated", f => { if (f === p.mainFrame()) p.navs++; }); p.on("request", r => p.reqs.push(r.url())); p.on("dialog", d => d.accept()); return p; };
       const menuReady = p => p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready && MENU_DEV.entry.state === "menu", null, { timeout: 60000, polling: 100 });
-      const surveyReady = p => p.waitForFunction(() => { const s = MENU_DEV.entry.survey; return s && s.state === "survey" && s.cells.every(Boolean); }, null, { timeout: 120000, polling: 100 });
+      // (035C2) EXPEDITION / Begin Expedition now open Choose Plant Species first: pass through it with the selected species (Organic Hybrid on a
+      // fresh visit) via its primary "Survey for <name>"; a survey reached otherwise (Choose another planet) goes straight on
+      const viaSpecies = async p => { const at = await (await p.waitForFunction(() => { const e = MENU_DEV.entry, v = e.speciesView, s = e.survey;
+          if (e.state === "species") return v && v.inner && v.inner.state === "cards" && !e.covered && e.black.style.display === "none" ? "species" : false; return s && s.state !== "disposed" ? "survey" : false; }, null, { timeout: 60000, polling: 50 })).jsonValue();
+        if (at === "species") { await p.evaluate(() => { const s = MENU_DEV.entry.speciesView.inner; s.open(s.selected.id); }); await p.click(".ss-btn.go"); } return at; };
+      const surveyReady = async p => { await viaSpecies(p); await p.waitForFunction(() => { const s = MENU_DEV.entry.survey; return s && s.state === "survey" && s.cells.every(Boolean); }, null, { timeout: 120000, polling: 100 }); };
       const runReady = (p, n) => p.waitForFunction(n => window.BLOOM_APP && BLOOM_APP.session && BLOOM_APP.stats.sessions.length >= n && BLOOM_APP.stats.sessions[n - 1].readyMs !== null && !BLOOM_APP.busy
         && !document.querySelector(".atx") && MENU_DEV.entry.state === "away", n, { timeout: 60000, polling: 50 });
       const frames = (p, n = 2) => p.evaluate(n => new Promise(r => { let k = 0; const f = () => (++k >= n ? r() : requestAnimationFrame(f)); requestAnimationFrame(f); }), n);
@@ -341,11 +346,11 @@ const GEN = [["generateFromArchetype", null], ["generatePlanet", null], ["attemp
         await p.click('.mm-item[data-act="training"]'); await trainReady(7);
         await winNow(p); await reportOpen(p);
         const tacts = await p.evaluate(() => BLOOM.runReport.instance.state().actions);
-        await p.click('#rr [data-act="beginExpedition"]'); await p.waitForFunction(() => !BLOOM_APP.session && MENU_DEV.entry.state === "survey", null, { timeout: 60000, polling: 100 });
+        await p.click('#rr [data-act="beginExpedition"]'); await p.waitForFunction(() => !BLOOM_APP.session && MENU_DEV.entry.state === "species", null, { timeout: 60000, polling: 100 }); await surveyReady(p);
         const be = await p.evaluate(() => ({ rec: JSON.parse(localStorage.getItem("strange-bloom.training")).status, survey: !!MENU_DEV.entry.survey }));
         check(tr1.planet === "training_grounds" && tr1.training && tr1.coach && !tr1.running && tr2.sessions === 5 && tr2.pv === 1 && tr2.coaches === 1 && asked === "Skip training?" && sk.rec === "completed" && sk.coach === 0 && sk.ui === null
           && J(tacts) === J(["beginExpedition", "restartTraining", "mainMenu"]) && be.rec === "completed" && be.survey && p.navs === 1,
-          `[${bn}] F14 · TRAINING is a run configuration inside index.html: the training world, paused, the guided coach; Restart Training (a fresh training session, one coach); Skip Training (its one confirmation; a completed training is never downgraded; back to the title, no coach left); Main Menu; the finished training's Begin Expedition · Restart training · Main menu → Begin Expedition opens the survey (records "completed") — one document load for all of it`,
+          `[${bn}] F14 · TRAINING is a run configuration inside index.html: the training world, paused, the guided coach; Restart Training (a fresh training session, one coach); Skip Training (its one confirmation; a completed training is never downgraded; back to the title, no coach left); Main Menu; the finished training's Begin Expedition · Restart training · Main menu → Begin Expedition opens Choose Plant Species, then the survey (records "completed") — one document load for all of it`,
           `restart lesson ${tr2.lesson} · skip asked "${asked}" · training report ${J(tacts)}`);
         const au = await audit(p, U), bad = urlsBad(p.reqs).concat(REQ.filter(r => /demo-run|expedition=|handoff/.test(r))), html = REQ.filter(r => /\.html(\?|$)|\/(\?|$)/.test(r));
         const planetStored = au.sets.filter(s => !/^strange-bloom\.(training|settings|menu\.)/.test(s.k) || s.bytes > 400);
