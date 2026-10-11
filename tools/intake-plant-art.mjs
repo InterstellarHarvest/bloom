@@ -39,7 +39,7 @@ import os from "node:os";
 import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
-import { decodePNG, buildPlantArt } from "./build-plant-art.mjs";
+import { decodePNG, buildPlantArt, paintableTargets } from "./build-plant-art.mjs";
 import { readZip, encodePNG, signature } from "./intake-organic-hybrid-art.mjs";
 
 export const FORMAT = { brief: "bloom-species-art-brief@1", acceptance: "bloom-plant-art-acceptance@1", delivery: "bloom-plant-art-delivery@1", map: "bloom-plant-art-intake@1" };
@@ -54,9 +54,11 @@ const SPRITE_KEYS = ["id", "file", "anchor", "points", "size", "orientation", "n
 /** OS litter that is never a delivery, never a ZIP entry worth reading. */
 const litter = name => name.split("/").some(s => s === "__MACOSX" || s === ".DS_Store") || path.basename(name).startsWith("._");
 /** The contract's anchor conventions (docs/PLANT_SPRITE_PIPELINE_v1.md ARTIST_HANDOFF H6; each brief's "Anchor pixel" column), by attach kind:
- *  start = the column touching the plant (x 0: drawings face right) · top / bottom = the first / last row · centre = the middle
+ *  start = the column touching the plant (x 0: drawings face right) · base (035C2, a stem leaf: ARTIST_HANDOFF H6 "the petiole's first pixel,
+ *  the one that touches the stem") = column 0 or 1 — a sheathing leaf may wrap one pixel over the stem's edge, as the PMO-locked Organic Hybrid
+ *  leaves (14 at x 1) and the accepted Reed Spire sheaths (35 at x 1) do · top / bottom = the first / last row · centre = the middle
  *  column (± ½ px). Attach kinds not listed (leafPoint, stemNode, drift, rootCrown) only need an opaque anchor pixel. */
-export const ANCHOR_EDGE = { radialLeaf: ["start"], leafSocket: ["start"], stiltRoot: ["start", "top"], primaryRoot: ["top", "centre"], pod: ["top"],
+export const ANCHOR_EDGE = { radialLeaf: ["start"], leafSocket: ["base"], stiltRoot: ["start", "top"], primaryRoot: ["top", "centre"], pod: ["top"],
   aerialRoot: ["bottom"], apex: ["bottom"], flower: ["bottom"], seedHead: ["bottom"], body: ["bottom", "centre"] };
 
 // ================================================================ lanes
@@ -216,10 +218,10 @@ export function assemble(root, pack) {
     const { w, h, rgba } = img, A = (x, y) => rgba[(y * w + x) * 4 + 3];
     if (s.size !== undefined && !(isPt(s.size) && s.size[0] === w && s.size[1] === h)) E(`${sw}: PNG is ${w}×${h}, delivery.json says ${J(s.size)}`);
     if (c.maxSize && (w > c.maxSize[0] || h > c.maxSize[1])) E(`${sw}: ${w}×${h} exceeds the contract's maxSize ${c.maxSize.join("×")}`);
-    let opaque = 0, partial = null, off = null, tOnly = null;
+    let opaque = 0, partial = null, off = null, tOnly = null; const paintable = paintableTargets(c, C0);
     for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const i = (y * w + x) * 4, a = rgba[i + 3]; if (!a) continue; if (a !== 255) { partial = partial || [x, y, a]; continue; } opaque++;
       const hx = "#" + [rgba[i], rgba[i + 1], rgba[i + 2]].map(v => v.toString(16).padStart(2, "0")).join(""), cm = colour.get(hx);
-      if (!cm) off = off || [x, y, hx]; else if (cm.treatmentOnly) tOnly = tOnly || [x, y, cm.m]; }
+      if (!cm) off = off || [x, y, hx]; else if (cm.treatmentOnly && !paintable.has(cm.m)) tOnly = tOnly || [x, y, cm.m]; }
     if (partial) E(`${sw}: pixel (${partial[0]}, ${partial[1]}) has partial alpha ${partial[2]} — alpha must be exactly 0 or 255`);
     if (off) E(`${sw}: pixel (${off[0]}, ${off[1]}) colour ${off[2]} is not a declared palette colour`);
     if (tOnly) E(`${sw}: pixel (${tOnly[0]}, ${tOnly[1]}) uses treatment-only material ${tOnly[2]} (treatments recolour; never draw with them)`);
@@ -227,8 +229,8 @@ export function assemble(root, pack) {
     const solid = p => isPt(p) && p[0] >= 0 && p[1] >= 0 && p[0] < w && p[1] < h && A(p[0], p[1]) === 255;
     if (!isPt(s.anchor) || s.anchor[0] < 0 || s.anchor[1] < 0 || s.anchor[0] >= w || s.anchor[1] >= h) E(`${sw}: anchor ${J(s.anchor)} is outside the ${w}×${h} drawing`);
     else { if (!solid(s.anchor)) E(`${sw}: anchor ${J(s.anchor)} is on a transparent pixel`);
-      for (const rule of ANCHOR_EDGE[c.attach] || []) { const [ax, ay] = s.anchor, ok = rule === "start" ? ax === 0 : rule === "top" ? ay === 0 : rule === "bottom" ? ay === h - 1 : Math.abs(ax - (w - 1) / 2) <= 0.5;
-        if (!ok) E(`${sw}: anchor ${J(s.anchor)} breaks the ${c.attach} convention (${rule === "start" ? "the leftmost column" : rule === "centre" ? "the centre column" : `the ${rule} row`})`); } }
+      for (const rule of ANCHOR_EDGE[c.attach] || []) { const [ax, ay] = s.anchor, ok = rule === "start" ? ax === 0 : rule === "base" ? ax <= 1 : rule === "top" ? ay === 0 : rule === "bottom" ? ay === h - 1 : Math.abs(ax - (w - 1) / 2) <= 0.5;
+        if (!ok) E(`${sw}: anchor ${J(s.anchor)} breaks the ${c.attach} convention (${rule === "start" ? "the leftmost column" : rule === "base" ? "column 0 or 1: the leaf base touching the stem" : rule === "centre" ? "the centre column" : `the ${rule} row`})`); } }
     const P = s.points;
     if (!c.points) { if (P !== undefined) E(`${sw}: ${dr.component} takes no points`); }
     else if (!P || typeof P !== "object") E(`${sw}: points { ${c.points.join(", ")} } required (surface details attach there)`);

@@ -9,10 +9,11 @@
 //     same World Seed is the same physical planet whatever the player brings (docs/SPECIES_SYSTEM_v1.md §2).
 //
 //   id                 stable id — part of cache keys, provenance, reports and any future save. Never renamed.
-//   version            the definition's revision (presentation / art / physiology)
+//   version            the definition's revision (presentation / art / physiology) — 035C2: the three specialists' real art = version 2
 //   physiologyVersion  the physiology's revision: bump it with ANY change to `physiology` (tools/species-check.js pins the numbers per
 //                      revision; BLOOM.species derives the cache / provenance key "<id>/p<physiologyVersion>#<hash of the numbers>")
-//   status             "released" (in the normal game) | "candidate" (development flag ?species=1 only, until its real art is accepted)
+//   status             "released" (in the normal game) | "candidate" (not yet releasable: its real art is not accepted; the selection screen
+//                      marks it). BLOOM-035C2: all four species are released on their PMO-accepted art.
 //   role               generalist | dry-heat | cold | wet — the card order is this role order, never a power order
 //   physiology         exactly the reference physiology's seven keys (°C, moisture 0–100, salt / radiation / toxin tolerances)
 //   art                { bodyPlan, pack } — the species' body plan and its sprite pack (resources/plant-visual, art/plant)
@@ -52,12 +53,12 @@
       },
     },
     {
-      id: "cinder_rosette", version: 1, physiologyVersion: 1, status: "candidate",
+      id: "cinder_rosette", version: 2, physiologyVersion: 1, status: "released",
       name: "Cinder Rosette", role: "dry-heat",
       short: "A ground-hugging rosette of fleshy, waxy leaves that stores water and shrugs off heat.",
       physiology: { tempFloor: 2, tempCeil: 34, waterPos: 34, waterTol: 16, saltTol: 15, radTol: 35, toxTol: 25 },
       edges: null, startingGenome: null,
-      art: { bodyPlan: "rosette@1", pack: "proof-cinder-rosette" },
+      art: { bodyPlan: "rosette@1", pack: "cinder-rosette" },
       presentation: {
         roleLabel: "Heat- and drought-hardy",
         note: null,
@@ -78,12 +79,12 @@
       },
     },
     {
-      id: "woolly_candle", version: 1, physiologyVersion: 1, status: "candidate",
+      id: "woolly_candle", version: 2, physiologyVersion: 1, status: "released",
       name: "Woolly Candle", role: "cold",
       short: "A stout woolly trunk crowned by silver-haired leaves, built to keep its growing tip above the frost.",
       physiology: { tempFloor: -14, tempCeil: 16, waterPos: 46, waterTol: 18, saltTol: 15, radTol: 50, toxTol: 25 },
       edges: null, startingGenome: null,
-      art: { bodyPlan: "candle@1", pack: "proof-woolly-candle" },
+      art: { bodyPlan: "candle@2", pack: "woolly-candle" },
       presentation: {
         roleLabel: "Cold-hardy",
         note: null,
@@ -103,12 +104,12 @@
       },
     },
     {
-      id: "reed_spire", version: 1, physiologyVersion: 1, status: "candidate",
+      id: "reed_spire", version: 2, physiologyVersion: 1, status: "released",
       name: "Reed Spire", role: "wet",
       short: "A clump of tall culms on a creeping rhizome, at home in waterlogged and salty ground.",
       physiology: { tempFloor: -6, tempCeil: 24, waterPos: 62, waterTol: 20, saltTol: 60, radTol: 30, toxTol: 25 },
       edges: null, startingGenome: null,
-      art: { bodyPlan: "reed@1", pack: "proof-reed-spire" },
+      art: { bodyPlan: "reed@1", pack: "reed-spire" },
       presentation: {
         roleLabel: "Wet- and salt-hardy",
         note: null,

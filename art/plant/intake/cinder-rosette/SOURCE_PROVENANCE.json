@@ -1,0 +1,1397 @@
+{
+ "format": "bloom-species-source-provenance@1",
+ "milestone": "BLOOM-035C2",
+ "tool": "tools/species-source-deliveries.mjs",
+ "pack": "cinder-rosette",
+ "species": "cinder_rosette",
+ "bodyPlan": "rosette@1",
+ "identity": "CINDER_ROSETTE_PRODUCTION_SOURCE_CANDIDATE_v3_1",
+ "pmo": {
+  "status": "FINAL SOURCE ACCEPTED",
+  "verdict": "FINAL SOURCE ACCEPTED — 60 canonical sprites, 42 toothed masks; origins RECOVERED_EXACT + CANONICAL_REFERENCE_TRANSCRIPTION; no Cinder pixel may be redesigned"
+ },
+ "sourceZip": {
+  "name": "CINDER_ROSETTE_PRODUCTION_SOURCE_CANDIDATE_v3_1.zip",
+  "bytes": 2607263,
+  "sha256": "1be928b1a6d4e9d95ededdb459f941e08fdcaae7e0db0797b7a5b539f5973bff",
+  "entries": 235,
+  "root": "."
+ },
+ "aggregate": {
+  "algorithm": "sha256 over the sorted records \"<relative path>\\t<sha256 of the file>\\n\" (paths relative to the candidate root)",
+  "sha256": "4254d43c20cf9b13b1215441687342dcc326e857d055cd769163683559ff3bfc",
+  "files": 235,
+  "bytes": 3071331
+ },
+ "checksums": {
+  "file": "SOURCE_AND_CANONICAL_SHA256SUMS.txt",
+  "lines": 147,
+  "verified": 147
+ },
+ "origins": {
+  "CANONICAL_REFERENCE_TRANSCRIPTION": 33,
+  "RECOVERED_EXACT": 27
+ },
+ "counts": {
+  "drawings": 60,
+  "masks": 42
+ },
+ "mapping": {
+  "environment": "engineering mapping from the accepted Cinder reference palette (original-manifests/BATCH3_candidate_manifest.json referencePalette): sky [sky, skyL], soil [soil, soilD, soilL], turf soil2 — the candidate declares no environment; PMO confirmation requested",
+  "render": "stemOutline ink — the candidate declares none; the convention of every pack in the repository (Organic Hybrid final art included)"
+ },
+ "derived": [],
+ "usedInDeliveries": [
+  "CINDER_ROSETTE_CANONICAL_MANIFEST.json",
+  "CINDER_ROSETTE_PRODUCTION_PALETTE_v1.json",
+  "CINDER_ROSETTE_SOURCE_MAP.json",
+  "README.md",
+  "SOURCE_AND_CANONICAL_SHA256SUMS.txt",
+  "V3_1_README.md",
+  "masks/toothed/leaf.base.flat.toothed.png",
+  "masks/toothed/leaf.base.heat.high.toothed.png",
+  "masks/toothed/leaf.base.heat.mid.toothed.png",
+  "masks/toothed/leaf.base.high.toothed.png",
+  "masks/toothed/leaf.base.low.toothed.png",
+  "masks/toothed/leaf.base.mid.toothed.png",
+  "masks/toothed/leaf.drought.1.flat.toothed.png",
+  "masks/toothed/leaf.drought.1.heat.high.toothed.png",
+  "masks/toothed/leaf.drought.1.heat.mid.toothed.png",
+  "masks/toothed/leaf.drought.1.high.toothed.png",
+  "masks/toothed/leaf.drought.1.low.toothed.png",
+  "masks/toothed/leaf.drought.1.mid.toothed.png",
+  "masks/toothed/leaf.drought.2.flat.toothed.png",
+  "masks/toothed/leaf.drought.2.heat.high.toothed.png",
+  "masks/toothed/leaf.drought.2.heat.mid.toothed.png",
+  "masks/toothed/leaf.drought.2.high.toothed.png",
+  "masks/toothed/leaf.drought.2.low.toothed.png",
+  "masks/toothed/leaf.drought.2.mid.toothed.png",
+  "masks/toothed/leaf.drought.3.flat.toothed.png",
+  "masks/toothed/leaf.drought.3.heat.high.toothed.png",
+  "masks/toothed/leaf.drought.3.heat.mid.toothed.png",
+  "masks/toothed/leaf.drought.3.high.toothed.png",
+  "masks/toothed/leaf.drought.3.low.toothed.png",
+  "masks/toothed/leaf.drought.3.mid.toothed.png",
+  "masks/toothed/leaf.flood.1.flat.toothed.png",
+  "masks/toothed/leaf.flood.1.heat.high.toothed.png",
+  "masks/toothed/leaf.flood.1.heat.mid.toothed.png",
+  "masks/toothed/leaf.flood.1.high.toothed.png",
+  "masks/toothed/leaf.flood.1.low.toothed.png",
+  "masks/toothed/leaf.flood.1.mid.toothed.png",
+  "masks/toothed/leaf.flood.2.flat.toothed.png",
+  "masks/toothed/leaf.flood.2.heat.high.toothed.png",
+  "masks/toothed/leaf.flood.2.heat.mid.toothed.png",
+  "masks/toothed/leaf.flood.2.high.toothed.png",
+  "masks/toothed/leaf.flood.2.low.toothed.png",
+  "masks/toothed/leaf.flood.2.mid.toothed.png",
+  "masks/toothed/leaf.flood.3.flat.toothed.png",
+  "masks/toothed/leaf.flood.3.heat.high.toothed.png",
+  "masks/toothed/leaf.flood.3.heat.mid.toothed.png",
+  "masks/toothed/leaf.flood.3.high.toothed.png",
+  "masks/toothed/leaf.flood.3.low.toothed.png",
+  "masks/toothed/leaf.flood.3.mid.toothed.png",
+  "original-manifests/BATCH3_candidate_manifest.json",
+  "source-canonical/bud.png",
+  "source-canonical/flower.png",
+  "source-canonical/frost.collar.2.png",
+  "source-canonical/frost.collar.3.png",
+  "source-canonical/frost.hair.1.png",
+  "source-canonical/frost.hair.2.png",
+  "source-canonical/frost.hair.3.png",
+  "source-canonical/leaf.base.flat.png",
+  "source-canonical/leaf.base.heat.high.png",
+  "source-canonical/leaf.base.heat.mid.png",
+  "source-canonical/leaf.base.high.png",
+  "source-canonical/leaf.base.low.png",
+  "source-canonical/leaf.base.mid.png",
+  "source-canonical/leaf.drought.1.flat.png",
+  "source-canonical/leaf.drought.1.heat.high.png",
+  "source-canonical/leaf.drought.1.heat.mid.png",
+  "source-canonical/leaf.drought.1.high.png",
+  "source-canonical/leaf.drought.1.low.png",
+  "source-canonical/leaf.drought.1.mid.png",
+  "source-canonical/leaf.drought.2.flat.png",
+  "source-canonical/leaf.drought.2.heat.high.png",
+  "source-canonical/leaf.drought.2.heat.mid.png",
+  "source-canonical/leaf.drought.2.high.png",
+  "source-canonical/leaf.drought.2.low.png",
+  "source-canonical/leaf.drought.2.mid.png",
+  "source-canonical/leaf.drought.3.flat.png",
+  "source-canonical/leaf.drought.3.heat.high.png",
+  "source-canonical/leaf.drought.3.heat.mid.png",
+  "source-canonical/leaf.drought.3.high.png",
+  "source-canonical/leaf.drought.3.low.png",
+  "source-canonical/leaf.drought.3.mid.png",
+  "source-canonical/leaf.flood.1.flat.png",
+  "source-canonical/leaf.flood.1.heat.high.png",
+  "source-canonical/leaf.flood.1.heat.mid.png",
+  "source-canonical/leaf.flood.1.high.png",
+  "source-canonical/leaf.flood.1.low.png",
+  "source-canonical/leaf.flood.1.mid.png",
+  "source-canonical/leaf.flood.2.flat.png",
+  "source-canonical/leaf.flood.2.heat.high.png",
+  "source-canonical/leaf.flood.2.heat.mid.png",
+  "source-canonical/leaf.flood.2.high.png",
+  "source-canonical/leaf.flood.2.low.png",
+  "source-canonical/leaf.flood.2.mid.png",
+  "source-canonical/leaf.flood.3.flat.png",
+  "source-canonical/leaf.flood.3.heat.high.png",
+  "source-canonical/leaf.flood.3.heat.mid.png",
+  "source-canonical/leaf.flood.3.high.png",
+  "source-canonical/leaf.flood.3.low.png",
+  "source-canonical/leaf.flood.3.mid.png",
+  "source-canonical/pod.png",
+  "source-canonical/root.aerial.1.png",
+  "source-canonical/root.aerial.2.png",
+  "source-canonical/root.aerial.3.png",
+  "source-canonical/root.storage.2.png",
+  "source-canonical/root.storage.3.png",
+  "source-canonical/salt.crystal.png",
+  "source-canonical/salt.gland.png",
+  "source-canonical/seed.drift.png",
+  "source-canonical/seedHead.large.png",
+  "source-canonical/seedHead.small.png"
+ ],
+ "deliveries": [
+  {
+   "file": "cinder-rosette-batch1-base-body.zip",
+   "batch": 1,
+   "bytes": 4568,
+   "sha256": "6f2cefe52c9de8811423ccfe9fe1f824bfbe2dedf830e054e7a1096a9d005a57",
+   "drawings": 5,
+   "masks": 0,
+   "entries": 6
+  },
+  {
+   "file": "cinder-rosette-batch2-cold-heat.zip",
+   "batch": 2,
+   "bytes": 4483,
+   "sha256": "ad7dac754ba2144246650b6863659e1ea4a7b7ca3e1497c8b6323457354a633f",
+   "drawings": 7,
+   "masks": 0,
+   "entries": 8
+  },
+  {
+   "file": "cinder-rosette-batch3-drought.zip",
+   "batch": 3,
+   "bytes": 15873,
+   "sha256": "0b18c8ffb800c0148aaa0981d0737ef5e378267d688cdc835d13f2a1fbc604e8",
+   "drawings": 20,
+   "masks": 0,
+   "entries": 21
+  },
+  {
+   "file": "cinder-rosette-batch4-flood.zip",
+   "batch": 4,
+   "bytes": 19923,
+   "sha256": "d34d91ab8436e520fbbca658ff1090e84b2392ed6519c9bfa2f0d4f0645701e8",
+   "drawings": 21,
+   "masks": 0,
+   "entries": 22
+  },
+  {
+   "file": "cinder-rosette-batch5-salt-radiation.zip",
+   "batch": 5,
+   "bytes": 16435,
+   "sha256": "d807693683048189fb8a6bb9e23c47f8d9119ae27b824d8132ce356d06c76058",
+   "drawings": 2,
+   "masks": 42,
+   "entries": 45
+  },
+  {
+   "file": "cinder-rosette-batch6-reproduction-dispersal.zip",
+   "batch": 6,
+   "bytes": 2948,
+   "sha256": "de7d60c36a52a41da6475dd29ab2decc63cb685a77ce150a995a189dd27a046b",
+   "drawings": 5,
+   "masks": 0,
+   "entries": 6
+  },
+  {
+   "file": "cinder-rosette-batch7-metadata-closure.zip",
+   "batch": 7,
+   "bytes": 393772,
+   "sha256": "63fd8b7aa0bf77055c6c10e5aa04eb650ef66f1623449897d3f3f96a1418fc57",
+   "drawings": 0,
+   "masks": 0,
+   "entries": 8
+  }
+ ],
+ "inventory": [
+  {
+   "path": "BATCH5_VERIFICATION.json",
+   "bytes": 5101,
+   "sha256": "36e8ac2a756950014adb1cadec4e236a5b4daf60a414fad379c4a82047612d2c"
+  },
+  {
+   "path": "CINDER_ROSETTE_CANONICAL_MANIFEST.json",
+   "bytes": 160900,
+   "sha256": "8433c829993112fc0b8868e33e62fa3e2a17d17b86c978650ffb5c0d3b2045b8"
+  },
+  {
+   "path": "CINDER_ROSETTE_PRODUCTION_PALETTE_v1.json",
+   "bytes": 3026,
+   "sha256": "842060eb57c4240506db3bce659bb1996de9ba9384245be7aa665c787892b90b"
+  },
+  {
+   "path": "CINDER_ROSETTE_SOURCE_MAP.json",
+   "bytes": 197455,
+   "sha256": "799286d0d6cfc376b824a7db064653df580e8211216a99a12f0cb8858e160eb6"
+  },
+  {
+   "path": "MISSING_NATIVE_SOURCES.json",
+   "bytes": 8697,
+   "sha256": "03c425b84bd728fffced6ed426e89575639883eb7e856904b54f8b2e6fae795d"
+  },
+  {
+   "path": "README.md",
+   "bytes": 866,
+   "sha256": "75efd259534512b914df630a4e441bac881d104427348307cfbf0985cd0cb299"
+  },
+  {
+   "path": "SOURCE_AND_CANONICAL_SHA256SUMS.txt",
+   "bytes": 16274,
+   "sha256": "89d66ce8f80c84d7c364b2d9f2737947c1fa9ff5a0d7d898c25bf58a63e0d2e3"
+  },
+  {
+   "path": "V2_TO_V3_CHANGE_REPORT.json",
+   "bytes": 35767,
+   "sha256": "982d7eb2044f5a649444ab12fc99bdd715a9eb97d36b0561d8b81bc2c0a035b0"
+  },
+  {
+   "path": "V3_1_README.md",
+   "bytes": 848,
+   "sha256": "d830fd20001ecfe349a3386306520db6666700017fe4385ad35f1884813ef840"
+  },
+  {
+   "path": "V3_TO_V3_1_CHANGE_REPORT.json",
+   "bytes": 4736,
+   "sha256": "d4af2aac3412b9f4671f129a5b72ad6227df6fdf4ed4c38321694416550a8c9c"
+  },
+  {
+   "path": "masks/toothed/leaf.base.flat.toothed.png",
+   "bytes": 90,
+   "sha256": "20ff0c18a0c324f1bf9d3a37f6cff087256f1b4caa9b085e33766bf923c8271a"
+  },
+  {
+   "path": "masks/toothed/leaf.base.heat.high.toothed.png",
+   "bytes": 95,
+   "sha256": "eac29087313aff6a100ca3db2460f8c6e71eec9ae2738f9a4e54200d360890ed"
+  },
+  {
+   "path": "masks/toothed/leaf.base.heat.mid.toothed.png",
+   "bytes": 92,
+   "sha256": "eb6764921ea03ea342fd0c47f3757f34105c4ad8327765b7b57d1aa0a621e638"
+  },
+  {
+   "path": "masks/toothed/leaf.base.high.toothed.png",
+   "bytes": 92,
+   "sha256": "e2476d76f50849ed5641591a1d90a61764f9d4752b1ecac2c784ead1c957a561"
+  },
+  {
+   "path": "masks/toothed/leaf.base.low.toothed.png",
+   "bytes": 89,
+   "sha256": "84b0d1f3617c6cc337e3003bda0d35b3e6af041a0f1bef8afa3e6eb5fd1c93aa"
+  },
+  {
+   "path": "masks/toothed/leaf.base.mid.toothed.png",
+   "bytes": 88,
+   "sha256": "30a4050bf254bb1d008bca91819c196d4ba4801e3fe13b0a004de26e7ffb2b4d"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.1.flat.toothed.png",
+   "bytes": 85,
+   "sha256": "f609d7c3931f78cd8c1a4cd31dc6be8c6c66e63756e0f73bc34da596ecae5645"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.1.heat.high.toothed.png",
+   "bytes": 88,
+   "sha256": "16ebca27ec63ee66b9952f628a698f3afa9567e1f204f59b373cbd2f84af8bad"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.1.heat.mid.toothed.png",
+   "bytes": 85,
+   "sha256": "46aa512df5be93ac6883423b91f72e0cf364f74065e898fc3809efa7213ed22d"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.1.high.toothed.png",
+   "bytes": 88,
+   "sha256": "fe84a7aa1e631672dca703624550afdad5fd73b29039312bffcb1e57225931b5"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.1.low.toothed.png",
+   "bytes": 85,
+   "sha256": "0fa0cc95de7c51cf3b0dbfc7bcea40d36800911bbcd562e0246687f346187f9e"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.1.mid.toothed.png",
+   "bytes": 88,
+   "sha256": "8f85c4484e042237752cdcdc1b4cb5676b21a4830b1b184d0511f366b76b2af3"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.2.flat.toothed.png",
+   "bytes": 88,
+   "sha256": "f00d3cb5547a7adaa0564effb04c99d43b1ce1f4a68d3fe4c268136493b1c617"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.2.heat.high.toothed.png",
+   "bytes": 88,
+   "sha256": "3012f97b9cfcfdfcf323a4d8dd048e00e6b9056d60d7e43dd1b97ae844e1f59c"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.2.heat.mid.toothed.png",
+   "bytes": 89,
+   "sha256": "52bd541906f1887b1411a97abd05a47d31d273f52ab8e9ab1523223ec03389dc"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.2.high.toothed.png",
+   "bytes": 88,
+   "sha256": "3dc2e06a93d8f1417a214c500f76eafae7676fdd62f241bc87f8339b3424680f"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.2.low.toothed.png",
+   "bytes": 89,
+   "sha256": "242fc22ccb160d95d7a1add3895477663271aa95d303231882652a14fbb385df"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.2.mid.toothed.png",
+   "bytes": 88,
+   "sha256": "ab8b944452ceb562171d9786a762d1a3d9cfed615f3a90290f93675b506d1fc1"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.3.flat.toothed.png",
+   "bytes": 84,
+   "sha256": "fe247798e543acb127ea016327bfad739e646a69d7fcec198976d066e37af994"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.3.heat.high.toothed.png",
+   "bytes": 84,
+   "sha256": "ed743b6ecf3d105e858b10029d71317d74f7eb56b82e43b547adb2a445895282"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.3.heat.mid.toothed.png",
+   "bytes": 83,
+   "sha256": "c4d3f95f3d9df824b219743cb1e395f5f8056a02897b9f17a6ce84fd8d13d2e6"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.3.high.toothed.png",
+   "bytes": 84,
+   "sha256": "4909be09a3036f3cc8e36f73cff518945ba181a0e1b99f55052cc6aef2fdd03d"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.3.low.toothed.png",
+   "bytes": 86,
+   "sha256": "fa98aea4d41373649dd90eaa706b0699d5c1f6ee2dd62d5ab91414f74481abde"
+  },
+  {
+   "path": "masks/toothed/leaf.drought.3.mid.toothed.png",
+   "bytes": 83,
+   "sha256": "5936e02af3dab274e31dee37efa38e7ae9206a79bf72164d93e984e73c6275ab"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.1.flat.toothed.png",
+   "bytes": 91,
+   "sha256": "d9a23b254f550f885966eba43b1f351dfd4c7e79396fd4b8764b16b985d7008b"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.1.heat.high.toothed.png",
+   "bytes": 94,
+   "sha256": "c6da636a07113b28af547439a76189df95c1d0cbd2fe28c4a31ae32c875b3bac"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.1.heat.mid.toothed.png",
+   "bytes": 90,
+   "sha256": "6e360640e4fc8448310f2fd225c5145de469ff3040ae694eda61e5d50a629d20"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.1.high.toothed.png",
+   "bytes": 93,
+   "sha256": "20722b752814af7b35eceb3aee33bbbbd4454a526defbac8531070581df328a3"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.1.low.toothed.png",
+   "bytes": 90,
+   "sha256": "34156d9e064c1be2a0b5feb0b57461045dbe65dde76226ad57385d3fd20203f2"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.1.mid.toothed.png",
+   "bytes": 94,
+   "sha256": "cc9eefc70475973fefecb973c80a81a07823acd820fe85049363ff7a1816e067"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.2.flat.toothed.png",
+   "bytes": 92,
+   "sha256": "7233d984e7cfcf9d010922ff77e192a653c1bba93274eeb55f18d7349bacb8da"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.2.heat.high.toothed.png",
+   "bytes": 93,
+   "sha256": "a0b69994d4a639f52cebbff7390e299be5fe5fe77e53a64b6b509b421a440f43"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.2.heat.mid.toothed.png",
+   "bytes": 91,
+   "sha256": "ee9642a7e67984e6a988f55a8c71bf24fa89d19210f67cf50ec8ac125204a7c0"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.2.high.toothed.png",
+   "bytes": 94,
+   "sha256": "7176c90cbc9897daf49357fb80698e0171cd39221833ec201367183655a87978"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.2.low.toothed.png",
+   "bytes": 91,
+   "sha256": "acc871b663584357d4c4d6a823605978c21c7e116ac9c00ef2fb288acabc975e"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.2.mid.toothed.png",
+   "bytes": 94,
+   "sha256": "be7911ce36d6add292656210fdac40cbe0a145c4242b5ff625f85db2844bc8b3"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.3.flat.toothed.png",
+   "bytes": 92,
+   "sha256": "a5a7605a65507704616013e2d04cad2b2bed28f928ef06cffbb55bb6cc1b5d91"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.3.heat.high.toothed.png",
+   "bytes": 93,
+   "sha256": "449ac48d633b1fc37cda2f2f721dcd908e594b29695ebc0f433630f36f44b356"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.3.heat.mid.toothed.png",
+   "bytes": 92,
+   "sha256": "59819e034bc8d8f27b043c7baa1238ce34ad366b9c3b925b90f15c43aef54c0b"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.3.high.toothed.png",
+   "bytes": 93,
+   "sha256": "0e9200722aa14d60792c7751ed2b964c34172d9efe58c8cfddb79d6f3a6fce79"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.3.low.toothed.png",
+   "bytes": 92,
+   "sha256": "6f4a44b21f0b2be6b82e919251daee878ef5b38b3a38bd751751ac1160626dcf"
+  },
+  {
+   "path": "masks/toothed/leaf.flood.3.mid.toothed.png",
+   "bytes": 94,
+   "sha256": "ff37b6b6b4be22f477e09ae257ec7eafe6a2de8023be646e142a6fd51377b0d8"
+  },
+  {
+   "path": "original-manifests/BATCH3_candidate_manifest.json",
+   "bytes": 10999,
+   "sha256": "d15db720bbfe28b55b5401222ea35a16eb7001e33d232a9db28c38014e0d63dd"
+  },
+  {
+   "path": "original-manifests/BATCH5_partial_manifest.json",
+   "bytes": 18371,
+   "sha256": "aea7b406e9e791d37e3f0765b11b9ef4ba3fccbc53a98e92f765c29df87115f8"
+  },
+  {
+   "path": "original-manifests/BATCH6_visual_candidate_manifest.json",
+   "bytes": 3867,
+   "sha256": "35244c8f9b45b1c86b06419df4014852b37d6db109d98203b9332c28f88cd3fd"
+  },
+  {
+   "path": "qa/CINDER_035C1_V3_STATIC_QA.json",
+   "bytes": 37436,
+   "sha256": "8451e18548ee0195a9311d9c3683fff690ef60e88b4190a0c19c9a19dd7f4c92"
+  },
+  {
+   "path": "source-canonical/bud.png",
+   "bytes": 240,
+   "sha256": "a70db911e19c5b1fbbf0092cc77048c5b28017571dbc8b5afce9c8dde0da89ba"
+  },
+  {
+   "path": "source-canonical/flower.png",
+   "bytes": 333,
+   "sha256": "a9659fc949bdeac900f3723214f28c69a0a50904c81b749437f5822eceeacd79"
+  },
+  {
+   "path": "source-canonical/frost.collar.2.png",
+   "bytes": 185,
+   "sha256": "8f58c0a0ab5a3749a5821f5a028ec46b7d75a81dea324be02e8ac9aaf065a8a1"
+  },
+  {
+   "path": "source-canonical/frost.collar.3.png",
+   "bytes": 198,
+   "sha256": "0c08aa927ead849450c89e6f113d9d63260a0bf5b030987bab20ebd21e9cfcba"
+  },
+  {
+   "path": "source-canonical/frost.hair.1.png",
+   "bytes": 110,
+   "sha256": "30754533f4000090cb2b6e10b1ae863913553e69741feb2b0fcc804add4029c1"
+  },
+  {
+   "path": "source-canonical/frost.hair.2.png",
+   "bytes": 95,
+   "sha256": "673e7ae5b14902780022c0493a45c95707632a583d18dac1db199e9ae9942b2d"
+  },
+  {
+   "path": "source-canonical/frost.hair.3.png",
+   "bytes": 120,
+   "sha256": "33f21a43493a09a188da558ba4ea47051fcf49c4a304f5e5ff32e53c277c167e"
+  },
+  {
+   "path": "source-canonical/leaf.base.flat.png",
+   "bytes": 450,
+   "sha256": "0d71dfb2e576aaa01b8af7a9b2798424eef146043d501b4392d5dc7b8e48a445"
+  },
+  {
+   "path": "source-canonical/leaf.base.heat.high.png",
+   "bytes": 601,
+   "sha256": "6a28daf850da03591bbe3da139f8bc1b5eb88cb169df2086d199f0d9dd2ce18f"
+  },
+  {
+   "path": "source-canonical/leaf.base.heat.mid.png",
+   "bytes": 604,
+   "sha256": "559b1e7cc9181a2a7c66ed44822097806ae5531c0088c23e95c908767cd5863e"
+  },
+  {
+   "path": "source-canonical/leaf.base.high.png",
+   "bytes": 499,
+   "sha256": "06a31badafc0f5d2a8c98b95eb30f166dbf3daa5b0d8d1794bb04c78f2bb6aba"
+  },
+  {
+   "path": "source-canonical/leaf.base.low.png",
+   "bytes": 486,
+   "sha256": "7d0c7b0199c78f9f88ada7ce9f8a795f399fdb16b556cd10353e94c930c86f82"
+  },
+  {
+   "path": "source-canonical/leaf.base.mid.png",
+   "bytes": 506,
+   "sha256": "df9335b31a8f6a69bdbd73af15803c1d78d79bcbebb8dc9ad7fe5033f62b2cbf"
+  },
+  {
+   "path": "source-canonical/leaf.drought.1.flat.png",
+   "bytes": 285,
+   "sha256": "d2573beec0970514987fdd4c443f54ff9af1a31ae86350bfde219133bcf26c62"
+  },
+  {
+   "path": "source-canonical/leaf.drought.1.heat.high.png",
+   "bytes": 371,
+   "sha256": "cd5ca8973bfcd2c741c06d9d73bee5f07fb4d4d951d5d69f8bc8c2e6e8aaa3c3"
+  },
+  {
+   "path": "source-canonical/leaf.drought.1.heat.mid.png",
+   "bytes": 371,
+   "sha256": "d882ac354d3b26fa8553f6f2321d2b6df68fcfa0b9e668bf85f21d7d9ff6e561"
+  },
+  {
+   "path": "source-canonical/leaf.drought.1.high.png",
+   "bytes": 338,
+   "sha256": "75bc3bfdc041b8bb109692d2af75f8d07d3c9b29040fdd2d7880bf6698ffb67f"
+  },
+  {
+   "path": "source-canonical/leaf.drought.1.low.png",
+   "bytes": 320,
+   "sha256": "06cb7deb38cf5fb844d581be9776938a22946b4197fcf4f4e11c04dd6827d878"
+  },
+  {
+   "path": "source-canonical/leaf.drought.1.mid.png",
+   "bytes": 347,
+   "sha256": "1f17a1cbf7711d3c5a67731eb7078ad441479b27f93ef9f231f7332002e8e3ae"
+  },
+  {
+   "path": "source-canonical/leaf.drought.2.flat.png",
+   "bytes": 342,
+   "sha256": "b475b895a8eb0b992d13b8f5c911ef28a68213545dbc2dd7e0afd4e26b10f267"
+  },
+  {
+   "path": "source-canonical/leaf.drought.2.heat.high.png",
+   "bytes": 376,
+   "sha256": "59252e21cc1d534d5758bed259b838e7a0d8cd27cb2a01da2e0d34ca564ff3f2"
+  },
+  {
+   "path": "source-canonical/leaf.drought.2.heat.mid.png",
+   "bytes": 397,
+   "sha256": "eadf361f8e728a207e66749890e7aae7857212a4485ed28e9140a98893090732"
+  },
+  {
+   "path": "source-canonical/leaf.drought.2.high.png",
+   "bytes": 383,
+   "sha256": "f3bfa412966f70f083a1d438e6fef836a0917934eee8b9bab0e39dbcbde1c9e8"
+  },
+  {
+   "path": "source-canonical/leaf.drought.2.low.png",
+   "bytes": 372,
+   "sha256": "76b4dde9e8f93d61e1f81c2b82edfe744b3ef4c2886306f3c58f7fade2e9bf99"
+  },
+  {
+   "path": "source-canonical/leaf.drought.2.mid.png",
+   "bytes": 382,
+   "sha256": "d9b167d56bd1bd568259358b2e22ce4b8c6ff68275bfb2290a3e1a70ad3eb19d"
+  },
+  {
+   "path": "source-canonical/leaf.drought.3.flat.png",
+   "bytes": 350,
+   "sha256": "eda70fac32d188bb13ae066d651e1c61ed7adcd82890c2e3de970588339ecb1d"
+  },
+  {
+   "path": "source-canonical/leaf.drought.3.heat.high.png",
+   "bytes": 367,
+   "sha256": "4ec5acec113f5ea46fe4582c09c536e7c801afce230003894fd71756c97f5f2a"
+  },
+  {
+   "path": "source-canonical/leaf.drought.3.heat.mid.png",
+   "bytes": 400,
+   "sha256": "3179dc1fd18d3b3b90bdfdf0cb73f819cf585018795a7206f9c99088c48510c2"
+  },
+  {
+   "path": "source-canonical/leaf.drought.3.high.png",
+   "bytes": 339,
+   "sha256": "0517eaecc77c34f473807b6cbce5c9083d3c6f60ded93a15b5544901ad1f9dab"
+  },
+  {
+   "path": "source-canonical/leaf.drought.3.low.png",
+   "bytes": 356,
+   "sha256": "92f7eea756e81967797a1fc31521a962b09d467e71c451e80534a32767737303"
+  },
+  {
+   "path": "source-canonical/leaf.drought.3.mid.png",
+   "bytes": 384,
+   "sha256": "5c02975c5a45a0584fc2562ee6c7bc85d0b55a3631956bab3bd7ddde9393a8f5"
+  },
+  {
+   "path": "source-canonical/leaf.flood.1.flat.png",
+   "bytes": 433,
+   "sha256": "622dc2343f3795be18b1f4227f026ae5f89128d8d41528ea8b4869c268bcc932"
+  },
+  {
+   "path": "source-canonical/leaf.flood.1.heat.high.png",
+   "bytes": 560,
+   "sha256": "c4b32864f4e947d448428e39feecbcc990c4dea0cddb2ba2d48ab9ed74471cda"
+  },
+  {
+   "path": "source-canonical/leaf.flood.1.heat.mid.png",
+   "bytes": 625,
+   "sha256": "8283d588d2a9dee69e6bbd8afab3822d297c78e3203e00734cc7402f9bcc9eff"
+  },
+  {
+   "path": "source-canonical/leaf.flood.1.high.png",
+   "bytes": 496,
+   "sha256": "c67718dfca1020138296181cadbbd50a834395094d2f3ad00f8d2beace7df17b"
+  },
+  {
+   "path": "source-canonical/leaf.flood.1.low.png",
+   "bytes": 517,
+   "sha256": "821f5e74390509be89ec01db083ff1b053ec5ae2ffbdeb9236946573fa2aad0a"
+  },
+  {
+   "path": "source-canonical/leaf.flood.1.mid.png",
+   "bytes": 538,
+   "sha256": "fa7582ca5a5a8a2ae89c9695b5bdacc8f53fe1cb4a40cf123185d4a080fda92e"
+  },
+  {
+   "path": "source-canonical/leaf.flood.2.flat.png",
+   "bytes": 530,
+   "sha256": "8463cb745e4f092d25a630508c90b7fa06a32ebf31907f130ec0c090bcb7b0ee"
+  },
+  {
+   "path": "source-canonical/leaf.flood.2.heat.high.png",
+   "bytes": 698,
+   "sha256": "51edabed8b57db27e62f8226a458b706f1e8d277158e5f0e36bab80d0d9e3b3b"
+  },
+  {
+   "path": "source-canonical/leaf.flood.2.heat.mid.png",
+   "bytes": 607,
+   "sha256": "9902ee854717d2a3ec7a3890aced964a8cc5714f8b75dd6554db0da502ca5934"
+  },
+  {
+   "path": "source-canonical/leaf.flood.2.high.png",
+   "bytes": 628,
+   "sha256": "66cf1c4b8982a37f1d16c44f6f49e03ad0b142a0ca6604f6544b5ee59cab5b5a"
+  },
+  {
+   "path": "source-canonical/leaf.flood.2.low.png",
+   "bytes": 612,
+   "sha256": "ac9e8e158fe0d4d259fbe873670c9886bd77b0cefde4600d78857c9aa9601d7d"
+  },
+  {
+   "path": "source-canonical/leaf.flood.2.mid.png",
+   "bytes": 635,
+   "sha256": "97105948f78e394b4ad9fd3de1021f5825a2952bf261efbbfd2517330eeec4a9"
+  },
+  {
+   "path": "source-canonical/leaf.flood.3.flat.png",
+   "bytes": 424,
+   "sha256": "285cd4253045af33d8dcc555f79545b5effe8e1efb66fd79fa420492b301fad2"
+  },
+  {
+   "path": "source-canonical/leaf.flood.3.heat.high.png",
+   "bytes": 612,
+   "sha256": "1b7b54843ccaf652126f3562288d17ba70c14a8cdf6835544ae050c0189d444c"
+  },
+  {
+   "path": "source-canonical/leaf.flood.3.heat.mid.png",
+   "bytes": 600,
+   "sha256": "358a7bd8d048fc05d352ae6a0e9858e8049c238dccfcb6f20f42c9856af02df2"
+  },
+  {
+   "path": "source-canonical/leaf.flood.3.high.png",
+   "bytes": 658,
+   "sha256": "b57e08924153ad5e6f7bbe915c0bc139d36f842e9558f79ca4ac5bd561566575"
+  },
+  {
+   "path": "source-canonical/leaf.flood.3.low.png",
+   "bytes": 564,
+   "sha256": "45c9b6e4e58b4676666352d0e382756a5ee27d19f39e9b41ea037ef72a5cc7e3"
+  },
+  {
+   "path": "source-canonical/leaf.flood.3.mid.png",
+   "bytes": 606,
+   "sha256": "350bc67deaeacd692956b6b0bcec241757aaa1598481b4ac85c5d633885ef28b"
+  },
+  {
+   "path": "source-canonical/pod.png",
+   "bytes": 255,
+   "sha256": "695e5a70a141381c6c2a91bc7d7688043f791befee27bceda8c9d949f801542f"
+  },
+  {
+   "path": "source-canonical/root.aerial.1.png",
+   "bytes": 152,
+   "sha256": "9973d31f2a559f92caa0b58520c1b531437483677fd687e9e3b62d6f82278f50"
+  },
+  {
+   "path": "source-canonical/root.aerial.2.png",
+   "bytes": 170,
+   "sha256": "0e99dbc3073e6398fd9f7f174d3a7f7aa35902dcdef39efca62b7f5db9296c13"
+  },
+  {
+   "path": "source-canonical/root.aerial.3.png",
+   "bytes": 216,
+   "sha256": "2b6c4ba77b5a2d005bb9d2e4d5421e79df9d04c649ab0fbf96ffd94a1824b08f"
+  },
+  {
+   "path": "source-canonical/root.storage.2.png",
+   "bytes": 233,
+   "sha256": "5f828f12f84c202021cfeac53d8b5d34c910b0fc6614dac861da655499c91698"
+  },
+  {
+   "path": "source-canonical/root.storage.3.png",
+   "bytes": 258,
+   "sha256": "d15f9309be49fb43c6aa09250f60a42cf1b8aeb929e196cf20b139dacc23e775"
+  },
+  {
+   "path": "source-canonical/salt.crystal.png",
+   "bytes": 146,
+   "sha256": "1ae632a5b708887f8d42780bd8f5b080db13bdb6992805741ae9f4d90d79d42c"
+  },
+  {
+   "path": "source-canonical/salt.gland.png",
+   "bytes": 121,
+   "sha256": "7a1a0d910a731841f5ef8eb8d236c3e7f9a2bae99ea061847b1fffaa549be09a"
+  },
+  {
+   "path": "source-canonical/seed.drift.png",
+   "bytes": 167,
+   "sha256": "a2f08363b9b3bf5bdb67c207cc5400e685c1a6f53d305d229f18827f4246bcb3"
+  },
+  {
+   "path": "source-canonical/seedHead.large.png",
+   "bytes": 320,
+   "sha256": "11b75972184b9ba7efccae43014ba479b98d87a6b8fdac9d5860bb5c6d3c3fde"
+  },
+  {
+   "path": "source-canonical/seedHead.small.png",
+   "bytes": 223,
+   "sha256": "3c732834619aba5dc0a27e34dda8995fec61732f558c709c72954882f71146b1"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.1.flat.png",
+   "bytes": 285,
+   "sha256": "d2573beec0970514987fdd4c443f54ff9af1a31ae86350bfde219133bcf26c62"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.1.heat.high.png",
+   "bytes": 367,
+   "sha256": "e9f865404c647fe433a84a1ca3d9bd825d93f8df257756b85ca220b7c1efd474"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.1.heat.mid.png",
+   "bytes": 376,
+   "sha256": "7785b9361521eda4b7bac965c2e1ab45511ec4d01d74180ebeb7ba4f206ec8d8"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.1.high.png",
+   "bytes": 338,
+   "sha256": "75bc3bfdc041b8bb109692d2af75f8d07d3c9b29040fdd2d7880bf6698ffb67f"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.1.low.png",
+   "bytes": 320,
+   "sha256": "06cb7deb38cf5fb844d581be9776938a22946b4197fcf4f4e11c04dd6827d878"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.1.mid.png",
+   "bytes": 347,
+   "sha256": "1f17a1cbf7711d3c5a67731eb7078ad441479b27f93ef9f231f7332002e8e3ae"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.2.flat.png",
+   "bytes": 342,
+   "sha256": "b475b895a8eb0b992d13b8f5c911ef28a68213545dbc2dd7e0afd4e26b10f267"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.2.heat.high.png",
+   "bytes": 378,
+   "sha256": "5c1d147a549c85db43b42e579cef0187db3417f672ef05208940be3de57f7ae1"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.2.heat.mid.png",
+   "bytes": 402,
+   "sha256": "2c0c75101ae835dc79562e162ebf6ba832368a61d5d5738f0c025b7643d894ea"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.2.high.png",
+   "bytes": 383,
+   "sha256": "f3bfa412966f70f083a1d438e6fef836a0917934eee8b9bab0e39dbcbde1c9e8"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.2.low.png",
+   "bytes": 372,
+   "sha256": "76b4dde9e8f93d61e1f81c2b82edfe744b3ef4c2886306f3c58f7fade2e9bf99"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.2.mid.png",
+   "bytes": 382,
+   "sha256": "d9b167d56bd1bd568259358b2e22ce4b8c6ff68275bfb2290a3e1a70ad3eb19d"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.3.flat.png",
+   "bytes": 350,
+   "sha256": "eda70fac32d188bb13ae066d651e1c61ed7adcd82890c2e3de970588339ecb1d"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.3.heat.high.png",
+   "bytes": 368,
+   "sha256": "2a6d0841f17e9bdb4cce0a48c5e7e5e88d4b7ef329641cbdf482a0d663b61e03"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.3.heat.mid.png",
+   "bytes": 397,
+   "sha256": "f0343f590091e80903d5611c868727686fa1337b765cbf3165c5379bc44c7a9f"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.3.high.png",
+   "bytes": 339,
+   "sha256": "0517eaecc77c34f473807b6cbce5c9083d3c6f60ded93a15b5544901ad1f9dab"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.3.low.png",
+   "bytes": 356,
+   "sha256": "92f7eea756e81967797a1fc31521a962b09d467e71c451e80534a32767737303"
+  },
+  {
+   "path": "source-original/BATCH3/leaf.drought.3.mid.png",
+   "bytes": 384,
+   "sha256": "5c02975c5a45a0584fc2562ee6c7bc85d0b55a3631956bab3bd7ddde9393a8f5"
+  },
+  {
+   "path": "source-original/BATCH3/root.storage.2.png",
+   "bytes": 233,
+   "sha256": "5f828f12f84c202021cfeac53d8b5d34c910b0fc6614dac861da655499c91698"
+  },
+  {
+   "path": "source-original/BATCH3/root.storage.3.png",
+   "bytes": 258,
+   "sha256": "d15f9309be49fb43c6aa09250f60a42cf1b8aeb929e196cf20b139dacc23e775"
+  },
+  {
+   "path": "source-original/BATCH5/salt.crystal.png",
+   "bytes": 146,
+   "sha256": "1ae632a5b708887f8d42780bd8f5b080db13bdb6992805741ae9f4d90d79d42c"
+  },
+  {
+   "path": "source-original/BATCH5/salt.gland.png",
+   "bytes": 121,
+   "sha256": "7a1a0d910a731841f5ef8eb8d236c3e7f9a2bae99ea061847b1fffaa549be09a"
+  },
+  {
+   "path": "source-original/BATCH6/flower.png",
+   "bytes": 333,
+   "sha256": "a9659fc949bdeac900f3723214f28c69a0a50904c81b749437f5822eceeacd79"
+  },
+  {
+   "path": "source-original/BATCH6/pod.png",
+   "bytes": 255,
+   "sha256": "695e5a70a141381c6c2a91bc7d7688043f791befee27bceda8c9d949f801542f"
+  },
+  {
+   "path": "source-original/BATCH6/seed.drift.png",
+   "bytes": 167,
+   "sha256": "a2f08363b9b3bf5bdb67c207cc5400e685c1a6f53d305d229f18827f4246bcb3"
+  },
+  {
+   "path": "source-original/BATCH6/seedHead.large.png",
+   "bytes": 320,
+   "sha256": "11b75972184b9ba7efccae43014ba479b98d87a6b8fdac9d5860bb5c6d3c3fde"
+  },
+  {
+   "path": "source-original/BATCH6/seedHead.small.png",
+   "bytes": 223,
+   "sha256": "3c732834619aba5dc0a27e34dda8995fec61732f558c709c72954882f71146b1"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.1.flat.toothed.png",
+   "bytes": 85,
+   "sha256": "f609d7c3931f78cd8c1a4cd31dc6be8c6c66e63756e0f73bc34da596ecae5645"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.1.heat.high.toothed.png",
+   "bytes": 88,
+   "sha256": "16ebca27ec63ee66b9952f628a698f3afa9567e1f204f59b373cbd2f84af8bad"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.1.heat.mid.toothed.png",
+   "bytes": 85,
+   "sha256": "46aa512df5be93ac6883423b91f72e0cf364f74065e898fc3809efa7213ed22d"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.1.high.toothed.png",
+   "bytes": 88,
+   "sha256": "fe84a7aa1e631672dca703624550afdad5fd73b29039312bffcb1e57225931b5"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.1.low.toothed.png",
+   "bytes": 85,
+   "sha256": "0fa0cc95de7c51cf3b0dbfc7bcea40d36800911bbcd562e0246687f346187f9e"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.1.mid.toothed.png",
+   "bytes": 88,
+   "sha256": "8f85c4484e042237752cdcdc1b4cb5676b21a4830b1b184d0511f366b76b2af3"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.2.flat.toothed.png",
+   "bytes": 88,
+   "sha256": "f00d3cb5547a7adaa0564effb04c99d43b1ce1f4a68d3fe4c268136493b1c617"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.2.heat.high.toothed.png",
+   "bytes": 88,
+   "sha256": "3012f97b9cfcfdfcf323a4d8dd048e00e6b9056d60d7e43dd1b97ae844e1f59c"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.2.heat.mid.toothed.png",
+   "bytes": 89,
+   "sha256": "52bd541906f1887b1411a97abd05a47d31d273f52ab8e9ab1523223ec03389dc"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.2.high.toothed.png",
+   "bytes": 88,
+   "sha256": "3dc2e06a93d8f1417a214c500f76eafae7676fdd62f241bc87f8339b3424680f"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.2.low.toothed.png",
+   "bytes": 89,
+   "sha256": "242fc22ccb160d95d7a1add3895477663271aa95d303231882652a14fbb385df"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.2.mid.toothed.png",
+   "bytes": 88,
+   "sha256": "ab8b944452ceb562171d9786a762d1a3d9cfed615f3a90290f93675b506d1fc1"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.3.flat.toothed.png",
+   "bytes": 84,
+   "sha256": "fe247798e543acb127ea016327bfad739e646a69d7fcec198976d066e37af994"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.3.heat.high.toothed.png",
+   "bytes": 84,
+   "sha256": "ed743b6ecf3d105e858b10029d71317d74f7eb56b82e43b547adb2a445895282"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.3.heat.mid.toothed.png",
+   "bytes": 83,
+   "sha256": "c4d3f95f3d9df824b219743cb1e395f5f8056a02897b9f17a6ce84fd8d13d2e6"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.3.high.toothed.png",
+   "bytes": 84,
+   "sha256": "4909be09a3036f3cc8e36f73cff518945ba181a0e1b99f55052cc6aef2fdd03d"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.3.low.toothed.png",
+   "bytes": 86,
+   "sha256": "fa98aea4d41373649dd90eaa706b0699d5c1f6ee2dd62d5ab91414f74481abde"
+  },
+  {
+   "path": "source-original/masks/toothed/leaf.drought.3.mid.toothed.png",
+   "bytes": 83,
+   "sha256": "5936e02af3dab274e31dee37efa38e7ae9206a79bf72164d93e984e73c6275ab"
+  },
+  {
+   "path": "visual-equivalence/individual/bud.png",
+   "bytes": 24884,
+   "sha256": "14337d58b53e4dbba31da1908a4fd531a98351eb251c672b0c00953c7f7e1bf6"
+  },
+  {
+   "path": "visual-equivalence/individual/frost.collar.2.png",
+   "bytes": 31404,
+   "sha256": "5665179567f87bbc6c0b1cc600b0c996221aac6062dca96b34cce0e765fb1b4a"
+  },
+  {
+   "path": "visual-equivalence/individual/frost.collar.3.png",
+   "bytes": 37817,
+   "sha256": "7a6b40813eff678d61ec80f77cad0767f4583a863561786373d9bfc743931449"
+  },
+  {
+   "path": "visual-equivalence/individual/frost.hair.1.png",
+   "bytes": 20104,
+   "sha256": "b145cb3e628e531de347a2a91436d6b589edfce69081fbcf6da8c4aeb940d6d3"
+  },
+  {
+   "path": "visual-equivalence/individual/frost.hair.2.png",
+   "bytes": 24553,
+   "sha256": "f830068a68bb2cb9234ab1378d09a82494b1d247ff1a7152fd19bd5106bf84bf"
+  },
+  {
+   "path": "visual-equivalence/individual/frost.hair.3.png",
+   "bytes": 31948,
+   "sha256": "58e5356022892651bbe9448ac1d3db4e64f1aab67e2353b9c3aa65c2c1715180"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.base.flat.png",
+   "bytes": 27084,
+   "sha256": "6bda2084450a87dfe5906a48017a66ed1f5df9ad63469af8dec22578eaf1b0b2"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.base.heat.high.png",
+   "bytes": 35906,
+   "sha256": "0097362a875ad919aa2ee01d613322214bdf1bdf174d66982da7a492c8f5fe92"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.base.heat.mid.png",
+   "bytes": 33917,
+   "sha256": "1d6840bcb7e7f41fd819f1d1ef362dc30bcf708316fa88f3847453da781e16c4"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.base.high.png",
+   "bytes": 34797,
+   "sha256": "84a476cf3ff10ce64587e79f92f6bca9dea72f7d5a39dc6efef708de90394115"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.base.low.png",
+   "bytes": 30141,
+   "sha256": "e254472fcb0600f55957b8324312e9526882510e0cd88a3f3ae2809800b0421f"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.base.mid.png",
+   "bytes": 33398,
+   "sha256": "05bca3914837b1ef322616ac6c7897b462ea0763595ecbb8db6e1c28943b1473"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.1.flat.png",
+   "bytes": 21093,
+   "sha256": "7aa7e4f98b6961aecb55f0a3098918091099ada959a3681cac1a3eedf1a645bc"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.1.heat.high.png",
+   "bytes": 27980,
+   "sha256": "a91fc5148d727e2fb220772c4d08c5150d2684e98244ea816732d43ef7224976"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.1.heat.mid.png",
+   "bytes": 26027,
+   "sha256": "7d39d2e085ac742e994428ff0cd2a9a6ac37bbf1884fc058566347df8efb66f2"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.1.high.png",
+   "bytes": 23924,
+   "sha256": "31dd5136e0febe88c6aa891f32f544667fee5450ea9d7b3c3e9c034a4b4aa88a"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.1.low.png",
+   "bytes": 23020,
+   "sha256": "44718323e7c569ba09b5c4cceedd60c446165935dbffb43304c61d99bb5c9951"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.1.mid.png",
+   "bytes": 24243,
+   "sha256": "6ce844e6c0157d42cd56599b1ac9babef58ce69dc0f13d8029beea9263e40232"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.2.flat.png",
+   "bytes": 20402,
+   "sha256": "ae7d0a3b7e5d2a51dc3f76b0b42c96f42b2b54fa9060e9930a9fea8d02b2c7d3"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.2.heat.high.png",
+   "bytes": 23755,
+   "sha256": "e83424b4f7a0dc4a2b195cf0491a577e64cf67aa409a47b33420073b7b663ee2"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.2.heat.mid.png",
+   "bytes": 20809,
+   "sha256": "c2a9a5fe0220f0f76b58de6b8c4ac32e66dc5256d049342c67881cccc78e8d21"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.2.high.png",
+   "bytes": 24373,
+   "sha256": "15be5e3a58d3137ee0bbe98289faad9463712c2e54a86bcecca991a21d79bc73"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.2.low.png",
+   "bytes": 23129,
+   "sha256": "b52cb38c682e4e004d119404eece58fada900639bedc1cecb890e7ac1a9b9bfd"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.2.mid.png",
+   "bytes": 24437,
+   "sha256": "845758cfc159cebdc1a085d1eaeadafb459a2b74a7a69cd84211db6b4adcc6fe"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.3.flat.png",
+   "bytes": 19114,
+   "sha256": "ccfe2b8077e04f4173c5a9a0ba87429b8ae924e1f6fc44e25b49933314b23222"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.3.heat.high.png",
+   "bytes": 29245,
+   "sha256": "6642c6c72dda837bcc7f2999ec154b7dacc1459dcf0555c9d57d2b348fb3f6ec"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.3.heat.mid.png",
+   "bytes": 18891,
+   "sha256": "be4e9bc3ff59ed6327a8f1f2d5274b8c5da7a74f6143e890d69dc8d285119349"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.3.high.png",
+   "bytes": 21885,
+   "sha256": "9deddc6b7e6ad8e04df871b3547d26bed85b1f767e67ca42fae8eb32b528dad2"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.3.low.png",
+   "bytes": 19615,
+   "sha256": "4d5e3ff7282a27617f0c33c26d5f91d132bb3ca5e26ccf544cb750cac809747a"
+  },
+  {
+   "path": "visual-equivalence/individual/leaf.flood.3.mid.png",
+   "bytes": 20505,
+   "sha256": "84b982dbe722dfbda471f0c38f441503609bc7254520a158fefed7413aa63026"
+  },
+  {
+   "path": "visual-equivalence/individual/root.aerial.1.png",
+   "bytes": 17176,
+   "sha256": "8d09db1f7badef03f121ccaa102a9727f392d3d3ca399ca801a70055b41256ea"
+  },
+  {
+   "path": "visual-equivalence/individual/root.aerial.2.png",
+   "bytes": 19736,
+   "sha256": "0658a5cacdf7132d5436575524b92185a996e67ca6302d4172a91c682820db6f"
+  },
+  {
+   "path": "visual-equivalence/individual/root.aerial.3.png",
+   "bytes": 25233,
+   "sha256": "c54a2aacc1fbdac58e19689f849033de19ef6fd69af486fdcf5051823367a1b8"
+  },
+  {
+   "path": "visual-equivalence/overview/BATCH1_THREE_WAY.png",
+   "bytes": 99685,
+   "sha256": "817c5ebc9403a919e3df0fe658d8fdd784b92e3541946e8a665ec81b1463f3e8"
+  },
+  {
+   "path": "visual-equivalence/overview/BATCH2_THREE_WAY.png",
+   "bytes": 147663,
+   "sha256": "c82772f9ca539daeb4ca31878422271bd2b9697bab36ddd6172b529390bd1d73"
+  },
+  {
+   "path": "visual-equivalence/overview/BATCH4_THREE_WAY.png",
+   "bytes": 455713,
+   "sha256": "a20f64c935685eb0c132b4942f69b11d75a31a5690d8e61086bc5aee580043a5"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/bud.png",
+   "bytes": 25960,
+   "sha256": "576c75443b535391b7a44c2cbfe94f4bf87448654f8c506b8a27ee62cff76ff7"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/frost.collar.2.png",
+   "bytes": 23666,
+   "sha256": "74e63006b714bee12ff946e97555432754443da878fd52f10b2c0358892c8318"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/frost.collar.3.png",
+   "bytes": 53492,
+   "sha256": "bc8f78f7533d660d8f4d394b9e85ebc1eb35f1107a400a6a94c5d4c378722967"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/frost.hair.1.png",
+   "bytes": 8800,
+   "sha256": "21a3659e742dc3f20c7cbe68806576c56c65b440ff8b3b47f7be611fc6fac33d"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/frost.hair.2.png",
+   "bytes": 15245,
+   "sha256": "0fb2555191437caecc1e96a146bccd7ee0eaf36c594246b9a9d7560ed31dad66"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/frost.hair.3.png",
+   "bytes": 24261,
+   "sha256": "6fbeb73267867b150ca1427861d18a8715b24973e81d5d2e9159712fd9752f69"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.base.flat.png",
+   "bytes": 29608,
+   "sha256": "117587d1afdc21398f770f1c2578fc2646980567eaf09953c6b28cdd0c149b34"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.base.heat.high.png",
+   "bytes": 42921,
+   "sha256": "a4e81651bada09d1e3b3120252c06844bec36f9594c43038dd81fb1356c52c88"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.base.heat.mid.png",
+   "bytes": 33495,
+   "sha256": "2db7fdd4aa3c99a7fd87a4f4a60acd84edc5871f2b0f2b24cce18ddf3cf5a386"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.base.high.png",
+   "bytes": 56788,
+   "sha256": "4138929b719bcf4d68b29f331edaf01c0816758d1bc0a934584baa51d2311455"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.base.low.png",
+   "bytes": 37297,
+   "sha256": "37246762c6a91b20cba0e5804e62fe81979b3c5a235c51c6c2cf5215934fd83f"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.base.mid.png",
+   "bytes": 48353,
+   "sha256": "6e4338235c0d559b268e48060e01c2658df517dc7f0dd6747da0b533b8ac8149"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.1.flat.png",
+   "bytes": 9544,
+   "sha256": "7776385e950d648ec6cb5d7ece49f3ea9e8281f16ed40f58b5b4f34090790698"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.1.heat.high.png",
+   "bytes": 22837,
+   "sha256": "a9c1128ab5643d9468d0e1a233353cbcc577820cec9fa8b7db859d6d05c1309c"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.1.heat.mid.png",
+   "bytes": 16534,
+   "sha256": "5bfa42431862a9ad54baa76edb5a814847a0b7156e9214fb2ca8e0a025a556ab"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.1.high.png",
+   "bytes": 18624,
+   "sha256": "04093505e017aa6f7ef18059973ef1d2fe73f00e6df77a26b78d8cbdfa46e318"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.1.low.png",
+   "bytes": 11695,
+   "sha256": "d1ae90b039286e9301acfe90681a9de7f92ff7d130af2d8a36ab923d7b509146"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.1.mid.png",
+   "bytes": 15872,
+   "sha256": "6c1a32da7680091d76e09cf1c939a78fdca12a98a0709ba73962dbdbef4f4ac5"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.2.flat.png",
+   "bytes": 8665,
+   "sha256": "85b4066e015831d7a33dee15538b675026527f1295387b7672f22fe8e7455a9a"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.2.heat.high.png",
+   "bytes": 11150,
+   "sha256": "6481a3a6cb49cf05c3f092edc0ade79d8fa84f105c38f3b10db56d24d8457206"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.2.heat.mid.png",
+   "bytes": 9122,
+   "sha256": "d7182111e4d4bc29aab8d81be7ba85c18f6ff47346125dcc4fd25294eb66b738"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.2.high.png",
+   "bytes": 14498,
+   "sha256": "ef33cf9a93675bc276fc610c705c3ab6c222edfd6cf9a0e51ec9ae7b083e0f23"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.2.low.png",
+   "bytes": 11937,
+   "sha256": "fe03248c65444982b964792f5a3c50a83b585a650379d710063ef21fe9accc46"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.2.mid.png",
+   "bytes": 14126,
+   "sha256": "10baef6149d2b5286653d6619db9b6b9590c3745a58eb82cac7d5436ec678f46"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.3.flat.png",
+   "bytes": 6850,
+   "sha256": "a2960990843a8ce80202d59f2fb084d83020bd6d8ab1c373cd401462c1f92027"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.3.heat.high.png",
+   "bytes": 24182,
+   "sha256": "b685aa211f60a1daa65c028f467c8ceb65e14af52f12482565aa1403d6961352"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.3.heat.mid.png",
+   "bytes": 6661,
+   "sha256": "a2b71a962e0db92e3d015252041920d290f9d2b4951bdec264833eab576a0e43"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.3.high.png",
+   "bytes": 9584,
+   "sha256": "b80d18d3ca9453c36ac671e4fb699b39be34dd720294b2945fbb520c0e478238"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.3.low.png",
+   "bytes": 7195,
+   "sha256": "efffcac183d763aca53e9ddceddd3ffe9704ccde61a9b306366fd6fd04bbe99a"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/leaf.flood.3.mid.png",
+   "bytes": 8278,
+   "sha256": "abb722dd27d4f087c803a99d536dbf7f83751629a635bcada46eea9e398f43e7"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/root.aerial.1.png",
+   "bytes": 6669,
+   "sha256": "2a0c8018d5bd0e154ccb76da66e02e7cc1ebd76ee666ca85a81f616046c5d097"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/root.aerial.2.png",
+   "bytes": 9894,
+   "sha256": "de1a53189e075b759a618d30a744c5b5e847a8501f815f8c43ed0a6c04a581d0"
+  },
+  {
+   "path": "visual-equivalence/reference-crops/root.aerial.3.png",
+   "bytes": 17228,
+   "sha256": "2be5fce86d01bd500da4105746c72317487c9f58b48d982aa2d4ca375e018a34"
+  },
+  {
+   "path": "visual-equivalence/v3_1/LOCKED_REVIEW_V3_V3_1_COMPARISON.png",
+   "bytes": 167891,
+   "sha256": "031e8f435720dec267bb8f4cdc75de8c1a10b708d433a1eb0e3afa65226cbd5b"
+  },
+  {
+   "path": "visual-equivalence/v3_1/bud_THREE_WAY.png",
+   "bytes": 53000,
+   "sha256": "0f6adf5d655829d3c4f9021bc4b2afb53b72fcc0922e11365619e0b7e4fc5fed"
+  },
+  {
+   "path": "visual-equivalence/v3_1/root.aerial.1_THREE_WAY.png",
+   "bytes": 31533,
+   "sha256": "97d5aba04671ac489bc379fbe7603386b5dd539749bdb8cfab536fd5f12d3c56"
+  },
+  {
+   "path": "visual-equivalence/v3_1/root.aerial.2_THREE_WAY.png",
+   "bytes": 32759,
+   "sha256": "a3769c5e3ea6321a69c01116e5f9914323758697a99abd4afe8ed393e7d52a5e"
+  },
+  {
+   "path": "visual-equivalence/v3_1/root.aerial.3_THREE_WAY.png",
+   "bytes": 39800,
+   "sha256": "d9d1c68a5de41e5037bef064fcc1a42e1b2345fd829ba4108a358dd3946cfbb6"
+  }
+ ]
+}

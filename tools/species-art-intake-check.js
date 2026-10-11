@@ -207,7 +207,7 @@ function zip(entries, deflate = true) {
     () => refuse("an anchor outside the drawing", RS, fx => { S(fx, "pod").s.anchor = [40, 0]; }, /anchor \[40,0\] is outside/),
     () => refuse("an anchor on a transparent pixel", RS, fx => { const { s, img } = S(fx, "frost.collar.2"); s.anchor = opaqueAt(img, false); }, /is on a transparent pixel/),
     () => refuse("an anchor off the contract edge (seed head not on its bottom row)", RS, fx => { const { s } = S(fx, "seedHead.small"); s.anchor = [s.anchor[0], s.anchor[1] - 1]; }, /breaks the seedHead convention \(the bottom row\)/),
-    () => refuse("a leaf anchor off its leftmost column", RS, fx => { const { s, img } = S(fx, "leaf.flood.2.high"); const p = (() => { for (let x = 1; x < img.w; x++) for (let y = 0; y < img.h; y++) if (img.rgba[(y * img.w + x) * 4 + 3]) return [x, y]; })(); s.anchor = p; }, /breaks the leafSocket convention \(the leftmost column\)/),
+    () => refuse("a stem-leaf anchor beyond its base columns (x ≥ 2)", RS, fx => { const { s, img } = S(fx, "leaf.flood.2.high"); const p = (() => { for (let x = 2; x < img.w; x++) for (let y = 0; y < img.h; y++) if (img.rgba[(y * img.w + x) * 4 + 3]) return [x, y]; })(); s.anchor = p; }, /breaks the leafSocket convention \(column 0 or 1: the leaf base touching the stem\)/),
     () => refuse("a tip point on a transparent pixel", RS, fx => { const { s, img } = S(fx, "leaf.drought.1.low"); s.points.tip = opaqueAt(img, false); }, /points\.tip .* must be an opaque pixel/),
     () => refuse("only two margin points", RS, fx => { S(fx, "leaf.base.low").s.points.margin.pop(); }, /points\.margin must be exactly 3 points/),
     () => refuse("missing points", RS, fx => { delete S(fx, "leaf.base.high").s.points; }, /points \{ tip, margin \} required/),

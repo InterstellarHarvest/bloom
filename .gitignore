@@ -17,3 +17,6 @@ npm-debug.log*
 
 # GitHub Pages site assembled by tools/build-pages-site.mjs (CI / local QA only)
 _site/
+
+# BLOOM-035C2 owner-supplied source art (temporary input, never committed)
+_art_intake/

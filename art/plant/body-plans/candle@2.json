@@ -3,7 +3,7 @@
   "id": "candle",
   "version": 2,
   "name": "Woolly Candle (C1) — candle@2 fidelity revision: sprite trunk + rosette crown + inflorescence column at production authoring resolution",
-  "about": "BLOOM-035C2A body plan REVISION candle@2 of the cold specialist (docs/SPECIES_BODY_PLANS_v1.md §3.2; revision record docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.md §0). The SAME anatomy, grammar, sockets (by name and attach kind), architectures and gameplay as candle@1 — a fidelity contract revision, not a new species design: the plan contract art/plant/contracts/candle@2.json raises the maximum native size of every Woolly component, and this file moves the socket coordinates ONLY as far as the larger drawings need to fit the unchanged 84 × 98 specimen (soil row 68, crown 42,68). Vertical budget (the binding constraint, proven by the build's clip proof with full-size drawings): trunk crown height |top| + column height ≤ 43, so a 24 × 24 seed head at the column apex keeps ≥ 1 px of sky. candle@1 (art/plant/body-plans/candle.json) is unchanged and remains the plan of the current player proof pack.",
+  "about": "BLOOM-035C2 body plan REVISION candle@2 of the cold specialist (docs/SPECIES_BODY_PLANS_v1.md §3.2; revision record docs/species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.md §0). The SAME anatomy, grammar, architectures, socket geometry and gameplay as candle@1 — a fidelity contract revision, not a new species design: the plan contract art/plant/contracts/candle@2.json raises the maximum native size of every Woolly component to the PMO production maxima. The accepted Woolly Candle source (CANONICAL_REFERENCE_TRANSCRIPTION, candle@2) was composed on candle@1's sockets — its trunk crown points are exactly candle@1's (open −28 · dense −27 · compact −26 · closed −25) — and the complete legal-model enumeration proves it renders unclipped with ≥ 1 px margin on them, so no socket moved. Canonical canvas 84 × 98, soil row 68, crown 42,68. candle@1 (art/plant/body-plans/candle.json) is unchanged and remains historical / proof-compatibility material.",
   "canvas": {
     "w": 84,
     "h": 98
@@ -37,28 +37,28 @@
           "body": "body.trunk.0",
           "top": [
             0,
-            -34
+            -28
           ],
           "sockets": {
             "collar": [
               {
                 "dx": 0,
-                "dy": -12
+                "dy": -9
               },
               {
                 "dx": 0,
-                "dy": -24
+                "dy": -18
               }
             ],
             "stilt": [
               {
-                "dx": -8,
-                "dy": -11,
+                "dx": -5,
+                "dy": -8,
                 "side": -1
               },
               {
-                "dx": 8,
-                "dy": -11,
+                "dx": 5,
+                "dy": -8,
                 "side": 1
               }
             ]
@@ -77,37 +77,37 @@
             "leaf": [
               {
                 "a": -150,
-                "r": 3,
+                "r": 2,
                 "dy": -1,
                 "angle": "high"
               },
               {
                 "a": 150,
-                "r": 3,
+                "r": 2,
                 "dy": -1,
                 "angle": "high"
               },
               {
                 "a": -105,
-                "r": 4,
+                "r": 3,
                 "dy": 0,
                 "angle": "mid"
               },
               {
                 "a": 105,
-                "r": 4,
+                "r": 3,
                 "dy": 0,
                 "angle": "mid"
               },
               {
                 "a": -50,
-                "r": 4,
+                "r": 3,
                 "dy": 1,
                 "angle": "low"
               },
               {
                 "a": 50,
-                "r": 4,
+                "r": 3,
                 "dy": 1,
                 "angle": "low"
               }
@@ -123,7 +123,7 @@
             1
           ],
           "part": "flowers",
-          "height": 9,
+          "height": 17,
           "width": [
             3,
             2
@@ -146,7 +146,7 @@
               {
                 "t": 0.8,
                 "side": 1,
-                "dx": 11,
+                "dx": 8,
                 "dy": -4
               }
             ],
@@ -154,13 +154,13 @@
               {
                 "t": 0.6,
                 "side": -1,
-                "dx": -12,
+                "dx": -8,
                 "dy": -2
               },
               {
                 "t": 0.45,
                 "side": 1,
-                "dx": 12,
+                "dx": 8,
                 "dy": -1
               }
             ],
@@ -168,28 +168,28 @@
               {
                 "t": 0.2,
                 "side": -1,
-                "dx": -11,
+                "dx": -8,
                 "dy": 1
               },
               {
                 "t": 0.3,
                 "side": 1,
-                "dx": 11,
+                "dx": 8,
                 "dy": 1
               }
             ],
             "drift": [
               [
-                13,
-                -13
+                9,
+                -9
               ],
               [
-                20,
-                -4
+                14,
+                -3
               ],
               [
-                -14,
-                -10
+                -10,
+                -7
               ]
             ]
           }
@@ -206,28 +206,28 @@
           "body": "body.trunk.1",
           "top": [
             0,
-            -33
+            -27
           ],
           "sockets": {
             "collar": [
               {
                 "dx": 0,
-                "dy": -12
+                "dy": -9
               },
               {
                 "dx": 0,
-                "dy": -24
+                "dy": -18
               }
             ],
             "stilt": [
               {
-                "dx": -9,
-                "dy": -11,
+                "dx": -6,
+                "dy": -8,
                 "side": -1
               },
               {
-                "dx": 9,
-                "dy": -11,
+                "dx": 6,
+                "dy": -8,
                 "side": 1
               }
             ]
@@ -246,37 +246,37 @@
             "leaf": [
               {
                 "a": -150,
-                "r": 3,
+                "r": 2,
                 "dy": -1,
                 "angle": "high"
               },
               {
                 "a": 150,
-                "r": 3,
+                "r": 2,
                 "dy": -1,
                 "angle": "high"
               },
               {
                 "a": -105,
-                "r": 3,
+                "r": 2,
                 "dy": 0,
                 "angle": "high"
               },
               {
                 "a": 105,
-                "r": 3,
+                "r": 2,
                 "dy": 0,
                 "angle": "high"
               },
               {
                 "a": -50,
-                "r": 4,
+                "r": 3,
                 "dy": 1,
                 "angle": "mid"
               },
               {
                 "a": 50,
-                "r": 4,
+                "r": 3,
                 "dy": 1,
                 "angle": "mid"
               }
@@ -292,7 +292,7 @@
             1
           ],
           "part": "flowers",
-          "height": 10,
+          "height": 16,
           "width": [
             3,
             2
@@ -315,7 +315,7 @@
               {
                 "t": 0.8,
                 "side": 1,
-                "dx": 11,
+                "dx": 8,
                 "dy": -4
               }
             ],
@@ -323,13 +323,13 @@
               {
                 "t": 0.6,
                 "side": -1,
-                "dx": -12,
+                "dx": -8,
                 "dy": -2
               },
               {
                 "t": 0.45,
                 "side": 1,
-                "dx": 12,
+                "dx": 8,
                 "dy": -1
               }
             ],
@@ -337,28 +337,28 @@
               {
                 "t": 0.2,
                 "side": -1,
-                "dx": -11,
+                "dx": -8,
                 "dy": 1
               },
               {
                 "t": 0.3,
                 "side": 1,
-                "dx": 11,
+                "dx": 8,
                 "dy": 1
               }
             ],
             "drift": [
               [
-                13,
-                -13
+                9,
+                -9
               ],
               [
-                20,
-                -4
+                14,
+                -3
               ],
               [
-                -14,
-                -10
+                -10,
+                -7
               ]
             ]
           }
@@ -375,28 +375,28 @@
           "body": "body.trunk.2",
           "top": [
             0,
-            -32
+            -26
           ],
           "sockets": {
             "collar": [
               {
                 "dx": 0,
-                "dy": -12
+                "dy": -9
               },
               {
                 "dx": 0,
-                "dy": -24
+                "dy": -18
               }
             ],
             "stilt": [
               {
-                "dx": -11,
-                "dy": -11,
+                "dx": -7,
+                "dy": -8,
                 "side": -1
               },
               {
-                "dx": 11,
-                "dy": -11,
+                "dx": 7,
+                "dy": -8,
                 "side": 1
               }
             ]
@@ -427,25 +427,25 @@
               },
               {
                 "a": -105,
-                "r": 3,
+                "r": 2,
                 "dy": 0,
                 "angle": "high"
               },
               {
                 "a": 105,
-                "r": 3,
+                "r": 2,
                 "dy": 0,
                 "angle": "high"
               },
               {
                 "a": -50,
-                "r": 3,
+                "r": 2,
                 "dy": 1,
                 "angle": "mid"
               },
               {
                 "a": 50,
-                "r": 3,
+                "r": 2,
                 "dy": 1,
                 "angle": "mid"
               }
@@ -461,7 +461,7 @@
             1
           ],
           "part": "flowers",
-          "height": 11,
+          "height": 15,
           "width": [
             3,
             2
@@ -484,7 +484,7 @@
               {
                 "t": 0.8,
                 "side": 1,
-                "dx": 11,
+                "dx": 8,
                 "dy": -4
               }
             ],
@@ -492,13 +492,13 @@
               {
                 "t": 0.6,
                 "side": -1,
-                "dx": -12,
+                "dx": -8,
                 "dy": -2
               },
               {
                 "t": 0.45,
                 "side": 1,
-                "dx": 12,
+                "dx": 8,
                 "dy": -1
               }
             ],
@@ -506,28 +506,28 @@
               {
                 "t": 0.2,
                 "side": -1,
-                "dx": -11,
+                "dx": -8,
                 "dy": 1
               },
               {
                 "t": 0.3,
                 "side": 1,
-                "dx": 11,
+                "dx": 8,
                 "dy": 1
               }
             ],
             "drift": [
               [
-                13,
-                -13
+                9,
+                -9
               ],
               [
-                20,
-                -4
+                14,
+                -3
               ],
               [
-                -14,
-                -10
+                -10,
+                -7
               ]
             ]
           }
@@ -544,32 +544,32 @@
           "body": "body.trunk.3",
           "top": [
             0,
-            -31
+            -25
           ],
           "sockets": {
             "collar": [
               {
                 "dx": 0,
-                "dy": -9
+                "dy": -7
               },
               {
                 "dx": 0,
-                "dy": -17
+                "dy": -13
               },
               {
                 "dx": 0,
-                "dy": -25
+                "dy": -19
               }
             ],
             "stilt": [
               {
-                "dx": -12,
-                "dy": -11,
+                "dx": -8,
+                "dy": -8,
                 "side": -1
               },
               {
-                "dx": 12,
-                "dy": -11,
+                "dx": 8,
+                "dy": -8,
                 "side": 1
               }
             ]
@@ -634,7 +634,7 @@
             1
           ],
           "part": "flowers",
-          "height": 12,
+          "height": 14,
           "width": [
             3,
             2
@@ -657,7 +657,7 @@
               {
                 "t": 0.8,
                 "side": 1,
-                "dx": 11,
+                "dx": 8,
                 "dy": -4
               }
             ],
@@ -665,13 +665,13 @@
               {
                 "t": 0.6,
                 "side": -1,
-                "dx": -12,
+                "dx": -8,
                 "dy": -2
               },
               {
                 "t": 0.45,
                 "side": 1,
-                "dx": 12,
+                "dx": 8,
                 "dy": -1
               }
             ],
@@ -679,28 +679,28 @@
               {
                 "t": 0.2,
                 "side": -1,
-                "dx": -11,
+                "dx": -8,
                 "dy": 1
               },
               {
                 "t": 0.3,
                 "side": 1,
-                "dx": 11,
+                "dx": 8,
                 "dy": 1
               }
             ],
             "drift": [
               [
-                13,
-                -13
+                9,
+                -9
               ],
               [
-                20,
-                -4
+                14,
+                -3
               ],
               [
-                -14,
-                -10
+                -10,
+                -7
               ]
             ]
           }
@@ -710,7 +710,7 @@
   },
   "roots": {
     "kind": "taproot",
-    "about": "a taproot like Organic Hybrid's (the same procedural numbers as candle@1); the storage socket sits one row under the soil (dy 1, candle@1: 2) so a full 18 × 28 storage organ keeps 1 px of canvas below it; breathing roots stand clear of the wider trunk",
+    "about": "a taproot like Organic Hybrid's (the same numbers)",
     "depth": [
       16,
       21,
@@ -776,15 +776,15 @@
     ],
     "storage": {
       "dx": 0,
-      "dy": 1
+      "dy": 2
     },
     "aerial": {
       "dy": 1,
       "dx": [
-        -14,
-        15,
-        -20,
-        21
+        -10,
+        11,
+        -15,
+        16
       ]
     }
   },

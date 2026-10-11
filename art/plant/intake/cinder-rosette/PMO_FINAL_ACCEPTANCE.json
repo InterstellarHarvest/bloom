@@ -1,0 +1,60 @@
+{
+ "format": "bloom-plant-art-acceptance@1",
+ "project": "STRANGE BLOOM · UNKNOWN SOILS",
+ "pack": "cinder-rosette",
+ "species": "cinder_rosette",
+ "bodyPlan": "rosette@1",
+ "status": "FINAL PMO-APPROVED ART INTAKE",
+ "production_main": "e534750f62962b4cb23ee63886e1ef29bbae442a",
+ "deliveries": [
+  {
+   "file": "cinder-rosette-batch1-base-body.zip",
+   "batch": 1,
+   "bytes": 4568,
+   "sha256": "6f2cefe52c9de8811423ccfe9fe1f824bfbe2dedf830e054e7a1096a9d005a57"
+  },
+  {
+   "file": "cinder-rosette-batch2-cold-heat.zip",
+   "batch": 2,
+   "bytes": 4483,
+   "sha256": "ad7dac754ba2144246650b6863659e1ea4a7b7ca3e1497c8b6323457354a633f"
+  },
+  {
+   "file": "cinder-rosette-batch3-drought.zip",
+   "batch": 3,
+   "bytes": 15873,
+   "sha256": "0b18c8ffb800c0148aaa0981d0737ef5e378267d688cdc835d13f2a1fbc604e8"
+  },
+  {
+   "file": "cinder-rosette-batch4-flood.zip",
+   "batch": 4,
+   "bytes": 19923,
+   "sha256": "d34d91ab8436e520fbbca658ff1090e84b2392ed6519c9bfa2f0d4f0645701e8"
+  },
+  {
+   "file": "cinder-rosette-batch5-salt-radiation.zip",
+   "batch": 5,
+   "bytes": 16435,
+   "sha256": "d807693683048189fb8a6bb9e23c47f8d9119ae27b824d8132ce356d06c76058"
+  },
+  {
+   "file": "cinder-rosette-batch6-reproduction-dispersal.zip",
+   "batch": 6,
+   "bytes": 2948,
+   "sha256": "de7d60c36a52a41da6475dd29ab2decc63cb685a77ce150a995a189dd27a046b"
+  },
+  {
+   "file": "cinder-rosette-batch7-metadata-closure.zip",
+   "batch": 7,
+   "bytes": 393772,
+   "sha256": "63fd8b7aa0bf77055c6c10e5aa04eb650ef66f1623449897d3f3f96a1418fc57"
+  }
+ ],
+ "integration_rule": "BLOOM-035C2: ingest only with node tools/intake-plant-art.mjs --pack cinder-rosette; the deliveries are the PMO-accepted source candidate CINDER_ROSETTE_PRODUCTION_SOURCE_CANDIDATE_v3_1, converted mechanically by tools/species-source-deliveries.mjs (source provenance: art/plant/intake/cinder-rosette/SOURCE_PROVENANCE.json).",
+ "notes": [
+  "PMO FINAL SOURCE VERDICT: FINAL SOURCE ACCEPTED — 60 canonical sprites, 42 toothed masks; origins RECOVERED_EXACT + CANONICAL_REFERENCE_TRANSCRIPTION; no Cinder pixel may be redesigned.",
+  "Source candidate CINDER_ROSETTE_PRODUCTION_SOURCE_CANDIDATE_v3_1: ZIP CINDER_ROSETTE_PRODUCTION_SOURCE_CANDIDATE_v3_1.zip (2607263 B, SHA-256 1be928b1a6d4e9d95ededdb459f941e08fdcaae7e0db0797b7a5b539f5973bff); aggregate package hash 4254d43c20cf9b13b1215441687342dcc326e857d055cd769163683559ff3bfc over 235 files.",
+  "Origins: CANONICAL_REFERENCE_TRANSCRIPTION 33, RECOVERED_EXACT 27.",
+  "Acceptance record created by the engineering agent under explicit PMO authorization for exactly this accepted candidate (BLOOM-035C2)."
+ ]
+}

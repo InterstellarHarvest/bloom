@@ -1,8 +1,8 @@
 // BLOOM — CHOOSE PLANT SPECIES (BLOOM-035B-6). docs/SPECIES_SYSTEM_v1.md §7 (UX), §0.1 (PMO decisions).
 //
-// DEVELOPMENT FLAG ONLY. The app mounts this screen only for a ?species=1 visit (resources/app/app-controller.js loads this module
-// lazily then; nothing in the normal flow imports it and Settings has no entry for it). The three new species are CANDIDATES with
-// TEMPORARY engineering proof art (status "candidate"): every candidate card and dossier says so on screen.
+// (BLOOM-035C2) THE NORMAL EXPEDITION FLOW: the app mounts this screen on every EXPEDITION (resources/app/app-controller.js loads this module
+// lazily on the first one). All four species are released on their PMO-accepted art. A species with status "candidate" (none today) would
+// still be marked on screen as temporary proof art — card, dossier and a development note.
 //
 //   import { SpeciesSelect } from "<repo>/resources/species-select/species-select.js";
 //   const s = new SpeciesSelect(host, { species, reducedMotion, onChoose(sp), onBack() });
@@ -105,7 +105,7 @@ export class SpeciesSelect {
       <header class="ss-head">
         <button type="button" class="ss-btn ghost" data-act="back">${ico("back")}<span>Back</span></button>
         <div class="ss-title"><span class="ss-kicker">Expedition</span><h1 id="${tid}">Choose your plant</h1></div>
-        <p class="ss-dev" role="note"><b>Development build</b> · species flag · the three new species use temporary engineering proof art</p>
+        ${this.list.some(sp => sp.status === "candidate") ? `<p class="ss-dev" role="note"><b>Development build</b> · a candidate species uses temporary engineering proof art</p>` : ""}
       </header>
       <p class="ss-lede">Each species starts with a different body. The worlds you are offered next are judged by what <em>this</em> plant can live on.</p>
       <div class="ss-cards" role="radiogroup" aria-labelledby="${tid}">${this.list.map((sp, i) => this._card(sp, i)).join("")}</div>
