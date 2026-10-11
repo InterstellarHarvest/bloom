@@ -363,8 +363,10 @@ export class ExpeditionEntry {
   _prefetchSector(first) {
     const pool = this.prefetch = DestinationSurvey.prefetch({ ...first, ...this.poolOpts, species: this.species }), rec = { seed: pool.first.seed, species: this.species.id, at: performance.now(), readyMs: null };
     this.stats.prefetches.push(rec);
+    // the status line shows survey progress only while worlds are actually being generated; a ready sector clears it (owner decision
+    // 2026-10-10: no completion banner / toast / badge — the Destination Survey's 3 × 3 matrix already shows that the worlds are ready)
     const status = () => { if (this.prefetch !== pool || this.state !== "menu") return; const p = pool.progress;
-      this.menu.setStatus(p.ready ? "Sector surveyed · nine worlds ready" : `Surveying sector · ${p.confirmed} of ${p.total} worlds`); };
+      this.menu.setStatus(p.ready ? "" : `Surveying sector · ${p.confirmed} of ${p.total} worlds`); };
     pool.onProgress = status; status();
     pool.ready.then(() => { rec.readyMs = Math.round(performance.now() - rec.at); status(); }, () => { if (this.prefetch === pool) this.menu.setStatus(""); });
   }
