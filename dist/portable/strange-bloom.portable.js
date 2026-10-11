@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: 68d43a0c807f2d7837a22d04fc79800c50033cfc58f7aac568de4d7c3581d955  (40 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: 575fec9301d9572d4d401e732bd9b825a15e16e3933b8b8b227d97bed9a6c2a8  (40 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {
@@ -14244,7 +14244,7 @@
           const status = () => {
             if (this.prefetch !== pool || this.state !== "menu") return;
             const p2 = pool.progress;
-            this.menu.setStatus(p2.ready ? "Sector surveyed · nine worlds ready" : `Surveying sector · ${p2.confirmed} of ${p2.total} worlds`);
+            this.menu.setStatus(p2.ready ? "" : `Surveying sector · ${p2.confirmed} of ${p2.total} worlds`);
           };
           pool.onProgress = status;
           status();

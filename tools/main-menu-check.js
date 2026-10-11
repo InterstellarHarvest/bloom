@@ -144,6 +144,15 @@ const mulberry32 = a => () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.i
     check(/\.mm\.is-settled \.mm-plaque, \.mm\.is-settled \.mm-nav li, \.mm\.is-settled \.mm-status\{animation:none\}/.test(css) && /\.mm\.is-settled \.mm-art\{transition:none\}/.test(css) && /show\(\{ settled: true \}\)/.test(ec),
       "M7h (028C1) the return shows the menu `settled` under the black (no entrance replay, no painting fade), so the screen is complete before the black lifts"); }
 
+  // M8 · (PMO UI correction 2026-10-10) the owner rejected the "Sector surveyed · nine worlds ready" completion banner: it is gone from every
+  // player-facing source and the shipped portable bundle, and the title's status line is cleared (hidden by .mm-status:empty) once the
+  // prefetched sector is ready — progress copy only while worlds are actually being generated. (release-check R16b proves it live.)
+  { const walk = d => fs.readdirSync(path.join(ROOT, d), { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(`${d}/${e.name}`) : /\.(js|mjs|css|html)$/.test(e.name) ? [`${d}/${e.name}`] : []);
+    const files = [...walk("resources"), ...walk("content"), ...walk("dist"), "index.html"], hits = files.filter(f => /nine worlds ready|sector surveyed|worlds ready/i.test(read(f)));
+    const ee = read("resources/main-menu/expedition-entry.js"), css = read("resources/main-menu/main-menu.css");
+    check(!hits.length && /this\.menu\.setStatus\(p\.ready \? "" : `Surveying sector · \$\{p\.confirmed\} of \$\{p\.total\} worlds`\)/.test(ee) && /\.mm-status:empty\{display:none\}/.test(css),
+      `M8 no survey-complete banner: "Sector surveyed · nine worlds ready" (or any "worlds ready" copy) appears in none of ${files.length} player-facing files (resources, content, dist, index.html); the title's status line shows "Surveying sector · n of 9 worlds" only while the sector is being generated and is cleared — hence display:none, no reserved space — once it is ready`, J(hits)); }
+
   console.log(fails ? `\n${fails} check(s) FAILED (${Date.now() - t0} ms)` : `\nALL CHECKS PASS (${Date.now() - t0} ms)`);
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

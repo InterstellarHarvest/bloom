@@ -284,6 +284,13 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
         const m1 = await M_STATE(p);
         check(m1.prefetch && m1.prefetch.total === 9 && Number.isInteger(m1.prefetch.seed) && m1.tag && /Recommended/.test(await p.textContent('.mm-item[data-act="training"]')) && LOG.some(([u, s]) => u === "/resources/destination-survey/survey-worker.js" && s === 200),
           `${B} R16 · R18 · at the root the first validated sector is prefetching while the title shows (its own module workers, nine worlds) and TRAINING carries the small "Recommended" tag (no training record)`, J({ prefetch: m1.prefetch, tag: m1.tag }));
+        // R16b · (PMO UI correction 2026-10-10) no completion banner: while the root's sector is being generated the status line shows only its
+        // progress; once it is ready the line is empty, display:none (no reserved space) and no "worlds ready" copy is anywhere on the title
+        const prog = await p.evaluate(() => ({ ready: MENU_DEV.entry.prefetch.progress.ready, text: document.querySelector(".mm-status").textContent }));
+        await p.waitForFunction(() => MENU_DEV.entry.prefetch && MENU_DEV.entry.prefetch.progress.ready, null, { timeout: 180000, polling: 100 });
+        const st = await p.evaluate(() => { const e = document.querySelector(".mm-status"), r = e.getBoundingClientRect(); return { text: e.textContent, display: getComputedStyle(e).display, w: r.width, h: r.height, page: /worlds ready|sector surveyed/i.test(document.body.innerText) }; });
+        check((prog.ready || /^Surveying sector · \d of 9 worlds$/.test(prog.text)) && st.text === "" && st.display === "none" && !st.w && !st.h && !st.page,
+          `${B} R16b · no survey-complete banner on the title: while the root sector is generated the status line shows only "Surveying sector · n of 9 worlds"${prog.ready ? " (already ready here)" : ` ("${prog.text}")`}; once all nine worlds are ready it is empty and display:none (0 × 0, no reserved space) and no "worlds ready" copy is on the page`, J({ prog, st }));
         await shot(p, "02-root-recommended-tag.png", { clip: await p.evaluate(() => { const r = document.querySelector(".mm-plaque").getBoundingClientRect(); return { x: Math.max(0, r.left - 12), y: Math.max(0, r.top - 12), width: r.width + 24, height: r.height + 24 }; }) });
         // R22 · R23 · Settings (a real motion change, persisted) and Credits; R73 · keyboard title navigation
         await p.focus('.mm-item[data-act="begin"]'); const kbd = [];
