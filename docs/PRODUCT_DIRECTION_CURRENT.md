@@ -15,11 +15,12 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-11, BLOOM-035C2 review candidate (branch `handoff/bloom-035c2-review`, NOT merged; production `main` is still
-`e534750`). On this candidate: the three PMO-accepted species packs (Cinder Rosette v3.1 · Reed Spire v3.1 · Woolly Candle on the new body
-plan revision `candle@2`) are ingested through the 035C0 intake; all four species are released; Species Selection is the normal
-EXPEDITION flow (no `?species=1`). **BLOOM-035C2: CANDIDATE** · **BLOOM-035C: not IMPLEMENTED until PMO integration** · BLOOM-036
-Challenges: NEXT / PLANNED (not started; no CHALLENGES menu entry). Record: [`evidence/bloom-035c2/REPORT.md`](evidence/bloom-035c2/REPORT.md).*
+*Last updated: 2026-10-11, BLOOM-035C integration closeout. The PMO accepted BLOOM-035C2 and production `main` was fast-forwarded to the
+exact accepted review head `4ac7301` (from `e534750`; no merge commit, squash, cherry-pick or rebase); this docs-only closeout follows it.
+**BLOOM-035C: IMPLEMENTED / COMPLETE** — the three PMO-accepted species packs (Cinder Rosette · Reed Spire · Woolly Candle on body-plan
+revision `candle@2`) are in production, all four species are released, Species Selection is the normal EXPEDITION flow, and the plant
+specimen stands in a dynamic, region-driven environment. **Challenges: NEXT** · **BLOOM-036A: NEXT** (no CHALLENGES menu entry yet).
+Record: [`evidence/bloom-035c2/REPORT.md`](evidence/bloom-035c2/REPORT.md).*
 
 ---
 
@@ -64,9 +65,9 @@ STRANGE BLOOM · UNKNOWN SOILS
   worlds" only while the prefetched sector is actually being generated and disappears when it is ready; the rejected "Sector surveyed ·
   nine worlds ready" banner (and any toast / badge / "9 worlds" replacement) must not return — the Destination Survey's 3 × 3 matrix shows
   readiness. Guarded by `main-menu-check` M8 and `release-check` R16b.
-- **CHALLENGES: PLANNED** (BLOOM-036). It is not added as a fake or disabled control before then: the real CHALLENGES entry is added at
-  the **beginning of BLOOM-036**, as part of its first functional Challenge slice (036A), and BLOOM-036 begins only after the BLOOM-035C
-  species release.
+- **CHALLENGES: PLANNED** (BLOOM-036; **036A is NEXT**). It is not added as a fake or disabled control before then: the real CHALLENGES
+  entry is added at the **beginning of BLOOM-036**, as part of its first functional Challenge slice (036A). The BLOOM-035C species release
+  that had to come first is complete.
 
 ## 4. Expedition definition
 
@@ -79,12 +80,14 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
            → Begin Expedition → gameplay → Bloom / Extinction report
 ```
 
-- Production `main` today (normal players): EXPEDITION → Destination Survey → focus → Begin Expedition → gameplay → report (Organic
-  Hybrid only; Species Selection behind `?species=1`).
-- **BLOOM-035C2 CANDIDATE (this review branch):** EXPEDITION → **Choose Plant Species** → Destination Survey (for that species) → Begin
-  Expedition → gameplay, all four species on their PMO-accepted art; Organic Hybrid stays "Recommended first expedition"; no Easy /
-  Hard / stars / scores. `?species=1` is ignored (one behaviour path). Training is always Organic Hybrid. Production `main` changes only
-  when the PMO integrates the candidate.
+- **IMPLEMENTED** in production `main` (BLOOM-035C) — the final released Expedition flow:
+
+  ```
+  EXPEDITION → Choose Plant Species → Destination Survey → Run → Report
+  ```
+
+  All four species on their PMO-accepted art; Organic Hybrid stays "Recommended first expedition"; no Easy / Hard / stars / scores.
+  `?species=1` is not required — it is ignored (one behaviour path). Training is always Organic Hybrid.
 
 ## 5. Destination Survey / difficulty
 
@@ -101,22 +104,39 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
 
 ## 6. Plant species
 
-**LOCKED DESIGN · Species system IMPLEMENTED** (BLOOM-035B **IMPLEMENTED / COMPLETE**, PMO-accepted, in production `main`; design
-BLOOM-035A COMPLETE; record [`evidence/bloom-035b/REPORT.md`](evidence/bloom-035b/REPORT.md)). The product state, precisely:
+**LOCKED DESIGN · Species system IMPLEMENTED** (BLOOM-035B **IMPLEMENTED / COMPLETE**; BLOOM-035C **IMPLEMENTED / COMPLETE**, PMO-accepted
+`4ac7301`, in production `main`; design BLOOM-035A COMPLETE; records [`evidence/bloom-035b/REPORT.md`](evidence/bloom-035b/REPORT.md),
+[`evidence/bloom-035c2/REPORT.md`](evidence/bloom-035c2/REPORT.md)). The product state, precisely:
 
-- **Production `main`:** Organic Hybrid is the only normal Expedition choice; Species Selection and the three candidate species are behind
-  `?species=1` on TEMPORARY PIPELINE PROOF art.
-- **BLOOM-035C2 CANDIDATE (review branch, not merged):** the final species art is ingested — `cinder-rosette` (`rosette@1`),
-  `woolly-candle` (**`candle@2`**, the Woolly fidelity revision: candle@1's sockets with larger native component maxima; brief
-  [`WOOLLY_CANDLE_ART_BRIEF_v2`](species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.md)), `reed-spire` (`reed@1`) — from the PMO-accepted
-  source candidates via `tools/species-source-deliveries.mjs` → `tools/intake-plant-art.mjs` (provenance:
-  `art/plant/intake/<pack>/SOURCE_PROVENANCE.json` + `PMO_FINAL_ACCEPTANCE.json`); all four species are `released` and selectable in the
-  normal EXPEDITION flow. The proof packs stay in the repository as engineering / proof-compatibility material only; no species uses one.
-- **Specimen environment (035C2 candidate):** the plant specimen stands in a deterministic, region-driven environment scene (sky, sun,
-  clouds, horizon, ground and soil cues, standing water) with runtime weather FX; Terraform previews change only the scene, Adapt previews
-  only the organism; the Terraform room shows the plant in its region's scene ([`VISUAL_DIRECTION_v1.0.md`](VISUAL_DIRECTION_v1.0.md) §3).
-- **BLOOM-035C is not IMPLEMENTED until the PMO integrates the candidate.**
-- **Challenges: NEXT / PLANNED** (BLOOM-036, §8) — not started.
+| Item | Status |
+|---|---|
+| **BLOOM-035C** | **IMPLEMENTED / COMPLETE** |
+| Released species | **Organic Hybrid · Cinder Rosette · Woolly Candle · Reed Spire** |
+| Real art (the three PMO-accepted specialist packs) | **IMPLEMENTED** |
+| `candle@2` (the Woolly Candle body-plan revision) | **IMPLEMENTED** |
+| Normal Species Selection (EXPEDITION → Choose Plant Species) | **IMPLEMENTED** |
+| `?species=1` | **not required** (ignored: one behaviour path) |
+| Dynamic region specimen environments | **IMPLEMENTED** |
+| Challenges | **NEXT** |
+| BLOOM-036A | **NEXT** |
+
+- **The final species art is in production** — `cinder-rosette` (`rosette@1`), `woolly-candle` (**`candle@2`**, the Woolly fidelity
+  revision: candle@1's sockets with larger native component maxima; brief [`WOOLLY_CANDLE_ART_BRIEF_v2`](species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.md)),
+  `reed-spire` (`reed@1`) — ingested from the PMO-accepted source candidates via `tools/species-source-deliveries.mjs` →
+  `tools/intake-plant-art.mjs` (provenance: `art/plant/intake/<pack>/SOURCE_PROVENANCE.json` + `PMO_FINAL_ACCEPTANCE.json`); all four
+  species are `released` and selectable in the normal EXPEDITION flow. The proof packs stay in the repository as engineering /
+  proof-compatibility material only; no species uses one.
+- **Specimen environment:** the plant specimen stands in a deterministic, region-driven environment scene (sky, sun, clouds, horizon,
+  ground and soil cues, standing water) with runtime weather FX, read from the real region / sky state
+  ([`VISUAL_DIRECTION_v1.0.md`](VISUAL_DIRECTION_v1.0.md) §3).
+- **Locked visual rule:** **ADAPT changes the organism. TERRAFORM changes the environment around the organism.** An Adapt preview changes
+  only the organism; a Terraform preview changes only the scene around it.
+- **Intentional supersession — the Terraform room now shows the plant.** Terraform intentionally includes the **unchanged** plant inside the
+  region scene, so the player sees the environment change around the organism it is for. This supersedes the older mockup / production
+  decision that the Terraform room has *no plant* (the UI concept reviews' "a land scene instead of a plant", Concepts 15–17,
+  [`UI_CONCEPT_REVIEW_v7.md`](UI_CONCEPT_REVIEW_v7.md) / [`UI_CONCEPT_REVIEW_v8.md`](UI_CONCEPT_REVIEW_v8.md), and the BLOOM-029D production
+  room). Those documents remain the record of what was decided then; this file records that the decision changed in BLOOM-035C2.
+- **Challenges: NEXT** (BLOOM-036, §8) — **BLOOM-036A is NEXT**; not started.
 
 - Plant choices are genuinely different biological species — **not** Organic Hybrid recolours, not Organic Hybrid with purchased
   mutations pre-applied, not cosmetic skins.
@@ -157,8 +177,8 @@ BLOOM-035A COMPLETE; record [`evidence/bloom-035b/REPORT.md`](evidence/bloom-035
 ## 7. Species art architecture
 
 **LOCKED DESIGN · the body-plan layer IMPLEMENTED** (BLOOM-035B: per-species body plans, contracts, grammars and proof packs —
-[`SPECIES_BODY_PLANS_v1.md`](SPECIES_BODY_PLANS_v1.md)) · **final species packs: BLOOM-035C2 CANDIDATE** (ingested on the review branch;
-Woolly Candle on body-plan revision `candle@2`; not in `main` until PMO integration).
+[`SPECIES_BODY_PLANS_v1.md`](SPECIES_BODY_PLANS_v1.md)) · **final species packs IMPLEMENTED** (BLOOM-035C, in production `main`; Woolly
+Candle on body-plan revision `candle@2`).
 
 - Different species need genuine new authored sprite families.
 - Reuse the production architecture proven by Organic Hybrid: species art pack → species body plan → visual model → component selection
@@ -168,9 +188,9 @@ Woolly Candle on body-plan revision `candle@2`; not in `main` until PMO integrat
 
 ## 8. Challenges
 
-**LOCKED DESIGN · PLANNED** (BLOOM-036). Nothing of this exists in production. **Sequence (locked):** BLOOM-035B species engineering
-(complete) → BLOOM-035C three final species art packs + real-pack intake + the normal Species Selection release → **then** BLOOM-036.
-Challenges are not implemented during the species art work.
+**LOCKED DESIGN · PLANNED** (BLOOM-036) · **Challenges: NEXT** · **BLOOM-036A: NEXT**. Nothing of this exists in production.
+**Sequence (locked):** BLOOM-035B species engineering (complete) → BLOOM-035C three final species art packs + real-pack intake + the normal
+Species Selection release (**complete**) → **then** BLOOM-036, beginning with 036A.
 
 Reserved shape of BLOOM-036 (not implemented):
 
@@ -245,6 +265,6 @@ This is not a gameplay-code feature; product code does not work around repositor
 | **BLOOM-034** — Visual-system convergence | shared theme tokens (`resources/ui/bloom-theme.css`); title / menu restyle; Destination Survey convergence; the dark-space BLOOM planning language; **no species mechanics yet** | **IMPLEMENTED / COMPLETE** (in production `main`) |
 | **BLOOM-035A** — Species design / research | species architecture, the reference physiology, the strategic-distinctness study, body plans and concepts | **ACCEPTED / COMPLETE** (docs + research in `main`) |
 | **BLOOM-035B** — Species system implementation + Species Selection | species data / model; `config.referencePlant`; simulation / validator support; species-aware Destination Survey; run plumbing; body-plan layer with proof packs; the Species Selection screen behind `?species=1` | **IMPLEMENTED / COMPLETE** (PMO-accepted `2180fcd`, in production `main`; Species Selection still behind `?species=1`, candidate species on TEMPORARY PIPELINE PROOF art) |
-| **BLOOM-035C** — Final species art + Species Selection release | three final production species packs (Cinder Rosette, Woolly Candle, Reed Spire; four species total) on the same compositor architecture; the generalized real-pack intake (**035C0 IMPLEMENTED**: `tools/intake-plant-art.mjs --pack <id>`, schemas in `PLANT_SPRITE_PIPELINE_v1.md` § SPECIES_ART_INTAKE; lanes `art/plant/intake/{cinder-rosette,woolly-candle,reed-spire}/` awaiting deliveries); then switch the three species to their real packs and release Species Selection in the normal EXPEDITION flow (no `?species=1`). **035C2** (the three PMO-accepted packs ingested; `candle@2`; the species released; Species Selection the normal flow): review branch `handoff/bloom-035c2-review` | **035C2 CANDIDATE** — not IMPLEMENTED until PMO integration |
-| **BLOOM-036** — Challenges (NEXT after the 035C integration) | begins only after the 035C release: 036A CHALLENGES menu entry + hub + definition schema + routing · 036B dossier, prescribed species, world recipe, starting state, mechanics composition · 036C Dying World / Native Competition / Volatile Climate as ingredients · 036D initial authored set, generated Challenge planet, result / replay, full regression | PLANNED |
+| **BLOOM-035C** — Final species art + Species Selection release | three final production species packs (Cinder Rosette, Woolly Candle, Reed Spire; four species total) on the same compositor architecture; the generalized real-pack intake (035C0: `tools/intake-plant-art.mjs --pack <id>`, schemas in `PLANT_SPRITE_PIPELINE_v1.md` § SPECIES_ART_INTAKE); the three species on their real packs (Woolly Candle on `candle@2`); Species Selection released in the normal EXPEDITION flow (`?species=1` not required); dynamic region specimen environments | **IMPLEMENTED / COMPLETE** (PMO-accepted 035C2 `4ac7301`, in production `main`) |
+| **BLOOM-036** — Challenges | 036A CHALLENGES menu entry + hub + definition schema + routing · 036B dossier, prescribed species, world recipe, starting state, mechanics composition · 036C Dying World / Native Competition / Volatile Climate as ingredients · 036D initial authored set, generated Challenge planet, result / replay, full regression | **NEXT** (036A NEXT; PLANNED beyond it) |
 | **Final hardening** | full documentation reconciliation; dead historical production-path cleanup; Pages enablement / release; a Safari / WebKit production test if practical; final end-to-end release QA | PLANNED |
