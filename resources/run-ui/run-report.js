@@ -35,6 +35,7 @@
     competition: '<path d="M12 21V9"/><path d="M12 9c-3 0-5-3-5-6 3 0 5 2 5 6zM12 12c0-4 2-6 5-6 0 3-2 6-5 6z"/><path d="M4 21l4-4M20 21l-4-4"/>',
     temp: '<path d="M10 4a2 2 0 0 1 4 0v9.5a4 4 0 1 1-4 0z"/><circle cx="12" cy="17" r="1.6"/>', humid: '<path d="M7 15.5a4 4 0 0 1 .6-7.95A5.5 5.5 0 0 1 18 9a3.25 3.25 0 0 1-.5 6.5H7z"/><path d="M9 18l-1 2.6M13 18l-1 2.6M17 18l-1 2.6"/>',
     leaf: '<path d="M5 19C5 10 10 5 20 4c0 10-5 15-14 15z"/><path d="M5 19l9-9"/>', journal: '<path d="M6 3h11a2 2 0 0 1 2 2v16H8a2 2 0 0 1-2-2z"/><path d="M6 3v16a2 2 0 0 0 2 2"/><path d="M10 8h5M10 12h5"/>',
+    challenge: '<path d="M6 21V3.5"/><path d="M6 4.5h11.5l-3 4 3 4H6"/>', // (036B) the CHALLENGES pennant (resources/ui/bloom-icons.js, identical) for the report's Challenges action
     home: '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>', restart: '<path d="M4 12a8 8 0 1 0 2.3-5.7"/><path d="M4 4v5h5"/>', info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.6" r=".9"/>',
   };
   const ico = (n, cls) => `<svg class="ic${cls ? " " + cls : ""}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${I[n] || I.info}</svg>`;
