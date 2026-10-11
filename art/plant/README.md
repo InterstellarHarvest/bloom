@@ -15,9 +15,13 @@ packs/<pack>/atlas.json        the metadata (palette, environment, one entry per
 intake/organic-hybrid/         the PMO-approved delivery ZIPs + PMO_FINAL_ACCEPTANCE.json (hashes) + intake-map.json (source → atlas)
 intake/<species-pack>/         (BLOOM-035C0) the three species lanes cinder-rosette / woolly-candle / reed-spire: PMO_FINAL_ACCEPTANCE.json +
                                approved-deliveries/*.zip, ingested by `node tools/intake-plant-art.mjs --pack <id>` (README.txt per lane;
-                               schemas: docs/PLANT_SPRITE_PIPELINE_v1.md § SPECIES_ART_INTAKE) — awaiting deliveries, no final art yet
+                               schemas: docs/PLANT_SPRITE_PIPELINE_v1.md § SPECIES_ART_INTAKE). (BLOOM-035C2) INGESTED: each lane also holds
+                               SOURCE_PROVENANCE.json — the PMO-accepted source candidate's complete inventory + aggregate hash — and its
+                               deliveries were made from that candidate by `node tools/species-source-deliveries.mjs`
 body-plans/<plan>.json         (BLOOM-035B-5) one BODY PLAN @3 per plan — oh-stem (Organic Hybrid: references body-plan.json + contract.json,
-                               which stay byte-pinned), rosette (Cinder Rosette), candle (Woolly Candle), reed (Reed Spire)
+                               which stay byte-pinned), rosette (Cinder Rosette), candle (Woolly Candle, candle@1: historical / proof), reed
+                               (Reed Spire). (BLOOM-035C2) a plan REVISION sits beside it as <plan>@<n>.json: candle@2.json (+ contracts/
+                               candle@2.json) = Woolly Candle's production plan (candle@1's sockets, larger native maxima)
 contracts/<plan>.json          (BLOOM-035B-5) a plan's component registry; materials / treatments / pixel rules shared from contract.json
 proof-packs/make-proof-packs.mjs   generates the three TEMPORARY PIPELINE PROOF packs of the new plans (--check: committed == regeneration)
 ```
@@ -31,9 +35,13 @@ species: `docs/species-art-briefs/` (generated: `node tools/build-plant-art.mjs 
 clean intake; `intake/organic-hybrid/intake-map.json` records every sprite's source → atlas rect and pixel signature). Do not hand-edit its
 atlas: change the art at the studio, re-deliver, re-run the intake. (BLOOM-032B2; not yet used by production.)
 
+`cinder-rosette` (rosette@1), `woolly-candle` (candle@2) and `reed-spire` (reed@1) are **FINAL ART** (BLOOM-035C2, review candidate): the
+PMO-accepted source candidates, ingested mechanically (`art/plant/intake/<pack>/`); `content/species.js` uses them. Do not hand-edit their
+atlases either.
+
 The `proof-cinder-rosette`, `proof-woolly-candle` and `proof-reed-spire` packs (BLOOM-035B-5, body plans rosette@1 / candle@1 / reed@1) are
 **TEMPORARY PIPELINE PROOF — NOT FINAL ART** as well: generated engineering placeholders (flat fills, a hazard checker) that only prove every
-legal model of their plan renders; each folder's README says so.
+legal model of their plan renders; each folder's README says so. Since BLOOM-035C2 no species uses them (engineering / proof compatibility only).
 
 The other three packs (`proof`, `proof-angular`, `proof-round`) are **TEMPORARY PIPELINE PROOF — NOT FINAL ART**. They were drawn
 once by the BLOOM-032B1 engineering agent as deliberately simple placeholders and exported to PNG, so the pipeline could be proven. They are

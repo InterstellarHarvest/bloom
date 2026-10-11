@@ -229,7 +229,16 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
   const BLOCK_STORAGE = () => { for (const k of ["localStorage", "sessionStorage"]) Object.defineProperty(window, k, { configurable: true, get() { throw new DOMException("storage blocked (QA)", "SecurityError"); } }); };
   const frames = (p, n = 3) => p.evaluate(n => new Promise(r => { let k = 0; const f = () => (++k >= n ? r() : requestAnimationFrame(f)); requestAnimationFrame(f); }), n);
   const menuReady = p => p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready, null, { timeout: 60000, polling: 50 });
-  const surveyReady = p => p.waitForFunction(() => MENU_DEV.entry.survey && MENU_DEV.entry.survey.state === "survey" && MENU_DEV.entry.state === "survey", null, { timeout: 180000, polling: 100 });
+  // (BLOOM-035C2) EXPEDITION opens CHOOSE PLANT SPECIES first: once that screen is up (fully drawn, the black lifted), open the selected
+  // species' dossier (Organic Hybrid on a fresh visit; the last chosen one later) and press "Survey for <name>" — the survey is then FOR that
+  // species. Resolves "species" when it passed through the screen, "survey" if a survey appeared without it.
+  const throughSpecies = async p => {
+    const at = await (await p.waitForFunction(() => { const e = MENU_DEV.entry, v = e.speciesView;
+      if (e.state === "species" && v && v.inner && !e.covered && getComputedStyle(e.black).display === "none") return "species";
+      return e.survey && !v ? "survey" : false; }, null, { timeout: 60000, polling: 50 })).jsonValue();
+    if (at === "species") { await p.evaluate(() => { const i = MENU_DEV.entry.speciesView.inner; i.open(i.selected.id); }); await p.click(".ss-btn.go"); }
+    return at; };
+  const surveyReady = async p => { const via = await throughSpecies(p); await p.waitForFunction(() => MENU_DEV.entry.survey && MENU_DEV.entry.survey.state === "survey" && MENU_DEV.entry.state === "survey", null, { timeout: 180000, polling: 100 }); return via; };
   const menuBack = p => p.waitForFunction(() => MENU_DEV.entry.state === "menu" && getComputedStyle(MENU_DEV.entry.black).display === "none", null, { timeout: 20000, polling: 50 });
   const waitRun = p => p.waitForFunction(() => window.BLOOM_RUN && (BLOOM_RUN.started || BLOOM_RUN.failed), null, { timeout: 120000, polling: 50 });
   const waitProd = async p => { await p.waitForFunction(() => BLOOM.planetView && BLOOM.planetView.instance && BLOOM.planetView.instance.renderer.info().frames > 0 && BLOOM.decisionRooms.instance && BLOOM.runReport.instance, null, { timeout: 30000, polling: 100 }); await frames(p, 3); };
@@ -348,13 +357,14 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
         await p.focus('.mm-item[data-act="begin"]'); await p.keyboard.press("Enter"); await sleep(300);
         const dlg = await p.evaluate(() => { const d = document.querySelector('[data-dialog="recommend"]'); return { open: d.open, btns: [...d.querySelectorAll(".mm-btn")].map(b => b.textContent) }; });
         await p.click('[data-act="recommend-expedition"]');
+        const via1 = await throughSpecies(p), sp1 = await p.evaluate(() => MENU_DEV.entry.species && MENU_DEV.entry.species.id);   // (035C2) → Choose Plant Species → "Survey for Organic Hybrid"
         const samples = await surveySamples(p), cells = await CELLS(p);
         const last = samples[samples.length - 1], truthful = samples.every(s => s.both === 0) && last && last.incoming === 0 && last.shown === 9;   // an Incoming slot never holds a world; none left at the end
-        F.firstSurvey = { samples: samples.length, incomingSeen: Math.max(0, ...samples.map(s => s.incoming)), cells: cells.cells.map(x => x && x.key), source: cells.source, workersStarted: await p.evaluate(() => BLOOM_PORTABLE.stats.workersStarted), workerUrl: await p.evaluate(() => BLOOM_PORTABLE.stats.workerUrl), workerTasks: cells.tasks };
-        check(dlg.open && J(dlg.btns) === J(["Go to Expedition", "Start Training (~5 min)"]) && cells.cells.length === 9 && cells.cells.every(x => x && x.ok && x.col) && new Set(cells.cells.map(x => x.key)).size === 9 && truthful
+        F.firstSurvey = { via: via1, species: sp1, samples: samples.length, incomingSeen: Math.max(0, ...samples.map(s => s.incoming)), cells: cells.cells.map(x => x && x.key), source: cells.source, workersStarted: await p.evaluate(() => BLOOM_PORTABLE.stats.workersStarted), workerUrl: await p.evaluate(() => BLOOM_PORTABLE.stats.workerUrl), workerTasks: cells.tasks };
+        check(dlg.open && J(dlg.btns) === J(["Go to Expedition", "Start Training (~5 min)"]) && via1 === "species" && sp1 === "organic_hybrid" && cells.cells.length === 9 && cells.cells.every(x => x && x.ok && x.col) && new Set(cells.cells.map(x => x.key)).size === 9 && truthful
           && cells.source === "worker" && F.firstSurvey.workersStarted > 0 && /^blob:/.test(F.firstSurvey.workerUrl || "") && cells.tasks > 0,
-          `${B} P14 · P15 · the first BEGIN EXPEDITION offers the one first-run recommendation (Go to Expedition · Start Training); the Destination Survey opens over file:// with nine distinct, fully validated worlds (layers 1–8, one class per column) built by the SAME survey worker, started from the portable runtime as blob: workers; an empty slot reads "Incoming" and never one that holds a world, none at the end (${samples.length} samples, up to ${F.firstSurvey.incomingSeen} incoming at once)`,
-          J({ truthful, dialog: dlg.open, source: cells.source, workers: F.firstSurvey.workersStarted, url: (F.firstSurvey.workerUrl || "").slice(0, 10), tasks: cells.tasks, keys: F.firstSurvey.cells }));
+          `${B} P14 · P15 · the first BEGIN EXPEDITION offers the one first-run recommendation (Go to Expedition · Start Training); (035C2) Go to Expedition → Choose Plant Species (Organic Hybrid preselected) → Survey: the Destination Survey for Organic Hybrid opens over file:// with nine distinct, fully validated worlds (layers 1–8, one class per column) built by the SAME survey worker, started from the portable runtime as blob: workers; an empty slot reads "Incoming" and never one that holds a world, none at the end (${samples.length} samples, up to ${F.firstSurvey.incomingSeen} incoming at once)`,
+          J({ truthful, dialog: dlg.open, via: via1, species: sp1, source: cells.source, workers: F.firstSurvey.workersStarted, url: (F.firstSurvey.workerUrl || "").slice(0, 10), tasks: cells.tasks, keys: F.firstSurvey.cells }));
         await shot(p, `02-file-survey.png`); await grab();
         // P16 · Scan New Sector
         const seed0 = cells.seed; await p.click('.ds-btn.scan'); await p.waitForFunction(s => MENU_DEV.entry.survey.sectorSeed !== s && MENU_DEV.entry.survey.state === "survey", seed0, { timeout: 180000, polling: 100 });
@@ -410,7 +420,7 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
         check(mm.url === FINDEX && mm.state === "menu" && mm.title === "Strange Bloom — Unknown Soils" && mm.prefetch && mm.prefetch.total === 9, `${B} P27 · Main menu from the run returns to the title in the same file:// index.html (a fresh prefetch starts)`, mm.url.replace(FROOT, "<repo>"));
         // a second expedition (another world, in the same document) → win → P26 · Choose another planet
         const prompts0 = await p.evaluate(() => MENU_DEV.entry.stats.prompts);   // (BLOOM-033: one entry for the whole visit — count only this EXPEDITION's)
-        await p.click('.mm-item[data-act="begin"]'); await surveyReady(p);
+        await p.click('.mm-item[data-act="begin"]'); const via2 = await surveyReady(p);   // (035C2) EXPEDITION → Choose Plant Species → Survey
         const prompts = await p.evaluate(() => MENU_DEV.entry.stats.prompts) - prompts0;
         await p.click('.ds-cand[data-index="0"]'); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000, polling: 50 });
         const pick2 = await PICK(p, 0); await DEPART(p);
@@ -420,8 +430,8 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
         await disarm(p); await p.click('#rr [data-act="choosePlanet"]'); await surveyIn(p);
         const ca = await p.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state, events: MENU_DEV.events.map(e => e.type), cells: MENU_DEV.entry.survey.cells.filter(Boolean).length, nameLen: window.name.length }));
         F.secondExpedition = { key: pick2.key, sessions: g3.sessions, windowNameBytes: ca.nameLen };
-        check(!prompts && g3.sameObject && g3.planet === pick2.planet && g3.sessions === 3 && GEN_NAMES.every(n => g3.counters[n] === 0) && ca.url === FINDEX && ca.state === "survey" && ca.events.includes("choose-planet") && ca.cells === 9,
-          `${B} P26 · a second file:// expedition (another exact world, a third session in the same document; window.name ${ca.nameLen} B — untouched) → its report's Choose another planet opens the Destination Survey inside the same index.html`, J({ key: pick2.key, cells: ca.cells, prompts, same: g3.sameObject, sessions: g3.sessions, gen: g3.counters, url: ca.url === FINDEX, state: ca.state, ev: ca.events.slice(-4) }));
+        check(!prompts && via2 === "species" && g3.sameObject && g3.planet === pick2.planet && g3.sessions === 3 && GEN_NAMES.every(n => g3.counters[n] === 0) && ca.url === FINDEX && ca.state === "survey" && ca.events.includes("choose-planet") && ca.cells === 9,
+          `${B} P26 · a second file:// expedition (EXPEDITION → Choose Plant Species → Survey, no second recommendation; another exact world, a third session in the same document; window.name ${ca.nameLen} B — untouched) → its report's Choose another planet opens the Destination Survey inside the same index.html`, J({ key: pick2.key, via: via2, cells: ca.cells, prompts, same: g3.sameObject, sessions: g3.sessions, gen: g3.counters, url: ca.url === FINDEX, state: ca.state, ev: ca.events.slice(-4) }));
         // P12 · TRAINING over file:// (the complete guided training is guided-training-check --file, run below)
         await p.keyboard.press("Escape"); await menuBack(p).catch(() => {});
         if ((await p.evaluate(() => MENU_DEV.entry.state)) !== "menu") { await p.goto(FINDEX); await menuReady(p); }
@@ -450,7 +460,7 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
         await p.goto(FINDEX); await menuReady(p); await sleep(300);
         const s0 = await p.evaluate(() => { let ls = "ok"; try { void localStorage; } catch (e) { ls = e.name; } return { ls, state: BLOOM_TITLE_BOOT.state }; });
         await p.click('.mm-item[data-act="settings"]'); await sleep(150); await p.click('[data-dialog="settings"] input[value="reduced"]'); await sleep(100); await p.keyboard.press("Escape"); await sleep(150);
-        await p.click('.mm-item[data-act="begin"]'); await sleep(300); await p.click('[data-act="recommend-expedition"]'); await surveyReady(p);
+        await p.click('.mm-item[data-act="begin"]'); await sleep(300); await p.click('[data-act="recommend-expedition"]'); const via = await surveyReady(p);
         await p.click('.ds-cand[data-index="2"]'); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000, polling: 50 });
         const pick = await PICK(p, 2); await DEPART(p);
         await runIn(p); await waitProd(p);
@@ -459,9 +469,9 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
         await p.click('.mm-item[data-act="training"]'); await coached(p);
         await p.click(".tc-card .tc-skip"); await sleep(200); await p.click('[data-skip="skip"]'); await titleIn(p);
         const s1 = await p.evaluate(() => ({ state: MENU_DEV.entry.state, tag: MENU_DEV.entry.menu.trainingRecommended }));
-        F.noStorage = { localStorage: s0.ls, exact: g.planet === pick.planet, sameObject: g.sameObject };
-        check(s0.ls === "SecurityError" && s0.state === "mounted" && g.planet === pick.planet && g.sameObject && g.nameUntouched && GEN_NAMES.every(n => g.counters[n] === 0) && s1.state === "menu" && !p.errs.length,
-          `${B} P28 · persistence failure degrades safely: with localStorage AND sessionStorage throwing, the file:// title still boots, Settings still applies (nothing saved), the exact selected planet still reaches gameplay — (BLOOM-033) the same object, no storage involved at all — and Training's Skip returns to the title`, J(F.noStorage));
+        F.noStorage = { localStorage: s0.ls, via, exact: g.planet === pick.planet, sameObject: g.sameObject };
+        check(s0.ls === "SecurityError" && s0.state === "mounted" && via === "species" && g.planet === pick.planet && g.sameObject && g.nameUntouched && GEN_NAMES.every(n => g.counters[n] === 0) && s1.state === "menu" && !p.errs.length,
+          `${B} P28 · persistence failure degrades safely: with localStorage AND sessionStorage throwing, the file:// title still boots, Settings still applies (nothing saved), (035C2) Go to Expedition → Choose Plant Species → Survey still works, the exact selected planet still reaches gameplay — (BLOOM-033) the same object, no storage involved at all — and Training's Skip returns to the title`, J(F.noStorage));
         await collectUnhandled(p); PROOF.browsers[bname].flows.push("file:// storage blocked"); await c.close(); }
 
       // ============================================================ P43 · reduced motion over file://
@@ -479,16 +489,16 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
       { const c = await ctx({ record: "completed" }), p = watch(await c.newPage(), "http-root"); const lf = LOG_ROOT.length;
         await p.goto(HOME); await menuReady(p);
         const b = await p.evaluate(() => ({ served: BLOOM_TITLE_BOOT.served, portable: BLOOM_TITLE_BOOT.portable, scripts: BLOOM_TITLE_BOOT.scripts.length, bundle: !!window.BLOOM_PORTABLE, seam: !!(window.BLOOM && BLOOM.modules), factory: null }));
-        await p.click('.mm-item[data-act="begin"]'); await surveyReady(p);
+        await p.click('.mm-item[data-act="begin"]'); const via = await surveyReady(p);   // (035C2) EXPEDITION → Choose Plant Species → Survey
         const cells = await CELLS(p);
         await p.click('.ds-cand[data-index="5"]'); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000, polling: 50 });
         const pick = await PICK(p, 5); await DEPART(p);
         await runIn(p); await waitProd(p);
         const g = await GAME(p); await openRoom(p, "terraform"); await p.waitForFunction(() => BLOOM.decisionRooms.instance.rooms.terraform.globeKind() !== "pending", null, { timeout: 30000, polling: 50 });
         const tf = await TF(p), seen = LOG_ROOT.slice(lf).map(r => r[0]);
-        check(b.served && !b.portable && b.scripts === 16 && !b.bundle && b.seam /* (BLOOM-033: the seam loads everywhere; served it is import()) */ && !seen.some(u => u.startsWith("/dist/")) && cells.source === "worker" && seen.includes("/resources/destination-survey/survey-worker.js") && seen.includes("/resources/app/app-controller.js") && !seen.includes("/demos/demo-run.html") && !seen.some(u => u.startsWith("/dist/"))
+        check(b.served && !b.portable && b.scripts === 16 && !b.bundle && b.seam && via === "species" /* (BLOOM-033: the seam loads everywhere; served it is import()) */ && !seen.some(u => u.startsWith("/dist/")) && cells.source === "worker" && seen.includes("/resources/destination-survey/survey-worker.js") && seen.includes("/resources/app/app-controller.js") && !seen.includes("/demos/demo-run.html") && !seen.some(u => u.startsWith("/dist/"))
           && g.sameObject && g.path === "/" && g.planet === pick.planet && GEN_NAMES.every(n => g.counters[n] === 0) && tf.kind === "sphere" && seen.includes("/resources/planet-sphere/planet-sphere-view.js") && !p.errs.length,
-          `${B} P29 · P31 · the served root (http://…/) is the unchanged source path: (BLOOM-033) the app imports the source modules (16 classic scripts incl. the seam and (035B) the species content + module, which only import()s here; no portable runtime — dist/ is never requested), the survey runs its MODULE workers, the exact planet becomes the run in the same document, Terraform shows the real sphere`, J({ requests: seen.length, transport: g.transport }));
+          `${B} P29 · P31 · the served root (http://…/) is the unchanged source path: (BLOOM-033) the app imports the source modules (16 classic scripts incl. the seam and (035B) the species content + module, which only import()s here; no portable runtime — dist/ is never requested), EXPEDITION → Choose Plant Species → the survey, which runs its MODULE workers; the exact planet becomes the run in the same document, Terraform shows the real sphere`, J({ requests: seen.length, transport: g.transport }));
         PROOF.http[bname] = { requests: seen.length, distRequested: seen.some(u => u.startsWith("/dist/")), source: cells.source, sameObject: g.sameObject };
         await collectUnhandled(p); PROOF.browsers[bname].flows.push("http root"); await c.close(); }
 
@@ -497,7 +507,7 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
         await p.goto(PHOME); await menuReady(p); await sleep(300);
         const tb = await p.evaluate(() => ({ url: location.href, title: document.title, bg: MENU_DEV.entry.menu._url(MENU_DEV.entry.menu.background.index), page: MENU_DEV.page }));
         await shot(p, `07-http-bloom-title.png`);
-        await p.click('.mm-item[data-act="begin"]'); await surveyReady(p); const cells = await CELLS(p);
+        await p.click('.mm-item[data-act="begin"]'); const via = await surveyReady(p); const cells = await CELLS(p);   // (035C2) through Choose Plant Species
         await p.click('.ds-cand[data-index="3"]'); await p.waitForFunction(() => MENU_DEV.entry.survey.state === "focus", null, { timeout: 20000, polling: 50 });
         const pick = await PICK(p, 3); await DEPART(p);
         await runIn(p); await waitProd(p);
@@ -522,9 +532,9 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
           training: tr.url.replace(PO, "<pages>"), trainingReturn: tr.ret, requests: req.length, outside: outside.length, workerRequests: req.filter(r => /survey-worker\.js$/.test(r[0])).length };
         check(tb.url === PHOME && tb.title === "Strange Bloom — Unknown Soils" && tb.bg.startsWith(PHOME + "resources/main-menu/backgrounds/") && tb.page.document === "/bloom/" /* (BLOOM-033: the one document) */ && !outside.length && !notOk.length && redirect.status === 301 && redirect.location === "/bloom/",
           `${B} P30 · the Pages artifact under the project subpath: ${PHOME.replace(PO, "")} is the Strange Bloom app (painting and every module resolved inside /bloom/; the run mounts in the same document); ${req.length} requests, none outside /bloom/, none failed (/bloom → 301 /bloom/, as GitHub Pages)`, J({ painting: PROOF.pages[bname].painting, outside: outside.slice(0, 3) }));
-        check(cells.source === "worker" && PROOF.pages[bname].workerRequests >= 1 && cells.cells.every(x => x && x.ok) && g.path === "/bloom/" && g.sameObject && g.planet === pick.planet && S.planetFingerprint(JSON.parse(g.planet)) === pick.fingerprint
+        check(via === "species" && cells.source === "worker" && PROOF.pages[bname].workerRequests >= 1 && cells.cells.every(x => x && x.ok) && g.path === "/bloom/" && g.sameObject && g.planet === pick.planet && S.planetFingerprint(JSON.parse(g.planet)) === pick.fingerprint
           && GEN_NAMES.every(n => g.counters[n] === 0) && tf.kind === "sphere" && tf.planetId === g.id && g2.sameObject && g2.planet === pick.planet && g2.path === "/bloom/",
-          `${B} P31 · P32 · under /bloom/ the survey's module workers load (/bloom/resources/destination-survey/survey-worker.js), nine validated worlds; (BLOOM-033) the exact selected planet object becomes the run inside /bloom/ itself (same JSON, fingerprint, no generator), the real Terraform sphere shows it, Play Again keeps it`,
+          `${B} P31 · P32 · under /bloom/ EXPEDITION → Choose Plant Species → Survey, and the survey's module workers load (/bloom/resources/destination-survey/survey-worker.js), nine validated worlds; (BLOOM-033) the exact selected planet object becomes the run inside /bloom/ itself (same JSON, fingerprint, no generator), the real Terraform sphere shows it, Play Again keeps it`,
           J({ path: g.path, fingerprint: S.planetFingerprint(JSON.parse(g.planet)) }));
         check(acts.playAgain === null && acts.choosePlanet === null && acts.mainMenu === null && new URL(ch.url).pathname === "/bloom/" && ch.state === "survey"
           && new URL(tr.url).pathname === "/bloom/" && tr.ret === null && tr.steps === 13 && tr.css && tm === PHOME,
