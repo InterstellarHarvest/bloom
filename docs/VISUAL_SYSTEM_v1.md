@@ -93,7 +93,7 @@ word (the suites read those words). Shared glyphs are byte-identical to the game
   (Suits · Marginal · Hostile with shares); the five rows as gameplay condition boxes with the category identity — Climate =
   Temperature, Water, Soil, Atmosphere (neutral, cloud), Solar exposure = Hazard (sun). Each row has two separate parts: on the left
   the category kicker over its **primary descriptor** (bold, ink); past a thin rule on the right, the **secondary explanation**
-  (smaller, soft) — e.g. "Fertile | fertile 100 %" no longer runs together; on a phone the explanation drops under the descriptor; expected challenges in the "blocked" tint
+  (smaller, soft) — e.g. "Fertile | fertile 100 %" no longer runs together; on a phone the explanation drops under the descriptor; expected hazards (036B: formerly "Expected challenges") in the "blocked" tint
   with its icon; the cue as a leaf note; Return to survey (ghost) · **Begin expedition** (leaf primary).
 - The action bar is sticky: on a short screen (1024 × 768, 1280 × 720) the dossier scrolls under it and Begin expedition stays in
   view (it was cut off at 1024 × 768 before). Below 820 px of height the dossier is a little more compact.
