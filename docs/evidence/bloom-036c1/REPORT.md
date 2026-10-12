@@ -1,7 +1,7 @@
 # BLOOM-036C1 — First authored Challenges (Low Tide · Oasis Line): REPORT
 
-**CANDIDATE** — review branch `handoff/bloom-036c1-authored-challenges` (branch `agent/bloom-036c1-authored-challenges`), from production `main`
-`d8ca0cb` (the PMO-accepted 036C content study). **Not merged; STOP for PMO review.** No completion-condition, medal, scoring or progression work.
+**IMPLEMENTED / COMPLETE** — PMO-accepted for release (with the REFUGE presentation correction, §9) and fast-forwarded into production `main` at
+`d69d458` (from `d8ca0cb`); integration record §10. No completion-condition, medal, scoring or progression work.
 
 ## 1. Integrated study
 
@@ -136,3 +136,14 @@ no bank rebuild).
 QA (challenge-world-check, Chromium + Firefox): **A11** Oasis Line origin → Refuge + Origin + "Limiting: Water · too dry", fitness unchanged (0.62
 refuge floor), a non-origin unsuitable region → Blocked, after Drought Adaptation → OK; a suitable Low Tide origin → OK · **A12** a 0 %-arrival
 Dying World origin → Refuge · **A13** engine sources unchanged · **I7** Training's origin ordinary. Focused suites: see the integration record.
+
+## 10. Integration (2026-10-12)
+
+PMO: BLOOM-036C1 **ACCEPTED FOR RELEASE** with the REFUGE correction (§9). `origin/main` was `d8ca0cb`; the corrected review head `d69d458` = the
+accepted candidate `659b240` + only the correction (5 ahead / 0 behind). Production `main` was fast-forwarded to exactly `d69d458` (no merge commit,
+squash, rebase, cherry-pick or force push) and converged with `origin/main`.
+
+Post-integration release check on clean `main` `d69d458`, sequential: `challenges-check` 33 / 33 · `challenge-world-check` 100 / 100 · `run-ui-check` ✓ ·
+`run-ui-convergence-check` ✓ · `game-flow-check` ✓ · `portable-runtime-check` 71 / 71 · `release-check --no-suites` 51 / 51 · `visual-system-check` 54 / 54.
+(The exact candidate passed the full 44-suite regression, §7; the REFUGE correction's focused QA additionally ran planet-view, plant-rooms, terraform,
+training and guided-training — all green. No bank rebuild: no proof provenance changed.)

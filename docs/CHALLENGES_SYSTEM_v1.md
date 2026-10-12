@@ -2,8 +2,7 @@
 
 **BLOOM-036A — Challenges foundation + first playable hub** **+ BLOOM-036B — the contained Challenge: ONE procedural planet per instance**
 **+ BLOOM-036B1 — Challenge worlds from PREVALIDATED SEED BANKS** — PMO-accepted and **IMPLEMENTED / COMPLETE in production `main`** as one
-combined Challenges release (`bd0eb27`, 2026-10-12). **+ BLOOM-036C1 — the first AUTHORED Challenges (Low Tide · Oasis Line): CANDIDATE** on
-`handoff/bloom-036c1-authored-challenges` (§9). Current product direction: [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §8.
+combined Challenges release (`bd0eb27`, 2026-10-12). **+ BLOOM-036C1 — the first AUTHORED Challenges (Low Tide · Oasis Line): IMPLEMENTED / COMPLETE** (`d69d458`, §9). Current product direction: [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §8.
 
 > **EXPEDITION** = live procedural world discovery (the 3 × 3 Destination Survey generates and validates worlds on the player's machine).
 > **CHALLENGES** = curated banks of **prevalidated procedural seeds**: the world is still procedurally generated, but which worlds a Challenge
@@ -191,7 +190,7 @@ Challenge-specific completion conditions (036D+; the content study names the one
 beyond 50 · default-rules Challenges (the schema refuses `default`) · medals, scoring, difficulty tiers, unlock trees, campaign progression (not
 planned without explicit approval).
 
-## 9. Authored Challenges (BLOOM-036C1, CANDIDATE)
+## 9. Authored Challenges (BLOOM-036C1, IMPLEMENTED / COMPLETE)
 
 From the PMO-accepted content study ([`CHALLENGE_CONTENT_STUDY_v1.md`](CHALLENGE_CONTENT_STUDY_v1.md) §6.1, §6.2, §11):
 
