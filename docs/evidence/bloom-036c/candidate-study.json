@@ -1,0 +1,4065 @@
+{
+ "format": "bloom-036c-candidate-study@1",
+ "tool": "tools/research/challenges/content-analysis.mjs",
+ "runner": "tools/research/challenges/content-study.mjs",
+ "shippedBank": {
+  "file": "content/challenge-seed-banks.js",
+  "sha256": "dcca6d8ff53e7cbb032bcdf0d0dae81fc0b4660ada008ce08894d6d4ed6871ba",
+  "note": "unchanged by this study"
+ },
+ "pool": "the released seed-bank pool stream (tools/challenge-bank-builder.mjs POOL_STREAM), first N World Seeds per archetype",
+ "timeUnit": "game-seconds of the validator's perfect-knowledge witness (a person is slower); never player-facing, never a ranking",
+ "concepts": {
+  "thin_air": {
+   "kind": "fixture",
+   "definition": {
+    "scenario": "dying_world",
+    "species": {
+     "policy": "prescribed",
+     "species": "woolly_candle"
+    },
+    "recipe": {
+     "version": 1,
+     "archetypes": [
+      "desert_world",
+      "ocean_archipelago"
+     ],
+     "arrival": null,
+     "nativeCover": null
+    },
+    "startingState": {
+     "policy": "normal"
+    },
+    "presentation": {
+     "name": "Thin Air",
+     "short": "A plant from the cold heights, on a warm world that is losing its air.",
+     "tagline": "As the atmosphere thins the world cools, dries and brightens with radiation: conditions this plant was built for.",
+     "briefing": "Woolly Candle lands on a warm world whose atmosphere is escaping. Today most of the ground is too warm for it. As the air thins, the land cools toward the candle's range and surface radiation rises, which its wool and pigments shrug off. The drying is the part it was not built for.",
+     "strategicIdea": "Do not pay to fight warmth that is already leaving. Hold your refuges, move into ground the decline opens, and watch the water.",
+     "icon": "pressure",
+     "science": "Giant rosettes of high mountains (frailejón, giant groundsels) live where the air is thin: cold nights, dry wind and strong ultraviolet light. Their wool and leaf skirts answer exactly the conditions a thinning atmosphere brings."
+    }
+   },
+   "sample": {
+    "perArchetype": 160,
+    "worlds": 320,
+    "diagPerArchetype": 30
+   },
+   "cells": {
+    "c36_thin_air/woolly_candle": {
+     "key": "c36_thin_air/woolly_candle",
+     "evaluated": 320,
+     "physicalOk": 315,
+     "stages": {
+      "ok": 310,
+      "physical": 5,
+      "scenario": 3,
+      "species": 2
+     },
+     "qualifying": 310,
+     "qualifyingPct": 98.4,
+     "s2Pct": 99.4,
+     "layerPPassPct": 99,
+     "arrival": {
+      "all": {
+       "n": 315,
+       "p10": 0.05,
+       "p50": 0.196,
+       "p90": 0.42
+      },
+      "passing": {
+       "n": 310,
+       "p10": 0.05,
+       "p50": 0.197,
+       "p90": 0.42
+      },
+      "passingZero": 9,
+      "passingUnder5": 32
+     },
+     "foothold": {
+      "n": 310,
+      "p10": 0.052,
+      "p50": 0.157,
+      "p90": 0.348
+     },
+     "byArchetype": {
+      "ocean_archipelago": {
+       "evaluated": 160,
+       "qualifying": 153
+      },
+      "desert_world": {
+       "evaluated": 160,
+       "qualifying": 157
+      }
+     },
+     "failReasons": {
+      "INCONCLUSIVE — search capped: no candidate build reached the win with earned Biomass (best": 2,
+      "only # of # broad strategies meet the pacing policy — [Temperature:heat=Adapt(#) · Water:d": 1
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 310,
+       "p10": 247.2,
+       "p50": 293.3,
+       "p90": 514.9
+      },
+      "purchases": {
+       "n": 310,
+       "p10": 3,
+       "p50": 4,
+       "p90": 5
+      },
+      "usesTerraformPct": 23.5,
+      "pressureAtMargin": {
+       "n": 310,
+       "p10": 0.829,
+       "p50": 1,
+       "p90": 1
+      }
+     },
+     "decline": {
+      "greenNow": {
+       "n": 310,
+       "p10": 0.05,
+       "p50": 0.197,
+       "p90": 0.42
+      },
+      "greenFinal": {
+       "n": 310,
+       "p10": 0.067,
+       "p50": 0.269,
+       "p90": 0.647
+      },
+      "opened": {
+       "n": 310,
+       "p10": 0,
+       "p50": 0.121,
+       "p90": 0.408
+      },
+      "closed": {
+       "n": 310,
+       "p10": 0,
+       "p50": 0.044,
+       "p90": 0.153
+      },
+      "netGainPct": 62.3
+     },
+     "diag": {
+      "worlds": 58,
+      "distinctQualified": {
+       "1": 8,
+       "2": 8,
+       "3": 42
+      },
+      "fastestWinSeconds": {
+       "n": 58,
+       "p10": 230.1,
+       "p50": 266.4,
+       "p90": 379
+      },
+      "fastestMarginSeconds": {
+       "n": 58,
+       "p10": 245,
+       "p50": 277.9,
+       "p90": 407.4
+      },
+      "firstPurchaseSeconds": {
+       "n": 150,
+       "p10": 24.3,
+       "p50": 27,
+       "p90": 29.9
+      },
+      "approaches": {
+       "Crossing:waterSeeds=Spread1 · Defense:salt=Adapt1": 9,
+       "Temperature:heat=Adapt1 · Water:dry=Adapt2": 8,
+       "Defense:rad=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt2": 7,
+       "Defense:rad=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt1+Terraform+8": 7,
+       "Defense:salt=Adapt1 · Water:dry=Adapt2": 7,
+       "Defense:salt=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt2": 6,
+       "Temperature:heat=Terraform−6 · Water:dry=Adapt2": 5,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:heat=Adapt1": 4
+      },
+      "worldsWithAdaptOnlyWin": 57,
+      "worldsWithTerraformWin": 49,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "cold": 19,
+       "heat": 74.1,
+       "drought": 65.5,
+       "flood": 5.2,
+       "salt": 84.5,
+       "rad": 58.6,
+       "seedOut": 98.3,
+       "waterSeeds": 48.3,
+       "earlyMat": 19,
+       "warm": 3.4,
+       "cool": 56.9,
+       "humid": 50,
+       "dry": 12.1
+      }
+     },
+     "baseline": {
+      "cell": "dying_world/woolly_candle",
+      "worlds": 315,
+      "baselineQualifyingPct": 98.4,
+      "conceptQualifyingPct": 98.4,
+      "sameVerdictPct": 100,
+      "identicalProofPct": 100,
+      "marginDeltaSeconds": {
+       "n": 310,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      }
+     },
+     "candidateBank": {
+      "retained": 50,
+      "provisional": false,
+      "quota": {
+       "desert_world": 25,
+       "ocean_archipelago": 25
+      },
+      "minPairDistance": 0.4336,
+      "projectedQualifyingInFullPool": 315
+     }
+    }
+   }
+  },
+  "hearthfire": {
+   "kind": "fixture",
+   "definition": {
+    "scenario": "volatile_climate",
+    "species": {
+     "policy": "prescribed",
+     "species": "cinder_rosette"
+    },
+    "recipe": {
+     "version": 1,
+     "archetypes": [
+      "frozen_world"
+     ],
+     "arrival": null,
+     "nativeCover": null
+    },
+    "startingState": {
+     "policy": "normal"
+    },
+    "presentation": {
+     "name": "Hearthfire",
+     "short": "A plant of hot ground on a frozen world, and a climate that pushes back.",
+     "tagline": "Your plant needs warmth the planet does not have, and warming the sky quickly unsettles the climate.",
+     "briefing": "Cinder Rosette lands in a warm geothermal pocket on a frozen world. Outside its refuges the ground is far too cold for it. Warming the sky opens the land, but every Terraform step unsettles the climate, and a cold snap on a frozen world can take back what the warming gave.",
+     "strategicIdea": "Warm the world in measured steps and let it settle between them, or make the rosette more cold-tolerant and Terraform less.",
+     "icon": "climate",
+     "science": "@scenario.display.science"
+    }
+   },
+   "sample": {
+    "perArchetype": 160,
+    "worlds": 160,
+    "diagPerArchetype": 30
+   },
+   "cells": {
+    "c36_hearthfire/cinder_rosette": {
+     "key": "c36_hearthfire/cinder_rosette",
+     "evaluated": 160,
+     "physicalOk": 160,
+     "stages": {
+      "ok": 153,
+      "scenario": 7
+     },
+     "qualifying": 153,
+     "qualifyingPct": 95.6,
+     "s2Pct": 100,
+     "layerPPassPct": 95.6,
+     "arrival": {
+      "all": {
+       "n": 160,
+       "p10": 0.053,
+       "p50": 0.159,
+       "p90": 0.293
+      },
+      "passing": {
+       "n": 153,
+       "p10": 0.053,
+       "p50": 0.159,
+       "p90": 0.298
+      },
+      "passingZero": 5,
+      "passingUnder5": 14
+     },
+     "foothold": {
+      "n": 153,
+      "p10": 0.032,
+      "p50": 0.084,
+      "p90": 0.26
+     },
+     "byArchetype": {
+      "frozen_world": {
+       "evaluated": 160,
+       "qualifying": 153
+      }
+     },
+     "failReasons": {
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Tempe": 5,
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#)+Terraform": 1,
+      "INCONCLUSIVE — search capped: witness wins with # Terraform steps but never lived through ": 1
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 153,
+       "p10": 257.1,
+       "p50": 315.4,
+       "p90": 420.5
+      },
+      "purchases": {
+       "n": 153,
+       "p10": 4,
+       "p50": 5,
+       "p90": 5
+      },
+      "usesTerraformPct": 51.6,
+      "shockedPct": 0.7,
+      "pressureAtMargin": {
+       "n": 153,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      }
+     },
+     "diag": {
+      "worlds": 29,
+      "distinctQualified": {
+       "1": 2,
+       "2": 9,
+       "3": 18
+      },
+      "fastestWinSeconds": {
+       "n": 29,
+       "p10": 248.6,
+       "p50": 289,
+       "p90": 368.2
+      },
+      "fastestMarginSeconds": {
+       "n": 29,
+       "p10": 256.3,
+       "p50": 293.1,
+       "p90": 370.6
+      },
+      "firstPurchaseSeconds": {
+       "n": 74,
+       "p10": 22.4,
+       "p50": 27.7,
+       "p90": 30.9
+      },
+      "approaches": {
+       "Temperature:cold=Adapt2 · Water:wet=Adapt1": 9,
+       "Temperature:cold=Adapt2+Terraform+6 · Water:wet=Adapt1": 8,
+       "Temperature:cold=Adapt3 · Water:wet=Adapt1": 8,
+       "Temperature:cold=Adapt3": 8,
+       "Temperature:cold=Adapt2 · Water:wet=Terraform−8": 6,
+       "Temperature:cold=Adapt2+Terraform+6": 5,
+       "Temperature:cold=Adapt3 · Water:wet=Terraform−8": 4,
+       "Temperature:cold=Adapt2": 2
+      },
+      "worldsWithAdaptOnlyWin": 28,
+      "worldsWithTerraformWin": 28,
+      "worldsWithShockedWin": 9,
+      "traitUsePct": {
+       "cold": 100,
+       "heat": 3.4,
+       "flood": 72.4,
+       "salt": 27.6,
+       "seedOut": 100,
+       "earlyMat": 24.1,
+       "warm": 89.7,
+       "humid": 3.4,
+       "dry": 44.8
+      }
+     },
+     "baseline": {
+      "cell": "volatile_climate/cinder_rosette",
+      "worlds": 160,
+      "baselineQualifyingPct": 95.6,
+      "conceptQualifyingPct": 95.6,
+      "sameVerdictPct": 100,
+      "identicalProofPct": 100,
+      "marginDeltaSeconds": {
+       "n": 153,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      }
+     },
+     "candidateBank": {
+      "retained": 50,
+      "provisional": false,
+      "quota": {
+       "frozen_world": 50
+      },
+      "minPairDistance": 0.5241,
+      "projectedQualifyingInFullPool": 153
+     }
+    }
+   }
+  },
+  "oasis_line": {
+   "kind": "fixture",
+   "definition": {
+    "scenario": "native_competition",
+    "species": {
+     "policy": "prescribed",
+     "species": "reed_spire"
+    },
+    "recipe": {
+     "version": 1,
+     "archetypes": [
+      "desert_world"
+     ],
+     "arrival": null,
+     "nativeCover": null
+    },
+    "startingState": {
+     "policy": "normal"
+    },
+    "presentation": {
+     "name": "Oasis Line",
+     "short": "A wetland plant in a desert that is already taken.",
+     "tagline": "Drought-hardy native vegetation holds the open desert; your plant can only live where the water is.",
+     "briefing": "Reed Spire lands beside a desert basin. The wet ground suits it; the dry plains belong to native vegetation adapted to them. Every spring, lakeshore and wet hollow is a front.",
+     "strategicIdea": "Hold the wet basins first. To push into the plains the natives hold, your reed must learn to live drier; reshaping the sky can weaken their strongholds.",
+     "icon": "competition",
+     "science": "In real deserts, reeds and palms crowd around springs and oases while drought-hardy shrubs hold the open ground; who wins at the edge depends on how much water the soil holds (a simplified game model)."
+    }
+   },
+   "sample": {
+    "perArchetype": 160,
+    "worlds": 160,
+    "diagPerArchetype": 30
+   },
+   "cells": {
+    "c36_oasis_line/reed_spire": {
+     "key": "c36_oasis_line/reed_spire",
+     "evaluated": 160,
+     "physicalOk": 160,
+     "stages": {
+      "ok": 113,
+      "scenario": 46,
+      "species": 1
+     },
+     "qualifying": 113,
+     "qualifyingPct": 70.6,
+     "s2Pct": 99.4,
+     "layerPPassPct": 71.1,
+     "arrival": {
+      "all": {
+       "n": 160,
+       "p10": 0,
+       "p50": 0.061,
+       "p90": 0.143
+      },
+      "passing": {
+       "n": 113,
+       "p10": 0.025,
+       "p50": 0.074,
+       "p90": 0.161
+      },
+      "passingZero": 10,
+      "passingUnder5": 35
+     },
+     "foothold": {
+      "n": 113,
+      "p10": 0.036,
+      "p50": 0.079,
+      "p90": 0.166
+     },
+     "byArchetype": {
+      "desert_world": {
+       "evaluated": 160,
+       "qualifying": 113
+      }
+     },
+     "failReasons": {
+      "INCONCLUSIVE — search capped: every witness died out (extinction at # s; best peak #%)": 13,
+      "no legal build reaches the validation margin: best build holds #% < target #%": 9,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Defen": 8,
+      "no legal build can hold the win simultaneously: best build reaches #% < #%": 6,
+      "INCONCLUSIVE — search capped: no candidate build reached the win with earned Biomass (best": 3,
+      "INCONCLUSIVE — search capped: witness wins but peaks at #% < target #%": 3
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 113,
+       "p10": 385.8,
+       "p50": 500.6,
+       "p90": 616.8
+      },
+      "purchases": {
+       "n": 113,
+       "p10": 5,
+       "p50": 6,
+       "p90": 8
+      },
+      "usesTerraformPct": 80.5,
+      "contested": {
+       "n": 113,
+       "p10": 8,
+       "p50": 11,
+       "p90": 14
+      },
+      "nativeStart": {
+       "n": 113,
+       "p10": 0.223,
+       "p50": 0.281,
+       "p90": 0.312
+      },
+      "nativePeak": {
+       "n": 113,
+       "p10": 0.267,
+       "p50": 0.397,
+       "p90": 0.543
+      },
+      "pressureAtMargin": {
+       "n": 113,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      }
+     },
+     "diag": {
+      "worlds": 23,
+      "distinctQualified": {
+       "1": 6,
+       "2": 6,
+       "3": 11
+      },
+      "fastestWinSeconds": {
+       "n": 23,
+       "p10": 382.9,
+       "p50": 452.2,
+       "p90": 605.8
+      },
+      "fastestMarginSeconds": {
+       "n": 23,
+       "p10": 388.2,
+       "p50": 472.2,
+       "p90": 619.4
+      },
+      "firstPurchaseSeconds": {
+       "n": 51,
+       "p10": 17.1,
+       "p50": 26.2,
+       "p90": 30.6
+      },
+      "approaches": {
+       "Defense:rad=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt2 · Water:wet=Terraform−8": 4,
+       "Defense:rad=Adapt1 · Temperature:heat=Terraform−12 · Water:dry=Adapt2 · Water:wet=Terraform−8": 4,
+       "Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt2 · Water:wet=Terraform−8": 4,
+       "Defense:rad=Adapt1 · Temperature:heat=Terraform−6 · Water:dry=Adapt2": 3,
+       "Defense:rad=Adapt1 · Temperature:heat=Terraform−6 · Water:dry=Adapt2 · Water:wet=Terraform−8": 3,
+       "Defense:rad=Adapt1 · Temperature:cold=Terraform+12 · Temperature:heat=Adapt2 · Water:dry=Adapt2": 3,
+       "Defense:rad=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt2": 2,
+       "Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:heat=Terraform−6 · Water:dry=Adapt2": 2
+      },
+      "worldsWithAdaptOnlyWin": 3,
+      "worldsWithTerraformWin": 23,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "cold": 4.3,
+       "heat": 91.3,
+       "drought": 100,
+       "salt": 47.8,
+       "rad": 100,
+       "seedOut": 95.7,
+       "warm": 60.9,
+       "cool": 78.3,
+       "humid": 13,
+       "dry": 60.9
+      }
+     },
+     "baseline": {
+      "cell": "native_competition/reed_spire",
+      "worlds": 160,
+      "baselineQualifyingPct": 4.4,
+      "conceptQualifyingPct": 70.6,
+      "sameVerdictPct": 33.8,
+      "identicalProofPct": 100,
+      "marginDeltaSeconds": {
+       "n": 7,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      }
+     },
+     "candidateBank": {
+      "retained": 50,
+      "provisional": false,
+      "quota": {
+       "desert_world": 50
+      },
+      "minPairDistance": 0.5938,
+      "projectedQualifyingInFullPool": 113
+     }
+    }
+   }
+  },
+  "windfall": {
+   "kind": "fixture",
+   "definition": {
+    "scenario": "volatile_climate",
+    "species": {
+     "policy": "player-choice"
+    },
+    "recipe": {
+     "version": 1,
+     "archetypes": [
+      "ocean_archipelago",
+      "desert_world",
+      "frozen_world"
+     ],
+     "arrival": null,
+     "nativeCover": null
+    },
+    "startingState": {
+     "policy": "prescribed",
+     "adaptations": [],
+     "biomass": 400
+    },
+    "presentation": {
+     "name": "Windfall",
+     "short": "Land with a full hold, on a planet whose climate does not like to be rushed.",
+     "tagline": "You land with four times the usual Biomass: enough to start reshaping the sky at once.",
+     "briefing": "Your expedition arrives with a large Biomass reserve. Spending it is simple; spending it well is the challenge. The climate here is unstable: heavy Terraforming in a short time makes it swing to temporary extremes.",
+     "strategicIdea": "A big budget is not a reason to change the planet all at once. Decide what to adapt, what to Terraform, and how fast.",
+     "icon": "climate",
+     "science": "@scenario.display.science"
+    }
+   },
+   "sample": {
+    "perArchetype": 40,
+    "worlds": 120,
+    "diagPerArchetype": 10
+   },
+   "cells": {
+    "c36_windfall/cinder_rosette": {
+     "key": "c36_windfall/cinder_rosette",
+     "evaluated": 120,
+     "physicalOk": 118,
+     "stages": {
+      "ok": 87,
+      "scenario": 31,
+      "physical": 2
+     },
+     "qualifying": 87,
+     "qualifyingPct": 73.7,
+     "s2Pct": 100,
+     "layerPPassPct": 73.7,
+     "arrival": {
+      "all": {
+       "n": 118,
+       "p10": 0,
+       "p50": 0.18,
+       "p90": 0.434
+      },
+      "passing": {
+       "n": 87,
+       "p10": 0,
+       "p50": 0.131,
+       "p90": 0.293
+      },
+      "passingZero": 19,
+      "passingUnder5": 21
+     },
+     "foothold": {
+      "n": 87,
+      "p10": 0.035,
+      "p50": 0.108,
+      "p90": 0.342
+     },
+     "byArchetype": {
+      "ocean_archipelago": {
+       "evaluated": 40,
+       "qualifying": 37
+      },
+      "frozen_world": {
+       "evaluated": 40,
+       "qualifying": 35
+      },
+      "desert_world": {
+       "evaluated": 40,
+       "qualifying": 15
+      }
+     },
+     "failReasons": {
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Water:dry=Ad": 12,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Defen": 4,
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#)+Terraform": 3,
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Defense:salt": 3,
+      "only # of # broad strategies meet the pacing policy — [Water:dry=Adapt(#)] margin reached ": 3,
+      "only # of # broad strategies meet the pacing policy — [Defense:salt=Adapt(#) · Water:dry=A": 2
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 87,
+       "p10": 244.3,
+       "p50": 277.4,
+       "p90": 434.4
+      },
+      "purchases": {
+       "n": 87,
+       "p10": 3,
+       "p50": 5,
+       "p90": 6
+      },
+      "usesTerraformPct": 42.5,
+      "shockedPct": 9.2,
+      "pressureAtMargin": {
+       "n": 87,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      }
+     },
+     "arrivalWithoutStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0.18,
+      "p90": 0.434
+     },
+     "arrivalGainFromStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+     },
+     "diag": {
+      "worlds": 24,
+      "distinctQualified": {
+       "1": 5,
+       "2": 4,
+       "3": 15
+      },
+      "fastestWinSeconds": {
+       "n": 24,
+       "p10": 214.4,
+       "p50": 255.2,
+       "p90": 334.7
+      },
+      "fastestMarginSeconds": {
+       "n": 24,
+       "p10": 245.9,
+       "p50": 288.8,
+       "p90": 373.6
+      },
+      "firstPurchaseSeconds": {
+       "n": 58,
+       "p10": 0.2,
+       "p50": 0.2,
+       "p90": 0.2
+      },
+      "approaches": {
+       "Temperature:cold=Adapt3 · Water:wet=Adapt1": 4,
+       "Temperature:cold=Adapt3 · Water:wet=Terraform−8": 4,
+       "Crossing:waterSeeds=Spread1 · Defense:salt=Adapt1 · Temperature:cold=Adapt1 · Water:wet=Adapt1": 3,
+       "Crossing:waterSeeds=Spread1 · Defense:salt=Adapt1 · Temperature:cold=Terraform+6 · Water:wet=Adapt1": 3,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:cold=Adapt1 · Water:wet=Adapt1": 3,
+       "Temperature:cold=Adapt2+Terraform+6 · Water:wet=Adapt1": 2,
+       "Crossing:waterSeeds=Spread1 · Defense:salt=Adapt1 · Temperature:cold=Adapt1 · Water:wet=Adapt1+Terraform−8": 2,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:cold=Adapt1 · Water:wet=Adapt2": 2
+      },
+      "worldsWithAdaptOnlyWin": 19,
+      "worldsWithTerraformWin": 21,
+      "worldsWithShockedWin": 7,
+      "traitUsePct": {
+       "cold": 79.2,
+       "heat": 12.5,
+       "drought": 12.5,
+       "flood": 75,
+       "salt": 62.5,
+       "rad": 45.8,
+       "seedOut": 91.7,
+       "waterSeeds": 41.7,
+       "earlyMat": 45.8,
+       "warm": 54.2,
+       "humid": 16.7,
+       "dry": 58.3
+      }
+     },
+     "baseline": {
+      "cell": "volatile_climate/cinder_rosette",
+      "worlds": 118,
+      "baselineQualifyingPct": 84.7,
+      "conceptQualifyingPct": 73.7,
+      "sameVerdictPct": 87.3,
+      "identicalProofPct": 0,
+      "marginDeltaSeconds": {
+       "n": 86,
+       "p10": -155.7,
+       "p50": -58.2,
+       "p90": 16.5
+      }
+     },
+     "candidateBank": {
+      "retained": 50,
+      "provisional": false,
+      "quota": {
+       "desert_world": 12,
+       "frozen_world": 19,
+       "ocean_archipelago": 19
+      },
+      "minPairDistance": 0.2041,
+      "projectedQualifyingInFullPool": 354
+     }
+    },
+    "c36_windfall/organic_hybrid": {
+     "key": "c36_windfall/organic_hybrid",
+     "evaluated": 120,
+     "physicalOk": 118,
+     "stages": {
+      "ok": 83,
+      "scenario": 35,
+      "physical": 2
+     },
+     "qualifying": 83,
+     "qualifyingPct": 70.3,
+     "s2Pct": 100,
+     "layerPPassPct": 70.3,
+     "arrival": {
+      "all": {
+       "n": 118,
+       "p10": 0.095,
+       "p50": 0.281,
+       "p90": 0.491
+      },
+      "passing": {
+       "n": 83,
+       "p10": 0.095,
+       "p50": 0.307,
+       "p90": 0.497
+      },
+      "passingZero": 0,
+      "passingUnder5": 0
+     },
+     "foothold": {
+      "n": 83,
+      "p10": 0.052,
+      "p50": 0.211,
+      "p90": 0.399
+     },
+     "byArchetype": {
+      "ocean_archipelago": {
+       "evaluated": 40,
+       "qualifying": 37
+      },
+      "frozen_world": {
+       "evaluated": 40,
+       "qualifying": 23
+      },
+      "desert_world": {
+       "evaluated": 40,
+       "qualifying": 23
+      }
+     },
+     "failReasons": {
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#)+Terraform": 11,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Defen": 8,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Tempe": 3,
+      "only # of # broad strategies meet the pacing policy — [Water:dry=Adapt(#)] margin reached ": 3,
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#)] margin r": 3,
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Temperature:": 3
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 83,
+       "p10": 244.8,
+       "p50": 274.6,
+       "p90": 411.4
+      },
+      "purchases": {
+       "n": 83,
+       "p10": 3,
+       "p50": 5,
+       "p90": 6
+      },
+      "usesTerraformPct": 44.6,
+      "shockedPct": 20.5,
+      "pressureAtMargin": {
+       "n": 83,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      }
+     },
+     "arrivalWithoutStart": {
+      "n": 118,
+      "p10": 0.095,
+      "p50": 0.281,
+      "p90": 0.491
+     },
+     "arrivalGainFromStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+     },
+     "diag": {
+      "worlds": 19,
+      "distinctQualified": {
+       "1": 4,
+       "2": 3,
+       "3": 12
+      },
+      "fastestWinSeconds": {
+       "n": 19,
+       "p10": 207.2,
+       "p50": 242.9,
+       "p90": 324.6
+      },
+      "fastestMarginSeconds": {
+       "n": 19,
+       "p10": 243.2,
+       "p50": 267.2,
+       "p90": 348.8
+      },
+      "firstPurchaseSeconds": {
+       "n": 46,
+       "p10": 0.2,
+       "p50": 0.2,
+       "p90": 0.2
+      },
+      "approaches": {
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:heat=Adapt1 · Water:wet=Adapt1": 3,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:heat=Adapt1": 2,
+       "Crossing:waterSeeds=Spread1 · Defense:salt=Adapt1 · Water:wet=Adapt1": 2,
+       "Crossing:waterSeeds=Spread1 · Defense:salt=Adapt1 · Water:wet=Terraform−8": 2,
+       "Temperature:cold=Adapt1+Terraform+6 · Temperature:heat=Adapt1": 2,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:heat=Terraform−6 · Water:wet=Adapt1": 2,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:heat=Adapt1 · Water:wet=Terraform−8": 2,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:cold=Adapt1 · Temperature:heat=Terraform−6 · Water:wet=Adapt1": 2
+      },
+      "worldsWithAdaptOnlyWin": 15,
+      "worldsWithTerraformWin": 18,
+      "worldsWithShockedWin": 4,
+      "traitUsePct": {
+       "cold": 47.4,
+       "heat": 57.9,
+       "drought": 31.6,
+       "flood": 47.4,
+       "salt": 68.4,
+       "rad": 63.2,
+       "seedOut": 78.9,
+       "waterSeeds": 52.6,
+       "earlyMat": 15.8,
+       "warm": 31.6,
+       "cool": 36.8,
+       "humid": 15.8,
+       "dry": 47.4
+      }
+     },
+     "baseline": {
+      "cell": "volatile_climate/organic_hybrid",
+      "worlds": 118,
+      "baselineQualifyingPct": 99.2,
+      "conceptQualifyingPct": 70.3,
+      "sameVerdictPct": 71.2,
+      "identicalProofPct": 1.2,
+      "marginDeltaSeconds": {
+       "n": 83,
+       "p10": -132.3,
+       "p50": -15.8,
+       "p90": 31
+      }
+     },
+     "candidateBank": {
+      "retained": 50,
+      "provisional": false,
+      "quota": {
+       "desert_world": 17,
+       "frozen_world": 17,
+       "ocean_archipelago": 16
+      },
+      "minPairDistance": 0.3388,
+      "projectedQualifyingInFullPool": 337
+     }
+    },
+    "c36_windfall/reed_spire": {
+     "key": "c36_windfall/reed_spire",
+     "evaluated": 120,
+     "physicalOk": 118,
+     "stages": {
+      "ok": 92,
+      "scenario": 26,
+      "physical": 2
+     },
+     "qualifying": 92,
+     "qualifyingPct": 78,
+     "s2Pct": 100,
+     "layerPPassPct": 78,
+     "arrival": {
+      "all": {
+       "n": 118,
+       "p10": 0.046,
+       "p50": 0.214,
+       "p90": 0.693
+      },
+      "passing": {
+       "n": 92,
+       "p10": 0.055,
+       "p50": 0.255,
+       "p90": 0.698
+      },
+      "passingZero": 5,
+      "passingUnder5": 9
+     },
+     "foothold": {
+      "n": 92,
+      "p10": 0.046,
+      "p50": 0.16,
+      "p90": 0.434
+     },
+     "byArchetype": {
+      "ocean_archipelago": {
+       "evaluated": 40,
+       "qualifying": 35
+      },
+      "frozen_world": {
+       "evaluated": 40,
+       "qualifying": 31
+      },
+      "desert_world": {
+       "evaluated": 40,
+       "qualifying": 26
+      }
+     },
+     "failReasons": {
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Defen": 9,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Tempe": 5,
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#)+Terraform": 3,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Water": 2,
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Temperature:": 2,
+      "only # of # broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(#)] marg": 1
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 92,
+       "p10": 241.9,
+       "p50": 261.1,
+       "p90": 362.2
+      },
+      "purchases": {
+       "n": 92,
+       "p10": 2,
+       "p50": 4,
+       "p90": 6
+      },
+      "usesTerraformPct": 43.5,
+      "shockedPct": 16.3,
+      "pressureAtMargin": {
+       "n": 92,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      }
+     },
+     "arrivalWithoutStart": {
+      "n": 118,
+      "p10": 0.046,
+      "p50": 0.214,
+      "p90": 0.693
+     },
+     "arrivalGainFromStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+     },
+     "diag": {
+      "worlds": 23,
+      "distinctQualified": {
+       "1": 4,
+       "2": 6,
+       "3": 13
+      },
+      "fastestWinSeconds": {
+       "n": 23,
+       "p10": 186.6,
+       "p50": 236,
+       "p90": 299.4
+      },
+      "fastestMarginSeconds": {
+       "n": 23,
+       "p10": 241.6,
+       "p50": 259.2,
+       "p90": 342.9
+      },
+      "firstPurchaseSeconds": {
+       "n": 55,
+       "p10": 0.2,
+       "p50": 0.2,
+       "p90": 0.2
+      },
+      "approaches": {
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Temperature:heat=Adapt1": 4,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Temperature:cold=Adapt1 · Temperature:heat=Terraform−6": 3,
+       "Crossing:waterSeeds=Spread1 · Defense:salt=Adapt1": 3,
+       "Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt2": 3,
+       "Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:heat=Terraform−6 · Water:dry=Adapt2": 3,
+       "Temperature:cold=Adapt2 · Water:dry=Adapt1": 3,
+       "Defense:rad=Adapt1 · Temperature:heat=Terraform−6 · Water:dry=Adapt2": 2,
+       "Defense:rad=Adapt1 · Temperature:heat=Terraform−6 · Water:dry=Adapt1+Terraform+16": 2
+      },
+      "worldsWithAdaptOnlyWin": 20,
+      "worldsWithTerraformWin": 20,
+      "worldsWithShockedWin": 6,
+      "traitUsePct": {
+       "cold": 56.5,
+       "heat": 56.5,
+       "drought": 52.2,
+       "salt": 39.1,
+       "rad": 60.9,
+       "seedOut": 91.3,
+       "waterSeeds": 39.1,
+       "earlyMat": 47.8,
+       "warm": 30.4,
+       "cool": 52.2,
+       "humid": 39.1
+      }
+     },
+     "baseline": {
+      "cell": "volatile_climate/reed_spire",
+      "worlds": 118,
+      "baselineQualifyingPct": 96.6,
+      "conceptQualifyingPct": 78,
+      "sameVerdictPct": 76.3,
+      "identicalProofPct": 0,
+      "marginDeltaSeconds": {
+       "n": 89,
+       "p10": -102.9,
+       "p50": -21,
+       "p90": 31.1
+      }
+     },
+     "candidateBank": {
+      "retained": 50,
+      "provisional": false,
+      "quota": {
+       "desert_world": 17,
+       "frozen_world": 17,
+       "ocean_archipelago": 16
+      },
+      "minPairDistance": 0.3031,
+      "projectedQualifyingInFullPool": 374
+     }
+    },
+    "c36_windfall/woolly_candle": {
+     "key": "c36_windfall/woolly_candle",
+     "evaluated": 120,
+     "physicalOk": 118,
+     "stages": {
+      "ok": 90,
+      "scenario": 28,
+      "physical": 2
+     },
+     "qualifying": 90,
+     "qualifyingPct": 76.3,
+     "s2Pct": 100,
+     "layerPPassPct": 76.3,
+     "arrival": {
+      "all": {
+       "n": 118,
+       "p10": 0.07,
+       "p50": 0.255,
+       "p90": 0.47
+      },
+      "passing": {
+       "n": 90,
+       "p10": 0.068,
+       "p50": 0.241,
+       "p90": 0.421
+      },
+      "passingZero": 1,
+      "passingUnder5": 7
+     },
+     "foothold": {
+      "n": 90,
+      "p10": 0.052,
+      "p50": 0.182,
+      "p90": 0.4
+     },
+     "byArchetype": {
+      "ocean_archipelago": {
+       "evaluated": 40,
+       "qualifying": 36
+      },
+      "frozen_world": {
+       "evaluated": 40,
+       "qualifying": 21
+      },
+      "desert_world": {
+       "evaluated": 40,
+       "qualifying": 33
+      }
+     },
+     "failReasons": {
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#)] margin r": 13,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Tempe": 8,
+      "only # of # broad strategies meet the pacing policy — [Defense:salt=Adapt(#) · Temperature": 2,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Cross": 2,
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#)+Terraform": 2,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Defen": 1
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 90,
+       "p10": 244.8,
+       "p50": 273.6,
+       "p90": 382.1
+      },
+      "purchases": {
+       "n": 90,
+       "p10": 2,
+       "p50": 5,
+       "p90": 6
+      },
+      "usesTerraformPct": 46.7,
+      "shockedPct": 27.8,
+      "pressureAtMargin": {
+       "n": 90,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      }
+     },
+     "arrivalWithoutStart": {
+      "n": 118,
+      "p10": 0.07,
+      "p50": 0.255,
+      "p90": 0.47
+     },
+     "arrivalGainFromStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+     },
+     "diag": {
+      "worlds": 25,
+      "distinctQualified": {
+       "1": 5,
+       "2": 8,
+       "3": 12
+      },
+      "fastestWinSeconds": {
+       "n": 25,
+       "p10": 195.8,
+       "p50": 239.8,
+       "p90": 268.3
+      },
+      "fastestMarginSeconds": {
+       "n": 25,
+       "p10": 242.6,
+       "p50": 269.9,
+       "p90": 349
+      },
+      "firstPurchaseSeconds": {
+       "n": 57,
+       "p10": 0.2,
+       "p50": 0.2,
+       "p90": 0.2
+      },
+      "approaches": {
+       "Crossing:waterSeeds=Spread1 · Defense:salt=Adapt1 · Temperature:heat=Adapt1 · Water:wet=Adapt1": 6,
+       "Crossing:waterSeeds=Spread1 · Defense:salt=Adapt1 · Temperature:heat=Adapt1 · Water:wet=Terraform−8": 3,
+       "Crossing:waterSeeds=Spread1 · Defense:salt=Adapt1 · Temperature:heat=Terraform−6 · Water:wet=Adapt1": 3,
+       "Crossing:waterSeeds=Spread1 · Temperature:heat=Adapt1 · Water:wet=Adapt1": 2,
+       "Temperature:heat=Terraform−12 · Water:dry=Terraform+16": 2,
+       "Defense:salt=Adapt1 · Temperature:heat=Terraform−12 · Water:dry=Adapt1": 2,
+       "Crossing:waterSeeds=Spread1 · Defense:salt=Adapt1 · Water:wet=Adapt1": 2,
+       "Temperature:heat=Adapt2 · Water:dry=Adapt1+Terraform+16": 2
+      },
+      "worldsWithAdaptOnlyWin": 16,
+      "worldsWithTerraformWin": 23,
+      "worldsWithShockedWin": 16,
+      "traitUsePct": {
+       "cold": 28,
+       "heat": 72,
+       "drought": 32,
+       "flood": 40,
+       "salt": 60,
+       "rad": 20,
+       "seedOut": 76,
+       "waterSeeds": 40,
+       "earlyMat": 40,
+       "warm": 20,
+       "cool": 56,
+       "humid": 28,
+       "dry": 40
+      }
+     },
+     "baseline": {
+      "cell": "volatile_climate/woolly_candle",
+      "worlds": 118,
+      "baselineQualifyingPct": 93.2,
+      "conceptQualifyingPct": 76.3,
+      "sameVerdictPct": 81.4,
+      "identicalProofPct": 2.2,
+      "marginDeltaSeconds": {
+       "n": 89,
+       "p10": -124,
+       "p50": -8.4,
+       "p90": 65.1
+      }
+     },
+     "candidateBank": {
+      "retained": 50,
+      "provisional": false,
+      "quota": {
+       "desert_world": 17,
+       "frozen_world": 17,
+       "ocean_archipelago": 16
+      },
+      "minPairDistance": 0.196,
+      "projectedQualifyingInFullPool": 366
+     }
+    }
+   }
+  },
+  "pioneer_rush": {
+   "kind": "fixture",
+   "definition": {
+    "scenario": "native_competition",
+    "species": {
+     "policy": "player-choice"
+    },
+    "recipe": {
+     "version": 1,
+     "archetypes": [
+      "ocean_archipelago",
+      "desert_world",
+      "frozen_world"
+     ],
+     "arrival": {
+      "minHabitable": 0.2
+     },
+     "nativeCover": null
+    },
+    "startingState": {
+     "policy": "prescribed",
+     "adaptations": [
+      "seedOut",
+      "earlyMat"
+     ],
+     "biomass": 0
+    },
+    "presentation": {
+     "name": "Pioneer Rush",
+     "short": "A fast-seeding pioneer with empty pockets, on a planet that is already green.",
+     "tagline": "Your plant lands already seeding heavily and maturing early, with no Biomass in reserve, among established native vegetation.",
+     "briefing": "Your plant arrives as a pioneer: heavy seed output and early maturity, nothing saved. It can spread into open ground quickly, but young colonies are exactly what established natives overgrow.",
+     "strategicIdea": "Speed wins open ground, not fronts. Use the head start to claim land, then make it hold before the natives push back.",
+     "icon": "competition",
+     "science": "Pioneer plants such as dandelions and fireweed colonise open ground fast by sheer numbers of seeds; slower, established vegetation often takes that ground back later: the beginning of ecological succession (a simplified game model)."
+    }
+   },
+   "sample": {
+    "perArchetype": 40,
+    "worlds": 120,
+    "diagPerArchetype": 10
+   },
+   "cells": {
+    "c36_pioneer_rush/cinder_rosette": {
+     "key": "c36_pioneer_rush/cinder_rosette",
+     "evaluated": 120,
+     "physicalOk": 118,
+     "stages": {
+      "recipe": 66,
+      "scenario": 49,
+      "ok": 3,
+      "physical": 2
+     },
+     "qualifying": 3,
+     "qualifyingPct": 2.5,
+     "s2Pct": 100,
+     "layerPPassPct": 5.8,
+     "arrival": {
+      "all": {
+       "n": 118,
+       "p10": 0,
+       "p50": 0.18,
+       "p90": 0.434
+      },
+      "passing": {
+       "n": 3,
+       "p10": 0.208,
+       "p50": 0.284,
+       "p90": 0.619
+      },
+      "passingZero": 0,
+      "passingUnder5": 0
+     },
+     "foothold": {
+      "n": 3,
+      "p10": 0.139,
+      "p50": 0.26,
+      "p90": 0.697
+     },
+     "byArchetype": {
+      "desert_world": {
+       "evaluated": 40,
+       "qualifying": 1
+      },
+      "frozen_world": {
+       "evaluated": 40,
+       "qualifying": 2
+      },
+      "ocean_archipelago": {
+       "evaluated": 40,
+       "qualifying": 0
+      }
+     },
+     "failReasons": {
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Defen": 13,
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Water:dry=Ad": 6,
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Defense:salt": 5,
+      "only # of # broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(#) · Def": 3,
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#) · Water:w": 2,
+      "INCONCLUSIVE — search capped: every witness died out (extinction at # s; best peak #%)": 2
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 3,
+       "p10": 291.5,
+       "p50": 339,
+       "p90": 405.4
+      },
+      "purchases": {
+       "n": 3,
+       "p10": 4,
+       "p50": 5,
+       "p90": 6
+      },
+      "usesTerraformPct": 100,
+      "contested": {
+       "n": 3,
+       "p10": 7,
+       "p50": 9,
+       "p90": 14
+      },
+      "nativeStart": {
+       "n": 3,
+       "p10": 0.156,
+       "p50": 0.277,
+       "p90": 0.31
+      },
+      "nativePeak": {
+       "n": 3,
+       "p10": 0.169,
+       "p50": 0.424,
+       "p90": 0.52
+      },
+      "pressureAtMargin": {
+       "n": 3,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      }
+     },
+     "arrivalWithoutStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0.18,
+      "p90": 0.434
+     },
+     "arrivalGainFromStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+     },
+     "diag": {
+      "worlds": 1,
+      "distinctQualified": {
+       "1": 1
+      },
+      "fastestWinSeconds": {
+       "n": 1,
+       "p10": 400.3,
+       "p50": 400.3,
+       "p90": 400.3
+      },
+      "fastestMarginSeconds": {
+       "n": 1,
+       "p10": 405.4,
+       "p50": 405.4,
+       "p90": 405.4
+      },
+      "firstPurchaseSeconds": {
+       "n": 1,
+       "p10": 59.2,
+       "p50": 59.2,
+       "p90": 59.2
+      },
+      "approaches": {
+       "Temperature:cold=Adapt3+Terraform+6 · Water:dry=Terraform+8 · Water:wet=Adapt1": 1
+      },
+      "worldsWithAdaptOnlyWin": 0,
+      "worldsWithTerraformWin": 1,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "cold": 100,
+       "flood": 100,
+       "warm": 100,
+       "humid": 100
+      }
+     },
+     "ablations": {
+      "no-reserve-only": {
+       "worlds": 52,
+       "conceptPassPct": 5.8,
+       "ablationPassPct": 15.4,
+       "conceptOnly": 2,
+       "ablationOnly": 7,
+       "marginDeltaSeconds": {
+        "n": 1,
+        "p10": -16.8,
+        "p50": -16.8,
+        "p90": -16.8
+       }
+      }
+     },
+     "baseline": {
+      "cell": "native_competition/cinder_rosette",
+      "worlds": 118,
+      "baselineQualifyingPct": 34.7,
+      "conceptQualifyingPct": 2.5,
+      "sameVerdictPct": 67.8,
+      "identicalProofPct": 0,
+      "marginDeltaSeconds": {
+       "n": 3,
+       "p10": -31.5,
+       "p50": -2.6,
+       "p90": 1.4
+      }
+     },
+     "candidateBank": {
+      "retained": 3,
+      "provisional": true,
+      "quota": {
+       "desert_world": 1,
+       "frozen_world": 2
+      },
+      "minPairDistance": 1.5065,
+      "projectedQualifyingInFullPool": 12
+     }
+    },
+    "c36_pioneer_rush/organic_hybrid": {
+     "key": "c36_pioneer_rush/organic_hybrid",
+     "evaluated": 120,
+     "physicalOk": 118,
+     "stages": {
+      "scenario": 77,
+      "recipe": 32,
+      "ok": 9,
+      "physical": 2
+     },
+     "qualifying": 9,
+     "qualifyingPct": 7.6,
+     "s2Pct": 100,
+     "layerPPassPct": 10.5,
+     "arrival": {
+      "all": {
+       "n": 118,
+       "p10": 0.095,
+       "p50": 0.281,
+       "p90": 0.491
+      },
+      "passing": {
+       "n": 9,
+       "p10": 0.226,
+       "p50": 0.318,
+       "p90": 0.399
+      },
+      "passingZero": 0,
+      "passingUnder5": 0
+     },
+     "foothold": {
+      "n": 9,
+      "p10": 0.033,
+      "p50": 0.084,
+      "p90": 0.318
+     },
+     "byArchetype": {
+      "desert_world": {
+       "evaluated": 40,
+       "qualifying": 0
+      },
+      "frozen_world": {
+       "evaluated": 40,
+       "qualifying": 9
+      },
+      "ocean_archipelago": {
+       "evaluated": 40,
+       "qualifying": 0
+      }
+     },
+     "failReasons": {
+      "only # of # broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(#) · Def": 20,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Defen": 13,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Cross": 9,
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#) · Tempera": 6,
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#) · Water:d": 6,
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Temperature:": 4
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 9,
+       "p10": 349.3,
+       "p50": 417.9,
+       "p90": 495.5
+      },
+      "purchases": {
+       "n": 9,
+       "p10": 5,
+       "p50": 6,
+       "p90": 7
+      },
+      "usesTerraformPct": 100,
+      "contested": {
+       "n": 9,
+       "p10": 9,
+       "p50": 11,
+       "p90": 14
+      },
+      "nativeStart": {
+       "n": 9,
+       "p10": 0.261,
+       "p50": 0.281,
+       "p90": 0.307
+      },
+      "nativePeak": {
+       "n": 9,
+       "p10": 0.383,
+       "p50": 0.438,
+       "p90": 0.492
+      },
+      "pressureAtMargin": {
+       "n": 9,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      }
+     },
+     "arrivalWithoutStart": {
+      "n": 118,
+      "p10": 0.095,
+      "p50": 0.281,
+      "p90": 0.491
+     },
+     "arrivalGainFromStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+     },
+     "diag": {
+      "worlds": 2,
+      "distinctQualified": {
+       "1": 1,
+       "3": 1
+      },
+      "fastestWinSeconds": {
+       "n": 2,
+       "p10": 412.3,
+       "p50": 425.1,
+       "p90": 425.1
+      },
+      "fastestMarginSeconds": {
+       "n": 2,
+       "p10": 417.9,
+       "p50": 427.7,
+       "p90": 427.7
+      },
+      "firstPurchaseSeconds": {
+       "n": 4,
+       "p10": 52.2,
+       "p50": 52.2,
+       "p90": 58.2
+      },
+      "approaches": {
+       "Temperature:cold=Adapt2+Terraform+6 · Temperature:heat=Adapt1 · Water:dry=Adapt1 · Water:wet=Terraform−16": 1,
+       "Temperature:cold=Adapt1+Terraform+12 · Temperature:heat=Adapt1 · Water:dry=Adapt1 · Water:wet=Terraform−16": 1,
+       "Temperature:cold=Adapt2+Terraform+12 · Water:dry=Adapt1 · Water:wet=Terraform−16": 1,
+       "Temperature:cold=Adapt3 · Water:dry=Adapt1 · Water:wet=Terraform−16": 1
+      },
+      "worldsWithAdaptOnlyWin": 0,
+      "worldsWithTerraformWin": 2,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "cold": 100,
+       "heat": 50,
+       "drought": 100,
+       "warm": 50,
+       "dry": 100
+      }
+     },
+     "ablations": {
+      "no-reserve-only": {
+       "worlds": 86,
+       "conceptPassPct": 10.5,
+       "ablationPassPct": 18.6,
+       "conceptOnly": 7,
+       "ablationOnly": 14,
+       "marginDeltaSeconds": {
+        "n": 2,
+        "p10": -52.8,
+        "p50": -21.6,
+        "p90": -21.6
+       }
+      }
+     },
+     "baseline": {
+      "cell": "native_competition/organic_hybrid",
+      "worlds": 118,
+      "baselineQualifyingPct": 65.3,
+      "conceptQualifyingPct": 7.6,
+      "sameVerdictPct": 42.4,
+      "identicalProofPct": 0,
+      "marginDeltaSeconds": {
+       "n": 9,
+       "p10": -229,
+       "p50": -34.2,
+       "p90": 4.2
+      }
+     },
+     "candidateBank": {
+      "retained": 9,
+      "provisional": true,
+      "quota": {
+       "frozen_world": 9
+      },
+      "minPairDistance": 0.9695,
+      "projectedQualifyingInFullPool": 36
+     }
+    },
+    "c36_pioneer_rush/reed_spire": {
+     "key": "c36_pioneer_rush/reed_spire",
+     "evaluated": 120,
+     "physicalOk": 118,
+     "stages": {
+      "scenario": 60,
+      "recipe": 55,
+      "ok": 3,
+      "physical": 2
+     },
+     "qualifying": 3,
+     "qualifyingPct": 2.5,
+     "s2Pct": 100,
+     "layerPPassPct": 4.8,
+     "arrival": {
+      "all": {
+       "n": 118,
+       "p10": 0.046,
+       "p50": 0.214,
+       "p90": 0.693
+      },
+      "passing": {
+       "n": 3,
+       "p10": 0.236,
+       "p50": 0.277,
+       "p90": 0.359
+      },
+      "passingZero": 0,
+      "passingUnder5": 0
+     },
+     "foothold": {
+      "n": 3,
+      "p10": 0.033,
+      "p50": 0.048,
+      "p90": 0.409
+     },
+     "byArchetype": {
+      "desert_world": {
+       "evaluated": 40,
+       "qualifying": 0
+      },
+      "frozen_world": {
+       "evaluated": 40,
+       "qualifying": 3
+      },
+      "ocean_archipelago": {
+       "evaluated": 40,
+       "qualifying": 0
+      }
+     },
+     "failReasons": {
+      "only # of # broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(#) · Def": 22,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Cross": 9,
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#) · Water:d": 8,
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Defense:salt": 4,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Defen": 4,
+      "only # of # broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(#) · Tem": 3
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 3,
+       "p10": 364,
+       "p50": 391.2,
+       "p90": 439.8
+      },
+      "purchases": {
+       "n": 3,
+       "p10": 4,
+       "p50": 5,
+       "p90": 7
+      },
+      "usesTerraformPct": 100,
+      "contested": {
+       "n": 3,
+       "p10": 9,
+       "p50": 14,
+       "p90": 16
+      },
+      "nativeStart": {
+       "n": 3,
+       "p10": 0.261,
+       "p50": 0.298,
+       "p90": 0.318
+      },
+      "nativePeak": {
+       "n": 3,
+       "p10": 0.383,
+       "p50": 0.432,
+       "p90": 0.517
+      },
+      "pressureAtMargin": {
+       "n": 3,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      }
+     },
+     "arrivalWithoutStart": {
+      "n": 118,
+      "p10": 0.046,
+      "p50": 0.214,
+      "p90": 0.693
+     },
+     "arrivalGainFromStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+     },
+     "diag": {
+      "worlds": 2,
+      "distinctQualified": {
+       "2": 1,
+       "3": 1
+      },
+      "fastestWinSeconds": {
+       "n": 2,
+       "p10": 382.2,
+       "p50": 435.8,
+       "p90": 435.8
+      },
+      "fastestMarginSeconds": {
+       "n": 2,
+       "p10": 391.2,
+       "p50": 439.8,
+       "p90": 439.8
+      },
+      "firstPurchaseSeconds": {
+       "n": 5,
+       "p10": 52.2,
+       "p50": 52.2,
+       "p90": 52.3
+      },
+      "approaches": {
+       "Temperature:cold=Adapt2+Terraform+6 · Temperature:heat=Adapt1 · Water:dry=Adapt1 · Water:wet=Terraform−16": 1,
+       "Temperature:cold=Adapt1+Terraform+12 · Temperature:heat=Adapt1 · Water:dry=Adapt1 · Water:wet=Terraform−16": 1,
+       "Temperature:cold=Adapt3 · Temperature:heat=Terraform−6 · Water:dry=Terraform+16": 1,
+       "Temperature:cold=Adapt3 · Water:dry=Terraform+16": 1,
+       "Temperature:cold=Adapt3 · Temperature:heat=Terraform−12 · Water:dry=Terraform+8": 1
+      },
+      "worldsWithAdaptOnlyWin": 0,
+      "worldsWithTerraformWin": 2,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "cold": 100,
+       "heat": 50,
+       "drought": 50,
+       "warm": 50,
+       "cool": 100,
+       "humid": 100,
+       "dry": 50
+      }
+     },
+     "ablations": {
+      "no-reserve-only": {
+       "worlds": 63,
+       "conceptPassPct": 4.8,
+       "ablationPassPct": 25.4,
+       "conceptOnly": 2,
+       "ablationOnly": 15,
+       "marginDeltaSeconds": {
+        "n": 1,
+        "p10": -31.9,
+        "p50": -31.9,
+        "p90": -31.9
+       }
+      }
+     },
+     "baseline": {
+      "cell": "native_competition/reed_spire",
+      "worlds": 118,
+      "baselineQualifyingPct": 48.3,
+      "conceptQualifyingPct": 2.5,
+      "sameVerdictPct": 54.2,
+      "identicalProofPct": 0,
+      "marginDeltaSeconds": {
+       "n": 3,
+       "p10": -71.7,
+       "p50": -19.4,
+       "p90": 9.6
+      }
+     },
+     "candidateBank": {
+      "retained": 3,
+      "provisional": true,
+      "quota": {
+       "frozen_world": 3
+      },
+      "minPairDistance": 2.0684,
+      "projectedQualifyingInFullPool": 12
+     }
+    },
+    "c36_pioneer_rush/woolly_candle": {
+     "key": "c36_pioneer_rush/woolly_candle",
+     "evaluated": 120,
+     "physicalOk": 118,
+     "stages": {
+      "scenario": 69,
+      "recipe": 40,
+      "ok": 9,
+      "physical": 2
+     },
+     "qualifying": 9,
+     "qualifyingPct": 7.6,
+     "s2Pct": 100,
+     "layerPPassPct": 11.5,
+     "arrival": {
+      "all": {
+       "n": 118,
+       "p10": 0.07,
+       "p50": 0.255,
+       "p90": 0.47
+      },
+      "passing": {
+       "n": 9,
+       "p10": 0.305,
+       "p50": 0.416,
+       "p90": 0.48
+      },
+      "passingZero": 0,
+      "passingUnder5": 0
+     },
+     "foothold": {
+      "n": 9,
+      "p10": 0.033,
+      "p50": 0.371,
+      "p90": 0.442
+     },
+     "byArchetype": {
+      "desert_world": {
+       "evaluated": 40,
+       "qualifying": 0
+      },
+      "frozen_world": {
+       "evaluated": 40,
+       "qualifying": 8
+      },
+      "ocean_archipelago": {
+       "evaluated": 40,
+       "qualifying": 1
+      }
+     },
+     "failReasons": {
+      "only # of # broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(#) · Def": 19,
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#) · Tempera": 11,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Tempe": 11,
+      "only # of # broad strategies meet the pacing policy — [Defense:salt=Adapt(#) · Temperature": 8,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Defen": 7,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Cross": 3
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 9,
+       "p10": 261,
+       "p50": 354.7,
+       "p90": 481.1
+      },
+      "purchases": {
+       "n": 9,
+       "p10": 4,
+       "p50": 5,
+       "p90": 5
+      },
+      "usesTerraformPct": 88.9,
+      "contested": {
+       "n": 9,
+       "p10": 8,
+       "p50": 10,
+       "p90": 12
+      },
+      "nativeStart": {
+       "n": 9,
+       "p10": 0.262,
+       "p50": 0.276,
+       "p90": 0.297
+      },
+      "nativePeak": {
+       "n": 9,
+       "p10": 0.353,
+       "p50": 0.393,
+       "p90": 0.432
+      },
+      "pressureAtMargin": {
+       "n": 9,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      }
+     },
+     "arrivalWithoutStart": {
+      "n": 118,
+      "p10": 0.07,
+      "p50": 0.255,
+      "p90": 0.47
+     },
+     "arrivalGainFromStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+     },
+     "diag": {
+      "worlds": 2,
+      "distinctQualified": {
+       "2": 1,
+       "3": 1
+      },
+      "fastestWinSeconds": {
+       "n": 2,
+       "p10": 247,
+       "p50": 397.6,
+       "p90": 397.6
+      },
+      "fastestMarginSeconds": {
+       "n": 2,
+       "p10": 268.3,
+       "p50": 401.4,
+       "p90": 401.4
+      },
+      "firstPurchaseSeconds": {
+       "n": 5,
+       "p10": 52.3,
+       "p50": 52.3,
+       "p90": 58.2
+      },
+      "approaches": {
+       "Temperature:cold=Adapt3 · Temperature:heat=Terraform−12": 1,
+       "Temperature:cold=Adapt3 · Temperature:heat=Terraform−6 · Water:dry=Terraform+8 · Water:wet=Adapt1": 1,
+       "Temperature:cold=Adapt2 · Temperature:heat=Adapt1+Terraform−12 · Water:dry=Terraform+8 · Water:wet=Adapt1": 1,
+       "Temperature:cold=Adapt2 · Water:dry=Adapt1 · Water:wet=Terraform−16": 1,
+       "Defense:salt=Adapt1 · Temperature:cold=Adapt2 · Temperature:heat=Adapt1 · Water:dry=Adapt1 · Water:wet=Terraform−8": 1
+      },
+      "worldsWithAdaptOnlyWin": 0,
+      "worldsWithTerraformWin": 2,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "cold": 100,
+       "heat": 100,
+       "drought": 50,
+       "flood": 50,
+       "salt": 50,
+       "cool": 50,
+       "humid": 50,
+       "dry": 50
+      }
+     },
+     "ablations": {
+      "no-reserve-only": {
+       "worlds": 78,
+       "conceptPassPct": 11.5,
+       "ablationPassPct": 12.8,
+       "conceptOnly": 8,
+       "ablationOnly": 9,
+       "marginDeltaSeconds": {
+        "n": 1,
+        "p10": -63.2,
+        "p50": -63.2,
+        "p90": -63.2
+       }
+      }
+     },
+     "baseline": {
+      "cell": "native_competition/woolly_candle",
+      "worlds": 118,
+      "baselineQualifyingPct": 61.9,
+      "conceptQualifyingPct": 7.6,
+      "sameVerdictPct": 45.8,
+      "identicalProofPct": 0,
+      "marginDeltaSeconds": {
+       "n": 9,
+       "p10": -54.5,
+       "p50": -40,
+       "p90": 13.7
+      }
+     },
+     "candidateBank": {
+      "retained": 9,
+      "provisional": true,
+      "quota": {
+       "frozen_world": 8,
+       "ocean_archipelago": 1
+      },
+      "minPairDistance": 0.8662,
+      "projectedQualifyingInFullPool": 36
+     }
+    }
+   }
+  },
+  "empty_hold": {
+   "kind": "fixture",
+   "definition": {
+    "scenario": "dying_world",
+    "species": {
+     "policy": "player-choice"
+    },
+    "recipe": {
+     "version": 1,
+     "archetypes": [
+      "ocean_archipelago",
+      "desert_world",
+      "frozen_world"
+     ],
+     "arrival": null,
+     "nativeCover": null
+    },
+    "startingState": {
+     "policy": "prescribed",
+     "adaptations": [],
+     "biomass": 0
+    },
+    "presentation": {
+     "name": "Empty Hold",
+     "short": "No reserves at landing, and the air is already thinning.",
+     "tagline": "You land with no Biomass at all on a world that is losing its atmosphere.",
+     "briefing": "Your expedition arrives with nothing to spend. Every upgrade must be grown first, and the decline begins soon after landing.",
+     "strategicIdea": "Your first growth is your whole budget: decide whether to answer the world as it is, or save for the world it is becoming.",
+     "icon": "pressure",
+     "science": "@scenario.display.channels"
+    }
+   },
+   "sample": {
+    "perArchetype": 40,
+    "worlds": 120,
+    "diagPerArchetype": 10
+   },
+   "cells": {
+    "c36_empty_hold/cinder_rosette": {
+     "key": "c36_empty_hold/cinder_rosette",
+     "evaluated": 120,
+     "physicalOk": 118,
+     "stages": {
+      "scenario": 104,
+      "ok": 14,
+      "physical": 2
+     },
+     "qualifying": 14,
+     "qualifyingPct": 11.9,
+     "s2Pct": 100,
+     "layerPPassPct": 11.9,
+     "arrival": {
+      "all": {
+       "n": 118,
+       "p10": 0,
+       "p50": 0.18,
+       "p90": 0.434
+      },
+      "passing": {
+       "n": 14,
+       "p10": 0.138,
+       "p50": 0.266,
+       "p90": 0.352
+      },
+      "passingZero": 0,
+      "passingUnder5": 0
+     },
+     "foothold": {
+      "n": 14,
+      "p10": 0.05,
+      "p50": 0.26,
+      "p90": 0.432
+     },
+     "byArchetype": {
+      "frozen_world": {
+       "evaluated": 40,
+       "qualifying": 8
+      },
+      "desert_world": {
+       "evaluated": 40,
+       "qualifying": 5
+      },
+      "ocean_archipelago": {
+       "evaluated": 40,
+       "qualifying": 1
+      }
+     },
+     "failReasons": {
+      "only # of # broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(#) · Def": 16,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Cross": 16,
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#)+Terraform": 12,
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Water:dry=Ad": 11,
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Defense:salt": 9,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Defen": 8
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 14,
+       "p10": 245,
+       "p50": 341.8,
+       "p90": 461.9
+      },
+      "purchases": {
+       "n": 14,
+       "p10": 4,
+       "p50": 5,
+       "p90": 6
+      },
+      "usesTerraformPct": 64.3,
+      "pressureAtMargin": {
+       "n": 14,
+       "p10": 0.82,
+       "p50": 1,
+       "p90": 1
+      }
+     },
+     "arrivalWithoutStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0.18,
+      "p90": 0.434
+     },
+     "arrivalGainFromStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+     },
+     "decline": {
+      "greenNow": {
+       "n": 14,
+       "p10": 0.138,
+       "p50": 0.266,
+       "p90": 0.352
+      },
+      "greenFinal": {
+       "n": 14,
+       "p10": 0.034,
+       "p50": 0.126,
+       "p90": 0.257
+      },
+      "opened": {
+       "n": 14,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0.08
+      },
+      "closed": {
+       "n": 14,
+       "p10": 0.062,
+       "p50": 0.142,
+       "p90": 0.218
+      },
+      "netGainPct": 7.1
+     },
+     "diag": {
+      "worlds": 5,
+      "distinctQualified": {
+       "1": 1,
+       "2": 1,
+       "3": 3
+      },
+      "fastestWinSeconds": {
+       "n": 5,
+       "p10": 234.6,
+       "p50": 298.4,
+       "p90": 399.8
+      },
+      "fastestMarginSeconds": {
+       "n": 5,
+       "p10": 267.8,
+       "p50": 305.9,
+       "p90": 404.6
+      },
+      "firstPurchaseSeconds": {
+       "n": 12,
+       "p10": 51.8,
+       "p50": 57.9,
+       "p90": 59.8
+      },
+      "approaches": {
+       "Temperature:cold=Adapt3 · Water:dry=Terraform+8": 2,
+       "Temperature:cold=Adapt3 · Water:dry=Adapt1": 1,
+       "Defense:rad=Adapt1 · Temperature:cold=Adapt2+Terraform+6 · Water:dry=Adapt1": 1,
+       "Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:cold=Adapt1 · Water:dry=Adapt1+Terraform+8": 1,
+       "Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:cold=Terraform+6 · Water:dry=Adapt1+Terraform+8": 1,
+       "Temperature:cold=Adapt2+Terraform+12 · Water:dry=Terraform+8": 1,
+       "Temperature:cold=Adapt3 · Water:dry=Adapt1 · Water:wet=Terraform−8": 1,
+       "Defense:rad=Adapt1 · Defense:salt=Adapt1 · Water:dry=Adapt1": 1
+      },
+      "worldsWithAdaptOnlyWin": 2,
+      "worldsWithTerraformWin": 4,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "cold": 80,
+       "drought": 100,
+       "salt": 40,
+       "rad": 60,
+       "seedOut": 100,
+       "earlyMat": 40,
+       "warm": 80,
+       "humid": 80,
+       "dry": 40
+      }
+     },
+     "baseline": {
+      "cell": "dying_world/cinder_rosette",
+      "worlds": 118,
+      "baselineQualifyingPct": 88.1,
+      "conceptQualifyingPct": 11.9,
+      "sameVerdictPct": 22,
+      "identicalProofPct": 0,
+      "marginDeltaSeconds": {
+       "n": 13,
+       "p10": -25.2,
+       "p50": 25.6,
+       "p90": 41.6
+      }
+     },
+     "candidateBank": {
+      "retained": 14,
+      "provisional": true,
+      "quota": {
+       "desert_world": 5,
+       "frozen_world": 7,
+       "ocean_archipelago": 1
+      },
+      "minPairDistance": 0.3985,
+      "projectedQualifyingInFullPool": 57
+     }
+    },
+    "c36_empty_hold/organic_hybrid": {
+     "key": "c36_empty_hold/organic_hybrid",
+     "evaluated": 120,
+     "physicalOk": 118,
+     "stages": {
+      "scenario": 96,
+      "ok": 22,
+      "physical": 2
+     },
+     "qualifying": 22,
+     "qualifyingPct": 18.6,
+     "s2Pct": 100,
+     "layerPPassPct": 18.6,
+     "arrival": {
+      "all": {
+       "n": 118,
+       "p10": 0.095,
+       "p50": 0.281,
+       "p90": 0.491
+      },
+      "passing": {
+       "n": 22,
+       "p10": 0.071,
+       "p50": 0.223,
+       "p90": 0.455
+      },
+      "passingZero": 0,
+      "passingUnder5": 1
+     },
+     "foothold": {
+      "n": 22,
+      "p10": 0.047,
+      "p50": 0.161,
+      "p90": 0.325
+     },
+     "byArchetype": {
+      "frozen_world": {
+       "evaluated": 40,
+       "qualifying": 7
+      },
+      "desert_world": {
+       "evaluated": 40,
+       "qualifying": 11
+      },
+      "ocean_archipelago": {
+       "evaluated": 40,
+       "qualifying": 4
+      }
+     },
+     "failReasons": {
+      "only # of # broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(#) · Def": 25,
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Water:dry=Ad": 15,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Defen": 12,
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Defense:salt": 9,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Tempe": 8,
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Temperature:": 8
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 22,
+       "p10": 252.8,
+       "p50": 297.8,
+       "p90": 385
+      },
+      "purchases": {
+       "n": 22,
+       "p10": 4,
+       "p50": 5,
+       "p90": 6
+      },
+      "usesTerraformPct": 50,
+      "pressureAtMargin": {
+       "n": 22,
+       "p10": 0.851,
+       "p50": 1,
+       "p90": 1
+      }
+     },
+     "arrivalWithoutStart": {
+      "n": 118,
+      "p10": 0.095,
+      "p50": 0.281,
+      "p90": 0.491
+     },
+     "arrivalGainFromStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+     },
+     "decline": {
+      "greenNow": {
+       "n": 22,
+       "p10": 0.071,
+       "p50": 0.223,
+       "p90": 0.455
+      },
+      "greenFinal": {
+       "n": 22,
+       "p10": 0,
+       "p50": 0.058,
+       "p90": 0.172
+      },
+      "opened": {
+       "n": 22,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0.094
+      },
+      "closed": {
+       "n": 22,
+       "p10": 0.034,
+       "p50": 0.115,
+       "p90": 0.379
+      },
+      "netGainPct": 4.5
+     },
+     "diag": {
+      "worlds": 7,
+      "distinctQualified": {
+       "1": 2,
+       "2": 2,
+       "3": 3
+      },
+      "fastestWinSeconds": {
+       "n": 7,
+       "p10": 255,
+       "p50": 269.3,
+       "p90": 323.7
+      },
+      "fastestMarginSeconds": {
+       "n": 7,
+       "p10": 260,
+       "p50": 271.8,
+       "p90": 326.9
+      },
+      "firstPurchaseSeconds": {
+       "n": 15,
+       "p10": 47.4,
+       "p50": 56.5,
+       "p90": 59.8
+      },
+      "approaches": {
+       "Defense:rad=Adapt1 · Water:dry=Adapt2": 2,
+       "Temperature:cold=Adapt2+Terraform+6 · Water:dry=Adapt1": 1,
+       "Temperature:cold=Adapt3 · Water:dry=Adapt1": 1,
+       "Temperature:cold=Adapt2+Terraform+6 · Water:dry=Terraform+16": 1,
+       "Defense:rad=Adapt1 · Temperature:cold=Adapt2 · Water:dry=Adapt1": 1,
+       "Defense:rad=Adapt1 · Temperature:cold=Adapt1+Terraform+12 · Temperature:heat=Adapt1 · Water:dry=Adapt1": 1,
+       "Defense:rad=Adapt1 · Temperature:cold=Adapt2+Terraform+6 · Water:dry=Terraform+16": 1,
+       "Defense:rad=Adapt1 · Water:dry=Adapt1": 1
+      },
+      "worldsWithAdaptOnlyWin": 7,
+      "worldsWithTerraformWin": 5,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "cold": 42.9,
+       "heat": 14.3,
+       "drought": 100,
+       "salt": 28.6,
+       "rad": 85.7,
+       "seedOut": 100,
+       "waterSeeds": 14.3,
+       "earlyMat": 14.3,
+       "warm": 42.9,
+       "humid": 71.4,
+       "dry": 14.3
+      }
+     },
+     "baseline": {
+      "cell": "dying_world/organic_hybrid",
+      "worlds": 118,
+      "baselineQualifyingPct": 94.1,
+      "conceptQualifyingPct": 18.6,
+      "sameVerdictPct": 22.9,
+      "identicalProofPct": 0,
+      "marginDeltaSeconds": {
+       "n": 21,
+       "p10": -43.4,
+       "p50": 24,
+       "p90": 70.9
+      }
+     },
+     "candidateBank": {
+      "retained": 22,
+      "provisional": true,
+      "quota": {
+       "desert_world": 10,
+       "frozen_world": 6,
+       "ocean_archipelago": 4
+      },
+      "minPairDistance": 0.3915,
+      "projectedQualifyingInFullPool": 89
+     }
+    },
+    "c36_empty_hold/reed_spire": {
+     "key": "c36_empty_hold/reed_spire",
+     "evaluated": 120,
+     "physicalOk": 118,
+     "stages": {
+      "scenario": 95,
+      "ok": 23,
+      "physical": 2
+     },
+     "qualifying": 23,
+     "qualifyingPct": 19.5,
+     "s2Pct": 100,
+     "layerPPassPct": 19.5,
+     "arrival": {
+      "all": {
+       "n": 118,
+       "p10": 0.046,
+       "p50": 0.214,
+       "p90": 0.693
+      },
+      "passing": {
+       "n": 23,
+       "p10": 0.055,
+       "p50": 0.213,
+       "p90": 0.571
+      },
+      "passingZero": 0,
+      "passingUnder5": 2
+     },
+     "foothold": {
+      "n": 23,
+      "p10": 0.047,
+      "p50": 0.121,
+      "p90": 0.409
+     },
+     "byArchetype": {
+      "frozen_world": {
+       "evaluated": 40,
+       "qualifying": 7
+      },
+      "desert_world": {
+       "evaluated": 40,
+       "qualifying": 9
+      },
+      "ocean_archipelago": {
+       "evaluated": 40,
+       "qualifying": 7
+      }
+     },
+     "failReasons": {
+      "only # of # broad strategies meet the pacing policy — [Defense:rad=Adapt(#) · Water:dry=Ad": 22,
+      "only # of # broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(#) · Def": 20,
+      "INCONCLUSIVE — search capped: every witness died out (extinction at # s; best peak #%)": 14,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Tempe": 9,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Defen": 7,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Cross": 6
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 23,
+       "p10": 269.4,
+       "p50": 321.6,
+       "p90": 493
+      },
+      "purchases": {
+       "n": 23,
+       "p10": 4,
+       "p50": 5,
+       "p90": 6
+      },
+      "usesTerraformPct": 34.8,
+      "pressureAtMargin": {
+       "n": 23,
+       "p10": 0.918,
+       "p50": 1,
+       "p90": 1
+      }
+     },
+     "arrivalWithoutStart": {
+      "n": 118,
+      "p10": 0.046,
+      "p50": 0.214,
+      "p90": 0.693
+     },
+     "arrivalGainFromStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+     },
+     "decline": {
+      "greenNow": {
+       "n": 23,
+       "p10": 0.055,
+       "p50": 0.213,
+       "p90": 0.571
+      },
+      "greenFinal": {
+       "n": 23,
+       "p10": 0,
+       "p50": 0.022,
+       "p90": 0.244
+      },
+      "opened": {
+       "n": 23,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      },
+      "closed": {
+       "n": 23,
+       "p10": 0.016,
+       "p50": 0.135,
+       "p90": 0.478
+      },
+      "netGainPct": 0
+     },
+     "diag": {
+      "worlds": 5,
+      "distinctQualified": {
+       "1": 2,
+       "2": 1,
+       "3": 2
+      },
+      "fastestWinSeconds": {
+       "n": 5,
+       "p10": 261.3,
+       "p50": 313.4,
+       "p90": 369.3
+      },
+      "fastestMarginSeconds": {
+       "n": 5,
+       "p10": 268.2,
+       "p50": 315.8,
+       "p90": 373.4
+      },
+      "firstPurchaseSeconds": {
+       "n": 10,
+       "p10": 47.4,
+       "p50": 49.6,
+       "p90": 59.8
+      },
+      "approaches": {
+       "Defense:rad=Adapt1 · Water:dry=Adapt2": 2,
+       "Temperature:cold=Adapt3 · Water:dry=Adapt1": 1,
+       "Temperature:cold=Adapt2+Terraform+6 · Water:dry=Adapt1+Terraform+8": 1,
+       "Defense:rad=Adapt1 · Temperature:cold=Adapt2+Terraform+6 · Water:dry=Adapt1": 1,
+       "Defense:rad=Adapt1 · Temperature:cold=Adapt2 · Water:dry=Adapt1+Terraform+8": 1,
+       "Defense:rad=Adapt1 · Temperature:cold=Adapt2 · Water:dry=Adapt2": 1,
+       "Defense:rad=Adapt1 · Temperature:cold=Adapt1+Terraform+12 · Temperature:heat=Adapt1 · Water:dry=Adapt1+Terraform+8": 1,
+       "Defense:rad=Adapt1 · Defense:salt=Adapt1 · Water:dry=Adapt2": 1
+      },
+      "worldsWithAdaptOnlyWin": 5,
+      "worldsWithTerraformWin": 3,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "cold": 40,
+       "heat": 20,
+       "drought": 100,
+       "salt": 20,
+       "rad": 100,
+       "seedOut": 100,
+       "earlyMat": 20,
+       "warm": 40,
+       "humid": 60
+      }
+     },
+     "baseline": {
+      "cell": "dying_world/reed_spire",
+      "worlds": 118,
+      "baselineQualifyingPct": 86.4,
+      "conceptQualifyingPct": 19.5,
+      "sameVerdictPct": 33.1,
+      "identicalProofPct": 0,
+      "marginDeltaSeconds": {
+       "n": 23,
+       "p10": -32.5,
+       "p50": 23.1,
+       "p90": 60
+      }
+     },
+     "candidateBank": {
+      "retained": 23,
+      "provisional": true,
+      "quota": {
+       "desert_world": 9,
+       "frozen_world": 5,
+       "ocean_archipelago": 7
+      },
+      "minPairDistance": 0.2678,
+      "projectedQualifyingInFullPool": 94
+     }
+    },
+    "c36_empty_hold/woolly_candle": {
+     "key": "c36_empty_hold/woolly_candle",
+     "evaluated": 120,
+     "physicalOk": 118,
+     "stages": {
+      "scenario": 105,
+      "ok": 13,
+      "physical": 2
+     },
+     "qualifying": 13,
+     "qualifyingPct": 11,
+     "s2Pct": 100,
+     "layerPPassPct": 11,
+     "arrival": {
+      "all": {
+       "n": 118,
+       "p10": 0.07,
+       "p50": 0.255,
+       "p90": 0.47
+      },
+      "passing": {
+       "n": 13,
+       "p10": 0.047,
+       "p50": 0.155,
+       "p90": 0.39
+      },
+      "passingZero": 0,
+      "passingUnder5": 4
+     },
+     "foothold": {
+      "n": 13,
+      "p10": 0.023,
+      "p50": 0.085,
+      "p90": 0.208
+     },
+     "byArchetype": {
+      "frozen_world": {
+       "evaluated": 40,
+       "qualifying": 3
+      },
+      "desert_world": {
+       "evaluated": 40,
+       "qualifying": 9
+      },
+      "ocean_archipelago": {
+       "evaluated": 40,
+       "qualifying": 1
+      }
+     },
+     "failReasons": {
+      "only # of # broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(#) · Def": 26,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Tempe": 22,
+      "only # of # broad strategies meet the pacing policy — [Temperature:cold=Adapt(#)+Terraform": 9,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Defen": 7,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pacing policy — [Cross": 6,
+      "only # of # broad strategies meet the pacing policy — [Defense:salt=Adapt(#) · Temperature": 6
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 13,
+       "p10": 246.9,
+       "p50": 290.2,
+       "p90": 346.7
+      },
+      "purchases": {
+       "n": 13,
+       "p10": 4,
+       "p50": 5,
+       "p90": 5
+      },
+      "usesTerraformPct": 46.2,
+      "pressureAtMargin": {
+       "n": 13,
+       "p10": 0.828,
+       "p50": 1,
+       "p90": 1
+      }
+     },
+     "arrivalWithoutStart": {
+      "n": 118,
+      "p10": 0.07,
+      "p50": 0.255,
+      "p90": 0.47
+     },
+     "arrivalGainFromStart": {
+      "n": 118,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+     },
+     "decline": {
+      "greenNow": {
+       "n": 13,
+       "p10": 0.047,
+       "p50": 0.155,
+       "p90": 0.39
+      },
+      "greenFinal": {
+       "n": 13,
+       "p10": 0.05,
+       "p50": 0.095,
+       "p90": 0.223
+      },
+      "opened": {
+       "n": 13,
+       "p10": 0,
+       "p50": 0.038,
+       "p90": 0.092
+      },
+      "closed": {
+       "n": 13,
+       "p10": 0,
+       "p50": 0.039,
+       "p90": 0.305
+      },
+      "netGainPct": 38.5
+     },
+     "diag": {
+      "worlds": 6,
+      "distinctQualified": {
+       "3": 6
+      },
+      "fastestWinSeconds": {
+       "n": 6,
+       "p10": 238.6,
+       "p50": 272,
+       "p90": 321.9
+      },
+      "fastestMarginSeconds": {
+       "n": 6,
+       "p10": 244.6,
+       "p50": 277,
+       "p90": 326.9
+      },
+      "firstPurchaseSeconds": {
+       "n": 18,
+       "p10": 50.4,
+       "p50": 57.9,
+       "p90": 59.8
+      },
+      "approaches": {
+       "Defense:rad=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt2": 2,
+       "Temperature:cold=Adapt2 · Water:dry=Adapt1": 1,
+       "Temperature:cold=Adapt2 · Water:dry=Terraform+16": 1,
+       "Temperature:cold=Adapt1+Terraform+12 · Temperature:heat=Adapt1 · Water:dry=Adapt1": 1,
+       "Defense:rad=Adapt1 · Temperature:heat=Terraform−6 · Water:dry=Adapt2": 1,
+       "Defense:rad=Adapt1 · Defense:salt=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt1+Terraform+16": 1,
+       "Defense:rad=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt1": 1,
+       "Temperature:heat=Adapt1 · Water:dry=Adapt2": 1
+      },
+      "worldsWithAdaptOnlyWin": 6,
+      "worldsWithTerraformWin": 5,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "cold": 33.3,
+       "heat": 83.3,
+       "drought": 100,
+       "salt": 50,
+       "rad": 50,
+       "seedOut": 100,
+       "waterSeeds": 16.7,
+       "earlyMat": 16.7,
+       "warm": 16.7,
+       "cool": 50,
+       "humid": 83.3,
+       "dry": 16.7
+      }
+     },
+     "baseline": {
+      "cell": "dying_world/woolly_candle",
+      "worlds": 118,
+      "baselineQualifyingPct": 94.9,
+      "conceptQualifyingPct": 11,
+      "sameVerdictPct": 16.1,
+      "identicalProofPct": 0,
+      "marginDeltaSeconds": {
+       "n": 13,
+       "p10": -13.8,
+       "p50": 15.3,
+       "p90": 37.4
+      }
+     },
+     "candidateBank": {
+      "retained": 13,
+      "provisional": true,
+      "quota": {
+       "desert_world": 8,
+       "frozen_world": 3,
+       "ocean_archipelago": 1
+      },
+      "minPairDistance": 0.5309,
+      "projectedQualifyingInFullPool": 53
+     }
+    }
+   }
+  },
+  "low_tide": {
+   "kind": "fixture",
+   "definition": {
+    "scenario": "dying_world",
+    "species": {
+     "policy": "prescribed",
+     "species": "organic_hybrid"
+    },
+    "recipe": {
+     "version": 1,
+     "archetypes": [
+      "ocean_archipelago"
+     ],
+     "arrival": null,
+     "nativeCover": null
+    },
+    "startingState": {
+     "policy": "prescribed",
+     "adaptations": [
+      "flood",
+      "salt"
+     ],
+     "biomass": null
+    },
+    "presentation": {
+     "name": "Low Tide",
+     "short": "A plant fitted for wet salt coasts, on an archipelago that is drying out.",
+     "tagline": "Your plant lands already adapted to flooded, salty shores, and committed to that water strategy, as the planet's air dries.",
+     "briefing": "Organic Hybrid arrives with Flood Adaptation and Salt Handling: well fitted to the archipelago's wet, salty coasts today. But the atmosphere is thinning. The world dries, cools and brightens, and a plant committed to wet ground cannot also adapt to drought.",
+     "strategicIdea": "Your head start is also a commitment. Use the coasts while they last, then decide how to keep enough ground wet: Terraform, or retreat.",
+     "icon": "pressure",
+     "science": "Mangroves and saltmarsh plants are superbly fitted to wet, salty shores, and stranded when the water retreats. Specialisation pays only while the world it fits lasts."
+    }
+   },
+   "sample": {
+    "perArchetype": 160,
+    "worlds": 160,
+    "diagPerArchetype": 30
+   },
+   "cells": {
+    "c36_low_tide/organic_hybrid": {
+     "key": "c36_low_tide/organic_hybrid",
+     "evaluated": 160,
+     "physicalOk": 155,
+     "stages": {
+      "ok": 78,
+      "scenario": 77,
+      "physical": 5
+     },
+     "qualifying": 78,
+     "qualifyingPct": 50.3,
+     "s2Pct": 100,
+     "layerPPassPct": 50.3,
+     "arrival": {
+      "all": {
+       "n": 155,
+       "p10": 0.545,
+       "p50": 0.698,
+       "p90": 0.83
+      },
+      "passing": {
+       "n": 78,
+       "p10": 0.626,
+       "p50": 0.737,
+       "p90": 0.831
+      },
+      "passingZero": 0,
+      "passingUnder5": 0
+     },
+     "foothold": {
+      "n": 78,
+      "p10": 0.079,
+      "p50": 0.229,
+      "p90": 0.415
+     },
+     "byArchetype": {
+      "ocean_archipelago": {
+       "evaluated": 160,
+       "qualifying": 78
+      }
+     },
+     "failReasons": {
+      "no legal build can hold the win simultaneously: best build reaches #% < #%": 50,
+      "no legal build reaches the validation margin: best build holds #% < target #%": 11,
+      "INCONCLUSIVE — search capped: no candidate build reached the win with earned Biomass (best": 8,
+      "INCONCLUSIVE — search capped: witness wins but peaks at #% < target #%": 2,
+      "INCONCLUSIVE — search capped: every witness died out (extinction at # s; best peak #%)": 2,
+      "INCONCLUSIVE — search capped: witness reaches the margin but holds only #% < #% # s into t": 1
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 78,
+       "p10": 276.5,
+       "p50": 397.4,
+       "p90": 600.3
+      },
+      "purchases": {
+       "n": 78,
+       "p10": 4,
+       "p50": 5,
+       "p90": 6
+      },
+      "usesTerraformPct": 91,
+      "pressureAtMargin": {
+       "n": 78,
+       "p10": 0.946,
+       "p50": 1,
+       "p90": 1
+      }
+     },
+     "arrivalWithoutStart": {
+      "n": 155,
+      "p10": 0.208,
+      "p50": 0.433,
+      "p90": 0.607
+     },
+     "arrivalGainFromStart": {
+      "n": 155,
+      "p10": 0.061,
+      "p50": 0.263,
+      "p90": 0.487
+     },
+     "decline": {
+      "greenNow": {
+       "n": 78,
+       "p10": 0.626,
+       "p50": 0.737,
+       "p90": 0.831
+      },
+      "greenFinal": {
+       "n": 78,
+       "p10": 0.054,
+       "p50": 0.179,
+       "p90": 0.399
+      },
+      "opened": {
+       "n": 78,
+       "p10": 0,
+       "p50": 0,
+       "p90": 0
+      },
+      "closed": {
+       "n": 78,
+       "p10": 0.329,
+       "p50": 0.54,
+       "p90": 0.667
+      },
+      "netGainPct": 0
+     },
+     "diag": {
+      "worlds": 16,
+      "distinctQualified": {
+       "1": 4,
+       "2": 9,
+       "3": 3
+      },
+      "fastestWinSeconds": {
+       "n": 16,
+       "p10": 297.4,
+       "p50": 373.6,
+       "p90": 556.3
+      },
+      "fastestMarginSeconds": {
+       "n": 16,
+       "p10": 322.6,
+       "p50": 396,
+       "p90": 570.9
+      },
+      "firstPurchaseSeconds": {
+       "n": 31,
+       "p10": 17.1,
+       "p50": 26.2,
+       "p90": 27.8
+      },
+      "approaches": {
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Temperature:cold=Adapt1 · Water:dry=Terraform+8": 4,
+       "Crossing:waterSeeds=Spread1 · Temperature:cold=Adapt1 · Water:dry=Terraform+16": 3,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Temperature:cold=Terraform+6 · Water:dry=Terraform+8": 3,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Water:dry=Terraform+8": 3,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Temperature:cold=Adapt1 · Water:dry=Terraform+16": 2,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Temperature:cold=Terraform+6 · Temperature:heat=Adapt1 · Water:dry=Terraform+16": 2,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Water:dry=Terraform+16": 2,
+       "Crossing:waterSeeds=Spread1 · Defense:rad=Adapt1 · Temperature:cold=Adapt1": 2
+      },
+      "worldsWithAdaptOnlyWin": 2,
+      "worldsWithTerraformWin": 16,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "cold": 75,
+       "heat": 31.3,
+       "rad": 87.5,
+       "seedOut": 87.5,
+       "waterSeeds": 100,
+       "earlyMat": 18.8,
+       "warm": 68.8,
+       "cool": 6.3,
+       "humid": 93.8
+      }
+     },
+     "ablations": {
+      "normal-start": {
+       "worlds": 155,
+       "conceptPassPct": 50.3,
+       "ablationPassPct": 92.9,
+       "conceptOnly": 0,
+       "ablationOnly": 66,
+       "marginDeltaSeconds": {
+        "n": 78,
+        "p10": -183.8,
+        "p50": 44.6,
+        "p90": 168.9
+       }
+      }
+     },
+     "baseline": {
+      "cell": "dying_world/organic_hybrid",
+      "worlds": 155,
+      "baselineQualifyingPct": 92.9,
+      "conceptQualifyingPct": 50.3,
+      "sameVerdictPct": 57.4,
+      "identicalProofPct": 0,
+      "marginDeltaSeconds": {
+       "n": 78,
+       "p10": -183.8,
+       "p50": 44.6,
+       "p90": 168.9
+      }
+     },
+     "candidateBank": {
+      "retained": 50,
+      "provisional": false,
+      "quota": {
+       "ocean_archipelago": 50
+      },
+      "minPairDistance": 0.6201,
+      "projectedQualifyingInFullPool": 80
+     }
+    }
+   }
+  },
+  "far_from_home_frost": {
+   "kind": "default",
+   "definition": {
+    "scenario": "default",
+    "species": {
+     "policy": "prescribed",
+     "species": "woolly_candle"
+    },
+    "recipe": {
+     "archetypes": [
+      "desert_world"
+     ]
+    },
+    "startingState": {
+     "policy": "normal"
+    },
+    "presentation": {
+     "name": "Snow on the Dunes",
+     "short": "A cold-country plant on a hot desert world, under ordinary skies.",
+     "tagline": "Your plant is built for frost; this planet is hot and dry nearly everywhere.",
+     "briefing": "Woolly Candle lands in the coolest basin of a desert world. Nothing here is changing on its own: the plant must make itself fit for heat and drought, or make the sky cooler and wetter.",
+     "strategicIdea": "Choose your answer to the heat: change the plant, change the sky, or both, and accept the ground each answer gives up.",
+     "science": "Plants carried far from their native climate rarely thrive without help; alpine plants in hot lowland gardens need shade, cool roots and water."
+    },
+    "schemaNote": "the current Challenge schema refuses the default scenario"
+   },
+   "sample": {
+    "perArchetype": 160,
+    "worlds": 160,
+    "diagPerArchetype": 30
+   },
+   "cells": {
+    "far_from_home_frost/woolly_candle": {
+     "key": "far_from_home_frost/woolly_candle",
+     "evaluated": 160,
+     "physicalOk": 160,
+     "stages": {
+      "ok": 158,
+      "species": 2
+     },
+     "qualifying": 158,
+     "qualifyingPct": 98.8,
+     "s2Pct": 98.8,
+     "layerPPassPct": 100,
+     "arrival": {
+      "all": {
+       "n": 160,
+       "p10": 0.044,
+       "p50": 0.128,
+       "p90": 0.232
+      },
+      "passing": {
+       "n": 158,
+       "p10": 0.044,
+       "p50": 0.127,
+       "p90": 0.232
+      },
+      "passingZero": 4,
+      "passingUnder5": 24
+     },
+     "foothold": {
+      "n": 158,
+      "p10": 0.047,
+      "p50": 0.135,
+      "p90": 0.257
+     },
+     "byArchetype": {
+      "desert_world": {
+       "evaluated": 160,
+       "qualifying": 158
+      }
+     },
+     "failReasons": {},
+     "witness": {
+      "marginSeconds": {
+       "n": 158,
+       "p10": 243.4,
+       "p50": 261,
+       "p90": 294.6
+      },
+      "purchases": {
+       "n": 158,
+       "p10": 3,
+       "p50": 5,
+       "p90": 6
+      },
+      "usesTerraformPct": 55.7
+     },
+     "diag": {
+      "worlds": 158,
+      "distinctQualified": {
+       "1": 3,
+       "2": 21,
+       "3": 134
+      },
+      "fastestWinSeconds": {
+       "n": 158,
+       "p10": 224.5,
+       "p50": 241.9,
+       "p90": 274.7
+      },
+      "fastestMarginSeconds": {
+       "n": 158,
+       "p10": 241.4,
+       "p50": 251.4,
+       "p90": 279.5
+      },
+      "firstPurchaseSeconds": {
+       "n": 447,
+       "p10": 21.6,
+       "p50": 26.7,
+       "p90": 31
+      },
+      "approaches": {
+       "Temperature:heat=Adapt1 · Water:dry=Adapt2": 31,
+       "Temperature:heat=Terraform−12 · Water:dry=Adapt1": 25,
+       "Temperature:heat=Adapt1+Terraform−6 · Water:dry=Adapt1+Terraform+8": 22,
+       "Defense:salt=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt2": 22,
+       "Defense:salt=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt1+Terraform+8": 21,
+       "Temperature:heat=Adapt1 · Water:dry=Adapt1": 19,
+       "Defense:salt=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt1": 18,
+       "Temperature:heat=Adapt1 · Water:dry=Adapt1+Terraform+8": 18
+      },
+      "worldsWithAdaptOnlyWin": 118,
+      "worldsWithTerraformWin": 157,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "heat": 94.9,
+       "drought": 98.7,
+       "salt": 57.6,
+       "rad": 41.1,
+       "seedOut": 97.5,
+       "waterSeeds": 0.6,
+       "earlyMat": 53.2,
+       "cool": 91.8,
+       "humid": 65.8,
+       "dry": 8.9
+      }
+     },
+     "candidateBank": {
+      "retained": 50,
+      "provisional": false,
+      "quota": {
+       "desert_world": 50
+      },
+      "minPairDistance": 0.6083,
+      "projectedQualifyingInFullPool": 158
+     }
+    }
+   },
+   "defaultBaseline": {
+    "worlds": 160,
+    "organicHybridS2Pct": 100,
+    "conceptS2Pct": 98.8,
+    "requiredConditionAnsweredPct": 100
+   }
+  },
+  "far_from_home_ember": {
+   "kind": "default",
+   "definition": {
+    "scenario": "default",
+    "species": {
+     "policy": "prescribed",
+     "species": "cinder_rosette"
+    },
+    "recipe": {
+     "archetypes": [
+      "frozen_world"
+     ]
+    },
+    "startingState": {
+     "policy": "normal"
+    },
+    "presentation": {
+     "name": "Ember in the Ice",
+     "short": "A desert rosette on a frozen world, under ordinary skies.",
+     "tagline": "Your plant is built for heat; this planet is frozen nearly everywhere.",
+     "briefing": "Cinder Rosette lands in a geothermal pocket of a frozen world. Nothing here is changing on its own: the rosette must harden to cold, or the sky must warm.",
+     "strategicIdea": "Cold tolerance and a warmer sky compete for the same answer, and a warmer sky pushes the hottest vents out of reach.",
+     "science": "Succulents survive frost only where something keeps them warm: a sheltered wall, a hot spring, a sunny rock."
+    },
+    "schemaNote": "the current Challenge schema refuses the default scenario"
+   },
+   "sample": {
+    "perArchetype": 160,
+    "worlds": 160,
+    "diagPerArchetype": 30
+   },
+   "cells": {
+    "far_from_home_ember/cinder_rosette": {
+     "key": "far_from_home_ember/cinder_rosette",
+     "evaluated": 160,
+     "physicalOk": 160,
+     "stages": {
+      "ok": 157,
+      "scenario": 3
+     },
+     "qualifying": 157,
+     "qualifyingPct": 98.1,
+     "s2Pct": 100,
+     "layerPPassPct": 98.1,
+     "arrival": {
+      "all": {
+       "n": 160,
+       "p10": 0.053,
+       "p50": 0.159,
+       "p90": 0.293
+      },
+      "passing": {
+       "n": 157,
+       "p10": 0.054,
+       "p50": 0.159,
+       "p90": 0.293
+      },
+      "passingZero": 5,
+      "passingUnder5": 14
+     },
+     "foothold": {
+      "n": 157,
+      "p10": 0.033,
+      "p50": 0.081,
+      "p90": 0.259
+     },
+     "byArchetype": {
+      "frozen_world": {
+       "evaluated": 160,
+       "qualifying": 157
+      }
+     },
+     "failReasons": {
+      "won only outside the pacing bands": 3
+     },
+     "witness": {
+      "marginSeconds": {
+       "n": 157,
+       "p10": 257.9,
+       "p50": 317.3,
+       "p90": 424.3
+      },
+      "purchases": {
+       "n": 157,
+       "p10": 4,
+       "p50": 5,
+       "p90": 5
+      },
+      "usesTerraformPct": 53.5
+     },
+     "diag": {
+      "worlds": 157,
+      "distinctQualified": {
+       "1": 3,
+       "2": 21,
+       "3": 133
+      },
+      "fastestWinSeconds": {
+       "n": 157,
+       "p10": 242.6,
+       "p50": 297.4,
+       "p90": 382.6
+      },
+      "fastestMarginSeconds": {
+       "n": 157,
+       "p10": 252.6,
+       "p50": 305.9,
+       "p90": 394.2
+      },
+      "firstPurchaseSeconds": {
+       "n": 444,
+       "p10": 18.4,
+       "p50": 27.5,
+       "p90": 30.9
+      },
+      "approaches": {
+       "Temperature:cold=Adapt3 · Water:wet=Adapt1": 48,
+       "Temperature:cold=Adapt2+Terraform+6 · Water:wet=Adapt1": 44,
+       "Temperature:cold=Adapt2 · Water:wet=Adapt1": 28,
+       "Temperature:cold=Adapt3": 28,
+       "Temperature:cold=Adapt2+Terraform+6 · Water:wet=Terraform−8": 24,
+       "Temperature:cold=Adapt3 · Water:wet=Terraform−8": 24,
+       "Defense:salt=Adapt1 · Temperature:cold=Adapt2 · Water:wet=Adapt1": 18,
+       "Temperature:cold=Adapt1+Terraform+12 · Water:wet=Adapt1": 18
+      },
+      "worldsWithAdaptOnlyWin": 132,
+      "worldsWithTerraformWin": 157,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "cold": 100,
+       "heat": 13.4,
+       "flood": 82.8,
+       "salt": 36.3,
+       "seedOut": 98.1,
+       "earlyMat": 7,
+       "warm": 94.9,
+       "humid": 16.6,
+       "dry": 61.8
+      }
+     },
+     "candidateBank": {
+      "retained": 50,
+      "provisional": false,
+      "quota": {
+       "frozen_world": 50
+      },
+      "minPairDistance": 0.5433,
+      "projectedQualifyingInFullPool": 157
+     }
+    }
+   },
+   "defaultBaseline": {
+    "worlds": 160,
+    "organicHybridS2Pct": 100,
+    "conceptS2Pct": 100,
+    "requiredConditionAnsweredPct": 100
+   }
+  },
+  "far_from_home_reed": {
+   "kind": "default",
+   "definition": {
+    "scenario": "default",
+    "species": {
+     "policy": "prescribed",
+     "species": "reed_spire"
+    },
+    "recipe": {
+     "archetypes": [
+      "desert_world"
+     ]
+    },
+    "startingState": {
+     "policy": "normal"
+    },
+    "presentation": {
+     "name": "Reed in the Sand",
+     "short": "A wetland plant on a dry world, under ordinary skies.",
+     "tagline": "Your plant needs waterlogged ground; this planet has only scattered wet basins.",
+     "briefing": "Reed Spire lands in a wet basin of a desert world. Nothing here is changing on its own: the reed must learn to live drier, or the sky must hold more water.",
+     "strategicIdea": "Your basins are islands of wet ground in a dry sea: decide whether to cross the dry land or flood it.",
+     "science": "Reeds and papyrus line desert rivers and oases and stop exactly where the water table drops away."
+    },
+    "schemaNote": "the current Challenge schema refuses the default scenario"
+   },
+   "sample": {
+    "perArchetype": 160,
+    "worlds": 160,
+    "diagPerArchetype": 30
+   },
+   "cells": {
+    "far_from_home_reed/reed_spire": {
+     "key": "far_from_home_reed/reed_spire",
+     "evaluated": 160,
+     "physicalOk": 160,
+     "stages": {
+      "ok": 159,
+      "species": 1
+     },
+     "qualifying": 159,
+     "qualifyingPct": 99.4,
+     "s2Pct": 99.4,
+     "layerPPassPct": 100,
+     "arrival": {
+      "all": {
+       "n": 160,
+       "p10": 0,
+       "p50": 0.061,
+       "p90": 0.143
+      },
+      "passing": {
+       "n": 159,
+       "p10": 0,
+       "p50": 0.061,
+       "p90": 0.143
+      },
+      "passingZero": 36,
+      "passingUnder5": 67
+     },
+     "foothold": {
+      "n": 159,
+      "p10": 0.036,
+      "p50": 0.074,
+      "p90": 0.157
+     },
+     "byArchetype": {
+      "desert_world": {
+       "evaluated": 160,
+       "qualifying": 159
+      }
+     },
+     "failReasons": {},
+     "witness": {
+      "marginSeconds": {
+       "n": 159,
+       "p10": 245.3,
+       "p50": 279.8,
+       "p90": 321.1
+      },
+      "purchases": {
+       "n": 159,
+       "p10": 4,
+       "p50": 5,
+       "p90": 6
+      },
+      "usesTerraformPct": 20.1
+     },
+     "diag": {
+      "worlds": 159,
+      "distinctQualified": {
+       "1": 6,
+       "2": 27,
+       "3": 126
+      },
+      "fastestWinSeconds": {
+       "n": 159,
+       "p10": 231.8,
+       "p50": 255.8,
+       "p90": 315.2
+      },
+      "fastestMarginSeconds": {
+       "n": 159,
+       "p10": 242.6,
+       "p50": 265,
+       "p90": 321
+      },
+      "firstPurchaseSeconds": {
+       "n": 438,
+       "p10": 21.3,
+       "p50": 27.2,
+       "p90": 30.7
+      },
+      "approaches": {
+       "Defense:rad=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt2": 84,
+       "Defense:rad=Adapt1 · Temperature:heat=Terraform−6 · Water:dry=Adapt2": 57,
+       "Defense:rad=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt1+Terraform+8": 30,
+       "Defense:rad=Adapt1 · Temperature:heat=Adapt1 · Water:dry=Adapt1+Terraform+16": 27,
+       "Defense:rad=Adapt1 · Water:dry=Adapt2": 23,
+       "Water:dry=Adapt2": 22,
+       "Defense:salt=Adapt1 · Water:dry=Adapt2": 18,
+       "Defense:rad=Adapt1 · Temperature:heat=Terraform−6 · Water:dry=Adapt1+Terraform+8": 17
+      },
+      "worldsWithAdaptOnlyWin": 153,
+      "worldsWithTerraformWin": 153,
+      "worldsWithShockedWin": 0,
+      "traitUsePct": {
+       "cold": 0.6,
+       "heat": 88.7,
+       "drought": 100,
+       "salt": 37.7,
+       "rad": 96.9,
+       "seedOut": 98.7,
+       "waterSeeds": 0.6,
+       "earlyMat": 30.8,
+       "cool": 74.2,
+       "humid": 73.6
+      }
+     },
+     "candidateBank": {
+      "retained": 50,
+      "provisional": false,
+      "quota": {
+       "desert_world": 50
+      },
+      "minPairDistance": 0.5676,
+      "projectedQualifyingInFullPool": 159
+     }
+    }
+   },
+   "defaultBaseline": {
+    "worlds": 160,
+    "organicHybridS2Pct": 100,
+    "conceptS2Pct": 99.4,
+    "requiredConditionAnsweredPct": 100
+   }
+  }
+ },
+ "derived": {
+  "deep_freeze": {
+   "id": "deep_freeze",
+   "name": "Deep Freeze",
+   "scenario": "dying_world",
+   "archetypes": [
+    "frozen_world"
+   ],
+   "species": "player-choice",
+   "question": "is Dying World restricted to Frozen worlds a distinct Challenge, or Dying World under another name?",
+   "source": "docs/evidence/bloom-036b/seed-bank/candidates.json",
+   "bySpecies": {
+    "organic_hybrid": {
+     "frozenQualifyingPct": 95,
+     "allQualifyingPct": 91.2,
+     "frozenMargin": {
+      "n": 152,
+      "p10": 262.7,
+      "p50": 327.7,
+      "p90": 445.1
+     },
+     "allMargin": {
+      "n": 433,
+      "p10": 252.3,
+      "p50": 316,
+      "p90": 481.3
+     },
+     "shippedBankFrozenEntries": 17
+    },
+    "cinder_rosette": {
+     "frozenQualifyingPct": 94.4,
+     "allQualifyingPct": 85.1,
+     "frozenMargin": {
+      "n": 151,
+      "p10": 294.1,
+      "p50": 364.3,
+      "p90": 490.2
+     },
+     "allMargin": {
+      "n": 404,
+      "p10": 251.2,
+      "p50": 360.8,
+      "p90": 597.9
+     },
+     "shippedBankFrozenEntries": 17
+    },
+    "woolly_candle": {
+     "frozenQualifyingPct": 90,
+     "allQualifyingPct": 95.6,
+     "frozenMargin": {
+      "n": 144,
+      "p10": 244.3,
+      "p50": 266.4,
+      "p90": 314.4
+     },
+     "allMargin": {
+      "n": 454,
+      "p10": 245.8,
+      "p50": 279.4,
+      "p90": 457.8
+     },
+     "shippedBankFrozenEntries": 17
+    },
+    "reed_spire": {
+     "frozenQualifyingPct": 81.9,
+     "allQualifyingPct": 87.8,
+     "frozenMargin": {
+      "n": 131,
+      "p10": 289.8,
+      "p50": 352,
+      "p90": 455.8
+     },
+     "allMargin": {
+      "n": 417,
+      "p10": 263.4,
+      "p50": 333.8,
+      "p90": 481.8
+     },
+     "shippedBankFrozenEntries": 17
+    }
+   }
+  },
+  "last_refuge": {
+   "id": "last_refuge",
+   "name": "Last Refuge",
+   "scenario": "native_competition",
+   "arrival": {
+    "maxHabitable": 0.2
+   },
+   "species": "player-choice",
+   "question": "is Native Competition on worlds with < 20 % arrival (the band the released recipe excludes) a viable Challenge?",
+   "source": "docs/evidence/bloom-036b/challenge-recipe-study.json (40 World Seeds per archetype, every species, layer P on every S2-winnable world)",
+   "bySpecies": {
+    "organic_hybrid": {
+     "worldsBelow20": 39,
+     "s2Below20": 39,
+     "passBelow20": 34,
+     "passBelow20Pct": 87.2,
+     "passAtOrAbove20Pct": 88.8,
+     "failReasonsBelow20": {
+      "INCONCLUSIVE — search capped: witness wins but peaks at #% < target #%": 2,
+      "no legal build reaches the validation margin: best build holds #% < ta": 2,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pa": 1
+     }
+    },
+    "cinder_rosette": {
+     "worldsBelow20": 63,
+     "s2Below20": 63,
+     "passBelow20": 37,
+     "passBelow20Pct": 58.7,
+     "passAtOrAbove20Pct": 85.7,
+     "failReasonsBelow20": {
+      "INCONCLUSIVE — search capped: witness wins with margin under the valid": 6,
+      "no legal build reaches the validation margin: best build holds #% < ta": 4,
+      "only # of # broad strategies meet the pacing policy — [Crossing:waterS": 3,
+      "INCONCLUSIVE — search capped: every witness died out (extinction at # ": 3,
+      "no legal build can hold the win simultaneously: best build reaches #% ": 3,
+      "INCONCLUSIVE — search capped: no candidate build reached the win with ": 2,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pa": 2,
+      "only # of # broad strategies meet the pacing policy — [Defense:salt=Ad": 2,
+      "INCONCLUSIVE — search capped: witness reaches the margin but holds onl": 1
+     }
+    },
+    "woolly_candle": {
+     "worldsBelow20": 54,
+     "s2Below20": 54,
+     "passBelow20": 49,
+     "passBelow20Pct": 90.7,
+     "passAtOrAbove20Pct": 92.3,
+     "failReasonsBelow20": {
+      "no legal build reaches the validation margin: best build holds #% < ta": 2,
+      "INCONCLUSIVE — search capped: witness wins with margin under the valid": 1,
+      "INCONCLUSIVE — search capped: every witness died out (extinction at # ": 1,
+      "INCONCLUSIVE — search capped: witness wins but peaks at #% < target #%": 1
+     }
+    },
+    "reed_spire": {
+     "worldsBelow20": 60,
+     "s2Below20": 60,
+     "passBelow20": 42,
+     "passBelow20Pct": 70,
+     "passAtOrAbove20Pct": 84.7,
+     "failReasonsBelow20": {
+      "INCONCLUSIVE — search capped: every witness died out (extinction at # ": 8,
+      "INCONCLUSIVE — search capped: only # of # broad strategies meet the pa": 6,
+      "no legal build reaches the validation margin: best build holds #% < ta": 2,
+      "no legal build can hold the win simultaneously: best build reaches #% ": 1,
+      "INCONCLUSIVE — search capped: witness wins but peaks at #% < target #%": 1
+     }
+    }
+   }
+  }
+ },
+ "current": {
+  "dying_world": {
+   "bank": {
+    "organic_hybrid": {
+     "arrival": {
+      "n": 50,
+      "p10": 0.089,
+      "p50": 0.262,
+      "p90": 0.497
+     },
+     "arrivalZero": 0,
+     "arrivalUnder5Pct": 4,
+     "marginSeconds": {
+      "n": 50,
+      "p10": 247,
+      "p50": 318.4,
+      "p90": 584.8
+     }
+    },
+    "cinder_rosette": {
+     "arrival": {
+      "n": 50,
+      "p10": 0,
+      "p50": 0.243,
+      "p90": 0.456
+     },
+     "arrivalZero": 8,
+     "arrivalUnder5Pct": 22,
+     "marginSeconds": {
+      "n": 50,
+      "p10": 249.4,
+      "p50": 360.6,
+      "p90": 656
+     }
+    },
+    "woolly_candle": {
+     "arrival": {
+      "n": 50,
+      "p10": 0.066,
+      "p50": 0.222,
+      "p90": 0.48
+     },
+     "arrivalZero": 3,
+     "arrivalUnder5Pct": 10,
+     "marginSeconds": {
+      "n": 50,
+      "p10": 247,
+      "p50": 279,
+      "p90": 549.3
+     }
+    },
+    "reed_spire": {
+     "arrival": {
+      "n": 50,
+      "p10": 0,
+      "p50": 0.277,
+      "p90": 0.619
+     },
+     "arrivalZero": 6,
+     "arrivalUnder5Pct": 14,
+     "marginSeconds": {
+      "n": 50,
+      "p10": 265.1,
+      "p50": 353.8,
+      "p90": 535.2
+     }
+    }
+   }
+  },
+  "native_competition": {
+   "bank": {
+    "organic_hybrid": {
+     "arrival": {
+      "n": 50,
+      "p10": 0.214,
+      "p50": 0.336,
+      "p90": 0.51
+     },
+     "arrivalZero": 0,
+     "arrivalUnder5Pct": 0,
+     "marginSeconds": {
+      "n": 50,
+      "p10": 350.6,
+      "p50": 534.7,
+      "p90": 839.8
+     },
+     "contested": {
+      "n": 50,
+      "p10": 4,
+      "p50": 9,
+      "p90": 13
+     }
+    },
+    "cinder_rosette": {
+     "arrival": {
+      "n": 50,
+      "p10": 0.205,
+      "p50": 0.293,
+      "p90": 0.431
+     },
+     "arrivalZero": 0,
+     "arrivalUnder5Pct": 0,
+     "marginSeconds": {
+      "n": 50,
+      "p10": 299.7,
+      "p50": 478.7,
+      "p90": 712.3
+     },
+     "contested": {
+      "n": 50,
+      "p10": 4,
+      "p50": 9,
+      "p90": 12
+     }
+    },
+    "woolly_candle": {
+     "arrival": {
+      "n": 50,
+      "p10": 0.212,
+      "p50": 0.305,
+      "p90": 0.573
+     },
+     "arrivalZero": 0,
+     "arrivalUnder5Pct": 0,
+     "marginSeconds": {
+      "n": 50,
+      "p10": 297,
+      "p50": 459,
+      "p90": 659.2
+     },
+     "contested": {
+      "n": 50,
+      "p10": 4,
+      "p50": 9,
+      "p90": 13
+     }
+    },
+    "reed_spire": {
+     "arrival": {
+      "n": 50,
+      "p10": 0.217,
+      "p50": 0.357,
+      "p90": 0.651
+     },
+     "arrivalZero": 0,
+     "arrivalUnder5Pct": 0,
+     "marginSeconds": {
+      "n": 50,
+      "p10": 304.3,
+      "p50": 490.6,
+      "p90": 696.8
+     },
+     "contested": {
+      "n": 50,
+      "p10": 4,
+      "p50": 8,
+      "p90": 14
+     }
+    }
+   }
+  },
+  "volatile_climate": {
+   "bank": {
+    "organic_hybrid": {
+     "arrival": {
+      "n": 50,
+      "p10": 0.131,
+      "p50": 0.254,
+      "p90": 0.48
+     },
+     "arrivalZero": 0,
+     "arrivalUnder5Pct": 4,
+     "marginSeconds": {
+      "n": 50,
+      "p10": 254.1,
+      "p50": 283.8,
+      "p90": 528.8
+     },
+     "witnessShockedPct": 18
+    },
+    "cinder_rosette": {
+     "arrival": {
+      "n": 50,
+      "p10": 0,
+      "p50": 0.243,
+      "p90": 0.428
+     },
+     "arrivalZero": 7,
+     "arrivalUnder5Pct": 18,
+     "marginSeconds": {
+      "n": 50,
+      "p10": 249.1,
+      "p50": 308,
+      "p90": 505.9
+     },
+     "witnessShockedPct": 12
+    },
+    "woolly_candle": {
+     "arrival": {
+      "n": 50,
+      "p10": 0.081,
+      "p50": 0.258,
+      "p90": 0.544
+     },
+     "arrivalZero": 2,
+     "arrivalUnder5Pct": 6,
+     "marginSeconds": {
+      "n": 50,
+      "p10": 248.6,
+      "p50": 280,
+      "p90": 581.6
+     },
+     "witnessShockedPct": 16
+    },
+    "reed_spire": {
+     "arrival": {
+      "n": 50,
+      "p10": 0,
+      "p50": 0.274,
+      "p90": 0.596
+     },
+     "arrivalZero": 7,
+     "arrivalUnder5Pct": 16,
+     "marginSeconds": {
+      "n": 50,
+      "p10": 243.7,
+      "p50": 291.8,
+      "p90": 605.9
+     },
+     "witnessShockedPct": 6
+    }
+   },
+   "passingPool": {
+    "organic_hybrid": {
+     "witnessUsesTerraformPct": 32.3,
+     "witnessShockedPct": 4.5
+    },
+    "cinder_rosette": {
+     "witnessUsesTerraformPct": 48.1,
+     "witnessShockedPct": 6.6
+    },
+    "woolly_candle": {
+     "witnessUsesTerraformPct": 44,
+     "witnessShockedPct": 10.3
+    },
+    "reed_spire": {
+     "witnessUsesTerraformPct": 21.8,
+     "witnessShockedPct": 0.9
+    }
+   }
+  }
+ }
+}
