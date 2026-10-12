@@ -287,6 +287,10 @@
     // page's own post-run actions for it (id, label, note, primary; href only for the player's navigation links — the page navigates)
     function report() { const r = R.report(); return r ? plain(r) : null; }
     function reportActions() { return (R.reportActions() || []).map(a => ({ id: a.id, label: a.label, note: a.note || null, primary: !!a.primary, href: a.href || "" })); }
+    // (BLOOM-036D1, additive) a gated Challenge's live completion state — the page's tracker (resources/challenges/challenge-completion.js),
+    // a plain copy: { status, line, sub, condition { type, label, met, progress }, coverage, winAt, bloomNow, earlyBloom, … } — or null (the
+    // ordinary Bloom: Expedition, Training, every ungated Challenge). Optional on the host (older harnesses have none)
+    function completion() { const c = R.completion ? R.completion() : null; return c ? plain(c) : null; }
 
     // ---- actions: the run page's own functions (each fires its bloom:* event itself)
     const actions = Object.freeze({
@@ -320,7 +324,7 @@
     const adapter = Object.freeze({
       api: API_VERSION, events: Object.freeze(EVENTS.map(t => "bloom:" + t)),
       run: runInfo, hud, scenario, regions, region, selection, upgrades, upgrade, previewOf, activePreview, terraformPreview, wouldHelp, colony, bubbles,
-      message: () => V.message(), map, tileAt, surface, mapState, effects, runMenu, report, reportActions, actions,
+      message: () => V.message(), map, tileAt, surface, mapState, effects, runMenu, report, reportActions, completion, actions,
       subscribe(fn) { if (typeof fn !== "function") throw new TypeError("subscribe needs a function"); listeners.add(fn); return () => { listeners.delete(fn); }; },
       get revision() { return revision; },
     });

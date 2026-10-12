@@ -76,6 +76,10 @@
 .rr-scn{display:flex; flex-direction:column; gap:4px; padding:10px 12px; border:2px solid var(--rr-line); border-radius:var(--r-md, 16px); background:var(--rr-paper)}
 .rr-scn h3{display:flex; align-items:center; gap:6px; margin:0; font-size:12px; font-weight:900; letter-spacing:1px; text-transform:uppercase; color:var(--rr-soft)} .rr-scn h3 .ic{width:18px; height:18px; color:var(--pressure, #8a5bb8)}
 .rr-scn p{margin:0; font-size:13.5px; line-height:1.4}
+/* (036D1) a gated Challenge's completion condition: met (part of the win, a check) or what it was doing at an extinction */
+.rr-cond{border-color:#bfe0b5; background:linear-gradient(var(--leaf-soft, #e2f2d6), var(--rr-bg) 60%)} .rr-cond h3 .ic{padding:2px; border-radius:50%; background:var(--ok, #3f9d4b); color:#fff; stroke-width:3.4}
+.rr-cond p{margin:0; font-size:14px; line-height:1.4}
+.rr-cond[data-kind="loss"]{border-color:#d9c4ea; background:linear-gradient(#f1e9f8, var(--rr-bg) 60%)} .rr-cond[data-kind="loss"] h3 .ic{padding:0; background:none; color:var(--pressure, #8a5bb8); stroke-width:2}
 
 /* ── actions: Keep playing first (a win), then the page's own run actions (the shell's <footer> rule is overridden property by property) ── */
 .rr .rr-actions{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:0; padding:12px 24px 16px; background:var(--rr-paper); border:0; border-top:3px solid var(--rr-line); color:var(--rr-ink);

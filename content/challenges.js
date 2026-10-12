@@ -25,13 +25,16 @@
 //                                   docs/evidence/bloom-036b/CHALLENGE_RECIPE_STUDY.md; a recipe never changes a planet
 //                    startingState  { policy: "normal" }  nothing owned at landing, the normal starting Biomass
 //                                   { policy: "prescribed", adaptations, biomass }  — none released yet (QA fixtures only)
-//   completion     win "bloom" — the normal Bloom win (the planet's own threshold); conditions [] — reserved for later Challenge-specific
-//                  conditions, none yet
+//   completion     win "bloom" — the normal Bloom win (the planet's own threshold); conditions [] — the ordinary Bloom completes the run.
+//                  (036D1) conditions [{ type: "pressure-final-state" }] — the Bloom counts only once the scenario's pressure has reached its
+//                  final state (validated, gated and proven by resources/challenges/challenge-completion.js; at most one condition, no parameters)
 // VERSIONS. `version` is the definition's revision; `launch.world.recipe.version` the recipe's. The recipe decides which planet a launch
 // generates, so changing a released recipe is an explicit change of BOTH (an old instance is never reinterpreted under new recipe data).
 // 036B: every Challenge is version 2 (036A's version 1 launched through the Destination Survey), recipe version 1. 036B1: version 3 (seed banks).
 // 036C1: Native Competition and Volatile Climate version 4 (copy revised: presentation is part of the definition's revision, and the bank cells
 // carry the Challenge version, so those cells were rebuilt — same worlds, same proofs); Low Tide and Oasis Line version 1.
+// 036D1: Thin Air version 1 (the first completion condition). The five earlier Challenges are unchanged (their cells carry a new completion
+// fingerprint in the rebuilt bank's provenance — same worlds, same proofs).
 // No difficulty labels anywhere: no Easy / Medium / Hard, no stars, no recommended skill. The hub lists Challenges in this order, which
 // is not a ranking.
 (function (root) {
@@ -143,6 +146,26 @@
         world: { policy: "seed-bank", recipe: { version: 1, archetypes: ["desert_world"], arrival: null, nativeCover: null }, bank: { ...BANK } },
         startingState: { ...NORMAL_START } },
       completion: { win: "bloom", conditions: [] },
+    },
+    // ---- BLOOM-036D1: the first Challenge with a completion CONDITION (docs/CHALLENGE_COMPLETION_STUDY_v1.md, PMO-approved). Same scenario and
+    // plant as Dying World × Woolly Candle, a different contract: an early Bloom is only a milestone — the run is completed by the Bloom held in
+    // the FINAL atmosphere (the decline finished), so every run lives through the reversal the candle is built for.
+    {
+      id: "thin_air", version: 1, status: "released",
+      name: "Thin Air",
+      short: "A cold-hardy plant on a warm world whose air is thinning.",
+      scenario: "dying_world",
+      presentation: {
+        tagline: "As the atmosphere thins, the world cools, dries and brightens with radiation — conditions Woolly Candle was built to endure.",
+        briefing: "Woolly Candle lands on a warm world whose atmosphere is thinning. Much of the ground is too warm for it today. As the decline continues, the land cools toward the candle's range while surface radiation rises. The drying is the danger it was not built for.",
+        strategicIdea: "Do not rush to solve warmth that the changing world may solve for you. Hold your refuges, move into ground the cooling opens, and be ready for the loss of water.",
+        icon: "pressure",
+        science: "High-mountain giant rosettes such as frailejones live with cold nights, dry winds and strong ultraviolet radiation. Woolly leaves and protective pigments are real adaptations to those stresses; Strange Bloom uses a simplified changing-atmosphere model.",
+      },
+      launch: { species: { policy: "prescribed", species: "woolly_candle" },
+        world: { policy: "seed-bank", recipe: { version: 1, archetypes: ["desert_world", "ocean_archipelago"], arrival: null, nativeCover: null }, bank: { ...BANK } },
+        startingState: { ...NORMAL_START } },
+      completion: { win: "bloom", conditions: [{ type: "pressure-final-state" }] },
     },
   ];
 })(typeof window !== "undefined" ? window : globalThis);

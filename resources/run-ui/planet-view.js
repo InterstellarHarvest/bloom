@@ -175,7 +175,10 @@
       hudEls.skyd.textContent = h.skyChange ? stripGlyph(h.skyChange.text).replace(/^[▲▼]\s*/, "") : "";
       el.querySelector(".pv-sky").setAttribute("aria-label", `Sky ${degC(sk.temp)}, moisture ${Math.round(sk.moist)}${h.skyChange ? ", just changed " + h.skyChange.text : ""}`);
       const st = r.won ? "won" : r.lost ? "lost" : r.running ? "running" : "paused";
-      el.dataset.state = st; hudEls.state.textContent = { won: "BLOOMED", lost: "EXTINCT", running: "GROWING", paused: "PAUSED" }[st];
+      // (036D1) a gated Challenge holding an early Bloom says so (the run is not won yet: the report waits for the condition)
+      const cp = A.completion ? A.completion() : null, holding = !!(cp && cp.status === "early-held" && st === "running");
+      el.dataset.state = st; hudEls.state.textContent = holding ? "HOLDING" : { won: "BLOOMED", lost: "EXTINCT", running: "GROWING", paused: "PAUSED" }[st];
+      if (cp) el.dataset.completion = cp.status; else delete el.dataset.completion;
       const pb = $("pvPause"); pb.innerHTML = ico(r.running ? "pause" : "play"); pb.setAttribute("aria-pressed", String(!r.running)); pb.setAttribute("aria-label", r.running ? "Pause" : "Resume"); pb.title = r.running ? "Pause" : "Resume";
       const sp = $("pvSpeed"); sp.textContent = r.speed + "×"; sp.setAttribute("aria-label", `Speed ${r.speed} times. Press to cycle 1, 2, 4`); sp.title = "Speed: 1× → 2× → 4×";
       const name = r.kind === "procedural" ? `${r.archetypeName} · ${r.play ? "World Seed" : "seed"} ${r.seed}` : r.planetName;
@@ -184,7 +187,7 @@
     function paintLog() { const m = stripGlyph(A.message()); const L = $("pvLog"); if (L.dataset.m !== m) { L.dataset.m = m; L.innerHTML = ico("info") + esc(m); } }
 
     // ---------------------------------------------------------------- scenario status (compact; every live value on "Details")
-    let scnKey = "", scnPhase = null, scnShock = "", scnComp = 0;
+    let scnKey = "", scnPhase = null, scnShock = "", scnComp = 0, scnCond = null;
     function paintScenario() {
       const sc = A.scenario(), h = A.hud();
       if (!sc.pressure && !sc.competition && !sc.climate) { scn.hidden = true; return; }
@@ -213,11 +216,16 @@
         if (shock || pend) details.push(esc(stripGlyph(C.forecast)));
         if (!sc.pressure) details.push(skyLine);
         const sk = shock ? "s" + shock[0] : pend ? "p" + pend[0] : ""; if (sk && sk !== scnShock) pulse(); scnShock = sk; }
-      const key = [kind, line, line2, warn, details.join("|"), Math.round(meter * 400), state.scnOpen].join("¦"); if (key === scnKey) return; scnKey = key;
-      scn.dataset.kind = kind;
+      // (BLOOM-036D1) a gated Challenge's completion condition: ONE persistent line under the pressure state it is tied to (the tracker's own
+      // words: "Final atmosphere · 82% of decline" → early Bloom "BLOOM REACHED — hold it …" → "Final atmosphere reached · regain Bloom …" → ✓)
+      const cp = A.completion ? A.completion() : null;
+      const cond = cp ? `<div class="cond" data-status="${esc(cp.status)}" role="status">${ico(cp.status === "complete" ? "check" : cp.status === "early-held" ? "star" : "pressure")}<span><b>${esc(cp.line)}</b>${cp.sub ? `<small>${esc(cp.sub)}</small>` : ""}</span></div>` : "";
+      if (cp && scnCond !== null && cp.status !== scnCond) pulse(); scnCond = cp ? cp.status : null;
+      const key = [kind, line, line2, warn, cond, details.join("|"), Math.round(meter * 400), state.scnOpen].join("¦"); if (key === scnKey) return; scnKey = key;
+      scn.dataset.kind = kind; if (cp) scn.dataset.completion = cp.status; else delete scn.dataset.completion;
       scn.innerHTML = `<div class="sh">${ico(icon)}<b>${esc(sc.name)}</b><button type="button" class="more" aria-expanded="${state.scnOpen}" aria-controls="pvScnD">Details${ico("chevron")}</button></div>` +
         `<div class="sm" role="meter" aria-label="${esc(sc.name)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(meter * 100)}"><i style="width:${Math.min(100, meter * 100).toFixed(1)}%"></i>${marks.filter(m => m > 0 && m < 1).map(m => `<em style="left:${(m * 100).toFixed(1)}%"></em>`).join("")}</div>` +
-        `<div class="sl">${line}</div>${line2 ? `<div class="sl2">${line2}</div>` : ""}${warn ? `<div class="warn">${esc(warn)}</div>` : ""}` +
+        `<div class="sl">${line}</div>${line2 ? `<div class="sl2">${line2}</div>` : ""}${cond}${warn ? `<div class="warn">${esc(warn)}</div>` : ""}` +
         `<div class="sd" id="pvScnD"${state.scnOpen ? "" : " hidden"}>${details.map(d => `<div>${d}</div>`).join("")}</div>`;
     }
     function pulse() { if (reduced()) return; scn.classList.add("pulse"); setTimeout(() => scn.classList.remove("pulse"), 1800); }

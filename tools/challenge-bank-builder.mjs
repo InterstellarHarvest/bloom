@@ -10,6 +10,11 @@
 //                            confirmation run included — no Challenge proof budget offline (that was a live-search early stop, now retired)
 //   5. Challenge quality     (curation) the mechanic must have mattered in the proof: Native Competition's witness met contested fronts;
 //                            Dying World's witness reached its margin with the decline ≥ 80 % done (the validator's own pacing guarantees it)
+//   6. completion            (036D1, VALIDATOR_ID @2) the Challenge's completion contract, ASSERTED from the layer-P evidence by the one
+//                            completion boundary (BLOOM.challengeCompletion.prove): for "pressure-final-state", every proven strategy's hold
+//                            record and every confirmation run's held the Bloom threshold with the pressure at its final state (progress = 1).
+//                            Never assumed from the scenario: a candidate whose evidence does not establish it fails (stage "completion").
+//                            An ungated Challenge (conditions []) proves nothing more and its records are unchanged.
 // The candidate POOL is species-free and Challenge-free: per archetype, World Seeds from a fixed stream (archetype-stratified, so every
 // archetype is equally represented before any filter). Physical validation runs once per world; species evaluation once per world ×
 // species; layer P once per world × species × Challenge (only where steps 2–3 passed).
@@ -21,7 +26,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 export const CLASSIC = ["content/config.js", "content/traits.js", "content/species.js", "planets/first_bloom.js", "planets/training_grounds.js", "content/archetypes.js", "content/scenarios.js",
   "content/challenges.js", "content/play.js", "resources/bloom-sim.js", "resources/bloom-species.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js",
-  "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/bloom-challenges.js"];
+  "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/bloom-challenges.js", "resources/challenges/challenge-completion.js"];
 export const POOL_STREAM = "bloom-036b1 challenge seed bank pool v1";
 const require = createRequire(import.meta.url);
 export function loadEngine() { for (const f of CLASSIC) require(path.join(ROOT, f)); return { BLOOM: globalThis.BLOOM, D: globalThis.BLOOM_DATA }; }
@@ -87,6 +92,10 @@ export function evaluateWorld(task, { BLOOM, D, SD }, { challenges = null, speci
       // 5. Challenge quality: the mechanic mattered in the proof
       if (S.competition && !(c.proof.contested >= 1)) { c.stage = "quality"; c.quality = "no contested front in the witness"; continue; }
       if (S.pressure && !(c.proof.pressureAtMargin >= 0.8)) { c.stage = "quality"; c.quality = "margin before 80 % of the decline"; continue; }
+      // 6. (036D1) the completion contract, asserted from the proof's own witness evidence (ungated: nothing to prove, the record is unchanged)
+      if (BLOOM.challengeCompletion.contract(ch).gated) { const K = BLOOM.challengeCompletion.prove(ch, v, { winAt: row.physical.winAt });
+        if (!K.ok) { c.stage = "completion"; c.completion = { ok: false, reason: K.reason.slice(0, reasonChars) }; continue; }
+        c.proof.completion = K.evidence; }
       c.stage = "ok";
     }
   }
@@ -146,7 +155,7 @@ export const entryOf = (row, c) => ({ archetypeId: row.archetypeId, seed: row.se
   ...(c.nativeStart != null ? { nativeStart: c.nativeStart } : {}),
   proof: { status: c.proof.status, simulations: c.proof.simulations, confirmations: c.proof.confirmations, strategies: c.proof.strategies, marginSeconds: c.proof.marginSeconds,
     holdCoverage: c.proof.holdCoverage, ...(c.proof.contested != null ? { contested: c.proof.contested } : {}), ...(c.proof.pressureAtMargin != null ? { pressureAtMargin: c.proof.pressureAtMargin } : {}),
-    ...(c.proof.shocks != null ? { shocks: c.proof.shocks } : {}) },
+    ...(c.proof.shocks != null ? { shocks: c.proof.shocks } : {}), ...(c.proof.completion ? { completion: c.proof.completion } : {}) },
   bucket: `${row.archetypeId}:${c.classId}:${c.features.landmasses > 1 ? "islands" : "one-land"}` });
 
 /** One bank cell from curated candidates. */

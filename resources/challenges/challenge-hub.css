@@ -64,6 +64,10 @@
 .ch-card h3{margin:0; font-size:21px; font-weight:900; line-height:1.1}
 .ch-card-short{font-weight:800; color:var(--ink); font-size:15px}
 .ch-card-tag{font-weight:600; color:var(--ink-soft); font-size:14px}
+/* (036D1) a gated Challenge's card names its extra win condition */
+.ch-card-cond{display:inline-flex; align-self:flex-start; align-items:center; gap:5px; margin-top:3px; padding:2px 9px 2px 6px; border-radius:999px; font-size:12.5px; font-weight:800;
+  color:var(--bloom-gold-night); border:1.5px solid color-mix(in srgb, var(--bloom-gold-night) 55%, transparent); background:color-mix(in srgb, var(--bloom-gold-night) 12%, transparent)}
+.ch-card-cond .ic{width:15px; height:15px}
 
 .ch-dossier{position:relative; display:flex; flex-direction:column; min-height:0; min-width:0; border:2px solid var(--line-2); border-radius:var(--bloom-r-lg);
   background:var(--bloom-night-card-solid, var(--panel)); box-shadow:var(--bloom-night-shadow); overflow:hidden}
@@ -78,6 +82,11 @@
 .ch-row{--cat:var(--ink-soft); position:relative; padding:8px 12px 9px 52px; border-radius:10px; border:1.5px solid color-mix(in srgb, var(--cat) 26%, transparent); border-left:5px solid var(--cat);
   background:linear-gradient(90deg, color-mix(in srgb, var(--cat) 11%, transparent), transparent 85%)}
 .ch-row.changes{--cat:var(--accent)} .ch-row.idea{--cat:var(--bloom-leaf-night)} .ch-row.science{--cat:var(--bloom-sky-night)} .ch-row.run{--cat:var(--bloom-gold-night)}
+.ch-row.goal{--cat:var(--bloom-gold-night)}
+/* (036D1) the completion contract: the Bloom goal, then the condition that is part of the win */
+.ch-goal{display:grid; gap:4px} .ch-goal-l{margin:0; display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 10px}
+.ch-goal-l b{font-weight:900; letter-spacing:.6px; font-size:13.5px} .ch-goal-l span{font-weight:600}
+.ch-goal-l.cond b::before{content:"AND · "; color:var(--ink-soft); font-weight:800}
 .ch-row-i{position:absolute; left:10px; top:9px; display:grid; place-items:center; width:30px; height:30px; border-radius:50%; color:var(--cat);
   border:1.5px solid color-mix(in srgb, var(--cat) 50%, transparent); background:color-mix(in srgb, var(--cat) 14%, transparent)}
 .ch-row-i .ic{width:17px; height:17px}

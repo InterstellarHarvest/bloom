@@ -34,8 +34,17 @@ const POLICY_WORDS = {
     prescribed: c => { const st = window.BLOOM.challenges.startingStateOf(c), n = {}; for (const id of st.adaptations) n[id] = (n[id] || 0) + 1;
       const closed = window.BLOOM.challenges.closedByStart(c).map(t => ` ${t.name} is not available${t.why ? `: ${t.why}` : ""}.`).join("");
       return "Your plant lands with what the Challenge gives it: " + [...Object.entries(n).map(([id, k]) => traitName(id) + (k > 1 ? ` ×${k}` : "")), ...(st.biomass != null ? [`${st.biomass} Biomass`] : [])].join(" · ") + "." + closed; } },
-  win: { bloom: () => "Win with the normal Bloom: cover the planet's target share of land." },
+  // (036D1) a gated Challenge (a completion condition) never says "the normal Bloom": an early Bloom is only a milestone there
+  win: { bloom: c => window.BLOOM.challengeCompletion.contract(c).gated
+    ? "Win with the Bloom held in the final atmosphere: reaching it earlier is a milestone, and the run goes on (extinction stays possible) until the atmosphere has settled."
+    : "Win with the normal Bloom: cover the planet's target share of land." },
 };
+/** (036D1) the completion contract in the hub's words: the Bloom goal + each condition (BLOOM.challengeCompletion.goal); "" when ungated. */
+function goalHtml(c) {
+  const G = window.BLOOM.challengeCompletion.goal(c, window.BLOOM_DATA.config.win); if (!G.gated) return "";
+  return `<div class="ch-goal" data-gated="true"><p class="ch-goal-l"><b>${esc(G.bloom.title.toUpperCase())}</b><span>${esc(G.bloom.body)}</span></p>` +
+    G.conditions.map(k => `<p class="ch-goal-l cond" data-condition="${esc(k.type)}"><b>${esc(k.title.toUpperCase())}</b><span>${esc(k.body)}</span></p>`).join("") + `</div>`;
+}
 
 export class ChallengeHub {
   constructor(host, { challenge = null, reducedMotion = null, onChoose = null, onBack = null } = {}) {
@@ -169,11 +178,13 @@ export class ChallengeHub {
   }
 
   _card(c, i) {
-    const P = c.presentation;
+    const P = c.presentation, G = window.BLOOM.challengeCompletion.goal(c, window.BLOOM_DATA.config.win);
+    // (036D1) a gated Challenge's card names its extra win condition (the dossier explains it)
+    const cond = G.gated ? G.conditions.map(k => `<span class="ch-card-cond" data-condition="${esc(k.type)}">${ico("pressure")}Bloom in the ${esc(k.title.toLowerCase())}</span>`).join("") : "";
     return `<div class="ch-card" role="radio" aria-checked="false" tabindex="-1" data-index="${i}" data-challenge="${esc(c.id)}" data-scenario="${esc(c.scenario)}"
-        aria-label="${esc(c.name)}. ${esc(c.short)}" aria-controls="">
+        aria-label="${esc(c.name)}. ${esc(c.short)}${G.gated ? ` Win condition: Bloom in the ${esc(G.conditions.map(k => k.title.toLowerCase()).join(", "))}.` : ""}" aria-controls="">
       <span class="ch-card-i" aria-hidden="true">${ico(P.icon)}</span>
-      <span class="ch-card-t"><h3>${esc(c.name)}</h3><span class="ch-card-short">${esc(c.short)}</span><span class="ch-card-tag">${esc(P.tagline)}</span></span>
+      <span class="ch-card-t"><h3>${esc(c.name)}</h3><span class="ch-card-short">${esc(c.short)}</span><span class="ch-card-tag">${esc(P.tagline)}</span>${cond}</span>
     </div>`;
   }
 
@@ -182,7 +193,9 @@ export class ChallengeHub {
     this.index = i; this.stats.selects++;
     this.cards.forEach((c, j) => { c.setAttribute("aria-checked", String(j === i)); c.tabIndex = j === i ? 0 : -1; c.setAttribute("aria-controls", this.dossier ? this.dossier.id : ""); });
     if (changed) this._fill(this.list[i]);
-    if (focus) this.cards[i].focus();
+    // (036D1) the keyboard-selected card is brought fully into view: Firefox's focus() leaves a PARTLY visible card cut off at the list's edge
+    // (with six Challenges the list scrolls at 1024 × 768); "nearest" moves the list / page only as far as needed
+    if (focus) { this.cards[i].focus({ preventScroll: true }); this.cards[i].scrollIntoView({ block: "nearest", inline: "nearest" }); }
   }
 
   /** The player words for a Challenge's launch / completion policies (throws for a policy the hub cannot describe). */
@@ -200,7 +213,9 @@ export class ChallengeHub {
     const row = (cls, icon, label, body) => `<div class="ch-row ${cls}"><dt><span class="ch-row-i" aria-hidden="true">${ico(icon)}</span>${esc(label)}</dt><dd>${body}</dd></div>`;
     const para = t => `<p>${esc(t)}</p>`, list = a => `<ul>${a.map(t => `<li>${esc(t.charAt(0).toUpperCase() + t.slice(1))}</li>`).join("")}</ul>`;
     const loss = S.loss && S.loss.extinction ? "The run ends in extinction if no living plants are left anywhere." : "";
+    const goal = goalHtml(c);
     q(".ch-rows").innerHTML = [
+      goal ? row("goal", "challenge", "To win", goal) : "",          // (036D1) the completion contract, before anything else, when it is not the plain Bloom
       row("changes", P.icon, "What changes", para(P.tagline)),
       row("idea", "adapt", "Strategic idea", para(P.strategicIdea)),
       (P.science || P.sciencePoints) ? row("science", "info", P.sciencePoints ? "Why it happens" : "The science", P.science ? para(P.science) : list(P.sciencePoints)) : "",
