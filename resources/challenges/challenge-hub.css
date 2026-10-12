@@ -45,8 +45,11 @@
 
 /* ── the body: the cards (left) and the selected Challenge's dossier (right) ── */
 .ch-body{flex:1 1 auto; min-height:0; display:grid; grid-template-columns:minmax(300px, 5fr) minmax(0, 7fr); gap:clamp(14px, 1.8cqw, 28px);
-  padding:16px var(--padX) 20px; max-width:1480px; width:100%; margin:0 auto; align-items:stretch}
-.ch-list{display:flex; flex-direction:column; gap:clamp(10px, 1.4cqh, 16px); min-width:0}
+  padding:16px var(--padX) 20px; max-width:1480px; width:100%; margin:0 auto; align-items:stretch; grid-template-rows:minmax(0, 1fr)}
+/* (036C1) more Challenges than fit: the card list scrolls on its own, so the dossier (and BEGIN CHALLENGE at its foot) always stays in view; the
+   padding / negative margin keep the focus ring, the lift on hover and the selected card's side marker inside the scroll box */
+.ch-list{display:flex; flex-direction:column; gap:clamp(10px, 1.4cqh, 16px); min-width:0; min-height:0; overflow-y:auto; overscroll-behavior:contain;
+  padding:6px 10px 8px 6px; margin:-6px -10px -8px -6px}
 .ch-card{position:relative; display:grid; grid-template-columns:auto minmax(0, 1fr); gap:14px; align-items:start; padding:14px 16px; cursor:pointer;
   border:2px solid var(--line-2); border-radius:var(--bloom-r-lg); background:var(--panel); box-shadow:var(--bloom-night-shadow);
   transition:transform .18s var(--bloom-ease), border-color .18s, box-shadow .18s}
@@ -95,7 +98,7 @@
   .ch-title h1{font-size:22px}
   .ch-lede{font-size:14px}
   .ch-body{display:block; padding:12px var(--padX) 20px}
-  .ch-list{gap:10px}
+  .ch-list{gap:10px; overflow:visible; padding:0; margin:0}
   .ch-card[aria-checked="true"]::after{display:none}
   .ch-dossier{display:none; position:absolute; z-index:3; left:0; right:0; bottom:0; top:auto; height:86%; border-radius:var(--bloom-r-lg) var(--bloom-r-lg) 0 0; border-bottom:0}
   .ch[data-sheet="true"] .ch-dossier{display:flex}
