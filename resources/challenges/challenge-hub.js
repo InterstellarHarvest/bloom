@@ -32,7 +32,8 @@ const POLICY_WORDS = {
   world: { "seed-bank": () => "One qualifying Challenge world is generated for your plant: there is no survey and no choosing among worlds." },
   startingState: { normal: () => "Your plant lands as it always does: nothing owned yet.",
     prescribed: c => { const st = window.BLOOM.challenges.startingStateOf(c), n = {}; for (const id of st.adaptations) n[id] = (n[id] || 0) + 1;
-      return "Your plant lands with what the Challenge gives it: " + [...Object.entries(n).map(([id, k]) => traitName(id) + (k > 1 ? ` ×${k}` : "")), ...(st.biomass != null ? [`${st.biomass} Biomass`] : [])].join(" · ") + "."; } },
+      const closed = window.BLOOM.challenges.closedByStart(c).map(t => ` ${t.name} is not available${t.why ? `: ${t.why}` : ""}.`).join("");
+      return "Your plant lands with what the Challenge gives it: " + [...Object.entries(n).map(([id, k]) => traitName(id) + (k > 1 ? ` ×${k}` : "")), ...(st.biomass != null ? [`${st.biomass} Biomass`] : [])].join(" · ") + "." + closed; } },
   win: { bloom: () => "Win with the normal Bloom: cover the planet's target share of land." },
 };
 

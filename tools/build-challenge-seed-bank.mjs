@@ -34,15 +34,18 @@ if (!isMainThread) {
   const PROV = opt("--provisional", null) == null ? null : +opt("--provisional", null), CHECK = has("--check"), REUSE = has("--reuse") || CHECK;
   const { BLOOM, D } = loadEngine(), { CB } = await modules();
   const CH = BLOOM.challenges.list(), SP = BLOOM.species.ids();
+  // (036C1) a Challenge's cells are the species it ALLOWS: every released species (player choice) or its one prescribed plant — never a cell for a
+  // species the Challenge can never launch with (that phantom cell would be "short" and wrongly mark the bank provisional)
+  const spOf = ch => { const pres = BLOOM.challenges.speciesOf(ch); return pres ? [pres.id] : SP; };
   // the inputs a candidate record depends on: every cell's provenance (rules, scenario, recipe, physiology, world generation, validator)
-  const inputs = Object.fromEntries(CH.flatMap(ch => SP.map(sp => [`${ch.id}/${sp}`, CB.cellProvenance(ch, sp)])));
+  const inputs = Object.fromEntries(CH.flatMap(ch => spOf(ch).map(sp => [`${ch.id}/${sp}`, CB.cellProvenance(ch, sp)])));
   const inputsFp = crypto.createHash("sha256").update(JSON.stringify(inputs)).digest("hex").slice(0, 16);
   const pool = candidatePool(D, PER);
   let cached = [];
   if (REUSE && fs.existsSync(CAND_FILE)) { const C = JSON.parse(fs.readFileSync(CAND_FILE, "utf8")); if (C.inputsFingerprint === inputsFp) cached = C.rows; else console.log(`candidate cache is STALE (${C.inputsFingerprint} ≠ ${inputsFp}): re-evaluating`); }
   const have = new Map(cached.map(r => [`${r.archetypeId}:${r.seed}`, r])), todo = pool.filter(t => !have.has(`${t.archetypeId}:${t.seed}`));
   if (CHECK && todo.length) { console.error(`--check: ${todo.length} pool worlds have no current candidate record`); process.exit(1); }
-  console.log(`challenge seed bank: pool ${pool.length} worlds (${D.archetypes.length} archetypes × ${PER}) × ${CH.length} Challenges × ${SP.length} species · ${todo.length} to evaluate (${pool.length - todo.length} cached) · ${NW} workers`);
+  console.log(`challenge seed bank: pool ${pool.length} worlds (${D.archetypes.length} archetypes × ${PER}) × ${CH.length} Challenges (${CH.reduce((n, ch) => n + spOf(ch).length, 0)} cells) · ${todo.length} to evaluate (${pool.length - todo.length} cached) · ${NW} workers`);
   const t0 = Date.now();
   if (todo.length) await new Promise((resolve, reject) => { let next = 0, done = 0, live = 0;
     for (let k = 0; k < Math.min(NW, todo.length); k++) { const w = new Worker(fileURLToPath(import.meta.url)); live++;
@@ -57,7 +60,7 @@ if (!isMainThread) {
   if (!CHECK) writeJson(CAND_FILE, { format: "bloom-challenge-bank-candidates@1", inputsFingerprint: inputsFp, poolStream: POOL_STREAM, perArchetype: PER, rows });
   // 2. curate every cell
   const cells = {}, report = {}, short = [];
-  for (const ch of CH) for (const sp of SP) {
+  for (const ch of CH) for (const sp of spOf(ch)) {
     const key = `${ch.id}/${sp}`, cur = curateCell(rows, key, TARGET), stages = {};
     for (const r of rows) { const c = r.cells && r.cells[key]; const st = !r.physical ? "physical" : c ? c.stage : "none"; stages[st] = (stages[st] || 0) + 1; }
     const arch = {}, cls = {}; for (const k of cur.kept) { arch[k.row.archetypeId] = (arch[k.row.archetypeId] || 0) + 1; cls[k.c.classId] = (cls[k.c.classId] || 0) + 1; }

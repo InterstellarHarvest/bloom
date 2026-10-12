@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "2c04bf43fb1fed9df5b9981d8e7a0c51aaa6d894d5104c7db0521cdd27ec2ccf",
+  "fingerprint": "b6f81e180a7c20ac8e30ad31c3628619c59bb9a516a3299ef6ef03dfa2a9c639",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -17,8 +17,8 @@
   ],
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
-    "bytes": 1427075,
-    "sha256": "abe42bae6b4d9940b5f402c41e256be688d95d7fd94836f3244e2fdfd30e6d03",
+    "bytes": 1428038,
+    "sha256": "9de7522365699a90f90523a94ad06e45486890842f27acc8259285a79f5c1d85",
     "surveyWorkerTextBytes": 245578
   },
   "workerInputs": [
@@ -152,9 +152,9 @@
     },
     {
       "path": "resources/challenges/challenge-hub.js",
-      "bytes": 14951,
-      "sha256": "6d5f5be9ff10fa9b2704fbe64d302e81ce9055ebc9d5c40f1198a246357ff4cf",
-      "bytesInBundle": 15054
+      "bytes": 15101,
+      "sha256": "8d747e9eb754ad5c4bc87c018a38812932092dc97dccbfb0af8b70de3a376a43",
+      "bytesInBundle": 15217
     },
     {
       "path": "resources/challenges/challenge-world-prep.js",
@@ -164,9 +164,9 @@
     },
     {
       "path": "resources/challenges/challenge-world-screen.js",
-      "bytes": 24239,
-      "sha256": "366cd18df353669105120313c0e9024d1f1d22b0d6cbed783ca790988bd0544b",
-      "bytesInBundle": 23806
+      "bytes": 25332,
+      "sha256": "2ed53efecf9d98e96b8d62296d4503295266297d70cd03709d204bcb35ee3975",
+      "bytesInBundle": 24606
     },
     {
       "path": "resources/challenges/challenge-world.js",

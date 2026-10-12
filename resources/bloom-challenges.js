@@ -287,10 +287,29 @@
     let s = startCache.get(ch); if (!s) { s = deepFreeze({ adaptations: [...L.adaptations], biomass: L.biomass, source: "challenge" }); startCache.set(ch, s); }
     return s;
   }
+  /** (036C1) what a prescribed starting state CLOSES for the whole run: the plant traits the engine would sell from a normal start but not
+   *  from this one, although none of them is owned (e.g. Flood Adaptation owned → Drought Adaptation: one water strategy). Decided by the
+   *  engine's own legality rule (sim.canBuy / sim.why on the authored First Bloom, Biomass no object) — never a list kept here. Frozen
+   *  [{ id, name, why }] ([] = nothing closed; also for the normal start). Presentation only: the dossier says it so the player need not
+   *  infer it from the Adapt room. */
+  const closedCache = new WeakMap();
+  function closedByStart(ch) {
+    let r = closedCache.get(ch); if (r) return r;
+    const st = startingStateOf(ch), B = root.BLOOM, D = root.BLOOM_DATA;
+    if (!st || !st.adaptations.length) r = deepFreeze([]);
+    else {
+      const mk = start => { const s = B.createSim(D.planets.first_bloom, D.config, D.traits, { rng: () => 0.5, ...(start ? { startingState: start } : {}) }); s.biomass = 1e9; return s; };
+      const a = mk(null), b = mk(st);
+      r = deepFreeze(D.traits.filter(t => B.startingState.BOARDS.includes(t.board) && B.startingState.EFFECTS.includes(t.effect.type))
+        .filter(t => a.canBuy(t) && !b.canBuy(t) && !b.ownedTier(t))
+        .map(t => ({ id: t.id, name: t.name, why: b.why(t) || null })));
+    }
+    closedCache.set(ch, r); return r;
+  }
   const list = () => catalogue().filter(d => d.status === "released").map(resolveDef);
   const ids = () => list().map(c => c.id);
   const provenance = ch => ({ id: ch.id, name: ch.name, version: ch.version, recipeVersion: ch.launch.world.recipe.version, bankVersion: ch.launch.world.bank.version, scenarioId: ch.scenario, icon: ch.presentation.icon });
 
   BLOOM.challenges = { SCHEMA_VERSION, LAUNCH_POLICIES, POLICY_KEYS, RECIPE_KEYS, COMPLETION_WINS, MECHANICS_KEYS, REFERABLE, ICONS, FORBIDDEN_COPY, STATUSES,
-    resolve, list, ids, check, checkChallenge, checkRecipe, fixture, scenarioOf, speciesOf, startingStateOf, provenance };
+    resolve, list, ids, check, checkChallenge, checkRecipe, fixture, scenarioOf, speciesOf, startingStateOf, closedByStart, provenance };
 })(typeof window !== "undefined" ? window : globalThis);
