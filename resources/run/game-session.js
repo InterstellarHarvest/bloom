@@ -67,8 +67,14 @@ const SPECIES=BLOOM_RUN.species;
 const TRAIN=BLOOM_RUN.training||null, TC=TRAIN?BLOOM_DATA.training.copy:null;
 // (BLOOM-036B) a Challenge's prescribed starting state (owned adaptations / Biomass) — the engine's own createSim startingState; null = normal
 const START=TRAIN?null:(BLOOM_RUN.startingState||null);
+// (BLOOM-036D1) a Challenge's COMPLETION contract (resources/challenges/challenge-completion.js). A gated Challenge (a completion condition) hands
+// the engine its GENERIC win gate through the session's tracker (CT, created right after the sim: it records the first EARLY Bloom); every
+// other run — Expedition, Training, an ungated Challenge — passes no gate, so createSim is called exactly as before.
+const CHK=!TRAIN&&BLOOM_RUN.challenge&&BLOOM.challengeCompletion?BLOOM.challengeCompletion.contract(BLOOM_RUN.challenge):null, GATED=!!(CHK&&CHK.gated);
+let CT=null;
 const sim=BLOOM.createSim(BLOOM_RUN.planet, TRAIN?TRAIN.config:BLOOM_DATA.config, BLOOM_DATA.traits,
-  TRAIN?{scenario:BLOOM_RUN.scenario||undefined, rng:BLOOM.gen.mulberry32(TRAIN.rngSeed), species:SPECIES}:{scenario:BLOOM_RUN.scenario||undefined, species:SPECIES, ...(START?{startingState:START}:{})});
+  TRAIN?{scenario:BLOOM_RUN.scenario||undefined, rng:BLOOM.gen.mulberry32(TRAIN.rngSeed), species:SPECIES}:{scenario:BLOOM_RUN.scenario||undefined, species:SPECIES, ...(START?{startingState:START}:{}), ...(GATED?{canWin:(s,c)=>CT.gate(s,c)}:{})});
+if(CHK) CT=BLOOM.challengeCompletion.tracker(BLOOM_RUN.challenge, sim, { onEarlyBloom:()=>{ log("Bloom reached — hold it until the atmosphere settles. In this Challenge the Bloom counts only in the final atmosphere."); } });
 const CFG=sim.config;
 // BLOOM-012: the run's pressure scenario (null / default = no pressure: every readout below is exactly as before)
 const SCN=BLOOM_RUN.scenario||null, PRESS=!!(SCN&&SCN.pressure), PS=sim.pressure;
@@ -1029,14 +1035,14 @@ function winReport(cov){
   const colonyUpgrades=SEC.map((_,i)=>{ const sp=sim.getSpecialization(i); return sp?{ region:secRef(i), upgrade:sp, name:SPEC[sp].name }:null; }).filter(Boolean);
   return { kind:"win", heading:TRAIN?TC.complete.toUpperCase():"BLOOM", coverage:cov, coveragePct:Math.round(cov*100), winAt:sim.winAt, elapsed:elapsed(), identity:reportIdentity(),
     built, terraform, held, gaveUp, colonyUpgrades, analogs:built.filter(b=>b.science).map(b=>({ id:b.id, name:b.name, science:b.science })),
-    pressure:pressureReportData(), competition:competitionReportData(), climate:climateReportData(),
+    pressure:pressureReportData(), competition:competitionReportData(), climate:climateReportData(), completion:CT?CT.reportData("win"):null, // (036D1) a gated Challenge's condition result
     why:{ lead:"every region has a limiting factor: the one condition furthest outside your plant's tolerance. You fixed enough of them to hold the planet",
       gaveUpNote:"No plant tolerates everything. Adapting to one extreme costs you another, so choosing what to sacrifice was the real strategy." } };
 }
 // BLOOM-012: extinction (scenarios that enable it): the engine has confirmed no living plants for the scenario's grace period
 function lossReport(why){
   return { kind:"loss", heading:"EXTINCTION", reason:why, lostReason:sim.lostReason||why, graceSeconds:SCN.loss.extinctionGraceSeconds, elapsed:elapsed(), identity:reportIdentity(),
-    pressure:pressureReportData(), competition:competitionReportData(), climate:climateReportData(),
+    pressure:pressureReportData(), competition:competitionReportData(), climate:climateReportData(), completion:CT?CT.reportData("loss"):null, // (036D1) e.g. Bloom reached early, then lost
     debrief:(SCN.display&&SCN.display.lossNote)||"the planet kept changing and your plant could no longer live on any of its land. Adapting to the new conditions (Adapt), pushing the sky back (Terraform) or protecting your strongest colonies earlier can keep a foothold alive." };
 }
 // the engineering modal's markup (?ui=legacy only), rendered from the structured report — the same words as before
@@ -1148,7 +1154,8 @@ if(BLOOM.runUI){
       colonyWord:w=>COLONY_WORD[w], colonyHint:w=>COLONY_HINT[w], colonyTip, focusUI:FOCUS_UI, specUI:SPEC_UI, geoInfo, compWhy,
       pressureStatus, phaseName, climForecast, upgradeState, offeredOn, computePreview, tileAt:(x,y)=>tileAt({clientX:x, clientY:y}),
       runMenu:()=>PLAY?{label:TRAIN?TC.menu:PC.actions.menu, items:playActions()}:null,
-      report:()=>REPORT, reportActions }, // (BLOOM-029E) the structured run-end report and its actions (the modal reads the same)
+      report:()=>REPORT, reportActions, // (BLOOM-029E) the structured run-end report and its actions (the modal reads the same)
+      completion:()=>CT?CT.progress():null }, // (BLOOM-036D1) a gated Challenge's live completion state (null: the ordinary Bloom)
     act:{ setRunning, setSpeed, selectAt, showPreview, clearPreview, buy, chooseFocus, buySpec, collectBubbleAt, placeBubble,
       runAction:id=>{ const a=PLAY&&playActions().find(x=>x.id===id); return a?goAction(a.id,a.href||""):false; }, reportAction },
     // (BLOOM-029B) the map's render hints and this page's own transient map feedback, for the production map
@@ -1399,11 +1406,15 @@ const API=root.BLOOM_API={
     const archetype = A || { id: X.archetypeId, name: (P.archetype && P.archetype.name) || X.archetypeId, render: X.render || null, display: null, standIn: true };
     const pa = P.archetype || null;
     if (ch.launch.world.bank.version !== X.bank.bankVersion) throw new Error(`BLOOM.gameSession.challengeRun: the instance came from bank v${X.bank.bankVersion}, the Challenge ships v${ch.launch.world.bank.version}`);
+    // (036D1) the completion contract the instance was proven for is the one the Challenge completes by now
+    const K = B.challengeCompletion.contract(ch);
+    if (!X.completion || X.completion.fingerprint !== K.fingerprint) throw new Error(`BLOOM.gameSession.challengeRun: the instance was proven for completion ${X.completion && X.completion.fingerprint}, ${ch.name} completes by ${K.fingerprint}`);
     const challengeRun = { source: "seed-bank", challengeId: ch.id, challengeVersion: ch.version, recipeVersion: X.recipeVersion, recipeKey: ch.recipeKey,
       bankVersion: X.bank.bankVersion, cellKey: X.bank.cellKey, entryIndex: X.entryIndex, entries: X.bank.entries, validator: X.bank.validator,
       scenarioId: scenario.id, speciesId: species.id, speciesPolicy: X.speciesPolicy, physiologyKey: species.physiologyKey, launchSeed: X.launchSeed,
       planetSeed: X.worldSeed, archetypeId: X.archetypeId, attempt: X.candidate.attempt, fingerprint: fingerprint || X.fingerprint, instanceFingerprint: X.fingerprint,
-      startingState: start ? { adaptations: [...start.adaptations], biomass: start.biomass, source: "challenge" } : null, scenarioValidation: { status: sv.status, strategiesProven: sv.strategiesProven } };
+      startingState: start ? { adaptations: [...start.adaptations], biomass: start.biomass, source: "challenge" } : null, scenarioValidation: { status: sv.status, strategiesProven: sv.strategiesProven },
+      completion: { fingerprint: K.fingerprint, conditions: K.conditions.map(c => c.type) } };
     const summary = { kind: "procedural", challenge: B.challenges.provenance(ch), source: challengeRun.source, planetId: P.id, name: P.name, archetypeId: X.archetypeId,
       archetype: archetype.name, publicSeed: X.worldSeed, attempt: X.candidate.attempt, validatedLayers: pa ? pa.validatedLayers || null : null,
       landmasses: pa ? pa.landmasses ?? null : null, actualWaterPct: pa ? pa.actualWaterPct ?? null : null, scenarioId: scenario.id, scenario: scenario.name,

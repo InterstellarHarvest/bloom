@@ -396,6 +396,14 @@
     const LANDMASS = SEC.map((_, i) => CROSS.landmass[SEC_TILES[i][0]]);
     const crossStat = (traits.find(t => t.effect.type === "crossing") || { effect: {} }).effect.stat;
     const winAt = planet.winThreshold ?? C.win;
+    // (BLOOM-036D1) an OPTIONAL, GENERIC win gate: opts.canWin(sim, coverage) → true | false, asked only on a tick whose coverage has reached
+    // winAt while the run is not yet won. Absent (every Expedition, Training and ungated Challenge run) = the ordinary coverage win, exactly as
+    // before (nothing is called, nothing else changes). Present: coverage ≥ winAt is NECESSARY but not sufficient — the run is won on the first
+    // tick where coverage ≥ winAt AND the gate returns true. Until then sim.won stays false, so the run keeps ticking, onWin does not fire and
+    // extinction stays live (a gated run can still be lost). The engine knows nothing of what the gate tests (no Challenge id, no condition
+    // name): the caller owns its meaning. It must be a pure read of the sim — never a mutation, never randomness.
+    const WIN_GATE = opts.canWin == null ? null : opts.canWin;
+    if (WIN_GATE !== null && typeof WIN_GATE !== "function") throw new Error("bloom-sim: opts.canWin must be a function (sim, coverage) => boolean, or absent");
     // pressure scenario (BLOOM-012): definition is data; this run's live pressure state is sim.pressure (below)
     const SCN = opts.scenario || null;
     if (SCN) { const bad = checkScenario(SCN); if (bad.length) throw new Error(`bloom-sim: scenario ${SCN.id}: ${bad.join("; ")}`); }
@@ -518,7 +526,10 @@
       colonies: { focus: SEC.map(() => "balanced"), spec: SEC.map(() => null) },
       spent: { global: 0, local: 0 }, // Biomass spent on shop upgrades / local specializations
       biomass: C.econ.startBiomass, income: 0, ticks: 0, won: false,
-      onWin: null, // (coverage) => void, called once from the tick that crosses winAt
+      // sim.won = the RUN's actual completion: set (once) on the first tick with coverage ≥ winAt that the optional win gate permits
+      // (no gate: the first tick that reaches winAt). winGated: a gate was supplied (provenance only; the engine never reads it)
+      winGated: WIN_GATE !== null,
+      onWin: null, // (coverage) => void, called once from the tick that wins (see sim.won)
       // scenario pressure (BLOOM-012). active = the scenario has pressure channels; seconds = scenario clock (run time);
       // progress 0..1; offsets = the CURRENT environmental drift every evaluation uses; phase = index into the scenario's
       // phases (-1 = grace period, still stable); events = phase changes { tick, phase, progress } (UI milestone feedback).
@@ -993,9 +1004,9 @@
       }
       for (const b of bubbles) { b.life++; if (b.life > E.bubbleAutoTicks) { sim.biomass += E.bubbleValue * E.autoCollectShare; b.dead = true; } }
       for (let k = bubbles.length - 1; k >= 0; k--) if (bubbles[k].dead) bubbles.splice(k, 1);
-      // 5. win check
+      // 5. win check (BLOOM-036D1: a supplied win gate must also permit it — asked only when coverage has reached winAt)
       const cov = coverage();
-      if (!sim.won && cov >= winAt) { sim.won = true; if (sim.onWin) sim.onWin(cov); }
+      if (!sim.won && cov >= winAt && (WIN_GATE === null || WIN_GATE(sim, cov) === true)) { sim.won = true; if (sim.onWin) sim.onWin(cov); }
       if (CP) compAfterTick();
       // 6. extinction (pressure scenarios that enable it): no Living tile anywhere for the whole grace → the run is lost
       if (LOSS && !sim.won) {

@@ -1,8 +1,8 @@
 {
- "builtAt": "2026-10-12T14:40:00.227Z",
- "gitHead": "d8ca0cb",
- "wallSeconds": 2455,
- "workers": 12,
+ "builtAt": "2026-10-12T21:59:51.014Z",
+ "gitHead": "d0eaf8f",
+ "wallSeconds": 4164,
+ "workers": 14,
  "hardwareThreads": 16,
  "pool": {
   "perArchetype": 160,
@@ -13,9 +13,9 @@
  "target": 50,
  "provisional": false,
  "limitingCells": [],
- "inputsFingerprint": "1d2974cdecae151b",
- "bankSha256": "5cd2e385963abcfdaf2a3bd5191f721ae2207b2c17510ef93cb1420737d1bcf3",
- "bankBytes": 364165,
+ "inputsFingerprint": "cf96f14e470882d7",
+ "bankSha256": "8506124b462cf4d47710a1eb37806ddead9dd3f600c28c36cfcfd071fda59e40",
+ "bankBytes": 400847,
  "cells": {
   "dying_world/organic_hybrid": {
    "evaluated": 480,
@@ -45,8 +45,8 @@
    },
    "minPairDistance": 0.4447,
    "cpuSeconds": {
-    "species": 2,
-    "proof": 840
+    "species": 4,
+    "proof": 1576
    },
    "proof": {
     "simulations": 144,
@@ -83,8 +83,8 @@
    },
    "minPairDistance": 0.4046,
    "cpuSeconds": {
-    "species": 243,
-    "proof": 1738
+    "species": 457,
+    "proof": 3327
    },
    "proof": {
     "simulations": 312,
@@ -121,8 +121,8 @@
    },
    "minPairDistance": 0.4662,
    "cpuSeconds": {
-    "species": 211,
-    "proof": 1032
+    "species": 420,
+    "proof": 1585
    },
    "proof": {
     "simulations": 212,
@@ -159,8 +159,8 @@
    },
    "minPairDistance": 0.4271,
    "cpuSeconds": {
-    "species": 224,
-    "proof": 916
+    "species": 419,
+    "proof": 1597
    },
    "proof": {
     "simulations": 180,
@@ -197,8 +197,8 @@
    },
    "minPairDistance": 0.4907,
    "cpuSeconds": {
-    "species": 2,
-    "proof": 4021
+    "species": 4,
+    "proof": 8207
    },
    "proof": {
     "simulations": 125,
@@ -235,8 +235,8 @@
    },
    "minPairDistance": 0.3965,
    "cpuSeconds": {
-    "species": 238,
-    "proof": 3428
+    "species": 464,
+    "proof": 6336
    },
    "proof": {
     "simulations": 155,
@@ -273,8 +273,8 @@
    },
    "minPairDistance": 0.3698,
    "cpuSeconds": {
-    "species": 208,
-    "proof": 2760
+    "species": 422,
+    "proof": 5243
    },
    "proof": {
     "simulations": 104,
@@ -310,8 +310,8 @@
    },
    "minPairDistance": 0.4405,
    "cpuSeconds": {
-    "species": 218,
-    "proof": 2873
+    "species": 422,
+    "proof": 7076
    },
    "proof": {
     "simulations": 110,
@@ -347,8 +347,8 @@
    },
    "minPairDistance": 0.4756,
    "cpuSeconds": {
-    "species": 2,
-    "proof": 1437
+    "species": 4,
+    "proof": 2566
    },
    "proof": {
     "simulations": 162,
@@ -385,8 +385,8 @@
    },
    "minPairDistance": 0.399,
    "cpuSeconds": {
-    "species": 230,
-    "proof": 1919
+    "species": 463,
+    "proof": 3643
    },
    "proof": {
     "simulations": 138,
@@ -423,8 +423,8 @@
    },
    "minPairDistance": 0.4586,
    "cpuSeconds": {
-    "species": 206,
-    "proof": 1857
+    "species": 414,
+    "proof": 3155
    },
    "proof": {
     "simulations": 201,
@@ -461,8 +461,8 @@
    },
    "minPairDistance": 0.3999,
    "cpuSeconds": {
-    "species": 214,
-    "proof": 1142
+    "species": 411,
+    "proof": 2086
    },
    "proof": {
     "simulations": 116,
@@ -493,8 +493,8 @@
    },
    "minPairDistance": 0.6201,
    "cpuSeconds": {
-    "species": 66,
-    "proof": 315
+    "species": 180,
+    "proof": 851
    },
    "proof": {
     "simulations": 154,
@@ -527,12 +527,49 @@
    },
    "minPairDistance": 0.5938,
    "cpuSeconds": {
-    "species": 68,
-    "proof": 1749
+    "species": 120,
+    "proof": 3298
    },
    "proof": {
     "simulations": 80,
     "confirmations": 120,
+    "allPass": true
+   }
+  },
+  "thin_air/woolly_candle": {
+   "evaluated": 480,
+   "stages": {
+    "ok": 310,
+    "physical": 5,
+    "scenario": 3,
+    "species": 2,
+    "recipe": 160
+   },
+   "passing": 310,
+   "qualifyingPct": 64.6,
+   "retained": 50,
+   "deprioritized": 31,
+   "passingByArchetype": {
+    "ocean_archipelago": 153,
+    "desert_world": 157
+   },
+   "retainedByArchetype": {
+    "desert_world": 25,
+    "ocean_archipelago": 25
+   },
+   "retainedByClass": {
+    "extreme": 28,
+    "precarious": 14,
+    "favorable": 8
+   },
+   "minPairDistance": 0.4336,
+   "cpuSeconds": {
+    "species": 360,
+    "proof": 879
+   },
+   "proof": {
+    "simulations": 152,
+    "confirmations": 0,
     "allPass": true
    }
   }

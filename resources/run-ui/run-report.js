@@ -123,6 +123,13 @@
       const parts = [...[...n].map(([w, k]) => w + (k > 1 ? ` ×${k}` : "")), ...(st.biomass != null ? [`${st.biomass} Biomass`] : [])];
       return `<p class="rr-note rr-given" data-given="challenge">${ico("info")}<span>Given by the Challenge at landing: ${esc(parts.join(" · "))}.</span></p>`;
     }
+    // (036D1) a gated Challenge's completion condition: its result in the Challenge's own words (a win shows it ✓ — part of the win condition,
+    // never a bonus or a score; a loss says what the condition was doing, e.g. a Bloom reached early that did not survive the final conditions)
+    function completionCard(d) {
+      const C = d.completion; if (!C) return "";
+      const ok = d.kind === "win";
+      return `<section class="rr-sec rr-cond" data-kind="${ok ? "met" : "loss"}" aria-label="${esc(C.mark)}"><h3>${ico(ok ? "check" : "pressure")}${esc(C.mark)}</h3>${C.lines.map(l => `<p>${esc(l)}</p>`).join("")}</section>`;
+    }
     function render(d) {
       const win = d.kind === "win", i = d.identity;
       layer.dataset.kind = d.kind; layer.dataset.training = String(!!i.training);
@@ -158,6 +165,7 @@
       // the text column
       let html = "";
       if (win) {
+        html += completionCard(d);
         html += `<section class="rr-sec" aria-label="Regions bloomed"><h3>${ico("regions")}Regions bloomed</h3><div class="rr-chips">${(d.held || []).map(h => chip(`${ico("check")}${esc(h.region.name)}`, "rg ok")).join("") || chip("None yet", "rg")}</div></section>`;
         if ((d.colonyUpgrades || []).length) html += `<section class="rr-sec" aria-label="Colony upgrades"><h3>${ico("colony")}Colony upgrades</h3><div class="rr-chips">${d.colonyUpgrades.map(c => chip(`${ico("colony")}${esc(c.name)} <i>in ${esc(c.region.name)}</i>`, "rg")).join("")}</div></section>`;
         html += `<section class="rr-sec rr-why" aria-label="Why it worked"><h3>${ico("science")}Why it worked</h3><p>${esc(cap(d.why.lead))}${(d.gaveUp || []).length ? ", and your build gave these up:" : "."}</p>` +
@@ -165,6 +173,7 @@
         if ((d.analogs || []).length) html += `<section class="rr-sec rr-analog" aria-label="Real plants do this too"><h3>${ico("science")}Real plants do this too</h3><ul>${d.analogs.map(a => `<li><b>${esc(a.name)}</b> — ${esc(a.science)}</li>`).join("")}</ul></section>`;
       } else {
         html += `<section class="rr-sec rr-why" aria-label="What happened"><h3>${ico("alert")}What happened</h3><p>${esc(cap(d.debrief))}</p></section>`;
+        html += completionCard(d);
       }
       html += scenarioCards(d);
       $("rrText").innerHTML = html;

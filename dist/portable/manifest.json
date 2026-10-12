@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "b6f81e180a7c20ac8e30ad31c3628619c59bb9a516a3299ef6ef03dfa2a9c639",
+  "fingerprint": "c5da9400fdf73b91584cb329110c2b2aa3a3da3e70273bdebb6734d4df885fac",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -17,9 +17,9 @@
   ],
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
-    "bytes": 1428038,
-    "sha256": "9de7522365699a90f90523a94ad06e45486890842f27acc8259285a79f5c1d85",
-    "surveyWorkerTextBytes": 245578
+    "bytes": 1431876,
+    "sha256": "ce3b7062bdf36fdbfd3630c0b9497eb75ad0bac0ba6e390b4a6aacfa99e0e97a",
+    "surveyWorkerTextBytes": 246251
   },
   "workerInputs": [
     "content/archetypes.js",
@@ -122,8 +122,8 @@
     },
     {
       "path": "resources/bloom-sim.js",
-      "bytes": 96102,
-      "sha256": "c8c362a74cbabf64bb57fdb6f3e38a7949bed0a2e818828c0a8e5cc89a159d9e",
+      "bytes": 97631,
+      "sha256": "9d50d5b03e9f42dd72fd7ae09ddddbe4cc2d4edd777173de77049a6e4c24866d",
       "bytesInBundle": 0
     },
     {
@@ -140,21 +140,21 @@
     },
     {
       "path": "resources/bloom-witness.js",
-      "bytes": 41949,
-      "sha256": "11a9d33b1d047fceb965524d89dd45f5df08a38a8c3716645dcdf39fc7da0343",
+      "bytes": 42028,
+      "sha256": "b2697e70489ada4720d67f5cb09cb481c37ca004df5e6cc10f9893d76ce7a45b",
       "bytesInBundle": 0
     },
     {
       "path": "resources/challenges/challenge-bank.js",
-      "bytes": 15662,
-      "sha256": "b646ae043b156a3a23d7e47cc6d6d31222162d3a0949a7b1ce733630ddaa7350",
-      "bytesInBundle": 11312
+      "bytes": 16960,
+      "sha256": "1aa805bab207173dd1da6bdd71d5c60ab34e1afdfdeb49c6968d3bb6648c1bdd",
+      "bytesInBundle": 11986
     },
     {
       "path": "resources/challenges/challenge-hub.js",
-      "bytes": 15101,
-      "sha256": "8d747e9eb754ad5c4bc87c018a38812932092dc97dccbfb0af8b70de3a376a43",
-      "bytesInBundle": 15217
+      "bytes": 17097,
+      "sha256": "e30aaddf012edfbdf0af6fa4c408acc5982d9e6dd21577f32d010db5e10b19b5",
+      "bytesInBundle": 16818
     },
     {
       "path": "resources/challenges/challenge-world-prep.js",
@@ -164,9 +164,9 @@
     },
     {
       "path": "resources/challenges/challenge-world-screen.js",
-      "bytes": 25332,
-      "sha256": "2ed53efecf9d98e96b8d62296d4503295266297d70cd03709d204bcb35ee3975",
-      "bytesInBundle": 24606
+      "bytes": 26214,
+      "sha256": "92e03d60cb374d561b6d468db1f100c3fa3d4820ab879ba174522641295baf8c",
+      "bytesInBundle": 25490
     },
     {
       "path": "resources/challenges/challenge-world.js",

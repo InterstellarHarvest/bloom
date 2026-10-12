@@ -235,7 +235,7 @@
       if (r.ok && CONFIRM.length) { // robustness: the same plan under other simulation seeds (each a full run: margin + hold)
         // (confirmation runs verify a found witness; they are counted apart and never use up the search budget)
         r.confirm = CONFIRM.map(seed => { search.confirmations = (search.confirmations || 0) + 1; const c = timed("c", () => simulate(planet, config, traits, plan, target, false, SCN, seed, SP, ST));
-          return { rngSeed: seed, ok: c.ok, marginSeconds: c.marginSeconds, hold: c.hold && { coverage: c.hold.coverage, held: c.hold.held }, lost: c.lost,
+          return { rngSeed: seed, ok: c.ok, marginSeconds: c.marginSeconds, hold: c.hold && { seconds: c.hold.seconds, coverage: c.hold.coverage, held: c.hold.held, progress: c.hold.progress }, lost: c.lost,
             ...(c.climate ? { shocks: c.climate.shocks.length, noEvidence: c.climate.noEvidence } : {}) }; });
         if (r.confirm.some(c => !c.ok)) { r.ok = false; r.unconfirmed = true; } }
       r.staticCoverage = cand.cov; r.build = cand.items; if (r.ok) r.signature = signature(cand.items); return r; };
@@ -321,7 +321,7 @@
       heldShare: w.signature.heldShare, build: w.build, plan: w.plan, purchases: w.purchases.map(p => ({ id: p.id, seconds: p.seconds, cost: p.cost })),
       totalSpent: w.totalSpent, winSeconds: w.winSeconds, marginSeconds: w.marginSeconds, peak: w.peak, peakMeasured: w.peakMeasured,
       pacing: w.pacing, pacingCheck: w.pacingCheck,
-      ...(w.scenario ? { scenario: w.scenario, order: w.order, pressureAtMargin: w.pressureAtMargin, hold: w.hold && { seconds: w.hold.seconds, coverage: w.hold.coverage, held: w.hold.held },
+      ...(w.scenario ? { scenario: w.scenario, order: w.order, pressureAtMargin: w.pressureAtMargin, hold: w.hold && { seconds: w.hold.seconds, coverage: w.hold.coverage, held: w.hold.held, progress: w.hold.progress },
         trace: w.trace } : {}), ...(w.competition ? { competition: w.competition } : {}), ...(w.climate ? { climate: w.climate } : {}), ...(w.confirm ? { confirm: w.confirm } : {}) });
     const classRows = classes.map(c => ({ signature: c.signature.key, members: c.members.length, status: c.status || "not reached", cheapest: c.members[0].cost,
       ...(c.coreIncomplete ? { winsBeforeCoreBought: c.coreIncomplete } : {}) }));

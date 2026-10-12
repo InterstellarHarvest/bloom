@@ -22,9 +22,13 @@
 // Nothing here runs BLOOM.findWitness, BLOOM.species.validateFor or BLOOM.validateScenario (tools/challenge-world-check proves it).
 import { assessWorld, classFor, surveyDossier, physicalKey, planetFingerprint, speciesFor, startKey } from "../destination-survey/survey-data.js";
 
-export const BANK_FORMAT = 1;                  // the bank file's structure
+// (036D1) format 2: every cell's provenance carries the completion contract's fingerprint (completionFingerprint). A format-1 bank (no
+// completion provenance) is STALE and refused — never read as "ordinary Bloom" by default.
+export const BANK_FORMAT = 2;                  // the bank file's structure
 export const INSTANCE_FORMAT = 2;              // a bank-backed Challenge instance (036B's live-search instances were format 1: refused)
-export const VALIDATOR_ID = "challenge-bank-validation@1";   // what the builder proves for an entry (see the builder header) — part of provenance
+// (036D1) @2: the builder also PROVES the Challenge's completion contract from the layer-P witness evidence (BLOOM.challengeCompletion.prove;
+// an ungated Challenge proves nothing more) — @1 entries never asserted it
+export const VALIDATOR_ID = "challenge-bank-validation@2";   // what the builder proves for an entry (see the builder header) — part of provenance
 export const AVOID_RECENT = 8;                 // in-session repeat avoidance: never reuse one of the last N entries of a cell while others remain
 
 const deps0 = deps => ({ BLOOM: (deps && deps.BLOOM) || globalThis.BLOOM, BLOOM_DATA: (deps && deps.BLOOM_DATA) || globalThis.BLOOM_DATA });
@@ -51,7 +55,9 @@ export function cellProvenance(ch, species, deps) {
   return { challengeId: ch.id, challengeVersion: ch.version, recipeVersion: R.version, recipeFingerprint: fnv(stable(R)), scenarioId: S.id, scenarioFingerprint: scenarioFingerprint(S),
     speciesId: sp.id, physiologyVersion: sp.physiologyVersion, physiologyKey: sp.physiologyKey, startingState: st ? startKey(st) : null,
     worldGenVersion: BLOOM.archetype.WORLD_GEN_VERSION, archetypes: Object.fromEntries(R.archetypes.map(a => [a, archetypeFingerprint(D.archetypes.find(x => x.id === a))])),
-    rulesFingerprint: rulesFingerprint(deps), validator: VALIDATOR_ID };
+    rulesFingerprint: rulesFingerprint(deps), validator: VALIDATOR_ID,
+    // (036D1) the resolved completion contract (win + conditions + their versions): any completion change makes the cell STALE
+    completionFingerprint: BLOOM.challengeCompletion.fingerprint(ch) };
 }
 export const cellKey = (chId, spId) => `${chId}/${spId}`;
 
@@ -141,8 +147,12 @@ export function makeBankInstance({ challenge, species, launchSeed, cell, pick, w
     worldType: P.worldType, tagline: P.tagline, cue: P.cue, validation: P.validation, fingerprint: P.fingerprint,
     speciesId: sp.id, physiologyVersion: sp.physiologyVersion, physiologyKey: sp.physiologyKey, habitable: ev.habitable, classId: ev.classId, playability: ev.playability,
     scenarioId: ch.scenario, scenarioValidation: sv, bank };
+  // (036D1) the completion contract the run plays (and the cell was proven under: checked by bankCell)
+  const K = BLOOM.challengeCompletion.contract(ch);
+  if (cell.provenance.completionFingerprint !== K.fingerprint) throw Object.assign(new Error(`challenge-bank: the cell was proven for completion ${cell.provenance.completionFingerprint}, ${ch.name} completes by ${K.fingerprint}`), { code: "STALE_BANK" });
+  const completion = Object.freeze({ fingerprint: K.fingerprint, conditions: Object.freeze(K.conditions.map(c => c.type)) });
   return Object.freeze({ kind: "challenge-instance", format: INSTANCE_FORMAT, source: "seed-bank",
-    challenge: ch, challengeId: ch.id, challengeVersion: ch.version, recipeVersion: R.version, recipeKey: ch.recipeKey, scenarioId: ch.scenario,
+    challenge: ch, challengeId: ch.id, challengeVersion: ch.version, recipeVersion: R.version, recipeKey: ch.recipeKey, scenarioId: ch.scenario, completion,
     species: sp, speciesId: sp.id, speciesPolicy: ch.launch.species.policy,
     launchSeed, bank, entryIndex: pick.index,
     startingState: start, startingStatePolicy: ch.launch.startingState.policy,
@@ -154,4 +164,5 @@ export function makeBankInstance({ challenge, species, launchSeed, cell, pick, w
 export const instanceProvenance = X => ({ challengeId: X.challengeId, challengeVersion: X.challengeVersion, recipeVersion: X.recipeVersion, recipeKey: X.recipeKey,
   scenarioId: X.scenarioId, speciesId: X.speciesId, speciesPolicy: X.speciesPolicy, launchSeed: X.launchSeed, bankVersion: X.bank.bankVersion, cellKey: X.bank.cellKey,
   entryIndex: X.entryIndex, planetSeed: X.worldSeed, archetypeId: X.archetypeId, fingerprint: X.fingerprint,
+  completion: { fingerprint: X.completion.fingerprint, conditions: [...X.completion.conditions] },
   startingState: X.startingState ? { adaptations: [...X.startingState.adaptations], biomass: X.startingState.biomass, source: "challenge" } : null });

@@ -192,6 +192,7 @@ export class ChallengeWorldScreen {
               <p class="cw-sec-k">${ico(ch.presentation.icon)}<span>The challenge</span></p>
               <h3 class="cw-ch-name">${esc(ch.name)}</h3>
               <dl class="cw-ch-rows">
+                ${this._goalRow(window.BLOOM_DATA.config.win)}
                 <div><dt>What changes</dt><dd>${esc(ch.presentation.tagline)}</dd></div>
                 <div><dt>Strategic idea</dt><dd>${esc(ch.presentation.strategicIdea)}</dd></div>
               </dl>
@@ -234,8 +235,17 @@ export class ChallengeWorldScreen {
     this._paintPlant();
   }
 
+  /** (036D1) a gated Challenge's completion contract ("To win": BLOOM · n% of land alive AND each condition); "" for the ordinary Bloom. */
+  _goalRow(winAt) {
+    const G = window.BLOOM.challengeCompletion.goal(this.challenge, winAt); if (!G.gated) return "";
+    return `<div class="cw-goal" data-gated="true"><dt>To win</dt><dd><p class="cw-goal-l"><b>${esc(G.bloom.title.toUpperCase())}</b><span>${esc(G.bloom.body)}</span></p>` +
+      G.conditions.map(k => `<p class="cw-goal-l cond" data-condition="${esc(k.type)}"><b>${esc(k.title.toUpperCase())}</b><span>${esc(k.body)}</span></p>`).join("") + `</dd></div>`;
+  }
+
   _fillDossier(X) {
     const d = X.dossier, q = s => this.root.querySelector(s), h = d.habitable;
+    // (036D1) the goal quotes THIS planet's own Bloom threshold
+    const goal = q(".cw-goal"); if (goal) goal.outerHTML = this._goalRow(X.planet.winThreshold ?? window.BLOOM_DATA.config.win);
     this.title.textContent = d.name;
     q(".cw-type").textContent = X.candidate.worldType;
     q(".cw-tagline").textContent = d.tagline || "";

@@ -11,13 +11,13 @@ exactly a rebuild from the cached candidates).
 |---|---|
 | Pool | 480 worlds = 3 archetypes × 160 World Seeds, stream `bloom-036b1 challenge seed bank pool v1` (species- and Challenge-free) |
 | Physical validation passed | 475 / 480 (the production generation path: archetype layers 1–8, its accepted attempt) |
-| Cells | 14 (every released Challenge × each species it allows: player choice = 4 cells, a prescribed plant = 1), target 50 entries each |
+| Cells | 15 (every released Challenge × each species it allows: player choice = 4 cells, a prescribed plant = 1), target 50 entries each |
 | Result | every cell holds 50; **not provisional** |
 | Validation per candidate | species evaluation + S2 (from the prescribed start if any) → recipe → the scenario's layer P at the validator's FULL budget with every confirmation run → Challenge quality |
-| Builder | 12 worker threads on 16 hardware threads · wall 41 min · git d8ca0cb |
-| Inputs fingerprint | `1d2974cdecae151b` (every cell's provenance; a change re-evaluates every candidate) |
-| Bank | 364165 bytes · sha256 `5cd2e385963abcfdaf2a3bd5191f721ae2207b2c17510ef93cb1420737d1bcf3` |
-| Candidate cache | 5236055 bytes · sha256 `fb7da6272e9d9262d9e00c28583cd50ca96115776b37dfcd302db7e5299cf61a` |
+| Builder | 14 worker threads on 16 hardware threads · wall 69 min · git d0eaf8f |
+| Inputs fingerprint | `cf96f14e470882d7` (every cell's provenance; a change re-evaluates every candidate) |
+| Bank | 400847 bytes · sha256 `8506124b462cf4d47710a1eb37806ddead9dd3f600c28c36cfcfd071fda59e40` |
+| Candidate cache | 5622651 bytes · sha256 `d978736f2207a29366980bb796b634cab2a6a3819068d94f1ec4968103c9cd92` |
 
 ## 2. Accepted / rejected — per Challenge × species
 
@@ -40,6 +40,7 @@ cover floor; unused) · **scenario** (layer P failed) · **quality** (passed, bu
 | `volatile_climate/reed_spire` | 480 | 5 | 0 | 0 | 1 | 0 | 10 | 0 | 464 | 464 (96.7 %) | **50** | 46 | desert 17 · frozen 17 · ocean 16 | extreme 21 · precarious 7 · favorable 22 |
 | `low_tide/organic_hybrid` | 480 | 5 | 320 | 0 | 0 | 0 | 77 | 0 | 78 | 78 (16.3 %) | **50** | 7 | ocean 50 | favorable 50 |
 | `oasis_line/reed_spire` | 480 | 5 | 315 | 0 | 1 | 0 | 46 | 0 | 113 | 113 (23.5 %) | **50** | 11 | desert 50 | precarious 6 · extreme 44 |
+| `thin_air/woolly_candle` | 480 | 5 | 160 | 0 | 2 | 0 | 3 | 0 | 310 | 310 (64.6 %) | **50** | 31 | desert 25 · ocean 25 | extreme 28 · precarious 14 · favorable 8 |
 
 ## 3. Proof summary (the retained entries)
 
@@ -62,6 +63,7 @@ follow each scenario's own `validation.confirmRngSeeds` (Native Competition and 
 | `volatile_climate/reed_spire` | yes | 116 / 1 | 218 | 291.8 (240.5–762.7) | 0.74 | climate shocks median 0 |
 | `low_tide/organic_hybrid` | yes | 154 / 1 | 0 | 397.4 (247.8–893.1) | 0.74 | climate shocks median 0 |
 | `oasis_line/reed_spire` | yes | 80 / 1 | 120 | 503.7 (285.1–816.5) | 0.73 | climate shocks median 0 |
+| `thin_air/woolly_candle` | yes | 152 / 1 | 0 | 279.7 (240–861) | 0.74 | climate shocks median 0 |
 
 ## 4. Diversity (curation)
 
@@ -85,27 +87,29 @@ near-duplicate). Ranges: passing candidates → retained 50 (full table: [`distr
 | `volatile_climate/reed_spire` | 0.3999 | 6 | 0 %–83 % → 0 %–73 % | 2 %–62 % → 2 %–52 % | 2 %–71 % → 2 %–69 % | -22.54–22.65 → -22.54–21.05 | 240–763 → 241–763 |
 | `low_tide/organic_hybrid` | 0.6201 | 1 | 49 %–99 % → 49 %–99 % | 4 %–55 % → 4 %–55 % | 55 %–70 % → 56 %–70 % | 7.09–19.03 → 7.09–19.03 | 248–893 → 248–893 |
 | `oasis_line/reed_spire` | 0.5938 | 3 | 0 %–33 % → 0 %–33 % | 2 %–33 % → 2 %–33 % | 2 %–12 % → 2 %–12 % | 16.6–21.46 → 16.6–21.46 | 285–817 → 285–817 |
+| `thin_air/woolly_candle` | 0.4336 | 5 | 0 %–68 % → 0 %–61 % | 2 %–55 % → 2 %–55 % | 2 %–71 % → 2 %–70 % | 5.54–22.65 → 5.88–22.65 | 240–861 → 240–861 |
 
 ## 5. Builder cost (CPU, summed over worker threads)
 
 | Cell | species evaluation s | layer-P proof s | proof s per retained entry |
 |---|---:|---:|---:|
-| `dying_world/organic_hybrid` | 2 | 840 | 17 |
-| `dying_world/cinder_rosette` | 243 | 1738 | 35 |
-| `dying_world/woolly_candle` | 211 | 1032 | 21 |
-| `dying_world/reed_spire` | 224 | 916 | 18 |
-| `native_competition/organic_hybrid` | 2 | 4021 | 80 |
-| `native_competition/cinder_rosette` | 238 | 3428 | 69 |
-| `native_competition/woolly_candle` | 208 | 2760 | 55 |
-| `native_competition/reed_spire` | 218 | 2873 | 57 |
-| `volatile_climate/organic_hybrid` | 2 | 1437 | 29 |
-| `volatile_climate/cinder_rosette` | 230 | 1919 | 38 |
-| `volatile_climate/woolly_candle` | 206 | 1857 | 37 |
-| `volatile_climate/reed_spire` | 214 | 1142 | 23 |
-| `low_tide/organic_hybrid` | 66 | 315 | 6 |
-| `oasis_line/reed_spire` | 68 | 1749 | 35 |
+| `dying_world/organic_hybrid` | 4 | 1576 | 32 |
+| `dying_world/cinder_rosette` | 457 | 3327 | 67 |
+| `dying_world/woolly_candle` | 420 | 1585 | 32 |
+| `dying_world/reed_spire` | 419 | 1597 | 32 |
+| `native_competition/organic_hybrid` | 4 | 8207 | 164 |
+| `native_competition/cinder_rosette` | 464 | 6336 | 127 |
+| `native_competition/woolly_candle` | 422 | 5243 | 105 |
+| `native_competition/reed_spire` | 422 | 7076 | 142 |
+| `volatile_climate/organic_hybrid` | 4 | 2566 | 51 |
+| `volatile_climate/cinder_rosette` | 463 | 3643 | 73 |
+| `volatile_climate/woolly_candle` | 414 | 3155 | 63 |
+| `volatile_climate/reed_spire` | 411 | 2086 | 42 |
+| `low_tide/organic_hybrid` | 180 | 851 | 17 |
+| `oasis_line/reed_spire` | 120 | 3298 | 66 |
+| `thin_air/woolly_candle` | 360 | 879 | 18 |
 
-Native Competition is 50 % of all proof CPU (13082 of 26027 s) — the cost the live search used to put in front of the player
+Native Competition is 52 % of all proof CPU (26862 of 51425 s) — the cost the live search used to put in front of the player
 ([`../NATIVE_COMPETITION_LATENCY_STUDY.md`](../NATIVE_COMPETITION_LATENCY_STUDY.md), superseded). It is now paid once, offline.
 
 ## 6. Provenance (stale-bank protection)
@@ -132,7 +136,8 @@ difference (`STALE_BANK`). Example — `native_competition/organic_hybrid`:
   "frozen_world": "69dfd739"
  },
  "rulesFingerprint": "053ed983",
- "validator": "challenge-bank-validation@1"
+ "validator": "challenge-bank-validation@2",
+ "completionFingerprint": "c59f4a25"
 }
 ```
 
@@ -142,4 +147,4 @@ An entry carries what regenerates and verifies the exact world plus its proof pr
 {"archetypeId":"desert_world","seed":98716,"attempt":0,"generationSeed":3691814810,"requestedWaterPct":3,"actualWaterPct":3,"landmasses":1,"originLandmassShare":1,"validatedLayers":[1,2,3,4,5,6,7,8],"fingerprint":"a3981460706af432","habitable":0.2229,"classId":"precarious","foothold":0.2229,"s2":true,"nativeStart":0.2345,"proof":{"status":"PASS","simulations":1,"confirmations":2,"strategies":1,"marginSeconds":365.3,"holdCoverage":0.7659,"contested":10,"pressureAtMargin":0},"bucket":"desert_world:precarious:one-land"}
 ```
 
-Hashes: bank sha256 `5cd2e385963abcfdaf2a3bd5191f721ae2207b2c17510ef93cb1420737d1bcf3` · build.json sha256 `2d9c6fed16b4d646c4e48efb0edc6fab303d1be0a3f766741691d5bf3b9787bb` · distributions.json sha256 `07ad998ffc5901db50ba60de1f66d3b3ce7e7227d250e9222da7ebc73dc80994`.
+Hashes: bank sha256 `8506124b462cf4d47710a1eb37806ddead9dd3f600c28c36cfcfd071fda59e40` · build.json sha256 `eb180ec3d51c9bdbc8118e8f51920129499527bd005cee2b8219d4fa0b56a4a5` · distributions.json sha256 `780e03f9ad88c5da132256d6a16ca5dede24fb03aaf97f8ef2ccb1b61bf42fcf`.

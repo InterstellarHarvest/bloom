@@ -13,7 +13,7 @@
 //   BLOOM.challenges.scenarioOf(ch)          → the scenario object the Challenge plays (BLOOM.pressure.resolveScenario on the catalogue)
 //   BLOOM.challenges.speciesOf(ch)           → the prescribed species (BLOOM.species.resolve object) or null (player choice)
 //   BLOOM.challenges.startingStateOf(ch)     → the prescribed starting state { adaptations, biomass, source: "challenge" } (frozen) or null
-//   BLOOM.challenges.provenance(ch)          → { id, name, version, recipeVersion, bankVersion, scenarioId, icon } (run summaries, reports)
+//   BLOOM.challenges.provenance(ch)          → { id, name, version, recipeVersion, bankVersion, scenarioId, icon, completion } (run summaries, reports)
 //   BLOOM.challenges.SCHEMA_VERSION / LAUNCH_POLICIES / RECIPE_KEYS / COMPLETION_WINS / MECHANICS_KEYS
 //
 // A Challenge is a PRODUCT definition that references one scenario (content/scenarios.js) by id; the scenario's mechanics stay in the
@@ -34,7 +34,9 @@
 //                  { policy: "prescribed", adaptations, biomass }      plant adaptations owned at landing (trait ids, one tier each) and / or
 //                                                                       the starting Biomass (null = the normal amount); the engine's own
 //                                                                       createSim startingState applies it (refused here if it cannot)
-// Completion keeps the normal Bloom; `completion.conditions` must stay [] until Challenge-specific conditions exist (the schema path is kept).
+// COMPLETION (036D1): { win: "bloom", conditions } — validated by the ONE completion boundary, resources/challenges/challenge-completion.js
+// (BLOOM.challengeCompletion.check: conditions [] = the ordinary Bloom; v1 supports exactly one condition type, "pressure-final-state", with no
+// parameters, at most one per Challenge, only on a scenario with pressure). That file must be loaded with this one.
 // Every value the runtime cannot honour is REFUSED by check(), so the schema can never describe something the game ignores.
 // VERSIONING: the recipe decides which planet a launch generates, so it is versioned (recipe.version) and part of the Challenge instance's
 // provenance. Changing a released recipe is an explicit definition change: bump recipe.version AND the Challenge version.
@@ -68,7 +70,7 @@
   //   foothold       { minShare } — the species' S1 connected foothold at landing (growable AND reachable over land from the landing region,
   //                  BLOOM.species.foothold), 0…1 — or null (BLOOM-036B1: only where a study shows it removes degenerate worlds)
   const RECIPE_KEYS = Object.freeze(["version", "archetypes", "arrival", "nativeCover", "foothold"]);
-  const COMPLETION_WINS = Object.freeze(["bloom"]);     // the normal Bloom win (the planet's own threshold)
+  const COMPLETION_WINS = Object.freeze(["bloom"]);     // the normal Bloom win (the planet's own threshold) — BLOOM.challengeCompletion.WINS
   // the scenario-mechanics vocabulary (content/scenarios.js): never inside a Challenge definition, at any depth
   const MECHANICS_KEYS = Object.freeze(["pressure", "competition", "climateInstability", "validation", "loss", "channels", "phases", "graceSeconds",
     "durationSeconds", "extinctionGraceSeconds", "pacing", "tolerance", "growth", "contest", "forcing", "settling", "shocks", "bands", "axes", "intent"]);
@@ -214,12 +216,10 @@
         if (k === "startingState" && pol === "prescribed") e.push(...checkStart(v));
       }
     }
-    const C = def.completion;
-    if (!C || typeof C !== "object" || Object.keys(C).some(k => !["win", "conditions"].includes(k))) e.push("completion must be { win, conditions }");
-    else {
-      if (!COMPLETION_WINS.includes(C.win)) e.push(`completion.win must be one of ${COMPLETION_WINS.join(" / ")}`);
-      if (!Array.isArray(C.conditions) || C.conditions.length) e.push("completion.conditions must be [] (Challenge-specific conditions are not implemented yet)");
-    }
+    // (036D1) the completion block: the ONE completion boundary decides (conditions, their legality on this scenario)
+    const CC = B.challengeCompletion;
+    if (!CC) e.push("completion cannot be checked: load resources/challenges/challenge-completion.js");
+    else e.push(...CC.check(def.completion, S));
     return e.map(m => `challenge ${at}: ${m}`);
   }
 
@@ -241,6 +241,7 @@
     if (!Array.isArray(defs)) throw new Error("BLOOM.challenges: load content/challenges.js first");
     if (!Array.isArray(D.scenarios)) throw new Error("BLOOM.challenges: load content/scenarios.js first");
     if (!root.BLOOM.pressure) throw new Error("BLOOM.challenges: load resources/bloom-sim.js first");
+    if (!root.BLOOM.challengeCompletion) throw new Error("BLOOM.challenges: load resources/challenges/challenge-completion.js");
     if (checkedFor !== defs) { const bad = check(defs, D.scenarios); if (bad.length) throw new Error("BLOOM.challenges: " + bad.join("; ")); checkedFor = defs; }
     return defs;
   }
@@ -308,7 +309,10 @@
   }
   const list = () => catalogue().filter(d => d.status === "released").map(resolveDef);
   const ids = () => list().map(c => c.id);
-  const provenance = ch => ({ id: ch.id, name: ch.name, version: ch.version, recipeVersion: ch.launch.world.recipe.version, bankVersion: ch.launch.world.bank.version, scenarioId: ch.scenario, icon: ch.presentation.icon });
+  // (036D1) + the completion contract's fingerprint and condition types ([] = the ordinary Bloom)
+  const provenance = ch => { const K = root.BLOOM.challengeCompletion.contract(ch);
+    return { id: ch.id, name: ch.name, version: ch.version, recipeVersion: ch.launch.world.recipe.version, bankVersion: ch.launch.world.bank.version, scenarioId: ch.scenario, icon: ch.presentation.icon,
+      completion: { fingerprint: K.fingerprint, conditions: K.conditions.map(c => c.type) } }; };
 
   BLOOM.challenges = { SCHEMA_VERSION, LAUNCH_POLICIES, POLICY_KEYS, RECIPE_KEYS, COMPLETION_WINS, MECHANICS_KEYS, REFERABLE, ICONS, FORBIDDEN_COPY, STATUSES,
     resolve, list, ids, check, checkChallenge, checkRecipe, fixture, scenarioOf, speciesOf, startingStateOf, closedByStart, provenance };
