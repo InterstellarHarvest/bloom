@@ -217,6 +217,14 @@ const LOW_ARRIVAL_PICK = { ids: [] }, VERSION = {};
         && minContested >= 1 && E.every(e => e.proof.status === "PASS" && e.proof.confirmations >= 2) && cell.provenance.scenarioId === "native_competition" && C.startingStateOf(ch) === null,
       "A3 · Oasis Line: 50 Desert worlds for Reed Spire under the FULL Native Competition proof (+ its confirmation runs), WITHOUT the released Native Competition's 20 % arrival floor (most entries start below it), and every proof witness met real contested fronts",
       `below 20 % arrival: ${below}/50 · contested min ${minContested}, median ${med} · arrival p50 ${Math.round([...E.map(e => e.habitable)].sort((a, b) => a - b)[25] * 100)}%`); }
+  // A13 · (036C1, PMO) the REFUGE label is presentation only: the engine, generator, validator and scenario sources are byte-identical to the
+  // accepted 036C base (d8ca0cb) — fitness, spread, establishment, origin protection and validation unchanged (the banks' provenance checks, B1, agree)
+  { let same = false, out = ""; try { execFileSync("git", ["diff", "--quiet", "d8ca0cb", "--", "resources/bloom-sim.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js",
+      "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-species.js", "content/config.js", "content/scenarios.js", "content/species.js", "content/traits.js", "content/archetypes.js"], { cwd: ROOT }); same = true; }
+    catch (e) { out = String(e.stdout || e.message).slice(0, 200); }
+    const adapter = fs.readFileSync(path.join(ROOT, "resources/run-ui/run-ui-adapter.js"), "utf8");
+    check(same && /const refugeOf = \(s, e\) =>/.test(adapter) && /originFitnessFloor/.test(adapter),
+      "A13 · the protected-landing-REFUGE label is presentation only: engine / generator / validator / scenario / species / trait sources are byte-identical to the accepted base d8ca0cb (fitness, spread, establishment, origin protection, validation and banks unchanged); the run-UI adapter derives refuge from the real evaluation", same ? "identical" : out); }
   // A4 · Windfall (only when released): the exact starting Biomass, nothing owned, player choice, all archetypes
   if (AUTH.includes("windfall")) { const ch = C.resolve("windfall"), st = C.startingStateOf(ch), cells = SPECIES.map(sp => CB.bankCell(ch, sp));
     const sim = BLOOM.createSim(CB.buildBankWorld(cells[0].entries[0]).planet, D.config, D.traits, { rng: () => 0.5, species: BLOOM.species.resolve(SPECIES[0]), startingState: st });
@@ -283,6 +291,13 @@ async function browserChecks() {
         hud: (document.querySelector(".pv-id small") || {}).textContent, footer: (document.getElementById("pvRunId") || {}).textContent, cr: S.run.challengeRun || null, expedition: S.run.expedition || null,
         fp: X && X.fingerprint, launchSeed: X && X.launchSeed, entryIndex: X && X.entryIndex,
         scn: (() => { const el = document.getElementById("pvScn"); return el && !el.hidden ? (el.querySelector(".sh b") || {}).textContent : null; })() }; });
+    // (036C1, PMO) the PROTECTED LANDING REFUGE presentation: the selected region's banner chip, its Origin marker and limiting line, for the
+    // origin and for an ordinarily blocked non-origin region (the adapter's own refuge / blocked flags alongside)
+    const refugeRead = (p, which) => p.evaluate(async w => { const A = BLOOM_APP.session.adapter, regs = A.regions(), o = regs.find(r => r.isOrigin);
+      const r = w === "origin" ? o : regs.find(x => !x.isOrigin && x.blocked); if (!r) return null; A.actions.selectRegion(r.index);
+      await new Promise(res => setTimeout(res, 350)); const st = document.querySelector(".pv-st"), bn = st && st.closest(".bn-h") && st.closest(".bn-h").parentElement;
+      const R = A.region(r.index); return { name: r.name, origin: r.isOrigin, chip: st && st.textContent.trim(), cls: st && st.className, tip: st && st.getAttribute("aria-label"), originMark: !!(bn && bn.querySelector(".rg-o")),
+        limiting: bn ? (bn.innerText.match(/Limiting: [^\n]*/) || [null])[0] : null, refuge: R.limiting.refuge, blocked: R.limiting.blocked, fitness: +R.fitness.toFixed(3), living: R.living }; }, which);
     const storageClean = p => p.evaluate(() => { const keys = s => { try { return Object.keys(s).map(k => k + "=" + s.getItem(k)); } catch (e) { return []; } };
       const all = [...keys(localStorage), ...keys(sessionStorage)]; return { leak: all.filter(x => /challenge|dying_world|native_competition|volatile_climate|scenario|launch|bank/i.test(x)), name: window.name, href: location.href }; });
     const reportFacts = p => p.evaluate(() => ({ facts: [...document.querySelectorAll(".rr-fact")].map(x => [x.querySelector("small").textContent, x.querySelector("b").textContent]), kicker: document.getElementById("rrKicker").textContent,
@@ -407,6 +422,21 @@ async function browserChecks() {
             && (id !== "oasis_line" || (S0.comp > 0.1 && S0.native > 0 && S0.start === null)),
           `[${bn}] A6 ${id} · the run is ${A.name} (Challenge id ${id}, version 1; the HUD names it) playing the ${A.scenario} scenario, its own cell + entry; nothing given was charged (spent 0)${id === "low_tide" ? "; Flood + Salt owned, Drought refused by the engine" : id === "oasis_line" ? "; native vegetation established at the start" : ""}`,
           J({ hud: R.hud, cr: R.cr && R.cr.cellKey, S0 }));
+        { const O = await refugeRead(p, "origin");
+          if (id === "oasis_line") await shot(p, `a8-refuge-origin-${id}.png`, { firefox: true });
+          const B = await refugeRead(p, "blocked");
+          if (id === "oasis_line") {
+            await shot(p, `a8b-blocked-non-origin-${id}.png`);
+            // 7 · Adapt moves the origin into its ordinary status naturally (Drought Adaptation answers "too dry")
+            const after = await p.evaluate(async () => { BLOOM_API.addBiomass(5000); const A = BLOOM_APP.session.adapter, o = A.regions().find(r => r.isOrigin); let n = 0;
+              while (A.region(o.index).limiting.blocked && n < 3) { BLOOM_API.buy("drought"); n++; } BLOOM_API.advance(5); return { bought: n, blocked: A.region(o.index).limiting.blocked, refuge: A.region(o.index).limiting.refuge }; });
+            const O2 = await refugeRead(p, "origin");
+            check(O && O.origin && O.refuge && O.chip === "Refuge" && /refuge/.test(O.cls) && /Protected landing refuge/.test(O.tip || "") && O.originMark && /^Limiting: Water · /.test(O.limiting || "") && O.living > 0 && O.fitness > 0.35
+                && B && !B.origin && B.blocked && !B.refuge && B.chip === "Blocked" && after.bought >= 1 && !after.blocked && !after.refuge && O2.chip !== "Refuge" && ["OK", "Strained"].includes(O2.chip) && O2.originMark,
+              `[${bn}] A11 ${id} · the PROTECTED LANDING REFUGE: the unsuitable origin the refuge keeps alive shows REFUGE (not Blocked; "Protected landing refuge" for assistive tech) with its ORIGIN marker and its REAL limiting condition; an unsuitable non-origin region stays Blocked; after Drought Adaptation the origin takes its ordinary status (derived from the real current state)`,
+              J({ O, B, after, O2: O2 && O2.chip })); }
+          if (id === "low_tide") check(O && O.origin && !O.blocked && !O.refuge && O.chip !== "Refuge" && O.originMark,
+            `[${bn}] A11 ${id} · a SUITABLE origin is not labelled Refuge (its ordinary status: ${O && O.chip})`, J(O)); }
         await p.evaluate(n => BLOOM_API.advance(n), 300); await p.waitForTimeout(300); await shot(p, `a4-run-${id}.png`, { firefox: id === "oasis_line" });
         const idle = () => p.waitForFunction(() => !BLOOM.decisionRooms.instance.state().transitioning, null, { timeout: 20000, polling: 50 });
         await idle(); await p.evaluate(() => { const D = BLOOM.decisionRooms.instance; D.open("adapt", D.state().context); });
@@ -441,6 +471,9 @@ async function browserChecks() {
         await shot(p, `a7-low-arrival-dossier.png`, { firefox: true });
         check(lo.idx === L.index && lo.green < 0.05 && lo.shown && /landing region keeps it alive at first\. Adapt before you spread\./.test(lo.text) && lo.pct === `${Math.round(lo.green * 100)}% of the land` && !p.errs.length,
           `[${bn}] A10 · a ${L.challenge} / ${L.species} world where under 5 % of the land suits the plant: the dossier shows the TRUE share and explains it ("…your landing region keeps it alive at first. Adapt before you spread."); every ordinary-arrival dossier above (F3, A5) has no such line`, J(lo));
+        await beginRun(p, 1); const LO = await refugeRead(p, "origin"); await shot(p, `a9-refuge-origin-dying_world.png`); const LB = await refugeRead(p, "blocked");
+        check(LO && LO.refuge && LO.chip === "Refuge" && LO.originMark && /^Limiting: /.test(LO.limiting || "") && (!LB || LB.chip === "Blocked") && !p.errs.length,
+          `[${bn}] A12 · the same REFUGE rule on a released Challenge's low-arrival origin (${L.challenge} / ${L.species}, under 5 % arrival): REFUGE + ORIGIN + the real limiting condition; other unsuitable regions stay Blocked`, J({ LO, LB }));
         await c.close(); }
 
       // ------------------------------------------------------------------ I · invariants (Dying World) · K · keyboard
@@ -516,7 +549,9 @@ async function browserChecks() {
         await p.waitForFunction(() => window.BLOOM_APP && BLOOM_APP.session && BLOOM_APP.session.run.training && BLOOM_APP.stats.sessions.at(-1).readyMs !== null, null, { timeout: 60000, polling: 50 });
         await p.waitForTimeout(800);
         const TR = await p.evaluate(() => { const S = BLOOM_APP.session, M = S.adapter.run().mechanics; return { mech: !M.pressure && !M.competition && !M.climate, training: !!S.run.training, species: S.run.species.id, scenario: S.run.scenario, challenge: S.run.challenge || null, cr: S.run.challengeRun || null, start: S.sim.startingState }; });
-        check(TR.training && TR.species === "organic_hybrid" && TR.scenario === null && TR.challenge === null && TR.cr === null && TR.start === null && TR.mech, `[${bn}] I7 · TRAINING unchanged: Organic Hybrid, the default scenario, no Challenge`, J(TR));
+        const TO = await refugeRead(p, "origin");
+        check(TR.training && TR.species === "organic_hybrid" && TR.scenario === null && TR.challenge === null && TR.cr === null && TR.start === null && TR.mech && TO && !TO.refuge && TO.chip !== "Refuge",
+          `[${bn}] I7 · TRAINING unchanged: Organic Hybrid, the default scenario, no Challenge; its (suitable) origin shows its ordinary status, not Refuge`, J({ ...TR, origin: TO && TO.chip }));
         check(!p.errs.length, `[${bn}] I8 · no console / page error through the invariant walk`, p.errs.join(" | ") || "clean");
         await c.close(); }
 

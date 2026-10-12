@@ -238,3 +238,6 @@
 /* while a swap runs, the swap-affecting controls are locked at the controller too (the mist's overlay already blocks input) */
 .dr[data-transitioning] .rb, .dr[data-transitioning] .rn, .dr[data-transitioning] [data-go]{pointer-events:none}
 .pv[data-transitioning] .pv-tool, .pv[data-transitioning] .pv-banner [data-go]{pointer-events:none}
+/* (036C1) REFUGE — the protected landing refuge chip and region-strip dot (sky, not red; the limiting factor stays shown as it is) */
+.dr .stc.refuge{border-color:var(--bloom-sky); background:var(--bloom-sky-soft); color:var(--bloom-sky-dark)} .dr .stc.refuge .ic{background:var(--bloom-sky-dark)}
+.dr .rc.st-refuge .rs{background:var(--bloom-sky-dark)}

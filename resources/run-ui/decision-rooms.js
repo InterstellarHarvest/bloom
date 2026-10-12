@@ -115,7 +115,8 @@
     Seeds: ["seedHead", "Seed head", "crown"], Growth: ["flowers", "Flowers", "colony"], Reach: ["pods", "Pods", "pods"] };
   const COND_CAT = ["Temperature", "Water", "Soil", "Hazard"];
   const catStyle = c => { const k = CAT_COLOR[c]; return k ? `--cat:${k[0]};--cat-soft:${k[1]};--cat-dark:${k[2]}` : ""; };
-  const LAMP_ST = { green: "ok", yellow: "warn", red: "bad" }, ST_WORD = { ok: "OK", warn: "Strained", bad: "Blocked" }, ST_ICON = { ok: "check", warn: "alert", bad: "x" };
+  // (036C1) "refuge": the protected landing refuge (the adapter's limiting.refuge / refuge) — never a plain Blocked for the origin it protects
+  const LAMP_ST = { green: "ok", yellow: "warn", red: "bad" }, ST_WORD = { ok: "OK", warn: "Strained", bad: "Blocked", refuge: "Refuge" }, ST_ICON = { ok: "check", warn: "alert", bad: "x", refuge: "rad" };
   const LENSES = [["", "Plants", "off"], ["Temperature", "Temperature", "temp"], ["Water", "Water", "water"], ["Soil", "Soil", "soil"], ["Hazard", "Hazard", "hazard"]];
   const chip = (st, word) => `<span class="stc ${st}">${ico(ST_ICON[st])}${esc(word || ST_WORD[st])}</span>`;
   // Concept 18 ORGANIC tendril weights (owner-approved; docs/UI_CONCEPT_REVIEW_v10.md §3): [em, px floor]
@@ -172,7 +173,7 @@
     }
 
     // ---------------------------------------------------------------- shared pieces
-    const lampSt = r => r.limiting && r.limiting.blocked ? "bad" : LAMP_ST[r.lamp] || "ok";
+    const lampSt = r => r.limiting && r.limiting.refuge ? "refuge" : r.limiting && r.limiting.blocked ? "bad" : LAMP_ST[r.lamp] || "ok";
     const limitLine = r => r.limiting.blocked ? `${cap(r.limiting.key)}: ${r.limiting.text}` : r.limiting.softSoil ? "Growing · the soil is marginal here" : "Nothing holding the plant back";
     const traitTiers = () => { const t = {}, nm = {}; for (const b of A.upgrades()) if (b.board !== "Terraform") for (const u of b.items) { t[u.id] = u.tier; nm[u.id] = u.name; } return { tiers: t, names: nm }; };
     // (035C2) the specimen's ENVIRONMENT: this region of this planet under the sky its ground sees now (Terraform + scenario drift), plus a
@@ -183,7 +184,8 @@
         salinity: r.raw.salinity, toxicity: r.raw.toxicity, radiation: r.raw.effectiveRadiation }); };
     const specState = (i, preview, d) => { const r = A.region(i), c = A.colony(i), { tiers, names: nm } = traitTiers();
       return { traits: tiers, names: nm, preview: preview || null, colony: { living: c.living, establishment: r.colony.establishment, word: r.colony.word }, focus: c.focus, local: c.localUpgrade,
-        condition: lampSt(r), viable: !r.limiting.blocked, region: { name: r.name }, scene: sceneFor(i, d) }; };
+        condition: r.limiting && r.limiting.blocked ? "bad" : LAMP_ST[r.lamp] || "ok", viable: !r.limiting.blocked,   // the specimen keeps the ground's own condition (a refuge is not suitable ground)
+        region: { name: r.name }, scene: sceneFor(i, d) }; };
     const specCaption = r => !r.living ? (r.limiting.blocked ? "No colony yet · would not survive yet" : "No colony yet") : `${r.colony.label} · ${lampSt(r) === "ok" ? "thriving" : "stressed"}`;
     function roomShell(id) {
       const R = ROOMS[id], sec = document.createElement("section"); sec.className = `dr-room r-${id}`; sec.dataset.room = id; sec.hidden = true; sec.setAttribute("role", "dialog"); sec.setAttribute("aria-modal", "true"); sec.setAttribute("aria-labelledby", `drt-${id}`);
@@ -227,7 +229,7 @@
       cv.addEventListener("pointermove", e => { if (e.pointerType === "touch") return; const h = R.hitTest(e.clientX, e.clientY); pk(h.region >= 0 ? h.region : -1); cv.classList.toggle("over", h.region >= 0); });
       cv.addEventListener("pointerleave", () => { pk(-1); cv.classList.remove("over"); });
       cv.addEventListener("click", e => { const h = R.hitTest(e.clientX, e.clientY); if (h.region >= 0) setCtx(h.region, "map"); });
-      const paintStrip = () => { strip.querySelectorAll("[data-r]").forEach(b => { const r = regs[+b.dataset.r]; if (!r) return; const st = r.blocked ? "bad" : LAMP_ST[r.lamp] || "ok";
+      const paintStrip = () => { strip.querySelectorAll("[data-r]").forEach(b => { const r = regs[+b.dataset.r]; if (!r) return; const st = r.refuge ? "refuge" : r.blocked ? "bad" : LAMP_ST[r.lamp] || "ok";
         b.className = `rc st-${st}${r.living > 0 ? " living" : ""}${state.peek === r.index ? " pk" : ""}`; b.setAttribute("aria-pressed", String(r.index === state.ctx)); b.querySelector(".rs").innerHTML = ico(ST_ICON[st]); b.title = `${r.name}: ${ST_WORD[st]}`; }); };
       function frame() {
         if (!dirty) return; dirty = false;

@@ -189,3 +189,5 @@ html.ui18 body{background:var(--bloom-frame)}
 
 @media (prefers-reduced-motion: reduce){ .pv *{transition:none !important; animation:none !important} }
 .pv.reduced *{transition:none !important; animation:none !important}
+/* (036C1) REFUGE — the protected landing refuge (the origin's ground would be Blocked; the refuge rule keeps the plant alive): sky, not red */
+.pv-st.refuge{border-color:var(--bloom-sky); background:var(--bloom-sky-soft); color:var(--bloom-sky-dark)} .pv-st.refuge .ic{background:var(--bloom-sky-dark)}

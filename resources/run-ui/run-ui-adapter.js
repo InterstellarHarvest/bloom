@@ -151,11 +151,18 @@
           axes, forecast: R.climForecast(), threshold: scn.climateInstability.shocks.threshold }; } // (029B) the shock threshold the meter marks
       return out;
     }
+    // (036C1, PMO presentation rule) the PROTECTED LANDING REFUGE: the origin region whose own ground would ordinarily be blocked, but whose
+    // fitness the engine's refuge rule (config.categories.originFitnessFloor) is currently lifting above the die-back threshold — the plant
+    // lives there BECAUSE it is the landing refuge. Derived from the real current evaluation every time (the unprotected fitness is the product
+    // of the category factors, exactly as evaluate() forms it before the floor): once the ground suits the plant (Adapt / Terraform) or the
+    // protection no longer keeps it alive (e.g. late in a Dying World decline), the ordinary status takes over. Presentation only.
+    const refugeOf = (s, e) => { if (!s.isOrigin || !R.isBlocked(e)) return false; const C = e.cats, raw = C.Temperature.f * C.Water.f * C.Soil.f * C.Hazard.f;
+      return e.fitness > raw + 1e-9 && e.fitness > CFG.grow.dieThresh; };
     function regionSummary(i, liv) {
       const s = SEC[i], e = sim.evaluate(i), cs = sim.colonyStatus(i), sel = V.selected();
       return { ...ref(i), biome: s.name, isOrigin: !!s.isOrigin, selected: i === sel, landmass: M.LANDMASS[i], area: M.AREA[i],
         center: { x: M.CENT[i].x, y: M.CENT[i].y }, living: liv[i], fitness: e.fitness, lamp: sim.lampOf(e.fitness),
-        blocked: R.isBlocked(e), limitKey: e.limitKey, colony: { word: cs.word, establishment: cs.establishment },
+        blocked: R.isBlocked(e), refuge: refugeOf(s, e), limitKey: e.limitKey, colony: { word: cs.word, establishment: cs.establishment },
         focus: sim.getColonyFocus(i), localUpgrade: sim.getSpecialization(i) };
     }
     function regions() { const liv = sim.livingCountBySection(); return SEC.map((_, i) => regionSummary(i, liv)); }
@@ -167,7 +174,7 @@
         ...regionSummary(i, liv), geothermal: !!s.geothermal,
         conditions: host.categories.map(k => { const C = e.cats[k];
           return { key: k, word: C.word, f: C.f, lamp: R.catLamp(C), soft: !!C.soft, terraformable: !!e.terraformable[k] }; }),
-        limiting: { key: e.limitKey, f: e.limitF, blocked, text: blocked ? R.limitText(e) : null, hint: blocked ? R.fixHint(e) : null,
+        limiting: { key: e.limitKey, f: e.limitF, blocked, refuge: refugeOf(s, e), text: blocked ? R.limitText(e) : null, hint: blocked ? R.fixHint(e) : null,
           softSoil: !blocked && !!e.cats.Soil.soft },
         temperature: { ground: e.effT, sky: e.skyT, plantMin: dv.tempFloor, plantMax: dv.tempCeil },
         colony: { word: cs.word, label: R.colonyWord(cs.word), hint: R.colonyHint(cs.word), establishment: cs.establishment },

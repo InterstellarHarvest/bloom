@@ -41,6 +41,7 @@
     off: '<circle cx="12" cy="12" r="8"/><path d="M6.5 6.5l11 11"/>',
     check: '<path d="M5 12.5l4.5 4.5L19 7"/>', alert: '<path d="M12 5v9"/><circle cx="12" cy="18" r="1"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>',
     sky: '<path d="M7 17a4 4 0 0 1-.5-8A6 6 0 0 1 18 9a3.5 3.5 0 0 1 0 8z"/>',
+    refuge: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
     star: '<path d="M12 3.5l2.6 5.3 5.9.9-4.25 4.15 1 5.85L12 16.9l-5.25 2.8 1-5.85L3.5 9.7l5.9-.9z"/>',
     pressure: '<path d="M4 8c3-2 5 2 8 0s5-2 8 0M4 12c3-2 5 2 8 0s5-2 8 0M4 16c3-2 5 2 8 0s5-2 8 0"/>',
     competition: '<path d="M12 21V9"/><path d="M12 9c-3 0-5-3-5-6 3 0 5 2 5 6zM12 12c0-4 2-6 5-6 0 3-2 6-5 6z"/><path d="M4 21l4-4M20 21l-4-4"/>',
@@ -55,7 +56,9 @@
   const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const CATS = ["Temperature", "Water", "Soil", "Hazard"], CAT_ICON = { Temperature: "temp", Water: "water", Soil: "soil", Hazard: "hazard" };
   const LENSES = [["", "Plants / Normal", "off"], ["Temperature", "Temperature", "temp"], ["Water", "Water", "water"], ["Soil", "Soil", "soil"], ["Hazard", "Hazard", "hazard"]];
-  const LAMP_ST = { green: "ok", yellow: "warn", red: "bad" }, ST_WORD = { ok: "OK", warn: "Strained", bad: "Blocked" }, ST_ICON = { ok: "check", warn: "alert", bad: "x" };
+  // (036C1) "refuge": the protected landing refuge — the origin's ground would be Blocked, the refuge rule keeps the plant alive there
+  const LAMP_ST = { green: "ok", yellow: "warn", red: "bad" }, ST_WORD = { ok: "OK", warn: "Strained", bad: "Blocked", refuge: "Refuge" }, ST_ICON = { ok: "check", warn: "alert", bad: "x", refuge: "refuge" };
+  const ST_TIP = { refuge: "Protected landing refuge: this ground does not suit your plant yet, but your landing region keeps it alive while you adapt." };
   const BOARD_CLASS = { Adapt: "plant", Spread: "spread", Terraform: "planet" }, BOARD_ROOM = { Adapt: "adapt", Spread: "spread", Terraform: "terraform" };
   const ROOM_TITLE = { region: "Region Inspect", adapt: "Adapt", spread: "Spread", terraform: "Terraform" };
   const SHOCK_TINT = { tempUp: [255, 130, 60], tempDown: [110, 170, 255], moistUp: [70, 200, 200], moistDown: [230, 190, 110] };
@@ -227,7 +230,7 @@
       if (sel.index < 0) { if (!banner.hidden) { banner.hidden = true; bannerKey = ""; } helpFor = -1; return; }
       const r = A.region(sel.index), t = now();
       if (force || helpFor !== sel.index || t - helpAt > 1000) { help = A.wouldHelp(sel.index) || []; helpFor = sel.index; helpAt = t; }
-      const st = r.limiting.blocked ? "bad" : LAMP_ST[r.lamp] || "ok";
+      const st = r.limiting.refuge ? "refuge" : r.limiting.blocked ? "bad" : LAMP_ST[r.lamp] || "ok";
       const conds = r.conditions.map(c => { const s = LAMP_ST[c.lamp] || "ok";
         const reading = cap(c.word) + (c.key === "Temperature" ? ` · ${degC(r.temperature.ground)}` : "");
         return `<div class="bc st-${s}" data-cat="${c.key}"><span class="bc-i">${ico(CAT_ICON[c.key])}</span><span class="bc-t"><small>${c.key}</small><b>${esc(reading)}</b></span>` +
@@ -239,7 +242,7 @@
       if (key === bannerKey && !banner.hidden) return; bannerKey = key;
       const focused = banner.contains(document.activeElement) ? (document.activeElement.dataset.item || document.activeElement.className) : null;
       banner.innerHTML = `<button type="button" class="bx" data-act="deselect" aria-label="Close and deselect ${esc(r.name)}">${ico("close")}</button>` +
-        `<div class="bn-h"><div class="bn-t">${ico("inspect")}<b>${esc(r.name)}</b><span class="pv-st ${st}">${ico(ST_ICON[st])}${ST_WORD[st]}</span>${r.isOrigin ? `<span class="rg-o">${ico("star")}Origin</span>` : ""}</div>` +
+        `<div class="bn-h"><div class="bn-t">${ico("inspect")}<b>${esc(r.name)}</b><span class="pv-st ${st}"${ST_TIP[st] ? ` title="${esc(ST_TIP[st])}" aria-label="${esc(ST_TIP[st])}"` : ""}>${ico(ST_ICON[st])}${ST_WORD[st]}</span>${r.isOrigin ? `<span class="rg-o">${ico("star")}Origin</span>` : ""}</div>` +
           `<p><span data-tutorial="colony-status">${esc(r.colony.label)}</span> · <span class="lim" data-tutorial="limiting-factor">${lim}</span></p></div>` +
         `<div class="bn-c" role="group" aria-label="Conditions" data-tutorial="readout">${conds}</div>` +
         `<div class="bn-a"><button type="button" class="pv-btn" data-go="region">${ico("regions")}Inspect region</button>` +
@@ -350,7 +353,7 @@
         if (wrap && Math.abs(dx) > W / 2) dx -= Math.sign(dx) * W;
         const along = dx * dir[0] + dy * dir[1], across = Math.abs(dx * dir[1]) + Math.abs(dy * dir[0]); if (along <= 0.5) continue;
         const score = along + 2 * across; if (score < bs) { bs = score; best = r.index; } }
-      if (best >= 0) { state.focus = best; dirty = true; const r = regs[best]; live(`${r.name}: ${r.lamp === "red" ? "blocked" : r.lamp === "yellow" ? "strained" : "open"}. Enter selects.`); }
+      if (best >= 0) { state.focus = best; dirty = true; const r = regs[best]; live(`${r.name}: ${r.refuge ? "protected landing refuge" : r.lamp === "red" ? "blocked" : r.lamp === "yellow" ? "strained" : "open"}. Enter selects.`); }
     });
     canvas.addEventListener("blur", () => { if (state.focus >= 0) { state.focus = -1; dirty = true; } });
 
