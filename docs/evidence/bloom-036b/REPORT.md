@@ -1,231 +1,247 @@
-# BLOOM-036B — Contained Challenge worlds: REPORT
+# BLOOM-036B + 036B1 — Contained Challenge worlds from prevalidated seed banks: REPORT
 
 **Status: CANDIDATE — STOP FOR PMO REVIEW.** Review branch `handoff/bloom-036b-review` (NOT merged). It contains the PMO-accepted 036A
-foundation plus 036B. Do not merge 036A separately; 036C not started.
+foundation, the 036B product architecture (accepted) and **036B1: Challenge worlds from PREVALIDATED SEED BANKS** (this pass). Do not merge
+036A separately; 036C not started; `main` untouched.
 
 | | SHA |
 |---|---|
 | Production `main` (untouched) | `47ae6c3649b5ce3f1c42334ec08cf6e06f79e231` |
-| 036A accepted parent (`handoff/bloom-036a-review`, kept intact; 4 ahead / 0 behind main) | `8af3e12e46f484f2d8c1a4013eb956b3f86ec269` |
-| 036B implementation branch | `agent/bloom-036b-challenge-worlds` (from exactly `8af3e12`) |
-| 036B commits | `481da93` implementation · `abe6159` proof budget counts confirmations, foothold, report pennant · `e55fae2` QA · `31ba1b1` report-boundary fix (run-ui-convergence N6) · the docs / evidence commit (this report) |
-| Final review head | `handoff/bloom-036b-review` = the docs / evidence commit — **036A 4 + 036B 5 = 9 ahead / 0 behind `main`** |
+| 036A accepted parent (`handoff/bloom-036a-review`, kept intact) | `8af3e12e46f484f2d8c1a4013eb956b3f86ec269` |
+| 036B accepted-architecture head (previous review head) | `80c353941fc0b1e5fd4141b556d186241d0408ac` |
+| 036B1 commits | `7e471dc` implementation (builder, bank, runtime consumer, screen, QA tools) · the docs / evidence commit (this report) |
+| Final review head | `handoff/bloom-036b-review` = the docs / evidence commit — **036A 4 + 036B 5 + 036B1 2 = 11 ahead / 0 behind `main`** |
 
-Design (canonical): [`docs/CHALLENGES_SYSTEM_v1.md`](../../CHALLENGES_SYSTEM_v1.md). Recipe calibration:
-[`CHALLENGE_RECIPE_STUDY.md`](CHALLENGE_RECIPE_STUDY.md). Product direction: [`PRODUCT_DIRECTION_CURRENT.md`](../../PRODUCT_DIRECTION_CURRENT.md) §8.
+Design (canonical): [`docs/CHALLENGES_SYSTEM_v1.md`](../../CHALLENGES_SYSTEM_v1.md) §4 (seed banks). Build: [`seed-bank/BUILD_REPORT.md`](seed-bank/BUILD_REPORT.md).
+Superseded research: [`NATIVE_COMPETITION_LATENCY_STUDY.md`](NATIVE_COMPETITION_LATENCY_STUDY.md). Recipes: [`CHALLENGE_RECIPE_STUDY.md`](CHALLENGE_RECIPE_STUDY.md).
 
-## 1. What changed
+> **EXPEDITION** = live procedural world discovery. **CHALLENGES** = curated banks of **prevalidated procedural seeds** (seeds + proof
+> provenance, never geometry): procedural variety with fast, guaranteed-valid startup.
 
-- **The 3 × 3 Challenge survey is gone.** MAIN MENU → CHALLENGES → hub → BEGIN CHALLENGE → Choose Plant Species (only if the Challenge allows
-  it; "Continue with <plant>") → **PREPARING CHALLENGE WORLD** → the **Challenge Planet Dossier** (one planet) → BEGIN CHALLENGE (the survey's
-  dramatic descent) → run → report. No alternatives, no reroll; beginning the Challenge again from the hub is the route to a fresh instance.
-- **Schema 2** (`resources/bloom-challenges.js`): `launch.species` player-choice | prescribed · `launch.world` recipe (versioned) ·
-  `launch.startingState` normal | prescribed; `completion` normal Bloom (`conditions` path kept, refused until implemented). Every value the
-  runtime cannot honour is refused — the prescribed start by the engine itself. QA fixtures (`status: "fixture"`, `BLOOM.challenges.fixture`) are
-  never on the hub or in content.
-- **The three released Challenges** keep player choice, the normal start and the normal Bloom (v2, recipe v1).
-- **The Destination Survey is the Expedition's only again** (036A's scenario layer / worker task / Challenge option / wording removed;
-  `main`'s survey files restored), and its "Expected challenges" heading is now **EXPECTED HAZARDS**.
-- **Copy:** hub lede "Each Challenge is a contained run with its own starting situation and pressure. Read the brief, choose what the Challenge
-  allows, and find a way to bloom."; How the run works: choose your plant · one qualifying Challenge world is generated (no survey, no choosing
-  among worlds) · nothing owned at landing · the normal Bloom · extinction where the scenario says so. Native Competition's science line and
-  "challenge debrief" kept as accepted.
+## 1. What changed in 036B1
 
-## 2. Recipe schema
+- **No validation in the player's browser.** 036B searched a stream and proved each candidate live (Native Competition up to 20–90 s). Now an
+  **offline builder** proves worlds with the FULL validation and ships **50 curated entries per Challenge × released species (600)**; the
+  runtime picks one, regenerates the exact planet from its seeds in milliseconds and verifies its fingerprint.
+- **Clean boundaries:** GENERATOR (`bloom-gen.js`, `bloom-archetype.js`, unchanged) · VALIDATOR (`bloom-validate.js`, `bloom-witness.js`,
+  `bloom-scenario.js`, `bloom-species.js` — kept whole; one opt-in `trace` for the study) · BANK BUILDER (`tools/build-challenge-seed-bank.mjs`
+  + `tools/challenge-bank-builder.mjs`, offline) · RUNTIME CONSUMER (`resources/challenges/challenge-bank.js`, `challenge-world-prep.js`, the
+  survey worker's `challenge-bank-world` task). The live search module `challenge-world-search.js` is deleted; `challenge-world.js` keeps only
+  shared helpers.
+- **Versions:** Challenges v2 → **v3**, `launch.world.policy "recipe"` → **`"seed-bank"`** with `bank: { version: 1, size: 50 }`; instance
+  format 1 → **2** (`source: "seed-bank"`). A 036B live-search instance or definition cannot pass as bank-backed (refused: challenges-check C3,
+  challenge-world-check B9).
+- **PREPARING CHALLENGE WORLD** says only what happens: *Selecting a proven world · Building the planet · Verifying the planet*; no
+  percentage; skipped cleanly when the world was built while the player read Choose Plant Species.
+- **Dossier:** the separate "Foothold: X %" line is removed (PMO); S1 stays in the bank entry / instance for validation and QA. Every other
+  accepted string is unchanged.
+- **Retry / repeat:** RETRY CHALLENGE = the same entry (same planet object, fresh simulation); a new BEGIN CHALLENGE = a new launch seed and a
+  fresh deterministic pick, stepping past the entries played this session (in memory only; no storage added).
 
-```js
-world: { policy: "recipe", recipe: {
-  version: 1,                                   // the recipe's revision (instance provenance; a change = a new recipe AND Challenge version)
-  archetypes: ["ocean_archipelago", "desert_world", "frozen_world"],   // the only archetypes the stream draws
-  arrival: { minHabitable, maxHabitable } | null, // species-relative arrival share band (the survey's habitable share)
-  nativeCover: { minStartShare } | null,         // competition scenarios only: the engine probe's native start share
-} }
-```
-Product-level selection data only: no generator parameter, no scenario mechanic (both refused). A recipe never changes a planet.
+## 2. Bank schema + provenance
 
-## 3. Recipe study (read-only, before choosing numbers)
+`content/challenge-seed-banks.js` (generated; deterministic bytes) → `BLOOM_DATA.challengeSeedBanks = { format: 1, bankVersion: 1, provisional:
+false, generator, poolStream, perArchetype, target, inputsFingerprint, cells }`. A **cell** (`"<challenge>/<species>"`) = `{ bankVersion,
+provenance, candidates { evaluated, passing, retained, deprioritized }, entries[50] }`. **Entry** = `archetypeId, seed, attempt,
+generationSeed, requestedWaterPct, actualWaterPct, landmasses, originLandmassShare, validatedLayers, fingerprint, habitable, classId,
+foothold (S1), s2, nativeStart?, proof { status, simulations, confirmations, strategies, marginSeconds, holdCoverage, contested? /
+pressureAtMargin? / shocks? }, bucket`.
 
-120 worlds (3 archetypes × 40 seeds) × 4 species × 3 scenarios through the production path. Findings
-([full study](CHALLENGE_RECIPE_STUDY.md)): every species can win every validated world (S2 119 / 119); every species gets qualifying worlds in
-every Challenge; Dying World / Volatile Climate already reject trivial starts themselves (their failures are "too fast" Favorable starts);
-Native Competition's failures concentrate on Extreme-arrival starts (extinction under established natives / no build reaches the margin);
-the slow waits are failing proofs (up to 40 witness runs, plus confirmation reruns).
+**Provenance per cell:** challengeId · challengeVersion · recipeVersion · recipeFingerprint · scenarioId · scenarioFingerprint (mechanics) ·
+speciesId · physiologyVersion · physiologyKey · startingState · worldGenVersion · archetype fingerprints · rulesFingerprint (engine config +
+trait mechanics) · validator `challenge-bank-validation@1`. **Stale-bank protection:** the runtime recomputes it from the running game at
+every launch; any difference, another bank version, too few entries or a provisional bank → `STALE_BANK` (refused, an error screen with Back
+— never a silent reuse, never a live search). A regenerated world whose fingerprint or arrival share differs → `FINGERPRINT_MISMATCH`.
 
-**Chosen recipes (v1):** Dying World **broad** · Native Competition **arrival ≥ 20 %** (the survey's own Extreme / Precarious boundary) ·
-Volatile Climate **broad**. No fake constraints for symmetry, no difficulty labels, no physiology or mechanic change.
+## 3. The build
 
-## 4. One-planet selection algorithm (`resources/challenges/challenge-world.js`, rule version 1)
+`node tools/build-challenge-seed-bank.mjs --per-archetype 160 --workers 8` — full table set: [`seed-bank/BUILD_REPORT.md`](seed-bank/BUILD_REPORT.md).
 
-1. **Stream:** `streamSeed = fnv("<id>|v<version>|recipe<recipe version>") ⊕ (launchSeed × 0x9e3779b1)` — species-free; draw *i* = an archetype
-   from the recipe + a World Seed in 1…99 999, computed directly from *i*. Launch seed: `crypto.getRandomValues` (no `Math.random`).
-2. **Stages per draw** (first failure rejects it for this species): predicted (arrival band on the cheap structural world) → physical
-   (`physicalCandidate`: the survey's own production validation) → recipe → species S2 (`BLOOM.species.validateFor`) → native cover → layer P
-   (`BLOOM.validateScenario` with the species and starting state) within the **proof budget**.
-3. **Acceptance:** the first draw in stream order that passes, once every earlier draw is known (`acceptInOrder`). Parallel workers evaluate
-   draws speculatively; timing never chooses the planet. **Measured: identical planets across Chromium, Firefox and all three timing modes
-   for every one of the 72 Challenge × species × seed cases.**
-4. **Proof budget (early stop):** layer P may use **6 simulation runs in all, confirmation reruns included** (the validator's new opt-in
-   `maxRuns`, checked only before a new witness run so a winner completes its confirmations). A world proven within it gets the identical
-   witness (suite W9); a world needing more is not offered. *(First version capped witness runs only; timing showed Native Competition's
-   failing searches spending most of their time in uncapped confirmations — 6 witnesses + 12 confirmations — so the cap counts every run.)*
-5. **Browser search** (`challenge-world-search.js`): its own worker pool on the survey worker; from BEGIN CHALLENGE the launch's species-free
-   physical worlds are prefetched; the plant selected on Choose Plant Species is prepared early (choosing it joins the work); on acceptance /
-   Back the remaining tasks are dropped and busy workers terminated. Nothing rejected reaches the screen.
+- **Pool:** 480 species-free worlds (3 archetypes × 160 World Seeds, fixed stream); **475** pass physical validation. Every world evaluated
+  for all 12 cells: 5,760 cell evaluations, each to the full layer P where it got that far. **Wall 38 min on 8 worker threads** (16-thread
+  iMac; 8 / 12 / 15 workers measured flat — [`builder-pool-bench.json`](seed-bank/builder-pool-bench.json)); 16,200 CPU-s of layer-P proofs.
+- **Result: every cell holds 50 — not provisional, no limiting cell.**
 
-## 5. Generation timing — every Challenge × species, Chromium and Firefox
+| Challenge | Organic Hybrid | Cinder Rosette | Woolly Candle | Reed Spire |
+|---|---|---|---|---|
+| Dying World — qualifying of 480 | 433 (90 %) | 404 (84 %) | 454 (95 %) | 417 (87 %) |
+| Native Competition — qualifying of 480 | 293 (61 %) | 185 (39 %) | 273 (57 %) | 227 (47 %) |
+| Volatile Climate — qualifying of 480 | 471 (98 %) | 395 (82 %) | 439 (92 %) | 464 (97 %) |
 
-6 launch seeds per cell (the same seeds in both browsers; with n = 6 the p90 is the worst sample). *typical* = the launch prefetch ran for 3 s
-(the species screen) and then this plant was chosen; *focused* = this plant was the selected card for those 3 s (its world prepared early);
-*cold* = nothing prefetched. Data: [`challenge-world-timing.json`](challenge-world-timing.json) (final rule);
-[`challenge-world-timing-witness-run-budget.json`](challenge-world-timing-witness-run-budget.json) (the witness-runs-only budget);
-[`challenge-world-timing-before-proof-budget.json`](challenge-world-timing-before-proof-budget.json) (no budget, Chromium, 3 seeds). Machine:
-the iMac (16 hardware threads; Chromium reports 8 → a 6-worker pool, Firefox 16 → 8).
+  Rejections: Native Competition's are mostly its arrival ≥ 20 % recipe (139–247 per species), then layer P (30–42); Dying World / Volatile
+  Climate reject only by layer P (4–78) and S2 (≤ 2). The quality rule removed 2 (Native Competition proofs that met no contested front).
+- **Retained 50:** archetypes 17 / 17 / 16 in 11 cells; **Native Competition × Reed Spire 5 Desert / 23 Frozen / 22 Ocean** (only 5 Desert
+  worlds give Reed Spire ≥ 20 % arrival and pass — all 5 kept). Arrival classes spread over Favorable / Precarious / Extreme where the recipe
+  allows (Native Competition: no Extreme, by its recipe).
+- **Proofs:** all 600 entries PASS layer P at the full budget, confirmations included where the scenario declares them (Native Competition /
+  Volatile Climate: 1,756 confirmation runs across the retained entries); every entry S2-winnable; witness margins 240–890 s; Dying World
+  proofs all reach their margin with ≥ 80 % of the decline done; every Native Competition proof meets ≥ 1 contested front (median 8–9).
+- **Diversity:** min pair distance 0.37–0.49 (normalized feature space; no near-duplicates); 5–10 distinct archetype × class × land
+  buckets per cell; retained ranges cover nearly the passing ranges (arrival, foothold, water, temperature, margin — `distributions.json`).
+  The lowest decile of hold margin (18–47 per cell) was held back and not needed.
+- **Builder cost — Native Competition:** 54 % of all proof CPU (8,689 of 16,200 s; 36–52 CPU-s per retained entry vs 11–27 for the others) —
+  the cost 036B's live search put in front of the player, now paid once, offline.
+- **Hashes:** bank `content/challenge-seed-banks.js` 312,145 B, sha256 `dcca6d8ff53e7cbb032bcdf0d0dae81fc0b4660ada008ce08894d6d4ed6871ba` ·
+  inputs fingerprint `c176d9c14ca63b83` · candidate cache 4.9 MB sha256 `82766064…`. `--check` (B4) rebuilds the bank byte-identically.
 
-| Challenge | Species | Chromium typical median / p90 / worst | Chromium focused median | Chromium cold median / worst | Firefox typical median / p90 / worst | Firefox focused median | Firefox cold median / worst | attempts median / max |
-|---|---|---|---|---|---|---|---|---|
-| Dying World | Organic Hybrid | 1.8 / 2.1 / 2.1 s | 1.2 s | 4.2 / 7.2 s | 2.5 / 6.6 / 6.6 s | 1.3 s | 4.6 / 10.4 s | 1 / 3 |
-| Dying World | Cinder Rosette | 2.5 / 5.2 / 5.2 s | 2.0 s | 5.7 / 7.8 s | 2.7 / 3.9 / 3.9 s | 1.6 s | 4.8 / 7.5 s | 1 / 3 |
-| Dying World | Woolly Candle | 1.9 / 2.2 / 2.2 s | 1.7 s | 3.9 / 6.5 s | 1.4 / 3.4 / 3.4 s | 0.9 s | 4.1 / 7.2 s | 1 / 1 |
-| Dying World | Reed Spire | 1.3 / 3.4 / 3.4 s | 1.3 s | 3.9 / 8.8 s | 0.8 / 3.9 / 3.9 s | 0.1 s | 3.1 / 7.7 s | 1 / 1 |
-| Native Competition | Organic Hybrid | 4.8 / 5.4 / 5.4 s | 3.7 s | 6.8 / 7.2 s | 9.7 / 11.2 / 11.2 s | 7.1 s | 10.5 / 12.6 s | 1 / 2 |
-| Native Competition | Cinder Rosette | 11.9 / 21.5 / 21.5 s | 11.3 s | 14.2 / 23.2 s | 22.1 / 43.6 / 43.6 s | 21.2 s | 25.1 / 44.4 s | 3 / 14 |
-| Native Competition | Woolly Candle | 6.2 / 9.2 / 9.2 s | 5.6 s | 8.1 / 11.5 s | 9.9 / 16.5 / 16.5 s | 8.0 s | 12.4 / 15.3 s | 2 / 7 |
-| Native Competition | Reed Spire | 4.2 / 23.7 / 23.7 s | 3.6 s | 6.3 / 26.7 s | 5.7 / 52.9 / 52.9 s | 4.2 s | 7.5 / 55.9 s | 2 / 4 |
-| Volatile Climate | Organic Hybrid | 1.6 / 4.8 / 4.8 s | 1.1 s | 4.0 / 8.1 s | 3.0 / 7.1 / 7.1 s | 1.8 s | 4.8 / 11.2 s | 1 / 2 |
-| Volatile Climate | Cinder Rosette | 3.3 / 4.6 / 4.6 s | 3.2 s | 6.2 / 8.3 s | 5.4 / 8.1 / 8.1 s | 5.1 s | 8.1 / 11.7 s | 2 / 3 |
-| Volatile Climate | Woolly Candle | 1.6 / 4.1 / 4.1 s | 1.2 s | 4.0 / 7.2 s | 3.1 / 7.6 / 7.6 s | 2.0 s | 4.9 / 11.3 s | 1 / 4 |
-| Volatile Climate | Reed Spire | 1.6 / 4.1 / 4.1 s | 0.8 s | 3.9 / 7.7 s | 3.2 / 7.1 / 7.1 s | 1.8 s | 5.5 / 11.3 s | 1 / 2 |
+## 4. Runtime — perceived wait, Chromium and Firefox
 
-- **Against the old survey (up to ~32 s):** materially faster everywhere. **Dying World and Volatile Climate meet the < 8 s target** in Chromium
-  in every mode and sample (worst typical 5.2 s); Firefox typical worst 8.1 s, cold up to 11.7 s.
-- **Native Competition: target met for Organic Hybrid and Woolly Candle in Chromium; NOT met for Cinder Rosette (median 11.9 s) and one Reed
-  Spire seed (23.7 s), and Firefox is ~2× slower on this scenario** (Cinder median 22.1 s; Reed worst 52.9 s). Profiled (§10 concern 1).
-- Before the proof budget, Native Competition · Cinder Rosette took **85–98 s** on launch seed 1; with the witness-runs-only budget the worst
-  Native Competition case was 48–92 s; the final budget brings it to 21–26 s (Chromium) / 42–56 s (Firefox).
+"Continue with <plant>" → the dossier on screen with the black lifted, through the real UI (`tools/challenge-world-timing.js`; 8 launch seeds ×
+3 Challenges × 4 species per mode and browser; the same seeds in both browsers). **cold** = the plant is chosen and Continue pressed at once
+(its build starts at that moment); **warm** = the plant's one world was built while the player read the species screen. Data:
+[`challenge-world-timing.json`](challenge-world-timing.json).
 
-## 6. Prescribed species · starting state (QA fixtures only — nothing released)
+**Target (< 2 s typical) met everywhere, worst case included: every one of the 384 launches showed its dossier in 1.0–1.2 s.**
 
-- **Prescribed species:** `launch.species = { policy: "prescribed", species }` (a released species). BEGIN CHALLENGE → PREPARING (no species
-  screen) → the dossier says "This Challenge prescribes the plant."; Back → the hub. The search refuses another species.
-- **Starting state:** `createSim(…, { startingState: { adaptations, biomass } })` — Adapt / Spread plant traits (tempPoint · waterArm · level)
-  applied through the engine's own legality rule and effect, never paid for (`sim.spent` stays 0), and / or the starting Biomass; Terraform
-  and crossing traits are refused. `sim.startingState` records it; the witness, layer P and S2 all run from that start (S2 never reuses the
-  construction proof then). The dossier lists it ("Lands with Cold Tolerance · Salt Handling · 250 Biomass (given by the Challenge)"); the run
-  and report provenance carry it as the Challenge's, and the report says "Given by the Challenge at landing: …" (not a purchase).
+| Browser | cold median / p90 / worst | warm median / p90 / worst | world build in the worker (median / max) | PREPARING shown |
+|---|---|---|---|---|
+| Chromium 147 | 1.08 / 1.12 / 1.21 s | 1.06 / 1.11 / 1.19 s | 12 / 96 ms | never (192 / 192 skipped) |
+| Firefox 148 | 1.06 / 1.09 / 1.14 s | 1.00 / 1.09 / 1.13 s | 14 / 100 ms | never (192 / 192 skipped) |
 
-## 7. Instance, retry provenance, report / menu behaviour
-
-- **Instance:** canonical Challenge (id, version, recipe version, recipe key), scenario, canonical species (+ policy), launch seed, stream /
-  draw / attempts, rule version, starting state, the EXACT planet object + fingerprint + World Seed + archetype, the verdicts it passed, the
-  dossier. Application state only (no URL, sessionStorage, localStorage or `window.name`; QA: `?launch=<n>`).
-- **`BLOOM.gameSession.challengeRun(instance)`** re-checks it against the current catalogue and refuses another Challenge version / recipe
-  version, a foreign Challenge or species object, another starting state, another scenario or an unproven planet — never reinterpreted.
-  `run.challengeRun` and the report identity carry challenge id / version, recipe version, rule version, launch seed, planet seed /
-  fingerprint, species, scenario and the starting state. `expeditionRun` refuses a Challenge (no residue).
-- **Report:** KEEP PLAYING (on a win) · **RETRY CHALLENGE** (same instance: same planet / species / Challenge / start objects, a fresh
-  session + simulation) · **CHALLENGES** (the hub, the Challenge selected; BEGIN CHALLENGE again = a new launch seed) · **MAIN MENU**
-  (clears it). The Expedition report keeps Play again · Choose another planet · Main menu.
-- **Back:** species → hub (launch released) · PREPARING → species (selection cancelled, workers terminated) · dossier → species (same
-  launch: the same plant again = the same planet) · prescribed → hub.
-
-## 8. Browsers / offline
-
-Chromium 147 and Firefox 148 (Playwright). `file://` offline (the portable runtime; the Challenge world screen is a registered portable
-module and the survey worker bundle carries the `challenge-*` tasks) and the Pages site under `/bloom/`: a complete one-planet Challenge
-launch, one document, no request outside the site. Portable runtime regenerated.
-
-## 9. QA
-
-**Focused first** (directive §20): challenges-check · challenge-world-check · main-menu · species-selection · destination-survey · game-flow ·
-single-app-flow · run-ui · portable-runtime · release `--no-suites` · visual-system — all green. **Then every other `tools/*-check.js`
-sequentially** with nothing else running (33 suites). The 11 focused suites were not re-run a second time in that pass: they had just run, in
-the same sequential way, on the identical code (a time saving made at the owner's request). **Result: 44 / 44 suites green, zero new reproducible
-failures.**
-
-- Narrow 036B pins, updated before the run (no check removed or loosened beyond the new state): main-menu **M7e** (the survey worker now
-  serves `challenge-physical` / `challenge-draw`, no survey `scenario` task) · portable-runtime **P5** (+ the Challenge world screen module) ·
-  visual-system **V5** (+ the screen in the icon check; the report's Challenges action carries the shared pennant).
-- **One real defect found by the regression:** run-ui-convergence **N6** — the report's \"Given by the Challenge\" note looked trait names up
-  in `BLOOM_DATA` (the report component may only display `adapter.report()`). Fixed (the report data carries the names), N6 green, and the
-  suites that read the report re-run green (challenge-world-check, run-ui, release).
-- 036A's Challenge / scenario separation tests are kept (challenges-check C1–C5, C20 + hub M / K / H / R); its survey-flow checks became
-  challenge-world-check's one-planet checks.
-
-| Suite | Result | Note |
+| Challenge | Chromium cold / warm median (worst) | Firefox cold / warm median (worst) |
 |---|---|---|
-| `archetype-check.js` | ALL CHECKS PASS  (58.9 s) |  |
-| `atmosphere-transition-check.js` | ALL CHECKS PASS  (0.1 s) |  |
-| `body-plan-check.js` | OK — 15/15 checks passed (905 s) |  |
-| `candle2-contract-check.js` | OK — candle2-contract-check: 15 passed, 0 failed (22.2 s) |  |
-| `challenge-world-check.js` | OK — challenge-world-check: 70 passed, 0 failed (261 s) | NEW · Chromium + Firefox, --evidence; rerun after the N6 fix |
-| `challenges-check.js` | OK — challenges-check: 31 passed, 0 failed (46 s) | Chromium + Firefox, --evidence |
-| `colony-development-check.js` | ALL CHECKS PASS  (28.9 s) |  |
-| `crossing-check.js` | ALL CHECKS PASS |  |
-| `cylinder-gen-check.js` | ALL CHECKS PASS  (10.0 s) |  |
-| `desert-check.js` | ALL CHECKS PASS  (57.5 s) |  |
-| `destination-survey-check.js` | ALL CHECKS PASS  (199.0 s) | focused pass |
-| `dying-world-check.js` | ALL CHECKS PASS  (62.5 s) |  |
-| `economy-check.js` | ALL CHECKS PASS  (384.9 s) |  |
-| `frozen-check.js` | ALL CHECKS PASS  (100.6 s) |  |
-| `game-flow-check.js` | ALL CHECKS PASS  (166.5 s) | focused pass |
-| `gen-check.js` | ALL CHECKS PASS |  |
-| `guided-training-check.js` | ALL 50 CHECKS PASS  (149.8 s) |  |
-| `main-menu-check.js` | ALL CHECKS PASS (17587 ms) | focused pass · pin updated for 036B before the run (M7e / P5 / V5) |
-| `native-competition-check.js` | ALL CHECKS PASS  (204.5 s) |  |
-| `organic-hybrid-art-intake-check.js` | OK — 45/45 checks passed (39 s) |  |
-| `planet-view-check.js` | ALL CHECKS PASS  (85.5 s) |  |
-| `plant-rooms-check.js` | ALL CHECKS PASS  (96.5 s) |  |
-| `plant-sprite-pipeline-check.js` | OK — 59/59 checks passed (29 s) |  |
-| `portable-runtime-check.js` | ALL 71 CHECKS PASS  (487.9 s) | focused pass · pin updated for 036B before the run (M7e / P5 / V5) |
-| `procedural-run-check.js` | ALL CHECKS PASS  (18.5 s) |  |
-| `production-plant-integration-check.js` | OK — 50/50 checks passed (100 s) |  |
-| `release-check.js` | ALL CHECKS PASS (51)  (125.1 s) | `--no-suites`; focused pass; rerun after the N6 fix |
-| `run-ui-check.js` | ALL CHECKS PASS  (69.0 s) | focused pass; rerun after the N6 fix |
-| `run-ui-convergence-check.js` | ALL CHECKS PASS  (129.5 s) | first run FAILED N6 — a real defect of this milestone (the report's Challenge-given note read BLOOM_DATA); fixed, rerun green |
-| `sim-check.js` | ALL CHECKS PASS |  |
-| `single-app-flow-check.js` | OK — 59 passed, 0 failed (651 s) | focused pass |
-| `slice-check.js` | ALL CHECKS PASS |  |
-| `species-art-intake-check.js` | ALL CHECKS PASS (16/16) (91 s) |  |
-| `species-check.js` | ALL CHECKS PASS (17/17) |  |
-| `species-selection-check.js` | ALL CHECKS PASS (68/68) (333 s) | focused pass |
-| `specimen-environment-check.js` | OK — specimen-environment-check: 15 passed, 0 failed (60.5 s) |  |
-| `sphere-texture-check.js` | ALL CHECKS PASS  (6.8 s) |  |
-| `strategy-check.js` | ALL CHECKS PASS  (28.6 s) |  |
-| `surface-check.js` | ALL CHECKS PASS |  |
-| `terraform-check.js` | ALL CHECKS PASS  (127.9 s) |  |
-| `topology-check.js` | ALL CHECKS PASS  (3.7 s) |  |
-| `training-check.js` | ALL CHECKS PASS  (42.1 s) |  |
-| `visual-system-check.js` | OK — 54/54 checks passed (251 s) | focused pass · pin updated for 036B before the run (M7e / P5 / V5) |
-| `volatile-climate-check.js` | ALL CHECKS PASS  (107.6 s) |  |
+| Dying World | 1.06 / 1.05 s (1.20) | 1.06 / 0.99 s (1.13) |
+| Native Competition | 1.09 / 1.07 s (1.21) | 1.06 / 1.03 s (1.12) |
+| Volatile Climate | 1.09 / 1.08 s (1.14) | 1.06 / 1.01 s (1.14) |
+
+- **What the ~1 s is:** the screen change itself (fade to black, the dossier's globe and specimen drawn under the black, the black lifting). The
+  world takes 12–14 ms to rebuild; even cold, it is ready inside the 250 ms skip window, so PREPARING never flashes. Native Competition is
+  no slower than the others (036B live search: Native Competition typical medians 4–22 s, worst 53 s; cold up to 56 s in Firefox).
+- **Deterministic:** the same launch seed + species gave the same bank entry and fingerprint in both modes and both browsers (all 96 cases).
+- **Responsiveness (species screen, requestAnimationFrame gaps):** idle max 17–18 ms; while a plant is selected and its world built,
+  Chromium max 33 ms (none > 50 ms), Firefox max 50–67 ms (1–3 frames > 50 ms per 400 ms sample). That sample includes the species card's
+  own specimen redraw on the main thread; the build runs in the worker.
+- No console / page errors in either browser.
+
+## 5. No expensive proof at runtime
+
+- The runtime modules contain no call to `findWitness`, `findStrategies`, `validateScenario`, `species.validateFor`, `evaluateSpecies`,
+  `physicalCandidate` or `runSearch` (static check), and counting wrappers on every one of them stay at **zero** across complete launches in
+  Node (B7, 12 launches) and on the page (F3, every Challenge flow in both browsers).
+- A launch = `bankCell` (provenance check) → `pickEntry` (fnv of Challenge id / version × species × launch seed, stepping past this session's
+  recent entries) → `BLOOM.archetype.attemptPlanet(archetype, seed, attempt)` (the accepted attempt only) → `planetFingerprint` = the
+  entry's → `assessWorld` (the engine's cheap `evaluate()`, for the dossier) → the instance. The proof summary shown to QA / provenance comes
+  from the bank (`scenarioValidation.offline: true`).
+
+## 6. Old research (superseded, kept as record)
+
+[`NATIVE_COMPETITION_LATENCY_STUDY.md`](NATIVE_COMPETITION_LATENCY_STUDY.md): Native Competition's live latency came from **slow failing
+proofs** (a failing competition run plays towards the tick limit) and **stream-order acceptance** (one slow failing draw blocks the launch);
+confirmation reruns were ~45 % of proof time. Run budgets of 3–6 cut the tail but excluded winnable worlds; the S1 foothold showed no content
+reason for a floor. **None of it is adopted** — the seed banks remove the proof from the launch. The findings now serve as builder cost data
+(§3). Earlier timings: [`challenge-world-timing-live-search.json`](challenge-world-timing-live-search.json) (036B final live search),
+`challenge-world-timing-witness-run-budget.json`, `challenge-world-timing-before-proof-budget.json`.
+
+## 7. Unchanged from the accepted 036B architecture
+
+- Flow: MAIN MENU → CHALLENGES → hub → BEGIN CHALLENGE → Choose Plant Species (player choice) → PREPARING → the Challenge Planet Dossier (ONE
+  planet) → BEGIN CHALLENGE → run → report (KEEP PLAYING · RETRY CHALLENGE · CHALLENGES · MAIN MENU). No survey, no alternatives, no reroll.
+- Recipes v1 (Dying World broad · Native Competition arrival ≥ 20 % · Volatile Climate broad) — now what the builder accepts.
+- Prescribed species / starting state: implemented, QA fixtures only (their own fixture bank cells), nothing released.
+- Instance / run / report provenance (now with bank version, cell, entry); `challengeRun` refuses anything else; `expeditionRun` refuses a
+  Challenge; the Expedition's 3 × 3 survey and EXPECTED HAZARDS unchanged; one document, no URL / storage / `window.name` transport.
+
+## 8. QA
+
+**Focused first** (16 suites, the Challenge / species / run / menu / portable / release / visual surfaces), **then every other
+`tools/*-check.js`** — one sequential pass over all **44 suites**, each run once, nothing else running, on the committed implementation
+(`7e471dc`). **Result: 43 / 44 green; 1 pre-existing stochastic flake (slice-check pacing); zero new reproducible failures.**
+
+Defects found and fixed during 036B1 QA (before this pass):
+- **Hub crash on the v3 Challenges** (challenges-check, early run): the hub's player words were keyed by the retired `"recipe"` world
+  policy, so opening CHALLENGES threw. Re-keyed to `"seed-bank"` (same accepted sentence).
+- **Black, unclickable dossier when the world was ready early** (challenge-world-check F4, both browsers): a bank world can arrive before
+  the screen's stylesheet; the dossier's globe / transition then saw `position: static` and pinned an inline `position: relative`, which
+  collapsed the `container-type: size` root to 0 px. The dossier now waits for its stylesheet; F3 now also asserts the dossier has real
+  height and that Begin challenge is the element hit at its centre. (036B never hit it: the live search always outlasted the stylesheet.)
+- QA-only: B6 / B7's static scans matched validator names in `/** */` comments and provenance strings (now: code only, calls only); P1's
+  bank-request count under Firefox file:// (Playwright reports no file:// requests there; the data's presence is asserted directly).
+
+**slice-check pacing** (`perfect-bot win in 4–8 min`, floor 240 s): failed at 238 s in the pass. The demo's simulation draws on
+`Math.random` (`bloom-sim.js` default rng), so the bot's win time varies run to run: current code 238 / 236 / 231 / 244 / 255 / 251 s, the
+previous review head `80c3539` 239 / 262 / 256 / 251 s — it fails on both. Nothing the demo executes changed (its scripts' only diff is the
+witness's opt-in `trace`, never passed there). Not loosened; flagged for whoever owns the slice harness.
+
+Validator / engine suites green with the opt-in `trace` in place: sim-check (golden), strategy, species, native-competition, dying-world,
+volatile-climate, economy, terraform, archetype.
+
+| # | Suite | Result | Note |
+|---:|---|---|---|
+| 1 | `challenge-world-check.js` | OK — challenge-world-check: 70 passed, 0 failed (244 s) (244s) | focused pass · REWRITTEN for 036B1 (bank integrity B1–B9 + browser flow); evidence captured in a separate `--evidence` run (Chromium + Firefox) |
+| 2 | `challenges-check.js` | OK — challenges-check: 31 passed, 0 failed (33 s) (33s) | focused pass · updated for v3 / seed-bank (C3 refusals, C5) |
+| 3 | `main-menu-check.js` | ALL CHECKS PASS (15691 ms) (16s) | focused pass · pin M7e: the worker's Challenge task is `challenge-bank-world` |
+| 4 | `species-selection-check.js` | ALL CHECKS PASS (68/68) (309 s) (309s) | focused pass |
+| 5 | `native-competition-check.js` | ALL CHECKS PASS  (178.6 s) (179s) | focused pass |
+| 6 | `dying-world-check.js` | ALL CHECKS PASS  (63.2 s) (63s) | focused pass |
+| 7 | `volatile-climate-check.js` | ALL CHECKS PASS  (108.6 s) (109s) | focused pass |
+| 8 | `species-check.js` | ALL CHECKS PASS (17/17) (228s) | focused pass |
+| 9 | `run-ui-check.js` | ALL CHECKS PASS  (71.3 s) (71s) | focused pass |
+| 10 | `run-ui-convergence-check.js` | ALL CHECKS PASS  (135.4 s) (135s) | focused pass |
+| 11 | `game-flow-check.js` | ALL CHECKS PASS  (113.5 s) (114s) | focused pass |
+| 12 | `single-app-flow-check.js` | OK — 59 passed, 0 failed (420 s) (420s) | focused pass |
+| 13 | `destination-survey-check.js` | ALL CHECKS PASS  (124.3 s) (124s) | focused pass |
+| 14 | `portable-runtime-check.js` | ALL 71 CHECKS PASS  (423.1 s) (423s) | focused pass · pins P6 / P29: 19 classic scripts (+ the bank) |
+| 15 | `release-check.js` | ALL CHECKS PASS (51)  (122.5 s) (123s) | focused pass · `--no-suites` |
+| 16 | `visual-system-check.js` | OK — 54/54 checks passed (220 s) (220s) | focused pass |
+| 17 | `archetype-check.js` | ALL CHECKS PASS  (50.6 s) (51s) |  |
+| 18 | `atmosphere-transition-check.js` | ALL CHECKS PASS  (0.0 s) (0s) |  |
+| 19 | `body-plan-check.js` | OK — 15/15 checks passed (917 s) (917s) |  |
+| 20 | `candle2-contract-check.js` | OK — candle2-contract-check: 15 passed, 0 failed (21.6 s) (21s) |  |
+| 21 | `colony-development-check.js` | ALL CHECKS PASS  (26.4 s) (27s) |  |
+| 22 | `crossing-check.js` | ALL CHECKS PASS (2s) |  |
+| 23 | `cylinder-gen-check.js` | ALL CHECKS PASS  (9.4 s) (9s) |  |
+| 24 | `desert-check.js` | ALL CHECKS PASS  (55.7 s) (56s) |  |
+| 25 | `economy-check.js` | ALL CHECKS PASS  (345.9 s) (346s) |  |
+| 26 | `frozen-check.js` | ALL CHECKS PASS  (79.6 s) (79s) |  |
+| 27 | `gen-check.js` | ALL CHECKS PASS (6s) |  |
+| 28 | `guided-training-check.js` | ALL 50 CHECKS PASS  (131.0 s) (131s) |  |
+| 29 | `organic-hybrid-art-intake-check.js` | OK — 45/45 checks passed (34 s) (35s) |  |
+| 30 | `planet-view-check.js` | ALL CHECKS PASS  (78.3 s) (78s) |  |
+| 31 | `plant-rooms-check.js` | ALL CHECKS PASS  (82.2 s) (82s) |  |
+| 32 | `plant-sprite-pipeline-check.js` | OK — 59/59 checks passed (24 s) (25s) |  |
+| 33 | `procedural-run-check.js` | ALL CHECKS PASS  (14.8 s) (15s) |  |
+| 34 | `production-plant-integration-check.js` | OK — 50/50 checks passed (90 s) (90s) |  |
+| 35 | `sim-check.js` | ALL CHECKS PASS (10s) |  |
+| 36 | `slice-check.js` | **FAIL** — 1 check(s) FAILED (9s) | **pre-existing stochastic flake** — see above |
+| 37 | `species-art-intake-check.js` | ALL CHECKS PASS (16/16) (90 s) (91s) |  |
+| 38 | `specimen-environment-check.js` | OK — specimen-environment-check: 15 passed, 0 failed (54.0 s) (54s) |  |
+| 39 | `sphere-texture-check.js` | ALL CHECKS PASS  (6.3 s) (6s) |  |
+| 40 | `strategy-check.js` | ALL CHECKS PASS  (24.5 s) (25s) |  |
+| 41 | `surface-check.js` | ALL CHECKS PASS (3s) |  |
+| 42 | `terraform-check.js` | ALL CHECKS PASS  (116.5 s) (116s) |  |
+| 43 | `topology-check.js` | ALL CHECKS PASS  (3.1 s) (3s) |  |
+| 44 | `training-check.js` | ALL CHECKS PASS  (39.5 s) (40s) |  |
 
 
-## 10. Known concerns (for the PMO)
+## 9. Known concerns (for the PMO)
 
-1. **Native Competition generation time.** Root cause, profiled: one passing proof is three full competition simulations (the witness + two
-   confirmation seeds), and a stream-order acceptance must also wait for earlier draws whose proofs fail; a failing competition run is long
-   (it plays out towards the tick limit), so even within the 6-run budget one failing draw can cost ~15–30 s in a worker (×2 in Firefox).
-   Not weakened to hit the number. Options if the PMO wants it faster: (a) a smaller run budget (e.g. 3 runs: only first-candidate proofs
-   would be accepted; fewer worlds qualify); (b) a tighter Native Competition recipe (e.g. Favorable arrival only — a product choice the study
-   does not support on legibility grounds); (c) accept it with the existing mitigation (the selected plant is prepared while the player reads
-   Choose Plant Species — *focused* medians above). Recommendation: (c) now, revisit with 036C's authored Challenges.
-2. **The proof budget excludes some winnable worlds** (proofs that need many witness tries): an early stop, never a weaker proof, but it
-   shifts the accepted set toward worlds whose win the validator finds quickly. Qualifying rates stay healthy (study §5).
-3. **Validator touched (opt-in only):** `findStrategies` / `validateScenario` gained `maxRuns`, and the witness / layer P / S2 accept a
-   `startingState`; both absent = byte-identical behaviour (golden `sim-check`, every validator suite in the regression).
-4. **Volatile Climate's mechanic** is met only when the player Terraforms (the scenario's design); most witnesses adapt instead. Not a recipe
-   problem (a cap would not change it); flagged for 036C.
-5. **New player-facing copy for review:** PREPARING CHALLENGE WORLD + its three steps; the dossier's section names, "Lands as it always does:
-   nothing owned yet.", the foothold line, "This Challenge prescribes the plant."; "Continue with <plant>"; Retry / Challenges notes
-   ("The same Challenge, plant and planet…", "…Beginning one again prepares a fresh world."); "Given by the Challenge at landing";
-   "No qualifying world turned up in this part of space." (exhaustion; never observed); EXPECTED HAZARDS.
-6. **The foothold line** is the S1 measure (growable + reachable over land at landing) and can read low beside a higher arrival share
-   (e.g. "50 % of the land" but "Foothold: 6 %"): both true; the PMO may prefer to drop it.
+1. **Native Competition × Reed Spire archetype spread:** 5 Desert / 23 Frozen / 22 Ocean (the other 11 cells are 17 / 17 / 16). Only 5
+   pool Desert worlds give Reed Spire ≥ 20 % arrival and pass; all are kept. A larger pool would add a few; the recipe is unchanged.
+2. **Volatile Climate's mechanic in the proofs:** median 0 climate shocks in the witnesses — shocks follow the player's Terraforming (the
+   scenario's design, flagged in 036B), and most witnesses adapt instead. No quality rule was invented for it; requiring ≥ 1 shock would
+   select Terraform-led proofs — a PMO / 036C decision.
+3. **Broad recipes keep near-zero-arrival worlds** (e.g. Reed Spire on a Dying World desert with 0 % suitable land at landing — proven
+   winnable at the full budget). Curation keeps each cell's Favorable / Precarious / Extreme shares within ~12 points of the passing pool
+   (no skew to the edges). An arrival floor would be recipe v2 + a bank rebuild.
+4. **Size:** the bank is 312 KB and loads with the title's classic scripts (every session, Expedition included; once per document). It could
+   be loaded lazily at the first BEGIN CHALLENGE — not done (kept to the existing boot path). The candidate cache (4.9 MB JSON) is committed
+   as evidence and as the `--check` input.
+5. **Rule changes make every bank stale** (any engine config, trait mechanic, scenario mechanic, physiology, archetype or generator change):
+   the Challenge then shows "This Challenge's proven worlds are out of date, so none can be prepared." with Back, and challenge-world-check B1
+   fails. Rebuild: `node tools/build-challenge-seed-bank.mjs` (~38 min here) + commit. Worth adding to the release checklist.
+6. **Variety:** 50 worlds per Challenge × species; repeats are avoided within a session (in memory); across sessions any entry may come
+   back (1 in 50 per launch).
+7. **Validator touched (opt-in only):** `trace` (run timings for the latency study); absent = unchanged behaviour (sim-check golden,
+   every validator suite green).
+8. **New player-facing copy for review:** PREPARING steps *Selecting a proven world · Building the planet · Verifying the planet*; failure
+   lines "This Challenge's proven worlds are out of date, so none can be prepared." · "The prepared world did not match its proof, so it was
+   not used." (never observed). All other accepted copy unchanged; the Foothold line removed.
 
-## 11. Evidence
+## 10. Evidence
 
-`docs/evidence/bloom-036b/` (Chromium unless prefixed `firefox-`): main menu · hub × 3 (1440 × 900 and 390 × 844) · species choice from each
-Challenge · PREPARING for each · the dossier for each Challenge + Organic Hybrid on Dying World (each species across representative
-Challenges: Woolly Candle / Dying World + Native Competition, Cinder Rosette / Volatile Climate, Organic Hybrid / Dying World) · runs of all
-three · reports of all three · retry (same world) · back to hub · a new launch's dossier · the Expedition 3 × 3 survey with EXPECTED HAZARDS ·
-fixtures (prescribed species; starting state dossier + report — test-only) · Firefox: menu, hub, species, PREPARING, the Dying World and Native
-Competition dossiers, run, report, the Expedition survey. Data: `challenge-recipe-study.json`, `challenge-world-timing*.json`.
+`docs/evidence/bloom-036b/` (Chromium unless prefixed `firefox-`): main menu · hub × 3 (1440 × 900, 390 × 844) · species choice from each
+Challenge · **`04-preparing-slowed.png`** (the PREPARING copy; a QA-slowed build, since the real screen is normally skipped) · the dossier for
+each Challenge (no Foothold line) + Organic Hybrid on Dying World · runs and reports of all three · retry (same entry) · back to hub · a new
+launch's dossier (another entry) · the Expedition survey with EXPECTED HAZARDS · fixtures (prescribed species; starting state). Seed bank:
+`seed-bank/BUILD_REPORT.md`, `build.json`, `distributions.json`, `candidates.json` (every evaluated world's record — the `--check` rebuild
+input), `builder-pool-bench.json`. Timing: `challenge-world-timing.json`.

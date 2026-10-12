@@ -15,7 +15,7 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-11, **BLOOM-036B review candidate** (branch `handoff/bloom-036b-review`, NOT merged; it contains the PMO-accepted
+*Last updated: 2026-10-11, **BLOOM-036B + 036B1 (seed banks) review candidate** (branch `handoff/bloom-036b-review`, NOT merged; it contains the PMO-accepted
 036A foundation `8af3e12` + 036B; production `main` is the 035C closeout below). **BLOOM-035C: IMPLEMENTED / COMPLETE** · **BLOOM-036A:
 ACCEPTED FOUNDATION** (not separately integrated; included in the 036B candidate) · **BLOOM-036B: CANDIDATE** · **Challenges: CANDIDATE**
 (the CHALLENGES hub; a Challenge is a contained run with ONE generated qualifying planet — no Destination Survey) · **036C: NEXT /
@@ -216,19 +216,26 @@ BLOOM-036 (036A accepted foundation → 036B one-planet launch → 036C).
   PREPARING CHALLENGE WORLD → the Challenge Planet Dossier (ONE planet: the challenge · your plant · your world) → BEGIN CHALLENGE → Run →
   Report (KEEP PLAYING · RETRY CHALLENGE · CHALLENGES · MAIN MENU). **No 3 × 3 Destination Survey, no choosing among worlds, no reroll.**
   One document, application state only.
-- **World recipe:** each Challenge has a versioned recipe (archetypes · arrival band · native cover), calibrated by a read-only study
-  ([`evidence/bloom-036b/CHALLENGE_RECIPE_STUDY.md`](evidence/bloom-036b/CHALLENGE_RECIPE_STUDY.md)): Dying World and Volatile Climate
-  broad, Native Competition arrival ≥ 20 %. The launch searches the normal physical world stream (a species-free stream from the launch seed ×
-  Challenge id × version × recipe version) for the FIRST world that passes physical validation, the recipe, the species' S2 and the
-  scenario's layer P within a proof budget of 6 simulation runs, confirmations included (an early stop, never a weaker proof). A recipe never changes a planet.
+- **World recipe + seed bank (036B1):** each Challenge has a versioned recipe (archetypes · arrival band · native cover), calibrated by a
+  read-only study ([`evidence/bloom-036b/CHALLENGE_RECIPE_STUDY.md`](evidence/bloom-036b/CHALLENGE_RECIPE_STUDY.md)): Dying World and
+  Volatile Climate broad, Native Competition arrival ≥ 20 %. **EXPEDITION = live procedural world discovery; CHALLENGES = curated banks of
+  prevalidated procedural seeds.** An offline builder (`tools/build-challenge-seed-bank.mjs`) proves worlds with the FULL validation
+  (physical, the recipe, the species' S2, the scenario's layer P at its full budget with every confirmation) and curates 50 diverse passing
+  seeds per Challenge × released species into `content/challenge-seed-banks.js` (seeds + proof provenance, never geometry). At launch the
+  game picks one entry deterministically (launch seed; this session's recent entries avoided, in memory only), rebuilds that exact planet in
+  milliseconds and verifies its fingerprint — no validation runs in the player's browser. A stale bank (any rule / species / scenario /
+  generator change) or a fingerprint mismatch is refused, never silently reused or searched around. A recipe never changes a planet.
 - **Instance:** the canonical Challenge, scenario, species, launch seed, starting state and the exact planet object. RETRY CHALLENGE replays
-  it (a fresh simulation); CHALLENGES → the hub, where beginning again is a fresh instance. Provenance (challenge id / version, recipe version,
-  planet seed / fingerprint, species, scenario) reaches the run and the report; an instance from other data is refused, never reinterpreted.
+  it (the same bank entry, a fresh simulation); CHALLENGES → the hub, where beginning again is a fresh instance. Provenance (challenge id / version, recipe version,
+  bank version / cell / entry, planet seed / fingerprint, species, scenario) reaches the run and the report; an instance from other data is refused, never reinterpreted.
 - **Implemented for future Challenges, QA-only fixtures (none released):** a prescribed species (skips Choose Plant Species) and a prescribed
   starting state (owned plant adaptations and / or starting Biomass, applied by the engine's own `createSim` option; proven from that start;
   the report says the Challenge gave it).
 - **History:** 036A launched a Challenge through a scenario-proven Destination Survey (interim PMO directive, ~4–32 s); 036B replaced it —
-  the survey is the Expedition's only again (its heading "Expected challenges" is now **Expected hazards**).
+  the survey is the Expedition's only again (its heading "Expected challenges" is now **Expected hazards**). 036B first searched and proved
+  each Challenge world live in the browser (Native Competition 20–90 s in the tail); 036B1 moved that proof offline into the seed banks
+  ([`evidence/bloom-036b/NATIVE_COMPETITION_LATENCY_STUDY.md`](evidence/bloom-036b/NATIVE_COMPETITION_LATENCY_STUDY.md), superseded findings).
+  The dossier no longer shows a separate "Foothold" line (the S1 metric stays in the bank and the instance).
 - Invariants: EXPEDITION = its 3 × 3 survey and the default scenario, no Challenge residue; TRAINING = Organic Hybrid, no Challenge; Main
   Menu clears the Challenge.
 - **Not yet (036C+):** Challenge-specific completion conditions (schema path kept, refused until implemented), authored Challenge worlds,
@@ -310,6 +317,6 @@ This is not a gameplay-code feature; product code does not work around repositor
 | **BLOOM-035B** — Species system implementation + Species Selection | species data / model; `config.referencePlant`; simulation / validator support; species-aware Destination Survey; run plumbing; body-plan layer with proof packs; the Species Selection screen behind `?species=1` | **IMPLEMENTED / COMPLETE** (PMO-accepted `2180fcd`, in production `main`; Species Selection still behind `?species=1`, candidate species on TEMPORARY PIPELINE PROOF art) |
 | **BLOOM-035C** — Final species art + Species Selection release | three final production species packs (Cinder Rosette, Woolly Candle, Reed Spire; four species total) on the same compositor architecture; the generalized real-pack intake (035C0: `tools/intake-plant-art.mjs --pack <id>`, schemas in `PLANT_SPRITE_PIPELINE_v1.md` § SPECIES_ART_INTAKE); the three species on their real packs (Woolly Candle on `candle@2`); Species Selection released in the normal EXPEDITION flow (`?species=1` not required); dynamic region specimen environments | **IMPLEMENTED / COMPLETE** (PMO-accepted 035C2 `4ac7301`, in production `main`) |
 | **BLOOM-036A** — Challenges foundation + first playable hub | the CHALLENGES menu entry; the Challenge hub; the definition schema (`content/challenges.js`, `BLOOM.challenges`); single-document routing; (interim) a scenario-proven Destination Survey | **ACCEPTED FOUNDATION** (`8af3e12`; not separately integrated — included in the 036B candidate) |
-| **BLOOM-036B** — Contained Challenge worlds | ONE generated qualifying planet per Challenge instance from a calibrated, versioned recipe (no survey); PREPARING CHALLENGE WORLD + the Challenge Planet Dossier; instance provenance; Retry Challenge / Challenges; prescribed species + starting-state support (QA fixtures) | **CANDIDATE** (review branch `handoff/bloom-036b-review`) |
+| **BLOOM-036B** — Contained Challenge worlds | ONE generated qualifying planet per Challenge instance from a calibrated, versioned recipe (no survey), drawn from prevalidated seed banks (036B1); PREPARING CHALLENGE WORLD + the Challenge Planet Dossier; instance provenance; Retry Challenge / Challenges; prescribed species + starting-state support (QA fixtures) | **CANDIDATE** (review branch `handoff/bloom-036b-review`) |
 | **BLOOM-036C+** — Challenges, continued | 036C the three mechanics as ingredients · 036D initial authored set, result / replay, full regression | **036C: NEXT / planned** |
 | **Final hardening** | full documentation reconciliation; dead historical production-path cleanup; Pages enablement / release; a Safari / WebKit production test if practical; final end-to-end release QA | PLANNED |
