@@ -1,0 +1,474 @@
+{
+ "builtAt": "2026-10-12T00:57:41.329Z",
+ "gitHead": "80c3539",
+ "wallSeconds": 2285,
+ "workers": 8,
+ "hardwareThreads": 16,
+ "pool": {
+  "perArchetype": 160,
+  "worlds": 480,
+  "stream": "bloom-036b1 challenge seed bank pool v1",
+  "physicalOk": 475
+ },
+ "target": 50,
+ "provisional": false,
+ "limitingCells": [],
+ "inputsFingerprint": "c176d9c14ca63b83",
+ "bankSha256": "dcca6d8ff53e7cbb032bcdf0d0dae81fc0b4660ada008ce08894d6d4ed6871ba",
+ "bankBytes": 312145,
+ "cells": {
+  "dying_world/organic_hybrid": {
+   "evaluated": 480,
+   "stages": {
+    "ok": 433,
+    "physical": 5,
+    "scenario": 42
+   },
+   "passing": 433,
+   "qualifyingPct": 90.2,
+   "retained": 50,
+   "deprioritized": 42,
+   "passingByArchetype": {
+    "ocean_archipelago": 144,
+    "desert_world": 137,
+    "frozen_world": 152
+   },
+   "retainedByArchetype": {
+    "desert_world": 17,
+    "frozen_world": 17,
+    "ocean_archipelago": 16
+   },
+   "retainedByClass": {
+    "extreme": 17,
+    "precarious": 14,
+    "favorable": 19
+   },
+   "minPairDistance": 0.4447,
+   "cpuSeconds": {
+    "species": 1,
+    "proof": 563
+   },
+   "proof": {
+    "simulations": 144,
+    "confirmations": 0,
+    "allPass": true
+   }
+  },
+  "dying_world/cinder_rosette": {
+   "evaluated": 480,
+   "stages": {
+    "ok": 404,
+    "scenario": 69,
+    "physical": 5,
+    "species": 2
+   },
+   "passing": 404,
+   "qualifyingPct": 84.2,
+   "retained": 50,
+   "deprioritized": 40,
+   "passingByArchetype": {
+    "ocean_archipelago": 140,
+    "desert_world": 113,
+    "frozen_world": 151
+   },
+   "retainedByArchetype": {
+    "desert_world": 17,
+    "frozen_world": 17,
+    "ocean_archipelago": 16
+   },
+   "retainedByClass": {
+    "favorable": 11,
+    "precarious": 17,
+    "extreme": 22
+   },
+   "minPairDistance": 0.4046,
+   "cpuSeconds": {
+    "species": 152,
+    "proof": 1209
+   },
+   "proof": {
+    "simulations": 312,
+    "confirmations": 0,
+    "allPass": true
+   }
+  },
+  "dying_world/woolly_candle": {
+   "evaluated": 480,
+   "stages": {
+    "ok": 454,
+    "physical": 5,
+    "scenario": 19,
+    "species": 2
+   },
+   "passing": 454,
+   "qualifyingPct": 94.6,
+   "retained": 50,
+   "deprioritized": 45,
+   "passingByArchetype": {
+    "ocean_archipelago": 153,
+    "desert_world": 157,
+    "frozen_world": 144
+   },
+   "retainedByArchetype": {
+    "desert_world": 17,
+    "frozen_world": 17,
+    "ocean_archipelago": 16
+   },
+   "retainedByClass": {
+    "extreme": 24,
+    "precarious": 12,
+    "favorable": 14
+   },
+   "minPairDistance": 0.4662,
+   "cpuSeconds": {
+    "species": 140,
+    "proof": 721
+   },
+   "proof": {
+    "simulations": 212,
+    "confirmations": 0,
+    "allPass": true
+   }
+  },
+  "dying_world/reed_spire": {
+   "evaluated": 480,
+   "stages": {
+    "ok": 417,
+    "physical": 5,
+    "scenario": 57,
+    "species": 1
+   },
+   "passing": 417,
+   "qualifyingPct": 86.9,
+   "retained": 50,
+   "deprioritized": 41,
+   "passingByArchetype": {
+    "ocean_archipelago": 141,
+    "desert_world": 145,
+    "frozen_world": 131
+   },
+   "retainedByArchetype": {
+    "desert_world": 17,
+    "frozen_world": 17,
+    "ocean_archipelago": 16
+   },
+   "retainedByClass": {
+    "extreme": 19,
+    "precarious": 13,
+    "favorable": 18
+   },
+   "minPairDistance": 0.4271,
+   "cpuSeconds": {
+    "species": 147,
+    "proof": 610
+   },
+   "proof": {
+    "simulations": 180,
+    "confirmations": 0,
+    "allPass": true
+   }
+  },
+  "native_competition/organic_hybrid": {
+   "evaluated": 480,
+   "stages": {
+    "ok": 293,
+    "recipe": 139,
+    "scenario": 42,
+    "physical": 5,
+    "quality": 1
+   },
+   "passing": 293,
+   "qualifyingPct": 61,
+   "retained": 50,
+   "deprioritized": 29,
+   "passingByArchetype": {
+    "ocean_archipelago": 109,
+    "desert_world": 46,
+    "frozen_world": 138
+   },
+   "retainedByArchetype": {
+    "desert_world": 17,
+    "frozen_world": 17,
+    "ocean_archipelago": 16
+   },
+   "retainedByClass": {
+    "precarious": 27,
+    "favorable": 23
+   },
+   "minPairDistance": 0.4907,
+   "cpuSeconds": {
+    "species": 1,
+    "proof": 2586
+   },
+   "proof": {
+    "simulations": 125,
+    "confirmations": 168,
+    "allPass": true
+   }
+  },
+  "native_competition/cinder_rosette": {
+   "evaluated": 480,
+   "stages": {
+    "recipe": 247,
+    "scenario": 41,
+    "ok": 185,
+    "physical": 5,
+    "species": 2
+   },
+   "passing": 185,
+   "qualifyingPct": 38.5,
+   "retained": 50,
+   "deprioritized": 18,
+   "passingByArchetype": {
+    "ocean_archipelago": 18,
+    "desert_world": 121,
+    "frozen_world": 46
+   },
+   "retainedByArchetype": {
+    "desert_world": 17,
+    "frozen_world": 17,
+    "ocean_archipelago": 16
+   },
+   "retainedByClass": {
+    "favorable": 14,
+    "precarious": 36
+   },
+   "minPairDistance": 0.3965,
+   "cpuSeconds": {
+    "species": 153,
+    "proof": 2440
+   },
+   "proof": {
+    "simulations": 155,
+    "confirmations": 170,
+    "allPass": true
+   }
+  },
+  "native_competition/woolly_candle": {
+   "evaluated": 480,
+   "stages": {
+    "ok": 273,
+    "recipe": 171,
+    "scenario": 30,
+    "physical": 5,
+    "quality": 1
+   },
+   "passing": 273,
+   "qualifyingPct": 56.9,
+   "retained": 50,
+   "deprioritized": 27,
+   "passingByArchetype": {
+    "ocean_archipelago": 92,
+    "desert_world": 30,
+    "frozen_world": 151
+   },
+   "retainedByArchetype": {
+    "desert_world": 17,
+    "frozen_world": 17,
+    "ocean_archipelago": 16
+   },
+   "retainedByClass": {
+    "precarious": 31,
+    "favorable": 19
+   },
+   "minPairDistance": 0.3698,
+   "cpuSeconds": {
+    "species": 138,
+    "proof": 1845
+   },
+   "proof": {
+    "simulations": 104,
+    "confirmations": 146,
+    "allPass": true
+   }
+  },
+  "native_competition/reed_spire": {
+   "evaluated": 480,
+   "stages": {
+    "ok": 227,
+    "scenario": 33,
+    "physical": 5,
+    "recipe": 215
+   },
+   "passing": 227,
+   "qualifyingPct": 47.3,
+   "retained": 50,
+   "deprioritized": 22,
+   "passingByArchetype": {
+    "ocean_archipelago": 126,
+    "desert_world": 7,
+    "frozen_world": 94
+   },
+   "retainedByArchetype": {
+    "desert_world": 5,
+    "frozen_world": 23,
+    "ocean_archipelago": 22
+   },
+   "retainedByClass": {
+    "precarious": 22,
+    "favorable": 28
+   },
+   "minPairDistance": 0.4405,
+   "cpuSeconds": {
+    "species": 148,
+    "proof": 1818
+   },
+   "proof": {
+    "simulations": 110,
+    "confirmations": 164,
+    "allPass": true
+   }
+  },
+  "volatile_climate/organic_hybrid": {
+   "evaluated": 480,
+   "stages": {
+    "ok": 471,
+    "physical": 5,
+    "scenario": 4
+   },
+   "passing": 471,
+   "qualifyingPct": 98.1,
+   "retained": 50,
+   "deprioritized": 47,
+   "passingByArchetype": {
+    "ocean_archipelago": 153,
+    "desert_world": 158,
+    "frozen_world": 160
+   },
+   "retainedByArchetype": {
+    "desert_world": 17,
+    "frozen_world": 17,
+    "ocean_archipelago": 16
+   },
+   "retainedByClass": {
+    "precarious": 15,
+    "extreme": 16,
+    "favorable": 19
+   },
+   "minPairDistance": 0.4756,
+   "cpuSeconds": {
+    "species": 1,
+    "proof": 995
+   },
+   "proof": {
+    "simulations": 162,
+    "confirmations": 296,
+    "allPass": true
+   }
+  },
+  "volatile_climate/cinder_rosette": {
+   "evaluated": 480,
+   "stages": {
+    "ok": 395,
+    "physical": 5,
+    "scenario": 78,
+    "species": 2
+   },
+   "passing": 395,
+   "qualifyingPct": 82.3,
+   "retained": 50,
+   "deprioritized": 39,
+   "passingByArchetype": {
+    "ocean_archipelago": 151,
+    "desert_world": 91,
+    "frozen_world": 153
+   },
+   "retainedByArchetype": {
+    "desert_world": 17,
+    "frozen_world": 17,
+    "ocean_archipelago": 16
+   },
+   "retainedByClass": {
+    "favorable": 11,
+    "precarious": 17,
+    "extreme": 22
+   },
+   "minPairDistance": 0.399,
+   "cpuSeconds": {
+    "species": 153,
+    "proof": 1342
+   },
+   "proof": {
+    "simulations": 138,
+    "confirmations": 250,
+    "allPass": true
+   }
+  },
+  "volatile_climate/woolly_candle": {
+   "evaluated": 480,
+   "stages": {
+    "ok": 439,
+    "scenario": 34,
+    "physical": 5,
+    "species": 2
+   },
+   "passing": 439,
+   "qualifyingPct": 91.5,
+   "retained": 50,
+   "deprioritized": 43,
+   "passingByArchetype": {
+    "ocean_archipelago": 150,
+    "desert_world": 156,
+    "frozen_world": 133
+   },
+   "retainedByArchetype": {
+    "desert_world": 17,
+    "frozen_world": 17,
+    "ocean_archipelago": 16
+   },
+   "retainedByClass": {
+    "precarious": 15,
+    "extreme": 19,
+    "favorable": 16
+   },
+   "minPairDistance": 0.4586,
+   "cpuSeconds": {
+    "species": 137,
+    "proof": 1282
+   },
+   "proof": {
+    "simulations": 201,
+    "confirmations": 344,
+    "allPass": true
+   }
+  },
+  "volatile_climate/reed_spire": {
+   "evaluated": 480,
+   "stages": {
+    "ok": 464,
+    "scenario": 10,
+    "physical": 5,
+    "species": 1
+   },
+   "passing": 464,
+   "qualifyingPct": 96.7,
+   "retained": 50,
+   "deprioritized": 46,
+   "passingByArchetype": {
+    "ocean_archipelago": 147,
+    "desert_world": 159,
+    "frozen_world": 158
+   },
+   "retainedByArchetype": {
+    "desert_world": 17,
+    "frozen_world": 17,
+    "ocean_archipelago": 16
+   },
+   "retainedByClass": {
+    "extreme": 21,
+    "precarious": 7,
+    "favorable": 22
+   },
+   "minPairDistance": 0.3999,
+   "cpuSeconds": {
+    "species": 145,
+    "proof": 789
+   },
+   "proof": {
+    "simulations": 116,
+    "confirmations": 218,
+    "allPass": true
+   }
+  }
+ }
+}

@@ -1,0 +1,25 @@
+{
+ "tool": "tools/challenge-bank-bench.mjs",
+ "hardwareThreads": 16,
+ "worlds": 16,
+ "results": [
+  {
+   "workers": 8,
+   "wallSeconds": 155.4,
+   "worldsPerMinute": 6.18,
+   "meanWorldSeconds": 44.2
+  },
+  {
+   "workers": 12,
+   "wallSeconds": 157.3,
+   "worldsPerMinute": 6.1,
+   "meanWorldSeconds": 58.7
+  },
+  {
+   "workers": 15,
+   "wallSeconds": 152.2,
+   "worldsPerMinute": 6.31,
+   "meanWorldSeconds": 63.6
+  }
+ ]
+}

@@ -1,5 +1,10 @@
 # BLOOM-036B — Challenge recipe study
 
+> **036B1 update (2026-10-11):** the RECIPES chosen here stand. The live per-launch search and its **proof budget (§4–§5) are RETIRED**:
+> Challenge worlds now come from prevalidated seed banks proven offline at the validator's full budget with every confirmation
+> ([`../../CHALLENGES_SYSTEM_v1.md`](../../CHALLENGES_SYSTEM_v1.md) §4, [`seed-bank/BUILD_REPORT.md`](seed-bank/BUILD_REPORT.md)). The
+> wall-time model below describes the superseded live search and is kept as history.
+
 **Read-only measurement, done BEFORE any recipe number was chosen** (PMO directive §4). Data:
 [`challenge-recipe-study.json`](challenge-recipe-study.json) (per-world rows + two analyses). Tools:
 [`tools/challenge-recipe-study.mjs`](../../../tools/challenge-recipe-study.mjs) (the measurement) ·
