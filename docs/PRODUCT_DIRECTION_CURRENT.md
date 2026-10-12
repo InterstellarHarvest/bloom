@@ -15,7 +15,12 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-12, **BLOOM-036C1 integration closeout**. The PMO accepted BLOOM-036C1 for release with one narrow presentation correction
+*Last updated: 2026-10-12, **BLOOM-036D completion-condition study — DESIGN / CALIBRATION CANDIDATE** (branch `handoff/bloom-036d-completion-study`,
+NOT merged; [`CHALLENGE_COMPLETION_STUDY_v1.md`](CHALLENGE_COMPLETION_STUDY_v1.md)). **036C: IMPLEMENTED / COMPLETE** · **036C1: IMPLEMENTED / COMPLETE** ·
+**036D: DESIGN / CALIBRATION CANDIDATE** · **Challenge completion conditions: NOT IMPLEMENTED** · **Progression / rewards: NOT APPROVED / NOT STARTED**.
+Production `main` is the 036C1 closeout below.*
+
+*Production `main` (2026-10-12): **BLOOM-036C1 integration closeout**. The PMO accepted BLOOM-036C1 for release with one narrow presentation correction
 (REFUGE, below); production `main` was fast-forwarded to the exact corrected review head `d69d458` (accepted candidate `659b240` + the correction; from
 `d8ca0cb`; no merge commit, squash, rebase, cherry-pick or force push); this docs-only closeout follows it. **BLOOM-036C (content study): IMPLEMENTED /
 COMPLETE** ([`CHALLENGE_CONTENT_STUDY_v1.md`](CHALLENGE_CONTENT_STUDY_v1.md)) · **BLOOM-036C1: IMPLEMENTED / COMPLETE** — **Low Tide** and **Oasis Line**
@@ -137,6 +142,8 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
 | BLOOM-036B1 | **IMPLEMENTED / COMPLETE** (prevalidated seed banks) |
 | BLOOM-036C (content study) | **IMPLEMENTED / COMPLETE** (PMO-accepted, `d8ca0cb`) |
 | BLOOM-036C1 (first authored Challenges) | **IMPLEMENTED / COMPLETE** — Low Tide · Oasis Line released (`d69d458`) |
+| BLOOM-036D (completion-condition study) | **DESIGN / CALIBRATION CANDIDATE** (review branch) — Challenge completion conditions **NOT IMPLEMENTED** |
+| Progression / rewards | **NOT APPROVED / NOT STARTED** |
 
 - **The final species art is in production** — `cinder-rosette` (`rosette@1`), `woolly-candle` (**`candle@2`**, the Woolly fidelity
   revision: candle@1's sockets with larger native component maxima; brief [`WOOLLY_CANDLE_ART_BRIEF_v2`](species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.md)),
@@ -400,5 +407,6 @@ This is not a gameplay-code feature; product code does not work around repositor
 | **BLOOM-036B1** — Prevalidated seed banks | the offline bank builder, 12 cells × 50 proven seeds, runtime provenance check + stale-bank refusal, no proof at runtime | **IMPLEMENTED / COMPLETE** (`bd0eb27`, in production `main`) |
 | **BLOOM-036C** — Authored Challenge content study | design + read-only calibration of the first genuinely authored Challenge set (species · planet selection · starting state · existing scenarios) | **IMPLEMENTED / COMPLETE** (PMO-accepted, `d8ca0cb`; [`CHALLENGE_CONTENT_STUDY_v1.md`](CHALLENGE_CONTENT_STUDY_v1.md)) |
 | **BLOOM-036C1** — First authored Challenges | Low Tide + Oasis Line with their own bank cells; the released-copy corrections; the low-arrival dossier line; the REFUGE status; Windfall recalibrated → HOLD | **IMPLEMENTED / COMPLETE** (`d69d458`, in production `main`) |
-| **BLOOM-036D+** — Challenge completion / progression | Challenge-specific completion systems where needed; progression / rewards only if later approved | PLANNED (not designed) |
+| **BLOOM-036D** — Challenge completion-condition study | which completion conditions make an authored premise unavoidable (Thin Air, Hearthfire, Windfall, Oasis Line), calibrated offline; the minimal schema; validator / bank impact | **DESIGN / CALIBRATION CANDIDATE** (review branch `handoff/bloom-036d-completion-study`; recommends Thin Air · `pressure-final-state` first; nothing implemented) |
+| **BLOOM-036E+** — completion implementation / progression | the PMO-selected completion condition; progression / rewards only if later approved | PLANNED (completion) · NOT APPROVED (progression) |
 | **Final hardening** | full documentation reconciliation; dead historical production-path cleanup; Pages enablement / release; a Safari / WebKit production test if practical; final end-to-end release QA | PLANNED |

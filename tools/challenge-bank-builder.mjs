@@ -46,7 +46,9 @@ export function candidatePool(D, perArchetype) {
  * Evaluate one pool world for every released Challenge (and `extraChallenges`, e.g. QA fixtures) × every species they allow: steps 1–5 of the
  * header. Plain data out (the planet itself is not kept: its seed + attempt + fingerprint regenerate it).
  */
-export function evaluateWorld(task, { BLOOM, D, SD }, { challenges = null, species = null } = {}) {
+// (036D tooling correction) `reasonChars`: how much of a layer-P failure reason the record keeps — the release builder keeps its 140 characters
+// (candidate-cache bytes unchanged); RESEARCH callers pass Infinity so the full reason (and its failing pacing bound) survives.
+export function evaluateWorld(task, { BLOOM, D, SD }, { challenges = null, species = null, reasonChars = 140 } = {}) {
   const t0 = Date.now(), CH = challenges || BLOOM.challenges.list(), SP = species || BLOOM.species.ids();
   const phys = SD.physicalCandidate({ archetypeId: task.archetypeId, seed: task.seed });
   const row = { archetypeId: task.archetypeId, seed: task.seed, poolIndex: task.poolIndex ?? null, physical: null, cells: {} };
@@ -76,7 +78,7 @@ export function evaluateWorld(task, { BLOOM, D, SD }, { challenges = null, speci
       const t3 = Date.now(), v = BLOOM.validateScenario(P, D.config, D.traits, S, { archetypeId: task.archetypeId, species: sp, ...(st ? { startingState: st } : {}) });
       const W = (v.strategies || [])[0] || null;
       c.proof = { status: v.status, ok: !!v.ok, ms: Date.now() - t3, simulations: v.search ? v.search.simulations : null, confirmations: v.search ? v.search.confirmations || 0 : null,
-        strategies: (v.strategies || []).length, reason: v.ok ? null : (v.reason || "").replace(/^layer P \([^)]*\): /, "").slice(0, 140),
+        strategies: (v.strategies || []).length, reason: v.ok ? null : (v.reason || "").replace(/^layer P \([^)]*\): /, "").slice(0, reasonChars),
         ...(W ? { marginSeconds: W.marginSeconds, purchases: W.purchases.length, terraformSteps: W.purchases.filter(p => (D.traits.find(t => t.id === p.id) || {}).board === "Terraform").length,
           holdCoverage: W.hold ? W.hold.coverage : null, pressureAtMargin: W.pressureAtMargin ?? null,
           contested: W.competition ? W.competition.contestedRegions : null, nativePeak: W.competition ? r4(W.competition.peakShare) : null,
