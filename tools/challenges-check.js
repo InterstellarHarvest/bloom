@@ -277,9 +277,10 @@ async function browserChecks() {
         await p.keyboard.press("Tab"); const tabTo = await p.evaluate(() => document.activeElement.dataset.act || document.activeElement.className);
         await p.keyboard.press("Escape"); await p.keyboard.press("Escape"); await menuReady(p);
         const back = await p.evaluate(() => ({ state: MENU_DEV.entry.state, ch: MENU_DEV.entry.challenge, focus: document.activeElement.dataset.act }));
-        const want = ["native_competition", "volatile_climate", "dying_world", "dying_world", "volatile_climate", "native_competition"];
-        check(kf === "challenges" && K.focused === "dying_world" && K.sel === "dying_world" && K.role === "radio" && K.checked === "true" && K.tab === "0-1-1" && K.ring && K.group === "radiogroup"
-            && J(keys.map(x => x.f)) === J(want) && keys.every(x => x.f === x.s && x.s === x.d) && opened.state === "detail" && opened.focusH2 && closed.state === "list" && closed.focus === "native_competition"
+        // ↓ ↓ ↓ Home End ↑ over the catalogue's cards (wrapping): 036C1 has more than three
+        const n = IDS.length, want = [IDS[1 % n], IDS[2 % n], IDS[3 % n], IDS[0], IDS[n - 1], IDS[n - 2]];
+        check(kf === "challenges" && K.focused === "dying_world" && K.sel === "dying_world" && K.role === "radio" && K.checked === "true" && K.tab === ["0", ...IDS.slice(1).map(() => "-1")].join("") && K.ring && K.group === "radiogroup"
+            && J(keys.map(x => x.f)) === J(want) && keys.every(x => x.f === x.s && x.s === x.d) && opened.state === "detail" && opened.focusH2 && closed.state === "list" && closed.focus === want[5]
             && opened2 === "detail" && tabTo === "choose" && back.state === "menu" && back.ch === null && back.focus === "begin",
           `[${bn}] K1 · keyboard: ↓ from EXPEDITION focuses CHALLENGES, Enter opens the hub on the first card (a roving-tabindex radiogroup, visible focus ring); ↓ ↑ Home End move the selection and the dossier follows; Space / Enter open the dossier (focus on its heading), Tab reaches BEGIN CHALLENGE, Escape closes it (focus back to the card) and Escape again returns to the title (focus on EXPEDITION, no Challenge)`,
           `${kf} → ${J(keys.map(x => x.f))} · open ${J(opened)} · close ${J(closed)} · tab → ${tabTo} · back ${J(back)}`);

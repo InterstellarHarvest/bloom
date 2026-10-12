@@ -985,7 +985,7 @@ const reportIdentity=()=>({ planetId:BLOOM_RUN.planet.id, planetName:BLOOM_RUN.p
     speciesId:XP.speciesId, physiologyVersion:XP.physiologyVersion, physiologyKey:XP.physiologyKey }:null,
   // (BLOOM-036B) a Challenge run's provenance (challenge id / version, recipe version, launch seed, planet seed / fingerprint, species,
   // scenario) and the starting state the CHALLENGE gave — never counted as the player's purchases
-  challengeRun:CX?{ ...CX }:null, startingState:sim.startingState?{ adaptations:[...sim.startingState.adaptations], names:sim.startingState.adaptations.map(id=>sim.traitById[id].name), biomass:sim.startingState.biomass, source:sim.startingState.source }:null });
+  challengeRun:CX?{ ...CX }:null, startingState:sim.startingState?{ adaptations:[...sim.startingState.adaptations], names:sim.startingState.adaptations.map(id=>sim.traitById[id].name), biomass:START&&START.biomass!=null?sim.startingState.biomass:null, source:sim.startingState.source }:null }); // (036C1) Biomass is GIVEN only when the Challenge prescribes it (Low Tide lands with the normal Biomass: not a gift)
 // BLOOM-012: the scenario's identity and how far the decline got, with the drift the plant endured (pressure runs only)
 function pressureReportData(){ if(!PRESS) return null; const o=PS.offsets;
   return { title:SCN.display.title, phaseName:phaseName(PS.phase), phase:PS.phase, progress:PS.progress, done:PS.progress>=1, offsets:{moist:o.moist, temp:o.temp, rad:o.rad}, max:{moist:PS.max.moist, temp:PS.max.temp, rad:PS.max.rad} }; }

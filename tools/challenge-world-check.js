@@ -87,8 +87,9 @@ const LOW_ARRIVAL_PICK = { ids: [] }, VERSION = {};
       rows.map(r => `${r.key} ${r.err || r.n + "/" + r.size} (passing ${r.passing})`).join(" · ")); }
   // B2
   { let all = 0; const bad = [], ms = [], sample = [];
+    // (036C1) each world is rebuilt WITH its Challenge's starting state: the arrival share is the start's, as the runtime builds it
     for (const [ch, sp] of CELLS) { const cell = CB.bankCell(ch, sp);
-      cell.entries.forEach((e, i) => { const t = Date.now(); try { const w = CB.bankWorld(e, cell, sp, null); all++; ms.push(Date.now() - t); if (i === 0) sample.push([e, w]); } catch (err) { bad.push(`${ch.id}/${sp}#${i}: ${err.code}`); } }); }
+      cell.entries.forEach((e, i) => { const t = Date.now(); try { const w = CB.bankWorld(e, cell, sp, C.startingStateOf(ch)); all++; ms.push(Date.now() - t); if (i === 0) sample.push([e, w]); } catch (err) { bad.push(`${ch.id}/${sp}#${i}: ${err.code}`); } }); }
     const idDiff = sample.filter(([e, w]) => { const P = S.physicalCandidate({ archetypeId: e.archetypeId, seed: e.seed }); return !P || P.fingerprint !== e.fingerprint || stable(P.planet.archetype) !== stable(w.physical.planet.archetype); });
     const sorted = ms.sort((a, b) => a - b), attempts = new Set(D.challengeSeedBanks ? Object.values(D.challengeSeedBanks.cells).flatMap(c => c.entries.map(e => e.attempt)) : []);
     check(all === NCELLS * 50 && !bad.length && !idDiff.length,
@@ -137,7 +138,7 @@ const LOW_ARRIVAL_PICK = { ids: [] }, VERSION = {};
     for (const [n, o] of names) { orig[n] = o[n]; o[n] = (...a) => { calls[n] = (calls[n] || 0) + 1; return orig[n](...a); }; }
     let made = 0;
     try { for (const [ch, sp] of CELLS) { const cell = CB.bankCell(ch, sp), pick = CB.pickEntry(cell, { challenge: ch, species: BLOOM.species.resolve(sp), launchSeed: 99 });
-      const w = CB.bankWorld(pick.entry, cell, sp, null); CB.makeBankInstance({ challenge: ch, species: sp, launchSeed: 99, cell, pick, world: w }); made++; } }
+      const w = CB.bankWorld(pick.entry, cell, sp, C.startingStateOf(ch)); CB.makeBankInstance({ challenge: ch, species: sp, launchSeed: 99, cell, pick, world: w }); made++; } }
     finally { for (const [n, o] of names) o[n] = orig[n]; }
     const rt = ["resources/challenges/challenge-bank.js", "resources/challenges/challenge-world-prep.js"].map(f => fs.readFileSync(path.join(ROOT, f), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "")).join("\n");   // code only (comments stripped)
     const worker = fs.readFileSync(path.join(ROOT, "resources/destination-survey/survey-worker.js"), "utf8"), task = (worker.match(/type === "challenge-bank-world"[^\n]*/) || [""])[0];
@@ -198,7 +199,7 @@ const LOW_ARRIVAL_PICK = { ids: [] }, VERSION = {};
       `${J(shared)} · ${rows.map(r => r.id + (r.ok ? "✓" : "✗")).join(" ")}`); }
   // A2 · Low Tide: Flood + Salt owned at landing (given, not bought), Drought closed for the run, normal Biomass; its bank proven FROM that start
   { const ch = C.resolve("low_tide"), sp = BLOOM.species.resolve("organic_hybrid"), st = C.startingStateOf(ch), cell = CB.bankCell(ch, sp), e = cell.entries[0];
-    const P = CB.buildBankWorld(e), sim = BLOOM.createSim(P, D.config, D.traits, { rng: () => 0.5, species: sp, startingState: st, scenario: C.scenarioOf(ch) }), T = id => D.traits.find(t => t.id === id);
+    const P = CB.buildBankWorld(e).planet, sim = BLOOM.createSim(P, D.config, D.traits, { rng: () => 0.5, species: sp, startingState: st, scenario: C.scenarioOf(ch) }), T = id => D.traits.find(t => t.id === id);
     const dw = BLOOM.createSim(P, D.config, D.traits, { rng: () => 0.5, species: sp, scenario: C.scenarioOf(ch) }); sim.biomass = dw.biomass = 1e6;
     const closed = C.closedByStart(ch), arrivalNormal = S.assessWorld(P, undefined, sp).habitable, arrivalStart = S.assessWorld(P, undefined, sp, st).habitable;
     const pick = CB.pickEntry(cell, { challenge: ch, species: sp, launchSeed: 3 }), X = CB.makeBankInstance({ challenge: ch, species: sp, launchSeed: 3, cell, pick, world: CB.bankWorld(pick.entry, cell, sp, st) });
@@ -218,7 +219,7 @@ const LOW_ARRIVAL_PICK = { ids: [] }, VERSION = {};
       `below 20 % arrival: ${below}/50 · contested min ${minContested}, median ${med} · arrival p50 ${Math.round([...E.map(e => e.habitable)].sort((a, b) => a - b)[25] * 100)}%`); }
   // A4 · Windfall (only when released): the exact starting Biomass, nothing owned, player choice, all archetypes
   if (AUTH.includes("windfall")) { const ch = C.resolve("windfall"), st = C.startingStateOf(ch), cells = SPECIES.map(sp => CB.bankCell(ch, sp));
-    const sim = BLOOM.createSim(CB.buildBankWorld(cells[0].entries[0]), D.config, D.traits, { rng: () => 0.5, species: BLOOM.species.resolve(SPECIES[0]), startingState: st });
+    const sim = BLOOM.createSim(CB.buildBankWorld(cells[0].entries[0]).planet, D.config, D.traits, { rng: () => 0.5, species: BLOOM.species.resolve(SPECIES[0]), startingState: st });
     check(C.speciesOf(ch) === null && st.adaptations.length === 0 && Number.isInteger(st.biomass) && sim.biomass === st.biomass && sim.spent.global === 0 && cells.every(c => c.entries.length === 50 && c.provenance.startingState === `|start::${st.biomass}`),
       `A4 · Windfall: player choice (four cells), the selected start EXACTLY ${st.biomass} Biomass with nothing owned (not a purchase), every cell proven from that start`, cells.map(c => c.provenance.startingState).join(" ")); }
 
@@ -310,7 +311,7 @@ async function browserChecks() {
             bank: X.bank, entryIndex: X.entryIndex, source: X.source, format: X.format, launchSeed: X.launchSeed, worldSeed: X.worldSeed, archetype: X.archetypeId, sv: X.candidate.scenarioValidation,
             rootH: Math.round(r.getBoundingClientRect().height), hit: (() => { const b = r.querySelector(".cw-btn.go").getBoundingClientRect(), e = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2); return !!e && !!e.closest(".cw-btn.go"); })(),
             build: L.stats.builds.find(b => b.species === X.speciesId), calls: window.__validatorCalls, survey: !!MENU_DEV.entry.survey || !!document.querySelector(".ds"),
-            low: !r.querySelector(".cw-hab-note").hidden, green: X.candidate.dossier.habitable.green, closed: !r.querySelector(".cw-closed").hidden }; }, CW);
+            low: !r.querySelector(".cw-hab-note").hidden, green: X.dossier.habitable.green, closed: !r.querySelector(".cw-closed").hidden }; }, CW);
         await shot(p, `05-dossier-${id}.png`, { firefox: true });
         const archName = await p.evaluate(a => BLOOM_DATA.archetypes.find(x => x.id === a).name, DOS.archetype), spName = await p.evaluate(s => BLOOM.species.resolve(s).name, sp);
         check(SPS.kicker === `Challenge · ${NAMES[id]}` && J(SPS.cards) === J(SPECIES) && /^Continue with /.test(go) && SPS.launch === seed,
@@ -384,7 +385,7 @@ async function browserChecks() {
         await shot(p, `a1-hub-${id}.png`, { firefox: id === "low_tide" });
         await p.click(".ch-btn.go");
         if (A.species) await worldReady(p); else { await speciesReady(p); await p.evaluate(([s, SS]) => eval(SS).open(s), [sp, SS]); await shot(p, `a2-species-${id}.png`); await p.click(".ss-btn.go"); await worldReady(p); }
-        const DOS = await p.evaluate(CW => { const v = eval(CW), r = v.root, X = v.instance, h = X.candidate.dossier.habitable;
+        const DOS = await p.evaluate(CW => { const v = eval(CW), r = v.root, X = v.instance, h = X.dossier.habitable;
           return { sp: r.querySelector(".cw-sp-name").textContent, ch: r.querySelector(".cw-ch-name").textContent, note: (r.querySelector(".cw-sp-note") || {}).textContent || null, start: r.querySelector(".cw-start").textContent,
             closed: r.querySelector(".cw-closed").hidden ? null : r.querySelector(".cw-closed").textContent, low: !r.querySelector(".cw-hab-note").hidden, green: h.green, archetype: X.archetypeId, entryIndex: X.entryIndex, fp: X.fingerprint,
             cell: X.bank.cellKey, species: X.speciesId, speciesScreen: MENU_DEV.events.filter(e => e.type === "species-screen").length, calls: window.__validatorCalls }; }, CW);
@@ -399,7 +400,7 @@ async function browserChecks() {
         await beginRun(p, 1);
         const R = await runId(p), S0 = await p.evaluate(() => { const s = BLOOM_API.sim, T = id => s.traitById[id];
           return { spent: s.spent, biomass: s.biomass, flood: s.ownedTier(T("flood")), salt: s.ownedTier(T("salt")), drought: s.canBuy(T("drought")), why: s.why(T("drought")), start: s.startingState && { a: [...s.startingState.adaptations], b: s.startingState.biomass },
-            comp: s.competition ? +s.competition.startShare.toFixed(3) : null, native: s.competition ? s.competition.native.filter(x => x > 0).length : null }; });
+            comp: s.competition && s.competition.enabled ? +s.competition.startShare.toFixed(3) : null, native: s.competition && s.competition.enabled ? s.competition.native.filter(x => x > 0).length : null }; });
         check(R.challenge === id && R.scenario === A.scenario && R.simScenario === A.scenario && R.simSpecies === sp && R.adapter && R.adapter.id === id && R.adapter.scenarioId === A.scenario && R.hud === `Challenge · ${A.name}`
             && R.cr && R.cr.challengeVersion === 1 && R.cr.cellKey === `${id}/${sp}` && R.cr.entryIndex === DOS.entryIndex && R.cr.fingerprint === DOS.fp && S0.spent.global === 0 && S0.spent.local === 0
             && (id !== "low_tide" || (S0.flood === 1 && S0.salt === 1 && !S0.drought && /one water strategy/.test(S0.why) && J(S0.start.a) === J(["flood", "salt"])))
@@ -436,7 +437,7 @@ async function browserChecks() {
       // A10 · the low-arrival explanation on a released Challenge's dossier (an entry where under 5 % suits the plant), and its absence otherwise
       { const L = LOW_ARRIVAL_PICK, c = await context(), p = await page(c);
         await p.goto(`${ORIGIN}/?launch=${L.seed}&bg=7`); await menuReady(p); await openHub(p); await beginChallenge(p, L.challenge); await chooseSpecies(p, L.species); await worldReady(p);
-        const lo = await p.evaluate(CW => { const v = eval(CW), r = v.root; return { idx: v.instance.entryIndex, green: v.instance.candidate.dossier.habitable.green, shown: !r.querySelector(".cw-hab-note").hidden, text: r.querySelector(".cw-hab-note").textContent, pct: r.querySelector(".cw-hab-top b").textContent }; }, CW);
+        const lo = await p.evaluate(CW => { const v = eval(CW), r = v.root; return { idx: v.instance.entryIndex, green: v.instance.dossier.habitable.green, shown: !r.querySelector(".cw-hab-note").hidden, text: r.querySelector(".cw-hab-note").textContent, pct: r.querySelector(".cw-hab-top b").textContent }; }, CW);
         await shot(p, `a7-low-arrival-dossier.png`, { firefox: true });
         check(lo.idx === L.index && lo.green < 0.05 && lo.shown && /landing region keeps it alive at first\. Adapt before you spread\./.test(lo.text) && lo.pct === `${Math.round(lo.green * 100)}% of the land` && !p.errs.length,
           `[${bn}] A10 · a ${L.challenge} / ${L.species} world where under 5 % of the land suits the plant: the dossier shows the TRUE share and explains it ("…your landing region keeps it alive at first. Adapt before you spread."); every ordinary-arrival dossier above (F3, A5) has no such line`, J(lo));
