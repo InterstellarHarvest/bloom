@@ -15,12 +15,17 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-12, **BLOOM-036 Challenges integration closeout**. The PMO accepted the combined 036A + 036B + 036B1 candidate and
+*Last updated: 2026-10-12, **BLOOM-036C1 first authored Challenges — review CANDIDATE** (branch `handoff/bloom-036c1-authored-challenges`, NOT
+merged; production `main` is the 036C study integration `d8ca0cb` below). **BLOOM-036C study: IMPLEMENTED / COMPLETE** (PMO-accepted,
+[`CHALLENGE_CONTENT_STUDY_v1.md`](CHALLENGE_CONTENT_STUDY_v1.md)) · **BLOOM-036C1: CANDIDATE** — **Low Tide** and **Oasis Line** (§8); **Windfall: HOLD**
+after its focused recalibration; **Thin Air: RESERVE**.*
+
+*Production `main` (2026-10-12): the PMO accepted the 036C content study and `main` was fast-forwarded to it (`d8ca0cb`, a research milestone:
+tooling, results, docs). Before that, the **BLOOM-036 Challenges integration closeout**. The PMO accepted the combined 036A + 036B + 036B1 candidate and
 production `main` was fast-forwarded to the exact accepted review head `bd0eb27` (from `47ae6c3`; no merge commit, squash, rebase,
 cherry-pick or force push); this docs-only closeout follows it. **BLOOM-036A: IMPLEMENTED / COMPLETE** (as part of the combined Challenges
 release) · **BLOOM-036B: IMPLEMENTED / COMPLETE** · **BLOOM-036B1: IMPLEMENTED / COMPLETE** · **CHALLENGES: IMPLEMENTED** for the current
-first playable product — **Dying World · Native Competition · Volatile Climate** (§8) · **BLOOM-036C: NEXT — authored Challenge content,
-design / calibration**. Design: [`CHALLENGES_SYSTEM_v1.md`](CHALLENGES_SYSTEM_v1.md); records: [`evidence/bloom-036a/REPORT.md`](evidence/bloom-036a/REPORT.md),
+first playable product — **Dying World · Native Competition · Volatile Climate** (§8). Design: [`CHALLENGES_SYSTEM_v1.md`](CHALLENGES_SYSTEM_v1.md); records: [`evidence/bloom-036a/REPORT.md`](evidence/bloom-036a/REPORT.md),
 [`evidence/bloom-036b/REPORT.md`](evidence/bloom-036b/REPORT.md).*
 
 *Previous production closeout (2026-10-11, BLOOM-035C): production `main` was fast-forwarded to the PMO-accepted 035C2 head `4ac7301`
@@ -128,7 +133,8 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
 | BLOOM-036A | **IMPLEMENTED / COMPLETE** (as part of the combined Challenges release) |
 | BLOOM-036B | **IMPLEMENTED / COMPLETE** |
 | BLOOM-036B1 | **IMPLEMENTED / COMPLETE** (prevalidated seed banks) |
-| BLOOM-036C | **NEXT** — authored Challenge content, design / calibration |
+| BLOOM-036C (content study) | **IMPLEMENTED / COMPLETE** (PMO-accepted, `d8ca0cb`) |
+| BLOOM-036C1 (first authored Challenges) | **CANDIDATE** — Low Tide · Oasis Line (review branch) |
 
 - **The final species art is in production** — `cinder-rosette` (`rosette@1`), `woolly-candle` (**`candle@2`**, the Woolly fidelity
   revision: candle@1's sockets with larger native component maxima; brief [`WOOLLY_CANDLE_ART_BRIEF_v2`](species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.md)),
@@ -201,12 +207,29 @@ Candle on body-plan revision `candle@2`).
 ## 8. Challenges
 
 **LOCKED DESIGN · IMPLEMENTED** (BLOOM-036) · **BLOOM-036A: IMPLEMENTED / COMPLETE** · **BLOOM-036B: IMPLEMENTED / COMPLETE** ·
-**BLOOM-036B1: IMPLEMENTED / COMPLETE** · **CHALLENGES: IMPLEMENTED** for the current first playable product · **036C: NEXT — authored
-Challenge content (design / calibration)**. PMO-accepted and fast-forwarded into production `main` as one combined release (`bd0eb27`,
+**BLOOM-036B1: IMPLEMENTED / COMPLETE** · **CHALLENGES: IMPLEMENTED** for the current first playable product · **BLOOM-036C study:
+IMPLEMENTED / COMPLETE** · **BLOOM-036C1 (Low Tide · Oasis Line): CANDIDATE**. PMO-accepted and fast-forwarded into production `main` as one combined release (`bd0eb27`,
 2026-10-12). **Sequence (locked):** BLOOM-035B species engineering (complete) → BLOOM-035C final species art + the normal Species Selection
 release (complete) → BLOOM-036A/B/B1 the Challenges system and its first three Challenges (complete) → 036C authored Challenge content.
 
-**Current released Challenges:** **Dying World** · **Native Competition** · **Volatile Climate**.
+**Current released Challenges (production `main`):** **Dying World** · **Native Competition** · **Volatile Climate**.
+
+**BLOOM-036C1 — CANDIDATE** (review branch `handoff/bloom-036c1-authored-challenges`, not in production `main` until PMO integration): the first
+**authored** Challenges, from the PMO-accepted content study — equal cards on the same hub, no basic / advanced split:
+
+- **Low Tide** — Dying World · prescribed **Organic Hybrid** · Ocean Archipelago only · lands WITH Flood Adaptation + Salt Handling (given by the
+  Challenge, never a purchase) and the normal Biomass; because the plant is committed to the wet water strategy, **Drought Adaptation is
+  unavailable** for the run — the dossier says so (engine-decided, `BLOOM.challenges.closedByStart`).
+- **Oasis Line** — Native Competition · prescribed **Reed Spire** · Desert World only · **no 20 % arrival floor** · normal start. Its pace (~501 s
+  perfect-play median) is **accepted** as right for the spatial competition scenario; not shortened.
+- Several Challenges may share one scenario: each keeps its own id, name, version, recipe, bank cells and provenance; hub, run and report name the
+  Challenge, never only the scenario. Prescribed-plant Challenges skip Choose Plant Species.
+- **Windfall: HOLD** — the focused recalibration (200 / 225 / 250 starting Biomass, CHALLENGE_CONTENT_STUDY §11) met content supply but not the
+  premise gate: extra Biomass mostly speeds the ordinary game up and does not make shock-exposed winning strategies more available.
+  **Thin Air: RESERVE** (proofs identical to the released Dying World × Woolly Candle cell; a candidate again only with a completion condition).
+- Released-copy corrections (036C1): Native Competition's strategic idea; Volatile Climate says the climate is stable until you Terraform, that quick
+  or repeated steps swing it, and that adapting never unsettles it (both version 4: presentation is part of a Challenge's revision and its bank
+  cells, so those cells were rebuilt — same worlds, same proofs). A dossier whose landing share is under 5 % explains it.
 
 **Canonical Challenge world model (LOCKED):** ONE procedural planet selected from a **versioned bank of prevalidated procedural seeds**. No 3 × 3
 Destination Survey inside a Challenge. Normal Challenge startup:
@@ -292,9 +315,9 @@ Shape of BLOOM-036 (**roadmap correction, 2026-10-12**):
 - *The older plan's "036C — migrate / reuse Dying World, Native Competition and Volatile Climate as Challenge ingredients" was pulled forward
   and is **already complete** in 036A / 036B: the three released Challenges reference those scenarios (no duplicated mechanics). It is not
   future work.*
-- **036C — AUTHORED CHALLENGE CONTENT — design / calibration (NEXT).** Which contained situations BLOOM can author from species, planet
-  selection, starting state and the existing scenario mechanics — studied read-only and offline first (seed-bank pipeline), then a PMO-selected
-  release batch. No new engine mechanics merely to create content.
+- **036C — AUTHORED CHALLENGE CONTENT — study COMPLETE** (PMO-accepted). Which contained situations BLOOM can author from species, planet
+  selection, starting state and the existing scenario mechanics — studied read-only and offline (seed-bank pipeline). **036C1 — the first authored
+  batch: Low Tide + Oasis Line (CANDIDATE)**; Windfall HOLD, Thin Air RESERVE.
 - **036D+ — future**: Challenge-specific completion systems where a studied concept needs one; progression / reward systems **only if later
   approved**.
 
@@ -365,6 +388,7 @@ This is not a gameplay-code feature; product code does not work around repositor
 | **BLOOM-036A** — Challenges foundation + first playable hub | the CHALLENGES menu entry; the Challenge hub; the definition schema (`content/challenges.js`, `BLOOM.challenges`); single-document routing; (interim, superseded by 036B) a scenario-proven Destination Survey | **IMPLEMENTED / COMPLETE** (accepted `8af3e12`; released inside the combined Challenges release `bd0eb27`) |
 | **BLOOM-036B** — Contained Challenge worlds | ONE prevalidated procedural planet per Challenge instance (no survey); PREPARING CHALLENGE WORLD + the Challenge Planet Dossier; instance provenance; Retry Challenge / Challenges; prescribed species + starting-state support (QA fixtures); the three scenarios as Challenge ingredients | **IMPLEMENTED / COMPLETE** (`bd0eb27`, in production `main`) |
 | **BLOOM-036B1** — Prevalidated seed banks | the offline bank builder, 12 cells × 50 proven seeds, runtime provenance check + stale-bank refusal, no proof at runtime | **IMPLEMENTED / COMPLETE** (`bd0eb27`, in production `main`) |
-| **BLOOM-036C** — Authored Challenge content | design + read-only calibration of the first genuinely authored Challenge set (species · planet selection · starting state · existing scenarios), then a PMO-selected release batch | **NEXT** — design study awaiting PMO content review ([`CHALLENGE_CONTENT_STUDY_v1.md`](CHALLENGE_CONTENT_STUDY_v1.md), review branch `handoff/bloom-036c-content-design`; nothing implemented) |
+| **BLOOM-036C** — Authored Challenge content study | design + read-only calibration of the first genuinely authored Challenge set (species · planet selection · starting state · existing scenarios) | **IMPLEMENTED / COMPLETE** (PMO-accepted, `d8ca0cb`; [`CHALLENGE_CONTENT_STUDY_v1.md`](CHALLENGE_CONTENT_STUDY_v1.md)) |
+| **BLOOM-036C1** — First authored Challenges | Low Tide + Oasis Line with their own bank cells; the released-copy corrections; the low-arrival dossier line; Windfall recalibrated → HOLD | **CANDIDATE** (review branch `handoff/bloom-036c1-authored-challenges`) |
 | **BLOOM-036D+** — Challenge completion / progression | Challenge-specific completion systems where needed; progression / rewards only if later approved | PLANNED (not designed) |
 | **Final hardening** | full documentation reconciliation; dead historical production-path cleanup; Pages enablement / release; a Safari / WebKit production test if practical; final end-to-end release QA | PLANNED |

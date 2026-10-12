@@ -1,5 +1,9 @@
 # Strange Bloom · Unknown Soils — Challenge content study v1 (BLOOM-036C)
 
+> **Status (2026-10-12): BLOOM-036C study IMPLEMENTED / COMPLETE (PMO-accepted, in production `main` `d8ca0cb`).** PMO decisions and the
+> 036C1 Windfall recalibration: §11 — Low Tide and Oasis Line approved and implemented in BLOOM-036C1 (CANDIDATE); Thin Air RESERVE; Windfall
+> HOLD after recalibration. The sections below are the study as accepted.
+
 **BLOOM-036C — AUTHORED CHALLENGE CONTENT: design + read-only calibration.** Branch `agent/bloom-036c-challenge-content` → review branch
 `handoff/bloom-036c-content-design`, from production `main` `a91c6d0` (the BLOOM-036 integration closeout). **Nothing player-facing is
 implemented:** no gameplay behaviour changed, `content/challenges.js` and the shipped seed bank `content/challenge-seed-banks.js` (sha256
@@ -434,3 +438,48 @@ node tools/research/challenges/pacing-probe.mjs --per-cell 4         # → pacin
 Concept definitions: `tools/research/challenges/concepts.mjs` (fixture Challenge definitions + default-rules drafts + derived questions).
 Baselines read: `docs/evidence/bloom-036b/seed-bank/candidates.json`, `docs/evidence/bloom-036b/challenge-recipe-study.json`,
 `content/challenge-seed-banks.js` (read only).
+
+## 11. PMO decisions (2026-10-12) and the 036C1 Windfall recalibration
+
+**Study: ACCEPTED** (integrated into production `main` at `d8ca0cb`). Content decisions:
+
+| Concept | Decision |
+|---|---|
+| **Low Tide** | **APPROVED FOR PRODUCTION** — implemented in BLOOM-036C1 |
+| **Oasis Line** | **APPROVED FOR PRODUCTION** — implemented in BLOOM-036C1; its pace (~501 s perfect-play median) **accepted** as right for the spatial Native Competition scenario; not shortened |
+| **Thin Air** | **RESERVE — not released as a separate Challenge**: its proofs are mechanically identical to the released Dying World × Woolly Candle cell, so today its value is framing, not a distinct gameplay contract. It may become a genuine authored Challenge if a completion condition such as "Bloom only after the atmosphere reaches its final state" exists. No hub card. |
+| **Windfall** | third slot CONDITIONAL on a focused recalibration (below) → **HOLD** |
+| Hearthfire · Far From Home · Pioneer Rush · Empty Hold · Deep Freeze · Last Refuge | research history only (unchanged verdicts, §6–§7) |
+
+### 11.1 Windfall recalibration (200 · 225 · 250 Biomass) — HOLD
+
+Definition otherwise unchanged (Volatile Climate · player choice · every archetype · nothing owned · normal Bloom), the full offline Challenge proof, on
+the **same 120 World Seeds** (40 per archetype) as the studied 400-Biomass Windfall and the released Volatile Climate (the shipped bank's records); strategy
+diagnostics on the first 10 worlds per archetype (the released start re-measured the same way: concept `vc_released_diag`). Full table:
+[`evidence/bloom-036c1/windfall-recalibration.md`](evidence/bloom-036c1/windfall-recalibration.md) (`windfall-recalibration.json`).
+
+Organic Hybrid · Cinder Rosette · Woolly Candle · Reed Spire:
+
+| Start | Qualifying | Refused as too fast | Witness p50 (Δ vs released, same worlds) | Shock in 1st witness | A shocked winning strategy exists | ≥ 3 strategies |
+|---|---|---|---|---|---|---|
+| released (100) | 99 · 85 · 93 · 97 % | 1 · 6 · 3 · 1 | 268 · 330 · 272 · 282 s | 2.6 · 4.0 · 13.6 · 0 % | 21 · 27 · 67 · 13 % | 66 · 54 · 50 · 63 % |
+| **200** | 89 · 80 · 87 · 95 % | 13 · 22 · 14 · 4 | 272 (−9) · 316 (−33) · 268 (−3) · 269 (−18) | 8.6 · 4.3 · 18.4 · 2.7 % | 22 · 25 · 54 · 14 % | 67 · 58 · 50 · 61 % |
+| **225** | 89 · 80 · 84 · 93 % | 13 · 22 · 18 · 6 | 271 (−12) · 304 (−36) · 267 (−7) · 266 (−22) | 7.6 · 5.3 · 19.2 · 4.5 % | 23 · 25 · 61 · 18 % | 69 · 67 · 46 · 64 % |
+| **250** | 86 · 80 · 81 · 92 % | 17 · 23 · 21 · 9 | 267 (−13) · 302 (−40) · 277 (−2) · 266 (−13) | 10.9 · 5.3 · 21.9 · 6.4 % | 24 · 25 · 54 · 22 % | 72 · 58 · 46 · 63 % |
+| 400 (036C) | 70 · 74 · 76 · 78 % | ≥ 16 · 13 · 15 · 4 | 275 (−16) · 277 (−58) · 274 (−8) · 261 (−21) | 20.5 · 9.2 · 27.8 · 16.3 % | 21 · 29 · 64 · 26 % | 63 · 63 · 48 · 57 % |
+
+**Gate A (content supply): passes at 200 / 225 / 250** — every species ≥ 79.7 %, enough worlds for a diverse bank of 50; Cinder Rosette's thin Desert
+column (17–18 of 40) is the released start's own weakness (24 of 40), not a new hole.
+
+**Gate B (the premise materially more visible): fails at every setting.**
+- Whether a *winning strategy that lives through a climate shock* exists at all is **unchanged** from the released start (e.g. 200: 22 / 25 / 54 / 14 %
+  vs 21 / 27 / 67 / 13 %): extra Biomass does not open new shock-exposed ways to win; it lets the same strategies be bought sooner.
+- The first-witness shock rate roughly doubles only for Organic Hybrid (2.6 → 8.6–10.9 %); Cinder Rosette is flat (4.0 → 4.3–5.3 %), Woolly
+  Candle +5–8 points; Reed Spire rises from 0 to 2.7–6.4 %. Terraform use in the first witness moves by a few points only.
+- The reserve mostly **makes the ordinary game faster**: same-world medians 2–40 s quicker, 11–19 % of worlds per species refused as won before the
+  240 s floor (released: 1–6 per species), strategy diversity unchanged. The whole reserve is spent at landing (first purchase at 0 s) on the
+  strategies a normal start buys a minute later.
+
+**Verdict: WINDFALL REMAINS HOLD** — no Biomass value in 200 / 225 / 250 produces the intended behaviour, so the lowest such value does not exist. The
+first authored batch is **Low Tide + Oasis Line**. Windfall's premise likely needs a restraint completion condition ("Bloom without the climate ever
+reaching Critical", §9) rather than a bigger reserve.
