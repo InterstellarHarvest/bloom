@@ -41,7 +41,7 @@ const path = require("path"), fs = require("fs"), http = require("http"), os = r
 const ROOT = path.resolve(__dirname, "..");
 for (const f of ["content/config.js", "content/traits.js", "content/species.js", "planets/first_bloom.js", "planets/training_grounds.js", "content/archetypes.js", "content/scenarios.js", "content/challenges.js",
   "content/challenge-seed-banks.js", "content/play.js", "content/training.js", "resources/bloom-sim.js", "resources/bloom-species.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js",
-  "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/bloom-challenges.js", "resources/run/game-session.js"]) require(path.join(ROOT, f));
+  "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/bloom-challenges.js", "resources/challenges/challenge-completion.js", "resources/run/game-session.js"]) require(path.join(ROOT, f));
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const BROWSERS = (argOf("--browsers") || "chromium,firefox").split(","), EVIDENCE = argv.includes("--evidence"), NODE_ONLY = argv.includes("--node-only");
 const EVD = path.join(ROOT, "docs/evidence/bloom-036c1");   // (036C1) current evidence; the 036B stills stay as they were accepted
@@ -54,7 +54,9 @@ const FLOW = { dying_world: ["woolly_candle", 2], native_competition: ["woolly_c
 // (036C1) the AUTHORED Challenges (prescribed plant; Windfall — player choice + a starting reserve — only if released): their own ids / cells / provenance
 const AUTHORED = { low_tide: { name: "Low Tide", scenario: "dying_world", species: "organic_hybrid", archetypes: ["ocean_archipelago"], start: "flood+salt:-", launch: 3 },
   oasis_line: { name: "Oasis Line", scenario: "native_competition", species: "reed_spire", archetypes: ["desert_world"], start: null, launch: 3 },
-  windfall: { name: "Windfall", scenario: "volatile_climate", species: null, archetypes: ["ocean_archipelago", "desert_world", "frozen_world"], start: "biomass", launch: 3 } };
+  windfall: { name: "Windfall", scenario: "volatile_climate", species: null, archetypes: ["ocean_archipelago", "desert_world", "frozen_world"], start: "biomass", launch: 3 },
+  // (036D1) the first gated Challenge (its completion is tools/challenge-completion-check.js); here: an authored Challenge like the others
+  thin_air: { name: "Thin Air", scenario: "dying_world", species: "woolly_candle", archetypes: ["desert_world", "ocean_archipelago"], start: null, launch: 3 } };
 const { BLOOM, BLOOM_DATA: D } = globalThis;
 const stable = v => Array.isArray(v) ? `[${v.map(stable).join(",")}]` : v && typeof v === "object" ? `{${Object.keys(v).sort().map(k => JSON.stringify(k) + ":" + stable(v[k])).join(",")}}` : JSON.stringify(v);
 // QA fixtures (never in content/challenges.js, never on the hub; their bank cells are built here, by the builder library)
@@ -219,12 +221,22 @@ const LOW_ARRIVAL_PICK = { ids: [] }, VERSION = {};
       `below 20 % arrival: ${below}/50 · contested min ${minContested}, median ${med} · arrival p50 ${Math.round([...E.map(e => e.habitable)].sort((a, b) => a - b)[25] * 100)}%`); }
   // A13 · (036C1, PMO) the REFUGE label is presentation only: the engine, generator, validator and scenario sources are byte-identical to the
   // accepted 036C base (d8ca0cb) — fitness, spread, establishment, origin protection and validation unchanged (the banks' provenance checks, B1, agree)
-  { let same = false, out = ""; try { execFileSync("git", ["diff", "--quiet", "d8ca0cb", "--", "resources/bloom-sim.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js",
-      "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-species.js", "content/config.js", "content/scenarios.js", "content/species.js", "content/traits.js", "content/archetypes.js"], { cwd: ROOT }); same = true; }
+  // (036D1) the ONE deliberate engine change since then is the generic, optional win gate (bloom-sim.js: opts.canWin / sim.winGated, absent = bit for bit,
+  // tools/challenge-completion-check.js G1) and the witness's hold records now carrying their pressure progress (bloom-witness.js): every changed line of
+  // those two files must be exactly that — anything else is still refused
+  { let same = false, out = "";
+    try { execFileSync("git", ["diff", "--quiet", "d8ca0cb", "--", "resources/bloom-gen.js", "resources/bloom-validate.js",
+      "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-species.js", "content/config.js", "content/scenarios.js", "content/species.js", "content/traits.js", "content/archetypes.js"], { cwd: ROOT });
+      const d = execFileSync("git", ["diff", "-U0", "d8ca0cb", "--", "resources/bloom-sim.js", "resources/bloom-witness.js"], { cwd: ROOT, encoding: "utf8" });
+      const changed = d.split("\n").filter(l => /^[+-](?![+-])/.test(l)).map(l => l.slice(1));
+      // added: the gate's comment / declaration / guarded win line, winGated, the hold's progress · removed: the ungated win line and the two progress-less hold records
+      const GATE_036D1 = /^\s*\/\/|WIN_GATE|winGated|onWin: null, \/\/ \(coverage\) => void|progress: [cw]\.hold\.progress|if \(!sim\.won && cov >= winAt\) \{ sim\.won = true; if \(sim\.onWin\) sim\.onWin\(cov\); \}$|hold: [cw]\.hold && \{ (seconds: [cw]\.hold\.seconds, )?coverage: [cw]\.hold\.coverage, held: [cw]\.hold\.held \}/;
+      const bad = changed.filter(l => l.trim() && !GATE_036D1.test(l));
+      same = !bad.length; if (bad.length) out = "unexpected engine change: " + bad.slice(0, 2).join(" ⏎ ").slice(0, 200); }
     catch (e) { out = String(e.stdout || e.message).slice(0, 200); }
     const adapter = fs.readFileSync(path.join(ROOT, "resources/run-ui/run-ui-adapter.js"), "utf8");
     check(same && /const refugeOf = \(s, e\) =>/.test(adapter) && /originFitnessFloor/.test(adapter),
-      "A13 · the protected-landing-REFUGE label is presentation only: engine / generator / validator / scenario / species / trait sources are byte-identical to the accepted base d8ca0cb (fitness, spread, establishment, origin protection, validation and banks unchanged); the run-UI adapter derives refuge from the real evaluation", same ? "identical" : out); }
+      "A13 · the protected-landing-REFUGE label is presentation only: engine / generator / validator / scenario / species / trait sources are byte-identical to the accepted base d8ca0cb (fitness, spread, establishment, origin protection, validation unchanged) — except, line for line, the 036D1 generic win gate and the witness hold's progress; the run-UI adapter derives refuge from the real evaluation", same ? "identical" : out); }
   // A4 · Windfall (only when released): the exact starting Biomass, nothing owned, player choice, all archetypes
   if (AUTH.includes("windfall")) { const ch = C.resolve("windfall"), st = C.startingStateOf(ch), cells = SPECIES.map(sp => CB.bankCell(ch, sp));
     const sim = BLOOM.createSim(CB.buildBankWorld(cells[0].entries[0]).planet, D.config, D.traits, { rng: () => 0.5, species: BLOOM.species.resolve(SPECIES[0]), startingState: st });
