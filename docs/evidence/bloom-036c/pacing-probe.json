@@ -1,0 +1,1972 @@
+{
+ "format": "bloom-036c-pacing-probe@1",
+ "perCell": 4,
+ "summary": {
+  "empty_hold": {
+   "first purchase > 60 s": 15,
+   "no pacing witness (cannot win / hold)": 1
+  },
+  "pioneer_rush": {
+   "first purchase > 60 s": 15,
+   "no pacing witness (cannot win / hold)": 1
+  },
+  "windfall": {
+   "margin < 240 s (won too fast)": 16
+  }
+ },
+ "rows": [
+  {
+   "concept": "empty_hold",
+   "archetypeId": "desert_world",
+   "seed": 78123,
+   "species": "cinder_rosette",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (dying_world): INCONCLUSIVE — search capped: only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(1) · Water:dry=Adapt(1)] margin reached at 137.4 s < 240 s (too fast); first purchase at 61.9 s > 60 s (too slow) | [Temperature:cold=Terraform(+6) · Water:dry=Adapt(1)] margin reached at 145.1 s < 240 s (too fast); first purchase at 69.1 s > 60 s (too slow) | [Defense:rad=Adapt(1) · Water:dry=Adapt(1)] margin reached at 140 s < 240 s (too fast); first purchase at 69.1 s > 60 s (too slow) | [Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+8)] margin reached at 176.2 s < 240 s (too fast); first purchase at 61.9 s > 60 s (too slow) | [Defense:rad=Adapt(1) · Temperature:cold=Terraform(+6) · Water:dry=Terraform(+8)] margin reached at 173.8 s < 240 s (too fast); first purchase at 85.1 s > 60 s (too slow) | [Temperature:cold=Adapt(1) · Water:dry=Terraform(+16)] margin reached at 180.8 s < 240 s (too fast); first purchase at 85.1 s > 60 s (too slow) | [Temperature:cold=Terraform(+6) · Water:dry=Terraform(+16)] margin reached at 180.8 s < 240 s (too fast); first purchase at 85.1 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 137.4,
+     "firstPurchaseSeconds": 61.9,
+     "maxGapSeconds": 61.9,
+     "pacing": [
+      "margin reached at 137.4 s < 240 s (too fast)",
+      "first purchase at 61.9 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Terraform(+6) · Water:dry=Adapt(1)",
+     "marginSeconds": 145.1,
+     "firstPurchaseSeconds": 69.1,
+     "maxGapSeconds": 69.1,
+     "pacing": [
+      "margin reached at 145.1 s < 240 s (too fast)",
+      "first purchase at 69.1 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 140,
+     "firstPurchaseSeconds": 69.1,
+     "maxGapSeconds": 69.1,
+     "pacing": [
+      "margin reached at 140 s < 240 s (too fast)",
+      "first purchase at 69.1 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+8)",
+     "marginSeconds": 176.2,
+     "firstPurchaseSeconds": 61.9,
+     "maxGapSeconds": 61.9,
+     "pacing": [
+      "margin reached at 176.2 s < 240 s (too fast)",
+      "first purchase at 61.9 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Terraform(+6) · Water:dry=Terraform(+8)",
+     "marginSeconds": 173.8,
+     "firstPurchaseSeconds": 85.1,
+     "maxGapSeconds": 85.1,
+     "pacing": [
+      "margin reached at 173.8 s < 240 s (too fast)",
+      "first purchase at 85.1 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(1) · Water:dry=Terraform(+16)",
+     "marginSeconds": 180.8,
+     "firstPurchaseSeconds": 85.1,
+     "maxGapSeconds": 85.1,
+     "pacing": [
+      "margin reached at 180.8 s < 240 s (too fast)",
+      "first purchase at 85.1 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Terraform(+6) · Water:dry=Terraform(+16)",
+     "marginSeconds": 180.8,
+     "firstPurchaseSeconds": 85.1,
+     "maxGapSeconds": 85.1,
+     "pacing": [
+      "margin reached at 180.8 s < 240 s (too fast)",
+      "first purchase at 85.1 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "frozen_world",
+   "seed": 62248,
+   "species": "cinder_rosette",
+   "status": "FAIL",
+   "reason": "layer P (dying_world): only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(3)+Terraform(+6)] first purchase at 94.6 s > 60 s (too slow); purchase gap of 125.1 s before the margin > 120 s",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(3)+Terraform(+6)",
+     "marginSeconds": 403.8,
+     "firstPurchaseSeconds": 94.6,
+     "maxGapSeconds": 125.1,
+     "pacing": [
+      "first purchase at 94.6 s > 60 s (too slow)",
+      "purchase gap of 125.1 s before the margin > 120 s"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "ocean_archipelago",
+   "seed": 6271,
+   "species": "cinder_rosette",
+   "status": "FAIL",
+   "reason": "layer P (dying_world): only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)] first purchase at 83.7 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] first purchase at 83.7 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+6) · Water:wet=Terraform(−8)] first purchase at 83.7 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12)] margin reached at 978.7 s > 900 s (too slow); first purchase at 83.7 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+6) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] first purchase at 83.7 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] first purchase at 83.7 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)",
+     "marginSeconds": 555,
+     "firstPurchaseSeconds": 83.7,
+     "maxGapSeconds": 104.5,
+     "pacing": [
+      "first purchase at 83.7 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)",
+     "marginSeconds": 611.4,
+     "firstPurchaseSeconds": 83.7,
+     "maxGapSeconds": 83.7,
+     "pacing": [
+      "first purchase at 83.7 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+6) · Water:wet=Terraform(−8)",
+     "marginSeconds": 564.5,
+     "firstPurchaseSeconds": 83.7,
+     "maxGapSeconds": 104.5,
+     "pacing": [
+      "first purchase at 83.7 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12)",
+     "marginSeconds": 978.7,
+     "firstPurchaseSeconds": 83.7,
+     "maxGapSeconds": 110.5,
+     "pacing": [
+      "margin reached at 978.7 s > 900 s (too slow)",
+      "first purchase at 83.7 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+6) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)",
+     "marginSeconds": 611.5,
+     "firstPurchaseSeconds": 83.7,
+     "maxGapSeconds": 83.7,
+     "pacing": [
+      "first purchase at 83.7 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)",
+     "marginSeconds": 613.9,
+     "firstPurchaseSeconds": 83.7,
+     "maxGapSeconds": 97.3,
+     "pacing": [
+      "first purchase at 83.7 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "ocean_archipelago",
+   "seed": 40240,
+   "species": "cinder_rosette",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (dying_world): INCONCLUSIVE — search capped: only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)] first purchase at 90.4 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] first purchase at 90.4 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1)+Terraform(+6) · Water:wet=Terraform(−8)] first purchase at 90.4 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(2) · Water:wet=Terraform(−8)] first purchase at 90.4 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12)] first purchase at 90.4 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+6) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] first purchase at 90.4 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+12) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] first purchase at 90.4 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)",
+     "marginSeconds": 434.1,
+     "firstPurchaseSeconds": 90.4,
+     "maxGapSeconds": 95.2,
+     "pacing": [
+      "first purchase at 90.4 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)",
+     "marginSeconds": 475.4,
+     "firstPurchaseSeconds": 90.4,
+     "maxGapSeconds": 95.2,
+     "pacing": [
+      "first purchase at 90.4 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1)+Terraform(+6) · Water:wet=Terraform(−8)",
+     "marginSeconds": 509.6,
+     "firstPurchaseSeconds": 90.4,
+     "maxGapSeconds": 95.2,
+     "pacing": [
+      "first purchase at 90.4 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(2) · Water:wet=Terraform(−8)",
+     "marginSeconds": 479.4,
+     "firstPurchaseSeconds": 90.4,
+     "maxGapSeconds": 95.2,
+     "pacing": [
+      "first purchase at 90.4 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12)",
+     "marginSeconds": 671.8,
+     "firstPurchaseSeconds": 90.4,
+     "maxGapSeconds": 116,
+     "pacing": [
+      "first purchase at 90.4 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+6) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)",
+     "marginSeconds": 772.8,
+     "firstPurchaseSeconds": 90.4,
+     "maxGapSeconds": 116,
+     "pacing": [
+      "first purchase at 90.4 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+12) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)",
+     "marginSeconds": 648.6,
+     "firstPurchaseSeconds": 90.4,
+     "maxGapSeconds": 116,
+     "pacing": [
+      "first purchase at 90.4 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "desert_world",
+   "seed": 78123,
+   "species": "organic_hybrid",
+   "status": "FAIL",
+   "reason": "layer P (dying_world): only 0 of 1 broad strategies meet the pacing policy — [Defense:rad=Adapt(1) · Water:dry=Adapt(1)] margin reached at 174.6 s < 240 s (too fast); first purchase at 74.6 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 174.6,
+     "firstPurchaseSeconds": 74.6,
+     "maxGapSeconds": 74.6,
+     "pacing": [
+      "margin reached at 174.6 s < 240 s (too fast)",
+      "first purchase at 74.6 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "desert_world",
+   "seed": 90725,
+   "species": "organic_hybrid",
+   "status": "FAIL",
+   "reason": "layer P (dying_world): only 0 of 1 broad strategies meet the pacing policy — [Defense:rad=Adapt(1) · Water:dry=Adapt(2)] first purchase at 70.9 s > 60 s (too slow) | [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+16)] first purchase at 70.9 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2)",
+     "marginSeconds": 266.6,
+     "firstPurchaseSeconds": 70.9,
+     "maxGapSeconds": 70.9,
+     "pacing": [
+      "first purchase at 70.9 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)+Terraform(+16)",
+     "marginSeconds": 331,
+     "firstPurchaseSeconds": 70.9,
+     "maxGapSeconds": 70.9,
+     "pacing": [
+      "first purchase at 70.9 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "ocean_archipelago",
+   "seed": 6271,
+   "species": "organic_hybrid",
+   "status": "FAIL",
+   "reason": "layer P (dying_world): only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)] first purchase at 70.2 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Terraform(+8)] first purchase at 70.2 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 388,
+     "firstPurchaseSeconds": 70.2,
+     "maxGapSeconds": 71.2,
+     "pacing": [
+      "first purchase at 70.2 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Terraform(+8)",
+     "marginSeconds": 407.4,
+     "firstPurchaseSeconds": 70.2,
+     "maxGapSeconds": 71.2,
+     "pacing": [
+      "first purchase at 70.2 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "ocean_archipelago",
+   "seed": 40240,
+   "species": "organic_hybrid",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (dying_world): INCONCLUSIVE — search capped: only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1)] first purchase at 72.6 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+8)] first purchase at 72.6 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)] first purchase at 72.6 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(1)] first purchase at 72.6 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)] first purchase at 72.6 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+8)] first purchase at 72.6 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)] first purchase at 72.6 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 378.7,
+     "firstPurchaseSeconds": 72.6,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 72.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+8)",
+     "marginSeconds": 364.6,
+     "firstPurchaseSeconds": 72.6,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 72.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1)",
+     "marginSeconds": 402.1,
+     "firstPurchaseSeconds": 72.6,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 72.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(1)",
+     "marginSeconds": 456,
+     "firstPurchaseSeconds": 72.6,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 72.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 483.4,
+     "firstPurchaseSeconds": 72.6,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 72.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+8)",
+     "marginSeconds": 477.8,
+     "firstPurchaseSeconds": 72.6,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 72.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)",
+     "marginSeconds": 496.3,
+     "firstPurchaseSeconds": 72.6,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 72.6 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "desert_world",
+   "seed": 78123,
+   "species": "reed_spire",
+   "status": "FAIL",
+   "reason": "layer P (dying_world): only 0 of 1 broad strategies meet the pacing policy — [Defense:rad=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] first purchase at 64.6 s > 60 s (too slow) | [Defense:rad=Adapt(1) · Water:dry=Adapt(2)] margin reached at 196.3 s < 240 s (too fast); first purchase at 68 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)",
+     "marginSeconds": 263.8,
+     "firstPurchaseSeconds": 64.6,
+     "maxGapSeconds": 68.3,
+     "pacing": [
+      "first purchase at 64.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2)",
+     "marginSeconds": 196.3,
+     "firstPurchaseSeconds": 68,
+     "maxGapSeconds": 75.5,
+     "pacing": [
+      "margin reached at 196.3 s < 240 s (too fast)",
+      "first purchase at 68 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "desert_world",
+   "seed": 90725,
+   "species": "reed_spire",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (dying_world): INCONCLUSIVE — search capped: every witness died out (extinction at 122.9 s; best peak 6.5%)",
+   "witnesses": [],
+   "bound": "no pacing witness (cannot win / hold)"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "ocean_archipelago",
+   "seed": 6271,
+   "species": "reed_spire",
+   "status": "FAIL",
+   "reason": "layer P (dying_world): only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1)] first purchase at 62.9 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+6) · Water:dry=Adapt(1)] first purchase at 62.9 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)] first purchase at 62.9 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+16)] first purchase at 62.9 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+6) · Water:dry=Terraform(+16)] first purchase at 62.9 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Terraform(+16)] first purchase at 62.9 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 383.8,
+     "firstPurchaseSeconds": 62.9,
+     "maxGapSeconds": 66.4,
+     "pacing": [
+      "first purchase at 62.9 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+6) · Water:dry=Adapt(1)",
+     "marginSeconds": 395.8,
+     "firstPurchaseSeconds": 62.9,
+     "maxGapSeconds": 66.4,
+     "pacing": [
+      "first purchase at 62.9 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 317,
+     "firstPurchaseSeconds": 62.9,
+     "maxGapSeconds": 66.4,
+     "pacing": [
+      "first purchase at 62.9 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+16)",
+     "marginSeconds": 460,
+     "firstPurchaseSeconds": 62.9,
+     "maxGapSeconds": 73.4,
+     "pacing": [
+      "first purchase at 62.9 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+6) · Water:dry=Terraform(+16)",
+     "marginSeconds": 516.8,
+     "firstPurchaseSeconds": 62.9,
+     "maxGapSeconds": 73.3,
+     "pacing": [
+      "first purchase at 62.9 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Terraform(+16)",
+     "marginSeconds": 485.3,
+     "firstPurchaseSeconds": 62.9,
+     "maxGapSeconds": 82.1,
+     "pacing": [
+      "first purchase at 62.9 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "ocean_archipelago",
+   "seed": 40240,
+   "species": "reed_spire",
+   "status": "FAIL",
+   "reason": "layer P (dying_world): only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1)] first purchase at 72.6 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)] first purchase at 72.6 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+8)] first purchase at 72.6 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+16)] first purchase at 72.6 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+16)] first purchase at 72.6 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+8)] first purchase at 72.6 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 469,
+     "firstPurchaseSeconds": 72.6,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 72.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 468.6,
+     "firstPurchaseSeconds": 72.6,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 72.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+8)",
+     "marginSeconds": 633.3,
+     "firstPurchaseSeconds": 72.6,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 72.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+16)",
+     "marginSeconds": 463.8,
+     "firstPurchaseSeconds": 72.6,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 72.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+16)",
+     "marginSeconds": 529.9,
+     "firstPurchaseSeconds": 72.6,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 72.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+8)",
+     "marginSeconds": 591.5,
+     "firstPurchaseSeconds": 72.6,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 72.6 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "desert_world",
+   "seed": 78123,
+   "species": "woolly_candle",
+   "status": "FAIL",
+   "reason": "layer P (dying_world): only 0 of 1 broad strategies meet the pacing policy — [Temperature:heat=Adapt(1) · Water:dry=Adapt(1)] margin reached at 158.6 s < 240 s (too fast); first purchase at 68.3 s > 60 s (too slow) | [Water:dry=Adapt(1)+Terraform(+8)] first purchase at 68.3 s > 60 s (too slow) | [Temperature:heat=Terraform(−6) · Water:dry=Adapt(1)] margin reached at 165.8 s < 240 s (too fast); first purchase at 68.3 s > 60 s (too slow) | [Water:dry=Adapt(2)] first purchase at 68.3 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Temperature:heat=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 158.6,
+     "firstPurchaseSeconds": 68.3,
+     "maxGapSeconds": 68.3,
+     "pacing": [
+      "margin reached at 158.6 s < 240 s (too fast)",
+      "first purchase at 68.3 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Water:dry=Adapt(1)+Terraform(+8)",
+     "marginSeconds": 245.9,
+     "firstPurchaseSeconds": 68.3,
+     "maxGapSeconds": 68.3,
+     "pacing": [
+      "first purchase at 68.3 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Temperature:heat=Terraform(−6) · Water:dry=Adapt(1)",
+     "marginSeconds": 165.8,
+     "firstPurchaseSeconds": 68.3,
+     "maxGapSeconds": 68.3,
+     "pacing": [
+      "margin reached at 165.8 s < 240 s (too fast)",
+      "first purchase at 68.3 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Water:dry=Adapt(2)",
+     "marginSeconds": 240.5,
+     "firstPurchaseSeconds": 68.3,
+     "maxGapSeconds": 68.3,
+     "pacing": [
+      "first purchase at 68.3 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "frozen_world",
+   "seed": 77469,
+   "species": "woolly_candle",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (dying_world): INCONCLUSIVE — search capped: only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(1) · Water:dry=Adapt(1)] first purchase at 73.1 s > 60 s (too slow) | [Temperature:cold=Adapt(1) · Water:dry=Terraform(+16)] first purchase at 73.1 s > 60 s (too slow) | [Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)] first purchase at 73.1 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 266.1,
+     "firstPurchaseSeconds": 73.1,
+     "maxGapSeconds": 73.1,
+     "pacing": [
+      "first purchase at 73.1 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(1) · Water:dry=Terraform(+16)",
+     "marginSeconds": 265.1,
+     "firstPurchaseSeconds": 73.1,
+     "maxGapSeconds": 73.1,
+     "pacing": [
+      "first purchase at 73.1 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 277.3,
+     "firstPurchaseSeconds": 73.1,
+     "maxGapSeconds": 73.1,
+     "pacing": [
+      "first purchase at 73.1 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "ocean_archipelago",
+   "seed": 6271,
+   "species": "woolly_candle",
+   "status": "FAIL",
+   "reason": "layer P (dying_world): only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:dry=Terraform(+8)] first purchase at 70.2 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1)] first purchase at 70.2 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−8)] first purchase at 70.2 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:dry=Terraform(+8)",
+     "marginSeconds": 287.4,
+     "firstPurchaseSeconds": 70.2,
+     "maxGapSeconds": 72.1,
+     "pacing": [
+      "first purchase at 70.2 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1)",
+     "marginSeconds": 563,
+     "firstPurchaseSeconds": 70.2,
+     "maxGapSeconds": 73.3,
+     "pacing": [
+      "first purchase at 70.2 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−8)",
+     "marginSeconds": 328.3,
+     "firstPurchaseSeconds": 70.2,
+     "maxGapSeconds": 70.2,
+     "pacing": [
+      "first purchase at 70.2 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "empty_hold",
+   "archetypeId": "ocean_archipelago",
+   "seed": 40240,
+   "species": "woolly_candle",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (dying_world): INCONCLUSIVE — search capped: only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Temperature:heat=Adapt(1)] first purchase at 60.3 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−6)] first purchase at 60.3 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−6)] first purchase at 60.3 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−12)] first purchase at 60.3 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)] first purchase at 60.3 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)] first purchase at 60.3 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Temperature:heat=Adapt(1)",
+     "marginSeconds": 342.4,
+     "firstPurchaseSeconds": 60.3,
+     "maxGapSeconds": 60.3,
+     "pacing": [
+      "first purchase at 60.3 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−6)",
+     "marginSeconds": 512.3,
+     "firstPurchaseSeconds": 60.3,
+     "maxGapSeconds": 74.6,
+     "pacing": [
+      "first purchase at 60.3 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−6)",
+     "marginSeconds": 368.2,
+     "firstPurchaseSeconds": 60.3,
+     "maxGapSeconds": 77.6,
+     "pacing": [
+      "first purchase at 60.3 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−12)",
+     "marginSeconds": 356,
+     "firstPurchaseSeconds": 60.3,
+     "maxGapSeconds": 70,
+     "pacing": [
+      "first purchase at 60.3 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)",
+     "marginSeconds": 452,
+     "firstPurchaseSeconds": 60.3,
+     "maxGapSeconds": 65.1,
+     "pacing": [
+      "first purchase at 60.3 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)",
+     "marginSeconds": 398.4,
+     "firstPurchaseSeconds": 60.3,
+     "maxGapSeconds": 74.7,
+     "pacing": [
+      "first purchase at 60.3 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "desert_world",
+   "seed": 78123,
+   "species": "cinder_rosette",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (native_competition): INCONCLUSIVE — search capped: only 0 of 1 broad strategies meet the pacing policy — [Defense:rad=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)] margin reached at 227.4 s < 240 s (too fast); first purchase at 87.7 s > 60 s (too slow) | [Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Adapt(1)] first purchase at 103.2 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)",
+     "marginSeconds": 227.4,
+     "firstPurchaseSeconds": 87.7,
+     "maxGapSeconds": 87.7,
+     "pacing": [
+      "margin reached at 227.4 s < 240 s (too fast)",
+      "first purchase at 87.7 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Adapt(1)",
+     "marginSeconds": 431.5,
+     "firstPurchaseSeconds": 103.2,
+     "maxGapSeconds": 103.2,
+     "pacing": [
+      "first purchase at 103.2 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "desert_world",
+   "seed": 90725,
+   "species": "cinder_rosette",
+   "status": "FAIL",
+   "reason": "layer P (native_competition): only 0 of 1 broad strategies meet the pacing policy — [Defense:rad=Adapt(1) · Water:dry=Adapt(2) · Water:wet=Terraform(−16)] first purchase at 106.4 s > 60 s (too slow) | [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2) · Water:wet=Terraform(−8)] first purchase at 106.4 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2) · Water:wet=Terraform(−16)",
+     "marginSeconds": 397.1,
+     "firstPurchaseSeconds": 106.4,
+     "maxGapSeconds": 106.4,
+     "pacing": [
+      "first purchase at 106.4 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2) · Water:wet=Terraform(−8)",
+     "marginSeconds": 488.6,
+     "firstPurchaseSeconds": 106.4,
+     "maxGapSeconds": 106.4,
+     "pacing": [
+      "first purchase at 106.4 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "frozen_world",
+   "seed": 77469,
+   "species": "cinder_rosette",
+   "status": "FAIL",
+   "reason": "layer P (native_competition): only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(3) · Water:wet=Terraform(−16)] first purchase at 105.6 s > 60 s (too slow) | [Temperature:cold=Adapt(2)+Terraform(+12) · Water:wet=Terraform(−16)] first purchase at 105.6 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(3) · Water:wet=Terraform(−16)",
+     "marginSeconds": 462.7,
+     "firstPurchaseSeconds": 105.6,
+     "maxGapSeconds": 105.6,
+     "pacing": [
+      "first purchase at 105.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(2)+Terraform(+12) · Water:wet=Terraform(−16)",
+     "marginSeconds": 459.4,
+     "firstPurchaseSeconds": 105.6,
+     "maxGapSeconds": 105.6,
+     "pacing": [
+      "first purchase at 105.6 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "ocean_archipelago",
+   "seed": 6271,
+   "species": "cinder_rosette",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (native_competition): INCONCLUSIVE — search capped: every witness died out (extinction at 308.2 s; best peak 3.3%)",
+   "witnesses": [],
+   "bound": "no pacing witness (cannot win / hold)"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "desert_world",
+   "seed": 78123,
+   "species": "organic_hybrid",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (native_competition): INCONCLUSIVE — search capped: only 0 of 1 broad strategies meet the pacing policy — [Defense:rad=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Adapt(1)] first purchase at 94.6 s > 60 s (too slow) | [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2) · Water:wet=Terraform(−16)] first purchase at 94.6 s > 60 s (too slow) | [Defense:rad=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(2) · Water:wet=Terraform(−16)] first purchase at 94.6 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Adapt(1)",
+     "marginSeconds": 328.2,
+     "firstPurchaseSeconds": 94.6,
+     "maxGapSeconds": 94.6,
+     "pacing": [
+      "first purchase at 94.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2) · Water:wet=Terraform(−16)",
+     "marginSeconds": 438.1,
+     "firstPurchaseSeconds": 94.6,
+     "maxGapSeconds": 94.6,
+     "pacing": [
+      "first purchase at 94.6 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(2) · Water:wet=Terraform(−16)",
+     "marginSeconds": 437,
+     "firstPurchaseSeconds": 94.6,
+     "maxGapSeconds": 94.6,
+     "pacing": [
+      "first purchase at 94.6 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "frozen_world",
+   "seed": 62248,
+   "species": "organic_hybrid",
+   "status": "FAIL",
+   "reason": "layer P (native_competition): only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(3) · Temperature:heat=Terraform(−6)] first purchase at 116 s > 60 s (too slow) | [Temperature:cold=Adapt(3) · Water:dry=Adapt(1) · Water:wet=Terraform(−8)] first purchase at 116 s > 60 s (too slow) | [Temperature:cold=Adapt(3) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)] first purchase at 116 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(3) · Temperature:heat=Terraform(−6)",
+     "marginSeconds": 434.2,
+     "firstPurchaseSeconds": 116,
+     "maxGapSeconds": 116,
+     "pacing": [
+      "first purchase at 116 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(3) · Water:dry=Adapt(1) · Water:wet=Terraform(−8)",
+     "marginSeconds": 526.6,
+     "firstPurchaseSeconds": 116,
+     "maxGapSeconds": 116,
+     "pacing": [
+      "first purchase at 116 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(3) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)",
+     "marginSeconds": 510.7,
+     "firstPurchaseSeconds": 116,
+     "maxGapSeconds": 116,
+     "pacing": [
+      "first purchase at 116 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "ocean_archipelago",
+   "seed": 6271,
+   "species": "organic_hybrid",
+   "status": "FAIL",
+   "reason": "layer P (native_competition): only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:wet=Adapt(1)] margin reached at 918.6 s > 900 s (too slow); first purchase at 109.1 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:wet=Terraform(−16)] first purchase at 109.1 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(1) · Water:wet=Terraform(−8)] first purchase at 109.1 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:wet=Adapt(1)",
+     "marginSeconds": 918.6,
+     "firstPurchaseSeconds": 109.1,
+     "maxGapSeconds": 109.1,
+     "pacing": [
+      "margin reached at 918.6 s > 900 s (too slow)",
+      "first purchase at 109.1 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:wet=Terraform(−16)",
+     "marginSeconds": 657.6,
+     "firstPurchaseSeconds": 109.1,
+     "maxGapSeconds": 109.1,
+     "pacing": [
+      "first purchase at 109.1 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(1) · Water:wet=Terraform(−8)",
+     "marginSeconds": 576.2,
+     "firstPurchaseSeconds": 109.1,
+     "maxGapSeconds": 109.1,
+     "pacing": [
+      "first purchase at 109.1 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "ocean_archipelago",
+   "seed": 51311,
+   "species": "organic_hybrid",
+   "status": "FAIL",
+   "reason": "layer P (native_competition): only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)] first purchase at 116.5 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] first purchase at 84.3 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)",
+     "marginSeconds": 680.2,
+     "firstPurchaseSeconds": 116.5,
+     "maxGapSeconds": 116.5,
+     "pacing": [
+      "first purchase at 116.5 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)",
+     "marginSeconds": 653.1,
+     "firstPurchaseSeconds": 84.3,
+     "maxGapSeconds": 84.3,
+     "pacing": [
+      "first purchase at 84.3 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "ocean_archipelago",
+   "seed": 6271,
+   "species": "reed_spire",
+   "status": "FAIL",
+   "reason": "layer P (native_competition): only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1)] first purchase at 106.4 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1)",
+     "marginSeconds": 429.1,
+     "firstPurchaseSeconds": 106.4,
+     "maxGapSeconds": 106.4,
+     "pacing": [
+      "first purchase at 106.4 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "ocean_archipelago",
+   "seed": 32205,
+   "species": "reed_spire",
+   "status": "FAIL",
+   "reason": "layer P (native_competition): only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)] first purchase at 109.4 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Temperature:heat=Terraform(−6) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)] first purchase at 69 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)] first purchase at 109.4 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)",
+     "marginSeconds": 408.8,
+     "firstPurchaseSeconds": 109.4,
+     "maxGapSeconds": 109.4,
+     "pacing": [
+      "first purchase at 109.4 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Temperature:heat=Terraform(−6) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)",
+     "marginSeconds": 403.5,
+     "firstPurchaseSeconds": 69,
+     "maxGapSeconds": 102.1,
+     "pacing": [
+      "first purchase at 69 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)",
+     "marginSeconds": 505.6,
+     "firstPurchaseSeconds": 109.4,
+     "maxGapSeconds": 109.4,
+     "pacing": [
+      "first purchase at 109.4 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "ocean_archipelago",
+   "seed": 40240,
+   "species": "reed_spire",
+   "status": "FAIL",
+   "reason": "layer P (native_competition): only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] first purchase at 118.7 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+8)] first purchase at 118.7 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] first purchase at 118.7 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Terraform(+8)] first purchase at 118.7 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)] first purchase at 92.2 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)",
+     "marginSeconds": 502.9,
+     "firstPurchaseSeconds": 118.7,
+     "maxGapSeconds": 118.7,
+     "pacing": [
+      "first purchase at 118.7 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+8)",
+     "marginSeconds": 598.4,
+     "firstPurchaseSeconds": 118.7,
+     "maxGapSeconds": 118.7,
+     "pacing": [
+      "first purchase at 118.7 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)",
+     "marginSeconds": 529.6,
+     "firstPurchaseSeconds": 118.7,
+     "maxGapSeconds": 118.7,
+     "pacing": [
+      "first purchase at 118.7 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Terraform(+8)",
+     "marginSeconds": 549,
+     "firstPurchaseSeconds": 118.7,
+     "maxGapSeconds": 118.7,
+     "pacing": [
+      "first purchase at 118.7 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)",
+     "marginSeconds": 496.2,
+     "firstPurchaseSeconds": 92.2,
+     "maxGapSeconds": 92.2,
+     "pacing": [
+      "first purchase at 92.2 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "ocean_archipelago",
+   "seed": 51311,
+   "species": "reed_spire",
+   "status": "FAIL",
+   "reason": "layer P (native_competition): only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+16)] first purchase at 117.1 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Terraform(+8)] first purchase at 87.4 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(2) · Temperature:heat=Terraform(−12) · Water:dry=Terraform(+8)] first purchase at 117.1 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(1) · Water:dry=Terraform(+16)",
+     "marginSeconds": 447.2,
+     "firstPurchaseSeconds": 117.1,
+     "maxGapSeconds": 117.1,
+     "pacing": [
+      "first purchase at 117.1 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Terraform(+8)",
+     "marginSeconds": 386.9,
+     "firstPurchaseSeconds": 87.4,
+     "maxGapSeconds": 87.4,
+     "pacing": [
+      "first purchase at 87.4 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Temperature:cold=Adapt(2) · Temperature:heat=Terraform(−12) · Water:dry=Terraform(+8)",
+     "marginSeconds": 464.8,
+     "firstPurchaseSeconds": 117.1,
+     "maxGapSeconds": 117.1,
+     "pacing": [
+      "first purchase at 117.1 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "desert_world",
+   "seed": 90725,
+   "species": "woolly_candle",
+   "status": "FAIL",
+   "reason": "layer P (native_competition): only 0 of 1 broad strategies meet the pacing policy — [Defense:salt=Adapt(1) · Temperature:heat=Adapt(1)+Terraform(−6) · Water:dry=Adapt(2) · Water:wet=Terraform(−16)] first purchase at 71.4 s > 60 s (too slow) | [Defense:salt=Adapt(1) · Temperature:heat=Adapt(2) · Water:dry=Adapt(2) · Water:wet=Terraform(−16)] first purchase at 71.4 s > 60 s (too slow) | [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(2) · Water:dry=Adapt(2) · Water:wet=Terraform(−8)] first purchase at 127.5 s > 60 s (too slow); purchase gap of 127.5 s before the margin > 120 s",
+   "witnesses": [
+    {
+     "signature": "Defense:salt=Adapt(1) · Temperature:heat=Adapt(1)+Terraform(−6) · Water:dry=Adapt(2) · Water:wet=Terraform(−16)",
+     "marginSeconds": 400.8,
+     "firstPurchaseSeconds": 71.4,
+     "maxGapSeconds": 88.2,
+     "pacing": [
+      "first purchase at 71.4 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Defense:salt=Adapt(1) · Temperature:heat=Adapt(2) · Water:dry=Adapt(2) · Water:wet=Terraform(−16)",
+     "marginSeconds": 413.3,
+     "firstPurchaseSeconds": 71.4,
+     "maxGapSeconds": 88.2,
+     "pacing": [
+      "first purchase at 71.4 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12) · Temperature:heat=Adapt(2) · Water:dry=Adapt(2) · Water:wet=Terraform(−8)",
+     "marginSeconds": 542.6,
+     "firstPurchaseSeconds": 127.5,
+     "maxGapSeconds": 127.5,
+     "pacing": [
+      "first purchase at 127.5 s > 60 s (too slow)",
+      "purchase gap of 127.5 s before the margin > 120 s"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "frozen_world",
+   "seed": 62248,
+   "species": "woolly_candle",
+   "status": "FAIL",
+   "reason": "layer P (native_competition): only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1) · Water:wet=Terraform(−8)] first purchase at 129 s > 60 s (too slow); purchase gap of 129 s before the margin > 120 s | [Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1)+Terraform(−6)] first purchase at 129 s > 60 s (too slow); purchase gap of 129 s before the margin > 120 s | [Temperature:cold=Adapt(2) · Temperature:heat=Terraform(−6) · Water:wet=Terraform(−8)] first purchase at 129 s > 60 s (too slow); purchase gap of 129 s before the margin > 120 s | [Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] first purchase at 129 s > 60 s (too slow); purchase gap of 129 s before the margin > 120 s | [Temperature:cold=Adapt(3) · Temperature:heat=Terraform(−6)] first purchase at 129 s > 60 s (too slow); purchase gap of 129 s before the margin > 120 s",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1) · Water:wet=Terraform(−8)",
+     "marginSeconds": 362.4,
+     "firstPurchaseSeconds": 129,
+     "maxGapSeconds": 129,
+     "pacing": [
+      "first purchase at 129 s > 60 s (too slow)",
+      "purchase gap of 129 s before the margin > 120 s"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1)+Terraform(−6)",
+     "marginSeconds": 358.4,
+     "firstPurchaseSeconds": 129,
+     "maxGapSeconds": 129,
+     "pacing": [
+      "first purchase at 129 s > 60 s (too slow)",
+      "purchase gap of 129 s before the margin > 120 s"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(2) · Temperature:heat=Terraform(−6) · Water:wet=Terraform(−8)",
+     "marginSeconds": 387.4,
+     "firstPurchaseSeconds": 129,
+     "maxGapSeconds": 129,
+     "pacing": [
+      "first purchase at 129 s > 60 s (too slow)",
+      "purchase gap of 129 s before the margin > 120 s"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)",
+     "marginSeconds": 439.8,
+     "firstPurchaseSeconds": 129,
+     "maxGapSeconds": 129,
+     "pacing": [
+      "first purchase at 129 s > 60 s (too slow)",
+      "purchase gap of 129 s before the margin > 120 s"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(3) · Temperature:heat=Terraform(−6)",
+     "marginSeconds": 397.9,
+     "firstPurchaseSeconds": 129,
+     "maxGapSeconds": 129,
+     "pacing": [
+      "first purchase at 129 s > 60 s (too slow)",
+      "purchase gap of 129 s before the margin > 120 s"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "frozen_world",
+   "seed": 77469,
+   "species": "woolly_candle",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (native_competition): INCONCLUSIVE — search capped: only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)] first purchase at 121.1 s > 60 s (too slow); purchase gap of 121.1 s before the margin > 120 s | [Temperature:cold=Adapt(3) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)] first purchase at 121.1 s > 60 s (too slow); purchase gap of 121.1 s before the margin > 120 s | [Temperature:cold=Adapt(3) · Temperature:heat=Terraform(−12) · Water:dry=Terraform(+16)] first purchase at 98.2 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(2) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)",
+     "marginSeconds": 482.9,
+     "firstPurchaseSeconds": 121.1,
+     "maxGapSeconds": 121.1,
+     "pacing": [
+      "first purchase at 121.1 s > 60 s (too slow)",
+      "purchase gap of 121.1 s before the margin > 120 s"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(3) · Water:dry=Adapt(1) · Water:wet=Terraform(−16)",
+     "marginSeconds": 614.6,
+     "firstPurchaseSeconds": 121.1,
+     "maxGapSeconds": 121.1,
+     "pacing": [
+      "first purchase at 121.1 s > 60 s (too slow)",
+      "purchase gap of 121.1 s before the margin > 120 s"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(3) · Temperature:heat=Terraform(−12) · Water:dry=Terraform(+16)",
+     "marginSeconds": 539.2,
+     "firstPurchaseSeconds": 98.2,
+     "maxGapSeconds": 98.2,
+     "pacing": [
+      "first purchase at 98.2 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "pioneer_rush",
+   "archetypeId": "ocean_archipelago",
+   "seed": 51311,
+   "species": "woolly_candle",
+   "status": "FAIL",
+   "reason": "layer P (native_competition): only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)] first purchase at 117.3 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] first purchase at 117.3 s > 60 s (too slow) | [Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)] first purchase at 117.3 s > 60 s (too slow)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Water:dry=Terraform(+16) · Water:wet=Adapt(1)",
+     "marginSeconds": 560.5,
+     "firstPurchaseSeconds": 117.3,
+     "maxGapSeconds": 117.3,
+     "pacing": [
+      "first purchase at 117.3 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:salt=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)",
+     "marginSeconds": 606.9,
+     "firstPurchaseSeconds": 117.3,
+     "maxGapSeconds": 117.3,
+     "pacing": [
+      "first purchase at 117.3 s > 60 s (too slow)"
+     ]
+    },
+    {
+     "signature": "Crossing:waterSeeds=Spread(1) · Defense:rad=Adapt(1) · Temperature:cold=Adapt(1) · Temperature:heat=Terraform(−12) · Water:dry=Terraform(+8) · Water:wet=Adapt(1)",
+     "marginSeconds": 633,
+     "firstPurchaseSeconds": 117.3,
+     "maxGapSeconds": 117.3,
+     "pacing": [
+      "first purchase at 117.3 s > 60 s (too slow)"
+     ]
+    }
+   ],
+   "bound": "first purchase > 60 s"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "desert_world",
+   "seed": 30179,
+   "species": "cinder_rosette",
+   "status": "FAIL",
+   "reason": "layer P (volatile_climate): only 0 of 1 broad strategies meet the pacing policy — [Defense:salt=Adapt(1) · Water:dry=Adapt(1)] margin reached at 144.6 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Water:dry=Adapt(1)] margin reached at 81.1 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Water:dry=Terraform(+8)] margin reached at 89.8 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Defense:salt=Adapt(1)] margin reached at 87.5 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Defense:salt=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 144.6,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 43.7,
+     "pacing": [
+      "margin reached at 144.6 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 81.1,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 50.4,
+     "pacing": [
+      "margin reached at 81.1 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Terraform(+8)",
+     "marginSeconds": 89.8,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 66.3,
+     "pacing": [
+      "margin reached at 89.8 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1)",
+     "marginSeconds": 87.5,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 66.3,
+     "pacing": [
+      "margin reached at 87.5 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "desert_world",
+   "seed": 78123,
+   "species": "cinder_rosette",
+   "status": "FAIL",
+   "reason": "layer P (volatile_climate): only 0 of 1 broad strategies meet the pacing policy — [Water:dry=Adapt(1) · Water:wet=Terraform(−8)] margin reached at 108.3 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Water:dry=Adapt(1)] margin reached at 97.9 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Water:dry=Terraform(+8)] margin reached at 102.1 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Water:dry=Adapt(1) · Water:wet=Terraform(−8)",
+     "marginSeconds": 108.3,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 57.5,
+     "pacing": [
+      "margin reached at 108.3 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 97.9,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 65.5,
+     "pacing": [
+      "margin reached at 97.9 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Terraform(+8)",
+     "marginSeconds": 102.1,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 71.2,
+     "pacing": [
+      "margin reached at 102.1 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "desert_world",
+   "seed": 90725,
+   "species": "cinder_rosette",
+   "status": "FAIL",
+   "reason": "layer P (volatile_climate): only 0 of 1 broad strategies meet the pacing policy — [Defense:rad=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] margin reached at 116.8 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)] margin reached at 115 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Water:dry=Adapt(2) · Water:wet=Terraform(−8)] margin reached at 151.2 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)",
+     "marginSeconds": 116.8,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 46.1,
+     "pacing": [
+      "margin reached at 116.8 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 115,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 46.1,
+     "pacing": [
+      "margin reached at 115 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(2) · Water:wet=Terraform(−8)",
+     "marginSeconds": 151.2,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 49.2,
+     "pacing": [
+      "margin reached at 151.2 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "desert_world",
+   "seed": 98716,
+   "species": "cinder_rosette",
+   "status": "FAIL",
+   "reason": "layer P (volatile_climate): only 0 of 1 broad strategies meet the pacing policy — [Defense:rad=Adapt(1) · Water:dry=Adapt(1)] margin reached at 121.3 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Water:dry=Terraform(+8)] margin reached at 156.8 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 121.3,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 52.7,
+     "pacing": [
+      "margin reached at 121.3 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Terraform(+8)",
+     "marginSeconds": 156.8,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 67.1,
+     "pacing": [
+      "margin reached at 156.8 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "desert_world",
+   "seed": 78123,
+   "species": "organic_hybrid",
+   "status": "FAIL",
+   "reason": "layer P (volatile_climate): only 0 of 1 broad strategies meet the pacing policy — [Water:dry=Adapt(1)] margin reached at 105.4 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+16)] margin reached at 174.6 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Terraform(+16)] margin reached at 182.7 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Water:dry=Adapt(1)",
+     "marginSeconds": 105.4,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 0.2,
+     "pacing": [
+      "margin reached at 105.4 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Terraform(+16)",
+     "marginSeconds": 174.6,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 60.6,
+     "pacing": [
+      "margin reached at 174.6 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Terraform(+16)",
+     "marginSeconds": 182.7,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 60.6,
+     "pacing": [
+      "margin reached at 182.7 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "frozen_world",
+   "seed": 5330,
+   "species": "organic_hybrid",
+   "status": "FAIL",
+   "reason": "layer P (volatile_climate): only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(1)+Terraform(+6)] margin reached at 133.8 s < 240 s (too fast) | [Temperature:cold=Adapt(2)] margin reached at 158.9 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(1)+Terraform(+6)",
+     "marginSeconds": 133.8,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 38.4,
+     "pacing": [
+      "margin reached at 133.8 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(2)",
+     "marginSeconds": 158.9,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 62.7,
+     "pacing": [
+      "margin reached at 158.9 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "frozen_world",
+   "seed": 17872,
+   "species": "organic_hybrid",
+   "status": "FAIL",
+   "reason": "layer P (volatile_climate): only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(2)] margin reached at 124.6 s < 240 s (too fast) | [Temperature:cold=Adapt(1)+Terraform(+12)] margin reached at 167 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(2)",
+     "marginSeconds": 124.6,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 67.9,
+     "pacing": [
+      "margin reached at 124.6 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(1)+Terraform(+12)",
+     "marginSeconds": 167,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 60.2,
+     "pacing": [
+      "margin reached at 167 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "frozen_world",
+   "seed": 62248,
+   "species": "organic_hybrid",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (volatile_climate): INCONCLUSIVE — search capped: only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(2)] margin reached at 132.3 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(2)",
+     "marginSeconds": 132.3,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 64.7,
+     "pacing": [
+      "margin reached at 132.3 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "desert_world",
+   "seed": 30179,
+   "species": "reed_spire",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (volatile_climate): INCONCLUSIVE — search capped: only 0 of 1 broad strategies meet the pacing policy — [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] margin reached at 133.1 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)] margin reached at 133.4 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(1)] margin reached at 151.5 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2)] margin reached at 158.1 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(2)] margin reached at 167.7 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(2)] margin reached at 172.8 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)",
+     "marginSeconds": 133.1,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 46.4,
+     "pacing": [
+      "margin reached at 133.1 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 133.4,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 46.4,
+     "pacing": [
+      "margin reached at 133.4 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(1)",
+     "marginSeconds": 151.5,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 63.7,
+     "pacing": [
+      "margin reached at 151.5 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(2)",
+     "marginSeconds": 158.1,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 62.4,
+     "pacing": [
+      "margin reached at 158.1 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(2)",
+     "marginSeconds": 167.7,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 62.4,
+     "pacing": [
+      "margin reached at 167.7 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Defense:salt=Adapt(1) · Water:dry=Adapt(2)",
+     "marginSeconds": 172.8,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 62.4,
+     "pacing": [
+      "margin reached at 172.8 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "desert_world",
+   "seed": 78123,
+   "species": "reed_spire",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (volatile_climate): INCONCLUSIVE — search capped: only 0 of 1 broad strategies meet the pacing policy — [Water:dry=Adapt(2)] margin reached at 107.5 s < 240 s (too fast) | [Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] margin reached at 112.3 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)] margin reached at 127.4 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)] margin reached at 142.4 s < 240 s (too fast) | [Defense:rad=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(1)] margin reached at 132.6 s < 240 s (too fast) | [Water:dry=Adapt(1)+Terraform(+16)] margin reached at 132.2 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Water:dry=Adapt(2)",
+     "marginSeconds": 107.5,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 68.3,
+     "pacing": [
+      "margin reached at 107.5 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Temperature:heat=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)",
+     "marginSeconds": 112.3,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 46.6,
+     "pacing": [
+      "margin reached at 112.3 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Adapt(1) · Water:dry=Adapt(1)",
+     "marginSeconds": 127.4,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 53.5,
+     "pacing": [
+      "margin reached at 127.4 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Water:dry=Adapt(1)+Terraform(+8)",
+     "marginSeconds": 142.4,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 53.9,
+     "pacing": [
+      "margin reached at 142.4 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:rad=Adapt(1) · Temperature:heat=Terraform(−6) · Water:dry=Adapt(1)",
+     "marginSeconds": 132.6,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 53.9,
+     "pacing": [
+      "margin reached at 132.6 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Water:dry=Adapt(1)+Terraform(+16)",
+     "marginSeconds": 132.2,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 59.8,
+     "pacing": [
+      "margin reached at 132.2 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "frozen_world",
+   "seed": 62248,
+   "species": "reed_spire",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (volatile_climate): INCONCLUSIVE — search capped: only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(2) · Water:dry=Adapt(1)] margin reached at 156.2 s < 240 s (too fast) | [Temperature:cold=Adapt(2) · Water:dry=Terraform(+8)] margin reached at 164.6 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(2) · Water:dry=Adapt(1)",
+     "marginSeconds": 156.2,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 64.8,
+     "pacing": [
+      "margin reached at 156.2 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(2) · Water:dry=Terraform(+8)",
+     "marginSeconds": 164.6,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 67.5,
+     "pacing": [
+      "margin reached at 164.6 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "ocean_archipelago",
+   "seed": 51311,
+   "species": "reed_spire",
+   "status": "FAIL",
+   "reason": "layer P (volatile_climate): only 0 of 1 broad strategies meet the pacing policy — [Crossing:waterSeeds=Spread(1)] margin reached at 228.6 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Crossing:waterSeeds=Spread(1)",
+     "marginSeconds": 228.6,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 0.2,
+     "pacing": [
+      "margin reached at 228.6 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "frozen_world",
+   "seed": 5330,
+   "species": "woolly_candle",
+   "status": "FAIL",
+   "reason": "layer P (volatile_climate): only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(1)] margin reached at 134.1 s < 240 s (too fast) | [Defense:salt=Adapt(1) · Temperature:cold=Terraform(+6)] margin reached at 133.3 s < 240 s (too fast) | [Temperature:cold=Terraform(+12)] margin reached at 199.2 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(1)",
+     "marginSeconds": 134.1,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 0.2,
+     "pacing": [
+      "margin reached at 134.1 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:salt=Adapt(1) · Temperature:cold=Terraform(+6)",
+     "marginSeconds": 133.3,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 63.7,
+     "pacing": [
+      "margin reached at 133.3 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Terraform(+12)",
+     "marginSeconds": 199.2,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 54.2,
+     "pacing": [
+      "margin reached at 199.2 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "frozen_world",
+   "seed": 16711,
+   "species": "woolly_candle",
+   "status": "FAIL",
+   "reason": "layer P (volatile_climate): only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(1)] margin reached at 109 s < 240 s (too fast) | [Defense:salt=Adapt(1) · Temperature:cold=Terraform(+6)] margin reached at 162.1 s < 240 s (too fast) | [Temperature:cold=Terraform(+12)] margin reached at 217.9 s < 240 s (too fast) | [Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(2)] margin reached at 144 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(1)",
+     "marginSeconds": 109,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 0.2,
+     "pacing": [
+      "margin reached at 109 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:salt=Adapt(1) · Temperature:cold=Terraform(+6)",
+     "marginSeconds": 162.1,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 70.3,
+     "pacing": [
+      "margin reached at 162.1 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Terraform(+12)",
+     "marginSeconds": 217.9,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 59.8,
+     "pacing": [
+      "margin reached at 217.9 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(2)",
+     "marginSeconds": 144,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 77.6,
+     "pacing": [
+      "margin reached at 144 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "frozen_world",
+   "seed": 27256,
+   "species": "woolly_candle",
+   "status": "INCONCLUSIVE",
+   "reason": "layer P (volatile_climate): INCONCLUSIVE — search capped: only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(1)] margin reached at 123.8 s < 240 s (too fast) | [Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(2)] margin reached at 153.4 s < 240 s (too fast) | [Temperature:cold=Terraform(+12) · Water:wet=Adapt(1)] margin reached at 202.1 s < 240 s (too fast) | [Temperature:cold=Terraform(+12) · Water:wet=Terraform(−8)] margin reached at 197 s < 240 s (too fast) | [Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12)] margin reached at 199.4 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(1)",
+     "marginSeconds": 123.8,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 0.2,
+     "pacing": [
+      "margin reached at 123.8 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Terraform(+6) · Temperature:heat=Adapt(2)",
+     "marginSeconds": 153.4,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 73.2,
+     "pacing": [
+      "margin reached at 153.4 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Terraform(+12) · Water:wet=Adapt(1)",
+     "marginSeconds": 202.1,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 80.2,
+     "pacing": [
+      "margin reached at 202.1 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Terraform(+12) · Water:wet=Terraform(−8)",
+     "marginSeconds": 197,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 100.5,
+     "pacing": [
+      "margin reached at 197 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Defense:salt=Adapt(1) · Temperature:cold=Terraform(+12)",
+     "marginSeconds": 199.4,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 100.5,
+     "pacing": [
+      "margin reached at 199.4 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  },
+  {
+   "concept": "windfall",
+   "archetypeId": "frozen_world",
+   "seed": 62248,
+   "species": "woolly_candle",
+   "status": "FAIL",
+   "reason": "layer P (volatile_climate): only 0 of 1 broad strategies meet the pacing policy — [Temperature:cold=Adapt(2)] margin reached at 141.6 s < 240 s (too fast) | [Temperature:cold=Adapt(1)+Terraform(+6) · Temperature:heat=Adapt(1)] margin reached at 119 s < 240 s (too fast) | [Temperature:cold=Adapt(1)+Terraform(+12)] margin reached at 183.2 s < 240 s (too fast)",
+   "witnesses": [
+    {
+     "signature": "Temperature:cold=Adapt(2)",
+     "marginSeconds": 141.6,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 64.5,
+     "pacing": [
+      "margin reached at 141.6 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(1)+Terraform(+6) · Temperature:heat=Adapt(1)",
+     "marginSeconds": 119,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 78.1,
+     "pacing": [
+      "margin reached at 119 s < 240 s (too fast)"
+     ]
+    },
+    {
+     "signature": "Temperature:cold=Adapt(1)+Terraform(+12)",
+     "marginSeconds": 183.2,
+     "firstPurchaseSeconds": 0.2,
+     "maxGapSeconds": 68.7,
+     "pacing": [
+      "margin reached at 183.2 s < 240 s (too fast)"
+     ]
+    }
+   ],
+   "bound": "margin < 240 s (won too fast)"
+  }
+ ]
+}
