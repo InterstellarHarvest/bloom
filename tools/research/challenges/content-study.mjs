@@ -58,7 +58,7 @@ function evaluateConcept(task, E) {
     // species by observing the builder's own validateScenario call (nothing re-run, nothing changed)
     const seen = {}, orig = BLOOM.validateScenario;
     BLOOM.validateScenario = (...a) => { const v = orig(...a), sp = a[4] && a[4].species; if (sp) seen[sp.id] = v; return v; };
-    let row; try { row = evaluateWorld(task, { BLOOM, D, SD: SDc }, { challenges: [ch] }); } finally { BLOOM.validateScenario = orig; }
+    let row; try { row = evaluateWorld(task, { BLOOM, D, SD: SDc }, { challenges: [ch], reasonChars: Infinity }); } finally { BLOOM.validateScenario = orig; }
     for (const [key, cell] of Object.entries(row.cells)) { const v = seen[key.split("/")[1]];
       if (v && !v.ok && cell.proof) { cell.proof.reasonFull = v.reason || null;
         cell.proof.refusedWitnesses = (v.slow || []).map(w => ({ marginSeconds: r4(w.marginSeconds), firstPurchaseSeconds: w.pacing ? r4(w.pacing.firstPurchaseSeconds) : null,
