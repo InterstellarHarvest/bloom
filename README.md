@@ -123,13 +123,17 @@ After changing a module it contains, rebuild and commit it: `npm --prefix tools 
 The whole game is one application, `index.html`. `demos/demo-run.html` is a developer harness only (direct runs, scenarios, the
 historical engineering shell for regression suites); players never see it ([`docs/SINGLE_DOCUMENT_APP_v1.md`](docs/SINGLE_DOCUMENT_APP_v1.md)).
 
-**Plant species (development only).** `index.html?species=1` turns on the species flow (EXPEDITION → Choose Plant Species → the
-Destination Survey for that species); the harness takes `demos/demo-run.html?…&species=<id>`. Without the flag the game is the Organic
-Hybrid flow. The three new species use temporary engineering proof art until their real packs are accepted
-([`docs/SPECIES_SYSTEM_v1.md`](docs/SPECIES_SYSTEM_v1.md) §0.2).
+**Plant species.** All four species are released on their accepted art and EXPEDITION always opens Choose Plant Species (`?species=1` is
+ignored); the harness takes `demos/demo-run.html?…&species=<id>` ([`docs/SPECIES_SYSTEM_v1.md`](docs/SPECIES_SYSTEM_v1.md)).
+
+**Challenges.** CHALLENGES plays one prevalidated procedural planet from a generated seed bank (`content/challenge-seed-banks.js`,
+[`docs/CHALLENGES_SYSTEM_v1.md`](docs/CHALLENGES_SYSTEM_v1.md)). A change to the generator, archetypes, species physiology, traits, engine rules,
+scenarios, Challenge recipes or the validator makes the bank stale and the game refuses it: rebuild with
+`node tools/build-challenge-seed-bank.mjs --per-archetype 160 --workers 8` and commit it with the change (checklist:
+[`docs/DEVELOPMENT_NOTES.md`](docs/DEVELOPMENT_NOTES.md) § "Change checklist — Challenge seed banks").
 
 **What's decided and what's next:** [`docs/PRODUCT_DIRECTION_CURRENT.md`](docs/PRODUCT_DIRECTION_CURRENT.md) is the current product-direction
-record and roadmap (visual-system convergence, then plant species, then Challenges). The game's one visual language — the shared
+record and roadmap (Challenges are released; authored Challenge content is next). The game's one visual language — the shared
 tokens in `resources/ui/bloom-theme.css`, light for gameplay, dark for the planning screens — is described in
 [`docs/VISUAL_SYSTEM_v1.md`](docs/VISUAL_SYSTEM_v1.md).
 

@@ -245,3 +245,27 @@ each Challenge (no Foothold line) + Organic Hybrid on Dying World · runs and re
 launch's dossier (another entry) · the Expedition survey with EXPECTED HAZARDS · fixtures (prescribed species; starting state). Seed bank:
 `seed-bank/BUILD_REPORT.md`, `build.json`, `distributions.json`, `candidates.json` (every evaluated world's record — the `--check` rebuild
 input), `builder-pool-bench.json`. Timing: `challenge-world-timing.json`.
+
+## 11. Integration (2026-10-12)
+
+PMO verdict: BLOOM-036A foundation, BLOOM-036B and the BLOOM-036B1 seed-bank architecture **ACCEPTED**; the combined candidate authorized for
+integration. `origin/main` was `47ae6c3`, `handoff/bloom-036b-review` `bd0eb27` (11 ahead / 0 behind); production `main` was fast-forwarded to
+exactly `bd0eb27` (no merge commit, squash, rebase, cherry-pick or force push) and converged with `origin/main`.
+
+Post-integration QA on clean `main` `bd0eb27`, sequential, nothing else running:
+
+| Suite | Result |
+|---|---|
+| `challenge-world-check.js` | 70 passed, 0 failed |
+| `challenges-check.js` | 31 passed, 0 failed |
+| `main-menu-check.js` | all pass |
+| `species-selection-check.js` | 68 / 68 |
+| `native-competition-check.js` · `dying-world-check.js` · `volatile-climate-check.js` | all pass |
+| `run-ui-check.js` · `run-ui-convergence-check.js` · `game-flow-check.js` | all pass |
+| `single-app-flow-check.js` | 59 passed, 0 failed |
+| `portable-runtime-check.js` | 71 / 71 |
+| `release-check.js --no-suites` | 51 / 51 |
+| `visual-system-check.js` | 54 / 54 (the sequential pass hit one Firefox `page.goto` 30 s navigation timeout that aborted the Firefox half; rerun alone: 54 / 54) |
+| `node tools/build-challenge-seed-bank.mjs --check` | the shipped bank is exactly the rebuild from the cached candidates (sha256 `dcca6d8f…`) |
+
+`slice-check`'s stochastic pacing rule stays documented pre-existing QA debt (not loosened; PRODUCT_DIRECTION_CURRENT §8, DEVELOPMENT_NOTES).
