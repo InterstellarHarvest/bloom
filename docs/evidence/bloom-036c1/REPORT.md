@@ -120,6 +120,19 @@ Hub with five cards: `02-hub-*-1440x900.png` / `-390x844.png` (Native Competitio
    stay visible). A sixth Challenge would make this more noticeable.
 4. **Rebuild cost**: any rule change now rebuilds 14 cells (~41 min on 12 workers).
 5. `windfall_*` / `vc_released_diag` research concepts remain in `tools/research/challenges/concepts.mjs` (fixtures, never in the catalogue).
-6. **"Blocked" landing region on low-arrival worlds** (existing UI behaviour, more visible now): on an Oasis Line world the landing region can read
+6. *(Resolved before integration — PMO presentation correction, §9.)* **"Blocked" landing region on low-arrival worlds** (existing UI behaviour, more visible now): on an Oasis Line world the landing region can read
    "Blocked · Water: too dry" while the plant lives there as the protected refuge (evidence `a4-run-oasis_line`). The new dossier line ("your landing
    region keeps it alive at first") prepares the player; the run-screen wording is unchanged in this milestone.
+
+## 9. Pre-integration presentation correction — REFUGE (PMO, 2026-10-12)
+
+PMO accepted 036C1 for release with one narrow presentation correction: the protected, unsuitable origin must read **REFUGE**, not BLOCKED.
+`resources/run-ui/run-ui-adapter.js` derives `refuge` (origin ∧ ordinarily blocked ∧ the refuge rule lifting its fitness above the unprotected value
+and the die-back threshold — from the real current evaluation); `planet-view.js` / `decision-rooms.js` show the chip **Refuge** (shield, sky tone,
+"Protected landing refuge: …" for assistive tech) in exactly that case, keep the Origin marker and the real limiting line, and keep Blocked for every
+other unsuitable region; the specimen keeps the ground's own condition. Presentation only (engine / validator / content byte-identical to `d8ca0cb`;
+no bank rebuild).
+
+QA (challenge-world-check, Chromium + Firefox): **A11** Oasis Line origin → Refuge + Origin + "Limiting: Water · too dry", fitness unchanged (0.62
+refuge floor), a non-origin unsuitable region → Blocked, after Drought Adaptation → OK; a suitable Low Tide origin → OK · **A12** a 0 %-arrival
+Dying World origin → Refuge · **A13** engine sources unchanged · **I7** Training's origin ordinary. Focused suites: see the integration record.

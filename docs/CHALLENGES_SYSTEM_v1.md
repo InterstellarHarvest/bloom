@@ -210,3 +210,11 @@ From the PMO-accepted content study ([`CHALLENGE_CONTENT_STUDY_v1.md`](CHALLENGE
   carries `challengeVersion`; the 036C1 copy corrections therefore made Native Competition and Volatile Climate **version 4**, and their cells were
   **rebuilt** (stale-bank protection kept, no bypass). The rebuilt cells hold the same worlds with the same proofs (only the provenance changed).
 - **Windfall: HOLD** (the focused recalibration did not pass the premise gate) · **Thin Air: RESERVE** — neither is in the catalogue.
+- **REFUGE — the protected landing refuge (PMO presentation rule).** When the run's ORIGIN region's own ground would be Blocked but the engine's
+  landing-refuge rule (`config.categories.originFitnessFloor`) is what keeps the plant alive there (the protected fitness is above both the
+  unprotected one and the die-back threshold), the region's status chip says **Refuge** (shield; "Protected landing refuge: this ground does not
+  suit your plant yet, but your landing region keeps it alive while you adapt.") instead of Blocked; the **Origin** marker and the real limiting
+  condition ("Limiting: Water · too dry") stay. Derived every time from the real evaluation (`run-ui-adapter` `refuge`): once Adapt / Terraform
+  make the ground suit the plant, or the protection no longer keeps it alive, the ordinary status takes over. Non-origin regions keep **Blocked**.
+  Presentation only — fitness, spread, establishment, origin protection, validation and banks unchanged. Applies wherever the rule holds
+  (Challenges, Expedition, Training alike); it reinforces the dossier's low-arrival line.
