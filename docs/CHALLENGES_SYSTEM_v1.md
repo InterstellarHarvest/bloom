@@ -1,9 +1,8 @@
 # Strange Bloom · Unknown Soils — Challenges system v1
 
-**BLOOM-036A — Challenges foundation + first playable hub** (PMO: ACCEPTED FOUNDATION) **+ BLOOM-036B — the contained Challenge: ONE
-procedural planet per instance** (PMO: product architecture ACCEPTED) **+ BLOOM-036B1 — Challenge worlds from PREVALIDATED SEED BANKS**
-(CANDIDATE). Review branch `handoff/bloom-036b-review` (036A + 036B + 036B1); not in production `main` until the PMO integrates it. Current
-product direction: [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §8.
+**BLOOM-036A — Challenges foundation + first playable hub** **+ BLOOM-036B — the contained Challenge: ONE procedural planet per instance**
+**+ BLOOM-036B1 — Challenge worlds from PREVALIDATED SEED BANKS** — PMO-accepted and **IMPLEMENTED / COMPLETE in production `main`** as one
+combined Challenges release (`bd0eb27`, 2026-10-12). Current product direction: [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §8.
 
 > **EXPEDITION** = live procedural world discovery (the 3 × 3 Destination Survey generates and validates worlds on the player's machine).
 > **CHALLENGES** = curated banks of **prevalidated procedural seeds**: the world is still procedurally generated, but which worlds a Challenge
@@ -140,6 +139,12 @@ not words), speciesId, physiologyVersion, physiologyKey, startingState, worldGen
 (the whole engine config + every trait's mechanics), validator ("challenge-bank-validation@1") }`. The runtime recomputes it from the running
 game at every launch and refuses any difference, a cell of another bank version than the Challenge's `bank.version`, too few entries
 and a provisional bank; the builder re-evaluates everything when its input fingerprint changes. Never a silent reuse.
+
+**Rebuild requirement (PMO-LOCKED).** Any change to the world generator, an archetype, a species physiology, a trait mechanic, an engine rule,
+a scenario mechanic, a Challenge recipe / version or the validator / proof contract makes the affected cells stale: rebuild with
+`node tools/build-challenge-seed-bank.mjs --per-archetype 160 --workers 8` (~38 min on 8 workers) and commit the regenerated `content/challenge-seed-banks.js` + `docs/evidence/bloom-036b/seed-bank/`
+with the change. `challenge-world-check` B1 fails on a stale bank. Checklist: [`DEVELOPMENT_NOTES.md`](DEVELOPMENT_NOTES.md) § "Change checklist —
+Challenge seed banks". Release bank (bank v1): 12 cells × 50, 312 145 bytes, sha256 `dcca6d8ff53e7cbb032bcdf0d0dae81fc0b4660ada008ce08894d6d4ed6871ba`.
 
 ## 5. The Challenge instance (format 2, `source: "seed-bank"`)
 
