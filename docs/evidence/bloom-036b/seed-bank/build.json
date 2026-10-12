@@ -1,8 +1,8 @@
 {
- "builtAt": "2026-10-12T00:57:41.329Z",
- "gitHead": "80c3539",
- "wallSeconds": 2285,
- "workers": 8,
+ "builtAt": "2026-10-12T14:40:00.227Z",
+ "gitHead": "d8ca0cb",
+ "wallSeconds": 2455,
+ "workers": 12,
  "hardwareThreads": 16,
  "pool": {
   "perArchetype": 160,
@@ -13,9 +13,9 @@
  "target": 50,
  "provisional": false,
  "limitingCells": [],
- "inputsFingerprint": "c176d9c14ca63b83",
- "bankSha256": "dcca6d8ff53e7cbb032bcdf0d0dae81fc0b4660ada008ce08894d6d4ed6871ba",
- "bankBytes": 312145,
+ "inputsFingerprint": "1d2974cdecae151b",
+ "bankSha256": "5cd2e385963abcfdaf2a3bd5191f721ae2207b2c17510ef93cb1420737d1bcf3",
+ "bankBytes": 364165,
  "cells": {
   "dying_world/organic_hybrid": {
    "evaluated": 480,
@@ -45,8 +45,8 @@
    },
    "minPairDistance": 0.4447,
    "cpuSeconds": {
-    "species": 1,
-    "proof": 563
+    "species": 2,
+    "proof": 840
    },
    "proof": {
     "simulations": 144,
@@ -83,8 +83,8 @@
    },
    "minPairDistance": 0.4046,
    "cpuSeconds": {
-    "species": 152,
-    "proof": 1209
+    "species": 243,
+    "proof": 1738
    },
    "proof": {
     "simulations": 312,
@@ -121,8 +121,8 @@
    },
    "minPairDistance": 0.4662,
    "cpuSeconds": {
-    "species": 140,
-    "proof": 721
+    "species": 211,
+    "proof": 1032
    },
    "proof": {
     "simulations": 212,
@@ -159,8 +159,8 @@
    },
    "minPairDistance": 0.4271,
    "cpuSeconds": {
-    "species": 147,
-    "proof": 610
+    "species": 224,
+    "proof": 916
    },
    "proof": {
     "simulations": 180,
@@ -197,8 +197,8 @@
    },
    "minPairDistance": 0.4907,
    "cpuSeconds": {
-    "species": 1,
-    "proof": 2586
+    "species": 2,
+    "proof": 4021
    },
    "proof": {
     "simulations": 125,
@@ -235,8 +235,8 @@
    },
    "minPairDistance": 0.3965,
    "cpuSeconds": {
-    "species": 153,
-    "proof": 2440
+    "species": 238,
+    "proof": 3428
    },
    "proof": {
     "simulations": 155,
@@ -273,8 +273,8 @@
    },
    "minPairDistance": 0.3698,
    "cpuSeconds": {
-    "species": 138,
-    "proof": 1845
+    "species": 208,
+    "proof": 2760
    },
    "proof": {
     "simulations": 104,
@@ -310,8 +310,8 @@
    },
    "minPairDistance": 0.4405,
    "cpuSeconds": {
-    "species": 148,
-    "proof": 1818
+    "species": 218,
+    "proof": 2873
    },
    "proof": {
     "simulations": 110,
@@ -347,8 +347,8 @@
    },
    "minPairDistance": 0.4756,
    "cpuSeconds": {
-    "species": 1,
-    "proof": 995
+    "species": 2,
+    "proof": 1437
    },
    "proof": {
     "simulations": 162,
@@ -385,8 +385,8 @@
    },
    "minPairDistance": 0.399,
    "cpuSeconds": {
-    "species": 153,
-    "proof": 1342
+    "species": 230,
+    "proof": 1919
    },
    "proof": {
     "simulations": 138,
@@ -423,8 +423,8 @@
    },
    "minPairDistance": 0.4586,
    "cpuSeconds": {
-    "species": 137,
-    "proof": 1282
+    "species": 206,
+    "proof": 1857
    },
    "proof": {
     "simulations": 201,
@@ -461,12 +461,78 @@
    },
    "minPairDistance": 0.3999,
    "cpuSeconds": {
-    "species": 145,
-    "proof": 789
+    "species": 214,
+    "proof": 1142
    },
    "proof": {
     "simulations": 116,
     "confirmations": 218,
+    "allPass": true
+   }
+  },
+  "low_tide/organic_hybrid": {
+   "evaluated": 480,
+   "stages": {
+    "ok": 78,
+    "scenario": 77,
+    "physical": 5,
+    "recipe": 320
+   },
+   "passing": 78,
+   "qualifyingPct": 16.3,
+   "retained": 50,
+   "deprioritized": 7,
+   "passingByArchetype": {
+    "ocean_archipelago": 78
+   },
+   "retainedByArchetype": {
+    "ocean_archipelago": 50
+   },
+   "retainedByClass": {
+    "favorable": 50
+   },
+   "minPairDistance": 0.6201,
+   "cpuSeconds": {
+    "species": 66,
+    "proof": 315
+   },
+   "proof": {
+    "simulations": 154,
+    "confirmations": 0,
+    "allPass": true
+   }
+  },
+  "oasis_line/reed_spire": {
+   "evaluated": 480,
+   "stages": {
+    "recipe": 315,
+    "physical": 5,
+    "ok": 113,
+    "scenario": 46,
+    "species": 1
+   },
+   "passing": 113,
+   "qualifyingPct": 23.5,
+   "retained": 50,
+   "deprioritized": 11,
+   "passingByArchetype": {
+    "desert_world": 113
+   },
+   "retainedByArchetype": {
+    "desert_world": 50
+   },
+   "retainedByClass": {
+    "precarious": 6,
+    "extreme": 44
+   },
+   "minPairDistance": 0.5938,
+   "cpuSeconds": {
+    "species": 68,
+    "proof": 1749
+   },
+   "proof": {
+    "simulations": 80,
+    "confirmations": 120,
     "allPass": true
    }
   }

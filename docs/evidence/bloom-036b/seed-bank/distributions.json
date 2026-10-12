@@ -1942,5 +1942,333 @@
     "max": 762.7
    }
   }
+ },
+ "low_tide/organic_hybrid": {
+  "habitable": {
+   "passing": {
+    "min": 0.4858,
+    "median": 0.7365,
+    "max": 0.9851
+   },
+   "retained": {
+    "min": 0.4945,
+    "median": 0.7334,
+    "max": 0.9851
+   }
+  },
+  "foothold": {
+   "passing": {
+    "min": 0.0419,
+    "median": 0.2285,
+    "max": 0.5482
+   },
+   "retained": {
+    "min": 0.0419,
+    "median": 0.2753,
+    "max": 0.5482
+   }
+  },
+  "waterShare": {
+   "passing": {
+    "min": 0.55,
+    "median": 0.6283,
+    "max": 0.695
+   },
+   "retained": {
+    "min": 0.56,
+    "median": 0.6329,
+    "max": 0.695
+   }
+  },
+  "landmasses": {
+   "passing": {
+    "min": 3,
+    "median": 4,
+    "max": 9
+   },
+   "retained": {
+    "min": 3,
+    "median": 5,
+    "max": 9
+   }
+  },
+  "meanTemp": {
+   "passing": {
+    "min": 7.091,
+    "median": 12.6143,
+    "max": 19.0346
+   },
+   "retained": {
+    "min": 7.091,
+    "median": 12.5808,
+    "max": 19.0346
+   }
+  },
+  "strongRadiation": {
+   "passing": {
+    "min": 0.0596,
+    "median": 0.2926,
+    "max": 0.6245
+   },
+   "retained": {
+    "min": 0.0596,
+    "median": 0.2926,
+    "max": 0.5681
+   }
+  },
+  "dry": {
+   "passing": {
+    "min": 0,
+    "median": 0,
+    "max": 0.2033
+   },
+   "retained": {
+    "min": 0,
+    "median": 0,
+    "max": 0.2033
+   }
+  },
+  "wet": {
+   "passing": {
+    "min": 0,
+    "median": 0,
+    "max": 0
+   },
+   "retained": {
+    "min": 0,
+    "median": 0,
+    "max": 0
+   }
+  },
+  "cold": {
+   "passing": {
+    "min": 0,
+    "median": 0.0058,
+    "max": 0.1482
+   },
+   "retained": {
+    "min": 0,
+    "median": 0.038,
+    "max": 0.1482
+   }
+  },
+  "hot": {
+   "passing": {
+    "min": 0,
+    "median": 0.028,
+    "max": 0.2165
+   },
+   "retained": {
+    "min": 0,
+    "median": 0.0308,
+    "max": 0.2165
+   }
+  },
+  "soil": {
+   "passing": {
+    "min": 0,
+    "median": 0,
+    "max": 0.0443
+   },
+   "retained": {
+    "min": 0,
+    "median": 0,
+    "max": 0.0443
+   }
+  },
+  "hazard": {
+   "passing": {
+    "min": 0,
+    "median": 0.1606,
+    "max": 0.3968
+   },
+   "retained": {
+    "min": 0,
+    "median": 0.1443,
+    "max": 0.3968
+   }
+  },
+  "marginSeconds": {
+   "passing": {
+    "min": 247.8,
+    "median": 397.4,
+    "max": 893.1
+   },
+   "retained": {
+    "min": 247.8,
+    "median": 397.4,
+    "max": 893.1
+   }
+  }
+ },
+ "oasis_line/reed_spire": {
+  "habitable": {
+   "passing": {
+    "min": 0,
+    "median": 0.0737,
+    "max": 0.3272
+   },
+   "retained": {
+    "min": 0,
+    "median": 0.0792,
+    "max": 0.3272
+   }
+  },
+  "foothold": {
+   "passing": {
+    "min": 0.0245,
+    "median": 0.0785,
+    "max": 0.3346
+   },
+   "retained": {
+    "min": 0.0245,
+    "median": 0.0812,
+    "max": 0.3346
+   }
+  },
+  "waterShare": {
+   "passing": {
+    "min": 0.02,
+    "median": 0.07,
+    "max": 0.1221
+   },
+   "retained": {
+    "min": 0.02,
+    "median": 0.08,
+    "max": 0.1221
+   }
+  },
+  "landmasses": {
+   "passing": {
+    "min": 1,
+    "median": 1,
+    "max": 2
+   },
+   "retained": {
+    "min": 1,
+    "median": 1,
+    "max": 2
+   }
+  },
+  "meanTemp": {
+   "passing": {
+    "min": 16.5968,
+    "median": 19.2598,
+    "max": 21.4602
+   },
+   "retained": {
+    "min": 16.5968,
+    "median": 19.2462,
+    "max": 21.4602
+   }
+  },
+  "strongRadiation": {
+   "passing": {
+    "min": 0.1152,
+    "median": 0.3872,
+    "max": 0.7736
+   },
+   "retained": {
+    "min": 0.1152,
+    "median": 0.3655,
+    "max": 0.7736
+   }
+  },
+  "dry": {
+   "passing": {
+    "min": 0.5838,
+    "median": 0.8385,
+    "max": 1
+   },
+   "retained": {
+    "min": 0.5838,
+    "median": 0.8134,
+    "max": 1
+   }
+  },
+  "wet": {
+   "passing": {
+    "min": 0,
+    "median": 0,
+    "max": 0
+   },
+   "retained": {
+    "min": 0,
+    "median": 0,
+    "max": 0
+   }
+  },
+  "cold": {
+   "passing": {
+    "min": 0,
+    "median": 0,
+    "max": 0
+   },
+   "retained": {
+    "min": 0,
+    "median": 0,
+    "max": 0
+   }
+  },
+  "hot": {
+   "passing": {
+    "min": 0,
+    "median": 0.0452,
+    "max": 0.2179
+   },
+   "retained": {
+    "min": 0,
+    "median": 0.0486,
+    "max": 0.2179
+   }
+  },
+  "soil": {
+   "passing": {
+    "min": 0,
+    "median": 0,
+    "max": 0.1054
+   },
+   "retained": {
+    "min": 0,
+    "median": 0,
+    "max": 0.1054
+   }
+  },
+  "hazard": {
+   "passing": {
+    "min": 0,
+    "median": 0,
+    "max": 0.1445
+   },
+   "retained": {
+    "min": 0,
+    "median": 0.0362,
+    "max": 0.1302
+   }
+  },
+  "nativeStart": {
+   "passing": {
+    "min": 0.0838,
+    "median": 0.2809,
+    "max": 0.3176
+   },
+   "retained": {
+    "min": 0.0838,
+    "median": 0.2809,
+    "max": 0.3163
+   }
+  },
+  "marginSeconds": {
+   "passing": {
+    "min": 285.1,
+    "median": 500.6,
+    "max": 816.5
+   },
+   "retained": {
+    "min": 285.1,
+    "median": 503.7,
+    "max": 816.5
+   }
+  }
  }
 }

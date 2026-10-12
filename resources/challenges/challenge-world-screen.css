@@ -135,3 +135,8 @@
 }
 .cw.rm *, .cw.rm *::before, .cw.rm *::after{transition:none !important; animation:none !important}
 @media (prefers-reduced-motion: reduce){ .cw *, .cw *::before, .cw *::after{transition:none !important; animation:none !important} }
+/* (036C1) what a prescribed start closes (e.g. Flood owned → Drought unavailable) and the low-arrival explanation (< 5 % suits the plant) */
+.cw-closed{margin:3px 0 0; font-weight:700; color:var(--ink-soft); font-size:13.5px; line-height:1.3}
+.cw-hab-note{display:flex; align-items:flex-start; gap:6px; margin:6px 0 0; font-weight:700; font-size:13.5px; line-height:1.35; color:var(--ink-soft)}
+.cw-hab-note .ic{flex:none; width:16px; height:16px; margin-top:1px; color:var(--bloom-gold-night)}
+.cw-hab-note[hidden], .cw-closed[hidden]{display:none}

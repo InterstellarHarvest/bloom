@@ -4,7 +4,7 @@
 //   NODE_PATH="$(npm root -g)" node tools/challenges-check.js [--browsers chromium,firefox] [--evidence] [--node-only]
 //
 // NODE (content/challenges.js + resources/bloom-challenges.js):
-//   C1 exactly three released Challenges (Dying World · Native Competition · Volatile Climate), in that order
+//   C1 exactly the released Challenges in content order: the original three + the 036C1 authored batch (Low Tide · Oasis Line [· Windfall])
 //   C2 each references a real, non-default scenario with mechanics; scenarioOf() is the catalogue's own object
 //   C3 Challenge ≠ scenario: no mechanics key anywhere in a definition; copy is a reference to the scenario's own player-facing copy or the
 //      Challenge's own text (never a verbatim copy); no number but versions and the recipe's own shares; check() refuses mechanics (also
@@ -15,27 +15,33 @@
 //   C5 the launch of the three released Challenges: player-choice species · a SEED-BANK world (the calibrated recipe + bank { 1, 50 }) · the
 //      normal start · completion bloom / []; Challenge version 3 (036B1) / recipe 1; the recipe key
 //   C6 no Challenge plumbing in the Destination Survey any more (036A's scenario layer removed: the survey is the Expedition's only)
+//   C21 (036C1) the copy corrections: Native Competition's strategic idea; Volatile Climate: stable until Terraformed, Terraform unsettles,
+//       quick / repeated steps swing it, Adapt never adds instability · C22 the authored launches exactly (Low Tide, Oasis Line, Windfall if released)
 //   C20 no difficulty-ranking language in any Challenge copy
 // BROWSER (Chromium AND Firefox):
 //   M · the main menu: EXPEDITION · CHALLENGES · TRAINING · SETTINGS · CREDITS, CHALLENGES a real chunky icon + word button (the shared
 //       challenge glyph), never disabled, no "coming soon"
-//   H · the hub at 390 × 844, 1024 × 768, 1440 × 900, 2560 × 1440: three cards (icon + name + line), the dossier (its "How the run works"
+//   H · the hub at 390 × 844, 1024 × 768, 1440 × 900, 2560 × 1440: every released Challenge as an equal card (icon + name + line), the dossier (its "How the run works"
 //       says one qualifying Challenge world is generated — no survey), BEGIN CHALLENGE visible (the phone: pinned in the sheet), the 036B
 //       lede, no horizontal overflow, contrast, no ranking words
 //   K · keyboard: ↓ to CHALLENGES, Enter → hub, the radiogroup (↓ ↑ Home End), visible focus, Enter / Space opens the dossier, Escape
 //       closes it, Escape again → the title; R · reduced motion: nothing animates on the hub
-// --evidence writes docs/evidence/bloom-036b/ hub stills. Exits 1 on any failure.
+// --evidence writes docs/evidence/bloom-036c1/ hub stills. Exits 1 on any failure.
 "use strict";
 const path = require("path"), fs = require("fs"), http = require("http"), os = require("os");
 const ROOT = path.resolve(__dirname, "..");
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const BROWSERS = (argOf("--browsers") || "chromium,firefox").split(","), EVIDENCE = argv.includes("--evidence"), NODE_ONLY = argv.includes("--node-only");
-const EVD = path.join(ROOT, "docs/evidence/bloom-036b");
+const EVD = path.join(ROOT, "docs/evidence/bloom-036c1");   // (036C1) current evidence; the 036B stills stay as they were accepted
 let fails = 0, passes = 0; const t0 = Date.now();
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (ok) passes++; else fails++; return ok; };
 const info = (name, detail) => console.log(`INFO  ${name}  — ${detail}`);
 const J = JSON.stringify;
-const IDS = ["dying_world", "native_competition", "volatile_climate"], NAMES = ["Dying World", "Native Competition", "Volatile Climate"];
+// the three original Challenges (036B1) + the first AUTHORED batch (036C1; Windfall only if it passed its recalibration and is in the catalogue)
+const ORIG = ["dying_world", "native_competition", "volatile_climate"], ORIG_VERSION = { dying_world: 3, native_competition: 4, volatile_climate: 4 };
+const ALL_NAMES = { dying_world: "Dying World", native_competition: "Native Competition", volatile_climate: "Volatile Climate", low_tide: "Low Tide", oasis_line: "Oasis Line", windfall: "Windfall" };
+const SCN = { dying_world: "dying_world", native_competition: "native_competition", volatile_climate: "volatile_climate", low_tide: "dying_world", oasis_line: "native_competition", windfall: "volatile_climate" };
+let IDS = null, NAMES = null;   // set once content/challenges.js is loaded
 const MENU = ["Expedition", "Challenges", "Training", "Settings", "Credits"];
 const VIEWPORTS = [[390, 844], [1024, 768], [1440, 900], [2560, 1440]];
 // no difficulty ranking (the hub, the Challenge's species screen / survey / run / report)
@@ -45,21 +51,22 @@ for (const f of ["content/config.js", "content/traits.js", "content/species.js",
   "resources/bloom-sim.js", "resources/bloom-species.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js",
   "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/bloom-challenges.js"]) require(path.join(ROOT, f));
 const { BLOOM, BLOOM_DATA: D } = globalThis;
+IDS = [...ORIG, "low_tide", "oasis_line", ...(D.challenges.some(c => c.id === "windfall") ? ["windfall"] : [])]; NAMES = IDS.map(id => ALL_NAMES[id]);
 
 (async () => {
   console.log("# C · the Challenge data layer (Node)");
   const C = BLOOM.challenges, list = C.list(), scenarios = D.scenarios;
   // C1
-  check(J(list.map(c => c.id)) === J(IDS) && J(list.map(c => c.name)) === J(NAMES) && J(C.ids()) === J(IDS) && D.challenges.length === 3 && list.every(c => c.status === "released"),
-    "C1 · exactly three released Challenges, in content order (not a ranking): Dying World · Native Competition · Volatile Climate", J(list.map(c => c.id)));
+  check(J(list.map(c => c.id)) === J(IDS) && J(list.map(c => c.name)) === J(NAMES) && J(C.ids()) === J(IDS) && D.challenges.length === IDS.length && list.every(c => c.status === "released"),
+    `C1 · exactly the released Challenges, in content order (not a ranking): ${NAMES.join(" · ")} (036C1: the original three + the authored batch)`, J(list.map(c => c.id)));
   // C2
   { const rows = list.map(c => { const S = C.scenarioOf(c); return { id: c.id, scenario: c.scenario, same: S === scenarios.find(s => s.id === c.scenario), dynamic: BLOOM.pressure.isDynamic(S), isDefault: S.id === BLOOM.pressure.DEFAULT_SCENARIO }; });
-    check(rows.every(r => r.same && r.dynamic && !r.isDefault) && J(rows.map(r => r.scenario)) === J(["dying_world", "native_competition", "volatile_climate"]),
+    check(rows.every(r => r.same && r.dynamic && !r.isDefault) && J(rows.map(r => r.scenario)) === J(IDS.map(id => SCN[id])),
       "C2 · each Challenge references a REAL non-default scenario with mechanics (pressure · competition · climate instability); BLOOM.challenges.scenarioOf() returns the catalogue's own scenario object (nothing copied)", J(rows)); }
   // C3
   { const src = fs.readFileSync(path.join(ROOT, "content/challenges.js"), "utf8").replace(/\/\/.*$/gm, "");
     const keyHits = C.MECHANICS_KEYS.filter(k => new RegExp(`\\b${k}\\s*:`).test(src));
-    const numbers = /\b\d+(\.\d+)?\b/.test(src.replace(/(version|size): \d+/g, "").replace(/(minHabitable|maxHabitable|minStartShare): [\d.]+/g, "").replace(/\b0x[0-9a-f]+\b/gi, ""));
+    const numbers = /\b\d+(\.\d+)?\b/.test(src.replace(/(version|size): \d+/g, "").replace(/(minHabitable|maxHabitable|minStartShare): [\d.]+/g, "").replace(/biomass: \d+/g, "").replace(/\b0x[0-9a-f]+\b/gi, ""));
     const ownCopy = s => { const out = []; const w = v => { if (typeof v === "string") out.push(v); else if (v && typeof v === "object") Object.values(v).forEach(w); }; w(s.display); return out; };
     const verbatim = list.flatMap(c => { const own = ownCopy(C.scenarioOf(c)), d = D.challenges.find(x => x.id === c.id);
       return [d.short, ...Object.values(d.presentation)].filter(v => typeof v === "string" && !v.startsWith("@scenario.") && own.includes(v)).map(v => `${c.id}: ${v.slice(0, 30)}`); });
@@ -110,7 +117,7 @@ const { BLOOM, BLOOM_DATA: D } = globalThis;
       cover: C.check([{ ...d1, launch: { ...d1.launch, world: { ...d1.launch.world, recipe: { ...d1.launch.world.recipe, nativeCover: { minStartShare: 0.15 } } } } }], S),
       foothold: C.check([W({ foothold: { minShare: 0.1 } })], S) };
     const allRefused = Object.values(refuse).every(e => e.length > 0), allAccepted = Object.values(accept).every(e => e.length === 0);
-    check(!keyHits.length && !numbers && !verbatim.length && allRefused && allAccepted && refs.every(r => /^scenario\.display\./.test(r.short) && /^scenario\.display\./.test(r.tagline) && /^scenario\.display\./.test(r.briefing) && /^scenario\.display\./.test(r.strategicIdea)),
+    check(!keyHits.length && !numbers && !verbatim.length && allRefused && allAccepted && refs.every(r => Object.values(r).every(x => x === null || x === "challenge" || /^scenario\.display\./.test(x))) && /^scenario\.display\./.test(refs[0].strategicIdea),
       "C3 · Challenge ≠ scenario: content/challenges.js carries no mechanics key and no number but versions and the recipe's own shares; every copy field references the scenario's own player-facing copy (\"@scenario.display.*\") or is the Challenge's own text, never a verbatim copy; check() refuses a mechanics key at any depth (also in a recipe), verbatim scenario copy, the default / an unknown scenario, every launch value the runtime cannot honour (036A policy strings, a survey / authored world, an unreleased or missing prescribed species, an unknown recipe key or archetype, a bad arrival band, a Terraform / crossing / over-max / two-arm starting adaptation, negative or ungiven start, launch-level Biomass, a fixture in the catalogue), completion conditions / another win, difficulty words and a non-player-facing reference — and accepts what the runtime does honour",
       `${keyHits.length ? "keys " + keyHits : ""}${numbers ? " numbers" : ""}${verbatim.length ? " verbatim " + verbatim : ""} refused: ${Object.entries(refuse).map(([k, e]) => `${k}${e.length ? "✓" : "✗"}`).join(" ")} · accepted: ${Object.entries(accept).map(([k, e]) => `${k}${e.length ? "✗ " + e[0] : "✓"}`).join(" ")}`); }
   // C4
@@ -125,14 +132,35 @@ const { BLOOM, BLOOM_DATA: D } = globalThis;
   // C5
   { const ARCH = ["ocean_archipelago", "desert_world", "frozen_world"];
     const want = { dying_world: { arrival: null }, native_competition: { arrival: { minHabitable: 0.2 } }, volatile_climate: { arrival: null } };
-    const rows = list.map(c => ({ id: c.id, v: c.version, schema: c.schema, key: c.recipeKey, launch: c.launch }));
-    check(list.every(c => J(c.launch) === J({ species: { policy: "player-choice" }, world: { policy: "seed-bank", recipe: { version: 1, archetypes: ARCH, arrival: want[c.id].arrival, nativeCover: null }, bank: { version: 1, size: 50 } }, startingState: { policy: "normal" } })
-        && c.completion.win === "bloom" && c.completion.conditions.length === 0 && c.schema === 2 && C.SCHEMA_VERSION === 2 && c.version === 3 && c.recipeKey === `${c.id}@3/recipe-1`
-        && C.speciesOf(c) === null && C.startingStateOf(c) === null && J(C.provenance(c)) === J({ id: c.id, name: c.name, version: 3, recipeVersion: 1, bankVersion: 1, scenarioId: c.scenario, icon: c.presentation.icon })
+    const orig = list.filter(c => ORIG.includes(c.id)), rows = orig.map(c => ({ id: c.id, v: c.version, schema: c.schema, key: c.recipeKey, launch: c.launch }));
+    check(orig.length === 3 && orig.every(c => J(c.launch) === J({ species: { policy: "player-choice" }, world: { policy: "seed-bank", recipe: { version: 1, archetypes: ARCH, arrival: want[c.id].arrival, nativeCover: null }, bank: { version: 1, size: 50 } }, startingState: { policy: "normal" } })
+        && c.completion.win === "bloom" && c.completion.conditions.length === 0 && c.schema === 2 && C.SCHEMA_VERSION === 2 && c.version === ORIG_VERSION[c.id] && c.recipeKey === `${c.id}@${ORIG_VERSION[c.id]}/recipe-1`
+        && C.speciesOf(c) === null && C.startingStateOf(c) === null && J(C.provenance(c)) === J({ id: c.id, name: c.name, version: ORIG_VERSION[c.id], recipeVersion: 1, bankVersion: 1, scenarioId: c.scenario, icon: c.presentation.icon })
         && C.ICONS.includes(c.presentation.icon) && c.presentation.tagline && c.presentation.briefing && c.presentation.strategicIdea)
-      && J(list.map(c => c.presentation.icon)) === J(["pressure", "competition", "climate"]) && !!list[0].presentation.sciencePoints && !!list[2].presentation.science,
+      && J(orig.map(c => c.presentation.icon)) === J(["pressure", "competition", "climate"]) && !!orig[0].presentation.sciencePoints && !!orig[2].presentation.science,
       "C5 · the launch of the three released Challenges (036B1): species { player-choice } · world { seed-bank: recipe v1 (every archetype; Dying World and Volatile Climate BROAD, Native Competition arrival ≥ 20 % — what the offline bank builder accepts) · bank { version 1, size 50 } } · startingState { normal } · completion { bloom, [] }; Challenge version 3 (the live-search v2 is retired), recipe version 1, recipe key <id>@3/recipe-1; nothing prescribed",
       rows.map(r => `${r.id} v${r.v} ${r.key} arrival ${J(r.launch.world.recipe.arrival)}`).join(" · ")); }
+  // C21 — (036C1) the released-copy corrections: Native Competition's strategic idea; Volatile Climate says the climate is stable until Terraformed
+  { const nc = C.resolve("native_competition").presentation, vc = C.resolve("volatile_climate").presentation, vcAll = [vc.tagline, vc.briefing, vc.strategicIdea].join(" ");
+    const facts = { startsStable: /stable until you (change|Terraform)/i.test(vc.briefing) && /stable until you Terraform/i.test(vc.tagline), terraformUnsettles: /Each Terraform step unsettles it/.test(vc.briefing),
+      quickOrRepeated: /quick or repeated steps can (make it )?swing/.test(vc.briefing) && /temporary heat pulse, cold snap, wet surge or dry spell/.test(vc.briefing),
+      adaptSafe: /^Adapting your plant never unsettles the climate\./.test(vc.strategicIdea) };
+    check(nc.strategicIdea === "Win ground where your plant suits it better than the natives do, and thicken young colonies before they are overgrown." && /suited to its conditions/.test(nc.science)
+        && Object.values(facts).every(Boolean) && !/random/i.test(vcAll),
+      "C21 · the 036C1 copy corrections: Native Competition's strategic idea is a real strategy (the native-adaptation fact stays in its science line); Volatile Climate states that the climate STARTS STABLE, that each TERRAFORM step unsettles it, that QUICK OR REPEATED steps swing it to a temporary extreme, and that ADAPTING never unsettles it (both the hub's What changes and the planet dossier's lines carry it)",
+      J(facts)); }
+  // C22 — (036C1) the authored launches, exactly
+  { const ARCH = ["ocean_archipelago", "desert_world", "frozen_world"], B = { version: 1, size: 50 }, wf = IDS.includes("windfall") ? C.resolve("windfall") : null;
+    const want = { low_tide: { species: { policy: "prescribed", species: "organic_hybrid" }, world: { policy: "seed-bank", recipe: { version: 1, archetypes: ["ocean_archipelago"], arrival: null, nativeCover: null }, bank: B },
+        startingState: { policy: "prescribed", adaptations: ["flood", "salt"], biomass: null } },
+      oasis_line: { species: { policy: "prescribed", species: "reed_spire" }, world: { policy: "seed-bank", recipe: { version: 1, archetypes: ["desert_world"], arrival: null, nativeCover: null }, bank: B }, startingState: { policy: "normal" } },
+      ...(wf ? { windfall: { species: { policy: "player-choice" }, world: { policy: "seed-bank", recipe: { version: 1, archetypes: ARCH, arrival: null, nativeCover: null }, bank: B }, startingState: { policy: "prescribed", adaptations: [], biomass: wf.launch.startingState.biomass } } } : {}) };
+    const rows = Object.entries(want).map(([id, L]) => { const c = C.resolve(id); return { id, ok: J(c.launch) === J(L) && c.version === 1 && c.scenario === SCN[id] && c.completion.win === "bloom" && !c.completion.conditions.length
+      && J(C.provenance(c)) === J({ id, name: ALL_NAMES[id], version: 1, recipeVersion: 1, bankVersion: 1, scenarioId: SCN[id], icon: c.presentation.icon }) && c.presentation.icon === { dying_world: "pressure", native_competition: "competition", volatile_climate: "climate" }[SCN[id]] }; });
+    check(rows.every(r => r.ok) && J(C.closedByStart(C.resolve("low_tide")).map(t => t.id)) === J(["drought"]) && IDS.every(id => id === "low_tide" || !C.closedByStart(C.resolve(id)).length)
+        && (!wf || [200, 225, 250].includes(wf.launch.startingState.biomass)),
+      "C22 · the authored Challenges, exactly as approved: Low Tide (Dying World · prescribed Organic Hybrid · Ocean only · Flood + Salt given, normal Biomass), Oasis Line (Native Competition · prescribed Reed Spire · Desert only · NO arrival floor · normal start)" + (wf ? `, Windfall (Volatile Climate · player choice · every archetype · ${wf.launch.startingState.biomass} Biomass)` : "") + "; version 1, recipe 1, bank 1, the normal Bloom, the scenario family's icon; only Low Tide's start closes anything (Drought Adaptation)",
+      rows.map(r => r.id + (r.ok ? "✓" : "✗")).join(" ")); }
   // C20
   { const words = list.map(c => [c.name, c.short, ...Object.values(c.presentation).flat()].filter(v => typeof v === "string").join(" ")).join(" "), hit = words.match(RANKING);
     check(!hit, "C20 · no difficulty-ranking language in any Challenge copy (no Easy / Medium / Hard, stars, scores, recommended skill)", hit ? `"${hit[0]}"` : "clean"); }
@@ -189,6 +217,12 @@ async function browserChecks() {
     const hubReady = p => p.waitForFunction(() => { const e = MENU_DEV.entry, v = e.challengeView; return e.state === "challenges" && v && v.inner && e.black.style.display === "none"; }, null, { timeout: 60000, polling: 50 });
     const speciesReady = p => p.waitForFunction(() => { const e = MENU_DEV.entry, v = e.speciesView; return e.state === "species" && v && v.inner && e.black.style.display === "none"; }, null, { timeout: 60000, polling: 50 });
     const surveyReady = p => p.waitForFunction(() => { const s = MENU_DEV.entry.survey; return s && s.state === "survey" && s.cells.every(Boolean) && MENU_DEV.entry.black.style.display === "none"; }, null, { timeout: 420000, polling: 200 });
+    // the dossier's "How the run works" per Challenge (036C1: a prescribed plant / a given start say so; Low Tide's start says what it closes)
+    const WORLD = "One qualifying Challenge world is generated for your plant: there is no survey and no choosing among worlds.", WIN = "Win with the normal Bloom: cover the planet's target share of land.";
+    const HOW = Object.fromEntries(IDS.map(id => [id, { low_tide: ["This Challenge prescribes the plant: Organic Hybrid.", WORLD, "Your plant lands with what the Challenge gives it: Flood Adaptation · Salt Handling. Drought Adaptation is not available: a plant commits to one water strategy — Flood is already chosen.", WIN],
+      oasis_line: ["This Challenge prescribes the plant: Reed Spire.", WORLD, "Your plant lands as it always does: nothing owned yet.", WIN],
+      windfall: ["You choose your plant: every species is open.", WORLD, `Your plant lands with what the Challenge gives it: ${(D.challenges.find(c => c.id === "windfall") || { launch: { startingState: {} } }).launch.startingState.biomass} Biomass.`, WIN] }[id]
+      || ["You choose your plant: every species is open.", WORLD, "Your plant lands as it always does: nothing owned yet.", WIN]]));
     const runReady = (p, n) => p.waitForFunction(n => window.BLOOM_APP && BLOOM_APP.session && BLOOM_APP.stats.sessions.length >= n && BLOOM_APP.stats.sessions[n - 1].readyMs !== null && !BLOOM_APP.busy
       && !document.querySelector(".atx") && MENU_DEV.entry.state === "away" && MENU_DEV.entry.black.style.display === "none", n, { timeout: 90000, polling: 50 });
     const reportOpen = p => p.waitForFunction(() => BLOOM.runReport.instance && BLOOM.runReport.instance.state().open && !BLOOM.runReport.instance.state().busy, null, { timeout: 20000, polling: 30 });
@@ -260,7 +294,7 @@ async function browserChecks() {
         await openHub(p);
         const rows = [];
         for (const id of IDS) {
-          await p.evaluate(([id, H]) => { const h = eval(H); h.select(id); if (h.narrow) h.open(id); }, [id, HUB]);
+          await p.evaluate(([id, H]) => { const h = eval(H); h.select(id); if (h.narrow) h.open(id); }, [id, HUB]);   // every card, the authored ones included
           await p.evaluate(() => Promise.all(document.querySelector(".ch").getAnimations({ subtree: true }).map(a => a.finished.catch(() => {})))); await p.waitForTimeout(60);
           const R = await p.evaluate(([H, RANK]) => { const h = eval(H), go = document.querySelector(".ch-btn.go"), r = go.getBoundingClientRect(), d = document.querySelector(".ch-dossier");
             const card = document.querySelector(`.ch-card[data-challenge="${h.selected.id}"]`);
@@ -278,12 +312,11 @@ async function browserChecks() {
         const sameSize = new Set(cards.map(x => x.w)).size === 1;
         check(rows.every(r => r.title === NAMES[IDS.indexOf(r.id)] && r.dossierFor === r.id && r.visible && r.contrast >= 4.5 && r.icon && r.words && !r.rank && r.ov.doc && r.ov.inner && r.label === "Begin challenge"
             && r.rows[0] === "What changes" && r.rows[1] === "Strategic idea" && r.rows.includes("How the run works") && r.rows.length === 4 && (w !== 390 || r.sheet === "true")
-            && J(r.run.slice(0, 4)) === J(["You choose your plant: every species is open.", "One qualifying Challenge world is generated for your plant: there is no survey and no choosing among worlds.",
-              "Your plant lands as it always does: nothing owned yet.", "Win with the normal Bloom: cover the planet's target share of land."]) && /extinction/i.test(r.run[4] || "")
+            && J(r.run.slice(0, 4)) === J(HOW[r.id]) && /extinction/i.test(r.run[4] || "")
             && r.lede === "Each Challenge is a contained run with its own starting situation and pressure. Read the brief, choose what the Challenge allows, and find a way to bloom."
             && !/Destination Survey|choose your plant and your world/i.test(r.run.join(" ") + r.lede))
             && J(cards.map(x => x.id)) === J(IDS) && sameSize,
-          `[${bn}] H1 ${w}×${h} · the hub: three equal cards (scenario glyph + name + one line; no ranking cue) and the selected Challenge's dossier (What changes · Strategic idea · the science / why · How the run works: choose your plant · ONE qualifying Challenge world is generated (no survey) · nothing owned at landing · the normal Bloom · extinction); the 036B lede (\"choose what the Challenge allows\"); BEGIN CHALLENGE fully visible${w === 390 ? " (pinned in the phone sheet)" : ""} with contrast ≥ 4.5 : 1; no horizontal overflow; no difficulty words`,
+          `[${bn}] H1 ${w}×${h} · the hub: ${IDS.length} equal cards (scenario glyph + name + one line; no ranking cue) and the selected Challenge's dossier (What changes · Strategic idea · the science / why · How the run works: choose your plant · ONE qualifying Challenge world is generated (no survey) · nothing owned at landing · the normal Bloom · extinction); the 036B lede (\"choose what the Challenge allows\"); BEGIN CHALLENGE fully visible${w === 390 ? " (pinned in the phone sheet)" : ""} with contrast ≥ 4.5 : 1; no horizontal overflow; no difficulty words`,
           rows.map(r => `${r.id} ${r.contrast}:1${r.visible ? "" : " HIDDEN"}${r.rank ? ` RANK "${r.rank}"` : ""}`).join(" · ") + ` · cards ${J(cards.map(x => x.w + "×" + x.h))}`);
         if (w === 1024) check(rows.every(r => r.anims === 0), `[${bn}] R1 · reduced motion (the OS setting): nothing animates on the hub`, J(rows.map(r => r.anims)));
         check(!p.errs.length, `[${bn}] H2 ${w}×${h} · no console / page error`, p.errs.join(" | ") || "clean");

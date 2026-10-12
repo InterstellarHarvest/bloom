@@ -9,7 +9,7 @@
 //
 //   id             stable lower_snake id — part of run provenance and the report. Never renamed.
 //   version        the definition's revision (presentation / launch / completion)
-//   status         "released" (on the hub). All three are released (a "fixture" status exists for QA only: BLOOM.challenges.fixture).
+//   status         "released" (on the hub). Every Challenge here is released (a "fixture" status exists for QA only: BLOOM.challenges.fixture).
 //   name           the Challenge's name (hub, survey, run, report)
 //   short          one line for the hub card
 //   scenario       the scenario id the run plays (a real, non-default scenario of content/scenarios.js)
@@ -29,7 +29,9 @@
 //                  conditions, none yet
 // VERSIONS. `version` is the definition's revision; `launch.world.recipe.version` the recipe's. The recipe decides which planet a launch
 // generates, so changing a released recipe is an explicit change of BOTH (an old instance is never reinterpreted under new recipe data).
-// 036B: every Challenge is version 2 (036A's version 1 launched through the Destination Survey), recipe version 1.
+// 036B: every Challenge is version 2 (036A's version 1 launched through the Destination Survey), recipe version 1. 036B1: version 3 (seed banks).
+// 036C1: Native Competition and Volatile Climate version 4 (copy revised: presentation is part of the definition's revision, and the bank cells
+// carry the Challenge version, so those cells were rebuilt — same worlds, same proofs); Low Tide and Oasis Line version 1.
 // No difficulty labels anywhere: no Easy / Medium / Hard, no stars, no recommended skill. The hub lists Challenges in this order, which
 // is not a ranking.
 (function (root) {
@@ -62,14 +64,15 @@
       completion: { win: "bloom", conditions: [] },
     },
     {
-      id: "native_competition", version: 3, status: "released",
+      id: "native_competition", version: 4, status: "released",
       name: "Native Competition",
       short: "@scenario.display.card.tagline",
       scenario: "native_competition",
       presentation: {
         tagline: "@scenario.display.card.detail",
         briefing: "@scenario.display.summary",
-        strategicIdea: "@scenario.display.card.cue",
+        // (036C1, PMO) a real strategic idea (the scenario's cue states a fact; that fact stays in the science line below)
+        strategicIdea: "Win ground where your plant suits it better than the natives do, and thicken young colonies before they are overgrown.",
         icon: "competition",
         // the scenario has no science line of its own; the hub's context, in the terms of the mechanic (stands that are established hold,
         // young ones can be overgrown; the better-suited plant pushes at a front)
@@ -83,20 +86,62 @@
       completion: { win: "bloom", conditions: [] },
     },
     {
-      id: "volatile_climate", version: 3, status: "released",
+      id: "volatile_climate", version: 4, status: "released",
       name: "Volatile Climate",
       short: "@scenario.display.card.tagline",
       scenario: "volatile_climate",
+      // (036C1, PMO) the copy says plainly that the climate is NOT unstable by itself: it starts stable, only Terraforming unsettles it, quick or
+      // repeated steps can swing it to a temporary extreme, and Adapt (the plant) never adds instability. No shock is forced mechanically.
       presentation: {
-        tagline: "@scenario.display.card.detail",
-        briefing: "@scenario.display.summary",
-        strategicIdea: "@scenario.display.card.cue",
+        tagline: "The climate stays stable until you Terraform it: quick or repeated steps can swing it to temporary extremes.",
+        briefing: "The climate here is stable until you change it. Each Terraform step unsettles it; quick or repeated steps can make it swing to a temporary heat pulse, cold snap, wet surge or dry spell.",
+        strategicIdea: "Adapting your plant never unsettles the climate. Terraform when it pays, and give the sky time to settle between steps.",
         icon: "climate",
         science: "@scenario.display.science",
       },
       // recipe: intentionally BROAD — layer P (pacing, a Terraform-heavy witness must live through a real shock, confirmation seeds) is the
       // proof; capping the arrival share would not change how often the mechanic is met (the study), so no constraint is added for symmetry
       launch: { species: { ...PLAYER_CHOICE }, world: { policy: "seed-bank", recipe: { version: 1, archetypes: [...ALL_ARCHETYPES], arrival: null, nativeCover: null }, bank: { ...BANK } }, startingState: { ...NORMAL_START } },
+      completion: { win: "bloom", conditions: [] },
+    },
+    // ---- BLOOM-036C1: the first AUTHORED Challenges (docs/CHALLENGE_CONTENT_STUDY_v1.md, PMO-approved). Each references an existing scenario and
+    // keeps its OWN id, name, bank cell and provenance: two Challenges may share one scenario and are never collapsed by it.
+    {
+      // the start is a commitment: Flood Adaptation owned closes Drought Adaptation for the whole run (the engine's one-water-strategy rule),
+      // while the thinning atmosphere dries the archipelago (study: 50 % of Ocean worlds qualify vs 93 % from the normal start)
+      id: "low_tide", version: 1, status: "released",
+      name: "Low Tide",
+      short: "A plant fitted for wet salt coasts, on an archipelago that is drying out.",
+      scenario: "dying_world",
+      presentation: {
+        tagline: "Your plant lands already adapted to flooded, salty shores, and committed to that water strategy, as the planet's air dries.",
+        briefing: "Organic Hybrid arrives with Flood Adaptation and Salt Handling: well fitted to the archipelago's wet, salty coasts today. But the atmosphere is thinning. The world dries, cools and brightens, and a plant committed to wet ground cannot also adapt to drought.",
+        strategicIdea: "Your head start is also a commitment. Use the coasts while they last, then decide how to keep enough ground wet: Terraform, or retreat.",
+        icon: "pressure",
+        science: "Mangroves and saltmarsh plants are superbly fitted to wet, salty shores, and stranded when the water retreats. Specialisation pays only while the world it fits lasts.",
+      },
+      launch: { species: { policy: "prescribed", species: "organic_hybrid" },
+        world: { policy: "seed-bank", recipe: { version: 1, archetypes: ["ocean_archipelago"], arrival: null, nativeCover: null }, bank: { ...BANK } },
+        startingState: { policy: "prescribed", adaptations: ["flood", "salt"], biomass: null } },
+      completion: { win: "bloom", conditions: [] },
+    },
+    {
+      // a wetland plant on a desert the natives already own: deliberately NO arrival floor (the released Native Competition's 20 % floor would
+      // accept almost none of these worlds for Reed Spire); the study's proofs all meet contested fronts (median 11 contested regions)
+      id: "oasis_line", version: 1, status: "released",
+      name: "Oasis Line",
+      short: "A wetland plant in a desert that is already taken.",
+      scenario: "native_competition",
+      presentation: {
+        tagline: "Drought-hardy native vegetation holds the open desert; your plant can only live where the water is.",
+        briefing: "Reed Spire lands beside a desert basin. The wet ground suits it; the dry plains belong to native vegetation adapted to them. Every spring, lakeshore and wet hollow is a front.",
+        strategicIdea: "Hold the wet basins first. To push into the plains the natives hold, your reed must learn to live drier; reshaping the sky can weaken their strongholds.",
+        icon: "competition",
+        science: "In real deserts, reeds and palms crowd around springs and oases while drought-hardy shrubs hold the open ground; who wins at the edge depends on how much water the soil holds (a simplified game model).",
+      },
+      launch: { species: { policy: "prescribed", species: "reed_spire" },
+        world: { policy: "seed-bank", recipe: { version: 1, archetypes: ["desert_world"], arrival: null, nativeCover: null }, bank: { ...BANK } },
+        startingState: { ...NORMAL_START } },
       completion: { win: "bloom", conditions: [] },
     },
   ];

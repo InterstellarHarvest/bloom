@@ -20,6 +20,13 @@
 //   B9 the run (BLOOM.gameSession.challengeRun): the exact bank instance, its provenance (bank / cell / entry / launch seed / planet seed +
 //      fingerprint / versions); a 036B live-search instance (format 1), another bank version, a tampered or foreign instance are refused;
 //      expeditionRun refuses a Challenge; the Destination Survey never touches a bank
+// AUTHORED (036C1) — several Challenges share one scenario and are never collapsed by it:
+//   A1 Low Tide → Dying World, Oasis Line → Native Competition (Windfall → Volatile Climate if released): own id / name / provenance / recipe / cells
+//   A2 Low Tide: Flood + Salt given at landing (owned, unpaid, normal Biomass), Drought Adaptation closed (closedByStart), proofs made from that start
+//   A3 Oasis Line: 50 Desert worlds, no 20 % arrival floor, every proof met contested fronts · A4 Windfall (only if released): the exact Biomass
+//   A5–A9 (browser) each authored Challenge: the hub card, prescribed plant → no Choose Plant Species, the dossier (plant, what is given, what the
+//      start closes, the low-arrival line only < 5 %), the run (id / scenario / cell / entry, nothing given charged), Low Tide's Adapt room (Drought
+//      locked), the report (the Challenge named, given tiers marked), RETRY (the exact entry) · A10 a < 5 %-arrival released dossier explains itself
 // BROWSER (Chromium AND Firefox; "/" = the repository, "/bloom/" = the Pages site, file:// offline):
 //   F · each Challenge: hub → BEGIN CHALLENGE → Choose Plant Species (the selected plant's ONE world built early) → PREPARING ("Selecting a
 //       proven world · Building the planet · Verifying the planet", or skipped when already built) → the dossier (one globe; no Foothold line)
@@ -28,7 +35,7 @@
 //   E · the specimen environment reads the real region sky · I · cancel, Back (same entry), Change Species, RETRY (same entry, fresh sim),
 //       CHALLENGES → a new launch (a different entry: session repeat avoidance), MAIN MENU, EXPEDITION (3 × 3 survey, EXPECTED HAZARDS, no
 //       residue), TRAINING · X · fixtures · K · keyboard · D · one document, no storage · P · file:// offline · B · /bloom/
-// --evidence writes docs/evidence/bloom-036b/ stills. Exits 1 on any failure.
+// --evidence writes docs/evidence/bloom-036c1/ stills. Exits 1 on any failure.
 "use strict";
 const path = require("path"), fs = require("fs"), http = require("http"), os = require("os"), { execFileSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "..");
@@ -37,13 +44,17 @@ for (const f of ["content/config.js", "content/traits.js", "content/species.js",
   "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/bloom-challenges.js", "resources/run/game-session.js"]) require(path.join(ROOT, f));
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const BROWSERS = (argOf("--browsers") || "chromium,firefox").split(","), EVIDENCE = argv.includes("--evidence"), NODE_ONLY = argv.includes("--node-only");
-const EVD = path.join(ROOT, "docs/evidence/bloom-036b");
+const EVD = path.join(ROOT, "docs/evidence/bloom-036c1");   // (036C1) current evidence; the 036B stills stay as they were accepted
 let fails = 0, passes = 0; const t0 = Date.now();
 const check = (ok, name, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); if (ok) passes++; else fails++; return ok; };
 const J = JSON.stringify;
 const IDS = ["dying_world", "native_competition", "volatile_climate"], NAMES = { dying_world: "Dying World", native_competition: "Native Competition", volatile_climate: "Volatile Climate" };
 const SPECIES = ["organic_hybrid", "cinder_rosette", "woolly_candle", "reed_spire"];
 const FLOW = { dying_world: ["woolly_candle", 2], native_competition: ["woolly_candle", 2], volatile_climate: ["cinder_rosette", 2] };
+// (036C1) the AUTHORED Challenges (prescribed plant; Windfall — player choice + a starting reserve — only if released): their own ids / cells / provenance
+const AUTHORED = { low_tide: { name: "Low Tide", scenario: "dying_world", species: "organic_hybrid", archetypes: ["ocean_archipelago"], start: "flood+salt:-", launch: 3 },
+  oasis_line: { name: "Oasis Line", scenario: "native_competition", species: "reed_spire", archetypes: ["desert_world"], start: null, launch: 3 },
+  windfall: { name: "Windfall", scenario: "volatile_climate", species: null, archetypes: ["ocean_archipelago", "desert_world", "frozen_world"], start: "biomass", launch: 3 } };
 const { BLOOM, BLOOM_DATA: D } = globalThis;
 const stable = v => Array.isArray(v) ? `[${v.map(stable).join(",")}]` : v && typeof v === "object" ? `{${Object.keys(v).sort().map(k => JSON.stringify(k) + ":" + stable(v[k])).join(",")}}` : JSON.stringify(v);
 // QA fixtures (never in content/challenges.js, never on the hub; their bank cells are built here, by the builder library)
@@ -54,37 +65,41 @@ const FX_START = { ...base, id: "qa_starting_state", status: "fixture", name: "Q
   launch: { ...base.launch, species: { policy: "prescribed", species: "woolly_candle" }, world: { ...base.launch.world, bank: { version: 1, size: 2 } },
     startingState: { policy: "prescribed", adaptations: ["cold", "salt"], biomass: 250 } } };
 let FIXTURE_CELLS = null;   // cellKey → cell (built in Node, injected into the page for X)
+// (036C1) a launch seed whose Dying World × Cinder Rosette entry has < 5 % arrival (found in Node from the shipped bank), and the hub's ids
+const LOW_ARRIVAL_PICK = { ids: [] }, VERSION = {};
 
 (async () => {
   const CB = await import("file://" + path.join(ROOT, "resources/challenges/challenge-bank.js"));
   const S = await import("file://" + path.join(ROOT, "resources/destination-survey/survey-data.js"));
   const BL = await import("file://" + path.join(ROOT, "tools/challenge-bank-builder.mjs"));
   const C = BLOOM.challenges, bank = D.challengeSeedBanks;
+  // (036C1) every released Challenge's OWN cells: one per species it allows (a prescribed plant = one cell); never collapsed by scenario
+  const spOf = ch => C.speciesOf(ch) ? [C.speciesOf(ch).id] : SPECIES, CELLS = C.list().flatMap(ch => spOf(ch).map(sp => [ch, sp])), NCELLS = CELLS.length;
   console.log("# B · the seed banks (Node)");
   // B1
   { const rows = [];
-    for (const ch of C.list()) for (const sp of SPECIES) { let err = null, cell = null; try { cell = CB.bankCell(ch, sp); } catch (e) { err = e.code || e.message; }
+    for (const [ch, sp] of CELLS) { let err = null, cell = null; try { cell = CB.bankCell(ch, sp); } catch (e) { err = e.code || e.message; }
       const fps = cell ? cell.entries.map(e => e.fingerprint) : [];
       rows.push({ key: `${ch.id}/${sp}`, err, n: fps.length, unique: new Set(fps).size === fps.length, size: ch.launch.world.bank.size, archetypes: cell ? new Set(cell.entries.map(e => e.archetypeId)).size : 0,
-        passing: cell ? cell.candidates.passing : 0 }); }
-    check(bank && bank.format === CB.BANK_FORMAT && bank.provisional === false && rows.length === 12 && rows.every(r => !r.err && r.n === 50 && r.size === 50 && r.unique && r.archetypes === 3 && r.passing >= 50),
-      "B1 · every released Challenge × species (3 × 4) has its bank cell: exactly 50 entries (the Challenge's bank size), unique planet fingerprints, every archetype represented, built against the CURRENT game (bankCell's provenance check passes); the bank is final, not provisional",
+        want: ch.launch.world.recipe.archetypes.length, passing: cell ? cell.candidates.passing : 0 }); }
+    check(bank && bank.format === CB.BANK_FORMAT && bank.provisional === false && rows.length === NCELLS && Object.keys(bank.cells).length === NCELLS && rows.every(r => !r.err && r.n === 50 && r.size === 50 && r.unique && r.archetypes === r.want && r.passing >= 50),
+      "B1 · every released Challenge × the species it allows has its OWN bank cell (036C1: a prescribed plant = one cell; the cell set is exactly the catalogue's): exactly 50 entries (the Challenge's bank size), unique planet fingerprints, every archetype represented, built against the CURRENT game (bankCell's provenance check passes); the bank is final, not provisional",
       rows.map(r => `${r.key} ${r.err || r.n + "/" + r.size} (passing ${r.passing})`).join(" · ")); }
   // B2
   { let all = 0; const bad = [], ms = [], sample = [];
-    for (const ch of C.list()) for (const sp of SPECIES) { const cell = CB.bankCell(ch, sp);
+    for (const [ch, sp] of CELLS) { const cell = CB.bankCell(ch, sp);
       cell.entries.forEach((e, i) => { const t = Date.now(); try { const w = CB.bankWorld(e, cell, sp, null); all++; ms.push(Date.now() - t); if (i === 0) sample.push([e, w]); } catch (err) { bad.push(`${ch.id}/${sp}#${i}: ${err.code}`); } }); }
     const idDiff = sample.filter(([e, w]) => { const P = S.physicalCandidate({ archetypeId: e.archetypeId, seed: e.seed }); return !P || P.fingerprint !== e.fingerprint || stable(P.planet.archetype) !== stable(w.physical.planet.archetype); });
     const sorted = ms.sort((a, b) => a - b), attempts = new Set(D.challengeSeedBanks ? Object.values(D.challengeSeedBanks.cells).flatMap(c => c.entries.map(e => e.attempt)) : []);
-    check(all === 600 && !bad.length && !idDiff.length,
-      "B2 · every bank entry regenerates EXACTLY at runtime: the accepted attempt (BLOOM.archetype.attemptPlanet) gives the bank's planet fingerprint and arrival share (600 / 600, accepted attempts of every index the bank holds), and its identity record equals the production generation path's (BLOOM.play.runSearch — one per cell)",
+    check(all === NCELLS * 50 && !bad.length && !idDiff.length,
+      "B2 · every bank entry regenerates EXACTLY at runtime: the accepted attempt (BLOOM.archetype.attemptPlanet) gives the bank's planet fingerprint and arrival share (every entry of every cell, accepted attempts of every index the bank holds), and its identity record equals the production generation path's (BLOOM.play.runSearch — one per cell)",
       `${all} regenerated · median ${sorted[Math.floor(sorted.length / 2)]} ms, max ${sorted.at(-1)} ms · attempts ${J([...attempts].sort())} · identity differs ${idDiff.length}${bad.length ? " · " + bad.slice(0, 3) : ""}`); }
   // B3
   { const out = [], t = Date.now();
-    for (const ch of C.list()) for (const sp of SPECIES) { const cell = CB.bankCell(ch, sp), e = cell.entries[(ch.id.length * 7 + sp.length) % cell.entries.length];
+    for (const [ch, sp] of CELLS) { const cell = CB.bankCell(ch, sp), e = cell.entries[(ch.id.length * 7 + sp.length) % cell.entries.length];
       const row = BL.evaluateWorld({ archetypeId: e.archetypeId, seed: e.seed }, { BLOOM, D, SD: S }, { challenges: [ch], species: [sp] }), c = row.cells[`${ch.id}/${sp}`];
-      out.push({ key: `${ch.id}/${sp}`, stage: c.stage, status: c.proof && c.proof.status, fp: row.physical.fingerprint === e.fingerprint, confirmations: c.proof && c.proof.confirmations }); }
-    check(out.every(o => o.stage === "ok" && o.status === "PASS" && o.fp) && out.filter(o => o.key.startsWith("native_competition") || o.key.startsWith("volatile_climate")).every(o => o.confirmations >= 2),
+      out.push({ key: `${ch.id}/${sp}`, scn: ch.scenario, stage: c.stage, status: c.proof && c.proof.status, fp: row.physical.fingerprint === e.fingerprint, confirmations: c.proof && c.proof.confirmations }); }
+    check(out.every(o => o.stage === "ok" && o.status === "PASS" && o.fp) && out.filter(o => o.scn === "native_competition" || o.scn === "volatile_climate").every(o => o.confirmations >= 2),
       "B3 · sampled bank worlds (one per cell) still pass the FULL offline validation — physical, S2, the recipe, the scenario's layer P at the validator's full budget WITH its confirmation runs (Native Competition, Volatile Climate), the quality rule",
       `${out.map(o => `${o.key} ${o.status}${o.confirmations ? "+" + o.confirmations + "c" : ""}`).join(" · ")} (${Math.round((Date.now() - t) / 1000)} s)`); }
   // B4
@@ -121,12 +136,12 @@ let FIXTURE_CELLS = null;   // cellKey → cell (built in Node, injected into th
   { const names = [["findWitness", BLOOM], ["findStrategies", BLOOM], ["validateScenario", BLOOM], ["validateFor", BLOOM.species]], calls = {}, orig = {};
     for (const [n, o] of names) { orig[n] = o[n]; o[n] = (...a) => { calls[n] = (calls[n] || 0) + 1; return orig[n](...a); }; }
     let made = 0;
-    try { for (const ch of C.list()) for (const sp of SPECIES) { const cell = CB.bankCell(ch, sp), pick = CB.pickEntry(cell, { challenge: ch, species: BLOOM.species.resolve(sp), launchSeed: 99 });
+    try { for (const [ch, sp] of CELLS) { const cell = CB.bankCell(ch, sp), pick = CB.pickEntry(cell, { challenge: ch, species: BLOOM.species.resolve(sp), launchSeed: 99 });
       const w = CB.bankWorld(pick.entry, cell, sp, null); CB.makeBankInstance({ challenge: ch, species: sp, launchSeed: 99, cell, pick, world: w }); made++; } }
     finally { for (const [n, o] of names) o[n] = orig[n]; }
     const rt = ["resources/challenges/challenge-bank.js", "resources/challenges/challenge-world-prep.js"].map(f => fs.readFileSync(path.join(ROOT, f), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "")).join("\n");   // code only (comments stripped)
     const worker = fs.readFileSync(path.join(ROOT, "resources/destination-survey/survey-worker.js"), "utf8"), task = (worker.match(/type === "challenge-bank-world"[^\n]*/) || [""])[0];
-    check(made === 12 && !Object.keys(calls).length && !/\b(findWitness|findStrategies|validateScenario|validateFor|evaluateSpecies|physicalCandidate|runSearch)\(/.test(rt) && /bankWorld\(/.test(task) && !/challenge-draw|challenge-physical/.test(worker),
+    check(made === NCELLS && !Object.keys(calls).length && !/\b(findWitness|findStrategies|validateScenario|validateFor|evaluateSpecies|physicalCandidate|runSearch)\(/.test(rt) && /bankWorld\(/.test(task) && !/challenge-draw|challenge-physical/.test(worker),
       "B7 · the runtime performs NO expensive Challenge proof: building and instancing a bank world for every cell calls findWitness / findStrategies / validateScenario / species.validateFor ZERO times; the runtime modules (challenge-bank.js, challenge-world-prep.js) and the worker's only Challenge task (\"challenge-bank-world\") contain no validator, no physical-validation search; the 036B live-search worker tasks are gone",
       `${made} instances · validator calls ${J(calls)}`); }
   // B8 — fixtures: their bank cells (built by the builder library) and the engine's starting state
@@ -165,6 +180,47 @@ let FIXTURE_CELLS = null;   // cellKey → cell (built in Node, injected into th
         && !/challenge-bank|challengeSeedBank/.test(surveySrc),
       "B9 · BLOOM.gameSession.challengeRun plays the EXACT bank instance with its provenance (source seed-bank, bank v1, cell, entry, launch seed, planet seed + fingerprint, Challenge v3 / recipe v1); a 036B live-search instance (format 1), another Challenge / recipe / bank version, a foreign Challenge or species, another starting state or an unproven world is REFUSED; expeditionRun refuses a Challenge; the Destination Survey never touches a bank (the Expedition stays live procedural)",
       `${cr.cellKey} #${cr.entryIndex} ${pick.entry.archetypeId}:${pick.entry.seed} · ${J(out)}`); }
+
+  // ---------------------------------------------------------------- A · the AUTHORED Challenges (036C1)
+  { LOW_ARRIVAL_PICK.ids = C.ids(); for (const ch of C.list()) VERSION[ch.id] = ch.version;
+    const ch = C.resolve("dying_world"), sp = BLOOM.species.resolve("cinder_rosette"), cell = CB.bankCell(ch, sp);
+    for (let seed = 1; seed < 5000; seed++) { const pk = CB.pickEntry(cell, { challenge: ch, species: sp, launchSeed: seed }); if (pk.entry.habitable < 0.05) { Object.assign(LOW_ARRIVAL_PICK, { challenge: ch.id, species: sp.id, seed, index: pk.index }); break; } } }
+  console.log("\n# A · authored Challenges (Node)");
+  const AUTH = Object.keys(AUTHORED).filter(id => C.ids().includes(id));
+  // A1 · several Challenges share one scenario and are never collapsed by it
+  { const rows = AUTH.map(id => { const ch = C.resolve(id), A = AUTHORED[id], pv = C.provenance(ch), cells = Object.keys(bank.cells).filter(k => k.startsWith(id + "/"));
+      return { id, ok: ch.scenario === A.scenario && C.scenarioOf(ch) === D.scenarios.find(s => s.id === A.scenario) && pv.id === id && pv.scenarioId === A.scenario && ch.name === A.name
+        && J(ch.launch.world.recipe.archetypes) === J(A.archetypes) && J(cells) === J(spOf(ch).map(sp => `${id}/${sp}`)) && (A.species ? C.speciesOf(ch) === BLOOM.species.resolve(A.species) : C.speciesOf(ch) === null)
+        && cells.every(k => bank.cells[k].provenance.challengeId === id && bank.cells[k].provenance.scenarioId === A.scenario && bank.cells[k].candidates.retained === 50) }; });
+    const shared = {}; for (const ch of C.list()) (shared[ch.scenario] = shared[ch.scenario] || []).push(ch.id);
+    check(AUTH.includes("low_tide") && AUTH.includes("oasis_line") && rows.every(r => r.ok) && C.ids().length === new Set(C.ids()).size && shared.dying_world.length >= 2 && shared.native_competition.length >= 2,
+      "A1 · the authored Challenges resolve to an EXISTING scenario but stay their own Challenge: Low Tide → Dying World, Oasis Line → Native Competition (Windfall → Volatile Climate when released) — own id, name, provenance, recipe and bank cells keyed by the Challenge id, never by the scenario",
+      `${J(shared)} · ${rows.map(r => r.id + (r.ok ? "✓" : "✗")).join(" ")}`); }
+  // A2 · Low Tide: Flood + Salt owned at landing (given, not bought), Drought closed for the run, normal Biomass; its bank proven FROM that start
+  { const ch = C.resolve("low_tide"), sp = BLOOM.species.resolve("organic_hybrid"), st = C.startingStateOf(ch), cell = CB.bankCell(ch, sp), e = cell.entries[0];
+    const P = CB.buildBankWorld(e), sim = BLOOM.createSim(P, D.config, D.traits, { rng: () => 0.5, species: sp, startingState: st, scenario: C.scenarioOf(ch) }), T = id => D.traits.find(t => t.id === id);
+    const dw = BLOOM.createSim(P, D.config, D.traits, { rng: () => 0.5, species: sp, scenario: C.scenarioOf(ch) }); sim.biomass = dw.biomass = 1e6;
+    const closed = C.closedByStart(ch), arrivalNormal = S.assessWorld(P, undefined, sp).habitable, arrivalStart = S.assessWorld(P, undefined, sp, st).habitable;
+    const pick = CB.pickEntry(cell, { challenge: ch, species: sp, launchSeed: 3 }), X = CB.makeBankInstance({ challenge: ch, species: sp, launchSeed: 3, cell, pick, world: CB.bankWorld(pick.entry, cell, sp, st) });
+    const run = BLOOM.gameSession.challengeRun(X), rsim = BLOOM.createSim(X.planet, D.config, D.traits, { rng: () => 0.5, species: sp, startingState: run.startingState, scenario: C.scenarioOf(ch) });
+    check(J(st.adaptations) === J(["flood", "salt"]) && st.biomass === null && sim.ownedTier(T("flood")) === 1 && sim.ownedTier(T("salt")) === 1 && sim.genome.salt === 1 && rsim.biomass === D.config.econ.startBiomass
+        && rsim.spent.global === 0 && rsim.spent.local === 0 && !sim.canBuy(T("drought")) && /one water strategy/.test(sim.why(T("drought"))) && dw.canBuy(T("drought"))
+        && J(closed.map(t => t.id)) === J(["drought"]) && cell.provenance.startingState === "|start:flood+salt:-" && arrivalStart > arrivalNormal
+        && run.startingState === st && X.startingState === st && X.speciesPolicy === "prescribed",
+      "A2 · Low Tide lands Organic Hybrid WITH Flood Adaptation + Salt Handling (owned through the engine's own rule, never paid for: spent 0, the normal starting Biomass) — so Drought Adaptation is UNAVAILABLE for the whole run (the one-water-strategy rule; buyable from a normal start on the same world), closedByStart names exactly it; the bank cell's provenance carries that start and its proofs (S2 + layer P) were made from it",
+      `entry ${e.archetypeId}:${e.seed} · arrival normal ${Math.round(arrivalNormal * 100)}% → with the start ${Math.round(arrivalStart * 100)}% · drought: ${sim.why(T("drought"))}`); }
+  // A3 · Oasis Line: Desert only, NO inherited 20 % arrival floor, every proof met contested fronts
+  { const ch = C.resolve("oasis_line"), cell = CB.bankCell(ch, "reed_spire"), E = cell.entries, nc = C.resolve("native_competition");
+    const below = E.filter(e => e.habitable < 0.2).length, minContested = Math.min(...E.map(e => e.proof.contested)), med = [...E.map(e => e.proof.contested)].sort((a, b) => a - b)[25];
+    check(E.length === 50 && E.every(e => e.archetypeId === "desert_world") && ch.launch.world.recipe.arrival === null && nc.launch.world.recipe.arrival.minHabitable === 0.2 && below >= 25
+        && minContested >= 1 && E.every(e => e.proof.status === "PASS" && e.proof.confirmations >= 2) && cell.provenance.scenarioId === "native_competition" && C.startingStateOf(ch) === null,
+      "A3 · Oasis Line: 50 Desert worlds for Reed Spire under the FULL Native Competition proof (+ its confirmation runs), WITHOUT the released Native Competition's 20 % arrival floor (most entries start below it), and every proof witness met real contested fronts",
+      `below 20 % arrival: ${below}/50 · contested min ${minContested}, median ${med} · arrival p50 ${Math.round([...E.map(e => e.habitable)].sort((a, b) => a - b)[25] * 100)}%`); }
+  // A4 · Windfall (only when released): the exact starting Biomass, nothing owned, player choice, all archetypes
+  if (AUTH.includes("windfall")) { const ch = C.resolve("windfall"), st = C.startingStateOf(ch), cells = SPECIES.map(sp => CB.bankCell(ch, sp));
+    const sim = BLOOM.createSim(CB.buildBankWorld(cells[0].entries[0]), D.config, D.traits, { rng: () => 0.5, species: BLOOM.species.resolve(SPECIES[0]), startingState: st });
+    check(C.speciesOf(ch) === null && st.adaptations.length === 0 && Number.isInteger(st.biomass) && sim.biomass === st.biomass && sim.spent.global === 0 && cells.every(c => c.entries.length === 50 && c.provenance.startingState === `|start::${st.biomass}`),
+      `A4 · Windfall: player choice (four cells), the selected start EXACTLY ${st.biomass} Biomass with nothing owned (not a purchase), every cell proven from that start`, cells.map(c => c.provenance.startingState).join(" ")); }
 
   if (NODE_ONLY) return done();
   await browserChecks();
@@ -253,7 +309,8 @@ async function browserChecks() {
             start: r.querySelector(".cw-start").textContent, specimen: !!r.querySelector(".cw-specimen").dataset.signature, skipped: !!v.stats.skippedPreparing,
             bank: X.bank, entryIndex: X.entryIndex, source: X.source, format: X.format, launchSeed: X.launchSeed, worldSeed: X.worldSeed, archetype: X.archetypeId, sv: X.candidate.scenarioValidation,
             rootH: Math.round(r.getBoundingClientRect().height), hit: (() => { const b = r.querySelector(".cw-btn.go").getBoundingClientRect(), e = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2); return !!e && !!e.closest(".cw-btn.go"); })(),
-            build: L.stats.builds.find(b => b.species === X.speciesId), calls: window.__validatorCalls, survey: !!MENU_DEV.entry.survey || !!document.querySelector(".ds") }; }, CW);
+            build: L.stats.builds.find(b => b.species === X.speciesId), calls: window.__validatorCalls, survey: !!MENU_DEV.entry.survey || !!document.querySelector(".ds"),
+            low: !r.querySelector(".cw-hab-note").hidden, green: X.candidate.dossier.habitable.green, closed: !r.querySelector(".cw-closed").hidden }; }, CW);
         await shot(p, `05-dossier-${id}.png`, { firefox: true });
         const archName = await p.evaluate(a => BLOOM_DATA.archetypes.find(x => x.id === a).name, DOS.archetype), spName = await p.evaluate(s => BLOOM.species.resolve(s).name, sp);
         check(SPS.kicker === `Challenge · ${NAMES[id]}` && J(SPS.cards) === J(SPECIES) && /^Continue with /.test(go) && SPS.launch === seed,
@@ -263,13 +320,13 @@ async function browserChecks() {
         check(DOS.globes === 1 && DOS.canvases === 1 && DOS.drawnFp === DOS.fp && J(DOS.secs) === J(["The challenge", "Your plant", "Your world"]) && DOS.hazards === "Expected hazards" && DOS.seed === `World Seed ${DOS.worldSeed} · ${archName}`
             && J(DOS.buttons) === J(["Back", "Begin challenge"]) && DOS.rootH > 300 && DOS.hit && DOS.sp === spName && DOS.ch === NAMES[id] && DOS.specimen && /nothing owned yet/.test(DOS.start) && !DOS.foot && DOS.s1
             && DOS.source === "seed-bank" && DOS.format === 2 && DOS.bank.cellKey === `${id}/${sp}` && DOS.bank.bankVersion === 1 && DOS.bank.entries === 50 && Number.isInteger(DOS.entryIndex) && DOS.sv.ok && DOS.sv.offline
-            && DOS.build && DOS.build.source === "worker" && !Object.keys(DOS.calls || {}).length && !DOS.survey && DOS.launchSeed === seed,
+            && DOS.build && DOS.build.source === "worker" && !Object.keys(DOS.calls || {}).length && !DOS.survey && DOS.launchSeed === seed && DOS.low === (DOS.green < 0.05) && !DOS.closed,
           `[${bn}] F3 ${id} · the dossier shows ONE bank world, laid out and clickable (one globe; Begin challenge is hit at its centre; The challenge · Your plant · Your world; Expected hazards; World Seed; no Foothold line — S1 stays in the instance); the instance is bank-backed (format 2, cell ${id}/${sp}, an entry of 50, proof offline); built in the worker; ZERO validator calls on the page; no Destination Survey`,
           `${DOS.name} ${DOS.archetype}:${DOS.worldSeed} #${DOS.entryIndex} ${DOS.fp} · build ${DOS.build && DOS.build.buildMs} ms (${DOS.build && DOS.build.source})`);
         await beginRun(p, 1);
         const R = await runId(p);
         check(R.planetSame && R.speciesSame && R.challengeSame && R.challengeCanon && R.scenario === id && R.scenarioCanon && R.simScenario === id && R.simSpecies === sp && R.challenge === id && R.adapter && R.adapter.id === id
-            && R.cr && R.cr.source === "seed-bank" && R.cr.challengeVersion === 3 && R.cr.bankVersion === 1 && R.cr.cellKey === `${id}/${sp}` && R.cr.entryIndex === DOS.entryIndex && R.cr.launchSeed === seed && R.cr.fingerprint === DOS.fp && R.cr.planetSeed === DOS.worldSeed
+            && R.cr && R.cr.source === "seed-bank" && R.cr.challengeVersion === VERSION[id] && R.cr.bankVersion === 1 && R.cr.cellKey === `${id}/${sp}` && R.cr.entryIndex === DOS.entryIndex && R.cr.launchSeed === seed && R.cr.fingerprint === DOS.fp && R.cr.planetSeed === DOS.worldSeed
             && R.expedition === null && R.hud === `Challenge · ${NAMES[id]}` && /^Challenge · /.test(R.footer) && R.scn === NAMES[id],
           `[${bn}] F4 ${id} · BEGIN CHALLENGE (the dramatic descent) → the run plays EXACTLY the bank instance (planet / species / Challenge / scenario objects) with its provenance (seed-bank v1, cell, entry, launch seed, planet seed + fingerprint, Challenge v3); the HUD names the Challenge; the scenario's status card runs`,
           `${R.hud} · ${J({ cell: R.cr && R.cr.cellKey, entry: R.cr && R.cr.entryIndex })}`);
@@ -305,7 +362,7 @@ async function browserChecks() {
         await winNow(p); await reportOpen(p);
         const RP = await reportFacts(p), fact = RP.facts.find(x => x[0] === "Challenge"), I = RP.identity.challengeRun;
         check(fact && fact[1] === NAMES[id] && !RP.facts.some(x => x[0] === "Scenario") && /challenge debrief/.test(RP.kicker) && J(RP.acts) === J(["keepPlaying", "retryChallenge", "challenges", "mainMenu"])
-            && J(RP.labels) === J(["Retry challenge", "Challenges", "Main menu"]) && I && I.source === "seed-bank" && I.challengeId === id && I.challengeVersion === 3 && I.recipeVersion === 1 && I.bankVersion === 1
+            && J(RP.labels) === J(["Retry challenge", "Challenges", "Main menu"]) && I && I.source === "seed-bank" && I.challengeId === id && I.challengeVersion === VERSION[id] && I.recipeVersion === 1 && I.bankVersion === 1
             && I.cellKey === `${id}/${sp}` && I.entryIndex === DOS.entryIndex && I.launchSeed === seed && I.planetSeed === DOS.worldSeed && I.fingerprint === DOS.fp && I.speciesId === sp && I.scenarioId === id && RP.identity.startingState === null && !RP.given,
           `[${bn}] F5 ${id} · the report names the Challenge (challenge debrief), carries the bank provenance (seed-bank v1, cell, entry, launch seed, planet seed / fingerprint, Challenge / recipe versions, species, scenario) and offers KEEP PLAYING · RETRY CHALLENGE · CHALLENGES · MAIN MENU`,
           `${J(RP.acts)}`);
@@ -316,6 +373,74 @@ async function browserChecks() {
           `navs ${p.navs} · leak ${J(D1.leak)}${p.errs.length ? " · " + p.errs.join(" | ") : ""}`);
         await c.close();
       }
+
+      // ------------------------------------------------------------------ A · the AUTHORED Challenges end to end (036C1)
+      for (const id of Object.keys(AUTHORED).filter(x => LOW_ARRIVAL_PICK.ids.includes(x))) {
+        const A = AUTHORED[id], sp = A.species || "woolly_candle", c = await context(), p = await page(c);
+        await p.goto(`${ORIGIN}/?launch=${A.launch}&bg=7`); await menuReady(p); await countValidators(p); await openHub(p);
+        const HB = await p.evaluate(([id, H]) => { const h = eval(H); h.select(id); const r = h.root || document;
+          return { cards: [...document.querySelectorAll(".ch-card")].map(x => x.querySelector("h3").textContent), brief: (document.querySelector(".ch-d-brief") || {}).textContent,
+            how: [...document.querySelectorAll(".ch-d li")].map(x => x.textContent).join(" | ") || document.querySelector(".ch-dossier, .ch-d") && document.querySelector(".ch-dossier, .ch-d").innerText }; }, [id, HUB]);
+        await shot(p, `a1-hub-${id}.png`, { firefox: id === "low_tide" });
+        await p.click(".ch-btn.go");
+        if (A.species) await worldReady(p); else { await speciesReady(p); await p.evaluate(([s, SS]) => eval(SS).open(s), [sp, SS]); await shot(p, `a2-species-${id}.png`); await p.click(".ss-btn.go"); await worldReady(p); }
+        const DOS = await p.evaluate(CW => { const v = eval(CW), r = v.root, X = v.instance, h = X.candidate.dossier.habitable;
+          return { sp: r.querySelector(".cw-sp-name").textContent, ch: r.querySelector(".cw-ch-name").textContent, note: (r.querySelector(".cw-sp-note") || {}).textContent || null, start: r.querySelector(".cw-start").textContent,
+            closed: r.querySelector(".cw-closed").hidden ? null : r.querySelector(".cw-closed").textContent, low: !r.querySelector(".cw-hab-note").hidden, green: h.green, archetype: X.archetypeId, entryIndex: X.entryIndex, fp: X.fingerprint,
+            cell: X.bank.cellKey, species: X.speciesId, speciesScreen: MENU_DEV.events.filter(e => e.type === "species-screen").length, calls: window.__validatorCalls }; }, CW);
+        await shot(p, `a3-dossier-${id}.png`, { firefox: id === "low_tide" });
+        const want = id === "low_tide" ? { start: /^Lands with Flood Adaptation · Salt Handling \(given by the Challenge\)$/, closed: /^Drought Adaptation is not available: a plant commits to one water strategy/ } : null;
+        check(HB.cards.includes(A.name) && HB.cards.length === LOW_ARRIVAL_PICK.ids.length && DOS.ch === A.name && DOS.cell === `${id}/${sp}` && DOS.species === sp && DOS.archetype && A.archetypes.includes(DOS.archetype)
+            && (A.species ? DOS.speciesScreen === 0 && /prescribes the plant/.test(DOS.note || "") : !DOS.note) && DOS.low === (DOS.green < 0.05) && !Object.keys(DOS.calls || {}).length
+            && (want ? want.start.test(DOS.start) && want.closed.test(DOS.closed || "") : DOS.closed === null)
+            && (id !== "oasis_line" || /nothing owned yet/.test(DOS.start)) && (id !== "windfall" || /Biomass \(given by the Challenge\)$/.test(DOS.start)),
+          `[${bn}] A5 ${id} · the hub lists ${A.name} as an equal card; BEGIN CHALLENGE ${A.species ? "goes straight to the prepared world (no Choose Plant Species: the plant is prescribed and the dossier says so)" : "opens Choose Plant Species"}; the dossier names ${A.name} and the plant, the cell ${id}/${sp}, a ${A.archetypes.join(" / ")} world, what the Challenge gives${id === "low_tide" ? " and what that start CLOSES (Drought Adaptation)" : ""}; the low-arrival line exactly when < 5 % suits the plant; no validator on the page`,
+          J({ cards: HB.cards, ...DOS, calls: undefined })); 
+        await beginRun(p, 1);
+        const R = await runId(p), S0 = await p.evaluate(() => { const s = BLOOM_API.sim, T = id => s.traitById[id];
+          return { spent: s.spent, biomass: s.biomass, flood: s.ownedTier(T("flood")), salt: s.ownedTier(T("salt")), drought: s.canBuy(T("drought")), why: s.why(T("drought")), start: s.startingState && { a: [...s.startingState.adaptations], b: s.startingState.biomass },
+            comp: s.competition ? +s.competition.startShare.toFixed(3) : null, native: s.competition ? s.competition.native.filter(x => x > 0).length : null }; });
+        check(R.challenge === id && R.scenario === A.scenario && R.simScenario === A.scenario && R.simSpecies === sp && R.adapter && R.adapter.id === id && R.adapter.scenarioId === A.scenario && R.hud === `Challenge · ${A.name}`
+            && R.cr && R.cr.challengeVersion === 1 && R.cr.cellKey === `${id}/${sp}` && R.cr.entryIndex === DOS.entryIndex && R.cr.fingerprint === DOS.fp && S0.spent.global === 0 && S0.spent.local === 0
+            && (id !== "low_tide" || (S0.flood === 1 && S0.salt === 1 && !S0.drought && /one water strategy/.test(S0.why) && J(S0.start.a) === J(["flood", "salt"])))
+            && (id !== "oasis_line" || (S0.comp > 0.1 && S0.native > 0 && S0.start === null)),
+          `[${bn}] A6 ${id} · the run is ${A.name} (Challenge id ${id}, version 1; the HUD names it) playing the ${A.scenario} scenario, its own cell + entry; nothing given was charged (spent 0)${id === "low_tide" ? "; Flood + Salt owned, Drought refused by the engine" : id === "oasis_line" ? "; native vegetation established at the start" : ""}`,
+          J({ hud: R.hud, cr: R.cr && R.cr.cellKey, S0 }));
+        await p.evaluate(n => BLOOM_API.advance(n), 300); await p.waitForTimeout(300); await shot(p, `a4-run-${id}.png`, { firefox: id === "oasis_line" });
+        const idle = () => p.waitForFunction(() => !BLOOM.decisionRooms.instance.state().transitioning, null, { timeout: 20000, polling: 50 });
+        await idle(); await p.evaluate(() => { const D = BLOOM.decisionRooms.instance; D.open("adapt", D.state().context); });
+        await p.waitForFunction(() => { const st = BLOOM.decisionRooms.instance.state(); return st.room === "adapt" && !st.transitioning; }, null, { timeout: 20000, polling: 50 }); await p.waitForTimeout(400);
+        const AD = await p.evaluate(() => { const n = d => document.querySelector(`.dr-room[data-room="adapt"] .node[data-node="${d}"]`);
+          return Object.fromEntries(["drought", "flood", "salt"].map(d => [d, n(d) ? { disabled: n(d).getAttribute("aria-disabled"), lock: !!n(d).querySelector(".nl:not(.ok)"), owned: !!n(d).querySelector(".nl.ok"), word: (n(d).querySelector(".nt small") || {}).textContent } : null])); });
+        if (id === "low_tide") { await p.hover('.dr-room[data-room="adapt"] .node[data-node="drought"]').catch(() => {}); await p.waitForTimeout(250); }
+        await shot(p, `a5-adapt-${id}.png`, { firefox: id === "low_tide" });
+        const hint = await p.evaluate(() => (document.querySelector('.dr-room[data-room="adapt"] .li-hint') || {}).textContent || "");
+        if (id === "low_tide") check(AD.drought && AD.drought.disabled === "true" && AD.drought.lock && AD.flood && AD.flood.owned && AD.salt && AD.salt.owned && /one water strategy/i.test(hint),
+          `[${bn}] A7 low_tide · the Adapt room shows Flood Adaptation and Salt Handling OWNED and Drought Adaptation LOCKED with the engine's reason (one water strategy)`, J({ AD, hint }));
+        await p.evaluate(() => BLOOM.decisionRooms.instance.close()).catch(() => {}); await idle(); await p.waitForTimeout(200);
+        await winNow(p); await reportOpen(p);
+        const RP = await reportFacts(p), sum = await p.evaluate(() => document.getElementById("rrSum").textContent), chips = await p.evaluate(() => [...document.querySelectorAll(".rr-chip.ow")].map(x => [x.textContent, x.classList.contains("given")]));
+        const fact = RP.facts.find(x => x[0] === "Challenge"), I = RP.identity.challengeRun;
+        check(fact && fact[1] === A.name && sum.includes(`in the ${A.name} Challenge`) && I.challengeId === id && I.scenarioId === A.scenario && I.cellKey === `${id}/${sp}` && I.entryIndex === DOS.entryIndex
+            && (id !== "low_tide" || (/^Given by the Challenge at landing: Flood Adaptation · Salt Handling\.$/.test(RP.given || "") && chips.filter(x => x[1]).length === 2 && chips.filter(x => x[1]).every(x => /given/.test(x[0]))))
+            && (id !== "oasis_line" || (!RP.given && !chips.some(x => x[1]))),
+          `[${bn}] A8 ${id} · the report is ${A.name}'s (the Challenge fact, "in the ${A.name} Challenge", provenance id ${id} / scenario ${A.scenario}, its own cell + entry)${id === "low_tide" ? "; the given Flood + Salt are marked GIVEN on their chips and in the landing note, never as purchases" : ""}`,
+          J({ fact, sum, given: RP.given, chips }));
+        await shot(p, `a6-report-${id}.png`, { firefox: id === "low_tide" });
+        await p.click('#rrActs [data-act="retryChallenge"]'); await runReady(p, 2);
+        const R2 = await runId(p), S2 = await p.evaluate(() => { const s = BLOOM_API.sim; return { spent: s.spent.global, start: s.startingState && [...s.startingState.adaptations], ticks: s.ticks }; });
+        check(R2.challenge === id && R2.cr.entryIndex === DOS.entryIndex && R2.cr.fingerprint === DOS.fp && R2.cr.launchSeed === R.cr.launchSeed && S2.spent === 0 && S2.ticks < 50 && J(S2.start) === J(id === "low_tide" ? ["flood", "salt"] : null) && !p.errs.length,
+          `[${bn}] A9 ${id} · RETRY CHALLENGE replays the EXACT entry (same cell, entry, planet, launch) with a fresh simulation and the same given start; no console error`, J({ entry: R2.cr.entryIndex, S2, errs: p.errs.slice(0, 2) }));
+        await c.close();
+      }
+      // A10 · the low-arrival explanation on a released Challenge's dossier (an entry where under 5 % suits the plant), and its absence otherwise
+      { const L = LOW_ARRIVAL_PICK, c = await context(), p = await page(c);
+        await p.goto(`${ORIGIN}/?launch=${L.seed}&bg=7`); await menuReady(p); await openHub(p); await beginChallenge(p, L.challenge); await chooseSpecies(p, L.species); await worldReady(p);
+        const lo = await p.evaluate(CW => { const v = eval(CW), r = v.root; return { idx: v.instance.entryIndex, green: v.instance.candidate.dossier.habitable.green, shown: !r.querySelector(".cw-hab-note").hidden, text: r.querySelector(".cw-hab-note").textContent, pct: r.querySelector(".cw-hab-top b").textContent }; }, CW);
+        await shot(p, `a7-low-arrival-dossier.png`, { firefox: true });
+        check(lo.idx === L.index && lo.green < 0.05 && lo.shown && /landing region keeps it alive at first\. Adapt before you spread\./.test(lo.text) && lo.pct === `${Math.round(lo.green * 100)}% of the land` && !p.errs.length,
+          `[${bn}] A10 · a ${L.challenge} / ${L.species} world where under 5 % of the land suits the plant: the dossier shows the TRUE share and explains it ("…your landing region keeps it alive at first. Adapt before you spread."); every ordinary-arrival dossier above (F3, A5) has no such line`, J(lo));
+        await c.close(); }
 
       // ------------------------------------------------------------------ I · invariants (Dying World) · K · keyboard
       { const c = await context(), p = await page(c);

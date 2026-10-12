@@ -38,6 +38,9 @@ const GLOBE_DISTANCE = 3.4, DOLLY_TO = 1.45;
 const T = { recede: 320, recedeRm: 200, dolly: 2500, dollyDelay: 120, cloudsAfter: 1000, minPrepare: 450 };
 const ROW_CAT = { climate: ["temperature", "temp"], water: ["water", "water"], soil: ["soil", "soil"], atmosphere: [null, "sky"], solar: ["hazard", "heat"] };
 const PHASES = ["select", "build", "verify"];
+// (036C1) a landing where under LOW_ARRIVAL of the land suits the plant: the share is shown as it is (never faked) and this line says why the
+// run is still playable — the landing region is the protected refuge the plant lives in while it adapts (presentation only)
+const LOW_ARRIVAL = 0.05, LOW_ARRIVAL_NOTE = "Little or none of this world suits your plant yet: your landing region keeps it alive at first. Adapt before you spread.";
 const SKIP_WAIT = 250;   // a world already prepared shows the dossier directly (drawn under the black): no PREPARING flash
 
 export class ChallengeWorldScreen {
@@ -198,7 +201,7 @@ export class ChallengeWorldScreen {
               <div class="cw-plant-row"><canvas class="cw-specimen" width="84" height="98" aria-hidden="true"></canvas>
                 <div><h3 class="cw-sp-name">${esc(sp.name)}</h3><p class="cw-sp-role">${esc(sp.presentation.roleLabel)}</p>
                   ${this.prescribed ? `<p class="cw-sp-note">${ico("info")}<span>This Challenge prescribes the plant.</span></p>` : ""}
-                  <p class="cw-start"></p></div></div>
+                  <p class="cw-start"></p><p class="cw-closed" hidden></p></div></div>
               </section>
             </div>
             <section class="cw-sec cw-world">
@@ -207,7 +210,8 @@ export class ChallengeWorldScreen {
               <p class="cw-type"></p><p class="cw-tagline"></p>
               <div class="cw-hab"><div class="cw-hab-top"><span>Ground your plant can live on at landing</span><b></b></div>
                 <div class="cw-bar" role="img"><i class="g"></i><i class="y"></i><i class="r"></i></div>
-                <div class="cw-bar-key" aria-hidden="true"><span class="ok">${ico("check")}<span>Suits</span></span><span class="warn">${ico("alert")}<span>Marginal</span></span><span class="bad">${ico("x")}<span>Hostile</span></span></div></div>
+                <div class="cw-bar-key" aria-hidden="true"><span class="ok">${ico("check")}<span>Suits</span></span><span class="warn">${ico("alert")}<span>Marginal</span></span><span class="bad">${ico("x")}<span>Hostile</span></span></div>
+                <p class="cw-hab-note" hidden>${ico("info")}<span>${esc(LOW_ARRIVAL_NOTE)}</span></p></div>
               <dl class="cw-rows"></dl>
               <section class="cw-hazards"><h3>${ico("hazard")}Expected hazards</h3><ul></ul></section>
             </section>
@@ -236,6 +240,7 @@ export class ChallengeWorldScreen {
     q(".cw-type").textContent = X.candidate.worldType;
     q(".cw-tagline").textContent = d.tagline || "";
     q(".cw-hab-top b").textContent = `${pct(h.green)}% of the land`;
+    const low = h.green < LOW_ARRIVAL; q(".cw-hab-note").hidden = !low; this.root.dataset.lowArrival = low ? "1" : "0";
     const bar = q(".cw-bar"); bar.setAttribute("aria-label", `At landing: ${pct(h.green)}% of the land suits your plant, ${pct(h.yellow)}% is marginal, ${pct(h.red)}% is hostile`);
     [["g", h.green], ["y", h.yellow], ["r", h.red]].forEach(([k, v]) => { bar.querySelector("." + k).style.width = (v * 100).toFixed(1) + "%"; });
     [["ok", "Suits", h.green], ["warn", "Marginal", h.yellow], ["bad", "Hostile", h.red]].forEach(([k, w, v]) => { q(`.cw-bar-key .${k} span`).textContent = `${w} ${pct(v)}%`; });
@@ -259,6 +264,9 @@ export class ChallengeWorldScreen {
     const T = window.BLOOM_DATA.traits, name = id => (T.find(t => t.id === id) || { name: id }).name;
     line.textContent = st ? "Lands with " + [...Object.entries(traits).map(([id, n]) => name(id) + (n > 1 ? ` ×${n}` : "")), ...(st.biomass != null ? [`${st.biomass} Biomass`] : [])].join(" · ") + " (given by the Challenge)"
       : "Lands as it always does: nothing owned yet.";
+    // (036C1) what that start closes for the whole run (engine-decided: BLOOM.challenges.closedByStart), so the player need not find it in Adapt
+    const closed = B.challenges.closedByStart(this.challenge), cl = this.root.querySelector(".cw-closed");
+    if (cl) { cl.hidden = !closed.length; cl.textContent = closed.map(t => `${t.name} is not available${t.why ? `: ${t.why}` : ""}.`).join(" "); }
     if (!B.plantSpecimen || !c || c.dataset.signature) return;
     try { const PE = B.plantEnvironment, img = B.plantSpecimen.drawSpecies(this.species, { traits, condition: "ok", scene: PE ? PE.showcase() : null });
       c.width = img.w; c.height = img.h; c.getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(img.rgba), img.w, img.h), 0, 0); c.dataset.signature = img.signature || ""; }

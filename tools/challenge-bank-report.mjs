@@ -47,7 +47,7 @@ P("| | |");
 P("|---|---|");
 P(`| Pool | ${build.pool.worlds} worlds = ${D.archetypes.length} archetypes × ${build.pool.perArchetype} World Seeds, stream \`${build.pool.stream}\` (species- and Challenge-free) |`);
 P(`| Physical validation passed | ${build.pool.physicalOk} / ${build.pool.worlds} (the production generation path: archetype layers 1–8, its accepted attempt) |`);
-P(`| Cells | ${keys.length} (3 released Challenges × 4 released species), target ${build.target} entries each |`);
+P(`| Cells | ${keys.length} (every released Challenge × each species it allows: player choice = 4 cells, a prescribed plant = 1), target ${build.target} entries each |`);
 P(`| Result | ${build.limitingCells.length ? `**LIMITING CELLS:** ${build.limitingCells.join("; ")}` : `every cell holds ${build.target}; **not provisional**`} |`);
 P(`| Validation per candidate | species evaluation + S2 (from the prescribed start if any) → recipe → the scenario's layer P at the validator's FULL budget with every confirmation run → Challenge quality |`);
 P(`| Builder | ${build.workers} worker threads on ${build.hardwareThreads} hardware threads · wall ${Math.round(build.wallSeconds / 60)} min${build.wallSeconds < 60 ? " (candidate cache reused)" : ""} · git ${build.gitHead} |`);

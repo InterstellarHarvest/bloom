@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: 2c04bf43fb1fed9df5b9981d8e7a0c51aaa6d894d5104c7db0521cdd27ec2ccf  (45 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: b6f81e180a7c20ac8e30ad31c3628619c59bb9a516a3299ef6ef03dfa2a9c639  (45 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {
@@ -16421,7 +16421,8 @@
           prescribed: (c2) => {
             const st2 = window.BLOOM.challenges.startingStateOf(c2), n2 = {};
             for (const id2 of st2.adaptations) n2[id2] = (n2[id2] || 0) + 1;
-            return "Your plant lands with what the Challenge gives it: " + [...Object.entries(n2).map(([id2, k2]) => traitName(id2) + (k2 > 1 ? ` ×${k2}` : "")), ...st2.biomass != null ? [`${st2.biomass} Biomass`] : []].join(" · ") + ".";
+            const closed = window.BLOOM.challenges.closedByStart(c2).map((t2) => ` ${t2.name} is not available${t2.why ? `: ${t2.why}` : ""}.`).join("");
+            return "Your plant lands with what the Challenge gives it: " + [...Object.entries(n2).map(([id2, k2]) => traitName(id2) + (k2 > 1 ? ` ×${k2}` : "")), ...st2.biomass != null ? [`${st2.biomass} Biomass`] : []].join(" · ") + "." + closed;
           }
         },
         win: { bloom: () => "Win with the normal Bloom: cover the planet's target share of land." }
@@ -17130,7 +17131,7 @@
     l2.dataset.bloom = "challenge-world";
     document.head.appendChild(l2);
   }
-  var CSS_URL3, esc7, pct3, GLOBE_DISTANCE2, DOLLY_TO2, T5, ROW_CAT2, PHASES, SKIP_WAIT, ChallengeWorldScreen;
+  var CSS_URL3, esc7, pct3, GLOBE_DISTANCE2, DOLLY_TO2, T5, ROW_CAT2, PHASES, LOW_ARRIVAL, LOW_ARRIVAL_NOTE, SKIP_WAIT, ChallengeWorldScreen;
   var init_challenge_world_screen = __esm({
     "resources/challenges/challenge-world-screen.js"() {
       init_portable_root();
@@ -17146,6 +17147,8 @@
       T5 = { recede: 320, recedeRm: 200, dolly: 2500, dollyDelay: 120, cloudsAfter: 1e3, minPrepare: 450 };
       ROW_CAT2 = { climate: ["temperature", "temp"], water: ["water", "water"], soil: ["soil", "soil"], atmosphere: [null, "sky"], solar: ["hazard", "heat"] };
       PHASES = ["select", "build", "verify"];
+      LOW_ARRIVAL = 0.05;
+      LOW_ARRIVAL_NOTE = "Little or none of this world suits your plant yet: your landing region keeps it alive at first. Adapt before you spread.";
       SKIP_WAIT = 250;
       ChallengeWorldScreen = class {
         /**
@@ -17376,7 +17379,7 @@
               <div class="cw-plant-row"><canvas class="cw-specimen" width="84" height="98" aria-hidden="true"></canvas>
                 <div><h3 class="cw-sp-name">${esc7(sp2.name)}</h3><p class="cw-sp-role">${esc7(sp2.presentation.roleLabel)}</p>
                   ${this.prescribed ? `<p class="cw-sp-note">${ico("info")}<span>This Challenge prescribes the plant.</span></p>` : ""}
-                  <p class="cw-start"></p></div></div>
+                  <p class="cw-start"></p><p class="cw-closed" hidden></p></div></div>
               </section>
             </div>
             <section class="cw-sec cw-world">
@@ -17385,7 +17388,8 @@
               <p class="cw-type"></p><p class="cw-tagline"></p>
               <div class="cw-hab"><div class="cw-hab-top"><span>Ground your plant can live on at landing</span><b></b></div>
                 <div class="cw-bar" role="img"><i class="g"></i><i class="y"></i><i class="r"></i></div>
-                <div class="cw-bar-key" aria-hidden="true"><span class="ok">${ico("check")}<span>Suits</span></span><span class="warn">${ico("alert")}<span>Marginal</span></span><span class="bad">${ico("x")}<span>Hostile</span></span></div></div>
+                <div class="cw-bar-key" aria-hidden="true"><span class="ok">${ico("check")}<span>Suits</span></span><span class="warn">${ico("alert")}<span>Marginal</span></span><span class="bad">${ico("x")}<span>Hostile</span></span></div>
+                <p class="cw-hab-note" hidden>${ico("info")}<span>${esc7(LOW_ARRIVAL_NOTE)}</span></p></div>
               <dl class="cw-rows"></dl>
               <section class="cw-hazards"><h3>${ico("hazard")}Expected hazards</h3><ul></ul></section>
             </section>
@@ -17429,6 +17433,9 @@
           q2(".cw-type").textContent = X2.candidate.worldType;
           q2(".cw-tagline").textContent = d2.tagline || "";
           q2(".cw-hab-top b").textContent = `${pct3(h2.green)}% of the land`;
+          const low = h2.green < LOW_ARRIVAL;
+          q2(".cw-hab-note").hidden = !low;
+          this.root.dataset.lowArrival = low ? "1" : "0";
           const bar = q2(".cw-bar");
           bar.setAttribute("aria-label", `At landing: ${pct3(h2.green)}% of the land suits your plant, ${pct3(h2.yellow)}% is marginal, ${pct3(h2.red)}% is hostile`);
           [["g", h2.green], ["y", h2.yellow], ["r", h2.red]].forEach(([k2, v2]) => {
@@ -17465,6 +17472,11 @@
           for (const id2 of st2 ? st2.adaptations : []) traits[id2] = (traits[id2] || 0) + 1;
           const T6 = window.BLOOM_DATA.traits, name2 = (id2) => (T6.find((t2) => t2.id === id2) || { name: id2 }).name;
           line.textContent = st2 ? "Lands with " + [...Object.entries(traits).map(([id2, n2]) => name2(id2) + (n2 > 1 ? ` ×${n2}` : "")), ...st2.biomass != null ? [`${st2.biomass} Biomass`] : []].join(" · ") + " (given by the Challenge)" : "Lands as it always does: nothing owned yet.";
+          const closed = B2.challenges.closedByStart(this.challenge), cl2 = this.root.querySelector(".cw-closed");
+          if (cl2) {
+            cl2.hidden = !closed.length;
+            cl2.textContent = closed.map((t2) => `${t2.name} is not available${t2.why ? `: ${t2.why}` : ""}.`).join(" ");
+          }
           if (!B2.plantSpecimen || !c2 || c2.dataset.signature) return;
           try {
             const PE = B2.plantEnvironment, img = B2.plantSpecimen.drawSpecies(this.species, { traits, condition: "ok", scene: PE ? PE.showcase() : null });

@@ -129,9 +129,11 @@
       $("rrKicker").textContent = win ? (i.training ? "Training · field journal" : i.challenge ? "Field journal · challenge debrief" : "Field journal · expedition debrief") : "Field journal · the run is over";
       $("rrTitle").innerHTML = `${ico(win ? "star" : "x", "rr-mark")}<span>${esc(d.heading)}</span>`;
       const world = identityLine(d);
+      // (036C1) a Challenge run is named by its Challenge (several Challenges share one scenario), never only by the scenario underneath
+      const under = i.challenge ? ` in the ${i.challenge.name} Challenge` : i.scenarioActive ? ` under ${i.scenarioName}` : "";
       $("rrSum").textContent = win
-        ? `You held ${d.coveragePct} % of the land of ${world}${i.scenarioActive ? ` under ${i.scenarioName}` : ""} in ${d.elapsed.text}.`
-        : `No living plants were left anywhere for ${d.graceSeconds} s, so the run is over after ${d.elapsed.text} on ${world}${i.scenarioActive ? ` under ${i.scenarioName}` : ""}.`;
+        ? `You held ${d.coveragePct} % of the land of ${world}${under} in ${d.elapsed.text}.`
+        : `No living plants were left anywhere for ${d.graceSeconds} s, so the run is over after ${d.elapsed.text} on ${world}${under}.`;
       // (036A) a Challenge run names its Challenge (the scenario's final state follows below); an Expedition keeps "Scenario · None"
       const mode = i.challenge ? ["Challenge", i.challenge.name, "its final state below", i.challenge.icon] : ["Scenario", i.scenarioActive ? i.scenarioName : "None", i.scenarioActive ? "final state below" : "no challenge modifier", "climate"];
       const facts = win
@@ -145,7 +147,10 @@
       // (035B) the report names the species (the caption's second line: "<species> · n adaptations")
       layer.dataset.species = i.species ? i.species.id : "";
       specCap.innerHTML = `<b>${win ? "Your plant, as it bloomed" : "Your plant, as it was"}</b><small>${i.species ? `<span class="rr-species">${esc(i.species.name)}</span> · ` : ""}${(d.built || []).length ? `${d.built.length} adaptation${d.built.length === 1 ? "" : "s"}` : "the unmodified pioneer"}</small>`;
-      const builtChips = (d.built || []).map(b => chip(`${ico("leaf")}${esc(tierWord(b))}`, "ow", catStyle(b.uiCategory))).join("") || chip("The unmodified pioneer", "ow none");
+      // (036C1) a tier the Challenge GAVE at landing is marked on its chip (never presented as the player's purchase)
+      const given = {}; for (const id of (i.startingState && i.startingState.adaptations) || []) given[id] = (given[id] || 0) + 1;
+      const givenMark = b => !given[b.id] ? "" : ` <i class="rr-given-k">${given[b.id] >= b.tier ? "given" : `${given[b.id]} given`}</i>`;
+      const builtChips = (d.built || []).map(b => chip(`${ico("leaf")}${esc(tierWord(b))}${givenMark(b)}`, given[b.id] ? "ow given" : "ow", catStyle(b.uiCategory))).join("") || chip("The unmodified pioneer", "ow none");
       const tfChips = (d.terraform || []).map(t => chip(`${ico(t.axis === "temp" ? "temp" : "humid")}${esc(t.name)}${t.tier > 1 ? ` ${ROMAN[t.tier] || t.tier}` : ""}`, "ow", catStyle(t.uiCategory))).join("");
       build.innerHTML = `<section class="rr-sec" aria-label="Your plant became"><h3>${ico("adapt")}${win ? "Your plant became" : "Your plant had become"}</h3><div class="rr-chips">${builtChips}</div></section>` +
         startNote(i) +
