@@ -62,6 +62,28 @@ export const CONCEPTS = [
     }, { species: CHOICE, world: RECIPE(ALL), startingState: START([], 400) }),
     study: { sample: 40, diag: 10, baseline: "volatile_climate" },
   },
+  // BLOOM-036C1 focused Windfall recalibration (PMO): 200 / 225 / 250 starting Biomass, otherwise the studied Windfall (400) definition
+  ...[200, 225, 250].map(b => ({
+    id: `windfall_${b}`, kind: "fixture",
+    def: fx(`windfall_${b}`, "Windfall", "volatile_climate", "climate", {
+      short: "Land with a large reserve, on a planet whose climate does not like to be rushed.",
+      tagline: "You land with extra Biomass: enough to make big decisions immediately.",
+      briefing: "A large reserve gives you choices from the moment you land. But this climate becomes unstable when you reshape it too quickly. Spending Biomass is simple; deciding what should change, and how fast, is the challenge.",
+      strategicIdea: "A big reserve is not a reason to change the whole planet at once. Decide what to Adapt, what to Terraform, and give the climate time to settle.",
+      science: "Rapid changes can push connected climate systems out of balance before they settle. Strange Bloom uses a simplified model: repeated Terraforming can produce temporary temperature or moisture swings.",
+    }, { species: CHOICE, world: RECIPE(ALL), startingState: START([], b) }),
+    study: { sample: 40, diag: 10, baseline: "volatile_climate" },
+  })),
+  // (036C1) the RELEASED Volatile Climate start (player choice, normal start) with the same strategy diagnostics, so the Windfall settings compare
+  // against the released Challenge's strategy evidence too (its proofs equal the shipped bank's candidate records)
+  {
+    id: "vc_released_diag", kind: "fixture",
+    def: fx("vc_released_diag", "Volatile Climate (baseline)", "volatile_climate", "climate", {
+      short: "The released Volatile Climate start, measured for comparison.", tagline: "Baseline: the normal start.", briefing: "Baseline measurement of the released start.",
+      strategicIdea: "Baseline measurement.", science: "@scenario.display.science",
+    }, { species: CHOICE, world: RECIPE(ALL), startingState: NORMAL }),
+    study: { sample: 10, diag: 10, baseline: "volatile_climate" },
+  },
   {
     id: "pioneer_rush", kind: "fixture",
     def: fx("pioneer_rush", "Pioneer Rush", "native_competition", "competition", {

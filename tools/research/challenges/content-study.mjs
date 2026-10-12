@@ -54,7 +54,15 @@ function evaluateConcept(task, E) {
   const SDc = { ...SD, physicalCandidate: (spec, deps) => SD.physicalCandidate(spec, deps, cache) };
   if (c.kind === "fixture") {
     const ch = BLOOM.challenges.fixture(c.def), S = BLOOM.challenges.scenarioOf(ch), st = BLOOM.challenges.startingStateOf(ch);
-    const row = evaluateWorld(task, { BLOOM, D, SD: SDc }, { challenges: [ch] });
+    // (036C1) the builder stores the layer-P reason cut to 140 characters; keep the FULL reason and the refused witnesses' real pacing per
+    // species by observing the builder's own validateScenario call (nothing re-run, nothing changed)
+    const seen = {}, orig = BLOOM.validateScenario;
+    BLOOM.validateScenario = (...a) => { const v = orig(...a), sp = a[4] && a[4].species; if (sp) seen[sp.id] = v; return v; };
+    let row; try { row = evaluateWorld(task, { BLOOM, D, SD: SDc }, { challenges: [ch] }); } finally { BLOOM.validateScenario = orig; }
+    for (const [key, cell] of Object.entries(row.cells)) { const v = seen[key.split("/")[1]];
+      if (v && !v.ok && cell.proof) { cell.proof.reasonFull = v.reason || null;
+        cell.proof.refusedWitnesses = (v.slow || []).map(w => ({ marginSeconds: r4(w.marginSeconds), firstPurchaseSeconds: w.pacing ? r4(w.pacing.firstPurchaseSeconds) : null,
+          maxGapSeconds: w.pacing ? r4(w.pacing.maxPurchaseGapSeconds) : null, pacing: w.pacingCheck ? w.pacingCheck.reasons : null })); } }
     row.concept = c.id;
     if (!row.physical) return row;
     const phys = SDc.physicalCandidate({ archetypeId: task.archetypeId, seed: task.seed }), P = phys.planet;

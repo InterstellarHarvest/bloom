@@ -1,0 +1,620 @@
+{
+ "format": "bloom-036c1-windfall-recalibration@1",
+ "tool": "tools/research/challenges/windfall-recalibration.mjs",
+ "sample": {
+  "worlds": 120,
+  "perArchetype": 40
+ },
+ "settings": {
+  "200": {
+   "concept": "windfall_200",
+   "diagConcept": "windfall_200",
+   "bySpecies": {
+    "organic_hybrid": {
+     "worlds": 118,
+     "qualifying": 105,
+     "qualifyingPct": 89,
+     "byArchetype": {
+      "ocean_archipelago": "38/38",
+      "desert_world": "34/40",
+      "frozen_world": "33/40"
+     },
+     "refused": 13,
+     "refusedTooFast": 13,
+     "refusedTooFastKnown": true,
+     "witness": {
+      "p10": 245,
+      "p50": 272,
+      "p90": 471
+     },
+     "sameWorldDeltaP50": -9,
+     "usesTerraformPct": 40,
+     "shockedFirstWitnessPct": 8.6,
+     "diag": {
+      "worlds": 27,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 22.2,
+      "terraformWinningStrategyPct": 96.3,
+      "threeStrategiesPct": 66.7,
+      "firstTerraformP50": 174
+     }
+    },
+    "cinder_rosette": {
+     "worlds": 118,
+     "qualifying": 94,
+     "qualifyingPct": 79.7,
+     "byArchetype": {
+      "ocean_archipelago": "37/38",
+      "desert_world": "18/40",
+      "frozen_world": "39/40"
+     },
+     "refused": 24,
+     "refusedTooFast": 22,
+     "refusedTooFastKnown": true,
+     "witness": {
+      "p10": 247,
+      "p50": 316,
+      "p90": 479
+     },
+     "sameWorldDeltaP50": -33,
+     "usesTerraformPct": 45.7,
+     "shockedFirstWitnessPct": 4.3,
+     "diag": {
+      "worlds": 24,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 25,
+      "terraformWinningStrategyPct": 87.5,
+      "threeStrategiesPct": 58.3,
+      "firstTerraformP50": 242
+     }
+    },
+    "woolly_candle": {
+     "worlds": 118,
+     "qualifying": 103,
+     "qualifyingPct": 87.3,
+     "byArchetype": {
+      "ocean_archipelago": "37/38",
+      "desert_world": "39/40",
+      "frozen_world": "27/40"
+     },
+     "refused": 15,
+     "refusedTooFast": 14,
+     "refusedTooFastKnown": true,
+     "witness": {
+      "p10": 244,
+      "p50": 268,
+      "p90": 429
+     },
+     "sameWorldDeltaP50": -3,
+     "usesTerraformPct": 48.5,
+     "shockedFirstWitnessPct": 18.4,
+     "diag": {
+      "worlds": 28,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 53.6,
+      "terraformWinningStrategyPct": 89.3,
+      "threeStrategiesPct": 50,
+      "firstTerraformP50": 178
+     }
+    },
+    "reed_spire": {
+     "worlds": 118,
+     "qualifying": 112,
+     "qualifyingPct": 94.9,
+     "byArchetype": {
+      "ocean_archipelago": "38/38",
+      "desert_world": "37/40",
+      "frozen_world": "37/40"
+     },
+     "refused": 6,
+     "refusedTooFast": 4,
+     "refusedTooFastKnown": true,
+     "witness": {
+      "p10": 243,
+      "p50": 269,
+      "p90": 385
+     },
+     "sameWorldDeltaP50": -18,
+     "usesTerraformPct": 30.4,
+     "shockedFirstWitnessPct": 2.7,
+     "diag": {
+      "worlds": 28,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 14.3,
+      "terraformWinningStrategyPct": 89.3,
+      "threeStrategiesPct": 60.7,
+      "firstTerraformP50": 201
+     }
+    }
+   }
+  },
+  "225": {
+   "concept": "windfall_225",
+   "diagConcept": "windfall_225",
+   "bySpecies": {
+    "organic_hybrid": {
+     "worlds": 118,
+     "qualifying": 105,
+     "qualifyingPct": 89,
+     "byArchetype": {
+      "ocean_archipelago": "38/38",
+      "desert_world": "36/40",
+      "frozen_world": "31/40"
+     },
+     "refused": 13,
+     "refusedTooFast": 13,
+     "refusedTooFastKnown": true,
+     "witness": {
+      "p10": 243,
+      "p50": 271,
+      "p90": 448
+     },
+     "sameWorldDeltaP50": -12,
+     "usesTerraformPct": 33.3,
+     "shockedFirstWitnessPct": 7.6,
+     "diag": {
+      "worlds": 26,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 23.1,
+      "terraformWinningStrategyPct": 96.2,
+      "threeStrategiesPct": 69.2,
+      "firstTerraformP50": 175
+     }
+    },
+    "cinder_rosette": {
+     "worlds": 118,
+     "qualifying": 94,
+     "qualifyingPct": 79.7,
+     "byArchetype": {
+      "ocean_archipelago": "37/38",
+      "desert_world": "18/40",
+      "frozen_world": "39/40"
+     },
+     "refused": 24,
+     "refusedTooFast": 22,
+     "refusedTooFastKnown": true,
+     "witness": {
+      "p10": 246,
+      "p50": 304,
+      "p90": 499
+     },
+     "sameWorldDeltaP50": -36,
+     "usesTerraformPct": 45.7,
+     "shockedFirstWitnessPct": 5.3,
+     "diag": {
+      "worlds": 24,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 25,
+      "terraformWinningStrategyPct": 83.3,
+      "threeStrategiesPct": 66.7,
+      "firstTerraformP50": 233
+     }
+    },
+    "woolly_candle": {
+     "worlds": 118,
+     "qualifying": 99,
+     "qualifyingPct": 83.9,
+     "byArchetype": {
+      "ocean_archipelago": "36/38",
+      "desert_world": "38/40",
+      "frozen_world": "25/40"
+     },
+     "refused": 19,
+     "refusedTooFast": 18,
+     "refusedTooFastKnown": true,
+     "witness": {
+      "p10": 244,
+      "p50": 267,
+      "p90": 375
+     },
+     "sameWorldDeltaP50": -7,
+     "usesTerraformPct": 45.5,
+     "shockedFirstWitnessPct": 19.2,
+     "diag": {
+      "worlds": 28,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 60.7,
+      "terraformWinningStrategyPct": 92.9,
+      "threeStrategiesPct": 46.4,
+      "firstTerraformP50": 174
+     }
+    },
+    "reed_spire": {
+     "worlds": 118,
+     "qualifying": 110,
+     "qualifyingPct": 93.2,
+     "byArchetype": {
+      "ocean_archipelago": "37/38",
+      "desert_world": "36/40",
+      "frozen_world": "37/40"
+     },
+     "refused": 8,
+     "refusedTooFast": 6,
+     "refusedTooFastKnown": true,
+     "witness": {
+      "p10": 243,
+      "p50": 266,
+      "p90": 355
+     },
+     "sameWorldDeltaP50": -22,
+     "usesTerraformPct": 37.3,
+     "shockedFirstWitnessPct": 4.5,
+     "diag": {
+      "worlds": 28,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 17.9,
+      "terraformWinningStrategyPct": 89.3,
+      "threeStrategiesPct": 64.3,
+      "firstTerraformP50": 190
+     }
+    }
+   }
+  },
+  "250": {
+   "concept": "windfall_250",
+   "diagConcept": "windfall_250",
+   "bySpecies": {
+    "organic_hybrid": {
+     "worlds": 118,
+     "qualifying": 101,
+     "qualifyingPct": 85.6,
+     "byArchetype": {
+      "ocean_archipelago": "38/38",
+      "desert_world": "33/40",
+      "frozen_world": "30/40"
+     },
+     "refused": 17,
+     "refusedTooFast": 17,
+     "refusedTooFastKnown": true,
+     "witness": {
+      "p10": 245,
+      "p50": 267,
+      "p90": 413
+     },
+     "sameWorldDeltaP50": -13,
+     "usesTerraformPct": 33.7,
+     "shockedFirstWitnessPct": 10.9,
+     "diag": {
+      "worlds": 25,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 24,
+      "terraformWinningStrategyPct": 100,
+      "threeStrategiesPct": 72,
+      "firstTerraformP50": 167
+     }
+    },
+    "cinder_rosette": {
+     "worlds": 118,
+     "qualifying": 94,
+     "qualifyingPct": 79.7,
+     "byArchetype": {
+      "ocean_archipelago": "37/38",
+      "desert_world": "17/40",
+      "frozen_world": "40/40"
+     },
+     "refused": 24,
+     "refusedTooFast": 23,
+     "refusedTooFastKnown": true,
+     "witness": {
+      "p10": 249,
+      "p50": 302,
+      "p90": 474
+     },
+     "sameWorldDeltaP50": -40,
+     "usesTerraformPct": 44.7,
+     "shockedFirstWitnessPct": 5.3,
+     "diag": {
+      "worlds": 24,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 25,
+      "terraformWinningStrategyPct": 87.5,
+      "threeStrategiesPct": 58.3,
+      "firstTerraformP50": 227
+     }
+    },
+    "woolly_candle": {
+     "worlds": 118,
+     "qualifying": 96,
+     "qualifyingPct": 81.4,
+     "byArchetype": {
+      "ocean_archipelago": "37/38",
+      "desert_world": "37/40",
+      "frozen_world": "22/40"
+     },
+     "refused": 22,
+     "refusedTooFast": 21,
+     "refusedTooFastKnown": true,
+     "witness": {
+      "p10": 250,
+      "p50": 277,
+      "p90": 374
+     },
+     "sameWorldDeltaP50": -2,
+     "usesTerraformPct": 49,
+     "shockedFirstWitnessPct": 21.9,
+     "diag": {
+      "worlds": 26,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 53.8,
+      "terraformWinningStrategyPct": 92.3,
+      "threeStrategiesPct": 46.2,
+      "firstTerraformP50": 161
+     }
+    },
+    "reed_spire": {
+     "worlds": 118,
+     "qualifying": 109,
+     "qualifyingPct": 92.4,
+     "byArchetype": {
+      "ocean_archipelago": "37/38",
+      "desert_world": "36/40",
+      "frozen_world": "36/40"
+     },
+     "refused": 9,
+     "refusedTooFast": 9,
+     "refusedTooFastKnown": true,
+     "witness": {
+      "p10": 244,
+      "p50": 266,
+      "p90": 389
+     },
+     "sameWorldDeltaP50": -13,
+     "usesTerraformPct": 39.4,
+     "shockedFirstWitnessPct": 6.4,
+     "diag": {
+      "worlds": 27,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 22.2,
+      "terraformWinningStrategyPct": 88.9,
+      "threeStrategiesPct": 63,
+      "firstTerraformP50": 179
+     }
+    }
+   }
+  },
+  "400": {
+   "concept": "windfall",
+   "diagConcept": "windfall",
+   "bySpecies": {
+    "organic_hybrid": {
+     "worlds": 118,
+     "qualifying": 83,
+     "qualifyingPct": 70.3,
+     "byArchetype": {
+      "ocean_archipelago": "37/38",
+      "desert_world": "23/40",
+      "frozen_world": "23/40"
+     },
+     "refused": 35,
+     "refusedTooFast": 16,
+     "refusedTooFastKnown": "036C probe: 16/16 sampled refusals too fast",
+     "witness": {
+      "p10": 245,
+      "p50": 275,
+      "p90": 411
+     },
+     "sameWorldDeltaP50": -16,
+     "usesTerraformPct": 44.6,
+     "shockedFirstWitnessPct": 20.5,
+     "diag": {
+      "worlds": 19,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 21.1,
+      "terraformWinningStrategyPct": 94.7,
+      "threeStrategiesPct": 63.2,
+      "firstTerraformP50": 96
+     }
+    },
+    "cinder_rosette": {
+     "worlds": 118,
+     "qualifying": 87,
+     "qualifyingPct": 73.7,
+     "byArchetype": {
+      "ocean_archipelago": "37/38",
+      "desert_world": "15/40",
+      "frozen_world": "35/40"
+     },
+     "refused": 31,
+     "refusedTooFast": 13,
+     "refusedTooFastKnown": "036C probe: 16/16 sampled refusals too fast",
+     "witness": {
+      "p10": 244,
+      "p50": 277,
+      "p90": 434
+     },
+     "sameWorldDeltaP50": -58,
+     "usesTerraformPct": 42.5,
+     "shockedFirstWitnessPct": 9.2,
+     "diag": {
+      "worlds": 24,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 29.2,
+      "terraformWinningStrategyPct": 87.5,
+      "threeStrategiesPct": 62.5,
+      "firstTerraformP50": 160
+     }
+    },
+    "woolly_candle": {
+     "worlds": 118,
+     "qualifying": 90,
+     "qualifyingPct": 76.3,
+     "byArchetype": {
+      "ocean_archipelago": "36/38",
+      "desert_world": "33/40",
+      "frozen_world": "21/40"
+     },
+     "refused": 28,
+     "refusedTooFast": 15,
+     "refusedTooFastKnown": "036C probe: 16/16 sampled refusals too fast",
+     "witness": {
+      "p10": 245,
+      "p50": 274,
+      "p90": 382
+     },
+     "sameWorldDeltaP50": -8,
+     "usesTerraformPct": 46.7,
+     "shockedFirstWitnessPct": 27.8,
+     "diag": {
+      "worlds": 25,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 64,
+      "terraformWinningStrategyPct": 92,
+      "threeStrategiesPct": 48,
+      "firstTerraformP50": 118
+     }
+    },
+    "reed_spire": {
+     "worlds": 118,
+     "qualifying": 92,
+     "qualifyingPct": 78,
+     "byArchetype": {
+      "ocean_archipelago": "35/38",
+      "desert_world": "26/40",
+      "frozen_world": "31/40"
+     },
+     "refused": 26,
+     "refusedTooFast": 4,
+     "refusedTooFastKnown": "036C probe: 16/16 sampled refusals too fast",
+     "witness": {
+      "p10": 242,
+      "p50": 261,
+      "p90": 362
+     },
+     "sameWorldDeltaP50": -21,
+     "usesTerraformPct": 43.5,
+     "shockedFirstWitnessPct": 16.3,
+     "diag": {
+      "worlds": 23,
+      "firstPurchaseP50": 0,
+      "shockedWinningStrategyPct": 26.1,
+      "terraformWinningStrategyPct": 87,
+      "threeStrategiesPct": 56.5,
+      "firstTerraformP50": 149
+     }
+    }
+   }
+  },
+  "released": {
+   "concept": "volatile_climate (shipped records)",
+   "diagConcept": "vc_released_diag",
+   "bySpecies": {
+    "organic_hybrid": {
+     "worlds": 118,
+     "qualifying": 117,
+     "qualifyingPct": 99.2,
+     "byArchetype": {
+      "ocean_archipelago": "38/38",
+      "desert_world": "39/40",
+      "frozen_world": "40/40"
+     },
+     "refused": 1,
+     "refusedTooFast": 1,
+     "refusedTooFastKnown": false,
+     "witness": {
+      "p10": 245,
+      "p50": 268,
+      "p90": 440
+     },
+     "sameWorldDeltaP50": 0,
+     "usesTerraformPct": 32.5,
+     "shockedFirstWitnessPct": 2.6,
+     "diag": {
+      "worlds": 29,
+      "firstPurchaseP50": 27,
+      "shockedWinningStrategyPct": 20.7,
+      "terraformWinningStrategyPct": 96.6,
+      "threeStrategiesPct": 65.5,
+      "firstTerraformP50": 226
+     }
+    },
+    "cinder_rosette": {
+     "worlds": 118,
+     "qualifying": 100,
+     "qualifyingPct": 84.7,
+     "byArchetype": {
+      "ocean_archipelago": "37/38",
+      "desert_world": "24/40",
+      "frozen_world": "39/40"
+     },
+     "refused": 18,
+     "refusedTooFast": 6,
+     "refusedTooFastKnown": false,
+     "witness": {
+      "p10": 255,
+      "p50": 330,
+      "p90": 551
+     },
+     "sameWorldDeltaP50": 0,
+     "usesTerraformPct": 47,
+     "shockedFirstWitnessPct": 4,
+     "diag": {
+      "worlds": 26,
+      "firstPurchaseP50": 28,
+      "shockedWinningStrategyPct": 26.9,
+      "terraformWinningStrategyPct": 84.6,
+      "threeStrategiesPct": 53.8,
+      "firstTerraformP50": 285
+     }
+    },
+    "woolly_candle": {
+     "worlds": 118,
+     "qualifying": 110,
+     "qualifyingPct": 93.2,
+     "byArchetype": {
+      "ocean_archipelago": "37/38",
+      "desert_world": "39/40",
+      "frozen_world": "34/40"
+     },
+     "refused": 8,
+     "refusedTooFast": 3,
+     "refusedTooFastKnown": false,
+     "witness": {
+      "p10": 247,
+      "p50": 272,
+      "p90": 425
+     },
+     "sameWorldDeltaP50": 0,
+     "usesTerraformPct": 40,
+     "shockedFirstWitnessPct": 13.6,
+     "diag": {
+      "worlds": 30,
+      "firstPurchaseP50": 27,
+      "shockedWinningStrategyPct": 66.7,
+      "terraformWinningStrategyPct": 93.3,
+      "threeStrategiesPct": 50,
+      "firstTerraformP50": 199
+     }
+    },
+    "reed_spire": {
+     "worlds": 118,
+     "qualifying": 114,
+     "qualifyingPct": 96.6,
+     "byArchetype": {
+      "ocean_archipelago": "36/38",
+      "desert_world": "40/40",
+      "frozen_world": "38/40"
+     },
+     "refused": 4,
+     "refusedTooFast": 1,
+     "refusedTooFastKnown": false,
+     "witness": {
+      "p10": 245,
+      "p50": 282,
+      "p90": 395
+     },
+     "sameWorldDeltaP50": 0,
+     "usesTerraformPct": 27.2,
+     "shockedFirstWitnessPct": 0,
+     "diag": {
+      "worlds": 30,
+      "firstPurchaseP50": 27,
+      "shockedWinningStrategyPct": 13.3,
+      "terraformWinningStrategyPct": 90,
+      "threeStrategiesPct": 63.3,
+      "firstTerraformP50": 221
+     }
+    }
+   }
+  }
+ }
+}
