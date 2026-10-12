@@ -2,7 +2,8 @@
 
 **BLOOM-036A — Challenges foundation + first playable hub** **+ BLOOM-036B — the contained Challenge: ONE procedural planet per instance**
 **+ BLOOM-036B1 — Challenge worlds from PREVALIDATED SEED BANKS** — PMO-accepted and **IMPLEMENTED / COMPLETE in production `main`** as one
-combined Challenges release (`bd0eb27`, 2026-10-12). Current product direction: [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §8.
+combined Challenges release (`bd0eb27`, 2026-10-12). **+ BLOOM-036C1 — the first AUTHORED Challenges (Low Tide · Oasis Line): CANDIDATE** on
+`handoff/bloom-036c1-authored-challenges` (§9). Current product direction: [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §8.
 
 > **EXPEDITION** = live procedural world discovery (the 3 × 3 Destination Survey generates and validates worlds on the player's machine).
 > **CHALLENGES** = curated banks of **prevalidated procedural seeds**: the world is still procedurally generated, but which worlds a Challenge
@@ -36,7 +37,7 @@ QA: [`tools/challenges-check.js`](../tools/challenges-check.js) (data layer + hu
 `BLOOM.challenges.check()` refuses any scenario-mechanics key at any depth (also inside a recipe), the default / an unknown scenario, verbatim
 scenario copy, difficulty words, and every launch value the runtime cannot honour.
 
-## 2. Schema (`BLOOM.challenges.SCHEMA_VERSION = 2`; Challenges at version 3)
+## 2. Schema (`BLOOM.challenges.SCHEMA_VERSION = 2`; Dying World v3, Native Competition / Volatile Climate v4, the authored Challenges v1)
 
 ```js
 {
@@ -176,11 +177,36 @@ fingerprint, species, scenario, starting state. `expeditionRun` refuses a Challe
   read the species screen. An invariant failure says the world could not be prepared and offers Back.
 - **Dossier:** The challenge · Your plant (specimen; prescribed plant / starting state) · Your world (globe, name, type, World Seed, ground the
   plant can live on at landing, conditions, Expected hazards). **No separate "Foothold" line** (036B1, PMO): the S1 metric stays in the bank /
-  instance for validation and QA.
-- **Run / Report:** "Challenge · <name>", challenge debrief, the scenario's final state, "Given by the Challenge at landing: …" for a
-  prescribed start, KEEP PLAYING · RETRY CHALLENGE · CHALLENGES · MAIN MENU.
+  instance for validation and QA. (036C1) A prescribed start also says what it **closes** for the run ("Drought Adaptation is not available: a
+  plant commits to one water strategy — Flood is already chosen.") — the hub's How the run works says the same; and when under **5 %** of the
+  land suits the plant at landing, the true share is kept and one line explains it: "Little or none of this world suits your plant yet: your
+  landing region keeps it alive at first. Adapt before you spread." (presentation only; validation unchanged).
+- **Run / Report:** "Challenge · <name>", challenge debrief, the summary "… in the <name> Challenge …" (036C1: the Challenge, not only its scenario),
+  the scenario's final state, "Given by the Challenge at landing: …" for a prescribed start with the given tiers marked *given* on their chips,
+  KEEP PLAYING · RETRY CHALLENGE · CHALLENGES · MAIN MENU.
 
-## 8. Deferred (036C+)
+## 8. Deferred
 
-Challenge-specific completion conditions · authored Challenges using prescribed species / starting states · bank variety beyond 50 · medals,
-scoring, difficulty tiers, unlock trees, campaign progression.
+Challenge-specific completion conditions (036D+; the content study names the ones Thin Air, Hearthfire and Windfall would need) · bank variety
+beyond 50 · default-rules Challenges (the schema refuses `default`) · medals, scoring, difficulty tiers, unlock trees, campaign progression (not
+planned without explicit approval).
+
+## 9. Authored Challenges (BLOOM-036C1, CANDIDATE)
+
+From the PMO-accepted content study ([`CHALLENGE_CONTENT_STUDY_v1.md`](CHALLENGE_CONTENT_STUDY_v1.md) §6.1, §6.2, §11):
+
+| Challenge | Scenario | Species | World recipe | Starting state | Bank |
+|---|---|---|---|---|---|
+| **Low Tide** (`low_tide` v1) | Dying World | prescribed Organic Hybrid | Ocean Archipelago only | Flood Adaptation + Salt Handling given · normal Biomass | `low_tide/organic_hybrid` × 50 |
+| **Oasis Line** (`oasis_line` v1) | Native Competition | prescribed Reed Spire | Desert World only · **no arrival floor** | normal | `oasis_line/reed_spire` × 50 |
+
+- **Several Challenges per scenario.** A Challenge references a scenario; it is never identified by it. Low Tide and Dying World both play
+  `dying_world`, Oasis Line and Native Competition both play `native_competition`, yet each has its own id, name, version, recipe, bank cells
+  (keyed `<challenge>/<species>`) and instance / run / report provenance. The builder makes cells only for the species a Challenge allows (a
+  prescribed plant = one cell).
+- **What a start closes.** `BLOOM.challenges.closedByStart(ch)` — the plant traits the engine would sell from a normal start but not from the
+  prescribed one (Low Tide: Drought Adaptation, by the one-water-strategy rule) — decided by the engine's own `canBuy` / `why`, never a list.
+- **Versioning of copy edits.** A Challenge's `version` is the definition's revision, presentation included, and each bank cell's provenance
+  carries `challengeVersion`; the 036C1 copy corrections therefore made Native Competition and Volatile Climate **version 4**, and their cells were
+  **rebuilt** (stale-bank protection kept, no bypass). The rebuilt cells hold the same worlds with the same proofs (only the provenance changed).
+- **Windfall: HOLD** (the focused recalibration did not pass the premise gate) · **Thin Air: RESERVE** — neither is in the catalogue.
