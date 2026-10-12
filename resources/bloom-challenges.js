@@ -13,7 +13,7 @@
 //   BLOOM.challenges.scenarioOf(ch)          → the scenario object the Challenge plays (BLOOM.pressure.resolveScenario on the catalogue)
 //   BLOOM.challenges.speciesOf(ch)           → the prescribed species (BLOOM.species.resolve object) or null (player choice)
 //   BLOOM.challenges.startingStateOf(ch)     → the prescribed starting state { adaptations, biomass, source: "challenge" } (frozen) or null
-//   BLOOM.challenges.provenance(ch)          → { id, name, version, recipeVersion, scenarioId, icon } (run summaries, reports)
+//   BLOOM.challenges.provenance(ch)          → { id, name, version, recipeVersion, bankVersion, scenarioId, icon } (run summaries, reports)
 //   BLOOM.challenges.SCHEMA_VERSION / LAUNCH_POLICIES / RECIPE_KEYS / COMPLETION_WINS / MECHANICS_KEYS
 //
 // A Challenge is a PRODUCT definition that references one scenario (content/scenarios.js) by id; the scenario's mechanics stay in the
@@ -25,10 +25,11 @@
 // generated qualifying planet → its dossier → the run. Three policies, each a { policy, … } object:
 //   species        { policy: "player-choice" }                         the normal Choose Plant Species screen (every released species)
 //                  { policy: "prescribed", species: "<species id>" }   that species; the species screen is skipped
-//   world          { policy: "recipe", recipe }                        ONE world generated for this Challenge from its RECIPE (§4): the normal
-//                                                                       physical world stream filtered by product-level constraints, the
-//                                                                       species evaluation and the scenario's own validation. A recipe never
-//                                                                       changes a planet — it only decides which finished world is accepted
+//   world          { policy: "seed-bank", recipe, bank }              (036B1) ONE procedural world per instance, chosen from a BANK of worlds
+//                                                                       PREVALIDATED offline for this Challenge × species (§4): the recipe is
+//                                                                       what the bank builder accepts (product-level constraints on finished
+//                                                                       worlds, never a planet change); bank { version, size } is the shipped
+//                                                                       bank's revision and the number of entries every cell must hold
 //   startingState  { policy: "normal" }                                nothing owned at landing, config.econ.startBiomass
 //                  { policy: "prescribed", adaptations, biomass }      plant adaptations owned at landing (trait ids, one tier each) and / or
 //                                                                       the starting Biomass (null = the normal amount); the engine's own
@@ -48,15 +49,15 @@
   // 036B: the supported values of each launch policy (docs/CHALLENGES_SYSTEM_v1.md §2.3); later milestones add values, never meanings
   const LAUNCH_POLICIES = Object.freeze({
     species: Object.freeze(["player-choice", "prescribed"]),
-    world: Object.freeze(["recipe"]),
+    world: Object.freeze(["seed-bank"]),               // (036B1) the live-search "recipe" policy is retired: worlds come from a prevalidated bank
     startingState: Object.freeze(["normal", "prescribed"]),
   });
   const POLICY_KEYS = Object.freeze({
     species: { "player-choice": ["policy"], prescribed: ["policy", "species"] },
-    world: { recipe: ["policy", "recipe"] },
+    world: { "seed-bank": ["policy", "recipe", "bank"] },
     startingState: { normal: ["policy"], prescribed: ["policy", "adaptations", "biomass"] },
   });
-  // the world recipe's vocabulary: product-level selection constraints the runtime (resources/challenges/challenge-world.js) honours —
+  // the world recipe's vocabulary: product-level selection constraints the offline bank builder (tools/challenge-bank-builder.mjs) honours —
   // never generator parameters, never scenario mechanics. Each constraint is optional except version + archetypes.
   //   version        integer ≥ 1: the recipe's own revision (instance provenance)
   //   archetypes     the archetype ids a Challenge world may be (the stream draws only these; ≥ 1, known, no repeats)
@@ -64,7 +65,9 @@
   //                  share, engine evaluate()), 0…1, min < max — or null (any)
   //   nativeCover    { minStartShare } — (a competition scenario only) the native cover's starting share of the land, as layer P reports
   //                  it (planet-derived, 0…1) — or null
-  const RECIPE_KEYS = Object.freeze(["version", "archetypes", "arrival", "nativeCover"]);
+  //   foothold       { minShare } — the species' S1 connected foothold at landing (growable AND reachable over land from the landing region,
+  //                  BLOOM.species.foothold), 0…1 — or null (BLOOM-036B1: only where a study shows it removes degenerate worlds)
+  const RECIPE_KEYS = Object.freeze(["version", "archetypes", "arrival", "nativeCover", "foothold"]);
   const COMPLETION_WINS = Object.freeze(["bloom"]);     // the normal Bloom win (the planet's own threshold)
   // the scenario-mechanics vocabulary (content/scenarios.js): never inside a Challenge definition, at any depth
   const MECHANICS_KEYS = Object.freeze(["pressure", "competition", "climateInstability", "validation", "loss", "channels", "phases", "graceSeconds",
@@ -122,6 +125,10 @@
         if ("maxHabitable" in A && !isShare(A.maxHabitable)) e.push("launch.world.recipe.arrival.maxHabitable must be a share 0…1");
         if (isShare(A.minHabitable) && isShare(A.maxHabitable) && !(A.minHabitable < A.maxHabitable)) e.push("launch.world.recipe.arrival: minHabitable must be < maxHabitable");
       }
+    }
+    if (R.foothold != null) {
+      const F = R.foothold;
+      if (!F || typeof F !== "object" || Object.keys(F).join() !== "minShare" || !isShare(F.minShare)) e.push("launch.world.recipe.foothold must be { minShare: 0…1 } or null");
     }
     if (R.nativeCover != null) {
       const N = R.nativeCover;
@@ -202,7 +209,8 @@
           try { const sp = B.species && B.species.resolve(v.species); if (!sp || sp.status !== "released") e.push(`launch.species.species "${v.species}" is not a released species`); }
           catch { e.push(`launch.species.species "${v.species}" is not a known species`); }
         }
-        if (k === "world") e.push(...checkRecipe(v.recipe, S));
+        if (k === "world") { e.push(...checkRecipe(v.recipe, S));
+          const BK = v.bank; if (!BK || typeof BK !== "object" || Object.keys(BK).sort().join() !== "size,version" || !isInt(BK.version) || !isInt(BK.size)) e.push("launch.world.bank must be { version, size } (integers ≥ 1)"); }
         if (k === "startingState" && pol === "prescribed") e.push(...checkStart(v));
       }
     }
@@ -281,7 +289,7 @@
   }
   const list = () => catalogue().filter(d => d.status === "released").map(resolveDef);
   const ids = () => list().map(c => c.id);
-  const provenance = ch => ({ id: ch.id, name: ch.name, version: ch.version, recipeVersion: ch.launch.world.recipe.version, scenarioId: ch.scenario, icon: ch.presentation.icon });
+  const provenance = ch => ({ id: ch.id, name: ch.name, version: ch.version, recipeVersion: ch.launch.world.recipe.version, bankVersion: ch.launch.world.bank.version, scenarioId: ch.scenario, icon: ch.presentation.icon });
 
   BLOOM.challenges = { SCHEMA_VERSION, LAUNCH_POLICIES, POLICY_KEYS, RECIPE_KEYS, COMPLETION_WINS, MECHANICS_KEYS, REFERABLE, ICONS, FORBIDDEN_COPY, STATUSES,
     resolve, list, ids, check, checkChallenge, checkRecipe, fixture, scenarioOf, speciesOf, startingStateOf, provenance };

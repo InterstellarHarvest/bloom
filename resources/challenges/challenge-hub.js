@@ -29,7 +29,7 @@ const traitName = id => { const t = (window.BLOOM_DATA.traits || []).find(x => x
 const POLICY_WORDS = {
   species: { "player-choice": () => "You choose your plant: every species is open.",
     prescribed: c => `This Challenge prescribes the plant: ${window.BLOOM.challenges.speciesOf(c).name}.` },
-  world: { recipe: () => "One qualifying Challenge world is generated for your plant: there is no survey and no choosing among worlds." },
+  world: { "seed-bank": () => "One qualifying Challenge world is generated for your plant: there is no survey and no choosing among worlds." },
   startingState: { normal: () => "Your plant lands as it always does: nothing owned yet.",
     prescribed: c => { const st = window.BLOOM.challenges.startingStateOf(c), n = {}; for (const id of st.adaptations) n[id] = (n[id] || 0) + 1;
       return "Your plant lands with what the Challenge gives it: " + [...Object.entries(n).map(([id, k]) => traitName(id) + (k > 1 ? ` ×${k}` : "")), ...(st.biomass != null ? [`${st.biomass} Biomass`] : [])].join(" · ") + "."; } },

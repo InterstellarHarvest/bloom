@@ -52,8 +52,8 @@
 //
 // (BLOOM-036A) CHALLENGES. With a `challengeScreen` factory (the app's Challenge hub) the menu shows CHALLENGES: menu → black → the hub.
 // (BLOOM-036B) A Challenge is a contained run with ONE generated planet — no Destination Survey. BEGIN CHALLENGE on the hub creates the
-// Challenge LAUNCH (`entry.launch`: the Challenge, a fresh launch seed and its ChallengeWorldSearch, whose workers start validating the
-// launch's species-free world stream at once) → Choose Plant Species (only if the Challenge lets the player choose) → PREPARING CHALLENGE
+// Challenge LAUNCH (`entry.launch`: the Challenge, a fresh launch seed and its ChallengeWorldPrep — (036B1) the launch takes its world from
+// the Challenge's prevalidated SEED BANK: no validation runs in the browser; one low-priority worker builds the selected plant's one world) → Choose Plant Species (only if the Challenge lets the player choose) → PREPARING CHALLENGE
 // WORLD → the Challenge Planet Dossier (`challengeWorld.screen`, the app's factory) → BEGIN CHALLENGE → the dramatic departure → the run.
 // Back from the dossier: Choose Plant Species (a player-choice Challenge: the same launch, so the same species again gives the same planet;
 // another species is evaluated anew) or the hub (a prescribed species); Back from the species screen: the hub (the launch is let go —
@@ -99,12 +99,13 @@ export class ExpeditionEntry {
     this.speciesView = null; this.carry = null; // carry: { pool, sectorSeed, firstBloom } kept across Change Species
     // (036A) the Challenge hub factory (the app's), the Challenge the flow is in (null: an Expedition) and the hub view
     this.challengeScreen = typeof challengeScreen === "function" ? challengeScreen : null; this.challenge = null; this.challengeView = null;
-    // (036B) the Challenge world: the app's { load() → the module (ChallengeWorldSearch, newLaunchSeed), screen(host, opts) → the Preparing /
-    // Dossier view }; the current launch { challenge, launchSeed, search } (null outside a Challenge); `launchSeed` fixes the NEXT launch's
+    // (036B) the Challenge world: the app's { load() → the module (ChallengeWorldPrep, newLaunchSeed), screen(host, opts) → the Preparing /
+    // Dossier view }; the current launch { challenge, launchSeed, prep } (null outside a Challenge); (036B1) `recent`: cellKey → the bank entry
+    // indices played in this session (in memory only — never storage), so a new launch avoids an immediate repeat; `launchSeed` fixes the NEXT launch's
     // seed (development / QA), consumed once
     this.challengeWorld = challengeWorld && typeof challengeWorld.screen === "function" && typeof challengeWorld.load === "function" ? challengeWorld : null;
     if (this.challengeScreen && !this.challengeWorld) throw new TypeError("ExpeditionEntry: the Challenge hub needs a challengeWorld (the one-planet launch)");
-    this.launch = null; this.worldView = null; this.nextLaunchSeed = launchSeed;
+    this.launch = null; this.worldView = null; this.nextLaunchSeed = launchSeed; this.recent = new Map();
     this.stats = { begins: 0, returns: 0, entries: [], exits: [], prefetches: [], prompts: 0, promptChoices: [], leaves: 0, runs: 0, resumes: [], species: [], challenges: [], launches: [], worlds: [] };
     if (getComputedStyle(root).position === "static") root.style.position = "relative";
     this.menuHost = host(root, "ee-menu"); this.surveyHost = host(root, "ee-survey"); this.surveyHost.hidden = true;
@@ -302,7 +303,7 @@ export class ExpeditionEntry {
   async _openSpecies(rm, rec, t0) {
     this.speciesHost.hidden = false; this.speciesHost.inert = false;
     // (036B) inside a Challenge the launch prepares the SELECTED plant's world while the player reads (choosing it joins that work)
-    const warm = this.challenge && this.launch ? sp => { if (this.launch) this.launch.search.warm(sp); } : null;
+    const warm = this.challenge && this.launch ? sp => { if (this.launch) this.launch.prep.prepare(sp); } : null;
     if (warm) warm(this.species);
     const view = this.speciesView = this.speciesScreen(this.speciesHost, { species: this.species, reducedMotion: rm, challenge: this.challenge, onSelect: warm, // (036A) the screen names it
       onChoose: sp => { this._speciesChosen(sp).catch(err => console.error("ExpeditionEntry: could not open the survey", err)); },
@@ -402,8 +403,7 @@ export class ExpeditionEntry {
   }
   _closeChallenges() { const v = this.challengeView; this.challengeView = null; if (v) v.dispose(); this.challengeHost.hidden = true; this.challengeHost.replaceChildren(); }
 
-  /** BEGIN CHALLENGE: black → the hub goes → the LAUNCH (a fresh launch seed; its search starts validating the launch's species-free world
-   *  stream) → Choose Plant Species (a player-choice Challenge) or straight to PREPARING CHALLENGE WORLD (a prescribed species) → black lifts. */
+  /** BEGIN CHALLENGE: black → the hub goes → the LAUNCH (a fresh launch seed; (036B1) its one world worker starts idle) → Choose Plant Species (a player-choice Challenge) or straight to PREPARING CHALLENGE WORLD (a prescribed species) → black lifts. */
   async _challengeChosen(ch) {
     if (this.state !== "challenges") return false;
     const B = globalThis.BLOOM;
@@ -429,17 +429,20 @@ export class ExpeditionEntry {
     }
   }
 
-  /** (036B) the Challenge launch: its seed (a fixed development / QA seed once, else fresh) and its search (the app's module). */
+  /** (036B) the Challenge launch: its seed (a fixed development / QA seed once, else fresh) and (036B1) its seed-bank preparation. */
   async _startLaunch(ch) {
     this._endLaunch();
     const M = await this.challengeWorld.load(), seed = this.nextLaunchSeed != null ? this.nextLaunchSeed : M.newLaunchSeed(); this.nextLaunchSeed = null;
-    const search = new M.ChallengeWorldSearch({ challenge: ch, launchSeed: seed, ...(this.poolOpts.workers ? { workers: this.poolOpts.workers } : {}), worker: this.poolOpts.worker });
-    this.launch = { challenge: ch, launchSeed: seed, search, at: performance.now() };
+    const recent = new Map([...this.recent].map(([k, v]) => [k, v.slice()]));   // this launch's view of the session history (fixed for the launch)
+    const prep = new M.ChallengeWorldPrep({ challenge: ch, launchSeed: seed, avoid: key => recent.get(key) || [], worker: this.poolOpts.worker });
+    this.launch = { challenge: ch, launchSeed: seed, prep, at: performance.now() };
     this.stats.launches.push({ challenge: ch.id, launchSeed: seed, at: this.launch.at });
     return this.launch;
   }
   /** (036B) let the launch go: its workers terminated, its held worlds dropped (a planet a run already holds is untouched). */
-  _endLaunch() { const L = this.launch; this.launch = null; if (L && L.search) L.search.dispose(); }
+  _endLaunch() { const L = this.launch; this.launch = null; if (L && L.prep) L.prep.dispose(); }
+  /** (036B1) a Challenge run began on this bank entry: remembered for this session (in memory) so the next launch avoids repeating it */
+  noteChallengeRun(X) { const k = X.bank.cellKey, a = (this.recent.get(k) || []).filter(i => i !== X.entryIndex); a.push(X.entryIndex); this.recent.set(k, a.slice(-16)); }
 
   /** (036B) At full black: PREPARING CHALLENGE WORLD for this entry's species, which becomes the dossier; lift the black. */
   async _openWorld(rm, rec, t0) {
@@ -447,7 +450,7 @@ export class ExpeditionEntry {
     this.worldHost.hidden = false; this.worldHost.inert = false;
     const wrec = { challenge: L.challenge.id, launchSeed: L.launchSeed, species: this.species.id, at: performance.now(), outcome: null, readyMs: null };
     this.stats.worlds.push(wrec);
-    const view = this.worldView = this.challengeWorld.screen(this.worldHost, { challenge: L.challenge, species: this.species, search: L.search, reducedMotion: rm,
+    const view = this.worldView = this.challengeWorld.screen(this.worldHost, { challenge: L.challenge, species: this.species, prep: L.prep, reducedMotion: rm,
       descent: this.descent ? { ...this.descent, transition: this.descent.transition || this.atx } : null,
       onBegin: d => this._worldBegin(d),
       onBack: () => { this._worldBack().catch(err => console.error("ExpeditionEntry: could not go back from the Challenge world", err)); } });
