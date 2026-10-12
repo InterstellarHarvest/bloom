@@ -1366,7 +1366,8 @@ const API=root.BLOOM_API={
   }
 
   /**
-   * (BLOOM-036B) The run descriptor of a CHALLENGE: a Challenge instance (resources/challenges/challenge-world.js makeInstance, the dossier's
+   * (BLOOM-036B) The run descriptor of a CHALLENGE: a Challenge instance ((036B1) resources/challenges/challenge-bank.js makeBankInstance — a
+   * prevalidated seed-bank world; the dossier's
    * BEGIN CHALLENGE) → { kind, play, planet, archetype, seed, scenario, challenge, species, startingState, challengeRun, render, summary }.
    * `planet` IS instance.planet — the exact object the Challenge's selection accepted and the dossier drew (no copy, no regeneration, no
    * search). Every part is cross-checked against the CURRENT catalogue, and an instance made under another Challenge version, recipe
@@ -1375,7 +1376,8 @@ const API=root.BLOOM_API={
    */
   function challengeRun(X, { BLOOM_DATA = root.BLOOM_DATA, fingerprint = null } = {}) {
     const B = root.BLOOM, D = BLOOM_DATA || {};
-    if (!X || X.kind !== "challenge-instance" || X.format !== 1) throw new TypeError("BLOOM.gameSession.challengeRun: a Challenge instance (format 1) is required");
+    // (036B1) a SEED-BANK instance (format 2): its world was proven offline; 036B's live-search instances (format 1) are refused
+    if (!X || X.kind !== "challenge-instance" || X.format !== 2 || X.source !== "seed-bank" || !X.bank) throw new TypeError("BLOOM.gameSession.challengeRun: a seed-bank Challenge instance (format 2) is required");
     if (!B.challenges) throw new Error("BLOOM.gameSession.challengeRun: load content/challenges.js and resources/bloom-challenges.js");
     const ch = B.challenges.resolve(X.challengeId);                                  // an unknown id throws (never a silent Expedition)
     if (ch !== X.challenge) throw new Error(`BLOOM.gameSession.challengeRun: the instance's Challenge is not the canonical ${X.challengeId} object`);
@@ -1396,8 +1398,10 @@ const API=root.BLOOM_API={
     const A = Array.isArray(D.archetypes) ? D.archetypes.find(a => a.id === X.archetypeId) || null : null;
     const archetype = A || { id: X.archetypeId, name: (P.archetype && P.archetype.name) || X.archetypeId, render: X.render || null, display: null, standIn: true };
     const pa = P.archetype || null;
-    const challengeRun = { source: "challenge-recipe", challengeId: ch.id, challengeVersion: ch.version, recipeVersion: X.recipeVersion, recipeKey: ch.recipeKey, ruleVersion: X.ruleVersion,
-      scenarioId: scenario.id, speciesId: species.id, speciesPolicy: X.speciesPolicy, physiologyKey: species.physiologyKey, launchSeed: X.launchSeed, draw: X.draw,
+    if (ch.launch.world.bank.version !== X.bank.bankVersion) throw new Error(`BLOOM.gameSession.challengeRun: the instance came from bank v${X.bank.bankVersion}, the Challenge ships v${ch.launch.world.bank.version}`);
+    const challengeRun = { source: "seed-bank", challengeId: ch.id, challengeVersion: ch.version, recipeVersion: X.recipeVersion, recipeKey: ch.recipeKey,
+      bankVersion: X.bank.bankVersion, cellKey: X.bank.cellKey, entryIndex: X.entryIndex, entries: X.bank.entries, validator: X.bank.validator,
+      scenarioId: scenario.id, speciesId: species.id, speciesPolicy: X.speciesPolicy, physiologyKey: species.physiologyKey, launchSeed: X.launchSeed,
       planetSeed: X.worldSeed, archetypeId: X.archetypeId, attempt: X.candidate.attempt, fingerprint: fingerprint || X.fingerprint, instanceFingerprint: X.fingerprint,
       startingState: start ? { adaptations: [...start.adaptations], biomass: start.biomass, source: "challenge" } : null, scenarioValidation: { status: sv.status, strategiesProven: sv.strategiesProven } };
     const summary = { kind: "procedural", challenge: B.challenges.provenance(ch), source: challengeRun.source, planetId: P.id, name: P.name, archetypeId: X.archetypeId,

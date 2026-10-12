@@ -226,12 +226,15 @@
       if (!r.ok && capped) r = { ...r, inconclusive: true, reason: `search capped at ${V.maxStaticStates} static builds (result inconclusive): ${r.reason}` };
       return { ...r, search, early, bestStatic: { coverage: bestStatic.cov, build: bestStatic.items } }; };
     const CONFIRM = (SCN && SCN.validation && SCN.validation.confirmRngSeeds) || [];
+    // (BLOOM-036B1) opts.trace: an opt-in record of every simulation run in order — { k: "w" witness | "c" confirmation, ms, ok } — so a
+    // total-run budget can be replayed exactly offline (absent = no record; the search and its result are unchanged either way)
+    const TR = opts.trace ? (search.trace = []) : null, timed = (k, f) => { if (!TR) return f(); const t = Date.now(), x = f(); TR.push({ k, ms: Date.now() - t, ok: !!x.ok }); return x; };
     const run = (cand, opening, measurePeak) => { search.simulations++;
-      const plan = [...opening.o, ...order(cand.items, opening.mode)], r = simulate(planet, config, traits, plan, target, !!measurePeak, SCN, null, SP, ST);
+      const plan = [...opening.o, ...order(cand.items, opening.mode)], r = timed("w", () => simulate(planet, config, traits, plan, target, !!measurePeak, SCN, null, SP, ST));
       if (SCN && FIN) r.order = opening.mode;
       if (r.ok && CONFIRM.length) { // robustness: the same plan under other simulation seeds (each a full run: margin + hold)
         // (confirmation runs verify a found witness; they are counted apart and never use up the search budget)
-        r.confirm = CONFIRM.map(seed => { search.confirmations = (search.confirmations || 0) + 1; const c = simulate(planet, config, traits, plan, target, false, SCN, seed, SP, ST);
+        r.confirm = CONFIRM.map(seed => { search.confirmations = (search.confirmations || 0) + 1; const c = timed("c", () => simulate(planet, config, traits, plan, target, false, SCN, seed, SP, ST));
           return { rngSeed: seed, ok: c.ok, marginSeconds: c.marginSeconds, hold: c.hold && { coverage: c.hold.coverage, held: c.hold.held }, lost: c.lost,
             ...(c.climate ? { shocks: c.climate.shocks.length, noEvidence: c.climate.noEvidence } : {}) }; });
         if (r.confirm.some(c => !c.ok)) { r.ok = false; r.unconfirmed = true; } }

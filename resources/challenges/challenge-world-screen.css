@@ -99,7 +99,6 @@
 .cw-bar-key span{display:inline-flex; align-items:center; gap:5px}
 .cw-bar-key .ic{width:15px; height:15px; padding:2px; border-radius:50%; stroke-width:3.4; color:var(--bloom-space-1); box-sizing:border-box}
 .cw-bar-key .ok .ic{background:var(--bloom-ok-night)} .cw-bar-key .warn .ic{background:var(--bloom-warn-night)} .cw-bar-key .bad .ic{background:var(--bloom-bad-night)}
-.cw-foot{margin:6px 0 0; font-size:13px; font-weight:700; color:var(--ink-soft)}
 .cw-rows{margin:10px 0 0; display:grid; gap:6px}
 .cw-row{--cat:var(--ink-soft); position:relative; display:grid; grid-template-columns:minmax(0, 40fr) minmax(0, 60fr); grid-template-rows:auto auto; align-items:center; column-gap:12px;
   min-height:42px; padding:5px 10px 5px 48px; border-radius:10px;

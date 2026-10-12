@@ -3,20 +3,21 @@
 // alternatives, no reroll.
 //
 //   import { ChallengeWorldScreen } from "<repo>/resources/challenges/challenge-world-screen.js";
-//   const s = new ChallengeWorldScreen(host, { challenge, species, search, reducedMotion, descent, onBack });
+//   const s = new ChallengeWorldScreen(host, { challenge, species, prep, reducedMotion, descent, onBack });
 //   await s.ready (drawn) · s.prepared (the selection's outcome) · s.state ("preparing" | "ready" | "failed" | "departing" | "departed" | "disposed")
 //   s.begin() · s.back() · s.focus() · s.dispose()
 //
-// PREPARING. The screen asks the launch's ChallengeWorldSearch for the species' planet and shows only the real phase the search reports —
-// "Searching candidate worlds" (physical worlds of the stream), "Checking <Challenge> conditions" (a world passed the recipe and the
-// species and its Challenge proof — layer P — is running), "Preparing your planet" (the accepted instance is being put on screen). No
-// percentage (there is no real denominator: the first qualifying world ends the search), no rejected world, no count of rejections.
-// Back cancels the search at once (its workers are terminated) and leaves.
-//
+// PREPARING (036B1, seed banks). The launch's ChallengeWorldPrep picks the species' ONE prevalidated bank world and rebuilds it; the screen
+// shows only the real phases it reports — "Selecting a proven world" · "Building the planet" (the exact accepted attempt regenerated in a
+// worker) · "Verifying the planet" (its fingerprint checked against the bank's proof). No Challenge proof runs here (it was done offline),
+// so nothing claims to be checking Challenge conditions. No percentage, no rejected world. If the world was already built while the player
+// read Choose Plant Species, the dossier is drawn under the black and the PREPARING state is never shown (no flash). Back cancels the build.
+// A stale bank / a fingerprint mismatch is an invariant failure: the screen says the world could not be prepared and offers Back.
 // THE DOSSIER. CHALLENGE (name, what changes, the strategic idea) · YOUR PLANT (the species — a prescribed one says so — its specimen with
 // any prescribed adaptations, and a prescribed starting state) · YOUR WORLD (a PlanetSphereView of the EXACT accepted planet, its name, world
-// type, World Seed, the ground the plant can live on at landing and its foothold, the conditions rows and the expected hazards — the survey's own dossier
-// data, computed for this species and starting state). Primary BEGIN CHALLENGE, secondary Back. Nothing here regenerates, rerolls or
+// type, World Seed, the ground the plant can live on at landing, the conditions rows and the expected hazards — the survey's own dossier
+// data, computed for this species and starting state). (036B1, PMO: no separate "Foothold" line — the S1 connected-foothold metric stays in
+// the instance, candidate.playability.s1, for validation, studies and QA; beside the arrival bar it read as a contradiction.) Primary BEGIN CHALLENGE, secondary Back. Nothing here regenerates, rerolls or
 // offers another world: entering the Challenge again from the hub is the route to a fresh instance.
 //
 // DEPARTURE. BEGIN CHALLENGE plays the survey's dramatic departure: the dossier recedes, the same live globe grows toward the viewer and the
@@ -26,8 +27,7 @@ import { PlanetSphereView, PlanetSphereRenderer } from "../planet-sphere/planet-
 import { AtmosphereTransition } from "../atmosphere-transition/atmosphere-transition.js";
 import { ico } from "../ui/bloom-icons.js";
 // the launch's parts, from this one lazily loaded module (the app loads it on the first BEGIN CHALLENGE; file://: the portable seam)
-export { ChallengeWorldSearch } from "./challenge-world-search.js";
-export { newLaunchSeed } from "./challenge-world.js";
+export { ChallengeWorldPrep, newLaunchSeed } from "./challenge-world-prep.js";
 
 const CSS_URL = new URL("./challenge-world-screen.css", import.meta.url).href;
 function attachCss() { if (document.querySelector('link[data-bloom="challenge-world"]')) return;
@@ -37,31 +37,33 @@ const pct = x => Math.round(x * 100);
 const GLOBE_DISTANCE = 3.4, DOLLY_TO = 1.45;
 const T = { recede: 320, recedeRm: 200, dolly: 2500, dollyDelay: 120, cloudsAfter: 1000, minPrepare: 450 };
 const ROW_CAT = { climate: ["temperature", "temp"], water: ["water", "water"], soil: ["soil", "soil"], atmosphere: [null, "sky"], solar: ["hazard", "heat"] };
-const PHASES = ["search", "check", "prepare"];
+const PHASES = ["select", "build", "verify"];
+const SKIP_WAIT = 250;   // a world already prepared shows the dossier directly (drawn under the black): no PREPARING flash
 
 export class ChallengeWorldScreen {
   /**
    * challenge       the resolved Challenge (canonical object)
    * species         the canonical species object (the player's choice, or the Challenge's prescribed one)
-   * search          the launch's ChallengeWorldSearch (owned by the caller: it outlives this screen across a species change)
+   * prep            the launch's ChallengeWorldPrep (owned by the caller: it outlives this screen across a species change)
    * descent         { onCovered(detail, info), transition, seed, onError } — the departure consumer (the app), as the survey's
-   * onBack          Back (preparing: cancels the search first)
+   * onBack          Back (preparing: cancels the build first)
    * onBegin(detail)  BEGIN CHALLENGE was pressed (also dispatched as a bubbling "bloom:begin-challenge" event on the screen)
    */
-  constructor(host, { challenge, species, search, reducedMotion = null, descent = null, onBack = null, onBegin = null } = {}) {
+  constructor(host, { challenge, species, prep, reducedMotion = null, descent = null, onBack = null, onBegin = null } = {}) {
     if (!host || typeof host.appendChild !== "function") throw new TypeError("ChallengeWorldScreen: host must be a DOM element");
-    if (!search || search.challenge !== challenge) throw new TypeError("ChallengeWorldScreen: the launch's search is for another Challenge");
+    if (!prep || prep.challenge !== challenge) throw new TypeError("ChallengeWorldScreen: the launch's preparation is for another Challenge");
     if (descent && typeof descent.onCovered !== "function") throw new TypeError("ChallengeWorldScreen: descent.onCovered must be a function");
-    this.host = host; this.challenge = challenge; this.species = species; this.search = search; this.descent = descent; this.onBack = onBack; this.onBegin = onBegin;
+    this.host = host; this.challenge = challenge; this.species = species; this.prep = prep; this.descent = descent; this.onBack = onBack; this.onBegin = onBegin;
     this.forcedReducedMotion = reducedMotion; this.mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
-    this.state = "preparing"; this.phase = "search"; this.instance = null; this.view = null; this.disposed = false;
+    this.state = "preparing"; this.phase = "select"; this.instance = null; this.view = null; this.disposed = false;
     this.stats = { t0: performance.now(), readyMs: null, phases: [], begins: 0, backs: 0, outcome: null };
     attachCss();
     this._build();
-    const css = new Promise(res => { const l = document.querySelector('link[data-bloom="challenge-world"]'), done = () => res();
+    const css = this._css = new Promise(res => { const l = document.querySelector('link[data-bloom="challenge-world"]'), done = () => res();
       if (!l || l.sheet) return done(); l.addEventListener("load", done, { once: true }); l.addEventListener("error", done, { once: true }); setTimeout(done, 3000); });
-    this.ready = css.then(() => this);
     this.prepared = this._prepare();
+    // ready (the consumer lifts the black after it): the stylesheet, and — briefly — a world that is already prepared, so it is drawn directly
+    this.ready = css.then(() => Promise.race([this.prepared.catch(() => {}), new Promise(r => setTimeout(r, SKIP_WAIT))])).then(() => this);
   }
 
   get reducedMotion() { return this.forcedReducedMotion ?? !!(this.mq && this.mq.matches); }
@@ -69,10 +71,10 @@ export class ChallengeWorldScreen {
 
   focus() { if (this.state === "ready") this.title.focus({ preventScroll: true }); else this.backBtn.focus({ preventScroll: true }); }
 
-  /** Back: preparing → the search is cancelled (its workers terminated); ready / failed → leave. The consumer decides where (§3). */
+  /** Back: preparing → the build is cancelled (its worker terminated); ready / failed → leave. The consumer decides where (§3). */
   back() {
     if (this.disposed || this.state === "departing" || this.state === "departed") return false;
-    if (this.state === "preparing") this.search.cancel();
+    if (this.state === "preparing") this.prep.cancel();
     this.stats.backs++; this.state = "leaving"; this.root.dataset.state = "leaving";
     if (this.onBack) this.onBack(this);
     return true;
@@ -102,7 +104,7 @@ export class ChallengeWorldScreen {
 
   dispose() {
     if (this.disposed) return; this.disposed = true;
-    if (this.state === "preparing") this.search.cancel();
+    if (this.state === "preparing") this.prep.cancel();
     this.state = "disposed";
     if (this._dollyFrame) cancelAnimationFrame(this._dollyFrame);
     for (const a of this._anims || []) a.cancel();
@@ -115,14 +117,18 @@ export class ChallengeWorldScreen {
 
   // ---------------------------------------------------------------- preparing
   async _prepare() {
-    this._phase("search");
+    this._phase("select");
     let out;
-    try { out = await this.search.select(this.species, { onProgress: p => this._phase(p.phase) }); }
+    try { out = await this.prep.select(this.species, { onProgress: p => this._phase(p.phase) }); }
     catch (err) { if (this.disposed) return { ok: false, cancelled: true }; this._failed(String(err && err.message || err)); throw err; }
     if (this.disposed || this.state !== "preparing") return out;
-    if (!out.ok) { if (!out.cancelled) this._failed(null); return out; }
-    this._phase("prepare");
-    const left = T.minPrepare - (performance.now() - this.stats.t0); if (left > 0 && !this.reducedMotion) await new Promise(r => setTimeout(r, left)); // no one-frame flash
+    if (!out.ok) { if (!out.cancelled) this._failed(out.code || out.error || "error"); return out; }
+    // a world that arrives while the screen is still under the black (it was prepared on Choose Plant Species): straight to the dossier.
+    // Otherwise PREPARING was visible: keep it on screen at least a beat, so it never flashes
+    const at = performance.now() - this.stats.t0;
+    if (at > SKIP_WAIT) { const left = T.minPrepare - at; if (left > 0 && !this.reducedMotion) await new Promise(r => setTimeout(r, left)); }
+    else this.stats.skippedPreparing = true;
+    await this._css;   // (036B1) a bank world can arrive before the stylesheet: the dossier (globe, transition) is laid out only with it
     if (this.disposed || this.state !== "preparing") return out;
     this.instance = out.instance; this._fillDossier(out.instance);
     this.state = "ready"; this.root.dataset.state = "ready"; this.stats.readyMs = Math.round(performance.now() - this.stats.t0); this.stats.outcome = "ready";
@@ -140,9 +146,11 @@ export class ChallengeWorldScreen {
     this.status.textContent = this.steps[k].textContent.trim();
   }
 
-  _failed(error) {
-    this.state = "failed"; this.root.dataset.state = "failed"; this.stats.outcome = error ? "error" : "exhausted";
-    this.failEl.querySelector("p").textContent = error ? "Something went wrong while preparing this Challenge world." : "No qualifying world turned up in this part of space.";
+  _failed(code) {
+    this.state = "failed"; this.root.dataset.state = "failed"; this.stats.outcome = code || "error";
+    // (036B1) an invariant failure, never a search for another world: a stale / missing bank, or a world that did not match its proof
+    this.failEl.querySelector("p").textContent = code === "STALE_BANK" || code === "NO_BANK" ? "This Challenge's proven worlds are out of date, so none can be prepared."
+      : code === "FINGERPRINT_MISMATCH" ? "The prepared world did not match its proof, so it was not used." : "Something went wrong while preparing this Challenge world.";
     this.backBtn.focus({ preventScroll: true });
   }
 
@@ -164,13 +172,13 @@ export class ChallengeWorldScreen {
           <h2 id="${tid}-p">Preparing challenge world</h2>
           <p class="cw-for">${esc(ch.name)} · ${esc(sp.name)}</p>
           <ol class="cw-steps">
-            <li data-step="now">Searching candidate worlds</li>
-            <li data-step="next">Checking ${esc(ch.name)} conditions</li>
-            <li data-step="next">Preparing your planet</li>
+            <li data-step="now">Selecting a proven world</li>
+            <li data-step="next">Building the planet</li>
+            <li data-step="next">Verifying the planet</li>
           </ol>
           <p class="cw-status sr-only" role="status" aria-live="polite"></p>
         </div>
-        <div class="cw-fail" hidden><p></p><span>Go back and begin the Challenge again to look elsewhere.</span></div>
+        <div class="cw-fail" hidden><p></p><span>Go back.</span></div>
       </div>
       <div class="cw-body">
         <div class="cw-globe-col"><div class="cw-stage"><div class="cw-globe"></div></div><p class="cw-seed"></p></div>
@@ -199,8 +207,7 @@ export class ChallengeWorldScreen {
               <p class="cw-type"></p><p class="cw-tagline"></p>
               <div class="cw-hab"><div class="cw-hab-top"><span>Ground your plant can live on at landing</span><b></b></div>
                 <div class="cw-bar" role="img"><i class="g"></i><i class="y"></i><i class="r"></i></div>
-                <div class="cw-bar-key" aria-hidden="true"><span class="ok">${ico("check")}<span>Suits</span></span><span class="warn">${ico("alert")}<span>Marginal</span></span><span class="bad">${ico("x")}<span>Hostile</span></span></div>
-                <p class="cw-foot" hidden></p></div>
+                <div class="cw-bar-key" aria-hidden="true"><span class="ok">${ico("check")}<span>Suits</span></span><span class="warn">${ico("alert")}<span>Marginal</span></span><span class="bad">${ico("x")}<span>Hostile</span></span></div></div>
               <dl class="cw-rows"></dl>
               <section class="cw-hazards"><h3>${ico("hazard")}Expected hazards</h3><ul></ul></section>
             </section>
@@ -232,11 +239,6 @@ export class ChallengeWorldScreen {
     const bar = q(".cw-bar"); bar.setAttribute("aria-label", `At landing: ${pct(h.green)}% of the land suits your plant, ${pct(h.yellow)}% is marginal, ${pct(h.red)}% is hostile`);
     [["g", h.green], ["y", h.yellow], ["r", h.red]].forEach(([k, v]) => { bar.querySelector("." + k).style.width = (v * 100).toFixed(1) + "%"; });
     [["ok", "Suits", h.green], ["warn", "Marginal", h.yellow], ["bad", "Hostile", h.red]].forEach(([k, w, v]) => { q(`.cw-bar-key .${k} span`).textContent = `${w} ${pct(v)}%`; });
-    // the foothold (the S1 measure: land the plant can grow on at landing AND reach over land from its landing region) — shown for the normal
-    // start only (S1 is measured without a prescribed start, so it would understate one)
-    const s1 = X.candidate.playability && X.candidate.playability.s1, foot = q(".cw-foot");
-    foot.hidden = !(s1 && X.startingState === null && Number.isFinite(s1.reachableShare));
-    if (!foot.hidden) foot.textContent = `Foothold: ${pct(s1.reachableShare)}% of the land is growable at landing and reachable over land from your landing region.`;
     q(".cw-rows").innerHTML = d.rows.map(r => { const [cat, icon] = ROW_CAT[r.id] || [null, "info"];
       return `<div class="cw-row"${cat ? ` data-cat="${cat}"` : ""}><dt><span class="cw-row-i" aria-hidden="true">${ico(icon)}</span>${esc(r.label)}</dt><dd><b>${esc(r.word)}</b><span class="cw-row-v">${esc(r.value)}</span></dd></div>`; }).join("");
     q(".cw-hazards ul").innerHTML = d.challenges.length ? d.challenges.map(c => `<li>${esc(c.text)}${c.share != null ? ` <small>· ${pct(c.share)}% of land</small>` : ""}</li>`).join("")

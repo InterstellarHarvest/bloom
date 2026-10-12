@@ -1,6 +1,6 @@
 // BLOOM — pressure-scenario validation layer (BLOOM-012). No DOM.
 //
-//   BLOOM.validateScenario(planet, config, traits, scenario, { archetypeId, minStrategies, species, startingState, maxRuns }) → verdict
+//   BLOOM.validateScenario(planet, config, traits, scenario, { archetypeId, minStrategies, species, startingState, maxRuns, trace }) → verdict
 //
 // The archetype layers 1–8 (bloom-validate / bloom-archetype) keep validating the underlying DEFAULT-scenario planet; they say nothing
 // about a pressure run. This separate layer ("layer P") proves that ONE planet + ONE scenario is a fair combination, using
@@ -42,7 +42,7 @@
     // (BLOOM-036B) opts.startingState: a prescribed start (a Challenge's) — every witness and probe starts from it
     const SPO = { ...(opts.species ? { species: opts.species } : {}), ...(opts.startingState ? { startingState: opts.startingState } : {}) };
     // (BLOOM-036B) opts.maxRuns: an opt-in early stop on all simulation runs (a Challenge world's proof budget); absent = unchanged
-    const r = BLOOM.findStrategies(planet, config, traits, { minStrategies: need, pacing: V.pacing || null, scenario: S, ...SPO, ...(opts.maxRuns ? { maxRuns: opts.maxRuns } : {}) });
+    const r = BLOOM.findStrategies(planet, config, traits, { minStrategies: need, pacing: V.pacing || null, scenario: S, ...SPO, ...(opts.maxRuns ? { maxRuns: opts.maxRuns } : {}), ...(opts.trace ? { trace: true } : {}) });
     const max = BLOOM.pressure.maxOffsets(S.pressure, planet.globalClimate);
     const pressure = S.pressure ? { graceSeconds: S.pressure.graceSeconds, fullAtSeconds: S.pressure.graceSeconds + S.pressure.durationSeconds,
       maxOffsets: { temp: +max.temp.toFixed(2), moist: +max.moist.toFixed(2), rad: +max.rad.toFixed(2) }, holdFinalSeconds: V.holdFinalSeconds || 0 } : null;

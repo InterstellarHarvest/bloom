@@ -59,7 +59,7 @@ const loadSpeciesScreen = () => speciesModule || (speciesModule = (window.BLOOM.
 const CHALLENGES_URL = new URL("../challenges/challenge-hub.js", import.meta.url).href;
 let challengesModule = null;
 const loadChallengeHub = () => challengesModule || (challengesModule = (window.BLOOM.modules && BLOOM.modules.portable ? BLOOM.modules.load(CHALLENGES_URL) : import(CHALLENGES_URL)));
-// (036B) the Challenge world (PREPARING CHALLENGE WORLD / the dossier, and the launch's search), loaded on the first BEGIN CHALLENGE
+// (036B) the Challenge world (PREPARING CHALLENGE WORLD / the dossier, and (036B1) the launch's seed-bank preparation), loaded on the first BEGIN CHALLENGE
 const WORLD_URL = new URL("../challenges/challenge-world-screen.js", import.meta.url).href;
 let worldModule = null;
 const loadChallengeWorld = () => worldModule || (worldModule = (window.BLOOM.modules && BLOOM.modules.portable ? BLOOM.modules.load(WORLD_URL) : import(WORLD_URL)));
@@ -148,6 +148,7 @@ export class AppController {
     try { await this._mount(BLOOM.gameSession.challengeRun(X, { fingerprint: rec.fingerprint })); }
     catch (err) { this._disposeSession(); this.entry.state = "challenge-world"; this.entry.worldHost.hidden = false; this.entry.worldHost.inert = false; throw err; } // the dossier comes back under the same cover
     this.challengeRun = { instance: X, fingerprint: rec.fingerprint }; this.expedition = null;
+    this.entry.noteChallengeRun(X);                              // (036B1) in-session repeat avoidance (memory only)
     rec.sessionAt = performance.now(); rec.planetIsSelected = this.session.planet === X.planet; rec.speciesIsSelected = this.session.run.species === X.species;
     rec.challengeIsSelected = this.session.run.challenge === X.challenge;
     this._ev("depart", { key: rec.key, fingerprint: rec.fingerprint, species: X.speciesId, challenge: X.challengeId, scenario: this.session.run.scenario.id, launchSeed: X.launchSeed });

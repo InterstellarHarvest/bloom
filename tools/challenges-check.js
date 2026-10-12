@@ -12,8 +12,8 @@
 //      a prescribed species that is not released, an unknown recipe key / archetype, a bad arrival band, a Terraform / crossing / over-max
 //      starting adaptation, negative Biomass, a fixture in the catalogue), completion conditions / another win and difficulty words
 //   C4 validated and frozen: resolve() is deep-frozen and identical per id; an unknown id throws UNKNOWN_CHALLENGE
-//   C5 the schema-2 launch of the three released Challenges: player-choice species · a recipe world (the calibrated recipes) · the normal
-//      start · completion bloom / []; versions 2 / recipe 1; the recipe key
+//   C5 the launch of the three released Challenges: player-choice species · a SEED-BANK world (the calibrated recipe + bank { 1, 50 }) · the
+//      normal start · completion bloom / []; Challenge version 3 (036B1) / recipe 1; the recipe key
 //   C6 no Challenge plumbing in the Destination Survey any more (036A's scenario layer removed: the survey is the Expedition's only)
 //   C20 no difficulty-ranking language in any Challenge copy
 // BROWSER (Chromium AND Firefox):
@@ -59,12 +59,12 @@ const { BLOOM, BLOOM_DATA: D } = globalThis;
   // C3
   { const src = fs.readFileSync(path.join(ROOT, "content/challenges.js"), "utf8").replace(/\/\/.*$/gm, "");
     const keyHits = C.MECHANICS_KEYS.filter(k => new RegExp(`\\b${k}\\s*:`).test(src));
-    const numbers = /\b\d+(\.\d+)?\b/.test(src.replace(/version: \d+/g, "").replace(/(minHabitable|maxHabitable|minStartShare): [\d.]+/g, "").replace(/\b0x[0-9a-f]+\b/gi, ""));
+    const numbers = /\b\d+(\.\d+)?\b/.test(src.replace(/(version|size): \d+/g, "").replace(/(minHabitable|maxHabitable|minStartShare): [\d.]+/g, "").replace(/\b0x[0-9a-f]+\b/gi, ""));
     const ownCopy = s => { const out = []; const w = v => { if (typeof v === "string") out.push(v); else if (v && typeof v === "object") Object.values(v).forEach(w); }; w(s.display); return out; };
     const verbatim = list.flatMap(c => { const own = ownCopy(C.scenarioOf(c)), d = D.challenges.find(x => x.id === c.id);
       return [d.short, ...Object.values(d.presentation)].filter(v => typeof v === "string" && !v.startsWith("@scenario.") && own.includes(v)).map(v => `${c.id}: ${v.slice(0, 30)}`); });
     const refs = list.map(c => c.sources), d0 = D.challenges[0], d1 = D.challenges[1], S = scenarios, L = d0.launch, R0 = L.world.recipe;
-    const W = recipe => ({ ...d0, launch: { ...L, world: { policy: "recipe", recipe: { ...R0, ...recipe } } } });
+    const W = recipe => ({ ...d0, launch: { ...L, world: { ...L.world, recipe: { ...R0, ...recipe } } } });
     const ST = st => ({ ...d0, launch: { ...L, startingState: { policy: "prescribed", adaptations: [], biomass: null, ...st } } });
     const refuse = {
       mechanics: C.check([{ ...d0, launch: { ...L }, pressure: { graceSeconds: 1 } }], S),
@@ -76,6 +76,11 @@ const { BLOOM, BLOOM_DATA: D } = globalThis;
       oldPolicyString: C.check([{ ...d0, launch: { ...L, species: "player-choice" } }], S),
       surveyWorld: C.check([{ ...d0, launch: { ...L, world: { policy: "destination-survey" } } }], S),
       authoredWorld: C.check([{ ...d0, launch: { ...L, world: { policy: "authored", planet: "first_bloom" } } }], S),
+      liveRecipeWorld: C.check([{ ...d0, launch: { ...L, world: { policy: "recipe", recipe: R0 } } }], S),          // (036B1) the retired live search
+      noBank: C.check([{ ...d0, launch: { ...L, world: { policy: "seed-bank", recipe: R0 } } }], S),
+      badBank: C.check([{ ...d0, launch: { ...L, world: { ...L.world, bank: { version: 1, size: 0 } } } }], S),
+      recipeProofKey: C.check([W({ proof: { maxRuns: 3 } })], S),
+      badFoothold: C.check([W({ foothold: { minShare: 2 } })], S),
       prescribedNoSpecies: C.check([{ ...d0, launch: { ...L, species: { policy: "prescribed" } } }], S),
       prescribedUnknown: C.check([{ ...d0, launch: { ...L, species: { policy: "prescribed", species: "moss_king" } } }], S),
       recipeUnknownKey: C.check([W({ water: [20, 40] })], S),
@@ -102,7 +107,8 @@ const { BLOOM, BLOOM_DATA: D } = globalThis;
     };
     // and what the runtime CAN honour passes (a legal prescribed start, a prescribed released species, a native-cover recipe on the competition scenario)
     const accept = { start: C.check([ST({ adaptations: ["salt", "cold", "cold"], biomass: 250 })], S), prescribed: C.check([{ ...d0, launch: { ...L, species: { policy: "prescribed", species: "reed_spire" } } }], S),
-      cover: C.check([{ ...d1, launch: { ...d1.launch, world: { policy: "recipe", recipe: { ...d1.launch.world.recipe, nativeCover: { minStartShare: 0.15 } } } } }], S) };
+      cover: C.check([{ ...d1, launch: { ...d1.launch, world: { ...d1.launch.world, recipe: { ...d1.launch.world.recipe, nativeCover: { minStartShare: 0.15 } } } } }], S),
+      foothold: C.check([W({ foothold: { minShare: 0.1 } })], S) };
     const allRefused = Object.values(refuse).every(e => e.length > 0), allAccepted = Object.values(accept).every(e => e.length === 0);
     check(!keyHits.length && !numbers && !verbatim.length && allRefused && allAccepted && refs.every(r => /^scenario\.display\./.test(r.short) && /^scenario\.display\./.test(r.tagline) && /^scenario\.display\./.test(r.briefing) && /^scenario\.display\./.test(r.strategicIdea)),
       "C3 · Challenge ≠ scenario: content/challenges.js carries no mechanics key and no number but versions and the recipe's own shares; every copy field references the scenario's own player-facing copy (\"@scenario.display.*\") or is the Challenge's own text, never a verbatim copy; check() refuses a mechanics key at any depth (also in a recipe), verbatim scenario copy, the default / an unknown scenario, every launch value the runtime cannot honour (036A policy strings, a survey / authored world, an unreleased or missing prescribed species, an unknown recipe key or archetype, a bad arrival band, a Terraform / crossing / over-max / two-arm starting adaptation, negative or ungiven start, launch-level Biomass, a fixture in the catalogue), completion conditions / another win, difficulty words and a non-player-facing reference — and accepts what the runtime does honour",
@@ -120,12 +126,12 @@ const { BLOOM, BLOOM_DATA: D } = globalThis;
   { const ARCH = ["ocean_archipelago", "desert_world", "frozen_world"];
     const want = { dying_world: { arrival: null }, native_competition: { arrival: { minHabitable: 0.2 } }, volatile_climate: { arrival: null } };
     const rows = list.map(c => ({ id: c.id, v: c.version, schema: c.schema, key: c.recipeKey, launch: c.launch }));
-    check(list.every(c => J(c.launch) === J({ species: { policy: "player-choice" }, world: { policy: "recipe", recipe: { version: 1, archetypes: ARCH, arrival: want[c.id].arrival, nativeCover: null } }, startingState: { policy: "normal" } })
-        && c.completion.win === "bloom" && c.completion.conditions.length === 0 && c.schema === 2 && C.SCHEMA_VERSION === 2 && c.version === 2 && c.recipeKey === `${c.id}@2/recipe-1`
-        && C.speciesOf(c) === null && C.startingStateOf(c) === null && J(C.provenance(c)) === J({ id: c.id, name: c.name, version: 2, recipeVersion: 1, scenarioId: c.scenario, icon: c.presentation.icon })
+    check(list.every(c => J(c.launch) === J({ species: { policy: "player-choice" }, world: { policy: "seed-bank", recipe: { version: 1, archetypes: ARCH, arrival: want[c.id].arrival, nativeCover: null }, bank: { version: 1, size: 50 } }, startingState: { policy: "normal" } })
+        && c.completion.win === "bloom" && c.completion.conditions.length === 0 && c.schema === 2 && C.SCHEMA_VERSION === 2 && c.version === 3 && c.recipeKey === `${c.id}@3/recipe-1`
+        && C.speciesOf(c) === null && C.startingStateOf(c) === null && J(C.provenance(c)) === J({ id: c.id, name: c.name, version: 3, recipeVersion: 1, bankVersion: 1, scenarioId: c.scenario, icon: c.presentation.icon })
         && C.ICONS.includes(c.presentation.icon) && c.presentation.tagline && c.presentation.briefing && c.presentation.strategicIdea)
       && J(list.map(c => c.presentation.icon)) === J(["pressure", "competition", "climate"]) && !!list[0].presentation.sciencePoints && !!list[2].presentation.science,
-      "C5 · the schema-2 launch of the three released Challenges: species { player-choice } · world { recipe v1: every archetype; Dying World and Volatile Climate BROAD, Native Competition arrival ≥ 20 % (the calibrated recipes) } · startingState { normal } · completion { bloom, [] }; Challenge version 2, recipe version 1, recipe key <id>@2/recipe-1; nothing prescribed",
+      "C5 · the launch of the three released Challenges (036B1): species { player-choice } · world { seed-bank: recipe v1 (every archetype; Dying World and Volatile Climate BROAD, Native Competition arrival ≥ 20 % — what the offline bank builder accepts) · bank { version 1, size 50 } } · startingState { normal } · completion { bloom, [] }; Challenge version 3 (the live-search v2 is retired), recipe version 1, recipe key <id>@3/recipe-1; nothing prescribed",
       rows.map(r => `${r.id} v${r.v} ${r.key} arrival ${J(r.launch.world.recipe.arrival)}`).join(" · ")); }
   // C20
   { const words = list.map(c => [c.name, c.short, ...Object.values(c.presentation).flat()].filter(v => typeof v === "string").join(" ")).join(" "), hit = words.match(RANKING);

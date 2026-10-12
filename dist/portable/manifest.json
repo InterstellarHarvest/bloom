@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "44c34eb6fbd4a71809e95379f3a9ced6a84c7e9d29e8b1105ebfd21ecf92fe28",
+  "fingerprint": "2c04bf43fb1fed9df5b9981d8e7a0c51aaa6d894d5104c7db0521cdd27ec2ccf",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -17,9 +17,9 @@
   ],
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
-    "bytes": 1436510,
-    "sha256": "e99ae09897abfc3e8fd52952b75c88495b679159ff73989de9f72b871599d0f9",
-    "surveyWorkerTextBytes": 247684
+    "bytes": 1427075,
+    "sha256": "abe42bae6b4d9940b5f402c41e256be688d95d7fd94836f3244e2fdfd30e6d03",
+    "surveyWorkerTextBytes": 245578
   },
   "workerInputs": [
     "content/archetypes.js",
@@ -37,7 +37,7 @@
     "resources/bloom-species.js",
     "resources/bloom-validate.js",
     "resources/bloom-witness.js",
-    "resources/challenges/challenge-world.js",
+    "resources/challenges/challenge-bank.js",
     "resources/destination-survey/survey-data.js",
     "resources/destination-survey/survey-worker.js"
   ],
@@ -86,9 +86,9 @@
     },
     {
       "path": "resources/app/app-controller.js",
-      "bytes": 23655,
-      "sha256": "8997c97cf621876745b7acc08cc373b572f8a8dcc5180906bbc2d89eaaeca931",
-      "bytesInBundle": 20443
+      "bytes": 23796,
+      "sha256": "4015710cef735aa47ed78fe73f6fdd375ba6620afccc5bac90ec812e2564f8e7",
+      "bytesInBundle": 20486
     },
     {
       "path": "resources/atmosphere-transition/atmosphere-transition.js",
@@ -116,8 +116,8 @@
     },
     {
       "path": "resources/bloom-scenario.js",
-      "bytes": 6361,
-      "sha256": "719a0a90a93be8e4559a5822fe4da6e7ad7d45da9e22c5ce5ec0e6b162591150",
+      "bytes": 6408,
+      "sha256": "e423449a2769222d8e62842f6dbffd853b3898681e0d672c39290a8abc333f2b",
       "bytesInBundle": 0
     },
     {
@@ -140,33 +140,39 @@
     },
     {
       "path": "resources/bloom-witness.js",
-      "bytes": 41453,
-      "sha256": "946f24a4ec26561b0db0a5994864ebc762b6afbf6737c821676532a32db8833a",
+      "bytes": 41949,
+      "sha256": "11a9d33b1d047fceb965524d89dd45f5df08a38a8c3716645dcdf39fc7da0343",
       "bytesInBundle": 0
     },
     {
+      "path": "resources/challenges/challenge-bank.js",
+      "bytes": 15662,
+      "sha256": "b646ae043b156a3a23d7e47cc6d6d31222162d3a0949a7b1ce733630ddaa7350",
+      "bytesInBundle": 11312
+    },
+    {
       "path": "resources/challenges/challenge-hub.js",
-      "bytes": 14946,
-      "sha256": "f58c9b217c6d7b7e3f2c20e33363a3f8bd086e950bd755ec3c159892a155cd17",
-      "bytesInBundle": 15049
+      "bytes": 14951,
+      "sha256": "6d5f5be9ff10fa9b2704fbe64d302e81ce9055ebc9d5c40f1198a246357ff4cf",
+      "bytesInBundle": 15054
+    },
+    {
+      "path": "resources/challenges/challenge-world-prep.js",
+      "bytes": 10280,
+      "sha256": "2db0807c6614f858eb41a333ff1ef9c8fffe92848837ba16b6928a9c08586b85",
+      "bytesInBundle": 9982
     },
     {
       "path": "resources/challenges/challenge-world-screen.js",
-      "bytes": 23484,
-      "sha256": "8574d31d92409be9cfdf99caf16890123f0007fb38c0bbd9fe544de193119389",
-      "bytesInBundle": 23903
-    },
-    {
-      "path": "resources/challenges/challenge-world-search.js",
-      "bytes": 17970,
-      "sha256": "5bb19287faaed07e9a7bef4838282cd39b0f76764faff50d02e5631f35851c43",
-      "bytesInBundle": 18332
+      "bytes": 24239,
+      "sha256": "366cd18df353669105120313c0e9024d1f1d22b0d6cbed783ca790988bd0544b",
+      "bytesInBundle": 23806
     },
     {
       "path": "resources/challenges/challenge-world.js",
-      "bytes": 19188,
-      "sha256": "ca570ad875d591d72d562c6158e7c56cf397b5946a8b3e07bb709065adac99e0",
-      "bytesInBundle": 11182
+      "bytes": 3212,
+      "sha256": "657e6dd276e5447e9c33a5d7c5261aae9d2c50c68b0d1fc7530133d3048e02d8",
+      "bytesInBundle": 515
     },
     {
       "path": "resources/destination-survey/destination-survey.js",
@@ -188,8 +194,8 @@
     },
     {
       "path": "resources/destination-survey/survey-worker.js",
-      "bytes": 5264,
-      "sha256": "ea0aad74faee144d82e6352ec279fe4f387d44f44187e51db97cc4749f9fcb9e",
+      "bytes": 4470,
+      "sha256": "73c51ebb5a1ab8f88cc8f951fc71d5d20fcb339dbe59e42a38098188aada62f7",
       "bytesInBundle": 0
     },
     {
@@ -200,9 +206,9 @@
     },
     {
       "path": "resources/main-menu/expedition-entry.js",
-      "bytes": 42780,
-      "sha256": "0257006f7f96a632fe775d15bb0a001689f675f72420f762116f5e222e6b5936",
-      "bytesInBundle": 37934
+      "bytes": 43447,
+      "sha256": "8431338ee489d18d2ce95e2013a3468fbf674e8df326df971c1998f3669fc151",
+      "bytesInBundle": 38370
     },
     {
       "path": "resources/main-menu/main-menu-data.js",
