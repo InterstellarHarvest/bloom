@@ -1,5 +1,7 @@
 # Main Menu v1 — integration handoff (Menu / Tutorial workstream, Main PMO)
 
+> **Current state (BLOOM-037):** the full target menu is implemented — **EXPEDITION · CHALLENGES · TRAINING · SETTINGS · CREDITS**; EXPEDITION opens Choose Plant Species, then the survey; `file://` runs the whole game through the portable runtime (the HTTP-required notice below is retired, BLOOM-031); the "Sector surveyed · nine worlds ready" banner was rejected (owner / PMO 2026-10-10) and removed. What ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md).
+
 > **Current state (BLOOM-033):** the title's main action reads **EXPEDITION** (was BEGIN EXPEDITION); TRAINING and the survey's
 > returns stay inside `index.html` (no page navigation, no `?begin=1` round trip). Architecture: [`SINGLE_DOCUMENT_APP_v1.md`](SINGLE_DOCUMENT_APP_v1.md);
 > current direction (the planned menu with CHALLENGES and the BLOOM-034 restyle): [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md).

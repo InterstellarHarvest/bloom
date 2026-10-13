@@ -1,5 +1,7 @@
 # Guided Training v1 — the production coach (BLOOM-028D2)
 
+> **Current state (BLOOM-037):** since BLOOM-033 Training is an in-document session of `index.html` (not `demo-run.html?training=1`); it is always Organic Hybrid; its Begin Expedition opens Choose Plant Species (035C2), then the survey. What ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md).
+
 **From:** BLOOM-028D2 · **For:** the Tutorial PMO, the Main PMO, and whoever packages the root site (BLOOM-030).
 **Builds on:** the accepted BLOOM-029F end-to-end baseline `8f4c273` (production Planet View, rooms, report, exact expedition
 handoff) and the 028D1 training foundation (`docs/TRAINING_FOUNDATION_v1.md`).

@@ -1,5 +1,7 @@
 # Plant Sprite Pipeline v1 — BLOOM-032B1 (production pipeline proof)
 
+> **Current state (BLOOM-037):** the pipeline is production — all four species are on their final packs (Organic Hybrid 032B2/C; the specialists 035C2); the six proof packs are engineering / QA material only. Status lines below such as "production is still unchanged" or "points at TEMPORARY PIPELINE PROOF packs" are milestone-era. What ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md).
+
 **Status:** pipeline PROOF + the COMPLETE locked Organic Hybrid art contract. It stops at the handoff gate. Branch `handoff/bloom-032b1-review`,
 from accepted production main `bba000f` (BLOOM-031). Nothing in production changed: `resources/run-ui/plant-specimen.js` still draws
 the plant in every room.

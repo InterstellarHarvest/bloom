@@ -4,7 +4,8 @@
 **+ BLOOM-036B1 — Challenge worlds from PREVALIDATED SEED BANKS** — PMO-accepted and **IMPLEMENTED / COMPLETE in production `main`** as one
 combined Challenges release (`bd0eb27`, 2026-10-12). **+ BLOOM-036C1 — the first AUTHORED Challenges (Low Tide · Oasis Line): IMPLEMENTED / COMPLETE** (`d69d458`, §9).
 **+ BLOOM-036D1 — the first Challenge COMPLETION CONDITION: Thin Air · `pressure-final-state` — IMPLEMENTED / COMPLETE** (`3b4d3a7`, §2.5, §10).
-**BLOOM-036 is closed: CHALLENGES are IMPLEMENTED / COMPLETE for the current release scope** (six released Challenges; one condition type). Current product direction: [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §8.
+**BLOOM-036 is closed: CHALLENGES are IMPLEMENTED / COMPLETE for the current release scope** (six released Challenges; one condition type). Current product direction: [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §8;
+what ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md) §3.
 
 > **EXPEDITION** = live procedural world discovery (the 3 × 3 Destination Survey generates and validates worlds on the player's machine).
 > **CHALLENGES** = curated banks of **prevalidated procedural seeds**: the world is still procedurally generated, but which worlds a Challenge
@@ -59,12 +60,15 @@ scenario copy, difficulty words, and every launch value the runtime cannot honou
 - **Recipe** (product-level selection data for finished worlds, never a planet change): `version` · `archetypes` · `arrival` band (the
   species' arrival share) · `nativeCover` floor (competition scenarios) · `foothold` floor (S1; supported, unused — the latency study found no
   content reason). Unknown keys, mechanics keys and generator parameters are refused.
-- **Versions.** Challenge v3 (036B's live-search launch was v2, 036A's survey launch v1) · recipe v1 · bank v1. Changing a released recipe
+- **Versions.** Each Challenge carries its own version (released: Dying World v3, Native Competition v4, Volatile Climate v4 — 036C1's
+  copy corrections —, Low Tide / Oasis Line / Thin Air v1; 036B's live-search launch was v2, 036A's survey launch v1) · recipe v1 · bank
+  version 1, bank **format 2** since 036D1 (completion provenance). Changing a released recipe
   or bank is an explicit change of those numbers; the bank's provenance makes any other rule change detectable (§4.4).
 - **Completion** (036D1): `{ win: "bloom", conditions }` — `[]` = the ordinary Bloom; one condition type exists (`pressure-final-state`, §2.5).
-- **Released** Challenges keep player choice, the normal start and the normal Bloom. **Prescribed species and prescribed starting states**
-  are implemented and QA-covered with **fixtures** that carry their own fixture bank cells (`BLOOM_DATA.challengeSeedBankFixtures`, honoured
-  for `status: "fixture"` only).
+- **Prescribed species and prescribed starting states** were first implemented and QA-covered with **fixtures** that carry their own fixture
+  bank cells (`BLOOM_DATA.challengeSeedBankFixtures`, honoured for `status: "fixture"` only); since 036C1 / 036D1 released Challenges use
+  them: Low Tide (Organic Hybrid + Flood Adaptation · Salt Handling), Oasis Line (Reed Spire), Thin Air (Woolly Candle, gated completion).
+  The three 036A/B Challenges keep player choice, the normal start and the normal Bloom.
 
 ## 2.5 Completion (BLOOM-036D1)
 
@@ -228,8 +232,9 @@ launch seed, planet seed and fingerprint, species, scenario, starting state and 
 ## 7. Screens
 
 - **Hub:** lede "Each Challenge is a contained run with its own starting situation and pressure. Read the brief, choose what the Challenge
-  allows, and find a way to bloom."; How the run works: choose your plant · one qualifying Challenge world is generated (no survey, no
-  choosing among worlds) · nothing owned at landing · the normal Bloom · extinction where the scenario says so.
+  allows, and find a way to bloom."; How the run works is built **per Challenge** (`challenge-hub.js`): choose your plant *or* the
+  prescribed plant · one prevalidated Challenge world (no survey, no choosing among worlds) · what the plant owns at landing · the
+  completion (the normal Bloom, or Thin Air's final-atmosphere condition) · extinction where the scenario says so.
 - **PREPARING CHALLENGE WORLD:** only the real phases — *Selecting a proven world · Building the planet · Verifying the planet* (no Challenge
   simulation runs, so nothing claims to check Challenge conditions); no percentage; skipped cleanly when the world was built while the player
   read the species screen. An invariant failure says the world could not be prepared and offers Back.

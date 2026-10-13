@@ -1,5 +1,11 @@
 # Portable Runtime v1 — Strange Bloom · Unknown Soils
 
+> **Current state (BLOOM-037):** the bundle now registers **eight** lazily loaded modules — `app-controller` (BLOOM-033, replacing
+> `main-menu-page`), `main-menu-data`, `planet-sphere-view`, `atmosphere-transition`, `training-run`, `species-select` (035B/C),
+> `challenge-hub` (036A), `challenge-world-screen` (036B) — where §3 below says "five"; the reproducibility contract is unchanged
+> (`npm --prefix tools run check:portable`). **GitHub Pages is live** (§9 — through the repository's legacy branch source until the
+> one-time setting below is made). What ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md).
+
 > **Updated by BLOOM-033:** the game is one document, so nothing has to survive a file:// navigation any more — the window.name / session
 > "file-safe handoff" described below is **retired** and deleted; the portable runtime's module list starts with the app
 > (`resources/app/app-controller.js`, which replaced the page composer `main-menu-page.js`); the Pages site is `index.html` + `content/`
@@ -150,12 +156,14 @@ are computed from the title's own address), so the game runs unchanged at `/` or
 (P30–P34: every request stays inside `/bloom/`; Play again, Choose another planet, Main menu and every training exit return inside it).
 
 `.github/workflows/pages.yml` (official actions only: `checkout`, `configure-pages`, `upload-pages-artifact`, `deploy-pages`) runs on
-every push to `main` (or by hand): `node tools/build-pages-site.mjs _site` copies the game's own files — `index.html`,
-`demos/demo-run.html`, `demos/main-menu.html`, `content/`, `planets/`, `resources/` — and deploys them. No npm install, no build, no
+every push to `main` (or by hand): `node tools/build-pages-site.mjs _site` copies the game's own files — `index.html`, `content/`,
+`planets/`, `resources/` (since BLOOM-033; no `demos/`) — and deploys them. No npm install, no build, no
 server code, no analytics. Pages serves the HTTP source path (the portable bundle is not needed there and is not published).
 
 **One-time repository setting** (cannot be done from code): **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-After that, the next push to `main` publishes `https://interstellarharvest.github.io/bloom/`.
+*(BLOOM-037 audit, 2026-10-12: Pages is already enabled and live at `https://interstellarharvest.github.io/bloom/`, but with the legacy
+source "Deploy from a branch" (`main`, `/`) — GitHub's own Pages build then publishes the whole repository, racing this workflow's curated
+site and landing last. The setting above is still the one remaining owner action; after it, only the workflow's site is published.)*
 
 ## 10. Offline guarantees
 

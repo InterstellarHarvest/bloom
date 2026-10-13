@@ -1,5 +1,7 @@
 # Production plant integration v1 — BLOOM-032C
 
+> **Current state (BLOOM-037):** milestone-era document (BLOOM-032C), superseded in part. Since BLOOM-035C2 there are four species on their own packs, the specimen stands in a dynamic region-driven environment (not the pack's static backdrop), and the **Terraform room shows the unchanged plant** (this document's "Terraform never shows the plant" was reversed — PRODUCT_DIRECTION_CURRENT §6); since BLOOM-033 the run lives inside `index.html`, not `demo-run.html`. What ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md).
+
 **Status:** the approved **Organic Hybrid** sprite organism is the production plant. It replaces the provisional BLOOM-029C SVG
 everywhere the game shows the plant: Region Inspect, Adapt, Spread, Guided Training (which uses those rooms) and the
 Bloom / Extinction report. Terraform never shows the plant and never changes it.

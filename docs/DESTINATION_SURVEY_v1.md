@@ -1,5 +1,7 @@
 # Destination Survey v1 — integration handoff (Menu / Tutorial workstream)
 
+> **Current state (BLOOM-037):** the survey is entered after Choose Plant Species, its classes are species-relative (035B/C), it is EXPEDITION-only (never inside a Challenge, 036B), and it hands the planet over in-document (BLOOM-033; the 029F session handoff and the "needs http(s)" note below are retired — `file://` works since BLOOM-031). What ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md).
+
 > **Current names (BLOOM-033):** the three classes are **Favorable / Precarious / Extreme** (ids `favorable` / `precarious` / `extreme`);
 > they were Stable / Volatile / Extreme when this document was written. Same thresholds, columns and worlds. The survey's departure now
 > mounts the run inside `index.html` ([`SINGLE_DOCUMENT_APP_v1.md`](SINGLE_DOCUMENT_APP_v1.md)). Direction: [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §5.
