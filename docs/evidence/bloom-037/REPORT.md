@@ -1,15 +1,20 @@
 # BLOOM-037 — Final hardening & release — report
 
-**Status: CANDIDATE** on `handoff/bloom-037-review` — 9 commits ahead of production `main` `3cc3e33`, 0 behind (a fast-forward).
-Not merged. Product frozen: no feature, Challenge, species, progression, audio or save work. Canonical inventory of what ships:
+**Status: RELEASE CANDIDATE (PMO-corrected)** on `handoff/bloom-037-review` — 12 commits ahead of production `main` `3cc3e33`, 0 behind (a
+fast-forward). Product frozen: no feature, Challenge, species, progression, audio or save work. Canonical inventory of what ships:
 [`docs/RELEASE_STATE_v1.md`](../../RELEASE_STATE_v1.md).
 
 | | |
 |---|---|
 | Starting `main` | `3cc3e33` (BLOOM-036 closeout; 036D1 integrated at `3b4d3a7`) |
 | Review head | the tip of `handoff/bloom-037-review` (the commit carrying this report) |
-| Implementation commits | `26cbb83` dead-path cleanup · `d7296be` stale code comments · `060c1e8` a11y fixes · `496bef7` globe role → Destination Survey · `563594b` globe role → Terraform room + Challenge dossier |
-| Docs / evidence commits | `32f22ea` documentation reconciliation + RELEASE_STATE · `39e43e5` RELEASE_STATE base · `8f4c5de` QA driver · the final commit: this report + evidence |
+| Implementation commits | `26cbb83` dead-path cleanup · `d7296be` stale code comments · `060c1e8` a11y fixes · `496bef7` globe role → Destination Survey · `563594b` globe role → Terraform room + Challenge dossier · **`feb47b0` WCAG AA contrast fix (PMO release blocker)** |
+| Docs / evidence commits | `32f22ea` documentation reconciliation + RELEASE_STATE · `39e43e5` RELEASE_STATE base · `8f4c5de` QA driver · `d9fe2b4` first report · `50bb6f6` docs: contrast fixed, PMO locks, Pages source · the final commit: this report + evidence |
+
+**PMO final release review (2026-10-13): hardening ACCEPTED, with one release-blocking correction — the six sub-WCAG-AA colour-contrast
+pairs — now FIXED (§1 B5, §6).** Locked decisions: gameplay ≥ 1024 px is an accepted v1 limitation (no phone gameplay UI); Safari itself stays
+untested / not claimed (the Playwright WebKit pass is supporting evidence only). The final QA (§4, §8) ran on the corrected head `50bb6f6`; the
+final commit adds only this report and evidence files.
 
 **Reconciliation note.** 037 began on the 036D1 candidate `e64d0c4` while 036D1 was still under PMO revision (owner-approved). When 036D1 was
 integrated (`main` → `3cc3e33`), the 037 commits were rebased onto `3cc3e33`; the only conflicts were the two docs the 036 closeout also edited
@@ -26,8 +31,10 @@ integrated (`main` → `3cc3e33`), the 037 commits were rebased onto `3cc3e33`; 
 | B2 | **Challenge Planet Dossier body not keyboard-scrollable** in browsers that do not make scrollers focusable (WebKit). | `.cw-d-main` focusable named region ("Challenge details"). | axe, A2 in WebKit |
 | B3 | **Planet map canvas had no accessible name** (`role="application"` with only a roledescription + description). | `aria-label="Planet map"`. | A1 |
 | B4 | **Interactive globes' labels never announced:** PlanetSphereView labels the focusable host, but the hosts (`<span>` / `<div>`, no role) made the label prohibited (axe `aria-prohibited-attr`, serious) — Destination Survey focus, Terraform room, Challenge dossier. | Each host gives its labelled globe `role="img"` while interactive (removed when the label goes). PlanetSphereView itself untouched (byte-frozen since 029D; see §8 — a first fix inside it was caught by `terraform-check` N3 and moved). | A4 in all three browsers |
+| B5 | **Text below WCAG AA 4.5 : 1** (PMO: release blocker). Small secondary text in faint ink `#8a937f` (2.7–3.2 : 1) and gold-deep `#a86f00` (3.8–4.2 : 1) on the light gameplay surfaces; a white word on the gameplay leaf button `#3f9d4b` (3.4 : 1 — Keep playing, Resume) — and, found by a static scan of every white-on-colour gameplay rule, the same pattern on the "would help" Plant / Spread / Planet buttons (banner + Region Inspect, 3.4–3.5 : 1) and the Adapt preview's part chip on Temperature / Water (3.5–3.7 : 1). | Narrow and text / button-scoped (§6): TEXT-only shades `--bloom-ink-faint-text #646c5b`, `--bloom-gold-deep-text #8a5a00` on the `color:` uses only; gameplay button ladders `--bloom-{leaf,bloom,sky}-btn` (rest on the hue's dark shade, rimmed with the hue, pointer one step deeper — the BLOOM-034 planning-button rule; leaf / sky reuse its exact values); the part chip on the category's dark shade. `--bloom-leaf` and every semantic hue unchanged. | A4 0 serious incl. contrast · A7 rendered ratios · visual-system V6b + G1 |
 
-No gameplay, rule, content, bank or layout defect was found. Behaviour for pointer players is unchanged by B1–B4.
+
+No gameplay, rule, content, bank or layout defect was found. Behaviour for pointer players is unchanged by B1–B5 (B5 changes colour shades only).
 
 ## 2. Cleanup performed
 
@@ -70,13 +77,13 @@ No tracked junk (`.DS_Store`, backups, `.orig`, scratch logs) exists.
 
 ## 4. Browsers
 
-Driver: [`qa-037.js`](qa-037.js) on the production `index.html` only. Matrix (Chromium 19 / 19, Firefox 19 / 19, WebKit 18 / 18 — every check passed; logs and JSON in [`results/`](results/)):
+Driver: [`qa-037.js`](qa-037.js) on the production `index.html` only, on the corrected head `50bb6f6`. Matrix (Chromium 20 / 20, Firefox 20 / 20, WebKit 19 / 19 — every check passed; logs and JSON in [`results/`](results/)):
 
 | | Chromium 147.0.7727 | Firefox 148.0.2 | WebKit 18.0 (mac12 build) |
 |---|---|---|---|
 | O · http `/`, Pages `/bloom/`, `file://` (full product) | 3 / 3 | 3 / 3 | 3 / 3 |
 | S · gameplay smoke matrix | 8 / 8 | 8 / 8 | 7 / 7 (S4 skipped) |
-| A · accessibility (20 screens) | A1–A5 ✓ (+ A4b known contrast) | A1–A5 ✓ (+ A4b known contrast) | A1–A5 ✓ (+ A4b known contrast) |
+| A · accessibility (23 screens) | A1–A7 ✓ — axe 0 critical / 0 serious incl. contrast | A1–A7 ✓ | A1–A7 ✓ |
 | R · responsive (17 screens × 4 sizes) | 68 samples, 0 problems (+ R1b known) | 68 samples, 0 problems (+ R1b known) | 68 samples, 0 problems (+ R1b known) |
 
 **WebKit / Safari.** WebKit = Playwright's frozen `webkit_mac12_special-2009` build (WebKit 18.0; Playwright 1.46.1 client on macOS 12 — the only
@@ -100,21 +107,49 @@ the engine runs the game.
 
 ## 6. Accessibility
 
-20 screens (first-run dialog, Main Menu, Settings, Credits, Species Selection, species dossier, Destination Survey, survey focus, run map,
-region banner, Region Inspect, Adapt, Spread, Terraform, run menu, report, Challenge hub, Challenge dossier, Training coach, Skip-training
-dialog), in Chromium, Firefox and WebKit:
+23 screens (first-run dialog, Main Menu, Settings, Credits, Species Selection, species dossier, Destination Survey, survey focus, run map,
+region banner, **region banner with "would help" buttons**, Region Inspect, **Region Inspect with its help buttons**, Adapt, **an Adapt node
+preview (the part chip)**, Spread, Terraform, run menu, report, Challenge hub, Challenge dossier, Training coach, Skip-training dialog), in
+Chromium, Firefox and WebKit:
 
 - **A1** every visible control has an accessible name · **A2** keyboard-only Tab walk: every stop on-screen with a visible focus indicator
   (outline, ring, or a designed descendant / sibling indicator — the survey's halo + name colour, the Terraform globe's ring); dialogs trap focus ·
   **A3** Escape / Back: Species → menu, survey focus → survey, dossier → hub → menu, every room → map, run menu and Settings / Credits close; the
   report deliberately ignores Escape (a win is not silently resumed, a loss not dismissed into a dead run) · **A4** axe-core 4.10 (WCAG 2.1 A/AA):
-  no critical violation and no serious violation other than colour contrast · **A5** reduced motion.
-- **KNOWN — colour contrast (not fixed, PMO decision).** Six text / background pairs from the locked BLOOM-033 / 034 visual-system tokens are
-  below WCAG AA 4.5 : 1 for small text: muted `#8a937f` on the light surfaces (2.7–3.1 : 1 — HUD group captions "Explore / Change", run id,
-  report fact notes, hints), white on the leaf button `#3f9d4b` (3.4 : 1 — Resume / Keep playing), gold-deep `#a86f00` labels (3.8–4.2 : 1 —
-  "Origin", room kicker). Fixing them recolours shared tokens that `visual-system-check` pins to their accepted values — a visual decision, so it is
-  recorded, not made. Suggested if approved (ratios computed): faint ink `#646c5b` (≥ 4.65 : 1 on all three surfaces), leaf button `#2f7d3a` (white 5.1 : 1),
-  gold-deep `#8a5a00` (≥ 5.3 : 1).
+  **0 critical, 0 serious — colour contrast included; no rule suppressed, no exception** · **A5** reduced motion · **A6** the conditional
+  white-on-colour controls were really on screen for the scan · **A7** every corrected text pair measured as RENDERED (computed colour on the
+  first opaque background; gradients count with their worst stop).
+
+**Colour contrast — FIXED before release (B5).** The pairs, before → after (WCAG AA small text needs 4.5 : 1):
+
+| pair | before | after |
+|---|---|---|
+| faint text on card `#fffdf7` (HUD captions, run id, room hints / notes) | `#8a937f` 3.15 | `#646c5b` **5.38** |
+| faint text on paper `#fbf6ea` (report fact notes, notes) | `#8a937f` 2.97 | `#646c5b` **5.07** |
+| faint text on paper-2 `#f4ecd8` (room panels) | `#8a937f` 2.72 | `#646c5b` **4.65** |
+| gold-deep text on gold-soft `#fff1c7` ("Origin") | `#a86f00` 3.78 | `#8a5a00` **5.27** |
+| gold-deep text on card (room / coach kickers, pressed check) | `#a86f00` 4.18 | `#8a5a00` **5.83** |
+| white on the leaf button (Keep playing, Resume, Plant) | `#3f9d4b` 3.42 | `#2a7636` **5.61** (pointer `#215f2b` 7.67) |
+| white on the Spread button | `#d9607e` 3.54 | `#a83d5a` **6.03** (pointer `#8c3049` 7.97) |
+| white on the Planet (sky) button | `#3b8fd0` 3.49 | `#23679f` **5.98** (pointer `#1b5282`) |
+| white on the part chip · Temperature / Water | 3.72 / 3.49 | `#9c3f0e` **6.71** / `#23679f` **5.98** |
+
+**As rendered (A7, identical in Chromium, Firefox and WebKit):** `.pv-tg > small` 5.38 · `.pv-runid` 5.38 · `.rg-o` (Origin) 5.27 ·
+`.dr .r-region .rk` 5.83 · `.dr .ow.none` 4.65 · `.dr .li-hint` 4.55 (worst gradient stop) · `.dr .mc-row.faint` 5.38 · `.dr .bank-empty` 5.38 ·
+`.rr-fact span` 5.07 · `.rr-chip.ow.none` 5.07 · `.tc-kicker` 5.83 · `#rrContinue` / `.rr-btn.primary` 5.61 · `.dr .rb.resume` 5.61 ·
+`.pv-btn.plant` 5.61 · `.dr .hbtn` 5.61 · `.dr .li-part` 6.71. (This planet offered only a Plant "would help" button; the Spread / Planet
+button shades are covered by `visual-system-check` V6b's computed ratios.)
+
+**How it stays narrow:** the base `--bloom-ink-faint` / `--bloom-gold-deep` keep their values for non-text (preview rims, leader dots, icon
+strokes, meter / bar fills); only `color:` declarations moved to the text shades; `--bloom-leaf` and every semantic hue are unchanged; planning
+screens (night tokens) are untouched. **Proof:** `visual-system-check` G1 compares the computed styles of ~2 400 gameplay elements with the
+accepted baseline in Chromium and Firefox — the only differences are the exact 037 colour transitions (run 40, Adapt 40, report 6, coach 1,
+training HUD 5), nothing else: no plant art, map state, status chip or planning-screen colour moved. V3 pins the new mappings to their exact
+values; the new **V6b** fails if any of these pairs drops below 4.5 : 1, if a use-site loses its accessible shade, or if a gameplay `color:`
+falls back to the non-text faint / gold-deep. Before / after stills (same seeded planet, 1440 × 900): [`contrast/`](contrast/) —
+`before-*` on `main` `3cc3e33`, `after-*` on the fix (HUD + "would help" banner, Region Inspect, Region Inspect at the origin, Adapt preview,
+Terraform, the Bloom report). Hierarchy holds (secondary text still reads secondary), the buttons stay recognisably BLOOM green (rimmed in the
+brand green), the part chip keeps its category.
 - Colour is never the sole meaning (status chips carry a word and an icon: OK / Strained / Blocked / Refuge); icons always pair with text.
 
 ## 7. Responsive
@@ -135,11 +170,16 @@ Stills: `shots/` (36 representative PNGs; `<browser>-r-<screen>-<width>.png`, `<
 
 Every `tools/*-check.js`, sequentially, on the quiet machine.
 
-**Final head — 45 / 45 suites pass, 2052 checks, 0 failures** (≈ 90 min; per-suite counts and times in [`regression-final.tsv`](regression-final.tsv)):
+**Release head `50bb6f6` (the contrast fix + docs) — 45 / 45 suites pass, 2053 checks, 0 failures, no flake** (≈ 90 min; per-suite
+counts and times in [`regression-final.tsv`](regression-final.tsv)):
 
-archetype 40 · atmosphere-transition 14 · body-plan 15 · candle2-contract 15 · challenge-completion 71 · challenge-world 108 · challenges 33 · colony-development 68 · crossing 14 · cylinder-gen 35 · desert 64 · destination-survey 18 · dying-world 63 · economy 39 · frozen 70 · game-flow 48 · gen 47 · guided-training 50 · main-menu 18 · native-competition 66 · organic-hybrid-art-intake 45 · planet-view 80 · plant-rooms 66 · plant-sprite-pipeline 59 · portable-runtime 71 · procedural-run 32 · production-plant-integration 50 · release 53 · run-ui 40 · run-ui-convergence 57 · sim 32 · single-app-flow 59 · slice 15 · species-art-intake 16 · species 17 · species-selection 68 · specimen-environment 15 · sphere-texture 14 · strategy 35 · surface 11 · terraform 61 · topology 53 · training 75 · visual-system 54 · volatile-climate 78.
+archetype 40 · atmosphere-transition 14 · body-plan 15 · candle2-contract 15 · challenge-completion 71 · challenge-world 108 · challenges 33 · colony-development 68 · crossing 14 · cylinder-gen 35 · desert 64 · destination-survey 18 · dying-world 63 · economy 39 · frozen 70 · game-flow 48 · gen 47 · guided-training 50 · main-menu 18 · native-competition 66 · organic-hybrid-art-intake 45 · planet-view 80 · plant-rooms 66 · plant-sprite-pipeline 59 · portable-runtime 71 · procedural-run 32 · production-plant-integration 50 · release 53 · run-ui 40 · run-ui-convergence 57 · sim 32 · single-app-flow 59 · slice 15 · species-art-intake 16 · species 17 · species-selection 68 · specimen-environment 15 · sphere-texture 14 · strategy 35 · surface 11 · terraform 61 · topology 53 · training 75 · visual-system 55 · volatile-climate 78.
 
-**The first full run** (on `39e43e5`, before the last two fixes) had three failing suites, each resolved as follows — no bound was loosened:
+Before it, on the same day: the PMO's focused list on `50bb6f6` — visual-system 55 · main-menu 18 · run-ui 40 · run-ui-convergence 57 ·
+challenge-world 108 · challenge-completion 71 · species-selection 68 · destination-survey 18 · guided-training 50 · portable-runtime 71 ·
+release `--no-suites` 51 — all green ([`results/focused-qa.tsv`](results/focused-qa.tsv)); and the first candidate `d9fe2b4`: 45 / 45, 2052 checks.
+
+**The first full run** (on `39e43e5`, before the globe-role fixes) had three failing suites, each resolved as follows — no bound was loosened:
 
 - `terraform-check` **N3 — a real 037 regression, fixed.** PlanetSphereView is byte-pinned against `2d0fb08` in the working tree (frozen since
   029D); 037's first a11y fix had edited it. The fix moved to the globe hosts (`496bef7`, `563594b`); PlanetSphereView is byte-identical to `main`.
@@ -153,7 +193,7 @@ archetype 40 · atmosphere-transition 14 · body-plan 15 · candle2-contract 15 
 
 ## 9. Performance sanity
 
-Chromium, median of 3, the same flow on both roots (title → Species → survey → run → Adapt / Terraform → report → three Challenge dossiers),
+Measured on `d9fe2b4` (the contrast fix after it changes colour values only). Chromium, median of 3, the same flow on both roots (title → Species → survey → run → Adapt / Terraform → report → three Challenge dossiers),
 measured `main` → 037 → `main` back to back:
 
 | wait (ms) | `main` 3cc3e33 (a) | **037** | `main` 3cc3e33 (b) |
@@ -202,31 +242,20 @@ Menu (`challenge-world-check` F), every Expedition return path (`single-app-flow
 
 ## 11. Release / hosting readiness
 
-- **GitHub Pages is LIVE** at <https://interstellarharvest.github.io/bloom/> — the repository's Pages source is still the **legacy "Deploy from a
-  branch" (`main`, `/`)**. Every push to `main` therefore runs two deployments: GitHub's legacy build (publishes the *whole* repository —
-  docs, tools, evidence, demos) and the repository's workflow (`pages.yml` → `build-pages-site.mjs`, the curated game-only site). They race,
-  and the legacy one is what is live: after the `3cc3e33` push (two deployments, 11:37 and 11:38 UTC) the site still serves `/tools/package.json`
-  and `/docs/…` (not in the curated site). The game works either way: a live smoke on the current
-  site (title 1.3 s, the hub, a Low Tide launch, one host, no console error) and byte-identical assets.
-- **Remaining one-time owner action (outside code):** GitHub → **Settings → Pages → Build and deployment → Source: GitHub Actions**. After it,
-  each push to `main` publishes only the curated site. Not done here (repository settings are an owner action).
-- On fast-forwarding `main` to this candidate, the push deploys it (whichever source is set).
+- **Pages source: GitHub Actions — DONE by the owner.** The Pages API reports `build_type: "workflow"` (the legacy "Deploy from a branch" source
+  is no longer active). Only the repository's workflow publishes: `.github/workflows/pages.yml` → `tools/build-pages-site.mjs` →
+  `index.html` + `content/` + `planets/` + `resources/` (no tools, docs, evidence or demos).
+- *History:* the 037 audit found the legacy source still active — each push to `main` ran GitHub's legacy build (the whole repository) and the
+  workflow, racing; after the `3cc3e33` push the site still served `/tools/package.json` and `/docs/…`.
+- Release = fast-forward `main` to the accepted head; the push runs the workflow; the live site is then verified (the closeout records it).
 
 ## 12. Known limitations (release-facing)
 
 As RELEASE_STATE §9: no saved runs / Continue · no audio · no separate difficulty setting · no progression or rewards · Challenge rule changes
-cost an offline bank rebuild (~70 min) · gameplay needs ≥ 1024 px (no phone layout) · small secondary text below WCAG AA contrast (token
-decision pending) · Safari untested (WebKit proxy only).
+cost an offline bank rebuild (~70 min) · gameplay needs ≥ 1024 px (no phone layout — PMO-accepted) · Safari itself untested (WebKit proxy
+evidence only — PMO-locked). Colour contrast is **not** a limitation: the issues found by 037 were fixed before release.
 
 ## 13. Release blockers
 
-**None in the code.** Everything frozen for the release is implemented, reproducible and green (45 / 45 suites; three browsers).
-
-Outside the code, before / at release:
-
-1. **Owner action — Pages source:** Settings → Pages → Source: **GitHub Actions** (§11). Not a blocker for the game working (the legacy source
-   serves it), but until it is set the whole repository is public on the Pages site and two deployments race on every push.
-2. **PMO decision — colour contrast** (§6): accept the six sub-AA secondary-text pairs as a known limitation for v1, or approve a token change
-   (a small follow-up with `visual-system-check` pins updated).
-3. **PMO confirmation — screens / browsers:** gameplay ≥ 1024 px (no phone run UI) and Safari untested (WebKit proxy only) are stated in README
-   and RELEASE_STATE as limitations, not support claims.
+**None.** The PMO's release blocker (colour contrast) is fixed; the Pages source is GitHub Actions; the release head passes 45 / 45 suites and the
+three-browser matrix. Integration (fast-forward `main`, push, live verification) and the closeout follow.
