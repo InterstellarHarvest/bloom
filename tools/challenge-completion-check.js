@@ -245,6 +245,18 @@ const thinTo = (sim, keep) => { const liv = sim.map.LAND_TILES.filter(i => sim.s
       "C9/C11 · early Bloom → total die-off under the Thin Air gate is a real EXTINCTION (onLoss once, never won); the loss data says the Bloom came before the atmosphere finished changing and the plant did not survive — never that it had already won",
       L && L.lines[0]); }
 
+  // W2 · the LEGACY report path (developer harness ?ui=legacy) — its pressureReport, evaluated from the session source with stubbed data, says the same
+  { const src = fs.readFileSync(path.join(ROOT, "resources/run/game-session.js"), "utf8"), a = src.indexOf("function pressureReport(kind=\"win\")"), b = src.indexOf("\n}", a) + 2;
+    const sgn = v => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(Math.round(v * 10) / 10)}`;
+    const mk = done => new Function("pressureReportData", "sgn", src.slice(a, b) + "; return pressureReport;")(() => ({ title: "Atmosphere thinning", phaseName: done ? "Final harsh state" : "Severe loss", progress: done ? 1 : 0.6, done,
+      offsets: { moist: -5, temp: -4, rad: 4 }, max: { moist: -9, temp: -8, rad: 8 } }), sgn);
+    const lossEarly = mk(false)("loss"), winEarly = mk(false)("win"), def = mk(false)(), lossDone = mk(true)("loss"), winDone = mk(true)("win");
+    const lossCall = /legacyLossHtml[\s\S]*?\$\{pressureReport\("loss"\)\}/.test(src), winCall = /legacyWinHtml[\s\S]*?\$\{pressureReport\(\)\}/.test(src);
+    check(!/keep playing/i.test(lossEarly) && /The atmosphere had not finished changing\. Final conditions would have been: moisture −9, temperature −8 °C, radiation \+8\./.test(lossEarly)
+        && /The decline continues if you keep playing \(final: moisture −9/.test(winEarly) && def === winEarly && /the final harsh state\./.test(lossDone) && lossDone === winDone && lossCall && winCall,
+      "W2 · the LEGACY report path agrees: an extinction before the final state never says \"keep playing\" and names the final conditions it never reached; a win keeps \"continues if you keep playing\"; a completed decline keeps its final-state words (win and loss alike); the legacy loss report asks for the loss wording",
+      lossEarly.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").slice(0, 220)); }
+
   console.log("\n# K · the bank (Node)");
   { const cells = Object.entries(bank.cells), bad = [];
     for (const [key, cell] of cells) { const [chId, sp] = key.split("/"), ch = C.resolve(chId);
@@ -370,7 +382,8 @@ async function browserChecks(LAUNCH = 3) {
       return { cond: c ? c.querySelector("b").textContent : null, sub: c && c.querySelector("small") ? c.querySelector("small").textContent : null, status: c ? c.dataset.status : null, state: document.getElementById("pvState").textContent,
         msg: A.message(), completion: A.completion(), report: !!(BLOOM.runReport.instance && BLOOM.runReport.instance.state().open), running: A.run().running, won: A.run().won, lost: A.run().lost, ticks: A.run().ticks }; });
     const reportRead = p => p.evaluate(() => { const r = BLOOM_APP.session.adapter.report(), el = document.querySelector(".rr-cond");
-      return { kind: r.kind, heading: r.heading, completion: r.completion, card: el ? { h: el.querySelector("h3").textContent, p: [...el.querySelectorAll("p")].map(x => x.textContent) } : null, sum: document.getElementById("rrSum").textContent,
+      const pc = [...document.querySelectorAll(".rr-scn")].find(x => /Pressure/.test(x.querySelector("h3").textContent));
+      return { kind: r.kind, heading: r.heading, completion: r.completion, press: pc ? pc.innerText.replace(/\s+/g, " ") : null, done: !!(r.pressure && r.pressure.done), card: el ? { h: el.querySelector("h3").textContent, p: [...el.querySelectorAll("p")].map(x => x.textContent) } : null, sum: document.getElementById("rrSum").textContent,
         acts: BLOOM.runReport.instance.state().actions, identity: r.identity }; });
     // an engineered QA dip: keep only the first `share` of the land's tiles living (deterministic: land-tile order), the rest bare
     const thinTo = (p, share) => p.evaluate(share => { const s = BLOOM_API.sim, keep = Math.floor(share * s.map.LAND); let n = 0;
@@ -482,6 +495,8 @@ async function browserChecks(LAUNCH = 3) {
             && e3.won && e3.wonAt === e3.firstCross && after.wins === 1 && after.shown === shown0 + 1 && after.won,
           `[${bn}] T3b${label} · the FULL early-Bloom sequence (seeded run, engineered dips): early coverage ≥ winAt → NOT won → coverage falls below winAt before the final state ("${hd.cond}") → the final atmosphere arrives → STILL not won ("${hf.cond}") → coverage regains winAt → won EXACTLY once on that tick (one bloom:win) → the report opens only then (once)`,
           J({ ...seq, regained: { tick: e3.firstCross, won: e3.wonAt }, wins: after.wins, reports: after.shown - shown0 }));
+        check(RP.done && /the final harsh state\./.test(RP.press || "") && !/keep playing|had not finished/i.test(RP.press || ""),
+          `[${bn}] W4${label} · a report with the pressure already complete keeps its final-state words ("— the final harsh state.")`, RP.press);
         if (evidence) await shot(p, "t5-thin-air-true-win-report.png", { firefox: true });
         check(e3.won && e3.wonAt !== null && e3.progress === 1 && RP.kind === "win" && RP.completion && RP.completion.mark === "FINAL ATMOSPHERE ✓" && RP.card && RP.card.h === "FINAL ATMOSPHERE ✓"
             && /^You held \d+% of the land in the final atmosphere\.$/.test(RP.card.p[0]) && /Bloom was first reached at \dm \d\ds/.test(RP.card.p[1] || "") && RP.completion.earlyBloomSeconds !== null
@@ -522,6 +537,10 @@ async function browserChecks(LAUNCH = 3) {
         check(l1.cov >= l1.winAt && l1.progress < 1 && !l1.won && l2.lost && !l2.won && LR.kind === "loss" && LR.heading === "EXTINCTION" && LR.card && /reached Bloom before the atmosphere finished changing, but the plant did not survive the final conditions/.test(LR.card.p[0])
             && !/won|victory/i.test(LR.card.p.join(" ")) && J(LR.acts) === J(["retryChallenge", "challenges", "mainMenu"]),
           `[${bn}] L · an engineered QA run: early Bloom (decline ${Math.round(l1.progress * 100)}%) → total die-off → a real EXTINCTION loss (no Keep playing); the report explains the early Bloom without implying a win`, J({ card: LR.card, sum: LR.sum }));
+        // (PMO copy correction) an extinction BEFORE the final pressure state never says "keep playing" (there is no Keep playing on a loss)
+        check(!LR.done && LR.press && !/keep playing/i.test(LR.press) && /The atmosphere had not finished changing\. Final conditions would have been: moisture [^,]+, temperature [^,]+ °C, radiation [^.]+\./.test(LR.press)
+            && /did not survive the final conditions/.test(LR.card.p[0]),
+          `[${bn}] W1 · the extinction report's pressure card (decline not finished) never says "keep playing"; it says the atmosphere had not finished changing and what the final conditions would have been; the Thin Air card still says the plant did not survive the final conditions`, LR.press);
         check(!p.errs.length && p.navs === 1, `[${bn}] D · the Thin Air runs: one document, no console error`, p.errs.join(" | ")); await T.c.close(); }
 
       // ------------------------------------------------------------------ X · an UNGATED Challenge still ends at its first Bloom
@@ -536,6 +555,8 @@ async function browserChecks(LAUNCH = 3) {
         await shot(p, "x1-dying-world-ordinary-bloom-ends.png", { firefox: true });
         check(noGoal && !xh.gated && !xh.cond && x.won && x.wonAt === x.firstCross && x.progress < 1 && XR.kind === "win" && XR.completion === null && !XR.card,
           `[${bn}] X · Dying World (ungated): no condition anywhere (dossier, HUD); its ordinary 70 % Bloom ENDS the run at once — won on the very tick coverage first reached winAt (decline ${Math.round(x.progress * 100)}%), report open`, J({ firstCross: x.firstCross, wonAt: x.wonAt, progress: +x.progress.toFixed(3) }));
+        check(!XR.done && /The decline continues if you keep playing \(final: moisture/.test(XR.press || "") && XR.acts.includes("keepPlaying"),
+          `[${bn}] W3 · a WIN before the final pressure state (Keep playing exists) keeps "The decline continues if you keep playing (final: …)"`, XR.press);
         await c.close(); }
 
       // ------------------------------------------------------------------ E · an Expedition's ordinary Bloom (unchanged)

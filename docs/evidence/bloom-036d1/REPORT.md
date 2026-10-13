@@ -158,3 +158,14 @@ Affected suites rerun after the fixes: training-check ✓ · native-competition-
 - **The report's "Time · to the bloom"** fact is the true completion time (for Thin Air after the final atmosphere), not the first early Bloom; the
   completion card states both.
 - **Not done (out of scope):** another condition type, Hearthfire, Windfall, Oasis Line changes, progression / medals / scoring / tiers / unlocks.
+
+## 11. PMO acceptance + copy correction (2026-10-12)
+
+PMO: 036D1 ACCEPTED FOR RELEASE (Thin Air and the completion system accepted) with one presentation-only correction: an EXTINCTION report's pressure
+line no longer says "The decline continues if you keep playing …" (a loss has no Keep playing). Before the final state it now reads "The atmosphere had
+not finished changing. Final conditions would have been: moisture …, temperature … °C, radiation …."; a win before the final state keeps the
+keep-playing wording; a completed decline keeps "— the final harsh state." Production (`run-report.js`) and legacy (`game-session.js`
+`pressureReport(kind)`) paths aligned. No simulation, pressure, completion, extinction, bank or Challenge-content change.
+QA (challenge-completion-check W1–W4, both browsers; the legacy path evaluated in Node): green. Focused: run-ui-check · run-ui-convergence-check ·
+challenge-completion-check 71/71 · dying-world-check · visual-system-check 54/54 · release-check --no-suites 51 · portable-runtime-check 71/71.
+`l1-thin-air-early-bloom-then-extinction.png` re-captured with the corrected wording.

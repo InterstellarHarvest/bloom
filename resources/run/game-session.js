@@ -995,9 +995,12 @@ const reportIdentity=()=>({ planetId:BLOOM_RUN.planet.id, planetName:BLOOM_RUN.p
 // BLOOM-012: the scenario's identity and how far the decline got, with the drift the plant endured (pressure runs only)
 function pressureReportData(){ if(!PRESS) return null; const o=PS.offsets;
   return { title:SCN.display.title, phaseName:phaseName(PS.phase), phase:PS.phase, progress:PS.progress, done:PS.progress>=1, offsets:{moist:o.moist, temp:o.temp, rad:o.rad}, max:{moist:PS.max.moist, temp:PS.max.temp, rad:PS.max.rad} }; }
-function pressureReport(){ const d=pressureReportData(); if(!d) return ""; const o=d.offsets;
+// (036D1, PMO copy correction) an EXTINCTION has no Keep playing: before the final state it says the atmosphere had not finished changing and what
+// the final conditions would have been; a win keeps "continues if you keep playing" (Keep playing exists); a completed decline keeps its final-state words
+function pressureReport(kind="win"){ const d=pressureReportData(); if(!d) return ""; const o=d.offsets;
+  const fin=`moisture ${sgn(d.max.moist)}, temperature ${sgn(d.max.temp)} °C, radiation ${sgn(d.max.rad)}`;
   return `<div class="press" id="repPressure"><b>Pressure: ${d.title}</b> — ${d.phaseName} (${Math.round(d.progress*100)}% of the decline).
-    Your plant endured: moisture <b>${sgn(o.moist)}</b>, temperature <b>${sgn(o.temp)} °C</b>, radiation <b>${sgn(o.rad)}</b>${d.done?" — the final harsh state.":`. The decline continues if you keep playing (final: moisture ${sgn(d.max.moist)}, temperature ${sgn(d.max.temp)} °C, radiation ${sgn(d.max.rad)}).`}</div>`;
+    Your plant endured: moisture <b>${sgn(o.moist)}</b>, temperature <b>${sgn(o.temp)} °C</b>, radiation <b>${sgn(o.rad)}</b>${d.done?" — the final harsh state.":kind==="loss"?`. The atmosphere had not finished changing. Final conditions would have been: ${fin}.`:`. The decline continues if you keep playing (final: ${fin}).`}</div>`;
 }
 // BLOOM-014: one competition line — how much land the native plants held at the start, at their peak and now, how many regions
 // were contested, and the regions left to them (winning never needed every native plant gone)
@@ -1062,7 +1065,7 @@ function legacyWinHtml(d){ const lbl=b=>b.single?b.name:`${b.short||b.name} ×${
 function legacyLossHtml(d){ const I=d.identity, e=d.elapsed;
   return `<h2>✕ EXTINCTION</h2>
     <div class="sub" id="lossWhy">No living plants were left anywhere for ${d.graceSeconds} s, so the run is over (${e.mins}m ${String(e.secs).padStart(2,"0")}s${I.kind==="procedural"?` on <b>${I.planetName}</b>, ${I.archetypeName} · ${I.seedWord} ${I.seed}`:""}).</div>
-    ${pressureReport()}${competitionReport()}${climateReport()}
+    ${pressureReport("loss")}${competitionReport()}${climateReport()}
     <div class="debrief" id="lossDebrief"><b>What happened:</b> ${d.debrief}</div>
     ${PLAY?runActionsHtml():`<button class="btn" id="lossRestart">Restart this run ↻</button>`}`; }
 // (BLOOM-029E) the report's actions and their one real path. Keep playing = the continue-after-win the modal's button has always made

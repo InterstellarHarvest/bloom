@@ -107,7 +107,10 @@
       const out = [];
       if (d.pressure) { const P = d.pressure, o = P.offsets;
         out.push({ icon: "pressure", title: `Pressure · ${P.title}`, lines: [`${P.phaseName} (${Math.round(P.progress * 100)} % of the decline).`,
-          `Your plant endured: moisture ${sgn(o.moist)}, temperature ${sgn(o.temp)} °C, radiation ${sgn(o.rad)}${P.done ? " — the final harsh state." : `. The decline continues if you keep playing (final: moisture ${sgn(P.max.moist)}, temperature ${sgn(P.max.temp)} °C, radiation ${sgn(P.max.rad)}).`}`] }); }
+          // (036D1, PMO copy correction) an extinction has no Keep playing: before the final state it names the final conditions that were never reached
+          `Your plant endured: moisture ${sgn(o.moist)}, temperature ${sgn(o.temp)} °C, radiation ${sgn(o.rad)}${P.done ? " — the final harsh state."
+            : d.kind === "loss" ? `. The atmosphere had not finished changing. Final conditions would have been: moisture ${sgn(P.max.moist)}, temperature ${sgn(P.max.temp)} °C, radiation ${sgn(P.max.rad)}.`
+            : `. The decline continues if you keep playing (final: moisture ${sgn(P.max.moist)}, temperature ${sgn(P.max.temp)} °C, radiation ${sgn(P.max.rad)}).`}`] }); }
       if (d.competition) { const C = d.competition, left = C.left.map(r => r.name);
         out.push({ icon: "competition", title: `Competition · ${C.title}`, lines: [`Native plants held ${pct(C.startShare)} of the land at the start, ${pct(C.peakShare)} at their peak and ${pct(C.share)} now. ${C.contested} region${C.contested === 1 ? "" : "s"} became contested.`,
           left.length ? `Left to native vegetation: ${left.join(", ")}. You did not need to remove every native plant.` : "Hardly any native cover is left: your plant out-competed it almost everywhere."] }); }
