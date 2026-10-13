@@ -186,7 +186,7 @@ export class ChallengeWorldScreen {
       <div class="cw-body">
         <div class="cw-globe-col"><div class="cw-stage"><div class="cw-globe"></div></div><p class="cw-seed"></p></div>
         <aside class="cw-dossier" aria-labelledby="${tid}">
-          <div class="cw-d-main">
+          <div class="cw-d-main" tabindex="0" role="region" aria-label="Challenge details">
             <div class="cw-pair">
               <section class="cw-sec cw-challenge">
               <p class="cw-sec-k">${ico(ch.presentation.icon)}<span>The challenge</span></p>

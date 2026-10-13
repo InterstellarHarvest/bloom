@@ -69,7 +69,7 @@
     layer.innerHTML = `<div class="rr-veil" aria-hidden="true"></div>` +
       `<article class="rr-card" id="rrCard" role="dialog" aria-modal="true" aria-labelledby="rrTitle" aria-describedby="rrSum" tabindex="-1">` +
         `<header class="rr-head"><span class="rr-kicker" id="rrKicker"></span><h2 id="rrTitle"></h2><p class="rr-sum" id="rrSum"></p></header>` +
-        `<div class="rr-scroll" id="rrScroll">` +
+        `<div class="rr-scroll" id="rrScroll" tabindex="0" role="region" aria-label="Run details">` +   // (BLOOM-037, a11y) focusable: keyboard players can scroll a long report
           `<div class="rr-facts" id="rrFacts" role="list"></div>` +
           `<div class="rr-body"><div class="rr-plant" id="rrPlant"></div><div class="rr-text" id="rrText"></div></div>` +
         `</div>` +

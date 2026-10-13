@@ -70,6 +70,7 @@
 .cw-stage{width:min(100%, calc(100cqh - 150px)); aspect-ratio:1; max-width:640px}
 .cw-globe{width:100%; height:100%; border-radius:50%}
 .cw-globe:focus-visible{outline-offset:-6px; border-radius:50%}
+.cw-d-main:focus-visible{outline-offset:-4px}
 .cw-seed{margin:8px 0 0; font-size:12.5px; color:var(--ink-faint); font-weight:800; letter-spacing:.3px; text-align:center}
 .cw-dossier{display:flex; flex-direction:column; min-height:0; min-width:0; border:2px solid var(--line-2); border-radius:var(--bloom-r-lg); background:var(--panel); box-shadow:var(--bloom-night-shadow); overflow:hidden}
 .cw-d-main{flex:1 1 auto; min-height:0; overflow:auto; padding:16px 20px 12px; display:grid; gap:14px; align-content:start}

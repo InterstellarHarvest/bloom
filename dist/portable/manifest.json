@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "cd9eb4bbc3d03fdb0403302c0bf2724393ff871c1233e93c33211c1f9e845fbc",
+  "fingerprint": "7d76d228cee9cfce3acb7e94b70bfe38ffe0325fc40cfa7bc36353c28bab11f1",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -17,8 +17,8 @@
   ],
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
-    "bytes": 1431876,
-    "sha256": "a55724808fd16377ab918a65948d5a11986c232e42a23be00904d75461178884",
+    "bytes": 1432196,
+    "sha256": "dc13f21f1a3ed4f3ab20bb137f3bd84baa00407becaf26d53d2705abfec4fd96",
     "surveyWorkerTextBytes": 246251
   },
   "workerInputs": [
@@ -164,9 +164,9 @@
     },
     {
       "path": "resources/challenges/challenge-world-screen.js",
-      "bytes": 26214,
-      "sha256": "92e03d60cb374d561b6d468db1f100c3fa3d4820ab879ba174522641295baf8c",
-      "bytesInBundle": 25490
+      "bytes": 26272,
+      "sha256": "75d1a72edae7e8c7efb6b0c481dc6d9e69215d2d2c9977a08904fe0ea8cceacb",
+      "bytesInBundle": 25548
     },
     {
       "path": "resources/challenges/challenge-world.js",
@@ -224,9 +224,9 @@
     },
     {
       "path": "resources/planet-sphere/planet-sphere-view.js",
-      "bytes": 29241,
-      "sha256": "9236b79cb3bd2f72a24e0ecb7d9d56d31092239f19ea4163b5c04cace56be382",
-      "bytesInBundle": 28000
+      "bytes": 29607,
+      "sha256": "ae44cc46306693ac6b8265540b5580d7a5fdeab6daf4a7f62d04d474b0278faa",
+      "bytesInBundle": 28262
     },
     {
       "path": "resources/planet-sphere/planet-texture.js",

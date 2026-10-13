@@ -111,7 +111,7 @@
         `</div>` +
       `</header>` +
       `<main class="pv-stage" id="pvStage">` +
-        `<canvas class="pv-map" id="pvMap" data-tutorial="map" tabindex="0" role="application" aria-roledescription="planet map" aria-describedby="pvMapHelp"></canvas>` +
+        `<canvas class="pv-map" id="pvMap" data-tutorial="map" tabindex="0" role="application" aria-label="Planet map" aria-roledescription="planet map" aria-describedby="pvMapHelp"></canvas>` +
         `<span class="sr-only" id="pvMapHelp">Click or tap a region to select it, water to clear the selection. With the keyboard: arrow keys move between regions, Enter selects, Escape clears.</span>` +
         `<section class="pv-scn" id="pvScn" data-tutorial="scenario-status" hidden aria-live="off"></section>` +
         `<div class="pv-legend" id="pvLegend" hidden></div>` +

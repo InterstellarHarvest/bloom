@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: cd9eb4bbc3d03fdb0403302c0bf2724393ff871c1233e93c33211c1f9e845fbc  (45 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: 7d76d228cee9cfce3acb7e94b70bfe38ffe0325fc40cfa7bc36353c28bab11f1  (45 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {
@@ -12111,11 +12111,13 @@
               cursor: c2.style.cursor,
               userSelect: c2.style.userSelect,
               tabindex: c2.getAttribute("tabindex"),
-              ariaLabel: c2.getAttribute("aria-label")
+              ariaLabel: c2.getAttribute("aria-label"),
+              role: c2.getAttribute("role")
             };
             Object.assign(c2.style, { touchAction: "pan-y", cursor: "grab", userSelect: "none" });
             if (this._saved.tabindex === null) c2.tabIndex = 0;
             if (this._saved.ariaLabel === null && this.opts.ariaLabel) c2.setAttribute("aria-label", this.opts.ariaLabel);
+            if (this._saved.role === null && c2.getAttribute("aria-label")) c2.setAttribute("role", "img");
           } else this._restoreContainer();
           return this;
         }
@@ -12277,6 +12279,8 @@
           else c2.setAttribute("tabindex", s2.tabindex);
           if (s2.ariaLabel === null) c2.removeAttribute("aria-label");
           else c2.setAttribute("aria-label", s2.ariaLabel);
+          if (s2.role === null) c2.removeAttribute("role");
+          else c2.setAttribute("role", s2.role);
           this._saved = null;
         }
         _touch() {
@@ -17383,7 +17387,7 @@
       <div class="cw-body">
         <div class="cw-globe-col"><div class="cw-stage"><div class="cw-globe"></div></div><p class="cw-seed"></p></div>
         <aside class="cw-dossier" aria-labelledby="${tid}">
-          <div class="cw-d-main">
+          <div class="cw-d-main" tabindex="0" role="region" aria-label="Challenge details">
             <div class="cw-pair">
               <section class="cw-sec cw-challenge">
               <p class="cw-sec-k">${ico(ch2.presentation.icon)}<span>The challenge</span></p>
