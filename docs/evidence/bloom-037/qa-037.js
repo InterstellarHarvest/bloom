@@ -455,7 +455,10 @@ const PRESCRIBED = { low_tide: "organic_hybrid", oasis_line: "reed_spire", thin_
           for (const id of ["dying_world", "low_tide", "oasis_line"]) {   // (all three exist on main d0eaf8f too: the same flow on both roots) t = Date.now(); await p.click('.mm-item[data-act="challenges"]').catch(() => {}); await hubReady(p); m[`menuToHub`] = m.menuToHub || (Date.now() - t);
             await p.evaluate(([HUBX, id]) => eval(HUBX).select(id), [HUB, id]); t = Date.now(); await p.click(".ch-btn.go");
             if (!PRESCRIBED[id]) { await speciesReady(p); await p.evaluate(SSX => eval(SSX).open("woolly_candle"), SS); await p.waitForTimeout(150); t = Date.now(); await p.click(".ss-btn.go"); }
-            await worldReady(p); m[`dossier:${id}`] = Date.now() - t; await p.keyboard.press("Escape"); await hubReady(p); await p.keyboard.press("Escape"); await atMenu(p); }
+            await worldReady(p); m[`dossier:${id}`] = Date.now() - t;
+            // back out to the title: dossier → (Choose Plant Species, player-choice Challenges) → hub → title
+            for (let k = 0; k < 6 && !(await p.evaluate(() => MENU_DEV.entry.state === "menu")); k++) { await p.keyboard.press("Escape"); await p.waitForTimeout(900); }
+            await atMenu(p); }
           const W = await p.evaluate(() => ({ workers: window.__w.length, longtasks: window.__lt.length, maxLong: Math.max(0, ...window.__lt.map(x => x[1])), sumLong: window.__lt.reduce((n, x) => n + x[1], 0) }));
           Object.assign(m, W);
           const counts = {}; for (const u of p.reqs) { const k = u.replace(/[?#].*$/, ""); counts[k] = (counts[k] || 0) + 1; }

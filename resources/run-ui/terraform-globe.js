@@ -94,7 +94,7 @@
     const H = { kind: "pending", view: null, disposed: false, pending: null, flat: null, surfaceSets: 0 };
     host.classList.add("tg-host");
     H.setSurface = (planet, render) => { H.pending = { planet, render: render || null }; H.surfaceSets++; if (H.view) H.view.setPlanet(planet, { render: render || null }); else if (H.flat) paintFlat(); };
-    H.dispose = () => { if (H.disposed) return; H.disposed = true; if (H.view) { H.view.dispose(); H.view = null; } if (H.flat) { H.flat.wrap.remove(); H.flat = null; } host.classList.remove("tg-host", "tg-sphere", "tg-flat"); };
+    H.dispose = () => { if (H.disposed) return; H.disposed = true; if (H.view) { H.view.dispose(); H.view = null; } if (H.role) { host.removeAttribute("role"); H.role = false; } if (H.flat) { H.flat.wrap.remove(); H.flat = null; } host.classList.remove("tg-host", "tg-sphere", "tg-flat"); };
     // the flat fallback: the canonical surface painted once with BLOOM.surface (the production map's own paint function), clipped to a disc
     function paintFlat() {
       if (!H.flat || !H.pending || !surface) return; const { planet, render } = H.pending, cv = H.flat.canvas, W = planet.gridWidth, Hh = planet.gridHeight;
@@ -108,6 +108,8 @@
       if (mod) {
         H.kind = "sphere"; host.classList.add("tg-sphere");
         H.view = new mod.PlanetSphereView(host, { reducedMotion, ariaLabel, background: null, wheelZoom: false });
+        // (BLOOM-037, a11y) the view labels the focusable host; a label on a role-less <div> is not announced (axe aria-prohibited-attr)
+        if (host.getAttribute("aria-label") && !host.hasAttribute("role")) { host.setAttribute("role", "img"); H.role = true; }
         if (H.pending) H.view.setPlanet(H.pending.planet, { render: H.pending.render });
       } else {
         H.kind = "fallback"; host.classList.add("tg-flat");
