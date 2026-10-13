@@ -253,7 +253,20 @@ const PRESCRIBED = { low_tide: "organic_hybrid", oasis_line: "reed_spire", thin_
           const unnamed = ctrls.filter(el => !nameOf(el)).map(el => el.outerHTML.slice(0, 90));
           const desc = el => el ? (el.id ? "#" + el.id : el.tagName.toLowerCase() + (el.className && typeof el.className === "string" ? "." + el.className.trim().split(/\s+/).slice(0, 2).join(".") : "") + (el.dataset.act ? `[${el.dataset.act}]` : "") + (el.dataset.species ? `[${el.dataset.species}]` : "") + (el.dataset.challenge ? `[${el.dataset.challenge}]` : "")) : "none";
           const ring = el => { const cs = getComputedStyle(el); return [cs.outlineStyle, cs.outlineWidth, cs.boxShadow, cs.borderColor, cs.backgroundColor, cs.transform].join("|"); };
-          return { controls: ctrls.length, unnamed, live: [...document.querySelectorAll("[aria-live],[role=status],[role=alert]")].filter(e => root.contains(e) || e.closest("#app")).length, desc0: desc(document.activeElement) };
+          // (BLOOM-037 contrast) the corrected TEXT pairs as rendered: computed colour vs the first opaque background behind it
+          const lum = c => { const m = c.match(/[\d.]+/g).map(Number).slice(0, 3).map(v => v / 255).map(v => v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); return 0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]; };
+          // the backgrounds behind a text: the first opaque colour up the tree; a gradient on the way counts with EVERY colour stop (conservative: the worst)
+          const bgOf = el => { const out = []; for (let e = el; e; e = e.parentElement) { const cs = getComputedStyle(e), g = cs.backgroundImage;
+              if (g && g !== "none" && /gradient/.test(g)) out.push(...(g.match(/rgba?\([^)]+\)/g) || []).filter(c => { const a = c.match(/[\d.]+/g).map(Number); return a.length === 3 || a[3] > 0.95; }));
+              const b = cs.backgroundColor, a = (b.match(/[\d.]+/g) || []).map(Number); if (a.length === 3 || (a.length === 4 && a[3] > 0.95)) { out.push(b); return out; }
+              if (out.length) return out; }
+            return out.length ? out : ["rgb(255,255,255)"]; };
+          const SEL = [".pv-tg > small", ".pv-runid", ".rg-o", ".pv-ck[aria-pressed=true]", ".pv-btn.plant", ".pv-btn.spread", ".pv-btn.planet", ".dr .hbtn", ".dr .li-part", ".dr .rb.resume", ".dr .r-region .rk",
+            ".dr .ow.none", ".dr .li-hint", ".dr .bank-empty", ".dr .mc-row.faint", ".dr .note", ".rr-fact span", ".rr-note", ".rr-chip.ow.none", "#rrContinue", ".rr-btn.primary", ".tc-kicker"];
+          const ratios = {}; for (const sel of SEL) for (const el of document.querySelectorAll(sel)) { if (!vis(el) || !el.textContent.trim()) continue;
+            const f = getComputedStyle(el).color, bs = bgOf(el), rs = bs.map(b => (Math.max(lum(f), lum(b)) + 0.05) / (Math.min(lum(f), lum(b)) + 0.05)), r = Math.min(...rs), b = bs[rs.indexOf(r)];
+            if (!ratios[sel] || r < ratios[sel].ratio) ratios[sel] = { ratio: +r.toFixed(2), fg: f, bg: b, text: el.textContent.trim().slice(0, 24) }; }
+          return { ratios, controls: ctrls.length, unnamed, live: [...document.querySelectorAll("[aria-live],[role=status],[role=alert]")].filter(e => root.contains(e) || e.closest("#app")).length, desc0: desc(document.activeElement) };
         }, [scope, dialog, tabs]);
         await p.mouse.move(1, 1);   // no pointer hover state anywhere during the walk
         // the Tab walk (real key presses): focus stays visible, inside the screen (and inside a dialog), with a visible focus indicator
@@ -283,12 +296,13 @@ const PRESCRIBED = { low_tide: "organic_hybrid", oasis_line: "reed_spire", thin_
             return r.violations.map(v => ({ id: v.id, impact: v.impact, n: v.nodes.length, t: v.nodes.slice(0, 2).map(x => x.target.join(" ")).join(" | ").slice(0, 160),
               nodes: v.nodes.slice(0, 8).map(x => ({ t: x.target.join(" "), text: (document.querySelector(x.target.join(" ")) || {}).textContent ? document.querySelector(x.target.join(" ")).textContent.trim().slice(0, 40) : "",
                 data: x.any && x.any[0] && x.any[0].data ? { ratio: x.any[0].data.contrastRatio, fg: x.any[0].data.fgColor, bg: x.any[0].data.bgColor, size: x.any[0].data.fontSize, weight: x.any[0].data.fontWeight, need: x.any[0].data.expectedContrastRatio } : null })) })); }, scope); }
+        for (const [k, v] of Object.entries(out.ratios || {})) if (!RATIOS[k] || v.ratio < RATIOS[k].ratio) RATIOS[k] = { ...v, screen };
         return { screen, ...out, tabStops: uniq.length, seq: uniq.slice(0, 14), bad: bad.slice(0, 6), badCount: bad.length, axe };
       };
-      const A = [];
+      const A = [], RATIOS = {};
       const record = (a, extra = {}) => { A.push({ ...a, ...extra }); const serious = (a.axe || []).filter(v => v.impact === "critical" || v.impact === "serious");
         info(`${bn}:A:${a.screen}`, { controls: a.controls, unnamed: a.unnamed.length, tabStops: a.tabStops, focusProblems: a.badCount, live: a.live, axe: (a.axe || []).map(v => `${v.id}(${v.impact},${v.n})`).join(" ") || (AXE ? "clean" : "not run"), seq: a.seq.slice(0, 8).join(" → ") }); return serious; };
-      const c = await context({ trained: false, seeded: true }), p = await page(c); const esc = {}; const serious = []; const issues = [];
+      const c = await context({ trained: false, seeded: true }), p = await page(c); const esc = {}; const serious = []; const issues = []; const states = {};
       try {
         await p.goto(`${ORIGIN}/?launch=3&bg=5`); await menuReady(p);
         // the first-run recommendation dialog (EXPEDITION before training): a real dialog — focus trapped, Escape closes
@@ -330,6 +344,25 @@ const PRESCRIBED = { low_tide: "organic_hybrid", oasis_line: "reed_spire", thin_
           serious.push(...record(await audit(p, `room:${st}`, "#dr", { tabs: 16 })));
           await p.keyboard.press("Escape"); await roomClosed(p).catch(() => {}); esc["room:" + st] = await p.evaluate(() => ({ closed: !BLOOM.decisionRooms.instance.state().room, focus: document.activeElement && (document.activeElement.dataset.tool || document.activeElement.id) }));
         }
+        // (BLOOM-037 contrast) the conditional states that carry the white-on-colour buttons / chip: a region the banner offers "would help"
+        // upgrades for (Plant / Spread / Planet buttons), Region Inspect on it (its help buttons) and an Adapt node preview (the part chip)
+        { const found = await p.evaluate(async () => { const A = BLOOM_APP.session.adapter;
+            for (const r of A.regions()) { A.actions.selectRegion(r.index); await new Promise(res => setTimeout(res, 150));
+              const b = [...document.querySelectorAll(".pv-btn.plant, .pv-btn.spread, .pv-btn.planet")].map(x => x.className.split(" ").pop());
+              if (b.length) return { region: r.name, buttons: b }; }
+            return null; });
+          states.banner = found;
+          if (found) { serious.push(...record(await audit(p, "region banner (would help)", "#pv", { tabs: 6 }), { found }));
+            await p.focus('.pv-tool[data-tool="region"]'); await p.keyboard.press("Enter"); await roomOpen(p, "inspect").catch(() => {}); await p.waitForTimeout(500);
+            states.hbtn = await p.evaluate(() => [...document.querySelectorAll(".dr .dr-room:not([hidden]) .hbtn")].map(x => x.className.split(" ").pop()));
+            serious.push(...record(await audit(p, "room:inspect (help buttons)", "#dr", { tabs: 4 })));
+            await p.keyboard.press("Escape"); await roomClosed(p).catch(() => {}); }
+          await p.keyboard.press("Escape"); await p.waitForTimeout(250);
+          await p.focus('.pv-tool[data-tool="adapt"]'); await p.keyboard.press("Enter"); await roomOpen(p, "adapt");
+          await p.focus(".dr .dr-room:not([hidden]) .node"); await p.waitForTimeout(600);
+          states.part = await p.evaluate(() => { const c = document.querySelector(".dr .dr-room:not([hidden]) .li-part"); return c ? c.textContent.trim() : null; });
+          serious.push(...record(await audit(p, "room:adapt (node preview)", "#dr", { tabs: 0 })));
+          await p.keyboard.press("Escape"); await roomClosed(p).catch(() => {}); }
         await p.click("#pvMenuBtn"); await p.waitForTimeout(300); serious.push(...record(await audit(p, "run menu", "#pvMenu", { tabs: 5 })));
         await p.keyboard.press("Escape"); await p.waitForTimeout(300); esc.runMenu = await p.evaluate(() => ({ hidden: document.getElementById("pvMenu").hidden, focus: document.activeElement && document.activeElement.id }));
         await winNow(p); await reportOpen(p); await p.waitForTimeout(400);
@@ -356,13 +389,13 @@ const PRESCRIBED = { low_tide: "organic_hybrid", oasis_line: "reed_spire", thin_
       check(esc.species === "menu" && esc.surveyFocus === "survey" && esc.dossier === "challenges" && esc.hub === "menu" && Object.keys(esc).filter(k => k.startsWith("room:")).every(k => esc[k].closed)
           && esc.runMenu && esc.runMenu.hidden && esc.settings && !esc.settings.open && esc.credits && !esc.credits.open && esc.report === true,
         tag("A3 · Escape / Back: Species → Main Menu · survey focus → survey · dossier → hub → Main Menu · every room → the map · run menu closes · Settings / Credits close · the end-of-run report deliberately stays (its actions are the way on)"), J(esc));
-      // colour contrast is reported separately: the failing pairs are the locked BLOOM-033 / 034 visual-system tokens (a design decision for the
-      // PMO, docs/evidence/bloom-037/REPORT.md § Accessibility) — never silently counted as a pass
-      const other = serious.filter(v => v.id !== "color-contrast"), contrast = A.flatMap(a => (a.axe || []).filter(v => v.id === "color-contrast").flatMap(v => v.nodes.map(n => ({ screen: a.screen, text: n.text, ...n.data }))));
-      const pairs = {}; for (const x of contrast) { const k = `${x.fg} on ${x.bg}`; (pairs[k] = pairs[k] || { ratio: x.ratio, need: x.need, n: 0, eg: [] }).n++; if (pairs[k].eg.length < 4 && !pairs[k].eg.includes(x.text)) pairs[k].eg.push(x.text); }
-      info(`${bn}:A:contrast-debt`, pairs);
-      check(!!AXE && !other.length && !A.some(a => (a.axe || []).some(v => v.impact === "critical")), tag(`A4 · axe-core WCAG 2.1 A/AA on ${A.length} screens: no critical violation and no serious violation other than colour contrast${AXE ? "" : " (axe NOT run: set AXE)"}`), J(other.slice(0, 8)));
-      check(true, tag(`A4b · KNOWN (not fixed in 037, PMO token decision): ${Object.keys(pairs).length} text/background colour pairs below WCAG AA 4.5:1 — ${Object.entries(pairs).map(([k, v]) => `${k} ${v.ratio}:1`).join(" · ")}`), J(pairs));
+      // (BLOOM-037 PMO) colour contrast is part of the gate: 0 critical, 0 serious — no rule suppressed, no exception
+      check(!!AXE && !serious.length && !A.some(a => (a.axe || []).some(v => v.impact === "critical")), tag(`A4 · axe-core WCAG 2.1 A/AA on ${A.length} screens: 0 critical and 0 serious violations (colour contrast included)${AXE ? "" : " (axe NOT run: set AXE)"}`), J(serious.slice(0, 8)));
+      info(`${bn}:A:ratios`, Object.fromEntries(Object.entries(RATIOS).map(([k, v]) => [k, v.ratio])));
+      RESULTS.info[`${bn}:A:ratioDetail`] = RATIOS;
+      check(Object.keys(RATIOS).length >= 15 && Object.values(RATIOS).every(v => v.ratio >= 4.5), tag(`A7 · the 037-corrected text pairs as RENDERED (computed colour on the first opaque background): ${Object.keys(RATIOS).length} element types, every one ≥ 4.5 : 1 (min ${Math.min(...Object.values(RATIOS).map(v => v.ratio))} : 1)`),
+        J(Object.fromEntries(Object.entries(RATIOS).filter(([, v]) => v.ratio < 4.5))));
+      check(!!(states.banner && states.banner.buttons.length && states.hbtn && states.hbtn.length && states.part), tag(`A6 · the conditional white-on-colour controls were on screen for the scan: banner "would help" buttons ${J(states.banner && states.banner.buttons)}, Region Inspect help buttons ${J(states.hbtn)}, the Adapt preview's part chip "${states.part}"`), J(states));
       RESULTS.info[`${bn}:A:screens`] = A;
       await c.close();
       // reduced motion: the title's fades and the long decorative animations honour prefers-reduced-motion
@@ -432,6 +465,32 @@ const PRESCRIBED = { low_tide: "organic_hybrid", oasis_line: "reed_spire", thin_
         J({ errs, bad: bad.slice(0, 6), pageErrs: p.errs.slice(0, 3) }));
       check(true, tag(`R1b · KNOWN LIMITATION (recorded, not a pass): gameplay at 390×844 — ${known.length} of ${R.filter(narrowRun).length} gameplay screens have covered controls / clipped specimens (the run UI has no phone layout)`), J(known.map(r => `${r.screen}: ${r.unreachable.join("; ")}${r.specimenClipped ? " · specimen clipped" : ""}`)));
       RESULTS.info[`${bn}:R:all`] = R;
+      await c.close();
+    }
+
+    // ======================================================================================== C · contrast before / after stills
+    // (BLOOM-037 PMO) the same seeded Expedition, the same screens, run once per --root with --label before|after: the HUD captions + run id + a
+    // "would help" banner, Region Inspect (Origin / kicker), an Adapt node preview (part chip), Terraform, the Bloom report (fact notes, Keep playing)
+    if (ONLY.includes("C")) {
+      const CD = path.join(__dirname, "contrast"); fs.mkdirSync(CD, { recursive: true });
+      const snap = async (p, name) => { await p.waitForTimeout(700); await p.screenshot({ path: path.join(CD, `${LABEL || "run"}-${bn}-${name}.png`) }); };
+      const c = await context({ seeded: true }), p = await page(c);
+      try {
+        await p.goto(`${ORIGIN}/?bg=5`); await menuReady(p); await expedition(p, "organic_hybrid", 1);
+        const o = await p.evaluate(async () => { const A = BLOOM_APP.session.adapter; for (const r of A.regions()) { A.actions.selectRegion(r.index); await new Promise(res => setTimeout(res, 150));
+          if (document.querySelector(".pv-btn.plant, .pv-btn.spread, .pv-btn.planet")) return r.name; } A.actions.selectRegion(A.regions().find(x => x.isOrigin).index); return null; });
+        await p.mouse.move(1, 1); await snap(p, "1-hud-banner");
+        await p.click('.pv-tool[data-tool="region"]'); await roomOpen(p, "inspect").catch(() => {}); await p.mouse.move(1, 1); await snap(p, "2-region-inspect");
+        await p.keyboard.press("Escape"); await roomClosed(p); await p.evaluate(async () => { const A = BLOOM_APP.session.adapter; A.actions.selectRegion(A.regions().find(x => x.isOrigin).index); });
+        await p.click('.pv-tool[data-tool="region"]'); await roomOpen(p, "inspect").catch(() => {}); await p.mouse.move(1, 1); await snap(p, "3-region-inspect-origin");
+        await p.keyboard.press("Escape"); await roomClosed(p);
+        await p.click('.pv-tool[data-tool="adapt"]'); await roomOpen(p, "adapt"); await p.focus(".dr .dr-room:not([hidden]) .node"); await snap(p, "4-adapt-preview");
+        await p.keyboard.press("Escape"); await roomClosed(p);
+        await p.click('.pv-tool[data-tool="terraform"]'); await roomOpen(p, "terraform"); await p.mouse.move(1, 1); await snap(p, "5-terraform");
+        await p.keyboard.press("Escape"); await roomClosed(p);
+        await winNow(p); await reportOpen(p); await p.mouse.move(1, 1); await snap(p, "6-report");
+        info(`${bn}:C:${LABEL}`, { banner: o, shots: fs.readdirSync(CD).filter(f => f.startsWith(`${LABEL || "run"}-${bn}-`)).length });
+      } catch (e) { check(false, tag("C · contrast stills"), String(e.message).slice(0, 200)); }
       await c.close();
     }
 
