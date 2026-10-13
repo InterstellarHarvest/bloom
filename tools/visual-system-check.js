@@ -105,8 +105,13 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
     for (const [sel, prop] of [[".tsk-card", "background"], [".tsk-card", "border-radius"], [".tsk-card p", "color"], [".tsk-btn", "background"], [".tsk-btn", "color"], [".tsk-btn", "border-radius"]]) {
       const v = lit(skipNew, sel, prop); rows.push({ f: "training-coach.css " + sel, k: prop, base: lit(skipOld, sel, prop), theme: tv(v), via: v }); }
     const norm = s => (s || "").replace(/\s+/g, " ").trim();
-    const off = rows.filter(r => norm(r.base) !== norm(r.theme));
-    PROOF.node.gameplayTokens = { compared: rows.length, differing: off };
+    // (BLOOM-037, PMO WCAG AA correction) these gameplay mappings changed ON PURPOSE: each is pinned to its exact accessible value instead
+    // (the TEXT-only faint / gold-deep shades; the gameplay button ladders) — every other token still equals its BLOOM-033 value
+    const A037 = { "--ink-faint-text": "#646c5b", "--rr-faint": "#646c5b", "--gold-deep-text": "#8a5a00",
+      "--leaf-btn": "#2a7636", "--leaf-btn-hover": "#215f2b", "--leaf-btn-lip": "#174a20", "--bloom-btn": "#a83d5a", "--bloom-btn-hover": "#8c3049", "--bloom-btn-lip": "#6a2236",
+      "--sky-btn": "#23679f", "--sky-btn-hover": "#1b5282", "--sky-btn-lip": "#123a5c" };
+    const off = rows.filter(r => r.k in A037 ? norm(r.theme) !== A037[r.k] : norm(r.base) !== norm(r.theme));
+    PROOF.node.gameplayTokens = { compared: rows.length, differing: off, accessible037: rows.filter(r => r.k in A037).map(r => [r.f.split("/").pop(), r.k, r.theme]) };
     check(rows.length >= 45 && !off.length, "V3 · gameplay reads the SAME values from the theme: every gameplay token now written var(--bloom-…) (the Planet View's palette, radii, shadow and font; the four category identities; the run report's card tokens; the training coach's and its Skip dialog's colours) resolves to exactly the value it had on 79f5540 — one source, no gameplay colour changed",
       `${rows.length} tokens compared · differing ${J(off.slice(0, 4))}`); }
   // V4 · the planning screens read the theme; the serif / gold-plaque language is retired
@@ -140,12 +145,33 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
     for (const k of text) for (const [b, c] of Object.entries(bgs)) rows.push({ k, on: b, ratio: +contrast(hex(T[k]), c).toFixed(2) });
     const focus = Object.entries(bgs).map(([b, c]) => ({ on: b, ratio: +contrast(hex(T["--bloom-focus-night"]), c).toFixed(2) }));
     const white = Object.fromEntries(["--bloom-leaf-btn-night", "--bloom-leaf-btn-night-hover", "--bloom-sky-btn-night", "--bloom-sky-btn-night-hover"].map(k => [k.slice(8), +contrast([255, 255, 255], hex(T[k])).toFixed(2)]));
-    const gameplayPair = { leaf: +contrast([255, 255, 255], hex(T["--bloom-leaf"])).toFixed(2), sky: +contrast([255, 255, 255], hex(T["--bloom-sky"])).toFixed(2) };   // (gameplay's own buttons: unchanged, reported)
+    const gameplayPair = { leaf: +contrast([255, 255, 255], hex(T["--bloom-leaf"])).toFixed(2), sky: +contrast([255, 255, 255], hex(T["--bloom-sky"])).toFixed(2) };   // (the semantic hues, reported; gameplay buttons rest on their -btn shades since BLOOM-037 — V6b)
     PROOF.node.contrast = { text: rows, focus, whiteOnPlanningButtons: white, gameplayButtonsUnchanged: gameplayPair };
     const low = rows.filter(r => r.ratio < 4.5), inkMin = Math.min(...rows.filter(r => r.k === "--bloom-night-ink").map(r => r.ratio));
     check(!low.length && inkMin >= 12 && focus.every(f => f.ratio >= 3) && Object.values(white).every(r => r >= 4.5),
       "V6 · night text tokens meet WCAG AA (≥ 4.5 : 1) on every night surface (the solid card, deep space, a raised control) — ink ≥ 12 : 1 — and the night focus ring ≥ 3 : 1 (non-text); the planning leaf / sky button shades carry a white word at ≥ 4.5 : 1 at rest and under the pointer / pressed (gameplay's own leaf / sky buttons are not changed)",
       `min ${Math.min(...rows.map(r => r.ratio))} : 1 · ink ≥ ${inkMin} · focus ${focus.map(f => f.ratio).join(" / ")} · white on ${Object.entries(white).map(([k, v]) => k + " " + v).join(", ")} · (gameplay leaf ${gameplayPair.leaf} / sky ${gameplayPair.sky}, unchanged)${low.length ? " · LOW " + J(low) : ""}`); }
+  // V6b · (BLOOM-037, PMO) gameplay TEXT contrast — the six sub-AA pairs found by the 037 audit stay fixed: the TEXT-only faint / gold-deep shades
+  // on every light gameplay surface, a white word on every gameplay button shade (rest + pointer) and on the category chips' dark shades, ≥ 4.5 : 1;
+  // the fixed use-sites keep using them; no gameplay `color:` falls back to the non-text faint / gold-deep
+  { const W = [255, 255, 255], surf = { card: "--bloom-card", paper: "--bloom-paper", "paper-2": "--bloom-paper-2", "gold-soft": "--bloom-gold-soft", "leaf-soft": "--bloom-leaf-soft" };
+    const rows = [];
+    for (const k of ["--bloom-ink-faint-text", "--bloom-gold-deep-text"]) for (const [n, b] of Object.entries(surf)) rows.push({ pair: `${k.slice(8)} on ${n}`, ratio: +contrast(hex(T[k]), hex(T[b])).toFixed(2) });
+    for (const k of ["--bloom-leaf-btn", "--bloom-leaf-btn-hover", "--bloom-bloom-btn", "--bloom-bloom-btn-hover", "--bloom-sky-btn", "--bloom-sky-btn-hover",
+      "--bloom-cat-temperature-dark", "--bloom-cat-water-dark", "--bloom-cat-soil-dark", "--bloom-cat-hazard-dark"]) rows.push({ pair: `white on ${k.slice(8)}`, ratio: +contrast(W, hex(T[k])).toFixed(2) });
+    const PV = stripCss(read("resources/run-ui/planet-view.css")), DR = stripCss(read("resources/run-ui/decision-rooms.css")), RR = stripCss(read("resources/run-ui/run-report.css")), TC = stripCss(read("resources/training/training-coach.css"));
+    const uses = { ".rr-btn.primary": /\.rr-btn\.primary\{background:var\(--leaf-btn/.test(RR), ".dr .rb.resume": /\.dr \.rb\.resume\{background:var\(--leaf-btn\)/.test(DR),
+      ".pv-btn.plant/spread/planet": ["leaf", "bloom", "sky"].every(h => new RegExp(`\\.pv-btn\\.\\w+\\{background:var\\(--${h}-btn\\)`).test(PV)),
+      ".dr .hbtn.plant/spread/planet": ["leaf", "bloom", "sky"].every(h => new RegExp(`\\.dr \\.hbtn\\.\\w+\\{background:var\\(--${h}-btn\\)`).test(DR)),
+      ".dr .li-part": /\.dr \.li-part\{[^}]*background:var\(--cat-dark, var\(--acc-dark\)\)/.test(DR), ".dr .r-region .rk": /\.dr \.r-region \.rk\{color:var\(--gold-deep-text\)\}/.test(DR),
+      "--rr-faint": /--rr-faint:var\(--bloom-ink-faint-text\)/.test(RR) };
+    const back = [["planet-view.css", PV], ["decision-rooms.css", DR], ["run-report.css", RR], ["training-coach.css", TC]].flatMap(([f, c]) => [...c.matchAll(/(?<![-a-z])color:\s*var\(--(ink-faint|gold-deep)\)/g)].map(m => `${f} color:${m[1]}`));
+    const unchanged = ["--bloom-leaf", "--bloom-bloom", "--bloom-sky", "--bloom-ink-faint", "--bloom-gold-deep"].map(k => [k, T[k]]), hues = J(unchanged) === J([["--bloom-leaf", "#3f9d4b"], ["--bloom-bloom", "#d9607e"], ["--bloom-sky", "#3b8fd0"], ["--bloom-ink-faint", "#8a937f"], ["--bloom-gold-deep", "#a86f00"]]);
+    PROOF.node.gameplayContrast037 = { rows, uses, fallbacks: back, semanticHuesUnchanged: unchanged };
+    const low = rows.filter(r => r.ratio < 4.5);
+    check(!low.length && Object.values(uses).every(Boolean) && !back.length && hues,
+      "V6b · (BLOOM-037) gameplay small TEXT ≥ 4.5 : 1 — faint-text / gold-deep-text on card, paper, paper-2, gold-soft, leaf-soft; a white word on the leaf / bloom / sky button shades at rest and under the pointer and on the four category chips' dark shades; the corrected use-sites use them; no gameplay color: falls back to the non-text faint / gold-deep; the semantic hues themselves unchanged",
+      `min ${Math.min(...rows.map(r => r.ratio))} : 1${low.length ? " · LOW " + J(low) : ""} · uses ${J(Object.entries(uses).filter(([, v]) => !v).map(([k]) => k))} · fallbacks ${J(back)}`); }
   // V7 · scope: what this milestone may touch, and what stays byte-identical
   { const changed = [...new Set([...git(`diff --name-only ${V7_DIFF}`).split("\n"), ...(LATER ? [] : git("ls-files --others --exclude-standard").split("\n"))].filter(Boolean))];
     const ALLOWED = p => /^(resources\/ui\/|tools\/|docs\/)/.test(p) || ["index.html", "README.md", "GAME_BIBLE.md", "demos/main-menu.html", "demos/demo-run.html", "demos/destination-survey.html", "demos/expedition-descent.html",
@@ -367,11 +393,33 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
           const fixed = x => /#dr[^>]*>.*>div\.mm\[\d+\]/.test(x), cmp = common.filter(x => !fixed(x));
           const SCALE_FREE = ["color", "background-color", "background-image", "border-top-color", "border-left-color", "font-family", "font-weight", "opacity", "fill", "stroke"].map(p => STYLE.indexOf(p));
           const pick = v => k === "adapt" ? SCALE_FREE.map(i => v.split("|")[i]).join("|").replace(/-?\d+(\.\d+)?px/g, "#px") : v;   // (gradient stops in px scale with the room too)
-          rows[k] = { elements: cmp.length, repaired: common.length - cmp.length, onlyHead: Object.keys(a).length - common.length, onlyBase: Object.keys(b).length - common.length, differ: cmp.filter(x => pick(a[x]) !== pick(b[x])).map(x => ({ x, head: a[x], base: b[x] })) }; }
+          // (BLOOM-037, PMO WCAG AA correction) the ONLY deliberate gameplay colour changes since: a field may differ solely by one of these exact
+          // transitions — small TEXT faint / gold-deep → the text shades (in colour-carrying fields, currentColor-derived ones included), and on the
+          // corrected white-word buttons / the Adapt part chip only: rest hue → its -btn shade, the old dark rim → the hue, the old dark lip → the -btn lip
+          const TEXT037 = [["rgb(138, 147, 127)", "rgb(100, 108, 91)"], ["rgb(168, 111, 0)", "rgb(138, 90, 0)"]];
+          const BTN037 = [["rgb(63, 157, 75)", "rgb(42, 118, 54)"], ["rgb(42, 118, 54)", "rgb(63, 157, 75)"], ["rgb(42, 118, 54)", "rgb(23, 74, 32)"],
+            ["rgb(217, 96, 126)", "rgb(168, 61, 90)"], ["rgb(168, 61, 90)", "rgb(217, 96, 126)"], ["rgb(168, 61, 90)", "rgb(106, 34, 54)"],
+            ["rgb(59, 143, 208)", "rgb(35, 103, 159)"], ["rgb(35, 103, 159)", "rgb(59, 143, 208)"], ["rgb(35, 103, 159)", "rgb(18, 58, 92)"],
+            ["rgb(217, 96, 31)", "rgb(156, 63, 14)"], ["rgb(138, 106, 62)", "rgb(95, 69, 42)"], ["rgb(138, 91, 184)", "rgb(94, 58, 134)"]];
+          const LIP037 = /^rgb\(\d+, \d+, \d+\)( -?[\d.]+px)+$/;   // the part chip's old category-dark lip → rgba(0, 0, 0, 0.3)
+          const names = k === "adapt" ? ["color", "background-color", "background-image", "border-top-color", "border-left-color", "font-family", "font-weight", "opacity", "fill", "stroke"] : STYLE;
+          const clsOf = el => new Set(el.replace(/\[\d+\]$/, "").split("#")[0].split(".").slice(1).concat((el.split("#")[1] || "").replace(/\[\d+\]$/, "").split(".").slice(1)));
+          const BTN_EL = { test: el => { const c = clsOf(el), hue = ["plant", "spread", "planet"].some(h => c.has(h));
+            return ((c.has("pv-btn") || c.has("hbtn")) && hue) || (c.has("rb") && c.has("resume")) || (c.has("rr-btn") && c.has("primary")) || c.has("li-part"); } };
+          const ok037 = (x, hv, bv) => { const H = pick(hv).split("|"), Bv = pick(bv).split("|"); if (H.length !== Bv.length) return false; const el = x.split(">").pop();
+            return H.every((h, i) => { const b = Bv[i], n = names[i]; if (h === b) return true;
+              const sub = T => T.some(([o, nw]) => b.split(o).join(nw) === h);
+              if (/^(color|border-top-color|border-left-color|outline-color|fill|stroke)$/.test(n) && sub(TEXT037)) return true;
+              if (BTN_EL.test(el) && /^(background-color|border-top-color|border-left-color|box-shadow)$/.test(n) && sub(BTN037)) return true;
+              if (/li-part/.test(el) && n === "box-shadow" && LIP037.test(b) && /^rgba\(0, 0, 0, 0\.3\)/.test(h)) return true;
+              return false; }); };
+          const changed = cmp.filter(x => pick(a[x]) !== pick(b[x]));
+          rows[k] = { elements: cmp.length, repaired: common.length - cmp.length, onlyHead: Object.keys(a).length - common.length, onlyBase: Object.keys(b).length - common.length,
+            contrast037: changed.filter(x => ok037(x, a[x], b[x])).length, differ: changed.filter(x => !ok037(x, a[x], b[x])).map(x => ({ x, head: a[x], base: b[x] })) }; }
         B.gameplayIdentity = Object.fromEntries(Object.entries(rows).map(([k, v]) => [k, { elements: v.elements, onlyHead: v.onlyHead, onlyBase: v.onlyBase, differ: v.differ.length, first: v.differ.slice(0, 2) }]));
         check(Object.values(rows).every(r => r.elements >= 15 && !r.differ.length) && !head.errs.length && !base.errs.length,
-          `[${bn}] G1 · gameplay is otherwise UNCHANGED: on this tree and on 79f5540, the same run (the same planet) — the Planet View with its region banner, the Bloom report, and the training coach over its run — EVERY element's computed colour, background, borders, radii, font, size, weight, spacing, shadow, fill and stroke are identical (the theme carries gameplay's exact values); in the Adapt room (whose scale follows the repaired mini-map card, G2) every element's colours, typeface, weight, opacity, fill and stroke are identical`,
-          Object.entries(rows).map(([k, v]) => `${k} ${v.elements} el / ${v.differ.length} differ${v.differ[0] ? " e.g. " + v.differ[0].x.slice(-60) + " " + v.differ[0].head + " ≠ " + v.differ[0].base : ""}`).join(" · ") + (head.errs.length || base.errs.length ? ` · errors ${J({ head: head.errs.slice(0, 2), base: base.errs.slice(0, 2) })}` : ""));
+          `[${bn}] G1 · gameplay is otherwise UNCHANGED (apart from BLOOM-037's exact WCAG AA colour transitions, counted separately): on this tree and on 79f5540, the same run (the same planet) — the Planet View with its region banner, the Bloom report, and the training coach over its run — EVERY element's computed colour, background, borders, radii, font, size, weight, spacing, shadow, fill and stroke are identical (the theme carries gameplay's exact values); in the Adapt room (whose scale follows the repaired mini-map card, G2) every element's colours, typeface, weight, opacity, fill and stroke are identical`,
+          Object.entries(rows).map(([k, v]) => `${k} ${v.elements} el / ${v.contrast037} 037-contrast / ${v.differ.length} differ${v.differ[0] ? " e.g. " + v.differ[0].x.slice(-60) + " " + v.differ[0].head + " ≠ " + v.differ[0].base : ""}`).join(" · ") + (head.errs.length || base.errs.length ? ` · errors ${J({ head: head.errs.slice(0, 2), base: base.errs.slice(0, 2) })}` : ""));
         const mh = head.miniMap, mb = base.miniMap; B.miniMapRepair = { head: mh, base: mb };
         check(mh && mb && mh.container === "normal" && mh.font === mh.gameFont && mh.kicker === mh.soft && mh.h >= 150 && mh.canvasH >= 60 && mb.container === "size" && mb.h < 60,
           `[${bn}] G2 · REPAIRED (a BLOOM-033 one-document regression): on 79f5540 the menu's root rule also hit the decision rooms' mini-map card (".mm"): container-type:size collapsed it to a ${mb && mb.h} px strip (its planet map and region strip invisible), in the menu's serif and cream ink; now the menu's root rules select only its own root (.mm-screen) and the card is gameplay's again (as accepted in BLOOM-032C) — the gameplay font and ink, ${mh && mh.h} px tall, its map canvas ${mh && mh.canvasH} px; the room's scale probe, which measures that card, gives the room em ${mh && mh.roomEm} again (${mb && mb.roomEm} while collapsed)`,

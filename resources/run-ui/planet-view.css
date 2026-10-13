@@ -16,6 +16,10 @@ html.ui18 body{background:var(--bloom-frame)}
   --sky:var(--bloom-sky); --sky-dark:var(--bloom-sky-dark); --sky-soft:var(--bloom-sky-soft); --gold:var(--bloom-gold); --gold-deep:var(--bloom-gold-deep); --gold-soft:var(--bloom-gold-soft);
   --ok:var(--bloom-ok); --warn:var(--bloom-warn); --bad:var(--bloom-bad); --pressure:var(--bloom-pressure); --pressure-soft:var(--bloom-pressure-soft); --focus:var(--bloom-focus);
   --frame:var(--bloom-frame);
+  --ink-faint-text:var(--bloom-ink-faint-text); --gold-deep-text:var(--bloom-gold-deep-text);   /* (BLOOM-037) small TEXT, WCAG AA */
+  --leaf-btn:var(--bloom-leaf-btn); --leaf-btn-hover:var(--bloom-leaf-btn-hover); --leaf-btn-lip:var(--bloom-leaf-btn-lip);
+  --bloom-btn:var(--bloom-bloom-btn); --bloom-btn-hover:var(--bloom-bloom-btn-hover); --bloom-btn-lip:var(--bloom-bloom-btn-lip);
+  --sky-btn:var(--bloom-sky-btn); --sky-btn-hover:var(--bloom-sky-btn-hover); --sky-btn-lip:var(--bloom-sky-btn-lip);
   --r-lg:var(--bloom-r-lg); --r-md:var(--bloom-r-md);
   --shadow-lg:var(--bloom-shadow-lg);
   --font:var(--bloom-font);
@@ -63,7 +67,7 @@ html.ui18 body{background:var(--bloom-frame)}
 .pv-skyd{font-size:12px; font-weight:900; color:var(--sky-dark); background:var(--sky-soft); border-radius:9px; padding:1px 7px; white-space:nowrap}
 .pv-skyd:empty{display:none}
 .pv-tools{display:flex; gap:10px; align-items:flex-end}
-.pv-tg{display:flex; flex-direction:column; align-items:center; gap:2px} .pv-tg > small{font-size:10px; font-weight:900; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-faint)}
+.pv-tg{display:flex; flex-direction:column; align-items:center; gap:2px} .pv-tg > small{font-size:10px; font-weight:900; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-faint-text)}
 .pv-tt{display:inline-flex; border:2px solid var(--line-2); border-radius:14px; overflow:hidden; background:var(--card); box-shadow:0 2px 0 var(--line-2)}
 .pv-tool{position:relative; display:inline-flex; align-items:center; gap:7px; min-height:44px; min-width:44px; padding:6px 12px; border:0; border-right:2px solid var(--line); background:none; cursor:pointer; font-weight:800; font-size:14px; color:var(--ink); white-space:nowrap}
 .pv-tool:last-child{border-right:0} .pv-tool:hover{background:var(--paper-2)} .pv-tool .ic{width:21px; height:21px}
@@ -72,7 +76,7 @@ html.ui18 body{background:var(--bloom-frame)}
 .pv-tool .tn{pointer-events:none}
 .pv-clock{display:inline-flex; gap:6px; justify-self:end}
 .pv-ck{display:inline-grid; place-items:center; min-width:46px; height:46px; padding:0 10px; border:2px solid var(--line-2); border-radius:12px; background:var(--card); cursor:pointer; font-weight:900; font-size:16px; box-shadow:0 2px 0 var(--line-2)}
-.pv-ck .ic{width:21px; height:21px} .pv-ck[aria-pressed="true"]{background:var(--gold-soft); border-color:var(--gold-deep); color:var(--gold-deep)}
+.pv-ck .ic{width:21px; height:21px} .pv-ck[aria-pressed="true"]{background:var(--gold-soft); border-color:var(--gold-deep); color:var(--gold-deep-text)}
 .pv-ck.menu{display:inline-flex; gap:6px; font-size:14px} .pv-ck[aria-expanded="true"]{background:var(--ink); color:#fff7e0; border-color:var(--ink)}
 @media (max-width:1400px){ .pv-id{display:none} .pv-hud{grid-template-columns:minmax(0,1fr) auto} .pv-ck.menu .tn{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)} }
 @media (max-width:1200px){ .pv-tool .tn{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)} .pv-tool{padding:6px 11px} .pv-sky small{display:none} }
@@ -128,7 +132,7 @@ html.ui18 body{background:var(--bloom-frame)}
 .pv-st.ok{border-color:#bfe0b5; background:var(--leaf-soft); color:var(--leaf-dark)} .pv-st.ok .ic{background:var(--ok)}
 .pv-st.warn{border-color:#e9b25a; background:#fff2dc; color:#8a5300} .pv-st.warn .ic{background:var(--warn)}
 .pv-st.bad{border-color:#d98aa2; background:#fbe6ec; color:#8f2846} .pv-st.bad .ic{background:var(--bad)}
-.rg-o{display:inline-flex; align-items:center; gap:3px; font-size:11px; font-weight:900; letter-spacing:.6px; text-transform:uppercase; color:var(--gold-deep); background:var(--gold-soft); border:1.5px solid #f0cf72; border-radius:9px; padding:1px 7px}
+.rg-o{display:inline-flex; align-items:center; gap:3px; font-size:11px; font-weight:900; letter-spacing:.6px; text-transform:uppercase; color:var(--gold-deep-text); background:var(--gold-soft); border:1.5px solid #f0cf72; border-radius:9px; padding:1px 7px}
 .rg-o .ic{width:13px; height:13px; fill:var(--gold); stroke:var(--gold-deep); stroke-width:1.6}
 /* four condition boxes = one matched category set. CATEGORY (always): accent bar, tinted icon disc, label in the category's
    dark shade, faint category wash. STATUS (separately): a badge with an icon, and a word when not OK. */
@@ -152,10 +156,10 @@ html.ui18 body{background:var(--bloom-frame)}
 .pv-btn{display:inline-flex; align-items:center; gap:8px; flex:0 0 auto; width:auto; min-height:44px; padding:5px 16px 5px 13px; border:2px solid var(--line-2); border-radius:14px; background:var(--card);
   box-shadow:0 2px 0 var(--line-2); cursor:pointer; font-weight:800; font-size:14px; white-space:nowrap; text-align:left}
 .pv-btn:hover{background:var(--paper-2)} .pv-btn .ic{width:20px; height:20px}
-.pv-btn.plant{background:var(--leaf); border-color:var(--leaf-dark); color:#fff; box-shadow:0 2px 0 var(--leaf-dark)}
-.pv-btn.spread{background:var(--bloom); border-color:var(--bloom-dark); color:#fff; box-shadow:0 2px 0 var(--bloom-dark)}
-.pv-btn.planet{background:var(--sky); border-color:var(--sky-dark); color:#fff; box-shadow:0 2px 0 var(--sky-dark)}
-.pv-btn.plant:hover{background:var(--leaf-dark)} .pv-btn.spread:hover{background:var(--bloom-dark)} .pv-btn.planet:hover{background:var(--sky-dark)}
+.pv-btn.plant{background:var(--leaf-btn); border-color:var(--leaf); color:#fff; box-shadow:0 2px 0 var(--leaf-btn-lip)}
+.pv-btn.spread{background:var(--bloom-btn); border-color:var(--bloom); color:#fff; box-shadow:0 2px 0 var(--bloom-btn-lip)}
+.pv-btn.planet{background:var(--sky-btn); border-color:var(--sky); color:#fff; box-shadow:0 2px 0 var(--sky-btn-lip)}
+.pv-btn.plant:hover{background:var(--leaf-btn-hover)} .pv-btn.spread:hover{background:var(--bloom-btn-hover)} .pv-btn.planet:hover{background:var(--sky-btn-hover)}
 .bn-help{display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; flex:0 1 auto; min-width:0}
 .bn-help > small{font-size:11px; font-weight:900; letter-spacing:.9px; text-transform:uppercase; color:var(--ink-soft); margin-left:2px}
 .bn-help .none{font-size:13px; font-weight:700; color:var(--ink-soft)}
@@ -188,7 +192,7 @@ html.ui18 body{background:var(--bloom-frame)}
 .pv-foot{display:flex; align-items:center; gap:14px; min-height:34px; padding:5px 14px; background:var(--card); border-top:3px solid var(--line-2); font-size:13.5px; font-weight:700; color:var(--ink); overflow:hidden}
 .pv-log{flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .pv-log .ic{width:16px; height:16px; color:var(--leaf-dark); margin-right:6px}
-.pv-runid{flex:none; color:var(--ink-faint); font-size:12px; white-space:nowrap; max-width:42%; overflow:hidden; text-overflow:ellipsis}
+.pv-runid{flex:none; color:var(--ink-faint-text); font-size:12px; white-space:nowrap; max-width:42%; overflow:hidden; text-overflow:ellipsis}
 .pv-toast{position:absolute; left:50%; top:88px; transform:translateX(-50%); z-index:60; max-width:min(560px, calc(100% - 24px)); background:var(--ink); color:#fff7e0; border-radius:12px;
   padding:9px 14px; font-weight:800; font-size:13.5px; box-shadow:var(--shadow-lg); display:flex; gap:8px; align-items:center}
 .pv-toast .ic{width:18px; height:18px; color:#ffe08a}

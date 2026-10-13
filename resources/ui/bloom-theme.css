@@ -51,6 +51,16 @@
   /* ── LIGHT surfaces (gameplay) ── */
   --bloom-paper:#fbf6ea; --bloom-paper-2:#f4ecd8; --bloom-card:#fffdf7; --bloom-line:#e4d8bd; --bloom-line-2:#d3c39f;
   --bloom-ink:#2f3a2c; --bloom-ink-soft:#5f6b57; --bloom-ink-faint:#8a937f;
+  /* (BLOOM-037, WCAG AA) TEXT-only shades: faint ink / gold-deep as small TEXT on the light surfaces were 2.7–4.2 : 1. These keep the same
+     hue and their place in the hierarchy at ≥ 4.65 : 1 on card / paper / paper-2 / gold-soft; the base tokens stay for non-text (rims, lines,
+     strokes, fills). */
+  --bloom-ink-faint-text:#646c5b; --bloom-gold-deep-text:#8a5a00;
+  /* (BLOOM-037, WCAG AA) gameplay BUTTONS carrying a white word: the BLOOM-034 planning-button rule applied to gameplay — rest on the hue's DARK
+     shade (white ≥ 5.6 : 1), rimmed with the hue itself, pointer / press one step deeper (≥ 7.6 : 1). Leaf and sky reuse the planning ladders'
+     exact values; the semantic hues (--bloom-leaf / -bloom / -sky) are unchanged. */
+  --bloom-leaf-btn:#2a7636;  --bloom-leaf-btn-hover:#215f2b;  --bloom-leaf-btn-lip:#174a20;
+  --bloom-bloom-btn:#a83d5a; --bloom-bloom-btn-hover:#8c3049; --bloom-bloom-btn-lip:#6a2236;
+  --bloom-sky-btn:#23679f;   --bloom-sky-btn-hover:#1b5282;   --bloom-sky-btn-lip:#123a5c;
   --bloom-frame:#242c22;                                                                /* the dark olive around the map */
   --bloom-shadow-lg:0 4px 0 rgba(80,60,20,.08), 0 18px 48px rgba(60,45,15,.20);
 
