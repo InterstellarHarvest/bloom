@@ -1,20 +1,19 @@
 {
- "root": "(worktree)",
  "checks": [
   {
    "ok": true,
    "name": "[webkit] O \u00b7 http /: the complete product \u2014 title \u2192 EXPEDITION (Choose Plant Species \u2192 survey \u2192 run) \u2192 Main Menu \u2192 CHALLENGES (Low Tide dossier \u2192 run) \u2192 Main Menu \u2192 TRAINING \u2192 Main Menu; one document, every request local, no console error",
-   "detail": "{\"titleMs\":174,\"exp\":{\"sp\":\"organic_hybrid\",\"planet\":true,\"scn\":null},\"ch\":{\"id\":\"low_tide\",\"sp\":\"organic_hybrid\"},\"tr\":{\"planet\":\"training_grounds\",\"coach\":true},\"far\":[],\"portable\":false,\"navs\":1,\"fileReqs\":0,\"errs\":[],\"reqs\":170}"
+   "detail": "{\"titleMs\":289,\"exp\":{\"sp\":\"organic_hybrid\",\"planet\":true,\"scn\":null},\"ch\":{\"id\":\"low_tide\",\"sp\":\"organic_hybrid\"},\"tr\":{\"planet\":\"training_grounds\",\"coach\":true},\"far\":[],\"portable\":false,\"navs\":1,\"fileReqs\":0,\"errs\":[],\"reqs\":169}"
   },
   {
    "ok": true,
    "name": "[webkit] O \u00b7 Pages /bloom/: the complete product \u2014 title \u2192 EXPEDITION (Choose Plant Species \u2192 survey \u2192 run) \u2192 Main Menu \u2192 CHALLENGES (Low Tide dossier \u2192 run) \u2192 Main Menu \u2192 TRAINING \u2192 Main Menu; one document, every request local, no console error",
-   "detail": "{\"titleMs\":162,\"exp\":{\"sp\":\"organic_hybrid\",\"planet\":true,\"scn\":null},\"ch\":{\"id\":\"low_tide\",\"sp\":\"organic_hybrid\"},\"tr\":{\"planet\":\"training_grounds\",\"coach\":true},\"far\":[],\"portable\":false,\"navs\":1,\"fileReqs\":0,\"errs\":[],\"reqs\":171}"
+   "detail": "{\"titleMs\":208,\"exp\":{\"sp\":\"organic_hybrid\",\"planet\":true,\"scn\":null},\"ch\":{\"id\":\"low_tide\",\"sp\":\"organic_hybrid\"},\"tr\":{\"planet\":\"training_grounds\",\"coach\":true},\"far\":[],\"portable\":false,\"navs\":1,\"fileReqs\":0,\"errs\":[],\"reqs\":171}"
   },
   {
    "ok": true,
    "name": "[webkit] O \u00b7 file://: the complete product \u2014 title \u2192 EXPEDITION (Choose Plant Species \u2192 survey \u2192 run) \u2192 Main Menu \u2192 CHALLENGES (Low Tide dossier \u2192 run) \u2192 Main Menu \u2192 TRAINING \u2192 Main Menu; one document, every request local (portable runtime, network offline), no console error",
-   "detail": "{\"titleMs\":210,\"exp\":{\"sp\":\"organic_hybrid\",\"planet\":true,\"scn\":null},\"ch\":{\"id\":\"low_tide\",\"sp\":\"organic_hybrid\"},\"tr\":{\"planet\":\"training_grounds\",\"coach\":true},\"far\":[],\"portable\":true,\"navs\":1,\"fileReqs\":55,\"errs\":[],\"reqs\":56}"
+   "detail": "{\"titleMs\":217,\"exp\":{\"sp\":\"organic_hybrid\",\"planet\":true,\"scn\":null},\"ch\":{\"id\":\"low_tide\",\"sp\":\"organic_hybrid\"},\"tr\":{\"planet\":\"training_grounds\",\"coach\":true},\"far\":[],\"portable\":true,\"navs\":1,\"fileReqs\":55,\"errs\":[],\"reqs\":56}"
   },
   {
    "ok": true,
@@ -39,7 +38,7 @@
   {
    "ok": true,
    "name": "[webkit] S3b \u00b7 Oasis Line: Reed Spire on a Native Competition world with native vegetation on the map; the origin's status chip reads Refuge exactly when the landing-refuge rule protects it",
-   "detail": "{\"refuge\":{\"chip\":\"OK\",\"refuge\":false,\"blocked\":false},\"natives\":744}"
+   "detail": "{\"refuge\":{\"chip\":\"OK\",\"refuge\":false,\"blocked\":false},\"natives\":645}"
   },
   {
    "ok": true,
@@ -53,7 +52,7 @@
   },
   {
    "ok": true,
-   "name": "[webkit] A1 \u00b7 every visible control on 20 screens has an accessible name (aria-label / labelledby / text)",
+   "name": "[webkit] A1 \u00b7 every visible control on 23 screens has an accessible name (aria-label / labelledby / text)",
    "detail": "{\"issues\":[],\"unnamed\":[]}"
   },
   {
@@ -68,18 +67,23 @@
   },
   {
    "ok": true,
-   "name": "[webkit] A4 \u00b7 axe-core WCAG 2.1 A/AA on 20 screens: no critical violation and no serious violation other than colour contrast",
+   "name": "[webkit] A4 \u00b7 axe-core WCAG 2.1 A/AA on 23 screens: 0 critical and 0 serious violations (colour contrast included)",
    "detail": "[]"
   },
   {
    "ok": true,
-   "name": "[webkit] A4b \u00b7 KNOWN (not fixed in 037, PMO token decision): 7 text/background colour pairs below WCAG AA 4.5:1 \u2014 #323437 on #04070e 1.61:1 \u00b7 #8a937f on #fffdf7 3.14:1 \u00b7 #a86f00 on #fff1c7 3.77:1 \u00b7 #a86f00 on #fffdf7 4.18:1 \u00b7 #ffffff on #3f9d4b 3.42:1 \u00b7 #8a937f on #f4ecd8 2.71:1 \u00b7 #8a937f on #fbf6ea 2.96:1",
-   "detail": "{\"#323437 on #04070e\":{\"ratio\":1.61,\"need\":\"4.5:1\",\"n\":1,\"eg\":[\"Surveying sector \u00b7 0 of 9 worlds\"]},\"#8a937f on #fffdf7\":{\"ratio\":3.14,\"need\":\"4.5:1\",\"n\":14,\"eg\":[\"Explore\",\"Change\",\"Ocean Archipelago \u00b7 World Seed 38579\",\"Hover a region to peek \u00b7 click to switch\"]},\"#a86f00 on #fff1c7\":{\"ratio\":3.77,\"need\":\"4.5:1\",\"n\":3,\"eg\":[\"Origin\"]},\"#a86f00 on #fffdf7\":{\"ratio\":4.18,\"need\":\"4.5:1\",\"n\":1,\"eg\":[\"EXPLORE\"]},\"#ffffff on #3f9d4b\":{\"ratio\":3.42,\"need\":\"4.5:1\",\"n\":3,\"eg\":[\"Resume\",\"Keep playing\"]},\"#8a937f on #f4ecd8\":{\"ratio\":2.71,\"need\":\"4.5:1\",\"n\":1,\"eg\":[\"No adaptations yet\"]},\"#8a937f on #fbf6ea\":{\"ratio\":2.96,\"need\":\"4.5:1\",\"n\":5,\"eg\":[\"of land \u00b7 goal 70 %\",\"to the bloom\",\"Ocean Archipelago \u00b7 World Seed 38579\",\"no challenge modifier\"]}}"
+   "name": "[webkit] A7 \u00b7 the 037-corrected text pairs as RENDERED (computed colour on the first opaque background): 17 element types, every one \u2265 4.5 : 1 (min 4.55 : 1)",
+   "detail": "{}"
+  },
+  {
+   "ok": true,
+   "name": "[webkit] A6 \u00b7 the conditional white-on-colour controls were on screen for the scan: banner \"would help\" buttons [\"plant\"], Region Inspect help buttons [\"plant\"], the Adapt preview's part chip \"Changes Stem\"",
+   "detail": "{\"banner\":{\"region\":\"Fern Wastes\",\"buttons\":[\"plant\"]},\"hbtn\":[\"plant\"],\"part\":\"Changes Stem\"}"
   },
   {
    "ok": true,
    "name": "[webkit] A5 \u00b7 prefers-reduced-motion: no long-running (> 600 ms / infinite) animation on Choose Plant Species",
-   "detail": "{\"ms\":427,\"anim\":0}"
+   "detail": "{\"ms\":441,\"anim\":0}"
   },
   {
    "ok": true,
@@ -89,7 +93,7 @@
   {
    "ok": true,
    "name": "[webkit] R1b \u00b7 KNOWN LIMITATION (recorded, not a pass): gameplay at 390\u00d7844 \u2014 7 of 8 gameplay screens have covered controls / clipped specimens (the run UI has no phone layout)",
-   "detail": "[\"run-map-oasis: #pvSpeed @276,14 hit=pv-tool; #pvMenuBtn @332,14 hit=pv-tool\",\"region-banner-refuge: #pvSpeed @276,14 hit=pv-tool; #pvMenuBtn @332,14 hit=pv-tool\",\"room-adapt:  \u00b7 specimen clipped\",\"room-spread: button.node.card @160,107 hit=node card st-poor \u00b7 specimen clipped\",\"room-terraform:  \u00b7 specimen clipped\",\"thin-air-hud: #pvMenuBtn @326,14 hit=pv-tool\",\"training-coach: #pvSpeed @274,14 hit=pv-tool; #pvMenuBtn @330,14 hit=pv-tool; button.pv-btn @81,710 hit=tcTitle\"]"
+   "detail": "[\"run-map-oasis: #pvSpeed @276,14 hit=pv-tool; #pvMenuBtn @332,14 hit=pv-tool\",\"region-banner-refuge: #pvSpeed @276,14 hit=pv-tool; #pvMenuBtn @332,14 hit=pv-tool\",\"room-adapt:  \u00b7 specimen clipped\",\"room-spread: button.node.card @160,107 hit=node card st-poor \u00b7 specimen clipped\",\"room-terraform:  \u00b7 specimen clipped\",\"thin-air-hud: #pvSpeed @276,14 hit=pv-tool; #pvMenuBtn @332,14 hit=pv-tool\",\"training-coach: #pvSpeed @274,14 hit=pv-tool; #pvMenuBtn @330,14 hit=pv-tool; button.pv-btn @81,710 hit=tcTitle\"]"
   }
  ],
  "info": {
@@ -109,7 +113,7 @@
    "tabStops": 1,
    "focusProblems": 0,
    "live": 1,
-   "axe": "color-contrast(serious,1)",
+   "axe": "clean",
    "seq": "body"
   },
   "webkit:A:settings dialog": {
@@ -172,7 +176,7 @@
    "tabStops": 1,
    "focusProblems": 0,
    "live": 13,
-   "axe": "color-contrast(serious,4)",
+   "axe": "clean",
    "seq": "#pvMap"
   },
   "webkit:A:region banner": {
@@ -181,7 +185,7 @@
    "tabStops": 1,
    "focusProblems": 0,
    "live": 13,
-   "axe": "color-contrast(serious,3)",
+   "axe": "clean",
    "seq": "#pvMap"
   },
   "webkit:A:room:region": {
@@ -190,7 +194,7 @@
    "tabStops": 2,
    "focusProblems": 0,
    "live": 13,
-   "axe": "color-contrast(serious,5)",
+   "axe": "clean",
    "seq": "#drtab-overview \u2192 #drpane-overview"
   },
   "webkit:A:room:adapt": {
@@ -217,8 +221,35 @@
    "tabStops": 1,
    "focusProblems": 0,
    "live": 13,
-   "axe": "color-contrast(serious,5)",
+   "axe": "clean",
    "seq": "div.tf-globe"
+  },
+  "webkit:A:region banner (would help)": {
+   "controls": 12,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "#pvMap"
+  },
+  "webkit:A:room:inspect (help buttons)": {
+   "controls": 33,
+   "unnamed": 0,
+   "tabStops": 2,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "#drtab-overview \u2192 #drpane-overview"
+  },
+  "webkit:A:room:adapt (node preview)": {
+   "controls": 34,
+   "unnamed": 0,
+   "tabStops": 0,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": ""
   },
   "webkit:A:run menu": {
    "controls": 3,
@@ -235,7 +266,7 @@
    "tabStops": 1,
    "focusProblems": 0,
    "live": 13,
-   "axe": "color-contrast(serious,6)",
+   "axe": "clean",
    "seq": "#rrScroll"
   },
   "webkit:A:challenge hub": {
@@ -262,7 +293,7 @@
    "tabStops": 1,
    "focusProblems": 0,
    "live": 13,
-   "axe": "color-contrast(serious,4)",
+   "axe": "clean",
    "seq": "#pvMap"
   },
   "webkit:A:skip-training dialog": {
@@ -315,73 +346,148 @@
    "hub": "menu",
    "skipDialog": false
   },
-  "webkit:A:contrast-debt": {
-   "#323437 on #04070e": {
-    "ratio": 1.61,
-    "need": "4.5:1",
-    "n": 1,
-    "eg": [
-     "Surveying sector \u00b7 0 of 9 worlds"
-    ]
+  "webkit:A:ratios": {
+   ".pv-tg > small": 5.38,
+   ".pv-runid": 5.38,
+   ".rg-o": 5.27,
+   ".dr .rb.resume": 5.61,
+   ".dr .r-region .rk": 5.83,
+   ".dr .ow.none": 4.65,
+   ".dr .li-hint": 4.55,
+   ".dr .mc-row.faint": 5.38,
+   ".dr .bank-empty": 5.38,
+   ".pv-btn.plant": 5.61,
+   ".dr .hbtn": 5.61,
+   ".dr .li-part": 6.71,
+   ".rr-fact span": 5.07,
+   ".rr-chip.ow.none": 5.07,
+   "#rrContinue": 5.61,
+   ".rr-btn.primary": 5.61,
+   ".tc-kicker": 5.83
+  },
+  "webkit:A:ratioDetail": {
+   ".pv-tg > small": {
+    "ratio": 5.38,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "Change",
+    "screen": "run map"
    },
-   "#8a937f on #fffdf7": {
-    "ratio": 3.14,
-    "need": "4.5:1",
-    "n": 14,
-    "eg": [
-     "Explore",
-     "Change",
-     "Ocean Archipelago \u00b7 World Seed 38579",
-     "Hover a region to peek \u00b7 click to switch"
-    ]
+   ".pv-runid": {
+    "ratio": 5.38,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "Ocean Archipelago \u00b7 Worl",
+    "screen": "run map"
    },
-   "#a86f00 on #fff1c7": {
-    "ratio": 3.77,
-    "need": "4.5:1",
-    "n": 3,
-    "eg": [
-     "Origin"
-    ]
+   ".rg-o": {
+    "ratio": 5.27,
+    "fg": "rgb(138, 90, 0)",
+    "bg": "rgb(255, 241, 199)",
+    "text": "Origin",
+    "screen": "run map"
    },
-   "#a86f00 on #fffdf7": {
-    "ratio": 4.18,
-    "need": "4.5:1",
-    "n": 1,
-    "eg": [
-     "EXPLORE"
-    ]
+   ".dr .rb.resume": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Resume",
+    "screen": "room:region"
    },
-   "#ffffff on #3f9d4b": {
-    "ratio": 3.42,
-    "need": "4.5:1",
-    "n": 3,
-    "eg": [
-     "Resume",
-     "Keep playing"
-    ]
+   ".dr .r-region .rk": {
+    "ratio": 5.83,
+    "fg": "rgb(138, 90, 0)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "EXPLORE",
+    "screen": "room:region"
    },
-   "#8a937f on #f4ecd8": {
-    "ratio": 2.71,
-    "need": "4.5:1",
-    "n": 1,
-    "eg": [
-     "No adaptations yet"
-    ]
+   ".dr .ow.none": {
+    "ratio": 4.65,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(244, 236, 216)",
+    "text": "No adaptations yet",
+    "screen": "room:region"
    },
-   "#8a937f on #fbf6ea": {
-    "ratio": 2.96,
-    "need": "4.5:1",
-    "n": 5,
-    "eg": [
-     "of land \u00b7 goal 70 %",
-     "to the bloom",
-     "Ocean Archipelago \u00b7 World Seed 38579",
-     "no challenge modifier"
-    ]
+   ".dr .li-hint": {
+    "ratio": 4.55,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(253, 230, 214)",
+    "text": "Needs 140 Biomass.",
+    "screen": "room:adapt (node preview)"
+   },
+   ".dr .mc-row.faint": {
+    "ratio": 5.38,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "Hover a skill to see wha",
+    "screen": "room:adapt"
+   },
+   ".dr .bank-empty": {
+    "ratio": 5.38,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "No soil interventions av",
+    "screen": "room:terraform"
+   },
+   ".pv-btn.plant": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Salt HandlingAdapt",
+    "screen": "region banner (would help)"
+   },
+   ".dr .hbtn": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Salt HandlingAdapt",
+    "screen": "room:inspect (help buttons)"
+   },
+   ".dr .li-part": {
+    "ratio": 6.71,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(156, 63, 14)",
+    "text": "Changes Stem",
+    "screen": "room:adapt (node preview)"
+   },
+   ".rr-fact span": {
+    "ratio": 5.07,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(251, 246, 234)",
+    "text": "of land \u00b7 goal 70 %",
+    "screen": "report"
+   },
+   ".rr-chip.ow.none": {
+    "ratio": 5.07,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(251, 246, 234)",
+    "text": "The unmodified pioneer",
+    "screen": "report"
+   },
+   "#rrContinue": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Keep playing",
+    "screen": "report"
+   },
+   ".rr-btn.primary": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Keep playing",
+    "screen": "report"
+   },
+   ".tc-kicker": {
+    "ratio": 5.83,
+    "fg": "rgb(138, 90, 0)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "TRAINING",
+    "screen": "training coach"
    }
   },
   "webkit:A:reduced-motion": {
-   "menuToSpeciesMs": 427,
+   "menuToSpeciesMs": 441,
    "longRunningAnimations": 0
   },
   "webkit:R:summary": {
