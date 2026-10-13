@@ -167,6 +167,7 @@ NODE_PATH="$(npm root -g)" node tools/release-check.js [--browsers chromium,fire
 node tools/main-menu-check.js                                            # BLOOM-028C Main Menu: backgrounds, title, background rule, settings, SectorPool = buildSector, source rules, Node, ~15 s
 NODE_PATH="$(npm root -g)" node tools/challenges-check.js                # BLOOM-036A Challenges data layer + hub, Node + browser, ~35 s
 NODE_PATH="$(npm root -g)" node tools/challenge-world-check.js [--evidence]  # BLOOM-036B/B1 seed banks (integrity, exact regeneration, sampled full re-validation, stale refusal) + the contained-Challenge flow, Node + browser, ~4 min
+NODE_PATH="$(npm root -g)" node tools/challenge-completion-check.js [--evidence] [--node-only]  # BLOOM-036D1 the generic engine win gate (no gate = bit for bit), the completion boundary, Thin Air (early Bloom, extinction after it, the true win), the bank's completion proof + provenance; Node + browser
 node tools/build-challenge-seed-bank.mjs --check                         # BLOOM-036B1: the shipped bank is exactly a rebuild from the committed candidate cache, Node, seconds
 node tools/pacing-metrics.js [--json <out>]                              # opening / pacing measurements (report, not pass/fail)
 node tools/colony-study.js [--json <out>] [--quick] [--worlds fb,13,8,d25,d9,f22,f12]  # per-colony allocation + local-investment study (report; d<N> / f<N> = Desert / Frozen seed N)
@@ -187,6 +188,9 @@ stale bank. **Before committing** a change to any of these, rebuild the bank in 
 - [ ] an engine rule (`content/config.js`, `resources/bloom-sim.js`)
 - [ ] a scenario mechanic (`content/scenarios.js` pressure / competition / climate / validation)
 - [ ] a Challenge recipe or version (`content/challenges.js` `launch.world`, `version`)
+- [ ] (036D1) a Challenge's completion definition (`content/challenges.js` `completion`) or the completion boundary's semantics
+  (`resources/challenges/challenge-completion.js`: `VERSION`, a condition type's `version`) — every cell's provenance carries its
+  `completionFingerprint`; ungated Challenges share one fingerprint, so a contract-version bump makes EVERY cell stale
 - [ ] the validator / proof contract (`resources/bloom-validate.js`, `bloom-witness.js`, `bloom-scenario.js`, `bloom-species.js`, the builder's `VALIDATOR_ID`)
 
 ```bash

@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "c5da9400fdf73b91584cb329110c2b2aa3a3da3e70273bdebb6734d4df885fac",
+  "fingerprint": "e07fcccacfe8e3f34f776b2932d61fe976a9b8f34bdf8db909b4b2d4671fb80c",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -18,7 +18,7 @@
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
     "bytes": 1431876,
-    "sha256": "ce3b7062bdf36fdbfd3630c0b9497eb75ad0bac0ba6e390b4a6aacfa99e0e97a",
+    "sha256": "27e48ad771cb47eae41d447814e09d7457040b1bafd0fe9597dd61b0bda92fe8",
     "surveyWorkerTextBytes": 246251
   },
   "workerInputs": [
@@ -122,8 +122,8 @@
     },
     {
       "path": "resources/bloom-sim.js",
-      "bytes": 97631,
-      "sha256": "9d50d5b03e9f42dd72fd7ae09ddddbe4cc2d4edd777173de77049a6e4c24866d",
+      "bytes": 97607,
+      "sha256": "f0725f95a2aba39088376cb8dde3f426715813a2b04db2977d6343ce572e93e1",
       "bytesInBundle": 0
     },
     {
