@@ -6,6 +6,10 @@ worktree, local branch and remote review branch were deleted after containment w
 
 Design record: [`CHALLENGES_SYSTEM_v1.md`](../../CHALLENGES_SYSTEM_v1.md) §2.5 (completion), §4 (bank format 2), §10 (Thin Air).
 
+Commits on the review branch (from `d0eaf8f`): `c403815` implementation (engine gate, completion boundary, Thin Air, UI, bank format 2 + full
+rebuild, portable runtime) · `ccd804c` QA (challenge-completion-check, suite updates, evidence) · `9d6ab67` QA (historical layer-P pins) · the docs
+commit (engine-comment reword for training-check T8a, portable rebuilt, docs, this report).
+
 ## 1. Generic engine win gate
 
 `createSim(planet, config, traits, { …, canWin })` — optional, generic: `canWin(sim, coverage) → boolean`, asked only on a tick with coverage ≥
@@ -123,8 +127,34 @@ Focused + full regression: see §9.
 
 ## 9. Regression
 
-‹REGRESSION›
+**Focused** (sequential): sim-check · dying-world-check · challenges-check 33/33 · challenge-world-check 108/108 · challenge-completion-check 64/64 ·
+game-flow-check · run-ui-check · run-ui-convergence-check · single-app-flow-check 59/59 · portable-runtime-check 71/71 · release-check --no-suites ·
+visual-system-check 54/54 — **12/12 green**. First pass: `run-ui-check` B8 failed (a 20th `BLOOM_API` member I had added — removed: `BLOOM_API`
+keeps its pinned 19 members; completion is read through `adapter.completion()`); `run-ui-convergence-check` B5 (Firefox room-transition timing),
+`release-check` (a Destination Survey candidate click timed out) and `portable-runtime-check` P12 (a guided-training callout-fit check over
+file://) failed once under load and **pass when rerun alone** (none touches 036D1 code).
+
+**Full regression** — every `tools/*-check.js` (45 suites), sequentially: **45 / 45 green** after two test-pin fixes and one comment reword:
+- `native-competition-check` #4 and `volatile-climate-check`'s layer-P pins hashed the witness hold record, which now also carries `seconds` /
+  `progress` (additive): they now hash the pre-036D1 hold fields (so they still prove the verdicts unchanged) and #4 asserts `progress === 1` on its own.
+- `training-check` T8a forbids the word "training" anywhere in `bloom-sim.js`; the win-gate comment named Training runs — reworded (comment only;
+  portable runtime rebuilt).
+Affected suites rerun after the fixes: training-check ✓ · native-competition-check (incl. part B) ✓ · sim-check ✓ · challenge-completion-check (Node 26/26) ✓ · challenge-world-check (Node 13/13) ✓ · portable-runtime-check 71/71 ✓. `slice-check` (known stochastic pacing debt) passed and was not loosened.
 
 ## 10. Known concerns
 
-‹CONCERNS›
+- **Load-sensitive browser checks (pre-existing):** `run-ui-convergence-check` B5 (Firefox), `release-check`'s survey click and `portable-runtime-check`
+  P12 failed once each under load in the focused pass and passed alone; not loosened.
+- **Engineered QA:** the early-Bloom browser runs use a Biomass boost and the run's own witness plan; T3b also uses seeded page randomness and two
+  engineered coverage dips (`thinTo`) to force the below-threshold-at-final path — a natural regain is not guaranteed on every world. The early Bloom →
+  extinction run is an engineered total die-off. The browser launch seed is chosen in Node (the first Desert entry whose witness blooms early).
+- **Many Ocean Thin Air worlds bloom only after the decline** (the study: ~79 % of Ocean wins come after the final state). On those the condition is
+  met implicitly and the player sees only the HUD line; this is by design (the Bloom must be in the final atmosphere either way).
+- **The early-Bloom log line** can be replaced in the same tick by a pressure-phase message; the persistent HUD condition line and the HOLDING badge
+  are the primary channel (QA records every log message and checks it was shown).
+- **Witness hold records** gained `seconds` / `progress` (strategy summary + confirmation runs) — additive; historical pins adjusted as above.
+- **Bank rebuild cost** ~70 min on 14 workers on this machine (the first build was stopped at 380 / 480 and restarted so every Thin Air entry records
+  the explicit proof statement). `DEVELOPMENT_NOTES.md`'s checklist now lists a completion-definition change as a rebuild trigger.
+- **The report's "Time · to the bloom"** fact is the true completion time (for Thin Air after the final atmosphere), not the first early Bloom; the
+  completion card states both.
+- **Not done (out of scope):** another condition type, Hearthfire, Windfall, Oasis Line changes, progression / medals / scoring / tiers / unlocks.

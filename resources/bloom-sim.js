@@ -397,7 +397,7 @@
     const crossStat = (traits.find(t => t.effect.type === "crossing") || { effect: {} }).effect.stat;
     const winAt = planet.winThreshold ?? C.win;
     // (BLOOM-036D1) an OPTIONAL, GENERIC win gate: opts.canWin(sim, coverage) → true | false, asked only on a tick whose coverage has reached
-    // winAt while the run is not yet won. Absent (every Expedition, Training and ungated Challenge run) = the ordinary coverage win, exactly as
+    // winAt while the run is not yet won. Absent (every run that is given none) = the ordinary coverage win, exactly as
     // before (nothing is called, nothing else changes). Present: coverage ≥ winAt is NECESSARY but not sufficient — the run is won on the first
     // tick where coverage ≥ winAt AND the gate returns true. Until then sim.won stays false, so the run keeps ticking, onWin does not fire and
     // extinction stays live (a gated run can still be lost). The engine knows nothing of what the gate tests (no Challenge id, no condition

@@ -1,5 +1,20 @@
 # Strange Bloom · Unknown Soils — Challenge completion-condition study v1 (BLOOM-036D)
 
+> **STATUS (BLOOM-036D1, 2026-10-12): this study is ACCEPTED and IMPLEMENTED / COMPLETE.** The PMO accepted it and selected **Thin Air** with
+> exactly one condition type, `pressure-final-state` — implemented in BLOOM-036D1 (CANDIDATE, review branch `handoff/bloom-036d1-review`;
+> [`CHALLENGES_SYSTEM_v1.md`](CHALLENGES_SYSTEM_v1.md) §2.5, §10). **Hearthfire: REJECTED** under the studied completion conditions (RESERVE design
+> history only) · **Windfall: HOLD** (the never-Critical condition is rejected) · **Oasis Line: released unchanged**, no extra condition.
+>
+> **PMO CORRECTION to §2 / §9 (the engine boundary).** The study's implementation note described the `sim.won` boundary backwards. In the
+> engine, `sim.won` is set when coverage first reaches `winAt`, `onWin` fires (the session stops the run and opens the report), and extinction runs
+> only while `!sim.won`. A session-level gate that let `sim.won` fire at 70 % before the final atmosphere would therefore open the report early AND
+> switch extinction off for the rest of the decline (an effectively immortal plant) — that is not Thin Air. The implemented boundary: **`sim.won`
+> means the RUN's actual completion.** `createSim` takes an optional, GENERIC win gate (`opts.canWin(sim, coverage)`; absent = the ordinary
+> engine bit for bit); with a gate, coverage may cross `winAt` earlier, but `sim.won` does not become true — the run goes on, extinction stays
+> live — until the gate permits on a tick with coverage ≥ `winAt`. The engine never reads a Challenge or a condition name; the Challenge's
+> completion boundary (`resources/challenges/challenge-completion.js`) builds the gate. The struck sentences below are kept as the study wrote
+> them, marked, for the record.
+
 **BLOOM-036D — DESIGN + CALIBRATION CANDIDATE.** Branch `agent/bloom-036d-completion-study` → review branch `handoff/bloom-036d-completion-study`, from
 production `main` `bfd8461` (the 036C1 closeout). **Nothing player-facing is implemented:** no completion condition, no Challenge card, no change to
 `content/challenges.js`, the shipped seed bank (sha256 `5cd2e385…`, `--check` identical) or any gameplay code. Research tooling, results and documents
@@ -52,9 +67,11 @@ A condition that ordinary play **always** satisfies is decoration; one that **no
 | **Native Competition** | `sim.competition`: `startShare`, `share`, `peakShare`, `everContested[]`, per-region `regionTiles.native` / `.player` **now**, `regions[].side`, flips, events | **which regions natives held AT LANDING** (only the start *share* is kept): a one-time landing snapshot |
 | **General** | `sim.won` (set the tick coverage first reaches the threshold; **it also switches off extinction**), `sim.ticks`, coverage, species, `startingState`, the Challenge instance's provenance | any "held for N seconds" duration at runtime (Bloom is an instant today) |
 
-**Implementation consequence:** a completion condition must not be implemented by delaying `sim.won` (that would keep extinction off) nor by setting it
+~~**Implementation consequence:** a completion condition must not be implemented by delaying `sim.won` (that would keep extinction off) nor by setting it
 early; it belongs at the Challenge-run level (game session): "Bloom" stays the engine's coverage event, the Challenge's *completion* is Bloom ∧ the
-condition, evaluated each tick, and extinction stays live until the Challenge completes.
+condition, evaluated each tick, and extinction stays live until the Challenge completes.~~ **(Backwards — PMO correction above.)** Delaying
+`sim.won` is exactly what keeps extinction ON: the implemented rule is a generic engine win gate — `sim.won` (the run's actual completion) is set
+only on a tick with coverage ≥ `winAt` that the gate permits; until then the run continues and extinction stays live.
 
 ## 3. Thin Air — Bloom in the final atmosphere — RECOMMEND
 
@@ -73,7 +90,7 @@ Definition: Dying World · prescribed Woolly Candle · Desert + Ocean · normal 
 | Degenerate bypass | none — the condition cannot be met early, and extinction stays live until it is |
 | Idle risk | low (p90 60 s, only where Bloom came early; the world is still changing) |
 | UI legibility | high — one existing meter (the decline's progress) |
-| Implementation | small: one condition type over existing state; a session-level completion check; HUD / dossier / report lines |
+| Implementation | small: one condition type over existing state; ~~a session-level completion check~~ a generic engine win gate fed by the Challenge's completion boundary (PMO correction); HUD / dossier / report lines |
 | Bank / proof cost | **≈ none**: every Dying World × Woolly Candle proof already satisfies it (§8) |
 
 **Why it is more than the released Dying World × Woolly Candle case:** the worlds and proofs are the same, but the *contract* is not — plain Bloom lets
@@ -185,7 +202,7 @@ completion: { win: "bloom", conditions: [ { type: "pressure-final-state" } ] }
 | | `pressure-final-state` |
 |---|---|
 | **Validation** | only with a scenario that has `pressure` (refused otherwise); no parameters; at most one condition per Challenge |
-| **Runtime evaluator** | met while `sim.pressure.progress >= 1`; the Challenge completes on the first tick with Bloom coverage (`coverage ≥ winAt`) AND the condition met; extinction stays live until then; the engine's own `sim.won` stays the coverage event |
+| **Runtime evaluator** | met while `sim.pressure.progress >= 1`; the Challenge completes on the first tick with Bloom coverage (`coverage ≥ winAt`) AND the condition met; extinction stays live until then; ~~the engine's own `sim.won` stays the coverage event~~ (corrected: `sim.won` IS that completion — set through the engine's generic win gate) |
 | **Progress** | `{ progress: sim.pressure.progress, reached: progress >= 1, coverage, winAt }` → "Final atmosphere: 82 % of the decline" / "reached" |
 | **Report** | `{ type, metAtSeconds, coverageAtCompletion, earlyBloomSeconds? }` |
 | **Offline proof** | layer P's hold (already `max(margin, final state) + holdFinalSeconds`); the builder records the condition in the cell's provenance |
