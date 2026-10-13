@@ -97,17 +97,17 @@ dismiss (its actions are the way on).
   and every request stays on the disk. No network, server, install, account or browser flag.
 - **Hosted:** any static host; every URL is relative, so `/` and a project subpath such as `/bloom/` both work. GitHub Pages:
   <https://interstellarharvest.github.io/bloom/>. The repository's Pages workflow (`.github/workflows/pages.yml`, `tools/build-pages-site.mjs`)
-  publishes exactly `index.html` + `content/` + `planets/` + `resources/` — once the repository's Pages source is **GitHub Actions**
-  (see [`evidence/bloom-037/REPORT.md`](evidence/bloom-037/REPORT.md) § Release / hosting: the remaining one-time owner setting).
+  publishes exactly `index.html` + `content/` + `planets/` + `resources/`; the repository's Pages source is **GitHub Actions** (set by the
+  owner at the 037 release — the old "Deploy from a branch" source, which published the whole repository, is no longer active).
 - No web fonts, CDN, analytics, cookies, service worker or external request anywhere. `localStorage` holds only the settings and the
   training record (the game runs without storage).
 
 ## 8. Supported browsers and screens
 
 - **Supported:** current desktop **Chromium-based browsers** (Chrome, Edge, …) and **Firefox** — both the full release QA matrix.
-- **Safari / WebKit:** see [`evidence/bloom-037/REPORT.md`](evidence/bloom-037/REPORT.md) § Browsers for exactly what was tested (a Playwright
-  WebKit build on macOS 12, not Safari itself). Not claimed as supported beyond that evidence.
-- **Screens:** gameplay needs a window **at least 1024 px wide** (laptop / desktop / landscape tablet); designed and checked at 1024 × 768,
+- **Safari: untested, not claimed as supported** (PMO decision, BLOOM-037). A Playwright WebKit build (WebKit 18, macOS 12) runs the whole release
+  QA matrix green — supporting evidence only, not Safari itself ([`evidence/bloom-037/REPORT.md`](evidence/bloom-037/REPORT.md) § Browsers).
+- **Screens:** gameplay needs a window **at least 1024 px wide** (laptop / desktop / landscape tablet — an accepted v1 limitation, PMO); designed and checked at 1024 × 768,
   1440 × 900 and 2560 × 1440. The planning screens (title, Species Selection, Destination Survey, Challenge hub and dossier) also have phone
   layouts (checked at 390 × 844). Keyboard play is supported throughout; touch is not a designed input.
 
@@ -119,5 +119,8 @@ dismiss (its actions are the way on).
 - **No progression or rewards** — no medals, scores, unlocks or campaign; Challenges are not ranked.
 - **Challenge rule changes cost a bank rebuild** (§6, ~70 min offline) — a development cost, invisible to players.
 - **Gameplay is not laid out for phones** (§8): the run map and decision rooms need ≥ 1024 px.
-- **Colour contrast:** several small secondary labels (muted captions, notes, and white text on the green primary buttons) are below the
-  WCAG AA 4.5 : 1 text ratio — locked visual-system tokens; recorded for a PMO decision ([`evidence/bloom-037/REPORT.md`](evidence/bloom-037/REPORT.md) § Accessibility).
+- **Safari itself is untested** (§8): WebKit proxy evidence only.
+
+**Accessibility:** WCAG 2.1 AA (axe-core) — 0 critical / 0 serious violations on the 23 audited screens in Chromium, Firefox and WebKit. The
+colour-contrast issues found by the 037 hardening (small secondary text, white words on gameplay buttons) were **FIXED before release** — text-only
+shades and gameplay button shades in `resources/ui/bloom-theme.css`, the semantic hues unchanged ([`evidence/bloom-037/REPORT.md`](evidence/bloom-037/REPORT.md) § Accessibility).

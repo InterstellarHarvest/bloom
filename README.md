@@ -127,7 +127,7 @@ Then choose **Expedition**, **Challenges** or **Training**. The whole game runs 
 
 **Good to know:**
 
-- Made for desktop and laptop browsers: Chrome, Edge and other Chromium-based browsers, and Firefox. Safari hasn't been tested itself: the whole game does run in a WebKit test build (the engine behind Safari), so it will probably work, but that isn't a promise yet.
+- Made for desktop and laptop browsers: Chrome, Edge and other Chromium-based browsers, and Firefox. Safari hasn't been tested itself and isn't officially supported: the whole game does run in a WebKit test build (the engine behind Safari), but that isn't a promise.
 - Gameplay needs a window at least 1024 pixels wide. The menus also work on a phone, but the game itself doesn't.
 - There's no sound, no difficulty setting and no unlocks or scores. Runs aren't saved: a reload returns to the title.
 

@@ -17,7 +17,10 @@ not rewritten to match later plans.
 
 *Last updated: 2026-10-13, **BLOOM-037 — final hardening & release — CANDIDATE** (review branch `handoff/bloom-037-review`, NOT merged; from
 production `main` `3cc3e33`). **The product is FROZEN** (EXPEDITION · CHALLENGES · TRAINING; four species; six Challenges); 037 changed only
-documentation, dead code, accessibility and release readiness. The canonical inventory of what ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md);
+documentation, dead code, accessibility and release readiness. **PMO final review (2026-10-13): hardening ACCEPTED; one release-blocking
+correction — the six sub-WCAG-AA colour-contrast pairs — FIXED before release** (text-only shades and gameplay button shades; the semantic hues
+unchanged). **Locked:** gameplay ≥ 1024 px is an accepted v1 limitation (no phone gameplay UI); Safari itself stays untested / not claimed (WebKit
+proxy evidence only). The canonical inventory of what ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md);
 record [`evidence/bloom-037/REPORT.md`](evidence/bloom-037/REPORT.md).*
 
 *Production `main` (2026-10-13): **BLOOM-036 CLOSEOUT — CHALLENGES: IMPLEMENTED / COMPLETE for the current release scope.** **BLOOM-036A · 036B · 036B1 ·
@@ -416,12 +419,11 @@ The decisions (unchanged):
 
 ## 11. GitHub Pages
 
-**Pages is LIVE** at <https://interstellarharvest.github.io/bloom/> (BLOOM-037 audit, 2026-10-12) — but through the repository's **legacy
-"Deploy from a branch" source** (`main`, `/`): every push to `main` runs both GitHub's legacy Pages build (which publishes the *whole*
-repository: docs, tools, evidence, demos) and the repository's own workflow (`.github/workflows/pages.yml` → `tools/build-pages-site.mjs`,
-the curated game-only site); the two deployments race and the legacy one currently lands last. **Remaining one-time owner action:**
-
-GitHub repository → **Settings → Pages → Build and deployment → Source: GitHub Actions** — then only the curated workflow site is published.
+**Pages is LIVE** at <https://interstellarharvest.github.io/bloom/>, published by the repository's own workflow only
+(`.github/workflows/pages.yml` → `tools/build-pages-site.mjs`: `index.html` + `content/` + `planets/` + `resources/`). The one-time owner
+setting is **done** (BLOOM-037): GitHub repository → **Settings → Pages → Build and deployment → Source: GitHub Actions** (the Pages API reports
+`build_type: workflow`). *History:* the BLOOM-037 audit (2026-10-12) found the legacy "Deploy from a branch" source (`main`, `/`) still active
+— GitHub's legacy build published the whole repository and raced the workflow on every push.
 
 This is not a gameplay-code feature; product code does not work around repository settings.
 
