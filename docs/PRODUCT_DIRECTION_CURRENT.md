@@ -15,12 +15,16 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-12, **BLOOM-036D1 — Thin Air, the first Challenge completion condition — CANDIDATE** (review branch `handoff/bloom-036d1-review`,
-NOT merged; [`CHALLENGES_SYSTEM_v1.md`](CHALLENGES_SYSTEM_v1.md) §2.5, §10; record [`evidence/bloom-036d1/REPORT.md`](evidence/bloom-036d1/REPORT.md)).
-**036D study: IMPLEMENTED / COMPLETE** (PMO-accepted, integrated into `main` `d0eaf8f`) · **036D1: CANDIDATE** · **Thin Air: CANDIDATE** ·
-**Hearthfire: REJECTED** under the studied completion conditions (RESERVE design history only) · **Windfall: HOLD** (the study rejected never-Critical) ·
-**Oasis Line: released unchanged** (no extra condition) · **Progression / rewards: NOT APPROVED / NOT STARTED**. Production `main` is `d0eaf8f`
-(the 036C1 closeout + the accepted 036D study).*
+*Last updated: 2026-10-13, **BLOOM-036 CLOSEOUT — CHALLENGES: IMPLEMENTED / COMPLETE for the current release scope.** **BLOOM-036A · 036B · 036B1 ·
+036C · 036C1 · 036D · 036D1: IMPLEMENTED / COMPLETE.** Released Challenges: Dying World · Native Competition · Volatile Climate · Low Tide · Oasis Line ·
+**Thin Air** (§8). Completion system: exactly one released condition type, `pressure-final-state`; **no additional condition type is planned without a
+new study**. **Progression / rewards: NOT APPROVED / NOT STARTED** · **medals / scoring / tiers / unlocks: NOT PLANNED**. **Next: FINAL HARDENING /
+RELEASE.***
+
+*Production `main` (2026-10-13): **BLOOM-036D1 integrated**. The PMO accepted 036D1 for release (Thin Air and the completion system) with one
+presentation-only correction (an extinction report's pressure line no longer says "continues if you keep playing" — a loss has no Keep playing);
+`main` was fast-forwarded `d0eaf8f` → `3b4d3a7` (accepted candidate `e64d0c4` + the copy correction; no merge commit, squash, rebase, cherry-pick or
+force push); this docs-only closeout follows it. Record: [`evidence/bloom-036d1/REPORT.md`](evidence/bloom-036d1/REPORT.md).*
 
 *Production `main` (2026-10-12): **BLOOM-036C1 integration closeout**. The PMO accepted BLOOM-036C1 for release with one narrow presentation correction
 (REFUGE, below); production `main` was fast-forwarded to the exact corrected review head `d69d458` (accepted candidate `659b240` + the correction; from
@@ -138,14 +142,15 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
 | Normal Species Selection (EXPEDITION → Choose Plant Species) | **IMPLEMENTED** |
 | `?species=1` | **not required** (ignored: one behaviour path) |
 | Dynamic region specimen environments | **IMPLEMENTED** |
-| Challenges | **IMPLEMENTED** (Dying World · Native Competition · Volatile Climate, §8) |
+| Challenges | **IMPLEMENTED / COMPLETE** for the current release scope (Dying World · Native Competition · Volatile Climate · Low Tide · Oasis Line · Thin Air, §8) |
 | BLOOM-036A | **IMPLEMENTED / COMPLETE** (as part of the combined Challenges release) |
 | BLOOM-036B | **IMPLEMENTED / COMPLETE** |
 | BLOOM-036B1 | **IMPLEMENTED / COMPLETE** (prevalidated seed banks) |
 | BLOOM-036C (content study) | **IMPLEMENTED / COMPLETE** (PMO-accepted, `d8ca0cb`) |
 | BLOOM-036C1 (first authored Challenges) | **IMPLEMENTED / COMPLETE** — Low Tide · Oasis Line released (`d69d458`) |
 | BLOOM-036D (completion-condition study) | **IMPLEMENTED / COMPLETE** (PMO-accepted, `d0eaf8f`) |
-| BLOOM-036D1 (Thin Air · `pressure-final-state`) | **CANDIDATE** (review branch `handoff/bloom-036d1-review`) — the generic engine win gate, the completion boundary, Thin Air, bank format 2 |
+| BLOOM-036D1 (Thin Air · `pressure-final-state`) | **IMPLEMENTED / COMPLETE** (`3b4d3a7`) — the generic engine win gate, the completion boundary, Thin Air, bank format 2 |
+| Medals / scoring / tiers / unlocks | **NOT PLANNED** |
 | Progression / rewards | **NOT APPROVED / NOT STARTED** |
 
 - **The final species art is in production** — `cinder-rosette` (`rosette@1`), `woolly-candle` (**`candle@2`**, the Woolly fidelity
@@ -219,22 +224,26 @@ Candle on body-plan revision `candle@2`).
 ## 8. Challenges
 
 **LOCKED DESIGN · IMPLEMENTED** (BLOOM-036) · **BLOOM-036A: IMPLEMENTED / COMPLETE** · **BLOOM-036B: IMPLEMENTED / COMPLETE** ·
-**BLOOM-036B1: IMPLEMENTED / COMPLETE** · **CHALLENGES: IMPLEMENTED** for the current first playable product · **BLOOM-036C study:
-IMPLEMENTED / COMPLETE** · **BLOOM-036C1 (Low Tide · Oasis Line): IMPLEMENTED / COMPLETE** (`d69d458`). 036A/B/B1 PMO-accepted and fast-forwarded into production `main` as one combined release (`bd0eb27`,
+**BLOOM-036B1: IMPLEMENTED / COMPLETE** · **CHALLENGES: IMPLEMENTED / COMPLETE for the current release scope** · **BLOOM-036C study:
+IMPLEMENTED / COMPLETE** · **BLOOM-036C1 (Low Tide · Oasis Line): IMPLEMENTED / COMPLETE** (`d69d458`) · **BLOOM-036D study: IMPLEMENTED / COMPLETE**
+(`d0eaf8f`) · **BLOOM-036D1 (Thin Air · completion): IMPLEMENTED / COMPLETE** (`3b4d3a7`). 036A/B/B1 PMO-accepted and fast-forwarded into production `main` as one combined release (`bd0eb27`,
 2026-10-12). **Sequence (locked):** BLOOM-035B species engineering (complete) → BLOOM-035C final species art + the normal Species Selection
 release (complete) → BLOOM-036A/B/B1 the Challenges system and its first three Challenges (complete) → 036C authored Challenge content.
 
 **Current released Challenges (production `main`):** 1. **Dying World** · 2. **Native Competition** · 3. **Volatile Climate** · 4. **Low Tide** ·
-5. **Oasis Line** (hub order — content order, not a ranking). **036D1 candidate:** 6. **Thin Air**.
+5. **Oasis Line** · 6. **Thin Air** (hub order — content order, not a ranking).
 
-**BLOOM-036D1 — CANDIDATE** (review branch `handoff/bloom-036d1-review`): **Thin Air** — Dying World · prescribed **Woolly Candle** · Desert World +
+**BLOOM-036D1 — IMPLEMENTED / COMPLETE** (`3b4d3a7`): **Thin Air** — Dying World · prescribed **Woolly Candle** · Desert World +
 Ocean Archipelago · normal start · completion **Bloom AND `pressure-final-state`**: an early 70 % Bloom is only a milestone (no stop, no report, the run
 goes on, extinction stays live — "BLOOM REACHED — hold it until the atmosphere settles.", badge HOLDING); the run is won once, on the first tick with
 coverage ≥ the threshold in the final atmosphere (FINAL ATMOSPHERE ✓). Engine: a GENERIC optional win gate (`createSim` `canWin`; no gate = bit for
 bit; the engine names no Challenge). Completion semantics: `resources/challenges/challenge-completion.js` (one condition type, no parameters, ≤ 1
 condition, pressure scenarios only). Bank: format 2 / validator @2, every cell carries `completionFingerprint`; **15 cells × 50 = 750** (the 14
-released cells' 700 entries unchanged — only their provenance changed; `thin_air/woolly_candle` new: 25 Desert World + 25 Ocean Archipelago, 310 of the 320 Desert / Ocean pool worlds qualified), sha256 `8506124b462cf4d47710a1eb37806ddead9dd3f600c28c36cfcfd071fda59e40`. The five released
-Challenges keep `conditions: []` and are mechanically and textually unchanged.
+released cells' 700 entries unchanged — only their provenance changed; `thin_air/woolly_candle` new: 25 Desert World + 25 Ocean Archipelago, 310 of the 320 Desert / Ocean pool worlds qualified), sha256 `8506124b462cf4d47710a1eb37806ddead9dd3f600c28c36cfcfd071fda59e40` — **the current production bank (format 2, 15 cells, 50 entries each, 750
+in all; the existing 14 cells' 700 selections preserved exactly through the migration; Thin Air 25 Desert + 25 Ocean)**. The five earlier Challenges
+keep `conditions: []` and are mechanically and textually unchanged. **`sim.won` means the run's ACTUAL completion** (the generic engine gate); an early
+Thin Air Bloom is a milestone only until the final-atmosphere condition is met. **Exactly one released condition type (`pressure-final-state`); no
+additional condition type is planned without a new study.**
 
 **BLOOM-036C1 — IMPLEMENTED / COMPLETE** (`d69d458`): the first **authored** Challenges, from the PMO-accepted content study — equal cards on the same
 hub, no basic / advanced split. Release seed bank: **14 cells × 50 = 700 entries**, sha256 `5cd2e385963abcfdaf2a3bd5191f721ae2207b2c17510ef93cb1420737d1bcf3`
@@ -250,7 +259,7 @@ completion conditions yet** (every Challenge completes with the normal Bloom).
   Challenge, never only the scenario. Prescribed-plant Challenges skip Choose Plant Species.
 - **Windfall: HOLD** — the focused recalibration (200 / 225 / 250 starting Biomass, CHALLENGE_CONTENT_STUDY §11) met content supply but failed the
   premise gate: extra Biomass mostly speeds the ordinary game up and does not make shock-exposed winning strategies more available.
-  ~~Thin Air: RESERVE~~ → **Thin Air: CANDIDATE in 036D1** (with its completion condition, above).
+  ~~Thin Air: RESERVE~~ → **Thin Air: RELEASED in 036D1** (with its completion condition, above).
   **Hearthfire: REJECTED** under the studied completion conditions (036D study: +6 / +12 / +18 °C warming decorative, supply-collapsing or beyond the
   validator's sky search) — RESERVE design history only.
 - **REFUGE — protected landing refuge (LOCKED presentation rule).** When the run's origin region's own ground would be Blocked but the landing-refuge
@@ -348,7 +357,7 @@ Shape of BLOOM-036 (**roadmap correction, 2026-10-12**):
 - **036C — AUTHORED CHALLENGE CONTENT — study COMPLETE** (PMO-accepted). Which contained situations BLOOM can author from species, planet
   selection, starting state and the existing scenario mechanics — studied read-only and offline (seed-bank pipeline). **036C1 — the first authored
   batch: Low Tide + Oasis Line — IMPLEMENTED / COMPLETE**; Windfall HOLD, Thin Air and Hearthfire RESERVE.
-- **036D — completion-condition study: IMPLEMENTED / COMPLETE** (PMO-accepted) → **036D1 — Thin Air with `pressure-final-state`: CANDIDATE.** No
+- **036D — completion-condition study: IMPLEMENTED / COMPLETE** (PMO-accepted) → **036D1 — Thin Air with `pressure-final-state`: IMPLEMENTED / COMPLETE.** **BLOOM-036 is closed; next: final hardening / release.** No
   other condition type is implemented or planned without a new study; progression / reward systems **only if later approved**.
 
 - CHALLENGES are **not** modifiers chosen during a normal Expedition. They are separate, SimCity-style contained challenge runs.
@@ -421,6 +430,6 @@ This is not a gameplay-code feature; product code does not work around repositor
 | **BLOOM-036C** — Authored Challenge content study | design + read-only calibration of the first genuinely authored Challenge set (species · planet selection · starting state · existing scenarios) | **IMPLEMENTED / COMPLETE** (PMO-accepted, `d8ca0cb`; [`CHALLENGE_CONTENT_STUDY_v1.md`](CHALLENGE_CONTENT_STUDY_v1.md)) |
 | **BLOOM-036C1** — First authored Challenges | Low Tide + Oasis Line with their own bank cells; the released-copy corrections; the low-arrival dossier line; the REFUGE status; Windfall recalibrated → HOLD | **IMPLEMENTED / COMPLETE** (`d69d458`, in production `main`) |
 | **BLOOM-036D** — Challenge completion-condition study | which completion conditions make an authored premise unavoidable (Thin Air, Hearthfire, Windfall, Oasis Line), calibrated offline; the minimal schema; validator / bank impact | **IMPLEMENTED / COMPLETE** (PMO-accepted, `d0eaf8f`; the study's backwards `sim.won` sentence corrected in 036D1) |
-| **BLOOM-036D1** — Thin Air | exactly one completion condition type (`pressure-final-state`); a GENERIC engine win gate; `challenge-completion.js`; Thin Air (Dying World · Woolly Candle · Desert + Ocean); completionFingerprint provenance (bank format 2, 15 cells × 50) | **CANDIDATE** (review branch `handoff/bloom-036d1-review`) |
+| **BLOOM-036D1** — Thin Air | exactly one completion condition type (`pressure-final-state`); a GENERIC engine win gate; `challenge-completion.js`; Thin Air (Dying World · Woolly Candle · Desert + Ocean); completionFingerprint provenance (bank format 2, 15 cells × 50) | **IMPLEMENTED / COMPLETE** (`3b4d3a7`, in production `main`) |
 | **BLOOM-036E+** — progression | progression / rewards only if later approved; no further condition type without a new study | NOT APPROVED |
-| **Final hardening** | full documentation reconciliation; dead historical production-path cleanup; Pages enablement / release; a Safari / WebKit production test if practical; final end-to-end release QA | PLANNED |
+| **Final hardening** | full documentation reconciliation; dead historical production-path cleanup; Pages enablement / release; a Safari / WebKit production test if practical; final end-to-end release QA | **NEXT** (planned) |
