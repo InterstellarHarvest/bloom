@@ -1,5 +1,7 @@
 # Gameplay UI Convergence v1 — the production run interface by default, SUBDUED transitions, the production run report
 
+> **Current state (BLOOM-037):** the production run interface described here runs inside `index.html` since BLOOM-033 (not `demo-run.html`), and over `file://` its modules come through the portable runtime (BLOOM-031) — the transitions below are not "immediate" there any more. What ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md).
+
 **From:** BLOOM-029E · **For:** whoever builds BLOOM-029F (Destination Survey → exact gameplay planet handoff), the Tutorial PMO
 (BLOOM-028D2, the guided coach), and the Main PMO.
 

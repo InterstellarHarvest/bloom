@@ -1,5 +1,7 @@
 # Strange Bloom — species system v1 (BLOOM-035A design)
 
+> **Current state (BLOOM-037):** implemented and released — BLOOM-035B (`2180fcd`) + BLOOM-035C (`4ac7301`): four species on their final art packs, Species Selection in the normal EXPEDITION flow (`?species=1` is ignored), the proof packs engineering / QA material only. Status lines below that say "candidate", "behind `?species=1`" or "proof packs" describe 035B. What ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md).
+
 **Status: ACCEPTED (PMO, 2026-10-10) — BLOOM-035A design COMPLETE; BLOOM-035B implements it.** The PMO accepted this design
 with the decisions recorded as **LOCKED** in §0.1 below; where §0.1 and a later section differ, **§0.1 wins** (the later sections are kept
 as the reviewed design text). BLOOM-035A itself changed no production mechanic, data file or sprite.

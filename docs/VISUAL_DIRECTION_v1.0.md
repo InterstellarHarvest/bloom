@@ -1,5 +1,7 @@
 # BLOOM — Visual & specimen direction v1.0
 
+> **Current state (BLOOM-037):** historical direction — implemented by BLOOM-029 (production UI), 032C (the sprite organism), 034 (the visual system) and 035C2 (the region-driven specimen environment, released). The "nothing is implemented yet" status below is the 2026-09 planning state. What ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md).
+
 **Status:** APPROVED FUTURE DIRECTION (owner + PMO, recorded with BLOOM-009, 2026-09-26; §9 contextual pop-out panels added with BLOOM-010, 2026-09-27). **Nothing in this document is implemented yet** except where the *Current implementation* section says so.
 
 **Gate rule:** gameplay and mechanics validation comes before the full visual-polish phase. The owner passed the human procedural playtest ([`PLAYTEST_PROCEDURAL_v1.md`](PLAYTEST_PROCEDURAL_v1.md)) after BLOOM-009: the gameplay loop and per-colony development are kept, and the main open concern is **UI crowding** (§9). Content work (more archetypes) continues first; this document still does not start the visual-polish phase.

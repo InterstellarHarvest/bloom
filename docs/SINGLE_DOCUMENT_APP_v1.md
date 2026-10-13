@@ -1,5 +1,7 @@
 # Strange Bloom — the single-document application (BLOOM-033)
 
+> **Current state (BLOOM-037):** IMPLEMENTED in production `main` since BLOOM-033 (the "on branch … awaiting PMO review" status below is historical). Later milestones added screens inside the same document — Choose Plant Species (035C2), the CHALLENGES hub, PREPARING CHALLENGE WORLD and the Challenge Planet Dossier (036A/B; [`CHALLENGES_SYSTEM_v1.md`](CHALLENGES_SYSTEM_v1.md) §3). What ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md).
+
 **Status:** IMPLEMENTED on branch `agent/bloom-033-single-document-app` (awaiting PMO review). Current product direction:
 [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md).
 

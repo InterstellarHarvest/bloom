@@ -1,5 +1,7 @@
 # Release Candidate v1 — Strange Bloom · Unknown Soils
 
+> **Current state (BLOOM-037):** the released product adds Choose Plant Species (035C) and CHALLENGES (036) to what this document describes. What ships: [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md).
+
 > **Milestone-era document (BLOOM-030 / 031).** It records the release candidate as it was then — a root title that handed the selected
 > planet to `demos/demo-run.html` through a session handoff. **Since BLOOM-033 the game is one document:** `index.html` holds the title,
 > Training, the survey, gameplay and every return flow; `demos/demo-run.html` is a developer harness only; the normal mode is `default`

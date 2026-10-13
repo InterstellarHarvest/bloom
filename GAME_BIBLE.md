@@ -8,12 +8,12 @@
 **Tutorial mode:** A small number of authored planets that introduce systems gradually.
 **Player fantasy:** *I figured out how to make this plant thrive and take over the planet.*
 
-> **Current status (2026-10-10, BLOOM-033).** Production decisions made after the older sections of this bible were written — the
-> one-document application, the `default` mode (formerly "Eden"), the Favorable / Precarious / Extreme survey classes, the planned plant
-> species and Challenges, the planned visual-system convergence — are summarized in
+> **Current status (2026-10-13, BLOOM-037).** Production decisions made after the older sections of this bible were written — the
+> one-document application, the `default` mode (formerly "Eden"), the Favorable / Precarious / Extreme survey classes, the four plant
+> species, the six Challenges, the shared visual system — are summarized in
 > **[`docs/PRODUCT_DIRECTION_CURRENT.md`](docs/PRODUCT_DIRECTION_CURRENT.md)**, which wins about the *current* direction. Older "future" /
 > "not implemented" / "next" passages below may describe the planning state at the time they were written; the milestone documents in
-> `docs/` and `docs/evidence/` record what each milestone actually did.
+> `docs/` and `docs/evidence/` record what each milestone actually did; **[`docs/RELEASE_STATE_v1.md`](docs/RELEASE_STATE_v1.md)** is what ships.
 
 ---
 

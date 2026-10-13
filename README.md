@@ -13,12 +13,24 @@ you're the one bringing a planet to life. There's nothing to install and no acco
 
 ---
 
+## Choose your plant
+
+Choose **Expedition** on the title screen and you first pick your pioneer: four genuinely different plant species, each with its own body,
+strengths and weaknesses.
+
+- **Organic Hybrid**: the balanced generalist. A good first expedition.
+- **Cinder Rosette**: built for dry, hot ground.
+- **Woolly Candle**: built for the cold, and tougher under radiation than it looks.
+- **Reed Spire**: built for wet, flooded and salty ground.
+
+None of them is the "easy" one. A specialist thrives where it fits and struggles where it doesn't.
+
 ## Choose your world
 
 ![The Destination Survey: nine candidate worlds sorted into Favorable, Precarious and Extreme](docs/screenshots/destination-survey.png)
 
-Choose **Expedition** on the title screen and every expedition begins at the **Destination Survey**: a sector of nine planets, each one a real globe you can spin and
-study before you commit. They're sorted by how much of the land your plant could live on the moment it lands:
+Then comes the **Destination Survey**: a sector of nine planets, each one a real globe you can spin and
+study before you commit. They're sorted by how much of the land *your* plant could live on the moment it lands:
 
 - **Favorable**: broad footholds on arrival.
 - **Precarious**: refuges beside hostile ground.
@@ -75,6 +87,14 @@ about finding a strategy that suits *this* planet, not buying every upgrade. Whe
 strategy worked and which regions you gave up for it. Then you can keep growing toward 100%, play the same planet again with a
 different plan, or set out for a new world.
 
+## Challenges
+
+Choose **Challenges** for six authored situations, each played on one hand-checked planet: survive an atmosphere that is
+thinning away (**Dying World**), out-compete native vegetation (**Native Competition**), Terraform a climate that swings
+when you push it too fast (**Volatile Climate**), or take on **Low Tide**, **Oasis Line** and **Thin Air**, which hand you a particular plant and a
+particular kind of world. In Thin Air, blooming early isn't enough: you have to hold on until the atmosphere has finished
+changing. Every Challenge planet has been proven winnable before it ships, and you can retry the same planet as often as you like.
+
 ## New to the game?
 
 Choose **Training** on the title screen. It's about five minutes on a gentle practice world: thirteen short guided lessons that
@@ -101,12 +121,15 @@ When you win, you should be able to say: *I understood this planet, built the ri
 **On your computer:** download the repository (**Code → Download ZIP**, then unzip it) or clone it, and **double-click
 `index.html`**. That's it: no installation, no server, no internet connection needed.
 
-**Online:** once GitHub Pages is switched on for this repository, the game will be playable at
-**<https://interstellarharvest.github.io/bloom/>**.
+**Online:** **<https://interstellarharvest.github.io/bloom/>**.
 
-Then choose **Expedition**. The whole game runs in that one page: title, training, the survey, the expedition and its report.
+Then choose **Expedition**, **Challenges** or **Training**. The whole game runs in that one page.
 
-Tested on desktop in Chromium-based browsers and Firefox (Safari hasn't been tested yet). There's no sound, and runs aren't saved between visits.
+**Good to know:**
+
+- Made for desktop and laptop browsers: Chrome, Edge and other Chromium-based browsers, and Firefox. Safari hasn't been tested itself: the whole game does run in a WebKit test build (the engine behind Safari), so it will probably work, but that isn't a promise yet.
+- Gameplay needs a window at least 1024 pixels wide. The menus also work on a phone, but the game itself doesn't.
+- There's no sound, no difficulty setting and no unlocks or scores. Runs aren't saved: a reload returns to the title.
 
 ## For developers
 
@@ -133,18 +156,20 @@ scenarios, Challenge recipes or the validator makes the bank stale and the game 
 [`docs/DEVELOPMENT_NOTES.md`](docs/DEVELOPMENT_NOTES.md) § "Change checklist — Challenge seed banks").
 
 **What's decided and what's next:** [`docs/PRODUCT_DIRECTION_CURRENT.md`](docs/PRODUCT_DIRECTION_CURRENT.md) is the current product-direction
-record and roadmap (Challenges are released; authored Challenge content is next). The game's one visual language — the shared
+record; [`docs/RELEASE_STATE_v1.md`](docs/RELEASE_STATE_v1.md) is the canonical inventory of what the released game is
+(modes, species, Challenges, rules, seed banks, offline behaviour, browsers, known limitations). The game's one visual language — the shared
 tokens in `resources/ui/bloom-theme.css`, light for gameplay, dark for the planning screens — is described in
 [`docs/VISUAL_SYSTEM_v1.md`](docs/VISUAL_SYSTEM_v1.md).
 
 How the game was built, its design, architecture, test suites and release history live in the docs:
 
+- [`docs/RELEASE_STATE_v1.md`](docs/RELEASE_STATE_v1.md): **what the released game is** (BLOOM-037).
 - [`docs/PRODUCT_DIRECTION_CURRENT.md`](docs/PRODUCT_DIRECTION_CURRENT.md): **the current product decisions and roadmap** (this wins over
   older documents about the current direction).
 - [`GAME_BIBLE.md`](GAME_BIBLE.md): the broad design bible.
 - [`docs/SINGLE_DOCUMENT_APP_v1.md`](docs/SINGLE_DOCUMENT_APP_v1.md): the production architecture: one document, GameSession, the developer harness.
 - [`docs/RELEASE_CANDIDATE_v1.md`](docs/RELEASE_CANDIDATE_v1.md): the BLOOM-030 release candidate (milestone-era: player flow, developer
-  URLs; the pressure mechanics Dying World, Native Competition and Volatile Climate, today developer-harness runs and future Challenge ingredients).
+  URLs). Its pressure mechanics — Dying World, Native Competition, Volatile Climate — are now the released Challenges' scenarios.
 - [`docs/PORTABLE_RUNTIME_v1.md`](docs/PORTABLE_RUNTIME_v1.md): how one game runs from a double-clicked file and from GitHub Pages
   (the portable build, the Pages workflow and its one-time setting).
 - [`docs/DEVELOPMENT_NOTES.md`](docs/DEVELOPMENT_NOTES.md): the full development log, QA and architecture notes (formerly this README).
