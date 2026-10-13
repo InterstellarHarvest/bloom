@@ -3,7 +3,6 @@
 // offline by tools/build-challenge-seed-bank.mjs): the browser no longer searches a stream and proves candidates. What remains here is shared
 // by the runtime (the launch seed) and the offline tools (the bank builder, the latency study):
 //   newLaunchSeed(random?)                         → a fresh launch seed (crypto.getRandomValues; never Math.random)
-//   inArrival(habitable, recipe)                   → is an arrival share inside the recipe's band
 //   predictHabitable(pick, deps, species, start)   → the cheap structural (layers 1–3) arrival share of an (archetype, World Seed)
 //   nativeStartShare(planet, scenarioId, species)  → the scenario's native cover at the start (the engine's own probe)
 import { assessWorld, physicalKey } from "../destination-survey/survey-data.js";
@@ -15,12 +14,6 @@ export function newLaunchSeed(random = null) {
   if (typeof random === "function") return 1 + Math.floor(random() * 0x7ffffffe);
   const c = globalThis.crypto; if (!c || !c.getRandomValues) throw new Error("challenge-world: no crypto.getRandomValues for a launch seed (pass one)");
   const a = new Uint32Array(1); c.getRandomValues(a); return 1 + (a[0] % 0x7ffffffe);
-}
-
-/** The recipe's arrival band (species-relative habitable share). */
-export function inArrival(habitable, recipe) {
-  const A = recipe.arrival; if (!A) return true;
-  return !(A.minHabitable != null && habitable < A.minHabitable) && !(A.maxHabitable != null && habitable > A.maxHabitable);
 }
 
 /** The cheap structural prediction for (archetype, World Seed): its arrival share for the species (layers 1–3, never shown). */
