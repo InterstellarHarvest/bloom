@@ -5,8 +5,8 @@ is added to without a new, explicit PMO decision. Where an older document disagr
 [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) holds the decisions and their history, and `docs/evidence/` what happened at
 each milestone. Release QA record: [`evidence/bloom-037/REPORT.md`](evidence/bloom-037/REPORT.md).
 
-**Release candidate:** review branch `handoff/bloom-037-review` — BLOOM-037 on top of production `main` `3cc3e33` (the BLOOM-036 closeout:
-all six Challenges, 036D1 integrated). A fast-forward of `main`. Everything below describes that candidate.
+**Released:** production `main` **`2c491f1`** (BLOOM-037, 2026-10-13), live at <https://interstellarharvest.github.io/bloom/> through the GitHub
+Actions Pages workflow. Everything below describes that release.
 
 ## 1. Modes
 
