@@ -104,8 +104,12 @@ const DWLP = {};
   for (const [k, [id, seed]] of Object.entries(FIX)) { const key = `${id}:${seed}`, p = WORLDS[k], plan = p.archetype.strategies.list[0].purchases.map(x => x[0]);
     const run = runFp(BLOOM.createSim(p, config, traits, { rng: mul(4242), scenario: DW }), plan, 3000);
     const v = DWLP[k] = BLOOM.validateScenario(p, config, traits, DW, { archetypeId: id });
-    const lp = fnv(J({ status: v.status, strategies: v.strategies.map(x => ({ sig: x.signature, purchases: x.purchases, margin: x.marginSeconds, hold: x.hold, trace: x.trace })) }));
-    rows.push({ key, planet: fnv(J(p)) === PIN.planets[key], run: run === PIN.dw[key], lp: lp === PIN.dwLayerP[key], status: v.status }); }
+    // (036D1) the witness's hold record now also carries its pressure `progress` (additive: the Challenge completion proof reads it); the pin hashes
+    // the pre-036D1 hold fields so it still proves the verdict itself unchanged, and the new field is asserted on its own (the final state: exactly 1)
+    const holdV1 = h => h && { seconds: h.seconds, coverage: h.coverage, held: h.held };
+    const lp = fnv(J({ status: v.status, strategies: v.strategies.map(x => ({ sig: x.signature, purchases: x.purchases, margin: x.marginSeconds, hold: holdV1(x.hold), trace: x.trace })) }));
+    const progressOk = v.strategies.every(x => !x.hold || x.hold.progress === 1);
+    rows.push({ key, planet: fnv(J(p)) === PIN.planets[key], run: run === PIN.dw[key], lp: lp === PIN.dwLayerP[key] && progressOk, status: v.status }); }
   check(rows.every(r => r.run && r.lp), "4 · Dying World is unchanged: Ocean 30 / Desert 17 / Frozen 11 Dying World 3000-tick runs and their layer P verdicts (strategies, purchases, margins, holds, traces) equal 8a15863",
     rows.map(r => `${r.key} run ${r.run ? "✓" : "✗"} layer P ${r.status} ${r.lp ? "✓" : "✗"}`).join(" · "));
   check(rows.every(r => r.planet), "36 · archetype validation layers 1–8 are unchanged in meaning: the three generated fixture worlds, including their whole validator record (witness, strategies, rejected attempts), equal 8a15863 bit-for-bit",

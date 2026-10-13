@@ -105,7 +105,8 @@ const PINROWS = {};
 { for (const [k, [id, seed]] of Object.entries(FIX)) { const key = `${id}:${seed}`, p = WORLDS[k], plan = p.archetype.strategies.list[0].purchases.map(x => x[0]), row = PINROWS[key] = { planet: fnv(J(p)) === PIN[key].planet };
     for (const S of [DEFAULT_SCN, DW, NC]) { row[S.id + "Run"] = fnv(runFp(BLOOM.createSim(p, config, traits, { rng: mul(4242), scenario: S }), plan, 3000)) === PIN[key][S.id + "Run"];
       if (S !== DEFAULT_SCN) { const v = BLOOM.validateScenario(p, config, traits, S, { archetypeId: id }); row[S.id + "Status"] = v.status;
-        row[S.id + "LayerP"] = fnv(J({ status: v.status, strategies: v.strategies.map(x => ({ sig: x.signature, purchases: x.purchases, margin: x.marginSeconds, hold: x.hold, trace: x.trace, competition: x.competition, confirm: x.confirm })) })) === PIN[key][S.id + "LayerP"];
+        // (036D1) hashed with the pre-036D1 hold fields (the witness hold now also carries its pressure progress — additive, for the completion proof)
+        row[S.id + "LayerP"] = fnv(J({ status: v.status, strategies: v.strategies.map(x => ({ sig: x.signature, purchases: x.purchases, margin: x.marginSeconds, hold: x.hold && { seconds: x.hold.seconds, coverage: x.hold.coverage, held: x.hold.held }, trace: x.trace, competition: x.competition, confirm: x.confirm && x.confirm.map(c => ({ ...c, hold: c.hold && { coverage: c.hold.coverage, held: c.hold.held } })) })) })) === PIN[key][S.id + "LayerP"];
         row[S.id + "Climate"] = v.climate === null && v.strategies.every(x => !x.climate); } } }
   const want = JSON.parse(fs.readFileSync(path.join(__dirname, "golden/first_bloom.json"), "utf8")), ids = Object.keys(want.static.prices.start), planet = BLOOM_DATA.planets.first_bloom;
   const adapter = scenario => { let sim; return {
