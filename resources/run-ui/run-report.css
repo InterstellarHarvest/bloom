@@ -16,6 +16,7 @@
 .rr-scroll{flex:1 1 auto; min-height:0; overflow:auto; overscroll-behavior:contain; display:flex; flex-direction:column; gap:14px; padding:14px 24px 16px}
 .rr-card:focus-visible{outline:3px solid var(--focus, #1f6fd1); outline-offset:3px}
 .rr :focus-visible{outline:3px solid var(--focus, #1f6fd1); outline-offset:3px}
+.rr .rr-scroll:focus-visible{outline-offset:-3px}
 .rr .ic{pointer-events:none; width:1.25em; height:1.25em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex:none; vertical-align:-.28em}
 /* the card's restrained entrance THROUGH the mist (only when it ran; never under reduced motion) */
 .rr-card.entering{animation:rrEnter .2s cubic-bezier(.2,.7,.3,1) both}
