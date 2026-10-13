@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "7d76d228cee9cfce3acb7e94b70bfe38ffe0325fc40cfa7bc36353c28bab11f1",
+  "fingerprint": "481988a56624c16fce110587f928588056e7a8af84d8256715363846eea1df3f",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -17,8 +17,8 @@
   ],
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
-    "bytes": 1432196,
-    "sha256": "dc13f21f1a3ed4f3ab20bb137f3bd84baa00407becaf26d53d2705abfec4fd96",
+    "bytes": 1432455,
+    "sha256": "52c006f05834079b82863b12c743461c54ddc2d1ef0ff139f9f284cff4c2c0e5",
     "surveyWorkerTextBytes": 246251
   },
   "workerInputs": [
@@ -176,9 +176,9 @@
     },
     {
       "path": "resources/destination-survey/destination-survey.js",
-      "bytes": 51387,
-      "sha256": "7524257f7e4af34c92c6eedd3f3c69935deafe7dc9b81350127fed86eb23196f",
-      "bytesInBundle": 50699
+      "bytes": 51848,
+      "sha256": "637f8f6da6d11525317eab53a3dbf5da3d3fc31ce5b663af21fec83c087355ae",
+      "bytesInBundle": 51220
     },
     {
       "path": "resources/destination-survey/sector-pool.js",
@@ -224,9 +224,9 @@
     },
     {
       "path": "resources/planet-sphere/planet-sphere-view.js",
-      "bytes": 29607,
-      "sha256": "ae44cc46306693ac6b8265540b5580d7a5fdeab6daf4a7f62d04d474b0278faa",
-      "bytesInBundle": 28262
+      "bytes": 29241,
+      "sha256": "9236b79cb3bd2f72a24e0ecb7d9d56d31092239f19ea4163b5c04cace56be382",
+      "bytesInBundle": 28000
     },
     {
       "path": "resources/planet-sphere/planet-texture.js",

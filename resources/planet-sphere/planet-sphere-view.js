@@ -221,12 +221,10 @@ export class PlanetSphereView {
     const c = this.container;
     if (on) {
       this._saved = { touchAction: c.style.touchAction, cursor: c.style.cursor, userSelect: c.style.userSelect,
-        tabindex: c.getAttribute("tabindex"), ariaLabel: c.getAttribute("aria-label"), role: c.getAttribute("role") };
+        tabindex: c.getAttribute("tabindex"), ariaLabel: c.getAttribute("aria-label") };
       Object.assign(c.style, { touchAction: "pan-y", cursor: "grab", userSelect: "none" }); // vertical swipes still scroll the page
       if (this._saved.tabindex === null) c.tabIndex = 0;
       if (this._saved.ariaLabel === null && this.opts.ariaLabel) c.setAttribute("aria-label", this.opts.ariaLabel);
-      // (BLOOM-037, a11y) a focusable container's label is only announced with a role: a plain <span> / <div> has none (axe aria-prohibited-attr)
-      if (this._saved.role === null && c.getAttribute("aria-label")) c.setAttribute("role", "img");
     } else this._restoreContainer();
     return this;
   }
@@ -338,7 +336,6 @@ export class PlanetSphereView {
     Object.assign(c.style, { touchAction: s.touchAction, cursor: s.cursor, userSelect: s.userSelect });
     if (s.tabindex === null) c.removeAttribute("tabindex"); else c.setAttribute("tabindex", s.tabindex);
     if (s.ariaLabel === null) c.removeAttribute("aria-label"); else c.setAttribute("aria-label", s.ariaLabel);
-    if (s.role === null) c.removeAttribute("role"); else c.setAttribute("role", s.role);
     this._saved = null;
   }
 

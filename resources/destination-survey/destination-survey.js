@@ -214,11 +214,18 @@ export class DestinationSurvey {
       await this._flip(g, first, g.getBoundingClientRect(), T.flipIn);
     }
     if (this.state === "disposed") return false;
-    this.views[i].setInteractionEnabled(true); // the accepted controls: horizontal drag / ← → spin; vertical ignored
+    this._interactive(i, true); // the accepted controls: horizontal drag / ← → spin; vertical ignored
     if (this.descent) this._transition().prepare(); // draw the cloud bitmaps now, while the player reads the dossier
     this.state = "focus"; this.stats.selects++;
     this.dossierTitle.focus({ preventScroll: true });
     return true;
+  }
+
+  /** (BLOOM-037, a11y) the focused globe's interaction, and its role: while interactive PlanetSphereView makes the globe's <span> focusable and
+   *  labelled ("Planet globe: drag sideways …"); a label on a role-less <span> is not announced (axe aria-prohibited-attr), so it is an image then. */
+  _interactive(i, on) {
+    this.views[i].setInteractionEnabled(on); const g = this.globes[i];
+    if (on && g.getAttribute("aria-label")) g.setAttribute("role", "img"); else g.removeAttribute("role");
   }
 
   /** Focus → grid: the reverse — the globe flies back to its cell (still turning) and the other worlds return. */
@@ -226,7 +233,7 @@ export class DestinationSurvey {
     if (this.state !== "focus") return false;
     this.state = "to-survey";
     const i = this.selected, g = this.globes[i], rm = this.reducedMotion, others = this._others(i);
-    this.views[i].setInteractionEnabled(false);
+    this._interactive(i, false);
     if (rm) await this._fade(0);
     const first = g.getBoundingClientRect();
     this.slots[i].insertBefore(g, this.slots[i].firstChild);
@@ -285,7 +292,7 @@ export class DestinationSurvey {
   async _depart(detail) {
     const i = this.selected, g = this.globes[i], view = this.views[i], rm = this.reducedMotion, D = this.descent;
     this._haltPool();                       // no world generation (not even the next-sector prefetch) while departing
-    view.setInteractionEnabled(false);      // no drag / keys; the idle spin carries on, yaw untouched
+    this._interactive(i, false);            // no drag / keys; the idle spin carries on, yaw untouched
     this.focus.inert = true; this.head.inert = true;
     const anims = this._departAnims = [];
     const ease = { easing: EASE_OUT, fill: "forwards" };
@@ -353,7 +360,7 @@ export class DestinationSurvey {
     this.views[this.selected].setDistance(GLOBE_DISTANCE); // back to the inspection framing (orientation was never touched)
     this.focus.inert = false; this.head.inert = false;
     this.state = "focus"; this.root.dataset.state = "focus"; delete this.root.dataset.departPhase;
-    this.views[this.selected].setInteractionEnabled(true);
+    this._interactive(this.selected, true);
     this.sectors.resume(); this._prefetch();
   }
 

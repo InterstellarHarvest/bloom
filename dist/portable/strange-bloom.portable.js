@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: 7d76d228cee9cfce3acb7e94b70bfe38ffe0325fc40cfa7bc36353c28bab11f1  (45 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: 481988a56624c16fce110587f928588056e7a8af84d8256715363846eea1df3f  (45 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {
@@ -12111,13 +12111,11 @@
               cursor: c2.style.cursor,
               userSelect: c2.style.userSelect,
               tabindex: c2.getAttribute("tabindex"),
-              ariaLabel: c2.getAttribute("aria-label"),
-              role: c2.getAttribute("role")
+              ariaLabel: c2.getAttribute("aria-label")
             };
             Object.assign(c2.style, { touchAction: "pan-y", cursor: "grab", userSelect: "none" });
             if (this._saved.tabindex === null) c2.tabIndex = 0;
             if (this._saved.ariaLabel === null && this.opts.ariaLabel) c2.setAttribute("aria-label", this.opts.ariaLabel);
-            if (this._saved.role === null && c2.getAttribute("aria-label")) c2.setAttribute("role", "img");
           } else this._restoreContainer();
           return this;
         }
@@ -12279,8 +12277,6 @@
           else c2.setAttribute("tabindex", s2.tabindex);
           if (s2.ariaLabel === null) c2.removeAttribute("aria-label");
           else c2.setAttribute("aria-label", s2.ariaLabel);
-          if (s2.role === null) c2.removeAttribute("role");
-          else c2.setAttribute("role", s2.role);
           this._saved = null;
         }
         _touch() {
@@ -13174,19 +13170,27 @@
             await this._flip(g2, first, g2.getBoundingClientRect(), T3.flipIn);
           }
           if (this.state === "disposed") return false;
-          this.views[i2].setInteractionEnabled(true);
+          this._interactive(i2, true);
           if (this.descent) this._transition().prepare();
           this.state = "focus";
           this.stats.selects++;
           this.dossierTitle.focus({ preventScroll: true });
           return true;
         }
+        /** (BLOOM-037, a11y) the focused globe's interaction, and its role: while interactive PlanetSphereView makes the globe's <span> focusable and
+         *  labelled ("Planet globe: drag sideways …"); a label on a role-less <span> is not announced (axe aria-prohibited-attr), so it is an image then. */
+        _interactive(i2, on2) {
+          this.views[i2].setInteractionEnabled(on2);
+          const g2 = this.globes[i2];
+          if (on2 && g2.getAttribute("aria-label")) g2.setAttribute("role", "img");
+          else g2.removeAttribute("role");
+        }
         /** Focus → grid: the reverse — the globe flies back to its cell (still turning) and the other worlds return. */
         async returnToSurvey() {
           if (this.state !== "focus") return false;
           this.state = "to-survey";
           const i2 = this.selected, g2 = this.globes[i2], rm = this.reducedMotion, others = this._others(i2);
-          this.views[i2].setInteractionEnabled(false);
+          this._interactive(i2, false);
           if (rm) await this._fade(0);
           const first = g2.getBoundingClientRect();
           this.slots[i2].insertBefore(g2, this.slots[i2].firstChild);
@@ -13277,7 +13281,7 @@
         async _depart(detail) {
           const i2 = this.selected, g2 = this.globes[i2], view = this.views[i2], rm = this.reducedMotion, D2 = this.descent;
           this._haltPool();
-          view.setInteractionEnabled(false);
+          this._interactive(i2, false);
           this.focus.inert = true;
           this.head.inert = true;
           const anims = this._departAnims = [];
@@ -13367,7 +13371,7 @@
           this.state = "focus";
           this.root.dataset.state = "focus";
           delete this.root.dataset.departPhase;
-          this.views[this.selected].setInteractionEnabled(true);
+          this._interactive(this.selected, true);
           this.sectors.resume();
           this._prefetch();
         }
