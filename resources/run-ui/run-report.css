@@ -7,7 +7,7 @@
 */
 .pv.in-report > .pv-hud, .pv.in-report > .pv-stage, .pv.in-report > .pv-foot{filter:saturate(.78) brightness(.92); pointer-events:none; user-select:none}
 .rr{position:absolute; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; padding:24px; font-size:15px;
-  --rr-bg:var(--bloom-card); --rr-paper:var(--bloom-paper); --rr-line:var(--bloom-line); --rr-line-2:var(--bloom-line-2); --rr-ink:var(--bloom-ink); --rr-soft:var(--bloom-ink-soft); --rr-faint:var(--bloom-ink-faint)}   /* (BLOOM-034) from the shared theme */
+  --rr-bg:var(--bloom-card); --rr-paper:var(--bloom-paper); --rr-line:var(--bloom-line); --rr-line-2:var(--bloom-line-2); --rr-ink:var(--bloom-ink); --rr-soft:var(--bloom-ink-soft); --rr-faint:var(--bloom-ink-faint-text)}   /* (BLOOM-034) from the shared theme */
 .rr-veil{position:absolute; inset:0; background:radial-gradient(80% 70% at 50% 45%, rgba(36,44,34,.42), rgba(36,44,34,.62))}
 .rr-card{position:relative; width:min(900px, 100%); max-height:100%; overflow:hidden; background:var(--rr-bg); color:var(--rr-ink);
   border:3px solid var(--rr-ink); border-radius:var(--r-lg, 22px 18px 24px 18px); box-shadow:var(--shadow-lg, 0 18px 48px rgba(60,45,15,.25)); padding:0; outline:none;
@@ -90,7 +90,7 @@
   cursor:pointer; font:inherit; font-weight:800; font-size:14px; color:var(--rr-ink); text-align:left; line-height:1.1}
 .rr-btn .ic{width:20px; height:20px} .rr-btn span{display:flex; flex-direction:column} .rr-btn small{font-size:11px; font-weight:700; color:var(--rr-soft)}
 .rr-btn:hover{background:var(--rr-paper)}
-.rr-btn.primary{background:var(--leaf, #3f9d4b); border-color:var(--leaf-dark, #2a7636); color:#fff; box-shadow:0 2px 0 var(--leaf-dark, #2a7636)} .rr-btn.primary:hover{background:var(--leaf-dark, #2a7636)} .rr-btn.primary small{color:#eaf6e4}
+.rr-btn.primary{background:var(--leaf-btn, #2a7636); border-color:var(--leaf, #3f9d4b); color:#fff; box-shadow:0 2px 0 var(--leaf-btn-lip, #174a20)} .rr-btn.primary:hover{background:var(--leaf-btn-hover, #215f2b)} .rr-btn.primary small{color:#eaf6e4}
 .rr[data-kind="loss"] .rr-btn.primary{background:var(--ink, #2f3a2c); border-color:#1f261e; box-shadow:0 2px 0 #1f261e}
 
 @media (max-width:1100px){ .rr{padding:18px} .rr-scroll{padding:12px 18px 14px} .rr .rr-head{padding:14px 18px 10px} .rr .rr-actions{padding:10px 18px 14px} .rr-head h2{font-size:26px} .rr-facts{grid-template-columns:repeat(2, minmax(0,1fr))} .rr-body{grid-template-columns:minmax(200px, 240px) minmax(0,1fr)} }

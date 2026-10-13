@@ -17,8 +17,8 @@
 /* ── shared room header: Back · kicker / title / verb · Region | Adapt | Spread | Terraform · Biomass · PAUSED · Resume ── */
 .dr .rh{grid-area:rh; display:flex; flex-wrap:nowrap; align-items:center; gap:.75em; padding:.55em .8em; margin-top:10px; min-height:4.2em; min-width:0}
 .dr .rb{display:inline-flex; align-items:center; gap:.4em; min-height:max(3em, 44px); min-width:max(3em, 44px); padding:.3em .85em; border:2px solid var(--line-2); border-radius:.8em; background:var(--card); font-weight:800; font-size:1em; cursor:pointer; box-shadow:0 2px 0 var(--line-2); color:var(--ink)}
-.dr .rb .ic{width:1.35em; height:1.35em} .dr .rb:hover{background:var(--paper-2)} .dr .rb.resume{background:var(--leaf); border-color:var(--leaf-dark); color:#fff; box-shadow:0 2px 0 var(--leaf-dark)} .dr .rb.resume:hover{background:var(--leaf-dark)}
-.dr .rt{display:flex; flex-direction:column; line-height:1.1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:0 1 auto} .dr .rk{font-size:.72em; letter-spacing:1.4px; font-weight:900; color:var(--acc-dark)} .dr .rt h2{margin:0; font-size:1.75em; outline-offset:4px} .dr .rt small{font-size:.82em; color:var(--ink-soft); font-weight:700}
+.dr .rb .ic{width:1.35em; height:1.35em} .dr .rb:hover{background:var(--paper-2)} .dr .rb.resume{background:var(--leaf-btn); border-color:var(--leaf); color:#fff; box-shadow:0 2px 0 var(--leaf-btn-lip)} .dr .rb.resume:hover{background:var(--leaf-btn-hover)}
+.dr .rt{display:flex; flex-direction:column; line-height:1.1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:0 1 auto} .dr .rk{font-size:.72em; letter-spacing:1.4px; font-weight:900; color:var(--acc-dark)} .dr .r-region .rk{color:var(--gold-deep-text)} .dr .rt h2{margin:0; font-size:1.75em; outline-offset:4px} .dr .rt small{font-size:.82em; color:var(--ink-soft); font-weight:700}
 .dr .rnav{display:inline-flex; margin:0 auto; border:2px solid var(--line-2); border-radius:.9em; overflow:hidden; background:var(--card)}
 .dr .rn{position:relative; display:inline-flex; align-items:center; gap:.4em; min-height:max(3.1em, 44px); min-width:max(3.1em, 44px); padding:.3em .8em; border:0; border-right:2px solid var(--line); background:none; cursor:pointer; font-weight:800; font-size:.98em; color:var(--ink); white-space:nowrap}
 .dr .rn:last-child{border-right:0} .dr .rn:hover{background:var(--paper-2)} .dr .rn .ic{width:1.3em; height:1.3em}
@@ -56,17 +56,17 @@
 .dr .li-h b{font-size:1.3em; line-height:1.1; display:block} .dr .li-h small{display:block; font-size:.82em; color:var(--ink-soft); font-weight:800}
 .dr .lf-info p{margin:0; font-size:1em; line-height:1.35}
 .dr .li-row{display:flex; gap:.5em; align-items:flex-start; font-size:.95em; line-height:1.3} .dr .li-row .ic{width:1.3em; height:1.3em; color:var(--cat-dark, var(--acc-dark)); flex:none; margin-top:.1em} .dr .li-row b{color:var(--ink-soft)}
-.dr .li-part{display:inline-flex; align-items:center; gap:.4em; padding:.3em .8em; border-radius:.7em; background:var(--cat, var(--acc)); color:#fff; font-weight:900; font-size:.82em; letter-spacing:.6px; text-transform:uppercase; align-self:flex-start; box-shadow:0 2px 0 var(--cat-dark, var(--acc-dark))}
+.dr .li-part{display:inline-flex; align-items:center; gap:.4em; padding:.3em .8em; border-radius:.7em; background:var(--cat-dark, var(--acc-dark)); color:#fff; font-weight:900; font-size:.82em; letter-spacing:.6px; text-transform:uppercase; align-self:flex-start; box-shadow:0 2px 0 rgba(0,0,0,.3)}   /* (BLOOM-037) white word on the DARK category shade ≥ 5.9 : 1 */
 .dr .ownd{display:flex; flex-wrap:wrap; gap:.3em; align-items:center; font-size:.9em} .dr .ownd small{width:100%; font-weight:900; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-soft); font-size:.75em}
-.dr .ow{display:inline-flex; align-items:center; gap:.3em; padding:.25em .65em; border-radius:.5em; background:var(--cat-soft, var(--leaf-soft)); color:var(--cat-dark, var(--leaf-dark)); font-weight:800} .dr .ow .ic{width:1.1em; height:1.1em} .dr .ow i{font-style:normal; font-weight:900} .dr .ow.none{background:var(--paper-2); color:var(--ink-faint)}
-.dr .li-hint{margin-top:.2em; font-size:.8em; color:var(--ink-faint); font-weight:700}
+.dr .ow{display:inline-flex; align-items:center; gap:.3em; padding:.25em .65em; border-radius:.5em; background:var(--cat-soft, var(--leaf-soft)); color:var(--cat-dark, var(--leaf-dark)); font-weight:800} .dr .ow .ic{width:1.1em; height:1.1em} .dr .ow i{font-style:normal; font-weight:900} .dr .ow.none{background:var(--paper-2); color:var(--ink-faint-text)}
+.dr .li-hint{margin-top:.2em; font-size:.8em; color:var(--ink-faint-text); font-weight:700}
 
 /* ── right column: mini-map card (the production renderer), Map View chips, region strip; then a separate context / effect card ── */
 .dr .mm{display:flex; flex-direction:column; gap:.55em; flex:0 1 auto; min-height:0; padding:.75em}
 .dr .mm-h{display:flex; align-items:center; gap:.5em; flex-wrap:wrap; flex:none} .dr .mm-k{font-size:.72em; letter-spacing:1.2px; font-weight:900; color:var(--ink-soft); text-transform:uppercase; width:100%} .dr .mm-name{font-size:1.35em}
 .dr .mm-map{flex:none; aspect-ratio:412/272; max-height:38%; border-radius:.7em; overflow:hidden; border:2px solid var(--line-2); min-height:7em; background:var(--card); position:relative}
 .dr .mm-cv{position:absolute; left:0; top:0; display:block; image-rendering:pixelated; cursor:default} .dr .mm-cv.over{cursor:pointer}
-.dr .mm-peek{margin:0; font-size:.88em; color:var(--ink-faint); font-weight:700; min-height:1.5em; flex:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis} .dr .mm-peek.on{color:var(--ink)}
+.dr .mm-peek{margin:0; font-size:.88em; color:var(--ink-faint-text); font-weight:700; min-height:1.5em; flex:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis} .dr .mm-peek.on{color:var(--ink)}
 .dr .mm-lens{display:flex; flex-wrap:wrap; gap:3px; flex:none}
 .dr .lb{display:inline-flex; align-items:center; gap:.3em; min-height:max(2.5em, 36px); min-width:max(2.5em, 36px); padding:.15em .65em; border:2px solid transparent; border-radius:.7em; background:none; cursor:pointer; font-weight:800; font-size:.9em; color:var(--ink); text-align:left}
 .dr .lb .ic{width:1.25em; height:1.25em} .dr .lb span{display:none} .dr .lb[aria-pressed="true"] span{display:inline}
@@ -79,9 +79,9 @@
 .dr .rc.pk[aria-pressed="true"]{box-shadow:0 0 0 2px var(--card), 0 0 0 4px var(--ink)}
 .dr .mm-ctx{display:flex; flex-direction:column; gap:.45em; padding:.8em .9em; flex:none; transition:border-color .15s, background .15s} .dr .mc-k{font-size:.72em; letter-spacing:1.2px; font-weight:900; text-transform:uppercase; color:var(--ink-soft)}
 .dr .mc-rows{display:flex; flex-direction:column; gap:.4em}
-.dr .mc-row{display:flex; align-items:flex-start; gap:.5em; font-size:.95em; line-height:1.3} .dr .mc-row .ic{width:1.25em; height:1.25em; flex:none; color:var(--ink-soft); margin-top:.05em} .dr .mc-row b{color:var(--ink)} .dr .mc-row.faint{color:var(--ink-faint); font-weight:700; font-size:.88em}
+.dr .mc-row{display:flex; align-items:flex-start; gap:.5em; font-size:.95em; line-height:1.3} .dr .mc-row .ic{width:1.25em; height:1.25em; flex:none; color:var(--ink-soft); margin-top:.05em} .dr .mc-row b{color:var(--ink)} .dr .mc-row.faint{color:var(--ink-faint-text); font-weight:700; font-size:.88em}
 .dr .mm-ctx.pvw{border-color:var(--cat, var(--acc)); background:linear-gradient(var(--cat-soft, var(--acc-soft)), var(--card) 60%)} .dr .mm-ctx.pvw .mc-k{color:var(--cat-dark, var(--acc-dark))}
-.dr .mc-row.fx-gain .ic{color:var(--leaf-dark)} .dr .mc-row.fx-lose .ic,.dr .mc-row.fx-lose b{color:#8f2846} .dr .mc-row.fx-hostile .ic,.dr .mc-row.fx-worse .ic{color:#8a5300} .dr .mc-row.fx-off .ic{color:var(--ink-faint)}
+.dr .mc-row.fx-gain .ic{color:var(--leaf-dark)} .dr .mc-row.fx-lose .ic,.dr .mc-row.fx-lose b{color:#8f2846} .dr .mc-row.fx-hostile .ic,.dr .mc-row.fx-worse .ic{color:#8a5300} .dr .mc-row.fx-off .ic{color:var(--ink-faint-text)}
 
 /* ── status chips (icon + word: never colour alone) ── */
 .dr .stc{display:inline-flex; align-items:center; gap:.3em; padding:.18em .7em .18em .35em; border-radius:1em; font-size:.9em; font-weight:900; border:1.5px solid}
@@ -94,7 +94,7 @@
 .dr .r-region .z-main{overflow:auto; padding:.9em 1.1em; height:auto; max-height:100%}
 .dr .rg-head{display:flex; align-items:baseline; justify-content:space-between; gap:.7em; flex-wrap:wrap; margin-bottom:.5em} .dr .rg-name{margin:0; font-size:2em}
 .dr .rg-sub{display:inline-flex; align-items:center; gap:.5em; flex-wrap:wrap} .dr .rg-w{font-weight:800; color:var(--ink-soft)}
-.dr .rg-o{display:inline-flex; align-items:center; gap:.25em; font-size:.7em; font-weight:900; letter-spacing:1px; text-transform:uppercase; padding:.15em .6em; border-radius:.5em; background:var(--gold-soft); color:var(--gold-deep); border:1.5px solid #f0cf72} .dr .rg-o .ic{width:1.1em; height:1.1em; fill:var(--gold); stroke:var(--gold-deep); stroke-width:1.6}
+.dr .rg-o{display:inline-flex; align-items:center; gap:.25em; font-size:.7em; font-weight:900; letter-spacing:1px; text-transform:uppercase; padding:.15em .6em; border-radius:.5em; background:var(--gold-soft); color:var(--gold-deep-text); border:1.5px solid #f0cf72} .dr .rg-o .ic{width:1.1em; height:1.1em; fill:var(--gold); stroke:var(--gold-deep); stroke-width:1.6}
 .dr .tabs{display:flex; gap:.3em; border-bottom:3px solid var(--line); margin-bottom:.8em}
 .dr .tabs [role="tab"]{display:inline-flex; align-items:center; gap:.45em; min-height:max(3.1em, 44px); padding:.4em 1.3em; border:2px solid transparent; border-bottom:0; border-radius:.8em .8em 0 0; background:none; cursor:pointer; font-weight:800; font-size:1.1em; color:var(--ink-soft)}
 .dr .tabs [role="tab"] .ic{width:1.3em; height:1.3em} .dr .tabs [role="tab"]:hover{background:var(--paper-2)}
@@ -113,8 +113,8 @@
 .dr .help-b{display:grid; grid-template-columns:max-content; gap:.55em .7em; justify-content:start; align-items:start} .dr .help.n2 .help-b{grid-template-columns:repeat(2, minmax(0, max-content))}
 .dr .hbtn{display:inline-flex; align-items:center; gap:.55em; min-height:max(3.2em, 44px); padding:.45em 1.15em .45em .85em; border:2px solid var(--line-2); border-radius:.9em; background:var(--card); box-shadow:0 2px 0 var(--line-2); cursor:pointer; font-weight:800; font-size:1em; line-height:1.1; width:auto; max-width:100%; text-align:left; color:var(--ink)}
 .dr .hbtn .ic{width:1.5em; height:1.5em; flex:none; opacity:.9} .dr .hb-t{display:flex; flex-direction:column; min-width:0} .dr .hb-t b{white-space:nowrap} .dr .hb-t small{font-size:.65em; opacity:.85; letter-spacing:.8px; text-transform:uppercase; font-weight:900}
-.dr .hbtn.plant{background:var(--leaf); border-color:var(--leaf-dark); color:#fff; box-shadow:0 2px 0 var(--leaf-dark)} .dr .hbtn.spread{background:var(--bloom); border-color:var(--bloom-dark); color:#fff; box-shadow:0 2px 0 var(--bloom-dark)} .dr .hbtn.planet{background:var(--sky); border-color:var(--sky-dark); color:#fff; box-shadow:0 2px 0 var(--sky-dark)}
-.dr .hbtn.plant:hover{background:var(--leaf-dark)} .dr .hbtn.spread:hover{background:var(--bloom-dark)} .dr .hbtn.planet:hover{background:var(--sky-dark)}
+.dr .hbtn.plant{background:var(--leaf-btn); border-color:var(--leaf); color:#fff; box-shadow:0 2px 0 var(--leaf-btn-lip)} .dr .hbtn.spread{background:var(--bloom-btn); border-color:var(--bloom); color:#fff; box-shadow:0 2px 0 var(--bloom-btn-lip)} .dr .hbtn.planet{background:var(--sky-btn); border-color:var(--sky); color:#fff; box-shadow:0 2px 0 var(--sky-btn-lip)}
+.dr .hbtn.plant:hover{background:var(--leaf-btn-hover)} .dr .hbtn.spread:hover{background:var(--bloom-btn-hover)} .dr .hbtn.planet:hover{background:var(--sky-btn-hover)}
 @media (max-width:900px){ .dr .help.n2 .help-b{grid-template-columns:max-content} }
 .dr .est .est-h{display:flex; justify-content:space-between; align-items:baseline} .dr .est small{color:var(--ink-soft); font-weight:700} .dr .est b{font-size:1.1em}
 .dr .bar{position:relative; height:10px; border-radius:6px; background:var(--paper-2); overflow:hidden; border:1px solid var(--line); margin:.3em 0} .dr .bar i{position:absolute; left:0; top:0; bottom:0; width:0; border-radius:6px; background:var(--leaf)}
@@ -123,9 +123,9 @@
 .dr .opt{display:flex; gap:.5em; align-items:flex-start; text-align:left; min-height:max(3.2em, 44px); padding:.6em .7em; border:2px solid var(--line); border-radius:.8em; background:var(--card); cursor:pointer; line-height:1.15; color:var(--ink); font:inherit}
 .dr .opt .ic{width:1.5em; height:1.5em; margin-top:.1em; color:var(--leaf-dark); flex:none} .dr .opt b{display:block; font-size:1em} .dr .opt small{display:block; font-size:.8em; color:var(--ink-soft); font-weight:700}
 .dr .opt:hover{border-color:var(--ink)} .dr .opt[aria-pressed="true"]{border-color:var(--leaf); background:var(--leaf-soft)} .dr .opt[aria-disabled="true"]{opacity:.55; cursor:not-allowed}
-.dr .rawt{width:100%; border-collapse:collapse; font-size:1em} .dr .rawt th{text-align:left; font-weight:800; padding:.4em .6em; color:var(--ink-soft); border-bottom:1px solid var(--line)} .dr .rawt th small{display:block; font-size:.75em; font-weight:700; color:var(--ink-faint)}
+.dr .rawt{width:100%; border-collapse:collapse; font-size:1em} .dr .rawt th{text-align:left; font-weight:800; padding:.4em .6em; color:var(--ink-soft); border-bottom:1px solid var(--line)} .dr .rawt th small{display:block; font-size:.75em; font-weight:700; color:var(--ink-faint-text)}
 .dr .rawt td{padding:.4em .6em; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; text-align:right; font-weight:800}
-.dr .note{font-size:.8em; color:var(--ink-faint); font-weight:700; margin:.4em 0 0}
+.dr .note{font-size:.8em; color:var(--ink-faint-text); font-weight:700; margin:.4em 0 0}
 @media (max-width:1100px){ .dr .cond{grid-template-columns:2.2em 6em auto 1fr} .dr .tabs [role="tab"]{padding:.4em .8em} }
 
 /* ── Adapt / Spread trees: a category rail at the left, one real trait per row ── */
@@ -201,7 +201,7 @@
 .dr .soil-card .li-k{color:var(--cat-dark)} .dr .soil-st{display:flex; align-items:center; gap:.4em; flex-wrap:wrap}
 .dr .soil-card .geo{display:inline-flex; align-items:center; gap:.25em; font-size:.78em; font-weight:900; letter-spacing:.6px; text-transform:uppercase; padding:.15em .55em; border-radius:.5em; background:#fde6d6; color:#9c3f0e; border:1.5px solid #f0b58e} .dr .soil-card .geo .ic{width:1.1em; height:1.1em}
 .dr .soil-rows{display:grid; grid-template-columns:1fr auto; gap:.15em .7em; margin:0; font-variant-numeric:tabular-nums} .dr .soil-rows > div{display:contents} .dr .soil-rows dt{font-weight:800; color:var(--ink-soft)} .dr .soil-rows dd{margin:0; font-weight:900; text-align:right}
-.dr .soil-card .li-row{font-size:.92em} .dr .bank-empty{margin:.2em 0 0; font-size:.8em; font-weight:800; color:var(--ink-faint)}
+.dr .soil-card .li-row{font-size:.92em} .dr .bank-empty{margin:.2em 0 0; font-size:.8em; font-weight:800; color:var(--ink-faint-text)}
 /* the Atmosphere bank (right): the real nodes as intrinsic cards hugging the exclusion zone; lock / owned badges on the OUTER top corner (away from the globe) */
 .dr .tf-node.node{transform:translate(0,-50%); width:var(--nw,10em); z-index:4}
 .dr .tf-node .nl{top:-.35em; bottom:auto} .dr .tf-node.side-r .nl{right:-.35em} .dr .tf-node.side-l .nl{right:auto; left:-.35em}
@@ -212,7 +212,7 @@
 .dr .bank-legend .ic{width:1.25em; height:1.25em} .dr .bank-legend small{font-size:.8em; font-weight:800; letter-spacing:.2px; text-transform:none; color:var(--ink-soft)}
 .dr .g-read{position:absolute; left:.8em; bottom:.5em; display:flex; flex-direction:column; line-height:1.15; font-size:.9em; z-index:3; pointer-events:none}
 .dr .g-read .gr-k{font-size:.72em; letter-spacing:1.1px; font-weight:900; text-transform:uppercase; color:var(--ink-soft)} .dr .g-read b{font-size:1.25em; font-variant-numeric:tabular-nums} .dr .g-read .d-r{font-weight:800; color:var(--ink-soft)}
-.dr .g-read .g-hint{display:inline-flex; align-items:center; gap:.3em; margin-top:.25em; font-size:.74em; font-weight:800; color:var(--ink-faint)} .dr .g-read .g-hint .ic{width:1.1em; height:1.1em}
+.dr .g-read .g-hint{display:inline-flex; align-items:center; gap:.3em; margin-top:.25em; font-size:.74em; font-weight:800; color:var(--ink-faint-text)} .dr .g-read .g-hint .ic{width:1.1em; height:1.1em}
 .dr .to{font-style:normal; font-weight:900; color:var(--cat-dark, var(--sky-dark))}
 /* left: the environment / land focus (sky + ground from real values; never the plant) and the information card's compact condition rows */
 .dr .lf-top.env{aspect-ratio:4/3; max-height:38%; background:#dceefa} .dr .env.previewing .ps-tag{opacity:1}
@@ -224,7 +224,7 @@
 /* right: the planet readout rows above the region / planet effect */
 .dr .env-rows{display:flex; flex-direction:column; gap:.28em; margin:0} .dr .env-rows > div{display:flex; justify-content:space-between; gap:.6em; align-items:flex-start}
 .dr .env-rows dt{display:inline-flex; align-items:center; gap:.35em; font-weight:800; color:var(--ink-soft); font-size:.9em; flex:none} .dr .env-rows dt .ic{width:1.2em; height:1.2em}
-.dr .env-rows dd{margin:0; text-align:right; min-width:0} .dr .env-rows dd b{display:block; font-variant-numeric:tabular-nums; line-height:1.2} .dr .env-rows dd small{display:block; font-size:.74em; color:var(--ink-faint); font-weight:700; line-height:1.2}
+.dr .env-rows dd{margin:0; text-align:right; min-width:0} .dr .env-rows dd b{display:block; font-variant-numeric:tabular-nums; line-height:1.2} .dr .env-rows dd small{display:block; font-size:.74em; color:var(--ink-faint-text); font-weight:700; line-height:1.2}
 .dr .mc-k2{margin-top:.25em; padding-top:.45em; border-top:1px solid var(--line)}
 @media (max-width:1100px){ .dr .cond.mini{grid-template-columns:1.8em 4.6em auto 1fr} .dr .bank-legend small,.dr .g-read .g-hint{display:none} }
 

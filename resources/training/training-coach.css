@@ -7,7 +7,7 @@
   clicks (every coach element but the card itself is pointer-events:none). Reduced motion: no pulse, no glide, no entrance lift —
   the card and ring jump to place, opacity only.
 */
-.tc-layer{--card:var(--bloom-card); --paper:var(--bloom-paper); --line-2:var(--bloom-line-2); --ink:var(--bloom-ink); --ink-soft:var(--bloom-ink-soft); --gold:var(--bloom-gold); --gold-deep:var(--bloom-gold-deep); --gold-soft:var(--bloom-gold-soft);
+.tc-layer{--card:var(--bloom-card); --paper:var(--bloom-paper); --line-2:var(--bloom-line-2); --ink:var(--bloom-ink); --ink-soft:var(--bloom-ink-soft); --gold:var(--bloom-gold); --gold-deep:var(--bloom-gold-deep); --gold-deep-text:var(--bloom-gold-deep-text); --gold-soft:var(--bloom-gold-soft);
   --leaf:var(--bloom-leaf); --focus:var(--bloom-focus); --r-md:var(--bloom-r-md);   /* (BLOOM-034) from the shared theme, resources/ui/bloom-theme.css */
   --font:var(--bloom-font);
   position:fixed; inset:0; z-index:500; pointer-events:none; font-family:var(--font); color:var(--ink)}
@@ -20,7 +20,7 @@
 .tc-card.tc-in{animation:tcIn .22s ease-out}
 @keyframes tcIn{from{opacity:0; transform:translateY(5px)} to{opacity:1; transform:none}}
 .tc-top{display:flex; align-items:center; gap:8px; min-height:30px}
-.tc-kicker{font-size:11px; font-weight:900; letter-spacing:1.6px; color:var(--gold-deep)}
+.tc-kicker{font-size:11px; font-weight:900; letter-spacing:1.6px; color:var(--gold-deep-text)}
 .tc-count{font-size:12px; font-weight:800; color:var(--ink-soft)}
 .tc-skip{margin-left:auto; font:inherit; font-size:13px; font-weight:800; color:var(--ink); background:var(--paper); border:2px solid var(--line-2);
   border-radius:12px; padding:4px 10px; min-height:34px; cursor:pointer}
