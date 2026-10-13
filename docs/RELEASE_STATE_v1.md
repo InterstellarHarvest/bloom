@@ -5,8 +5,8 @@ is added to without a new, explicit PMO decision. Where an older document disagr
 [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) holds the decisions and their history, and `docs/evidence/` what happened at
 each milestone. Release QA record: [`evidence/bloom-037/REPORT.md`](evidence/bloom-037/REPORT.md).
 
-**Release candidate:** review branch `handoff/bloom-037-review` — BLOOM-036D1 (Thin Air) + BLOOM-037 on top of production `main` `d0eaf8f`
-(a fast-forward; 036D1 had not yet been fast-forwarded into `main` when 037 began). Everything below describes that candidate.
+**Release candidate:** review branch `handoff/bloom-037-review` — BLOOM-037 on top of production `main` `3cc3e33` (the BLOOM-036 closeout:
+all six Challenges, 036D1 integrated). A fast-forward of `main`. Everything below describes that candidate.
 
 ## 1. Modes
 
