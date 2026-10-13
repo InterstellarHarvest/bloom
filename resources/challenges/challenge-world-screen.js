@@ -264,6 +264,7 @@ export class ChallengeWorldScreen {
     this.renderer = new PlanetSphereRenderer(this.root);
     this.view = new PlanetSphereView(this.globe, { renderer: this.renderer, planet: X.planet, render: X.render, interactive: true, reducedMotion: this.forcedReducedMotion, distance: GLOBE_DISTANCE, yaw: 0.35,
       ariaLabel: `${d.name}: drag sideways or press the left and right arrow keys to spin it` });
+    this._globeRole();
     this._paintPlant();
   }
 
@@ -284,9 +285,11 @@ export class ChallengeWorldScreen {
   }
 
   // ---------------------------------------------------------------- departure (the survey's dramatic one, for one globe)
+  /** (BLOOM-037, a11y) while the globe is interactive the view labels it; a labelled role-less <div> is not announced (axe aria-prohibited-attr) */
+  _globeRole() { const g = this.globe; if (g.getAttribute("aria-label")) g.setAttribute("role", "img"); else g.removeAttribute("role"); }
   async _depart(detail) {
     const rm = this.reducedMotion, D = this.descent, anims = this._anims = [], ease = { easing: "cubic-bezier(.2,.8,.2,1)", fill: "forwards" };
-    this.view.setInteractionEnabled(false); this.dossier.inert = true; this.root.querySelector(".cw-head").inert = true;
+    this.view.setInteractionEnabled(false); this._globeRole(); this.dossier.inert = true; this.root.querySelector(".cw-head").inert = true;
     anims.push(this.dossier.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: rm ? "none" : "translateX(48px)" }], { duration: rm ? T.recedeRm : T.recede, ...ease }));
     anims.push(this.root.querySelector(".cw-head").animate([{ opacity: 1 }, { opacity: 0 }], { duration: rm ? T.recedeRm : T.recede, ...ease }));
     if (!rm) this._dolly();
@@ -319,7 +322,7 @@ export class ChallengeWorldScreen {
   _undo() {
     for (const a of this._anims || []) a.cancel(); this._anims = null;
     if (this._dollyFrame) cancelAnimationFrame(this._dollyFrame); this._dollyFrame = null;
-    if (this.view) { this.view.setDistance(GLOBE_DISTANCE); this.view.setInteractionEnabled(true); }
+    if (this.view) { this.view.setDistance(GLOBE_DISTANCE); this.view.setInteractionEnabled(true); this._globeRole(); }
     this.dossier.inert = false; this.root.querySelector(".cw-head").inert = false;
     this.state = "ready"; this.root.dataset.state = "ready"; this.title.focus({ preventScroll: true });
   }

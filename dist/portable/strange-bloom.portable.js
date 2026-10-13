@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: 481988a56624c16fce110587f928588056e7a8af84d8256715363846eea1df3f  (45 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: b8d4eb23981b28602645e7598316fce88b6e60d4ec8a7504a851a07905dcd31d  (45 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {
@@ -17499,6 +17499,7 @@
             yaw: 0.35,
             ariaLabel: `${d2.name}: drag sideways or press the left and right arrow keys to spin it`
           });
+          this._globeRole();
           this._paintPlant();
         }
         /** The plant: its real specimen (with any prescribed adaptations) and the prescribed starting state in words. */
@@ -17525,9 +17526,16 @@
           }
         }
         // ---------------------------------------------------------------- departure (the survey's dramatic one, for one globe)
+        /** (BLOOM-037, a11y) while the globe is interactive the view labels it; a labelled role-less <div> is not announced (axe aria-prohibited-attr) */
+        _globeRole() {
+          const g2 = this.globe;
+          if (g2.getAttribute("aria-label")) g2.setAttribute("role", "img");
+          else g2.removeAttribute("role");
+        }
         async _depart(detail) {
           const rm = this.reducedMotion, D2 = this.descent, anims = this._anims = [], ease = { easing: "cubic-bezier(.2,.8,.2,1)", fill: "forwards" };
           this.view.setInteractionEnabled(false);
+          this._globeRole();
           this.dossier.inert = true;
           this.root.querySelector(".cw-head").inert = true;
           anims.push(this.dossier.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: rm ? "none" : "translateX(48px)" }], { duration: rm ? T5.recedeRm : T5.recede, ...ease }));
@@ -17591,6 +17599,7 @@
           if (this.view) {
             this.view.setDistance(GLOBE_DISTANCE2);
             this.view.setInteractionEnabled(true);
+            this._globeRole();
           }
           this.dossier.inert = false;
           this.root.querySelector(".cw-head").inert = false;
