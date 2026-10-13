@@ -1,0 +1,391 @@
+{
+ "root": "(worktree)",
+ "checks": [
+  {
+   "ok": true,
+   "name": "[firefox] O \u00b7 http /: the complete product \u2014 title \u2192 EXPEDITION (Choose Plant Species \u2192 survey \u2192 run) \u2192 Main Menu \u2192 CHALLENGES (Low Tide dossier \u2192 run) \u2192 Main Menu \u2192 TRAINING \u2192 Main Menu; one document, every request local, no console error",
+   "detail": "{\"titleMs\":616,\"exp\":{\"sp\":\"organic_hybrid\",\"planet\":true,\"scn\":null},\"ch\":{\"id\":\"low_tide\",\"sp\":\"organic_hybrid\"},\"tr\":{\"planet\":\"training_grounds\",\"coach\":true},\"far\":[],\"portable\":false,\"navs\":1,\"fileReqs\":0,\"errs\":[],\"reqs\":114}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] O \u00b7 Pages /bloom/: the complete product \u2014 title \u2192 EXPEDITION (Choose Plant Species \u2192 survey \u2192 run) \u2192 Main Menu \u2192 CHALLENGES (Low Tide dossier \u2192 run) \u2192 Main Menu \u2192 TRAINING \u2192 Main Menu; one document, every request local, no console error",
+   "detail": "{\"titleMs\":355,\"exp\":{\"sp\":\"organic_hybrid\",\"planet\":true,\"scn\":null},\"ch\":{\"id\":\"low_tide\",\"sp\":\"organic_hybrid\"},\"tr\":{\"planet\":\"training_grounds\",\"coach\":true},\"far\":[],\"portable\":false,\"navs\":1,\"fileReqs\":0,\"errs\":[],\"reqs\":113}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] O \u00b7 file://: the complete product \u2014 title \u2192 EXPEDITION (Choose Plant Species \u2192 survey \u2192 run) \u2192 Main Menu \u2192 CHALLENGES (Low Tide dossier \u2192 run) \u2192 Main Menu \u2192 TRAINING \u2192 Main Menu; one document, every request local (portable runtime, network offline), no console error",
+   "detail": "{\"titleMs\":256,\"exp\":{\"sp\":\"organic_hybrid\",\"planet\":true,\"scn\":null},\"ch\":{\"id\":\"low_tide\",\"sp\":\"organic_hybrid\"},\"tr\":{\"planet\":\"training_grounds\",\"coach\":true},\"far\":[],\"portable\":true,\"navs\":1,\"fileReqs\":0,\"errs\":[],\"reqs\":0}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] S1 \u00b7 EXPEDITION launches with each species (2): the run's simulation species = the chosen plant, default rules, no Challenge",
+   "detail": "{\"rows\":[{\"want\":\"organic_hybrid\",\"sp\":\"organic_hybrid\",\"run\":\"organic_hybrid\",\"scn\":\"default\",\"ch\":false},{\"want\":\"reed_spire\",\"sp\":\"reed_spire\",\"run\":\"reed_spire\",\"scn\":\"default\",\"ch\":false}],\"errs\":[]}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] S2 \u00b7 one COMPLETE Expedition run (Organic Hybrid, its own witness plan, no QA win shortcut) \u2192 Bloom report (Keep playing \u00b7 Play Again \u00b7 Choose Another Planet \u00b7 Main Menu) \u2192 Play Again (same planet, fresh run) \u2192 Choose Another Planet (survey, same species) \u2192 Change Species \u2192 Cinder Rosette survey \u2192 Main Menu",
+   "detail": "{\"planet0\":\"proc_3302375803\",\"plan\":3,\"run\":{\"ticks\":1674,\"cov\":0.7,\"winAt\":0.7,\"won\":true,\"lost\":false,\"progress\":0,\"firstCross\":1674,\"bought\":3},\"acts\":[\"keepPlaying\",\"playAgain\",\"choosePlanet\",\"mainMenu\"],\"kind\":\"win\",\"again\":{\"same\":true,\"ticks\":1,\"won\":false},\"survey\":{\"species\":\"organic_hybrid\",\"session\":false},\"changeSpecies\":\"species\",\"survey2\":\"cinder_rosette\",\"menu\":{\"focus\":\"begin\",\"items\":[\"begin\",\"challenges\",\"training\",\"settings\",\"credits\"]},\"errs\":[]}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] S3 \u00b7 the hub shows the six Challenge cards in content order; every card launches its own Challenge run; Low Tide / Oasis Line / Thin Air skip Choose Plant Species and run their prescribed plant, the three player-choice Challenges use it; Retry Challenge replays; Challenges returns to the hub (Oasis Line: Main Menu)",
+   "detail": "{\"cards\":[\"dying_world\",\"native_competition\",\"volatile_climate\",\"low_tide\",\"oasis_line\",\"thin_air\"],\"rows\":[{\"id\":\"dying_world\",\"sp\":\"woolly_candle\",\"speciesScreen\":true,\"retry\":{\"id\":\"dying_world\",\"ticks\":2},\"exit\":\"challenges\"},{\"id\":\"native_competition\",\"sp\":\"reed_spire\",\"speciesScreen\":true,\"retry\":{\"id\":\"native_competition\",\"ticks\":2},\"exit\":\"challenges\"},{\"id\":\"volatile_climate\",\"sp\":\"woolly_candle\",\"speciesScreen\":true,\"retry\":{\"id\":\"volatile_climate\",\"ticks\":2},\"exit\":\"challenges\"},{\"id\":\"low_tide\",\"sp\":\"organic_hybrid\",\"speciesScreen\":false,\"retry\":{\"id\":\"low_tide\",\"ticks\":2},\"exit\":\"challenges\"},{\"id\":\"oasis_line\",\"sp\":\"reed_spire\",\"speciesScreen\":false,\"retry\":{\"id\":\"oasis_line\",\"ticks\":2},\"exit\":\"mainMenu\"},{\"id\":\"thin_air\",\"sp\":\"woolly_candle\",\"speciesScreen\":false,\"retry\":{\"id\":\"thin_air\",\"ticks\":2},\"exit\":\"challenges\"}],\"errs\":[]}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] S3a \u00b7 Low Tide lands WITH its two prescribed adaptations (Flood Adaptation + Salt Handling) and says so in the dossier",
+   "detail": "{\"owned\":[\"flood\",\"salt\"],\"start\":\"Lands with Flood Adaptation \u00b7 Salt Handling (given by the Challenge)\"}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] S3b \u00b7 Oasis Line: Reed Spire on a Native Competition world with native vegetation on the map; the origin's status chip reads Refuge exactly when the landing-refuge rule protects it",
+   "detail": "{\"refuge\":{\"chip\":\"OK\",\"refuge\":false,\"blocked\":false},\"natives\":644}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] S3c \u00b7 Thin Air runs GATED with its one HUD condition line; the other Challenges are not gated",
+   "detail": "{\"ta\":{\"gated\":true,\"cond\":\"Final atmosphere \u00b7 0% of decline\"},\"dw\":false}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] S4 \u00b7 Thin Air end to end (Woolly Candle, its own plan + a QA Biomass boost): no early Bloom on this plan \u2192 the win only in the final atmosphere \u2192 FINAL ATMOSPHERE \u2713 report (Keep playing \u00b7 Retry Challenge \u00b7 Challenges \u00b7 Main Menu)",
+   "detail": "{\"plan\":3,\"early\":{\"ticks\":3011,\"cov\":0.629,\"winAt\":0.7,\"won\":false,\"lost\":false,\"progress\":1,\"firstCross\":null,\"bought\":3},\"h1\":{\"cond\":\"Final atmosphere reached \u00b7 regain Bloom: 63% / 70%\",\"status\":\"regain\",\"state\":\"PAUSED\",\"report\":false,\"won\":false,\"lost\":false},\"final\":{\"ticks\":3158,\"cov\":0.7,\"winAt\":0.7,\"won\":true,\"lost\":false,\"progress\":1,\"firstCross\":3158,\"bought\":3},\"rep\":{\"kind\":\"win\",\"mark\":\"FINAL ATMOSPHERE \u2713\",\"acts\":[\"keepPlaying\",\"retryChallenge\",\"challenges\",\"mainMenu\"]},\"errs\":[]}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] S5 \u00b7 TRAINING (Organic Hybrid, Training Grounds) \u2192 Restart Training \u2192 Skip (confirmed, recorded as skipped) \u2192 TRAINING \u2192 completion \u2192 Begin Expedition \u2192 Choose Plant Species",
+   "detail": "{\"recommended\":true,\"t1\":{\"planet\":\"training_grounds\",\"sp\":\"organic_hybrid\",\"coach\":true},\"skip\":\"skipped\",\"acts\":[\"beginExpedition\",\"restartTraining\",\"mainMenu\"],\"after\":\"species\",\"errs\":[]}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] A1 \u00b7 every visible control on 20 screens has an accessible name (aria-label / labelledby / text)",
+   "detail": "{\"issues\":[],\"unnamed\":[]}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] A2 \u00b7 keyboard-only Tab walk on every screen: each focus stop is on-screen with a visible focus indicator; dialogs (first-run, Settings, Credits, report, Skip training) keep focus inside",
+   "detail": "[]"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] A3 \u00b7 Escape / Back: Species \u2192 Main Menu \u00b7 survey focus \u2192 survey \u00b7 dossier \u2192 hub \u2192 Main Menu \u00b7 every room \u2192 the map \u00b7 run menu closes \u00b7 Settings / Credits close \u00b7 the end-of-run report deliberately stays (its actions are the way on)",
+   "detail": "{\"firstRun\":{\"state\":\"menu\",\"open\":false},\"settings\":{\"open\":false,\"focus\":\"settings\"},\"credits\":{\"open\":false,\"focus\":\"credits\"},\"species\":\"menu\",\"surveyFocus\":\"survey\",\"region\":false,\"room:region\":{\"closed\":true,\"focus\":\"region\"},\"room:adapt\":{\"closed\":true,\"focus\":\"adapt\"},\"room:spread\":{\"closed\":true,\"focus\":\"spread\"},\"room:terraform\":{\"closed\":true,\"focus\":\"terraform\"},\"runMenu\":{\"hidden\":true,\"focus\":\"pvMenuBtn\"},\"report\":true,\"dossier\":\"challenges\",\"hub\":\"menu\",\"skipDialog\":false}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] A4 \u00b7 axe-core WCAG 2.1 A/AA on 20 screens: no critical violation and no serious violation other than colour contrast",
+   "detail": "[]"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] A4b \u00b7 KNOWN (not fixed in 037, PMO token decision): 6 text/background colour pairs below WCAG AA 4.5:1 \u2014 #8a937f on #fffdf7 3.14:1 \u00b7 #a86f00 on #fff1c7 3.77:1 \u00b7 #a86f00 on #fffdf7 4.18:1 \u00b7 #ffffff on #3f9d4b 3.42:1 \u00b7 #8a937f on #f4ecd8 2.71:1 \u00b7 #8a937f on #fbf6ea 2.96:1",
+   "detail": "{\"#8a937f on #fffdf7\":{\"ratio\":3.14,\"need\":\"4.5:1\",\"n\":12,\"eg\":[\"Explore\",\"Change\",\"Ocean Archipelago \u00b7 World Seed 38579\",\"Hover a planet system to preview this la\"]},\"#a86f00 on #fff1c7\":{\"ratio\":3.77,\"need\":\"4.5:1\",\"n\":2,\"eg\":[\"Origin\"]},\"#a86f00 on #fffdf7\":{\"ratio\":4.18,\"need\":\"4.5:1\",\"n\":1,\"eg\":[\"EXPLORE\"]},\"#ffffff on #3f9d4b\":{\"ratio\":3.42,\"need\":\"4.5:1\",\"n\":3,\"eg\":[\"Resume\",\"Keep playing\"]},\"#8a937f on #f4ecd8\":{\"ratio\":2.71,\"need\":\"4.5:1\",\"n\":1,\"eg\":[\"No adaptations yet\"]},\"#8a937f on #fbf6ea\":{\"ratio\":2.96,\"need\":\"4.5:1\",\"n\":5,\"eg\":[\"of land \u00b7 goal 70 %\",\"to the bloom\",\"Ocean Archipelago \u00b7 World Seed 38579\",\"no challenge modifier\"]}}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] A5 \u00b7 prefers-reduced-motion: no long-running (> 600 ms / infinite) animation on Choose Plant Species",
+   "detail": "{\"ms\":354,\"anim\":0}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] R1 \u00b7 responsive (17 screens; planning screens at 390\u00d7844 \u00b7 1024\u00d7768 \u00b7 1440\u00d7900 \u00b7 2560\u00d71440, gameplay screens at 1024 / 1440 / 2560): no horizontal overflow, every visible control scrolls into view un-covered, dialogs inside the viewport, specimens inside their frames",
+   "detail": "{\"errs\":[],\"bad\":[],\"pageErrs\":[]}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] R1b \u00b7 KNOWN LIMITATION (recorded, not a pass): gameplay at 390\u00d7844 \u2014 7 of 8 gameplay screens have covered controls / clipped specimens (the run UI has no phone layout)",
+   "detail": "[\"run-map-oasis: #pvPause @230,14 hit=pv-tool; #pvSpeed @282,14 hit=pv-tool; #pvMenuBtn @334,14 hit=pv-tool\",\"region-banner-refuge: #pvPause @230,14 hit=pv-tool; #pvSpeed @282,14 hit=pv-tool; #pvMenuBtn @334,14 hit=pv-tool\",\"room-adapt:  \u00b7 specimen clipped\",\"room-spread: button.node.card @159,101 hit=node card st-poor \u00b7 specimen clipped\",\"room-terraform:  \u00b7 specimen clipped\",\"thin-air-hud: #pvPause @230,14 hit=pv-tool; #pvSpeed @282,14 hit=pv-tool; #pvMenuBtn @334,14 hit=pv-tool\",\"training-coach: #pvPause @230,14 hit=pv-tool; #pvSpeed @282,14 hit=pv-tool; #pvMenuBtn @334,14 hit=pv-tool; button.pv-btn @79,711 hit=tcTitle\"]"
+  }
+ ],
+ "info": {
+  "browser:firefox": "firefox 148.0.2",
+  "firefox:A:first-run dialog": {
+   "controls": 0,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "button.mm-btn[recommend-training]"
+  },
+  "firefox:A:main menu": {
+   "controls": 5,
+   "unnamed": 0,
+   "tabStops": 5,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "button.mm-item[begin] \u2192 button.mm-item[challenges] \u2192 button.mm-item[training] \u2192 button.mm-item[settings] \u2192 button.mm-item[credits]"
+  },
+  "firefox:A:settings dialog": {
+   "controls": 4,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "button.mm-btn[close]"
+  },
+  "firefox:A:credits dialog": {
+   "controls": 1,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "button.mm-btn[close]"
+  },
+  "firefox:A:species selection": {
+   "controls": 5,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "div.ss-card[organic_hybrid]"
+  },
+  "firefox:A:species dossier": {
+   "controls": 4,
+   "unnamed": 0,
+   "tabStops": 3,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "div.ss-range \u2192 button.ss-btn[close] \u2192 button.ss-btn[choose]"
+  },
+  "firefox:A:destination survey": {
+   "controls": 12,
+   "unnamed": 0,
+   "tabStops": 4,
+   "focusProblems": 0,
+   "live": 3,
+   "axe": "clean",
+   "seq": "button.ds-btn[exit] \u2192 button.ds-btn[species] \u2192 button.ds-btn[scan] \u2192 button.ds-cand"
+  },
+  "firefox:A:survey focus": {
+   "controls": 3,
+   "unnamed": 0,
+   "tabStops": 2,
+   "focusProblems": 0,
+   "live": 3,
+   "axe": "clean",
+   "seq": "button.ds-btn[return] \u2192 button.ds-btn[begin]"
+  },
+  "firefox:A:run map": {
+   "controls": 11,
+   "unnamed": 0,
+   "tabStops": 11,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "color-contrast(serious,4)",
+   "seq": "button.pv-tool[region] \u2192 button.pv-tool[mapview] \u2192 button.pv-tool[adapt] \u2192 button.pv-tool[spread] \u2192 button.pv-tool[terraform] \u2192 #pvPause \u2192 #pvSpeed \u2192 #pvMenuBtn"
+  },
+  "firefox:A:region banner": {
+   "controls": 11,
+   "unnamed": 0,
+   "tabStops": 2,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "color-contrast(serious,3)",
+   "seq": "button.bx[deselect] \u2192 button.pv-btn"
+  },
+  "firefox:A:room:region": {
+   "controls": 32,
+   "unnamed": 0,
+   "tabStops": 7,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "color-contrast(serious,3)",
+   "seq": "button.rn \u2192 button.rb[resume] \u2192 #drtab-overview \u2192 #drpane-overview \u2192 button.lb \u2192 div.mm-strip \u2192 button.rc"
+  },
+  "firefox:A:room:adapt": {
+   "controls": 34,
+   "unnamed": 0,
+   "tabStops": 4,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rn \u2192 button.rb[resume] \u2192 button.node \u2192 button.lb"
+  },
+  "firefox:A:room:spread": {
+   "controls": 31,
+   "unnamed": 0,
+   "tabStops": 6,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rn \u2192 button.rb[resume] \u2192 button.node \u2192 button.lb \u2192 div.mm-strip \u2192 button.rc"
+  },
+  "firefox:A:room:terraform": {
+   "controls": 33,
+   "unnamed": 0,
+   "tabStops": 6,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "color-contrast(serious,4)",
+   "seq": "button.rn \u2192 button.rb[resume] \u2192 div.tf-globe \u2192 button.node \u2192 button.lb \u2192 div.mm-strip"
+  },
+  "firefox:A:run menu": {
+   "controls": 3,
+   "unnamed": 0,
+   "tabStops": 2,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.pv-lb[choosePlanet] \u2192 button.pv-lb[mainMenu]"
+  },
+  "firefox:A:report": {
+   "controls": 5,
+   "unnamed": 0,
+   "tabStops": 5,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "color-contrast(serious,6)",
+   "seq": "button.rr-btn[playAgain] \u2192 button.rr-btn[choosePlanet] \u2192 button.rr-btn[mainMenu] \u2192 #rrScroll \u2192 #rrContinue[keepPlaying]"
+  },
+  "firefox:A:challenge hub": {
+   "controls": 8,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "button.ch-btn[choose]"
+  },
+  "firefox:A:challenge dossier": {
+   "controls": 5,
+   "unnamed": 0,
+   "tabStops": 2,
+   "focusProblems": 0,
+   "live": 2,
+   "axe": "clean",
+   "seq": "button.cw-btn[back] \u2192 button.cw-btn[begin]"
+  },
+  "firefox:A:training coach": {
+   "controls": 11,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "color-contrast(serious,4)",
+   "seq": "button.tc-skip"
+  },
+  "firefox:A:skip-training dialog": {
+   "controls": 2,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.tsk-btn"
+  },
+  "firefox:A:escape": {
+   "firstRun": {
+    "state": "menu",
+    "open": false
+   },
+   "settings": {
+    "open": false,
+    "focus": "settings"
+   },
+   "credits": {
+    "open": false,
+    "focus": "credits"
+   },
+   "species": "menu",
+   "surveyFocus": "survey",
+   "region": false,
+   "room:region": {
+    "closed": true,
+    "focus": "region"
+   },
+   "room:adapt": {
+    "closed": true,
+    "focus": "adapt"
+   },
+   "room:spread": {
+    "closed": true,
+    "focus": "spread"
+   },
+   "room:terraform": {
+    "closed": true,
+    "focus": "terraform"
+   },
+   "runMenu": {
+    "hidden": true,
+    "focus": "pvMenuBtn"
+   },
+   "report": true,
+   "dossier": "challenges",
+   "hub": "menu",
+   "skipDialog": false
+  },
+  "firefox:A:contrast-debt": {
+   "#8a937f on #fffdf7": {
+    "ratio": 3.14,
+    "need": "4.5:1",
+    "n": 12,
+    "eg": [
+     "Explore",
+     "Change",
+     "Ocean Archipelago \u00b7 World Seed 38579",
+     "Hover a planet system to preview this la"
+    ]
+   },
+   "#a86f00 on #fff1c7": {
+    "ratio": 3.77,
+    "need": "4.5:1",
+    "n": 2,
+    "eg": [
+     "Origin"
+    ]
+   },
+   "#a86f00 on #fffdf7": {
+    "ratio": 4.18,
+    "need": "4.5:1",
+    "n": 1,
+    "eg": [
+     "EXPLORE"
+    ]
+   },
+   "#ffffff on #3f9d4b": {
+    "ratio": 3.42,
+    "need": "4.5:1",
+    "n": 3,
+    "eg": [
+     "Resume",
+     "Keep playing"
+    ]
+   },
+   "#8a937f on #f4ecd8": {
+    "ratio": 2.71,
+    "need": "4.5:1",
+    "n": 1,
+    "eg": [
+     "No adaptations yet"
+    ]
+   },
+   "#8a937f on #fbf6ea": {
+    "ratio": 2.96,
+    "need": "4.5:1",
+    "n": 5,
+    "eg": [
+     "of land \u00b7 goal 70 %",
+     "to the bloom",
+     "Ocean Archipelago \u00b7 World Seed 38579",
+     "no challenge modifier"
+    ]
+   }
+  },
+  "firefox:A:reduced-motion": {
+   "menuToSpeciesMs": 354,
+   "longRunningAnimations": 0
+  },
+  "firefox:R:summary": {
+   "screens": 17,
+   "samples": 68,
+   "problems": 0,
+   "narrowGameplay": 7
+  }
+ }
+}

@@ -452,7 +452,8 @@ const PRESCRIBED = { low_tide: "organic_hybrid", oasis_line: "reed_spire", thin_
             t = Date.now(); await p.keyboard.press("Escape"); await roomClosed(p); m[`close:${room}`] = Date.now() - t; }
           await p.evaluate(() => { const s = BLOOM_API.sim; BLOOM_API.advance(40); s.won = true; }); t = Date.now(); await p.evaluate(() => BLOOM_API.sim.onWin(BLOOM_API.sim.coverage())); await reportOpen(p); m.reportOpen = Date.now() - t;
           await p.click('#rr [data-act="mainMenu"]'); await atMenu(p);
-          for (const id of ["dying_world", "low_tide", "oasis_line"]) {   // (all three exist on main d0eaf8f too: the same flow on both roots) t = Date.now(); await p.click('.mm-item[data-act="challenges"]').catch(() => {}); await hubReady(p); m[`menuToHub`] = m.menuToHub || (Date.now() - t);
+          // (Dying World, Low Tide, Oasis Line exist on every compared root: the same flow on both)
+          for (const id of ["dying_world", "low_tide", "oasis_line"]) { t = Date.now(); await p.click('.mm-item[data-act="challenges"]').catch(() => {}); await hubReady(p); m[`menuToHub`] = m.menuToHub || (Date.now() - t);
             await p.evaluate(([HUBX, id]) => eval(HUBX).select(id), [HUB, id]); t = Date.now(); await p.click(".ch-btn.go");
             if (!PRESCRIBED[id]) { await speciesReady(p); await p.evaluate(SSX => eval(SSX).open("woolly_candle"), SS); await p.waitForTimeout(150); t = Date.now(); await p.click(".ss-btn.go"); }
             await worldReady(p); m[`dossier:${id}`] = Date.now() - t;
