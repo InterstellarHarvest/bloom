@@ -75,7 +75,6 @@
 .ch-d-kicker{display:flex; align-items:center; gap:10px; margin:0; font-size:var(--bloom-kicker-size); font-weight:var(--bloom-kicker-weight); letter-spacing:var(--bloom-kicker-track); text-transform:uppercase; color:var(--accent)}
 .ch-d-i{width:40px; height:40px} .ch-d-i .ic{width:22px; height:22px}
 .ch-dossier h2{margin:8px 0 0; font-size:32px; font-weight:900; line-height:1.05} .ch-dossier h2:focus{outline:none}
-.ch-d-short{margin:4px 0 0; font-weight:800; font-size:17px}
 .ch-d-brief{margin:8px 0 0; color:var(--ink-soft); font-weight:600; max-width:72ch}
 /* two-part rows: the survey's dossier language (a labelled heading row, then its text) */
 .ch-rows{margin:14px 0 0; display:grid; gap:8px}

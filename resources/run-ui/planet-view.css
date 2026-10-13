@@ -74,7 +74,6 @@ html.ui18 body{background:var(--bloom-frame)}
 .pv-ck{display:inline-grid; place-items:center; min-width:46px; height:46px; padding:0 10px; border:2px solid var(--line-2); border-radius:12px; background:var(--card); cursor:pointer; font-weight:900; font-size:16px; box-shadow:0 2px 0 var(--line-2)}
 .pv-ck .ic{width:21px; height:21px} .pv-ck[aria-pressed="true"]{background:var(--gold-soft); border-color:var(--gold-deep); color:var(--gold-deep)}
 .pv-ck.menu{display:inline-flex; gap:6px; font-size:14px} .pv-ck[aria-expanded="true"]{background:var(--ink); color:#fff7e0; border-color:var(--ink)}
-.pv-tip{position:absolute; z-index:30; background:var(--ink); color:#fff7e0; font-size:12px; font-weight:700; padding:4px 9px; border-radius:8px; white-space:nowrap; pointer-events:none}
 @media (max-width:1400px){ .pv-id{display:none} .pv-hud{grid-template-columns:minmax(0,1fr) auto} .pv-ck.menu .tn{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)} }
 @media (max-width:1200px){ .pv-tool .tn{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)} .pv-tool{padding:6px 11px} .pv-sky small{display:none} }
 @media (max-width:1120px){ .pv-hud{padding:6px 10px; gap:8px} .pv-cov{min-width:124px} .pv-bio b{font-size:26px} .pv-tools{gap:6px} .pv-c{gap:8px} }

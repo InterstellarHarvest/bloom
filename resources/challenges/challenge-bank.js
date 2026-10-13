@@ -159,10 +159,3 @@ export function makeBankInstance({ challenge, species, launchSeed, cell, pick, w
     planet: P.planet, fingerprint: P.fingerprint, worldSeed: P.seed, archetypeId: P.archetypeId, candidate,
     dossier: ev.dossier, assessment: ev.assessment, render: P.render });
 }
-
-/** The provenance a run / report keeps of an instance (plain data). */
-export const instanceProvenance = X => ({ challengeId: X.challengeId, challengeVersion: X.challengeVersion, recipeVersion: X.recipeVersion, recipeKey: X.recipeKey,
-  scenarioId: X.scenarioId, speciesId: X.speciesId, speciesPolicy: X.speciesPolicy, launchSeed: X.launchSeed, bankVersion: X.bank.bankVersion, cellKey: X.bank.cellKey,
-  entryIndex: X.entryIndex, planetSeed: X.worldSeed, archetypeId: X.archetypeId, fingerprint: X.fingerprint,
-  completion: { fingerprint: X.completion.fingerprint, conditions: [...X.completion.conditions] },
-  startingState: X.startingState ? { adaptations: [...X.startingState.adaptations], biomass: X.startingState.biomass, source: "challenge" } : null });
