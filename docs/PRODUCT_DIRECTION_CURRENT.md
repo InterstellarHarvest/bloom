@@ -15,8 +15,14 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-13, **BLOOM-037 — final hardening & release — CANDIDATE** (review branch `handoff/bloom-037-review`, NOT merged; from
-production `main` `3cc3e33`). **The product is FROZEN** (EXPEDITION · CHALLENGES · TRAINING; four species; six Challenges); 037 changed only
+*Last updated: 2026-10-13, **RELEASE CLOSEOUT — BLOOM-037: IMPLEMENTED / COMPLETE · FINAL HARDENING: COMPLETE · RELEASE: LIVE.** Production
+`main` was fast-forwarded `3cc3e33` → **`2c491f1`** (the exact PMO-corrected review head; no merge commit, squash, rebase, cherry-pick or force
+push) and is live at <https://interstellarharvest.github.io/bloom/> (GitHub Actions Pages workflow run 38482916954 — success; the only deployment
+source). Final regression on the release head: **45 / 45 suites, 2053 checks, 0 failures**; Chromium 20 / 20, Firefox 20 / 20, WebKit 19 / 19
+(axe-core 0 critical / 0 serious on 23 screens); portable fingerprint `b8d4eb23…`; seed bank sha256 `8506124b…` (format 2, 15 × 50). Release
+record: [`evidence/bloom-037/REPORT.md`](evidence/bloom-037/REPORT.md) § Release closeout. **No further milestone is started or approved.***
+
+*BLOOM-037 summary (2026-10-13). **The product is FROZEN** (EXPEDITION · CHALLENGES · TRAINING; four species; six Challenges); 037 changed only
 documentation, dead code, accessibility and release readiness. **PMO final review (2026-10-13): hardening ACCEPTED; one release-blocking
 correction — the six sub-WCAG-AA colour-contrast pairs — FIXED before release** (text-only shades and gameplay button shades; the semantic hues
 unchanged). **Locked:** gameplay ≥ 1024 px is an accepted v1 limitation (no phone gameplay UI); Safari itself stays untested / not claimed (WebKit
@@ -160,7 +166,7 @@ EXPEDITION → Choose Plant Species → Destination Survey → choose one of the
 | BLOOM-036D1 (Thin Air · `pressure-final-state`) | **IMPLEMENTED / COMPLETE** (`3b4d3a7`) — the generic engine win gate, the completion boundary, Thin Air, bank format 2 |
 | Medals / scoring / tiers / unlocks | **NOT PLANNED** |
 | Progression / rewards | **NOT APPROVED / NOT STARTED** |
-| BLOOM-037 (final hardening & release) | **CANDIDATE** (`handoff/bloom-037-review`) — [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md) |
+| BLOOM-037 (final hardening & release) | **IMPLEMENTED / COMPLETE** — **RELEASE LIVE** (`2c491f1`) — [`RELEASE_STATE_v1.md`](RELEASE_STATE_v1.md) |
 
 - **The final species art is in production** — `cinder-rosette` (`rosette@1`), `woolly-candle` (**`candle@2`**, the Woolly fidelity
   revision: candle@1's sockets with larger native component maxima; brief [`WOOLLY_CANDLE_ART_BRIEF_v2`](species-art-briefs/WOOLLY_CANDLE_ART_BRIEF_v2.md)),
@@ -238,7 +244,7 @@ IMPLEMENTED / COMPLETE** · **BLOOM-036C1 (Low Tide · Oasis Line): IMPLEMENTED 
 (`d0eaf8f`) · **BLOOM-036D1 (Thin Air · completion): IMPLEMENTED / COMPLETE** (`3b4d3a7`). 036A/B/B1 PMO-accepted and fast-forwarded into production `main` as one combined release (`bd0eb27`,
 2026-10-12). **Sequence (locked):** BLOOM-035B species engineering (complete) → BLOOM-035C final species art + the normal Species Selection
 release (complete) → BLOOM-036A/B/B1 the Challenges system and its first three Challenges (complete) → 036C authored Challenge content
-(complete: 036C1 Low Tide + Oasis Line, 036D study, 036D1 Thin Air) → BLOOM-037 final hardening (candidate).
+(complete: 036C1 Low Tide + Oasis Line, 036D study, 036D1 Thin Air) → BLOOM-037 final hardening & release (complete; live).
 
 **Current released Challenges (production `main`):** 1. **Dying World** · 2. **Native Competition** · 3. **Volatile Climate** · 4. **Low Tide** ·
 5. **Oasis Line** · 6. **Thin Air** (hub order — content order, not a ranking).
@@ -446,4 +452,4 @@ This is not a gameplay-code feature; product code does not work around repositor
 | **BLOOM-036D** — Challenge completion-condition study | which completion conditions make an authored premise unavoidable (Thin Air, Hearthfire, Windfall, Oasis Line), calibrated offline; the minimal schema; validator / bank impact | **IMPLEMENTED / COMPLETE** (PMO-accepted, `d0eaf8f`; the study's backwards `sim.won` sentence corrected in 036D1) |
 | **BLOOM-036D1** — Thin Air | exactly one completion condition type (`pressure-final-state`); a GENERIC engine win gate; `challenge-completion.js`; Thin Air (Dying World · Woolly Candle · Desert + Ocean); completionFingerprint provenance (bank format 2, 15 cells × 50) | **IMPLEMENTED / COMPLETE** (`3b4d3a7`, in production `main`) |
 | **BLOOM-036E+** — progression | progression / rewards only if later approved; no further condition type without a new study | NOT APPROVED |
-| **BLOOM-037** — Final hardening & release | documentation reconciliation + `RELEASE_STATE_v1.md`; dead production-path cleanup; offline / subpath / portable proof; accessibility, responsive, WebKit and performance passes; the gameplay smoke matrix; full regression; Pages readiness | **CANDIDATE** (`handoff/bloom-037-review`) |
+| **BLOOM-037** — Final hardening & release | documentation reconciliation + `RELEASE_STATE_v1.md`; dead production-path cleanup; offline / subpath / portable proof; accessibility, responsive, WebKit and performance passes; the gameplay smoke matrix; full regression; Pages readiness | **IMPLEMENTED / COMPLETE — RELEASE LIVE** (`2c491f1`; the contrast correction included) |

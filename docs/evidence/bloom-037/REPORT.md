@@ -1,7 +1,7 @@
 # BLOOM-037 — Final hardening & release — report
 
-**Status: RELEASE CANDIDATE (PMO-corrected)** on `handoff/bloom-037-review` — 12 commits ahead of production `main` `3cc3e33`, 0 behind (a
-fast-forward). Product frozen: no feature, Challenge, species, progression, audio or save work. Canonical inventory of what ships:
+**Status: RELEASED — production `main` = `2c491f1`, live** (§14 Release closeout). Reviewed as `handoff/bloom-037-review` — 12 commits ahead of
+`3cc3e33`, 0 behind; `main` fast-forwarded to it exactly. Product frozen: no feature, Challenge, species, progression, audio or save work. Canonical inventory of what ships:
 [`docs/RELEASE_STATE_v1.md`](../../RELEASE_STATE_v1.md).
 
 | | |
@@ -259,3 +259,19 @@ evidence only — PMO-locked). Colour contrast is **not** a limitation: the issu
 
 **None.** The PMO's release blocker (colour contrast) is fixed; the Pages source is GitHub Actions; the release head passes 45 / 45 suites and the
 three-browser matrix. Integration (fast-forward `main`, push, live verification) and the closeout follow.
+
+## 14. Release closeout (2026-10-13)
+
+**BLOOM-037: IMPLEMENTED / COMPLETE · FINAL HARDENING: COMPLETE · RELEASE: LIVE.**
+
+| | |
+|---|---|
+| Final production SHA | **`2c491f11008d40613c7cb8cfa603ffa0e621ffe5`** — `main` fast-forwarded from `3cc3e33` to the exact PMO-corrected review head (no merge commit, squash, rebase, cherry-pick or force push); local `main` = `origin/main` = the accepted head, proven after the push |
+| Pages | Source **GitHub Actions** (API `build_type: workflow`); the release push ran ONE deployment — workflow "Deploy to GitHub Pages", run 38482916954, **success**; no legacy `pages-build-deployment` run (the `3cc3e33` push before it still had both) |
+| Live verification | <https://interstellarharvest.github.io/bloom/>: every 037-changed asset byte-identical to `2c491f1` (and different from `3cc3e33`); `/tools/…`, `/docs/…`, `/demos/…`, `/dist/…`, `README.md`, `GAME_BIBLE.md` → 404 (the curated site only); Chromium: Main Menu (EXPEDITION · CHALLENGES · TRAINING · SETTINGS · CREDITS) in 1.2 s; the hub's six cards (… Oasis Line · **Thin Air**); the Thin Air dossier (Woolly Candle, the final-atmosphere goal) → a gated Thin Air run ("Final atmosphere · 0% of decline"); the corrected faint text live (`rgb(100, 108, 91)`); one host; 0 console errors |
+| Final regression | release head `50bb6f6` (the final commit adds evidence only): **45 / 45 suites, 2053 checks, 0 failures** |
+| Browser / a11y QA | Chromium 20 / 20 · Firefox 20 / 20 · WebKit 19 / 19 — axe-core 0 critical / 0 serious on 23 screens incl. colour contrast |
+| Contrast fix | `feb47b0` — the six sub-AA pairs + the same-pattern buttons / chip, final ratios 4.55–7.97 : 1 (§6) |
+| Portable runtime | fingerprint `b8d4eb23981b28602645e7598316fce88b6e60d4ec8a7504a851a07905dcd31d` (reproducible: `check:portable` identical) |
+| Challenge seed bank | sha256 `8506124b462cf4d47710a1eb37806ddead9dd3f600c28c36cfcfd071fda59e40` — format 2, 15 cells × 50 = 750 (`--check` identical) |
+| Accepted known limitations | no saved run / Continue · no audio · no separate difficulty option · no progression / rewards · Challenge rule changes need an offline bank rebuild · gameplay ≥ 1024 px · Safari itself untested (WebKit proxy evidence only) |
