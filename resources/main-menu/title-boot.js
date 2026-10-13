@@ -25,8 +25,8 @@
   var HERE = new URL(me.src, location.href), REPO = new URL("../../", HERE), d = me.dataset;
   var TITLE = "Strange Bloom", SUBTITLE = "Unknown Soils";
   // the classic scripts the title and the survey need (the module seam last: it reads window.BLOOM)
-  // (BLOOM-036A) + the Challenge catalogue and its resolver (the CHALLENGES hub and a Challenge survey read them before any run);
-  // (BLOOM-036B1) + the generated Challenge seed banks (prevalidated worlds: seeds + proof provenance, ~100 KB of data)
+  // (BLOOM-036A) + the Challenge catalogue and its resolver (the CHALLENGES hub and the Challenge dossier read them before any run);
+  // (BLOOM-036B1) + the generated Challenge seed banks (prevalidated worlds: seeds + proof provenance; ~400 KB of data since 036D1's format 2)
   var CLASSIC = ["content/config.js", "content/traits.js", "content/species.js", "planets/first_bloom.js", "content/archetypes.js", "content/scenarios.js", "content/challenges.js", "content/challenge-seed-banks.js", "content/play.js",
     "resources/bloom-sim.js", "resources/bloom-species.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js",
     "resources/bloom-scenario.js", "resources/bloom-play.js", "resources/bloom-challenges.js", "resources/challenges/challenge-completion.js", "resources/portable/module-loader.js"];

@@ -3,19 +3,20 @@
 //   import { mountApp } from "<repo>/resources/app/app-controller.js";
 //   const app = mountApp({ app: document.getElementById("app"), runScripts })   // → the AppController (also window.BLOOM_APP)
 //
-// THREE SCREENS, mounted and disposed in place — never a document navigation:
-//   TITLE    the Main Menu (EXPEDITION · TRAINING · SETTINGS · CREDITS) over one of twelve paintings      ┐ resources/main-menu/
+// THREE SCREENS (+ Choose Plant Species and the Challenge screens, below), mounted and disposed in place — never a document navigation:
+//   TITLE    the Main Menu (EXPEDITION · CHALLENGES · TRAINING · SETTINGS · CREDITS) over one of twelve paintings ┐ resources/main-menu/
 //   SURVEY   the Destination Survey (focus, inspect, Begin Expedition)                                     ┘ expedition-entry.js owns both
 //   RUN      one GameSession (resources/run/game-session.js): an expedition, or Training (a run configuration, not a page); the
 //            Bloom / Extinction report is part of the run
 //
-//   title → survey          EXPEDITION (the first-run recommendation may ask once): the title's black fade (ExpeditionEntry)
+//   title → survey          EXPEDITION (the first-run recommendation may ask once): the title's black fade (ExpeditionEntry), via
+//                           Choose Plant Species (BLOOM-035C2, below)
 //   survey → run            Begin Expedition: the DRAMATIC descent; under its full cover the EXACT selected planet becomes the run
 //   run → run               Play Again: black → a fresh session on the SAME planet object → black lifts
 //   run → survey / title    Choose Another Planet / Main Menu: black → the session is disposed → a fresh survey / the title → black lifts
 //   title → training run    TRAINING: black → a training session; its own layer lifts the black and starts the guided lessons
 //   training → …            Restart Training (a fresh training session) · Main Menu / Skip Training (the title) · Begin Expedition
-//                           (the survey): each fades to black in the training layer, then comes here
+//                           (Choose Plant Species → the survey): each fades to black in the training layer, then comes here
 //
 // THE IDENTITY RULE. The Destination Survey's detail.planet IS the gameplay planet: BLOOM.gameSession.expeditionRun(detail) hands that very
 // object to BLOOM.createSim. Nothing on this path serializes it, stores it (no sessionStorage, localStorage or window.name), puts it in the
