@@ -3,8 +3,8 @@
 **BLOOM-036A — Challenges foundation + first playable hub** **+ BLOOM-036B — the contained Challenge: ONE procedural planet per instance**
 **+ BLOOM-036B1 — Challenge worlds from PREVALIDATED SEED BANKS** — PMO-accepted and **IMPLEMENTED / COMPLETE in production `main`** as one
 combined Challenges release (`bd0eb27`, 2026-10-12). **+ BLOOM-036C1 — the first AUTHORED Challenges (Low Tide · Oasis Line): IMPLEMENTED / COMPLETE** (`d69d458`, §9).
-**+ BLOOM-036D1 — the first Challenge COMPLETION CONDITION: Thin Air · `pressure-final-state` — CANDIDATE** (review branch `handoff/bloom-036d1-review`,
-§2.5, §10). Current product direction: [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §8.
+**+ BLOOM-036D1 — the first Challenge COMPLETION CONDITION: Thin Air · `pressure-final-state` — IMPLEMENTED / COMPLETE** (`3b4d3a7`, §2.5, §10).
+**BLOOM-036 is closed: CHALLENGES are IMPLEMENTED / COMPLETE for the current release scope** (six released Challenges; one condition type). Current product direction: [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md) §8.
 
 > **EXPEDITION** = live procedural world discovery (the 3 × 3 Destination Survey generates and validates worlds on the player's machine).
 > **CHALLENGES** = curated banks of **prevalidated procedural seeds**: the world is still procedurally generated, but which worlds a Challenge
@@ -241,7 +241,8 @@ launch seed, planet seed and fingerprint, species, scenario, starting state and 
   landing region keeps it alive at first. Adapt before you spread." (presentation only; validation unchanged).
 - **Completion contract** (036D1, gated Challenges only — §2.5): the hub card's chip "Bloom in the final atmosphere"; **To win** first in the hub
   dossier and the Challenge Planet Dossier; the run's one condition line in the pressure panel and the HOLDING badge during an early Bloom; the
-  report's FINAL ATMOSPHERE ✓ card. With six Challenges the hub's card list scrolls on its own at 1024 × 768 (a card is visibly cut at the list's
+  report's FINAL ATMOSPHERE ✓ card. (036D1 PMO copy correction) An extinction report has no Keep playing: before the final pressure state its pressure
+  line says "The atmosphere had not finished changing. Final conditions would have been: …"; only a win keeps "continues if you keep playing". With six Challenges the hub's card list scrolls on its own at 1024 × 768 (a card is visibly cut at the list's
   edge); the keyboard-selected card is scrolled fully into view (`scrollIntoView({ block: "nearest" })` — Firefox's `focus()` alone left a partly
   visible card cut off).
 - **Run / Report:** "Challenge · <name>", challenge debrief, the summary "… in the <name> Challenge …" (036C1: the Challenge, not only its scenario),
@@ -284,7 +285,7 @@ From the PMO-accepted content study ([`CHALLENGE_CONTENT_STUDY_v1.md`](CHALLENGE
   Presentation only — fitness, spread, establishment, origin protection, validation and banks unchanged. Applies wherever the rule holds
   (Challenges, Expedition, Training alike); it reinforces the dossier's low-arrival line.
 
-## 10. Thin Air — the first Challenge with a completion condition (BLOOM-036D1, CANDIDATE)
+## 10. Thin Air — the first Challenge with a completion condition (BLOOM-036D1, IMPLEMENTED / COMPLETE)
 
 From the PMO-accepted completion study ([`CHALLENGE_COMPLETION_STUDY_v1.md`](CHALLENGE_COMPLETION_STUDY_v1.md) §3) and the 036C content direction:
 

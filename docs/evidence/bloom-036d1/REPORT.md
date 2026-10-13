@@ -169,3 +169,11 @@ keep-playing wording; a completed decline keeps "— the final harsh state." Pro
 QA (challenge-completion-check W1–W4, both browsers; the legacy path evaluated in Node): green. Focused: run-ui-check · run-ui-convergence-check ·
 challenge-completion-check 71/71 · dying-world-check · visual-system-check 54/54 · release-check --no-suites 51 · portable-runtime-check 71/71.
 `l1-thin-air-early-bloom-then-extinction.png` re-captured with the corrected wording.
+
+## 12. Integration + BLOOM-036 closeout (2026-10-13)
+
+`main` fast-forwarded `d0eaf8f` → **`3b4d3a7`** (= the corrected review head; 5 commits, no merge commit / squash / rebase / cherry-pick / force push);
+local `main` = `origin/main` = `origin/handoff/bloom-036d1-review`. Post-integration on clean `main`: challenge-completion-check 71/71 · challenges-check
+33/33 · challenge-world-check 108/108 · run-ui-check · run-ui-convergence-check · portable-runtime-check 71/71 · release-check --no-suites 51 ·
+visual-system-check 54/54; `build-challenge-seed-bank --check` identical (sha256 `8506124b…`). BLOOM-036 (A · B · B1 · C · C1 · D · D1) is
+IMPLEMENTED / COMPLETE; next: final hardening / release.

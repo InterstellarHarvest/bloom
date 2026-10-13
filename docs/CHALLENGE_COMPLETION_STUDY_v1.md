@@ -1,7 +1,7 @@
 # Strange Bloom · Unknown Soils — Challenge completion-condition study v1 (BLOOM-036D)
 
 > **STATUS (BLOOM-036D1, 2026-10-12): this study is ACCEPTED and IMPLEMENTED / COMPLETE.** The PMO accepted it and selected **Thin Air** with
-> exactly one condition type, `pressure-final-state` — implemented in BLOOM-036D1 (CANDIDATE, review branch `handoff/bloom-036d1-review`;
+> exactly one condition type, `pressure-final-state` — implemented in BLOOM-036D1 (IMPLEMENTED / COMPLETE, production `main` `3b4d3a7`;
 > [`CHALLENGES_SYSTEM_v1.md`](CHALLENGES_SYSTEM_v1.md) §2.5, §10). **Hearthfire: REJECTED** under the studied completion conditions (RESERVE design
 > history only) · **Windfall: HOLD** (the never-Critical condition is rejected) · **Oasis Line: released unchanged**, no extra condition.
 >
