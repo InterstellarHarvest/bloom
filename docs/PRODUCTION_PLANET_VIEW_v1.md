@@ -38,7 +38,10 @@ render hints, sky      └── run-map-renderer.js ── the gameplay map's b
 ```
 
 - **The only terrain palette and terrain algorithm in production**: the temperature → ground ramp, dry / wet ground, the archetype
-  treatment (ground tint, `tintBy: "cold"`, water hue, dunes, frost glints), per-tile grain, coast line, shallows, wave marks.
+  treatment (ground tint, `tintBy: "cold"`, water hue, dunes, frost glints), per-tile grain, coast line, shallows, wave marks; (v1.0.1)
+  under a sky colder than the frost line water is ICY WATER — a deeper cool blue, shallows toward pale cyan, ripple marks darker than the
+  surface — so a frozen lake never shares the land's white frost / glint motif (the owner's readability correction: water must read as
+  non-selectable water beside frozen, selectable land).
   planet-texture.js keeps no palette (it used to copy the 2D map's, "kept in step by hand"); the map renderer keeps none either
   (`planet-view-check` N3, `sphere-texture-check` D3).
 - **In the surface (static — identifies this exact planet):** water / land / which region (tilemap), each region's climate
@@ -97,12 +100,14 @@ it owns no simulation and no rules.
 | `hitTest(x, y)` → `{tile, x, y, region, copy}` · `bubbleAt(x, y, bubbles)` · `clientOf(tx, ty)` · `info()` |
 
 - **Layers:** surface → live tiles (or the Map View layer) → haze / shock tint → preview tints → region borders, fronts, outlines →
-  per copy in screen space: crossings, labels, colony badges, bubbles (on top: they are clickable).
-- **Cylinder fill:** a wrapping world is centred on its middle meridian (as the globe faces it at yaw 0) and **repeated** sideways
-  until the stage is full (3 copies at 1280 × 800); never padded with invented ocean. Any copy's click resolves to the same
-  canonical tile (`x mod W`), and that canonical tile is what the click's `bloom:region-select` reports — QA B8 / B29b click the left
-  and right copies. Labels / bubbles near the cut are drawn on every copy.
-  A rectangle is drawn once, centred, inside the dark stage frame. Simulation geometry is untouched.
+  in screen space: crossings, labels, colony badges, bubbles (on top: they are clickable).
+- **One visual copy (v1.0.1, owner direction):** every world — a cylinder as much as a rectangle — is drawn exactly ONCE, at whole-pixel
+  tiles as large as the stage allows, centred inside the dark stage frame; a wider stage (2560 × 1440) shows frame either side, never a
+  repeated world. The frame is outside the map: `hitTest` there is tile −1 / region −2 and a click deselects (it never resolves `x mod W`
+  into an invisible copy) — QA B8 / B29b. Labels, bubbles, selection and effects therefore appear once; a water crossing over the
+  x = W − 1 → 0 seam leaves one edge and re-enters at the other, clipped to the one world. Simulation geometry and topology are untouched
+  (the cylinder still wraps mechanically: spread, crossings, fronts, neighbours). Before v1.0.1 the cylinder was repeated sideways to fill
+  the stage; the owner read that as a duplicated map.
 - **Context loss:** Chromium can drop and restore offscreen 2D canvases (blank) at start-up; the renderer repaints the surface on
   `contextrestored` and asks its owner for a frame.
 - **029C:** a room mini-map = `createRenderer(itsCanvas)` + `setSource(adapter.surface())` + `draw()` with that room's context region
@@ -113,8 +118,8 @@ it owns no simulation and no rules.
 - **Selection** is the run's own (`adapter.selection()` + `bloom:region-select`). A bubble under the pointer is collected first, as
   in the shell. The banner's X deselects; Pause / speed never touch the selection. The run opens with the origin selected (the
   page's own start), so the banner shows it.
-  - **A physical map click = the real canonical tile.** The view sends the renderer's `hitTest` tile (a repeated cylinder copy
-    resolves to `x mod W`) through `actions.selectTile(tile)`, which calls the page's own map-click action `selectAt(sec, tile)`.
+  - **A physical map click = the real canonical tile.** The view sends the renderer's `hitTest` tile (v1.0.1: the one drawn world;
+    the frame is no tile) through `actions.selectTile(tile)`, which calls the page's own map-click action `selectAt(sec, tile)`.
     So, exactly as the shell's map: the event carries that tile; clicking the selected region again **deselects** it (the event
     still carries the clicked tile); a water tile deselects with `water: true` and the water tile. Only a click on the frame
     outside the planet (no tile) clears through `actions.deselect()`.

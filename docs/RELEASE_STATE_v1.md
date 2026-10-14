@@ -10,7 +10,7 @@ Actions Pages workflow. Everything below describes that release.
 
 ## 1. Modes
 
-The title (`index.html`, one of twelve paintings) offers **EXPEDITION · CHALLENGES · TRAINING · SETTINGS · CREDITS**. The whole game is that
+The title (`index.html`, one of twelve paintings) offers **EXPEDITION · CHALLENGES · TRAINING · SETTINGS** (v1.0.1: no CREDITS entry; attribution stays in the README and the vendored licences). The whole game is that
 one document: no screen opens another page, the address never changes, and a reload returns to the title.
 
 | Mode | What it is | Rules |
@@ -19,7 +19,16 @@ one document: no screen opens another page, the address never changes, and a rel
 | **CHALLENGES** | six authored, contained runs, each on ONE prevalidated planet from a seed bank | the Challenge's scenario (all six have extinction loss) |
 | **TRAINING** | about five minutes, thirteen guided lessons on the Training Grounds | always Organic Hybrid; `default` rules; Bloom at 65 % |
 
-SETTINGS: motion (system / reduced / full). CREDITS: the team, the paintings, Three.js (MIT).
+SETTINGS (v1.0.1): motion (system / reduced / full) · "Show Training recommendation again" (the training record back to first-run) · "Reset preferences"
+(motion → Follow system and the training record back to first-run; nothing else in the browser's storage is touched). Nothing gameplay-affecting is a
+setting — "pause while a decision room is open" is explicitly deferred (it changes run timing under Dying World / Native Competition / Volatile Climate / Thin Air).
+
+v1.0.1 UI polish (owner direction): the title shows no survey-prefetch status (the prefetch itself still runs silently from the title); no
+player-facing text is pointer-selectable (`html.mm-page{user-select:none}`); right-hand planning panels — the Challenge dossier, the species dossier,
+the Destination Survey's focused-planet dossier and the Challenge Planet Dossier — take their content's height (top-aligned, up to the available
+height, scrolling inside only when the content overflows); the flat gameplay map draws exactly ONE copy of a cylindrical world (the frame either
+side is outside the map; the topology is unchanged); under a freezing sky water is icy water (deeper cool blue, ripple marks darker than the
+surface) while the white frost glints stay on land alone.
 
 ## 2. Species
 

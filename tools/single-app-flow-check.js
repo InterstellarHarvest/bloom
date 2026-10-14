@@ -13,7 +13,7 @@
 // same classification as Stable / Volatile / Extreme); the portable runtime rebuilds deterministically, matches dist/ and carries no
 // handoff code; the Pages site is the one production document and its resources.
 // Browser (Chromium AND Firefox; a real static server on 127.0.0.1 serving "/" → index.html and the Pages site under "/bloom/"):
-//   F · the root flow: title (EXPEDITION · CHALLENGES · TRAINING · SETTINGS · CREDITS) → the Destination Survey (nine validated worlds, Favorable /
+//   F · the root flow: title (EXPEDITION · CHALLENGES · TRAINING · SETTINGS; v1.0.1: no CREDITS) → the Destination Survey (nine validated worlds, Favorable /
 //       Precarious / Extreme columns) → focus → Begin Expedition (DRAMATIC, full cover) → the EXACT selected planet object is the run's
 //       (JSON, planetFingerprint, render hints, canonical surface; generateFromArchetype / generatePlanet / attemptPlanet / searchWorld /
 //       runSearch called ZERO times, no worker started) → the run mounted in the same document (no navigation, no shell DOM) → Region /
@@ -251,8 +251,8 @@ const GEN = [["generateFromArchetype", null], ["generatePlanet", null], ["attemp
       { const c = await context(), p = await page(c), U = `${ORIGIN}/?sector=77&workers=3&bg=3`; REQ.length = 0;
         await p.goto(U); await menuReady(p);
         const t = await p.evaluate(() => ({ items: [...document.querySelectorAll(".mm-item")].map(b => b.innerText.trim()), title: document.title, state: MENU_DEV.entry.state, run: !!document.getElementById("pv"), boot: BLOOM_TITLE_BOOT.state }));
-        check(J(t.items) === J(["EXPEDITION", "CHALLENGES", "TRAINING", "SETTINGS", "CREDITS"]) && t.title === "Strange Bloom — Unknown Soils" && !t.run && t.boot === "mounted",
-          `[${bn}] F1 · GET / is the title: EXPEDITION · CHALLENGES (036A) · TRAINING · SETTINGS · CREDITS ("Begin Expedition" is now the survey's decision), no run mounted`, J(t.items));
+        check(J(t.items) === J(["EXPEDITION", "CHALLENGES", "TRAINING", "SETTINGS"]) && t.title === "Strange Bloom — Unknown Soils" && !t.run && t.boot === "mounted",
+          `[${bn}] F1 · GET / is the title: EXPEDITION · CHALLENGES (036A) · TRAINING · SETTINGS (v1.0.1: no CREDITS; "Begin Expedition" is now the survey's decision), no run mounted`, J(t.items));
         if (EVIDENCE && bn === "chromium") await sleep(2500);   // the title's entrance (painting, plaque, menu) has settled before the still
         await shot(p, "01-title.png");
         await p.click('.mm-item[data-act="begin"]'); await surveyReady(p);
@@ -329,7 +329,7 @@ const GEN = [["generateFromArchetype", null], ["generatePlanet", null], ["attemp
           `[${bn}] F12 · a second world from the new sector: again the exact selected planet object, nothing generated after the selection`, `${id3.title} · ${id3.fp}`);
         await menuAct(p, "mainMenu"); await p.waitForFunction(() => !BLOOM_APP.session && MENU_DEV.entry.state === "menu", null, { timeout: 30000, polling: 100 });
         const mm = await p.evaluate(() => ({ title: document.title, items: document.querySelectorAll(".mm-item").length, focus: document.activeElement && document.activeElement.dataset.act, prefetch: !!MENU_DEV.entry.prefetch }));
-        check(mm.title === "Strange Bloom — Unknown Soils" && mm.items === 5 && mm.focus === "begin" && mm.prefetch, `[${bn}] F13 · Main Menu → the title inside index.html (focus on EXPEDITION, a fresh sector prefetching)`, J(mm));
+        check(mm.title === "Strange Bloom — Unknown Soils" && mm.items === 4 /* (v1.0.1: no CREDITS) */ && mm.focus === "begin" && mm.prefetch, `[${bn}] F13 · Main Menu → the title inside index.html (focus on EXPEDITION, a fresh sector prefetching)`, J(mm));
         // Training: every return path
         const trainReady = n => p.waitForFunction(n => window.BLOOM_TRAINING_UI && BLOOM_TRAINING_UI.stats.liftedAt && BLOOM_TRAINING_UI.guide.mounted && BLOOM_APP.stats.sessions.length >= n && !BLOOM_APP.busy, n, { timeout: 30000, polling: 50 });
         await p.click('.mm-item[data-act="training"]'); await trainReady(4);

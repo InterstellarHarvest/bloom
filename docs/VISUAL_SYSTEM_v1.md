@@ -68,11 +68,12 @@ word (the suites read those words). Shared glyphs are byte-identical to the game
 - The title is the one expressive element: the gameplay family at 900 weight — STRANGE in night ink, BLOOM in a bloom-pink
   gradient with a soft pink glow (one static filter, never animated); UNKNOWN SOILS a leaf-green kicker between two leaf dots.
   Readability is measured on all twelve paintings through the card's least opaque stop (T2: worst 5.2 : 1, painting 09).
-- Menu: EXPEDITION · CHALLENGES · TRAINING · SETTINGS · CREDITS as chunky icon + word buttons (world · challenge pennant · journal · settings · info; CHALLENGES since 036A).
+- Menu: EXPEDITION · CHALLENGES · TRAINING · SETTINGS as chunky icon + word buttons (world · challenge pennant · journal · settings; CHALLENGES since 036A; CREDITS removed in v1.0.1).
   EXPEDITION is the leaf button in its planning shade (white ≥ 5.6 : 1); the others are raised night controls. TRAINING's "Recommended" is a Biomass-gold pill
   with a star (a word, not a colour).
-- Status ("Surveying sector · n of 9 worlds"): a night pill with a leaf dot.
-- Dialogs (Training placeholder, the first-run recommendation, Settings, Credits): the solid night card; kicker above the heading;
+- No status line (v1.0.1): the sector prefetch runs silently; the title never reports survey progress.
+- Dialogs (Training placeholder, the first-run recommendation, Settings): the solid night card; kicker above the heading; Settings' two
+  actions (Show Training recommendation again · Reset preferences) are gameplay buttons under kicker headings with a faint helper line;
   Settings' motion choices are gameplay list rows (the checked one outlined in leaf); notes are sky info lines; buttons are gameplay
   buttons (Start Training = leaf primary).
 - Narrow (< 720 px): the card spans the bottom; short (< 560 px): a compact card.

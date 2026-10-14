@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: b8d4eb23981b28602645e7598316fce88b6e60d4ec8a7504a851a07905dcd31d  (45 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: de32ce9116bbec5c0bef3c280a36c4e2b75e6461187bce781603ec27931f4ecc  (45 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {
@@ -842,10 +842,9 @@
         { id: "challenges", label: "Challenges", hook: "onChallenges" },
         // (BLOOM-036A) only with its hook: never a dead entry
         { id: "training", label: "Training" },
-        { id: "settings", label: "Settings" },
-        { id: "credits", label: "Credits" }
+        { id: "settings", label: "Settings" }
       ];
-      ITEM_ICON = { begin: "world", challenges: "challenge", training: "journal", settings: "settings", credits: "info" };
+      ITEM_ICON = { begin: "world", challenges: "challenge", training: "journal", settings: "settings" };
       MainMenu = class {
         /**
          * root               the screen element (any sized box)
@@ -857,6 +856,8 @@
          * onChallenges()     (036A) CHALLENGES — the Challenge hub. Omitted: there is no CHALLENGES entry at all (never a dead control)
          * onTraining()       TRAINING — the tutorial hook. Omitted: the "not yet open" placeholder dialog
          * onSettingsChange(settings)  after a setting changed (already persisted)
+         * onTrainingReset()  (v1.0.1) Settings → "Show Training recommendation again" / "Reset preferences": the owner of the training
+         *                    record puts it back to first-run. Omitted: no Training section in Settings (Reset preferences resets Motion only)
          * onRecommendChoice(choice)    (028D2) the first-run recommendation's answer: "training" | "expedition" (the dialog is closed first)
          * baseUrl            where "resources/main-menu/backgrounds/…" resolves from (default: this module's repository root)
          * storage / session  Storage-like objects for settings / the last background (default: localStorage / sessionStorage)
@@ -871,6 +872,7 @@
           onTraining = null,
           onSettingsChange = null,
           onRecommendChoice = null,
+          onTrainingReset = null,
           baseUrl = new URL("../../", sourceUrl("resources/main-menu/main-menu.js")),
           storage = void 0,
           session = void 0
@@ -882,6 +884,7 @@
           this.onTraining = onTraining;
           this.onSettingsChange = onSettingsChange;
           this.onRecommendChoice = onRecommendChoice;
+          this.onTrainingReset = typeof onTrainingReset === "function" ? onTrainingReset : null;
           this.rng = rng;
           this.baseUrl = baseUrl;
           this.storage = storage === void 0 ? safe(() => globalThis.localStorage) : storage;
@@ -909,10 +912,6 @@
           return SUBTITLE;
         }
         // ---------------------------------------------------------------- public
-        /** Status line under the plaque's column (e.g. the first sector preparing). Empty hides it. */
-        setStatus(text) {
-          this.statusEl.textContent = text || "";
-        }
         /** (028D2) Show / hide the small "Recommended" tag on TRAINING (no training record yet). TRAINING itself is always there. */
         setTrainingRecommended(on2) {
           this.trainingTag.hidden = !on2;
@@ -926,16 +925,13 @@
           this.forcedReducedMotion = v2;
           this._applyMotionClass();
         }
-        /** Leaving: the plaque and status recede (opacity + a short rise; opacity only under reduced motion). Resolves when done. */
+        /** Leaving: the plaque recedes (opacity + a short rise; opacity only under reduced motion). Resolves when done. */
         recede() {
           if (this.state !== "shown") return Promise.resolve();
           this.state = "receded";
           this._closeDialog();
           const rm = this.reducedMotion, dur = rm ? T.recedeRm : T.recede, opts = { duration: dur, easing: EASE, fill: "forwards" };
-          this._recedeAnims = [
-            this.plaque.animate([{ opacity: 1, translate: "0 0" }, { opacity: 0, translate: rm ? "0 0" : "0 -14px" }], opts),
-            this.statusEl.animate([{ opacity: 1 }, { opacity: 0 }], opts)
-          ];
+          this._recedeAnims = [this.plaque.animate([{ opacity: 1, translate: "0 0" }, { opacity: 0, translate: rm ? "0 0" : "0 -14px" }], opts)];
           return Promise.all(this._recedeAnims.map((a2) => a2.finished.catch(() => {
           }))).then(() => {
             if (this.state === "receded") this.root.classList.add("is-receded");
@@ -971,7 +967,7 @@
           const b2 = this.items.begin;
           if (b2 && this.state === "shown") b2.focus({ preventScroll: true });
         }
-        /** Open Training / Settings / Credits as a modal; focus returns to `opener` (default: the active element) when it closes. */
+        /** Open Training / Settings (or the first-run recommendation) as a modal; focus returns to `opener` (default: the active element) when it closes. */
         openDialog(name2, opener = document.activeElement) {
           const d2 = this.dialogs[name2];
           if (!d2 || this.state !== "shown") return false;
@@ -1056,7 +1052,6 @@
           <ul class="mm-nav" aria-label="Main menu">${this._entries().map((it2, i2) => `<li style="--i:${i2}"><button type="button" class="mm-item${it2.primary ? " primary" : ""}" data-act="${it2.id}"><span class="mm-ico" aria-hidden="true">${ico(ITEM_ICON[it2.id])}</span>${esc(it2.label)}${it2.id === "training" ? ` <small class="mm-tag" hidden>${ico("star")}Recommended</small>` : ""}</button></li>`).join("")}</ul>
         </div>
       </section>
-      <p class="mm-status" role="status" aria-live="polite"></p>
       <dialog class="mm-dialog" data-dialog="training" aria-labelledby="mm-dlg-training"><div class="mm-dialog-body">
         <p class="lede">Not yet open</p><h2 id="mm-dlg-training">Training</h2>
         <p>The training expedition — a guided first landing on a hand-made world — is not ready for recruits yet.</p>
@@ -1070,32 +1065,29 @@
       <dialog class="mm-dialog" data-dialog="settings" aria-labelledby="mm-dlg-settings"><div class="mm-dialog-body">
         <p class="lede">Expedition preferences</p><h2 id="mm-dlg-settings">Settings</h2>
         <fieldset><legend>Motion</legend>${MOTION_OPTIONS.map((m2) => `<label class="mm-choice"><input type="radio" name="mm-motion" value="${m2.id}"><span><b>${esc(m2.label)}</b><small>${esc(m2.hint)}</small></span></label>`).join("")}</fieldset>
-        <div class="mm-rule"></div>
-        <p>Motion covers the menu, the atmosphere between screens and the turning worlds of the Destination Survey. Nothing is switched off by reducing it.</p>
-        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">${ico("check")}Done</button></div></div></dialog>
-      <dialog class="mm-dialog" data-dialog="credits" aria-labelledby="mm-dlg-credits"><div class="mm-dialog-body">
-        <p class="lede">${esc(TITLE)} · ${esc(SUBTITLE)}</p><h2 id="mm-dlg-credits">Credits</h2>
-        <dl class="mm-credits">
-          <dt>A BLOOM project</dt><dd>Design, worlds, simulation and code by the BLOOM project team.</dd>
-          <dt>Menu paintings</dt><dd>Twelve hand-painted expedition vistas by the project's owner.</dd>
-          <dt>Open source</dt><dd>Three.js r185.1 (MIT) draws the globes of the Destination Survey.</dd>
-        </dl>
-        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">${ico("back")}Back to menu</button></div></div></dialog>`;
+        ${this.onTrainingReset ? `<div class="mm-set" role="group" aria-labelledby="mm-set-training"><h3 id="mm-set-training">Training</h3>
+          <button type="button" class="mm-btn" data-act="training-again" aria-describedby="mm-set-training-d">${ico("journal")}Show Training recommendation again</button>
+          <small id="mm-set-training-d">Show the first-expedition Training suggestion again.</small></div>` : ""}
+        <div class="mm-set" role="group" aria-labelledby="mm-set-local"><h3 id="mm-set-local">Local preferences</h3>
+          <button type="button" class="mm-btn" data-act="reset-prefs" aria-describedby="mm-set-local-d">${ico("back")}Reset preferences</button>
+          <small id="mm-set-local-d">${this.onTrainingReset ? "Motion back to Follow system; Training recommended again." : "Motion back to Follow system."}</small></div>
+        <p class="mm-set-msg" role="status" aria-live="polite"></p>
+        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">${ico("check")}Done</button></div></div></dialog>`;
           const q2 = (s2) => r2.querySelector(s2);
           this.art = q2(".mm-art");
           this.plaque = q2(".mm-plaque");
           this.nav = q2(".mm-nav");
-          this.statusEl = q2(".mm-status");
           this.titleEl = q2("#mm-title");
           this.items = Object.fromEntries(this._entries().map((it2) => [it2.id, q2(`[data-act="${it2.id}"]`)]));
           this.trainingTag = q2(".mm-tag");
+          this.settingsMsg = q2(".mm-set-msg");
           this.dialogs = Object.fromEntries([...r2.querySelectorAll("dialog")].map((d2) => [d2.dataset.dialog, d2]));
           for (const d2 of Object.values(this.dialogs)) d2.addEventListener("close", () => {
             const o2 = this._opener;
             this._opener = null;
             if (o2 && o2.isConnected && this.state === "shown") o2.focus({ preventScroll: true });
           });
-          const radios = [...r2.querySelectorAll('input[name="mm-motion"]')];
+          const radios = this._radios = [...r2.querySelectorAll('input[name="mm-motion"]')];
           for (const x2 of radios) {
             x2.checked = x2.value === this.settings.motion;
             x2.addEventListener("change", () => this._setMotion(x2.value));
@@ -1118,7 +1110,15 @@
             } else if (act === "training") {
               if (this.onTraining) this.onTraining(this);
               else this.openDialog("training", b2);
-            } else if (act === "settings" || act === "credits") this.openDialog(act, b2);
+            } else if (act === "settings") {
+              this.settingsMsg.textContent = "";
+              this.openDialog(act, b2);
+            } else if (act === "training-again") {
+              if (this.onTrainingReset) {
+                this.onTrainingReset();
+                this.settingsMsg.textContent = "Training will be recommended again.";
+              }
+            } else if (act === "reset-prefs") this.resetPreferences();
           };
           this._onKey = (e2) => {
             const cur = e2.target.closest ? e2.target.closest(".mm-item") : null;
@@ -1138,6 +1138,15 @@
         _entries() {
           return ITEMS.filter((it2) => !it2.hook || this[it2.hook]);
         }
+        /** (v1.0.1) Settings → Reset preferences: the local preferences this game owns go back to their first-visit state — Motion
+         *  → Follow system (the settings record, through writeSettings) and, with a training reset hook, the training recommendation. Nothing else
+         *  in storage is touched; no reload. */
+        resetPreferences() {
+          for (const x2 of this._radios) x2.checked = x2.value === "system";
+          this._setMotion("system");
+          if (this.onTrainingReset) this.onTrainingReset();
+          this.settingsMsg.textContent = this.onTrainingReset ? "Preferences reset: Motion follows your system; Training is recommended again." : "Preferences reset: Motion follows your system.";
+        }
         _setMotion(id2) {
           this.settings = writeSettings(this.storage, { motion: id2 });
           this.setReducedMotion(reducedMotionFor(this.settings.motion));
@@ -1150,9 +1159,9 @@
         _closeDialog() {
           for (const d2 of Object.values(this.dialogs || {})) if (d2.open) d2.close();
         }
-        /** Restart the CSS entrance animations (plaque, entries, status) for a renewed show. */
+        /** Restart the CSS entrance animations (plaque, entries) for a renewed show. */
         _replayEntrance() {
-          for (const el2 of [this.plaque, this.statusEl, ...this.nav.querySelectorAll("li")]) {
+          for (const el2 of [this.plaque, ...this.nav.querySelectorAll("li")]) {
             el2.style.animation = "none";
             void el2.offsetWidth;
             el2.style.animation = "";
@@ -1224,6 +1233,12 @@
     } catch {
     }
     return { status, at: now4, v: TRAINING_VERSION };
+  }
+  function clearTraining(storage) {
+    try {
+      storage && storage.removeItem(TRAINING_KEY);
+    } catch {
+    }
   }
   var TRAINING_KEY, TRAINING_VERSION, TRAINING_STATUSES, none;
   var init_training_store = __esm({
@@ -11547,7 +11562,13 @@
           duneShadowMix: 0.3,
           frost: [255, 255, 255],
           frostMix: 0.75,
-          frostBelow: -8
+          frostBelow: -8,
+          // (v1.0.1) water under a sky colder than frostBelow: a deeper cool blue, shallows toward a pale cyan (never white), ripple marks darker than the water
+          coldWater: [58, 104, 156],
+          coldMix: 0.42,
+          coldShallow: [168, 214, 230],
+          coldMark: [26, 64, 118],
+          coldMarkMix: 0.5
         });
         const coldWeight = (t2) => clamp3((4 - t2) / 24, 0.12, 1);
         function tempColor(v2) {
@@ -11630,7 +11651,9 @@
         function surfaceTiles(sp2, { render = null, sky = null } = {}) {
           const W2 = sp2.gridWidth, H2 = sp2.gridHeight, T6 = sp2.tilemap, SEC = sp2.sections, ST = stipplesFor(W2), wrap = wrapsX2(sp2), P2 = PALETTE;
           const S2 = skyOf(sp2, sky), tintCold = !!(render && render.tintBy === "cold");
-          const water = lightWater(render && render.water), shallow = mix(water, [255, 255, 255], P2.shallowMix);
+          const cold = S2.temperature < P2.frostBelow;
+          const water0 = lightWater(render && render.water), water = cold ? mix(water0, P2.coldWater, P2.coldMix) : water0;
+          const shallow = cold ? mix(water, P2.coldShallow, P2.shallowMix) : mix(water, [255, 255, 255], P2.shallowMix);
           const secColor = SEC.map((s2) => {
             const t2 = S2.temperature + s2.local.tempOffset, m2 = S2.moisture + s2.local.moistureOffset;
             let c2 = tempColor(t2);
@@ -11653,7 +11676,7 @@
             const i2 = y2 * W2 + x2, s2 = T6[i2];
             if (s2 < 0) {
               const sh = !isWater(x2 - 1, y2) && (x2 > 0 || wrap) || !isWater(x2 + 1, y2) && (x2 < W2 - 1 || wrap) || y2 > 0 && !isWater(x2, y2 - 1) || y2 < H2 - 1 && !isWater(x2, y2 + 1);
-              out[i2] = { rgb: sh ? shallow : water, water: true, shallow: sh, wave: ST.water(x2, y2), coast: 0, dune: false, frost: false };
+              out[i2] = { rgb: sh ? shallow : water, water: true, shallow: sh, wave: ST.water(x2, y2), cold, coast: 0, dune: false, frost: false };
             } else {
               const g2 = ST.grain(x2, y2), base = secColor[s2], rgb = g2 >= 0 ? mix(base, [255, 255, 255], g2 * P2.grain) : mix(base, P2.coast, -g2 * P2.grain);
               const coast = (isWater(x2, y2 - 1) ? 1 : 0) | (isWater(x2 + 1, y2) ? 2 : 0) | (isWater(x2, y2 + 1) ? 4 : 0) | (isWater(x2 - 1, y2) ? 8 : 0);
@@ -11662,6 +11685,7 @@
                 water: false,
                 shallow: false,
                 wave: false,
+                cold: false,
                 coast,
                 dune: !!(render && render.dunes) && ST.dune(x2, y2),
                 frost: !!(render && render.frost) && frosty[s2] && ST.frost(x2, y2)
@@ -11702,7 +11726,7 @@
             ctx.fillRect(X2, Y2, tw, th2);
             if (t2.water) {
               if (t2.wave) {
-                ctx.fillStyle = css(mix(t2.rgb, [255, 255, 255], P2.waveMix));
+                ctx.fillStyle = css(t2.cold ? mix(t2.rgb, P2.coldMark, P2.coldMarkMix) : mix(t2.rgb, [255, 255, 255], P2.waveMix));
                 const h2 = one(th2 * 0.1);
                 ctx.fillRect(X2 + R3(tw * 0.16), Y2 + R3(th2 * 0.5), one(tw * 0.34), h2);
                 ctx.fillRect(X2 + R3(tw * 0.5), Y2 + R3(th2 * 0.5) - h2, one(tw * 0.34), h2);
@@ -13912,7 +13936,8 @@
             } : null,
             onTraining: toTraining,
             onRecommendChoice: (c2) => this._recommendChoice(c2),
-            onSettingsChange: (s2) => this._settingsChanged(s2)
+            onSettingsChange: (s2) => this._settingsChanged(s2),
+            onTrainingReset: toTraining ? () => this.resetTrainingRecommendation() : null
           });
           this._syncTrainingTag();
           this._prefetchSector(this.firstSector);
@@ -14097,7 +14122,6 @@
           }
           this.challenge = null;
           this._endLaunch();
-          this.menu.setStatus("");
           this._syncTrainingTag();
           const shown = this.menu.show({ settled: true });
           rec.swappedMs = Math.round(performance.now() - t0);
@@ -14130,7 +14154,6 @@
           this.surveyHost.hidden = true;
           this.surveyHost.inert = false;
           this.challenge = null;
-          this.menu.setStatus("");
           const shown = this.menu.show({ settled: true });
           rec.swappedMs = Math.round(performance.now() - t0);
           await Promise.race([shown, sleep(T4.paintingWait)]);
@@ -14233,7 +14256,6 @@
             await this._openChallenges(rm, { at: performance.now(), back: true }, performance.now());
             return true;
           }
-          this.menu.setStatus("");
           this._syncTrainingTag();
           const shown = this.menu.show({ settled: true });
           await Promise.race([shown, sleep(T4.paintingWait)]);
@@ -14476,7 +14498,6 @@
           this._closeChallenges();
           this.challenge = null;
           this._endLaunch();
-          this.menu.setStatus("");
           this._syncTrainingTag();
           const shown = this.menu.show({ settled: true });
           await Promise.race([shown, sleep(T4.paintingWait)]);
@@ -14548,6 +14569,12 @@
             this.beginExpedition().catch((err) => console.error("ExpeditionEntry: could not enter the survey", err));
           } else if (choice === "training" && this._toTraining) this._toTraining();
         }
+        /** (v1.0.1) Settings: the training record back to first-run (the training store's own clearTraining), so TRAINING carries its
+         *  Recommended tag again and the next EXPEDITION offers the first-run recommendation. Launches nothing; no flow state changes. */
+        resetTrainingRecommendation() {
+          clearTraining(this.store);
+          this._syncTrainingTag();
+        }
         _syncTrainingTag() {
           this.menu.setTrainingRecommended(this.recommendsTraining);
         }
@@ -14558,18 +14585,9 @@
         _prefetchSector(first) {
           const pool = this.prefetch = DestinationSurvey.prefetch({ ...first, ...this.poolOpts, species: this.species }), rec = { seed: pool.first.seed, species: this.species.id, at: performance.now(), readyMs: null };
           this.stats.prefetches.push(rec);
-          const status = () => {
-            if (this.prefetch !== pool || this.state !== "menu") return;
-            const p2 = pool.progress;
-            this.menu.setStatus(p2.ready ? "" : `Surveying sector · ${p2.confirmed} of ${p2.total} worlds`);
-          };
-          pool.onProgress = status;
-          status();
           pool.ready.then(() => {
             rec.readyMs = Math.round(performance.now() - rec.at);
-            status();
           }, () => {
-            if (this.prefetch === pool) this.menu.setStatus("");
           });
         }
         _announced(detail) {

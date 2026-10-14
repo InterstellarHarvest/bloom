@@ -95,15 +95,20 @@ STRANGE BLOOM · UNKNOWN SOILS
   CHALLENGES
   TRAINING
   SETTINGS
-  CREDITS
 ```
+(v1.0.1, owner direction: CREDITS removed from the player-facing menu; attribution and licences stay in the repository.)
 
 - **IMPLEMENTED** (BLOOM-033): BEGIN EXPEDITION → **EXPEDITION**. **The full target menu is IMPLEMENTED** since BLOOM-036: EXPEDITION ·
-  CHALLENGES · TRAINING · SETTINGS · CREDITS.
-- **UI correction (2026-10-10, owner / PMO): no survey-complete banner.** The title's status line shows "Surveying sector · n of 9
-  worlds" only while the prefetched sector is actually being generated and disappears when it is ready; the rejected "Sector surveyed ·
-  nine worlds ready" banner (and any toast / badge / "9 worlds" replacement) must not return — the Destination Survey's 3 × 3 matrix shows
-  readiness. Guarded by `main-menu-check` M8 and `release-check` R16b.
+  CHALLENGES · TRAINING · SETTINGS (· CREDITS until v1.0.1).
+- **UI correction (2026-10-10, owner / PMO): no survey-complete banner** — and **(v1.0.1, owner): no survey status on the title at all.**
+  The prefetch still starts silently while the title shows (BEGIN EXPEDITION adopts whatever is ready); the title never says "Surveying
+  sector", "n of 9 worlds", "Sector surveyed" or "worlds ready" (no status line, toast or badge) — the Destination Survey's own header
+  reports progress once the player is in it. Guarded by `main-menu-check` M8, `release-check` R16b and `ui-polish-check`.
+- **v1.0.1 UI polish (owner, 2026-10-13):** Settings stays small — Motion · "Show Training recommendation again" · "Reset preferences"
+  (local preferences only; no difficulty / audio / graphics / colour / text-size / save / Challenge options; **"pause while a decision room
+  is open" and Fullscreen are explicitly deferred** — the pause changes gameplay timing under the pressure Challenges and needs its own
+  design / QA pass). No player-facing text is pointer-selectable. Right-hand planning panels take their content's height. The flat map
+  shows ONE copy of a cylindrical world. Icy water on frozen planets is distinct from frozen land.
 - **CHALLENGES: IMPLEMENTED** (BLOOM-036A + 036B + 036B1, in production `main`). The CHALLENGES entry arrived with the first functional
   Challenges — never as a fake, disabled or "coming soon" control (the shared `challenge` pennant glyph + the word; `MainMenu` renders it
   only with a real hook).
