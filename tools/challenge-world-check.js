@@ -309,7 +309,9 @@ async function browserChecks() {
       const r = w === "origin" ? o : regs.find(x => !x.isOrigin && x.blocked); if (!r) return null; A.actions.selectRegion(r.index);
       await new Promise(res => setTimeout(res, 350)); const st = document.querySelector(".pv-st"), bn = st && st.closest(".bn-h") && st.closest(".bn-h").parentElement;
       const R = A.region(r.index); return { name: r.name, origin: r.isOrigin, chip: st && st.textContent.trim(), cls: st && st.className, tip: st && st.getAttribute("aria-label"), originMark: !!(bn && bn.querySelector(".rg-o")),
-        limiting: bn ? (bn.innerText.match(/Limiting: [^\n]*/) || [null])[0] : null, refuge: R.limiting.refuge, blocked: R.limiting.blocked, fitness: +R.fitness.toFixed(3), living: R.living }; }, which);
+        limiting: bn ? (bn.innerText.match(/Limiting: [^\n]*/) || [null])[0] : null, refuge: R.limiting.refuge, blocked: R.limiting.blocked, fitness: +R.fitness.toFixed(3), living: R.living,
+        // (BLOOM-039) the ground's own, unprotected fitness (the product of the four conditions) vs the engine's grow rule
+        raw: +R.conditions.reduce((m, c) => m * c.f, 1).toFixed(3), growThresh: BLOOM_API.sim.config.grow.growThresh }; }, which);
     const storageClean = p => p.evaluate(() => { const keys = s => { try { return Object.keys(s).map(k => k + "=" + s.getItem(k)); } catch (e) { return []; } };
       const all = [...keys(localStorage), ...keys(sessionStorage)]; return { leak: all.filter(x => /challenge|dying_world|native_competition|volatile_climate|scenario|launch|bank/i.test(x)), name: window.name, href: location.href }; });
     const reportFacts = p => p.evaluate(() => ({ facts: [...document.querySelectorAll(".rr-fact")].map(x => [x.querySelector("small").textContent, x.querySelector("b").textContent]), kicker: document.getElementById("rrKicker").textContent,
@@ -434,19 +436,24 @@ async function browserChecks() {
             && (id !== "oasis_line" || (S0.comp > 0.1 && S0.native > 0 && S0.start === null)),
           `[${bn}] A6 ${id} · the run is ${A.name} (Challenge id ${id}, version 1; the HUD names it) playing the ${A.scenario} scenario, its own cell + entry; nothing given was charged (spent 0)${id === "low_tide" ? "; Flood + Salt owned, Drought refused by the engine" : id === "oasis_line" ? "; native vegetation established at the start" : ""}`,
           J({ hud: R.hud, cr: R.cr && R.cr.cellKey, S0 }));
-        { const O = await refugeRead(p, "origin");
+        { let O = await refugeRead(p, "origin"), O0 = O, dried = 0;
+          // (BLOOM-039) REFUGE = the protection is what keeps the plant alive: the origin's own ground cannot support growth (grow rule). A landing
+          // origin whose own ground already grows reads its ordinary status; the refuge state is then reached in play — Dry the Sky (a real purchase)
+          // until the origin's own ground can no longer support growth while the refuge keeps the plant alive
+          if (id === "oasis_line" && O && !O.refuge) { dried = await p.evaluate(() => { BLOOM_API.addBiomass(5000); const A = BLOOM_APP.session.adapter, o = A.regions().find(r => r.isOrigin); let n = 0;
+              while (!A.region(o.index).limiting.refuge && n < 4) { if (!BLOOM_API.buy("dry")) break; n++; } BLOOM_API.advance(2); return n; }); O = await refugeRead(p, "origin"); }
           if (id === "oasis_line") await shot(p, `a8-refuge-origin-${id}.png`, { firefox: true });
           const B = await refugeRead(p, "blocked");
           if (id === "oasis_line") {
             await shot(p, `a8b-blocked-non-origin-${id}.png`);
             // 7 · Adapt moves the origin into its ordinary status naturally (Drought Adaptation answers "too dry")
             const after = await p.evaluate(async () => { BLOOM_API.addBiomass(5000); const A = BLOOM_APP.session.adapter, o = A.regions().find(r => r.isOrigin); let n = 0;
-              while (A.region(o.index).limiting.blocked && n < 3) { BLOOM_API.buy("drought"); n++; } BLOOM_API.advance(5); return { bought: n, blocked: A.region(o.index).limiting.blocked, refuge: A.region(o.index).limiting.refuge }; });
+              while ((A.region(o.index).limiting.blocked || A.region(o.index).limiting.refuge) && n < 3) { BLOOM_API.buy("drought"); n++; } BLOOM_API.advance(5); return { bought: n, blocked: A.region(o.index).limiting.blocked, refuge: A.region(o.index).limiting.refuge }; });
             const O2 = await refugeRead(p, "origin");
-            check(O && O.origin && O.refuge && O.chip === "Refuge" && /refuge/.test(O.cls) && /Protected landing refuge/.test(O.tip || "") && O.originMark && /^Limiting: Water · /.test(O.limiting || "") && O.living > 0 && O.fitness > 0.35
+            check((O0.refuge || (O0.raw > O0.growThresh && ["OK", "Strained"].includes(O0.chip) && !O0.blocked)) && O.raw <= O.growThresh && O && O.origin && O.refuge && O.chip === "Refuge" && /refuge/.test(O.cls) && /Protected landing refuge/.test(O.tip || "") && O.originMark && /^Limiting: Water · /.test(O.limiting || "") && O.living > 0 && O.fitness > 0.35
                 && B && !B.origin && B.blocked && !B.refuge && B.chip === "Blocked" && after.bought >= 1 && !after.blocked && !after.refuge && O2.chip !== "Refuge" && ["OK", "Strained"].includes(O2.chip) && O2.originMark,
-              `[${bn}] A11 ${id} · the PROTECTED LANDING REFUGE: the unsuitable origin the refuge keeps alive shows REFUGE (not Blocked; "Protected landing refuge" for assistive tech) with its ORIGIN marker and its REAL limiting condition; an unsuitable non-origin region stays Blocked; after Drought Adaptation the origin takes its ordinary status (derived from the real current state)`,
-              J({ O, B, after, O2: O2 && O2.chip })); }
+              `[${bn}] A11 ${id} · the PROTECTED LANDING REFUGE (BLOOM-039: REFUGE exactly when the origin's own ground cannot support growth — the grow rule — and the refuge keeps the plant alive; a landing origin whose own ground grows reads OK / Strained; the refuge state then reached with Dry the Sky): the unsuitable origin the refuge keeps alive shows REFUGE (not Blocked; "Protected landing refuge" for assistive tech) with its ORIGIN marker and its REAL limiting condition; an unsuitable non-origin region stays Blocked; after Drought Adaptation the origin takes its ordinary status (derived from the real current state)`,
+              J({ landing: O0 && { chip: O0.chip, raw: O0.raw, refuge: O0.refuge }, dried, O, B, after, O2: O2 && O2.chip })); }
           if (id === "low_tide") check(O && O.origin && !O.blocked && !O.refuge && O.chip !== "Refuge" && O.originMark,
             `[${bn}] A11 ${id} · a SUITABLE origin is not labelled Refuge (its ordinary status: ${O && O.chip})`, J(O)); }
         await p.evaluate(n => BLOOM_API.advance(n), 300); await p.waitForTimeout(300); await shot(p, `a4-run-${id}.png`, { firefox: id === "oasis_line" });

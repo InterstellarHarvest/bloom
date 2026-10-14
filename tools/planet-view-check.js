@@ -245,7 +245,8 @@ const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT
         const sMid = await click(r.mid, 0), want = await reg(r.mid);
         const ev = await p.evaluate(() => __EV.filter(e => e.type === "region-select").slice(-1)[0]);
         const bannerName = await p.evaluate(() => document.querySelector("#pvBanner .bn-t b").textContent);
-        const sL0 = await click(r.left, 0), sL1 = await click(r.mid, 0), sLm = await click(r.left, -1), sR1 = await click(r.right, 1), wantL = await reg(r.left), wantR = await reg(r.right);
+        // (BLOOM-039) a selected low region puts its banner at the TOP of the map, over the mid tile's row: close it before that click
+        const sL0 = await click(r.left, 0), sL1 = (await p.evaluate(() => __pv.A.actions.deselect()), await click(r.mid, 0)), sLm = await click(r.left, -1), sR1 = await click(r.right, 1), wantL = await reg(r.left), wantR = await reg(r.right);
         const hitCopies = await p.evaluate(([l, rr]) => { const a = __pv.client(l, -1), b = __pv.client(rr, 1), h1 = __pv.R.hitTest(a.x, a.y), h2 = __pv.R.hitTest(b.x, b.y), I = __pv.R.info();
           const cv = document.getElementById("pvMap").getBoundingClientRect(), gutter = I.offsetX > 0 && a.x >= cv.left && b.x <= cv.right;   // (both probe points are ON the canvas, in the frame)
           return [h1.tile === -1 && h1.region === -2 && h2.tile === -1 && h2.region === -2, gutter, Math.abs(I.offsetX - (cv.width - I.worldWidth - I.offsetX)) <= I.tilePx]; }, [r.left, r.right]);
@@ -319,12 +320,13 @@ const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT
           && left.lensPreview === null && left.layerShown === null && foc.lensPreview === "Water" && J(kb) === '["Soil","Soil"]' && com.lens === "Temperature" && com.lensOpen && com.layerShown === "Temperature",
           `${tag} B11 · Map View: exactly five choices; hover previews, leaving returns to the committed view; keyboard focus / ↓ previews; a click commits and the popover STAYS open`, J({ choices, hov: hov.layerShown, left: left.layerShown, foc: foc.layerShown, kb, com })); }
       { const r = await p.evaluate(() => { const A = __pv.A, m = A.map(), W = m.width, TM = m.tilemap, I = __pv.R.info(), LAY = { green: [156, 210, 136], yellow: [243, 196, 107], red: [233, 143, 166] };
-          const lamps = A.regions().map(r => (A.region(r.index).conditions.find(c => c.key === "Temperature") || {}).lamp), out = { ok: 0, bad: [], kinds: {} };
+          // (BLOOM-039) a layer shows each condition's own STATUS (blocked = it alone stops growth: the banner's word) — green / yellow / red
+          const ST = { ok: "green", strained: "yellow", blocked: "red" }, lamps = A.regions().map(r => { const c = A.region(r.index).conditions.find(c => c.key === "Temperature") || {}; return ST[c.status] || c.lamp; }), out = { ok: 0, bad: [], kinds: {} };
           for (const r of A.regions()) { const t = TM.findIndex((s, i) => s === r.index && TM[i + 1] === s && TM[i - 1] === s && TM[i + W] === s && TM[i - W] === s); if (t < 0) continue;
             const c = __pv.worldPx(t, 0.12, 0.12), near = Object.entries(LAY).map(([k, v]) => [k, Math.hypot(c[0] - v[0], c[1] - v[1], c[2] - v[2])]).sort((a, b) => a[1] - b[1])[0][0];
             out.kinds[lamps[r.index]] = (out.kinds[lamps[r.index]] || 0) + 1; if (near === lamps[r.index]) out.ok++; else out.bad.push([r.name, lamps[r.index], near, c]); }
           return out; });
-        check(r.ok > 5 && !r.bad.length, `${tag} B12 · the Temperature layer colours every region by its REAL Temperature condition (adapter.region().conditions lamp: green / yellow / red), over the canonical surface`, J(r)); }
+        check(r.ok > 5 && !r.bad.length, `${tag} B12 · the Temperature layer colours every region by its REAL Temperature condition (adapter.region().conditions status — BLOOM-039: ok / strained / blocked → green / yellow / red), over the canonical surface`, J(r)); }
       { await p.mouse.click(640, 520); await frames(p, 2); const out = await p.evaluate(() => __pv.PV.state());
         await p.click('[data-tool="mapview"]'); await frames(p, 1); await p.keyboard.press("Escape"); await frames(p, 1);
         const esc = await p.evaluate(() => [__pv.PV.state().lensOpen, document.activeElement.dataset.tool]);
@@ -335,12 +337,15 @@ const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT
       { await p.evaluate(() => __pv.A.actions.selectRegion(__pv.A.regions().find(r => r.blocked).index)); await frames(p, 3);
         const r = await p.evaluate(() => { const A = __pv.A, sel = A.selection(), R = A.region(sel.index), b = document.getElementById("pvBanner"), q = s => b.querySelector(s);
           const boxes = [...b.querySelectorAll(".bc")].map(e => ({ cat: e.dataset.cat, st: e.className.match(/st-(\w+)/)[1], color: getComputedStyle(e).borderLeftColor, label: e.querySelector("small").textContent, word: e.querySelector("b").textContent, badge: e.querySelector(".sb").textContent.trim() }));
-          const want = R.conditions.map(c => ({ cat: c.key, st: { green: "ok", yellow: "warn", red: "bad" }[c.lamp], word: c.word }));
-          const help = [...b.querySelectorAll("[data-item]")].map(x => x.dataset.item), wh = A.wouldHelp(sel.index).map(u => u.id);
+          // (BLOOM-039) the box status is the condition's own status (one vocabulary with the pill); a hazard / soil box names the PHYSICAL condition
+          const want = R.conditions.map(c => ({ cat: c.key, st: { ok: "ok", strained: "warn", blocked: "bad" }[c.status], word: c.word }));
+          const PHYS = /^(Radioactive|Toxic|Salty|Acidic|Alkaline|Low)/;
+          // (BLOOM-039) "Would help" = the adapter's multi-step advice: its opening routes (fewest steps; at most two)
+          const help = [...b.querySelectorAll("[data-item]")].map(x => x.dataset.item), wh = A.advice(sel.index).routes.slice(0, 2).map(u => u.id);
           const btns = [...b.querySelectorAll(".bn-a .pv-btn")].map(x => { const cs = getComputedStyle(x); return { w: x.getBoundingClientRect().width, grow: cs.flexGrow, sw: x.scrollWidth, cw: x.clientWidth }; });
           return { name: q(".bn-t b").textContent === R.name, colony: q('[data-tutorial="colony-status"]').textContent === R.colony.label,
-            limiting: R.limiting.blocked && q('[data-tutorial="limiting-factor"]').textContent.includes(R.limiting.text) && q('[data-tutorial="limiting-factor"]').textContent.includes(R.limiting.key),
-            boxes: JSON.stringify(boxes.map(x => ({ cat: x.cat, st: x.st }))) === JSON.stringify(want.map(x => ({ cat: x.cat, st: x.st }))) && boxes.every((x, i) => x.word.toLowerCase().startsWith(want[i].word.toLowerCase())),
+            limiting: R.limiting.blocked && q('[data-tutorial="limiting-factor"]').textContent.includes(R.limiting.key) && (q('[data-tutorial="limiting-factor"]').textContent.includes(R.limiting.text) || /^(Hazard|Soil)$/.test(R.limiting.key)),
+            boxes: JSON.stringify(boxes.map(x => ({ cat: x.cat, st: x.st }))) === JSON.stringify(want.map(x => ({ cat: x.cat, st: x.st }))) && boxes.every((x, i) => x.word.toLowerCase().startsWith(want[i].word.toLowerCase()) || (/^(Hazard|Soil)$/.test(x.cat) && PHYS.test(x.word))),
             colors: boxes.map(x => x.cat + "=" + x.color), distinct: new Set(boxes.map(x => x.color)).size === 4, notOk: boxes.filter(x => x.st !== "ok").map(x => x.cat + ":" + x.badge),
             help, wh, helpEq: JSON.stringify(help) === JSON.stringify(wh), intrinsic: btns.every(x => x.grow === "0" && x.w < 420 && x.sw <= x.cw + 1), nBtns: btns.length }; });
         if (!FF) { await shot(p, "02-selected-region-banner.png"); const bb = await p.evaluate(() => { const r = document.querySelector("#pvBanner .bn-c").getBoundingClientRect(); return { x: r.x - 6, y: r.y - 6, width: r.width + 12, height: r.height + 12 }; }); await shot(p, "03-condition-boxes-closeup.png", bb); }
@@ -349,7 +354,7 @@ const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT
         const okCols = await p.evaluate(() => [...document.querySelectorAll("#pvBanner .bc")].map(e => e.dataset.cat + "=" + getComputedStyle(e).borderLeftColor));
         check(r.name && r.colony && r.limiting && r.boxes, `${tag} B14 · the banner shows the real region: name, colony status, limiting factor (key + the page's words) and the four condition readings / statuses from adapter.region()`, J({ name: r.name, colony: r.colony, limiting: r.limiting, notOk: r.notOk }));
         check(ok && r.distinct && J(okCols) === J(r.colors), `${tag} B15 · Temperature / Water / Soil / Hazard keep four distinct category colours whatever their status (a blocked region and an all-OK region show the same four); status is a separate icon + word badge`, r.colors.join(" · ") + " · " + r.notOk.join(", "));
-        check(r.helpEq && r.help.length > 0 && r.intrinsic, `${tag} B16 · "Would help" = adapter.wouldHelp(region) exactly (real previews), and the banner's buttons are intrinsic-width (no flex-grow, no clipping)`, J({ help: r.help, wh: r.wh, buttons: r.nBtns })); }
+        check(r.helpEq && r.help.length > 0 && r.intrinsic, `${tag} B16 · "Would help" = the adapter's multi-step advice routes exactly (BLOOM-039: real what-ifs, fewest steps, at most two), and the banner's buttons are intrinsic-width (no flex-grow, no clipping)`, J({ help: r.help, wh: r.wh, buttons: r.nBtns })); }
       // B17 · the room seam: Region / Adapt / Spread (BLOOM-029C) and Terraform (BLOOM-029D) are all registered (tools ready) and open /
       // close through it (a room pauses the run; Escape closes and restores it, no home selection).
       { const before = await p.evaluate(() => [__pv.A.selection().index, __pv.A.run().running, __EV.length]);
