@@ -209,6 +209,23 @@ the same renderer / surface in every origin. No network change.
 `07-challenge-planet-dossier-{dying-world,low-tide}-1440x900` · `08-frozen-world-7-selected-region-1440x900` ·
 `09-frozen-world-7-one-copy-{1024x768,2560x1440}` · `cold-water-study/` (the four options on two Frozen worlds).
 
+## Integration · live deployment · v1.0.1 LIVE / COMPLETE (2026-10-14)
+
+PMO accepted `e149112` (visual review green) with one release gate — the strict accessibility pass above (green, no code change).
+`main` fast-forwarded `ab29f6b` → **`f631f4f`** (8 commits; no merge / squash / rebase / cherry-pick / force) and pushed; local `main` =
+`origin/main` = release head verified after a re-fetch. GitHub Actions "Deploy to GitHub Pages" run **38567439937**: success (12:55:02 Z);
+the live site served the v1.0.1 `main-menu.css` (the dialog rule) within 10 s. **Live verification** on https://interstellarharvest.github.io/bloom/
+(Chromium, `live-v101.js` from the scratchpad; stills in `live/`): 11 / 11 — the four-entry title (no Credits, no survey status, root
+`user-select:none`); Settings' Motion / Show Training recommendation again / Reset preferences work (unrelated key kept); title, a
+menu label and Settings copy cannot be pointer-selected; Challenge dossier (Dying World 725 px, no scrollbar, 12 px to BEGIN; Thin Air
+capped), Challenge Planet Dossier (top-aligned, = the row), species dossier (749 / 778 px, each at its own actions), survey focused
+dossier (level with the globe, 707 px, no scrollbar) all content-height; the gameplay map at 2560×1440 on a **live Frozen World** from the
+survey: one 1980 px world copy with 290 px frame-colour gutters, gutters outside the map, a gutter click deselects, 12 labels for 12
+regions; icy water on that live planet (312 / 312 water tiles cold, base luminance 151 vs 189 plain, ripple marks darker, no frost on
+water); no console / page errors, no failed requests. Portable fingerprint `de32ce91…` (repository; the Pages site serves the source modules).
+
+Live stills: `live-01-title-1440.jpg` · `live-02-settings-1440.png` · `live-03-hub-dying-world-1440.png` · `live-04-challenge-planet-dossier-1440.png` · `live-05-species-dossier-2560.png` · `live-06-survey-focused-2560.png` · `live-07-run-map-one-copy-2560.png`
+
 ## Review
 
 Starting `origin/main`: `ab29f6b` (game `2c491f1`). Implementation: `12a5e00` · `acb625d` · `59e834b` · `0cab8cc` · `6ea89ef` · `a963870`
