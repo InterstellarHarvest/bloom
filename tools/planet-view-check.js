@@ -12,7 +12,7 @@
 // default run still boots the legacy shell; &ui=18 mounts the production Planet View over the SAME sim, reading adapter truth;
 // the map's surface is the canonical one (and equals the sphere's texture for the same world, and every Destination Survey
 // globe's texture); live overlays (stands, dead ground, native hatch, fronts, bubbles) render from mapState; selection, repeated
-// cylinder copies, X / water deselect, pause / speed; the banner (real region, colony, limiting factor, four category boxes,
+// (v1.0.1) one world copy — the frame is outside, X / water deselect, pause / speed; the banner (real region, colony, limiting factor, four category boxes,
 // "Would help" = adapter.wouldHelp, intrinsic buttons); Map View (five choices, hover / focus preview, click commit stays open,
 // outside click / Escape close, layer colours from real conditions); HUD = adapter; scenario cards = adapter; training starts
 // paused with the anchors on the new controls; no network beyond the server, no console errors, no horizontal scroll.
@@ -233,7 +233,8 @@ const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT
           return { liveTiles: r.live.length, green, gold, bubble: !!b }; }, r);
         check(q.liveTiles > 10 && q.green === q.liveTiles && q.bubble && q.gold[0] > 200 && q.gold[1] > 140 && q.gold[2] < 120,
           `${tag} B6 · live overlays come from mapState: every full living stand is drawn green over the surface; a placed Biomass bubble is a gold coin on the map`, J(q)); }
-      // B7 · selection: real ids; repeated cylinder copies resolve to the canonical tile; X / water deselect; pause / speed keep it
+      // B7 · selection: real ids; (v1.0.1) ONE visual copy — the frame either side of the world is outside the map (a click there deselects,
+      // never x mod W into an invisible copy); X / water deselect; pause / speed keep it
       { const r = await p.evaluate(() => { const I = __pv.R.info(), m = __pv.A.map(), W = m.width, TM = m.tilemap, rows = Math.floor((560 - 80 - I.offsetY) / I.tilePx) - 1;
           const minX = Math.ceil(W - I.offsetX / I.tilePx) + 1, maxX = Math.floor((1280 - I.offsetX - I.worldWidth) / I.tilePx) - 2, find = (x0, x1) => { for (let y = 1; y < rows; y++) for (let x = x0; x <= x1; x++) if (TM[y * W + x] >= 0) return y * W + x; return -1; };
           let water = -1; for (let y = 10; y < rows && water < 0; y++) for (let x = 20; x < 40; x++) if (TM[y * W + x] < 0) { water = y * W + x; break; }
@@ -245,12 +246,14 @@ const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT
         const ev = await p.evaluate(() => __EV.filter(e => e.type === "region-select").slice(-1)[0]);
         const bannerName = await p.evaluate(() => document.querySelector("#pvBanner .bn-t b").textContent);
         const sL0 = await click(r.left, 0), sL1 = await click(r.mid, 0), sLm = await click(r.left, -1), sR1 = await click(r.right, 1), wantL = await reg(r.left), wantR = await reg(r.right);
-        const hitCopies = await p.evaluate(([l, rr]) => { const a = __pv.client(l, -1), b = __pv.client(rr, 1), h1 = __pv.R.hitTest(a.x, a.y), h2 = __pv.R.hitTest(b.x, b.y); return [h1.tile === l && h1.copy === -1, h2.tile === rr && h2.copy === 1]; }, [r.left, r.right]);
-        check(sMid.index === want && sMid.id === ev.detail.id && ev.detail.index === want && ev.detail.tile === r.mid && bannerName === sMid.name && r.copies.count === 3,
+        const hitCopies = await p.evaluate(([l, rr]) => { const a = __pv.client(l, -1), b = __pv.client(rr, 1), h1 = __pv.R.hitTest(a.x, a.y), h2 = __pv.R.hitTest(b.x, b.y), I = __pv.R.info();
+          const cv = document.getElementById("pvMap").getBoundingClientRect(), gutter = I.offsetX > 0 && a.x >= cv.left && b.x <= cv.right;   // (both probe points are ON the canvas, in the frame)
+          return [h1.tile === -1 && h1.region === -2 && h2.tile === -1 && h2.region === -2, gutter, Math.abs(I.offsetX - (cv.width - I.worldWidth - I.offsetX)) <= I.tilePx]; }, [r.left, r.right]);
+        check(sMid.index === want && sMid.id === ev.detail.id && ev.detail.index === want && ev.detail.tile === r.mid && bannerName === sMid.name && r.copies.count === 1,
           `${tag} B7 · a map click selects the real region under it (adapter selection = the tilemap's region, bloom:region-select carries its id and the clicked canonical tile, the banner names it)`, `tile ${r.mid} → ${J(sMid)} · event ${J(ev.detail)}`);
-        check(sL0.index === wantL && sLm.index === wantL && sL1.index !== wantL && sR1.index === (wantR >= 0 ? wantR : -1) && hitCopies.every(Boolean),
-          `${tag} B8 · cylinder: the stage shows ${r.copies.count} copies; a click on the left repeated copy (copy −1) and on the right one (+1) selects the SAME canonical region as copy 0 (x mod W)`,
-          `left tile ${r.left} copy0 ${sL0.index} copy−1 ${sLm.index} (want ${wantL}) · right tile ${r.right} copy+1 ${sR1.index} (want ${wantR}) · hitTest ${J(hitCopies)}`);
+        check(sL0.index === wantL && sL1.index !== wantL && sLm.index === -1 && sR1.index === -1 && hitCopies.every(Boolean),
+          `${tag} B8 · (v1.0.1) cylinder, ONE visual copy: the stage shows exactly one world, centred (equal frame either side); the canonical left-edge tile selects its region on that one copy, while the points where a repeated copy (−1 / +1) used to be are frame — hitTest says outside (tile −1, region −2) and a click there deselects instead of selecting x mod W`,
+          `left tile ${r.left} copy0 ${sL0.index} (want ${wantL}) · frame-left click → ${sLm.index} · frame-right click → ${sR1.index} · hitTest/gutter/centred ${J(hitCopies)}`);
         await click(r.mid, 0);
         const s1 = await p.evaluate(() => __pv.A.selection().index);
         await p.click("#pvPause"); await p.click("#pvPause"); await p.click("#pvSpeed"); await p.click("#pvSpeed"); await p.click("#pvSpeed"); await frames(p, 2);
@@ -278,13 +281,14 @@ const RANGE = AT_END ? `${BASE_SHA} ${END_SHA}` : BASE_SHA, untracked = () => AT
         const shape = [a1, a2, w2].every(x => JSON.stringify(Object.keys(E(x))) === SHAPE);
         check(land && toggle && water && shape, `${tag} B29a · a physical LAND click emits bloom:region-select with the exact canonical tile (not −1) and selects that tile's region; clicking it AGAIN deselects (event: the same tile, previous = that region); a WATER click deselects with water:true and the real water tile; detail shape unchanged`,
           J({ tile: T.mid, a1: E(a1), a2: E(a2), w2: E(w2) }));
-        // repeated cylinder copies: the left copy (−1) and the centre copy emit the SAME canonical tile and toggle the same region; a right-copy (+1) water tile likewise
-        const c0 = await clickEv(T.left, 0), cL = await clickEv(T.left, -1), cL2 = await clickEv(T.left, -1), rW = await clickEv(T.rightW, 1), rW0 = await clickEv(T.rightW, 0);
+        // (v1.0.1) one visual copy: the canonical left-edge tile selects on the one world; a click where the repeated copy (−1) used to be is the
+        // frame — the abstract deselect (tile −1, no water flag), never the canonical tile; the same for the right frame; the canonical water tile still deselects with water:true
+        const c0 = await clickEv(T.left, 0), cL = await clickEv(T.left, -1), cL2 = await clickEv(T.left, 0), rW = await clickEv(T.rightW, 1), rW0 = await clickEv(T.rightW, 0);
         const rl = T.TM[T.left];
-        const copies = E(c0).tile === T.left && E(c0).index === rl && E(cL).tile === T.left && E(cL).index === -1 && E(cL).previous === c0.sel.id
-          && E(cL2).tile === T.left && E(cL2).index === rl && cL2.sel.index === rl && E(rW).tile === T.rightW && E(rW).water === true && rW.sel.index === -1 && E(rW0).tile === T.rightW && E(rW0).water === true;
-        check(copies, `${tag} B29b · repeated cylinder copies: a click on the left copy (−1) emits the SAME canonical tile as the centre copy and toggles the same region (centre selects → left copy deselects → left copy selects again); a right-copy (+1) water click emits the canonical water tile`,
-          J({ left: T.left, c0: E(c0), cL: E(cL), cL2: E(cL2), rightWater: T.rightW, rW: E(rW), rW0: E(rW0) }));
+        const copies = E(c0).tile === T.left && E(c0).index === rl && E(cL).tile === -1 && E(cL).index === -1 && E(cL).previous === c0.sel.id && !E(cL).water && cL.sel.index === -1
+          && E(cL2).tile === T.left && E(cL2).index === rl && cL2.sel.index === rl && rW.ev.length === 1 && E(rW).tile === -1 && E(rW).index === -1 && rW.sel.index === -1 && E(rW0).tile === T.rightW && E(rW0).water === true;
+        check(copies, `${tag} B29b · (v1.0.1) one visual copy: the left-edge tile selects its region on the one world; a click on the LEFT frame (where copy −1 was) deselects through the abstract path (tile −1, no water flag) — it never resolves x mod W; the RIGHT frame likewise; the canonical water tile on the one copy still deselects with water:true`,
+          J({ left: T.left, c0: E(c0), frameL: E(cL), c0Again: E(cL2), rightWater: T.rightW, frameR: E(rW), rW0: E(rW0) }));
         // abstract choices: keyboard Enter and actions.selectRegion report tile −1; selectRegion is idempotent (no toggle, no second event)
         await p.evaluate(() => { __pv.A.actions.deselect(); __EV.length = 0; }); await p.focus("#pvMap"); await p.keyboard.press("ArrowRight"); await p.keyboard.press("Enter"); await frames(p, 2);
         const kb = await p.evaluate(() => ({ ev: __EV.filter(e => e.type === "region-select").map(e => e.detail), sel: __pv.A.selection().index, focus: __pv.PV.state().focus }));

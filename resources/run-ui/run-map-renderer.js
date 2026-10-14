@@ -9,9 +9,9 @@
 //   const R = BLOOM.runMap.createRenderer(canvas, { surface: BLOOM.surface, reducedMotion: () => bool })
 //   R.setSource(adapter.surface())        // the planet (layout, region climate, topology, render hints) + the sky now
 //   R.setSky(adapter.surface().sky)       // repaints the canonical surface only when the sky actually changed
-//   R.layout({ width, height, dpr })      // CSS size of the stage the canvas fills; returns the geometry (tile px, copies)
+//   R.layout({ width, height, dpr })      // CSS size of the stage the canvas fills; returns the geometry (tile px, offsets)
 //   R.draw(frame)                         // one frame (see FRAME below)
-//   R.hitTest(clientX, clientY)           // → { tile, x, y, region (−1 water, −2 outside), copy }  (repeated copies → the SAME tile)
+//   R.hitTest(clientX, clientY)           // → { tile, x, y, region (−1 water, −2 outside), copy (always 0) }  (the frame → outside)
 //   R.bubbleAt(clientX, clientY, bubbles) // → the bubble under the pointer, or null
 //   R.info()                              // geometry + counters (QA)
 //
@@ -21,13 +21,15 @@
 //
 // Layers: 1 surface (static: ground, water, coast, archetype treatment) → 2 live tiles (stands by density, dead ground, native
 // hatched stands) or the Map View condition layer → 3 scenario haze / shock tint → 4 preview tints → 5 region borders, fronts,
-// outlines (selection, previews, sky change, threshold / competition flashes, hover, keyboard focus) → 6 per copy, in screen
-// space: water crossings, bubbles, labels (status glyph + name, origin star), colony badges.
+// outlines (selection, previews, sky change, threshold / competition flashes, hover, keyboard focus) → 6 in screen space: water
+// crossings, bubbles, labels (status glyph + name, origin star), colony badges.
 //
-// Cylinders: a generated planet wraps in x, so when the stage is wider than one copy the world is REPEATED (never padded with
-// invented ocean) and a click on any copy resolves to the same canonical tile (x mod W). Outlines, borders and fronts use the
-// planet's own neighbour rule, so nothing breaks at x = W − 1 → 0. Rectangles (First Bloom, Training Grounds) are drawn once,
-// centred, inside the stage's frame colour. The simulation geometry is never changed.
+// ONE visual copy (v1.0.1, owner direction): every planet — a generated cylinder as well as a rectangle (First Bloom, Training
+// Grounds) — is drawn exactly once, at whole-pixel tiles as large as the stage allows, centred inside the stage's frame colour; a wider
+// stage is frame, never a repeated world. A click on the frame is outside the map (never x mod W into an invisible copy). The
+// cylinder's TOPOLOGY is untouched: outlines, borders and fronts use the planet's own neighbour rule, so nothing breaks at
+// x = W − 1 → 0, and a water crossing over that seam leaves one edge and re-enters at the other (clipped to the one world).
+// The simulation geometry is never changed.
 //
 // Classic script, no dependencies besides the BLOOM.surface it is handed: boots over file://.
 (function (root) {
@@ -99,8 +101,8 @@
       surfSig = sig; surfaceRepaints++;
     }
 
-    // ---- geometry: whole device pixels per tile; the map fits the stage height (and its width: the whole planet is always shown
-    // at least once); a cylinder repeats sideways to fill the stage, centred on the map's middle meridian (as the globe faces it)
+    // ---- geometry: whole device pixels per tile; the map fits the stage height and its width (the whole planet is always shown,
+    // exactly once), centred; what is left either side is the stage frame
     function layout({ width, height, dpr = 1 }) {
       G.cssW = width; G.cssH = height; G.dpr = dpr;
       const dw = Math.max(1, Math.round(width * dpr)), dh = Math.max(1, Math.round(height * dpr));
@@ -111,29 +113,28 @@
       G.worldW = W * G.td; G.worldH = H * G.td;
       if (world.width !== G.worldW) world.width = G.worldW; if (world.height !== G.worldH) world.height = G.worldH;
       G.oy = Math.floor((dh - G.worldH) / 2); G.ox = Math.floor((dw - G.worldW) / 2);
-      if (WRAP) { G.kMin = -Math.ceil(G.ox / G.worldW); G.kMax = Math.ceil((dw - G.ox - G.worldW) / G.worldW); } else { G.kMin = 0; G.kMax = 0; }
+      G.kMin = 0; G.kMax = 0;                                                          // (v1.0.1) one copy, cylinder or rectangle
       paintSurfaceIfNeeded();
       return info();
     }
 
-    // ---- hit testing (client px → canonical tile). A repeated copy resolves to the same tile, modulo the world width.
+    // ---- hit testing (client px → canonical tile). Only the one drawn world maps to tiles; the frame either side is outside.
     function toDevice(clientX, clientY) { const r = canvas.getBoundingClientRect(); return { dx: (clientX - r.left) * G.dpr, dy: (clientY - r.top) * G.dpr }; }
     function hitTest(clientX, clientY) {
       if (!SP) return { tile: -1, x: -1, y: -1, region: -2, copy: 0 };
       const { dx, dy } = toDevice(clientX, clientY), tx = Math.floor((dx - G.ox) / G.td), ty = Math.floor((dy - G.oy) / G.td);
-      const copy = Math.floor(tx / W);
-      if (ty < 0 || ty >= H || (!WRAP && (tx < 0 || tx >= W)) || copy < G.kMin || copy > G.kMax) return { tile: -1, x: -1, y: -1, region: -2, copy };
-      const x = ((tx % W) + W) % W, tile = ty * W + x;
-      return { tile, x, y: ty, region: TM[tile], copy };
+      if (ty < 0 || ty >= H || tx < 0 || tx >= W) return { tile: -1, x: -1, y: -1, region: -2, copy: 0 };
+      const tile = ty * W + tx;
+      return { tile, x: tx, y: ty, region: TM[tile], copy: 0 };
     }
     function bubbleAt(clientX, clientY, bubbles) {
       if (!SP || !bubbles) return null; const { dx, dy } = toDevice(clientX, clientY);
       const r = Math.max(14 * G.dpr, G.td * 0.75); let best = null, bd = Infinity;
-      for (const b of bubbles) for (let k = G.kMin; k <= G.kMax; k++) {
-        const d = Math.hypot(dx - (G.ox + k * G.worldW + b.x * G.td), dy - (G.oy + b.y * G.td)); if (d <= r && d < bd) { bd = d; best = b; } }
+      for (const b of bubbles) {
+        const d = Math.hypot(dx - (G.ox + b.x * G.td), dy - (G.oy + b.y * G.td)); if (d <= r && d < bd) { bd = d; best = b; } }
       return best;
     }
-    /** screen (client) position of a point in tile units, on the copy nearest the stage centre */
+    /** screen (client) position of a point in tile units, on the one drawn world */
     function clientOf(tx, ty) { const r = canvas.getBoundingClientRect(); return { x: r.left + (G.ox + tx * G.td) / G.dpr, y: r.top + (G.oy + ty * G.td) / G.dpr }; }
 
     // ---- drawing helpers (world canvas, device px)
@@ -209,14 +210,16 @@
       if (f.focus >= 0) outline(c, f.focus, OUT.focus, Math.max(3, lw), null, "#ffffff");
     }
 
-    function drawCopyOverlays(f, k, labels) {
-      const c = ctx, t = G.td, dpr = G.dpr, X0 = G.ox + k * G.worldW, Y0 = G.oy, now = f.now || 0, still = reducedMotion();
-      const cw = canvas.width;
-      // water crossings: seed dots along an arc from the source coast to the landing tile (the shorter way round on a cylinder)
+    // water crossings: seed dots along an arc from the source coast to the landing tile (the shorter way round on a cylinder). Drawn at
+    // world offset k (in world widths) and clipped to the one world by drawOverlays(): a crossing over the x = W − 1 → 0 seam is drawn at
+    // k = 0 and at the one neighbouring k whose half re-enters the world, so its dots leave one edge and arrive at the other — never a copy.
+    function drawCrossings(f, k) {
+      const c = ctx, t = G.td, dpr = G.dpr, X0 = G.ox + k * G.worldW, Y0 = G.oy, still = reducedMotion();
       const fx = f.effects || {}, TT = fx.crossingTiming || { travel: 1300, land: 700 };
       for (const a of fx.crossings || []) {
         const fx0 = a.from % W + 0.5, fy0 = ((a.from / W) | 0) + 0.5; let fx1 = a.to % W + 0.5; const fy1 = ((a.to / W) | 0) + 0.5;
-        if (WRAP && Math.abs(fx1 - fx0) > W / 2) fx1 += fx1 > fx0 ? -W : W;
+        const seam = WRAP && Math.abs(fx1 - fx0) > W / 2; if (seam) fx1 += fx1 > fx0 ? -W : W;
+        if (k !== 0 && (!seam || k !== (fx1 < 0 ? 1 : -1))) continue;    // (only a seam crossing has a second, re-entering half)
         const x0 = X0 + fx0 * t, y0 = Y0 + fy0 * t, x1 = X0 + fx1 * t, y1 = Y0 + fy1 * t;
         const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy) || 1, cx = (x0 + x1) / 2 - dy / L * L * 0.22, cy = (y0 + y1) / 2 + dx / L * L * 0.22;
         if (k === 0) drawn.crossings++;
@@ -229,9 +232,16 @@
           c.beginPath(); c.arc(x1, y1, t * 0.7 * (1 - g * 0.5), 0, 7); c.fillStyle = `rgba(63,157,75,${still ? 0.85 : 0.9 * (1 - lt)})`; c.fill(); }
         else { c.beginPath(); c.arc(x1, y1, t * (0.35 + 1.0 * g), 0, 7); c.lineWidth = 1.6 * dpr; c.strokeStyle = `rgba(35,103,159,${still ? 0.7 : 0.75 * (1 - lt)})`; c.stroke(); }
       }
-      if (f.labels && labels) { drawLabels(c, labels, X0, cw, dpr); if (k === 0) { drawn.labels = labels.length; drawn.badges = labels.filter(L => L.focus !== "balanced" || L.local).length; } }
+    }
+
+    function drawOverlays(f, labels) {
+      const c = ctx, t = G.td, dpr = G.dpr, X0 = G.ox, Y0 = G.oy, cw = canvas.width;
+      c.save(); c.beginPath(); c.rect(G.ox, G.oy, G.worldW, G.worldH); c.clip();
+      for (const k of WRAP ? [0, -1, 1] : [0]) drawCrossings(f, k);
+      c.restore();
+      if (f.labels && labels) { drawLabels(c, labels, X0, cw, dpr); { drawn.labels = labels.length; drawn.badges = labels.filter(L => L.focus !== "balanced" || L.local).length; } }
       // Biomass bubbles: gold coins with a "+" (collect by click / tap; the engine auto-collects them later), above the labels
-      for (const b of f.bubbles || []) { const bx = X0 + b.x * t, by = Y0 + b.y * t, r = Math.max(7 * dpr, t * 0.45); if (k === 0) drawn.bubbles++; if (bx < -r || bx > cw + r) continue;
+      for (const b of f.bubbles || []) { const bx = X0 + b.x * t, by = Y0 + b.y * t, r = Math.max(7 * dpr, t * 0.45); drawn.bubbles++; if (bx < -r || bx > cw + r) continue;
         c.beginPath(); c.arc(bx, by, r, 0, 7); c.fillStyle = "#f2b324"; c.fill(); c.lineWidth = 1.8 * dpr; c.strokeStyle = "#fffdf7"; c.stroke();
         c.beginPath(); c.arc(bx, by, r + 1.2 * dpr, 0, 7); c.lineWidth = 1 * dpr; c.strokeStyle = "rgba(90,60,0,0.55)"; c.stroke();
         icon(c, "plus", bx, by, r * 1.3, "#5a3c00", 3.2 * dpr); }
@@ -280,10 +290,10 @@
       drawWorld(f);
       const c = ctx; c.setTransform(1, 0, 0, 1, 0, 0); c.imageSmoothingEnabled = false;
       c.fillStyle = rgb(frameColor); c.fillRect(0, 0, canvas.width, canvas.height);    // the stage frame (outside the planet only)
-      for (let k = G.kMin; k <= G.kMax; k++) c.drawImage(world, G.ox + k * G.worldW, G.oy);
+      c.drawImage(world, G.ox, G.oy);                                                    // (v1.0.1) the one world
       if (!WRAP) { c.strokeStyle = "rgba(255,253,247,0.18)"; c.lineWidth = G.dpr; c.strokeRect(G.ox - 0.5, G.oy - 0.5, G.worldW + 1, G.worldH + 1); }
       const labels = placeLabels(f);
-      for (let k = G.kMin; k <= G.kMax; k++) drawCopyOverlays(f, k, labels);
+      drawOverlays(f, labels);
     }
 
     function info() {
