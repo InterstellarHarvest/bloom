@@ -157,3 +157,6 @@ html.mm-page #app{position:relative; width:100%; height:100vh; height:100dvh}
    root, so the title, Training, species, survey, Challenges, gameplay, rooms and reports (everything under #app, and the overlays put on
    <body>) all inherit it. Presentation only: focus, keyboard, scrolling, pointer input and accessible names are untouched. */
 html.mm-page{-webkit-user-select:none; user-select:none}
+/* the one exception the rule needs: a <dialog> in the top layer does not resolve the property's `auto` value against its DOM parent (Chromium
+   computes `text` inside a modal), so the same rule is stated for every top-layer dialog of the production document (the title's three) */
+html.mm-page dialog{-webkit-user-select:none; user-select:none}
