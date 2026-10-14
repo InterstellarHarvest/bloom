@@ -299,8 +299,9 @@
     const nodeState = u => u.canBuy ? "avail" : u.rules ? "poor" : u.owned ? "owned" : "blocked";
     const stateWord = u => { const st = nodeState(u), t = u.tier ? `Tier ${ROMAN[u.tier] || u.tier} owned` : "";
       if (st === "avail") return (t ? t + " · next " : "") + `${u.price} Biomass`;
-      // (BLOOM-039) unaffordable but legal: the reason at rest, in one line (the price and what is missing; an owned tier keeps its ✓ badge)
-      if (st === "poor") return `${u.price} Biomass · need ${Math.max(1, Math.ceil(u.price - A.hud().biomassExact))} more`;
+      // (BLOOM-039) unaffordable but legal: the reason at rest, short enough for every node width (the price stays in the node's name and the
+      // hover / focus card; an owned tier keeps its ✓ badge)
+      if (st === "poor") return `Need ${Math.max(1, Math.ceil(u.price - A.hud().biomassExact))} more`;
       if (st === "owned") return t + (u.maxTier !== null && u.tier >= u.maxTier ? " · complete" : "");
       return u.reason ? cap(u.reason) : "Not available now"; };
     function effectFor(pv, i) { // the real preview region lists (ids) read for the room context: never recalculated here
@@ -408,7 +409,7 @@
         for (const u of items) { const n = nodeEls[u.id], st = nodeState(u);
           n.className = `node card st-${st}${u.owned ? " has" : ""}${state.hovered === u.id ? " pvw" : ""}`;
           n.innerHTML = `<span class="ni">${ico(I[u.id] ? u.id : CAT_ICON[u.uiCategory])}${u.owned ? `<span class="nl ok">${ico("check")}</span>` : st === "blocked" ? `<span class="nl">${ico("lock")}</span>` : ""}</span><span class="nt"><b>${esc(u.name)}</b><small>${esc(stateWord(u))}</small></span>`;
-          n.setAttribute("aria-label", `${u.name}, ${u.uiCategory}. ${stateWord(u)}. ${u.sub}${u.canBuy ? ". Press to buy" : ""}`); n.setAttribute("aria-disabled", String(!u.canBuy)); n.title = u.sub; }
+          n.setAttribute("aria-label", `${u.name}, ${u.uiCategory}. ${stateWord(u)}${st === "poor" ? ` (${u.price} Biomass)` : ""}. ${u.sub}${u.canBuy ? ". Press to buy" : ""}`); n.setAttribute("aria-disabled", String(!u.canBuy)); n.title = u.sub; }
         paintEdges(); fitTitles();
       }
       function fitTitles() { for (const u of items) { const b = nodeEls[u.id].querySelector(".nt b"); if (!b) continue; b.style.removeProperty("--fit"); if (b.scrollWidth > b.clientWidth + 0.5) b.style.setProperty("--fit", Math.max(0.8, Math.floor(b.clientWidth / b.scrollWidth * 100) / 100)); } }
@@ -489,7 +490,7 @@
         sp.info.innerHTML = `<span class="li-k">Preview · ${esc(u.uiCategory)}</span><div class="li-h"><span class="ni">${ico(I[u.id] ? u.id : CAT_ICON[u.uiCategory])}</span><div><b>${esc(u.name)}</b><small>${esc(stateWord(u))}</small></div></div>` +
           `<p>${esc(cap(u.sub))}.</p>` + (u.science ? `<div class="li-row">${ico("science")}<span><b>In real plants:</b> ${esc(u.science)}</span></div>` : "") +
           `<span class="li-part">${ico(part[2])}Changes ${esc(part[1])}</span>` + (elsewhere.length ? `<div class="li-row">${ico("regions")}<span>${elsewhere.join(" · ")}</span></div>` : "") +
-          `<p class="li-hint">${u.canBuy ? "Click or press Enter to buy." : u.rules ? `Needs ${u.price} Biomass.` : esc(cap(u.reason || "Not available now"))}</p>`;
+          `<p class="li-hint">${u.canBuy ? "Click or press Enter to buy." : u.rules ? `Needs ${u.price} Biomass · ${Math.max(1, Math.ceil(u.price - A.hud().biomassExact))} more.` : esc(cap(u.reason || "Not available now"))}</p>`;
         mm.ctx.setAttribute("style", catStyle(u.uiCategory)); mm.ctx.classList.add("pvw");
         mm.ctx.querySelector(".mc-rows").innerHTML = `<div class="mc-row fx-${fx.cls}">${ico(fx.icon)}<span><b>${esc(fx.text)}</b></span></div>` + (elsewhere.length ? `<div class="mc-row faint">${ico("regions")}<span>${elsewhere.join(" · ")}</span></div>` : "");
       }
@@ -581,7 +582,7 @@
         for (const u of items) { const n = nodeEls[u.id], st = nodeState(u), bank = BANK_OF(u);
           n.className = `node card tf-node st-${st}${u.owned ? " has" : ""}${state.hovered === u.id ? " pvw" : ""} side-${bank === "Soil" ? "l" : "r"}`;
           n.innerHTML = `<span class="ni">${ico(I[u.id] ? u.id : CAT_ICON[u.uiCategory] || "air")}${u.owned ? `<span class="nl ok">${ico("check")}</span>` : st === "blocked" ? `<span class="nl">${ico("lock")}</span>` : ""}</span><span class="nt"><b>${esc(u.name)}</b><small>${esc(stateWord(u))}</small></span>`;
-          n.setAttribute("aria-label", `${u.name}, ${u.uiCategory || "sky"} · ${bank}. ${stateWord(u)}. ${u.sub || ""}. Changes the planet, not the plant${u.canBuy ? ". Press to buy" : ""}`); n.setAttribute("aria-disabled", String(!u.canBuy)); n.title = u.sub || u.name; }
+          n.setAttribute("aria-label", `${u.name}, ${u.uiCategory || "sky"} · ${bank}. ${stateWord(u)}${st === "poor" ? ` (${u.price} Biomass)` : ""}. ${u.sub || ""}. Changes the planet, not the plant${u.canBuy ? ". Press to buy" : ""}`); n.setAttribute("aria-disabled", String(!u.canBuy)); n.title = u.sub || u.name; }
         paintEdges(); fitTitles();
       }
       function fitTitles() { for (const u of items) { const b = nodeEls[u.id].querySelector(".nt b"); if (!b) continue; b.style.removeProperty("--fit"); if (b.scrollWidth > b.clientWidth + 0.5) b.style.setProperty("--fit", Math.max(0.8, Math.floor(b.clientWidth / b.scrollWidth * 100) / 100)); } }
