@@ -343,7 +343,7 @@
     canvas.addEventListener("click", e => {
       const b = R.bubbleAt(e.clientX, e.clientY, A.bubbles()); if (b) { A.actions.collectBubble(b.tile); return; }   // a bubble first (as the shell)
       const h = R.hitTest(e.clientX, e.clientY);
-      // a physical click: the canonical tile under it (a repeated cylinder copy resolves to x mod W) through the run's own map-click
+      // a physical click: the canonical tile under it (v1.0.1: the one drawn world; the frame is no tile) through the run's own map-click
       // path — the event carries that tile, the selected region clicked again deselects, water deselects with water:true. Only a
       // click on the frame outside the planet (no tile) clears through the abstract deselect.
       if (h.tile >= 0) A.actions.selectTile(h.tile); else A.actions.deselect();
@@ -414,7 +414,7 @@
     relayout(); paintHud(); paintLog(); paintScenario(); paintBanner(true); paintLens(); loop();
 
     // (BLOOM-028D2) read-only presentation geometry for an instruction placed over the map (the guided training's callout): where a region
-    // is on screen NOW, from the renderer's current layout (client px; on a cylinder, the copy nearest the stage centre). Nothing is cached
+    // is on screen NOW, from the renderer's current layout (client px; v1.0.1: the one drawn world). Nothing is cached
     // in screen space, so a resize / relayout is reflected on the next read. Unknown region → null. No rule, no selection, no event.
     const BOX = MAP0.regions.map(() => ({ x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity }));
     MAP0.tilemap.forEach((s, t) => { if (s < 0) return; const b = BOX[s], x = t % MAP0.width, y = (t / MAP0.width) | 0;
