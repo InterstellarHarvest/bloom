@@ -245,9 +245,9 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         const normF = s => (s || "").replace(/\s+/g, "").replace(/'/g, '"');
         const allGame = els.every(([, f]) => normF(f) === normF(gameFont));
         B.title = { gameFont, els, prim, items, card };
-        check(allGame && prim["background-color"] === leaf && prim.color === "rgb(255, 255, 255)" && J(items.map(i => i.text)) === J(["EXPEDITION", "CHALLENGES", "TRAINING", "SETTINGS", "CREDITS"])
+        check(allGame && prim["background-color"] === leaf && prim.color === "rgb(255, 255, 255)" && J(items.map(i => i.text)) === J(["EXPEDITION", "CHALLENGES", "TRAINING", "SETTINGS"]) /* (v1.0.1: no CREDITS) */
           && items.every(i => i.icon && i.h >= 44) && card["border-top-left-radius"] === "22px" && card["border-top-right-radius"] === "18px" && !p.errs.length,
-          `[${bn}] T1 · the title speaks the gameplay language: every interface element (title, subtitle, menu, dialogs; v1.0.1: the title has no status line) in the gameplay font family; EXPEDITION is the leaf button in its planning shade (white word on --bloom-leaf-btn-night, ≥ 4.5 : 1); five chunky icon + word entries (≥ 44 px; BLOOM-036A added CHALLENGES), the labels unchanged; one dark planning card with the gameplay's irregular corners`,
+          `[${bn}] T1 · the title speaks the gameplay language: every interface element (title, subtitle, menu, dialogs; v1.0.1: the title has no status line) in the gameplay font family; EXPEDITION is the leaf button in its planning shade (white word on --bloom-leaf-btn-night, ≥ 4.5 : 1); four chunky icon + word entries (≥ 44 px; BLOOM-036A added CHALLENGES, v1.0.1 removed CREDITS), the labels unchanged; one dark planning card with the gameplay's irregular corners`,
           `${els.map(([s, f]) => s + "=" + (normF(f) === normF(gameFont) ? "game" : f)).join(" ")} · ${prim["background-color"]} · ${items.map(i => `${i.text} ${Math.round(i.h)}px`).join(" · ")}`);
         await shot(p, "01-title-1440x900.jpg");
         // T2 · every painting loads untouched and the title stays readable over it
@@ -476,8 +476,8 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         await p.click('.mm-item[data-act="begin"]'); await surveyReady(p); await focusOn(p, 0);
         const s = await p.evaluate(() => ({ rows: document.querySelectorAll(".ds-row[data-cat]").length, heads: document.querySelectorAll(".ds-colhead svg.bloom-ic").length }));
         const leaf = await tokenRgb(p, "--bloom-leaf-btn-night");
-        check(r.boot && r.prim === leaf && r.icons === 5 /* (036A) + CHALLENGES */ && r.font && s.rows === 4 && s.heads === 3 && !p.errs.length,
-          `[${bn}] P1 · file:// offline (the portable runtime): the restyled title (gameplay font, leaf EXPEDITION, five icons) and the restyled survey reached through it (EXPEDITION → Choose Plant Species → Survey: status heads, category rows) — the theme stylesheet and the shared icon module work without a server`, J({ ...r, ...s }));
+        check(r.boot && r.prim === leaf && r.icons === 4 /* (036A) + CHALLENGES; (v1.0.1) − CREDITS */ && r.font && s.rows === 4 && s.heads === 3 && !p.errs.length,
+          `[${bn}] P1 · file:// offline (the portable runtime): the restyled title (gameplay font, leaf EXPEDITION, four icons) and the restyled survey reached through it (EXPEDITION → Choose Plant Species → Survey: status heads, category rows) — the theme stylesheet and the shared icon module work without a server`, J({ ...r, ...s }));
         await c.close(); }
     } catch (e) { check(false, `[${bn}] browser run`, e && e.stack || String(e)); }
     await browser.close();

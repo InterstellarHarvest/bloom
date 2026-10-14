@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "b8d4eb23981b28602645e7598316fce88b6e60d4ec8a7504a851a07905dcd31d",
+  "fingerprint": "de32ce9116bbec5c0bef3c280a36c4e2b75e6461187bce781603ec27931f4ecc",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -17,8 +17,8 @@
   ],
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
-    "bytes": 1432885,
-    "sha256": "a918bb948b72c0180543700d2fe3164e2387a200dd01de6e0ac413a2326c6fd2",
+    "bytes": 1434650,
+    "sha256": "becaa128ffe619976b1c8301fd88c185978770a9caf2a149a672d99ce98b8601",
     "surveyWorkerTextBytes": 246251
   },
   "workerInputs": [
@@ -206,9 +206,9 @@
     },
     {
       "path": "resources/main-menu/expedition-entry.js",
-      "bytes": 43447,
-      "sha256": "8431338ee489d18d2ce95e2013a3468fbf674e8df326df971c1998f3669fc151",
-      "bytesInBundle": 38370
+      "bytes": 43334,
+      "sha256": "09b3e18e1abe67a528aef73b397076b137a48ce804565241fd223187cf168de1",
+      "bytesInBundle": 38307
     },
     {
       "path": "resources/main-menu/main-menu-data.js",
@@ -218,9 +218,9 @@
     },
     {
       "path": "resources/main-menu/main-menu.js",
-      "bytes": 20233,
-      "sha256": "4cfcadab2c34a3b84a495bf5383138fbe1b094ce3d46a0524530d7488f5f0cbe",
-      "bytesInBundle": 19619
+      "bytes": 21577,
+      "sha256": "49bae6560a4b3fd71f946762802d25352653e89107ffc0dbcbc51e5c35a34aae",
+      "bytesInBundle": 20725
     },
     {
       "path": "resources/planet-sphere/planet-sphere-view.js",
@@ -248,9 +248,9 @@
     },
     {
       "path": "resources/planet-surface/planet-surface.js",
-      "bytes": 15876,
-      "sha256": "bc3ade86186ef7ee6f0991ba57a693c275f1e68e73e1b0f4940641f0ff3c84e5",
-      "bytesInBundle": 12613
+      "bytes": 16913,
+      "sha256": "82ef2878bcd59019608d404117ddf17484700d0d65da3bad7616b5f20092df9a",
+      "bytesInBundle": 13214
     },
     {
       "path": "resources/portable/portable-entry.js",
@@ -298,7 +298,7 @@
       "path": "resources/training/training-store.js",
       "bytes": 2391,
       "sha256": "ccb327c82b60a955f6c26815394b17d6d51b2f734724dc461336af8cbe3af341",
-      "bytesInBundle": 1316
+      "bytesInBundle": 1437
     },
     {
       "path": "resources/ui/bloom-icons.js",
