@@ -1,0 +1,2176 @@
+{
+ "root": "/Users/MrDashiki/Experiments & Projects/_worktrees/bloom-v1.0.1-ui-polish",
+ "label": "",
+ "checks": [
+  {
+   "ok": true,
+   "name": "[chromium] A1 · every visible control on 22 screens has an accessible name (aria-label / labelledby / text)",
+   "detail": "{\"issues\":[],\"unnamed\":[]}"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] A2 · keyboard-only Tab walk on every screen: each focus stop is on-screen with a visible focus indicator; dialogs (first-run, Settings, Credits, report, Skip training) keep focus inside",
+   "detail": "[]"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] A3 · Escape / Back: Species → Main Menu · survey focus → survey · dossier → hub → Main Menu · every room → the map · run menu closes · Settings / Credits close · the end-of-run report deliberately stays (its actions are the way on)",
+   "detail": "{\"firstRun\":{\"state\":\"menu\",\"open\":false},\"credits\":{\"removed\":true,\"open\":false},\"settings\":{\"open\":false,\"focus\":\"settings\"},\"species\":\"menu\",\"surveyFocus\":\"survey\",\"region\":false,\"room:region\":{\"closed\":true,\"focus\":\"region\"},\"room:adapt\":{\"closed\":true,\"focus\":\"adapt\"},\"room:spread\":{\"closed\":true,\"focus\":\"spread\"},\"room:terraform\":{\"closed\":true,\"focus\":\"terraform\"},\"runMenu\":{\"hidden\":true,\"focus\":\"pvMenuBtn\"},\"report\":true,\"dossier\":\"challenges\",\"hub\":\"menu\",\"skipDialog\":false}"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] A4 · axe-core WCAG 2.1 A/AA on 22 screens: 0 critical and 0 serious violations (colour contrast included)",
+   "detail": "[]"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] A7 · the 037-corrected text pairs as RENDERED (computed colour on the first opaque background): 17 element types, every one ≥ 4.5 : 1 (min 4.55 : 1)",
+   "detail": "{}"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] A6 · the conditional white-on-colour controls were on screen for the scan: banner \"would help\" buttons [\"plant\"], Region Inspect help buttons [\"plant\"], the Adapt preview's part chip \"Changes Stem\"",
+   "detail": "{\"banner\":{\"region\":\"Fern Wastes\",\"buttons\":[\"plant\"]},\"hbtn\":[\"plant\"],\"part\":\"Changes Stem\"}"
+  },
+  {
+   "ok": true,
+   "name": "[chromium] A5 · prefers-reduced-motion: no long-running (> 600 ms / infinite) animation on Choose Plant Species",
+   "detail": "{\"ms\":408,\"anim\":0}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] A1 · every visible control on 22 screens has an accessible name (aria-label / labelledby / text)",
+   "detail": "{\"issues\":[],\"unnamed\":[]}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] A2 · keyboard-only Tab walk on every screen: each focus stop is on-screen with a visible focus indicator; dialogs (first-run, Settings, Credits, report, Skip training) keep focus inside",
+   "detail": "[]"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] A3 · Escape / Back: Species → Main Menu · survey focus → survey · dossier → hub → Main Menu · every room → the map · run menu closes · Settings / Credits close · the end-of-run report deliberately stays (its actions are the way on)",
+   "detail": "{\"firstRun\":{\"state\":\"menu\",\"open\":false},\"credits\":{\"removed\":true,\"open\":false},\"settings\":{\"open\":false,\"focus\":\"settings\"},\"species\":\"menu\",\"surveyFocus\":\"survey\",\"region\":false,\"room:region\":{\"closed\":true,\"focus\":\"region\"},\"room:adapt\":{\"closed\":true,\"focus\":\"adapt\"},\"room:spread\":{\"closed\":true,\"focus\":\"spread\"},\"room:terraform\":{\"closed\":true,\"focus\":\"terraform\"},\"runMenu\":{\"hidden\":true,\"focus\":\"pvMenuBtn\"},\"report\":true,\"dossier\":\"challenges\",\"hub\":\"menu\",\"skipDialog\":false}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] A4 · axe-core WCAG 2.1 A/AA on 22 screens: 0 critical and 0 serious violations (colour contrast included)",
+   "detail": "[]"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] A7 · the 037-corrected text pairs as RENDERED (computed colour on the first opaque background): 17 element types, every one ≥ 4.5 : 1 (min 4.55 : 1)",
+   "detail": "{}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] A6 · the conditional white-on-colour controls were on screen for the scan: banner \"would help\" buttons [\"plant\"], Region Inspect help buttons [\"plant\"], the Adapt preview's part chip \"Changes Stem\"",
+   "detail": "{\"banner\":{\"region\":\"Fern Wastes\",\"buttons\":[\"plant\"]},\"hbtn\":[\"plant\"],\"part\":\"Changes Stem\"}"
+  },
+  {
+   "ok": true,
+   "name": "[firefox] A5 · prefers-reduced-motion: no long-running (> 600 ms / infinite) animation on Choose Plant Species",
+   "detail": "{\"ms\":432,\"anim\":0}"
+  }
+ ],
+ "info": {
+  "browser:chromium": "chromium 147.0.7727.15",
+  "chromium:A:first-run dialog": {
+   "controls": 0,
+   "unnamed": 0,
+   "tabStops": 3,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "button.mm-btn[recommend-training] → body → button.mm-btn[recommend-expedition]"
+  },
+  "chromium:A:main menu": {
+   "controls": 4,
+   "unnamed": 0,
+   "tabStops": 5,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "button.mm-item[begin] → button.mm-item[challenges] → button.mm-item[training] → button.mm-item[settings] → body"
+  },
+  "chromium:A:credits": "no CREDITS entry since v1.0.1 (removed by owner direction) — Settings is the title's one player-opened dialog; A3's Credits-closed condition is recorded as absent / closed",
+  "chromium:A:settings dialog": {
+   "controls": 6,
+   "unnamed": 0,
+   "tabStops": 5,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "button.mm-btn[training-again] → button.mm-btn[reset-prefs] → button.mm-btn[close] → body → input."
+  },
+  "chromium:A:species selection": {
+   "controls": 5,
+   "unnamed": 0,
+   "tabStops": 3,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "body → button.ss-btn[back] → div.ss-card[organic_hybrid]"
+  },
+  "chromium:A:species dossier": {
+   "controls": 4,
+   "unnamed": 0,
+   "tabStops": 4,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "div.ss-range → button.ss-btn[close] → button.ss-btn[choose] → body"
+  },
+  "chromium:A:destination survey": {
+   "controls": 12,
+   "unnamed": 0,
+   "tabStops": 5,
+   "focusProblems": 0,
+   "live": 3,
+   "axe": "clean",
+   "seq": "button.ds-btn[exit] → button.ds-btn[species] → button.ds-btn[scan] → button.ds-cand → body"
+  },
+  "chromium:A:survey focus": {
+   "controls": 3,
+   "unnamed": 0,
+   "tabStops": 4,
+   "focusProblems": 0,
+   "live": 3,
+   "axe": "clean",
+   "seq": "button.ds-btn[return] → button.ds-btn[begin] → body → span.ds-globe"
+  },
+  "chromium:A:run map": {
+   "controls": 11,
+   "unnamed": 0,
+   "tabStops": 12,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.pv-tool[region] → button.pv-tool[mapview] → button.pv-tool[adapt] → button.pv-tool[spread] → button.pv-tool[terraform] → #pvPause → #pvSpeed → #pvMenuBtn"
+  },
+  "chromium:A:region banner": {
+   "controls": 11,
+   "unnamed": 0,
+   "tabStops": 10,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.bx[deselect] → button.pv-btn → body → button.pv-tool[region] → button.pv-tool[mapview] → button.pv-tool[adapt] → button.pv-tool[spread] → button.pv-tool[terraform]"
+  },
+  "chromium:A:room:region": {
+   "controls": 32,
+   "unnamed": 0,
+   "tabStops": 6,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rn → button.rb[resume] → #drtab-overview → #drpane-overview → button.lb → button.rc"
+  },
+  "chromium:A:room:adapt": {
+   "controls": 34,
+   "unnamed": 0,
+   "tabStops": 4,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rn → button.rb[resume] → button.node → button.lb"
+  },
+  "chromium:A:room:spread": {
+   "controls": 31,
+   "unnamed": 0,
+   "tabStops": 5,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rn → button.rb[resume] → button.node → button.lb → button.rc"
+  },
+  "chromium:A:room:terraform": {
+   "controls": 33,
+   "unnamed": 0,
+   "tabStops": 6,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rn → button.rb[resume] → div.tf-globe → button.node → button.lb → button.rc"
+  },
+  "chromium:A:region banner (would help)": {
+   "controls": 12,
+   "unnamed": 0,
+   "tabStops": 6,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "#pvPause → #pvSpeed → #pvMenuBtn → #pvMap → button.bx[deselect] → button.pv-btn"
+  },
+  "chromium:A:room:inspect (help buttons)": {
+   "controls": 33,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rn"
+  },
+  "chromium:A:room:adapt (node preview)": {
+   "controls": 34,
+   "unnamed": 0,
+   "tabStops": 0,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": ""
+  },
+  "chromium:A:run menu": {
+   "controls": 3,
+   "unnamed": 0,
+   "tabStops": 5,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.pv-lb[choosePlanet] → button.pv-lb[mainMenu] → body → button.pv-tool[region] → button.pv-tool[mapview]"
+  },
+  "chromium:A:report": {
+   "controls": 5,
+   "unnamed": 0,
+   "tabStops": 5,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rr-btn[playAgain] → button.rr-btn[choosePlanet] → button.rr-btn[mainMenu] → #rrScroll → #rrContinue[keepPlaying]"
+  },
+  "chromium:A:challenge hub": {
+   "controls": 8,
+   "unnamed": 0,
+   "tabStops": 4,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "button.ch-btn[choose] → body → button.ch-btn[back] → div.ch-card[dying_world]"
+  },
+  "chromium:A:challenge dossier": {
+   "controls": 5,
+   "unnamed": 0,
+   "tabStops": 5,
+   "focusProblems": 0,
+   "live": 2,
+   "axe": "clean",
+   "seq": "button.cw-btn[back] → button.cw-btn[begin] → body → div.cw-globe → div.cw-d-main"
+  },
+  "chromium:A:training coach": {
+   "controls": 11,
+   "unnamed": 0,
+   "tabStops": 10,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.tc-skip → body → button.pv-tool[region] → button.pv-tool[mapview] → button.pv-tool[adapt] → button.pv-tool[spread] → button.pv-tool[terraform] → #pvPause"
+  },
+  "chromium:A:skip-training dialog": {
+   "controls": 2,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.tsk-btn"
+  },
+  "chromium:A:escape": {
+   "firstRun": {
+    "state": "menu",
+    "open": false
+   },
+   "credits": {
+    "removed": true,
+    "open": false
+   },
+   "settings": {
+    "open": false,
+    "focus": "settings"
+   },
+   "species": "menu",
+   "surveyFocus": "survey",
+   "region": false,
+   "room:region": {
+    "closed": true,
+    "focus": "region"
+   },
+   "room:adapt": {
+    "closed": true,
+    "focus": "adapt"
+   },
+   "room:spread": {
+    "closed": true,
+    "focus": "spread"
+   },
+   "room:terraform": {
+    "closed": true,
+    "focus": "terraform"
+   },
+   "runMenu": {
+    "hidden": true,
+    "focus": "pvMenuBtn"
+   },
+   "report": true,
+   "dossier": "challenges",
+   "hub": "menu",
+   "skipDialog": false
+  },
+  "chromium:A:ratios": {
+   ".pv-tg > small": 5.38,
+   ".pv-runid": 5.38,
+   ".rg-o": 5.27,
+   ".dr .rb.resume": 5.61,
+   ".dr .r-region .rk": 5.83,
+   ".dr .ow.none": 4.65,
+   ".dr .li-hint": 4.55,
+   ".dr .mc-row.faint": 5.38,
+   ".dr .bank-empty": 5.38,
+   ".pv-btn.plant": 5.61,
+   ".dr .hbtn": 5.61,
+   ".dr .li-part": 6.71,
+   ".rr-fact span": 5.07,
+   ".rr-chip.ow.none": 5.07,
+   "#rrContinue": 5.61,
+   ".rr-btn.primary": 5.61,
+   ".tc-kicker": 5.83
+  },
+  "chromium:A:ratioDetail": {
+   ".pv-tg > small": {
+    "ratio": 5.38,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "Change",
+    "screen": "run map"
+   },
+   ".pv-runid": {
+    "ratio": 5.38,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "Ocean Archipelago · Worl",
+    "screen": "run map"
+   },
+   ".rg-o": {
+    "ratio": 5.27,
+    "fg": "rgb(138, 90, 0)",
+    "bg": "rgb(255, 241, 199)",
+    "text": "Origin",
+    "screen": "run map"
+   },
+   ".dr .rb.resume": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Resume",
+    "screen": "room:region"
+   },
+   ".dr .r-region .rk": {
+    "ratio": 5.83,
+    "fg": "rgb(138, 90, 0)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "EXPLORE",
+    "screen": "room:region"
+   },
+   ".dr .ow.none": {
+    "ratio": 4.65,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(244, 236, 216)",
+    "text": "No adaptations yet",
+    "screen": "room:region"
+   },
+   ".dr .li-hint": {
+    "ratio": 4.55,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(253, 230, 214)",
+    "text": "Needs 140 Biomass.",
+    "screen": "room:adapt (node preview)"
+   },
+   ".dr .mc-row.faint": {
+    "ratio": 5.38,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "Hover a skill to see wha",
+    "screen": "room:adapt"
+   },
+   ".dr .bank-empty": {
+    "ratio": 5.38,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "No soil interventions av",
+    "screen": "room:terraform"
+   },
+   ".pv-btn.plant": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Salt HandlingAdapt",
+    "screen": "region banner (would help)"
+   },
+   ".dr .hbtn": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Salt HandlingAdapt",
+    "screen": "room:inspect (help buttons)"
+   },
+   ".dr .li-part": {
+    "ratio": 6.71,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(156, 63, 14)",
+    "text": "Changes Stem",
+    "screen": "room:adapt (node preview)"
+   },
+   ".rr-fact span": {
+    "ratio": 5.07,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(251, 246, 234)",
+    "text": "of land · goal 70 %",
+    "screen": "report"
+   },
+   ".rr-chip.ow.none": {
+    "ratio": 5.07,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(251, 246, 234)",
+    "text": "The unmodified pioneer",
+    "screen": "report"
+   },
+   "#rrContinue": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Keep playing",
+    "screen": "report"
+   },
+   ".rr-btn.primary": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Keep playing",
+    "screen": "report"
+   },
+   ".tc-kicker": {
+    "ratio": 5.83,
+    "fg": "rgb(138, 90, 0)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "TRAINING",
+    "screen": "training coach"
+   }
+  },
+  "chromium:A:screens": [
+   {
+    "screen": "first-run dialog",
+    "ratios": {},
+    "controls": 0,
+    "unnamed": [],
+    "live": 1,
+    "desc0": "button.mm-btn[recommend-expedition]",
+    "tabStops": 3,
+    "seq": [
+     "button.mm-btn[recommend-training]",
+     "body",
+     "button.mm-btn[recommend-expedition]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": [],
+    "rec": {
+     "sel": "dialog.mm-dialog",
+     "modal": "dialog",
+     "label": true
+    }
+   },
+   {
+    "screen": "main menu",
+    "ratios": {},
+    "controls": 4,
+    "unnamed": [],
+    "live": 1,
+    "desc0": "body",
+    "tabStops": 5,
+    "seq": [
+     "button.mm-item[begin]",
+     "button.mm-item[challenges]",
+     "button.mm-item[training]",
+     "button.mm-item[settings]",
+     "body"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "settings dialog",
+    "ratios": {},
+    "controls": 6,
+    "unnamed": [],
+    "live": 1,
+    "desc0": "input",
+    "tabStops": 5,
+    "seq": [
+     "button.mm-btn[training-again]",
+     "button.mm-btn[reset-prefs]",
+     "button.mm-btn[close]",
+     "body",
+     "input."
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "species selection",
+    "ratios": {},
+    "controls": 5,
+    "unnamed": [],
+    "live": 1,
+    "desc0": "div.ss-card[organic_hybrid]",
+    "tabStops": 3,
+    "seq": [
+     "body",
+     "button.ss-btn[back]",
+     "div.ss-card[organic_hybrid]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "species dossier",
+    "ratios": {},
+    "controls": 4,
+    "unnamed": [],
+    "live": 1,
+    "desc0": "#ss-title-e8y0qy-d-h",
+    "tabStops": 4,
+    "seq": [
+     "div.ss-range",
+     "button.ss-btn[close]",
+     "button.ss-btn[choose]",
+     "body"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "destination survey",
+    "ratios": {},
+    "controls": 12,
+    "unnamed": [],
+    "live": 3,
+    "desc0": "body",
+    "tabStops": 5,
+    "seq": [
+     "button.ds-btn[exit]",
+     "button.ds-btn[species]",
+     "button.ds-btn[scan]",
+     "button.ds-cand",
+     "body"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "survey focus",
+    "ratios": {},
+    "controls": 3,
+    "unnamed": [],
+    "live": 3,
+    "desc0": "#ds-dossier-title-1zmlkb",
+    "tabStops": 4,
+    "seq": [
+     "button.ds-btn[return]",
+     "button.ds-btn[begin]",
+     "body",
+     "span.ds-globe"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "run map",
+    "ratios": {
+     ".pv-tg > small": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Change"
+     },
+     ".pv-runid": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Ocean Archipelago · Worl"
+     },
+     ".rg-o": {
+      "ratio": 5.27,
+      "fg": "rgb(138, 90, 0)",
+      "bg": "rgb(255, 241, 199)",
+      "text": "Origin"
+     }
+    },
+    "controls": 11,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "body",
+    "tabStops": 12,
+    "seq": [
+     "button.pv-tool[region]",
+     "button.pv-tool[mapview]",
+     "button.pv-tool[adapt]",
+     "button.pv-tool[spread]",
+     "button.pv-tool[terraform]",
+     "#pvPause",
+     "#pvSpeed",
+     "#pvMenuBtn",
+     "#pvMap",
+     "button.bx[deselect]",
+     "button.pv-btn",
+     "body"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "region banner",
+    "ratios": {
+     ".pv-tg > small": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Change"
+     },
+     ".pv-runid": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Ocean Archipelago · Worl"
+     }
+    },
+    "controls": 11,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#pvMap",
+    "tabStops": 10,
+    "seq": [
+     "button.bx[deselect]",
+     "button.pv-btn",
+     "body",
+     "button.pv-tool[region]",
+     "button.pv-tool[mapview]",
+     "button.pv-tool[adapt]",
+     "button.pv-tool[spread]",
+     "button.pv-tool[terraform]",
+     "#pvPause",
+     "#pvSpeed"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": [],
+    "regionSel": true
+   },
+   {
+    "screen": "room:region",
+    "ratios": {
+     ".dr .rb.resume": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Resume"
+     },
+     ".dr .r-region .rk": {
+      "ratio": 5.83,
+      "fg": "rgb(138, 90, 0)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "EXPLORE"
+     },
+     ".dr .ow.none": {
+      "ratio": 4.65,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(244, 236, 216)",
+      "text": "No adaptations yet"
+     }
+    },
+    "controls": 32,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#drt-region",
+    "tabStops": 6,
+    "seq": [
+     "button.rn",
+     "button.rb[resume]",
+     "#drtab-overview",
+     "#drpane-overview",
+     "button.lb",
+     "button.rc"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "room:adapt",
+    "ratios": {
+     ".dr .rb.resume": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Resume"
+     },
+     ".dr .ow.none": {
+      "ratio": 4.65,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(244, 236, 216)",
+      "text": "No adaptations yet"
+     },
+     ".dr .li-hint": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "This changes YOUR PLANT,"
+     },
+     ".dr .mc-row.faint": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Hover a skill to see wha"
+     }
+    },
+    "controls": 34,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#drt-adapt",
+    "tabStops": 4,
+    "seq": [
+     "button.rn",
+     "button.rb[resume]",
+     "button.node",
+     "button.lb"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "room:spread",
+    "ratios": {
+     ".dr .rb.resume": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Resume"
+     },
+     ".dr .ow.none": {
+      "ratio": 4.65,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(244, 236, 216)",
+      "text": "No adaptations yet"
+     },
+     ".dr .li-hint": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "This changes how your pl"
+     },
+     ".dr .mc-row.faint": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Hover a skill to see wha"
+     }
+    },
+    "controls": 31,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#drt-spread",
+    "tabStops": 5,
+    "seq": [
+     "button.rn",
+     "button.rb[resume]",
+     "button.node",
+     "button.lb",
+     "button.rc"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "room:terraform",
+    "ratios": {
+     ".dr .rb.resume": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Resume"
+     },
+     ".dr .li-hint": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Hover a planet system to"
+     },
+     ".dr .bank-empty": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "No soil interventions av"
+     },
+     ".dr .mc-row.faint": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Hover a planet system to"
+     }
+    },
+    "controls": 33,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#drt-terraform",
+    "tabStops": 6,
+    "seq": [
+     "button.rn",
+     "button.rb[resume]",
+     "div.tf-globe",
+     "button.node",
+     "button.lb",
+     "button.rc"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "region banner (would help)",
+    "ratios": {
+     ".pv-tg > small": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Change"
+     },
+     ".pv-runid": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Ocean Archipelago · Worl"
+     },
+     ".pv-btn.plant": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Salt HandlingAdapt"
+     }
+    },
+    "controls": 12,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "button.pv-tool",
+    "tabStops": 6,
+    "seq": [
+     "#pvPause",
+     "#pvSpeed",
+     "#pvMenuBtn",
+     "#pvMap",
+     "button.bx[deselect]",
+     "button.pv-btn"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": [],
+    "found": {
+     "region": "Fern Wastes",
+     "buttons": [
+      "plant"
+     ]
+    }
+   },
+   {
+    "screen": "room:inspect (help buttons)",
+    "ratios": {
+     ".dr .hbtn": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Salt HandlingAdapt"
+     },
+     ".dr .rb.resume": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Resume"
+     },
+     ".dr .r-region .rk": {
+      "ratio": 5.83,
+      "fg": "rgb(138, 90, 0)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "EXPLORE"
+     },
+     ".dr .ow.none": {
+      "ratio": 4.65,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(244, 236, 216)",
+      "text": "No adaptations yet"
+     }
+    },
+    "controls": 33,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#drt-region",
+    "tabStops": 1,
+    "seq": [
+     "button.rn"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "room:adapt (node preview)",
+    "ratios": {
+     ".dr .li-part": {
+      "ratio": 6.71,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(156, 63, 14)",
+      "text": "Changes Stem"
+     },
+     ".dr .rb.resume": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Resume"
+     },
+     ".dr .li-hint": {
+      "ratio": 4.55,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(253, 230, 214)",
+      "text": "Needs 140 Biomass."
+     }
+    },
+    "controls": 34,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "button.node.card",
+    "tabStops": 0,
+    "seq": [],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "run menu",
+    "ratios": {
+     ".pv-tg > small": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Change"
+     },
+     ".pv-runid": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Ocean Archipelago · Worl"
+     }
+    },
+    "controls": 3,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "button.pv-lb.primary[playAgain]",
+    "tabStops": 5,
+    "seq": [
+     "button.pv-lb[choosePlanet]",
+     "button.pv-lb[mainMenu]",
+     "body",
+     "button.pv-tool[region]",
+     "button.pv-tool[mapview]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "report",
+    "ratios": {
+     ".rr-fact span": {
+      "ratio": 5.07,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(251, 246, 234)",
+      "text": "of land · goal 70 %"
+     },
+     ".rr-chip.ow.none": {
+      "ratio": 5.07,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(251, 246, 234)",
+      "text": "The unmodified pioneer"
+     },
+     "#rrContinue": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Keep playing"
+     },
+     ".rr-btn.primary": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Keep playing"
+     }
+    },
+    "controls": 5,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#rrContinue",
+    "tabStops": 5,
+    "seq": [
+     "button.rr-btn[playAgain]",
+     "button.rr-btn[choosePlanet]",
+     "button.rr-btn[mainMenu]",
+     "#rrScroll",
+     "#rrContinue[keepPlaying]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "challenge hub",
+    "ratios": {},
+    "controls": 8,
+    "unnamed": [],
+    "live": 1,
+    "desc0": "div.ch-card[dying_world]",
+    "tabStops": 4,
+    "seq": [
+     "button.ch-btn[choose]",
+     "body",
+     "button.ch-btn[back]",
+     "div.ch-card[dying_world]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "challenge dossier",
+    "ratios": {},
+    "controls": 5,
+    "unnamed": [],
+    "live": 2,
+    "desc0": "#cw-t-ir5em",
+    "tabStops": 5,
+    "seq": [
+     "button.cw-btn[back]",
+     "button.cw-btn[begin]",
+     "body",
+     "div.cw-globe",
+     "div.cw-d-main"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "training coach",
+    "ratios": {
+     ".pv-tg > small": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Change"
+     },
+     ".pv-runid": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Training · Training Grou"
+     },
+     ".rg-o": {
+      "ratio": 5.27,
+      "fg": "rgb(138, 90, 0)",
+      "bg": "rgb(255, 241, 199)",
+      "text": "Origin"
+     },
+     ".tc-kicker": {
+      "ratio": 5.83,
+      "fg": "rgb(138, 90, 0)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "TRAINING"
+     }
+    },
+    "controls": 11,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "section.tc-card.tc-in",
+    "tabStops": 10,
+    "seq": [
+     "button.tc-skip",
+     "body",
+     "button.pv-tool[region]",
+     "button.pv-tool[mapview]",
+     "button.pv-tool[adapt]",
+     "button.pv-tool[spread]",
+     "button.pv-tool[terraform]",
+     "#pvPause",
+     "#pvSpeed",
+     "#pvMenuBtn"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "skip-training dialog",
+    "ratios": {},
+    "controls": 2,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "button.tsk-btn",
+    "tabStops": 1,
+    "seq": [
+     "button.tsk-btn"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   }
+  ],
+  "chromium:A:reduced-motion": {
+   "menuToSpeciesMs": 408,
+   "longRunningAnimations": 0
+  },
+  "browser:firefox": "firefox 148.0.2",
+  "firefox:A:first-run dialog": {
+   "controls": 0,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "button.mm-btn[recommend-training]"
+  },
+  "firefox:A:main menu": {
+   "controls": 4,
+   "unnamed": 0,
+   "tabStops": 4,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "button.mm-item[begin] → button.mm-item[challenges] → button.mm-item[training] → button.mm-item[settings]"
+  },
+  "firefox:A:credits": "no CREDITS entry since v1.0.1 (removed by owner direction) — Settings is the title's one player-opened dialog; A3's Credits-closed condition is recorded as absent / closed",
+  "firefox:A:settings dialog": {
+   "controls": 6,
+   "unnamed": 0,
+   "tabStops": 3,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "button.mm-btn[training-again] → button.mm-btn[reset-prefs] → button.mm-btn[close]"
+  },
+  "firefox:A:species selection": {
+   "controls": 5,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "div.ss-card[organic_hybrid]"
+  },
+  "firefox:A:species dossier": {
+   "controls": 4,
+   "unnamed": 0,
+   "tabStops": 3,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "div.ss-range → button.ss-btn[close] → button.ss-btn[choose]"
+  },
+  "firefox:A:destination survey": {
+   "controls": 12,
+   "unnamed": 0,
+   "tabStops": 4,
+   "focusProblems": 0,
+   "live": 3,
+   "axe": "clean",
+   "seq": "button.ds-btn[exit] → button.ds-btn[species] → button.ds-btn[scan] → button.ds-cand"
+  },
+  "firefox:A:survey focus": {
+   "controls": 3,
+   "unnamed": 0,
+   "tabStops": 2,
+   "focusProblems": 0,
+   "live": 3,
+   "axe": "clean",
+   "seq": "button.ds-btn[return] → button.ds-btn[begin]"
+  },
+  "firefox:A:run map": {
+   "controls": 11,
+   "unnamed": 0,
+   "tabStops": 11,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.pv-tool[region] → button.pv-tool[mapview] → button.pv-tool[adapt] → button.pv-tool[spread] → button.pv-tool[terraform] → #pvPause → #pvSpeed → #pvMenuBtn"
+  },
+  "firefox:A:region banner": {
+   "controls": 11,
+   "unnamed": 0,
+   "tabStops": 2,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.bx[deselect] → button.pv-btn"
+  },
+  "firefox:A:room:region": {
+   "controls": 32,
+   "unnamed": 0,
+   "tabStops": 7,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rn → button.rb[resume] → #drtab-overview → #drpane-overview → button.lb → div.mm-strip → button.rc"
+  },
+  "firefox:A:room:adapt": {
+   "controls": 34,
+   "unnamed": 0,
+   "tabStops": 4,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rn → button.rb[resume] → button.node → button.lb"
+  },
+  "firefox:A:room:spread": {
+   "controls": 31,
+   "unnamed": 0,
+   "tabStops": 6,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rn → button.rb[resume] → button.node → button.lb → div.mm-strip → button.rc"
+  },
+  "firefox:A:room:terraform": {
+   "controls": 33,
+   "unnamed": 0,
+   "tabStops": 6,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rn → button.rb[resume] → div.tf-globe → button.node → button.lb → div.mm-strip"
+  },
+  "firefox:A:region banner (would help)": {
+   "controls": 12,
+   "unnamed": 0,
+   "tabStops": 6,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "#pvPause → #pvSpeed → #pvMenuBtn → #pvMap → button.bx[deselect] → button.pv-btn"
+  },
+  "firefox:A:room:inspect (help buttons)": {
+   "controls": 33,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rn"
+  },
+  "firefox:A:room:adapt (node preview)": {
+   "controls": 34,
+   "unnamed": 0,
+   "tabStops": 0,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": ""
+  },
+  "firefox:A:run menu": {
+   "controls": 3,
+   "unnamed": 0,
+   "tabStops": 2,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.pv-lb[choosePlanet] → button.pv-lb[mainMenu]"
+  },
+  "firefox:A:report": {
+   "controls": 5,
+   "unnamed": 0,
+   "tabStops": 5,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.rr-btn[playAgain] → button.rr-btn[choosePlanet] → button.rr-btn[mainMenu] → #rrScroll → #rrContinue[keepPlaying]"
+  },
+  "firefox:A:challenge hub": {
+   "controls": 8,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 1,
+   "axe": "clean",
+   "seq": "button.ch-btn[choose]"
+  },
+  "firefox:A:challenge dossier": {
+   "controls": 5,
+   "unnamed": 0,
+   "tabStops": 2,
+   "focusProblems": 0,
+   "live": 2,
+   "axe": "clean",
+   "seq": "button.cw-btn[back] → button.cw-btn[begin]"
+  },
+  "firefox:A:training coach": {
+   "controls": 11,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.tc-skip"
+  },
+  "firefox:A:skip-training dialog": {
+   "controls": 2,
+   "unnamed": 0,
+   "tabStops": 1,
+   "focusProblems": 0,
+   "live": 13,
+   "axe": "clean",
+   "seq": "button.tsk-btn"
+  },
+  "firefox:A:escape": {
+   "firstRun": {
+    "state": "menu",
+    "open": false
+   },
+   "credits": {
+    "removed": true,
+    "open": false
+   },
+   "settings": {
+    "open": false,
+    "focus": "settings"
+   },
+   "species": "menu",
+   "surveyFocus": "survey",
+   "region": false,
+   "room:region": {
+    "closed": true,
+    "focus": "region"
+   },
+   "room:adapt": {
+    "closed": true,
+    "focus": "adapt"
+   },
+   "room:spread": {
+    "closed": true,
+    "focus": "spread"
+   },
+   "room:terraform": {
+    "closed": true,
+    "focus": "terraform"
+   },
+   "runMenu": {
+    "hidden": true,
+    "focus": "pvMenuBtn"
+   },
+   "report": true,
+   "dossier": "challenges",
+   "hub": "menu",
+   "skipDialog": false
+  },
+  "firefox:A:ratios": {
+   ".pv-tg > small": 5.38,
+   ".pv-runid": 5.38,
+   ".rg-o": 5.27,
+   ".dr .rb.resume": 5.61,
+   ".dr .r-region .rk": 5.83,
+   ".dr .ow.none": 4.65,
+   ".dr .li-hint": 4.55,
+   ".dr .mc-row.faint": 5.38,
+   ".dr .bank-empty": 5.38,
+   ".pv-btn.plant": 5.61,
+   ".dr .hbtn": 5.61,
+   ".dr .li-part": 6.71,
+   ".rr-fact span": 5.07,
+   ".rr-chip.ow.none": 5.07,
+   "#rrContinue": 5.61,
+   ".rr-btn.primary": 5.61,
+   ".tc-kicker": 5.83
+  },
+  "firefox:A:ratioDetail": {
+   ".pv-tg > small": {
+    "ratio": 5.38,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "Change",
+    "screen": "run map"
+   },
+   ".pv-runid": {
+    "ratio": 5.38,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "Ocean Archipelago · Worl",
+    "screen": "run map"
+   },
+   ".rg-o": {
+    "ratio": 5.27,
+    "fg": "rgb(138, 90, 0)",
+    "bg": "rgb(255, 241, 199)",
+    "text": "Origin",
+    "screen": "run map"
+   },
+   ".dr .rb.resume": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Resume",
+    "screen": "room:region"
+   },
+   ".dr .r-region .rk": {
+    "ratio": 5.83,
+    "fg": "rgb(138, 90, 0)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "EXPLORE",
+    "screen": "room:region"
+   },
+   ".dr .ow.none": {
+    "ratio": 4.65,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(244, 236, 216)",
+    "text": "No adaptations yet",
+    "screen": "room:region"
+   },
+   ".dr .li-hint": {
+    "ratio": 4.55,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(253, 230, 214)",
+    "text": "Needs 140 Biomass.",
+    "screen": "room:adapt (node preview)"
+   },
+   ".dr .mc-row.faint": {
+    "ratio": 5.38,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "Hover a skill to see wha",
+    "screen": "room:adapt"
+   },
+   ".dr .bank-empty": {
+    "ratio": 5.38,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "No soil interventions av",
+    "screen": "room:terraform"
+   },
+   ".pv-btn.plant": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Salt HandlingAdapt",
+    "screen": "region banner (would help)"
+   },
+   ".dr .hbtn": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Salt HandlingAdapt",
+    "screen": "room:inspect (help buttons)"
+   },
+   ".dr .li-part": {
+    "ratio": 6.71,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(156, 63, 14)",
+    "text": "Changes Stem",
+    "screen": "room:adapt (node preview)"
+   },
+   ".rr-fact span": {
+    "ratio": 5.07,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(251, 246, 234)",
+    "text": "of land · goal 70 %",
+    "screen": "report"
+   },
+   ".rr-chip.ow.none": {
+    "ratio": 5.07,
+    "fg": "rgb(100, 108, 91)",
+    "bg": "rgb(251, 246, 234)",
+    "text": "The unmodified pioneer",
+    "screen": "report"
+   },
+   "#rrContinue": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Keep playing",
+    "screen": "report"
+   },
+   ".rr-btn.primary": {
+    "ratio": 5.61,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(42, 118, 54)",
+    "text": "Keep playing",
+    "screen": "report"
+   },
+   ".tc-kicker": {
+    "ratio": 5.83,
+    "fg": "rgb(138, 90, 0)",
+    "bg": "rgb(255, 253, 247)",
+    "text": "TRAINING",
+    "screen": "training coach"
+   }
+  },
+  "firefox:A:screens": [
+   {
+    "screen": "first-run dialog",
+    "ratios": {},
+    "controls": 0,
+    "unnamed": [],
+    "live": 1,
+    "desc0": "button.mm-btn[recommend-expedition]",
+    "tabStops": 1,
+    "seq": [
+     "button.mm-btn[recommend-training]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": [],
+    "rec": {
+     "sel": "dialog.mm-dialog",
+     "modal": "dialog",
+     "label": true
+    }
+   },
+   {
+    "screen": "main menu",
+    "ratios": {},
+    "controls": 4,
+    "unnamed": [],
+    "live": 1,
+    "desc0": "body",
+    "tabStops": 4,
+    "seq": [
+     "button.mm-item[begin]",
+     "button.mm-item[challenges]",
+     "button.mm-item[training]",
+     "button.mm-item[settings]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "settings dialog",
+    "ratios": {},
+    "controls": 6,
+    "unnamed": [],
+    "live": 1,
+    "desc0": "input",
+    "tabStops": 3,
+    "seq": [
+     "button.mm-btn[training-again]",
+     "button.mm-btn[reset-prefs]",
+     "button.mm-btn[close]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "species selection",
+    "ratios": {},
+    "controls": 5,
+    "unnamed": [],
+    "live": 1,
+    "desc0": "div.ss-card[organic_hybrid]",
+    "tabStops": 1,
+    "seq": [
+     "div.ss-card[organic_hybrid]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "species dossier",
+    "ratios": {},
+    "controls": 4,
+    "unnamed": [],
+    "live": 1,
+    "desc0": "#ss-title-e8y0qy-d-h",
+    "tabStops": 3,
+    "seq": [
+     "div.ss-range",
+     "button.ss-btn[close]",
+     "button.ss-btn[choose]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "destination survey",
+    "ratios": {},
+    "controls": 12,
+    "unnamed": [],
+    "live": 3,
+    "desc0": "body",
+    "tabStops": 4,
+    "seq": [
+     "button.ds-btn[exit]",
+     "button.ds-btn[species]",
+     "button.ds-btn[scan]",
+     "button.ds-cand"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "survey focus",
+    "ratios": {},
+    "controls": 3,
+    "unnamed": [],
+    "live": 3,
+    "desc0": "#ds-dossier-title-1zmlkb",
+    "tabStops": 2,
+    "seq": [
+     "button.ds-btn[return]",
+     "button.ds-btn[begin]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "run map",
+    "ratios": {
+     ".pv-tg > small": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Change"
+     },
+     ".pv-runid": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Ocean Archipelago · Worl"
+     },
+     ".rg-o": {
+      "ratio": 5.27,
+      "fg": "rgb(138, 90, 0)",
+      "bg": "rgb(255, 241, 199)",
+      "text": "Origin"
+     }
+    },
+    "controls": 11,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "body",
+    "tabStops": 11,
+    "seq": [
+     "button.pv-tool[region]",
+     "button.pv-tool[mapview]",
+     "button.pv-tool[adapt]",
+     "button.pv-tool[spread]",
+     "button.pv-tool[terraform]",
+     "#pvPause",
+     "#pvSpeed",
+     "#pvMenuBtn",
+     "#pvMap",
+     "button.bx[deselect]",
+     "button.pv-btn"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "region banner",
+    "ratios": {
+     ".pv-tg > small": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Change"
+     },
+     ".pv-runid": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Ocean Archipelago · Worl"
+     }
+    },
+    "controls": 11,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#pvMap",
+    "tabStops": 2,
+    "seq": [
+     "button.bx[deselect]",
+     "button.pv-btn"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": [],
+    "regionSel": true
+   },
+   {
+    "screen": "room:region",
+    "ratios": {
+     ".dr .rb.resume": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Resume"
+     },
+     ".dr .r-region .rk": {
+      "ratio": 5.83,
+      "fg": "rgb(138, 90, 0)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "EXPLORE"
+     },
+     ".dr .ow.none": {
+      "ratio": 4.65,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(244, 236, 216)",
+      "text": "No adaptations yet"
+     }
+    },
+    "controls": 32,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#drt-region",
+    "tabStops": 7,
+    "seq": [
+     "button.rn",
+     "button.rb[resume]",
+     "#drtab-overview",
+     "#drpane-overview",
+     "button.lb",
+     "div.mm-strip",
+     "button.rc"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "room:adapt",
+    "ratios": {
+     ".dr .rb.resume": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Resume"
+     },
+     ".dr .ow.none": {
+      "ratio": 4.65,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(244, 236, 216)",
+      "text": "No adaptations yet"
+     },
+     ".dr .li-hint": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "This changes YOUR PLANT,"
+     },
+     ".dr .mc-row.faint": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Hover a skill to see wha"
+     }
+    },
+    "controls": 34,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#drt-adapt",
+    "tabStops": 4,
+    "seq": [
+     "button.rn",
+     "button.rb[resume]",
+     "button.node",
+     "button.lb"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "room:spread",
+    "ratios": {
+     ".dr .rb.resume": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Resume"
+     },
+     ".dr .ow.none": {
+      "ratio": 4.65,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(244, 236, 216)",
+      "text": "No adaptations yet"
+     },
+     ".dr .li-hint": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "This changes how your pl"
+     },
+     ".dr .mc-row.faint": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Hover a skill to see wha"
+     }
+    },
+    "controls": 31,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#drt-spread",
+    "tabStops": 6,
+    "seq": [
+     "button.rn",
+     "button.rb[resume]",
+     "button.node",
+     "button.lb",
+     "div.mm-strip",
+     "button.rc"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "room:terraform",
+    "ratios": {
+     ".dr .rb.resume": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Resume"
+     },
+     ".dr .li-hint": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Hover a planet system to"
+     },
+     ".dr .bank-empty": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "No soil interventions av"
+     },
+     ".dr .mc-row.faint": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Hover a planet system to"
+     }
+    },
+    "controls": 33,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#drt-terraform",
+    "tabStops": 6,
+    "seq": [
+     "button.rn",
+     "button.rb[resume]",
+     "div.tf-globe",
+     "button.node",
+     "button.lb",
+     "div.mm-strip"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "region banner (would help)",
+    "ratios": {
+     ".pv-tg > small": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Change"
+     },
+     ".pv-runid": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Ocean Archipelago · Worl"
+     },
+     ".pv-btn.plant": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Salt HandlingAdapt"
+     }
+    },
+    "controls": 12,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "button.pv-tool",
+    "tabStops": 6,
+    "seq": [
+     "#pvPause",
+     "#pvSpeed",
+     "#pvMenuBtn",
+     "#pvMap",
+     "button.bx[deselect]",
+     "button.pv-btn"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": [],
+    "found": {
+     "region": "Fern Wastes",
+     "buttons": [
+      "plant"
+     ]
+    }
+   },
+   {
+    "screen": "room:inspect (help buttons)",
+    "ratios": {
+     ".dr .hbtn": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Salt HandlingAdapt"
+     },
+     ".dr .rb.resume": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Resume"
+     },
+     ".dr .r-region .rk": {
+      "ratio": 5.83,
+      "fg": "rgb(138, 90, 0)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "EXPLORE"
+     },
+     ".dr .ow.none": {
+      "ratio": 4.65,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(244, 236, 216)",
+      "text": "No adaptations yet"
+     }
+    },
+    "controls": 33,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#drt-region",
+    "tabStops": 1,
+    "seq": [
+     "button.rn"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "room:adapt (node preview)",
+    "ratios": {
+     ".dr .li-part": {
+      "ratio": 6.71,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(156, 63, 14)",
+      "text": "Changes Stem"
+     },
+     ".dr .rb.resume": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Resume"
+     },
+     ".dr .li-hint": {
+      "ratio": 4.55,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(253, 230, 214)",
+      "text": "Needs 140 Biomass."
+     }
+    },
+    "controls": 34,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "button.node.card",
+    "tabStops": 0,
+    "seq": [],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "run menu",
+    "ratios": {
+     ".pv-tg > small": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Change"
+     },
+     ".pv-runid": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Ocean Archipelago · Worl"
+     }
+    },
+    "controls": 3,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "button.pv-lb.primary[playAgain]",
+    "tabStops": 2,
+    "seq": [
+     "button.pv-lb[choosePlanet]",
+     "button.pv-lb[mainMenu]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "report",
+    "ratios": {
+     ".rr-fact span": {
+      "ratio": 5.07,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(251, 246, 234)",
+      "text": "of land · goal 70 %"
+     },
+     ".rr-chip.ow.none": {
+      "ratio": 5.07,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(251, 246, 234)",
+      "text": "The unmodified pioneer"
+     },
+     "#rrContinue": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Keep playing"
+     },
+     ".rr-btn.primary": {
+      "ratio": 5.61,
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(42, 118, 54)",
+      "text": "Keep playing"
+     }
+    },
+    "controls": 5,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "#rrContinue",
+    "tabStops": 5,
+    "seq": [
+     "button.rr-btn[playAgain]",
+     "button.rr-btn[choosePlanet]",
+     "button.rr-btn[mainMenu]",
+     "#rrScroll",
+     "#rrContinue[keepPlaying]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "challenge hub",
+    "ratios": {},
+    "controls": 8,
+    "unnamed": [],
+    "live": 1,
+    "desc0": "div.ch-card[dying_world]",
+    "tabStops": 1,
+    "seq": [
+     "button.ch-btn[choose]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "challenge dossier",
+    "ratios": {},
+    "controls": 5,
+    "unnamed": [],
+    "live": 2,
+    "desc0": "#cw-t-ga7a36",
+    "tabStops": 2,
+    "seq": [
+     "button.cw-btn[back]",
+     "button.cw-btn[begin]"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "training coach",
+    "ratios": {
+     ".pv-tg > small": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Change"
+     },
+     ".pv-runid": {
+      "ratio": 5.38,
+      "fg": "rgb(100, 108, 91)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "Training · Training Grou"
+     },
+     ".rg-o": {
+      "ratio": 5.27,
+      "fg": "rgb(138, 90, 0)",
+      "bg": "rgb(255, 241, 199)",
+      "text": "Origin"
+     },
+     ".tc-kicker": {
+      "ratio": 5.83,
+      "fg": "rgb(138, 90, 0)",
+      "bg": "rgb(255, 253, 247)",
+      "text": "TRAINING"
+     }
+    },
+    "controls": 11,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "section.tc-card.tc-in",
+    "tabStops": 1,
+    "seq": [
+     "button.tc-skip"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   },
+   {
+    "screen": "skip-training dialog",
+    "ratios": {},
+    "controls": 2,
+    "unnamed": [],
+    "live": 13,
+    "desc0": "button.tsk-btn",
+    "tabStops": 1,
+    "seq": [
+     "button.tsk-btn"
+    ],
+    "bad": [],
+    "badCount": 0,
+    "axe": []
+   }
+  ],
+  "firefox:A:reduced-motion": {
+   "menuToSpeciesMs": 432,
+   "longRunningAnimations": 0
+  }
+ }
+}

@@ -163,6 +163,24 @@ glint motif; C's cracks read as the letter "L" at map resolution. The two were n
 - **O1 · origins:** http `/`, the Pages site `/bloom/`, `file://` (offline, the portable runtime): four entries, no status, no Credits,
   `user-select: none` on the root, Settings with both actions.
 
+## Strict accessibility pass (PMO release gate, 2026-10-14) — the BLOOM-037 driver, section A, with `AXE` set
+
+`qa-a11y-v101.js` = `docs/evidence/bloom-037/qa-037.js` with one adaptation (the title has no CREDITS entry, so the dialog loop audits
+the dialogs that exist; A3's Credits-closed condition is recorded as absent / closed). Same scopes, Tab walks, rendered-contrast
+reading and axe configuration (WCAG 2.0/2.1 A + AA, no rule suppressed, no exception). Results (`a11y-summary.log`,
+`a11y-chromium-firefox.json`, `a11y-webkit.json`):
+
+| Engine | Screens | A1 names | A2 focus walk | A3 Escape / Back | **A4 axe critical / serious** | A7 rendered contrast | A5 / A6 |
+|---|---|---|---|---|---|---|---|
+| Chromium 147 | 22 | all named | clean | clean | **0 / 0** (every screen *clean*) | 17 pairs ≥ 4.55 : 1 | pass |
+| Firefox 148 | 22 | all named | clean | clean | **0 / 0** (every screen *clean*) | 17 pairs ≥ 4.55 : 1 | pass |
+| WebKit 18.0 | 22 | all named | clean | clean | **0 / 0** (every screen *clean*) | 17 pairs ≥ 4.55 : 1 | pass |
+
+Screens: first-run dialog · Main Menu · Settings dialog · Species Selection · species dossier · Destination Survey · survey focus · run map ·
+region banner · Region Inspect / Adapt / Spread / Terraform rooms · banner "would help" · Inspect help buttons · Adapt node preview · run
+menu · report · Challenge hub · Challenge Planet Dossier · Training coach · Skip-training dialog. No contrast, accessible-name or
+focus / dialog regression against BLOOM-037; no code change was needed, so the 46 / 46 regression above stands as the release regression.
+
 ## Focused QA (before the full run)
 
 `focused-run-1.tsv` / `focused-run-2.tsv`: main-menu 20/20 · sphere-texture 14/14 · topology 53/53 · crossing 14/14 · destination-survey
