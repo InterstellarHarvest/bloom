@@ -2,7 +2,9 @@
 //
 // ONE rendered surface, TWO presentations. This file is the only place where BLOOM decides what bare ground and water look
 // like: the terrain palette, the archetype treatment (ground tint, desert dunes, frost glints, water hue), the coast, the
-// per-tile grain and the wave marks. Both production consumers draw the planet with it and with nothing else:
+// per-tile grain and the wave marks. (v1.0.1, owner direction) Under a freezing sky the water is ICY WATER, not frozen land: a
+// deeper, cooler blue with ripple marks DARKER than the surface, while the white frost / glint motif stays on land alone — so a
+// frozen lake never reads like a selectable region. It thaws back to ordinary water as the sky warms past the frost line. Both production consumers draw the planet with it and with nothing else:
 //   · PlanetSphereView (resources/planet-sphere/planet-texture.js → drawPlanetTexture) wraps it round the globe;
 //   · the production gameplay map (resources/run-ui/run-map-renderer.js) shows it flat, under the live overlays.
 // There is no second palette and no second terrain algorithm to keep in step.
@@ -50,6 +52,8 @@
     grain: 0.045,                   // per-tile lightness variation (± toward white / toward the coast ink)
     dune: [255, 246, 218], duneMix: 0.62, duneShadow: [150, 104, 52], duneShadowMix: 0.3,
     frost: [255, 255, 255], frostMix: 0.75, frostBelow: -8,
+    // (v1.0.1) water under a sky colder than frostBelow: a deeper cool blue, shallows toward a pale cyan (never white), ripple marks darker than the water
+    coldWater: [58, 104, 156], coldMix: 0.42, coldShallow: [168, 214, 230], coldMark: [26, 64, 118], coldMarkMix: 0.5,
   });
   const coldWeight = t => clamp((4 - t) / 24, 0.12, 1); // render.tintBy "cold": colder ground takes more of the tint (BLOOM-011)
 
@@ -114,13 +118,15 @@
 
   /**
    * Per-tile surface model (pure): for every tile its fill colour and the decoration it carries.
-   *   { rgb, water, shallow, wave, coast (bits N1 E2 S4 W8: land edges facing water), dune, frost }
+   *   { rgb, water, shallow, wave, cold (water under a freezing sky), coast (bits N1 E2 S4 W8: land edges facing water), dune, frost }
    * `sky` defaults to the planet's starting sky (planet.globalClimate).
    */
   function surfaceTiles(sp, { render = null, sky = null } = {}) {
     const W = sp.gridWidth, H = sp.gridHeight, T = sp.tilemap, SEC = sp.sections, ST = stipplesFor(W), wrap = wrapsX(sp), P = PALETTE;
     const S = skyOf(sp, sky), tintCold = !!(render && render.tintBy === "cold");
-    const water = lightWater(render && render.water), shallow = mix(water, [255, 255, 255], P.shallowMix);
+    const cold = S.temperature < P.frostBelow;                                            // (v1.0.1) icy water under a freezing sky
+    const water0 = lightWater(render && render.water), water = cold ? mix(water0, P.coldWater, P.coldMix) : water0;
+    const shallow = cold ? mix(water, P.coldShallow, P.shallowMix) : mix(water, [255, 255, 255], P.shallowMix);
     const secColor = SEC.map(s => {
       const t = S.temperature + s.local.tempOffset, m = S.moisture + s.local.moistureOffset; let c = tempColor(t);
       if (m < P.dryBelow) c = mix(c, P.dry, P.dryMix); else if (m > P.wetAbove) c = mix(c, P.wet, P.wetMix);
@@ -134,11 +140,11 @@
       const i = y * W + x, s = T[i];
       if (s < 0) {
         const sh = !isWater(x - 1, y) && (x > 0 || wrap) || !isWater(x + 1, y) && (x < W - 1 || wrap) || (y > 0 && !isWater(x, y - 1)) || (y < H - 1 && !isWater(x, y + 1));
-        out[i] = { rgb: sh ? shallow : water, water: true, shallow: sh, wave: ST.water(x, y), coast: 0, dune: false, frost: false };
+        out[i] = { rgb: sh ? shallow : water, water: true, shallow: sh, wave: ST.water(x, y), cold, coast: 0, dune: false, frost: false };
       } else {
         const g = ST.grain(x, y), base = secColor[s], rgb = g >= 0 ? mix(base, [255, 255, 255], g * P.grain) : mix(base, P.coast, -g * P.grain);
         const coast = (isWater(x, y - 1) ? 1 : 0) | (isWater(x + 1, y) ? 2 : 0) | (isWater(x, y + 1) ? 4 : 0) | (isWater(x - 1, y) ? 8 : 0);
-        out[i] = { rgb, water: false, shallow: false, wave: false, coast,
+        out[i] = { rgb, water: false, shallow: false, wave: false, cold: false, coast,
           dune: !!(render && render.dunes) && ST.dune(x, y), frost: !!(render && render.frost) && frosty[s] && ST.frost(x, y) };
       }
     }
@@ -175,7 +181,7 @@
       const t = TL[y * W + x], X = x * tw, Y = y * th;
       ctx.fillStyle = css(t.rgb); ctx.fillRect(X, Y, tw, th);
       if (t.water) {
-        if (t.wave) { ctx.fillStyle = css(mix(t.rgb, [255, 255, 255], P.waveMix)); const h = one(th * 0.1);   // a small "~": two offset dashes
+        if (t.wave) { ctx.fillStyle = css(t.cold ? mix(t.rgb, P.coldMark, P.coldMarkMix) : mix(t.rgb, [255, 255, 255], P.waveMix)); const h = one(th * 0.1);   // a small "~": two offset dashes (icy water: darker than the surface, never the land's white)
           ctx.fillRect(X + R(tw * 0.16), Y + R(th * 0.5), one(tw * 0.34), h); ctx.fillRect(X + R(tw * 0.5), Y + R(th * 0.5) - h, one(tw * 0.34), h); }
         continue;
       }
