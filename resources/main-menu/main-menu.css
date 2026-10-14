@@ -37,7 +37,7 @@
   background:radial-gradient(140% 120% at 50% 45%, transparent 62%, rgba(3,5,11,.42) 100%)}
 
 /* ── the planning card: title + menu ── */
-.mm-plaque{position:absolute; right:clamp(24px, 6cqw, 128px); top:50%; transform:translateY(-50%); width:clamp(300px, 31cqw, 420px); max-height:calc(100cqh - 32px);
+.mm-plaque{position:absolute; right:calc(max(0px, (100cqw - var(--bloom-app-max, 100cqw)) / 2) + clamp(24px, calc(min(100cqw, var(--bloom-app-max, 100cqw)) * .06), 128px)); /* (BLOOM-039) inside the capped composition */ top:50%; transform:translateY(-50%); width:clamp(300px, 31cqw, 420px); max-height:calc(100cqh - 32px);
   border:2px solid var(--line-2); border-radius:var(--bloom-r-lg); background:linear-gradient(180deg, rgba(12,18,33,.84), rgba(9,13,25,.9)); box-shadow:var(--bloom-night-shadow)}
 .mm-plaque-inner{max-height:calc(100cqh - 36px); overflow:auto; padding:clamp(22px,3.4cqh,34px) clamp(20px,2.2cqw,30px) clamp(20px,3cqh,28px)}
 
@@ -153,6 +153,16 @@
 /* (BLOOM-030; BLOOM-033) the app document shell (the root index.html and the demos/main-menu.html alias): the app fills the viewport. */
 html.mm-page, html.mm-page body{margin:0; height:100%; background:var(--bloom-space-0); overflow:hidden}
 html.mm-page #app{position:relative; width:100%; height:100vh; height:100dvh}
+/* (BLOOM-039, owner decision) ONE shared application-width contract: the game is at most --bloom-app-max (1920 CSS px) wide, centred; a wider
+   browser shows passive side wells in the app's own dark background (nothing in them, nothing interactive). Every screen root inside #app takes
+   the capped box — Choose Plant Species, the Destination Survey, the Challenge hub and Planet Dossier, and the run (HUD, map, banner, rooms,
+   report: the run's fixed layers resolve to the capped box through layout containment). At or below the cap the gutter is 0: nothing moves.
+   Full-bleed by design: the title's painting (its menu plaque stays inside the capped composition, below) and the black fade. */
+html.mm-page{--bloom-app-max:1920px; --bloom-app-gutter:max(0px, calc((100vw - var(--bloom-app-max)) / 2))}
+html.mm-page #app > .ee-species, html.mm-page #app > .ee-survey, html.mm-page #app > .ee-challenges, html.mm-page #app > .ee-challenge-world{
+  left:var(--bloom-app-gutter) !important; right:var(--bloom-app-gutter) !important; width:auto !important; max-width:var(--bloom-app-max)}
+html.mm-page #app > .app-run{position:absolute; top:0; bottom:0; left:var(--bloom-app-gutter); right:var(--bloom-app-gutter); contain:layout}
+html.mm-page #app > .app-run[hidden]{display:none}
 /* (v1.0.1, owner direction) no player-facing text in the game is selectable by a pointer drag: ONE rule on the production document's
    root, so the title, Training, species, survey, Challenges, gameplay, rooms and reports (everything under #app, and the overlays put on
    <body>) all inherit it. Presentation only: focus, keyboard, scrolling, pointer input and accessible names are untouched. */

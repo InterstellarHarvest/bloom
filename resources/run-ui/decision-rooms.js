@@ -77,6 +77,7 @@
     land: '<path d="M3 17l5-6 4 4 3-3 6 5"/><path d="M3 21h18"/><circle cx="17.5" cy="6.5" r="2.2"/>',
     geo: '<path d="M12 21c-4 0-6.5-2.6-6.5-6.2 0-3.1 2.2-5.3 3.3-7.3.5 2 1.6 3.1 3.1 3.6-.5-3.2 1-5.8 3.1-8 .1 4.2 3.5 5.9 3.5 10.5 0 4.3-2.6 7.4-6.5 7.4z"/>',
     drag: '<path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/>',
+    competition: '<path d="M12 21V9"/><path d="M12 9c-3 0-5-3-5-6 3 0 5 2 5 6zM12 12c0-4 2-6 5-6 0 3-2 6-5 6z"/><path d="M4 21l4-4M20 21l-4-4"/>', // (BLOOM-039) the Planet View's native-competition glyph
   };
   const ico = (n, cls) => `<svg class="ic${cls ? " " + cls : ""}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${I[n] || I.info}</svg>`;
   const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -119,6 +120,25 @@
   const LAMP_ST = { green: "ok", yellow: "warn", red: "bad" }, ST_WORD = { ok: "OK", warn: "Strained", bad: "Blocked", refuge: "Refuge" }, ST_ICON = { ok: "check", warn: "alert", bad: "x", refuge: "rad" };
   const LENSES = [["", "Plants", "off"], ["Temperature", "Temperature", "temp"], ["Water", "Water", "water"], ["Soil", "Soil", "soil"], ["Hazard", "Hazard", "hazard"]];
   const chip = (st, word) => `<span class="stc ${st}">${ico(ST_ICON[st])}${esc(word || ST_WORD[st])}</span>`;
+  // (BLOOM-039) one status vocabulary with the Planet View: the adapter's aggregate region status / a condition's own status (blocked = it alone
+  // stops growth); conditions are read in physical words (Toxic, Salty …); Native Competition's reason when it is what holds the plant back
+  const STATUS_ST = { ok: "ok", strained: "warn", blocked: "bad", refuge: "refuge" }, COND_LAMP = { ok: "green", strained: "yellow", blocked: "red" };
+  const condSt = c => STATUS_ST[c.status] || LAMP_ST[c.lamp] || "ok";
+  function reading(c, r) {
+    const F = r.facts || {};
+    if (c.key === "Temperature") return cap(c.word) + ` · ${degC(r.temperature.ground)}`;
+    if (c.key === "Hazard") return c.word === "low" ? "Low" : F.radiation && F.toxic ? "Radioactive · toxic" : F.toxic ? "Toxic" : F.radiation ? "Radioactive" : cap(c.word);
+    if (c.key === "Soil" && (c.word === "hostile" || c.word === "workable")) return F.salty && F.ph ? `Salty · ${F.ph}` : F.salty ? "Salty" : F.ph ? cap(F.ph) : cap(c.word);
+    return cap(c.word);
+  }
+  function limitPhrase(r) {
+    const F = r.facts || {}, k = r.limiting.key;
+    if (k === "Hazard") return F.toxic && F.radiation ? "toxic and radioactive ground" : F.toxic ? "toxic ground" : F.radiation ? "too much radiation" : r.limiting.text || "";
+    if (k === "Soil" && !r.limiting.softSoil) return F.salty ? "salty soil" : F.ph ? `${F.ph} soil` : r.limiting.text || "";
+    return r.limiting.text || "";
+  }
+  const NATIVE_LINE = { "native-better-suited": "Natives are better suited to this ground", "native-young": "Established natives are reclaiming your young colony", "native-established": "The native plants here are more established" };
+  const nativeLine = r => { const c = r.competition; return c && c.nativeTiles > 0 && r.status !== "blocked" && NATIVE_LINE[c.reason] || null; };
   // Concept 18 ORGANIC tendril weights (owner-approved; docs/UI_CONCEPT_REVIEW_v10.md §3): [em, px floor]
   const TENDRIL = { idle: [0.52, 8.5], lit: [0.8, 12.5], glow: 1.9, vein: [0.12, 2] }, TENSION = [0.3, 0.26], PORT_R = 0.66, RAIL_X = 1.5, STEP_MAX = 5.4, CAT_GAP = 0.35;
   const tendrilW = (k, em) => Math.max(TENDRIL[k][0] * em, TENDRIL[k][1]);
@@ -173,8 +193,12 @@
     }
 
     // ---------------------------------------------------------------- shared pieces
-    const lampSt = r => r.limiting && r.limiting.refuge ? "refuge" : r.limiting && r.limiting.blocked ? "bad" : LAMP_ST[r.lamp] || "ok";
-    const limitLine = r => r.limiting.blocked ? `${cap(r.limiting.key)}: ${r.limiting.text}` : r.limiting.softSoil ? "Growing · the soil is marginal here" : "Nothing holding the plant back";
+    const lampSt = r => STATUS_ST[r.status] || (r.limiting && r.limiting.refuge ? "refuge" : r.limiting && r.limiting.blocked ? "bad" : LAMP_ST[r.lamp] || "ok");
+    const limitLine = r => { const nl = nativeLine(r);
+      if (r.status === "blocked" || r.status === "refuge") return r.limiting.combined ? "Conditions together: none fails alone, but together they are too harsh" : `${cap(r.limiting.key)}: ${limitPhrase(r)}`;
+      if (nl) return nl;
+      if (r.status === "strained" && r.limiting.text) return `Grows · strained by ${r.limiting.key}: ${limitPhrase(r)}`;
+      return r.limiting.softSoil ? "Growing · the soil is marginal here" : "Nothing holding the plant back"; };
     const traitTiers = () => { const t = {}, nm = {}; for (const b of A.upgrades()) if (b.board !== "Terraform") for (const u of b.items) { t[u.id] = u.tier; nm[u.id] = u.name; } return { tiers: t, names: nm }; };
     // (035C2) the specimen's ENVIRONMENT: this region of this planet under the sky its ground sees now (Terraform + scenario drift), plus a
     // Terraform preview's sky change `d` — never the species (BLOOM.plantEnvironment; absent → the pack backdrop, as before)
@@ -184,7 +208,7 @@
         salinity: r.raw.salinity, toxicity: r.raw.toxicity, radiation: r.raw.effectiveRadiation }); };
     const specState = (i, preview, d) => { const r = A.region(i), c = A.colony(i), { tiers, names: nm } = traitTiers();
       return { traits: tiers, names: nm, preview: preview || null, colony: { living: c.living, establishment: r.colony.establishment, word: r.colony.word }, focus: c.focus, local: c.localUpgrade,
-        condition: r.limiting && r.limiting.blocked ? "bad" : LAMP_ST[r.lamp] || "ok", viable: !r.limiting.blocked,   // the specimen keeps the ground's own condition (a refuge is not suitable ground)
+        condition: r.limiting && r.limiting.blocked ? "bad" : r.status === "strained" ? "warn" : r.status === "ok" ? "ok" : LAMP_ST[r.lamp] || "ok", viable: !r.limiting.blocked,   // the specimen keeps the ground's own condition (a refuge is not suitable ground)
         region: { name: r.name }, scene: sceneFor(i, d) }; };
     const specCaption = r => !r.living ? (r.limiting.blocked ? "No colony yet · would not survive yet" : "No colony yet") : `${r.colony.label} · ${lampSt(r) === "ok" ? "thriving" : "stressed"}`;
     function roomShell(id) {
@@ -229,8 +253,8 @@
       cv.addEventListener("pointermove", e => { if (e.pointerType === "touch") return; const h = R.hitTest(e.clientX, e.clientY); pk(h.region >= 0 ? h.region : -1); cv.classList.toggle("over", h.region >= 0); });
       cv.addEventListener("pointerleave", () => { pk(-1); cv.classList.remove("over"); });
       cv.addEventListener("click", e => { const h = R.hitTest(e.clientX, e.clientY); if (h.region >= 0) setCtx(h.region, "map"); });
-      const paintStrip = () => { strip.querySelectorAll("[data-r]").forEach(b => { const r = regs[+b.dataset.r]; if (!r) return; const st = r.refuge ? "refuge" : r.blocked ? "bad" : LAMP_ST[r.lamp] || "ok";
-        b.className = `rc st-${st}${r.living > 0 ? " living" : ""}${state.peek === r.index ? " pk" : ""}`; b.setAttribute("aria-pressed", String(r.index === state.ctx)); b.querySelector(".rs").innerHTML = ico(ST_ICON[st]); b.title = `${r.name}: ${ST_WORD[st]}`; }); };
+      const paintStrip = () => { strip.querySelectorAll("[data-r]").forEach(b => { const r = regs[+b.dataset.r]; if (!r) return; const st = lampSt(r), nat = r.nativeHeld && st !== "bad";
+        b.className = `rc st-${st}${nat ? " native" : ""}${r.living > 0 ? " living" : ""}${state.peek === r.index ? " pk" : ""}`; b.setAttribute("aria-pressed", String(r.index === state.ctx)); b.querySelector(".rs").innerHTML = nat ? `<i class="nmark" aria-hidden="true"></i>` : ico(ST_ICON[st]); b.title = `${r.name}: ${ST_WORD[st]}${nat ? " · held by native plants" : ""}`; }); };
       function frame() {
         if (!dirty) return; dirty = false;
         const src = A.hud(), key = `${src.skyNow.temp.toFixed(3)}|${src.skyNow.moist.toFixed(3)}`; if (key !== skyKey) { skyKey = key; R.setSky({ temperature: src.skyNow.temp, moisture: src.skyNow.moist }); }
@@ -246,7 +270,7 @@
     }
     let condCache = null, condAt = 0;
     function layerLamps(key) { const t = performance.now(); if (!condCache || t - condAt > 400) { condCache = regs.map(r => A.region(r.index).conditions); condAt = t; }
-      return condCache.map(cs => { const c = cs.find(x => x.key === key); return c ? c.lamp : "green"; }); }
+      return condCache.map(cs => { const c = cs.find(x => x.key === key); return c ? COND_LAMP[c.status] || c.lamp : "green"; }); }
     // Map View chips in every room share one room lens (presentation only; the Planet View's committed lens is never touched)
     function paintLens() { layer.querySelectorAll("[data-lens]").forEach(b => { const k = b.dataset.lens || null; b.setAttribute("aria-pressed", String(k === state.lens));
       b.classList.toggle("pvw", state.lensPv !== null && (b.dataset.lens || "") === state.lensPv && (state.lensPv || null) !== state.lens); }); miniMaps.forEach(m => m.invalidate()); }
@@ -272,7 +296,9 @@
     // shared by the tree rooms (Adapt / Spread / Terraform): a real node's state and its state line, from the adapter's item only
     const nodeState = u => u.canBuy ? "avail" : u.rules ? "poor" : u.owned ? "owned" : "blocked";
     const stateWord = u => { const st = nodeState(u), t = u.tier ? `Tier ${ROMAN[u.tier] || u.tier} owned` : "";
-      if (st === "avail" || st === "poor") return (t ? t + " · next " : "") + `${u.price} Biomass`;
+      if (st === "avail") return (t ? t + " · next " : "") + `${u.price} Biomass`;
+      // (BLOOM-039) unaffordable but legal: the reason at rest, in one line (the price and what is missing; an owned tier keeps its ✓ badge)
+      if (st === "poor") return `${u.price} Biomass · need ${Math.max(1, Math.ceil(u.price - A.hud().biomassExact))} more`;
       if (st === "owned") return t + (u.maxTier !== null && u.tier >= u.maxTier ? " · complete" : "");
       return u.reason ? cap(u.reason) : "Not available now"; };
     function effectFor(pv, i) { // the real preview region lists (ids) read for the room context: never recalculated here
@@ -284,6 +310,14 @@
       if (inL("better")) return { icon: "alert", text: `${r.name}: closer to your plant's range, still blocked.`, cls: "better" };
       if (inL("worse")) return { icon: "alert", text: `${r.name}: worse for your plant, but it still grows.`, cls: "worse" };
       return { icon: "info", text: `Unchanged for ${r.name}.`, cls: "same" };
+    }
+    // (BLOOM-039) Native Competition: what a Terraform preview does to the NATIVES here (the page's own native shift lists; ids). null outside
+    // Native Competition or for a preview with no native lists (Adapt / Spread)
+    function nativeFx(pv, i) {
+      if (!A.scenario().competition || !pv || !pv.available || !pv.sky) return null; const r = regs[i], rid = r.id;
+      if ((pv.nativeLess || []).includes(rid)) return { text: `Less suited to the natives in ${r.name}: the front can tip your way.`, cls: "gain" };
+      if ((pv.nativeMore || []).includes(rid)) return { text: `Better suited to the natives in ${r.name}: they push harder here.`, cls: "lose" };
+      return { text: `About the same for the natives in ${r.name}.`, cls: "same" };
     }
     const svgMk = (tag, attrs, parent) => { const e = document.createElementNS("http://www.w3.org/2000/svg", tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
 
@@ -300,20 +334,28 @@
       const showTab = t => { tabs.forEach(b => { const on = b.id === "drtab-" + t; b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; }); TABS.forEach(([x]) => { zm.querySelector("#drpane-" + x).hidden = x !== t; }); };
       tabs.forEach((b, k) => { b.addEventListener("click", () => showTab(b.id.slice(6)));
         b.addEventListener("keydown", e => { const d = { ArrowRight: 1, ArrowLeft: -1, Home: -k, End: tabs.length - 1 - k }[e.key]; if (d === undefined) return; e.preventDefault(); const n = tabs[((k + d) % tabs.length + tabs.length) % tabs.length]; showTab(n.id.slice(6)); n.focus(); }); });
-      const helpBtn = u => `<button type="button" class="hbtn hb ${u.board === "Terraform" ? "planet" : u.board === "Spread" ? "spread" : "plant"}" data-go="${u.board.toLowerCase()}" data-item="${esc(u.id)}">${ico(I[u.id] ? u.id : u.board.toLowerCase())}<span class="hb-t"><b>${esc(u.name)}</b><small>${u.board}</small></span></button>`;
+      const helpBtn = u => `<button type="button" class="hbtn hb ${u.board === "Terraform" ? "planet" : u.board === "Spread" ? "spread" : "plant"}" data-go="${u.board.toLowerCase()}" data-item="${esc(u.id)}" data-steps="${u.steps || 1}">${ico(I[u.id] ? u.id : u.board.toLowerCase())}<span class="hb-t"><b>${esc(u.name)}${u.steps > 1 ? ` ×${u.steps}` : ""}</b><small>${u.cost !== undefined ? esc(`${u.cost} Biomass${u.steps > 1 ? " total" : ""}${u.need > 0 ? ` · need ${u.need} more` : ""}`) : u.board}</small></span></button>`;
       function paint() {
-        if (state.ctx < 0) return; const i = state.ctx, r = A.region(i), c = A.colony(i), st = lampSt(r), help = A.wouldHelp(i) || [];
+        if (state.ctx < 0) return; const i = state.ctx, r = A.region(i), c = A.colony(i), st = lampSt(r);
+        // (BLOOM-039) the adapter's multi-step advice: up to two opening routes (fewest steps, real prices), else the truthful reason
+        const adv = A.advice ? A.advice(i) : null, help = adv && r.status === "blocked" ? adv.routes.slice(0, 2) : [];
+        const h0 = adv && adv.helps[0], noHelp = r.status === "blocked" ? (adv && adv.toxic ? "Toxicity is lethal here. No current adaptation removes it."
+          : h0 ? (h0.stillBlocks ? `${h0.name} helps; ${h0.stillBlocks} would still block this region.` : `${h0.name} helps, but cannot open it on its own.`) : "No offered upgrade opens it right now")
+          : r.status === "refuge" ? "Nothing needed while the refuge keeps it alive" : "Nothing needed";
         sp.spec.highlight(null); sp.spec.render(specState(i)); sp.caption(r);
         const focusName = (c.focusChoices.find(f => f.selected) || {}).name || cap(c.focus);
         sp.info.innerHTML = `<span class="li-k">This colony</span><div class="li-h"><span class="ni">${ico(c.living ? "colony" : "off")}</span><div><b>${esc(r.colony.label)}</b><small>${c.living ? `${Math.round(r.colony.establishment * 100)} % established · focus ${esc(focusName)}${c.localUpgradeName ? ` · ${esc(c.localUpgradeName)}` : ""}` : esc(r.colony.hint)}</small></div></div>` +
           `<div class="li-row">${ico(r.limiting.blocked ? ST_ICON.bad : "check")}<span><b>${r.limiting.blocked ? "Holding it back:" : "Limiting factor:"}</b> ${esc(limitLine(r))}</span></div>` +
           `<div class="ownd"><small>Your plant everywhere · Adapt and Spread</small>${ownedChips()}</div>`;
         zm.querySelector(".rg-name").textContent = r.name; zm.querySelector(".rg-sub").innerHTML = chip(st) + `<span class="rg-w" data-tutorial-note="colony">${esc(r.colony.label)}</span>` + (r.isOrigin ? `<span class="rg-o">${ico("star")}Origin</span>` : "");
-        const conds = r.conditions.map(cd => { const s = LAMP_ST[cd.lamp] || "ok", reading = cap(cd.word) + (cd.key === "Temperature" ? ` · ${degC(r.temperature.ground)}` : "");
-          return `<div class="cond st-${s}" data-cat="${cd.key}" style="${catStyle(cd.key)}"><span class="cond-i">${ico(CAT_ICON[cd.key])}</span><span class="cnm">${cd.key}</span>${chip(s)}<span class="ct">${esc(reading)}</span></div>`; }).join("");
-        const lim = r.limiting.blocked ? `<div class="limbox st-bad">${ico(CAT_ICON[r.limiting.key] || "alert")}<div><small>Holding the plant back · ${esc(r.limiting.key)}</small><b>${esc(cap(r.limiting.text))}</b></div></div>`
+        const conds = r.conditions.map(cd => { const s = condSt(cd);
+          return `<div class="cond st-${s}" data-cat="${cd.key}" style="${catStyle(cd.key)}"><span class="cond-i">${ico(CAT_ICON[cd.key])}</span><span class="cnm">${cd.key}</span>${chip(s)}<span class="ct">${esc(reading(cd, r))}</span></div>`; }).join("");
+        const nl = nativeLine(r);
+        const lim = r.status === "blocked" || r.status === "refuge" ? `<div class="limbox st-${st}">${ico(r.limiting.combined ? "alert" : CAT_ICON[r.limiting.key] || "alert")}<div><small>Holding the plant back · ${esc(r.limiting.combined ? "conditions together" : r.limiting.key)}</small><b>${esc(cap(r.limiting.combined ? "none fails alone, but together they are too harsh" : limitPhrase(r)))}</b></div></div>`
+          : nl ? `<div class="limbox st-native">${ico("competition")}<div><small>Native competition</small><b>${esc(nl)}.</b></div></div>`
+          : r.status === "strained" && r.limiting.text ? `<div class="limbox st-warn">${ico(CAT_ICON[r.limiting.key] || "alert")}<div><small>Grows here · strained by ${esc(r.limiting.key)}</small><b>${esc(cap(limitPhrase(r)))}</b></div></div>`
           : `<div class="limbox st-${st}">${ico("check")}<div><small>Limiting factor</small><b>${r.limiting.softSoil ? "None: it grows here, though the soil is marginal." : "None: this region suits your plant."}</b></div></div>`;
-        const helpHtml = `<div class="help n${Math.min(help.length, 2) || 1}"><small>Would help</small>${help.length ? `<div class="help-b">${help.map(helpBtn).join("")}</div>` : `<span class="none">${r.limiting.blocked ? "No offered upgrade opens it right now" : "Nothing needed"}</span>`}</div>`;
+        const helpHtml = `<div class="help n${Math.min(help.length, 2) || 1}"><small>Would help</small>${help.length ? `<div class="help-b">${help.map(helpBtn).join("")}</div>` : `<span class="none">${esc(noHelp)}</span>`}</div>`;
         zm.querySelector("#drpane-overview .pb").innerHTML = conds + lim + helpHtml;
         // Colony: the real growth focus + local upgrade (adapter.colony: selected, availability, ownership, price, block reason, synergy)
         const est = c.living ? r.colony.establishment : 0;
@@ -601,11 +643,11 @@
       // ---- the Soil side: the room-context region's REAL ground, as information (adapter.region.raw / conditions / limiting / geothermal).
       // Real Soil Terraform nodes would sit in this bank too; none exist, so one honest line says so and no card, arrow or pin is drawn.
       function paintSoil(r) {
-        const R = r.raw, sc = r.conditions.find(c => c.key === "Soil") || { word: "", lamp: "green", terraformable: false }, st = LAMP_ST[sc.lamp] || "ok", limSoil = r.limiting.key === "Soil" && r.limiting.blocked;
+        const R = r.raw, sc = r.conditions.find(c => c.key === "Soil") || { word: "", lamp: "green", terraformable: false }, st = condSt(sc), limSoil = r.limiting.key === "Soil" && r.limiting.blocked;
         const rel = limSoil ? `<div class="li-row">${ico("x")}<span><b>Holding the plant back here.</b>${sc.terraformable ? "" : " No sky change reaches the ground."}</span></div>`
           : r.limiting.softSoil ? `<div class="li-row">${ico("alert")}<span>Marginal ground: the plant grows here, slowly.</span></div>` : `<div class="li-row">${ico("check")}<span>The ground suits your plant.</span></div>`;
         soil.innerHTML = `<div class="cat-l tf-cat bank-cat">${ico("soil")}<span>Soil</span></div><div class="soil-card"><span class="li-k">The ground · ${esc(r.name)}</span>` +
-          `<div class="soil-st">${chip(st, cap(sc.word))}${r.geothermal ? `<span class="geo">${ico("geo")}Geothermal</span>` : ""}</div>` +
+          `<div class="soil-st">${chip(st, sc.key ? reading(sc, r) : cap(sc.word))}${r.geothermal ? `<span class="geo">${ico("geo")}Geothermal</span>` : ""}</div>` +
           `<dl class="soil-rows"><div><dt>pH</dt><dd>${esc(num(R.ph))}</dd></div><div><dt>Salinity</dt><dd>${esc(num(R.salinity))}</dd></div><div><dt>Nutrients</dt><dd>${esc(num(R.nutrients))}</dd></div><div><dt>Toxicity</dt><dd>${esc(num(R.toxicity))}</dd></div></dl>${rel}` +
           (L && L.banks.Soil.length ? "" : `<p class="bank-empty">No soil interventions available.</p>`) + `</div>`;
       }
@@ -617,25 +659,26 @@
         envCap.querySelector(".sc-n").textContent = `Your plant in ${r.name}`; envCap.querySelector(".sc-w").textContent = `${previewing ? "Preview · " : ""}sky ${fmtT(sky.temperature)} · ${fmtM(sky.moisture)}`;
       }
       // ---- the information card (left): the current environment, or the REAL Terraform action under preview (it changes the planet / sky, not the plant)
-      const condRows = r => r.conditions.map(cd => { const s = LAMP_ST[cd.lamp] || "ok", reading = cap(cd.word) + (cd.key === "Temperature" ? ` · ${degC(r.temperature.ground)}` : "");
-        return `<div class="cond mini st-${s}" data-cat="${cd.key}" style="${catStyle(cd.key)}"><span class="cond-i">${ico(CAT_ICON[cd.key])}</span><span class="cnm">${cd.key}<small class="ct">${esc(reading)}</small></span>${chip(s)}</div>`; }).join("");
+      const condRows = r => r.conditions.map(cd => { const s = condSt(cd), rd = reading(cd, r);
+        return `<div class="cond mini st-${s}" data-cat="${cd.key}" style="${catStyle(cd.key)}"><span class="cond-i">${ico(CAT_ICON[cd.key])}</span><span class="cnm">${cd.key}<small class="ct">${esc(rd)}</small></span>${chip(s)}</div>`; }).join("");
       function paintInfoBase(r) {
         const sky = src.sky, dT = r.temperature.ground - sky.temperature, rel = Math.abs(dT) < 0.5 ? "as the sky" : `${Math.abs(Math.round(dT))} °C ${dT > 0 ? "warmer" : "colder"} than the sky`;
-        info.innerHTML = `<span class="li-k">The land around ${esc(r.name)}</span><div class="li-h"><span class="ni">${ico("land")}</span><div><b>${esc(r.limiting.blocked ? "Blocked here" : r.limiting.softSoil ? "Marginal here" : "Suits your plant")}</b><small>${esc(limitLine(r))}</small></div></div>` +
+        info.innerHTML = `<span class="li-k">The land around ${esc(r.name)}</span><div class="li-h"><span class="ni">${ico("land")}</span><div><b>${esc(r.status === "blocked" ? "Blocked here" : r.status === "refuge" ? "Refuge here" : r.status === "strained" ? "Strained here" : r.limiting.softSoil ? "Marginal here" : "Suits your plant")}</b><small>${esc(limitLine(r))}</small></div></div>` +
           `<div class="conds">${condRows(r)}</div>` +
           `<div class="li-row">${ico("terraform")}<span><b>Sky</b> ${fmtT(sky.temperature)} · ${fmtM(sky.moisture)}${A.hud().skyAdjusted ? " (as the ground sees it now)" : ""} · ground here ${rel}</span></div>` +
           `<p class="li-hint">Hover a planet system to preview this land. Terraform never changes your plant.</p>`;
         info.classList.remove("pvw"); info.removeAttribute("style");
       }
       function paintInfoPreview(u, pv, r) {
-        const s = pv.sky, axis = s ? s.axis : u.axis, cur = s ? s.current : src.sky, nx = s ? s.preview : cur, fx = effectFor(pv, state.ctx);
+        const s = pv.sky, axis = s ? s.axis : u.axis, cur = s ? s.current : src.sky, nx = s ? s.preview : cur, fx = effectFor(pv, state.ctx), nfx = nativeFx(pv, state.ctx);
         const elsewhere = [pv.gain && pv.gain.length ? `<b>Opens:</b> ${esc(names(pv.gain))}` : "", pv.lose && pv.lose.length ? `<b>Closes:</b> ${esc(names(pv.lose))}` : "", pv.better && pv.better.length ? `<b>Closer, still blocked:</b> ${esc(names(pv.better))}` : "", pv.worse && pv.worse.length ? `<b>Worse, still growing:</b> ${esc(names(pv.worse))}` : ""].filter(Boolean);
         info.setAttribute("style", catStyle(u.uiCategory)); info.classList.add("pvw");
         info.innerHTML = `<span class="li-k">Preview · ${esc(u.uiCategory || "Sky")} · ${esc(BANK_OF(u))}</span><div class="li-h"><span class="ni">${ico(I[u.id] ? u.id : CAT_ICON[u.uiCategory] || "air")}</span><div><b>${esc(u.name)}</b><small>${esc(stateWord(u))}</small></div></div>` +
           `<p>${esc(cap(u.sub || ""))}.</p><span class="li-part">${ico("terraform")}Changes the planet's sky · not the plant</span>` +
           `<div class="li-row">${ico(axis === "temp" ? "temp" : "humid")}<span><b>${axisName(axis)}:</b> ${axis === "temp" ? `${fmtT(cur.temperature)} → ${fmtT(nx.temperature)}` : `${num(cur.moisture)} → ${num(nx.moisture)}`}${A.hud().skyAdjusted ? " (as the ground sees it)" : ""}</span></div>` +
-          `<div class="li-row fx-${fx.cls}">${ico(fx.icon)}<span><b>${esc(fx.text)}</b></span></div>` + (elsewhere.length ? `<div class="li-row">${ico("regions")}<span>${elsewhere.join(" · ")}</span></div>` : "") +
-          `<p class="li-hint">${u.canBuy ? "Click or press Enter to buy." : u.rules ? `Needs ${u.price} Biomass.` : esc(cap(u.reason || "Not available now"))}</p>`;
+          `<div class="li-row fx-${fx.cls}">${ico(fx.icon)}<span>${nfx ? "<small class=\"who\">Your plant</small>" : ""}<b>${esc(fx.text)}</b></span></div>` +
+          (nfx ? `<div class="li-row fx-${nfx.cls}">${ico("competition")}<span><small class="who">Natives</small><b>${esc(nfx.text)}</b></span></div>` : "") + (elsewhere.length ? `<div class="li-row">${ico("regions")}<span>${elsewhere.join(" · ")}</span></div>` : "") +
+          `<p class="li-hint">${u.canBuy ? "Click or press Enter to buy." : u.rules ? `Needs ${u.price} Biomass · ${Math.max(1, Math.ceil(u.price - A.hud().biomassExact))} more.` : esc(cap(u.reason || "Not available now"))}</p>`;
       }
       // ---- the right-hand card: the real current planet readout (current → preview while previewing, scenario-adjusted, climate instability from
       // the real preview) and the region / planet effect from the real preview lists
@@ -648,12 +691,17 @@
         if (sc.climate) { const C = sc.climate, ax = c ? C.axes[c.axis] : null;
           rows.push([ico("hazard"), "Climate instability", c ? `${pct(c.axisBefore)} <i class="to">→ ${pct(c.axisAfter)}</i> · ${esc(sc.climate.bandName)}${c.bandAfter !== c.bandBefore ? ` → ${esc((C.bandNames || [])[c.bandAfter] || "")}` : ""}` : `${pct(C.level)} · ${esc(C.bandName)}`,
             c ? (c.triggersShock ? `⚠ Sets off a ${c.kind ? lower(c.kind.name) : "shock"} (about ${c.axis === "temp" ? `${c.kind && c.kind.sign < 0 ? "−" : "+"}${num(c.magnitude)} °C` : `${c.kind && c.kind.sign < 0 ? "−" : "+"}${num(c.magnitude)} moisture`})` : c.addsToActive ? `Adds to the ${ax ? lower(ax.name) : ""} swing already under way` : c.afterQuiet ? "Stays volatile: another shock can follow the quiet spell" : c.crossesBand ? "Crosses into a less settled band · no shock from this step" : "No shock from this step") : (C.forecast || "")]); }
-        rows.push([ico("soil"), "Soil here", `${chip(LAMP_ST[soilC.lamp] || "ok", cap(soilC.word))}`, ""], [ico(r.limiting.blocked ? "x" : "check"), "Limiting factor", r.limiting.blocked ? esc(cap(r.limiting.key)) : "None", r.limiting.blocked ? esc(r.limiting.text) : r.limiting.softSoil ? "marginal soil" : ""]);
+        rows.push([ico("soil"), "Soil here", `${chip(soilC.key ? condSt(soilC) : "ok", soilC.key ? reading(soilC, r) : cap(soilC.word))}`, ""], [ico(r.limiting.blocked ? "x" : "check"), "Limiting factor", r.limiting.blocked ? esc(cap(r.limiting.key)) : "None", r.limiting.blocked ? esc(r.limiting.text) : r.limiting.softSoil ? "marginal soil" : ""]);
         mm.ctx.querySelector(".env-rows").innerHTML = rows.map(([ic, k, v, n]) => `<div><dt>${ic}${k}</dt><dd><b>${v}</b>${n ? `<small>${n}</small>` : ""}</dd></div>`).join("");
         const rowsEl = mm.ctx.querySelector(".mc-rows");
         if (!pv) { rowsEl.innerHTML = `<div class="mc-row faint">${ico("info")}<span>Hover a planet system to see what it does for ${esc(r.name)} and the whole planet</span></div>`; mm.ctx.classList.remove("pvw"); mm.ctx.removeAttribute("style"); return; }
-        const fx = effectFor(pv, state.ctx), tot = [["Opens", pv.gain, "check"], ["Closes", pv.lose, "x"], ["Closer, still blocked", pv.better, "alert"], ["Worse, still growing", pv.worse, "alert"]].filter(([, l]) => l && l.length);
-        rowsEl.innerHTML = `<div class="mc-row fx-${fx.cls}">${ico(fx.icon)}<span><b>${esc(fx.text)}</b></span></div>` + (tot.length ? tot.map(([k, l, ic]) => `<div class="mc-row faint">${ico(ic)}<span><b>${k} ${l.length}:</b> ${esc(names(l))}</span></div>`).join("") : `<div class="mc-row faint">${ico("info")}<span>No region changes state right away.</span></div>`);
+        const fx = effectFor(pv, state.ctx), nfx = nativeFx(pv, state.ctx), tot = [["Opens", pv.gain, "check"], ["Closes", pv.lose, "x"], ["Closer, still blocked", pv.better, "alert"], ["Worse, still growing", pv.worse, "alert"]].filter(([, l]) => l && l.length);
+        // (BLOOM-039) Native Competition: the same preview's native shift (the page's "suits native plants less / more"), before purchase
+        const ntot = A.scenario().competition ? [["Suits natives less", pv.nativeLess, "check"], ["Suits natives more", pv.nativeMore, "x"]].filter(([, l]) => l && l.length) : [];
+        rowsEl.innerHTML = `<div class="mc-row fx-${fx.cls}">${ico(fx.icon)}<span>${nfx ? "<small class=\"who\">Your plant</small>" : ""}<b>${esc(fx.text)}</b></span></div>` +
+          (nfx ? `<div class="mc-row fx-${nfx.cls}">${ico("competition")}<span><small class="who">Natives</small><b>${esc(nfx.text)}</b></span></div>` : "") +
+          (tot.length ? tot.map(([k, l, ic]) => `<div class="mc-row faint">${ico(ic)}<span><b>${k} ${l.length}:</b> ${esc(names(l))}</span></div>`).join("") : `<div class="mc-row faint">${ico("info")}<span>No region changes state right away.</span></div>`) +
+          ntot.map(([k, l, ic]) => `<div class="mc-row faint nat">${ico(ic)}<span><b>${k} ${l.length}:</b> ${esc(names(l))}</span></div>`).join("");
         const u = items.find(x => x.id === pv.id); mm.ctx.setAttribute("style", catStyle(u && u.uiCategory)); mm.ctx.classList.add("pvw");
       }
       const lower = s => (s || "").toLowerCase();

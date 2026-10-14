@@ -241,3 +241,11 @@
 /* (036C1) REFUGE — the protected landing refuge chip and region-strip dot (sky, not red; the limiting factor stays shown as it is) */
 .dr .stc.refuge{border-color:var(--bloom-sky); background:var(--bloom-sky-soft); color:var(--bloom-sky-dark)} .dr .stc.refuge .ic{background:var(--bloom-sky-dark)}
 .dr .rc.st-refuge .rs{background:var(--bloom-sky-dark)}
+/* (BLOOM-039) one vocabulary with the Planet View: ground the native plants hold carries the native stands' hatched purple mark (never a ✓);
+   the native competition line; "Your plant" / "Natives" rows of a Terraform preview; an unaffordable node says what is missing at rest, in the
+   gold of a price (not the crimson of Blocked / unavailable, which keeps its lock) */
+.dr .rc.native .rs{background:repeating-linear-gradient(135deg,#704698 0 .16em,#c7a8e0 .16em .3em)} .dr .rc.native .rs .nmark{display:none}
+.dr .limbox.st-native{border-color:#c7a8e0; background:#f3ebfa} .dr .limbox.st-native .ic{color:#5e3a86} .dr .limbox.st-native b{color:#5e3a86}
+.dr .mc-row .who, .dr .li-row .who{display:block; font-size:.72em; font-weight:900; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-soft)}
+.dr .mc-row.nat .ic{color:#5e3a86}
+.dr .node.st-poor .nt small{color:var(--gold-deep-text, #8a5a00)}
