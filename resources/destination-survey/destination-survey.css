@@ -150,7 +150,10 @@
 .ds-focus-slot{justify-self:center; width:var(--F); height:var(--F)}
 .ds-focus-slot .ds-globe{border-radius:50%}
 .ds-focus-slot .ds-globe:focus-visible{outline-offset:-6px; border-radius:50%}
-.ds-dossier{position:relative; justify-self:start; width:100%; max-width:500px; max-height:calc(100cqh - var(--head) - 28px); overflow:auto;
+/* (v1.0.1, owner direction) content height, its top level with the focused globe's (the globe stays centred in its column), up to the
+   space below that: only a dossier taller than it scrolls, under its sticky action bar */
+.ds-dossier{--ds-top:max(0px, calc((100cqh - var(--head) - 20px - var(--F)) / 2)); position:relative; align-self:start; margin-top:var(--ds-top); justify-self:start; width:100%; max-width:500px;
+  max-height:calc(100cqh - var(--head) - 20px - var(--ds-top)); overflow:auto;
   padding:18px 20px 16px; border:2px solid var(--line-2); border-radius:var(--r-lg); background:var(--panel); box-shadow:var(--bloom-night-shadow);
   opacity:0; transform:translateX(28px); visibility:hidden; transition:opacity .35s var(--ease), transform .45s var(--ease), visibility 0s .45s}
 .ds[data-state="focus"] .ds-focus{pointer-events:auto}
@@ -220,7 +223,7 @@
   .ds-focus{--F:clamp(200px, min(44cqh, 82cqw), 560px)} /* (a container query styles descendants, never .ds itself) */
   .ds-sector{display:none}
   .ds-focus{grid-template-columns:1fr; grid-template-rows:auto minmax(0,1fr); align-items:start; row-gap:12px; overflow:auto}
-  .ds-dossier{justify-self:center; max-height:none; transform:translateY(20px)}
+  .ds-dossier{justify-self:center; max-height:none; margin-top:0; transform:translateY(20px)}
 }
 @container (max-width: 560px){
   .ds-title h1{font-size:19px} .ds-kicker{display:none} .ds-btn.scan .lbl-long{display:none}

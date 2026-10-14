@@ -69,7 +69,9 @@
   color:var(--bloom-gold-night); border:1.5px solid color-mix(in srgb, var(--bloom-gold-night) 55%, transparent); background:color-mix(in srgb, var(--bloom-gold-night) 12%, transparent)}
 .ch-card-cond .ic{width:15px; height:15px}
 
-.ch-dossier{position:relative; display:flex; flex-direction:column; min-height:0; min-width:0; border:2px solid var(--line-2); border-radius:var(--bloom-r-lg);
+/* (v1.0.1, owner direction) the dossier's height follows its content, top-aligned with the cards, up to the body's height — only a dossier
+   taller than that scrolls (.ch-d-main), BEGIN CHALLENGE right after the last section; the card list still fills the row and scrolls on its own */
+.ch-dossier{position:relative; display:flex; flex-direction:column; align-self:start; max-height:100%; min-height:0; min-width:0; border:2px solid var(--line-2); border-radius:var(--bloom-r-lg);
   background:var(--bloom-night-card-solid, var(--panel)); box-shadow:var(--bloom-night-shadow); overflow:hidden}
 .ch-d-main{flex:1 1 auto; min-height:0; overflow:auto; padding:18px 22px 12px}
 .ch-d-kicker{display:flex; align-items:center; gap:10px; margin:0; font-size:var(--bloom-kicker-size); font-weight:var(--bloom-kicker-weight); letter-spacing:var(--bloom-kicker-track); text-transform:uppercase; color:var(--accent)}
@@ -108,7 +110,7 @@
   .ch-body{display:block; padding:12px var(--padX) 20px}
   .ch-list{gap:10px; overflow:visible; padding:0; margin:0}
   .ch-card[aria-checked="true"]::after{display:none}
-  .ch-dossier{display:none; position:absolute; z-index:3; left:0; right:0; bottom:0; top:auto; height:86%; border-radius:var(--bloom-r-lg) var(--bloom-r-lg) 0 0; border-bottom:0}
+  .ch-dossier{display:none; position:absolute; z-index:3; left:0; right:0; bottom:0; top:auto; height:86%; max-height:none; border-radius:var(--bloom-r-lg) var(--bloom-r-lg) 0 0; border-bottom:0}
   .ch[data-sheet="true"] .ch-dossier{display:flex}
   .ch[data-sheet="true"] .ch-list, .ch[data-sheet="true"] .ch-lede, .ch[data-sheet="true"] .ch-head{opacity:.28; filter:saturate(.6)}
   .ch-d-main{padding:14px 14px 8px}
