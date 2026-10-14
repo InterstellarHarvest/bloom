@@ -204,11 +204,19 @@ export class TrainingCoach {
     const keep = [];
     for (const k of m.keepClear || []) { const t = typeof k === "string" ? { anchor: k } : k;
       if (t.all) keep.push(...this.locateAll(t)); else { const a = this.locate(t); if (a) keep.push(a.rect); } }
-    const view = { width: document.documentElement.clientWidth || innerWidth, height: document.documentElement.clientHeight || innerHeight };
+    // (BLOOM-039) the selected-region banner is always kept clear while it shows (the coach never covers the region readout it may be teaching)
+    const bn = document.getElementById("pvBanner"), bnr = bn && !bn.hidden ? shownRect(bn) : null, keep0 = keep.slice(); if (bnr) keep.push(bnr);
+    // (BLOOM-039) the card stays inside the game's capped width (the run's own box; ≤ 1920 px, centred): rects are placed in that box, then shifted back
+    const vw = document.documentElement.clientWidth || innerWidth, host = document.querySelector("#app > .app-run:not([hidden])"), hr = host ? host.getBoundingClientRect() : null;
+    const ox = hr && hr.width > 0 && hr.width < vw - 1 ? hr.left : 0, sh = r => r && { ...r, left: r.left - ox, right: r.right - ox };
+    const view = { width: ox ? hr.width : vw, height: document.documentElement.clientHeight || innerHeight };
     const narrow = view.width < PLACE.narrow, w = narrow ? Math.min(PLACE.dockMax, view.width - 2 * PLACE.margin) : Math.min(PLACE.width, view.width - 2 * PLACE.margin);
     if (this.card.style.width !== w + "px") this.card.style.width = w + "px";
     const size = { w, h: this.card.offsetHeight };
-    const p = placeCard(size, prim ? prim.at.rect : null, others.map(o => o.at.rect), keep, view);
+    let p = placeCard(size, prim ? sh(prim.at.rect) : null, others.map(o => sh(o.at.rect)), keep.map(sh), view);
+    // the coach's own target outranks the banner: if keeping the banner clear would put the card on its target, place it as before
+    if (bnr && prim && overlap({ left: p.left, top: p.top, right: p.left + p.width, bottom: p.top + size.h }, sh(prim.at.rect)) > 0) p = placeCard(size, sh(prim.at.rect), others.map(o => sh(o.at.rect)), keep0.map(sh), view);
+    p.left += ox;
     const sig = JSON.stringify([p, size.h, found.map(f => [keyOf(f.t), r4(f.at.rect)])]);
     if (!force && sig === this._last) return;
     this._last = sig; this.stats.places++;

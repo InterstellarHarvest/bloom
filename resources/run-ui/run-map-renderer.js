@@ -13,6 +13,7 @@
 //   R.draw(frame)                         // one frame (see FRAME below)
 //   R.hitTest(clientX, clientY)           // → { tile, x, y, region (−1 water, −2 outside), copy (always 0) }  (the frame → outside)
 //   R.bubbleAt(clientX, clientY, bubbles) // → the bubble under the pointer, or null
+//   R.labelAt(clientX, clientY)           // (BLOOM-039) → the region index whose name pill is under the pointer (last drawn), or −1
 //   R.info()                              // geometry + counters (QA)
 //
 // FRAME = { tiles (mapState), regions (regions() summaries), selected (index), hover, focus (indices), preview { gain, lose,
@@ -31,6 +32,9 @@
 // x = W − 1 → 0, and a water crossing over that seam leaves one edge and re-enters at the other (clipped to the one world).
 // The simulation geometry is never changed.
 //
+// BLOOM-039: a label's glyph follows the region's aggregate status (regions() status: ok ✓ · strained ! · blocked × · refuge shield), and a
+// region the native plants hold (regions() nativeHeld, the engine's own flag) shows the map's native-stand mark (purple, hatched) instead of
+// a ✓ — suitability and ownership never share one sign. The pills drawn last frame are hit-testable (labelAt).
 // Classic script, no dependencies besides the BLOOM.surface it is handed: boots over file://.
 (function (root) {
   "use strict";
@@ -58,7 +62,11 @@
     leaves: "M5 19C5 10 10 5 20 4c0 10-5 15-14 15zM5 19l9-9",
     seeds: "M12 21V9M12 9c-3 0-5-3-5-6 3 0 5 2 5 6zM12 12c0-4 2-6 5-6 0 3-2 6-5 6z",
     star: "M12 3.5l2.6 5.3 5.9.9-4.25 4.15 1 5.85L12 16.9l-5.25 2.8 1-5.85L3.5 9.7l5.9-.9z",
+    refuge: "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4",
   };
+  // (BLOOM-039) the label glyph by aggregate status (falls back to the fitness lamp for older region snapshots)
+  const ST_GLYPH = { ok: "check", strained: "alert", blocked: "x", refuge: "refuge" }, ST_LAMP = { ok: "green", strained: "yellow", blocked: "red" };
+  const REFUGE_COLOR = "#2b6c99";
   const paths = {}; const P2 = name => paths[name] || (paths[name] = typeof Path2D === "function" ? new Path2D(ICON[name]) : null);
   const DFULL = 0.78, patchFrac = d => 0.24 + 0.76 * Math.pow(clamp((d - 0.03) / (DFULL - 0.03), 0, 1), 0.8); // the stand's footprint (BLOOM-008)
   const standColor = (d, v) => mix(STAND.sick, mix(STAND.sparse, STAND.dense, Math.pow(clamp(d, 0, 1), 0.75)), clamp((v - 0.2) / 0.5, 0, 1));
@@ -70,7 +78,7 @@
     const world = document.createElement("canvas"), wctx = world.getContext("2d");      // the whole planet once, at the current tile size
     const surf = document.createElement("canvas"), sctx = surf.getContext("2d");        // the canonical surface, at the current tile size
     let SP = null, RENDER = null, SKY = null, W = 0, H = 0, WRAP = false, TM = null, NREG = 0, JIT = null, EDGES = null, TILES_OF = null;
-    let surfSig = null, surfaceRepaints = 0, frames = 0, restores = 0, drawn = { crossings: 0, bubbles: 0, labels: 0, badges: 0 };
+    let surfSig = null, surfaceRepaints = 0, frames = 0, restores = 0, drawn = { crossings: 0, bubbles: 0, labels: 0, badges: 0 }, lastLabels = null;
     // a 2D canvas can lose its backing store (Chromium drops and restores offscreen contexts, blank, e.g. while the GPU process starts):
     // repaint the surface and ask the owner for a new frame when that happens
     for (const c of [canvas, world, surf]) c.addEventListener("contextrestored", () => { restores++; surfSig = null; if (onInvalidate) onInvalidate(); });
@@ -133,6 +141,13 @@
       for (const b of bubbles) {
         const d = Math.hypot(dx - (G.ox + b.x * G.td), dy - (G.oy + b.y * G.td)); if (d <= r && d < bd) { bd = d; best = b; } }
       return best;
+    }
+    // (BLOOM-039) the region-name pill under the pointer (the pills as drawn on the last frame; topmost = drawn last), or −1
+    function labelAt(clientX, clientY) {
+      if (!lastLabels || !lastLabels.length) return -1; const { dx, dy } = toDevice(clientX, clientY), pad = 1 * G.dpr;
+      for (let k = lastLabels.length - 1; k >= 0; k--) { const L = lastLabels[k], x = G.ox + L.x, y = G.oy + L.y;
+        if (Math.abs(dx - x) <= L.w / 2 + pad && Math.abs(dy - y) <= L.h / 2 + pad) return L.index; }
+      return -1;
     }
     /** screen (client) position of a point in tile units, on the one drawn world */
     function clientOf(tx, ty) { const r = canvas.getBoundingClientRect(); return { x: r.left + (G.ox + tx * G.td) / G.dpr, y: r.top + (G.oy + ty * G.td) / G.dpr }; }
@@ -254,7 +269,11 @@
         roundRect(c, x - L.w / 2, y - L.h / 2, L.w, L.h, L.h / 2); c.fillStyle = L.selected ? "#2f3a2c" : "rgba(255,253,247,0.94)"; c.fill(); c.restore();
         c.lineWidth = 1.2 * dpr; c.strokeStyle = L.selected ? "#2f3a2c" : "rgba(47,58,44,0.28)"; c.stroke();
         let gx = x - L.w / 2 + L.pad + L.g / 2;
-        icon(c, GLYPH[L.lamp] || "check", gx, y, L.g, L.selected ? "#fff7e0" : GLYPH_COLOR[L.lamp] || INK, 3 * dpr);
+        if (L.glyph === "native") { // the map's own native-stand mark: a purple swatch with the "/" hatch, never a ✓ (BLOOM-039)
+          const sz = L.g * 0.86, x0 = gx - sz / 2, y0 = y - sz / 2; roundRect(c, x0, y0, sz, sz, sz * 0.24); c.fillStyle = L.selected ? "#fff7e0" : rgb(NATIVE.dense); c.fill();
+          c.save(); c.clip(); c.strokeStyle = L.selected ? rgb(NATIVE.dense) : "rgba(236,222,250,0.95)"; c.lineWidth = Math.max(1, sz * 0.14); c.beginPath();
+          for (const k of [-0.5, 0, 0.5]) { c.moveTo(x0 + sz * (k), y0 + sz); c.lineTo(x0 + sz * (k + 1), y0); } c.stroke(); c.restore(); }
+        else icon(c, L.glyph || GLYPH[L.lamp] || "check", gx, y, L.g, L.selected ? "#fff7e0" : L.glyph === "refuge" ? REFUGE_COLOR : GLYPH_COLOR[L.lamp] || INK, 3 * dpr);
         gx += L.g / 2 + L.gap;
         if (L.origin) { const p = P2("star"); if (p) { c.save(); c.translate(gx, y - L.g / 2); c.scale(L.g / 24, L.g / 24); c.fillStyle = "#f2b324"; c.fill(p); c.lineWidth = 2; c.strokeStyle = "#a86f00"; c.stroke(p); c.restore(); } gx += L.g + L.gap; }
         c.fillStyle = L.selected ? "#fff7e0" : "#2f3a2c"; c.font = L.font; c.textAlign = "left"; c.textBaseline = "middle"; c.fillText(L.name, gx, y + 0.5 * dpr);
@@ -274,12 +293,14 @@
       const out = [], placed = [];
       const order = regs.slice().sort((a, b) => (b.area || 0) - (a.area || 0));
       for (const r of order) {
-        const lamp = f.layer ? (f.layer.lamps[r.index] || "green") : r.lamp, name = r.name;
+        // (BLOOM-039) Map View: the layer's lamp; otherwise the aggregate status, and native-held ground (not blocked) shows the native mark
+        const lamp = f.layer ? (f.layer.lamps[r.index] || "green") : (ST_LAMP[r.status] || r.lamp), name = r.name;
+        const glyph = f.layer ? GLYPH[lamp] : r.nativeHeld && r.status !== "blocked" ? "native" : ST_GLYPH[r.status] || GLYPH[lamp];
         const w = Math.round(pad + g + gap + (r.isOrigin ? g + gap : 0) + ctx.measureText(name).width + pad);
         let x = r.center.x * G.td, y = r.center.y * G.td;
         const hit = (yy) => placed.some(p => Math.abs(p.x - x) < (p.w + w) / 2 + 2 * dpr && Math.abs(p.y - yy) < h + 2 * dpr);
         if (hit(y)) { const up = y - h - 3 * dpr, dn = y + h + 3 * dpr; y = !hit(dn) ? dn : !hit(up) ? up : y; }
-        const L = { index: r.index, name, lamp, origin: !!r.isOrigin, selected: r.index === f.selected, focus: r.focus || "balanced", local: !!r.localUpgrade, x, y, w, h, g, pad, gap, font };
+        const L = { index: r.index, name, lamp, glyph, origin: !!r.isOrigin, selected: r.index === f.selected, focus: r.focus || "balanced", local: !!r.localUpgrade, x, y, w, h, g, pad, gap, font };
         out.push(L); placed.push(L);
       }
       return out;
@@ -292,7 +313,7 @@
       c.fillStyle = rgb(frameColor); c.fillRect(0, 0, canvas.width, canvas.height);    // the stage frame (outside the planet only)
       c.drawImage(world, G.ox, G.oy);                                                    // (v1.0.1) the one world
       if (!WRAP) { c.strokeStyle = "rgba(255,253,247,0.18)"; c.lineWidth = G.dpr; c.strokeRect(G.ox - 0.5, G.oy - 0.5, G.worldW + 1, G.worldH + 1); }
-      const labels = placeLabels(f);
+      const labels = placeLabels(f); lastLabels = f.labels ? labels : null;
       drawOverlays(f, labels);
     }
 
@@ -300,9 +321,11 @@
       return { gridWidth: W, gridHeight: H, wrapX: WRAP, tilePx: G.td / G.dpr, tileDevicePx: G.td, dpr: G.dpr, offsetX: G.ox / G.dpr, offsetY: G.oy / G.dpr,
         worldWidth: G.worldW / G.dpr, worldHeight: G.worldH / G.dpr, copies: { from: G.kMin, to: G.kMax, count: G.kMax - G.kMin + 1 },
         surfaceSignature: SP ? surface.surfaceSignature(SP, { render: RENDER, sky: SKY }) : null, surfaceRepaints, frames, contextRestores: restores, lastFrame: { ...drawn },
-        sky: SKY ? surface.skyOf(SP, SKY) : null };
+        sky: SKY ? surface.skyOf(SP, SKY) : null,
+        // (BLOOM-039, QA) the region-name pills drawn last frame, in canvas CSS px (their hit areas: labelAt)
+        labels: (lastLabels || []).map(L => ({ index: L.index, name: L.name, glyph: L.glyph || null, x: (G.ox + L.x - L.w / 2) / G.dpr, y: (G.oy + L.y - L.h / 2) / G.dpr, w: L.w / G.dpr, h: L.h / G.dpr })) };
     }
-    return Object.freeze({ setSource, setSky, layout, draw, hitTest, bubbleAt, clientOf, info, surfaceCanvas: surf, worldCanvas: world, get planet() { return SP; }, get render() { return RENDER; } });
+    return Object.freeze({ setSource, setSky, layout, draw, hitTest, bubbleAt, labelAt, clientOf, info, surfaceCanvas: surf, worldCanvas: world, get planet() { return SP; }, get render() { return RENDER; } });
   }
 
   root.BLOOM = Object.assign(root.BLOOM || {}, { runMap: Object.freeze({ createRenderer, version: 1 }) });

@@ -19,6 +19,13 @@
 // developer flag ?ui=legacy shows that shell instead. The production run report (resources/run-ui/run-report.js) mounts over this view.
 // BLOOM-028D2: regionPoint(id) / regionRect(id) — read-only screen geometry of a region on the current map layout, for the guided
 // training's callout (resources/training/training-coach.js); presentation only.
+// BLOOM-039 (pre-playtest clarity): the banner's status pill is the adapter's ONE aggregate status (OK · Strained · Blocked · Refuge, from the
+// engine's grow rule); condition boxes name the physical condition (Toxic, Salty …) with the same three status words; "Would help" is the
+// adapter's multi-step advice (fewest steps on one track, real prices, what still blocks, toxicity truth); in Native Competition the
+// banner names the competition reason and who holds the ground, and the scenario card shows a FRONT STALLED cue after ~120 game seconds
+// without front progress while a native-held viable frontier remains (presentation only). The banner flips from the bottom to the top of
+// the map (under the HUD) when the bottom placement would materially cover the selected region (decided once per selection / layout). A
+// click inside a region-name pill selects the region that pill names.
 // Classic script, no dependencies besides BLOOM.surface and BLOOM.runMap: boots over file://.
 (function (root) {
   "use strict";
@@ -59,6 +66,33 @@
   // (036C1) "refuge": the protected landing refuge — the origin's ground would be Blocked, the refuge rule keeps the plant alive there
   const LAMP_ST = { green: "ok", yellow: "warn", red: "bad" }, ST_WORD = { ok: "OK", warn: "Strained", bad: "Blocked", refuge: "Refuge" }, ST_ICON = { ok: "check", warn: "alert", bad: "x", refuge: "refuge" };
   const ST_TIP = { refuge: "Protected landing refuge: this ground does not suit your plant yet, but your landing region keeps it alive while you adapt." };
+  // (BLOOM-039) the adapter's aggregate region status / a condition's own status → the shared ok / warn / bad / refuge styles and words
+  const STATUS_ST = { ok: "ok", strained: "warn", blocked: "bad", refuge: "refuge" };
+  const regionSt = r => STATUS_ST[r.status] || (r.limiting && r.limiting.refuge ? "refuge" : r.limiting && r.limiting.blocked ? "bad" : LAMP_ST[r.lamp] || "ok");
+  const condSt = c => STATUS_ST[c.status] || LAMP_ST[c.lamp] || "ok";
+  // (BLOOM-039) ONE severity vocabulary: a condition box names WHAT the condition is (physical words); how bad it is, is the status chip's job
+  function reading(c, r) {
+    const F = r.facts || {};
+    if (c.key === "Temperature") return cap(c.word) + ` · ${degC(r.temperature.ground)}`;
+    if (c.key === "Hazard") return c.word === "low" ? "Low" : F.radiation && F.toxic ? "Radioactive · toxic" : F.toxic ? "Toxic" : F.radiation ? "Radioactive" : cap(c.word);
+    if (c.key === "Soil" && (c.word === "hostile" || c.word === "workable")) return F.salty && F.ph ? `Salty · ${F.ph}` : F.salty ? "Salty" : F.ph ? cap(F.ph) : cap(c.word);
+    return cap(c.word);
+  }
+  // the limiting condition in physical words (the page's own "too cold" / "too dry" for temperature and water)
+  function limitPhrase(r) {
+    const F = r.facts || {}, k = r.limiting.key;
+    if (k === "Hazard") return F.toxic && F.radiation ? "toxic and radioactive ground" : F.toxic ? "toxic ground" : F.radiation ? "too much radiation" : r.limiting.text || "";
+    if (k === "Soil" && !r.limiting.softSoil) return F.salty ? "salty soil" : F.ph ? `${F.ph} soil` : r.limiting.text || "";
+    return r.limiting.text || "";
+  }
+  // (BLOOM-039) Native Competition: the competition reason, when it is what holds the plant back on ground it could grow on
+  const NATIVE_REASON = {
+    "native-better-suited": { line: "Natives are better suited to this ground.", hint: "A sky change that favors your plant — or hurts the natives more — can tip the front.", terraform: true },
+    "native-young": { line: "Established natives are reclaiming your young colony here.", hint: "Roots thicken a young colony faster." },
+    "native-established": { line: "The native plants here are more established and are holding this ground.", hint: "Strengthening your colony next to it, or changing what suits each plant, can tip it.", terraform: true },
+  };
+  const nativeFront = r => { const c = r.competition; return c && c.nativeTiles > 0 && r.status !== "blocked" && NATIVE_REASON[c.reason] || null; };
+  const STANDOFF_S = 120; // game seconds without front progress before the FRONT STALLED cue (presentation only)
   const BOARD_CLASS = { Adapt: "plant", Spread: "spread", Terraform: "planet" }, BOARD_ROOM = { Adapt: "adapt", Spread: "spread", Terraform: "terraform" };
   const ROOM_TITLE = { region: "Region Inspect", adapt: "Adapt", spread: "Spread", terraform: "Terraform" };
   const SHOCK_TINT = { tempUp: [255, 130, 60], tempDown: [110, 170, 255], moistUp: [70, 200, 200], moistDown: [230, 190, 110] };
@@ -81,6 +115,11 @@
     const life = new AbortController(), LIFE = { signal: life.signal };
     const MAP0 = A.map(), IDX = {}; MAP0.regions.forEach(r => { IDX[r.id] = r.index; });
     const idx = list => (list || []).map(id => IDX[id]).filter(i => i >= 0);
+    // (BLOOM-039) each region's tiles (banner placement measures them) and the tile nearest its centre (a label click selects through it)
+    const TILES = MAP0.regions.map(() => []); MAP0.tilemap.forEach((s, t) => { if (s >= 0) TILES[s].push(t); });
+    const REP = MAP0.regions.map((g, i) => { let best = TILES[i][0], bd = Infinity; for (const t of TILES[i]) { const dx = (t % MAP0.width) + 0.5 - g.center.x, dy = ((t / MAP0.width) | 0) + 0.5 - g.center.y, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = t; } } return best; });
+    const PLACE = { material: 0.15, gap: 12 };
+    let placeKey = "", lastPlace = null;
 
     // ---------------------------------------------------------------- DOM
     document.documentElement.classList.add("ui18");
@@ -155,7 +194,9 @@
     function readRegions(force) { if (force || now() - regsAt > 250) { regs = A.regions(); regsAt = now(); dirty = true; } }
     // real condition lamps for every region (Map View layers): region(i).conditions — the same read the banner shows
     function readConds(force) { if (!force && conds && now() - condsAt < 400) return conds; conds = regs.map(r => A.region(r.index).conditions); condsAt = now(); return conds; }
-    function layerLamps(key) { const C = readConds(); return C.map(cs => { const c = cs.find(x => x.key === key); return c ? c.lamp : "green"; }); }
+    // (BLOOM-039) a layer shows each condition's own status (blocked = it alone stops growth), the same words as the banner's boxes
+    const COND_LAMP = { ok: "green", strained: "yellow", blocked: "red" };
+    function layerLamps(key) { const C = readConds(); return C.map(cs => { const c = cs.find(x => x.key === key); return c ? COND_LAMP[c.status] || c.lamp : "green"; }); }
 
     // ---------------------------------------------------------------- HUD
     const hudEls = { bio: $("pvBio"), rate: $("pvRate"), cov: $("pvCov"), goal: $("pvGoal"), fill: $("pvCovFill"), win: $("pvCovWin"), sky: $("pvSky"), skyd: $("pvSkyD"), state: $("pvState") };
@@ -188,11 +229,21 @@
 
     // ---------------------------------------------------------------- scenario status (compact; every live value on "Details")
     let scnKey = "", scnPhase = null, scnShock = "", scnComp = 0, scnCond = null;
+    // (BLOOM-039) FRONT STALLED: in Native Competition, below the Bloom target, with native-held ground the plant could grow on, and no front
+    // progress (+1 point of land, or −1 point of native cover) for STANDOFF_S GAME seconds (paused time and rooms never count: sim time)
+    const SO = { since: null, cov: 0, nat: 0, frontier: false, shown: false, last: 0 };
+    function standoff(sc, h) {
+      const r = A.run(), C = sc.competition, t = r.seconds;
+      SO.frontier = !!C && regs.some(g => g.growable && g.nativeSide === "native" && g.nativeTiles > 0);
+      if (!C || r.won || r.lost || h.coverage >= h.winAt || !SO.frontier) { SO.since = null; return false; }
+      if (SO.since === null || h.coverage >= SO.cov + 0.01 || C.share <= SO.nat - 0.01) { SO.since = t; SO.cov = h.coverage; SO.nat = C.share; }
+      SO.last = t; return t - SO.since >= STANDOFF_S;
+    }
     function paintScenario() {
       const sc = A.scenario(), h = A.hud();
       if (!sc.pressure && !sc.competition && !sc.climate) { scn.hidden = true; return; }
       scn.hidden = false;
-      let kind, icon, meter = 0, marks = [], line = "", line2 = "", warn = "", details = [];
+      let kind, icon, meter = 0, marks = [], line = "", line2 = "", warn = "", details = [], stall = "";
       const skyLine = `Sky <b>${degC(h.skyBase.temp)} → ${degC(h.skyNow.temp)}</b> · moisture <b>${Math.round(h.skyBase.moist)} → ${Math.round(h.skyNow.moist)}</b> (start → now)`;
       if (sc.pressure) { const P = sc.pressure; kind = "pressure"; icon = "pressure"; meter = P.progress; marks = P.phaseMarks || [];
         line = `${P.phaseName} · ${Math.round(P.progress * 100)}% lost`; line2 = cap(P.next);
@@ -205,6 +256,8 @@
         const c2 = C.contested ? `${C.contested} contested · you lead ${C.playerLeads || 0} · natives lead ${C.nativeLeads || 0}` : "No contested regions";
         if (!sc.pressure) { meter = C.share; line = cl; line2 = c2; } else details.push(cl, c2);
         details.push(`Native share: start <b>${Math.round(C.startShare * 100)}%</b> · peak <b>${Math.round(C.peakShare * 100)}%</b>`);
+        if (standoff(sc, h)) stall = `<div class="stall" role="status"><b>Front stalled</b><span>Native plants are holding the remaining ground. Preview Terraforming to see whether a sky change can tip the competition.</span>` +
+          `<button type="button" class="tf" data-go="terraform">${ico("terraform")}Preview Terraform</button></div>`;
         const n = A.effects().competition.length; if (n > scnComp) pulse(); scnComp = n; }
       if (sc.climate) { const C = sc.climate; kind = kind || "climate"; icon = icon || "climate";
         const axes = Object.entries(C.axes), shock = axes.find(([, X]) => X.shock), pend = axes.find(([, X]) => X.pending);
@@ -221,41 +274,66 @@
       const cp = A.completion ? A.completion() : null;
       const cond = cp ? `<div class="cond" data-status="${esc(cp.status)}" role="status">${ico(cp.status === "complete" ? "check" : cp.status === "early-held" ? "star" : "pressure")}<span><b>${esc(cp.line)}</b>${cp.sub ? `<small>${esc(cp.sub)}</small>` : ""}</span></div>` : "";
       if (cp && scnCond !== null && cp.status !== scnCond) pulse(); scnCond = cp ? cp.status : null;
-      const key = [kind, line, line2, warn, cond, details.join("|"), Math.round(meter * 400), state.scnOpen].join("¦"); if (key === scnKey) return; scnKey = key;
+      if (stall && !SO.shown) pulse(); SO.shown = !!stall;
+      const key = [kind, line, line2, warn, cond, stall, details.join("|"), Math.round(meter * 400), state.scnOpen].join("¦"); if (key === scnKey) return; scnKey = key;
+      // (BLOOM-039) a Challenge run's card is titled by the Challenge itself; the scenario it runs under follows when the names differ
+      const ttl = RUN.challenge ? RUN.challenge.name : sc.name, sub = RUN.challenge && RUN.challenge.name !== sc.name ? (sc.pressure ? `${sc.name} pressure` : sc.name) : "";
       scn.dataset.kind = kind; if (cp) scn.dataset.completion = cp.status; else delete scn.dataset.completion;
-      scn.innerHTML = `<div class="sh">${ico(icon)}<b>${esc(sc.name)}</b><button type="button" class="more" aria-expanded="${state.scnOpen}" aria-controls="pvScnD">Details${ico("chevron")}</button></div>` +
-        `<div class="sm" role="meter" aria-label="${esc(sc.name)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(meter * 100)}"><i style="width:${Math.min(100, meter * 100).toFixed(1)}%"></i>${marks.filter(m => m > 0 && m < 1).map(m => `<em style="left:${(m * 100).toFixed(1)}%"></em>`).join("")}</div>` +
-        `<div class="sl">${line}</div>${line2 ? `<div class="sl2">${line2}</div>` : ""}${cond}${warn ? `<div class="warn">${esc(warn)}</div>` : ""}` +
+      scn.innerHTML = `<div class="sh">${ico(icon)}<b>${esc(ttl)}${sub ? `<small class="ssub">${esc(sub)}</small>` : ""}</b><button type="button" class="more" aria-expanded="${state.scnOpen}" aria-controls="pvScnD">Details${ico("chevron")}</button></div>` +
+        `<div class="sm" role="meter" aria-label="${esc(sub ? `${ttl} · ${sub}` : ttl)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(meter * 100)}"><i style="width:${Math.min(100, meter * 100).toFixed(1)}%"></i>${marks.filter(m => m > 0 && m < 1).map(m => `<em style="left:${(m * 100).toFixed(1)}%"></em>`).join("")}</div>` +
+        `<div class="sl">${line}</div>${line2 ? `<div class="sl2">${line2}</div>` : ""}${cond}${warn ? `<div class="warn">${esc(warn)}</div>` : ""}${stall}` +
         `<div class="sd" id="pvScnD"${state.scnOpen ? "" : " hidden"}>${details.map(d => `<div>${d}</div>`).join("")}</div>`;
     }
     function pulse() { if (reduced()) return; scn.classList.add("pulse"); setTimeout(() => scn.classList.remove("pulse"), 1800); }
-    scn.addEventListener("click", e => { if (e.target.closest(".more")) { state.scnOpen = !state.scnOpen; scnKey = ""; paintScenario(); } });
+    scn.addEventListener("click", e => { if (e.target.closest(".more")) { state.scnOpen = !state.scnOpen; scnKey = ""; paintScenario(); return; }
+      const g = e.target.closest("[data-go]"); if (g) openRoom(g.dataset.go, { opener: g }); });
 
     // ---------------------------------------------------------------- selected-region banner (real region, colony, limiting factor)
-    let bannerKey = "";
+    let bannerKey = "", advice = null;
+    // (BLOOM-039) "Would help": the adapter's multi-step advice — at most two opening routes (fewest steps, then cheapest), real prices, what is
+    // still missing; else the truthful reason nothing on offer opens it (another condition still blocks · lethal toxicity · nothing on offer)
+    const routeCost = u => `${u.cost} Biomass${u.steps > 1 ? " total" : ""}${u.need > 0 ? ` · need ${u.need} more` : ""}`;
+    const routeBtn = u => `<button type="button" class="pv-btn hb ${BOARD_CLASS[u.board]}${u.need > 0 ? " short" : ""}" data-go="${BOARD_ROOM[u.board]}" data-item="${esc(u.id)}" data-steps="${u.steps}" aria-label="${esc(`${u.name}${u.steps > 1 ? ` ${u.steps} times` : ""} opens it: ${routeCost(u)}`)}">${ico(u.board === "Terraform" ? "terraform" : u.board === "Spread" ? "spread" : "adapt")}<span class="hb-t"><b>${esc(u.name)}${u.steps > 1 ? ` <i class="x">×${u.steps}</i>` : ""}</b><small>${esc("opens it · " + routeCost(u))}</small></span></button>`;
+    const helpLine = h => h.stillBlocks ? `${h.name} helps; ${h.stillBlocks} would still block this region.` : `${h.name} helps, but cannot open it on its own.`;
+    function helpBlock(r) {
+      const nf = nativeFront(r);
+      if (r.status === "blocked") { const a = advice;
+        if (a && a.routes.length) return a.routes.slice(0, 2).map((u, k) => routeBtn(u).replace('<button type="button" class="pv-btn hb', `<button type="button" data-route="${k + 1}" class="pv-btn hb`)).join("");
+        if (a && a.toxic) return `<span class="none tox">${ico("hazard")}Toxicity is lethal here. No current adaptation removes it.</span>`;
+        if (a && a.helps.length) { const h2 = a.helps.slice(1).find(h => h.category !== a.helps[0].category);
+          return `<span class="none multi">${esc(helpLine(a.helps[0]))}${h2 ? ` ${esc(`${h2.name} helps with ${h2.category}.`)}` : ""}</span>`; }
+        return `<span class="none">No offered upgrade opens it right now</span>`; }
+      if (r.status === "refuge") return `<span class="none">Nothing needed while the refuge keeps it alive</span>`;
+      if (nf && nf.terraform) return `<button type="button" class="pv-btn hb planet" data-go="terraform" data-native="1">${ico("terraform")}<span class="hb-t"><b>Terraform</b><small>preview a sky change</small></span></button>`;
+      return `<span class="none">Nothing needed</span>`;
+    }
     function paintBanner(force) {
       const sel = A.selection();
       if (sel.index < 0) { if (!banner.hidden) { banner.hidden = true; bannerKey = ""; } helpFor = -1; return; }
       const r = A.region(sel.index), t = now();
-      if (force || helpFor !== sel.index || t - helpAt > 1000) { help = A.wouldHelp(sel.index) || []; helpFor = sel.index; helpAt = t; }
-      const st = r.limiting.refuge ? "refuge" : r.limiting.blocked ? "bad" : LAMP_ST[r.lamp] || "ok";
-      const conds = r.conditions.map(c => { const s = LAMP_ST[c.lamp] || "ok";
-        const reading = cap(c.word) + (c.key === "Temperature" ? ` · ${degC(r.temperature.ground)}` : "");
-        return `<div class="bc st-${s}" data-cat="${c.key}"><span class="bc-i">${ico(CAT_ICON[c.key])}</span><span class="bc-t"><small>${c.key}</small><b>${esc(reading)}</b></span>` +
+      if (force || helpFor !== sel.index || t - helpAt > 1000) { advice = A.advice ? A.advice(sel.index) : null; helpFor = sel.index; helpAt = t; }
+      const st = regionSt(r), nf = nativeFront(r), C = r.competition;
+      const conds = r.conditions.map(c => { const s = condSt(c);
+        return `<div class="bc st-${s}" data-cat="${c.key}"><span class="bc-i">${ico(CAT_ICON[c.key])}</span><span class="bc-t"><small>${c.key}</small><b>${esc(reading(c, r))}</b></span>` +
           `<span class="sb sb-${s}" title="${ST_WORD[s]}">${ico(ST_ICON[s])}<span${s === "ok" ? ' class="sr-only"' : ""}>${ST_WORD[s]}</span></span></div>`; }).join("");
-      const lim = r.limiting.blocked ? `Limiting: <b>${esc(r.limiting.key)}</b> · ${esc(r.limiting.text)}` : r.limiting.softSoil ? "Growing · the soil is marginal here" : "Nothing holding the plant back";
-      const helpHtml = help.length ? help.map(u => `<button type="button" class="pv-btn hb ${BOARD_CLASS[u.board]}" data-go="${BOARD_ROOM[u.board]}" data-item="${esc(u.id)}">${ico(u.board === "Terraform" ? "terraform" : u.board === "Spread" ? "spread" : "adapt")}<span class="hb-t"><b>${esc(u.name)}</b><small>${u.board}</small></span></button>`).join("")
-        : `<span class="none">${r.limiting.blocked ? "No offered upgrade opens it right now" : "Nothing needed"}</span>`;
-      const key = [sel.index, st, lim, r.colony.label, r.isOrigin, conds, help.map(u => u.id).join()].join("¦");
+      const named = `<b>${esc(r.limiting.key)}</b> · ${esc(limitPhrase(r))}`;
+      const lim = (r.status === "blocked" || r.status === "refuge") ? (r.limiting.combined ? "Limiting: <b>conditions together</b> · none fails alone, but together they are too harsh" : `Limiting: ${named}`)
+        : nf ? `<b class="nat">${esc(nf.line)}</b>${nf.hint ? ` <span class="nat-h">${esc(nf.hint)}</span>` : ""}`
+        : r.status === "strained" && r.limiting.text ? `Grows here · strained by ${named}`
+        : r.limiting.softSoil ? "Growing · the soil is marginal here" : "Nothing holding the plant back";
+      // (BLOOM-039) who holds the ground (Native Competition): separate from how well the ground suits the plant
+      const own = C && C.nativeTiles > 0 ? `<span class="pv-own${r.nativeHeld ? " held" : ""}" title="${esc(r.nativeHeld ? "Native plants hold this region" : "Native plants hold part of this region")}">${ico("competition")}${r.nativeHeld ? "Native-held" : "Natives"} ${Math.round(C.nativeShare * 100)}%</span>` : "";
+      const helpHtml = helpBlock(r);
+      const key = [sel.index, st, lim, own, r.colony.label, r.isOrigin, conds, helpHtml].join("¦");
       if (key === bannerKey && !banner.hidden) return; bannerKey = key;
       const focused = banner.contains(document.activeElement) ? (document.activeElement.dataset.item || document.activeElement.className) : null;
       banner.innerHTML = `<button type="button" class="bx" data-act="deselect" aria-label="Close and deselect ${esc(r.name)}">${ico("close")}</button>` +
-        `<div class="bn-h"><div class="bn-t">${ico("inspect")}<b>${esc(r.name)}</b><span class="pv-st ${st}"${ST_TIP[st] ? ` title="${esc(ST_TIP[st])}" aria-label="${esc(ST_TIP[st])}"` : ""}>${ico(ST_ICON[st])}${ST_WORD[st]}</span>${r.isOrigin ? `<span class="rg-o">${ico("star")}Origin</span>` : ""}</div>` +
+        `<div class="bn-h"><div class="bn-t">${ico("inspect")}<b>${esc(r.name)}</b><span class="pv-st ${st}"${ST_TIP[st] ? ` title="${esc(ST_TIP[st])}" aria-label="${esc(ST_TIP[st])}"` : ""}>${ico(ST_ICON[st])}${ST_WORD[st]}</span>${own}${r.isOrigin ? `<span class="rg-o">${ico("star")}Origin</span>` : ""}</div>` +
           `<p><span data-tutorial="colony-status">${esc(r.colony.label)}</span> · <span class="lim" data-tutorial="limiting-factor">${lim}</span></p></div>` +
         `<div class="bn-c" role="group" aria-label="Conditions" data-tutorial="readout">${conds}</div>` +
         `<div class="bn-a"><button type="button" class="pv-btn" data-go="region">${ico("regions")}Inspect region</button>` +
           `<div class="bn-help" role="group" aria-label="Would help"><small>Would help</small>${helpHtml}</div></div>`;
-      banner.hidden = false;
+      const wasHidden = banner.hidden; banner.hidden = false; if (wasHidden || placeKey.split("|")[0] !== String(sel.index)) placeBanner();
       if (focused) { const b = [...banner.querySelectorAll("button")].find(x => (x.dataset.item || x.className) === focused); if (b) b.focus(); }
     }
     banner.addEventListener("click", e => {
@@ -268,6 +346,29 @@
     banner.addEventListener("pointerleave", () => helpPv(null));
     banner.addEventListener("focusin", e => helpPv(e.target.closest("[data-item]")));
     banner.addEventListener("focusout", () => helpPv(null));
+
+    // ---------------------------------------------------------------- (BLOOM-039) banner placement: bottom by default; the top of the map (just under
+    // the HUD, clear of the scenario card) when the bottom placement would materially cover the selected region. Measured on the region's REAL
+    // tiles (the renderer's own screen geometry), decided once per selection and per stage size — never per frame, so it never jitters.
+    const coverOf = (i, rc) => { const T = TILES[i]; if (!T || !T.length) return 0; let n = 0;
+      for (const t of T) { const p = R.clientOf((t % MAP0.width) + 0.5, ((t / MAP0.width) | 0) + 0.5); if (p.x >= rc.left && p.x <= rc.right && p.y >= rc.top && p.y <= rc.bottom) n++; }
+      return n / T.length; };
+    function placeBanner() {
+      const sel = A.selection().index; if (banner.hidden || sel < 0) return;
+      const sr = stage.getBoundingClientRect(); placeKey = `${sel}|${Math.round(sr.width)}x${Math.round(sr.height)}`;
+      banner.removeAttribute("style"); delete banner.dataset.place;
+      const b = banner.getBoundingClientRect(), fb = coverOf(sel, b); let ft = null, place = "bottom", top = 0, left = 0;
+      if (fb > PLACE.material) {
+        top = sr.top + PLACE.gap; left = b.left; const w = b.width, h = b.height;
+        // clear of the scenario card (top-left): slide right if there is room, else sit just below it
+        const sc = scn.hidden ? null : scn.getBoundingClientRect();
+        if (sc && left < sc.right + PLACE.gap) { const maxLeft = sr.right - PLACE.gap - w; if (sc.right + PLACE.gap <= maxLeft) left = sc.right + PLACE.gap; else top = sc.bottom + PLACE.gap; }
+        const tr = { left, top, right: left + w, bottom: top + h }; ft = coverOf(sel, tr);
+        if (tr.bottom <= sr.bottom - PLACE.gap && ft < fb) place = "top";
+      }
+      if (place === "top") { banner.dataset.place = "top"; Object.assign(banner.style, { top: (top - sr.top) + "px", left: (left - sr.left) + "px", bottom: "auto", transform: "none" }); }
+      lastPlace = { region: sel, place, coverBottom: +fb.toFixed(3), coverTop: ft === null ? null : +ft.toFixed(3), stage: [Math.round(sr.width), Math.round(sr.height)] };
+    }
 
     // ---------------------------------------------------------------- Map View: hover / focus = preview, click = commit (stays open)
     function paintLens() {
@@ -337,12 +438,17 @@
     $("pvSpeed").addEventListener("click", () => A.actions.cycleSpeed());
 
     // ---------------------------------------------------------------- map input
-    canvas.addEventListener("pointermove", e => { if (e.pointerType === "touch") return; const h = R.hitTest(e.clientX, e.clientY), b = R.bubbleAt(e.clientX, e.clientY, lastBubbles);
-      const hv = h.region >= 0 ? h.region : -1; canvas.classList.toggle("over", hv >= 0 || !!b); if (hv !== state.hover) { state.hover = hv; dirty = true; } });
+    // (BLOOM-039) a region-name pill is the region it names: inside a pill, hover / click mean THAT region (never the tile under the pill's edge)
+    const labelAt = (x, y) => R.labelAt ? R.labelAt(x, y) : -1;
+    canvas.addEventListener("pointermove", e => { if (e.pointerType === "touch") return; const b = R.bubbleAt(e.clientX, e.clientY, lastBubbles), lr = b ? -1 : labelAt(e.clientX, e.clientY), h = R.hitTest(e.clientX, e.clientY);
+      const hv = lr >= 0 ? lr : h.region >= 0 ? h.region : -1; canvas.classList.toggle("over", hv >= 0 || !!b); if (hv !== state.hover) { state.hover = hv; dirty = true; } });
     canvas.addEventListener("pointerleave", () => { if (state.hover !== -1) { state.hover = -1; dirty = true; } canvas.classList.remove("over"); });
     canvas.addEventListener("click", e => {
       const b = R.bubbleAt(e.clientX, e.clientY, A.bubbles()); if (b) { A.actions.collectBubble(b.tile); return; }   // a bubble first (as the shell)
-      const h = R.hitTest(e.clientX, e.clientY);
+      // (BLOOM-039) then a region-name pill: when the pill names ANOTHER region than the tile under the pointer (a pill straddling a border,
+      // water or the frame), the click means the named region — through that region's own tile; over its own region it is an ordinary click
+      const lr = labelAt(e.clientX, e.clientY), h = R.hitTest(e.clientX, e.clientY);
+      if (lr >= 0 && lr !== h.region && REP[lr] >= 0) { A.actions.selectTile(REP[lr]); if (state.focus >= 0) { state.focus = -1; dirty = true; } return; }
       // a physical click: the canonical tile under it (v1.0.1: the one drawn world; the frame is no tile) through the run's own map-click
       // path — the event carries that tile, the selected region clicked again deselects, water deselects with water:true. Only a
       // click on the frame outside the planet (no tile) clears through the abstract deselect.
@@ -361,7 +467,7 @@
         if (wrap && Math.abs(dx) > W / 2) dx -= Math.sign(dx) * W;
         const along = dx * dir[0] + dy * dir[1], across = Math.abs(dx * dir[1]) + Math.abs(dy * dir[0]); if (along <= 0.5) continue;
         const score = along + 2 * across; if (score < bs) { bs = score; best = r.index; } }
-      if (best >= 0) { state.focus = best; dirty = true; const r = regs[best]; live(`${r.name}: ${r.refuge ? "protected landing refuge" : r.lamp === "red" ? "blocked" : r.lamp === "yellow" ? "strained" : "open"}. Enter selects.`); }
+      if (best >= 0) { state.focus = best; dirty = true; const r = regs[best]; live(`${r.name}: ${r.status === "refuge" ? "protected landing refuge" : r.status === "blocked" ? "blocked" : r.status === "strained" ? "strained" : "open"}${r.nativeHeld ? ", held by native plants" : ""}. Enter selects.`); }
     });
     canvas.addEventListener("blur", () => { if (state.focus >= 0) { state.focus = -1; dirty = true; } });
 
@@ -409,7 +515,8 @@
       if (sel) { const s = A.selection(); live(s.index >= 0 ? `${s.name} selected` : "No region selected"); }
       dirty = true;
     });
-    const stageRO = new ResizeObserver(() => { if (disposed) return; relayout(); if (state.lensOpen) placePop(lensPop, mapviewBtn); if (state.menuOpen) placePop(menuPop, menuBtn, true); }); stageRO.observe(stage);
+    const stageRO = new ResizeObserver(() => { if (disposed) return; relayout(); if (state.lensOpen) placePop(lensPop, mapviewBtn); if (state.menuOpen) placePop(menuPop, menuBtn, true);
+      const sr = stage.getBoundingClientRect(); if (!banner.hidden && !placeKey.endsWith(`|${Math.round(sr.width)}x${Math.round(sr.height)}`)) placeBanner(); }); stageRO.observe(stage);
     if (mq && mq.addEventListener) mq.addEventListener("change", () => { el.classList.toggle("reduced", reduced()); dirty = true; }, LIFE);
     relayout(); paintHud(); paintLog(); paintScenario(); paintBanner(true); paintLens(); loop();
 
@@ -434,7 +541,9 @@
       toast,
       openRoom, setLens, previewLens, openLens, openMenu,
       state: () => ({ lens: state.lens, lensPreview: state.lensPv, lensOpen: state.lensOpen, menuOpen: state.menuOpen, hover: state.hover, focus: state.focus,
-        selection: A.selection().index, banner: !banner.hidden, scenarioOpen: state.scnOpen, layerShown: el.dataset.layer || null, room: activeRoom }),
+        selection: A.selection().index, banner: !banner.hidden, scenarioOpen: state.scnOpen, layerShown: el.dataset.layer || null, room: activeRoom,
+        // (BLOOM-039) QA: the banner's placement decision and the stand-off watch (game seconds)
+        bannerPlace: lastPlace ? { ...lastPlace } : null, standoff: { frontier: SO.frontier, watching: SO.since !== null, stalledFor: SO.since === null ? 0 : +(SO.last - SO.since).toFixed(1), shown: SO.shown } }),
       redraw() { dirty = true; },
       regionPoint, regionRect, // (BLOOM-028D2) read-only map geometry (above)
       dispose() { if (disposed) return; disposed = true; cancelAnimationFrame(raf); clearTimeout(state.toastTimer); unsub(); anchorWatch.disconnect(); stageRO.disconnect(); life.abort(); el.remove(); document.documentElement.classList.remove("ui18");

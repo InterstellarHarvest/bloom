@@ -34,6 +34,21 @@
 // up with their limiting factor, colony upgrades, analogs from the trait content, each scenario's final state; null until the run ends) —
 // reportActions() (the page's own post-run actions: Keep playing, the player / training actions, Restart this run) and
 // actions.reportAction(id) (the page's own continue-after-win / reload / goAction). The production report only displays and delegates.
+// BLOOM-039 (additive; api stays 1) — the readout tells the truth about growth:
+//   · status — ONE aggregate region status from the engine's own growth rule (a region grows where its fitness is above
+//     config.grow.growThresh, exactly the test bloom-sim.js spreads and establishes with): "refuge" (the protected origin is what keeps
+//     the plant alive), "blocked" (the plant cannot establish or grow there now), "strained" (it grows, but a condition is poor:
+//     the fitness lamp is not green), "ok". `blocked` / limiting.blocked now mean exactly status "blocked" (before: any one factor
+//     under categories.blockedBelow, which also named ground the plant was filling). growable = the grow rule itself.
+//   · advice(r) — the multi-step "Would help": for each offered upgrade track, the fewest legal steps (≤ ADVICE_STEPS) that open the
+//     region under current conditions, priced at the engine's real prices (the page's stepsWhatIf: the engine's own what-if,
+//     restored); tracks that raise the region but cannot open it alone, with the category that would still block it; and whether a
+//     lethal toxicity binds (no released trait raises toxicity tolerance).
+//   · facts — physical words' evidence (radiation / toxicity over the plant's tolerance, salty / acidic / alkaline ground), so the
+//     presentation names a hazard or a soil by what it is, not by a second severity word.
+//   · competition.reason (the page's compReason: which branch of its own explanation applies) and nativeHeld on every region
+//     summary (the engine's own "dominated" flag), so ground the natives hold never reads as the player's.
+//   · previews of a Terraform step carry nativeLess / nativeMore — the page's own "suits native plants less / more" lists.
 // Classic script, no dependencies: boots over file:// like every other run-page file.
 (function (root) {
   "use strict";
@@ -156,26 +171,42 @@
     // lives there BECAUSE it is the landing refuge. Derived from the real current evaluation every time (the unprotected fitness is the product
     // of the category factors, exactly as evaluate() forms it before the floor): once the ground suits the plant (Adapt / Terraform) or the
     // protection no longer keeps it alive (e.g. late in a Dying World decline), the ordinary status takes over. Presentation only.
-    const refugeOf = (s, e) => { if (!s.isOrigin || !R.isBlocked(e)) return false; const C = e.cats, raw = C.Temperature.f * C.Water.f * C.Soil.f * C.Hazard.f;
-      return e.fitness > raw + 1e-9 && e.fitness > CFG.grow.dieThresh; };
+    // (BLOOM-039) "would the plant grow here without the refuge?" is the engine's own grow rule on the unprotected fitness: the refuge is
+    // what permits survival only where that raw ground is not growable (before: any single factor under blockedBelow)
+    const grows = f => f > CFG.grow.growThresh;
+    const refugeOf = (s, e) => { if (!s.isOrigin) return false; const C = e.cats, raw = C.Temperature.f * C.Water.f * C.Soil.f * C.Hazard.f;
+      return !grows(raw) && e.fitness > raw + 1e-9 && e.fitness > CFG.grow.dieThresh; };
+    // (BLOOM-039) the ONE aggregate status (see the header): refuge · blocked (cannot establish / grow) · strained (grows; lamp not green) · ok
+    const statusOf = (s, e) => refugeOf(s, e) ? "refuge" : !grows(e.fitness) ? "blocked" : sim.lampOf(e.fitness) === "green" ? "ok" : "strained";
     function regionSummary(i, liv) {
-      const s = SEC[i], e = sim.evaluate(i), cs = sim.colonyStatus(i), sel = V.selected();
+      const s = SEC[i], e = sim.evaluate(i), cs = sim.colonyStatus(i), sel = V.selected(), st = statusOf(s, e), c = S.comp ? sim.competitionAt(i) : null;
       return { ...ref(i), biome: s.name, isOrigin: !!s.isOrigin, selected: i === sel, landmass: M.LANDMASS[i], area: M.AREA[i],
         center: { x: M.CENT[i].x, y: M.CENT[i].y }, living: liv[i], fitness: e.fitness, lamp: sim.lampOf(e.fitness),
-        blocked: R.isBlocked(e), refuge: refugeOf(s, e), limitKey: e.limitKey, colony: { word: cs.word, establishment: cs.establishment },
+        status: st, growable: grows(e.fitness), blocked: st === "blocked", refuge: st === "refuge", limitKey: e.limitKey,
+        nativeHeld: !!(c && c.dominated), // (BLOOM-039) the engine's own native-dominated flag (null-safe: false outside Native Competition)
+        nativeSide: c ? c.side : null, nativeTiles: c ? c.nativeTiles : 0, // (BLOOM-039) the competition's side + native cover here (the stand-off cue reads them)
+        colony: { word: cs.word, establishment: cs.establishment },
         focus: sim.getColonyFocus(i), localUpgrade: sim.getSpecialization(i) };
     }
     function regions() { const liv = sim.livingCountBySection(); return SEC.map((_, i) => regionSummary(i, liv)); }
     function region(r) {
       const i = indexOf(r); if (i < 0) return null;
       const s = SEC[i], L = s.local, e = sim.evaluate(i), liv = sim.livingCountBySection(), dv = sim.derived(), cs = sim.colonyStatus(i), tc = R.tileCounts(i);
-      const blocked = R.isBlocked(e), c = S.comp ? sim.competitionAt(i) : null;
+      const st = statusOf(s, e), blocked = st === "blocked", c = S.comp ? sim.competitionAt(i) : null, SO = CFG.categories.Soil;
+      // (BLOOM-039) a limiting line wherever the region is not simply OK; "combined" = no single condition is poor, the conditions together are
+      const poor = host.categories.filter(k => e.cats[k].f < CFG.categories.blockedBelow), named = st !== "ok" && poor.length > 0;
       return {
         ...regionSummary(i, liv), geothermal: !!s.geothermal,
         conditions: host.categories.map(k => { const C = e.cats[k];
-          return { key: k, word: C.word, f: C.f, lamp: R.catLamp(C), soft: !!C.soft, terraformable: !!e.terraformable[k] }; }),
-        limiting: { key: e.limitKey, f: e.limitF, blocked, refuge: refugeOf(s, e), text: blocked ? R.limitText(e) : null, hint: blocked ? R.fixHint(e) : null,
+          return { key: k, word: C.word, f: C.f, lamp: R.catLamp(C), soft: !!C.soft, terraformable: !!e.terraformable[k],
+            // (BLOOM-039) this condition ALONE vs the grow rule: at or under growThresh it blocks growth by itself; otherwise its lamp says ok / strained
+            status: !grows(C.f) ? "blocked" : R.catLamp(C) === "green" ? "ok" : "strained" }; }),
+        limiting: { key: e.limitKey, f: e.limitF, blocked, refuge: st === "refuge", strained: st === "strained", status: st, growable: grows(e.fitness),
+          text: named ? R.limitText(e) : null, hint: named ? R.fixHint(e) : null, combined: st === "blocked" && !poor.length, poor,
           softSoil: !blocked && !!e.cats.Soil.soft },
+        // (BLOOM-039) the evidence for physical words: which hazard / soil condition is outside the plant's tolerance (raw vs the plant's own limits)
+        facts: { radiation: e.effRad > dv.radTol, toxic: L.toxicity > dv.toxTol, toxicLethal: L.toxicity > dv.toxTol && e.cats.Hazard.word === "lethal",
+          salty: L.salinity > dv.saltTol, ph: L.ph < SO.phMin ? "acidic" : L.ph > SO.phMax ? "alkaline" : null },
         temperature: { ground: e.effT, sky: e.skyT, plantMin: dv.tempFloor, plantMax: dv.tempCeil },
         colony: { word: cs.word, label: R.colonyWord(cs.word), hint: R.colonyHint(cs.word), establishment: cs.establishment },
         vitals: { vigor: sim.vigor[i], living: liv[i], dead: tc.dead, barren: tc.barr, native: S.comp ? tc.natv : null, area: M.AREA[i] },
@@ -183,7 +214,7 @@
           toxicity: L.toxicity, radiation: L.radiation, effectiveRadiation: e.effRad },
         geo: plain(R.geoInfo(i)),
         pressure: S.press ? { started: sim.pressure.progress > 0, offsets: plain(sim.pressure.offsets) } : null,
-        competition: c ? { ...plain(c), why: R.compWhy(i, c) } : null,
+        competition: c ? { ...plain(c), why: R.compWhy(i, c), reason: R.compReason ? R.compReason(i, c) : null } : null,
       };
     }
     function selection() { const i = V.selected(); return { ...ref(i), water: i < 0 && V.selectedWater() }; }
@@ -203,11 +234,12 @@
     // (BLOOM-029D) a sky preview's exact current → preview surface sky, as the page's what-if computed it ({ t, m } → { temperature, moisture })
     const skyShape = s => s ? { axis: s.axis, from: s.from, to: s.to, current: { temperature: s.current.t, moisture: s.current.m }, preview: { temperature: s.preview.t, moisture: s.preview.m } } : null;
     const previewShape = d => d ? { gain: ids(d.gain), lose: ids(d.lose), better: ids(d.better), worse: ids(d.worse),
-      reachHostile: ids(d.reachHostile), climate: d.climate ? plain(d.climate) : null, sky: skyShape(d.sky) } : null;
+      reachHostile: ids(d.reachHostile), climate: d.climate ? plain(d.climate) : null, sky: skyShape(d.sky),
+      nativeLess: ids(d.nativeLess), nativeMore: ids(d.nativeMore) } : null; // (BLOOM-039) [] unless a Terraform step in Native Competition
     // the real preview calculation, without showing it (no outline, no footer, no event): what a room previews in place
     function previewOf(id) {
       const u = sim.traitById[id]; if (!u) return null; const r = R.computePreview(id), d = previewShape(r.data);
-      return { id, board: u.board, name: u.name, available: !!r.data, ...(d || { gain: [], lose: [], better: [], worse: [], reachHostile: [], climate: null }), text: r.text };
+      return { id, board: u.board, name: u.name, available: !!r.data, ...(d || { gain: [], lose: [], better: [], worse: [], reachHostile: [], climate: null, nativeLess: [], nativeMore: [] }), text: r.text };
     }
     function activePreview() { return previewShape(V.preview()); } // what the main map outlines now (null = no preview)
     // (BLOOM-029D) the exact REAL current → preview surface sky of one Terraform node, from the page's own what-if (the same
@@ -223,6 +255,32 @@
       const i = indexOf(r); if (i < 0) return null; const out = [];
       for (const board of host.boards) for (const u of R.offeredOn(board)) { const d = R.computePreview(u.id).data;
         if (d && d.gain.includes(i)) out.push({ id: u.id, board: u.board, name: u.name }); }
+      return out;
+    }
+    // (BLOOM-039) the multi-step "Would help" for region r under CURRENT conditions (see the header). routes: the tracks that open it, fewest
+    // steps first then cheapest (steps · total price at the real tiers · need = Biomass still missing, 0 if affordable now); helps: tracks that
+    // raise the region's fitness but cannot open it alone within their legal steps, each with the category that would still block it; toxic:
+    // a lethal toxicity binds here (no released trait addresses toxicity — the plant's toxicity tolerance is never upgraded). Read-only.
+    const ADVICE_STEPS = 4;
+    function advice(r) {
+      const i = indexOf(r); if (i < 0) return null; const s = SEC[i], e = sim.evaluate(i), st = statusOf(s, e), bio = Math.floor(sim.biomass);
+      const out = { region: ref(i), status: st, routes: [], helps: [], toxic: false, biomass: bio };
+      if (st !== "blocked" || !R.stepsWhatIf) return out;
+      for (const board of host.boards) for (const u of R.offeredOn(board)) {
+        const steps = R.stepsWhatIf(u.id, i, ADVICE_STEPS); if (!steps || !steps.length) continue;
+        const open = steps.find(x => x.grows), last = steps[steps.length - 1];
+        if (open) { out.routes.push({ id: u.id, board: u.board, name: u.name, steps: open.n, cost: open.cost, need: Math.max(0, open.cost - bio) }); continue; }
+        // "helps": the track raises a POOR condition (its own category = the one it raised most), even when the product stays at zero because
+        // another condition still fails; what still blocks = the weakest OTHER poor condition after the track (null: its own is still not enough)
+        const own = host.categories.reduce((m, k) => last.cats[k] - e.cats[k].f > last.cats[m] - e.cats[m].f ? k : m, host.categories[0]), raised = last.cats[own] - e.cats[own].f;
+        if (raised > 0.02 && e.cats[own].f < CFG.categories.blockedBelow) {
+          const other = host.categories.filter(k => k !== own && last.cats[k] < CFG.categories.blockedBelow).sort((a, b) => last.cats[a] - last.cats[b]);
+          out.helps.push({ id: u.id, board: u.board, name: u.name, steps: last.n, gain: raised, category: own, limiting: own === e.limitKey, stillBlocks: other.length ? other[0] : null }); }
+      }
+      out.routes.sort((a, b) => a.steps - b.steps || a.cost - b.cost);
+      out.helps.sort((a, b) => (b.limiting - a.limiting) || b.gain - a.gain);
+      // lethal toxicity anywhere in the region's hazard (whatever else also fails): no released trait raises the plant's toxicity tolerance
+      const dv = sim.derived(); out.toxic = e.cats.Hazard.word === "lethal" && s.local.toxicity > dv.toxTol && !out.routes.length;
       return out;
     }
     function colony(r) {
@@ -323,7 +381,7 @@
 
     const adapter = Object.freeze({
       api: API_VERSION, events: Object.freeze(EVENTS.map(t => "bloom:" + t)),
-      run: runInfo, hud, scenario, regions, region, selection, upgrades, upgrade, previewOf, activePreview, terraformPreview, wouldHelp, colony, bubbles,
+      run: runInfo, hud, scenario, regions, region, selection, upgrades, upgrade, previewOf, activePreview, terraformPreview, wouldHelp, advice, colony, bubbles,
       message: () => V.message(), map, tileAt, surface, mapState, effects, runMenu, report, reportActions, completion, actions,
       subscribe(fn) { if (typeof fn !== "function") throw new TypeError("subscribe needs a function"); listeners.add(fn); return () => { listeners.delete(fn); }; },
       get revision() { return revision; },

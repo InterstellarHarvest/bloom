@@ -616,6 +616,15 @@ const SIDE_UI={ player:{icon:"▲", name:"Your advantage", cls:"mine"}, native:{
   even:{icon:"◆", name:"Even contest", cls:""}, none:{icon:"—", name:"No native plants here", cls:""} };
 const NLIM={ cold:"too cold for them", hot:"too hot for them", dry:"too dry for them", wet:"too wet for them", salt:"too salty for them", hazard:"too harsh (radiation/toxicity) for them" };
 const suitWord=f=>f>CFG.categories.lamp.green?"well":f>CFG.grow.growThresh?"only partly":"poorly";
+// (BLOOM-039) which branch of the competition explanation applies here, as a key: compWhy words it for the shell / room, the production
+// banner names it briefly (the same rule; nothing recalculated by the presentation)
+function compReason(i,c){
+  const youSuit=c.playerFitness, theySuit=c.nativeFitness, young=c.playerTiles>0&&c.playerMaturity<CFG.establish.status.established;
+  if(c.side==="none") return c.nativeCanGrow?"none-open":"none-limited";
+  if(c.side==="native") return !c.playerCanGrow?"native-cannot-grow":theySuit>youSuit+0.05?"native-better-suited":young?"native-young":"native-established";
+  if(c.side==="player") return youSuit>theySuit+0.05?"player-better-suited":"player-established";
+  return "even";
+}
 function compWhy(i,c){
   const youSuit=c.playerFitness, theySuit=c.nativeFitness, young=c.playerTiles>0&&c.playerMaturity<CFG.establish.status.established;
   if(c.side==="none") return c.nativeCanGrow?"Native vegetation could spread in here: this ground suits it. Plants already growing here block it."
@@ -874,13 +883,31 @@ function computePreview(id){
     const d=skyWhatIf(u), c=CLIM?sim.climatePreview(id):null;
     // (BLOOM-029D) sky = the exact current → preview SURFACE sky of this what-if, for the production Terraform room's globe (read-only;
     // the map's outline code and the bloom:upgrade-preview detail pick their own keys, so neither changes)
-    data={gain:data.gain, lose:data.lose, better:d.better, worse:d.worse, climate:c, sky:{axis:d.axis, from:d.from, to:d.to, current:skyNow(), preview:d.skyAfter}};
+    data={gain:data.gain, lose:data.lose, better:d.better, worse:d.worse, climate:c, sky:{axis:d.axis, from:d.from, to:d.to, current:skyNow(), preview:d.skyAfter},
+      nativeLess:d.nb||[], nativeMore:d.nw||[]}; // (BLOOM-039) the same "suits native plants less / more" lists the footer names
     return { data, text:`${u.name} — ${skyWords({...d, gain:data.gain, lose:data.lose})}.${c?" "+climPreviewWords(c,false)+".":""}` }; }
   return { data, text:`${u.name} — ` + (data.gain.length||data.lose.length
     ? [data.gain.length?`opens: ${nm(data.gain)}`:"", data.lose.length?`⚠ closes: ${nm(data.lose)}`:""].filter(Boolean).join(" · ")
     : (u.board==="Spread"?"no region changes; your plant spreads faster.":"no region changes state yet.")) };
 }
 function describePreview(id){ const r=computePreview(id); preview=r.data; log(r.text); }
+// (BLOOM-039) the SAME what-if as the engine's previewOf — apply the upgrade to the plant / sky, read evaluate(), restore — taken up to
+// `maxN` steps along ONE upgrade track, for region `i`: the readout's multi-step "Would help" ("Cold Tolerance ×2 opens it"). Each step must
+// be legal by the engine's own canBuy and is priced by the engine's own price at that tier (cumulative). Nothing is bought; Biomass, the
+// climate and every run state are untouched; genome / sky / Terraform counts are restored exactly. The step's effect is the engine's
+// applyTrait, effect for effect (bloom-sim.js); a sky clamped at its limit ends the track (one more step would change nothing).
+function applyStep(u){ const e=u.effect;
+  if(e.type==="tempPoint"||e.type==="level"||e.type==="crossing") genome[e.stat]++;
+  else if(e.type==="waterArm"){ if(genome.waterArm!==e.arm){ genome.waterArm=e.arm; genome.waterPts=0; } genome.waterPts++; }
+  else if(e.type==="sky"){ const v=G[e.axis]+e.delta; G[e.axis]=(e.min!==undefined||e.max!==undefined)?clamp(v,e.min??-Infinity,e.max??Infinity):v; tf[u.id]++; } }
+function stepsWhatIf(id,i,maxN){
+  const u=upById[id]; if(!u||!sim.offered(u)||!(i>=0&&i<SEC.length)) return null;
+  const g0={...genome}, s0={...G}, t0={...tf}, out=[]; let cost=0;
+  try{ for(let n=1;n<=maxN;n++){ if(!sim.canBuy(u)) break; const p=sim.price(u), was=u.effect.type==="sky"?G[u.effect.axis]:null; applyStep(u);
+      if(was!==null&&G[u.effect.axis]===was) break; cost+=p; const e=evaluate(i);
+      out.push({ n, cost, fitness:e.fitness, grows:e.fitness>CFG.grow.growThresh, limitKey:e.limitKey, cats:{Temperature:e.cats.Temperature.f, Water:e.cats.Water.f, Soil:e.cats.Soil.f, Hazard:e.cats.Hazard.f} }); } }
+  finally{ for(const k of Object.keys(genome)) if(!(k in g0)) delete genome[k]; Object.assign(genome,g0); Object.assign(G,s0); Object.assign(tf,t0); }
+  return out; }
 function clearPreview(){ preview=null; runUI.invalidate("preview-clear"); }
 let justBought=null;
 function buy(id){
@@ -1102,9 +1129,16 @@ function onWin(cov){
 /*  MAIN LOOP                                                                   */
 /* ========================================================================== */
 let lastCov=0, acc=0, last=0, lastInspectTick=-1;
+// (BLOOM-039) the run advances on VISIBLE wall-clock time only. A hidden tab (or a frozen page, a sleeping laptop) does not bank the
+// time it was away: the clock restarts from the moment the page is shown again, so nothing is simulated in a burst on return. A long
+// frame is clamped (the run slows instead of jumping); a gap longer than FRAME_GAP_MS is a suspension and counts as no time at all.
+// Shell timekeeping only: running / paused, the speed, rooms and every scenario clock are untouched (they all run on sim ticks).
+const FRAME_MAX_MS=250, FRAME_GAP_MS=2000;
+doc.addEventListener("visibilitychange",()=>{ last=0; },LIFE);
 function frame(ts){
   if(disposed) return; // (BLOOM-033) a disposed run stops at once
-  if(!last)last=ts; const dt=ts-last; last=ts;
+  if(!last||doc.hidden)last=ts; let dt=ts-last; last=ts;
+  if(dt>FRAME_GAP_MS) dt=0; else if(dt>FRAME_MAX_MS) dt=FRAME_MAX_MS;
   if(running){ acc+=dt*speed;
     while(acc>=CFG.tickMs){ lastCov=sim.tick(); acc-=CFG.tickMs; if(!running)break; }
   }
@@ -1154,7 +1188,7 @@ if(BLOOM.runUI){
     view:{ running:()=>running, speed:()=>speed, selected:()=>selected, selectedWater:()=>selectedWater, coverage:()=>lastCov, preview:()=>preview,
       skyFx:()=>skyFx, message:()=>lastMessage, tilePx:()=>TILE, canvas:cv, compBar:()=>compBar },
     read:{ skyNow, catLamp, isBlocked, tileCounts, limitText:e=>LIMIT_MSG[e.limitKey](e), fixHint:e=>FIX_HINT[e.limitKey](e),
-      colonyWord:w=>COLONY_WORD[w], colonyHint:w=>COLONY_HINT[w], colonyTip, focusUI:FOCUS_UI, specUI:SPEC_UI, geoInfo, compWhy,
+      colonyWord:w=>COLONY_WORD[w], colonyHint:w=>COLONY_HINT[w], colonyTip, focusUI:FOCUS_UI, specUI:SPEC_UI, geoInfo, compWhy, compReason, stepsWhatIf, // (BLOOM-039) compReason + the multi-step what-if
       pressureStatus, phaseName, climForecast, upgradeState, offeredOn, computePreview, tileAt:(x,y)=>tileAt({clientX:x, clientY:y}),
       runMenu:()=>PLAY?{label:TRAIN?TC.menu:PC.actions.menu, items:playActions()}:null,
       report:()=>REPORT, reportActions, // (BLOOM-029E) the structured run-end report and its actions (the modal reads the same)
@@ -1170,7 +1204,7 @@ if(BLOOM.runUI){
     if(BLOOM.runReport) RR=BLOOM.runReport.mount(PV,{ transition:DR.transition }); }
 }
 // BLOOM-008/009: open on the origin so its colony status and growth focus are the first thing in view
-selected=ORIGIN; renderInspect(); log(`Your plant has just sprouted in ${LABEL[ORIGIN]}: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish.`);
+selected=ORIGIN; renderInspect(); log(`Your plant has just sprouted in ${LABEL[ORIGIN]}: a few tiny seedlings. ${SHELL?"Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish.":"Pick a growth focus for this colony in Regions — or leave it Balanced — and watch it establish."}`);
 if(PRESS) log(`☁ ${SCN.display.title}. ${SCN.display.summary} The decline begins in ${mmss(SCN.pressure.graceSeconds)}. Your plant sprouted in ${LABEL[ORIGIN]}.`);
 if(CLIM&&!PRESS&&!COMP) log(`🌪 ${SCN.display.title}. ${SCN.display.summary} Terraform unsettles the part of the climate it changes; Adapt and Spread do not. Your plant sprouted in ${LABEL[ORIGIN]}.`);
 if(COMP&&!PRESS) log(`🌿 ${SCN.display.title}. ${SCN.display.summary} Native plants (violet, hatched) hold ${Math.round(CS.share*100)}% of the land. Your plant sprouted in ${LABEL[ORIGIN]}.`);

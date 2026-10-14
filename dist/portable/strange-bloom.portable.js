@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: de32ce9116bbec5c0bef3c280a36c4e2b75e6461187bce781603ec27931f4ecc  (45 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: c8f04676664dd2fef94eea80e8854b0500d3ca8625bc2a94b54e137b421e1064  (45 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {
@@ -15319,11 +15319,17 @@
               if (a2) keep.push(a2.rect);
             }
           }
-          const view = { width: document.documentElement.clientWidth || innerWidth, height: document.documentElement.clientHeight || innerHeight };
+          const bn2 = document.getElementById("pvBanner"), bnr = bn2 && !bn2.hidden ? shownRect(bn2) : null, keep0 = keep.slice();
+          if (bnr) keep.push(bnr);
+          const vw = document.documentElement.clientWidth || innerWidth, host2 = document.querySelector("#app > .app-run:not([hidden])"), hr3 = host2 ? host2.getBoundingClientRect() : null;
+          const ox = hr3 && hr3.width > 0 && hr3.width < vw - 1 ? hr3.left : 0, sh = (r2) => r2 && { ...r2, left: r2.left - ox, right: r2.right - ox };
+          const view = { width: ox ? hr3.width : vw, height: document.documentElement.clientHeight || innerHeight };
           const narrow = view.width < PLACE.narrow, w2 = narrow ? Math.min(PLACE.dockMax, view.width - 2 * PLACE.margin) : Math.min(PLACE.width, view.width - 2 * PLACE.margin);
           if (this.card.style.width !== w2 + "px") this.card.style.width = w2 + "px";
           const size = { w: w2, h: this.card.offsetHeight };
-          const p2 = placeCard(size, prim ? prim.at.rect : null, others.map((o2) => o2.at.rect), keep, view);
+          let p2 = placeCard(size, prim ? sh(prim.at.rect) : null, others.map((o2) => sh(o2.at.rect)), keep.map(sh), view);
+          if (bnr && prim && overlap({ left: p2.left, top: p2.top, right: p2.left + p2.width, bottom: p2.top + size.h }, sh(prim.at.rect)) > 0) p2 = placeCard(size, sh(prim.at.rect), others.map((o2) => sh(o2.at.rect)), keep0.map(sh), view);
+          p2.left += ox;
           const sig = JSON.stringify([p2, size.h, found.map((f2) => [keyOf(f2.t), r4(f2.at.rect)])]);
           if (!force && sig === this._last) return;
           this._last = sig;
