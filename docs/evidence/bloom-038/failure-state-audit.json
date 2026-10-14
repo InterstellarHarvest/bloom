@@ -1,0 +1,3503 @@
+{
+ "format": "bloom-038-failure-state-audit@1",
+ "tools": [
+  "tools/research/design-audit/failure-ui.js",
+  "tools/research/design-audit/readout.mjs",
+  "tools/research/design-audit/analyze.mjs",
+  "tools/research/design-audit/escape.mjs",
+  "tools/research/design-audit/merge-failure.mjs"
+ ],
+ "questions": {
+  "q1": "does it identify the TRUE limiting cause?",
+  "q2": "does it distinguish current symptom from root cause?",
+  "q3": "does it present an action that would genuinely help?",
+  "q4": "could the player reasonably infer what to do next? (heuristic — HUMAN PLAYTEST NEEDED)",
+  "q5": "do two different mechanics use visually similar language / symbols?"
+ },
+ "ui": {
+  "source": "failure-ui.json (full per-state captures: banner text, conditions, would-help, scenario card, log, report, screenshots in failure-ui/)",
+  "worlds": {
+   "temp_cold": {
+    "archetype": "frozen_world",
+    "seed": 7,
+    "species": "organic_hybrid",
+    "region": 3,
+    "name": "Hoar Reach"
+   },
+   "temp_hot": {
+    "archetype": "frozen_world",
+    "seed": 7,
+    "species": "organic_hybrid",
+    "region": 2,
+    "name": "Fumarole Reach"
+   },
+   "soil_salt": {
+    "archetype": "frozen_world",
+    "seed": 7,
+    "species": "organic_hybrid",
+    "region": 0,
+    "name": "Thaw Shelf"
+   },
+   "multi_factor": {
+    "archetype": "frozen_world",
+    "seed": 7,
+    "species": "organic_hybrid",
+    "region": 1,
+    "name": "Tundra Cirque"
+   },
+   "water_wet": {
+    "archetype": "frozen_world",
+    "seed": 7,
+    "species": "cinder_rosette",
+    "region": 2,
+    "name": "Fumarole Reach"
+   },
+   "refuge": {
+    "archetype": "frozen_world",
+    "seed": 7,
+    "species": "reed_spire",
+    "region": 7,
+    "name": "Sedge Ridge"
+   },
+   "hazard_toxicity": {
+    "archetype": "frozen_world",
+    "seed": 9,
+    "species": "organic_hybrid",
+    "region": 6,
+    "name": "Lichen Moraine"
+   },
+   "water_dry": {
+    "archetype": "frozen_world",
+    "seed": 9,
+    "species": "reed_spire",
+    "region": 3,
+    "name": "Spring Reach"
+   },
+   "unreachable_land": {
+    "archetype": "frozen_world",
+    "seed": 17,
+    "species": "organic_hybrid",
+    "region": 1,
+    "name": "Thaw Basin"
+   },
+   "hazard_radiation": {
+    "archetype": "desert_world",
+    "seed": 7,
+    "species": "cinder_rosette",
+    "region": 11,
+    "name": "Furnace Shelf"
+   }
+  },
+  "perState": {
+   "temp_cold": {
+    "region": "Hoar Reach",
+    "limiting": "Limiting: Temperature · too cold",
+    "status": "Blocked",
+    "lamp": "red",
+    "q1": "yes",
+    "blockedButColonisedUnaided": false,
+    "tierProbe": {
+     "cold": "opens at tier 2",
+     "warm": "opens at tier 4"
+    },
+    "q2": "n/a (the limiting factor is the root cause at landing)",
+    "q3": "improves-only (nothing shown)",
+    "q4": "partial",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/temp_cold.png"
+   },
+   "temp_hot": {
+    "region": "Fumarole Reach",
+    "limiting": "Limiting: Temperature · too hot",
+    "status": "Blocked",
+    "lamp": "yellow",
+    "q1": "yes",
+    "blockedButColonisedUnaided": false,
+    "tierProbe": {
+     "heat": "opens at tier 1",
+     "cool": "opens at tier 1"
+    },
+    "q2": "n/a (the limiting factor is the root cause at landing)",
+    "q3": "yes",
+    "q4": "likely",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/temp_hot.png"
+   },
+   "soil_salt": {
+    "region": "Thaw Shelf",
+    "limiting": "Limiting: Soil · soil is hostile (salt/pH)",
+    "status": "Blocked",
+    "lamp": "red",
+    "q1": "yes",
+    "blockedButColonisedUnaided": false,
+    "tierProbe": {
+     "salt": "opens at tier 1"
+    },
+    "q2": "n/a (the limiting factor is the root cause at landing)",
+    "q3": "yes",
+    "q4": "likely",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/soil_salt.png"
+   },
+   "multi_factor": {
+    "region": "Tundra Cirque",
+    "limiting": "Limiting: Temperature · too cold",
+    "status": "Blocked",
+    "lamp": "red",
+    "q1": "partial",
+    "blockedButColonisedUnaided": false,
+    "tierProbe": {
+     "cold": "does not open (temperature points are capped — cold+heat ≤ 3)",
+     "warm": "does not open (max probed)"
+    },
+    "q2": "n/a (the limiting factor is the root cause at landing)",
+    "q3": "improves-only (nothing shown)",
+    "q4": "unlikely",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/multi_factor.png"
+   },
+   "water_wet": {
+    "region": "Fumarole Reach",
+    "limiting": "Limiting: Water · too wet",
+    "status": "Blocked",
+    "lamp": "yellow",
+    "q1": "yes",
+    "blockedButColonisedUnaided": true,
+    "tierProbe": {
+     "flood": "opens at tier 1",
+     "dry": "opens at tier 1"
+    },
+    "q2": "n/a (the limiting factor is the root cause at landing)",
+    "q3": "no",
+    "q4": "partial",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/water_wet.png"
+   },
+   "refuge": {
+    "region": "Sedge Ridge",
+    "limiting": "Limiting: Water · too dry",
+    "status": "Refuge",
+    "lamp": "yellow",
+    "q1": "yes",
+    "blockedButColonisedUnaided": true,
+    "tierProbe": {
+     "drought": "opens at tier 1",
+     "humid": "opens at tier 1"
+    },
+    "q2": "yes",
+    "q3": "no",
+    "q4": "partial",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/refuge.png"
+   },
+   "hazard_toxicity": {
+    "region": "Lichen Moraine",
+    "limiting": "Limiting: Hazard · hazard is lethal",
+    "status": "Blocked",
+    "lamp": "red",
+    "q1": "yes",
+    "blockedButColonisedUnaided": false,
+    "tierProbe": {
+     "rad": "does not open (cannot buy)"
+    },
+    "q2": "n/a (the limiting factor is the root cause at landing)",
+    "q3": "no",
+    "q4": "partial",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/hazard_toxicity.png"
+   },
+   "water_dry": {
+    "region": "Spring Reach",
+    "limiting": "Limiting: Water · too dry",
+    "status": "Blocked",
+    "lamp": "yellow",
+    "q1": "yes",
+    "blockedButColonisedUnaided": true,
+    "tierProbe": {
+     "drought": "opens at tier 1",
+     "humid": "opens at tier 1"
+    },
+    "q2": "n/a (the limiting factor is the root cause at landing)",
+    "q3": "no",
+    "q4": "partial",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/water_dry.png"
+   },
+   "unreachable_land": {
+    "region": "Thaw Basin",
+    "limiting": "Nothing holding the plant back",
+    "status": "Strained",
+    "lamp": "yellow",
+    "q1": "n/a (region not blocked)",
+    "blockedButColonisedUnaided": false,
+    "tierProbe": {},
+    "q2": "yes",
+    "q3": "yes",
+    "q4": "partial",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/unreachable_land.png"
+   },
+   "hazard_radiation": {
+    "region": "Furnace Shelf",
+    "limiting": "Limiting: Hazard · hazard is stressful",
+    "status": "Blocked",
+    "lamp": "yellow",
+    "q1": "yes",
+    "blockedButColonisedUnaided": true,
+    "tierProbe": {
+     "rad": "opens at tier 1"
+    },
+    "q2": "n/a (the limiting factor is the root cause at landing)",
+    "q3": "no",
+    "q4": "partial",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/hazard_radiation.png"
+   },
+   "low_biomass": {
+    "region": "Hoar Reach",
+    "limiting": "Limiting: Temperature · too cold",
+    "status": "Blocked",
+    "lamp": "red",
+    "q1": "yes",
+    "blockedButColonisedUnaided": false,
+    "q2": "no",
+    "q3": "improves-only (nothing shown)",
+    "q4": "partial",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/low_biomass.png"
+   },
+   "native_takeover": {
+    "region": "Willow Hollow",
+    "limiting": "Nothing holding the plant back",
+    "status": "OK",
+    "lamp": "green",
+    "q1": "n/a (region not blocked)",
+    "blockedButColonisedUnaided": false,
+    "q2": "yes",
+    "q3": "no",
+    "q4": "unlikely",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/native_takeover.png"
+   },
+   "climate_shock_warning": {
+    "region": "Amber Reach",
+    "limiting": "Nothing holding the plant back",
+    "status": "OK",
+    "lamp": "green",
+    "q1": "n/a (region not blocked)",
+    "blockedButColonisedUnaided": false,
+    "q2": "yes",
+    "q3": "no",
+    "q4": "unlikely",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/climate_shock_warning.png"
+   },
+   "climate_shock_active": {
+    "region": "Oasis Shelf",
+    "limiting": "Nothing holding the plant back",
+    "status": "OK",
+    "lamp": "green",
+    "q1": "n/a (region not blocked)",
+    "blockedButColonisedUnaided": false,
+    "q2": "message-only",
+    "q3": "no",
+    "q4": "unlikely",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/climate_shock_active.png"
+   },
+   "dying_world_late_decline": {
+    "region": "Gold Pan",
+    "limiting": "Limiting: Water · too dry",
+    "status": "Blocked",
+    "lamp": "yellow",
+    "q1": "yes",
+    "blockedButColonisedUnaided": false,
+    "q2": "yes",
+    "q3": "yes",
+    "q4": "likely",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/dying_world_late_decline.png"
+   },
+   "extinction_warning": {
+    "region": null,
+    "limiting": null,
+    "status": null,
+    "lamp": null,
+    "q1": "n/a (no region selected)",
+    "blockedButColonisedUnaided": false,
+    "q2": "yes",
+    "q3": "n/a",
+    "q4": "see note",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/extinction_warning.png"
+   },
+   "extinction_report": {
+    "region": null,
+    "limiting": null,
+    "status": null,
+    "lamp": null,
+    "q1": "n/a (no region selected)",
+    "blockedButColonisedUnaided": false,
+    "q2": "n/a",
+    "q3": "n/a",
+    "q4": "see note",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/extinction_report.png"
+   },
+   "thin_air_holding": {
+    "region": null,
+    "limiting": null,
+    "status": null,
+    "lamp": null,
+    "q1": "n/a (no region selected)",
+    "blockedButColonisedUnaided": false,
+    "q2": "yes",
+    "q3": "n/a",
+    "q4": "see note",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/thin_air_holding.png"
+   },
+   "thin_air_coverage_lost": {
+    "region": null,
+    "limiting": null,
+    "status": null,
+    "lamp": null,
+    "q1": "n/a (no region selected)",
+    "blockedButColonisedUnaided": false,
+    "q2": "yes",
+    "q3": "n/a",
+    "q4": "see note",
+    "screenshot": "docs/evidence/bloom-038/failure-ui/thin_air_coverage_lost.png"
+   }
+  },
+  "vocabulary": [
+   {
+    "mechanic": "blocked lamp",
+    "state": "temp_cold",
+    "where": "banner status pill",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "temp_cold",
+    "where": "condition box Temperature",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "log",
+    "state": "temp_cold",
+    "where": "log line",
+    "words": "Your plant has just sprouted in Sedge Ridge: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "temp_cold",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "temp_hot",
+    "where": "banner status pill",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "strained lamp",
+    "state": "temp_hot",
+    "where": "condition box Temperature",
+    "words": "Strained",
+    "icon": "alert",
+    "colour": "rgb(138, 83, 0)"
+   },
+   {
+    "mechanic": "log",
+    "state": "temp_hot",
+    "where": "log line",
+    "words": "Your plant has just sprouted in Sedge Ridge: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "temp_hot",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "soil_salt",
+    "where": "banner status pill",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "soil_salt",
+    "where": "condition box Soil",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "log",
+    "state": "soil_salt",
+    "where": "log line",
+    "words": "Your plant has just sprouted in Sedge Ridge: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "soil_salt",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "multi_factor",
+    "where": "banner status pill",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "multi_factor",
+    "where": "condition box Temperature",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "strained lamp",
+    "state": "multi_factor",
+    "where": "condition box Water",
+    "words": "Strained",
+    "icon": "alert",
+    "colour": "rgb(138, 83, 0)"
+   },
+   {
+    "mechanic": "log",
+    "state": "multi_factor",
+    "where": "log line",
+    "words": "Your plant has just sprouted in Sedge Ridge: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "multi_factor",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "water_wet",
+    "where": "banner status pill",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "strained lamp",
+    "state": "water_wet",
+    "where": "condition box Water",
+    "words": "Strained",
+    "icon": "alert",
+    "colour": "rgb(138, 83, 0)"
+   },
+   {
+    "mechanic": "log",
+    "state": "water_wet",
+    "where": "log line",
+    "words": "Your plant has just sprouted in Sedge Ridge: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "water_wet",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "refuge",
+    "state": "refuge",
+    "where": "banner status pill",
+    "words": "Refuge",
+    "icon": "refuge",
+    "colour": "rgb(35, 103, 159)"
+   },
+   {
+    "mechanic": "strained lamp",
+    "state": "refuge",
+    "where": "condition box Water",
+    "words": "Strained",
+    "icon": "alert",
+    "colour": "rgb(138, 83, 0)"
+   },
+   {
+    "mechanic": "log",
+    "state": "refuge",
+    "where": "log line",
+    "words": "Your plant has just sprouted in Sedge Ridge: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "refuge",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "hazard_toxicity",
+    "where": "banner status pill",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "hazard_toxicity",
+    "where": "condition box Hazard",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "log",
+    "state": "hazard_toxicity",
+    "where": "log line",
+    "words": "Your plant has just sprouted in Mist Valley: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "hazard_toxicity",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "water_dry",
+    "where": "banner status pill",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "strained lamp",
+    "state": "water_dry",
+    "where": "condition box Water",
+    "words": "Strained",
+    "icon": "alert",
+    "colour": "rgb(138, 83, 0)"
+   },
+   {
+    "mechanic": "log",
+    "state": "water_dry",
+    "where": "log line",
+    "words": "Your plant has just sprouted in Mist Valley: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "water_dry",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "strained lamp",
+    "state": "unreachable_land",
+    "where": "banner status pill",
+    "words": "Strained",
+    "icon": "alert",
+    "colour": "rgb(138, 83, 0)"
+   },
+   {
+    "mechanic": "log",
+    "state": "unreachable_land",
+    "where": "log line",
+    "words": "Your plant has just sprouted in Lichen Rise: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "unreachable_land",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "hazard_radiation",
+    "where": "banner status pill",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "strained lamp",
+    "state": "hazard_radiation",
+    "where": "condition box Hazard",
+    "words": "Strained",
+    "icon": "alert",
+    "colour": "rgb(138, 83, 0)"
+   },
+   {
+    "mechanic": "log",
+    "state": "hazard_radiation",
+    "where": "log line",
+    "words": "Your plant has just sprouted in Gold Dunes 2: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establis",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "hazard_radiation",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "low_biomass",
+    "where": "banner status pill",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "low_biomass",
+    "where": "condition box Temperature",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "log",
+    "state": "low_biomass",
+    "where": "log line",
+    "words": "Your plant has just sprouted in Sedge Ridge: a few tiny seedlings. Pick a growth focus for this colony on the left (or leave it Balanced) and watch it establish",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "low_biomass",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "ok lamp",
+    "state": "native_takeover",
+    "where": "banner status pill",
+    "words": "OK",
+    "icon": "check",
+    "colour": "rgb(42, 118, 54)"
+   },
+   {
+    "mechanic": "native competition",
+    "state": "native_takeover",
+    "where": "scenario card header",
+    "words": "Native Competition Details Native plants hold 41% spreading",
+    "icon": "competition",
+    "colour": "rgb(47, 58, 44)"
+   },
+   {
+    "mechanic": "native competition",
+    "state": "native_takeover",
+    "where": "log line",
+    "words": "Willow Hollow is now dominated by native vegetation.",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "native_takeover",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "ok lamp",
+    "state": "climate_shock_warning",
+    "where": "banner status pill",
+    "words": "OK",
+    "icon": "check",
+    "colour": "rgb(42, 118, 54)"
+   },
+   {
+    "mechanic": "Volatile Climate",
+    "state": "climate_shock_warning",
+    "where": "scenario card header",
+    "words": "Volatile Climate Details Instability 80% · Volatile Heat",
+    "icon": "climate",
+    "colour": "rgb(47, 58, 44)"
+   },
+   {
+    "mechanic": "Volatile Climate",
+    "state": "climate_shock_warning",
+    "where": "log line",
+    "words": "The climate has settled to Volatile (80%).",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "climate_shock_warning",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "ok lamp",
+    "state": "climate_shock_active",
+    "where": "banner status pill",
+    "words": "OK",
+    "icon": "check",
+    "colour": "rgb(42, 118, 54)"
+   },
+   {
+    "mechanic": "Volatile Climate",
+    "state": "climate_shock_active",
+    "where": "scenario card header",
+    "words": "Volatile Climate Details Instability 45% · Unsettled Heat",
+    "icon": "climate",
+    "colour": "rgb(47, 58, 44)"
+   },
+   {
+    "mechanic": "Volatile Climate",
+    "state": "climate_shock_active",
+    "where": "log line",
+    "words": "The climate has settled to Unsettled (46%).",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "climate_shock_active",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "blocked lamp",
+    "state": "dying_world_late_decline",
+    "where": "banner status pill",
+    "words": "Blocked",
+    "icon": "close",
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "strained lamp",
+    "state": "dying_world_late_decline",
+    "where": "condition box Water",
+    "words": "Strained",
+    "icon": "alert",
+    "colour": "rgb(138, 83, 0)"
+   },
+   {
+    "mechanic": "Dying World pressure",
+    "state": "dying_world_late_decline",
+    "where": "scenario card header",
+    "words": "Dying World Details Severe decline · 84% lost",
+    "icon": "pressure",
+    "colour": "rgb(47, 58, 44)"
+   },
+   {
+    "mechanic": "Dying World pressure",
+    "state": "dying_world_late_decline",
+    "where": "log line",
+    "words": "The thinning atmosphere changed the land: Gold Pan is now marginal for your plant (too dry); Gold Canyon is now too hostile for your plant (too dry); Ochre Erg ",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "dying_world_late_decline",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "Dying World pressure",
+    "state": "extinction_warning",
+    "where": "scenario card header",
+    "words": "Dying World Details Severe decline · 85% lost",
+    "icon": "pressure",
+    "colour": "rgb(47, 58, 44)"
+   },
+   {
+    "mechanic": "extinction warning",
+    "state": "extinction_warning",
+    "where": "scenario card warn line",
+    "words": "No living plants left. Extinction in 0:07",
+    "icon": null,
+    "colour": "rgb(143, 40, 70)"
+   },
+   {
+    "mechanic": "Dying World pressure",
+    "state": "extinction_warning",
+    "where": "log line",
+    "words": "The thinning atmosphere changed the land: Gold Pan is now marginal for your plant (too dry); Gold Canyon is now too hostile for your plant (too dry); Ochre Erg ",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "extinction_warning",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "Dying World pressure",
+    "state": "extinction_report",
+    "where": "scenario card header",
+    "words": "Dying World Details Severe decline · 87% lost",
+    "icon": "pressure",
+    "colour": "rgb(47, 58, 44)"
+   },
+   {
+    "mechanic": "Dying World pressure",
+    "state": "extinction_report",
+    "where": "log line",
+    "words": "✕ Extinction: extinction: no living plants anywhere for 8 s.",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "extinction",
+    "state": "extinction_report",
+    "where": "report heading",
+    "words": "EXTINCTION · extinction: no living plants anywhere for 8 s",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "extinction_report",
+    "where": "HUD",
+    "words": "EXTINCT",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "Dying World pressure",
+    "state": "thin_air_holding",
+    "where": "scenario card header",
+    "words": "Dying World Details Severe decline · 68% lost",
+    "icon": "pressure",
+    "colour": "rgb(47, 58, 44)"
+   },
+   {
+    "mechanic": "Thin Air completion",
+    "state": "thin_air_holding",
+    "where": "scenario card condition",
+    "words": "BLOOM REACHED — hold it until the atmosphere settles. The atmosphere settles in 1:20",
+    "icon": "star",
+    "colour": "rgb(47, 58, 44)"
+   },
+   {
+    "mechanic": "log",
+    "state": "thin_air_holding",
+    "where": "log line",
+    "words": "Severe decline: Regions near their limits are tipping over. Now: moisture −4.9, temperature −5.4 °C, radiation +5.4.",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "thin_air_holding",
+    "where": "HUD",
+    "words": "HOLDING",
+    "icon": null,
+    "colour": null
+   },
+   {
+    "mechanic": "Dying World pressure",
+    "state": "thin_air_coverage_lost",
+    "where": "scenario card header",
+    "words": "Dying World Details Severe decline · 68% lost",
+    "icon": "pressure",
+    "colour": "rgb(47, 58, 44)"
+   },
+   {
+    "mechanic": "Thin Air completion",
+    "state": "thin_air_coverage_lost",
+    "where": "scenario card condition",
+    "words": "Final atmosphere: 68% · Bloom 62% / 70% Settles in 1:19",
+    "icon": "pressure",
+    "colour": "rgb(47, 58, 44)"
+   },
+   {
+    "mechanic": "log",
+    "state": "thin_air_coverage_lost",
+    "where": "log line",
+    "words": "Severe decline: Regions near their limits are tipping over. Now: moisture −4.9, temperature −5.4 °C, radiation +5.4.",
+    "icon": "info",
+    "colour": null
+   },
+   {
+    "mechanic": "HUD state word",
+    "state": "thin_air_coverage_lost",
+    "where": "HUD",
+    "words": "PAUSED",
+    "icon": null,
+    "colour": null
+   }
+  ],
+  "collisions": [
+   {
+    "kind": "icon",
+    "icon": "info",
+    "mechanics": [
+     "log",
+     "native competition",
+     "Volatile Climate",
+     "Dying World pressure"
+    ]
+   },
+   {
+    "kind": "icon",
+    "icon": "pressure",
+    "mechanics": [
+     "Dying World pressure",
+     "Thin Air completion"
+    ]
+   },
+   {
+    "kind": "text colour",
+    "colour": "rgb(143, 40, 70)",
+    "mechanics": [
+     "blocked lamp",
+     "extinction warning"
+    ]
+   },
+   {
+    "kind": "text colour",
+    "colour": "rgb(47, 58, 44)",
+    "mechanics": [
+     "native competition",
+     "Volatile Climate",
+     "Dying World pressure",
+     "Thin Air completion"
+    ]
+   },
+   {
+    "kind": "emoji survives stripGlyph in the log line",
+    "state": "climate_shock_warning",
+    "text": "Bought Warm the Sky. Sky +20°C → +26°C · ⚠ worse, still growing: Gold Pan. 🌪 instability: temperature 34% → 81% · Unsettled → Critical · ⚠ "
+   },
+   {
+    "kind": "emoji survives stripGlyph in the log line",
+    "state": "climate_shock_warning",
+    "text": "⚠ 🌪 Temperature is unstable after your Terraforming: a heat pulse is coming in 0:11. Colonies near their heat limit may die back until it p"
+   },
+   {
+    "kind": "emoji survives stripGlyph in the log line",
+    "state": "climate_shock_active",
+    "text": "Bought Warm the Sky. Sky +20°C → +26°C · ⚠ worse, still growing: Gold Pan. 🌪 instability: temperature 34% → 81% · Unsettled → Critical · ⚠ "
+   },
+   {
+    "kind": "emoji survives stripGlyph in the log line",
+    "state": "climate_shock_active",
+    "text": "⚠ 🌪 Temperature is unstable after your Terraforming: a heat pulse is coming in 0:11. Colonies near their heat limit may die back until it p"
+   }
+  ],
+  "errors": [
+   "no landing example found for soil_ph in 84 harness worlds"
+  ]
+ },
+ "readoutHonesty": {
+  "format": "bloom-038-readout-honesty@1",
+  "blockedBelow": 0.72,
+  "growThresh": 0.55,
+  "landing": {
+   "desert_world|organic_hybrid": {
+    "land": 20,
+    "blocked": 16.598,
+    "blockedButGrows": 0.225,
+    "clearButCannotGrow": 0,
+    "multiFactor": 7.158,
+    "hintAdaptCannotHelp": 7.003,
+    "hintNeitherHelps": 7.003,
+    "soilByPH": 0,
+    "hazardByTox": 0.126,
+    "wouldHelpEmpty": 9.41,
+    "wouldHelpEmptyButMultiStep": 2.408,
+    "regions": 298,
+    "examples": [
+     {
+      "tag": "desert_world:32513/organic_hybrid@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 3,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:32513/organic_hybrid@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 9,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:32513/organic_hybrid@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 13,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:18097/organic_hybrid@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 0,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:18097/organic_hybrid@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 2,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:18097/organic_hybrid@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 6,
+      "limit": "Water:parched"
+     }
+    ]
+   },
+   "desert_world|cinder_rosette": {
+    "land": 19,
+    "blocked": 12.259,
+    "blockedButGrows": 0.712,
+    "clearButCannotGrow": 0,
+    "multiFactor": 4.364,
+    "hintAdaptCannotHelp": 4.148,
+    "hintNeitherHelps": 4.148,
+    "soilByPH": 0,
+    "hazardByTox": 0.343,
+    "wouldHelpEmpty": 4.5,
+    "wouldHelpEmptyButMultiStep": 0.352,
+    "regions": 286,
+    "examples": [
+     {
+      "tag": "desert_world:72675/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 4,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:41702/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 9,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:55163/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 11,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:42585/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 0,
+      "limit": "Water:parched"
+     }
+    ]
+   },
+   "desert_world|woolly_candle": {
+    "land": 20,
+    "blocked": 17.416,
+    "blockedButGrows": 0.514,
+    "clearButCannotGrow": 0,
+    "multiFactor": 9.557,
+    "hintAdaptCannotHelp": 8.285,
+    "hintNeitherHelps": 8.285,
+    "soilByPH": 0,
+    "hazardByTox": 0.333,
+    "wouldHelpEmpty": 10.001,
+    "wouldHelpEmptyButMultiStep": 1.715,
+    "regions": 298,
+    "examples": [
+     {
+      "tag": "desert_world:32513/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 3,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:32513/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 9,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:32513/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 13,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:18097/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 0,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:18097/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 6,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:18097/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 7,
+      "limit": "Water:parched"
+     }
+    ]
+   },
+   "desert_world|reed_spire": {
+    "land": 20,
+    "blocked": 18.21,
+    "blockedButGrows": 0.166,
+    "clearButCannotGrow": 0,
+    "multiFactor": 6.671,
+    "hintAdaptCannotHelp": 6.48,
+    "hintNeitherHelps": 6.48,
+    "soilByPH": 0,
+    "hazardByTox": 0,
+    "wouldHelpEmpty": 12.005,
+    "wouldHelpEmptyButMultiStep": 5.525,
+    "regions": 298,
+    "examples": [
+     {
+      "tag": "desert_world:32513/reed_spire@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 3,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:32513/reed_spire@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 9,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:32513/reed_spire@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 10,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:32513/reed_spire@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 13,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:18097/reed_spire@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 0,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "desert_world:18097/reed_spire@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 2,
+      "limit": "Water:parched"
+     }
+    ]
+   },
+   "frozen_world|organic_hybrid": {
+    "land": 20,
+    "blocked": 13.803,
+    "blockedButGrows": 0.5,
+    "clearButCannotGrow": 0,
+    "multiFactor": 1.958,
+    "hintAdaptCannotHelp": 1.779,
+    "hintNeitherHelps": 1.779,
+    "soilByPH": 0,
+    "hazardByTox": 0.114,
+    "wouldHelpEmpty": 7.168,
+    "wouldHelpEmptyButMultiStep": 5.39,
+    "regions": 293,
+    "examples": [
+     {
+      "tag": "frozen_world:97365/organic_hybrid@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 0,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:97365/organic_hybrid@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 2,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:97365/organic_hybrid@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 6,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:11877/organic_hybrid@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 0,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:11877/organic_hybrid@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 3,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:11877/organic_hybrid@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 6,
+      "limit": "Temperature:freezing"
+     }
+    ]
+   },
+   "frozen_world|cinder_rosette": {
+    "land": 20,
+    "blocked": 15.807,
+    "blockedButGrows": 0.158,
+    "clearButCannotGrow": 0,
+    "multiFactor": 4.493,
+    "hintAdaptCannotHelp": 5.088,
+    "hintNeitherHelps": 5.088,
+    "soilByPH": 0,
+    "hazardByTox": 0.056,
+    "wouldHelpEmpty": 11.665,
+    "wouldHelpEmptyButMultiStep": 6.578,
+    "regions": 293,
+    "examples": [
+     {
+      "tag": "frozen_world:97365/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 0,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:97365/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 2,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:97365/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 4,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:97365/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 8,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:11877/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 0,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:11877/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 2,
+      "limit": "Temperature:freezing"
+     }
+    ]
+   },
+   "frozen_world|woolly_candle": {
+    "land": 20,
+    "blocked": 11.993,
+    "blockedButGrows": 1.185,
+    "clearButCannotGrow": 0,
+    "multiFactor": 1.676,
+    "hintAdaptCannotHelp": 0.955,
+    "hintNeitherHelps": 0.955,
+    "soilByPH": 0,
+    "hazardByTox": 0.114,
+    "wouldHelpEmpty": 4.374,
+    "wouldHelpEmptyButMultiStep": 3.419,
+    "regions": 293,
+    "examples": [
+     {
+      "tag": "frozen_world:97365/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 0,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:97365/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 2,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:97365/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 6,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:11877/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 3,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:11877/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 7,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:61323/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 1,
+      "limit": "Temperature:freezing"
+     }
+    ]
+   },
+   "frozen_world|reed_spire": {
+    "land": 20,
+    "blocked": 14.389,
+    "blockedButGrows": 0.224,
+    "clearButCannotGrow": 0,
+    "multiFactor": 3.919,
+    "hintAdaptCannotHelp": 3.177,
+    "hintNeitherHelps": 3.177,
+    "soilByPH": 0,
+    "hazardByTox": 0.114,
+    "wouldHelpEmpty": 8.211,
+    "wouldHelpEmptyButMultiStep": 5.033,
+    "regions": 293,
+    "examples": [
+     {
+      "tag": "frozen_world:97365/reed_spire@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 0,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:97365/reed_spire@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 2,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:97365/reed_spire@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 6,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:11877/reed_spire@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 0,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:11877/reed_spire@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 3,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:11877/reed_spire@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 4,
+      "limit": "Temperature:freezing"
+     }
+    ]
+   },
+   "ocean_archipelago|organic_hybrid": {
+    "land": 20,
+    "blocked": 9.991,
+    "blockedButGrows": 1.014,
+    "clearButCannotGrow": 0,
+    "multiFactor": 4.845,
+    "hintAdaptCannotHelp": 4.166,
+    "hintNeitherHelps": 4.166,
+    "soilByPH": 0,
+    "hazardByTox": 0.317,
+    "wouldHelpEmpty": 4.166,
+    "wouldHelpEmptyButMultiStep": 0,
+    "regions": 284,
+    "examples": []
+   },
+   "ocean_archipelago|cinder_rosette": {
+    "land": 20,
+    "blocked": 16.499,
+    "blockedButGrows": 0.512,
+    "clearButCannotGrow": 0,
+    "multiFactor": 8.75,
+    "hintAdaptCannotHelp": 7.685,
+    "hintNeitherHelps": 7.685,
+    "soilByPH": 0,
+    "hazardByTox": 0.194,
+    "wouldHelpEmpty": 8.423,
+    "wouldHelpEmptyButMultiStep": 0.739,
+    "regions": 284,
+    "examples": [
+     {
+      "tag": "ocean_archipelago:39141/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 6,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "ocean_archipelago:96513/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 12,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "ocean_archipelago:26446/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 9,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "ocean_archipelago:4299/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 2,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "ocean_archipelago:4299/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 3,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "ocean_archipelago:27666/cinder_rosette@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 9,
+      "limit": "Water:flooded"
+     }
+    ]
+   },
+   "ocean_archipelago|woolly_candle": {
+    "land": 20,
+    "blocked": 12.653,
+    "blockedButGrows": 1.269,
+    "clearButCannotGrow": 0,
+    "multiFactor": 5.163,
+    "hintAdaptCannotHelp": 4.801,
+    "hintNeitherHelps": 4.801,
+    "soilByPH": 0,
+    "hazardByTox": 0.238,
+    "wouldHelpEmpty": 5.024,
+    "wouldHelpEmptyButMultiStep": 0.223,
+    "regions": 284,
+    "examples": [
+     {
+      "tag": "ocean_archipelago:41192/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 11,
+      "limit": "Temperature:scorching"
+     },
+     {
+      "tag": "ocean_archipelago:59187/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 4,
+      "limit": "Temperature:scorching"
+     },
+     {
+      "tag": "ocean_archipelago:27666/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 12,
+      "limit": "Temperature:scorching"
+     },
+     {
+      "tag": "ocean_archipelago:36411/woolly_candle@landing",
+      "kind": "would-help-empty-multistep",
+      "region": 11,
+      "limit": "Temperature:scorching"
+     }
+    ]
+   },
+   "ocean_archipelago|reed_spire": {
+    "land": 20,
+    "blocked": 6.847,
+    "blockedButGrows": 0.998,
+    "clearButCannotGrow": 0,
+    "multiFactor": 3.545,
+    "hintAdaptCannotHelp": 2.558,
+    "hintNeitherHelps": 2.558,
+    "soilByPH": 0,
+    "hazardByTox": 0.353,
+    "wouldHelpEmpty": 2.558,
+    "wouldHelpEmptyButMultiStep": 0,
+    "regions": 284,
+    "examples": []
+   }
+  },
+  "runEnd": {
+   "expedition|organic_hybrid": {
+    "land": 120,
+    "blocked": 19.046,
+    "blockedButGrows": 5.945,
+    "clearButCannotGrow": 0,
+    "multiFactor": 6.842,
+    "hintAdaptCannotHelp": 8.711,
+    "hintNeitherHelps": 7.779,
+    "soilByPH": 0,
+    "hazardByTox": 2.753,
+    "wouldHelpEmpty": 8.433,
+    "wouldHelpEmptyButMultiStep": 0.654,
+    "regions": 1750,
+    "examples": [
+     {
+      "tag": "desert_world:99116/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 8,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "desert_world:99116/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 8,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "desert_world:28633/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 14,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "frozen_world:65191/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 1,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:65191/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 7,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:65191/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 1,
+      "limit": "Temperature:freezing"
+     }
+    ]
+   },
+   "expedition|cinder_rosette": {
+    "land": 118,
+    "blocked": 15.102,
+    "blockedButGrows": 4.237,
+    "clearButCannotGrow": 0,
+    "multiFactor": 3.354,
+    "hintAdaptCannotHelp": 5.72,
+    "hintNeitherHelps": 4.322,
+    "soilByPH": 0,
+    "hazardByTox": 2.744,
+    "wouldHelpEmpty": 5.303,
+    "wouldHelpEmptyButMultiStep": 0.981,
+    "regions": 1726,
+    "examples": [
+     {
+      "tag": "desert_world:25962/cinder_rosette@end",
+      "kind": "would-help-empty-multistep",
+      "region": 4,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "desert_world:25962/cinder_rosette@end",
+      "kind": "would-help-empty-multistep",
+      "region": 4,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "desert_world:41702/cinder_rosette@end",
+      "kind": "would-help-empty-multistep",
+      "region": 10,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "desert_world:41702/cinder_rosette@end",
+      "kind": "would-help-empty-multistep",
+      "region": 10,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "desert_world:11748/cinder_rosette@end",
+      "kind": "would-help-empty-multistep",
+      "region": 8,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "desert_world:11748/cinder_rosette@end",
+      "kind": "would-help-empty-multistep",
+      "region": 8,
+      "limit": "Water:flooded"
+     }
+    ]
+   },
+   "expedition|woolly_candle": {
+    "land": 120,
+    "blocked": 18.759,
+    "blockedButGrows": 6.915,
+    "clearButCannotGrow": 0,
+    "multiFactor": 3.975,
+    "hintAdaptCannotHelp": 6.195,
+    "hintNeitherHelps": 4.512,
+    "soilByPH": 0,
+    "hazardByTox": 2.951,
+    "wouldHelpEmpty": 5.841,
+    "wouldHelpEmptyButMultiStep": 1.329,
+    "regions": 1750,
+    "examples": [
+     {
+      "tag": "desert_world:25962/woolly_candle@end",
+      "kind": "would-help-empty-multistep",
+      "region": 4,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "desert_world:25962/woolly_candle@end",
+      "kind": "would-help-empty-multistep",
+      "region": 4,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "desert_world:28633/woolly_candle@end",
+      "kind": "would-help-empty-multistep",
+      "region": 14,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "desert_world:28633/woolly_candle@end",
+      "kind": "would-help-empty-multistep",
+      "region": 14,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "frozen_world:11877/woolly_candle@end",
+      "kind": "would-help-empty-multistep",
+      "region": 9,
+      "limit": "Temperature:scorching"
+     },
+     {
+      "tag": "frozen_world:11877/woolly_candle@end",
+      "kind": "would-help-empty-multistep",
+      "region": 9,
+      "limit": "Temperature:scorching"
+     }
+    ]
+   },
+   "expedition|reed_spire": {
+    "land": 120,
+    "blocked": 20.045,
+    "blockedButGrows": 6.318,
+    "clearButCannotGrow": 0,
+    "multiFactor": 6.609,
+    "hintAdaptCannotHelp": 8.028,
+    "hintNeitherHelps": 7.075,
+    "soilByPH": 0,
+    "hazardByTox": 3.077,
+    "wouldHelpEmpty": 7.768,
+    "wouldHelpEmptyButMultiStep": 0.693,
+    "regions": 1750,
+    "examples": [
+     {
+      "tag": "frozen_world:65191/reed_spire@end",
+      "kind": "would-help-empty-multistep",
+      "region": 1,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:65191/reed_spire@end",
+      "kind": "would-help-empty-multistep",
+      "region": 7,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:65191/reed_spire@end",
+      "kind": "would-help-empty-multistep",
+      "region": 1,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:65191/reed_spire@end",
+      "kind": "would-help-empty-multistep",
+      "region": 7,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:90709/reed_spire@end",
+      "kind": "would-help-empty-multistep",
+      "region": 3,
+      "limit": "Temperature:freezing"
+     },
+     {
+      "tag": "frozen_world:90709/reed_spire@end",
+      "kind": "would-help-empty-multistep",
+      "region": 3,
+      "limit": "Temperature:freezing"
+     }
+    ]
+   },
+   "dying_world|organic_hybrid": {
+    "land": 10,
+    "blocked": 2.617,
+    "blockedButGrows": 0.508,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0.756,
+    "hintAdaptCannotHelp": 1.037,
+    "hintNeitherHelps": 0.923,
+    "soilByPH": 0,
+    "hazardByTox": 0.432,
+    "wouldHelpEmpty": 0.882,
+    "wouldHelpEmptyButMultiStep": 0.03,
+    "regions": 141,
+    "examples": [
+     {
+      "tag": "dying_world/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 6,
+      "limit": "Water:wet"
+     }
+    ]
+   },
+   "dying_world|cinder_rosette": {
+    "land": 10,
+    "blocked": 2.207,
+    "blockedButGrows": 0.407,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0.266,
+    "hintAdaptCannotHelp": 0.896,
+    "hintNeitherHelps": 0.637,
+    "soilByPH": 0,
+    "hazardByTox": 0.285,
+    "wouldHelpEmpty": 0.797,
+    "wouldHelpEmptyButMultiStep": 0.16,
+    "regions": 137,
+    "examples": [
+     {
+      "tag": "dying_world/cinder_rosette@end",
+      "kind": "would-help-empty-multistep",
+      "region": 6,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "dying_world/cinder_rosette@end",
+      "kind": "would-help-empty-multistep",
+      "region": 3,
+      "limit": "Water:wet"
+     }
+    ]
+   },
+   "dying_world|woolly_candle": {
+    "land": 10,
+    "blocked": 2.253,
+    "blockedButGrows": 0.396,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0.468,
+    "hintAdaptCannotHelp": 0.822,
+    "hintNeitherHelps": 0.748,
+    "soilByPH": 0,
+    "hazardByTox": 0.597,
+    "wouldHelpEmpty": 0.748,
+    "wouldHelpEmptyButMultiStep": 0,
+    "regions": 146,
+    "examples": []
+   },
+   "dying_world|reed_spire": {
+    "land": 10,
+    "blocked": 2.483,
+    "blockedButGrows": 0.629,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0.689,
+    "hintAdaptCannotHelp": 1.067,
+    "hintNeitherHelps": 1.067,
+    "soilByPH": 0,
+    "hazardByTox": 0.36,
+    "wouldHelpEmpty": 1.017,
+    "wouldHelpEmptyButMultiStep": 0,
+    "regions": 143,
+    "examples": []
+   },
+   "native_competition|organic_hybrid": {
+    "land": 10,
+    "blocked": 1.718,
+    "blockedButGrows": 0.59,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0.396,
+    "hintAdaptCannotHelp": 0.664,
+    "hintNeitherHelps": 0.61,
+    "soilByPH": 0,
+    "hazardByTox": 0.61,
+    "wouldHelpEmpty": 0.639,
+    "wouldHelpEmptyButMultiStep": 0.029,
+    "regions": 149,
+    "examples": [
+     {
+      "tag": "native_competition/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 9,
+      "limit": "Water:flooded"
+     }
+    ]
+   },
+   "native_competition|cinder_rosette": {
+    "land": 10,
+    "blocked": 1.934,
+    "blockedButGrows": 0.55,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0.339,
+    "hintAdaptCannotHelp": 1.102,
+    "hintNeitherHelps": 0.945,
+    "soilByPH": 0.06,
+    "hazardByTox": 0.747,
+    "wouldHelpEmpty": 0.959,
+    "wouldHelpEmptyButMultiStep": 0.014,
+    "regions": 157,
+    "examples": [
+     {
+      "tag": "native_competition/cinder_rosette@end",
+      "kind": "would-help-empty-multistep",
+      "region": 2,
+      "limit": "Water:flooded"
+     }
+    ]
+   },
+   "native_competition|woolly_candle": {
+    "land": 10,
+    "blocked": 1.361,
+    "blockedButGrows": 0.615,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0.241,
+    "hintAdaptCannotHelp": 0.522,
+    "hintNeitherHelps": 0.508,
+    "soilByPH": 0,
+    "hazardByTox": 0.364,
+    "wouldHelpEmpty": 0.587,
+    "wouldHelpEmptyButMultiStep": 0.079,
+    "regions": 156,
+    "examples": [
+     {
+      "tag": "native_competition/woolly_candle@end",
+      "kind": "would-help-empty-multistep",
+      "region": 2,
+      "limit": "Water:wet"
+     },
+     {
+      "tag": "native_competition/woolly_candle@end",
+      "kind": "would-help-empty-multistep",
+      "region": 6,
+      "limit": "Water:parched"
+     }
+    ]
+   },
+   "native_competition|reed_spire": {
+    "land": 10,
+    "blocked": 0.917,
+    "blockedButGrows": 0.495,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0,
+    "hintAdaptCannotHelp": 0.133,
+    "hintNeitherHelps": 0,
+    "soilByPH": 0,
+    "hazardByTox": 0,
+    "wouldHelpEmpty": 0.075,
+    "wouldHelpEmptyButMultiStep": 0.075,
+    "regions": 148,
+    "examples": [
+     {
+      "tag": "native_competition/reed_spire@end",
+      "kind": "would-help-empty-multistep",
+      "region": 9,
+      "limit": "Temperature:freezing"
+     }
+    ]
+   },
+   "volatile_climate|organic_hybrid": {
+    "land": 10,
+    "blocked": 1.979,
+    "blockedButGrows": 0.16,
+    "clearButCannotGrow": 0,
+    "multiFactor": 1.243,
+    "hintAdaptCannotHelp": 1.36,
+    "hintNeitherHelps": 1.284,
+    "soilByPH": 0,
+    "hazardByTox": 0.13,
+    "wouldHelpEmpty": 1.346,
+    "wouldHelpEmptyButMultiStep": 0.062,
+    "regions": 149,
+    "examples": [
+     {
+      "tag": "volatile_climate/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 7,
+      "limit": "Water:wet"
+     }
+    ]
+   },
+   "volatile_climate|cinder_rosette": {
+    "land": 10,
+    "blocked": 1.915,
+    "blockedButGrows": 0.472,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0.382,
+    "hintAdaptCannotHelp": 1.126,
+    "hintNeitherHelps": 0.812,
+    "soilByPH": 0.06,
+    "hazardByTox": 0.516,
+    "wouldHelpEmpty": 1.059,
+    "wouldHelpEmptyButMultiStep": 0.247,
+    "regions": 150,
+    "examples": [
+     {
+      "tag": "volatile_climate/cinder_rosette@end",
+      "kind": "would-help-empty-multistep",
+      "region": 5,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "volatile_climate/cinder_rosette@end",
+      "kind": "would-help-empty-multistep",
+      "region": 5,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "volatile_climate/cinder_rosette@end",
+      "kind": "would-help-empty-multistep",
+      "region": 3,
+      "limit": "Water:flooded"
+     }
+    ]
+   },
+   "volatile_climate|woolly_candle": {
+    "land": 10,
+    "blocked": 1.861,
+    "blockedButGrows": 0.302,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0.582,
+    "hintAdaptCannotHelp": 0.848,
+    "hintNeitherHelps": 0.848,
+    "soilByPH": 0,
+    "hazardByTox": 0.477,
+    "wouldHelpEmpty": 0.848,
+    "wouldHelpEmptyButMultiStep": 0,
+    "regions": 149,
+    "examples": []
+   },
+   "volatile_climate|reed_spire": {
+    "land": 10,
+    "blocked": 1.339,
+    "blockedButGrows": 0.051,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0.81,
+    "hintAdaptCannotHelp": 1.025,
+    "hintNeitherHelps": 1.025,
+    "soilByPH": 0,
+    "hazardByTox": 0.295,
+    "wouldHelpEmpty": 1.025,
+    "wouldHelpEmptyButMultiStep": 0,
+    "regions": 142,
+    "examples": []
+   },
+   "low_tide|organic_hybrid": {
+    "land": 10,
+    "blocked": 1.757,
+    "blockedButGrows": 0.538,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0.316,
+    "hintAdaptCannotHelp": 0.922,
+    "hintNeitherHelps": 0.588,
+    "soilByPH": 0.044,
+    "hazardByTox": 0.061,
+    "wouldHelpEmpty": 0.792,
+    "wouldHelpEmptyButMultiStep": 0.204,
+    "regions": 138,
+    "examples": [
+     {
+      "tag": "low_tide/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 10,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "low_tide/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 0,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "low_tide/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 5,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "low_tide/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 8,
+      "limit": "Water:parched"
+     },
+     {
+      "tag": "low_tide/organic_hybrid@end",
+      "kind": "would-help-empty-multistep",
+      "region": 10,
+      "limit": "Water:parched"
+     }
+    ]
+   },
+   "oasis_line|reed_spire": {
+    "land": 10,
+    "blocked": 0.877,
+    "blockedButGrows": 0.588,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0,
+    "hintAdaptCannotHelp": 0.289,
+    "hintNeitherHelps": 0.289,
+    "soilByPH": 0,
+    "hazardByTox": 0.193,
+    "wouldHelpEmpty": 0.289,
+    "wouldHelpEmptyButMultiStep": 0,
+    "regions": 158,
+    "examples": []
+   },
+   "thin_air|woolly_candle": {
+    "land": 10,
+    "blocked": 1.387,
+    "blockedButGrows": 0.239,
+    "clearButCannotGrow": 0,
+    "multiFactor": 0.115,
+    "hintAdaptCannotHelp": 0.589,
+    "hintNeitherHelps": 0.469,
+    "soilByPH": 0.06,
+    "hazardByTox": 0.351,
+    "wouldHelpEmpty": 0.604,
+    "wouldHelpEmptyButMultiStep": 0.135,
+    "regions": 156,
+    "examples": [
+     {
+      "tag": "thin_air/woolly_candle@end",
+      "kind": "would-help-empty-multistep",
+      "region": 2,
+      "limit": "Water:flooded"
+     },
+     {
+      "tag": "thin_air/woolly_candle@end",
+      "kind": "would-help-empty-multistep",
+      "region": 2,
+      "limit": "Water:parched"
+     }
+    ]
+   }
+  },
+  "landingTotal": {
+   "land": 239,
+   "blocked": 166.465,
+   "blockedButGrows": 7.477,
+   "clearButCannotGrow": 0,
+   "multiFactor": 62.099,
+   "hintAdaptCannotHelp": 56.125,
+   "hintNeitherHelps": 56.125,
+   "soilByPH": 0,
+   "hazardByTox": 2.302,
+   "wouldHelpEmpty": 87.505,
+   "wouldHelpEmptyButMultiStep": 31.382,
+   "regions": 3488,
+   "examples": []
+  },
+  "runEndTotal": {
+   "land": 628,
+   "blocked": 99.557,
+   "blockedButGrows": 29.955,
+   "clearButCannotGrow": 0,
+   "multiFactor": 27.383,
+   "hintAdaptCannotHelp": 41.056,
+   "hintNeitherHelps": 34.441,
+   "soilByPH": 0.224,
+   "hazardByTox": 16.943,
+   "wouldHelpEmpty": 39.012,
+   "wouldHelpEmptyButMultiStep": 4.692,
+   "regions": 9195,
+   "examples": []
+  }
+ },
+ "outcomes": {
+  "expedition": {
+   "bloom": 3228,
+   "timeout": 118
+  },
+  "challenges": {
+   "dying_world": {
+    "bloom": 270,
+    "timeout": 10
+   },
+   "native_competition": {
+    "bloom": 148,
+    "timeout": 127,
+    "extinction": 5
+   },
+   "volatile_climate": {
+    "bloom": 277,
+    "timeout": 3
+   },
+   "low_tide": {
+    "bloom": 69,
+    "timeout": 1
+   },
+   "oasis_line": {
+    "bloom": 65,
+    "timeout": 5
+   },
+   "thin_air": {
+    "bloom": 69,
+    "timeout": 1
+   }
+  }
+ },
+ "timeoutCauses": {
+  "note": "Expedition runs that never Bloomed: the land not growable at the cap, by the region readout's named limit (area share of land), plus growable-but-unreached land",
+  "byPolicy": {
+   "balanced": {
+    "runs": 9,
+    "finalCoverage": {
+     "n": 9,
+     "p10": 50,
+     "p25": 52.5,
+     "median": 56.2,
+     "p75": 56.2,
+     "p90": 58.5,
+     "max": 67.6,
+     "mean": 55.3
+    },
+    "topLimit": {
+     "Water:wet": 7,
+     "Water:dry": 1,
+     "Hazard:lethal": 1
+    },
+    "unreachedGrowable": {
+     "n": 9,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 41.1,
+     "p90": 44.6,
+     "max": 44.6,
+     "mean": 19
+    }
+   },
+   "adapt_first": {
+    "runs": 8,
+    "finalCoverage": {
+     "n": 8,
+     "p10": 50,
+     "p25": 51.9,
+     "median": 54.4,
+     "p75": 56.2,
+     "p90": 56.2,
+     "max": 56.2,
+     "mean": 53.7
+    },
+    "topLimit": {
+     "Water:dry": 4,
+     "Water:wet": 4
+    },
+    "unreachedGrowable": {
+     "n": 8,
+     "p10": 0,
+     "p25": 0,
+     "median": 20.4,
+     "p75": 42.2,
+     "p90": 46.2,
+     "max": 46.2,
+     "mean": 21.8
+    }
+   },
+   "spread_first": {
+    "runs": 7,
+    "finalCoverage": {
+     "n": 7,
+     "p10": 56.2,
+     "p25": 56.2,
+     "median": 56.2,
+     "p75": 58.5,
+     "p90": 60.8,
+     "max": 60.8,
+     "mean": 57.5
+    },
+    "topLimit": {
+     "Water:wet": 5,
+     "Water:flooded": 2
+    },
+    "unreachedGrowable": {
+     "n": 7,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 0,
+     "p90": 0,
+     "max": 0,
+     "mean": 0
+    }
+   },
+   "terraform_first": {
+    "runs": 70,
+    "finalCoverage": {
+     "n": 70,
+     "p10": 6.5,
+     "p25": 26.3,
+     "median": 36.4,
+     "p75": 49.2,
+     "p90": 56.6,
+     "max": 70,
+     "mean": 35.8
+    },
+    "topLimit": {
+     "Hazard:lethal": 22,
+     "Temperature:freezing": 12,
+     "Soil:hostile": 9,
+     "Water:dry": 7,
+     "Temperature:scorching": 7,
+     "Water:wet": 6,
+     "Water:flooded": 6,
+     "Temperature:cold": 1
+    },
+    "unreachedGrowable": {
+     "n": 70,
+     "p10": 9.1,
+     "p25": 22,
+     "median": 37.5,
+     "p75": 43.9,
+     "p90": 50.3,
+     "max": 57.4,
+     "mean": 32.4
+    }
+   },
+   "greedy": {
+    "runs": 10,
+    "finalCoverage": {
+     "n": 10,
+     "p10": 56.2,
+     "p25": 56.2,
+     "median": 58.5,
+     "p75": 60.8,
+     "p90": 66.6,
+     "max": 66.6,
+     "mean": 59.7
+    },
+    "topLimit": {
+     "Water:wet": 6,
+     "Hazard:lethal": 2,
+     "Water:flooded": 2
+    },
+    "unreachedGrowable": {
+     "n": 10,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 0,
+     "p90": 0,
+     "max": 0,
+     "mean": 0
+    }
+   },
+   "low_planning": {
+    "runs": 5,
+    "finalCoverage": {
+     "n": 5,
+     "p10": 56.2,
+     "p25": 56.2,
+     "median": 56.2,
+     "p75": 60.8,
+     "p90": 64.3,
+     "max": 66.6,
+     "mean": 59.2
+    },
+    "topLimit": {
+     "Water:wet": 4,
+     "Hazard:lethal": 1
+    },
+    "unreachedGrowable": {
+     "n": 5,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 0,
+     "p90": 0,
+     "max": 0,
+     "mean": 0
+    }
+   },
+   "colony": {
+    "runs": 9,
+    "finalCoverage": {
+     "n": 9,
+     "p10": 50,
+     "p25": 52.5,
+     "median": 56.2,
+     "p75": 56.2,
+     "p90": 58.4,
+     "max": 67.3,
+     "mean": 55.2
+    },
+    "topLimit": {
+     "Water:wet": 5,
+     "Water:dry": 3,
+     "Hazard:lethal": 1
+    },
+    "unreachedGrowable": {
+     "n": 9,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 41.1,
+     "p90": 46.2,
+     "max": 46.2,
+     "mean": 19.4
+    }
+   }
+  }
+ },
+ "extinctions": {
+  "dying_world": {
+   "runs": 0,
+   "at": {
+    "n": 0
+   },
+   "policies": {},
+   "maxCoverageBefore": {
+    "n": 0
+   },
+   "earlyBloomBefore": null
+  },
+  "native_competition": {
+   "runs": 5,
+   "at": {
+    "n": 5,
+    "p10": 250.6,
+    "p25": 272,
+    "median": 348.8,
+    "p75": 580.5,
+    "p90": 1942.4,
+    "max": 2850.4,
+    "mean": 857.6
+   },
+   "policies": {
+    "low_planning": 3,
+    "greedy": 2
+   },
+   "maxCoverageBefore": {
+    "n": 5,
+    "p10": 4.7,
+    "p25": 5,
+    "median": 6.7,
+    "p75": 7.1,
+    "p90": 9,
+    "max": 10.3,
+    "mean": 6.7
+   },
+   "earlyBloomBefore": 0
+  },
+  "volatile_climate": {
+   "runs": 0,
+   "at": {
+    "n": 0
+   },
+   "policies": {},
+   "maxCoverageBefore": {
+    "n": 0
+   },
+   "earlyBloomBefore": null
+  },
+  "low_tide": {
+   "runs": 0,
+   "at": {
+    "n": 0
+   },
+   "policies": {},
+   "maxCoverageBefore": {
+    "n": 0
+   },
+   "earlyBloomBefore": null
+  },
+  "oasis_line": {
+   "runs": 0,
+   "at": {
+    "n": 0
+   },
+   "policies": {},
+   "maxCoverageBefore": {
+    "n": 0
+   },
+   "earlyBloomBefore": null
+  },
+  "thin_air": {
+   "runs": 0,
+   "at": {
+    "n": 0
+   },
+   "policies": {},
+   "maxCoverageBefore": {
+    "n": 0
+   },
+   "earlyBloomBefore": null
+  }
+ },
+ "nativeTakeover": {
+  "native_competition": {
+   "runs": 280,
+   "nativeFinalShareAboveStart": 0.296,
+   "nativeTookTiles": {
+    "n": 280,
+    "p10": 120.9,
+    "p25": 182,
+    "median": 283,
+    "p75": 507.5,
+    "p90": 806.4,
+    "max": 5092,
+    "mean": 424.8
+   }
+  },
+  "oasis_line": {
+   "runs": 70,
+   "nativeFinalShareAboveStart": 0.129,
+   "nativeTookTiles": {
+    "n": 70,
+    "p10": 128.6,
+    "p25": 178,
+    "median": 231,
+    "p75": 400.8,
+    "p90": 716.3,
+    "max": 1052,
+    "mean": 323.8
+   }
+  }
+ },
+ "standoffEscape": {
+  "method": "escape.mjs header: replay each stalled native-competition research run (balanced / greedy) to its plateau, then one legal trait (Terraform also ×2) with Biomass topped up, 600 s more",
+  "format": "bloom-038-standoff-escape@1",
+  "summary": {
+   "runs": 39,
+   "escapable": 34,
+   "controlRecovered": 0,
+   "escapeTraits": {
+    "cool×2": 14,
+    "humid×2": 14,
+    "warm×2": 6,
+    "dry": 10,
+    "humid": 15,
+    "drought": 6,
+    "dry×2": 14,
+    "warm": 2,
+    "cool": 4
+   }
+  },
+  "rows": [
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 0,
+    "policy": "greedy",
+    "plateauAt": 575,
+    "plateauCov": 69.1,
+    "control": 69.3,
+    "escapes": [
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": true,
+      "cov": 70.1
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": true,
+      "cov": 70.1
+     }
+    ],
+    "tried": 12
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 1,
+    "policy": "balanced",
+    "plateauAt": 506.9,
+    "plateauCov": 52.1,
+    "control": 52.1,
+    "escapes": [
+     {
+      "trait": "warm",
+      "times": 2,
+      "won": false,
+      "cov": 69
+     },
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": false,
+      "cov": 61.5
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": true,
+      "cov": 70
+     },
+     {
+      "trait": "dry",
+      "times": 1,
+      "won": false,
+      "cov": 57.2
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 1,
+    "policy": "greedy",
+    "plateauAt": 446.4,
+    "plateauCov": 61.5,
+    "control": 61.5,
+    "escapes": [
+     {
+      "trait": "warm",
+      "times": 2,
+      "won": true,
+      "cov": 70.1
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": true,
+      "cov": 70.1
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 2,
+    "policy": "balanced",
+    "plateauAt": 529,
+    "plateauCov": 65.6,
+    "control": 65.6,
+    "escapes": [
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": true,
+      "cov": 70
+     },
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": true,
+      "cov": 70
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 2,
+    "policy": "greedy",
+    "plateauAt": 573.1,
+    "plateauCov": 61.5,
+    "control": 61.3,
+    "escapes": [
+     {
+      "trait": "warm",
+      "times": 2,
+      "won": false,
+      "cov": 67.9
+     },
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": true,
+      "cov": 70.1
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 3,
+    "policy": "balanced",
+    "plateauAt": 576,
+    "plateauCov": 4.6,
+    "control": 4.6,
+    "escapes": [
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": false,
+      "cov": 61.3
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 3,
+    "policy": "greedy",
+    "plateauAt": 496.3,
+    "plateauCov": 3.3,
+    "control": 3.3,
+    "escapes": [
+     {
+      "trait": "drought",
+      "times": 1,
+      "won": false,
+      "cov": 9.3
+     },
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": false,
+      "cov": 61.3
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": false,
+      "cov": 9.6
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 5,
+    "policy": "greedy",
+    "plateauAt": 523.2,
+    "plateauCov": 57.1,
+    "control": 56.8,
+    "escapes": [
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": true,
+      "cov": 70
+     }
+    ],
+    "tried": 12
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 6,
+    "policy": "balanced",
+    "plateauAt": 532.8,
+    "plateauCov": 56.7,
+    "control": 56.8,
+    "escapes": [
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": true,
+      "cov": 70
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": true,
+      "cov": 70
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 6,
+    "policy": "greedy",
+    "plateauAt": 539.5,
+    "plateauCov": 54.1,
+    "control": 54.2,
+    "escapes": [
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": true,
+      "cov": 70.1
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": true,
+      "cov": 70
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 7,
+    "policy": "balanced",
+    "plateauAt": 446.4,
+    "plateauCov": 56.6,
+    "control": 56.7,
+    "escapes": [
+     {
+      "trait": "warm",
+      "times": 2,
+      "won": false,
+      "cov": 64.5
+     }
+    ],
+    "tried": 12
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 7,
+    "policy": "greedy",
+    "plateauAt": 658.6,
+    "plateauCov": 32.9,
+    "control": 32.7,
+    "escapes": [
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": false,
+      "cov": 54.5
+     }
+    ],
+    "tried": 12
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 8,
+    "policy": "balanced",
+    "plateauAt": 471.4,
+    "plateauCov": 68.8,
+    "control": 68.8,
+    "escapes": [
+     {
+      "trait": "warm",
+      "times": 2,
+      "won": true,
+      "cov": 70
+     },
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": true,
+      "cov": 70.1
+     },
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": true,
+      "cov": 70.2
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 8,
+    "policy": "greedy",
+    "plateauAt": 463.7,
+    "plateauCov": 67.9,
+    "control": 68.1,
+    "escapes": [
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": true,
+      "cov": 70.1
+     },
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": true,
+      "cov": 70
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 9,
+    "policy": "balanced",
+    "plateauAt": 466.6,
+    "plateauCov": 55.6,
+    "control": 55.6,
+    "escapes": [
+     {
+      "trait": "warm",
+      "times": 1,
+      "won": false,
+      "cov": 66.8
+     },
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": false,
+      "cov": 61.3
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "organic_hybrid",
+    "entry": 9,
+    "policy": "greedy",
+    "plateauAt": 503,
+    "plateauCov": 58.9,
+    "control": 58.9,
+    "escapes": [],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 0,
+    "policy": "balanced",
+    "plateauAt": 3000,
+    "plateauCov": 65.9,
+    "control": 65.9,
+    "escapes": [
+     {
+      "trait": "drought",
+      "times": 1,
+      "won": true,
+      "cov": 70
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": true,
+      "cov": 70
+     }
+    ],
+    "tried": 12
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 0,
+    "policy": "greedy",
+    "plateauAt": 3000,
+    "plateauCov": 65.8,
+    "control": 65.8,
+    "escapes": [
+     {
+      "trait": "drought",
+      "times": 1,
+      "won": true,
+      "cov": 70
+     },
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": true,
+      "cov": 70.1
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": true,
+      "cov": 70
+     }
+    ],
+    "tried": 12
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 1,
+    "policy": "balanced",
+    "plateauAt": 484.8,
+    "plateauCov": 55.3,
+    "control": 50.1,
+    "escapes": [
+     {
+      "trait": "warm",
+      "times": 2,
+      "won": false,
+      "cov": 56.1
+     },
+     {
+      "trait": "cool",
+      "times": 1,
+      "won": false,
+      "cov": 55.3
+     },
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": false,
+      "cov": 55.3
+     },
+     {
+      "trait": "dry",
+      "times": 1,
+      "won": false,
+      "cov": 57.2
+     }
+    ],
+    "tried": 12
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 2,
+    "policy": "balanced",
+    "plateauAt": 453.1,
+    "plateauCov": 10.3,
+    "control": 10.3,
+    "escapes": [
+     {
+      "trait": "drought",
+      "times": 1,
+      "won": false,
+      "cov": 53.2
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": false,
+      "cov": 34.3
+     },
+     {
+      "trait": "dry",
+      "times": 1,
+      "won": false,
+      "cov": 65.5
+     },
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": false,
+      "cov": 55.7
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 2,
+    "policy": "greedy",
+    "plateauAt": 447.4,
+    "plateauCov": 9.1,
+    "control": 9,
+    "escapes": [
+     {
+      "trait": "drought",
+      "times": 1,
+      "won": false,
+      "cov": 48.4
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": false,
+      "cov": 31.4
+     },
+     {
+      "trait": "dry",
+      "times": 1,
+      "won": false,
+      "cov": 65.5
+     },
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": false,
+      "cov": 55.7
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 3,
+    "policy": "balanced",
+    "plateauAt": 494.4,
+    "plateauCov": 53.5,
+    "control": 53.5,
+    "escapes": [
+     {
+      "trait": "dry",
+      "times": 1,
+      "won": true,
+      "cov": 70.1
+     },
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": false,
+      "cov": 67.6
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 4,
+    "policy": "balanced",
+    "plateauAt": 918.7,
+    "plateauCov": 1.2,
+    "control": 1.2,
+    "escapes": [
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": false,
+      "cov": 50.4
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 3,
+    "policy": "greedy",
+    "plateauAt": 406.1,
+    "plateauCov": 51,
+    "control": 54.3,
+    "escapes": [
+     {
+      "trait": "dry",
+      "times": 1,
+      "won": true,
+      "cov": 70
+     },
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": false,
+      "cov": 67.7
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 5,
+    "policy": "balanced",
+    "plateauAt": 515.5,
+    "plateauCov": 53.9,
+    "control": 54,
+    "escapes": [
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": false,
+      "cov": 59.9
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": false,
+      "cov": 59.1
+     },
+     {
+      "trait": "dry",
+      "times": 1,
+      "won": false,
+      "cov": 62.2
+     },
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": false,
+      "cov": 68.8
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 5,
+    "policy": "greedy",
+    "plateauAt": 761.3,
+    "plateauCov": 69,
+    "control": 68.9,
+    "escapes": [
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": true,
+      "cov": 70.1
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": true,
+      "cov": 70
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 7,
+    "policy": "balanced",
+    "plateauAt": 529.9,
+    "plateauCov": 58.9,
+    "control": 58.9,
+    "escapes": [],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 7,
+    "policy": "greedy",
+    "plateauAt": 460.8,
+    "plateauCov": 62.4,
+    "control": 62,
+    "escapes": [],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 8,
+    "policy": "greedy",
+    "plateauAt": 648,
+    "plateauCov": 4.8,
+    "control": 4.8,
+    "escapes": [
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": false,
+      "cov": 12.5
+     },
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": false,
+      "cov": 13
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": false,
+      "cov": 13
+     },
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": false,
+      "cov": 65.3
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "cinder_rosette",
+    "entry": 9,
+    "policy": "balanced",
+    "plateauAt": 448.3,
+    "plateauCov": 57.5,
+    "control": 56.1,
+    "escapes": [
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": false,
+      "cov": 61.7
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "woolly_candle",
+    "entry": 2,
+    "policy": "balanced",
+    "plateauAt": 522.2,
+    "plateauCov": 67.2,
+    "control": 67.3,
+    "escapes": [],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "woolly_candle",
+    "entry": 2,
+    "policy": "greedy",
+    "plateauAt": 550.1,
+    "plateauCov": 67.3,
+    "control": 67.3,
+    "escapes": [],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "woolly_candle",
+    "entry": 9,
+    "policy": "balanced",
+    "plateauAt": 654.7,
+    "plateauCov": 7.9,
+    "control": 7.9,
+    "escapes": [
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": true,
+      "cov": 70.1
+     },
+     {
+      "trait": "humid",
+      "times": 1,
+      "won": true,
+      "cov": 70
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "native_competition",
+    "species": "reed_spire",
+    "entry": 0,
+    "policy": "balanced",
+    "plateauAt": 636.5,
+    "plateauCov": 64.4,
+    "control": 64.4,
+    "escapes": [
+     {
+      "trait": "drought",
+      "times": 1,
+      "won": true,
+      "cov": 70
+     },
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": false,
+      "cov": 69.5
+     },
+     {
+      "trait": "humid",
+      "times": 2,
+      "won": true,
+      "cov": 70.1
+     },
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": true,
+      "cov": 70
+     }
+    ],
+    "tried": 12
+   },
+   {
+    "challenge": "native_competition",
+    "species": "reed_spire",
+    "entry": 0,
+    "policy": "greedy",
+    "plateauAt": 764.2,
+    "plateauCov": 64.1,
+    "control": 64,
+    "escapes": [
+     {
+      "trait": "dry",
+      "times": 1,
+      "won": true,
+      "cov": 70.1
+     },
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": true,
+      "cov": 70.2
+     }
+    ],
+    "tried": 12
+   },
+   {
+    "challenge": "native_competition",
+    "species": "reed_spire",
+    "entry": 7,
+    "policy": "balanced",
+    "plateauAt": 547.2,
+    "plateauCov": 41.9,
+    "control": 42.2,
+    "escapes": [
+     {
+      "trait": "cool",
+      "times": 1,
+      "won": false,
+      "cov": 68.1
+     },
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": true,
+      "cov": 70
+     },
+     {
+      "trait": "dry",
+      "times": 1,
+      "won": true,
+      "cov": 70
+     },
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": true,
+      "cov": 70.3
+     }
+    ],
+    "tried": 13
+   },
+   {
+    "challenge": "native_competition",
+    "species": "reed_spire",
+    "entry": 7,
+    "policy": "greedy",
+    "plateauAt": 501.1,
+    "plateauCov": 41.1,
+    "control": 41,
+    "escapes": [
+     {
+      "trait": "cool",
+      "times": 1,
+      "won": false,
+      "cov": 68.1
+     },
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": true,
+      "cov": 70.1
+     },
+     {
+      "trait": "dry",
+      "times": 1,
+      "won": true,
+      "cov": 70.2
+     },
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": true,
+      "cov": 70.2
+     }
+    ],
+    "tried": 13
+   },
+   {
+    "challenge": "oasis_line",
+    "species": "reed_spire",
+    "entry": 0,
+    "policy": "greedy",
+    "plateauAt": 690.2,
+    "plateauCov": 69.6,
+    "control": 69.6,
+    "escapes": [
+     {
+      "trait": "warm",
+      "times": 1,
+      "won": true,
+      "cov": 70
+     },
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": true,
+      "cov": 70
+     },
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": true,
+      "cov": 70.1
+     }
+    ],
+    "tried": 11
+   },
+   {
+    "challenge": "oasis_line",
+    "species": "reed_spire",
+    "entry": 8,
+    "policy": "greedy",
+    "plateauAt": 3000,
+    "plateauCov": 68.5,
+    "control": 68.6,
+    "escapes": [
+     {
+      "trait": "cool",
+      "times": 1,
+      "won": true,
+      "cov": 70
+     },
+     {
+      "trait": "cool",
+      "times": 2,
+      "won": true,
+      "cov": 70.1
+     },
+     {
+      "trait": "dry",
+      "times": 2,
+      "won": true,
+      "cov": 70.1
+     }
+    ],
+    "tried": 11
+   }
+  ]
+ }
+}
