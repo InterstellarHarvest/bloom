@@ -412,6 +412,9 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
               if (/^(color|border-top-color|border-left-color|outline-color|fill|stroke)$/.test(n) && sub(TEXT037)) return true;
               if (BTN_EL.test(el) && /^(background-color|border-top-color|border-left-color|box-shadow)$/.test(n) && sub(BTN037)) return true;
               if (/li-part/.test(el) && n === "box-shadow" && LIP037.test(b) && /^rgba\(0, 0, 0, 0\.3\)/.test(h)) return true;
+              // (BLOOM-039, pre-playtest clarity) the ONE deliberate gameplay colour change since: an unaffordable-but-legal node's state line (it now says
+              // "N Biomass · need M more" at rest) reads in the gold of a price, not the crimson of Blocked — the BLOOM-037 AA gold-deep text shade
+              if (/node\.[^>]*st-poor/.test(x) && /small\[\d+\]$/.test(el) && /^(color|border-top-color|border-left-color|outline-color)$/.test(n) && b.split("rgb(196, 70, 106)").join("rgb(138, 90, 0)") === h) return true;
               return false; }); };
           const changed = cmp.filter(x => pick(a[x]) !== pick(b[x]));
           rows[k] = { elements: cmp.length, repaired: common.length - cmp.length, onlyHead: Object.keys(a).length - common.length, onlyBase: Object.keys(b).length - common.length,
