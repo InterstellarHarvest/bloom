@@ -36,7 +36,7 @@
 @media (max-width:1600px){ .dr .rt small{display:none} }
 /* room header widths: below 1500 px only the OPEN room's nav button keeps its label (the others keep a tooltip); below 1100 px icons only */
 @media (max-width:1500px){ .dr .rn:not([aria-pressed="true"]) span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)} .dr .rn{padding:.25em .7em} .dr .rbio small{display:none} }
-@media (max-width:1100px){ .dr .rn span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)} .dr .rb span{display:none} .dr .rt h2{font-size:1.4em} }
+@media (max-width:1100px){ .dr .rn span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)} .dr .rb > span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap} /* (BLOOM-039, a11y) icon-only, still named */ .dr .rt h2{font-size:1.4em} }
 
 /* ── left column: the production plant specimen above, the information card below (content height, with a floor) ── */
 .dr .lf-top{position:relative; flex:none; border-radius:var(--r-md); overflow:hidden; background:#dceefa; width:100%; aspect-ratio:170/196; max-height:56%}

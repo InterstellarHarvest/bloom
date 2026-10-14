@@ -137,8 +137,10 @@
     if (k === "Soil" && !r.limiting.softSoil) return F.salty ? "salty soil" : F.ph ? `${F.ph} soil` : r.limiting.text || "";
     return r.limiting.text || "";
   }
-  const NATIVE_LINE = { "native-better-suited": "Natives are better suited to this ground", "native-young": "Established natives are reclaiming your young colony", "native-established": "The native plants here are more established" };
-  const nativeLine = r => { const c = r.competition; return c && c.nativeTiles > 0 && r.status !== "blocked" && NATIVE_LINE[c.reason] || null; };
+  const NATIVE_LINE = { "native-better-suited": "Natives are better suited to this ground", "native-young": "Established natives are reclaiming your young colony", "native-established": "The native plants here are more established",
+    "player-better-suited": "Your plant is better suited here and is pushing native cover back", "player-established": "Your colony is more established here and is pushing native cover back", "even": "An even contest with the native plants" };
+  const nativeLine = r => { const c = r.competition; if (!c || !(c.nativeTiles > 0) || r.status === "blocked") return null;
+    return NATIVE_LINE[c.reason] || (r.nativeHeld || !c.playerTiles ? "Native plants hold this ground; your plant has not reached it yet" : "Native plants hold part of this ground"); };
   // Concept 18 ORGANIC tendril weights (owner-approved; docs/UI_CONCEPT_REVIEW_v10.md §3): [em, px floor]
   const TENDRIL = { idle: [0.52, 8.5], lit: [0.8, 12.5], glow: 1.9, vein: [0.12, 2] }, TENSION = [0.3, 0.26], PORT_R = 0.66, RAIL_X = 1.5, STEP_MAX = 5.4, CAT_GAP = 0.35;
   const tendrilW = (k, em) => Math.max(TENDRIL[k][0] * em, TENDRIL[k][1]);

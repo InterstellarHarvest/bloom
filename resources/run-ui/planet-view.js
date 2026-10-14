@@ -90,8 +90,14 @@
     "native-better-suited": { line: "Natives are better suited to this ground.", hint: "A sky change that favors your plant — or hurts the natives more — can tip the front.", terraform: true },
     "native-young": { line: "Established natives are reclaiming your young colony here.", hint: "Roots thicken a young colony faster." },
     "native-established": { line: "The native plants here are more established and are holding this ground.", hint: "Strengthening your colony next to it, or changing what suits each plant, can tip it.", terraform: true },
+    "player-better-suited": { line: "Your plant is better suited here and is pushing native cover back.", hint: "" },
+    "player-established": { line: "Your colony is more established here and is pushing native cover back.", hint: "" },
+    "even": { line: "An even contest with the native plants: the more established side holds.", hint: "Strengthening your colony here, or changing what suits each plant, tips it." },
   };
-  const nativeFront = r => { const c = r.competition; return c && c.nativeTiles > 0 && r.status !== "blocked" && NATIVE_REASON[c.reason] || null; };
+  // ground the natives hold where no front has formed yet (the competition's side is "none": the plant has not reached it) — never "Nothing holding"
+  const NATIVE_UNREACHED = { line: "Native plants hold this ground; your plant has not reached it yet.", hint: "" };
+  const nativeFront = r => { const c = r.competition; if (!c || !(c.nativeTiles > 0) || r.status === "blocked") return null;
+    return NATIVE_REASON[c.reason] || (r.nativeHeld || !c.playerTiles ? NATIVE_UNREACHED : { line: "Native plants hold part of this ground.", hint: "" }); };
   const STANDOFF_S = 120; // game seconds without front progress before the FRONT STALLED cue (presentation only)
   const BOARD_CLASS = { Adapt: "plant", Spread: "spread", Terraform: "planet" }, BOARD_ROOM = { Adapt: "adapt", Spread: "spread", Terraform: "terraform" };
   const ROOM_TITLE = { region: "Region Inspect", adapt: "Adapt", spread: "Spread", terraform: "Terraform" };
