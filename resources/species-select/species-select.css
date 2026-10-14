@@ -76,9 +76,11 @@
 .ss[data-state="dossier"] .ss-cards{opacity:.28; filter:saturate(.6)}
 
 /* ── the dossier: a panel over the receded cards (desktop), a bottom sheet (phone) ── */
-.ss-dossier{position:absolute; z-index:2; top:clamp(70px, 9cqh, 110px); bottom:16px; left:50%; transform:translateX(-50%); width:min(1040px, calc(100% - 2 * var(--padX)));
+/* (v1.0.1, owner direction) the desktop panel's height follows its content (no bottom anchor), up to the space above the screen's foot:
+   the inner grid carries that cap, so only a dossier taller than it scrolls (.ss-d-main) and its actions follow the content */
+.ss-dossier{position:absolute; z-index:2; top:clamp(70px, 9cqh, 110px); bottom:auto; left:50%; transform:translateX(-50%); width:min(1040px, calc(100% - 2 * var(--padX)));
   border:2px solid var(--line-2); border-radius:var(--bloom-r-lg); background:var(--bloom-night-card-solid, var(--panel)); box-shadow:var(--bloom-night-shadow); overflow:hidden}
-.ss-dossier-in{display:grid; grid-template-columns:auto minmax(0, 1fr); grid-template-rows:minmax(0, 1fr) auto; height:100%}
+.ss-dossier-in{display:grid; grid-template-columns:auto minmax(0, 1fr); grid-template-rows:minmax(0, 1fr) auto; max-height:calc(100cqh - clamp(70px, 9cqh, 110px) - 16px - 4px)}
 .ss-d-spec{grid-row:1 / 2; position:relative; align-self:start; margin:20px 0 0 20px; padding:8px; border-radius:var(--bloom-r-md); background:rgba(5,9,20,.55); border:1.5px solid var(--line)}
 .ss-d-main{grid-row:1; overflow:auto; padding:18px 22px 12px 22px; min-height:0}
 .ss-d-role{margin:0; font-size:var(--bloom-kicker-size); font-weight:var(--bloom-kicker-weight); letter-spacing:var(--bloom-kicker-track); text-transform:uppercase; color:var(--bloom-leaf-night)}
@@ -134,7 +136,7 @@
   .ss-chips{grid-column:1 / -1; margin-top:8px}
   .ss-card h3{font-size:19px}
   .ss-dossier{top:auto; bottom:0; left:0; right:0; transform:none; width:auto; height:78%; border-radius:var(--bloom-r-lg) var(--bloom-r-lg) 0 0; border-bottom:0}
-  .ss-dossier-in{grid-template-columns:1fr}
+  .ss-dossier-in{grid-template-columns:1fr; height:100%; max-height:none}
   .ss-d-spec{display:none}
   .ss-d-main{padding:14px 14px 8px}
   .ss-dossier h2{font-size:26px}

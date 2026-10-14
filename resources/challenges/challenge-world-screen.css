@@ -64,7 +64,7 @@
 
 /* ── the dossier ── */
 .cw-body{flex:1 1 auto; min-height:0; display:grid; grid-template-columns:minmax(0, 5fr) minmax(360px, 6fr); gap:clamp(14px, 2cqw, 32px);
-  padding:12px var(--padX) 18px; max-width:1480px; width:100%; margin:0 auto; align-items:stretch}
+  padding:12px var(--padX) 18px; max-width:1480px; width:100%; margin:0 auto; align-items:stretch; grid-template-rows:minmax(0, 1fr)}
 .cw[data-state="preparing"] .cw-body, .cw[data-state="failed"] .cw-body{display:none}
 .cw-globe-col{display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:0; min-height:0}
 .cw-stage{width:min(100%, calc(100cqh - 150px)); aspect-ratio:1; max-width:640px}
@@ -72,7 +72,8 @@
 .cw-globe:focus-visible{outline-offset:-6px; border-radius:50%}
 .cw-d-main:focus-visible{outline-offset:-4px}
 .cw-seed{margin:8px 0 0; font-size:12.5px; color:var(--ink-faint); font-weight:800; letter-spacing:.3px; text-align:center}
-.cw-dossier{display:flex; flex-direction:column; min-height:0; min-width:0; border:2px solid var(--line-2); border-radius:var(--bloom-r-lg); background:var(--panel); box-shadow:var(--bloom-night-shadow); overflow:hidden}
+/* (v1.0.1, owner direction) content height, top-aligned, up to the body's height: only a dossier taller than that scrolls (.cw-d-main) */
+.cw-dossier{display:flex; flex-direction:column; align-self:start; max-height:100%; min-height:0; min-width:0; border:2px solid var(--line-2); border-radius:var(--bloom-r-lg); background:var(--panel); box-shadow:var(--bloom-night-shadow); overflow:hidden}
 .cw-d-main{flex:1 1 auto; min-height:0; overflow:auto; padding:16px 20px 12px; display:grid; gap:14px; align-content:start}
 .cw-sec{padding:0 0 12px; border-bottom:1.5px solid var(--line)} .cw-sec:last-child{border-bottom:0; padding-bottom:0}
 /* CHALLENGE | YOUR PLANT side by side (compact), then YOUR WORLD — the directive's reading order */
@@ -132,7 +133,7 @@
   .cw-back span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
   .cw-body{display:flex; flex-direction:column; gap:8px; padding:6px 12px 12px}
   .cw-globe-col{flex:none} .cw-stage{width:min(56cqw, 30cqh)} .cw-seed{margin-top:4px}
-  .cw-dossier{flex:1 1 auto} .cw-d-main{padding:12px 12px 8px}
+  .cw-dossier{flex:1 1 auto; align-self:stretch; max-height:none} .cw-d-main{padding:12px 12px 8px}
   .cw-pair{grid-template-columns:minmax(0, 1fr); gap:8px}
   .cw-dossier h2{font-size:24px}
   .cw-row{padding:5px 8px 5px 44px; grid-template-columns:minmax(0,1fr); grid-template-rows:auto auto auto}
