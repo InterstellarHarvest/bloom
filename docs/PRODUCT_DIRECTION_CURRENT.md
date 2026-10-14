@@ -104,7 +104,7 @@ STRANGE BLOOM · UNKNOWN SOILS
   The prefetch still starts silently while the title shows (BEGIN EXPEDITION adopts whatever is ready); the title never says "Surveying
   sector", "n of 9 worlds", "Sector surveyed" or "worlds ready" (no status line, toast or badge) — the Destination Survey's own header
   reports progress once the player is in it. Guarded by `main-menu-check` M8, `release-check` R16b and `ui-polish-check`.
-- **v1.0.1 UI polish (owner, 2026-10-13):** Settings stays small — Motion · "Show Training recommendation again" · "Reset preferences"
+- **v1.0.1 UI polish — LIVE 2026-10-14 (release head `f631f4f`; PMO accepted; strict axe gate green):** Settings stays small — Motion · "Show Training recommendation again" · "Reset preferences"
   (local preferences only; no difficulty / audio / graphics / colour / text-size / save / Challenge options; **"pause while a decision room
   is open" and Fullscreen are explicitly deferred** — the pause changes gameplay timing under the pressure Challenges and needs its own
   design / QA pass). No player-facing text is pointer-selectable. Right-hand planning panels take their content's height. The flat map

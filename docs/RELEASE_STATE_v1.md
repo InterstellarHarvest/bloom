@@ -23,7 +23,9 @@ SETTINGS (v1.0.1): motion (system / reduced / full) · "Show Training recommenda
 (motion → Follow system and the training record back to first-run; nothing else in the browser's storage is touched). Nothing gameplay-affecting is a
 setting — "pause while a decision room is open" is explicitly deferred (it changes run timing under Dying World / Native Competition / Volatile Climate / Thin Air).
 
-v1.0.1 UI polish (owner direction): the title shows no survey-prefetch status (the prefetch itself still runs silently from the title); no
+**v1.0.1 — LIVE / COMPLETE 2026-10-14, release head `f631f4f`** (docs/evidence/bloom-v1.0.1/REPORT.md: 46 / 46 regression · 2119 checks, strict
+axe pass 0 critical / 0 serious on 22 screens × Chromium / Firefox / WebKit, Pages run 38567439937, live verification 11 / 11, portable
+fingerprint de32ce91…). UI polish (owner direction): the title shows no survey-prefetch status (the prefetch itself still runs silently from the title); no
 player-facing text is pointer-selectable (`html.mm-page{user-select:none}`); right-hand planning panels — the Challenge dossier, the species dossier,
 the Destination Survey's focused-planet dossier and the Challenge Planet Dossier — take their content's height (top-aligned, up to the available
 height, scrolling inside only when the content overflows); the flat gameplay map draws exactly ONE copy of a cylindrical world (the frame either
