@@ -1,0 +1,1291 @@
+{
+ "format": "bloom-038-challenge-comparison@1",
+ "method": {
+  "sample": "first 10 entries of every shipped seed-bank cell × 7 policies × 1 run seed",
+  "similarity": "actionMixCosine = cosine of board + per-trait purchase shares; coverage curves = median coverage every 30 s (0–600 s) and over normalised run time (wins)"
+ },
+ "profiles": {
+  "dying_world": {
+   "runs": 280,
+   "archetypes": {
+    "desert_world": 280
+   },
+   "species": {
+    "organic_hybrid": 70,
+    "cinder_rosette": 70,
+    "woolly_candle": 70,
+    "reed_spire": 70
+   },
+   "bloom": 0.964,
+   "extinction": 0,
+   "timeout": 0.036,
+   "actionDistribution": {
+    "Adapt": 0.616,
+    "Spread": 0.221,
+    "Terraform": 0.162
+   },
+   "traitMix": {
+    "cold": 0,
+    "heat": 0.059,
+    "drought": 0.297,
+    "flood": 0,
+    "salt": 0.099,
+    "rad": 0.161,
+    "seedOut": 0.143,
+    "waterSeeds": 0,
+    "earlyMat": 0.079,
+    "warm": 0,
+    "cool": 0.019,
+    "humid": 0.139,
+    "dry": 0.004
+   },
+   "terraformRunsShare": 0.496,
+   "adaptationPatternTop": {
+    "drought>rad": 27,
+    "drought>drought>rad": 25,
+    "drought>salt>rad": 15,
+    "drought>rad>drought": 14,
+    "rad": 12,
+    "drought>drought>salt>rad": 11
+   },
+   "firstSpread": {
+    "n": 176,
+    "p10": 29.8,
+    "p25": 33.4,
+    "median": 100.3,
+    "p75": 175.7,
+    "p90": 231.9,
+    "max": 555.8,
+    "mean": 117.2
+   },
+   "firstPurchase": {
+    "n": 280,
+    "p10": 26.9,
+    "p25": 31.7,
+    "median": 43.2,
+    "p75": 48,
+    "p90": 61.5,
+    "max": 84.5,
+    "mean": 42.1
+   },
+   "purchases": {
+    "n": 280,
+    "p10": 3,
+    "p25": 4,
+    "median": 5,
+    "p75": 6,
+    "p90": 7,
+    "max": 8,
+    "mean": 4.8
+   },
+   "coverageCurveMedian_0to600s_every30s": [
+    1.4,
+    5.3,
+    9.9,
+    16.4,
+    24.2,
+    34.9,
+    49.3,
+    60.8,
+    65.1,
+    66.8,
+    67.4,
+    67.6,
+    67.7,
+    67.7,
+    67.8,
+    67.8,
+    67.8,
+    67.8,
+    67.8,
+    67.8,
+    67.8
+   ],
+   "normalizedCurveWins_0to1": [
+    1.4,
+    4,
+    7.3,
+    11,
+    15.3,
+    21.7,
+    27.5,
+    36.3,
+    45.4,
+    56.3,
+    67.8
+   ],
+   "duration": {
+    "n": 270,
+    "p10": 168.6,
+    "p25": 195.5,
+    "median": 232.1,
+    "p75": 286.5,
+    "p90": 345.2,
+    "max": 699,
+    "mean": 247.2
+   },
+   "extinctionAt": {
+    "n": 0
+   },
+   "reversals": {
+    "n": 280,
+    "p10": 0,
+    "p25": 0,
+    "median": 0,
+    "p75": 0,
+    "p90": 0,
+    "max": 0,
+    "mean": 0
+   },
+   "runsWithReversal": 0,
+   "pressure": {
+    "finalProgress": {
+     "n": 280,
+     "p10": 0.5,
+     "p25": 0.6,
+     "median": 0.8,
+     "p75": 1,
+     "p90": 1,
+     "max": 1,
+     "mean": 0.8
+    }
+   },
+   "competition": null,
+   "climate": null,
+   "completion": null
+  },
+  "native_competition": {
+   "runs": 280,
+   "archetypes": {
+    "desert_world": 245,
+    "frozen_world": 35
+   },
+   "species": {
+    "organic_hybrid": 70,
+    "cinder_rosette": 70,
+    "woolly_candle": 70,
+    "reed_spire": 70
+   },
+   "bloom": 0.529,
+   "extinction": 0.018,
+   "timeout": 0.454,
+   "actionDistribution": {
+    "Adapt": 0.389,
+    "Spread": 0.27,
+    "Terraform": 0.341
+   },
+   "traitMix": {
+    "cold": 0.034,
+    "heat": 0.067,
+    "drought": 0.123,
+    "flood": 0,
+    "salt": 0.081,
+    "rad": 0.083,
+    "seedOut": 0.181,
+    "waterSeeds": 0,
+    "earlyMat": 0.09,
+    "warm": 0.028,
+    "cool": 0.101,
+    "humid": 0.139,
+    "dry": 0.073
+   },
+   "terraformRunsShare": 0.868,
+   "adaptationPatternTop": {
+    "drought>rad>salt": 20,
+    "drought>salt>rad": 17,
+    "drought>heat>salt>rad": 14,
+    "rad>salt": 12,
+    "drought>drought>rad>heat": 9,
+    "drought>heat>rad>salt": 8
+   },
+   "firstSpread": {
+    "n": 259,
+    "p10": 28.8,
+    "p25": 33.6,
+    "median": 165.1,
+    "p75": 289.5,
+    "p90": 424,
+    "max": 1014.7,
+    "mean": 197.3
+   },
+   "firstPurchase": {
+    "n": 280,
+    "p10": 25,
+    "p25": 29.8,
+    "median": 36.5,
+    "p75": 46.1,
+    "p90": 62.4,
+    "max": 82.6,
+    "mean": 39.3
+   },
+   "purchases": {
+    "n": 280,
+    "p10": 6,
+    "p25": 7,
+    "median": 8,
+    "p75": 10,
+    "p90": 11,
+    "max": 35,
+    "mean": 9
+   },
+   "coverageCurveMedian_0to600s_every30s": [
+    1.4,
+    6,
+    8.8,
+    10.3,
+    11.1,
+    12,
+    13.4,
+    15.9,
+    19.5,
+    23.1,
+    29.3,
+    36.2,
+    40.8,
+    46.9,
+    51.8,
+    55.7,
+    58.8,
+    61.9,
+    63.1,
+    65.2,
+    65.6
+   ],
+   "normalizedCurveWins_0to1": [
+    1.4,
+    7.4,
+    10.5,
+    12.4,
+    14.7,
+    19.1,
+    24.5,
+    32.9,
+    44.1,
+    54.5,
+    68.6
+   ],
+   "duration": {
+    "n": 148,
+    "p10": 306,
+    "p25": 367.5,
+    "median": 456.6,
+    "p75": 576.3,
+    "p90": 677.2,
+    "max": 1218.4,
+    "mean": 486.9
+   },
+   "extinctionAt": {
+    "n": 5,
+    "p10": 250.6,
+    "p25": 272,
+    "median": 348.8,
+    "p75": 580.5,
+    "p90": 1942.4,
+    "max": 2850.4,
+    "mean": 857.6
+   },
+   "reversals": {
+    "n": 280,
+    "p10": 0,
+    "p25": 0,
+    "median": 0,
+    "p75": 0,
+    "p90": 0,
+    "max": 1,
+    "mean": 0.1
+   },
+   "runsWithReversal": 0.071,
+   "pressure": null,
+   "competition": {
+    "startShare": {
+     "n": 280,
+     "p10": 0.2,
+     "p25": 0.3,
+     "median": 0.3,
+     "p75": 0.3,
+     "p90": 0.3,
+     "max": 0.3,
+     "mean": 0.3
+    },
+    "peakShare": {
+     "n": 280,
+     "p10": 0.3,
+     "p25": 0.3,
+     "median": 0.4,
+     "p75": 0.5,
+     "p90": 0.6,
+     "max": 0.7,
+     "mean": 0.4
+    },
+    "finalShare": {
+     "n": 280,
+     "p10": 0.1,
+     "p25": 0.2,
+     "median": 0.2,
+     "p75": 0.3,
+     "p90": 0.5,
+     "max": 0.6,
+     "mean": 0.2
+    },
+    "contestedRegions": {
+     "n": 280,
+     "p10": 7,
+     "p25": 9,
+     "median": 11,
+     "p75": 13,
+     "p90": 14,
+     "max": 16,
+     "mean": 10.6
+    },
+    "firstContact": {
+     "n": 280,
+     "p10": 19.7,
+     "p25": 22.2,
+     "median": 27.8,
+     "p75": 39.8,
+     "p90": 48.6,
+     "max": 443.7,
+     "mean": 37.2
+    },
+    "nativeTook": {
+     "n": 280,
+     "p10": 120.9,
+     "p25": 182,
+     "median": 283,
+     "p75": 507.5,
+     "p90": 806.4,
+     "max": 5092,
+     "mean": 424.8
+    }
+   },
+   "climate": null,
+   "completion": null
+  },
+  "volatile_climate": {
+   "runs": 280,
+   "archetypes": {
+    "desert_world": 280
+   },
+   "species": {
+    "organic_hybrid": 70,
+    "cinder_rosette": 70,
+    "woolly_candle": 70,
+    "reed_spire": 70
+   },
+   "bloom": 0.989,
+   "extinction": 0,
+   "timeout": 0.011,
+   "actionDistribution": {
+    "Adapt": 0.588,
+    "Spread": 0.222,
+    "Terraform": 0.19
+   },
+   "traitMix": {
+    "cold": 0,
+    "heat": 0.102,
+    "drought": 0.269,
+    "flood": 0,
+    "salt": 0.09,
+    "rad": 0.126,
+    "seedOut": 0.141,
+    "waterSeeds": 0,
+    "earlyMat": 0.081,
+    "warm": 0.001,
+    "cool": 0.052,
+    "humid": 0.134,
+    "dry": 0.004
+   },
+   "terraformRunsShare": 0.496,
+   "adaptationPatternTop": {
+    "drought>rad": 25,
+    "drought>rad>salt": 23,
+    "drought>drought>rad>heat": 21,
+    "drought": 18,
+    "drought>heat": 15,
+    "drought>drought": 14
+   },
+   "firstSpread": {
+    "n": 187,
+    "p10": 29.4,
+    "p25": 62.4,
+    "median": 125.8,
+    "p75": 174.7,
+    "p90": 232.3,
+    "max": 431,
+    "mean": 124.8
+   },
+   "firstPurchase": {
+    "n": 280,
+    "p10": 25.9,
+    "p25": 28.8,
+    "median": 40.3,
+    "p75": 48,
+    "p90": 58.7,
+    "max": 89.3,
+    "mean": 40.2
+   },
+   "purchases": {
+    "n": 280,
+    "p10": 3,
+    "p25": 4,
+    "median": 5,
+    "p75": 6,
+    "p90": 7,
+    "max": 9,
+    "mean": 4.8
+   },
+   "coverageCurveMedian_0to600s_every30s": [
+    1.4,
+    5.3,
+    10.6,
+    17.4,
+    25.2,
+    37.8,
+    52.2,
+    63.2,
+    65.8,
+    67,
+    67.4,
+    67.5,
+    67.7,
+    67.9,
+    67.9,
+    68,
+    68,
+    68,
+    68,
+    68,
+    68
+   ],
+   "normalizedCurveWins_0to1": [
+    1.4,
+    3.8,
+    7.6,
+    11.5,
+    16.5,
+    22.6,
+    28.2,
+    36.3,
+    45.6,
+    56,
+    68
+   ],
+   "duration": {
+    "n": 277,
+    "p10": 163.7,
+    "p25": 191,
+    "median": 224.8,
+    "p75": 266.2,
+    "p90": 328.8,
+    "max": 552.8,
+    "mean": 236.9
+   },
+   "extinctionAt": {
+    "n": 0
+   },
+   "reversals": {
+    "n": 280,
+    "p10": 0,
+    "p25": 0,
+    "median": 0,
+    "p75": 0,
+    "p90": 0,
+    "max": 1,
+    "mean": 0
+   },
+   "runsWithReversal": 0.018,
+   "pressure": null,
+   "competition": null,
+   "climate": {
+    "shocks": {
+     "n": 280,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 0,
+     "p90": 1,
+     "max": 2,
+     "mean": 0.1
+    },
+    "runsWithShock": 0.111,
+    "peakBand": {
+     "0": 244,
+     "1": 33,
+     "2": 3
+    }
+   },
+   "completion": null
+  },
+  "low_tide": {
+   "runs": 70,
+   "archetypes": {
+    "ocean_archipelago": 70
+   },
+   "species": {
+    "organic_hybrid": 70
+   },
+   "bloom": 0.986,
+   "extinction": 0,
+   "timeout": 0.014,
+   "actionDistribution": {
+    "Adapt": 0.257,
+    "Spread": 0.432,
+    "Terraform": 0.311
+   },
+   "traitMix": {
+    "cold": 0.107,
+    "heat": 0.038,
+    "drought": 0,
+    "flood": 0,
+    "salt": 0,
+    "rad": 0.112,
+    "seedOut": 0.183,
+    "waterSeeds": 0.154,
+    "earlyMat": 0.094,
+    "warm": 0.036,
+    "cool": 0.029,
+    "humid": 0.246,
+    "dry": 0
+   },
+   "terraformRunsShare": 0.757,
+   "adaptationPatternTop": {
+    "cold>rad": 13,
+    "rad>cold": 13,
+    "": 12,
+    "cold": 8,
+    "rad": 7,
+    "rad>heat>cold": 5
+   },
+   "firstSpread": {
+    "n": 69,
+    "p10": 29.6,
+    "p25": 36.5,
+    "median": 49,
+    "p75": 138.2,
+    "p90": 257.1,
+    "max": 685.4,
+    "mean": 109.5
+   },
+   "firstPurchase": {
+    "n": 70,
+    "p10": 25.7,
+    "p25": 30.7,
+    "median": 44.7,
+    "p75": 54,
+    "p90": 65.3,
+    "max": 74.9,
+    "mean": 43.2
+   },
+   "purchases": {
+    "n": 70,
+    "p10": 3,
+    "p25": 4,
+    "median": 6,
+    "p75": 8,
+    "p90": 10,
+    "max": 20,
+    "mean": 6.4
+   },
+   "coverageCurveMedian_0to600s_every30s": [
+    3.2,
+    11.8,
+    23.4,
+    32.3,
+    39,
+    44.5,
+    48.5,
+    49.7,
+    51.9,
+    59.8,
+    62.9,
+    64.9,
+    65.2,
+    65.6,
+    65.6,
+    66.1,
+    66.7,
+    66.8,
+    66.9,
+    66.9,
+    66.9
+   ],
+   "normalizedCurveWins_0to1": [
+    3.2,
+    11.8,
+    22.7,
+    28.8,
+    32.8,
+    36,
+    40.6,
+    44.7,
+    50.3,
+    57.1,
+    67.3
+   ],
+   "duration": {
+    "n": 69,
+    "p10": 144.5,
+    "p25": 200.3,
+    "median": 324.8,
+    "p75": 474.2,
+    "p90": 562.4,
+    "max": 884.2,
+    "mean": 358
+   },
+   "extinctionAt": {
+    "n": 0
+   },
+   "reversals": {
+    "n": 70,
+    "p10": 0,
+    "p25": 0,
+    "median": 0,
+    "p75": 0,
+    "p90": 1,
+    "max": 1,
+    "mean": 0.1
+   },
+   "runsWithReversal": 0.114,
+   "pressure": {
+    "finalProgress": {
+     "n": 70,
+     "p10": 0.4,
+     "p25": 0.6,
+     "median": 1,
+     "p75": 1,
+     "p90": 1,
+     "max": 1,
+     "mean": 0.8
+    }
+   },
+   "competition": null,
+   "climate": null,
+   "completion": null
+  },
+  "oasis_line": {
+   "runs": 70,
+   "archetypes": {
+    "desert_world": 70
+   },
+   "species": {
+    "reed_spire": 70
+   },
+   "bloom": 0.929,
+   "extinction": 0,
+   "timeout": 0.071,
+   "actionDistribution": {
+    "Adapt": 0.434,
+    "Spread": 0.205,
+    "Terraform": 0.361
+   },
+   "traitMix": {
+    "cold": 0.001,
+    "heat": 0.064,
+    "drought": 0.18,
+    "flood": 0,
+    "salt": 0.086,
+    "rad": 0.102,
+    "seedOut": 0.14,
+    "waterSeeds": 0,
+    "earlyMat": 0.066,
+    "warm": 0.036,
+    "cool": 0.087,
+    "humid": 0.186,
+    "dry": 0.051
+   },
+   "terraformRunsShare": 0.943,
+   "adaptationPatternTop": {
+    "drought>drought>salt>rad": 10,
+    "drought>drought>rad>heat>salt": 9,
+    "drought>drought>salt>heat>rad": 6,
+    "drought>drought>salt>rad>heat": 4,
+    "drought>drought>rad>heat": 3,
+    "drought>heat>salt>rad>drought": 3
+   },
+   "firstSpread": {
+    "n": 64,
+    "p10": 48.3,
+    "p25": 95.8,
+    "median": 184.8,
+    "p75": 324.5,
+    "p90": 514.7,
+    "max": 728.6,
+    "mean": 235.4
+   },
+   "firstPurchase": {
+    "n": 70,
+    "p10": 30.6,
+    "p25": 34.1,
+    "median": 43.2,
+    "p75": 51.8,
+    "p90": 59.1,
+    "max": 79.7,
+    "mean": 44.4
+   },
+   "purchases": {
+    "n": 70,
+    "p10": 6.9,
+    "p25": 8,
+    "median": 9,
+    "p75": 11,
+    "p90": 11.1,
+    "max": 38,
+    "mean": 9.8
+   },
+   "coverageCurveMedian_0to600s_every30s": [
+    1.4,
+    4.8,
+    7.3,
+    9.1,
+    9.9,
+    10.3,
+    11.7,
+    14,
+    17.2,
+    23.2,
+    28.9,
+    32.9,
+    36.2,
+    42.9,
+    47.9,
+    53.4,
+    62.4,
+    65.3,
+    66.1,
+    67,
+    67.2
+   ],
+   "normalizedCurveWins_0to1": [
+    1.4,
+    6,
+    8.7,
+    10.1,
+    11.6,
+    15.7,
+    20.2,
+    31.9,
+    40.9,
+    54.6,
+    68.4
+   ],
+   "duration": {
+    "n": 65,
+    "p10": 334.6,
+    "p25": 385.4,
+    "median": 495,
+    "p75": 636.8,
+    "p90": 730.2,
+    "max": 1233.6,
+    "mean": 528.6
+   },
+   "extinctionAt": {
+    "n": 0
+   },
+   "reversals": {
+    "n": 70,
+    "p10": 0,
+    "p25": 0,
+    "median": 0,
+    "p75": 0,
+    "p90": 0,
+    "max": 0,
+    "mean": 0
+   },
+   "runsWithReversal": 0,
+   "pressure": null,
+   "competition": {
+    "startShare": {
+     "n": 70,
+     "p10": 0.2,
+     "p25": 0.3,
+     "median": 0.3,
+     "p75": 0.3,
+     "p90": 0.3,
+     "max": 0.3,
+     "mean": 0.3
+    },
+    "peakShare": {
+     "n": 70,
+     "p10": 0.2,
+     "p25": 0.3,
+     "median": 0.4,
+     "p75": 0.5,
+     "p90": 0.5,
+     "max": 0.6,
+     "mean": 0.4
+    },
+    "finalShare": {
+     "n": 70,
+     "p10": 0.1,
+     "p25": 0.2,
+     "median": 0.2,
+     "p75": 0.3,
+     "p90": 0.3,
+     "max": 0.4,
+     "mean": 0.2
+    },
+    "contestedRegions": {
+     "n": 70,
+     "p10": 8,
+     "p25": 11,
+     "median": 13,
+     "p75": 14,
+     "p90": 15,
+     "max": 17,
+     "mean": 12.5
+    },
+    "firstContact": {
+     "n": 70,
+     "p10": 22.4,
+     "p25": 25.4,
+     "median": 36.3,
+     "p75": 44.7,
+     "p90": 54.3,
+     "max": 61,
+     "mean": 36.7
+    },
+    "nativeTook": {
+     "n": 70,
+     "p10": 128.6,
+     "p25": 178,
+     "median": 231,
+     "p75": 400.8,
+     "p90": 716.3,
+     "max": 1052,
+     "mean": 323.8
+    }
+   },
+   "climate": null,
+   "completion": null
+  },
+  "thin_air": {
+   "runs": 70,
+   "archetypes": {
+    "desert_world": 70
+   },
+   "species": {
+    "woolly_candle": 70
+   },
+   "bloom": 0.986,
+   "extinction": 0,
+   "timeout": 0.014,
+   "actionDistribution": {
+    "Adapt": 0.626,
+    "Spread": 0.197,
+    "Terraform": 0.176
+   },
+   "traitMix": {
+    "cold": 0,
+    "heat": 0.135,
+    "drought": 0.246,
+    "flood": 0,
+    "salt": 0.114,
+    "rad": 0.132,
+    "seedOut": 0.128,
+    "waterSeeds": 0,
+    "earlyMat": 0.07,
+    "warm": 0,
+    "cool": 0.037,
+    "humid": 0.132,
+    "dry": 0.007
+   },
+   "terraformRunsShare": 0.6,
+   "adaptationPatternTop": {
+    "drought>heat>salt>rad>drought": 7,
+    "heat>drought>rad>drought": 6,
+    "heat>drought>salt>rad": 6,
+    "drought>heat>salt>rad": 6,
+    "drought>heat>salt>drought>rad": 6,
+    "drought>heat>drought>salt": 5
+   },
+   "firstSpread": {
+    "n": 53,
+    "p10": 30,
+    "p25": 81.6,
+    "median": 144,
+    "p75": 216,
+    "p90": 251.1,
+    "max": 315.8,
+    "mean": 150.6
+   },
+   "firstPurchase": {
+    "n": 70,
+    "p10": 24.3,
+    "p25": 27.8,
+    "median": 35.5,
+    "p75": 43.2,
+    "p90": 52.9,
+    "max": 66.2,
+    "mean": 36.1
+   },
+   "purchases": {
+    "n": 70,
+    "p10": 5,
+    "p25": 5.3,
+    "median": 6,
+    "p75": 7,
+    "p90": 7,
+    "max": 9,
+    "mean": 6.2
+   },
+   "coverageCurveMedian_0to600s_every30s": [
+    1.4,
+    5.2,
+    8.9,
+    13.2,
+    20.2,
+    31.3,
+    49.2,
+    64.1,
+    75.8,
+    85.9,
+    87.9,
+    87.9,
+    87.9,
+    87.9,
+    87.9,
+    87.9,
+    87.9,
+    87.9,
+    87.9,
+    87.9,
+    87.9
+   ],
+   "normalizedCurveWins_0to1": [
+    1.4,
+    5.2,
+    8.9,
+    15.1,
+    20.9,
+    34.5,
+    43.7,
+    61.3,
+    72.2,
+    82.9,
+    88.6
+   ],
+   "duration": {
+    "n": 69,
+    "p10": 290.1,
+    "p25": 290.1,
+    "median": 290.1,
+    "p75": 290.1,
+    "p90": 346.6,
+    "max": 700,
+    "mean": 309
+   },
+   "extinctionAt": {
+    "n": 0
+   },
+   "reversals": {
+    "n": 70,
+    "p10": 0,
+    "p25": 0,
+    "median": 0,
+    "p75": 0,
+    "p90": 0,
+    "max": 1,
+    "mean": 0
+   },
+   "runsWithReversal": 0.029,
+   "pressure": {
+    "finalProgress": {
+     "n": 70,
+     "p10": 1,
+     "p25": 1,
+     "median": 1,
+     "p75": 1,
+     "p90": 1,
+     "max": 1,
+     "mean": 1
+    }
+   },
+   "competition": null,
+   "climate": null,
+   "completion": {
+    "earlyBloomRuns": 0.771,
+    "earlyBloomAt": {
+     "n": 54,
+     "p10": 163.1,
+     "p25": 196.8,
+     "median": 215.1,
+     "p75": 240.4,
+     "p90": 262.5,
+     "max": 278.7,
+     "mean": 215.1
+    },
+    "holdSeconds": {
+     "n": 54,
+     "p10": 27.6,
+     "p25": 49.7,
+     "median": 75,
+     "p75": 93.3,
+     "p90": 127,
+     "max": 162.3,
+     "mean": 75
+    },
+    "earlyBloomThenExtinction": 0
+   }
+  }
+ },
+ "pairwise": {
+  "dying_world~native_competition": {
+   "runsA": 280,
+   "runsB": 280,
+   "actionMixCosine": 0.884,
+   "coverageCurveMeanAbsDiffPts": 18.3,
+   "normalizedCurveDiffPts": 2,
+   "medianDurationA": 232.1,
+   "medianDurationB": 456.6,
+   "bloomA": 0.964,
+   "bloomB": 0.529,
+   "firstPurchaseOverlap": 0.775
+  },
+  "dying_world~volatile_climate": {
+   "runsA": 280,
+   "runsB": 280,
+   "actionMixCosine": 0.995,
+   "coverageCurveMeanAbsDiffPts": 0.6,
+   "normalizedCurveDiffPts": 0.4,
+   "medianDurationA": 232.1,
+   "medianDurationB": 224.8,
+   "bloomA": 0.964,
+   "bloomB": 0.989,
+   "firstPurchaseOverlap": 0.904
+  },
+  "dying_world~low_tide": {
+   "runsA": 280,
+   "runsB": 70,
+   "actionMixCosine": 0.699,
+   "coverageCurveMeanAbsDiffPts": 5.5,
+   "normalizedCurveDiffPts": 9.3,
+   "medianDurationA": 232.1,
+   "medianDurationB": 324.8,
+   "bloomA": 0.964,
+   "bloomB": 0.986,
+   "firstPurchaseOverlap": 0.289
+  },
+  "dying_world~oasis_line": {
+   "runsA": 280,
+   "runsB": 70,
+   "actionMixCosine": 0.917,
+   "coverageCurveMeanAbsDiffPts": 19,
+   "normalizedCurveDiffPts": 3,
+   "medianDurationA": 232.1,
+   "medianDurationB": 495,
+   "bloomA": 0.964,
+   "bloomB": 0.929,
+   "firstPurchaseOverlap": 0.811
+  },
+  "dying_world~thin_air": {
+   "runsA": 280,
+   "runsB": 70,
+   "actionMixCosine": 0.991,
+   "coverageCurveMeanAbsDiffPts": 12.7,
+   "normalizedCurveDiffPts": 12.8,
+   "medianDurationA": 232.1,
+   "medianDurationB": 290.1,
+   "bloomA": 0.964,
+   "bloomB": 0.986,
+   "firstPurchaseOverlap": 0.825
+  },
+  "native_competition~volatile_climate": {
+   "runsA": 280,
+   "runsB": 280,
+   "actionMixCosine": 0.911,
+   "coverageCurveMeanAbsDiffPts": 18.9,
+   "normalizedCurveDiffPts": 2.1,
+   "medianDurationA": 456.6,
+   "medianDurationB": 224.8,
+   "bloomA": 0.529,
+   "bloomB": 0.989,
+   "firstPurchaseOverlap": 0.711
+  },
+  "native_competition~low_tide": {
+   "runsA": 280,
+   "runsB": 70,
+   "actionMixCosine": 0.877,
+   "coverageCurveMeanAbsDiffPts": 18.7,
+   "normalizedCurveDiffPts": 9.8,
+   "medianDurationA": 456.6,
+   "medianDurationB": 324.8,
+   "bloomA": 0.529,
+   "bloomB": 0.986,
+   "firstPurchaseOverlap": 0.371
+  },
+  "native_competition~oasis_line": {
+   "runsA": 280,
+   "runsB": 70,
+   "actionMixCosine": 0.983,
+   "coverageCurveMeanAbsDiffPts": 2.1,
+   "normalizedCurveDiffPts": 1.9,
+   "medianDurationA": 456.6,
+   "medianDurationB": 495,
+   "bloomA": 0.529,
+   "bloomB": 0.929,
+   "firstPurchaseOverlap": 0.614
+  },
+  "native_competition~thin_air": {
+   "runsA": 280,
+   "runsB": 70,
+   "actionMixCosine": 0.892,
+   "coverageCurveMeanAbsDiffPts": 29.9,
+   "normalizedCurveDiffPts": 13.8,
+   "medianDurationA": 456.6,
+   "medianDurationB": 290.1,
+   "bloomA": 0.529,
+   "bloomB": 0.986,
+   "firstPurchaseOverlap": 0.682
+  },
+  "volatile_climate~low_tide": {
+   "runsA": 280,
+   "runsB": 70,
+   "actionMixCosine": 0.722,
+   "coverageCurveMeanAbsDiffPts": 5.6,
+   "normalizedCurveDiffPts": 9,
+   "medianDurationA": 224.8,
+   "medianDurationB": 324.8,
+   "bloomA": 0.989,
+   "bloomB": 0.986,
+   "firstPurchaseOverlap": 0.254
+  },
+  "volatile_climate~oasis_line": {
+   "runsA": 280,
+   "runsB": 70,
+   "actionMixCosine": 0.938,
+   "coverageCurveMeanAbsDiffPts": 19.7,
+   "normalizedCurveDiffPts": 3.2,
+   "medianDurationA": 224.8,
+   "medianDurationB": 495,
+   "bloomA": 0.989,
+   "bloomB": 0.929,
+   "firstPurchaseOverlap": 0.882
+  },
+  "volatile_climate~thin_air": {
+   "runsA": 280,
+   "runsB": 70,
+   "actionMixCosine": 0.996,
+   "coverageCurveMeanAbsDiffPts": 12.9,
+   "normalizedCurveDiffPts": 12.5,
+   "medianDurationA": 224.8,
+   "medianDurationB": 290.1,
+   "bloomA": 0.989,
+   "bloomB": 0.986,
+   "firstPurchaseOverlap": 0.829
+  },
+  "low_tide~oasis_line": {
+   "runsA": 70,
+   "runsB": 70,
+   "actionMixCosine": 0.825,
+   "coverageCurveMeanAbsDiffPts": 19.5,
+   "normalizedCurveDiffPts": 11.6,
+   "medianDurationA": 324.8,
+   "medianDurationB": 495,
+   "bloomA": 0.986,
+   "bloomB": 0.929,
+   "firstPurchaseOverlap": 0.157
+  },
+  "low_tide~thin_air": {
+   "runsA": 70,
+   "runsB": 70,
+   "actionMixCosine": 0.693,
+   "coverageCurveMeanAbsDiffPts": 18.2,
+   "normalizedCurveDiffPts": 12.5,
+   "medianDurationA": 324.8,
+   "medianDurationB": 290.1,
+   "bloomA": 0.986,
+   "bloomB": 0.986,
+   "firstPurchaseOverlap": 0.186
+  },
+  "oasis_line~thin_air": {
+   "runsA": 70,
+   "runsB": 70,
+   "actionMixCosine": 0.923,
+   "coverageCurveMeanAbsDiffPts": 30.6,
+   "normalizedCurveDiffPts": 15.2,
+   "medianDurationA": 495,
+   "medianDurationB": 290.1,
+   "bloomA": 0.929,
+   "bloomB": 0.986,
+   "firstPurchaseOverlap": 0.771
+  }
+ },
+ "focusPairs": {
+  "dying_world(woolly_candle, desert+ocean) ~ thin_air": {
+   "label": "same scenario, same species, same archetypes — only the completion contract differs",
+   "runsA": 70,
+   "runsB": 70,
+   "actionMixCosine": 0.995,
+   "coverageCurveMeanAbsDiffPts": 12.6,
+   "normalizedCurveDiffPts": 13,
+   "medianDurationA": 232.3,
+   "medianDurationB": 290.1,
+   "bloomA": 1,
+   "bloomB": 0.986,
+   "firstPurchaseOverlap": 0.886
+  },
+  "dying_world(woolly_candle, all) ~ thin_air": {
+   "runsA": 70,
+   "runsB": 70,
+   "actionMixCosine": 0.995,
+   "coverageCurveMeanAbsDiffPts": 12.6,
+   "normalizedCurveDiffPts": 13,
+   "medianDurationA": 232.3,
+   "medianDurationB": 290.1,
+   "bloomA": 1,
+   "bloomB": 0.986,
+   "firstPurchaseOverlap": 0.886
+  },
+  "native_competition(reed_spire, desert) ~ oasis_line": {
+   "label": "same scenario, same species, same archetype — only the recipe (arrival floor) differs",
+   "runsA": 35,
+   "runsB": 70,
+   "actionMixCosine": 0.989,
+   "coverageCurveMeanAbsDiffPts": 2.4,
+   "normalizedCurveDiffPts": 2.5,
+   "medianDurationA": 451.9,
+   "medianDurationB": 495,
+   "bloomA": 0.743,
+   "bloomB": 0.929,
+   "firstPurchaseOverlap": 0.7
+  },
+  "native_competition(all) ~ oasis_line": {
+   "runsA": 280,
+   "runsB": 70,
+   "actionMixCosine": 0.983,
+   "coverageCurveMeanAbsDiffPts": 2.1,
+   "normalizedCurveDiffPts": 1.9,
+   "medianDurationA": 456.6,
+   "medianDurationB": 495,
+   "bloomA": 0.529,
+   "bloomB": 0.929,
+   "firstPurchaseOverlap": 0.614
+  },
+  "volatile_climate ~ expedition(same species mix)": {
+   "label": "is Volatile Climate distinguishable from an ordinary Expedition?",
+   "runsA": 280,
+   "runsB": 2868,
+   "actionMixCosine": 0.927,
+   "coverageCurveMeanAbsDiffPts": 1.8,
+   "normalizedCurveDiffPts": 0.6,
+   "medianDurationA": 224.8,
+   "medianDurationB": 256.5,
+   "bloomA": 0.989,
+   "bloomB": 0.961,
+   "firstPurchaseOverlap": 0.471
+  },
+  "low_tide ~ dying_world(organic_hybrid, ocean)": {
+   "label": "same scenario + species + archetype; Low Tide adds the starting state",
+   "runsA": 70,
+   "runsB": 0,
+   "actionMixCosine": 0,
+   "coverageCurveMeanAbsDiffPts": null,
+   "normalizedCurveDiffPts": null,
+   "medianDurationA": 324.8,
+   "medianDurationB": null,
+   "bloomA": 0.986,
+   "bloomB": null,
+   "firstPurchaseOverlap": null
+  }
+ }
+}

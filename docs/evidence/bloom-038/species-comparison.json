@@ -1,0 +1,1148 @@
+{
+ "format": "bloom-038-species-comparison@1",
+ "method": {
+  "equivalentPlanets": "59 Expedition sample worlds playable (survey S2) by all four species; same world, same policy, same run seed compared across species",
+  "similarity": "sequenceSimilarity = 1 − normalised Levenshtein distance between purchase-id sequences; traitMixCosine = cosine of per-trait purchase counts; withinSpeciesBaseline = the same comparison between two run seeds of ONE species (noise floor)",
+  "blindClassifier": "nearest-centroid on per-trait purchase counts, leave-one-world-out: if labels and art were hidden, how often do the action trajectories alone name the species (chance 25 %)"
+ },
+ "equivalentWorlds": 59,
+ "profiles": {
+  "organic_hybrid": {
+   "runs": 826,
+   "bloom": 0.969,
+   "timeout": 0.031,
+   "bloomTime": {
+    "n": 800,
+    "p10": 178.1,
+    "p25": 201.4,
+    "median": 249.7,
+    "p75": 355.5,
+    "p90": 455.3,
+    "max": 1117.9,
+    "mean": 298.5
+   },
+   "firstPurchaseBoard": {
+    "Adapt": 529,
+    "Spread": 173,
+    "Terraform": 124
+   },
+   "firstPurchase": {
+    "cold": 184,
+    "drought": 175,
+    "seedOut": 107,
+    "flood": 79,
+    "waterSeeds": 49,
+    "humid": 47
+   },
+   "adaptationSequenceTop": {
+    "cold>cold": 43,
+    "cold": 37,
+    "drought>rad>heat": 32,
+    "drought>rad": 31,
+    "flood>salt>rad>heat": 30,
+    "cold>cold>salt": 26
+   },
+   "terraformShare": 0.236,
+   "firstSpread": {
+    "n": 599,
+    "p10": 29.8,
+    "p25": 52.8,
+    "median": 114.2,
+    "p75": 205,
+    "p90": 289.2,
+    "max": 517.4,
+    "mean": 138.2
+   },
+   "viableLandTrajectory": {
+    "0s": {
+     "n": 826,
+     "p10": 4.3,
+     "p25": 7.5,
+     "median": 18.3,
+     "p75": 32.6,
+     "p90": 43.1,
+     "max": 56.7,
+     "mean": 21.3
+    },
+    "60s": {
+     "n": 826,
+     "p10": 10.7,
+     "p25": 28.7,
+     "median": 42.9,
+     "p75": 55.3,
+     "p90": 67.9,
+     "max": 76.8,
+     "mean": 41
+    },
+    "120s": {
+     "n": 826,
+     "p10": 24.6,
+     "p25": 39.4,
+     "median": 54.1,
+     "p75": 65.3,
+     "p90": 73.5,
+     "max": 95.1,
+     "mean": 50.9
+    },
+    "240s": {
+     "n": 826,
+     "p10": 46.3,
+     "p25": 61.9,
+     "median": 75.2,
+     "p75": 88.5,
+     "p90": 94.2,
+     "max": 100,
+     "mean": 72.8
+    },
+    "360s": {
+     "n": 826,
+     "p10": 69.8,
+     "p25": 75.2,
+     "median": 84,
+     "p75": 92.5,
+     "p90": 96.9,
+     "max": 100,
+     "mean": 82.3
+    }
+   },
+   "finalOwnership": {
+    "cold": 0.662,
+    "heat": 0.439,
+    "drought": 0.409,
+    "flood": 0.272,
+    "salt": 0.592,
+    "rad": 0.501,
+    "seedOut": 0.906,
+    "waterSeeds": 0.315,
+    "earlyMat": 0.528,
+    "warm": 0.329,
+    "cool": 0.214,
+    "humid": 0.59,
+    "dry": 0.294
+   },
+   "failureCauses": {
+    "Water:wet": 9,
+    "Water:dry": 6,
+    "Soil:hostile": 3,
+    "Hazard:lethal": 2,
+    "Water:flooded": 2,
+    "Temperature:freezing": 2,
+    "Temperature:cold": 1,
+    "Temperature:scorching": 1
+   }
+  },
+  "cinder_rosette": {
+   "runs": 826,
+   "bloom": 0.953,
+   "timeout": 0.047,
+   "bloomTime": {
+    "n": 787,
+    "p10": 168.5,
+    "p25": 200.2,
+    "median": 299,
+    "p75": 410.1,
+    "p90": 531.4,
+    "max": 1461.8,
+    "mean": 336.9
+   },
+   "firstPurchaseBoard": {
+    "Adapt": 543,
+    "Spread": 151,
+    "Terraform": 132
+   },
+   "firstPurchase": {
+    "cold": 205,
+    "flood": 181,
+    "drought": 132,
+    "seedOut": 105,
+    "dry": 52,
+    "humid": 40
+   },
+   "adaptationSequenceTop": {
+    "drought>rad": 82,
+    "drought>rad>salt": 63,
+    "cold>cold": 50,
+    "flood>cold>rad>salt": 38,
+    "flood>cold>salt>rad": 34,
+    "cold>flood>cold": 22
+   },
+   "terraformShare": 0.255,
+   "firstSpread": {
+    "n": 589,
+    "p10": 29.8,
+    "p25": 67.2,
+    "median": 163.2,
+    "p75": 279.4,
+    "p90": 369.2,
+    "max": 937.9,
+    "mean": 189.1
+   },
+   "viableLandTrajectory": {
+    "0s": {
+     "n": 826,
+     "p10": 3.9,
+     "p25": 7.2,
+     "median": 13.9,
+     "p75": 30.3,
+     "p90": 46.8,
+     "max": 62.5,
+     "mean": 20.2
+    },
+    "60s": {
+     "n": 826,
+     "p10": 6.5,
+     "p25": 13.8,
+     "median": 30.1,
+     "p75": 50,
+     "p90": 63.9,
+     "max": 78,
+     "mean": 32.3
+    },
+    "120s": {
+     "n": 826,
+     "p10": 7.2,
+     "p25": 20.4,
+     "median": 39.3,
+     "p75": 58.6,
+     "p90": 76,
+     "max": 100,
+     "mean": 41.5
+    },
+    "240s": {
+     "n": 826,
+     "p10": 29.6,
+     "p25": 48.9,
+     "median": 70.3,
+     "p75": 83.1,
+     "p90": 91.2,
+     "max": 100,
+     "mean": 64.1
+    },
+    "360s": {
+     "n": 826,
+     "p10": 50,
+     "p25": 72.4,
+     "median": 82.9,
+     "p75": 92.1,
+     "p90": 96.2,
+     "max": 100,
+     "mean": 77.7
+    }
+   },
+   "finalOwnership": {
+    "cold": 0.984,
+    "heat": 0.047,
+    "drought": 0.265,
+    "flood": 0.593,
+    "salt": 0.574,
+    "rad": 0.571,
+    "seedOut": 0.889,
+    "waterSeeds": 0.312,
+    "earlyMat": 0.522,
+    "warm": 0.513,
+    "cool": 0.096,
+    "humid": 0.414,
+    "dry": 0.607
+   },
+   "failureCauses": {
+    "Water:wet": 13,
+    "Temperature:freezing": 6,
+    "Hazard:lethal": 6,
+    "Water:dry": 6,
+    "Water:flooded": 4,
+    "Soil:hostile": 4
+   }
+  },
+  "woolly_candle": {
+   "runs": 826,
+   "bloom": 0.981,
+   "timeout": 0.019,
+   "bloomTime": {
+    "n": 810,
+    "p10": 160.3,
+    "p25": 189.3,
+    "median": 245.4,
+    "p75": 352.4,
+    "p90": 470.2,
+    "max": 1061.3,
+    "mean": 296.6
+   },
+   "firstPurchaseBoard": {
+    "Adapt": 520,
+    "Spread": 178,
+    "Terraform": 128
+   },
+   "firstPurchase": {
+    "cold": 141,
+    "drought": 137,
+    "heat": 128,
+    "seedOut": 122,
+    "flood": 99,
+    "waterSeeds": 42
+   },
+   "adaptationSequenceTop": {
+    "cold>heat": 39,
+    "drought>heat": 38,
+    "drought>heat>salt": 37,
+    "cold>cold": 37,
+    "cold": 35,
+    "salt": 34
+   },
+   "terraformShare": 0.221,
+   "firstSpread": {
+    "n": 584,
+    "p10": 30.7,
+    "p25": 48,
+    "median": 113.3,
+    "p75": 208.8,
+    "p90": 294.4,
+    "max": 745,
+    "mean": 145.5
+   },
+   "viableLandTrajectory": {
+    "0s": {
+     "n": 826,
+     "p10": 5.3,
+     "p25": 7.7,
+     "median": 21.9,
+     "p75": 37.1,
+     "p90": 47.6,
+     "max": 70.5,
+     "mean": 24
+    },
+    "60s": {
+     "n": 826,
+     "p10": 11.5,
+     "p25": 24.6,
+     "median": 39.7,
+     "p75": 54,
+     "p90": 70,
+     "max": 91.5,
+     "mean": 40.5
+    },
+    "120s": {
+     "n": 826,
+     "p10": 21.6,
+     "p25": 38.3,
+     "median": 54.2,
+     "p75": 70,
+     "p90": 83.1,
+     "max": 100,
+     "mean": 52.8
+    },
+    "240s": {
+     "n": 826,
+     "p10": 44.1,
+     "p25": 58.7,
+     "median": 78.3,
+     "p75": 88.6,
+     "p90": 95.4,
+     "max": 100,
+     "mean": 73.1
+    },
+    "360s": {
+     "n": 826,
+     "p10": 70.2,
+     "p25": 76.8,
+     "median": 83.9,
+     "p75": 92.5,
+     "p90": 100,
+     "max": 100,
+     "mean": 82.8
+    }
+   },
+   "finalOwnership": {
+    "cold": 0.441,
+    "heat": 0.831,
+    "drought": 0.354,
+    "flood": 0.31,
+    "salt": 0.587,
+    "rad": 0.234,
+    "seedOut": 0.892,
+    "waterSeeds": 0.322,
+    "earlyMat": 0.516,
+    "warm": 0.235,
+    "cool": 0.425,
+    "humid": 0.413,
+    "dry": 0.199
+   },
+   "failureCauses": {
+    "Temperature:scorching": 4,
+    "Water:flooded": 4,
+    "Water:dry": 3,
+    "Soil:hostile": 2,
+    "Temperature:freezing": 2,
+    "Water:wet": 1
+   }
+  },
+  "reed_spire": {
+   "runs": 826,
+   "bloom": 0.959,
+   "timeout": 0.041,
+   "bloomTime": {
+    "n": 792,
+    "p10": 195.7,
+    "p25": 226.2,
+    "median": 264.5,
+    "p75": 320.5,
+    "p90": 406.6,
+    "max": 1156,
+    "mean": 295.2
+   },
+   "firstPurchaseBoard": {
+    "Adapt": 546,
+    "Spread": 178,
+    "Terraform": 102
+   },
+   "firstPurchase": {
+    "drought": 234,
+    "cold": 176,
+    "seedOut": 91,
+    "waterSeeds": 72,
+    "rad": 65,
+    "humid": 52
+   },
+   "adaptationSequenceTop": {
+    "salt>rad>heat": 48,
+    "salt": 38,
+    "drought>drought>rad": 36,
+    "drought>drought>rad>heat": 34,
+    "": 34,
+    "cold>salt": 29
+   },
+   "terraformShare": 0.21,
+   "firstSpread": {
+    "n": 586,
+    "p10": 30.7,
+    "p25": 49.9,
+    "median": 103.7,
+    "p75": 176.6,
+    "p90": 227.1,
+    "max": 404.2,
+    "mean": 120.8
+   },
+   "viableLandTrajectory": {
+    "0s": {
+     "n": 826,
+     "p10": 4.2,
+     "p25": 6.5,
+     "median": 13.4,
+     "p75": 36.4,
+     "p90": 50.8,
+     "max": 57.9,
+     "mean": 20.7
+    },
+    "60s": {
+     "n": 826,
+     "p10": 7.6,
+     "p25": 23.1,
+     "median": 39.4,
+     "p75": 54.5,
+     "p90": 66.8,
+     "max": 87.9,
+     "mean": 39
+    },
+    "120s": {
+     "n": 826,
+     "p10": 22.7,
+     "p25": 37.8,
+     "median": 49.9,
+     "p75": 66.8,
+     "p90": 76.5,
+     "max": 95.7,
+     "mean": 49.7
+    },
+    "240s": {
+     "n": 826,
+     "p10": 50,
+     "p25": 67.3,
+     "median": 77.6,
+     "p75": 89.6,
+     "p90": 95.6,
+     "max": 100,
+     "mean": 75.3
+    },
+    "360s": {
+     "n": 826,
+     "p10": 70.1,
+     "p25": 75.2,
+     "median": 84.3,
+     "p75": 93.6,
+     "p90": 96.6,
+     "max": 100,
+     "mean": 82.6
+    }
+   },
+   "finalOwnership": {
+    "cold": 0.634,
+    "heat": 0.431,
+    "drought": 0.759,
+    "flood": 0.038,
+    "salt": 0.441,
+    "rad": 0.492,
+    "seedOut": 0.91,
+    "waterSeeds": 0.32,
+    "earlyMat": 0.545,
+    "warm": 0.304,
+    "cool": 0.163,
+    "humid": 0.519,
+    "dry": 0.231
+   },
+   "failureCauses": {
+    "Hazard:lethal": 16,
+    "Water:wet": 14,
+    "Temperature:freezing": 2,
+    "Temperature:scorching": 2
+   }
+  }
+ },
+ "profilesByArchetype": {
+  "desert_world": {
+   "organic_hybrid": {
+    "runs": 266,
+    "bloom": 0.992,
+    "bloomTime": {
+     "n": 264,
+     "p10": 171.4,
+     "p25": 189.5,
+     "median": 216,
+     "p75": 257.5,
+     "p90": 322.7,
+     "max": 604.2,
+     "mean": 237.7
+    },
+    "firstPurchase": {
+     "drought": 175,
+     "humid": 47,
+     "seedOut": 39,
+     "earlyMat": 3,
+     "rad": 2
+    },
+    "adaptationSequenceTop": {
+     "drought>rad>heat": 32,
+     "drought>rad": 31,
+     "drought>salt": 22,
+     "drought>salt>rad": 18,
+     "drought>salt>rad>heat": 18,
+     "drought": 15
+    },
+    "terraformShare": 0.219
+   },
+   "cinder_rosette": {
+    "runs": 266,
+    "bloom": 1,
+    "bloomTime": {
+     "n": 266,
+     "p10": 143.2,
+     "p25": 163.5,
+     "median": 184.8,
+     "p75": 215.5,
+     "p90": 255.8,
+     "max": 364.3,
+     "mean": 193.8
+    },
+    "firstPurchase": {
+     "drought": 132,
+     "seedOut": 73,
+     "humid": 40,
+     "rad": 16,
+     "earlyMat": 5
+    },
+    "adaptationSequenceTop": {
+     "drought>rad": 82,
+     "drought>rad>salt": 63,
+     "rad": 19,
+     "drought": 17,
+     "rad>salt": 16,
+     "rad>drought": 15
+    },
+    "terraformShare": 0.133
+   },
+   "woolly_candle": {
+    "runs": 266,
+    "bloom": 1,
+    "bloomTime": {
+     "n": 266,
+     "p10": 172.5,
+     "p25": 195.8,
+     "median": 229.3,
+     "p75": 276.9,
+     "p90": 352.2,
+     "max": 533,
+     "mean": 248.4
+    },
+    "firstPurchase": {
+     "drought": 136,
+     "heat": 45,
+     "humid": 35,
+     "seedOut": 31,
+     "cool": 17,
+     "earlyMat": 2
+    },
+    "adaptationSequenceTop": {
+     "drought>heat": 38,
+     "drought>heat>salt": 37,
+     "drought>heat>rad": 25,
+     "heat>drought>salt": 19,
+     "heat>drought": 16,
+     "": 12
+    },
+    "terraformShare": 0.267
+   },
+   "reed_spire": {
+    "runs": 266,
+    "bloom": 1,
+    "bloomTime": {
+     "n": 266,
+     "p10": 197.1,
+     "p25": 223.5,
+     "median": 258,
+     "p75": 297.6,
+     "p90": 353.7,
+     "max": 540.5,
+     "mean": 267.7
+    },
+    "firstPurchase": {
+     "drought": 210,
+     "humid": 33,
+     "seedOut": 19,
+     "rad": 3,
+     "heat": 1
+    },
+    "adaptationSequenceTop": {
+     "drought>drought>rad": 36,
+     "drought>drought>rad>heat": 34,
+     "drought>rad": 24,
+     "drought>rad>heat": 22,
+     "drought>drought": 19,
+     "drought>drought>salt": 15
+    },
+    "terraformShare": 0.201
+   }
+  },
+  "frozen_world": {
+   "organic_hybrid": {
+    "runs": 280,
+    "bloom": 1,
+    "bloomTime": {
+     "n": 280,
+     "p10": 173.2,
+     "p25": 192.1,
+     "median": 220.6,
+     "p75": 265,
+     "p90": 319.6,
+     "max": 592.6,
+     "mean": 236.8
+    },
+    "firstPurchase": {
+     "cold": 177,
+     "warm": 40,
+     "seedOut": 37,
+     "heat": 12,
+     "cool": 7,
+     "earlyMat": 4
+    },
+    "adaptationSequenceTop": {
+     "cold>cold": 43,
+     "cold": 37,
+     "cold>cold>salt": 26,
+     "cold>heat>cold": 25,
+     "cold>salt": 23,
+     "cold>cold>cold": 21
+    },
+    "terraformShare": 0.19
+   },
+   "cinder_rosette": {
+    "runs": 280,
+    "bloom": 0.993,
+    "bloomTime": {
+     "n": 278,
+     "p10": 207.9,
+     "p25": 255,
+     "median": 305.9,
+     "p75": 361.8,
+     "p90": 423.9,
+     "max": 719.7,
+     "mean": 319.2
+    },
+    "firstPurchase": {
+     "cold": 173,
+     "flood": 38,
+     "warm": 29,
+     "dry": 21,
+     "seedOut": 16,
+     "salt": 1
+    },
+    "adaptationSequenceTop": {
+     "cold>cold": 50,
+     "cold>flood>cold": 22,
+     "cold>cold>cold": 20,
+     "cold>flood>cold>salt": 18,
+     "cold>flood>cold>cold": 18,
+     "flood>cold>cold>cold": 17
+    },
+    "terraformShare": 0.272
+   },
+   "woolly_candle": {
+    "runs": 280,
+    "bloom": 1,
+    "bloomTime": {
+     "n": 280,
+     "p10": 147.8,
+     "p25": 160.5,
+     "median": 185,
+     "p75": 225.1,
+     "p90": 268.2,
+     "max": 502.7,
+     "mean": 198.5
+    },
+    "firstPurchase": {
+     "cold": 141,
+     "seedOut": 63,
+     "warm": 31,
+     "heat": 22,
+     "salt": 10,
+     "earlyMat": 7
+    },
+    "adaptationSequenceTop": {
+     "cold>heat": 39,
+     "cold>cold": 37,
+     "cold": 35,
+     "cold>heat>salt": 22,
+     "cold>cold>heat": 19,
+     "cold>heat>cold": 18
+    },
+    "terraformShare": 0.141
+   },
+   "reed_spire": {
+    "runs": 280,
+    "bloom": 0.993,
+    "bloomTime": {
+     "n": 278,
+     "p10": 185.4,
+     "p25": 213.4,
+     "median": 246.1,
+     "p75": 291.8,
+     "p90": 336.4,
+     "max": 663,
+     "mean": 258
+    },
+    "firstPurchase": {
+     "cold": 154,
+     "warm": 38,
+     "seedOut": 33,
+     "drought": 20,
+     "heat": 19,
+     "humid": 10
+    },
+    "adaptationSequenceTop": {
+     "cold>cold": 26,
+     "cold>drought>cold": 26,
+     "cold": 17,
+     "cold>salt": 16,
+     "cold>drought": 15,
+     "heat>cold>drought>cold": 13
+    },
+    "terraformShare": 0.202
+   }
+  },
+  "ocean_archipelago": {
+   "organic_hybrid": {
+    "runs": 280,
+    "bloom": 0.914,
+    "bloomTime": {
+     "n": 256,
+     "p10": 265.7,
+     "p25": 329.9,
+     "median": 389.7,
+     "p75": 462,
+     "p90": 673.1,
+     "max": 1117.9,
+     "mean": 428.7
+    },
+    "firstPurchase": {
+     "flood": 79,
+     "waterSeeds": 49,
+     "salt": 44,
+     "seedOut": 31,
+     "rad": 29,
+     "dry": 28
+    },
+    "adaptationSequenceTop": {
+     "flood>salt>rad>heat": 30,
+     "salt>flood>rad>heat": 21,
+     "flood>rad>salt>heat": 18,
+     "flood>salt": 18,
+     "salt>flood": 16,
+     "salt": 13
+    },
+    "terraformShare": 0.267
+   },
+   "cinder_rosette": {
+    "runs": 280,
+    "bloom": 0.868,
+    "bloomTime": {
+     "n": 243,
+     "p10": 328.3,
+     "p25": 387.5,
+     "median": 449.1,
+     "p75": 561.7,
+     "p90": 825,
+     "max": 1461.8,
+     "mean": 513.9
+    },
+    "firstPurchase": {
+     "flood": 143,
+     "waterSeeds": 37,
+     "cold": 32,
+     "dry": 31,
+     "seedOut": 16,
+     "warm": 11
+    },
+    "adaptationSequenceTop": {
+     "flood>cold>rad>salt": 38,
+     "flood>cold>salt>rad": 34,
+     "cold>flood>salt>rad": 22,
+     "flood>rad>salt>cold": 12,
+     "flood>cold>rad>salt>flood": 12,
+     "flood>rad>salt": 9
+    },
+    "terraformShare": 0.29
+   },
+   "woolly_candle": {
+    "runs": 280,
+    "bloom": 0.943,
+    "bloomTime": {
+     "n": 264,
+     "p10": 288.4,
+     "p25": 331.9,
+     "median": 389.8,
+     "p75": 486,
+     "p90": 740.2,
+     "max": 1061.3,
+     "mean": 449.2
+    },
+    "firstPurchase": {
+     "flood": 99,
+     "heat": 61,
+     "waterSeeds": 42,
+     "seedOut": 28,
+     "cool": 20,
+     "dry": 20
+    },
+    "adaptationSequenceTop": {
+     "flood>heat>rad>salt": 32,
+     "heat>salt>flood": 29,
+     "heat>flood>salt": 26,
+     "flood>salt>heat": 24,
+     "flood>salt>heat>rad": 19,
+     "flood>heat>salt": 18
+    },
+    "terraformShare": 0.232
+   },
+   "reed_spire": {
+    "runs": 280,
+    "bloom": 0.886,
+    "bloomTime": {
+     "n": 248,
+     "p10": 222.5,
+     "p25": 257.8,
+     "median": 310.3,
+     "p75": 401.4,
+     "p90": 593.1,
+     "max": 1156,
+     "mean": 366.3
+    },
+    "firstPurchase": {
+     "waterSeeds": 72,
+     "rad": 61,
+     "salt": 48,
+     "seedOut": 39,
+     "cold": 22,
+     "earlyMat": 11
+    },
+    "adaptationSequenceTop": {
+     "salt>rad>heat": 48,
+     "salt": 34,
+     "rad>heat>salt": 27,
+     "": 20,
+     "rad>salt>heat": 15,
+     "rad>heat": 13
+    },
+    "terraformShare": 0.222
+   }
+  }
+ },
+ "pairwise": {
+  "organic_hybrid~cinder_rosette": {
+   "pairs": 826,
+   "sequenceSimilarity": 0.432,
+   "traitMixCosine": 0.761,
+   "sameFirstPurchase": 0.596
+  },
+  "organic_hybrid~woolly_candle": {
+   "pairs": 826,
+   "sequenceSimilarity": 0.455,
+   "traitMixCosine": 0.768,
+   "sameFirstPurchase": 0.611
+  },
+  "organic_hybrid~reed_spire": {
+   "pairs": 826,
+   "sequenceSimilarity": 0.562,
+   "traitMixCosine": 0.822,
+   "sameFirstPurchase": 0.69
+  },
+  "cinder_rosette~woolly_candle": {
+   "pairs": 826,
+   "sequenceSimilarity": 0.392,
+   "traitMixCosine": 0.683,
+   "sameFirstPurchase": 0.504
+  },
+  "cinder_rosette~reed_spire": {
+   "pairs": 826,
+   "sequenceSimilarity": 0.385,
+   "traitMixCosine": 0.72,
+   "sameFirstPurchase": 0.447
+  },
+  "woolly_candle~reed_spire": {
+   "pairs": 826,
+   "sequenceSimilarity": 0.392,
+   "traitMixCosine": 0.738,
+   "sameFirstPurchase": 0.472
+  }
+ },
+ "pairwiseByArchetype": {
+  "desert_world": {
+   "organic_hybrid~cinder_rosette": {
+    "pairs": 266,
+    "sequenceSimilarity": 0.425,
+    "traitMixCosine": 0.716,
+    "sameFirstPurchase": 0.718
+   },
+   "organic_hybrid~woolly_candle": {
+    "pairs": 266,
+    "sequenceSimilarity": 0.384,
+    "traitMixCosine": 0.731,
+    "sameFirstPurchase": 0.647
+   },
+   "organic_hybrid~reed_spire": {
+    "pairs": 266,
+    "sequenceSimilarity": 0.563,
+    "traitMixCosine": 0.835,
+    "sameFirstPurchase": 0.805
+   },
+   "cinder_rosette~woolly_candle": {
+    "pairs": 266,
+    "sequenceSimilarity": 0.358,
+    "traitMixCosine": 0.604,
+    "sameFirstPurchase": 0.586
+   },
+   "cinder_rosette~reed_spire": {
+    "pairs": 266,
+    "sequenceSimilarity": 0.39,
+    "traitMixCosine": 0.706,
+    "sameFirstPurchase": 0.635
+   },
+   "woolly_candle~reed_spire": {
+    "pairs": 266,
+    "sequenceSimilarity": 0.338,
+    "traitMixCosine": 0.715,
+    "sameFirstPurchase": 0.568
+   }
+  },
+  "frozen_world": {
+   "organic_hybrid~cinder_rosette": {
+    "pairs": 280,
+    "sequenceSimilarity": 0.445,
+    "traitMixCosine": 0.797,
+    "sameFirstPurchase": 0.618
+   },
+   "organic_hybrid~woolly_candle": {
+    "pairs": 280,
+    "sequenceSimilarity": 0.51,
+    "traitMixCosine": 0.79,
+    "sameFirstPurchase": 0.696
+   },
+   "organic_hybrid~reed_spire": {
+    "pairs": 280,
+    "sequenceSimilarity": 0.625,
+    "traitMixCosine": 0.864,
+    "sameFirstPurchase": 0.779
+   },
+   "cinder_rosette~woolly_candle": {
+    "pairs": 280,
+    "sequenceSimilarity": 0.373,
+    "traitMixCosine": 0.712,
+    "sameFirstPurchase": 0.468
+   },
+   "cinder_rosette~reed_spire": {
+    "pairs": 280,
+    "sequenceSimilarity": 0.38,
+    "traitMixCosine": 0.75,
+    "sameFirstPurchase": 0.55
+   },
+   "woolly_candle~reed_spire": {
+    "pairs": 280,
+    "sequenceSimilarity": 0.425,
+    "traitMixCosine": 0.746,
+    "sameFirstPurchase": 0.6
+   }
+  },
+  "ocean_archipelago": {
+   "organic_hybrid~cinder_rosette": {
+    "pairs": 280,
+    "sequenceSimilarity": 0.426,
+    "traitMixCosine": 0.767,
+    "sameFirstPurchase": 0.457
+   },
+   "organic_hybrid~woolly_candle": {
+    "pairs": 280,
+    "sequenceSimilarity": 0.467,
+    "traitMixCosine": 0.782,
+    "sameFirstPurchase": 0.493
+   },
+   "organic_hybrid~reed_spire": {
+    "pairs": 280,
+    "sequenceSimilarity": 0.498,
+    "traitMixCosine": 0.767,
+    "sameFirstPurchase": 0.493
+   },
+   "cinder_rosette~woolly_candle": {
+    "pairs": 280,
+    "sequenceSimilarity": 0.443,
+    "traitMixCosine": 0.728,
+    "sameFirstPurchase": 0.461
+   },
+   "cinder_rosette~reed_spire": {
+    "pairs": 280,
+    "sequenceSimilarity": 0.386,
+    "traitMixCosine": 0.705,
+    "sameFirstPurchase": 0.164
+   },
+   "woolly_candle~reed_spire": {
+    "pairs": 280,
+    "sequenceSimilarity": 0.409,
+    "traitMixCosine": 0.753,
+    "sameFirstPurchase": 0.254
+   }
+  }
+ },
+ "withinSpeciesBaseline": {
+  "pairs": 1652,
+  "sequenceSimilarity": 0.808,
+  "traitMixCosine": 0.938
+ },
+ "blindClassifier": {
+  "all": {
+   "runs": 3304,
+   "accuracy": 0.465,
+   "chance": 0.25,
+   "confusion": {
+    "organic_hybrid->reed_spire": 252,
+    "organic_hybrid->organic_hybrid": 98,
+    "cinder_rosette->reed_spire": 217,
+    "woolly_candle->reed_spire": 108,
+    "woolly_candle->woolly_candle": 531,
+    "reed_spire->reed_spire": 387,
+    "cinder_rosette->organic_hybrid": 68,
+    "woolly_candle->organic_hybrid": 44,
+    "organic_hybrid->woolly_candle": 205,
+    "reed_spire->organic_hybrid": 95,
+    "organic_hybrid->cinder_rosette": 271,
+    "cinder_rosette->cinder_rosette": 520,
+    "woolly_candle->cinder_rosette": 143,
+    "reed_spire->cinder_rosette": 164,
+    "reed_spire->woolly_candle": 180,
+    "cinder_rosette->woolly_candle": 21
+   }
+  },
+  "balancedPolicyOnly": {
+   "runs": 472,
+   "accuracy": 0.494,
+   "chance": 0.25,
+   "confusion": {
+    "organic_hybrid->reed_spire": 36,
+    "cinder_rosette->organic_hybrid": 13,
+    "woolly_candle->reed_spire": 14,
+    "reed_spire->reed_spire": 61,
+    "cinder_rosette->reed_spire": 31,
+    "woolly_candle->woolly_candle": 81,
+    "reed_spire->woolly_candle": 27,
+    "organic_hybrid->woolly_candle": 30,
+    "organic_hybrid->cinder_rosette": 35,
+    "cinder_rosette->cinder_rosette": 74,
+    "woolly_candle->cinder_rosette": 18,
+    "reed_spire->cinder_rosette": 17,
+    "reed_spire->organic_hybrid": 13,
+    "organic_hybrid->organic_hybrid": 17,
+    "woolly_candle->organic_hybrid": 5
+   }
+  },
+  "desert_world": {
+   "runs": 1064,
+   "accuracy": 0.641,
+   "chance": 0.25,
+   "confusion": {
+    "organic_hybrid->reed_spire": 97,
+    "organic_hybrid->organic_hybrid": 104,
+    "cinder_rosette->organic_hybrid": 41,
+    "cinder_rosette->cinder_rosette": 198,
+    "woolly_candle->woolly_candle": 209,
+    "woolly_candle->reed_spire": 28,
+    "reed_spire->reed_spire": 171,
+    "reed_spire->organic_hybrid": 88,
+    "organic_hybrid->cinder_rosette": 57,
+    "cinder_rosette->reed_spire": 27,
+    "woolly_candle->organic_hybrid": 24,
+    "organic_hybrid->woolly_candle": 8,
+    "reed_spire->cinder_rosette": 5,
+    "woolly_candle->cinder_rosette": 5,
+    "reed_spire->woolly_candle": 2
+   }
+  },
+  "frozen_world": {
+   "runs": 1120,
+   "accuracy": 0.615,
+   "chance": 0.25,
+   "confusion": {
+    "organic_hybrid->organic_hybrid": 109,
+    "organic_hybrid->woolly_candle": 100,
+    "cinder_rosette->cinder_rosette": 229,
+    "woolly_candle->organic_hybrid": 57,
+    "woolly_candle->woolly_candle": 191,
+    "reed_spire->reed_spire": 160,
+    "reed_spire->cinder_rosette": 28,
+    "reed_spire->organic_hybrid": 42,
+    "organic_hybrid->cinder_rosette": 47,
+    "woolly_candle->cinder_rosette": 32,
+    "reed_spire->woolly_candle": 50,
+    "cinder_rosette->organic_hybrid": 37,
+    "organic_hybrid->reed_spire": 24,
+    "cinder_rosette->woolly_candle": 14
+   }
+  },
+  "ocean_archipelago": {
+   "runs": 1120,
+   "accuracy": 0.672,
+   "chance": 0.25,
+   "confusion": {
+    "organic_hybrid->organic_hybrid": 98,
+    "organic_hybrid->woolly_candle": 110,
+    "organic_hybrid->reed_spire": 53,
+    "cinder_rosette->organic_hybrid": 29,
+    "cinder_rosette->cinder_rosette": 214,
+    "woolly_candle->woolly_candle": 223,
+    "reed_spire->reed_spire": 218,
+    "organic_hybrid->cinder_rosette": 19,
+    "cinder_rosette->woolly_candle": 19,
+    "woolly_candle->cinder_rosette": 13,
+    "reed_spire->woolly_candle": 26,
+    "woolly_candle->organic_hybrid": 27,
+    "cinder_rosette->reed_spire": 18,
+    "reed_spire->organic_hybrid": 17,
+    "reed_spire->cinder_rosette": 19,
+    "woolly_candle->reed_spire": 17
+   }
+  }
+ }
+}

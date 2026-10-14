@@ -1,0 +1,1295 @@
+{
+ "format": "bloom-038-pause-audit@1",
+ "tool": "tools/research/design-audit/pause-audit.js",
+ "at": "2026-10-14T20:10:10.998Z",
+ "browser": "chromium 147.0.7727.15",
+ "viewport": "1440x900",
+ "method": "Real clicks / keys on the production UI; ticks from adapter.run().ticks, wall time from performance.now() in the page. Waits are wall-clock (setTimeout) while the page's own requestAnimationFrame loop runs the sim. Headless Chromium on this machine; rates are what the loop delivered here.",
+ "A": {
+  "atLanding": {
+   "running": true,
+   "speed": 1,
+   "speeds": [
+    1,
+    2,
+    4
+   ],
+   "tickMs": 160,
+   "ticks": 10,
+   "pauseLabel": "Pause",
+   "speedLabel": "1×",
+   "speedTitle": "Speed: 1× → 2× → 4×",
+   "state": "GROWING"
+  },
+  "speeds": {
+   "1x": {
+    "wallMs": 3003,
+    "ticks": 18,
+    "simSeconds": 2.88,
+    "runningBefore": true,
+    "runningAfter": true,
+    "ticksPerSecond": 6,
+    "simSecondsPerRealSecond": 0.96
+   },
+   "2x": {
+    "wallMs": 3001,
+    "ticks": 37,
+    "simSeconds": 5.92,
+    "runningBefore": true,
+    "runningAfter": true,
+    "ticksPerSecond": 12.33,
+    "simSecondsPerRealSecond": 1.97
+   },
+   "4x": {
+    "wallMs": 3002,
+    "ticks": 75,
+    "simSeconds": 12,
+    "runningBefore": true,
+    "runningAfter": true,
+    "ticksPerSecond": 24.99,
+    "simSecondsPerRealSecond": 4
+   }
+  },
+  "speedCycle": 1,
+  "pauseButton": {
+   "wallMs": 2002,
+   "ticks": 0,
+   "simSeconds": 0,
+   "runningBefore": false,
+   "runningAfter": false,
+   "hudState": "PAUSED",
+   "label": "Resume"
+  },
+  "rooms": {
+   "region": {
+    "openTransition": {
+     "wallMs": 413,
+     "ticks": 0,
+     "simSeconds": 0,
+     "runningBefore": true,
+     "runningAfter": false
+    },
+    "whileOpen3s": {
+     "wallMs": 3004,
+     "ticks": 0,
+     "simSeconds": 0,
+     "runningBefore": false,
+     "runningAfter": false
+    },
+    "closeTransition": {
+     "wallMs": 467,
+     "ticks": 1,
+     "simSeconds": 0.16,
+     "runningBefore": false,
+     "runningAfter": true
+    },
+    "afterBack1500ms": {
+     "wallMs": 1503,
+     "ticks": 9,
+     "simSeconds": 1.44,
+     "runningBefore": true,
+     "runningAfter": true
+    },
+    "pausedPill": "PAUSED",
+    "pausedPillOn": true,
+    "resumeBtn": true,
+    "timeline": [
+     {
+      "kind": "open",
+      "from": null,
+      "to": "region",
+      "tStart": 24417.69999998808,
+      "runningBefore": true,
+      "tPause": 24417.80000001192,
+      "tCovered": 24530.19999998808,
+      "tSwapDone": 24554.899999976158,
+      "tEnd": 24789.599999964237,
+      "runningAtSwap": false,
+      "runningAtEnd": false,
+      "ran": true,
+      "immediate": false,
+      "ticksAtStart": 148,
+      "ticksAtEnd": 148,
+      "error": null
+     },
+     {
+      "kind": "back",
+      "from": "region",
+      "to": null,
+      "tStart": 27806.599999964237,
+      "runningBefore": false,
+      "wasRunning": true,
+      "tCovered": 28000,
+      "tSwapDone": 28000.19999998808,
+      "tEnd": 28229.69999998808,
+      "tResume": 28229.80000001192,
+      "runningAtSwap": false,
+      "runningAtEnd": true,
+      "ran": true,
+      "immediate": false,
+      "ticksAtStart": 148,
+      "ticksAtEnd": 148,
+      "error": null
+     }
+    ]
+   },
+   "adapt": {
+    "openTransition": {
+     "wallMs": 402,
+     "ticks": 0,
+     "simSeconds": 0,
+     "runningBefore": true,
+     "runningAfter": false
+    },
+    "whileOpen3s": {
+     "wallMs": 3013,
+     "ticks": 0,
+     "simSeconds": 0,
+     "runningBefore": false,
+     "runningAfter": false
+    },
+    "closeTransition": {
+     "wallMs": 537,
+     "ticks": 0,
+     "simSeconds": 0,
+     "runningBefore": false,
+     "runningAfter": true
+    },
+    "afterBack1500ms": {
+     "wallMs": 1527,
+     "ticks": 10,
+     "simSeconds": 1.6,
+     "runningBefore": true,
+     "runningAfter": true
+    },
+    "pausedPill": "PAUSED",
+    "pausedPillOn": true,
+    "resumeBtn": true,
+    "timeline": [
+     {
+      "kind": "open",
+      "from": null,
+      "to": "adapt",
+      "tStart": 29817.599999964237,
+      "runningBefore": true,
+      "tPause": 29817.599999964237,
+      "tCovered": 29929.099999964237,
+      "tSwapDone": 29941.80000001192,
+      "tEnd": 30145.899999976158,
+      "runningAtSwap": false,
+      "runningAtEnd": false,
+      "ran": true,
+      "immediate": false,
+      "ticksAtStart": 158,
+      "ticksAtEnd": 158,
+      "error": null
+     },
+     {
+      "kind": "back",
+      "from": "adapt",
+      "to": null,
+      "tStart": 33207.89999997616,
+      "runningBefore": false,
+      "wasRunning": true,
+      "tCovered": 33449.89999997616,
+      "tSwapDone": 33449.89999997616,
+      "tEnd": 33713.30000001192,
+      "tResume": 33713.30000001192,
+      "runningAtSwap": false,
+      "runningAtEnd": true,
+      "ran": true,
+      "immediate": false,
+      "ticksAtStart": 158,
+      "ticksAtEnd": 158,
+      "error": null
+     }
+    ]
+   },
+   "spread": {
+    "openTransition": {
+     "wallMs": 404,
+     "ticks": 0,
+     "simSeconds": 0,
+     "runningBefore": true,
+     "runningAfter": false
+    },
+    "whileOpen3s": {
+     "wallMs": 3004,
+     "ticks": 0,
+     "simSeconds": 0,
+     "runningBefore": false,
+     "runningAfter": false
+    },
+    "closeTransition": {
+     "wallMs": 416,
+     "ticks": 1,
+     "simSeconds": 0.16,
+     "runningBefore": false,
+     "runningAfter": true
+    },
+    "afterBack1500ms": {
+     "wallMs": 1502,
+     "ticks": 9,
+     "simSeconds": 1.44,
+     "runningBefore": true,
+     "runningAfter": true
+    },
+    "pausedPill": "PAUSED",
+    "pausedPillOn": true,
+    "resumeBtn": true,
+    "timeline": [
+     {
+      "kind": "open",
+      "from": null,
+      "to": "spread",
+      "tStart": 35299.69999998808,
+      "runningBefore": true,
+      "tPause": 35299.80000001192,
+      "tCovered": 35412.69999998808,
+      "tSwapDone": 35422.5,
+      "tEnd": 35647.39999997616,
+      "runningAtSwap": false,
+      "runningAtEnd": false,
+      "ran": true,
+      "immediate": false,
+      "ticksAtStart": 168,
+      "ticksAtEnd": 168,
+      "error": null
+     },
+     {
+      "kind": "back",
+      "from": "spread",
+      "to": null,
+      "tStart": 38669.19999998808,
+      "runningBefore": false,
+      "wasRunning": true,
+      "tCovered": 38862.5,
+      "tSwapDone": 38862.59999996424,
+      "tEnd": 39062.30000001192,
+      "tResume": 39062.30000001192,
+      "runningAtSwap": false,
+      "runningAtEnd": true,
+      "ran": true,
+      "immediate": false,
+      "ticksAtStart": 168,
+      "ticksAtEnd": 168,
+      "error": null
+     }
+    ]
+   },
+   "terraform": {
+    "openTransition": {
+     "wallMs": 579,
+     "ticks": 0,
+     "simSeconds": 0,
+     "runningBefore": true,
+     "runningAfter": false
+    },
+    "whileOpen3s": {
+     "wallMs": 3028,
+     "ticks": 0,
+     "simSeconds": 0,
+     "runningBefore": false,
+     "runningAfter": false
+    },
+    "closeTransition": {
+     "wallMs": 413,
+     "ticks": 0,
+     "simSeconds": 0,
+     "runningBefore": false,
+     "runningAfter": true
+    },
+    "afterBack1500ms": {
+     "wallMs": 1503,
+     "ticks": 10,
+     "simSeconds": 1.6,
+     "runningBefore": true,
+     "runningAfter": true
+    },
+    "pausedPill": "PAUSED",
+    "pausedPillOn": true,
+    "resumeBtn": true,
+    "timeline": [
+     {
+      "kind": "open",
+      "from": null,
+      "to": "terraform",
+      "tStart": 40614.89999997616,
+      "runningBefore": true,
+      "tPause": 40614.89999997616,
+      "tCovered": 40740.19999998808,
+      "tSwapDone": 40775.80000001192,
+      "tEnd": 41139.39999997616,
+      "runningAtSwap": false,
+      "runningAtEnd": false,
+      "ran": true,
+      "immediate": false,
+      "ticksAtStart": 178,
+      "ticksAtEnd": 178,
+      "error": null
+     },
+     {
+      "kind": "back",
+      "from": "terraform",
+      "to": null,
+      "tStart": 44196.89999997616,
+      "runningBefore": false,
+      "wasRunning": true,
+      "tCovered": 44386.30000001192,
+      "tSwapDone": 44386.39999997616,
+      "tEnd": 44578.89999997616,
+      "tResume": 44579,
+      "runningAtSwap": false,
+      "runningAtEnd": true,
+      "ran": true,
+      "immediate": false,
+      "ticksAtStart": 178,
+      "ticksAtEnd": 178,
+      "error": null
+     }
+    ]
+   }
+  },
+  "pausedBeforeRoom": {
+   "afterBack": {
+    "running": false
+   },
+   "afterResume": {
+    "running": true
+   }
+  },
+  "selectRegion": {
+   "wallMs": 3002,
+   "ticks": 19,
+   "simSeconds": 3.04,
+   "runningBefore": true,
+   "runningAfter": true,
+   "bannerShown": true
+  },
+  "mapView": {
+   "popoverOpen2s": {
+    "wallMs": 2002,
+    "ticks": 13,
+    "simSeconds": 2.08,
+    "runningBefore": true,
+    "runningAfter": true
+   },
+   "lensHoverPreview2s": {
+    "wallMs": 2002,
+    "ticks": 12,
+    "simSeconds": 1.92,
+    "runningBefore": true,
+    "runningAfter": true
+   }
+  },
+  "runMenu": {
+   "wallMs": 2002,
+   "ticks": 12,
+   "simSeconds": 1.92,
+   "runningBefore": true,
+   "runningAfter": true,
+   "items": [
+    "Play again This exact planet, exactly as surveyed. A fresh start: your choices make the run.",
+    "Choose another planet Back to the Destination Survey to pick a different destination.",
+    "Main menu Back to the title."
+   ]
+  },
+  "frozenPage5s": {
+   "wallMs": 5258,
+   "ticks": 33,
+   "simSeconds": 5.28,
+   "runningBefore": true,
+   "runningAfter": true,
+   "note": "CDP Page.setWebLifecycleState frozen for 5 s (no rAF, no tasks), then active: the run loop adds the whole elapsed rAF dt (no clamp, no visibilitychange handler in game-session.js), so the frozen time is simulated on return"
+  },
+  "winReport": {
+   "wallMs": 2002,
+   "ticks": 0,
+   "simSeconds": 0,
+   "runningBefore": false,
+   "runningAfter": false,
+   "actions": [
+    "keepPlaying:Keep playing",
+    "playAgain:Play again",
+    "choosePlanet:Choose another planet",
+    "mainMenu:Main menu"
+   ]
+  },
+  "keepPlaying": {
+   "wallMs": 2002,
+   "ticks": 12,
+   "simSeconds": 1.92,
+   "runningBefore": true,
+   "runningAfter": true
+  }
+ },
+ "B": {
+  "from-map": {
+   "world": "frozen_world:7 organic_hybrid",
+   "region": "Thaw Shelf",
+   "trait": "salt",
+   "bought": true,
+   "phases": [
+    {
+     "label": "start",
+     "ticksSinceStart": 0,
+     "simSecondsSinceStart": 0,
+     "wallSecondsSinceStart": 0,
+     "running": true,
+     "room": null
+    },
+    {
+     "label": "selected (banner)",
+     "ticksSinceStart": 0,
+     "simSecondsSinceStart": 0,
+     "wallSecondsSinceStart": 0.11,
+     "running": true,
+     "room": null
+    },
+    {
+     "label": "read banner 4 s",
+     "ticksSinceStart": 25,
+     "simSecondsSinceStart": 4,
+     "wallSecondsSinceStart": 4.11,
+     "running": true,
+     "room": null
+    },
+    {
+     "label": "hover Would-help preview 2 s",
+     "ticksSinceStart": 38,
+     "simSecondsSinceStart": 6.08,
+     "wallSecondsSinceStart": 6.19,
+     "running": true,
+     "room": null
+    },
+    {
+     "label": "Adapt open (from Would help)",
+     "ticksSinceStart": 39,
+     "simSecondsSinceStart": 6.24,
+     "wallSecondsSinceStart": 6.66,
+     "running": false,
+     "room": "adapt"
+    },
+    {
+     "label": "hover node preview 2 s",
+     "ticksSinceStart": 39,
+     "simSecondsSinceStart": 6.24,
+     "wallSecondsSinceStart": 9.03,
+     "running": false,
+     "room": "adapt"
+    },
+    {
+     "label": "bought",
+     "ticksSinceStart": 39,
+     "simSecondsSinceStart": 6.24,
+     "wallSecondsSinceStart": 9.4,
+     "running": false,
+     "room": "adapt"
+    },
+    {
+     "label": "closed (Back)",
+     "ticksSinceStart": 39,
+     "simSecondsSinceStart": 6.24,
+     "wallSecondsSinceStart": 9.77,
+     "running": true,
+     "room": null
+    }
+   ],
+   "totalSimSeconds": 6.24,
+   "totalWallSeconds": 9.77
+  },
+  "inside-rooms": {
+   "world": "frozen_world:7 organic_hybrid",
+   "region": "Thaw Shelf",
+   "trait": "salt",
+   "bought": true,
+   "phases": [
+    {
+     "label": "start",
+     "ticksSinceStart": 0,
+     "simSecondsSinceStart": 0,
+     "wallSecondsSinceStart": 0,
+     "running": true,
+     "room": null
+    },
+    {
+     "label": "Regions room open",
+     "ticksSinceStart": 0,
+     "simSecondsSinceStart": 0,
+     "wallSecondsSinceStart": 0.63,
+     "running": false,
+     "room": "region"
+    },
+    {
+     "label": "region chosen in strip",
+     "ticksSinceStart": 0,
+     "simSecondsSinceStart": 0,
+     "wallSecondsSinceStart": 1.23,
+     "running": false,
+     "room": "region"
+    },
+    {
+     "label": "read region 4 s",
+     "ticksSinceStart": 0,
+     "simSecondsSinceStart": 0,
+     "wallSecondsSinceStart": 5.23,
+     "running": false,
+     "room": "region"
+    },
+    {
+     "label": "Adapt open (room → room)",
+     "ticksSinceStart": 0,
+     "simSecondsSinceStart": 0,
+     "wallSecondsSinceStart": 5.81,
+     "running": false,
+     "room": "adapt"
+    },
+    {
+     "label": "hover node preview 2 s",
+     "ticksSinceStart": 0,
+     "simSecondsSinceStart": 0,
+     "wallSecondsSinceStart": 8.16,
+     "running": false,
+     "room": "adapt"
+    },
+    {
+     "label": "bought",
+     "ticksSinceStart": 0,
+     "simSecondsSinceStart": 0,
+     "wallSecondsSinceStart": 8.52,
+     "running": false,
+     "room": "adapt"
+    },
+    {
+     "label": "closed (Back)",
+     "ticksSinceStart": 1,
+     "simSecondsSinceStart": 0.16,
+     "wallSecondsSinceStart": 9,
+     "running": true,
+     "room": null
+    }
+   ],
+   "totalSimSeconds": 0.16,
+   "totalWallSeconds": 9
+  }
+ },
+ "C": {
+  "dying_world": {
+   "label": "Dying World (Challenge, launch 1, Organic Hybrid), decline ≈40 %",
+   "onMap4s": {
+    "wallMs": 4002,
+    "ticks": 25,
+    "simSeconds": 4,
+    "runningBefore": true,
+    "runningAfter": true,
+    "before": {
+     "t": 10299.100000023842,
+     "ticks": 877,
+     "running": true,
+     "speed": 1,
+     "room": null,
+     "banner": true,
+     "biomass": 118,
+     "coverage": 0.308,
+     "pressure": {
+      "progress": 0.4013,
+      "seconds": 140.32,
+      "nextIn": 67.18,
+      "extinctionIn": null,
+      "phase": "Noticeable loss"
+     },
+     "competition": null,
+     "climate": null,
+     "completion": null,
+     "bubbles": 1,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Dying World\nDetails\nNoticeable loss · 40% lost\nSevere decline in 1:08"
+    },
+    "after": {
+     "t": 14301.300000011921,
+     "ticks": 902,
+     "running": true,
+     "speed": 1,
+     "room": null,
+     "banner": true,
+     "biomass": 142,
+     "coverage": 0.3125,
+     "pressure": {
+      "progress": 0.4173,
+      "seconds": 144.32,
+      "nextIn": 63.18000000000001,
+      "extinctionIn": null,
+      "phase": "Noticeable loss"
+     },
+     "competition": null,
+     "climate": null,
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Dying World\nDetails\nNoticeable loss · 42% lost\nSevere decline in 1:04"
+    }
+   },
+   "inRoom4s": {
+    "wallMs": 4020,
+    "ticks": 0,
+    "simSeconds": 0,
+    "runningBefore": false,
+    "runningAfter": false,
+    "before": {
+     "t": 14786.300000011921,
+     "ticks": 902,
+     "running": false,
+     "speed": 1,
+     "room": "adapt",
+     "banner": false,
+     "biomass": 142,
+     "coverage": 0.3125,
+     "pressure": {
+      "progress": 0.4173,
+      "seconds": 144.32,
+      "nextIn": 63.18000000000001,
+      "extinctionIn": null,
+      "phase": "Noticeable loss"
+     },
+     "competition": null,
+     "climate": null,
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Dying World\nDetails\nNoticeable loss · 42% lost\nSevere decline in 1:04"
+    },
+    "after": {
+     "t": 18805.899999976158,
+     "ticks": 902,
+     "running": false,
+     "speed": 1,
+     "room": "adapt",
+     "banner": false,
+     "biomass": 142,
+     "coverage": 0.3125,
+     "pressure": {
+      "progress": 0.4173,
+      "seconds": 144.32,
+      "nextIn": 63.18000000000001,
+      "extinctionIn": null,
+      "phase": "Noticeable loss"
+     },
+     "competition": null,
+     "climate": null,
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Dying World\nDetails\nNoticeable loss · 42% lost\nSevere decline in 1:04"
+    }
+   },
+   "afterClose": {
+    "running": true
+   }
+  },
+  "dying_world_extinctionCountdown": {
+   "label": "Dying World: no living plants (extinction grace counting)",
+   "onMap4s": {
+    "wallMs": 4005,
+    "ticks": 26,
+    "simSeconds": 4.16,
+    "runningBefore": true,
+    "runningAfter": true,
+    "before": {
+     "t": 19909.399999976158,
+     "ticks": 908,
+     "running": true,
+     "speed": 1,
+     "room": null,
+     "banner": false,
+     "biomass": 144,
+     "coverage": 0,
+     "pressure": {
+      "progress": 0.4211,
+      "seconds": 145.28,
+      "nextIn": 62.22,
+      "extinctionIn": 7.52,
+      "phase": "Noticeable loss"
+     },
+     "competition": null,
+     "climate": null,
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Dying World\nDetails\nNoticeable loss · 42% lost\nSevere decline in 1:03\nNo living plants left. Extinction in 0:08"
+    },
+    "after": {
+     "t": 23914.600000023842,
+     "ticks": 934,
+     "running": true,
+     "speed": 1,
+     "room": null,
+     "banner": false,
+     "biomass": 148,
+     "coverage": 0,
+     "pressure": {
+      "progress": 0.4378,
+      "seconds": 149.44,
+      "nextIn": 58.06,
+      "extinctionIn": 3.36,
+      "phase": "Noticeable loss"
+     },
+     "competition": null,
+     "climate": null,
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Dying World\nDetails\nNoticeable loss · 44% lost\nSevere decline in 0:59\nNo living plants left. Extinction in 0:03"
+    }
+   },
+   "inRoom4s": {
+    "wallMs": 4003,
+    "ticks": 0,
+    "simSeconds": 0,
+    "runningBefore": false,
+    "runningAfter": false,
+    "before": {
+     "t": 24312.69999998808,
+     "ticks": 934,
+     "running": false,
+     "speed": 1,
+     "room": "adapt",
+     "banner": false,
+     "biomass": 148,
+     "coverage": 0,
+     "pressure": {
+      "progress": 0.4378,
+      "seconds": 149.44,
+      "nextIn": 58.06,
+      "extinctionIn": 3.36,
+      "phase": "Noticeable loss"
+     },
+     "competition": null,
+     "climate": null,
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Dying World\nDetails\nNoticeable loss · 44% lost\nSevere decline in 0:59\nNo living plants left. Extinction in 0:03"
+    },
+    "after": {
+     "t": 28316,
+     "ticks": 934,
+     "running": false,
+     "speed": 1,
+     "room": "adapt",
+     "banner": false,
+     "biomass": 148,
+     "coverage": 0,
+     "pressure": {
+      "progress": 0.4378,
+      "seconds": 149.44,
+      "nextIn": 58.06,
+      "extinctionIn": 3.36,
+      "phase": "Noticeable loss"
+     },
+     "competition": null,
+     "climate": null,
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Dying World\nDetails\nNoticeable loss · 44% lost\nSevere decline in 0:59\nNo living plants left. Extinction in 0:03"
+    }
+   },
+   "afterClose": {
+    "running": true
+   }
+  },
+  "native_competition": {
+   "label": "native_competition (harness ocean_archipelago:28, Organic Hybrid)",
+   "onMap4s": {
+    "wallMs": 4004,
+    "ticks": 25,
+    "simSeconds": 4,
+    "runningBefore": true,
+    "runningAfter": true,
+    "before": {
+     "t": 9509.800000011921,
+     "ticks": 558,
+     "running": true,
+     "speed": 1,
+     "room": null,
+     "banner": true,
+     "biomass": 491,
+     "coverage": 0.0614,
+     "pressure": null,
+     "competition": {
+      "share": 0.3349,
+      "contested": 0
+     },
+     "climate": null,
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Native Competition\nDetails\nNative plants hold 33% \nspreading\nNo contested regions"
+    },
+    "after": {
+     "t": 13513.5,
+     "ticks": 583,
+     "running": true,
+     "speed": 1,
+     "room": null,
+     "banner": true,
+     "biomass": 499,
+     "coverage": 0.0614,
+     "pressure": null,
+     "competition": {
+      "share": 0.3349,
+      "contested": 0
+     },
+     "climate": null,
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Native Competition\nDetails\nNative plants hold 33% \nspreading\nNo contested regions"
+    }
+   },
+   "inRoom4s": {
+    "wallMs": 4002,
+    "ticks": 0,
+    "simSeconds": 0,
+    "runningBefore": false,
+    "runningAfter": false,
+    "before": {
+     "t": 14012.800000011921,
+     "ticks": 584,
+     "running": false,
+     "speed": 1,
+     "room": "adapt",
+     "banner": false,
+     "biomass": 499,
+     "coverage": 0.0614,
+     "pressure": null,
+     "competition": {
+      "share": 0.3349,
+      "contested": 0
+     },
+     "climate": null,
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Native Competition\nDetails\nNative plants hold 33% \nspreading\nNo contested regions"
+    },
+    "after": {
+     "t": 18014.80000001192,
+     "ticks": 584,
+     "running": false,
+     "speed": 1,
+     "room": "adapt",
+     "banner": false,
+     "biomass": 499,
+     "coverage": 0.0614,
+     "pressure": null,
+     "competition": {
+      "share": 0.3349,
+      "contested": 0
+     },
+     "climate": null,
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Native Competition\nDetails\nNative plants hold 33% \nspreading\nNo contested regions"
+    }
+   },
+   "afterClose": {
+    "running": true
+   }
+  },
+  "volatile_climate": {
+   "label": "volatile_climate (harness desert_world:17, Organic Hybrid)",
+   "onMap4s": {
+    "wallMs": 4003,
+    "ticks": 25,
+    "simSeconds": 4,
+    "runningBefore": true,
+    "runningAfter": true,
+    "before": {
+     "t": 3186.300000011921,
+     "ticks": 64,
+     "running": true,
+     "speed": 1,
+     "room": null,
+     "banner": true,
+     "biomass": 1419,
+     "coverage": 0.0287,
+     "pressure": null,
+     "competition": null,
+     "climate": {
+      "level": 0.7888,
+      "band": "Volatile",
+      "axes": {
+       "temp": {
+        "pendingIn": 9.44,
+        "shockEndsIn": null
+       },
+       "moist": {
+        "pendingIn": null,
+        "shockEndsIn": null
+       }
+      }
+     },
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Volatile Climate\nDetails\nInstability 79% · Volatile\nHeat pulse coming: temperature in 0:09"
+    },
+    "after": {
+     "t": 7189.300000011921,
+     "ticks": 89,
+     "running": true,
+     "speed": 1,
+     "room": null,
+     "banner": true,
+     "biomass": 1424,
+     "coverage": 0.0358,
+     "pressure": null,
+     "competition": null,
+     "climate": {
+      "level": 0.762,
+      "band": "Volatile",
+      "axes": {
+       "temp": {
+        "pendingIn": 5.44,
+        "shockEndsIn": null
+       },
+       "moist": {
+        "pendingIn": null,
+        "shockEndsIn": null
+       }
+      }
+     },
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Volatile Climate\nDetails\nInstability 76% · Volatile\nHeat pulse coming: temperature in 0:05"
+    }
+   },
+   "inRoom4s": {
+    "wallMs": 4003,
+    "ticks": 0,
+    "simSeconds": 0,
+    "runningBefore": false,
+    "runningAfter": false,
+    "before": {
+     "t": 7682.600000023842,
+     "ticks": 89,
+     "running": false,
+     "speed": 1,
+     "room": "adapt",
+     "banner": false,
+     "biomass": 1424,
+     "coverage": 0.0358,
+     "pressure": null,
+     "competition": null,
+     "climate": {
+      "level": 0.762,
+      "band": "Volatile",
+      "axes": {
+       "temp": {
+        "pendingIn": 5.44,
+        "shockEndsIn": null
+       },
+       "moist": {
+        "pendingIn": null,
+        "shockEndsIn": null
+       }
+      }
+     },
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Volatile Climate\nDetails\nInstability 76% · Volatile\nHeat pulse coming: temperature in 0:05"
+    },
+    "after": {
+     "t": 11685.300000011921,
+     "ticks": 89,
+     "running": false,
+     "speed": 1,
+     "room": "adapt",
+     "banner": false,
+     "biomass": 1424,
+     "coverage": 0.0358,
+     "pressure": null,
+     "competition": null,
+     "climate": {
+      "level": 0.762,
+      "band": "Volatile",
+      "axes": {
+       "temp": {
+        "pendingIn": 5.44,
+        "shockEndsIn": null
+       },
+       "moist": {
+        "pendingIn": null,
+        "shockEndsIn": null
+       }
+      }
+     },
+     "completion": null,
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Volatile Climate\nDetails\nInstability 76% · Volatile\nHeat pulse coming: temperature in 0:05"
+    }
+   },
+   "afterClose": {
+    "running": true
+   }
+  },
+  "thin_air_holding": {
+   "label": "Thin Air early Bloom (HOLDING)",
+   "onMap4s": {
+    "wallMs": 4003,
+    "ticks": 25,
+    "simSeconds": 4,
+    "runningBefore": true,
+    "runningAfter": true,
+    "before": {
+     "t": 17858.5,
+     "ticks": 1312,
+     "running": true,
+     "speed": 1,
+     "room": null,
+     "banner": true,
+     "biomass": 113,
+     "coverage": 0.7005,
+     "pressure": {
+      "progress": 0.6797,
+      "seconds": 209.92,
+      "nextIn": 80.08000000000001,
+      "extinctionIn": null,
+      "phase": "Severe decline"
+     },
+     "competition": null,
+     "climate": null,
+     "completion": {
+      "status": "early-held",
+      "line": "BLOOM REACHED — hold it until the atmosphere settles.",
+      "sub": "The atmosphere settles in 1:21"
+     },
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Dying World\nDetails\nSevere decline · 68% lost\nFinal harsh state in 1:21\nBLOOM REACHED — hold it until the atmosphere settles.\nThe atmosphere settles in 1:21"
+    },
+    "after": {
+     "t": 21861.200000047684,
+     "ticks": 1337,
+     "running": true,
+     "speed": 1,
+     "room": null,
+     "banner": true,
+     "biomass": 134,
+     "coverage": 0.7083,
+     "pressure": {
+      "progress": 0.6957,
+      "seconds": 213.92,
+      "nextIn": 76.08000000000001,
+      "extinctionIn": null,
+      "phase": "Severe decline"
+     },
+     "competition": null,
+     "climate": null,
+     "completion": {
+      "status": "early-held",
+      "line": "BLOOM REACHED — hold it until the atmosphere settles.",
+      "sub": "The atmosphere settles in 1:17"
+     },
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [
+       5578
+      ],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Dying World\nDetails\nSevere decline · 70% lost\nFinal harsh state in 1:17\nBLOOM REACHED — hold it until the atmosphere settles.\nThe atmosphere settles in 1:17"
+    }
+   },
+   "inRoom4s": {
+    "wallMs": 4003,
+    "ticks": 0,
+    "simSeconds": 0,
+    "runningBefore": false,
+    "runningAfter": false,
+    "before": {
+     "t": 22340.400000035763,
+     "ticks": 1338,
+     "running": false,
+     "speed": 1,
+     "room": "adapt",
+     "banner": false,
+     "biomass": 135,
+     "coverage": 0.7088,
+     "pressure": {
+      "progress": 0.6963,
+      "seconds": 214.08,
+      "nextIn": 75.91999999999999,
+      "extinctionIn": null,
+      "phase": "Severe decline"
+     },
+     "competition": null,
+     "climate": null,
+     "completion": {
+      "status": "early-held",
+      "line": "BLOOM REACHED — hold it until the atmosphere settles.",
+      "sub": "The atmosphere settles in 1:16"
+     },
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [
+       5098
+      ],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Dying World\nDetails\nSevere decline · 70% lost\nFinal harsh state in 1:16\nBLOOM REACHED — hold it until the atmosphere settles.\nThe atmosphere settles in 1:16"
+    },
+    "after": {
+     "t": 26343.400000035763,
+     "ticks": 1338,
+     "running": false,
+     "speed": 1,
+     "room": "adapt",
+     "banner": false,
+     "biomass": 135,
+     "coverage": 0.7088,
+     "pressure": {
+      "progress": 0.6963,
+      "seconds": 214.08,
+      "nextIn": 75.91999999999999,
+      "extinctionIn": null,
+      "phase": "Severe decline"
+     },
+     "competition": null,
+     "climate": null,
+     "completion": {
+      "status": "early-held",
+      "line": "BLOOM REACHED — hold it until the atmosphere settles.",
+      "sub": "The atmosphere settles in 1:16"
+     },
+     "bubbles": 0,
+     "wallFx": {
+      "thresholds": [
+       1095
+      ],
+      "competition": [],
+      "crossings": 0,
+      "toast": false
+     },
+     "scnText": "Dying World\nDetails\nSevere decline · 70% lost\nFinal harsh state in 1:16\nBLOOM REACHED — hold it until the atmosphere settles.\nThe atmosphere settles in 1:16"
+    }
+   },
+   "afterClose": {
+    "running": true
+   }
+  }
+ },
+ "findings": [
+  "Expedition run lands RUNNING at 1× (speeds 1 / 2 / 4; tick 160 ms → 6.25 ticks/s at 1×). Measured: 1x 6 ticks/s, 2x 12.33 ticks/s, 4x 24.99 ticks/s.",
+  "Room region: 0 ticks during the open transition (413 ms), 0 ticks in 3 s open, 1 during close; running after Back: true.",
+  "Room adapt: 0 ticks during the open transition (402 ms), 0 ticks in 3 s open, 0 during close; running after Back: true.",
+  "Room spread: 0 ticks during the open transition (404 ms), 0 ticks in 3 s open, 1 during close; running after Back: true.",
+  "Room terraform: 0 ticks during the open transition (579 ms), 0 ticks in 3 s open, 0 during close; running after Back: true.",
+  "Selecting a region / showing the banner does NOT pause: 19 ticks in 3002 ms.",
+  "Map View popover does NOT pause: 13 ticks in 2 s (lens hover preview 12).",
+  "Run menu popover: 12 ticks in 2 s (running true).",
+  "Frozen/hidden page for 5 s: 33 ticks simulated on return (5.28 s of run time).",
+  "Inspection sequence: from the map 6.24 s of run time elapse (wall 9.77 s); entirely inside rooms 0.16 s (wall 9 s).",
+  "Dying World (Challenge, launch 1, Organic Hybrid), decline ≈40 %: on the map 25 ticks / 4 s; in a room 0 ticks / 4 s.",
+  "Dying World: no living plants (extinction grace counting): on the map 26 ticks / 4 s; in a room 0 ticks / 4 s.",
+  "native_competition (harness ocean_archipelago:28, Organic Hybrid): on the map 25 ticks / 4 s; in a room 0 ticks / 4 s.",
+  "volatile_climate (harness desert_world:17, Organic Hybrid): on the map 25 ticks / 4 s; in a room 0 ticks / 4 s.",
+  "Thin Air early Bloom (HOLDING): on the map 25 ticks / 4 s; in a room 0 ticks / 4 s."
+ ],
+ "errors": [],
+ "seconds": 178
+}

@@ -1,0 +1,8843 @@
+{
+ "format": "bloom-038-strategy-study@1",
+ "method": {
+  "unit": "game seconds at 1× (decision rooms pause the run; 2×/4× speed divides wall-clock time)",
+  "policies": [
+   "balanced",
+   "adapt_first",
+   "spread_first",
+   "terraform_first",
+   "greedy",
+   "low_planning",
+   "colony"
+  ],
+  "informationModel": "runner.mjs header: lamps / previews / prices / map adjacency / climate preview only — no validator witness, no rng, no future pressure",
+  "human": "notice delay 2–6 s after a target becomes affordable; 35–80 % of Biomass bubbles clicked after 2–4 s (the rest auto-collect at half value)",
+  "sample": {
+   "expeditionWorlds": 60,
+   "stream": "bloom-038 design audit expedition pool v1",
+   "perArchetype": 20,
+   "runSeedsPerCell": 2,
+   "challengeEntriesPerCell": 10,
+   "trainingRuns": 28,
+   "totalRuns": 4424
+  },
+  "cap": "3600 s (training 1800 s); a run that neither Blooms nor goes extinct by the cap is a TIMEOUT (Expedition has no extinction loss)",
+  "definitions": {
+   "firstMeaningfulDecision": "first second at which a purchase that opens reachable land / reaches across water / speeds a large uncovered frontier is affordable",
+   "biomassSaving": "seconds with a chosen target the policy could not yet afford (waiting for Biomass)",
+   "noUsefulAction": "seconds with no legal purchase that the previews show opens, reaches or measurably improves frontier land",
+   "meaningfulPurchase": "a purchase whose preview opened reachable land (unlock) or that made other landmasses reachable (Waterborne Seeds)",
+   "waitAfterSolved": "won runs: seconds from the later of (strategically solved, last purchase after it) to Bloom — pure waiting"
+  }
+ },
+ "expedition": {
+  "policies": {
+   "balanced": {
+    "runs": 478,
+    "winRate": 0.981,
+    "extinction": 0,
+    "bloomTime": {
+     "n": 469,
+     "p10": 168.5,
+     "p25": 195.5,
+     "median": 242.7,
+     "p75": 336.3,
+     "p90": 461.8,
+     "max": 1117.9,
+     "mean": 290
+    },
+    "biomassSpentAtBloom": {
+     "n": 469,
+     "p10": 540,
+     "p25": 680,
+     "median": 840,
+     "p75": 1170,
+     "p90": 1470,
+     "max": 3980,
+     "mean": 958.8
+    },
+    "coveragePer100Biomass": {
+     "n": 469,
+     "p10": 4.8,
+     "p25": 6,
+     "median": 8.3,
+     "p75": 10.3,
+     "p90": 13,
+     "max": 20,
+     "mean": 8.7
+    },
+    "purchases": {
+     "n": 478,
+     "p10": 3,
+     "p25": 4,
+     "median": 5,
+     "p75": 6,
+     "p90": 8,
+     "max": 27,
+     "mean": 5.4
+    },
+    "byBoard": {
+     "Adapt": 0.576,
+     "Spread": 0.256,
+     "Terraform": 0.168
+    },
+    "firstPurchase": {
+     "drought": 151,
+     "cold": 144,
+     "flood": 88,
+     "heat": 32,
+     "salt": 23,
+     "rad": 22
+    },
+    "opening2": {
+     "cold>cold": 58,
+     "drought>rad": 42,
+     "drought>drought": 38,
+     "drought>heat": 34,
+     "flood>cold": 26,
+     "flood>salt": 25
+    }
+   },
+   "adapt_first": {
+    "runs": 478,
+    "winRate": 0.983,
+    "extinction": 0,
+    "bloomTime": {
+     "n": 470,
+     "p10": 169.6,
+     "p25": 194.8,
+     "median": 246.2,
+     "p75": 346.8,
+     "p90": 476.9,
+     "max": 997.4,
+     "mean": 296.4
+    },
+    "biomassSpentAtBloom": {
+     "n": 470,
+     "p10": 510,
+     "p25": 625,
+     "median": 840,
+     "p75": 1190,
+     "p90": 1490,
+     "max": 3470,
+     "mean": 965
+    },
+    "coveragePer100Biomass": {
+     "n": 470,
+     "p10": 4.7,
+     "p25": 5.9,
+     "median": 8.3,
+     "p75": 11.2,
+     "p90": 13.7,
+     "max": 24.1,
+     "mean": 8.7
+    },
+    "purchases": {
+     "n": 478,
+     "p10": 3,
+     "p25": 3,
+     "median": 4,
+     "p75": 7,
+     "p90": 9,
+     "max": 27,
+     "mean": 5.3
+    },
+    "byBoard": {
+     "Adapt": 0.69,
+     "Spread": 0.227,
+     "Terraform": 0.083
+    },
+    "firstPurchase": {
+     "drought": 152,
+     "cold": 144,
+     "flood": 92,
+     "heat": 32,
+     "salt": 30,
+     "rad": 28
+    },
+    "opening2": {
+     "cold>cold": 76,
+     "drought>drought": 52,
+     "drought>rad": 50,
+     "drought>heat": 36,
+     "flood>cold": 26,
+     "flood>salt": 26
+    }
+   },
+   "spread_first": {
+    "runs": 478,
+    "winRate": 0.985,
+    "extinction": 0,
+    "bloomTime": {
+     "n": 471,
+     "p10": 179.8,
+     "p25": 206.2,
+     "median": 261,
+     "p75": 346,
+     "p90": 469.8,
+     "max": 1237.6,
+     "mean": 300.8
+    },
+    "biomassSpentAtBloom": {
+     "n": 471,
+     "p10": 640,
+     "p25": 720,
+     "median": 960,
+     "p75": 1250,
+     "p90": 1470,
+     "max": 1810,
+     "mean": 993.5
+    },
+    "coveragePer100Biomass": {
+     "n": 471,
+     "p10": 4.8,
+     "p25": 5.6,
+     "median": 7.3,
+     "p75": 9.7,
+     "p90": 10.9,
+     "max": 16.7,
+     "mean": 7.9
+    },
+    "purchases": {
+     "n": 478,
+     "p10": 4,
+     "p25": 4,
+     "median": 5,
+     "p75": 7,
+     "p90": 8,
+     "max": 10,
+     "mean": 5.6
+    },
+    "byBoard": {
+     "Adapt": 0.471,
+     "Spread": 0.478,
+     "Terraform": 0.051
+    },
+    "firstPurchase": {
+     "seedOut": 162,
+     "waterSeeds": 140,
+     "cold": 78,
+     "drought": 76,
+     "flood": 16,
+     "heat": 6
+    },
+    "opening2": {
+     "waterSeeds>seedOut": 135,
+     "seedOut>earlyMat": 86,
+     "drought>seedOut": 73,
+     "cold>seedOut": 55,
+     "seedOut>drought": 41,
+     "seedOut>cold": 22
+    }
+   },
+   "terraform_first": {
+    "runs": 478,
+    "winRate": 0.854,
+    "extinction": 0,
+    "bloomTime": {
+     "n": 408,
+     "p10": 199.9,
+     "p25": 246.4,
+     "median": 333.9,
+     "p75": 427.1,
+     "p90": 582.1,
+     "max": 1461.8,
+     "mean": 369.3
+    },
+    "biomassSpentAtBloom": {
+     "n": 408,
+     "p10": 654,
+     "p25": 870,
+     "median": 1240,
+     "p75": 1540,
+     "p90": 2100,
+     "max": 3910,
+     "mean": 1284.5
+    },
+    "coveragePer100Biomass": {
+     "n": 408,
+     "p10": 3.3,
+     "p25": 4.5,
+     "median": 5.6,
+     "p75": 8,
+     "p90": 10.7,
+     "max": 18.9,
+     "mean": 6.5
+    },
+    "purchases": {
+     "n": 478,
+     "p10": 3,
+     "p25": 4,
+     "median": 6,
+     "p75": 8,
+     "p90": 21,
+     "max": 27,
+     "mean": 7.9
+    },
+    "byBoard": {
+     "Adapt": 0.228,
+     "Spread": 0.104,
+     "Terraform": 0.668
+    },
+    "firstPurchase": {
+     "humid": 130,
+     "warm": 114,
+     "dry": 93,
+     "cool": 36,
+     "drought": 30,
+     "cold": 26
+    },
+    "opening2": {
+     "humid>humid": 66,
+     "warm>warm": 56,
+     "dry>dry": 26,
+     "warm>cold": 22,
+     "cold>warm": 21,
+     "dry>warm": 20
+    }
+   },
+   "greedy": {
+    "runs": 478,
+    "winRate": 0.979,
+    "extinction": 0,
+    "bloomTime": {
+     "n": 468,
+     "p10": 157,
+     "p25": 194.6,
+     "median": 253.2,
+     "p75": 330.4,
+     "p90": 420.5,
+     "max": 1050.6,
+     "mean": 282.9
+    },
+    "biomassSpentAtBloom": {
+     "n": 468,
+     "p10": 590,
+     "p25": 770,
+     "median": 990,
+     "p75": 1210,
+     "p90": 1470,
+     "max": 3980,
+     "mean": 1000.3
+    },
+    "coveragePer100Biomass": {
+     "n": 468,
+     "p10": 4.8,
+     "p25": 5.8,
+     "median": 7.1,
+     "p75": 9.1,
+     "p90": 11.9,
+     "max": 25.9,
+     "mean": 8
+    },
+    "purchases": {
+     "n": 478,
+     "p10": 4,
+     "p25": 5,
+     "median": 6,
+     "p75": 7,
+     "p90": 8,
+     "max": 16,
+     "mean": 5.9
+    },
+    "byBoard": {
+     "Adapt": 0.508,
+     "Spread": 0.383,
+     "Terraform": 0.109
+    },
+    "firstPurchase": {
+     "seedOut": 196,
+     "cold": 126,
+     "drought": 85,
+     "heat": 36,
+     "flood": 35
+    },
+    "opening2": {
+     "drought>seedOut": 75,
+     "cold>seedOut": 69,
+     "seedOut>drought": 52,
+     "seedOut>cold": 51,
+     "seedOut>flood": 37,
+     "seedOut>heat": 29
+    }
+   },
+   "low_planning": {
+    "runs": 478,
+    "winRate": 0.99,
+    "extinction": 0,
+    "bloomTime": {
+     "n": 473,
+     "p10": 193.6,
+     "p25": 244.2,
+     "median": 316.3,
+     "p75": 397.8,
+     "p90": 509.4,
+     "max": 1156,
+     "mean": 345.7
+    },
+    "biomassSpentAtBloom": {
+     "n": 473,
+     "p10": 612,
+     "p25": 820,
+     "median": 1050,
+     "p75": 1360,
+     "p90": 1660,
+     "max": 2790,
+     "mean": 1099.6
+    },
+    "coveragePer100Biomass": {
+     "n": 473,
+     "p10": 4.2,
+     "p25": 5.1,
+     "median": 6.7,
+     "p75": 8.5,
+     "p90": 11.4,
+     "max": 25.9,
+     "mean": 7.4
+    },
+    "purchases": {
+     "n": 478,
+     "p10": 4,
+     "p25": 5,
+     "median": 6,
+     "p75": 7,
+     "p90": 9,
+     "max": 14,
+     "mean": 5.9
+    },
+    "byBoard": {
+     "Adapt": 0.462,
+     "Spread": 0.346,
+     "Terraform": 0.192
+    },
+    "firstPurchase": {
+     "seedOut": 66,
+     "drought": 60,
+     "earlyMat": 55,
+     "cold": 44,
+     "humid": 42,
+     "warm": 41
+    },
+    "opening2": {
+     "humid>drought": 19,
+     "warm>cold": 19,
+     "drought>earlyMat": 17,
+     "drought>seedOut": 17,
+     "cold>cold": 15,
+     "seedOut>drought": 14
+    }
+   },
+   "colony": {
+    "runs": 478,
+    "winRate": 0.981,
+    "extinction": 0,
+    "bloomTime": {
+     "n": 469,
+     "p10": 170.8,
+     "p25": 194.9,
+     "median": 229.8,
+     "p75": 296.8,
+     "p90": 392.9,
+     "max": 1006.2,
+     "mean": 271.4
+    },
+    "biomassSpentAtBloom": {
+     "n": 469,
+     "p10": 700,
+     "p25": 850,
+     "median": 1100,
+     "p75": 1400,
+     "p90": 1760,
+     "max": 4070,
+     "mean": 1167.8
+    },
+    "coveragePer100Biomass": {
+     "n": 469,
+     "p10": 4,
+     "p25": 5,
+     "median": 6.4,
+     "p75": 8.2,
+     "p90": 10,
+     "max": 19.4,
+     "mean": 6.8
+    },
+    "purchases": {
+     "n": 478,
+     "p10": 4,
+     "p25": 4,
+     "median": 5,
+     "p75": 7,
+     "p90": 9,
+     "max": 34,
+     "mean": 6
+    },
+    "byBoard": {
+     "Adapt": 0.541,
+     "Spread": 0.295,
+     "Terraform": 0.164
+    },
+    "firstPurchase": {
+     "drought": 150,
+     "cold": 144,
+     "flood": 88,
+     "heat": 31,
+     "salt": 23,
+     "rad": 22
+    },
+    "opening2": {
+     "cold>cold": 58,
+     "drought>rad": 42,
+     "drought>drought": 38,
+     "drought>heat": 34,
+     "flood>cold": 26,
+     "flood>salt": 26
+    }
+   }
+  },
+  "cells": 478,
+  "cellsAllPoliciesWin": 405,
+  "cellsSomePolicyFails": 70,
+  "fastestPolicyCount": {
+   "colony": 166,
+   "greedy": 144,
+   "adapt_first": 51,
+   "balanced": 48,
+   "spread_first": 42,
+   "low_planning": 18,
+   "terraform_first": 6
+  },
+  "slowerThanCellBestPct": {
+   "balanced": {
+    "n": 469,
+    "p10": 0,
+    "p25": 3.6,
+    "median": 9.8,
+    "p75": 19,
+    "p90": 35.9,
+    "max": 183.3,
+    "mean": 15.5
+   },
+   "adapt_first": {
+    "n": 470,
+    "p10": 0,
+    "p25": 4.4,
+    "median": 11.2,
+    "p75": 21.7,
+    "p90": 43.9,
+    "max": 148.8,
+    "mean": 18.2
+   },
+   "spread_first": {
+    "n": 471,
+    "p10": 0.4,
+    "p25": 8.1,
+    "median": 15.9,
+    "p75": 29.3,
+    "p90": 44.3,
+    "max": 128.9,
+    "mean": 21.4
+   },
+   "terraform_first": {
+    "n": 408,
+    "p10": 12.1,
+    "p25": 24.3,
+    "median": 49.1,
+    "p75": 82.4,
+    "p90": 130.1,
+    "max": 208.9,
+    "mean": 60.2
+   },
+   "greedy": {
+    "n": 468,
+    "p10": 0,
+    "p25": 0,
+    "median": 8.5,
+    "p75": 21.4,
+    "p90": 36.5,
+    "max": 133.4,
+    "mean": 14.5
+   },
+   "low_planning": {
+    "n": 473,
+    "p10": 6.6,
+    "p25": 18.9,
+    "median": 35.4,
+    "p75": 54.7,
+    "p90": 78.9,
+    "max": 201.8,
+    "mean": 40.5
+   },
+   "colony": {
+    "n": 469,
+    "p10": 0,
+    "p25": 0,
+    "median": 4.5,
+    "p75": 13.6,
+    "p90": 25.1,
+    "max": 87.2,
+    "mean": 9.6
+   }
+  },
+  "lossVsCellBest": {
+   "balanced": 0.013,
+   "adapt_first": 0.011,
+   "spread_first": 0.008,
+   "terraform_first": 0.141,
+   "greedy": 0.015,
+   "low_planning": 0.004,
+   "colony": 0.013
+  },
+  "openingOfFastest": {
+   "drought>drought": 37,
+   "cold>cold": 37,
+   "cold>seedOut": 35,
+   "seedOut>cold": 23,
+   "drought>rad": 22,
+   "waterSeeds>seedOut": 22,
+   "drought>heat": 19,
+   "flood>cold": 19,
+   "drought>humid": 18,
+   "drought>seedOut": 18
+  },
+  "traitOwnershipInWins": {
+   "seedOut": 0.71,
+   "salt": 0.55,
+   "earlyMat": 0.534,
+   "rad": 0.448,
+   "heat": 0.427,
+   "cold": 0.426,
+   "drought": 0.375,
+   "waterSeeds": 0.313,
+   "flood": 0.273,
+   "humid": 0.238,
+   "warm": 0.19,
+   "cool": 0.122,
+   "dry": 0.116
+  },
+  "tierShareInWins": {
+   "seedOut#1": 0.71,
+   "salt#1": 0.55,
+   "earlyMat#1": 0.534,
+   "rad#1": 0.448,
+   "heat#1": 0.427,
+   "cold#1": 0.426,
+   "drought#1": 0.375,
+   "waterSeeds#1": 0.313,
+   "flood#1": 0.273,
+   "humid#1": 0.238,
+   "cold#2": 0.22,
+   "seedOut#2": 0.197,
+   "warm#1": 0.19,
+   "cool#1": 0.122,
+   "dry#1": 0.116,
+   "drought#2": 0.1,
+   "humid#2": 0.058,
+   "warm#2": 0.043,
+   "cold#3": 0.041,
+   "humid#3": 0.03,
+   "dry#2": 0.028,
+   "flood#2": 0.024,
+   "warm#3": 0.02,
+   "cool#2": 0.019,
+   "heat#2": 0.019,
+   "humid#4": 0.014,
+   "warm#4": 0.007,
+   "dry#3": 0.007,
+   "humid#5": 0.004,
+   "cool#3": 0.004,
+   "drought#3": 0.002,
+   "warm#5": 0.002,
+   "dry#4": 0.002,
+   "flood#3": 0.002,
+   "dry#5": 0.001
+  },
+  "neverBoughtInWins": [],
+  "terraformUseful": {
+   "runsWithTerraformThatOpenedLand": 0.542,
+   "runsBuyingTerraform": 0.555,
+   "terraformShareOfPurchases": 0.231
+  },
+  "purchaseKinds": {
+   "Adapt:unlock": 9262,
+   "Spread:speed": 4766,
+   "Terraform:unlock": 4521,
+   "Spread:reach": 1048,
+   "Adapt:progress": 380,
+   "Terraform:progress": 112
+  },
+  "colonyLayer": {
+   "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+   "vsBalanced": {
+    "pairs": 469,
+    "colonyFasterShare": 0.638,
+    "relativeTimePct": {
+     "n": 469,
+     "p10": -18.7,
+     "p25": -11,
+     "median": -3,
+     "p75": 2.9,
+     "p90": 9.1,
+     "max": 77.4,
+     "mean": -3.6
+    }
+   }
+  }
+ },
+ "expeditionByArchetype": {
+  "desert_world": {
+   "policies": {
+    "balanced": {
+     "runs": 158,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 158,
+      "p10": 155.7,
+      "p25": 179.2,
+      "median": 208.1,
+      "p75": 237.9,
+      "p90": 264.4,
+      "max": 329.6,
+      "mean": 211.2
+     },
+     "biomassSpentAtBloom": {
+      "n": 158,
+      "p10": 500,
+      "p25": 570,
+      "median": 710,
+      "p75": 840,
+      "p90": 1013,
+      "max": 1180,
+      "mean": 738.7
+     },
+     "coveragePer100Biomass": {
+      "n": 158,
+      "p10": 6.9,
+      "p25": 8.3,
+      "median": 9.9,
+      "p75": 12.3,
+      "p90": 14,
+      "max": 20,
+      "mean": 10.2
+     },
+     "purchases": {
+      "n": 158,
+      "p10": 3,
+      "p25": 3,
+      "median": 4,
+      "p75": 5,
+      "p90": 5,
+      "max": 6,
+      "mean": 4
+     },
+     "byBoard": {
+      "Adapt": 0.713,
+      "Spread": 0.114,
+      "Terraform": 0.174
+     },
+     "firstPurchase": {
+      "drought": 146,
+      "heat": 8,
+      "humid": 2,
+      "rad": 2
+     },
+     "opening2": {
+      "drought>rad": 42,
+      "drought>drought": 38,
+      "drought>heat": 32,
+      "drought>humid": 22,
+      "heat>drought": 8,
+      "drought>salt": 8
+     }
+    },
+    "adapt_first": {
+     "runs": 158,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 158,
+      "p10": 160.6,
+      "p25": 180.2,
+      "median": 205.6,
+      "p75": 240.7,
+      "p90": 260.3,
+      "max": 330.9,
+      "mean": 210.6
+     },
+     "biomassSpentAtBloom": {
+      "n": 158,
+      "p10": 510,
+      "p25": 570,
+      "median": 760,
+      "p75": 810,
+      "p90": 980,
+      "max": 1370,
+      "mean": 729.5
+     },
+     "coveragePer100Biomass": {
+      "n": 158,
+      "p10": 7.1,
+      "p25": 8.6,
+      "median": 9.2,
+      "p75": 12.3,
+      "p90": 13.7,
+      "max": 24.1,
+      "mean": 10.4
+     },
+     "purchases": {
+      "n": 158,
+      "p10": 3,
+      "p25": 3,
+      "median": 4,
+      "p75": 4,
+      "p90": 5,
+      "max": 7,
+      "mean": 3.8
+     },
+     "byBoard": {
+      "Adapt": 0.935,
+      "Spread": 0.051,
+      "Terraform": 0.013
+     },
+     "firstPurchase": {
+      "drought": 146,
+      "heat": 8,
+      "rad": 4
+     },
+     "opening2": {
+      "drought>drought": 52,
+      "drought>rad": 50,
+      "drought>heat": 34,
+      "drought>salt": 10,
+      "heat>drought": 8,
+      "rad>drought": 3
+     }
+    },
+    "spread_first": {
+     "runs": 158,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 158,
+      "p10": 177.4,
+      "p25": 192.4,
+      "median": 220.6,
+      "p75": 262.1,
+      "p90": 298.5,
+      "max": 375.5,
+      "mean": 230.8
+     },
+     "biomassSpentAtBloom": {
+      "n": 158,
+      "p10": 590,
+      "p25": 670,
+      "median": 830,
+      "p75": 1010,
+      "p90": 1210,
+      "max": 1480,
+      "mean": 867
+     },
+     "coveragePer100Biomass": {
+      "n": 158,
+      "p10": 5.8,
+      "p25": 6.9,
+      "median": 8.4,
+      "p75": 10.4,
+      "p90": 11.9,
+      "max": 16.7,
+      "mean": 8.7
+     },
+     "purchases": {
+      "n": 158,
+      "p10": 4,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 7,
+      "max": 8,
+      "mean": 5
+     },
+     "byBoard": {
+      "Adapt": 0.544,
+      "Spread": 0.396,
+      "Terraform": 0.061
+     },
+     "firstPurchase": {
+      "drought": 76,
+      "seedOut": 76,
+      "heat": 6
+     },
+     "opening2": {
+      "drought>seedOut": 73,
+      "seedOut>drought": 39,
+      "seedOut>earlyMat": 34,
+      "heat>seedOut": 4,
+      "drought>drought": 3,
+      "heat>drought": 2
+     }
+    },
+    "terraform_first": {
+     "runs": 158,
+     "winRate": 0.987,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 156,
+      "p10": 179,
+      "p25": 242.3,
+      "median": 310.3,
+      "p75": 396,
+      "p90": 461.9,
+      "max": 604.2,
+      "mean": 323.1
+     },
+     "biomassSpentAtBloom": {
+      "n": 156,
+      "p10": 700,
+      "p25": 840,
+      "median": 1230,
+      "p75": 1532.5,
+      "p90": 1780,
+      "max": 2520,
+      "mean": 1242.4
+     },
+     "coveragePer100Biomass": {
+      "n": 156,
+      "p10": 3.9,
+      "p25": 4.6,
+      "median": 5.7,
+      "p75": 8.3,
+      "p90": 10,
+      "max": 18.9,
+      "mean": 6.7
+     },
+     "purchases": {
+      "n": 158,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 7,
+      "max": 8,
+      "mean": 5.1
+     },
+     "byBoard": {
+      "Adapt": 0.343,
+      "Spread": 0.03,
+      "Terraform": 0.628
+     },
+     "firstPurchase": {
+      "humid": 114,
+      "drought": 30,
+      "cool": 14
+     },
+     "opening2": {
+      "humid>humid": 66,
+      "humid>drought": 18,
+      "drought>humid": 18,
+      "humid>cool": 16,
+      "humid>rad": 12,
+      "drought>rad": 6
+     }
+    },
+    "greedy": {
+     "runs": 158,
+     "winRate": 0.987,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 156,
+      "p10": 157.1,
+      "p25": 182.7,
+      "median": 218.4,
+      "p75": 267.6,
+      "p90": 307.9,
+      "max": 417,
+      "mean": 228.1
+     },
+     "biomassSpentAtBloom": {
+      "n": 156,
+      "p10": 590,
+      "p25": 670,
+      "median": 860,
+      "p75": 1040,
+      "p90": 1280,
+      "max": 1480,
+      "mean": 900.7
+     },
+     "coveragePer100Biomass": {
+      "n": 156,
+      "p10": 5.5,
+      "p25": 6.7,
+      "median": 8.1,
+      "p75": 10.4,
+      "p90": 11.9,
+      "max": 25,
+      "mean": 8.7
+     },
+     "purchases": {
+      "n": 158,
+      "p10": 4,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 7,
+      "max": 8,
+      "mean": 5.3
+     },
+     "byBoard": {
+      "Adapt": 0.558,
+      "Spread": 0.321,
+      "Terraform": 0.122
+     },
+     "firstPurchase": {
+      "drought": 81,
+      "seedOut": 58,
+      "heat": 19
+     },
+     "opening2": {
+      "drought>seedOut": 73,
+      "seedOut>drought": 50,
+      "heat>drought": 12,
+      "heat>seedOut": 7,
+      "seedOut>heat": 6,
+      "drought>heat": 5
+     }
+    },
+    "low_planning": {
+     "runs": 158,
+     "winRate": 0.994,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 157,
+      "p10": 183.4,
+      "p25": 222.7,
+      "median": 274.1,
+      "p75": 321.9,
+      "p90": 366.8,
+      "max": 453.1,
+      "mean": 273.9
+     },
+     "biomassSpentAtBloom": {
+      "n": 157,
+      "p10": 532,
+      "p25": 750,
+      "median": 940,
+      "p75": 1140,
+      "p90": 1460,
+      "max": 1880,
+      "mean": 974.3
+     },
+     "coveragePer100Biomass": {
+      "n": 157,
+      "p10": 4.8,
+      "p25": 6.1,
+      "median": 7.4,
+      "p75": 9.3,
+      "p90": 13.2,
+      "max": 25,
+      "mean": 8.2
+     },
+     "purchases": {
+      "n": 158,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 7,
+      "max": 9,
+      "mean": 5.1
+     },
+     "byBoard": {
+      "Adapt": 0.503,
+      "Spread": 0.257,
+      "Terraform": 0.24
+     },
+     "firstPurchase": {
+      "drought": 54,
+      "humid": 39,
+      "seedOut": 27,
+      "rad": 13,
+      "heat": 10,
+      "earlyMat": 10
+     },
+     "opening2": {
+      "humid>drought": 19,
+      "drought>earlyMat": 17,
+      "drought>seedOut": 15,
+      "seedOut>drought": 14,
+      "humid>humid": 8,
+      "drought>humid": 7
+     }
+    },
+    "colony": {
+     "runs": 158,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 158,
+      "p10": 165.4,
+      "p25": 179.6,
+      "median": 201.7,
+      "p75": 225.3,
+      "p90": 250.3,
+      "max": 294.9,
+      "mean": 204.5
+     },
+     "biomassSpentAtBloom": {
+      "n": 158,
+      "p10": 660,
+      "p25": 790,
+      "median": 960,
+      "p75": 1097.5,
+      "p90": 1180,
+      "max": 1450,
+      "mean": 938.1
+     },
+     "coveragePer100Biomass": {
+      "n": 158,
+      "p10": 5.9,
+      "p25": 6.4,
+      "median": 7.3,
+      "p75": 8.9,
+      "p90": 10.6,
+      "max": 15.9,
+      "mean": 7.9
+     },
+     "purchases": {
+      "n": 158,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 5,
+      "p90": 6,
+      "max": 7,
+      "mean": 4.7
+     },
+     "byBoard": {
+      "Adapt": 0.653,
+      "Spread": 0.188,
+      "Terraform": 0.159
+     },
+     "firstPurchase": {
+      "drought": 146,
+      "heat": 7,
+      "humid": 2,
+      "rad": 2,
+      "seedOut": 1
+     },
+     "opening2": {
+      "drought>rad": 42,
+      "drought>drought": 38,
+      "drought>heat": 32,
+      "drought>humid": 22,
+      "drought>salt": 8,
+      "heat>drought": 7
+     }
+    }
+   },
+   "cells": 158,
+   "cellsAllPoliciesWin": 154,
+   "cellsSomePolicyFails": 4,
+   "fastestPolicyCount": {
+    "colony": 67,
+    "greedy": 36,
+    "adapt_first": 21,
+    "balanced": 18,
+    "spread_first": 8,
+    "low_planning": 5,
+    "terraform_first": 3
+   },
+   "slowerThanCellBestPct": {
+    "balanced": {
+     "n": 158,
+     "p10": 0,
+     "p25": 2.4,
+     "median": 6.5,
+     "p75": 11.6,
+     "p90": 16.3,
+     "max": 30.4,
+     "mean": 7.6
+    },
+    "adapt_first": {
+     "n": 158,
+     "p10": 0,
+     "p25": 2.5,
+     "median": 6.8,
+     "p75": 10.6,
+     "p90": 16.1,
+     "max": 28,
+     "mean": 7.5
+    },
+    "spread_first": {
+     "n": 158,
+     "p10": 2.2,
+     "p25": 9,
+     "median": 15.8,
+     "p75": 26.1,
+     "p90": 33.9,
+     "max": 58.1,
+     "mean": 17.6
+    },
+    "terraform_first": {
+     "n": 156,
+     "p10": 10.6,
+     "p25": 23.6,
+     "median": 53.4,
+     "p75": 96.5,
+     "p90": 141,
+     "max": 206.6,
+     "mean": 65.5
+    },
+    "greedy": {
+     "n": 156,
+     "p10": 0,
+     "p25": 1,
+     "median": 10.1,
+     "p75": 22.5,
+     "p90": 36.9,
+     "max": 77.7,
+     "mean": 15.9
+    },
+    "low_planning": {
+     "n": 157,
+     "p10": 7.1,
+     "p25": 20.8,
+     "median": 32.8,
+     "p75": 54,
+     "p90": 79.3,
+     "max": 165.3,
+     "mean": 40.9
+    },
+    "colony": {
+     "n": 158,
+     "p10": 0,
+     "p25": 0,
+     "median": 2.2,
+     "p75": 8.9,
+     "p90": 14.3,
+     "max": 29.7,
+     "mean": 5.1
+    }
+   },
+   "lossVsCellBest": {
+    "balanced": 0,
+    "adapt_first": 0,
+    "spread_first": 0,
+    "terraform_first": 0.013,
+    "greedy": 0.013,
+    "low_planning": 0.006,
+    "colony": 0
+   },
+   "openingOfFastest": {
+    "drought>drought": 37,
+    "drought>rad": 22,
+    "drought>humid": 18,
+    "seedOut>drought": 18,
+    "drought>heat": 17,
+    "drought>seedOut": 16,
+    "heat>drought": 9,
+    "drought>salt": 5,
+    "heat>seedOut": 4,
+    "rad>drought": 4
+   },
+   "traitOwnershipInWins": {
+    "drought": 0.904,
+    "rad": 0.658,
+    "seedOut": 0.583,
+    "salt": 0.461,
+    "humid": 0.441,
+    "heat": 0.44,
+    "earlyMat": 0.346,
+    "cool": 0.233,
+    "dry": 0.023,
+    "cold": 0,
+    "flood": 0,
+    "waterSeeds": 0,
+    "warm": 0
+   },
+   "tierShareInWins": {
+    "drought#1": 0.904,
+    "rad#1": 0.658,
+    "seedOut#1": 0.583,
+    "salt#1": 0.461,
+    "humid#1": 0.441,
+    "heat#1": 0.44,
+    "earlyMat#1": 0.346,
+    "drought#2": 0.292,
+    "cool#1": 0.233,
+    "humid#2": 0.131,
+    "humid#3": 0.07,
+    "cool#2": 0.037,
+    "humid#4": 0.028,
+    "seedOut#2": 0.026,
+    "dry#1": 0.023,
+    "heat#2": 0.021,
+    "humid#5": 0.009,
+    "drought#3": 0.007,
+    "cool#3": 0.007
+   },
+   "neverBoughtInWins": [
+    "cold",
+    "flood",
+    "waterSeeds",
+    "warm"
+   ],
+   "terraformUseful": {
+    "runsWithTerraformThatOpenedLand": 0.546,
+    "runsBuyingTerraform": 0.566,
+    "terraformShareOfPurchases": 0.208
+   },
+   "purchaseKinds": {
+    "Adapt:unlock": 2956,
+    "Spread:speed": 1056,
+    "Terraform:unlock": 1049,
+    "Adapt:progress": 127,
+    "Terraform:progress": 40
+   },
+   "colonyLayer": {
+    "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+    "vsBalanced": {
+     "pairs": 158,
+     "colonyFasterShare": 0.608,
+     "relativeTimePct": {
+      "n": 158,
+      "p10": -11.5,
+      "p25": -6.6,
+      "median": -1.5,
+      "p75": 2.7,
+      "p90": 6.5,
+      "max": 20.7,
+      "mean": -2.1
+     }
+    }
+   }
+  },
+  "frozen_world": {
+   "policies": {
+    "balanced": {
+     "runs": 160,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 160,
+      "p10": 157,
+      "p25": 181.2,
+      "median": 211.7,
+      "p75": 266.4,
+      "p90": 315.4,
+      "max": 500,
+      "mean": 230.6
+     },
+     "biomassSpentAtBloom": {
+      "n": 160,
+      "p10": 480,
+      "p25": 610,
+      "median": 760,
+      "p75": 900,
+      "p90": 1056,
+      "max": 1540,
+      "mean": 769.8
+     },
+     "coveragePer100Biomass": {
+      "n": 160,
+      "p10": 6.6,
+      "p25": 7.8,
+      "median": 9.2,
+      "p75": 11.5,
+      "p90": 14.6,
+      "max": 17.1,
+      "mean": 9.9
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 3,
+      "p25": 3,
+      "median": 4,
+      "p75": 5,
+      "p90": 5,
+      "max": 8,
+      "mean": 4
+     },
+     "byBoard": {
+      "Adapt": 0.725,
+      "Spread": 0.121,
+      "Terraform": 0.154
+     },
+     "firstPurchase": {
+      "cold": 136,
+      "heat": 10,
+      "flood": 8,
+      "drought": 4,
+      "salt": 2
+     },
+     "opening2": {
+      "cold>cold": 58,
+      "cold>warm": 20,
+      "cold>drought": 14,
+      "cold>salt": 14,
+      "cold>heat": 14,
+      "cold>flood": 12
+     }
+    },
+    "adapt_first": {
+     "runs": 160,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 160,
+      "p10": 166.6,
+      "p25": 186,
+      "median": 215.6,
+      "p75": 269.9,
+      "p90": 324,
+      "max": 509.4,
+      "mean": 232.7
+     },
+     "biomassSpentAtBloom": {
+      "n": 160,
+      "p10": 480,
+      "p25": 557.5,
+      "median": 750,
+      "p75": 950,
+      "p90": 1091,
+      "max": 1360,
+      "mean": 756.4
+     },
+     "coveragePer100Biomass": {
+      "n": 160,
+      "p10": 6.4,
+      "p25": 7.4,
+      "median": 9.3,
+      "p75": 12.6,
+      "p90": 14.6,
+      "max": 17.1,
+      "mean": 10.2
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 3,
+      "p25": 3,
+      "median": 4,
+      "p75": 4,
+      "p90": 5,
+      "max": 6,
+      "mean": 3.8
+     },
+     "byBoard": {
+      "Adapt": 0.89,
+      "Spread": 0.065,
+      "Terraform": 0.045
+     },
+     "firstPurchase": {
+      "cold": 136,
+      "heat": 10,
+      "flood": 8,
+      "drought": 4,
+      "salt": 2
+     },
+     "opening2": {
+      "cold>cold": 76,
+      "cold>drought": 18,
+      "cold>heat": 16,
+      "cold>salt": 14,
+      "cold>flood": 12,
+      "flood>cold": 8
+     }
+    },
+    "spread_first": {
+     "runs": 160,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 160,
+      "p10": 168.4,
+      "p25": 192.3,
+      "median": 237.8,
+      "p75": 275.1,
+      "p90": 315.2,
+      "max": 506.2,
+      "mean": 242
+     },
+     "biomassSpentAtBloom": {
+      "n": 160,
+      "p10": 580,
+      "p25": 710,
+      "median": 860,
+      "p75": 1000,
+      "p90": 1205,
+      "max": 1540,
+      "mean": 858.9
+     },
+     "coveragePer100Biomass": {
+      "n": 160,
+      "p10": 5.8,
+      "p25": 7,
+      "median": 8.1,
+      "p75": 9.9,
+      "p90": 12.1,
+      "max": 15.9,
+      "mean": 8.9
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 4,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 6,
+      "max": 8,
+      "mean": 4.9
+     },
+     "byBoard": {
+      "Adapt": 0.485,
+      "Spread": 0.452,
+      "Terraform": 0.063
+     },
+     "firstPurchase": {
+      "seedOut": 78,
+      "cold": 76,
+      "flood": 6
+     },
+     "opening2": {
+      "cold>seedOut": 53,
+      "seedOut>earlyMat": 50,
+      "seedOut>cold": 22,
+      "cold>cold": 10,
+      "cold>warm": 6,
+      "cold>drought": 6
+     }
+    },
+    "terraform_first": {
+     "runs": 160,
+     "winRate": 0.975,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 156,
+      "p10": 190.9,
+      "p25": 230.6,
+      "median": 301.5,
+      "p75": 375.5,
+      "p90": 441.4,
+      "max": 679.5,
+      "mean": 316
+     },
+     "biomassSpentAtBloom": {
+      "n": 156,
+      "p10": 610,
+      "p25": 750,
+      "median": 1070,
+      "p75": 1390,
+      "p90": 1550,
+      "max": 2310,
+      "mean": 1105.8
+     },
+     "coveragePer100Biomass": {
+      "n": 156,
+      "p10": 4.5,
+      "p25": 5,
+      "median": 6.5,
+      "p75": 9.3,
+      "p90": 11.5,
+      "max": 14.9,
+      "mean": 7.4
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 7,
+      "max": 14,
+      "mean": 5
+     },
+     "byBoard": {
+      "Adapt": 0.329,
+      "Spread": 0.058,
+      "Terraform": 0.613
+     },
+     "firstPurchase": {
+      "warm": 98,
+      "cold": 26,
+      "dry": 16,
+      "humid": 8,
+      "cool": 6,
+      "heat": 4
+     },
+     "opening2": {
+      "warm>warm": 54,
+      "warm>cold": 22,
+      "cold>warm": 21,
+      "dry>cold": 8,
+      "dry>warm": 8,
+      "warm>humid": 8
+     }
+    },
+    "greedy": {
+     "runs": 160,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 160,
+      "p10": 142.9,
+      "p25": 174.2,
+      "median": 228.7,
+      "p75": 275.9,
+      "p90": 334.3,
+      "max": 570.2,
+      "mean": 234.9
+     },
+     "biomassSpentAtBloom": {
+      "n": 160,
+      "p10": 440,
+      "p25": 620,
+      "median": 860,
+      "p75": 1087.5,
+      "p90": 1260,
+      "max": 1540,
+      "mean": 873.8
+     },
+     "coveragePer100Biomass": {
+      "n": 160,
+      "p10": 5.6,
+      "p25": 6.4,
+      "median": 8.1,
+      "p75": 11.3,
+      "p90": 15.9,
+      "max": 25.9,
+      "mean": 9.2
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 7,
+      "max": 8,
+      "mean": 5.2
+     },
+     "byBoard": {
+      "Adapt": 0.516,
+      "Spread": 0.34,
+      "Terraform": 0.144
+     },
+     "firstPurchase": {
+      "cold": 100,
+      "seedOut": 49,
+      "flood": 4,
+      "heat": 4,
+      "drought": 3
+     },
+     "opening2": {
+      "cold>seedOut": 58,
+      "seedOut>cold": 40,
+      "cold>heat": 13,
+      "cold>drought": 11,
+      "cold>flood": 10,
+      "cold>warm": 8
+     }
+    },
+    "low_planning": {
+     "runs": 160,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 160,
+      "p10": 183.3,
+      "p25": 221.2,
+      "median": 284.6,
+      "p75": 341.7,
+      "p90": 408.1,
+      "max": 719.7,
+      "mean": 291.1
+     },
+     "biomassSpentAtBloom": {
+      "n": 160,
+      "p10": 540,
+      "p25": 707.5,
+      "median": 950,
+      "p75": 1140,
+      "p90": 1337,
+      "max": 1940,
+      "mean": 940.3
+     },
+     "coveragePer100Biomass": {
+      "n": 160,
+      "p10": 5.2,
+      "p25": 6.1,
+      "median": 7.4,
+      "p75": 9.9,
+      "p90": 13,
+      "max": 25.9,
+      "mean": 8.5
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 7,
+      "max": 8,
+      "mean": 5
+     },
+     "byBoard": {
+      "Adapt": 0.484,
+      "Spread": 0.278,
+      "Terraform": 0.238
+     },
+     "firstPurchase": {
+      "warm": 40,
+      "cold": 35,
+      "seedOut": 22,
+      "heat": 16,
+      "earlyMat": 16,
+      "dry": 8
+     },
+     "opening2": {
+      "warm>cold": 19,
+      "cold>cold": 15,
+      "seedOut>cold": 7,
+      "earlyMat>seedOut": 6,
+      "heat>cold": 6,
+      "seedOut>earlyMat": 6
+     }
+    },
+    "colony": {
+     "runs": 160,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 160,
+      "p10": 170.3,
+      "p25": 189,
+      "median": 212.3,
+      "p75": 255.7,
+      "p90": 292.8,
+      "max": 410.6,
+      "mean": 225.4
+     },
+     "biomassSpentAtBloom": {
+      "n": 160,
+      "p10": 700,
+      "p25": 822.5,
+      "median": 970,
+      "p75": 1200,
+      "p90": 1341,
+      "max": 1630,
+      "mean": 997.9
+     },
+     "coveragePer100Biomass": {
+      "n": 160,
+      "p10": 5.2,
+      "p25": 5.8,
+      "median": 7.2,
+      "p75": 8.5,
+      "p90": 10,
+      "max": 19.4,
+      "mean": 7.5
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 5,
+      "p90": 6,
+      "max": 8,
+      "mean": 4.7
+     },
+     "byBoard": {
+      "Adapt": 0.676,
+      "Spread": 0.181,
+      "Terraform": 0.143
+     },
+     "firstPurchase": {
+      "cold": 136,
+      "heat": 10,
+      "flood": 8,
+      "drought": 4,
+      "salt": 2
+     },
+     "opening2": {
+      "cold>cold": 58,
+      "cold>warm": 20,
+      "cold>drought": 14,
+      "cold>salt": 14,
+      "cold>heat": 14,
+      "cold>flood": 12
+     }
+    }
+   },
+   "cells": 160,
+   "cellsAllPoliciesWin": 156,
+   "cellsSomePolicyFails": 4,
+   "fastestPolicyCount": {
+    "greedy": 62,
+    "colony": 43,
+    "adapt_first": 21,
+    "balanced": 17,
+    "spread_first": 14,
+    "low_planning": 2,
+    "terraform_first": 1
+   },
+   "slowerThanCellBestPct": {
+    "balanced": {
+     "n": 160,
+     "p10": 0,
+     "p25": 3.1,
+     "median": 8.5,
+     "p75": 14.6,
+     "p90": 20.1,
+     "max": 38.8,
+     "mean": 9.6
+    },
+    "adapt_first": {
+     "n": 160,
+     "p10": 0,
+     "p25": 3.5,
+     "median": 9.5,
+     "p75": 16.8,
+     "p90": 22.1,
+     "max": 43.3,
+     "mean": 10.9
+    },
+    "spread_first": {
+     "n": 160,
+     "p10": 0.4,
+     "p25": 5.9,
+     "median": 13.6,
+     "p75": 21.3,
+     "p90": 34.8,
+     "max": 66,
+     "mean": 16
+    },
+    "terraform_first": {
+     "n": 156,
+     "p10": 12.2,
+     "p25": 22.8,
+     "median": 44.8,
+     "p75": 72.1,
+     "p90": 106,
+     "max": 162.6,
+     "mean": 52.1
+    },
+    "greedy": {
+     "n": 160,
+     "p10": 0,
+     "p25": 0,
+     "median": 5.8,
+     "p75": 17.4,
+     "p90": 29.1,
+     "max": 49.1,
+     "mean": 10.3
+    },
+    "low_planning": {
+     "n": 160,
+     "p10": 7.1,
+     "p25": 17.1,
+     "median": 37.6,
+     "p75": 53.7,
+     "p90": 66.6,
+     "max": 118.8,
+     "mean": 38
+    },
+    "colony": {
+     "n": 160,
+     "p10": 0,
+     "p25": 0,
+     "median": 5.2,
+     "p75": 14.1,
+     "p90": 22.5,
+     "max": 38.9,
+     "mean": 8.5
+    }
+   },
+   "lossVsCellBest": {
+    "balanced": 0,
+    "adapt_first": 0,
+    "spread_first": 0,
+    "terraform_first": 0.025,
+    "greedy": 0,
+    "low_planning": 0,
+    "colony": 0
+   },
+   "openingOfFastest": {
+    "cold>cold": 37,
+    "cold>seedOut": 29,
+    "seedOut>cold": 23,
+    "cold>flood": 14,
+    "cold>drought": 12,
+    "cold>warm": 11,
+    "cold>heat": 7,
+    "flood>cold": 6,
+    "heat>cold": 5,
+    "cold>salt": 4
+   },
+   "traitOwnershipInWins": {
+    "cold": 0.936,
+    "seedOut": 0.582,
+    "warm": 0.501,
+    "earlyMat": 0.402,
+    "heat": 0.323,
+    "salt": 0.305,
+    "drought": 0.168,
+    "flood": 0.151,
+    "dry": 0.091,
+    "humid": 0.075,
+    "cool": 0.015,
+    "rad": 0.013,
+    "waterSeeds": 0
+   },
+   "tierShareInWins": {
+    "cold#1": 0.936,
+    "cold#2": 0.636,
+    "seedOut#1": 0.582,
+    "warm#1": 0.501,
+    "earlyMat#1": 0.402,
+    "heat#1": 0.323,
+    "salt#1": 0.305,
+    "drought#1": 0.168,
+    "flood#1": 0.151,
+    "cold#3": 0.119,
+    "warm#2": 0.116,
+    "dry#1": 0.091,
+    "humid#1": 0.075,
+    "warm#3": 0.057,
+    "seedOut#2": 0.056,
+    "dry#2": 0.022,
+    "warm#4": 0.022,
+    "cool#1": 0.015,
+    "heat#2": 0.015,
+    "rad#1": 0.013,
+    "humid#2": 0.007,
+    "warm#5": 0.006,
+    "cool#2": 0.005,
+    "dry#3": 0.002
+   },
+   "neverBoughtInWins": [
+    "waterSeeds"
+   ],
+   "terraformUseful": {
+    "runsWithTerraformThatOpenedLand": 0.56,
+    "runsBuyingTerraform": 0.571,
+    "terraformShareOfPurchases": 0.207
+   },
+   "purchaseKinds": {
+    "Adapt:unlock": 2903,
+    "Spread:speed": 1161,
+    "Terraform:unlock": 1056,
+    "Adapt:progress": 71,
+    "Terraform:progress": 25
+   },
+   "colonyLayer": {
+    "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+    "vsBalanced": {
+     "pairs": 160,
+     "colonyFasterShare": 0.544,
+     "relativeTimePct": {
+      "n": 160,
+      "p10": -11.6,
+      "p25": -5.9,
+      "median": -1.2,
+      "p75": 3.8,
+      "p90": 9.1,
+      "max": 18.7,
+      "mean": -0.8
+     }
+    }
+   }
+  },
+  "ocean_archipelago": {
+   "policies": {
+    "balanced": {
+     "runs": 160,
+     "winRate": 0.944,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 151,
+      "p10": 262.1,
+      "p25": 317.1,
+      "median": 401.1,
+      "p75": 473.5,
+      "p90": 669.4,
+      "max": 1117.9,
+      "mean": 435.5
+     },
+     "biomassSpentAtBloom": {
+      "n": 151,
+      "p10": 840,
+      "p25": 1040,
+      "median": 1390,
+      "p75": 1590,
+      "p90": 1760,
+      "max": 3980,
+      "mean": 1389.4
+     },
+     "coveragePer100Biomass": {
+      "n": 151,
+      "p10": 4,
+      "p25": 4.4,
+      "median": 5,
+      "p75": 6.7,
+      "p90": 8.3,
+      "max": 13.2,
+      "mean": 5.7
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 5,
+      "p25": 6,
+      "median": 8,
+      "p75": 9,
+      "p90": 10,
+      "max": 27,
+      "mean": 8.1
+     },
+     "byBoard": {
+      "Adapt": 0.435,
+      "Spread": 0.393,
+      "Terraform": 0.173
+     },
+     "firstPurchase": {
+      "flood": 80,
+      "salt": 21,
+      "rad": 20,
+      "waterSeeds": 16,
+      "heat": 14,
+      "cold": 8
+     },
+     "opening2": {
+      "flood>salt": 25,
+      "flood>rad": 20,
+      "flood>cold": 18,
+      "flood>heat": 14,
+      "salt>flood": 12,
+      "waterSeeds>seedOut": 9
+     }
+    },
+    "adapt_first": {
+     "runs": 160,
+     "winRate": 0.95,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 152,
+      "p10": 293.8,
+      "p25": 345.1,
+      "median": 402.7,
+      "p75": 501.9,
+      "p90": 750,
+      "max": 997.4,
+      "mean": 452.5
+     },
+     "biomassSpentAtBloom": {
+      "n": 152,
+      "p10": 1020,
+      "p25": 1170,
+      "median": 1390,
+      "p75": 1652.5,
+      "p90": 1740,
+      "max": 3470,
+      "mean": 1429.3
+     },
+     "coveragePer100Biomass": {
+      "n": 152,
+      "p10": 4,
+      "p25": 4.2,
+      "median": 5,
+      "p75": 6,
+      "p90": 6.9,
+      "max": 10.4,
+      "mean": 5.3
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 6,
+      "p25": 7,
+      "median": 8,
+      "p75": 9,
+      "p90": 10,
+      "max": 27,
+      "mean": 8.2
+     },
+     "byBoard": {
+      "Adapt": 0.487,
+      "Spread": 0.381,
+      "Terraform": 0.132
+     },
+     "firstPurchase": {
+      "flood": 84,
+      "salt": 28,
+      "rad": 24,
+      "heat": 14,
+      "cold": 8,
+      "drought": 2
+     },
+     "opening2": {
+      "flood>salt": 26,
+      "flood>rad": 24,
+      "flood>cold": 18,
+      "flood>heat": 14,
+      "rad>heat": 12,
+      "salt>flood": 12
+     }
+    },
+    "spread_first": {
+     "runs": 160,
+     "winRate": 0.956,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 153,
+      "p10": 261.4,
+      "p25": 325.1,
+      "median": 391.7,
+      "p75": 485.1,
+      "p90": 704,
+      "max": 1237.6,
+      "mean": 434.7
+     },
+     "biomassSpentAtBloom": {
+      "n": 153,
+      "p10": 844,
+      "p25": 1110,
+      "median": 1250,
+      "p75": 1470,
+      "p90": 1670,
+      "max": 1810,
+      "mean": 1265
+     },
+     "coveragePer100Biomass": {
+      "n": 153,
+      "p10": 4.2,
+      "p25": 4.8,
+      "median": 5.6,
+      "p75": 6.3,
+      "p90": 8.3,
+      "max": 14.6,
+      "mean": 5.9
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 5,
+      "p25": 6,
+      "median": 7,
+      "p75": 8,
+      "p90": 9,
+      "max": 10,
+      "mean": 7
+     },
+     "byBoard": {
+      "Adapt": 0.409,
+      "Spread": 0.556,
+      "Terraform": 0.035
+     },
+     "firstPurchase": {
+      "waterSeeds": 140,
+      "flood": 10,
+      "seedOut": 8,
+      "cold": 2
+     },
+     "opening2": {
+      "waterSeeds>seedOut": 135,
+      "flood>waterSeeds": 10,
+      "seedOut>flood": 6,
+      "waterSeeds>flood": 4,
+      "cold>seedOut": 2,
+      "seedOut>earlyMat": 2
+     }
+    },
+    "terraform_first": {
+     "runs": 160,
+     "winRate": 0.6,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 96,
+      "p10": 292.5,
+      "p25": 352.2,
+      "median": 448.6,
+      "p75": 660.4,
+      "p90": 853.8,
+      "max": 1461.8,
+      "mean": 530.8
+     },
+     "biomassSpentAtBloom": {
+      "n": 96,
+      "p10": 920,
+      "p25": 1167.5,
+      "median": 1470,
+      "p75": 2080,
+      "p90": 2390,
+      "max": 3910,
+      "mean": 1643.2
+     },
+     "coveragePer100Biomass": {
+      "n": 96,
+      "p10": 2.9,
+      "p25": 3.4,
+      "median": 4.8,
+      "p75": 6,
+      "p90": 7.6,
+      "max": 10.6,
+      "mean": 4.9
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 6,
+      "p25": 7,
+      "median": 10,
+      "p75": 22,
+      "p90": 24,
+      "max": 27,
+      "mean": 13.7
+     },
+     "byBoard": {
+      "Adapt": 0.149,
+      "Spread": 0.148,
+      "Terraform": 0.703
+     },
+     "firstPurchase": {
+      "dry": 77,
+      "rad": 18,
+      "warm": 16,
+      "cool": 16,
+      "salt": 13,
+      "flood": 10
+     },
+     "opening2": {
+      "dry>dry": 26,
+      "dry>salt": 16,
+      "dry>warm": 12,
+      "dry>cool": 10,
+      "cool>dry": 8,
+      "humid>dry": 8
+     }
+    },
+    "greedy": {
+     "runs": 160,
+     "winRate": 0.95,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 152,
+      "p10": 236.3,
+      "p25": 291.4,
+      "median": 345.3,
+      "p75": 424.3,
+      "p90": 588.5,
+      "max": 1050.6,
+      "mean": 389.7
+     },
+     "biomassSpentAtBloom": {
+      "n": 152,
+      "p10": 830,
+      "p25": 977.5,
+      "median": 1190,
+      "p75": 1450,
+      "p90": 1670,
+      "max": 3980,
+      "mean": 1235.7
+     },
+     "coveragePer100Biomass": {
+      "n": 152,
+      "p10": 4.2,
+      "p25": 4.8,
+      "median": 5.9,
+      "p75": 7.2,
+      "p90": 8.4,
+      "max": 15.6,
+      "mean": 6.2
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 5,
+      "p25": 6,
+      "median": 7,
+      "p75": 8,
+      "p90": 9,
+      "max": 16,
+      "mean": 7.1
+     },
+     "byBoard": {
+      "Adapt": 0.464,
+      "Spread": 0.461,
+      "Terraform": 0.075
+     },
+     "firstPurchase": {
+      "seedOut": 89,
+      "flood": 31,
+      "cold": 26,
+      "heat": 13,
+      "drought": 1
+     },
+     "opening2": {
+      "seedOut>flood": 37,
+      "seedOut>heat": 16,
+      "flood>seedOut": 13,
+      "seedOut>waterSeeds": 11,
+      "seedOut>cold": 11,
+      "cold>seedOut": 11
+     }
+    },
+    "low_planning": {
+     "runs": 160,
+     "winRate": 0.975,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 156,
+      "p10": 286.6,
+      "p25": 351.5,
+      "median": 445.8,
+      "p75": 517.8,
+      "p90": 741.8,
+      "max": 1156,
+      "mean": 473.9
+     },
+     "biomassSpentAtBloom": {
+      "n": 156,
+      "p10": 900,
+      "p25": 1107.5,
+      "median": 1380,
+      "p75": 1670,
+      "p90": 1865,
+      "max": 2790,
+      "mean": 1389
+     },
+     "coveragePer100Biomass": {
+      "n": 156,
+      "p10": 3.8,
+      "p25": 4.2,
+      "median": 5.1,
+      "p75": 6.3,
+      "p90": 7.8,
+      "max": 14.6,
+      "mean": 5.5
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 5,
+      "p25": 6,
+      "median": 8,
+      "p75": 9,
+      "p90": 9.1,
+      "max": 14,
+      "mean": 7.5
+     },
+     "byBoard": {
+      "Adapt": 0.419,
+      "Spread": 0.451,
+      "Terraform": 0.13
+     },
+     "firstPurchase": {
+      "earlyMat": 29,
+      "flood": 27,
+      "waterSeeds": 27,
+      "salt": 17,
+      "seedOut": 17,
+      "rad": 12
+     },
+     "opening2": {
+      "waterSeeds>earlyMat": 11,
+      "earlyMat>waterSeeds": 10,
+      "earlyMat>salt": 8,
+      "salt>waterSeeds": 7,
+      "seedOut>waterSeeds": 5,
+      "waterSeeds>flood": 5
+     }
+    },
+    "colony": {
+     "runs": 160,
+     "winRate": 0.944,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 151,
+      "p10": 250.9,
+      "p25": 280.7,
+      "median": 342.2,
+      "p75": 412.7,
+      "p90": 697,
+      "max": 1006.2,
+      "mean": 390
+     },
+     "biomassSpentAtBloom": {
+      "n": 151,
+      "p10": 1190,
+      "p25": 1330,
+      "median": 1540,
+      "p75": 1760,
+      "p90": 1850,
+      "max": 4070,
+      "mean": 1588.3
+     },
+     "coveragePer100Biomass": {
+      "n": 151,
+      "p10": 3.8,
+      "p25": 4,
+      "median": 4.5,
+      "p75": 5.3,
+      "p90": 5.9,
+      "max": 17.5,
+      "mean": 4.8
+     },
+     "purchases": {
+      "n": 160,
+      "p10": 6,
+      "p25": 7,
+      "median": 8,
+      "p75": 9,
+      "p90": 10,
+      "max": 34,
+      "mean": 8.7
+     },
+     "byBoard": {
+      "Adapt": 0.407,
+      "Spread": 0.414,
+      "Terraform": 0.179
+     },
+     "firstPurchase": {
+      "flood": 80,
+      "salt": 21,
+      "rad": 20,
+      "waterSeeds": 17,
+      "heat": 14,
+      "cold": 8
+     },
+     "opening2": {
+      "flood>salt": 26,
+      "flood>rad": 20,
+      "flood>cold": 18,
+      "flood>heat": 14,
+      "salt>flood": 12,
+      "waterSeeds>seedOut": 10
+     }
+    }
+   },
+   "cells": 160,
+   "cellsAllPoliciesWin": 95,
+   "cellsSomePolicyFails": 62,
+   "fastestPolicyCount": {
+    "colony": 56,
+    "greedy": 46,
+    "spread_first": 20,
+    "balanced": 13,
+    "low_planning": 11,
+    "adapt_first": 9,
+    "terraform_first": 2
+   },
+   "slowerThanCellBestPct": {
+    "balanced": {
+     "n": 151,
+     "p10": 1.4,
+     "p25": 10.8,
+     "median": 21,
+     "p75": 40.7,
+     "p90": 63.3,
+     "max": 183.3,
+     "mean": 29.8
+    },
+    "adapt_first": {
+     "n": 152,
+     "p10": 5.9,
+     "p25": 16.4,
+     "median": 29.7,
+     "p75": 49,
+     "p90": 77.3,
+     "max": 148.8,
+     "mean": 37
+    },
+    "spread_first": {
+     "n": 153,
+     "p10": 0,
+     "p25": 9.6,
+     "median": 24,
+     "p75": 44.1,
+     "p90": 71,
+     "max": 128.9,
+     "mean": 30.9
+    },
+    "terraform_first": {
+     "n": 96,
+     "p10": 12,
+     "p25": 28.3,
+     "median": 49.2,
+     "p75": 81.3,
+     "p90": 150.5,
+     "max": 208.9,
+     "mean": 64.6
+    },
+    "greedy": {
+     "n": 152,
+     "p10": 0,
+     "p25": 0,
+     "median": 9.4,
+     "p75": 27.2,
+     "p90": 47.4,
+     "max": 133.4,
+     "mean": 17.5
+    },
+    "low_planning": {
+     "n": 156,
+     "p10": 3.9,
+     "p25": 18.5,
+     "median": 36.4,
+     "p75": 57,
+     "p90": 89.2,
+     "max": 201.8,
+     "mean": 42.7
+    },
+    "colony": {
+     "n": 151,
+     "p10": 0,
+     "p25": 0,
+     "median": 7.8,
+     "p75": 21,
+     "p90": 48.2,
+     "max": 87.2,
+     "mean": 15.7
+    }
+   },
+   "lossVsCellBest": {
+    "balanced": 0.038,
+    "adapt_first": 0.032,
+    "spread_first": 0.025,
+    "terraform_first": 0.389,
+    "greedy": 0.032,
+    "low_planning": 0.006,
+    "colony": 0.038
+   },
+   "openingOfFastest": {
+    "waterSeeds>seedOut": 22,
+    "seedOut>flood": 13,
+    "flood>cold": 13,
+    "flood>salt": 11,
+    "flood>rad": 9,
+    "flood>seedOut": 9,
+    "flood>heat": 8,
+    "salt>flood": 8,
+    "seedOut>heat": 7,
+    "cold>seedOut": 6
+   },
+   "traitOwnershipInWins": {
+    "waterSeeds": 1,
+    "seedOut": 0.988,
+    "salt": 0.918,
+    "earlyMat": 0.885,
+    "flood": 0.705,
+    "rad": 0.7,
+    "heat": 0.528,
+    "cold": 0.327,
+    "dry": 0.247,
+    "humid": 0.196,
+    "cool": 0.121,
+    "warm": 0.052,
+    "drought": 0.029
+   },
+   "tierShareInWins": {
+    "waterSeeds#1": 1,
+    "seedOut#1": 0.988,
+    "salt#1": 0.918,
+    "earlyMat#1": 0.885,
+    "flood#1": 0.705,
+    "rad#1": 0.7,
+    "seedOut#2": 0.538,
+    "heat#1": 0.528,
+    "cold#1": 0.327,
+    "dry#1": 0.247,
+    "humid#1": 0.196,
+    "cool#1": 0.121,
+    "flood#2": 0.075,
+    "dry#2": 0.065,
+    "warm#1": 0.052,
+    "humid#2": 0.034,
+    "drought#1": 0.029,
+    "heat#2": 0.022,
+    "dry#3": 0.021,
+    "humid#3": 0.019,
+    "cool#2": 0.015,
+    "humid#4": 0.013,
+    "warm#2": 0.01,
+    "dry#4": 0.008,
+    "flood#3": 0.006,
+    "cool#3": 0.004,
+    "humid#5": 0.003,
+    "dry#5": 0.002
+   },
+   "neverBoughtInWins": [],
+   "terraformUseful": {
+    "runsWithTerraformThatOpenedLand": 0.521,
+    "runsBuyingTerraform": 0.527,
+    "terraformShareOfPurchases": 0.255
+   },
+   "purchaseKinds": {
+    "Adapt:unlock": 3403,
+    "Spread:speed": 2549,
+    "Terraform:unlock": 2416,
+    "Spread:reach": 1048,
+    "Adapt:progress": 182,
+    "Terraform:progress": 47
+   },
+   "colonyLayer": {
+    "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+    "vsBalanced": {
+     "pairs": 151,
+     "colonyFasterShare": 0.768,
+     "relativeTimePct": {
+      "n": 151,
+      "p10": -27.7,
+      "p25": -20.1,
+      "median": -12.8,
+      "p75": -1.5,
+      "p90": 14.3,
+      "max": 77.4,
+      "mean": -8.1
+     }
+    }
+   }
+  }
+ },
+ "expeditionBySpecies": {
+  "organic_hybrid": {
+   "policies": {
+    "balanced": {
+     "runs": 120,
+     "winRate": 0.983,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 118,
+      "p10": 171.7,
+      "p25": 192.8,
+      "median": 225.9,
+      "p75": 322.3,
+      "p90": 452.9,
+      "max": 1117.9,
+      "mean": 281.9
+     },
+     "biomassSpentAtBloom": {
+      "n": 118,
+      "p10": 564,
+      "p25": 645,
+      "median": 820,
+      "p75": 1110,
+      "p90": 1470,
+      "max": 3980,
+      "mean": 945.8
+     },
+     "coveragePer100Biomass": {
+      "n": 118,
+      "p10": 4.8,
+      "p25": 6.3,
+      "median": 8.5,
+      "p75": 10.9,
+      "p90": 12.4,
+      "max": 17.1,
+      "mean": 8.7
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 3,
+      "p25": 3,
+      "median": 4,
+      "p75": 6,
+      "p90": 8.1,
+      "max": 27,
+      "mean": 5.4
+     },
+     "byBoard": {
+      "Adapt": 0.562,
+      "Spread": 0.247,
+      "Terraform": 0.19
+     },
+     "firstPurchase": {
+      "drought": 40,
+      "cold": 38,
+      "flood": 20,
+      "salt": 12,
+      "rad": 6,
+      "heat": 2
+     },
+     "opening2": {
+      "cold>cold": 20,
+      "flood>salt": 12,
+      "drought>drought": 10,
+      "drought>humid": 10,
+      "drought>rad": 10,
+      "flood>rad": 8
+     }
+    },
+    "adapt_first": {
+     "runs": 120,
+     "winRate": 0.983,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 118,
+      "p10": 174.7,
+      "p25": 193.2,
+      "median": 235,
+      "p75": 344.8,
+      "p90": 439.5,
+      "max": 869.9,
+      "mean": 288
+     },
+     "biomassSpentAtBloom": {
+      "n": 118,
+      "p10": 510,
+      "p25": 620,
+      "median": 815,
+      "p75": 1190,
+      "p90": 1470,
+      "max": 2750,
+      "mean": 946.8
+     },
+     "coveragePer100Biomass": {
+      "n": 118,
+      "p10": 4.8,
+      "p25": 5.9,
+      "median": 8.6,
+      "p75": 11.3,
+      "p90": 13.7,
+      "max": 17.1,
+      "mean": 8.7
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 3,
+      "p25": 3,
+      "median": 4,
+      "p75": 7,
+      "p90": 8,
+      "max": 26,
+      "mean": 5.3
+     },
+     "byBoard": {
+      "Adapt": 0.674,
+      "Spread": 0.206,
+      "Terraform": 0.12
+     },
+     "firstPurchase": {
+      "drought": 40,
+      "cold": 38,
+      "flood": 22,
+      "salt": 12,
+      "rad": 6,
+      "heat": 2
+     },
+     "opening2": {
+      "cold>cold": 26,
+      "drought>drought": 16,
+      "drought>rad": 16,
+      "flood>salt": 12,
+      "flood>rad": 10,
+      "salt>flood": 8
+     }
+    },
+    "spread_first": {
+     "runs": 120,
+     "winRate": 0.992,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 119,
+      "p10": 184.9,
+      "p25": 205.6,
+      "median": 241.4,
+      "p75": 335.3,
+      "p90": 442.2,
+      "max": 858.7,
+      "mean": 289.1
+     },
+     "biomassSpentAtBloom": {
+      "n": 119,
+      "p10": 650,
+      "p25": 720,
+      "median": 960,
+      "p75": 1185,
+      "p90": 1470,
+      "max": 1810,
+      "mean": 1005
+     },
+     "coveragePer100Biomass": {
+      "n": 119,
+      "p10": 4.8,
+      "p25": 5.9,
+      "median": 7.3,
+      "p75": 9.7,
+      "p90": 10.8,
+      "max": 15.9,
+      "mean": 7.7
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 4,
+      "p25": 4,
+      "median": 5,
+      "p75": 6.3,
+      "p90": 8,
+      "max": 10,
+      "mean": 5.7
+     },
+     "byBoard": {
+      "Adapt": 0.479,
+      "Spread": 0.475,
+      "Terraform": 0.046
+     },
+     "firstPurchase": {
+      "waterSeeds": 40,
+      "seedOut": 38,
+      "drought": 22,
+      "cold": 20
+     },
+     "opening2": {
+      "waterSeeds>seedOut": 38,
+      "drought>seedOut": 22,
+      "cold>seedOut": 16,
+      "seedOut>earlyMat": 15,
+      "seedOut>drought": 13,
+      "seedOut>cold": 9
+     }
+    },
+    "terraform_first": {
+     "runs": 120,
+     "winRate": 0.867,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 104,
+      "p10": 206.3,
+      "p25": 256.2,
+      "median": 362.4,
+      "p75": 442.8,
+      "p90": 593.9,
+      "max": 1079.4,
+      "mean": 380.7
+     },
+     "biomassSpentAtBloom": {
+      "n": 104,
+      "p10": 666,
+      "p25": 970,
+      "median": 1340,
+      "p75": 1647.5,
+      "p90": 2195,
+      "max": 2520,
+      "mean": 1349.9
+     },
+     "coveragePer100Biomass": {
+      "n": 104,
+      "p10": 3.2,
+      "p25": 4.2,
+      "median": 5.2,
+      "p75": 7.2,
+      "p90": 10.5,
+      "max": 13,
+      "mean": 6.1
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 4,
+      "p25": 5,
+      "median": 6,
+      "p75": 8,
+      "p90": 21.1,
+      "max": 26,
+      "mean": 7.9
+     },
+     "byBoard": {
+      "Adapt": 0.236,
+      "Spread": 0.12,
+      "Terraform": 0.644
+     },
+     "firstPurchase": {
+      "humid": 36,
+      "warm": 32,
+      "dry": 26,
+      "cold": 6,
+      "rad": 6,
+      "drought": 4
+     },
+     "opening2": {
+      "humid>humid": 28,
+      "warm>warm": 19,
+      "dry>salt": 10,
+      "humid>drought": 8,
+      "dry>dry": 8,
+      "warm>cold": 5
+     }
+    },
+    "greedy": {
+     "runs": 120,
+     "winRate": 0.967,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 116,
+      "p10": 172.7,
+      "p25": 195.3,
+      "median": 235.8,
+      "p75": 307.9,
+      "p90": 392.3,
+      "max": 1050.6,
+      "mean": 269.5
+     },
+     "biomassSpentAtBloom": {
+      "n": 116,
+      "p10": 640,
+      "p25": 802.5,
+      "median": 985,
+      "p75": 1142.5,
+      "p90": 1390,
+      "max": 3980,
+      "mean": 1000.6
+     },
+     "coveragePer100Biomass": {
+      "n": 116,
+      "p10": 5,
+      "p25": 6.1,
+      "median": 7.1,
+      "p75": 8.7,
+      "p90": 10.9,
+      "max": 16.7,
+      "mean": 7.8
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 4,
+      "p25": 5,
+      "median": 6,
+      "p75": 7,
+      "p90": 8,
+      "max": 16,
+      "mean": 5.9
+     },
+     "byBoard": {
+      "Adapt": 0.51,
+      "Spread": 0.379,
+      "Terraform": 0.111
+     },
+     "firstPurchase": {
+      "seedOut": 51,
+      "cold": 33,
+      "drought": 26,
+      "flood": 8,
+      "heat": 2
+     },
+     "opening2": {
+      "drought>seedOut": 26,
+      "cold>seedOut": 23,
+      "seedOut>flood": 20,
+      "seedOut>drought": 14,
+      "seedOut>cold": 13,
+      "cold>heat": 6
+     }
+    },
+    "low_planning": {
+     "runs": 120,
+     "winRate": 0.983,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 118,
+      "p10": 195.7,
+      "p25": 243.6,
+      "median": 297.7,
+      "p75": 393,
+      "p90": 485.5,
+      "max": 880,
+      "mean": 327.8
+     },
+     "biomassSpentAtBloom": {
+      "n": 118,
+      "p10": 647,
+      "p25": 815,
+      "median": 1055,
+      "p75": 1260,
+      "p90": 1526,
+      "max": 1870,
+      "mean": 1063.2
+     },
+     "coveragePer100Biomass": {
+      "n": 118,
+      "p10": 4.6,
+      "p25": 5.6,
+      "median": 6.6,
+      "p75": 8.6,
+      "p90": 10.8,
+      "max": 17.1,
+      "mean": 7.4
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 4,
+      "p25": 5,
+      "median": 6,
+      "p75": 7,
+      "p90": 8,
+      "max": 14,
+      "mean": 5.8
+     },
+     "byBoard": {
+      "Adapt": 0.479,
+      "Spread": 0.346,
+      "Terraform": 0.176
+     },
+     "firstPurchase": {
+      "seedOut": 18,
+      "earlyMat": 17,
+      "drought": 15,
+      "humid": 13,
+      "cold": 11,
+      "warm": 10
+     },
+     "opening2": {
+      "humid>drought": 8,
+      "seedOut>drought": 7,
+      "drought>seedOut": 5,
+      "earlyMat>seedOut": 5,
+      "drought>earlyMat": 4,
+      "cold>cold": 4
+     }
+    },
+    "colony": {
+     "runs": 120,
+     "winRate": 0.983,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 118,
+      "p10": 178,
+      "p25": 194,
+      "median": 220,
+      "p75": 306.5,
+      "p90": 396.9,
+      "max": 928.8,
+      "mean": 267.4
+     },
+     "biomassSpentAtBloom": {
+      "n": 118,
+      "p10": 770,
+      "p25": 900,
+      "median": 1095,
+      "p75": 1462.5,
+      "p90": 1760,
+      "max": 4070,
+      "mean": 1189.2
+     },
+     "coveragePer100Biomass": {
+      "n": 118,
+      "p10": 4,
+      "p25": 4.8,
+      "median": 6.4,
+      "p75": 7.8,
+      "p90": 9.1,
+      "max": 13,
+      "mean": 6.6
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 4,
+      "p25": 4,
+      "median": 5,
+      "p75": 7.3,
+      "p90": 9,
+      "max": 34,
+      "mean": 6.3
+     },
+     "byBoard": {
+      "Adapt": 0.523,
+      "Spread": 0.283,
+      "Terraform": 0.194
+     },
+     "firstPurchase": {
+      "drought": 40,
+      "cold": 38,
+      "flood": 20,
+      "salt": 12,
+      "rad": 6,
+      "heat": 2
+     },
+     "opening2": {
+      "cold>cold": 20,
+      "flood>salt": 12,
+      "drought>drought": 10,
+      "drought>humid": 10,
+      "drought>rad": 10,
+      "flood>rad": 8
+     }
+    }
+   },
+   "cells": 120,
+   "cellsAllPoliciesWin": 101,
+   "cellsSomePolicyFails": 19,
+   "fastestPolicyCount": {
+    "colony": 44,
+    "greedy": 31,
+    "balanced": 15,
+    "spread_first": 14,
+    "adapt_first": 9,
+    "low_planning": 6,
+    "terraform_first": 1
+   },
+   "slowerThanCellBestPct": {
+    "balanced": {
+     "n": 118,
+     "p10": 0,
+     "p25": 2.1,
+     "median": 9.2,
+     "p75": 18.1,
+     "p90": 31.2,
+     "max": 82.6,
+     "mean": 14.2
+    },
+    "adapt_first": {
+     "n": 118,
+     "p10": 0.8,
+     "p25": 3.9,
+     "median": 10.3,
+     "p75": 20.2,
+     "p90": 39.7,
+     "max": 101.1,
+     "mean": 16.8
+    },
+    "spread_first": {
+     "n": 119,
+     "p10": 0,
+     "p25": 6.5,
+     "median": 15.2,
+     "p75": 26.3,
+     "p90": 36.7,
+     "max": 75.4,
+     "mean": 18.6
+    },
+    "terraform_first": {
+     "n": 104,
+     "p10": 16.3,
+     "p25": 28.6,
+     "median": 53.1,
+     "p75": 83.7,
+     "p90": 131,
+     "max": 185,
+     "mean": 64.3
+    },
+    "greedy": {
+     "n": 116,
+     "p10": 0,
+     "p25": 0,
+     "median": 8.3,
+     "p75": 20.8,
+     "p90": 31.3,
+     "max": 90.6,
+     "mean": 12.6
+    },
+    "low_planning": {
+     "n": 118,
+     "p10": 5.3,
+     "p25": 15.8,
+     "median": 34.5,
+     "p75": 52.3,
+     "p90": 69.4,
+     "max": 143.5,
+     "mean": 37.8
+    },
+    "colony": {
+     "n": 118,
+     "p10": 0,
+     "p25": 0,
+     "median": 4.6,
+     "p75": 14.2,
+     "p90": 26,
+     "max": 85.8,
+     "mean": 9.9
+    }
+   },
+   "lossVsCellBest": {
+    "balanced": 0.017,
+    "adapt_first": 0.017,
+    "spread_first": 0.008,
+    "terraform_first": 0.133,
+    "greedy": 0.033,
+    "low_planning": 0.017,
+    "colony": 0.017
+   },
+   "openingOfFastest": {
+    "cold>cold": 14,
+    "cold>seedOut": 11,
+    "drought>drought": 10,
+    "drought>humid": 9,
+    "seedOut>flood": 7,
+    "drought>seedOut": 6,
+    "drought>rad": 6,
+    "flood>salt": 6,
+    "waterSeeds>seedOut": 5,
+    "salt>flood": 5
+   },
+   "traitOwnershipInWins": {
+    "seedOut": 0.721,
+    "salt": 0.594,
+    "earlyMat": 0.536,
+    "rad": 0.499,
+    "heat": 0.444,
+    "cold": 0.407,
+    "drought": 0.344,
+    "waterSeeds": 0.316,
+    "humid": 0.274,
+    "flood": 0.256,
+    "warm": 0.178,
+    "cool": 0.123,
+    "dry": 0.067
+   },
+   "tierShareInWins": {
+    "seedOut#1": 0.721,
+    "salt#1": 0.594,
+    "earlyMat#1": 0.536,
+    "rad#1": 0.499,
+    "heat#1": 0.444,
+    "cold#1": 0.407,
+    "drought#1": 0.344,
+    "waterSeeds#1": 0.316,
+    "humid#1": 0.274,
+    "flood#1": 0.256,
+    "cold#2": 0.224,
+    "seedOut#2": 0.196,
+    "warm#1": 0.178,
+    "cool#1": 0.123,
+    "drought#2": 0.1,
+    "dry#1": 0.067,
+    "humid#2": 0.058,
+    "warm#2": 0.042,
+    "humid#3": 0.037,
+    "cold#3": 0.036,
+    "humid#4": 0.023,
+    "warm#3": 0.022,
+    "dry#2": 0.018,
+    "warm#4": 0.012,
+    "humid#5": 0.011,
+    "cool#2": 0.009,
+    "flood#2": 0.009,
+    "dry#3": 0.005,
+    "drought#3": 0.004,
+    "heat#2": 0.001,
+    "warm#5": 0.001
+   },
+   "neverBoughtInWins": [],
+   "terraformUseful": {
+    "runsWithTerraformThatOpenedLand": 0.539,
+    "runsBuyingTerraform": 0.551,
+    "terraformShareOfPurchases": 0.235
+   },
+   "purchaseKinds": {
+    "Adapt:unlock": 2321,
+    "Spread:speed": 1195,
+    "Terraform:unlock": 1158,
+    "Spread:reach": 260,
+    "Adapt:progress": 122,
+    "Terraform:progress": 37
+   },
+   "colonyLayer": {
+    "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+    "vsBalanced": {
+     "pairs": 118,
+     "colonyFasterShare": 0.644,
+     "relativeTimePct": {
+      "n": 118,
+      "p10": -18,
+      "p25": -9.6,
+      "median": -2,
+      "p75": 2.8,
+      "p90": 9.8,
+      "max": 75.7,
+      "mean": -2.5
+     }
+    }
+   }
+  },
+  "cinder_rosette": {
+   "policies": {
+    "balanced": {
+     "runs": 118,
+     "winRate": 0.966,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 114,
+      "p10": 157.1,
+      "p25": 192.5,
+      "median": 276.9,
+      "p75": 393.3,
+      "p90": 480,
+      "max": 1042.1,
+      "mean": 317.6
+     },
+     "biomassSpentAtBloom": {
+      "n": 114,
+      "p10": 500,
+      "p25": 700,
+      "median": 960,
+      "p75": 1287.5,
+      "p90": 1670,
+      "max": 3810,
+      "mean": 1031.3
+     },
+     "coveragePer100Biomass": {
+      "n": 114,
+      "p10": 4.2,
+      "p25": 5.4,
+      "median": 7.3,
+      "p75": 10,
+      "p90": 14,
+      "max": 20,
+      "mean": 8.4
+     },
+     "purchases": {
+      "n": 118,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 8,
+      "p90": 9,
+      "max": 27,
+      "mean": 5.9
+     },
+     "byBoard": {
+      "Adapt": 0.563,
+      "Spread": 0.23,
+      "Terraform": 0.207
+     },
+     "firstPurchase": {
+      "flood": 42,
+      "cold": 36,
+      "drought": 34,
+      "humid": 2,
+      "rad": 2,
+      "waterSeeds": 2
+     },
+     "opening2": {
+      "drought>rad": 30,
+      "flood>cold": 26,
+      "cold>flood": 16,
+      "cold>cold": 14,
+      "flood>rad": 12,
+      "cold>warm": 6
+     }
+    },
+    "adapt_first": {
+     "runs": 118,
+     "winRate": 0.966,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 114,
+      "p10": 159.1,
+      "p25": 194.5,
+      "median": 287,
+      "p75": 400.9,
+      "p90": 521.3,
+      "max": 997.4,
+      "mean": 326.7
+     },
+     "biomassSpentAtBloom": {
+      "n": 114,
+      "p10": 518,
+      "p25": 700,
+      "median": 960,
+      "p75": 1342.5,
+      "p90": 1740,
+      "max": 3470,
+      "mean": 1063.2
+     },
+     "coveragePer100Biomass": {
+      "n": 114,
+      "p10": 4,
+      "p25": 5.2,
+      "median": 7.3,
+      "p75": 10,
+      "p90": 13.6,
+      "max": 20,
+      "mean": 8.3
+     },
+     "purchases": {
+      "n": 118,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 8,
+      "p90": 9,
+      "max": 27,
+      "mean": 5.8
+     },
+     "byBoard": {
+      "Adapt": 0.65,
+      "Spread": 0.218,
+      "Terraform": 0.132
+     },
+     "firstPurchase": {
+      "flood": 44,
+      "cold": 36,
+      "drought": 34,
+      "rad": 4
+     },
+     "opening2": {
+      "drought>rad": 30,
+      "flood>cold": 26,
+      "cold>cold": 20,
+      "cold>flood": 16,
+      "flood>rad": 14,
+      "drought>salt": 4
+     }
+    },
+    "spread_first": {
+     "runs": 118,
+     "winRate": 0.966,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 114,
+      "p10": 178.7,
+      "p25": 203,
+      "median": 287.8,
+      "p75": 402.5,
+      "p90": 512.6,
+      "max": 1237.6,
+      "mean": 329.4
+     },
+     "biomassSpentAtBloom": {
+      "n": 114,
+      "p10": 670,
+      "p25": 670,
+      "median": 990,
+      "p75": 1270,
+      "p90": 1670,
+      "max": 1740,
+      "mean": 1036.3
+     },
+     "coveragePer100Biomass": {
+      "n": 114,
+      "p10": 4.2,
+      "p25": 5.5,
+      "median": 7.1,
+      "p75": 10.4,
+      "p90": 10.4,
+      "max": 15.6,
+      "mean": 7.7
+     },
+     "purchases": {
+      "n": 118,
+      "p10": 4,
+      "p25": 4,
+      "median": 6,
+      "p75": 7,
+      "p90": 9,
+      "max": 9,
+      "mean": 5.9
+     },
+     "byBoard": {
+      "Adapt": 0.479,
+      "Spread": 0.453,
+      "Terraform": 0.068
+     },
+     "firstPurchase": {
+      "seedOut": 49,
+      "cold": 27,
+      "waterSeeds": 24,
+      "flood": 16,
+      "drought": 2
+     },
+     "opening2": {
+      "seedOut>earlyMat": 30,
+      "waterSeeds>seedOut": 22,
+      "cold>seedOut": 16,
+      "seedOut>drought": 10,
+      "flood>waterSeeds": 10,
+      "cold>cold": 6
+     }
+    },
+    "terraform_first": {
+     "runs": 118,
+     "winRate": 0.847,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 100,
+      "p10": 170.9,
+      "p25": 224.4,
+      "median": 356.9,
+      "p75": 448.5,
+      "p90": 680.2,
+      "max": 1461.8,
+      "mean": 397
+     },
+     "biomassSpentAtBloom": {
+      "n": 100,
+      "p10": 606,
+      "p25": 830,
+      "median": 1290,
+      "p75": 1590,
+      "p90": 2120,
+      "max": 3910,
+      "mean": 1317.9
+     },
+     "coveragePer100Biomass": {
+      "n": 100,
+      "p10": 3.3,
+      "p25": 4.4,
+      "median": 5.4,
+      "p75": 8.4,
+      "p90": 11.6,
+      "max": 18.9,
+      "mean": 6.8
+     },
+     "purchases": {
+      "n": 118,
+      "p10": 3,
+      "p25": 4,
+      "median": 6,
+      "p75": 9,
+      "p90": 22,
+      "max": 26,
+      "mean": 8.4
+     },
+     "byBoard": {
+      "Adapt": 0.232,
+      "Spread": 0.087,
+      "Terraform": 0.681
+     },
+     "firstPurchase": {
+      "dry": 40,
+      "humid": 32,
+      "warm": 28,
+      "cold": 8,
+      "drought": 6,
+      "flood": 4
+     },
+     "opening2": {
+      "dry>warm": 18,
+      "humid>humid": 16,
+      "dry>dry": 14,
+      "humid>rad": 12,
+      "warm>warm": 12,
+      "cold>warm": 8
+     }
+    },
+    "greedy": {
+     "runs": 118,
+     "winRate": 0.966,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 114,
+      "p10": 163.3,
+      "p25": 197.6,
+      "median": 289.4,
+      "p75": 396.6,
+      "p90": 449.9,
+      "max": 958.6,
+      "mean": 308.8
+     },
+     "biomassSpentAtBloom": {
+      "n": 114,
+      "p10": 620,
+      "p25": 700,
+      "median": 1060,
+      "p75": 1350,
+      "p90": 1537,
+      "max": 1940,
+      "mean": 1056.3
+     },
+     "coveragePer100Biomass": {
+      "n": 114,
+      "p10": 4.6,
+      "p25": 5.2,
+      "median": 6.6,
+      "p75": 10,
+      "p90": 11.3,
+      "max": 25,
+      "mean": 7.7
+     },
+     "purchases": {
+      "n": 118,
+      "p10": 4,
+      "p25": 4,
+      "median": 6,
+      "p75": 8,
+      "p90": 9,
+      "max": 10,
+      "mean": 6.1
+     },
+     "byBoard": {
+      "Adapt": 0.502,
+      "Spread": 0.38,
+      "Terraform": 0.118
+     },
+     "firstPurchase": {
+      "cold": 45,
+      "seedOut": 40,
+      "flood": 18,
+      "drought": 15
+     },
+     "opening2": {
+      "seedOut>drought": 21,
+      "cold>flood": 20,
+      "cold>seedOut": 18,
+      "drought>seedOut": 14,
+      "seedOut>cold": 10,
+      "flood>cold": 9
+     }
+    },
+    "low_planning": {
+     "runs": 118,
+     "winRate": 0.992,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 117,
+      "p10": 185.3,
+      "p25": 226.9,
+      "median": 350.7,
+      "p75": 488.3,
+      "p90": 631.3,
+      "max": 1039.5,
+      "mean": 389.5
+     },
+     "biomassSpentAtBloom": {
+      "n": 117,
+      "p10": 540,
+      "p25": 820,
+      "median": 1110,
+      "p75": 1490,
+      "p90": 1740,
+      "max": 2630,
+      "mean": 1169.4
+     },
+     "coveragePer100Biomass": {
+      "n": 117,
+      "p10": 4,
+      "p25": 4.7,
+      "median": 6.3,
+      "p75": 8.5,
+      "p90": 13,
+      "max": 25,
+      "mean": 7.3
+     },
+     "purchases": {
+      "n": 118,
+      "p10": 3,
+      "p25": 4.3,
+      "median": 6,
+      "p75": 8,
+      "p90": 9,
+      "max": 13,
+      "mean": 6.2
+     },
+     "byBoard": {
+      "Adapt": 0.477,
+      "Spread": 0.329,
+      "Terraform": 0.194
+     },
+     "firstPurchase": {
+      "cold": 17,
+      "seedOut": 16,
+      "flood": 15,
+      "rad": 12,
+      "dry": 12,
+      "warm": 12
+     },
+     "opening2": {
+      "cold>cold": 7,
+      "warm>cold": 7,
+      "dry>cold": 6,
+      "flood>cold": 5,
+      "seedOut>drought": 4,
+      "seedOut>humid": 4
+     }
+    },
+    "colony": {
+     "runs": 118,
+     "winRate": 0.966,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 114,
+      "p10": 166.7,
+      "p25": 193.5,
+      "median": 262.5,
+      "p75": 359.3,
+      "p90": 409.4,
+      "max": 948.2,
+      "mean": 295.5
+     },
+     "biomassSpentAtBloom": {
+      "n": 114,
+      "p10": 660,
+      "p25": 790,
+      "median": 1250,
+      "p75": 1557.5,
+      "p90": 1760,
+      "max": 3900,
+      "mean": 1240.9
+     },
+     "coveragePer100Biomass": {
+      "n": 114,
+      "p10": 4,
+      "p25": 4.5,
+      "median": 5.6,
+      "p75": 8.9,
+      "p90": 10.6,
+      "max": 15.9,
+      "mean": 6.6
+     },
+     "purchases": {
+      "n": 118,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 8,
+      "p90": 9,
+      "max": 34,
+      "mean": 6.5
+     },
+     "byBoard": {
+      "Adapt": 0.523,
+      "Spread": 0.262,
+      "Terraform": 0.215
+     },
+     "firstPurchase": {
+      "flood": 42,
+      "cold": 36,
+      "drought": 34,
+      "humid": 2,
+      "rad": 2,
+      "waterSeeds": 2
+     },
+     "opening2": {
+      "drought>rad": 30,
+      "flood>cold": 26,
+      "cold>flood": 16,
+      "cold>cold": 14,
+      "flood>rad": 12,
+      "cold>warm": 6
+     }
+    }
+   },
+   "cells": 118,
+   "cellsAllPoliciesWin": 100,
+   "cellsSomePolicyFails": 17,
+   "fastestPolicyCount": {
+    "colony": 47,
+    "greedy": 28,
+    "balanced": 13,
+    "spread_first": 11,
+    "adapt_first": 9,
+    "low_planning": 7,
+    "terraform_first": 2
+   },
+   "slowerThanCellBestPct": {
+    "balanced": {
+     "n": 114,
+     "p10": 0,
+     "p25": 4.5,
+     "median": 11.1,
+     "p75": 17.8,
+     "p90": 31.6,
+     "max": 59.5,
+     "mean": 13.4
+    },
+    "adapt_first": {
+     "n": 114,
+     "p10": 1.1,
+     "p25": 5.7,
+     "median": 11.7,
+     "p75": 20.9,
+     "p90": 36.9,
+     "max": 88.1,
+     "mean": 16.4
+    },
+    "spread_first": {
+     "n": 114,
+     "p10": 0.2,
+     "p25": 6.1,
+     "median": 14.4,
+     "p75": 23.9,
+     "p90": 49.4,
+     "max": 128.9,
+     "mean": 20.6
+    },
+    "terraform_first": {
+     "n": 100,
+     "p10": 10,
+     "p25": 16,
+     "median": 42.5,
+     "p75": 75,
+     "p90": 117,
+     "max": 208.9,
+     "mean": 53
+    },
+    "greedy": {
+     "n": 114,
+     "p10": 0,
+     "p25": 1,
+     "median": 10,
+     "p75": 21.2,
+     "p90": 30.1,
+     "max": 64.8,
+     "mean": 13.4
+    },
+    "low_planning": {
+     "n": 117,
+     "p10": 3.7,
+     "p25": 17,
+     "median": 34.3,
+     "p75": 52.4,
+     "p90": 81.6,
+     "max": 201.8,
+     "mean": 39
+    },
+    "colony": {
+     "n": 114,
+     "p10": 0,
+     "p25": 0,
+     "median": 2.4,
+     "p75": 11.9,
+     "p90": 19.3,
+     "max": 77.4,
+     "mean": 7.2
+    }
+   },
+   "lossVsCellBest": {
+    "balanced": 0.026,
+    "adapt_first": 0.026,
+    "spread_first": 0.026,
+    "terraform_first": 0.145,
+    "greedy": 0.026,
+    "low_planning": 0,
+    "colony": 0.026
+   },
+   "openingOfFastest": {
+    "flood>cold": 19,
+    "cold>flood": 17,
+    "drought>rad": 14,
+    "cold>cold": 11,
+    "seedOut>drought": 9,
+    "drought>seedOut": 5,
+    "flood>seedOut": 5,
+    "flood>rad": 5,
+    "rad>drought": 4,
+    "cold>warm": 4
+   },
+   "traitOwnershipInWins": {
+    "seedOut": 0.715,
+    "cold": 0.61,
+    "rad": 0.568,
+    "salt": 0.565,
+    "earlyMat": 0.529,
+    "flood": 0.504,
+    "waterSeeds": 0.309,
+    "warm": 0.309,
+    "dry": 0.291,
+    "drought": 0.272,
+    "humid": 0.152,
+    "heat": 0.038,
+    "cool": 0.006
+   },
+   "tierShareInWins": {
+    "seedOut#1": 0.715,
+    "cold#1": 0.61,
+    "rad#1": 0.568,
+    "salt#1": 0.565,
+    "earlyMat#1": 0.529,
+    "flood#1": 0.504,
+    "warm#1": 0.309,
+    "waterSeeds#1": 0.309,
+    "cold#2": 0.3,
+    "dry#1": 0.291,
+    "drought#1": 0.272,
+    "seedOut#2": 0.179,
+    "humid#1": 0.152,
+    "cold#3": 0.098,
+    "flood#2": 0.074,
+    "warm#2": 0.066,
+    "dry#2": 0.057,
+    "humid#2": 0.042,
+    "heat#1": 0.038,
+    "humid#3": 0.025,
+    "warm#3": 0.022,
+    "dry#3": 0.011,
+    "dry#4": 0.009,
+    "warm#4": 0.008,
+    "humid#4": 0.008,
+    "flood#3": 0.008,
+    "drought#2": 0.006,
+    "cool#1": 0.006,
+    "warm#5": 0.003,
+    "dry#5": 0.003
+   },
+   "neverBoughtInWins": [],
+   "terraformUseful": {
+    "runsWithTerraformThatOpenedLand": 0.62,
+    "runsBuyingTerraform": 0.625,
+    "terraformShareOfPurchases": 0.255
+   },
+   "purchaseKinds": {
+    "Adapt:unlock": 2460,
+    "Terraform:unlock": 1333,
+    "Spread:speed": 1165,
+    "Spread:reach": 258,
+    "Adapt:progress": 47,
+    "Terraform:progress": 13
+   },
+   "colonyLayer": {
+    "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+    "vsBalanced": {
+     "pairs": 114,
+     "colonyFasterShare": 0.632,
+     "relativeTimePct": {
+      "n": 114,
+      "p10": -19.2,
+      "p25": -13.1,
+      "median": -4.2,
+      "p75": 2.6,
+      "p90": 6.2,
+      "max": 77.4,
+      "mean": -4.6
+     }
+    }
+   }
+  },
+  "woolly_candle": {
+   "policies": {
+    "balanced": {
+     "runs": 120,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 120,
+      "p10": 152.6,
+      "p25": 178.9,
+      "median": 227.4,
+      "p75": 335.2,
+      "p90": 466.8,
+      "max": 1012.5,
+      "mean": 285.5
+     },
+     "biomassSpentAtBloom": {
+      "n": 120,
+      "p10": 489,
+      "p25": 597.5,
+      "median": 780,
+      "p75": 1170,
+      "p90": 1450,
+      "max": 3550,
+      "mean": 935.8
+     },
+     "coveragePer100Biomass": {
+      "n": 120,
+      "p10": 4.8,
+      "p25": 6,
+      "median": 9,
+      "p75": 11.7,
+      "p90": 14.3,
+      "max": 17.1,
+      "mean": 9.1
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 3,
+      "p25": 3,
+      "median": 4,
+      "p75": 7,
+      "p90": 8,
+      "max": 15,
+      "mean": 5.2
+     },
+     "byBoard": {
+      "Adapt": 0.589,
+      "Spread": 0.262,
+      "Terraform": 0.15
+     },
+     "firstPurchase": {
+      "cold": 34,
+      "drought": 32,
+      "heat": 26,
+      "flood": 26,
+      "salt": 2
+     },
+     "opening2": {
+      "drought>heat": 30,
+      "cold>cold": 14,
+      "flood>heat": 14,
+      "cold>heat": 12,
+      "flood>salt": 11,
+      "heat>drought": 8
+     }
+    },
+    "adapt_first": {
+     "runs": 120,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 120,
+      "p10": 161.2,
+      "p25": 180.1,
+      "median": 222.7,
+      "p75": 350.3,
+      "p90": 491.2,
+      "max": 948.2,
+      "mean": 289.7
+     },
+     "biomassSpentAtBloom": {
+      "n": 120,
+      "p10": 480,
+      "p25": 550,
+      "median": 760,
+      "p75": 1190,
+      "p90": 1470,
+      "max": 2880,
+      "mean": 922.8
+     },
+     "coveragePer100Biomass": {
+      "n": 120,
+      "p10": 4.8,
+      "p25": 5.9,
+      "median": 9.2,
+      "p75": 12.7,
+      "p90": 14.6,
+      "max": 24.1,
+      "mean": 9.3
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 3,
+      "p25": 3,
+      "median": 4,
+      "p75": 7,
+      "p90": 8,
+      "max": 13,
+      "mean": 5
+     },
+     "byBoard": {
+      "Adapt": 0.726,
+      "Spread": 0.239,
+      "Terraform": 0.035
+     },
+     "firstPurchase": {
+      "cold": 34,
+      "drought": 32,
+      "heat": 26,
+      "flood": 26,
+      "salt": 2
+     },
+     "opening2": {
+      "drought>heat": 32,
+      "cold>cold": 18,
+      "flood>heat": 14,
+      "cold>heat": 12,
+      "flood>salt": 12,
+      "heat>drought": 8
+     }
+    },
+    "spread_first": {
+     "runs": 120,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 120,
+      "p10": 169.2,
+      "p25": 194.9,
+      "median": 255.2,
+      "p75": 359.2,
+      "p90": 459.8,
+      "max": 1013.9,
+      "mean": 297.5
+     },
+     "biomassSpentAtBloom": {
+      "n": 120,
+      "p10": 580,
+      "p25": 717.5,
+      "median": 860,
+      "p75": 1250,
+      "p90": 1303,
+      "max": 1670,
+      "mean": 957
+     },
+     "coveragePer100Biomass": {
+      "n": 120,
+      "p10": 5.4,
+      "p25": 5.6,
+      "median": 8.1,
+      "p75": 9.8,
+      "p90": 12.1,
+      "max": 16.7,
+      "mean": 8.3
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 4,
+      "p25": 4,
+      "median": 5,
+      "p75": 7,
+      "p90": 7,
+      "max": 9,
+      "mean": 5.5
+     },
+     "byBoard": {
+      "Adapt": 0.453,
+      "Spread": 0.5,
+      "Terraform": 0.047
+     },
+     "firstPurchase": {
+      "seedOut": 49,
+      "waterSeeds": 36,
+      "drought": 19,
+      "cold": 10,
+      "heat": 6
+     },
+     "opening2": {
+      "waterSeeds>seedOut": 35,
+      "seedOut>earlyMat": 32,
+      "drought>seedOut": 19,
+      "seedOut>drought": 9,
+      "cold>seedOut": 8,
+      "heat>seedOut": 4
+     }
+    },
+    "terraform_first": {
+     "runs": 120,
+     "winRate": 0.867,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 104,
+      "p10": 187.6,
+      "p25": 239.2,
+      "median": 321.6,
+      "p75": 424,
+      "p90": 553.8,
+      "max": 1061.3,
+      "mean": 364.2
+     },
+     "biomassSpentAtBloom": {
+      "n": 104,
+      "p10": 630,
+      "p25": 870,
+      "median": 1160,
+      "p75": 1510,
+      "p90": 2194,
+      "max": 3060,
+      "mean": 1260.7
+     },
+     "coveragePer100Biomass": {
+      "n": 104,
+      "p10": 3.2,
+      "p25": 4.6,
+      "median": 6,
+      "p75": 8,
+      "p90": 11.1,
+      "max": 14.9,
+      "mean": 6.7
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 3,
+      "p25": 4,
+      "median": 6,
+      "p75": 8,
+      "p90": 17.4,
+      "max": 27,
+      "mean": 7.7
+     },
+     "byBoard": {
+      "Adapt": 0.221,
+      "Spread": 0.105,
+      "Terraform": 0.674
+     },
+     "firstPurchase": {
+      "cool": 32,
+      "warm": 25,
+      "humid": 24,
+      "dry": 20,
+      "cold": 7,
+      "heat": 4
+     },
+     "opening2": {
+      "humid>cool": 16,
+      "warm>warm": 15,
+      "cool>cool": 10,
+      "dry>cool": 10,
+      "warm>cold": 8,
+      "cool>dry": 8
+     }
+    },
+    "greedy": {
+     "runs": 120,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 120,
+      "p10": 142.9,
+      "p25": 163.8,
+      "median": 221.8,
+      "p75": 302,
+      "p90": 372.2,
+      "max": 966.6,
+      "mean": 257.3
+     },
+     "biomassSpentAtBloom": {
+      "n": 120,
+      "p10": 440,
+      "p25": 610,
+      "median": 805,
+      "p75": 1130,
+      "p90": 1250,
+      "max": 1670,
+      "mean": 871.3
+     },
+     "coveragePer100Biomass": {
+      "n": 120,
+      "p10": 5.6,
+      "p25": 6.2,
+      "median": 8.7,
+      "p75": 11.5,
+      "p90": 15.9,
+      "max": 17.1,
+      "mean": 9.3
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 7,
+      "p90": 7,
+      "max": 9,
+      "mean": 5.3
+     },
+     "byBoard": {
+      "Adapt": 0.498,
+      "Spread": 0.403,
+      "Terraform": 0.098
+     },
+     "firstPurchase": {
+      "seedOut": 54,
+      "heat": 30,
+      "cold": 17,
+      "drought": 10,
+      "flood": 9
+     },
+     "opening2": {
+      "seedOut>heat": 23,
+      "seedOut>cold": 17,
+      "heat>seedOut": 12,
+      "cold>seedOut": 12,
+      "heat>drought": 11,
+      "heat>flood": 7
+     }
+    },
+    "low_planning": {
+     "runs": 120,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 120,
+      "p10": 187,
+      "p25": 234.1,
+      "median": 318.7,
+      "p75": 393.4,
+      "p90": 485.4,
+      "max": 964.3,
+      "mean": 331.9
+     },
+     "biomassSpentAtBloom": {
+      "n": 120,
+      "p10": 580,
+      "p25": 775,
+      "median": 1050,
+      "p75": 1420,
+      "p90": 1551,
+      "max": 2790,
+      "mean": 1076.3
+     },
+     "coveragePer100Biomass": {
+      "n": 120,
+      "p10": 4.5,
+      "p25": 4.9,
+      "median": 6.7,
+      "p75": 9,
+      "p90": 12.1,
+      "max": 25.9,
+      "mean": 7.7
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 3,
+      "p25": 4,
+      "median": 6,
+      "p75": 7,
+      "p90": 8,
+      "max": 12,
+      "mean": 5.9
+     },
+     "byBoard": {
+      "Adapt": 0.442,
+      "Spread": 0.344,
+      "Terraform": 0.213
+     },
+     "firstPurchase": {
+      "heat": 23,
+      "seedOut": 18,
+      "earlyMat": 14,
+      "humid": 11,
+      "drought": 10,
+      "cool": 9
+     },
+     "opening2": {
+      "heat>seedOut": 5,
+      "humid>drought": 4,
+      "heat>humid": 4,
+      "seedOut>heat": 4,
+      "drought>earlyMat": 4,
+      "seedOut>cold": 4
+     }
+    },
+    "colony": {
+     "runs": 120,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 120,
+      "p10": 164.4,
+      "p25": 185.7,
+      "median": 224.2,
+      "p75": 284.5,
+      "p90": 388.9,
+      "max": 884.5,
+      "mean": 261.1
+     },
+     "biomassSpentAtBloom": {
+      "n": 120,
+      "p10": 695,
+      "p25": 780,
+      "median": 1000,
+      "p75": 1340,
+      "p90": 1560,
+      "max": 3640,
+      "mean": 1108.9
+     },
+     "coveragePer100Biomass": {
+      "n": 120,
+      "p10": 4.5,
+      "p25": 5.2,
+      "median": 7,
+      "p75": 9,
+      "p90": 10.1,
+      "max": 19.4,
+      "mean": 7.2
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 7,
+      "p90": 8,
+      "max": 15,
+      "mean": 5.7
+     },
+     "byBoard": {
+      "Adapt": 0.552,
+      "Spread": 0.309,
+      "Terraform": 0.14
+     },
+     "firstPurchase": {
+      "cold": 34,
+      "drought": 32,
+      "flood": 26,
+      "heat": 25,
+      "salt": 2,
+      "seedOut": 1
+     },
+     "opening2": {
+      "drought>heat": 30,
+      "cold>cold": 14,
+      "flood>heat": 14,
+      "cold>heat": 12,
+      "flood>salt": 12,
+      "heat>salt": 8
+     }
+    }
+   },
+   "cells": 120,
+   "cellsAllPoliciesWin": 104,
+   "cellsSomePolicyFails": 16,
+   "fastestPolicyCount": {
+    "greedy": 60,
+    "colony": 28,
+    "adapt_first": 12,
+    "balanced": 9,
+    "spread_first": 6,
+    "low_planning": 3,
+    "terraform_first": 2
+   },
+   "slowerThanCellBestPct": {
+    "balanced": {
+     "n": 120,
+     "p10": 1.1,
+     "p25": 4.6,
+     "median": 10.3,
+     "p75": 21.4,
+     "p90": 45.9,
+     "max": 183.3,
+     "mean": 18.4
+    },
+    "adapt_first": {
+     "n": 120,
+     "p10": 0.7,
+     "p25": 5.9,
+     "median": 12.2,
+     "p75": 22.5,
+     "p90": 48.7,
+     "max": 148.8,
+     "mean": 20.4
+    },
+    "spread_first": {
+     "n": 120,
+     "p10": 4.1,
+     "p25": 12.3,
+     "median": 20.7,
+     "p75": 33.8,
+     "p90": 56.9,
+     "max": 120.9,
+     "mean": 26.2
+    },
+    "terraform_first": {
+     "n": 104,
+     "p10": 11.4,
+     "p25": 29.9,
+     "median": 54.7,
+     "p75": 99.4,
+     "p90": 147.2,
+     "max": 206.6,
+     "mean": 68.3
+    },
+    "greedy": {
+     "n": 120,
+     "p10": 0,
+     "p25": 0,
+     "median": 0.6,
+     "p75": 9.9,
+     "p90": 20.6,
+     "max": 85.2,
+     "mean": 8.1
+    },
+    "low_planning": {
+     "n": 120,
+     "p10": 9.2,
+     "p25": 19.8,
+     "median": 39,
+     "p75": 63.3,
+     "p90": 80.2,
+     "max": 165.3,
+     "mean": 44.7
+    },
+    "colony": {
+     "n": 120,
+     "p10": 0,
+     "p25": 0.7,
+     "median": 7.9,
+     "p75": 15.6,
+     "p90": 30.3,
+     "max": 69.8,
+     "mean": 11.2
+    }
+   },
+   "lossVsCellBest": {
+    "balanced": 0,
+    "adapt_first": 0,
+    "spread_first": 0,
+    "terraform_first": 0.133,
+    "greedy": 0,
+    "low_planning": 0,
+    "colony": 0
+   },
+   "openingOfFastest": {
+    "drought>heat": 16,
+    "seedOut>cold": 14,
+    "seedOut>heat": 11,
+    "cold>seedOut": 10,
+    "heat>drought": 9,
+    "heat>seedOut": 8,
+    "flood>heat": 8,
+    "seedOut>drought": 5,
+    "flood>salt": 5,
+    "cold>heat": 4
+   },
+   "traitOwnershipInWins": {
+    "heat": 0.78,
+    "seedOut": 0.697,
+    "salt": 0.591,
+    "earlyMat": 0.523,
+    "waterSeeds": 0.32,
+    "drought": 0.313,
+    "cold": 0.306,
+    "flood": 0.297,
+    "cool": 0.255,
+    "humid": 0.252,
+    "rad": 0.234,
+    "warm": 0.109,
+    "dry": 0.059
+   },
+   "tierShareInWins": {
+    "heat#1": 0.78,
+    "seedOut#1": 0.697,
+    "salt#1": 0.591,
+    "earlyMat#1": 0.523,
+    "waterSeeds#1": 0.32,
+    "drought#1": 0.313,
+    "cold#1": 0.306,
+    "flood#1": 0.297,
+    "cool#1": 0.255,
+    "humid#1": 0.252,
+    "rad#1": 0.234,
+    "seedOut#2": 0.208,
+    "cold#2": 0.131,
+    "warm#1": 0.109,
+    "heat#2": 0.069,
+    "humid#2": 0.066,
+    "cool#2": 0.059,
+    "dry#1": 0.059,
+    "drought#2": 0.056,
+    "humid#3": 0.03,
+    "warm#2": 0.025,
+    "warm#3": 0.018,
+    "dry#2": 0.018,
+    "cool#3": 0.015,
+    "flood#2": 0.013,
+    "humid#4": 0.011,
+    "dry#3": 0.01,
+    "humid#5": 0.002,
+    "cold#3": 0.002,
+    "dry#4": 0.001
+   },
+   "neverBoughtInWins": [],
+   "terraformUseful": {
+    "runsWithTerraformThatOpenedLand": 0.527,
+    "runsBuyingTerraform": 0.539,
+    "terraformShareOfPurchases": 0.222
+   },
+   "purchaseKinds": {
+    "Adapt:unlock": 2282,
+    "Spread:speed": 1182,
+    "Terraform:unlock": 1046,
+    "Spread:reach": 266,
+    "Adapt:progress": 38,
+    "Terraform:progress": 32
+   },
+   "colonyLayer": {
+    "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+    "vsBalanced": {
+     "pairs": 120,
+     "colonyFasterShare": 0.608,
+     "relativeTimePct": {
+      "n": 120,
+      "p10": -20.3,
+      "p25": -10.6,
+      "median": -2.4,
+      "p75": 3.5,
+      "p90": 10.8,
+      "max": 63.4,
+      "mean": -4
+     }
+    }
+   }
+  },
+  "reed_spire": {
+   "policies": {
+    "balanced": {
+     "runs": 120,
+     "winRate": 0.975,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 117,
+      "p10": 188.2,
+      "p25": 215.2,
+      "median": 244.3,
+      "p75": 283,
+      "p90": 366.7,
+      "max": 1031.8,
+      "mean": 276.1
+     },
+     "biomassSpentAtBloom": {
+      "n": 117,
+      "p10": 610,
+      "p25": 710,
+      "median": 840,
+      "p75": 1040,
+      "p90": 1200,
+      "max": 2340,
+      "mean": 924.8
+     },
+     "coveragePer100Biomass": {
+      "n": 117,
+      "p10": 5.8,
+      "p25": 6.7,
+      "median": 8.3,
+      "p75": 9.9,
+      "p90": 11.5,
+      "max": 14.9,
+      "mean": 8.3
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 7,
+      "max": 11,
+      "mean": 5
+     },
+     "byBoard": {
+      "Adapt": 0.594,
+      "Spread": 0.289,
+      "Terraform": 0.117
+     },
+     "firstPurchase": {
+      "drought": 45,
+      "cold": 36,
+      "rad": 14,
+      "waterSeeds": 12,
+      "salt": 9,
+      "heat": 4
+     },
+     "opening2": {
+      "drought>drought": 28,
+      "drought>humid": 10,
+      "cold>drought": 10,
+      "cold>cold": 10,
+      "rad>heat": 8,
+      "waterSeeds>seedOut": 7
+     }
+    },
+    "adapt_first": {
+     "runs": 120,
+     "winRate": 0.983,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 118,
+      "p10": 193.3,
+      "p25": 221.3,
+      "median": 251.9,
+      "p75": 303.5,
+      "p90": 407.5,
+      "max": 823.5,
+      "mean": 282.2
+     },
+     "biomassSpentAtBloom": {
+      "n": 118,
+      "p10": 560,
+      "p25": 760,
+      "median": 845,
+      "p75": 1040,
+      "p90": 1390,
+      "max": 2100,
+      "mean": 931.2
+     },
+     "coveragePer100Biomass": {
+      "n": 118,
+      "p10": 5,
+      "p25": 6.7,
+      "median": 8.3,
+      "p75": 9.2,
+      "p90": 12.5,
+      "max": 17.1,
+      "mean": 8.4
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 3,
+      "p25": 4,
+      "median": 4,
+      "p75": 6,
+      "p90": 8,
+      "max": 11,
+      "mean": 4.9
+     },
+     "byBoard": {
+      "Adapt": 0.718,
+      "Spread": 0.247,
+      "Terraform": 0.035
+     },
+     "firstPurchase": {
+      "drought": 46,
+      "cold": 36,
+      "rad": 18,
+      "salt": 16,
+      "heat": 4
+     },
+     "opening2": {
+      "drought>drought": 36,
+      "cold>drought": 14,
+      "cold>cold": 12,
+      "rad>heat": 12,
+      "salt>rad": 8,
+      "cold>salt": 6
+     }
+    },
+    "spread_first": {
+     "runs": 120,
+     "winRate": 0.983,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 118,
+      "p10": 194,
+      "p25": 228.9,
+      "median": 260.9,
+      "p75": 307.7,
+      "p90": 373.8,
+      "max": 968.2,
+      "mean": 288.4
+     },
+     "biomassSpentAtBloom": {
+      "n": 118,
+      "p10": 647,
+      "p25": 810,
+      "median": 965,
+      "p75": 1120,
+      "p90": 1320,
+      "max": 1610,
+      "mean": 977.9
+     },
+     "coveragePer100Biomass": {
+      "n": 118,
+      "p10": 5.3,
+      "p25": 6.3,
+      "median": 7.3,
+      "p75": 8.6,
+      "p90": 10.8,
+      "max": 15.9,
+      "mean": 7.8
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 4,
+      "p25": 5,
+      "median": 5,
+      "p75": 6,
+      "p90": 7,
+      "max": 9,
+      "mean": 5.5
+     },
+     "byBoard": {
+      "Adapt": 0.472,
+      "Spread": 0.487,
+      "Terraform": 0.041
+     },
+     "firstPurchase": {
+      "waterSeeds": 40,
+      "drought": 33,
+      "seedOut": 26,
+      "cold": 21
+     },
+     "opening2": {
+      "waterSeeds>seedOut": 40,
+      "drought>seedOut": 30,
+      "cold>seedOut": 15,
+      "seedOut>drought": 9,
+      "seedOut>earlyMat": 9,
+      "seedOut>cold": 5
+     }
+    },
+    "terraform_first": {
+     "runs": 120,
+     "winRate": 0.833,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 100,
+      "p10": 233.6,
+      "p25": 261.2,
+      "median": 316.2,
+      "p75": 378.3,
+      "p90": 461.4,
+      "max": 736.5,
+      "mean": 334.9
+     },
+     "biomassSpentAtBloom": {
+      "n": 100,
+      "p10": 770,
+      "p25": 870,
+      "median": 1115,
+      "p75": 1370,
+      "p90": 1820,
+      "max": 2320,
+      "mean": 1207.8
+     },
+     "coveragePer100Biomass": {
+      "n": 100,
+      "p10": 3.9,
+      "p25": 5.1,
+      "median": 6.3,
+      "p75": 8,
+      "p90": 9.1,
+      "max": 13,
+      "mean": 6.5
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 4,
+      "p25": 5,
+      "median": 6,
+      "p75": 7,
+      "p90": 21,
+      "max": 23,
+      "mean": 7.7
+     },
+     "byBoard": {
+      "Adapt": 0.223,
+      "Spread": 0.104,
+      "Terraform": 0.673
+     },
+     "firstPurchase": {
+      "humid": 38,
+      "warm": 29,
+      "drought": 18,
+      "rad": 12,
+      "salt": 9,
+      "dry": 7
+     },
+     "opening2": {
+      "humid>humid": 16,
+      "drought>humid": 12,
+      "warm>warm": 10,
+      "warm>humid": 8,
+      "humid>dry": 8,
+      "humid>drought": 6
+     }
+    },
+    "greedy": {
+     "runs": 120,
+     "winRate": 0.983,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 118,
+      "p10": 190.2,
+      "p25": 230.6,
+      "median": 272,
+      "p75": 336.5,
+      "p90": 390.4,
+      "max": 919.4,
+      "mean": 297
+     },
+     "biomassSpentAtBloom": {
+      "n": 118,
+      "p10": 640,
+      "p25": 840,
+      "median": 1045,
+      "p75": 1280,
+      "p90": 1480,
+      "max": 1960,
+      "mean": 1077
+     },
+     "coveragePer100Biomass": {
+      "n": 118,
+      "p10": 4.7,
+      "p25": 5.5,
+      "median": 6.7,
+      "p75": 8.3,
+      "p90": 10.9,
+      "max": 25.9,
+      "mean": 7.3
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 4,
+      "p25": 5,
+      "median": 6,
+      "p75": 7,
+      "p90": 8,
+      "max": 10,
+      "mean": 6.2
+     },
+     "byBoard": {
+      "Adapt": 0.519,
+      "Spread": 0.374,
+      "Terraform": 0.108
+     },
+     "firstPurchase": {
+      "seedOut": 51,
+      "drought": 34,
+      "cold": 31,
+      "heat": 4
+     },
+     "opening2": {
+      "drought>seedOut": 29,
+      "cold>seedOut": 16,
+      "seedOut>drought": 11,
+      "seedOut>cold": 11,
+      "cold>drought": 9,
+      "seedOut>waterSeeds": 9
+     }
+    },
+    "low_planning": {
+     "runs": 120,
+     "winRate": 0.983,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 118,
+      "p10": 225.6,
+      "p25": 267.1,
+      "median": 311.1,
+      "p75": 359.6,
+      "p90": 444.7,
+      "max": 1156,
+      "mean": 334.1
+     },
+     "biomassSpentAtBloom": {
+      "n": 118,
+      "p10": 727,
+      "p25": 900,
+      "median": 1010,
+      "p75": 1232.5,
+      "p90": 1523,
+      "max": 2680,
+      "mean": 1090.3
+     },
+     "coveragePer100Biomass": {
+      "n": 118,
+      "p10": 4.6,
+      "p25": 5.7,
+      "median": 6.9,
+      "p75": 7.8,
+      "p90": 9.6,
+      "max": 16.7,
+      "mean": 7.1
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 4,
+      "p25": 5,
+      "median": 5.5,
+      "p75": 7,
+      "p90": 8,
+      "max": 13,
+      "mean": 5.8
+     },
+     "byBoard": {
+      "Adapt": 0.448,
+      "Spread": 0.366,
+      "Terraform": 0.186
+     },
+     "firstPurchase": {
+      "drought": 28,
+      "earlyMat": 15,
+      "humid": 14,
+      "seedOut": 14,
+      "warm": 13,
+      "cold": 11
+     },
+     "opening2": {
+      "drought>earlyMat": 7,
+      "drought>seedOut": 7,
+      "humid>drought": 7,
+      "drought>drought": 5,
+      "warm>cold": 5,
+      "earlyMat>waterSeeds": 5
+     }
+    },
+    "colony": {
+     "runs": 120,
+     "winRate": 0.975,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 117,
+      "p10": 186,
+      "p25": 213.3,
+      "median": 235.7,
+      "p75": 268.5,
+      "p90": 322.5,
+      "max": 1006.2,
+      "mean": 262.4
+     },
+     "biomassSpentAtBloom": {
+      "n": 117,
+      "p10": 792,
+      "p25": 1000,
+      "median": 1120,
+      "p75": 1270,
+      "p90": 1410,
+      "max": 2050,
+      "mean": 1135.6
+     },
+     "coveragePer100Biomass": {
+      "n": 117,
+      "p10": 5,
+      "p25": 5.5,
+      "median": 6.3,
+      "p75": 7,
+      "p90": 8.8,
+      "max": 17.5,
+      "mean": 6.6
+     },
+     "purchases": {
+      "n": 120,
+      "p10": 4,
+      "p25": 5,
+      "median": 5.5,
+      "p75": 6,
+      "p90": 7,
+      "max": 10,
+      "mean": 5.6
+     },
+     "byBoard": {
+      "Adapt": 0.569,
+      "Spread": 0.334,
+      "Terraform": 0.097
+     },
+     "firstPurchase": {
+      "drought": 44,
+      "cold": 36,
+      "rad": 14,
+      "waterSeeds": 13,
+      "salt": 9,
+      "heat": 4
+     },
+     "opening2": {
+      "drought>drought": 28,
+      "drought>humid": 10,
+      "cold>drought": 10,
+      "cold>cold": 10,
+      "rad>heat": 8,
+      "waterSeeds>seedOut": 8
+     }
+    }
+   },
+   "cells": 120,
+   "cellsAllPoliciesWin": 100,
+   "cellsSomePolicyFails": 18,
+   "fastestPolicyCount": {
+    "colony": 47,
+    "greedy": 25,
+    "adapt_first": 21,
+    "spread_first": 11,
+    "balanced": 11,
+    "low_planning": 2,
+    "terraform_first": 1
+   },
+   "slowerThanCellBestPct": {
+    "balanced": {
+     "n": 117,
+     "p10": 0.3,
+     "p25": 3.6,
+     "median": 9,
+     "p75": 18.8,
+     "p90": 40.2,
+     "max": 159,
+     "mean": 15.7
+    },
+    "adapt_first": {
+     "n": 118,
+     "p10": 0,
+     "p25": 1.7,
+     "median": 10.5,
+     "p75": 21.5,
+     "p90": 52.8,
+     "max": 129.1,
+     "mean": 19.1
+    },
+    "spread_first": {
+     "n": 118,
+     "p10": 1.2,
+     "p25": 8,
+     "median": 15.5,
+     "p75": 30.2,
+     "p90": 40,
+     "max": 123.7,
+     "mean": 20.1
+    },
+    "terraform_first": {
+     "n": 100,
+     "p10": 16.7,
+     "p25": 23,
+     "median": 41,
+     "p75": 76.9,
+     "p90": 110.3,
+     "max": 174.6,
+     "mean": 54.5
+    },
+    "greedy": {
+     "n": 118,
+     "p10": 0,
+     "p25": 3.8,
+     "median": 19.4,
+     "p75": 35.2,
+     "p90": 55.4,
+     "max": 133.4,
+     "mean": 23.9
+    },
+    "low_planning": {
+     "n": 118,
+     "p10": 9,
+     "p25": 22.1,
+     "median": 34,
+     "p75": 56.3,
+     "p90": 73.4,
+     "max": 134.9,
+     "mean": 40.4
+    },
+    "colony": {
+     "n": 117,
+     "p10": 0,
+     "p25": 0,
+     "median": 3.7,
+     "p75": 11.1,
+     "p90": 27.3,
+     "max": 87.2,
+     "mean": 10
+    }
+   },
+   "lossVsCellBest": {
+    "balanced": 0.008,
+    "adapt_first": 0,
+    "spread_first": 0,
+    "terraform_first": 0.153,
+    "greedy": 0,
+    "low_planning": 0,
+    "colony": 0.008
+   },
+   "openingOfFastest": {
+    "drought>drought": 27,
+    "waterSeeds>seedOut": 12,
+    "cold>seedOut": 10,
+    "cold>cold": 10,
+    "drought>humid": 9,
+    "cold>drought": 8,
+    "drought>seedOut": 4,
+    "heat>cold": 3,
+    "cold>warm": 3,
+    "salt>flood": 3
+   },
+   "traitOwnershipInWins": {
+    "seedOut": 0.706,
+    "drought": 0.571,
+    "earlyMat": 0.55,
+    "rad": 0.499,
+    "salt": 0.449,
+    "heat": 0.428,
+    "cold": 0.39,
+    "waterSeeds": 0.308,
+    "humid": 0.27,
+    "warm": 0.167,
+    "cool": 0.099,
+    "dry": 0.055,
+    "flood": 0.038
+   },
+   "tierShareInWins": {
+    "seedOut#1": 0.706,
+    "drought#1": 0.571,
+    "earlyMat#1": 0.55,
+    "rad#1": 0.499,
+    "salt#1": 0.449,
+    "heat#1": 0.428,
+    "cold#1": 0.39,
+    "waterSeeds#1": 0.308,
+    "humid#1": 0.27,
+    "drought#2": 0.236,
+    "cold#2": 0.228,
+    "seedOut#2": 0.203,
+    "warm#1": 0.167,
+    "cool#1": 0.099,
+    "humid#2": 0.065,
+    "dry#1": 0.055,
+    "warm#2": 0.04,
+    "flood#1": 0.038,
+    "cold#3": 0.031,
+    "humid#3": 0.026,
+    "dry#2": 0.019,
+    "warm#3": 0.017,
+    "humid#4": 0.012,
+    "warm#4": 0.01,
+    "cool#2": 0.007,
+    "drought#3": 0.006,
+    "warm#5": 0.005,
+    "heat#2": 0.005,
+    "humid#5": 0.002,
+    "dry#3": 0.002
+   },
+   "neverBoughtInWins": [],
+   "terraformUseful": {
+    "runsWithTerraformThatOpenedLand": 0.485,
+    "runsBuyingTerraform": 0.505,
+    "terraformShareOfPurchases": 0.208
+   },
+   "purchaseKinds": {
+    "Adapt:unlock": 2199,
+    "Spread:speed": 1224,
+    "Terraform:unlock": 984,
+    "Spread:reach": 264,
+    "Adapt:progress": 173,
+    "Terraform:progress": 30
+   },
+   "colonyLayer": {
+    "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+    "vsBalanced": {
+     "pairs": 117,
+     "colonyFasterShare": 0.667,
+     "relativeTimePct": {
+      "n": 117,
+      "p10": -17.2,
+      "p25": -9.2,
+      "median": -3.6,
+      "p75": 2.3,
+      "p90": 7.6,
+      "max": 77.1,
+      "mean": -3.3
+     }
+    }
+   }
+  }
+ },
+ "challenges": {
+  "dying_world": {
+   "policies": {
+    "balanced": {
+     "runs": 40,
+     "winRate": 0.925,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 37,
+      "p10": 154.7,
+      "p25": 182.9,
+      "median": 217.4,
+      "p75": 246.7,
+      "p90": 269,
+      "max": 290.9,
+      "mean": 212.7
+     },
+     "biomassSpentAtBloom": {
+      "n": 37,
+      "p10": 500,
+      "p25": 640,
+      "median": 710,
+      "p75": 840,
+      "p90": 974,
+      "max": 1210,
+      "mean": 744.9
+     },
+     "coveragePer100Biomass": {
+      "n": 37,
+      "p10": 7.2,
+      "p25": 8.3,
+      "median": 9.9,
+      "p75": 10.9,
+      "p90": 14,
+      "max": 18.9,
+      "mean": 10.1
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 3,
+      "p25": 3,
+      "median": 4,
+      "p75": 5,
+      "p90": 6,
+      "max": 7,
+      "mean": 4.1
+     },
+     "byBoard": {
+      "Adapt": 0.727,
+      "Spread": 0.139,
+      "Terraform": 0.133
+     },
+     "firstPurchase": {
+      "drought": 33,
+      "rad": 4,
+      "heat": 2,
+      "seedOut": 1
+     },
+     "opening2": {
+      "drought>drought": 12,
+      "drought>heat": 7,
+      "drought>rad": 6,
+      "drought>humid": 4,
+      "drought>salt": 4,
+      "rad>drought": 3
+     }
+    },
+    "adapt_first": {
+     "runs": 40,
+     "winRate": 0.975,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 39,
+      "p10": 159.5,
+      "p25": 181,
+      "median": 213.3,
+      "p75": 247.6,
+      "p90": 272,
+      "max": 317.4,
+      "mean": 215
+     },
+     "biomassSpentAtBloom": {
+      "n": 39,
+      "p10": 516,
+      "p25": 570,
+      "median": 760,
+      "p75": 840,
+      "p90": 1012,
+      "max": 1230,
+      "mean": 745.4
+     },
+     "coveragePer100Biomass": {
+      "n": 39,
+      "p10": 6.9,
+      "p25": 8.3,
+      "median": 9.2,
+      "p75": 12.3,
+      "p90": 13.6,
+      "max": 18.9,
+      "mean": 10.1
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 3,
+      "p25": 3,
+      "median": 4,
+      "p75": 4,
+      "p90": 5,
+      "max": 6,
+      "mean": 3.8
+     },
+     "byBoard": {
+      "Adapt": 0.908,
+      "Spread": 0.072,
+      "Terraform": 0.02
+     },
+     "firstPurchase": {
+      "drought": 33,
+      "rad": 4,
+      "heat": 2,
+      "salt": 1
+     },
+     "opening2": {
+      "drought>drought": 13,
+      "drought>rad": 8,
+      "drought>heat": 7,
+      "drought>salt": 5,
+      "rad>drought": 3,
+      "heat>drought": 2
+     }
+    },
+    "spread_first": {
+     "runs": 40,
+     "winRate": 0.925,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 37,
+      "p10": 170.9,
+      "p25": 199.2,
+      "median": 238.7,
+      "p75": 300,
+      "p90": 339,
+      "max": 398.6,
+      "mean": 251.2
+     },
+     "biomassSpentAtBloom": {
+      "n": 37,
+      "p10": 574,
+      "p25": 720,
+      "median": 970,
+      "p75": 1140,
+      "p90": 1244,
+      "max": 1620,
+      "mean": 954.3
+     },
+     "coveragePer100Biomass": {
+      "n": 37,
+      "p10": 5.6,
+      "p25": 6.1,
+      "median": 7.2,
+      "p75": 9.7,
+      "p90": 12.2,
+      "max": 15.6,
+      "mean": 8.1
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 3.9,
+      "p25": 4,
+      "median": 6,
+      "p75": 6,
+      "p90": 7,
+      "max": 8,
+      "mean": 5.3
+     },
+     "byBoard": {
+      "Adapt": 0.524,
+      "Spread": 0.41,
+      "Terraform": 0.067
+     },
+     "firstPurchase": {
+      "seedOut": 25,
+      "drought": 15
+     },
+     "opening2": {
+      "seedOut>earlyMat": 14,
+      "drought>seedOut": 12,
+      "seedOut>drought": 9,
+      "drought>drought": 2,
+      "seedOut>rad": 1,
+      "drought>heat": 1
+     }
+    },
+    "terraform_first": {
+     "runs": 40,
+     "winRate": 0.975,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 39,
+      "p10": 189.1,
+      "p25": 252.1,
+      "median": 298.9,
+      "p75": 364.7,
+      "p90": 441,
+      "max": 699,
+      "mean": 319.5
+     },
+     "biomassSpentAtBloom": {
+      "n": 39,
+      "p10": 690,
+      "p25": 840,
+      "median": 1130,
+      "p75": 1350,
+      "p90": 1720,
+      "max": 2970,
+      "mean": 1165.1
+     },
+     "coveragePer100Biomass": {
+      "n": 39,
+      "p10": 4.1,
+      "p25": 5.2,
+      "median": 6.2,
+      "p75": 8.3,
+      "p90": 10.1,
+      "max": 20,
+      "mean": 7.1
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 3.9,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 6,
+      "max": 8,
+      "mean": 5
+     },
+     "byBoard": {
+      "Adapt": 0.428,
+      "Spread": 0.065,
+      "Terraform": 0.507
+     },
+     "firstPurchase": {
+      "humid": 27,
+      "drought": 10,
+      "rad": 2,
+      "cool": 1
+     },
+     "opening2": {
+      "humid>humid": 11,
+      "humid>drought": 7,
+      "drought>humid": 7,
+      "humid>cool": 4,
+      "humid>salt": 3,
+      "humid>rad": 2
+     }
+    },
+    "greedy": {
+     "runs": 40,
+     "winRate": 0.975,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 39,
+      "p10": 167.6,
+      "p25": 204.6,
+      "median": 233.6,
+      "p75": 292.1,
+      "p90": 358.9,
+      "max": 404.6,
+      "mean": 248.3
+     },
+     "biomassSpentAtBloom": {
+      "n": 39,
+      "p10": 590,
+      "p25": 815,
+      "median": 1010,
+      "p75": 1245,
+      "p90": 1368,
+      "max": 1630,
+      "mean": 1005.1
+     },
+     "coveragePer100Biomass": {
+      "n": 39,
+      "p10": 5.1,
+      "p25": 5.6,
+      "median": 6.9,
+      "p75": 8.6,
+      "p90": 11.9,
+      "max": 15.6,
+      "mean": 7.8
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 4,
+      "p25": 5,
+      "median": 6,
+      "p75": 7,
+      "p90": 7.1,
+      "max": 8,
+      "mean": 5.7
+     },
+     "byBoard": {
+      "Adapt": 0.573,
+      "Spread": 0.313,
+      "Terraform": 0.115
+     },
+     "firstPurchase": {
+      "seedOut": 21,
+      "drought": 17,
+      "heat": 2
+     },
+     "opening2": {
+      "seedOut>drought": 17,
+      "drought>seedOut": 14,
+      "seedOut>earlyMat": 2,
+      "heat>drought": 2,
+      "seedOut>heat": 2,
+      "drought>heat": 1
+     }
+    },
+    "low_planning": {
+     "runs": 40,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 40,
+      "p10": 194.3,
+      "p25": 219.1,
+      "median": 261.1,
+      "p75": 326.1,
+      "p90": 367.3,
+      "max": 431.7,
+      "mean": 271.9
+     },
+     "biomassSpentAtBloom": {
+      "n": 40,
+      "p10": 620,
+      "p25": 715,
+      "median": 950,
+      "p75": 1135,
+      "p90": 1342,
+      "max": 1450,
+      "mean": 948.5
+     },
+     "coveragePer100Biomass": {
+      "n": 40,
+      "p10": 5.2,
+      "p25": 6.2,
+      "median": 7.4,
+      "p75": 9.8,
+      "p90": 11.3,
+      "max": 20,
+      "mean": 8.2
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 3.9,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 7,
+      "max": 7,
+      "mean": 5
+     },
+     "byBoard": {
+      "Adapt": 0.585,
+      "Spread": 0.27,
+      "Terraform": 0.145
+     },
+     "firstPurchase": {
+      "drought": 12,
+      "humid": 10,
+      "earlyMat": 6,
+      "rad": 5,
+      "salt": 3,
+      "seedOut": 2
+     },
+     "opening2": {
+      "drought>drought": 5,
+      "humid>drought": 4,
+      "drought>earlyMat": 3,
+      "rad>earlyMat": 3,
+      "earlyMat>humid": 2,
+      "earlyMat>drought": 2
+     }
+    },
+    "colony": {
+     "runs": 40,
+     "winRate": 0.975,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 39,
+      "p10": 167.9,
+      "p25": 183.6,
+      "median": 212.2,
+      "p75": 234.5,
+      "p90": 253.5,
+      "max": 298.9,
+      "mean": 209.4
+     },
+     "biomassSpentAtBloom": {
+      "n": 39,
+      "p10": 706,
+      "p25": 790,
+      "median": 930,
+      "p75": 1215,
+      "p90": 1302,
+      "max": 1710,
+      "mean": 1005.4
+     },
+     "coveragePer100Biomass": {
+      "n": 39,
+      "p10": 5.4,
+      "p25": 5.8,
+      "median": 7.5,
+      "p75": 8.9,
+      "p90": 10,
+      "max": 11.9,
+      "mean": 7.5
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 6.1,
+      "max": 8,
+      "mean": 4.9
+     },
+     "byBoard": {
+      "Adapt": 0.672,
+      "Spread": 0.21,
+      "Terraform": 0.118
+     },
+     "firstPurchase": {
+      "drought": 34,
+      "rad": 3,
+      "heat": 2,
+      "seedOut": 1
+     },
+     "opening2": {
+      "drought>drought": 13,
+      "drought>rad": 7,
+      "drought>heat": 6,
+      "drought>salt": 5,
+      "drought>humid": 3,
+      "rad>drought": 2
+     }
+    }
+   },
+   "cells": 40,
+   "cellsAllPoliciesWin": 34,
+   "cellsSomePolicyFails": 6,
+   "fastestPolicyCount": {
+    "colony": 16,
+    "adapt_first": 7,
+    "balanced": 7,
+    "greedy": 6,
+    "spread_first": 3,
+    "terraform_first": 1
+   },
+   "slowerThanCellBestPct": {
+    "balanced": {
+     "n": 37,
+     "p10": 0,
+     "p25": 1.8,
+     "median": 7.7,
+     "p75": 13.9,
+     "p90": 19.1,
+     "max": 59.8,
+     "mean": 9.3
+    },
+    "adapt_first": {
+     "n": 39,
+     "p10": 0,
+     "p25": 1.8,
+     "median": 6.9,
+     "p75": 12.3,
+     "p90": 15.7,
+     "max": 24.2,
+     "mean": 7.8
+    },
+    "spread_first": {
+     "n": 37,
+     "p10": 3,
+     "p25": 12.7,
+     "median": 21.3,
+     "p75": 32.7,
+     "p90": 59.2,
+     "max": 67.3,
+     "mean": 26.4
+    },
+    "terraform_first": {
+     "n": 39,
+     "p10": 19.8,
+     "p25": 25.9,
+     "median": 47.9,
+     "p75": 77.6,
+     "p90": 130,
+     "max": 211.8,
+     "mean": 59.5
+    },
+    "greedy": {
+     "n": 39,
+     "p10": 0,
+     "p25": 10.8,
+     "median": 21,
+     "p75": 34.9,
+     "p90": 51.6,
+     "max": 78,
+     "mean": 24.1
+    },
+    "low_planning": {
+     "n": 40,
+     "p10": 9,
+     "p25": 19.4,
+     "median": 28.7,
+     "p75": 50.9,
+     "p90": 71.2,
+     "max": 88,
+     "mean": 35.8
+    },
+    "colony": {
+     "n": 39,
+     "p10": 0,
+     "p25": 0,
+     "median": 2.1,
+     "p75": 7.4,
+     "p90": 21.1,
+     "max": 42.6,
+     "mean": 6.2
+    }
+   },
+   "lossVsCellBest": {
+    "balanced": 0.075,
+    "adapt_first": 0.025,
+    "spread_first": 0.075,
+    "terraform_first": 0.025,
+    "greedy": 0.025,
+    "low_planning": 0,
+    "colony": 0.025
+   },
+   "openingOfFastest": {
+    "drought>drought": 10,
+    "drought>heat": 6,
+    "drought>rad": 5,
+    "seedOut>drought": 4,
+    "drought>salt": 3,
+    "rad>drought": 3,
+    "drought>humid": 2,
+    "drought>seedOut": 2,
+    "salt>drought": 1,
+    "seedOut>earlyMat": 1
+   },
+   "traitOwnershipInWins": {
+    "drought": 0.93,
+    "rad": 0.77,
+    "seedOut": 0.6,
+    "salt": 0.47,
+    "humid": 0.452,
+    "earlyMat": 0.367,
+    "heat": 0.285,
+    "cool": 0.081,
+    "dry": 0.007,
+    "cold": 0,
+    "flood": 0,
+    "waterSeeds": 0,
+    "warm": 0
+   },
+   "tierShareInWins": {
+    "drought#1": 0.93,
+    "rad#1": 0.77,
+    "seedOut#1": 0.6,
+    "drought#2": 0.489,
+    "salt#1": 0.47,
+    "humid#1": 0.452,
+    "earlyMat#1": 0.367,
+    "heat#1": 0.285,
+    "humid#2": 0.119,
+    "cool#1": 0.081,
+    "seedOut#2": 0.07,
+    "humid#3": 0.052,
+    "humid#4": 0.026,
+    "drought#3": 0.022,
+    "cool#2": 0.011,
+    "dry#1": 0.007,
+    "heat#2": 0.004,
+    "humid#5": 0.004,
+    "humid#6": 0.004
+   },
+   "neverBoughtInWins": [
+    "cold",
+    "flood",
+    "waterSeeds",
+    "warm"
+   ],
+   "terraformUseful": {
+    "runsWithTerraformThatOpenedLand": 0.482,
+    "runsBuyingTerraform": 0.496,
+    "terraformShareOfPurchases": 0.162
+   },
+   "purchaseKinds": {
+    "Adapt:unlock": 815,
+    "Spread:speed": 299,
+    "Terraform:unlock": 205,
+    "Adapt:progress": 17,
+    "Terraform:progress": 14
+   },
+   "colonyLayer": {
+    "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+    "vsBalanced": {
+     "pairs": 37,
+     "colonyFasterShare": 0.568,
+     "relativeTimePct": {
+      "n": 37,
+      "p10": -12.1,
+      "p25": -8.8,
+      "median": -3,
+      "p75": 2.8,
+      "p90": 8.1,
+      "max": 25.6,
+      "mean": -2.1
+     }
+    }
+   }
+  },
+  "native_competition": {
+   "policies": {
+    "balanced": {
+     "runs": 40,
+     "winRate": 0.525,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 21,
+      "p10": 305.8,
+      "p25": 319,
+      "median": 381.6,
+      "p75": 463.7,
+      "p90": 519.4,
+      "max": 531.4,
+      "mean": 400.3
+     },
+     "biomassSpentAtBloom": {
+      "n": 21,
+      "p10": 1110,
+      "p25": 1180,
+      "median": 1510,
+      "p75": 1690,
+      "p90": 2080,
+      "max": 2450,
+      "mean": 1525.2
+     },
+     "coveragePer100Biomass": {
+      "n": 21,
+      "p10": 3.4,
+      "p25": 4.1,
+      "median": 4.6,
+      "p75": 5.9,
+      "p90": 6.3,
+      "max": 7.9,
+      "mean": 4.9
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 6,
+      "p25": 6,
+      "median": 8,
+      "p75": 8,
+      "p90": 10,
+      "max": 33,
+      "mean": 8.3
+     },
+     "byBoard": {
+      "Adapt": 0.44,
+      "Spread": 0.28,
+      "Terraform": 0.28
+     },
+     "firstPurchase": {
+      "drought": 28,
+      "cold": 5,
+      "rad": 4,
+      "heat": 3
+     },
+     "opening2": {
+      "drought>heat": 7,
+      "drought>drought": 6,
+      "drought>rad": 6,
+      "drought>humid": 4,
+      "drought>salt": 3,
+      "heat>drought": 3
+     }
+    },
+    "adapt_first": {
+     "runs": 40,
+     "winRate": 0.625,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 25,
+      "p10": 298.1,
+      "p25": 331.7,
+      "median": 358.1,
+      "p75": 411,
+      "p90": 484,
+      "max": 572.6,
+      "mean": 379.6
+     },
+     "biomassSpentAtBloom": {
+      "n": 25,
+      "p10": 1130,
+      "p25": 1180,
+      "median": 1360,
+      "p75": 1480,
+      "p90": 1694,
+      "max": 2050,
+      "mean": 1385.2
+     },
+     "coveragePer100Biomass": {
+      "n": 25,
+      "p10": 4.1,
+      "p25": 4.7,
+      "median": 5.1,
+      "p75": 5.9,
+      "p90": 6.2,
+      "max": 6.5,
+      "mean": 5.2
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 6,
+      "p25": 6,
+      "median": 7,
+      "p75": 8,
+      "p90": 9.1,
+      "max": 33,
+      "mean": 7.9
+     },
+     "byBoard": {
+      "Adapt": 0.549,
+      "Spread": 0.21,
+      "Terraform": 0.241
+     },
+     "firstPurchase": {
+      "drought": 28,
+      "cold": 5,
+      "rad": 4,
+      "heat": 3
+     },
+     "opening2": {
+      "drought>drought": 10,
+      "drought>heat": 8,
+      "drought>rad": 7,
+      "drought>salt": 3,
+      "heat>drought": 3,
+      "cold>drought": 3
+     }
+    },
+    "spread_first": {
+     "runs": 40,
+     "winRate": 0.475,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 19,
+      "p10": 381,
+      "p25": 418.7,
+      "median": 473,
+      "p75": 523.5,
+      "p90": 609.8,
+      "max": 730.6,
+      "mean": 487.3
+     },
+     "biomassSpentAtBloom": {
+      "n": 19,
+      "p10": 1456,
+      "p25": 1540,
+      "median": 1760,
+      "p75": 1960,
+      "p90": 2016,
+      "max": 2270,
+      "mean": 1734.2
+     },
+     "coveragePer100Biomass": {
+      "n": 19,
+      "p10": 3.5,
+      "p25": 3.6,
+      "median": 4,
+      "p75": 4.5,
+      "p90": 4.8,
+      "max": 5.2,
+      "mean": 4.1
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 6,
+      "p25": 7.8,
+      "median": 8,
+      "p75": 9.3,
+      "p90": 10.1,
+      "max": 33,
+      "mean": 8.9
+     },
+     "byBoard": {
+      "Adapt": 0.412,
+      "Spread": 0.339,
+      "Terraform": 0.249
+     },
+     "firstPurchase": {
+      "seedOut": 35,
+      "drought": 2,
+      "cold": 2,
+      "heat": 1
+     },
+     "opening2": {
+      "seedOut>earlyMat": 31,
+      "seedOut>drought": 3,
+      "drought>seedOut": 2,
+      "heat>seedOut": 1,
+      "seedOut>cold": 1,
+      "cold>cold": 1
+     }
+    },
+    "terraform_first": {
+     "runs": 40,
+     "winRate": 0.475,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 19,
+      "p10": 461.8,
+      "p25": 513.3,
+      "median": 586.6,
+      "p75": 659.8,
+      "p90": 719.9,
+      "max": 958.4,
+      "mean": 592.1
+     },
+     "biomassSpentAtBloom": {
+      "n": 19,
+      "p10": 1698,
+      "p25": 1940,
+      "median": 2490,
+      "p75": 2760,
+      "p90": 3064,
+      "max": 4380,
+      "mean": 2428.4
+     },
+     "coveragePer100Biomass": {
+      "n": 19,
+      "p10": 2.3,
+      "p25": 2.5,
+      "median": 2.8,
+      "p75": 3.6,
+      "p90": 4.1,
+      "max": 6.4,
+      "mean": 3.2
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 7,
+      "p25": 8,
+      "median": 9,
+      "p75": 10,
+      "p90": 11.1,
+      "max": 21,
+      "mean": 9.6
+     },
+     "byBoard": {
+      "Adapt": 0.206,
+      "Spread": 0.206,
+      "Terraform": 0.587
+     },
+     "firstPurchase": {
+      "humid": 31,
+      "cool": 5,
+      "drought": 2,
+      "warm": 2
+     },
+     "opening2": {
+      "humid>humid": 24,
+      "humid>cool": 3,
+      "humid>warm": 2,
+      "cool>humid": 2,
+      "warm>humid": 2,
+      "drought>humid": 1
+     }
+    },
+    "greedy": {
+     "runs": 40,
+     "winRate": 0.5,
+     "extinction": 0.05,
+     "bloomTime": {
+      "n": 20,
+      "p10": 372.7,
+      "p25": 439.9,
+      "median": 524,
+      "p75": 589.7,
+      "p90": 624.7,
+      "max": 764.5,
+      "mean": 516.9
+     },
+     "biomassSpentAtBloom": {
+      "n": 20,
+      "p10": 1490,
+      "p25": 1855,
+      "median": 2165,
+      "p75": 2360,
+      "p90": 2450,
+      "max": 2850,
+      "mean": 2087
+     },
+     "coveragePer100Biomass": {
+      "n": 20,
+      "p10": 2.9,
+      "p25": 3,
+      "median": 3.2,
+      "p75": 3.8,
+      "p90": 4.7,
+      "max": 5.6,
+      "mean": 3.5
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 6.9,
+      "p25": 8,
+      "median": 9,
+      "p75": 11,
+      "p90": 12,
+      "max": 34,
+      "mean": 9.7
+     },
+     "byBoard": {
+      "Adapt": 0.389,
+      "Spread": 0.284,
+      "Terraform": 0.327
+     },
+     "firstPurchase": {
+      "seedOut": 28,
+      "drought": 6,
+      "heat": 3,
+      "cold": 3
+     },
+     "opening2": {
+      "seedOut>drought": 17,
+      "seedOut>heat": 8,
+      "drought>seedOut": 6,
+      "heat>drought": 2,
+      "seedOut>cold": 2,
+      "cold>drought": 2
+     }
+    },
+    "low_planning": {
+     "runs": 40,
+     "winRate": 0.6,
+     "extinction": 0.075,
+     "bloomTime": {
+      "n": 24,
+      "p10": 439.2,
+      "p25": 563.9,
+      "median": 626.3,
+      "p75": 747.2,
+      "p90": 916.5,
+      "max": 1218.4,
+      "mean": 664.6
+     },
+     "biomassSpentAtBloom": {
+      "n": 24,
+      "p10": 1533,
+      "p25": 1842.5,
+      "median": 2095,
+      "p75": 2450,
+      "p90": 2790,
+      "max": 3520,
+      "mean": 2151.3
+     },
+     "coveragePer100Biomass": {
+      "n": 24,
+      "p10": 2.5,
+      "p25": 2.9,
+      "median": 3.3,
+      "p75": 3.8,
+      "p90": 4.6,
+      "max": 6.4,
+      "mean": 3.5
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 6,
+      "p25": 8,
+      "median": 10,
+      "p75": 11.3,
+      "p90": 13,
+      "max": 15,
+      "mean": 9.6
+     },
+     "byBoard": {
+      "Adapt": 0.356,
+      "Spread": 0.28,
+      "Terraform": 0.364
+     },
+     "firstPurchase": {
+      "seedOut": 10,
+      "humid": 8,
+      "drought": 7,
+      "earlyMat": 4,
+      "cool": 4,
+      "warm": 2
+     },
+     "opening2": {
+      "seedOut>rad": 5,
+      "humid>drought": 2,
+      "earlyMat>drought": 2,
+      "humid>earlyMat": 2,
+      "drought>earlyMat": 2,
+      "humid>seedOut": 2
+     }
+    },
+    "colony": {
+     "runs": 40,
+     "winRate": 0.5,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 20,
+      "p10": 292.5,
+      "p25": 305.9,
+      "median": 352.8,
+      "p75": 429.1,
+      "p90": 453.7,
+      "max": 509.1,
+      "mean": 368.8
+     },
+     "biomassSpentAtBloom": {
+      "n": 20,
+      "p10": 1197,
+      "p25": 1367.5,
+      "median": 1730,
+      "p75": 2185,
+      "p90": 2369,
+      "max": 2540,
+      "mean": 1764
+     },
+     "coveragePer100Biomass": {
+      "n": 20,
+      "p10": 3,
+      "p25": 3.2,
+      "median": 4,
+      "p75": 5.1,
+      "p90": 5.8,
+      "max": 7.1,
+      "mean": 4.3
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 6,
+      "p25": 6.8,
+      "median": 8,
+      "p75": 10,
+      "p90": 11,
+      "max": 35,
+      "mean": 8.9
+     },
+     "byBoard": {
+      "Adapt": 0.406,
+      "Spread": 0.29,
+      "Terraform": 0.304
+     },
+     "firstPurchase": {
+      "drought": 28,
+      "cold": 5,
+      "rad": 4,
+      "heat": 3
+     },
+     "opening2": {
+      "drought>heat": 7,
+      "drought>drought": 6,
+      "drought>rad": 6,
+      "drought>humid": 4,
+      "drought>salt": 3,
+      "heat>drought": 3
+     }
+    }
+   },
+   "cells": 40,
+   "cellsAllPoliciesWin": 10,
+   "cellsSomePolicyFails": 21,
+   "fastestPolicyCount": {
+    "adapt_first": 14,
+    "colony": 10,
+    "balanced": 3,
+    "terraform_first": 3,
+    "greedy": 1
+   },
+   "slowerThanCellBestPct": {
+    "balanced": {
+     "n": 21,
+     "p10": 0,
+     "p25": 6,
+     "median": 8.8,
+     "p75": 21.3,
+     "p90": 24.7,
+     "max": 52.7,
+     "mean": 14.7
+    },
+    "adapt_first": {
+     "n": 25,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 11.8,
+     "p90": 21,
+     "max": 41.4,
+     "mean": 6.4
+    },
+    "spread_first": {
+     "n": 19,
+     "p10": 19.8,
+     "p25": 24,
+     "median": 36.6,
+     "p75": 46.4,
+     "p90": 65.5,
+     "max": 78.3,
+     "mean": 38.5
+    },
+    "terraform_first": {
+     "n": 19,
+     "p10": 0,
+     "p25": 30.2,
+     "median": 62.3,
+     "p75": 89.9,
+     "p90": 111,
+     "max": 189.8,
+     "mean": 64.3
+    },
+    "greedy": {
+     "n": 20,
+     "p10": 7,
+     "p25": 18.3,
+     "median": 42.2,
+     "p75": 74.4,
+     "p90": 78.9,
+     "max": 99.2,
+     "mean": 45.2
+    },
+    "low_planning": {
+     "n": 24,
+     "p10": 31,
+     "p25": 50.7,
+     "median": 70.7,
+     "p75": 119.1,
+     "p90": 162.6,
+     "max": 308.7,
+     "mean": 87.6
+    },
+    "colony": {
+     "n": 20,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 8.7,
+     "p90": 16.9,
+     "max": 27.6,
+     "mean": 5.7
+    }
+   },
+   "lossVsCellBest": {
+    "balanced": 0.323,
+    "adapt_first": 0.194,
+    "spread_first": 0.387,
+    "terraform_first": 0.387,
+    "greedy": 0.355,
+    "low_planning": 0.226,
+    "colony": 0.355
+   },
+   "openingOfFastest": {
+    "drought>drought": 7,
+    "drought>heat": 7,
+    "humid>humid": 3,
+    "heat>drought": 3,
+    "drought>rad": 2,
+    "cold>drought": 2,
+    "drought>humid": 1,
+    "drought>salt": 1,
+    "rad>cool": 1,
+    "rad>drought": 1
+   },
+   "traitOwnershipInWins": {
+    "seedOut": 0.878,
+    "drought": 0.831,
+    "salt": 0.73,
+    "rad": 0.669,
+    "earlyMat": 0.669,
+    "heat": 0.649,
+    "humid": 0.568,
+    "cool": 0.541,
+    "dry": 0.365,
+    "cold": 0.277,
+    "warm": 0.209,
+    "flood": 0,
+    "waterSeeds": 0
+   },
+   "tierShareInWins": {
+    "seedOut#1": 0.878,
+    "drought#1": 0.831,
+    "salt#1": 0.73,
+    "rad#1": 0.669,
+    "earlyMat#1": 0.669,
+    "heat#1": 0.649,
+    "humid#1": 0.568,
+    "cool#1": 0.541,
+    "seedOut#2": 0.466,
+    "cool#2": 0.399,
+    "drought#2": 0.372,
+    "dry#1": 0.365,
+    "cold#1": 0.277,
+    "cool#3": 0.236,
+    "humid#2": 0.209,
+    "warm#1": 0.209,
+    "cold#2": 0.203,
+    "humid#3": 0.115,
+    "heat#2": 0.074,
+    "humid#4": 0.061,
+    "dry#2": 0.061,
+    "warm#2": 0.041,
+    "humid#5": 0.041,
+    "cold#3": 0.034,
+    "cool#4": 0.027,
+    "warm#3": 0.014,
+    "dry#3": 0.007
+   },
+   "neverBoughtInWins": [
+    "flood",
+    "waterSeeds"
+   ],
+   "terraformUseful": {
+    "runsWithTerraformThatOpenedLand": 0.864,
+    "runsBuyingTerraform": 0.868,
+    "terraformShareOfPurchases": 0.341
+   },
+   "purchaseKinds": {
+    "Adapt:unlock": 930,
+    "Terraform:unlock": 767,
+    "Spread:speed": 678,
+    "Terraform:progress": 89,
+    "Adapt:progress": 45
+   },
+   "colonyLayer": {
+    "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+    "vsBalanced": {
+     "pairs": 20,
+     "colonyFasterShare": 0.7,
+     "relativeTimePct": {
+      "n": 20,
+      "p10": -19.6,
+      "p25": -16.7,
+      "median": -7.8,
+      "p75": 0.1,
+      "p90": 6.4,
+      "max": 18.9,
+      "mean": -7.5
+     }
+    }
+   }
+  },
+  "volatile_climate": {
+   "policies": {
+    "balanced": {
+     "runs": 40,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 40,
+      "p10": 157.2,
+      "p25": 180.7,
+      "median": 206.3,
+      "p75": 236.6,
+      "p90": 259.6,
+      "max": 289.3,
+      "mean": 207.2
+     },
+     "biomassSpentAtBloom": {
+      "n": 40,
+      "p10": 500,
+      "p25": 607.5,
+      "median": 700,
+      "p75": 855,
+      "p90": 993,
+      "max": 1310,
+      "mean": 751.8
+     },
+     "coveragePer100Biomass": {
+      "n": 40,
+      "p10": 7.1,
+      "p25": 8.2,
+      "median": 10,
+      "p75": 11.5,
+      "p90": 14,
+      "max": 16.7,
+      "mean": 10
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 3,
+      "p25": 3,
+      "median": 4,
+      "p75": 5,
+      "p90": 5.1,
+      "max": 7,
+      "mean": 4.2
+     },
+     "byBoard": {
+      "Adapt": 0.695,
+      "Spread": 0.162,
+      "Terraform": 0.144
+     },
+     "firstPurchase": {
+      "drought": 38,
+      "rad": 1,
+      "heat": 1
+     },
+     "opening2": {
+      "drought>drought": 11,
+      "drought>rad": 9,
+      "drought>heat": 9,
+      "drought>humid": 6,
+      "drought>salt": 3,
+      "rad>drought": 1
+     }
+    },
+    "adapt_first": {
+     "runs": 40,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 40,
+      "p10": 164,
+      "p25": 181.7,
+      "median": 212.9,
+      "p75": 232.2,
+      "p90": 259.2,
+      "max": 294.6,
+      "mean": 209.4
+     },
+     "biomassSpentAtBloom": {
+      "n": 40,
+      "p10": 509,
+      "p25": 570,
+      "median": 760,
+      "p75": 840,
+      "p90": 980,
+      "max": 1300,
+      "mean": 743.5
+     },
+     "coveragePer100Biomass": {
+      "n": 40,
+      "p10": 7.1,
+      "p25": 8.3,
+      "median": 9.2,
+      "p75": 12.3,
+      "p90": 13.8,
+      "max": 16.7,
+      "mean": 10.1
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 3,
+      "p25": 3,
+      "median": 4,
+      "p75": 4,
+      "p90": 5,
+      "max": 6,
+      "mean": 3.9
+     },
+     "byBoard": {
+      "Adapt": 0.916,
+      "Spread": 0.077,
+      "Terraform": 0.006
+     },
+     "firstPurchase": {
+      "drought": 38,
+      "rad": 1,
+      "heat": 1
+     },
+     "opening2": {
+      "drought>drought": 16,
+      "drought>rad": 10,
+      "drought>heat": 9,
+      "drought>salt": 3,
+      "rad>drought": 1,
+      "heat>drought": 1
+     }
+    },
+    "spread_first": {
+     "runs": 40,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 40,
+      "p10": 158.7,
+      "p25": 202.1,
+      "median": 227.6,
+      "p75": 256.1,
+      "p90": 279.9,
+      "max": 316.6,
+      "mean": 226.4
+     },
+     "biomassSpentAtBloom": {
+      "n": 40,
+      "p10": 590,
+      "p25": 707.5,
+      "median": 855,
+      "p75": 1062.5,
+      "p90": 1162,
+      "max": 1480,
+      "mean": 875.3
+     },
+     "coveragePer100Biomass": {
+      "n": 40,
+      "p10": 6,
+      "p25": 6.6,
+      "median": 8.2,
+      "p75": 9.9,
+      "p90": 11.9,
+      "max": 16.7,
+      "mean": 8.7
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 4,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 6.1,
+      "max": 8,
+      "mean": 5
+     },
+     "byBoard": {
+      "Adapt": 0.542,
+      "Spread": 0.388,
+      "Terraform": 0.07
+     },
+     "firstPurchase": {
+      "seedOut": 21,
+      "drought": 19
+     },
+     "opening2": {
+      "drought>seedOut": 16,
+      "seedOut>earlyMat": 11,
+      "seedOut>drought": 10,
+      "drought>drought": 2,
+      "drought>heat": 1
+     }
+    },
+    "terraform_first": {
+     "runs": 40,
+     "winRate": 0.95,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 38,
+      "p10": 209.2,
+      "p25": 266.6,
+      "median": 291.2,
+      "p75": 372.2,
+      "p90": 435.4,
+      "max": 517.8,
+      "mean": 316.4
+     },
+     "biomassSpentAtBloom": {
+      "n": 38,
+      "p10": 746,
+      "p25": 972.5,
+      "median": 1175,
+      "p75": 1400,
+      "p90": 1910,
+      "max": 2130,
+      "mean": 1203.9
+     },
+     "coveragePer100Biomass": {
+      "n": 38,
+      "p10": 3.7,
+      "p25": 5,
+      "median": 6,
+      "p75": 7.2,
+      "p90": 9.4,
+      "max": 12.3,
+      "mean": 6.5
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 3.9,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 7,
+      "max": 9,
+      "mean": 5.3
+     },
+     "byBoard": {
+      "Adapt": 0.333,
+      "Spread": 0.076,
+      "Terraform": 0.59
+     },
+     "firstPurchase": {
+      "humid": 28,
+      "drought": 8,
+      "cool": 2,
+      "rad": 1,
+      "dry": 1
+     },
+     "opening2": {
+      "humid>humid": 20,
+      "humid>cool": 6,
+      "drought>humid": 5,
+      "humid>drought": 1,
+      "humid>salt": 1,
+      "drought>rad": 1
+     }
+    },
+    "greedy": {
+     "runs": 40,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 40,
+      "p10": 145.7,
+      "p25": 199.5,
+      "median": 233,
+      "p75": 268.1,
+      "p90": 296.8,
+      "max": 364.2,
+      "mean": 231.4
+     },
+     "biomassSpentAtBloom": {
+      "n": 40,
+      "p10": 581,
+      "p25": 692.5,
+      "median": 870,
+      "p75": 1040,
+      "p90": 1262,
+      "max": 1480,
+      "mean": 909.3
+     },
+     "coveragePer100Biomass": {
+      "n": 40,
+      "p10": 5.5,
+      "p25": 6.7,
+      "median": 8,
+      "p75": 10.1,
+      "p90": 12.1,
+      "max": 16.7,
+      "mean": 8.5
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 3.9,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 7,
+      "max": 8,
+      "mean": 5.4
+     },
+     "byBoard": {
+      "Adapt": 0.556,
+      "Spread": 0.327,
+      "Terraform": 0.117
+     },
+     "firstPurchase": {
+      "drought": 20,
+      "seedOut": 17,
+      "heat": 3
+     },
+     "opening2": {
+      "drought>seedOut": 16,
+      "seedOut>drought": 13,
+      "seedOut>heat": 4,
+      "heat>drought": 3,
+      "drought>heat": 2,
+      "drought>humid": 2
+     }
+    },
+    "low_planning": {
+     "runs": 40,
+     "winRate": 0.975,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 39,
+      "p10": 176.7,
+      "p25": 199.9,
+      "median": 251.5,
+      "p75": 338.6,
+      "p90": 378.6,
+      "max": 552.8,
+      "mean": 270.3
+     },
+     "biomassSpentAtBloom": {
+      "n": 39,
+      "p10": 550,
+      "p25": 700,
+      "median": 880,
+      "p75": 1205,
+      "p90": 1464,
+      "max": 2150,
+      "mean": 961.3
+     },
+     "coveragePer100Biomass": {
+      "n": 39,
+      "p10": 4.8,
+      "p25": 5.8,
+      "median": 8,
+      "p75": 10,
+      "p90": 12.7,
+      "max": 20,
+      "mean": 8.4
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 7,
+      "max": 9,
+      "mean": 5
+     },
+     "byBoard": {
+      "Adapt": 0.548,
+      "Spread": 0.241,
+      "Terraform": 0.211
+     },
+     "firstPurchase": {
+      "drought": 17,
+      "humid": 8,
+      "earlyMat": 6,
+      "rad": 3,
+      "heat": 3,
+      "seedOut": 1
+     },
+     "opening2": {
+      "drought>earlyMat": 5,
+      "drought>drought": 4,
+      "humid>humid": 3,
+      "drought>rad": 3,
+      "earlyMat>drought": 2,
+      "humid>drought": 2
+     }
+    },
+    "colony": {
+     "runs": 40,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 40,
+      "p10": 162.8,
+      "p25": 177.4,
+      "median": 200.5,
+      "p75": 227.5,
+      "p90": 244.9,
+      "max": 285.1,
+      "mean": 201.7
+     },
+     "biomassSpentAtBloom": {
+      "n": 40,
+      "p10": 635,
+      "p25": 810,
+      "median": 960,
+      "p75": 1122.5,
+      "p90": 1243,
+      "max": 1400,
+      "mean": 957.5
+     },
+     "coveragePer100Biomass": {
+      "n": 40,
+      "p10": 5.6,
+      "p25": 6.2,
+      "median": 7.3,
+      "p75": 8.6,
+      "p90": 11,
+      "max": 12.1,
+      "mean": 7.8
+     },
+     "purchases": {
+      "n": 40,
+      "p10": 3,
+      "p25": 4,
+      "median": 5,
+      "p75": 6,
+      "p90": 6,
+      "max": 7,
+      "mean": 4.8
+     },
+     "byBoard": {
+      "Adapt": 0.635,
+      "Spread": 0.24,
+      "Terraform": 0.125
+     },
+     "firstPurchase": {
+      "drought": 38,
+      "rad": 1,
+      "heat": 1
+     },
+     "opening2": {
+      "drought>drought": 11,
+      "drought>rad": 9,
+      "drought>heat": 9,
+      "drought>humid": 6,
+      "drought>salt": 3,
+      "rad>salt": 1
+     }
+    }
+   },
+   "cells": 40,
+   "cellsAllPoliciesWin": 38,
+   "cellsSomePolicyFails": 2,
+   "fastestPolicyCount": {
+    "colony": 15,
+    "balanced": 8,
+    "greedy": 7,
+    "adapt_first": 5,
+    "spread_first": 2,
+    "low_planning": 2,
+    "terraform_first": 1
+   },
+   "slowerThanCellBestPct": {
+    "balanced": {
+     "n": 40,
+     "p10": 0,
+     "p25": 0.5,
+     "median": 6.4,
+     "p75": 8.9,
+     "p90": 13.7,
+     "max": 20.8,
+     "mean": 6.6
+    },
+    "adapt_first": {
+     "n": 40,
+     "p10": 0,
+     "p25": 1.5,
+     "median": 7.1,
+     "p75": 12.8,
+     "p90": 16.6,
+     "max": 24.4,
+     "mean": 7.9
+    },
+    "spread_first": {
+     "n": 40,
+     "p10": 4.3,
+     "p25": 10.7,
+     "median": 15.4,
+     "p75": 21.8,
+     "p90": 28.1,
+     "max": 46.9,
+     "mean": 16.5
+    },
+    "terraform_first": {
+     "n": 38,
+     "p10": 16.9,
+     "p25": 38.7,
+     "median": 63.5,
+     "p75": 89.4,
+     "p90": 106.3,
+     "max": 120.6,
+     "mean": 64.7
+    },
+    "greedy": {
+     "n": 40,
+     "p10": 0,
+     "p25": 2.6,
+     "median": 16.1,
+     "p75": 27.1,
+     "p90": 43.5,
+     "max": 67.2,
+     "mean": 18.6
+    },
+    "low_planning": {
+     "n": 39,
+     "p10": 3.5,
+     "p25": 18.6,
+     "median": 29.7,
+     "p75": 47.5,
+     "p90": 102.2,
+     "max": 114.8,
+     "mean": 39.5
+    },
+    "colony": {
+     "n": 40,
+     "p10": 0,
+     "p25": 0,
+     "median": 0.8,
+     "p75": 6.3,
+     "p90": 12.1,
+     "max": 28.2,
+     "mean": 4.4
+    }
+   },
+   "lossVsCellBest": {
+    "balanced": 0,
+    "adapt_first": 0,
+    "spread_first": 0,
+    "terraform_first": 0.05,
+    "greedy": 0,
+    "low_planning": 0.025,
+    "colony": 0
+   },
+   "openingOfFastest": {
+    "drought>drought": 9,
+    "drought>rad": 7,
+    "drought>heat": 7,
+    "drought>humid": 5,
+    "drought>seedOut": 3,
+    "seedOut>drought": 3,
+    "drought>salt": 2,
+    "seedOut>heat": 2,
+    "salt>rad": 1,
+    "seedOut>earlyMat": 1
+   },
+   "traitOwnershipInWins": {
+    "drought": 0.949,
+    "seedOut": 0.632,
+    "rad": 0.603,
+    "heat": 0.469,
+    "salt": 0.437,
+    "humid": 0.408,
+    "earlyMat": 0.379,
+    "cool": 0.22,
+    "dry": 0.011,
+    "warm": 0.004,
+    "cold": 0,
+    "flood": 0,
+    "waterSeeds": 0
+   },
+   "tierShareInWins": {
+    "drought#1": 0.949,
+    "seedOut#1": 0.632,
+    "rad#1": 0.603,
+    "heat#1": 0.469,
+    "salt#1": 0.437,
+    "humid#1": 0.408,
+    "earlyMat#1": 0.379,
+    "drought#2": 0.339,
+    "cool#1": 0.22,
+    "humid#2": 0.134,
+    "humid#3": 0.072,
+    "seedOut#2": 0.032,
+    "cool#2": 0.025,
+    "heat#2": 0.025,
+    "humid#4": 0.018,
+    "dry#1": 0.011,
+    "drought#3": 0.011,
+    "warm#1": 0.004,
+    "dry#2": 0.004,
+    "cool#3": 0.004
+   },
+   "neverBoughtInWins": [
+    "cold",
+    "flood",
+    "waterSeeds"
+   ],
+   "terraformUseful": {
+    "runsWithTerraformThatOpenedLand": 0.479,
+    "runsBuyingTerraform": 0.496,
+    "terraformShareOfPurchases": 0.19
+   },
+   "purchaseKinds": {
+    "Adapt:unlock": 732,
+    "Spread:speed": 297,
+    "Terraform:unlock": 245,
+    "Adapt:progress": 55,
+    "Terraform:progress": 9
+   },
+   "colonyLayer": {
+    "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+    "vsBalanced": {
+     "pairs": 40,
+     "colonyFasterShare": 0.575,
+     "relativeTimePct": {
+      "n": 40,
+      "p10": -11.9,
+      "p25": -5.9,
+      "median": -1.2,
+      "p75": 1.6,
+      "p90": 6.6,
+      "max": 16.7,
+      "mean": -1.9
+     }
+    }
+   }
+  },
+  "low_tide": {
+   "policies": {
+    "balanced": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 141,
+      "p25": 172.6,
+      "median": 289.9,
+      "p75": 396.6,
+      "p90": 486.4,
+      "max": 849,
+      "mean": 326.5
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 436,
+      "p25": 522.5,
+      "median": 955,
+      "p75": 1445,
+      "p90": 1752,
+      "max": 2130,
+      "mean": 1034
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 4,
+      "p25": 4.9,
+      "median": 7.4,
+      "p75": 13.6,
+      "p90": 16.3,
+      "max": 22.6,
+      "mean": 9.6
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 2.9,
+      "p25": 3.3,
+      "median": 5.5,
+      "p75": 6.8,
+      "p90": 8.2,
+      "max": 10,
+      "mean": 5.4
+     },
+     "byBoard": {
+      "Adapt": 0.278,
+      "Spread": 0.463,
+      "Terraform": 0.259
+     },
+     "firstPurchase": {
+      "waterSeeds": 6,
+      "rad": 2,
+      "cold": 1,
+      "humid": 1
+     },
+     "opening2": {
+      "waterSeeds>cold": 3,
+      "waterSeeds>seedOut": 3,
+      "rad>heat": 2,
+      "cold>rad": 1,
+      "humid>rad": 1
+     }
+    },
+    "adapt_first": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 171.4,
+      "p25": 292,
+      "median": 321.4,
+      "p75": 427.2,
+      "p90": 566.8,
+      "max": 725.6,
+      "mean": 364.3
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 517,
+      "p25": 1025,
+      "median": 1160,
+      "p75": 1540,
+      "p90": 1925,
+      "max": 2600,
+      "mean": 1276
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 3.7,
+      "p25": 4.5,
+      "median": 6,
+      "p75": 6.8,
+      "p90": 13.9,
+      "max": 22.6,
+      "mean": 7.7
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 2.9,
+      "p25": 5.3,
+      "median": 6,
+      "p75": 7,
+      "p90": 9.2,
+      "max": 11,
+      "mean": 6.2
+     },
+     "byBoard": {
+      "Adapt": 0.355,
+      "Spread": 0.339,
+      "Terraform": 0.306
+     },
+     "firstPurchase": {
+      "waterSeeds": 3,
+      "rad": 3,
+      "cold": 2,
+      "humid": 1,
+      "heat": 1
+     },
+     "opening2": {
+      "rad>heat": 2,
+      "cold>rad": 1,
+      "waterSeeds>rad": 1,
+      "humid>cold": 1,
+      "cold>heat": 1,
+      "waterSeeds>cold": 1
+     }
+    },
+    "spread_first": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 132.1,
+      "p25": 210.4,
+      "median": 376.2,
+      "p75": 479.5,
+      "p90": 567.9,
+      "max": 844.8,
+      "mean": 380.2
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 480,
+      "p25": 690,
+      "median": 1400,
+      "p75": 1610,
+      "p90": 2004,
+      "max": 2130,
+      "mean": 1290
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 3.5,
+      "p25": 4.3,
+      "median": 5,
+      "p75": 12.3,
+      "p90": 14.6,
+      "max": 14.6,
+      "mean": 7.5
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 3,
+      "p25": 4,
+      "median": 7,
+      "p75": 8,
+      "p90": 9.1,
+      "max": 10,
+      "mean": 6.5
+     },
+     "byBoard": {
+      "Adapt": 0.215,
+      "Spread": 0.554,
+      "Terraform": 0.231
+     },
+     "firstPurchase": {
+      "waterSeeds": 10
+     },
+     "opening2": {
+      "waterSeeds>seedOut": 10
+     }
+    },
+    "terraform_first": {
+     "runs": 10,
+     "winRate": 0.9,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 9,
+      "p10": 159,
+      "p25": 197,
+      "median": 329.6,
+      "p75": 509.8,
+      "p90": 601.6,
+      "max": 769,
+      "mean": 382.1
+     },
+     "biomassSpentAtBloom": {
+      "n": 9,
+      "p10": 526,
+      "p25": 730,
+      "median": 870,
+      "p75": 1940,
+      "p90": 2248,
+      "max": 2520,
+      "mean": 1296.7
+     },
+     "coveragePer100Biomass": {
+      "n": 9,
+      "p10": 3.1,
+      "p25": 3.6,
+      "median": 8,
+      "p75": 9.6,
+      "p90": 14.2,
+      "max": 22.6,
+      "mean": 8.4
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 2.9,
+      "p25": 4,
+      "median": 6.5,
+      "p75": 9,
+      "p90": 11.9,
+      "max": 20,
+      "mean": 7.5
+     },
+     "byBoard": {
+      "Adapt": 0.147,
+      "Spread": 0.227,
+      "Terraform": 0.627
+     },
+     "firstPurchase": {
+      "waterSeeds": 4,
+      "warm": 2,
+      "rad": 2,
+      "humid": 1,
+      "cool": 1
+     },
+     "opening2": {
+      "waterSeeds>seedOut": 2,
+      "warm>humid": 1,
+      "waterSeeds>warm": 1,
+      "warm>waterSeeds": 1,
+      "humid>humid": 1,
+      "waterSeeds>rad": 1
+     }
+    },
+    "greedy": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 191.5,
+      "p25": 249.2,
+      "median": 401.2,
+      "p75": 449.4,
+      "p90": 505.5,
+      "max": 751,
+      "mean": 377.6
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 678,
+      "p25": 1017.5,
+      "median": 1540,
+      "p75": 1610,
+      "p90": 1788,
+      "max": 2130,
+      "mean": 1341
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 3.9,
+      "p25": 4.3,
+      "median": 4.6,
+      "p75": 6.9,
+      "p90": 10.5,
+      "max": 14.6,
+      "mean": 6.3
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 3.9,
+      "p25": 6,
+      "median": 8,
+      "p75": 8,
+      "p90": 9.1,
+      "max": 10,
+      "mean": 7
+     },
+     "byBoard": {
+      "Adapt": 0.3,
+      "Spread": 0.486,
+      "Terraform": 0.214
+     },
+     "firstPurchase": {
+      "seedOut": 9,
+      "cold": 1
+     },
+     "opening2": {
+      "seedOut>cold": 4,
+      "seedOut>waterSeeds": 2,
+      "seedOut>earlyMat": 2,
+      "cold>waterSeeds": 1,
+      "seedOut>heat": 1
+     }
+    },
+    "low_planning": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 200,
+      "p25": 212.1,
+      "median": 361.8,
+      "p75": 538.7,
+      "p90": 602.3,
+      "max": 884.2,
+      "mean": 398.3
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 616,
+      "p25": 692.5,
+      "median": 1110,
+      "p75": 1580,
+      "p90": 2004,
+      "max": 2130,
+      "mean": 1179
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 3.5,
+      "p25": 4.4,
+      "median": 6.5,
+      "p75": 10.1,
+      "p90": 12,
+      "max": 22.6,
+      "mean": 8.2
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 3.8,
+      "p25": 4,
+      "median": 6,
+      "p75": 7.8,
+      "p90": 9.1,
+      "max": 10,
+      "mean": 6
+     },
+     "byBoard": {
+      "Adapt": 0.233,
+      "Spread": 0.517,
+      "Terraform": 0.25
+     },
+     "firstPurchase": {
+      "waterSeeds": 5,
+      "earlyMat": 3,
+      "cold": 1,
+      "seedOut": 1
+     },
+     "opening2": {
+      "waterSeeds>earlyMat": 3,
+      "waterSeeds>seedOut": 2,
+      "earlyMat>waterSeeds": 1,
+      "cold>earlyMat": 1,
+      "earlyMat>seedOut": 1,
+      "seedOut>cold": 1
+     }
+    },
+    "colony": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 152.1,
+      "p25": 177.7,
+      "median": 231.6,
+      "p75": 351.9,
+      "p90": 483.7,
+      "max": 489.9,
+      "mean": 279.1
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 526,
+      "p25": 645,
+      "median": 1170,
+      "p75": 1810,
+      "p90": 2253,
+      "max": 2550,
+      "mean": 1291
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 3.1,
+      "p25": 3.9,
+      "median": 6,
+      "p75": 11.5,
+      "p90": 13.4,
+      "max": 17.5,
+      "mean": 7.7
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 2.9,
+      "p25": 3.5,
+      "median": 6,
+      "p75": 8.5,
+      "p90": 10,
+      "max": 10,
+      "mean": 6.1
+     },
+     "byBoard": {
+      "Adapt": 0.295,
+      "Spread": 0.475,
+      "Terraform": 0.23
+     },
+     "firstPurchase": {
+      "waterSeeds": 7,
+      "rad": 2,
+      "cold": 1
+     },
+     "opening2": {
+      "waterSeeds>seedOut": 4,
+      "waterSeeds>cold": 3,
+      "rad>heat": 2,
+      "cold>rad": 1
+     }
+    }
+   },
+   "cells": 10,
+   "cellsAllPoliciesWin": 9,
+   "cellsSomePolicyFails": 1,
+   "fastestPolicyCount": {
+    "balanced": 4,
+    "colony": 3,
+    "spread_first": 2,
+    "low_planning": 1
+   },
+   "slowerThanCellBestPct": {
+    "balanced": {
+     "n": 10,
+     "p10": 0,
+     "p25": 0,
+     "median": 8.7,
+     "p75": 37.9,
+     "p90": 59.6,
+     "max": 75.8,
+     "mean": 21.7
+    },
+    "adapt_first": {
+     "n": 10,
+     "p10": 8.7,
+     "p25": 15.1,
+     "median": 38.6,
+     "p75": 61.3,
+     "p90": 88,
+     "max": 117.9,
+     "mean": 44.4
+    },
+    "spread_first": {
+     "n": 10,
+     "p10": 0,
+     "p25": 20.6,
+     "median": 38.6,
+     "p75": 67.2,
+     "p90": 77.9,
+     "max": 104.6,
+     "mean": 42.3
+    },
+    "terraform_first": {
+     "n": 9,
+     "p10": 6,
+     "p25": 14.3,
+     "median": 38.6,
+     "p75": 109.5,
+     "p90": 146.1,
+     "max": 161.3,
+     "mean": 61.9
+    },
+    "greedy": {
+     "n": 10,
+     "p10": 14.5,
+     "p25": 21.5,
+     "median": 46.9,
+     "p75": 77.6,
+     "p90": 87.5,
+     "max": 110.9,
+     "mean": 49.8
+    },
+    "low_planning": {
+     "n": 10,
+     "p10": 3,
+     "p25": 10.6,
+     "median": 40.3,
+     "p75": 77.1,
+     "p90": 128.6,
+     "max": 185.9,
+     "mean": 55.9
+    },
+    "colony": {
+     "n": 10,
+     "p10": 0,
+     "p25": 2.5,
+     "median": 11.7,
+     "p75": 14,
+     "p90": 17,
+     "max": 19.4,
+     "mean": 9.6
+    }
+   },
+   "lossVsCellBest": {
+    "balanced": 0,
+    "adapt_first": 0,
+    "spread_first": 0,
+    "terraform_first": 0.1,
+    "greedy": 0,
+    "low_planning": 0,
+    "colony": 0
+   },
+   "openingOfFastest": {
+    "waterSeeds>seedOut": 5,
+    "waterSeeds>cold": 2,
+    "rad>heat": 2,
+    "cold>rad": 1
+   },
+   "traitOwnershipInWins": {
+    "waterSeeds": 1,
+    "seedOut": 0.899,
+    "humid": 0.739,
+    "rad": 0.71,
+    "cold": 0.681,
+    "earlyMat": 0.609,
+    "heat": 0.246,
+    "warm": 0.087,
+    "cool": 0.043,
+    "drought": 0,
+    "flood": 0,
+    "salt": 0,
+    "dry": 0
+   },
+   "tierShareInWins": {
+    "waterSeeds#1": 1,
+    "seedOut#1": 0.899,
+    "humid#1": 0.739,
+    "rad#1": 0.71,
+    "cold#1": 0.681,
+    "earlyMat#1": 0.609,
+    "humid#2": 0.507,
+    "seedOut#2": 0.29,
+    "humid#3": 0.275,
+    "heat#1": 0.246,
+    "warm#1": 0.087,
+    "cool#1": 0.043,
+    "humid#4": 0.043,
+    "warm#2": 0.029,
+    "cool#2": 0.014,
+    "cold#2": 0.014
+   },
+   "neverBoughtInWins": [
+    "drought",
+    "flood",
+    "salt",
+    "dry"
+   ],
+   "terraformUseful": {
+    "runsWithTerraformThatOpenedLand": 0.743,
+    "runsBuyingTerraform": 0.757,
+    "terraformShareOfPurchases": 0.311
+   },
+   "purchaseKinds": {
+    "Terraform:unlock": 134,
+    "Spread:speed": 124,
+    "Adapt:unlock": 108,
+    "Spread:reach": 69,
+    "Adapt:progress": 7,
+    "Terraform:progress": 5
+   },
+   "colonyLayer": {
+    "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+    "vsBalanced": {
+     "pairs": 10,
+     "colonyFasterShare": 0.5,
+     "relativeTimePct": {
+      "n": 10,
+      "p10": -37.3,
+      "p25": -19.2,
+      "median": 1.5,
+      "p75": 11.8,
+      "p90": 15.2,
+      "max": 16.7,
+      "mean": -5.5
+     }
+    }
+   }
+  },
+  "oasis_line": {
+   "policies": {
+    "balanced": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 357.7,
+      "p25": 360.6,
+      "median": 394,
+      "p75": 428.1,
+      "p90": 459.2,
+      "max": 649,
+      "mean": 415.6
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 1150,
+      "p25": 1370,
+      "median": 1495,
+      "p75": 1645,
+      "p90": 1800,
+      "max": 1800,
+      "mean": 1473
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 3.9,
+      "p25": 4.3,
+      "median": 4.7,
+      "p75": 5.1,
+      "p90": 6.1,
+      "max": 7.2,
+      "mean": 4.9
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 5.9,
+      "p25": 7,
+      "median": 8,
+      "p75": 8,
+      "p90": 9,
+      "max": 9,
+      "mean": 7.5
+     },
+     "byBoard": {
+      "Adapt": 0.587,
+      "Spread": 0.147,
+      "Terraform": 0.267
+     },
+     "firstPurchase": {
+      "drought": 10
+     },
+     "opening2": {
+      "drought>drought": 8,
+      "drought>humid": 1,
+      "drought>rad": 1
+     }
+    },
+    "adapt_first": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 341.4,
+      "p25": 356.8,
+      "median": 399.1,
+      "p75": 427.7,
+      "p90": 554.6,
+      "max": 648.2,
+      "mean": 422.4
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 1164,
+      "p25": 1325,
+      "median": 1425,
+      "p75": 1652.5,
+      "p90": 1791,
+      "max": 2070,
+      "mean": 1485
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 3.9,
+      "p25": 4.2,
+      "median": 4.9,
+      "p75": 5.3,
+      "p90": 6,
+      "max": 6.3,
+      "mean": 4.9
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 6,
+      "p25": 6,
+      "median": 7.5,
+      "p75": 8,
+      "p90": 9.1,
+      "max": 10,
+      "mean": 7.4
+     },
+     "byBoard": {
+      "Adapt": 0.703,
+      "Spread": 0.162,
+      "Terraform": 0.135
+     },
+     "firstPurchase": {
+      "drought": 10
+     },
+     "opening2": {
+      "drought>drought": 9,
+      "drought>rad": 1
+     }
+    },
+    "spread_first": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 421.9,
+      "p25": 441.7,
+      "median": 503.3,
+      "p75": 575.9,
+      "p90": 657.9,
+      "max": 727.7,
+      "mean": 522.7
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 1540,
+      "p25": 1655,
+      "median": 1760,
+      "p75": 1872.5,
+      "p90": 1989,
+      "max": 2250,
+      "mean": 1770
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 3.5,
+      "p25": 3.7,
+      "median": 4,
+      "p75": 4.2,
+      "p90": 4.6,
+      "max": 5.1,
+      "mean": 4
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 7.9,
+      "p25": 8.3,
+      "median": 9,
+      "p75": 9,
+      "p90": 10.1,
+      "max": 11,
+      "mean": 8.9
+     },
+     "byBoard": {
+      "Adapt": 0.528,
+      "Spread": 0.337,
+      "Terraform": 0.135
+     },
+     "firstPurchase": {
+      "drought": 6,
+      "seedOut": 4
+     },
+     "opening2": {
+      "drought>seedOut": 6,
+      "seedOut>earlyMat": 4
+     }
+    },
+    "terraform_first": {
+     "runs": 10,
+     "winRate": 0.8,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 8,
+      "p10": 613.4,
+      "p25": 694.8,
+      "median": 730.8,
+      "p75": 872.6,
+      "p90": 942.3,
+      "max": 1002.6,
+      "mean": 769.3
+     },
+     "biomassSpentAtBloom": {
+      "n": 8,
+      "p10": 2716,
+      "p25": 2927.5,
+      "median": 3105,
+      "p75": 3402.5,
+      "p90": 3911,
+      "max": 4380,
+      "mean": 3236.3
+     },
+     "coveragePer100Biomass": {
+      "n": 8,
+      "p10": 1.8,
+      "p25": 2.1,
+      "median": 2.3,
+      "p75": 2.4,
+      "p90": 2.6,
+      "max": 2.8,
+      "mean": 2.2
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 8,
+      "p25": 9,
+      "median": 10,
+      "p75": 11,
+      "p90": 11.4,
+      "max": 15,
+      "mean": 10.2
+     },
+     "byBoard": {
+      "Adapt": 0.206,
+      "Spread": 0.137,
+      "Terraform": 0.657
+     },
+     "firstPurchase": {
+      "humid": 9,
+      "drought": 1
+     },
+     "opening2": {
+      "humid>humid": 9,
+      "drought>humid": 1
+     }
+    },
+    "greedy": {
+     "runs": 10,
+     "winRate": 0.8,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 8,
+      "p10": 498.2,
+      "p25": 505.7,
+      "median": 622.8,
+      "p75": 669.3,
+      "p90": 694.8,
+      "max": 731.8,
+      "mean": 602.7
+     },
+     "biomassSpentAtBloom": {
+      "n": 8,
+      "p10": 1778,
+      "p25": 2075,
+      "median": 2160,
+      "p75": 2190,
+      "p90": 2424,
+      "max": 2830,
+      "mean": 2153.8
+     },
+     "coveragePer100Biomass": {
+      "n": 8,
+      "p10": 2.9,
+      "p25": 3.2,
+      "median": 3.2,
+      "p75": 3.4,
+      "p90": 3.9,
+      "max": 4.2,
+      "mean": 3.3
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 9,
+      "p25": 10.3,
+      "median": 11,
+      "p75": 11,
+      "p90": 15.5,
+      "max": 38,
+      "mean": 13.4
+     },
+     "byBoard": {
+      "Adapt": 0.358,
+      "Spread": 0.209,
+      "Terraform": 0.433
+     },
+     "firstPurchase": {
+      "drought": 8,
+      "seedOut": 2
+     },
+     "opening2": {
+      "drought>seedOut": 7,
+      "drought>heat": 1,
+      "seedOut>drought": 1,
+      "seedOut>heat": 1
+     }
+    },
+    "low_planning": {
+     "runs": 10,
+     "winRate": 0.9,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 9,
+      "p10": 567.2,
+      "p25": 579.2,
+      "median": 609,
+      "p75": 636.8,
+      "p90": 1002.4,
+      "max": 1233.6,
+      "mean": 704.4
+     },
+     "biomassSpentAtBloom": {
+      "n": 9,
+      "p10": 1716,
+      "p25": 2160,
+      "median": 2250,
+      "p75": 2520,
+      "p90": 3170,
+      "max": 3370,
+      "mean": 2384.4
+     },
+     "coveragePer100Biomass": {
+      "n": 9,
+      "p10": 2.2,
+      "p25": 2.8,
+      "median": 3.1,
+      "p75": 3.2,
+      "p90": 4.1,
+      "max": 4.5,
+      "mean": 3.1
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 8.9,
+      "p25": 10.3,
+      "median": 11,
+      "p75": 12.8,
+      "p90": 15.1,
+      "max": 34,
+      "mean": 13.2
+     },
+     "byBoard": {
+      "Adapt": 0.311,
+      "Spread": 0.212,
+      "Terraform": 0.477
+     },
+     "firstPurchase": {
+      "humid": 4,
+      "drought": 3,
+      "salt": 1,
+      "earlyMat": 1,
+      "rad": 1
+     },
+     "opening2": {
+      "humid>earlyMat": 1,
+      "salt>drought": 1,
+      "drought>drought": 1,
+      "drought>warm": 1,
+      "drought>seedOut": 1,
+      "earlyMat>drought": 1
+     }
+    },
+    "colony": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 291.6,
+      "p25": 308.6,
+      "median": 328.6,
+      "p75": 342.5,
+      "p90": 436.4,
+      "max": 470.2,
+      "mean": 343.4
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 1393,
+      "p25": 1487.5,
+      "median": 1710,
+      "p75": 1902.5,
+      "p90": 2060,
+      "max": 2060,
+      "mean": 1683
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 3.4,
+      "p25": 3.7,
+      "median": 4.1,
+      "p75": 4.7,
+      "p90": 5.1,
+      "max": 6.6,
+      "mean": 4.3
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 6.8,
+      "p25": 7,
+      "median": 8.5,
+      "p75": 9,
+      "p90": 10,
+      "max": 10,
+      "mean": 8.1
+     },
+     "byBoard": {
+      "Adapt": 0.556,
+      "Spread": 0.222,
+      "Terraform": 0.222
+     },
+     "firstPurchase": {
+      "drought": 10
+     },
+     "opening2": {
+      "drought>drought": 8,
+      "drought>humid": 1,
+      "drought>rad": 1
+     }
+    }
+   },
+   "cells": 10,
+   "cellsAllPoliciesWin": 6,
+   "cellsSomePolicyFails": 4,
+   "fastestPolicyCount": {
+    "colony": 9,
+    "balanced": 1
+   },
+   "slowerThanCellBestPct": {
+    "balanced": {
+     "n": 10,
+     "p10": 8.5,
+     "p25": 17.2,
+     "median": 21.7,
+     "p75": 26.9,
+     "p90": 35.1,
+     "max": 50,
+     "mean": 22.3
+    },
+    "adapt_first": {
+     "n": 10,
+     "p10": 7.8,
+     "p25": 18.2,
+     "median": 21.5,
+     "p75": 26.3,
+     "p90": 39.7,
+     "max": 49.8,
+     "mean": 23.5
+    },
+    "spread_first": {
+     "n": 10,
+     "p10": 33.9,
+     "p25": 39.9,
+     "median": 52.3,
+     "p75": 65.5,
+     "p90": 75.6,
+     "max": 90.5,
+     "mean": 54
+    },
+    "terraform_first": {
+     "n": 8,
+     "p10": 70.3,
+     "p25": 90,
+     "median": 103.5,
+     "p75": 152.5,
+     "p90": 184.3,
+     "max": 193.8,
+     "mean": 119.8
+    },
+    "greedy": {
+     "n": 8,
+     "p10": 48.8,
+     "p25": 54.8,
+     "median": 68.8,
+     "p75": 102.1,
+     "p90": 116.6,
+     "max": 121.6,
+     "mean": 77.2
+    },
+    "low_planning": {
+     "n": 9,
+     "p10": 73.9,
+     "p25": 85,
+     "median": 88.6,
+     "p75": 111,
+     "p90": 131.1,
+     "max": 185.2,
+     "mean": 101.8
+    },
+    "colony": {
+     "n": 10,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 0,
+     "p90": 0.8,
+     "max": 8.3,
+     "mean": 0.8
+    }
+   },
+   "lossVsCellBest": {
+    "balanced": 0,
+    "adapt_first": 0,
+    "spread_first": 0,
+    "terraform_first": 0.2,
+    "greedy": 0.2,
+    "low_planning": 0.1,
+    "colony": 0
+   },
+   "openingOfFastest": {
+    "drought>drought": 8,
+    "drought>humid": 1,
+    "drought>rad": 1
+   },
+   "traitOwnershipInWins": {
+    "rad": 1,
+    "seedOut": 0.908,
+    "drought": 0.892,
+    "salt": 0.831,
+    "heat": 0.631,
+    "humid": 0.631,
+    "earlyMat": 0.615,
+    "cool": 0.538,
+    "warm": 0.338,
+    "dry": 0.154,
+    "cold": 0.015,
+    "flood": 0,
+    "waterSeeds": 0
+   },
+   "tierShareInWins": {
+    "rad#1": 1,
+    "seedOut#1": 0.908,
+    "drought#1": 0.892,
+    "drought#2": 0.831,
+    "salt#1": 0.831,
+    "humid#1": 0.631,
+    "heat#1": 0.631,
+    "earlyMat#1": 0.615,
+    "cool#1": 0.538,
+    "seedOut#2": 0.415,
+    "warm#1": 0.338,
+    "humid#2": 0.231,
+    "cool#2": 0.215,
+    "humid#3": 0.169,
+    "humid#4": 0.154,
+    "dry#1": 0.154,
+    "humid#5": 0.123,
+    "drought#3": 0.077,
+    "humid#6": 0.062,
+    "cool#3": 0.062,
+    "warm#2": 0.031,
+    "heat#2": 0.015,
+    "humid#7": 0.015,
+    "cool#4": 0.015,
+    "cold#1": 0.015
+   },
+   "neverBoughtInWins": [
+    "flood",
+    "waterSeeds"
+   ],
+   "terraformUseful": {
+    "runsWithTerraformThatOpenedLand": 0.943,
+    "runsBuyingTerraform": 0.943,
+    "terraformShareOfPurchases": 0.361
+   },
+   "purchaseKinds": {
+    "Adapt:unlock": 287,
+    "Terraform:unlock": 245,
+    "Spread:speed": 141,
+    "Adapt:progress": 11,
+    "Terraform:progress": 3
+   },
+   "colonyLayer": {
+    "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+    "vsBalanced": {
+     "pairs": 10,
+     "colonyFasterShare": 0.9,
+     "relativeTimePct": {
+      "n": 10,
+      "p10": -25.9,
+      "p25": -21.2,
+      "median": -17.8,
+      "p75": -14.7,
+      "p90": -6.9,
+      "max": 8.3,
+      "mean": -16.5
+     }
+    }
+   }
+  },
+  "thin_air": {
+   "policies": {
+    "balanced": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 290.1,
+      "p25": 290.1,
+      "median": 290.1,
+      "p75": 290.1,
+      "p90": 292.7,
+      "max": 315.7,
+      "mean": 292.7
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 834,
+      "p25": 912.5,
+      "median": 1075,
+      "p75": 1180,
+      "p90": 1247,
+      "max": 1310,
+      "mean": 1055
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 5.6,
+      "p25": 5.9,
+      "median": 6.5,
+      "p75": 7.7,
+      "p90": 8.4,
+      "max": 9,
+      "mean": 6.8
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 4.9,
+      "p25": 5,
+      "median": 6,
+      "p75": 6,
+      "p90": 7,
+      "max": 7,
+      "mean": 5.7
+     },
+     "byBoard": {
+      "Adapt": 0.772,
+      "Spread": 0.105,
+      "Terraform": 0.123
+     },
+     "firstPurchase": {
+      "drought": 8,
+      "heat": 2
+     },
+     "opening2": {
+      "drought>heat": 8,
+      "heat>drought": 2
+     }
+    },
+    "adapt_first": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 290.1,
+      "p25": 290.1,
+      "median": 290.1,
+      "p75": 290.1,
+      "p90": 293,
+      "max": 319.5,
+      "mean": 293
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 778,
+      "p25": 857.5,
+      "median": 1045,
+      "p75": 1162.5,
+      "p90": 1190,
+      "max": 1280,
+      "mean": 1013
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 5.9,
+      "p25": 6,
+      "median": 6.7,
+      "p75": 8.2,
+      "p90": 9,
+      "max": 9.2,
+      "mean": 7.1
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 4,
+      "p25": 5,
+      "median": 5.5,
+      "p75": 6,
+      "p90": 6.1,
+      "max": 7,
+      "mean": 5.4
+     },
+     "byBoard": {
+      "Adapt": 0.852,
+      "Spread": 0.111,
+      "Terraform": 0.037
+     },
+     "firstPurchase": {
+      "drought": 8,
+      "heat": 2
+     },
+     "opening2": {
+      "drought>heat": 8,
+      "heat>drought": 2
+     }
+    },
+    "spread_first": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 290.1,
+      "p25": 290.1,
+      "median": 290.1,
+      "p75": 290.1,
+      "p90": 325.4,
+      "max": 405.1,
+      "mean": 304.2
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 1073,
+      "p25": 1080,
+      "median": 1170,
+      "p75": 1280,
+      "p90": 1382,
+      "max": 1760,
+      "mean": 1225
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 5.1,
+      "p25": 5.5,
+      "median": 6,
+      "p75": 6.5,
+      "p90": 6.5,
+      "max": 6.9,
+      "mean": 5.8
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 6,
+      "p25": 6,
+      "median": 6.5,
+      "p75": 7,
+      "p90": 7.2,
+      "max": 9,
+      "mean": 6.7
+     },
+     "byBoard": {
+      "Adapt": 0.612,
+      "Spread": 0.343,
+      "Terraform": 0.045
+     },
+     "firstPurchase": {
+      "drought": 4,
+      "seedOut": 4,
+      "heat": 2
+     },
+     "opening2": {
+      "drought>seedOut": 3,
+      "seedOut>drought": 3,
+      "heat>seedOut": 2,
+      "drought>heat": 1,
+      "seedOut>earlyMat": 1
+     }
+    },
+    "terraform_first": {
+     "runs": 10,
+     "winRate": 0.9,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 9,
+      "p10": 290.1,
+      "p25": 290.1,
+      "median": 321.8,
+      "p75": 379.2,
+      "p90": 468.6,
+      "max": 700,
+      "mean": 368.7
+     },
+     "biomassSpentAtBloom": {
+      "n": 9,
+      "p10": 1100,
+      "p25": 1200,
+      "median": 1260,
+      "p75": 1540,
+      "p90": 2002,
+      "max": 2970,
+      "mean": 1480
+     },
+     "coveragePer100Biomass": {
+      "n": 9,
+      "p10": 3.7,
+      "p25": 4.5,
+      "median": 5.6,
+      "p75": 5.8,
+      "p90": 6.5,
+      "max": 8.1,
+      "mean": 5.3
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 4.9,
+      "p25": 5,
+      "median": 6,
+      "p75": 6.8,
+      "p90": 7.1,
+      "max": 8,
+      "mean": 5.9
+     },
+     "byBoard": {
+      "Adapt": 0.339,
+      "Spread": 0.034,
+      "Terraform": 0.627
+     },
+     "firstPurchase": {
+      "humid": 6,
+      "drought": 2,
+      "cool": 2
+     },
+     "opening2": {
+      "humid>humid": 4,
+      "drought>cool": 2,
+      "humid>cool": 2,
+      "cool>humid": 1,
+      "cool>drought": 1
+     }
+    },
+    "greedy": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 290.1,
+      "p25": 290.1,
+      "median": 290.1,
+      "p75": 290.1,
+      "p90": 298.5,
+      "max": 373.8,
+      "mean": 298.5
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 1055,
+      "p25": 1087.5,
+      "median": 1210,
+      "p75": 1210,
+      "p90": 1282,
+      "max": 1480,
+      "mean": 1184
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 5.5,
+      "p25": 5.8,
+      "median": 5.8,
+      "p75": 6.4,
+      "p90": 6.6,
+      "max": 6.9,
+      "mean": 6
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 6,
+      "p25": 6,
+      "median": 7,
+      "p75": 7,
+      "p90": 7.1,
+      "max": 8,
+      "mean": 6.7
+     },
+     "byBoard": {
+      "Adapt": 0.612,
+      "Spread": 0.284,
+      "Terraform": 0.104
+     },
+     "firstPurchase": {
+      "heat": 5,
+      "seedOut": 3,
+      "drought": 2
+     },
+     "opening2": {
+      "heat>drought": 5,
+      "seedOut>drought": 3,
+      "drought>heat": 2
+     }
+    },
+    "low_planning": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 290.1,
+      "p25": 290.1,
+      "median": 290.1,
+      "p75": 333,
+      "p90": 372.8,
+      "max": 469.3,
+      "mean": 321.9
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 910,
+      "p25": 957.5,
+      "median": 1065,
+      "p75": 1242.5,
+      "p90": 1469,
+      "max": 2000,
+      "mean": 1172
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 4.8,
+      "p25": 5.7,
+      "median": 6.6,
+      "p75": 7.3,
+      "p90": 7.7,
+      "max": 7.7,
+      "mean": 6.3
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 5,
+      "p25": 5.3,
+      "median": 6,
+      "p75": 6.8,
+      "p90": 7.1,
+      "max": 8,
+      "mean": 6.1
+     },
+     "byBoard": {
+      "Adapt": 0.541,
+      "Spread": 0.246,
+      "Terraform": 0.213
+     },
+     "firstPurchase": {
+      "drought": 6,
+      "humid": 3,
+      "earlyMat": 1
+     },
+     "opening2": {
+      "drought>seedOut": 2,
+      "humid>humid": 2,
+      "drought>heat": 2,
+      "drought>humid": 1,
+      "humid>drought": 1,
+      "drought>cool": 1
+     }
+    },
+    "colony": {
+     "runs": 10,
+     "winRate": 1,
+     "extinction": 0,
+     "bloomTime": {
+      "n": 10,
+      "p10": 290.1,
+      "p25": 290.1,
+      "median": 290.1,
+      "p75": 290.1,
+      "p90": 290.1,
+      "max": 290.1,
+      "mean": 290.1
+     },
+     "biomassSpentAtBloom": {
+      "n": 10,
+      "p10": 998,
+      "p25": 1125,
+      "median": 1250,
+      "p75": 1400,
+      "p90": 1590,
+      "max": 1770,
+      "mean": 1292
+     },
+     "coveragePer100Biomass": {
+      "n": 10,
+      "p10": 4.4,
+      "p25": 5,
+      "median": 5.6,
+      "p75": 6.2,
+      "p90": 7,
+      "max": 7.1,
+      "mean": 5.6
+     },
+     "purchases": {
+      "n": 10,
+      "p10": 5,
+      "p25": 6,
+      "median": 6.5,
+      "p75": 7,
+      "p90": 8.1,
+      "max": 9,
+      "mean": 6.6
+     },
+     "byBoard": {
+      "Adapt": 0.682,
+      "Spread": 0.212,
+      "Terraform": 0.106
+     },
+     "firstPurchase": {
+      "drought": 8,
+      "heat": 2
+     },
+     "opening2": {
+      "drought>heat": 7,
+      "heat>drought": 2,
+      "drought>salt": 1
+     }
+    }
+   },
+   "cells": 10,
+   "cellsAllPoliciesWin": 9,
+   "cellsSomePolicyFails": 1,
+   "fastestPolicyCount": {
+    "balanced": 8,
+    "adapt_first": 1,
+    "colony": 1
+   },
+   "slowerThanCellBestPct": {
+    "balanced": {
+     "n": 10,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 0,
+     "p90": 0.9,
+     "max": 8.8,
+     "mean": 0.9
+    },
+    "adapt_first": {
+     "n": 10,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 0,
+     "p90": 1,
+     "max": 10.1,
+     "mean": 1
+    },
+    "spread_first": {
+     "n": 10,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 0,
+     "p90": 12.2,
+     "max": 39.6,
+     "mean": 4.9
+    },
+    "terraform_first": {
+     "n": 9,
+     "p10": 0,
+     "p25": 0,
+     "median": 10.9,
+     "p75": 30.7,
+     "p90": 61.5,
+     "max": 141.3,
+     "mean": 27.1
+    },
+    "greedy": {
+     "n": 10,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 0,
+     "p90": 2.9,
+     "max": 28.9,
+     "mean": 2.9
+    },
+    "low_planning": {
+     "n": 10,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 14.8,
+     "p90": 28.5,
+     "max": 61.8,
+     "mean": 11
+    },
+    "colony": {
+     "n": 10,
+     "p10": 0,
+     "p25": 0,
+     "median": 0,
+     "p75": 0,
+     "p90": 0,
+     "max": 0,
+     "mean": 0
+    }
+   },
+   "lossVsCellBest": {
+    "balanced": 0,
+    "adapt_first": 0,
+    "spread_first": 0,
+    "terraform_first": 0.1,
+    "greedy": 0,
+    "low_planning": 0,
+    "colony": 0
+   },
+   "openingOfFastest": {
+    "drought>heat": 8,
+    "heat>drought": 2
+   },
+   "traitOwnershipInWins": {
+    "drought": 0.928,
+    "heat": 0.841,
+    "rad": 0.812,
+    "seedOut": 0.739,
+    "salt": 0.696,
+    "humid": 0.493,
+    "earlyMat": 0.435,
+    "cool": 0.188,
+    "dry": 0.043,
+    "cold": 0,
+    "flood": 0,
+    "waterSeeds": 0,
+    "warm": 0
+   },
+   "tierShareInWins": {
+    "drought#1": 0.928,
+    "heat#1": 0.841,
+    "rad#1": 0.812,
+    "seedOut#1": 0.739,
+    "salt#1": 0.696,
+    "drought#2": 0.594,
+    "humid#1": 0.493,
+    "earlyMat#1": 0.435,
+    "cool#1": 0.188,
+    "humid#2": 0.116,
+    "humid#3": 0.087,
+    "seedOut#2": 0.058,
+    "humid#4": 0.058,
+    "dry#1": 0.043,
+    "cool#2": 0.029,
+    "humid#5": 0.014,
+    "humid#6": 0.014
+   },
+   "neverBoughtInWins": [
+    "cold",
+    "flood",
+    "waterSeeds",
+    "warm"
+   ],
+   "terraformUseful": {
+    "runsWithTerraformThatOpenedLand": 0.557,
+    "runsBuyingTerraform": 0.6,
+    "terraformShareOfPurchases": 0.176
+   },
+   "purchaseKinds": {
+    "Adapt:unlock": 259,
+    "Spread:speed": 85,
+    "Terraform:unlock": 72,
+    "Adapt:progress": 11,
+    "Terraform:progress": 4
+   },
+   "colonyLayer": {
+    "note": "policy 'colony' = balanced + origin growth focus Leaves + a Leaf Canopy local upgrade",
+    "vsBalanced": {
+     "pairs": 10,
+     "colonyFasterShare": 0.1,
+     "relativeTimePct": {
+      "n": 10,
+      "p10": -0.8,
+      "p25": 0,
+      "median": 0,
+      "p75": 0,
+      "p90": 0,
+      "max": 0,
+      "mean": -0.8
+     }
+    }
+   }
+  }
+ }
+}
