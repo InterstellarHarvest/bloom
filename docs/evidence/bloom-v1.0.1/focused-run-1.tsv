@@ -1,0 +1,14 @@
+destination-survey-check	0	18	0	134s
+single-app-flow-check	1	55	5	423s
+species-selection-check	1	66	2	315s
+challenges-check	0	33	0	40s
+run-ui-check	0	40	0	72s
+run-ui-convergence-check	0	57	0	135s
+guided-training-check	0	50	0	134s
+visual-system-check	1	51	4	232s
+portable-runtime-check	0	71	0	408s
+planet-view-check	0	80	0	67s
+surface-check	0	11	0	2s
+native-competition-check	0	66	0	167s
+release-check--no-suites	0	51	0	128s
+FOCUSED-DONE
