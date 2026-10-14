@@ -13,7 +13,7 @@
 // Browser (Chromium AND Firefox; a static server for this tree and one for the 79f5540 tree):
 //   T · the title: the gameplay font on every interface element, EXPEDITION = the gameplay leaf button, icon + word entries, the dark planning
 //       card; all twelve paintings load untouched and the title text stays readable over every one of them (measured on the paintings' pixels)
-//   D · dialogs (Settings, Credits, the first-run recommendation): the same font / night card; their buttons' words unchanged
+//   D · dialogs (Settings, the first-run recommendation; v1.0.1: no Credits): the same font / night card; their buttons' words unchanged
 //   S · the Destination Survey: the gameplay font; the class columns = the gameplay statuses (icon + word); focus → the dossier's category rows,
 //       habitability key, Begin expedition in view and unobscured at 1024×768 … 2560×1440
 //   G · gameplay unchanged: the run (HUD, map banner), the Adapt room, the report and the training coach have IDENTICAL computed styles on
@@ -238,7 +238,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
       // ------------------------------------------------------------------ T · the title
       { const c = await context(), p = await page(c); await p.goto(HEAD_O + "/" + Q); await menuReady(p); await sleep(2600);
         const gameFont = await p.evaluate(() => { const d = document.createElement("i"); d.style.fontFamily = "var(--bloom-font)"; document.body.append(d); const f = getComputedStyle(d).fontFamily; d.remove(); return f; });   // the gameplay family, as the browser resolves it
-        const els = await p.evaluate(() => [".mm", "#mm-title", ".mm-sub", ".mm-item", ".mm-status", ".mm-dialog"].map(s => { const e = document.querySelector(s); return [s, e && getComputedStyle(e).fontFamily]; }));
+        const els = await p.evaluate(() => [".mm", "#mm-title", ".mm-sub", ".mm-item", ".mm-dialog"].map(s => { const e = document.querySelector(s); return [s, e && getComputedStyle(e).fontFamily]; }));
         const leaf = await tokenRgb(p, "--bloom-leaf-btn-night"), prim = await css(p, ".mm-item.primary", ["background-color", "color", "border-top-left-radius", "min-height"]);
         const items = await p.evaluate(() => [...document.querySelectorAll(".mm-item")].map(b => ({ text: b.innerText.trim(), icon: !!b.querySelector(".mm-ico svg.bloom-ic"), h: b.getBoundingClientRect().height })));
         const card = await css(p, ".mm-plaque", ["border-top-left-radius", "border-top-right-radius", "font-family"]);
@@ -247,7 +247,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
         B.title = { gameFont, els, prim, items, card };
         check(allGame && prim["background-color"] === leaf && prim.color === "rgb(255, 255, 255)" && J(items.map(i => i.text)) === J(["EXPEDITION", "CHALLENGES", "TRAINING", "SETTINGS", "CREDITS"])
           && items.every(i => i.icon && i.h >= 44) && card["border-top-left-radius"] === "22px" && card["border-top-right-radius"] === "18px" && !p.errs.length,
-          `[${bn}] T1 · the title speaks the gameplay language: every interface element (title, subtitle, menu, status, dialogs) in the gameplay font family; EXPEDITION is the leaf button in its planning shade (white word on --bloom-leaf-btn-night, ≥ 4.5 : 1); five chunky icon + word entries (≥ 44 px; BLOOM-036A added CHALLENGES), the labels unchanged; one dark planning card with the gameplay's irregular corners`,
+          `[${bn}] T1 · the title speaks the gameplay language: every interface element (title, subtitle, menu, dialogs; v1.0.1: the title has no status line) in the gameplay font family; EXPEDITION is the leaf button in its planning shade (white word on --bloom-leaf-btn-night, ≥ 4.5 : 1); five chunky icon + word entries (≥ 44 px; BLOOM-036A added CHALLENGES), the labels unchanged; one dark planning card with the gameplay's irregular corners`,
           `${els.map(([s, f]) => s + "=" + (normF(f) === normF(gameFont) ? "game" : f)).join(" ")} · ${prim["background-color"]} · ${items.map(i => `${i.text} ${Math.round(i.h)}px`).join(" · ")}`);
         await shot(p, "01-title-1440x900.jpg");
         // T2 · every painting loads untouched and the title stays readable over it
@@ -277,12 +277,12 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
           paint.map(x => `${x.u.slice(5, 7)}:${x.worst}`).join(" "));
         // D · dialogs
         const dlg = {};
-        for (const [name, act] of [["settings", "settings"], ["credits", "credits"]]) { await p.click(`.mm-item[data-act="${act}"]`); await sleep(350);
+        for (const [name, act] of [["settings", "settings"]]) { await p.click(`.mm-item[data-act="${act}"]`); await sleep(350);
           dlg[name] = await p.evaluate(n => { const d = document.querySelector(`[data-dialog="${n}"]`), s = getComputedStyle(d); return { open: d.open, font: s.fontFamily, radius: s.borderTopLeftRadius, bg: s.backgroundColor, h2: getComputedStyle(d.querySelector("h2")).fontFamily, btns: [...d.querySelectorAll(".mm-btn")].map(b => b.textContent) }; }, name);
           await shot(p, `02-${name}-1440x900.jpg`); await p.keyboard.press("Escape"); await sleep(200); }
         const solid = await tokenRgb(p, "--bloom-night-card-solid");
-        check(Object.values(dlg).every(d => d.open && normF(d.font) === normF(gameFont) && normF(d.h2) === normF(gameFont) && d.radius === "22px" && d.bg === solid) && J(dlg.settings.btns) === J(["Done"]) && J(dlg.credits.btns) === J(["Back to menu"]),
-          `[${bn}] D1 · Settings and Credits are the night card (solid, the gameplay corners), in the gameplay font; their buttons keep their words (icons beside them, not in them)`, J(Object.fromEntries(Object.entries(dlg).map(([k, d]) => [k, d.btns]))));
+        check(Object.values(dlg).every(d => d.open && normF(d.font) === normF(gameFont) && normF(d.h2) === normF(gameFont) && d.radius === "22px" && d.bg === solid) && J(dlg.settings.btns) === J(["Show Training recommendation again", "Reset preferences", "Done"]),
+          `[${bn}] D1 · Settings is the night card (solid, the gameplay corners), in the gameplay font; its buttons keep their words (icons beside them, not in them; v1.0.1: + the Training and Reset preferences actions; no Credits dialog)`, J(Object.fromEntries(Object.entries(dlg).map(([k, d]) => [k, d.btns]))));
         // A · keyboard focus + arrows
         await p.focus('.mm-item[data-act="begin"]'); await p.keyboard.press("ArrowDown"); await sleep(60);
         const kb = await p.evaluate(() => { const a = document.activeElement, s = getComputedStyle(a); return { act: a.dataset.act, outline: `${s.outlineStyle} ${s.outlineWidth}`, color: s.outlineColor }; });
@@ -498,7 +498,7 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
     await c.addInitScript(() => { try { localStorage.setItem("strange-bloom.training", '{"v":1,"status":"completed","at":1}'); } catch (e) { /* none */ } });
     fs.mkdirSync(path.join(EVD, "paintings"), { recursive: true });
     for (let i = 0; i < 12; i++) { const p = await c.newPage(); await p.goto(`${HEAD_O}/?sector=77&workers=1&bg=${i}`); await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready && MENU_DEV.entry.state === "menu", null, { timeout: 60000 }); await sleep(2400);
-      await p.evaluate(() => document.querySelector(".mm-status").textContent = ""); await p.screenshot({ path: path.join(EVD, `paintings/title-painting-${String(i + 1).padStart(2, "0")}.jpg`), type: "jpeg", quality: 82 }); await p.close(); }
+      await p.screenshot({ path: path.join(EVD, `paintings/title-painting-${String(i + 1).padStart(2, "0")}.jpg`), type: "jpeg", quality: 82 }); await p.close(); }
     await browser.close();
   }
   srvHead.close(); srvBase.close(); fs.rmSync(BASE_DIR, { recursive: true, force: true });

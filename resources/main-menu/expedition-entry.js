@@ -63,7 +63,7 @@
 import { MainMenu } from "./main-menu.js";
 import { BlackFade } from "./black-fade.js";
 import { readSettings, reducedMotionFor } from "./main-menu-data.js";
-import { readTraining, writeTraining } from "../training/training-store.js";
+import { readTraining, writeTraining, clearTraining } from "../training/training-store.js";
 import { DestinationSurvey } from "../destination-survey/destination-survey.js";
 import { speciesFor } from "../destination-survey/survey-data.js";
 import { AtmosphereTransition } from "../atmosphere-transition/atmosphere-transition.js";
@@ -121,7 +121,8 @@ export class ExpeditionEntry {
       onChallenges: this.challengeScreen ? () => { this.beginChallenges().catch(err => console.error("ExpeditionEntry: could not open the Challenges", err)); } : null,
       onTraining: toTraining,
       onRecommendChoice: c => this._recommendChoice(c),
-      onSettingsChange: s => this._settingsChanged(s) });
+      onSettingsChange: s => this._settingsChanged(s),
+      onTrainingReset: toTraining ? () => this.resetTrainingRecommendation() : null });
     this._syncTrainingTag();
     this._prefetchSector(this.firstSector);           // the first sector starts now, while the title is showing
     this.menu.shown.then(() => { if (this.state === "menu") this.atx.prepare(); }); // cloud bitmaps ready before the first transition
@@ -246,7 +247,7 @@ export class ExpeditionEntry {
       return true;
     }
     this.challenge = null; this._endLaunch();                           // (036A) the title never carries a Challenge
-    this.menu.setStatus(""); this._syncTrainingTag();
+    this._syncTrainingTag();
     const shown = this.menu.show({ settled: true });
     rec.swappedMs = Math.round(performance.now() - t0);
     await Promise.race([shown, sleep(T.paintingWait)]);
@@ -274,7 +275,6 @@ export class ExpeditionEntry {
     s.dispose();                                                        // renderer (one context), nine views, workers (the pool it owned), listeners, DOM
     this.surveyHost.hidden = true; this.surveyHost.inert = false;
     this.challenge = null;                                              // (036A) the title never carries a Challenge
-    this.menu.setStatus("");                                            // that sector went with the survey; the fresh prefetch reports its own
     const shown = this.menu.show({ settled: true });                    // the next painting (preloaded) at rest, no entrance; focus on Begin
     rec.swappedMs = Math.round(performance.now() - t0);
     await Promise.race([shown, sleep(T.paintingWait)]);                 // decoded and on screen before the black lifts
@@ -342,7 +342,7 @@ export class ExpeditionEntry {
     this._closeSpecies();
     if (this.carry) { if (this.carry.pool) this.carry.pool.dispose(); this.carry = null; }
     if (this.challenge && this.challengeScreen) { this.challenge = null; this._endLaunch(); await this._openChallenges(rm, { at: performance.now(), back: true }, performance.now()); return true; } // (036A) back to the hub; (036B) the launch is let go
-    this.menu.setStatus(""); this._syncTrainingTag();
+    this._syncTrainingTag();
     const shown = this.menu.show({ settled: true });
     await Promise.race([shown, sleep(T.paintingWait)]); await frame(); await frame();
     if (this.state === "disposed") return false;
@@ -500,7 +500,7 @@ export class ExpeditionEntry {
     await this._fade(1, rm);
     if (this.state === "disposed") return false;
     this._closeChallenges(); this.challenge = null; this._endLaunch();
-    this.menu.setStatus(""); this._syncTrainingTag();
+    this._syncTrainingTag();
     const shown = this.menu.show({ settled: true });
     await Promise.race([shown, sleep(T.paintingWait)]); await frame(); await frame();
     if (this.state === "disposed") return false;
@@ -540,6 +540,9 @@ export class ExpeditionEntry {
       this.beginExpedition().catch(err => console.error("ExpeditionEntry: could not enter the survey", err)); }
     else if (choice === "training" && this._toTraining) this._toTraining();
   }
+  /** (v1.0.1) Settings: the training record back to first-run (the training store's own clearTraining), so TRAINING carries its
+   *  Recommended tag again and the next EXPEDITION offers the first-run recommendation. Launches nothing; no flow state changes. */
+  resetTrainingRecommendation() { clearTraining(this.store); this._syncTrainingTag(); }
   _syncTrainingTag() { this.menu.setTrainingRecommended(this.recommendsTraining); }
 
   /** The black layer to opacity `to` (1: covered, 0: clear): ./black-fade.js (220 / 250 ms, reduced motion 80 / 80 ms). */
@@ -548,12 +551,9 @@ export class ExpeditionEntry {
   _prefetchSector(first) {
     const pool = this.prefetch = DestinationSurvey.prefetch({ ...first, ...this.poolOpts, species: this.species }), rec = { seed: pool.first.seed, species: this.species.id, at: performance.now(), readyMs: null };
     this.stats.prefetches.push(rec);
-    // the status line shows survey progress only while worlds are actually being generated; a ready sector clears it (owner decision
-    // 2026-10-10: no completion banner / toast / badge — the Destination Survey's 3 × 3 matrix already shows that the worlds are ready)
-    const status = () => { if (this.prefetch !== pool || this.state !== "menu") return; const p = pool.progress;
-      this.menu.setStatus(p.ready ? "" : `Surveying sector · ${p.confirmed} of ${p.total} worlds`); };
-    pool.onProgress = status; status();
-    pool.ready.then(() => { rec.readyMs = Math.round(performance.now() - rec.at); status(); }, () => { if (this.prefetch === pool) this.menu.setStatus(""); });
+    // (v1.0.1, owner direction) the prefetch runs silently: the title never shows survey progress or a completed sector (no status line,
+    // banner, toast or badge) — the Destination Survey's own header reports progress once the player is in it
+    pool.ready.then(() => { rec.readyMs = Math.round(performance.now() - rec.at); }, () => {});
   }
 
   _announced(detail) {

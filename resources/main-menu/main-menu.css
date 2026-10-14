@@ -73,14 +73,7 @@
 .mm-item .mm-tag .ic{width:13px; height:13px; fill:var(--bloom-gold-night); stroke:var(--bloom-gold-night); stroke-width:1.4}
 .mm-item .mm-tag[hidden]{display:none}
 
-/* ── status (what EXPEDITION will meet: the first sector preparing) — a small night pill, bottom right, under the card's column ── */
-.mm-status{position:absolute; right:clamp(24px, 6cqw, 128px); bottom:clamp(12px, 2cqh, 22px); margin:0; max-width:min(60cqw, 460px); display:flex; align-items:center; gap:8px;
-  padding:5px 12px 5px 10px; border:2px solid var(--line); border-radius:var(--bloom-r-pill); background:rgba(9,13,25,.78);
-  font-size:11.5px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); pointer-events:none}
-.mm-status::before{content:""; width:9px; height:9px; border-radius:50%; flex:none; background:var(--bloom-leaf-night); box-shadow:0 0 0 3px rgba(127,207,134,.18)}
-.mm-status:empty{display:none}
-
-/* ── dialogs (Training / Settings / Credits / the first-run recommendation): the same night card ── */
+/* ── dialogs (Training / Settings / the first-run recommendation): the same night card ── */
 .mm-dialog{position:fixed; inset:0; margin:auto; width:min(520px, calc(100vw - 32px)); max-height:calc(100vh - 32px); padding:0; border:2px solid var(--line-2); border-radius:var(--bloom-r-lg);
   background:var(--bloom-night-card-solid); color:var(--ink); font-family:var(--bloom-font); box-shadow:var(--bloom-night-shadow)}
 .mm-dialog::backdrop{background:var(--bloom-night-veil)}
@@ -99,10 +92,12 @@
 .mm-choice input:focus-visible{outline:3px solid var(--focus); outline-offset:2px}
 .mm-choice b{display:block; font-weight:800; color:var(--ink)}
 .mm-choice small{display:block; color:var(--ink-faint); font-size:13px; font-weight:700}
-.mm-dialog .mm-credits{margin:0}
-.mm-dialog .mm-credits dt{margin-top:12px; font-size:var(--bloom-kicker-size); font-weight:var(--bloom-kicker-weight); letter-spacing:var(--bloom-kicker-track); text-transform:uppercase; color:var(--ink-faint)}
-.mm-dialog .mm-credits dt:first-child{margin-top:0}
-.mm-dialog .mm-credits dd{margin:2px 0 0; color:var(--ink-soft); font-weight:600}
+/* (v1.0.1) Settings' two small actions: a kicker heading (the Motion legend's), one button, one helper line */
+.mm-dialog .mm-set{display:flex; flex-direction:column; align-items:flex-start; gap:6px; margin-top:14px}
+.mm-dialog .mm-set h3{margin:0; font-size:var(--bloom-kicker-size); font-weight:var(--bloom-kicker-weight); letter-spacing:var(--bloom-kicker-track); text-transform:uppercase; color:var(--ink-faint)}
+.mm-dialog .mm-set small{color:var(--ink-faint); font-size:13px; font-weight:700}
+.mm-dialog p.mm-set-msg{margin:12px 0 0; font-size:13px; font-weight:700; color:var(--bloom-leaf-night)}
+.mm-dialog p.mm-set-msg:empty{display:none}
 .mm-dialog-actions{display:flex; justify-content:flex-end; flex-wrap:wrap; gap:10px; margin-top:18px}
 .mm-btn{display:inline-flex; align-items:center; gap:8px; min-height:var(--bloom-control-min); padding:6px 16px 6px 13px; cursor:pointer; border:2px solid var(--line-2); border-radius:var(--bloom-r-btn);
   background:var(--raised); box-shadow:0 var(--bloom-lip) 0 var(--line-2); font-weight:800; font-size:15px; color:var(--ink); white-space:nowrap;
@@ -120,13 +115,12 @@
 /* ── entrances (the card rises, the entries follow); hidden state; recede ── */
 .mm-plaque{animation:mm-rise .7s var(--ease) both}
 .mm-nav li{animation:mm-fade .5s var(--ease) both; animation-delay:calc(.26s + var(--i, 0) * .07s)}
-.mm-status{animation:mm-fade .6s var(--ease) .6s both}
 /* (entrances and the recede use the independent `translate` property, so the card's layout transform is never fought) */
 @keyframes mm-rise{from{opacity:0; translate:0 14px} to{opacity:1; translate:0 0}}
 @keyframes mm-fade{from{opacity:0} to{opacity:1}}
-.mm.is-receded .mm-plaque, .mm.is-receded .mm-status{opacity:0} /* held by the script's recede animation, then hidden */
+.mm.is-receded .mm-plaque{opacity:0} /* held by the script's recede animation, then hidden */
 /* settled (028C1): shown under the entry's black, which is the entrance — no replay, the painting appears without its fade */
-.mm.is-settled .mm-plaque, .mm.is-settled .mm-nav li, .mm.is-settled .mm-status{animation:none}
+.mm.is-settled .mm-plaque, .mm.is-settled .mm-nav li{animation:none}
 .mm.is-settled .mm-art{transition:none}
 
 /* ── narrower screens: the card spans the bottom (portrait phones, small tablets) ── */
@@ -137,7 +131,6 @@
   .mm-sub{letter-spacing:.26em; padding-left:.26em}
   .mm-item{font-size:15px; min-height:46px}
   .mm-item.primary{font-size:16px; min-height:50px}
-  .mm-status{right:auto; left:16px; top:14px; bottom:auto}
 }
 @container (max-height: 560px){
   .mm-title h1{font-size:clamp(28px, 3.6cqw, 42px)} .mm-title{margin-bottom:12px} .mm-sub{margin-top:8px}
@@ -147,12 +140,12 @@
 
 /* ── reduced motion: entrances become immediate, the painting appears without a fade; nothing is disabled ── */
 @media (prefers-reduced-motion: reduce){
-  .mm:not(.motion-full) .mm-plaque, .mm:not(.motion-full) .mm-nav li, .mm:not(.motion-full) .mm-status{animation-duration:.01s; animation-delay:0s}
+  .mm:not(.motion-full) .mm-plaque, .mm:not(.motion-full) .mm-nav li{animation-duration:.01s; animation-delay:0s}
   .mm:not(.motion-full) .mm-art{transition-duration:.01s}
   .mm:not(.motion-full) .mm-item, .mm:not(.motion-full) .mm-btn{transition-duration:.01s}
   .mm:not(.motion-full) .mm-item:hover, .mm:not(.motion-full) .mm-btn:hover, .mm:not(.motion-full) .mm-item:active, .mm:not(.motion-full) .mm-btn:active{transform:none}
 }
-.mm.rm .mm-plaque, .mm.rm .mm-nav li, .mm.rm .mm-status{animation-duration:.01s; animation-delay:0s}
+.mm.rm .mm-plaque, .mm.rm .mm-nav li{animation-duration:.01s; animation-delay:0s}
 .mm.rm .mm-art{transition-duration:.01s}
 .mm.rm .mm-item, .mm.rm .mm-btn{transition-duration:.01s}
 .mm.rm .mm-item:hover, .mm.rm .mm-btn:hover, .mm.rm .mm-item:active, .mm.rm .mm-btn:active{transform:none}
@@ -160,3 +153,7 @@
 /* (BLOOM-030; BLOOM-033) the app document shell (the root index.html and the demos/main-menu.html alias): the app fills the viewport. */
 html.mm-page, html.mm-page body{margin:0; height:100%; background:var(--bloom-space-0); overflow:hidden}
 html.mm-page #app{position:relative; width:100%; height:100vh; height:100dvh}
+/* (v1.0.1, owner direction) no player-facing text in the game is selectable by a pointer drag: ONE rule on the production document's
+   root, so the title, Training, species, survey, Challenges, gameplay, rooms and reports (everything under #app, and the overlays put on
+   <body>) all inherit it. Presentation only: focus, keyboard, scrolling, pointer input and accessible names are untouched. */
+html.mm-page{-webkit-user-select:none; user-select:none}

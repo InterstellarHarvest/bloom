@@ -199,8 +199,8 @@ const RANKING = /\b(easy|easier|hard|difficulty|beginner|expert|stars?|rating|sc
         check(cp.species === "reed_spire" && cp.chip === "Reed Spire" && cp.cells, `[${bn}] F8 · Choose another planet: a survey for the SAME species (Reed Spire)`, J(cp));
         await p.click(".ds-exit"); await menuReady(p);
         await p.waitForFunction(() => { const pool = MENU_DEV.entry.prefetch; return !pool || (pool.progress && pool.progress.ready); }, null, { timeout: 180000, polling: 200 }).catch(() => {});
-        const banner = await p.evaluate(() => ({ status: (document.querySelector(".mm-status") || {}).textContent || "", text: document.body.innerText }));
-        check(!/sector surveyed|nine worlds ready/i.test(banner.text) && !/surveyed/i.test(banner.status), `[${bn}] F9b · back on the title with the sector surveyed: NO "Sector surveyed · nine worlds ready" banner (the owner correction; progress text only while worlds are generated)`, J(banner.status));
+        const banner = await p.evaluate(() => ({ status: !!document.querySelector(".mm-status, .mm [role=status]"), text: document.body.innerText }));
+        check(!/sector surveyed|worlds ready|surveying sector|of 9 worlds/i.test(banner.text) && !banner.status, `[${bn}] F9b · back on the title with the sector surveyed: NO "Sector surveyed · nine worlds ready" banner and (v1.0.1) no survey status line at all on the title`, J(banner.status));
         await openSpecies(p);
         const again = await p.evaluate(SS => eval(SS).selected.id, SS);
         check(again === "reed_spire", `[${bn}] F9 · Main menu → title; EXPEDITION re-opens the species screen on the last species chosen this session`, again);

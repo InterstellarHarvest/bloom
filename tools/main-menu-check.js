@@ -54,10 +54,10 @@ const mulberry32 = a => () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.i
   // M2 the displayed title
   check(M.TITLE === "Strange Bloom" && M.SUBTITLE === "Unknown Soils", "M2 player-facing title is exactly \"Strange Bloom\" / \"Unknown Soils\"", `${M.TITLE} · ${M.SUBTITLE}`);
   { const menu = read("resources/main-menu/main-menu.js"), page = read("demos/main-menu.html");
-    const literal = /["'`](BLOOM|Bloom)(?! project| internally|_| classic|-0)/; // the menu's visible strings never call the game BLOOM; "A BLOOM project" (credits) is the one intended mention
+    const literal = /["'`](BLOOM|Bloom)(?! project| internally|_| classic|-0)/; // the menu's visible strings never call the game BLOOM; (v1.0.1: the Credits dialog and its "A BLOOM project" are gone)
     const visible = menu.split("\n").filter(l => /<h1|<h2|mm-sub|label:|<p>|<dt>|<dd>|lede/.test(l) && !/BLOOM project|BLOOM-0|Destination Survey/.test(l) && /BLOOM\b/.test(l));
     check(!visible.length && /<title>Strange Bloom — Unknown Soils<\/title>/.test(page) && menu.includes("TITLE") && menu.includes("SUBTITLE") && !/["']Strange Bloom["']/.test(menu),
-      "M2b the menu renders TITLE / SUBTITLE from data (no other spelling), the entry page's <title> is the player title, no visible menu string names the game BLOOM (credits: \"A BLOOM project\")", visible.join(" | ").slice(0, 200) || "ok");
+      "M2b the menu renders TITLE / SUBTITLE from data (no other spelling), the entry page's <title> is the player title, no visible menu string names the game BLOOM", visible.join(" | ").slice(0, 200) || "ok");
     void literal; }
 
   // M3 the background rule
@@ -142,17 +142,52 @@ const mulberry32 = a => () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.i
       && /\.animate\(\[\{ opacity: to \? 0 : 1 \}, \{ opacity: to \}\]/.test(bf) && !/translate|scale|clip-path|filter/.test(bf)
       && /toBlack: 220, fromBlack: 250, toBlackRm: 80, fromBlackRm: 80/.test(bf) && /FADE_EASE = "cubic-bezier\(\.4,0,\.2,1\)"/.test(bf),
       "M7g (028C1; 028D1: the fade lives in black-fade.js) menu ↔ survey is a fade through black: ExpeditionEntry never runs the AtmosphereTransition itself (it only hands it to the survey's dramatic departure); its fade (BlackFade) animates opacity alone (no zoom, wipe, clouds), 220 / 250 ms, reduced 80 / 80 ms");
-    check(/\.mm\.is-settled \.mm-plaque, \.mm\.is-settled \.mm-nav li, \.mm\.is-settled \.mm-status\{animation:none\}/.test(css) && /\.mm\.is-settled \.mm-art\{transition:none\}/.test(css) && /show\(\{ settled: true \}\)/.test(ec),
+    check(/\.mm\.is-settled \.mm-plaque, \.mm\.is-settled \.mm-nav li\{animation:none\}/.test(css) && /\.mm\.is-settled \.mm-art\{transition:none\}/.test(css) && /show\(\{ settled: true \}\)/.test(ec),
       "M7h (028C1) the return shows the menu `settled` under the black (no entrance replay, no painting fade), so the screen is complete before the black lifts"); }
 
   // M8 · (PMO UI correction 2026-10-10) the owner rejected the "Sector surveyed · nine worlds ready" completion banner: it is gone from every
-  // player-facing source and the shipped portable bundle, and the title's status line is cleared (hidden by .mm-status:empty) once the
-  // prefetched sector is ready — progress copy only while worlds are actually being generated. (release-check R16b proves it live.)
+  // player-facing source and the shipped portable bundle. (v1.0.1, owner direction) the title shows NO survey status at all: the status
+  // line, its API (MainMenu.setStatus) and its styles are gone, and the prefetch itself still starts from the title, silently.
+  // (release-check R16b and text-selection-check S1 prove it live.)
   { const walk = d => fs.readdirSync(path.join(ROOT, d), { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(`${d}/${e.name}`) : /\.(js|mjs|css|html)$/.test(e.name) ? [`${d}/${e.name}`] : []);
     const files = [...walk("resources"), ...walk("content"), ...walk("dist"), "index.html"], hits = files.filter(f => /nine worlds ready|sector surveyed|worlds ready/i.test(read(f)));
-    const ee = read("resources/main-menu/expedition-entry.js"), css = read("resources/main-menu/main-menu.css");
-    check(!hits.length && /this\.menu\.setStatus\(p\.ready \? "" : `Surveying sector · \$\{p\.confirmed\} of \$\{p\.total\} worlds`\)/.test(ee) && /\.mm-status:empty\{display:none\}/.test(css),
-      `M8 no survey-complete banner: "Sector surveyed · nine worlds ready" (or any "worlds ready" copy) appears in none of ${files.length} player-facing files (resources, content, dist, index.html); the title's status line shows "Surveying sector · n of 9 worlds" only while the sector is being generated and is cleared — hence display:none, no reserved space — once it is ready`, J(hits)); }
+    const code = s => s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`\\])\/\/.*$/gm, "$1");
+    const mm = code(read("resources/main-menu/main-menu.js")), ee = code(read("resources/main-menu/expedition-entry.js")), css = code(read("resources/main-menu/main-menu.css")), bundle = read("dist/portable/strange-bloom.portable.js");
+    const gone = !/setStatus|statusEl|mm-status/.test(mm) && (mm.match(/role="status"/g) || []).length === 1 && /<p class="mm-set-msg" role="status" aria-live="polite"><\/p>/.test(mm) /* (the one live line left is the Settings dialog's own feedback) */ && !/mm-status/.test(css) && !/setStatus|Surveying sector|of \$\{[^}]*\} worlds|pool\.onProgress/.test(ee)
+      && !/mm-status|setStatus|Surveying sector · /.test(bundle);
+    const prefetch = /_prefetchSector\(first\) \{\s*const pool = this\.prefetch = DestinationSurvey\.prefetch\(/.test(ee) && (ee.match(/this\._prefetchSector\(/g) || []).length >= 3 && /rec\.readyMs = /.test(ee);
+    check(!hits.length && gone && prefetch,
+      `M8 no survey status on the title: "Sector surveyed · nine worlds ready" (or any "worlds ready" copy) appears in none of ${files.length} player-facing files (resources, content, dist, index.html); (v1.0.1) the title's status line is removed — no .mm-status element / style, no MainMenu.setStatus, no "Surveying sector · n of 9 worlds" in the entry or the portable bundle — while ExpeditionEntry still starts DestinationSurvey.prefetch() from the title and records its readiness`, J({ hits, gone, prefetch })); }
+
+  // M9 · (v1.0.1, owner direction) no player-facing text is pointer-selectable: ONE rule on the production document's root (html.mm-page:
+  // index.html and its demos/main-menu.html alias), inherited by every screen; no component re-enables selection; no script hack; the shared
+  // theme (also read by docs / demo pages) carries no selection rule. (text-selection-check proves it in the browsers.)
+  { const strip = s => s.replace(/\/\*[\s\S]*?\*\//g, "");
+    const css = strip(read("resources/main-menu/main-menu.css")), theme = strip(read("resources/ui/bloom-theme.css")), html = read("index.html");
+    const prod = [...fs.readdirSync(path.join(ROOT, "resources"), { recursive: true })].map(f => `resources/${f}`).filter(f => /\.(js|css)$/.test(f) && !/vendor\//.test(f) && fs.statSync(path.join(ROOT, f)).isFile());
+    const reenable = prod.filter(f => /user-select\s*:\s*(text|all|auto|contain)/i.test(read(f))), hacks = prod.filter(f => /selectstart|removeAllRanges|\.empty\(\)\s*;?\s*\/\/\s*selection/.test(read(f)));
+    const rule = /html\.mm-page\{-webkit-user-select:none; user-select:none\}/.test(css), page = /<html lang="en" class="mm-page">/.test(html) && /href="resources\/main-menu\/main-menu\.css"/.test(html);
+    check(rule && page && !reenable.length && !hacks.length && !/user-select/.test(theme),
+      `M9 one central selection rule: html.mm-page{-webkit-user-select:none; user-select:none} in main-menu.css (the production document shell), index.html is that document; none of ${prod.length} production JS / CSS files re-enables selection (user-select:text|all|auto|contain) or suppresses it by script (selectstart / removeAllRanges); bloom-theme.css has no selection rule`, J({ rule, page, reenable, hacks })); }
+
+  // M10 · (v1.0.1, owner direction) the title is EXPEDITION · CHALLENGES · TRAINING · SETTINGS — no CREDITS entry, dialog or styles — while
+  // the attribution and licences stay shipped (README "Credits", the Three.js vendor LICENSE, the bundle's @license header); Settings is
+  // small: Motion + "Show Training recommendation again" + "Reset preferences", through the existing stores (writeSettings /
+  // clearTraining), never localStorage.clear(); nothing gameplay-affecting (pause, difficulty, fullscreen …) is offered
+  { const strip = s => s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`\\])\/\/.*$/gm, "$1");
+    const mm = strip(read("resources/main-menu/main-menu.js")), css = strip(read("resources/main-menu/main-menu.css")), ee = strip(read("resources/main-menu/expedition-entry.js"));
+    const ids = [...mm.slice(mm.indexOf("const ITEMS = ["), mm.indexOf("];", mm.indexOf("const ITEMS = ["))).matchAll(/id: "(\w+)"/g)].map(m => m[1]);
+    const noCredits = !/credits/i.test(mm) && !/credits/i.test(css);
+    const kept = /## Credits[\s\S]*Three\.js[\s\S]*\(MIT\)/.test(read("README.md")) && /MIT License/.test(read("resources/planet-sphere/vendor/three-0.185.1/LICENSE")) && /@license/.test(read("dist/portable/strange-bloom.portable.js"));
+    const dlg = mm.slice(mm.indexOf('data-dialog="settings"'), mm.indexOf("</dialog>", mm.indexOf('data-dialog="settings"')));
+    const settings = /Show Training recommendation again/.test(dlg) && /Reset preferences/.test(dlg) && /data-act="training-again"/.test(dlg) && /data-act="reset-prefs"/.test(dlg) && /name="mm-motion"/.test(dlg)
+      && !/difficulty|audio|sound|volume|graphics|quality|colou?rblind|contrast|text size|scale|fullscreen|pause|save|continue/i.test(dlg.replace(/Motion covers[^<]*/, ""))
+      && /resetPreferences\(\) \{[\s\S]*?this\._setMotion\("system"\);[\s\S]*?if \(this\.onTrainingReset\) this\.onTrainingReset\(\);/.test(mm)
+      && /resetTrainingRecommendation\(\) \{ clearTraining\(this\.store\); this\._syncTrainingTag\(\); \}/.test(ee) && /onTrainingReset: toTraining \? \(\) => this\.resetTrainingRecommendation\(\) : null/.test(ee);
+    const walk = d => fs.readdirSync(path.join(ROOT, d), { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(`${d}/${e.name}`) : /\.(js|mjs)$/.test(e.name) ? [`${d}/${e.name}`] : []);
+    const clears = [...walk("resources"), ...walk("content")].filter(f => /localStorage\.clear\(|sessionStorage\.clear\(/.test(read(f)));
+    check(J(ids) === J(["begin", "challenges", "training", "settings"]) && noCredits && kept && settings && !clears.length,
+      `M10 the title menu is exactly begin · challenges · training · settings (no CREDITS entry, dialog or style); attribution kept (README Credits with Three.js MIT, the vendor LICENSE, the bundle's @license); Settings = Motion + "Show Training recommendation again" (clearTraining through ExpeditionEntry, only with a training hook) + "Reset preferences" (Motion → Follow system via writeSettings + the same training reset), nothing gameplay-affecting, and no storage-wide clear() anywhere`, J({ ids, noCredits, kept, settings, clears })); }
 
   console.log(fails ? `\n${fails} check(s) FAILED (${Date.now() - t0} ms)` : `\nALL CHECKS PASS (${Date.now() - t0} ms)`);
   process.exit(fails ? 1 : 0);
