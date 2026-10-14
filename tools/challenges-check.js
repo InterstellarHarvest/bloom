@@ -43,7 +43,7 @@ const ORIG = ["dying_world", "native_competition", "volatile_climate"], ORIG_VER
 const ALL_NAMES = { dying_world: "Dying World", native_competition: "Native Competition", volatile_climate: "Volatile Climate", low_tide: "Low Tide", oasis_line: "Oasis Line", windfall: "Windfall", thin_air: "Thin Air" };
 const SCN = { dying_world: "dying_world", native_competition: "native_competition", volatile_climate: "volatile_climate", low_tide: "dying_world", oasis_line: "native_competition", windfall: "volatile_climate", thin_air: "dying_world" };
 let IDS = null, NAMES = null;   // set once content/challenges.js is loaded
-const MENU = ["Expedition", "Challenges", "Training", "Settings", "Credits"];
+const MENU = ["Expedition", "Challenges", "Training", "Settings"];   // (v1.0.1: no Credits)
 const VIEWPORTS = [[390, 844], [1024, 768], [1440, 900], [2560, 1440]];
 // no difficulty ranking (the hub, the Challenge's species screen / survey / run / report)
 const RANKING = /\b(easy|easier|easiest|medium|hard|harder|hardest|difficulty|difficult|beginner|expert|novice|veteran|stars?|rating|score|recommended|skill|tier|coming soon)\b/i;

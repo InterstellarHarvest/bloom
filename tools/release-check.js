@@ -11,7 +11,7 @@
 // diff is the title links alone; no deployment / package / vendor file and no external URL; the paused c23815e 028D2 worktree untouched.
 // Browser (a real static server on 127.0.0.1 serving "/" like any web server; Chromium, Firefox for the main path): GET / · /index.html ·
 // /?begin=1 = 200; the canonical URL / → the title (12 paintings, no repeat, the next preloaded, Recommended + the first-run dialog,
-// Settings, Credits, the first-sector prefetch, the black fades, ?begin=1, Escape / Back, rotation) → the Destination Survey (nine
+// Settings, (v1.0.1: no Credits) the first-sector prefetch, the black fades, ?begin=1, Escape / Back, rotation) → the Destination Survey (nine
 // validated worlds) → the exact candidate (focus, DRAMATIC, the session handoff, no generator) → demos/demo-run.html (fingerprint,
 // canonical surface == the focused globe, four rooms, the Terraform sphere's identity, the report) → Play again / Choose another planet /
 // Main menu back to ROOT; TRAINING from ROOT and every training exit back to ROOT; direct developer URLs, ?ui=legacy, file://, viewports,
@@ -274,7 +274,7 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
           `${B} R2b · R11 · R12 · the canonical URL / is the Strange Bloom title: "Strange Bloom — Unknown Soils", STRANGE BLOOM / UNKNOWN SOILS, every relative asset 200 (boot, composer, components, stylesheets, engine scripts, the survey's module worker, the painting) — no 404, no redirect; the composer's canonical title is / itself and its run page demos/demo-run.html`,
           `${rootReqs.length} requests · ${missing.join(", ") || "all needed present"}${req404.length ? " · 404: " + req404.map(r => r[0]).join(",") : ""}`);
         const vis = m0.text.replace(/\s+/g, " ");
-        check(J(m0.items) === J(["begin", "challenges", "training", "settings", "credits"]) && !/continue/i.test(vis) && !DEV_COPY.test(vis) && !EMOJI.test(vis) && !/BLOOM\b/i.test(vis.replace(/STRANGE BLOOM/gi, "")),
+        check(J(m0.items) === J(["begin", "challenges", "training", "settings"]) && !/continue/i.test(vis) && !DEV_COPY.test(vis) && !EMOJI.test(vis) && !/BLOOM\b/i.test(vis.replace(/STRANGE BLOOM/gi, "")),
           `${B} R15 · R80 · the title menu is (BLOOM-033; BLOOM-036A + CHALLENGES) EXPEDITION · CHALLENGES · TRAINING · SETTINGS · CREDITS (no CONTINUE); nothing player-visible names a milestone, the playtest harness, a development handoff, a temporary shell, ui=18 / ui=legacy, "training not ready" or the old launcher; no emoji; the game is never called BLOOM`, m0.items.join(" · "));
         await shot(p, "01-root-title.png");
         // R13 · R14 · the twelve paintings and the background rule
@@ -290,15 +290,17 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
         const m1 = await M_STATE(p);
         check(m1.prefetch && m1.prefetch.total === 9 && Number.isInteger(m1.prefetch.seed) && m1.tag && /Recommended/.test(await p.textContent('.mm-item[data-act="training"]')) && LOG.some(([u, s]) => u === "/resources/destination-survey/survey-worker.js" && s === 200),
           `${B} R16 · R18 · at the root the first validated sector is prefetching while the title shows (its own module workers, nine worlds) and TRAINING carries the small "Recommended" tag (no training record)`, J({ prefetch: m1.prefetch, tag: m1.tag }));
-        // R16b · (PMO UI correction 2026-10-10) no completion banner: while the root's sector is being generated the status line shows only its
-        // progress; once it is ready the line is empty, display:none (no reserved space) and no "worlds ready" copy is anywhere on the title
-        const prog = await p.evaluate(() => ({ ready: MENU_DEV.entry.prefetch.progress.ready, text: document.querySelector(".mm-status").textContent }));
+        // R16b · (PMO UI correction 2026-10-10; v1.0.1 owner direction) NO survey status on the title at all: while the root's sector is
+        // still being generated nothing on the page says so (no status element, no "Surveying sector", no "n of 9 worlds"); once it is ready
+        // there is still no "worlds ready" / "Sector surveyed" copy — and the prefetch itself did run to completion from the title
+        const prog = await p.evaluate(() => ({ ready: MENU_DEV.entry.prefetch.progress.ready, confirmed: MENU_DEV.entry.prefetch.progress.confirmed, status: !!document.querySelector(".mm-status, .mm [role=status]:not(.mm-set-msg)"), text: document.body.innerText.replace(/\s+/g, " ") }));
         await p.waitForFunction(() => MENU_DEV.entry.prefetch && MENU_DEV.entry.prefetch.progress.ready, null, { timeout: 180000, polling: 100 });
-        const st = await p.evaluate(() => { const e = document.querySelector(".mm-status"), r = e.getBoundingClientRect(); return { text: e.textContent, display: getComputedStyle(e).display, w: r.width, h: r.height, page: /worlds ready|sector surveyed/i.test(document.body.innerText) }; });
-        check((prog.ready || /^Surveying sector · \d of 9 worlds$/.test(prog.text)) && st.text === "" && st.display === "none" && !st.w && !st.h && !st.page,
-          `${B} R16b · no survey-complete banner on the title: while the root sector is generated the status line shows only "Surveying sector · n of 9 worlds"${prog.ready ? " (already ready here)" : ` ("${prog.text}")`}; once all nine worlds are ready it is empty and display:none (0 × 0, no reserved space) and no "worlds ready" copy is on the page`, J({ prog, st }));
+        const st = await p.evaluate(() => ({ ready: MENU_DEV.entry.prefetch.progress.ready, confirmed: MENU_DEV.entry.prefetch.progress.confirmed, status: !!document.querySelector(".mm-status, .mm [role=status]:not(.mm-set-msg)"), page: /worlds ready|sector surveyed|surveying sector|of 9 worlds/i.test(document.body.innerText) }));
+        const BAN = /surveying sector|sector surveyed|worlds ready|of 9 worlds/i;
+        check(!prog.status && !BAN.test(prog.text) && st.ready && st.confirmed === 9 && !st.status && !st.page,
+          `${B} R16b · (v1.0.1) no survey status on the title: while the root sector is generated${prog.ready ? " (already ready here)" : ` (${prog.confirmed} of 9 confirmed at the first read)`} the title carries no status element and none of "Surveying sector" / "n of 9 worlds"; once all nine worlds are ready (the prefetch still completes from the title) there is no "worlds ready" / "Sector surveyed" copy either`, J({ prog: { ready: prog.ready, confirmed: prog.confirmed, status: prog.status }, st }));
         await shot(p, "02-root-recommended-tag.png", { clip: await p.evaluate(() => { const r = document.querySelector(".mm-plaque").getBoundingClientRect(); return { x: Math.max(0, r.left - 12), y: Math.max(0, r.top - 12), width: r.width + 24, height: r.height + 24 }; }) });
-        // R22 · R23 · Settings (a real motion change, persisted) and Credits; R73 · keyboard title navigation
+        // R22 · R23 · Settings (a real motion change, persisted) and (v1.0.1) no Credits; R73 · keyboard title navigation
         await p.focus('.mm-item[data-act="begin"]'); const kbd = [];
         for (const key of ["ArrowDown", "ArrowDown", "ArrowDown", "ArrowDown", "End", "Home"]) { await p.keyboard.press(key); kbd.push(await p.evaluate(() => document.activeElement && document.activeElement.dataset.act)); }
         await p.keyboard.press("ArrowDown"); await p.keyboard.press("ArrowDown"); await p.keyboard.press("ArrowDown"); await p.keyboard.press("Enter"); await sleep(150);   // (036A) begin → challenges → training → settings
@@ -307,13 +309,10 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
         const st2 = await p.evaluate(() => ({ stored: localStorage.getItem("strange-bloom.settings"), rm: MENU_DEV.entry.reducedMotion }));
         await p.click('[data-dialog="settings"] input[value="system"]'); await p.keyboard.press("Escape"); await sleep(150);
         const st3 = await p.evaluate(() => ({ open: document.querySelector('[data-dialog="settings"]').open, focus: document.activeElement.dataset.act, stored: localStorage.getItem("strange-bloom.settings") }));
-        await p.click('.mm-item[data-act="credits"]'); await sleep(150);
-        const cr = await p.evaluate(() => { const d = document.querySelector('[data-dialog="credits"]'); return { open: d.open, text: d.innerText }; });
-        await p.click('[data-dialog="credits"] [data-act="close"]'); await sleep(120);
-        const cr2 = await p.evaluate(() => ({ open: document.querySelector('[data-dialog="credits"]').open, focus: document.activeElement.dataset.act }));
-        check(J(kbd) === J(["challenges", "training", "settings", "credits", "credits", "begin"]) /* (036A: + CHALLENGES) */ && st1.open && st1.focusIn && /"motion":"reduced"/.test(st2.stored) && st2.rm === true && !st3.open && st3.focus === "settings" && /"motion":"system"/.test(st3.stored),
+        const cr = await p.evaluate(() => ({ item: !!document.querySelector('[data-act="credits"]'), dialog: !!document.querySelector('[data-dialog="credits"]'), word: /credits/i.test(document.querySelector(".mm").innerText) }));
+        check(J(kbd) === J(["challenges", "training", "settings", "begin", "settings", "begin"]) /* (036A: + CHALLENGES; v1.0.1: no CREDITS, ↓ wraps after SETTINGS) */ && st1.open && st1.focusIn && /"motion":"reduced"/.test(st2.stored) && st2.rm === true && !st3.open && st3.focus === "settings" && /"motion":"system"/.test(st3.stored),
           `${B} R22 · R73 · keyboard alone walks the title menu (↓ wraps, Home / End) and Enter opens SETTINGS with focus inside; its motion choice persists and applies at once (reduced → the entry's reduced motion); Escape closes it and focus returns to SETTINGS`, J({ kbd, st2 }));
-        check(cr.open && /Strange Bloom · Unknown Soils/i.test(cr.text) && /A BLOOM project/i.test(cr.text) && !cr2.open && cr2.focus === "credits", `${B} R23 · CREDITS opens its dialog (the player title, "A BLOOM project", the paintings, Three.js) and closes back to the menu`, cr.text.split("\n").slice(0, 2).join(" · "));
+        check(!cr.item && !cr.dialog && !cr.word, `${B} R23 · (v1.0.1, owner direction) no CREDITS: no menu entry, no dialog markup, the word nowhere on the title (attribution and licences stay in the repository)`, J(cr));
         // R19 · R74 · the first-run prompt by keyboard: Enter on BEGIN, focus inside, Tab between its two answers, Escape records nothing
         await p.focus('.mm-item[data-act="begin"]'); await p.keyboard.press("Enter"); await sleep(250);
         const d1 = await p.evaluate(() => { const d = document.querySelector('[data-dialog="recommend"]'); return { open: d.open, focus: document.activeElement.textContent, h: d.querySelector("h2").textContent, btns: [...d.querySelectorAll(".mm-btn")].map(b => b.textContent), state: MENU_DEV.entry.state }; });
@@ -502,7 +501,7 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
             app: document.getElementById("app").hidden, ready: !!(window.MENU_DEV && MENU_DEV.ready), items: [...document.querySelectorAll(".mm-item")].map(b => b.dataset.act), body: document.body.innerText.trim().length, bg: getComputedStyle(document.body).backgroundColor }));
           await shot(f, "20-file-root-title.png"); await c8.close();
           PROOF.fileProtocol = { root: { title: fr.title, bootState: fr.boot, portable: fr.portable, menu: fr.items }, demoRun: fileRun };
-          check(fr.title === "Strange Bloom — Unknown Soils" && !fr.note && fr.boot === "mounted" && fr.portable && fr.ready && !fr.app && J(fr.items) === J(["begin", "challenges", "training", "settings", "credits"]) && fr.body > 40,
+          check(fr.title === "Strange Bloom — Unknown Soils" && !fr.note && fr.boot === "mounted" && fr.portable && fr.ready && !fr.app && J(fr.items) === J(["begin", "challenges", "training", "settings"]) && fr.body > 40,
             `${B} R62 · R63 · (BLOOM-031) the root index.html over file:// is the real Strange Bloom title (the generated portable runtime; the HTTP-required notice is retired), never a blank page`, J({ boot: fr.boot, portable: fr.portable, items: fr.items }));
           check(fileRun && fileRun.kind === "authored" && fileRun.id === "first_bloom" && fileRun.pv, `${B} R64 · the standalone direct demos/demo-run.html still boots over file:// (First Bloom, the production Planet View)`, J(fileRun)); }
         // ================= viewports =================
@@ -538,7 +537,7 @@ const PROOF = { milestone: "BLOOM-030", generatedAt: new Date().toISOString(), b
         const g = await p.evaluate(GAME_CAP), sc = await hscroll(p);
         await disarm(p); await runMenu(p, "mainMenu"); await titleIn(p);
         const back = await p.evaluate(() => ({ url: location.href, state: MENU_DEV.entry.state }));
-        check(m0.title === "Strange Bloom — Unknown Soils" && J(m0.items) === J(["begin", "challenges", "training", "settings", "credits"]) && g.fingerprint === cap.fingerprint && g.planet === cap.planet && g.counters.createSim === 1 && GEN_NAMES.every(n => g.counters[n] === 0) && g.sameObject && g.path === "/" && back.url === HOME && back.state === "menu" && sc <= 0,
+        check(m0.title === "Strange Bloom — Unknown Soils" && J(m0.items) === J(["begin", "challenges", "training", "settings"]) && g.fingerprint === cap.fingerprint && g.planet === cap.planet && g.counters.createSim === 1 && GEN_NAMES.every(n => g.counters[n] === 0) && g.sameObject && g.path === "/" && back.url === HOME && back.state === "menu" && sc <= 0,
           `${B} R71 · Firefox 1280×800: the root title → the survey → the exact candidate → the run inside the root document (the same planet object, fingerprint and JSON, no generator) → Main menu back to the ROOT title; no horizontal scroll`, J({ fp: g.fingerprint, back: back.url.replace(ORIGIN, "") }));
         await collectUnhandled(p); PROOF.browsers[bname].flows.push("root expedition flow (1280x800)"); await c.close();
       }

@@ -166,13 +166,13 @@ const server = http.createServer((req, res) => { const u = decodeURIComponent(re
     const r = await t.evaluate(() => ({ title: document.title, items: [...document.querySelectorAll(".mm-item")].map(b => b.dataset.act), launcher: ["scrHome", "scrPlanets", "scrScenarios", "scrBrief", "btnFirstBloom", "btnChoose", "planetCards", "scenarioCards"].filter(id => document.getElementById(id)), api: typeof window.BLOOM_LAUNCHER, hash: location.hash }));
     await t.evaluate(() => { location.hash = "#/brief/frozen_world/volatile_climate"; }); await t.waitForTimeout(200);
     const routed = await t.evaluate(() => ({ screens: document.querySelectorAll(".screen.on").length, state: MENU_DEV.entry.state }));
-    check(r.title === "Strange Bloom — Unknown Soils" && J(r.items) === J(["begin", "challenges", "training", "settings", "credits"]) && !r.launcher.length && r.api === "undefined" && !routed.screens && routed.state === "menu"
+    check(r.title === "Strange Bloom — Unknown Soils" && J(r.items) === J(["begin", "challenges", "training", "settings"]) && !r.launcher.length && r.api === "undefined" && !routed.screens && routed.state === "menu"
       && !/#\/(planet|scenario|brief)|BLOOM_LAUNCHER|scrBrief|btnFirstBloom/.test(INDEX_SRC),
       "RT1 · the root index.html is the Strange Bloom title (EXPEDITION · CHALLENGES (036A) · TRAINING · SETTINGS · CREDITS); the BLOOM-016 launcher's screens, buttons, hash router and BLOOM_LAUNCHER are gone (a launcher hash route does nothing)", J({ title: r.title, items: r.items }));
     await t.context().close(); }
   { await p.goto(FILE + "/index.html"); await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready, null, { timeout: 30000 }).catch(() => {}); await p.waitForTimeout(300);
     const r = await p.evaluate(() => ({ title: document.title, note: !!document.getElementById("needsServer"), boot: window.BLOOM_TITLE_BOOT && BLOOM_TITLE_BOOT.state, items: [...document.querySelectorAll(".mm-item")].map(b => b.dataset.act), launcher: !!document.getElementById("scrHome") }));
-    check(r.title === "Strange Bloom — Unknown Soils" && !r.note && r.boot === "mounted" && J(r.items) === J(["begin", "challenges", "training", "settings", "credits"]) && !r.launcher,
+    check(r.title === "Strange Bloom — Unknown Soils" && !r.note && r.boot === "mounted" && J(r.items) === J(["begin", "challenges", "training", "settings"]) && !r.launcher,
       "RT2 · (BLOOM-031) over file:// the root is the Strange Bloom title itself (the generated portable runtime; the HTTP-required notice is retired), not the old launcher and not a blank page", J(r)); }
 
   // ---- 21 / 29 / 31–33 · Start → Preparing planet → the accepted run (file://: the search runs between frames) ----

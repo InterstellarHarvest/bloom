@@ -1,6 +1,9 @@
 // BLOOM — Main Menu screen (BLOOM-028C): the opening title. One of twelve hand-painted backgrounds, the title STRANGE BLOOM /
-// UNKNOWN SOILS and the menu (EXPEDITION · CHALLENGES · TRAINING · SETTINGS · CREDITS) as real HTML over it, with small dialogs for
-// Training (a placeholder when no training hook is given), Settings (motion) and Credits.
+// UNKNOWN SOILS and the menu (EXPEDITION · CHALLENGES · TRAINING · SETTINGS) as real HTML over it, with small dialogs for
+// Training (a placeholder when no training hook is given) and Settings (motion).
+// (v1.0.1, owner direction) no CREDITS entry (attribution and licences stay in the repository: README, docs, the Three.js vendor
+// LICENSE). Settings stays small: Motion, "Show Training recommendation again" (only with a real training reset hook) and
+// "Reset preferences" (Motion → Follow system, and the training recommendation back) — local preferences only.
 // (BLOOM-028D2) TRAINING can carry a small "Recommended" tag (setTrainingRecommended) and there is one more dialog, the first-run
 // recommendation ("recommend": Start Training (~5 min) · Go to Expedition), opened by ExpeditionEntry on a first EXPEDITION;
 // the choice goes to onRecommendChoice("training" | "expedition"). This screen still decides nothing: the flow is ExpeditionEntry's.
@@ -37,9 +40,8 @@ const ITEMS = [
   { id: "challenges", label: "Challenges", hook: "onChallenges" },   // (BLOOM-036A) only with its hook: never a dead entry
   { id: "training", label: "Training" },
   { id: "settings", label: "Settings" },
-  { id: "credits", label: "Credits" },
 ];
-const ITEM_ICON = { begin: "world", challenges: "challenge", training: "journal", settings: "settings", credits: "info" };   // (BLOOM-034) the gameplay icon family
+const ITEM_ICON = { begin: "world", challenges: "challenge", training: "journal", settings: "settings" };   // (BLOOM-034) the gameplay icon family
 
 export class MainMenu {
   /**
@@ -52,14 +54,16 @@ export class MainMenu {
    * onChallenges()     (036A) CHALLENGES — the Challenge hub. Omitted: there is no CHALLENGES entry at all (never a dead control)
    * onTraining()       TRAINING — the tutorial hook. Omitted: the "not yet open" placeholder dialog
    * onSettingsChange(settings)  after a setting changed (already persisted)
+   * onTrainingReset()  (v1.0.1) Settings → "Show Training recommendation again" / "Reset preferences": the owner of the training
+   *                    record puts it back to first-run. Omitted: no Training section in Settings (Reset preferences resets Motion only)
    * onRecommendChoice(choice)    (028D2) the first-run recommendation's answer: "training" | "expedition" (the dialog is closed first)
    * baseUrl            where "resources/main-menu/backgrounds/…" resolves from (default: this module's repository root)
    * storage / session  Storage-like objects for settings / the last background (default: localStorage / sessionStorage)
    */
   constructor(root, { reducedMotion = null, background = null, previous = undefined, rng = Math.random, onBegin = null, onChallenges = null, onTraining = null, onSettingsChange = null,
-    onRecommendChoice = null, baseUrl = new URL("../../", import.meta.url), storage = undefined, session = undefined } = {}) {
+    onRecommendChoice = null, onTrainingReset = null, baseUrl = new URL("../../", import.meta.url), storage = undefined, session = undefined } = {}) {
     if (!root || typeof root.appendChild !== "function") throw new TypeError("MainMenu: root must be a DOM element");
-    this.root = root; this.onBegin = onBegin; this.onChallenges = typeof onChallenges === "function" ? onChallenges : null; this.onTraining = onTraining; this.onSettingsChange = onSettingsChange; this.onRecommendChoice = onRecommendChoice; this.rng = rng; this.baseUrl = baseUrl;
+    this.root = root; this.onBegin = onBegin; this.onChallenges = typeof onChallenges === "function" ? onChallenges : null; this.onTraining = onTraining; this.onSettingsChange = onSettingsChange; this.onRecommendChoice = onRecommendChoice; this.onTrainingReset = typeof onTrainingReset === "function" ? onTrainingReset : null; this.rng = rng; this.baseUrl = baseUrl;
     this.storage = storage === undefined ? safe(() => globalThis.localStorage) : storage;
     this.session = session === undefined ? safe(() => globalThis.sessionStorage) : session;
     this.mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
@@ -78,9 +82,6 @@ export class MainMenu {
   get subtitle() { return SUBTITLE; }
 
   // ---------------------------------------------------------------- public
-  /** Status line under the plaque's column (e.g. the first sector preparing). Empty hides it. */
-  setStatus(text) { this.statusEl.textContent = text || ""; }
-
   /** (028D2) Show / hide the small "Recommended" tag on TRAINING (no training record yet). TRAINING itself is always there. */
   setTrainingRecommended(on) { this.trainingTag.hidden = !on; this.items.training.classList.toggle("is-recommended", !!on); }
   get trainingRecommended() { return !this.trainingTag.hidden; }
@@ -88,13 +89,12 @@ export class MainMenu {
   /** The Settings motion choice took effect (null follows the OS; true / false force). */
   setReducedMotion(v) { this.forcedReducedMotion = v; this._applyMotionClass(); }
 
-  /** Leaving: the plaque and status recede (opacity + a short rise; opacity only under reduced motion). Resolves when done. */
+  /** Leaving: the plaque recedes (opacity + a short rise; opacity only under reduced motion). Resolves when done. */
   recede() {
     if (this.state !== "shown") return Promise.resolve();
     this.state = "receded"; this._closeDialog();
     const rm = this.reducedMotion, dur = rm ? T.recedeRm : T.recede, opts = { duration: dur, easing: EASE, fill: "forwards" };
-    this._recedeAnims = [this.plaque.animate([{ opacity: 1, translate: "0 0" }, { opacity: 0, translate: rm ? "0 0" : "0 -14px" }], opts),
-      this.statusEl.animate([{ opacity: 1 }, { opacity: 0 }], opts)];
+    this._recedeAnims = [this.plaque.animate([{ opacity: 1, translate: "0 0" }, { opacity: 0, translate: rm ? "0 0" : "0 -14px" }], opts)];
     return Promise.all(this._recedeAnims.map(a => a.finished.catch(() => {}))).then(() => { if (this.state === "receded") this.root.classList.add("is-receded"); });
   }
 
@@ -120,7 +120,7 @@ export class MainMenu {
 
   focusMenu() { const b = this.items.begin; if (b && this.state === "shown") b.focus({ preventScroll: true }); }
 
-  /** Open Training / Settings / Credits as a modal; focus returns to `opener` (default: the active element) when it closes. */
+  /** Open Training / Settings (or the first-run recommendation) as a modal; focus returns to `opener` (default: the active element) when it closes. */
   openDialog(name, opener = document.activeElement) { const d = this.dialogs[name]; if (!d || this.state !== "shown") return false; this._opener = opener; this.stats.dialogs++; d.showModal(); return true; }
 
   dispose() {
@@ -172,7 +172,6 @@ export class MainMenu {
           <ul class="mm-nav" aria-label="Main menu">${this._entries().map((it, i) => `<li style="--i:${i}"><button type="button" class="mm-item${it.primary ? " primary" : ""}" data-act="${it.id}"><span class="mm-ico" aria-hidden="true">${ico(ITEM_ICON[it.id])}</span>${esc(it.label)}${it.id === "training" ? ` <small class="mm-tag" hidden>${ico("star")}Recommended</small>` : ""}</button></li>`).join("")}</ul>
         </div>
       </section>
-      <p class="mm-status" role="status" aria-live="polite"></p>
       <dialog class="mm-dialog" data-dialog="training" aria-labelledby="mm-dlg-training"><div class="mm-dialog-body">
         <p class="lede">Not yet open</p><h2 id="mm-dlg-training">Training</h2>
         <p>The training expedition — a guided first landing on a hand-made world — is not ready for recruits yet.</p>
@@ -186,24 +185,21 @@ export class MainMenu {
       <dialog class="mm-dialog" data-dialog="settings" aria-labelledby="mm-dlg-settings"><div class="mm-dialog-body">
         <p class="lede">Expedition preferences</p><h2 id="mm-dlg-settings">Settings</h2>
         <fieldset><legend>Motion</legend>${MOTION_OPTIONS.map(m => `<label class="mm-choice"><input type="radio" name="mm-motion" value="${m.id}"><span><b>${esc(m.label)}</b><small>${esc(m.hint)}</small></span></label>`).join("")}</fieldset>
-        <div class="mm-rule"></div>
-        <p>Motion covers the menu, the atmosphere between screens and the turning worlds of the Destination Survey. Nothing is switched off by reducing it.</p>
-        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">${ico("check")}Done</button></div></div></dialog>
-      <dialog class="mm-dialog" data-dialog="credits" aria-labelledby="mm-dlg-credits"><div class="mm-dialog-body">
-        <p class="lede">${esc(TITLE)} · ${esc(SUBTITLE)}</p><h2 id="mm-dlg-credits">Credits</h2>
-        <dl class="mm-credits">
-          <dt>A BLOOM project</dt><dd>Design, worlds, simulation and code by the BLOOM project team.</dd>
-          <dt>Menu paintings</dt><dd>Twelve hand-painted expedition vistas by the project's owner.</dd>
-          <dt>Open source</dt><dd>Three.js r185.1 (MIT) draws the globes of the Destination Survey.</dd>
-        </dl>
-        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">${ico("back")}Back to menu</button></div></div></dialog>`;
+        ${this.onTrainingReset ? `<div class="mm-set" role="group" aria-labelledby="mm-set-training"><h3 id="mm-set-training">Training</h3>
+          <button type="button" class="mm-btn" data-act="training-again" aria-describedby="mm-set-training-d">${ico("journal")}Show Training recommendation again</button>
+          <small id="mm-set-training-d">Show the first-expedition Training suggestion again.</small></div>` : ""}
+        <div class="mm-set" role="group" aria-labelledby="mm-set-local"><h3 id="mm-set-local">Local preferences</h3>
+          <button type="button" class="mm-btn" data-act="reset-prefs" aria-describedby="mm-set-local-d">${ico("back")}Reset preferences</button>
+          <small id="mm-set-local-d">${this.onTrainingReset ? "Motion back to Follow system; Training recommended again." : "Motion back to Follow system."}</small></div>
+        <p class="mm-set-msg" role="status" aria-live="polite"></p>
+        <div class="mm-dialog-actions"><button type="button" class="mm-btn" data-act="close">${ico("check")}Done</button></div></div></dialog>`;
     const q = s => r.querySelector(s);
-    this.art = q(".mm-art"); this.plaque = q(".mm-plaque"); this.nav = q(".mm-nav"); this.statusEl = q(".mm-status"); this.titleEl = q("#mm-title");
+    this.art = q(".mm-art"); this.plaque = q(".mm-plaque"); this.nav = q(".mm-nav"); this.titleEl = q("#mm-title");
     this.items = Object.fromEntries(this._entries().map(it => [it.id, q(`[data-act="${it.id}"]`)]));
-    this.trainingTag = q(".mm-tag");
+    this.trainingTag = q(".mm-tag"); this.settingsMsg = q(".mm-set-msg");
     this.dialogs = Object.fromEntries([...r.querySelectorAll("dialog")].map(d => [d.dataset.dialog, d]));
     for (const d of Object.values(this.dialogs)) d.addEventListener("close", () => { const o = this._opener; this._opener = null; if (o && o.isConnected && this.state === "shown") o.focus({ preventScroll: true }); });
-    const radios = [...r.querySelectorAll('input[name="mm-motion"]')];
+    const radios = this._radios = [...r.querySelectorAll('input[name="mm-motion"]')];
     for (const x of radios) { x.checked = x.value === this.settings.motion; x.addEventListener("change", () => this._setMotion(x.value)); }
     this._onClick = e => {
       const b = e.target.closest("button"); if (!b || !r.contains(b)) return;
@@ -214,7 +210,9 @@ export class MainMenu {
       else if (act === "begin") { if (this.state === "shown") { this.stats.begins++; if (this.onBegin) this.onBegin(this); } }
       else if (act === "challenges") { if (this.state === "shown" && this.onChallenges) this.onChallenges(this); } // (036A)
       else if (act === "training") { if (this.onTraining) this.onTraining(this); else this.openDialog("training", b); }
-      else if (act === "settings" || act === "credits") this.openDialog(act, b); // (the button itself: a click need not have focused it)
+      else if (act === "settings") { this.settingsMsg.textContent = ""; this.openDialog(act, b); } // (the button itself: a click need not have focused it)
+      else if (act === "training-again") { if (this.onTrainingReset) { this.onTrainingReset(); this.settingsMsg.textContent = "Training will be recommended again."; } } // (v1.0.1)
+      else if (act === "reset-prefs") this.resetPreferences();
     };
     this._onKey = e => { // menu list: ↑ ↓ Home End move between entries (Enter / Space activate the focused button natively)
       const cur = e.target.closest ? e.target.closest(".mm-item") : null; if (!cur || e.altKey || e.ctrlKey || e.metaKey) return;
@@ -228,6 +226,16 @@ export class MainMenu {
   /** The entries this menu shows: (036A) CHALLENGES only with its hook. */
   _entries() { return ITEMS.filter(it => !it.hook || this[it.hook]); }
 
+  /** (v1.0.1) Settings → Reset preferences: the local preferences this game owns go back to their first-visit state — Motion
+   *  → Follow system (the settings record, through writeSettings) and, with a training reset hook, the training recommendation. Nothing else
+   *  in storage is touched; no reload. */
+  resetPreferences() {
+    for (const x of this._radios) x.checked = x.value === "system";
+    this._setMotion("system");
+    if (this.onTrainingReset) this.onTrainingReset();
+    this.settingsMsg.textContent = this.onTrainingReset ? "Preferences reset: Motion follows your system; Training is recommended again." : "Preferences reset: Motion follows your system.";
+  }
+
   _setMotion(id) {
     this.settings = writeSettings(this.storage, { motion: id });
     this.setReducedMotion(reducedMotionFor(this.settings.motion));
@@ -238,9 +246,9 @@ export class MainMenu {
 
   _closeDialog() { for (const d of Object.values(this.dialogs || {})) if (d.open) d.close(); }
 
-  /** Restart the CSS entrance animations (plaque, entries, status) for a renewed show. */
+  /** Restart the CSS entrance animations (plaque, entries) for a renewed show. */
   _replayEntrance() {
-    for (const el of [this.plaque, this.statusEl, ...this.nav.querySelectorAll("li")]) { el.style.animation = "none"; void el.offsetWidth; el.style.animation = ""; }
+    for (const el of [this.plaque, ...this.nav.querySelectorAll("li")]) { el.style.animation = "none"; void el.offsetWidth; el.style.animation = ""; }
   }
 }
 

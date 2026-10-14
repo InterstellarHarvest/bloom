@@ -324,7 +324,7 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
           prefetch: MENU_DEV.entry.prefetch ? MENU_DEV.entry.prefetch.progress : null }));
         F.boot = { ...boot, url: boot.url.replace(FROOT, "<repo>") };   // (no local path in the evidence)
         check(boot.protocol === "file:" && boot.state === "mounted" && !boot.served && boot.portable && boot.scripts === 20 /* (035B: + content/species.js, resources/bloom-species.js; 036A: + content/challenges.js, resources/bloom-challenges.js; 036B1: + content/challenge-seed-banks.js; 036D1: + resources/challenges/challenge-completion.js) */ && boot.bundle && boot.loaded.includes("resources/app/app-controller.js") && !boot.notice && !boot.failed
-          && boot.title === "Strange Bloom — Unknown Soils" && /^Strange Bloom$/i.test(boot.h1) && J(boot.items) === J(["begin", "challenges", "training", "settings", "credits"]) && boot.tag && boot.prefetch && boot.prefetch.total === 9,
+          && boot.title === "Strange Bloom — Unknown Soils" && /^Strange Bloom$/i.test(boot.h1) && J(boot.items) === J(["begin", "challenges", "training", "settings"]) && boot.tag && boot.prefetch && boot.prefetch.total === 9,
           `${B} P6 · P7 · P8 · ${FINDEX.replace(FROOT, "<repo>")} over file:// boots the REAL title (no HTTP-required notice, no failure notice): the classic engine scripts, the module seam and the portable runtime's page composer; STRANGE BLOOM, EXPEDITION · CHALLENGES · TRAINING (Recommended) · SETTINGS · CREDITS; the first sector already prefetching`,
           J({ state: boot.state, loaded: boot.loaded, prefetch: boot.prefetch }));
         await shot(p, `01-file-title.png`);
@@ -351,7 +351,7 @@ const PROOF = { milestone: "BLOOM-031", baseSha: BASE_SHA, mainSha: MAIN_SHA, he
         const st2 = await p.evaluate(() => ({ stored: localStorage.getItem("strange-bloom.settings"), rm: MENU_DEV.entry.reducedMotion }));
         await p.click('[data-dialog="settings"] input[value="system"]'); await p.keyboard.press("Escape"); await sleep(150);
         const st3 = await p.evaluate(() => ({ open: document.querySelector('[data-dialog="settings"]').open, focus: document.activeElement.dataset.act }));
-        check(J(kbd) === J(["challenges", "training", "settings", "credits", "credits", "begin"]) /* (036A: + CHALLENGES) */ && st1.open && st1.focusIn && /"motion":"reduced"/.test(st2.stored) && st2.rm === true && !st3.open && st3.focus === "settings",
+        check(J(kbd) === J(["challenges", "training", "settings", "begin", "settings", "begin"]) /* (036A: + CHALLENGES; v1.0.1: no CREDITS, ↓ wraps after SETTINGS) */ && st1.open && st1.focusIn && /"motion":"reduced"/.test(st2.stored) && st2.rm === true && !st3.open && st3.focus === "settings",
           `${B} P44 · Settings works over file:// · keyboard: arrows / Home / End walk the title menu, Enter opens SETTINGS (focus inside); its motion choice persists in this browser's file storage and applies at once; Escape closes it back to SETTINGS`, J({ kbd, stored: st2.stored }));
         // the first-run recommendation (Enter on BEGIN) → Go to Expedition → the survey; P14 · P15 truthful Incoming, nine validated worlds
         await p.focus('.mm-item[data-act="begin"]'); await p.keyboard.press("Enter"); await sleep(300);

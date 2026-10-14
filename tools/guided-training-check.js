@@ -659,7 +659,7 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       await shot(p, "02-first-begin-recommendation.png");
       await p.click('[data-act="recommend-expedition"]'); await throughSpecies(p); await p.waitForFunction(() => MENU_DEV.entry.state === "survey", null, { timeout: 30000 }).catch(() => {});
       const m2 = await M(p);
-      check(m0.tag && /Training Recommended/.test(m0.name) && J(m0.items) === J(["begin", "challenges", "training", "settings", "credits"]) && m1.dlg && m1.state === "menu" && m1.prompts === 1 && new URL(dl.url).pathname === MENU_PATH
+      check(m0.tag && /Training Recommended/.test(m0.name) && J(m0.items) === J(["begin", "challenges", "training", "settings"]) && m1.dlg && m1.state === "menu" && m1.prompts === 1 && new URL(dl.url).pathname === MENU_PATH
         && J(dl.btns) === J(["Go to Expedition", "Start Training (~5 min)"]) && m2.state === "survey" && JSON.parse(m2.rec).status === "skipped" && !m2.tag && m2.survey && m2.survey.adopted,
         `${B} G9a · no training record: TRAINING carries "Recommended" (read with the label); the first BEGIN EXPEDITION opens ONE dialog ("${dl.h}": Go to Expedition · Start Training (~5 min)) and never starts training by itself; Go to Expedition records "skipped", drops the tag and enters the expedition (BLOOM-035C2: Choose Plant Species, then the Destination Survey for the preselected Organic Hybrid on the sector prefetched under the dialog)`,
         J({ name: m0.name, prompts: m1.prompts, rec: m2.rec && JSON.parse(m2.rec).status, adopted: m2.survey && m2.survey.adopted }));
