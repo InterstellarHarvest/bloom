@@ -1,0 +1,2745 @@
+{
+ "method": "Real app at each viewport (title, species, survey, run, selected region, four rooms, Challenge hub + dossier). app = the visible screen root (the run: .pv); inkFree = the largest rectangle inside the app box with no text, image, control or map (decorative full-card overlays and the blurred map behind a room are not content); room.resumeToNodes = edge gap Resume -> the node union (the BLOOM-038 measure); selected.* = banner / Would-help -> selected region.",
+ "viewports": {
+  "1024": {
+   "before": {
+    "title": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 656,
+      "h": 768,
+      "area": 503808,
+      "shareOfApp": 0.641
+     }
+    },
+    "species": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 240,
+      "y": 576,
+      "w": 784,
+      "h": 192,
+      "area": 150528,
+      "shareOfApp": 0.191
+     }
+    },
+    "species-dossier": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 704,
+      "y": 0,
+      "w": 320,
+      "h": 144,
+      "area": 46080,
+      "shareOfApp": 0.059
+     }
+    },
+    "survey-grid": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 816,
+      "y": 64,
+      "w": 208,
+      "h": 704,
+      "area": 146432,
+      "shareOfApp": 0.186
+     }
+    },
+    "survey-focus": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 80,
+      "w": 208,
+      "h": 688,
+      "area": 143104,
+      "shareOfApp": 0.182
+     }
+    },
+    "run-base": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 32,
+      "h": 736,
+      "area": 23552,
+      "shareOfApp": 0.03
+     },
+     "selected": {
+      "region": "Amber Fields",
+      "bannerToRegion": 92,
+      "bannerToRegionCentre": 470,
+      "wouldHelpToRegionCentre": 488
+     }
+    },
+    "run-selected": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 32,
+      "h": 736,
+      "area": 23552,
+      "shareOfApp": 0.03
+     },
+     "selected": {
+      "region": "Heath Flats 1",
+      "bannerToRegion": 58,
+      "bannerToRegionCentre": 282,
+      "wouldHelpToRegionCentre": 339
+     }
+    },
+    "room-region": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 512,
+      "w": 688,
+      "h": 224,
+      "area": 154112,
+      "shareOfApp": 0.196
+     },
+     "room": {
+      "width": 1024,
+      "mainCard": 436,
+      "resumeToNodes": null,
+      "resumeToNodesCentre": null,
+      "nodesToMap": null
+     }
+    },
+    "room-adapt": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 560,
+      "w": 688,
+      "h": 176,
+      "area": 121088,
+      "shareOfApp": 0.154
+     },
+     "room": {
+      "width": 1024,
+      "mainCard": 426,
+      "resumeToNodes": 429,
+      "resumeToNodesCentre": 597,
+      "nodesToMap": 166
+     }
+    },
+    "room-spread": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 208,
+      "y": 352,
+      "w": 480,
+      "h": 384,
+      "area": 184320,
+      "shareOfApp": 0.234
+     },
+     "room": {
+      "width": 1024,
+      "mainCard": 426,
+      "resumeToNodes": 429,
+      "resumeToNodesCentre": 554,
+      "nodesToMap": 166
+     }
+    },
+    "room-terraform": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 560,
+      "w": 784,
+      "h": 144,
+      "area": 112896,
+      "shareOfApp": 0.144
+     },
+     "room": {
+      "width": 1024,
+      "mainCard": 546,
+      "resumeToNodes": 314,
+      "resumeToNodesCentre": 485,
+      "nodesToMap": 59
+     }
+    },
+    "challenge-hub": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 208,
+      "y": 96,
+      "w": 816,
+      "h": 48,
+      "area": 39168,
+      "shareOfApp": 0.05
+     }
+    },
+    "challenge-dossier": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 624,
+      "w": 464,
+      "h": 144,
+      "area": 66816,
+      "shareOfApp": 0.085
+     }
+    }
+   },
+   "after": {
+    "title": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 656,
+      "h": 768,
+      "area": 503808,
+      "shareOfApp": 0.641
+     }
+    },
+    "species": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 240,
+      "y": 576,
+      "w": 784,
+      "h": 192,
+      "area": 150528,
+      "shareOfApp": 0.191
+     }
+    },
+    "species-dossier": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 704,
+      "y": 0,
+      "w": 320,
+      "h": 144,
+      "area": 46080,
+      "shareOfApp": 0.059
+     }
+    },
+    "survey-grid": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 816,
+      "y": 64,
+      "w": 208,
+      "h": 704,
+      "area": 146432,
+      "shareOfApp": 0.186
+     }
+    },
+    "survey-focus": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 80,
+      "w": 208,
+      "h": 688,
+      "area": 143104,
+      "shareOfApp": 0.182
+     }
+    },
+    "run-base": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 32,
+      "h": 736,
+      "area": 23552,
+      "shareOfApp": 0.03
+     },
+     "selected": {
+      "region": "Amber Fields",
+      "place": {
+       "region": 17,
+       "place": "bottom",
+       "coverBottom": 0,
+       "coverTop": null,
+       "stage": [
+        1024,
+        656
+       ]
+      },
+      "bannerToRegion": 92,
+      "bannerToRegionCentre": 470,
+      "wouldHelpToRegionCentre": 488
+     }
+    },
+    "run-selected": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 32,
+      "h": 736,
+      "area": 23552,
+      "shareOfApp": 0.03
+     },
+     "selected": {
+      "region": "Heath Flats 1",
+      "place": {
+       "region": 6,
+       "place": "bottom",
+       "coverBottom": 0,
+       "coverTop": null,
+       "stage": [
+        1024,
+        656
+       ]
+      },
+      "bannerToRegion": 58,
+      "bannerToRegionCentre": 282,
+      "wouldHelpToRegionCentre": 363
+     }
+    },
+    "room-region": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 512,
+      "w": 688,
+      "h": 224,
+      "area": 154112,
+      "shareOfApp": 0.196
+     },
+     "room": {
+      "width": 1024,
+      "mainCard": 436,
+      "resumeToNodes": null,
+      "resumeToNodesCentre": null,
+      "nodesToMap": null
+     }
+    },
+    "room-adapt": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 560,
+      "w": 688,
+      "h": 176,
+      "area": 121088,
+      "shareOfApp": 0.154
+     },
+     "room": {
+      "width": 1024,
+      "mainCard": 426,
+      "resumeToNodes": 429,
+      "resumeToNodesCentre": 597,
+      "nodesToMap": 166
+     }
+    },
+    "room-spread": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 208,
+      "y": 352,
+      "w": 480,
+      "h": 384,
+      "area": 184320,
+      "shareOfApp": 0.234
+     },
+     "room": {
+      "width": 1024,
+      "mainCard": 426,
+      "resumeToNodes": 429,
+      "resumeToNodesCentre": 554,
+      "nodesToMap": 166
+     }
+    },
+    "room-terraform": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 560,
+      "w": 784,
+      "h": 144,
+      "area": 112896,
+      "shareOfApp": 0.144
+     },
+     "room": {
+      "width": 1024,
+      "mainCard": 546,
+      "resumeToNodes": 310,
+      "resumeToNodesCentre": 484,
+      "nodesToMap": 56
+     }
+    },
+    "challenge-hub": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 208,
+      "y": 96,
+      "w": 816,
+      "h": 48,
+      "area": 39168,
+      "shareOfApp": 0.05
+     }
+    },
+    "challenge-dossier": {
+     "app": {
+      "x": 0,
+      "w": 1024,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 624,
+      "w": 464,
+      "h": 144,
+      "area": 66816,
+      "shareOfApp": 0.085
+     }
+    }
+   }
+  },
+  "1440": {
+   "before": {
+    "title": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 960,
+      "h": 912,
+      "area": 875520,
+      "shareOfApp": 0.667
+     }
+    },
+    "species": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 192,
+      "y": 672,
+      "w": 1248,
+      "h": 240,
+      "area": 299520,
+      "shareOfApp": 0.228
+     }
+    },
+    "species-dossier": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 736,
+      "w": 832,
+      "h": 176,
+      "area": 146432,
+      "shareOfApp": 0.112
+     }
+    },
+    "survey-grid": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 336,
+      "h": 848,
+      "area": 284928,
+      "shareOfApp": 0.217
+     }
+    },
+    "survey-focus": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 336,
+      "h": 848,
+      "area": 284928,
+      "shareOfApp": 0.217
+     }
+    },
+    "run-base": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 144,
+      "h": 800,
+      "area": 115200,
+      "shareOfApp": 0.088
+     },
+     "selected": {
+      "region": "Amber Fields",
+      "bannerToRegion": 151,
+      "bannerToRegionCentre": 571,
+      "wouldHelpToRegionCentre": 534
+     }
+    },
+    "run-selected": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 144,
+      "h": 800,
+      "area": 115200,
+      "shareOfApp": 0.088
+     },
+     "selected": {
+      "region": "Heath Flats 1",
+      "bannerToRegion": 111,
+      "bannerToRegionCentre": 359,
+      "wouldHelpToRegionCentre": 400
+     }
+    },
+    "room-region": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 672,
+      "w": 960,
+      "h": 192,
+      "area": 184320,
+      "shareOfApp": 0.14
+     },
+     "room": {
+      "width": 1440,
+      "mainCard": 614,
+      "resumeToNodes": null,
+      "resumeToNodesCentre": null,
+      "nodesToMap": null
+     }
+    },
+    "room-adapt": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 752,
+      "w": 960,
+      "h": 112,
+      "area": 107520,
+      "shareOfApp": 0.082
+     },
+     "room": {
+      "width": 1440,
+      "mainCard": 601,
+      "resumeToNodes": 556,
+      "resumeToNodesCentre": 814,
+      "nodesToMap": 243
+     }
+    },
+    "room-spread": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 272,
+      "y": 448,
+      "w": 688,
+      "h": 416,
+      "area": 286208,
+      "shareOfApp": 0.218
+     },
+     "room": {
+      "width": 1440,
+      "mainCard": 601,
+      "resumeToNodes": 556,
+      "resumeToNodesCentre": 757,
+      "nodesToMap": 243
+     }
+    },
+    "room-terraform": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 256,
+      "y": 160,
+      "w": 848,
+      "h": 128,
+      "area": 108544,
+      "shareOfApp": 0.083
+     },
+     "room": {
+      "width": 1440,
+      "mainCard": 769,
+      "resumeToNodes": 344,
+      "resumeToNodesCentre": 594,
+      "nodesToMap": 70
+     }
+    },
+    "challenge-hub": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 576,
+      "y": 752,
+      "w": 608,
+      "h": 160,
+      "area": 97280,
+      "shareOfApp": 0.074
+     }
+    },
+    "challenge-dossier": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 464,
+      "y": 0,
+      "w": 976,
+      "h": 96,
+      "area": 93696,
+      "shareOfApp": 0.071
+     }
+    }
+   },
+   "after": {
+    "title": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 960,
+      "h": 912,
+      "area": 875520,
+      "shareOfApp": 0.667
+     }
+    },
+    "species": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 192,
+      "y": 672,
+      "w": 1248,
+      "h": 240,
+      "area": 299520,
+      "shareOfApp": 0.228
+     }
+    },
+    "species-dossier": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 736,
+      "w": 832,
+      "h": 176,
+      "area": 146432,
+      "shareOfApp": 0.112
+     }
+    },
+    "survey-grid": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 336,
+      "h": 848,
+      "area": 284928,
+      "shareOfApp": 0.217
+     }
+    },
+    "survey-focus": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 336,
+      "h": 848,
+      "area": 284928,
+      "shareOfApp": 0.217
+     }
+    },
+    "run-base": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 144,
+      "h": 800,
+      "area": 115200,
+      "shareOfApp": 0.088
+     },
+     "selected": {
+      "region": "Amber Fields",
+      "place": {
+       "region": 17,
+       "place": "bottom",
+       "coverBottom": 0,
+       "coverTop": null,
+       "stage": [
+        1440,
+        785
+       ]
+      },
+      "bannerToRegion": 151,
+      "bannerToRegionCentre": 571,
+      "wouldHelpToRegionCentre": 534
+     }
+    },
+    "run-selected": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 144,
+      "h": 800,
+      "area": 115200,
+      "shareOfApp": 0.088
+     },
+     "selected": {
+      "region": "Heath Flats 1",
+      "place": {
+       "region": 6,
+       "place": "bottom",
+       "coverBottom": 0,
+       "coverTop": null,
+       "stage": [
+        1440,
+        785
+       ]
+      },
+      "bannerToRegion": 111,
+      "bannerToRegionCentre": 359,
+      "wouldHelpToRegionCentre": 411
+     }
+    },
+    "room-region": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 656,
+      "w": 960,
+      "h": 208,
+      "area": 199680,
+      "shareOfApp": 0.152
+     },
+     "room": {
+      "width": 1440,
+      "mainCard": 614,
+      "resumeToNodes": null,
+      "resumeToNodesCentre": null,
+      "nodesToMap": null
+     }
+    },
+    "room-adapt": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 752,
+      "w": 960,
+      "h": 112,
+      "area": 107520,
+      "shareOfApp": 0.082
+     },
+     "room": {
+      "width": 1440,
+      "mainCard": 601,
+      "resumeToNodes": 556,
+      "resumeToNodesCentre": 814,
+      "nodesToMap": 243
+     }
+    },
+    "room-spread": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 272,
+      "y": 448,
+      "w": 688,
+      "h": 416,
+      "area": 286208,
+      "shareOfApp": 0.218
+     },
+     "room": {
+      "width": 1440,
+      "mainCard": 601,
+      "resumeToNodes": 556,
+      "resumeToNodesCentre": 757,
+      "nodesToMap": 243
+     }
+    },
+    "room-terraform": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 256,
+      "y": 160,
+      "w": 848,
+      "h": 128,
+      "area": 108544,
+      "shareOfApp": 0.083
+     },
+     "room": {
+      "width": 1440,
+      "mainCard": 769,
+      "resumeToNodes": 339,
+      "resumeToNodesCentre": 592,
+      "nodesToMap": 68
+     }
+    },
+    "challenge-hub": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 576,
+      "y": 752,
+      "w": 608,
+      "h": 160,
+      "area": 97280,
+      "shareOfApp": 0.074
+     }
+    },
+    "challenge-dossier": {
+     "app": {
+      "x": 0,
+      "w": 1440,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 464,
+      "y": 0,
+      "w": 976,
+      "h": 96,
+      "area": 93696,
+      "shareOfApp": 0.071
+     }
+    }
+   }
+  },
+  "1920": {
+   "before": {
+    "title": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 1408,
+      "h": 1088,
+      "area": 1531904,
+      "shareOfApp": 0.733
+     }
+    },
+    "species": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 688,
+      "w": 1920,
+      "h": 400,
+      "area": 768000,
+      "shareOfApp": 0.368
+     }
+    },
+    "species-dossier": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 832,
+      "w": 1920,
+      "h": 256,
+      "area": 491520,
+      "shareOfApp": 0.235
+     }
+    },
+    "survey-grid": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 464,
+      "h": 1024,
+      "area": 475136,
+      "shareOfApp": 0.227
+     }
+    },
+    "survey-focus": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 1584,
+      "y": 64,
+      "w": 336,
+      "h": 1024,
+      "area": 344064,
+      "shareOfApp": 0.165
+     }
+    },
+    "run-base": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 240,
+      "h": 992,
+      "area": 238080,
+      "shareOfApp": 0.114
+     },
+     "selected": {
+      "region": "Amber Fields",
+      "bannerToRegion": 233,
+      "bannerToRegionCentre": 731,
+      "wouldHelpToRegionCentre": 693
+     }
+    },
+    "run-selected": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 240,
+      "h": 992,
+      "area": 238080,
+      "shareOfApp": 0.114
+     },
+     "selected": {
+      "region": "Heath Flats 1",
+      "bannerToRegion": 181,
+      "bannerToRegionCentre": 468,
+      "wouldHelpToRegionCentre": 508
+     }
+    },
+    "room-region": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 960,
+      "y": 320,
+      "w": 336,
+      "h": 736,
+      "area": 247296,
+      "shareOfApp": 0.118
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 819,
+      "resumeToNodes": null,
+      "resumeToNodesCentre": null,
+      "nodesToMap": null
+     }
+    },
+    "room-adapt": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 992,
+      "y": 112,
+      "w": 304,
+      "h": 944,
+      "area": 286976,
+      "shareOfApp": 0.137
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 801,
+      "resumeToNodes": 745,
+      "resumeToNodesCentre": 1088,
+      "nodesToMap": 323
+     }
+    },
+    "room-spread": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 368,
+      "y": 608,
+      "w": 928,
+      "h": 448,
+      "area": 415744,
+      "shareOfApp": 0.199
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 801,
+      "resumeToNodes": 745,
+      "resumeToNodesCentre": 1011,
+      "nodesToMap": 323
+     }
+    },
+    "room-terraform": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 608,
+      "y": 864,
+      "w": 864,
+      "h": 192,
+      "area": 165888,
+      "shareOfApp": 0.079
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 1025,
+      "resumeToNodes": 420,
+      "resumeToNodesCentre": 749,
+      "nodesToMap": 88
+     }
+    },
+    "challenge-hub": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 1648,
+      "y": 0,
+      "w": 272,
+      "h": 1088,
+      "area": 295936,
+      "shareOfApp": 0.142
+     }
+    },
+    "challenge-dossier": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 928,
+      "w": 1920,
+      "h": 160,
+      "area": 307200,
+      "shareOfApp": 0.147
+     }
+    }
+   },
+   "after": {
+    "title": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 1408,
+      "h": 1088,
+      "area": 1531904,
+      "shareOfApp": 0.733
+     }
+    },
+    "species": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 688,
+      "w": 1920,
+      "h": 400,
+      "area": 768000,
+      "shareOfApp": 0.368
+     }
+    },
+    "species-dossier": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 832,
+      "w": 1920,
+      "h": 256,
+      "area": 491520,
+      "shareOfApp": 0.235
+     }
+    },
+    "survey-grid": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 464,
+      "h": 1024,
+      "area": 475136,
+      "shareOfApp": 0.227
+     }
+    },
+    "survey-focus": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 1584,
+      "y": 64,
+      "w": 336,
+      "h": 1024,
+      "area": 344064,
+      "shareOfApp": 0.165
+     }
+    },
+    "run-base": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 240,
+      "h": 992,
+      "area": 238080,
+      "shareOfApp": 0.114
+     },
+     "selected": {
+      "region": "Amber Fields",
+      "place": {
+       "region": 17,
+       "place": "bottom",
+       "coverBottom": 0,
+       "coverTop": null,
+       "stage": [
+        1920,
+        965
+       ]
+      },
+      "bannerToRegion": 233,
+      "bannerToRegionCentre": 731,
+      "wouldHelpToRegionCentre": 693
+     }
+    },
+    "run-selected": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 240,
+      "h": 992,
+      "area": 238080,
+      "shareOfApp": 0.114
+     },
+     "selected": {
+      "region": "Heath Flats 1",
+      "place": {
+       "region": 6,
+       "place": "bottom",
+       "coverBottom": 0,
+       "coverTop": null,
+       "stage": [
+        1920,
+        965
+       ]
+      },
+      "bannerToRegion": 181,
+      "bannerToRegionCentre": 468,
+      "wouldHelpToRegionCentre": 520
+     }
+    },
+    "room-region": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 912,
+      "y": 384,
+      "w": 384,
+      "h": 672,
+      "area": 258048,
+      "shareOfApp": 0.124
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 819,
+      "resumeToNodes": null,
+      "resumeToNodesCentre": null,
+      "nodesToMap": null
+     }
+    },
+    "room-adapt": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 1008,
+      "y": 112,
+      "w": 288,
+      "h": 944,
+      "area": 271872,
+      "shareOfApp": 0.13
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 801,
+      "resumeToNodes": 745,
+      "resumeToNodesCentre": 1088,
+      "nodesToMap": 323
+     }
+    },
+    "room-spread": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 368,
+      "y": 608,
+      "w": 928,
+      "h": 448,
+      "area": 415744,
+      "shareOfApp": 0.199
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 801,
+      "resumeToNodes": 745,
+      "resumeToNodesCentre": 1011,
+      "nodesToMap": 323
+     }
+    },
+    "room-terraform": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 608,
+      "y": 864,
+      "w": 864,
+      "h": 192,
+      "area": 165888,
+      "shareOfApp": 0.079
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 1025,
+      "resumeToNodes": 414,
+      "resumeToNodesCentre": 747,
+      "nodesToMap": 87
+     }
+    },
+    "challenge-hub": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 1648,
+      "y": 0,
+      "w": 272,
+      "h": 1088,
+      "area": 295936,
+      "shareOfApp": 0.142
+     }
+    },
+    "challenge-dossier": {
+     "app": {
+      "x": 0,
+      "w": 1920,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 928,
+      "w": 1920,
+      "h": 160,
+      "area": 307200,
+      "shareOfApp": 0.147
+     }
+    }
+   }
+  },
+  "2200": {
+   "before": {
+    "title": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 1680,
+      "h": 1200,
+      "area": 2016000,
+      "shareOfApp": 0.761
+     }
+    },
+    "species": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 688,
+      "w": 2208,
+      "h": 512,
+      "area": 1130496,
+      "shareOfApp": 0.427
+     }
+    },
+    "species-dossier": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 848,
+      "w": 2208,
+      "h": 352,
+      "area": 777216,
+      "shareOfApp": 0.293
+     }
+    },
+    "survey-grid": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 528,
+      "h": 1136,
+      "area": 599808,
+      "shareOfApp": 0.226
+     }
+    },
+    "survey-focus": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 1728,
+      "y": 64,
+      "w": 480,
+      "h": 1136,
+      "area": 545280,
+      "shareOfApp": 0.206
+     }
+    },
+    "run-base": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 288,
+      "h": 1104,
+      "area": 317952,
+      "shareOfApp": 0.12
+     },
+     "selected": {
+      "region": "Amber Fields",
+      "bannerToRegion": 301,
+      "bannerToRegionCentre": 830,
+      "wouldHelpToRegionCentre": 792
+     }
+    },
+    "run-selected": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 288,
+      "h": 1104,
+      "area": 317952,
+      "shareOfApp": 0.12
+     },
+     "selected": {
+      "region": "Heath Flats 1",
+      "bannerToRegion": 229,
+      "bannerToRegionCentre": 539,
+      "wouldHelpToRegionCentre": 579
+     }
+    },
+    "room-region": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 1040,
+      "y": 320,
+      "w": 432,
+      "h": 880,
+      "area": 380160,
+      "shareOfApp": 0.143
+     },
+     "room": {
+      "width": 2200,
+      "mainCard": 948,
+      "resumeToNodes": null,
+      "resumeToNodesCentre": null,
+      "nodesToMap": null
+     }
+    },
+    "room-adapt": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 1008,
+      "w": 1472,
+      "h": 160,
+      "area": 235520,
+      "shareOfApp": 0.089
+     },
+     "room": {
+      "width": 2200,
+      "mainCard": 930,
+      "resumeToNodes": 965,
+      "resumeToNodesCentre": 1288,
+      "nodesToMap": 452
+     }
+    },
+    "room-spread": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 464,
+      "y": 608,
+      "w": 1008,
+      "h": 560,
+      "area": 564480,
+      "shareOfApp": 0.213
+     },
+     "room": {
+      "width": 2200,
+      "mainCard": 930,
+      "resumeToNodes": 965,
+      "resumeToNodesCentre": 1224,
+      "nodesToMap": 452
+     }
+    },
+    "room-terraform": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 880,
+      "y": 112,
+      "w": 816,
+      "h": 176,
+      "area": 143616,
+      "shareOfApp": 0.054
+     },
+     "room": {
+      "width": 2200,
+      "mainCard": 1185,
+      "resumeToNodes": 507,
+      "resumeToNodesCentre": 833,
+      "nodesToMap": 107
+     }
+    },
+    "challenge-hub": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 944,
+      "w": 2208,
+      "h": 256,
+      "area": 565248,
+      "shareOfApp": 0.213
+     }
+    },
+    "challenge-dossier": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 960,
+      "w": 2208,
+      "h": 240,
+      "area": 529920,
+      "shareOfApp": 0.2
+     }
+    }
+   },
+   "after": {
+    "title": {
+     "app": {
+      "x": 0,
+      "w": 2200,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 1552,
+      "h": 1200,
+      "area": 1862400,
+      "shareOfApp": 0.703
+     }
+    },
+    "species": {
+     "app": {
+      "x": 140,
+      "w": 1920,
+      "wellL": 140,
+      "wellR": 140
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 140,
+      "y": 688,
+      "w": 1920,
+      "h": 512,
+      "area": 983040,
+      "shareOfApp": 0.427
+     }
+    },
+    "species-dossier": {
+     "app": {
+      "x": 140,
+      "w": 1920,
+      "wellL": 140,
+      "wellR": 140
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 140,
+      "y": 848,
+      "w": 1920,
+      "h": 352,
+      "area": 675840,
+      "shareOfApp": 0.293
+     }
+    },
+    "survey-grid": {
+     "app": {
+      "x": 140,
+      "w": 1920,
+      "wellL": 140,
+      "wellR": 140
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 140,
+      "y": 64,
+      "w": 400,
+      "h": 1136,
+      "area": 454400,
+      "shareOfApp": 0.197
+     }
+    },
+    "survey-focus": {
+     "app": {
+      "x": 140,
+      "w": 1920,
+      "wellL": 140,
+      "wellR": 140
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 1724,
+      "y": 64,
+      "w": 336,
+      "h": 1136,
+      "area": 381696,
+      "shareOfApp": 0.166
+     }
+    },
+    "run-base": {
+     "app": {
+      "x": 140,
+      "w": 1920,
+      "wellL": 140,
+      "wellR": 140
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 140,
+      "y": 64,
+      "w": 144,
+      "h": 1104,
+      "area": 158976,
+      "shareOfApp": 0.069
+     },
+     "selected": {
+      "region": "Amber Fields",
+      "place": {
+       "region": 17,
+       "place": "bottom",
+       "coverBottom": 0,
+       "coverTop": null,
+       "stage": [
+        1920,
+        1085
+       ]
+      },
+      "bannerToRegion": 301,
+      "bannerToRegionCentre": 830,
+      "wouldHelpToRegionCentre": 792
+     }
+    },
+    "run-selected": {
+     "app": {
+      "x": 140,
+      "w": 1920,
+      "wellL": 140,
+      "wellR": 140
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 140,
+      "y": 64,
+      "w": 144,
+      "h": 1104,
+      "area": 158976,
+      "shareOfApp": 0.069
+     },
+     "selected": {
+      "region": "Heath Flats 1",
+      "place": {
+       "region": 6,
+       "place": "bottom",
+       "coverBottom": 0,
+       "coverTop": null,
+       "stage": [
+        1920,
+        1085
+       ]
+      },
+      "bannerToRegion": 229,
+      "bannerToRegionCentre": 539,
+      "wouldHelpToRegionCentre": 591
+     }
+    },
+    "room-region": {
+     "app": {
+      "x": 140,
+      "w": 1920,
+      "wellL": 140,
+      "wellR": 140
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 140,
+      "y": 880,
+      "w": 1296,
+      "h": 288,
+      "area": 373248,
+      "shareOfApp": 0.162
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 819,
+      "resumeToNodes": null,
+      "resumeToNodesCentre": null,
+      "nodesToMap": null
+     }
+    },
+    "room-adapt": {
+     "app": {
+      "x": 140,
+      "w": 1920,
+      "wellL": 140,
+      "wellR": 140
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 140,
+      "y": 1008,
+      "w": 1296,
+      "h": 160,
+      "area": 207360,
+      "shareOfApp": 0.09
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 801,
+      "resumeToNodes": 745,
+      "resumeToNodesCentre": 1088,
+      "nodesToMap": 323
+     }
+    },
+    "room-spread": {
+     "app": {
+      "x": 140,
+      "w": 1920,
+      "wellL": 140,
+      "wellR": 140
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 508,
+      "y": 608,
+      "w": 928,
+      "h": 560,
+      "area": 519680,
+      "shareOfApp": 0.226
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 801,
+      "resumeToNodes": 745,
+      "resumeToNodesCentre": 1011,
+      "nodesToMap": 323
+     }
+    },
+    "room-terraform": {
+     "app": {
+      "x": 140,
+      "w": 1920,
+      "wellL": 140,
+      "wellR": 140
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 748,
+      "y": 928,
+      "w": 864,
+      "h": 240,
+      "area": 207360,
+      "shareOfApp": 0.09
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 1025,
+      "resumeToNodes": 455,
+      "resumeToNodesCentre": 792,
+      "nodesToMap": 104
+     }
+    },
+    "challenge-hub": {
+     "app": {
+      "x": 140,
+      "w": 1920,
+      "wellL": 140,
+      "wellR": 140
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 140,
+      "y": 944,
+      "w": 1920,
+      "h": 256,
+      "area": 491520,
+      "shareOfApp": 0.213
+     }
+    },
+    "challenge-dossier": {
+     "app": {
+      "x": 140,
+      "w": 1920,
+      "wellL": 140,
+      "wellR": 140
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 140,
+      "y": 960,
+      "w": 1920,
+      "h": 240,
+      "area": 460800,
+      "shareOfApp": 0.2
+     }
+    }
+   }
+  },
+  "2560": {
+   "before": {
+    "title": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 2032,
+      "h": 1440,
+      "area": 2926080,
+      "shareOfApp": 0.794
+     }
+    },
+    "species": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 688,
+      "w": 2560,
+      "h": 752,
+      "area": 1925120,
+      "shareOfApp": 0.522
+     }
+    },
+    "species-dossier": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 848,
+      "w": 2560,
+      "h": 592,
+      "area": 1515520,
+      "shareOfApp": 0.411
+     }
+    },
+    "survey-grid": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 624,
+      "h": 1376,
+      "area": 858624,
+      "shareOfApp": 0.233
+     }
+    },
+    "survey-focus": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 1936,
+      "y": 64,
+      "w": 624,
+      "h": 1376,
+      "area": 858624,
+      "shareOfApp": 0.233
+     }
+    },
+    "run-base": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 288,
+      "h": 1344,
+      "area": 387072,
+      "shareOfApp": 0.105
+     },
+     "selected": {
+      "region": "Amber Fields",
+      "bannerToRegion": 452,
+      "bannerToRegionCentre": 1029,
+      "wouldHelpToRegionCentre": 992
+     }
+    },
+    "run-selected": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 64,
+      "w": 288,
+      "h": 1344,
+      "area": 387072,
+      "shareOfApp": 0.105
+     },
+     "selected": {
+      "region": "Heath Flats 1",
+      "bannerToRegion": 325,
+      "bannerToRegionCentre": 681,
+      "wouldHelpToRegionCentre": 721
+     }
+    },
+    "room-region": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 1008,
+      "w": 1712,
+      "h": 400,
+      "area": 684800,
+      "shareOfApp": 0.186
+     },
+     "room": {
+      "width": 2560,
+      "mainCard": 1113,
+      "resumeToNodes": null,
+      "resumeToNodesCentre": null,
+      "nodesToMap": null
+     }
+    },
+    "room-adapt": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 144,
+      "y": 1072,
+      "w": 1568,
+      "h": 336,
+      "area": 526848,
+      "shareOfApp": 0.143
+     },
+     "room": {
+      "width": 2560,
+      "mainCard": 1096,
+      "resumeToNodes": 1249,
+      "resumeToNodesCentre": 1554,
+      "nodesToMap": 617
+     }
+    },
+    "room-spread": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 544,
+      "y": 608,
+      "w": 1168,
+      "h": 800,
+      "area": 934400,
+      "shareOfApp": 0.253
+     },
+     "room": {
+      "width": 2560,
+      "mainCard": 1096,
+      "resumeToNodes": 1249,
+      "resumeToNodesCentre": 1501,
+      "nodesToMap": 617
+     }
+    },
+    "room-terraform": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 992,
+      "w": 576,
+      "h": 416,
+      "area": 239616,
+      "shareOfApp": 0.065
+     },
+     "room": {
+      "width": 2560,
+      "mainCard": 1390,
+      "resumeToNodes": 649,
+      "resumeToNodesCentre": 974,
+      "nodesToMap": 169
+     }
+    },
+    "challenge-hub": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 944,
+      "w": 2560,
+      "h": 496,
+      "area": 1269760,
+      "shareOfApp": 0.344
+     }
+    },
+    "challenge-dossier": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 1072,
+      "w": 2560,
+      "h": 368,
+      "area": 942080,
+      "shareOfApp": 0.256
+     }
+    }
+   },
+   "after": {
+    "title": {
+     "app": {
+      "x": 0,
+      "w": 2560,
+      "wellL": 0,
+      "wellR": 0
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 0,
+      "y": 0,
+      "w": 1728,
+      "h": 1440,
+      "area": 2488320,
+      "shareOfApp": 0.675
+     }
+    },
+    "species": {
+     "app": {
+      "x": 320,
+      "w": 1920,
+      "wellL": 320,
+      "wellR": 320
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 320,
+      "y": 688,
+      "w": 1920,
+      "h": 752,
+      "area": 1443840,
+      "shareOfApp": 0.522
+     }
+    },
+    "species-dossier": {
+     "app": {
+      "x": 320,
+      "w": 1920,
+      "wellL": 320,
+      "wellR": 320
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 320,
+      "y": 848,
+      "w": 1920,
+      "h": 592,
+      "area": 1136640,
+      "shareOfApp": 0.411
+     }
+    },
+    "survey-grid": {
+     "app": {
+      "x": 320,
+      "w": 1920,
+      "wellL": 320,
+      "wellR": 320
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 320,
+      "y": 64,
+      "w": 320,
+      "h": 1376,
+      "area": 440320,
+      "shareOfApp": 0.159
+     }
+    },
+    "survey-focus": {
+     "app": {
+      "x": 320,
+      "w": 1920,
+      "wellL": 320,
+      "wellR": 320
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 1920,
+      "y": 64,
+      "w": 320,
+      "h": 1376,
+      "area": 440320,
+      "shareOfApp": 0.159
+     }
+    },
+    "run-base": {
+     "app": {
+      "x": 320,
+      "w": 1920,
+      "wellL": 320,
+      "wellR": 320
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 320,
+      "y": 80,
+      "w": 1920,
+      "h": 16,
+      "area": 30720,
+      "shareOfApp": 0.011
+     },
+     "selected": {
+      "region": "Amber Fields",
+      "place": {
+       "region": 17,
+       "place": "bottom",
+       "coverBottom": 0,
+       "coverTop": null,
+       "stage": [
+        1920,
+        1325
+       ]
+      },
+      "bannerToRegion": 443,
+      "bannerToRegionCentre": 1008,
+      "wouldHelpToRegionCentre": 973
+     }
+    },
+    "run-selected": {
+     "app": {
+      "x": 320,
+      "w": 1920,
+      "wellL": 320,
+      "wellR": 320
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 320,
+      "y": 80,
+      "w": 1920,
+      "h": 16,
+      "area": 30720,
+      "shareOfApp": 0.011
+     },
+     "selected": {
+      "region": "Heath Flats 1",
+      "place": {
+       "region": 6,
+       "place": "bottom",
+       "coverBottom": 0,
+       "coverTop": null,
+       "stage": [
+        1920,
+        1325
+       ]
+      },
+      "bannerToRegion": 329,
+      "bannerToRegionCentre": 677,
+      "wouldHelpToRegionCentre": 729
+     }
+    },
+    "room-region": {
+     "app": {
+      "x": 320,
+      "w": 1920,
+      "wellL": 320,
+      "wellR": 320
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 320,
+      "y": 880,
+      "w": 1296,
+      "h": 528,
+      "area": 684288,
+      "shareOfApp": 0.247
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 819,
+      "resumeToNodes": null,
+      "resumeToNodesCentre": null,
+      "nodesToMap": null
+     }
+    },
+    "room-adapt": {
+     "app": {
+      "x": 320,
+      "w": 1920,
+      "wellL": 320,
+      "wellR": 320
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 320,
+      "y": 1008,
+      "w": 1296,
+      "h": 400,
+      "area": 518400,
+      "shareOfApp": 0.188
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 801,
+      "resumeToNodes": 745,
+      "resumeToNodesCentre": 1088,
+      "nodesToMap": 323
+     }
+    },
+    "room-spread": {
+     "app": {
+      "x": 320,
+      "w": 1920,
+      "wellL": 320,
+      "wellR": 320
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 688,
+      "y": 608,
+      "w": 928,
+      "h": 800,
+      "area": 742400,
+      "shareOfApp": 0.269
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 801,
+      "resumeToNodes": 745,
+      "resumeToNodesCentre": 1011,
+      "nodesToMap": 323
+     }
+    },
+    "room-terraform": {
+     "app": {
+      "x": 320,
+      "w": 1920,
+      "wellL": 320,
+      "wellR": 320
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 320,
+      "y": 1056,
+      "w": 1472,
+      "h": 240,
+      "area": 353280,
+      "shareOfApp": 0.128
+     },
+     "room": {
+      "width": 1920,
+      "mainCard": 1025,
+      "resumeToNodes": 547,
+      "resumeToNodesCentre": 885,
+      "nodesToMap": 162
+     }
+    },
+    "challenge-hub": {
+     "app": {
+      "x": 320,
+      "w": 1920,
+      "wellL": 320,
+      "wellR": 320
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 320,
+      "y": 944,
+      "w": 1920,
+      "h": 496,
+      "area": 952320,
+      "shareOfApp": 0.344
+     }
+    },
+    "challenge-dossier": {
+     "app": {
+      "x": 320,
+      "w": 1920,
+      "wellL": 320,
+      "wellR": 320
+     },
+     "overflowX": false,
+     "inkFree": {
+      "x": 320,
+      "y": 1072,
+      "w": 1920,
+      "h": 368,
+      "area": 706560,
+      "shareOfApp": 0.256
+     }
+    }
+   }
+  }
+ }
+}

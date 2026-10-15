@@ -21,7 +21,9 @@ one document: no screen opens another page, the address never changes, and a rel
 
 SETTINGS (v1.0.1): motion (system / reduced / full) · "Show Training recommendation again" (the training record back to first-run) · "Reset preferences"
 (motion → Follow system and the training record back to first-run; nothing else in the browser's storage is touched). Nothing gameplay-affecting is a
-setting — "pause while a decision room is open" is explicitly deferred (it changes run timing under Dying World / Native Competition / Volatile Climate / Thin Air).
+setting. **Pause truth (corrected by BLOOM-039):** the four decision rooms already pause the run unconditionally (BLOOM-038 measured 0 ticks while a room is
+open, scenario clocks frozen), so room pausing is not a deferred setting; whether the selected-region banner, Map View and the run menu should also pause is
+a **human-playtest question** (not implemented).
 
 **v1.0.1 — LIVE / COMPLETE 2026-10-14, release head `f631f4f`** (docs/evidence/bloom-v1.0.1/REPORT.md: 46 / 46 regression · 2119 checks, strict
 axe pass 0 critical / 0 serious on 22 screens × Chromium / Firefox / WebKit, Pages run 38567439937, live verification 11 / 11, portable

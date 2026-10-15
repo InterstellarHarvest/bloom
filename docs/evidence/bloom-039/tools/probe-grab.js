@@ -1,0 +1,12 @@
+const Q = require("./q.js"), path = require("path"); const L = require(path.join(Q.WT, "tools/research/design-audit/atlas-lib.js"));
+(async () => { const S = await Q.serve(Q.WT), b = await Q.launch(process.argv[2] || "chromium"), out = {};
+  const probe = async (p, sel) => { const r = await p.evaluate(s => { const g = document.querySelector(s), rc = g.getBoundingClientRect(); return { x: rc.left + rc.width / 2, y: rc.top + rc.height / 2, rest: getComputedStyle(g).cursor }; }, sel);
+    await p.mouse.move(r.x, r.y); await p.mouse.down(); await p.mouse.move(r.x + 30, r.y, { steps: 4 }); const during = await p.evaluate(s => getComputedStyle(document.querySelector(s)).cursor, sel); await p.mouse.up(); await p.waitForTimeout(150);
+    const after = await p.evaluate(s => getComputedStyle(document.querySelector(s)).cursor, sel); return { rest: r.rest, during, after }; };
+  const p = await Q.newPage(b, { width: 1440, height: 900 }); await p.goto(S.origin + "/?bg=3"); await Q.waits.menu(p);
+  await Q.nav.toSpecies(p); await Q.nav.chooseSpecies(p, "organic_hybrid"); await Q.waits.survey(p); await Q.waits.cells(p);
+  out.surveyGridGlobe = await p.evaluate(() => getComputedStyle(document.querySelector(".ds-cell .ds-globe, .ds-grid .ds-globe, .ds-globe")).cursor);
+  await Q.nav.focusFirst(p); await p.waitForTimeout(700); out.surveyFocus = await probe(p, ".ds-focus .ds-globe");
+  await p.click(".ds-btn.go"); await Q.waits.run(p, 1); await L.openRoom(p, "terraform"); await p.waitForTimeout(900); out.terraform = await probe(p, ".dr-room:not([hidden]) .tf-globe"); await p.context().close();
+  const q = await Q.newPage(b, { width: 1440, height: 900 }); await q.goto(S.origin + "/?bg=3"); await Q.waits.menu(q); await Q.nav.challenge(q, "dying_world", "organic_hybrid", 1); await q.waitForTimeout(800);
+  out.challengeDossier = await probe(q, ".cw-globe"); console.log(JSON.stringify(out)); await b.close(); S.close(); })();

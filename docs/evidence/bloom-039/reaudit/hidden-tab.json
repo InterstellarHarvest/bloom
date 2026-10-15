@@ -1,0 +1,84 @@
+{
+ "method": "Chromium; synthetic visibility (document.hidden + visibilitychange), a synthetic 10-minute animation-frame gap (rAF timestamps jump 600000 ms), CDP Page.setWebLifecycleState frozen (the 038 method), and a real background tab. tickMs 160 (6.25 ticks/s at 1x).",
+ "before": {
+  "hidden5s": {
+   "ticksPerSecondBefore": 5.99,
+   "ticksWhileHidden": 31,
+   "ticksIn250msAfterReturn": 2,
+   "expectedIf5sReplayed": 31,
+   "running": true,
+   "speed": 1
+  },
+  "speedAndPause": {
+   "at4x": {
+    "ticksAcrossHidden3s": 81,
+    "expectedIfReplayed": 75,
+    "runningAfter": true,
+    "speedAfter": 4,
+    "ticksPerSecondAfter": 25.22
+   },
+   "pausedBeforeHide": {
+    "runningAfter": false,
+    "ticksAcross": 0,
+    "speedAfter": 4
+   }
+  },
+  "gap10min": {
+   "ticksAcrossGap": 3752,
+   "expectedIfReplayed": 3750,
+   "ordinaryTicksIn400ms": 3,
+   "running": true
+  },
+  "frozen5s": {
+   "ticks": 34,
+   "wallSeconds": 5.31,
+   "expectedIfReplayed": 33
+  },
+  "realBackgroundTab": {
+   "visibilityWhileBehind": "visible",
+   "ticks": 34,
+   "wallSeconds": 5.35
+  }
+ },
+ "after": {
+  "hidden5s": {
+   "ticksPerSecondBefore": 6.49,
+   "ticksWhileHidden": 0,
+   "ticksIn250msAfterReturn": 1,
+   "expectedIf5sReplayed": 31,
+   "running": true,
+   "speed": 1
+  },
+  "speedAndPause": {
+   "at4x": {
+    "ticksAcrossHidden3s": 5,
+    "expectedIfReplayed": 75,
+    "runningAfter": true,
+    "speedAfter": 4,
+    "ticksPerSecondAfter": 25.31
+   },
+   "pausedBeforeHide": {
+    "runningAfter": false,
+    "ticksAcross": 0,
+    "speedAfter": 4
+   }
+  },
+  "gap10min": {
+   "ticksAcrossGap": 2,
+   "expectedIfReplayed": 3750,
+   "ordinaryTicksIn400ms": 3,
+   "running": true
+  },
+  "frozen5s": {
+   "ticks": 33,
+   "wallSeconds": 5.31,
+   "expectedIfReplayed": 33
+  },
+  "realBackgroundTab": {
+   "visibilityWhileBehind": "visible",
+   "ticks": 33,
+   "wallSeconds": 5.35
+  }
+ },
+ "note": "Headless Chromium keeps animation frames running through the CDP frozen state and reports a background tab as visible, so frozen5s / realBackgroundTab tick at the ordinary rate BEFORE and AFTER: the 038 frozenPage5s figure measured ordinary running. The catch-up defect and its fix are shown by hidden5s, speedAndPause and gap10min."
+}

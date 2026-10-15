@@ -227,3 +227,20 @@ Every value the adapter returns comes from the real run.
 - **Pre-existing quirks, kept as they are:**
   - The report's *Keep playing* resumes without `bloom:play-pause`. The adapter notices it as `"continue"`.
   - `BLOOM_API.advance` stops the clock without updating the ▶ button. It is a QA hook.
+
+## 9. BLOOM-039 additions (additive; `api` stays 1)
+
+Presentation reads only; no rule, price or threshold moves into the adapter. Evidence: [`evidence/bloom-039/REPORT.md`](evidence/bloom-039/REPORT.md).
+
+| Read | What it is | Source of truth |
+|---|---|---|
+| `region / regions().status` · `growable` | ONE aggregate status: `refuge` (the origin's own ground cannot support growth and the refuge keeps the plant alive) · `blocked` (cannot establish / grow now) · `strained` (grows; fitness lamp not green) · `ok`. `blocked` / `limiting.blocked` mean exactly status `blocked` | the engine's grow rule: `evaluate(i).fitness > config.grow.growThresh` |
+| `conditions[].status` | one condition ALONE vs the grow rule (blocked = it stops growth by itself; else its lamp: ok / strained) | `cats[k].f` |
+| `region.facts` | radiation / toxicity over the plant's tolerance, salty / acidic / alkaline ground (the physical words of the readout) | raw signals vs `derived()` tolerances |
+| `region.limiting.text` | now present wherever the status is not OK (strained included); `combined` when no single condition is poor | the page's `LIMIT_MSG` |
+| `regions().nativeHeld` · `nativeSide` · `nativeTiles` · `competition.reason` | who holds the ground; the branch of the page's competition explanation (`compReason`, the same branches as `compWhy`) | `sim.competitionAt` (engine `dominated` flag) |
+| `advice(r)` | multi-step "Would help": `routes` (fewest legal steps on one offered track that open r now; total price at the real tiers; Biomass still missing), `helps` (tracks that raise a poor condition but cannot open it alone; the condition that would still block), `toxic` (lethal toxicity binds; no trait raises toxicity tolerance) | the page's `stepsWhatIf`: the engine's own previewOf what-if taken along one track, restored |
+| `previewOf(id).nativeLess / nativeMore` | a Terraform step's native shift (regions it suits less / more) | the page's existing `nativeSkyShift` (it was only in the footer text) |
+
+The page (`game-session.js`) adds the host reads `compReason` and `stepsWhatIf`. `wouldHelp(r)` (one step) is unchanged and still
+available. The renderer adds `labelAt(x, y)` (the region-name pill under the pointer) and `info().labels` (QA geometry).

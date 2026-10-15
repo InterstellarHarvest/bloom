@@ -1,0 +1,483 @@
+{
+ "method": "A: every region where the competition (side native, native cover present) holds back ground the plant could grow on (engine fitness > growThresh), 4 harness worlds after purchases + game time, read in the REAL banner. B: production Terraform room, each sky node hovered (preview only, nothing bought). C: FRONT STALLED on a deterministic stalled front (desert 7, Drought x2, no further purchase); then real progress (Dry the Sky x2, a real purchase) clears it.",
+ "A": {
+  "before": {
+   "regions": 21,
+   "saysNothingHolding": 20,
+   "namesCompetition": 0,
+   "showsOwnership": 0,
+   "worlds": [
+    {
+     "world": "desert_world:7",
+     "coverage": 0.122,
+     "native": 0.516,
+     "regions": 5
+    },
+    {
+     "world": "desert_world:11",
+     "coverage": 0.291,
+     "native": 0.341,
+     "regions": 6
+    },
+    {
+     "world": "frozen_world:7",
+     "coverage": 0.318,
+     "native": 0.33,
+     "regions": 5
+    },
+    {
+     "world": "ocean_archipelago:28",
+     "coverage": 0.061,
+     "native": 0.335,
+     "regions": 5
+    }
+   ]
+  },
+  "after": {
+   "regions": 23,
+   "saysNothingHolding": 0,
+   "namesCompetition": 22,
+   "showsOwnership": 23,
+   "worlds": [
+    {
+     "world": "desert_world:7",
+     "coverage": 0.124,
+     "native": 0.516,
+     "regions": 6
+    },
+    {
+     "world": "desert_world:11",
+     "coverage": 0.292,
+     "native": 0.34,
+     "regions": 6
+    },
+    {
+     "world": "frozen_world:7",
+     "coverage": 0.351,
+     "native": 0.335,
+     "regions": 6
+    },
+    {
+     "world": "ocean_archipelago:28",
+     "coverage": 0.061,
+     "native": 0.335,
+     "regions": 5
+    }
+   ]
+  }
+ },
+ "B": {
+  "before": [
+   {
+    "id": "warm",
+    "footerHasNativeShift": true,
+    "adapterLists": [
+     0,
+     0
+    ],
+    "roomShowsNatives": false,
+    "roomShowsLessMore": false,
+    "info": "PREVIEW \u00b7 SKY TEMPERATURE \u00b7 ATMOSPHERE Warm the Sky 200 Biomass +6\u00b0C globally. CHANGES THE PLANET'S SKY \u00b7 NOT THE PLANT Sky temperature: 14 \u00b0C \u2192 20 \u00b0C Unchanged for Gold Dunes 2. Closes: Ember Basin, Saffron Flats Click or press Enter to buy.",
+    "ctx": "PLANET READOUT Sky temperature 14 \u00b0C \u2192 20 \u00b0C Rain \u00b7 sky moisture 18 Soil here Rich Limiting factor None REGION EFFECT OF THIS CHOICE Unchanged for Gold Dunes 2. Closes 2: Ember Basin, Saffron Flats"
+   },
+   {
+    "id": "cool",
+    "footerHasNativeShift": false,
+    "adapterLists": [
+     0,
+     0
+    ],
+    "roomShowsNatives": false,
+    "roomShowsLessMore": false,
+    "info": "PREVIEW \u00b7 SKY TEMPERATURE \u00b7 ATMOSPHERE Cool the Sky 200 Biomass \u22126\u00b0C globally. CHANGES THE PLANET'S SKY \u00b7 NOT THE PLANT Sky temperature: 14 \u00b0C \u2192 8 \u00b0C Unchanged for Gold Dunes 2. Closer, still blocked: Glass Hollow, Blaze Hollow, Chalk Wastes, Furnace Shelf Click or press Enter to buy.",
+    "ctx": "PLANET READOUT Sky temperature 14 \u00b0C \u2192 8 \u00b0C Rain \u00b7 sky moisture 18 Soil here Rich Limiting factor None REGION EFFECT OF THIS CHOICE Unchanged for Gold Dunes 2. Closer, still blocked 4: Glass Hollow, Blaze Hollow, Chalk Wastes, Furnace Shelf"
+   },
+   {
+    "id": "humid",
+    "footerHasNativeShift": false,
+    "adapterLists": [
+     0,
+     0
+    ],
+    "roomShowsNatives": false,
+    "roomShowsLessMore": false,
+    "info": "PREVIEW \u00b7 RAIN \u00b7 ATMOSPHERE Humidify 200 Biomass +8 moisture globally. CHANGES THE PLANET'S SKY \u00b7 NOT THE PLANT Sky moisture: 18 \u2192 26 Gold Dunes 2: worse for your plant, but it still grows. Worse, still growing: Copper Hollow, Gold Dunes 2 Click or press Enter to buy.",
+    "ctx": "PLANET READOUT Sky temperature 14 \u00b0C Rain \u00b7 sky moisture 18 \u2192 26 Soil here Rich Limiting factor None REGION EFFECT OF THIS CHOICE Gold Dunes 2: worse for your plant, but it still grows. Worse, still growing 2: Copper Hollow, Gold Dunes 2"
+   },
+   {
+    "id": "dry",
+    "footerHasNativeShift": true,
+    "adapterLists": [
+     0,
+     0
+    ],
+    "roomShowsNatives": false,
+    "roomShowsLessMore": false,
+    "info": "PREVIEW \u00b7 RAIN \u00b7 ATMOSPHERE Dry the Sky 200 Biomass \u22128 moisture globally. CHANGES THE PLANET'S SKY \u00b7 NOT THE PLANT Sky moisture: 18 \u2192 10 Unchanged for Gold Dunes 2. Click or press Enter to buy.",
+    "ctx": "PLANET READOUT Sky temperature 14 \u00b0C Rain \u00b7 sky moisture 18 \u2192 10 Soil here Rich Limiting factor None REGION EFFECT OF THIS CHOICE Unchanged for Gold Dunes 2. No region changes state right away."
+   }
+  ],
+  "after": [
+   {
+    "id": "warm",
+    "footerHasNativeShift": true,
+    "adapterLists": [
+     1,
+     0
+    ],
+    "roomShowsNatives": true,
+    "roomShowsLessMore": true,
+    "ctx": "PLANET READOUT Sky temperature 14 \u00b0C \u2192 20 \u00b0C Rain \u00b7 sky moisture 18 Soil here Rich Limiting factor None REGION EFFECT OF THIS CHOICE YOUR PLANT Unchanged for Gold Dunes 1. NATIVES About the same for the natives in Gold Dunes 1. Closes 2: Ember Basin, Saffron Flats Suits natives less 1: Ember Basin"
+   },
+   {
+    "id": "cool",
+    "footerHasNativeShift": false,
+    "adapterLists": [
+     0,
+     0
+    ],
+    "roomShowsNatives": true,
+    "roomShowsLessMore": false,
+    "ctx": "PLANET READOUT Sky temperature 14 \u00b0C \u2192 8 \u00b0C Rain \u00b7 sky moisture 18 Soil here Rich Limiting factor None REGION EFFECT OF THIS CHOICE YOUR PLANT Unchanged for Gold Dunes 1. NATIVES About the same for the natives in Gold Dunes 1. Closer, still blocked 4: Glass Hollow, Blaze Hollow, Chalk Wastes, Furnac"
+   },
+   {
+    "id": "humid",
+    "footerHasNativeShift": false,
+    "adapterLists": [
+     0,
+     0
+    ],
+    "roomShowsNatives": true,
+    "roomShowsLessMore": false,
+    "ctx": "PLANET READOUT Sky temperature 14 \u00b0C Rain \u00b7 sky moisture 18 \u2192 26 Soil here Rich Limiting factor None REGION EFFECT OF THIS CHOICE YOUR PLANT Unchanged for Gold Dunes 1. NATIVES About the same for the natives in Gold Dunes 1. Worse, still growing 2: Copper Hollow, Gold Dunes 2"
+   },
+   {
+    "id": "dry",
+    "footerHasNativeShift": true,
+    "adapterLists": [
+     4,
+     0
+    ],
+    "roomShowsNatives": true,
+    "roomShowsLessMore": true,
+    "ctx": "PLANET READOUT Sky temperature 14 \u00b0C Rain \u00b7 sky moisture 18 \u2192 10 Soil here Rich Limiting factor None REGION EFFECT OF THIS CHOICE YOUR PLANT Unchanged for Gold Dunes 1. NATIVES Less suited to the natives in Gold Dunes 1: the front can tip your way. No region changes state right away. Suits natives l"
+   }
+  ]
+ },
+ "C": {
+  "trace": [
+   {
+    "gameSeconds": 16,
+    "coverage": 0.0305,
+    "nativeShare": 0.392,
+    "stalledFor": 0,
+    "cue": false
+   },
+   {
+    "gameSeconds": 32,
+    "coverage": 0.0712,
+    "nativeShare": 0.4297,
+    "stalledFor": 0,
+    "cue": false
+   },
+   {
+    "gameSeconds": 48,
+    "coverage": 0.0995,
+    "nativeShare": 0.4592,
+    "stalledFor": 0,
+    "cue": false
+   },
+   {
+    "gameSeconds": 64,
+    "coverage": 0.1142,
+    "nativeShare": 0.4754,
+    "stalledFor": 0,
+    "cue": false
+   },
+   {
+    "gameSeconds": 80,
+    "coverage": 0.1228,
+    "nativeShare": 0.4933,
+    "stalledFor": 16,
+    "cue": false
+   },
+   {
+    "gameSeconds": 96,
+    "coverage": 0.1254,
+    "nativeShare": 0.5067,
+    "stalledFor": 0,
+    "cue": false
+   },
+   {
+    "gameSeconds": 112,
+    "coverage": 0.129,
+    "nativeShare": 0.5099,
+    "stalledFor": 16,
+    "cue": false
+   },
+   {
+    "gameSeconds": 128,
+    "coverage": 0.125,
+    "nativeShare": 0.5148,
+    "stalledFor": 32,
+    "cue": false
+   },
+   {
+    "gameSeconds": 144,
+    "coverage": 0.1241,
+    "nativeShare": 0.5157,
+    "stalledFor": 48,
+    "cue": false
+   },
+   {
+    "gameSeconds": 160,
+    "coverage": 0.1214,
+    "nativeShare": 0.5184,
+    "stalledFor": 64,
+    "cue": false
+   },
+   {
+    "gameSeconds": 176,
+    "coverage": 0.1214,
+    "nativeShare": 0.5184,
+    "stalledFor": 80,
+    "cue": false
+   },
+   {
+    "gameSeconds": 192,
+    "coverage": 0.1214,
+    "nativeShare": 0.5184,
+    "stalledFor": 96,
+    "cue": false
+   },
+   {
+    "gameSeconds": 208,
+    "coverage": 0.1192,
+    "nativeShare": 0.5206,
+    "stalledFor": 112,
+    "cue": false
+   },
+   {
+    "gameSeconds": 224,
+    "coverage": 0.1174,
+    "nativeShare": 0.5224,
+    "stalledFor": 128,
+    "cue": true
+   },
+   {
+    "gameSeconds": 240,
+    "coverage": 0.1169,
+    "nativeShare": 0.5228,
+    "stalledFor": 144,
+    "cue": true
+   },
+   {
+    "gameSeconds": 256,
+    "coverage": 0.1178,
+    "nativeShare": 0.522,
+    "stalledFor": 160,
+    "cue": true
+   },
+   {
+    "gameSeconds": 272,
+    "coverage": 0.1134,
+    "nativeShare": 0.5264,
+    "stalledFor": 176,
+    "cue": true
+   },
+   {
+    "gameSeconds": 288,
+    "coverage": 0.1134,
+    "nativeShare": 0.5264,
+    "stalledFor": 192,
+    "cue": true
+   },
+   {
+    "gameSeconds": 304,
+    "coverage": 0.1142,
+    "nativeShare": 0.5255,
+    "stalledFor": 208,
+    "cue": true
+   },
+   {
+    "gameSeconds": 320,
+    "coverage": 0.1156,
+    "nativeShare": 0.5242,
+    "stalledFor": 224,
+    "cue": true
+   },
+   {
+    "gameSeconds": 336,
+    "coverage": 0.1151,
+    "nativeShare": 0.5246,
+    "stalledFor": 240,
+    "cue": true
+   },
+   {
+    "gameSeconds": 352,
+    "coverage": 0.1147,
+    "nativeShare": 0.5251,
+    "stalledFor": 256,
+    "cue": true
+   },
+   {
+    "gameSeconds": 368,
+    "coverage": 0.1134,
+    "nativeShare": 0.5264,
+    "stalledFor": 272,
+    "cue": true
+   },
+   {
+    "gameSeconds": 384,
+    "coverage": 0.1142,
+    "nativeShare": 0.5255,
+    "stalledFor": 288,
+    "cue": true
+   },
+   {
+    "gameSeconds": 400,
+    "coverage": 0.1138,
+    "nativeShare": 0.526,
+    "stalledFor": 304,
+    "cue": true
+   },
+   {
+    "gameSeconds": 416,
+    "coverage": 0.1142,
+    "nativeShare": 0.5255,
+    "stalledFor": 320,
+    "cue": true
+   },
+   {
+    "gameSeconds": 432,
+    "coverage": 0.1138,
+    "nativeShare": 0.526,
+    "stalledFor": 336,
+    "cue": true
+   },
+   {
+    "gameSeconds": 448,
+    "coverage": 0.1156,
+    "nativeShare": 0.5242,
+    "stalledFor": 352,
+    "cue": true
+   },
+   {
+    "gameSeconds": 464,
+    "coverage": 0.1147,
+    "nativeShare": 0.5251,
+    "stalledFor": 368,
+    "cue": true
+   },
+   {
+    "gameSeconds": 480,
+    "coverage": 0.1138,
+    "nativeShare": 0.526,
+    "stalledFor": 384,
+    "cue": true
+   },
+   {
+    "gameSeconds": 496,
+    "coverage": 0.1134,
+    "nativeShare": 0.5264,
+    "stalledFor": 400,
+    "cue": true
+   },
+   {
+    "gameSeconds": 512,
+    "coverage": 0.1142,
+    "nativeShare": 0.5255,
+    "stalledFor": 416,
+    "cue": true
+   },
+   {
+    "gameSeconds": 528,
+    "coverage": 0.1142,
+    "nativeShare": 0.5255,
+    "stalledFor": 432,
+    "cue": true
+   },
+   {
+    "gameSeconds": 544,
+    "coverage": 0.1142,
+    "nativeShare": 0.5255,
+    "stalledFor": 448,
+    "cue": true
+   },
+   {
+    "gameSeconds": 560,
+    "coverage": 0.1134,
+    "nativeShare": 0.5264,
+    "stalledFor": 464,
+    "cue": true
+   },
+   {
+    "gameSeconds": 576,
+    "coverage": 0.1134,
+    "nativeShare": 0.5264,
+    "stalledFor": 480,
+    "cue": true
+   },
+   {
+    "gameSeconds": 592,
+    "coverage": 0.1125,
+    "nativeShare": 0.5273,
+    "stalledFor": 496,
+    "cue": true
+   },
+   {
+    "gameSeconds": 608,
+    "coverage": 0.1125,
+    "nativeShare": 0.5273,
+    "stalledFor": 512,
+    "cue": true
+   },
+   {
+    "gameSeconds": 624,
+    "coverage": 0.1125,
+    "nativeShare": 0.5273,
+    "stalledFor": 528,
+    "cue": true
+   },
+   {
+    "gameSeconds": 640,
+    "coverage": 0.1125,
+    "nativeShare": 0.5273,
+    "stalledFor": 544,
+    "cue": true
+   }
+  ],
+  "firstCueAtSecond": 224,
+  "pausedWallTime3s": {
+   "before": {
+    "frontier": true,
+    "watching": true,
+    "stalledFor": 544,
+    "shown": true
+   },
+   "after": {
+    "frontier": true,
+    "watching": true,
+    "stalledFor": 544,
+    "shown": true
+   }
+  },
+  "clearedByProgress": {
+   "cueBeforeBuy": true,
+   "bought": [
+    true,
+    true
+   ],
+   "cleared": true,
+   "clearedAtSecond": 336,
+   "coverage": [
+    0.1156,
+    0.1326
+   ],
+   "nativeShare": [
+    0.5242,
+    0.4189
+   ]
+  }
+ }
+}
