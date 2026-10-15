@@ -15,6 +15,34 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
+*Last updated: 2026-10-14, **BLOOM-039 CLOSEOUT — BLOOM-038: IMPLEMENTED / COMPLETE (automated design audit) · BLOOM-039: IMPLEMENTED /
+COMPLETE (pre-playtest clarity & UX) · LIVE.** Production `main` was fast-forwarded `8b23e78` → **`c1b5171`** (the exact PMO-accepted review head;
+no merge commit, squash, rebase, cherry-pick or force push) and is live at <https://interstellarharvest.github.io/bloom/> (GitHub Actions Pages run
+38673127447 — success). Review regression **46 / 46 suites, 2,119 checks, 0 failures**; clean-main release QA 11 / 11 (703 checks); live
+verification Chromium 21 / 21 and Firefox 21 / 21; seed bank sha256 `8506124b…` unchanged (no bank rebuild, no mechanic change). Record:
+[`evidence/bloom-039/REPORT.md`](evidence/bloom-039/REPORT.md) § Release closeout. **Development is STOPPED: the next phase is HUMAN PLAYTEST.
+No BLOOM-040 is started or approved.***
+
+**LOCKED by BLOOM-039 (PMO, 2026-10-14):**
+- **Aggregate region states** (one vocabulary everywhere — banner, rooms, labels, Map View): **OK** = ordinary growth supported ·
+  **STRAINED** = growth supported, one or more conditions poor · **BLOCKED** = growth not supported · **REFUGE** = growth not supported
+  naturally, the protected origin survives because of the landing refuge. Growth is the engine's own rule (`fitness > grow.growThresh`).
+  REFUGE is never used merely because one factor sits under a presentation threshold (Oasis Line's Seep Wastes at unprotected fitness
+  0.583 reads STRAINED). Condition boxes name the physical condition (Toxic, Salty, Radioactive …) with the same status words.
+- **Application width:** `--bloom-app-max: 1920px`; wider browsers centre the game with passive side wells. Do not restore unlimited
+  expansion to fill a monitor. The title painting stays full-bleed.
+- **Selected-region panel:** bottom-centre by default; top, under the HUD, when the bottom placement would cover > 15 % of the selected
+  region's real tiles; decided once per selection (and per stage size). Not a fixed lower-quarter rule.
+- **Native Competition clarity** (presentation only; native mechanics unchanged): the competition reason in the banner, ownership shown
+  apart from suitability, the native mark instead of ✓, the Your plant / Natives Terraform preview, the FRONT STALLED cue.
+- **Hidden tab / sleep:** hidden wall-clock time is never simulated on return; speed, an explicit pause and a room's pause are kept.
+
+**HELD FOR HUMAN PLAYTEST — QUESTIONS, not planned changes** (BLOOM-038 measured them; nothing is decided or scheduled):
+Volatile Climate tuning (shock threshold / forcing memory) · Dying World decline strength and timing · Thin Air final-atmosphere hold
+duration · Ocean Archipelago pacing (Spread sequence, late run) · the Biomass economy and decision cadence · the 70 % win target · species
+balance · Challenge recipes · Oasis Line's distinctness from Native Competition · Terraform balance · save / Continue · whether map-level
+inspection (the selected-region banner, Map View, the run menu) should pause · the vertical surplus inside decision rooms on very tall windows.
+
 *Last updated: 2026-10-13, **RELEASE CLOSEOUT — BLOOM-037: IMPLEMENTED / COMPLETE · FINAL HARDENING: COMPLETE · RELEASE: LIVE.** Production
 `main` was fast-forwarded `3cc3e33` → **`2c491f1`** (the exact PMO-corrected review head; no merge commit, squash, rebase, cherry-pick or force
 push) and is live at <https://interstellarharvest.github.io/bloom/> (GitHub Actions Pages workflow run 38482916954 — success; the only deployment
@@ -462,6 +490,6 @@ This is not a gameplay-code feature; product code does not work around repositor
 | **BLOOM-036E+** — progression | progression / rewards only if later approved; no further condition type without a new study | NOT APPROVED |
 | **BLOOM-037** — Final hardening & release | documentation reconciliation + `RELEASE_STATE_v1.md`; dead production-path cleanup; offline / subpath / portable proof; accessibility, responsive, WebKit and performance passes; the gameplay smoke matrix; full regression; Pages readiness | **IMPLEMENTED / COMPLETE — RELEASE LIVE** (`2c491f1`; the contrast correction included) |
 | **v1.0.1** — UI polish hotfix | title / settings / selection / planning panels / one-copy map / icy water (presentation only) | **IMPLEMENTED / COMPLETE** (LIVE, closeout `2590d79`) |
-| **BLOOM-038** — Automated design audit | read-only design / visual-quality study: 4,424 policy runs, the visual atlas, affordance / copy / pause audits, failure states ([`DESIGN_AUDIT_v1.md`](DESIGN_AUDIT_v1.md)) | **ACCEPTED / COMPLETE** — compact research record in `main` (`8b23e78`; the regenerable ~56 MB raw atlas intentionally not in history) |
-| **BLOOM-039** — Pre-playtest clarity & UX | presentation / shell only, before human playtesting: Native Competition legibility (competition reason, native-held mark, Terraform native preview, FRONT STALLED cue); an honest region readout (status from the engine's grow rule, multi-step "Would help" with real prices, toxicity truth); hidden-tab / long-gap timekeeping; copy fixes (landing pointer, Challenge card title, one severity vocabulary, unaffordable reason at rest); the region banner flips to the top when it would cover its region; region-name pills select the region they name; ONE shared application width (≤ 1920 px, centred). No mechanic, bank, balance or species change ([`evidence/bloom-039/REPORT.md`](evidence/bloom-039/REPORT.md)) | **CANDIDATE** — review branch `handoff/bloom-039-review`, pending PMO |
-| **Human playtest** | the HELD questions: Volatile Climate shocks / forcing, Dying World decline, Thin Air hold, Ocean pacing, economy / costs, 70 % target, species economy, Oasis Line distinctness, Terraform power, save / continue, whether the banner / Map View / run menu should pause | NEXT (not started) |
+| **BLOOM-038** — Automated design audit | read-only design / visual-quality study: 4,424 policy runs, the visual atlas, affordance / copy / pause audits, failure states ([`DESIGN_AUDIT_v1.md`](DESIGN_AUDIT_v1.md)) | **IMPLEMENTED / COMPLETE** — compact research record in `main` (`8b23e78`; the regenerable ~56 MB raw atlas intentionally not in history) |
+| **BLOOM-039** — Pre-playtest clarity & UX | presentation / shell only, before human playtesting: Native Competition legibility (competition reason, native-held mark, Terraform native preview, FRONT STALLED cue); an honest region readout (status from the engine's grow rule, multi-step "Would help" with real prices, toxicity truth); hidden-tab / long-gap timekeeping; copy fixes (landing pointer, Challenge card title, one severity vocabulary, unaffordable reason at rest); the region banner flips to the top when it would cover its region; region-name pills select the region they name; ONE shared application width (≤ 1920 px, centred). No mechanic, bank, balance or species change ([`evidence/bloom-039/REPORT.md`](evidence/bloom-039/REPORT.md)) | **IMPLEMENTED / COMPLETE** — LIVE (`main` `c1b5171`, Pages run 38673127447) |
+| **Human playtest** | QUESTIONS, not planned changes: Volatile Climate tuning, Dying World decline, Thin Air hold, Ocean pacing, Biomass economy / cadence, the 70 % target, species balance, Challenge recipes, Oasis Line distinctness, Terraform balance, save / Continue, whether map inspection should pause, tall-window room surplus | NEXT (not started) |

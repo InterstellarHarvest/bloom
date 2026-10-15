@@ -1,0 +1,210 @@
+{
+ "live": "https://interstellarharvest.github.io/bloom/",
+ "browser": "chromium",
+ "rows": [
+  {
+   "ok": true,
+   "name": "D · the live site serves the BLOOM-039 build (adapter advice, visible-time loop, 1920 app contract)",
+   "d": {
+    "advice": true,
+    "visibility": true,
+    "appMax": true
+   }
+  },
+  {
+   "ok": true,
+   "name": "N1 · live Native Competition (launch 1): native-held ground names the competition, shows who holds it, native mark (not ✓)",
+   "d": {
+    "banner": "Amber Wastes OK Native-held 97% Sparse · An even contest with the native plants: the more established side holds. Strengthening your colony here, or changing what suits each plant, tips it. TEMPERATURE Suitable · 20 °C OK WATER Dry OK SOIL Rich OK HAZARD Low OK Inspect region WOULD HELP Nothing needed",
+    "glyph": "native"
+   }
+  },
+  {
+   "ok": true,
+   "name": "N2 · live Terraform preview: Your plant + Natives rows before purchase",
+   "d": "PREVIEW · RAIN · ATMOSPHERE Dry the Sky 200 Biomass −8 moisture globally. CHANGES THE PLANET'S SKY · NOT THE PLANT Sky moisture: 18 → 10 YOUR PLANT Closes Amber Wastes: your plant would no longer survive here. NATIVES Ab"
+  },
+  {
+   "ok": true,
+   "name": "N3 · live FRONT STALLED cue on a passive stalled front (launch 1, game second 193.28)",
+   "d": {
+    "cue": true,
+    "s": 193.28
+   }
+  },
+  {
+   "ok": true,
+   "name": "E · live Native Competition run: no console / page error",
+   "d": []
+  },
+  {
+   "ok": true,
+   "name": "R1 · live 1024: no region the plant can grow on says Blocked (15 regions); strained ground reads Strained",
+   "d": []
+  },
+  {
+   "ok": true,
+   "name": "R3 · live 1024: lethal toxicity has the no-cure wording",
+   "d": "Verdant Wastes"
+  },
+  {
+   "ok": true,
+   "name": "B1 · live 1024: a low region flips the panel under the HUD when the bottom would cover it; an upper region keeps it at the bottom; no HUD overlap",
+   "d": {
+    "lo": {
+     "region": 2,
+     "place": "top",
+     "coverBottom": 0.357,
+     "coverTop": 0,
+     "stage": [
+      1024,
+      656
+     ],
+     "gapUnderHud": 12
+    },
+    "up": {
+     "region": 0,
+     "place": "bottom",
+     "coverBottom": 0,
+     "coverTop": null,
+     "stage": [
+      1024,
+      656
+     ],
+     "gapUnderHud": 452
+    }
+   }
+  },
+  {
+   "ok": true,
+   "name": "L1 · live 1024: clicking a name pill selects the named region (4 straddling points + a pill centre)",
+   "d": {
+    "ok": 4,
+    "pts": 4,
+    "centre": true
+   }
+  },
+  {
+   "ok": true,
+   "name": "T1 · live 1024: a hidden tab replays nothing on return (2× kept)",
+   "d": {
+    "whileHidden": 0,
+    "after300ms": 4,
+    "speed": 2
+   }
+  },
+  {
+   "ok": true,
+   "name": "E · live 1024 expedition: no console / page error",
+   "d": []
+  },
+  {
+   "ok": true,
+   "name": "R1 · live 1440: no region the plant can grow on says Blocked (15 regions); strained ground reads Strained",
+   "d": []
+  },
+  {
+   "ok": true,
+   "name": "R3 · live 1440: lethal toxicity has the no-cure wording",
+   "d": "Verdant Wastes"
+  },
+  {
+   "ok": true,
+   "name": "B1 · live 1440: a low region flips the panel under the HUD when the bottom would cover it; an upper region keeps it at the bottom; no HUD overlap",
+   "d": {
+    "lo": {
+     "region": 2,
+     "place": "top",
+     "coverBottom": 0.471,
+     "coverTop": 0,
+     "stage": [
+      1440,
+      785
+     ],
+     "gapUnderHud": 12
+    },
+    "up": {
+     "region": 0,
+     "place": "bottom",
+     "coverBottom": 0,
+     "coverTop": null,
+     "stage": [
+      1440,
+      785
+     ],
+     "gapUnderHud": 581
+    }
+   }
+  },
+  {
+   "ok": true,
+   "name": "L1 · live 1440: clicking a name pill selects the named region (4 straddling points + a pill centre)",
+   "d": {
+    "ok": 4,
+    "pts": 4,
+    "centre": true
+   }
+  },
+  {
+   "ok": true,
+   "name": "T1 · live 1440: a hidden tab replays nothing on return (2× kept)",
+   "d": {
+    "whileHidden": 0,
+    "after300ms": 3,
+    "speed": 2
+   }
+  },
+  {
+   "ok": true,
+   "name": "E · live 1440 expedition: no console / page error",
+   "d": []
+  },
+  {
+   "ok": true,
+   "name": "W1 · live 2560: the run is a centred 1920 app, 320 / 320 wells, one map copy, no horizontal overflow",
+   "d": {
+    "x": 320,
+    "w": 1920,
+    "right": 320,
+    "copies": 1,
+    "ox": false,
+    "wellIsGame": false
+   }
+  },
+  {
+   "ok": true,
+   "name": "W2 · live 2560: decision rooms inside the 1920 app",
+   "d": {
+    "x": 320,
+    "w": 1920
+   }
+  },
+  {
+   "ok": true,
+   "name": "E · live 2560: no console / page error",
+   "d": []
+  },
+  {
+   "ok": true,
+   "name": "E · no failed request / HTTP error on the live site",
+   "d": {
+    "failed": [],
+    "bad": []
+   }
+  }
+ ],
+ "requests": {
+  "failed": [],
+  "bad": []
+ },
+ "scan1024": {
+  "multi": false,
+  "toxic": true
+ },
+ "scan1440": {
+  "multi": false,
+  "toxic": true
+ },
+ "pass": 21,
+ "fail": 0
+}
