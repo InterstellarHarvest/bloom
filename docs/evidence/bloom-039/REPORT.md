@@ -202,7 +202,10 @@ Every pin change is narrow and named in its commit (`b47f334` and the fixes); no
 
 **Full regression** — every `tools/*-check.js`, sequentially, quiet machine (`run-all.sh`):
 
-REGRESSION_LINE
+**46 / 46 suites green · 2,119 checks · 0 failures · 100 min**, on the code head `b905060` (`regression.tsv`). The suite count is 46, as
+before (no suite added: the re-audit and QA drivers live in `tools/` here). No timing bound loosened, no seed bank rebuilt
+(`challenge-world-check` B4 rebuild-determinism and A13 engine byte-identity pass; `challenge-completion-check` K6 bank stability passes).
+For comparison: v1.0.1's release regression was 46 / 46 · 2,119 checks.
 
 
 ## 8. Evidence files
