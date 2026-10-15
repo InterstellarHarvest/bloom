@@ -1,7 +1,7 @@
 # BLOOM-039 — Pre-playtest clarity & UX · evidence report
 
 **Presentation / shell only.** Base: production `main` = `origin/main` = **`8b23e78`** (the compact BLOOM-038 record, itself on
-`2590d79`). Branch `agent/bloom-039-pre-playtest-ux` → review branch `handoff/bloom-039-review`. **Not merged.**
+`2590d79`). Branch `agent/bloom-039-pre-playtest-ux` → review branch `handoff/bloom-039-review` → **PMO ACCEPTED, released: `main` = `c1b5171`** (§10).
 
 The brief is the PMO's BLOOM-039 directive plus the owner's additions (region panel flips around the region; one application width).
 The findings it answers are in [`../../DESIGN_AUDIT_v1.md`](../../DESIGN_AUDIT_v1.md) (BLOOM-038).
@@ -230,3 +230,19 @@ Volatile Climate shock threshold / forcing memory / tuning · Dying World declin
 Ocean Archipelago Spread sequence and late pacing · Biomass gain / costs / purchase cadence · the 70 % target · species physiology and
 economy · Challenge recipes / seed banks / mechanics · Oasis Line distinctness · Terraform balance · save / continue · whether the
 selected-region banner, Map View or the run menu should pause · the vertical surplus inside rooms on very tall windows.
+
+## 10. Release closeout (2026-10-14)
+
+**PMO verdict: ACCEPTED FOR RELEASE.** Design decisions locked: REFUGE semantics and the four aggregate region states, the 1920 px application
+width, the selected-region collision placement (> 15 % of the region's real tiles), the Native Competition clarity set, hidden-tab
+suspension ([`../../PRODUCT_DIRECTION_CURRENT.md`](../../PRODUCT_DIRECTION_CURRENT.md)).
+
+| Step | Result |
+|---|---|
+| Integration | `origin/main` = `8b23e78`, review `c1b5171` 7 ahead / 0 behind → `main` fast-forwarded to **`c1b5171`** exactly (no merge commit, squash, rebase, cherry-pick or force push) and pushed; local `main` = `origin/main` = the accepted review head |
+| Deployment | GitHub Actions Pages run **38673127447 — success**; the live site serves the BLOOM-039 build (adapter advice, visible-time loop, 1920 contract) |
+| Clean-main release QA | run-ui 40 · run-ui-convergence 57 · planet-view 80 · native-competition 66 · challenge-world 108 · guided-training 50 · terraform 61 · ui-polish 64 · portable-runtime 71 · visual-system 55 · release-check --no-suites 51 — **11 / 11 green, 703 checks, 0 failures** |
+| Bank unchanged | `content/challenge-seed-banks.js` sha256 `8506124b462cf4d4…` = the 037 release; zero diff `2590d79`..`c1b5171`; `challenge-world-check` B4 (the shipped bank is byte-identical to a deterministic rebuild) and A13 (engine / generator / validator byte-identity) green; engine / content / planets diff empty |
+| Live verification (`live/`) | Chromium **21 / 21**, Firefox **21 / 21**: Native Competition native-held ground names the competition with the ownership chip and the native mark (never "Nothing holding"); Terraform preview Your plant / Natives; FRONT STALLED on a passive stalled front (launch 1, game second 193); no growable region says Blocked, strained reads Strained; toxicity no-cure wording; multi-step advice (Dying World launch 1, Ember Playa: "Humidify ×2 · 490 Biomass total · need 389 more", `live-multistep.json`); a low region's panel flips under the HUD (12 px gap), an upper one stays at the bottom; name-pill clicks select their region; a hidden tab replays nothing (0 ticks, 2× kept); 2560: centred 1920 app, 320 / 320 wells, one map copy, no overflow, rooms inside the app; no console error, no failed request |
+
+**Development stopped.** The next phase is HUMAN PLAYTEST; the held questions are listed in `PRODUCT_DIRECTION_CURRENT.md`.

@@ -8,6 +8,14 @@ each milestone. Release QA record: [`evidence/bloom-037/REPORT.md`](evidence/blo
 **Released:** production `main` **`2c491f1`** (BLOOM-037, 2026-10-13), live at <https://interstellarharvest.github.io/bloom/> through the GitHub
 Actions Pages workflow. Everything below describes that release.
 
+**Current production: `c1b5171` (BLOOM-039, 2026-10-14), live** (Pages run 38673127447). BLOOM-039 is presentation / shell only on top of the
+v1 release described here — no mode, species, Challenge, bank, mechanic or balance changed. It adds: ONE aggregate region-state vocabulary
+from the engine's grow rule (OK · STRAINED · BLOCKED · REFUGE, locked in [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md));
+multi-step "Would help" with real prices; Native Competition legibility (competition reason, native ownership mark, Your plant / Natives
+Terraform preview, FRONT STALLED cue); hidden-tab / sleep suspension; the selected-region panel's collision placement; region-name pills
+that select their region; and a 1920 px maximum application width (centred, passive wells; the title painting full-bleed). Record:
+[`evidence/bloom-039/REPORT.md`](evidence/bloom-039/REPORT.md).
+
 ## 1. Modes
 
 The title (`index.html`, one of twelve paintings) offers **EXPEDITION · CHALLENGES · TRAINING · SETTINGS** (v1.0.1: no CREDITS entry; attribution stays in the README and the vendored licences). The whole game is that
