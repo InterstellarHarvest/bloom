@@ -1,0 +1,408 @@
+{
+ "browser": "webkit",
+ "rows": [
+  {
+   "ok": true,
+   "name": "W1 · 1440x900 title: painting full-bleed (1440), menu plaque inside the 1440px composition, no horizontal overflow",
+   "detail": {
+    "ox": false,
+    "bg": 1440,
+    "plaqueRight": 86
+   }
+  },
+  {
+   "ok": true,
+   "name": "W2 · 1440x900 species: app 1440px, wells 0px balanced, no overflow",
+   "detail": {
+    "x": 0,
+    "w": 1440,
+    "right": 0,
+    "ox": false
+   }
+  },
+  {
+   "ok": true,
+   "name": "W3 · 1440x900 survey: app 1440px centred, no overflow",
+   "detail": {
+    "x": 0,
+    "w": 1440,
+    "right": 0,
+    "ox": false
+   }
+  },
+  {
+   "ok": true,
+   "name": "W4 · 1440x900 run: the whole run view (HUD, map, footer) is 1440px centred; the wells hold no game element; one world copy",
+   "detail": {
+    "rn": {
+     "x": 0,
+     "w": 1440,
+     "right": 0,
+     "ox": false
+    },
+    "wellClick": null,
+    "copies": 1
+   }
+  },
+  {
+   "ok": true,
+   "name": "W5 · 1440x900 region room inside the capped app (1440px), Resume reachable, no overflow",
+   "detail": {
+    "x": 0,
+    "w": 1440,
+    "ox": false,
+    "resume": true
+   }
+  },
+  {
+   "ok": true,
+   "name": "W5 · 1440x900 adapt room inside the capped app (1440px), Resume reachable, no overflow",
+   "detail": {
+    "x": 0,
+    "w": 1440,
+    "ox": false,
+    "resume": true
+   }
+  },
+  {
+   "ok": true,
+   "name": "W5 · 1440x900 spread room inside the capped app (1440px), Resume reachable, no overflow",
+   "detail": {
+    "x": 0,
+    "w": 1440,
+    "ox": false,
+    "resume": true
+   }
+  },
+  {
+   "ok": true,
+   "name": "W5 · 1440x900 terraform room inside the capped app (1440px), Resume reachable, no overflow",
+   "detail": {
+    "x": 0,
+    "w": 1440,
+    "ox": false,
+    "resume": true
+   }
+  },
+  {
+   "ok": true,
+   "name": "A · axe 1440x900 run (expedition): 0 critical / 0 serious",
+   "detail": []
+  },
+  {
+   "ok": true,
+   "name": "E1 · 1440x900 app flow: no page / console error",
+   "detail": []
+  },
+  {
+   "ok": true,
+   "name": "R1 · 1440x900 multi-step Would help with real price + what is missing (Hoar Reach: Cold Tolerance ×2)",
+   "detail": {
+    "text": " Hoar Reach Blocked No plants yet · Limiting: Temperature · too cold TEMPERATURE Freezing · −31 °C Blocked WATER Suitable OK SOIL Rich OK HAZARD Low OK Inspect region WOULD HELP Cold Tolerance ×2 OPENS IT · 410 BIOMASS TOTAL · NEED 300 MORE Warm the Sky ×4 OPENS IT · 1340 BIOMASS TOTAL · NEED 1230 MORE ",
+    "steps": [
+     2,
+     4
+    ]
+   }
+  },
+  {
+   "ok": true,
+   "name": "B1 · 1440x900 a low region's banner: top under the HUD (clear gap) when the bottom would cover it, else bottom",
+   "detail": {
+    "s": {
+     "region": 2,
+     "place": "top",
+     "coverBottom": 1,
+     "coverTop": 0,
+     "stage": [
+      1440,
+      782
+     ]
+    },
+    "gapUnderHud": 12
+   }
+  },
+  {
+   "ok": true,
+   "name": "A · axe 1440x900 banner (blocked, multi-step): 0 critical / 0 serious",
+   "detail": []
+  },
+  {
+   "ok": true,
+   "name": "T1 · 1440x900 hidden tab: no ticks while hidden, no burst on return, 2× kept",
+   "detail": {
+    "whileHidden": 0,
+    "afterReturn300ms": 3,
+    "speed": 2
+   }
+  },
+  {
+   "ok": true,
+   "name": "L1 · 1440x900 a click inside a region-name pill selects the region it names (1 straddling points)",
+   "detail": {
+    "pts": 1,
+    "lok": 1
+   }
+  },
+  {
+   "ok": true,
+   "name": "E2 · 1440x900 harness (frozen): no page / console error",
+   "detail": []
+  },
+  {
+   "ok": true,
+   "name": "N1 · 1440x900 Native Competition: native-held ground names the competition + who holds it (native mark, not ✓); FRONT STALLED after the stalled front",
+   "detail": {
+    "banner": " Gold Dunes 1 OK Native-held 100% No plants yet · The native plants here are more established and are holding this ground. Strengthening your colony next to it, or changing what suits each plant, can tip it. TEMPERATURE Suitable · 18 °C OK WATER Suitable OK SOIL Rich OK HAZARD Low OK Inspect region WOULD HELP Terraform PREVIEW A SKY CHANGE ",
+    "stall": true,
+    "glyph": "native"
+   }
+  },
+  {
+   "ok": true,
+   "name": "A · axe 1440x900 Native Competition banner + FRONT STALLED: 0 critical / 0 serious",
+   "detail": []
+  },
+  {
+   "ok": true,
+   "name": "N2 · 1440x900 Terraform preview before purchase: Your plant + Natives rows, \"Suits natives less\" list",
+   "detail": {
+    "info": "PREVIEW · RAIN · ATMOSPHERE Dry the Sky 200 Biomass −8 moisture globally. CHANGES THE PLANET'S SKY · NOT THE PLANT Sky moisture: 18 → 10 YOUR PLANT Unchanged for Gold Dunes 1. NATIVES Less suited to t",
+    "ctx": "PLANET READOUT Sky temperature 14 °C Rain · sky moisture 18 → 10 Soil here Rich Limiting factor None REGION EFFECT OF THIS CHOICE YOUR PLANT Unchanged for Gold Dunes 1. NATIVES Less suited to the nati"
+   }
+  },
+  {
+   "ok": true,
+   "name": "A · axe 1440x900 Terraform room, native preview: 0 critical / 0 serious",
+   "detail": []
+  },
+  {
+   "ok": true,
+   "name": "E3 · 1440x900 harness (Native Competition): no page / console error",
+   "detail": []
+  },
+  {
+   "ok": true,
+   "name": "W1 · 1024x768 title: painting full-bleed (1024), menu plaque inside the 1024px composition, no horizontal overflow",
+   "detail": {
+    "ox": false,
+    "bg": 1024,
+    "plaqueRight": 61
+   }
+  },
+  {
+   "ok": true,
+   "name": "W2 · 1024x768 species: app 1024px, wells 0px balanced, no overflow",
+   "detail": {
+    "x": 0,
+    "w": 1024,
+    "right": 0,
+    "ox": false
+   }
+  },
+  {
+   "ok": true,
+   "name": "W3 · 1024x768 survey: app 1024px centred, no overflow",
+   "detail": {
+    "x": 0,
+    "w": 1024,
+    "right": 0,
+    "ox": false
+   }
+  },
+  {
+   "ok": true,
+   "name": "W4 · 1024x768 run: the whole run view (HUD, map, footer) is 1024px centred; the wells hold no game element; one world copy",
+   "detail": {
+    "rn": {
+     "x": 0,
+     "w": 1024,
+     "right": 0,
+     "ox": false
+    },
+    "wellClick": null,
+    "copies": 1
+   }
+  },
+  {
+   "ok": true,
+   "name": "W5 · 1024x768 region room inside the capped app (1024px), Resume reachable, no overflow",
+   "detail": {
+    "x": 0,
+    "w": 1024,
+    "ox": false,
+    "resume": true
+   }
+  },
+  {
+   "ok": true,
+   "name": "W5 · 1024x768 adapt room inside the capped app (1024px), Resume reachable, no overflow",
+   "detail": {
+    "x": 0,
+    "w": 1024,
+    "ox": false,
+    "resume": true
+   }
+  },
+  {
+   "ok": true,
+   "name": "C3 · 1024x768 unaffordable Adapt nodes say what is missing at rest",
+   "detail": [
+    "Need 39 more",
+    "Need 39 more",
+    "Need 49 more"
+   ]
+  },
+  {
+   "ok": true,
+   "name": "W5 · 1024x768 spread room inside the capped app (1024px), Resume reachable, no overflow",
+   "detail": {
+    "x": 0,
+    "w": 1024,
+    "ox": false,
+    "resume": true
+   }
+  },
+  {
+   "ok": true,
+   "name": "W5 · 1024x768 terraform room inside the capped app (1024px), Resume reachable, no overflow",
+   "detail": {
+    "x": 0,
+    "w": 1024,
+    "ox": false,
+    "resume": true
+   }
+  },
+  {
+   "ok": true,
+   "name": "E1 · 1024x768 app flow: no page / console error",
+   "detail": []
+  },
+  {
+   "ok": true,
+   "name": "R1 · 1024x768 multi-step Would help with real price + what is missing (Hoar Reach: Cold Tolerance ×2)",
+   "detail": {
+    "text": " Hoar Reach Blocked No plants yet · Limiting: Temperature · too cold TEMPERATURE Freezing · −31 °C Blocked WATER Suitable OK SOIL Rich OK HAZARD Low OK Inspect region WOULD HELP Cold Tolerance ×2 OPENS IT · 410 BIOMASS TOTAL · NEED 300 MORE ",
+    "steps": [
+     2,
+     4
+    ]
+   }
+  },
+  {
+   "ok": true,
+   "name": "B1 · 1024x768 a low region's banner: top under the HUD (clear gap) when the bottom would cover it, else bottom",
+   "detail": {
+    "s": {
+     "region": 2,
+     "place": "top",
+     "coverBottom": 1,
+     "coverTop": 0,
+     "stage": [
+      1024,
+      652
+     ]
+    },
+    "gapUnderHud": 12
+   }
+  },
+  {
+   "ok": true,
+   "name": "A · axe 1024x768 banner (blocked, multi-step): 0 critical / 0 serious",
+   "detail": []
+  },
+  {
+   "ok": true,
+   "name": "T1 · 1024x768 hidden tab: no ticks while hidden, no burst on return, 2× kept",
+   "detail": {
+    "whileHidden": 0,
+    "afterReturn300ms": 3,
+    "speed": 2
+   }
+  },
+  {
+   "ok": true,
+   "name": "L1 · 1024x768 a click inside a region-name pill selects the region it names (0 straddling points)",
+   "detail": {
+    "pts": 0,
+    "lok": 0
+   }
+  },
+  {
+   "ok": true,
+   "name": "E2 · 1024x768 harness (frozen): no page / console error",
+   "detail": []
+  },
+  {
+   "ok": true,
+   "name": "N1 · 1024x768 Native Competition: native-held ground names the competition + who holds it (native mark, not ✓); FRONT STALLED after the stalled front",
+   "detail": {
+    "banner": " Gold Dunes 1 OK Native-held 100% No plants yet · The native plants here are more established and are holding this ground. Strengthening your colony next to it, or changing what suits each plant, can tip it. TEMPERATURE Suitable · 18 °C OK WATER Suitable OK SOIL Rich OK HAZARD Low OK Inspect region WOULD HELP Terraform PREVIEW A SKY CHANGE ",
+    "stall": true,
+    "glyph": "native"
+   }
+  },
+  {
+   "ok": true,
+   "name": "A · axe 1024x768 Native Competition banner + FRONT STALLED: 0 critical / 0 serious",
+   "detail": []
+  },
+  {
+   "ok": true,
+   "name": "N2 · 1024x768 Terraform preview before purchase: Your plant + Natives rows, \"Suits natives less\" list",
+   "detail": {
+    "info": "PREVIEW · RAIN · ATMOSPHERE Dry the Sky 200 Biomass −8 moisture globally. CHANGES THE PLANET'S SKY · NOT THE PLANT Sky moisture: 18 → 10 YOUR PLANT Unchanged for Gold Dunes 1. NATIVES Less suited to t",
+    "ctx": "PLANET READOUT Sky temperature 14 °C Rain · sky moisture 18 → 10 Soil here Rich Limiting factor None REGION EFFECT OF THIS CHOICE YOUR PLANT Unchanged for Gold Dunes 1. NATIVES Less suited to the nati"
+   }
+  },
+  {
+   "ok": true,
+   "name": "A · axe 1024x768 Terraform room, native preview: 0 critical / 0 serious",
+   "detail": []
+  },
+  {
+   "ok": true,
+   "name": "E3 · 1024x768 harness (Native Competition): no page / console error",
+   "detail": []
+  }
+ ],
+ "axe": [
+  {
+   "label": "1440x900 run (expedition)",
+   "all": [],
+   "bad": []
+  },
+  {
+   "label": "1440x900 banner (blocked, multi-step)",
+   "all": [],
+   "bad": []
+  },
+  {
+   "label": "1440x900 Native Competition banner + FRONT STALLED",
+   "all": [],
+   "bad": []
+  },
+  {
+   "label": "1440x900 Terraform room, native preview",
+   "all": [],
+   "bad": []
+  },
+  {
+   "label": "1024x768 banner (blocked, multi-step)",
+   "all": [],
+   "bad": []
+  },
+  {
+   "label": "1024x768 Native Competition banner + FRONT STALLED",
+   "all": [],
+   "bad": []
+  },
+  {
+   "label": "1024x768 Terraform room, native preview",
+   "all": [],
+   "bad": []
+  }
+ ],
+ "pass": 42,
+ "fail": 0
+}

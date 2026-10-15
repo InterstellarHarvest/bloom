@@ -1,0 +1,80 @@
+{
+ "before": {
+  "worlds": 239,
+  "land": 221.74867954278076,
+  "regions": 3249,
+  "pillBlocked": 166.46379598653382,
+  "pillBlockedButGrows": 7.47780302354971,
+  "pillOkButCannotGrow": 0,
+  "noOffered": 93.12570848221898,
+  "noOfferedButHintedOpensMulti": 31.381091527450096,
+  "noOfferedButAnyTrackOpens": 31.381091527450096,
+  "multiStepShown": 0,
+  "claimsChecked": 1714,
+  "claimsFalse": 0,
+  "helpsLine": 0,
+  "toxicLethal": 6.364708497804344,
+  "toxicLethalNamed": 0,
+  "severityWordBanners": 791,
+  "sevWords": {
+   "lethal": 580,
+   "stressful": 283,
+   "dangerous": 127
+  },
+  "statusWords": {
+   "Blocked": 5348,
+   "Strained": 1187,
+   "OK": 9710
+  },
+  "pct": {
+   "pillBlocked": 75.07,
+   "pillBlockedButGrows": 3.37,
+   "pillOkButCannotGrow": 0,
+   "noOffered": 42,
+   "noOfferedButHintedOpensMulti": 14.15,
+   "noOfferedButAnyTrackOpens": 14.15,
+   "multiStepShown": 0,
+   "helpsLine": 0,
+   "toxicLethal": 2.87,
+   "toxicLethalNamed": 0
+  },
+  "errors": []
+ },
+ "after": {
+  "worlds": 239,
+  "land": 221.74867954278076,
+  "regions": 3249,
+  "pillBlocked": 158.98599296298414,
+  "pillBlockedButGrows": 0,
+  "pillOkButCannotGrow": 0,
+  "noOffered": 0.5197820737515481,
+  "noOfferedButHintedOpensMulti": 0,
+  "noOfferedButAnyTrackOpens": 0,
+  "multiStepShown": 64.26882239617795,
+  "claimsChecked": 2643,
+  "claimsFalse": 0,
+  "helpsLine": 49.2395756650252,
+  "toxicLethal": 6.364708497804344,
+  "toxicLethalNamed": 6.364708497804344,
+  "statusWords": {
+   "Blocked": 5826,
+   "OK": 9710,
+   "Strained": 709
+  },
+  "pct": {
+   "pillBlocked": 71.7,
+   "pillBlockedButGrows": 0,
+   "pillOkButCannotGrow": 0,
+   "noOffered": 0.23,
+   "noOfferedButHintedOpensMulti": 0,
+   "noOfferedButAnyTrackOpens": 0,
+   "multiStepShown": 28.98,
+   "helpsLine": 22.21,
+   "toxicLethal": 2.87,
+   "toxicLethalNamed": 2.87
+  },
+  "errors": []
+ },
+ "method": "REAL production banner text for every non-origin region of the 60 BLOOM-038 sample worlds x each playable species at landing (in-page sessions from attemptPlanet + expeditionRun), scored against the engine: grows = fitness > grow.growThresh; hinted = the hinted Adapt / Terraform track opens it within 4 legal steps; every \"opens it\" route re-verified by an independent what-if. Shares are % of non-origin land area.",
+ "source": "scratchpad qa/readout-audit.js; BEFORE = main 8b23e78, AFTER = b47f334"
+}

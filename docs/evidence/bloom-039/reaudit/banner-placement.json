@@ -1,0 +1,3936 @@
+{
+ "method": "Harness worlds desert 7, frozen 7, ocean 28, desert 7 + Native Competition; regions by position (upper / middle / lower / bottom edge / left / right edge / seam); share of the selected region's real tiles under the banner (and the scenario card); BEFORE main, AFTER b47f334. Stability: the selection held 3 s at 4x, placement sampled every 150 ms.",
+ "byViewport": {
+  "1024": {
+   "before": {
+    "samples": 25,
+    "meanCovered": 0.25,
+    "maxCovered": 0.992,
+    "materialOver15pct": 11,
+    "top": 0,
+    "hudOverlapPxMax": 0,
+    "allInStage": true
+   },
+   "after": {
+    "samples": 25,
+    "meanCovered": 0.015,
+    "maxCovered": 0.148,
+    "materialOver15pct": 0,
+    "top": 11,
+    "hudOverlapPxMax": 0,
+    "allInStage": true
+   }
+  },
+  "1440": {
+   "before": {
+    "samples": 25,
+    "meanCovered": 0.243,
+    "maxCovered": 0.928,
+    "materialOver15pct": 11,
+    "top": 0,
+    "hudOverlapPxMax": 0,
+    "allInStage": true
+   },
+   "after": {
+    "samples": 25,
+    "meanCovered": 0.007,
+    "maxCovered": 0.08,
+    "materialOver15pct": 0,
+    "top": 11,
+    "hudOverlapPxMax": 0,
+    "allInStage": true
+   }
+  },
+  "1920": {
+   "before": {
+    "samples": 25,
+    "meanCovered": 0.129,
+    "maxCovered": 0.752,
+    "materialOver15pct": 4,
+    "top": 0,
+    "hudOverlapPxMax": 0,
+    "allInStage": true
+   },
+   "after": {
+    "samples": 25,
+    "meanCovered": 0.03,
+    "maxCovered": 0.127,
+    "materialOver15pct": 0,
+    "top": 4,
+    "hudOverlapPxMax": 0,
+    "allInStage": true
+   }
+  },
+  "2560": {
+   "before": {
+    "samples": 25,
+    "meanCovered": 0.045,
+    "maxCovered": 0.456,
+    "materialOver15pct": 2,
+    "top": 0,
+    "hudOverlapPxMax": 0,
+    "allInStage": true
+   },
+   "after": {
+    "samples": 25,
+    "meanCovered": 0.01,
+    "maxCovered": 0.128,
+    "materialOver15pct": 0,
+    "top": 2,
+    "hudOverlapPxMax": 0,
+    "allInStage": true
+   }
+  }
+ },
+ "rows": [
+  {
+   "world": "desert_world:7@1024",
+   "cls": "upper",
+   "region": 14,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1024",
+   "cls": "middle",
+   "region": 4,
+   "before": {
+    "tiles": 231,
+    "coveredByBanner": 0.043,
+    "visible": 0.957,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 231,
+    "coveredByBanner": 0.043,
+    "visible": 0.957,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1024",
+   "cls": "lower",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.365,
+    "visible": 0.635,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     91,
+     780,
+     216
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1024",
+   "cls": "bottomEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.365,
+    "visible": 0.635,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     91,
+     780,
+     216
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1024",
+   "cls": "leftEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.365,
+    "visible": 0.635,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     91,
+     780,
+     216
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1024",
+   "cls": "seam",
+   "region": 0,
+   "before": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1440",
+   "cls": "upper",
+   "region": 14,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1440",
+   "cls": "middle",
+   "region": 4,
+   "before": {
+    "tiles": 231,
+    "coveredByBanner": 0.013,
+    "visible": 0.987,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 231,
+    "coveredByBanner": 0.013,
+    "visible": 0.987,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1440",
+   "cls": "lower",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.365,
+    "visible": 0.635,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     93,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1440",
+   "cls": "bottomEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.365,
+    "visible": 0.635,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     93,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1440",
+   "cls": "leftEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.365,
+    "visible": 0.635,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     93,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1440",
+   "cls": "seam",
+   "region": 0,
+   "before": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1920",
+   "cls": "upper",
+   "region": 14,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1920",
+   "cls": "middle",
+   "region": 4,
+   "before": {
+    "tiles": 231,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 231,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1920",
+   "cls": "lower",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.127,
+    "visible": 0.873,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0.127,
+    "visible": 0.873,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1920",
+   "cls": "bottomEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.127,
+    "visible": 0.873,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0.127,
+    "visible": 0.873,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1920",
+   "cls": "leftEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.127,
+    "visible": 0.873,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0.127,
+    "visible": 0.873,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@1920",
+   "cls": "seam",
+   "region": 0,
+   "before": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@2560",
+   "cls": "upper",
+   "region": 14,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@2560",
+   "cls": "middle",
+   "region": 4,
+   "before": {
+    "tiles": 231,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 231,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@2560",
+   "cls": "lower",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@2560",
+   "cls": "bottomEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@2560",
+   "cls": "leftEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7@2560",
+   "cls": "seam",
+   "region": 0,
+   "before": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1024",
+   "cls": "upper",
+   "region": 10,
+   "before": {
+    "tiles": 115,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 115,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1024",
+   "cls": "middle",
+   "region": 4,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1024",
+   "cls": "lower",
+   "region": 2,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.992,
+    "visible": 0.008,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     91,
+     780,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1024",
+   "cls": "bottomEdge",
+   "region": 2,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.992,
+    "visible": 0.008,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     91,
+     780,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1024",
+   "cls": "leftEdge",
+   "region": 0,
+   "before": {
+    "tiles": 134,
+    "coveredByBanner": 0.157,
+    "visible": 0.843,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 134,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     91,
+     780,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1024",
+   "cls": "rightEdge",
+   "region": 9,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1024",
+   "cls": "seam",
+   "region": 9,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1440",
+   "cls": "upper",
+   "region": 10,
+   "before": {
+    "tiles": 115,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 115,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1440",
+   "cls": "middle",
+   "region": 4,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     608,
+     940,
+     244
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1440",
+   "cls": "lower",
+   "region": 2,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.928,
+    "visible": 0.072,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     93,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1440",
+   "cls": "bottomEdge",
+   "region": 2,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.928,
+    "visible": 0.072,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     93,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1440",
+   "cls": "leftEdge",
+   "region": 0,
+   "before": {
+    "tiles": 134,
+    "coveredByBanner": 0.216,
+    "visible": 0.784,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 134,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     93,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1440",
+   "cls": "rightEdge",
+   "region": 9,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1440",
+   "cls": "seam",
+   "region": 9,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1920",
+   "cls": "upper",
+   "region": 10,
+   "before": {
+    "tiles": 115,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 115,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1920",
+   "cls": "middle",
+   "region": 4,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     788,
+     940,
+     244
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1920",
+   "cls": "lower",
+   "region": 2,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.752,
+    "visible": 0.248,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     93,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1920",
+   "cls": "bottomEdge",
+   "region": 2,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.752,
+    "visible": 0.248,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     93,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1920",
+   "cls": "leftEdge",
+   "region": 0,
+   "before": {
+    "tiles": 134,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 134,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1920",
+   "cls": "rightEdge",
+   "region": 9,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@1920",
+   "cls": "seam",
+   "region": 9,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@2560",
+   "cls": "upper",
+   "region": 10,
+   "before": {
+    "tiles": 115,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 115,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@2560",
+   "cls": "middle",
+   "region": 4,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1148,
+     940,
+     244
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@2560",
+   "cls": "lower",
+   "region": 2,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.456,
+    "visible": 0.544,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     93,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@2560",
+   "cls": "bottomEdge",
+   "region": 2,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.456,
+    "visible": 0.544,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     93,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@2560",
+   "cls": "leftEdge",
+   "region": 0,
+   "before": {
+    "tiles": 134,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 134,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@2560",
+   "cls": "rightEdge",
+   "region": 9,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "frozen_world:7@2560",
+   "cls": "seam",
+   "region": 9,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1024",
+   "cls": "upper",
+   "region": 0,
+   "before": {
+    "tiles": 40,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 40,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1024",
+   "cls": "middle",
+   "region": 6,
+   "before": {
+    "tiles": 51,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 51,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1024",
+   "cls": "lower",
+   "region": 1,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.768,
+    "visible": 0.232,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     91,
+     780,
+     240
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1024",
+   "cls": "bottomEdge",
+   "region": 1,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.768,
+    "visible": 0.232,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     91,
+     780,
+     240
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1024",
+   "cls": "rightEdge",
+   "region": 12,
+   "before": {
+    "tiles": 88,
+    "coveredByBanner": 0.148,
+    "visible": 0.852,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 88,
+    "coveredByBanner": 0.148,
+    "visible": 0.852,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1024",
+   "cls": "seam",
+   "region": 12,
+   "before": {
+    "tiles": 88,
+    "coveredByBanner": 0.148,
+    "visible": 0.852,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 88,
+    "coveredByBanner": 0.148,
+    "visible": 0.852,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1440",
+   "cls": "upper",
+   "region": 0,
+   "before": {
+    "tiles": 40,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 40,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1440",
+   "cls": "middle",
+   "region": 6,
+   "before": {
+    "tiles": 51,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 51,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1440",
+   "cls": "lower",
+   "region": 1,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.816,
+    "visible": 0.184,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     93,
+     940,
+     216
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1440",
+   "cls": "bottomEdge",
+   "region": 1,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.816,
+    "visible": 0.184,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     93,
+     940,
+     216
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1440",
+   "cls": "rightEdge",
+   "region": 12,
+   "before": {
+    "tiles": 88,
+    "coveredByBanner": 0.08,
+    "visible": 0.92,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 88,
+    "coveredByBanner": 0.08,
+    "visible": 0.92,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1440",
+   "cls": "seam",
+   "region": 12,
+   "before": {
+    "tiles": 88,
+    "coveredByBanner": 0.08,
+    "visible": 0.92,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 88,
+    "coveredByBanner": 0.08,
+    "visible": 0.92,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1920",
+   "cls": "upper",
+   "region": 0,
+   "before": {
+    "tiles": 40,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 40,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1920",
+   "cls": "middle",
+   "region": 6,
+   "before": {
+    "tiles": 51,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 51,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1920",
+   "cls": "lower",
+   "region": 1,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.48,
+    "visible": 0.52,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     93,
+     940,
+     216
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1920",
+   "cls": "bottomEdge",
+   "region": 1,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.48,
+    "visible": 0.52,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     93,
+     940,
+     216
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1920",
+   "cls": "rightEdge",
+   "region": 12,
+   "before": {
+    "tiles": 88,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 88,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@1920",
+   "cls": "seam",
+   "region": 12,
+   "before": {
+    "tiles": 88,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 88,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@2560",
+   "cls": "upper",
+   "region": 0,
+   "before": {
+    "tiles": 40,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 40,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@2560",
+   "cls": "middle",
+   "region": 6,
+   "before": {
+    "tiles": 51,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 51,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@2560",
+   "cls": "lower",
+   "region": 1,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.104,
+    "visible": 0.896,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0.128,
+    "visible": 0.872,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1176,
+     940,
+     216
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@2560",
+   "cls": "bottomEdge",
+   "region": 1,
+   "before": {
+    "tiles": 125,
+    "coveredByBanner": 0.104,
+    "visible": 0.896,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 125,
+    "coveredByBanner": 0.128,
+    "visible": 0.872,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1176,
+     940,
+     216
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@2560",
+   "cls": "rightEdge",
+   "region": 12,
+   "before": {
+    "tiles": 88,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 88,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "ocean_archipelago:28@2560",
+   "cls": "seam",
+   "region": 12,
+   "before": {
+    "tiles": 88,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 88,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1024",
+   "cls": "upper",
+   "region": 14,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 0.65,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 0.65,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1024",
+   "cls": "middle",
+   "region": 4,
+   "before": {
+    "tiles": 231,
+    "coveredByBanner": 0.043,
+    "visible": 0.957,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 231,
+    "coveredByBanner": 0.043,
+    "visible": 0.957,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1024",
+   "cls": "lower",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.365,
+    "visible": 0.635,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     209,
+     780,
+     216
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1024",
+   "cls": "bottomEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.365,
+    "visible": 0.635,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     209,
+     780,
+     216
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1024",
+   "cls": "leftEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.365,
+    "visible": 0.635,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     530,
+     780,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     209,
+     780,
+     216
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1024",
+   "cls": "seam",
+   "region": 0,
+   "before": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     122,
+     528,
+     780,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1440",
+   "cls": "upper",
+   "region": 14,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 0.962,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 0.962,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1440",
+   "cls": "middle",
+   "region": 4,
+   "before": {
+    "tiles": 231,
+    "coveredByBanner": 0.013,
+    "visible": 0.987,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 231,
+    "coveredByBanner": 0.013,
+    "visible": 0.987,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1440",
+   "cls": "lower",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.365,
+    "visible": 0.635,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     324,
+     93,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1440",
+   "cls": "bottomEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.365,
+    "visible": 0.635,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     324,
+     93,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1440",
+   "cls": "leftEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.365,
+    "visible": 0.635,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     662,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "top",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     324,
+     93,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1440",
+   "cls": "seam",
+   "region": 0,
+   "before": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     250,
+     660,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1920",
+   "cls": "upper",
+   "region": 14,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1920",
+   "cls": "middle",
+   "region": 4,
+   "before": {
+    "tiles": 231,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 231,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1920",
+   "cls": "lower",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.127,
+    "visible": 0.873,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0.127,
+    "visible": 0.873,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1920",
+   "cls": "bottomEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.127,
+    "visible": 0.873,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0.127,
+    "visible": 0.873,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1920",
+   "cls": "leftEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0.127,
+    "visible": 0.873,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0.127,
+    "visible": 0.873,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     842,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@1920",
+   "cls": "seam",
+   "region": 0,
+   "before": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     490,
+     840,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@2560",
+   "cls": "upper",
+   "region": 14,
+   "before": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 157,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@2560",
+   "cls": "middle",
+   "region": 4,
+   "before": {
+    "tiles": 231,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 231,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@2560",
+   "cls": "lower",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@2560",
+   "cls": "bottomEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@2560",
+   "cls": "leftEdge",
+   "region": 8,
+   "before": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   },
+   "after": {
+    "tiles": 189,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1202,
+     940,
+     190
+    ]
+   }
+  },
+  {
+   "world": "desert_world:7+native_competition@2560",
+   "cls": "seam",
+   "region": 0,
+   "before": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   },
+   "after": {
+    "tiles": 269,
+    "coveredByBanner": 0,
+    "visible": 1,
+    "place": "bottom",
+    "bannerHudOverlapPx": 0,
+    "bannerInStage": true,
+    "bannerScnOverlapPx": 0,
+    "banner": [
+     810,
+     1200,
+     940,
+     192
+    ]
+   }
+  }
+ ],
+ "stability": [
+  {
+   "world": "desert_world:7@1024",
+   "region": 8,
+   "distinct": [
+    "top|91"
+   ]
+  },
+  {
+   "world": "desert_world:7@1440",
+   "region": 8,
+   "distinct": [
+    "top|93"
+   ]
+  },
+  {
+   "world": "frozen_world:7@1024",
+   "region": 2,
+   "distinct": [
+    "top|91"
+   ]
+  },
+  {
+   "world": "frozen_world:7@1440",
+   "region": 2,
+   "distinct": [
+    "top|93"
+   ]
+  },
+  {
+   "world": "ocean_archipelago:28@1024",
+   "region": 1,
+   "distinct": [
+    "top|91"
+   ]
+  },
+  {
+   "world": "ocean_archipelago:28@1440",
+   "region": 1,
+   "distinct": [
+    "top|93"
+   ]
+  },
+  {
+   "world": "desert_world:7+native_competition@1024",
+   "region": 8,
+   "distinct": [
+    "top|209"
+   ]
+  },
+  {
+   "world": "desert_world:7+native_competition@1440",
+   "region": 8,
+   "distinct": [
+    "top|93"
+   ]
+  }
+ ],
+ "labelClicks": {
+  "points": 11,
+  "beforeSelectsNamedRegion": 0,
+  "afterSelectsNamedRegion": 11,
+  "rows": [
+   {
+    "world": "desert_world:7@1024",
+    "label": 11,
+    "name": "Furnace Shelf",
+    "under": -1,
+    "x": 541.9147826086956,
+    "y": 660.7608695652174,
+    "before": -1,
+    "after": 11
+   },
+   {
+    "world": "desert_world:7@1440",
+    "label": 11,
+    "name": "Furnace Shelf",
+    "under": -1,
+    "x": 756.731304347826,
+    "y": 775.1222826086956,
+    "before": -1,
+    "after": 11
+   },
+   {
+    "world": "frozen_world:7@1440",
+    "label": 9,
+    "name": "Spring Moraine",
+    "under": -2,
+    "x": 1341.756050955414,
+    "y": 411.28622611464965,
+    "before": -1,
+    "after": 9
+   },
+   {
+    "world": "ocean_archipelago:28@1024",
+    "label": 7,
+    "name": "Marsh Expanse",
+    "under": -2,
+    "x": 993.0689795918368,
+    "y": 689.4387755102041,
+    "before": -1,
+    "after": 7
+   },
+   {
+    "world": "ocean_archipelago:28@1024",
+    "label": 10,
+    "name": "Green Span",
+    "under": 0,
+    "x": 498.48857142857145,
+    "y": 107.07142857142857,
+    "before": 0,
+    "after": 10
+   },
+   {
+    "world": "ocean_archipelago:28@1024",
+    "label": 14,
+    "name": "Sun Rise",
+    "under": 9,
+    "x": 387.55636363636364,
+    "y": 370.8636363636364,
+    "before": 9,
+    "after": 14
+   },
+   {
+    "world": "ocean_archipelago:28@1440",
+    "label": 7,
+    "name": "Marsh Expanse",
+    "under": -2,
+    "x": 1290.088163265306,
+    "y": 809.1772959183673,
+    "before": -1,
+    "after": 7
+   },
+   {
+    "world": "ocean_archipelago:28@1440",
+    "label": 10,
+    "name": "Green Span",
+    "under": 0,
+    "x": 702.9314285714287,
+    "y": 117.61607142857143,
+    "before": 0,
+    "after": 10
+   },
+   {
+    "world": "ocean_archipelago:28@1440",
+    "label": 14,
+    "name": "Sun Rise",
+    "under": 9,
+    "x": 571.2781818181818,
+    "y": 430.8693181818182,
+    "before": 9,
+    "after": 14
+   },
+   {
+    "world": "desert_world:7+native_competition@1024",
+    "label": 11,
+    "name": "Furnace Shelf",
+    "under": -1,
+    "x": 541.9147826086956,
+    "y": 660.7608695652174,
+    "before": -1,
+    "after": 11
+   },
+   {
+    "world": "desert_world:7+native_competition@1440",
+    "label": 11,
+    "name": "Furnace Shelf",
+    "under": -1,
+    "x": 756.731304347826,
+    "y": 775.1222826086956,
+    "before": -1,
+    "after": 11
+   }
+  ]
+ },
+ "trainingCoach": {
+  "before": {
+   "1024x768": [
+    {
+     "lesson": "start",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "below"
+    },
+    {
+     "lesson": "natural-spread",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "below"
+    },
+    {
+     "lesson": "biomass",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 31824,
+     "shareOfBanner": 0.215,
+     "side": "below"
+    },
+    {
+     "lesson": "inspect-chill",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "below"
+    },
+    {
+     "lesson": "limiting-factor",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 101,
+     "shareOfBanner": 0.001,
+     "side": "above"
+    }
+   ],
+   "1440x900": [
+    {
+     "lesson": "start",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "below"
+    },
+    {
+     "lesson": "natural-spread",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "below"
+    },
+    {
+     "lesson": "biomass",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 24046,
+     "shareOfBanner": 0.135,
+     "side": "below"
+    },
+    {
+     "lesson": "inspect-chill",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "below"
+    },
+    {
+     "lesson": "limiting-factor",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 101,
+     "shareOfBanner": 0.001,
+     "side": "above"
+    }
+   ]
+  },
+  "after": {
+   "1024x768": [
+    {
+     "lesson": "start",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "below"
+    },
+    {
+     "lesson": "natural-spread",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "below"
+    },
+    {
+     "lesson": "biomass",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "above"
+    },
+    {
+     "lesson": "inspect-chill",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "below"
+    },
+    {
+     "lesson": "limiting-factor",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "above"
+    }
+   ],
+   "1440x900": [
+    {
+     "lesson": "start",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "below"
+    },
+    {
+     "lesson": "natural-spread",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "below"
+    },
+    {
+     "lesson": "biomass",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "below"
+    },
+    {
+     "lesson": "inspect-chill",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "below"
+    },
+    {
+     "lesson": "limiting-factor",
+     "coach": true,
+     "banner": true,
+     "overlapPx": 0,
+     "shareOfBanner": 0,
+     "side": "above"
+    }
+   ]
+  }
+ }
+}
