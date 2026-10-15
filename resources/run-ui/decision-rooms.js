@@ -299,9 +299,9 @@
     const nodeState = u => u.canBuy ? "avail" : u.rules ? "poor" : u.owned ? "owned" : "blocked";
     const stateWord = u => { const st = nodeState(u), t = u.tier ? `Tier ${ROMAN[u.tier] || u.tier} owned` : "";
       if (st === "avail") return (t ? t + " · next " : "") + `${u.price} Biomass`;
-      // (BLOOM-039) unaffordable but legal: the reason at rest, short enough for every node width (the price stays in the node's name and the
-      // hover / focus card; an owned tier keeps its ✓ badge)
-      if (st === "poor") return `Need ${Math.max(1, Math.ceil(u.price - A.hud().biomassExact))} more`;
+      // (BLOOM-039) unaffordable but legal: the reason at rest, first (what is missing), then the real price; short enough for the narrowest node
+      // (the full "N Biomass" is in the node's name and the hover / focus card; an owned tier keeps its ✓ badge)
+      if (st === "poor") return `Need ${Math.max(1, Math.ceil(u.price - A.hud().biomassExact))} more · ${u.price}`;
       if (st === "owned") return t + (u.maxTier !== null && u.tier >= u.maxTier ? " · complete" : "");
       return u.reason ? cap(u.reason) : "Not available now"; };
     function effectFor(pv, i) { // the real preview region lists (ids) read for the room context: never recalculated here
