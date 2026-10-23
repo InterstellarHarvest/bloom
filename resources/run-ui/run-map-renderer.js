@@ -18,7 +18,8 @@
 //
 // FRAME = { tiles (mapState), regions (regions() summaries), selected (index), hover, focus (indices), preview { gain, lose,
 //   reachHostile, better, worse } (indices), effects (effects(), ids → indices by the caller), bubbles, layer null | { key,
-//   lamps[region] "green" | "yellow" | "red" }, haze (0–1), tints [{ rgb:[r,g,b], k }], labels (bool), now (ms) }
+//   lamps[region] "green" | "yellow" | "red" }, haze (0–1), tints [{ rgb:[r,g,b], k }], labels (bool), now (ms),
+//   (BLOOM-040) spot null | { index, k (0–1: how far the rest of the map is dimmed), pulse (0–1: the region's soft outline glow) } }
 //
 // Layers: 1 surface (static: ground, water, coast, archetype treatment) → 2 live tiles (stands by density, dead ground, native
 // hatched stands) or the Map View condition layer → 3 scenario haze / shock tint → 4 preview tints → 5 region borders, fronts,
@@ -50,6 +51,7 @@
   const NATIVE = { sparse: [196, 168, 222], dense: [112, 70, 152], hatch: "rgba(64,30,96,0.62)" };
   const FRONT = "#e0820b";
   const LAYER = { green: [156, 210, 136], yellow: [243, 196, 107], red: [233, 143, 166], markYellow: [150, 96, 10], markRed: [143, 40, 70] };
+  const SPOT_DIM = 0.3;   // (BLOOM-040) the map emphasis: the rest of the world dims at most this much (restrained: the map stays readable)
   const OUT = { select: "#2f3a2c", selectUnder: "#fffdf7", hover: "rgba(255,253,247,0.95)", focus: "#1f6fd1", gain: "#2a7636", lose: "#c4466a",
     hostile: "#d98a1c", better: "#5aa24a", worse: "#d9601f", opened: "#2a7636", worseFx: "#d9601f" };
   const CX_COLOR = { contested: "#8a5bb8", playerAdvantage: "#2a7636", nativeRetake: "#d9601f", nativeDominated: "#c4466a" };
@@ -198,6 +200,9 @@
       for (const x of f.tints || []) if (x.k > 0) { c.fillStyle = rgba(x.rgb, 0.18 * x.k); c.fillRect(0, 0, G.worldW, G.worldH); }
       const pv = f.preview;
       if (pv) { for (const s of pv.gain || []) tintRegion(c, s, "rgba(63,157,75,0.30)"); for (const s of pv.lose || []) tintRegion(c, s, "rgba(196,70,106,0.32)"); } // 4
+      const sp = f.spot && f.spot.index >= 0 && TILES_OF[f.spot.index] ? f.spot : null;   // (BLOOM-040) Edge Assemble's map emphasis: everything but ONE region dims
+      if (sp && sp.k > 0) { c.save(); c.beginPath(); c.rect(0, 0, G.worldW, G.worldH); for (const i of TILES_OF[sp.index]) c.rect((i % W) * t, ((i / W) | 0) * t, t, t);
+        c.fillStyle = `rgba(30,38,28,${(SPOT_DIM * clamp(sp.k, 0, 1)).toFixed(3)})`; c.fill("evenodd"); c.restore(); }
       // 5 · region borders (land | land between two regions), under the planet's topology
       c.strokeStyle = "rgba(47,58,44,0.32)"; c.lineWidth = Math.max(1, Math.round(t * 0.07)); c.beginPath();
       for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const s = TM[y * W + x]; if (s < 0) continue;
@@ -223,6 +228,7 @@
       if (f.hover >= 0 && f.hover !== f.selected) outline(c, f.hover, OUT.hover, Math.max(2, lw * 0.75), null, "rgba(47,58,44,0.55)");
       if (f.selected >= 0) outline(c, f.selected, OUT.select, lw + dpr, [Math.round(t * 0.5), Math.round(t * 0.28)], OUT.selectUnder);
       if (f.focus >= 0) outline(c, f.focus, OUT.focus, Math.max(3, lw), null, "#ffffff");
+      if (sp && sp.pulse > 0) outline(c, sp.index, `rgba(255,236,150,${(0.95 * clamp(sp.pulse, 0, 1)).toFixed(3)})`, lw + Math.round(3 * dpr * clamp(sp.pulse, 0, 1)), null, false); // (BLOOM-040) its soft pulse
     }
 
     // water crossings: seed dots along an arc from the source coast to the landing tile (the shorter way round on a cylinder). Drawn at

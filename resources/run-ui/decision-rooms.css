@@ -4,9 +4,13 @@
   content-height cards over the blurred, dimmed, inert world; the shared room header; category identity; organic tendrils whose
   weights follow the room em — set by decision-rooms.js); no mockup file is loaded. Local inline-SVG icons only; no web fonts.
 */
-/* the Planet View stays mounted underneath in the same geometry: blurred ≈ 7 px, dimmed by the layer's 46 % ink veil, inert */
+/* the Planet View stays mounted underneath in the same geometry: blurred ≈ 7 px, dimmed by the layer's 46 % ink veil, inert.
+   (BLOOM-040) The ink is its own element (.dr-veil) so Edge Assemble can fade it (opacity); the blur stays a static filter at rest (a backdrop
+   filter re-blurs on every weather frame: measured 20 / 12 fps against 30 / 60 for this rule) and is eased in / out only while a room opens or
+   closes, so the map never snaps between sharp and blurred. */
 .pv.in-room > .pv-hud, .pv.in-room > .pv-stage, .pv.in-room > .pv-foot{filter:blur(7px) saturate(.72) brightness(.94); pointer-events:none; user-select:none}
-.dr{position:absolute; inset:0; z-index:40; background:rgba(52,62,48,.46); --room-em:16px; font-size:var(--room-em);
+.dr-veil{position:absolute; inset:0; background:rgba(52,62,48,.46)}
+.dr{position:absolute; inset:0; z-index:40; --room-em:16px; font-size:var(--room-em);
   --room-bg:#ebe4d2; --acc:var(--leaf); --acc-soft:var(--leaf-soft); --acc-dark:var(--leaf-dark);
   --box-shadow:0 2px 0 rgba(60,50,20,.08), 0 10px 28px rgba(40,50,30,.22)}
 .dr-room{position:absolute; inset:0; display:grid; grid-template-rows:auto minmax(0,1fr); grid-template-columns:21% minmax(0,1fr) 33%; grid-template-areas:"rh rh rh" "focus main map"; gap:1em; padding:0 1em 1em; min-height:0; align-items:start; font-size:var(--room-em)}
@@ -30,7 +34,7 @@
 .dr .paused b{display:block; font-size:.85em; letter-spacing:1.4px; padding-right:.3em} .dr .paused:not(.on){opacity:.35; filter:grayscale(1)}
 .dr .rz{min-height:0; min-width:0}
 /* the three zones are content-height columns: cards end where their content ends, the dimmed world shows below them */
-.dr .z-focus{grid-area:focus; display:flex; flex-direction:column; gap:1em; max-height:100%; min-height:0}
+.dr .z-focus{grid-area:focus; display:flex; flex-direction:column; gap:1em; height:100%; max-height:100%; min-height:0}   /* (BLOOM-040) a definite height: the specimen's cap below never depends on a room's content */
 .dr .z-main{grid-area:main; display:flex; flex-direction:column; min-height:0; overflow:hidden; position:relative; height:100%}
 .dr .z-map{grid-area:map; display:flex; flex-direction:column; gap:1em; max-height:100%; min-height:0}
 @media (max-width:1600px){ .dr .rt small{display:none} }
@@ -38,7 +42,10 @@
 @media (max-width:1500px){ .dr .rn:not([aria-pressed="true"]) span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)} .dr .rn{padding:.25em .7em} .dr .rbio small{display:none} }
 @media (max-width:1100px){ .dr .rn span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)} .dr .rb > span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap} /* (BLOOM-039, a11y) icon-only, still named */ .dr .rt h2{font-size:1.4em} }
 
-/* ── left column: the production plant specimen above, the information card below (content height, with a floor) ── */
+/* ── left column: the production plant specimen above, the information card below (content height, with a floor) ──
+   (BLOOM-040) THE CANONICAL SPECIMEN GEOMETRY — one box for Region Inspect, Adapt, Spread AND Terraform: the full width of the 21 % left
+   column, 170 : 196 (the accepted Region / Adapt presentation), capped at 56 % of the room's zone height (the zone is the same in every
+   room). Nothing a room shows may resize, move or crop it; the scene inside fills it edge to edge (plant-specimen.js). */
 .dr .lf-top{position:relative; flex:none; border-radius:var(--r-md); overflow:hidden; background:#dceefa; width:100%; aspect-ratio:170/196; max-height:56%}
 .dr .ps{position:relative; width:100%; height:100%; overflow:hidden}
 /* BLOOM-032C: the Organic Hybrid organism — one 84×98 canvas at a whole-number scale, nearest-neighbour, centred (plant-specimen.js sets size / offset) */
@@ -174,8 +181,9 @@
 @media (prefers-reduced-motion: reduce){ .dr *{transition:none !important; animation:none !important} .dr .node:hover .ni,.dr .node:focus-visible .ni{transform:none} }
 .pv.reduced .dr *{transition:none !important; animation:none !important}
 
-/* ── Terraform (BLOOM-029D): the environmental room. Concept 18 Terraform proportions (20 / 1fr / 23), sky accent; no plant specimen ── */
-.dr .r-terraform{grid-template-columns:20% minmax(0,1fr) 23%; --acc:var(--sky); --acc-soft:var(--sky-soft); --acc-dark:var(--sky-dark)}
+/* ── Terraform (BLOOM-029D): the environmental room, sky accent. Concept 18 Terraform proportions for the planet and readout (1fr / 23 %);
+   (BLOOM-040) its left column is the canonical 21 % of every plant room, so the plant in its land is the SAME specimen box as elsewhere ── */
+.dr .r-terraform{grid-template-columns:21% minmax(0,1fr) 23%; --acc:var(--sky); --acc-soft:var(--sky-soft); --acc-dark:var(--sky-dark)}
 .dr .r-terraform .rc{font-size:.84em} .dr .r-terraform .mm-lens .lb{padding:.15em .5em}
 /* the right column: when the readout grows (a preview), the mini-map gives up height first (down to 5.5 em) and the strip keeps one row and scrolls */
 .dr .r-terraform .mm{overflow:hidden} .dr .r-terraform .mm-map{flex:0 1 auto; min-height:5.5em; max-height:8.6em} .dr .r-terraform .mm-strip{flex:1 1 auto; min-height:2.6em; overflow:auto}
@@ -215,7 +223,7 @@
 .dr .g-read .g-hint{display:inline-flex; align-items:center; gap:.3em; margin-top:.25em; font-size:.74em; font-weight:800; color:var(--ink-faint-text)} .dr .g-read .g-hint .ic{width:1.1em; height:1.1em}
 .dr .to{font-style:normal; font-weight:900; color:var(--cat-dark, var(--sky-dark))}
 /* left: the environment / land focus (sky + ground from real values; never the plant) and the information card's compact condition rows */
-.dr .lf-top.env{aspect-ratio:4/3; max-height:38%; background:#dceefa} .dr .env.previewing .ps-tag{opacity:1}
+.dr .env.previewing .ps-tag{opacity:1}   /* (BLOOM-040) the Terraform specimen is the canonical .lf-top box (no 4 : 3 / 38 % variant) */
 .dr .conds{display:flex; flex-direction:column; gap:.3em} .dr .cond.mini{grid-template-columns:1.8em minmax(0,1fr) auto; gap:.4em; padding:.25em .45em .25em .35em; font-size:.86em}
 .dr .cond.mini .cond-i{width:1.8em; height:1.8em} .dr .cond.mini .cond-i .ic{width:1.1em; height:1.1em} .dr .cond.mini .stc{font-size:.82em; padding:.1em .5em .1em .25em}
 .dr .cond.mini .cnm{display:flex; flex-direction:column; line-height:1.1; min-width:0; font-size:.94em; letter-spacing:-.01em} .dr .cond.mini .cnm .ct{font-size:.86em; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
@@ -228,16 +236,16 @@
 .dr .mc-k2{margin-top:.25em; padding-top:.45em; border-top:1px solid var(--line)}
 @media (max-width:1100px){ .dr .cond.mini{grid-template-columns:1.8em 4.6em auto 1fr} .dr .bank-legend small,.dr .g-read .g-hint{display:none} }
 
-/* ── BLOOM-029E: the SUBDUED mist is the transition; the incoming room gets only a restrained card entrance THROUGH it (a small opacity
-   rise, a few px of lift, scale → 1; ~180 ms, after the reveal has begun). Never a slide from an edge, a drawer, a spring, or any motion
-   of the map underneath. Absent under reduced motion (the component's own reduced path is authoritative; the controller skips the class). ── */
-.dr .dr-room.entering{animation:drEnter .18s cubic-bezier(.2,.7,.3,1) both}
-@keyframes drEnter{from{opacity:0; transform:translate3d(0,6px,0) scale(.992)} to{opacity:1; transform:translate3d(0,0,0) scale(1)}}
-@media (prefers-reduced-motion: reduce){ .dr .dr-room.entering{animation:none} }
-.pv.reduced .dr .dr-room.entering{animation:none}
-/* while a swap runs, the swap-affecting controls are locked at the controller too (the mist's overlay already blocks input) */
-.dr[data-transitioning] .rb, .dr[data-transitioning] .rn, .dr[data-transitioning] [data-go]{pointer-events:none}
+/* ── BLOOM-040: EDGE ASSEMBLE (docs/GAMEPLAY_UI_CONVERGENCE_v1.md §6). The motion itself is Web Animations driven by decision-rooms.js
+   (transform + opacity only); these rules are the input lock while it runs. Opening / closing: the moving room takes no pointer input (a
+   double-click never lands on an arriving control); Escape is the keyboard way out at any moment. Room → room: the header's Back, room tabs and
+   Resume stay where they are and stay live (a new choice supersedes the settling one); the changing work panels take no input. ── */
+.dr[data-transitioning="open"] .dr-room, .dr[data-transitioning="back"] .dr-room, .dr[data-transitioning="resume"] .dr-room{pointer-events:none}
+.dr[data-transitioning="switch"] .z-main, .dr[data-transitioning="switch"] .z-map, .dr[data-transitioning="switch"] .lf-info, .dr[data-transitioning="switch"] .dr-leaders{pointer-events:none}
 .pv[data-transitioning] .pv-tool, .pv[data-transitioning] .pv-banner [data-go]{pointer-events:none}
+/* the home selection stays while a room is open (the map returns with it): its banner fades out under the arriving veil and back in as it clears */
+.pv.in-room .pv-banner{opacity:0; transition:opacity .18s ease-out}
+.pv.in-room[data-transitioning="back"] .pv-banner, .pv.in-room[data-transitioning="resume"] .pv-banner{opacity:1; transition:opacity .22s ease-in-out .06s}
 /* (036C1) REFUGE — the protected landing refuge chip and region-strip dot (sky, not red; the limiting factor stays shown as it is) */
 .dr .stc.refuge{border-color:var(--bloom-sky); background:var(--bloom-sky-soft); color:var(--bloom-sky-dark)} .dr .stc.refuge .ic{background:var(--bloom-sky-dark)}
 .dr .rc.st-refuge .rs{background:var(--bloom-sky-dark)}

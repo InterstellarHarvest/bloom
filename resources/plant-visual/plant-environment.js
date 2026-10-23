@@ -8,11 +8,11 @@
 //   const S = BLOOM.plantEnvironment.region({ planetId, archetypeId, regionId, local: { tempOffset, moistureOffset }, sky: { temperature,
 //               moisture }, salinity, toxicity, radiation })                      → a frozen scene descriptor (plain data)
 //   const S = BLOOM.plantEnvironment.showcase()                                    → the neutral, presentation-only Species Selection scene
-//   BLOOM.plantEnvironment.paint(S, W, H, soilY)   → Uint8ClampedArray RGBA: the STATIC geography (sky gradient, sun, horizon, ground,
+//   BLOOM.plantEnvironment.paint(S, W, H, soilY[, ext])   → Uint8ClampedArray RGBA: the STATIC geography (sky gradient, sun, horizon, ground,
 //                                                    standing water, soil cutaway) — a low-resolution procedural raster on the organism's grid
 //   BLOOM.plantEnvironment.fx(S)                   → the weather FX spec (clouds drifting, rain, snow, haze, dust, water ripples) — data only
 //   BLOOM.plantEnvironment.signature(S, W, H, soilY) → "<raster fnv>-<fx fnv>": the environment signature (organism-independent)
-//   BLOOM.plantEnvironment.mountFx(canvas, { reducedMotion })  (browser) → { set(spec, { W, H, soilY, scale }), frame(), state(), dispose() }:
+//   BLOOM.plantEnvironment.mountFx(canvas, { reducedMotion })  (browser) → { set(spec, { W, H, soilY, scale, fw }), frame(), state(), dispose() }:
 //                                                    the FX overlay — simple runtime particles on its own canvas above the specimen;
 //                                                    reduced motion draws ONE still frame (the weather state stays visible, nothing moves)
 //
@@ -67,16 +67,26 @@
 
   // ================================================================ the static raster
   const cache = new Map();
-  function paint(s, W, H, soilY) {
+  // (BLOOM-040) `ext` { left, top, right, bottom } (whole logical px, default none) paints the SAME scene over a larger grid around the W × H frame:
+  // every feature keeps its frame coordinates, so the window [left, left + W) × [top, top + H) of the result is byte-identical to paint(s, W, H, soilY)
+  // and the margins continue the sky, horizon, ground, soil strata and marks out to a box's edges (the specimen fills its container; the frame —
+  // and every signature, which is always taken on the W × H frame — is unchanged). Margin-only marks never touch the window.
+  function paint(s, W, H, soilY, ext) {
     if (!isScene(s)) throw new TypeError("BLOOM.plantEnvironment.paint: not a scene (region() / showcase())");
-    const ck = keyOf(s) + `|${W}x${H}@${soilY}`; let hit = cache.get(ck); if (hit) return new Uint8ClampedArray(hit);
-    const L = look(s), o = new Uint8ClampedArray(W * H * 4), set = (x, y, c) => { if (x < 0 || y < 0 || x >= W || y >= H) return; const i = (y * W + x) * 4; o[i] = R(c[0]); o[i + 1] = R(c[1]); o[i + 2] = R(c[2]); o[i + 3] = 255; };
-    const get = (x, y) => { const i = (y * W + x) * 4; return [o[i], o[i + 1], o[i + 2]]; };
+    const mL = ext ? Math.max(0, ext.left | 0) : 0, mT = ext ? Math.max(0, ext.top | 0) : 0, mR = ext ? Math.max(0, ext.right | 0) : 0, mB = ext ? Math.max(0, ext.bottom | 0) : 0;
+    const EW = W + mL + mR, EH = H + mT + mB, X0 = -mL, X1 = W + mR, Y0 = -mT, Y1 = H + mB, margins = mL + mT + mR + mB > 0;
+    const ck = keyOf(s) + `|${W}x${H}@${soilY}` + (margins ? `+${mL},${mT},${mR},${mB}` : ""); let hit = cache.get(ck); if (hit) return new Uint8ClampedArray(hit);
+    const L = look(s), o = new Uint8ClampedArray(EW * EH * 4), set = (x, y, c) => { if (x < X0 || y < Y0 || x >= X1 || y >= Y1) return; const i = ((y + mT) * EW + x + mL) * 4; o[i] = R(c[0]); o[i + 1] = R(c[1]); o[i + 2] = R(c[2]); o[i + 3] = 255; };
+    const get = (x, y) => { const i = ((y + mT) * EW + x + mL) * 4; return [o[i], o[i + 1], o[i + 2]]; };
+    const inFrame = (x, y) => x >= 0 && y >= 0 && x < W && y < H, setM = (x, y, c) => { if (!inFrame(x, y)) set(x, y, c); };
+    // margin marks: the frame's scattered marks continue at the same density per area (a per-pixel hash; never inside the window)
+    const scatter = (n, y0, y1, salt, fn) => { if (!margins || n <= 0) return; const p = n / Math.max(1, W * (y1 - y0));
+      for (let y = Math.max(Y0, y0); y < Math.min(Y1, y1); y++) for (let x = X0; x < X1; x++) if (!inFrame(x, y) && hash(s.seed, (x + 4096) * 8191 + y, salt) < p) fn(x, y); };
     // SKY: a soft gradient with a light ordered dither (retro, not a painting)
-    for (let y = 0; y < soilY; y++) { const f = y / Math.max(1, soilY - 1); for (let x = 0; x < W; x++) { const d = (BAYER[(y & 3) * 4 + (x & 3)] - 0.5) * 0.06; set(x, y, mix(L.top, L.bot, clamp(f + d, 0, 1))); } }
+    for (let y = Y0; y < soilY; y++) { const f = y / Math.max(1, soilY - 1); for (let x = X0; x < X1; x++) { const d = (BAYER[(y & 3) * 4 + (x & 3)] - 0.5) * 0.06; set(x, y, mix(L.top, L.bot, clamp(f + d, 0, 1))); } }
     // SUN (a clear sky only), a radiation glow ring when the region's radiation is high
     if (L.sun) { const cx = W - 16, cy = 12, r0 = L.hot ? 5.5 : 4.5, core = L.hot ? [255, 178, 84] : [255, 222, 120];
-      for (let y = 0; y < soilY; y++) for (let x = 0; x < W; x++) { const d = Math.hypot(x - cx, y - cy); if (d <= r0) set(x, y, core); else if (d <= r0 + 3) set(x, y, mix(get(x, y), [255, 246, 200], 0.55 * (1 - (d - r0) / 3) + Math.min(0.25, L.rad / 160))); } }
+      for (let y = Y0; y < soilY; y++) for (let x = X0; x < X1; x++) { const d = Math.hypot(x - cx, y - cy); if (d <= r0) set(x, y, core); else if (d <= r0 + 3) set(x, y, mix(get(x, y), [255, 246, 200], 0.55 * (1 - (d - r0) / 3) + Math.min(0.25, L.rad / 160))); } }
     // static cloud banks (the FX overlay adds the drifting wisps): soft, lighter or greyer with the weather
     const cloudN = R(1 + L.clouds * 4), cloudC = L.overcast ? [196, 202, 210] : [246, 248, 250];
     for (let k = 0; k < cloudN; k++) { const cx = R(hash(s.seed, k, 3) * W), cy = R(6 + hash(s.seed, k, 4) * (soilY * 0.42)), rx = 6 + R(hash(s.seed, k, 5) * 9), ry = 2 + R(hash(s.seed, k, 6) * 2);
@@ -85,33 +95,40 @@
     const far = mix(mix(L.ground, L.bot, 0.55), [150, 160, 172], 0.25), near = mix(L.ground, L.bot, 0.3), hz = soilY - 1;
     const ridge = (x, seed, amp, base, rough) => { let h = 0; for (let o2 = 1; o2 <= 3; o2++) { const p = (x + R(hash(seed, 91) * 400)) / (24 / o2); const i = Math.floor(p), f = p - i, a = hash(seed, i, o2), b = hash(seed, i + 1, o2); h += (a + (b - a) * (f * f * (3 - 2 * f))) * amp / o2; } return base + h * rough; };
     const skyline = s.skyline ^ (s.seed & 0xffff);
-    for (let x = 0; x < W; x++) {
+    for (let x = X0; x < X1; x++) {
       let hFar, hNear;
       if (s.horizon === "sea") { hFar = 2 + (hash(skyline, Math.floor((x + 3) / 9)) > 0.72 ? 2 + R(hash(skyline, x >> 3, 7) * 3) : 0); hNear = 0; }
       else if (s.horizon === "dunes") { hFar = R(ridge(x, skyline, 6, 4, 0.8)); hNear = R(ridge(x, skyline ^ 77, 4, 2, 0.7)); }
       else if (s.horizon === "peaks") { const p = ridge(x, skyline, 14, 5, 1); hFar = R(p + (hash(skyline, x >> 2, 9) > 0.8 ? 2 : 0)); hNear = R(ridge(x, skyline ^ 55, 6, 2, 0.8)); }
       else { hFar = R(ridge(x, skyline, 9, 4, 0.9)); hNear = R(ridge(x, skyline ^ 33, 5, 2, 0.8)); }
-      for (let k = 0; k < hFar; k++) { const y = hz - k; if (y < 0) break; const cap = L.caps && s.horizon !== "sea" && k >= hFar - 2 && hFar > 6; set(x, y, cap ? [240, 244, 248] : far); }
+      for (let k = 0; k < hFar; k++) { const y = hz - k; if (y < Y0) break; const cap = L.caps && s.horizon !== "sea" && k >= hFar - 2 && hFar > 6; set(x, y, cap ? [240, 244, 248] : far); }
       if (s.horizon === "sea") for (let y = hz - 1; y <= hz; y++) set(x, y, mix([92, 140, 168], L.bot, 0.35));
-      for (let k = 0; k < hNear; k++) { const y = hz - k; if (y >= 0) set(x, y, L.snowGround ? [226, 232, 240] : near); }
+      for (let k = 0; k < hNear; k++) { const y = hz - k; if (y >= Y0) set(x, y, L.snowGround ? [226, 232, 240] : near); }
     }
     // GROUND line + turf
-    for (let x = 0; x < W; x++) { const tuft = x % 4 === 1 && hash(s.seed, x, 11) > 0.35;
+    for (let x = X0; x < X1; x++) { const tuft = ((x % 4) + 4) % 4 === 1 && hash(s.seed, x, 11) > 0.35;
       set(x, soilY, L.salt ? mix(L.ground, [236, 232, 220], 0.5) : L.ground);
       if (tuft && !L.snowGround && !L.water) set(x, soilY - 1, L.cracks ? mix(L.ground, [150, 130, 80], 0.4) : mix(L.ground, [70, 96, 52], 0.5)); }
     // SOIL cutaway: strata + moisture / dryness / mineral cues
-    for (let y = soilY + 1; y < H; y++) { const f = (y - soilY) / (H - soilY), layer = Math.min(2, Math.floor(f * 3)), seam = (f * 3) % 1;
-      for (let x = 0; x < W; x++) { let c = layer % 2 ? L.soil[1] : L.soil[0]; if (layer && seam < 0.15 && BAYER[(y & 3) * 4 + (x & 3)] < 0.5) c = layer % 2 ? L.soil[0] : L.soil[1];
+    for (let y = soilY + 1; y < Y1; y++) { const f = (y - soilY) / (H - soilY), layer = Math.min(2, Math.floor(f * 3)), seam = (f * 3) % 1;
+      for (let x = X0; x < X1; x++) { let c = layer % 2 ? L.soil[1] : L.soil[0]; if (layer && seam < 0.15 && BAYER[(y & 3) * 4 + (x & 3)] < 0.5) c = layer % 2 ? L.soil[0] : L.soil[1];
         if (L.frost && y <= soilY + 3) c = mix(c, [214, 226, 238], 0.45 - (y - soilY) * 0.1); set(x, y, c); } }
     for (let k = 0; k < 14; k++) { const x = R(2 + hash(s.seed, k, 21) * (W - 5)), y = R(soilY + 4 + hash(s.seed, k, 22) * (H - soilY - 6)); set(x, y, L.soil[2]); set(x + 1, y, L.soil[2]); }
+    scatter(14, soilY + 4, soilY + 4 + (H - soilY - 6), 23, (x, y) => { setM(x, y, L.soil[2]); setM(x + 1, y, L.soil[2]); });
+    if (margins) scatter(14 * (mB / Math.max(1, H - soilY - 6)), H - 2, Y1, 24, (x, y) => { setM(x, y, L.soil[2]); setM(x + 1, y, L.soil[2]); });   // the strata go on below the frame: so do the specks
     if (L.mud) for (let k = 0; k < 18; k++) { const x = R(hash(s.seed, k, 31) * (W - 1)), y = R(soilY + 2 + hash(s.seed, k, 32) * 12); set(x, y, [70, 86, 96]); }
+    if (L.mud) scatter(18, soilY + 2, soilY + 14, 33, (x, y) => setM(x, y, [70, 86, 96]));
     if (L.cracks) for (let k = 0; k < 5; k++) { let x = R(6 + hash(s.seed, k, 41) * (W - 12)), y = soilY + 1; for (let j = 0; j < 4 + R(hash(s.seed, k, 42) * 4); j++) { set(x, y, mix(L.soil[1], [80, 60, 40], 0.5)); x += hash(s.seed, k * 9 + j, 43) > 0.5 ? 1 : -1; y++; } }
+    if (L.cracks && margins) for (let x0 = X0; x0 < X1; x0++) { if (x0 >= -6 && x0 < W + 6 || hash(s.seed, x0 + 4096, 44) >= 5 / (W - 12)) continue;   // margin cracks, the frame's density
+      let x = x0, y = soilY + 1; for (let j = 0; j < 4 + R(hash(s.seed, x0 + 4096, 42) * 4); j++) { setM(x, y, mix(L.soil[1], [80, 60, 40], 0.5)); x += hash(s.seed, (x0 + 4096) * 9 + j, 45) > 0.5 ? 1 : -1; y++; } }
     if (L.salt) for (let k = 0; k < 26; k++) set(R(hash(s.seed, k, 51) * (W - 1)), R(soilY + 1 + hash(s.seed, k, 52) * 8), [244, 242, 236]);
+    if (L.salt) scatter(26, soilY + 1, soilY + 9, 53, (x, y) => setM(x, y, [244, 242, 236]));
     if (L.toxic) for (let k = 0; k < 10; k++) set(R(hash(s.seed, k, 61) * (W - 1)), R(soilY + 3 + hash(s.seed, k, 62) * 14), [112, 72, 150]);
+    if (L.toxic) scatter(10, soilY + 3, soilY + 17, 63, (x, y) => setM(x, y, [112, 72, 150]));
     // SNOW on the ground, STANDING WATER over the soil line (regional, never a species property)
-    if (L.snowGround) for (let x = 0; x < W; x++) { set(x, soilY, [244, 247, 252]); if (hash(s.seed, x, 71) > 0.4) set(x, soilY - 1, [236, 241, 248]); }
+    if (L.snowGround) for (let x = X0; x < X1; x++) { set(x, soilY, [244, 247, 252]); if (hash(s.seed, x, 71) > 0.4) set(x, soilY - 1, [236, 241, 248]); }
     if (L.water || L.ice) { const rows = L.ice ? 2 : 2 + R(L.water * 2), deep = L.ice ? [188, 214, 232] : [70, 122, 150], lite = L.ice ? [226, 238, 246] : [128, 176, 198];
-      for (let y = soilY - rows; y < soilY; y++) for (let x = 0; x < W; x++) set(x, y, y === soilY - rows && BAYER[(y & 3) * 4 + (x & 3)] < 0.5 ? lite : deep); }
+      for (let y = soilY - rows; y < soilY; y++) for (let x = X0; x < X1; x++) set(x, y, y === soilY - rows && BAYER[(y & 3) * 4 + (x & 3)] < 0.5 ? lite : deep); }
     cache.set(ck, new Uint8ClampedArray(o)); if (cache.size > 64) cache.delete(cache.keys().next().value);
     return o;
   }
@@ -127,31 +144,46 @@
   function signature(s, W, H, soilY) { return `${fnv(paint(s, W, H, soilY))}-${fnv(Array.from(JSON.stringify(fx(s)), c => c.charCodeAt(0)))}`; }
 
   /** The FX overlay on its own canvas (above the specimen, pointer-events none). Particle positions come from the scene seed; only their motion
-   *  uses animation time. Reduced motion: one still frame. */
+   *  uses animation time. Reduced motion: one still frame.
+   *  (BLOOM-040) Layout { W, H, soilY, scale, fw }: W × H may be a whole specimen box larger than the frame (fw = the frame's width, default W),
+   *  so the weather covers the box edge to edge at the frame's density per area. Animation time is the PAGE clock (the rAF / performance.now
+   *  timeline), not a per-overlay start, so two overlays of the same scene and layout draw the same frame at the same moment: switching between
+   *  rooms never visibly restarts the weather. set() draws at once (no empty frame before the next animation frame); a hidden overlay skips
+   *  drawing. Rain is a two-tone streak (a dark core that reads on bright sky and snow, a pale edge that reads on dark ground) and a snowflake a
+   *  white core with a soft blue-grey rim: size and contrast, never more particles. */
+  const RAIN = { core: "rgba(46,78,118,0.82)", edge: "rgba(236,244,252,0.7)", len: 4, w: 0.75, fall: 38 };
+  const SNOW = { rim: "rgba(78,100,130,0.55)", core: "#ffffff", size: 1.34, fall: 6 };
   function mountFx(cv, { reducedMotion = () => false } = {}) {
-    const ctx = cv.getContext("2d"); let spec = null, lay = null, raf = 0, t0 = 0, frames = 0, still = false;
+    const ctx = cv.getContext("2d"); let spec = null, lay = null, raf = 0, frames = 0, still = false;
     const rm = () => !!(typeof reducedMotion === "function" ? reducedMotion() : reducedMotion);
+    const clock = () => performance.now();   // the page clock (the rAF timeline's own origin)
+    const shown = () => !cv.isConnected || cv.getClientRects().length > 0;
     function size() { if (!lay) return; const w = lay.W * lay.scale, h = lay.H * lay.scale; if (cv.width !== w) cv.width = w; if (cv.height !== h) cv.height = h; }
     function draw(time) {
-      frames++; if (!spec || !lay) return; size(); const k = lay.scale, W = lay.W, H = lay.H, sy = lay.soilY, T = time / 1000;
+      frames++; if (!spec || !lay) return; size(); const k = lay.scale, W = lay.W, H = lay.H, sy = lay.soilY, T = time / 1000, area = W / (lay.fw || W);
+      const many = n => Math.max(n > 0 ? 1 : 0, Math.round(n * area));
       ctx.clearRect(0, 0, cv.width, cv.height);
       const px = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(Math.round(x * k), Math.round(y * k), Math.max(1, Math.round(w * k)), Math.max(1, Math.round(h * k))); };
       // drifting cloud wisps (sky band only)
-      for (let i = 0; i < spec.clouds.n; i++) { const w = 10 + hash(spec.seed, i, 101) * 12, y = 4 + hash(spec.seed, i, 102) * (sy * 0.35), x = ((hash(spec.seed, i, 103) * (W + w) + T * spec.clouds.speed * (1 + i * 0.3)) % (W + w)) - w;
+      for (let i = 0; i < many(spec.clouds.n); i++) { const w = 10 + hash(spec.seed, i, 101) * 12, y = 4 + hash(spec.seed, i, 102) * (sy * 0.35), x = ((hash(spec.seed, i, 103) * (W + w) + T * spec.clouds.speed * (1 + i * 0.3)) % (W + w)) - w;
         ctx.globalAlpha = spec.clouds.shade === "grey" ? 0.35 : 0.45; px(x, y, w, 1.6, spec.clouds.shade === "grey" ? "#c4cad2" : "#ffffff"); px(x + w * 0.2, y - 1, w * 0.55, 1.2, spec.clouds.shade === "grey" ? "#ccd1d8" : "#ffffff"); }
       ctx.globalAlpha = 1;
       if (spec.haze) { const g = ctx.createLinearGradient(0, (sy - 26) * k, 0, sy * k); g.addColorStop(0, "rgba(245,222,170,0)"); g.addColorStop(1, `rgba(245,222,170,${spec.haze.strength + 0.04 * Math.sin(T * 0.6)})`); ctx.fillStyle = g; ctx.fillRect(0, 0, cv.width, sy * k); }
-      if (spec.rain) { ctx.globalAlpha = 0.55; for (let i = 0; i < spec.rain.density; i++) { const x = hash(spec.seed, i, 111) * W, y = ((hash(spec.seed, i, 112) * sy + T * 38 * (0.8 + hash(spec.seed, i, 113) * 0.4)) % sy); px(x - (y / sy) * 2, y, 0.5, 3, "#7b9cba"); } ctx.globalAlpha = 1; }
-      if (spec.snow) { for (let i = 0; i < spec.snow.density; i++) { const y = ((hash(spec.seed, i, 121) * sy + T * 6 * (0.7 + hash(spec.seed, i, 122) * 0.6)) % sy), x = hash(spec.seed, i, 123) * W + Math.sin(T * 0.8 + i) * 1.2; px(x, y, 1, 1, "#ffffff"); } }
-      if (spec.dust) { ctx.globalAlpha = 0.5; for (let i = 0; i < spec.dust.n; i++) { const x = ((hash(spec.seed, i, 131) * W + T * 4 * (0.5 + hash(spec.seed, i, 132))) % W), y = sy - 6 - hash(spec.seed, i, 133) * 14 + Math.sin(T + i) * 1.5; px(x, y, 1, 1, "#c8a46a"); } ctx.globalAlpha = 1; }
-      if (spec.ripples) { ctx.globalAlpha = 0.6; for (let i = 0; i < spec.ripples.n; i++) { const x = hash(spec.seed, i, 141) * (W - 6), ph = (T * 0.9 + hash(spec.seed, i, 142) * 6) % 3, w = 1 + ph * 1.6; px(x + 3 - w / 2, sy - 2, w, 0.6, "#d6ecf5"); } ctx.globalAlpha = 1; }
+      if (spec.rain) { const dw = Math.max(1, Math.round(RAIN.w * k)), dh = Math.max(3, Math.round(RAIN.len * k)), ew = Math.max(1, Math.round(k / 3));
+        for (let i = 0; i < many(spec.rain.density); i++) { const x = hash(spec.seed, i, 111) * W, y = ((hash(spec.seed, i, 112) * sy + T * RAIN.fall * (0.8 + hash(spec.seed, i, 113) * 0.4)) % sy), X = Math.round((x - (y / sy) * 2) * k), Y = Math.round(y * k);
+          ctx.fillStyle = RAIN.edge; ctx.fillRect(X - ew, Y, ew, dh); ctx.fillStyle = RAIN.core; ctx.fillRect(X, Y, dw, dh); } }
+      if (spec.snow) { const c = Math.max(1, Math.round(SNOW.size * k)), r = Math.max(1, Math.round(k / 3));
+        for (let i = 0; i < many(spec.snow.density); i++) { const y = ((hash(spec.seed, i, 121) * sy + T * SNOW.fall * (0.7 + hash(spec.seed, i, 122) * 0.6)) % sy), x = hash(spec.seed, i, 123) * W + Math.sin(T * 0.8 + i) * 1.2, X = Math.round(x * k), Y = Math.round(y * k);
+          ctx.fillStyle = SNOW.rim; ctx.fillRect(X - r, Y - r, c + 2 * r, c + 2 * r); ctx.fillStyle = SNOW.core; ctx.fillRect(X, Y, c, c); } }
+      if (spec.dust) { ctx.globalAlpha = 0.5; for (let i = 0; i < many(spec.dust.n); i++) { const x = ((hash(spec.seed, i, 131) * W + T * 4 * (0.5 + hash(spec.seed, i, 132))) % W), y = sy - 6 - hash(spec.seed, i, 133) * 14 + Math.sin(T + i) * 1.5; px(x, y, 1, 1, "#c8a46a"); } ctx.globalAlpha = 1; }
+      if (spec.ripples) { ctx.globalAlpha = 0.6; for (let i = 0; i < many(spec.ripples.n); i++) { const x = hash(spec.seed, i, 141) * (W - 6), ph = (T * 0.9 + hash(spec.seed, i, 142) * 6) % 3, w = 1 + ph * 1.6; px(x + 3 - w / 2, sy - 2, w, 0.6, "#d6ecf5"); } ctx.globalAlpha = 1; }
     }
-    const loop = time => { raf = 0; if (!spec) return; if (!t0) t0 = time; draw(time - t0); if (!still) raf = requestAnimationFrame(loop); };
+    const loop = time => { raf = 0; if (!spec) return; if (shown()) draw(time); if (!still) raf = requestAnimationFrame(loop); };
     return Object.freeze({
       set(s2, l2) { spec = s2 || null; lay = l2 || lay; still = rm(); if (raf) { cancelAnimationFrame(raf); raf = 0; }
-        if (!spec) { ctx.clearRect(0, 0, cv.width, cv.height); return; } if (still) { draw(0); return; } raf = requestAnimationFrame(loop); },
-      frame() { draw(still ? 0 : performance.now() - (t0 || performance.now())); },
-      state: () => ({ spec, animating: !!raf, still, frames }),
+        if (!spec) { ctx.clearRect(0, 0, cv.width, cv.height); return; } if (still) { draw(0); return; } draw(clock()); raf = requestAnimationFrame(loop); },
+      frame() { draw(still ? 0 : clock()); },
+      state: () => ({ spec, animating: !!raf, still, frames, layout: lay ? { ...lay } : null }),
       dispose() { if (raf) cancelAnimationFrame(raf); raf = 0; spec = null; } });
   }
 

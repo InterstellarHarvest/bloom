@@ -15,6 +15,7 @@
 //   (additive) sp.canvas (sp.svg names the same image element) · sp.globalSignature() · sp.scale() · sp.lastFx {seq, style, frames,
 //   endSig, targetSig, exact} · sp.animating() · sp.highlighted · sp.pack · BLOOM.plantSpecimen.mounted() (QA: the mounted specimens, read-only)
 //   sp.dispose()   (BLOOM-033) its owner releases it (listener, observer, element, its mounted() entry) when the run is disposed
+//   (BLOOM-040) sp.fill() → { ext, env, envRect, boxRect }: the environment layer that makes the scene fill the whole box (QA)
 //
 // (BLOOM-035B-5, docs/SPECIES_BODY_PLANS_v1.md §2.6) SPECIES — every call above is unchanged; a species is optional:
 //   BLOOM.plantSpecimen.mount(host, { reducedMotion, species })   species = any { id, art: { bodyPlan: "<plan>@<n>", pack } } (content/species.js);
@@ -260,9 +261,18 @@
     const tag = document.createElement("span"); tag.className = "ps-tag"; tag.setAttribute("aria-hidden", "true"); tag.textContent = "PREVIEW";
     // (035C2) the weather FX overlay: its own canvas above the specimen (never part of the organism or the static environment pixels)
     const fxc = document.createElement("canvas"); fxc.className = "ps-fx"; fxc.setAttribute("aria-hidden", "true");
-    Object.assign(fxc.style, { position: "absolute", pointerEvents: "none", imageRendering: "pixelated" });
-    box.append(cv, fxc, tag);
-    const PE = root.BLOOM && root.BLOOM.plantEnvironment, fxl = PE && typeof fxc.getContext === "function" ? PE.mountFx(fxc, { reducedMotion }) : null; let fxKey = "";
+    // (BLOOM-040) the ENVIRONMENT FILL: one more canvas BEHIND the organism, the same scene painted over the whole box (plantEnvironment.paint's
+    // margin extension; its window under the organism is byte-identical to the organism frame's own backdrop, so the two read as one picture).
+    // The sky, horizon, ground and soil reach every edge of the box — never a flat padded band — and the weather overlay covers the box too.
+    // Both layers are presentation only: the organism canvas, its pixels and every signature are exactly as before. Their inline styles also
+    // shield them from a page-wide canvas rule (the developer harness paints every canvas dark).
+    const envc = document.createElement("canvas"); envc.className = "ps-env"; envc.setAttribute("aria-hidden", "true"); envc.hidden = true;
+    const LAYER = { position: "absolute", pointerEvents: "none", imageRendering: "pixelated", background: "transparent", border: "0", borderRadius: "0", maxWidth: "none", maxHeight: "none", margin: "0", boxSizing: "content-box" };
+    Object.assign(fxc.style, LAYER); Object.assign(envc.style, LAYER);
+    box.append(envc, cv, fxc, tag);
+    const PE = root.BLOOM && root.BLOOM.plantEnvironment, fxl = PE && typeof fxc.getContext === "function" ? PE.mountFx(fxc, { reducedMotion }) : null; let fxKey = "", envKey = "";
+    const envCtx = typeof envc.getContext === "function" ? envc.getContext("2d") : null;
+    let ext = { left: 0, top: 0, right: 0, bottom: 0 };   // the box's margins around the frame, in whole logical px (BLOOM-040)
     const ctx = cv.getContext("2d");
     let last = null, D = null, hl = null, k = 0, fit = "", anim = null, armed = false, committed = null, sig = "";
     const fx = { last: null };
@@ -275,8 +285,13 @@
       const s = Math.max(1, Math.floor(Math.min(w / p.W, h / p.H))), key = `${w}x${h}`; if (key === fit && s === k) return k; fit = key; k = s;
       const cw = p.W * s, ch = p.H * s, left = Math.floor((w - cw) / 2), top = Math.floor((h - ch) / 2), soil = top + p.soilY * s, rgb = c => `rgb(${c.join(",")})`;
       Object.assign(cv.style, { width: cw + "px", height: ch + "px", left: left + "px", top: top + "px" });
-      Object.assign(fxc.style, { width: cw + "px", height: ch + "px", left: left + "px", top: top + "px" });
-      padBg(top, soil); fxKey = "";
+      // (BLOOM-040) whole logical margins on every side (the last one may run a fraction past the box, clipped by its overflow), aligned to the
+      // organism's own pixel grid: the environment and weather layers cover the whole box
+      // (+1 px: clientWidth / clientHeight are rounded, a box may be a fraction of a pixel larger; the overflow clips the excess)
+      ext = { left: Math.ceil(left / s), top: Math.ceil(top / s), right: Math.ceil((w + 1 - left - cw) / s), bottom: Math.ceil((h + 1 - top - ch) / s) };
+      const EW = p.W + ext.left + ext.right, EH = p.H + ext.top + ext.bottom, at = { width: EW * s + "px", height: EH * s + "px", left: left - ext.left * s + "px", top: top - ext.top * s + "px" };
+      Object.assign(envc.style, at); Object.assign(fxc.style, at);
+      padBg(top, soil); fxKey = ""; envKey = "";
       return k;
     }
     // the padding around the canvas continues the backdrop: the scene's (035C2) or the pack's own sky / soil
@@ -288,12 +303,18 @@
       // a scene: the sky colour is sampled ABOVE its skyline (the horizon would tint the margins), the soil below the ground line
       const hy = Math.max(1, p.soilY - 24), s = (padSoil - padTop) / p.soilY, c = [px(0, 0), px(0, hy), px(0, p.soilY + 2), px(0, p.H - 1)];
       box.style.background = `linear-gradient(to bottom, ${rgb(c[0])} 0, ${rgb(c[0])} ${padTop}px, ${rgb(c[1])} ${Math.round(padTop + hy * s)}px, ${rgb(c[1])} ${padSoil}px, ${rgb(c[2])} ${padSoil}px, ${rgb(c[3])} 100%)`; }
-    function syncFx() { if (!fxl) return; const key = `${D && D.envSig}|${k}`; if (key === fxKey) return; fxKey = key; fxl.set(D && D.scene ? D.fx : null, { W: p.W, H: p.H, soilY: p.soilY, scale: Math.max(1, k) }); }
-    const ro = typeof ResizeObserver === "function" ? new ResizeObserver(() => { layout(); syncFx(); }) : null; if (ro) ro.observe(box);
+    function syncFx() { if (!fxl) return; const key = `${D && D.envSig}|${k}|${ext.left},${ext.top},${ext.right},${ext.bottom}`; if (key === fxKey) return; fxKey = key;
+      fxl.set(D && D.scene ? D.fx : null, { W: p.W + ext.left + ext.right, H: p.H + ext.top + ext.bottom, soilY: ext.top + p.soilY, scale: Math.max(1, k), fw: p.W }); }
+    // (BLOOM-040) the environment fill: the scene's raster over the whole box, repainted only when the scene or the box's margins change
+    function syncEnv() { if (!envCtx) return; const sc = D && D.scene; if (!sc || !fit) { envc.hidden = true; envKey = ""; return; }
+      const key = `${PE.keyOf(sc)}|${ext.left},${ext.top},${ext.right},${ext.bottom}`; if (key === envKey) return; envKey = key;
+      const EW = p.W + ext.left + ext.right, EH = p.H + ext.top + ext.bottom; if (envc.width !== EW) envc.width = EW; if (envc.height !== EH) envc.height = EH;
+      envCtx.putImageData(new ImageData(PE.paint(sc, p.W, p.H, p.soilY, ext), EW, EH), 0, 0); envc.hidden = false; }
+    const ro = typeof ResizeObserver === "function" ? new ResizeObserver(() => { layout(); syncEnv(); syncFx(); }) : null; if (ro) ro.observe(box);
     const visible = () => box.isConnected && box.getClientRects().length > 0 && !box.closest("[hidden]");
     // a REAL purchase only (the page's own event); consumed by the very next render of a visible specimen
     document.addEventListener("bloom:upgrade-purchase", () => { if (visible()) armed = true; }, { signal: life.signal });
-    function show() { if (!D) return; sig = D.sig; if (!anim) paint(D.rgba); padBg(); syncFx(); }
+    function show() { if (!D) return; sig = D.sig; if (!anim) paint(D.rgba); padBg(); syncEnv(); syncFx(); }
     function render(st) {
       last = st; const S = readState(st); layout();
       D = draw(st, { highlight: hl, species });
@@ -319,6 +340,8 @@
       signature: () => sig, globalSignature: () => D ? D.globalSig : null,
       // (035C2) the organism layer and the environment scene, each with its own signature (QA: Terraform moves only the second, Adapt only the first)
       organismSignature: () => D ? D.organismSig : null, environmentSignature: () => D ? D.envSig : null, get scene() { return D ? D.scene : null; }, fxState: () => fxl ? fxl.state() : null, scale: () => layout(), animating: () => !!anim,
+      // (BLOOM-040) the environment fill's geometry (QA): the margins in logical px and whether the box is covered
+      fill: () => ({ ext: { ...ext }, env: !envc.hidden, envRect: envc.hidden ? null : envc.getBoundingClientRect().toJSON(), boxRect: box.getBoundingClientRect().toJSON() }),
       get state() { return last; }, get lastFx() { return fx.last; }, get highlighted() { return hl; }, parts: PARTS.slice(), pack: p.packId, plan: p.planRef,
       species: species ? (species.id || null) : null, partLabels: Object.freeze(Object.assign({}, p.plan.partLabels || {})),
       // (BLOOM-033) the owner (a room, the report) disposes its specimen with itself: listener, observer, element, and its MOUNTED entry

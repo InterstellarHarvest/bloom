@@ -15,10 +15,10 @@
 //
 // Room controller (presentation state only; the simulation has ONE pause, the run page's):
 //   open    the real run pauses at once (adapter.actions.pause → the real bloom:play-pause); whether it was running is remembered;
-//           the home selection (if any) becomes the ROOM CONTEXT, else the room's last context, else the origin; the home
-//           selection is then cleared (adapter.actions.deselect, the real bloom:region-select); the Planet View stays mounted
-//           underneath in the exact same geometry, blurred ≈ 7 px, dimmed by a 46 % ink veil, inert and aria-hidden.
-//   Back / Escape   close, clear transient previews / peeks, restore the run to its pre-room state; no home region selected.
+//           the home selection (if any) becomes the ROOM CONTEXT, else the room's last context, else the origin. (BLOOM-040) The home
+//           selection is no longer cleared: it stays selected under the room (its banner faded out), so the map returns with it. The
+//           Planet View stays mounted underneath in the exact same geometry, blurred ≈ 7 px, dimmed by a 46 % ink veil, inert and aria-hidden.
+//   Back / Escape   close, clear transient previews / peeks, restore the run to its pre-room state; the same home region still selected.
 //   Resume          close, clear, and run regardless of the pre-room state.
 //   room → room     no Planet View in between, still paused, same context, the old room's transient preview cleared.
 //   Terraform       (029D) the fourth room: same lifecycle; its preview repaints the globe to the exact real preview sky and clears
@@ -27,17 +27,17 @@
 // on its own canvas) and region strip change the room context only — never actions.selectRegion, never bloom:region-select.
 // Real Adapt / Spread nodes preview through adapter.actions.preview(id) (the deliberate player preview: bloom:upgrade-preview,
 // the home map's outline) and buy through adapter.actions.buy(id) (bloom:upgrade-purchase).
-// BLOOM-029E — every swap is wrapped in the SUBDUED mist through ONE gameplay transition bridge (resources/run-ui/gameplay-transition.js,
-// the unmodified AtmosphereTransition behind a guarded import; immediate swaps over file://). docs/GAMEPLAY_UI_CONVERGENCE_v1.md §5:
-//   open     1 remember the running state · 2 pause the REAL run at once · 3 conceal · 4 at covered: carry the selection into the
-//            context, clear the home selection (the real action), make the Planet View inert, reveal the room layer, swap · 5 reveal ·
-//            6 focus the room control once the reveal has completed. The sim never advances while a room opens.
-//   switch   paused throughout, same context, the old room's transient preview cleared BEFORE the swap, no Planet View in between.
-//   close    1 clear the preview · 2 stay paused · 3 conceal · 4 at covered: hide the room, restore the Planet View, no selection ·
-//            5 reveal · 6 ONLY after the transition completes: Back restores the pre-room state, Resume runs · 7 restore focus.
-//   A second request while `transitioning` is ignored cleanly (no overlapping run, no double pause / resume, no two rooms, no lost
-//   context); the swap itself always happens exactly once (the bridge rolls forward on any failure). `controller.timeline()` records
-//   every swap's pause / covered / reveal / resume timestamps and running states (QA).
+// BLOOM-040 — EDGE ASSEMBLE replaces the 029E SUBDUED mist for every room swap (the controller section below; docs/GAMEPLAY_UI_CONVERGENCE_v1.md §6):
+//   open     1 remember the running state · 2 pause the REAL run at once · 3 the map emphasises the region · 4 the room is shown at once with
+//            its pieces at their screen edges (the Planet View inert) and assembles: header from above, specimen column from the left, work
+//            panels from the right · 5 settled: measure at rest, focus the room control. The sim never advances while a room opens.
+//   switch   paused throughout, same context, the old room's transient preview cleared first; the specimen box stays fixed while the header
+//            copy and the work / information panels fade out and in with a short nudge; never two rooms, no Planet View in between.
+//   close    1 clear the preview · 2 stay paused · 3 the reverse motion over the clearing veil · 4 at rest: hide the room, restore the Planet
+//            View · 5 ONLY then: Back restores the pre-room state, Resume runs · 6 restore focus.
+//   A new request while one is settling COMMITS it (its end state at once) and then runs: no overlap, no double pause / resume, no two
+//   rooms, no lost context, and the final state is the player's last action. `controller.timeline()` records every swap (QA).
+//   The 029E gameplay transition bridge is still created and prepared here: the production report (run-report.js) uses it.
 // Classic script, no dependencies besides BLOOM.surface, BLOOM.runMap, BLOOM.plantSpecimen, (029D) BLOOM.terraformGlobe and (029E)
 // BLOOM.gameplayTransition: boots over file://.
 (function (root) {
@@ -86,6 +86,13 @@
   const num = v => typeof v === "number" ? (Number.isInteger(v) ? String(v) : (Math.round(v * 10) / 10).toString()) : String(v);
   const ROMAN = ["", "I", "II", "III", "IV", "V"];
   const ROOM_IDS = ["region", "adapt", "spread", "terraform"];
+  // (BLOOM-040) Edge Assemble timings ([delay, duration] ms; the controller's section below explains the motion)
+  const EDGE_ASSEMBLE = Object.freeze({ ease: "cubic-bezier(.2,.8,.2,1)", exit: "cubic-bezier(.45,0,.75,.5)",
+    open: { veil: [60, 220], header: [40, 340], focus: [80, 340], work: [120, 340], leaders: 140 },          // [delay, duration] ms → 460 ms of motion, ≈ 0.5 s settled
+    close: { work: [0, 220], focus: [30, 220], header: [60, 220], veil: [50, 250] },                          // the reverse, quicker → 300 ms of motion
+    switch: { out: 110, in: 190, nudge: 16 },                                                                 // → ≈ 300 ms
+    reduced: { open: 160, close: 140, out: 70, in: 120 },
+    travel: [56, 0.06, 120] });
   const ROOMS = { // the accepted room-header language (docs/UI_CONCEPT_REVIEW_v10.md)
     region: { kicker: "EXPLORE", title: "Region Inspect", verb: "Compare regions and their colonies", ico: "regions", kind: "explore" },
     adapt: { kicker: "CHANGE · YOUR PLANT", title: "Adapt", verb: "Change your plant", ico: "adapt", kind: "plant", board: "Adapt" },
@@ -165,7 +172,8 @@
     let regs = A.regions();
     // presentation state only: the run has one pause (the page's); this remembers what the room must restore
     const state = { room: null, ctx: -1, wasRunning: null, opener: null, peek: -1, lens: null, lensPv: null, em: 16, emBy: "", preview: null, hovered: null, suspended: false,
-      transitioning: false, transitionKind: null, ignored: 0 }; // (029E) one swap at a time; `ignored` counts requests dropped while one ran (QA)
+      transitioning: false, transitionKind: null, ignored: 0, // (029E) `ignored` counts stray input dropped while the room moved (QA)
+      superseded: 0, spot: false };                           // (BLOOM-040) settling transitions committed by a newer request · the map emphasis is on
     const TL = []; // (029E) the swap timeline: pause / covered / reveal / resume timestamps and running states (QA evidence)
 
     // ---------------------------------------------------------------- the layer (inside the Planet View, over the veil)
@@ -294,7 +302,16 @@
     }
     const ownedChips = () => { const out = []; for (const b of A.upgrades()) if (b.board !== "Terraform") for (const u of b.items) if (u.owned) out.push(`<span class="ow" style="${catStyle(u.uiCategory)}">${ico(I[u.id] ? u.id : CAT_ICON[u.uiCategory])}${esc(u.name)}${u.tier > 1 ? ` <i>${ROMAN[u.tier] || u.tier}</i>` : ""}</span>`);
       return out.length ? out.join("") : `<span class="ow none">No adaptations yet</span>`; };
-    function zoneHeight(sec) { const rr = sec.getBoundingClientRect(), hh = sec.querySelector(".rh").getBoundingClientRect(), cs = getComputedStyle(sec); return Math.floor(rr.bottom - parseFloat(cs.paddingBottom) - hh.bottom - (parseFloat(cs.rowGap) || 0)); }
+    // (BLOOM-040) layout offsets, not client rects: the free height is the same while Edge Assemble moves the header / zones (transforms)
+    // (BLOOM-040) an information card keeps its content height up to the left column's free height (the canonical specimen box above it is
+    // the same in every room): its closing hint — the lowest-priority line — steps aside when it would make the card scroll; a card that still
+    // overflows (very short windows) is keyboard-focusable, so its scrolled content stays reachable
+    function fitInfo(info) {
+      if (!info || !info.isConnected) return; const h = info.querySelector(".li-hint"), over = () => info.clientHeight > 0 && info.scrollHeight - info.clientHeight > 1;
+      if (h) { h.hidden = false; if (over()) h.hidden = true; }
+      if (over()) { info.tabIndex = 0; info.setAttribute("role", "group"); info.setAttribute("aria-label", "Details"); } else { info.removeAttribute("tabindex"); info.removeAttribute("role"); info.removeAttribute("aria-label"); }
+    }
+    function zoneHeight(sec) { const hh = sec.querySelector(".rh"), cs = getComputedStyle(sec); return Math.floor(sec.clientHeight - parseFloat(cs.paddingBottom) - (hh.offsetTop + hh.offsetHeight) - (parseFloat(cs.rowGap) || 0)); }
     // shared by the tree rooms (Adapt / Spread / Terraform): a real node's state and its state line, from the adapter's item only
     const nodeState = u => u.canBuy ? "avail" : u.rules ? "poor" : u.owned ? "owned" : "blocked";
     const stateWord = u => { const st = nodeState(u), t = u.tier ? `Tier ${ROMAN[u.tier] || u.tier} owned` : "";
@@ -349,7 +366,7 @@
         const focusName = (c.focusChoices.find(f => f.selected) || {}).name || cap(c.focus);
         sp.info.innerHTML = `<span class="li-k">This colony</span><div class="li-h"><span class="ni">${ico(c.living ? "colony" : "off")}</span><div><b>${esc(r.colony.label)}</b><small>${c.living ? `${Math.round(r.colony.establishment * 100)} % established · focus ${esc(focusName)}${c.localUpgradeName ? ` · ${esc(c.localUpgradeName)}` : ""}` : esc(r.colony.hint)}</small></div></div>` +
           `<div class="li-row">${ico(r.limiting.blocked ? ST_ICON.bad : "check")}<span><b>${r.limiting.blocked ? "Holding it back:" : "Limiting factor:"}</b> ${esc(limitLine(r))}</span></div>` +
-          `<div class="ownd"><small>Your plant everywhere · Adapt and Spread</small>${ownedChips()}</div>`;
+          `<div class="ownd"><small>Your plant everywhere · Adapt and Spread</small>${ownedChips()}</div>`; fitInfo(sp.info);
         zm.querySelector(".rg-name").textContent = r.name; zm.querySelector(".rg-sub").innerHTML = chip(st) + `<span class="rg-w" data-tutorial-note="colony">${esc(r.colony.label)}</span>` + (r.isOrigin ? `<span class="rg-o">${ico("star")}Origin</span>` : "");
         const conds = r.conditions.map(cd => { const s = condSt(cd);
           return `<div class="cond st-${s}" data-cat="${cd.key}" style="${catStyle(cd.key)}"><span class="cond-i">${ico(CAT_ICON[cd.key])}</span><span class="cnm">${cd.key}</span>${chip(s)}<span class="ct">${esc(reading(cd, r))}</span></div>`; }).join("");
@@ -437,7 +454,7 @@
         for (const c of cats) { const a = L.ports[c]; lbls[c].style.left = a.lx + "px"; lbls[c].style.top = a.y + "px"; lbls[c].querySelector("span").hidden = L.labelMode === "icon"; }
         paintEdges(); fitTitles();
         if (!pass && items.map(u => nodeEls[u.id].offsetHeight).join() !== hs) return relayout(1);
-        fitMain(); drawLeaders();
+        fitMain(); drawLeaders(); fitInfo(sp.info);
       }
       // content-height tree card: as tall as the tree wants (capped row step), up to the room's free height; next frame, so the
       // tree's own ResizeObserver never loops on itself
@@ -477,7 +494,7 @@
         sp.info.innerHTML = `<span class="li-k">${id === "spread" ? "How your plant travels" : "Your plant"} · ${esc(r.name)}</span><div class="li-h"><span class="ni">${ico(R0.ico)}</span><div><b>${esc(r.living ? r.colony.label : r.limiting.blocked ? "Would not survive yet" : "No colony yet")}</b><small>${esc(limitLine(r))}</small></div></div>` +
           `<div class="ownd"><small>${id === "spread" ? "How it travels now" : "Already part of your plant"}</small>${ownedChips()}</div>` +
           `<p class="li-hint">${id === "spread" ? "This changes how your plant travels and takes root everywhere." : "This changes YOUR PLANT, everywhere it grows."} Hover or focus a skill: the plant previews it and the line shows which part changes.</p>`;
-        sp.info.classList.remove("pvw"); sp.info.removeAttribute("style"); mm.ctx.removeAttribute("style"); mm.ctx.classList.remove("pvw");
+        sp.info.classList.remove("pvw"); sp.info.removeAttribute("style"); mm.ctx.removeAttribute("style"); mm.ctx.classList.remove("pvw"); fitInfo(sp.info);
         mm.ctx.querySelector(".mc-rows").innerHTML = `<div class="mc-row">${ico("inspect")}<span><b>${esc(r.name)}</b> · ${esc(r.colony.label)}</span></div><div class="mc-row">${ico(r.limiting.blocked ? "x" : "check")}<span>${esc(limitLine(r))}</span></div><div class="mc-row faint">${ico("info")}<span>Hover a skill to see what it does for this region</span></div>`;
       }
       function paintPreview() {
@@ -493,6 +510,7 @@
           `<p class="li-hint">${u.canBuy ? "Click or press Enter to buy." : u.rules ? `Needs ${u.price} Biomass · ${Math.max(1, Math.ceil(u.price - A.hud().biomassExact))} more.` : esc(cap(u.reason || "Not available now"))}</p>`;
         mm.ctx.setAttribute("style", catStyle(u.uiCategory)); mm.ctx.classList.add("pvw");
         mm.ctx.querySelector(".mc-rows").innerHTML = `<div class="mc-row fx-${fx.cls}">${ico(fx.icon)}<span><b>${esc(fx.text)}</b></span></div>` + (elsewhere.length ? `<div class="mc-row faint">${ico("regions")}<span>${elsewhere.join(" · ")}</span></div>` : "");
+        fitInfo(sp.info);
       }
       // UPGRADE PREVIEW CONTRACT: a real node previews ONLY while the pointer is over it or it has keyboard focus, through
       // adapter.actions.preview(id) (bloom:upgrade-preview + the home map's outline). Every reset path clears it (no sticky previews).
@@ -620,7 +638,7 @@
         for (const c of cats) { const a = L.labelPos[c], l = lbls[c]; if (!a || !l) continue; l.style.left = a.x + "px"; l.style.top = a.y + "px"; l.classList.toggle("flip", a.side < 0); }
         paintEdges(); fitTitles();
         if (!pass && items.map(u => nodeEls[u.id].offsetHeight).join() !== hs) return relayout(1);
-        if (globe.view) globe.view.resize();
+        if (globe.view) globe.view.resize(); fitInfo(info);
       }
       // ---- the edges layer: ONE diffuse atmosphere (an SVG radial gradient AROUND the component — never in the sphere's materials: clear at the
       // face, strongest where the Atmosphere connectors end, gone by 80 % of the clearance; the colour leans to the previewed channel) and one
@@ -670,8 +688,9 @@
           `<div class="conds">${condRows(r)}</div>` +
           `<div class="li-row">${ico("terraform")}<span><b>Sky</b> ${fmtT(sky.temperature)} · ${fmtM(sky.moisture)}${A.hud().skyAdjusted ? " (as the ground sees it now)" : ""} · ground here ${rel}</span></div>` +
           `<p class="li-hint">Hover a planet system to preview this land. Terraform never changes your plant.</p>`;
-        info.classList.remove("pvw"); info.removeAttribute("style");
+        info.classList.remove("pvw"); info.removeAttribute("style"); fitInfo(info);
       }
+      // (BLOOM-040) the canonical specimen box is taller than Terraform's old 4 : 3 one: fitInfo (above) keeps its information card unscrolled
       function paintInfoPreview(u, pv, r) {
         const s = pv.sky, axis = s ? s.axis : u.axis, cur = s ? s.current : src.sky, nx = s ? s.preview : cur, fx = effectFor(pv, state.ctx), nfx = nativeFx(pv, state.ctx);
         const elsewhere = [pv.gain && pv.gain.length ? `<b>Opens:</b> ${esc(names(pv.gain))}` : "", pv.lose && pv.lose.length ? `<b>Closes:</b> ${esc(names(pv.lose))}` : "", pv.better && pv.better.length ? `<b>Closer, still blocked:</b> ${esc(names(pv.better))}` : "", pv.worse && pv.worse.length ? `<b>Worse, still growing:</b> ${esc(names(pv.worse))}` : ""].filter(Boolean);
@@ -682,6 +701,7 @@
           `<div class="li-row fx-${fx.cls}">${ico(fx.icon)}<span>${nfx ? "<small class=\"who\">Your plant</small>" : ""}<b>${esc(fx.text)}</b></span></div>` +
           (nfx ? `<div class="li-row fx-${nfx.cls}">${ico("competition")}<span><small class="who">Natives</small><b>${esc(nfx.text)}</b></span></div>` : "") + (elsewhere.length ? `<div class="li-row">${ico("regions")}<span>${elsewhere.join(" · ")}</span></div>` : "") +
           `<p class="li-hint">${u.canBuy ? "Click or press Enter to buy." : u.rules ? `Needs ${u.price} Biomass · ${Math.max(1, Math.ceil(u.price - A.hud().biomassExact))} more.` : esc(cap(u.reason || "Not available now"))}</p>`;
+        fitInfo(info);
       }
       // ---- the right-hand card: the real current planet readout (current → preview while previewing, scenario-adjusted, climate instability from
       // the real preview) and the region / planet effect from the real preview lists
@@ -754,96 +774,171 @@
     // ---------------------------------------------------------------- the controller: open / close / switch / context
     function setCtx(i, from) {
       if (i < 0 || i >= regs.length) return; state.ctx = i; state.peek = -1;
+      if (state.room && state.spot && view.emphasize) view.emphasize(i);   // (BLOOM-040) the map under the room emphasises the region the room considers
       miniMaps.forEach(m => m.paint()); for (const k in rooms) if (!rooms[k].sec.hidden) rooms[k].paint();
       if (from && state.room) live(`Considering ${regs[i].name}`);
     }
-    // (029E) the transition lock: while a swap runs, every swap-affecting control is locked (the mist's overlay blocks input too) and a
-    // second request is ignored cleanly; the lock is released when the transition has completed (resume / focus happen after that)
+    // ---------------------------------------------------------------- (BLOOM-040) EDGE ASSEMBLE — the one motion between the map and the plant workspace
+    // docs/GAMEPLAY_UI_CONVERGENCE_v1.md §6 (owner-locked style; replaces the 029E SUBDUED mist for every room swap):
+    //   Planet View → room   the region the room opens for is emphasised on the map (the rest dims slightly, one soft pulse) while the veil fades
+    //                        in over the map (the home selection STAYS selected under the room; its banner fades out under the veil); the room ASSEMBLES from the nearest screen edges — header from ABOVE, the specimen column from the
+    //                        LEFT, the work panels from the RIGHT — a short, staggered, eased travel (transform + opacity only) settled in ≈ 0.5 s
+    //   room → Planet View   the reverse, a little quicker: work panels exit right, the specimen column left, the header up; the veil clears, the
+    //                        map resolves with the same region still selected (its banner fades back in)
+    //   room → room          the specimen box never moves, resizes, fades or re-enters; the header copy and the work / information panels fade
+    //                        with a short (16 px) directional nudge — the same workspace, a different tool
+    //   reduced motion       no travel: a short opacity cross-fade; the specimen box still never moves between rooms
+    // ONE controller: `motion` is the transition in flight (its animations + its end state). A new request while one is settling COMMITS it (its
+    // end state at once: the swap done, the run restored, the selection, focus) and then runs from there — the final state always matches the
+    // player's last action, and no timeouts stack. Nothing ever waits on a timer: the end state is applied when the animations finish (or at once).
+    const EA = EDGE_ASSEMBLE;   // the timings (module scope, BLOOM.decisionRooms.EDGE for QA)                                                                               // side travel: clamp(56 px, 6 % of the width, 120 px)
     const tnow = () => performance.now();
     const lock = (kind) => { state.transitioning = true; state.transitionKind = kind; layer.dataset.transitioning = kind; view.el.dataset.transitioning = kind; };
     const unlock = () => { state.transitioning = false; state.transitionKind = null; delete layer.dataset.transitioning; delete view.el.dataset.transitioning; };
     const record = e => { TL.push(e); if (TL.length > 60) TL.shift(); return e; };
-    // the swap through the bridge (the mist when it can run, immediate otherwise); the swap function runs exactly once on every path
-    const swapThrough = (kind, swap, origin) => T ? T.run({ onCovered: swap, kind, origin }) : Promise.resolve((swap({ immediate: true, why: "no-transition" }), { ran: false, immediate: true, covered: false, error: null }));
-    // the incoming room's restrained card entrance (opacity rise, a few px of lift, scale → 1), only when the mist ran; never under reduced motion
-    const entrance = (sec, ran) => { sec.classList.remove("entering"); if (!ran || reduced()) return; void sec.offsetWidth; sec.classList.add("entering"); sec.addEventListener("animationend", () => sec.classList.remove("entering"), { once: true }); };
+    const BLURRED = "blur(7px) saturate(.72) brightness(.94)", SHARP = "blur(0px) saturate(1) brightness(1)";   // the in-room map treatment (decision-rooms.css) and none
+    const veil = document.createElement("div"); veil.className = "dr-veil"; veil.setAttribute("aria-hidden", "true"); layer.prepend(veil);
+    const partsOf = sec => ({ header: sec.querySelector(".rh"), copy: sec.querySelector(".rh .rt"), focus: sec.querySelector(".z-focus"), main: sec.querySelector(".z-main"), map: sec.querySelector(".z-map"),
+      info: sec.querySelector(".z-focus .lf-info"), cap: [...sec.querySelectorAll(".z-focus .spec-cap > *")], leaders: sec.querySelector(".dr-leaders") });
+    const travel = () => Math.round(Math.max(EA.travel[0], Math.min(EA.travel[2], (layer.clientWidth || view.el.clientWidth || 1280) * EA.travel[1])));
+    const can = el => !!(el && typeof el.animate === "function");
+    let motion = null;
+    // one transition: its animations, and `end` — applied exactly once, when they have all finished, or at once on commit()
+    function Motion(e, end) {
+      const M = { e, anims: [], done: false, end };
+      M.add = (el, frames, opts) => { if (!can(el)) return null; const a = el.animate(frames, { fill: "both", ...opts }); M.anims.push(a); return a; };
+      M.finish = (superseded) => { if (M.done) return; M.done = true; if (motion === M) motion = null; e.superseded = !!superseded; e.tEnd = tnow();
+        end(); M.anims.forEach(a => { try { a.cancel(); } catch { /* gone */ } }); M.anims.length = 0; };
+      M.commit = () => M.finish(true);
+      M.started = () => { if (M.anims[0]) M.anims[0].ready.then(() => { if (e.tMotion == null) e.tMotion = tnow(); }).catch(() => null); };   // the first frame the motion runs (QA)
+      M.start = () => { motion = M; M.started(); const all = M.anims.map(a => a.finished.catch(() => null)); if (!all.length) { M.finish(false); return M; } Promise.all(all).then(() => { if (!M.done) M.finish(false); }); return M; };
+      return M;
+    }
+    const supersede = () => { if (motion) { state.superseded++; motion.commit(); } };
+    // the incoming room's pieces from their edges (or a plain fade under reduced motion); every keyframe is a transform / opacity
+    function assemble(M, sec, rm) {
+      const P = partsOf(sec), D = travel(), hy = Math.round((P.header ? P.header.offsetTop + P.header.offsetHeight : 80) + 8);
+      if (P.leaders) M.add(P.leaders, [{ opacity: 0 }, { opacity: 0 }], { duration: rm ? EA.reduced.open : EA.open.work[0] + EA.open.work[1] });
+      if (rm) { M.add(veil, [{ opacity: 0 }, { opacity: 1 }], { duration: EA.reduced.open, easing: "linear" }); parts.forEach(x => M.add(x, [{ filter: SHARP }, { filter: BLURRED }], { duration: EA.reduced.open, easing: "linear" }));
+        for (const el of [P.header, P.focus, P.main, P.map]) M.add(el, [{ opacity: 0 }, { opacity: 1 }], { duration: EA.reduced.open, easing: "linear" }); return; }
+      const T0 = EA.open, from = (el, x, y, [delay, duration]) => M.add(el, [{ transform: `translate3d(${x}px,${y}px,0)`, opacity: 0 }, { opacity: 1, offset: 0.55 }, { transform: "translate3d(0,0,0)", opacity: 1 }], { delay, duration, easing: EA.ease });
+      M.add(veil, [{ opacity: 0 }, { opacity: 1 }], { delay: T0.veil[0], duration: T0.veil[1], easing: "ease-out" });
+      parts.forEach(x => M.add(x, [{ filter: SHARP }, { filter: BLURRED }], { delay: T0.veil[0], duration: T0.veil[1], easing: "ease-out" }));   // the map blurs as the veil arrives
+      from(P.header, 0, -hy, T0.header); from(P.focus, -D, 0, T0.focus); from(P.main, D, 0, T0.work); from(P.map, D, 0, T0.work);
+    }
+    // the outgoing room's pieces back to their edges (or a plain fade); they hold their end keyframe until the end state hides the room
+    function disassemble(M, sec, rm) {
+      const P = partsOf(sec), D = travel(), hy = Math.round((P.header ? P.header.offsetTop + P.header.offsetHeight : 80) + 8);
+      if (rm) { for (const el of [P.header, P.focus, P.main, P.map, P.leaders, veil]) M.add(el, [{ opacity: 1 }, { opacity: 0 }], { duration: EA.reduced.close, easing: "linear" });
+        parts.forEach(x => M.add(x, [{ filter: BLURRED }, { filter: SHARP }], { duration: EA.reduced.close, easing: "linear" })); return; }
+      const C = EA.close, to = (el, x, y, [delay, duration]) => M.add(el, [{ transform: "translate3d(0,0,0)", opacity: 1 }, { opacity: 1, offset: 0.35 }, { transform: `translate3d(${x}px,${y}px,0)`, opacity: 0 }], { delay, duration, easing: EA.exit });
+      to(P.main, D, 0, C.work); to(P.map, D, 0, C.work); if (P.leaders) M.add(P.leaders, [{ opacity: 1 }, { opacity: 0 }], { duration: 90, easing: "linear" });
+      to(P.focus, -D, 0, C.focus); to(P.header, 0, -hy, C.header);
+      M.add(veil, [{ opacity: 1 }, { opacity: 0 }], { delay: C.veil[0], duration: C.veil[1], easing: "ease-in-out" });
+      parts.forEach(x => M.add(x, [{ filter: BLURRED }, { filter: SHARP }], { delay: C.veil[0], duration: C.veil[1], easing: "ease-in-out" }));   // the map resolves
+    }
+    // room → room: what changes fades with a short nudge in the direction of travel along the room tabs; the specimen box (.lf-top) never animates
+    const switchParts = P => [P.copy, P.main, P.map, P.info, ...P.cap, P.leaders].filter(Boolean);
+    const nudged = el => el && !el.closest(".spec-cap") && !el.classList.contains("dr-leaders");
+    function settle(room) { if (room.redraw) room.redraw(); }   // geometry measured with every piece at rest (tendrils, the tree card's height)
+    const fadeInLeaders = (sec, rm) => { const l = sec.querySelector(".dr-leaders"); if (l && !rm && can(l)) l.animate([{ opacity: 0 }, { opacity: 1 }], { duration: EA.open.leaders, easing: "ease-out" }); };
     const focusRoom = (room, ctx) => {
       // a requested real node ("Would help") gets a deliberate focus preview; until the pointer really moves, a pointerover the browser may
       // synthesise for whatever now sits under the stationary pointer (Firefox does, on a room swap) must not clear it (the 029C suspended rule)
       if (ctx.item && room.focusNode) { state.suspended = true; if (room.focusNode(ctx.item)) return; state.suspended = false; } room.focusFirst(); };
     function open(name, ctx = {}) {
       const room = rooms[name]; if (!room) return false;
-      if (state.transitioning) { state.ignored++; return false; }                   // (029E) one swap at a time: a repeated click / key is dropped
+      supersede();                                                                    // a settling transition lands first; this request runs from its end state
       const first = !state.room;
       if (!first && state.room === name) return () => close(false);
-      const e = record({ kind: first ? "open" : "switch", from: state.room, to: name, tStart: tnow(), runningBefore: A.run().running, tPause: null, tCovered: null, tSwapDone: null, tEnd: null, runningAtSwap: null, runningAtEnd: null, ran: false, immediate: null, ticksAtStart: A.run().ticks, ticksAtEnd: null });
+      const rm = reduced(), e = record({ kind: first ? "open" : "switch", from: state.room, to: name, motion: rm ? "reduced" : "edge", tStart: tnow(), runningBefore: A.run().running, tPause: null, tCovered: null, tSwapDone: null, tEnd: null,
+        runningAtSwap: null, runningAtEnd: null, ran: false, immediate: false, superseded: false, ticksAtStart: A.run().ticks, ticksAtEnd: null });
       if (first) {
         const run = A.run(); state.wasRunning = run.running; state.opener = ctx.opener || null;   // 1 · the pre-room running state, remembered for Back
         if (run.running) { A.actions.pause(); e.tPause = tnow(); }                                 // 2 · the REAL pause, at once (the one bloom:play-pause)
-      } else { const old = rooms[state.room]; old.clear(); if (A.activePreview()) A.actions.clearPreview(); } // room → room: the old room's transient preview cleared BEFORE the swap
-      lock(e.kind);
-      const swap = () => {                                                                           // 4 · at the covered point
+        const sel = A.selection().index, carry = ctx.region >= 0 ? ctx.region : sel >= 0 ? sel : state.ctx >= 0 ? state.ctx : origin();
+        state.spot = sel >= 0 || ctx.region >= 0; if (state.spot && view.emphasize) view.emphasize(carry);   // 3 · the map's brief emphasis of THIS region
+        regs = A.regions(); state.ctx = carry; state.peek = -1;
         e.tCovered = tnow(); e.runningAtSwap = A.run().running;
-        if (first) {
-          const sel = A.selection().index, carry = ctx.region >= 0 ? ctx.region : sel >= 0 ? sel : state.ctx >= 0 ? state.ctx : origin();
-          if (sel >= 0 || A.selection().water) A.actions.deselect();                 // the home selection is cleared (the real bloom:region-select)
-          regs = A.regions(); state.ctx = carry; state.peek = -1;
-          layer.hidden = false; view.el.classList.add("in-room"); calibrate();           // calibrate with the layer laid out
-          parts.forEach(x => { x.inert = true; x.setAttribute("aria-hidden", "true"); });   // the Planet View stays, exactly where it was, inert
-        } else { rooms[state.room].sec.hidden = true; }                                   // no Planet View in between
+        layer.hidden = false; view.el.classList.add("in-room"); calibrate();                       // 4 · the room, at once, its pieces at their edges
+        parts.forEach(x => { x.inert = true; x.setAttribute("aria-hidden", "true"); });           //     the Planet View stays, exactly where it was, inert
+      } else {
+        const old = rooms[state.room]; old.clear(); if (A.activePreview()) A.actions.clearPreview();   // room → room: the old room's transient preview cleared first
+        e.tCovered = null; e.runningAtSwap = A.run().running;
+      }
+      lock(e.kind);
+      const show = () => {                                                            // the swap: the room shown and painted for its context
+        if (!first) rooms[state.room].sec.hidden = true;                             // never two rooms; no Planet View in between
         state.room = name; view.rooms.setActive(name);
         room.sec.hidden = false; room.onOpen(); paintHeader();
         layer.querySelectorAll("[data-go]").forEach(b => { if (b.classList.contains("rn")) b.setAttribute("aria-pressed", String(b.dataset.go === name)); });
         live(`${ROOMS[name].title} open. Game paused. Considering ${regs[state.ctx].name}.`);
-        e.tSwapDone = tnow();
+        e.tSwapDone = tnow(); if (e.tCovered === null) e.tCovered = e.tSwapDone;
       };
-      swapThrough(e.kind, swap, ctx.origin || null).then(res => {                                  // 5 · revealed → 6 · focus the room control
-        e.tEnd = tnow(); e.ran = !!res.ran; e.immediate = !!res.immediate; e.runningAtEnd = A.run().running; e.ticksAtEnd = A.run().ticks; e.error = res.error || null;
-        unlock(); entrance(room.sec, res.ran);
-        requestAnimationFrame(() => { if (state.room === name && !state.transitioning) focusRoom(room, ctx); });
+      const end = () => {                                                             // settled: unlock, measure at rest, then focus the room control
+        unlock(); e.ran = !e.superseded; e.runningAtEnd = A.run().running; e.ticksAtEnd = A.run().ticks;
+        settle(room); fadeInLeaders(room.sec, rm || e.superseded);
+        if (state.room === name) focusRoom(room, ctx);
+      };
+      if (first) { show(); const M = Motion(e, end); assemble(M, room.sec, rm); M.start(); return () => close(false); }
+      // room → room: OUT (the old room's changing pieces) → the swap → IN (the new room's), one motion
+      const out = rooms[state.room].sec, dir = ROOM_IDS.indexOf(name) >= ROOM_IDS.indexOf(state.room) ? 1 : -1, S = EA.switch, R = EA.reduced;
+      const M = Motion(e, () => { if (!e.tSwapDone) show(); end(); });
+      const fade = (el, a, b, x0, x1, duration, easing, delay = 0) => M.add(el, [{ opacity: a, transform: nudged(el) ? `translate3d(${x0}px,0,0)` : "none" }, { opacity: b, transform: nudged(el) ? `translate3d(${x1}px,0,0)` : "none" }], { duration, easing, delay });
+      const outMs = rm ? R.out : S.out, inMs = rm ? R.in : S.in, n = rm ? 0 : S.nudge;
+      const outs = switchParts(partsOf(out)).map(el => fade(el, 1, 0, 0, -dir * n, outMs, rm ? "linear" : EA.exit)).filter(Boolean);
+      motion = M; M.started();                                                        // (two phases: the motion is finished by hand, not by M.start)
+      Promise.all(outs.map(a => a.finished.catch(() => null))).then(() => {           // the old pieces are out: swap, then the new ones come in
+        if (M.done) return; show();
+        const ins = switchParts(partsOf(room.sec)).map(el => fade(el, 0, 1, dir * n, 0, inMs, rm ? "linear" : EA.ease)).filter(Boolean);
+        Promise.all(ins.map(a => a.finished.catch(() => null))).then(() => { if (!M.done) M.finish(false); });
       });
       return () => close(false);
     }
     function close(resume) {
-      if (!state.room || state.transitioning) { if (state.room) state.ignored++; return; }
-      const room = rooms[state.room], from = state.room;
-      const e = record({ kind: resume ? "resume" : "back", from, to: null, tStart: tnow(), runningBefore: A.run().running, wasRunning: !!state.wasRunning, tCovered: null, tSwapDone: null, tEnd: null, tResume: null, runningAtSwap: null, runningAtEnd: null, ran: false, immediate: null, ticksAtStart: A.run().ticks, ticksAtEnd: null });
+      if (!state.room) return;
+      supersede(); if (!state.room) return;                                          // (a settling close may have just landed)
+      const room = rooms[state.room], from = state.room, rm = reduced();
+      const e = record({ kind: resume ? "resume" : "back", from, to: null, motion: rm ? "reduced" : "edge", tStart: tnow(), runningBefore: A.run().running, wasRunning: !!state.wasRunning, tCovered: null, tSwapDone: null, tEnd: null, tResume: null,
+        runningAtSwap: null, runningAtEnd: null, ran: false, immediate: false, superseded: false, ticksAtStart: A.run().ticks, ticksAtEnd: null });
       room.clear(); if (A.activePreview()) A.actions.clearPreview();                  // 1 · the transient preview cleared · 2 · still paused
-      lock(e.kind);
-      const swap = () => {                                                              // 4 · at the covered point: hide the room, restore the Planet View, no selection
+      lock(e.kind); room.sec.inert = true;                                             // the leaving room takes no input; Escape still commits
+      if (view.emphasize) view.emphasize(-1, { ms: rm ? 1 : EA.close.veil[0] + EA.close.veil[1] });   // the emphasis resolves with the veil
+      const end = () => {                                                              // 4 · at rest: hide the room, restore the Planet View · 5 · ONLY now resume
         e.tCovered = tnow(); e.runningAtSwap = A.run().running;
-        room.sec.hidden = true; room.sec.classList.remove("entering"); state.room = null; state.hovered = null; state.preview = null; state.peek = -1; state.lensPv = null;
+        room.sec.hidden = true; room.sec.inert = false; state.room = null; state.hovered = null; state.preview = null; state.peek = -1; state.lensPv = null;
         layer.hidden = true; view.el.classList.remove("in-room"); parts.forEach(x => { x.inert = false; x.removeAttribute("aria-hidden"); });
-        view.rooms.setActive(null);
-        e.tSwapDone = tnow();
-      };
-      swapThrough(e.kind, swap, null).then(res => {                                     // 5 · revealed → 6 · ONLY now: Resume runs; Back restores the pre-room state
-        e.tEnd = tnow(); e.ran = !!res.ran; e.immediate = !!res.immediate; e.error = res.error || null;
-        unlock();
+        view.rooms.setActive(null); e.tSwapDone = tnow();
+        unlock(); e.ran = !e.superseded;
         if (resume) A.actions.play(); else A.actions.setRunning(!!state.wasRunning);
         e.tResume = tnow(); e.runningAtEnd = A.run().running; e.ticksAtEnd = A.run().ticks;
-        live(`Back to Planet View${A.run().running ? ", running" : ", still paused"}. No region selected.`);
-        const op = state.opener; state.opener = null;                                   // 7 · focus back where the room was opened from
+        const sel = A.selection(); live(`Back to Planet View${A.run().running ? ", running" : ", still paused"}. ${sel.index >= 0 ? `${sel.name} selected.` : "No region selected."}`);
+        const op = state.opener; state.opener = null;                                   // 6 · focus back where the room was opened from
         if (op && document.contains(op) && !op.closest("[hidden]") && !op.closest("[inert]")) op.focus(); else { const t = view.el.querySelector('.pv-tool[data-tool="region"]'); if (t) t.focus(); }
-      });
+      };
+      const M = Motion(e, end); disassemble(M, room.sec, rm); M.start();
     }
-    // (029E) an immediate close with no transition and no resume — the run has ended (win / loss) while a room was open: the production
-    // report takes over the Planet View through its own SUBDUED swap, so nothing stale may stay open underneath it
+    // an immediate close with no transition and no resume — the run has ended (win / loss) while a room was open: the production report takes over
+    // the Planet View through its own swap, so nothing stale may stay open underneath it
     function closeImmediate() {
-      if (!state.room) return false; const room = rooms[state.room];
+      if (motion) { motion.anims.forEach(a => { try { a.cancel(); } catch { /* gone */ } }); motion.done = true; motion = null; }
+      if (!state.room) { unlock(); return false; } const room = rooms[state.room];
       room.clear(); if (A.activePreview()) A.actions.clearPreview();
-      room.sec.hidden = true; room.sec.classList.remove("entering"); state.room = null; state.hovered = null; state.preview = null; state.peek = -1; state.lensPv = null; state.opener = null;
+      room.sec.hidden = true; room.sec.inert = false; state.room = null; state.hovered = null; state.preview = null; state.peek = -1; state.lensPv = null; state.opener = null;
       layer.hidden = true; view.el.classList.remove("in-room"); parts.forEach(x => { x.inert = false; x.removeAttribute("aria-hidden"); });
+      if (view.emphasize) view.emphasize(-1, { ms: 1 });
       view.rooms.setActive(null); unlock(); record({ kind: "end-of-run", from: room.sec.dataset.room, tStart: tnow(), tEnd: tnow(), immediate: true, ran: false });
       return true;
     }
     function paintHeader() { const h = A.hud(); layer.querySelectorAll(".rbio-n").forEach(e => { e.textContent = h.biomass; }); const r = A.run(); layer.querySelectorAll(".paused").forEach(e => e.classList.toggle("on", !r.running)); }
     layer.addEventListener("click", e => {
-      if (state.transitioning) { state.ignored++; return; }
+      // (BLOOM-040) while the room itself moves (open / close) it takes no pointer input at all (CSS) — a stray click is counted and dropped; during
+      // a room → room switch the header's Back, room tabs and Resume stay live, and a new choice supersedes the settling one
+      if (state.transitioning && state.transitionKind !== "switch") { state.ignored++; return; }
       const a = e.target.closest("[data-act]"); if (a) { close(a.dataset.act === "resume"); return; }
       const g = e.target.closest(".rn[data-go]"); if (g) open(g.dataset.go, { region: state.ctx, opener: state.opener });
     });
-    document.addEventListener("keydown", e => { if (e.key === "Escape" && state.room) { e.preventDefault(); if (state.transitioning) { state.ignored++; return; } close(false); } }, LIFE);
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && state.room) { e.preventDefault(); close(false); } }, LIFE);   // (BLOOM-040) at any moment: a settling transition lands, then Back
     // preview safety nets: the window losing focus, the tab hidden, the pointer leaving the window
     root.addEventListener("blur", () => { state.suspended = true; for (const k in rooms) if (rooms[k].clear && !rooms[k].sec.hidden) rooms[k].clear(); }, LIFE);
     root.addEventListener("focus", () => { state.suspended = false; }, LIFE);
@@ -873,14 +968,15 @@
 
     const api = {
       el: layer, adapter: A, rooms, open, close, closeImmediate, setCtx, setLens, previewLens, calibrate,
-      // (029E) the ONE gameplay transition of this run (BLOOM.gameplayTransition bridge over the unmodified AtmosphereTransition, SUBDUED);
-      // the production report shares it. null only when the bridge file is not loaded (every swap is then immediate)
+      // (029E) the ONE gameplay transition bridge of this run (the unmodified AtmosphereTransition, SUBDUED): since BLOOM-040 only the production
+      // report uses it (room swaps are Edge Assemble, above); the rooms still create and prepare it for the report. null without the bridge file
       transition: T,
       timeline: () => TL.map(e => ({ ...e })),
       state: () => ({ room: state.room, context: state.ctx, contextId: state.ctx >= 0 ? regs[state.ctx].id : null, wasRunning: state.wasRunning, peek: state.peek, lens: state.lens, lensPreview: state.lensPv,
         hovered: state.hovered, preview: state.preview ? state.preview.id : null, em: state.em, emBy: state.emBy, emChips: state.emChips, emHeight: state.emHeight, medianName, claimedAnchors: claimed.slice(),
         globe: rooms.terraform ? rooms.terraform.globeKind() : null, // (029D) "pending" | "sphere" | "fallback"
-        transitioning: state.transitioning, transitionKind: state.transitionKind, transition: T ? T.kind : "none", ignored: state.ignored, swaps: TL.length }), // (029E)
+        transitioning: state.transitioning, transitionKind: state.transitionKind, transition: T ? T.kind : "none", ignored: state.ignored, swaps: TL.length, // (029E)
+        motion: motion ? motion.e.kind : null, superseded: state.superseded, spot: state.spot }), // (BLOOM-040) Edge Assemble
       measure: name => rooms[name] && rooms[name].measure ? rooms[name].measure() : null,
       // (029D) disposing the rooms disposes the Terraform globe (its WebGL context, canvas and listeners) with them; (029E) and the transition
       dispose() { if (disposed) return; disposed = true; cancelAnimationFrame(raf); unsub(); if (state.room) closeImmediate(); for (const k in rooms) if (rooms[k].dispose) rooms[k].dispose(); if (T) T.dispose();
@@ -892,6 +988,6 @@
     const pvDispose = view.dispose; view.dispose = () => { if (instance === api) api.dispose(); pvDispose(); };
     instance = api; DR.instance = api; return api;
   }
-  const DR = { mount, version: 1, instance: null, CATS: Object.freeze(CATS), CAT_COLOR: Object.freeze(CAT_COLOR), CAT_PART: Object.freeze(CAT_PART), TENDRIL: Object.freeze(TENDRIL), BANKS: Object.freeze(BANKS), TF: Object.freeze(TF) };
+  const DR = { mount, version: 1, instance: null, EDGE: EDGE_ASSEMBLE, CATS: Object.freeze(CATS), CAT_COLOR: Object.freeze(CAT_COLOR), CAT_PART: Object.freeze(CAT_PART), TENDRIL: Object.freeze(TENDRIL), BANKS: Object.freeze(BANKS), TF: Object.freeze(TF) };
   root.BLOOM = Object.assign(root.BLOOM || {}, { decisionRooms: DR });
 })(typeof window !== "undefined" ? window : globalThis);

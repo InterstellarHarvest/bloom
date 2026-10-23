@@ -485,6 +485,28 @@
     document.addEventListener("keydown", e => { if (e.key !== "Escape") return;
       if (state.lensOpen) { e.preventDefault(); openLens(false, true); } else if (state.menuOpen) { e.preventDefault(); closeMenu(true); } }, LIFE);
 
+    // ---------------------------------------------------------------- (BLOOM-040) Edge Assemble's map emphasis
+    // emphasize(index) — the region a room is opened for stays crisp while the rest of the map dims slightly and the region's outline gives
+    // one soft pulse, then holds a quiet glow under the room; emphasize(-1) lets it go (the map resolves). Presentation only: no selection, no
+    // event, no camera move (no zoom, no pan, no morph). Reduced motion: the dim and glow are set at once, nothing pulses.
+    const SPOT = { index: -1, from: 0, to: 0, t0: 0, ms: 1, pulseAt: -1 }, SPOT_PULSE_MS = 420, SPOT_HOLD = 0.4;
+    const ease = u => 1 - (1 - u) * (1 - u);
+    function spotK(t) { const u = Math.min(1, Math.max(0, (t - SPOT.t0) / SPOT.ms)); return SPOT.from + (SPOT.to - SPOT.from) * ease(u); }
+    function spotFrame(t) {
+      if (SPOT.index < 0) return null; const k = spotK(t);
+      if (SPOT.to === 0 && t - SPOT.t0 >= SPOT.ms) { SPOT.index = -1; return null; }
+      let pulse = SPOT.to ? SPOT_HOLD : SPOT_HOLD * k;
+      if (SPOT.pulseAt >= 0) { const u = (t - SPOT.pulseAt) / SPOT_PULSE_MS; if (u < 1) pulse = u < 0.4 ? SPOT_HOLD + (1 - SPOT_HOLD) * (u / 0.4) : 1 - (1 - SPOT_HOLD) * ((u - 0.4) / 0.6); }
+      return { index: SPOT.index, k, pulse };
+    }
+    const spotAnimating = () => SPOT.index >= 0 && (now() - SPOT.t0 < SPOT.ms + 20 || (SPOT.pulseAt >= 0 && now() - SPOT.pulseAt < SPOT_PULSE_MS + 20));
+    function emphasize(index, { ms = 160 } = {}) {
+      const t = now(), cur = SPOT.index >= 0 ? spotK(t) : 0, rm = reduced();
+      if (index >= 0 && index < regs.length) { const same = SPOT.index === index; if (!same) SPOT.pulseAt = rm ? -1 : t; SPOT.from = rm ? 1 : same ? cur : 0; SPOT.index = index; SPOT.to = 1; }
+      else { if (SPOT.index < 0) return; SPOT.from = cur; SPOT.to = 0; SPOT.pulseAt = -1; }
+      SPOT.t0 = t; SPOT.ms = rm ? 1 : Math.max(1, ms); dirty = true;
+    }
+
     // ---------------------------------------------------------------- frame: draw the map when something changed (or is animating)
     let lastBubbles = [], lastFx = null;
     function frameState() {
@@ -499,13 +521,13 @@
         effects: { crossings: fx.crossings, crossingTiming: fx.crossingTiming, thresholds: fx.thresholds, competition: fx.competition,
           skyChange: fx.skyChange ? { gain: idx(fx.skyChange.gain), lose: idx(fx.skyChange.lose), better: idx(fx.skyChange.better), worse: idx(fx.skyChange.worse) } : null },
         bubbles: lastBubbles, layer: shown ? { key: shown, lamps: layerLamps(shown) } : null,
-        haze: sc.pressure ? sc.pressure.progress : 0, tints, labels: true, now: now() };
+        haze: sc.pressure ? sc.pressure.progress : 0, tints, labels: true, now: now(), spot: spotFrame(now()) };
     }
     const animating = () => !!(lastFx && (lastFx.crossings.length || lastFx.thresholds.length || lastFx.competition.length || lastFx.skyChange));
     let raf = 0, disposed = false;
     function loop() {
       if (disposed) return; raf = requestAnimationFrame(loop);
-      if (!(dirty || animating())) return; dirty = false;
+      if (!(dirty || animating() || spotAnimating())) return; dirty = false;
       const src = A.hud(), key = `${src.skyNow.temp.toFixed(3)}|${src.skyNow.moist.toFixed(3)}`;
       if (key !== lastSkyKey) { lastSkyKey = key; R.setSky({ temperature: src.skyNow.temp, moisture: src.skyNow.moist }); }
       R.draw(frameState());
@@ -545,8 +567,8 @@
         setActive(name) { activeRoom = name || null; el.querySelectorAll(".pv-tool[data-tool]").forEach(b => { if (b.dataset.tool !== "mapview") b.setAttribute("aria-pressed", String(b.dataset.tool === activeRoom)); }); },
         get active() { return activeRoom; }, parts: () => [el.querySelector(".pv-hud"), stage, el.querySelector(".pv-foot")] }),
       toast,
-      openRoom, setLens, previewLens, openLens, openMenu,
-      state: () => ({ lens: state.lens, lensPreview: state.lensPv, lensOpen: state.lensOpen, menuOpen: state.menuOpen, hover: state.hover, focus: state.focus,
+      openRoom, setLens, previewLens, openLens, openMenu, emphasize,
+      state: () => ({ spot: SPOT.index >= 0 ? { index: SPOT.index, to: SPOT.to } : null, lens: state.lens, lensPreview: state.lensPv, lensOpen: state.lensOpen, menuOpen: state.menuOpen, hover: state.hover, focus: state.focus,
         selection: A.selection().index, banner: !banner.hidden, scenarioOpen: state.scnOpen, layerShown: el.dataset.layer || null, room: activeRoom,
         // (BLOOM-039) QA: the banner's placement decision and the stand-off watch (game seconds)
         bannerPlace: lastPlace ? { ...lastPlace } : null, standoff: { frontier: SO.frontier, watching: SO.since !== null, stalledFor: SO.since === null ? 0 : +(SO.last - SO.since).toFixed(1), shown: SO.shown } }),
