@@ -415,6 +415,8 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
               // (BLOOM-039, pre-playtest clarity) the ONE deliberate gameplay colour change since: an unaffordable-but-legal node's state line (it now says
               // "N Biomass · need M more" at rest) reads in the gold of a price, not the crimson of Blocked — the BLOOM-037 AA gold-deep text shade
               if (/node\.[^>]*st-poor/.test(x) && /small\[\d+\]$/.test(el) && /^(color|border-top-color|border-left-color|outline-color)$/.test(n) && b.split("rgb(196, 70, 106)").join("rgb(138, 90, 0)") === h) return true;
+              // (BLOOM-040, Edge Assemble) the rooms layer's 46 % ink moved onto its own child (.dr-veil, so the veil can fade): the layer itself is transparent
+              if (/^div#dr\.dr\[\d+\]$/.test(el) && n === "background-color" && b === "rgba(52, 62, 48, 0.46)" && h === "rgba(0, 0, 0, 0)") return true;
               return false; }); };
           const changed = cmp.filter(x => pick(a[x]) !== pick(b[x]));
           rows[k] = { elements: cmp.length, repaired: common.length - cmp.length, onlyHead: Object.keys(a).length - common.length, onlyBase: Object.keys(b).length - common.length,
