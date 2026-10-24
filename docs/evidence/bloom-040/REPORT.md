@@ -239,7 +239,19 @@ Native Competition Bloom (the harness) and Thin Air (the production Challenge fl
 crossfade, the right report and heading, ONE report, Escape ×2 + a premature Keep playing + a second open() while it opens change nothing,
 Keep playing (double-clicked) closes once and resumes, no stuck opacity / filter, the loss's Home and the Challenge's Challenges actions work,
 axe 0 / 0 on the Bloom and Extinction reports. `guided-training-check` GA1 / GA2 by real input through the whole 13-lesson flow.
-`run-ui-convergence-check` N5 / B11 / B13 / B16 / B19 / B20 re-pinned to the crossfade (no mist). Results: {{CORR_QA}}
+`run-ui-convergence-check` N5 / B11 / B13 / B16 / B19 / B20 re-pinned to the crossfade (no mist). Results on the corrected head (`7005cc7`; game files = `bdc1733`):
+
+| Run | Result |
+|---|---|
+| `transition-check` Chromium + Firefox, AXE (N · E · M · F · V · W · I · A · P · T · X) | **149 / 149** (`qa/transition-check-chromium-firefox.log`) |
+| `transition-check` WebKit 18 proxy, AXE (E · M · F · V · W · I · A · P · X) | **66 / 66** (`qa/transition-check-webkit.log`) |
+| Focused: transition · guided-training (54) · run-ui · run-ui-convergence · game-flow · plant-rooms · planet-view · visual-system · portable-runtime · challenge-completion (the report-specific suite) · `release-check --no-suites` | **11 / 11** |
+| **Final full regression — every `tools/*-check.js`, sequentially** | **47 / 47 after re-runs** · 2,262 passing check lines · 108 min (`regression-corrected.tsv`) |
+
+Two first-run failures did not reproduce: `dying-world-check` 40 (the legacy shell's scripted Dying World win read its coverage a few ticks
+after the win — re-runs 2 / 2 PASS, `main` PASS) and `run-ui-convergence-check` B17 (its legacy competition line is recomputed live a few
+ticks after the scripted win inside `advance(5)`, while the production line is the report data fixed at the win; a live-random run crossed a
+rounding boundary, 17 vs 18 % — re-runs 2 / 2 PASS; render timing cannot affect either number). No timing bound loosened; no bank rebuild.
 
 ## 11. Concerns / questions for the PMO
 
@@ -261,7 +273,11 @@ axe 0 / 0 on the Bloom and Extinction reports. `guided-training-check` GA1 / GA2
 | `75caf77` | `transition-check` (47th suite) + suite pins for Edge Assemble |
 | `5bb9339` | planet-view B17 / visual-system G1 pins |
 | `a60124f` | visual-system G1 — the kept selection's banner faded under an open room |
-| (this commit) | docs (the transition system, the canonical specimen, weather) + this evidence record |
+| `ab64bbe` | docs (the transition system, the canonical specimen, weather) + this evidence record — the first review head |
+| `d2026b2` | **PMO correction 1** — the report crossfades (no mist page transition) |
+| `bdc1733` | **PMO correction 2** — the Training anatomy lessons show the full canonical specimen |
+| `7005cc7` | the corrections' QA (transition-check N5 / N7 / T4 / T5 / X) + docs + evidence |
+| (this commit) | the corrected regression record — the corrected review head |
 
 Evidence in this folder: `REPORT.md`; `transition-proof.json` (per-browser timings, specimen rects, weather A / B); `regression.tsv`;
 `qa/` (transition-check logs: Chromium + Firefox, WebKit); `frames/` (36 stills: Edge Assemble start / middle / end and the reverse — the
