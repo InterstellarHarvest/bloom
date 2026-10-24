@@ -305,3 +305,15 @@ training exit — Skip (after its confirmation), Main menu, TRAINING COMPLETE's 
 root; the training run's own fallback without `return=` is `../index.html` (`content/training.js` `returnTo`; the training planet,
 config, seed and copy are unchanged). This suite's provenance / scope checks (N1, N8, N9, N10) are now bounded by 028D2's final
 `726f74d` (END_SHA), as the 029B–029F suites bound theirs, and its title URLs are the root (`release-check` R17, R21, R45–R50).
+
+## BLOOM-040 — the anatomy lessons show the full plant (PMO correction)
+
+Lessons 5 and 6 (**Find the limiting factor** · **Change the plant**) teach the plant's parts on the Adapt room's anatomy callouts (Leaf
+pigment · Leaf shape · Stem · Roots) while the room considers Chill Hollow, where no colony grows yet. The ordinary no-colony presentation (a
+checker "ghost" of the organism) hid the anatomy, so while either lesson is current the training layer asks the rooms for the **anatomy
+presentation** (`ANATOMY_LESSONS` in `training-steps.js` → `decisionRooms.setSpecimenPresentation("anatomy", { rooms: ["adapt"] })`): the
+Adapt specimen is the FULL canonical production Organic Hybrid for the current adaptation state — the same pack, compositor and scene, no
+duplicate asset. Presentation only: no colony is created, the simulation, region states, progression and lesson copy / sequencing / callout
+positions are unchanged, and the caption still says "No colony yet". Every other lesson and ordinary play keep the ghost.
+QA: `guided-training-check` GA1 / GA2 (by real input), `transition-check` T4.
+

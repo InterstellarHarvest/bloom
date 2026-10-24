@@ -32,8 +32,17 @@ world-generation or room-layout change). Record: [`evidence/bloom-040/REPORT.md`
   width; ground to the left, right and bottom edges); the caption overlays it.
 - **Weather is environmental presentation, never a transition device.** Rain and snow read more clearly (size and contrast, not density);
   the weather continues through navigation (the page clock) and is never accelerated, swept or restarted to hide a page change.
-- **The home selection stays selected while a plant room is open** (it was cleared since 029C) so the map returns with it.
-- **Training's specimen** is confirmed to use the canonical production Organic Hybrid path (no proof / fallback art): see the report.
+- **Home selection — the production contract (PMO lock):** opening a plant room does NOT clear or change the home selection (no
+  `bloom:region-select {id:null}` — the 029C behaviour is retired); the room never owns or mutates it; when Back completes the same region
+  is still selected and its banner returns.
+- **REPORT: a quiet CROSSFADE (PMO correction).** The Bloom / Extinction report opens and closes with a calm crossfade (the run / map fades
+  back, the report fades in; ≈ 340 ms, reversed for Keep playing; reduced motion ≈ 120 ms). It is NOT Edge Assemble and NEVER the mist /
+  cloud page transition — no page navigation uses the mist any more (the AtmosphereTransition utility stays for the Expedition descent).
+- **TRAINING ANATOMY: the canonical full production specimen, no ghost dither (PMO correction).** While the guided training teaches the
+  plant's parts on the Adapt room's callouts (the lessons "Find the limiting factor" and "Change the plant"), the Adapt specimen is the FULL
+  canonical Organic Hybrid for the current adaptation state — a presentation override only (no colony is created; the caption still reads
+  "No colony yet"). **GENERAL NO-COLONY GHOST: still valid** everywhere else, every other lesson included.
+- **Training's specimen** uses the canonical production Organic Hybrid path (no proof / fallback art): see the report.
 
 *Previous: 2026-10-14, **BLOOM-039 CLOSEOUT — BLOOM-038: IMPLEMENTED / COMPLETE (automated design audit) · BLOOM-039: IMPLEMENTED /
 COMPLETE (pre-playtest clarity & UX) · LIVE.** Production `main` was fast-forwarded `8b23e78` → **`c1b5171`** (the exact PMO-accepted review head;

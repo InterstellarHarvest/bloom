@@ -259,4 +259,6 @@ No adapter change. Additive presentation APIs only:
 | `decisionRooms.EDGE` · `controller.state().motion / superseded / spot` · timeline `motion`, `tMotion`, `superseded` | the Edge Assemble timing table and its QA state |
 | `plantEnvironment.paint(S, W, H, soilY, ext)` | the box-filling margin extension (window byte-identical to the frame) |
 | `plantSpecimen` instance `fill()` | the environment layer's geometry (QA) |
+| `decisionRooms` `setSpecimenPresentation("anatomy" \| null, { rooms })` · `state().presentation` | (PMO correction) the Training anatomy view: the room's specimen drawn as the full canonical organism (no ghost); presentation only |
+| `runReport` timeline `motion: "crossfade"`, `reducedMotion` | (PMO correction) the report's own crossfade; the 029E bridge is no longer run by any page navigation |
 

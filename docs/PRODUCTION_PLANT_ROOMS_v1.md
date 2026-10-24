@@ -76,6 +76,16 @@ it). Changing the context (mini-map click, region-chip click, `controller.setCtx
 touches the hidden home selection (QA B5). When a room closes, no home region is selected. *(BLOOM-040: the home selection is kept
 through the room — the map returns with the same region selected; the room context still never writes it.)*
 
+**(BLOOM-040 — the production contract, PMO-locked)** opening a room never clears or changes the home selection (no
+`bloom:region-select {id:null}`); the room never owns or mutates it; when Back completes the same region is selected and its banner is back.
+
+**Training anatomy presentation (BLOOM-040, PMO):** `controller.setSpecimenPresentation("anatomy", { rooms: ["adapt"] })` — driven by the
+guided training (`resources/training/training-run.js`, from the current lesson: `ANATOMY_LESSONS` in `training-steps.js` = "limiting-factor",
+"adapt-buy") — makes the open Adapt room's specimen the FULL canonical organism for the current adaptation state (living, establishment 0,
+balanced, condition OK, viable: no no-colony ghost dither, no stress / unviable tint, no sprouts) through the same production path; the
+caption keeps the region's truth ("No colony yet"), the canvas label says the plant is shown in full to point out its parts. Presentation
+only; `null` restores the ordinary colony / no-colony presentation (every other lesson, ordinary play).
+
 **Fallback to origin:** `ctx.region ≥ 0` → that; else `selection().index ≥ 0` → that; else the last room context; else the origin.
 
 ## 4. Mini-map / region strip (every room's right column)

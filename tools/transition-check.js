@@ -31,12 +31,17 @@
 //       over 200 ms in an opening / switch / closing, keyframes limited to transform / opacity (+ the map's filter fade).
 //   T · Training's specimen (production index.html → TRAINING): the canonical production Organic Hybrid path (pack, body plan, the organism
 //       pixels = BLOOM.plantSpecimen.draw of the same state, = an Expedition's at the same state), no retired SVG specimen, the anatomy
-//       callouts anchored on the real specimen. Exits 1 on any FAIL.
+//       callouts anchored on the real specimen; (PMO correction) the anatomy lessons show the FULL canonical specimen on a no-colony region
+//       (no ghost dither) while every other lesson keeps the ghost, and no colony is created.
+//   X · (PMO correction) the Bloom / Extinction report: a quiet CROSSFADE, never the mist / cloud page transition — Expedition Bloom,
+//       Dying World Extinction and Bloom, Native Competition Bloom (the harness) and Thin Air (the production Challenge flow): the correct report,
+//       its actions, Keep playing, no duplicate report, no stuck opacity, rapid input / Escape cannot strand it, reduced motion, axe.
+//   Exits 1 on any FAIL.
 "use strict";
 const path = require("path"), fs = require("fs"), http = require("http"), cp = require("child_process"), crypto = require("crypto");
 const argv = process.argv, argOf = k => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : null; };
 const ROOT = path.resolve(__dirname, ".."), J = JSON.stringify, BASE = "d03c6f9";   // the BLOOM-040 starting production SHA
-const BROWSERS = (argOf("--browsers") || "chromium,firefox").split(","), ONLY = (argOf("--only") || "N,E,M,F,V,W,I,A,P,T").split(","), EVIDENCE = argv.includes("--evidence");
+const BROWSERS = (argOf("--browsers") || "chromium,firefox").split(","), ONLY = (argOf("--only") || "N,E,M,F,V,W,I,A,P,T,X").split(","), EVIDENCE = argv.includes("--evidence");
 const VIEWPORTS = (argOf("--viewports") || "1024x768,1440x900,1920x1080,2560x1440").split(",").map(v => v.split("x").map(Number));
 const EVD = path.join(ROOT, "docs/evidence/bloom-040"), AXE = process.env.AXE && fs.existsSync(process.env.AXE) ? fs.readFileSync(process.env.AXE, "utf8") : null;
 let fails = 0, passes = 0; const t0 = Date.now();
@@ -78,17 +83,26 @@ if (has("N")) {
     for (let i = 3; ok && i < X.length; i += 4) if (X[i] !== 255) ok = false; if (ok) windowOk++; }
   check(same === n && windowOk === n, `N4 · plantEnvironment: for ${n} scenes the 84 × 98 frame, its signature and FX spec are byte-identical to ${BASE} (every organism / environment signature is unchanged), and the box-filling margin extension is opaque with its window byte-identical to the frame`, J({ n, same, windowOk }));
   const prot = ["resources/bloom-sim.js", "resources/bloom-species.js", "resources/bloom-gen.js", "resources/bloom-validate.js", "resources/bloom-witness.js", "resources/bloom-archetype.js", "resources/bloom-scenario.js", "resources/bloom-challenges.js",
-    "resources/challenges", "content", "planets", "resources/plant-visual/generated", "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-components.js", "resources/plant-visual/plant-visual-model.js", "resources/plant-visual/grammars", "art", "resources/atmosphere-transition", "resources/training"];
+    "resources/challenges", "content", "planets", "resources/plant-visual/generated", "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-components.js", "resources/plant-visual/plant-visual-model.js", "resources/plant-visual/grammars", "art", "resources/atmosphere-transition",
+    "resources/training/training-coach.js", "resources/training/training-coach.css", "resources/training/training-director.js", "resources/training/training-store.js", "resources/run-ui/gameplay-transition.js"];
   const changed = git(`diff --name-only ${BASE} -- ${prot.join(" ")}`).split("\n").filter(Boolean);
   const bank = crypto.createHash("sha256").update(fs.readFileSync(path.join(ROOT, "content/challenge-seed-banks.js"))).digest("hex");
-  check(!changed.length && bank === "8506124b462cf4d47710a1eb37806ddead9dd3f600c28c36cfcfd071fda59e40",
-    `N5 · presentation only: no engine, species, generator, scenario, Challenge, content, planet, plant-art, compositor, mist or training-lesson file differs from ${BASE}; the seed bank is the released one (sha256 8506124b…)`, J({ changed, bank: bank.slice(0, 8) }));
+  // (PMO correction) the training lessons are unchanged: training-steps.js only ADDS the anatomy-lesson list, training-run.js only the anatomy hook
+  const tdiff = f => git(`diff -U0 ${BASE} -- ${f}`).split("\n").filter(l => /^[-+][^-+]/.test(l) || /^[-+]$/.test(l));
+  const steps = tdiff("resources/training/training-steps.js"), trun = tdiff("resources/training/training-run.js");
+  const lessonsOk = steps.every(l => l.startsWith("+")) && steps.some(l => /ANATOMY_LESSONS = Object\.freeze\(\["limiting-factor", "adapt-buy"\]\)/.test(l))
+    && trun.filter(l => l.startsWith("-")).every(l => /KEEP_CLEAR \} from|onFinish: outcome|unmount\(\) \{|readUi,$|placeBubble/.test(l)) && trun.filter(l => l.startsWith("+")).every(l => /anatomy|ANATOMY|^\+\s*\/\/|^\+\s*\}$|^\+\s*const dr|^\+\s*const on|^\+\s*dr\.set|KEEP_CLEAR|placeBubble|unmount/.test(l));
+  check(!changed.length && lessonsOk && bank === "8506124b462cf4d47710a1eb37806ddead9dd3f600c28c36cfcfd071fda59e40",
+    `N5 · presentation only: no engine, species, generator, scenario, Challenge, content, planet, plant-art (atlas included), compositor, mist, bridge or training coach / director / store file differs from ${BASE}; the lessons are unchanged (training-steps.js only adds the anatomy-lesson list; training-run.js only the anatomy hook); the seed bank is the released one (sha256 8506124b…)`, J({ changed, lessonsOk, steps: steps.length, trun: trun.length, bank: bank.slice(0, 8) }));
   const FXsrc = PE.mountFx.toString(), ctrlWeather = /mountFx|\.fx\(|rain|snow|clouds/.test(ctrl);
+  const RR = fs.readFileSync(path.join(ROOT, "resources/run-ui/run-report.js"), "utf8").replace(/\/\/[^\n]*/g, ""), RRC = fs.readFileSync(path.join(ROOT, "resources/run-ui/run-report.css"), "utf8");
+  check(!/T\.run\(|\.run\(\{\s*onCovered|through\(/.test(RR) && /function crossfade\(/.test(RR) && /crossfade\("report-open"/.test(RR) && /crossfade\("report-close"/.test(RR) && !/rrEnter|\.entering/.test(RRC),
+    "N7 · (PMO correction) the Bloom / Extinction report never runs the mist / cloud page transition (no bridge run in run-report.js): it opens and closes with its own crossfade; the card has no entrance transform", "");
   check(/clock\(\)/.test(FXsrc) && !/t0/.test(FXsrc) && !ctrlWeather, "N6 · weather is environment, never a transition device: the room controller never touches the weather; the overlay's animation time is the page clock (no per-overlay restart)", J({ ctrlWeather }));
 }
 
 (async () => {
-  if (!["E", "M", "F", "V", "W", "I", "A", "P", "T"].some(has)) return finish();
+  if (!["E", "M", "F", "V", "W", "I", "A", "P", "T", "X"].some(has)) return finish();
   const pw = require(process.env.PW_MODULE || "playwright");
   const MIME = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".png": "image/png", ".json": "application/json", ".svg": "image/svg+xml", ".webp": "image/webp", ".jpg": "image/jpeg" };
   const server = http.createServer((req, res) => { let u = decodeURIComponent(new URL(req.url, "http://x").pathname); if (u.endsWith("/")) u += "index.html"; const f = path.join(ROOT, u);
@@ -406,7 +420,94 @@ if (has("N")) {
         check(t.plates === 4 && t.inside && t.anchors === 7, tag("T2 · the Adapt anatomy callouts (four plates: pigment · leaf shape · stem · roots) stay where they were, anchored on the REAL specimen (every anatomy anchor inside its canvas)"), J({ plates: t.plates, anchors: t.anchors, inside: t.inside }));
         if (EVIDENCE) { await p.locator(".dr .dr-room:not([hidden]) .lf-top").screenshot({ path: path.join(EVD, "frames", `${bn}-training-adapt-specimen.png`) }).catch(() => {}); }
         P.training = { org: t.org, state: t.state };
+        // T4 · (PMO correction) the anatomy lessons show Chill Hollow's Adapt specimen in FULL; another lesson keeps the no-colony ghost; no colony is made
+        await p.keyboard.press("Escape"); await settled(p);
+        const anat = [];
+        for (const [i, id] of [[2, "biomass"], [4, "limiting-factor"], [5, "adapt-buy"], [6, "spread"]]) {
+          const r = await p.evaluate(async ([i]) => { const d = BLOOM_TRAINING_UI.guide.director; d._enter(i); d.evaluate("qa"); const A = BLOOM_RUN_UI.adapter, chill = A.regions().find(r => r.id === "chill_hollow");
+            __T.PV().openRoom("adapt", { region: chill.index }); await new Promise(r => { const f = () => (__T.DR().state().transitioning || __T.DR().state().motion ? requestAnimationFrame(f) : r()); requestAnimationFrame(f); });
+            const sp = __T.specOf(), S = sp.state, ref = BLOOM.plantSpecimen.draw({ traits: S.traits, names: {}, preview: null, colony: { living: true, establishment: 0, word: "" }, focus: "balanced", local: null, condition: "ok", viable: true }, { species: A.run().species });
+            const out = { lesson: d.current.id, active: !!(__T.DR().state().presentation && __T.DR().state().presentation.active), org: sp.organismSignature(), canonical: ref.organismSig, living: A.region(chill.index).living,
+              caption: __T.room().querySelector(".spec-cap").textContent, label: sp.canvas.getAttribute("aria-label") };
+            __T.DR().close(false); await new Promise(r => { const f = () => (__T.DR().state().transitioning || __T.DR().state().motion ? requestAnimationFrame(f) : r()); requestAnimationFrame(f); }); return out; }, [i]);
+          anat.push(r); if (EVIDENCE && bn === "chromium" && (id === "biomass" || id === "limiting-factor")) { /* the stills come from the evidence driver */ } }
+        if (AXE) {   // axe on the anatomy instructional state itself (lesson 5, the Adapt room on Chill Hollow, the full specimen)
+          await p.evaluate(async () => { const d = BLOOM_TRAINING_UI.guide.director; d._enter(4); d.evaluate("qa"); __T.PV().openRoom("adapt", { region: BLOOM_RUN_UI.adapter.regions().find(r => r.id === "chill_hollow").index }); });
+          await settled(p); await frames(p, 3); await p.addScriptTag({ content: AXE });
+          const v = await p.evaluate(async () => (await axe.run(document, { resultTypes: ["violations"] })).violations.filter(x => x.impact === "critical" || x.impact === "serious").map(x => `${x.id}:${x.nodes.map(n => n.target.join(" ")).join(",")}`));
+          const active = await p.evaluate(() => !!(__T.DR().state().presentation && __T.DR().state().presentation.active));
+          check(active && !v.length, tag("T5 · axe-core on the Training anatomy state (the Adapt room, full specimen, the coach): 0 critical / 0 serious"), J({ active, v }));
+          await p.keyboard.press("Escape"); await settled(p); }
+        const [b0, l4, l5, s6] = anat, full = x => x.active && x.org === x.canonical && x.living === 0 && /No colony yet/.test(x.caption);
+        check(!b0.active && b0.org !== b0.canonical && full(l4) && full(l5) && l4.org === l5.org && !s6.active && s6.org === b0.org && /shown in full/.test(l4.label),
+          tag("T4 · (PMO) the anatomy lessons (limiting-factor, adapt-buy) show Chill Hollow's Adapt specimen as the FULL canonical organism (= the production draw for the same adaptation state; no ghost dither), the same in both; the Biomass and Spread lessons keep the ordinary no-colony ghost; no colony is created and the caption still says No colony yet"),
+          J(anat.map(x => [x.lesson, x.active, x.org, x.living]))); 
         check(!p.errs.length, tag("T3 · Training: no page error"), p.errs.slice(0, 2).join(" | ")); await c.close();
+      }
+
+      // ============================================================ X · (PMO correction) the Bloom / Extinction report: a quiet crossfade, no mist
+      if (has("X")) {
+        const XH = `(() => { window.__atx = 0; new MutationObserver(m => { for (const r of m) for (const n of r.addedNodes) if (n.nodeType === 1 && n.classList && n.classList.contains("atx")) window.__atx++; }).observe(document.body, { childList: true, subtree: true });
+          window.__X = { RR: () => BLOOM.runReport.instance, runs: () => { const T = BLOOM.decisionRooms.instance.transition; return T ? T.runs : 0; },
+            async sample(fn) { const out = [], t0 = performance.now(), RR = BLOOM.runReport.instance, layer = RR.el; await fn();
+              await new Promise(res => { const f = () => { out.push({ t: Math.round(performance.now() - t0), op: +getComputedStyle(layer).opacity, hidden: layer.hidden, tf: getComputedStyle(layer.querySelector(".rr-card")).transform, busy: RR.state().busy });
+                if ((RR.state().busy || performance.now() - t0 < 80) && performance.now() - t0 < 4000) requestAnimationFrame(f); else res(); }; requestAnimationFrame(f); }); return out; },
+            after: () => { const RR = BLOOM.runReport.instance, st = RR.state(), layer = RR.el, stage = document.querySelector(".pv-stage");
+              return { open: st.open, kind: st.kind, shown: st.shown, busy: st.busy, actions: st.actions, rr: document.querySelectorAll(".rr").length, op: +getComputedStyle(layer).opacity, hidden: layer.hidden, anims: document.getAnimations().filter(a => a.playState === "running").filter(a => a.effect && (a.effect.target === layer || [".pv-hud", ".pv-stage", ".pv-foot"].some(q => a.effect.target === document.querySelector(q)))).length,
+                pvInert: stage.inert, mapFilter: getComputedStyle(stage).filter, focusIn: !!(document.activeElement && document.activeElement.closest(".rr")), heading: (layer.querySelector("h2") || {}).textContent || "", atx: window.__atx, runs: __X.runs(), running: BLOOM_RUN_UI.adapter.run().running, e: RR.timeline().slice(-1)[0] }; } };
+          return true; })()`;
+        const reportOpen = p => p.waitForFunction(() => BLOOM.runReport.instance.state().open && !BLOOM.runReport.instance.state().busy, null, { timeout: 30000, polling: 30 });
+        const fadeOk = (S, dir) => { const mid = S.filter(x => !x.hidden && x.op > 0.02 && x.op < 0.98), mono = S.every((x, k) => k === 0 || x.hidden || S[k - 1].hidden || (dir > 0 ? x.op >= S[k - 1].op - 0.01 : x.op <= S[k - 1].op + 0.01));
+          return { mid: mid.length, mono, notf: S.every(x => x.tf === "none") }; };
+        const WIN = "() => { const s = BLOOM_API.sim; BLOOM_API.advance(30); s.won = true; s.onWin(s.coverage()); }";
+        const CASES = [["Expedition Bloom", "?play=1&archetype=ocean_archipelago&seed=28", "win"], ["Dying World Extinction", "?play=1&archetype=frozen_world&seed=9&scenario=dying_world", "loss"],
+          ["Dying World Bloom", "?play=1&archetype=ocean_archipelago&seed=13&scenario=dying_world", "win"], ["Native Competition Bloom", "?play=1&archetype=desert_world&seed=17&scenario=native_competition", "win"]];
+        for (const [label, q, kind] of CASES) for (const rm of label === "Expedition Bloom" ? [false, true] : [false]) {
+          const p = await open(q, { w: 1440, h: 900, rm }); await p.evaluate(XH); const n0 = await p.evaluate(() => __X.runs());
+          // rapid input WHILE it opens (30 ms in): Escape ×2, a premature Keep playing and a second open() never dismiss or double it; Escape once it stands
+          const S = await p.evaluate(async ([kind, WIN]) => __X.sample(async () => { if (kind === "win") (0, eval)(WIN)(); else BLOOM_API.advance(3000);
+            setTimeout(() => { const esc = () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })); esc(); esc(); window.__early = { busy: BLOOM.runReport.instance.state().busy, keep: BLOOM.runReport.instance.keepPlaying(), reopen: BLOOM.runReport.instance.open() }; }, 30); }), [kind, WIN]);
+          await reportOpen(p); await frames(p, 3); await p.keyboard.press("Escape"); await frames(p, 2); const early = await p.evaluate(() => window.__early);
+          const A1 = await p.evaluate(() => __X.after()), f1 = fadeOk(S, 1);
+          const okOpen = early && early.busy && early.keep === false && early.reopen === false && A1.open && A1.kind === kind && A1.shown === 1 && A1.rr === 1 && A1.op === 1 && !A1.hidden && A1.anims === 0 && A1.pvInert && A1.focusIn && A1.atx === 0 && A1.runs === n0 && A1.e.motion === "crossfade" && f1.notf
+            && (rm ? A1.e.reducedMotion === true && A1.e.tEnd - A1.e.tStart <= 450 : f1.mid >= 1 && f1.mono && A1.e.tEnd - A1.e.tStart >= 250 && A1.e.tEnd - A1.e.tStart <= 1100);
+          check(okOpen, tag(`X1 · ${label}${rm ? " (reduced motion)" : ""}: the ${kind === "win" ? "Bloom" : "Extinction"} report opens with a quiet crossfade (opacity only, no card transform; ${rm ? "a very short fade" : "≈ 340 ms"}), never the mist / cloud page transition (no .atx overlay, the bridge never runs); Escape and a premature Keep playing cannot dismiss or double it: ONE report, opacity 1, the map dimmed and inert, focus in the dialog`),
+            J({ early, fade: f1, ms: Math.round(A1.e.tEnd - A1.e.tStart), atx: A1.atx, runs: [n0, A1.runs], shown: A1.shown, rr: A1.rr, actions: A1.actions, heading: A1.heading.slice(0, 30) }));
+          if (AXE && !rm && (label === "Expedition Bloom" || label === "Dying World Extinction")) { await p.addScriptTag({ content: AXE });
+            const v = await p.evaluate(async () => (await axe.run(document, { resultTypes: ["violations"] })).violations.filter(x => x.impact === "critical" || x.impact === "serious").map(x => `${x.id}:${x.nodes.map(n => n.target.join(" ")).join(",")}`));
+            check(!v.length, tag(`X2 · axe-core on the ${label} report: 0 critical / 0 serious`), J(v)); }
+          if (kind === "win") {   // Keep playing: the crossfade reversed (two quick clicks = one close), then the run runs again
+            const S2 = await p.evaluate(() => __X.sample(() => { const b = document.getElementById("rrContinue"); b.click(); b.click(); })); await frames(p, 3);
+            const A2 = await p.evaluate(() => __X.after()), f2 = fadeOk(S2, -1);
+            check(!A2.open && A2.hidden && A2.shown === 1 && A2.anims === 0 && !A2.pvInert && A2.mapFilter === "none" && A2.running && A2.atx === 0 && A2.runs === n0 && A2.e.kind === "report-close" && A2.e.motion === "crossfade" && (rm || (f2.mid >= 1 && f2.mono)),
+              tag(`X3 · ${label}${rm ? " (reduced motion)" : ""}: Keep playing fades the report out (the reversed crossfade; a double click closes once), restores the map (no stuck opacity / filter, not inert) and only then resumes the run`),
+              J({ fade: f2, ms: Math.round(A2.e.tEnd - A2.e.tStart), running: A2.running, mapFilter: A2.mapFilter })); }
+          else {   // an extinction: the report's own way out (the player run's actions: Play again · New world · Change planet · Home) — Home leaves the run
+            const acts = A1.actions; await p.evaluate(() => { window.__left = false; addEventListener("pagehide", () => { window.__left = true; }); });
+            p.once("dialog", d => d.accept().catch(() => {})); const nav = p.waitForNavigation({ timeout: 15000 }).then(() => true).catch(() => false);
+            const out = acts.includes("mainMenu") ? "mainMenu" : "home"; await p.click(`.rr [data-act="${out}"]`).catch(() => {}); const left = await nav;
+            check(acts.includes(out) && !acts.includes("keepPlaying") && left, tag(`X3 · ${label}: no Keep playing on a loss; the report's ${out === "home" ? "Home" : "Main Menu"} action leaves the run`), J({ acts, left })); }
+          check(!p.errs.length, tag(`X4 · ${label}${rm ? " (reduced)" : ""}: no console error`), p.errs.slice(0, 2).join(" | ")); await close(p);
+        }
+        // Thin Air through the production Challenge flow: its report (Challenge actions) crossfades too; the Challenges action returns to the hub
+        if (bn !== "webkit" || true) {
+          const c = await browser.newContext({ viewport: { width: 1440, height: 900 } }); await c.addInitScript(() => { try { localStorage.setItem("strange-bloom.training", JSON.stringify({ v: 1, status: "completed", at: 1 })); } catch { /* blocked */ } });
+          const p = await c.newPage(); p.errs = []; p.on("pageerror", e => p.errs.push(e.message)); p.on("console", m => { if (m.type() === "error") p.errs.push(m.text()); }); p.on("dialog", d => d.accept().catch(() => {}));
+          await p.goto(HOME + "?launch=7&bg=7"); await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.ready && MENU_DEV.entry.state === "menu", null, { timeout: 60000, polling: 50 });
+          await p.click('.mm-item[data-act="challenges"]'); await p.waitForFunction(() => { const e = MENU_DEV.entry, v = e.challengeView; return e.state === "challenges" && v && v.inner && e.black.style.display === "none"; }, null, { timeout: 60000, polling: 50 });
+          await p.evaluate(() => MENU_DEV.entry.challengeView.inner.select("thin_air")); await p.click(".ch-btn.go");
+          await p.waitForFunction(() => { const e = MENU_DEV.entry, v = e.worldView; return e.state === "challenge-world" && v && v.inner && v.inner.state === "ready" && e.black.style.display === "none"; }, null, { timeout: 120000, polling: 50 });
+          await p.click(".cw-btn.go"); await p.waitForFunction(() => window.BLOOM_APP && BLOOM_APP.session && !BLOOM_APP.busy && !document.querySelector(".atx") && BLOOM.runReport && BLOOM.runReport.instance && BLOOM.decisionRooms.instance, null, { timeout: 120000, polling: 50 });
+          await p.evaluate(XH); await sleep(300); const n0 = await p.evaluate(() => __X.runs());
+          const S = await p.evaluate(WIN => __X.sample(() => (0, eval)(WIN)()), WIN); await reportOpen(p); await frames(p, 3);
+          const A1 = await p.evaluate(() => __X.after()), f1 = fadeOk(S, 1);
+          await p.click('.rr [data-act="challenges"]').catch(() => {});
+          const hub = await p.waitForFunction(() => window.MENU_DEV && MENU_DEV.entry.state === "challenges" && !(window.BLOOM_APP && BLOOM_APP.session), null, { timeout: 30000, polling: 50 }).then(() => true).catch(() => false);
+          check(A1.open && A1.kind === "win" && A1.shown === 1 && A1.rr === 1 && A1.op === 1 && A1.atx === 0 && A1.runs === n0 && A1.e.motion === "crossfade" && f1.mid >= 1 && f1.notf && A1.actions.includes("challenges") && A1.actions.includes("mainMenu") && hub && !p.errs.length,
+            tag("X5 · Thin Air (the production Challenge flow): its report opens with the crossfade (no mist), carries the Challenge actions, and Challenges returns to the hub; no console error"),
+            J({ fade: f1, ms: Math.round(A1.e.tEnd - A1.e.tStart), actions: A1.actions, hub, errs: p.errs.slice(0, 2) }));
+          await c.close();
+        }
       }
     } catch (err) { check(false, tag("the browser checks ran to completion"), (err && err.stack || String(err)).split("\n").slice(0, 3).join(" | ")); }
     await browser.close();

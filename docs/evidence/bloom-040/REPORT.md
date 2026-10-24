@@ -198,15 +198,56 @@ Every other suite passed on its first run, including `run-ui-check`, `run-ui-con
 `challenge-world-check` (bank integrity, exact regeneration, engine byte-identity A13) and `single-app-flow-check`.
 
 
+## 10a. PMO review — two presentation corrections (core candidate ACCEPTED)
+
+**Correction 1 — the report crossfades; no mist page transition (`d2026b2`).** The Bloom / Extinction report no longer runs the SUBDUED
+mist (the last player-facing cloud page transition): `run-report.js` opens it with a quiet **crossfade** — the run / map fades back (its
+existing in-report colour treatment, `saturate(.78) brightness(.92)`, eased in) while the report layer (veil + card) fades in, **340 ms**;
+Keep playing reverses it (**300 ms**) and resumes the run only after the fade; reduced motion **120 ms**. Opacity + the map's colour filter
+only: no cloud / mist / weather wipe, no slide, zoom or parallax, no card entrance transform. Report layout, content, win / loss mechanics,
+Keep playing and Challenge report behaviour unchanged. The AtmosphereTransition utility is kept (the Expedition descent uses it directly);
+the 029E bridge object stays (it reads the player's Settings → Motion choice) but **no page navigation runs it any more**.
+Still: `pmo-corrections/report-crossfade-middle.png` (paused at 170 ms) · `report-crossfade-end.png`.
+
+**Correction 2 — Training anatomy shows the full canonical plant (`bdc1733`).** While the guided training's anatomy lessons are current —
+`ANATOMY_LESSONS` = **"limiting-factor"** (Find the limiting factor) and **"adapt-buy"** (Change the plant), the lessons that teach Leaf
+pigment · Leaf shape · Stem · Roots on the Adapt room's callouts over Chill Hollow — the training layer asks the rooms for the anatomy
+presentation (`decisionRooms.setSpecimenPresentation("anatomy", { rooms: ["adapt"] })`, driven by the director's existing `onChange`). The
+Adapt specimen is then the FULL canonical Organic Hybrid for the current adaptation state through the same production path (living,
+establishment 0, balanced, OK, viable: no checker ghost, no stress / unviable tint, no colony sprouts). Presentation only: no colony is
+created (Chill Hollow living 0), region state, simulation, progression, lesson copy / sequencing / callout positions / connectors and the
+specimen geometry are unchanged; the caption still says "No colony yet"; the canvas label says the plant is "shown in full to point out its
+parts". Every other lesson and ordinary play keep the no-colony ghost.
+
+| Lesson-5 Adapt specimen on Chill Hollow | organism signature | = canonical draw of the state | region living |
+|---|---|---|---|
+| BEFORE (`d03c6f9`, the ghost) | `5f73f976` | no (`7674b261`) | 0 |
+| AFTER (`bdc1733`) | **`7674b261`** | **yes** — and = the Expedition specimen at the same state | 0 |
+
+Evidence: `pmo-corrections/training-anatomy-before-after.png` (+ `-before` / `-after` / `.json`). **Canonical sprite assets unchanged:**
+`git diff d03c6f9` is empty for `art/` (81 files), `resources/plant-visual/generated/`, the compositor, components, visual model and grammars;
+`plant-atlas.js` sha256 `220fb2f0…` and `plant-atlas-manifest.json` `082a4f24…` are byte-identical to the base. The portable runtime was
+rebuilt because `training-run.js` is bundled (fingerprint `e5e5dd36…`, `check:portable` identical).
+
+**Home selection — PMO-locked production contract:** opening a room never emits `region-select {id:null}` and never changes the
+selection; Back returns to the same region with its banner (documented in `PRODUCT_DIRECTION_CURRENT.md`, `PRODUCTION_PLANT_ROOMS_v1.md` §3).
+
+**QA for the corrections:** `transition-check` N5 (training lessons unchanged; only the anatomy list and hook added) · N7 (no bridge run in
+the report) · T4 (the override is lesson-scoped: Biomass and Spread lessons keep the ghost; both anatomy lessons show the canonical organism;
+no colony) · T5 (axe on the anatomy state) · X1–X5: Expedition Bloom (+ reduced motion), Dying World Extinction, Dying World Bloom,
+Native Competition Bloom (the harness) and Thin Air (the production Challenge flow): no `.atx` overlay and no bridge run, a monotonic
+crossfade, the right report and heading, ONE report, Escape ×2 + a premature Keep playing + a second open() while it opens change nothing,
+Keep playing (double-clicked) closes once and resumes, no stuck opacity / filter, the loss's Home and the Challenge's Challenges actions work,
+axe 0 / 0 on the Bloom and Extinction reports. `guided-training-check` GA1 / GA2 by real input through the whole 13-lesson flow.
+`run-ui-convergence-check` N5 / B11 / B13 / B16 / B19 / B20 re-pinned to the crossfade (no mist). Results: {{CORR_QA}}
+
 ## 11. Concerns / questions for the PMO
 
-1. **The home selection is now kept through a room** (since 029C it was cleared on open: one `bloom:region-select {id:null}`). Needed for
+1. **The home selection is now kept through a room** (**PMO: approved and locked** as the production contract) (since 029C it was cleared on open: one `bloom:region-select {id:null}`). Needed for
    "selected region remains the same / visible when the map returns"; it removes that event from the stream. Training is unaffected
    (guided-training-check, §10).
-2. **The report still uses the SUBDUED mist** (Planet View ↔ the Bloom / Extinction report): out of this milestone's scope (Reports were
-   named as unrelated screens). Say if Edge Assemble or a plain fade should replace it later.
-3. **The no-colony ghost dither** (§8.3) is the most visible "crude" element in Training; it is the accepted production presentation, so it
-   was left alone. A future art / presentation decision.
+2. ~~The report still uses the SUBDUED mist~~ — **resolved by PMO correction 1** (a quiet crossfade, §10a).
+3. ~~The no-colony ghost dither in Training~~ — **resolved by PMO correction 2** for the anatomy lessons (§10a); the general ghost stays.
 4. **Information-card hints** (Terraform most often, Spread on long texts) now step aside when there is no room, rather than scrolling.
 5. **Measured timings are headless** (software rendering, ≈ +40–140 ms for the first frame; Firefox headless ≈ 10–12 fps while the map's
    blur fades). The animation timeline is 460 / 300 ms; on GPU hardware it settles at ≈ 0.5 s. Worth a glance on the owner's machine.

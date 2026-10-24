@@ -68,8 +68,8 @@ the shell exactly — its map drawn, its anchors, its title, its buttons usable;
 ## 3. The transition language (what 029E owns)
 
 > **BLOOM-040 — TRANSITION SYSTEM: EDGE ASSEMBLE (LOCKED owner direction; supersedes the two room rows below).** Planet View ↔ room and room
-> ↔ room no longer use the SUBDUED mist: they are **Edge Assemble** (§6, the current text). The table's other rows are unchanged — the report
-> still opens / closes through the SUBDUED mist, the descent is still DRAMATIC, the menu fades are untouched.
+> ↔ room no longer use the SUBDUED mist: they are **Edge Assemble** (§6, the current text). The table's other rows are unchanged — the descent is
+> still DRAMATIC, the menu fades are untouched; the report row is superseded too (the crossfade below): **no page navigation uses the mist**.
 >
 > | crossing | treatment (BLOOM-040) |
 > |---|---|
@@ -77,6 +77,7 @@ the shell exactly — its map drawn, its anchors, its title, its buttons usable;
 > | **room → Planet View** (Back / Resume / Escape) | the reverse: work panel exits right, specimen left, header up; the map resolves underneath, the region still selected |
 > | **room ↔ room** (Region · Adapt · Spread · Terraform) | the **specimen is fixed**; the surrounding UI changes (header copy + work / information panels: fade + 16 px) |
 > | reduced motion | a restrained cross-fade / near-instant replacement; no directional travel; the specimen fixed in either mode |
+> | **Planet View ↔ the Bloom / Extinction report** (PMO correction) | a quiet **CROSSFADE**: the run / map fades back (its in-report colour treatment eased in) and the report (veil + card) fades in, ≈ 340 ms; Keep playing reverses it (≈ 300 ms) and only then resumes; reduced motion ≈ 120 ms. Not Edge Assemble, never the mist |
 >
 > **Weather is environmental presentation, never a transition device:** rain, snow and clouds keep running through every navigation (the
 > specimen weather runs on the page clock); nothing accelerates, sweeps or restarts them to hide a change. Not used anywhere: cloud / weather
