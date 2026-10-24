@@ -8,7 +8,14 @@ each milestone. Release QA record: [`evidence/bloom-037/REPORT.md`](evidence/blo
 **Released:** production `main` **`2c491f1`** (BLOOM-037, 2026-10-13), live at <https://interstellarharvest.github.io/bloom/> through the GitHub
 Actions Pages workflow. Everything below describes that release.
 
-**Current production: `c1b5171` (BLOOM-039, 2026-10-14), live** (Pages run 38673127447). BLOOM-039 is presentation / shell only on top of the
+**Current production: `77a972e` (BLOOM-040, 2026-10-24), live** (Pages run 40061546667). BLOOM-040 is presentation / navigation only: Edge Assemble
+between the map and the plant workspace (header from the top · specimen from the left · work panel from the right; the reverse on Back), the
+specimen fixed across Regions / Adapt / Spread / Terraform in one canonical geometry (Terraform included), the specimen scene filling its box,
+clearer rain and snow (weather is never a transition device), the home selection kept while a room is open, the Bloom / Extinction report as a
+quiet crossfade (no page navigation uses the mist), and the Training anatomy lessons showing the full canonical plant (no ghost dither) — no
+mode, species, Challenge, bank, mechanic or balance change. Record: [`evidence/bloom-040/REPORT.md`](evidence/bloom-040/REPORT.md).
+
+*Previous production: `c1b5171` (BLOOM-039, 2026-10-14)* (Pages run 38673127447). BLOOM-039 is presentation / shell only on top of the
 v1 release described here — no mode, species, Challenge, bank, mechanic or balance changed. It adds: ONE aggregate region-state vocabulary
 from the engine's grow rule (OK · STRAINED · BLOCKED · REFUGE, locked in [`PRODUCT_DIRECTION_CURRENT.md`](PRODUCT_DIRECTION_CURRENT.md));
 multi-step "Would help" with real prices; Native Competition legibility (competition reason, native ownership mark, Your plant / Natives

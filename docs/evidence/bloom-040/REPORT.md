@@ -1,7 +1,8 @@
 # BLOOM-040 — Edge Assemble transitions + specimen consistency · evidence report
 
 **Presentation / navigation only.** Base: production `main` = `origin/main` = **`d03c6f9`** (the BLOOM-039 closeout; game `c1b5171`).
-Branch `agent/bloom-040-edge-assemble` → review branch `handoff/bloom-040-review`. **Not merged — STOPPED FOR PMO REVIEW.**
+Branch `agent/bloom-040-edge-assemble` → review branch `handoff/bloom-040-review` → **PMO ACCEPTED (with two corrections, §10a) — released:
+`main` = `77a972e` (§13).**
 
 No gameplay, species physiology, Challenge mechanic, seed bank, world generation or room layout changed: `git diff d03c6f9` is empty for
 `resources/bloom-*.js`, `resources/challenges/`, `content/`, `planets/`, the plant art / compositor / grammars, the AtmosphereTransition and
@@ -283,4 +284,17 @@ Evidence in this folder: `REPORT.md`; `transition-proof.json` (per-browser timin
 `qa/` (transition-check logs: Chromium + Firefox, WebKit); `frames/` (36 stills: Edge Assemble start / middle / end and the reverse — the
 animations paused at fixed times, Chromium + Firefox; the environment fill under six weathers; weather before / after at 1440 and 1024;
 Training's Adapt specimen); `tutorial-specimen-ab.png` / `.json`; `tools/` (the scratch drivers for the timings and the Training A / B).
+
+## 13. Release closeout (2026-10-24)
+
+| | |
+|---|---|
+| PMO | core candidate `ab64bbe` ACCEPTED; two presentation corrections required (report crossfade · Training anatomy specimen) → made (`d2026b2`, `bdc1733`), QA'd (`7005cc7`, `77a972e`) |
+| Corrected review head | `77a972e44eb0daf6a0f8849014ec99f9fbee871b` = `handoff/bloom-040-review`, 9 ahead / 0 behind `d03c6f9` |
+| Integration | `origin/main` verified unchanged (`d03c6f9`), then fast-forwarded to `77a972e` (no merge commit, squash, rebase, cherry-pick or force push); local `main` = `origin/main` = `77a972e` |
+| Pages | GitHub Actions run 40061546667 — success (`77a972e`) |
+| Live files | `decision-rooms.js/.css`, `run-report.js`, `plant-specimen.js`, `plant-environment.js`, `training-run.js` served byte-identical to the release (and different from `d03c6f9`); `plant-atlas.js` and `index.html` byte-identical to both |
+| Live verification | `tools/live-040.js` on <https://interstellarharvest.github.io/bloom/>, **Chromium 9 / 9 · Firefox 9 / 9**: map → Regions Edge Assemble after the region's emphasis · the specimen never moves / resizes through Regions → Adapt → Spread → Terraform → Regions (Terraform the same size and scale) · the environment fills the box in every room · rain and snow drawn and visible · Back = the reverse with the same region selected and its banner back · the Bloom report crossfades (no mist overlay) · the Training anatomy lesson's Adapt specimen is the full canonical plant (`7674b261`, no colony created) · no console error. Stills: `live/` |
+| Bank | sha256 `8506124b…` unchanged; no rebuild |
+| Cleanup | the 040 worktree, the local `agent/bloom-040-edge-assemble` and the remote `handoff/bloom-040-review` deleted after this closeout |
 

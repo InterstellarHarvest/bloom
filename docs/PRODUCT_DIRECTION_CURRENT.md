@@ -15,18 +15,25 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-23, **BLOOM-040 — EDGE ASSEMBLE TRANSITIONS + SPECIMEN CONSISTENCY: CANDIDATE** (review branch `handoff/bloom-040-review`,
-from production `c1b5171` / docs `d03c6f9`; NOT in production `main`; presentation / navigation only — no gameplay, species, Challenge, bank,
-world-generation or room-layout change). Record: [`evidence/bloom-040/REPORT.md`](evidence/bloom-040/REPORT.md).*
+*Last updated: 2026-10-24, **BLOOM-040 CLOSEOUT — EDGE ASSEMBLE TRANSITIONS + SPECIMEN CONSISTENCY: IMPLEMENTED / COMPLETE · LIVE.** The PMO
+accepted the core candidate (`ab64bbe`) with two presentation corrections (the report crossfade; the Training anatomy specimen), both made and
+re-reviewed; production `main` was fast-forwarded `d03c6f9` → **`77a972e`** (the exact corrected review head; no merge commit, squash, rebase,
+cherry-pick or force push) and is live (GitHub Actions Pages run 40061546667 — success). Presentation / navigation only — no gameplay, species,
+Challenge, bank, world-generation or room-layout change; seed bank sha256 `8506124b…` unchanged. Final regression **47 / 47** (2,262 passing
+lines); `transition-check` Chromium + Firefox 149 / 149, WebKit 66 / 66 (axe 0 / 0); live verification Chromium 9 / 9 + Firefox 9 / 9. Record:
+[`evidence/bloom-040/REPORT.md`](evidence/bloom-040/REPORT.md) § Release closeout. **No further visual milestone is started; development returns to
+the HUMAN PLAYTEST phase.***
 
-**LOCKED owner direction — BLOOM-040 (CANDIDATE implementation):**
+**LOCKED by BLOOM-040 (owner direction + PMO, 2026-10-24) — IMPLEMENTED:**
+- **EDGE ASSEMBLE: map ↔ plant workspace. ROOM SWITCH: specimen fixed. REPORT: quiet crossfade. TRAINING ANATOMY: the canonical full
+  production specimen, no ghost dither. GENERAL NO-COLONY GHOST: still valid outside the anatomy instructional specimen.** (Details below.)
 - **TRANSITION SYSTEM: EDGE ASSEMBLE.** Map → plant workspace: the selected region is briefly emphasised (crisp; the rest dims; one soft
   pulse — no zoom, pan or morph), then the workspace assembles from the nearest edges — **header from the top · specimen from the left · work
   panel from the right** (≈ 0.5 s, staggered, ease `cubic-bezier(.2,.8,.2,1)`, transform / opacity). **Back** is the reverse (quicker), the
   map resolving underneath with the same region still selected. **Plant room → plant room** (Regions · Adapt · Spread · Terraform): the
   **specimen is fixed**, the surrounding UI changes (header copy and work / information panels: a short fade + ~16 px). **Reduced Motion:** a
   restrained cross-fade, no directional travel; the specimen fixed in either mode. No cloud / weather wipes, giant foreground objects,
-  parallax, dramatic zooms, full-screen slides or spins. The report, menu and survey transitions are unchanged.
+  parallax, dramatic zooms, full-screen slides or spins. Menu and survey transitions are unchanged; the report crossfades (below).
 - **Canonical fixed specimen geometry** across Regions / Adapt / Spread / Terraform: one `.lf-top` box (the 21 % left column, 170 : 196,
   ≤ 56 % of the zone) — same x, y, width, height, scale and scene bounds; Terraform conforms. The environment scene fills the box (sky full
   width; ground to the left, right and bottom edges); the caption overlays it.
@@ -521,5 +528,5 @@ This is not a gameplay-code feature; product code does not work around repositor
 | **v1.0.1** — UI polish hotfix | title / settings / selection / planning panels / one-copy map / icy water (presentation only) | **IMPLEMENTED / COMPLETE** (LIVE, closeout `2590d79`) |
 | **BLOOM-038** — Automated design audit | read-only design / visual-quality study: 4,424 policy runs, the visual atlas, affordance / copy / pause audits, failure states ([`DESIGN_AUDIT_v1.md`](DESIGN_AUDIT_v1.md)) | **IMPLEMENTED / COMPLETE** — compact research record in `main` (`8b23e78`; the regenerable ~56 MB raw atlas intentionally not in history) |
 | **BLOOM-039** — Pre-playtest clarity & UX | presentation / shell only, before human playtesting: Native Competition legibility (competition reason, native-held mark, Terraform native preview, FRONT STALLED cue); an honest region readout (status from the engine's grow rule, multi-step "Would help" with real prices, toxicity truth); hidden-tab / long-gap timekeeping; copy fixes (landing pointer, Challenge card title, one severity vocabulary, unaffordable reason at rest); the region banner flips to the top when it would cover its region; region-name pills select the region they name; ONE shared application width (≤ 1920 px, centred). No mechanic, bank, balance or species change ([`evidence/bloom-039/REPORT.md`](evidence/bloom-039/REPORT.md)) | **IMPLEMENTED / COMPLETE** — LIVE (`main` `c1b5171`, Pages run 38673127447) |
-| **BLOOM-040** — Edge Assemble transitions + specimen consistency | presentation / navigation only: Edge Assemble map ↔ plant workspace (header top · specimen left · work panel right; reverse on Back; reduced motion = cross-fade); room ↔ room with a fixed specimen; ONE canonical specimen geometry (Terraform conforms); the scene fills its box; clearer rain / snow; weather never a transition device; the home selection kept through a room; Training's specimen audited (canonical path) ([`evidence/bloom-040/REPORT.md`](evidence/bloom-040/REPORT.md)) | **CANDIDATE** — `handoff/bloom-040-review`, pending PMO review |
+| **BLOOM-040** — Edge Assemble transitions + specimen consistency | presentation / navigation only: Edge Assemble map ↔ plant workspace (header top · specimen left · work panel right; reverse on Back; reduced motion = cross-fade); room ↔ room with a fixed specimen; ONE canonical specimen geometry (Terraform conforms); the scene fills its box; clearer rain / snow; weather never a transition device; the home selection kept through a room; Training's specimen audited (canonical path) ([`evidence/bloom-040/REPORT.md`](evidence/bloom-040/REPORT.md)) | **IMPLEMENTED / COMPLETE** — LIVE (`main` `77a972e`, Pages run 40061546667; PMO corrections: report crossfade, Training anatomy specimen) |
 | **Human playtest** | QUESTIONS, not planned changes: Volatile Climate tuning, Dying World decline, Thin Air hold, Ocean pacing, Biomass economy / cadence, the 70 % target, species balance, Challenge recipes, Oasis Line distinctness, Terraform balance, save / Continue, whether map inspection should pause, tall-window room surplus | NEXT (not started) |
