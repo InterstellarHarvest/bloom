@@ -417,6 +417,8 @@ function ruleTokens(css, sel) { const c = stripCss(css), i = c.indexOf(sel + "{"
               if (/node\.[^>]*st-poor/.test(x) && /small\[\d+\]$/.test(el) && /^(color|border-top-color|border-left-color|outline-color)$/.test(n) && b.split("rgb(196, 70, 106)").join("rgb(138, 90, 0)") === h) return true;
               // (BLOOM-040, Edge Assemble) the rooms layer's 46 % ink moved onto its own child (.dr-veil, so the veil can fade): the layer itself is transparent
               if (/^div#dr\.dr\[\d+\]$/.test(el) && n === "background-color" && b === "rgba(52, 62, 48, 0.46)" && h === "rgba(0, 0, 0, 0)") return true;
+              // (BLOOM-040) the home selection now stays selected under an open room: its banner is faded out (opacity 0) instead of hidden
+              if (/^aside#pvBanner\.pv-banner\[\d+\]$/.test(el) && n === "opacity" && b === "1" && h === "0" && k === "adapt") return true;
               return false; }); };
           const changed = cmp.filter(x => pick(a[x]) !== pick(b[x]));
           rows[k] = { elements: cmp.length, repaired: common.length - cmp.length, onlyHead: Object.keys(a).length - common.length, onlyBase: Object.keys(b).length - common.length,
