@@ -410,14 +410,32 @@ const proof = { milestone: "BLOOM-028D2", baseSha: BASE_SHA, generatedAt: null, 
       await shot(p, "06-step04-chill-hollow.png"); R.push(await usePrim(p, "chill_hollow")); await sleep(250);
       // 5 · the limiting factor → the real "Would help" Cold Tolerance (opens Adapt, focuses the node = its real preview)
       const s5 = await G(p); R.push(await usePrim(p, "cold")); await settle(p);
+      // (BLOOM-040, PMO) the anatomy lessons show the Adapt room's FULL canonical specimen (no no-colony ghost dither) — presentation only
+      const ANAT = () => { const DR = BLOOM.decisionRooms.instance, st = DR.state(), room = document.querySelector(".dr .dr-room:not([hidden])"), sp = room && BLOOM.plantSpecimen.mounted().find(x => room.querySelector(".lf-top").contains(x.el));
+        if (!sp) return { room: st.room }; const S = sp.state, A = BLOOM_RUN_UI.adapter, ctx = A.region(st.context), cr = sp.canvas.getBoundingClientRect();
+        // the canonical production draw of the SAME state (its adaptation tiers and any live preview), and the no-colony ghost of it
+        const ref = BLOOM.plantSpecimen.draw({ traits: S.traits, names: {}, preview: S.preview || null, colony: { living: true, establishment: 0, word: "" }, focus: "balanced", local: null, condition: "ok", viable: true }, { species: A.run().species, highlight: sp.highlighted });
+        const ghost = BLOOM.plantSpecimen.draw({ ...S, presentation: undefined, colony: { living: false, establishment: 0, word: "" }, condition: "bad", viable: false }, { species: A.run().species, highlight: sp.highlighted });
+        return { lesson: BLOOM_TRAINING_UI.guide.director.current && BLOOM_TRAINING_UI.guide.director.current.id, room: st.room, ctx: ctx.id, living: ctx.living, pres: st.presentation, org: sp.organismSignature(), canonical: ref.organismSig, ghost: ghost.organismSig, preview: !!S.preview,
+          plates: room.querySelectorAll(".dr-leaders .aplate").length, labels: [...room.querySelectorAll(".dr-leaders .alab")].map(t => t.textContent), inside: sp.anchors().filter(a => a.client).every(a => a.client.x >= cr.left && a.client.x <= cr.right && a.client.y >= cr.top && a.client.y <= cr.bottom) }; };
+      const an5 = await p.evaluate(ANAT);
       await p.mouse.move(5, 400); await sleep(100);
       const coldNode = await p.evaluate(() => { const r = document.querySelector('[data-tutorial="upgrade-cold"]').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
       await p.mouse.move(coldNode[0], coldNode[1]); await sleep(250); await shot(p, "07-step05-cold-preview.png");
       // 6 · buy Cold Tolerance on its node
+      await p.mouse.move(5, 400); await sleep(150); const an6 = await p.evaluate(ANAT); await p.mouse.move(coldNode[0], coldNode[1]); await sleep(150);
       const s6 = await G(p); R.push(await usePrim(p, "upgrade-cold")); await settle(p); await shot(p, "08-step06-adapt-purchase.png");
+      { const ok = a => a.room === "adapt" && a.ctx === "chill_hollow" && a.living === 0 && a.pres && a.pres.active && a.org === a.canonical && a.org !== a.ghost && a.plates === 4 && a.inside;
+        // (the "Would help" button opens Adapt with Cold Tolerance focused — its real preview — so lesson 5 completes as the room appears: the first
+        // capture is the anatomy view WITH the Cold preview, the second the same view at rest)
+        check(["limiting-factor", "adapt-buy"].includes(an5.lesson) && an6.lesson === "adapt-buy" && ok(an5) && ok(an6) && !an6.preview && J(an5.labels) === J(["Leaf pigment", "Leaf shape", "Stem", "Roots"]),
+          `${B} GA1 · (BLOOM-040 PMO) the anatomy lessons (Find the limiting factor · Change the plant) show the Adapt room's FULL canonical Organic Hybrid on Chill Hollow — organism pixels = the production draw for the same adaptation state, never the no-colony ghost — under the same four callouts (Leaf pigment · Leaf shape · Stem · Roots, anchored on the real specimen); the organism is the canonical one in both lessons (with the Cold preview, then at rest); no colony is created (Chill Hollow living 0)`,
+          J({ an5: { ...an5, labels: an5.labels.join("/") }, an6: { org: an6.org, canonical: an6.canonical, lesson: an6.lesson, preview: an6.preview } })); }
       const fitAfterCold = await fit();
       // 7 · Spread: the room tab, point at Seed Output, then buy it once affordable
       R.push(await usePrim(p, "room-nav:spread")); await settle(p);
+      { const a7 = await p.evaluate(() => ({ lesson: BLOOM_TRAINING_UI.guide.director.current.id, pres: BLOOM.decisionRooms.instance.state().presentation }));
+        check(a7.lesson === "spread" && a7.pres === null, `${B} GA2 · (BLOOM-040 PMO) past the anatomy lessons the override is gone: the Spread lesson and every later one show the ordinary colony / no-colony presentation`, J(a7)); }
       R.push(await usePrim(p, "upgrade-seedOut", "hover")); const s7 = await G(p); await shot(p, "09-step07-spread.png");
       for (let k = 0; k < 30 && (await G(p)).bio < 130; k++) await adv(p, 20);
       await sleep(300); R.push(await usePrim(p, "upgrade-seedOut")); await settle(p);

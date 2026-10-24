@@ -250,6 +250,7 @@
   function describe(st) {
     const names = st.names || {}, owned = Object.keys(st.traits || {}).filter(id => st.traits[id] > 0).map(id => (names[id] || id) + (st.traits[id] > 1 ? " ×" + st.traits[id] : ""));
     const col = st.colony || {};
+    if (st.presentation === "anatomy") return `Your plant, shown in full to point out its parts${owned.length ? ": " + owned.join(", ") : ": no adaptations yet"}${st.preview ? `. Previewing ${names[st.preview.id] || st.preview.id}` : ""}.`;   // (BLOOM-040) the training anatomy view
     return `Your plant${col.living ? "" : " (no colony here yet)"}${owned.length ? ": " + owned.join(", ") : ": no adaptations yet"}${st.preview ? `. Previewing ${names[st.preview.id] || st.preview.id}` : ""}${col.living && st.condition !== "ok" ? ". Stressed here" : ""}${st.viable === false ? ". Would not survive" : ""}.`;
   }
 

@@ -1,7 +1,7 @@
 {
   "format": "bloom-portable/1",
   "esbuild": "0.28.2",
-  "fingerprint": "c8f04676664dd2fef94eea80e8854b0500d3ca8625bc2a94b54e137b421e1064",
+  "fingerprint": "e5e5dd3688e179486f61991ad59ef2798a36f6f57ff0a94453ff12fdcd1aba75",
   "generated": "do not edit by hand: npm --prefix tools run build:portable",
   "entry": "resources/portable/portable-entry.js",
   "workerEntry": "resources/destination-survey/survey-worker.js",
@@ -17,8 +17,8 @@
   ],
   "output": {
     "path": "dist/portable/strange-bloom.portable.js",
-    "bytes": 1435407,
-    "sha256": "149f2343aaa66f7cfa255473578d7574384dbaa72d810f1fbab4ad2264cc4208",
+    "bytes": 1435909,
+    "sha256": "3001bbe0cddd9f32794dc150dbb61c88aecd1e675d0c3b86d13e04c377131ede",
     "surveyWorkerTextBytes": 246251
   },
   "workerInputs": [
@@ -284,15 +284,15 @@
     },
     {
       "path": "resources/training/training-run.js",
-      "bytes": 12347,
-      "sha256": "0a1dcb875d8af1ac746cd6af536f5d2af2c771e000f9f7d84e0ecbdc878608ba",
-      "bytesInBundle": 9282
+      "bytes": 12989,
+      "sha256": "4b0abce2cfa616bd2c9acb903526015559e0dec94c8022dc45c01a08e7e8eca9",
+      "bytesInBundle": 9694
     },
     {
       "path": "resources/training/training-steps.js",
-      "bytes": 18162,
-      "sha256": "76bf6cb9f24ba3634a14513253a81c516882affbf5473d333e8a4e12c0a02d12",
-      "bytesInBundle": 15326
+      "bytes": 18672,
+      "sha256": "ed5f0559a98d9d0e685cd48b5cd554f89c584d8ab8a2bca17c812074c53e59e7",
+      "bytesInBundle": 15416
     },
     {
       "path": "resources/training/training-store.js",

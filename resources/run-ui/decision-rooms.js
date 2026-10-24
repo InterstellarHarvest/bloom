@@ -173,7 +173,8 @@
     // presentation state only: the run has one pause (the page's); this remembers what the room must restore
     const state = { room: null, ctx: -1, wasRunning: null, opener: null, peek: -1, lens: null, lensPv: null, em: 16, emBy: "", preview: null, hovered: null, suspended: false,
       transitioning: false, transitionKind: null, ignored: 0, // (029E) `ignored` counts stray input dropped while the room moved (QA)
-      superseded: 0, spot: false };                           // (BLOOM-040) settling transitions committed by a newer request · the map emphasis is on
+      superseded: 0, spot: false,                             // (BLOOM-040) settling transitions committed by a newer request · the map emphasis is on
+      presentation: null };                                   // (BLOOM-040 PMO) a specimen presentation override: { mode: "anatomy", rooms: [...] } | null
     const TL = []; // (029E) the swap timeline: pause / covered / reveal / resume timestamps and running states (QA evidence)
 
     // ---------------------------------------------------------------- the layer (inside the Planet View, over the veil)
@@ -216,7 +217,15 @@
     const sceneFor = (i, d) => { if (!PE) return null; const r = A.region(i), R0 = A.run(); if (!r) return null; d = d || { t: 0, m: 0 };
       return PE.region({ planetId: R0.planetId, archetypeId: R0.archetypeId, regionId: r.id, sky: { temperature: r.raw.effectiveTemp + d.t, moisture: r.raw.effectiveMoist + d.m },
         salinity: r.raw.salinity, toxicity: r.raw.toxicity, radiation: r.raw.effectiveRadiation }); };
+    // (BLOOM-040, PMO correction) the TRAINING ANATOMY presentation: while the guided training teaches the plant's parts in a room
+    // (setSpecimenPresentation("anatomy", { rooms })), that room's specimen is the FULL canonical organism for the current adaptation state —
+    // no no-colony ghost dither, no stress / unviable tint, no colony sprouts — through the same production path (the same pack, compositor and
+    // scene). Presentation only: no colony is created, nothing in the simulation or the region readouts changes, and the caption still says
+    // what the region really holds. Everywhere else (and in every other lesson) the ordinary colony / no-colony presentation is unchanged.
+    const anatomyOn = () => !!(state.presentation && state.presentation.mode === "anatomy" && state.room && state.presentation.rooms.includes(state.room));
     const specState = (i, preview, d) => { const r = A.region(i), c = A.colony(i), { tiers, names: nm } = traitTiers();
+      if (anatomyOn()) return { traits: tiers, names: nm, preview: preview || null, colony: { living: true, establishment: 0, word: r.colony.word }, focus: "balanced", local: null,
+        condition: "ok", viable: true, presentation: "anatomy", region: { name: r.name }, scene: sceneFor(i, d) };
       return { traits: tiers, names: nm, preview: preview || null, colony: { living: c.living, establishment: r.colony.establishment, word: r.colony.word }, focus: c.focus, local: c.localUpgrade,
         condition: r.limiting && r.limiting.blocked ? "bad" : r.status === "strained" ? "warn" : r.status === "ok" ? "ok" : LAMP_ST[r.lamp] || "ok", viable: !r.limiting.blocked,   // the specimen keeps the ground's own condition (a refuge is not suitable ground)
         region: { name: r.name }, scene: sceneFor(i, d) }; };
@@ -976,8 +985,15 @@
         hovered: state.hovered, preview: state.preview ? state.preview.id : null, em: state.em, emBy: state.emBy, emChips: state.emChips, emHeight: state.emHeight, medianName, claimedAnchors: claimed.slice(),
         globe: rooms.terraform ? rooms.terraform.globeKind() : null, // (029D) "pending" | "sphere" | "fallback"
         transitioning: state.transitioning, transitionKind: state.transitionKind, transition: T ? T.kind : "none", ignored: state.ignored, swaps: TL.length, // (029E)
-        motion: motion ? motion.e.kind : null, superseded: state.superseded, spot: state.spot }), // (BLOOM-040) Edge Assemble
+        motion: motion ? motion.e.kind : null, superseded: state.superseded, spot: state.spot, // (BLOOM-040) Edge Assemble
+        presentation: state.presentation ? { ...state.presentation, active: anatomyOn() } : null }),
       measure: name => rooms[name] && rooms[name].measure ? rooms[name].measure() : null,
+      // (BLOOM-040 PMO) the training anatomy presentation seam (resources/training/training-run.js drives it from the current lesson); the open
+      // room repaints at once when it changes. mode "anatomy" | null; rooms: the room ids it applies to (default the Adapt room)
+      setSpecimenPresentation(mode, { rooms: list = ["adapt"] } = {}) {
+        const next = mode === "anatomy" ? { mode, rooms: list.filter(x => ROOM_IDS.includes(x)) } : null;
+        if (JSON.stringify(next) === JSON.stringify(state.presentation)) return false;
+        state.presentation = next; if (state.room && rooms[state.room]) rooms[state.room].paint(); return true; },
       // (029D) disposing the rooms disposes the Terraform globe (its WebGL context, canvas and listeners) with them; (029E) and the transition
       dispose() { if (disposed) return; disposed = true; cancelAnimationFrame(raf); unsub(); if (state.room) closeImmediate(); for (const k in rooms) if (rooms[k].dispose) rooms[k].dispose(); if (T) T.dispose();
         life.abort(); ROS.forEach(ro => ro.disconnect()); SPECS.forEach(sp => sp.dispose()); layer.remove(); instance = null; DR.instance = null; },

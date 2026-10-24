@@ -37,6 +37,11 @@ export const VERGE_ESTABLISHED = 6;
  *  the navigation the player may need at any moment (the Planet View's tools, an open room's header: Back · room tabs · Resume) and every
  *  other control of an open room (nodes, Region Inspect's tabs, focus / local options, region chips): the honest alternatives — Warm the
  *  Sky, Early Maturity, Drought, another colony — stay clickable. */
+/** (BLOOM-040, PMO) the lessons that teach the plant's parts on the Adapt room's anatomy callouts (Leaf pigment · Leaf shape · Stem · Roots):
+ *  while one of them is current, the Adapt room shows the FULL canonical specimen (no no-colony ghost dither) — a presentation override only
+ *  (training-run.js → decisionRooms.setSpecimenPresentation). Every other lesson keeps the ordinary colony / no-colony presentation. */
+export const ANATOMY_LESSONS = Object.freeze(["limiting-factor", "adapt-buy"]);
+
 export const KEEP_CLEAR = ["play-pause", "speed", "run-menu", "biomass", "coverage", { control: "popover" }, { control: "room-header" }, { control: "hud-tools" }, { control: "room-controls", all: true }];
 
 const viable = (ctx, id) => { const r = ctx.region(id); return !!(r && r.viable); };

@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: c8f04676664dd2fef94eea80e8854b0500d3ca8625bc2a94b54e137b421e1064  (45 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: e5e5dd3688e179486f61991ad59ef2798a36f6f57ff0a94453ff12fdcd1aba75  (45 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {
@@ -15876,12 +15876,13 @@
     const cost2 = lose.length ? `but ${names(lose)} would close` : hurt.length ? `${names(hurt)} ${hurt.length > 1 ? "get" : "gets"} wetter too, but still ${hurt.length > 1 ? "grow" : "grows"}` : "nothing else gets worse";
     return `Humidify would open ${gain}. ${cap(cost2)}. ${lose.length ? "Weigh it before you buy." : "This trade is worth it: buy Humidify."}`;
   }
-  var TRAINING_REGIONS, R2, VERGE_ESTABLISHED, KEEP_CLEAR, viable, owned, name, inRoom, paused, pausedLine, colonyName, regionStep, isContext, cap;
+  var TRAINING_REGIONS, R2, VERGE_ESTABLISHED, ANATOMY_LESSONS, KEEP_CLEAR, viable, owned, name, inRoom, paused, pausedLine, colonyName, regionStep, isContext, cap;
   var init_training_steps = __esm({
     "resources/training/training-steps.js"() {
       TRAINING_REGIONS = Object.freeze({ meadow: "landing_meadow", verge: "green_verge", chill: "chill_hollow", fen: "reed_fen", flats: "thirsty_flats", salt: "salt_pan" });
       R2 = TRAINING_REGIONS;
       VERGE_ESTABLISHED = 6;
+      ANATOMY_LESSONS = Object.freeze(["limiting-factor", "adapt-buy"]);
       KEEP_CLEAR = ["play-pause", "speed", "run-menu", "biomass", "coverage", { control: "popover" }, { control: "room-header" }, { control: "hud-tools" }, { control: "room-controls", all: true }];
       viable = (ctx, id2) => {
         const r2 = ctx.region(id2);
@@ -15964,8 +15965,10 @@
           growThresh: T6.config.grow.growThresh,
           hooks: { placeBubble: (id2) => ui3.placeBubble(id2) },
           readUi,
+          onChange: anatomy,
           onFinish: (outcome) => {
             if (outcome === "completed") coach.hide();
+            anatomy(null);
           }
         });
         guide.mounted = true;
@@ -15978,6 +15981,7 @@
       /** Remove the coach and stop the director (no listener, timer, observer or element left behind). */
       unmount() {
         if (!guide.mounted) return false;
+        anatomy(null);
         guide.director.dispose();
         guide.coach.dispose();
         guide.director = guide.coach = null;
@@ -15985,6 +15989,12 @@
         return true;
       }
     };
+    function anatomy(d2) {
+      const dr3 = session.rooms;
+      if (!dr3 || typeof dr3.setSpecimenPresentation !== "function") return;
+      const on2 = !!(d2 && d2.state === "running" && d2.current && ANATOMY_LESSONS.includes(d2.current.id));
+      dr3.setSpecimenPresentation(on2 ? "anatomy" : null, { rooms: ["adapt"] });
+    }
     function readUi() {
       const dr3 = session.rooms, s2 = dr3 ? dr3.state() : null;
       const tab = s2 && s2.room === "region" ? document.querySelector('#dr .dr-room[data-room="region"] [role="tab"][aria-selected="true"]') : null;

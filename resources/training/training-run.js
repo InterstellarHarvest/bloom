@@ -28,7 +28,7 @@ import { BlackFade } from "../main-menu/black-fade.js";
 import { readTraining, writeTraining } from "./training-store.js";
 import { TrainingCoach } from "./training-coach.js";
 import { TrainingDirector } from "./training-director.js";
-import { trainingSteps, KEEP_CLEAR } from "./training-steps.js";
+import { trainingSteps, KEEP_CLEAR, ANATOMY_LESSONS } from "./training-steps.js";
 
 const ACTIONS = new Set(["restartTraining", "skipTraining", "mainMenu", "beginExpedition"]);
 const frame = () => new Promise(r => requestAnimationFrame(() => r()));
@@ -70,15 +70,22 @@ export function mountTraining(session, { fader = null, onAction = null, storage 
         geometry: { regionPoint: id => pv.regionPoint(id), regionRect: id => pv.regionRect(id), regionIndex: id => idx[id] ?? -1,
           bubblePoint: tile => { const b = A.bubbles().find(x => x.tile === tile); return b ? pv.renderer.clientOf(b.x, b.y) : null; } } });
       guide.director = new TrainingDirector({ steps: trainingSteps(), adapter: A, coach, keepClear: KEEP_CLEAR, growThresh: T.config.grow.growThresh,
-        hooks: { placeBubble: id => ui.placeBubble(id) }, readUi,
-        onFinish: outcome => { if (outcome === "completed") coach.hide(); } });
+        hooks: { placeBubble: id => ui.placeBubble(id) }, readUi, onChange: anatomy,
+        onFinish: outcome => { if (outcome === "completed") coach.hide(); anatomy(null); } });
       guide.mounted = true;
       const d = guide.director; coach.ready.then(() => { if (guide.director === d && !stats.leaving && !disposed) d.start(); });   // the first callout only once its styles apply
       return true;
     },
     /** Remove the coach and stop the director (no listener, timer, observer or element left behind). */
-    unmount() { if (!guide.mounted) return false; guide.director.dispose(); guide.coach.dispose(); guide.director = guide.coach = null; guide.mounted = false; return true; },
+    unmount() { if (!guide.mounted) return false; anatomy(null); guide.director.dispose(); guide.coach.dispose(); guide.director = guide.coach = null; guide.mounted = false; return true; },
   };
+  // (BLOOM-040, PMO) the anatomy lessons show the Adapt room's FULL canonical specimen (no no-colony ghost dither): presentation only, driven by
+  // the director's current lesson; any other lesson, the end of the guide or leaving it restores the ordinary presentation
+  function anatomy(d) {
+    const dr = session.rooms; if (!dr || typeof dr.setSpecimenPresentation !== "function") return;
+    const on = !!(d && d.state === "running" && d.current && ANATOMY_LESSONS.includes(d.current.id));
+    dr.setSpecimenPresentation(on ? "anatomy" : null, { rooms: ["adapt"] });
+  }
   // the rooms' presentation state (decision-rooms controller.state(): room, context, swap lock) and Region Inspect's selected tab
   function readUi() {
     const dr = session.rooms, s = dr ? dr.state() : null;
