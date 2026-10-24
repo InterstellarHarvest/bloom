@@ -9,12 +9,13 @@
 // reload, player / training navigation (its confirm and its training-layer fade). The plant is the PRODUCTION plant specimen
 // (resources/run-ui/plant-specimen.js) rendered from the real owned tiers; Terraform is shown apart, as what the sky became.
 //
-//   BLOOM.runReport.mount(planetView, { transition })   → the controller (also BLOOM.runReport.instance)
+//   BLOOM.runReport.mount(planetView, { transition })   → the controller (also BLOOM.runReport.instance); `transition` (the 029E bridge) is
+//                                                          kept for its reduced-motion reading only — no report swap runs the mist (BLOOM-040)
 //
 // Lifecycle: a win (bloom:win) or an extinction (the page's "loss" notice) → any open room is closed at once (nothing stale stays under
-// the report) → the ONE gameplay transition (SUBDUED mist, shared with the rooms) conceals → at covered: render, show, make the Planet
-// View inert / aria-hidden → reveal → focus enters the dialog. Keep playing → the mist again → at covered: hide, restore the view →
-// ONLY after the reveal completes: the page's continue-after-win (the run is running again). Leaving the run entirely (menu / training
+// the report) → (BLOOM-040) render, show, make the Planet View inert / aria-hidden → a quiet CROSSFADE (the map fades back, the report fades
+// in; no mist) → focus enters the dialog. Keep playing → the crossfade reversed → hide, restore the view → ONLY after the fade completes:
+// the page's continue-after-win (the run is running again). Leaving the run entirely (menu / training
 // actions) is the page's own navigation and its own fade: no cloud transition is layered over it.
 // Dialog semantics: role=dialog aria-modal, focus trapped (Tab cycles inside), visible focus, Escape never dismisses (a win is not
 // silently resumed; a loss cannot be dismissed into a dead run); win / loss read from the heading, the icon and the words, never colour.
@@ -187,17 +188,31 @@
       card.setAttribute("aria-label", `${d.heading}: ${$("rrSum").textContent}`);
     }
 
-    // ---------------------------------------------------------------- open / close through the one gameplay transition
+    // ---------------------------------------------------------------- open / close: a quiet CROSSFADE (BLOOM-040 PMO correction)
+    // The report is not a plant-workspace room and no longer uses the mist: the run / map fades back (its existing in-report treatment eased in)
+    // while the report layer — its veil and the card — fades in; Keep playing is the same fade reversed. No cloud, sweep, slide, zoom or
+    // parallax; opacity and the map's colour filter only. Reduced motion: a very short fade. The swap (render, show, inert) happens at the
+    // START so the fade has something to show; the end state (unlock, focus, and for Keep playing the page's resume) lands when the fade has
+    // finished — or at once without Web Animations. `T` (the 029E bridge) is not used for any report swap.
     const record = e => { TL.push(e); if (TL.length > 40) TL.shift(); return e; };
-    const through = (kind, swap) => T && typeof T.run === "function" ? T.run({ onCovered: swap, kind }) : Promise.resolve((swap({ immediate: true, why: "no-transition" }), { ran: false, immediate: true, covered: false, error: null }));
-    const entrance = ran => { card.classList.remove("entering"); if (!ran || reduced()) return; void card.offsetWidth; card.classList.add("entering"); card.addEventListener("animationend", () => card.classList.remove("entering"), { once: true }); };
+    const CROSSFADE = Object.freeze({ open: 340, close: 300, reduced: 120, ease: "cubic-bezier(.25,.1,.25,1)" });
+    const MAP_IN = "saturate(.78) brightness(.92)", MAP_OUT = "saturate(1) brightness(1)";
+    function crossfade(kind, swap) {
+      const rm = reduced(), ms = rm ? CROSSFADE.reduced : kind === "report-open" ? CROSSFADE.open : CROSSFADE.close, opening = kind === "report-open";
+      if (opening) swap();
+      const anims = [], add = (el, frames) => { if (el && typeof el.animate === "function") anims.push(el.animate(frames, { duration: ms, easing: rm ? "linear" : CROSSFADE.ease, fill: "both" })); };
+      add(layer, opening ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 1 }, { opacity: 0 }]);
+      parts.forEach(x => add(x, opening ? [{ filter: MAP_OUT }, { filter: MAP_IN }] : [{ filter: MAP_IN }, { filter: MAP_OUT }]));
+      const done = () => { if (!opening) swap(); anims.forEach(a => { try { a.cancel(); } catch { /* gone */ } }); return { ran: anims.length > 0, immediate: !anims.length, reducedMotion: rm, ms, error: null }; };
+      return Promise.all(anims.map(a => a.finished.catch(() => null))).then(done);
+    }
     function open() {
       const d = A.report(); if (!d || state.open || state.busy) return false;
       state.busy = true; state.kind = d.kind; state.opener = document.activeElement && document.activeElement !== document.body ? document.activeElement : null;
       const DR = root.BLOOM.decisionRooms && root.BLOOM.decisionRooms.instance; if (DR && DR.state().room) DR.closeImmediate(); // nothing stale under the report
       const e = record({ kind: "report-open", report: d.kind, tStart: tnow(), runningBefore: A.run().running, tCovered: null, tSwapDone: null, tEnd: null, runningAtEnd: null, ran: false, immediate: null });
       layer.dataset.transitioning = "report-open"; view.el.dataset.transitioning = "report-open";
-      through("report-open", () => {
+      crossfade("report-open", () => {
         e.tCovered = tnow();
         render(d); layer.hidden = false; view.el.classList.add("in-report"); state.open = true; state.shown++; coverMenu(true);
         parts.forEach(x => { x.inert = true; x.setAttribute("aria-hidden", "true"); });
@@ -205,7 +220,7 @@
         e.tSwapDone = tnow();
       }).then(res => {
         e.tEnd = tnow(); e.ran = !!res.ran; e.immediate = !!res.immediate; e.runningAtEnd = A.run().running; e.error = res.error || null;
-        delete layer.dataset.transitioning; delete view.el.dataset.transitioning; state.busy = false; entrance(res.ran);
+        delete layer.dataset.transitioning; delete view.el.dataset.transitioning; state.busy = false; e.motion = "crossfade"; e.reducedMotion = res.reducedMotion;
         requestAnimationFrame(() => { if (state.open) { const f = $("rrContinue").hidden ? $("rrActs").querySelector("button") : $("rrContinue"); (f || card).focus(); } });
       });
       return true;
@@ -215,13 +230,13 @@
       state.busy = true;
       const e = record({ kind: "report-close", report: state.kind, tStart: tnow(), runningBefore: A.run().running, tCovered: null, tSwapDone: null, tEnd: null, tResume: null, runningAtEnd: null, ran: false, immediate: null });
       layer.dataset.transitioning = "report-close"; view.el.dataset.transitioning = "report-close";
-      through("report-close", () => {
+      crossfade("report-close", () => {
         e.tCovered = tnow();
-        layer.hidden = true; card.classList.remove("entering"); view.el.classList.remove("in-report"); state.open = false; coverMenu(false);
+        layer.hidden = true; view.el.classList.remove("in-report"); state.open = false; coverMenu(false);
         parts.forEach(x => { x.inert = false; x.removeAttribute("aria-hidden"); });
         e.tSwapDone = tnow();
       }).then(res => {
-        e.tEnd = tnow(); e.ran = !!res.ran; e.immediate = !!res.immediate; e.error = res.error || null;
+        e.tEnd = tnow(); e.ran = !!res.ran; e.immediate = !!res.immediate; e.error = res.error || null; e.motion = "crossfade"; e.reducedMotion = res.reducedMotion;
         delete layer.dataset.transitioning; delete view.el.dataset.transitioning; state.busy = false;
         A.actions.reportAction("keepPlaying");                                     // ONLY now: the page's own continue-after-win
         e.tResume = tnow(); e.runningAtEnd = A.run().running;

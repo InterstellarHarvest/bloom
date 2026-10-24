@@ -19,10 +19,9 @@
 .rr .rr-scroll:focus-visible{outline-offset:-3px}
 .rr .ic{pointer-events:none; width:1.25em; height:1.25em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex:none; vertical-align:-.28em}
 /* the card's restrained entrance THROUGH the mist (only when it ran; never under reduced motion) */
-.rr-card.entering{animation:rrEnter .2s cubic-bezier(.2,.7,.3,1) both}
-@keyframes rrEnter{from{opacity:0; transform:translate3d(0,6px,0) scale(.992)} to{opacity:1; transform:translate3d(0,0,0) scale(1)}}
-@media (prefers-reduced-motion: reduce){ .rr-card.entering{animation:none} .rr *{transition:none !important; animation:none !important} }
-.pv.reduced .rr-card.entering{animation:none} .pv.reduced .rr *{transition:none !important; animation:none !important}
+/* (BLOOM-040) the report opens / closes with a quiet crossfade driven by run-report.js (no mist, no card entrance transform) */
+@media (prefers-reduced-motion: reduce){ .rr *{transition:none !important; animation:none !important} }
+.pv.reduced .rr *{transition:none !important; animation:none !important}
 
 /* ── header: kicker · heading (icon + word) · one summary sentence. (The run page styles every <header> / <footer> element for its
    engineering shell: every property that rule sets is set again here, so nothing of it reaches this card.) ── */
