@@ -200,7 +200,10 @@ view.setPlanet(BLOOM_RUN.planet, { render: (BLOOM_RUN.archetype && BLOOM_RUN.arc
 - **Seam.** Authored worlds (First Bloom, Training Grounds) have no `topology`. They are rectangles, so the globe shows a real
   seam at the cut. Generated worlds are cylinders.
 
-### 6.4 Room transitions (029E): AtmosphereTransition, unmodified — DONE
+### 6.4 Room transitions (029E): AtmosphereTransition, unmodified — DONE · (BLOOM-040) superseded for rooms by Edge Assemble
+
+> **BLOOM-040:** room swaps are **Edge Assemble** (`docs/GAMEPLAY_UI_CONVERGENCE_v1.md` §6) — no mist; the bridge below is now used by the
+> production report alone.
 
 `resources/run-ui/gameplay-transition.js` is the one bridge (a guarded dynamic import, as the sphere; the component consumed through its
 public API only; the Settings motion choice read through `main-menu-data.js`); the rooms controller and the production report run every
@@ -244,3 +247,16 @@ Presentation reads only; no rule, price or threshold moves into the adapter. Evi
 
 The page (`game-session.js`) adds the host reads `compReason` and `stepsWhatIf`. `wouldHelp(r)` (one step) is unchanged and still
 available. The renderer adds `labelAt(x, y)` (the region-name pill under the pointer) and `info().labels` (QA geometry).
+
+## 10. BLOOM-040 additions (presentation seams; `api` stays 1)
+
+No adapter change. Additive presentation APIs only:
+
+| Seam | What it is |
+|---|---|
+| `planetView.emphasize(index \| -1, { ms })` · `state().spot` | Edge Assemble's map emphasis: the region stays crisp, the rest dims, one soft pulse, then a quiet glow under the room; `-1` releases it. No selection, no event, no camera move |
+| renderer FRAME `spot { index, k, pulse }` | the same, drawn by `run-map-renderer.js` (an even-odd dim over every tile but the region's; a pale outline glow) |
+| `decisionRooms.EDGE` · `controller.state().motion / superseded / spot` · timeline `motion`, `tMotion`, `superseded` | the Edge Assemble timing table and its QA state |
+| `plantEnvironment.paint(S, W, H, soilY, ext)` | the box-filling margin extension (window byte-identical to the frame) |
+| `plantSpecimen` instance `fill()` | the environment layer's geometry (QA) |
+

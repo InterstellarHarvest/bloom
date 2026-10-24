@@ -67,6 +67,21 @@ the shell exactly — its map drawn, its anchors, its title, its buttons usable;
 
 ## 3. The transition language (what 029E owns)
 
+> **BLOOM-040 — TRANSITION SYSTEM: EDGE ASSEMBLE (LOCKED owner direction; supersedes the two room rows below).** Planet View ↔ room and room
+> ↔ room no longer use the SUBDUED mist: they are **Edge Assemble** (§6, the current text). The table's other rows are unchanged — the report
+> still opens / closes through the SUBDUED mist, the descent is still DRAMATIC, the menu fades are untouched.
+>
+> | crossing | treatment (BLOOM-040) |
+> |---|---|
+> | **Planet View → room** (map → plant workspace) | the region is emphasised on the map, then the room ASSEMBLES: **header from the top · specimen from the left · work panel from the right** |
+> | **room → Planet View** (Back / Resume / Escape) | the reverse: work panel exits right, specimen left, header up; the map resolves underneath, the region still selected |
+> | **room ↔ room** (Region · Adapt · Spread · Terraform) | the **specimen is fixed**; the surrounding UI changes (header copy + work / information panels: fade + 16 px) |
+> | reduced motion | a restrained cross-fade / near-instant replacement; no directional travel; the specimen fixed in either mode |
+>
+> **Weather is environmental presentation, never a transition device:** rain, snow and clouds keep running through every navigation (the
+> specimen weather runs on the page clock); nothing accelerates, sweeps or restarts them to hide a change. Not used anywhere: cloud / weather
+> wipes, giant foreground objects, parallax page transitions, dramatic zooms, full-screen slides, spins.
+
 | crossing | treatment | owner |
 |---|---|---|
 | Main Menu ↔ Destination Survey | fade through black | 028C1 (untouched) |
@@ -115,6 +130,33 @@ T.dispose()
   preset, the reduced flag and the layout seed of each run.
 
 ## 6. The locked order (rooms)
+
+> **BLOOM-040 — EDGE ASSEMBLE (current; the 029E mist text below is the historical record).** `resources/run-ui/decision-rooms.js`, one
+> controller, Web Animations on **transform / opacity only** (plus the map's existing in-room blur filter, eased only while the veil fades —
+> a backdrop filter re-blurred on every weather frame and was measured 20 / 12 fps). Timings `BLOOM.decisionRooms.EDGE` (ms, [delay, duration]):
+>
+> - **Open** (Planet View → room): 1 remember the running state · 2 pause the REAL run at once · 3 `planetView.emphasize(region)` — the region
+>   stays crisp, the rest of the map dims (≤ 30 %), its outline gives one soft pulse (no zoom, no pan, no morph) · 4 the room is shown at
+>   once with its pieces at their edges: the veil + blur `[60, 220]` (the region stays crisp for the emphasis' first beat), **header from above** `[40, 340]` (it starts one header height off the top),
+>   **specimen column from the left** `[80, 340]`, **work panels from the right** `[120, 340]` (side travel clamp(56 px, 6 vw, 120 px) with a
+>   fade, ease `cubic-bezier(.2,.8,.2,1)`) — 460 ms of motion, measured ≈ 0.5 s settled (Chromium headless 499–526 ms) · 5 settled: geometry
+>   measured at rest (tendrils, the tree card), the tendrils fade in, focus to the room title / the requested node. The home selection stays
+>   selected (its banner fades under the veil). No tick passes.
+> - **Close** (Back / Resume / Escape): clear the preview; stay paused; the reverse — work panels exit right `[0, 220]`, the specimen
+>   column left `[30, 220]`, the header up `[60, 220]`, the veil + blur clear `[50, 250]` (300 ms; measured 348–376 ms); the emphasis
+>   resolves; at rest the room hides, the Planet View is restored, **then** Back restores the pre-room state / Resume runs, and focus returns
+>   to the opener. The same region is still selected.
+> - **Switch** (room → room): the old room's preview cleared first; the specimen box (`.lf-top`) never animates — same rect, same
+>   pixels; the header copy (`.rt`), the work panels (`.z-main`, `.z-map`), the information card and the caption text fade out with a 16 px
+>   nudge (110 ms, in the direction of travel along the room tabs), the rooms swap, the new ones fade in (190 ms). Never two rooms, never
+>   the Planet View in between. The header's Back / room tabs / Resume stay live.
+> - **Reduced motion** (OS or Settings → Motion): opacity only — open 160 ms, close 140 ms, switch 70 + 120 ms; no element travels.
+> - **Interruption:** ONE transition at a time (`motion`). A newer request — Escape at any moment, a room tab / Back / Resume during a switch —
+>   **commits** the settling transition (its end state at once: the swap, the resume, the focus) and then runs, so the final route is the
+>   player's last action. While a room opens or closes it takes no pointer input (a double-click never lands on an arriving control). No
+>   timers are stacked; the end state is applied when the animations finish (`Animation.finished`) or at once on a commit.
+> - **Accessibility:** exactly one of {room, Planet View} is exposed at any frame (the Planet View inert + `aria-hidden` while a room shows);
+>   the leaving room is `inert` for its exit; focus moves only after the motion.
 
 **Open** (Planet View → room, `decisionRooms.open`):
 
@@ -234,6 +276,9 @@ Room navigation and the report's open / close remain presentation state (`contro
 events and their detail keys are frozen (N7, B10) — no new event was added. This freeze is what 028D2 builds on.
 
 ## 11. Reduced motion · file:// · failure safety
+
+> **BLOOM-040:** the rooms' reduced motion is Edge Assemble's own path (§6); the AtmosphereTransition's reduced path below now concerns the
+> report only. Over file:// the rooms run Edge Assemble too (it needs no module).
 
 - **Reduced motion**: AtmosphereTransition's own reduced mode is authoritative (a restrained veil fade, static clouds, 80 / 110 ms). The
   bridge hands it the Settings choice (`"reduced"` → true, `"full"` → false, `"system"` → null = the OS at the start of each run), the rooms and

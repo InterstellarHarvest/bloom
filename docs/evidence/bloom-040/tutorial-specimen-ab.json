@@ -1,0 +1,38 @@
+{
+ "before-expedition": {
+  "pack": "organic-hybrid",
+  "plan": "oh-stem@1",
+  "org": "7674b261",
+  "global": "a7b728dd",
+  "colony": "sparse",
+  "traits": 0,
+  "cond": "ok"
+ },
+ "before-training": {
+  "pack": "organic-hybrid",
+  "plan": "oh-stem@1",
+  "org": "7674b261",
+  "global": "a7b728dd",
+  "colony": "sparse",
+  "traits": 0,
+  "cond": "ok"
+ },
+ "after-expedition": {
+  "pack": "organic-hybrid",
+  "plan": "oh-stem@1",
+  "org": "7674b261",
+  "global": "a7b728dd",
+  "colony": "sparse",
+  "traits": 0,
+  "cond": "ok"
+ },
+ "after-training": {
+  "pack": "organic-hybrid",
+  "plan": "oh-stem@1",
+  "org": "7674b261",
+  "global": "a7b728dd",
+  "colony": "sparse",
+  "traits": 0,
+  "cond": "ok"
+ }
+}

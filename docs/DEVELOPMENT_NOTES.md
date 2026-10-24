@@ -196,6 +196,7 @@ node tools/species-art-intake-check.js                                   # BLOOM
 node tools/candle2-contract-check.js                                     # BLOOM-035C2 candle@2 contract revision
 NODE_PATH="$(npm root -g)" node tools/specimen-environment-check.js      # BLOOM-035C2 the region-driven specimen environment
 node tools/build-challenge-seed-bank.mjs --check                         # BLOOM-036B1: the shipped bank is exactly a rebuild from the committed candidate cache, Node, seconds
+NODE_PATH="$(npm root -g)" node tools/transition-check.js [--browsers chromium,firefox] [--only N,E,M,F,V,W,I,A,P,T] [--viewports 1024x768,…] [--evidence]  # BLOOM-040 Edge Assemble (map ↔ room, room ↔ room), the fixed canonical specimen, the environment fill, weather legibility, interruption, focus / axe (AXE=<axe.min.js>), Training's specimen art; Node + browser
 node tools/pacing-metrics.js [--json <out>]                              # opening / pacing measurements (report, not pass/fail)
 node tools/colony-study.js [--json <out>] [--quick] [--worlds fb,13,8,d25,d9,f22,f12]  # per-colony allocation + local-investment study (report; d<N> / f<N> = Desert / Frozen seed N)
 node tools/pressure-study.js [--scenario dying_world] [--seeds 20] [--json <out>]  # one scenario across every archetype + the fixtures (report, ~4 min)

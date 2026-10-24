@@ -32,6 +32,10 @@ canonical surface, AtmosphereTransition, main menu, survey, training layer, mock
 
 ## 2. Room controller lifecycle
 
+> **BLOOM-040 (current):** room swaps are **Edge Assemble** (§13, [`GAMEPLAY_UI_CONVERGENCE_v1.md`](GAMEPLAY_UI_CONVERGENCE_v1.md) §6), and
+> **the home selection is no longer cleared** when a room opens: it stays selected under the room (its banner fades out under the veil) and
+> the map returns with the same region selected on Back / Resume / Escape. Everything else below is unchanged.
+
 `BLOOM.decisionRooms.mount(pv)` builds the three rooms once (hidden) inside the Planet View's element, registers them on
 the seam (`pv.rooms.register("region" | "adapt" | "spread", { open(ctx) → close })`) and returns the controller (also
 `BLOOM.decisionRooms.instance`): `open(name, ctx)`, `close(resume)`, `setCtx(i)`, `setLens`, `previewLens`, `calibrate`,
@@ -69,7 +73,8 @@ synthesise under the stationary pointer after the swap (Firefox) does not clear 
 Room context is **not** `adapter.selection()`. The rooms read `region(ctx)`, `colony(ctx)`, `wouldHelp(ctx)` and act with
 `setGrowthFocus(ctx, …)` / `buyLocalUpgrade(ctx, …)`; they never call `actions.selectRegion` / `selectTile` (suite N4 scans for
 it). Changing the context (mini-map click, region-chip click, `controller.setCtx`) emits **no** `bloom:region-select` and never
-touches the hidden home selection (QA B5). When a room closes, no home region is selected.
+touches the hidden home selection (QA B5). When a room closes, no home region is selected. *(BLOOM-040: the home selection is kept
+through the room — the map returns with the same region selected; the room context still never writes it.)*
 
 **Fallback to origin:** `ctx.region ≥ 0` → that; else `selection().index ≥ 0` → that; else the last room context; else the origin.
 
@@ -229,7 +234,17 @@ adapter.surface().planet, { render: adapter.surface().render })`, match regions 
 atmosphere and the Soil / Atmosphere banks; its previews are `actions.preview` of the real sky traits. The specimen is never
 mutated by Terraform.
 
-## 13. Transition seam (029E) — filled
+## 13. Transition seam (029E) — filled; (BLOOM-040) Edge Assemble
+
+> **BLOOM-040 — current.** The SUBDUED mist no longer wraps room swaps. **Planet View → room:** the selected region is emphasised on the map
+> (`planetView.emphasize(i)`: the rest dims, one soft pulse; no zoom / pan), the veil arrives over the blurring map, and the room **assembles
+> from the nearest screen edges** — header from above, the specimen column from the left, the work panels (centre + right) from the right,
+> staggered, ease `cubic-bezier(.2,.8,.2,1)`, 460 ms of motion (≈ 0.5 s settled). **Room → Planet View:** the reverse, quicker (300 ms). **Room →
+> room:** the specimen box is fixed; the header copy, the work panels and the information card fade with a 16 px nudge (110 ms out, 190 ms
+> in). **Reduced motion:** opacity only, no travel. One controller (`motion`): a newer request commits the settling transition, then runs —
+> the final state is the last action. Transform / opacity only (the map's existing blur filter eased only while the veil fades). The bridge
+> (`controller.transition`) is still created and prepared here, for the production report. Timings: `BLOOM.decisionRooms.EDGE`; QA
+> `tools/transition-check.js`.
 
 *(029C text, kept for the record: every swap was immediate and `controller.transition` was `null`.)* BLOOM-029E filled the seam:
 `controller.transition` is the ONE gameplay transition bridge of the run (`resources/run-ui/gameplay-transition.js`, the unmodified
@@ -260,3 +275,18 @@ focus on open / return on close, no colour-only category or status, controls ≥
 - The 028D1 anchors `inspect / readout / limiting-factor / colony-status` stay on the banner; a coach that wants them inside the
   Region room needs a decision (duplicate active anchors were avoided on purpose).
 - Firefox tested at 1280×800; WebKit not run. `color-mix()` is used for the condition rows' tinted borders.
+
+## 16. Canonical specimen geometry (BLOOM-040 — LOCKED)
+
+ONE specimen box for **Region Inspect · Adapt · Spread · Terraform**: the `.dr .lf-top` rule — the full width of the room grid's **21 %**
+left column, aspect **170 : 196** (the accepted Region / Adapt presentation), capped at **56 %** of the room's zone height (`.z-focus` has
+a definite height, so the cap never depends on a room's content). Terraform's grid is `21 % · 1fr · 23 %` (was 20 %, and its 4 : 3 / 38 %
+specimen variant is gone): at 1440 × 900 every room's box is 294.25 × 339.25 px at (19.39, 117.63), the organism at 3×; at 1024 × 768,
+209.23 × 241.23 px at 2×. Nothing a room shows may move, resize, fade or re-crop the box; on a room switch the outgoing and incoming boxes
+are pixel-identical (same rect, same scene, same organism, the weather on the page clock). The scene **fills** the box edge to edge
+(`plant-specimen.js` environment layer: `plantEnvironment.paint`'s margin extension, its window byte-identical to the organism frame's own
+backdrop); the caption overlays the scene. Every room's information card (below the box) keeps its content height up to the column's free
+height: its closing hint (`.li-hint`) steps aside when it would otherwise make the card scroll (it shows whenever there is room), and a card
+that still overflows on a very short window becomes keyboard-focusable (`fitInfo`). Terraform needed this most (its specimen grew from the
+old 4 : 3 box); a long Spread text on some regions already overflowed by ~13 px on `main` (axe `scrollable-region-focusable`), now fixed.
+

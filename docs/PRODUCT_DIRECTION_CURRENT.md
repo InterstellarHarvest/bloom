@@ -15,7 +15,27 @@ near-term roadmap. Keep it short and keep it current: when a decision changes, c
 here. Historical milestone documents and `docs/evidence/` remain authoritative for *what happened at a particular milestone* — they are
 not rewritten to match later plans.
 
-*Last updated: 2026-10-14, **BLOOM-039 CLOSEOUT — BLOOM-038: IMPLEMENTED / COMPLETE (automated design audit) · BLOOM-039: IMPLEMENTED /
+*Last updated: 2026-10-23, **BLOOM-040 — EDGE ASSEMBLE TRANSITIONS + SPECIMEN CONSISTENCY: CANDIDATE** (review branch `handoff/bloom-040-review`,
+from production `c1b5171` / docs `d03c6f9`; NOT in production `main`; presentation / navigation only — no gameplay, species, Challenge, bank,
+world-generation or room-layout change). Record: [`evidence/bloom-040/REPORT.md`](evidence/bloom-040/REPORT.md).*
+
+**LOCKED owner direction — BLOOM-040 (CANDIDATE implementation):**
+- **TRANSITION SYSTEM: EDGE ASSEMBLE.** Map → plant workspace: the selected region is briefly emphasised (crisp; the rest dims; one soft
+  pulse — no zoom, pan or morph), then the workspace assembles from the nearest edges — **header from the top · specimen from the left · work
+  panel from the right** (≈ 0.5 s, staggered, ease `cubic-bezier(.2,.8,.2,1)`, transform / opacity). **Back** is the reverse (quicker), the
+  map resolving underneath with the same region still selected. **Plant room → plant room** (Regions · Adapt · Spread · Terraform): the
+  **specimen is fixed**, the surrounding UI changes (header copy and work / information panels: a short fade + ~16 px). **Reduced Motion:** a
+  restrained cross-fade, no directional travel; the specimen fixed in either mode. No cloud / weather wipes, giant foreground objects,
+  parallax, dramatic zooms, full-screen slides or spins. The report, menu and survey transitions are unchanged.
+- **Canonical fixed specimen geometry** across Regions / Adapt / Spread / Terraform: one `.lf-top` box (the 21 % left column, 170 : 196,
+  ≤ 56 % of the zone) — same x, y, width, height, scale and scene bounds; Terraform conforms. The environment scene fills the box (sky full
+  width; ground to the left, right and bottom edges); the caption overlays it.
+- **Weather is environmental presentation, never a transition device.** Rain and snow read more clearly (size and contrast, not density);
+  the weather continues through navigation (the page clock) and is never accelerated, swept or restarted to hide a page change.
+- **The home selection stays selected while a plant room is open** (it was cleared since 029C) so the map returns with it.
+- **Training's specimen** is confirmed to use the canonical production Organic Hybrid path (no proof / fallback art): see the report.
+
+*Previous: 2026-10-14, **BLOOM-039 CLOSEOUT — BLOOM-038: IMPLEMENTED / COMPLETE (automated design audit) · BLOOM-039: IMPLEMENTED /
 COMPLETE (pre-playtest clarity & UX) · LIVE.** Production `main` was fast-forwarded `8b23e78` → **`c1b5171`** (the exact PMO-accepted review head;
 no merge commit, squash, rebase, cherry-pick or force push) and is live at <https://interstellarharvest.github.io/bloom/> (GitHub Actions Pages run
 38673127447 — success). Review regression **46 / 46 suites, 2,119 checks, 0 failures**; clean-main release QA 11 / 11 (703 checks); live
@@ -492,4 +512,5 @@ This is not a gameplay-code feature; product code does not work around repositor
 | **v1.0.1** — UI polish hotfix | title / settings / selection / planning panels / one-copy map / icy water (presentation only) | **IMPLEMENTED / COMPLETE** (LIVE, closeout `2590d79`) |
 | **BLOOM-038** — Automated design audit | read-only design / visual-quality study: 4,424 policy runs, the visual atlas, affordance / copy / pause audits, failure states ([`DESIGN_AUDIT_v1.md`](DESIGN_AUDIT_v1.md)) | **IMPLEMENTED / COMPLETE** — compact research record in `main` (`8b23e78`; the regenerable ~56 MB raw atlas intentionally not in history) |
 | **BLOOM-039** — Pre-playtest clarity & UX | presentation / shell only, before human playtesting: Native Competition legibility (competition reason, native-held mark, Terraform native preview, FRONT STALLED cue); an honest region readout (status from the engine's grow rule, multi-step "Would help" with real prices, toxicity truth); hidden-tab / long-gap timekeeping; copy fixes (landing pointer, Challenge card title, one severity vocabulary, unaffordable reason at rest); the region banner flips to the top when it would cover its region; region-name pills select the region they name; ONE shared application width (≤ 1920 px, centred). No mechanic, bank, balance or species change ([`evidence/bloom-039/REPORT.md`](evidence/bloom-039/REPORT.md)) | **IMPLEMENTED / COMPLETE** — LIVE (`main` `c1b5171`, Pages run 38673127447) |
+| **BLOOM-040** — Edge Assemble transitions + specimen consistency | presentation / navigation only: Edge Assemble map ↔ plant workspace (header top · specimen left · work panel right; reverse on Back; reduced motion = cross-fade); room ↔ room with a fixed specimen; ONE canonical specimen geometry (Terraform conforms); the scene fills its box; clearer rain / snow; weather never a transition device; the home selection kept through a room; Training's specimen audited (canonical path) ([`evidence/bloom-040/REPORT.md`](evidence/bloom-040/REPORT.md)) | **CANDIDATE** — `handoff/bloom-040-review`, pending PMO review |
 | **Human playtest** | QUESTIONS, not planned changes: Volatile Climate tuning, Dying World decline, Thin Air hold, Ocean pacing, Biomass economy / cadence, the 70 % target, species balance, Challenge recipes, Oasis Line distinctness, Terraform balance, save / Continue, whether map inspection should pause, tall-window room surplus | NEXT (not started) |

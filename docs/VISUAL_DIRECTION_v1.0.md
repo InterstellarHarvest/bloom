@@ -54,6 +54,16 @@ The panel is one integrated scene: the plant grows upward from the soil into the
 > presentation-only showcase scene; the report shows the real final plant in a representative region. Environment art is not bound by the
 > plant sprite pixel contract. QA: `tools/specimen-environment-check.js`.
 
+> **BLOOM-040 — the scene FILLS its box; weather reads.** The environment is painted over the WHOLE specimen box (`plantEnvironment.paint`'s
+> margin extension: the same scene continued — sky, horizon, ground line, soil strata and marks — out to every edge; its window under the
+> organism is byte-identical to the 84 × 98 frame, so every organism / environment signature is unchanged). The sky reaches the full width;
+> the ground reaches the left, right and bottom edges; no padded card background shows; the caption overlays the scene. The weather overlay
+> covers the box at the frame's density per area. **Rain** is a two-tone streak (a dark blue-grey core that reads on bright sky and snow, a pale
+> edge that reads on dark ground), slightly longer and thicker; **snow** a slightly larger white flake with a soft blue-grey rim — size and
+> contrast, never more particles (A / B at the same instant and count: ≥ 1.4× the visible ink, `tools/transition-check.js` W1). **Weather is
+> environmental presentation, never a transition device:** it runs on the page clock, so it continues through every room switch (two
+> overlays of one scene draw the same frame at the same moment) and nothing ever accelerates, sweeps or restarts it to hide a page change.
+
 ### 3.1 Science / visual separation (must hold)
 
 - **Adapt** (organism traits) changes **the plant**.

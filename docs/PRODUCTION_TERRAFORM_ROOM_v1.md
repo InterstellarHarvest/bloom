@@ -61,6 +61,13 @@ Category identity (Concept 18): **Sky temperature** = the Temperature family (or
 
 ## 4. Room composition (Concept 18 lock)
 
+> **BLOOM-040 — the Terraform specimen conforms to the canonical geometry** ([`PRODUCTION_PLANT_ROOMS_v1.md`](PRODUCTION_PLANT_ROOMS_v1.md)
+> §16): the grid is `21 % · 1fr · 23 %` (the plant rooms' left column; was 20 %), and the plant-in-its-land box is the SAME `.lf-top` box as
+> Region / Adapt / Spread (170 : 196, the 4 : 3 / 38 % variant removed — it rendered the plant at 2× where the others showed 3×, and at 1× at
+> 1024 × 768). At rest its pixels equal Region Inspect's; a Terraform preview changes only the scene. The information card below keeps its
+> content and order; its closing hint steps aside when the taller box leaves too little height (it shows whenever there is room). *(The
+> "never shows the plant" text below is the 029D record; since 035C2 the plant stands in its land here — PRODUCT_DIRECTION §6.)*
+
 `.r-terraform` uses Concept 18's Terraform proportions (20 % / 1fr / 23 %), the sky accent, the shared header (**CHANGE · THE PLANET /
 Terraform / Change the planet, not the plant**, Region · Adapt · Spread · Terraform — all ready, Biomass pill, PAUSED, Resume, Back). It
 never shows the plant specimen or an anatomy tendril (B1, N4).
