@@ -1,8 +1,7 @@
 /*
   BLOOM-029C — production decision rooms (Region Inspect · Adapt · Spread), Concept 18 visual language. docs/PRODUCTION_PLANT_ROOMS_v1.md.
   Scoped to .pv .dr (mounted inside the production Planet View, &ui=18). Reuses the accepted Concept 18 room CSS ideas (floating
-  content-height cards over the blurred, dimmed, inert world; the shared room header; category identity; organic tendrils whose
-  weights follow the room em — set by decision-rooms.js); no mockup file is loaded. Local inline-SVG icons only; no web fonts.
+  content-height cards over the blurred, dimmed, inert world; the shared room header; category identity); no mockup file is loaded. Local inline-SVG icons only; no web fonts.
 */
 /* the Planet View stays mounted underneath in the same geometry: blurred ≈ 7 px, dimmed by the layer's 46 % ink veil, inert.
    (BLOOM-040) The ink is its own element (.dr-veil) so Edge Assemble can fade it (opacity); the blur stays a static filter at rest (a backdrop
@@ -13,9 +12,9 @@
 .dr{position:absolute; inset:0; z-index:40; --room-em:16px; font-size:var(--room-em);
   --room-bg:#ebe4d2; --acc:var(--leaf); --acc-soft:var(--leaf-soft); --acc-dark:var(--leaf-dark);
   --box-shadow:0 2px 0 rgba(60,50,20,.08), 0 10px 28px rgba(40,50,30,.22)}
-.dr-room{position:absolute; inset:0; display:grid; grid-template-rows:auto minmax(0,1fr); grid-template-columns:21% minmax(0,1fr) 33%; grid-template-areas:"rh rh rh" "focus main map"; gap:1em; padding:0 1em 1em; min-height:0; align-items:start; font-size:var(--room-em)}
+.dr-room{position:absolute; inset:0; display:grid; grid-template-rows:auto minmax(0,1fr); grid-template-columns:23% minmax(0,1fr) 33%; grid-template-areas:"rh rh rh" "focus main map"; gap:1em; padding:0 1em 1em; min-height:0; align-items:start; font-size:var(--room-em)}
 /* the scale probe: the room grid at a known font size, measured, never shown (and never a .dr-room) */
-.dr-probe{position:absolute; inset:auto 0 auto 0; top:0; display:grid; grid-template-rows:0 auto; grid-template-columns:21% minmax(0,1fr) 33%; grid-template-areas:"rh rh rh" "focus main map"; gap:1em; padding:0 1em 1em; visibility:hidden; pointer-events:none; height:2px; overflow:hidden; z-index:-1}
+.dr-probe{position:absolute; inset:auto 0 auto 0; top:0; display:grid; grid-template-rows:0 auto; grid-template-columns:23% minmax(0,1fr) 33%; grid-template-areas:"rh rh rh" "focus main map"; gap:1em; padding:0 1em 1em; visibility:hidden; pointer-events:none; height:2px; overflow:hidden; z-index:-1}
 .dr .box,.dr .rh,.dr .lf-top,.dr .lf-info,.dr .z-main,.dr .mm,.dr .mm-ctx{background:var(--card); border:2px solid var(--line-2); border-radius:var(--r-md); box-shadow:var(--box-shadow)}
 
 /* ── shared room header: Back · kicker / title / verb · Region | Adapt | Spread | Terraform · Biomass · PAUSED · Resume ── */
@@ -43,7 +42,7 @@
 @media (max-width:1100px){ .dr .rn span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)} .dr .rb > span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap} /* (BLOOM-039, a11y) icon-only, still named */ .dr .rt h2{font-size:1.4em} }
 
 /* ── left column: the production plant specimen above, the information card below (content height, with a floor) ──
-   (BLOOM-040) THE CANONICAL SPECIMEN GEOMETRY — one box for Region Inspect, Adapt, Spread AND Terraform: the full width of the 21 % left
+   (BLOOM-040) THE CANONICAL SPECIMEN GEOMETRY — one box for Region Inspect, Adapt, Spread AND Terraform: the full width of the 23 % left
    column, 170 : 196 (the accepted Region / Adapt presentation), capped at 56 % of the room's zone height (the zone is the same in every
    room). Nothing a room shows may resize, move or crop it; the scene inside fills it edge to edge (plant-specimen.js). */
 .dr .lf-top{position:relative; flex:none; border-radius:var(--r-md); overflow:hidden; background:#dceefa; width:100%; aspect-ratio:170/196; max-height:56%}
@@ -141,8 +140,7 @@
 .dr .cat-absent{flex:none; margin:0 .9em .7em; padding:.45em .75em; border-radius:.6em; border:2px dashed var(--cat, var(--line-2)); background:var(--cat-soft, transparent); color:var(--cat-dark, var(--ink)); font-size:.82em; font-weight:700; line-height:1.3}
 .dr .tree .edges{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
 .dr .edge{fill:none; stroke:var(--line-2); stroke-width:3.5; stroke-linecap:round; stroke-linejoin:round}
-.dr .edge.on{stroke:var(--cat, var(--acc))} .dr .edge.open{stroke:#c3b68f} .dr .edge.off{stroke-dasharray:4 7; opacity:.7} .dr .edge.rail-e{stroke-width:4; stroke:#c3b68f}
-.dr .edges .port{fill:var(--card); stroke:var(--cat-dark, var(--acc-dark)); stroke-width:3.5} .dr .edges .port.on{fill:var(--cat, var(--acc)); stroke:var(--cat-dark)}
+.dr .edge.on{stroke:var(--cat, var(--acc))} .dr .edge.open{stroke:#c3b68f} .dr .edge.off{stroke-dasharray:4 7; opacity:.7}
 .dr .cat-l{position:absolute; transform:translate(0,-50%); display:inline-flex; align-items:center; gap:.4em; font-size:.76em; font-weight:900; letter-spacing:1.2px; text-transform:uppercase; color:var(--cat-dark, var(--acc-dark)); white-space:nowrap; pointer-events:none; background:var(--cat-soft, var(--acc-soft)); border:2px solid var(--cat, var(--acc)); padding:.3em .75em; border-radius:.7em; z-index:3}
 .dr .cat-l .ic{width:1.3em; height:1.3em}
 .dr .node{position:absolute; transform:translate(-50%,-50%); display:flex; align-items:center; gap:.6em; cursor:pointer; font:inherit; color:var(--ink); text-align:left; line-height:1.1; z-index:2}
@@ -150,6 +148,8 @@
 .dr .node .ni{position:relative; display:grid; place-items:center; width:2.85em; height:2.85em; border-radius:50%; background:var(--paper-2); color:var(--cat-dark, var(--ink-soft)); flex:none} .dr .node .ni .ic{width:1.65em; height:1.65em}
 .dr .node .nl{position:absolute; right:-.3em; bottom:-.3em; width:1.2em; height:1.2em; border-radius:50%; background:var(--ink-faint); color:#fff; display:grid; place-items:center; border:2px solid var(--card)} .dr .node .nl .ic{width:.65em; height:.65em; stroke-width:3} .dr .node .nl.ok{background:var(--leaf)}
 .dr .node .nt{min-width:0} .dr .node .nt b{display:block; font-size:calc(1.02em * var(--fit, 1))} .dr .node .nt small{display:block; font-size:.72em; font-weight:800; color:var(--ink-soft); margin-top:.15em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+/* Adapt / Spread: the labels and cards fill the tree card (decision-rooms.js layout); Terraform keeps its own node scale */
+.dr .tree:is(.b-adapt,.b-spread) .cat-l{font-size:.9em} .dr .tree:is(.b-adapt,.b-spread) .node.card{min-height:max(4.2em, 44px)} .dr .tree:is(.b-adapt,.b-spread) .node .ni{width:3.1em; height:3.1em} .dr .tree:is(.b-adapt,.b-spread) .node .ni .ic{width:1.8em; height:1.8em} .dr .tree:is(.b-adapt,.b-spread) .node .nt b{font-size:calc(1.14em * var(--fit, 1))} .dr .tree:is(.b-adapt,.b-spread) .node .nt small{font-size:.8em}
 .dr .tree.tight .node.card .nt small{white-space:normal} .dr .tree.tight .node.card .ni{width:2.4em; height:2.4em} .dr .tree.tight .node.card .ni .ic{width:1.35em; height:1.35em} .dr .tree.tight .node.card{gap:.4em; padding:.35em .5em .35em .4em} .dr .tree.tight .node .nt b{font-size:calc(.92em * var(--fit, 1))}
 .dr .node:hover .ni,.dr .node:focus-visible .ni{transform:scale(1.07)} .dr .node.card:hover,.dr .node.card:focus-visible{border-color:var(--cat-dark, var(--ink)); border-left-color:var(--cat, var(--ink))}
 .dr .node.st-avail.card{border-color:var(--ink); border-left-color:var(--cat, var(--ink))} .dr .node.st-avail .ni{background:var(--cat-soft, var(--acc-soft)); color:var(--cat-dark, var(--acc-dark))}
@@ -158,32 +158,15 @@
 .dr .node.st-blocked{opacity:.65} .dr .node.st-blocked .ni{background:#fbe6ec; color:var(--bad)} .dr .node.st-blocked.card{border-style:dashed; border-left-style:solid; box-shadow:none}
 .dr .node.pvw .ni{box-shadow:0 0 0 .25em var(--cat-soft, var(--acc-soft)), 0 0 0 .45em var(--cat, var(--acc))}
 .dr .r-adapt .z-main{background:linear-gradient(#f4f9f0, var(--card))} .dr .r-spread .z-main{background:linear-gradient(#fdf4f6, var(--card))}
-/* the Organic gutter (Concept 18): room for the thick tendrils to curve apart between the plant card and the tree card */
-.dr .r-adapt .z-main,.dr .r-spread .z-main{margin-left:var(--gut, .8em)}
 .dr .r-adapt{--acc:var(--leaf); --acc-soft:var(--leaf-soft); --acc-dark:var(--leaf-dark)} .dr .r-spread{--acc:var(--bloom); --acc-soft:var(--bloom-soft); --acc-dark:var(--bloom-dark)} .dr .r-region{--acc:var(--gold); --acc-soft:var(--gold-soft); --acc-dark:var(--gold-deep)}
-
-/* ── ORGANIC tendrils (the only plant → tree treatment; owner-approved weights set per room em by decision-rooms.js) ── */
-.dr .dr-leaders{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:6; overflow:visible}
-.dr .dr-leaders .lead-g{transition:opacity .15s}
-.dr .dr-leaders .ld-glow{fill:none; stroke:var(--cat, var(--acc)); stroke-width:var(--ld-glow, 24px); stroke-linejoin:round; stroke-linecap:round; opacity:0; transition:opacity .15s}
-.dr .dr-leaders .lead-g.on .ld-glow{opacity:.34}
-.dr .dr-leaders .ld{fill:none; stroke:var(--cat, var(--acc)); stroke-width:var(--ld-w, 9px); opacity:.86; transition:opacity .15s; stroke-linejoin:round; stroke-linecap:round}
-.dr .dr-leaders .ld.on{opacity:1; stroke:var(--cat-dark, var(--acc-dark)); stroke-width:var(--ld-on, 13px)}
-.dr .dr-leaders .vein{fill:none; stroke:rgba(255,255,255,.5); stroke-width:var(--vein, 2px); stroke-linecap:round} .dr .dr-leaders .lead-g.on .vein{stroke:rgba(255,255,255,.62)}
-.dr .dr-leaders.dim .lead-g:not(.on){opacity:.4}
-.dr .dr-leaders .anchor-halo{fill:var(--cat-soft, var(--acc-soft)); opacity:.9}
-.dr .dr-leaders .anchor{fill:var(--card); stroke:var(--cat-dark, var(--acc-dark)); stroke-width:3.5} .dr .dr-leaders .anchor.on{fill:var(--cat, var(--acc)); stroke:#fff}
-.dr .dr-leaders .anchor-dot{fill:var(--cat-dark, var(--acc-dark))} .dr .dr-leaders .lead-g.on .anchor-dot{fill:#fff}
-.dr .dr-leaders .aplate{fill:var(--card); stroke:var(--cat-dark, var(--acc-dark)); stroke-width:2} .dr .dr-leaders .aplate.on{fill:var(--cat, var(--acc))}
-.dr .dr-leaders .alab{font:900 .74em/1 var(--font); letter-spacing:1px; text-transform:uppercase; fill:var(--cat-dark, var(--acc-dark))} .dr .dr-leaders .alab.on{fill:#fff}
 
 .dr :focus-visible{outline:3px solid var(--focus); outline-offset:3px}
 @media (prefers-reduced-motion: reduce){ .dr *{transition:none !important; animation:none !important} .dr .node:hover .ni,.dr .node:focus-visible .ni{transform:none} }
 .pv.reduced .dr *{transition:none !important; animation:none !important}
 
 /* ── Terraform (BLOOM-029D): the environmental room, sky accent. Concept 18 Terraform proportions for the planet and readout (1fr / 23 %);
-   (BLOOM-040) its left column is the canonical 21 % of every plant room, so the plant in its land is the SAME specimen box as elsewhere ── */
-.dr .r-terraform{grid-template-columns:21% minmax(0,1fr) 23%; --acc:var(--sky); --acc-soft:var(--sky-soft); --acc-dark:var(--sky-dark)}
+   (BLOOM-040) its left column is the canonical 23 % of every plant room, so the plant in its land is the SAME specimen box as elsewhere ── */
+.dr .r-terraform{grid-template-columns:23% minmax(0,1fr) 23%; --acc:var(--sky); --acc-soft:var(--sky-soft); --acc-dark:var(--sky-dark)}
 .dr .r-terraform .rc{font-size:.84em} .dr .r-terraform .mm-lens .lb{padding:.15em .5em}
 /* the right column: when the readout grows (a preview), the mini-map gives up height first (down to 5.5 em) and the strip keeps one row and scrolls */
 .dr .r-terraform .mm{overflow:hidden} .dr .r-terraform .mm-map{flex:0 1 auto; min-height:5.5em; max-height:8.6em} .dr .r-terraform .mm-strip{flex:1 1 auto; min-height:2.6em; overflow:auto}
@@ -241,7 +224,9 @@
    double-click never lands on an arriving control); Escape is the keyboard way out at any moment. Room → room: the header's Back, room tabs and
    Resume stay where they are and stay live (a new choice supersedes the settling one); the changing work panels take no input. ── */
 .dr[data-transitioning="open"] .dr-room, .dr[data-transitioning="back"] .dr-room, .dr[data-transitioning="resume"] .dr-room{pointer-events:none}
-.dr[data-transitioning="switch"] .z-main, .dr[data-transitioning="switch"] .z-map, .dr[data-transitioning="switch"] .lf-info, .dr[data-transitioning="switch"] .dr-leaders{pointer-events:none}
+.dr[data-transitioning="switch"] .z-main, .dr[data-transitioning="switch"] .z-map, .dr[data-transitioning="switch"] .lf-info{pointer-events:none}
+/* room → room: the incoming room dissolves in above the outgoing one (decision-rooms.js switch) */
+.dr[data-transitioning="switch"] .dr-room{z-index:1} .dr[data-transitioning="switch"] .dr-room.dr-outgoing{z-index:0}
 .pv[data-transitioning] .pv-tool, .pv[data-transitioning] .pv-banner [data-go]{pointer-events:none}
 /* the home selection stays while a room is open (the map returns with it): its banner fades out under the arriving veil and back in as it clears */
 .pv.in-room .pv-banner{opacity:0; transition:opacity .18s ease-out}

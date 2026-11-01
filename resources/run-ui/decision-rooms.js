@@ -6,7 +6,7 @@
 //
 // Four floating rooms over the production Planet View (resources/run-ui/planet-view.js), filled into its room seam
 // (planetView.rooms.register / openRoom). Concept 18 supplies the presentation (the floating-card room family, the shared room
-// header, the organic plant → tree tendrils, the category identity, the "three region chips across" scale); THE EXISTING RUN
+// header, the category identity, the "three region chips across" scale); THE EXISTING RUN
 // SUPPLIES TRUTH: every region, colony, trait, tier, price, availability, preview and purchase comes from window.BLOOM_RUN_UI's
 // adapter (handed in by the Planet View) and acts only through adapter.actions, so every bloom:* event fires unchanged from
 // the run page's own action functions. No mockup file, region, node, cost or rule is here.
@@ -31,12 +31,12 @@
 //   open     1 remember the running state · 2 pause the REAL run at once · 3 the map emphasises the region · 4 the room is shown at once with
 //            its pieces at their screen edges (the Planet View inert) and assembles: header from above, specimen column from the left, work
 //            panels from the right · 5 settled: measure at rest, focus the room control. The sim never advances while a room opens.
-//   switch   paused throughout, same context, the old room's transient preview cleared first; the specimen box stays fixed while the header
-//            copy and the work / information panels fade out and in with a short nudge; never two rooms, no Planet View in between.
+//   switch   paused throughout, same context, the old room's transient preview cleared first; the specimen box stays fixed while the new
+//            room's panels dissolve in OVER the old room's (a true overlap, so nothing ever dips to the map); no Planet View in between.
 //   close    1 clear the preview · 2 stay paused · 3 the reverse motion over the clearing veil · 4 at rest: hide the room, restore the Planet
 //            View · 5 ONLY then: Back restores the pre-room state, Resume runs · 6 restore focus.
-//   A new request while one is settling COMMITS it (its end state at once) and then runs: no overlap, no double pause / resume, no two
-//   rooms, no lost context, and the final state is the player's last action. `controller.timeline()` records every swap (QA).
+//   A new request while one is settling COMMITS it (its end state at once) and then runs: no double pause / resume, no stacked
+//   transitions, no lost context, and the final state is the player's last action. `controller.timeline()` records every swap (QA).
 //   The 029E gameplay transition bridge is still created and prepared here: the production report (run-report.js) uses it.
 // Classic script, no dependencies besides BLOOM.surface, BLOOM.runMap, BLOOM.plantSpecimen, (029D) BLOOM.terraformGlobe and (029E)
 // BLOOM.gameplayTransition: boots over file://.
@@ -88,10 +88,10 @@
   const ROOM_IDS = ["region", "adapt", "spread", "terraform"];
   // (BLOOM-040) Edge Assemble timings ([delay, duration] ms; the controller's section below explains the motion)
   const EDGE_ASSEMBLE = Object.freeze({ ease: "cubic-bezier(.2,.8,.2,1)", exit: "cubic-bezier(.45,0,.75,.5)",
-    open: { veil: [60, 220], header: [40, 340], focus: [80, 340], work: [120, 340], leaders: 140 },          // [delay, duration] ms → 460 ms of motion, ≈ 0.5 s settled
+    open: { veil: [60, 220], header: [40, 340], focus: [80, 340], work: [120, 340] },          // [delay, duration] ms → 460 ms of motion, ≈ 0.5 s settled
     close: { work: [0, 220], focus: [30, 220], header: [60, 220], veil: [50, 250] },                          // the reverse, quicker → 300 ms of motion
-    switch: { out: 110, in: 190, nudge: 16 },                                                                 // → ≈ 300 ms
-    reduced: { open: 160, close: 140, out: 70, in: 120 },
+    switch: { in: 260, out: [110, 150], nudge: 16 },                                                          // an overlap, not out-then-in: the old panels leave [delay, duration] only once the new ones cover them
+    reduced: { open: 160, close: 140, in: 120, out: [40, 80] },
     travel: [56, 0.06, 120] });
   const ROOMS = { // the accepted room-header language (docs/UI_CONCEPT_REVIEW_v10.md)
     region: { kicker: "EXPLORE", title: "Region Inspect", verb: "Compare regions and their colonies", ico: "regions", kind: "explore" },
@@ -99,8 +99,8 @@
     spread: { kicker: "CHANGE · HOW IT TRAVELS", title: "Spread", verb: "Reach new land", ico: "spread", kind: "spread", board: "Spread" },
     terraform: { kicker: "CHANGE · THE PLANET", title: "Terraform", verb: "Change the planet, not the plant", ico: "terraform", kind: "planet" },
   };
-  // PMO-locked presentation categories (content/traits.js uiCategory): order top → bottom = the plant's anatomy top → bottom, so
-  // the organic tendrils cannot cross; the accepted category colours; which specimen part each category points at
+  // PMO-locked presentation categories (content/traits.js uiCategory): order top → bottom = the plant's anatomy top → bottom; the
+  // accepted category colours; which specimen part each category highlights
   // (029D) Terraform: the PMO-locked presentation categories (content/traits.js uiCategory, order = upper sky → weather near the ground) and
   // banks (uiBank): Soil = the ground, LEFT of the globe (no real node exists yet: an environmental readout only); Atmosphere = the sky, RIGHT.
   const CATS = { Adapt: ["Hazard", "Water", "Temperature", "Soil"], Spread: ["Seeds", "Growth", "Reach"], Terraform: ["Sky temperature", "Rain"] };
@@ -115,7 +115,7 @@
   const BANK_ORDER = ["Soil", "Atmosphere"], BANK_OF = u => (u.uiBank && BANKS[u.uiBank] ? u.uiBank : "Atmosphere"); // a real sky trait without metadata still reads as the sky
   // Concept 18 Terraform geometry (em; docs/UI_CONCEPT_REVIEW_v9.md §7 exclusion zone, v10 §4–5): halo band from the face, the clearance nothing
   // may enter, the lane the banks start outside, top / bottom bands for the legend and readout, the bank step cap, the Soil arrow (future real nodes)
-  const TF = { haloIn: 0.3, haloW: 1, clear: 1, lane: 0.7, topbot: 2.6, margin: 0.5, stepMax: 4.9, catGap: 0.45, soilW: [8, 9.6], nodeW: [7.8, 9.4], ring: 0.42, soilGap: 0.1, soilHead: [0.62, 1], soilNose: 0.16 };
+  const TF = { haloIn: 0.3, haloW: 1, clear: 1, lane: 0.7, topbot: 2.6, margin: 0.5, stepMax: 4.9, catGap: 0.45, soilW: [8, 9.6], nodeW: [8.2, 9.4], ring: 0.42, soilGap: 0.1, soilHead: [0.62, 1], soilNose: 0.16 };
   // (035B) a body plan may name a part for its body ("Trunk", "Culms", "Rosette"…; BLOOM.plantSpecimen sp.partLabels) — the part id, the
   // category and the mechanics never change; Organic Hybrid's plan names none, so its rooms read exactly as before
   const partOf = (cat, spec) => { const p = CAT_PART[cat], l = spec && spec.partLabels && spec.partLabels[p[0]]; return l ? [p[0], l, p[2]] : p; };
@@ -148,9 +148,7 @@
     "player-better-suited": "Your plant is better suited here and is pushing native cover back", "player-established": "Your colony is more established here and is pushing native cover back", "even": "An even contest with the native plants" };
   const nativeLine = r => { const c = r.competition; if (!c || !(c.nativeTiles > 0) || r.status === "blocked") return null;
     return NATIVE_LINE[c.reason] || (r.nativeHeld || !c.playerTiles ? "Native plants hold this ground; your plant has not reached it yet" : "Native plants hold part of this ground"); };
-  // Concept 18 ORGANIC tendril weights (owner-approved; docs/UI_CONCEPT_REVIEW_v10.md §3): [em, px floor]
-  const TENDRIL = { idle: [0.52, 8.5], lit: [0.8, 12.5], glow: 1.9, vein: [0.12, 2] }, TENSION = [0.3, 0.26], PORT_R = 0.66, RAIL_X = 1.5, STEP_MAX = 5.4, CAT_GAP = 0.35;
-  const tendrilW = (k, em) => Math.max(TENDRIL[k][0] * em, TENDRIL[k][1]);
+  const LABEL_X = 0.9, STEP_MAX = 5.4, CAT_GAP = 0.35;
   // room scale: the largest em at which THREE median-length real region chips fit across the right column, capped by the height
   const DESIGN_H = 40, EM_MIN = 12, EM_MAX = 22, CHIPS = 3, CHIP_SLACK = 0.8; // em of slack beside the three chips
 
@@ -410,7 +408,7 @@
       rooms[id] = { sec, mm, paint, onOpen: paint, clear() { mm.pk(-1); }, focusFirst: () => sec.querySelector("h2").focus() };
     }
 
-    // ---------------------------------------------------------------- Adapt / Spread: one family (real tree + organic tendrils)
+    // ---------------------------------------------------------------- Adapt / Spread: one family (the plant + the real tree)
     function buildBoard(id) {
       const sec = roomShell(id), R0 = ROOMS[id], BOARD = R0.board, zf = sec.querySelector(".z-focus"), zm = sec.querySelector(".z-main"), zmap = sec.querySelector(".z-map");
       const mm = mapBlock(id, zmap, `<div class="mm-ctx"><span class="mc-k">Region effect of this choice</span><div class="mc-rows"><div class="mc-row"><b class="mc-open">Hover a skill to see what it does for this region</b></div></div></div>`);
@@ -418,7 +416,6 @@
       zm.dataset.tutorial = id === "adapt" ? "upgrades" : ""; if (!zm.dataset.tutorial) delete zm.dataset.tutorial;
       const tree = document.createElement("div"); tree.className = `tree b-${id}`; tree.dataset.tutorial = `board-${id}`; tree.setAttribute("role", "group"); tree.setAttribute("aria-label", `${R0.title} upgrades`); zm.appendChild(tree);
       const edges = document.createElementNS("http://www.w3.org/2000/svg", "svg"); edges.setAttribute("class", "edges"); edges.setAttribute("aria-hidden", "true"); tree.appendChild(edges);
-      const leaders = document.createElementNS("http://www.w3.org/2000/svg", "svg"); leaders.setAttribute("class", "dr-leaders"); leaders.setAttribute("aria-hidden", "true"); sec.appendChild(leaders);
       let items = [], cats = [], nodeEls = {}, lbls = {}, L = null, fitRaf = 0;
       const absent = document.createElement("p"); absent.className = "cat-absent"; absent.hidden = true; absent.setAttribute("role", "note"); zm.appendChild(absent);
       // the REAL tree: offered items of this board from the adapter, grouped by the content's presentation category
@@ -442,28 +439,29 @@
       // layout (px, from the room em): a category rail at the left, one row per real trait, grouped by category; the row step is
       // capped so a small tree (Spread) stays compact and its card ends where the tree ends (dims.wantH)
       function layout(w, h, em) {
-        const PAD = 1 * em, hOf = id => nodeEls[id].offsetHeight || 3.9 * em, railX = RAIL_X * em, right = 0.7 * em;
-        let labelW = 8.2 * em, left = railX + labelW + 0.9 * em, nw = w - left - right, labelMode = "full";
-        if (nw < 9.4 * em) { labelW = 2.8 * em; left = railX + labelW + 0.9 * em; nw = w - left - right; labelMode = "icon"; }
-        nw = Math.max(7 * em, Math.min(13 * em, nw));
-        const rowsOf = [], anchors = {}; let slot = 0;
-        for (const c of cats) { const start = slot; for (const u of items.filter(x => x.uiCategory === c)) { rowsOf.push({ id: u.id, slot: slot + 0.5 }); slot += 1; } anchors[c] = [start, slot]; slot += CAT_GAP; }
+        const PAD = 1 * em, hOf = id => nodeEls[id].offsetHeight || 3.9 * em, labelX = LABEL_X * em, right = 0.7 * em;
+        let labelW = 9.8 * em, left = labelX + labelW + 0.7 * em, nw = w - left - right, labelMode = "full";
+        if (nw < 9.4 * em) { labelW = 3 * em; left = labelX + labelW + 0.7 * em; nw = w - left - right; labelMode = "icon"; }
+        nw = Math.max(7 * em, Math.min(17 * em, nw));
+        const inset = Math.max(0, (w - left - right - nw) / 2);   // the labels and cards stay together, centred in the card
+        const rowsOf = []; let slot = 0;
+        for (const c of cats) { for (const u of items.filter(x => x.uiCategory === c)) { rowsOf.push({ id: u.id, slot: slot + 0.5 }); slot += 1; } slot += CAT_GAP; }
         const total = slot - CAT_GAP, first = rowsOf[0], last = rowsOf[rowsOf.length - 1];
         const padT = (first ? hOf(first.id) : 3.9 * em) / 2 + PAD, padB = (last ? hOf(last.id) : 3.9 * em) / 2 + PAD, rows = Math.max(1, total - 1);
         const step = Math.min(STEP_MAX * em, (h - padT - padB) / rows), wantH = padT + rows * STEP_MAX * em + padB;
-        const pos = {}; for (const r of rowsOf) pos[r.id] = { x: left + nw / 2, y: padT + (r.slot - 0.5) * step };
-        const ports = {}; for (const c of cats) { const ys = items.filter(u => u.uiCategory === c).map(u => pos[u.id].y); ports[c] = { x: railX, y: ys.reduce((a, b) => a + b, 0) / ys.length, lx: railX + 0.8 * em }; }
-        return { pos, ports, nw, labelMode, railX, wantH, railTop: Math.min(...cats.map(c => ports[c].y)), railBottom: Math.max(...cats.map(c => ports[c].y)), tight: nw < 9 * em, em };
+        const pos = {}; for (const r of rowsOf) pos[r.id] = { x: inset + left + nw / 2, y: padT + (r.slot - 0.5) * step };
+        const catAt = {}; for (const c of cats) { const ys = items.filter(u => u.uiCategory === c).map(u => pos[u.id].y); catAt[c] = { x: inset + labelX + em, y: ys.reduce((a, b) => a + b, 0) / ys.length, lx: inset + labelX }; }   // x: the card edges start behind their label
+        return { pos, catAt, nw, labelMode, wantH, tight: nw < 9 * em, em };
       }
       function relayout(pass) {
         const w = tree.clientWidth, h = tree.clientHeight; if (!w || !h) return; const em = state.em; const hs = items.map(u => nodeEls[u.id].offsetHeight).join();
         L = layout(w, h, em); tree.style.setProperty("--nw", L.nw + "px"); tree.classList.toggle("tight", L.tight); tree.classList.toggle("lab-icon", L.labelMode === "icon");
         edges.setAttribute("viewBox", `0 0 ${w} ${h}`); edges.setAttribute("width", w); edges.setAttribute("height", h);
         for (const u of items) { const p = L.pos[u.id]; nodeEls[u.id].style.left = p.x + "px"; nodeEls[u.id].style.top = p.y + "px"; }
-        for (const c of cats) { const a = L.ports[c]; lbls[c].style.left = a.lx + "px"; lbls[c].style.top = a.y + "px"; lbls[c].querySelector("span").hidden = L.labelMode === "icon"; }
+        for (const c of cats) { const a = L.catAt[c]; lbls[c].style.left = a.lx + "px"; lbls[c].style.top = a.y + "px"; lbls[c].querySelector("span").hidden = L.labelMode === "icon"; }
         paintEdges(); fitTitles();
         if (!pass && items.map(u => nodeEls[u.id].offsetHeight).join() !== hs) return relayout(1);
-        fitMain(); drawLeaders(); fitInfo(sp.info);
+        fitMain(); fitInfo(sp.info);
       }
       // content-height tree card: as tall as the tree wants (capped row step), up to the room's free height; next frame, so the
       // tree's own ResizeObserver never loops on itself
@@ -471,38 +469,15 @@
       const svgEl = (tag, attrs, parent) => svgMk(tag, attrs, parent || edges);
       const curveH = (a, b) => { const mx = (a.x + b.x) / 2; return `M${a.x} ${a.y}C${mx} ${a.y},${mx} ${b.y},${b.x} ${b.y}`; };
       function paintEdges() {
-        if (!L) return; edges.textContent = ""; const em = state.em;
-        svgEl("path", { class: "edge rail-e", d: `M${L.railX} ${L.railTop}V${L.railBottom}` });
-        for (const u of items) { const a = L.ports[u.uiCategory], p = L.pos[u.id], st = nodeState(u); const e = svgEl("path", { class: `edge ${u.owned ? "on" : st === "blocked" ? "off" : "open"}${state.hovered === u.id ? " on" : ""}`, d: curveH(a, { x: p.x - L.nw / 2, y: p.y }) }); e.setAttribute("style", catStyle(u.uiCategory)); }
-        for (const c of cats) { const a = L.ports[c], lit = state.hovered && (items.find(u => u.id === state.hovered) || {}).uiCategory === c; const port = svgEl("circle", { class: `port${lit ? " on" : ""}`, cx: a.x, cy: a.y, r: PORT_R * em }); port.setAttribute("style", catStyle(c)); port.dataset.cat = c; }
-      }
-      // ORGANIC tendrils (the only treatment): plant anchor → label plate → thick tendril → tree port, one per category, same
-      // x-profile and top → bottom order on both ends, so none can cross. Weights follow the room em (Concept 18 §3).
-      function drawLeaders() {
-        if (!L || sec.hidden) return; const rr = sec.getBoundingClientRect(); leaders.setAttribute("viewBox", `0 0 ${rr.width} ${rr.height}`); leaders.setAttribute("width", rr.width); leaders.setAttribute("height", rr.height); leaders.textContent = "";
-        const em = state.em, idle = tendrilW("idle", em), lit = tendrilW("lit", em), vein = tendrilW("vein", em);
-        leaders.style.setProperty("--ld-w", idle + "px"); leaders.style.setProperty("--ld-on", lit + "px"); leaders.style.setProperty("--ld-glow", lit * TENDRIL.glow + "px"); leaders.style.setProperty("--vein", vein + "px");
-        const box = sp.wrap.getBoundingClientRect(), tr = tree.getBoundingClientRect(), boxR = box.right - rr.left, treeL = tr.left - rr.left, treeT = tr.top - rr.top;
-        const on = state.hovered ? (items.find(u => u.id === state.hovered) || {}).uiCategory : null;
-        for (const c of cats) { const part = partOf(c, sp.spec), a = sp.spec.anchorPoint(part[0]), port = L.ports[c]; if (!a) continue;
-          const Ax = a.x - rr.left, Ay = a.y - rr.top, Bx = treeL + port.x, By = treeT + port.y, x0 = boxR - 0.5 * em, dx = Bx - x0, isLit = on === c;
-          const d = `M${Ax} ${Ay}H${x0}C${x0 + dx * TENSION[0]} ${Ay},${Bx - dx * TENSION[1]} ${By},${Bx} ${By}`;
-          const g = svgEl("g", { class: `lead-g${isLit ? " on" : ""}`, "data-cat": c }, leaders); g.setAttribute("style", catStyle(c));
-          svgEl("path", { class: "ld-glow", d }, g); svgEl("path", { class: `ld${isLit ? " on" : ""}`, d, "data-cat": c }, g); svgEl("path", { class: "vein", d }, g);
-          const ar = Math.max(0.72 * em, lit * 0.62);
-          svgEl("circle", { class: "anchor-halo", cx: Ax, cy: Ay, r: ar * 1.55 }, g); svgEl("circle", { class: `anchor${isLit ? " on" : ""}`, cx: Ax, cy: Ay, r: ar }, g); svgEl("circle", { class: "anchor-dot", cx: Ax, cy: Ay, r: ar * 0.33 }, g);
-          const tw = part[1].length * 0.56 * em * 0.74 + 1.1 * em, th = Math.max(1.45 * em, lit + 0.5 * em), rightSide = Ax + ar + 0.45 * em + tw < boxR - 0.4 * em;
-          const px = rightSide ? Ax + ar + 0.4 * em : Ax - ar - 0.4 * em - tw, py = Ay - th / 2;
-          svgEl("rect", { class: `aplate${isLit ? " on" : ""}`, x: px, y: py, width: tw, height: th, rx: th / 2 }, g);
-          const t = svgEl("text", { class: `alab${isLit ? " on" : ""}`, x: px + tw / 2, y: Ay + 0.27 * em, "text-anchor": "middle" }, g); t.textContent = part[1]; }
-        leaders.classList.toggle("dim", !!on);
+        if (!L) return; edges.textContent = "";
+        for (const u of items) { const a = L.catAt[u.uiCategory], p = L.pos[u.id], st = nodeState(u); const e = svgEl("path", { class: `edge ${u.owned ? "on" : st === "blocked" ? "off" : "open"}${state.hovered === u.id ? " on" : ""}`, d: curveH(a, { x: p.x - L.nw / 2, y: p.y }) }); e.setAttribute("style", catStyle(u.uiCategory)); }
       }
       // information card + region-effect card: the REAL trait (adapter.upgrade), the real preview result for the room context
       function paintInfoBase() {
         const r = A.region(state.ctx);
         sp.info.innerHTML = `<span class="li-k">${id === "spread" ? "How your plant travels" : "Your plant"} · ${esc(r.name)}</span><div class="li-h"><span class="ni">${ico(R0.ico)}</span><div><b>${esc(r.living ? r.colony.label : r.limiting.blocked ? "Would not survive yet" : "No colony yet")}</b><small>${esc(limitLine(r))}</small></div></div>` +
           `<div class="ownd"><small>${id === "spread" ? "How it travels now" : "Already part of your plant"}</small>${ownedChips()}</div>` +
-          `<p class="li-hint">${id === "spread" ? "This changes how your plant travels and takes root everywhere." : "This changes YOUR PLANT, everywhere it grows."} Hover or focus a skill: the plant previews it and the line shows which part changes.</p>`;
+          `<p class="li-hint">${id === "spread" ? "This changes how your plant travels and takes root everywhere." : "This changes YOUR PLANT, everywhere it grows."} Hover or focus a skill: the plant previews it and this card says which part changes.</p>`;
         sp.info.classList.remove("pvw"); sp.info.removeAttribute("style"); mm.ctx.removeAttribute("style"); mm.ctx.classList.remove("pvw"); fitInfo(sp.info);
         mm.ctx.querySelector(".mc-rows").innerHTML = `<div class="mc-row">${ico("inspect")}<span><b>${esc(r.name)}</b> · ${esc(r.colony.label)}</span></div><div class="mc-row">${ico(r.limiting.blocked ? "x" : "check")}<span>${esc(limitLine(r))}</span></div><div class="mc-row faint">${ico("info")}<span>Hover a skill to see what it does for this region</span></div>`;
       }
@@ -526,7 +501,7 @@
       function setHover(nid) {
         if (state.hovered === nid) return; state.hovered = nid;
         if (nid) state.preview = A.actions.preview(nid); else { state.preview = null; if (A.activePreview()) A.actions.clearPreview(); }
-        paintNodes(); paintPreview(); drawLeaders(); mm.invalidate();
+        paintNodes(); paintPreview(); mm.invalidate();
       }
       const clear = () => { if (state.hovered !== null) setHover(null); };
       tree.addEventListener("pointerover", e => { if (state.suspended) return; const b = e.target.closest(".node"); if (b) setHover(b.dataset.node); else clear(); });
@@ -542,14 +517,12 @@
           live(`Bought ${u.name}.`); if (state.hovered === u.id) { state.hovered = null; setHover(u.id); } } // still on the node: the preview re-reads the NEXT real tier
       });
       tree.addEventListener("keydown", e => { if (e.key !== "Enter" && e.key !== " ") return; const b = e.target.closest(".node"); if (!b) return; e.preventDefault(); b.click(); });
-      observe(() => relayout(), tree); observe(() => drawLeaders(), sp.wrap);
+      observe(() => relayout(), tree);
       function paint() { if (state.ctx < 0) return; readTree(); paintNodes(); paintPreview(); mm.paint(); relayout(); }
-      rooms[id] = { sec, mm, tree, paint, onOpen() { paint(); requestAnimationFrame(() => { relayout(); drawLeaders(); }); }, clear() { clear(); mm.pk(-1); }, redraw() { relayout(); drawLeaders(); },
+      rooms[id] = { sec, mm, tree, paint, onOpen() { paint(); requestAnimationFrame(() => relayout()); }, clear() { clear(); mm.pk(-1); }, redraw() { relayout(); },
         focusNode(nid) { const n = nodeEls[nid]; if (n) { n.focus(); return true; } return false; }, focusFirst: () => sec.querySelector("h2").focus(),
         measure() { return { em: state.em, categories: cats.slice(), absentNote: absent.hidden ? null : absent.textContent, items: items.map(u => ({ id: u.id, cat: u.uiCategory, tier: u.tier, price: u.price, canBuy: u.canBuy, rules: u.rules })),
-          tendrils: [...leaders.querySelectorAll(".ld")].map(p => ({ cat: p.dataset.cat, d: p.getAttribute("d"), width: parseFloat(getComputedStyle(p).strokeWidth), lit: p.classList.contains("on") })),
-          glow: parseFloat(leaders.style.getPropertyValue("--ld-glow")), vein: parseFloat(leaders.style.getPropertyValue("--vein")), idle: parseFloat(leaders.style.getPropertyValue("--ld-w")), litW: parseFloat(leaders.style.getPropertyValue("--ld-on")),
-          chain: cats.map(c => ({ cat: c, anchor: !!leaders.querySelector(`.lead-g[data-cat="${c}"] .anchor`), plate: !!leaders.querySelector(`.lead-g[data-cat="${c}"] .aplate`), tendril: !!leaders.querySelector(`.lead-g[data-cat="${c}"] .ld`), port: !!edges.querySelector(`.port[data-cat="${c}"]`), label: !!lbls[c], cards: items.filter(u => u.uiCategory === c).length })),
+          chain: cats.map(c => ({ cat: c, label: !!lbls[c], cards: items.filter(u => u.uiCategory === c).length })),
           treeHeight: zm.getBoundingClientRect().height, wantH: L ? L.wantH : null, labelMode: L ? L.labelMode : null }; } };
     }
 
@@ -558,13 +531,13 @@
     // globe is the unmodified PlanetSphereView painting a presentation snapshot of the exact authoritative planet under the run's CURRENT
     // surface sky (adapter.surface + BLOOM.terraformGlobe.snapshot), previews repaint it to the page's own what-if sky (preview.sky from
     // actions.preview) and the Soil side is the room-context region's real environmental readout (adapter.region) — no fake Soil skill,
-    // cost, lock, arrow or pin. (035C2) The plant is shown IN its environment (no tendrils): Terraform previews change only the scene around it. Future REAL Soil traits (uiBank "Soil") would take the Soil bank
+    // cost, lock, arrow or pin. (035C2) The plant is shown IN its environment: Terraform previews change only the scene around it. Future REAL Soil traits (uiBank "Soil") would take the Soil bank
     // and the accepted near-surface arrow; the layout, connectors and anchors below already handle both banks.
     function buildTerraform() {
       const id = "terraform", sec = roomShell(id), R0 = ROOMS[id], zf = sec.querySelector(".z-focus"), zm = sec.querySelector(".z-main"), zmap = sec.querySelector(".z-map");
       const mm = mapBlock(id, zmap, `<div class="mm-ctx tf"><span class="mc-k">Planet readout</span><dl class="env-rows"></dl><span class="mc-k mc-k2">Region effect of this choice</span><div class="mc-rows"></div></div>`);
       // LEFT: (035C2) the plant IN its environment — the room-context region's scene under the current / previewed sky. Terraform changes only the
-      // scene around the plant; the organism (and its signature) never changes here. No tendrils, no anchors. Then the information card.
+      // scene around the plant; the organism (and its signature) never changes here. Then the information card.
       const env = document.createElement("div"); env.className = "lf-top env"; zf.appendChild(env);
       const envSpec = PS.mount(env, { reducedMotion: reduced, species: A.run().species }); SPECS.push(envSpec);
       envSpec.canvas.setAttribute("aria-label", "Your plant in the land around the region. Terraform changes the sky and ground around it, never the plant.");
@@ -794,8 +767,9 @@
     //                        LEFT, the work panels from the RIGHT — a short, staggered, eased travel (transform + opacity only) settled in ≈ 0.5 s
     //   room → Planet View   the reverse, a little quicker: work panels exit right, the specimen column left, the header up; the veil clears, the
     //                        map resolves with the same region still selected (its banner fades back in)
-    //   room → room          the specimen box never moves, resizes, fades or re-enters; the header copy and the work / information panels fade
-    //                        with a short (16 px) directional nudge — the same workspace, a different tool
+    //   room → room          the specimen box never moves, resizes, fades or re-enters; the new room is shown at once ABOVE the old one and its
+    //                        header and work / information panels dissolve in over the old room's (with a short 16 px directional nudge), and the old
+    //                        panels leave only once they are covered, so the backdrop never shows between the two — the same workspace, a different tool
     //   reduced motion       no travel: a short opacity cross-fade; the specimen box still never moves between rooms
     // ONE controller: `motion` is the transition in flight (its animations + its end state). A new request while one is settling COMMITS it (its
     // end state at once: the swap done, the run restored, the selection, focus) and then runs from there — the final state always matches the
@@ -808,7 +782,7 @@
     const BLURRED = "blur(7px) saturate(.72) brightness(.94)", SHARP = "blur(0px) saturate(1) brightness(1)";   // the in-room map treatment (decision-rooms.css) and none
     const veil = document.createElement("div"); veil.className = "dr-veil"; veil.setAttribute("aria-hidden", "true"); layer.prepend(veil);
     const partsOf = sec => ({ header: sec.querySelector(".rh"), copy: sec.querySelector(".rh .rt"), focus: sec.querySelector(".z-focus"), main: sec.querySelector(".z-main"), map: sec.querySelector(".z-map"),
-      info: sec.querySelector(".z-focus .lf-info"), cap: [...sec.querySelectorAll(".z-focus .spec-cap > *")], leaders: sec.querySelector(".dr-leaders") });
+      info: sec.querySelector(".z-focus .lf-info") });
     const travel = () => Math.round(Math.max(EA.travel[0], Math.min(EA.travel[2], (layer.clientWidth || view.el.clientWidth || 1280) * EA.travel[1])));
     const can = el => !!(el && typeof el.animate === "function");
     let motion = null;
@@ -827,7 +801,6 @@
     // the incoming room's pieces from their edges (or a plain fade under reduced motion); every keyframe is a transform / opacity
     function assemble(M, sec, rm) {
       const P = partsOf(sec), D = travel(), hy = Math.round((P.header ? P.header.offsetTop + P.header.offsetHeight : 80) + 8);
-      if (P.leaders) M.add(P.leaders, [{ opacity: 0 }, { opacity: 0 }], { duration: rm ? EA.reduced.open : EA.open.work[0] + EA.open.work[1] });
       if (rm) { M.add(veil, [{ opacity: 0 }, { opacity: 1 }], { duration: EA.reduced.open, easing: "linear" }); parts.forEach(x => M.add(x, [{ filter: SHARP }, { filter: BLURRED }], { duration: EA.reduced.open, easing: "linear" }));
         for (const el of [P.header, P.focus, P.main, P.map]) M.add(el, [{ opacity: 0 }, { opacity: 1 }], { duration: EA.reduced.open, easing: "linear" }); return; }
       const T0 = EA.open, from = (el, x, y, [delay, duration]) => M.add(el, [{ transform: `translate3d(${x}px,${y}px,0)`, opacity: 0 }, { opacity: 1, offset: 0.55 }, { transform: "translate3d(0,0,0)", opacity: 1 }], { delay, duration, easing: EA.ease });
@@ -838,19 +811,19 @@
     // the outgoing room's pieces back to their edges (or a plain fade); they hold their end keyframe until the end state hides the room
     function disassemble(M, sec, rm) {
       const P = partsOf(sec), D = travel(), hy = Math.round((P.header ? P.header.offsetTop + P.header.offsetHeight : 80) + 8);
-      if (rm) { for (const el of [P.header, P.focus, P.main, P.map, P.leaders, veil]) M.add(el, [{ opacity: 1 }, { opacity: 0 }], { duration: EA.reduced.close, easing: "linear" });
+      if (rm) { for (const el of [P.header, P.focus, P.main, P.map, veil]) M.add(el, [{ opacity: 1 }, { opacity: 0 }], { duration: EA.reduced.close, easing: "linear" });
         parts.forEach(x => M.add(x, [{ filter: BLURRED }, { filter: SHARP }], { duration: EA.reduced.close, easing: "linear" })); return; }
       const C = EA.close, to = (el, x, y, [delay, duration]) => M.add(el, [{ transform: "translate3d(0,0,0)", opacity: 1 }, { opacity: 1, offset: 0.35 }, { transform: `translate3d(${x}px,${y}px,0)`, opacity: 0 }], { delay, duration, easing: EA.exit });
-      to(P.main, D, 0, C.work); to(P.map, D, 0, C.work); if (P.leaders) M.add(P.leaders, [{ opacity: 1 }, { opacity: 0 }], { duration: 90, easing: "linear" });
+      to(P.main, D, 0, C.work); to(P.map, D, 0, C.work);
       to(P.focus, -D, 0, C.focus); to(P.header, 0, -hy, C.header);
       M.add(veil, [{ opacity: 1 }, { opacity: 0 }], { delay: C.veil[0], duration: C.veil[1], easing: "ease-in-out" });
       parts.forEach(x => M.add(x, [{ filter: BLURRED }, { filter: SHARP }], { delay: C.veil[0], duration: C.veil[1], easing: "ease-in-out" }));   // the map resolves
     }
-    // room → room: what changes fades with a short nudge in the direction of travel along the room tabs; the specimen box (.lf-top) never animates
-    const switchParts = P => [P.copy, P.main, P.map, P.info, ...P.cap, P.leaders].filter(Boolean);
-    const nudged = el => el && !el.closest(".spec-cap") && !el.classList.contains("dr-leaders");
-    function settle(room) { if (room.redraw) room.redraw(); }   // geometry measured with every piece at rest (tendrils, the tree card's height)
-    const fadeInLeaders = (sec, rm) => { const l = sec.querySelector(".dr-leaders"); if (l && !rm && can(l)) l.animate([{ opacity: 0 }, { opacity: 1 }], { duration: EA.open.leaders, easing: "ease-out" }); };
+    // room → room: what changes dissolves over what it replaces; the specimen box (.lf-top) and the caption inside it never animate. The header fades whole
+    // over its identical twin (only the title and the pressed tab change) and is not nudged; the old header stays under it until the swap ends
+    const switchIn = P => [P.header, P.main, P.map, P.info].filter(Boolean), switchOut = P => [P.main, P.map, P.info].filter(Boolean);
+    const retire = sec => { sec.hidden = true; sec.inert = false; sec.classList.remove("dr-outgoing"); };
+    function settle(room) { if (room.redraw) room.redraw(); }   // geometry measured with every piece at rest (the tree card's height)
     const focusRoom = (room, ctx) => {
       // a requested real node ("Would help") gets a deliberate focus preview; until the pointer really moves, a pointerover the browser may
       // synthesise for whatever now sits under the stationary pointer (Firefox does, on a room swap) must not clear it (the 029C suspended rule)
@@ -877,7 +850,6 @@
       }
       lock(e.kind);
       const show = () => {                                                            // the swap: the room shown and painted for its context
-        if (!first) rooms[state.room].sec.hidden = true;                             // never two rooms; no Planet View in between
         state.room = name; view.rooms.setActive(name);
         room.sec.hidden = false; room.onOpen(); paintHeader();
         layer.querySelectorAll("[data-go]").forEach(b => { if (b.classList.contains("rn")) b.setAttribute("aria-pressed", String(b.dataset.go === name)); });
@@ -886,22 +858,17 @@
       };
       const end = () => {                                                             // settled: unlock, measure at rest, then focus the room control
         unlock(); e.ran = !e.superseded; e.runningAtEnd = A.run().running; e.ticksAtEnd = A.run().ticks;
-        settle(room); fadeInLeaders(room.sec, rm || e.superseded);
+        settle(room);
         if (state.room === name) focusRoom(room, ctx);
       };
       if (first) { show(); const M = Motion(e, end); assemble(M, room.sec, rm); M.start(); return () => close(false); }
-      // room → room: OUT (the old room's changing pieces) → the swap → IN (the new room's), one motion
-      const out = rooms[state.room].sec, dir = ROOM_IDS.indexOf(name) >= ROOM_IDS.indexOf(state.room) ? 1 : -1, S = EA.switch, R = EA.reduced;
-      const M = Motion(e, () => { if (!e.tSwapDone) show(); end(); });
-      const fade = (el, a, b, x0, x1, duration, easing, delay = 0) => M.add(el, [{ opacity: a, transform: nudged(el) ? `translate3d(${x0}px,0,0)` : "none" }, { opacity: b, transform: nudged(el) ? `translate3d(${x1}px,0,0)` : "none" }], { duration, easing, delay });
-      const outMs = rm ? R.out : S.out, inMs = rm ? R.in : S.in, n = rm ? 0 : S.nudge;
-      const outs = switchParts(partsOf(out)).map(el => fade(el, 1, 0, 0, -dir * n, outMs, rm ? "linear" : EA.exit)).filter(Boolean);
-      motion = M; M.started();                                                        // (two phases: the motion is finished by hand, not by M.start)
-      Promise.all(outs.map(a => a.finished.catch(() => null))).then(() => {           // the old pieces are out: swap, then the new ones come in
-        if (M.done) return; show();
-        const ins = switchParts(partsOf(room.sec)).map(el => fade(el, 0, 1, dir * n, 0, inMs, rm ? "linear" : EA.ease)).filter(Boolean);
-        Promise.all(ins.map(a => a.finished.catch(() => null))).then(() => { if (!M.done) M.finish(false); });
-      });
+      // room → room: the new room is up at once, above the old one (no Planet View in between), and dissolves in; the old one goes when the motion ends
+      const out = rooms[state.room].sec, dir = ROOM_IDS.indexOf(name) >= ROOM_IDS.indexOf(state.room) ? 1 : -1, S = rm ? EA.reduced : EA.switch, n = rm ? 0 : EA.switch.nudge;
+      out.classList.add("dr-outgoing"); out.inert = true; show();
+      const M = Motion(e, () => { retire(out); end(); }), P = partsOf(room.sec), slid = el => !rm && el !== P.header;
+      for (const el of switchIn(P)) M.add(el, [{ opacity: 0, transform: slid(el) ? `translate3d(${dir * n}px,0,0)` : "none" }, { opacity: 1, transform: slid(el) ? "translate3d(0,0,0)" : "none" }], { duration: S.in, easing: rm ? "linear" : EA.ease });
+      for (const el of switchOut(partsOf(out))) M.add(el, [{ opacity: 1 }, { opacity: 0 }], { delay: S.out[0], duration: S.out[1], easing: "linear" });
+      M.start();
       return () => close(false);
     }
     function close(resume) {
@@ -931,6 +898,7 @@
     // the Planet View through its own swap, so nothing stale may stay open underneath it
     function closeImmediate() {
       if (motion) { motion.anims.forEach(a => { try { a.cancel(); } catch { /* gone */ } }); motion.done = true; motion = null; }
+      layer.querySelectorAll(".dr-outgoing").forEach(retire);
       if (!state.room) { unlock(); return false; } const room = rooms[state.room];
       room.clear(); if (A.activePreview()) A.actions.clearPreview();
       room.sec.hidden = true; room.sec.inert = false; state.room = null; state.hovered = null; state.preview = null; state.peek = -1; state.lensPv = null; state.opener = null;
@@ -1004,6 +972,6 @@
     const pvDispose = view.dispose; view.dispose = () => { if (instance === api) api.dispose(); pvDispose(); };
     instance = api; DR.instance = api; return api;
   }
-  const DR = { mount, version: 1, instance: null, EDGE: EDGE_ASSEMBLE, CATS: Object.freeze(CATS), CAT_COLOR: Object.freeze(CAT_COLOR), CAT_PART: Object.freeze(CAT_PART), TENDRIL: Object.freeze(TENDRIL), BANKS: Object.freeze(BANKS), TF: Object.freeze(TF) };
+  const DR = { mount, version: 1, instance: null, EDGE: EDGE_ASSEMBLE, CATS: Object.freeze(CATS), CAT_COLOR: Object.freeze(CAT_COLOR), CAT_PART: Object.freeze(CAT_PART), BANKS: Object.freeze(BANKS), TF: Object.freeze(TF) };
   root.BLOOM = Object.assign(root.BLOOM || {}, { decisionRooms: DR });
 })(typeof window !== "undefined" ? window : globalThis);

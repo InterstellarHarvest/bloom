@@ -141,17 +141,18 @@ T.dispose()
 >   once with its pieces at their edges: the veil + blur `[60, 220]` (the region stays crisp for the emphasis' first beat), **header from above** `[40, 340]` (it starts one header height off the top),
 >   **specimen column from the left** `[80, 340]`, **work panels from the right** `[120, 340]` (side travel clamp(56 px, 6 vw, 120 px) with a
 >   fade, ease `cubic-bezier(.2,.8,.2,1)`) — 460 ms of motion, measured ≈ 0.5 s settled (Chromium headless 499–526 ms) · 5 settled: geometry
->   measured at rest (tendrils, the tree card), the tendrils fade in, focus to the room title / the requested node. The home selection stays
+>   measured at rest (the tree card), focus to the room title / the requested node. The home selection stays
 >   selected (its banner fades under the veil). No tick passes.
 > - **Close** (Back / Resume / Escape): clear the preview; stay paused; the reverse — work panels exit right `[0, 220]`, the specimen
 >   column left `[30, 220]`, the header up `[60, 220]`, the veil + blur clear `[50, 250]` (300 ms; measured 348–376 ms); the emphasis
 >   resolves; at rest the room hides, the Planet View is restored, **then** Back restores the pre-room state / Resume runs, and focus returns
 >   to the opener. The same region is still selected.
 > - **Switch** (room → room): the old room's preview cleared first; the specimen box (`.lf-top`) never animates — same rect, same
->   pixels; the header copy (`.rt`), the work panels (`.z-main`, `.z-map`), the information card and the caption text fade out with a 16 px
->   nudge (110 ms, in the direction of travel along the room tabs), the rooms swap, the new ones fade in (190 ms). Never two rooms, never
->   the Planet View in between. The header's Back / room tabs / Resume stay live.
-> - **Reduced motion** (OS or Settings → Motion): opacity only — open 160 ms, close 140 ms, switch 70 + 120 ms; no element travels.
+>   pixels; the new room is shown at once above the old one and its header, work panels (`.z-main`, `.z-map`) and information card dissolve in
+>   over the old room's (260 ms, the panels with a 16 px nudge in the direction of travel along the room tabs). The old panels leave `[110, 150]`, only once
+>   they are covered, so the backdrop never shows between the two (owner, post-040: fading out then in read as a blink; QA F2b holds the panels' combined cover ≥ 97 % on every
+>   frame). The outgoing room is inert and hidden when the motion ends: one live room, never the Planet View in between. The caption swaps with no fade. The header's Back / room tabs / Resume stay live.
+> - **Reduced motion** (OS or Settings → Motion): opacity only — open 160 ms, close 140 ms, switch a 120 ms dissolve; no element travels.
 > - **Interruption:** ONE transition at a time (`motion`). A newer request — Escape at any moment, a room tab / Back / Resume during a switch —
 >   **commits** the settling transition (its end state at once: the swap, the resume, the focus) and then runs, so the final route is the
 >   player's last action. While a room opens or closes it takes no pointer input (a double-click never lands on an arriving control). No

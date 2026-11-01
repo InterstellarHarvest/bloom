@@ -1,7 +1,7 @@
 /*! STRANGE BLOOM · UNKNOWN SOILS — the portable runtime (file://). GENERATED FILE — do not edit by hand.
  * Rebuild: npm --prefix tools run build:portable  ·  verify: npm --prefix tools run check:portable  (tools/build-portable.mjs; docs/PORTABLE_RUNTIME_v1.md)
  * Format: bloom-portable/1  ·  esbuild 0.28.2
- * Source fingerprint: e5e5dd3688e179486f61991ad59ef2798a36f6f57ff0a94453ff12fdcd1aba75  (45 source files, listed with their hashes in dist/portable/manifest.json)
+ * Source fingerprint: df9cbc0a672f2661715ca59507f024c428ee961c49610878c90544cb2b9a0f55  (45 source files, listed with their hashes in dist/portable/manifest.json)
  * Built from resources/portable/portable-entry.js and the unmodified game modules it names; only import.meta.url is rewritten (resources/portable/portable-root.js).
  */
 (() => {

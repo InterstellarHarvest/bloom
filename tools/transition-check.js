@@ -8,7 +8,7 @@
 // index.html for Training):
 //   N · static — the room controller animates transform / opacity only (the map's blur filter only while it fades) and never runs the mist;
 //       the timing table is the locked one (open ≈ 450–550 ms, a quicker reverse, room → room 250–350 ms with a 12–24 px nudge, reduced = no
-//       travel); ONE canonical specimen rule (no room-specific size, Terraform's left column = 21 %); plantEnvironment.paint without margins is
+//       travel); ONE canonical specimen rule (no room-specific size, Terraform's left column = 23 %); plantEnvironment.paint without margins is
 //       byte-identical to the BLOOM-040 base and its margin extension keeps the window byte-identical; no mechanic / bank / content file changed.
 //   E · Edge Assemble (Planet View → Region Inspect from the banner's real button), every viewport: the selected region is emphasised on the
 //       map first; the header starts ABOVE its final position, the specimen column LEFT of it, the work panels RIGHT of it; staggered; nothing
@@ -58,7 +58,7 @@ if (has("N")) {
   const DR = fs.readFileSync(path.join(ROOT, "resources/run-ui/decision-rooms.js"), "utf8"), CSS = fs.readFileSync(path.join(ROOT, "resources/run-ui/decision-rooms.css"), "utf8");
   global.window = undefined; require(path.join(ROOT, "resources/run-ui/decision-rooms.js")); const E = globalThis.BLOOM.decisionRooms.EDGE;
   const end = o => Math.max(...Object.values(o).filter(Array.isArray).map(([d, m]) => d + m));
-  const openMs = end(E.open), closeMs = end(E.close), switchMs = E.switch.out + E.switch.in;
+  const openMs = end(E.open), closeMs = end(E.close), switchMs = Math.max(E.switch.in, E.switch.out[0] + E.switch.out[1]);
   const ctrl = DR.slice(DR.indexOf("(BLOOM-040) EDGE ASSEMBLE —"), DR.indexOf("function closeImmediate"));
   const props = [...ctrl.matchAll(/\{\s*(transform|opacity|filter)\s*:/g)].map(m => m[1]), otherProps = [...ctrl.matchAll(/\{\s*(width|height|top|left|right|bottom|margin|padding)\s*:/g)];
   check(openMs >= 450 && openMs <= 550 && closeMs < openMs && closeMs >= 250 && switchMs >= 250 && switchMs <= 350 && E.switch.nudge >= 12 && E.switch.nudge <= 24 && E.open.header[0] < E.open.focus[0] && E.open.focus[0] < E.open.work[0]
@@ -69,8 +69,8 @@ if (has("N")) {
     "N2 · the room controller animates transform / opacity only (+ the map's own blur filter while the veil fades), never layout properties; room swaps never run the AtmosphereTransition mist; no backdrop filter", J({ props: [...new Set(props)], other: otherProps.length }));
   const lfRules = [...CSS.replace(/\/\*[\s\S]*?\*\//g, "").matchAll(/([^{}]*\.lf-top[^{}]*)\{([^}]*)\}/g)].filter(m => /(aspect-ratio|max-height|(^|[;\s])width|(^|[;\s])height)\s*:/.test(m[2])).map(m => m[1].trim());
   const tfCols = (CSS.match(/\.dr \.r-terraform\{grid-template-columns:([^;]+);/) || [])[1], baseCols = (CSS.match(/\.dr-room\{[^}]*grid-template-columns:([^;]+);/) || [])[1];
-  check(lfRules.length === 1 && lfRules[0] === ".dr .lf-top" && tfCols && tfCols.trim().startsWith("21%") && baseCols && baseCols.trim().startsWith("21%") && /\.dr \.z-focus\{[^}]*height:100%/.test(CSS),
-    "N3 · ONE canonical specimen rule (.dr .lf-top: the full 21 % left column, 170 : 196, capped at 56 % of the zone): no room-specific specimen size; Terraform's left column is the same 21 %", J({ lfRules, tfCols, baseCols }));
+  check(lfRules.length === 1 && lfRules[0] === ".dr .lf-top" && tfCols && tfCols.trim().startsWith("23%") && baseCols && baseCols.trim().startsWith("23%") && /\.dr \.z-focus\{[^}]*height:100%/.test(CSS),
+    "N3 · ONE canonical specimen rule (.dr .lf-top: the full 23 % left column, 170 : 196, capped at 56 % of the zone): no room-specific specimen size; Terraform's left column is the same 23 %", J({ lfRules, tfCols, baseCols }));
   // plantEnvironment: the frame is unchanged; the margin extension keeps the window byte-identical
   const oldSrc = git(`show ${BASE}:resources/plant-visual/plant-environment.js`), O = {}; new Function("window", oldSrc)(O); const PO = O.BLOOM.plantEnvironment;
   require(path.join(ROOT, "resources/plant-visual/plant-environment.js")); const PE = globalThis.BLOOM.plantEnvironment;
@@ -118,14 +118,16 @@ if (has("N")) {
     window.__LT = []; try { new PerformanceObserver(l => { for (const e of l.getEntries()) window.__LT.push(Math.round(e.duration)); }).observe({ type: "longtask", buffered: false }); } catch { window.__LT = null; } };
   // in-page helpers: rects, the visible room, sampling a transition on every animation frame until it settles
   const H = `(() => { const R = el => { if (!el) return null; const r = el.getBoundingClientRect(); return [r.x, r.y, r.width, r.height].map(v => Math.round(v * 100) / 100); };
-    const rooms = () => [...document.querySelectorAll(".dr .dr-room")].filter(s => !s.hidden), room = () => rooms()[0] || null;
+    const rooms = () => [...document.querySelectorAll(".dr .dr-room")].filter(s => !s.hidden && !s.classList.contains("dr-outgoing")), room = () => rooms()[0] || null;
     const DR = () => BLOOM.decisionRooms.instance, PV = () => BLOOM.planetView.instance, A = () => BLOOM_RUN_UI.adapter;
     const parts = s => ({ header: R(s.querySelector(".rh")), focus: R(s.querySelector(".z-focus")), main: R(s.querySelector(".z-main")), map: R(s.querySelector(".z-map")), box: R(s.querySelector(".lf-top")),
       op: ["rh", ".z-focus", ".z-main", ".z-map", ".lf-top"].map(q => +getComputedStyle(s.querySelector(q === "rh" ? ".rh" : q)).opacity) });
     const exposed = () => { const pvHidden = [".pv-hud", ".pv-stage", ".pv-foot"].every(q => { const e = document.querySelector(q); return e.getAttribute("aria-hidden") === "true" && e.inert; }); return { rooms: rooms().length, pvHidden, layer: !document.getElementById("dr").hidden }; };
+    // the panels' combined cover over the backdrop while one room dissolves over another: min over the panels of 1 − (1 − new)(1 − old); the outgoing room must be inert
+    const cover = () => { const o = document.querySelector(".dr .dr-outgoing"), s = room(); if (!o || !s) return null; const op = (r, q) => +getComputedStyle(r.querySelector(q)).opacity; return { min: Math.min(...[".z-main", ".z-map", ".lf-info"].map(q => 1 - (1 - op(s, q)) * (1 - op(o, q)))), inert: o.inert }; };
     const delays = s => s ? Object.fromEntries([["header", ".rh"], ["focus", ".z-focus"], ["main", ".z-main"], ["map", ".z-map"]].map(([k, q]) => { const a = s.querySelector(q).getAnimations()[0]; return [k, a ? a.effect.getTiming().delay : null]; })) : null;
     async function sample(fn, { min = 60, max = 3000 } = {}) { const out = [], t0 = performance.now(); fn(); window.__delays = delays(rooms()[0] || null);
-      await new Promise(res => { const f = () => { const s = room(), st = DR().state(); out.push({ t: Math.round(performance.now() - t0), n: rooms().length, tr: st.transitioning, kind: st.transitionKind, ex: exposed(),
+      await new Promise(res => { const f = () => { const s = room(), st = DR().state(); out.push({ t: Math.round(performance.now() - t0), n: rooms().length, tr: st.transitioning, kind: st.transitionKind, ex: exposed(), cv: cover(),
           p: s ? parts(s) : null, veil: +getComputedStyle(document.querySelector(".dr-veil")).opacity, put: window.__PUT, spot: PV().state().spot });
         if ((st.transitioning || performance.now() - t0 < min) && performance.now() - t0 < max) requestAnimationFrame(f); else res(); }; requestAnimationFrame(f); }); return out; }
     const quiet = () => document.getAnimations().filter(a => a.playState === "running" || a.playState === "paused").filter(a => a.effect && a.effect.target && a.effect.target.closest && (a.effect.target.closest(".dr") || a.effect.target.closest(".pv"))).length;
@@ -136,7 +138,7 @@ if (has("N")) {
     const specOf = () => { const s = room(); return s && BLOOM.plantSpecimen.mounted().find(x => s.querySelector(".lf-top").contains(x.el)); };
     window.__T = { R, rooms, room, DR, PV, A, parts, sample, settledState, specOf, exposed, quiet }; return true; })()`;
   const frames = (p, n = 3) => p.evaluate(n => new Promise(r => { let k = 0; const f = () => (++k >= n ? r() : requestAnimationFrame(f)); requestAnimationFrame(f); }), n);
-  // settled = no transition in flight and every room / map animation drained (the tendrils' short fade-in after a room settles included)
+  // settled = no transition in flight and every room / map animation drained 
   const settled = p => p.waitForFunction(() => !BLOOM.decisionRooms.instance.state().transitioning && !BLOOM.decisionRooms.instance.state().motion && (!window.__T || __T.quiet() === 0), null, { timeout: 10000, polling: 20 });
 
   for (const bn of BROWSERS) {
@@ -233,12 +235,13 @@ if (has("N")) {
         const stable = { region: await rect() }, perFrame = [];
         for (const r of ["adapt", "spread", "terraform", "region", "terraform", "adapt"]) {
           const S = await p.evaluate(r => __T.sample(() => __T.room().querySelector(`.rn[data-go="${r}"]`).click(), { min: 50 }), r); await settled(p); await frames(p, 3);
-          perFrame.push({ to: r, frames: S.length, two: S.filter(s => s.n !== 1).length, boxes: [...new Set(S.filter(s => s.p).map(s => s.p.box.join(",")))], minOp: Math.min(...S.filter(s => s.p).map(s => s.p.op[4])) });
+          perFrame.push({ to: r, frames: S.length, two: S.filter(s => s.n !== 1).length, boxes: [...new Set(S.filter(s => s.p).map(s => s.p.box.join(",")))], minOp: Math.min(...S.filter(s => s.p).map(s => s.p.op[4])), cover: Math.min(1, ...S.filter(s => s.cv).map(s => s.cv.min)), overlap: S.filter(s => s.cv).length, liveOld: S.filter(s => s.cv && !s.cv.inert).length });
           stable[r] = await rect(); }
         const keys = Object.keys(stable), ref = stable.region, sameAll = keys.every(k => J(stable[k].box) === J(ref.box) && J(stable[k].canvas) === J(ref.canvas) && stable[k].scale === ref.scale);
         const sameFrames = perFrame.every(f => f.two === 0 && f.boxes.length === 1 && f.boxes[0] === ref.box.join(",") && f.minOp === 1);
         check(sameAll, tag(`F1 · ${vt} ONE specimen rectangle for Region Inspect · Adapt · Spread · Terraform — x, y, width, height, the organism canvas and its pixel scale identical`), J(Object.fromEntries(keys.map(k => [k, [stable[k].box, stable[k].scale]]))));
-        check(sameFrames, tag(`F2 · ${vt} on EVERY frame of six room → room switches the specimen box never moves, resizes or fades, and two rooms are never shown`), J(perFrame.map(f => [f.to, f.frames, f.boxes.length, f.two, f.minOp])));
+        check(sameFrames, tag(`F2 · ${vt} on EVERY frame of six room → room switches the specimen box never moves, resizes or fades, and only one room is ever live`), J(perFrame.map(f => [f.to, f.frames, f.boxes.length, f.two, f.minOp])));
+        check(perFrame.every(f => f.overlap > 0 && f.cover >= 0.97 && !f.liveOld), tag(`F2b · ${vt} no blink: on EVERY frame of six room → room switches the new panels dissolve OVER the old ones (combined cover ≥ 97 %, the backdrop never shows between them) and the outgoing room is inert`), J(perFrame.map(f => [f.to, f.overlap, Math.round(f.cover * 1000) / 1000, f.liveOld])));
         const T0 = stable.terraform, ratio = ref.box[3] / ref.box[2];
         check(J(T0.box) === J(ref.box) && T0.scale === ref.scale && T0.org === ref.org && T0.env === ref.env && T0.sig === ref.sig && (Math.abs(ratio - 196 / 170) < 0.02 || ref.box[3] < ref.box[2] * 196 / 170),
           tag(`F3 · ${vt} Terraform conforms: the same box, the same scale, the same organism / environment / displayed pixels as Region Inspect at rest (170 : 196, or the 56 % cap)`), J({ terraform: T0.box, region: ref.box, scale: [T0.scale, ref.scale], ratio: +ratio.toFixed(3) }));
@@ -407,7 +410,7 @@ if (has("N")) {
           const ref = BLOOM.plantSpecimen.draw(st, { species: BLOOM_RUN_UI.adapter.run().species }), cr = s.canvas.getBoundingClientRect();
           const anchors = s.anchors().filter(a => a.client), inside = anchors.every(a => a.client.x >= cr.left && a.client.x <= cr.right && a.client.y >= cr.top && a.client.y <= cr.bottom);
           return { pack: s.pack, plan: s.plan, species: s.species, org: s.organismSignature(), refOrg: ref.organismSig, sig: s.signature(), refSig: ref.sig, svg: !!room.querySelector(".lf-top svg"), legacy: !!BLOOM.legacyPlantSpecimen,
-            plates: room.querySelectorAll(".dr-leaders .aplate").length, inside, anchors: anchors.length, renderer: BLOOM.plantSpecimen.renderer, state: { traits: st.traits, colony: st.colony, condition: st.condition, focus: st.focus, local: st.local } }; });
+            plates: room.querySelectorAll(".dr-leaders, .aplate").length, inside, anchors: anchors.length, renderer: BLOOM.plantSpecimen.renderer, state: { traits: st.traits, colony: st.colony, condition: st.condition, focus: st.focus, local: st.local } }; });
         const legacyLoaded = urls.some(u => /legacy-svg-specimen|plant-sprite-lab/.test(u));
         // the same state drawn in Node by the canonical pipeline (plant-specimen.js draw, the generated atlas): byte-identical organism pixels
         const NB = (() => { const g = {}; for (const f of ["resources/plant-visual/generated/plant-atlas.js", "resources/plant-visual/plant-visual-model.js", "resources/plant-visual/plant-components.js", "resources/plant-visual/plant-compositor.js", "resources/plant-visual/plant-fx.js",
@@ -417,7 +420,7 @@ if (has("N")) {
         check(t.pack === "organic-hybrid" && t.plan === "oh-stem@1" && t.renderer === "organic-hybrid-sprite" && t.org === t.refOrg && t.sig === t.refSig && nd.organismSig === t.org && !t.svg && !t.legacy && !legacyLoaded,
           tag("T1 · Training's specimen is the canonical production Organic Hybrid path: pack organic-hybrid · body plan oh-stem@1 · the sprite compositor; its organism pixels = BLOOM.plantSpecimen.draw of the same state in the page AND in Node (the generated atlas); no retired SVG specimen, no lab file loaded"),
           J({ pack: t.pack, plan: t.plan, org: [t.org, t.refOrg, nd.organismSig], svg: t.svg, legacyLoaded }));
-        check(t.plates === 4 && t.inside && t.anchors === 7, tag("T2 · the Adapt anatomy callouts (four plates: pigment · leaf shape · stem · roots) stay where they were, anchored on the REAL specimen (every anatomy anchor inside its canvas)"), J({ plates: t.plates, anchors: t.anchors, inside: t.inside }));
+        check(t.plates === 0 && t.inside && t.anchors === 7, tag("T2 · nothing is drawn over the Adapt specimen (no callout plates or connectors); every anatomy anchor still resolves inside its canvas"), J({ plates: t.plates, anchors: t.anchors, inside: t.inside }));
         if (EVIDENCE) { await p.locator(".dr .dr-room:not([hidden]) .lf-top").screenshot({ path: path.join(EVD, "frames", `${bn}-training-adapt-specimen.png`) }).catch(() => {}); }
         P.training = { org: t.org, state: t.state };
         // T4 · (PMO correction) the anatomy lessons show Chill Hollow's Adapt specimen in FULL; another lesson keeps the no-colony ghost; no colony is made

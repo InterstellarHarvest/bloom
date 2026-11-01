@@ -18,7 +18,7 @@
 
 | file | role |
 |---|---|
-| `resources/run-ui/decision-rooms.js` (new) | `BLOOM.decisionRooms.mount(planetView)` — the room controller (open / close / switch / context / pause-restore), the shared header, the mini-map block, Region Inspect, Adapt, Spread, the organic tendrils, the preview / purchase contract, anchor re-homing |
+| `resources/run-ui/decision-rooms.js` (new) | `BLOOM.decisionRooms.mount(planetView)` — the room controller (open / close / switch / context / pause-restore), the shared header, the mini-map block, Region Inspect, Adapt, Spread, the preview / purchase contract, anchor re-homing |
 | `resources/run-ui/decision-rooms.css` (new) | the rooms' presentation (Concept 18 room family), scoped to `.pv .dr` |
 | `resources/run-ui/plant-specimen.js` (new) | `BLOOM.plantSpecimen` — the production plant specimen (SVG), driven by real owned tiers / colony / context |
 | `content/traits.js` | + `uiCategory` on the nine Adapt / Spread traits (**presentation only**, §6) |
@@ -185,18 +185,14 @@ rule) when the rules refuse it; `aria-disabled` mirrors `canBuy`; the Biomass pi
 rail at 1.5 em, category label, cards to the right; row step capped at 5.4 em so Spread's card is content-height and shorter than
 Adapt's (289 vs 538 px at 1024; 360 vs 673 at 1280; 404 vs 755 at 1440 — QA B15).
 
-**Organic tendrils** (the only treatment; no Bridge / Docked / selector, N4): a room-level SVG draws, per category present,
-anchor ring + halo + dot → label plate (the part's name) → the tendril (`M anchor H x0 C … port`, tension .30 / .26, shared x-profile)
-→ the rail port (drawn by the tree) → the category label → that category's cards. Weights from the room em with Concept 18's
-floors: idle `max(.52em, 8.5px)`, lit `max(.8em, 12.5px)`, glow 1.9× lit, vein `max(.12em, 2px)` — **8.5 / 9.0 / 10.1 px idle and
-12.5 / 13.8 / 15.5 px lit at 1024 / 1280 / 1440** (glow 23.8 / 26.3 / 29.5, vein 2 / 2.1 / 2.3); others dim to 0.4 while one is lit. Anchors and ports are both ordered top → bottom
-by category, so no two tendrils can cross; QA samples every pair at the three widths, idle and lit: **0 crossings**, closest
-clear space 5.1 / 7.8 / 9.0 px idle and 2.9 / 5.1 / 6.0 px lit (Temperature / Soil, the same tightest pair Concept 18 reported).
+**Nothing joins the plant to the tree** (owner, post-040: the organic tendrils, their rail and ports, and the anchor rings and part labels over the specimen were removed as
+distracting). The hovered skill's card says which part changes (*Changes \<part\>*) and the specimen highlights that part; `sp.anchorPoint` / `draw().anchors` remain specimen API. In the
+tree card each category label joins its own cards; the labels (.9em) and cards (up to 17em) fill the card, and the left column is 23 % in every room.
 
 **Preview contract.** Hover or keyboard focus of a real node → `adapter.actions.preview(id)` — the deliberate player preview: the
 page shows it (home-map outline under the veil, footer) and fires `bloom:upgrade-preview` with its unchanged detail; the room
 mini-map draws the same gain / lose / reachHostile / better / worse, the specimen previews the next real tier with the category's
-part lit, the tendril lights, the information card describes the real trait (name, tier / price, `sub`, `science`, *Changes
+part lit, the information card describes the real trait (name, tier / price, `sub`, `science`, *Changes
 \<part\>*, opens / closes), the effect card reads the context (§10). Never the silent `previewOf` for nodes (N4). It clears
 (`actions.clearPreview()`) on: pointer to empty tree space, pointer to another node (replaced), leaving the tree, window blur,
 document hidden, pointer leaving the window, keyboard focus leaving the tree, switching rooms, closing the room (QA B12). Context
@@ -279,8 +275,6 @@ focus on open / return on close, no colour-only category or status, controls ≥
   calibrated em, longer names wrap earlier (as Concept 18).
 - **Header Biomass pill** is a 029C addition for affordability (not in the Concept 18 header language); nav labels show only on the
   open room below 1500 px and as icons below 1100 px.
-- **Tightest tendrils** at 1024: 2.9 px clear with Temperature lit (Concept 18: 3 px). A smaller window would need a lighter weight
-  or a wider gutter — not changed here (owner-approved weight).
 - Transitions arrived in 029E (the SUBDUED mist through `controller.transition`); Terraform arrived in 029D; the Bloom Report / extinction are the production report since 029E.
 - The 028D1 anchors `inspect / readout / limiting-factor / colony-status` stay on the banner; a coach that wants them inside the
   Region room needs a decision (duplicate active anchors were avoided on purpose).
@@ -288,9 +282,9 @@ focus on open / return on close, no colour-only category or status, controls ≥
 
 ## 16. Canonical specimen geometry (BLOOM-040 — LOCKED)
 
-ONE specimen box for **Region Inspect · Adapt · Spread · Terraform**: the `.dr .lf-top` rule — the full width of the room grid's **21 %**
+ONE specimen box for **Region Inspect · Adapt · Spread · Terraform**: the `.dr .lf-top` rule — the full width of the room grid's **23 %**
 left column, aspect **170 : 196** (the accepted Region / Adapt presentation), capped at **56 %** of the room's zone height (`.z-focus` has
-a definite height, so the cap never depends on a room's content). Terraform's grid is `21 % · 1fr · 23 %` (was 20 %, and its 4 : 3 / 38 %
+a definite height, so the cap never depends on a room's content). Terraform's grid is `23 % · 1fr · 23 %` (was 20 %, and its 4 : 3 / 38 %
 specimen variant is gone): at 1440 × 900 every room's box is 294.25 × 339.25 px at (19.39, 117.63), the organism at 3×; at 1024 × 768,
 209.23 × 241.23 px at 2×. Nothing a room shows may move, resize, fade or re-crop the box; on a room switch the outgoing and incoming boxes
 are pixel-identical (same rect, same scene, same organism, the weather on the page clock). The scene **fills** the box edge to edge
